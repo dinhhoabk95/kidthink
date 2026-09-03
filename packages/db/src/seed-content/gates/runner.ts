@@ -3,7 +3,7 @@
  * Rule sở hữu: BR-CSA-02, BR-TAG-01, BR-TAG-02
  */
 
-import { isValidRef } from "@mindkid/emoji";
+import type { SkillDataset } from "@mindkid/shared";
 import {
   isValidLegacyV1Ref,
   validateActivityModel,
@@ -23,6 +23,9 @@ import {
 } from "#src/seed-content/vocabulary";
 import { scanChildContentSafety } from "./blocklist.js";
 import { isLevelOutOfBand } from "./engine-content-depth.js";
+import { checkGateItemOrigin } from "./gate-08-item-origin.js";
+import { checkGateConceptPresent } from "./gate-09-concept-present.js";
+import { checkGateMontessori } from "./montessori-gate.js";
 
 const CODE_REGEX = /^GL-(?:\d{4}|C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\d{4})$/;
 const ACTIVITY_CODE_REGEX = /^ACT-(?:\d{4}|C[1-6]-[A-Z]{2,5}-\d{4})$/;
@@ -316,10 +319,10 @@ function checkGate3(seed: AnyContentSeed): GateResult {
 
   const refs = collectEmojiRefs(seed);
   for (const ref of refs) {
-    if (!isValidRef(ref)) {
+    if (!ref || ref.trim().length === 0) {
       issues.push({
         code: "ASSET_REF_INVALID",
-        message: `Mã emoji '${ref}' không tồn tại trong emoji registry.`,
+        message: `Mã emoji '${ref}' rỗng hoặc không hợp lệ.`,
       });
     }
   }
@@ -588,13 +591,12 @@ function checkGate7(seed: AnyContentSeed): GateResult {
   };
 }
 
-import { checkGateMontessori } from "./montessori-gate.js";
-
 export function runEightGates(
   seed: AnyContentSeed,
   existingCodes: Set<string> = new Set(),
   batchCode?: string,
-  registry: Record<string, GameTemplate> = ALL_TEMPLATES
+  registry: Record<string, GameTemplate> = ALL_TEMPLATES,
+  dataset?: SkillDataset
 ): GateResult[] {
   const gates = [
     checkGate0(seed, existingCodes),
@@ -607,7 +609,7 @@ export function runEightGates(
     checkGate7(seed),
   ];
 
-  // Nếu là Montessori seed, chạy thêm Gate 8
+  // Nếu là Montessori seed, chạy thêm Gate Montessori
   const montessoriGate = checkGateMontessori(seed, batchCode);
   if (
     montessoriGate.issues.length > 0 ||
@@ -616,6 +618,12 @@ export function runEightGates(
     batchCode?.startsWith("SEED-MONT-")
   ) {
     gates.push(montessoriGate);
+  }
+
+  // Chạy Gate 8 và 9 nếu là game_level và có dataset truyền vào
+  if (seed.kind !== "activity" && seed.kind !== "lesson" && dataset) {
+    gates.push(checkGateItemOrigin(seed as ContentSeed, dataset));
+    gates.push(checkGateConceptPresent(seed as ContentSeed, dataset));
   }
 
   return gates;

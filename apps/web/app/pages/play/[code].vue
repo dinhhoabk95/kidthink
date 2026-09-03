@@ -78,7 +78,10 @@
           <canvas
             class="game-canvas"
             ref="canvasRef"
+            @pointercancel="handlePointerCancel"
             @pointerdown="handlePointerDown"
+            @pointermove="handlePointerMove"
+            @pointerup="handlePointerUp"
           />
         </div>
       </main>
@@ -104,6 +107,7 @@
 <script lang="ts" setup>
   import {
     createGameSessionSync,
+    drawTargetHoverAura,
     type EngineConfig,
     GameEngine,
     type GameSession,
@@ -159,21 +163,71 @@
     }>;
   }
 
+  interface ItemAsset {
+    kind: string;
+    ref?: string;
+    path?: string;
+  }
+
+  interface InteractiveSessionItem {
+    item_id: string;
+    attribute?: string;
+    asset?: ItemAsset;
+    label?: string;
+    text?: string;
+    is_correct?: boolean;
+  }
+
   interface InteractiveSession {
     slots?: readonly Slot[];
     content?: {
-      options?: Array<{ value: number; item_id?: string }>;
-      items?: Array<{ item_id: string }>;
+      container?: { container_id: string; label?: string };
+      options?: Array<{
+        value: number;
+        item_id?: string;
+        label?: string;
+        text?: string;
+        asset?: ItemAsset;
+      }>;
+      items?: InteractiveSessionItem[];
+      pairs?: Array<{
+        left: { item_id: string; asset?: ItemAsset };
+        right: { item_id: string; asset?: ItemAsset };
+      }>;
+      slots?: Array<{
+        slot_id: string;
+        expected_item_id?: string;
+        label?: string;
+      }>;
       objects?: Array<{ object_id: string }>;
     };
-    displayOptions?: Array<{ item_id: string }>;
-    displayItems?: Array<{ item_id: string }>;
+    displayOptions?: Array<{
+      item_id: string;
+      value?: number;
+      asset?: ItemAsset;
+      label?: string;
+      text?: string;
+    }>;
+    displayItems?: InteractiveSessionItem[];
+    displayLeft?: InteractiveSessionItem[];
+    displayRight?: InteractiveSessionItem[];
     getOptions?: () => Array<{ value: number; item_id?: string }>;
-    selectValue?: (val: number) => boolean;
+    selectValue?: (val: number) => boolean | undefined;
+    selectOption?: (opt: number | string) => boolean | undefined;
     onItemLocked?: (id: string) => void;
     toggleItemSelection?: (id: string) => void;
     flipCard?: (idx: number) => void;
     tapObject?: (id: string) => void;
+    onItemDropped?: (itemId: string, containerId: string) => void;
+    onItemPlaced?: (itemId: string, slotId: string) => void;
+    connectPair?: (leftId: string, rightId: string) => void;
+    onPairMatched?: (leftId: string, rightId: string) => void;
+    stageItem?: (itemId: string | null) => void;
+    getStagedItemId?: () => string | null;
+    getContainerId?: () => string;
+    getPlacements?: () => ReadonlyMap<string, string>;
+    placedSlots?: Map<string, string>;
+    hoveredContainer?: boolean;
   }
 
   const route = useRoute();
@@ -326,17 +380,36 @@
     }
   }
 
-  function replayInstructionAudio() {
+  function playInstructionNarration(promptText?: string) {
     if (currentInstructionAudio) {
       const aud = new Audio(currentInstructionAudio);
       aud.play().catch(() => {
-        // audio playback might require user gesture
+        if (promptText && engine) {
+          engine.audio.speakPrompt(promptText);
+        }
       });
+    } else if (promptText && engine) {
+      engine.audio.speakPrompt(promptText);
     }
+  }
+
+  function replayInstructionAudio() {
+    engine?.audio.playTapSound();
+    const currentRoundCfg = roundRunner?.getCurrentRoundConfig();
+    const prompt =
+      (currentRoundCfg?.content_pack as { prompt?: string })?.prompt ||
+      currentRoundCfg?.instruction ||
+      cachedPayload?.title;
+    playInstructionNarration(prompt);
   }
 
   function handleContinueNext() {
     showVictoryModal.value = false;
+    const returnTo = route.query.return_to;
+    if (typeof returnTo === "string" && returnTo) {
+      router.push(`/play/${returnTo}`);
+      return;
+    }
     router.push("/games");
   }
 
@@ -347,7 +420,6 @@
       if (rounds.length === 0) {
         return;
       }
-      // Chơi lại là một **phiên mới** từ vòng 0 (BR-RSP-07).
       startRounds(
         cachedPayload,
         rounds,
@@ -362,11 +434,7 @@
   }
 
   /**
-   * Đổi điểm chạm sang toạ độ logic bằng **chính** hình học mà engine đang vẽ.
-   *
-   * Trước đây hàm này tự dựng lại công thức letterbox. Bản sao thứ hai đó trôi
-   * khỏi bản engine dùng, nên điểm chạm rơi lệch khỏi ô đang hiện. Giờ hỏi
-   * thẳng `RenderSystem` — một nguồn sự thật, không có bản sao để trôi.
+   * Đổi điểm chạm sang toạ độ logic bằng chính hình học mà engine đang vẽ.
    */
   function getLogicCoordinates(
     canvas: HTMLCanvasElement,
@@ -395,6 +463,293 @@
       }
     }
     return -1;
+  }
+
+  interface DragItemInfo {
+    item_id: string;
+    slotIndex: number;
+    asset?: ItemAsset;
+    label?: string;
+    text?: string;
+  }
+
+  interface ReturningItem {
+    item: DragItemInfo;
+    startX: number;
+    startY: number;
+    targetX: number;
+    targetY: number;
+    startTime: number;
+    duration: number;
+  }
+
+  let activePointerId: number | null = null;
+  let pointerDownTime = 0;
+  let pointerDownX = 0;
+  let pointerDownY = 0;
+  let isDragging = false;
+  let isMoved = false;
+  let draggedItem: DragItemInfo | null = null;
+  let returningItem: ReturningItem | null = null;
+  let currentDragPos = { x: 0, y: 0 };
+  let selectedSourceIndex: number | null = null;
+  let hoveredTargetIndex: number | null = null;
+  let isSettlingRound = false;
+
+  function getSourceSlotIndex(slots: readonly Slot[], hitIdx: number): number {
+    const slot = slots[hitIdx];
+    const sourceSlots = slots.filter((s) => s.role === "source");
+    if (sourceSlots.length > 0 && slot?.role === "source") {
+      const idx = sourceSlots.indexOf(slot);
+      if (idx >= 0) {
+        return idx;
+      }
+    }
+    return hitIdx;
+  }
+
+  function getItemFromCollection(
+    session: GameSession & InteractiveSession,
+    itemIndex: number
+  ): InteractiveSessionItem | undefined {
+    const directItem =
+      session.displayLeft?.[itemIndex] || session.displayItems?.[itemIndex];
+    if (directItem) {
+      return directItem;
+    }
+
+    const opt =
+      session.displayOptions?.[itemIndex] ||
+      session.content?.options?.[itemIndex];
+    if (opt) {
+      return {
+        item_id: opt.item_id ?? `opt-${itemIndex}`,
+        asset: opt.asset,
+        label: opt.label,
+        text: opt.text,
+      };
+    }
+    return session.content?.items?.[itemIndex];
+  }
+
+  function getItemForSlot(
+    session: GameSession & InteractiveSession,
+    hitIdx: number,
+    slots: readonly Slot[]
+  ): InteractiveSessionItem | undefined {
+    const itemIndex = getSourceSlotIndex(slots, hitIdx);
+    return getItemFromCollection(session, itemIndex);
+  }
+
+  function isSourceSlot(
+    session: GameSession & InteractiveSession,
+    hitIdx: number,
+    slots: readonly Slot[]
+  ): boolean {
+    const slot = slots[hitIdx];
+    if (slot?.role === "source") {
+      return true;
+    }
+    if (slot?.role === "target") {
+      return false;
+    }
+    if (
+      slots.length > 1 &&
+      hitIdx === slots.length - 1 &&
+      typeof session.onItemDropped === "function"
+    ) {
+      return false;
+    }
+    const hasExplicitTarget = slots.some((s) => s.role === "target");
+    if (hasExplicitTarget) {
+      return false;
+    }
+    const itemCount =
+      session.displayItems?.length ||
+      session.displayOptions?.length ||
+      session.displayLeft?.length ||
+      session.content?.items?.length ||
+      session.content?.options?.length ||
+      0;
+    return hitIdx < itemCount;
+  }
+
+  function isItemLocked(
+    session: GameSession & InteractiveSession,
+    itemId: string
+  ): boolean {
+    const placements = session.getPlacements?.();
+    if (placements?.has(itemId)) {
+      return true;
+    }
+    if (session.placedSlots) {
+      for (const [key, val] of session.placedSlots.entries()) {
+        if (key === itemId || val === itemId) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function isTargetSlot(
+    session: GameSession & InteractiveSession,
+    slots: readonly Slot[],
+    idx: number
+  ): boolean {
+    const slot = slots[idx];
+    if (!slot) {
+      return false;
+    }
+    if (slot.role === "target") {
+      return true;
+    }
+    if (
+      slots.length > 1 &&
+      idx === slots.length - 1 &&
+      typeof session.onItemDropped === "function"
+    ) {
+      return true;
+    }
+    const leftCount = session.displayLeft?.length || 0;
+    return Boolean(session.displayRight && idx >= leftCount);
+  }
+
+  function findNearestTargetSlot(
+    session: GameSession & InteractiveSession,
+    slots: readonly Slot[],
+    x: number,
+    y: number
+  ): number | null {
+    let bestIdx: number | null = null;
+    let bestDist = Number.POSITIVE_INFINITY;
+
+    for (let i = 0; i < slots.length; i++) {
+      const slot = slots[i];
+      if (!(slot && isTargetSlot(session, slots, i))) {
+        continue;
+      }
+      const halfW = Math.max(slot.hitW || slot.w || 80, 240) / 2 + 24;
+      const halfH = Math.max(slot.hitH || slot.h || 80, 120) / 2 + 24;
+
+      if (Math.abs(x - slot.x) <= halfW && Math.abs(y - slot.y) <= halfH) {
+        const dist = Math.hypot(x - slot.x, y - slot.y);
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestIdx = i;
+        }
+      }
+    }
+    return bestIdx;
+  }
+
+  function getRelativeTargetIndex(
+    slots: readonly Slot[],
+    targetIdx: number
+  ): number {
+    const targetSlots = slots.filter((s) => s.role === "target");
+    const targetSlot = slots[targetIdx];
+    if (targetSlots.length > 0 && targetSlot) {
+      const idx = targetSlots.indexOf(targetSlot);
+      if (idx >= 0) {
+        return idx;
+      }
+    }
+    return targetIdx;
+  }
+
+  function handlePlacementBySlot(
+    session: GameSession & InteractiveSession,
+    dragged: DragItemInfo,
+    relTargetIdx: number,
+    targetIdx: number
+  ): boolean {
+    if (typeof session.onItemPlaced !== "function") {
+      return false;
+    }
+    const targetSlotDef = session.content?.slots?.[relTargetIdx] ||
+      session.content?.slots?.[targetIdx] || {
+        slot_id: `slot-${relTargetIdx + 1}`,
+      };
+    session.onItemPlaced(dragged.item_id, targetSlotDef.slot_id);
+    return true;
+  }
+
+  function handlePlacementByContainer(
+    session: GameSession & InteractiveSession,
+    dragged: DragItemInfo
+  ): boolean {
+    if (typeof session.onItemDropped !== "function") {
+      return false;
+    }
+    const containerId =
+      session.getContainerId?.() ||
+      session.content?.container?.container_id ||
+      "coop";
+    session.onItemDropped(dragged.item_id, containerId);
+    return true;
+  }
+
+  function handlePlacementByGroup(
+    session: GameSession & InteractiveSession,
+    dragged: DragItemInfo,
+    relTargetIdx: number
+  ): boolean {
+    const withSort = session as {
+      onItemSorted?: (i: string, g: string) => void;
+    };
+    if (typeof withSort.onItemSorted !== "function") {
+      return false;
+    }
+    const group = (session.content as { groups?: Array<{ group_id: string }> })
+      ?.groups?.[relTargetIdx];
+    if (!group?.group_id) {
+      return false;
+    }
+    withSort.onItemSorted(dragged.item_id, group.group_id);
+    return true;
+  }
+
+  function handlePlacementByPair(
+    session: GameSession & InteractiveSession,
+    dragged: DragItemInfo,
+    relTargetIdx: number,
+    targetIdx: number
+  ): boolean {
+    if (typeof session.onPairMatched !== "function") {
+      return false;
+    }
+    const rightItems =
+      session.displayRight || session.content?.pairs?.map((p) => p.right);
+    const targetItem = rightItems?.[relTargetIdx] || rightItems?.[targetIdx];
+    if (!targetItem?.item_id) {
+      return false;
+    }
+    session.onPairMatched(dragged.item_id, targetItem.item_id);
+    return true;
+  }
+
+  function handleDropPlacement(
+    session: GameSession & InteractiveSession,
+    slots: readonly Slot[],
+    dragged: DragItemInfo,
+    targetIdx: number
+  ): void {
+    const relTargetIdx = getRelativeTargetIndex(slots, targetIdx);
+    if (
+      handlePlacementBySlot(session, dragged, relTargetIdx, targetIdx) ||
+      handlePlacementByContainer(session, dragged) ||
+      handlePlacementByGroup(session, dragged, relTargetIdx) ||
+      handlePlacementByPair(session, dragged, relTargetIdx, targetIdx)
+    ) {
+      engine?.audio.playSnapSound();
+      engine?.audio.playPopCelebrateSound();
+      return;
+    }
+    if (typeof session.onItemLocked === "function") {
+      session.onItemLocked(dragged.item_id);
+      engine?.audio.playTapSound();
+    }
   }
 
   function trySelectValue(
@@ -462,28 +817,120 @@
     tryOtherAction(session, hitIdx);
   }
 
-  /**
-   * Chốt vòng hiện tại nếu trẻ vừa thắng.
-   *
-   * Đây là mảnh còn thiếu làm cả vòng chơi hở: `roundRunner.completeCurrentRound()`
-   * chưa từng được gọi ở bất kỳ đâu trong `apps/web`, nên con trỏ vòng không bao
-   * giờ tiến, `onAllRoundsCompleted` không bao giờ chạy, và
-   * `showVictoryModal` — chỉ được đặt `true` ở đúng một chỗ, trong callback đó —
-   * không bao giờ hiện.
-   *
-   * Dò **sau hành động** chứ không dò mỗi frame vì đo được: cả 31 lời gọi
-   * `winSession()` trong 27 template đều nằm trong một hàm hành động
-   * (`selectOption`, `onTapCard`, `onSubmitSequence`, …), **không** cái nào nằm
-   * trong `update()`. Nên sau mỗi hành động là tất định và đủ, còn dò mỗi frame
-   * thì tốn một phép kiểm mỗi khung mà không bắt thêm được ca nào.
-   */
   function settleRoundIfWon(): void {
-    if (!roundRunner?.isCurrentRoundWon()) {
+    if (isSettlingRound || !roundRunner?.isCurrentRoundWon()) {
       return;
     }
-    // `completeCurrentRound()` tự sang vòng kế, và `startRound()` gọi
-    // `onRoundStarted` — chỗ đã gán `engine.activeSession`. Gán lại ở đây là dư.
-    roundRunner.completeCurrentRound();
+    isSettlingRound = true;
+
+    const state = roundRunner.getState();
+    const isFinalRound = state.currentRoundIndex >= state.roundsTotal - 1;
+
+    if (isFinalRound) {
+      engine?.audio.playLevelCelebrateSound();
+    } else {
+      engine?.audio.playPopCelebrateSound();
+    }
+
+    setTimeout(
+      () => {
+        isSettlingRound = false;
+        if (roundRunner) {
+          roundRunner.completeCurrentRound();
+        }
+      },
+      isFinalRound ? 1100 : 850
+    );
+  }
+
+  function handlePlacementTap(
+    session: GameSession & InteractiveSession,
+    slots: readonly Slot[],
+    hitIdx: number
+  ): void {
+    const isSource = isSourceSlot(session, hitIdx, slots);
+    if (isSource) {
+      const item = getItemForSlot(session, hitIdx, slots);
+      if (!item || isItemLocked(session, item.item_id)) {
+        return;
+      }
+      if (selectedSourceIndex === hitIdx) {
+        selectedSourceIndex = null;
+        session.stageItem?.(null);
+      } else {
+        selectedSourceIndex = hitIdx;
+        session.stageItem?.(item.item_id);
+        engine?.audio.playTapSound();
+      }
+    } else if (selectedSourceIndex !== null) {
+      const dragged = getItemForSlot(session, selectedSourceIndex, slots);
+      if (dragged) {
+        handleDropPlacement(
+          session,
+          slots,
+          { item_id: dragged.item_id, slotIndex: selectedSourceIndex },
+          hitIdx
+        );
+      }
+      selectedSourceIndex = null;
+      session.stageItem?.(null);
+    }
+  }
+
+  function handlePairTap(
+    session: GameSession & InteractiveSession,
+    hitIdx: number
+  ): void {
+    const isLeft = hitIdx < (session.displayLeft?.length || 0);
+    if (isLeft) {
+      const item = session.displayLeft?.[hitIdx];
+      if (item) {
+        selectedSourceIndex = hitIdx;
+        session.stageItem?.(item.item_id);
+        engine?.audio.playTapSound();
+      }
+    } else if (selectedSourceIndex !== null) {
+      const leftItem = session.displayLeft?.[selectedSourceIndex];
+      const rightItems =
+        session.displayRight || session.content?.pairs?.map((p) => p.right);
+      const rightIdx = hitIdx - (session.displayLeft?.length || 0);
+      const rightItem = rightItems?.[rightIdx] || rightItems?.[hitIdx];
+      if (leftItem && rightItem) {
+        session.onPairMatched?.(leftItem.item_id, rightItem.item_id);
+        engine?.audio.playPopCelebrateSound();
+      }
+      selectedSourceIndex = null;
+      session.stageItem?.(null);
+    }
+  }
+
+  function handleTapInteraction(
+    session: GameSession & InteractiveSession,
+    slots: readonly Slot[],
+    hitIdx: number
+  ): void {
+    if (hitIdx < 0) {
+      selectedSourceIndex = null;
+      session.stageItem?.(null);
+      return;
+    }
+
+    if (
+      typeof session.onItemPlaced === "function" ||
+      typeof session.onItemDropped === "function" ||
+      typeof (session as { onItemSorted?: (i: string, g: string) => void })
+        .onItemSorted === "function"
+    ) {
+      handlePlacementTap(session, slots, hitIdx);
+      return;
+    }
+
+    if (typeof session.onPairMatched === "function") {
+      handlePairTap(session, hitIdx);
+      return;
+    }
+
+    dispatchSlotAction(session, hitIdx);
   }
 
   function handlePointerDown(event: PointerEvent): void {
@@ -496,27 +943,276 @@
       event.clientX,
       event.clientY
     );
+    activePointerId = event.pointerId;
+    pointerDownTime = performance.now();
+    pointerDownX = x;
+    pointerDownY = y;
+    currentDragPos = { x, y };
+    isMoved = false;
+
+    try {
+      canvasRef.value.setPointerCapture(event.pointerId);
+    } catch {
+      /* ignore pointer capture error on devices without capture support */
+    }
+
     const slots = session.slots || engine.slots || [];
     const hitIdx = findHitSlot(slots, x, y);
+
     if (hitIdx >= 0) {
-      dispatchSlotAction(session, hitIdx);
-      settleRoundIfWon();
+      const isSource = isSourceSlot(session, hitIdx, slots);
+      if (isSource) {
+        const item = getItemForSlot(session, hitIdx, slots);
+        if (item && !isItemLocked(session, item.item_id)) {
+          isDragging = true;
+          draggedItem = {
+            item_id: item.item_id,
+            slotIndex: hitIdx,
+            asset: item.asset,
+            label: item.label,
+            text: item.text,
+          };
+          engine?.audio.playTapSound();
+        }
+      }
     }
   }
 
-  /**
-   * Đường chạy **duy nhất** của mọi màn chơi — kể cả level một vòng.
-   *
-   * Trước Task #167 có hai đường: `startMultiRound` gác sau `rounds.length > 1`,
-   * và `startSingleRound` cho phần còn lại. Vì `game_level_rounds` không có
-   * writer nào trong repo, `rounds` luôn rỗng, nên **mọi** phiên đi
-   * `startSingleRound` — hàm không kiểm điều kiện thắng, không bật modal ăn
-   * mừng, không cập nhật chỉ báo tiến độ. Không trẻ nào kết thúc được màn chơi.
-   *
-   * `BR-RSM-09` đã tuyên set một vòng là hợp lệ và là mặc định, `BR-RSP-02` bắt
-   * phát vòng cho **mọi** set. Hai đường mã cho một hợp đồng chính là chỗ nhánh
-   * chết đó sinh ra, nên chỉ còn một đường.
-   */
+  function handlePointerMove(event: PointerEvent): void {
+    if (
+      activePointerId !== event.pointerId ||
+      !canvasRef.value ||
+      !engine?.activeSession
+    ) {
+      return;
+    }
+    const session = engine.activeSession as GameSession & InteractiveSession;
+    const { x, y } = getLogicCoordinates(
+      canvasRef.value,
+      event.clientX,
+      event.clientY
+    );
+    currentDragPos = { x, y };
+
+    if (!isMoved && Math.hypot(x - pointerDownX, y - pointerDownY) > 8) {
+      isMoved = true;
+    }
+
+    if (isDragging && draggedItem) {
+      const slots = session.slots || engine.slots || [];
+      hoveredTargetIndex = findNearestTargetSlot(session, slots, x, y);
+      if (session.hoveredContainer !== undefined) {
+        session.hoveredContainer = hoveredTargetIndex !== null;
+      }
+    }
+  }
+
+  function handleDragDropRelease(
+    session: GameSession & InteractiveSession,
+    slots: readonly Slot[],
+    dragged: DragItemInfo,
+    x: number,
+    y: number
+  ): void {
+    const targetIdx = findNearestTargetSlot(session, slots, x, y);
+    if (targetIdx !== null) {
+      handleDropPlacement(session, slots, dragged, targetIdx);
+      return;
+    }
+    if (
+      typeof session.onItemLocked === "function" &&
+      Math.hypot(x - pointerDownX, y - pointerDownY) > 40
+    ) {
+      session.onItemLocked(dragged.item_id);
+      return;
+    }
+    engine?.audio.playSoftFeedbackSound();
+    const originSlot = slots[dragged.slotIndex];
+    if (originSlot) {
+      returningItem = {
+        item: dragged,
+        startX: x,
+        startY: y,
+        targetX: originSlot.x,
+        targetY: originSlot.y,
+        startTime: performance.now(),
+        duration: 240,
+      };
+      engine?.audio.playWhooshSound();
+    }
+  }
+
+  function handlePointerUp(event: PointerEvent): void {
+    if (
+      activePointerId !== event.pointerId ||
+      !canvasRef.value ||
+      !engine?.activeSession
+    ) {
+      return;
+    }
+    const session = engine.activeSession as GameSession & InteractiveSession;
+    const { x, y } = getLogicCoordinates(
+      canvasRef.value,
+      event.clientX,
+      event.clientY
+    );
+
+    try {
+      canvasRef.value.releasePointerCapture(event.pointerId);
+    } catch {
+      /* ignore pointer capture release error */
+    }
+
+    const timeHeld = performance.now() - pointerDownTime;
+    const distance = Math.hypot(x - pointerDownX, y - pointerDownY);
+    const slots = session.slots || engine.slots || [];
+    const hitIdx = findHitSlot(slots, x, y);
+
+    if (timeHeld < 350 && distance < 20) {
+      handleTapInteraction(session, slots, hitIdx);
+    } else if (isDragging && draggedItem) {
+      handleDragDropRelease(session, slots, draggedItem, x, y);
+    }
+
+    isDragging = false;
+    draggedItem = null;
+    activePointerId = null;
+    hoveredTargetIndex = null;
+    if (session.hoveredContainer !== undefined) {
+      session.hoveredContainer = false;
+    }
+    settleRoundIfWon();
+  }
+
+  function handlePointerCancel(event: PointerEvent): void {
+    if (activePointerId === event.pointerId) {
+      isDragging = false;
+      draggedItem = null;
+      activePointerId = null;
+      hoveredTargetIndex = null;
+    }
+  }
+
+  function renderDragAvatar(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    item: DragItemInfo,
+    scale = 1.15
+  ): void {
+    const baseRadius = 48;
+    const radius = baseRadius * scale;
+
+    ctx.save();
+    // 1. Deep floating 3D drop shadow
+    ctx.save();
+    ctx.shadowColor = "rgba(130, 118, 96, 0.38)";
+    ctx.shadowBlur = 24;
+    ctx.shadowOffsetY = 14;
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // 2. 3D Bottom Slab
+    ctx.save();
+    ctx.fillStyle = "#d4c5ab";
+    ctx.beginPath();
+    ctx.arc(x, y + 4, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // 3. Main Avatar Body
+    ctx.fillStyle = "#ffffff";
+    ctx.strokeStyle = "#ffbf00"; // Honey amber border
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+
+    // Specular highlight
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(x, y - 6, radius * 0.7, -Math.PI * 0.75, -Math.PI * 0.25);
+    ctx.stroke();
+
+    // Content: Emoji or Text
+    if (item.asset?.kind === "emoji" && item.asset.ref) {
+      ctx.font = `${Math.round(52 * scale)}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(item.asset.ref, x, y);
+    } else if (item.text || item.label) {
+      ctx.font = `bold ${Math.round(28 * scale)}px "Fredoka", "Quicksand", sans-serif`;
+      ctx.fillStyle = "#1b1c1a";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(item.text || item.label || "", x, y);
+    } else {
+      ctx.font = `${Math.round(48 * scale)}px "Noto Color Emoji", "Apple Color Emoji", sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("⭐", x, y);
+    }
+    ctx.restore();
+  }
+
+  function renderHoverAura(ctx: CanvasRenderingContext2D, nowMs: number): void {
+    if (!isDragging || hoveredTargetIndex === null) {
+      return;
+    }
+    const slots =
+      (engine?.activeSession as { slots?: readonly Slot[] })?.slots ||
+      engine?.slots ||
+      [];
+    const targetSlot = slots[hoveredTargetIndex];
+    if (targetSlot) {
+      const auraR = Math.max(targetSlot.w, targetSlot.h) / 2 + 16;
+      drawTargetHoverAura(
+        ctx,
+        targetSlot.x,
+        targetSlot.y,
+        auraR,
+        (nowMs % 1000) / 1000
+      );
+    }
+  }
+
+  function renderReturningAnimation(
+    ctx: CanvasRenderingContext2D,
+    nowMs: number
+  ): void {
+    if (!returningItem) {
+      return;
+    }
+    const progress = Math.min(
+      1,
+      (nowMs - returningItem.startTime) / returningItem.duration
+    );
+    const easeProgress = 1 - (1 - progress) ** 3;
+    const curX =
+      returningItem.startX +
+      (returningItem.targetX - returningItem.startX) * easeProgress;
+    const curY =
+      returningItem.startY +
+      (returningItem.targetY - returningItem.startY) * easeProgress;
+    ctx.save();
+    renderDragAvatar(
+      ctx,
+      curX,
+      curY,
+      returningItem.item,
+      1 + (1 - progress) * 0.15
+    );
+    ctx.restore();
+    if (progress >= 1) {
+      returningItem = null;
+    }
+  }
+
   function startRounds(
     payload: ConfigPayload,
     rounds: RoundPayload[],
@@ -552,21 +1248,28 @@
         const session = roundRunner?.getCurrentSession();
         if (session && engine) {
           engine.activeSession = session;
+          engine.audio.playStartSound();
         }
+        const currentRoundCfg = rounds[roundIndex];
+        const prompt =
+          (currentRoundCfg?.content_pack as { prompt?: string })?.prompt ||
+          currentRoundCfg?.instruction ||
+          cachedPayload?.title;
+        setTimeout(() => {
+          playInstructionNarration(prompt);
+        }, 350);
       },
       onRoundCompleted: (_roundIndex, _wasSkipped) => {
-        // Scaffolding leo theo từng vòng, không theo cả phiên (BR-RSP-08).
-        // `hint_count` vẫn cộng dồn cả phiên — nó do server dựng lại từ chuỗi
-        // event, không phải từ biến nào ở đây (BR-RSP-12).
-        // `resetOnSuccess()` là tên thật của phép reset — `ScaffoldingSystem`
-        // KHÔNG có `reset()`. Gọi `reset?.()` sẽ là một no-op im lặng.
         engine?.scaffolding?.resetOnSuccess();
       },
       onAllRoundsCompleted: () => {
-        finishSession().catch((err) => {
-          console.error("[play] finishSession thất bại:", err);
-          showVictoryModal.value = true;
-        });
+        engine?.audio.playLevelCelebrateSound();
+        setTimeout(() => {
+          finishSession().catch((err) => {
+            console.error("[play] finishSession thất bại:", err);
+            showVictoryModal.value = true;
+          });
+        }, 500);
       },
     });
 
@@ -585,21 +1288,36 @@
         engine = null;
       }
       engine = new GameEngine();
+      engine.onAfterRender = (ctx, _rs, nowMs) => {
+        renderHoverAura(ctx, nowMs);
+
+        if (isDragging && draggedItem) {
+          ctx.save();
+          renderDragAvatar(
+            ctx,
+            currentDragPos.x,
+            currentDragPos.y,
+            draggedItem,
+            1.15
+          );
+          ctx.restore();
+        }
+
+        renderReturningAnimation(ctx, nowMs);
+      };
       engine.load(engineConfig, factory);
       engine.start(canvasRef.value);
     }
   }
 
-  function handleApiError(status: number, message?: string): Error {
-    if (status === 401) {
-      errorTitle.value = "Yêu cầu đăng nhập";
-      errorEmoji.value = "🔒";
-      errorActionLink.value = `/login?redirect=/play/${levelCode}`;
-      errorActionText.value = "Đăng nhập để chơi";
-      return new Error(
-        "Trò chơi này yêu cầu đăng nhập tài khoản để bé có thể tham gia và lưu tiến độ."
-      );
-    }
+  function handleApiError(
+    status: number,
+    message?: string,
+    statusMessage?: string,
+    details?: Record<string, unknown>
+  ): Error {
+    errorActionLink.value = null;
+    errorActionText.value = "Thử lại";
 
     if (status === 410) {
       errorTitle.value = "Trò chơi đã ngừng phát hành";
@@ -608,6 +1326,16 @@
       errorActionText.value = "Xem danh sách trò chơi";
       return new Error(
         "Nội dung bài học này đã hoàn thành chu kỳ sử dụng hoặc được thay thế."
+      );
+    }
+
+    if (status === 401) {
+      errorTitle.value = "Yêu cầu đăng nhập";
+      errorEmoji.value = "🔒";
+      errorActionLink.value = `/login?redirect=/play/${levelCode}`;
+      errorActionText.value = "Đăng nhập để chơi";
+      return new Error(
+        "Trò chơi này yêu cầu đăng nhập tài khoản để bé có thể tham gia và lưu tiến độ."
       );
     }
 
@@ -632,6 +1360,28 @@
     }
 
     if (status === 428) {
+      if (
+        statusMessage === "INTRO_REQUIRED" ||
+        details?.intro_level_code ||
+        details?.intro_queue
+      ) {
+        const queue = details?.intro_queue as
+          | Array<{ intro_level_code: string }>
+          | undefined;
+        const introCode = String(
+          details?.intro_level_code ?? queue?.[0]?.intro_level_code ?? ""
+        );
+        errorTitle.value = "Làm quen khái niệm trước";
+        errorEmoji.value = "📖";
+        errorActionLink.value = introCode
+          ? `/play/${introCode}?return_to=${levelCode}`
+          : "/games";
+        errorActionText.value = "Bắt đầu bài làm quen";
+        return new Error(
+          "Bé hãy hoàn thành bài làm quen ngắn để hiểu khái niệm trước khi bước vào màn chơi nhé!"
+        );
+      }
+
       errorTitle.value = "Chưa chọn hồ sơ bé";
       errorEmoji.value = "👶";
       errorActionLink.value = `/me/children?redirect=/play/${levelCode}`;
@@ -691,8 +1441,18 @@
       const errJson = (await res.json().catch(() => ({}))) as {
         statusMessage?: string;
         message?: string;
+        data?: {
+          code?: string;
+          message?: string;
+          details?: Record<string, unknown>;
+        };
       };
-      throw handleApiError(res.status, errJson.message);
+      throw handleApiError(
+        res.status,
+        errJson.message ?? errJson.data?.message,
+        errJson.statusMessage ?? errJson.data?.code,
+        errJson.data?.details
+      );
     }
 
     const payload: ConfigPayload = await res.json();

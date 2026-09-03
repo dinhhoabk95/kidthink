@@ -104,6 +104,18 @@
           }
         }
       }
+    },
+    {
+      // skill-dataset-model.md §3: "File: packages/db/src/seed-content/skills/<c>/<strand>/<SKILL>.ts".
+      // Tên file kỹ năng mang mã taxonomy bất biến C[1-6].[STRAND].[NN].ts.
+      "includes": ["packages/db/src/seed-content/skills/**/*.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useFilenamingConvention": "off"
+          }
+        }
+      }
     }
   ]
 }

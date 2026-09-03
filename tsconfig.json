@@ -22,6 +22,11 @@
       "@mindkid/auth": ["./packages/auth/src/index.ts"],
       "@mindkid/cache": ["./packages/cache/src/index.ts"],
       "@mindkid/config": ["./packages/config/src/index.ts"],
+      "@mindkid/config/vitest": ["./packages/config/vitest/base.ts"],
+      "@mindkid/config/*": [
+        "./packages/config/*",
+        "./packages/config/src/*.ts"
+      ],
       "@mindkid/db": ["./packages/db/src/index.ts"],
       "@mindkid/emoji": ["./packages/emoji/src/index.ts"],
       "@mindkid/game-engine": ["./packages/game-engine/src/index.ts"],

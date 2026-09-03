@@ -16,14 +16,15 @@ const sessions = new WeakMap<H3Event, Record<string, unknown>>();
 
 export async function setUserSession(
   event: H3Event,
-  data: Record<string, unknown>
+  data: Record<string, unknown>,
+  config?: ReturnType<typeof getUserSessionConfig>
 ): Promise<void> {
   sessions.set(event, data);
   if (event.context) {
     event.context.userSession = data;
   }
   try {
-    const session = await useSession(event, getUserSessionConfig());
+    const session = await useSession(event, config || getUserSessionConfig());
     await session.update(data);
   } catch {
     // ignore
@@ -50,13 +51,16 @@ export async function getUserSession(
   return {};
 }
 
-export async function clearUserSession(event: H3Event): Promise<void> {
+export async function clearUserSession(
+  event: H3Event,
+  config?: ReturnType<typeof getUserSessionConfig>
+): Promise<void> {
   sessions.delete(event);
   if (event.context) {
     event.context.userSession = undefined;
   }
   try {
-    const session = await useSession(event, getUserSessionConfig());
+    const session = await useSession(event, config || getUserSessionConfig());
     await session.clear();
   } catch {
     // ignore

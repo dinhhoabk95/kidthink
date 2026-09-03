@@ -1,6 +1,7 @@
 import path from "node:path";
 import { defineConfig } from "vitest/config";
 import {
+  PARALLEL_DEFAULTS,
   SEQUENTIAL_DEFAULTS,
   workspaceAliases,
 } from "./packages/config/vitest/base.ts";
@@ -25,6 +26,7 @@ export default defineConfig({
           name: "scripts",
           root: path.resolve(import.meta.dirname, "scripts"),
           include: ["**/*.{test,spec}.ts"],
+          ...PARALLEL_DEFAULTS,
         },
       },
     ],

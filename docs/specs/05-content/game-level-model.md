@@ -27,6 +27,13 @@ về mặt sư phạm dù đúng schema.
 > **Ranh giới với chiều sâu nội dung.** File này sở hữu ràng buộc biên tập của **một** level.
 > Số lượng level mỗi engine và độ trải của chúng trên band tuổi, trục tư duy, chủ đề thuộc
 > [`engine-content-depth.md`](engine-content-depth.md) — thêm 2026-08-29, Task #113.
+>
+> **Ranh giới với nguồn vật.** Mọi rule dưới đây giả định vật trong level là vật của kỹ năng
+> level đó. Giả định ấy không được kiểm ở đâu cả cho tới 2026-09-03: đo trên 5.013 level
+> corpus, **0** level mang chữ số hay chữ cái, kể cả level của kỹ năng nhận biết số và bảng
+> chữ cái. Phép đo đó thuộc [`skill-dataset-model.md`](skill-dataset-model.md) — `BR-SDS-02`
+> (vật phải là vật của kỹ năng) và `BR-SDS-03` (khái niệm phải hiện ra). Một level thoả đủ
+> `BR-GLM-01`..`BR-GLM-10` mà trượt hai luật đó vẫn là level không dạy gì.
 
 ## 2. Actors
 
@@ -94,6 +101,7 @@ Một level chỉ tăng **một chiều** so với level trước cùng skill.
 ### 7.4 Kiểm tra trước khi gửi duyệt
 
 - [ ] Đúng một skill `weight = 1.0`
+- [ ] Vật trong `content_pack` truy được về dataset của kỹ năng đó (`BR-SDS-02`)
 - [ ] Chỉ dẫn ≤12 từ, không phủ định
 - [ ] Số item và nhiễu trong trần §7.1
 - [ ] Mọi emoji rõ nghĩa ở 96px
@@ -164,3 +172,4 @@ Scenario: BR-GLM-08 — tăng một chiều
 |---|---|---|---|---|
 | 1 | Trần số item ở §7.1 (2–4 / 3–6 / 3–8) dựa trên nguồn nào? Cần đối chiếu tài liệu phát triển nhận thức. **Approve spec này 2026-08-08 không đóng câu này** — trần đang là phán đoán chuyên môn chưa có trích dẫn, và `BR-GLM-02` biến nó thành lý do từ chối duyệt. Một con số chặn việc mà không ai truy được nguồn sẽ bị nới trong lần đầu nó cản một lô nội dung | P1 — mọi level seed đo bằng trần này | P1 | người quyết |
 | 2 | Cần bao nhiêu level mỗi skill để đủ đa dạng mà không lặp? | Kế hoạch nội dung, [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | P1 | hoãn — chốt cùng lúc chốt người biên soạn |
+| 3 | 5.013 level corpus hiện tại trượt `BR-SDS-02`: bỏ hết và soạn lại theo dataset kỹ năng, hay giữ phần trung thực? | Khối lượng lô soạn lại | P1 | người quyết |

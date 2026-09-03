@@ -104,6 +104,12 @@ Nó cấm — NEVER đụng ba trục sư phạm; ba trục đó thuộc
 | `BR-CTR-12` (một nguồn sự thật) | Từ vựng `theme` sống ở **một** chỗ: `packages/shared/src/constants/content-themes.ts`. Mục 7.2 của [`content-tagging.md`](../01-platform/content-tagging.md), `seed-master/content-tags.ts`, và `CANONICAL_THEME_TAGS` của cổng phải trỏ về đó, cấm — NEVER giữ danh sách riêng | Bốn nguồn ở mục 7.1, hai nguồn đầu giao nhau đúng hai giá trị, nguồn thứ ba hoà giải bằng cách hợp cả hai thành 22 giá trị. Hợp hai danh sách mâu thuẫn không phải là đóng từ vựng; nó là hợp thức hoá cả hai |
 | `BR-CTR-11` (thêm chủ đề cần người quyết) | Thêm giá trị mới vào từ vựng đi qua PR và cần người quyết | Từ vựng mở dần bằng PR của người soạn là từ vựng sẽ trôi lại như hôm nay |
 
+> **Chủ đề là lớp áo, không phải nguồn vật.** `BR-CTR-06` cấm giá trị nội dung học nằm ở trục
+> `theme`. Mặt còn lại của cùng ranh giới đó nằm ở `BR-SDS-10` (chủ đề là lớp áo), mục 6 của
+> [`skill-dataset-model.md`](skill-dataset-model.md): chủ đề chỉ đổi **hình minh hoạ** của vật,
+> cấm — NEVER đổi tập vật. Đường sinh nội dung cũ lấy vật **từ** vốn từ chủ đề, và đó là lý do
+> 5.013 level không mang một chữ số hay chữ cái nào dù nhãn kỹ năng đúng.
+
 ## 7. Data
 
 **Đọc:** `packages/shared/src/constants/content-themes.ts` · corpus seed.

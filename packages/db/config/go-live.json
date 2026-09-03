@@ -37,7 +37,8 @@
     "GT-033",
     "GT-034",
     "GT-035",
-    "GT-036"
+    "GT-036",
+    "GT-000"
   ],
   "thresholds": {
     "engine_render_coverage_percent": 100,

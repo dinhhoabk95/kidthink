@@ -16,7 +16,9 @@ import {
   drawSceneBackground,
   drawSlotItem,
   drawSlotLabel,
+  drawWoodenTokenDock,
   type ItemVisualState,
+  spawnParticlesAtSlot,
   updateParticles,
 } from "../shared-render.js";
 import { boxFromSlots, drawShapeTray } from "../shared-render-shapes.js";
@@ -54,6 +56,7 @@ export class GT008Session extends TemplateGameSession<
   setupEntities(): void {
     this.placedSlots.clear();
     this.isWon = false;
+    this.renderParticles = [];
   }
 
   validateAction(action: GameAction): ActionResult {
@@ -79,12 +82,12 @@ export class GT008Session extends TemplateGameSession<
   }
 
   onItemPlaced(itemId: string, slotId: string): void {
-    const slot = this.content.slots.find((s) => s.slot_id === slotId);
-    if (!slot) {
+    const slotDef = this.content.slots.find((s) => s.slot_id === slotId);
+    if (!slotDef) {
       return;
     }
 
-    const isCorrect = slot.expected_item_id === itemId;
+    const isCorrect = slotDef.expected_item_id === itemId;
 
     this.recordEvent("item_placed", {
       item_id: itemId,
@@ -94,6 +97,14 @@ export class GT008Session extends TemplateGameSession<
 
     if (isCorrect) {
       this.placedSlots.set(slotId, itemId);
+      const slotDefIdx = this.content.slots.findIndex(
+        (s) => s.slot_id === slotId
+      );
+      const targets = this.slots.filter((s) => s.role === "target");
+      const targetSlot = targets[slotDefIdx];
+      if (targetSlot) {
+        this.renderParticles.push(...spawnParticlesAtSlot(targetSlot, 12));
+      }
       if (this.checkWinCondition()) {
         this.winSession();
       }
@@ -133,13 +144,16 @@ export class GT008Session extends TemplateGameSession<
     rs: RenderSystem,
     _timeMs: number
   ): void {
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     const targets = this.slots.filter((s) => s.role === "target");
     const sources = this.slots.filter((s) => s.role === "source");
     const targetBox = boxFromSlots(targets);
     if (targetBox) {
       drawShapeTray(ctx, targetBox);
+    }
+    if (sources.length > 0) {
+      drawWoodenTokenDock(ctx, rs);
     }
     const itemById = new Map(this.content.items.map((i) => [i.item_id, i]));
     const placedItemIds = new Set(this.placedSlots.values());

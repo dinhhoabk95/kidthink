@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { EMOJI_REF_PATTERN, EmojiRef } from "#src/contracts/shared-fields";
+import { EmojiRef } from "#src/contracts/shared-fields";
 import { GT001Generator } from "#src/generators/gt001";
 import { GT009Generator } from "#src/generators/gt009";
 import { GT010Generator } from "#src/generators/gt010";
@@ -153,31 +153,16 @@ describe("getNouns — kho từ thiếu là lỗi dữ liệu, không phải đi
   });
 });
 
-describe("EMOJI_REF_PATTERN — mã, không phải glyph (BR-CTR-08)", () => {
-  it("nhận mã EMJ-*", () => {
-    expect(EMOJI_REF_PATTERN.test("EMJ-red-apple")).toBe(true);
-    expect(EMOJI_REF_PATTERN.test("EMJ-jack-o-lantern")).toBe(true);
+describe("EmojiRef — UTF-8 glyph validation (Task #202, D-EB, D-EC)", () => {
+  it("nhận glyph UTF-8 thật", () => {
+    expect(EmojiRef.safeParse("🍎").success).toBe(true);
+    expect(EmojiRef.safeParse("🎃").success).toBe(true);
+    expect(EmojiRef.safeParse("⭐").success).toBe(true);
+    expect(EmojiRef.safeParse("🪙").success).toBe(true);
   });
 
-  it("ca âm: glyph thô và mã sai khuôn đều bị từ chối", () => {
-    // `packages/emoji/src/query.ts` chỉ tra theo mã `EMJ-*`, nên một glyph thô
-    // resolve ra `not_found` lúc render — quá muộn để ai đó nhìn thấy.
-    expect(EMOJI_REF_PATTERN.test("🍎")).toBe(false);
-    expect(EMOJI_REF_PATTERN.test("emj-red-apple")).toBe(false);
-    expect(EMOJI_REF_PATTERN.test("EMJ-")).toBe(false);
-  });
-
-  it("contract ĐÃ siết: glyph thô bị `EmojiRef` từ chối", () => {
-    // Trước 2026-08-30 trường này nhận chuỗi bất kỳ vì nợ quá lớn để chặn tại
-    // contract: 57 trên 228 level seed dùng glyph, cộng fixture của 27 template
-    // và các test engine. Nợ được đo bằng một bậc thang riêng ở
-    // `packages/db/tests/gates/emoji-ref-debt.test.ts`.
-    //
-    // Task 162 dọn hết và bổ sung 23 emoji còn thiếu vào registry, nên chỗ
-    // chặn đúng đắn quay lại đây: một glyph lọt qua contract sẽ `not_found`
-    // lúc render, và trẻ thấy ô trống.
-    expect(EmojiRef.safeParse("🍎").success).toBe(false);
-    expect(EmojiRef.safeParse("EMJ-red-apple").success).toBe(true);
+  it("ca âm: chuỗi rỗng bị từ chối", () => {
+    expect(EmojiRef.safeParse("").success).toBe(false);
   });
 });
 
@@ -242,23 +227,23 @@ describe("Theme Axis Expansion (Task #173, BR-CTR-09)", () => {
     const vocabA: ThemeVocabulary = {
       theme: "school",
       nouns: [
-        { emoji_ref: "EMJ-book", label_vi: "quyển sách" },
-        { emoji_ref: "EMJ-pencil", label_vi: "bút chì" },
-        { emoji_ref: "EMJ-school-bag", label_vi: "cặp sách" },
-        { emoji_ref: "EMJ-scissors", label_vi: "cái kéo" },
-        { emoji_ref: "EMJ-crayon", label_vi: "bút màu" },
-        { emoji_ref: "EMJ-ruler", label_vi: "thước kẻ" },
+        { emoji_ref: "📖", label_vi: "quyển sách" },
+        { emoji_ref: "✏️", label_vi: "bút chì" },
+        { emoji_ref: "🎒", label_vi: "cặp sách" },
+        { emoji_ref: "✂️", label_vi: "cái kéo" },
+        { emoji_ref: "🖍️", label_vi: "bút màu" },
+        { emoji_ref: "📏", label_vi: "thước kẻ" },
       ],
     };
     const vocabB: ThemeVocabulary = {
       theme: "ocean",
       nouns: [
-        { emoji_ref: "EMJ-fish", label_vi: "con cá" },
-        { emoji_ref: "EMJ-dolphin", label_vi: "cá heo" },
-        { emoji_ref: "EMJ-whale", label_vi: "cá voi" },
-        { emoji_ref: "EMJ-crab", label_vi: "con cua" },
-        { emoji_ref: "EMJ-octopus", label_vi: "bạch tuộc" },
-        { emoji_ref: "EMJ-turtle", label_vi: "con rùa" },
+        { emoji_ref: "🐟", label_vi: "con cá" },
+        { emoji_ref: "🐬", label_vi: "cá heo" },
+        { emoji_ref: "🐳", label_vi: "cá voi" },
+        { emoji_ref: "🦀", label_vi: "con cua" },
+        { emoji_ref: "🐙", label_vi: "bạch tuộc" },
+        { emoji_ref: "🐢", label_vi: "con rùa" },
       ],
     };
 

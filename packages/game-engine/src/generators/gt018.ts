@@ -12,7 +12,7 @@ export const GT018Generator: LevelGenerator = {
     const nouns = getNouns(vocabulary, 6);
     const sampled = sampleUnique(rng, nouns, 3);
     const target = sampled[0] || {
-      emoji_ref: "EMJ-red-apple",
+      emoji_ref: "🍎",
       label_vi: "Táo",
     };
 

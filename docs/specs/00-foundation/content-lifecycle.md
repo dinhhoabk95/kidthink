@@ -72,10 +72,10 @@ draft ──┴──► in_review ──► approved ──► published ──
 ### 4.1 Đường thứ hai — nội dung nền từ seeder
 
 Nội dung nền của MVP **không** đi qua studio. Nó được viết thành seeder file trong repo,
-qua 8 cổng tự động, và **PR review là cổng người**. Merge = quyết định phát hành.
+qua 10 cổng tự động, và **PR review là cổng người**. Merge = quyết định phát hành.
 
 ```
-seeder file  ──8 cổng tự động──►  PR có người review  ──merge──►  seed  ──►  published
+seeder file  ─10 cổng tự động──►  PR có người review  ──merge──►  seed  ──►  published
                                      ▲
                         cổng người ở đây, ❌ không ở hàng đợi duyệt
 ```

@@ -4,6 +4,7 @@ import {
   bigint,
   check,
   integer,
+  jsonb,
   numeric,
   pgEnum,
   pgTable,
@@ -14,7 +15,18 @@ import {
 } from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.ts";
 
-export const skillStatusEnum = pgEnum("skill_status", ["seeded", "deprecated"]);
+/**
+ * Bậc tiến triển trong strand.
+ *
+ * Thay cho `skill_status` cũ. Cột trạng thái đó luôn bằng `"seeded"` vì seeder
+ * ghi cứng, nên nó không mô tả gì; bậc thì suy được từ độ khó và dùng được cho
+ * lộ trình học.
+ */
+export const skillTierEnum = pgEnum("skill_tier", [
+  "basic",
+  "core",
+  "advanced",
+]);
 
 export const competencies = pgTable(
   "competencies",
@@ -78,7 +90,7 @@ export const skills = pgTable(
     difficulty: smallint("difficulty").notNull(),
     thinkingProcesses: text("thinking_processes").array(),
     whatAxis: text("what_axis").array(),
-    status: skillStatusEnum("status").notNull().default("seeded"),
+    tier: skillTierEnum("tier").notNull().default("basic"),
     position: integer("position").notNull().default(0),
     ...timestamps(),
   },
@@ -89,11 +101,11 @@ export const skills = pgTable(
     ),
     check(
       "check_skills_age_min",
-      sql`${table.ageMin} >= 3 AND ${table.ageMin} <= 6`
+      sql`${table.ageMin} >= 3 AND ${table.ageMin} <= 7`
     ),
     check(
       "check_skills_age_max",
-      sql`${table.ageMax} >= 3 AND ${table.ageMax} <= 6`
+      sql`${table.ageMax} >= 3 AND ${table.ageMax} <= 7`
     ),
     check("check_skills_age_range", sql`${table.ageMin} <= ${table.ageMax}`),
     check(
@@ -149,36 +161,43 @@ export const learningObjectives = pgTable(
   ]
 );
 
-export const emojiAgeSuitabilityEnum = pgEnum("emoji_age_suitability", [
-  "all",
-  "4plus",
-  "blocked",
+export const skillDatasetSurfaceEnum = pgEnum("skill_dataset_surface", [
+  "game",
+  "worksheet",
 ]);
 
-export const emojiStatusEnum = pgEnum("emoji_status", ["active", "deprecated"]);
-
-export const emojiRegistry = pgTable(
-  "emoji_registry",
+export const skillDatasets = pgTable(
+  "skill_datasets",
   {
     id: bigint("id", { mode: "number" })
       .primaryKey()
       .generatedAlwaysAsIdentity(),
     code: varchar("code", { length: 50 }).notNull().unique(),
-    unicode: varchar("unicode", { length: 20 }).notNull(),
-    name: varchar("name", { length: 100 }).notNull(),
-    category: varchar("category", { length: 50 }).notNull(),
-    searchKeywords: text("search_keywords").array(),
-    ageSuitability: emojiAgeSuitabilityEnum("age_suitability")
+    skillId: bigint("skill_id", { mode: "number" })
       .notNull()
-      .default("all"),
-    whatAxis: varchar("what_axis", { length: 50 }),
-    status: emojiStatusEnum("status").notNull().default("active"),
+      .references(() => skills.id, { onDelete: "cascade" }),
+    contentVersion: integer("content_version").notNull().default(1),
+    conceptLabel: varchar("concept_label", { length: 200 }).notNull(),
+    surface: skillDatasetSurfaceEnum("surface").notNull().default("game"),
+    items: jsonb("items").notNull(),
+    relations: jsonb("relations"),
+    ordering: jsonb("ordering"),
+    axes: jsonb("axes"),
+    ladder: jsonb("ladder"),
+    phrasing: jsonb("phrasing"),
+    extendsSkillCode: varchar("extends_skill_code", { length: 50 }),
+    status: varchar("status", { length: 50 }).notNull().default("draft"),
+    seedBatchId: bigint("seed_batch_id", { mode: "number" }),
+    origin: varchar("origin", { length: 50 }).notNull().default("human"),
+    authoredIn: varchar("authored_in", { length: 50 })
+      .notNull()
+      .default("repo_seed"),
     ...timestamps(),
   },
   (table) => [
     check(
-      "check_emoji_registry_code_format",
-      sql`${table.code} ~ '^EMJ-[a-z0-9-]+$'`
+      "check_skill_datasets_code_format",
+      sql`${table.code} ~ '^C[1-6]\\.[A-Z]{2,5}\\.\\d{2}$'`
     ),
   ]
 );

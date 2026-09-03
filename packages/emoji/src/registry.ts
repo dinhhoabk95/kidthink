@@ -9,7 +9,6 @@ import { ANIMAL_FARM_EMOJIS } from "./data/animal-farm";
 import { ANIMAL_INSECT_EMOJIS } from "./data/animal-insect";
 import { ANIMAL_WATER_EMOJIS } from "./data/animal-water";
 import { ANIMAL_WILD_EMOJIS } from "./data/animal-wild";
-// ── Import all data ──────────────────────────────────────────────
 import { BODY_EMOJIS } from "./data/body";
 import { CLOTHING_EMOJIS } from "./data/clothing";
 import { FACE_EMOTION_EMOJIS } from "./data/face-emotion";
@@ -80,8 +79,19 @@ export const EMOJI_CATEGORIES: Record<EmojiCategory, EmojiEntry[]> = {
   "weather-season": WEATHER_SEASON_EMOJIS,
 };
 
-// ── All emojis flat array ────────────────────────────────────────
-export const ALL_EMOJIS: EmojiEntry[] = Object.values(EMOJI_CATEGORIES).flat();
+// ── All unique emojis flat array (deduped by glyph) ──────────────
+export const ALL_EMOJIS: EmojiEntry[] = (() => {
+  const map = new Map<string, EmojiEntry>();
+  for (const list of Object.values(EMOJI_CATEGORIES)) {
+    for (const entry of list) {
+      const key = entry.emoji.normalize("NFC");
+      if (!map.has(key)) {
+        map.set(key, entry);
+      }
+    }
+  }
+  return Array.from(map.values());
+})();
 
 // ── Curriculum theme → emoji entries map ─────────────────────────
 export const CURRICULUM_EMOJI_MAP: Record<CurriculumTheme, EmojiEntry[]> =
@@ -91,7 +101,17 @@ export const CURRICULUM_EMOJI_MAP: Record<CurriculumTheme, EmojiEntry[]> =
       CURRICULUM_THEME_CATEGORIES
     ) as CurriculumTheme[]) {
       const categories = CURRICULUM_THEME_CATEGORIES[theme];
-      map[theme] = categories.flatMap((cat) => EMOJI_CATEGORIES[cat] ?? []);
+      const seen = new Set<string>();
+      const entries: EmojiEntry[] = [];
+      for (const cat of categories) {
+        for (const entry of EMOJI_CATEGORIES[cat] ?? []) {
+          if (!seen.has(entry.emoji)) {
+            seen.add(entry.emoji);
+            entries.push(entry);
+          }
+        }
+      }
+      map[theme] = entries;
     }
     return map;
   })();
@@ -101,7 +121,17 @@ export const GROUP_EMOJI_MAP: Record<EmojiGroup, EmojiEntry[]> = (() => {
   const map = {} as Record<EmojiGroup, EmojiEntry[]>;
   for (const group of Object.keys(EMOJI_GROUPS) as EmojiGroup[]) {
     const categories = EMOJI_GROUPS[group];
-    map[group] = categories.flatMap((cat) => EMOJI_CATEGORIES[cat] ?? []);
+    const seen = new Set<string>();
+    const entries: EmojiEntry[] = [];
+    for (const cat of categories) {
+      for (const entry of EMOJI_CATEGORIES[cat] ?? []) {
+        if (!seen.has(entry.emoji)) {
+          seen.add(entry.emoji);
+          entries.push(entry);
+        }
+      }
+    }
+    map[group] = entries;
   }
   return map;
 })();

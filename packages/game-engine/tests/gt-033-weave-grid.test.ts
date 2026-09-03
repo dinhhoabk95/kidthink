@@ -55,11 +55,11 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
         palette: [
           {
             color_id: "red",
-            asset: { kind: "emoji" as const, ref: "EMJ-yarn" },
+            asset: { kind: "emoji" as const, ref: "🧶" },
           },
           {
             color_id: "blue",
-            asset: { kind: "emoji" as const, ref: "EMJ-yarn" },
+            asset: { kind: "emoji" as const, ref: "🧶" },
           },
         ],
         cells: ["red", "blue", "red"], // only 3 cells for 2x2!
@@ -74,11 +74,11 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
         palette: [
           {
             color_id: "red",
-            asset: { kind: "emoji" as const, ref: "EMJ-yarn" },
+            asset: { kind: "emoji" as const, ref: "🧶" },
           },
           {
             color_id: "blue",
-            asset: { kind: "emoji" as const, ref: "EMJ-yarn" },
+            asset: { kind: "emoji" as const, ref: "🧶" },
           },
         ],
         cells: ["red", "yellow", "blue", null], // yellow not in palette!
@@ -93,11 +93,11 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
         palette: [
           {
             color_id: "red",
-            asset: { kind: "emoji" as const, ref: "EMJ-yarn" },
+            asset: { kind: "emoji" as const, ref: "🧶" },
           },
           {
             color_id: "blue",
-            asset: { kind: "emoji" as const, ref: "EMJ-yarn" },
+            asset: { kind: "emoji" as const, ref: "🧶" },
           },
         ],
         cells: ["red", "blue", "blue", "red"], // no null cells!

@@ -25,17 +25,17 @@ describe("Gate check:round-sets (BR-RSM-01..13)", () => {
     prompt: "Tìm quả táo đỏ",
     target_item: {
       item_id: "apple",
-      asset: { kind: "emoji" as const, ref: "EMJ-red-apple" },
+      asset: { kind: "emoji" as const, ref: "🍎" },
     },
     options: [
       {
         item_id: "apple",
-        asset: { kind: "emoji" as const, ref: "EMJ-red-apple" },
+        asset: { kind: "emoji" as const, ref: "🍎" },
         is_correct: true,
       },
       {
         item_id: "banana",
-        asset: { kind: "emoji" as const, ref: "EMJ-banana" },
+        asset: { kind: "emoji" as const, ref: "🍌" },
         is_correct: false,
       },
     ],
@@ -45,22 +45,22 @@ describe("Gate check:round-sets (BR-RSM-01..13)", () => {
     prompt: "Tìm quả chuối vàng",
     target_item: {
       item_id: "banana",
-      asset: { kind: "emoji" as const, ref: "EMJ-banana" },
+      asset: { kind: "emoji" as const, ref: "🍌" },
     },
     options: [
       {
         item_id: "banana",
-        asset: { kind: "emoji" as const, ref: "EMJ-banana" },
+        asset: { kind: "emoji" as const, ref: "🍌" },
         is_correct: true,
       },
       {
         item_id: "apple",
-        asset: { kind: "emoji" as const, ref: "EMJ-red-apple" },
+        asset: { kind: "emoji" as const, ref: "🍎" },
         is_correct: false,
       },
       {
         item_id: "orange",
-        asset: { kind: "emoji" as const, ref: "EMJ-orange" },
+        asset: { kind: "emoji" as const, ref: "🍊" },
         is_correct: false,
       },
     ],
@@ -70,22 +70,22 @@ describe("Gate check:round-sets (BR-RSM-01..13)", () => {
     prompt: "Tìm quả cam",
     target_item: {
       item_id: "orange",
-      asset: { kind: "emoji" as const, ref: "EMJ-orange" },
+      asset: { kind: "emoji" as const, ref: "🍊" },
     },
     options: [
       {
         item_id: "orange",
-        asset: { kind: "emoji" as const, ref: "EMJ-orange" },
+        asset: { kind: "emoji" as const, ref: "🍊" },
         is_correct: true,
       },
       {
         item_id: "apple",
-        asset: { kind: "emoji" as const, ref: "EMJ-red-apple" },
+        asset: { kind: "emoji" as const, ref: "🍎" },
         is_correct: false,
       },
       {
         item_id: "banana",
-        asset: { kind: "emoji" as const, ref: "EMJ-banana" },
+        asset: { kind: "emoji" as const, ref: "🍌" },
         is_correct: false,
       },
     ],

@@ -32,12 +32,12 @@ export const SEED_GT033: ContentSeed<unknown, unknown>[] = [
       palette: [
         {
           color_id: "red",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Đỏ",
         },
         {
           color_id: "blue",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh dương",
         },
       ],
@@ -80,12 +80,12 @@ export const SEED_GT033: ContentSeed<unknown, unknown>[] = [
       palette: [
         {
           color_id: "green",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh lá",
         },
         {
           color_id: "yellow",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Vàng",
         },
       ],
@@ -128,12 +128,12 @@ export const SEED_GT033: ContentSeed<unknown, unknown>[] = [
       palette: [
         {
           color_id: "red",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Đỏ",
         },
         {
           color_id: "blue",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh",
         },
       ],
@@ -186,12 +186,12 @@ export const SEED_GT033: ContentSeed<unknown, unknown>[] = [
       palette: [
         {
           color_id: "orange",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Cam",
         },
         {
           color_id: "green",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh lá",
         },
       ],
@@ -254,17 +254,17 @@ export const SEED_GT033: ContentSeed<unknown, unknown>[] = [
       palette: [
         {
           color_id: "red",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Đỏ",
         },
         {
           color_id: "yellow",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Vàng",
         },
         {
           color_id: "blue",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh",
         },
       ],
@@ -327,17 +327,17 @@ export const SEED_GT033: ContentSeed<unknown, unknown>[] = [
       palette: [
         {
           color_id: "purple",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Tím",
         },
         {
           color_id: "yellow",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Vàng",
         },
         {
           color_id: "green",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh lá",
         },
       ],
@@ -400,17 +400,17 @@ export const SEED_GT033: ContentSeed<unknown, unknown>[] = [
       palette: [
         {
           color_id: "red",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Đỏ",
         },
         {
           color_id: "yellow",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Vàng",
         },
         {
           color_id: "blue",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh dương",
         },
       ],
@@ -473,12 +473,12 @@ export const SEED_GT033: ContentSeed<unknown, unknown>[] = [
       palette: [
         {
           color_id: "blue",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh",
         },
         {
           color_id: "yellow",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Vàng",
         },
       ],
@@ -555,22 +555,22 @@ export const SEED_GT033: ContentSeed<unknown, unknown>[] = [
       palette: [
         {
           color_id: "red",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Đỏ",
         },
         {
           color_id: "yellow",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Vàng",
         },
         {
           color_id: "green",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh lá",
         },
         {
           color_id: "blue",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh dương",
         },
       ],
@@ -648,17 +648,17 @@ export const SEED_GT033: ContentSeed<unknown, unknown>[] = [
       palette: [
         {
           color_id: "purple",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Tím",
         },
         {
           color_id: "orange",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Cam",
         },
         {
           color_id: "green",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh lá",
         },
       ],

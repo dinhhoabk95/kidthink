@@ -93,8 +93,30 @@ một tầng theo dõi không đoán trước được vào đúng chỗ không 
 
 ### 7.1 Không gian canvas
 
-Logic **cố định 960×540**, scale theo DPR, `object-fit: contain`. Mọi toạ độ trong Session
-class là toạ độ logic — cấm dùng pixel thiết bị.
+Không gian logic có **cạnh ngắn cố định 540**; cạnh dài suy ra từ tỉ lệ khung nhìn và
+bị chặn ở 1280. Màn ngang 16:9 vì thế vẫn ra đúng **960×540** như trước. Scale theo DPR,
+`object-fit: contain`. Mọi toạ độ trong Session class là toạ độ logic — cấm dùng pixel
+thiết bị.
+
+Phép biến đổi từ toạ độ logic sang pixel thiết bị **thuộc về `RenderSystem`**, và
+hit-test bắt buộc đọc **cùng một** `viewport` đó. Cấm — NEVER dựng lại công thức
+letterbox ở nơi thứ hai: hai bản sao sẽ trôi khỏi nhau và điểm chạm rơi lệch khỏi ô
+đang vẽ.
+
+| Khung nhìn | Không gian logic | Sàn chạm band 3-4 quy ra px CSS |
+|---|---|---|
+| 1280×720 | 960×540 | 128 |
+| 1440×900 | 864×540 | 160 |
+| 820×1180 | 540×777 | 146 |
+| 390×844 | 540×1169 | 69 |
+
+Vì sao không giữ 960×540 cố định: ở khung 390×844, tỉ lệ thu nhỏ khi đó là 0,406 nên sàn
+chạm 96 px của band 3-4 chỉ còn **39 px CSS** — dưới cả ngưỡng 44 px của WCAG, và xa
+ngưỡng riêng cho trẻ 3-6 ở [`accessibility.md`](../08-quality/accessibility.md).
+Cạnh ngắn cố định làm tỉ lệ chỉ còn phụ thuộc cạnh ngắn của khung nhìn.
+
+Hệ quả bắt buộc: `Slot[]` phụ thuộc khung nhìn, nên phải **tính lại khi khung đổi**.
+Layout tính một lần lúc nạp là sai.
 
 ### 7.2 Ngân sách hiệu năng
 

@@ -1,10 +1,17 @@
 import {
   appError,
   getAuthRedisClient,
+  getBrowserSessionService,
   MfaChallengeService,
   verifyPassword,
 } from "@mindkid/auth";
-import { getOwnerDb, managers, writeAudit } from "@mindkid/db";
+import {
+  getAppSql,
+  getOwnerDb,
+  managers,
+  PostgresSessionStore,
+  writeAudit,
+} from "@mindkid/db";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
@@ -14,7 +21,9 @@ import {
   assertManagerRequestBodySize,
   assertManagerSameOriginRequest,
   getManagerRemoteIp,
+  setManagerRememberCookie,
 } from "#server/utils/admin-auth-runtime";
+import { getManagerSessionConfig } from "#server/utils/session-runtime";
 
 const DUMMY_HASH =
   "$argon2id$v=19$m=19456,p=1,t=2$Zmx0piJSIcdd2b8oaF8ZUg$U60ArJk0sNteiIdlfZyr7G0shEXA+IqCyWIKs1La4WE";
@@ -83,7 +92,67 @@ export default defineEventHandler(async (event) => {
     throw appError("INSUFFICIENT_ROLE");
   }
 
-  // Password valid! Create 5-minute opaque Redis MFA challenge token (BR-AUT-35)
+  if (!manager.mfaEnabled) {
+    const sessionService = getBrowserSessionService();
+    const createdSession = await sessionService.create({
+      namespace: "manager",
+      accountId: manager.id,
+      displayName: manager.displayName,
+      role: manager.role,
+      rememberMe,
+      ipAddress: getManagerRemoteIp(event),
+    });
+
+    await setUserSession(
+      event,
+      {
+        secure: {
+          session_token: createdSession.sessionToken,
+        },
+      },
+      getManagerSessionConfig()
+    );
+
+    if (createdSession.rememberToken) {
+      setManagerRememberCookie(event, createdSession.rememberToken);
+    }
+
+    const pgStore = new PostgresSessionStore(getAppSql());
+    await pgStore
+      .recordSession({
+        account_type: "manager",
+        account_id: manager.id,
+        device_id: createdSession.deviceId,
+        remembered: !!rememberMe,
+        device_label: "manager-login",
+        ip_address: getManagerRemoteIp(event),
+        auth_method: "password",
+        expires_at: createdSession.expiresAt,
+      })
+      .catch(() => null);
+
+    await db.transaction(async (tx) => {
+      await writeAudit(tx, {
+        actor_type: "manager",
+        actor_id: manager.id,
+        action: "manager_login",
+        entity_type: "manager",
+        entity_id: manager.id.toString(),
+      });
+    });
+
+    return {
+      status: "ok",
+      manager: {
+        id: manager.id,
+        email: manager.email,
+        display_name: manager.displayName,
+        role: manager.role,
+      },
+    };
+  }
+
+  // MFA enabled: Create 5-minute opaque Redis MFA challenge token (BR-AUT-35)
   const mfaService = new MfaChallengeService(getAuthRedisClient());
   const createdChallenge = await mfaService.createChallenge({
     namespace: "manager",

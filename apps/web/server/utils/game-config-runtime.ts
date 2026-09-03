@@ -19,6 +19,7 @@ import {
 } from "@mindkid/shared";
 import { and, desc, eq } from "drizzle-orm";
 import { createError, type H3Event, setHeader, setResponseStatus } from "h3";
+import { checkLevelIntroRequired } from "#server/utils/concept-intro-runtime";
 import {
   loadRoundSet,
   RUNTIME_SCORING_MODE,
@@ -139,6 +140,12 @@ async function runContentAccessGuard(
           ownedChild !== null &&
           String(ownedChild.uuid) === childUuid &&
           String(ownedChild.userId) === userId,
+        checkIntroRequired: async () =>
+          await checkLevelIntroRequired(level, options.caller, {
+            guestDeviceId: options.guestDeviceId,
+            lessonRunId: null,
+            isManagerPreview: options.isManagerPreview,
+          }),
       }
     );
   } catch (err) {

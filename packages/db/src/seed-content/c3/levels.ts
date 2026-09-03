@@ -28,7 +28,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "r1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rose",
+            ref: "🌹",
           },
         },
       ],
@@ -83,14 +83,14 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "sf1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sunflower",
+            ref: "🌻",
           },
         },
         {
           item_id: "sf2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sunflower",
+            ref: "🌻",
           },
         },
       ],
@@ -145,7 +145,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "cat",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cat",
+            ref: "🐱",
           },
         },
       ],
@@ -206,7 +206,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "flower",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cherry-blossom",
+            ref: "🌸",
           },
           is_correct: true,
         },
@@ -215,7 +215,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "fruit",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
           is_correct: false,
         },
@@ -260,7 +260,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "vehicle",
           asset: {
             kind: "emoji",
-            ref: "EMJ-car",
+            ref: "🚗",
           },
           is_correct: true,
         },
@@ -269,7 +269,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "animal",
           asset: {
             kind: "emoji",
-            ref: "EMJ-dog",
+            ref: "🐶",
           },
           is_correct: false,
         },
@@ -331,7 +331,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Mặt yêu thương",
           asset: {
             kind: "emoji",
-            ref: "EMJ-heart-eyes",
+            ref: "😍",
           },
         },
         {
@@ -339,7 +339,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Mặt cười",
           asset: {
             kind: "emoji",
-            ref: "EMJ-grinning",
+            ref: "😀",
           },
         },
         {
@@ -347,7 +347,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Mặt yêu thương",
           asset: {
             kind: "emoji",
-            ref: "EMJ-heart-eyes",
+            ref: "😍",
           },
         },
         {
@@ -355,7 +355,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Mặt cười",
           asset: {
             kind: "emoji",
-            ref: "EMJ-grinning",
+            ref: "😀",
           },
         },
       ],
@@ -416,7 +416,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Trời mưa",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rain",
+            ref: "🌧️",
           },
         },
         {
@@ -424,7 +424,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Trời nắng",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sun",
+            ref: "☀️",
           },
         },
         {
@@ -432,7 +432,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Trời mưa",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rain",
+            ref: "🌧️",
           },
         },
         {
@@ -440,7 +440,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Trời nắng",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sun",
+            ref: "☀️",
           },
         },
       ],
@@ -477,7 +477,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "hippo",
         asset: {
           kind: "emoji",
-          ref: "EMJ-hippopotamus",
+          ref: "🦛",
         },
       },
       options: [
@@ -485,7 +485,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "hippo",
           asset: {
             kind: "emoji",
-            ref: "EMJ-hippopotamus",
+            ref: "🦛",
           },
           is_correct: true,
         },
@@ -493,7 +493,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "feather",
           asset: {
             kind: "emoji",
-            ref: "EMJ-feather",
+            ref: "🪶",
           },
           is_correct: false,
         },
@@ -531,7 +531,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "rocket",
         asset: {
           kind: "emoji",
-          ref: "EMJ-rocket",
+          ref: "🚀",
         },
       },
       options: [
@@ -539,7 +539,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "rocket",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rocket",
+            ref: "🚀",
           },
           is_correct: true,
         },
@@ -547,7 +547,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "snail",
           asset: {
             kind: "emoji",
-            ref: "EMJ-snail",
+            ref: "🐌",
           },
           is_correct: false,
         },
@@ -592,7 +592,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "water",
           asset: {
             kind: "emoji",
-            ref: "EMJ-fish",
+            ref: "🐟",
           },
           is_correct: true,
         },
@@ -601,7 +601,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "air",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bird",
+            ref: "🐦",
           },
           is_correct: false,
         },
@@ -641,7 +641,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "first",
           asset: {
             kind: "emoji",
-            ref: "EMJ-girl",
+            ref: "👧",
           },
           is_target: true,
           is_hidden: false,
@@ -652,7 +652,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "second",
           asset: {
             kind: "emoji",
-            ref: "EMJ-boy",
+            ref: "👦",
           },
           is_target: false,
           is_hidden: false,
@@ -663,7 +663,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "third",
           asset: {
             kind: "emoji",
-            ref: "EMJ-baby",
+            ref: "👶",
           },
           is_target: false,
           is_hidden: false,
@@ -708,7 +708,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-pencil",
+              ref: "✏️",
             },
           },
           {
@@ -716,7 +716,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-ruler",
+              ref: "📏",
             },
           },
           {
@@ -724,7 +724,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 2,
             asset: {
               kind: "emoji",
-              ref: "EMJ-scissors",
+              ref: "✂️",
             },
           },
           {
@@ -732,7 +732,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-ruler",
+              ref: "📏",
             },
           },
           {
@@ -740,7 +740,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-scissors",
+              ref: "✂️",
             },
           },
           {
@@ -748,7 +748,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 2,
             asset: {
               kind: "emoji",
-              ref: "EMJ-pencil",
+              ref: "✏️",
             },
           },
           {
@@ -756,7 +756,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-scissors",
+              ref: "✂️",
             },
           },
           {
@@ -764,7 +764,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-pencil",
+              ref: "✏️",
             },
           },
           {
@@ -779,7 +779,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "op-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-ruler",
+            ref: "📏",
           },
           is_correct: true,
         },
@@ -787,7 +787,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "op-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-pencil",
+            ref: "✏️",
           },
           is_correct: false,
         },
@@ -795,7 +795,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "op-3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-scissors",
+            ref: "✂️",
           },
           is_correct: false,
         },
@@ -834,28 +834,28 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "it-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
         },
         {
           item_id: "it-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
         },
         {
           item_id: "it-3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
         },
         {
           item_id: "it-4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
         },
       ],
@@ -916,7 +916,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "sports",
           asset: {
             kind: "emoji",
-            ref: "EMJ-basketball",
+            ref: "🏀",
           },
           is_correct: true,
         },
@@ -925,7 +925,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "stationery",
           asset: {
             kind: "emoji",
-            ref: "EMJ-pencil",
+            ref: "✏️",
           },
           is_correct: false,
         },
@@ -963,7 +963,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "jar",
         asset: {
           kind: "emoji",
-          ref: "EMJ-jar",
+          ref: "🫙",
         },
       },
       options: [
@@ -971,7 +971,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "jar",
           asset: {
             kind: "emoji",
-            ref: "EMJ-jar",
+            ref: "🫙",
           },
           is_correct: true,
         },
@@ -979,7 +979,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "cup",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cup-with-straw",
+            ref: "🥤",
           },
           is_correct: false,
         },
@@ -1022,7 +1022,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-red-circle",
+              ref: "🔴",
             },
           },
           {
@@ -1030,7 +1030,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-yellow-circle",
+              ref: "🟡",
             },
           },
           {
@@ -1038,7 +1038,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 2,
             asset: {
               kind: "emoji",
-              ref: "EMJ-blue-circle",
+              ref: "🔵",
             },
           },
           {
@@ -1046,7 +1046,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-yellow-circle",
+              ref: "🟡",
             },
           },
           {
@@ -1054,7 +1054,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-blue-circle",
+              ref: "🔵",
             },
           },
           {
@@ -1062,7 +1062,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 2,
             asset: {
               kind: "emoji",
-              ref: "EMJ-red-circle",
+              ref: "🔴",
             },
           },
           {
@@ -1070,7 +1070,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-blue-circle",
+              ref: "🔵",
             },
           },
           {
@@ -1078,7 +1078,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-red-circle",
+              ref: "🔴",
             },
           },
           {
@@ -1093,7 +1093,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "op-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-yellow-circle",
+            ref: "🟡",
           },
           is_correct: true,
         },
@@ -1101,7 +1101,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "op-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-circle",
+            ref: "🔴",
           },
           is_correct: false,
         },
@@ -1109,7 +1109,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "op-3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-blue-circle",
+            ref: "🔵",
           },
           is_correct: false,
         },
@@ -1149,7 +1149,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "g1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-balloon",
+            ref: "🎈",
           },
           is_target: false,
           is_hidden: false,
@@ -1158,7 +1158,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "g2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-gift",
+            ref: "🎁",
           },
           is_target: true,
           is_hidden: false,
@@ -1167,7 +1167,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "g3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-balloon",
+            ref: "🎈",
           },
           is_target: false,
           is_hidden: false,
@@ -1205,12 +1205,12 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
         {
           group_id: "g0",
           label: "Rổ trái cây",
-          label_emoji: "EMJ-red-apple",
+          label_emoji: "🍎",
         },
         {
           group_id: "g1",
           label: "Rổ con vật",
-          label_emoji: "EMJ-cat",
+          label_emoji: "🐱",
         },
       ],
       items: [
@@ -1218,7 +1218,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "apple",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
           correct_group_id: "g0",
         },
@@ -1226,7 +1226,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "banana",
           asset: {
             kind: "emoji",
-            ref: "EMJ-banana",
+            ref: "🍌",
           },
           correct_group_id: "g0",
         },
@@ -1234,7 +1234,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "cat",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cat",
+            ref: "🐱",
           },
           correct_group_id: "g1",
         },
@@ -1242,7 +1242,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "dog",
           asset: {
             kind: "emoji",
-            ref: "EMJ-dog",
+            ref: "🐶",
           },
           correct_group_id: "g1",
         },
@@ -1287,7 +1287,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "music",
           asset: {
             kind: "emoji",
-            ref: "EMJ-guitar",
+            ref: "🎸",
           },
           is_correct: true,
         },
@@ -1296,7 +1296,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "sports",
           asset: {
             kind: "emoji",
-            ref: "EMJ-soccer",
+            ref: "⚽",
           },
           is_correct: false,
         },
@@ -1334,7 +1334,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "ruler",
         asset: {
           kind: "emoji",
-          ref: "EMJ-ruler",
+          ref: "📏",
         },
       },
       options: [
@@ -1342,7 +1342,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "ruler",
           asset: {
             kind: "emoji",
-            ref: "EMJ-ruler",
+            ref: "📏",
           },
           is_correct: true,
         },
@@ -1350,7 +1350,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "pencil",
           asset: {
             kind: "emoji",
-            ref: "EMJ-pencil",
+            ref: "✏️",
           },
           is_correct: false,
         },
@@ -1606,7 +1606,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-red-apple",
+              ref: "🍎",
             },
           },
           {
@@ -1614,7 +1614,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-banana",
+              ref: "🍌",
             },
           },
           {
@@ -1622,7 +1622,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-banana",
+              ref: "🍌",
             },
           },
           {
@@ -1637,7 +1637,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "o1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
           is_correct: true,
         },
@@ -1645,7 +1645,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "o2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-banana",
+            ref: "🍌",
           },
           is_correct: false,
         },
@@ -1653,7 +1653,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "o3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-grapes",
+            ref: "🍇",
           },
           is_correct: false,
         },
@@ -1696,7 +1696,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-red-triangle-up",
+              ref: "🔺",
             },
           },
           {
@@ -1704,7 +1704,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-black-circle",
+              ref: "⚫",
             },
           },
           {
@@ -1712,7 +1712,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 2,
             asset: {
               kind: "emoji",
-              ref: "EMJ-star",
+              ref: "⭐",
             },
           },
           {
@@ -1720,7 +1720,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-black-circle",
+              ref: "⚫",
             },
           },
           {
@@ -1728,7 +1728,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-star",
+              ref: "⭐",
             },
           },
           {
@@ -1736,7 +1736,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 2,
             asset: {
               kind: "emoji",
-              ref: "EMJ-red-triangle-up",
+              ref: "🔺",
             },
           },
           {
@@ -1744,7 +1744,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-star",
+              ref: "⭐",
             },
           },
           {
@@ -1752,7 +1752,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-red-triangle-up",
+              ref: "🔺",
             },
           },
           {
@@ -1767,7 +1767,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "o1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-black-circle",
+            ref: "⚫",
           },
           is_correct: true,
         },
@@ -1775,7 +1775,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "o2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-star",
+            ref: "⭐",
           },
           is_correct: false,
         },
@@ -1783,7 +1783,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "o3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-triangle-up",
+            ref: "🔺",
           },
           is_correct: false,
         },
@@ -1826,7 +1826,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-up-arrow",
+              ref: "⬆️",
             },
           },
           {
@@ -1834,7 +1834,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-right-arrow",
+              ref: "➡️",
             },
           },
           {
@@ -1842,7 +1842,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-right-arrow",
+              ref: "➡️",
             },
           },
           {
@@ -1857,7 +1857,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "op-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-up-arrow",
+            ref: "⬆️",
           },
           is_correct: true,
         },
@@ -1865,7 +1865,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "op-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-right-arrow",
+            ref: "➡️",
           },
           is_correct: false,
         },
@@ -1873,7 +1873,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "op-3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-left-arrow",
+            ref: "⬅️",
           },
           is_correct: false,
         },
@@ -1916,14 +1916,14 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           symbol_id: "cat",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cat",
+            ref: "🐱",
           },
         },
         {
           symbol_id: "dog",
           asset: {
             kind: "emoji",
-            ref: "EMJ-dog",
+            ref: "🐶",
           },
         },
       ],
@@ -1985,21 +1985,21 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           symbol_id: "apple",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
         },
         {
           symbol_id: "banana",
           asset: {
             kind: "emoji",
-            ref: "EMJ-banana",
+            ref: "🍌",
           },
         },
         {
           symbol_id: "grape",
           asset: {
             kind: "emoji",
-            ref: "EMJ-grapes",
+            ref: "🍇",
           },
         },
       ],
@@ -2086,28 +2086,28 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           symbol_id: "circle",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-circle",
+            ref: "🔴",
           },
         },
         {
           symbol_id: "square",
           asset: {
             kind: "emoji",
-            ref: "EMJ-blue-square",
+            ref: "🟦",
           },
         },
         {
           symbol_id: "triangle",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-triangle-up",
+            ref: "🔺",
           },
         },
         {
           symbol_id: "star",
           asset: {
             kind: "emoji",
-            ref: "EMJ-star",
+            ref: "⭐",
           },
         },
       ],
@@ -2227,7 +2227,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-r1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-circle",
+            ref: "🔴",
           },
           x: 100,
           y: 200,
@@ -2236,7 +2236,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-b1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-blue-circle",
+            ref: "🔵",
           },
           x: 200,
           y: 200,
@@ -2245,7 +2245,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-r2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-circle",
+            ref: "🔴",
           },
           x: 300,
           y: 200,
@@ -2256,7 +2256,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-r1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-circle",
+            ref: "🔴",
           },
           x: 100,
           y: 200,
@@ -2265,7 +2265,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-y1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-yellow-circle",
+            ref: "🟡",
           },
           x: 200,
           y: 200,
@@ -2274,7 +2274,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-r2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-circle",
+            ref: "🔴",
           },
           x: 300,
           y: 200,
@@ -2324,14 +2324,14 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "yellow-1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-yellow-circle",
+              ref: "🟡",
             },
           },
           card_b: {
             card_id: "yellow-2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-yellow-circle",
+              ref: "🟡",
             },
           },
         },
@@ -2341,14 +2341,14 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "green-1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-green-square",
+              ref: "🟩",
             },
           },
           card_b: {
             card_id: "green-2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-green-square",
+              ref: "🟩",
             },
           },
         },
@@ -2393,7 +2393,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "circle",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-circle",
+            ref: "🔴",
           },
           is_correct: true,
         },
@@ -2402,7 +2402,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "circle",
           asset: {
             kind: "emoji",
-            ref: "EMJ-blue-circle",
+            ref: "🔵",
           },
           is_correct: true,
         },
@@ -2411,7 +2411,7 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "square",
           asset: {
             kind: "emoji",
-            ref: "EMJ-blue-square",
+            ref: "🟦",
           },
           is_correct: false,
         },
@@ -2452,14 +2452,14 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "red-circle",
             asset: {
               kind: "emoji",
-              ref: "EMJ-red-circle",
+              ref: "🔴",
             },
           },
           right: {
             item_id: "red-square",
             asset: {
               kind: "emoji",
-              ref: "EMJ-red-square",
+              ref: "🟥",
             },
           },
         },
@@ -2469,14 +2469,14 @@ export const C3_SEED_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "green-square",
             asset: {
               kind: "emoji",
-              ref: "EMJ-green-square",
+              ref: "🟩",
             },
           },
           right: {
             item_id: "green-circle",
             asset: {
               kind: "emoji",
-              ref: "EMJ-green-circle",
+              ref: "🟢",
             },
           },
         },

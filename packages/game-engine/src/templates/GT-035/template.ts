@@ -157,7 +157,7 @@ const GT035Template = defineTemplate({
   code: "GT-035",
   name: "Xếp hàng lệnh",
   mechanic: "command-sequence",
-  status: "draft",
+  status: "published",
   version: 1,
   engine_session: "GT035Session",
   layouts: ["matrix-slot-grid", "step-ladder"],

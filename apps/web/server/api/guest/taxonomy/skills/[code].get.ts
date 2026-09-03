@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
 
   const skillRows = await db.select().from(skills).where(eq(skills.code, code));
   const targetSkill = skillRows[0];
-  if (targetSkill?.status !== "seeded") {
+  if (!targetSkill) {
     throw createError({
       statusCode: 404,
       statusMessage: "NOT_FOUND",

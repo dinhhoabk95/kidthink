@@ -17,6 +17,7 @@ depends_on:
   - EMOJI-REGISTRY
   - AI-CODEGEN-PIPELINE
   - ENGINE-CONTENT-DEPTH
+  - SKILL-DATASET-MODEL
 ---
 
 # Bộ sinh level — chi phí soạn màn chơi thứ tư tới thứ bốn mươi
@@ -34,7 +35,14 @@ họ dừng vì đường cong chi phí phẳng. Sàn ở
 bậc 1 và 181 level để đạt bậc 2. Ở chi phí hằng số, đó là con số không đạt được.
 
 File này sở hữu **chi phí đó**. Mục tiêu: một engine khai một bộ sinh; người soạn cấp trục và
-vốn từ; máy sinh ứng viên `content_pack`; người đọc và duyệt. Nó cấm — NEVER nới bất kỳ cổng
+vốn từ; máy sinh ứng viên `content_pack`; người đọc và duyệt.
+
+**Sửa 2026-09-03 — nguồn vật.** Bản đầu của file này để bộ sinh lấy vật từ **vốn từ chủ đề**.
+Đo trên corpus sinh ra theo đường đó: 5.013 level, 18.255 asset, **0** level mang chữ số hay
+chữ cái, kể cả 80 level của kỹ năng bảng chữ cái. Vốn từ chủ đề không biết kỹ năng đang dạy
+gì, nên nó chỉ cấp được vật trang trí. Từ nay nguồn vật là `SkillDataset` của chính kỹ năng
+level đó — [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) — còn vốn từ chủ
+đề tụt xuống đúng vai của nó: **lớp áo minh hoạ** (`BR-SDS-10` — chủ đề là lớp áo). Nó cấm — NEVER nới bất kỳ cổng
 nào của [`content-seed-authoring.md`](content-seed-authoring.md): đầu ra của bộ sinh vào corpus
 qua đúng con đường mà một level viết tay đi qua.
 
@@ -44,7 +52,7 @@ qua đúng con đường mà một level viết tay đi qua.
 |---|---|---|
 | Người soạn nội dung | `content_reviewer` | Cấp trục sinh và vốn từ, chạy bộ sinh, **đọc từng ứng viên**, giữ hoặc bỏ |
 | Dev | — | Viết `generator.ts` cho một engine, dựa trên `content_contract` của engine đó |
-| Bộ sinh | — | Sinh ứng viên `content_pack` tất định từ seed. Cấm ghi vào database |
+| Bộ sinh | — | Sinh ứng viên `content_pack` tất định từ seed, lấy vật từ `SkillDataset`. Cấm ghi vào database |
 | AI agent IDE | — | Sinh vốn từ và câu lệnh gợi ý. Cấm — NEVER chạy `seed:content`, cấm merge PR (`BR-CSA-07`) |
 | Người review PR | `content_reviewer` | Cổng người duy nhất, y như với level viết tay (`BR-CSA-02`) |
 
@@ -71,7 +79,7 @@ qua đúng con đường mà một level viết tay đi qua.
    thích ghi seed và trục đã dùng.
 6. **Người soạn đọc từng ứng viên**, sửa câu lệnh tiếng Việt, bỏ ứng viên vô nghĩa, đặt mã và
    tag ba trục.
-7. PR như mọi lô nội dung khác. Tám cổng chạy. Người review duyệt.
+7. PR như mọi lô nội dung khác. Bộ cổng ở mục 7.3 của [`content-seed-authoring.md`](content-seed-authoring.md) chạy. Người review duyệt.
 
 Bước 6 là bước không bỏ được. Mọi thứ trước nó là dựng bộ khung; giá trị sư phạm vào ở đó.
 
@@ -80,7 +88,7 @@ Bước 6 là bước không bỏ được. Mọi thứ trước nó là dựng 
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
 | Engine chưa có `generator.ts` | Engine mới, hoặc cơ chế không sinh máy được | `gen:levels` dừng với thông báo nêu engine thiếu bộ sinh. Soạn tay vẫn hợp lệ |
-| Ứng viên trượt `content_contract` | Vốn từ không khớp `limits` | Bỏ ứng viên, đếm vào báo cáo. Cấm — NEVER sửa tự động cho vừa contract |
+| Ứng viên trượt `content_contract` | Dataset không đủ vật cho `limits` | **Dừng**, in kỹ năng, khuôn, số vật thiếu (`BR-SDS-05` — cấm thử lại). Cấm — NEVER sửa tự động cho vừa contract, cấm — NEVER sinh lại tới khi qua cổng |
 | Ứng viên trùng ứng viên đã có | Vốn từ hẹp | Cổng 6 (trùng lặp) của [`content-seed-authoring.md`](content-seed-authoring.md) bắt. Bộ sinh cũng tự lọc trước để đỡ lãng phí lượt đọc của người |
 | Emoji không có trong danh mục | Vốn từ tự chế | Nhận, nhưng ghi vào báo cáo kiểm kê — danh mục là vốn từ khuyến nghị (`BR-EMJ-01`) |
 | Người soạn muốn ghi thẳng vào database | Vội | Không có đường. `gen:levels` cấm — NEVER mở kết nối database |
@@ -93,12 +101,13 @@ Bước 6 là bước không bỏ được. Mọi thứ trước nó là dựng 
 | `BR-LGK-02` (tất định) | Cùng seed cộng cùng vốn từ cho **cùng** đầu ra, dùng nguồn của [`deterministic-randomness.md`](deterministic-randomness.md) | Lô nội dung phải dựng lại được. `Math.random()` làm một lô không tái tạo được để so |
 | `BR-LGK-03` (parse trước khi ghi) | Mỗi ứng viên parse bằng `content_contract` thật, gồm cả `refine`, trước khi ghi ra file | Cùng lý do với `BR-GTC-02` (parse ở server): một `content_pack` sai schema là màn hình trắng lúc trẻ đang chơi |
 | `BR-LGK-04` (không ghi database) | `gen:levels` cấm — NEVER mở kết nối database | Đường ghi published chỉ có một, và nó thuộc [`content-seed-authoring.md`](content-seed-authoring.md). Đường thứ hai là đường không ai kiểm |
-| `BR-LGK-05` (không nới cổng) | Ứng viên đi qua **đủ tám cổng** và đủ PR review, y hệt level viết tay | Nới cổng cho nội dung sinh máy là cách nhanh nhất để có 400 level không ai đọc |
+| `BR-LGK-05` (không nới cổng) | Ứng viên đi qua **đủ bộ cổng** ở mục 7.3 của [`content-seed-authoring.md`](content-seed-authoring.md) và đủ PR review, y hệt level viết tay | Nới cổng cho nội dung sinh máy là cách nhanh nhất để có 400 level không ai đọc |
 | `BR-LGK-06` (đánh dấu nguồn) | Level sinh từ bộ sinh mang `origin` phân biệt được với `human`, và giữ nguyên sau khi người sửa | Khi phát hiện một lô sai, phải truy được lô nào do bộ sinh dựng khung. Nối tiếp `BR-CSA-14` (provenance) |
 | `BR-LGK-07` (người đọc từng cái) | PR chứa level sinh máy phải ghi trong mô tả: ai đã đọc, bao nhiêu ứng viên bị bỏ | Con số bị bỏ là thước đo vốn từ. Bỏ 0 trên 40 nghĩa là không ai đọc |
 | `BR-LGK-08` (câu lệnh tiếng Việt do người viết) | Trường `instruction` và `prompt` hiển thị cho trẻ **phải** qua tay người ở bước 6 | Câu lệnh là thứ trẻ nghe. Tiếng Việt sinh máy chưa qua người là rủi ro không đo được ở lứa 3–6 |
 | `BR-LGK-09` (vốn từ là Lớp 1) | Vốn từ chủ đề và emoji theo chủ đề là dữ liệu Lớp 1, sửa qua PR, cấm sửa qua giao diện | Vốn từ quyết định mọi ứng viên sinh ra sau đó. Sửa từ giao diện là sửa nguồn mà không ai review |
 | `BR-LGK-10` (bộ sinh không đặt tag) | Bộ sinh cấm — NEVER tự đặt `thinking_tags`, `what_tags`, `skill_codes` | Ba trục là thứ ma trận phủ đo. Máy tự gắn tag làm phép đo tự nói về chính nó |
+| `BR-LGK-11` (vật đến từ dataset kỹ năng) | Bộ sinh lấy vật từ `SkillDataset` của kỹ năng level đó. Vốn từ chủ đề chỉ cấp **hình minh hoạ**, cấm — NEVER cấp vật học | Đường cũ lấy vật từ vốn từ chủ đề và sinh ra 5.013 level trượt `BR-SDS-02` (vật phải là vật của kỹ năng). Bộ sinh là chỗ vi phạm đó vào corpus, nên nó là chỗ phải chặn |
 
 `BR-LGK-10` là ranh giới quan trọng nhất trong file này. Bộ sinh dựng **hình dạng** màn chơi;
 việc màn chơi đó rèn tiến trình tư duy nào là phán đoán sư phạm, và nó thuộc về người.
@@ -120,17 +129,23 @@ interface LevelGenerator<TContent> {
   };
   generate(input: {
     rng: SeededRng;               // BR-LGK-02
+    dataset: SkillDataset;        // BR-LGK-11 — nguồn vật, đúng một kỹ năng
     age_band: AgeBand;
     what: WhatTag;
     theme: ThemeTag;
-    vocabulary: ThemeVocabulary;
+    vocabulary: ThemeVocabulary;  // chỉ lớp áo minh hoạ
   }): TContent;                   // kiểu lấy từ z.infer<content_contract>
 }
 ```
 
-Không có trường `thinking_tags`, không có `skill_codes` — theo `BR-LGK-10`.
+Không có trường `thinking_tags`, không có `skill_codes` — theo `BR-LGK-10`. `skill_code` đi vào
+qua `dataset`, không phải qua tham số rời: dataset đã mang nó, và một nguồn thì không lệch được
+với chính nó.
 
-### 7.2 Vốn từ theo chủ đề
+### 7.2 Vốn từ theo chủ đề — lớp áo, không phải nguồn vật
+
+Bảng dưới đây cấp **hình minh hoạ** cho vật mà `dataset.items[]` đã quyết định. Đổi `theme`
+đổi ảnh, cấm — NEVER đổi tập vật (`BR-LGK-11`).
 
 | Trường | Kiểu | Ràng buộc |
 |---|---|---|
@@ -159,7 +174,8 @@ lô đã soạn.
 | Việc | Hôm nay | Sau bộ sinh |
 |---|---|---|
 | Dựng hình dạng một `content_pack` | viết tay | máy |
-| Chọn emoji hợp chủ đề | viết tay, tra registry | máy, từ vốn từ |
+| Chọn hình minh hoạ hợp chủ đề | viết tay, tra registry | máy, từ vốn từ |
+| Chọn **vật học** của bài | viết tay, tuỳ hứng | **từ `SkillDataset`** — `BR-LGK-11` |
 | Trải trục band và `what` | viết tay, dễ quên | máy, là tham số |
 | Viết câu lệnh tiếng Việt | viết tay | **viết tay** — `BR-LGK-08` |
 | Đặt tag ba trục | viết tay | **viết tay** — `BR-LGK-10` |
@@ -203,6 +219,18 @@ Scenario: BR-LGK-08 — thiếu instruction thì cổng seed chặn
   Then batch bị từ chối
   And không hàng nào được ghi
 
+Scenario: BR-LGK-11 — vật đến từ dataset, không từ vốn từ chủ đề
+  Given dataset của C1.NREC.02 khai sáu vật n0..n5
+  And vốn từ chủ đề farm có danh từ không thuộc dataset
+  When chạy gen:levels cho C1.NREC.02 với theme farm
+  Then mọi item_id trong ứng viên truy được về dataset.items[].id
+  And không danh từ nào của vốn từ chủ đề xuất hiện như một vật học
+
+Scenario: BR-LGK-11 — đổi theme không đổi tập vật
+  Given cùng dataset chiếu ra ứng viên với theme farm và theme school
+  When so hai content_pack
+  Then tập item_id trùng khít
+
 Scenario: BR-LGK-10 — bộ sinh không đặt tag ba trục
   When đọc mọi generator.ts trong packages/game-engine/src/templates
   Then không file nào ghi thinking_tags, what_tags, hay skill_codes
@@ -212,7 +240,7 @@ Scenario: BR-LGK-06 — nguồn giữ nguyên sau khi người sửa
   When seed vào database
   Then cột origin vẫn phân biệt được với level do người soạn từ đầu
 
-Scenario: BR-LGK-05 — nội dung sinh máy đi qua đủ tám cổng
+Scenario: BR-LGK-05 — nội dung sinh máy đi qua đủ bộ cổng
   Given một lô 9 level sinh máy, trong đó một level chứa từ trong blocklist
   When chạy seed:content
   Then cổng 7 chặn cả batch
@@ -233,6 +261,8 @@ Scenario: BR-LGK-05 — nội dung sinh máy đi qua đủ tám cổng
 - Nâng số ứng viên một lượt lên quá 40.
 
 **Never**
+- Lấy vật học từ vốn từ chủ đề (`BR-LGK-11`).
+- Sinh lại tới khi qua cổng (`BR-SDS-05`).
 - Mở kết nối database từ bộ sinh.
 - Sửa ứng viên cho vừa `limits`.
 - Nới bất kỳ cổng nào của [`content-seed-authoring.md`](content-seed-authoring.md) cho nội dung sinh máy.

@@ -127,7 +127,7 @@ export function setManagerRememberCookie(
   setCookie(event, MANAGER_REMEMBER_COOKIE, rememberToken, {
     httpOnly: true,
     maxAge: 365 * 24 * 3600,
-    path: "/api/managers/auth/restore",
+    path: "/",
     sameSite: "strict",
     secure: process.env.NODE_ENV === "production",
   });
@@ -135,7 +135,7 @@ export function setManagerRememberCookie(
 
 export function clearManagerRememberCookie(event: H3Event): void {
   deleteCookie(event, MANAGER_REMEMBER_COOKIE, {
-    path: "/api/managers/auth/restore",
+    path: "/",
   });
 }
 

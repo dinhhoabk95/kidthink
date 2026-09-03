@@ -62,7 +62,7 @@ export default defineTemplate({
   code: "GT-033",
   name: "Dệt hoa văn lưới",
   mechanic: "weave-grid",
-  status: "draft",
+  status: "published",
   version: 1,
   engine_session: "GT033Session",
   layouts: ["weave-grid"],

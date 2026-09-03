@@ -138,7 +138,7 @@ describe("User Play Recommendations API (BR-REC-01..08, D-MQ..D-MV)", () => {
       ageMax: 5,
       difficulty: 1,
       status: "published",
-      thumbnailEmoji: "EMJ-apple",
+      thumbnailEmoji: "🍎",
     });
 
     const event = mockEvent(

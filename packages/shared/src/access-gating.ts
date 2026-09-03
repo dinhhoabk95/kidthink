@@ -86,6 +86,13 @@ function gatingError(
         "Đã đạt giới hạn chơi trong ngày.",
         details
       );
+    case "INTRO_REQUIRED":
+      return new AccessGatingError(
+        code,
+        428,
+        "Bé cần hoàn thành bài làm quen trước khi chơi.",
+        details
+      );
     default:
       return new AccessGatingError(
         code,
@@ -176,6 +183,26 @@ export interface ContentTarget {
   title?: string;
   competency?: string;
   thumbnail_emoji?: string;
+  kind?: "assess" | "teach" | string | null;
+  template_kind?: "assess" | "teach" | string | null;
+  primary_skill_code?: string | null;
+  strand_code?: string | null;
+}
+
+export interface IntroQueueItem {
+  readonly intro_level_code: string;
+  readonly skill_code: string;
+  readonly title: string;
+  readonly thumbnail_emoji?: string;
+}
+
+export interface IntroCheckResult {
+  readonly intro_required: boolean;
+  readonly intro_queue?: readonly IntroQueueItem[];
+  readonly intro_remaining?: number;
+  readonly return_level_code?: string;
+  readonly primary_skill_code?: string;
+  readonly intro_level_code?: string;
 }
 
 export interface ContentAccessContext {
@@ -185,11 +212,15 @@ export interface ContentAccessContext {
   managerAudience?: boolean;
   requiresChild?: boolean;
   callerChildAge?: number | null;
+  lessonRunId?: string | null;
   verifyChildOwnership?: (
     userId: string,
     childId: string
   ) => Promise<boolean> | boolean;
   checkQuotaRemaining?: () => Promise<boolean> | boolean;
+  checkIntroRequired?: (
+    content: ContentTarget
+  ) => Promise<IntroCheckResult | null> | IntroCheckResult | null;
 }
 
 export interface ContentAccessResult {
@@ -285,8 +316,37 @@ function calculateAgeMismatch(
   return callerChildAge < content.age_min || callerChildAge > content.age_max;
 }
 
+async function checkConceptIntroGate(
+  content: ContentTarget,
+  ctx: ContentAccessContext,
+  isPreview: boolean
+): Promise<void> {
+  const isTeach = content.kind === "teach" || content.template_kind === "teach";
+  if (isPreview || isTeach || ctx.lessonRunId || !ctx.checkIntroRequired) {
+    return;
+  }
+
+  const introCheck = await ctx.checkIntroRequired(content);
+  if (!introCheck?.intro_required) {
+    return;
+  }
+
+  const queue = introCheck.intro_queue ?? [];
+  const introLevelCode =
+    introCheck.intro_level_code ?? queue[0]?.intro_level_code ?? "";
+
+  throw gatingError("INTRO_REQUIRED", {
+    intro_queue: queue,
+    intro_remaining: introCheck.intro_remaining ?? 0,
+    return_level_code: introCheck.return_level_code ?? content.code,
+    primary_skill_code:
+      introCheck.primary_skill_code ?? content.primary_skill_code ?? "",
+    intro_level_code: introLevelCode,
+  });
+}
+
 /**
- * BR-GAT-02: Seven steps in exact fixed order:
+ * BR-GAT-02: Eight steps in exact fixed order:
  * 1. Content exists and status = published -> 404 if not
  * 2. Effective tier = max(levelTier, curriculumTier) (BR-LAD-05)
  * 3. Caller identity & ownership (BR-GAT-04)
@@ -294,6 +354,7 @@ function calculateAgeMismatch(
  * 5. allowedTiers(caller) >= effective tier -> 403 + metadata gate if not (BR-GAT-03)
  * 6. Quota remaining -> 402 if cap reached
  * 7. Age match -> 200 + age_mismatch flag if outside age_min..age_max
+ * 8. Concept intro completed? -> 428 INTRO_REQUIRED if intro_queue not empty (BR-CIG-01)
  */
 export async function assertContentAccess(
   content: ContentTarget | null | undefined,
@@ -321,6 +382,9 @@ export async function assertContentAccess(
   }
 
   const ageMismatch = calculateAgeMismatch(ctx.callerChildAge, content);
+
+  // Step 8: Pedagogical check — Concept intro completed? (BR-CIG-01, BR-CIG-06, BR-CIG-07)
+  await checkConceptIntroGate(content, ctx, isPreview);
 
   return {
     child_id: caller.kind === "user" ? (caller.active_child_id ?? null) : null,

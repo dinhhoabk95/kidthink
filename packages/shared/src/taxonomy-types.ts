@@ -24,15 +24,27 @@ export interface StrandTier {
   readonly name: string;
 }
 
-/** Tier 3: Skill (230 total), belongs to exactly one Strand. */
+/**
+ * Bậc tiến triển của một kỹ năng bên trong strand của nó.
+ *
+ * Thay cho cột `status` viết tay đã bị gỡ. Trục này mô tả **nhiệm vụ**, không
+ * mô tả đứa trẻ — Cấm — NEVER viết "con đang ở mức làm quen" trong báo cáo.
+ */
+export type SkillProgressionTier = "basic" | "core" | "advanced";
+
+/** Dải tuổi của một kỹ năng. `6-7` là band tiền tiểu học. */
+export type SkillAge = 3 | 4 | 5 | 6 | 7;
+
+/** Tier 3: Skill, belongs to exactly one Strand. */
 export interface SkillTier {
   readonly code: SkillCode;
   readonly strand_code: StrandCode;
   readonly name: string;
-  readonly age_min: 3 | 4 | 5 | 6;
-  readonly age_max: 3 | 4 | 5 | 6;
+  readonly age_min: SkillAge;
+  readonly age_max: SkillAge;
   readonly difficulty: 1 | 2 | 3 | 4 | 5;
   readonly thinking: readonly ThinkingProcess[];
+  readonly tier: SkillProgressionTier;
   readonly prerequisites: readonly SkillCode[];
 }
 
@@ -129,6 +141,7 @@ export const ALL_GAME_MECHANICS = [
   "beat-sequence",
   "command-sequence",
   "free-create",
+  "concept-intro",
 ] as const;
 
 export type GameMechanic = (typeof ALL_GAME_MECHANICS)[number];

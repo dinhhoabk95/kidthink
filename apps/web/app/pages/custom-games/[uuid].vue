@@ -555,7 +555,7 @@
     const nextIdx = options.length + 1;
     options.push({
       item_id: `opt_${nextIdx}`,
-      asset: { kind: "emoji", ref: "EMJ-banana" },
+      asset: { kind: "emoji", ref: "🍌" },
       is_correct: false,
     });
     game.value.contentPack.options = options;

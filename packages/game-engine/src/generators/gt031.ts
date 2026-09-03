@@ -14,7 +14,7 @@ export const GT031Generator: LevelGenerator = {
   generate({ rng, age_band: _age_band, vocabulary }) {
     const nouns = getNouns(vocabulary, 2);
     const itemNoun = nouns[0] ?? {
-      emoji_ref: "EMJ-red-apple",
+      emoji_ref: "🍎",
       label_vi: "Quả táo",
     };
 
@@ -57,7 +57,7 @@ export const GT031Generator: LevelGenerator = {
       coin_id: `coin_${idx + 1}_val${val}`,
       asset: {
         kind: "emoji" as const,
-        ref: "EMJ-coin",
+        ref: "🪙",
       },
       value: val,
     }));

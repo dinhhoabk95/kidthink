@@ -9,7 +9,7 @@ export const GT024_FIXTURES: {
     content: {
       prompt: "Bé hãy nối các điểm theo thứ tự 1-2-3 để vẽ hình tam giác nhé!",
       shape_name: "Hình tam giác",
-      guide_asset: { kind: "emoji", ref: "EMJ-red-triangle-up" },
+      guide_asset: { kind: "emoji", ref: "🔺" },
       waypoints: [
         { id: "wp-top", x: 480, y: 150, order: 0, label: "1" },
         { id: "wp-right", x: 650, y: 380, order: 1, label: "2" },
@@ -30,7 +30,7 @@ export const GT024_FIXTURES: {
     content: {
       prompt: "Bé hãy nối 4 điểm theo thứ tự để tạo thành hình vuông nhé!",
       shape_name: "Hình vuông",
-      guide_asset: { kind: "emoji", ref: "EMJ-blue-square" },
+      guide_asset: { kind: "emoji", ref: "🟦" },
       waypoints: [
         { id: "wp-tl", x: 340, y: 180, order: 0, label: "1" },
         { id: "wp-tr", x: 620, y: 180, order: 1, label: "2" },
@@ -53,7 +53,7 @@ export const GT024_FIXTURES: {
       prompt:
         "Bé hãy nối các điểm theo thứ tự từ 1 đến 5 để vẽ ngôi sao sáng nhé!",
       shape_name: "Ngôi sao",
-      guide_asset: { kind: "emoji", ref: "EMJ-star" },
+      guide_asset: { kind: "emoji", ref: "⭐" },
       waypoints: [
         { id: "wp-1", x: 480, y: 120, order: 0, label: "1" },
         { id: "wp-2", x: 530, y: 270, order: 1, label: "2" },

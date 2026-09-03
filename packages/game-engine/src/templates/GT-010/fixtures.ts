@@ -28,8 +28,8 @@ export const SAMPLE_LEVEL_1: GameLevelFixture<GT010Content, GT010Difficulty> = {
   content_pack: {
     prompt: "Bé hãy suy nghĩ xem Quả chuối có giá trị bằng mấy nhé!",
     symbols: [
-      { symbol_id: "apple", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-      { symbol_id: "banana", asset: { kind: "emoji", ref: "EMJ-banana" } },
+      { symbol_id: "apple", asset: { kind: "emoji", ref: "🍎" } },
+      { symbol_id: "banana", asset: { kind: "emoji", ref: "🍌" } },
     ],
     // Dòng 1: 🍎 + 🍎 = 10 -> 🍎 = 5
     // Dòng 2: 🍎 + 🍌 = 8  -> 🍌 = 3
@@ -67,11 +67,11 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT010Content, GT010Difficulty> = {
     symbols: [
       {
         symbol_id: "flower",
-        asset: { kind: "emoji", ref: "EMJ-cherry-blossom" },
+        asset: { kind: "emoji", ref: "🌸" },
       },
       {
         symbol_id: "clover",
-        asset: { kind: "emoji", ref: "EMJ-four-leaf-clover" },
+        asset: { kind: "emoji", ref: "🍀" },
       },
     ],
     // Dòng 1: 🌸 + 🌸 + 🌸 = 9 -> 🌸 = 3
@@ -117,9 +117,9 @@ export const SAMPLE_LEVEL_3: GameLevelFixture<GT010Content, GT010Difficulty> = {
   content_pack: {
     prompt: "Bé hãy tìm giá trị của Bạn Khỉ thông thái nhé!",
     symbols: [
-      { symbol_id: "cat", asset: { kind: "emoji", ref: "EMJ-cat" } },
-      { symbol_id: "dog", asset: { kind: "emoji", ref: "EMJ-dog" } },
-      { symbol_id: "monkey", asset: { kind: "emoji", ref: "EMJ-monkey" } },
+      { symbol_id: "cat", asset: { kind: "emoji", ref: "🐱" } },
+      { symbol_id: "dog", asset: { kind: "emoji", ref: "🐶" } },
+      { symbol_id: "monkey", asset: { kind: "emoji", ref: "🐵" } },
     ],
     // Dòng 1: 🐱 + 🐱 = 4 -> 🐱 = 2
     // Dòng 2: 🐱 + 🐶 = 7 -> 🐶 = 5

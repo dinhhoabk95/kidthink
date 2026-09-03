@@ -63,6 +63,7 @@ của bài học. Đo ngày 2026-08-29: **151 trên 162** liên kết không tho
 
 Ba ca đọc được, không phải lỗi công cụ:
 
+<!-- taxonomy-refs:historical — ba ca đo 2026-08-29 dùng mã taxonomy v1 đã bỏ -->
 | Bài học | Kỹ năng bài học | Trỏ tới level | Kỹ năng của level |
 |---|---|---|---|
 | `LES-0003` | `C1.CNT.02` đếm | `GL-C1-SEQ-PAT-0014` | `C1.NREC.09` nhận diện số |

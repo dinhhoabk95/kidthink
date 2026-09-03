@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { cpus } from "node:os";
 import path from "node:path";
 import { defineConfig, mergeConfig, type ViteUserConfig } from "vitest/config";
 import { testDatabaseUrls } from "./test-database.ts";
@@ -108,10 +109,19 @@ export function nuxtAppAliases(appRoot: string): PrefixAlias[] {
 export const SEQUENTIAL_DEFAULTS = {
   fileParallelism: false,
   maxWorkers: 1,
-  minWorkers: 1,
   maxConcurrency: 1,
   pool: "forks" as const,
-  forks: { singleFork: true },
+  sequence: { concurrent: false },
+} as const;
+
+const PARALLEL_WORKER_RESERVE = 1;
+
+export const PARALLEL_DEFAULTS = {
+  fileParallelism: true,
+  maxWorkers: Math.max(1, cpus().length - PARALLEL_WORKER_RESERVE),
+  maxConcurrency: 5,
+  pool: "threads" as const,
+  isolate: true,
   sequence: { concurrent: false },
 } as const;
 
@@ -120,11 +130,6 @@ const BASE_TIMEOUT_MS = 30_000;
 /**
  * Một `globalSetup` cho mọi workspace: dựng database test nếu chưa có, chạy
  * migration, rồi TRUNCATE.
- *
- * Đặt ở đây thay vì trong từng `vitest.config.ts` vì workspace nào quên khai
- * sẽ chạy trên database dev — đúng cách 1.117 dòng fixture lọt vào catalog
- * công khai. File sống trong `packages/db` vì nó cần biết danh sách bảng và
- * thư mục migration.
  */
 const DATABASE_GLOBAL_SETUP = path.join(
   REPO_ROOT,
@@ -134,25 +139,11 @@ const DATABASE_GLOBAL_SETUP = path.join(
   "global-setup.ts"
 );
 
-/**
- * Mọi test của repo sống dưới `src/` hoặc `tests/` của một workspace — không có
- * ngoại lệ nào khác (đo 2026-08-28 trên 339 file).
- *
- * Khai ở đây thay vì trong từng `vitest.config.ts` vì bỏ sót một nhánh là test
- * **im lặng không chạy**: `packages/shared/src/program-showcase.test.ts` từng
- * nằm ngoài mọi `include` và không cổng nào báo. Cổng giữ bất biến này đã bị
- * gỡ 2026-08-29 — file test nằm ngoài `include` giờ lại im lặng như cũ.
- */
 export const WORKSPACE_TEST_INCLUDE: readonly string[] = [
   "src/**/*.{test,spec}.{ts,tsx}",
   "tests/**/*.{test,spec}.{ts,tsx}",
 ];
 
-/**
- * `tests/**​/fixtures/` là **mẫu văn bản** cho cổng quét, không phải test:
- * ca âm cố ý sai kiểu, cố ý sai vị trí, cố ý import thứ package không có.
- * Cùng lý do `tsconfig.json` gốc loại chúng khỏi typecheck.
- */
 export const WORKSPACE_TEST_EXCLUDE: readonly string[] = [
   "**/node_modules/**",
   "**/dist/**",
@@ -161,10 +152,19 @@ export const WORKSPACE_TEST_EXCLUDE: readonly string[] = [
   "**/fixtures/**",
 ];
 
+const NO_DATABASE_URL =
+  "postgresql://mindkid_no_db:mindkid_no_db@127.0.0.1:5433/mindkid_khong_co_database_cho_test_thuan";
+
+export interface WorkspaceTestOptions {
+  readonly database?: boolean;
+}
+
 /** Điểm vào duy nhất cho `vitest.config.ts` của workspace. */
 export function defineWorkspaceTest(
-  overrides: ViteUserConfig = {}
+  overrides: ViteUserConfig = {},
+  options: WorkspaceTestOptions = {}
 ): ViteUserConfig {
+  const usesDatabase = options.database ?? true;
   const { owner, app } = testDatabaseUrls();
   const base = defineConfig({
     resolve: { alias: workspaceAliases() },
@@ -173,12 +173,11 @@ export function defineWorkspaceTest(
       include: [...WORKSPACE_TEST_INCLUDE],
       exclude: [...WORKSPACE_TEST_EXCLUDE],
       testTimeout: BASE_TIMEOUT_MS,
-      // Database RIÊNG cho test, dựng và dọn bởi `globalSetup` bên dưới.
-      // `requireEnv` nạp `.env` nhưng Cấm — NEVER ghi đè biến đã có giá trị,
-      // nên hai dòng này thắng file `.env` của máy dev.
-      env: { DATABASE_URL: owner, DATABASE_URL_APP: app },
-      globalSetup: [DATABASE_GLOBAL_SETUP],
-      ...SEQUENTIAL_DEFAULTS,
+      env: usesDatabase
+        ? { DATABASE_URL: owner, DATABASE_URL_APP: app }
+        : { DATABASE_URL: NO_DATABASE_URL, DATABASE_URL_APP: NO_DATABASE_URL },
+      ...(usesDatabase ? { globalSetup: [DATABASE_GLOBAL_SETUP] } : {}),
+      ...(usesDatabase ? SEQUENTIAL_DEFAULTS : PARALLEL_DEFAULTS),
     },
   });
 

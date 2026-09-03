@@ -19,25 +19,25 @@ type GridCoord = z.infer<typeof GT035GridCoordSchema>;
 type Collectible = z.infer<typeof GT035CollectibleSchema>;
 
 const THEME_GOALS: Record<string, { ref: string; name_vi: string }> = {
-  space: { ref: "EMJ-satellite", name_vi: "Trạm vũ trụ" },
-  school: { ref: "EMJ-backpack", name_vi: "Lớp học" },
-  home: { ref: "EMJ-house", name_vi: "Nhà ở" },
-  farm: { ref: "EMJ-barn", name_vi: "Chuồng trại" },
-  nature: { ref: "EMJ-tree", name_vi: "Cây cổ thụ" },
-  ocean: { ref: "EMJ-anchor", name_vi: "Mỏ neo" },
-  festival: { ref: "EMJ-trophy", name_vi: "Sân khấu nhận cúp" },
-  art: { ref: "EMJ-battery", name_vi: "Trạm sạc pin" },
+  space: { ref: "🛰️", name_vi: "Trạm vũ trụ" },
+  school: { ref: "🎒", name_vi: "Lớp học" },
+  home: { ref: "🏠", name_vi: "Nhà ở" },
+  farm: { ref: "🏚️", name_vi: "Chuồng trại" },
+  nature: { ref: "🌳", name_vi: "Cây cổ thụ" },
+  ocean: { ref: "⚓", name_vi: "Mỏ neo" },
+  festival: { ref: "🏆", name_vi: "Sân khấu nhận cúp" },
+  art: { ref: "🔋", name_vi: "Trạm sạc pin" },
 };
 
 const THEME_COLLECTIBLES: Record<string, { ref: string; name_vi: string }> = {
-  space: { ref: "EMJ-star", name_vi: "Ngôi sao" },
-  school: { ref: "EMJ-book", name_vi: "Quyển sách" },
-  home: { ref: "EMJ-coin", name_vi: "Đồng xu" },
-  farm: { ref: "EMJ-apple", name_vi: "Quả táo" },
-  nature: { ref: "EMJ-flower", name_vi: "Bông hoa" },
-  ocean: { ref: "EMJ-gem", name_vi: "Ngọc trai" },
-  festival: { ref: "EMJ-balloon", name_vi: "Bóng bay" },
-  art: { ref: "EMJ-gear", name_vi: "Bánh răng" },
+  space: { ref: "⭐", name_vi: "Ngôi sao" },
+  school: { ref: "📖", name_vi: "Quyển sách" },
+  home: { ref: "🪙", name_vi: "Đồng xu" },
+  farm: { ref: "🍎", name_vi: "Quả táo" },
+  nature: { ref: "🌸", name_vi: "Bông hoa" },
+  ocean: { ref: "💎", name_vi: "Ngọc trai" },
+  festival: { ref: "🎈", name_vi: "Bóng bay" },
+  art: { ref: "⚙️", name_vi: "Bánh răng" },
 };
 
 function pickObstacles(
@@ -184,12 +184,12 @@ export const GT035Generator: LevelGenerator = {
     const activeTheme = theme && THEME_GOALS[theme] ? theme : "space";
     const goalInfo = THEME_GOALS[activeTheme] ??
       THEME_GOALS.space ?? {
-        ref: "EMJ-satellite",
+        ref: "🛰️",
         name_vi: "Trạm pin",
       };
     const colInfo = THEME_COLLECTIBLES[activeTheme] ??
       THEME_COLLECTIBLES.space ?? {
-        ref: "EMJ-star",
+        ref: "⭐",
         name_vi: "Ngôi sao",
       };
 

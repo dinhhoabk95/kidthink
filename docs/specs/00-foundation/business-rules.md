@@ -113,7 +113,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-RBK` | [`release-rollback.md`](../01-platform/release-rollback.md) | | `BR-MTB` | [`montessori-template-batch.md`](../01-platform/montessori-template-batch.md) |
 | `BR-LVB` | [`legacy-v1-template-batch.md`](../01-platform/legacy-v1-template-batch.md) | | `BR-TGB` | [`taxonomy-gap-batch.md`](../01-platform/taxonomy-gap-batch.md) |
 | `BR-ESS` | [`engine-spec-sheet.md`](../01-platform/engine-spec-sheet.md) | | `BR-LGK` | [`level-generator-kit.md`](../01-platform/level-generator-kit.md) |
-| `BR-ERC` | [`engine-render-contract.md`](../01-platform/engine-render-contract.md) | | `BR-E001`…`BR-E036` | [`engines/index.md`](../01-platform/engines/index.md) (27 spec engine trong registry, 9 spec đặt trước) |
+| `BR-ERC` | [`engine-render-contract.md`](../01-platform/engine-render-contract.md) | | `BR-E000`…`BR-E036` | [`engines/index.md`](../01-platform/engines/index.md) (27 spec engine trong registry, 9 spec đặt trước) |
 
 **Public**
 
@@ -152,7 +152,8 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-PGT` | [`parent-gate.md`](../04-play/parent-gate.md) | | `BR-HPL` | [`healthy-play-limits.md`](../04-play/healthy-play-limits.md) |
 | `BR-CUR` | [`curriculum-player.md`](../04-play/curriculum-player.md) | | `BR-PRG` | [`progress-and-mastery.md`](../04-play/progress-and-mastery.md) |
 | `BR-REC` | [`next-game-recommendation.md`](../04-play/next-game-recommendation.md) | | `BR-LSR` | [`lesson-session-runner.md`](../04-play/lesson-session-runner.md) |
-| `BR-RSP` | [`round-sequence-play.md`](../04-play/round-sequence-play.md) | | | |
+| `BR-RSP` | [`round-sequence-play.md`](../04-play/round-sequence-play.md) | | `BR-CIR` | [`concept-intro-runner.md`](../04-play/concept-intro-runner.md) |
+| `BR-CIG` | [`concept-intro-gate.md`](../04-play/concept-intro-gate.md) | | | |
 
 **Content**
 
@@ -166,6 +167,9 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-TCL` | [`template-coverage-level-batch.md`](../05-content/template-coverage-level-batch.md) | | `BR-LTV` | [`lesson-template-variety.md`](../05-content/lesson-template-variety.md) |
 | `BR-ECD` | [`engine-content-depth.md`](../05-content/engine-content-depth.md) | | `BR-CTR` | [`content-theme-registry.md`](../05-content/content-theme-registry.md) |
 | `BR-LCD` | [`lesson-corpus-depth.md`](../05-content/lesson-corpus-depth.md) | | `BR-LFM` | [`lesson-flow-model.md`](../05-content/lesson-flow-model.md) |
+| `BR-RSD` | [`round-set-corpus-depth.md`](../05-content/round-set-corpus-depth.md) | | `BR-CIM` | [`concept-intro-model.md`](../05-content/concept-intro-model.md) |
+| `BR-SDS` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) | | `BR-SKQ` | [`engine-content-depth.md`](../05-content/engine-content-depth.md) mục 6.1 |
+| `BR-STA` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) §7.5 | | `BR-ALC` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) §7.4 |
 
 **Admin**
 

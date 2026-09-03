@@ -108,6 +108,11 @@ export class GameEngine {
   readonly interaction = new InteractionManager();
   readonly audio = new AudioController();
   scaffolding?: ScaffoldingSystem;
+  onAfterRender?: (
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    nowMs: number
+  ) => void;
 
   private isRunning = false;
   private isPaused = false;
@@ -203,6 +208,7 @@ export class GameEngine {
     if (this.ctx) {
       this.renderSystem.clear(this.ctx);
       this.activeSession?.render?.(this.ctx, this.renderSystem, now);
+      this.onAfterRender?.(this.ctx, this.renderSystem, now);
     }
 
     if (typeof requestAnimationFrame !== "undefined") {

@@ -132,15 +132,15 @@ async function exportSkillCoverageCsv(db: ReturnType<typeof getOwnerDb>) {
       code: skills.code,
       name: skills.name,
       difficulty: skills.difficulty,
-      status: skills.status,
+      tier: skills.tier,
     })
     .from(skills)
     .orderBy(skills.code)
     .limit(MAX_EXPORT_ROWS);
 
-  let csvContent = "\uFEFFMã kỹ năng,Tên kỹ năng,Độ khó,Trạng thái\n";
+  let csvContent = "\uFEFFMã kỹ năng,Tên kỹ năng,Độ khó,Bậc\n";
   for (const r of rows) {
-    csvContent += `"${r.code}","${r.name}",${r.difficulty},"${r.status}"\n`;
+    csvContent += `"${r.code}","${r.name}",${r.difficulty},"${r.tier}"\n`;
   }
   return { csvContent, rowCount: rows.length };
 }

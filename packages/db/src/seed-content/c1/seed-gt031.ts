@@ -31,22 +31,22 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       target_amount: 3,
       item_to_buy: {
         label: "Kẹo mút",
-        asset: { kind: "emoji", ref: "EMJ-lollipop" },
+        asset: { kind: "emoji", ref: "🍭" },
       },
       coins: [
         {
           coin_id: "c1_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
         {
           coin_id: "c1_2",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
         {
           coin_id: "c2_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
       ],
@@ -84,22 +84,22 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       target_amount: 4,
       item_to_buy: {
         label: "Quả táo",
-        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        asset: { kind: "emoji", ref: "🍎" },
       },
       coins: [
         {
           coin_id: "c2_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c2_2",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c1_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
       ],
@@ -137,27 +137,27 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       target_amount: 5,
       item_to_buy: {
         label: "Bánh mì",
-        asset: { kind: "emoji", ref: "EMJ-bread" },
+        asset: { kind: "emoji", ref: "🍞" },
       },
       coins: [
         {
           coin_id: "c1_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
         {
           coin_id: "c2_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c2_2",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c5_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 5,
         },
       ],
@@ -195,27 +195,27 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       target_amount: 5,
       item_to_buy: {
         label: "Hộp sữa",
-        asset: { kind: "emoji", ref: "EMJ-milk" },
+        asset: { kind: "emoji", ref: "🥛" },
       },
       coins: [
         {
           coin_id: "c1_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
         {
           coin_id: "c1_2",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
         {
           coin_id: "c1_3",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
         {
           coin_id: "c2_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
       ],
@@ -253,22 +253,22 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       target_amount: 6,
       item_to_buy: {
         label: "Dưa hấu",
-        asset: { kind: "emoji", ref: "EMJ-watermelon" },
+        asset: { kind: "emoji", ref: "🍉" },
       },
       coins: [
         {
           coin_id: "c5_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 5,
         },
         {
           coin_id: "c1_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
         {
           coin_id: "c2_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
       ],
@@ -306,27 +306,27 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       target_amount: 7,
       item_to_buy: {
         label: "Ô tô",
-        asset: { kind: "emoji", ref: "EMJ-car" },
+        asset: { kind: "emoji", ref: "🚗" },
       },
       coins: [
         {
           coin_id: "c5_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 5,
         },
         {
           coin_id: "c2_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c1_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
         {
           coin_id: "c2_2",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
       ],
@@ -364,27 +364,27 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       target_amount: 8,
       item_to_buy: {
         label: "Bút chì",
-        asset: { kind: "emoji", ref: "EMJ-crayon" },
+        asset: { kind: "emoji", ref: "🖍️" },
       },
       coins: [
         {
           coin_id: "c5_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 5,
         },
         {
           coin_id: "c2_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c1_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
         {
           coin_id: "c1_2",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
       ],
@@ -422,27 +422,27 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       target_amount: 9,
       item_to_buy: {
         label: "Gấu bông",
-        asset: { kind: "emoji", ref: "EMJ-teddy-bear" },
+        asset: { kind: "emoji", ref: "🧸" },
       },
       coins: [
         {
           coin_id: "c5_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 5,
         },
         {
           coin_id: "c2_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c2_2",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c1_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
       ],
@@ -480,27 +480,27 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       target_amount: 10,
       item_to_buy: {
         label: "Quả bóng",
-        asset: { kind: "emoji", ref: "EMJ-soccer" },
+        asset: { kind: "emoji", ref: "⚽" },
       },
       coins: [
         {
           coin_id: "c5_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 5,
         },
         {
           coin_id: "c5_2",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 5,
         },
         {
           coin_id: "c2_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c1_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
       ],
@@ -538,27 +538,27 @@ export const SEED_GT031: ContentSeed<unknown, unknown>[] = [
       target_amount: 12,
       item_to_buy: {
         label: "Bánh kem",
-        asset: { kind: "emoji", ref: "EMJ-birthday-cake" },
+        asset: { kind: "emoji", ref: "🎂" },
       },
       coins: [
         {
           coin_id: "c10_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 10,
         },
         {
           coin_id: "c2_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c5_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 5,
         },
         {
           coin_id: "c1_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
       ],

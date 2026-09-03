@@ -2,7 +2,7 @@
 
 # Danh mục phiếu engine
 
-36 engine trong registry, 36 phiếu, 0 đặt trước, 0 mồ côi.
+37 engine trong registry, 37 phiếu, 0 đặt trước, 0 mồ côi.
 
 Hình dạng phiếu và luật đối chiếu: [`engine-spec-sheet.md`](../engine-spec-sheet.md).
 Sàn nội dung mỗi engine: [`engine-content-depth.md`](../../05-content/engine-content-depth.md).
@@ -47,6 +47,7 @@ Sàn nội dung mỗi engine: [`engine-content-depth.md`](../../05-content/engin
 | [`GT-034`](GT-034.md) | Gõ theo nhịp | `beat-sequence` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
 | [`GT-035`](GT-035.md) | Xếp hàng lệnh | `command-sequence` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
 | [`GT-036`](GT-036.md) | Tự tạo quy luật | `free-create` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
+| [`GT-000`](GT-000.md) | Làm quen khái niệm | `concept-intro` | 3–6 | — | Không | preschool-pedagogy |
 
 ## Engine đặt trước — spec có, `template.ts` chưa
 

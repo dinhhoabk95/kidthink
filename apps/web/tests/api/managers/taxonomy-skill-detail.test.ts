@@ -104,7 +104,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
         difficulty: 1,
         thinkingProcesses: ["observe", "match"],
         whatAxis: ["geometry", "shape"],
-        status: "seeded",
+        tier: "basic",
         position: 98,
       })
       .onConflictDoNothing()
@@ -121,7 +121,7 @@ describe("Task 6 — GET /api/managers/taxonomy/skills/[code] (BR-TXB-04, BR-TXB
         difficulty: 2,
         thinkingProcesses: ["compare", "sort"],
         whatAxis: ["geometry", "shape"],
-        status: "seeded",
+        tier: "basic",
         position: 99,
       })
       .onConflictDoNothing()

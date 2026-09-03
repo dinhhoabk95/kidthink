@@ -31,14 +31,14 @@ export const SEED_GT034: ContentSeed<unknown, unknown>[] = [
       instruments: [
         {
           instrument_id: "drum",
-          asset: { kind: "emoji", ref: "EMJ-drum" },
+          asset: { kind: "emoji", ref: "🥁" },
           freq: 220,
           type: "sine",
           name_vi: "Trống cái",
         },
         {
           instrument_id: "bell",
-          asset: { kind: "emoji", ref: "EMJ-bell" },
+          asset: { kind: "emoji", ref: "🔔" },
           freq: 440,
           type: "triangle",
           name_vi: "Chuông nhỏ",
@@ -81,14 +81,14 @@ export const SEED_GT034: ContentSeed<unknown, unknown>[] = [
       instruments: [
         {
           instrument_id: "cow",
-          asset: { kind: "emoji", ref: "EMJ-cow" },
+          asset: { kind: "emoji", ref: "🐮" },
           freq: 180,
           type: "sine",
           name_vi: "Bò sữa",
         },
         {
           instrument_id: "duck",
-          asset: { kind: "emoji", ref: "EMJ-duck" },
+          asset: { kind: "emoji", ref: "🦆" },
           freq: 520,
           type: "triangle",
           name_vi: "Vịt con",
@@ -131,21 +131,21 @@ export const SEED_GT034: ContentSeed<unknown, unknown>[] = [
       instruments: [
         {
           instrument_id: "bell",
-          asset: { kind: "emoji", ref: "EMJ-bell" },
+          asset: { kind: "emoji", ref: "🔔" },
           freq: 523,
           type: "sine",
           name_vi: "Chuông",
         },
         {
           instrument_id: "drum",
-          asset: { kind: "emoji", ref: "EMJ-drum" },
+          asset: { kind: "emoji", ref: "🥁" },
           freq: 261,
           type: "sine",
           name_vi: "Trống",
         },
         {
           instrument_id: "cymbal",
-          asset: { kind: "emoji", ref: "EMJ-musical-score" },
+          asset: { kind: "emoji", ref: "🎼" },
           freq: 784,
           type: "triangle",
           name_vi: "Xèng",
@@ -188,14 +188,14 @@ export const SEED_GT034: ContentSeed<unknown, unknown>[] = [
       instruments: [
         {
           instrument_id: "clap",
-          asset: { kind: "emoji", ref: "EMJ-clapping-hands" },
+          asset: { kind: "emoji", ref: "👏" },
           freq: 330,
           type: "triangle",
           name_vi: "Vỗ tay",
         },
         {
           instrument_id: "snap",
-          asset: { kind: "emoji", ref: "EMJ-sparkles" },
+          asset: { kind: "emoji", ref: "✨" },
           freq: 660,
           type: "sine",
           name_vi: "Búng tay",
@@ -238,14 +238,14 @@ export const SEED_GT034: ContentSeed<unknown, unknown>[] = [
       instruments: [
         {
           instrument_id: "bird",
-          asset: { kind: "emoji", ref: "EMJ-bird" },
+          asset: { kind: "emoji", ref: "🐦" },
           freq: 600,
           type: "sine",
           name_vi: "Chim hót",
         },
         {
           instrument_id: "frog",
-          asset: { kind: "emoji", ref: "EMJ-frog" },
+          asset: { kind: "emoji", ref: "🐸" },
           freq: 240,
           type: "triangle",
           name_vi: "Ếch kêu",
@@ -288,14 +288,14 @@ export const SEED_GT034: ContentSeed<unknown, unknown>[] = [
       instruments: [
         {
           instrument_id: "drum_low",
-          asset: { kind: "emoji", ref: "EMJ-drum" },
+          asset: { kind: "emoji", ref: "🥁" },
           freq: 200,
           type: "sine",
           name_vi: "Trống hội",
         },
         {
           instrument_id: "gong",
-          asset: { kind: "emoji", ref: "EMJ-musical-score" },
+          asset: { kind: "emoji", ref: "🎼" },
           freq: 500,
           type: "triangle",
           name_vi: "Chiêng đồng",
@@ -345,14 +345,14 @@ export const SEED_GT034: ContentSeed<unknown, unknown>[] = [
       instruments: [
         {
           instrument_id: "kick",
-          asset: { kind: "emoji", ref: "EMJ-drum" },
+          asset: { kind: "emoji", ref: "🥁" },
           freq: 150,
           type: "sine",
           name_vi: "Trống cái",
         },
         {
           instrument_id: "snare",
-          asset: { kind: "emoji", ref: "EMJ-sparkles" },
+          asset: { kind: "emoji", ref: "✨" },
           freq: 400,
           type: "triangle",
           name_vi: "Trống con",
@@ -395,14 +395,14 @@ export const SEED_GT034: ContentSeed<unknown, unknown>[] = [
       instruments: [
         {
           instrument_id: "flute",
-          asset: { kind: "emoji", ref: "EMJ-musical-score" },
+          asset: { kind: "emoji", ref: "🎼" },
           freq: 659,
           type: "sine",
           name_vi: "Tiếng sáo",
         },
         {
           instrument_id: "bell",
-          asset: { kind: "emoji", ref: "EMJ-bell" },
+          asset: { kind: "emoji", ref: "🔔" },
           freq: 440,
           type: "triangle",
           name_vi: "Chuông reo",
@@ -445,14 +445,14 @@ export const SEED_GT034: ContentSeed<unknown, unknown>[] = [
       instruments: [
         {
           instrument_id: "triangle",
-          asset: { kind: "emoji", ref: "EMJ-musical-score" },
+          asset: { kind: "emoji", ref: "🎼" },
           freq: 880,
           type: "triangle",
           name_vi: "Tam giác sắt",
         },
         {
           instrument_id: "woodblock",
-          asset: { kind: "emoji", ref: "EMJ-drum" },
+          asset: { kind: "emoji", ref: "🥁" },
           freq: 350,
           type: "sine",
           name_vi: "Mõ gỗ",
@@ -495,21 +495,21 @@ export const SEED_GT034: ContentSeed<unknown, unknown>[] = [
       instruments: [
         {
           instrument_id: "drum",
-          asset: { kind: "emoji", ref: "EMJ-drum" },
+          asset: { kind: "emoji", ref: "🥁" },
           freq: 220,
           type: "sine",
           name_vi: "Trống",
         },
         {
           instrument_id: "bell",
-          asset: { kind: "emoji", ref: "EMJ-bell" },
+          asset: { kind: "emoji", ref: "🔔" },
           freq: 440,
           type: "triangle",
           name_vi: "Chuông",
         },
         {
           instrument_id: "gong",
-          asset: { kind: "emoji", ref: "EMJ-musical-score" },
+          asset: { kind: "emoji", ref: "🎼" },
           freq: 660,
           type: "sine",
           name_vi: "Chiêng",

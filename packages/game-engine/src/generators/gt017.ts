@@ -111,7 +111,7 @@ export const GT017Generator: LevelGenerator = {
     const shuffledCounts = sampleUnique(rng, allCounts, allCounts.length);
 
     const defaultNoun = nouns[0] ?? {
-      emoji_ref: "EMJ-star",
+      emoji_ref: "⭐",
       label_vi: "ngôi sao",
     };
     const options = shuffledCounts.map((count, idx) => {

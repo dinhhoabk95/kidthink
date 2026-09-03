@@ -1,3 +1,3 @@
 import { defineWorkspaceTest } from "./vitest/base.ts";
 
-export default defineWorkspaceTest();
+export default defineWorkspaceTest({}, { database: false });

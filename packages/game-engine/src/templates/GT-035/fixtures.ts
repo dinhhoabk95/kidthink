@@ -18,7 +18,7 @@ export const GT035_FIXTURES: GT035Fixture[] = [
       goal: {
         col: 2,
         row: 2,
-        asset: { kind: "emoji", ref: "EMJ-star" },
+        asset: { kind: "emoji", ref: "⭐" },
       },
       obstacles: [],
       collectibles: [],
@@ -43,7 +43,7 @@ export const GT035_FIXTURES: GT035Fixture[] = [
       goal: {
         col: 3,
         row: 0,
-        asset: { kind: "emoji", ref: "EMJ-house" },
+        asset: { kind: "emoji", ref: "🏠" },
       },
       obstacles: [{ col: 2, row: 0 }],
       collectibles: [
@@ -51,7 +51,7 @@ export const GT035_FIXTURES: GT035Fixture[] = [
           col: 1,
           row: 1,
           id: "gem_1",
-          asset: { kind: "emoji", ref: "EMJ-gem" },
+          asset: { kind: "emoji", ref: "💎" },
         },
       ],
       allowed_commands: ["forward", "turn_left", "turn_right"],
@@ -75,7 +75,7 @@ export const GT035_FIXTURES: GT035Fixture[] = [
       goal: {
         col: 2,
         row: 0,
-        asset: { kind: "emoji", ref: "EMJ-trophy" },
+        asset: { kind: "emoji", ref: "🏆" },
       },
       obstacles: [{ col: 0, row: 3 }],
       collectibles: [],

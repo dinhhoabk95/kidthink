@@ -10,7 +10,10 @@ export type SFXType =
   | "pop_celebrate"
   | "amber_soft"
   | "level_celebrate"
-  | "longpress_exit";
+  | "longpress_exit"
+  | "start_chime"
+  | "whoosh_return"
+  | "snap_item";
 
 /** Soft attack — BR-ENG-16 requires >= 20ms so onsets never startle a child. */
 const RAMP_IN_SEC = 0.02;
@@ -35,6 +38,7 @@ export interface NoteRecipe {
 const POP_NOTES = [523, 659, 784]; // C5, E5, G5
 const FANFARE_NOTES = [523, 659, 784, 1047, 784, 1047]; // C5 E5 G5 C6 G5 C6
 const FANFARE_FINAL_INDEX = FANFARE_NOTES.length - 1;
+const START_CHIME_NOTES = [523, 659, 784, 1047]; // C5 E5 G5 C6 - cheerful rising chime
 
 const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
   tap: [
@@ -47,6 +51,38 @@ const SFX_RECIPES: Record<SFXType, NoteRecipe[]> = {
       rampOutSec: 0.04,
     },
   ],
+
+  snap_item: [
+    {
+      delaySec: 0,
+      type: "triangle",
+      freq: 480,
+      volume: 0.12,
+      durationSec: 0.08,
+      rampOutSec: 0.04,
+    },
+  ],
+
+  whoosh_return: [
+    {
+      delaySec: 0,
+      type: "sine",
+      freq: 420,
+      glideTo: { freq: 240, overSec: 0.18 },
+      volume: 0.09,
+      durationSec: 0.18,
+      rampOutSec: 0.06,
+    },
+  ],
+
+  start_chime: START_CHIME_NOTES.map((freq, i) => ({
+    delaySec: i * 0.08,
+    type: "sine" as OscillatorType,
+    freq,
+    volume: 0.14,
+    durationSec: 0.22,
+    rampOutSec: 0.06,
+  })),
 
   longpress_exit: [
     {

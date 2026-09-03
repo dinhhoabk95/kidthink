@@ -16,17 +16,17 @@ export const GT008_FIXTURES: {
         {
           item_id: "car_2",
           label: "Số 2",
-          asset: { kind: "emoji", ref: "EMJ-two" },
+          asset: { kind: "emoji", ref: "2️⃣" },
         },
         {
           item_id: "car_1",
           label: "Số 1",
-          asset: { kind: "emoji", ref: "EMJ-one" },
+          asset: { kind: "emoji", ref: "1️⃣" },
         },
         {
           item_id: "car_3",
           label: "Số 3",
-          asset: { kind: "emoji", ref: "EMJ-three" },
+          asset: { kind: "emoji", ref: "3️⃣" },
         },
       ],
     },
@@ -50,22 +50,22 @@ export const GT008_FIXTURES: {
         {
           item_id: "red_sq",
           label: "Vuông đỏ",
-          asset: { kind: "emoji", ref: "EMJ-red-square" },
+          asset: { kind: "emoji", ref: "🟥" },
         },
         {
           item_id: "blue_sq",
           label: "Vuông xanh",
-          asset: { kind: "emoji", ref: "EMJ-blue-square" },
+          asset: { kind: "emoji", ref: "🟦" },
         },
         {
           item_id: "red_cir",
           label: "Tròn đỏ",
-          asset: { kind: "emoji", ref: "EMJ-red-circle" },
+          asset: { kind: "emoji", ref: "🔴" },
         },
         {
           item_id: "blue_cir",
           label: "Tròn xanh",
-          asset: { kind: "emoji", ref: "EMJ-blue-circle" },
+          asset: { kind: "emoji", ref: "🔵" },
         },
       ],
     },
@@ -88,17 +88,17 @@ export const GT008_FIXTURES: {
         {
           item_id: "num_6",
           label: "Số 6",
-          asset: { kind: "emoji", ref: "EMJ-six" },
+          asset: { kind: "emoji", ref: "6️⃣" },
         },
         {
           item_id: "num_2",
           label: "Số 2",
-          asset: { kind: "emoji", ref: "EMJ-two" },
+          asset: { kind: "emoji", ref: "2️⃣" },
         },
         {
           item_id: "num_4",
           label: "Số 4",
-          asset: { kind: "emoji", ref: "EMJ-four" },
+          asset: { kind: "emoji", ref: "4️⃣" },
         },
       ],
     },

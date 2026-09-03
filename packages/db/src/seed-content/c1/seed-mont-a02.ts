@@ -32,7 +32,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
         item_id: "opt-2",
         asset: {
           kind: "emoji",
-          ref: "EMJ-three",
+          ref: "3️⃣",
         },
       },
       options: [
@@ -40,7 +40,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
           item_id: "opt-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-two",
+            ref: "2️⃣",
           },
           is_correct: false,
         },
@@ -48,7 +48,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
           item_id: "opt-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-three",
+            ref: "3️⃣",
           },
           is_correct: true,
         },
@@ -56,7 +56,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
           item_id: "opt-3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-six",
+            ref: "6️⃣",
           },
           is_correct: false,
         },
@@ -95,7 +95,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
         item_id: "opt-2",
         asset: {
           kind: "emoji",
-          ref: "EMJ-seven",
+          ref: "7️⃣",
         },
       },
       options: [
@@ -103,7 +103,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
           item_id: "opt-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-five",
+            ref: "5️⃣",
           },
           is_correct: false,
         },
@@ -111,7 +111,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
           item_id: "opt-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-seven",
+            ref: "7️⃣",
           },
           is_correct: true,
         },
@@ -119,7 +119,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
           item_id: "opt-3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-eight",
+            ref: "8️⃣",
           },
           is_correct: false,
         },
@@ -160,7 +160,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
           order_index: 1,
           asset: {
             kind: "emoji",
-            ref: "EMJ-two",
+            ref: "2️⃣",
           },
           label: "2",
         },
@@ -169,7 +169,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
           order_index: 0,
           asset: {
             kind: "emoji",
-            ref: "EMJ-one",
+            ref: "1️⃣",
           },
           label: "1",
         },
@@ -178,7 +178,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
           order_index: 2,
           asset: {
             kind: "emoji",
-            ref: "EMJ-three",
+            ref: "3️⃣",
           },
           label: "3",
         },
@@ -218,7 +218,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
           order_index: 3,
           asset: {
             kind: "emoji",
-            ref: "EMJ-four",
+            ref: "4️⃣",
           },
           label: "4",
         },
@@ -227,7 +227,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
           order_index: 1,
           asset: {
             kind: "emoji",
-            ref: "EMJ-two",
+            ref: "2️⃣",
           },
           label: "2",
         },
@@ -236,7 +236,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
           order_index: 0,
           asset: {
             kind: "emoji",
-            ref: "EMJ-one",
+            ref: "1️⃣",
           },
           label: "1",
         },
@@ -245,7 +245,7 @@ export const SEED_MONT_A02: ContentSeed<unknown, unknown>[] = [
           order_index: 2,
           asset: {
             kind: "emoji",
-            ref: "EMJ-three",
+            ref: "3️⃣",
           },
           label: "3",
         },

@@ -12,7 +12,7 @@ export const GT022_FIXTURES: {
       scene_objects: [
         {
           id: "target-butterfly",
-          asset: { kind: "emoji", ref: "EMJ-butterfly" },
+          asset: { kind: "emoji", ref: "🦋" },
           is_target: true,
           is_hidden: false,
           x: 250,
@@ -20,7 +20,7 @@ export const GT022_FIXTURES: {
         },
         {
           id: "distractor-flower1",
-          asset: { kind: "emoji", ref: "EMJ-cherry-blossom" },
+          asset: { kind: "emoji", ref: "🌸" },
           is_target: false,
           is_hidden: false,
           x: 150,
@@ -28,7 +28,7 @@ export const GT022_FIXTURES: {
         },
         {
           id: "distractor-flower2",
-          asset: { kind: "emoji", ref: "EMJ-sunflower" },
+          asset: { kind: "emoji", ref: "🌻" },
           is_target: false,
           is_hidden: false,
           x: 450,
@@ -50,7 +50,7 @@ export const GT022_FIXTURES: {
       scene_objects: [
         {
           id: "fish-1",
-          asset: { kind: "emoji", ref: "EMJ-tropical-fish" },
+          asset: { kind: "emoji", ref: "🐠" },
           is_target: true,
           is_hidden: false,
           x: 200,
@@ -58,7 +58,7 @@ export const GT022_FIXTURES: {
         },
         {
           id: "fish-2",
-          asset: { kind: "emoji", ref: "EMJ-tropical-fish" },
+          asset: { kind: "emoji", ref: "🐠" },
           is_target: true,
           is_hidden: false,
           x: 600,
@@ -66,7 +66,7 @@ export const GT022_FIXTURES: {
         },
         {
           id: "seaweed",
-          asset: { kind: "emoji", ref: "EMJ-herb" },
+          asset: { kind: "emoji", ref: "🌿" },
           is_target: false,
           is_hidden: false,
           x: 400,
@@ -74,7 +74,7 @@ export const GT022_FIXTURES: {
         },
         {
           id: "rock",
-          asset: { kind: "emoji", ref: "EMJ-rock" },
+          asset: { kind: "emoji", ref: "🪨" },
           is_target: false,
           is_hidden: false,
           x: 300,
@@ -96,7 +96,7 @@ export const GT022_FIXTURES: {
       scene_objects: [
         {
           id: "target-rabbit",
-          asset: { kind: "emoji", ref: "EMJ-rabbit-face" },
+          asset: { kind: "emoji", ref: "🐰" },
           is_target: true,
           is_hidden: true,
           x: 350,
@@ -104,7 +104,7 @@ export const GT022_FIXTURES: {
         },
         {
           id: "bush",
-          asset: { kind: "emoji", ref: "EMJ-deciduous-tree" },
+          asset: { kind: "emoji", ref: "🌳" },
           is_target: false,
           is_hidden: false,
           x: 350,
@@ -112,7 +112,7 @@ export const GT022_FIXTURES: {
         },
         {
           id: "distractor-bird",
-          asset: { kind: "emoji", ref: "EMJ-bird" },
+          asset: { kind: "emoji", ref: "🐦" },
           is_target: false,
           is_hidden: false,
           x: 650,

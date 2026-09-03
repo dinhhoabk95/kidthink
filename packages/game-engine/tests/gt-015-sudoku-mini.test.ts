@@ -49,8 +49,8 @@ describe("GT-015: Sudoku hình ảnh mini (sudoku-mini)", () => {
         grid_size: 2 as const,
         regions: "row_col" as const,
         symbols: [
-          { symbol_id: "s1", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-          { symbol_id: "s2", asset: { kind: "emoji", ref: "EMJ-banana" } },
+          { symbol_id: "s1", asset: { kind: "emoji", ref: "🍎" } },
+          { symbol_id: "s2", asset: { kind: "emoji", ref: "🍌" } },
         ],
         cells: [
           { row: 0, col: 0, symbol_id: null },

@@ -14,8 +14,8 @@ export const GT036_FIXTURES: GT036Fixture[] = [
     content: {
       prompt: "Bé tự xếp một quy luật lặp lại bằng ngôi sao và mặt trăng nhé!",
       palette: [
-        { id: "star", asset: { kind: "emoji", ref: "EMJ-star" } },
-        { id: "moon", asset: { kind: "emoji", ref: "EMJ-crescent-moon" } },
+        { id: "star", asset: { kind: "emoji", ref: "⭐" } },
+        { id: "moon", asset: { kind: "emoji", ref: "🌙" } },
       ],
       track_length: 6,
       min_repetitions: 3,
@@ -35,9 +35,9 @@ export const GT036_FIXTURES: GT036Fixture[] = [
     content: {
       prompt: "Bé chọn hoa, cây, nấm và tự tạo quy luật riêng nhé!",
       palette: [
-        { id: "flower", asset: { kind: "emoji", ref: "EMJ-flower" } },
-        { id: "tree", asset: { kind: "emoji", ref: "EMJ-tree" } },
-        { id: "mushroom", asset: { kind: "emoji", ref: "EMJ-mushroom" } },
+        { id: "flower", asset: { kind: "emoji", ref: "🌸" } },
+        { id: "tree", asset: { kind: "emoji", ref: "🌳" } },
+        { id: "mushroom", asset: { kind: "emoji", ref: "🍄" } },
       ],
       track_length: 8,
       min_repetitions: 2,
@@ -60,9 +60,9 @@ export const GT036_FIXTURES: GT036Fixture[] = [
       palette: [
         {
           id: "red_heart",
-          asset: { kind: "emoji", ref: "EMJ-sparkling-heart" },
+          asset: { kind: "emoji", ref: "💖" },
         },
-        { id: "blue_heart", asset: { kind: "emoji", ref: "EMJ-blue-circle" } },
+        { id: "blue_heart", asset: { kind: "emoji", ref: "🔵" } },
       ],
       track_length: 8,
       min_repetitions: 2,

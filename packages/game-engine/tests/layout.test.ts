@@ -200,17 +200,17 @@ describe("Game Layout Engine (BR-LAY-01..10)", () => {
         prompt: "Chọn quả táo đúng",
         target_item: {
           item_id: "t1",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
         },
         options: [
           {
             item_id: "o1",
-            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            asset: { kind: "emoji", ref: "🍎" },
             is_correct: true,
           },
           {
             item_id: "o2",
-            asset: { kind: "emoji", ref: "EMJ-banana" },
+            asset: { kind: "emoji", ref: "🍌" },
             is_correct: false,
           },
         ],
@@ -260,22 +260,22 @@ describe("Game Layout Engine (BR-LAY-01..10)", () => {
         prompt: "Chọn quả táo đúng",
         target_item: {
           item_id: "t1",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
         },
         options: [
           {
             item_id: "o1",
-            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            asset: { kind: "emoji", ref: "🍎" },
             is_correct: true,
           },
           {
             item_id: "o2",
-            asset: { kind: "emoji", ref: "EMJ-banana" },
+            asset: { kind: "emoji", ref: "🍌" },
             is_correct: false,
           },
           {
             item_id: "o3",
-            asset: { kind: "emoji", ref: "EMJ-grapes" },
+            asset: { kind: "emoji", ref: "🍇" },
             is_correct: false,
           },
         ],

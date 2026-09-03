@@ -15,17 +15,17 @@ export const GT018_FIXTURES: {
       options: [
         {
           item_id: "cat",
-          asset: { kind: "emoji", ref: "EMJ-cat" },
+          asset: { kind: "emoji", ref: "🐱" },
           is_correct: true,
         },
         {
           item_id: "dog",
-          asset: { kind: "emoji", ref: "EMJ-dog" },
+          asset: { kind: "emoji", ref: "🐶" },
           is_correct: false,
         },
         {
           item_id: "bird",
-          asset: { kind: "emoji", ref: "EMJ-bird" },
+          asset: { kind: "emoji", ref: "🐦" },
           is_correct: false,
         },
       ],
@@ -47,17 +47,17 @@ export const GT018_FIXTURES: {
       options: [
         {
           item_id: "banana",
-          asset: { kind: "emoji", ref: "EMJ-banana" },
+          asset: { kind: "emoji", ref: "🍌" },
           is_correct: true,
         },
         {
           item_id: "apple",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
           is_correct: false,
         },
         {
           item_id: "grape",
-          asset: { kind: "emoji", ref: "EMJ-grapes" },
+          asset: { kind: "emoji", ref: "🍇" },
           is_correct: false,
         },
       ],
@@ -81,17 +81,17 @@ export const GT018_FIXTURES: {
       options: [
         {
           item_id: "rabbit",
-          asset: { kind: "emoji", ref: "EMJ-rabbit-face" },
+          asset: { kind: "emoji", ref: "🐰" },
           is_correct: false,
         },
         {
           item_id: "ant",
-          asset: { kind: "emoji", ref: "EMJ-ant" },
+          asset: { kind: "emoji", ref: "🐜" },
           is_correct: false,
         },
         {
           item_id: "elephant",
-          asset: { kind: "emoji", ref: "EMJ-elephant" },
+          asset: { kind: "emoji", ref: "🐘" },
           is_correct: false,
         },
       ],

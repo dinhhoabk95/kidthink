@@ -37,22 +37,22 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
       instruments: [
         {
           instrument_id: "inst1",
-          asset: { kind: "emoji" as const, ref: "EMJ-drum" },
+          asset: { kind: "emoji" as const, ref: "🥁" },
           freq: 200,
         },
         {
           instrument_id: "inst2",
-          asset: { kind: "emoji" as const, ref: "EMJ-bell" },
+          asset: { kind: "emoji" as const, ref: "🔔" },
           freq: 400,
         },
         {
           instrument_id: "inst3",
-          asset: { kind: "emoji" as const, ref: "EMJ-cymbal" },
+          asset: { kind: "emoji" as const, ref: "🥁" },
           freq: 600,
         },
         {
           instrument_id: "inst4",
-          asset: { kind: "emoji" as const, ref: "EMJ-gong" },
+          asset: { kind: "emoji" as const, ref: "🔔" },
           freq: 800,
         },
       ],
@@ -73,12 +73,12 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
       instruments: [
         {
           instrument_id: "drum",
-          asset: { kind: "emoji" as const, ref: "EMJ-drum" },
+          asset: { kind: "emoji" as const, ref: "🥁" },
           freq: 200,
         },
         {
           instrument_id: "bell",
-          asset: { kind: "emoji" as const, ref: "EMJ-bell" },
+          asset: { kind: "emoji" as const, ref: "🔔" },
           freq: 400,
         },
       ],

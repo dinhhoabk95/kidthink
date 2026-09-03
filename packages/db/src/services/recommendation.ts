@@ -7,7 +7,6 @@ import {
   type RecommendationsPayload,
   shuffleWithSeed,
 } from "@mindkid/adaptive";
-import { getByCode } from "@mindkid/emoji";
 import {
   type AccessTier,
   deriveAgeBand,
@@ -46,14 +45,10 @@ export interface GetGuestRecommendationsOptions {
 type PublishedGameLevel = typeof gameLevels.$inferSelect;
 
 /**
- * Resolves thumbnail emoji code to string or fallback.
+ * Resolves thumbnail emoji to string with fallback. (Task #202 D-EE)
  */
-export function resolveThumbnailEmoji(emojiCode?: string | null): string {
-  if (!emojiCode) {
-    return "⭐";
-  }
-  const entry = getByCode(emojiCode);
-  return entry?.emoji || emojiCode;
+export function resolveThumbnailEmoji(emoji?: string | null): string {
+  return emoji || "🎮";
 }
 
 function isLevelAgeMatch(

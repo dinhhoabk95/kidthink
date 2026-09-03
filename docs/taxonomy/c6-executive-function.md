@@ -16,59 +16,83 @@
 
 ## C6.ATT — Attention (3)
 
-| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
+| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
 |---|---|---|---|---|---|---|
-| C6.ATT.01 | Duy trì chú ý tới hết nhiệm vụ | 3 | 2 | — | `observe` | chờ |
-| C6.ATT.02 | Tìm mục tiêu giữa nhiều vật | 3 | 2 | C4.VIS.02 | `observe` | chờ |
-| C6.ATT.03 | Bỏ qua vật gây nhiễu | 4 | 3 | C6.ATT.02 | `observe` `inhibit` | chờ |
+| C6.ATT.01 | Duy trì chú ý tới hết nhiệm vụ | 3 | 2 | — | `observe` | b |
+| C6.ATT.02 | Tìm mục tiêu giữa nhiều vật | 3 | 2 | C4.VIS.02 | `observe` | b |
+| C6.ATT.03 | Bỏ qua vật gây nhiễu | 4 | 3 | C6.ATT.02 | `observe` `inhibit` | c |
 
 ## C6.WM — Working Memory (4)
 
 Giữ thông tin trong đầu **trong khi** làm việc khác.
 
-| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
+| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
 |---|---|---|---|---|---|---|
-| C6.WM.01 | Nhớ và thực hiện 2 bước | 3 | 2 | C5.LIS.02 | `recall` `plan` | chờ |
-| C6.WM.02 | Nhớ và thực hiện 3 bước | 5 | 4 | C6.WM.01 | `recall` `plan` | chờ |
-| C6.WM.03 | Nhớ vị trí sau khi bị che | 4 | 3 | C4.MEM.01 | `recall` | |
-| C6.WM.04 | Nhớ hình sau khi biến mất | 4 | 3 | C4.MEM.02 | `recall` | |
+| C6.WM.01 | Nhớ và thực hiện 2 bước | 3 | 2 | C5.LIS.02 | `recall` `plan` | b |
+| C6.WM.02 | Nhớ và thực hiện 3 bước | 5 | 4 | C6.WM.01 | `recall` `plan` | a |
+| C6.WM.03 | Nhớ vị trí sau khi bị che | 4 | 3 | C4.MEM.01 | `recall` | c |
+| C6.WM.04 | Nhớ hình sau khi biến mất | 4 | 3 | C4.MEM.02 | `recall` | c |
 
 ## C6.INH — Inhibition (4)
 
 Kìm phản xạ sai. Trục **thiết yếu** của EF — không có strand nào thay thế được.
 
-| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
+| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
 |---|---|---|---|---|---|---|
-| C6.INH.01 | Không chọn màu bị cấm | 4 | 3 | C3.CLS.01 | `inhibit` | ⬜ |
-| C6.INH.02 | Chỉ chọn một hình nhất định | 3 | 2 | C3.CLS.02 | `inhibit` | ⬜ |
-| C6.INH.03 | Simon Says — chỉ làm khi có tín hiệu | 4 | 3 | C5.LIS.02 · C6.ATT.01 | `inhibit` `listen` | ⬜ |
-| C6.INH.04 | Go / No-Go | 5 | 4 | C6.INH.03 | `inhibit` | ⬜ |
+| C6.INH.01 | Không chọn màu bị cấm | 4 | 3 | C3.CLS.01 | `inhibit` | c |
+| C6.INH.02 | Chỉ chọn một hình nhất định | 3 | 2 | C3.CLS.02 | `inhibit` | b |
+| C6.INH.03 | Simon Says — chỉ làm khi có tín hiệu | 4 | 3 | C5.LIS.02 · C6.ATT.01 | `inhibit` `listen` | c |
+| C6.INH.04 | Go / No-Go | 5 | 4 | C6.INH.03 | `inhibit` | a |
 
 ## C6.FLX — Cognitive Flexibility (3)
 
 Chuyển tiêu chí giữa lúc đang làm. Trục **thiết yếu** thứ hai.
 
-| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
+| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
 |---|---|---|---|---|---|---|
-| C6.FLX.01 | Đổi luật giữa vòng chơi | 5 | 4 | C3.CLS.06 | `shift` | ⬜ |
-| C6.FLX.02 | Đổi tiêu chí phân loại | 5 | 4 | C3.CLS.01 · C3.CLS.02 | `shift` `sort` | ⬜ |
-| C6.FLX.03 | Chuyển giữa hai nhiệm vụ | 6 | 5 | C6.FLX.01 | `shift` `plan` | ⬜ |
+| C6.FLX.01 | Đổi luật giữa vòng chơi | 5 | 4 | C3.CLS.06 | `shift` | a |
+| C6.FLX.02 | Đổi tiêu chí phân loại | 5 | 4 | C3.CLS.01 · C3.CLS.02 | `shift` `sort` | a |
+| C6.FLX.03 | Chuyển giữa hai nhiệm vụ | 6 | 5 | C6.FLX.01 | `shift` `plan` | a |
 
 ## C6.PLN — Planning (3)
 
-| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
+| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
 |---|---|---|---|---|---|---|
-| C6.PLN.01 | Lập kế hoạch trước khi làm | 5 | 4 | — | `plan` | |
-| C6.PLN.02 | Chọn đường đi tối ưu | 5 | 4 | C2.MAZ.02 | `plan` `compare` | chờ |
-| C6.PLN.03 | Thử trong đầu trước khi thao tác | 6 | 5 | C6.PLN.01 | `plan` `predict` | chờ |
+| C6.PLN.01 | Lập kế hoạch trước khi làm | 5 | 4 | — | `plan` | a |
+| C6.PLN.02 | Chọn đường đi tối ưu | 5 | 4 | C2.MAZ.02 | `plan` `compare` | a |
+| C6.PLN.03 | Thử trong đầu trước khi thao tác | 6 | 5 | C6.PLN.01 | `plan` `predict` | a |
 
 ## C6.MON — Self Monitoring (3)
 
-| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Status |
+| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
 |---|---|---|---|---|---|---|
-| C6.MON.01 | Tự phát hiện lỗi | 5 | 4 | C1.CNT.10 | `verify` | chờ |
-| C6.MON.02 | Tự sửa lỗi | 5 | 4 | C6.MON.01 | `verify` `shift` | chờ |
-| C6.MON.03 | Tự đánh giá kết quả | 6 | 5 | C6.MON.02 | `verify` `describe` | ⬜ |
+| C6.MON.01 | Tự phát hiện lỗi | 5 | 4 | C1.CNT.10 | `verify` | a |
+| C6.MON.02 | Tự sửa lỗi | 5 | 4 | C6.MON.01 | `verify` `shift` | a |
+| C6.MON.03 | Tự đánh giá kết quả | 6 | 5 | C6.MON.02 | `verify` `describe` | a |
+
+## C6.PER — Persistence (5)
+
+Kiên trì và nỗ lực. KDI 3 *Engagement* · GOLD 11b *Persists*.
+
+| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
+|---|---|---|---|---|---|---|
+| C6.PER.01 | Làm hết nhiệm vụ | 3 | 2 | C6.ATT.01 | `plan` `inhibit` | b |
+| C6.PER.02 | Thử lại sau khi sai | 4 | 3 | C6.PER.01 | `verify` `plan` | c |
+| C6.PER.03 | Làm xong rồi mới chơi tiếp | 5 | 3 | C6.PER.01 | `inhibit` `plan` | c |
+| C6.PER.04 | Chọn việc khó hơn | 5 | 4 | C6.PER.02 | `plan` `compare` | a |
+| C6.PER.05 | Chịu chờ kết quả | 5 | 4 | C6.PER.03 | `inhibit` `predict` | a |
+
+## C6.INI — Initiative (5)
+
+Khởi xướng và lựa chọn. KDI 1 *Initiative*.
+
+| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
+|---|---|---|---|---|---|---|
+| C6.INI.01 | Tự chọn hoạt động | 3 | 2 | — | `plan` `describe` | b |
+| C6.INI.02 | Nói ý định trước khi làm | 5 | 4 | C6.INI.01 · C6.PLN.01 | `plan` `describe` | a |
+| C6.INI.03 | Nhận ra khi cần giúp | 5 | 4 | C6.MON.01 | `verify` `describe` | a |
+| C6.INI.04 | Tự đặt mục tiêu nhỏ | 5 | 4 | C6.INI.02 | `plan` `create` | a |
+| C6.INI.05 | Chọn công cụ phù hợp trước khi làm | 5 | 4 | C6.INI.02 · C4.TOO.02 | `plan` `infer` | a |
 
 ---
 

@@ -1,6 +1,5 @@
 import { getOwnerDb, skills, strands } from "@mindkid/db";
 import { COMPETENCIES } from "@mindkid/taxonomy";
-import { eq } from "drizzle-orm";
 import { defineEventHandler, getQuery, setHeader } from "h3";
 
 export default defineEventHandler(async (event) => {
@@ -24,10 +23,7 @@ export default defineEventHandler(async (event) => {
     };
   }
 
-  const dbSkills = await db
-    .select()
-    .from(skills)
-    .where(eq(skills.status, "seeded"));
+  const dbSkills = await db.select().from(skills);
 
   return {
     competencies: COMPETENCIES,

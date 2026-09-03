@@ -1,4 +1,3 @@
-import { getByCode } from "@mindkid/emoji";
 import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
@@ -22,10 +21,11 @@ export type ItemVisualState =
   | "wrong"
   | "locked";
 
-/** Asset như contract khai — `emoji` mang mã `EMJ-*`, `image` mang đường dẫn. */
+/** Asset như contract khai — `emoji` mang ký tự UTF-8 thật, `image` mang đường dẫn, `text` mang chữ hiển thị. */
 export type RenderAsset =
   | { readonly kind: "emoji"; readonly ref: string }
-  | { readonly kind: "image"; readonly path: string };
+  | { readonly kind: "image"; readonly path: string }
+  | { readonly kind: "text"; readonly text: string };
 
 /** Một vật thể vẽ được, đã tách khỏi hình dạng `content_pack` của từng engine. */
 export interface RenderItem {
@@ -96,17 +96,9 @@ export function setEmojiResolver(resolver: EmojiResolver | null): void {
   customEmojiResolver = resolver;
 }
 
-const ASCII_PRINTABLE_REGEX = /^[\x20-\x7E]+$/;
-
 /**
- * Tra cứu glyph emoji theo `asset.ref`.
- *
- * Mặc định trả `null` trên mọi mã `EMJ-*` để `drawSlotItem()` kích hoạt
- * fallback icon và emit `MISSING_EMOJI_GLYPH` cho telemetry,
- * thay vì in chuỗi mã ra màn hình cho trẻ đọc.
- *
- * Corpus hiện còn glyph thô ở `asset.ref` (nợ đo ở `emoji-ref-debt.test.ts`),
- * nên một ref không khớp mã mà cũng không phải ASCII thì được coi là glyph sẵn.
+ * Tra cứu glyph emoji theo `asset.ref` (Task #202 D-EE).
+ * Ref chính là glyph UTF-8 thật.
  */
 export function resolveEmojiGlyph(ref: string): string | null {
   if (customEmojiResolver) {
@@ -115,12 +107,7 @@ export function resolveEmojiGlyph(ref: string): string | null {
       return resolved;
     }
   }
-  const entry = getByCode(ref);
-  if (entry?.emoji) {
-    return entry.emoji;
-  }
-  // Glyph thô còn sót trong corpus: không phải mã, không phải ASCII → vẽ luôn.
-  if (ref.length > 0 && !ASCII_PRINTABLE_REGEX.test(ref)) {
+  if (ref && ref.length > 0) {
     return ref;
   }
   return null;
@@ -132,20 +119,82 @@ export function sceneBox(rs: RenderSystem): SceneBox {
 
 export function drawSceneBackground(
   ctx: CanvasRenderingContext2D,
-  rs: RenderSystem
+  rs: RenderSystem,
+  themeId?: string
 ): void {
   ctx.save();
-  // Warm oatmeal paper base
-  ctx.fillStyle = designTokens.colors.surface[50];
+  if (themeId === "farm" || themeId === "nature") {
+    // Farm / Nature: soft pasture sky & sunlit meadow gradient
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT);
+    skyGrad.addColorStop(0, "#f0fdf4");
+    skyGrad.addColorStop(0.55, "#fbf9f5");
+    skyGrad.addColorStop(1, "#ecfdf5");
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
+  } else if (themeId === "space") {
+    // Space: soft pastel starlight
+    const spaceGrad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT);
+    spaceGrad.addColorStop(0, "#e0e7ff");
+    spaceGrad.addColorStop(0.6, "#fbf9f5");
+    spaceGrad.addColorStop(1, "#ede9fe");
+    ctx.fillStyle = spaceGrad;
+    ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
+  } else if (themeId === "ocean") {
+    // Ocean: gentle aquamarine
+    const seaGrad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT);
+    seaGrad.addColorStop(0, "#e0f2fe");
+    seaGrad.addColorStop(0.6, "#fbf9f5");
+    seaGrad.addColorStop(1, "#ccfbf1");
+    ctx.fillStyle = seaGrad;
+    ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
+  } else {
+    // Default / home / wood / classroom: Warm oatmeal paper base
+    ctx.fillStyle = designTokens.colors.surface[50];
+    ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
+
+    const grad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT * 0.45);
+    grad.addColorStop(0, "rgba(255, 250, 240, 0.65)");
+    grad.addColorStop(1, "rgba(251, 249, 245, 0)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
+  }
+
+  // Soft subtle corner accents (Kinder-Tactile Montessori vignette)
+  const vignette = ctx.createRadialGradient(
+    rs.LOGIC_WIDTH / 2,
+    rs.LOGIC_HEIGHT / 2,
+    rs.LOGIC_HEIGHT * 0.4,
+    rs.LOGIC_WIDTH / 2,
+    rs.LOGIC_HEIGHT / 2,
+    rs.LOGIC_WIDTH * 0.65
+  );
+  vignette.addColorStop(0, "rgba(255, 255, 255, 0)");
+  vignette.addColorStop(1, "rgba(212, 197, 171, 0.12)");
+  ctx.fillStyle = vignette;
   ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
 
-  // Soft sunlit warm gradient from top
-  const grad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT * 0.45);
-  grad.addColorStop(0, "rgba(255, 250, 240, 0.65)");
-  grad.addColorStop(1, "rgba(251, 249, 245, 0)");
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
+  ctx.restore();
+}
 
+/** Hào quang màu hổ phách khi kéo vật phẩm qua ô đích */
+export function drawTargetHoverAura(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  radius: number,
+  phase = 0
+): void {
+  ctx.save();
+  const pulse = 1 + Math.sin(phase * Math.PI * 2) * 0.08;
+  const r = radius * pulse;
+  const auraGrad = ctx.createRadialGradient(x, y, r * 0.3, x, y, r * 1.3);
+  auraGrad.addColorStop(0, "rgba(255, 191, 0, 0.45)");
+  auraGrad.addColorStop(0.7, "rgba(255, 223, 160, 0.2)");
+  auraGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
+  ctx.fillStyle = auraGrad;
+  ctx.beginPath();
+  ctx.arc(x, y, r * 1.3, 0, Math.PI * 2);
+  ctx.fill();
   ctx.restore();
 }
 
@@ -165,18 +214,18 @@ export function drawPromptText(
   }
 
   ctx.save();
-  ctx.font = `${PROMPT_FONT_PX}px ${designTokens.fonts.heading}`;
+  ctx.font = `bold ${PROMPT_FONT_PX}px ${designTokens.fonts.sans}`;
   const textMetrics = ctx.measureText(prompt);
-  const cardW = Math.max(340, Math.min(840, textMetrics.width + 100));
-  const cardH = 50;
+  const cardW = Math.max(360, Math.min(860, textMetrics.width + 100));
+  const cardH = 54;
   const cardX = (width - cardW) / 2;
   const cardY = height * PROMPT_TOP_RATIO;
-  const radius = 24;
+  const radius = 27;
 
   // Ambient card shadow
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.12)";
-  ctx.shadowBlur = 10;
+  ctx.shadowColor = "rgba(130, 118, 96, 0.16)";
+  ctx.shadowBlur = 12;
   ctx.shadowOffsetY = 4;
   ctx.fillStyle = designTokens.colors.surface[0];
   ctx.beginPath();
@@ -194,8 +243,8 @@ export function drawPromptText(
   ctx.stroke();
 
   // Honey Amber Speaker Icon Badge at left
-  const badgeRadius = 16;
-  const badgeX = cardX + 24;
+  const badgeRadius = 18;
+  const badgeX = cardX + 28;
   const badgeY = cardY + cardH / 2;
   ctx.fillStyle = designTokens.colors.montessori.amber;
   ctx.beginPath();
@@ -204,17 +253,17 @@ export function drawPromptText(
 
   // Speaker symbol inside badge
   ctx.font =
-    '16px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif';
+    '18px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif';
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("🔊", badgeX, badgeY);
 
   // Prompt text
   ctx.fillStyle = designTokens.colors.surface[900];
-  ctx.font = `bold ${PROMPT_FONT_PX}px ${designTokens.fonts.heading}`;
+  ctx.font = `bold 22px ${designTokens.fonts.sans}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(prompt, cardX + cardW / 2 + 12, cardY + cardH / 2);
+  ctx.fillText(prompt, cardX + cardW / 2 + 14, cardY + cardH / 2);
 
   ctx.restore();
 }
@@ -303,25 +352,50 @@ export function drawWoodenTokenDock(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem
 ): void {
-  const dockW = rs.LOGIC_WIDTH * 0.88;
-  const dockH = 130;
+  const dockW = rs.LOGIC_WIDTH * 0.9;
+  const dockH = 136;
   const dockX = (rs.LOGIC_WIDTH - dockW) / 2;
   const dockY = rs.LOGIC_HEIGHT - dockH - 12;
+  const radius = 32;
 
   ctx.save();
+  // 1. Ambient drop shadow
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.12)";
-  ctx.shadowBlur = 10;
-  ctx.shadowOffsetY = 4;
+  ctx.shadowColor = "rgba(130, 118, 96, 0.16)";
+  ctx.shadowBlur = 14;
+  ctx.shadowOffsetY = 6;
   ctx.fillStyle = designTokens.colors.surface[100];
   ctx.beginPath();
-  ctx.roundRect(dockX, dockY, dockW, dockH, 32);
+  ctx.roundRect(dockX, dockY, dockW, dockH, radius);
   ctx.fill();
   ctx.restore();
 
+  // 2. 3D Bottom Wood Slab
+  ctx.save();
+  ctx.translate(0, 4);
+  ctx.fillStyle = designTokens.colors.montessori.woodBorder;
+  ctx.beginPath();
+  ctx.roundRect(dockX, dockY, dockW, dockH, radius);
+  ctx.fill();
+  ctx.restore();
+
+  // 3. Dock Surface & Bevel
+  ctx.fillStyle = designTokens.colors.surface[50];
   ctx.strokeStyle = designTokens.colors.montessori.woodBevel;
-  ctx.lineWidth = 3;
+  ctx.lineWidth = 3.5;
+  ctx.beginPath();
+  ctx.roundRect(dockX, dockY, dockW, dockH, radius);
+  ctx.fill();
   ctx.stroke();
+
+  // 4. Specular highlight
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(dockX + radius, dockY + 4);
+  ctx.lineTo(dockX + dockW - radius, dockY + 4);
+  ctx.stroke();
+
   ctx.restore();
 }
 
@@ -382,6 +456,10 @@ export function drawAssetInSlot(
   if (!asset) {
     return false;
   }
+  if (asset.kind === "text") {
+    drawTextInSlot(ctx, asset.text, slot);
+    return true;
+  }
   if (asset.kind === "image") {
     // Ảnh bitmap chưa có đường nạp trong engine — ô thay thế trung tính
     // (`BR-ENG-09`: asset hỏng ❌ NEVER làm trống màn).
@@ -397,17 +475,41 @@ export function drawAssetInSlot(
   return true;
 }
 
+/** Mã tham chiếu emoji, ví dụ `🍎`. */
+const EMOJI_CODE_REGEX = /^EMJ-[a-z0-9-]+$/i;
+
+/**
+ * Vẽ một glyph vào ô.
+ *
+ * Nhận cả **mã** `EMJ-*` lẫn ký tự thật, vì nơi gọi không phải lúc nào cũng
+ * phân giải trước: `GT-004` truyền thẳng `group.label_emoji`, và ngày
+ * 2026-09-01 chụp thật thấy chuỗi `⚽` / `👦` hiện **to bằng nửa
+ * màn** cho trẻ 3-6 đọc. Mã không phân giải được thì vẽ ô thay thế, đúng ý đã
+ * ghi ở `resolveEmojiGlyph()`: cấm — NEVER in mã ra màn hình cho trẻ.
+ */
 export function drawGlyphInSlot(
   ctx: CanvasRenderingContext2D,
   glyph: string,
   slot: Slot
 ): void {
+  let drawable = glyph;
+  if (EMOJI_CODE_REGEX.test(drawable)) {
+    const resolved = resolveEmojiGlyph(drawable);
+    // Sau Task #202, `resolveEmojiGlyph` coi ref chính là glyph và trả nguyên
+    // chuỗi vào. Nên mã `EMJ-*` còn sót lại trong corpus sẽ quay về y hệt —
+    // cấm — NEVER vẽ nó, và cấm gọi đệ quy vì nó không bao giờ hội tụ.
+    if (!resolved || EMOJI_CODE_REGEX.test(resolved)) {
+      drawPlaceholderBox(ctx, slot);
+      return;
+    }
+    drawable = resolved;
+  }
   const size = Math.floor(Math.min(slot.w, slot.h) * GLYPH_FILL_RATIO);
   ctx.save();
   ctx.font = `${size}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(glyph, slot.x, slot.y);
+  ctx.fillText(drawable, slot.x, slot.y);
   ctx.restore();
 }
 
@@ -535,17 +637,33 @@ export function drawEmptyTargetSlot(
 ): void {
   ctx.save();
   const r = Math.min(slot.w, slot.h) / 2;
+  const radius = Math.max(12, r * 0.25);
 
-  // Soft wooden recessed socket background
+  // 1. Soft recessed inner shadow (sunken wooden socket)
+  ctx.save();
   ctx.fillStyle = designTokens.colors.surface[100];
   ctx.beginPath();
-  ctx.roundRect(slot.x - r, slot.y - r, r * 2, r * 2, Math.max(8, r * 0.2));
+  ctx.roundRect(slot.x - r, slot.y - r, r * 2, r * 2, radius);
   ctx.fill();
 
-  // Dashed wood/amber outline
-  ctx.strokeStyle = designTokens.colors.surface[400];
-  ctx.lineWidth = 3;
+  // Inset rim shadow
+  ctx.strokeStyle = "rgba(130, 118, 96, 0.25)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.restore();
+
+  // 2. Dashed warm honey amber guide border
+  ctx.strokeStyle = designTokens.colors.montessori.amber;
+  ctx.lineWidth = 2.5;
   ctx.setLineDash([8, 6]);
+  ctx.beginPath();
+  ctx.roundRect(
+    slot.x - r + 3,
+    slot.y - r + 3,
+    (r - 3) * 2,
+    (r - 3) * 2,
+    Math.max(10, r * 0.2)
+  );
   ctx.stroke();
   ctx.restore();
 }

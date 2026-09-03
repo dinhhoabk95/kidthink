@@ -116,7 +116,7 @@ describe("Task 5 — GET /api/managers/taxonomy (BR-TXB-01..03, BR-TXB-06, D-IT)
         ageMax: 5,
         difficulty: 1,
         thinkingProcesses: ["count"],
-        status: "seeded",
+        tier: "basic",
         position: 99,
       })
       .onConflictDoNothing()

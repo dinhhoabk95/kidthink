@@ -21,17 +21,17 @@ describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
       prompt: "Quả nào màu đỏ?",
       target_item: {
         item_id: "target_apple",
-        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        asset: { kind: "emoji", ref: "🍎" },
       },
       options: [
         {
           item_id: "opt_apple",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
           is_correct: true,
         },
         {
           item_id: "opt_banana",
-          asset: { kind: "emoji", ref: "EMJ-banana" },
+          asset: { kind: "emoji", ref: "🍌" },
           is_correct: false,
         },
       ],
@@ -57,17 +57,17 @@ describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
       items: [
         {
           item_id: "i1",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
           is_correct: true,
         },
         {
           item_id: "i2",
-          asset: { kind: "emoji", ref: "EMJ-banana" },
+          asset: { kind: "emoji", ref: "🍌" },
           is_correct: true,
         },
         {
           item_id: "i3",
-          asset: { kind: "emoji", ref: "EMJ-orange" },
+          asset: { kind: "emoji", ref: "🍊" },
           is_correct: false,
         },
       ],
@@ -98,13 +98,13 @@ describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
         {
           item_id: "i1",
           attribute: "flower",
-          asset: { kind: "emoji", ref: "EMJ-sunflower" },
+          asset: { kind: "emoji", ref: "🌻" },
           is_correct: true,
         },
         {
           item_id: "i2",
           attribute: "leaf",
-          asset: { kind: "emoji", ref: "EMJ-rose" },
+          asset: { kind: "emoji", ref: "🌹" },
           is_correct: false,
         },
       ],
@@ -127,28 +127,28 @@ describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
     content_pack: {
       prompt: "Phân loại động vật và cây",
       groups: [
-        { group_id: "g1", label: "Động vật", label_emoji: "EMJ-cat" },
-        { group_id: "g2", label: "Thực vật", label_emoji: "EMJ-red-apple" },
+        { group_id: "g1", label: "Động vật", label_emoji: "🐱" },
+        { group_id: "g2", label: "Thực vật", label_emoji: "🍎" },
       ],
       items: [
         {
           item_id: "i1",
-          asset: { kind: "emoji", ref: "EMJ-cat" },
+          asset: { kind: "emoji", ref: "🐱" },
           correct_group_id: "g1",
         },
         {
           item_id: "i2",
-          asset: { kind: "emoji", ref: "EMJ-dog" },
+          asset: { kind: "emoji", ref: "🐶" },
           correct_group_id: "g1",
         },
         {
           item_id: "i3",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
           correct_group_id: "g2",
         },
         {
           item_id: "i4",
-          asset: { kind: "emoji", ref: "EMJ-banana" },
+          asset: { kind: "emoji", ref: "🍌" },
           correct_group_id: "g2",
         },
       ],
@@ -175,22 +175,22 @@ describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
           pair_id: "p1",
           left: {
             item_id: "l1",
-            asset: { kind: "emoji", ref: "EMJ-cat" },
+            asset: { kind: "emoji", ref: "🐱" },
           },
           right: {
             item_id: "r1",
-            asset: { kind: "emoji", ref: "EMJ-cat" },
+            asset: { kind: "emoji", ref: "🐱" },
           },
         },
         {
           pair_id: "p2",
           left: {
             item_id: "l2",
-            asset: { kind: "emoji", ref: "EMJ-dog" },
+            asset: { kind: "emoji", ref: "🐶" },
           },
           right: {
             item_id: "r2",
-            asset: { kind: "emoji", ref: "EMJ-dog" },
+            asset: { kind: "emoji", ref: "🐶" },
           },
         },
       ],
@@ -215,19 +215,19 @@ describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
         {
           step_id: "s1",
           order_index: 0,
-          asset: { kind: "emoji", ref: "EMJ-bird" },
+          asset: { kind: "emoji", ref: "🐦" },
           label: "Chim nhỏ",
         },
         {
           step_id: "s2",
           order_index: 1,
-          asset: { kind: "emoji", ref: "EMJ-dove" },
+          asset: { kind: "emoji", ref: "🕊️" },
           label: "Bồ câu",
         },
         {
           step_id: "s3",
           order_index: 2,
-          asset: { kind: "emoji", ref: "EMJ-penguin" },
+          asset: { kind: "emoji", ref: "🐧" },
           label: "Cánh cụt",
         },
       ],
@@ -266,12 +266,12 @@ describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
         options: [
           {
             item_id: "opt_apple",
-            asset: { kind: "emoji", ref: "EMJ-apple" },
+            asset: { kind: "emoji", ref: "🍎" },
             is_correct: false,
           },
           {
             item_id: "opt_banana",
-            asset: { kind: "emoji", ref: "EMJ-banana" },
+            asset: { kind: "emoji", ref: "🍌" },
             is_correct: false,
           },
         ],
@@ -293,27 +293,27 @@ describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
         options: [
           {
             item_id: "1",
-            asset: { kind: "emoji", ref: "EMJ-apple" },
+            asset: { kind: "emoji", ref: "🍎" },
             is_correct: true,
           },
           {
             item_id: "2",
-            asset: { kind: "emoji", ref: "EMJ-banana" },
+            asset: { kind: "emoji", ref: "🍌" },
             is_correct: false,
           },
           {
             item_id: "3",
-            asset: { kind: "emoji", ref: "EMJ-orange" },
+            asset: { kind: "emoji", ref: "🍊" },
             is_correct: false,
           },
           {
             item_id: "4",
-            asset: { kind: "emoji", ref: "EMJ-lemon" },
+            asset: { kind: "emoji", ref: "🍋" },
             is_correct: false,
           },
           {
             item_id: "5",
-            asset: { kind: "emoji", ref: "EMJ-grapes" },
+            asset: { kind: "emoji", ref: "🍇" },
             is_correct: false,
           },
         ],
@@ -353,12 +353,12 @@ describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
         options: [
           {
             item_id: "opt_apple",
-            asset: { kind: "emoji", ref: "EMJ-superman-fake-123" },
+            asset: { kind: "emoji", ref: "🔞" },
             is_correct: true,
           },
           {
             item_id: "opt_banana",
-            asset: { kind: "emoji", ref: "EMJ-banana" },
+            asset: { kind: "emoji", ref: "🍌" },
             is_correct: false,
           },
         ],
@@ -381,10 +381,10 @@ describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
 
   it("extractEmojiRefsFromContentPack correctly finds nested emojis across structures", () => {
     const refs = extractEmojiRefsFromContentPack(validGT004.content_pack);
-    expect(refs).toContain("EMJ-cat");
-    expect(refs).toContain("EMJ-dog");
-    expect(refs).toContain("EMJ-red-apple");
-    expect(refs).toContain("EMJ-banana");
+    expect(refs).toContain("🐱");
+    expect(refs).toContain("🐶");
+    expect(refs).toContain("🍎");
+    expect(refs).toContain("🍌");
   });
 
   it("ensures exactly ONE definition of CUSTOM_GAME_TEMPLATE_CODES exists in monorepo (WP115.0)", async () => {

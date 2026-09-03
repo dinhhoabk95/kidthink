@@ -88,15 +88,83 @@ trường khai `.default(...)` là `undefined` lúc chạy. 23 trên 36 contract
 > (`LAYOUT_NOT_SUPPORTED` không còn ném) vì `layout_id` bị xoá. Đó là cách hố này
 > lộ ra — không phải bằng suy luận.
 
+## CHẶN CỨNG (2026-09-02) — ĐÃ GIẢI QUYẾT XONG BỞI TASK #202 ✅
+
+### Đo lại sau khi #202 hạ cánh (2026-09-02, `#203`)
+
+`/play/preview-sandbox` trả **200**. Engine: **64 file / 1.033 test** xanh. `tests/gates`: **33/33**.
+
+Nhưng #202 đổi `resolveEmojiGlyph()` thành "ref chính là glyph" — trả nguyên chuỗi vào.
+Corpus thì **3.932 / 4.059** level published vẫn còn mã `EMJ-*`. Nên mã bị **in thẳng ra
+màn** cho trẻ đọc, đúng lỗi GT-004 đã bắt.
+
+- [x] Guard ở `drawGlyphInSlot`: mã `EMJ-*` không ra được ký tự thật thì vẽ ô thay thế.
+      Cấm — NEVER in mã cho trẻ đọc
+- [x] Bỏ đệ quy trong guard. Bản đầu tự gọi lại mình → `RangeError: Maximum call stack
+      size exceeded`, vì `resolveEmojiGlyph` giờ trả về **chính chuỗi vào**. Cổng
+      `glyph-code-leak.test.ts` bắt được, không phải suy luận
+- [x] Xác nhận bằng ảnh `2026-09-02/GT-004-tablet-820x1180.png`: chữ `EMJ-ball` /
+      `EMJ-boy` khổng lồ đè nhau đã hết, còn ô trung tính trong rổ nhóm
+- [ ] **#202 gieo lại corpus** sang ký tự UTF-8 — 3.932 level đang hiện ô thay thế thay
+      vì emoji. Guard chỉ chặn cái tệ hơn, không thay được việc gieo lại
+
+Bảy nơi còn dùng API đã gỡ:
+
+| API đã gỡ | Nơi còn gọi | Trạng thái sau #202 |
+|---|---|---|
+| `getByCode` | `packages/game-engine/src/templates/shared-render.ts` | ✅ Đã gỡ, chuyển `resolveEmojiGlyph` sang identity |
+| `getEmojiCode` | `packages/db/src/seed-master/emoji.ts` · `packages/db/scripts/migrate-seed-contracts.ts` · `scripts/emoji/audit-refs.ts` | ✅ Đã xoá/gỡ bỏ |
+| `isValidRef` | `packages/shared/src/custom-game.ts` · `packages/db/src/seed-content/gates/runner.ts` · `packages/db/tests/integration/emoji-master.test.ts` | ✅ Đã đổi `isInCatalog`/gỡ/xoá |
+
+- [x] **#202 sửa 7 call site này** — chuyển hẳn sang ký tự UTF-8, bỏ không gian mã `EMJ-*`.
+- [x] Sau khi #202 xong: `packages/game-engine` test 64/64 files xanh (1033 tests pass).
+- [x] Xem lại `glyph-code-leak.test.ts` và guard trong `drawGlyphInSlot`: nếu #202 bỏ hẳn mã `EMJ-*` thì cổng này đổi mục tiêu, không xoá — luật "cấm in mã cho trẻ đọc" vẫn còn giá trị (3/3 tests pass).
+
 ## Đợt 3 — Phân loại phần còn lại
 
 ### `#203.7` Bảng lỗi theo engine
 - [ ] Đọc 108 ảnh sau khi sửa gốc, lập bảng `khuôn | khung nhìn | triệu chứng | file:line | mức`
+  - [x] GT-004 | cả ba | in nguyên mã `EMJ-ball` / `EMJ-boy` **to bằng nửa màn** cho trẻ đọc, hai chuỗi đè nhau | `templates/GT-004/session.ts:134` truyền `group.label_emoji` (một mã) thẳng vào `drawGlyphInSlot` | Nghiêm trọng — đã sửa ở `shared-render.ts` + cổng `glyph-code-leak.test.ts`
   - [x] GT-016 | cả ba | mặt đồng hồ **đè lên** pill hướng dẫn ở trên và **bị** ba thẻ đáp án đè ở dưới; nội dung dồn nửa trên-trái, nửa dưới bỏ trống | `templates/GT-016/session.ts` `render()` vẽ đồng hồ ở toạ độ cố định, không theo `Slot[]` | Cao
+  - [ ] GT-002, GT-005 | desktop | màn gần như trống, chỉ còn pill hướng dẫn | chưa truy | Cao
+  - [ ] 17 khuôn | mọi khung nhìn | nội dung **đè lên** pill hướng dẫn ở đỉnh màn | `layout/geometry.ts` — xem `#203.11` | Cao
+  - [ ] GT-013, GT-014, GT-017, GT-022, GT-024, GT-025 | desktop | nội dung tí hon giữa biển trống, không dùng hết khung | chưa truy | Trung bình
+  - [ ] GT-006, GT-023, GT-031 | desktop | chữ nhãn quá nhỏ so với sàn chữ của bề mặt trẻ | chưa truy | Trung bình
 - [ ] Cấm — NEVER sửa engine nào chưa có dòng trong bảng
 - [ ] Đối chiếu sàn cảm ứng theo band: 96 / 76 / 64 px (`packages/game-engine/src/interaction.ts`)
 
 > **CHỐT KIỂM 3** — bảng phủ đủ 36 khuôn, mỗi dòng có `file:line`.
+
+### `#203.11` Dải pill hướng dẫn không được trừ khỏi vùng bố cục
+
+Đo 2026-09-02, không phải quan sát mắt:
+
+| Thứ | Giá trị |
+|---|---|
+| Pill hướng dẫn chiếm | `y = 24,3 → 74,3` (`PROMPT_TOP_RATIO = 0,045`, `cardH = 50`) |
+| Vùng bố cục bắt đầu | `y = 32` (`SAFE_MARGIN_PX`) |
+| Chồng lấn | **42,3 px** |
+| Tổ hợp khuôn × layout × band × số slot có slot đè pill | **296 / 1.407** |
+| Khuôn dính | **17 / 36** — nặng nhất GT-007 (42), rồi GT-006 · GT-009 · GT-010 · GT-021 · GT-034 · GT-035 (21 mỗi khuôn) |
+
+Đây là lỗi **một chỗ**, không phải lỗi của từng engine: 16 hàm trong
+`packages/game-engine/src/layout/geometry.ts` đều lấy `SAFE_MARGIN_PX` làm gốc trục dọc
+và `availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX`, nên không hàm nào biết pill tồn tại.
+
+Cách sửa: thêm `CONTENT_TOP_PX` (đáy pill + khoảng thở) vào `layout/constants.ts`, đổi
+`availH` và mọi gốc trục dọc **neo trên** sang hằng mới. Gốc **neo dưới**
+(`LOGIC_HEIGHT - SAFE_MARGIN_PX - …`) giữ nguyên.
+
+- [ ] **CHẶN: phải chốt xung đột sàn cảm ứng trước.** Trừ thêm ~84 px chiều dọc làm
+      không gian dọc **hẹp đi**, tức sàn chạm 96/76/64 px càng khó đạt và số slot mỗi
+      trang càng giảm. Sửa trước khi chốt là gần như chắc chắn phải làm lại
+- [ ] Sửa spec trước: [`game-layout-engine.md`](../specs/01-platform/game-layout-engine.md)
+      sở hữu hình học slot — khai dải dành cho pill vào contract, rồi mới đổi mã
+- [ ] Mở rộng cổng `BR-LAY-09` (`tests/layout-safe-area.test.ts` + `layout-safe-area-debt.json`)
+      để vùng an toàn tính cả dải pill — hiện nó xanh trong khi 296 tổ hợp đè pill
+- [ ] 24 assert chạm `.y` trong 5 file test sẽ đổi kết quả. Theo luật refactor của kho:
+      chụp danh sách `trạng-thái | tên-test` trước và sau, đòi trùng khít; mọi đổi
+      trạng thái kể cả fail→pass đều là dấu hiệu đổi hành vi
 
 ## Đợt 4 — Chốt lại spec
 

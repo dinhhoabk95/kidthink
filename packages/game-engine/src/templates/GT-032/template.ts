@@ -82,7 +82,7 @@ export default defineTemplate({
   code: "GT-032",
   name: "So lượng chất lỏng",
   mechanic: "pour-quantity",
-  status: "draft",
+  status: "published",
   version: 1,
   engine_session: "GT032Session",
   layouts: ["horizontal-row", "split-columns"],

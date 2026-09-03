@@ -1,4 +1,5 @@
 import type { AgeBand } from "#src/contracts/types";
+import type { LogicSpace } from "./constants.js";
 
 export type { LayoutId } from "#src/contracts/types";
 export type SlotRole = "source" | "target" | "neutral";
@@ -19,6 +20,11 @@ export interface LayoutInput {
   readonly slotCount: number;
   readonly ageBand: AgeBand;
   readonly targetCount?: number;
+  /**
+   * Không gian logic của khung nhìn hiện tại. Bỏ trống thì dùng 960x540 —
+   * giữ nguyên hành vi cũ cho mọi nơi gọi chưa truyền.
+   */
+  readonly logic?: LogicSpace;
 }
 
 export type LayoutFn = (input: LayoutInput) => Slot[];

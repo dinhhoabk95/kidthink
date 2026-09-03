@@ -29,17 +29,17 @@ function asset(ref: string): Asset {
 
 /** Thẻ số 1–10 dùng cho các level xếp thứ tự số. */
 export const DIGIT_REFS: readonly string[] = [
-  "EMJ-zero",
-  "EMJ-one",
-  "EMJ-two",
-  "EMJ-three",
-  "EMJ-four",
-  "EMJ-five",
-  "EMJ-six",
-  "EMJ-seven",
-  "EMJ-eight",
-  "EMJ-nine",
-  "EMJ-ten",
+  "0️⃣",
+  "1️⃣",
+  "2️⃣",
+  "3️⃣",
+  "4️⃣",
+  "5️⃣",
+  "6️⃣",
+  "7️⃣",
+  "8️⃣",
+  "9️⃣",
+  "🔟",
 ];
 
 export interface TapOption {

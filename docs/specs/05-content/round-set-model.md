@@ -37,6 +37,8 @@ vòng có thứ tự, cùng một template, cùng một learning objective (`LO`
 nguyên cho từng vòng trong set. File này chỉ sở hữu thứ nằm **giữa** các vòng.
 
 Phía runtime do [`round-sequence-play.md`](../04-play/round-sequence-play.md) sở hữu.
+Sàn **cung** — corpus phải có bao nhiêu chuỗi vòng, mỗi chuỗi phải có hình dạng sư phạm nào —
+do [`round-set-corpus-depth.md`](round-set-corpus-depth.md) sở hữu.
 
 ## 2. Actors
 

@@ -473,7 +473,7 @@ function generateLevelsForAllocationRow(params: {
     const themeTag = resolveValidTheme(requestedTheme, row.theme_tags, ageMax);
     const vocab = getThemeVocabulary(themeTag);
     const noun = vocab.nouns[i % vocab.nouns.length] ??
-      vocab.nouns[0] ?? { emoji_ref: "EMJ-star", label_vi: "bạn nhỏ" };
+      vocab.nouns[0] ?? { emoji_ref: "⭐", label_vi: "bạn nhỏ" };
 
     const seqKey = `${row.competency_code}-${strandPart}-${mechSlug}`;
     let nextSeq = (sequenceCounters.get(seqKey) || 0) + 1;
@@ -506,7 +506,7 @@ function generateLevelsForAllocationRow(params: {
       instruction,
       whatTags,
       thinkingTags,
-      loCodes,
+      loCodes: [loCodes[i % loCodes.length] ?? loCodes[0] ?? ""],
       difficulty,
       ageMin,
       ageMax,

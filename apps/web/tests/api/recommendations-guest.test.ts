@@ -62,7 +62,7 @@ describe("Guest Play Recommendations API (BR-REC-04, BR-REC-06, D-MW)", () => {
       ageMax: 5,
       difficulty: 1,
       status: "published",
-      thumbnailEmoji: "EMJ-star",
+      thumbnailEmoji: "⭐",
     });
 
     // Insert standard level (negative test: must never be returned to guest)
@@ -79,7 +79,7 @@ describe("Guest Play Recommendations API (BR-REC-04, BR-REC-06, D-MW)", () => {
       ageMax: 5,
       difficulty: 2,
       status: "published",
-      thumbnailEmoji: "EMJ-lock",
+      thumbnailEmoji: "🔒",
     });
 
     const event = mockGuestEvent("GET", { age_band: "3-4", limit: "5" });

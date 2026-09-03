@@ -89,6 +89,8 @@ describe("GET /api/managers/emoji (BR-EPK-01 - BR-EPK-08, Spec §7.1)", () => {
     });
     const res = (await handler(event)) as any;
     expect(res.items.length).toBeGreaterThan(0);
-    expect(res.items.every((e: any) => e.category === "fruit")).toBe(true);
+    expect(res.items.every((e: any) => e.categories.includes("fruit"))).toBe(
+      true
+    );
   });
 });

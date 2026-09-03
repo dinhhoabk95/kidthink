@@ -3,21 +3,17 @@
     "header": {
       "code": "GL-C5-LIS-TAP-0001",
       "template_code": "GT-001",
-      "title": "Tìm Gia đình giống mẫu",
-      "instruction": "Bé chạm vào Gia đình giống mẫu nhé!",
-      "theme_tag": "family",
+      "title": "Tìm Bảng vẽ giống mẫu",
+      "instruction": "Bé chạm vào Bảng vẽ giống mẫu nhé!",
+      "theme_tag": "art",
       "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.01-01",
-        "LO-C5.LIS.01-02",
-        "LO-C5.LIS.01-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.01-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -25,10 +21,10 @@
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-girl",
+        "item_id": "item_🥁",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-girl"
+          "ref": "🥁"
         }
       },
       "options": [
@@ -36,23 +32,23 @@
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-girl"
+            "ref": "🎸"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-father"
+            "ref": "🥁"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-couple"
+            "ref": "🖍️"
           },
           "is_correct": false
         }
@@ -69,21 +65,17 @@
     "header": {
       "code": "GL-C5-LIS-TAP-0002",
       "template_code": "GT-001",
-      "title": "Tìm Tai giống mẫu",
-      "instruction": "Bé chạm vào Tai giống mẫu nhé!",
-      "theme_tag": "body",
+      "title": "Tìm Cây đàn ghi-ta giống mẫu",
+      "instruction": "Bé chạm vào Cây đàn ghi-ta giống mẫu nhé!",
+      "theme_tag": "art",
       "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.01-01",
-        "LO-C5.LIS.01-02",
-        "LO-C5.LIS.01-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.01-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -91,10 +83,10 @@
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-nose",
+        "item_id": "item_🥁",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-nose"
+          "ref": "🥁"
         }
       },
       "options": [
@@ -102,7 +94,7 @@
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-tongue"
+            "ref": "🎷"
           },
           "is_correct": false
         },
@@ -110,23 +102,23 @@
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-nose"
+            "ref": "🖍️"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-mouth"
+            "ref": "🥁"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "item_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-foot"
+            "ref": "🎨"
           },
           "is_correct": false
         }
@@ -143,17 +135,13 @@
     "header": {
       "code": "GL-C5-LIS-TCMP-0001",
       "template_code": "GT-003",
-      "title": "So sánh nhóm Mặt trời",
-      "instruction": "Bé chọn nhóm nhiều Mặt trời hơn nhé!",
-      "theme_tag": "weather",
+      "title": "So sánh nhóm Gia đình",
+      "instruction": "Bé chọn nhóm nhiều Gia đình hơn nhé!",
+      "theme_tag": "family",
       "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.01-01",
-        "LO-C5.LIS.01-02",
-        "LO-C5.LIS.01-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.01-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
@@ -175,7 +163,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-sun"
+            "ref": "👶"
           },
           "is_correct": true
         },
@@ -184,7 +172,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rainbow"
+            "ref": "👩"
           },
           "is_correct": true
         },
@@ -193,7 +181,7 @@
           "attribute": "other_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rain"
+            "ref": "🏡"
           },
           "is_correct": false
         }
@@ -210,17 +198,13 @@
     "header": {
       "code": "GL-C5-LIS-TCMP-0002",
       "template_code": "GT-003",
-      "title": "So sánh nhóm Bao lì xì",
-      "instruction": "Bé chọn nhóm nhiều Bao lì xì hơn nhé!",
-      "theme_tag": "festival",
+      "title": "So sánh nhóm Tai",
+      "instruction": "Bé chọn nhóm nhiều Tai hơn nhé!",
+      "theme_tag": "body",
       "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.01-01",
-        "LO-C5.LIS.01-02",
-        "LO-C5.LIS.01-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.01-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
@@ -242,7 +226,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-red-lantern"
+            "ref": "👅"
           },
           "is_correct": true
         },
@@ -251,7 +235,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-red-envelope"
+            "ref": "👄"
           },
           "is_correct": true
         },
@@ -260,7 +244,7 @@
           "attribute": "other_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-candle"
+            "ref": "👂"
           },
           "is_correct": false
         }
@@ -277,86 +261,14 @@
     "header": {
       "code": "GL-C5-LIS-PATT-0001",
       "template_code": "GT-005",
-      "title": "Xếp Trường học theo quy luật",
-      "instruction": "Bé chọn Trường học tiếp theo theo quy luật!",
-      "theme_tag": "school",
+      "title": "Xếp Mặt trời theo quy luật",
+      "instruction": "Bé chọn Mặt trời tiếp theo theo quy luật!",
+      "theme_tag": "weather",
       "what_tags": ["cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.01-01",
-        "LO-C5.LIS.01-02",
-        "LO-C5.LIS.01-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.01-01"],
       "difficulty": 1,
-      "age_min": 3,
-      "age_max": 4,
-      "access_tier": "premium",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
-      "pairs": [
-        {
-          "pair_id": "pair_1",
-          "left": {
-            "item_id": "left_1",
-            "asset": {
-              "kind": "emoji",
-              "ref": "EMJ-backpack"
-            }
-          },
-          "right": {
-            "item_id": "right_1",
-            "asset": {
-              "kind": "emoji",
-              "ref": "EMJ-pencil"
-            }
-          }
-        },
-        {
-          "pair_id": "pair_2",
-          "left": {
-            "item_id": "left_2",
-            "asset": {
-              "kind": "emoji",
-              "ref": "EMJ-abacus"
-            }
-          },
-          "right": {
-            "item_id": "right_2",
-            "asset": {
-              "kind": "emoji",
-              "ref": "EMJ-crayon"
-            }
-          }
-        }
-      ]
-    },
-    "difficulty_params": {
-      "hint_after_ms": 10000,
-      "allow_retry": true,
-      "shuffle_sides": true
-    }
-  },
-  {
-    "header": {
-      "code": "GL-C5-LIS-PATT-0002",
-      "template_code": "GT-005",
-      "title": "Xếp Bò sữa theo quy luật",
-      "instruction": "Bé chọn Bò sữa tiếp theo theo quy luật!",
-      "theme_tag": "farm",
-      "what_tags": ["cls"],
-      "thinking_tags": ["match"],
-      "skill_codes": ["C5.LIS.01"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.01-01",
-        "LO-C5.LIS.01-02",
-        "LO-C5.LIS.01-03"
-      ],
-      "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
       "access_tier": "standard",
@@ -373,14 +285,14 @@
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-horse"
+              "ref": "⛈️"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-rooster"
+              "ref": "❄️"
             }
           }
         },
@@ -390,14 +302,78 @@
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-sheep"
+              "ref": "🌈"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-duck"
+              "ref": "💧"
+            }
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_sides": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C5-LIS-PATT-0002",
+      "template_code": "GT-005",
+      "title": "Xếp Bao lì xì theo quy luật",
+      "instruction": "Bé chọn Bao lì xì tiếp theo theo quy luật!",
+      "theme_tag": "festival",
+      "what_tags": ["cls"],
+      "thinking_tags": ["match"],
+      "skill_codes": ["C5.LIS.01"],
+      "learning_objective_codes": ["LO-C5.LIS.01-02"],
+      "difficulty": 2,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "pairs": [
+        {
+          "pair_id": "pair_1",
+          "left": {
+            "item_id": "left_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "🎄"
+            }
+          },
+          "right": {
+            "item_id": "right_1",
+            "asset": {
+              "kind": "emoji",
+              "ref": "🏮"
+            }
+          }
+        },
+        {
+          "pair_id": "pair_2",
+          "left": {
+            "item_id": "left_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "🎂"
+            }
+          },
+          "right": {
+            "item_id": "right_2",
+            "asset": {
+              "kind": "emoji",
+              "ref": "🎁"
             }
           }
         }
@@ -413,21 +389,17 @@
     "header": {
       "code": "GL-C5-LIS-SLOT-0001",
       "template_code": "GT-008",
-      "title": "Kéo Ngôi nhà vào đúng ô",
-      "instruction": "Bé kéo Ngôi nhà vào đúng ô nhé!",
-      "theme_tag": "home",
+      "title": "Kéo Bác sĩ vào đúng ô",
+      "instruction": "Bé kéo Bác sĩ vào đúng ô nhé!",
+      "theme_tag": "job",
       "what_tags": ["spt"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.01-01",
-        "LO-C5.LIS.01-02",
-        "LO-C5.LIS.01-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.01-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -449,18 +421,18 @@
       "items": [
         {
           "item_id": "item_1",
-          "label": "Ghế sofa",
+          "label": "Cảnh sát",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-couch"
+            "ref": "👮"
           }
         },
         {
           "item_id": "item_2",
-          "label": "Cái thìa",
+          "label": "Họa sĩ",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-spoon"
+            "ref": "👨‍🎨"
           }
         }
       ]
@@ -477,21 +449,17 @@
     "header": {
       "code": "GL-C5-LIS-SLOT-0002",
       "template_code": "GT-008",
-      "title": "Kéo Voi vào đúng ô",
-      "instruction": "Bé kéo Voi vào đúng ô nhé!",
-      "theme_tag": "animal",
+      "title": "Kéo Hoa sen vào đúng ô",
+      "instruction": "Bé kéo Hoa sen vào đúng ô nhé!",
+      "theme_tag": "homeland",
       "what_tags": ["spt"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.01-01",
-        "LO-C5.LIS.01-02",
-        "LO-C5.LIS.01-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.01-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -513,18 +481,18 @@
       "items": [
         {
           "item_id": "item_1",
-          "label": "Voi",
+          "label": "Trâu nước",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-elephant"
+            "ref": "🐃"
           }
         },
         {
           "item_id": "item_2",
-          "label": "Gấu trúc",
+          "label": "Thuyền buồm",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-panda"
+            "ref": "⛵"
           }
         }
       ]
@@ -541,21 +509,17 @@
     "header": {
       "code": "GL-C5-LIS-GRID-0001",
       "template_code": "GT-020",
-      "title": "Bảng lưới logic với Cây xanh",
-      "instruction": "Bé xếp Cây xanh vào ô phù hợp nhé!",
-      "theme_tag": "nature",
+      "title": "Bảng lưới logic với Trường học",
+      "instruction": "Bé xếp Trường học vào ô phù hợp nhé!",
+      "theme_tag": "school",
       "what_tags": ["mem", "cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.01-01",
-        "LO-C5.LIS.01-02",
-        "LO-C5.LIS.01-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.01-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -569,14 +533,14 @@
             "card_id": "card_1_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-four-leaf-clover"
+              "ref": "📚"
             }
           },
           "card_b": {
             "card_id": "card_1_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-four-leaf-clover"
+              "ref": "📚"
             }
           }
         },
@@ -586,14 +550,14 @@
             "card_id": "card_2_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-deciduous-tree"
+              "ref": "🎒"
             }
           },
           "card_b": {
             "card_id": "card_2_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-deciduous-tree"
+              "ref": "🎒"
             }
           }
         }
@@ -610,21 +574,17 @@
     "header": {
       "code": "GL-C5-LIS-GRID-0002",
       "template_code": "GT-020",
-      "title": "Bảng lưới logic với Cá heo",
-      "instruction": "Bé xếp Cá heo vào ô phù hợp nhé!",
-      "theme_tag": "ocean",
+      "title": "Bảng lưới logic với Bò sữa",
+      "instruction": "Bé xếp Bò sữa vào ô phù hợp nhé!",
+      "theme_tag": "farm",
       "what_tags": ["mem", "cls"],
       "thinking_tags": ["match"],
       "skill_codes": ["C5.LIS.01"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.01-01",
-        "LO-C5.LIS.01-02",
-        "LO-C5.LIS.01-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.01-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -638,14 +598,14 @@
             "card_id": "card_1_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-jellyfish"
+              "ref": "🐑"
             }
           },
           "card_b": {
             "card_id": "card_1_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-jellyfish"
+              "ref": "🐑"
             }
           }
         },
@@ -655,14 +615,14 @@
             "card_id": "card_2_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-shark"
+              "ref": "🌾"
             }
           },
           "card_b": {
             "card_id": "card_2_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-shark"
+              "ref": "🌾"
             }
           }
         }
@@ -679,17 +639,13 @@
     "header": {
       "code": "GL-C5-LIS-SHAD-0001",
       "template_code": "GT-007",
-      "title": "Tìm bóng của Táo đỏ",
-      "instruction": "Bé tìm bóng của Táo đỏ nhé!",
-      "theme_tag": "food",
+      "title": "Tìm bóng của Ngôi nhà",
+      "instruction": "Bé tìm bóng của Ngôi nhà nhé!",
+      "theme_tag": "home",
       "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.02-01",
-        "LO-C5.LIS.02-02",
-        "LO-C5.LIS.02-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.02-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
@@ -702,23 +658,23 @@
       "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
       "whole": {
         "id": "whole_1",
-        "value": 10,
-        "label": "10",
+        "value": 6,
+        "label": "6",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-corn"
+          "ref": "🍽️"
         }
       },
       "parts": [
         {
           "id": "part_1",
-          "value": 8,
+          "value": 3,
           "is_target": false,
-          "label": "8"
+          "label": "3"
         },
         {
           "id": "part_2",
-          "value": 2,
+          "value": 3,
           "is_target": true,
           "label": "?"
         }
@@ -726,20 +682,20 @@
       "options": [
         {
           "id": "opt_1",
-          "value": 2,
-          "label": "2",
+          "value": 3,
+          "label": "3",
           "is_correct": true
         },
         {
           "id": "opt_2",
-          "value": 1,
-          "label": "1",
+          "value": 2,
+          "label": "2",
           "is_correct": false
         },
         {
           "id": "opt_3",
-          "value": 3,
-          "label": "3",
+          "value": 4,
+          "label": "4",
           "is_correct": false
         }
       ]
@@ -755,17 +711,13 @@
     "header": {
       "code": "GL-C5-LIS-SHAD-0002",
       "template_code": "GT-007",
-      "title": "Tìm bóng của Xe buýt",
-      "instruction": "Bé tìm bóng của Xe buýt nhé!",
-      "theme_tag": "vehicle",
+      "title": "Tìm bóng của Voi",
+      "instruction": "Bé tìm bóng của Voi nhé!",
+      "theme_tag": "animal",
       "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.02-01",
-        "LO-C5.LIS.02-02",
-        "LO-C5.LIS.02-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.02-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
@@ -778,11 +730,83 @@
       "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
       "whole": {
         "id": "whole_1",
+        "value": 9,
+        "label": "9",
+        "asset": {
+          "kind": "emoji",
+          "ref": "🦁"
+        }
+      },
+      "parts": [
+        {
+          "id": "part_1",
+          "value": 6,
+          "is_target": false,
+          "label": "6"
+        },
+        {
+          "id": "part_2",
+          "value": 3,
+          "is_target": true,
+          "label": "?"
+        }
+      ],
+      "options": [
+        {
+          "id": "opt_1",
+          "value": 3,
+          "label": "3",
+          "is_correct": true
+        },
+        {
+          "id": "opt_2",
+          "value": 2,
+          "label": "2",
+          "is_correct": false
+        },
+        {
+          "id": "opt_3",
+          "value": 4,
+          "label": "4",
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "part_count": 2,
+      "distractor_count": 2,
+      "hint_after_ms": 12000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C5-LIS-SHAD-0003",
+      "template_code": "GT-007",
+      "title": "Tìm bóng của Cỏ bốn lá",
+      "instruction": "Bé tìm bóng của Cỏ bốn lá nhé!",
+      "theme_tag": "nature",
+      "what_tags": ["ops"],
+      "thinking_tags": ["plan"],
+      "skill_codes": ["C5.LIS.02"],
+      "learning_objective_codes": ["LO-C5.LIS.02-03"],
+      "difficulty": 3,
+      "age_min": 3,
+      "age_max": 4,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
+      "whole": {
+        "id": "whole_1",
         "value": 7,
         "label": "7",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-helicopter"
+          "ref": "🍁"
         }
       },
       "parts": [
@@ -829,95 +853,15 @@
   },
   {
     "header": {
-      "code": "GL-C5-LIS-SHAD-0003",
-      "template_code": "GT-007",
-      "title": "Tìm bóng của Kèn saxophone",
-      "instruction": "Bé tìm bóng của Kèn saxophone nhé!",
-      "theme_tag": "art",
-      "what_tags": ["ops"],
-      "thinking_tags": ["plan"],
-      "skill_codes": ["C5.LIS.02"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.02-01",
-        "LO-C5.LIS.02-02",
-        "LO-C5.LIS.02-03"
-      ],
-      "difficulty": 3,
-      "age_min": 3,
-      "age_max": 4,
-      "access_tier": "standard",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
-      "whole": {
-        "id": "whole_1",
-        "value": 9,
-        "label": "9",
-        "asset": {
-          "kind": "emoji",
-          "ref": "EMJ-guitar"
-        }
-      },
-      "parts": [
-        {
-          "id": "part_1",
-          "value": 2,
-          "is_target": false,
-          "label": "2"
-        },
-        {
-          "id": "part_2",
-          "value": 7,
-          "is_target": true,
-          "label": "?"
-        }
-      ],
-      "options": [
-        {
-          "id": "opt_1",
-          "value": 7,
-          "label": "7",
-          "is_correct": true
-        },
-        {
-          "id": "opt_2",
-          "value": 6,
-          "label": "6",
-          "is_correct": false
-        },
-        {
-          "id": "opt_3",
-          "value": 8,
-          "label": "8",
-          "is_correct": false
-        }
-      ]
-    },
-    "difficulty_params": {
-      "part_count": 2,
-      "distractor_count": 2,
-      "hint_after_ms": 12000,
-      "allow_retry": true
-    }
-  },
-  {
-    "header": {
       "code": "GL-C5-LIS-SHAD-0004",
       "template_code": "GT-007",
-      "title": "Tìm bóng của Cà rốt",
-      "instruction": "Bé tìm bóng của Cà rốt nhé!",
-      "theme_tag": "food",
+      "title": "Tìm bóng của Cua",
+      "instruction": "Bé tìm bóng của Cua nhé!",
+      "theme_tag": "ocean",
       "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.02-01",
-        "LO-C5.LIS.02-02",
-        "LO-C5.LIS.02-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.02-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
@@ -930,23 +874,23 @@
       "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
       "whole": {
         "id": "whole_1",
-        "value": 7,
-        "label": "7",
+        "value": 10,
+        "label": "10",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-banana"
+          "ref": "🐙"
         }
       },
       "parts": [
         {
           "id": "part_1",
-          "value": 2,
+          "value": 8,
           "is_target": false,
-          "label": "2"
+          "label": "8"
         },
         {
           "id": "part_2",
-          "value": 5,
+          "value": 2,
           "is_target": true,
           "label": "?"
         }
@@ -954,20 +898,20 @@
       "options": [
         {
           "id": "opt_1",
-          "value": 5,
-          "label": "5",
+          "value": 2,
+          "label": "2",
           "is_correct": true
         },
         {
           "id": "opt_2",
-          "value": 4,
-          "label": "4",
+          "value": 1,
+          "label": "1",
           "is_correct": false
         },
         {
           "id": "opt_3",
-          "value": 6,
-          "label": "6",
+          "value": 3,
+          "label": "3",
           "is_correct": false
         }
       ]
@@ -983,17 +927,13 @@
     "header": {
       "code": "GL-C5-LIS-SHAD-0005",
       "template_code": "GT-007",
-      "title": "Tìm bóng của Mẹ",
-      "instruction": "Bé tìm bóng của Mẹ nhé!",
-      "theme_tag": "family",
+      "title": "Tìm bóng của Bắp ngô",
+      "instruction": "Bé tìm bóng của Bắp ngô nhé!",
+      "theme_tag": "food",
       "what_tags": ["ops"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.02-01",
-        "LO-C5.LIS.02-02",
-        "LO-C5.LIS.02-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.02-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
@@ -1006,23 +946,23 @@
       "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
       "whole": {
         "id": "whole_1",
-        "value": 6,
-        "label": "6",
+        "value": 7,
+        "label": "7",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-mother"
+          "ref": "🥛"
         }
       },
       "parts": [
         {
           "id": "part_1",
-          "value": 2,
+          "value": 1,
           "is_target": false,
-          "label": "2"
+          "label": "1"
         },
         {
           "id": "part_2",
-          "value": 4,
+          "value": 6,
           "is_target": true,
           "label": "?"
         }
@@ -1030,20 +970,20 @@
       "options": [
         {
           "id": "opt_1",
-          "value": 4,
-          "label": "4",
+          "value": 6,
+          "label": "6",
           "is_correct": true
         },
         {
           "id": "opt_2",
-          "value": 3,
-          "label": "3",
+          "value": 5,
+          "label": "5",
           "is_correct": false
         },
         {
           "id": "opt_3",
-          "value": 5,
-          "label": "5",
+          "value": 7,
+          "label": "7",
           "is_correct": false
         }
       ]
@@ -1059,21 +999,17 @@
     "header": {
       "code": "GL-C5-LIS-GRID-0003",
       "template_code": "GT-020",
-      "title": "Bảng lưới logic với Mắt",
-      "instruction": "Bé xếp Mắt vào ô phù hợp nhé!",
-      "theme_tag": "body",
+      "title": "Bảng lưới logic với Ô tô",
+      "instruction": "Bé xếp Ô tô vào ô phù hợp nhé!",
+      "theme_tag": "vehicle",
       "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.02-01",
-        "LO-C5.LIS.02-02",
-        "LO-C5.LIS.02-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.02-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1087,14 +1023,14 @@
             "card_id": "card_1_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-eyes"
+              "ref": "🚢"
             }
           },
           "card_b": {
             "card_id": "card_1_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-eyes"
+              "ref": "🚢"
             }
           }
         },
@@ -1104,14 +1040,14 @@
             "card_id": "card_2_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-leg"
+              "ref": "🚲"
             }
           },
           "card_b": {
             "card_id": "card_2_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-leg"
+              "ref": "🚲"
             }
           }
         }
@@ -1128,21 +1064,17 @@
     "header": {
       "code": "GL-C5-LIS-GRID-0004",
       "template_code": "GT-020",
-      "title": "Bảng lưới logic với Mây",
-      "instruction": "Bé xếp Mây vào ô phù hợp nhé!",
-      "theme_tag": "weather",
+      "title": "Bảng lưới logic với Cây đàn ghi-ta",
+      "instruction": "Bé xếp Cây đàn ghi-ta vào ô phù hợp nhé!",
+      "theme_tag": "art",
       "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.02-01",
-        "LO-C5.LIS.02-02",
-        "LO-C5.LIS.02-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.02-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1156,14 +1088,14 @@
             "card_id": "card_1_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-wind"
+              "ref": "📷"
             }
           },
           "card_b": {
             "card_id": "card_1_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-wind"
+              "ref": "📷"
             }
           }
         },
@@ -1173,14 +1105,14 @@
             "card_id": "card_2_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-cloud"
+              "ref": "🎹"
             }
           },
           "card_b": {
             "card_id": "card_2_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-cloud"
+              "ref": "🎹"
             }
           }
         }
@@ -1197,21 +1129,17 @@
     "header": {
       "code": "GL-C5-LIS-GRID-0005",
       "template_code": "GT-020",
-      "title": "Bảng lưới logic với Pháo hoa",
-      "instruction": "Bé xếp Pháo hoa vào ô phù hợp nhé!",
-      "theme_tag": "festival",
+      "title": "Bảng lưới logic với Máy bay",
+      "instruction": "Bé xếp Máy bay vào ô phù hợp nhé!",
+      "theme_tag": "vehicle",
       "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.02-01",
-        "LO-C5.LIS.02-02",
-        "LO-C5.LIS.02-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.02-03"],
       "difficulty": 3,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1225,14 +1153,14 @@
             "card_id": "card_1_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-fireworks"
+              "ref": "⛵"
             }
           },
           "card_b": {
             "card_id": "card_1_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-fireworks"
+              "ref": "⛵"
             }
           }
         },
@@ -1242,14 +1170,14 @@
             "card_id": "card_2_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-red-envelope"
+              "ref": "🏍️"
             }
           },
           "card_b": {
             "card_id": "card_2_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-red-envelope"
+              "ref": "🏍️"
             }
           }
         }
@@ -1266,21 +1194,17 @@
     "header": {
       "code": "GL-C5-LIS-GRID-0006",
       "template_code": "GT-020",
-      "title": "Bảng lưới logic với Sách",
-      "instruction": "Bé xếp Sách vào ô phù hợp nhé!",
-      "theme_tag": "school",
+      "title": "Bảng lưới logic với Ông",
+      "instruction": "Bé xếp Ông vào ô phù hợp nhé!",
+      "theme_tag": "family",
       "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.02-01",
-        "LO-C5.LIS.02-02",
-        "LO-C5.LIS.02-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.02-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1294,14 +1218,14 @@
             "card_id": "card_1_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-pencil"
+              "ref": "👶"
             }
           },
           "card_b": {
             "card_id": "card_1_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-pencil"
+              "ref": "👶"
             }
           }
         },
@@ -1311,14 +1235,14 @@
             "card_id": "card_2_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-abacus"
+              "ref": "👧"
             }
           },
           "card_b": {
             "card_id": "card_2_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-abacus"
+              "ref": "👧"
             }
           }
         }
@@ -1335,21 +1259,17 @@
     "header": {
       "code": "GL-C5-LIS-GRID-0007",
       "template_code": "GT-020",
-      "title": "Bảng lưới logic với Lúa",
-      "instruction": "Bé xếp Lúa vào ô phù hợp nhé!",
-      "theme_tag": "farm",
+      "title": "Bảng lưới logic với Bàn chân",
+      "instruction": "Bé xếp Bàn chân vào ô phù hợp nhé!",
+      "theme_tag": "body",
       "what_tags": ["mem", "cls"],
       "thinking_tags": ["plan"],
       "skill_codes": ["C5.LIS.02"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.02-01",
-        "LO-C5.LIS.02-02",
-        "LO-C5.LIS.02-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.02-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1363,14 +1283,14 @@
             "card_id": "card_1_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-goat"
+              "ref": "🦷"
             }
           },
           "card_b": {
             "card_id": "card_1_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-goat"
+              "ref": "🦷"
             }
           }
         },
@@ -1380,14 +1300,14 @@
             "card_id": "card_2_a",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-cow"
+              "ref": "👀"
             }
           },
           "card_b": {
             "card_id": "card_2_b",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-cow"
+              "ref": "👀"
             }
           }
         }
@@ -1404,21 +1324,17 @@
     "header": {
       "code": "GL-C5-LIS-PATT-0003",
       "template_code": "GT-005",
-      "title": "Xếp Ngôi nhà theo quy luật",
-      "instruction": "Bé tìm Ngôi nhà còn thiếu trong dãy quy luật!",
-      "theme_tag": "home",
+      "title": "Xếp Mặt trời theo quy luật",
+      "instruction": "Bé tìm Mặt trời còn thiếu trong dãy quy luật!",
+      "theme_tag": "weather",
       "what_tags": ["cls"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.03-01",
-        "LO-C5.LIS.03-02",
-        "LO-C5.LIS.03-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.03-01"],
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1432,14 +1348,14 @@
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-door"
+              "ref": "☀️"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-window"
+              "ref": "💨"
             }
           }
         },
@@ -1449,14 +1365,14 @@
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-spoon"
+              "ref": "⛄"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-house"
+              "ref": "☁️"
             }
           }
         },
@@ -1466,14 +1382,14 @@
             "item_id": "left_3",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-pot-of-food"
+              "ref": "☔"
             }
           },
           "right": {
             "item_id": "right_3",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-couch"
+              "ref": "💧"
             }
           }
         }
@@ -1489,21 +1405,17 @@
     "header": {
       "code": "GL-C5-LIS-PATT-0004",
       "template_code": "GT-005",
-      "title": "Xếp Voi theo quy luật",
-      "instruction": "Bé tìm Voi còn thiếu trong dãy quy luật!",
-      "theme_tag": "animal",
+      "title": "Xếp Bao lì xì theo quy luật",
+      "instruction": "Bé tìm Bao lì xì còn thiếu trong dãy quy luật!",
+      "theme_tag": "festival",
       "what_tags": ["cls"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.03-01",
-        "LO-C5.LIS.03-02",
-        "LO-C5.LIS.03-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.03-02"],
       "difficulty": 4,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1517,14 +1429,14 @@
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-lion"
+              "ref": "🎈"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-zebra"
+              "ref": "🕯️"
             }
           }
         },
@@ -1534,14 +1446,14 @@
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-monkey"
+              "ref": "🎄"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-tiger"
+              "ref": "🎊"
             }
           }
         },
@@ -1551,14 +1463,14 @@
             "item_id": "left_3",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-panda"
+              "ref": "🎁"
             }
           },
           "right": {
             "item_id": "right_3",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-bear"
+              "ref": "🎃"
             }
           }
         }
@@ -1574,79 +1486,14 @@
     "header": {
       "code": "GL-C5-LIS-SORT-0001",
       "template_code": "GT-006",
-      "title": "Phân loại Cây xanh theo nhóm",
-      "instruction": "Bé phân loại Cây xanh theo đặc điểm phù hợp!",
-      "theme_tag": "nature",
+      "title": "Phân loại Bác sĩ theo nhóm",
+      "instruction": "Bé phân loại Bác sĩ theo đặc điểm phù hợp!",
+      "theme_tag": "job",
       "what_tags": ["cmp", "sequence"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.03-01",
-        "LO-C5.LIS.03-02",
-        "LO-C5.LIS.03-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.03-01"],
       "difficulty": 3,
-      "age_min": 5,
-      "age_max": 6,
-      "access_tier": "premium",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy xếp các thẻ theo đúng thứ tự nhé!",
-      "sequence": [
-        {
-          "step_id": "step_1",
-          "order_index": 0,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-seedling"
-          },
-          "label": "Mầm cây"
-        },
-        {
-          "step_id": "step_2",
-          "order_index": 1,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-sunflower"
-          },
-          "label": "Hoa hướng dương"
-        },
-        {
-          "step_id": "step_3",
-          "order_index": 2,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-mountain"
-          },
-          "label": "Núi"
-        }
-      ]
-    },
-    "difficulty_params": {
-      "hint_after_ms": 15000,
-      "allow_retry": true,
-      "shuffle_initial": true
-    }
-  },
-  {
-    "header": {
-      "code": "GL-C5-LIS-SORT-0002",
-      "template_code": "GT-006",
-      "title": "Phân loại Cá heo theo nhóm",
-      "instruction": "Bé phân loại Cá heo theo đặc điểm phù hợp!",
-      "theme_tag": "ocean",
-      "what_tags": ["cmp", "sequence"],
-      "thinking_tags": ["sequence", "recall"],
-      "skill_codes": ["C5.LIS.03"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.03-01",
-        "LO-C5.LIS.03-02",
-        "LO-C5.LIS.03-03"
-      ],
-      "difficulty": 4,
       "age_min": 5,
       "age_max": 6,
       "access_tier": "standard",
@@ -1662,27 +1509,84 @@
           "order_index": 0,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-whale"
+            "ref": "🧑‍🏫"
           },
-          "label": "Cá voi"
+          "label": "Cô giáo"
         },
         {
           "step_id": "step_2",
           "order_index": 1,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-dolphin"
+            "ref": "👨‍🎨"
           },
-          "label": "Cá heo"
+          "label": "Họa sĩ"
         },
         {
           "step_id": "step_3",
           "order_index": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-sea-turtle"
+            "ref": "🧑‍⚕️"
           },
-          "label": "Rùa biển"
+          "label": "Bác sĩ"
+        }
+      ]
+    },
+    "difficulty_params": {
+      "hint_after_ms": 15000,
+      "allow_retry": true,
+      "shuffle_initial": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C5-LIS-SORT-0002",
+      "template_code": "GT-006",
+      "title": "Phân loại Hoa sen theo nhóm",
+      "instruction": "Bé phân loại Hoa sen theo đặc điểm phù hợp!",
+      "theme_tag": "homeland",
+      "what_tags": ["cmp", "sequence"],
+      "thinking_tags": ["sequence", "recall"],
+      "skill_codes": ["C5.LIS.03"],
+      "learning_objective_codes": ["LO-C5.LIS.03-02"],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy xếp các thẻ theo đúng thứ tự nhé!",
+      "sequence": [
+        {
+          "step_id": "step_1",
+          "order_index": 0,
+          "asset": {
+            "kind": "emoji",
+            "ref": "⛵"
+          },
+          "label": "Thuyền buồm"
+        },
+        {
+          "step_id": "step_2",
+          "order_index": 1,
+          "asset": {
+            "kind": "emoji",
+            "ref": "⛰️"
+          },
+          "label": "Núi non"
+        },
+        {
+          "step_id": "step_3",
+          "order_index": 2,
+          "asset": {
+            "kind": "emoji",
+            "ref": "🇻🇳"
+          },
+          "label": "Cờ Việt Nam"
         }
       ]
     },
@@ -1696,21 +1600,17 @@
     "header": {
       "code": "GL-C5-LIS-SLOT-0003",
       "template_code": "GT-008",
-      "title": "Kéo Táo đỏ vào đúng ô",
-      "instruction": "Bé kéo Táo đỏ vào vị trí tương ứng nhé!",
-      "theme_tag": "food",
+      "title": "Kéo Trường học vào đúng ô",
+      "instruction": "Bé kéo Trường học vào vị trí tương ứng nhé!",
+      "theme_tag": "school",
       "what_tags": ["spt"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.03-01",
-        "LO-C5.LIS.03-02",
-        "LO-C5.LIS.03-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.03-01"],
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1737,26 +1637,26 @@
       "items": [
         {
           "item_id": "item_1",
-          "label": "Chuối",
+          "label": "Thước kẻ",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-banana"
+            "ref": "📏"
           }
         },
         {
           "item_id": "item_2",
-          "label": "Sữa",
+          "label": "Cái chuông",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-milk"
+            "ref": "🔔"
           }
         },
         {
           "item_id": "item_3",
-          "label": "Cơm",
+          "label": "Bàn tính",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rice"
+            "ref": "🧮"
           }
         }
       ]
@@ -1773,21 +1673,17 @@
     "header": {
       "code": "GL-C5-LIS-SLOT-0004",
       "template_code": "GT-008",
-      "title": "Kéo Xe buýt vào đúng ô",
-      "instruction": "Bé kéo Xe buýt vào vị trí tương ứng nhé!",
-      "theme_tag": "vehicle",
+      "title": "Kéo Bò sữa vào đúng ô",
+      "instruction": "Bé kéo Bò sữa vào vị trí tương ứng nhé!",
+      "theme_tag": "farm",
       "what_tags": ["spt"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.03-01",
-        "LO-C5.LIS.03-02",
-        "LO-C5.LIS.03-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.03-02"],
       "difficulty": 4,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1814,26 +1710,26 @@
       "items": [
         {
           "item_id": "item_1",
-          "label": "Máy bay",
+          "label": "Heo",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-airplane"
+            "ref": "🐷"
           }
         },
         {
           "item_id": "item_2",
-          "label": "Trực thăng",
+          "label": "Dê",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-helicopter"
+            "ref": "🐐"
           }
         },
         {
           "item_id": "item_3",
-          "label": "Xe tải",
+          "label": "Cừu",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-truck"
+            "ref": "🐑"
           }
         }
       ]
@@ -1850,17 +1746,13 @@
     "header": {
       "code": "GL-C5-LIS-SIZE-0001",
       "template_code": "GT-009",
-      "title": "Xếp Bảng vẽ theo kích thước",
-      "instruction": "Bé sắp xếp Bảng vẽ theo kích thước nhé!",
-      "theme_tag": "art",
+      "title": "Xếp Ngôi nhà theo kích thước",
+      "instruction": "Bé sắp xếp Ngôi nhà theo kích thước nhé!",
+      "theme_tag": "home",
       "what_tags": ["log", "number", "cmp"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.03-01",
-        "LO-C5.LIS.03-02",
-        "LO-C5.LIS.03-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.03-01"],
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
@@ -1874,10 +1766,92 @@
       "candidates": [
         {
           "candidate_id": "cand_1",
+          "value": 4,
+          "asset": {
+            "kind": "emoji",
+            "ref": "🍽️"
+          }
+        },
+        {
+          "candidate_id": "cand_2",
+          "value": 6,
+          "asset": {
+            "kind": "emoji",
+            "ref": "🏠"
+          }
+        },
+        {
+          "candidate_id": "cand_3",
+          "value": 8,
+          "asset": {
+            "kind": "emoji",
+            "ref": "🛏️"
+          }
+        },
+        {
+          "candidate_id": "cand_4",
+          "value": 10,
+          "asset": {
+            "kind": "emoji",
+            "ref": "🚪"
+          }
+        }
+      ],
+      "clues": [
+        {
+          "clue_id": "clue_1",
+          "text": "Số lượng lớn hơn 6",
+          "predicate": {
+            "kind": "greater_than",
+            "value": 6
+          }
+        },
+        {
+          "clue_id": "clue_2",
+          "text": "Số lượng nhỏ hơn 10",
+          "predicate": {
+            "kind": "less_than",
+            "value": 10
+          }
+        }
+      ],
+      "answer_candidate_id": "cand_3"
+    },
+    "difficulty_params": {
+      "clue_count": 2,
+      "candidate_count": 4,
+      "hint_after_ms": 10000,
+      "allow_retry": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C5-LIS-SIZE-0002",
+      "template_code": "GT-009",
+      "title": "Xếp Voi theo kích thước",
+      "instruction": "Bé sắp xếp Voi theo kích thước nhé!",
+      "theme_tag": "animal",
+      "what_tags": ["log", "number", "cmp"],
+      "thinking_tags": ["sequence", "recall"],
+      "skill_codes": ["C5.LIS.03"],
+      "learning_objective_codes": ["LO-C5.LIS.03-02"],
+      "difficulty": 4,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy dựa vào các manh mối để tìm ra đồ vật bí mật nhé!",
+      "candidates": [
+        {
+          "candidate_id": "cand_1",
           "value": 2,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-violin"
+            "ref": "🦁"
           }
         },
         {
@@ -1885,7 +1859,7 @@
           "value": 4,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-saxophone"
+            "ref": "🐵"
           }
         },
         {
@@ -1893,7 +1867,7 @@
           "value": 6,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-drum"
+            "ref": "🐻"
           }
         },
         {
@@ -1901,7 +1875,7 @@
           "value": 8,
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-piano"
+            "ref": "🐯"
           }
         }
       ],
@@ -1934,105 +1908,15 @@
   },
   {
     "header": {
-      "code": "GL-C5-LIS-SIZE-0002",
-      "template_code": "GT-009",
-      "title": "Xếp Hành tinh theo kích thước",
-      "instruction": "Bé sắp xếp Hành tinh theo kích thước nhé!",
-      "theme_tag": "space",
-      "what_tags": ["log", "number", "cmp"],
-      "thinking_tags": ["sequence", "recall"],
-      "skill_codes": ["C5.LIS.03"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.03-01",
-        "LO-C5.LIS.03-02",
-        "LO-C5.LIS.03-03"
-      ],
-      "difficulty": 4,
-      "age_min": 4,
-      "age_max": 5,
-      "access_tier": "premium",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy dựa vào các manh mối để tìm ra đồ vật bí mật nhé!",
-      "candidates": [
-        {
-          "candidate_id": "cand_1",
-          "value": 4,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-crescent-moon"
-          }
-        },
-        {
-          "candidate_id": "cand_2",
-          "value": 6,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-earth"
-          }
-        },
-        {
-          "candidate_id": "cand_3",
-          "value": 8,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-sparkles"
-          }
-        },
-        {
-          "candidate_id": "cand_4",
-          "value": 10,
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-full-moon"
-          }
-        }
-      ],
-      "clues": [
-        {
-          "clue_id": "clue_1",
-          "text": "Số lượng lớn hơn 4",
-          "predicate": {
-            "kind": "greater_than",
-            "value": 4
-          }
-        },
-        {
-          "clue_id": "clue_2",
-          "text": "Số lượng nhỏ hơn 8",
-          "predicate": {
-            "kind": "less_than",
-            "value": 8
-          }
-        }
-      ],
-      "answer_candidate_id": "cand_2"
-    },
-    "difficulty_params": {
-      "clue_count": 2,
-      "candidate_count": 4,
-      "hint_after_ms": 10000,
-      "allow_retry": true
-    }
-  },
-  {
-    "header": {
       "code": "GL-C5-LIS-PUZZ-0001",
       "template_code": "GT-010",
-      "title": "Ghép hình Gia đình hoàn chỉnh",
-      "instruction": "Bé ghép các mảnh thành hình Gia đình nhé!",
-      "theme_tag": "family",
+      "title": "Ghép hình Cây xanh hoàn chỉnh",
+      "instruction": "Bé ghép các mảnh thành hình Cây xanh nhé!",
+      "theme_tag": "nature",
       "what_tags": ["log"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.03-01",
-        "LO-C5.LIS.03-02",
-        "LO-C5.LIS.03-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.03-01"],
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
@@ -2048,14 +1932,14 @@
           "symbol_id": "sym_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-house-with-garden"
+            "ref": "🌷"
           }
         },
         {
           "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-family"
+            "ref": "🌴"
           }
         }
       ],
@@ -2063,7 +1947,7 @@
         {
           "equation_id": "eq_1",
           "left": ["sym_1", "sym_1"],
-          "right_value": 8
+          "right_value": 6
         },
         {
           "equation_id": "eq_2",
@@ -2077,19 +1961,19 @@
       },
       "options": [
         {
-          "value": 1,
+          "value": 2,
           "is_correct": true
         },
         {
-          "value": 2,
+          "value": 3,
+          "is_correct": false
+        },
+        {
+          "value": 1,
           "is_correct": false
         },
         {
           "value": 4,
-          "is_correct": false
-        },
-        {
-          "value": 3,
           "is_correct": false
         }
       ]
@@ -2106,17 +1990,13 @@
     "header": {
       "code": "GL-C5-LIS-PUZZ-0002",
       "template_code": "GT-010",
-      "title": "Ghép hình Tai hoàn chỉnh",
-      "instruction": "Bé ghép các mảnh thành hình Tai nhé!",
-      "theme_tag": "body",
+      "title": "Ghép hình Cá heo hoàn chỉnh",
+      "instruction": "Bé ghép các mảnh thành hình Cá heo nhé!",
+      "theme_tag": "ocean",
       "what_tags": ["log"],
       "thinking_tags": ["sequence", "recall"],
       "skill_codes": ["C5.LIS.03"],
-      "learning_objective_codes": [
-        "LO-C5.LIS.03-01",
-        "LO-C5.LIS.03-02",
-        "LO-C5.LIS.03-03"
-      ],
+      "learning_objective_codes": ["LO-C5.LIS.03-02"],
       "difficulty": 4,
       "age_min": 4,
       "age_max": 5,
@@ -2132,14 +2012,14 @@
           "symbol_id": "sym_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-eyes"
+            "ref": "🐢"
           }
         },
         {
           "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-tongue"
+            "ref": "🐚"
           }
         }
       ],
@@ -2147,12 +2027,12 @@
         {
           "equation_id": "eq_1",
           "left": ["sym_1", "sym_1"],
-          "right_value": 8
+          "right_value": 4
         },
         {
           "equation_id": "eq_2",
           "left": ["sym_1", "sym_2"],
-          "right_value": 7
+          "right_value": 6
         }
       ],
       "question": {
@@ -2161,19 +2041,19 @@
       },
       "options": [
         {
-          "value": 3,
+          "value": 4,
           "is_correct": true
         },
         {
-          "value": 4,
+          "value": 5,
+          "is_correct": false
+        },
+        {
+          "value": 3,
           "is_correct": false
         },
         {
           "value": 2,
-          "is_correct": false
-        },
-        {
-          "value": 5,
           "is_correct": false
         }
       ]

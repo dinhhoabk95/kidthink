@@ -2,7 +2,7 @@
  * @mindkid/emoji
  * Hệ sinh thái emoji curated cho giáo dục mầm non Việt Nam.
  *
- * 800+ emoji phân loại theo 32 categories, mapping 12 chủ đề giáo trình,
+ * 750+ emoji phân loại theo 32 categories, mapping 12 chủ đề giáo trình,
  * hỗ trợ tìm kiếm tiếng Việt + tiếng Anh.
  */
 
@@ -15,14 +15,13 @@ export {
 // Query
 export {
   getAllCategories,
-  getByCode,
-  getEmojiCode,
+  getByGlyph,
   getEmojisByCategory,
   getEmojisByCurriculumTheme,
   getEmojisByGroup,
   getRandomEmojis,
   getTotalEmojiCount,
-  isValidRef,
+  isInCatalog,
 } from "./query";
 
 // Registry

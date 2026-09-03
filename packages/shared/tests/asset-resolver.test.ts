@@ -1,20 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { resolveAssets } from "#src/asset-resolver";
 
-describe("Task 1 — Server Asset Resolution (BR-CFG-07)", () => {
-  it("resolves emoji reference to glyph from registry", () => {
+describe("Task 1 — Server Asset Resolution (BR-CFG-07, Task #202 D-EE)", () => {
+  it("resolves emoji reference as identity glyph", () => {
     const contentPack = {
       prompt: "Chọn quả táo đỏ",
       target_item: {
         item_id: "i1",
-        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        asset: { kind: "emoji", ref: "🍎" },
       },
     };
 
     const assets = resolveAssets(contentPack);
-    expect(assets).toEqual([
-      { ref: "EMJ-red-apple", kind: "emoji", glyph: "🍎" },
-    ]);
+    expect(assets).toEqual([{ ref: "🍎", kind: "emoji", glyph: "🍎" }]);
   });
 
   it("resolves image and audio references via lookup functions", () => {
@@ -59,11 +57,11 @@ describe("Task 1 — Server Asset Resolution (BR-CFG-07)", () => {
     ]);
   });
 
-  it("handles missing asset gracefully with error: not_found (BR-CFG-07 failure mode)", () => {
+  it("handles missing image asset gracefully with error: not_found (BR-CFG-07 failure mode)", () => {
     const contentPack = {
       target_item: {
         item_id: "i1",
-        asset: { kind: "emoji", ref: "EMJ-nonexistent-999" },
+        asset: { kind: "emoji", ref: "🍎" },
       },
       image: { kind: "image", ref: "IMG-deleted-image" },
     };
@@ -73,7 +71,7 @@ describe("Task 1 — Server Asset Resolution (BR-CFG-07)", () => {
     });
 
     expect(assets).toEqual([
-      { ref: "EMJ-nonexistent-999", kind: "emoji", error: "not_found" },
+      { ref: "🍎", kind: "emoji", glyph: "🍎" },
       { ref: "IMG-deleted-image", kind: "image", error: "not_found" },
     ]);
   });

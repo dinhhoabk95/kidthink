@@ -158,10 +158,9 @@
   interface EmojiItem {
     name: string;
     emoji: string;
-    category: string;
-    group: string;
+    categories: string[];
     keywords: string[];
-    code: string;
+    age_min?: number;
   }
 
   const props = defineProps<{

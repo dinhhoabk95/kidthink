@@ -260,17 +260,17 @@
           prompt: "Đâu là quả táo màu đỏ?",
           target_item: {
             item_id: "target_apple",
-            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            asset: { kind: "emoji", ref: "🍎" },
           },
           options: [
             {
               item_id: "opt_apple",
-              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              asset: { kind: "emoji", ref: "🍎" },
               is_correct: true,
             },
             {
               item_id: "opt_banana",
-              asset: { kind: "emoji", ref: "EMJ-banana" },
+              asset: { kind: "emoji", ref: "🍌" },
               is_correct: false,
             },
           ],
@@ -282,22 +282,22 @@
               pair_id: "p1",
               left_item: {
                 item_id: "l1",
-                asset: { kind: "emoji", ref: "EMJ-cat" },
+                asset: { kind: "emoji", ref: "🐱" },
               },
               right_item: {
                 item_id: "r1",
-                asset: { kind: "emoji", ref: "EMJ-dog" },
+                asset: { kind: "emoji", ref: "🐶" },
               },
             },
             {
               pair_id: "p2",
               left_item: {
                 item_id: "l2",
-                asset: { kind: "emoji", ref: "EMJ-bird" },
+                asset: { kind: "emoji", ref: "🐦" },
               },
               right_item: {
                 item_id: "r2",
-                asset: { kind: "emoji", ref: "EMJ-dove" },
+                asset: { kind: "emoji", ref: "🕊️" },
               },
             },
           ],
@@ -308,62 +308,62 @@
             {
               group_id: "fruits",
               label: "Nhóm quả",
-              icon_emoji: "EMJ-red-apple",
+              icon_emoji: "🍎",
             },
             {
               group_id: "animals",
               label: "Nhóm con vật",
-              icon_emoji: "EMJ-cat",
+              icon_emoji: "🐱",
             },
           ],
           items: [
             {
               item_id: "i1",
               target_group_id: "fruits",
-              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              asset: { kind: "emoji", ref: "🍎" },
             },
             {
               item_id: "i2",
               target_group_id: "fruits",
-              asset: { kind: "emoji", ref: "EMJ-banana" },
+              asset: { kind: "emoji", ref: "🍌" },
             },
             {
               item_id: "i3",
               target_group_id: "animals",
-              asset: { kind: "emoji", ref: "EMJ-cat" },
+              asset: { kind: "emoji", ref: "🐱" },
             },
             {
               item_id: "i4",
               target_group_id: "animals",
-              asset: { kind: "emoji", ref: "EMJ-dog" },
+              asset: { kind: "emoji", ref: "🐶" },
             },
           ],
         };
       case "GT-004":
         return {
           target_count: 3,
-          target_item_kind: "EMJ-red-apple",
+          target_item_kind: "🍎",
           tray: { capacity: 3, label: "Giỏ táo" },
           items: [
             {
               item_id: "a1",
               is_target: true,
-              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              asset: { kind: "emoji", ref: "🍎" },
             },
             {
               item_id: "a2",
               is_target: true,
-              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              asset: { kind: "emoji", ref: "🍎" },
             },
             {
               item_id: "a3",
               is_target: true,
-              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              asset: { kind: "emoji", ref: "🍎" },
             },
             {
               item_id: "d1",
               is_target: false,
-              asset: { kind: "emoji", ref: "EMJ-banana" },
+              asset: { kind: "emoji", ref: "🍌" },
             },
           ],
         };
@@ -373,36 +373,36 @@
           sequence: [
             {
               slot_index: 0,
-              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              asset: { kind: "emoji", ref: "🍎" },
               is_blank: false,
             },
             {
               slot_index: 1,
-              asset: { kind: "emoji", ref: "EMJ-banana" },
+              asset: { kind: "emoji", ref: "🍌" },
               is_blank: false,
             },
             {
               slot_index: 2,
-              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              asset: { kind: "emoji", ref: "🍎" },
               is_blank: false,
             },
             {
               slot_index: 3,
-              asset: { kind: "emoji", ref: "EMJ-banana" },
+              asset: { kind: "emoji", ref: "🍌" },
               is_blank: true,
             },
           ],
           missing_index: 3,
-          correct_asset: { kind: "emoji", ref: "EMJ-banana" },
+          correct_asset: { kind: "emoji", ref: "🍌" },
           options: [
             {
               item_id: "opt_banana",
-              asset: { kind: "emoji", ref: "EMJ-banana" },
+              asset: { kind: "emoji", ref: "🍌" },
               is_correct: true,
             },
             {
               item_id: "opt_apple",
-              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              asset: { kind: "emoji", ref: "🍎" },
               is_correct: false,
             },
           ],
@@ -412,25 +412,22 @@
           matrix_size: 2,
           grid: [
             [
-              { asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-              { asset: { kind: "emoji", ref: "EMJ-banana" } },
+              { asset: { kind: "emoji", ref: "🍎" } },
+              { asset: { kind: "emoji", ref: "🍌" } },
             ],
-            [
-              { asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-              { is_blank: true },
-            ],
+            [{ asset: { kind: "emoji", ref: "🍎" } }, { is_blank: true }],
           ],
           target_cell: { row: 1, col: 1 },
-          correct_asset: { kind: "emoji", ref: "EMJ-banana" },
+          correct_asset: { kind: "emoji", ref: "🍌" },
           options: [
             {
               item_id: "opt_b",
-              asset: { kind: "emoji", ref: "EMJ-banana" },
+              asset: { kind: "emoji", ref: "🍌" },
               is_correct: true,
             },
             {
               item_id: "opt_a",
-              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              asset: { kind: "emoji", ref: "🍎" },
               is_correct: false,
             },
           ],

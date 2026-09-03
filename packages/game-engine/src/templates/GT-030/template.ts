@@ -55,7 +55,7 @@ export default defineTemplate({
   code: "GT-030",
   name: "Đo bằng đơn vị lặp",
   mechanic: "measure-with-unit",
-  status: "draft",
+  status: "published",
   version: 1,
   engine_session: "GT030Session",
   layouts: ["measure-strip", "horizontal-track"],

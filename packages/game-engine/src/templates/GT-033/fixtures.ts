@@ -17,12 +17,12 @@ export const GT033_FIXTURES: GT033Fixture[] = [
       palette: [
         {
           color_id: "red",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Đỏ",
         },
         {
           color_id: "blue",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh dương",
         },
       ],
@@ -48,17 +48,17 @@ export const GT033_FIXTURES: GT033Fixture[] = [
       palette: [
         {
           color_id: "red",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Đỏ",
         },
         {
           color_id: "yellow",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Vàng",
         },
         {
           color_id: "blue",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh",
         },
       ],
@@ -105,12 +105,12 @@ export const GT033_FIXTURES: GT033Fixture[] = [
       palette: [
         {
           color_id: "mint",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Xanh ngọc",
         },
         {
           color_id: "berry",
-          asset: { kind: "emoji", ref: "EMJ-yarn" },
+          asset: { kind: "emoji", ref: "🧶" },
           name_vi: "Hồng đào",
         },
       ],

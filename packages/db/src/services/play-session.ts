@@ -16,6 +16,7 @@ import { z } from "zod";
 import { getOwnerDb } from "#src/client";
 import { childBadges, masteryState } from "#src/schema/adaptive";
 import { childProfiles } from "#src/schema/child";
+import { gameTemplates } from "#src/schema/game";
 import {
   childDailyStats,
   playSessions,
@@ -30,6 +31,11 @@ export const ALLOWED_EVENT_NAMES = new Set([
   "game_resumed",
   "game_completed",
   "game_abandoned",
+  "intro_period_started",
+  "intro_item_presented",
+  "intro_item_deferred",
+  "intro_recall_answered",
+  "tts_unavailable",
   "round_started",
   "question_shown",
   "answer_selected",
@@ -128,6 +134,11 @@ const EVENT_PAYLOAD_FIELDS: Readonly<Record<string, ReadonlySet<string>>> = {
   game_resumed: new Set(["paused_ms"]),
   game_completed: new Set(["duration_ms", "rounds_total", "rounds_correct"]),
   game_abandoned: new Set(["duration_ms", "last_round_index", "reason"]),
+  intro_period_started: new Set(["period", "step_index"]),
+  intro_item_presented: new Set(["item_id", "period", "tts_used"]),
+  intro_item_deferred: new Set(["item_id", "miss_count"]),
+  intro_recall_answered: new Set(["item_id", "answer_correct"]),
+  tts_unavailable: new Set(["prompt_id", "reason"]),
   round_started: new Set(["round_index", "item_count", "distractor_count"]),
   question_shown: new Set(["round_index", "prompt_kind"]),
   answer_selected: new Set([
@@ -1329,7 +1340,15 @@ export async function completePlaySession(
   }
 
   let nextSuggestion: ReturnType<typeof selectNext> | null = null;
-  if (session.childProfileId && !session.isPreview) {
+  const [templateRow] = await db
+    .select({ kind: gameTemplates.kind })
+    .from(gameTemplates)
+    .where(eq(gameTemplates.id, session.templateId))
+    .limit(1);
+
+  const isTeachTemplate = templateRow?.kind === "teach";
+
+  if (session.childProfileId && !session.isPreview && !isTeachTemplate) {
     nextSuggestion = await applySessionMasteryAndBadges({
       db,
       childId: Number(session.childProfileId),

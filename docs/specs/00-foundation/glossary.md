@@ -54,6 +54,8 @@ Không có.
 | Chuẩn | Tiếng Việt | Nghĩa | Đồng nghĩa bị cấm |
 |---|---|---|---|
 | **Competency** | Năng lực | Tầng 1. Đúng **6**: C1–C6 | ability, area |
+| **Bậc** (`tier`) | Vị trí của một kỹ năng trong strand: `basic` · `core` · `advanced`. Mô tả **nhiệm vụ**, Cấm — NEVER mô tả đứa trẻ |
+| **Band tiền tiểu học** | Dải `6-7` — trẻ chuẩn bị vào lớp 1. Thêm cùng lúc với trục tiền đọc viết `C5` |
 | **Strand** | Nhánh | Tầng 2, thuộc một Competency. 41 cái | **domain** (PRD gọi vậy — không dùng) |
 | **Skill** | Kỹ năng | Tầng 3. 230 cái. Mã bất biến `C1.CNT.03` | competency detail |
 | **Learning Objective** (LO) | Mục tiêu học tập | Tầng 4. **Một hành vi quan sát được**. ≥3 mỗi Skill | goal, outcome |

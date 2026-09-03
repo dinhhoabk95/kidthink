@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
       difficulty: skills.difficulty,
       thinkingProcesses: skills.thinkingProcesses,
       whatAxis: skills.whatAxis,
-      status: skills.status,
+      tier: skills.tier,
       strandCode: strands.code,
       strandName: strands.name,
       competencyCode: competencies.code,
@@ -98,7 +98,7 @@ export default defineEventHandler(async (event) => {
     .innerJoin(
       gameLevels,
       and(
-        eq(contentSkillMap.entityType, "level"),
+        eq(contentSkillMap.entityType, "game_level"),
         eq(contentSkillMap.entityId, gameLevels.id)
       )
     )
@@ -114,8 +114,8 @@ export default defineEventHandler(async (event) => {
       strand_name: skill.strandName,
       competency_code: skill.competencyCode,
       competency_name: skill.competencyName,
-      status: skill.status,
-      is_deprecated: skill.status === "deprecated",
+      tier: skill.tier,
+      is_deprecated: false,
     },
     attributes: {
       age_min: skill.ageMin,

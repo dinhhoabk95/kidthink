@@ -1,5 +1,8 @@
 import { repoPath } from "@mindkid/config/paths";
-import { evaluateSkillQuota } from "#src/seed-content/gates/skill-quota";
+import {
+  evaluateSkillQuota,
+  readCoverageRatchet,
+} from "#src/seed-content/gates/skill-quota";
 import { ALL_SEED_LEVELS } from "#src/seed-content/index";
 
 function main(): void {
@@ -15,6 +18,9 @@ function main(): void {
     `- Skills đạt hạn ngạch level: ${report.skillsMeetingQuotaCount}/${report.totalSkills}`
   );
   console.log(
+    `- Trần bậc thang kỹ năng chưa có nội dung (BR-SKQ-06): ${report.skillsWithZeroLevelsCount}/${readCoverageRatchet().max_skills_without_levels}`
+  );
+  console.log(
     `- Skills đạt đa dạng khuôn: ${report.skillsMeetingDiversityCount}/${report.totalSkills}`
   );
   console.log(`- Skills trắng (0 level): ${report.skillsWithZeroLevelsCount}`);
@@ -23,7 +29,7 @@ function main(): void {
 
   if (report.passed) {
     console.log(
-      "\n✅ CỔNG XANH: Toàn bộ 230 skill đạt hạn ngạch và đa dạng khuôn!"
+      `\n✅ CỔNG XANH: ${report.skillsMeetingQuotaCount}/${report.totalSkills} skill có nội dung đều đạt hạn ngạch và đa dạng khuôn; ${report.skillsWithZeroLevelsCount} skill chưa có nội dung, trong trần bậc thang.`
     );
     process.exit(0);
   } else {

@@ -120,7 +120,7 @@ async function queryContentMetrics(db: OwnerDb) {
       gameLevels,
       and(
         eq(contentSkillMap.entityId, gameLevels.id),
-        eq(contentSkillMap.entityType, "level")
+        eq(contentSkillMap.entityType, "game_level")
       )
     )
     .where(eq(gameLevels.status, "published"))

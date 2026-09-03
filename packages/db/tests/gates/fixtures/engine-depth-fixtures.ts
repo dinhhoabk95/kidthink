@@ -23,12 +23,12 @@ export const SAMPLE_LEVEL_SEED: ContentSeed<unknown, unknown> = {
     prompt: "Test prompt",
     target_item: {
       item_id: "1",
-      asset: { kind: "emoji", ref: "EMJ-red-apple" },
+      asset: { kind: "emoji", ref: "🍎" },
     },
     options: [
       {
         item_id: "1",
-        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        asset: { kind: "emoji", ref: "🍎" },
         is_correct: true,
       },
     ],

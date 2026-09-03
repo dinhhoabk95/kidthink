@@ -127,6 +127,7 @@ access-gating ──→ game-config-delivery ──→ play-session-lifecycle
 | 9 | Quản lý hồ sơ trẻ, lưu trữ & chọn trẻ chơi | [`child-profile-crud.md`](03-account/child-profile-crud.md) · [`child-profile-switching.md`](03-account/child-profile-switching.md) · [`child-profile-archive.md`](03-account/child-profile-archive.md) · [`play-entry-and-profile-select.md`](04-play/play-entry-and-profile-select.md) |
 | 10 | Gắn tag nội dung & **Seeder nội dung nền** | [`content-tagging.md`](01-platform/content-tagging.md) · [`content-seed-authoring.md`](01-platform/content-seed-authoring.md) |
 | 11 | ≥120 game level `published` | [`game-level-model.md`](05-content/game-level-model.md) |
+| 11a | **Nguồn vật của level** — dataset kỹ năng, bộ chiếu thay bộ sinh theo khuôn, hai cổng trung thực. Đứng **trước** việc soạn lô level: đo 2026-09-03, corpus 5.013 level đạt 100% phủ kỹ năng và 0% trung thực kỹ năng | [`skill-dataset-model.md`](05-content/skill-dataset-model.md) |
 | 11b | Tìm kiếm nội dung — chung cho catalog công khai, thư viện, studio | [`content-search.md`](01-platform/content-search.md) |
 | 11c | Đóng claim, KPI và protocol evidence sư phạm/kiểm thử với trẻ trước cổng ra P1 | Chưa có spec owner; [`Task #81`](../tasks/81-pedagogical-evidence-contract-plan.md) tạo contract trước khi các ca “trẻ thật” được dùng làm bằng chứng sản phẩm |
 | 12 | Báo cáo cơ bản, trang chính của User & thư viện cá nhân | [`basic-report.md`](03-account/basic-report.md) · [`member-dashboard.md`](03-account/member-dashboard.md) · [`my-library.md`](03-account/my-library.md) |

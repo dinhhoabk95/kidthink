@@ -10,7 +10,7 @@ const EMPTY_ERROR_REGEX = /rỗng/;
 describe("Legacy V1 Coverage Gate — Task #170 (WP170.3, BR-LVC-01..05)", () => {
   it("Đọc đúng cấu hình bậc thang legacy-v1-coverage.json", () => {
     const config = loadLegacyV1CoverageConfig();
-    expect(config.active_step).toBe(0);
+    expect(config.active_step).toBe(3);
     expect(config.steps.length).toBe(4);
     expect(config.steps[0]?.min_levels_per_type).toBe(1);
     expect(config.steps[0]?.min_types_covered).toBe(20);
@@ -19,11 +19,11 @@ describe("Legacy V1 Coverage Gate — Task #170 (WP170.3, BR-LVC-01..05)", () =>
     expect(config.steps[3]?.min_types_covered).toBe(60);
   });
 
-  it("Toàn bộ ALL_SEED_LEVELS đạt chuẩn Bậc 0 (≥20 game types có ≥1 level)", () => {
+  it("Toàn bộ ALL_SEED_LEVELS đạt chuẩn Bậc 3 (60/60 game types có ≥10 levels)", () => {
     const report = checkLegacyV1Coverage(ALL_SEED_LEVELS);
-    expect(report.activeStep).toBe(0);
+    expect(report.activeStep).toBe(3);
     expect(report.totalTypes).toBe(60);
-    expect(report.coveredTypesCount).toBeGreaterThanOrEqual(20);
+    expect(report.coveredTypesCount).toBe(60);
     expect(report.passed).toBe(true);
     expect(report.details.length).toBe(60);
   });

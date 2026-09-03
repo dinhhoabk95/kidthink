@@ -35,14 +35,14 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
             item_id: "ball",
             asset: {
               kind: "emoji",
-              ref: "EMJ-soccer",
+              ref: "⚽",
             },
           },
           right: {
             item_id: "sphere",
             asset: {
               kind: "emoji",
-              ref: "EMJ-white-circle",
+              ref: "⚪",
             },
           },
         },
@@ -52,14 +52,14 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
             item_id: "box",
             asset: {
               kind: "emoji",
-              ref: "EMJ-gift",
+              ref: "🎁",
             },
           },
           right: {
             item_id: "cube",
             asset: {
               kind: "emoji",
-              ref: "EMJ-ice-cube",
+              ref: "🧊",
             },
           },
         },
@@ -69,14 +69,14 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
             item_id: "can",
             asset: {
               kind: "emoji",
-              ref: "EMJ-canned-food",
+              ref: "🥫",
             },
           },
           right: {
             item_id: "cylinder",
             asset: {
               kind: "emoji",
-              ref: "EMJ-oil-drum",
+              ref: "🛢️",
             },
           },
         },
@@ -117,14 +117,14 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
             item_id: "hat",
             asset: {
               kind: "emoji",
-              ref: "EMJ-party-popper",
+              ref: "🎉",
             },
           },
           right: {
             item_id: "cone",
             asset: {
               kind: "emoji",
-              ref: "EMJ-ice-cream",
+              ref: "🍦",
             },
           },
         },
@@ -134,14 +134,14 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
             item_id: "dice",
             asset: {
               kind: "emoji",
-              ref: "EMJ-die",
+              ref: "🎲",
             },
           },
           right: {
             item_id: "cube",
             asset: {
               kind: "emoji",
-              ref: "EMJ-ice-cube",
+              ref: "🧊",
             },
           },
         },
@@ -151,14 +151,14 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
             item_id: "globe",
             asset: {
               kind: "emoji",
-              ref: "EMJ-earth",
+              ref: "🌍",
             },
           },
           right: {
             item_id: "sphere",
             asset: {
               kind: "emoji",
-              ref: "EMJ-white-circle",
+              ref: "⚪",
             },
           },
         },
@@ -168,14 +168,14 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
             item_id: "drum",
             asset: {
               kind: "emoji",
-              ref: "EMJ-drum",
+              ref: "🥁",
             },
           },
           right: {
             item_id: "cylinder",
             asset: {
               kind: "emoji",
-              ref: "EMJ-oil-drum",
+              ref: "🛢️",
             },
           },
         },
@@ -216,14 +216,14 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
             item_id: "house",
             asset: {
               kind: "emoji",
-              ref: "EMJ-house",
+              ref: "🏠",
             },
           },
           right: {
             item_id: "roof-top",
             asset: {
               kind: "emoji",
-              ref: "EMJ-red-triangle-up",
+              ref: "🔺",
             },
           },
         },
@@ -233,14 +233,14 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
             item_id: "car",
             asset: {
               kind: "emoji",
-              ref: "EMJ-car",
+              ref: "🚗",
             },
           },
           right: {
             item_id: "car-top",
             asset: {
               kind: "emoji",
-              ref: "EMJ-oncoming-automobile",
+              ref: "🚘",
             },
           },
         },
@@ -281,14 +281,14 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
             item_id: "cup",
             asset: {
               kind: "emoji",
-              ref: "EMJ-milk",
+              ref: "🥛",
             },
           },
           right: {
             item_id: "cup-top",
             asset: {
               kind: "emoji",
-              ref: "EMJ-hollow-circle",
+              ref: "⭕",
             },
           },
         },
@@ -298,14 +298,14 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
             item_id: "table",
             asset: {
               kind: "emoji",
-              ref: "EMJ-chair",
+              ref: "🪑",
             },
           },
           right: {
             item_id: "table-top",
             asset: {
               kind: "emoji",
-              ref: "EMJ-brown-square",
+              ref: "🟫",
             },
           },
         },
@@ -315,14 +315,14 @@ export const SEED_MONT_A19: ContentSeed<unknown, unknown>[] = [
             item_id: "tent",
             asset: {
               kind: "emoji",
-              ref: "EMJ-tent",
+              ref: "⛺",
             },
           },
           right: {
             item_id: "tent-top",
             asset: {
               kind: "emoji",
-              ref: "EMJ-red-triangle-up",
+              ref: "🔺",
             },
           },
         },

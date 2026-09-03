@@ -31,12 +31,12 @@ export const SEED_GT030: ContentSeed<unknown, unknown>[] = [
         "Bé hãy xếp các chiếc kẹp giấy để đo xem bút chì dài mấy kẹp giấy nhé!",
       object: {
         object_id: "obj_pencil",
-        asset: { kind: "emoji", ref: "EMJ-pencil" },
+        asset: { kind: "emoji", ref: "✏️" },
         length_in_units: 4,
       },
       unit: {
         unit_id: "unit_clip",
-        asset: { kind: "emoji", ref: "EMJ-paperclip" },
+        asset: { kind: "emoji", ref: "📎" },
       },
       answer_options: [
         { option_id: "opt_3", value: 3, is_correct: false },
@@ -75,12 +75,12 @@ export const SEED_GT030: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy xếp các cúc áo để đo xem củ cà rốt dài mấy cúc áo nhé!",
       object: {
         object_id: "obj_carrot",
-        asset: { kind: "emoji", ref: "EMJ-carrot" },
+        asset: { kind: "emoji", ref: "🥕" },
         length_in_units: 4,
       },
       unit: {
         unit_id: "unit_button",
-        asset: { kind: "emoji", ref: "EMJ-red-circle" },
+        asset: { kind: "emoji", ref: "🔴" },
       },
       answer_options: [
         { option_id: "opt_3", value: 3, is_correct: false },
@@ -119,12 +119,12 @@ export const SEED_GT030: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy xếp các quả cherry để đo chiều dài quả dưa chuột nhé!",
       object: {
         object_id: "obj_cucumber",
-        asset: { kind: "emoji", ref: "EMJ-cucumber" },
+        asset: { kind: "emoji", ref: "🥒" },
         length_in_units: 5,
       },
       unit: {
         unit_id: "unit_cherry",
-        asset: { kind: "emoji", ref: "EMJ-cherries" },
+        asset: { kind: "emoji", ref: "🍒" },
       },
       answer_options: [
         { option_id: "opt_4", value: 4, is_correct: false },
@@ -164,12 +164,12 @@ export const SEED_GT030: ContentSeed<unknown, unknown>[] = [
         "Bé hãy xếp các cây bút chì để đo xem thước kẻ dài mấy bút chì nhé!",
       object: {
         object_id: "obj_ruler",
-        asset: { kind: "emoji", ref: "EMJ-ruler" },
+        asset: { kind: "emoji", ref: "📏" },
         length_in_units: 5,
       },
       unit: {
         unit_id: "unit_pencil",
-        asset: { kind: "emoji", ref: "EMJ-pencil" },
+        asset: { kind: "emoji", ref: "✏️" },
       },
       answer_options: [
         { option_id: "opt_3", value: 3, is_correct: false },
@@ -209,12 +209,12 @@ export const SEED_GT030: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy xếp các khối vuông đo xem đoàn tàu dài mấy khối nhé!",
       object: {
         object_id: "obj_train",
-        asset: { kind: "emoji", ref: "EMJ-locomotive" },
+        asset: { kind: "emoji", ref: "🚂" },
         length_in_units: 6,
       },
       unit: {
         unit_id: "unit_block",
-        asset: { kind: "emoji", ref: "EMJ-blue-square" },
+        asset: { kind: "emoji", ref: "🟦" },
       },
       answer_options: [
         { option_id: "opt_4", value: 4, is_correct: false },
@@ -254,12 +254,12 @@ export const SEED_GT030: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy xếp các vỏ sò đo xem chú cá dài mấy vỏ sò nhé!",
       object: {
         object_id: "obj_fish",
-        asset: { kind: "emoji", ref: "EMJ-tropical-fish" },
+        asset: { kind: "emoji", ref: "🐠" },
         length_in_units: 6,
       },
       unit: {
         unit_id: "unit_shell",
-        asset: { kind: "emoji", ref: "EMJ-spiral-shell" },
+        asset: { kind: "emoji", ref: "🐚" },
       },
       answer_options: [
         { option_id: "opt_5", value: 5, is_correct: false },
@@ -298,12 +298,12 @@ export const SEED_GT030: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy xếp các ngôi sao đo xem tên lửa dài mấy ngôi sao nhé!",
       object: {
         object_id: "obj_rocket",
-        asset: { kind: "emoji", ref: "EMJ-rocket" },
+        asset: { kind: "emoji", ref: "🚀" },
         length_in_units: 7,
       },
       unit: {
         unit_id: "unit_star",
-        asset: { kind: "emoji", ref: "EMJ-star" },
+        asset: { kind: "emoji", ref: "⭐" },
       },
       answer_options: [
         { option_id: "opt_5", value: 5, is_correct: false },
@@ -343,12 +343,12 @@ export const SEED_GT030: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy xếp các cây bút chì đo xem cọ vẽ dài mấy bút chì nhé!",
       object: {
         object_id: "obj_brush",
-        asset: { kind: "emoji", ref: "EMJ-paintbrush" },
+        asset: { kind: "emoji", ref: "🖌️" },
         length_in_units: 7,
       },
       unit: {
         unit_id: "unit_pencil",
-        asset: { kind: "emoji", ref: "EMJ-pencil" },
+        asset: { kind: "emoji", ref: "✏️" },
       },
       answer_options: [
         { option_id: "opt_6", value: 6, is_correct: false },
@@ -387,12 +387,12 @@ export const SEED_GT030: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy xếp các mầm cây đo xem bắp ngô dài mấy mầm cây nhé!",
       object: {
         object_id: "obj_corn",
-        asset: { kind: "emoji", ref: "EMJ-corn" },
+        asset: { kind: "emoji", ref: "🌽" },
         length_in_units: 8,
       },
       unit: {
         unit_id: "unit_sprout",
-        asset: { kind: "emoji", ref: "EMJ-seedling" },
+        asset: { kind: "emoji", ref: "🌱" },
       },
       answer_options: [
         { option_id: "opt_6", value: 6, is_correct: false },
@@ -432,12 +432,12 @@ export const SEED_GT030: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy xếp các quả dâu tây đo xem bánh mì dài mấy quả dâu nhé!",
       object: {
         object_id: "obj_bread",
-        asset: { kind: "emoji", ref: "EMJ-bread" },
+        asset: { kind: "emoji", ref: "🍞" },
         length_in_units: 8,
       },
       unit: {
         unit_id: "unit_strawberry",
-        asset: { kind: "emoji", ref: "EMJ-strawberry" },
+        asset: { kind: "emoji", ref: "🍓" },
       },
       answer_options: [
         { option_id: "opt_7", value: 7, is_correct: false },

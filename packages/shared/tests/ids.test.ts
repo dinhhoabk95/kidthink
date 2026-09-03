@@ -3,7 +3,7 @@ import {
   ActivityCodeSchema,
   CompetencyCodeSchema,
   CurriculumCodeSchema,
-  EmojiEntryCodeSchema,
+  EmojiRefSchema,
   EntitlementKeySchema,
   GameLevelCodeSchema,
   GameTemplateCodeSchema,
@@ -231,14 +231,13 @@ describe("ThemeCodeSchema", () => {
   });
 });
 
-// ─── EmojiEntryCode ──────────────────────────────────────────────────
-
-describe("EmojiEntryCodeSchema", () => {
-  it.each(["EMJ-apple-red", "EMJ-ab", "EMJ-123"])("accepts %s", (v) => {
-    ok(EmojiEntryCodeSchema, v);
+// ─── EmojiRef ────────────────────────────────────────────────────────
+describe("EmojiRefSchema", () => {
+  it.each(["🍎", "⭐", "🪙", "🧶", "🐶"])("accepts %s", (v) => {
+    ok(EmojiRefSchema, v);
   });
 
-  it.each(["EMJ-a", "EMJ-Apple", "emj-apple"])("rejects %s", (v) => {
-    fail(EmojiEntryCodeSchema, v);
+  it.each([""])("rejects %s", (v) => {
+    fail(EmojiRefSchema, v);
   });
 });

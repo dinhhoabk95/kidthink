@@ -31,6 +31,7 @@ export class GT003Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
   private particles: Particle[] = [];
   private itemStates: Map<string, ItemVisualState> = new Map();
+  hoveredContainer = false;
 
   setupEntities(): void {
     this.mechanic.reset();
@@ -38,13 +39,13 @@ export class GT003Session extends TemplateGameSession<
     this.particles = [];
     this.itemStates = new Map();
     this.displayItems = [...this.content.items];
+    this.hoveredContainer = false;
   }
 
   resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
     const layoutFn = resolveLayout("top-source-bottom-target");
     // `slotCount` của bố cục lưỡng phân là số slot **nguồn**, còn `targetCount`
-    // là số slot đích — layout tự cộng hai vế. Cộng thêm 1 vào `slotCount` như
-    // bản trước sinh dư một slot nguồn không có vật nào để đặt vào.
+    // là số slot đích — layout tự cộng hai vế.
     this.slots = layoutFn({
       slotCount: this.displayItems.length,
       ageBand,
@@ -56,8 +57,28 @@ export class GT003Session extends TemplateGameSession<
     this.itemStates.set(itemId, state);
   }
 
-  private getItemState(itemId: string): ItemVisualState {
+  getItemState(itemId: string): ItemVisualState {
+    const stagedId = this.mechanic.getStagedItemId();
+    if (stagedId === itemId) {
+      return "selected";
+    }
     return this.itemStates.get(itemId) ?? "idle";
+  }
+
+  stageItem(itemId: string | null): void {
+    this.mechanic.stageItem(itemId);
+  }
+
+  getStagedItemId(): string | null {
+    return this.mechanic.getStagedItemId();
+  }
+
+  getContainerId(): string {
+    return this.content.container.container_id;
+  }
+
+  getPlacements(): ReadonlyMap<string, string> {
+    return this.mechanic.getPlacements();
   }
 
   private resolveDrop(itemId: string, containerId: string) {
@@ -100,6 +121,10 @@ export class GT003Session extends TemplateGameSession<
       if (slot) {
         this.particles.push(...spawnParticlesAtSlot(slot, 6));
       }
+      const containerSlot = this.slots.at(-1);
+      if (containerSlot) {
+        this.particles.push(...spawnParticlesAtSlot(containerSlot, 8));
+      }
       if (this.checkWinCondition()) {
         this.winSession();
       }
@@ -141,7 +166,20 @@ export class GT003Session extends TemplateGameSession<
     if (!containerSlot) {
       return;
     }
-    drawNestTarget(ctx, containerSlot);
+    const placements = this.mechanic.getPlacements();
+    const placedItems = this.content.items.filter((i) =>
+      placements.has(i.item_id)
+    );
+    const targetCount =
+      this.difficulty.target_count ||
+      this.content.items.filter((i) => i.is_correct).length;
+
+    drawNestTarget(ctx, containerSlot, {
+      label: this.content.container.label || "Chuồng gà",
+      placedItems,
+      targetCount,
+      isHovered: this.hoveredContainer,
+    });
   }
 
   private drawInteractive(
@@ -150,13 +188,21 @@ export class GT003Session extends TemplateGameSession<
     slots: readonly Slot[]
   ): void {
     const sourceSlots = slots.slice(0, -1);
+    const placements = this.mechanic.getPlacements();
+
     for (let i = 0; i < this.displayItems.length; i++) {
       const item = this.displayItems[i];
       const slot = sourceSlots[i];
       if (!(slot && item)) {
         continue;
       }
-      const state = this.getItemState(item.item_id);
+      const isPlaced = placements.has(item.item_id);
+      const state = isPlaced ? "locked" : this.getItemState(item.item_id);
+
+      ctx.save();
+      if (isPlaced) {
+        ctx.globalAlpha = 0.35;
+      }
       drawSlotItem(
         ctx,
         rs,
@@ -168,6 +214,7 @@ export class GT003Session extends TemplateGameSession<
         },
         "circle"
       );
+      ctx.restore();
     }
   }
 

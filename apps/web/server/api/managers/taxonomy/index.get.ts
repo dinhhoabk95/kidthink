@@ -24,7 +24,7 @@ export interface TaxonomySkillSummary {
   difficulty: number;
   thinking_processes: string[];
   what_axis: string[];
-  status: string;
+  tier: "basic" | "core" | "advanced";
   is_deprecated: boolean;
   published_count: number;
   draft_count: number;
@@ -188,8 +188,8 @@ function computeEnhancedTaxonomy(
       difficulty: s.difficulty,
       thinking_processes: s.thinkingProcesses || [],
       what_axis: s.whatAxis || [],
-      status: s.status,
-      is_deprecated: s.status === "deprecated",
+      tier: s.tier,
+      is_deprecated: false,
       published_count: counts.published,
       draft_count: counts.draft,
       total_count: counts.total,

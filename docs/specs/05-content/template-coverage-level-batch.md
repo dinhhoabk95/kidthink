@@ -83,7 +83,7 @@ Nó **không** định nghĩa khuôn — đó là việc của mục 7.1 của
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
 | `packages/db/src/seed-content/c<n>/` | Người soạn nội dung | Nơi level mới được thêm |
-| `pnpm --filter @mindkid/db seed:check` | Cổng seed | Tám cổng nội dung, xem mục 7 của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) |
+| `pnpm --filter @mindkid/db seed:check` | Cổng seed | Bộ cổng nội dung, xem mục 7.3 của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) |
 | `pnpm --filter @mindkid/db test` | Cổng phủ | Ma trận phủ, xem mục 7.2 của [`thinking-coverage-matrix.md`](../08-quality/thinking-coverage-matrix.md) |
 | [`game-level-studio.md`](../06-admin/game-level-studio.md) | Người soạn nội dung | Bề mặt soạn level |
 
@@ -116,7 +116,7 @@ Trình tự cho **một** khuôn trong lô:
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-TCL-01` (hạn ngạch mỗi khuôn) | Mỗi khuôn trong mục 7.2 có **≥3** game level `published` thật trong corpus seed. **Đạt 2026-08-29 trên 27 engine**; sàn thường trực tiếp theo ở `BR-ECD-01` | Ba là con số `BR-TAK-09` đã dùng cho `fixtures.ts`. Fixture chứng minh contract chạy; level chứng minh trẻ chơi được |
-| `BR-TCL-02` (level thật, không phải fixture) | Level của lô này nằm trong corpus seed, **không** tính `fixtures.ts` của thư mục khuôn | `fixtures.ts` không đi qua tám cổng nội dung, không có tag ba trục, không vào ma trận phủ. Đếm nó là tự lừa |
+| `BR-TCL-02` (level thật, không phải fixture) | Level của lô này nằm trong corpus seed, **không** tính `fixtures.ts` của thư mục khuôn | `fixtures.ts` không đi qua bộ cổng nội dung, không có tag ba trục, không vào ma trận phủ. Đếm nó là tự lừa |
 | `BR-TCL-03` (parse được) | `content_pack` và `difficulty_params` của mọi level mới **parse được** bằng `content_contract` và `difficulty_contract` của khuôn | `BR-GTC-10`. Đo lại ngày 2026-08-29 trên 228 level: **162 không parse được `content_pack`** và **170 không parse được `difficulty_params`**; sáu engine MVP trượt 100% vì thiếu trường `prompt`. Vẫn không cổng nào phát hiện — nguyên nhân đọc được ở mục 7.3a của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md). Lô này cấm làm con số đó to thêm |
 | `BR-TCL-04` (khuôn ngoài rổ cơ bản) | Mỗi ô `competency × band tuổi` có **≥1** level chạy trên khuôn ngoài `GT-001`..`GT-008` | Đây là chỗ chữ "đa dạng" thành số đếm được. Sàn hai `mechanic` của `BR-TCM-05` đạt được bằng hai khuôn dễ nhất, nên nó không đo được điều này |
 | `BR-TCL-05` (thứ tự theo mức đói) | Nạp theo thứ tự ở mục 7.3, năng lực đói nhất trước | C4 và C5 là hai khoảng trống lớn nhất của sản phẩm. Nạp theo thứ tự mã khuôn sẽ dồn nội dung vào C1 lần nữa |

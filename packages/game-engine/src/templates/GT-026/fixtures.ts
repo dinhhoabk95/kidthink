@@ -10,11 +10,11 @@ export const GT026_FIXTURES: {
         "Bé chỉ chạm khi thấy chú thỏ xanh nhé, thấy cáo đỏ thì đứng yên!",
       go_stimulus: {
         label: "Thỏ xanh",
-        asset: { kind: "emoji", ref: "EMJ-rabbit-face" },
+        asset: { kind: "emoji", ref: "🐰" },
       },
       nogo_stimulus: {
         label: "Cáo đỏ",
-        asset: { kind: "emoji", ref: "EMJ-fox" },
+        asset: { kind: "emoji", ref: "🦊" },
       },
       trials: [
         { id: "tr-1", kind: "go" },
@@ -37,11 +37,11 @@ export const GT026_FIXTURES: {
       prompt: "Chạm vào ngôi sao vàng, gặp đám mây xám thì đừng chạm nhé!",
       go_stimulus: {
         label: "Ngôi sao vàng",
-        asset: { kind: "emoji", ref: "EMJ-star" },
+        asset: { kind: "emoji", ref: "⭐" },
       },
       nogo_stimulus: {
         label: "Đám mây xám",
-        asset: { kind: "emoji", ref: "EMJ-cloud" },
+        asset: { kind: "emoji", ref: "☁️" },
       },
       trials: [
         { id: "t1", kind: "go" },
@@ -64,11 +64,11 @@ export const GT026_FIXTURES: {
         "Thấy quả táo đỏ thì hái (chạm), thấy quả chanh vàng thì giữ tay nhé!",
       go_stimulus: {
         label: "Táo đỏ",
-        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        asset: { kind: "emoji", ref: "🍎" },
       },
       nogo_stimulus: {
         label: "Chanh vàng",
-        asset: { kind: "emoji", ref: "EMJ-lemon" },
+        asset: { kind: "emoji", ref: "🍋" },
       },
       trials: [
         { id: "tr1", kind: "go" },

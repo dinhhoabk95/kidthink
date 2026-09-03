@@ -54,10 +54,10 @@ describe("GT-028: Chạm đếm tích luỹ (tap-count)", () => {
         step: 5,
         target_total: 12, // 12 % 5 !== 0
         items: [
-          { item_id: "a1", asset: { kind: "emoji", ref: "EMJ-star" } },
-          { item_id: "a2", asset: { kind: "emoji", ref: "EMJ-star" } },
-          { item_id: "a3", asset: { kind: "emoji", ref: "EMJ-star" } },
-          { item_id: "a4", asset: { kind: "emoji", ref: "EMJ-star" } },
+          { item_id: "a1", asset: { kind: "emoji", ref: "⭐" } },
+          { item_id: "a2", asset: { kind: "emoji", ref: "⭐" } },
+          { item_id: "a3", asset: { kind: "emoji", ref: "⭐" } },
+          { item_id: "a4", asset: { kind: "emoji", ref: "⭐" } },
         ],
       };
       expect(() => GT028ContentSchema.parse(invalid)).toThrow(
@@ -71,10 +71,10 @@ describe("GT-028: Chạm đếm tích luỹ (tap-count)", () => {
         step: 10,
         target_total: 60, // items length 4 * 10 = 40 < 60
         items: [
-          { item_id: "a1", asset: { kind: "emoji", ref: "EMJ-star" } },
-          { item_id: "a2", asset: { kind: "emoji", ref: "EMJ-star" } },
-          { item_id: "a3", asset: { kind: "emoji", ref: "EMJ-star" } },
-          { item_id: "a4", asset: { kind: "emoji", ref: "EMJ-star" } },
+          { item_id: "a1", asset: { kind: "emoji", ref: "⭐" } },
+          { item_id: "a2", asset: { kind: "emoji", ref: "⭐" } },
+          { item_id: "a3", asset: { kind: "emoji", ref: "⭐" } },
+          { item_id: "a4", asset: { kind: "emoji", ref: "⭐" } },
         ],
       };
       expect(() => GT028ContentSchema.parse(invalid)).toThrow(

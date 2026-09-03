@@ -56,7 +56,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
           label: "Chuối",
           asset: {
             kind: "emoji",
-            ref: "EMJ-banana",
+            ref: "🍌",
           },
         },
         {
@@ -64,7 +64,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
           label: "Táo",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
         },
         {
@@ -72,7 +72,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
           label: "Chuối",
           asset: {
             kind: "emoji",
-            ref: "EMJ-banana",
+            ref: "🍌",
           },
         },
         {
@@ -80,7 +80,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
           label: "Táo",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
         },
       ],
@@ -148,7 +148,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
           label: "Vuông xanh",
           asset: {
             kind: "emoji",
-            ref: "EMJ-blue-square",
+            ref: "🟦",
           },
         },
         {
@@ -156,7 +156,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
           label: "Vuông đỏ",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-square",
+            ref: "🟥",
           },
         },
         {
@@ -164,7 +164,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
           label: "Tròn xanh",
           asset: {
             kind: "emoji",
-            ref: "EMJ-blue-circle",
+            ref: "🔵",
           },
         },
         {
@@ -172,7 +172,7 @@ export const SEED_MONT_B15: ContentSeed<unknown, unknown>[] = [
           label: "Tròn đỏ",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-circle",
+            ref: "🔴",
           },
         },
       ],

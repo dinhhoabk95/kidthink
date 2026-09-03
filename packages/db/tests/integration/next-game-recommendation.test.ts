@@ -121,7 +121,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
           ageMin: 3,
           ageMax: 5,
           difficulty: 1,
-          status: "seeded",
+          tier: "basic",
         })
         .returning();
     }
@@ -146,7 +146,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
           ageMin: 4,
           ageMax: 6,
           difficulty: 2,
-          status: "seeded",
+          tier: "basic",
         })
         .returning();
     }
@@ -220,7 +220,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         ageMax: 5,
         difficulty: 1,
         status: "published",
-        thumbnailEmoji: "EMJ-apple",
+        thumbnailEmoji: "🍎",
       })
       .returning();
     if (!levelFree1) {
@@ -242,7 +242,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         ageMax: 5,
         difficulty: 1,
         status: "published",
-        thumbnailEmoji: "EMJ-banana",
+        thumbnailEmoji: "🍌",
       })
       .returning();
     if (!levelFree2) {
@@ -264,7 +264,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         ageMax: 6,
         difficulty: 2,
         status: "published",
-        thumbnailEmoji: "EMJ-orange",
+        thumbnailEmoji: "🍊",
       })
       .returning();
     if (!levelStandard) {
@@ -286,7 +286,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         ageMax: 6,
         difficulty: 3,
         status: "published",
-        thumbnailEmoji: "EMJ-strawberry",
+        thumbnailEmoji: "🍓",
       })
       .returning();
     if (!levelPremium) {
@@ -424,7 +424,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         childProfileId: child.id,
         gameLevelId: levelFree1.id,
         contentVersion: 1,
-        templateId: 1,
+        templateId: levelFree1.templateId,
         startedAt: new Date(Date.now() - 3000),
         completionStatus: "completed",
       },
@@ -432,7 +432,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         childProfileId: child.id,
         gameLevelId: levelFree2.id,
         contentVersion: 1,
-        templateId: 1,
+        templateId: levelFree2.templateId,
         startedAt: new Date(Date.now() - 2000),
         completionStatus: "completed",
       },
@@ -440,7 +440,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         childProfileId: child.id,
         gameLevelId: levelStandard.id,
         contentVersion: 1,
-        templateId: 1,
+        templateId: levelStandard.templateId,
         startedAt: new Date(Date.now() - 1000),
         completionStatus: "completed",
       },
@@ -544,7 +544,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       childProfileId: child.id,
       gameLevelId: levelFree1.id,
       contentVersion: 1,
-      templateId: 1,
+      templateId: levelFree1.templateId,
       startedAt: new Date(),
       completionStatus: "completed",
     });

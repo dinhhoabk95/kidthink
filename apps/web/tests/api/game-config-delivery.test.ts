@@ -106,17 +106,17 @@ async function seedTestLevel(options: {
     prompt: "Bé hãy chọn quả táo đỏ",
     target_item: {
       item_id: "i1",
-      asset: { kind: "emoji", ref: "EMJ-red-apple" },
+      asset: { kind: "emoji", ref: "🍎" },
     },
     options: [
       {
         item_id: "i1",
-        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        asset: { kind: "emoji", ref: "🍎" },
         is_correct: true,
       },
       {
         item_id: "i2",
-        asset: { kind: "emoji", ref: "EMJ-green-apple" },
+        asset: { kind: "emoji", ref: "🍏" },
         is_correct: false,
       },
     ],
@@ -185,17 +185,17 @@ async function seedTestRounds(gameLevelId: number, count: number) {
       prompt: "Bé hãy chọn quả táo đỏ",
       target_item: {
         item_id: `i${i}`,
-        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        asset: { kind: "emoji", ref: "🍎" },
       },
       options: [
         {
           item_id: `i${i}`,
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
           is_correct: true,
         },
         {
           item_id: `j${i}`,
-          asset: { kind: "emoji", ref: "EMJ-green-apple" },
+          asset: { kind: "emoji", ref: "🍏" },
           is_correct: false,
         },
       ],
@@ -219,14 +219,14 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
         prompt_audio_ref: "AUD-prompt-1",
         target_item: {
           item_id: "i1",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
         },
       };
 
       const assets = resolveAssets(pack);
       expect(assets).toEqual(
         expect.arrayContaining([
-          { ref: "EMJ-red-apple", kind: "emoji", glyph: "🍎" },
+          { ref: "🍎", kind: "emoji", glyph: "🍎" },
           { ref: "AUD-prompt-1", kind: "audio", error: "not_found" },
         ])
       );
@@ -464,17 +464,17 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
           prompt: "Bé hãy chọn quả táo đỏ",
           target_item: {
             item_id: "i1",
-            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            asset: { kind: "emoji", ref: "🍎" },
           },
           options: [
             {
               item_id: `i1-${incompressible}`,
-              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              asset: { kind: "emoji", ref: "🍎" },
               is_correct: true,
             },
             {
               item_id: "i2",
-              asset: { kind: "emoji", ref: "EMJ-green-apple" },
+              asset: { kind: "emoji", ref: "🍏" },
               is_correct: false,
             },
           ],
@@ -502,17 +502,17 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
           prompt: "Bé hãy chọn quả táo đỏ",
           target_item: {
             item_id: "i1",
-            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            asset: { kind: "emoji", ref: "🍎" },
           },
           options: [
             {
               item_id: `i1-${incompressible}`,
-              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              asset: { kind: "emoji", ref: "🍎" },
               is_correct: true,
             },
             {
               item_id: "i2",
-              asset: { kind: "emoji", ref: "EMJ-green-apple" },
+              asset: { kind: "emoji", ref: "🍏" },
               is_correct: false,
             },
           ],

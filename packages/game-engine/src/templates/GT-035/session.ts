@@ -40,10 +40,10 @@ const COMMAND_LABELS: Record<CommandType, string> = {
 };
 
 const COMMAND_ICONS: Record<CommandType, string> = {
-  forward: "EMJ-arrow-up",
-  turn_left: "EMJ-arrow-left",
-  turn_right: "EMJ-arrow-right",
-  loop: "EMJ-repeat",
+  forward: "⬆️",
+  turn_left: "⬅️",
+  turn_right: "➡️",
+  loop: "🔁",
 };
 
 export class GT035Session extends TemplateGameSession<
@@ -384,7 +384,7 @@ export class GT035Session extends TemplateGameSession<
     if (isRobotHere) {
       drawSlotItem(ctx, rs, slot, {
         id: "robot",
-        asset: { kind: "emoji", ref: "EMJ-robot" },
+        asset: { kind: "emoji", ref: "🤖" },
         label: this.robotState.facing.toUpperCase(),
         state: "selected",
       });
@@ -396,7 +396,7 @@ export class GT035Session extends TemplateGameSession<
         id: "goal",
         asset: this.content.goal.asset ?? {
           kind: "emoji",
-          ref: "EMJ-star",
+          ref: "⭐",
         },
         label: "ĐÍCH",
         state: "idle",
@@ -407,7 +407,7 @@ export class GT035Session extends TemplateGameSession<
     if (isObstacle) {
       drawSlotItem(ctx, rs, slot, {
         id: `obs-${col}-${row}`,
-        asset: { kind: "emoji", ref: "EMJ-rock" },
+        asset: { kind: "emoji", ref: "🪨" },
         state: "idle",
       });
       return;

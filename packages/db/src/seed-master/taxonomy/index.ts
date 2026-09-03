@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import type { ContentLifecycleStatus, ThinkingProcess } from "@mindkid/shared";
+import type { SkillProgressionTier, ThinkingProcess } from "@mindkid/shared";
 import {
   assertDag,
   buildSkillTree,
@@ -13,6 +13,7 @@ import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import {
   competencies,
   learningObjectives,
+  skillDatasets,
   skillPrerequisites,
   skills,
   strands,
@@ -27,7 +28,7 @@ export interface ParsedSkill {
   age_max: number;
   difficulty: number;
   thinking_processes: string[];
-  status: "seeded" | "planned" | "drafted";
+  tier: SkillProgressionTier;
   prerequisites: string[];
   learning_objectives: {
     code: string;
@@ -47,12 +48,12 @@ const COMPETENCY_FILES = [
 ];
 
 const EXPECTED_SKILL_COUNTS: Record<string, number> = {
-  C1: 99,
-  C2: 44,
-  C3: 30,
-  C4: 16,
-  C5: 21,
-  C6: 20,
+  C1: 110,
+  C2: 56,
+  C3: 42,
+  C4: 86,
+  C5: 84,
+  C6: 30,
 };
 
 const SKILL_CODE_REGEX = /^C[1-6]\.[A-Z]{2,5}\.\d{2}$/;
@@ -147,11 +148,22 @@ function extractTableCells(line: string): string[] | null {
   return cells.length >= 6 ? cells : null;
 }
 
-function parseSkillStatus(statusStr: string): "seeded" | "planned" | "drafted" {
-  if (statusStr.includes("chờ") || statusStr.includes("draft")) {
-    return "planned";
+/**
+ * Bậc tiến triển trong strand — cột 7 của bảng kỹ năng.
+ *
+ * Cột này thay cho `Status` cũ. `Status` viết tay đã chết: seeder ghi cứng
+ * `"seeded"` cho mọi hàng, còn markdown thì ghi 96 kỹ năng là `chờ` trong khi
+ * cả 96 đều đã có ≥10 game level thật. Bậc thì suy được và dùng được.
+ */
+function parseSkillTier(tierStr: string): SkillProgressionTier {
+  const token = tierStr.trim().toLowerCase();
+  if (token === "a" || token === "advanced") {
+    return "advanced";
   }
-  return "seeded";
+  if (token === "c" || token === "core") {
+    return "core";
+  }
+  return "basic";
 }
 
 function parseSkillTableRow(
@@ -174,7 +186,7 @@ function parseSkillTableRow(
   const difficulty = Number.parseInt(cells[3] ?? "", 10) || 1;
   const prerequisites = parsePrereqs(cells[4] ?? "");
   const thinking_processes = parseThinkingProcesses(cells[5] ?? "");
-  const status = parseSkillStatus(cells[6] ?? "");
+  const tier = parseSkillTier(cells[6] ?? "");
 
   return {
     code,
@@ -185,7 +197,7 @@ function parseSkillTableRow(
     age_max,
     difficulty,
     thinking_processes,
-    status,
+    tier,
     prerequisites,
     learning_objectives: generateDefaultLOs(code, name),
   };
@@ -219,7 +231,7 @@ function resolveTaxonomyDocsDir(docsDir: string): string {
 /**
  * Parses markdown files in `docs/taxonomy/` to extract all skills & LOs.
  */
-export function parseTaxonomyDocs(docsDir: string): ParsedSkill[] {
+export function parseTaxonomyDocs(docsDir = "docs/taxonomy"): ParsedSkill[] {
   const parsedSkills: ParsedSkill[] = [];
   const resolvedDir = resolveTaxonomyDocsDir(docsDir);
 
@@ -284,12 +296,7 @@ function validateSkillPrerequisites(
   for (const s of skillsToSeed) {
     for (const pCode of s.prerequisites) {
       const pSkill = skillMap.get(pCode);
-      if (
-        s.status === "seeded" &&
-        pSkill &&
-        pSkill.status === "seeded" &&
-        pSkill.difficulty > s.difficulty
-      ) {
+      if (pSkill && pSkill.difficulty > s.difficulty) {
         throw new Error(
           `BR-TAX-05 violation: Prerequisite ${pCode} (diff ${pSkill.difficulty}) > skill ${s.code} (diff ${s.difficulty})`
         );
@@ -300,7 +307,7 @@ function validateSkillPrerequisites(
 
 function validateSkillBounds(skillsToSeed: ParsedSkill[]): void {
   for (const s of skillsToSeed) {
-    if (s.age_min < 3 || s.age_max > 6 || s.age_min > s.age_max) {
+    if (s.age_min < 3 || s.age_max > 7 || s.age_min > s.age_max) {
       throw new Error(
         `BR-TAX-04 violation: Invalid age range for skill ${s.code}`
       );
@@ -334,9 +341,9 @@ export function validateTaxonomyInvariants(skillsToSeed: ParsedSkill[]): void {
   const skillMap = new Map<string, ParsedSkill>();
   for (const s of skillsToSeed) {
     skillMap.set(s.code, s);
-    if (s.status === "seeded" && s.learning_objectives.length < 3) {
+    if (s.learning_objectives.length < 3) {
       throw new Error(
-        `BR-TAX-02 violation: Skill ${s.code} status='seeded' has ${s.learning_objectives.length} LOs (< 3)`
+        `BR-TAX-02 violation: Skill ${s.code} has ${s.learning_objectives.length} LOs (< 3)`
       );
     }
   }
@@ -353,7 +360,7 @@ export function validateTaxonomyInvariants(skillsToSeed: ParsedSkill[]): void {
     age_max: s.age_max,
     difficulty: s.difficulty,
     thinking_processes: s.thinking_processes as unknown as ThinkingProcess[],
-    status: s.status as ContentLifecycleStatus,
+    tier: s.tier,
     prerequisites: s.prerequisites.map((pCode) => ({
       prerequisite_code: pCode,
     })),
@@ -461,7 +468,7 @@ async function seedSkillsStep(
         ageMax: sk.age_max,
         difficulty: sk.difficulty,
         thinkingProcesses: sk.thinking_processes,
-        status: "seeded" as const,
+        tier: sk.tier,
         position: idx + 1,
       };
     })
@@ -480,7 +487,7 @@ async function seedSkillsStep(
           ageMax: sql`excluded.age_max`,
           difficulty: sql`excluded.difficulty`,
           thinkingProcesses: sql`excluded.thinking_processes`,
-          status: sql`excluded.status`,
+          tier: sql`excluded.tier`,
           position: sql`excluded.position`,
         },
       });
@@ -575,8 +582,63 @@ async function seedLearningObjectivesStep(
   return values.length;
 }
 
+async function seedSkillDatasetsStep(
+  db: NodePgDatabase<Record<string, unknown>>,
+  skillIdMap: Map<string, number>
+): Promise<number> {
+  const { SKILL_DATASETS } = await import("#src/seed-content/skills/index");
+  const values: (typeof skillDatasets.$inferInsert)[] = [];
+
+  for (const [code, dataset] of Object.entries(SKILL_DATASETS)) {
+    const skillId = skillIdMap.get(code);
+    if (!skillId) {
+      continue;
+    }
+    values.push({
+      skillId,
+      code: dataset.skill_code,
+      conceptLabel: dataset.concept_label,
+      surface: dataset.surface,
+      items: dataset.items,
+      ladder: dataset.ladder,
+      phrasing: dataset.phrasing,
+      relations: dataset.relations ?? null,
+      ordering: dataset.ordering ?? null,
+      status: "active",
+      origin: "human",
+      authoredIn: "repo_seed",
+    });
+  }
+
+  if (values.length > 0) {
+    for (let i = 0; i < values.length; i += 100) {
+      const chunk = values.slice(i, i + 100);
+      await db
+        .insert(skillDatasets)
+        .values(chunk)
+        .onConflictDoUpdate({
+          target: skillDatasets.code,
+          set: {
+            skillId: sql`excluded.skill_id`,
+            conceptLabel: sql`excluded.concept_label`,
+            surface: sql`excluded.surface`,
+            items: sql`excluded.items`,
+            ladder: sql`excluded.ladder`,
+            phrasing: sql`excluded.phrasing`,
+            relations: sql`excluded.relations`,
+            ordering: sql`excluded.ordering`,
+            status: sql`excluded.status`,
+            updatedAt: sql`now()`,
+          },
+        });
+    }
+  }
+
+  return values.length;
+}
+
 /**
- * Seeds Master Taxonomy data (competencies, strands, skills, prerequisites, LOs).
+ * Seeds Master Taxonomy data (competencies, strands, skills, prerequisites, LOs, skillDatasets).
  * Pre-flight validation & assertDag run BEFORE any INSERTs (D-EG).
  * Idempotent according to `code`.
  */
@@ -588,6 +650,7 @@ export async function seedTaxonomyMasterData(
   strandCount: number;
   skillCount: number;
   loCount: number;
+  datasetCount: number;
 }> {
   const defaultDocsDir = fs.existsSync(
     path.resolve(process.cwd(), "docs/taxonomy")
@@ -599,14 +662,7 @@ export async function seedTaxonomyMasterData(
 
   validateTaxonomyInvariants(allParsedSkills);
 
-  // Gieo **mọi** kỹ năng đã phân tích, giữ nguyên `status`.
-  //
-  // Bản cũ lọc `status === "seeded"` nên 88 kỹ năng trạng thái `chờ` không có
-  // dòng nào trong DB — trong khi corpus nội dung đã trỏ vào chúng
-  // (`C1.CNT.06`, `C4.VIS.01`, `C4.VIS.02`, `C4.SEN.01`, `C5.LIS.01`).
-  // `linkGameLevelSkills` ném khi không tra được mã, nên cả lô seed chết.
-  // Trạng thái vẫn nằm ở cột `status`; chỗ nào cần "đã sẵn sàng" thì lọc theo
-  // cột đó, không lọc bằng cách không tồn tại.
+  // Gieo **mọi** kỹ năng đã phân tích.
   const compIdMap = await seedCompetenciesStep(db);
   const strandIdMap = await seedStrandsStep(db, compIdMap);
   const skillIdMap = await seedSkillsStep(db, allParsedSkills, strandIdMap);
@@ -616,11 +672,13 @@ export async function seedTaxonomyMasterData(
     allParsedSkills,
     skillIdMap
   );
+  const datasetCount = await seedSkillDatasetsStep(db, skillIdMap);
 
   return {
     competencyCount: compIdMap.size,
     strandCount: strandIdMap.size,
     skillCount: skillIdMap.size,
     loCount,
+    datasetCount,
   };
 }

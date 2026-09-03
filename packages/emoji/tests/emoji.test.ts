@@ -5,16 +5,18 @@ import {
   ALL_EMOJIS,
   EMOJI_CATEGORIES,
   getAllCategories,
+  getByGlyph,
   getEmojisByCategory,
   getEmojisByCurriculumTheme,
   getEmojisByGroup,
   getRandomEmojis,
   getTotalEmojiCount,
+  isInCatalog,
   searchEmoji,
 } from "#src/index";
 
 describe("@mindkid/emoji", () => {
-  // ── Subtask 8.1: Test mỗi category có ít nhất 10 emoji entries ──
+  // ── Category size validation ──
   describe("Category size validation", () => {
     const categories = getAllCategories();
 
@@ -30,7 +32,7 @@ describe("@mindkid/emoji", () => {
     }
   });
 
-  // ── Subtask 8.2: Test search ──
+  // ── Search functionality ──
   describe("Search functionality", () => {
     it('searchEmoji("táo") should return 🍎', () => {
       const results = searchEmoji("táo");
@@ -54,6 +56,13 @@ describe("@mindkid/emoji", () => {
       expect(emojis).toContain("🐤");
     });
 
+    it('searchEmoji("thầy giáo") and searchEmoji("cô giáo") both return 🧑‍🏫', () => {
+      const teachers = searchEmoji("thầy giáo").map((r) => r.emoji);
+      const femaleTeachers = searchEmoji("cô giáo").map((r) => r.emoji);
+      expect(teachers).toContain("🧑‍🏫");
+      expect(femaleTeachers).toContain("🧑‍🏫");
+    });
+
     it("should be case-insensitive", () => {
       const lower = searchEmoji("chuối");
       const upper = searchEmoji("Chuối");
@@ -63,7 +72,6 @@ describe("@mindkid/emoji", () => {
     it("should be diacritics-tolerant (search without dấu)", () => {
       const withDiacritics = searchEmoji("chuối");
       const withoutDiacritics = searchEmoji("chuoi");
-      // Both should find banana
       expect(withDiacritics.map((r) => r.emoji)).toContain("🍌");
       expect(withoutDiacritics.map((r) => r.emoji)).toContain("🍌");
     });
@@ -85,37 +93,63 @@ describe("@mindkid/emoji", () => {
     });
   });
 
-  // ── Subtask 8.3: Test curriculum mapping ──
-  describe("Curriculum theme mapping", () => {
-    it('getEmojisByCurriculumTheme("dong_vat") should return emojis from all animal categories', () => {
-      const results = getEmojisByCurriculumTheme("dong_vat");
-      const categories = new Set(results.map((r) => r.category));
-      expect(categories.has("animal-farm")).toBe(true);
-      expect(categories.has("animal-wild")).toBe(true);
-      expect(categories.has("animal-water")).toBe(true);
-      expect(categories.has("animal-bird")).toBe(true);
-      expect(categories.has("animal-insect")).toBe(true);
+  // ── Glyph lookup & catalog membership (D-EH, D-EI) ──
+  describe("Glyph lookup & catalog membership", () => {
+    it("getByGlyph returns entry by exact NFC glyph", () => {
+      const entry = getByGlyph("🍎");
+      expect(entry).not.toBeNull();
+      expect(entry?.name).toBe("Táo đỏ");
     });
 
-    it('getEmojisByCurriculumTheme("phuong_tien") should return all transport emojis', () => {
+    it("getByGlyph matches both with and without VS16 (U+FE0F)", () => {
+      const withVS16 = getByGlyph("🕊️");
+      const withoutVS16 = getByGlyph("🕊");
+      expect(withVS16).not.toBeNull();
+      expect(withoutVS16).not.toBeNull();
+      expect(withVS16?.emoji).toBe(withoutVS16?.emoji);
+    });
+
+    it("isInCatalog returns true for catalog emojis, false otherwise", () => {
+      expect(isInCatalog("🍎")).toBe(true);
+      expect(isInCatalog("🪙")).toBe(true);
+      expect(isInCatalog("🧶")).toBe(true);
+      expect(isInCatalog("🔞")).toBe(false);
+      expect(isInCatalog("🚬")).toBe(false);
+      expect(isInCatalog("🔫")).toBe(false);
+    });
+  });
+
+  // ── Curriculum theme mapping ──
+  describe("Curriculum theme mapping", () => {
+    it('getEmojisByCurriculumTheme("dong_vat") should return emojis from animal categories', () => {
+      const results = getEmojisByCurriculumTheme("dong_vat");
+      const allCategories = new Set(results.flatMap((r) => r.categories));
+      expect(allCategories.has("animal-farm")).toBe(true);
+      expect(allCategories.has("animal-wild")).toBe(true);
+      expect(allCategories.has("animal-water")).toBe(true);
+      expect(allCategories.has("animal-bird")).toBe(true);
+      expect(allCategories.has("animal-insect")).toBe(true);
+    });
+
+    it('getEmojisByCurriculumTheme("phuong_tien") should return transport emojis', () => {
       const results = getEmojisByCurriculumTheme("phuong_tien");
-      const categories = new Set(results.map((r) => r.category));
-      expect(categories.has("vehicle-road")).toBe(true);
-      expect(categories.has("vehicle-rail")).toBe(true);
-      expect(categories.has("vehicle-water")).toBe(true);
-      expect(categories.has("vehicle-air")).toBe(true);
+      const allCategories = new Set(results.flatMap((r) => r.categories));
+      expect(allCategories.has("vehicle-road")).toBe(true);
+      expect(allCategories.has("vehicle-rail")).toBe(true);
+      expect(allCategories.has("vehicle-water")).toBe(true);
+      expect(allCategories.has("vehicle-air")).toBe(true);
     });
 
     it('getEmojisByCurriculumTheme("thuc_vat") should return plant emojis', () => {
       const results = getEmojisByCurriculumTheme("thuc_vat");
-      const categories = new Set(results.map((r) => r.category));
-      expect(categories.has("fruit")).toBe(true);
-      expect(categories.has("vegetable")).toBe(true);
-      expect(categories.has("flower-tree")).toBe(true);
+      const allCategories = new Set(results.flatMap((r) => r.categories));
+      expect(allCategories.has("fruit")).toBe(true);
+      expect(allCategories.has("vegetable")).toBe(true);
+      expect(allCategories.has("flower-tree")).toBe(true);
     });
   });
 
-  // ── Subtask 8.4: Test getRandomEmojis ──
+  // ── Random emoji selection ──
   describe("Random emoji selection", () => {
     it('getRandomEmojis("fruit", 5) should return 5 unique emojis', () => {
       const results = getRandomEmojis("fruit", 5);
@@ -125,10 +159,10 @@ describe("@mindkid/emoji", () => {
       expect(uniqueEmojis.size).toBe(5);
     });
 
-    it("all returned emojis should be from the requested category", () => {
+    it("all returned emojis should belong to the requested category", () => {
       const results = getRandomEmojis("fruit", 5);
       for (const entry of results) {
-        expect(entry.category).toBe("fruit");
+        expect(entry.categories).toContain("fruit");
       }
     });
 
@@ -156,10 +190,10 @@ describe("@mindkid/emoji", () => {
     });
   });
 
-  // ── Subtask 8.5: Test tổng emoji count ≥ 800 ──
+  // ── Total emoji count ──
   describe("Total emoji count", () => {
-    it("should have at least 800 total emoji entries", () => {
-      expect(getTotalEmojiCount()).toBeGreaterThanOrEqual(800);
+    it("should have at least 750 total distinct emoji entries", () => {
+      expect(getTotalEmojiCount()).toBeGreaterThanOrEqual(750);
     });
 
     it("ALL_EMOJIS.length should match getTotalEmojiCount()", () => {
@@ -173,7 +207,7 @@ describe("@mindkid/emoji", () => {
       for (const entry of ALL_EMOJIS) {
         expect(entry.emoji).toBeTruthy();
         expect(entry.name).toBeTruthy();
-        expect(entry.category).toBeTruthy();
+        expect(entry.categories.length).toBeGreaterThanOrEqual(1);
         expect(entry.keywords.length).toBeGreaterThanOrEqual(2);
         expect(entry.curriculum_themes.length).toBeGreaterThanOrEqual(1);
         expect(entry.age_min).toBeGreaterThanOrEqual(3);
@@ -181,10 +215,10 @@ describe("@mindkid/emoji", () => {
       }
     });
 
-    it("every entry category should match its source file category", () => {
+    it("every entry category list should include its key in EMOJI_CATEGORIES", () => {
       for (const [category, entries] of Object.entries(EMOJI_CATEGORIES)) {
         for (const entry of entries) {
-          expect(entry.category).toBe(category);
+          expect(entry.categories).toContain(category);
         }
       }
     });
@@ -195,18 +229,18 @@ describe("@mindkid/emoji", () => {
     it('getEmojisByGroup("dong_vat") should include all animal categories', () => {
       const results = getEmojisByGroup("dong_vat");
       expect(results.length).toBeGreaterThan(0);
-      const categories = new Set(results.map((r) => r.category));
-      expect(categories.has("animal-farm")).toBe(true);
-      expect(categories.has("animal-wild")).toBe(true);
+      const allCategories = new Set(results.flatMap((r) => r.categories));
+      expect(allCategories.has("animal-farm")).toBe(true);
+      expect(allCategories.has("animal-wild")).toBe(true);
     });
 
     it('getEmojisByGroup("phuong_tien") should include all vehicle categories', () => {
       const results = getEmojisByGroup("phuong_tien");
-      const categories = new Set(results.map((r) => r.category));
-      expect(categories.has("vehicle-road")).toBe(true);
-      expect(categories.has("vehicle-rail")).toBe(true);
-      expect(categories.has("vehicle-water")).toBe(true);
-      expect(categories.has("vehicle-air")).toBe(true);
+      const allCategories = new Set(results.flatMap((r) => r.categories));
+      expect(allCategories.has("vehicle-road")).toBe(true);
+      expect(allCategories.has("vehicle-rail")).toBe(true);
+      expect(allCategories.has("vehicle-water")).toBe(true);
+      expect(allCategories.has("vehicle-air")).toBe(true);
     });
   });
 });

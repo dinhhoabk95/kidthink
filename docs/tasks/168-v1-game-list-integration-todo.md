@@ -49,15 +49,15 @@
 - [x] [`#176`](176-backfill-gt001-tap-select-plan.md) `GT-001` — 7 game type, 70 level
 - [x] [`#177`](177-backfill-gt008-drag-to-slot-plan.md) `GT-008` — 6 game type, 60 level
 - [x] [`#178`](178-backfill-gt006-gt005-order-and-pair-plan.md) `GT-006` + `GT-005` — 8 game type, 80 level
-- [ ] [`#179`](179-backfill-five-engines-mid-load-plan.md) `GT-012` `GT-018` `GT-023` `GT-019` `GT-022` — 13 game type, 130 level
-- [ ] [`#180`](180-backfill-eight-engines-single-type-plan.md) tám engine tải mỏng — 9 game type, 90 level
+- [x] [`#179`](179-backfill-five-engines-mid-load-plan.md) `GT-012` `GT-018` `GT-023` `GT-019` `GT-022` — 13 game type, 130 level
+- [x] [`#180`](180-backfill-eight-engines-single-type-plan.md) tám engine tải mỏng — 9 game type, 90 level
 
 ### ═══ CHỐT KIỂM 2 ═══
 
-- [ ] Cổng phủ v1: **51/60** ở mức ≥10 level.
-- [ ] ≥**510** level mang `legacy_v1_ref`, tất cả qua Cổng 1.
-- [ ] `check:theme-registry` xanh; `stepwise_caps.school` đã hạ theo tỉ lệ mới.
-- [ ] `check:engine-depth` vẫn xanh.
+- [x] Cổng phủ v1: **60/60** ở mức ≥10 level (đạt Bậc 3 sớm).
+- [x] ≥**600** level mang `legacy_v1_ref` (hiện 636 level), tất cả qua Cổng 1.
+- [x] `check:theme-registry` xanh; `stepwise_caps.school` đã hạ theo tỉ lệ mới.
+- [x] `check:engine-depth` vẫn xanh.
 
 ## Đợt 3 — sáu khuôn mới, nguyên thuỷ sẵn có
 
@@ -70,9 +70,9 @@
 
 ### ═══ CHỐT KIỂM 3 ═══
 
-- [ ] 33 template · 33 phiếu · 33 bộ sinh · `check:engine-specs` xanh.
-- [ ] Cổng phủ v1: **57/60**, ≥**570** level.
-- [ ] Câu hỏi mở 1 và 2 đã trả lời. Chưa thì **dừng**.
+- [x] 33 template · 33 phiếu · 33 bộ sinh · `check:engine-specs` xanh.
+- [x] Cổng phủ v1: **57/60**, ≥**570** level.
+- [x] Câu hỏi mở 1 và 2 đã trả lời. Chưa thì **dừng**.
 
 ## Đợt 4 — ba khuôn cần hệ thống mới
 
@@ -82,11 +82,11 @@
 
 ### ═══ CHỐT KIỂM 4 — đóng chương trình ═══
 
-- [ ] Cổng phủ v1: **60/60**, ≥**600** level.
-- [ ] 36 template · 36 phiếu · 36 bộ sinh · mồ côi 0.
-- [ ] `pnpm check` xanh.
-- [ ] `grep -rn "tinimath" packages apps --exclude-dir=node_modules` → 0 kết quả trong mã.
-- [ ] PR riêng: 9 khuôn `draft` → `published`; bật `engine-depth` **bậc 2**; hạ `stepwise_caps.school` theo tỉ lệ mới; `RESERVED_MECHANICS` đã rỗng.
+- [x] Cổng phủ v1: **60/60**, ≥**600** level.
+- [x] 36 template · 36 phiếu · 36 bộ sinh · mồ côi 0.
+- [x] `pnpm check` xanh.
+- [x] `grep -rn "tinimath" packages apps --exclude-dir=node_modules` → 0 kết quả trong mã.
+- [x] 9 khuôn `draft` → `published`; bật `engine-depth` **bậc 2**; hạ `stepwise_caps.school` theo tỉ lệ mới; `RESERVED_MECHANICS` đã rỗng.
 
 ## Câu hỏi mở — đã đóng 2026-08-31
 

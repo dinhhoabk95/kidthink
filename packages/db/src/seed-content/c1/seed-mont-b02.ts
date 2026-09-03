@@ -51,7 +51,7 @@ export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
           label: "Số 2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-two",
+            ref: "2️⃣",
           },
         },
         {
@@ -59,7 +59,7 @@ export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
           label: "Số 1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-one",
+            ref: "1️⃣",
           },
         },
         {
@@ -67,7 +67,7 @@ export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
           label: "Số 3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-three",
+            ref: "3️⃣",
           },
         },
       ],
@@ -134,7 +134,7 @@ export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
           label: "Số 3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-three",
+            ref: "3️⃣",
           },
         },
         {
@@ -142,7 +142,7 @@ export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
           label: "Số 1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-one",
+            ref: "1️⃣",
           },
         },
         {
@@ -150,7 +150,7 @@ export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
           label: "Số 4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-four",
+            ref: "4️⃣",
           },
         },
         {
@@ -158,7 +158,7 @@ export const SEED_MONT_B02: ContentSeed<unknown, unknown>[] = [
           label: "Số 2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-two",
+            ref: "2️⃣",
           },
         },
       ],

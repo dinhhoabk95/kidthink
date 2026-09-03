@@ -69,6 +69,34 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
     expect(sessions).toHaveLength(0);
   });
 
+  it("Task 2: correct password for manager without MFA logs in directly with status ok", async () => {
+    const db = getOwnerDb();
+    const testEmail = `admin_direct_login_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
+    const passwordHash = await hashPassword("AdminSecret123!");
+
+    const [manager] = await db
+      .insert(managers)
+      .values({
+        email: testEmail,
+        passwordHash,
+        displayName: "Direct Admin",
+        role: "super_admin",
+        mfaEnabled: false,
+      })
+      .returning();
+
+    const event = mockEvent({
+      email: testEmail,
+      password: "AdminSecret123!",
+    });
+
+    const res = await loginHandler(event);
+    expect(res).toBeDefined();
+    expect(res.status).toBe("ok");
+    expect(res.manager).toBeDefined();
+    expect(res.manager.id).toBe(manager.id);
+  });
+
   it("Task 2: wrong password returns 401 INVALID_CREDENTIALS + audits manager_login_failed", async () => {
     const db = getOwnerDb();
     const testEmail = `admin_wrong_pass_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;

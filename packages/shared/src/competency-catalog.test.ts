@@ -30,9 +30,9 @@ describe("COMPETENCY_CATALOG — nguồn duy nhất của tầng L1", () => {
       "Tư duy toán học",
       "Tư duy không gian",
       "Tư duy logic",
-      "Tư duy quan sát",
+      "Tư duy khám phá",
       "Tư duy ngôn ngữ",
-      "Chức năng điều hành",
+      "Tư duy điều hành",
     ]);
   });
 
@@ -43,7 +43,16 @@ describe("COMPETENCY_CATALOG — nguồn duy nhất của tầng L1", () => {
   });
 
   it("BR-LND-06 — mô tả không hứa kết quả học tập", () => {
-    const banned = ["thông minh hơn", "tăng iq", "vượt trội", "giỏi hơn"];
+    const banned = [
+      "thông minh hơn",
+      "tăng iq",
+      "vượt trội",
+      "giỏi hơn",
+      "thiên tài",
+      "phát triển não bộ",
+      "dạy trước chương trình",
+      "không thua kém",
+    ];
 
     for (const entry of COMPETENCY_CATALOG) {
       const text = `${entry.tagline} ${entry.short}`.toLowerCase();

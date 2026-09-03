@@ -35,14 +35,14 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
             item_id: "f1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-star",
+              ref: "⭐",
             },
           },
           right: {
             item_id: "num1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-one",
+              ref: "1️⃣",
             },
           },
         },
@@ -52,14 +52,14 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
             item_id: "f2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-star",
+              ref: "⭐",
             },
           },
           right: {
             item_id: "num2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-two",
+              ref: "2️⃣",
             },
           },
         },
@@ -100,14 +100,14 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
             item_id: "l1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-star",
+              ref: "⭐",
             },
           },
           right: {
             item_id: "num2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-two",
+              ref: "2️⃣",
             },
           },
         },
@@ -117,14 +117,14 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
             item_id: "l2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-star",
+              ref: "⭐",
             },
           },
           right: {
             item_id: "num3",
             asset: {
               kind: "emoji",
-              ref: "EMJ-three",
+              ref: "3️⃣",
             },
           },
         },
@@ -134,14 +134,14 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
             item_id: "l3",
             asset: {
               kind: "emoji",
-              ref: "EMJ-star",
+              ref: "⭐",
             },
           },
           right: {
             item_id: "num4",
             asset: {
               kind: "emoji",
-              ref: "EMJ-four",
+              ref: "4️⃣",
             },
           },
         },
@@ -186,7 +186,7 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
           attribute: "target",
           asset: {
             kind: "emoji",
-            ref: "EMJ-front-facing-baby-chick",
+            ref: "🐥",
           },
           is_correct: true,
         },
@@ -195,7 +195,7 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
           attribute: "target",
           asset: {
             kind: "emoji",
-            ref: "EMJ-front-facing-baby-chick",
+            ref: "🐥",
           },
           is_correct: true,
         },
@@ -204,7 +204,7 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
           attribute: "target",
           asset: {
             kind: "emoji",
-            ref: "EMJ-front-facing-baby-chick",
+            ref: "🐥",
           },
           is_correct: false,
         },
@@ -250,7 +250,7 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
           attribute: "target",
           asset: {
             kind: "emoji",
-            ref: "EMJ-mushroom",
+            ref: "🍄",
           },
           is_correct: true,
         },
@@ -259,7 +259,7 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
           attribute: "target",
           asset: {
             kind: "emoji",
-            ref: "EMJ-mushroom",
+            ref: "🍄",
           },
           is_correct: true,
         },
@@ -268,7 +268,7 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
           attribute: "target",
           asset: {
             kind: "emoji",
-            ref: "EMJ-mushroom",
+            ref: "🍄",
           },
           is_correct: true,
         },
@@ -277,7 +277,7 @@ export const SEED_MONT_A05: ContentSeed<unknown, unknown>[] = [
           attribute: "target",
           asset: {
             kind: "emoji",
-            ref: "EMJ-mushroom",
+            ref: "🍄",
           },
           is_correct: false,
         },

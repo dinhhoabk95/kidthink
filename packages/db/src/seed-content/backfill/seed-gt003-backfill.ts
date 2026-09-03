@@ -40,16 +40,16 @@ const THEMES = [
 // 1. D1-01: Đếm & Kéo vào Rổ (C1.CNT.02, C1.CNT.09, C1.CNT.10, C1.NCOMP.11, C1.NCOMP.12) — 10 levels
 function createD101Levels(): ContentSeed<unknown, unknown>[] {
   const emojiSets = [
-    ["EMJ-red-apple", "EMJ-banana"],
-    ["EMJ-cow", "EMJ-pig"],
-    ["EMJ-car", "EMJ-bus"],
-    ["EMJ-sunflower", "EMJ-deciduous-tree"],
-    ["EMJ-fish", "EMJ-dolphin"],
-    ["EMJ-pencil", "EMJ-open-book"],
-    ["EMJ-star", "EMJ-sparkles"],
-    ["EMJ-candy", "EMJ-cake"],
-    ["EMJ-cat", "EMJ-dog"],
-    ["EMJ-gift", "EMJ-balloon"],
+    ["🍎", "🍌"],
+    ["🐮", "🐷"],
+    ["🚗", "🚌"],
+    ["🌻", "🌳"],
+    ["🐟", "🐬"],
+    ["✏️", "📖"],
+    ["⭐", "✨"],
+    ["🍬", "🍰"],
+    ["🐱", "🐶"],
+    ["🎁", "🎈"],
   ];
 
   const skillList = [
@@ -73,16 +73,11 @@ function createD101Levels(): ContentSeed<unknown, unknown>[] {
     const difficulty = ((i % 3) + 1) as 1 | 2 | 3;
     const [ageMin, ageMax] = getAgeRange(i);
     const accessTier = getAccessTier(i, 0);
-    const emjs = emojiSets[i % emojiSets.length] ?? [
-      "EMJ-star",
-      "EMJ-sunflower",
-    ];
+    const emjs = emojiSets[i % emojiSets.length] ?? ["⭐", "🌻"];
 
     const items = Array.from({ length: totalItems }, (_, itemIdx) => {
       const isTarget = itemIdx < targetCount;
-      const ref = isTarget
-        ? (emjs[0] ?? "EMJ-star")
-        : (emjs[1] ?? "EMJ-sunflower");
+      const ref = isTarget ? (emjs[0] ?? "⭐") : (emjs[1] ?? "🌻");
       return {
         item_id: `item_${itemIdx + 1}`,
         attribute: isTarget ? `count_${targetCount}` : "other_count",
@@ -134,14 +129,7 @@ function createD101Levels(): ContentSeed<unknown, unknown>[] {
 
 // 2. D1-04: Nhận diện Chữ số (C1.NREC.01, C1.NREC.02, C1.NREC.09..12) — 10 levels
 function createD104Levels(): ContentSeed<unknown, unknown>[] {
-  const numberEmojis = [
-    "EMJ-open-book",
-    "EMJ-pencil",
-    "EMJ-gift",
-    "EMJ-star",
-    "EMJ-sunflower",
-    "EMJ-candy",
-  ];
+  const numberEmojis = ["📖", "✏️", "🎁", "⭐", "🌻", "🍬"];
 
   const skillList = [
     "C1.NREC.01",
@@ -168,7 +156,7 @@ function createD104Levels(): ContentSeed<unknown, unknown>[] {
       {
         item_id: "item_1",
         attribute: `digit_${targetDigit}`,
-        asset: { kind: "emoji" as const, ref: numberEmojis[0] ?? "EMJ-star" },
+        asset: { kind: "emoji" as const, ref: numberEmojis[0] ?? "⭐" },
         is_correct: true,
       },
       {
@@ -176,20 +164,20 @@ function createD104Levels(): ContentSeed<unknown, unknown>[] {
         attribute: `digit_${targetDigit}`,
         asset: {
           kind: "emoji" as const,
-          ref: numberEmojis[1] ?? "EMJ-open-book",
+          ref: numberEmojis[1] ?? "📖",
         },
         is_correct: true,
       },
       {
         item_id: "item_3",
         attribute: "digit_other_1",
-        asset: { kind: "emoji" as const, ref: numberEmojis[2] ?? "EMJ-gift" },
+        asset: { kind: "emoji" as const, ref: numberEmojis[2] ?? "🎁" },
         is_correct: false,
       },
       {
         item_id: "item_4",
         attribute: "digit_other_2",
-        asset: { kind: "emoji" as const, ref: numberEmojis[3] ?? "EMJ-pencil" },
+        asset: { kind: "emoji" as const, ref: numberEmojis[3] ?? "✏️" },
         is_correct: false,
       },
     ];
@@ -245,10 +233,10 @@ function createD205Levels(): ContentSeed<unknown, unknown>[] {
     star: "Hình ngôi sao",
   };
   const shapeEmojis: Record<string, string[]> = {
-    circle: ["EMJ-red-circle", "EMJ-blue-circle"],
-    square: ["EMJ-blue-square", "EMJ-green-square"],
-    triangle: ["EMJ-red-triangle-up", "EMJ-red-triangle-up"],
-    star: ["EMJ-star", "EMJ-glowing-star"],
+    circle: ["🔴", "🔵"],
+    square: ["🟦", "🟩"],
+    triangle: ["🔺", "🔺"],
+    star: ["⭐", "🌟"],
   };
 
   const skillList = [
@@ -272,15 +260,9 @@ function createD205Levels(): ContentSeed<unknown, unknown>[] {
     const [ageMin, ageMax] = getAgeRange(i);
     const accessTier = getAccessTier(i, 2);
 
-    const targetRefs = shapeEmojis[targetShape] ?? [
-      "EMJ-red-circle",
-      "EMJ-blue-circle",
-    ];
+    const targetRefs = shapeEmojis[targetShape] ?? ["🔴", "🔵"];
     const distractorShape = targetShape === "circle" ? "square" : "circle";
-    const distractorRefs = shapeEmojis[distractorShape] ?? [
-      "EMJ-blue-square",
-      "EMJ-green-square",
-    ];
+    const distractorRefs = shapeEmojis[distractorShape] ?? ["🟦", "🟩"];
 
     const items = [
       {
@@ -288,7 +270,7 @@ function createD205Levels(): ContentSeed<unknown, unknown>[] {
         attribute: `shape_${targetShape}`,
         asset: {
           kind: "emoji" as const,
-          ref: targetRefs[0] ?? "EMJ-red-circle",
+          ref: targetRefs[0] ?? "🔴",
         },
         is_correct: true,
       },
@@ -297,7 +279,7 @@ function createD205Levels(): ContentSeed<unknown, unknown>[] {
         attribute: `shape_${targetShape}`,
         asset: {
           kind: "emoji" as const,
-          ref: targetRefs[1] ?? "EMJ-blue-circle",
+          ref: targetRefs[1] ?? "🔵",
         },
         is_correct: true,
       },
@@ -306,7 +288,7 @@ function createD205Levels(): ContentSeed<unknown, unknown>[] {
         attribute: `shape_${distractorShape}`,
         asset: {
           kind: "emoji" as const,
-          ref: distractorRefs[0] ?? "EMJ-blue-square",
+          ref: distractorRefs[0] ?? "🟦",
         },
         is_correct: false,
       },
@@ -315,7 +297,7 @@ function createD205Levels(): ContentSeed<unknown, unknown>[] {
         attribute: `shape_${distractorShape}`,
         asset: {
           kind: "emoji" as const,
-          ref: distractorRefs[1] ?? "EMJ-green-square",
+          ref: distractorRefs[1] ?? "🟩",
         },
         is_correct: false,
       },
@@ -373,10 +355,10 @@ function createD401Levels(): ContentSeed<unknown, unknown>[] {
     yellow: "Màu vàng",
   };
   const colorItems: Record<string, string[]> = {
-    red: ["EMJ-red-apple", "EMJ-tomato"],
-    blue: ["EMJ-blue-circle", "EMJ-whale"],
-    green: ["EMJ-green-apple", "EMJ-deciduous-tree"],
-    yellow: ["EMJ-banana", "EMJ-sunflower"],
+    red: ["🍎", "🍅"],
+    blue: ["🔵", "🐳"],
+    green: ["🍏", "🌳"],
+    yellow: ["🍌", "🌻"],
   };
 
   const skillList = [
@@ -400,15 +382,9 @@ function createD401Levels(): ContentSeed<unknown, unknown>[] {
     const [ageMin, ageMax] = getAgeRange(i);
     const accessTier = getAccessTier(i, 3);
 
-    const targetList = colorItems[targetColor] ?? [
-      "EMJ-red-apple",
-      "EMJ-tomato",
-    ];
+    const targetList = colorItems[targetColor] ?? ["🍎", "🍅"];
     const distractorColor = targetColor === "red" ? "blue" : "red";
-    const distractorList = colorItems[distractorColor] ?? [
-      "EMJ-blue-circle",
-      "EMJ-whale",
-    ];
+    const distractorList = colorItems[distractorColor] ?? ["🔵", "🐳"];
 
     const items = [
       {
@@ -416,14 +392,14 @@ function createD401Levels(): ContentSeed<unknown, unknown>[] {
         attribute: `color_${targetColor}`,
         asset: {
           kind: "emoji" as const,
-          ref: targetList[0] ?? "EMJ-red-apple",
+          ref: targetList[0] ?? "🍎",
         },
         is_correct: true,
       },
       {
         item_id: "item_2",
         attribute: `color_${targetColor}`,
-        asset: { kind: "emoji" as const, ref: targetList[1] ?? "EMJ-tomato" },
+        asset: { kind: "emoji" as const, ref: targetList[1] ?? "🍅" },
         is_correct: true,
       },
       {
@@ -431,7 +407,7 @@ function createD401Levels(): ContentSeed<unknown, unknown>[] {
         attribute: `color_${distractorColor}`,
         asset: {
           kind: "emoji" as const,
-          ref: distractorList[0] ?? "EMJ-blue-circle",
+          ref: distractorList[0] ?? "🔵",
         },
         is_correct: false,
       },
@@ -440,7 +416,7 @@ function createD401Levels(): ContentSeed<unknown, unknown>[] {
         attribute: `color_${distractorColor}`,
         asset: {
           kind: "emoji" as const,
-          ref: distractorList[1] ?? "EMJ-whale",
+          ref: distractorList[1] ?? "🐳",
         },
         is_correct: false,
       },
@@ -514,25 +490,25 @@ function createD402Levels(): ContentSeed<unknown, unknown>[] {
       {
         item_id: "item_1",
         attribute: "shape_round",
-        asset: { kind: "emoji" as const, ref: "EMJ-red-circle" },
+        asset: { kind: "emoji" as const, ref: "🔴" },
         is_correct: true,
       },
       {
         item_id: "item_2",
         attribute: "shape_round",
-        asset: { kind: "emoji" as const, ref: "EMJ-blue-circle" },
+        asset: { kind: "emoji" as const, ref: "🔵" },
         is_correct: true,
       },
       {
         item_id: "item_3",
         attribute: "shape_pointed",
-        asset: { kind: "emoji" as const, ref: "EMJ-star" },
+        asset: { kind: "emoji" as const, ref: "⭐" },
         is_correct: false,
       },
       {
         item_id: "item_4",
         attribute: "shape_pointed",
-        asset: { kind: "emoji" as const, ref: "EMJ-red-triangle-up" },
+        asset: { kind: "emoji" as const, ref: "🔺" },
         is_correct: false,
       },
     ];
@@ -580,10 +556,10 @@ function createD402Levels(): ContentSeed<unknown, unknown>[] {
 
 function createD403Items(targetSize: "big" | "small") {
   const isBig = targetSize === "big";
-  const targetEmoji1 = isBig ? "EMJ-elephant" : "EMJ-ant";
-  const targetEmoji2 = isBig ? "EMJ-whale" : "EMJ-bee";
-  const distractorEmoji1 = isBig ? "EMJ-ant" : "EMJ-elephant";
-  const distractorEmoji2 = isBig ? "EMJ-bee" : "EMJ-whale";
+  const targetEmoji1 = isBig ? "🐘" : "🐜";
+  const targetEmoji2 = isBig ? "🐳" : "🐝";
+  const distractorEmoji1 = isBig ? "🐜" : "🐘";
+  const distractorEmoji2 = isBig ? "🐝" : "🐳";
   const otherAttr = isBig ? "size_small" : "size_big";
 
   return [
@@ -705,25 +681,25 @@ function createD404Levels(): ContentSeed<unknown, unknown>[] {
       {
         item_id: "item_1",
         attribute: "red_and_round",
-        asset: { kind: "emoji" as const, ref: "EMJ-red-circle" },
+        asset: { kind: "emoji" as const, ref: "🔴" },
         is_correct: true,
       },
       {
         item_id: "item_2",
         attribute: "red_and_round",
-        asset: { kind: "emoji" as const, ref: "EMJ-red-apple" },
+        asset: { kind: "emoji" as const, ref: "🍎" },
         is_correct: true,
       },
       {
         item_id: "item_3",
         attribute: "red_and_square",
-        asset: { kind: "emoji" as const, ref: "EMJ-gift" },
+        asset: { kind: "emoji" as const, ref: "🎁" },
         is_correct: false,
       },
       {
         item_id: "item_4",
         attribute: "blue_and_round",
-        asset: { kind: "emoji" as const, ref: "EMJ-blue-circle" },
+        asset: { kind: "emoji" as const, ref: "🔵" },
         is_correct: false,
       },
     ];
@@ -779,10 +755,10 @@ function createD408Levels(): ContentSeed<unknown, unknown>[] {
     animal: "Động vật",
   };
   const catItems: Record<string, string[]> = {
-    food: ["EMJ-red-apple", "EMJ-banana"],
-    vehicle: ["EMJ-car", "EMJ-bus"],
-    school_supply: ["EMJ-pencil", "EMJ-open-book"],
-    animal: ["EMJ-cat", "EMJ-dog"],
+    food: ["🍎", "🍌"],
+    vehicle: ["🚗", "🚌"],
+    school_supply: ["✏️", "📖"],
+    animal: ["🐱", "🐶"],
   };
 
   const skillList = [
@@ -806,9 +782,9 @@ function createD408Levels(): ContentSeed<unknown, unknown>[] {
     const [ageMin, ageMax] = getAgeRange(i);
     const accessTier = getAccessTier(i, 2);
 
-    const targetList = catItems[targetCat] ?? ["EMJ-red-apple", "EMJ-banana"];
+    const targetList = catItems[targetCat] ?? ["🍎", "🍌"];
     const distractorCat = targetCat === "food" ? "vehicle" : "food";
-    const distractorList = catItems[distractorCat] ?? ["EMJ-car", "EMJ-bus"];
+    const distractorList = catItems[distractorCat] ?? ["🚗", "🚌"];
 
     const items = [
       {
@@ -816,14 +792,14 @@ function createD408Levels(): ContentSeed<unknown, unknown>[] {
         attribute: `cat_${targetCat}`,
         asset: {
           kind: "emoji" as const,
-          ref: targetList[0] ?? "EMJ-red-apple",
+          ref: targetList[0] ?? "🍎",
         },
         is_correct: true,
       },
       {
         item_id: "item_2",
         attribute: `cat_${targetCat}`,
-        asset: { kind: "emoji" as const, ref: targetList[1] ?? "EMJ-banana" },
+        asset: { kind: "emoji" as const, ref: targetList[1] ?? "🍌" },
         is_correct: true,
       },
       {
@@ -831,7 +807,7 @@ function createD408Levels(): ContentSeed<unknown, unknown>[] {
         attribute: `cat_${distractorCat}`,
         asset: {
           kind: "emoji" as const,
-          ref: distractorList[0] ?? "EMJ-car",
+          ref: distractorList[0] ?? "🚗",
         },
         is_correct: false,
       },
@@ -840,7 +816,7 @@ function createD408Levels(): ContentSeed<unknown, unknown>[] {
         attribute: `cat_${distractorCat}`,
         asset: {
           kind: "emoji" as const,
-          ref: distractorList[1] ?? "EMJ-bus",
+          ref: distractorList[1] ?? "🚌",
         },
         is_correct: false,
       },

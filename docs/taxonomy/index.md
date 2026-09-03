@@ -25,29 +25,55 @@ C1.CNT.03
 └───────── competency C1..C6
 ```
 
-## Bảng trạng thái
+## Bậc trong strand
 
-| Ký hiệu | Nghĩa | Điều kiện |
+| Ký hiệu | Mã | Nhãn | Nghĩa |
+|---|---|---|---|
+| `b` | `basic` | Làm quen | Một thuộc tính, có gợi ý, độ khó 1–2 |
+| `c` | `core` | Thành thạo | Chuẩn của band, làm độc lập, độ khó 3 |
+| `a` | `advanced` | Thử thách | Nhiều thuộc tính hoặc nhiều bước, độ khó 4–5 |
+
+> **Cột `Status` cũ đã bị gỡ.** Nó viết tay và đã chết: seeder ghi cứng
+> `"seeded"` cho mọi hàng nên DB không bao giờ thấy giá trị khác, còn markdown
+> thì ghi 96 kỹ năng là `chờ` trong khi cả 96 đều đã có ≥10 game level thật.
+> Trạng thái nội dung suy từ corpus (`check:skill-quota`), không viết tay.
+
+## Band tuổi
+
+| Mã | Nhãn | Tuổi |
 |---|---|---|
-| ⬜ | `planned` | Đã xác định tên, chưa biên soạn gì |
-| chờ | `drafted` | Có tên + tuổi + độ khó + prerequisite |
-| 🟢 | `seeded` | Có ≥ 3 Learning Objective, đã vào DB |
-| | `covered` | Có ≥ 1 `game_level` + ≥ 1 `lesson` published |
+| `3-4` | Mẫu giáo bé | 3–4 |
+| `4-5` | Mẫu giáo nhỡ | 4–5 |
+| `5-6` | Mẫu giáo lớn | 5–6 |
+| `6-7` | Sẵn sàng vào lớp 1 | 6–7 |
 
 ## Tổng quan tiến độ
 
-| ID | Competency | Strand | Skill đã đặt tên | Mục tiêu | Còn thiếu | Game type hiện có |
-|----|---|---:|---:|---:|---:|---:|
-| [C1](c1-mathematical-thinking.md) | Mathematical Thinking | 10 | 99 | ~120 | 21 | 22 |
-| [C2](c2-spatial-thinking.md) | Spatial Thinking | 8 | 44 | ~80 | 36 | 11 |
-| [C3](c3-logical-thinking.md) | Logical Thinking | 8 | 30 | ~70 | 40 | 20 |
-| [C4](c4-observation-thinking.md) | Observation Thinking | 4 | 16 | ~60 | 44 | 3 |
-| [C5](c5-language-thinking.md) | Language Thinking | 5 | 21 | ~60 | 39 | 1 |
-| [C6](c6-executive-function.md) | Executive Function | 6 | 20 | ~50 | 30 | 3 |
-| | **Tổng** | **41** | **230** | **350–500** | **120–270** | **60** |
+| ID | Competency | Tên | Strand | Skill | Có nội dung | Chưa có level |
+|----|---|---|---:|---:|---:|---:|
+| [C1](c1-mathematical-thinking.md) | Mathematical Thinking | Tư duy toán học | 12 | 110 | 99 | 11 |
+| [C2](c2-spatial-thinking.md) | Spatial Thinking | Tư duy không gian | 10 | 56 | 44 | 12 |
+| [C3](c3-logical-thinking.md) | Logical Thinking | Tư duy logic | 10 | 42 | 30 | 12 |
+| [C4](c4-observation-thinking.md) | Discovery Thinking | Tư duy khám phá | 16 | 86 | 16 | 70 |
+| [C5](c5-language-thinking.md) | Language Thinking | Tư duy ngôn ngữ | 15 | 84 | 21 | 63 |
+| [C6](c6-executive-function.md) | Executive Function | Tư duy điều hành | 8 | 30 | 20 | 10 |
+| | **Tổng** | | **71** | **408** | **230** | **178** |
 
-Khoảng trống lớn nhất: **C4 Observation** và **C5 Language** — cũng chính là hai
-competency gần như không có game type nào hiện tại. Đây là ưu tiên nội dung số 1.
+Cột **Chưa có level** là nợ nội dung có trần: `BR-SKQ-06` giữ nó ở
+`packages/db/src/seed-content/gates/skill-coverage-ratchet.json` và trần **chỉ
+được giảm**. Ưu tiên soạn theo thứ tự C5 → C4 → C2 → C3 → C6 → C1.
+
+**C4 đổi phạm vi** từ *Observation* sang *Discovery*: nhận thêm khám phá khoa
+học và khám phá xã hội — hai trụ còn lại của lĩnh vực Nhận thức trong Chương
+trình GDMN, trước đây không strand nào nhận. Hai strand `C4.VIS` và `C4.MEM`
+**đóng băng**: chú ý chọn lọc và trí nhớ làm việc là cấu trúc chức năng điều
+hành (Diamond 2013), nên kỹ năng mới thuộc hai nhóm đó đi vào `C6.ATT` và
+`C6.WM`. Tám kỹ năng cũ ở nguyên chỗ — luật bất biến mã.
+
+**C5 mở toàn bộ trục tiền đọc viết tiếng Việt**: âm vị và âm tiết, vần, thanh
+điệu, chữ cái, khái niệm chữ viết, sách, tiền tập viết, đọc tiếng và từ. Tiếng
+Việt là ngôn ngữ đơn lập có thanh điệu — đơn vị là **tiếng**, cấu trúc là **âm
+đầu + vần + thanh**. Cấm — NEVER bê khung phoneme tiếng Anh sang.
 
 ## Ba trục metadata — từ vựng chuẩn
 
@@ -127,9 +153,9 @@ Property test trong `packages/taxonomy` phải khẳng định:
 
 - Mỗi skill thuộc **đúng một** strand. Mỗi strand thuộc **đúng một** competency.
 - `skill_prerequisites` là **DAG** — không chu trình ở mọi trạng thái seed.
-- `age_min ≤ age_max`, cả hai ∈ [3, 6].
+- `age_min ≤ age_max`, cả hai ∈ **[3, 7]** — `7` là band tiền tiểu học.
 - `difficulty` ∈ [1, 5].
-- Mỗi skill 🟢 trở lên có **≥ 1** `thinking` code.
+- Mỗi skill có **≥ 1** `thinking` code và **≥ 3** Learning Objective.
 - Prerequisite của một skill phải có `difficulty` **≤** skill đó.
 - Skill code khớp regex `^C[1-6]\.[A-Z]{2,5}\.\d{2}$`.
 
@@ -140,7 +166,8 @@ Property test trong `packages/taxonomy` phải khẳng định:
 | [`c1-mathematical-thinking.md`](c1-mathematical-thinking.md) | C1 — Mathematical Thinking |
 | [`c2-spatial-thinking.md`](c2-spatial-thinking.md) | C2 — Spatial Thinking |
 | [`c3-logical-thinking.md`](c3-logical-thinking.md) | C3 — Logical Thinking |
-| [`c4-observation-thinking.md`](c4-observation-thinking.md) | C4 — Observation Thinking |
+| [`c4-observation-thinking.md`](c4-observation-thinking.md) | C4 — Discovery Thinking |
 | [`c5-language-thinking.md`](c5-language-thinking.md) | C5 — Language Thinking |
 | [`c6-executive-function.md`](c6-executive-function.md) | C6 — Executive Function |
+| [`moet-alignment.md`](moet-alignment.md) | Đối chiếu Chương trình GDMN và Bộ chuẩn 5 tuổi |
 | [`game-type-migration.md`](game-type-migration.md) | Ánh xạ 60 game type D→C |

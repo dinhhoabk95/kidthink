@@ -226,17 +226,17 @@ const VALID_CONTENT_PACK = {
   prompt: "Tìm quả táo màu đỏ",
   target_item: {
     item_id: "apple_target",
-    asset: { kind: "emoji", ref: "EMJ-red-apple" },
+    asset: { kind: "emoji", ref: "🍎" },
   },
   options: [
     {
       item_id: "apple_opt",
-      asset: { kind: "emoji", ref: "EMJ-red-apple" },
+      asset: { kind: "emoji", ref: "🍎" },
       is_correct: true,
     },
     {
       item_id: "banana_opt",
-      asset: { kind: "emoji", ref: "EMJ-banana" },
+      asset: { kind: "emoji", ref: "🍌" },
       is_correct: false,
     },
   ],

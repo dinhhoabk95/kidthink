@@ -38,22 +38,22 @@ export const C3_MULTI_SELECT_LEVELS: ContentSeed<unknown, unknown>[] = [
       items: [
         {
           item_id: "apple",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
           is_correct: true,
         },
         {
           item_id: "strawberry",
-          asset: { kind: "emoji", ref: "EMJ-strawberry" },
+          asset: { kind: "emoji", ref: "🍓" },
           is_correct: true,
         },
         {
           item_id: "banana",
-          asset: { kind: "emoji", ref: "EMJ-banana" },
+          asset: { kind: "emoji", ref: "🍌" },
           is_correct: false,
         },
         {
           item_id: "lemon",
-          asset: { kind: "emoji", ref: "EMJ-lemon" },
+          asset: { kind: "emoji", ref: "🍋" },
           is_correct: false,
         },
       ],
@@ -90,27 +90,27 @@ export const C3_MULTI_SELECT_LEVELS: ContentSeed<unknown, unknown>[] = [
       items: [
         {
           item_id: "dog",
-          asset: { kind: "emoji", ref: "EMJ-dog" },
+          asset: { kind: "emoji", ref: "🐶" },
           is_correct: true,
         },
         {
           item_id: "cat",
-          asset: { kind: "emoji", ref: "EMJ-cat" },
+          asset: { kind: "emoji", ref: "🐱" },
           is_correct: true,
         },
         {
           item_id: "fish",
-          asset: { kind: "emoji", ref: "EMJ-fish" },
+          asset: { kind: "emoji", ref: "🐟" },
           is_correct: false,
         },
         {
           item_id: "car",
-          asset: { kind: "emoji", ref: "EMJ-car" },
+          asset: { kind: "emoji", ref: "🚗" },
           is_correct: false,
         },
         {
           item_id: "bus",
-          asset: { kind: "emoji", ref: "EMJ-bus" },
+          asset: { kind: "emoji", ref: "🚌" },
           is_correct: false,
         },
       ],
@@ -147,32 +147,32 @@ export const C3_MULTI_SELECT_LEVELS: ContentSeed<unknown, unknown>[] = [
       items: [
         {
           item_id: "red-circle",
-          asset: { kind: "emoji", ref: "EMJ-red-circle" },
+          asset: { kind: "emoji", ref: "🔴" },
           is_correct: true,
         },
         {
           item_id: "blue-circle",
-          asset: { kind: "emoji", ref: "EMJ-blue-circle" },
+          asset: { kind: "emoji", ref: "🔵" },
           is_correct: true,
         },
         {
           item_id: "green-circle",
-          asset: { kind: "emoji", ref: "EMJ-green-circle" },
+          asset: { kind: "emoji", ref: "🟢" },
           is_correct: true,
         },
         {
           item_id: "red-square",
-          asset: { kind: "emoji", ref: "EMJ-red-square" },
+          asset: { kind: "emoji", ref: "🟥" },
           is_correct: false,
         },
         {
           item_id: "blue-square",
-          asset: { kind: "emoji", ref: "EMJ-blue-square" },
+          asset: { kind: "emoji", ref: "🟦" },
           is_correct: false,
         },
         {
           item_id: "star",
-          asset: { kind: "emoji", ref: "EMJ-star" },
+          asset: { kind: "emoji", ref: "⭐" },
           is_correct: false,
         },
       ],

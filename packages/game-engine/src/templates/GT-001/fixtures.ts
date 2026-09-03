@@ -9,22 +9,22 @@ export const GT001_FIXTURES: {
       prompt: "Tìm quả táo màu đỏ",
       target_item: {
         item_id: "apple_target",
-        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        asset: { kind: "emoji", ref: "🍎" },
       },
       options: [
         {
           item_id: "apple_opt",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
           is_correct: true,
         },
         {
           item_id: "banana_opt",
-          asset: { kind: "emoji", ref: "EMJ-banana" },
+          asset: { kind: "emoji", ref: "🍌" },
           is_correct: false,
         },
         {
           item_id: "orange_opt",
-          asset: { kind: "emoji", ref: "EMJ-orange" },
+          asset: { kind: "emoji", ref: "🍊" },
           is_correct: false,
         },
       ],
@@ -41,22 +41,22 @@ export const GT001_FIXTURES: {
       prompt: "Chọn thỏ con đáng yêu",
       target_item: {
         item_id: "rabbit_target",
-        asset: { kind: "emoji", ref: "EMJ-rabbit-face" },
+        asset: { kind: "emoji", ref: "🐰" },
       },
       options: [
         {
           item_id: "bear_opt",
-          asset: { kind: "emoji", ref: "EMJ-bear" },
+          asset: { kind: "emoji", ref: "🐻" },
           is_correct: false,
         },
         {
           item_id: "rabbit_opt",
-          asset: { kind: "emoji", ref: "EMJ-rabbit-face" },
+          asset: { kind: "emoji", ref: "🐰" },
           is_correct: true,
         },
         {
           item_id: "cat_opt",
-          asset: { kind: "emoji", ref: "EMJ-cat" },
+          asset: { kind: "emoji", ref: "🐱" },
           is_correct: false,
         },
       ],
@@ -73,22 +73,22 @@ export const GT001_FIXTURES: {
       prompt: "Chọn hình tròn màu đỏ",
       target_item: {
         item_id: "red_circle_target",
-        asset: { kind: "emoji", ref: "EMJ-red-circle" },
+        asset: { kind: "emoji", ref: "🔴" },
       },
       options: [
         {
           item_id: "blue_square_opt",
-          asset: { kind: "emoji", ref: "EMJ-blue-square" },
+          asset: { kind: "emoji", ref: "🟦" },
           is_correct: false,
         },
         {
           item_id: "yellow_triangle_opt",
-          asset: { kind: "emoji", ref: "EMJ-red-triangle-up" },
+          asset: { kind: "emoji", ref: "🔺" },
           is_correct: false,
         },
         {
           item_id: "red_circle_opt",
-          asset: { kind: "emoji", ref: "EMJ-red-circle" },
+          asset: { kind: "emoji", ref: "🔴" },
           is_correct: true,
         },
       ],

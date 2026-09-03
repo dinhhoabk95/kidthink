@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import { runEightGates } from "#src/seed-content/gates/runner";
 import type { ContentSeed } from "#src/seed-content/types";
 
-describe("Theme mapping & Cổng 3 Asset validation — Task #191 Đợt 3", () => {
-  it("Cổng 3 từ chối level chứa emoji ref không tồn tại trong emoji registry", () => {
+describe("Theme mapping & Cổng 3 Asset validation — Task #191 & Task #202 (BR-CSA-13)", () => {
+  it("Cổng 3 từ chối level chứa emoji ref rỗng", () => {
     const fakeSeed: ContentSeed = {
       header: {
         code: "GL-C1-CNT-TAP-9999",
@@ -27,12 +27,12 @@ describe("Theme mapping & Cổng 3 Asset validation — Task #191 Đợt 3", () 
         prompt: "Bé chạm vào hình nhé",
         target_item: {
           item_id: "item_fake",
-          asset: { kind: "emoji", ref: "EMJ-non-existent-fabricated-ref" },
+          asset: { kind: "emoji", ref: "" },
         },
         options: [
           {
             item_id: "opt_1",
-            asset: { kind: "emoji", ref: "EMJ-non-existent-fabricated-ref" },
+            asset: { kind: "emoji", ref: "" },
             is_correct: true,
           },
         ],
@@ -78,12 +78,12 @@ describe("Theme mapping & Cổng 3 Asset validation — Task #191 Đợt 3", () 
         prompt: "Bé chạm vào hình nhé",
         target_item: {
           item_id: "item_apple",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
         },
         options: [
           {
             item_id: "opt_1",
-            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            asset: { kind: "emoji", ref: "🍎" },
             is_correct: true,
           },
         ],

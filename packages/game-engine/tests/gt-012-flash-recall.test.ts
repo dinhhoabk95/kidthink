@@ -50,8 +50,8 @@ describe("GT-012: Nhìn chớp rồi nhớ lại (flash-recall)", () => {
         prompt: "Không có đáp án đúng",
         arrangement: "dice" as const,
         flash_items: [
-          { item_id: "c1", asset: { kind: "emoji", ref: "EMJ-red-circle" } },
-          { item_id: "c2", asset: { kind: "emoji", ref: "EMJ-red-circle" } },
+          { item_id: "c1", asset: { kind: "emoji", ref: "🔴" } },
+          { item_id: "c2", asset: { kind: "emoji", ref: "🔴" } },
         ],
         options: [
           { value: 1, is_correct: false },

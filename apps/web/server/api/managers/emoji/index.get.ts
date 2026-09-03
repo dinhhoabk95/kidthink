@@ -44,9 +44,8 @@ export default defineEventHandler(async (event) => {
   const results = filtered.slice(0, limit).map((e) => ({
     name: e.name,
     emoji: e.emoji,
-    category: e.category,
+    categories: e.categories,
     keywords: e.keywords,
-    code: e.code,
     age_min: e.age_min,
   }));
 

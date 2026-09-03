@@ -29,7 +29,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-ruler",
         asset: {
           kind: "emoji",
-          ref: "EMJ-ruler",
+          ref: "📏",
         },
       },
       options: [
@@ -37,7 +37,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bell",
+            ref: "🔔",
           },
           is_correct: false,
         },
@@ -45,7 +45,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-books",
+            ref: "📚",
           },
           is_correct: false,
         },
@@ -53,7 +53,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-ruler",
+            ref: "📏",
           },
           is_correct: true,
         },
@@ -61,7 +61,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-pencil",
+            ref: "✏️",
           },
           is_correct: false,
         },
@@ -99,7 +99,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-chicken",
         asset: {
           kind: "emoji",
-          ref: "EMJ-chicken",
+          ref: "🐔",
         },
       },
       options: [
@@ -107,7 +107,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-chicken",
+            ref: "🐔",
           },
           is_correct: true,
         },
@@ -115,7 +115,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cow",
+            ref: "🐮",
           },
           is_correct: false,
         },
@@ -123,7 +123,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-pig",
+            ref: "🐷",
           },
           is_correct: false,
         },
@@ -161,12 +161,12 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         {
           group_id: "g1",
           label: "Nhóm 1",
-          label_emoji: "EMJ-red-apple",
+          label_emoji: "🍎",
         },
         {
           group_id: "g2",
           label: "Nhóm 2",
-          label_emoji: "EMJ-banana",
+          label_emoji: "🍌",
         },
       ],
       items: [
@@ -174,7 +174,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-egg",
+            ref: "🥚",
           },
           correct_group_id: "g1",
         },
@@ -182,7 +182,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-noodles",
+            ref: "🍜",
           },
           correct_group_id: "g1",
         },
@@ -190,7 +190,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-corn",
+            ref: "🌽",
           },
           correct_group_id: "g2",
         },
@@ -198,7 +198,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bread",
+            ref: "🍞",
           },
           correct_group_id: "g2",
         },
@@ -238,7 +238,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         label: "8",
         asset: {
           kind: "emoji",
-          ref: "EMJ-door",
+          ref: "🚪",
         },
       },
       parts: [
@@ -310,7 +310,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 0,
           asset: {
             kind: "emoji",
-            ref: "EMJ-rose",
+            ref: "🌹",
           },
           label: "Hoa hồng",
         },
@@ -319,7 +319,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 1,
           asset: {
             kind: "emoji",
-            ref: "EMJ-mountain",
+            ref: "⛰️",
           },
           label: "Núi",
         },
@@ -328,7 +328,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 2,
           asset: {
             kind: "emoji",
-            ref: "EMJ-sunflower",
+            ref: "🌻",
           },
           label: "Hoa hướng dương",
         },
@@ -365,7 +365,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-ruler",
         asset: {
           kind: "emoji",
-          ref: "EMJ-ruler",
+          ref: "📏",
         },
       },
       options: [
@@ -373,7 +373,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-ruler",
+            ref: "📏",
           },
           is_correct: true,
         },
@@ -381,7 +381,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-pencil",
+            ref: "✏️",
           },
           is_correct: false,
         },
@@ -389,7 +389,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bell",
+            ref: "🔔",
           },
           is_correct: false,
         },
@@ -397,7 +397,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-books",
+            ref: "📚",
           },
           is_correct: false,
         },
@@ -405,7 +405,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_5",
           asset: {
             kind: "emoji",
-            ref: "EMJ-abacus",
+            ref: "🧮",
           },
           is_correct: false,
         },
@@ -446,14 +446,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "left_1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-broom",
+              ref: "🧹",
             },
           },
           right: {
             item_id: "right_1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-door",
+              ref: "🚪",
             },
           },
         },
@@ -463,14 +463,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "left_2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-house",
+              ref: "🏠",
             },
           },
           right: {
             item_id: "right_2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-window",
+              ref: "🪟",
             },
           },
         },
@@ -509,7 +509,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "obj_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-zebra",
+            ref: "🦓",
           },
           is_target: true,
           is_hidden: false,
@@ -520,7 +520,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "obj_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rabbit",
+            ref: "🐰",
           },
           is_target: false,
           is_hidden: false,
@@ -531,7 +531,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "obj_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-giraffe",
+            ref: "🦒",
           },
           is_target: false,
           is_hidden: false,
@@ -542,7 +542,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "obj_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bear",
+            ref: "🐻",
           },
           is_target: false,
           is_hidden: false,
@@ -553,7 +553,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "obj_5",
           asset: {
             kind: "emoji",
-            ref: "EMJ-panda",
+            ref: "🐼",
           },
           is_target: false,
           is_hidden: false,
@@ -564,7 +564,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "obj_6",
           asset: {
             kind: "emoji",
-            ref: "EMJ-monkey",
+            ref: "🐵",
           },
           is_target: false,
           is_hidden: false,
@@ -606,14 +606,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "left_1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-pencil",
+              ref: "✏️",
             },
           },
           right: {
             item_id: "right_1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-abacus",
+              ref: "🧮",
             },
           },
         },
@@ -623,14 +623,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "left_2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-books",
+              ref: "📚",
             },
           },
           right: {
             item_id: "right_2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-ruler",
+              ref: "📏",
             },
           },
         },
@@ -640,14 +640,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "left_3",
             asset: {
               kind: "emoji",
-              ref: "EMJ-open-book",
+              ref: "📖",
             },
           },
           right: {
             item_id: "right_3",
             asset: {
               kind: "emoji",
-              ref: "EMJ-bell",
+              ref: "🔔",
             },
           },
         },
@@ -686,7 +686,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "obj_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-truck",
+            ref: "🚛",
           },
           is_target: true,
           is_hidden: false,
@@ -697,7 +697,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "obj_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-car",
+            ref: "🚗",
           },
           is_target: false,
           is_hidden: false,
@@ -708,7 +708,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "obj_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-ship",
+            ref: "🚢",
           },
           is_target: false,
           is_hidden: false,
@@ -719,7 +719,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "obj_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-train",
+            ref: "🚆",
           },
           is_target: false,
           is_hidden: false,
@@ -730,7 +730,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "obj_5",
           asset: {
             kind: "emoji",
-            ref: "EMJ-helicopter",
+            ref: "🚁",
           },
           is_target: false,
           is_hidden: false,
@@ -741,7 +741,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "obj_6",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bus",
+            ref: "🚌",
           },
           is_target: false,
           is_hidden: false,
@@ -783,14 +783,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "left_1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-palm-tree",
+              ref: "🌴",
             },
           },
           right: {
             item_id: "right_1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-mountain",
+              ref: "⛰️",
             },
           },
         },
@@ -800,14 +800,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "left_2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-cactus",
+              ref: "🌵",
             },
           },
           right: {
             item_id: "right_2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-deciduous-tree",
+              ref: "🌳",
             },
           },
         },
@@ -817,14 +817,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "left_3",
             asset: {
               kind: "emoji",
-              ref: "EMJ-maple-leaf",
+              ref: "🍁",
             },
           },
           right: {
             item_id: "right_3",
             asset: {
               kind: "emoji",
-              ref: "EMJ-seedling",
+              ref: "🌱",
             },
           },
         },
@@ -861,12 +861,12 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         {
           group_id: "g1",
           label: "Nhóm 1",
-          label_emoji: "EMJ-broom",
+          label_emoji: "🧹",
         },
         {
           group_id: "g2",
           label: "Nhóm 2",
-          label_emoji: "EMJ-chair",
+          label_emoji: "🪑",
         },
       ],
       items: [
@@ -874,7 +874,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-plate",
+            ref: "🍽️",
           },
           correct_group_id: "g1",
         },
@@ -882,7 +882,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-window",
+            ref: "🪟",
           },
           correct_group_id: "g1",
         },
@@ -890,7 +890,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-spoon",
+            ref: "🥄",
           },
           correct_group_id: "g2",
         },
@@ -898,7 +898,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-door",
+            ref: "🚪",
           },
           correct_group_id: "g2",
         },
@@ -938,7 +938,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         label: "5",
         asset: {
           kind: "emoji",
-          ref: "EMJ-scissors",
+          ref: "✂️",
         },
       },
       parts: [
@@ -1010,7 +1010,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         label: "5",
         asset: {
           kind: "emoji",
-          ref: "EMJ-monkey",
+          ref: "🐵",
         },
       },
       parts: [
@@ -1083,14 +1083,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "card_1_a",
             asset: {
               kind: "emoji",
-              ref: "EMJ-tractor",
+              ref: "🚜",
             },
           },
           card_b: {
             card_id: "card_1_b",
             asset: {
               kind: "emoji",
-              ref: "EMJ-tractor",
+              ref: "🚜",
             },
           },
         },
@@ -1100,14 +1100,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "card_2_a",
             asset: {
               kind: "emoji",
-              ref: "EMJ-pig",
+              ref: "🐷",
             },
           },
           card_b: {
             card_id: "card_2_b",
             asset: {
               kind: "emoji",
-              ref: "EMJ-pig",
+              ref: "🐷",
             },
           },
         },
@@ -1117,14 +1117,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "card_3_a",
             asset: {
               kind: "emoji",
-              ref: "EMJ-rice",
+              ref: "🌾",
             },
           },
           card_b: {
             card_id: "card_3_b",
             asset: {
               kind: "emoji",
-              ref: "EMJ-rice",
+              ref: "🌾",
             },
           },
         },
@@ -1134,14 +1134,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "card_4_a",
             asset: {
               kind: "emoji",
-              ref: "EMJ-chicken",
+              ref: "🐔",
             },
           },
           card_b: {
             card_id: "card_4_b",
             asset: {
               kind: "emoji",
-              ref: "EMJ-chicken",
+              ref: "🐔",
             },
           },
         },
@@ -1179,7 +1179,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-red-apple",
         asset: {
           kind: "emoji",
-          ref: "EMJ-red-apple",
+          ref: "🍎",
         },
       },
       options: [
@@ -1187,7 +1187,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
           is_correct: true,
         },
@@ -1195,7 +1195,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bread",
+            ref: "🍞",
           },
           is_correct: false,
         },
@@ -1203,7 +1203,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rice",
+            ref: "🌾",
           },
           is_correct: false,
         },
@@ -1244,14 +1244,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "left_1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-sunflower",
+              ref: "🌻",
             },
           },
           right: {
             item_id: "right_1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-seedling",
+              ref: "🌱",
             },
           },
         },
@@ -1261,14 +1261,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "left_2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-maple-leaf",
+              ref: "🍁",
             },
           },
           right: {
             item_id: "right_2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-tulip",
+              ref: "🌷",
             },
           },
         },
@@ -1305,12 +1305,12 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         {
           group_id: "g1",
           label: "Nhóm 1",
-          label_emoji: "EMJ-sailboat",
+          label_emoji: "⛵",
         },
         {
           group_id: "g2",
           label: "Nhóm 2",
-          label_emoji: "EMJ-helicopter",
+          label_emoji: "🚁",
         },
       ],
       items: [
@@ -1318,7 +1318,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-truck",
+            ref: "🚛",
           },
           correct_group_id: "g1",
         },
@@ -1326,7 +1326,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-car",
+            ref: "🚗",
           },
           correct_group_id: "g1",
         },
@@ -1334,7 +1334,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-airplane",
+            ref: "✈️",
           },
           correct_group_id: "g2",
         },
@@ -1342,7 +1342,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bus",
+            ref: "🚌",
           },
           correct_group_id: "g2",
         },
@@ -1383,14 +1383,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "left_1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-ruler",
+              ref: "📏",
             },
           },
           right: {
             item_id: "right_1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-school",
+              ref: "🏫",
             },
           },
         },
@@ -1400,14 +1400,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "left_2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-backpack",
+              ref: "🎒",
             },
           },
           right: {
             item_id: "right_2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-crayon",
+              ref: "🖍️",
             },
           },
         },
@@ -1417,14 +1417,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             item_id: "left_3",
             asset: {
               kind: "emoji",
-              ref: "EMJ-abacus",
+              ref: "🧮",
             },
           },
           right: {
             item_id: "right_3",
             asset: {
               kind: "emoji",
-              ref: "EMJ-bell",
+              ref: "🔔",
             },
           },
         },
@@ -1524,7 +1524,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           target_flip: "none",
           asset: {
             kind: "emoji",
-            ref: "EMJ-teacher",
+            ref: "🧑‍🏫",
           },
         },
         {
@@ -1533,7 +1533,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           target_flip: "none",
           asset: {
             kind: "emoji",
-            ref: "EMJ-farmer",
+            ref: "🧑‍🌾",
           },
         },
       ],
@@ -1545,7 +1545,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           target_slot_id: "slot_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-teacher",
+            ref: "🧑‍🏫",
           },
         },
         {
@@ -1555,7 +1555,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           target_slot_id: "slot_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-farmer",
+            ref: "🧑‍🌾",
           },
         },
       ],
@@ -1617,7 +1617,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "opt_correct",
           asset: {
             kind: "emoji",
-            ref: "EMJ-star",
+            ref: "⭐",
           },
           is_correct: true,
         },
@@ -1625,7 +1625,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "opt_dist_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-circle",
+            ref: "🔴",
           },
           is_correct: false,
         },
@@ -1633,7 +1633,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "opt_dist_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-triangle-up",
+            ref: "🔺",
           },
           is_correct: false,
         },
@@ -1674,7 +1674,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         label: "8",
         asset: {
           kind: "emoji",
-          ref: "EMJ-mountain",
+          ref: "⛰️",
         },
       },
       parts: [
@@ -1749,7 +1749,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-snowflake",
+            ref: "❄️",
           },
           is_correct: true,
         },
@@ -1757,7 +1757,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cloud",
+            ref: "☁️",
           },
           is_correct: false,
         },
@@ -1765,7 +1765,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-umbrella-with-rain",
+            ref: "☔",
           },
           is_correct: false,
         },
@@ -1802,7 +1802,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-vietnam-flag",
         asset: {
           kind: "emoji",
-          ref: "EMJ-vietnam-flag",
+          ref: "🇻🇳",
         },
       },
       options: [
@@ -1810,7 +1810,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-water-buffalo",
+            ref: "🐃",
           },
           is_correct: false,
         },
@@ -1818,7 +1818,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-glowing-star",
+            ref: "🌟",
           },
           is_correct: false,
         },
@@ -1826,7 +1826,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-vietnam-flag",
+            ref: "🇻🇳",
           },
           is_correct: true,
         },
@@ -1834,7 +1834,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rice",
+            ref: "🌾",
           },
           is_correct: false,
         },
@@ -1877,7 +1877,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bear",
+            ref: "🐻",
           },
           is_correct: true,
         },
@@ -1885,7 +1885,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-tiger",
+            ref: "🐯",
           },
           is_correct: false,
         },
@@ -1893,7 +1893,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-zebra",
+            ref: "🦓",
           },
           is_correct: false,
         },
@@ -1932,7 +1932,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-foot",
+            ref: "🦶",
           },
           is_correct: true,
         },
@@ -1940,7 +1940,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-raised-hand",
+            ref: "✋",
           },
           is_correct: true,
         },
@@ -1948,7 +1948,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-ear",
+            ref: "👂",
           },
           is_correct: false,
         },
@@ -1956,7 +1956,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-mouth",
+            ref: "👄",
           },
           is_correct: false,
         },
@@ -1999,7 +1999,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-noodles",
+              ref: "🍜",
             },
           },
           {
@@ -2007,7 +2007,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-red-apple",
+              ref: "🍎",
             },
           },
           {
@@ -2015,7 +2015,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 2,
             asset: {
               kind: "emoji",
-              ref: "EMJ-cake",
+              ref: "🍰",
             },
           },
           {
@@ -2023,7 +2023,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-red-apple",
+              ref: "🍎",
             },
           },
           {
@@ -2031,7 +2031,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-cake",
+              ref: "🍰",
             },
           },
           {
@@ -2039,7 +2039,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 2,
             asset: {
               kind: "emoji",
-              ref: "EMJ-noodles",
+              ref: "🍜",
             },
           },
           {
@@ -2047,7 +2047,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 0,
             asset: {
               kind: "emoji",
-              ref: "EMJ-cake",
+              ref: "🍰",
             },
           },
           {
@@ -2055,7 +2055,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             col: 1,
             asset: {
               kind: "emoji",
-              ref: "EMJ-noodles",
+              ref: "🍜",
             },
           },
           {
@@ -2070,7 +2070,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
           is_correct: true,
         },
@@ -2078,7 +2078,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-noodles",
+            ref: "🍜",
           },
           is_correct: false,
         },
@@ -2086,7 +2086,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           option_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cake",
+            ref: "🍰",
           },
           is_correct: false,
         },
@@ -2129,7 +2129,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-pencil",
+            ref: "✏️",
           },
           is_correct: true,
         },
@@ -2137,7 +2137,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-school",
+            ref: "🏫",
           },
           is_correct: false,
         },
@@ -2145,7 +2145,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-open-book",
+            ref: "📖",
           },
           is_correct: false,
         },
@@ -2182,7 +2182,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-artist",
         asset: {
           kind: "emoji",
-          ref: "EMJ-artist",
+          ref: "👨‍🎨",
         },
       },
       options: [
@@ -2190,7 +2190,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-firefighter",
+            ref: "👨‍🚒",
           },
           is_correct: false,
         },
@@ -2198,7 +2198,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-chef",
+            ref: "🧑‍🍳",
           },
           is_correct: false,
         },
@@ -2206,7 +2206,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-artist",
+            ref: "👨‍🎨",
           },
           is_correct: true,
         },
@@ -2214,7 +2214,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-scientist",
+            ref: "👩‍🔬",
           },
           is_correct: false,
         },
@@ -2222,7 +2222,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_5",
           asset: {
             kind: "emoji",
-            ref: "EMJ-mechanic",
+            ref: "👨‍🔧",
           },
           is_correct: false,
         },
@@ -2267,7 +2267,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "target_attr",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sailboat",
+            ref: "⛵",
           },
           is_correct: true,
         },
@@ -2276,7 +2276,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "target_attr",
           asset: {
             kind: "emoji",
-            ref: "EMJ-vietnam-flag",
+            ref: "🇻🇳",
           },
           is_correct: true,
         },
@@ -2285,7 +2285,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "other_attr",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sunrise-over-mountains",
+            ref: "🌄",
           },
           is_correct: false,
         },
@@ -2294,7 +2294,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "other_attr",
           asset: {
             kind: "emoji",
-            ref: "EMJ-lotus",
+            ref: "🪷",
           },
           is_correct: false,
         },
@@ -2335,14 +2335,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "card_1_a",
             asset: {
               kind: "emoji",
-              ref: "EMJ-father",
+              ref: "👨",
             },
           },
           card_b: {
             card_id: "card_1_b",
             asset: {
               kind: "emoji",
-              ref: "EMJ-father",
+              ref: "👨",
             },
           },
         },
@@ -2352,14 +2352,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "card_2_a",
             asset: {
               kind: "emoji",
-              ref: "EMJ-grandfather",
+              ref: "👴",
             },
           },
           card_b: {
             card_id: "card_2_b",
             asset: {
               kind: "emoji",
-              ref: "EMJ-grandfather",
+              ref: "👴",
             },
           },
         },
@@ -2369,14 +2369,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "card_3_a",
             asset: {
               kind: "emoji",
-              ref: "EMJ-couple",
+              ref: "👫",
             },
           },
           card_b: {
             card_id: "card_3_b",
             asset: {
               kind: "emoji",
-              ref: "EMJ-couple",
+              ref: "👫",
             },
           },
         },
@@ -2386,14 +2386,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "card_4_a",
             asset: {
               kind: "emoji",
-              ref: "EMJ-family",
+              ref: "👨‍👩‍👦",
             },
           },
           card_b: {
             card_id: "card_4_b",
             asset: {
               kind: "emoji",
-              ref: "EMJ-family",
+              ref: "👨‍👩‍👦",
             },
           },
         },
@@ -2563,14 +2563,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "card_1_a",
             asset: {
               kind: "emoji",
-              ref: "EMJ-bell",
+              ref: "🔔",
             },
           },
           card_b: {
             card_id: "card_1_b",
             asset: {
               kind: "emoji",
-              ref: "EMJ-bell",
+              ref: "🔔",
             },
           },
         },
@@ -2580,14 +2580,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "card_2_a",
             asset: {
               kind: "emoji",
-              ref: "EMJ-school",
+              ref: "🏫",
             },
           },
           card_b: {
             card_id: "card_2_b",
             asset: {
               kind: "emoji",
-              ref: "EMJ-school",
+              ref: "🏫",
             },
           },
         },
@@ -2597,14 +2597,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "card_3_a",
             asset: {
               kind: "emoji",
-              ref: "EMJ-crayon",
+              ref: "🖍️",
             },
           },
           card_b: {
             card_id: "card_3_b",
             asset: {
               kind: "emoji",
-              ref: "EMJ-crayon",
+              ref: "🖍️",
             },
           },
         },
@@ -2614,14 +2614,14 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "card_4_a",
             asset: {
               kind: "emoji",
-              ref: "EMJ-abacus",
+              ref: "🧮",
             },
           },
           card_b: {
             card_id: "card_4_b",
             asset: {
               kind: "emoji",
-              ref: "EMJ-abacus",
+              ref: "🧮",
             },
           },
         },
@@ -2659,7 +2659,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-red-lantern",
         asset: {
           kind: "emoji",
-          ref: "EMJ-red-lantern",
+          ref: "🏮",
         },
       },
       options: [
@@ -2667,7 +2667,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-confetti-ball",
+            ref: "🎊",
           },
           is_correct: false,
         },
@@ -2675,7 +2675,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-birthday-cake",
+            ref: "🎂",
           },
           is_correct: false,
         },
@@ -2683,7 +2683,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-candle",
+            ref: "🕯️",
           },
           is_correct: false,
         },
@@ -2691,7 +2691,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-lantern",
+            ref: "🏮",
           },
           is_correct: true,
         },
@@ -2699,7 +2699,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_5",
           asset: {
             kind: "emoji",
-            ref: "EMJ-balloon",
+            ref: "🎈",
           },
           is_correct: false,
         },
@@ -2739,7 +2739,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 0,
           asset: {
             kind: "emoji",
-            ref: "EMJ-candle",
+            ref: "🕯️",
           },
           label: "Ngọn nến",
         },
@@ -2748,7 +2748,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 1,
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-lantern",
+            ref: "🏮",
           },
           label: "Đèn lồng",
         },
@@ -2757,7 +2757,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 2,
           asset: {
             kind: "emoji",
-            ref: "EMJ-balloon",
+            ref: "🎈",
           },
           label: "Bóng bay",
         },
@@ -2794,7 +2794,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-open-book",
         asset: {
           kind: "emoji",
-          ref: "EMJ-open-book",
+          ref: "📖",
         },
       },
       options: [
@@ -2802,7 +2802,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-school",
+            ref: "🏫",
           },
           is_correct: false,
         },
@@ -2810,7 +2810,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bell",
+            ref: "🔔",
           },
           is_correct: false,
         },
@@ -2818,7 +2818,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-books",
+            ref: "📚",
           },
           is_correct: false,
         },
@@ -2826,7 +2826,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-scissors",
+            ref: "✂️",
           },
           is_correct: false,
         },
@@ -2834,7 +2834,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_5",
           asset: {
             kind: "emoji",
-            ref: "EMJ-open-book",
+            ref: "📖",
           },
           is_correct: true,
         },
@@ -2874,7 +2874,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 0,
           asset: {
             kind: "emoji",
-            ref: "EMJ-tulip",
+            ref: "🌷",
           },
           label: "Hoa tulip",
         },
@@ -2883,7 +2883,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 1,
           asset: {
             kind: "emoji",
-            ref: "EMJ-maple-leaf",
+            ref: "🍁",
           },
           label: "Lá phong",
         },
@@ -2892,7 +2892,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 2,
           asset: {
             kind: "emoji",
-            ref: "EMJ-four-leaf-clover",
+            ref: "🍀",
           },
           label: "Cỏ bốn lá",
         },
@@ -2931,7 +2931,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 0,
           asset: {
             kind: "emoji",
-            ref: "EMJ-scientist",
+            ref: "👩‍🔬",
           },
           label: "Nhà khoa học",
         },
@@ -2940,7 +2940,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 1,
           asset: {
             kind: "emoji",
-            ref: "EMJ-chef",
+            ref: "🧑‍🍳",
           },
           label: "Đầu bếp",
         },
@@ -2949,7 +2949,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 2,
           asset: {
             kind: "emoji",
-            ref: "EMJ-artist",
+            ref: "👨‍🎨",
           },
           label: "Họa sĩ",
         },
@@ -2986,7 +2986,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-noodles",
         asset: {
           kind: "emoji",
-          ref: "EMJ-noodles",
+          ref: "🍜",
         },
       },
       options: [
@@ -2994,7 +2994,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-carrot",
+            ref: "🥕",
           },
           is_correct: false,
         },
@@ -3002,7 +3002,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-milk",
+            ref: "🥛",
           },
           is_correct: false,
         },
@@ -3010,7 +3010,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-noodles",
+            ref: "🍜",
           },
           is_correct: true,
         },
@@ -3018,7 +3018,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-corn",
+            ref: "🌽",
           },
           is_correct: false,
         },
@@ -3026,7 +3026,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_5",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
           is_correct: false,
         },
@@ -3064,7 +3064,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-vietnam-flag",
         asset: {
           kind: "emoji",
-          ref: "EMJ-vietnam-flag",
+          ref: "🇻🇳",
         },
       },
       options: [
@@ -3072,7 +3072,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rice",
+            ref: "🌾",
           },
           is_correct: false,
         },
@@ -3080,7 +3080,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-vietnam-flag",
+            ref: "🇻🇳",
           },
           is_correct: true,
         },
@@ -3088,7 +3088,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sailboat",
+            ref: "⛵",
           },
           is_correct: false,
         },
@@ -3096,7 +3096,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-lotus",
+            ref: "🪷",
           },
           is_correct: false,
         },
@@ -3104,7 +3104,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_5",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bridge-at-night",
+            ref: "🌉",
           },
           is_correct: false,
         },
@@ -3144,7 +3144,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 0,
           asset: {
             kind: "emoji",
-            ref: "EMJ-comet",
+            ref: "☄️",
           },
           label: "Sao chổi",
         },
@@ -3153,7 +3153,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 1,
           asset: {
             kind: "emoji",
-            ref: "EMJ-full-moon",
+            ref: "🌕",
           },
           label: "Trăng tròn",
         },
@@ -3162,7 +3162,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 2,
           asset: {
             kind: "emoji",
-            ref: "EMJ-earth",
+            ref: "🌍",
           },
           label: "Trái đất",
         },
@@ -3201,7 +3201,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 0,
           asset: {
             kind: "emoji",
-            ref: "EMJ-glowing-star",
+            ref: "🌟",
           },
           label: "Ngôi sao vàng",
         },
@@ -3210,7 +3210,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 1,
           asset: {
             kind: "emoji",
-            ref: "EMJ-water-buffalo",
+            ref: "🐃",
           },
           label: "Trâu nước",
         },
@@ -3219,7 +3219,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 2,
           asset: {
             kind: "emoji",
-            ref: "EMJ-vietnam-flag",
+            ref: "🇻🇳",
           },
           label: "Cờ Việt Nam",
         },
@@ -3256,7 +3256,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-pencil",
         asset: {
           kind: "emoji",
-          ref: "EMJ-pencil",
+          ref: "✏️",
         },
       },
       options: [
@@ -3264,7 +3264,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-pencil",
+            ref: "✏️",
           },
           is_correct: true,
         },
@@ -3272,7 +3272,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-ruler",
+            ref: "📏",
           },
           is_correct: false,
         },
@@ -3280,7 +3280,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-scissors",
+            ref: "✂️",
           },
           is_correct: false,
         },
@@ -3288,7 +3288,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-abacus",
+            ref: "🧮",
           },
           is_correct: false,
         },
@@ -3296,7 +3296,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_5",
           asset: {
             kind: "emoji",
-            ref: "EMJ-books",
+            ref: "📚",
           },
           is_correct: false,
         },
@@ -3336,7 +3336,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 0,
           asset: {
             kind: "emoji",
-            ref: "EMJ-maple-leaf",
+            ref: "🍁",
           },
           label: "Lá phong",
         },
@@ -3345,7 +3345,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 1,
           asset: {
             kind: "emoji",
-            ref: "EMJ-rose",
+            ref: "🌹",
           },
           label: "Hoa hồng",
         },
@@ -3354,7 +3354,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 2,
           asset: {
             kind: "emoji",
-            ref: "EMJ-sunflower",
+            ref: "🌻",
           },
           label: "Hoa hướng dương",
         },
@@ -3391,7 +3391,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-shell",
         asset: {
           kind: "emoji",
-          ref: "EMJ-shell",
+          ref: "🐚",
         },
       },
       options: [
@@ -3399,7 +3399,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-shark",
+            ref: "🦈",
           },
           is_correct: false,
         },
@@ -3407,7 +3407,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-shell",
+            ref: "🐚",
           },
           is_correct: true,
         },
@@ -3415,7 +3415,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-whale",
+            ref: "🐳",
           },
           is_correct: false,
         },
@@ -3423,7 +3423,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-fish",
+            ref: "🐟",
           },
           is_correct: false,
         },
@@ -3431,7 +3431,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_5",
           asset: {
             kind: "emoji",
-            ref: "EMJ-dolphin",
+            ref: "🐬",
           },
           is_correct: false,
         },
@@ -3469,12 +3469,12 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         {
           group_id: "g1",
           label: "Nhóm 1",
-          label_emoji: "EMJ-fish",
+          label_emoji: "🐟",
         },
         {
           group_id: "g2",
           label: "Nhóm 2",
-          label_emoji: "EMJ-shell",
+          label_emoji: "🐚",
         },
       ],
       items: [
@@ -3482,7 +3482,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-shark",
+            ref: "🦈",
           },
           correct_group_id: "g1",
         },
@@ -3490,7 +3490,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-dolphin",
+            ref: "🐬",
           },
           correct_group_id: "g1",
         },
@@ -3498,7 +3498,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-octopus",
+            ref: "🐙",
           },
           correct_group_id: "g2",
         },
@@ -3506,7 +3506,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "item_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-whale",
+            ref: "🐳",
           },
           correct_group_id: "g2",
         },
@@ -3546,7 +3546,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         label: "8",
         asset: {
           kind: "emoji",
-          ref: "EMJ-pig",
+          ref: "🐷",
         },
       },
       parts: [
@@ -3616,7 +3616,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-shrimp",
         asset: {
           kind: "emoji",
-          ref: "EMJ-shrimp",
+          ref: "🦐",
         },
       },
       options: [
@@ -3624,7 +3624,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-shrimp",
+            ref: "🦐",
           },
           is_correct: true,
         },
@@ -3632,7 +3632,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-octopus",
+            ref: "🐙",
           },
           is_correct: false,
         },
@@ -3640,7 +3640,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-whale",
+            ref: "🐳",
           },
           is_correct: false,
         },
@@ -3648,7 +3648,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-shell",
+            ref: "🐚",
           },
           is_correct: false,
         },
@@ -3656,7 +3656,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_5",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sea-turtle",
+            ref: "🐢",
           },
           is_correct: false,
         },
@@ -3696,7 +3696,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 0,
           asset: {
             kind: "emoji",
-            ref: "EMJ-bear",
+            ref: "🐻",
           },
           label: "Gấu",
         },
@@ -3705,7 +3705,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 1,
           asset: {
             kind: "emoji",
-            ref: "EMJ-monkey",
+            ref: "🐵",
           },
           label: "Khỉ",
         },
@@ -3714,7 +3714,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 2,
           asset: {
             kind: "emoji",
-            ref: "EMJ-zebra",
+            ref: "🦓",
           },
           label: "Ngựa vằn",
         },
@@ -3753,7 +3753,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 0,
           asset: {
             kind: "emoji",
-            ref: "EMJ-sparkles",
+            ref: "✨",
           },
           label: "Ánh sao",
         },
@@ -3762,7 +3762,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 1,
           asset: {
             kind: "emoji",
-            ref: "EMJ-flying-saucer",
+            ref: "🛸",
           },
           label: "Đĩa bay",
         },
@@ -3771,7 +3771,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 2,
           asset: {
             kind: "emoji",
-            ref: "EMJ-comet",
+            ref: "☄️",
           },
           label: "Sao chổi",
         },
@@ -3808,7 +3808,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-open-book",
         asset: {
           kind: "emoji",
-          ref: "EMJ-open-book",
+          ref: "📖",
         },
       },
       options: [
@@ -3816,7 +3816,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-scissors",
+            ref: "✂️",
           },
           is_correct: false,
         },
@@ -3824,7 +3824,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-crayon",
+            ref: "🖍️",
           },
           is_correct: false,
         },
@@ -3832,7 +3832,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-books",
+            ref: "📚",
           },
           is_correct: false,
         },
@@ -3840,7 +3840,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-abacus",
+            ref: "🧮",
           },
           is_correct: false,
         },
@@ -3848,7 +3848,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_5",
           asset: {
             kind: "emoji",
-            ref: "EMJ-open-book",
+            ref: "📖",
           },
           is_correct: true,
         },
@@ -3888,7 +3888,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 0,
           asset: {
             kind: "emoji",
-            ref: "EMJ-bell",
+            ref: "🔔",
           },
           label: "Cái chuông",
         },
@@ -3897,7 +3897,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 1,
           asset: {
             kind: "emoji",
-            ref: "EMJ-pencil",
+            ref: "✏️",
           },
           label: "Bút chì",
         },
@@ -3906,7 +3906,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 2,
           asset: {
             kind: "emoji",
-            ref: "EMJ-school",
+            ref: "🏫",
           },
           label: "Trường học",
         },
@@ -3943,7 +3943,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "item_EMJ-house",
         asset: {
           kind: "emoji",
-          ref: "EMJ-house",
+          ref: "🏠",
         },
       },
       options: [
@@ -3951,7 +3951,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-couch",
+            ref: "🛋️",
           },
           is_correct: false,
         },
@@ -3959,7 +3959,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-broom",
+            ref: "🧹",
           },
           is_correct: false,
         },
@@ -3967,7 +3967,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-chair",
+            ref: "🪑",
           },
           is_correct: false,
         },
@@ -3975,7 +3975,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_4",
           asset: {
             kind: "emoji",
-            ref: "EMJ-house",
+            ref: "🏠",
           },
           is_correct: true,
         },
@@ -3983,7 +3983,7 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "opt_5",
           asset: {
             kind: "emoji",
-            ref: "EMJ-spoon",
+            ref: "🥄",
           },
           is_correct: false,
         },
@@ -4020,22 +4020,22 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy chạm vào quả táo nhé!",
       target_item: {
         item_id: "target_apple",
-        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        asset: { kind: "emoji", ref: "🍎" },
       },
       options: [
         {
           item_id: "opt_1",
-          asset: { kind: "emoji", ref: "EMJ-banana" },
+          asset: { kind: "emoji", ref: "🍌" },
           is_correct: false,
         },
         {
           item_id: "opt_2",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
           is_correct: true,
         },
         {
           item_id: "opt_3",
-          asset: { kind: "emoji", ref: "EMJ-carrot" },
+          asset: { kind: "emoji", ref: "🥕" },
           is_correct: false,
         },
       ],
@@ -4072,22 +4072,22 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
       items: [
         {
           item_id: "item_1",
-          asset: { kind: "emoji", ref: "EMJ-cat" },
+          asset: { kind: "emoji", ref: "🐱" },
           is_correct: true,
         },
         {
           item_id: "item_2",
-          asset: { kind: "emoji", ref: "EMJ-dog" },
+          asset: { kind: "emoji", ref: "🐶" },
           is_correct: true,
         },
         {
           item_id: "item_3",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
           is_correct: false,
         },
         {
           item_id: "item_4",
-          asset: { kind: "emoji", ref: "EMJ-car" },
+          asset: { kind: "emoji", ref: "🚗" },
           is_correct: false,
         },
       ],
@@ -4122,17 +4122,17 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy chạm vào ngôi sao nhé!",
       target_item: {
         item_id: "target_star",
-        asset: { kind: "emoji", ref: "EMJ-star" },
+        asset: { kind: "emoji", ref: "⭐" },
       },
       options: [
         {
           item_id: "opt_1",
-          asset: { kind: "emoji", ref: "EMJ-star" },
+          asset: { kind: "emoji", ref: "⭐" },
           is_correct: true,
         },
         {
           item_id: "opt_2",
-          asset: { kind: "emoji", ref: "EMJ-pencil" },
+          asset: { kind: "emoji", ref: "✏️" },
           is_correct: false,
         },
       ],
@@ -4168,21 +4168,21 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
       pairs: [
         {
           pair_id: "pair_1",
-          left: { item_id: "l_1", asset: { kind: "emoji", ref: "EMJ-pencil" } },
+          left: { item_id: "l_1", asset: { kind: "emoji", ref: "✏️" } },
           right: {
             item_id: "r_1",
-            asset: { kind: "emoji", ref: "EMJ-pencil" },
+            asset: { kind: "emoji", ref: "✏️" },
           },
         },
         {
           pair_id: "pair_2",
           left: {
             item_id: "l_2",
-            asset: { kind: "emoji", ref: "EMJ-open-book" },
+            asset: { kind: "emoji", ref: "📖" },
           },
           right: {
             item_id: "r_2",
-            asset: { kind: "emoji", ref: "EMJ-open-book" },
+            asset: { kind: "emoji", ref: "📖" },
           },
         },
       ],
@@ -4219,8 +4219,8 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         { slot_id: "s_2", label: "Ô số 2", expected_item_id: "item_2" },
       ],
       items: [
-        { item_id: "item_1", asset: { kind: "emoji", ref: "EMJ-pencil" } },
-        { item_id: "item_2", asset: { kind: "emoji", ref: "EMJ-gift" } },
+        { item_id: "item_1", asset: { kind: "emoji", ref: "✏️" } },
+        { item_id: "item_2", asset: { kind: "emoji", ref: "🎁" } },
       ],
     },
     difficulty_params: {
@@ -4253,17 +4253,17 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
       prompt: "Bé hãy chạm vào quả dưa hấu nhé!",
       target_item: {
         item_id: "target_melon",
-        asset: { kind: "emoji", ref: "EMJ-watermelon" },
+        asset: { kind: "emoji", ref: "🍉" },
       },
       options: [
         {
           item_id: "opt_1",
-          asset: { kind: "emoji", ref: "EMJ-watermelon" },
+          asset: { kind: "emoji", ref: "🍉" },
           is_correct: true,
         },
         {
           item_id: "opt_2",
-          asset: { kind: "emoji", ref: "EMJ-banana" },
+          asset: { kind: "emoji", ref: "🍌" },
           is_correct: false,
         },
       ],
@@ -4301,22 +4301,22 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
           pair_id: "pair_1",
           left: {
             item_id: "l_1",
-            asset: { kind: "emoji", ref: "EMJ-palette" },
+            asset: { kind: "emoji", ref: "🎨" },
           },
           right: {
             item_id: "r_1",
-            asset: { kind: "emoji", ref: "EMJ-palette" },
+            asset: { kind: "emoji", ref: "🎨" },
           },
         },
         {
           pair_id: "pair_2",
           left: {
             item_id: "l_2",
-            asset: { kind: "emoji", ref: "EMJ-scissors" },
+            asset: { kind: "emoji", ref: "✂️" },
           },
           right: {
             item_id: "r_2",
-            asset: { kind: "emoji", ref: "EMJ-scissors" },
+            asset: { kind: "emoji", ref: "✂️" },
           },
         },
       ],
@@ -4353,8 +4353,8 @@ export const PEDAGOGY_MISSING_SKILL_LEVELS: ContentSeed<unknown, unknown>[] = [
         { slot_id: "s_2", label: "Ô máy bay", expected_item_id: "item_2" },
       ],
       items: [
-        { item_id: "item_1", asset: { kind: "emoji", ref: "EMJ-car" } },
-        { item_id: "item_2", asset: { kind: "emoji", ref: "EMJ-airplane" } },
+        { item_id: "item_1", asset: { kind: "emoji", ref: "🚗" } },
+        { item_id: "item_2", asset: { kind: "emoji", ref: "✈️" } },
       ],
     },
     difficulty_params: {

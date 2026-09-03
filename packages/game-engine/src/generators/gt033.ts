@@ -29,7 +29,7 @@ export const GT033Generator: LevelGenerator = {
 
     const palette: GT033PaletteItem[] = chosenColors.map((c) => ({
       color_id: c,
-      asset: { kind: "emoji", ref: "EMJ-yarn" },
+      asset: { kind: "emoji", ref: "🧶" },
       name_vi: COLOR_NAMES[c] ?? c,
     }));
 

@@ -183,15 +183,15 @@ export function setUserRememberCookie(
   setCookie(event, USER_REMEMBER_COOKIE, rememberToken, {
     httpOnly: true,
     maxAge: 365 * 24 * 3600,
-    path: "/api/users/auth/restore",
-    sameSite: "strict",
+    path: "/",
+    sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
   });
 }
 
 export function clearUserRememberCookie(event: H3Event): void {
   deleteCookie(event, USER_REMEMBER_COOKIE, {
-    path: "/api/users/auth/restore",
+    path: "/",
   });
 }
 

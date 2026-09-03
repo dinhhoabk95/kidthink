@@ -1,6 +1,6 @@
 /**
  * @mindkid/emoji — Query Functions
- * Category/group/theme query and random selection.
+ * Category/group/theme query, glyph lookup and random selection.
  */
 
 import {
@@ -15,6 +15,24 @@ import type {
   EmojiEntry,
   EmojiGroup,
 } from "./types";
+
+/**
+ * Strip variation selector 16 (\uFE0F) for normalization comparison.
+ */
+function stripVS16(str: string): string {
+  return str.replace(/\uFE0F/g, "");
+}
+
+// Fast lookup map for glyph -> EmojiEntry
+const GLYPH_MAP = new Map<string, EmojiEntry>();
+for (const entry of ALL_EMOJIS) {
+  const nfc = entry.emoji.normalize("NFC");
+  GLYPH_MAP.set(nfc, entry);
+  const stripped = stripVS16(nfc);
+  if (!GLYPH_MAP.has(stripped)) {
+    GLYPH_MAP.set(stripped, entry);
+  }
+}
 
 /**
  * Get all emoji entries for a specific category.
@@ -82,44 +100,29 @@ export function getAllCategories(): EmojiCategory[] {
 }
 
 /**
- * Get total number of emoji entries.
+ * Get total number of distinct emoji entries.
  */
 export function getTotalEmojiCount(): number {
   return ALL_EMOJIS.length;
 }
 
 /**
- * Get the EMJ-<slug> code for an emoji entry.
+ * Get an emoji entry by its UTF-8 glyph.
+ * Normalizes input to NFC and matches both with and without VS16 (U+FE0F).
  */
-export function getEmojiCode(entry: EmojiEntry): string {
-  if (entry.code) {
-    return entry.code;
+export function getByGlyph(glyph: string): EmojiEntry | null {
+  if (!glyph) {
+    return null;
   }
-  // keywords[0] is the English term — the merge in the data files keeps
-  // English first so EMJ-<slug> codes stay byte-identical.
-  const primaryKeyword = entry.keywords[0] || entry.name;
-  const slug = primaryKeyword
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/đ/g, "d")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-  return `EMJ-${slug}`;
-}
-
-/**
- * Get an emoji entry by code (EMJ-<slug>).
- */
-export function getByCode(code: string): EmojiEntry | null {
+  const normalized = glyph.normalize("NFC");
   return (
-    ALL_EMOJIS.find((e) => e.code === code || getEmojiCode(e) === code) ?? null
+    GLYPH_MAP.get(normalized) ?? GLYPH_MAP.get(stripVS16(normalized)) ?? null
   );
 }
 
 /**
- * Validates if an emoji code exists in the registry.
+ * Check if a glyph exists in the curated catalog.
  */
-export function isValidRef(code: string): boolean {
-  return getByCode(code) !== null;
+export function isInCatalog(glyph: string): boolean {
+  return getByGlyph(glyph) !== null;
 }

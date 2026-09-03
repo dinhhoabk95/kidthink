@@ -1,7 +1,7 @@
 /// <reference lib="dom" />
 // Public barrel entry point for @mindkid/game-engine (BR-MPA-01)
 
-export { EMOJI_REF_PATTERN } from "./contracts/shared-fields";
+export { EmojiRef } from "./contracts/shared-fields";
 export type {
   AgeBand,
   ContentStatus,
@@ -450,4 +450,10 @@ export type {
   GT036Difficulty,
   GT036PaletteItem,
 } from "./templates/GT-036/template.js";
+export {
+  drawCentralTargetCard,
+  drawSceneBackground,
+  drawTargetHoverAura,
+  drawWoodenTokenDock,
+} from "./templates/shared-render.js";
 export { ObjectPool } from "./utils/object-pool.js";

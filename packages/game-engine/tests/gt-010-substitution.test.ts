@@ -47,8 +47,8 @@ describe("GT-010: Thay thế biểu tượng (substitution)", () => {
       const invalidPack = {
         prompt: "Hệ vô nghiệm nguyên dương",
         symbols: [
-          { symbol_id: "a", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-          { symbol_id: "b", asset: { kind: "emoji", ref: "EMJ-banana" } },
+          { symbol_id: "a", asset: { kind: "emoji", ref: "🍎" } },
+          { symbol_id: "b", asset: { kind: "emoji", ref: "🍌" } },
         ],
         // a + a = 5 -> a = 2.5 (not integer)
         equations: [

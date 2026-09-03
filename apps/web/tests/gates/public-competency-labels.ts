@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { isAbsolute, join } from "node:path";
 import { REPO_ROOT } from "@mindkid/config/paths";
-import { COMPETENCY_CATALOG } from "@mindkid/shared";
+import { COMPETENCY_CATALOG, STRANDS_CATALOG } from "@mindkid/shared";
 
 /**
  * `BR-LND-09` — bề mặt công khai Cấm — NEVER viết cứng nhãn năng lực hay số
@@ -31,8 +31,30 @@ export interface CompetencyLabelViolation {
 const EXTENSION_REGEX = /\.(vue|ts)$/;
 const SKIP_DIR_REGEX = /^(node_modules|\.nuxt|\.output|dist|fixtures)$/;
 
-/** Tên hợp lệ, lấy thẳng từ nguồn duy nhất. */
-const ALLOWED_NAMES = new Set(COMPETENCY_CATALOG.map((entry) => entry.name));
+/**
+ * Tên hợp lệ, lấy thẳng từ hai nguồn duy nhất.
+ *
+ * Phải gồm **cả** nhãn strand: từ khi kho mở lên 71 strand, nhiều tên strand
+ * mang dấu `&` (`Cause & Effect`, `Rhyme & Rime`, `Safety & Traffic`…) — đúng
+ * khuôn mà `AMPERSAND_LABEL_REGEX` săn. Whitelist chỉ có nhãn năng lực thì
+ * cổng bắt chính dữ liệu hợp lệ.
+ */
+const ALLOWED_NAMES = new Set<string>([
+  ...COMPETENCY_CATALOG.map((entry) => entry.name),
+  ...COMPETENCY_CATALOG.map((entry) => entry.description),
+  ...COMPETENCY_CATALOG.map((entry) => entry.short),
+  ...STRANDS_CATALOG.map((entry) => entry.name),
+  ...STRANDS_CATALOG.map((entry) => entry.description),
+]);
+
+/**
+ * File **là** nguồn sự thật — cổng Cấm — NEVER quét chúng.
+ *
+ * Quét nguồn rồi báo nguồn viết cứng là vòng lặp vô nghĩa: mọi giá trị hợp lệ
+ * đều "viết cứng" ở đúng chỗ nó phải nằm.
+ */
+const CATALOG_SOURCE_REGEX =
+  /packages\/shared\/src\/(competency-catalog|strands-catalog)\.ts$/;
 
 /** `"Số & Lượng"` · `>Đo lường & Đại lượng<` — nhãn hai vế nối bằng `&`. */
 const AMPERSAND_LABEL_REGEX =
@@ -110,19 +132,29 @@ export function scanCompetencyLabels(dir: string): CompetencyLabelViolation[] {
   const violations: CompetencyLabelViolation[] = [];
   const targetPath = isAbsolute(dir) ? dir : join(REPO_ROOT, dir);
 
+  function handleEntry(currentPath: string, entry: string): void {
+    const fullPath = join(currentPath, entry);
+    if (statSync(fullPath).isDirectory()) {
+      if (!SKIP_DIR_REGEX.test(entry)) {
+        walk(fullPath);
+      }
+      return;
+    }
+    if (!EXTENSION_REGEX.test(entry)) {
+      return;
+    }
+    const relative = fullPath.replace(`${REPO_ROOT}/`, "");
+    if (!CATALOG_SOURCE_REGEX.test(relative)) {
+      checkFile(fullPath, relative, violations);
+    }
+  }
+
   function walk(currentPath: string): void {
     if (!existsSync(currentPath)) {
       return;
     }
     for (const entry of readdirSync(currentPath)) {
-      const fullPath = join(currentPath, entry);
-      if (statSync(fullPath).isDirectory()) {
-        if (!SKIP_DIR_REGEX.test(entry)) {
-          walk(fullPath);
-        }
-      } else if (EXTENSION_REGEX.test(entry)) {
-        checkFile(fullPath, fullPath.replace(`${REPO_ROOT}/`, ""), violations);
-      }
+      handleEntry(currentPath, entry);
     }
   }
 

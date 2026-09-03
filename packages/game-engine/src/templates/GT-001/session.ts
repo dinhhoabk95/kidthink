@@ -3,6 +3,11 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import {
+  getTouchFloor,
+  LOGIC_HEIGHT,
+  LOGIC_WIDTH,
+} from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
@@ -37,6 +42,15 @@ export class GT001Session extends TemplateGameSession<
   private itemStates: Map<string, ItemVisualState> = new Map();
   private wrongItemId: string | null = null;
   private wrongTimestamp = 0;
+
+  constructor(
+    content: GT001Content,
+    difficulty: GT001Difficulty,
+    layoutSeed = 0,
+    themeId?: string
+  ) {
+    super(content, difficulty, layoutSeed, themeId);
+  }
   /**
    * Mốc thời gian của khung vẽ gần nhất.
    *
@@ -64,11 +78,42 @@ export class GT001Session extends TemplateGameSession<
   }
 
   resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
-    const layoutFn = resolveLayout("grid");
-    this.slots = layoutFn({
-      slotCount: this.displayOptions.length,
-      ageBand,
-    });
+    const count = this.displayOptions.length;
+    if (this.content.target_item && count > 0) {
+      const touchFloor = getTouchFloor(ageBand);
+      const dockH = 130;
+      const dockY = LOGIC_HEIGHT - dockH - 12;
+      const centerY = dockY + dockH / 2;
+      const gap = 24;
+      const slotW = Math.max(
+        touchFloor,
+        Math.min(104, (LOGIC_WIDTH * 0.8 - (count - 1) * gap) / count)
+      );
+      const slotH = slotW;
+      const totalW = count * slotW + (count - 1) * gap;
+      const startX = (LOGIC_WIDTH - totalW) / 2;
+      const slots: Slot[] = [];
+      for (let i = 0; i < count; i++) {
+        slots.push({
+          index: i,
+          x: Math.round(startX + i * (slotW + gap) + slotW / 2),
+          y: Math.round(centerY),
+          w: Math.round(slotW),
+          h: Math.round(slotH),
+          hitW: Math.max(touchFloor, Math.round(slotW)),
+          hitH: Math.max(touchFloor, Math.round(slotH)),
+          page: 0,
+          role: "source",
+        });
+      }
+      this.slots = slots;
+    } else {
+      const layoutFn = resolveLayout("grid");
+      this.slots = layoutFn({
+        slotCount: this.displayOptions.length,
+        ageBand,
+      });
+    }
   }
 
   private getItemState(itemId: string): ItemVisualState {
@@ -129,7 +174,7 @@ export class GT001Session extends TemplateGameSession<
   ): void {
     this.lastFrameMs = timeMs;
     const slots = this.slots;
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     if (this.content.target_item) {
       drawCentralTargetCard(ctx, rs, this.content.target_item.asset);

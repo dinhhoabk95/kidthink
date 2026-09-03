@@ -40,7 +40,7 @@ ngược từ cổng phủ chứ không từ độ dày của nguồn.
 | Người biên soạn | `content_reviewer` | Đọc hạn ngạch trước khi soạn; xin mã trong khối dành riêng |
 | Người review PR | `content_reviewer` | Từ chối PR vượt hạn ngạch, kể cả khi từng bản đều đạt chất lượng |
 | Cổng phủ | — | Đo lại ba ma trận sau mỗi lô, chặn khi ô tụt sàn |
-| Cổng seed | — | Chạy tám cổng; hạn ngạch là cổng thứ chín ở tầng review, không ở tầng script |
+| Cổng seed | — | Chạy bộ cổng ở mục 7.3 của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md); hạn ngạch là cổng thêm ở tầng review, không ở tầng script |
 
 ## 3. Entry points
 
@@ -48,7 +48,7 @@ ngược từ cổng phủ chứ không từ độ dày của nguồn.
 |---|---|---|
 | `packages/db/src/seed-content/c1/` tới `c6/` | Người biên soạn | File seeder, chia theo competency như quy ước hiện có |
 | `pnpm --filter @mindkid/db seed:report` | Người biên soạn | Xem khoảng trống và mức tiêu thụ hạn ngạch |
-| `pnpm --filter @mindkid/db seed:check` | Người biên soạn | Tám cổng, không chạm database |
+| `pnpm --filter @mindkid/db seed:check` | Người biên soạn | Bộ cổng seed, không chạm database |
 | `pnpm --filter @mindkid/db test` | Cổng phủ | Ba ma trận và sàn |
 
 ## 4. Main flow
@@ -58,7 +58,7 @@ ngược từ cổng phủ chứ không từ độ dày của nguồn.
    không soạn tiếp.
 3. Cấp mã trong khối dành riêng ở mục 7.2.
 4. Soạn seeder theo hình dạng ở mục 7.2 của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md).
-5. Chạy `pnpm --filter @mindkid/db seed:check` cho tới khi tám cổng xanh.
+5. Chạy `pnpm --filter @mindkid/db seed:check` cho tới khi mọi cổng xanh.
 6. Chạy `pnpm --filter @mindkid/db test` trên tập published cộng lô đang soạn; ô nào tụt sàn thì sửa
    phân bổ band trước khi mở PR.
 7. Mở PR một batch một lần; người review đọc từng bản.

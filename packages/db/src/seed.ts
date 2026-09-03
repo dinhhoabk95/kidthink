@@ -16,7 +16,6 @@ import { seedInitialAccounts } from "./seed-master/accounts.ts";
 import { seedSkillActionSuggestions } from "./seed-master/action-suggestions.ts";
 import { seedContentTags } from "./seed-master/content-tags.ts";
 import { seedCurriculaMasterData } from "./seed-master/curricula.ts";
-import { seedEmojiMasterData } from "./seed-master/emoji.ts";
 import { seedGameTemplatesMasterData } from "./seed-master/game-templates.ts";
 import { seedTaxonomyMasterData } from "./seed-master/taxonomy/index.ts";
 
@@ -92,14 +91,10 @@ export async function seed() {
   // 4. Seed Taxonomy master data
   const taxStats = await seedTaxonomyMasterData(db);
   console.log(
-    `[db:seed] Taxonomy seeded: ${taxStats.competencyCount} competencies, ${taxStats.strandCount} strands, ${taxStats.skillCount} skills, ${taxStats.loCount} LOs.`
+    `[db:seed] Taxonomy seeded: ${taxStats.competencyCount} competencies, ${taxStats.strandCount} strands, ${taxStats.skillCount} skills, ${taxStats.loCount} LOs, ${taxStats.datasetCount} skill datasets.`
   );
 
-  // 5. Seed Emoji master data
-  const emojiStats = await seedEmojiMasterData(db);
-  console.log(`[db:seed] Emoji seeded: ${emojiStats.emojiCount} emojis.`);
-
-  // 6. Seed Game Templates master data
+  // 5. Seed Game Templates master data
   const templateStats = await seedGameTemplatesMasterData(db);
   console.log(
     `[db:seed] Game Templates seeded: ${templateStats.templateCount} templates.`
@@ -162,7 +157,7 @@ export async function seed() {
   if (masterOnly) {
     console.log("[db:seed] Bỏ qua nội dung (MINDKID_SEED_MASTER_ONLY=1).");
   } else {
-    await runSeedContent(false, `SEED-${Date.now()}`);
+    await runSeedContent(false, `SEED-${Date.now()}`, false);
   }
 
   // 10. Chương trình học — PHẢI đứng SAU bước nội dung.

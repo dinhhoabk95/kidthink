@@ -1,9 +1,8 @@
 /* biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: geometry calculations */
 
 import {
+  DEFAULT_LOGIC_SPACE,
   getTouchFloor,
-  LOGIC_HEIGHT,
-  LOGIC_WIDTH,
   SAFE_MARGIN_PX,
   SLOT_GAP_PX,
 } from "./constants.js";
@@ -36,6 +35,10 @@ export function computeGridLayout(
     aspectRatio?: number;
   }
 ): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand } = input;
   if (slotCount <= 0) {
     return [];
@@ -168,6 +171,10 @@ export function computeBipartiteLayout(
     isTwoColumn?: boolean;
   }
 ): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawTargetCount } = input;
   const targetCount = rawTargetCount ?? slotCount;
   const touchFloor = getTouchFloor(ageBand);
@@ -308,6 +315,10 @@ export function computeBipartiteLayout(
  * Bố cục phân loại vào nhiều rổ ở dưới (multi-bucket-bottom)
  */
 export function computeMultiBucketLayout(input: LayoutInput): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawBucketCount } = input;
   const bucketCount = rawBucketCount ?? 2;
   const touchFloor = getTouchFloor(ageBand);
@@ -385,6 +396,10 @@ export function computeTrackLayout(
   input: LayoutInput,
   options?: { isLadder?: boolean }
 ): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand } = input;
   if (slotCount <= 0) {
     return [];
@@ -452,6 +467,10 @@ export function computeTrackLayout(
  * - Các vật phẩm kéo/chọn (Sources) ở hàng dưới
  */
 export function computeNumberBondTreeLayout(input: LayoutInput): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawBranchCount } = input;
   const branchCount = rawBranchCount ?? 2;
   const touchFloor = getTouchFloor(ageBand);
@@ -528,6 +547,10 @@ export function computeNumberBondTreeLayout(input: LayoutInput): Slot[] {
  * - Nguồn vật phẩm ở hàng dưới
  */
 export function computeTenFrameSplitLayout(input: LayoutInput): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand } = input;
   const touchFloor = getTouchFloor(ageBand);
 
@@ -592,6 +615,10 @@ export function computeTenFrameSplitLayout(input: LayoutInput): Slot[] {
  * - Hàng vật phẩm kéo thả (source items) ở phía dưới
  */
 export function computeHorizontalSlotTrackLayout(input: LayoutInput): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawTargetCount } = input;
   const targetCount = rawTargetCount ?? slotCount;
   const touchFloor = getTouchFloor(ageBand);
@@ -649,6 +676,10 @@ export function computeHorizontalSlotTrackLayout(input: LayoutInput): Slot[] {
  * - Các thẻ lựa chọn ở bên phải
  */
 export function computeMatrixSlotGridLayout(input: LayoutInput): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawGridSize } = input;
   const gridSize = rawGridSize === 9 ? 3 : 2; // 2x2 hoặc 3x3
   const touchFloor = getTouchFloor(ageBand);
@@ -728,6 +759,10 @@ export function computeMatrixSlotGridLayout(input: LayoutInput): Slot[] {
  * `slotCount` là số ứng viên; `targetCount` là số manh mối (1–3).
  */
 export function computeClueBoardLayout(input: LayoutInput): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawClueCount } = input;
   const clueCount = Math.max(
     1,
@@ -868,6 +903,10 @@ function computeCandidateBoard(args: {
  * `slotCount` là số thẻ chọn; `targetCount` >= 9 cho lưới 3×3, còn lại 2×2.
  */
 export function computeMatrix3x3Layout(input: LayoutInput): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawGridSize } = input;
   const gridSize = (rawGridSize ?? 0) >= 9 ? 3 : 2;
   const touchFloor = getTouchFloor(ageBand);
@@ -937,6 +976,10 @@ export function computeMatrix3x3Layout(input: LayoutInput): Slot[] {
  * Hàng trên là 2-3 dòng phương trình, hàng dưới là khay chọn giá trị.
  */
 export function computeEquationRowsLayout(input: LayoutInput): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawEqCount } = input;
   const eqCount = Math.max(1, rawEqCount ?? 2);
   const touchFloor = getTouchFloor(ageBand);
@@ -993,6 +1036,10 @@ export function computeEquationRowsLayout(input: LayoutInput): Slot[] {
  * Nửa trái là mẫu tham chiếu, nửa phải là các ô cần hoàn thiện đối xứng, khay dưới là các mảnh lựa chọn.
  */
 export function computeMirrorAxisSplitLayout(input: LayoutInput): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawTargetCount } = input;
   const targetCount = Math.max(1, rawTargetCount ?? 2);
   const touchFloor = getTouchFloor(ageBand);
@@ -1070,6 +1117,10 @@ export function computeMirrorAxisSplitLayout(input: LayoutInput): Slot[] {
  * Phân bố các vị trí vật thể trong không gian tranh logic đảm bảo sàn chạm và không chồng lấn.
  */
 export function computeFreeSceneLayout(input: LayoutInput): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand } = input;
   if (slotCount <= 0) {
     return [];
@@ -1113,6 +1164,9 @@ export function computeFreeSceneLayout(input: LayoutInput): Slot[] {
  * - Slot N+2..N+1+M: Các ô đáp án lựa chọn ở khay dưới (neutral).
  */
 export function computeMeasureStripLayout(input: LayoutInput): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { w: LOGIC_WIDTH } = input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount: rawOptionCount, ageBand, targetCount: rawUnits } = input;
   const units = Math.max(2, Math.min(10, rawUnits ?? 4));
   const optionCount = Math.max(1, rawOptionCount ?? 3);
@@ -1222,6 +1276,10 @@ export function computeMeasureStripLayout(input: LayoutInput): Slot[] {
  * - Khay màu/sợi ở dưới (sources)
  */
 export function computeWeaveGridLayout(input: LayoutInput): Slot[] {
+  // Che hằng ở phạm vi hàm: mọi phép tính bên dưới giữ nguyên tên, nhưng đọc
+  // theo không gian logic của khung nhìn hiện tại. Bỏ trống thì là 960x540.
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawCellCount } = input;
   const touchFloor = getTouchFloor(ageBand);
   const totalCells = rawCellCount && rawCellCount >= 4 ? rawCellCount : 4;

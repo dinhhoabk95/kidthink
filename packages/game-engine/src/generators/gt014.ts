@@ -40,7 +40,7 @@ export const GT014Generator: LevelGenerator = {
         item_id: "left_1",
         asset: {
           kind: "emoji" as const,
-          ref: leftNoun?.emoji_ref ?? "EMJ-apple",
+          ref: leftNoun?.emoji_ref ?? "🍎",
         },
         weight: leftWeight,
       },
@@ -51,7 +51,7 @@ export const GT014Generator: LevelGenerator = {
         item_id: "right_1",
         asset: {
           kind: "emoji" as const,
-          ref: rightNoun?.emoji_ref ?? "EMJ-banana",
+          ref: rightNoun?.emoji_ref ?? "🍌",
         },
         weight: rightWeight,
       },
@@ -68,7 +68,7 @@ export const GT014Generator: LevelGenerator = {
         item_id: "tray_1",
         asset: {
           kind: "emoji" as const,
-          ref: trayNouns[0]?.emoji_ref ?? "EMJ-carrot",
+          ref: trayNouns[0]?.emoji_ref ?? "🥕",
         },
         weight: neededWeight, // Vật cân bằng chính xác
       },
@@ -76,7 +76,7 @@ export const GT014Generator: LevelGenerator = {
         item_id: "tray_2",
         asset: {
           kind: "emoji" as const,
-          ref: trayNouns[1]?.emoji_ref ?? "EMJ-grape",
+          ref: trayNouns[1]?.emoji_ref ?? "🍇",
         },
         weight: distractor1Weight, // Nhiễu
       },
@@ -84,7 +84,7 @@ export const GT014Generator: LevelGenerator = {
         item_id: "tray_3",
         asset: {
           kind: "emoji" as const,
-          ref: trayNouns[2]?.emoji_ref ?? "EMJ-lemon",
+          ref: trayNouns[2]?.emoji_ref ?? "🍋",
         },
         weight: distractor2Weight, // Nhiễu
       },

@@ -91,7 +91,7 @@ theo tuổi. Lý do ở mục 7.4.
 | `BR-MLS-08` (khối mã dành riêng) | Lesson lô này dùng mã từ `LES-0101`, activity từ `ACT-0101` | 60 lesson và 60 activity đã seed chiếm khối `0001` tới `0060`. Khối liền kề làm không thu hồi được nguyên lô khi cần |
 | `BR-MLS-09` (một batch một workbook) | Một batch chứa lesson và activity của **đúng một** workbook | `BR-MGL-07` cùng lý do — thu hồi theo workbook là đơn vị thu hồi tự nhiên khi một nguồn hoá ra sai |
 | `BR-MLS-10` (không dựng chương trình theo tuổi) | Lô này cấm — **NEVER dùng một mình để dựng một chương trình `age_based`** | `BR-CRM-08` (chương trình theo tuổi phủ đủ sáu competency) và `BR-CRM-07` (không competency nào quá 40%). Nguồn phủ bốn competency và lệch 14 trên 21 về C1 — xem mục 7.4 |
-| `BR-MLS-11` (chuyên gia đọc bản thô) | Mỗi lesson được một người có nền sư phạm mầm non đọc trước khi mở PR | Đóng cùng nợ mà câu hỏi mở số 1 của [`lesson-model.md`](lesson-model.md) nêu. Tám cổng seed không kiểm được cung bậc sư phạm của một buổi học |
+| `BR-MLS-11` (chuyên gia đọc bản thô) | Mỗi lesson được một người có nền sư phạm mầm non đọc trước khi mở PR | Đóng cùng nợ mà câu hỏi mở số 1 của [`lesson-model.md`](lesson-model.md) nêu. Bộ cổng seed không kiểm được cung bậc sư phạm của một buổi học |
 | `BR-MLS-12` (gắn game level đã published) | Activity kiểu `digital_game` của lô này chỉ trỏ game level Montessori đã `published` | Mục 7.2 của [`activity-model.md`](activity-model.md) — trỏ một level chưa publish là một buổi học có một bước không mở được |
 | `BR-MLS-13` (cung bậc theo CPA) | Hoạt động chính đi theo thứ tự **vật thật, rồi hình ảnh, rồi ký hiệu số**; khởi động luôn ở mức vật thật | Nguyên lý CPA ở mục 7.0 của [`montessori-corpus-mapping.md`](montessori-corpus-mapping.md). Lesson mở bằng ký hiệu số là đưa trẻ vào phần trừu tượng trước khi có nghĩa để gắn vào — cũng là lý do `BR-LSM-01` đòi có khởi động |
 
@@ -180,7 +180,7 @@ biến một câu hỏi chặn thành một cổng có trạng thái đọc đư
 | Hệ quả | Nội dung |
 |---|---|
 | Lesson lô Montessori | Seed ở `draft`, không vào ma trận phủ (`BR-TCM-03` chỉ đếm `published`) |
-| Game level lô Montessori | **Không** bị chặn bởi cổng này — chúng không có người lớn tham gia, và đi qua tám cổng seed |
+| Game level lô Montessori | **Không** bị chặn bởi cổng này — chúng không có người lớn tham gia, và đi qua bộ cổng seed |
 | Activity của lô | Theo trạng thái của lesson chứa nó |
 | Khi có người duyệt | Lật sang `published` bằng version mới, không sửa tại chỗ |
 

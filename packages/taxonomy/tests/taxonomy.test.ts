@@ -31,8 +31,8 @@ describe("COMPETENCIES", () => {
 });
 
 describe("STRANDS", () => {
-  it("has exactly 41 entries", () => {
-    expect(STRANDS).toHaveLength(41);
+  it("has exactly 71 entries", () => {
+    expect(STRANDS).toHaveLength(71);
   });
 
   it("all codes pass StrandCodeSchema", () => {
@@ -66,12 +66,12 @@ describe("STRANDS", () => {
       counts[s.competency_code] = (counts[s.competency_code] ?? 0) + 1;
     }
     expect(counts).toEqual({
-      C1: 10,
-      C2: 8,
-      C3: 8,
-      C4: 4,
-      C5: 5,
-      C6: 6,
+      C1: 12,
+      C2: 10,
+      C3: 10,
+      C4: 16,
+      C5: 15,
+      C6: 8,
     });
   });
 
@@ -99,7 +99,7 @@ describe("Taxonomy API functions & DAG validation", () => {
       age_max: 4,
       difficulty: 1,
       thinking_processes: ["memorization"],
-      status: "seeded" as const,
+      tier: "basic" as const,
       learning_objectives: [
         {
           code: "LO-C1.CNT.01-01",
@@ -117,7 +117,7 @@ describe("Taxonomy API functions & DAG validation", () => {
       age_max: 5,
       difficulty: 2,
       thinking_processes: ["memorization"],
-      status: "seeded" as const,
+      tier: "basic" as const,
       prerequisites: [{ prerequisite_code: "C1.CNT.01" }],
     },
     {
@@ -129,7 +129,7 @@ describe("Taxonomy API functions & DAG validation", () => {
       age_max: 6,
       difficulty: 3,
       thinking_processes: ["logical_reasoning"],
-      status: "seeded" as const,
+      tier: "basic" as const,
       prerequisites: [{ prerequisite_code: "C1.CNT.02" }],
     },
   ];
@@ -181,7 +181,7 @@ describe("Taxonomy API functions & DAG validation", () => {
         age_max: 4,
         difficulty: 1,
         thinking_processes: ["memorization"],
-        status: "seeded" as const,
+        tier: "basic" as const,
         prerequisites: [{ prerequisite_code: "SKILL-B" }],
       },
       {
@@ -193,7 +193,7 @@ describe("Taxonomy API functions & DAG validation", () => {
         age_max: 4,
         difficulty: 1,
         thinking_processes: ["memorization"],
-        status: "seeded" as const,
+        tier: "basic" as const,
         prerequisites: [{ prerequisite_code: "SKILL-A" }],
       },
     ];
@@ -227,7 +227,7 @@ describe("Taxonomy API functions & DAG validation", () => {
           age_max: 4,
           difficulty: 1,
           thinking_processes: ["memorization"],
-          status: "seeded" as const,
+          tier: "basic" as const,
           prerequisites: prereqs.map((p) => ({ prerequisite_code: p })),
         };
       });
@@ -253,7 +253,7 @@ describe("Taxonomy API functions & DAG validation", () => {
         age_max: 4,
         difficulty: 1,
         thinking_processes: ["memorization"],
-        status: "seeded" as const,
+        tier: "basic" as const,
         prerequisites: [{ prerequisite_code: nodes[(idx + 1) % nodeCount] }],
       }));
       const cyclicTree = buildSkillTree(directCycleRows as any);

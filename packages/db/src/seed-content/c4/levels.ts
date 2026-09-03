@@ -29,7 +29,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "sb1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-strawberry",
+            ref: "🍓",
           },
         },
       ],
@@ -84,14 +84,14 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "r1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rabbit-face",
+            ref: "🐰",
           },
         },
         {
           item_id: "r2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rabbit-face",
+            ref: "🐰",
           },
         },
       ],
@@ -145,7 +145,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "banana",
         asset: {
           kind: "emoji",
-          ref: "EMJ-banana",
+          ref: "🍌",
         },
       },
       options: [
@@ -153,7 +153,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "apple-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
           is_correct: false,
         },
@@ -161,7 +161,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "apple-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
           is_correct: false,
         },
@@ -169,7 +169,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "banana",
           asset: {
             kind: "emoji",
-            ref: "EMJ-banana",
+            ref: "🍌",
           },
           is_correct: true,
         },
@@ -214,7 +214,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "waste",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bottle",
+            ref: "🍾",
           },
           is_correct: true,
         },
@@ -223,7 +223,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "flower",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sunflower",
+            ref: "🌻",
           },
           is_correct: false,
         },
@@ -261,7 +261,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "butterfly",
         asset: {
           kind: "emoji",
-          ref: "EMJ-butterfly",
+          ref: "🦋",
         },
       },
       options: [
@@ -269,7 +269,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "butterfly",
           asset: {
             kind: "emoji",
-            ref: "EMJ-butterfly",
+            ref: "🦋",
           },
           is_correct: true,
         },
@@ -277,7 +277,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "leaf",
           asset: {
             kind: "emoji",
-            ref: "EMJ-leaf-fluttering",
+            ref: "🍃",
           },
           is_correct: false,
         },
@@ -285,7 +285,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "bee",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bee",
+            ref: "🐝",
           },
           is_correct: false,
         },
@@ -347,7 +347,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Màu vàng",
           asset: {
             kind: "emoji",
-            ref: "EMJ-yellow-circle",
+            ref: "🟡",
           },
         },
         {
@@ -355,7 +355,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Màu xanh",
           asset: {
             kind: "emoji",
-            ref: "EMJ-green-circle",
+            ref: "🟢",
           },
         },
         {
@@ -363,7 +363,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Màu vàng",
           asset: {
             kind: "emoji",
-            ref: "EMJ-yellow-circle",
+            ref: "🟡",
           },
         },
         {
@@ -371,7 +371,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Màu xanh",
           asset: {
             kind: "emoji",
-            ref: "EMJ-green-circle",
+            ref: "🟢",
           },
         },
       ],
@@ -408,7 +408,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "chick",
         asset: {
           kind: "emoji",
-          ref: "EMJ-front-facing-baby-chick",
+          ref: "🐥",
         },
       },
       options: [
@@ -416,7 +416,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "fish-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-tropical-fish",
+            ref: "🐠",
           },
           is_correct: false,
         },
@@ -424,7 +424,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "fish-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-tropical-fish",
+            ref: "🐠",
           },
           is_correct: false,
         },
@@ -432,7 +432,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "chick",
           asset: {
             kind: "emoji",
-            ref: "EMJ-front-facing-baby-chick",
+            ref: "🐥",
           },
           is_correct: true,
         },
@@ -477,7 +477,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "yellow_leaf",
           asset: {
             kind: "emoji",
-            ref: "EMJ-fallen-leaf",
+            ref: "🍂",
           },
           is_correct: true,
         },
@@ -486,7 +486,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "green_leaf",
           asset: {
             kind: "emoji",
-            ref: "EMJ-herb",
+            ref: "🌿",
           },
           is_correct: false,
         },
@@ -526,7 +526,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "palm",
           asset: {
             kind: "emoji",
-            ref: "EMJ-palm-tree",
+            ref: "🌴",
           },
           is_target: true,
           is_hidden: false,
@@ -537,7 +537,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "rock",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rock",
+            ref: "🪨",
           },
           is_target: false,
           is_hidden: false,
@@ -548,7 +548,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "tree",
           asset: {
             kind: "emoji",
-            ref: "EMJ-deciduous-tree",
+            ref: "🌳",
           },
           is_target: false,
           is_hidden: false,
@@ -589,21 +589,21 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "it-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-car",
+            ref: "🚗",
           },
         },
         {
           item_id: "it-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-car",
+            ref: "🚗",
           },
         },
         {
           item_id: "it-3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-car",
+            ref: "🚗",
           },
         },
       ],
@@ -658,21 +658,21 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "d1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-dolphin",
+            ref: "🐬",
           },
         },
         {
           item_id: "d2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-dolphin",
+            ref: "🐬",
           },
         },
         {
           item_id: "d3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-dolphin",
+            ref: "🐬",
           },
         },
       ],
@@ -750,7 +750,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Chú mèo",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cat",
+            ref: "🐱",
           },
         },
         {
@@ -758,7 +758,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Chú chó",
           asset: {
             kind: "emoji",
-            ref: "EMJ-dog",
+            ref: "🐶",
           },
         },
         {
@@ -766,7 +766,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Chú mèo",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cat",
+            ref: "🐱",
           },
         },
         {
@@ -774,7 +774,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           label: "Chú chó",
           asset: {
             kind: "emoji",
-            ref: "EMJ-dog",
+            ref: "🐶",
           },
         },
       ],
@@ -811,7 +811,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "sunflower",
         asset: {
           kind: "emoji",
-          ref: "EMJ-sunflower",
+          ref: "🌻",
         },
       },
       options: [
@@ -819,7 +819,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "rose-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rose",
+            ref: "🌹",
           },
           is_correct: false,
         },
@@ -827,7 +827,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "rose-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rose",
+            ref: "🌹",
           },
           is_correct: false,
         },
@@ -835,7 +835,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "sunflower",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sunflower",
+            ref: "🌻",
           },
           is_correct: true,
         },
@@ -880,7 +880,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "kitchen",
           asset: {
             kind: "emoji",
-            ref: "EMJ-fried-egg",
+            ref: "🍳",
           },
           is_correct: true,
         },
@@ -889,7 +889,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "toy",
           asset: {
             kind: "emoji",
-            ref: "EMJ-teddy-bear",
+            ref: "🧸",
           },
           is_correct: false,
         },
@@ -928,14 +928,14 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "it-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-teddy-bear",
+            ref: "🧸",
           },
         },
         {
           item_id: "it-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-teddy-bear",
+            ref: "🧸",
           },
         },
       ],
@@ -991,7 +991,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "turtle",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sea-turtle",
+            ref: "🐢",
           },
           is_target: true,
           is_hidden: false,
@@ -1002,7 +1002,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "rock-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rock",
+            ref: "🪨",
           },
           is_target: false,
           is_hidden: false,
@@ -1013,7 +1013,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "rock-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rock",
+            ref: "🪨",
           },
           is_target: false,
           is_hidden: false,
@@ -1024,7 +1024,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "fish",
           asset: {
             kind: "emoji",
-            ref: "EMJ-fish",
+            ref: "🐟",
           },
           is_target: false,
           is_hidden: false,
@@ -1064,7 +1064,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
         item_id: "oncoming",
         asset: {
           kind: "emoji",
-          ref: "EMJ-oncoming-automobile",
+          ref: "🚘",
         },
       },
       options: [
@@ -1072,7 +1072,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "oncoming",
           asset: {
             kind: "emoji",
-            ref: "EMJ-oncoming-automobile",
+            ref: "🚘",
           },
           is_correct: true,
         },
@@ -1080,7 +1080,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "car",
           asset: {
             kind: "emoji",
-            ref: "EMJ-car",
+            ref: "🚗",
           },
           is_correct: false,
         },
@@ -1088,7 +1088,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "taxi",
           asset: {
             kind: "emoji",
-            ref: "EMJ-taxi",
+            ref: "🚕",
           },
           is_correct: false,
         },
@@ -1128,7 +1128,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 0,
           asset: {
             kind: "emoji",
-            ref: "EMJ-full-moon",
+            ref: "🌕",
           },
           label: "Trăng tròn",
         },
@@ -1137,7 +1137,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 1,
           asset: {
             kind: "emoji",
-            ref: "EMJ-crescent-moon",
+            ref: "🌙",
           },
           label: "Trăng khuyết",
         },
@@ -1146,7 +1146,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           order_index: 2,
           asset: {
             kind: "emoji",
-            ref: "EMJ-new-moon",
+            ref: "🌑",
           },
           label: "Trăng tối",
         },
@@ -1183,12 +1183,12 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
         {
           group_id: "g0",
           label: "Rổ màu đỏ",
-          label_emoji: "EMJ-red-circle",
+          label_emoji: "🔴",
         },
         {
           group_id: "g1",
           label: "Rổ màu xanh",
-          label_emoji: "EMJ-blue-circle",
+          label_emoji: "🔵",
         },
       ],
       items: [
@@ -1196,7 +1196,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "r1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-circle",
+            ref: "🔴",
           },
           correct_group_id: "g0",
         },
@@ -1204,7 +1204,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "r2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-red-apple",
+            ref: "🍎",
           },
           correct_group_id: "g0",
         },
@@ -1212,7 +1212,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "b1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-blue-circle",
+            ref: "🔵",
           },
           correct_group_id: "g1",
         },
@@ -1220,7 +1220,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           item_id: "b2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-blue-square",
+            ref: "🟦",
           },
           correct_group_id: "g1",
         },
@@ -1265,7 +1265,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "plant",
           asset: {
             kind: "emoji",
-            ref: "EMJ-deciduous-tree",
+            ref: "🌳",
           },
           is_correct: true,
         },
@@ -1274,7 +1274,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           attribute: "animal",
           asset: {
             kind: "emoji",
-            ref: "EMJ-dog",
+            ref: "🐶",
           },
           is_correct: false,
         },
@@ -1314,7 +1314,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "cat-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cat",
+            ref: "🐱",
           },
           is_target: true,
           is_hidden: true,
@@ -1325,7 +1325,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "cat-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cat",
+            ref: "🐱",
           },
           is_target: true,
           is_hidden: true,
@@ -1336,7 +1336,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "cat-3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cat",
+            ref: "🐱",
           },
           is_target: true,
           is_hidden: true,
@@ -1347,7 +1347,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "tree-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-deciduous-tree",
+            ref: "🌳",
           },
           is_target: false,
           is_hidden: false,
@@ -1358,7 +1358,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "flower-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sunflower",
+            ref: "🌻",
           },
           is_target: false,
           is_hidden: false,
@@ -1400,7 +1400,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "rb-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rabbit-face",
+            ref: "🐰",
           },
           is_target: true,
           is_hidden: true,
@@ -1411,7 +1411,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "rb-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rabbit-face",
+            ref: "🐰",
           },
           is_target: true,
           is_hidden: true,
@@ -1422,7 +1422,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "bush-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-herb",
+            ref: "🌿",
           },
           is_target: false,
           is_hidden: false,
@@ -1433,7 +1433,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "rock-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rock",
+            ref: "🪨",
           },
           is_target: false,
           is_hidden: false,
@@ -1475,7 +1475,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "fish-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-tropical-fish",
+            ref: "🐠",
           },
           is_target: true,
           is_hidden: true,
@@ -1486,7 +1486,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "fish-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-tropical-fish",
+            ref: "🐠",
           },
           is_target: true,
           is_hidden: true,
@@ -1497,7 +1497,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "fish-3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-tropical-fish",
+            ref: "🐠",
           },
           is_target: true,
           is_hidden: true,
@@ -1508,7 +1508,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "coral-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-coral",
+            ref: "🪸",
           },
           is_target: false,
           is_hidden: false,
@@ -1519,7 +1519,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "shell-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-shell",
+            ref: "🐚",
           },
           is_target: false,
           is_hidden: false,
@@ -1561,7 +1561,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-sun",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sun",
+            ref: "☀️",
           },
           x: 100,
           y: 100,
@@ -1570,7 +1570,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-cat",
           asset: {
             kind: "emoji",
-            ref: "EMJ-cat",
+            ref: "🐱",
           },
           x: 200,
           y: 300,
@@ -1579,7 +1579,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-tree",
           asset: {
             kind: "emoji",
-            ref: "EMJ-deciduous-tree",
+            ref: "🌳",
           },
           x: 300,
           y: 250,
@@ -1590,7 +1590,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-sun",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sun",
+            ref: "☀️",
           },
           x: 100,
           y: 100,
@@ -1599,7 +1599,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-dog",
           asset: {
             kind: "emoji",
-            ref: "EMJ-dog",
+            ref: "🐶",
           },
           x: 200,
           y: 300,
@@ -1608,7 +1608,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-tree",
           asset: {
             kind: "emoji",
-            ref: "EMJ-deciduous-tree",
+            ref: "🌳",
           },
           x: 300,
           y: 250,
@@ -1656,7 +1656,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-flw1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rose",
+            ref: "🌹",
           },
           x: 120,
           y: 200,
@@ -1665,7 +1665,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-flw2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-sunflower",
+            ref: "🌻",
           },
           x: 220,
           y: 200,
@@ -1674,7 +1674,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-bird",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bird",
+            ref: "🐦",
           },
           x: 150,
           y: 100,
@@ -1683,7 +1683,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-bfly",
           asset: {
             kind: "emoji",
-            ref: "EMJ-butterfly",
+            ref: "🦋",
           },
           x: 250,
           y: 100,
@@ -1694,7 +1694,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-flw1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-rose",
+            ref: "🌹",
           },
           x: 120,
           y: 200,
@@ -1703,7 +1703,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-flw2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-tulip",
+            ref: "🌷",
           },
           x: 220,
           y: 200,
@@ -1712,7 +1712,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-bird",
           asset: {
             kind: "emoji",
-            ref: "EMJ-front-facing-baby-chick",
+            ref: "🐥",
           },
           x: 150,
           y: 100,
@@ -1721,7 +1721,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-bfly",
           asset: {
             kind: "emoji",
-            ref: "EMJ-butterfly",
+            ref: "🦋",
           },
           x: 250,
           y: 100,
@@ -1773,7 +1773,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-bed",
           asset: {
             kind: "emoji",
-            ref: "EMJ-bed",
+            ref: "🛏️",
           },
           x: 100,
           y: 300,
@@ -1782,7 +1782,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-lamp",
           asset: {
             kind: "emoji",
-            ref: "EMJ-light-bulb",
+            ref: "💡",
           },
           x: 100,
           y: 120,
@@ -1791,7 +1791,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-clock",
           asset: {
             kind: "emoji",
-            ref: "EMJ-alarm-clock",
+            ref: "⏰",
           },
           x: 220,
           y: 120,
@@ -1800,7 +1800,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "l-book",
           asset: {
             kind: "emoji",
-            ref: "EMJ-closed-book",
+            ref: "📕",
           },
           x: 220,
           y: 250,
@@ -1811,7 +1811,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-bed",
           asset: {
             kind: "emoji",
-            ref: "EMJ-couch",
+            ref: "🛋️",
           },
           x: 100,
           y: 300,
@@ -1820,7 +1820,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-lamp",
           asset: {
             kind: "emoji",
-            ref: "EMJ-light-bulb",
+            ref: "💡",
           },
           x: 100,
           y: 120,
@@ -1829,7 +1829,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-clock",
           asset: {
             kind: "emoji",
-            ref: "EMJ-mantelpiece-clock",
+            ref: "🕰️",
           },
           x: 220,
           y: 120,
@@ -1838,7 +1838,7 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
           id: "r-book",
           asset: {
             kind: "emoji",
-            ref: "EMJ-green-book",
+            ref: "📗",
           },
           x: 220,
           y: 250,
@@ -1897,14 +1897,14 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "chicken-1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-chicken",
+              ref: "🐔",
             },
           },
           card_b: {
             card_id: "chicken-2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-chicken",
+              ref: "🐔",
             },
           },
         },
@@ -1914,14 +1914,14 @@ export const C4_BASE_LEVELS: ContentSeed<unknown, unknown>[] = [
             card_id: "duck-1",
             asset: {
               kind: "emoji",
-              ref: "EMJ-duck",
+              ref: "🦆",
             },
           },
           card_b: {
             card_id: "duck-2",
             asset: {
               kind: "emoji",
-              ref: "EMJ-duck",
+              ref: "🦆",
             },
           },
         },

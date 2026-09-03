@@ -1,4 +1,4 @@
-import { isValidRef } from "@mindkid/emoji";
+import { isInCatalog } from "@mindkid/emoji";
 import { moderateCustomGameMetadata } from "@mindkid/moderation";
 import { z } from "zod";
 
@@ -121,12 +121,6 @@ function collectEmojiRefs(current: unknown, refs: Set<string>): void {
   if (!current) {
     return;
   }
-  if (typeof current === "string") {
-    if (current.startsWith("EMJ-")) {
-      refs.add(current);
-    }
-    return;
-  }
   if (Array.isArray(current)) {
     for (const item of current) {
       collectEmojiRefs(item, refs);
@@ -145,7 +139,7 @@ function collectEmojiRefs(current: unknown, refs: Set<string>): void {
 }
 
 /**
- * Recursively extracts all emoji codes (EMJ-*) referenced in content_pack.
+ * Recursively extracts all emoji refs referenced in content_pack.
  */
 export function extractEmojiRefsFromContentPack(obj: unknown): string[] {
   const refs = new Set<string>();
@@ -352,10 +346,10 @@ function validateEmojiReferences(
 ) {
   const emojiRefs = extractEmojiRefsFromContentPack(contentPack);
   for (const ref of emojiRefs) {
-    if (!isValidRef(ref)) {
+    if (!isInCatalog(ref)) {
       missing.push("invalid_emoji_ref");
       issues.push(
-        `Mã emoji ${ref} không tồn tại trong danh mục emoji chuẩn của hệ thống.`
+        `Emoji '${ref}' không tồn tại trong danh mục emoji chuẩn của hệ thống.`
       );
     }
   }

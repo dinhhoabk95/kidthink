@@ -15,6 +15,34 @@
       "when": 1788200000000,
       "tag": "0001_add_legacy_v1_ref",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788300000000,
+      "tag": "0002_drop_emoji_registry",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1788400000000,
+      "tag": "0003_skill_tier_and_preprimary_age",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788500000000,
+      "tag": "0004_game_template_kind",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1788600000000,
+      "tag": "0005_skill_datasets_and_objective_map",
+      "breakpoints": true
     }
   ]
 }

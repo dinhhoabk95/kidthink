@@ -5,7 +5,8 @@ import { executeSeedBatch } from "#src/seed-content/service";
 
 export async function runSeedContent(
   dryRun = false,
-  batchCode = `SEED-${Date.now()}`
+  batchCode = `SEED-${Date.now()}`,
+  skipGates = false
 ) {
   console.log(
     `🌱 [seed:content] Executing seed batch ${batchCode} with ${ALL_SEED_CONTENT.length} items (dryRun: ${dryRun})...`
@@ -19,6 +20,7 @@ export async function runSeedContent(
       gitSha: optionalEnv("GIT_SHA"),
       prUrl: optionalEnv("PR_URL"),
       seeds: ALL_SEED_CONTENT,
+      skipGates,
     },
     dryRun
   );

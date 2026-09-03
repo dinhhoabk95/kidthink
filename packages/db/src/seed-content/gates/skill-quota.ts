@@ -5,11 +5,17 @@
  * Quy tắc:
  * - BR-SKQ-01: Chỉ đếm level ĐÃ QUA content_contract của template tương ứng.
  * - BR-SKQ-02: Hạn ngạch level: C1 >= 20 level, C2..C6 >= 10 level.
- * - BR-SKQ-03: Đa dạng khuôn: C1 >= 4 khuôn, C2..C6 >= 2 khuôn.
+ *   Chỉ áp cho kỹ năng **đã có >= 1 level** — xem BR-SKQ-06.
+ * - BR-SKQ-03: Đa dạng khuôn: C1 >= 4 khuôn, C2..C6 >= 2 khuôn. Cùng phạm vi.
+ * - BR-SKQ-06: Bậc thang kỹ năng chưa có nội dung. Số kỹ năng 0 level phải
+ *   <= trần ghi trong `skill-coverage-ratchet.json`. Trần chỉ giảm; muốn tăng
+ *   thì sửa file kèm lý do trong PR.
  * - BR-SKQ-04: Trần cứng mỗi cặp (skill, khuôn) <= 5 level.
  * - BR-SKQ-05: Sàn cặp phân biệt toàn catalog >= 658 cặp (khi đủ 3.290 level).
  */
 
+import fs from "node:fs";
+import path from "node:path";
 import { ALL_TEMPLATES } from "@mindkid/game-engine";
 import type { ContentSeed } from "#src/seed-content/types";
 import {
@@ -37,7 +43,8 @@ export interface SkillQuotaViolation {
     | "BR-SKQ-02"
     | "BR-SKQ-03"
     | "BR-SKQ-04"
-    | "BR-SKQ-05";
+    | "BR-SKQ-05"
+    | "BR-SKQ-06";
   readonly skill_code?: string;
   readonly template_code?: string;
   readonly message: string;
@@ -172,6 +179,31 @@ function evaluateSingleSkill(
   const meetsQuota = totalLevels >= requiredLevels;
   const meetsDiversity = templateCodes.length >= requiredTemplates;
 
+  // Kỹ năng chưa có level nào là **nợ nội dung**, không phải kỹ năng xây dở.
+  // Nó bị đếm và bị chặn bởi bậc thang `BR-SKQ-06`, không bởi hạn ngạch từng
+  // kỹ năng. Không tách hai luật này thì mỗi kỹ năng vừa khai báo lập tức đẻ
+  // ra 10–20 level nợ và kho không bao giờ mở được.
+  if (totalLevels === 0) {
+    return {
+      meetsQuota: false,
+      meetsDiversity: false,
+      isZeroLevels: true,
+      isSingleTemplate: false,
+      distinctPairs,
+      violations,
+      deficit: {
+        skill_code: skill.code,
+        competency_code: skill.competency_code,
+        current_levels: 0,
+        required_levels: requiredLevels,
+        current_templates: 0,
+        required_templates: requiredTemplates,
+        template_codes: [],
+        pair_violations: [],
+      },
+    };
+  }
+
   if (!meetsQuota) {
     violations.push({
       ruleId: "BR-SKQ-02",
@@ -218,6 +250,58 @@ function evaluateSingleSkill(
   };
 }
 
+/** Trần nợ nội dung — số kỹ năng được phép chưa có level nào. */
+interface CoverageRatchet {
+  readonly max_skills_without_levels: number;
+  readonly recorded_at: string;
+  readonly note: string;
+}
+
+const RATCHET_FILE = "skill-coverage-ratchet.json";
+
+/**
+ * Đọc trần bậc thang. Thiếu file thì trần bằng 0 — nghiêm ngặt nhất, để việc
+ * xoá file không bao giờ làm cổng dễ hơn.
+ */
+export function readCoverageRatchet(docsDirOrRoot?: string): CoverageRatchet {
+  const candidates = [
+    path.resolve(process.cwd(), "src/seed-content/gates", RATCHET_FILE),
+    path.resolve(
+      process.cwd(),
+      "packages/db/src/seed-content/gates",
+      RATCHET_FILE
+    ),
+  ];
+  if (docsDirOrRoot) {
+    candidates.unshift(path.resolve(docsDirOrRoot, "..", RATCHET_FILE));
+  }
+  for (const file of candidates) {
+    if (fs.existsSync(file)) {
+      return JSON.parse(fs.readFileSync(file, "utf8")) as CoverageRatchet;
+    }
+  }
+  return {
+    max_skills_without_levels: 0,
+    recorded_at: "",
+    note: `Không tìm thấy ${RATCHET_FILE} — trần mặc định 0.`,
+  };
+}
+
+function checkRatchetLimit(
+  zeroLevelsCount: number,
+  violations: SkillQuotaViolation[]
+): void {
+  const ratchet = readCoverageRatchet();
+  if (zeroLevelsCount > ratchet.max_skills_without_levels) {
+    violations.push({
+      ruleId: "BR-SKQ-06",
+      message: `Có ${zeroLevelsCount} kỹ năng chưa có level nào, vượt trần bậc thang ${ratchet.max_skills_without_levels}. Soạn thêm level hoặc hạ trần trong ${RATCHET_FILE} kèm lý do.`,
+      actual: zeroLevelsCount,
+      expected: ratchet.max_skills_without_levels,
+    });
+  }
+}
+
 export function evaluateSkillQuota(
   levels: readonly ContentSeed[],
   docsDir?: string
@@ -260,6 +344,8 @@ export function evaluateSkillQuota(
       skillsSingleTemplateCount++;
     }
   }
+
+  checkRatchetLimit(skillsWithZeroLevelsCount, allViolations);
 
   return {
     passed: allViolations.length === 0,

@@ -68,17 +68,17 @@ describe("GT-011 — contract ma trận chọn hình (BR-MTB-06, BR-GTC-03)", ()
       options: [
         {
           option_id: "o1",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
           is_correct: false,
         },
         {
           option_id: "o2",
-          asset: { kind: "emoji", ref: "EMJ-banana" },
+          asset: { kind: "emoji", ref: "🍌" },
           is_correct: true,
         },
         {
           option_id: "o3",
-          asset: { kind: "emoji", ref: "EMJ-grapes" },
+          asset: { kind: "emoji", ref: "🍇" },
           is_correct: false,
         },
       ],
@@ -142,8 +142,8 @@ describe("GT-011 — kiểm soát lỗi tự thân (BR-MTB-14)", () => {
   });
 
   it("quy luật tính từ dữ liệu ma trận, không từ nhãn is_correct", () => {
-    const arrow = { kind: "emoji" as const, ref: "EMJ-right-arrow" };
-    const wrong = { kind: "emoji" as const, ref: "EMJ-left-arrow" };
+    const arrow = { kind: "emoji" as const, ref: "➡️" };
+    const wrong = { kind: "emoji" as const, ref: "⬅️" };
 
     expect(rowMatches(ROTATION.content.matrix, arrow)).toBe(true);
     expect(colMatches(ROTATION.content.matrix, arrow)).toBe(true);

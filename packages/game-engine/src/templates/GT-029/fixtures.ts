@@ -12,11 +12,11 @@ export const GT029_FIXTURES: GT029Fixture[] = [
     content: {
       prompt: "Bé hãy bớt 2 quả táo ra khỏi rổ rồi xem còn lại mấy quả nhé!",
       initial_items: [
-        { item_id: "apple_1", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-        { item_id: "apple_2", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-        { item_id: "apple_3", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-        { item_id: "apple_4", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-        { item_id: "apple_5", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
+        { item_id: "apple_1", asset: { kind: "emoji", ref: "🍎" } },
+        { item_id: "apple_2", asset: { kind: "emoji", ref: "🍎" } },
+        { item_id: "apple_3", asset: { kind: "emoji", ref: "🍎" } },
+        { item_id: "apple_4", asset: { kind: "emoji", ref: "🍎" } },
+        { item_id: "apple_5", asset: { kind: "emoji", ref: "🍎" } },
       ],
       remove_count: 2,
       answer_options: [
@@ -40,31 +40,31 @@ export const GT029_FIXTURES: GT029Fixture[] = [
       initial_items: [
         {
           item_id: "fish_1",
-          asset: { kind: "emoji", ref: "EMJ-tropical-fish" },
+          asset: { kind: "emoji", ref: "🐠" },
         },
         {
           item_id: "fish_2",
-          asset: { kind: "emoji", ref: "EMJ-tropical-fish" },
+          asset: { kind: "emoji", ref: "🐠" },
         },
         {
           item_id: "fish_3",
-          asset: { kind: "emoji", ref: "EMJ-tropical-fish" },
+          asset: { kind: "emoji", ref: "🐠" },
         },
         {
           item_id: "fish_4",
-          asset: { kind: "emoji", ref: "EMJ-tropical-fish" },
+          asset: { kind: "emoji", ref: "🐠" },
         },
         {
           item_id: "fish_5",
-          asset: { kind: "emoji", ref: "EMJ-tropical-fish" },
+          asset: { kind: "emoji", ref: "🐠" },
         },
         {
           item_id: "fish_6",
-          asset: { kind: "emoji", ref: "EMJ-tropical-fish" },
+          asset: { kind: "emoji", ref: "🐠" },
         },
         {
           item_id: "fish_7",
-          asset: { kind: "emoji", ref: "EMJ-tropical-fish" },
+          asset: { kind: "emoji", ref: "🐠" },
         },
       ],
       remove_count: 3,
@@ -88,14 +88,14 @@ export const GT029_FIXTURES: GT029Fixture[] = [
       prompt:
         "Bé hãy bớt 4 ngôi sao ra rồi đếm xem còn lại bao nhiêu ngôi sao nhé!",
       initial_items: [
-        { item_id: "star_1", asset: { kind: "emoji", ref: "EMJ-star" } },
-        { item_id: "star_2", asset: { kind: "emoji", ref: "EMJ-star" } },
-        { item_id: "star_3", asset: { kind: "emoji", ref: "EMJ-star" } },
-        { item_id: "star_4", asset: { kind: "emoji", ref: "EMJ-star" } },
-        { item_id: "star_5", asset: { kind: "emoji", ref: "EMJ-star" } },
-        { item_id: "star_6", asset: { kind: "emoji", ref: "EMJ-star" } },
-        { item_id: "star_7", asset: { kind: "emoji", ref: "EMJ-star" } },
-        { item_id: "star_8", asset: { kind: "emoji", ref: "EMJ-star" } },
+        { item_id: "star_1", asset: { kind: "emoji", ref: "⭐" } },
+        { item_id: "star_2", asset: { kind: "emoji", ref: "⭐" } },
+        { item_id: "star_3", asset: { kind: "emoji", ref: "⭐" } },
+        { item_id: "star_4", asset: { kind: "emoji", ref: "⭐" } },
+        { item_id: "star_5", asset: { kind: "emoji", ref: "⭐" } },
+        { item_id: "star_6", asset: { kind: "emoji", ref: "⭐" } },
+        { item_id: "star_7", asset: { kind: "emoji", ref: "⭐" } },
+        { item_id: "star_8", asset: { kind: "emoji", ref: "⭐" } },
       ],
       remove_count: 4,
       answer_options: [

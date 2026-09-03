@@ -33,7 +33,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
       goal: {
         col: 2,
         row: 0,
-        asset: { kind: "emoji", ref: "EMJ-rocket" },
+        asset: { kind: "emoji", ref: "🚀" },
       },
       obstacles: [],
       collectibles: [],
@@ -75,7 +75,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
       goal: {
         col: 2,
         row: 2,
-        asset: { kind: "emoji", ref: "EMJ-rocket" },
+        asset: { kind: "emoji", ref: "🚀" },
       },
       obstacles: [],
       collectibles: [],
@@ -117,7 +117,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
       goal: {
         col: 2,
         row: 0,
-        asset: { kind: "emoji", ref: "EMJ-rocket" },
+        asset: { kind: "emoji", ref: "🚀" },
       },
       obstacles: [],
       collectibles: [],
@@ -159,7 +159,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
       goal: {
         col: 3,
         row: 0,
-        asset: { kind: "emoji", ref: "EMJ-house" },
+        asset: { kind: "emoji", ref: "🏠" },
       },
       obstacles: [{ col: 2, row: 0 }],
       collectibles: [],
@@ -201,7 +201,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
       goal: {
         col: 3,
         row: 0,
-        asset: { kind: "emoji", ref: "EMJ-backpack" },
+        asset: { kind: "emoji", ref: "🎒" },
       },
       obstacles: [{ col: 2, row: 0 }],
       collectibles: [
@@ -209,7 +209,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
           col: 1,
           row: 1,
           id: "book_1",
-          asset: { kind: "emoji", ref: "EMJ-open-book" },
+          asset: { kind: "emoji", ref: "📖" },
         },
       ],
       allowed_commands: ["forward", "turn_left", "turn_right"],
@@ -250,7 +250,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
       goal: {
         col: 3,
         row: 3,
-        asset: { kind: "emoji", ref: "EMJ-house" },
+        asset: { kind: "emoji", ref: "🏠" },
       },
       obstacles: [{ col: 1, row: 3 }],
       collectibles: [
@@ -258,7 +258,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
           col: 0,
           row: 1,
           id: "apple_1",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
         },
       ],
       allowed_commands: ["forward", "turn_left", "turn_right", "loop"],
@@ -299,7 +299,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
       goal: {
         col: 3,
         row: 3,
-        asset: { kind: "emoji", ref: "EMJ-deciduous-tree" },
+        asset: { kind: "emoji", ref: "🌳" },
       },
       obstacles: [{ col: 0, row: 2 }],
       collectibles: [
@@ -307,7 +307,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
           col: 1,
           row: 1,
           id: "flower_1",
-          asset: { kind: "emoji", ref: "EMJ-sunflower" },
+          asset: { kind: "emoji", ref: "🌻" },
         },
       ],
       allowed_commands: ["forward", "turn_left", "turn_right", "loop"],
@@ -348,7 +348,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
       goal: {
         col: 2,
         row: 2,
-        asset: { kind: "emoji", ref: "EMJ-anchor" },
+        asset: { kind: "emoji", ref: "⚓" },
       },
       obstacles: [{ col: 1, row: 0 }],
       collectibles: [
@@ -356,7 +356,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
           col: 0,
           row: 2,
           id: "gem_1",
-          asset: { kind: "emoji", ref: "EMJ-gem-stone" },
+          asset: { kind: "emoji", ref: "💎" },
         },
       ],
       allowed_commands: ["forward", "turn_left", "turn_right"],
@@ -397,7 +397,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
       goal: {
         col: 3,
         row: 0,
-        asset: { kind: "emoji", ref: "EMJ-trophy" },
+        asset: { kind: "emoji", ref: "🏆" },
       },
       obstacles: [{ col: 2, row: 3 }],
       collectibles: [
@@ -405,7 +405,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
           col: 1,
           row: 1,
           id: "balloon_1",
-          asset: { kind: "emoji", ref: "EMJ-balloon" },
+          asset: { kind: "emoji", ref: "🎈" },
         },
       ],
       allowed_commands: ["forward", "turn_left", "turn_right", "loop"],
@@ -446,7 +446,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
       goal: {
         col: 0,
         row: 0,
-        asset: { kind: "emoji", ref: "EMJ-rocket" },
+        asset: { kind: "emoji", ref: "🚀" },
       },
       obstacles: [{ col: 1, row: 1 }],
       collectibles: [
@@ -454,7 +454,7 @@ export const SEED_GT035: ContentSeed<unknown, unknown>[] = [
           col: 2,
           row: 0,
           id: "gear_1",
-          asset: { kind: "emoji", ref: "EMJ-gear" },
+          asset: { kind: "emoji", ref: "⚙️" },
         },
       ],
       allowed_commands: ["forward", "turn_left", "turn_right", "loop"],

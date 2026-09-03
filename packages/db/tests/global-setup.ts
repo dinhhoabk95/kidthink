@@ -62,7 +62,6 @@ export const TABLES = [
   "curriculum_items",
   "curriculum_weeks",
   "custom_games",
-  "emoji_registry",
   "entitlement_keys",
   "entitlements",
   "error_logs",

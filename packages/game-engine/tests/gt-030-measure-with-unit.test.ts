@@ -54,12 +54,12 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
         prompt: "Bé hãy đo cây bút",
         object: {
           object_id: "obj1",
-          asset: { kind: "emoji", ref: "EMJ-pencil" },
+          asset: { kind: "emoji", ref: "✏️" },
           length_in_units: 4,
         },
         unit: {
           unit_id: "u1",
-          asset: { kind: "emoji", ref: "EMJ-paperclip" },
+          asset: { kind: "emoji", ref: "📎" },
         },
         answer_options: [
           { option_id: "opt_3", value: 3, is_correct: false },
@@ -76,12 +76,12 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
         prompt: "Bé hãy đo cây bút",
         object: {
           object_id: "obj1",
-          asset: { kind: "emoji", ref: "EMJ-pencil" },
+          asset: { kind: "emoji", ref: "✏️" },
           length_in_units: 4,
         },
         unit: {
           unit_id: "u1",
-          asset: { kind: "emoji", ref: "EMJ-paperclip" },
+          asset: { kind: "emoji", ref: "📎" },
         },
         answer_options: [
           { option_id: "opt_3", value: 3, is_correct: false },
@@ -98,12 +98,12 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
         prompt: "Bé hãy đo cây bút",
         object: {
           object_id: "obj1",
-          asset: { kind: "emoji", ref: "EMJ-pencil" },
+          asset: { kind: "emoji", ref: "✏️" },
           length_in_units: 1, // < 2
         },
         unit: {
           unit_id: "u1",
-          asset: { kind: "emoji", ref: "EMJ-paperclip" },
+          asset: { kind: "emoji", ref: "📎" },
         },
         answer_options: [{ option_id: "opt_1", value: 1, is_correct: true }],
       };

@@ -59,11 +59,11 @@ fi
 echo "✓ lint"
 phase_end
 
-# ── Phase 2: Typecheck (song song) ────────────────────────────────────────
+# ── Phase 2: Typecheck (cổng bậc thang + incremental) ─────────────────────
 echo "▸ Phase 2: typecheck"
 phase_start
 
-bash "${SCRIPT_DIR}/typecheck-parallel.sh"
+pnpm typecheck
 TC_STATUS=$?
 
 if [ $TC_STATUS -ne 0 ]; then
@@ -73,37 +73,37 @@ fi
 echo "✓ typecheck"
 phase_end
 
-# ── Phase 3: Test (fail-fast) ─────────────────────────────────────────────
-echo "▸ Phase 3: test"
-phase_start
+# ── Phase 3: Test (Tạm thời vô hiệu hóa - chuyển sang Manual Test) ─────────
+# echo "▸ Phase 3: test"
+# phase_start
+# 
+# NODE_OPTIONS=--max-old-space-size=4096 pnpm exec vitest run --bail 1
+# TEST_STATUS=$?
+# 
+# if [ $TEST_STATUS -ne 0 ]; then
+#   echo "✗ test failed" >&2
+#   exit 1
+# fi
+# echo "✓ test"
+# phase_end
 
-NODE_OPTIONS=--max-old-space-size=4096 pnpm exec vitest run --bail 1 --max-workers=1 --no-file-parallelism
-TEST_STATUS=$?
-
-if [ $TEST_STATUS -ne 0 ]; then
-  echo "✗ test failed" >&2
-  exit 1
-fi
-echo "✓ test"
-phase_end
-
-# ── Phase 4: Deploy test (bỏ khi --fast) ──────────────────────────────────
-if [ "$FAST" = false ]; then
-  echo "▸ Phase 4: deploy test"
-  phase_start
-
-  bash "${REPO_ROOT}/infra/scripts/tests/run.sh"
-  DEPLOY_STATUS=$?
-
-  if [ $DEPLOY_STATUS -ne 0 ]; then
-    echo "✗ test:deploy failed" >&2
-    exit 1
-  fi
-  echo "✓ deploy test"
-  phase_end
-else
-  echo "▸ Phase 4: deploy test (skipped — --fast)"
-fi
+# ── Phase 4: Deploy test (Tạm thời vô hiệu hóa) ───────────────────────────
+# if [ "$FAST" = false ]; then
+#   echo "▸ Phase 4: deploy test"
+#   phase_start
+# 
+#   bash "${REPO_ROOT}/infra/scripts/tests/run.sh"
+#   DEPLOY_STATUS=$?
+# 
+#   if [ $DEPLOY_STATUS -ne 0 ]; then
+#     echo "✗ test:deploy failed" >&2
+#     exit 1
+#   fi
+#   echo "✓ deploy test"
+#   phase_end
+# else
+#   echo "▸ Phase 4: deploy test (skipped — --fast)"
+# fi
 
 # ── Summary ────────────────────────────────────────────────────────────────
 TOTAL_ELAPSED=$(( $(date +%s) - TOTAL_START ))

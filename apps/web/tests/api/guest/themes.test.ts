@@ -57,13 +57,13 @@ describe("GET /api/guest/themes API", () => {
     const schoolTheme = response.themes.find((t: any) => t.code === "school");
     expect(schoolTheme).toBeDefined();
     expect(schoolTheme.label_vi).toBe("Trường học");
-    expect(schoolTheme.icon_emoji_ref).toBe("EMJ-school");
+    expect(schoolTheme.icon_emoji_ref).toBe("🏫");
     expect(schoolTheme.level_count).toBe(84);
 
     const farmTheme = response.themes.find((t: any) => t.code === "farm");
     expect(farmTheme).toBeDefined();
     expect(farmTheme.label_vi).toBe("Nông trại");
-    expect(farmTheme.icon_emoji_ref).toBe("EMJ-tractor");
+    expect(farmTheme.icon_emoji_ref).toBe("🚜");
     expect(farmTheme.level_count).toBe(42);
 
     // Chủ đề không có level (level_count = 0) không được xuất hiện

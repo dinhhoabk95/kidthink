@@ -28,12 +28,15 @@ export function loadAllGeneratedCorpusLevels(): ContentSeed<
 
       for (const file of files) {
         const filePath = path.join(compDir, file);
+        const content = fs.readFileSync(filePath, "utf-8");
         try {
-          const content = fs.readFileSync(filePath, "utf-8");
           const parsed = JSON.parse(content) as ContentSeed<unknown, unknown>[];
           levels.push(...parsed);
-        } catch {
-          // Bỏ qua nếu file trống hoặc đang ghi
+        } catch (err) {
+          throw new Error(
+            `[BR-SDS-08] Failed to parse corpus JSON file: ${filePath}`,
+            { cause: err }
+          );
         }
       }
     }

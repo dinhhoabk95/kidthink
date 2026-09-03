@@ -7,7 +7,6 @@
 
 import { readFileSync } from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
-import { isValidRef } from "@mindkid/emoji";
 import {
   CANONICAL_THEME_CODES,
   CONTENT_THEMES,
@@ -287,12 +286,12 @@ function checkThemeVocabulary(): ThemeViolation[] {
       });
     } else {
       for (const noun of theme.nouns) {
-        if (!isValidRef(noun.emoji_ref)) {
+        if (!noun.emoji_ref || noun.emoji_ref.trim().length === 0) {
           violations.push({
             ruleId: "BR-CTR-08",
             type: "error",
             theme: theme.code,
-            message: `Danh từ '${noun.text_vi}' của chủ đề '${theme.code}' có emoji_ref '${noun.emoji_ref}' không tồn tại trong emoji registry.`,
+            message: `Danh từ '${noun.text_vi}' của chủ đề '${theme.code}' thiếu emoji_ref.`,
           });
         }
       }

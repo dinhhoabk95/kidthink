@@ -33,17 +33,21 @@ vi.mock("#imports", async () => {
   return {
     getUserSession: async (event: H3Event) =>
       (await h3.useSession(event, runtime.getUserSessionConfig())).data,
-    setUserSession: async (event: H3Event, data: Record<string, unknown>) => {
+    setUserSession: async (
+      event: H3Event,
+      data: Record<string, unknown>,
+      config?: SessionConfig
+    ) => {
       const session = await h3.useSession(
         event,
-        runtime.getUserSessionConfig()
+        config || runtime.getUserSessionConfig()
       );
       await session.update(data);
     },
-    clearUserSession: async (event: H3Event) => {
+    clearUserSession: async (event: H3Event, config?: SessionConfig) => {
       const session = await h3.useSession(
         event,
-        runtime.getUserSessionConfig()
+        config || runtime.getUserSessionConfig()
       );
       await session.clear();
     },
@@ -251,6 +255,51 @@ describe("web auth middleware", () => {
 
     expect(event.context.user).toBeUndefined();
     expect(event.context.manager).toBeUndefined();
+  });
+
+  it("transparently auto-restores user session from remember cookie when session cookie is absent or expired", async () => {
+    const created = await getBrowserSessionService().create({
+      namespace: "user",
+      accountId: 14,
+      displayName: "Remember User",
+      rememberMe: true,
+    });
+
+    expect(created.rememberToken).toBeDefined();
+
+    // Request has NO session cookie, but HAS tm_u_remember cookie
+    const event = createRequest("/api/users/profile", {
+      cookie: `tm_u_remember=${created.rememberToken}`,
+    });
+
+    await authMiddleware(event);
+
+    expect(event.context.user).toBeDefined();
+    expect(event.context.user?.user_id).toBe(14);
+    expect(event.context.user?.display_name).toBe("Remember User");
+  });
+
+  it("transparently auto-restores manager session from remember cookie when session cookie is absent or expired", async () => {
+    const created = await getBrowserSessionService().create({
+      namespace: "manager",
+      accountId: 15,
+      displayName: "Remember Manager",
+      role: "content_reviewer",
+      rememberMe: true,
+    });
+
+    expect(created.rememberToken).toBeDefined();
+
+    // Request has NO session cookie, but HAS tm_m_remember cookie
+    const event = createRequest("/api/managers/content", {
+      cookie: `tm_m_remember=${created.rememberToken}`,
+    });
+
+    await authMiddleware(event);
+
+    expect(event.context.manager).toBeDefined();
+    expect(event.context.manager?.manager_id).toBe(15);
+    expect(event.context.manager?.role).toBe("content_reviewer");
   });
 });
 

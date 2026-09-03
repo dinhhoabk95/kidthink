@@ -292,12 +292,6 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     legalBasis: "BR-TAX-01",
   },
   {
-    tableName: "emoji_registry",
-    classification: "retain",
-    reason: "Từ vựng biểu tượng cảm xúc giáo dục",
-    legalBasis: "BR-EMJ-01",
-  },
-  {
     tableName: "curricula",
     classification: "retain",
     reason: "Lộ trình học theo tuần sư phạm",

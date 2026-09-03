@@ -8,10 +8,11 @@
 import type {
   CompetencyCode,
   CompetencyTier,
-  ContentLifecycleStatus,
   ContentWhat,
   LearningObjectiveTier,
+  SkillAge,
   SkillCode,
+  SkillProgressionTier,
   SkillTier,
   StrandCode,
   StrandTier,
@@ -47,7 +48,7 @@ export interface SkillRow {
   difficulty: number;
   thinking_processes: ThinkingProcess[];
   what_axis?: ContentWhat[];
-  status: ContentLifecycleStatus;
+  tier: SkillProgressionTier;
   prerequisites?: SkillPrerequisiteRef[];
   learning_objectives?: LearningObjectiveInput[];
 }
@@ -104,10 +105,11 @@ export function buildSkillTree(rows: SkillRow[], version?: string): SkillTree {
       code: row.code as SkillCode,
       strand_code: row.strand_code as StrandCode,
       name: row.name,
-      age_min: row.age_min as 3 | 4 | 5 | 6,
-      age_max: row.age_max as 3 | 4 | 5 | 6,
+      age_min: row.age_min as SkillAge,
+      age_max: row.age_max as SkillAge,
       difficulty: row.difficulty as 1 | 2 | 3 | 4 | 5,
       thinking: row.thinking_processes,
+      tier: row.tier,
       prerequisites: prereqCodes as SkillCode[],
     };
 

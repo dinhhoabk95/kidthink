@@ -13,7 +13,7 @@ export const GT021_FIXTURES: {
       reference_pattern: [
         {
           slot_id: "left-wing",
-          asset: { kind: "emoji", ref: "EMJ-butterfly" },
+          asset: { kind: "emoji", ref: "🦋" },
         },
       ],
       target_slots: [
@@ -25,12 +25,12 @@ export const GT021_FIXTURES: {
       options: [
         {
           item_id: "opt-wing",
-          asset: { kind: "emoji", ref: "EMJ-butterfly" },
+          asset: { kind: "emoji", ref: "🦋" },
           asset_ref: "butterfly-wing",
         },
         {
           item_id: "opt-flower",
-          asset: { kind: "emoji", ref: "EMJ-cherry-blossom" },
+          asset: { kind: "emoji", ref: "🌸" },
           asset_ref: "flower",
         },
       ],
@@ -49,11 +49,11 @@ export const GT021_FIXTURES: {
       reference_pattern: [
         {
           slot_id: "top-left",
-          asset: { kind: "emoji", ref: "EMJ-red-circle" },
+          asset: { kind: "emoji", ref: "🔴" },
         },
         {
           slot_id: "bottom-left",
-          asset: { kind: "emoji", ref: "EMJ-blue-square" },
+          asset: { kind: "emoji", ref: "🟦" },
         },
       ],
       target_slots: [
@@ -69,17 +69,17 @@ export const GT021_FIXTURES: {
       options: [
         {
           item_id: "opt-red",
-          asset: { kind: "emoji", ref: "EMJ-red-circle" },
+          asset: { kind: "emoji", ref: "🔴" },
           asset_ref: "red-circle",
         },
         {
           item_id: "opt-blue",
-          asset: { kind: "emoji", ref: "EMJ-blue-square" },
+          asset: { kind: "emoji", ref: "🟦" },
           asset_ref: "blue-square",
         },
         {
           item_id: "opt-yellow",
-          asset: { kind: "emoji", ref: "EMJ-star" },
+          asset: { kind: "emoji", ref: "⭐" },
           asset_ref: "yellow-star",
         },
       ],
@@ -98,7 +98,7 @@ export const GT021_FIXTURES: {
       reference_pattern: [
         {
           slot_id: "boat",
-          asset: { kind: "emoji", ref: "EMJ-sailboat" },
+          asset: { kind: "emoji", ref: "⛵" },
         },
       ],
       target_slots: [
@@ -110,12 +110,12 @@ export const GT021_FIXTURES: {
       options: [
         {
           item_id: "opt-boat",
-          asset: { kind: "emoji", ref: "EMJ-sailboat" },
+          asset: { kind: "emoji", ref: "⛵" },
           asset_ref: "boat-ref",
         },
         {
           item_id: "opt-fish",
-          asset: { kind: "emoji", ref: "EMJ-fish" },
+          asset: { kind: "emoji", ref: "🐟" },
           asset_ref: "fish",
         },
       ],

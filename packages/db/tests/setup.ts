@@ -24,4 +24,7 @@ setTestEnv("INITIAL_ADMIN_PASSWORD", "test-only-admin-password-0123456789");
 // Hàng đợi RIÊNG cho mỗi lượt chạy test: `mindkid-jobs` dùng chung với một
 // `pnpm dev` đang chạy, nên phép thử vừa bị worker thật nhặt mất job, vừa có
 // một phép thử gọi `obliterate` xoá sạch việc đang bay của người khác.
-setTestEnv("VALKEY_QUEUE_PREFIX", `test-${process.pid}`);
+setTestEnv(
+  "VALKEY_QUEUE_PREFIX",
+  `test-${process.pid}-${process.env.VITEST_POOL_ID ?? "0"}`
+);

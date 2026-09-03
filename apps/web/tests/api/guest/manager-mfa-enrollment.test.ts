@@ -3,7 +3,9 @@ import {
   encryptTotpSecret,
   generateTotpCode,
   generateTotpSecret,
+  getAuthRedisClient,
   hashPassword,
+  MfaChallengeService,
 } from "@mindkid/auth";
 import {
   activeSessions,
@@ -35,6 +37,22 @@ function mockH3Event(body: Record<string, unknown>): H3Event {
     _requestBody: body,
     _body: body,
   } as unknown as H3Event;
+}
+
+async function createChallengeForManager(manager: {
+  id: number;
+  displayName: string;
+  role: "super_admin" | "content_reviewer";
+}): Promise<string> {
+  const mfaService = new MfaChallengeService(getAuthRedisClient());
+  const res = await mfaService.createChallenge({
+    namespace: "manager",
+    accountId: manager.id,
+    displayName: manager.displayName,
+    role: manager.role,
+    rememberMe: false,
+  });
+  return res.challengeToken;
 }
 
 describe("Manager MFA Enrollment Flow (BR-MME-01..07, Task #105)", () => {
@@ -114,14 +132,9 @@ describe("Manager MFA Enrollment Flow (BR-MME-01..07, Task #105)", () => {
       })
       .returning();
 
-    const loginRes = await loginHandler(
-      mockH3Event({ email: testEmail, password: "AdminSecret123!" })
-    );
-    expect(loginRes.mfa_enabled).toBe(false);
+    const challenge = await createChallengeForManager(manager);
 
-    const setupRes = await mfaSetupHandler(
-      mockH3Event({ challenge: loginRes.challenge })
-    );
+    const setupRes = await mfaSetupHandler(mockH3Event({ challenge }));
 
     expect(setupRes.otpauth_uri).toContain("otpauth://");
     expect(setupRes.challenge).toBeDefined();
@@ -155,10 +168,7 @@ describe("Manager MFA Enrollment Flow (BR-MME-01..07, Task #105)", () => {
       })
       .returning();
 
-    const loginRes = await loginHandler(
-      mockH3Event({ email: testEmail, password: "AdminSecret123!" })
-    );
-    const challengeA = loginRes.challenge;
+    const challengeA = await createChallengeForManager(manager);
 
     // Exchange challengeA for challengeB
     const setupRes = await mfaSetupHandler(
@@ -216,11 +226,9 @@ describe("Manager MFA Enrollment Flow (BR-MME-01..07, Task #105)", () => {
       })
       .returning();
 
-    // First login & setup
-    const login1 = await loginHandler(
-      mockH3Event({ email: testEmail, password: "AdminSecret123!" })
-    );
-    await mfaSetupHandler(mockH3Event({ challenge: login1.challenge }));
+    // First setup
+    const challenge1 = await createChallengeForManager(manager);
+    await mfaSetupHandler(mockH3Event({ challenge: challenge1 }));
 
     const [firstSetting] = await db
       .select()
@@ -229,11 +237,9 @@ describe("Manager MFA Enrollment Flow (BR-MME-01..07, Task #105)", () => {
     expect(firstSetting.confirmedAt).toBeNull();
     const firstSecretEncrypted = firstSetting.secretEncrypted;
 
-    // Manager abandons and logs in again
-    const login2 = await loginHandler(
-      mockH3Event({ email: testEmail, password: "AdminSecret123!" })
-    );
-    await mfaSetupHandler(mockH3Event({ challenge: login2.challenge }));
+    // Manager abandons and setups again
+    const challenge2 = await createChallengeForManager(manager);
+    await mfaSetupHandler(mockH3Event({ challenge: challenge2 }));
 
     const settings = await db
       .select()
@@ -260,11 +266,9 @@ describe("Manager MFA Enrollment Flow (BR-MME-01..07, Task #105)", () => {
       })
       .returning();
 
-    const loginRes = await loginHandler(
-      mockH3Event({ email: testEmail, password: "AdminSecret123!" })
-    );
+    const challengeInitial = await createChallengeForManager(manager);
     const setupRes = await mfaSetupHandler(
-      mockH3Event({ challenge: loginRes.challenge })
+      mockH3Event({ challenge: challengeInitial })
     );
 
     // Negative branch: wrong TOTP code fails and does NOT confirm MFA
@@ -296,12 +300,10 @@ describe("Manager MFA Enrollment Flow (BR-MME-01..07, Task #105)", () => {
       );
     expect(failAudit.length).toBeGreaterThan(0);
 
-    // Now re-login & setup again for valid submission
-    const loginValid = await loginHandler(
-      mockH3Event({ email: testEmail, password: "AdminSecret123!" })
-    );
+    // Now setup again for valid submission
+    const challengeValid = await createChallengeForManager(manager);
     const setupValid = await mfaSetupHandler(
-      mockH3Event({ challenge: loginValid.challenge })
+      mockH3Event({ challenge: challengeValid })
     );
 
     const [setting] = await db

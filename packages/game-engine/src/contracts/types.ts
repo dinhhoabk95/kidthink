@@ -24,7 +24,8 @@ export type LayoutId =
   | "mirror-axis-split"
   | "free-scene"
   | "measure-strip"
-  | "weave-grid";
+  | "weave-grid"
+  | "single-focus";
 
 /**
  * Bộ giá trị band ở dạng **runtime**, không chỉ dạng kiểu.
@@ -77,6 +78,7 @@ export interface GameTemplate<
   banned_age_bands?: AgeBand[];
   requires_tap_fallback: boolean;
   asset_kinds: ("emoji" | "image" | "audio")[];
+  kind?: "assess" | "teach";
   scoring: ScoringSchema;
   events: string[];
   engine_session: string;

@@ -3,21 +3,17 @@
     "header": {
       "code": "GL-C4-DET-TAP-0001",
       "template_code": "GT-001",
-      "title": "Tìm Ngôi nhà giống mẫu",
-      "instruction": "Bé chạm vào Ngôi nhà giống mẫu nhé!",
-      "theme_tag": "home",
+      "title": "Tìm Cây xanh giống mẫu",
+      "instruction": "Bé chạm vào Cây xanh giống mẫu nhé!",
+      "theme_tag": "nature",
       "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.01"],
-      "learning_objective_codes": [
-        "LO-C4.DET.01-01",
-        "LO-C4.DET.01-02",
-        "LO-C4.DET.01-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.01-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -25,10 +21,10 @@
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-door",
+        "item_id": "item_🌳",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-door"
+          "ref": "🌳"
         }
       },
       "options": [
@@ -36,7 +32,7 @@
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-house"
+            "ref": "⛰️"
           },
           "is_correct": false
         },
@@ -44,17 +40,17 @@
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-window"
+            "ref": "🌳"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-door"
+            "ref": "🍀"
           },
-          "is_correct": true
+          "is_correct": false
         }
       ]
     },
@@ -69,21 +65,17 @@
     "header": {
       "code": "GL-C4-DET-TAP-0002",
       "template_code": "GT-001",
-      "title": "Tìm Voi giống mẫu",
-      "instruction": "Bé chạm vào Voi giống mẫu nhé!",
-      "theme_tag": "animal",
+      "title": "Tìm Cá heo giống mẫu",
+      "instruction": "Bé chạm vào Cá heo giống mẫu nhé!",
+      "theme_tag": "ocean",
       "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.01"],
-      "learning_objective_codes": [
-        "LO-C4.DET.01-01",
-        "LO-C4.DET.01-02",
-        "LO-C4.DET.01-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.01-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -91,10 +83,10 @@
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-monkey",
+        "item_id": "item_🦀",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-monkey"
+          "ref": "🦀"
         }
       },
       "options": [
@@ -102,15 +94,15 @@
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-panda"
+            "ref": "🦀"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rabbit"
+            "ref": "🐟"
           },
           "is_correct": false
         },
@@ -118,15 +110,15 @@
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-monkey"
+            "ref": "🦈"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-zebra"
+            "ref": "🐳"
           },
           "is_correct": false
         }
@@ -143,21 +135,17 @@
     "header": {
       "code": "GL-C4-DET-TCMP-0001",
       "template_code": "GT-003",
-      "title": "So sánh nhóm Cây xanh",
-      "instruction": "Bé chọn nhóm nhiều Cây xanh hơn nhé!",
-      "theme_tag": "nature",
+      "title": "So sánh nhóm Táo đỏ",
+      "instruction": "Bé chọn nhóm nhiều Táo đỏ hơn nhé!",
+      "theme_tag": "food",
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.01"],
-      "learning_objective_codes": [
-        "LO-C4.DET.01-01",
-        "LO-C4.DET.01-02",
-        "LO-C4.DET.01-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.01-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -175,7 +163,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-deciduous-tree"
+            "ref": "🍞"
           },
           "is_correct": true
         },
@@ -184,7 +172,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-maple-leaf"
+            "ref": "🌾"
           },
           "is_correct": true
         },
@@ -193,7 +181,7 @@
           "attribute": "other_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-mountain"
+            "ref": "🥚"
           },
           "is_correct": false
         }
@@ -210,21 +198,17 @@
     "header": {
       "code": "GL-C4-DET-TCMP-0002",
       "template_code": "GT-003",
-      "title": "So sánh nhóm Cá heo",
-      "instruction": "Bé chọn nhóm nhiều Cá heo hơn nhé!",
-      "theme_tag": "ocean",
+      "title": "So sánh nhóm Xe buýt",
+      "instruction": "Bé chọn nhóm nhiều Xe buýt hơn nhé!",
+      "theme_tag": "vehicle",
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.01"],
-      "learning_objective_codes": [
-        "LO-C4.DET.01-01",
-        "LO-C4.DET.01-02",
-        "LO-C4.DET.01-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.01-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -242,7 +226,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-shell"
+            "ref": "🚆"
           },
           "is_correct": true
         },
@@ -251,7 +235,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-shark"
+            "ref": "⛵"
           },
           "is_correct": true
         },
@@ -260,7 +244,7 @@
           "attribute": "other_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-shrimp"
+            "ref": "🚲"
           },
           "is_correct": false
         }
@@ -277,17 +261,13 @@
     "header": {
       "code": "GL-C4-DET-PATT-0001",
       "template_code": "GT-005",
-      "title": "Xếp Táo đỏ theo quy luật",
-      "instruction": "Bé chọn Táo đỏ tiếp theo theo quy luật!",
-      "theme_tag": "food",
+      "title": "Xếp Bảng vẽ theo quy luật",
+      "instruction": "Bé chọn Bảng vẽ tiếp theo theo quy luật!",
+      "theme_tag": "art",
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.01"],
-      "learning_objective_codes": [
-        "LO-C4.DET.01-01",
-        "LO-C4.DET.01-02",
-        "LO-C4.DET.01-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.01-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
@@ -305,14 +285,14 @@
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-cake"
+              "ref": "🥁"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-corn"
+              "ref": "🎻"
             }
           }
         },
@@ -322,14 +302,14 @@
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-bread"
+              "ref": "🎷"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-rice"
+              "ref": "🎶"
             }
           }
         }
@@ -345,17 +325,13 @@
     "header": {
       "code": "GL-C4-DET-PATT-0002",
       "template_code": "GT-005",
-      "title": "Xếp Xe buýt theo quy luật",
-      "instruction": "Bé chọn Xe buýt tiếp theo theo quy luật!",
-      "theme_tag": "vehicle",
+      "title": "Xếp Cây đàn ghi-ta theo quy luật",
+      "instruction": "Bé chọn Cây đàn ghi-ta tiếp theo theo quy luật!",
+      "theme_tag": "art",
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.01"],
-      "learning_objective_codes": [
-        "LO-C4.DET.01-01",
-        "LO-C4.DET.01-02",
-        "LO-C4.DET.01-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.01-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
@@ -373,14 +349,14 @@
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-car"
+              "ref": "🎹"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-sailboat"
+              "ref": "📷"
             }
           }
         },
@@ -390,14 +366,14 @@
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-bus"
+              "ref": "🖍️"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-bicycle"
+              "ref": "🎺"
             }
           }
         }
@@ -413,21 +389,17 @@
     "header": {
       "code": "GL-C4-DET-SLOT-0001",
       "template_code": "GT-008",
-      "title": "Kéo Bảng vẽ vào đúng ô",
-      "instruction": "Bé kéo Bảng vẽ vào đúng ô nhé!",
-      "theme_tag": "art",
+      "title": "Kéo Gia đình vào đúng ô",
+      "instruction": "Bé kéo Gia đình vào đúng ô nhé!",
+      "theme_tag": "family",
       "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.01"],
-      "learning_objective_codes": [
-        "LO-C4.DET.01-01",
-        "LO-C4.DET.01-02",
-        "LO-C4.DET.01-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.01-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -449,18 +421,18 @@
       "items": [
         {
           "item_id": "item_1",
-          "label": "Trống",
+          "label": "Bố",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-drum"
+            "ref": "👨"
           }
         },
         {
           "item_id": "item_2",
-          "label": "Bảng vẽ",
+          "label": "Đôi vợ chồng",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-artist-palette"
+            "ref": "👫"
           }
         }
       ]
@@ -477,21 +449,17 @@
     "header": {
       "code": "GL-C4-DET-SLOT-0002",
       "template_code": "GT-008",
-      "title": "Kéo Cây đàn ghi-ta vào đúng ô",
-      "instruction": "Bé kéo Cây đàn ghi-ta vào đúng ô nhé!",
-      "theme_tag": "art",
+      "title": "Kéo Tai vào đúng ô",
+      "instruction": "Bé kéo Tai vào đúng ô nhé!",
+      "theme_tag": "body",
       "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.01"],
-      "learning_objective_codes": [
-        "LO-C4.DET.01-01",
-        "LO-C4.DET.01-02",
-        "LO-C4.DET.01-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.01-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -513,18 +481,18 @@
       "items": [
         {
           "item_id": "item_1",
-          "label": "Cây đàn ghi-ta",
+          "label": "Trái tim",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-guitar"
+            "ref": "🫀"
           }
         },
         {
           "item_id": "item_2",
-          "label": "Bảng vẽ",
+          "label": "Mũi",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-artist-palette"
+            "ref": "👃"
           }
         }
       ]
@@ -541,17 +509,13 @@
     "header": {
       "code": "GL-C4-DET-MEMO-0001",
       "template_code": "GT-012",
-      "title": "Tìm cặp thẻ Gia đình giống nhau",
-      "instruction": "Bé lật mở cặp Gia đình giống nhau nhé!",
-      "theme_tag": "family",
+      "title": "Tìm cặp thẻ Mặt trời giống nhau",
+      "instruction": "Bé lật mở cặp Mặt trời giống nhau nhé!",
+      "theme_tag": "weather",
       "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.01"],
-      "learning_objective_codes": [
-        "LO-C4.DET.01-01",
-        "LO-C4.DET.01-02",
-        "LO-C4.DET.01-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.01-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
@@ -567,36 +531,43 @@
           "item_id": "flash_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-girl"
+            "ref": "⛈️"
           }
         },
         {
           "item_id": "flash_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-girl"
+            "ref": "⛈️"
+          }
+        },
+        {
+          "item_id": "flash_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "⛈️"
           }
         }
       ],
       "arrangement": "dice",
       "options": [
         {
-          "value": 2,
+          "value": 3,
           "is_correct": true
         },
         {
-          "value": 1,
+          "value": 2,
           "is_correct": false
         },
         {
-          "value": 3,
+          "value": 4,
           "is_correct": false
         }
       ]
     },
     "difficulty_params": {
       "flash_ms": 1500,
-      "item_count": 2,
+      "item_count": 3,
       "distractor_count": 2,
       "allow_replay": true,
       "hint_after_ms": 10000,
@@ -607,17 +578,13 @@
     "header": {
       "code": "GL-C4-DET-MEMO-0002",
       "template_code": "GT-012",
-      "title": "Tìm cặp thẻ Tai giống nhau",
-      "instruction": "Bé lật mở cặp Tai giống nhau nhé!",
-      "theme_tag": "body",
+      "title": "Tìm cặp thẻ Bao lì xì giống nhau",
+      "instruction": "Bé lật mở cặp Bao lì xì giống nhau nhé!",
+      "theme_tag": "festival",
       "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.01"],
-      "learning_objective_codes": [
-        "LO-C4.DET.01-01",
-        "LO-C4.DET.01-02",
-        "LO-C4.DET.01-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.01-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
@@ -633,21 +600,21 @@
           "item_id": "flash_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-nose"
+            "ref": "🎁"
           }
         },
         {
           "item_id": "flash_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-nose"
+            "ref": "🎁"
           }
         },
         {
           "item_id": "flash_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-nose"
+            "ref": "🎁"
           }
         }
       ],
@@ -680,21 +647,17 @@
     "header": {
       "code": "GL-C4-DET-TAP-0003",
       "template_code": "GT-001",
-      "title": "Tìm Mặt trời giống mẫu",
-      "instruction": "Bé chạm vào Mặt trời giống mẫu nhé!",
-      "theme_tag": "weather",
+      "title": "Tìm Bác sĩ giống mẫu",
+      "instruction": "Bé chạm vào Bác sĩ giống mẫu nhé!",
+      "theme_tag": "job",
       "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.02"],
-      "learning_objective_codes": [
-        "LO-C4.DET.02-01",
-        "LO-C4.DET.02-02",
-        "LO-C4.DET.02-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.02-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -702,10 +665,10 @@
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-thunderstorm",
+        "item_id": "item_👮",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-thunderstorm"
+          "ref": "👮"
         }
       },
       "options": [
@@ -713,15 +676,15 @@
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rainbow"
+            "ref": "👮"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rain"
+            "ref": "👩‍🔬"
           },
           "is_correct": false
         },
@@ -729,9 +692,9 @@
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-thunderstorm"
+            "ref": "👨‍🎨"
           },
-          "is_correct": true
+          "is_correct": false
         }
       ]
     },
@@ -746,21 +709,17 @@
     "header": {
       "code": "GL-C4-DET-TAP-0004",
       "template_code": "GT-001",
-      "title": "Tìm Bao lì xì giống mẫu",
-      "instruction": "Bé chạm vào Bao lì xì giống mẫu nhé!",
-      "theme_tag": "festival",
+      "title": "Tìm Hoa sen giống mẫu",
+      "instruction": "Bé chạm vào Hoa sen giống mẫu nhé!",
+      "theme_tag": "homeland",
       "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.02"],
-      "learning_objective_codes": [
-        "LO-C4.DET.02-01",
-        "LO-C4.DET.02-02",
-        "LO-C4.DET.02-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.02-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -768,10 +727,10 @@
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-christmas-tree",
+        "item_id": "item_🪷",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-christmas-tree"
+          "ref": "🪷"
         }
       },
       "options": [
@@ -779,7 +738,7 @@
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-red-envelope"
+            "ref": "🌟"
           },
           "is_correct": false
         },
@@ -787,7 +746,7 @@
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-jack-o-lantern"
+            "ref": "🌄"
           },
           "is_correct": false
         },
@@ -795,17 +754,17 @@
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-christmas-tree"
+            "ref": "🐃"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-birthday-cake"
+            "ref": "🪷"
           },
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },
@@ -826,15 +785,11 @@
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.02"],
-      "learning_objective_codes": [
-        "LO-C4.DET.02-01",
-        "LO-C4.DET.02-02",
-        "LO-C4.DET.02-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.02-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -852,7 +807,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-scissors"
+            "ref": "✂️"
           },
           "is_correct": true
         },
@@ -861,7 +816,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "📚"
           },
           "is_correct": true
         },
@@ -870,7 +825,7 @@
           "attribute": "other_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ruler"
+            "ref": "📏"
           },
           "is_correct": false
         }
@@ -893,15 +848,11 @@
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.02"],
-      "learning_objective_codes": [
-        "LO-C4.DET.02-01",
-        "LO-C4.DET.02-02",
-        "LO-C4.DET.02-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.02-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -919,7 +870,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rooster"
+            "ref": "🐓"
           },
           "is_correct": true
         },
@@ -928,7 +879,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-cow"
+            "ref": "🐮"
           },
           "is_correct": true
         },
@@ -937,7 +888,7 @@
           "attribute": "other_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-goat"
+            "ref": "🐐"
           },
           "is_correct": false
         }
@@ -960,11 +911,7 @@
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.02"],
-      "learning_objective_codes": [
-        "LO-C4.DET.02-01",
-        "LO-C4.DET.02-02",
-        "LO-C4.DET.02-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.02-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
@@ -982,14 +929,14 @@
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-house"
+              "ref": "🏠"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-plate"
+              "ref": "🍽️"
             }
           }
         },
@@ -999,14 +946,14 @@
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-spoon"
+              "ref": "🥄"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-broom"
+              "ref": "🧹"
             }
           }
         }
@@ -1028,11 +975,7 @@
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.02"],
-      "learning_objective_codes": [
-        "LO-C4.DET.02-01",
-        "LO-C4.DET.02-02",
-        "LO-C4.DET.02-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.02-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
@@ -1050,14 +993,14 @@
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-giraffe"
+              "ref": "🦒"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-zebra"
+              "ref": "🦓"
             }
           }
         },
@@ -1067,14 +1010,14 @@
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-elephant"
+              "ref": "🐘"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-fox"
+              "ref": "🦊"
             }
           }
         }
@@ -1096,15 +1039,11 @@
       "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.02"],
-      "learning_objective_codes": [
-        "LO-C4.DET.02-01",
-        "LO-C4.DET.02-02",
-        "LO-C4.DET.02-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.02-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1129,7 +1068,7 @@
           "label": "Xương rồng",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-cactus"
+            "ref": "🌵"
           }
         },
         {
@@ -1137,7 +1076,7 @@
           "label": "Cây cọ",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-palm-tree"
+            "ref": "🌴"
           }
         }
       ]
@@ -1160,15 +1099,11 @@
       "what_tags": ["spt"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.02"],
-      "learning_objective_codes": [
-        "LO-C4.DET.02-01",
-        "LO-C4.DET.02-02",
-        "LO-C4.DET.02-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.02-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1193,7 +1128,7 @@
           "label": "Cá mập",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-shark"
+            "ref": "🦈"
           }
         },
         {
@@ -1201,7 +1136,7 @@
           "label": "Bạch tuộc",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-octopus"
+            "ref": "🐙"
           }
         }
       ]
@@ -1224,11 +1159,7 @@
       "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.02"],
-      "learning_objective_codes": [
-        "LO-C4.DET.02-01",
-        "LO-C4.DET.02-02",
-        "LO-C4.DET.02-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.02-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
@@ -1244,14 +1175,14 @@
           "item_id": "flash_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-red-apple"
+            "ref": "🍎"
           }
         },
         {
           "item_id": "flash_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-red-apple"
+            "ref": "🍎"
           }
         }
       ],
@@ -1290,11 +1221,7 @@
       "what_tags": ["mem", "cnt", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.02"],
-      "learning_objective_codes": [
-        "LO-C4.DET.02-01",
-        "LO-C4.DET.02-02",
-        "LO-C4.DET.02-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.02-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
@@ -1310,21 +1237,21 @@
           "item_id": "flash_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-train"
+            "ref": "🚆"
           }
         },
         {
           "item_id": "flash_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-train"
+            "ref": "🚆"
           }
         },
         {
           "item_id": "flash_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-train"
+            "ref": "🚆"
           }
         }
       ],
@@ -1363,15 +1290,11 @@
       "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe", "compare"],
       "skill_codes": ["C4.DET.03"],
-      "learning_objective_codes": [
-        "LO-C4.DET.03-01",
-        "LO-C4.DET.03-02",
-        "LO-C4.DET.03-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.03-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1379,10 +1302,10 @@
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-crayon",
+        "item_id": "item_🖍️",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-crayon"
+          "ref": "🖍️"
         }
       },
       "options": [
@@ -1390,7 +1313,7 @@
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-artist-palette"
+            "ref": "🎨"
           },
           "is_correct": false
         },
@@ -1398,7 +1321,7 @@
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-guitar"
+            "ref": "🎸"
           },
           "is_correct": false
         },
@@ -1406,7 +1329,7 @@
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-crayon"
+            "ref": "🖍️"
           },
           "is_correct": true
         }
@@ -1429,15 +1352,11 @@
       "what_tags": ["cls"],
       "thinking_tags": ["observe", "compare"],
       "skill_codes": ["C4.DET.03"],
-      "learning_objective_codes": [
-        "LO-C4.DET.03-01",
-        "LO-C4.DET.03-02",
-        "LO-C4.DET.03-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.03-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1455,7 +1374,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-family"
+            "ref": "👨‍👩‍👦"
           },
           "is_correct": true
         },
@@ -1464,7 +1383,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-baby"
+            "ref": "👶"
           },
           "is_correct": true
         },
@@ -1473,7 +1392,7 @@
           "attribute": "other_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-grandfather"
+            "ref": "👴"
           },
           "is_correct": false
         }
@@ -1496,15 +1415,11 @@
       "what_tags": ["cls"],
       "thinking_tags": ["observe", "compare"],
       "skill_codes": ["C4.DET.03"],
-      "learning_objective_codes": [
-        "LO-C4.DET.03-01",
-        "LO-C4.DET.03-02",
-        "LO-C4.DET.03-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.03-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1522,7 +1437,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-eyes"
+            "ref": "👀"
           },
           "is_correct": true
         },
@@ -1531,7 +1446,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-nose"
+            "ref": "👃"
           },
           "is_correct": true
         },
@@ -1540,7 +1455,7 @@
           "attribute": "other_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-mouth"
+            "ref": "👄"
           },
           "is_correct": false
         }
@@ -1563,11 +1478,7 @@
       "what_tags": ["cls"],
       "thinking_tags": ["observe", "compare"],
       "skill_codes": ["C4.DET.03"],
-      "learning_objective_codes": [
-        "LO-C4.DET.03-01",
-        "LO-C4.DET.03-02",
-        "LO-C4.DET.03-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.03-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
@@ -1585,14 +1496,14 @@
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-snowflake"
+              "ref": "❄️"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-wind"
+              "ref": "💨"
             }
           }
         },
@@ -1602,14 +1513,14 @@
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-rainbow"
+              "ref": "🌈"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-sun"
+              "ref": "☀️"
             }
           }
         }
@@ -1631,11 +1542,7 @@
       "what_tags": ["cls"],
       "thinking_tags": ["observe", "compare"],
       "skill_codes": ["C4.DET.03"],
-      "learning_objective_codes": [
-        "LO-C4.DET.03-01",
-        "LO-C4.DET.03-02",
-        "LO-C4.DET.03-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.03-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
@@ -1653,14 +1560,14 @@
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-balloon"
+              "ref": "🎈"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-jack-o-lantern"
+              "ref": "🎃"
             }
           }
         },
@@ -1670,14 +1577,14 @@
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-red-lantern"
+              "ref": "🏮"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-candle"
+              "ref": "🕯️"
             }
           }
         }
@@ -1693,17 +1600,13 @@
     "header": {
       "code": "GL-C4-DET-SHAD-0001",
       "template_code": "GT-007",
-      "title": "Tìm bóng của Trường học",
-      "instruction": "Bé tìm bóng của Trường học nhé!",
-      "theme_tag": "school",
+      "title": "Tìm bóng của Bác sĩ",
+      "instruction": "Bé tìm bóng của Bác sĩ nhé!",
+      "theme_tag": "job",
       "what_tags": ["ops"],
       "thinking_tags": ["observe", "compare"],
       "skill_codes": ["C4.DET.03"],
-      "learning_objective_codes": [
-        "LO-C4.DET.03-01",
-        "LO-C4.DET.03-02",
-        "LO-C4.DET.03-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.03-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
@@ -1720,19 +1623,19 @@
         "label": "8",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-ruler"
+          "ref": "🧑‍✈️"
         }
       },
       "parts": [
         {
           "id": "part_1",
-          "value": 3,
+          "value": 1,
           "is_target": false,
-          "label": "3"
+          "label": "1"
         },
         {
           "id": "part_2",
-          "value": 5,
+          "value": 7,
           "is_target": true,
           "label": "?"
         }
@@ -1740,20 +1643,20 @@
       "options": [
         {
           "id": "opt_1",
-          "value": 5,
-          "label": "5",
+          "value": 7,
+          "label": "7",
           "is_correct": true
         },
         {
           "id": "opt_2",
-          "value": 4,
-          "label": "4",
+          "value": 6,
+          "label": "6",
           "is_correct": false
         },
         {
           "id": "opt_3",
-          "value": 6,
-          "label": "6",
+          "value": 8,
+          "label": "8",
           "is_correct": false
         }
       ]
@@ -1769,17 +1672,13 @@
     "header": {
       "code": "GL-C4-DET-SHAD-0002",
       "template_code": "GT-007",
-      "title": "Tìm bóng của Bò sữa",
-      "instruction": "Bé tìm bóng của Bò sữa nhé!",
-      "theme_tag": "farm",
+      "title": "Tìm bóng của Hoa sen",
+      "instruction": "Bé tìm bóng của Hoa sen nhé!",
+      "theme_tag": "homeland",
       "what_tags": ["ops"],
       "thinking_tags": ["observe", "compare"],
       "skill_codes": ["C4.DET.03"],
-      "learning_objective_codes": [
-        "LO-C4.DET.03-01",
-        "LO-C4.DET.03-02",
-        "LO-C4.DET.03-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.03-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
@@ -1792,23 +1691,23 @@
       "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
       "whole": {
         "id": "whole_1",
-        "value": 9,
-        "label": "9",
+        "value": 7,
+        "label": "7",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-tractor"
+          "ref": "🌄"
         }
       },
       "parts": [
         {
           "id": "part_1",
-          "value": 7,
+          "value": 1,
           "is_target": false,
-          "label": "7"
+          "label": "1"
         },
         {
           "id": "part_2",
-          "value": 2,
+          "value": 6,
           "is_target": true,
           "label": "?"
         }
@@ -1816,20 +1715,20 @@
       "options": [
         {
           "id": "opt_1",
-          "value": 2,
-          "label": "2",
+          "value": 6,
+          "label": "6",
           "is_correct": true
         },
         {
           "id": "opt_2",
-          "value": 1,
-          "label": "1",
+          "value": 5,
+          "label": "5",
           "is_correct": false
         },
         {
           "id": "opt_3",
-          "value": 3,
-          "label": "3",
+          "value": 7,
+          "label": "7",
           "is_correct": false
         }
       ]
@@ -1845,21 +1744,17 @@
     "header": {
       "code": "GL-C4-DET-SLOT-0005",
       "template_code": "GT-008",
-      "title": "Kéo Ngôi nhà vào đúng ô",
-      "instruction": "Bé kéo Ngôi nhà vào đúng ô nhé!",
-      "theme_tag": "home",
+      "title": "Kéo Trường học vào đúng ô",
+      "instruction": "Bé kéo Trường học vào đúng ô nhé!",
+      "theme_tag": "school",
       "what_tags": ["spt"],
       "thinking_tags": ["observe", "compare"],
       "skill_codes": ["C4.DET.03"],
-      "learning_objective_codes": [
-        "LO-C4.DET.03-01",
-        "LO-C4.DET.03-02",
-        "LO-C4.DET.03-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.03-01"],
       "difficulty": 1,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1881,18 +1776,18 @@
       "items": [
         {
           "item_id": "item_1",
-          "label": "Cái thìa",
+          "label": "Sách",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-spoon"
+            "ref": "📚"
           }
         },
         {
           "item_id": "item_2",
-          "label": "Cửa sổ",
+          "label": "Cái chuông",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-window"
+            "ref": "🔔"
           }
         }
       ]
@@ -1909,21 +1804,17 @@
     "header": {
       "code": "GL-C4-DET-SLOT-0006",
       "template_code": "GT-008",
-      "title": "Kéo Voi vào đúng ô",
-      "instruction": "Bé kéo Voi vào đúng ô nhé!",
-      "theme_tag": "animal",
+      "title": "Kéo Bò sữa vào đúng ô",
+      "instruction": "Bé kéo Bò sữa vào đúng ô nhé!",
+      "theme_tag": "farm",
       "what_tags": ["spt"],
       "thinking_tags": ["observe", "compare"],
       "skill_codes": ["C4.DET.03"],
-      "learning_objective_codes": [
-        "LO-C4.DET.03-01",
-        "LO-C4.DET.03-02",
-        "LO-C4.DET.03-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.03-02"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1945,18 +1836,18 @@
       "items": [
         {
           "item_id": "item_1",
-          "label": "Hươu cao cổ",
+          "label": "Vịt",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-giraffe"
+            "ref": "🦆"
           }
         },
         {
           "item_id": "item_2",
-          "label": "Thỏ",
+          "label": "Gà mái",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rabbit"
+            "ref": "🐔"
           }
         }
       ]
@@ -1973,21 +1864,17 @@
     "header": {
       "code": "GL-C4-DET-TAP-0006",
       "template_code": "GT-001",
-      "title": "Tìm Cây xanh giống mẫu",
-      "instruction": "Bé chạm vào Cây xanh giống mẫu nhé!",
-      "theme_tag": "nature",
+      "title": "Tìm Ngôi nhà giống mẫu",
+      "instruction": "Bé chạm vào Ngôi nhà giống mẫu nhé!",
+      "theme_tag": "home",
       "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.04"],
-      "learning_objective_codes": [
-        "LO-C4.DET.04-01",
-        "LO-C4.DET.04-02",
-        "LO-C4.DET.04-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.04-01"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1995,10 +1882,10 @@
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-mountain",
+        "item_id": "item_🥄",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-mountain"
+          "ref": "🥄"
         }
       },
       "options": [
@@ -2006,7 +1893,7 @@
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-mountain"
+            "ref": "🥄"
           },
           "is_correct": true
         },
@@ -2014,7 +1901,7 @@
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-cactus"
+            "ref": "🪟"
           },
           "is_correct": false
         },
@@ -2022,7 +1909,7 @@
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-rose"
+            "ref": "🪑"
           },
           "is_correct": false
         }
@@ -2039,21 +1926,17 @@
     "header": {
       "code": "GL-C4-DET-TAP-0007",
       "template_code": "GT-001",
-      "title": "Tìm Cá heo giống mẫu",
-      "instruction": "Bé chạm vào Cá heo giống mẫu nhé!",
-      "theme_tag": "ocean",
+      "title": "Tìm Voi giống mẫu",
+      "instruction": "Bé chạm vào Voi giống mẫu nhé!",
+      "theme_tag": "animal",
       "what_tags": ["cls", "shp", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.04"],
-      "learning_objective_codes": [
-        "LO-C4.DET.04-01",
-        "LO-C4.DET.04-02",
-        "LO-C4.DET.04-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.04-02"],
       "difficulty": 3,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -2061,10 +1944,10 @@
     "content_pack": {
       "prompt": "Bé hãy chạm vào hình giống mẫu nhé!",
       "target_item": {
-        "item_id": "item_EMJ-shell",
+        "item_id": "item_🐘",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-shell"
+          "ref": "🐘"
         }
       },
       "options": [
@@ -2072,7 +1955,7 @@
           "item_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-dolphin"
+            "ref": "🐯"
           },
           "is_correct": false
         },
@@ -2080,7 +1963,7 @@
           "item_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-fish"
+            "ref": "🦓"
           },
           "is_correct": false
         },
@@ -2088,17 +1971,17 @@
           "item_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-shell"
+            "ref": "🐻"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-shrimp"
+            "ref": "🐘"
           },
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },
@@ -2113,21 +1996,17 @@
     "header": {
       "code": "GL-C4-DET-TCNT-0001",
       "template_code": "GT-002",
-      "title": "Đếm số lượng Táo đỏ",
-      "instruction": "Bé đếm số Táo đỏ rồi chọn số đúng!",
-      "theme_tag": "food",
+      "title": "Đếm số lượng Cây xanh",
+      "instruction": "Bé đếm số Cây xanh rồi chọn số đúng!",
+      "theme_tag": "nature",
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.04"],
-      "learning_objective_codes": [
-        "LO-C4.DET.04-01",
-        "LO-C4.DET.04-02",
-        "LO-C4.DET.04-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.04-01"],
       "difficulty": 2,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -2140,7 +2019,7 @@
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-carrot"
+            "ref": "🍀"
           },
           "is_correct": true
         },
@@ -2148,7 +2027,7 @@
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-egg"
+            "ref": "🌻"
           },
           "is_correct": true
         },
@@ -2156,7 +2035,7 @@
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-red-apple"
+            "ref": "⛰️"
           },
           "is_correct": false
         },
@@ -2164,7 +2043,7 @@
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-corn"
+            "ref": "🍁"
           },
           "is_correct": false
         }
@@ -2181,21 +2060,17 @@
     "header": {
       "code": "GL-C4-DET-TCNT-0002",
       "template_code": "GT-002",
-      "title": "Đếm số lượng Xe buýt",
-      "instruction": "Bé đếm số Xe buýt rồi chọn số đúng!",
-      "theme_tag": "vehicle",
+      "title": "Đếm số lượng Cá heo",
+      "instruction": "Bé đếm số Cá heo rồi chọn số đúng!",
+      "theme_tag": "ocean",
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.04"],
-      "learning_objective_codes": [
-        "LO-C4.DET.04-01",
-        "LO-C4.DET.04-02",
-        "LO-C4.DET.04-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.04-02"],
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -2208,7 +2083,7 @@
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-bus"
+            "ref": "🐳"
           },
           "is_correct": true
         },
@@ -2216,7 +2091,7 @@
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-motorcycle"
+            "ref": "🦈"
           },
           "is_correct": true
         },
@@ -2224,7 +2099,7 @@
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-train"
+            "ref": "🐚"
           },
           "is_correct": false
         },
@@ -2232,7 +2107,7 @@
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-sailboat"
+            "ref": "🦐"
           },
           "is_correct": false
         }
@@ -2249,21 +2124,17 @@
     "header": {
       "code": "GL-C4-DET-TCMP-0007",
       "template_code": "GT-003",
-      "title": "So sánh nhóm Bảng vẽ",
-      "instruction": "Bé chọn nhóm nhiều Bảng vẽ hơn nhé!",
-      "theme_tag": "art",
+      "title": "So sánh nhóm Táo đỏ",
+      "instruction": "Bé chọn nhóm nhiều Táo đỏ hơn nhé!",
+      "theme_tag": "food",
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.04"],
-      "learning_objective_codes": [
-        "LO-C4.DET.04-01",
-        "LO-C4.DET.04-02",
-        "LO-C4.DET.04-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.04-01"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -2281,7 +2152,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-piano"
+            "ref": "🌽"
           },
           "is_correct": true
         },
@@ -2290,7 +2161,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-artist-palette"
+            "ref": "🌾"
           },
           "is_correct": true
         },
@@ -2299,7 +2170,7 @@
           "attribute": "other_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-trumpet"
+            "ref": "🍜"
           },
           "is_correct": false
         }
@@ -2316,21 +2187,17 @@
     "header": {
       "code": "GL-C4-DET-TCMP-0008",
       "template_code": "GT-003",
-      "title": "So sánh nhóm Cây đàn ghi-ta",
-      "instruction": "Bé chọn nhóm nhiều Cây đàn ghi-ta hơn nhé!",
-      "theme_tag": "art",
+      "title": "So sánh nhóm Xe buýt",
+      "instruction": "Bé chọn nhóm nhiều Xe buýt hơn nhé!",
+      "theme_tag": "vehicle",
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.04"],
-      "learning_objective_codes": [
-        "LO-C4.DET.04-01",
-        "LO-C4.DET.04-02",
-        "LO-C4.DET.04-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.04-02"],
       "difficulty": 3,
       "age_min": 3,
       "age_max": 4,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -2348,7 +2215,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-guitar"
+            "ref": "🚗"
           },
           "is_correct": true
         },
@@ -2357,7 +2224,7 @@
           "attribute": "target_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-drum"
+            "ref": "🚆"
           },
           "is_correct": true
         },
@@ -2366,7 +2233,7 @@
           "attribute": "other_attr",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-musical-notes"
+            "ref": "🏍️"
           },
           "is_correct": false
         }
@@ -2383,17 +2250,13 @@
     "header": {
       "code": "GL-C4-DET-PAIR-0001",
       "template_code": "GT-004",
-      "title": "Ghép đôi Gia đình tương ứng",
-      "instruction": "Bé ghép đôi các Gia đình tương ứng nhé!",
-      "theme_tag": "family",
+      "title": "Ghép đôi Bảng vẽ tương ứng",
+      "instruction": "Bé ghép đôi các Bảng vẽ tương ứng nhé!",
+      "theme_tag": "art",
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.04"],
-      "learning_objective_codes": [
-        "LO-C4.DET.04-01",
-        "LO-C4.DET.04-02",
-        "LO-C4.DET.04-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.04-01"],
       "difficulty": 2,
       "age_min": 4,
       "age_max": 5,
@@ -2408,12 +2271,12 @@
         {
           "group_id": "g1",
           "label": "Nhóm 1",
-          "label_emoji": "EMJ-boy"
+          "label_emoji": "🎶"
         },
         {
           "group_id": "g2",
           "label": "Nhóm 2",
-          "label_emoji": "EMJ-family"
+          "label_emoji": "🎸"
         }
       ],
       "items": [
@@ -2421,7 +2284,7 @@
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-mother"
+            "ref": "🎷"
           },
           "correct_group_id": "g1"
         },
@@ -2429,7 +2292,7 @@
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-father"
+            "ref": "🎻"
           },
           "correct_group_id": "g1"
         },
@@ -2437,7 +2300,7 @@
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-baby"
+            "ref": "📷"
           },
           "correct_group_id": "g2"
         },
@@ -2445,7 +2308,7 @@
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-grandmother"
+            "ref": "🎨"
           },
           "correct_group_id": "g2"
         }
@@ -2462,17 +2325,13 @@
     "header": {
       "code": "GL-C4-DET-PAIR-0002",
       "template_code": "GT-004",
-      "title": "Ghép đôi Tai tương ứng",
-      "instruction": "Bé ghép đôi các Tai tương ứng nhé!",
-      "theme_tag": "body",
+      "title": "Ghép đôi Hành tinh tương ứng",
+      "instruction": "Bé ghép đôi các Hành tinh tương ứng nhé!",
+      "theme_tag": "space",
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.04"],
-      "learning_objective_codes": [
-        "LO-C4.DET.04-01",
-        "LO-C4.DET.04-02",
-        "LO-C4.DET.04-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.04-02"],
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
@@ -2487,12 +2346,12 @@
         {
           "group_id": "g1",
           "label": "Nhóm 1",
-          "label_emoji": "EMJ-eyes"
+          "label_emoji": "🌟"
         },
         {
           "group_id": "g2",
           "label": "Nhóm 2",
-          "label_emoji": "EMJ-foot"
+          "label_emoji": "🌙"
         }
       ],
       "items": [
@@ -2500,7 +2359,7 @@
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-ear"
+            "ref": "🛸"
           },
           "correct_group_id": "g1"
         },
@@ -2508,7 +2367,7 @@
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-tooth"
+            "ref": "🪐"
           },
           "correct_group_id": "g1"
         },
@@ -2516,7 +2375,7 @@
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-raised-hand"
+            "ref": "🌕"
           },
           "correct_group_id": "g2"
         },
@@ -2524,7 +2383,7 @@
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-mouth"
+            "ref": "🚀"
           },
           "correct_group_id": "g2"
         }
@@ -2541,17 +2400,13 @@
     "header": {
       "code": "GL-C4-DET-PATT-0007",
       "template_code": "GT-005",
-      "title": "Xếp Mặt trời theo quy luật",
-      "instruction": "Bé chọn Mặt trời tiếp theo theo quy luật!",
-      "theme_tag": "weather",
+      "title": "Xếp Gia đình theo quy luật",
+      "instruction": "Bé chọn Gia đình tiếp theo theo quy luật!",
+      "theme_tag": "family",
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.04"],
-      "learning_objective_codes": [
-        "LO-C4.DET.04-01",
-        "LO-C4.DET.04-02",
-        "LO-C4.DET.04-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.04-01"],
       "difficulty": 2,
       "age_min": 3,
       "age_max": 4,
@@ -2569,14 +2424,14 @@
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-rain"
+              "ref": "👵"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-cloud"
+              "ref": "👫"
             }
           }
         },
@@ -2586,14 +2441,14 @@
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-snowflake"
+              "ref": "👨‍👩‍👦"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-wind"
+              "ref": "👨"
             }
           }
         }
@@ -2609,17 +2464,13 @@
     "header": {
       "code": "GL-C4-DET-PATT-0008",
       "template_code": "GT-005",
-      "title": "Xếp Bao lì xì theo quy luật",
-      "instruction": "Bé chọn Bao lì xì tiếp theo theo quy luật!",
-      "theme_tag": "festival",
+      "title": "Xếp Tai theo quy luật",
+      "instruction": "Bé chọn Tai tiếp theo theo quy luật!",
+      "theme_tag": "body",
       "what_tags": ["cls"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C4.DET.04"],
-      "learning_objective_codes": [
-        "LO-C4.DET.04-01",
-        "LO-C4.DET.04-02",
-        "LO-C4.DET.04-03"
-      ],
+      "learning_objective_codes": ["LO-C4.DET.04-02"],
       "difficulty": 3,
       "age_min": 3,
       "age_max": 4,
@@ -2637,14 +2488,14 @@
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-birthday-cake"
+              "ref": "👃"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-jack-o-lantern"
+              "ref": "✋"
             }
           }
         },
@@ -2654,14 +2505,14 @@
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-fireworks"
+              "ref": "🦶"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "EMJ-gift"
+              "ref": "🦷"
             }
           }
         }

@@ -198,7 +198,7 @@ export class GT031Session extends TemplateGameSession<
       targetSlot,
       {
         id: "payment_target",
-        asset: itemToBuy?.asset ?? { kind: "emoji", ref: "EMJ-coin" },
+        asset: itemToBuy?.asset ?? { kind: "emoji", ref: "🪙" },
         label,
         state,
       },

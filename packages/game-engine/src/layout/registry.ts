@@ -42,6 +42,7 @@ export const LAYOUT_IDS: readonly LayoutId[] = [
   "free-scene",
   "measure-strip",
   "weave-grid",
+  "single-focus",
 ] as const;
 
 export const LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
@@ -79,6 +80,8 @@ export const LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
   "free-scene": (input) => computeFreeSceneLayout(input),
   "measure-strip": (input) => computeMeasureStripLayout(input),
   "weave-grid": (input) => computeWeaveGridLayout(input),
+  "single-focus": (input) =>
+    computeGridLayout(input, { fixedCols: 1, fixedRows: 1 }),
 };
 
 export function isLayoutId(val: unknown): val is LayoutId {

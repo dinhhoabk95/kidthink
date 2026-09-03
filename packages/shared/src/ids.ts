@@ -118,10 +118,6 @@ export const ThemeCodeSchema = z
   .brand("ThemeCode");
 export type ThemeCode = z.infer<typeof ThemeCodeSchema>;
 
-// ─── Emoji Entry ─────────────────────────────────────────────────────
-export const EMOJI_ENTRY_CODE_REGEX = /^EMJ-[a-z0-9-]{2,40}$/;
-export const EmojiEntryCodeSchema = z
-  .string()
-  .regex(EMOJI_ENTRY_CODE_REGEX)
-  .brand("EmojiEntryCode");
-export type EmojiEntryCode = z.infer<typeof EmojiEntryCodeSchema>;
+// ─── Emoji Ref (Task #202 D-EB, D-EC) ────────────────────────────────
+export const EmojiRefSchema = z.string().min(1).brand("EmojiRef");
+export type EmojiRef = z.infer<typeof EmojiRefSchema>;

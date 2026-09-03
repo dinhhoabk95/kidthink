@@ -55,11 +55,11 @@ describe("GT-029: Bớt khỏi nhóm (remove-from-set)", () => {
       const invalid = {
         prompt: "Bé hãy bớt 5 quả táo",
         initial_items: [
-          { item_id: "a1", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-          { item_id: "a2", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-          { item_id: "a3", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-          { item_id: "a4", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-          { item_id: "a5", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
+          { item_id: "a1", asset: { kind: "emoji", ref: "🍎" } },
+          { item_id: "a2", asset: { kind: "emoji", ref: "🍎" } },
+          { item_id: "a3", asset: { kind: "emoji", ref: "🍎" } },
+          { item_id: "a4", asset: { kind: "emoji", ref: "🍎" } },
+          { item_id: "a5", asset: { kind: "emoji", ref: "🍎" } },
         ],
         remove_count: 5, // 5 >= 5
         answer_options: [
@@ -76,11 +76,11 @@ describe("GT-029: Bớt khỏi nhóm (remove-from-set)", () => {
       const invalid = {
         prompt: "Bé hãy bớt 2 quả táo",
         initial_items: [
-          { item_id: "a1", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-          { item_id: "a2", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-          { item_id: "a3", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-          { item_id: "a4", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-          { item_id: "a5", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
+          { item_id: "a1", asset: { kind: "emoji", ref: "🍎" } },
+          { item_id: "a2", asset: { kind: "emoji", ref: "🍎" } },
+          { item_id: "a3", asset: { kind: "emoji", ref: "🍎" } },
+          { item_id: "a4", asset: { kind: "emoji", ref: "🍎" } },
+          { item_id: "a5", asset: { kind: "emoji", ref: "🍎" } },
         ],
         remove_count: 2, // 5 - 2 = 3
         answer_options: [
@@ -97,10 +97,10 @@ describe("GT-029: Bớt khỏi nhóm (remove-from-set)", () => {
       const invalid = {
         prompt: "Bé hãy bớt 2 quả táo",
         initial_items: [
-          { item_id: "a1", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-          { item_id: "a2", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-          { item_id: "a3", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-          { item_id: "a4", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
+          { item_id: "a1", asset: { kind: "emoji", ref: "🍎" } },
+          { item_id: "a2", asset: { kind: "emoji", ref: "🍎" } },
+          { item_id: "a3", asset: { kind: "emoji", ref: "🍎" } },
+          { item_id: "a4", asset: { kind: "emoji", ref: "🍎" } },
         ],
         remove_count: 2,
         answer_options: [

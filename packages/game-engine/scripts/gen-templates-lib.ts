@@ -202,7 +202,7 @@ export function generateSessionLoaderCode(
   const syncCases = templates
     .map(
       (t) => `    case "${t.code}":
-      return Reflect.construct(${t.code.replace("-", "")}Session, [cfg.content_pack, cfg.difficulty_params]);`
+      return Reflect.construct(${t.code.replace("-", "")}Session, [cfg.content_pack, cfg.difficulty_params, cfg.layout_seed, cfg.theme_id]);`
     )
     .join("\n");
 

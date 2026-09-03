@@ -800,7 +800,7 @@ export async function buildAdvancedReport(params: {
     db
       .select()
       .from(contentSkillMap)
-      .where(eq(contentSkillMap.entityType, "level")),
+      .where(eq(contentSkillMap.entityType, "game_level")),
     db.select().from(gameLevels),
     db
       .select()

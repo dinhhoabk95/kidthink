@@ -9,7 +9,6 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { ALL_EMOJIS, getEmojiCode } from "@mindkid/emoji";
 import { ALL_TEMPLATES } from "@mindkid/game-engine";
 
 interface SeedHeader {
@@ -33,47 +32,24 @@ interface Asset {
 }
 type Transform = (seed: Seed) => Seed | null;
 
-// ── emoji: glyph thô → mã EMJ ────────────────────────────────────
-const GLYPH_TO_REF = new Map<string, string>();
-for (const entry of ALL_EMOJIS) {
-  const code = getEmojiCode(entry);
-  if (!GLYPH_TO_REF.has(entry.emoji)) {
-    GLYPH_TO_REF.set(entry.emoji, code);
-  }
-  // Nhiều glyph mang đuôi VS16 (U+FE0F); tra cả bản đã lược.
-  const stripped = entry.emoji.replace(/️/g, "");
-  if (!GLYPH_TO_REF.has(stripped)) {
-    GLYPH_TO_REF.set(stripped, code);
-  }
-}
-const unmappedGlyphs = new Map<string, number>();
-
+// ── emoji: identity glyph (Task #202 D-EB) ─────────────────────────
 function refForGlyph(glyph: string): string {
-  if (glyph.startsWith("EMJ-")) {
-    return glyph;
-  }
-  const hit =
-    GLYPH_TO_REF.get(glyph) ?? GLYPH_TO_REF.get(glyph.replace(/️/g, ""));
-  if (hit) {
-    return hit;
-  }
-  unmappedGlyphs.set(glyph, (unmappedGlyphs.get(glyph) ?? 0) + 1);
   return glyph;
 }
 
 /** Thẻ số trong nội dung cũ là chuỗi "3"; contract đòi asset. */
 const DIGIT_REFS: Record<string, string> = {
-  "0": "EMJ-zero",
-  "1": "EMJ-one",
-  "2": "EMJ-two",
-  "3": "EMJ-three",
-  "4": "EMJ-four",
-  "5": "EMJ-five",
-  "6": "EMJ-six",
-  "7": "EMJ-seven",
-  "8": "EMJ-eight",
-  "9": "EMJ-nine",
-  "10": "EMJ-ten",
+  "0": "0️⃣",
+  "1": "1️⃣",
+  "2": "2️⃣",
+  "3": "3️⃣",
+  "4": "4️⃣",
+  "5": "5️⃣",
+  "6": "6️⃣",
+  "7": "7️⃣",
+  "8": "8️⃣",
+  "9": "9️⃣",
+  "10": "🔟",
 };
 
 const GLYPH_FIELDS = ["ref", "emoji"] as const;
@@ -84,7 +60,7 @@ function toAsset(raw: unknown): Asset {
     return { kind: "emoji", ref: refForGlyph(raw) };
   }
   if (!(raw && typeof raw === "object")) {
-    return { kind: "emoji", ref: "EMJ-star" };
+    return { kind: "emoji", ref: "⭐" };
   }
   const obj = raw as Record<string, unknown>;
   for (const field of GLYPH_FIELDS) {
@@ -101,7 +77,7 @@ function toAsset(raw: unknown): Asset {
       return { kind: "emoji", ref: digit };
     }
   }
-  return { kind: "emoji", ref: "EMJ-star" };
+  return { kind: "emoji", ref: "⭐" };
 }
 
 /** `prompt` của mọi contract là 4..80 ký tự. Lấy từ instruction, không bịa. */
@@ -343,7 +319,7 @@ const toContainerFamily: Transform = (seed) => {
     containers.map((box, i) => ({
       id: String(box.id ?? `bin-${i + 1}`),
       label: String(box.label ?? `Nhóm ${i + 1}`),
-      emoji: String(box.emoji ?? box.label_emoji ?? "EMJ-basket"),
+      emoji: String(box.emoji ?? box.label_emoji ?? "🧺"),
     })),
     dragItems.map((item, i) => ({
       id: String(item.id ?? `item-${i + 1}`),
@@ -814,7 +790,7 @@ export function rewriteArrayLiteral(
 }
 
 export function reportUnmappedGlyphs(): [string, number][] {
-  return [...unmappedGlyphs.entries()].sort((a, b) => b[1] - a[1]);
+  return [];
 }
 
 export const SEED_ROOT = path.resolve(

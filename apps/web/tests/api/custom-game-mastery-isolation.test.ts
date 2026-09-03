@@ -142,17 +142,17 @@ describe("P4.5 Custom Game Mastery Isolation (BR-CGB-06)", () => {
           prompt: "Đâu là quả táo?",
           target_item: {
             item_id: "apple_target",
-            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            asset: { kind: "emoji", ref: "🍎" },
           },
           options: [
             {
               item_id: "opt_apple",
-              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              asset: { kind: "emoji", ref: "🍎" },
               is_correct: true,
             },
             {
               item_id: "opt_banana",
-              asset: { kind: "emoji", ref: "EMJ-banana" },
+              asset: { kind: "emoji", ref: "🍌" },
               is_correct: false,
             },
           ],

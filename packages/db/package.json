@@ -45,7 +45,8 @@
     "check:legacy-v1": "tsx src/seed-content/gates/legacy-v1-coverage.ts",
     "gen:levels": "tsx src/seed-content/cli/gen-levels.ts",
     "gen:corpus": "tsx src/seed-content/cli/gen-corpus.ts",
-    "reset-content": "tsx scripts/reset-content.ts"
+    "reset-content": "tsx scripts/reset-content.ts",
+    "check:taxonomy-refs": "vitest run tests/gates/taxonomy-refs.test.ts"
   },
   "imports": {
     "#src/*": "./src/*.ts",

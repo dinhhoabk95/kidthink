@@ -13,7 +13,7 @@ export const GT022Generator: LevelGenerator = {
     const count = age_band === "3-4" ? 4 : 6;
     const sampled = sampleUnique(rng, nouns, count);
     const target = sampled[0] || {
-      emoji_ref: "EMJ-red-apple",
+      emoji_ref: "🍎",
       label_vi: "Táo",
     };
 

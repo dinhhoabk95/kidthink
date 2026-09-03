@@ -166,6 +166,7 @@ kỹ năng xuất hiện trong thư viện cần **≥2** game level phục vụ
 | Kỹ năng có ≥2 level | 15 |
 | **Level cần soạn thêm để mọi kỹ năng đạt ≥2** | **48** |
 
+<!-- taxonomy-refs:historical — phép đo 2026-08 dùng mã taxonomy v1 đã bỏ; giữ nguyên để bản ghi đúng -->
 Mười ca thiếu đầu tiên: `C1.CNT.01` `C1.CNT.02` `C1.CNT.03` `C1.CNT.11` `C2.POS.01` `C2.2D.01`
 `C2.2D.02` `C3.PAT.01` `C4.LEN.01` `C4.WGT.01` — toàn kỹ năng nền, không phải kỹ năng hiếm.
 

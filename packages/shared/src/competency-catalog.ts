@@ -67,28 +67,28 @@ export const COMPETENCY_CATALOG: readonly CompetencyCatalogEntry[] = [
   },
   {
     code: "C4" as CompetencyCode,
-    name: "Tư duy quan sát",
-    description: "Observation Thinking",
+    name: "Tư duy khám phá",
+    description: "Discovery Thinking",
     emoji: "🔍",
-    tagline: "Chú ý chi tiết, tìm điểm khác, tìm vật ẩn và ghi nhớ hình ảnh.",
-    short: "Quan sát và tìm điểm khác",
+    tagline:
+      "Bé quan sát, thử nghiệm, hỏi vì sao và tìm hiểu thế giới quanh mình.",
+    short: "Quan sát và khám phá",
   },
   {
     code: "C5" as CompetencyCode,
     name: "Tư duy ngôn ngữ",
     description: "Language Thinking",
     emoji: "💬",
-    tagline:
-      "Từ vựng theo chủ đề, kể lại trình tự truyện và diễn đạt cách làm.",
-    short: "Từ ngữ và kể chuyện",
+    tagline: "Bé nghe hiểu, kể chuyện, nhận mặt chữ và làm quen với đọc, viết.",
+    short: "Kể chuyện và làm quen chữ",
   },
   {
     code: "C6" as CompetencyCode,
-    name: "Chức năng điều hành",
+    name: "Tư duy điều hành",
     description: "Executive Function",
     emoji: "🎯",
-    tagline: "Nhớ luật chơi, kiềm chế phản xạ sai và chuyển đổi linh hoạt.",
-    short: "Nhớ luật và tập trung",
+    tagline: "Bé nhớ luật chơi, làm hết việc, kìm phản xạ vội và tự sửa lỗi.",
+    short: "Tập trung và kiên trì",
   },
 ] as const;
 

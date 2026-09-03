@@ -91,7 +91,36 @@ cộng thêm vào ma trận phủ competency, cấm — NEVER thay thế.
 | `BR-ECD-10` (báo cáo nêu thiếu bao nhiêu) | Báo cáo in **engine thiếu và thiếu bao nhiêu trên trục nào**, cấm — NEVER in tỉ lệ phần trăm tổng | Một con số 84% che được 21 engine ở mức mẫu. Danh sách engine thiếu thì không che được |
 | `BR-ECD-11` (cổng có ca âm) | Cổng phải có test ca âm: bớt một level của engine đang sát sàn phải làm cổng đỏ | Cổng không có ca âm là cổng không biết mình hỏng |
 | `BR-ECD-12` (chiều sâu không phải bằng chứng sư phạm) | Số đo ở đây cấm — NEVER dùng làm bằng chứng hiệu quả học tập | Cùng ranh giới mà `BR-TCM-10` và `BR-PED-01` (cấm tuyên bố hiệu quả từ số đo catalog) đã đặt |
-| `BR-ECD-13` (band level nằm trong band engine) | Level có `age_min` nhỏ hơn hoặc `age_max` lớn hơn band của engine thì cổng **đỏ** | `BR-GTC-05` (band tuổi của template được ép) có kịch bản nghiệm thu ở mục 9 của [`game-template-contract.md`](../01-platform/game-template-contract.md), nhưng kịch bản đó nói về route studio. Đường seeder không đi qua route đó và tám cổng theo hàng không đối chiếu hai nguồn. Đo ngày 2026-08-29: **42 trên 228 level** vi phạm, trong đó 15 màn `GT-006` gắn cho band mà engine bị cấm |
+| `BR-ECD-13` (band level nằm trong band engine) | Level có `age_min` nhỏ hơn hoặc `age_max` lớn hơn band của engine thì cổng **đỏ** | `BR-GTC-05` (band tuổi của template được ép) có kịch bản nghiệm thu ở mục 9 của [`game-template-contract.md`](../01-platform/game-template-contract.md), nhưng kịch bản đó nói về route studio. Đường seeder không đi qua route đó và bộ cổng theo hàng không đối chiếu hai nguồn. Đo ngày 2026-08-29: **42 trên 228 level** vi phạm, trong đó 15 màn `GT-006` gắn cho band mà engine bị cấm |
+
+### 6.1 Hạn ngạch theo kỹ năng — `BR-SKQ-*`
+
+Bộ luật này đo theo **kỹ năng**, còn `BR-ECD-*` đo theo **engine**. Cổng:
+`packages/db/src/seed-content/gates/skill-quota.ts` · `pnpm --filter @mindkid/db
+check:skill-quota`.
+
+| ID | Rule | Vì sao |
+|---|---|---|
+| `BR-SKQ-01` (chỉ đếm level hợp lệ) | Chỉ đếm level đã qua `content_contract` của template tương ứng | Level không parse được thì không cho trẻ thêm lượt chơi nào |
+| `BR-SKQ-02` (hạn ngạch level) | Kỹ năng **đã có ≥1 level**: C1 ≥ 20 level, C2–C6 ≥ 10 | Ngăn kỹ năng xây dở. Kỹ năng chưa có level nào Cấm — NEVER tính ở đây, xem `BR-SKQ-06` |
+| `BR-SKQ-03` (đa dạng khuôn) | Cùng phạm vi `BR-SKQ-02`: C1 ≥ 4 khuôn, C2–C6 ≥ 2 | Một kỹ năng chỉ gặp qua một khuôn là một kỹ năng trẻ học thuộc thao tác, không học nội dung |
+| `BR-SKQ-04` (trần cặp) | Mỗi cặp (kỹ năng, khuôn) ≤ 5 level | Chống lấp hạn ngạch bằng cách nhân bản một khuôn |
+| `BR-SKQ-05` (sàn cặp toàn catalog) | Số cặp (kỹ năng, khuôn) phân biệt ≥ sàn đã ghi | Đo độ phủ ngang, không chỉ độ sâu dọc |
+| `BR-SKQ-06` (bậc thang nợ nội dung) | Số kỹ năng **0 level** ≤ trần trong `skill-coverage-ratchet.json`. Trần **chỉ giảm**; tăng phải sửa file kèm lý do trong PR | Không tách khỏi `BR-SKQ-02` thì mỗi kỹ năng vừa khai báo lập tức đẻ 10–20 level nợ và kho không mở được. Cùng khuôn bậc thang đã đưa nợ typecheck từ 2.931 về 0 |
+| `BR-SKQ-07` (cổng có ca âm) | Phải có ca âm cho `BR-SKQ-02` **và** `BR-SKQ-06`, cộng một ca chứng minh kỹ năng 0 level Cấm — NEVER bị báo là thiếu hạn ngạch | Nới cổng mà không có ca âm là tắt cổng. `BR-TYP-07` |
+
+> **Hạn ngạch đo độ phủ, không đo độ trung thực.** Mọi luật `BR-SKQ-*` đếm level và khuôn;
+> không luật nào hỏi *level này có dạy đúng kỹ năng nó gắn không*. Hệ quả đo ngày 2026-09-03:
+> `BR-SKQ-06` xanh với **0 trên 408** kỹ năng thiếu level, trong khi **0 trên 5.013** level
+> mang một chữ số hay một chữ cái. Phép đo còn thiếu thuộc
+> [`skill-dataset-model.md`](skill-dataset-model.md) — `BR-SDS-02` (vật phải là vật của kỹ
+> năng) và `BR-SDS-03` (khái niệm phải hiện ra). Hai bộ luật chạy song song: hạn ngạch nói
+> *đủ chưa*, trung thực nói *đúng chưa*, và một kho có thể xanh bộ này trong khi đỏ bộ kia.
+
+> **Thứ tự bắt buộc khi nới:** trước khi tách `BR-SKQ-06` khỏi `BR-SKQ-02`,
+> trạng thái kỹ năng phải suy từ corpus. Cột `status` viết tay đã bị gỡ ở
+> migration `0003` đúng vì lý do đó — nới hạn ngạch trong khi trạng thái còn
+> sai là tắt cổng, không phải nới cổng.
 
 ## 7. Data
 

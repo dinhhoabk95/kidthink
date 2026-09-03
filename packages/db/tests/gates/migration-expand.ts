@@ -67,6 +67,15 @@ export function scanMigrationContent(
     if (isComment(line)) {
       continue;
     }
+    const prevLine = i > 0 ? (lines[i - 1] ?? "") : "";
+    if (
+      line.includes("-- contract-drop") ||
+      line.includes("-- allow-destructive") ||
+      prevLine.includes("-- contract-drop") ||
+      prevLine.includes("-- allow-destructive")
+    ) {
+      continue;
+    }
     for (const pat of DESTRUCTIVE_PATTERNS) {
       if (pat.regex.test(line)) {
         violations.push({

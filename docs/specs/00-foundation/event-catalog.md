@@ -170,6 +170,11 @@ set một vòng — xem `BR-RSP-02` ở [`round-sequence-play.md`](../04-play/ro
 | `element_removed` | `{ slot_index, removed_id?, round_index? }` | `GT-036` |
 | `creation_submitted` | `{ placed_items?, round_index? }` | `GT-036` |
 | `rule_detected` | `{ detected, motif, repetitions, score, is_win, round_index? }` | `GT-036` |
+| `intro_step_started` | `{ step_id, action, target_asset_id, asset_kind }` | `GT-000` |
+| `intro_step_answered` | `{ step_id, action, answer_correct, miss_count, tts_used }` | `GT-000` |
+| `intro_step_deferred` | `{ step_id, reason }` | `GT-000` |
+| `intro_recall_answered` | `{ step_id, target_asset_id, answer_correct }` | `GT-000` |
+| `tts_unavailable` | `{ lang }` | `GT-000` |
 
 
 ### 7.3 Trợ giúp

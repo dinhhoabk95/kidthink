@@ -32,7 +32,7 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
         item_id: "opt-2",
         asset: {
           kind: "emoji",
-          ref: "EMJ-six",
+          ref: "6️⃣",
         },
       },
       options: [
@@ -40,7 +40,7 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
           item_id: "opt-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-five",
+            ref: "5️⃣",
           },
           is_correct: false,
         },
@@ -48,7 +48,7 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
           item_id: "opt-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-six",
+            ref: "6️⃣",
           },
           is_correct: true,
         },
@@ -56,7 +56,7 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
           item_id: "opt-3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-seven",
+            ref: "7️⃣",
           },
           is_correct: false,
         },
@@ -95,7 +95,7 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
         item_id: "opt-2",
         asset: {
           kind: "emoji",
-          ref: "EMJ-seven",
+          ref: "7️⃣",
         },
       },
       options: [
@@ -103,7 +103,7 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
           item_id: "opt-1",
           asset: {
             kind: "emoji",
-            ref: "EMJ-six",
+            ref: "6️⃣",
           },
           is_correct: false,
         },
@@ -111,7 +111,7 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
           item_id: "opt-2",
           asset: {
             kind: "emoji",
-            ref: "EMJ-seven",
+            ref: "7️⃣",
           },
           is_correct: true,
         },
@@ -119,7 +119,7 @@ export const SEED_MONT_A11: ContentSeed<unknown, unknown>[] = [
           item_id: "opt-3",
           asset: {
             kind: "emoji",
-            ref: "EMJ-eight",
+            ref: "8️⃣",
           },
           is_correct: false,
         },

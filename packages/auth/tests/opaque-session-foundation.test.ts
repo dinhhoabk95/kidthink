@@ -64,12 +64,12 @@ describe("T1 Opaque Redis Session Foundation (BR-AUT-25 .. BR-AUT-38)", () => {
     expect(restored1.rememberToken).not.toBe(initialRememberToken);
     expect(restored1.sessionToken).toBeDefined();
 
-    // Replay of old rememberToken must fail and trigger reuse detection (BR-AUT-29)
+    // Replay of old rememberToken must fail and trigger reuse detection after grace period (BR-AUT-29)
     await expect(
       store.restoreRemember({
         namespace: "user",
         rememberToken: initialRememberToken,
-        now: new Date("2026-01-02T00:01:00Z"),
+        now: new Date("2026-01-02T00:01:01Z"),
       })
     ).rejects.toThrowError(
       expect.objectContaining({ code: "SESSION_REVOKED", status: 401 })
@@ -85,6 +85,40 @@ describe("T1 Opaque Redis Session Foundation (BR-AUT-25 .. BR-AUT-38)", () => {
     ).rejects.toThrowError(
       expect.objectContaining({ code: "SESSION_REVOKED", status: 401 })
     );
+  });
+
+  it("allows concurrent remember token restoration within 60s grace period", async () => {
+    const redis = new InMemoryRedisClient();
+    const store = new RedisSessionStore(redis);
+
+    const created = await store.createSession({
+      namespace: "user",
+      accountId: 105,
+      displayName: "Người dùng Grace",
+      rememberMe: true,
+      now: new Date("2026-01-01T00:00:00Z"),
+    });
+
+    const initialToken = created.rememberToken ?? "";
+
+    // First request rotates token at T+0s
+    const restored1 = await store.restoreRemember({
+      namespace: "user",
+      rememberToken: initialToken,
+      now: new Date("2026-01-02T00:00:00Z"),
+    });
+
+    expect(restored1.rememberToken).not.toBe(initialToken);
+
+    // Second concurrent request with old token arrives within 30s (inside 60s grace period)
+    const restoredConcurrent = await store.restoreRemember({
+      namespace: "user",
+      rememberToken: initialToken,
+      now: new Date("2026-01-02T00:00:30Z"),
+    });
+
+    expect(restoredConcurrent.sessionToken).toBeDefined();
+    expect(restoredConcurrent.user?.user_id).toBe(105);
   });
 
   it("returns 401 on unknown remember selector miss without revoking account (BR-AUT-29)", async () => {

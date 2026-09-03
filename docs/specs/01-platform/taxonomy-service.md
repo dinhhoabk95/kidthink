@@ -26,11 +26,24 @@ Một sai sót ở đây lan ra mọi nơi và không sửa ngược được ch
 
 ```
 L1 COMPETENCY          6      C1..C6
-   └ L2 STRAND        41      C1.CNT
-       └ L3 SKILL    230      C1.CNT.03
-           └ L4 LEARNING OBJECTIVE  ≥690
+   └ L2 STRAND        71      C1.CNT
+       └ L3 SKILL    408      C1.CNT.03
+           └ L4 LEARNING OBJECTIVE  ≥1.224
                └ L5 ASSET   game_level | lesson | worksheet
 ```
+
+Hai trục cắt ngang cây, không phải tầng:
+
+| Trục | Giá trị | Ghi ở |
+|---|---|---|
+| Band tuổi | `3-4` · `4-5` · `5-6` · **`6-7`** (tiền tiểu học) | `skills.age_min` / `age_max`, ∈ [3, 7] |
+| Bậc trong strand | `basic` · `core` · `advanced` | `skills.tier` |
+
+> Cột `skills.status` đã bị gỡ ở migration `0003`. Nó viết tay và đã chết:
+> seeder ghi cứng `"seeded"` cho mọi hàng nên DB không bao giờ thấy giá trị
+> khác, còn markdown thì ghi 96 kỹ năng là `chờ` trong khi cả 96 đều đã có ≥10
+> game level thật. Trạng thái nội dung suy từ corpus qua `check:skill-quota`,
+> Cấm — NEVER viết tay.
 
 ## 2. Actors
 
@@ -46,7 +59,7 @@ L1 COMPETENCY          6      C1..C6
 | Nơi | |
 |---|---|
 | `packages/taxonomy/` | Pure TS — dựng cây, traversal, kiểm bất biến |
-| `packages/db/src/seed-master/taxonomy/` | Seed 6 + 41 + 230 + ≥690 |
+| `packages/db/src/seed-master/taxonomy/` | Seed 6 + 71 + 408 + ≥1.224 |
 | `GET /api/guest/taxonomy` | Cây công khai cho SEO và trang chương trình |
 | `06-admin/taxonomy-browser.md` | Manager duyệt |
 

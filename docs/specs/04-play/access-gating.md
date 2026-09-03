@@ -41,7 +41,7 @@ Năm trạng thái × bốn bậc = **20 ô** phải có test.
 
 Middleware `assertContentAccess(event, content)` — gọi trong **mọi** handler trả nội dung.
 
-## 4. Main flow — bảy bước, đúng thứ tự
+## 4. Main flow — tám bước, đúng thứ tự
 
 ```
 1. Content tồn tại và status = published?      → không: 404
@@ -51,11 +51,12 @@ Middleware `assertContentAccess(event, content)` — gọi trong **mọi** handl
 5. allowedTiers(caller) ⊇ tier hiệu lực?       → không: 403 + metadata gate
 6. Quota còn? (phút chơi trong ngày)           → hết: 402
 7. Content phù hợp tuổi của trẻ?               → không khớp: 200 + cờ age_mismatch
+8. intro_queue rỗng? (strand đã làm quen)      → không: 428 INTRO_REQUIRED  [BR-CIG-01]
 ```
 
-Thứ tự có ý nghĩa: **404 trước 403 trước 428 trước 402**. Trả 403 cho nội dung không tồn tại
+Thứ tự có ý nghĩa: **404 trước 403 trước 428 trước 402 trước 428 INTRO_REQUIRED**. Trả 403 cho nội dung không tồn tại
 là rò rỉ thông tin; trả 402 trước khi kiểm quyền là nói với người dùng "hết lượt" khi thật
-ra họ không có quyền.
+ra họ không có quyền. Bước 8 chỉ chạy sau khi bảy bước đầu đạt.
 
 ## 5. Alternative flows
 
@@ -117,7 +118,7 @@ async function assertContentAccess(
 ```
 
 Throw `NOT_FOUND` 404 · `NO_ACTIVE_CHILD` 428 · `TIER_LOCKED` 403 ·
-`DAILY_PLAY_CAP_REACHED` 402.
+`DAILY_PLAY_CAP_REACHED` 402 · `INTRO_REQUIRED` 428.
 
 ## 9. Acceptance criteria
 

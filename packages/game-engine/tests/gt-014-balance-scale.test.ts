@@ -51,26 +51,26 @@ describe("GT-014: Cân hai bên (balance-scale)", () => {
         left_pan: [
           {
             item_id: "l1",
-            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            asset: { kind: "emoji", ref: "🍎" },
             weight: 10,
           },
         ],
         right_pan: [
           {
             item_id: "r1",
-            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            asset: { kind: "emoji", ref: "🍎" },
             weight: 2,
           },
         ],
         tray: [
           {
             item_id: "t1",
-            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            asset: { kind: "emoji", ref: "🍎" },
             weight: 1,
           },
           {
             item_id: "t2",
-            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+            asset: { kind: "emoji", ref: "🍎" },
             weight: 1,
           },
         ],

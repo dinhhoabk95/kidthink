@@ -38,6 +38,7 @@ import { GT033Session } from "#src/templates/GT-033/session";
 import { GT034Session } from "#src/templates/GT-034/session";
 import { GT035Session } from "#src/templates/GT-035/session";
 import { GT036Session } from "#src/templates/GT-036/session";
+import { GT037Session } from "#src/templates/GT-000/session";
 
 /**
  * Dynamic lazy loader for GameSession classes by template code (BR-TAK-08).
@@ -189,6 +190,10 @@ export async function loadGameSession(templateCode: string): Promise<new (...arg
       const mod = await import("#src/templates/GT-036/session");
       return mod.GT036Session;
     }
+    case "GT-000": {
+      const mod = await import("#src/templates/GT-000/session");
+      return mod.GT037Session;
+    }
     default:
       throw new Error(`TEMPLATE_NOT_SUPPORTED: ${templateCode}`);
   }
@@ -200,77 +205,254 @@ export async function loadGameSession(templateCode: string): Promise<new (...arg
 export function createGameSessionSync(templateCode: string, cfg: EngineConfig): GameSession {
   switch (templateCode) {
     case "GT-001":
-      return Reflect.construct(GT001Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT001Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-002":
-      return Reflect.construct(GT002Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT002Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-003":
-      return Reflect.construct(GT003Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT003Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-004":
-      return Reflect.construct(GT004Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT004Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-005":
-      return Reflect.construct(GT005Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT005Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-006":
-      return Reflect.construct(GT006Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT006Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-007":
-      return Reflect.construct(GT007Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT007Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-008":
-      return Reflect.construct(GT008Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT008Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-009":
-      return Reflect.construct(GT009Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT009Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-010":
-      return Reflect.construct(GT010Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT010Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-011":
-      return Reflect.construct(GT011Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT011Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-012":
-      return Reflect.construct(GT012Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT012Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-013":
-      return Reflect.construct(GT013Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT013Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-014":
-      return Reflect.construct(GT014Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT014Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-015":
-      return Reflect.construct(GT015Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT015Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-016":
-      return Reflect.construct(GT016Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT016Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-017":
-      return Reflect.construct(GT017Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT017Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-018":
-      return Reflect.construct(GT018Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT018Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-019":
-      return Reflect.construct(GT019Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT019Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-020":
-      return Reflect.construct(GT020Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT020Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-021":
-      return Reflect.construct(GT021Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT021Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-022":
-      return Reflect.construct(GT022Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT022Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-023":
-      return Reflect.construct(GT023Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT023Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-024":
-      return Reflect.construct(GT024Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT024Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-025":
-      return Reflect.construct(GT025Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT025Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-026":
-      return Reflect.construct(GT026Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT026Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-027":
-      return Reflect.construct(GT027Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT027Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-028":
-      return Reflect.construct(GT028Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT028Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-029":
-      return Reflect.construct(GT029Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT029Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-030":
-      return Reflect.construct(GT030Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT030Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-031":
-      return Reflect.construct(GT031Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT031Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-032":
-      return Reflect.construct(GT032Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT032Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-033":
-      return Reflect.construct(GT033Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT033Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-034":
-      return Reflect.construct(GT034Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT034Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-035":
-      return Reflect.construct(GT035Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT035Session, [
+        cfg.content_pack,
+        cfg.difficulty_params,
+        cfg.layout_seed,
+        cfg.theme_id,
+      ]);
     case "GT-036":
-      return Reflect.construct(GT036Session, [cfg.content_pack, cfg.difficulty_params]);
+      return Reflect.construct(GT036Session, [cfg.content_pack, cfg.difficulty_params, cfg.layout_seed, cfg.theme_id]);
+    case "GT-000":
+      return Reflect.construct(GT037Session, [cfg.content_pack, cfg.difficulty_params, cfg.layout_seed, cfg.theme_id]);
     default:
       throw new Error(`TEMPLATE_NOT_SUPPORTED: ${templateCode}`);
   }

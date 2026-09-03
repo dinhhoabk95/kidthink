@@ -158,11 +158,50 @@ export function matchTemplatesForSkill(
 ): string[] {
   const matched: string[] = [];
   for (const [tCode, tObj] of Object.entries(templates)) {
+    if (tCode === "GT-000" || (tObj as { kind?: string }).kind === "teach") {
+      continue;
+    }
     if (isTemplateAffinityMatch(skill, tCode, tObj, engineThinkingMap)) {
       matched.push(tCode);
     }
   }
   return matched;
+}
+
+function filterAssessTemplates(
+  allTemplates: Record<string, GameTemplate>
+): Record<string, GameTemplate> {
+  const templates: Record<string, GameTemplate> = {};
+  for (const [code, tmpl] of Object.entries(allTemplates)) {
+    if (code !== "GT-000" && (tmpl as { kind?: string }).kind !== "teach") {
+      templates[code] = tmpl;
+    }
+  }
+  return templates;
+}
+
+function collectSkillMetrics(
+  s: ParsedSkill,
+  matchedCount: number,
+  lists: {
+    c1Below4: string[];
+    allBelow2: string[];
+    singleTemplateSkills: string[];
+    zeroTemplateSkills: string[];
+  }
+): void {
+  if (s.competency_code === "C1" && matchedCount < 4) {
+    lists.c1Below4.push(s.code);
+  }
+  if (matchedCount < 2) {
+    lists.allBelow2.push(s.code);
+  }
+  if (matchedCount === 1) {
+    lists.singleTemplateSkills.push(s.code);
+  }
+  if (matchedCount === 0) {
+    lists.zeroTemplateSkills.push(s.code);
+  }
 }
 
 export function buildSkillTemplateAffinityMatrix(
@@ -171,15 +210,17 @@ export function buildSkillTemplateAffinityMatrix(
   templatesOverride?: Record<string, GameTemplate>
 ): SkillAffinityMatrixData {
   const skills = parseTaxonomyDocs(docsDir ?? repoPath("docs/taxonomy"));
-  const templates = templatesOverride ?? ALL_TEMPLATES;
+  const templates = filterAssessTemplates(templatesOverride ?? ALL_TEMPLATES);
   const engineThinkingMap = extractEngineThinkingMap(specsDir);
 
   const affinities: Record<string, string[]> = {};
   let band34SkillsCount = 0;
-  const c1Below4: string[] = [];
-  const allBelow2: string[] = [];
-  const singleTemplateSkills: string[] = [];
-  const zeroTemplateSkills: string[] = [];
+  const metricsLists = {
+    c1Below4: [] as string[],
+    allBelow2: [] as string[],
+    singleTemplateSkills: [] as string[],
+    zeroTemplateSkills: [] as string[],
+  };
 
   for (const s of skills) {
     if (s.age_min === 3) {
@@ -188,21 +229,11 @@ export function buildSkillTemplateAffinityMatrix(
 
     const matched = matchTemplatesForSkill(s, templates, engineThinkingMap);
     affinities[s.code] = matched;
-
-    if (s.competency_code === "C1" && matched.length < 4) {
-      c1Below4.push(s.code);
-    }
-    if (matched.length < 2) {
-      allBelow2.push(s.code);
-    }
-    if (matched.length === 1) {
-      singleTemplateSkills.push(s.code);
-    }
-    if (matched.length === 0) {
-      zeroTemplateSkills.push(s.code);
-    }
+    collectSkillMetrics(s, matched.length, metricsLists);
   }
 
+  const { c1Below4, allBelow2, singleTemplateSkills, zeroTemplateSkills } =
+    metricsLists;
   const exceptions = Array.from(new Set([...allBelow2, ...c1Below4])).sort();
 
   return {

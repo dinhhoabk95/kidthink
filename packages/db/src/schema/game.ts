@@ -16,11 +16,17 @@ import {
 } from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.ts";
 import { managers } from "./identity.ts";
+import { skillDatasets } from "./taxonomy.ts";
 import { versioningConstraints } from "./versioning.ts";
 
 export const gameTemplateStatusEnum = pgEnum("game_template_status", [
   "active",
   "deprecated",
+]);
+
+export const gameTemplateKindEnum = pgEnum("game_template_kind", [
+  "assess",
+  "teach",
 ]);
 
 export const contentLifecycleStatusEnum = pgEnum("content_lifecycle_status", [
@@ -67,6 +73,7 @@ export const gameTemplates = pgTable(
     scoring: jsonb("scoring"),
     events: text("events").array(),
     engineSession: text("engine_session"),
+    kind: gameTemplateKindEnum("kind").notNull().default("assess"),
     status: gameTemplateStatusEnum("status").notNull().default("active"),
     version: integer("version").notNull().default(1),
     ...timestamps(),
@@ -108,6 +115,10 @@ export const gameLevels = pgTable(
     origin: contentOriginEnum("origin").notNull().default("human"),
     authoredIn: authoredInEnum("authored_in").notNull().default("studio"),
     seedBatchId: bigint("seed_batch_id", { mode: "number" }),
+    skillDatasetId: bigint("skill_dataset_id", { mode: "number" }).references(
+      () => skillDatasets.id
+    ),
+    projectionRef: varchar("projection_ref", { length: 100 }),
     createdByManagerId: bigint("created_by_manager_id", {
       mode: "number",
     }).references(() => managers.id),

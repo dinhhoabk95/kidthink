@@ -81,7 +81,7 @@ nội dung Montessori đều ngầm giả định mười một khuôn trò chơ
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-MCM-01` (dataset là nguồn, không phải nội dung) | Dataset là **nguồn soạn thảo**, cấm nạp thẳng vào bảng nội dung bằng bất kỳ script nào | Nó không có `code`, không có `access_tier`, không qua tám cổng của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md). Nạp thẳng là đi vòng qua toàn bộ cổng chất lượng |
+| `BR-MCM-01` (dataset là nguồn, không phải nội dung) | Dataset là **nguồn soạn thảo**, cấm nạp thẳng vào bảng nội dung bằng bất kỳ script nào | Nó không có `code`, không có `access_tier`, không qua bộ cổng của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md). Nạp thẳng là đi vòng qua toàn bộ cổng chất lượng |
 | `BR-MCM-02` (ánh xạ bất biến) | Hàng ánh xạ ở mục 7.1 **bất biến** sau khi spec này `approved`; đổi strand hay band của một workbook là version mới của spec | Mã game level mang competency và strand ngay trong hai đoạn đầu của chính nó, theo mục 7.1 của [`id-conventions.md`](../00-foundation/id-conventions.md). Đổi ánh xạ sau khi seed là đổi mã đã published |
 | `BR-MCM-03` (strand phân giải thành skill thật) | Cột strand ở 7.1 là **gợi ý tra cứu**, không phải giá trị seed. Seeder phải mang skill code có thật trong [`taxonomy/index.md`](../../taxonomy/index.md) | Strand không phải đơn vị gắn được vào `content_skill_map`. Seed strand là seed một thứ không tồn tại |
 | `BR-MCM-04` (cấm tự đặt skill) | Người biên soạn và AI agent IDE cấm — **NEVER tạo skill hay strand mới** để khớp một workbook | `BR-CSA-08` (AI không sinh taxonomy) — taxonomy là Lớp 1. Một workbook không khớp taxonomy là tín hiệu về taxonomy, không phải giấy phép mở rộng nó |
@@ -250,7 +250,7 @@ Không sở hữu route. Bảng ánh xạ là tài liệu, đọc bằng mắt l
 Scenario: BR-MCM-01 — dataset không nạp thẳng vào database
   When quét mọi script dưới packages/db và scripts
   Then không script nào đọc docs/montessori/dataset/raw-montessori-corpus.md
-  And không đường nào ghi vào game_levels mà bỏ qua tám cổng seed
+  And không đường nào ghi vào game_levels mà bỏ qua cổng seed
 
 Scenario: BR-MCM-03 — seeder mang skill code thật, không mang strand
   Given một seeder Montessori khai skill_codes là "C1.NREC"

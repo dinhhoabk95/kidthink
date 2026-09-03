@@ -41,85 +41,85 @@ const SCENE = {
 export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   // ── So sánh hai vật: chọn một đáp án (GT-001) ──────────────────
   "GL-C2-CMP-SIZ-0008": tapSelect("Bé chạm vào quả to hơn nhé!", [
-    { id: "watermelon", ref: "EMJ-watermelon", correct: true },
-    { id: "strawberry", ref: "EMJ-strawberry" },
+    { id: "watermelon", ref: "🍉", correct: true },
+    { id: "strawberry", ref: "🍓" },
   ]),
   "GL-C2-CMP-SIZ-0009": tapSelect("Bé chạm vào cái cây cao hơn nhé!", [
-    { id: "tall-tree", ref: "EMJ-evergreen-tree", correct: true },
-    { id: "seedling", ref: "EMJ-seedling" },
+    { id: "tall-tree", ref: "🌲", correct: true },
+    { id: "seedling", ref: "🌱" },
   ]),
   "GL-C2-CMP-SIZ-0017": tapSelect("Bé chạm vào con vật to hơn nhé!", [
-    { id: "elephant", ref: "EMJ-elephant", correct: true },
-    { id: "mouse", ref: "EMJ-mouse-face" },
+    { id: "elephant", ref: "🐘", correct: true },
+    { id: "mouse", ref: "🐭" },
   ]),
   "GL-C3-LOG-CMP-0008": tapSelect("Bé chạm vào con vật nặng hơn nhé!", [
-    { id: "hippo", ref: "EMJ-hippopotamus", correct: true },
-    { id: "feather", ref: "EMJ-feather" },
+    { id: "hippo", ref: "🦛", correct: true },
+    { id: "feather", ref: "🪶" },
   ]),
   "GL-C3-LOG-CMP-0009": tapSelect("Bé chạm vào thứ chạy nhanh hơn nhé!", [
-    { id: "rocket", ref: "EMJ-rocket", correct: true },
-    { id: "snail", ref: "EMJ-snail" },
+    { id: "rocket", ref: "🚀", correct: true },
+    { id: "snail", ref: "🐌" },
   ]),
   "GL-C3-LOG-CMP-0015": tapSelect("Bé chạm vào vật chứa được nhiều nước hơn!", [
-    { id: "jar", ref: "EMJ-jar", correct: true },
-    { id: "cup", ref: "EMJ-cup-with-straw" },
+    { id: "jar", ref: "🫙", correct: true },
+    { id: "cup", ref: "🥤" },
   ]),
   "GL-C3-LOG-CMP-0020": tapSelect("Bé chạm vào vật dài hơn nhé!", [
-    { id: "ruler", ref: "EMJ-ruler", correct: true },
-    { id: "pencil", ref: "EMJ-pencil" },
+    { id: "ruler", ref: "📏", correct: true },
+    { id: "pencil", ref: "✏️" },
   ]),
   "GL-C4-OBS-CARD-0003": tapSelect(
     "Bé chạm vào quả khác loại với hai quả kia!",
     [
-      { id: "apple-1", ref: "EMJ-red-apple" },
-      { id: "apple-2", ref: "EMJ-red-apple" },
-      { id: "banana", ref: "EMJ-banana", correct: true },
+      { id: "apple-1", ref: "🍎" },
+      { id: "apple-2", ref: "🍎" },
+      { id: "banana", ref: "🍌", correct: true },
     ]
   ),
   "GL-C4-DIF-CMP-0007": tapSelect("Bé chạm vào con vật không phải là cá nhé!", [
-    { id: "fish-1", ref: "EMJ-tropical-fish" },
-    { id: "fish-2", ref: "EMJ-tropical-fish" },
-    { id: "chick", ref: "EMJ-front-facing-baby-chick", correct: true },
+    { id: "fish-1", ref: "🐠" },
+    { id: "fish-2", ref: "🐠" },
+    { id: "chick", ref: "🐥", correct: true },
   ]),
   "GL-C4-DIF-CMP-0013": tapSelect("Bé chạm vào bông hoa có màu khác nhé!", [
-    { id: "rose-1", ref: "EMJ-rose" },
-    { id: "rose-2", ref: "EMJ-rose" },
-    { id: "sunflower", ref: "EMJ-sunflower", correct: true },
+    { id: "rose-1", ref: "🌹" },
+    { id: "rose-2", ref: "🌹" },
+    { id: "sunflower", ref: "🌻", correct: true },
   ]),
   "GL-C4-DIF-CMP-0017": tapSelect(
     "Bé chạm vào chiếc xe đang quay về phía bé!",
     [
-      { id: "oncoming", ref: "EMJ-oncoming-automobile", correct: true },
-      { id: "car", ref: "EMJ-car" },
-      { id: "taxi", ref: "EMJ-taxi" },
+      { id: "oncoming", ref: "🚘", correct: true },
+      { id: "car", ref: "🚗" },
+      { id: "taxi", ref: "🚕" },
     ]
   ),
   "GL-C5-EXP-CMP-0006": tapSelect("Bé chạm vào ngôi nhà TO nhé!", [
-    { id: "house", ref: "EMJ-house", correct: true },
-    { id: "hut", ref: "EMJ-hut" },
+    { id: "house", ref: "🏠", correct: true },
+    { id: "hut", ref: "🛖" },
   ]),
   "GL-C5-EXP-CMP-0007": tapSelect("Bé chạm vào con vật CAO nhé!", [
-    { id: "giraffe", ref: "EMJ-giraffe", correct: true },
-    { id: "chipmunk", ref: "EMJ-chipmunk" },
+    { id: "giraffe", ref: "🦒", correct: true },
+    { id: "chipmunk", ref: "🐿️" },
   ]),
   "GL-C5-EXP-CMP-0013": tapSelect("Cây nào có TRƯỚC, bé chạm vào nhé!", [
-    { id: "seedling", ref: "EMJ-seedling", correct: true },
-    { id: "tree", ref: "EMJ-deciduous-tree" },
+    { id: "seedling", ref: "🌱", correct: true },
+    { id: "tree", ref: "🌳" },
   ]),
   "GL-C5-EXP-CMP-0017": tapSelect("Khuôn mặt nào đang vui, bé chạm vào nhé!", [
-    { id: "grin", ref: "EMJ-grin", correct: true },
-    { id: "cry", ref: "EMJ-cry" },
+    { id: "grin", ref: "😄", correct: true },
+    { id: "cry", ref: "😢" },
   ]),
   "GL-C6-MEM-CMP-0007": tapSelect("Bé chạm vào quả táo XANH nhé!", [
-    { id: "green-apple", ref: "EMJ-green-apple", correct: true },
-    { id: "red-apple", ref: "EMJ-red-apple" },
+    { id: "green-apple", ref: "🍏", correct: true },
+    { id: "red-apple", ref: "🍎" },
   ]),
 
   // ── So sánh số lượng: cân hai bên (GT-014) ─────────────────────
   "GL-C1-CMP-NUM-0010": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy quả táo nhé!",
-      "EMJ-red-apple",
+      "🍎",
       3,
       1500,
       [2, 4]
@@ -130,7 +130,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C1-CMP-NUM-0011": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy viên kẹo nhé!",
-      "EMJ-candy",
+      "🍬",
       4,
       1500,
       [3, 5]
@@ -141,7 +141,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C1-CMP-NUM-0012": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy quả bóng nhé!",
-      "EMJ-soccer",
+      "⚽",
       4,
       1500,
       [3, 5]
@@ -152,7 +152,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C1-CMP-NUM-0013": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy chiếc bánh nhé!",
-      "EMJ-cupcake",
+      "🧁",
       5,
       1500,
       [4, 6]
@@ -163,7 +163,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C1-CMP-CARD-0115": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy chú cá nhé!",
-      "EMJ-fish",
+      "🐟",
       4,
       2000,
       [3, 5]
@@ -174,7 +174,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C1-CMP-CARD-0116": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy bông hoa nhé!",
-      "EMJ-sunflower",
+      "🌻",
       3,
       2000,
       [2, 4]
@@ -183,11 +183,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     instruction: "Bé nhìn nhanh xem có mấy bông hoa nhé!",
   },
   "GL-C6-MEM-CMP-0015": {
-    ...memoryFlip("Bé lật thẻ tìm hai quả giống nhau nhé!", [
-      "EMJ-grapes",
-      "EMJ-orange",
-      "EMJ-red-apple",
-    ]),
+    ...memoryFlip("Bé lật thẻ tìm hai quả giống nhau nhé!", ["🍇", "🍊", "🍎"]),
     instruction: "Bé lật thẻ và tìm hai quả giống nhau nhé!",
   },
 
@@ -195,191 +191,191 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C1-SEQ-PAT-0014": patternSlots(
     "Bé kéo quả vào ô cho đúng quy luật táo - chuối!",
     [
-      { ref: "EMJ-red-apple", label: "Quả táo" },
-      { ref: "EMJ-banana", label: "Quả chuối" },
+      { ref: "🍎", label: "Quả táo" },
+      { ref: "🍌", label: "Quả chuối" },
     ],
     2
   ),
   "GL-C1-SEQ-PAT-0016": latinMatrix(
     "Bé chọn chiếc xe điền vào ô trống nhé!",
-    ["EMJ-car", "EMJ-taxi"],
-    "EMJ-suv"
+    ["🚗", "🚕"],
+    "🚙"
   ),
   "GL-C2-SEQ-PAT-0011": patternSlots(
     "Bé kéo hình vào ô cho đúng quy luật nhé!",
     [
-      { ref: "EMJ-red-circle", label: "Hình tròn đỏ" },
-      { ref: "EMJ-blue-square", label: "Hình vuông xanh" },
+      { ref: "🔴", label: "Hình tròn đỏ" },
+      { ref: "🟦", label: "Hình vuông xanh" },
     ],
     2
   ),
   "GL-C2-SEQ-PAT-0012": patternSlots(
     "Bé kéo ngôi sao vào ô cho đúng quy luật nhé!",
     [
-      { ref: "EMJ-glowing-star", label: "Sao lớn" },
-      { ref: "EMJ-star", label: "Sao nhỏ" },
+      { ref: "🌟", label: "Sao lớn" },
+      { ref: "⭐", label: "Sao nhỏ" },
     ],
     2
   ),
   "GL-C2-SEQ-PAT-0018": latinMatrix(
     "Bé chọn hình điền vào ô trống cho đủ ba màu!",
-    ["EMJ-red-circle", "EMJ-green-circle", "EMJ-yellow-circle"],
-    "EMJ-blue-circle"
+    ["🔴", "🟢", "🟡"],
+    "🔵"
   ),
   "GL-C3-PAT-SEQ-0006": patternSlots(
     "Bé kéo khuôn mặt vào ô cho đúng quy luật nhé!",
     [
-      { ref: "EMJ-grinning", label: "Mặt cười" },
-      { ref: "EMJ-heart-eyes", label: "Mặt yêu thương" },
+      { ref: "😀", label: "Mặt cười" },
+      { ref: "😍", label: "Mặt yêu thương" },
     ],
     2
   ),
   "GL-C3-PAT-SEQ-0007": patternSlots(
     "Bé kéo thời tiết vào ô cho đúng quy luật nhé!",
     [
-      { ref: "EMJ-sun", label: "Trời nắng" },
-      { ref: "EMJ-rain", label: "Trời mưa" },
+      { ref: "☀️", label: "Trời nắng" },
+      { ref: "🌧️", label: "Trời mưa" },
     ],
     2
   ),
   "GL-C3-PAT-SEQ-0012": latinMatrix(
     "Bé chọn dụng cụ điền vào ô trống nhé!",
-    ["EMJ-pencil", "EMJ-ruler", "EMJ-scissors"],
-    "EMJ-blue-book"
+    ["✏️", "📏", "✂️"],
+    "📘"
   ),
   "GL-C3-PAT-SEQ-0016": latinMatrix(
     "Bé chọn hình điền vào ô trống cho đủ ba màu!",
-    ["EMJ-red-circle", "EMJ-yellow-circle", "EMJ-blue-circle"],
-    "EMJ-green-circle"
+    ["🔴", "🟡", "🔵"],
+    "🟢"
   ),
   "GL-C4-SEQ-OBS-0006": patternSlots(
     "Bé kéo màu vào ô cho đúng quy luật nhé!",
     [
-      { ref: "EMJ-green-circle", label: "Màu xanh" },
-      { ref: "EMJ-yellow-circle", label: "Màu vàng" },
+      { ref: "🟢", label: "Màu xanh" },
+      { ref: "🟡", label: "Màu vàng" },
     ],
     2
   ),
   "GL-C4-SEQ-OBS-0012": patternSlots(
     "Bé kéo con vật vào ô cho đúng quy luật nhé!",
     [
-      { ref: "EMJ-dog", label: "Chú chó" },
-      { ref: "EMJ-cat", label: "Chú mèo" },
+      { ref: "🐶", label: "Chú chó" },
+      { ref: "🐱", label: "Chú mèo" },
     ],
     2
   ),
   "GL-C5-VOC-SEQ-0008": patternSlots(
     "Bé kéo người vào ô cho đúng quy luật nhé!",
     [
-      { ref: "EMJ-father", label: "Bố" },
-      { ref: "EMJ-mother", label: "Mẹ" },
+      { ref: "👨", label: "Bố" },
+      { ref: "👩", label: "Mẹ" },
     ],
     2
   ),
   "GL-C6-MEM-SEQ-0006": patternSlots(
     "Bé kéo hình vào ô cho đúng quy luật nhé!",
     [
-      { ref: "EMJ-red-circle", label: "Hình đỏ" },
-      { ref: "EMJ-green-circle", label: "Hình xanh" },
+      { ref: "🔴", label: "Hình đỏ" },
+      { ref: "🟢", label: "Hình xanh" },
     ],
     2
   ),
   "GL-C6-MEM-SEQ-0012": patternSlots(
     "Bé kéo hình vào ô cho đúng quy luật nhé!",
     [
-      { ref: "EMJ-sun", label: "Mặt trời" },
-      { ref: "EMJ-crescent-moon", label: "Mặt trăng" },
-      { ref: "EMJ-star", label: "Ngôi sao" },
+      { ref: "☀️", label: "Mặt trời" },
+      { ref: "🌙", label: "Mặt trăng" },
+      { ref: "⭐", label: "Ngôi sao" },
     ],
     2
   ),
   "GL-C1-PAT-SEQ-0121": latinMatrix(
     "Bé chọn quả điền vào ô trống cho đúng quy luật!",
-    ["EMJ-red-apple", "EMJ-banana"],
-    "EMJ-orange"
+    ["🍎", "🍌"],
+    "🍊"
   ),
   "GL-C1-PAT-SEQ-0122": latinMatrix(
     "Bé chọn hình điền vào ô trống cho đủ ba màu!",
-    ["EMJ-red-circle", "EMJ-green-circle", "EMJ-blue-circle"],
-    "EMJ-yellow-circle"
+    ["🔴", "🟢", "🔵"],
+    "🟡"
   ),
   "GL-C3-MAT-CHO-0026": latinMatrix(
     "Bé chọn mũi tên điền vào ô trống nhé!",
-    ["EMJ-up-arrow", "EMJ-right-arrow"],
-    "EMJ-left-arrow"
+    ["⬆️", "➡️"],
+    "⬅️"
   ),
 
   // ── Dãy có thứ tự: kéo vào đúng ô (GT-008) ────────────────────
   "GL-C1-SEQ-PAT-0015": {
     ...orderedSlots("Bé kéo các số vào đúng ô theo thứ tự 1 đến 5!", [
-      { id: "n1", ref: "EMJ-one", label: "1" },
-      { id: "n2", ref: "EMJ-two", label: "2" },
-      { id: "n3", ref: "EMJ-three", label: "3" },
-      { id: "n4", ref: "EMJ-four", label: "4" },
-      { id: "n5", ref: "EMJ-five", label: "5" },
+      { id: "n1", ref: "1️⃣", label: "1" },
+      { id: "n2", ref: "2️⃣", label: "2" },
+      { id: "n3", ref: "3️⃣", label: "3" },
+      { id: "n4", ref: "4️⃣", label: "4" },
+      { id: "n5", ref: "5️⃣", label: "5" },
     ]),
     title: "Xếp dãy số 1 đến 5",
     instruction: "Bé kéo thẻ số vào ô theo thứ tự 1-5!",
   },
   "GL-C4-SEQ-OBS-0018": {
     ...sequenceOrder("Bé xếp mặt trăng từ tròn đầy đến tối dần nhé!", [
-      { id: "m-full", ref: "EMJ-full-moon", label: "Trăng tròn" },
-      { id: "m-cres", ref: "EMJ-crescent-moon", label: "Trăng khuyết" },
-      { id: "m-new", ref: "EMJ-new-moon", label: "Trăng tối" },
+      { id: "m-full", ref: "🌕", label: "Trăng tròn" },
+      { id: "m-cres", ref: "🌙", label: "Trăng khuyết" },
+      { id: "m-new", ref: "🌑", label: "Trăng tối" },
     ]),
     title: "Xếp thứ tự mặt trăng",
     instruction: "Bé xếp mặt trăng từ tròn đầy đến tối dần nhé!",
   },
   "GL-C5-VOC-SEQ-0014": {
     ...sequenceOrder("Bé xếp câu chuyện quả trứng nở thành gà nhé!", [
-      { id: "s-egg", ref: "EMJ-egg", label: "Quả trứng" },
-      { id: "s-hatch", ref: "EMJ-hatching-chick", label: "Trứng nở" },
-      { id: "s-chick", ref: "EMJ-front-facing-baby-chick", label: "Gà con" },
-      { id: "s-hen", ref: "EMJ-chicken", label: "Gà lớn" },
+      { id: "s-egg", ref: "🥚", label: "Quả trứng" },
+      { id: "s-hatch", ref: "🐣", label: "Trứng nở" },
+      { id: "s-chick", ref: "🐥", label: "Gà con" },
+      { id: "s-hen", ref: "🐔", label: "Gà lớn" },
     ]),
     title: "Xếp câu chuyện quả trứng",
     instruction: "Bé xếp các bức tranh theo thứ tự câu chuyện nhé!",
   },
   "GL-C5-VOC-SEQ-0019": {
     ...sequenceOrder("Bé xếp bốn mùa theo đúng thứ tự trong năm nhé!", [
-      { id: "spring", ref: "EMJ-cherry-blossom", label: "Mùa xuân" },
-      { id: "summer", ref: "EMJ-sun", label: "Mùa hè" },
-      { id: "autumn", ref: "EMJ-fallen-leaf", label: "Mùa thu" },
-      { id: "winter", ref: "EMJ-snowflake", label: "Mùa đông" },
+      { id: "spring", ref: "🌸", label: "Mùa xuân" },
+      { id: "summer", ref: "☀️", label: "Mùa hè" },
+      { id: "autumn", ref: "🍂", label: "Mùa thu" },
+      { id: "winter", ref: "❄️", label: "Mùa đông" },
     ]),
     title: "Xếp thứ tự bốn mùa",
     instruction: "Bé xếp bốn mùa theo đúng thứ tự trong năm nhé!",
   },
   "GL-C6-MEM-SEQ-0017": {
     ...sequenceOrder("Bé xếp các số theo thứ tự đếm ngược từ 5 về 1!", [
-      { id: "d5", ref: "EMJ-five", label: "5" },
-      { id: "d4", ref: "EMJ-four", label: "4" },
-      { id: "d3", ref: "EMJ-three", label: "3" },
-      { id: "d2", ref: "EMJ-two", label: "2" },
-      { id: "d1", ref: "EMJ-one", label: "1" },
+      { id: "d5", ref: "5️⃣", label: "5" },
+      { id: "d4", ref: "4️⃣", label: "4" },
+      { id: "d3", ref: "3️⃣", label: "3" },
+      { id: "d2", ref: "2️⃣", label: "2" },
+      { id: "d1", ref: "1️⃣", label: "1" },
     ]),
     title: "Xếp dãy số đếm ngược",
     instruction: "Bé xếp thẻ số theo thứ tự đếm ngược!",
   },
   "GL-C1-POS-LOC-0017": tapSelect("Bé chạm vào quả táo nhé!", [
-    { id: "apple", ref: "EMJ-red-apple", correct: true },
-    { id: "banana", ref: "EMJ-banana" },
-    { id: "orange", ref: "EMJ-orange" },
+    { id: "apple", ref: "🍎", correct: true },
+    { id: "banana", ref: "🍌" },
+    { id: "orange", ref: "🍊" },
   ]),
   "GL-C2-POS-LOC-0004": tapSelect("Bé chạm vào chú gấu bông nhé!", [
-    { id: "teddy", ref: "EMJ-teddy-bear", correct: true },
-    { id: "box", ref: "EMJ-package" },
-    { id: "book", ref: "EMJ-blue-book" },
+    { id: "teddy", ref: "🧸", correct: true },
+    { id: "box", ref: "📦" },
+    { id: "book", ref: "📘" },
   ]),
   "GL-C2-POS-LOC-0005": tapSelect("Bé chạm vào chú chó nhé!", [
-    { id: "dog", ref: "EMJ-dog", correct: true },
-    { id: "cat", ref: "EMJ-cat" },
-    { id: "house", ref: "EMJ-house" },
+    { id: "dog", ref: "🐶", correct: true },
+    { id: "cat", ref: "🐱" },
+    { id: "house", ref: "🏠" },
   ]),
   "GL-C4-OBS-LOC-0005": tapSelect("Bé chạm vào chú bướm nhé!", [
-    { id: "butterfly", ref: "EMJ-butterfly", correct: true },
-    { id: "leaf", ref: "EMJ-leaf-fluttering" },
-    { id: "bee", ref: "EMJ-bee" },
+    { id: "butterfly", ref: "🦋", correct: true },
+    { id: "leaf", ref: "🍃" },
+    { id: "bee", ref: "🐝" },
   ]),
 
   // ── Vị trí: tìm trong khung cảnh (GT-022) ─────────────────────
@@ -389,13 +385,13 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     [
       {
         id: "rabbit",
-        ref: "EMJ-rabbit-face",
+        ref: "🐰",
         target: true,
         x: SCENE.left,
         y: SCENE.middle,
       },
-      { id: "bear", ref: "EMJ-bear", x: SCENE.right, y: SCENE.middle },
-      { id: "bird", ref: "EMJ-bird", x: SCENE.centre, y: SCENE.top },
+      { id: "bear", ref: "🐻", x: SCENE.right, y: SCENE.middle },
+      { id: "bird", ref: "🐦", x: SCENE.centre, y: SCENE.top },
     ]
   ),
   "GL-C2-DIR-NAV-0010": hiddenObject(
@@ -404,18 +400,18 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     [
       {
         id: "chick",
-        ref: "EMJ-front-facing-baby-chick",
+        ref: "🐥",
         x: SCENE.left,
         y: SCENE.middle,
       },
       {
         id: "bird",
-        ref: "EMJ-bird",
+        ref: "🐦",
         target: true,
         x: SCENE.right,
         y: SCENE.middle,
       },
-      { id: "bee", ref: "EMJ-bee", x: SCENE.centre, y: SCENE.bottom },
+      { id: "bee", ref: "🐝", x: SCENE.centre, y: SCENE.bottom },
     ]
   ),
   "GL-C2-POS-LOC-0014": hiddenObject(
@@ -424,13 +420,13 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     [
       {
         id: "front",
-        ref: "EMJ-oncoming-automobile",
+        ref: "🚘",
         target: true,
         x: SCENE.centre,
         y: SCENE.top,
       },
-      { id: "back", ref: "EMJ-taxi", x: SCENE.centre, y: SCENE.bottom },
-      { id: "bus", ref: "EMJ-suv", x: SCENE.left, y: SCENE.middle },
+      { id: "back", ref: "🚕", x: SCENE.centre, y: SCENE.bottom },
+      { id: "bus", ref: "🚙", x: SCENE.left, y: SCENE.middle },
     ]
   ),
   "GL-C2-DIR-NAV-0016": hiddenObject(
@@ -439,13 +435,13 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     [
       {
         id: "star",
-        ref: "EMJ-star",
+        ref: "⭐",
         target: true,
         x: SCENE.left,
         y: SCENE.middle,
       },
-      { id: "moon", ref: "EMJ-crescent-moon", x: SCENE.right, y: SCENE.middle },
-      { id: "sun", ref: "EMJ-sun", x: SCENE.centre, y: SCENE.top },
+      { id: "moon", ref: "🌙", x: SCENE.right, y: SCENE.middle },
+      { id: "sun", ref: "☀️", x: SCENE.centre, y: SCENE.top },
     ]
   ),
   "GL-C3-LOG-POS-0011": hiddenObject(
@@ -454,13 +450,13 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     [
       {
         id: "first",
-        ref: "EMJ-girl",
+        ref: "👧",
         target: true,
         x: SCENE.left,
         y: SCENE.middle,
       },
-      { id: "second", ref: "EMJ-boy", x: SCENE.centre, y: SCENE.middle },
-      { id: "third", ref: "EMJ-baby", x: SCENE.right, y: SCENE.middle },
+      { id: "second", ref: "👦", x: SCENE.centre, y: SCENE.middle },
+      { id: "third", ref: "👶", x: SCENE.right, y: SCENE.middle },
     ]
   ),
   "GL-C4-OBS-LOC-0009": hiddenObject(
@@ -469,15 +465,15 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     [
       {
         id: "palm",
-        ref: "EMJ-palm-tree",
+        ref: "🌴",
         target: true,
         x: SCENE.centre,
         y: SCENE.middle,
       },
-      { id: "rock", ref: "EMJ-rock", x: SCENE.left, y: SCENE.bottom },
+      { id: "rock", ref: "🪨", x: SCENE.left, y: SCENE.bottom },
       {
         id: "tree",
-        ref: "EMJ-deciduous-tree",
+        ref: "🌳",
         x: SCENE.right,
         y: SCENE.middle,
       },
@@ -489,14 +485,14 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     [
       {
         id: "turtle",
-        ref: "EMJ-sea-turtle",
+        ref: "🐢",
         target: true,
         x: SCENE.centre,
         y: SCENE.bottom,
       },
-      { id: "rock-1", ref: "EMJ-rock", x: SCENE.left, y: SCENE.middle },
-      { id: "rock-2", ref: "EMJ-rock", x: SCENE.right, y: SCENE.bottom },
-      { id: "fish", ref: "EMJ-fish", x: SCENE.centre, y: SCENE.top },
+      { id: "rock-1", ref: "🪨", x: SCENE.left, y: SCENE.middle },
+      { id: "rock-2", ref: "🪨", x: SCENE.right, y: SCENE.bottom },
+      { id: "fish", ref: "🐟", x: SCENE.centre, y: SCENE.top },
     ]
   ),
   "GL-C5-VOC-LOC-0009": hiddenObject(
@@ -505,13 +501,13 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     [
       {
         id: "book",
-        ref: "EMJ-blue-book",
+        ref: "📘",
         target: true,
         x: SCENE.left,
         y: SCENE.middle,
       },
-      { id: "pencil", ref: "EMJ-pencil", x: SCENE.centre, y: SCENE.middle },
-      { id: "ruler", ref: "EMJ-ruler", x: SCENE.right, y: SCENE.middle },
+      { id: "pencil", ref: "✏️", x: SCENE.centre, y: SCENE.middle },
+      { id: "ruler", ref: "📏", x: SCENE.right, y: SCENE.middle },
     ]
   ),
   "GL-C5-VOC-LOC-0015": hiddenObject(
@@ -520,28 +516,28 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     [
       {
         id: "crosswalk",
-        ref: "EMJ-children-crossing",
+        ref: "🚸",
         target: true,
         x: SCENE.centre,
         y: SCENE.middle,
       },
-      { id: "stop", ref: "EMJ-stop-sign", x: SCENE.left, y: SCENE.middle },
-      { id: "car", ref: "EMJ-car", x: SCENE.right, y: SCENE.bottom },
+      { id: "stop", ref: "🛑", x: SCENE.left, y: SCENE.middle },
+      { id: "car", ref: "🚗", x: SCENE.right, y: SCENE.bottom },
     ]
   ),
   "GL-C6-ATT-LOC-0008": hiddenObject(
     "Bé tìm chú ong giữa vườn hoa nhé!",
     "Chú ong",
     [
-      { id: "bee", ref: "EMJ-bee", target: true, x: SCENE.right, y: SCENE.top },
+      { id: "bee", ref: "🐝", target: true, x: SCENE.right, y: SCENE.top },
       {
         id: "flower-1",
-        ref: "EMJ-cherry-blossom",
+        ref: "🌸",
         x: SCENE.left,
         y: SCENE.bottom,
       },
-      { id: "flower-2", ref: "EMJ-hibiscus", x: SCENE.centre, y: SCENE.middle },
-      { id: "flower-3", ref: "EMJ-sunflower", x: SCENE.right, y: SCENE.bottom },
+      { id: "flower-2", ref: "🌺", x: SCENE.centre, y: SCENE.middle },
+      { id: "flower-3", ref: "🌻", x: SCENE.right, y: SCENE.bottom },
     ]
   ),
   "GL-C6-ATT-LOC-0014": hiddenObject(
@@ -550,16 +546,16 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     [
       {
         id: "gem",
-        ref: "EMJ-gem-stone",
+        ref: "💎",
         target: true,
         x: SCENE.centre,
         y: SCENE.middle,
       },
-      { id: "circle-1", ref: "EMJ-red-circle", x: SCENE.left, y: SCENE.top },
-      { id: "circle-2", ref: "EMJ-blue-circle", x: SCENE.right, y: SCENE.top },
+      { id: "circle-1", ref: "🔴", x: SCENE.left, y: SCENE.top },
+      { id: "circle-2", ref: "🔵", x: SCENE.right, y: SCENE.top },
       {
         id: "circle-3",
-        ref: "EMJ-yellow-circle",
+        ref: "🟡",
         x: SCENE.left,
         y: SCENE.bottom,
       },
@@ -571,14 +567,14 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     ...sortGroups(
       "Bé xếp hình vào đúng rổ theo hình dạng nhé!",
       [
-        { id: "round", label: "Rổ hình tròn", labelRef: "EMJ-red-circle" },
-        { id: "corner", label: "Rổ hình có góc", labelRef: "EMJ-blue-square" },
+        { id: "round", label: "Rổ hình tròn", labelRef: "🔴" },
+        { id: "corner", label: "Rổ hình có góc", labelRef: "🟦" },
       ],
       [
-        { id: "circle-red", ref: "EMJ-red-circle", groupId: "round" },
-        { id: "circle-blue", ref: "EMJ-blue-circle", groupId: "round" },
-        { id: "square", ref: "EMJ-blue-square", groupId: "corner" },
-        { id: "triangle", ref: "EMJ-red-triangle-up", groupId: "corner" },
+        { id: "circle-red", ref: "🔴", groupId: "round" },
+        { id: "circle-blue", ref: "🔵", groupId: "round" },
+        { id: "square", ref: "🟦", groupId: "corner" },
+        { id: "triangle", ref: "🔺", groupId: "corner" },
       ]
     ),
     title: "Phân loại hình tròn và hình có góc",
@@ -587,7 +583,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C2-SUB-FAST-0019": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy ngôi sao nhé!",
-      "EMJ-star",
+      "⭐",
       2,
       1200,
       [1, 3]
@@ -598,7 +594,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C3-SUB-FAST-0013": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy quả táo nhé!",
-      "EMJ-red-apple",
+      "🍎",
       4,
       1500,
       [3, 5]
@@ -610,14 +606,14 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     ...sortGroups(
       "Bé xếp trái cây và con vật vào đúng rổ nhé!",
       [
-        { id: "fruit", label: "Rổ trái cây", labelRef: "EMJ-red-apple" },
-        { id: "animal", label: "Rổ con vật", labelRef: "EMJ-cat" },
+        { id: "fruit", label: "Rổ trái cây", labelRef: "🍎" },
+        { id: "animal", label: "Rổ con vật", labelRef: "🐱" },
       ],
       [
-        { id: "apple", ref: "EMJ-red-apple", groupId: "fruit" },
-        { id: "banana", ref: "EMJ-banana", groupId: "fruit" },
-        { id: "cat", ref: "EMJ-cat", groupId: "animal" },
-        { id: "dog", ref: "EMJ-dog", groupId: "animal" },
+        { id: "apple", ref: "🍎", groupId: "fruit" },
+        { id: "banana", ref: "🍌", groupId: "fruit" },
+        { id: "cat", ref: "🐱", groupId: "animal" },
+        { id: "dog", ref: "🐶", groupId: "animal" },
       ]
     ),
     title: "Phân loại trái cây và con vật",
@@ -626,7 +622,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C4-SUB-FAST-0010": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy chiếc xe nhé!",
-      "EMJ-car",
+      "🚗",
       3,
       1500,
       [2, 4]
@@ -637,7 +633,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C4-SUB-FAST-0015": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy chú gấu bông nhé!",
-      "EMJ-teddy-bear",
+      "🧸",
       2,
       1200,
       [1, 3]
@@ -649,14 +645,14 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     ...sortGroups(
       "Bé xếp quả bóng vào đúng rổ theo màu nhé!",
       [
-        { id: "red", label: "Rổ màu đỏ", labelRef: "EMJ-red-circle" },
-        { id: "blue", label: "Rổ màu xanh", labelRef: "EMJ-blue-circle" },
+        { id: "red", label: "Rổ màu đỏ", labelRef: "🔴" },
+        { id: "blue", label: "Rổ màu xanh", labelRef: "🔵" },
       ],
       [
-        { id: "r1", ref: "EMJ-red-circle", groupId: "red" },
-        { id: "r2", ref: "EMJ-red-apple", groupId: "red" },
-        { id: "b1", ref: "EMJ-blue-circle", groupId: "blue" },
-        { id: "b2", ref: "EMJ-blue-square", groupId: "blue" },
+        { id: "r1", ref: "🔴", groupId: "red" },
+        { id: "r2", ref: "🍎", groupId: "red" },
+        { id: "b1", ref: "🔵", groupId: "blue" },
+        { id: "b2", ref: "🟦", groupId: "blue" },
       ]
     ),
     title: "Phân loại theo màu đỏ và xanh",
@@ -665,7 +661,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C5-SUB-FAST-0010": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy quả táo nhé!",
-      "EMJ-red-apple",
+      "🍎",
       2,
       1500,
       [1, 3]
@@ -676,7 +672,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C5-SUB-FAST-0016": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy tên lửa nhé!",
-      "EMJ-rocket",
+      "🚀",
       3,
       1200,
       [2, 4]
@@ -688,14 +684,14 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     ...sortGroups(
       "Bé xếp khuôn mặt vào đúng rổ vui hoặc buồn nhé!",
       [
-        { id: "happy", label: "Rổ khuôn mặt vui", labelRef: "EMJ-grin" },
-        { id: "sad", label: "Rổ khuôn mặt buồn", labelRef: "EMJ-cry" },
+        { id: "happy", label: "Rổ khuôn mặt vui", labelRef: "😄" },
+        { id: "sad", label: "Rổ khuôn mặt buồn", labelRef: "😢" },
       ],
       [
-        { id: "h1", ref: "EMJ-grin", groupId: "happy" },
-        { id: "h2", ref: "EMJ-heart-eyes", groupId: "happy" },
-        { id: "s1", ref: "EMJ-cry", groupId: "sad" },
-        { id: "s2", ref: "EMJ-mouse-face", groupId: "sad" },
+        { id: "h1", ref: "😄", groupId: "happy" },
+        { id: "h2", ref: "😍", groupId: "happy" },
+        { id: "s1", ref: "😢", groupId: "sad" },
+        { id: "s2", ref: "🐭", groupId: "sad" },
       ]
     ),
     title: "Phân loại khuôn mặt vui và buồn",
@@ -704,7 +700,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C6-SUB-FAST-0009": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy tên lửa nhé!",
-      "EMJ-rocket",
+      "🚀",
       1,
       1500,
       [2, 3]
@@ -715,7 +711,7 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
   "GL-C6-SUB-FAST-0013": {
     ...flashCount(
       "Bé nhìn nhanh xem có mấy quả chuối nhé!",
-      "EMJ-banana",
+      "🍌",
       5,
       1200,
       [4, 6]
@@ -729,17 +725,17 @@ export const REAUTHORED_LEVELS: Record<string, ReauthoredPack> = {
     "Bé chọn hoạt động diễn ra lúc 9 giờ tối nhé!",
     { hour: 9, minute: 0 },
     [
-      { id: "sleep", ref: "EMJ-bed", name: "Bé đi ngủ", hour: 9, minute: 0 },
+      { id: "sleep", ref: "🛏️", name: "Bé đi ngủ", hour: 9, minute: 0 },
       {
         id: "school",
-        ref: "EMJ-blue-book",
+        ref: "📘",
         name: "Bé học bài",
         hour: 8,
         minute: 0,
       },
       {
         id: "sun",
-        ref: "EMJ-sun",
+        ref: "☀️",
         name: "Bé dậy buổi sáng",
         hour: 6,
         minute: 30,

@@ -49,6 +49,8 @@ export * from "./redirect.js";
 export * from "./round-event-gate.js";
 export * from "./round-set-validation.js";
 export * from "./scoring.js";
+export * from "./skill-dataset-types.js";
+export * from "./strands-catalog.js";
 export * from "./taxonomy-types.js";
 export * from "./versioning.js";
 export * from "./versioning-report.js";

@@ -138,6 +138,21 @@ export class AudioController {
     this.play("tap");
   }
 
+  /** Start chime sound on starting a round or session */
+  playStartSound(): void {
+    this.play("start_chime");
+  }
+
+  /** Soft snap sound when item locks into place */
+  playSnapSound(): void {
+    this.play("snap_item");
+  }
+
+  /** Whoosh return sound when item floats back to origin */
+  playWhooshSound(): void {
+    this.play("whoosh_return");
+  }
+
   /** Sound on holding exit button */
   playExitSound(): void {
     this.play("longpress_exit");

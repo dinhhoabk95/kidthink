@@ -93,6 +93,7 @@ Template là **Lớp 1** — thêm template là việc của dev, không của M
 | `BR-GTC-08` (breaking change) | Đổi `content_contract` của template đã publish = **breaking change**, cần migration kế hoạch | Mọi `game_level` đã seed giữ `content_pack` parse được bằng contract **cũ**. Đổi contract mà không migrate = level cũ fail parse ở `BR-GTC-02` — phát hiện lúc trẻ mở màn chơi, không phải lúc deploy |
 | `BR-GTC-09` (checkWinCondition thuần) | `checkWinCondition()` **thuần** — cấm side effect | Nó được gọi nhiều lần mỗi frame |
 | `BR-GTC-10` (round-trip test) | Test round-trip `content_pack` × `content_contract` chạy trên **toàn bộ** level đã seed. **Chưa nối vào cổng nào** — đo 2026-08-29: 162 trên 228 level không parse được, xem mục 7.3a của [`content-seed-authoring.md`](content-seed-authoring.md) | Một level lọt lưới là một đứa trẻ gặp màn hình trắng |
+| `BR-GTC-11` (asset nhận chữ) | `assetSchema()` khai đúng ba nhánh `emoji` · `image` · `text`; mọi `content_contract` dùng chung helper đó, cấm — NEVER khai lại union tại chỗ | Kỹ năng chữ số và chữ cái cần một khe cho ký tự; không có nhánh `text` thì bảng chữ cái phải dạy bằng ảnh em bé. Nhánh đã có ở [`shared-fields.ts:16`](../../../packages/game-engine/src/contracts/shared-fields.ts) và lớp vẽ đã xử lý nó — union khai lại tại chỗ là chỗ nhánh đó biến mất. Đo 2026-09-03: **một** vi phạm, [`GT-000/template.ts:15`](../../../packages/game-engine/src/templates/GT-000/template.ts) khai union hai nhánh tại chỗ, và GT-000 chính là engine ngữ âm. Nguồn vật thì thuộc `BR-SDS-02` (vật phải là vật của kỹ năng) |
 
 ## 7. Data
 
@@ -116,6 +117,7 @@ interface GameTemplate {
   banned_age_bands?: AgeBand[];      // band mà mechanic này không phù hợp
   requires_tap_fallback: boolean;    // true cho mọi mechanic drag
   asset_kinds: ("emoji" | "image" | "audio")[];
+  kind: "assess" | "teach";          // assess = kiểm tra, teach = làm quen khái niệm (GT-000)
   scoring: ScoringSchema;
   events: EventName[];               // tập con của event-catalog
   engine_session: string;            // tên Session class
@@ -160,10 +162,7 @@ const SortGroupsContent = z.object({
   })).min(2).max(4),
   items: z.array(z.object({
     item_id: z.string(),
-    asset: z.discriminatedUnion("kind", [
-      z.object({ kind: z.literal("emoji"), ref: z.string().min(1) }),
-      z.object({ kind: z.literal("image"), path: z.string() }),
-    ]),
+    asset: assetSchema(),   // emoji | image | text — BR-GTC-11
     correct_group_id: z.string(),   // refine: phải thuộc groups[]
   })).min(4).max(10),
 }).refine(everyItemTargetsAnExistingGroup)
@@ -242,6 +241,16 @@ Scenario: BR-GTC-10 — round-trip toàn bộ level đã seed
   Given DB đã seed đầy đủ game level
   When chạy test round-trip content_pack qua content_contract của template tương ứng
   Then 100% level parse thành công
+
+Scenario: BR-GTC-11 — asset chữ parse được
+  Given một content_pack mang asset kind text với text là "5"
+  When parse bằng content_contract của GT-001
+  Then parse thành công
+
+Scenario: BR-GTC-11 — không contract nào khai lại union asset
+  When đọc mọi content_contract trong packages/game-engine/src/templates
+  Then không file nào dựng discriminatedUnion cho asset tại chỗ
+  And mọi file dùng assetSchema()
 
 Scenario: BR-GTC-01 — template không mang skill
   When đọc định nghĩa của mọi template

@@ -26,16 +26,17 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | `01-platform` | 45 | 33 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
-| `04-play` | 15 | 13 |
-| `05-content` | 16 | 4 |
+| `04-play` | 17 | 13 |
+| `05-content` | 19 | 5 |
 | `06-admin` | 31 | 30 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 9 | 7 |
-| **Tổng** | **171** | **132** |
+| **Tổng** | **176** | **133** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 4 spec cộng thêm 2026-08-29 (Task #113) lấp lỗ hổng chiều sâu nội dung mỗi engine: [`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md), [`engine-content-depth.md`](05-content/engine-content-depth.md), [`level-generator-kit.md`](01-platform/level-generator-kit.md), [`content-theme-registry.md`](05-content/content-theme-registry.md). Kèm 27 phiếu engine ở [`engines/index.md`](01-platform/engines/index.md).
 2 spec cộng thêm cùng ngày cho go-live: [`engine-render-contract.md`](01-platform/engine-render-contract.md) và [`go-live-readiness.md`](08-quality/go-live-readiness.md) — corpus trước đó chỉ sở hữu tới mức MVP, không ai sở hữu câu "trẻ mở được chưa".
+1 spec cộng thêm 2026-09-03 cho trục kỹ năng: [`skill-dataset-model.md`](05-content/skill-dataset-model.md) — corpus đạt 100% phủ kỹ năng và 0% trung thực kỹ năng (0 trên 5.013 level mang chữ số hay chữ cái) vì không spec nào sở hữu câu hỏi *vật trong màn chơi đến từ đâu*.
 2 spec cộng thêm cùng ngày cho trục giáo án: [`lesson-flow-model.md`](05-content/lesson-flow-model.md) (thư viện master, tuổi là đề xuất — quyết định `D-SI`) và [`lesson-corpus-depth.md`](05-content/lesson-corpus-depth.md) (cầu 126 tiết, cung 81, và 48 level phải soạn thêm — `D-SJ`).
 2 spec cộng thêm 2026-08-05 ([`repo-bootstrap.md`](00-foundation/repo-bootstrap.md), [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md)) lấp lỗ hổng
 "Dựng repo, migration, cổng tự động" không có spec sở hữu ở [`roadmap.md`](roadmap.md) §P0 — xem `../../SPEC.md` §0 D9–D10.
@@ -85,7 +86,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [release-deploy](01-platform/release-deploy.md) | P0 | Một lệnh, nguồn là commit trên kho, cổng khói |
 | [release-rollback](01-platform/release-rollback.md) | P0 | Quay lui dưới 60 giây, chỉ migration cộng thêm |
 | **[ai-codegen-pipeline](01-platform/ai-codegen-pipeline.md)** | P0 | **Sinh code từ spec**, vùng cấm |
-| **[content-seed-authoring](01-platform/content-seed-authoring.md)** | P1 | **Seeder nội dung nền**, 8 cổng tự động, PR review là cổng người |
+| **[content-seed-authoring](01-platform/content-seed-authoring.md)** | P1 | **Seeder nội dung nền**, 10 cổng tự động, PR review là cổng người |
 | [oauth-provider-registry](01-platform/oauth-provider-registry.md) | P1 | Google + Facebook, PKCE, danh sách đóng |
 | [game-template-contract](01-platform/game-template-contract.md) | P1 | 6 template, `content_contract` |
 | [game-engine-runtime](01-platform/game-engine-runtime.md) | P1 | Canvas 60fps, bất biến bề mặt trẻ |
@@ -173,6 +174,8 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [curriculum-player](04-play/curriculum-player.md) | P3 | Ghim version, mở khoá tuần |
 | [progress-and-mastery](04-play/progress-and-mastery.md) | P3 | Bản đồ, huy hiệu không mất |
 | [lesson-session-runner](04-play/lesson-session-runner.md) | P4 | Người dạy chạy tiết học, một bước một lúc |
+| [concept-intro-runner](04-play/concept-intro-runner.md) | P4 | Ba nhịp giới thiệu → nhận biết → gọi tên, trẻ chạy một mình |
+| [concept-intro-gate](04-play/concept-intro-gate.md) | P4 | Bước 8: chưa làm quen khái niệm thì chưa vào màn chơi |
 
 ## 05-content — ràng buộc biên tập
 
@@ -180,6 +183,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 |---|:--:|---|
 | [game-level-model](05-content/game-level-model.md) | P1 | Trần item theo band, chỉ dẫn ≤12 từ |
 | [round-set-model](05-content/round-set-model.md) | P2 | Một template, dãy vòng leo một chiều |
+| [round-set-corpus-depth](05-content/round-set-corpus-depth.md) | P4 | Sàn vòng thật có trong corpus, vòng gọi lại, bậc thang 4 mức |
 | [lesson-model](05-content/lesson-model.md) | P3 | Cung bậc, ≥1 hoạt động ngoài màn hình |
 | [activity-model](05-content/activity-model.md) | P3 | Đứng độc lập, danh sách an toàn |
 | [curriculum-model](05-content/curriculum-model.md) | P3 | Thứ tự prerequisite, cân bằng |
@@ -192,6 +196,8 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [montessori-corpus-mapping](05-content/montessori-corpus-mapping.md) | P3 | Ánh xạ 21 workbook sang strand, band tuổi, khuôn; ranh giới lô A và lô B |
 | [montessori-game-level-batch](05-content/montessori-game-level-batch.md) | P3 | Hạn ngạch theo competency, khối mã, thứ tự nạp |
 | [montessori-lesson-batch](05-content/montessori-lesson-batch.md) | P3 | 21 lesson, thay giáo cụ bằng vật liệu trong nhà |
+| [concept-intro-model](05-content/concept-intro-model.md) | P4 | Bài làm quen ba nhịp, 2–5 vật, trần 90 giây |
+| **[skill-dataset-model](05-content/skill-dataset-model.md)** | P1 | Vật của level đến từ dataset kỹ năng; bộ chiếu thay bộ sinh theo khuôn; hai cổng trung thực |
 
 ## 06-admin — Manager
 

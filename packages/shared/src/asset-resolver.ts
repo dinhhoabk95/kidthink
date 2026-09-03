@@ -1,10 +1,7 @@
-import { getByCode } from "@mindkid/emoji";
-
 export interface ResolvedEmojiAsset {
   ref: string;
   kind: "emoji";
-  glyph?: string;
-  error?: "not_found";
+  glyph: string;
 }
 
 export interface ResolvedImageAsset {
@@ -30,8 +27,6 @@ export type ResolvedAsset =
   | ResolvedAudioAsset;
 
 export interface AssetResolverOptions {
-  /** Optional custom DB/registry lookup for emoji refs -> unicode glyph */
-  emojiRegistryLookup?: (ref: string) => string | undefined | null;
   /** Optional storage lookup for image refs/paths -> { url, width, height } */
   imageStorageLookup?: (
     refOrPath: string
@@ -42,17 +37,12 @@ export interface AssetResolverOptions {
   ) => { url: string; duration_ms?: number } | null | undefined;
 }
 
-function resolveEmojiRef(
-  ref: string,
-  options: AssetResolverOptions
-): ResolvedEmojiAsset {
-  const dbGlyph = options.emojiRegistryLookup?.(ref);
-  const emojiEntry = getByCode(ref);
-  const glyph = dbGlyph || emojiEntry?.emoji;
-  if (glyph) {
-    return { ref, kind: "emoji", glyph };
-  }
-  return { ref, kind: "emoji", error: "not_found" };
+/**
+ * Task #202 (D-EE): Emoji ref is identity (`glyph = ref`).
+ * No registry lookup, no not_found error.
+ */
+function resolveEmojiRef(ref: string): ResolvedEmojiAsset {
+  return { ref, kind: "emoji", glyph: ref };
 }
 
 function resolveImageRef(
@@ -134,8 +124,8 @@ export function resolveAssets(
       return;
     }
 
-    if (kindHint === "emoji" || ref.startsWith("EMJ-")) {
-      assetsMap.set(key, resolveEmojiRef(ref, options));
+    if (kindHint === "emoji") {
+      assetsMap.set(key, resolveEmojiRef(ref));
     } else if (isImageRef(ref, kindHint)) {
       assetsMap.set(key, resolveImageRef(ref, options));
     } else if (isAudioRef(ref, kindHint)) {
@@ -159,7 +149,12 @@ export function resolveAssets(
   }
 
   function checkStringEntry(key: string, value: string) {
-    if (key.includes("emoji") || value.startsWith("EMJ-")) {
+    if (
+      key.includes("emoji") ||
+      key === "icon_emoji_ref" ||
+      key === "thumbnail_emoji" ||
+      key === "label_emoji"
+    ) {
       processRef(value, "emoji");
     } else if (key.includes("audio") || value.startsWith("AUD-")) {
       processRef(value, "audio");

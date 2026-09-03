@@ -40,16 +40,16 @@ const THEMES = [
 // 1. D1-03: So sánh Nhiều/Ít (C1.CMP.04, C1.CMP.05, C1.NCOMP.11, C1.NCOMP.12, C1.PROB.04, C1.PROB.05) — 10 levels
 function createD103Levels(): ContentSeed<unknown, unknown>[] {
   const comparisonSets = [
-    { target: "EMJ-red-apple", distractor: "EMJ-banana" },
-    { target: "EMJ-car", distractor: "EMJ-bus" },
-    { target: "EMJ-star", distractor: "EMJ-pencil" },
-    { target: "EMJ-fish", distractor: "EMJ-dolphin" },
-    { target: "EMJ-candy", distractor: "EMJ-cake" },
-    { target: "EMJ-cat", distractor: "EMJ-dog" },
-    { target: "EMJ-sunflower", distractor: "EMJ-deciduous-tree" },
-    { target: "EMJ-cow", distractor: "EMJ-pig" },
-    { target: "EMJ-gift", distractor: "EMJ-balloon" },
-    { target: "EMJ-open-book", distractor: "EMJ-palette" },
+    { target: "🍎", distractor: "🍌" },
+    { target: "🚗", distractor: "🚌" },
+    { target: "⭐", distractor: "✏️" },
+    { target: "🐟", distractor: "🐬" },
+    { target: "🍬", distractor: "🍰" },
+    { target: "🐱", distractor: "🐶" },
+    { target: "🌻", distractor: "🌳" },
+    { target: "🐮", distractor: "🐷" },
+    { target: "🎁", distractor: "🎈" },
+    { target: "📖", distractor: "🎨" },
   ];
 
   const skillList = [
@@ -72,8 +72,8 @@ function createD103Levels(): ContentSeed<unknown, unknown>[] {
     const [ageMin, ageMax] = getAgeRange(i);
     const accessTier = getAccessTier(i, 0);
     const pair = comparisonSets[i % comparisonSets.length] ?? {
-      target: "EMJ-red-apple",
-      distractor: "EMJ-banana",
+      target: "🍎",
+      distractor: "🍌",
     };
     const skillCode = skillList[i] ?? "C1.CMP.04";
 
@@ -129,16 +129,16 @@ function createD103Levels(): ContentSeed<unknown, unknown>[] {
 // 2. D1-11: Số Đang Trốn (C1.NREC.10, C1.NREC.11, C1.NREC.12, C1.ADD.06, C1.SUB.05) — 10 levels
 function createD111Levels(): ContentSeed<unknown, unknown>[] {
   const missingItems = [
-    { target: "EMJ-red-apple", distractors: ["EMJ-banana", "EMJ-carrot"] },
-    { target: "EMJ-open-book", distractors: ["EMJ-pencil", "EMJ-palette"] },
-    { target: "EMJ-car", distractors: ["EMJ-bus", "EMJ-bicycle"] },
-    { target: "EMJ-star", distractors: ["EMJ-sparkles", "EMJ-sunflower"] },
-    { target: "EMJ-cat", distractors: ["EMJ-dog", "EMJ-cow"] },
-    { target: "EMJ-candy", distractors: ["EMJ-cake", "EMJ-ice-cream"] },
-    { target: "EMJ-fish", distractors: ["EMJ-whale", "EMJ-dolphin"] },
-    { target: "EMJ-gift", distractors: ["EMJ-balloon", "EMJ-party-popper"] },
-    { target: "EMJ-tomato", distractors: ["EMJ-potato", "EMJ-cucumber"] },
-    { target: "EMJ-chair", distractors: ["EMJ-bed", "EMJ-door"] },
+    { target: "🍎", distractors: ["🍌", "🥕"] },
+    { target: "📖", distractors: ["✏️", "🎨"] },
+    { target: "🚗", distractors: ["🚌", "🚲"] },
+    { target: "⭐", distractors: ["✨", "🌻"] },
+    { target: "🐱", distractors: ["🐶", "🐮"] },
+    { target: "🍬", distractors: ["🍰", "🍦"] },
+    { target: "🐟", distractors: ["🐳", "🐬"] },
+    { target: "🎁", distractors: ["🎈", "🎉"] },
+    { target: "🍅", distractors: ["🥔", "🥒"] },
+    { target: "🪑", distractors: ["🛏️", "🚪"] },
   ];
 
   const skillList = [
@@ -161,8 +161,8 @@ function createD111Levels(): ContentSeed<unknown, unknown>[] {
     const [ageMin, ageMax] = getAgeRange(i);
     const accessTier = getAccessTier(i, 1);
     const itemData = missingItems[i % missingItems.length] ?? {
-      target: "EMJ-red-apple",
-      distractors: ["EMJ-banana", "EMJ-carrot"],
+      target: "🍎",
+      distractors: ["🍌", "🥕"],
     };
     const skillCode = skillList[i] ?? "C1.NREC.10";
 
@@ -220,16 +220,16 @@ function createD111Levels(): ContentSeed<unknown, unknown>[] {
 // 3. D5-01: So sánh Kích thước (Thể tích/Diện tích) (C1.CMP.10..12, C1.MEAS.10, C1.MEAS.11) — 10 levels
 function createD501Levels(): ContentSeed<unknown, unknown>[] {
   const sizePairs = [
-    { big: "EMJ-elephant", small: "EMJ-ant" },
-    { big: "EMJ-whale", small: "EMJ-fish" },
-    { big: "EMJ-bus", small: "EMJ-bicycle" },
-    { big: "EMJ-house", small: "EMJ-chair" },
-    { big: "EMJ-deciduous-tree", small: "EMJ-sunflower" },
-    { big: "EMJ-cow", small: "EMJ-cat" },
-    { big: "EMJ-airplane", small: "EMJ-car" },
-    { big: "EMJ-watermelon", small: "EMJ-strawberry" },
-    { big: "EMJ-cake", small: "EMJ-candy" },
-    { big: "EMJ-open-book", small: "EMJ-pencil" },
+    { big: "🐘", small: "🐜" },
+    { big: "🐳", small: "🐟" },
+    { big: "🚌", small: "🚲" },
+    { big: "🏠", small: "🪑" },
+    { big: "🌳", small: "🌻" },
+    { big: "🐮", small: "🐱" },
+    { big: "✈️", small: "🚗" },
+    { big: "🍉", small: "🍓" },
+    { big: "🍰", small: "🍬" },
+    { big: "📖", small: "✏️" },
   ];
 
   const skillList = [
@@ -252,8 +252,8 @@ function createD501Levels(): ContentSeed<unknown, unknown>[] {
     const [ageMin, ageMax] = getAgeRange(i);
     const accessTier = getAccessTier(i, 2);
     const pair = sizePairs[i % sizePairs.length] ?? {
-      big: "EMJ-elephant",
-      small: "EMJ-ant",
+      big: "🐘",
+      small: "🐜",
     };
     const askBig = i % 2 === 0;
     const skillCode = skillList[i] ?? "C1.CMP.10";
@@ -319,16 +319,16 @@ function createD501Levels(): ContentSeed<unknown, unknown>[] {
 // 4. D5-02: So sánh Cao/Thấp (Chiều cao) (C1.CMP.13..15, C1.MEAS.06, C1.MEAS.08, C1.PAT.06, C1.PAT.07) — 10 levels
 function createD502Levels(): ContentSeed<unknown, unknown>[] {
   const heightPairs = [
-    { tall: "EMJ-giraffe", short: "EMJ-dog" },
-    { tall: "EMJ-deciduous-tree", short: "EMJ-sunflower" },
-    { tall: "EMJ-house", short: "EMJ-car" },
-    { tall: "EMJ-pencil", short: "EMJ-pencil" },
-    { tall: "EMJ-bottle", short: "EMJ-tea" },
-    { tall: "EMJ-ladder", short: "EMJ-chair" },
-    { tall: "EMJ-candle", short: "EMJ-candle" },
-    { tall: "EMJ-house", short: "EMJ-tent" },
-    { tall: "EMJ-chair", short: "EMJ-open-book" },
-    { tall: "EMJ-deciduous-tree", short: "EMJ-sunflower" },
+    { tall: "🦒", short: "🐶" },
+    { tall: "🌳", short: "🌻" },
+    { tall: "🏠", short: "🚗" },
+    { tall: "✏️", short: "✏️" },
+    { tall: "🍾", short: "🍵" },
+    { tall: "🪜", short: "🪑" },
+    { tall: "🕯️", short: "🕯️" },
+    { tall: "🏠", short: "⛺" },
+    { tall: "🪑", short: "📖" },
+    { tall: "🌳", short: "🌻" },
   ];
 
   const skillList = [
@@ -351,8 +351,8 @@ function createD502Levels(): ContentSeed<unknown, unknown>[] {
     const [ageMin, ageMax] = getAgeRange(i);
     const accessTier = getAccessTier(i, 3);
     const pair = heightPairs[i % heightPairs.length] ?? {
-      tall: "EMJ-giraffe",
-      short: "EMJ-dog",
+      tall: "🦒",
+      short: "🐶",
     };
     const askTall = i % 2 === 0;
     const skillCode = skillList[i] ?? "C1.CMP.13";
@@ -419,44 +419,44 @@ function createD502Levels(): ContentSeed<unknown, unknown>[] {
 function createD206Levels(): ContentSeed<unknown, unknown>[] {
   const shapeProjections = [
     {
-      target2d: "EMJ-red-circle",
-      distractors: ["EMJ-blue-square", "EMJ-red-triangle-up"],
+      target2d: "🔴",
+      distractors: ["🟦", "🔺"],
     },
     {
-      target2d: "EMJ-blue-square",
-      distractors: ["EMJ-red-circle", "EMJ-star"],
+      target2d: "🟦",
+      distractors: ["🔴", "⭐"],
     },
     {
-      target2d: "EMJ-red-triangle-up",
-      distractors: ["EMJ-blue-square", "EMJ-red-circle"],
+      target2d: "🔺",
+      distractors: ["🟦", "🔴"],
     },
     {
-      target2d: "EMJ-star",
-      distractors: ["EMJ-red-circle", "EMJ-blue-square"],
+      target2d: "⭐",
+      distractors: ["🔴", "🟦"],
     },
     {
-      target2d: "EMJ-green-square",
-      distractors: ["EMJ-red-circle", "EMJ-star"],
+      target2d: "🟩",
+      distractors: ["🔴", "⭐"],
     },
     {
-      target2d: "EMJ-blue-circle",
-      distractors: ["EMJ-red-triangle-up", "EMJ-blue-square"],
+      target2d: "🔵",
+      distractors: ["🔺", "🟦"],
     },
     {
-      target2d: "EMJ-yellow-circle",
-      distractors: ["EMJ-blue-square", "EMJ-red-triangle-up"],
+      target2d: "🟡",
+      distractors: ["🟦", "🔺"],
     },
     {
-      target2d: "EMJ-orange-square",
-      distractors: ["EMJ-red-circle", "EMJ-star"],
+      target2d: "🟧",
+      distractors: ["🔴", "⭐"],
     },
     {
-      target2d: "EMJ-purple-circle",
-      distractors: ["EMJ-blue-square", "EMJ-red-triangle-up"],
+      target2d: "🟣",
+      distractors: ["🟦", "🔺"],
     },
     {
-      target2d: "EMJ-glowing-star",
-      distractors: ["EMJ-red-circle", "EMJ-blue-square"],
+      target2d: "🌟",
+      distractors: ["🔴", "🟦"],
     },
   ];
 
@@ -480,8 +480,8 @@ function createD206Levels(): ContentSeed<unknown, unknown>[] {
     const [ageMin, ageMax] = getAgeRange(i);
     const accessTier = getAccessTier(i, 4);
     const proj = shapeProjections[i % shapeProjections.length] ?? {
-      target2d: "EMJ-red-circle",
-      distractors: ["EMJ-blue-square", "EMJ-red-triangle-up"],
+      target2d: "🔴",
+      distractors: ["🟦", "🔺"],
     };
     const skillCode = skillList[i] ?? "C2.CON.02";
 
@@ -539,20 +539,20 @@ function createD206Levels(): ContentSeed<unknown, unknown>[] {
 // 6. D4-05: Tìm Kẻ lạ (Odd One Out) (C3.CLS.04, C3.ANA.02, C3.ANA.03, C3.INF.01, C3.INF.02) — 10 levels
 function createD405Levels(): ContentSeed<unknown, unknown>[] {
   const oddSets = [
-    { targetGroup: "EMJ-red-apple", odd: "EMJ-car", label: "Hoa quả" },
-    { targetGroup: "EMJ-cat", odd: "EMJ-open-book", label: "Động vật" },
-    { targetGroup: "EMJ-car", odd: "EMJ-banana", label: "Xe cộ" },
-    { targetGroup: "EMJ-pencil", odd: "EMJ-fish", label: "Dụng cụ học tập" },
+    { targetGroup: "🍎", odd: "🚗", label: "Hoa quả" },
+    { targetGroup: "🐱", odd: "📖", label: "Động vật" },
+    { targetGroup: "🚗", odd: "🍌", label: "Xe cộ" },
+    { targetGroup: "✏️", odd: "🐟", label: "Dụng cụ học tập" },
     {
-      targetGroup: "EMJ-sunflower",
-      odd: "EMJ-airplane",
+      targetGroup: "🌻",
+      odd: "✈️",
       label: "Cây cối hoa lá",
     },
-    { targetGroup: "EMJ-candy", odd: "EMJ-bus", label: "Đồ ăn ngọt" },
-    { targetGroup: "EMJ-dog", odd: "EMJ-pencil", label: "Thú cưng" },
-    { targetGroup: "EMJ-tomato", odd: "EMJ-scissors", label: "Rau củ" },
-    { targetGroup: "EMJ-whale", odd: "EMJ-cake", label: "Sinh vật biển" },
-    { targetGroup: "EMJ-chair", odd: "EMJ-red-apple", label: "Đồ nội thất" },
+    { targetGroup: "🍬", odd: "🚌", label: "Đồ ăn ngọt" },
+    { targetGroup: "🐶", odd: "✏️", label: "Thú cưng" },
+    { targetGroup: "🍅", odd: "✂️", label: "Rau củ" },
+    { targetGroup: "🐳", odd: "🍰", label: "Sinh vật biển" },
+    { targetGroup: "🪑", odd: "🍎", label: "Đồ nội thất" },
   ];
 
   const skillList = [
@@ -575,8 +575,8 @@ function createD405Levels(): ContentSeed<unknown, unknown>[] {
     const [ageMin, ageMax] = getAgeRange(i);
     const accessTier = getAccessTier(i, 0);
     const set = oddSets[i % oddSets.length] ?? {
-      targetGroup: "EMJ-red-apple",
-      odd: "EMJ-car",
+      targetGroup: "🍎",
+      odd: "🚗",
       label: "Hoa quả",
     };
     const skillCode = skillList[i] ?? "C3.CLS.04";
@@ -641,54 +641,54 @@ function createD405Levels(): ContentSeed<unknown, unknown>[] {
 function createD407Levels(): ContentSeed<unknown, unknown>[] {
   const belongSets = [
     {
-      target: "EMJ-red-apple",
+      target: "🍎",
       groupLabel: "nhóm Quả ngọt",
-      distractors: ["EMJ-car", "EMJ-pencil"],
+      distractors: ["🚗", "✏️"],
     },
     {
-      target: "EMJ-cat",
+      target: "🐱",
       groupLabel: "nhóm Thú cưng",
-      distractors: ["EMJ-open-book", "EMJ-bus"],
+      distractors: ["📖", "🚌"],
     },
     {
-      target: "EMJ-pencil",
+      target: "✏️",
       groupLabel: "nhóm Đồ dùng học tập",
-      distractors: ["EMJ-fish", "EMJ-cake"],
+      distractors: ["🐟", "🍰"],
     },
     {
-      target: "EMJ-car",
+      target: "🚗",
       groupLabel: "nhóm Phương tiện đi lại",
-      distractors: ["EMJ-banana", "EMJ-dog"],
+      distractors: ["🍌", "🐶"],
     },
     {
-      target: "EMJ-fish",
+      target: "🐟",
       groupLabel: "nhóm Động vật dưới nước",
-      distractors: ["EMJ-chair", "EMJ-airplane"],
+      distractors: ["🪑", "✈️"],
     },
     {
-      target: "EMJ-sunflower",
+      target: "🌻",
       groupLabel: "nhóm Hoa quả cây cối",
-      distractors: ["EMJ-scissors", "EMJ-balloon"],
+      distractors: ["✂️", "🎈"],
     },
     {
-      target: "EMJ-cake",
+      target: "🍰",
       groupLabel: "nhóm Món ăn ngon",
-      distractors: ["EMJ-bicycle", "EMJ-ladder"],
+      distractors: ["🚲", "🪜"],
     },
     {
-      target: "EMJ-dog",
+      target: "🐶",
       groupLabel: "nhóm Bạn nhỏ 4 chân",
-      distractors: ["EMJ-palette", "EMJ-open-book"],
+      distractors: ["🎨", "📖"],
     },
     {
-      target: "EMJ-bus",
+      target: "🚌",
       groupLabel: "nhóm Xe công cộng",
-      distractors: ["EMJ-tomato", "EMJ-candle"],
+      distractors: ["🍅", "🕯️"],
     },
     {
-      target: "EMJ-open-book",
+      target: "📖",
       groupLabel: "nhóm Sách vở học tập",
-      distractors: ["EMJ-red-apple", "EMJ-whale"],
+      distractors: ["🍎", "🐳"],
     },
   ];
 
@@ -712,9 +712,9 @@ function createD407Levels(): ContentSeed<unknown, unknown>[] {
     const [ageMin, ageMax] = getAgeRange(i);
     const accessTier = getAccessTier(i, 1);
     const set = belongSets[i % belongSets.length] ?? {
-      target: "EMJ-red-apple",
+      target: "🍎",
       groupLabel: "nhóm Quả ngọt",
-      distractors: ["EMJ-car", "EMJ-pencil"],
+      distractors: ["🚗", "✏️"],
     };
     const skillCode = skillList[i] ?? "C3.CLS.06";
 

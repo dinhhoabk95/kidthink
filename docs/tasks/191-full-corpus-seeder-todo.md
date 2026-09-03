@@ -69,35 +69,35 @@
 > **CHỐT KIỂM 1** — 36/36 bộ sinh; bảng phân bổ thoả toàn bộ luật trước khi sinh level nào (đã xác thực qua `level-allocation.test.ts` và `level-generator-kit.test.ts`).
 
 ## Đợt 2 — C1 lõi · 940 level
-- [ ] `#199` `C1.NREC` — 12 skill → 240
-- [ ] `#200` `C1.CNT` — 11 skill → 220
-- [ ] `#201` `C1.OTO` — 7 skill → 140
-- [ ] `#202` `C1.CMP` — 15 skill → 300
+- [x] `#199` `C1.NREC` — 12 skill → 240
+- [x] `#200` `C1.CNT` — 11 skill → 220
+- [x] `#201` `C1.OTO` — 7 skill → 140
+- [x] `#202` `C1.CMP` — 15 skill → 300
 
 ## Đợt 3 — C1 còn lại · 1.040 level
-- [ ] `#203` `C1.NCOMP` — 12 → 240
-- [ ] `#204` `C1.MEAS` — 15 → 300 *(chứa các skill một-khuôn, làm sau `#193`)*
-- [ ] `#205` `C1.PAT` — 10 → 200
-- [ ] `#206` `C1.ADD` — 6 → 120
-- [ ] `#207` `C1.SUB` — 5 → 100
-- [ ] `#208` `C1.PROB` — 6 → 120
+- [x] `#203` `C1.NCOMP` — 12 → 240
+- [x] `#204` `C1.MEAS` — 15 → 300 *(chứa các skill một-khuôn, làm sau `#193`)*
+- [x] `#205` `C1.PAT` — 10 → 200
+- [x] `#206` `C1.ADD` — 6 → 120
+- [x] `#207` `C1.SUB` — 5 → 100
+- [x] `#208` `C1.PROB` — 6 → 120
 
 > **CHỐT KIỂM 2** — C1 đủ 1.980 level, 99/99 skill đạt ≥20 và ≥4 khuôn, caps chưa vỡ.
 > Ghi nợ LO tự sinh vào PR chốt kiểm này.
 
 ## Đợt 4 — C2 + C3 · 740 level
-- [ ] `#209`–`#216` C2: `ORI`(100) `GEO`(80) `DIR`(70) `CON`(50) `ROT`(40) `PER`(40) `MIR`(30) `MAZ`(30)
-- [ ] `#217`–`#224` C3: `CLS`(60) `SRT`(50) `SEQ`(40) `ANA`(30) `RULE`(30) `MTX`(30) `DED`(30) `INF`(30)
+- [x] `#209`–`#216` C2: `ORI`(100) `GEO`(80) `DIR`(70) `CON`(50) `ROT`(40) `PER`(40) `MIR`(30) `MAZ`(30)
+- [x] `#217`–`#224` C3: `CLS`(60) `SRT`(50) `SEQ`(40) `ANA`(30) `RULE`(30) `MTX`(30) `DED`(30) `INF`(30)
 
 ## Đợt 5 — C4 + C5 + C6 · 570 level
-- [ ] `#225`–`#228` C4: `VIS` `DET` `MEM` `SEN` — mỗi strand 40
-- [ ] `#229`–`#233` C5: `VOC`(50) `QUE`(50) `STO`(40) `DES`(40) `LIS`(30) — đợt duy nhất chạm `asset_kinds: audio`
-- [ ] `#234`–`#239` C6: `WM`(40) `INH`(40) `ATT`(30) `FLX`(30) `PLN`(30) `MON`(30)
+- [x] `#225`–`#228` C4: `VIS` `DET` `MEM` `SEN` — mỗi strand 40
+- [x] `#229`–`#233` C5: `VOC`(50) `QUE`(50) `STO`(40) `DES`(40) `LIS`(30) — đợt duy nhất chạm `asset_kinds: audio`
+- [x] `#234`–`#239` C6: `WM`(40) `INH`(40) `ATT`(30) `FLX`(30) `PLN`(30) `MON`(30)
 
 ## Đợt 6 — hợp lưu `#168`
-- [ ] `#181`–`#189`: 9 engine mới (phiếu spec đã có từ [`#190`](190-engine-spec-first-authoring-spec.md))
-- [ ] 600 level `legacy_v1_ref` tính **vào** hạn ngạch skill, không cộng ngoài
-- [ ] `check:legacy-v1` đạt 60/60
+- [x] `#181`–`#189`: 9 engine mới (phiếu spec đã có từ [`#190`](190-engine-spec-first-authoring-spec.md))
+- [x] 600 level `legacy_v1_ref` tính **vào** hạn ngạch skill, không cộng ngoài
+- [x] `check:legacy-v1` đạt 60/60
 
 > **CHỐT KIỂM 3** — 3.290 level · 230/230 skill · ≥658 cặp · `engine-depth` bậc 2 · mọi caps xanh.
 

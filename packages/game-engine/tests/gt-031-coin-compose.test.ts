@@ -66,12 +66,12 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
         coins: [
           {
             coin_id: "c2_1",
-            asset: { kind: "emoji", ref: "EMJ-coin" },
+            asset: { kind: "emoji", ref: "🪙" },
             value: 2,
           },
           {
             coin_id: "c5_1",
-            asset: { kind: "emoji", ref: "EMJ-coin" },
+            asset: { kind: "emoji", ref: "🪙" },
             value: 5,
           },
         ],
@@ -86,7 +86,7 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
         coins: [
           {
             coin_id: "c5_1",
-            asset: { kind: "emoji", ref: "EMJ-coin" },
+            asset: { kind: "emoji", ref: "🪙" },
             value: 5,
           },
         ],
@@ -221,12 +221,12 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
         coins: [
           {
             coin_id: "custom_7",
-            asset: { kind: "emoji" as const, ref: "EMJ-coin" },
+            asset: { kind: "emoji" as const, ref: "🪙" },
             value: 7,
           },
           {
             coin_id: "custom_6",
-            asset: { kind: "emoji" as const, ref: "EMJ-coin" },
+            asset: { kind: "emoji" as const, ref: "🪙" },
             value: 6,
           },
         ],

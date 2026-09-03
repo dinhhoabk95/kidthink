@@ -50,6 +50,7 @@ Không có.
 | `BR-SCT-05` (trigger chặn UPDATE) | Trigger chặn `UPDATE` hàng `published` | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) `BR-CLC-01` (bản published bất biến) |
 | `BR-SCT-06` (neo dòng dõi) | `curriculum_items` trỏ tới nội dung bằng `(entity_type, entity_id)` — `entity_id` là **neo dòng dõi** (`entity_id` lineage anchor), bất biến qua mọi version, không phải `id` của một hàng version cụ thể | Ghim đúng hàng version thì content update xong curriculum vẫn thấy bản cũ. Neo dòng dõi + `WHERE status='published'` giải quyết mà **vẫn là `id`**, không cần `code` (D-AE, sửa lại 2026-08-07) |
 | `BR-SCT-07` (weight CHECK) | `content_skill_map.weight` có `CHECK (weight > 0 AND weight <= 1)` | [`data-model-overview.md`](data-model-overview.md) `BR-DM-03` định nghĩa miền `[0,1]`; `CHECK` là chỗ **duy nhất** ép được — miền ghi trong prose không chặn một seeder ghi `weight = 5`. Cận dưới **loại trừ 0**: một hàng `weight = 0` nghĩa là "có ánh xạ nhưng không đóng góp gì", mâu thuẫn với chính việc hàng đó tồn tại, và nó làm mọi phép chuẩn hoá mastery chia cho tổng bằng 0 |
+| `BR-SCT-08` (từ vựng `entity_type` đóng) | `entity_type` của `content_skill_map`, `content_tag_map`, `content_objective_map` nhận đúng bộ giá trị `game_level` · `lesson` · `activity` · `curriculum` · `worksheet`, ép bằng enum ở tầng database | Seeder ghi `'game_level'` trong khi bốn nơi đọc `'level'` — [`dashboard.get.ts:123`](../../../apps/web/server/api/managers/dashboard.get.ts), [`skills/[code].get.ts:101`](../../../apps/web/server/api/managers/taxonomy/skills/%5Bcode%5D.get.ts), [`rollup.ts:155`](../../../packages/db/src/services/rollup.ts), [`advanced-report.ts:803`](../../../packages/db/src/services/advanced-report.ts). Bốn truy vấn đó trả 0 hàng và **không** báo lỗi, vì cột `text` nhận mọi chuỗi |
 
 ## 7. Data
 
@@ -76,6 +77,7 @@ Không có.
 | `skills` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `strand_id` FK · `name` · `description` · `age_min` `age_max` smallint CHECK 3–6 · `difficulty` smallint CHECK 1–5 · `thinking_processes` text[] · `what_axis` text[] · `status` enum (`seeded`\|`deprecated`) · `position` |
 | `skill_prerequisites` | `(skill_id, prerequisite_id)` PK · `strength` numeric CHECK 0–1 |
 | `learning_objectives` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `skill_id` FK · `behaviour` · `observable_criteria` · `position` |
+| `skill_datasets` | `id` bigserial PK · `code` UNIQUE (= `skill_code`, hiển thị) · `skill_id` FK · `content_version` int · `concept_label` · `surface` enum (`game`\|`worksheet`) · `items` jsonb · `axes` jsonb · `ladder` jsonb · `phrasing` jsonb · `status` · `seed_batch_id` FK nullable · `origin` · `authored_in` · audit cột — hình dạng ở mục 7.1 của [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) |
 
 ### 7.2 Tagging
 
@@ -84,6 +86,7 @@ Không có.
 | `content_tags` | `id` bigserial PK · `code` UNIQUE (hiển thị) · `axis` enum (`what`\|`thinking`\|`mechanic`\|`theme`) · `label` · `status` — Lớp 1 |
 | `content_tag_map` | `(entity_type, entity_id, tag_id)` PK ghép |
 | `content_skill_map` | `(entity_type, entity_id, skill_id)` PK ghép · `weight` numeric CHECK |
+| `content_objective_map` | `(entity_type, entity_id, learning_objective_id)` PK ghép — đóng `BR-SDS-15` (mục tiêu học tập phải ghi được): trước đó `learning_objective_codes` chỉ được cổng seed kiểm rồi vứt, không bảng nào giữ |
 | `user_tags` | `id` · `user_id` FK · `label` · UNIQUE `(user_id, label)` |
 
 ### 7.3 `game_templates` — Lớp 1
@@ -117,6 +120,8 @@ Không có.
 | `origin` | enum (`human`\|`ai_assisted`) — soạn thảo có AI agent IDE hỗ trợ không |
 | `authored_in` | enum (`repo_seed`\|`studio`) — hàng này vào DB bằng đường nào |
 | `seed_batch_id` | FK `content_seed_batches` nullable |
+| `skill_dataset_id` | FK `skill_datasets(id)` nullable — level chiếu từ dataset nào |
+| `projection_ref` | varchar nullable — bộ chiếu nào dựng `content_pack`; `NULL` nghĩa là soạn tay (nhóm G, mục 7.5 của [`skill-dataset-model.md`](../05-content/skill-dataset-model.md)) |
 | `created_by_manager_id` `reviewed_by_manager_id` `published_at` `archived_at` | |
 
 `access_tier` NOT NULL **không có default** — ép người soạn quyết định, thay vì im lặng cho
@@ -198,6 +203,12 @@ Scenario: BR-SCT-05 — trigger chặn sửa bản published
 Scenario: access_tier không có default
   When chèn game_levels không nêu access_tier
   Then DB từ chối vì NOT NULL không default
+
+Scenario: BR-SCT-08 — entity_type ngoài từ vựng bị chặn
+  Given một hàng content_skill_map với entity_type là 'level'
+  When ghi vào database
+  Then database từ chối vì giá trị không thuộc enum
+  And thông báo nêu bộ giá trị hợp lệ
 
 Scenario: BR-SCT-07 — weight bị ràng buộc
   When chèn content_skill_map với weight = 1.5

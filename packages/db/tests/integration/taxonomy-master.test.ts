@@ -12,7 +12,7 @@ const BR_TAX_02_REGEX = /BR-TAX-02 violation/;
 describe("Taxonomy Master Seeder & Invariants (BR-TAX-01..09)", () => {
   it("parses docs/taxonomy/ and satisfies BR-TAX-09 counts", () => {
     const skills = parseTaxonomyDocs("docs/taxonomy");
-    expect(skills.length).toBe(230);
+    expect(skills.length).toBe(408);
   });
 
   it("validates invariants without throwing on valid taxonomy docs", () => {
@@ -51,7 +51,7 @@ describe("Taxonomy Master Seeder & Invariants (BR-TAX-01..09)", () => {
           position: 3,
         },
       ],
-      status: "seeded" as const,
+      tier: "basic" as const,
     };
     const validSkills = parseTaxonomyDocs("docs/taxonomy");
     const dirtySkills = [...validSkills.slice(1), cyclicSkill];

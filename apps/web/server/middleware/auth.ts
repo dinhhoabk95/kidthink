@@ -3,9 +3,20 @@ import {
   type ManagerTokenPayload,
   type UserTokenPayload,
 } from "@mindkid/auth";
-import { defineEventHandler, getHeader, type H3Event } from "h3";
+import { defineEventHandler, getCookie, getHeader, type H3Event } from "h3";
+import {
+  clearManagerRememberCookie,
+  setManagerRememberCookie,
+} from "#server/utils/admin-auth-runtime";
+import {
+  clearUserRememberCookie,
+  MANAGER_REMEMBER_COOKIE,
+  setUserRememberCookie,
+  USER_REMEMBER_COOKIE,
+} from "#server/utils/auth-runtime";
 import {
   getManagerSession,
+  getManagerSessionConfig,
   getManagerSessionToken,
 } from "#server/utils/session-runtime";
 
@@ -34,31 +45,78 @@ async function resolveUserSession(event: H3Event) {
   const session = await getUserSession(event);
   const secure = session.secure as { session_token?: string } | undefined;
   const token = secure?.session_token;
-  if (typeof token !== "string" || token.length === 0) {
-    return undefined;
+  if (typeof token === "string" && token.length > 0) {
+    const authContext = await getBrowserSessionService().resolve("user", token);
+    if (authContext?.user) {
+      return authContext.user;
+    }
   }
 
-  const authContext = await getBrowserSessionService().resolve("user", token);
-  return authContext?.user;
+  // Session expired or missing. Auto-refresh session if remember token is present (Laravel-style)
+  const rememberToken = getCookie(event, USER_REMEMBER_COOKIE);
+  if (typeof rememberToken === "string" && rememberToken.length > 0) {
+    try {
+      const restored = await getBrowserSessionService().restore({
+        namespace: "user",
+        rememberToken,
+      });
+      if (restored?.user) {
+        await setUserSession(event, {
+          secure: { session_token: restored.sessionToken },
+        });
+        setUserRememberCookie(event, restored.rememberToken);
+        return restored.user;
+      }
+    } catch {
+      clearUserRememberCookie(event);
+    }
+  }
+
+  return undefined;
 }
 
 async function resolveManagerSession(event: H3Event) {
-  if (!getManagerSessionToken(event)) {
-    return undefined;
+  const managerSessionToken = getManagerSessionToken(event);
+  if (managerSessionToken) {
+    const session = await getManagerSession(event);
+    const secure = session.data.secure as
+      | { session_token?: string }
+      | undefined;
+    const token = secure?.session_token;
+    if (typeof token === "string" && token.length > 0) {
+      const authContext = await getBrowserSessionService().resolve(
+        "manager",
+        token
+      );
+      if (authContext?.manager) {
+        return authContext.manager;
+      }
+    }
   }
 
-  const session = await getManagerSession(event);
-  const secure = session.data.secure as { session_token?: string } | undefined;
-  const token = secure?.session_token;
-  if (typeof token !== "string" || token.length === 0) {
-    return undefined;
+  // Manager session expired or missing. Auto-refresh session if remember token is present (Laravel-style)
+  const rememberToken = getCookie(event, MANAGER_REMEMBER_COOKIE);
+  if (typeof rememberToken === "string" && rememberToken.length > 0) {
+    try {
+      const restored = await getBrowserSessionService().restore({
+        namespace: "manager",
+        rememberToken,
+      });
+      if (restored?.manager) {
+        await setUserSession(
+          event,
+          { secure: { session_token: restored.sessionToken } },
+          getManagerSessionConfig()
+        );
+        setManagerRememberCookie(event, restored.rememberToken);
+        return restored.manager;
+      }
+    } catch {
+      clearManagerRememberCookie(event);
+    }
   }
 
-  const authContext = await getBrowserSessionService().resolve(
-    "manager",
-    token
-  );
-  return authContext?.manager;
+  return undefined;
 }
 
 export default defineEventHandler(async (event) => {

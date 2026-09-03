@@ -24,8 +24,8 @@ export const SEED_GT036: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé tự xếp hoa lá theo quy luật lặp lại nhé!",
       palette: [
-        { id: "flower", asset: { kind: "emoji", ref: "EMJ-sunflower" } },
-        { id: "tree", asset: { kind: "emoji", ref: "EMJ-deciduous-tree" } },
+        { id: "flower", asset: { kind: "emoji", ref: "🌻" } },
+        { id: "tree", asset: { kind: "emoji", ref: "🌳" } },
       ],
       track_length: 6,
       min_repetitions: 3,
@@ -62,8 +62,8 @@ export const SEED_GT036: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé tự xếp bút màu theo quy luật lặp lại nhé!",
       palette: [
-        { id: "crayon", asset: { kind: "emoji", ref: "EMJ-crayon" } },
-        { id: "pencil", asset: { kind: "emoji", ref: "EMJ-pencil" } },
+        { id: "crayon", asset: { kind: "emoji", ref: "🖍️" } },
+        { id: "pencil", asset: { kind: "emoji", ref: "✏️" } },
       ],
       track_length: 6,
       min_repetitions: 3,
@@ -100,8 +100,8 @@ export const SEED_GT036: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé xếp quả táo và cà rốt theo quy luật lặp lại nhé!",
       palette: [
-        { id: "apple", asset: { kind: "emoji", ref: "EMJ-red-apple" } },
-        { id: "carrot", asset: { kind: "emoji", ref: "EMJ-carrot" } },
+        { id: "apple", asset: { kind: "emoji", ref: "🍎" } },
+        { id: "carrot", asset: { kind: "emoji", ref: "🥕" } },
       ],
       track_length: 8,
       min_repetitions: 2,
@@ -138,9 +138,9 @@ export const SEED_GT036: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé xếp các bạn cá và vỏ ốc theo quy luật lặp lại nhé!",
       palette: [
-        { id: "fish", asset: { kind: "emoji", ref: "EMJ-fish" } },
-        { id: "shell", asset: { kind: "emoji", ref: "EMJ-spiral-shell" } },
-        { id: "crab", asset: { kind: "emoji", ref: "EMJ-crab" } },
+        { id: "fish", asset: { kind: "emoji", ref: "🐟" } },
+        { id: "shell", asset: { kind: "emoji", ref: "🐚" } },
+        { id: "crab", asset: { kind: "emoji", ref: "🦀" } },
       ],
       track_length: 9,
       min_repetitions: 3,
@@ -177,9 +177,9 @@ export const SEED_GT036: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé xếp sách vở và chuông reo theo quy luật nhé!",
       palette: [
-        { id: "book", asset: { kind: "emoji", ref: "EMJ-open-book" } },
-        { id: "bell", asset: { kind: "emoji", ref: "EMJ-bell" } },
-        { id: "scissors", asset: { kind: "emoji", ref: "EMJ-scissors" } },
+        { id: "book", asset: { kind: "emoji", ref: "📖" } },
+        { id: "bell", asset: { kind: "emoji", ref: "🔔" } },
+        { id: "scissors", asset: { kind: "emoji", ref: "✂️" } },
       ],
       track_length: 6,
       min_repetitions: 2,
@@ -216,9 +216,9 @@ export const SEED_GT036: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé xếp bóng bay và quà tặng lặp lại nhé!",
       palette: [
-        { id: "balloon", asset: { kind: "emoji", ref: "EMJ-balloon" } },
-        { id: "gift", asset: { kind: "emoji", ref: "EMJ-gift" } },
-        { id: "sparkles", asset: { kind: "emoji", ref: "EMJ-sparkles" } },
+        { id: "balloon", asset: { kind: "emoji", ref: "🎈" } },
+        { id: "gift", asset: { kind: "emoji", ref: "🎁" } },
+        { id: "sparkles", asset: { kind: "emoji", ref: "✨" } },
       ],
       track_length: 9,
       min_repetitions: 3,
@@ -255,8 +255,8 @@ export const SEED_GT036: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé xếp ngôi sao và mặt trăng lặp lại 4 lần nhé!",
       palette: [
-        { id: "star", asset: { kind: "emoji", ref: "EMJ-star" } },
-        { id: "moon", asset: { kind: "emoji", ref: "EMJ-crescent-moon" } },
+        { id: "star", asset: { kind: "emoji", ref: "⭐" } },
+        { id: "moon", asset: { kind: "emoji", ref: "🌙" } },
       ],
       track_length: 8,
       min_repetitions: 4,
@@ -293,11 +293,11 @@ export const SEED_GT036: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé tự xếp đồ đạc trong nhà theo quy luật lặp lại nhé!",
       palette: [
-        { id: "chair", asset: { kind: "emoji", ref: "EMJ-chair" } },
-        { id: "door", asset: { kind: "emoji", ref: "EMJ-door" } },
+        { id: "chair", asset: { kind: "emoji", ref: "🪑" } },
+        { id: "door", asset: { kind: "emoji", ref: "🚪" } },
         {
           id: "cup",
-          asset: { kind: "emoji", ref: "EMJ-tea" },
+          asset: { kind: "emoji", ref: "🍵" },
         },
       ],
       track_length: 12,
@@ -335,10 +335,10 @@ export const SEED_GT036: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé xếp các loài cây hoa theo quy luật 3 lần lặp nhé!",
       palette: [
-        { id: "flower", asset: { kind: "emoji", ref: "EMJ-sunflower" } },
-        { id: "tree", asset: { kind: "emoji", ref: "EMJ-deciduous-tree" } },
-        { id: "leaf", asset: { kind: "emoji", ref: "EMJ-maple-leaf" } },
-        { id: "sun", asset: { kind: "emoji", ref: "EMJ-sun" } },
+        { id: "flower", asset: { kind: "emoji", ref: "🌻" } },
+        { id: "tree", asset: { kind: "emoji", ref: "🌳" } },
+        { id: "leaf", asset: { kind: "emoji", ref: "🍁" } },
+        { id: "sun", asset: { kind: "emoji", ref: "☀️" } },
       ],
       track_length: 12,
       min_repetitions: 3,
@@ -375,9 +375,9 @@ export const SEED_GT036: ContentSeed<unknown, unknown>[] = [
     content_pack: {
       prompt: "Bé xếp dụng cụ vẽ tranh kết thúc chuẩn xác ranh giới nhé!",
       palette: [
-        { id: "palette", asset: { kind: "emoji", ref: "EMJ-artist-palette" } },
-        { id: "crayon", asset: { kind: "emoji", ref: "EMJ-crayon" } },
-        { id: "brush", asset: { kind: "emoji", ref: "EMJ-paintbrush" } },
+        { id: "palette", asset: { kind: "emoji", ref: "🎨" } },
+        { id: "crayon", asset: { kind: "emoji", ref: "🖍️" } },
+        { id: "brush", asset: { kind: "emoji", ref: "🖌️" } },
       ],
       track_length: 9,
       min_repetitions: 3,

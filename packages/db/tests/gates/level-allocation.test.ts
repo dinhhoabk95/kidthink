@@ -10,7 +10,7 @@ import {
 
 const ERR_PAIR_CEILING_REGEX = /BR-ALC-04: Cặp .* vượt trần 5 level/;
 
-describe("Task #198 — Bảng phân bổ 3.290 level (level-allocation.json / BR-ALC-01..08)", () => {
+describe("Task #198 — Bảng phân bổ level (level-allocation.json / BR-ALC-01..08)", () => {
   it("Bảng phân bổ trong config/level-allocation.json tồn tại và đồng bộ với generator", () => {
     const configPath = repoPath("packages/db/config/level-allocation.json");
     expect(fs.existsSync(configPath)).toBe(true);
@@ -18,15 +18,15 @@ describe("Task #198 — Bảng phân bổ 3.290 level (level-allocation.json / B
     const savedPlan = loadLevelAllocationPlan();
     const generatedPlan = generateLevelAllocationPlan();
 
-    expect(savedPlan.target_total_levels).toBe(3290);
-    expect(savedPlan.total_skills).toBe(230);
+    expect(savedPlan.target_total_levels).toBe(5180);
+    expect(savedPlan.total_skills).toBe(408);
     expect(savedPlan.target_total_levels).toBe(
       generatedPlan.target_total_levels
     );
     expect(savedPlan.allocations.length).toBe(generatedPlan.allocations.length);
   });
 
-  it("Đạt đúng tổng 3.290 level: C1 (99 skills × 20 = 1980), C2..C6 (131 skills × 10 = 1310)", () => {
+  it("Đạt đúng tổng 5.180 level: C1 (110 skills × 20 = 2200), C2..C6 (298 skills × 10 = 2980)", () => {
     const plan = loadLevelAllocationPlan();
     const skillLevelSums = new Map<string, number>();
     const skillTemplateSets = new Map<string, Set<string>>();
@@ -43,7 +43,7 @@ describe("Task #198 — Bảng phân bổ 3.290 level (level-allocation.json / B
       tSet.add(row.template_code);
     }
 
-    expect(skillLevelSums.size).toBe(230);
+    expect(skillLevelSums.size).toBe(408);
 
     let c1Total = 0;
     let otherTotal = 0;
@@ -69,9 +69,9 @@ describe("Task #198 — Bảng phân bổ 3.290 level (level-allocation.json / B
       }
     }
 
-    expect(c1Total).toBe(1980);
-    expect(otherTotal).toBe(1310);
-    expect(c1Total + otherTotal).toBe(3290);
+    expect(c1Total).toBe(2200);
+    expect(otherTotal).toBe(2980);
+    expect(c1Total + otherTotal).toBe(5180);
   });
 
   it("Trần cứng: không cặp (skill, khuôn) nào vượt quá 5 level", () => {
@@ -123,7 +123,7 @@ describe("Task #198 — Bảng phân bổ 3.290 level (level-allocation.json / B
     const invalidAllocation: LevelAllocationPlan = {
       date: "2026-09-01",
       target_total_levels: 3290,
-      total_skills: 230,
+      total_skills: 408,
       total_allocations: 1,
       distinct_pairs_count: 1,
       theme_distribution: { school: 3290 },

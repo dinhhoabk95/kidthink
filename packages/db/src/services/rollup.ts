@@ -152,7 +152,7 @@ export async function runDailyRollup(
     .innerJoin(
       contentSkillMap,
       and(
-        eq(contentSkillMap.entityType, "level"),
+        eq(contentSkillMap.entityType, "game_level"),
         eq(playSessions.gameLevelId, contentSkillMap.entityId)
       )
     )

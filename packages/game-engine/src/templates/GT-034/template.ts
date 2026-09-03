@@ -80,7 +80,7 @@ export default defineTemplate({
   code: "GT-034",
   name: "Gõ theo nhịp",
   mechanic: "beat-sequence",
-  status: "draft",
+  status: "published",
   version: 1,
   engine_session: "GT034Session",
   layouts: ["horizontal-track", "step-ladder"],

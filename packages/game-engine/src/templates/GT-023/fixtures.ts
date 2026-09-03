@@ -10,7 +10,7 @@ export const GT023_FIXTURES: {
       prompt: "Bé hãy ghép mái nhà và thân nhà để tạo thành ngôi nhà nhé!",
       target_model: {
         name: "Ngôi nhà",
-        asset: { kind: "emoji", ref: "EMJ-house" },
+        asset: { kind: "emoji", ref: "🏠" },
       },
       anchors: [
         {
@@ -32,13 +32,13 @@ export const GT023_FIXTURES: {
         {
           part_id: "part-roof",
           target_anchor_id: "anchor-roof",
-          asset: { kind: "emoji", ref: "EMJ-red-triangle-up" },
+          asset: { kind: "emoji", ref: "🔺" },
           name: "Mái tam giác",
         },
         {
           part_id: "part-wall",
           target_anchor_id: "anchor-wall",
-          asset: { kind: "emoji", ref: "EMJ-blue-square" },
+          asset: { kind: "emoji", ref: "🟦" },
           name: "Tường vuông",
         },
       ],
@@ -56,7 +56,7 @@ export const GT023_FIXTURES: {
       prompt: "Bé hãy lắp 2 bánh xe vào thân xe ô tô nhé!",
       target_model: {
         name: "Xe ô tô",
-        asset: { kind: "emoji", ref: "EMJ-car" },
+        asset: { kind: "emoji", ref: "🚗" },
       },
       anchors: [
         {
@@ -85,19 +85,19 @@ export const GT023_FIXTURES: {
         {
           part_id: "part-chassis",
           target_anchor_id: "anchor-chassis",
-          asset: { kind: "emoji", ref: "EMJ-suv" },
+          asset: { kind: "emoji", ref: "🚙" },
           name: "Thân xe",
         },
         {
           part_id: "part-wheel-1",
           target_anchor_id: "anchor-wheel-left",
-          asset: { kind: "emoji", ref: "EMJ-black-circle" },
+          asset: { kind: "emoji", ref: "⚫" },
           name: "Bánh xe 1",
         },
         {
           part_id: "part-wheel-2",
           target_anchor_id: "anchor-wheel-right",
-          asset: { kind: "emoji", ref: "EMJ-black-circle" },
+          asset: { kind: "emoji", ref: "⚫" },
           name: "Bánh xe 2",
         },
       ],
@@ -115,7 +115,7 @@ export const GT023_FIXTURES: {
       prompt: "Bé hãy xếp các khối cầu để tạo thành người tuyết nhé!",
       target_model: {
         name: "Người tuyết",
-        asset: { kind: "emoji", ref: "EMJ-snowman" },
+        asset: { kind: "emoji", ref: "⛄" },
       },
       anchors: [
         {
@@ -144,19 +144,19 @@ export const GT023_FIXTURES: {
         {
           part_id: "part-head",
           target_anchor_id: "anchor-head",
-          asset: { kind: "emoji", ref: "EMJ-white-circle" },
+          asset: { kind: "emoji", ref: "⚪" },
           name: "Khối nhỏ",
         },
         {
           part_id: "part-torso",
           target_anchor_id: "anchor-torso",
-          asset: { kind: "emoji", ref: "EMJ-white-circle" },
+          asset: { kind: "emoji", ref: "⚪" },
           name: "Khối vừa",
         },
         {
           part_id: "part-base",
           target_anchor_id: "anchor-base",
-          asset: { kind: "emoji", ref: "EMJ-white-circle" },
+          asset: { kind: "emoji", ref: "⚪" },
           name: "Khối lớn",
         },
       ],

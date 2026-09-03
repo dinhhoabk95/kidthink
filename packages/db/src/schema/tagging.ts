@@ -11,7 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.ts";
 import { users } from "./identity.ts";
-import { skills } from "./taxonomy.ts";
+import { learningObjectives, skills } from "./taxonomy.ts";
 
 export const tagAxisEnum = pgEnum("tag_axis", [
   "what",
@@ -21,6 +21,14 @@ export const tagAxisEnum = pgEnum("tag_axis", [
 ]);
 
 export const tagStatusEnum = pgEnum("tag_status", ["active", "deprecated"]);
+
+export const contentEntityTypeEnum = pgEnum("content_entity_type", [
+  "game_level",
+  "lesson",
+  "activity",
+  "curriculum",
+  "worksheet",
+]);
 
 export const contentTags = pgTable("content_tags", {
   id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
@@ -34,7 +42,7 @@ export const contentTags = pgTable("content_tags", {
 export const contentTagMap = pgTable(
   "content_tag_map",
   {
-    entityType: varchar("entity_type", { length: 50 }).notNull(),
+    entityType: contentEntityTypeEnum("entity_type").notNull(),
     entityId: bigint("entity_id", { mode: "number" }).notNull(),
     tagId: bigint("tag_id", { mode: "number" })
       .notNull()
@@ -49,7 +57,7 @@ export const contentTagMap = pgTable(
 export const contentSkillMap = pgTable(
   "content_skill_map",
   {
-    entityType: varchar("entity_type", { length: 50 }).notNull(),
+    entityType: contentEntityTypeEnum("entity_type").notNull(),
     entityId: bigint("entity_id", { mode: "number" }).notNull(),
     skillId: bigint("skill_id", { mode: "number" })
       .notNull()
@@ -63,6 +71,23 @@ export const contentSkillMap = pgTable(
       "check_content_skill_map_weight",
       sql`${table.weight} > 0 AND ${table.weight} <= 1`
     ),
+  ]
+);
+
+export const contentObjectiveMap = pgTable(
+  "content_objective_map",
+  {
+    entityType: contentEntityTypeEnum("entity_type").notNull(),
+    entityId: bigint("entity_id", { mode: "number" }).notNull(),
+    learningObjectiveId: bigint("learning_objective_id", { mode: "number" })
+      .notNull()
+      .references(() => learningObjectives.id, { onDelete: "cascade" }),
+    ...timestamps(),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.entityType, table.entityId, table.learningObjectiveId],
+    }),
   ]
 );
 

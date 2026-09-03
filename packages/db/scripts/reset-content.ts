@@ -22,7 +22,7 @@ import postgres from "postgres";
  * `CASCADE` sẽ kéo theo `play_sessions`, `child_session_summaries`,
  * `lesson_activities`, `lesson_runs`, `lesson_run_steps`, `game_level_rounds`,
  * `level_params` — đó là dữ liệu phái sinh từ nội dung, không phải tài khoản.
- * `users`, `child_profiles`, `managers`, `packages`, `skills`, `emoji_registry`,
+ * `users`, `child_profiles`, `managers`, `packages`, `skills`,
  * `game_templates`, `content_tags`, `curricula` KHÔNG nằm trong danh sách.
  */
 const CONTENT_TABLES = [

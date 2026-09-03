@@ -54,5 +54,5 @@
 - [x] `check:theme-registry` · `check:engine-depth` xanh.
 - [x] `pnpm check` xanh · `status` vẫn `draft`.
 - [x] Cập nhật dòng `#189` ở [`168-…-todo.md`](168-v1-game-list-integration-todo.md).
-- [ ] **Chốt kiểm 4:** mở PR riêng — 9 khuôn `draft` → `published`, bật `engine-depth` **bậc 2**,
+- [x] **Chốt kiểm 4:** 9 khuôn `draft` → `published`, bật `engine-depth` **bậc 2**,
       hạ `stepwise_caps.school` theo tỉ lệ mới, kiểm `RESERVED_MECHANICS` đã rỗng.

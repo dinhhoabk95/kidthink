@@ -12,22 +12,22 @@ export const GT005_FIXTURES: {
           pair_id: "pair_1",
           left: {
             item_id: "monkey",
-            asset: { kind: "emoji", ref: "EMJ-monkey" },
+            asset: { kind: "emoji", ref: "🐵" },
           },
           right: {
             item_id: "banana",
-            asset: { kind: "emoji", ref: "EMJ-banana" },
+            asset: { kind: "emoji", ref: "🍌" },
           },
         },
         {
           pair_id: "pair_2",
           left: {
             item_id: "rabbit",
-            asset: { kind: "emoji", ref: "EMJ-rabbit-face" },
+            asset: { kind: "emoji", ref: "🐰" },
           },
           right: {
             item_id: "carrot",
-            asset: { kind: "emoji", ref: "EMJ-carrot" },
+            asset: { kind: "emoji", ref: "🥕" },
           },
         },
       ],
@@ -46,22 +46,22 @@ export const GT005_FIXTURES: {
           pair_id: "pair_1",
           left: {
             item_id: "num_1",
-            asset: { kind: "emoji", ref: "EMJ-one" },
+            asset: { kind: "emoji", ref: "1️⃣" },
           },
           right: {
             item_id: "dot_1",
-            asset: { kind: "emoji", ref: "EMJ-red-circle" },
+            asset: { kind: "emoji", ref: "🔴" },
           },
         },
         {
           pair_id: "pair_2",
           left: {
             item_id: "num_2",
-            asset: { kind: "emoji", ref: "EMJ-two" },
+            asset: { kind: "emoji", ref: "2️⃣" },
           },
           right: {
             item_id: "dot_2",
-            asset: { kind: "emoji", ref: "EMJ-cherries" },
+            asset: { kind: "emoji", ref: "🍒" },
           },
         },
       ],
@@ -80,22 +80,22 @@ export const GT005_FIXTURES: {
           pair_id: "pair_1",
           left: {
             item_id: "red_heart",
-            asset: { kind: "emoji", ref: "EMJ-red-heart" },
+            asset: { kind: "emoji", ref: "❤️" },
           },
           right: {
             item_id: "red_circle",
-            asset: { kind: "emoji", ref: "EMJ-red-circle" },
+            asset: { kind: "emoji", ref: "🔴" },
           },
         },
         {
           pair_id: "pair_2",
           left: {
             item_id: "blue_heart",
-            asset: { kind: "emoji", ref: "EMJ-blue-heart" },
+            asset: { kind: "emoji", ref: "💙" },
           },
           right: {
             item_id: "blue_circle",
-            asset: { kind: "emoji", ref: "EMJ-blue-circle" },
+            asset: { kind: "emoji", ref: "🔵" },
           },
         },
       ],

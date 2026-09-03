@@ -64,7 +64,7 @@ export default defineTemplate({
   code: "GT-031",
   name: "Gộp tiền xu",
   mechanic: "coin-compose",
-  status: "draft",
+  status: "published",
   version: 1,
   engine_session: "GT031Session",
   layouts: ["multi-bucket-bottom", "horizontal-row"],

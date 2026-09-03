@@ -34,8 +34,8 @@ Guest. User đã đăng nhập thấy cùng trang nhưng có ngữ cảnh quyề
 
 ## 4. Main flow
 
-1. Duyệt lưới game với bộ lọc §7.1.
-2. Mỗi thẻ hiện: tiêu đề · emoji · competency · band tuổi · độ khó · **trạng thái khoá**.
+1. Duyệt danh mục với **Sidebar gom nhóm 6 năng lực (C1–C6) & mạch kỹ năng con (Strands/Skills)** hiển thị mặc định, cùng thanh tìm kiếm từ khóa `q` và các bộ lọc nhanh §7.1.
+2. Mỗi thẻ hiện: tiêu đề · emoji · competency · band tuổi · độ khó (1–5) · **trạng thái khoá**.
 3. Mỗi thẻ mang một CTA lấy từ tập đóng mục 7.4 của
    [`game-detail-public.md`](game-detail-public.md) — game `free` đi thẳng `/play/{code}`,
    game khoá đi tới đúng rào chắn còn thiếu.
@@ -44,11 +44,11 @@ Guest. User đã đăng nhập thấy cùng trang nhưng có ngữ cảnh quyề
 
 | Nhánh | Hành vi |
 |---|---|
-| Lọc không ra kết quả | Gợi ý nới bộ lọc nào |
+| Lọc không ra kết quả | Gợi ý nới bộ lọc nào hoặc nút xoá tất cả bộ lọc |
 | Guest bấm game khoá | CTA đưa tới `/login` hoặc `/pricing` tuỳ bậc, không phải lỗi 403 trần trụi |
 | User đã đăng nhập | Sau khi hydrate, thẻ hiện đúng trạng thái theo quyền của họ — `BR-GCP-09` |
 | Tắt JavaScript | Thẻ giữ nguyên CTA góc nhìn guest do máy chủ dựng; mọi đích vẫn bấm được |
-| Nhiều bộ lọc | Phản ánh vào URL để chia sẻ và index được |
+| Nhiều bộ lọc | Phản ánh vào URL (`competency`, `strand`, `age_band`, `access_tier`, `difficulty`, `q`, `sort`, `cursor`) để chia sẻ và index được |
 
 ## 6. Business rules
 
@@ -68,8 +68,12 @@ Guest. User đã đăng nhập thấy cùng trang nhưng có ngữ cảnh quyề
 
 ### 7.1 Bộ lọc hiển thị
 
-Lứa tuổi (`3-4` · `4-5` · `5-6`) · Năng lực (C1–C6) · Kỹ năng · Độ khó (1–5) ·
-Cơ chế chơi · Miễn phí / trả phí · Chủ đề.
+- **Năng lực & Mạch kỹ năng**: Danh mục 6 năng lực lớn (C1–C6) và các mạch kỹ năng con (Strands/Skills) hiển thị mặc định dạng danh sách/panel tương tác, thay vì selectbox ẩn.
+- **Tìm kiếm từ khóa (`q`)**: Tìm theo tên trò chơi, kỹ năng (hỗ trợ tiếng Việt không dấu).
+- **Lứa tuổi (`age_band`)**: Lọc theo band (`3-4` · `4-5` · `5-6`) dạng Segmented Pills.
+- **Quyền truy cập (`access_tier`)**: `free` · `login` · `standard` · `premium`.
+- **Độ khó (`difficulty`)**: 1 đến 5 chấm.
+- **Sắp xếp (`sort`)**: `relevance` · `difficulty` · `newest`.
 
 Bộ lọc tuổi đi theo **band**, không theo một tuổi lẻ: level chỉ tồn tại ở ba band
 trên, và `age=4` hỏi một câu khác — "band có chứa tuổi 4" — nên khớp cả `3-4` lẫn

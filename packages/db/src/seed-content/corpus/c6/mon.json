@@ -3,21 +3,17 @@
     "header": {
       "code": "GL-C6-MON-MEAS-0001",
       "template_code": "GT-028",
-      "title": "Đo chiều dài của Mặt trời",
-      "instruction": "Bé dùng thước đo chiều dài của Mặt trời nhé!",
-      "theme_tag": "weather",
+      "title": "Đo chiều dài của Gia đình",
+      "instruction": "Bé dùng thước đo chiều dài của Gia đình nhé!",
+      "theme_tag": "family",
       "what_tags": ["number", "quantity", "pattern"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
-      "learning_objective_codes": [
-        "LO-C6.MON.01-01",
-        "LO-C6.MON.01-02",
-        "LO-C6.MON.01-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.01-01"],
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -31,42 +27,42 @@
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-thunderstorm"
+            "ref": "👦"
           }
         },
         {
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-thunderstorm"
+            "ref": "👦"
           }
         },
         {
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-thunderstorm"
+            "ref": "👦"
           }
         },
         {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-thunderstorm"
+            "ref": "👦"
           }
         },
         {
           "item_id": "item_5",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-thunderstorm"
+            "ref": "👦"
           }
         },
         {
           "item_id": "item_6",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-thunderstorm"
+            "ref": "👦"
           }
         }
       ]
@@ -83,76 +79,72 @@
     "header": {
       "code": "GL-C6-MON-MEAS-0002",
       "template_code": "GT-028",
-      "title": "Đo chiều dài của Bao lì xì",
-      "instruction": "Bé dùng thước đo chiều dài của Bao lì xì nhé!",
-      "theme_tag": "festival",
+      "title": "Đo chiều dài của Tai",
+      "instruction": "Bé dùng thước đo chiều dài của Tai nhé!",
+      "theme_tag": "body",
       "what_tags": ["number", "quantity", "pattern"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
-      "learning_objective_codes": [
-        "LO-C6.MON.01-01",
-        "LO-C6.MON.01-02",
-        "LO-C6.MON.01-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.01-02"],
       "difficulty": 4,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy chạm để đếm nhảy cóc 2 cho đủ 6 nhé!",
-      "step": 2,
-      "target_total": 6,
+      "prompt": "Bé hãy chạm để đếm nhảy cóc 5 cho đủ 15 nhé!",
+      "step": 5,
+      "target_total": 15,
       "items": [
         {
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-birthday-cake"
+            "ref": "✋"
           }
         },
         {
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-birthday-cake"
+            "ref": "✋"
           }
         },
         {
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-birthday-cake"
+            "ref": "✋"
           }
         },
         {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-birthday-cake"
+            "ref": "✋"
           }
         },
         {
           "item_id": "item_5",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-birthday-cake"
+            "ref": "✋"
           }
         },
         {
           "item_id": "item_6",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-birthday-cake"
+            "ref": "✋"
           }
         }
       ]
     },
     "difficulty_params": {
-      "step": 2,
+      "step": 5,
       "item_count": 6,
       "allow_undo": true,
       "hint_after_ms": 8000,
@@ -165,61 +157,64 @@
       "template_code": "GT-029",
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
-      "theme_tag": "school",
+      "theme_tag": "weather",
       "what_tags": ["number", "quantity", "ops"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
-      "learning_objective_codes": [
-        "LO-C6.MON.01-01",
-        "LO-C6.MON.01-02",
-        "LO-C6.MON.01-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.01-01"],
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy bớt 1 Sách rồi xem còn lại mấy Sách nhé!",
+      "prompt": "Bé hãy bớt 2 Mặt trời rồi xem còn lại mấy Mặt trời nhé!",
       "initial_items": [
         {
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "☀️"
           }
         },
         {
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "☀️"
           }
         },
         {
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "☀️"
           }
         },
         {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-books"
+            "ref": "☀️"
+          }
+        },
+        {
+          "item_id": "item_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "☀️"
           }
         }
       ],
-      "remove_count": 1,
+      "remove_count": 2,
       "answer_options": [
         {
-          "option_id": "opt_3",
-          "value": 3,
-          "is_correct": true
+          "option_id": "opt_1",
+          "value": 1,
+          "is_correct": false
         },
         {
           "option_id": "opt_4",
@@ -227,15 +222,15 @@
           "is_correct": false
         },
         {
-          "option_id": "opt_1",
-          "value": 1,
-          "is_correct": false
+          "option_id": "opt_3",
+          "value": 3,
+          "is_correct": true
         }
       ]
     },
     "difficulty_params": {
-      "initial_count": 4,
-      "remove_count": 1,
+      "initial_count": 5,
+      "remove_count": 2,
       "allow_retry": true,
       "hint_after_ms": 8000,
       "shuffle_items": true
@@ -247,71 +242,67 @@
       "template_code": "GT-029",
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
-      "theme_tag": "farm",
+      "theme_tag": "festival",
       "what_tags": ["number", "quantity", "ops"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
-      "learning_objective_codes": [
-        "LO-C6.MON.01-01",
-        "LO-C6.MON.01-02",
-        "LO-C6.MON.01-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.01-02"],
       "difficulty": 4,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy bớt 1 Heo rồi xem còn lại mấy Heo nhé!",
+      "prompt": "Bé hãy bớt 1 Bao lì xì rồi xem còn lại mấy Bao lì xì nhé!",
       "initial_items": [
         {
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pig"
+            "ref": "🧧"
           }
         },
         {
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pig"
+            "ref": "🧧"
           }
         },
         {
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pig"
+            "ref": "🧧"
           }
         },
         {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-pig"
+            "ref": "🧧"
           }
         }
       ],
       "remove_count": 1,
       "answer_options": [
         {
+          "option_id": "opt_3",
+          "value": 3,
+          "is_correct": true
+        },
+        {
           "option_id": "opt_4",
           "value": 4,
           "is_correct": false
         },
         {
-          "option_id": "opt_1",
-          "value": 1,
+          "option_id": "opt_2",
+          "value": 2,
           "is_correct": false
-        },
-        {
-          "option_id": "opt_3",
-          "value": 3,
-          "is_correct": true
         }
       ]
     },
@@ -327,17 +318,13 @@
     "header": {
       "code": "GL-C6-MON-COIN-0001",
       "template_code": "GT-030",
-      "title": "Đếm tiền xu mua Ngôi nhà",
+      "title": "Đếm tiền xu mua Bác sĩ",
       "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
-      "theme_tag": "home",
+      "theme_tag": "job",
       "what_tags": ["size", "quantity", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
-      "learning_objective_codes": [
-        "LO-C6.MON.01-01",
-        "LO-C6.MON.01-02",
-        "LO-C6.MON.01-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.01-01"],
       "difficulty": 3,
       "age_min": 5,
       "age_max": 6,
@@ -347,20 +334,20 @@
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy xếp các Cái giường để đo xem Ngôi nhà dài mấy Cái giường nhé!",
+      "prompt": "Bé hãy xếp các Cô giáo để đo xem Bác sĩ dài mấy Cô giáo nhé!",
       "object": {
         "object_id": "obj_main",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-house"
+          "ref": "🧑‍⚕️"
         },
-        "length_in_units": 4
+        "length_in_units": 5
       },
       "unit": {
         "unit_id": "unit_measure",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-bed"
+          "ref": "🧑‍🏫"
         }
       },
       "answer_options": [
@@ -370,8 +357,79 @@
           "is_correct": false
         },
         {
+          "option_id": "opt_5",
+          "value": 5,
+          "is_correct": true
+        },
+        {
+          "option_id": "opt_2",
+          "value": 2,
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_6",
+          "value": 6,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "length_in_units": 5,
+      "gap_tolerance_pct": 10,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C6-MON-COIN-0002",
+      "template_code": "GT-030",
+      "title": "Đếm tiền xu mua Hoa sen",
+      "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
+      "theme_tag": "homeland",
+      "what_tags": ["size", "quantity", "number"],
+      "thinking_tags": ["observe"],
+      "skill_codes": ["C6.MON.01"],
+      "learning_objective_codes": ["LO-C6.MON.01-02"],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy xếp các Hoa sen để đo xem Cờ Việt Nam dài mấy Hoa sen nhé!",
+      "object": {
+        "object_id": "obj_main",
+        "asset": {
+          "kind": "emoji",
+          "ref": "🇻🇳"
+        },
+        "length_in_units": 4
+      },
+      "unit": {
+        "unit_id": "unit_measure",
+        "asset": {
+          "kind": "emoji",
+          "ref": "🪷"
+        }
+      },
+      "answer_options": [
+        {
           "option_id": "opt_1",
           "value": 1,
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_7",
+          "value": 7,
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_3",
+          "value": 3,
           "is_correct": false
         },
         {
@@ -390,20 +448,16 @@
   },
   {
     "header": {
-      "code": "GL-C6-MON-COIN-0002",
-      "template_code": "GT-030",
-      "title": "Đếm tiền xu mua Voi",
-      "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
-      "theme_tag": "animal",
-      "what_tags": ["size", "quantity", "number"],
+      "code": "GL-C6-MON-PICT-0001",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Trường học",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "school",
+      "what_tags": ["money", "number", "quantity"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
-      "learning_objective_codes": [
-        "LO-C6.MON.01-01",
-        "LO-C6.MON.01-02",
-        "LO-C6.MON.01-03"
-      ],
-      "difficulty": 4,
+      "learning_objective_codes": ["LO-C6.MON.01-01"],
+      "difficulty": 3,
       "age_min": 5,
       "age_max": 6,
       "access_tier": "premium",
@@ -412,131 +466,45 @@
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy xếp các Voi để đo xem Sư tử dài mấy Voi nhé!",
-      "object": {
-        "object_id": "obj_main",
-        "asset": {
-          "kind": "emoji",
-          "ref": "EMJ-lion"
-        },
-        "length_in_units": 6
-      },
-      "unit": {
-        "unit_id": "unit_measure",
-        "asset": {
-          "kind": "emoji",
-          "ref": "EMJ-elephant"
-        }
-      },
-      "answer_options": [
-        {
-          "option_id": "opt_8",
-          "value": 8,
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_5",
-          "value": 5,
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_6",
-          "value": 6,
-          "is_correct": true
-        },
-        {
-          "option_id": "opt_9",
-          "value": 9,
-          "is_correct": false
-        }
-      ]
-    },
-    "difficulty_params": {
-      "length_in_units": 6,
-      "gap_tolerance_pct": 10,
-      "allow_retry": true,
-      "hint_after_ms": 8000
-    }
-  },
-  {
-    "header": {
-      "code": "GL-C6-MON-PICT-0001",
-      "template_code": "GT-031",
-      "title": "Biểu đồ tranh Cây xanh",
-      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
-      "theme_tag": "nature",
-      "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["observe"],
-      "skill_codes": ["C6.MON.01"],
-      "learning_objective_codes": [
-        "LO-C6.MON.01-01",
-        "LO-C6.MON.01-02",
-        "LO-C6.MON.01-03"
-      ],
-      "difficulty": 3,
-      "age_min": 5,
-      "age_max": 6,
-      "access_tier": "standard",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy chọn các đồng xu để trả đúng 13 đồng nhé!",
-      "target_amount": 13,
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 7 đồng nhé!",
+      "target_amount": 7,
       "item_to_buy": {
-        "label": "Cây xanh",
+        "label": "Trường học",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-deciduous-tree"
+          "ref": "🏫"
         }
       },
       "coins": [
         {
-          "coin_id": "coin_1_val1",
+          "coin_id": "coin_1_val5",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-coin"
-          },
-          "value": 1
-        },
-        {
-          "coin_id": "coin_2_val5",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-coin"
+            "ref": "🪙"
           },
           "value": 5
         },
         {
-          "coin_id": "coin_3_val5",
+          "coin_id": "coin_2_val2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-coin"
-          },
-          "value": 5
-        },
-        {
-          "coin_id": "coin_4_val2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-coin"
+            "ref": "🪙"
           },
           "value": 2
         },
         {
-          "coin_id": "coin_5_val10",
+          "coin_id": "coin_3_val1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-coin"
+            "ref": "🪙"
           },
-          "value": 10
+          "value": 1
         }
       ]
     },
     "difficulty_params": {
-      "coin_kind_count": 4,
-      "target_amount": 13,
+      "coin_kind_count": 3,
+      "target_amount": 7,
       "exact_change": true,
       "allow_retry": true,
       "hint_after_ms": 8000
@@ -546,65 +514,77 @@
     "header": {
       "code": "GL-C6-MON-PICT-0002",
       "template_code": "GT-031",
-      "title": "Biểu đồ tranh Cá heo",
+      "title": "Biểu đồ tranh Bò sữa",
       "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
-      "theme_tag": "ocean",
+      "theme_tag": "farm",
       "what_tags": ["money", "number", "quantity"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
-      "learning_objective_codes": [
-        "LO-C6.MON.01-01",
-        "LO-C6.MON.01-02",
-        "LO-C6.MON.01-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.01-02"],
       "difficulty": 4,
       "age_min": 5,
       "age_max": 6,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy chọn các đồng xu để trả đúng 12 đồng nhé!",
-      "target_amount": 12,
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 14 đồng nhé!",
+      "target_amount": 14,
       "item_to_buy": {
-        "label": "Cá voi",
+        "label": "Máy kéo",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-whale"
+          "ref": "🚜"
         }
       },
       "coins": [
         {
-          "coin_id": "coin_1_val10",
+          "coin_id": "coin_1_val2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-coin"
+            "ref": "🪙"
+          },
+          "value": 2
+        },
+        {
+          "coin_id": "coin_2_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🪙"
           },
           "value": 10
         },
         {
-          "coin_id": "coin_2_val2",
+          "coin_id": "coin_3_val10",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-coin"
+            "ref": "🪙"
+          },
+          "value": 10
+        },
+        {
+          "coin_id": "coin_4_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🪙"
           },
           "value": 2
         },
         {
-          "coin_id": "coin_3_val2",
+          "coin_id": "coin_5_val10",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-coin"
+            "ref": "🪙"
           },
-          "value": 2
+          "value": 10
         }
       ]
     },
     "difficulty_params": {
       "coin_kind_count": 2,
-      "target_amount": 12,
+      "target_amount": 14,
       "exact_change": true,
       "allow_retry": true,
       "hint_after_ms": 8000
@@ -614,17 +594,13 @@
     "header": {
       "code": "GL-C6-MON-VENN-0001",
       "template_code": "GT-032",
-      "title": "Biểu đồ Venn phân loại Táo đỏ",
+      "title": "Biểu đồ Venn phân loại Ngôi nhà",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
-      "theme_tag": "food",
+      "theme_tag": "home",
       "what_tags": ["msr", "quantity", "size"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
-      "learning_objective_codes": [
-        "LO-C6.MON.01-01",
-        "LO-C6.MON.01-02",
-        "LO-C6.MON.01-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.01-01"],
       "difficulty": 3,
       "age_min": 5,
       "age_max": 6,
@@ -639,30 +615,23 @@
         {
           "cup_id": "cup_1",
           "shape": "narrow_tall",
-          "capacity_units": 6,
-          "fill_units": 3,
-          "color": "mint"
+          "capacity_units": 8,
+          "fill_units": 6,
+          "color": "amber"
         },
         {
           "cup_id": "cup_2",
           "shape": "wide_short",
-          "capacity_units": 6,
-          "fill_units": 3,
-          "color": "mint"
-        },
-        {
-          "cup_id": "cup_3",
-          "shape": "standard",
-          "capacity_units": 6,
-          "fill_units": 1,
-          "color": "mint"
+          "capacity_units": 8,
+          "fill_units": 6,
+          "color": "amber"
         }
       ],
       "question_type": "same",
       "conservation_trap": true
     },
     "difficulty_params": {
-      "cup_count": 3,
+      "cup_count": 2,
       "level_steps": 8,
       "conservation_trap": true,
       "allow_retry": true,
@@ -673,17 +642,13 @@
     "header": {
       "code": "GL-C6-MON-VENN-0002",
       "template_code": "GT-032",
-      "title": "Biểu đồ Venn phân loại Xe buýt",
+      "title": "Biểu đồ Venn phân loại Voi",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
-      "theme_tag": "vehicle",
+      "theme_tag": "animal",
       "what_tags": ["msr", "quantity", "size"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.01"],
-      "learning_objective_codes": [
-        "LO-C6.MON.01-01",
-        "LO-C6.MON.01-02",
-        "LO-C6.MON.01-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.01-02"],
       "difficulty": 4,
       "age_min": 5,
       "age_max": 6,
@@ -698,14 +663,14 @@
         {
           "cup_id": "cup_1",
           "shape": "narrow_tall",
-          "capacity_units": 10,
+          "capacity_units": 8,
           "fill_units": 6,
           "color": "sky"
         },
         {
           "cup_id": "cup_2",
           "shape": "wide_short",
-          "capacity_units": 10,
+          "capacity_units": 8,
           "fill_units": 6,
           "color": "sky"
         }
@@ -725,17 +690,13 @@
     "header": {
       "code": "GL-C6-MON-PUZZ-0001",
       "template_code": "GT-010",
-      "title": "Ghép hình Bảng vẽ hoàn chỉnh",
-      "instruction": "Bé ghép các mảnh thành hình Bảng vẽ nhé!",
-      "theme_tag": "art",
+      "title": "Ghép hình Cây xanh hoàn chỉnh",
+      "instruction": "Bé ghép các mảnh thành hình Cây xanh nhé!",
+      "theme_tag": "nature",
       "what_tags": ["log"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
-      "learning_objective_codes": [
-        "LO-C6.MON.02-01",
-        "LO-C6.MON.02-02",
-        "LO-C6.MON.02-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.02-01"],
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
@@ -751,14 +712,14 @@
           "symbol_id": "sym_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-camera"
+            "ref": "🌴"
           }
         },
         {
           "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-saxophone"
+            "ref": "⛰️"
           }
         }
       ],
@@ -771,7 +732,7 @@
         {
           "equation_id": "eq_2",
           "left": ["sym_1", "sym_2"],
-          "right_value": 7
+          "right_value": 6
         }
       ],
       "question": {
@@ -780,19 +741,19 @@
       },
       "options": [
         {
-          "value": 3,
+          "value": 2,
           "is_correct": true
         },
         {
+          "value": 3,
+          "is_correct": false
+        },
+        {
+          "value": 1,
+          "is_correct": false
+        },
+        {
           "value": 4,
-          "is_correct": false
-        },
-        {
-          "value": 2,
-          "is_correct": false
-        },
-        {
-          "value": 5,
           "is_correct": false
         }
       ]
@@ -809,17 +770,13 @@
     "header": {
       "code": "GL-C6-MON-PUZZ-0002",
       "template_code": "GT-010",
-      "title": "Ghép hình Hành tinh hoàn chỉnh",
-      "instruction": "Bé ghép các mảnh thành hình Hành tinh nhé!",
-      "theme_tag": "space",
+      "title": "Ghép hình Cá heo hoàn chỉnh",
+      "instruction": "Bé ghép các mảnh thành hình Cá heo nhé!",
+      "theme_tag": "ocean",
       "what_tags": ["log"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
-      "learning_objective_codes": [
-        "LO-C6.MON.02-01",
-        "LO-C6.MON.02-02",
-        "LO-C6.MON.02-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.02-02"],
       "difficulty": 4,
       "age_min": 4,
       "age_max": 5,
@@ -835,14 +792,14 @@
           "symbol_id": "sym_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-sparkles"
+            "ref": "🐳"
           }
         },
         {
           "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-earth"
+            "ref": "🐚"
           }
         }
       ],
@@ -893,17 +850,13 @@
     "header": {
       "code": "GL-C6-MON-ADD-0001",
       "template_code": "GT-026",
-      "title": "Phép cộng trực quan với Gia đình",
-      "instruction": "Bé tính tổng số Gia đình của hai nhóm nhé!",
-      "theme_tag": "family",
+      "title": "Phép cộng trực quan với Táo đỏ",
+      "instruction": "Bé tính tổng số Táo đỏ của hai nhóm nhé!",
+      "theme_tag": "food",
       "what_tags": ["fnc"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
-      "learning_objective_codes": [
-        "LO-C6.MON.02-01",
-        "LO-C6.MON.02-02",
-        "LO-C6.MON.02-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.02-01"],
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
@@ -913,19 +866,19 @@
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy chạm khi thấy Bà, và dừng lại khi thấy Bố nhé!",
+      "prompt": "Bé hãy chạm khi thấy Cà rốt, và dừng lại khi thấy Mì nhé!",
       "go_stimulus": {
-        "label": "Bà",
+        "label": "Cà rốt",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-grandmother"
+          "ref": "🥕"
         }
       },
       "nogo_stimulus": {
-        "label": "Bố",
+        "label": "Mì",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-father"
+          "ref": "🍜"
         }
       },
       "trials": [
@@ -958,17 +911,13 @@
     "header": {
       "code": "GL-C6-MON-ADD-0002",
       "template_code": "GT-026",
-      "title": "Phép cộng trực quan với Tai",
-      "instruction": "Bé tính tổng số Tai của hai nhóm nhé!",
-      "theme_tag": "body",
+      "title": "Phép cộng trực quan với Xe buýt",
+      "instruction": "Bé tính tổng số Xe buýt của hai nhóm nhé!",
+      "theme_tag": "vehicle",
       "what_tags": ["fnc"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
-      "learning_objective_codes": [
-        "LO-C6.MON.02-01",
-        "LO-C6.MON.02-02",
-        "LO-C6.MON.02-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.02-02"],
       "difficulty": 4,
       "age_min": 4,
       "age_max": 5,
@@ -978,19 +927,19 @@
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy chạm khi thấy Bàn tay, và dừng lại khi thấy Tai nhé!",
+      "prompt": "Bé hãy chạm khi thấy Xe tải, và dừng lại khi thấy Xe máy nhé!",
       "go_stimulus": {
-        "label": "Bàn tay",
+        "label": "Xe tải",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-raised-hand"
+          "ref": "🚛"
         }
       },
       "nogo_stimulus": {
-        "label": "Tai",
+        "label": "Xe máy",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-ear"
+          "ref": "🏍️"
         }
       },
       "trials": [
@@ -1023,17 +972,13 @@
     "header": {
       "code": "GL-C6-MON-SUB-0001",
       "template_code": "GT-027",
-      "title": "Phép trừ trực quan với Mặt trời",
+      "title": "Phép trừ trực quan với Bảng vẽ",
       "instruction": "Bé làm phép trừ và chọn kết quả đúng nhé!",
-      "theme_tag": "weather",
+      "theme_tag": "art",
       "what_tags": ["fnc", "rule", "cls"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
-      "learning_objective_codes": [
-        "LO-C6.MON.02-01",
-        "LO-C6.MON.02-02",
-        "LO-C6.MON.02-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.02-01"],
       "difficulty": 3,
       "age_min": 5,
       "age_max": 6,
@@ -1067,7 +1012,7 @@
           "id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-thunderstorm"
+            "ref": "🥁"
           },
           "color": "red",
           "shape": "circle"
@@ -1076,7 +1021,7 @@
           "id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-snowflake"
+            "ref": "🎺"
           },
           "color": "red",
           "shape": "square"
@@ -1085,7 +1030,7 @@
           "id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-wind"
+            "ref": "🎶"
           },
           "color": "blue",
           "shape": "circle"
@@ -1094,7 +1039,7 @@
           "id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-sun"
+            "ref": "🎻"
           },
           "color": "blue",
           "shape": "square"
@@ -1112,17 +1057,13 @@
     "header": {
       "code": "GL-C6-MON-SUB-0002",
       "template_code": "GT-027",
-      "title": "Phép trừ trực quan với Bao lì xì",
+      "title": "Phép trừ trực quan với Hành tinh",
       "instruction": "Bé làm phép trừ và chọn kết quả đúng nhé!",
-      "theme_tag": "festival",
+      "theme_tag": "space",
       "what_tags": ["fnc", "rule", "cls"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
-      "learning_objective_codes": [
-        "LO-C6.MON.02-01",
-        "LO-C6.MON.02-02",
-        "LO-C6.MON.02-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.02-02"],
       "difficulty": 4,
       "age_min": 5,
       "age_max": 6,
@@ -1156,7 +1097,7 @@
           "id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-balloon"
+            "ref": "🚀"
           },
           "color": "red",
           "shape": "circle"
@@ -1165,7 +1106,7 @@
           "id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-jack-o-lantern"
+            "ref": "☄️"
           },
           "color": "red",
           "shape": "square"
@@ -1174,7 +1115,7 @@
           "id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-fireworks"
+            "ref": "🌕"
           },
           "color": "blue",
           "shape": "circle"
@@ -1183,7 +1124,7 @@
           "id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-candle"
+            "ref": "🌙"
           },
           "color": "blue",
           "shape": "square"
@@ -1201,70 +1142,66 @@
     "header": {
       "code": "GL-C6-MON-MEAS-0003",
       "template_code": "GT-028",
-      "title": "Đo chiều dài của Trường học",
-      "instruction": "Bé dùng thước đo chiều dài của Trường học nhé!",
-      "theme_tag": "school",
+      "title": "Đo chiều dài của Gia đình",
+      "instruction": "Bé dùng thước đo chiều dài của Gia đình nhé!",
+      "theme_tag": "family",
       "what_tags": ["number", "quantity", "pattern"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
-      "learning_objective_codes": [
-        "LO-C6.MON.02-01",
-        "LO-C6.MON.02-02",
-        "LO-C6.MON.02-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.02-01"],
       "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
-      "access_tier": "standard",
+      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy chạm để đếm nhảy cóc 2 cho đủ 8 nhé!",
+      "prompt": "Bé hãy chạm để đếm nhảy cóc 2 cho đủ 4 nhé!",
       "step": 2,
-      "target_total": 8,
+      "target_total": 4,
       "items": [
         {
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-open-book"
+            "ref": "🏡"
           }
         },
         {
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-open-book"
+            "ref": "🏡"
           }
         },
         {
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-open-book"
+            "ref": "🏡"
           }
         },
         {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-open-book"
+            "ref": "🏡"
           }
         },
         {
           "item_id": "item_5",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-open-book"
+            "ref": "🏡"
           }
         },
         {
           "item_id": "item_6",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-open-book"
+            "ref": "🏡"
           }
         }
       ]
@@ -1281,373 +1218,17 @@
     "header": {
       "code": "GL-C6-MON-MEAS-0004",
       "template_code": "GT-028",
-      "title": "Đo chiều dài của Bò sữa",
-      "instruction": "Bé dùng thước đo chiều dài của Bò sữa nhé!",
-      "theme_tag": "farm",
+      "title": "Đo chiều dài của Tai",
+      "instruction": "Bé dùng thước đo chiều dài của Tai nhé!",
+      "theme_tag": "body",
       "what_tags": ["number", "quantity", "pattern"],
       "thinking_tags": ["shift"],
       "skill_codes": ["C6.MON.02"],
-      "learning_objective_codes": [
-        "LO-C6.MON.02-01",
-        "LO-C6.MON.02-02",
-        "LO-C6.MON.02-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.02-02"],
       "difficulty": 4,
-      "age_min": 4,
-      "age_max": 5,
-      "access_tier": "premium",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy chạm để đếm nhảy cóc 2 cho đủ 6 nhé!",
-      "step": 2,
-      "target_total": 6,
-      "items": [
-        {
-          "item_id": "item_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-rooster"
-          }
-        },
-        {
-          "item_id": "item_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-rooster"
-          }
-        },
-        {
-          "item_id": "item_3",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-rooster"
-          }
-        },
-        {
-          "item_id": "item_4",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-rooster"
-          }
-        },
-        {
-          "item_id": "item_5",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-rooster"
-          }
-        },
-        {
-          "item_id": "item_6",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-rooster"
-          }
-        }
-      ]
-    },
-    "difficulty_params": {
-      "step": 2,
-      "item_count": 6,
-      "allow_undo": true,
-      "hint_after_ms": 8000,
-      "shuffle_items": true
-    }
-  },
-  {
-    "header": {
-      "code": "GL-C6-MON-TIME-0003",
-      "template_code": "GT-029",
-      "title": "Xem giờ trên đồng hồ",
-      "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
-      "theme_tag": "home",
-      "what_tags": ["number", "quantity", "ops"],
-      "thinking_tags": ["shift"],
-      "skill_codes": ["C6.MON.02"],
-      "learning_objective_codes": [
-        "LO-C6.MON.02-01",
-        "LO-C6.MON.02-02",
-        "LO-C6.MON.02-03"
-      ],
-      "difficulty": 3,
       "age_min": 4,
       "age_max": 5,
       "access_tier": "standard",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy bớt 1 Cái cửa rồi xem còn lại mấy Cái cửa nhé!",
-      "initial_items": [
-        {
-          "item_id": "item_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-door"
-          }
-        },
-        {
-          "item_id": "item_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-door"
-          }
-        },
-        {
-          "item_id": "item_3",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-door"
-          }
-        },
-        {
-          "item_id": "item_4",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-door"
-          }
-        },
-        {
-          "item_id": "item_5",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-door"
-          }
-        },
-        {
-          "item_id": "item_6",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-door"
-          }
-        }
-      ],
-      "remove_count": 1,
-      "answer_options": [
-        {
-          "option_id": "opt_4",
-          "value": 4,
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_2",
-          "value": 2,
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_5",
-          "value": 5,
-          "is_correct": true
-        }
-      ]
-    },
-    "difficulty_params": {
-      "initial_count": 6,
-      "remove_count": 1,
-      "allow_retry": true,
-      "hint_after_ms": 8000,
-      "shuffle_items": true
-    }
-  },
-  {
-    "header": {
-      "code": "GL-C6-MON-TIME-0004",
-      "template_code": "GT-029",
-      "title": "Xem giờ trên đồng hồ",
-      "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
-      "theme_tag": "animal",
-      "what_tags": ["number", "quantity", "ops"],
-      "thinking_tags": ["shift"],
-      "skill_codes": ["C6.MON.02"],
-      "learning_objective_codes": [
-        "LO-C6.MON.02-01",
-        "LO-C6.MON.02-02",
-        "LO-C6.MON.02-03"
-      ],
-      "difficulty": 4,
-      "age_min": 4,
-      "age_max": 5,
-      "access_tier": "premium",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy bớt 1 Thỏ rồi xem còn lại mấy Thỏ nhé!",
-      "initial_items": [
-        {
-          "item_id": "item_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-rabbit"
-          }
-        },
-        {
-          "item_id": "item_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-rabbit"
-          }
-        },
-        {
-          "item_id": "item_3",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-rabbit"
-          }
-        },
-        {
-          "item_id": "item_4",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-rabbit"
-          }
-        },
-        {
-          "item_id": "item_5",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-rabbit"
-          }
-        },
-        {
-          "item_id": "item_6",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-rabbit"
-          }
-        }
-      ],
-      "remove_count": 1,
-      "answer_options": [
-        {
-          "option_id": "opt_5",
-          "value": 5,
-          "is_correct": true
-        },
-        {
-          "option_id": "opt_2",
-          "value": 2,
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_4",
-          "value": 4,
-          "is_correct": false
-        }
-      ]
-    },
-    "difficulty_params": {
-      "initial_count": 6,
-      "remove_count": 1,
-      "allow_retry": true,
-      "hint_after_ms": 8000,
-      "shuffle_items": true
-    }
-  },
-  {
-    "header": {
-      "code": "GL-C6-MON-MEAS-0005",
-      "template_code": "GT-028",
-      "title": "Đo chiều dài của Cây xanh",
-      "instruction": "Bé đo và so sánh chiều dài các vật thể!",
-      "theme_tag": "nature",
-      "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["observe"],
-      "skill_codes": ["C6.MON.03"],
-      "learning_objective_codes": [
-        "LO-C6.MON.03-01",
-        "LO-C6.MON.03-02",
-        "LO-C6.MON.03-03"
-      ],
-      "difficulty": 4,
-      "age_min": 5,
-      "age_max": 6,
-      "access_tier": "standard",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy chạm để đếm nhảy cóc 2 cho đủ 6 nhé!",
-      "step": 2,
-      "target_total": 6,
-      "items": [
-        {
-          "item_id": "item_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-maple-leaf"
-          }
-        },
-        {
-          "item_id": "item_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-maple-leaf"
-          }
-        },
-        {
-          "item_id": "item_3",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-maple-leaf"
-          }
-        },
-        {
-          "item_id": "item_4",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-maple-leaf"
-          }
-        },
-        {
-          "item_id": "item_5",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-maple-leaf"
-          }
-        },
-        {
-          "item_id": "item_6",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-maple-leaf"
-          }
-        }
-      ]
-    },
-    "difficulty_params": {
-      "step": 2,
-      "item_count": 6,
-      "allow_undo": true,
-      "hint_after_ms": 8000,
-      "shuffle_items": true
-    }
-  },
-  {
-    "header": {
-      "code": "GL-C6-MON-MEAS-0006",
-      "template_code": "GT-028",
-      "title": "Đo chiều dài của Cá heo",
-      "instruction": "Bé đo và so sánh chiều dài các vật thể!",
-      "theme_tag": "ocean",
-      "what_tags": ["number", "quantity", "pattern"],
-      "thinking_tags": ["observe"],
-      "skill_codes": ["C6.MON.03"],
-      "learning_objective_codes": [
-        "LO-C6.MON.03-01",
-        "LO-C6.MON.03-02",
-        "LO-C6.MON.03-03"
-      ],
-      "difficulty": 5,
-      "age_min": 5,
-      "age_max": 6,
-      "access_tier": "premium",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
@@ -1661,42 +1242,42 @@
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-fish"
+            "ref": "👄"
           }
         },
         {
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-fish"
+            "ref": "👄"
           }
         },
         {
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-fish"
+            "ref": "👄"
           }
         },
         {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-fish"
+            "ref": "👄"
           }
         },
         {
           "item_id": "item_5",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-fish"
+            "ref": "👄"
           }
         },
         {
           "item_id": "item_6",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-fish"
+            "ref": "👄"
           }
         }
       ]
@@ -1711,20 +1292,269 @@
   },
   {
     "header": {
-      "code": "GL-C6-MON-TIME-0005",
+      "code": "GL-C6-MON-TIME-0003",
       "template_code": "GT-029",
       "title": "Xem giờ trên đồng hồ",
-      "instruction": "Bé quan sát kim giờ phút đọc thời gian nhé!",
-      "theme_tag": "food",
+      "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
+      "theme_tag": "weather",
       "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["shift"],
+      "skill_codes": ["C6.MON.02"],
+      "learning_objective_codes": ["LO-C6.MON.02-01"],
+      "difficulty": 3,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy bớt 2 Cầu vồng rồi xem còn lại mấy Cầu vồng nhé!",
+      "initial_items": [
+        {
+          "item_id": "item_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🌈"
+          }
+        },
+        {
+          "item_id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🌈"
+          }
+        },
+        {
+          "item_id": "item_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🌈"
+          }
+        },
+        {
+          "item_id": "item_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🌈"
+          }
+        },
+        {
+          "item_id": "item_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🌈"
+          }
+        },
+        {
+          "item_id": "item_6",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🌈"
+          }
+        }
+      ],
+      "remove_count": 2,
+      "answer_options": [
+        {
+          "option_id": "opt_2",
+          "value": 2,
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_4",
+          "value": 4,
+          "is_correct": true
+        },
+        {
+          "option_id": "opt_1",
+          "value": 1,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "initial_count": 6,
+      "remove_count": 2,
+      "allow_retry": true,
+      "hint_after_ms": 8000,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C6-MON-TIME-0004",
+      "template_code": "GT-029",
+      "title": "Xem giờ trên đồng hồ",
+      "instruction": "Bé xem đồng hồ và chọn giờ đúng nhé!",
+      "theme_tag": "festival",
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["shift"],
+      "skill_codes": ["C6.MON.02"],
+      "learning_objective_codes": ["LO-C6.MON.02-02"],
+      "difficulty": 4,
+      "age_min": 4,
+      "age_max": 5,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy bớt 2 Pháo giấy rồi xem còn lại mấy Pháo giấy nhé!",
+      "initial_items": [
+        {
+          "item_id": "item_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🎊"
+          }
+        },
+        {
+          "item_id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🎊"
+          }
+        },
+        {
+          "item_id": "item_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🎊"
+          }
+        },
+        {
+          "item_id": "item_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🎊"
+          }
+        }
+      ],
+      "remove_count": 2,
+      "answer_options": [
+        {
+          "option_id": "opt_2",
+          "value": 2,
+          "is_correct": true
+        },
+        {
+          "option_id": "opt_1",
+          "value": 1,
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_4",
+          "value": 4,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "initial_count": 4,
+      "remove_count": 2,
+      "allow_retry": true,
+      "hint_after_ms": 8000,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C6-MON-MEAS-0005",
+      "template_code": "GT-028",
+      "title": "Đo chiều dài của Bác sĩ",
+      "instruction": "Bé đo và so sánh chiều dài các vật thể!",
+      "theme_tag": "job",
+      "what_tags": ["number", "quantity", "pattern"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
-      "learning_objective_codes": [
-        "LO-C6.MON.03-01",
-        "LO-C6.MON.03-02",
-        "LO-C6.MON.03-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.03-01"],
       "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chạm để đếm nhảy cóc 5 cho đủ 25 nhé!",
+      "step": 5,
+      "target_total": 25,
+      "items": [
+        {
+          "item_id": "item_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "👩‍🔬"
+          }
+        },
+        {
+          "item_id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "👩‍🔬"
+          }
+        },
+        {
+          "item_id": "item_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "👩‍🔬"
+          }
+        },
+        {
+          "item_id": "item_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "👩‍🔬"
+          }
+        },
+        {
+          "item_id": "item_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "👩‍🔬"
+          }
+        },
+        {
+          "item_id": "item_6",
+          "asset": {
+            "kind": "emoji",
+            "ref": "👩‍🔬"
+          }
+        },
+        {
+          "item_id": "item_7",
+          "asset": {
+            "kind": "emoji",
+            "ref": "👩‍🔬"
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "step": 5,
+      "item_count": 7,
+      "allow_undo": true,
+      "hint_after_ms": 8000,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C6-MON-MEAS-0006",
+      "template_code": "GT-028",
+      "title": "Đo chiều dài của Hoa sen",
+      "instruction": "Bé đo và so sánh chiều dài các vật thể!",
+      "theme_tag": "homeland",
+      "what_tags": ["number", "quantity", "pattern"],
+      "thinking_tags": ["observe"],
+      "skill_codes": ["C6.MON.03"],
+      "learning_objective_codes": ["LO-C6.MON.03-02"],
+      "difficulty": 5,
       "age_min": 5,
       "age_max": 6,
       "access_tier": "standard",
@@ -1733,72 +1563,181 @@
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy bớt 3 Táo đỏ rồi xem còn lại mấy Táo đỏ nhé!",
-      "initial_items": [
+      "prompt": "Bé hãy chạm để đếm nhảy cóc 5 cho đủ 30 nhé!",
+      "step": 5,
+      "target_total": 30,
+      "items": [
         {
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-red-apple"
+            "ref": "🌄"
           }
         },
         {
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-red-apple"
+            "ref": "🌄"
           }
         },
         {
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-red-apple"
+            "ref": "🌄"
           }
         },
         {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-red-apple"
+            "ref": "🌄"
           }
         },
         {
           "item_id": "item_5",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-red-apple"
+            "ref": "🌄"
           }
         },
         {
           "item_id": "item_6",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-red-apple"
+            "ref": "🌄"
+          }
+        },
+        {
+          "item_id": "item_7",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🌄"
+          }
+        },
+        {
+          "item_id": "item_8",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🌄"
+          }
+        }
+      ]
+    },
+    "difficulty_params": {
+      "step": 5,
+      "item_count": 8,
+      "allow_undo": true,
+      "hint_after_ms": 8000,
+      "shuffle_items": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C6-MON-TIME-0005",
+      "template_code": "GT-029",
+      "title": "Xem giờ trên đồng hồ",
+      "instruction": "Bé quan sát kim giờ phút đọc thời gian nhé!",
+      "theme_tag": "school",
+      "what_tags": ["number", "quantity", "ops"],
+      "thinking_tags": ["observe"],
+      "skill_codes": ["C6.MON.03"],
+      "learning_objective_codes": ["LO-C6.MON.03-01"],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy bớt 3 Bút sáp rồi xem còn lại mấy Bút sáp nhé!",
+      "initial_items": [
+        {
+          "item_id": "item_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🖍️"
+          }
+        },
+        {
+          "item_id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🖍️"
+          }
+        },
+        {
+          "item_id": "item_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🖍️"
+          }
+        },
+        {
+          "item_id": "item_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🖍️"
+          }
+        },
+        {
+          "item_id": "item_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🖍️"
+          }
+        },
+        {
+          "item_id": "item_6",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🖍️"
+          }
+        },
+        {
+          "item_id": "item_7",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🖍️"
+          }
+        },
+        {
+          "item_id": "item_8",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🖍️"
           }
         }
       ],
       "remove_count": 3,
       "answer_options": [
         {
-          "option_id": "opt_1",
-          "value": 1,
+          "option_id": "opt_4",
+          "value": 4,
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_7",
+          "value": 7,
           "is_correct": false
         },
         {
           "option_id": "opt_3",
           "value": 3,
-          "is_correct": true
+          "is_correct": false
         },
         {
-          "option_id": "opt_2",
-          "value": 2,
-          "is_correct": false
+          "option_id": "opt_5",
+          "value": 5,
+          "is_correct": true
         }
       ]
     },
     "difficulty_params": {
-      "initial_count": 6,
+      "initial_count": 8,
       "remove_count": 3,
       "allow_retry": true,
       "hint_after_ms": 8000,
@@ -1811,112 +1750,108 @@
       "template_code": "GT-029",
       "title": "Xem giờ trên đồng hồ",
       "instruction": "Bé quan sát kim giờ phút đọc thời gian nhé!",
-      "theme_tag": "vehicle",
+      "theme_tag": "farm",
       "what_tags": ["number", "quantity", "ops"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
-      "learning_objective_codes": [
-        "LO-C6.MON.03-01",
-        "LO-C6.MON.03-02",
-        "LO-C6.MON.03-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.03-02"],
       "difficulty": 5,
       "age_min": 5,
       "age_max": 6,
-      "access_tier": "premium",
+      "access_tier": "standard",
       "content_version": 1,
       "authored_in": "repo_seed",
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy bớt 4 Xe buýt rồi xem còn lại mấy Xe buýt nhé!",
+      "prompt": "Bé hãy bớt 3 Bò sữa rồi xem còn lại mấy Bò sữa nhé!",
       "initial_items": [
         {
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-bus"
+            "ref": "🐮"
           }
         },
         {
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-bus"
+            "ref": "🐮"
           }
         },
         {
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-bus"
+            "ref": "🐮"
           }
         },
         {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-bus"
+            "ref": "🐮"
           }
         },
         {
           "item_id": "item_5",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-bus"
+            "ref": "🐮"
           }
         },
         {
           "item_id": "item_6",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-bus"
+            "ref": "🐮"
           }
         },
         {
           "item_id": "item_7",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-bus"
+            "ref": "🐮"
           }
         },
         {
           "item_id": "item_8",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-bus"
+            "ref": "🐮"
           }
         },
         {
           "item_id": "item_9",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-bus"
+            "ref": "🐮"
           }
         }
       ],
-      "remove_count": 4,
+      "remove_count": 3,
       "answer_options": [
+        {
+          "option_id": "opt_7",
+          "value": 7,
+          "is_correct": false
+        },
         {
           "option_id": "opt_6",
           "value": 6,
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_4",
-          "value": 4,
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_5",
-          "value": 5,
           "is_correct": true
+        },
+        {
+          "option_id": "opt_8",
+          "value": 8,
+          "is_correct": false
         }
       ]
     },
     "difficulty_params": {
       "initial_count": 9,
-      "remove_count": 4,
+      "remove_count": 3,
       "allow_retry": true,
       "hint_after_ms": 8000,
       "shuffle_items": true
@@ -1926,17 +1861,13 @@
     "header": {
       "code": "GL-C6-MON-COIN-0003",
       "template_code": "GT-030",
-      "title": "Đếm tiền xu mua Bảng vẽ",
+      "title": "Đếm tiền xu mua Ngôi nhà",
       "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
-      "theme_tag": "art",
+      "theme_tag": "home",
       "what_tags": ["size", "quantity", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
-      "learning_objective_codes": [
-        "LO-C6.MON.03-01",
-        "LO-C6.MON.03-02",
-        "LO-C6.MON.03-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.03-01"],
       "difficulty": 4,
       "age_min": 5,
       "age_max": 6,
@@ -1946,77 +1877,12 @@
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy xếp các Cây đàn ghi-ta để đo xem Bảng vẽ dài mấy Cây đàn ghi-ta nhé!",
+      "prompt": "Bé hãy xếp các Cái giường để đo xem Ngôi nhà dài mấy Cái giường nhé!",
       "object": {
         "object_id": "obj_main",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-artist-palette"
-        },
-        "length_in_units": 4
-      },
-      "unit": {
-        "unit_id": "unit_measure",
-        "asset": {
-          "kind": "emoji",
-          "ref": "EMJ-guitar"
-        }
-      },
-      "answer_options": [
-        {
-          "option_id": "opt_7",
-          "value": 7,
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_4",
-          "value": 4,
-          "is_correct": true
-        },
-        {
-          "option_id": "opt_6",
-          "value": 6,
-          "is_correct": false
-        }
-      ]
-    },
-    "difficulty_params": {
-      "length_in_units": 4,
-      "gap_tolerance_pct": 10,
-      "allow_retry": true,
-      "hint_after_ms": 8000
-    }
-  },
-  {
-    "header": {
-      "code": "GL-C6-MON-COIN-0004",
-      "template_code": "GT-030",
-      "title": "Đếm tiền xu mua Hành tinh",
-      "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
-      "theme_tag": "space",
-      "what_tags": ["size", "quantity", "number"],
-      "thinking_tags": ["observe"],
-      "skill_codes": ["C6.MON.03"],
-      "learning_objective_codes": [
-        "LO-C6.MON.03-01",
-        "LO-C6.MON.03-02",
-        "LO-C6.MON.03-03"
-      ],
-      "difficulty": 5,
-      "age_min": 5,
-      "age_max": 6,
-      "access_tier": "premium",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy xếp các Hành tinh để đo xem Tên lửa dài mấy Hành tinh nhé!",
-      "object": {
-        "object_id": "obj_main",
-        "asset": {
-          "kind": "emoji",
-          "ref": "EMJ-rocket"
+          "ref": "🏠"
         },
         "length_in_units": 3
       },
@@ -2024,24 +1890,19 @@
         "unit_id": "unit_measure",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-ringed-planet"
+          "ref": "🛏️"
         }
       },
       "answer_options": [
         {
-          "option_id": "opt_4",
-          "value": 4,
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_5",
-          "value": 5,
-          "is_correct": false
-        },
-        {
           "option_id": "opt_3",
           "value": 3,
           "is_correct": true
+        },
+        {
+          "option_id": "opt_1",
+          "value": 1,
+          "is_correct": false
         },
         {
           "option_id": "opt_2",
@@ -2059,95 +1920,15 @@
   },
   {
     "header": {
-      "code": "GL-C6-MON-PICT-0003",
-      "template_code": "GT-031",
-      "title": "Biểu đồ tranh Gia đình",
-      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
-      "theme_tag": "family",
-      "what_tags": ["money", "number", "quantity"],
+      "code": "GL-C6-MON-COIN-0004",
+      "template_code": "GT-030",
+      "title": "Đếm tiền xu mua Voi",
+      "instruction": "Bé tính tổng mệnh giá các đồng xu cho đúng!",
+      "theme_tag": "animal",
+      "what_tags": ["size", "quantity", "number"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
-      "learning_objective_codes": [
-        "LO-C6.MON.03-01",
-        "LO-C6.MON.03-02",
-        "LO-C6.MON.03-03"
-      ],
-      "difficulty": 4,
-      "age_min": 5,
-      "age_max": 6,
-      "access_tier": "standard",
-      "content_version": 1,
-      "authored_in": "repo_seed",
-      "origin": "ai_assisted"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy chọn các đồng xu để trả đúng 4 đồng nhé!",
-      "target_amount": 4,
-      "item_to_buy": {
-        "label": "Gia đình",
-        "asset": {
-          "kind": "emoji",
-          "ref": "EMJ-family"
-        }
-      },
-      "coins": [
-        {
-          "coin_id": "coin_1_val10",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-coin"
-          },
-          "value": 10
-        },
-        {
-          "coin_id": "coin_2_val1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-coin"
-          },
-          "value": 1
-        },
-        {
-          "coin_id": "coin_3_val2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-coin"
-          },
-          "value": 2
-        },
-        {
-          "coin_id": "coin_4_val2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "EMJ-coin"
-          },
-          "value": 2
-        }
-      ]
-    },
-    "difficulty_params": {
-      "coin_kind_count": 3,
-      "target_amount": 4,
-      "exact_change": true,
-      "allow_retry": true,
-      "hint_after_ms": 8000
-    }
-  },
-  {
-    "header": {
-      "code": "GL-C6-MON-PICT-0004",
-      "template_code": "GT-031",
-      "title": "Biểu đồ tranh Tai",
-      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
-      "theme_tag": "body",
-      "what_tags": ["money", "number", "quantity"],
-      "thinking_tags": ["observe"],
-      "skill_codes": ["C6.MON.03"],
-      "learning_objective_codes": [
-        "LO-C6.MON.03-01",
-        "LO-C6.MON.03-02",
-        "LO-C6.MON.03-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.03-02"],
       "difficulty": 5,
       "age_min": 5,
       "age_max": 6,
@@ -2157,13 +1938,79 @@
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy chọn các đồng xu để trả đúng 16 đồng nhé!",
-      "target_amount": 16,
-      "item_to_buy": {
-        "label": "Mắt",
+      "prompt": "Bé hãy xếp các Voi để đo xem Sư tử dài mấy Voi nhé!",
+      "object": {
+        "object_id": "obj_main",
         "asset": {
           "kind": "emoji",
-          "ref": "EMJ-eyes"
+          "ref": "🦁"
+        },
+        "length_in_units": 6
+      },
+      "unit": {
+        "unit_id": "unit_measure",
+        "asset": {
+          "kind": "emoji",
+          "ref": "🐘"
+        }
+      },
+      "answer_options": [
+        {
+          "option_id": "opt_3",
+          "value": 3,
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_6",
+          "value": 6,
+          "is_correct": true
+        },
+        {
+          "option_id": "opt_7",
+          "value": 7,
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_9",
+          "value": 9,
+          "is_correct": false
+        }
+      ]
+    },
+    "difficulty_params": {
+      "length_in_units": 6,
+      "gap_tolerance_pct": 10,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C6-MON-PICT-0003",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Cây xanh",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "nature",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["observe"],
+      "skill_codes": ["C6.MON.03"],
+      "learning_objective_codes": ["LO-C6.MON.03-01"],
+      "difficulty": 4,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "premium",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 19 đồng nhé!",
+      "target_amount": 19,
+      "item_to_buy": {
+        "label": "Cây xanh",
+        "asset": {
+          "kind": "emoji",
+          "ref": "🌳"
         }
       },
       "coins": [
@@ -2171,47 +2018,111 @@
           "coin_id": "coin_1_val5",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-coin"
+            "ref": "🪙"
           },
           "value": 5
         },
         {
-          "coin_id": "coin_2_val5",
+          "coin_id": "coin_2_val2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-coin"
+            "ref": "🪙"
           },
-          "value": 5
+          "value": 2
         },
         {
           "coin_id": "coin_3_val10",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-coin"
+            "ref": "🪙"
           },
           "value": 10
         },
         {
-          "coin_id": "coin_4_val1",
+          "coin_id": "coin_4_val2",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-coin"
+            "ref": "🪙"
           },
-          "value": 1
+          "value": 2
         },
         {
-          "coin_id": "coin_5_val1",
+          "coin_id": "coin_5_val5",
           "asset": {
             "kind": "emoji",
-            "ref": "EMJ-coin"
+            "ref": "🪙"
           },
-          "value": 1
+          "value": 5
         }
       ]
     },
     "difficulty_params": {
       "coin_kind_count": 3,
-      "target_amount": 16,
+      "target_amount": 19,
+      "exact_change": true,
+      "allow_retry": true,
+      "hint_after_ms": 8000
+    }
+  },
+  {
+    "header": {
+      "code": "GL-C6-MON-PICT-0004",
+      "template_code": "GT-031",
+      "title": "Biểu đồ tranh Cá heo",
+      "instruction": "Bé phân tích biểu đồ tranh để chọn đáp án!",
+      "theme_tag": "ocean",
+      "what_tags": ["money", "number", "quantity"],
+      "thinking_tags": ["observe"],
+      "skill_codes": ["C6.MON.03"],
+      "learning_objective_codes": ["LO-C6.MON.03-02"],
+      "difficulty": 5,
+      "age_min": 5,
+      "age_max": 6,
+      "access_tier": "standard",
+      "content_version": 1,
+      "authored_in": "repo_seed",
+      "origin": "ai_assisted"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 11 đồng nhé!",
+      "target_amount": 11,
+      "item_to_buy": {
+        "label": "Cá voi",
+        "asset": {
+          "kind": "emoji",
+          "ref": "🐳"
+        }
+      },
+      "coins": [
+        {
+          "coin_id": "coin_1_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🪙"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_2_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🪙"
+          },
+          "value": 1
+        },
+        {
+          "coin_id": "coin_3_val10",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🪙"
+          },
+          "value": 10
+        }
+      ]
+    },
+    "difficulty_params": {
+      "coin_kind_count": 3,
+      "target_amount": 11,
       "exact_change": true,
       "allow_retry": true,
       "hint_after_ms": 8000
@@ -2221,17 +2132,13 @@
     "header": {
       "code": "GL-C6-MON-VENN-0003",
       "template_code": "GT-032",
-      "title": "Biểu đồ Venn phân loại Mặt trời",
+      "title": "Biểu đồ Venn phân loại Táo đỏ",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
-      "theme_tag": "weather",
+      "theme_tag": "food",
       "what_tags": ["msr", "quantity", "size"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
-      "learning_objective_codes": [
-        "LO-C6.MON.03-01",
-        "LO-C6.MON.03-02",
-        "LO-C6.MON.03-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.03-01"],
       "difficulty": 4,
       "age_min": 5,
       "age_max": 6,
@@ -2241,30 +2148,30 @@
       "origin": "ai_assisted"
     },
     "content_pack": {
-      "prompt": "Bé hãy chạm vào chiếc cốc có ít nước nhất nhé!",
+      "prompt": "Bé hãy chạm vào chiếc cốc có lượng nước bằng nhau nhé!",
       "cups": [
         {
           "cup_id": "cup_1",
-          "shape": "standard",
-          "capacity_units": 8,
-          "fill_units": 2,
-          "color": "amber"
-        },
-        {
-          "cup_id": "cup_2",
           "shape": "narrow_tall",
           "capacity_units": 8,
           "fill_units": 4,
-          "color": "amber"
+          "color": "berry"
+        },
+        {
+          "cup_id": "cup_2",
+          "shape": "wide_short",
+          "capacity_units": 8,
+          "fill_units": 4,
+          "color": "berry"
         }
       ],
-      "question_type": "less",
-      "conservation_trap": false
+      "question_type": "same",
+      "conservation_trap": true
     },
     "difficulty_params": {
       "cup_count": 2,
       "level_steps": 8,
-      "conservation_trap": false,
+      "conservation_trap": true,
       "allow_retry": true,
       "hint_after_ms": 8000
     }
@@ -2273,17 +2180,13 @@
     "header": {
       "code": "GL-C6-MON-VENN-0004",
       "template_code": "GT-032",
-      "title": "Biểu đồ Venn phân loại Bao lì xì",
+      "title": "Biểu đồ Venn phân loại Xe buýt",
       "instruction": "Bé phân loại vào phần giao của biểu đồ Venn!",
-      "theme_tag": "festival",
+      "theme_tag": "vehicle",
       "what_tags": ["msr", "quantity", "size"],
       "thinking_tags": ["observe"],
       "skill_codes": ["C6.MON.03"],
-      "learning_objective_codes": [
-        "LO-C6.MON.03-01",
-        "LO-C6.MON.03-02",
-        "LO-C6.MON.03-03"
-      ],
+      "learning_objective_codes": ["LO-C6.MON.03-02"],
       "difficulty": 5,
       "age_min": 5,
       "age_max": 6,
@@ -2298,22 +2201,22 @@
         {
           "cup_id": "cup_1",
           "shape": "narrow_tall",
-          "capacity_units": 7,
-          "fill_units": 5,
+          "capacity_units": 9,
+          "fill_units": 6,
           "color": "sky"
         },
         {
           "cup_id": "cup_2",
           "shape": "wide_short",
-          "capacity_units": 7,
-          "fill_units": 5,
+          "capacity_units": 9,
+          "fill_units": 6,
           "color": "sky"
         },
         {
           "cup_id": "cup_3",
           "shape": "standard",
-          "capacity_units": 7,
-          "fill_units": 3,
+          "capacity_units": 9,
+          "fill_units": 4,
           "color": "sky"
         }
       ],

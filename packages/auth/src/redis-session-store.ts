@@ -23,6 +23,8 @@ export interface SessionData {
 export interface RememberData {
   readonly accountId: number;
   readonly verifierHash: string;
+  readonly previousVerifierHash?: string;
+  readonly previousVerifierExpiresAt?: number;
   readonly deviceId: string;
   readonly createdAt: number;
   readonly absoluteExpiresAt: number;
@@ -362,6 +364,59 @@ export class RedisSessionStore {
     }
   }
 
+  private async validateAndRotateVerifier(
+    namespace: AuthNamespace,
+    rememberKey: string,
+    rememberData: RememberData,
+    verifier: string,
+    rawRememberToken: string,
+    now: number
+  ): Promise<string> {
+    const verifierHash = sha256(verifier);
+    const isCurrent = verifierHash === rememberData.verifierHash;
+    const isGrace =
+      !isCurrent &&
+      rememberData.previousVerifierHash !== undefined &&
+      verifierHash === rememberData.previousVerifierHash &&
+      now < (rememberData.previousVerifierExpiresAt ?? 0);
+
+    if (!(isCurrent || isGrace)) {
+      await this.redis.del(rememberKey);
+      await this.revokeAll({
+        account_type: namespace,
+        account_id: rememberData.accountId,
+      });
+      throw appError("SESSION_REVOKED");
+    }
+
+    if (!isCurrent) {
+      return rawRememberToken;
+    }
+
+    const nextVerifier = generateTokenHex(32);
+    const updatedRememberData: RememberData = {
+      ...rememberData,
+      verifierHash: sha256(nextVerifier),
+      previousVerifierHash: rememberData.verifierHash,
+      previousVerifierExpiresAt: now + 60_000,
+    };
+
+    const remainingTtlSeconds = Math.max(
+      1,
+      Math.floor((rememberData.absoluteExpiresAt - now) / 1000)
+    );
+
+    await this.redis.set(
+      rememberKey,
+      JSON.stringify(updatedRememberData),
+      "EX",
+      remainingTtlSeconds
+    );
+
+    const selector = rawRememberToken.split(":")[0];
+    return `${selector}:${nextVerifier}`;
+  }
+
   async restoreRemember(
     options: RestoreOptions
   ): Promise<RestoredSessionOutput> {
@@ -388,34 +443,13 @@ export class RedisSessionStore {
         throw appError("SESSION_REVOKED");
       }
 
-      const verifierHash = sha256(verifier);
-      if (verifierHash !== rememberData.verifierHash) {
-        await this.redis.del(rememberKey);
-        await this.revokeAll({
-          account_type: options.namespace,
-          account_id: rememberData.accountId,
-        });
-        throw appError("SESSION_REVOKED");
-      }
-
-      const nextVerifier = generateTokenHex(32);
-      const nextVerifierHash = sha256(nextVerifier);
-
-      const updatedRememberData: RememberData = {
-        ...rememberData,
-        verifierHash: nextVerifierHash,
-      };
-
-      const remainingTtlSeconds = Math.max(
-        1,
-        Math.floor((rememberData.absoluteExpiresAt - now) / 1000)
-      );
-
-      await this.redis.set(
+      const nextRememberToken = await this.validateAndRotateVerifier(
+        options.namespace,
         rememberKey,
-        JSON.stringify(updatedRememberData),
-        "EX",
-        remainingTtlSeconds
+        rememberData,
+        verifier,
+        options.rememberToken,
+        now
       );
 
       const created = await this.createSession({
@@ -426,8 +460,6 @@ export class RedisSessionStore {
         deviceId: rememberData.deviceId,
         now: options.now,
       });
-
-      const nextRememberToken = `${selector}:${nextVerifier}`;
 
       if (options.namespace === "user") {
         return {

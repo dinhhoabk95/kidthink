@@ -63,7 +63,7 @@ const GT036Template = defineTemplate({
   code: "GT-036",
   name: "Tự tạo quy luật",
   mechanic: "free-create",
-  status: "draft",
+  status: "published",
   version: 1,
   engine_session: "GT036Session",
   layouts: ["free-scene", "horizontal-track"],

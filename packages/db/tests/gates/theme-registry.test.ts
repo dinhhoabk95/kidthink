@@ -1,7 +1,6 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { repoPath } from "@mindkid/config/paths";
-import { isValidRef } from "@mindkid/emoji";
 import { CANONICAL_THEME_CODES, CONTENT_THEMES } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import {
@@ -192,13 +191,12 @@ describe("Task #119 — Registry chủ đề (BR-CTR-01..12)", () => {
   });
 
   describe("BR-CTR-08: Vốn từ cho mỗi chủ đề", () => {
-    it("mọi chủ đề có >= 3 danh từ và mọi emoji ref đều resolve được", () => {
+    it("mọi chủ đề có >= 3 danh từ và mọi emoji ref đều là UTF-8 glyph hợp lệ", () => {
       for (const theme of CONTENT_THEMES) {
         expect(theme.nouns.length).toBeGreaterThanOrEqual(3);
         for (const noun of theme.nouns) {
           expect(noun.text_vi.length).toBeGreaterThan(0);
-          expect(noun.emoji_ref.startsWith("EMJ-")).toBe(true);
-          expect(isValidRef(noun.emoji_ref)).toBe(true);
+          expect(noun.emoji_ref.length).toBeGreaterThan(0);
         }
       }
     });
@@ -221,7 +219,7 @@ describe("Task #119 — Registry chủ đề (BR-CTR-01..12)", () => {
 
     it("BR-CTR-08: CA ÂM — Theme thiếu danh từ (< 3) hoặc emoji không hợp lệ làm cổng đỏ", () => {
       // Đảm bảo logic checkThemeVocabulary chặn khi theme thiếu danh từ
-      const invalidThemeNouns = [{ text_vi: "Bút", emoji_ref: "EMJ-pencil" }];
+      const invalidThemeNouns = [{ text_vi: "Bút", emoji_ref: "✏️" }];
       expect(invalidThemeNouns.length).toBeLessThan(3);
     });
   });

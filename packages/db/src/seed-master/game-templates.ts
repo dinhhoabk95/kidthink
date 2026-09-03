@@ -42,6 +42,7 @@ export async function seedGameTemplatesMasterData(
         engineSession: template.engine_session,
         status: "active",
         version: template.version,
+        kind: template.kind ?? "assess",
       })
       .onConflictDoUpdate({
         target: gameTemplates.code,
@@ -70,6 +71,7 @@ export async function seedGameTemplatesMasterData(
           engineSession: template.engine_session,
           status: "active",
           version: template.version,
+          kind: template.kind ?? "assess",
         },
       });
 

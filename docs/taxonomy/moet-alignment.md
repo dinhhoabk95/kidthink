@@ -13,6 +13,7 @@ Mọi nội dung đối chiếu trong tài liệu này được căn cứ trên 
    - **Thông tư số 17/2009/TT-BGDĐT** ngày 25 tháng 7 năm 2009 của Bộ trưởng Bộ Giáo dục và Đào tạo ban hành Chương trình Giáo dục Mầm non.
    - **Thông tư số 28/2016/TT-BGDĐT** ngày 30 tháng 12 năm 2016 của Bộ trưởng Bộ Giáo dục và Đào tạo sửa đổi, bổ sung một số nội dung của Chương trình Giáo dục Mầm non ban hành kèm theo Thông tư số 17/2009/TT-BGDĐT.
    - **Thông tư số 51/2020/TT-BGDĐT** ngày 31 tháng 12 năm 2020 của Bộ trưởng Bộ Giáo dục và Đào tạo sửa đổi, bổ sung một số nội dung của Chương trình Giáo dục Mầm non ban hành kèm theo Thông tư số 17/2009/TT-BGDĐT đã được sửa đổi, bổ sung bởi Thông tư số 28/2016/TT-BGDĐT.
+   - **Văn bản hợp nhất số 01/VBHN-BGDĐT** ngày 13 tháng 4 năm 2021 — hợp nhất ba thông tư trên thành một văn bản. **Đây là bản trường mầm non thực sự dùng**; ba thông tư ở trên là căn cứ ban hành.
 
 2. **Bộ chuẩn phát triển trẻ em 5 tuổi:**
    - **Thông tư số 23/2010/TT-BGDĐT** ngày 22 tháng 7 năm 2010 của Bộ trưởng Bộ Giáo dục và Đào tạo ban hành Quy định Bộ chuẩn phát triển trẻ em năm tuổi (gồm 4 lĩnh vực, 28 chuẩn, 120 chỉ số).
@@ -28,9 +29,9 @@ Chương trình GDMN Việt Nam cấu trúc việc nuôi dưỡng và giáo dụ
 | **C1** | Số học & Phép đếm (Number & Arithmetic) | **Phát triển Nhận thức** (Hình thành biểu tượng toán ban đầu) | Nhận biết số lượng, đếm trong phạm vi 10, số thứ tự, gộp/tách nhóm đối tượng, so sánh số lượng, biểu tượng chữ số. |
 | **C2** | Hình học & Không gian (Geometry & Spatial) | **Phát triển Nhận thức** (Hình dạng & Định hướng không gian) | Nhận biết, gọi tên và phân biệt hình phẳng (tròn, vuông, tam giác, chữ nhật), hình khối (cầu, trụ, vuông, chữ nhật); định hướng vị trí trong không gian (trên/dưới, trước/sau, phải/trái). |
 | **C3** | Logic & Mẫu quy tắc (Logic & Patterns) | **Phát triển Nhận thức** (Khám phá khoa học & Tư duy logic) | So sánh, phân loại đối tượng theo 1-2 dấu hiệu; nhận biết và tiếp tục sắp xếp theo quy tắc chu kỳ lặp lại (pattern). |
-| **C4** | Quan sát & Trí nhớ (Observation & Memory) | **Phát triển Nhận thức & Ngôn ngữ** | Quan sát phát hiện chi tiết, ghi nhớ có chủ định, tìm điểm khác biệt, phân biệt dấu hiệu tương đồng / dị biệt. |
-| **C5** | Tư duy Ngôn ngữ (Language Thinking) | **Phát triển Ngôn ngữ & Nhận thức** | Lắng nghe chỉ dẫn, mở rộng vốn từ vựng toán học & đời sống, giải thích lý do, suy luận nhân quả trong truyện tranh. |
-| **C6** | Chức năng Điều hành & Giải quyết vấn đề (Executive Function) | **Phát triển Nhận thức** (Khám phá & Tư duy suy luận) | Kiểm soát ức chế, chuyển đổi luật linh hoạt, lập kế hoạch hành động từng bước, vượt mê cung và giải quyết vấn đề có mục tiêu. |
+| **C4** | Tư duy Khám phá (Discovery Thinking) | **Phát triển Nhận thức** (Khám phá khoa học · Khám phá xã hội) | Tri giác và cảm quan; quan sát có mục đích, thử nghiệm và dự đoán, nhân quả, thế giới sống, vật chất và hiện tượng, công cụ; bản thân — gia đình — nghề nghiệp — quê hương — lễ hội — an toàn — môi trường. |
+| **C5** | Tư duy Ngôn ngữ (Language Thinking) | **Phát triển Ngôn ngữ** (Nghe · Nói · **Làm quen với đọc, viết**) | Nghe hiểu và làm theo chỉ dẫn, vốn từ, kể chuyện, miêu tả, đặt và trả lời câu hỏi; nhận thức âm vị và âm tiết, vần, thanh điệu, chữ cái, khái niệm chữ viết, tiền tập viết, đọc tiếng và từ. |
+| **C6** | Tư duy Điều hành (Executive Function) | **Phát triển Nhận thức** (Khám phá & Tư duy suy luận) | Chú ý, trí nhớ làm việc, kiểm soát ức chế, chuyển đổi luật linh hoạt, lập kế hoạch từng bước, tự kiểm, kiên trì và khởi xướng. |
 
 ---
 
@@ -44,20 +45,20 @@ Dưới đây là bảng đối chiếu cụ thể các chỉ số mà nền t�
 |---|---|---|---|---|---|
 | **Nhận thức** | **Chuẩn 19: Nhận biết số lượng và chữ số** | **Chỉ số 104** | Nhận biết con số phù hợp với số lượng trong phạm vi 10 | `C1.CNT.01`, `C1.NREC.01`, `C1.CNT.10` | Đếm và chọn chữ số tương ứng, gắn thẻ số với lượng quả/đồ vật |
 | **Nhận thức** | **Chuẩn 19: Nhận biết số lượng và chữ số** | **Chỉ số 105** | Tách 10 đối tượng thành 2 nhóm bằng ít nhất 2 cách và so sánh số lượng | `C1.PROB.01`, `C1.PROB.06`, `C1.NCOMP.01` | Chia đồ vật vào 2 rổ/2 đĩa, tách gộp số lượng 10 |
-| **Nhận thức** | **Chuẩn 19: Nhận biết số lượng và chữ số** | **Chỉ số 106** | Sử dụng các số từ 1 đến 10 để chỉ số lượng, số thứ tự | `C1.CNT.02`, `C1.CNT.04`, `C1.CNT.08` | Xếp hàng thi chạy, xác định thứ tự về đích thứ nhất/nhì/ba |
-| **Nhận thức** | **Chuẩn 20: Sắp xếp theo quy tắc** | **Chỉ số 107** | Chỉ ra quy tắc sắp xếp đơn giản và tiếp tục sắp xếp theo quy tắc | `C3.PAT.01`, `C3.PAT.02`, `C3.RULE.02` | Chuỗi hạt màu AB, AAB, ABC, dự đoán phần tử tiếp theo |
+| **Nhận thức** | **Chuẩn 19: Nhận biết số lượng và chữ số** | **Chỉ số 106** | Sử dụng các số từ 1 đến 10 để chỉ số lượng, số thứ tự | `C1.CNT.02`, `C1.ORD.01`, `C1.ORD.04` | Xếp hàng thi chạy, xác định thứ tự về đích thứ nhất/nhì/ba |
+| **Nhận thức** | **Chuẩn 20: Sắp xếp theo quy tắc** | **Chỉ số 107** | Chỉ ra quy tắc sắp xếp đơn giản và tiếp tục sắp xếp theo quy tắc | `C1.PAT.01`, `C1.PAT.02`, `C3.RULE.02` | Chuỗi hạt màu AB, AAB, ABC, dự đoán phần tử tiếp theo |
 | **Nhận thức** | **Chuẩn 21: Đo lường** | **Chỉ số 108** | Đo độ dài và so sánh kết quả đo bằng một đơn vị đo | `C1.MEAS.01`, `C1.MEAS.02`, `C1.MEAS.08` | Đo chiều dài thanh gỗ bằng que tính/bước chân |
 | **Nhận thức** | **Chuẩn 21: Đo lường** | **Chỉ số 109** | Sử dụng dụng cụ đo lường đơn giản để so sánh độ lớn, dung tích | `C1.MEAS.05`, `C1.MEAS.07` | Rót nước so sánh cốc đầy/vơi, cân thăng bằng |
-| **Nhận thức** | **Chuẩn 22: Hình học** | **Chỉ số 110** | Nhận biết, gọi tên các khối hình: cầu, trụ, vuông, chữ nhật | `C2.GEO.01`, `C2.GEO.02`, `C2.CON.04` | Phân loại đồ vật trong nhà theo hình khối tương ứng |
+| **Nhận thức** | **Chuẩn 22: Hình học** | **Chỉ số 110** | Nhận biết, gọi tên các khối hình: cầu, trụ, vuông, chữ nhật | `C2.SOL.01`, `C2.SOL.03`, `C2.SOL.04`, `C2.SOL.05` | Phân loại đồ vật trong nhà theo hình khối tương ứng |
 | **Nhận thức** | **Chuẩn 23: Thời gian** | **Chỉ số 111** | Nhận biết các biểu tượng thời gian và các buổi trong ngày | `C1.MEAS.10`, `C1.MEAS.12`, `C1.MEAS.13` | Sắp xếp trình tự hoạt động: sáng thức dậy -> trưa ăn cơm -> tối đi ngủ, xem đồng hồ giờ đúng |
 | **Nhận thức** | **Chuẩn 24: Định hướng không gian** | **Chỉ số 112** | Xác định vị trí đồ vật so với bản thân và người khác / vật khác | `C2.ORI.01`, `C2.ORI.02`, `C2.ORI.03`, `C2.ORI.04` | Xác định đồ vật ở phía trên/dưới, trước/sau, bên phải/bên trái của nhân vật |
-| **Nhận thức** | **Chuẩn 25: Phân loại đối tượng** | **Chỉ số 113** | Phân loại đồ dùng, đồ chơi theo 2-3 dấu hiệu | `C3.SRT.01`, `C3.SRT.02`, `C3.MTX.01` | Phân loại vừa theo màu sắc vừa theo hình dạng (ma trận 2 chiều) |
+| **Nhận thức** | **Chuẩn 25: Phân loại đối tượng** | **Chỉ số 113** | Phân loại đồ dùng, đồ chơi theo 2-3 dấu hiệu | `C3.CLS.06`, `C3.SET.03`, `C3.SET.05` | Phân loại vừa theo màu sắc vừa theo hình dạng (ma trận 2 chiều) |
 | **Ngôn ngữ** | **Chuẩn 13: Hiểu lời nói** | **Chỉ số 64** | Nghe hiểu và thực hiện được các chỉ dẫn gồm 2-3 hành động liên tiếp | `C5.LIS.01`, `C5.LIS.02`, `C5.LIS.03` | Lắng nghe âm thanh và làm theo chuỗi chỉ dẫn nhiều bước |
 | **Ngôn ngữ** | **Chuẩn 14: Sử dụng ngôn ngữ** | **Chỉ số 71** | Kể lại sự việc theo trình tự thời gian | `C5.STO.02`, `C5.STO.04` | Sắp xếp tranh theo thứ tự diễn biến câu chuyện |
 | **Ngôn ngữ** | **Chuẩn 14: Sử dụng ngôn ngữ** | **Chỉ số 74** | Biết đặt câu hỏi và giải thích nguyên nhân đơn giản | `C5.DES.04`, `C5.QUE.05` | Giải thích lý do chọn đáp án, nhận biết quan hệ nhân quả |
-| **Nhận thức** | **Chuẩn 26: Khám phá khoa học** | **Chỉ số 114** | Nhận biết một số hiện tượng thời tiết theo mùa và ảnh hưởng của nó | `C4.DET.03`, `C5.DES.04` | Quan sát tranh thời tiết bốn mùa, lựa chọn trang phục phù hợp |
-| **Nhận thức** | **Chuẩn 27: Nhận biết xã hội** | **Chỉ số 117** | Nhận biết một số đặc điểm nổi bật của địa phương, quê hương, đất nước | `C4.DET.03`, `C5.DES.04` | Nhận biết lá cờ Tổ quốc, Lăng Bác Hồ, Văn Miếu, danh lam thắng cảnh |
-| **Nhận thức** | **Chuẩn 28: Kỹ năng giải quyết vấn đề** | **Chỉ số 120** | Thử các cách khác nhau để giải quyết một nhiệm vụ | `C6.PLN.02`, `C6.PLN.03`, `C2.MAZ.01` | Lập kế hoạch đường đi trong mê cung, thử và điều chỉnh chiến lược |
+| **Nhận thức** | **Chuẩn 26: Khám phá khoa học** | **Chỉ số 114** | Nhận biết một số hiện tượng thời tiết theo mùa và ảnh hưởng của nó | `C4.MAT.01`, `C4.MAT.04`, `C4.MAT.03` | Quan sát tranh thời tiết bốn mùa, lựa chọn trang phục phù hợp |
+| **Nhận thức** | **Chuẩn 27: Nhận biết xã hội** | **Chỉ số 117** | Nhận biết một số đặc điểm nổi bật của địa phương, quê hương, đất nước | `C4.HOM.01`, `C4.HOM.04`, `C4.HOM.06` | Nhận biết lá cờ Tổ quốc, Lăng Bác Hồ, Văn Miếu, danh lam thắng cảnh |
+| **Nhận thức** | **Chuẩn 28: Kỹ năng giải quyết vấn đề** | **Chỉ số 120** | Thử các cách khác nhau để giải quyết một nhiệm vụ | `C6.PLN.02`, `C6.PLN.03`, `C4.EXP.06` | Lập kế hoạch đường đi trong mê cung, thử và điều chỉnh chiến lược |
 
 ---
 

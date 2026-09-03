@@ -8,52 +8,52 @@ import type { LevelGenerator } from "./types.js";
 
 const THEME_PALETTES: Record<string, { id: string; ref: string }[]> = {
   nature: [
-    { id: "flower", ref: "EMJ-flower" },
-    { id: "tree", ref: "EMJ-tree" },
-    { id: "leaf", ref: "EMJ-maple-leaf" },
-    { id: "sun", ref: "EMJ-sun" },
+    { id: "flower", ref: "🌸" },
+    { id: "tree", ref: "🌳" },
+    { id: "leaf", ref: "🍁" },
+    { id: "sun", ref: "☀️" },
   ],
   art: [
-    { id: "palette", ref: "EMJ-artist-palette" },
-    { id: "crayon", ref: "EMJ-crayon" },
-    { id: "pencil", ref: "EMJ-pencil" },
-    { id: "brush", ref: "EMJ-paintbrush" },
+    { id: "palette", ref: "🎨" },
+    { id: "crayon", ref: "🖍️" },
+    { id: "pencil", ref: "✏️" },
+    { id: "brush", ref: "🖌️" },
   ],
   farm: [
-    { id: "apple", ref: "EMJ-apple" },
-    { id: "carrot", ref: "EMJ-carrot" },
-    { id: "corn", ref: "EMJ-ear-of-corn" },
-    { id: "chick", ref: "EMJ-baby-chick" },
+    { id: "apple", ref: "🍎" },
+    { id: "carrot", ref: "🥕" },
+    { id: "corn", ref: "🌽" },
+    { id: "chick", ref: "🐤" },
   ],
   ocean: [
-    { id: "fish", ref: "EMJ-fish" },
-    { id: "shell", ref: "EMJ-spiral-shell" },
-    { id: "anchor", ref: "EMJ-anchor" },
-    { id: "crab", ref: "EMJ-crab" },
+    { id: "fish", ref: "🐟" },
+    { id: "shell", ref: "🐚" },
+    { id: "anchor", ref: "⚓" },
+    { id: "crab", ref: "🦀" },
   ],
   school: [
-    { id: "book", ref: "EMJ-book" },
-    { id: "bell", ref: "EMJ-bell" },
-    { id: "backpack", ref: "EMJ-backpack" },
-    { id: "scissors", ref: "EMJ-scissors" },
+    { id: "book", ref: "📖" },
+    { id: "bell", ref: "🔔" },
+    { id: "backpack", ref: "🎒" },
+    { id: "scissors", ref: "✂️" },
   ],
   festival: [
-    { id: "balloon", ref: "EMJ-balloon" },
-    { id: "gift", ref: "EMJ-wrapped-gift" },
-    { id: "sparkles", ref: "EMJ-sparkles" },
-    { id: "party_popper", ref: "EMJ-party-popper" },
+    { id: "balloon", ref: "🎈" },
+    { id: "gift", ref: "🎁" },
+    { id: "sparkles", ref: "✨" },
+    { id: "party_popper", ref: "🎉" },
   ],
   space: [
-    { id: "star", ref: "EMJ-star" },
-    { id: "moon", ref: "EMJ-crescent-moon" },
-    { id: "comet", ref: "EMJ-comet" },
-    { id: "satellite", ref: "EMJ-satellite" },
+    { id: "star", ref: "⭐" },
+    { id: "moon", ref: "🌙" },
+    { id: "comet", ref: "☄️" },
+    { id: "satellite", ref: "🛰️" },
   ],
   home: [
-    { id: "chair", ref: "EMJ-chair" },
-    { id: "door", ref: "EMJ-door" },
-    { id: "bed", ref: "EMJ-bed" },
-    { id: "cup", ref: "EMJ-teacup-without-handle" },
+    { id: "chair", ref: "🪑" },
+    { id: "door", ref: "🚪" },
+    { id: "bed", ref: "🛏️" },
+    { id: "cup", ref: "🍵" },
   ],
 };
 
@@ -79,8 +79,8 @@ export const GT036Generator: LevelGenerator = {
     const activeTheme = theme && THEME_PALETTES[theme] ? theme : "nature";
     const availableItems = THEME_PALETTES[activeTheme] ??
       THEME_PALETTES.nature ?? [
-        { id: "flower", ref: "EMJ-flower" },
-        { id: "tree", ref: "EMJ-tree" },
+        { id: "flower", ref: "🌸" },
+        { id: "tree", ref: "🌳" },
       ];
 
     const themeName = THEME_NAMES[activeTheme] ?? "hình ảnh";

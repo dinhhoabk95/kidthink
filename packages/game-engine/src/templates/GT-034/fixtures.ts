@@ -16,14 +16,14 @@ export const GT034_FIXTURES: GT034Fixture[] = [
       instruments: [
         {
           instrument_id: "drum",
-          asset: { kind: "emoji", ref: "EMJ-drum" },
+          asset: { kind: "emoji", ref: "🥁" },
           freq: 220,
           type: "sine",
           name_vi: "Trống cái",
         },
         {
           instrument_id: "cymbal",
-          asset: { kind: "emoji", ref: "EMJ-bell" },
+          asset: { kind: "emoji", ref: "🔔" },
           freq: 880,
           type: "triangle",
           name_vi: "Xèng",
@@ -49,21 +49,21 @@ export const GT034_FIXTURES: GT034Fixture[] = [
       instruments: [
         {
           instrument_id: "bell",
-          asset: { kind: "emoji", ref: "EMJ-bell" },
+          asset: { kind: "emoji", ref: "🔔" },
           freq: 523,
           type: "sine",
           name_vi: "Chuông nhỏ",
         },
         {
           instrument_id: "drum",
-          asset: { kind: "emoji", ref: "EMJ-drum" },
+          asset: { kind: "emoji", ref: "🥁" },
           freq: 261,
           type: "sine",
           name_vi: "Trống cái",
         },
         {
           instrument_id: "cymbal",
-          asset: { kind: "emoji", ref: "EMJ-musical-score" },
+          asset: { kind: "emoji", ref: "🎼" },
           freq: 784,
           type: "triangle",
           name_vi: "Keng keng",
@@ -89,14 +89,14 @@ export const GT034_FIXTURES: GT034Fixture[] = [
       instruments: [
         {
           instrument_id: "clap",
-          asset: { kind: "emoji", ref: "EMJ-clapping-hands" },
+          asset: { kind: "emoji", ref: "👏" },
           freq: 330,
           type: "triangle",
           name_vi: "Tiếng vỗ tay",
         },
         {
           instrument_id: "snap",
-          asset: { kind: "emoji", ref: "EMJ-sparkles" },
+          asset: { kind: "emoji", ref: "✨" },
           freq: 660,
           type: "sine",
           name_vi: "Tiếng búng tay",

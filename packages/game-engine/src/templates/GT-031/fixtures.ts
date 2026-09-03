@@ -16,22 +16,22 @@ export const GT031_FIXTURES: GT031Fixture[] = [
       target_amount: 3,
       item_to_buy: {
         label: "Quả táo",
-        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        asset: { kind: "emoji", ref: "🍎" },
       },
       coins: [
         {
           coin_id: "c1_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
         {
           coin_id: "c1_2",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
         {
           coin_id: "c2_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
       ],
@@ -52,27 +52,27 @@ export const GT031_FIXTURES: GT031Fixture[] = [
       target_amount: 5,
       item_to_buy: {
         label: "Cây kem",
-        asset: { kind: "emoji", ref: "EMJ-ice-cream" },
+        asset: { kind: "emoji", ref: "🍦" },
       },
       coins: [
         {
           coin_id: "c1_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
         {
           coin_id: "c2_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c2_2",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c5_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 5,
         },
       ],
@@ -93,32 +93,32 @@ export const GT031_FIXTURES: GT031Fixture[] = [
       target_amount: 7,
       item_to_buy: {
         label: "Ô tô",
-        asset: { kind: "emoji", ref: "EMJ-automobile" },
+        asset: { kind: "emoji", ref: "🚗" },
       },
       coins: [
         {
           coin_id: "c1_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
         {
           coin_id: "c2_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c5_1",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 5,
         },
         {
           coin_id: "c2_2",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 2,
         },
         {
           coin_id: "c1_2",
-          asset: { kind: "emoji", ref: "EMJ-coin" },
+          asset: { kind: "emoji", ref: "🪙" },
           value: 1,
         },
       ],

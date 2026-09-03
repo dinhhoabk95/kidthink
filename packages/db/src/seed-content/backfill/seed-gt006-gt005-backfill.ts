@@ -45,43 +45,43 @@ const THEMES = [
 function createD109Levels(): ContentSeed<unknown, unknown>[] {
   const countSequences = [
     {
-      items: ["EMJ-red-apple", "EMJ-banana", "EMJ-carrot"],
+      items: ["🍎", "🍌", "🥕"],
       labels: ["3 quả", "2 quả", "1 quả"],
     },
     {
-      items: ["EMJ-car", "EMJ-bus", "EMJ-bicycle"],
+      items: ["🚗", "🚌", "🚲"],
       labels: ["3 xe", "2 xe", "1 xe"],
     },
     {
-      items: ["EMJ-cat", "EMJ-dog", "EMJ-cow"],
+      items: ["🐱", "🐶", "🐮"],
       labels: ["3 bạn", "2 bạn", "1 bạn"],
     },
     {
-      items: ["EMJ-star", "EMJ-sparkles", "EMJ-glowing-star"],
+      items: ["⭐", "✨", "🌟"],
       labels: ["3 sao", "2 sao", "1 sao"],
     },
     {
-      items: ["EMJ-fish", "EMJ-whale", "EMJ-dolphin"],
+      items: ["🐟", "🐳", "🐬"],
       labels: ["3 cá", "2 cá", "1 cá"],
     },
     {
-      items: ["EMJ-candy", "EMJ-cake", "EMJ-cupcake"],
+      items: ["🍬", "🍰", "🧁"],
       labels: ["3 kẹo", "2 kẹo", "1 kẹo"],
     },
     {
-      items: ["EMJ-sunflower", "EMJ-deciduous-tree", "EMJ-seedling"],
+      items: ["🌻", "🌳", "🌱"],
       labels: ["3 cây", "2 cây", "1 cây"],
     },
     {
-      items: ["EMJ-pencil", "EMJ-open-book", "EMJ-palette"],
+      items: ["✏️", "📖", "🎨"],
       labels: ["3 bút", "2 bút", "1 bút"],
     },
     {
-      items: ["EMJ-gift", "EMJ-balloon", "EMJ-party-popper"],
+      items: ["🎁", "🎈", "🎉"],
       labels: ["3 quà", "2 quà", "1 quà"],
     },
     {
-      items: ["EMJ-chair", "EMJ-bed", "EMJ-door"],
+      items: ["🪑", "🛏️", "🚪"],
       labels: ["3 ghế", "2 ghế", "1 ghế"],
     },
   ];
@@ -105,7 +105,7 @@ function createD109Levels(): ContentSeed<unknown, unknown>[] {
     const difficulty = ((i % 3) + 1) as 1 | 2 | 3;
     const accessTier = getAccessTier(i, 0);
     const seq = countSequences[i % countSequences.length] ?? {
-      items: ["EMJ-red-apple", "EMJ-banana", "EMJ-carrot"],
+      items: ["🍎", "🍌", "🥕"],
       labels: ["3 quả", "2 quả", "1 quả"],
     };
     const skillCode = skillList[i] ?? "C1.CNT.04";
@@ -154,40 +154,40 @@ function createD109Levels(): ContentSeed<unknown, unknown>[] {
 function createD506Levels(): ContentSeed<unknown, unknown>[] {
   const sizeSequences = [
     {
-      items: ["EMJ-strawberry", "EMJ-red-apple", "EMJ-watermelon"],
+      items: ["🍓", "🍎", "🍉"],
       labels: ["Nhỏ", "Vừa", "To"],
     },
     {
-      items: ["EMJ-bicycle", "EMJ-car", "EMJ-bus"],
+      items: ["🚲", "🚗", "🚌"],
       labels: ["Bé", "Vừa", "Lớn"],
     },
-    { items: ["EMJ-cat", "EMJ-dog", "EMJ-cow"], labels: ["Nhỏ", "Vừa", "To"] },
+    { items: ["🐱", "🐶", "🐮"], labels: ["Nhỏ", "Vừa", "To"] },
     {
-      items: ["EMJ-sparkles", "EMJ-star", "EMJ-glowing-star"],
+      items: ["✨", "⭐", "🌟"],
       labels: ["Bé", "Vừa", "Lớn"],
     },
     {
-      items: ["EMJ-fish", "EMJ-dolphin", "EMJ-whale"],
+      items: ["🐟", "🐬", "🐳"],
       labels: ["Nhỏ", "Vừa", "To"],
     },
     {
-      items: ["EMJ-candy", "EMJ-cupcake", "EMJ-cake"],
+      items: ["🍬", "🧁", "🍰"],
       labels: ["Bé", "Vừa", "Lớn"],
     },
     {
-      items: ["EMJ-seedling", "EMJ-sunflower", "EMJ-deciduous-tree"],
+      items: ["🌱", "🌻", "🌳"],
       labels: ["Thấp", "Vừa", "Cao"],
     },
     {
-      items: ["EMJ-pencil", "EMJ-open-book", "EMJ-backpack"],
+      items: ["✏️", "📖", "🎒"],
       labels: ["Nhỏ", "Vừa", "To"],
     },
     {
-      items: ["EMJ-balloon", "EMJ-gift", "EMJ-party-popper"],
+      items: ["🎈", "🎁", "🎉"],
       labels: ["Bé", "Vừa", "Lớn"],
     },
     {
-      items: ["EMJ-chair", "EMJ-door", "EMJ-house"],
+      items: ["🪑", "🚪", "🏠"],
       labels: ["Nhỏ", "Vừa", "To"],
     },
   ];
@@ -211,7 +211,7 @@ function createD506Levels(): ContentSeed<unknown, unknown>[] {
     const difficulty = ((i % 3) + 1) as 1 | 2 | 3;
     const accessTier = getAccessTier(i, 1);
     const seq = sizeSequences[i % sizeSequences.length] ?? {
-      items: ["EMJ-strawberry", "EMJ-red-apple", "EMJ-watermelon"],
+      items: ["🍓", "🍎", "🍉"],
       labels: ["Nhỏ", "Vừa", "To"],
     };
     const skillCode = skillList[i] ?? "C1.MEAS.01";
@@ -260,43 +260,43 @@ function createD506Levels(): ContentSeed<unknown, unknown>[] {
 function createD507Levels(): ContentSeed<unknown, unknown>[] {
   const timeSequences = [
     {
-      items: ["EMJ-sun", "EMJ-sun-behind-cloud", "EMJ-crescent-moon"],
+      items: ["☀️", "⛅", "🌙"],
       labels: ["Sáng", "Chiều", "Tối"],
     },
     {
-      items: ["EMJ-seedling", "EMJ-sunflower", "EMJ-deciduous-tree"],
+      items: ["🌱", "🌻", "🌳"],
       labels: ["Nảy mầm", "Ra hoa", "Cây lớn"],
     },
     {
-      items: ["EMJ-egg", "EMJ-baby-chick", "EMJ-rooster"],
+      items: ["🥚", "🐤", "🐓"],
       labels: ["Quả trứng", "Gà con", "Gà trống"],
     },
     {
-      items: ["EMJ-alarm-clock", "EMJ-school", "EMJ-bed"],
+      items: ["⏰", "🏫", "🛏️"],
       labels: ["Thức dậy", "Đi học", "Đi ngủ"],
     },
     {
-      items: ["EMJ-bread", "EMJ-fork-and-knife", "EMJ-sparkles"],
+      items: ["🍞", "🍴", "✨"],
       labels: ["Chuẩn bị", "Ăn uống", "Dọn dẹp"],
     },
     {
-      items: ["EMJ-pencil", "EMJ-open-book", "EMJ-backpack"],
+      items: ["✏️", "📖", "🎒"],
       labels: ["Làm bài", "Đọc sách", "Cất cặp"],
     },
     {
-      items: ["EMJ-shower", "EMJ-t-shirt", "EMJ-sneaker"],
+      items: ["🚿", "👕", "👟"],
       labels: ["Tắm rửa", "Mặc áo", "Xỏ giày"],
     },
     {
-      items: ["EMJ-tomato", "EMJ-fork-and-knife", "EMJ-pot-of-food"],
+      items: ["🍅", "🍴", "🍲"],
       labels: ["Rửa rau", "Nấu ăn", "Món ngon"],
     },
     {
-      items: ["EMJ-balloon", "EMJ-party-popper", "EMJ-cake"],
+      items: ["🎈", "🎉", "🍰"],
       labels: ["Thổi bóng", "Bật tiệc", "Ăn bánh"],
     },
     {
-      items: ["EMJ-pencil", "EMJ-palette", "EMJ-framed-picture"],
+      items: ["✏️", "🎨", "🖼️"],
       labels: ["Chấm màu", "Vẽ tranh", "Treo tranh"],
     },
   ];
@@ -320,7 +320,7 @@ function createD507Levels(): ContentSeed<unknown, unknown>[] {
     const difficulty = ((i % 3) + 1) as 1 | 2 | 3;
     const accessTier = getAccessTier(i, 2);
     const seq = timeSequences[i % timeSequences.length] ?? {
-      items: ["EMJ-sun", "EMJ-sun-behind-cloud", "EMJ-crescent-moon"],
+      items: ["☀️", "⛅", "🌙"],
       labels: ["Sáng", "Chiều", "Tối"],
     };
     const skillCode = skillList[i] ?? "C1.CNT.07";
@@ -369,36 +369,36 @@ function createD507Levels(): ContentSeed<unknown, unknown>[] {
 function createD303Levels(): ContentSeed<unknown, unknown>[] {
   const seriationSequences = [
     {
-      items: ["EMJ-red-apple", "EMJ-banana", "EMJ-watermelon"],
+      items: ["🍎", "🍌", "🍉"],
       labels: ["1", "2", "3"],
     },
     {
-      items: ["EMJ-star", "EMJ-pencil", "EMJ-open-book"],
+      items: ["⭐", "✏️", "📖"],
       labels: ["1", "2", "3"],
     },
-    { items: ["EMJ-cat", "EMJ-dog", "EMJ-cow"], labels: ["1", "2", "3"] },
-    { items: ["EMJ-car", "EMJ-bus", "EMJ-airplane"], labels: ["1", "2", "3"] },
+    { items: ["🐱", "🐶", "🐮"], labels: ["1", "2", "3"] },
+    { items: ["🚗", "🚌", "✈️"], labels: ["1", "2", "3"] },
     {
-      items: ["EMJ-fish", "EMJ-dolphin", "EMJ-whale"],
-      labels: ["1", "2", "3"],
-    },
-    {
-      items: ["EMJ-candy", "EMJ-cupcake", "EMJ-cake"],
+      items: ["🐟", "🐬", "🐳"],
       labels: ["1", "2", "3"],
     },
     {
-      items: ["EMJ-sunflower", "EMJ-deciduous-tree", "EMJ-house"],
+      items: ["🍬", "🧁", "🍰"],
       labels: ["1", "2", "3"],
     },
     {
-      items: ["EMJ-balloon", "EMJ-gift", "EMJ-party-popper"],
+      items: ["🌻", "🌳", "🏠"],
       labels: ["1", "2", "3"],
     },
     {
-      items: ["EMJ-tomato", "EMJ-potato", "EMJ-cucumber"],
+      items: ["🎈", "🎁", "🎉"],
       labels: ["1", "2", "3"],
     },
-    { items: ["EMJ-chair", "EMJ-bed", "EMJ-door"], labels: ["1", "2", "3"] },
+    {
+      items: ["🍅", "🥔", "🥒"],
+      labels: ["1", "2", "3"],
+    },
+    { items: ["🪑", "🛏️", "🚪"], labels: ["1", "2", "3"] },
   ];
 
   const skillList = [
@@ -420,7 +420,7 @@ function createD303Levels(): ContentSeed<unknown, unknown>[] {
     const difficulty = ((i % 3) + 1) as 1 | 2 | 3;
     const accessTier = getAccessTier(i, 3);
     const seq = seriationSequences[i % seriationSequences.length] ?? {
-      items: ["EMJ-red-apple", "EMJ-banana", "EMJ-watermelon"],
+      items: ["🍎", "🍌", "🍉"],
       labels: ["1", "2", "3"],
     };
     const skillCode = skillList[i] ?? "C5.DES.01";
@@ -469,43 +469,43 @@ function createD303Levels(): ContentSeed<unknown, unknown>[] {
 function createD406Levels(): ContentSeed<unknown, unknown>[] {
   const groupOrderSequences = [
     {
-      items: ["EMJ-seedling", "EMJ-sunflower", "EMJ-deciduous-tree"],
+      items: ["🌱", "🌻", "🌳"],
       labels: ["Mầm", "Hoa", "Cây"],
     },
     {
-      items: ["EMJ-egg", "EMJ-baby-chick", "EMJ-rooster"],
+      items: ["🥚", "🐤", "🐓"],
       labels: ["Trứng", "Gà con", "Gà"],
     },
     {
-      items: ["EMJ-red-circle", "EMJ-blue-square", "EMJ-star"],
+      items: ["🔴", "🟦", "⭐"],
       labels: ["Tròn", "Vuông", "Sao"],
     },
     {
-      items: ["EMJ-bicycle", "EMJ-car", "EMJ-airplane"],
+      items: ["🚲", "🚗", "✈️"],
       labels: ["Chậm", "Vừa", "Nhanh"],
     },
     {
-      items: ["EMJ-ant", "EMJ-dog", "EMJ-elephant"],
+      items: ["🐜", "🐶", "🐘"],
       labels: ["Nhỏ", "Vừa", "Khổng lồ"],
     },
     {
-      items: ["EMJ-pencil", "EMJ-open-book", "EMJ-graduation-cap"],
+      items: ["✏️", "📖", "🎓"],
       labels: ["Bút", "Sách", "Mũ"],
     },
     {
-      items: ["EMJ-candy", "EMJ-cake", "EMJ-trophy"],
+      items: ["🍬", "🍰", "🏆"],
       labels: ["Kẹo", "Bánh", "Cúp"],
     },
     {
-      items: ["EMJ-balloon", "EMJ-gift", "EMJ-party-popper"],
+      items: ["🎈", "🎁", "🎉"],
       labels: ["Bóng", "Quà", "Pháo"],
     },
     {
-      items: ["EMJ-sparkles", "EMJ-crescent-moon", "EMJ-sun"],
+      items: ["✨", "🌙", "☀️"],
       labels: ["Sao", "Trăng", "Mặt trời"],
     },
     {
-      items: ["EMJ-tomato", "EMJ-pot-of-food", "EMJ-fork-and-knife"],
+      items: ["🍅", "🍲", "🍴"],
       labels: ["Rau", "Nấu", "Ăn"],
     },
   ];
@@ -529,7 +529,7 @@ function createD406Levels(): ContentSeed<unknown, unknown>[] {
     const difficulty = ((i % 3) + 1) as 1 | 2 | 3;
     const accessTier = getAccessTier(i, 4);
     const seq = groupOrderSequences[i % groupOrderSequences.length] ?? {
-      items: ["EMJ-seedling", "EMJ-sunflower", "EMJ-deciduous-tree"],
+      items: ["🌱", "🌻", "🌳"],
       labels: ["Mầm", "Hoa", "Cây"],
     };
     const skillCode = skillList[i] ?? "C2.CON.02";
@@ -583,67 +583,67 @@ function createD102Levels(): ContentSeed<unknown, unknown>[] {
   const pairSets = [
     {
       pairs: [
-        { l: "EMJ-red-apple", r: "EMJ-banana" },
-        { l: "EMJ-car", r: "EMJ-bus" },
+        { l: "🍎", r: "🍌" },
+        { l: "🚗", r: "🚌" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-cat", r: "EMJ-dog" },
-        { l: "EMJ-pencil", r: "EMJ-open-book" },
+        { l: "🐱", r: "🐶" },
+        { l: "✏️", r: "📖" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-star", r: "EMJ-glowing-star" },
-        { l: "EMJ-fish", r: "EMJ-whale" },
+        { l: "⭐", r: "🌟" },
+        { l: "🐟", r: "🐳" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-candy", r: "EMJ-cake" },
-        { l: "EMJ-sunflower", r: "EMJ-deciduous-tree" },
+        { l: "🍬", r: "🍰" },
+        { l: "🌻", r: "🌳" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-gift", r: "EMJ-balloon" },
-        { l: "EMJ-tomato", r: "EMJ-potato" },
+        { l: "🎁", r: "🎈" },
+        { l: "🍅", r: "🥔" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-chair", r: "EMJ-bed" },
-        { l: "EMJ-cow", r: "EMJ-pig" },
-        { l: "EMJ-car", r: "EMJ-bicycle" },
+        { l: "🪑", r: "🛏️" },
+        { l: "🐮", r: "🐷" },
+        { l: "🚗", r: "🚲" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-red-circle", r: "EMJ-blue-square" },
-        { l: "EMJ-sparkles", r: "EMJ-star" },
-        { l: "EMJ-bus", r: "EMJ-car" },
+        { l: "🔴", r: "🟦" },
+        { l: "✨", r: "⭐" },
+        { l: "🚌", r: "🚗" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-dolphin", r: "EMJ-fish" },
-        { l: "EMJ-strawberry", r: "EMJ-red-apple" },
-        { l: "EMJ-cake", r: "EMJ-candy" },
+        { l: "🐬", r: "🐟" },
+        { l: "🍓", r: "🍎" },
+        { l: "🍰", r: "🍬" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-sunflower", r: "EMJ-deciduous-tree" },
-        { l: "EMJ-pencil", r: "EMJ-palette" },
-        { l: "EMJ-balloon", r: "EMJ-gift" },
+        { l: "🌻", r: "🌳" },
+        { l: "✏️", r: "🎨" },
+        { l: "🎈", r: "🎁" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-cat", r: "EMJ-dog" },
-        { l: "EMJ-open-book", r: "EMJ-pencil" },
-        { l: "EMJ-car", r: "EMJ-bus" },
+        { l: "🐱", r: "🐶" },
+        { l: "📖", r: "✏️" },
+        { l: "🚗", r: "🚌" },
       ],
     },
   ];
@@ -669,8 +669,8 @@ function createD102Levels(): ContentSeed<unknown, unknown>[] {
     const accessTier = getAccessTier(i, 0);
     const pSet = pairSets[i % pairSets.length] ?? {
       pairs: [
-        { l: "EMJ-red-apple", r: "EMJ-banana" },
-        { l: "EMJ-car", r: "EMJ-bus" },
+        { l: "🍎", r: "🍌" },
+        { l: "🚗", r: "🚌" },
       ],
     };
     const skillCode = skillList[i] ?? "C1.CNT.01";
@@ -725,67 +725,67 @@ function createD108Levels(): ContentSeed<unknown, unknown>[] {
   const numDotSets = [
     {
       pairs: [
-        { l: "EMJ-red-apple", r: "EMJ-red-apple" },
-        { l: "EMJ-banana", r: "EMJ-banana" },
+        { l: "🍎", r: "🍎" },
+        { l: "🍌", r: "🍌" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-star", r: "EMJ-star" },
-        { l: "EMJ-pencil", r: "EMJ-pencil" },
+        { l: "⭐", r: "⭐" },
+        { l: "✏️", r: "✏️" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-car", r: "EMJ-car" },
-        { l: "EMJ-bus", r: "EMJ-bus" },
+        { l: "🚗", r: "🚗" },
+        { l: "🚌", r: "🚌" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-cat", r: "EMJ-cat" },
-        { l: "EMJ-dog", r: "EMJ-dog" },
+        { l: "🐱", r: "🐱" },
+        { l: "🐶", r: "🐶" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-fish", r: "EMJ-fish" },
-        { l: "EMJ-whale", r: "EMJ-whale" },
+        { l: "🐟", r: "🐟" },
+        { l: "🐳", r: "🐳" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-candy", r: "EMJ-candy" },
-        { l: "EMJ-cake", r: "EMJ-cake" },
-        { l: "EMJ-cupcake", r: "EMJ-cupcake" },
+        { l: "🍬", r: "🍬" },
+        { l: "🍰", r: "🍰" },
+        { l: "🧁", r: "🧁" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-sunflower", r: "EMJ-sunflower" },
-        { l: "EMJ-deciduous-tree", r: "EMJ-deciduous-tree" },
-        { l: "EMJ-seedling", r: "EMJ-seedling" },
+        { l: "🌻", r: "🌻" },
+        { l: "🌳", r: "🌳" },
+        { l: "🌱", r: "🌱" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-gift", r: "EMJ-gift" },
-        { l: "EMJ-balloon", r: "EMJ-balloon" },
-        { l: "EMJ-party-popper", r: "EMJ-party-popper" },
+        { l: "🎁", r: "🎁" },
+        { l: "🎈", r: "🎈" },
+        { l: "🎉", r: "🎉" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-tomato", r: "EMJ-tomato" },
-        { l: "EMJ-potato", r: "EMJ-potato" },
-        { l: "EMJ-cucumber", r: "EMJ-cucumber" },
+        { l: "🍅", r: "🍅" },
+        { l: "🥔", r: "🥔" },
+        { l: "🥒", r: "🥒" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-chair", r: "EMJ-chair" },
-        { l: "EMJ-bed", r: "EMJ-bed" },
-        { l: "EMJ-door", r: "EMJ-door" },
+        { l: "🪑", r: "🪑" },
+        { l: "🛏️", r: "🛏️" },
+        { l: "🚪", r: "🚪" },
       ],
     },
   ];
@@ -811,8 +811,8 @@ function createD108Levels(): ContentSeed<unknown, unknown>[] {
     const accessTier = getAccessTier(i, 1);
     const pSet = numDotSets[i % numDotSets.length] ?? {
       pairs: [
-        { l: "EMJ-red-apple", r: "EMJ-red-apple" },
-        { l: "EMJ-banana", r: "EMJ-banana" },
+        { l: "🍎", r: "🍎" },
+        { l: "🍌", r: "🍌" },
       ],
     };
     const skillCode = skillList[i] ?? "C6.WM.01";
@@ -867,67 +867,67 @@ function createD603Levels(): ContentSeed<unknown, unknown>[] {
   const causeEffectSets = [
     {
       pairs: [
-        { l: "EMJ-cloud", r: "EMJ-droplet" },
-        { l: "EMJ-sun", r: "EMJ-sunflower" },
+        { l: "☁️", r: "💧" },
+        { l: "☀️", r: "🌻" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-seedling", r: "EMJ-deciduous-tree" },
-        { l: "EMJ-egg", r: "EMJ-baby-chick" },
+        { l: "🌱", r: "🌳" },
+        { l: "🥚", r: "🐤" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-pot-of-food", r: "EMJ-fork-and-knife" },
-        { l: "EMJ-pencil", r: "EMJ-open-book" },
+        { l: "🍲", r: "🍴" },
+        { l: "✏️", r: "📖" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-soap", r: "EMJ-shower" },
-        { l: "EMJ-alarm-clock", r: "EMJ-sun" },
+        { l: "🧼", r: "🚿" },
+        { l: "⏰", r: "☀️" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-battery", r: "EMJ-flashlight" },
-        { l: "EMJ-key", r: "EMJ-door" },
+        { l: "🔋", r: "🔦" },
+        { l: "🔑", r: "🚪" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-cloud", r: "EMJ-rainbow" },
-        { l: "EMJ-seedling", r: "EMJ-sunflower" },
-        { l: "EMJ-bread", r: "EMJ-fork-and-knife" },
+        { l: "☁️", r: "🌈" },
+        { l: "🌱", r: "🌻" },
+        { l: "🍞", r: "🍴" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-palette", r: "EMJ-framed-picture" },
-        { l: "EMJ-key", r: "EMJ-door" },
-        { l: "EMJ-hammer", r: "EMJ-chair" },
+        { l: "🎨", r: "🖼️" },
+        { l: "🔑", r: "🚪" },
+        { l: "🔨", r: "🪑" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-t-shirt", r: "EMJ-sneaker" },
-        { l: "EMJ-cupcake", r: "EMJ-cake" },
-        { l: "EMJ-fire", r: "EMJ-pot-of-food" },
+        { l: "👕", r: "👟" },
+        { l: "🧁", r: "🍰" },
+        { l: "🔥", r: "🍲" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-sun", r: "EMJ-ice-cream" },
-        { l: "EMJ-cloud", r: "EMJ-seedling" },
-        { l: "EMJ-pencil", r: "EMJ-palette" },
+        { l: "☀️", r: "🍦" },
+        { l: "☁️", r: "🌱" },
+        { l: "✏️", r: "🎨" },
       ],
     },
     {
       pairs: [
-        { l: "EMJ-soap", r: "EMJ-shower" },
-        { l: "EMJ-gift", r: "EMJ-party-popper" },
-        { l: "EMJ-fork-and-knife", r: "EMJ-pot-of-food" },
+        { l: "🧼", r: "🚿" },
+        { l: "🎁", r: "🎉" },
+        { l: "🍴", r: "🍲" },
       ],
     },
   ];
@@ -953,8 +953,8 @@ function createD603Levels(): ContentSeed<unknown, unknown>[] {
     const accessTier = getAccessTier(i, 2);
     const pSet = causeEffectSets[i % causeEffectSets.length] ?? {
       pairs: [
-        { l: "EMJ-cloud", r: "EMJ-droplet" },
-        { l: "EMJ-sun", r: "EMJ-sunflower" },
+        { l: "☁️", r: "💧" },
+        { l: "☀️", r: "🌻" },
       ],
     };
     const skillCode = skillList[i] ?? "C3.INF.03";

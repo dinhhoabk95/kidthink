@@ -11,33 +11,33 @@ export const GT004_FIXTURES: {
         {
           group_id: "g1",
           label: "Trên cạn",
-          label_emoji: "EMJ-deciduous-tree",
+          label_emoji: "🌳",
         },
         {
           group_id: "g2",
           label: "Dưới nước",
-          label_emoji: "EMJ-ocean",
+          label_emoji: "🌊",
         },
       ],
       items: [
         {
           item_id: "cat",
-          asset: { kind: "emoji", ref: "EMJ-cat" },
+          asset: { kind: "emoji", ref: "🐱" },
           correct_group_id: "g1",
         },
         {
           item_id: "dog",
-          asset: { kind: "emoji", ref: "EMJ-dog" },
+          asset: { kind: "emoji", ref: "🐶" },
           correct_group_id: "g1",
         },
         {
           item_id: "fish",
-          asset: { kind: "emoji", ref: "EMJ-fish" },
+          asset: { kind: "emoji", ref: "🐟" },
           correct_group_id: "g2",
         },
         {
           item_id: "whale",
-          asset: { kind: "emoji", ref: "EMJ-whale" },
+          asset: { kind: "emoji", ref: "🐳" },
           correct_group_id: "g2",
         },
       ],
@@ -56,33 +56,33 @@ export const GT004_FIXTURES: {
         {
           group_id: "g1",
           label: "Rau củ",
-          label_emoji: "EMJ-carrot",
+          label_emoji: "🥕",
         },
         {
           group_id: "g2",
           label: "Hoa quả",
-          label_emoji: "EMJ-red-apple",
+          label_emoji: "🍎",
         },
       ],
       items: [
         {
           item_id: "carrot",
-          asset: { kind: "emoji", ref: "EMJ-carrot" },
+          asset: { kind: "emoji", ref: "🥕" },
           correct_group_id: "g1",
         },
         {
           item_id: "broccoli",
-          asset: { kind: "emoji", ref: "EMJ-broccoli" },
+          asset: { kind: "emoji", ref: "🥦" },
           correct_group_id: "g1",
         },
         {
           item_id: "apple",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
           correct_group_id: "g2",
         },
         {
           item_id: "banana",
-          asset: { kind: "emoji", ref: "EMJ-banana" },
+          asset: { kind: "emoji", ref: "🍌" },
           correct_group_id: "g2",
         },
       ],
@@ -101,33 +101,33 @@ export const GT004_FIXTURES: {
         {
           group_id: "g1",
           label: "Đường bộ",
-          label_emoji: "EMJ-car",
+          label_emoji: "🚗",
         },
         {
           group_id: "g2",
           label: "Đường hàng không",
-          label_emoji: "EMJ-airplane",
+          label_emoji: "✈️",
         },
       ],
       items: [
         {
           item_id: "car",
-          asset: { kind: "emoji", ref: "EMJ-car" },
+          asset: { kind: "emoji", ref: "🚗" },
           correct_group_id: "g1",
         },
         {
           item_id: "bus",
-          asset: { kind: "emoji", ref: "EMJ-bus" },
+          asset: { kind: "emoji", ref: "🚌" },
           correct_group_id: "g1",
         },
         {
           item_id: "airplane",
-          asset: { kind: "emoji", ref: "EMJ-airplane" },
+          asset: { kind: "emoji", ref: "✈️" },
           correct_group_id: "g2",
         },
         {
           item_id: "helicopter",
-          asset: { kind: "emoji", ref: "EMJ-helicopter" },
+          asset: { kind: "emoji", ref: "🚁" },
           correct_group_id: "g2",
         },
       ],

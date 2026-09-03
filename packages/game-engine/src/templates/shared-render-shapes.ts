@@ -19,6 +19,7 @@ import { timeToAngles } from "#src/systems/rotation-system";
 import {
   drawSlotItem,
   type RenderAsset,
+  resolveEmojiGlyph,
   type SceneBox,
 } from "./shared-render.js";
 
@@ -897,20 +898,52 @@ export function drawShapeTray(
   ctx: CanvasRenderingContext2D,
   box: SceneBox
 ): void {
+  const padX = 22;
+  const padY = 16;
+  const trayX = box.x - padX;
+  const trayY = box.y - padY;
+  const trayW = box.w + padX * 2;
+  const trayH = box.h + padY * 2;
+  const radius = 24;
+
   ctx.save();
+  // 1. Ambient drop shadow
   ctx.save();
   ctx.shadowColor = "rgba(130, 118, 96, 0.16)";
-  ctx.shadowBlur = 12;
+  ctx.shadowBlur = 14;
   ctx.shadowOffsetY = 6;
   ctx.fillStyle = designTokens.colors.surface[100];
   ctx.beginPath();
-  ctx.roundRect(box.x, box.y, box.w, box.h, 24);
+  ctx.roundRect(trayX, trayY, trayW, trayH, radius);
   ctx.fill();
   ctx.restore();
 
+  // 2. 3D Bottom Wood Rim
+  ctx.save();
+  ctx.translate(0, 4);
+  ctx.fillStyle = designTokens.colors.montessori.woodBorder;
+  ctx.beginPath();
+  ctx.roundRect(trayX, trayY, trayW, trayH, radius);
+  ctx.fill();
+  ctx.restore();
+
+  // 3. Main Tray Inset Body
+  ctx.fillStyle = designTokens.colors.surface[50];
   ctx.strokeStyle = designTokens.colors.montessori.woodBevel;
-  ctx.lineWidth = 4;
+  ctx.lineWidth = 3.5;
+  ctx.beginPath();
+  ctx.roundRect(trayX, trayY, trayW, trayH, radius);
+  ctx.fill();
   ctx.stroke();
+
+  // 4. Subtle Top Highlight
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(trayX + radius, trayY + 4);
+  ctx.lineTo(trayX + trayW - radius, trayY + 4);
+  ctx.stroke();
+
   ctx.restore();
 }
 
@@ -1222,34 +1255,160 @@ export function drawBasketSlot(
   ctx.restore();
 }
 
-// ── Tổ chim (GT-003) ────────────────────────────────────────────────
-export function drawNestTarget(
+function drawNestBase(
   ctx: CanvasRenderingContext2D,
-  slot: Slot
+  cx: number,
+  cy: number,
+  r: number,
+  isHovered: boolean
 ): void {
-  const cx = slot.x;
-  const cy = slot.y;
-  const r = Math.min(slot.w, slot.h) * 0.42;
-
-  ctx.save();
-  // Hào quang ấm áp quanh tổ
-  ctx.fillStyle = "rgba(255, 223, 160, 0.4)";
+  ctx.fillStyle = isHovered
+    ? "rgba(255, 191, 0, 0.45)"
+    : "rgba(255, 223, 160, 0.35)";
   ctx.beginPath();
-  ctx.arc(cx, cy, r * 1.3, 0, Math.PI * 2);
+  ctx.arc(cx, cy, r * (isHovered ? 1.45 : 1.25), 0, Math.PI * 2);
   ctx.fill();
 
-  // Tổ chim gỗ/rơm
-  ctx.fillStyle = "#d7ba89";
-  ctx.strokeStyle = designTokens.colors.montessori.woodBorder;
-  ctx.lineWidth = 3;
+  ctx.save();
+  ctx.shadowColor = "rgba(130, 118, 96, 0.22)";
+  ctx.shadowBlur = 16;
+  ctx.shadowOffsetY = 6;
+  ctx.fillStyle = "#f5ede0";
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fill();
+  ctx.restore();
+
+  ctx.strokeStyle = isHovered
+    ? designTokens.colors.montessori.amber
+    : designTokens.colors.montessori.woodBorder;
+  ctx.lineWidth = isHovered ? 5 : 4;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.stroke();
 
-  ctx.font = '28px "Noto Color Emoji", sans-serif';
+  ctx.fillStyle = "#ebd9be";
+  ctx.beginPath();
+  ctx.arc(cx, cy + 4, r * 0.78, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.strokeStyle = "rgba(180, 140, 80, 0.35)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(cx, cy + 6, r * 0.55, 0.2, Math.PI - 0.2);
+  ctx.stroke();
+}
+
+function drawNestPlacedItems(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  r: number,
+  placedItems: readonly {
+    item_id: string;
+    asset: { kind: string; ref?: string; path?: string };
+  }[]
+): void {
+  if (placedItems.length === 0) {
+    ctx.font = '36px "Noto Color Emoji", "Apple Color Emoji", sans-serif';
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("🪹", cx, cy);
+    return;
+  }
+
+  const count = placedItems.length;
+  const spacing = Math.min(36, r * 0.7);
+  const startX = cx - ((count - 1) * spacing) / 2;
+
+  for (let i = 0; i < count; i++) {
+    const item = placedItems[i];
+    if (!item) {
+      continue;
+    }
+    const chickX = startX + i * spacing;
+    const chickY = cy - 2;
+
+    ctx.save();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+    ctx.beginPath();
+    ctx.arc(chickX, chickY, 20, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.font = '32px "Noto Color Emoji", "Apple Color Emoji", sans-serif';
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    const glyph =
+      (item.asset.ref ? resolveEmojiGlyph(item.asset.ref) : "") || "🐥";
+    ctx.fillText(glyph, chickX, chickY);
+    ctx.restore();
+  }
+}
+
+function drawNestBadge(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  r: number,
+  label: string,
+  placedCount: number,
+  targetCount: number
+): void {
+  const pillW = Math.max(120, r * 1.4);
+  const pillH = 26;
+  const pillY = cy + r - 10;
+  const isComplete = placedCount >= targetCount;
+
+  ctx.save();
+  ctx.fillStyle = isComplete
+    ? designTokens.colors.semantic.success[500]
+    : designTokens.colors.surface[0];
+  ctx.strokeStyle = isComplete
+    ? designTokens.colors.semantic.success[600]
+    : designTokens.colors.montessori.woodBevel;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(cx - pillW / 2, pillY, pillW, pillH, 13);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = isComplete ? "#ffffff" : designTokens.colors.surface[800];
+  ctx.font = `bold 13px ${designTokens.fonts.heading}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("🪹", cx, cy);
+  ctx.fillText(
+    `${label} (${placedCount}/${targetCount})`,
+    cx,
+    pillY + pillH / 2
+  );
+  ctx.restore();
+}
+
+// ── Tổ chim / Chuồng gà (GT-003) ────────────────────────────────────────────────
+export function drawNestTarget(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  options?: {
+    label?: string;
+    placedItems?: readonly {
+      item_id: string;
+      asset: { kind: string; ref?: string; path?: string };
+    }[];
+    targetCount?: number;
+    isHovered?: boolean;
+  }
+): void {
+  const cx = slot.x;
+  const cy = slot.y;
+  const r = Math.min(slot.w, slot.h) * 0.44;
+  const isHovered = options?.isHovered ?? false;
+  const placedItems = options?.placedItems ?? [];
+  const targetCount = options?.targetCount ?? 2;
+  const label = options?.label ?? "Chuồng gà";
+
+  ctx.save();
+  drawNestBase(ctx, cx, cy, r, isHovered);
+  drawNestPlacedItems(ctx, cx, cy, r, placedItems);
+  drawNestBadge(ctx, cx, cy, r, label, placedItems.length, targetCount);
   ctx.restore();
 }

@@ -30,17 +30,17 @@ describe("P4.5 Custom Game DB Service (BR-CGB-01..10)", () => {
       prompt: "Quả nào màu đỏ?",
       target_item: {
         item_id: "target_apple",
-        asset: { kind: "emoji", ref: "EMJ-red-apple" },
+        asset: { kind: "emoji", ref: "🍎" },
       },
       options: [
         {
           item_id: "opt_apple",
-          asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          asset: { kind: "emoji", ref: "🍎" },
           is_correct: true,
         },
         {
           item_id: "opt_banana",
-          asset: { kind: "emoji", ref: "EMJ-banana" },
+          asset: { kind: "emoji", ref: "🍌" },
           is_correct: false,
         },
       ],

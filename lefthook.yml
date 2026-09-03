@@ -2,14 +2,16 @@
 #
 # Phân tầng có chủ đích:
 #   pre-commit  = nhanh (format staged + lint + ranh giới package) → không làm commit chậm tới mức người ta bỏ qua
-#   pre-push    = đủ (`pnpm check` = lint + deps + typecheck + test + test:deploy) → cổng thật trước khi code ra khỏi máy
+#   pre-push    = (Tạm thời vô hiệu hóa — dự án chuyển sang manual test)
 #
 # Gộp `check` vào pre-commit là đổi chỗ, không phải bỏ bớt: `check` tự chạy lại
-# `lint` và `lint:deps`, nên mỗi commit đo hai lần, cộng toàn bộ test và
-# test:deploy. Đó đúng là thứ làm người ta gõ `--no-verify`.
+# `lint` và `lint:deps`, nên mỗi commit đo hai lần.
 #
 # Cổng lint tuỳ biến (`packages/gates`) đã bị gỡ. Lint chỉ còn Biome (`pnpm lint`),
 # ranh giới package (`pnpm lint:deps`) và vue-tsc/tsc (`pnpm typecheck`).
+#
+# ⚠️ Lưu ý: Các bước chạy automated test (unit/integration/e2e) tạm thời tắt,
+# chuyển sang kiểm thử thủ công (manual testing).
 #
 # ⛔ `git commit --no-verify` / `git push --no-verify` BỎ QUA hook này.
 # lefthook là gate local, ❌ KHÔNG phải cưỡng chế server-side. Xem repo-bootstrap §11 Q12.

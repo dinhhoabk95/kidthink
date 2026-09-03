@@ -84,8 +84,8 @@ Bốn quyết định định hình toàn bộ schema, mỗi cái là một ràn
 | `identity` | `users` `managers` `active_sessions` `mfa_settings` `mfa_recovery_codes` `verification_tokens` `consent_logs` `consent_requirements` `social_identities` | [`schema-identity-billing.md`](schema-identity-billing.md) |
 | `billing` | `packages` `package_entitlements` `entitlement_keys` `entitlements` `payment_orders` `quota_usage` | idem |
 | `child` | `child_profiles` `child_session_summaries` | [`schema-play-telemetry.md`](schema-play-telemetry.md) |
-| `taxonomy` | `competencies` `strands` `skills` `skill_prerequisites` `learning_objectives` | [`schema-content-taxonomy.md`](schema-content-taxonomy.md) |
-| `tagging` | `content_tags` `content_tag_map` `content_skill_map` `user_tags` | idem |
+| `taxonomy` | `competencies` `strands` `skills` `skill_prerequisites` `learning_objectives` `skill_datasets` | [`schema-content-taxonomy.md`](schema-content-taxonomy.md) |
+| `tagging` | `content_tags` `content_tag_map` `content_skill_map` `content_objective_map` `user_tags` | idem |
 | `game` | `game_templates` `game_levels` | idem |
 | `content` | `lessons` `activities` `lesson_activities` `worksheets` `content_images` | idem |
 | `curriculum` | `curricula` `curriculum_items` `curriculum_enrollments` `curriculum_item_progress` | idem |
@@ -113,13 +113,14 @@ thứ chưa có contract.
 |---|---|---|
 | `content_tag_map` | `(entity_type, entity_id)` | orphan target |
 | `content_skill_map` | `(entity_type, entity_id)` | orphan target |
+| `content_objective_map` | `(entity_type, entity_id)` | orphan target |
 | `content_images` | `(owner_type, owner_id)` | orphan owner |
 | `content_review_log` | `(entity_type, entity_id)` | orphan target — `entity_id`, khớp quy tắc `BR-DM-13` (quyết định D-AE) |
 | `active_sessions` · `mfa_settings` · `mfa_recovery_codes` · `verification_tokens` | `(account_type, account_id)` | orphan account |
 | `activities.ref_id` | `(ref_type, ref_id)` — trỏ `game_levels.entity_id` hoặc `worksheets.entity_id` tuỳ `ref_type` | orphan target |
 | `curriculum_items.entity_id` | `(entity_type, entity_id)` — trỏ `lessons.entity_id` hoặc `game_levels.entity_id` tuỳ `entity_type` | orphan target |
 
-Chín chỗ (`D-AQ`, 2026-08-08 — thêm hai dòng cuối). Mỗi chỗ **bắt buộc** một integration
+Mười chỗ (`D-AQ`, 2026-08-08 — thêm hai dòng cuối; `content_objective_map` thêm 2026-09-03). Mỗi chỗ **bắt buộc** một integration
 test bắt orphan — đây không phải khuyến nghị. Hai dòng mới phát hiện khi soạn kế hoạch
 migration đầu tiên: [`schema-content-taxonomy.md`](schema-content-taxonomy.md) §7.5 và §7.6
 mô tả `activities.ref_id` và `curriculum_items.entity_id` là polymorphic thật, nhưng danh

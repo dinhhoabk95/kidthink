@@ -36,7 +36,7 @@ describe("Guest Taxonomy API & Performance (BR-TAX-06 & BR-TAX-10)", () => {
         from: vi.fn().mockReturnValue({
           where: vi
             .fn()
-            .mockResolvedValue([{ code: "C1.CNT.01", status: "seeded" }]),
+            .mockResolvedValue([{ code: "C1.CNT.01", tier: "basic" }]),
         }),
       }),
     });
@@ -58,9 +58,7 @@ describe("Guest Taxonomy API & Performance (BR-TAX-06 & BR-TAX-10)", () => {
         from: vi.fn().mockReturnValue({
           where: vi
             .fn()
-            .mockResolvedValue([
-              { id: 1, code: "C1.CNT.01", status: "seeded" },
-            ]),
+            .mockResolvedValue([{ id: 1, code: "C1.CNT.01", tier: "basic" }]),
         }),
       }),
     });
@@ -108,7 +106,7 @@ describe("Guest Taxonomy API & Performance (BR-TAX-06 & BR-TAX-10)", () => {
         from: vi.fn().mockReturnValue({
           where: vi
             .fn()
-            .mockResolvedValue([{ code: "C1.CNT.01", status: "seeded" }]),
+            .mockResolvedValue([{ code: "C1.CNT.01", tier: "basic" }]),
         }),
       }),
     });

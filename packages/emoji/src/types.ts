@@ -76,15 +76,13 @@ export type CurriculumTheme =
 
 // ── Emoji entry ──────────────────────────────────────────────────
 export interface EmojiEntry {
-  /** Optional EMJ-<slug> code */
-  code?: string;
   /** Minimum recommended age (3–6) */
   age_min: number;
-  /** Category this emoji belongs to */
-  category: EmojiCategory;
+  /** Categories this emoji belongs to */
+  categories: EmojiCategory[];
   /** Mapped curriculum themes */
   curriculum_themes: CurriculumTheme[];
-  /** The emoji character itself, e.g. '🍎' */
+  /** The emoji character itself (primary key, NFC, unique), e.g. '🍎' */
   emoji: string;
   /** Search keywords, English + Vietnamese merged, deduped (≥ 2) */
   keywords: string[];

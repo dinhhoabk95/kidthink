@@ -1,5 +1,7 @@
+import type { SkillDataset } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import { runEightGates } from "#src/seed-content/gates/runner";
+import type { ContentSeed } from "#src/seed-content/types";
 import {
   FIXTURE_GATE_0_INVALID_CODE,
   FIXTURE_GATE_1_EMPTY_CONTENT_PACK,
@@ -203,6 +205,90 @@ describe("Tám cổng thẩm định nội dung seed (BR-CSA-02, Task #117)", ()
             i.code === "ACCESS_TIER_INVALID"
         )
       ).toBe(true);
+    });
+  });
+
+  describe("Gate 8: Nguồn vật (BR-SDS-02, Task #207)", () => {
+    it("fails when item_id does not exist in skill dataset", async () => {
+      const { checkGateItemOrigin } = await import(
+        "#src/seed-content/gates/gate-08-item-origin"
+      );
+      const dataset: SkillDataset = {
+        skill_code: "C1.NREC.02",
+        concept_label: "Số 0 đến 5",
+        surface: "game",
+        items: [{ id: "n1", label: "một" }],
+        ladder: [],
+        phrasing: { prompt_template: "Bé chọn số {label}" },
+      };
+      const invalidSeed: ContentSeed = {
+        ...VALID_GAME_LEVEL_SEED,
+        content_pack: {
+          target_item: {
+            item_id: "unknown_item",
+            asset: { kind: "text", text: "x" },
+          },
+        },
+      };
+      const result = checkGateItemOrigin(invalidSeed, dataset);
+      expect(result.passed).toBe(false);
+      expect(result.issues.some((i) => i.code === "ITEM_ORIGIN_INVALID")).toBe(
+        true
+      );
+    });
+  });
+
+  describe("Gate 9: Khái niệm hiện ra (BR-SDS-03, Task #207)", () => {
+    it("fails when dataset has glyphs but level does not show any glyph", async () => {
+      const { checkGateConceptPresent } = await import(
+        "#src/seed-content/gates/gate-09-concept-present"
+      );
+      const dataset: SkillDataset = {
+        skill_code: "C1.NREC.02",
+        concept_label: "Số 0 đến 5",
+        surface: "game",
+        items: [{ id: "n1", label: "một", glyph: "1" }],
+        ladder: [],
+        phrasing: { prompt_template: "Bé chọn số {label}" },
+      };
+      const seedWithoutGlyph: ContentSeed = {
+        ...VALID_GAME_LEVEL_SEED,
+        content_pack: {
+          prompt: "Bé chọn hình tròn nhé",
+          options: [{ item_id: "n1", asset: { kind: "emoji", ref: "🍎" } }],
+        },
+      };
+      const result = checkGateConceptPresent(seedWithoutGlyph, dataset);
+      expect(result.passed).toBe(false);
+      expect(
+        result.issues.some((i) => i.code === "CONCEPT_GLYPH_MISSING")
+      ).toBe(true);
+    });
+  });
+
+  describe("Check Skill Registry (BR-SDS-07, Task #207)", () => {
+    it("fails when a skill file exists but is not registered in SKILL_DATASETS", async () => {
+      const { checkSkillRegistry } = await import(
+        "#src/seed-content/gates/check-skill-registry"
+      );
+      const emptyRegistry = {};
+      const result = checkSkillRegistry(emptyRegistry);
+      // Because C1.NREC.02.ts exists on disk, emptyRegistry must fail
+      expect(result.passed).toBe(false);
+      expect(
+        result.issues.some((i) => i.code === "SKILL_NOT_IN_REGISTRY")
+      ).toBe(true);
+    });
+
+    it("passes cleanly with all 408 skills registered in SKILL_DATASETS", async () => {
+      const { checkSkillRegistry } = await import(
+        "#src/seed-content/gates/check-skill-registry"
+      );
+      const { SKILL_DATASETS } = await import("#src/seed-content/skills/index");
+      expect(Object.keys(SKILL_DATASETS)).toHaveLength(408);
+      const result = checkSkillRegistry(SKILL_DATASETS);
+      expect(result.passed).toBe(true);
+      expect(result.issues).toHaveLength(0);
     });
   });
 });

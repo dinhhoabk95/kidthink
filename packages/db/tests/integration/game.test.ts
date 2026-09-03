@@ -221,17 +221,17 @@ describe("Game Schema Integration Tests", () => {
       prompt: "Tìm quả táo",
       target_item: {
         item_id: "apple",
-        asset: { kind: "emoji" as const, ref: "EMJ-red-apple" },
+        asset: { kind: "emoji" as const, ref: "🍎" },
       },
       options: [
         {
           item_id: "apple",
-          asset: { kind: "emoji" as const, ref: "EMJ-red-apple" },
+          asset: { kind: "emoji" as const, ref: "🍎" },
           is_correct: true,
         },
         {
           item_id: "banana",
-          asset: { kind: "emoji" as const, ref: "EMJ-banana" },
+          asset: { kind: "emoji" as const, ref: "🍌" },
           is_correct: false,
         },
       ],

@@ -11,19 +11,19 @@ export const GT025_FIXTURES: {
       left_objects: [
         {
           id: "left-sun",
-          asset: { kind: "emoji", ref: "EMJ-sun" },
+          asset: { kind: "emoji", ref: "☀️" },
           x: 100,
           y: 100,
         },
         {
           id: "left-cat",
-          asset: { kind: "emoji", ref: "EMJ-cat" },
+          asset: { kind: "emoji", ref: "🐱" },
           x: 200,
           y: 300,
         },
         {
           id: "left-tree",
-          asset: { kind: "emoji", ref: "EMJ-deciduous-tree" },
+          asset: { kind: "emoji", ref: "🌳" },
           x: 300,
           y: 250,
         },
@@ -31,19 +31,19 @@ export const GT025_FIXTURES: {
       right_objects: [
         {
           id: "right-sun",
-          asset: { kind: "emoji", ref: "EMJ-sun" },
+          asset: { kind: "emoji", ref: "☀️" },
           x: 100,
           y: 100,
         },
         {
           id: "right-dog",
-          asset: { kind: "emoji", ref: "EMJ-dog" },
+          asset: { kind: "emoji", ref: "🐶" },
           x: 200,
           y: 300,
         },
         {
           id: "right-tree",
-          asset: { kind: "emoji", ref: "EMJ-deciduous-tree" },
+          asset: { kind: "emoji", ref: "🌳" },
           x: 300,
           y: 250,
         },
@@ -70,25 +70,25 @@ export const GT025_FIXTURES: {
       left_objects: [
         {
           id: "l-flower-1",
-          asset: { kind: "emoji", ref: "EMJ-rose" },
+          asset: { kind: "emoji", ref: "🌹" },
           x: 120,
           y: 200,
         },
         {
           id: "l-flower-2",
-          asset: { kind: "emoji", ref: "EMJ-sunflower" },
+          asset: { kind: "emoji", ref: "🌻" },
           x: 220,
           y: 200,
         },
         {
           id: "l-bird",
-          asset: { kind: "emoji", ref: "EMJ-bird" },
+          asset: { kind: "emoji", ref: "🐦" },
           x: 150,
           y: 100,
         },
         {
           id: "l-butterfly",
-          asset: { kind: "emoji", ref: "EMJ-butterfly" },
+          asset: { kind: "emoji", ref: "🦋" },
           x: 250,
           y: 100,
         },
@@ -96,25 +96,25 @@ export const GT025_FIXTURES: {
       right_objects: [
         {
           id: "r-flower-1",
-          asset: { kind: "emoji", ref: "EMJ-rose" },
+          asset: { kind: "emoji", ref: "🌹" },
           x: 120,
           y: 200,
         },
         {
           id: "r-flower-2",
-          asset: { kind: "emoji", ref: "EMJ-tulip" },
+          asset: { kind: "emoji", ref: "🌷" },
           x: 220,
           y: 200,
         },
         {
           id: "r-bird",
-          asset: { kind: "emoji", ref: "EMJ-front-facing-baby-chick" },
+          asset: { kind: "emoji", ref: "🐥" },
           x: 150,
           y: 100,
         },
         {
           id: "r-butterfly",
-          asset: { kind: "emoji", ref: "EMJ-butterfly" },
+          asset: { kind: "emoji", ref: "🦋" },
           x: 250,
           y: 100,
         },
@@ -137,25 +137,25 @@ export const GT025_FIXTURES: {
       left_objects: [
         {
           id: "l-bed",
-          asset: { kind: "emoji", ref: "EMJ-bed" },
+          asset: { kind: "emoji", ref: "🛏️" },
           x: 100,
           y: 300,
         },
         {
           id: "l-lamp",
-          asset: { kind: "emoji", ref: "EMJ-light-bulb" },
+          asset: { kind: "emoji", ref: "💡" },
           x: 100,
           y: 120,
         },
         {
           id: "l-clock",
-          asset: { kind: "emoji", ref: "EMJ-alarm-clock" },
+          asset: { kind: "emoji", ref: "⏰" },
           x: 220,
           y: 120,
         },
         {
           id: "l-book",
-          asset: { kind: "emoji", ref: "EMJ-closed-book" },
+          asset: { kind: "emoji", ref: "📕" },
           x: 220,
           y: 250,
         },
@@ -163,25 +163,25 @@ export const GT025_FIXTURES: {
       right_objects: [
         {
           id: "r-bed",
-          asset: { kind: "emoji", ref: "EMJ-couch" },
+          asset: { kind: "emoji", ref: "🛋️" },
           x: 100,
           y: 300,
         },
         {
           id: "r-lamp",
-          asset: { kind: "emoji", ref: "EMJ-light-bulb" },
+          asset: { kind: "emoji", ref: "💡" },
           x: 100,
           y: 120,
         },
         {
           id: "r-clock",
-          asset: { kind: "emoji", ref: "EMJ-mantelpiece-clock" },
+          asset: { kind: "emoji", ref: "🕰️" },
           x: 220,
           y: 120,
         },
         {
           id: "r-book",
-          asset: { kind: "emoji", ref: "EMJ-green-book" },
+          asset: { kind: "emoji", ref: "📗" },
           x: 220,
           y: 250,
         },

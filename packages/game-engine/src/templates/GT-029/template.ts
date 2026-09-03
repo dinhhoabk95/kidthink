@@ -85,6 +85,6 @@ export default defineTemplate({
     "game_completed",
   ],
   engine_session: "GT029Session",
-  status: "draft",
+  status: "published",
   version: 1,
 });
