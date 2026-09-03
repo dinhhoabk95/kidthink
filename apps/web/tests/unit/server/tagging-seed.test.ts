@@ -1,14 +1,16 @@
 import {
-  type ContentSeed,
   detectOrphanedContentTags,
-  executeSeedBatch,
   getOwnerDb,
   normalizeMechanicTagCode,
-  runEightGates,
-  seed,
   validateAndAssignTags,
   validateContentSkillMap,
 } from "@mindkid/db";
+import {
+  type ContentSeed,
+  executeSeedBatch,
+  runEightGates,
+  seed,
+} from "@mindkid/db/seed";
 import { beforeAll, describe, expect, it } from "vitest";
 
 describe("Task P1.10 — Content Tagging & Seed Authoring Pipeline (BR-TAG-* & BR-CSA-*)", () => {

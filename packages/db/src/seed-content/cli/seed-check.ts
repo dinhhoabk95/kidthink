@@ -246,6 +246,18 @@ export async function runSeedCheck(againstDb = false) {
     blockingIssues++;
   }
 
+  const { checkSkillRegistry } = await import(
+    "#src/seed-content/gates/check-skill-registry"
+  );
+  const { SKILL_DATASETS } = await import("#src/seed-content/skills/index");
+  const skillRegistryGate = checkSkillRegistry(SKILL_DATASETS);
+  if (!skillRegistryGate.passed) {
+    for (const issue of skillRegistryGate.issues) {
+      console.error(`🚨 [BR-SDS-07] ${issue.message}`);
+    }
+    blockingIssues += skillRegistryGate.issues.length;
+  }
+
   if (againstDb) {
     const driftCount = await checkAllDrifts(ALL_SEED_CONTENT);
     if (driftCount > 0) {

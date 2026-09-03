@@ -4,13 +4,13 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./seed": "./src/seed.ts"
   },
   "dependencies": {
     "@mindkid/adaptive": "workspace:*",
     "@mindkid/auth": "workspace:*",
     "@mindkid/config": "workspace:*",
-    "@mindkid/emoji": "workspace:*",
     "@mindkid/game-engine": "workspace:*",
     "@mindkid/moderation": "workspace:*",
     "@mindkid/queue": "workspace:*",
@@ -48,6 +48,10 @@
     "check:skill-progression": "tsx src/seed-content/gates/skill-progression.ts",
     "gen:levels": "tsx src/seed-content/cli/gen-levels.ts",
     "gen:corpus": "tsx src/seed-content/cli/gen-corpus.ts",
+    "gen-level-allocation": "tsx scripts/gen-level-allocation.ts",
+    "gen-skill-affinity": "tsx scripts/gen-skill-affinity.ts",
+    "generate-skill-datasets": "tsx scripts/generate-skill-datasets.ts",
+    "gen-pedagogy-45": "tsx scripts/gen-pedagogy-45.ts",
     "reset-content": "tsx scripts/reset-content.ts",
     "check:taxonomy-refs": "vitest run tests/gates/taxonomy-refs.test.ts"
   },

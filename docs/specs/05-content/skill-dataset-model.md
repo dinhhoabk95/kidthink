@@ -352,6 +352,7 @@ Scenario: BR-SDS-05 — bộ chiếu không thử lại
   Then nó ném, nêu kỹ năng, khuôn, số vật thiếu
   And không level nào được sinh cho cặp đó
 
+<!-- taxonomy-refs:historical -->
 Scenario: BR-SDS-07 — file kỹ năng không đăng ký làm cổng đỏ
   Given một file skills/c1/nrec/C1.NREC.99.ts tồn tại
   And registry không chứa nó

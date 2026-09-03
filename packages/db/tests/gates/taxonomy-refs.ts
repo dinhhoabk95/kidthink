@@ -32,8 +32,7 @@ const SKIP_DIR_REGEX = /^(node_modules|\.nuxt|\.output|dist|generated)$/;
  * File cố tình chứa mã đã chết: bảng ánh xạ sửa chúng, và tài liệu kể lại việc
  * sửa. Quét chúng là bắt đúng thứ chúng sinh ra để dọn.
  */
-const ALLOW_FILE_REGEX =
-  /(remap-phantom-skills|fix-phantom-skill-targets)\.ts$|docs\/tasks\//;
+const ALLOW_FILE_REGEX = /docs\/tasks\//;
 
 /**
  * Lối thoát theo dòng cho **bản ghi lịch sử**: spec kể lại một phép đo cũ dùng

@@ -587,6 +587,18 @@ async function seedSkillDatasetsStep(
   skillIdMap: Map<string, number>
 ): Promise<number> {
   const { SKILL_DATASETS } = await import("#src/seed-content/skills/index");
+  const { checkSkillRegistry } = await import(
+    "#src/seed-content/gates/check-skill-registry"
+  );
+  const registryGate = checkSkillRegistry(SKILL_DATASETS);
+  if (!registryGate.passed) {
+    const details = registryGate.issues
+      .map((i) => `  - ${i.message}`)
+      .join("\n");
+    throw new Error(
+      `[db:seed] BR-SDS-07: Phát hiện file kỹ năng chưa được đăng ký trong SKILL_DATASETS:\n${details}`
+    );
+  }
   const values: (typeof skillDatasets.$inferInsert)[] = [];
 
   for (const [code, dataset] of Object.entries(SKILL_DATASETS)) {

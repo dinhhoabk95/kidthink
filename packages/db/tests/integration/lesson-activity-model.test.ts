@@ -5,14 +5,9 @@ import {
 } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import {
-  activities,
-  getOwnerDb,
-  lessons,
-  runEightGates,
-  skills,
-} from "#src/index";
+import { activities, getOwnerDb, lessons, skills } from "#src/index";
 import { ALL_SEED_ACTIVITIES } from "#src/seed-content/activities/index";
+import { runEightGates } from "#src/seed-content/gates/runner";
 import { ALL_SEED_LESSONS } from "#src/seed-content/lessons/index";
 import { executeSeedBatch } from "#src/seed-content/service";
 import { seedContentTags } from "#src/seed-master/content-tags";

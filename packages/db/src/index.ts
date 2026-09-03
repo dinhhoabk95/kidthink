@@ -24,11 +24,10 @@ export * from "./schema/planner.ts";
 export * from "./schema/play.ts";
 export * from "./schema/tagging.ts";
 export * from "./schema/taxonomy.ts";
-export * from "./seed.ts";
-export * from "./seed-content/gates/runner.ts";
-export * from "./seed-content/service.ts";
-export * from "./seed-content/types.ts";
-export * from "./seed-master/content-tags.ts";
+// `seed()` ❌ NEVER xuất ở đây: nó nhập tĩnh `runSeedContent`, kéo ~44.000 dòng
+// kho nội dung vào mọi consumer. Nó sống ở lối vào riêng `@mindkid/db/seed`.
+// Task #208 giai đoạn 1.
+export * from "./seed-catalog.ts";
 export * from "./services/advanced-report.ts";
 export * from "./services/ai-assistant.ts";
 export * from "./services/ai-credit.ts";

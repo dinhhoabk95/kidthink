@@ -7,10 +7,10 @@ import {
   getOwnerDb,
   masteryState,
   playSessions,
-  seed,
   skills,
   users,
 } from "@mindkid/db";
+import { seed } from "@mindkid/db/seed";
 import { beforeAll, describe, expect, it } from "vitest";
 import getAdvancedReportHandler from "#server/api/users/children/[uuid]/reports/advanced.get";
 import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";

@@ -1,9 +1,4 @@
 import { hashPassword } from "@mindkid/auth";
-import {
-  ENTITLEMENT_KEYS,
-  PACKAGE_CATALOG,
-  PENDING_PRICE_VND as PENDING_PRICE,
-} from "@mindkid/shared";
 import { getOwnerDb } from "./client.ts";
 import {
   entitlementKeys,
@@ -11,6 +6,11 @@ import {
   packages,
 } from "./schema/billing.ts";
 import { consentRequirements, managers } from "./schema/identity.ts";
+import {
+  SEED_ENTITLEMENT_KEYS,
+  SEED_PACKAGE_ENTITLEMENTS,
+  SEED_PACKAGES,
+} from "./seed-catalog.ts";
 import { runSeedContent } from "./seed-content/cli/seed-content.ts";
 import { seedInitialAccounts } from "./seed-master/accounts.ts";
 import { seedSkillActionSuggestions } from "./seed-master/action-suggestions.ts";
@@ -18,34 +18,11 @@ import { seedContentTags } from "./seed-master/content-tags.ts";
 import { seedCurriculaMasterData } from "./seed-master/curricula.ts";
 import { seedTaxonomyMasterData } from "./seed-master/taxonomy/index.ts";
 
-export const PENDING_PRICE_VND = PENDING_PRICE;
-
-export const SEED_ENTITLEMENT_KEYS = ENTITLEMENT_KEYS.map((item) => ({
-  key: item.key,
-  group: item.group,
-  label: item.label,
-  isMvp: item.is_mvp,
-}));
-
-export const SEED_PACKAGES = Object.values(PACKAGE_CATALOG).map((pkg) => ({
-  code: pkg.code,
-  name: pkg.name,
-  audience: pkg.audience,
-  description: pkg.description,
-  status: pkg.status,
-  offers: pkg.offers,
-  quotas: pkg.quotas,
-  isPublic: pkg.is_public,
-  isFeatured: pkg.is_featured,
-}));
-
-export const SEED_PACKAGE_ENTITLEMENTS = Object.values(PACKAGE_CATALOG).flatMap(
-  (pkg) =>
-    pkg.entitlements.map((key) => ({
-      packageCode: pkg.code,
-      entitlementKey: key,
-    }))
-);
+// biome-ignore lint/performance/noBarrelFile: lối vào phụ @mindkid/db/seed theo Task #208 G1
+export * from "./seed-content/gates/runner.ts";
+export * from "./seed-content/service.ts";
+export * from "./seed-content/types.ts";
+export * from "./seed-master/content-tags.ts";
 
 export async function seed() {
   const db = getOwnerDb();

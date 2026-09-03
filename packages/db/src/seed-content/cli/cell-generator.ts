@@ -5,7 +5,7 @@ import {
   ALL_TEMPLATES,
   getLevelGenerator,
 } from "@mindkid/game-engine";
-import { generateMatrixReport } from "../../../scripts/check-matrix-budget.js";
+import { generateMatrixReport } from "#scripts/check-matrix-budget";
 
 export interface CellSpec {
   engine: string;

@@ -3,7 +3,7 @@
  *
  * Mỗi hàm trả về đúng ba thứ mà một hạt giống cần đổi: `template_code`,
  * `content_pack`, `difficulty_params`. Phần đầu (mã, tiêu đề, kỹ năng, tag,
- * band tuổi, gói) giữ nguyên từ hạt gốc — xem `scripts/apply-reauthored-levels.ts`.
+ * band tuổi, gói) giữ nguyên từ hạt gốc.
  *
  * Viết bộ dựng thay vì chép tay 73 khối JSON vì hai lý do: khối tay dễ lệch
  * một trường mà zod mới bắt được, và mọi ràng buộc số (số ô, số phương án,

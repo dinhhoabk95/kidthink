@@ -258,9 +258,9 @@ Scenario: BR-CIG-02 — sai hết recall vẫn vào được trò chơi
   Then trả 200
 
 Scenario: BR-CIG-03 — level chạm hai strand đòi cả hai bài làm quen
-  Given một level gắn C5.PHN.02 và C5.VOC.01, hai kỹ năng thuộc hai strand khác nhau
+  Given một level gắn C5.PHO.02 và C5.VOC.01, hai kỹ năng thuộc hai strand khác nhau
   And cả hai strand đều có bài làm quen published
-  And trẻ mới đi hết bài của strand C5.PHN
+  And trẻ mới đi hết bài của strand C5.PHO
   When client xin config
   Then trả 428 INTRO_REQUIRED
   And intro_queue chứa bài của strand C5.VOC
