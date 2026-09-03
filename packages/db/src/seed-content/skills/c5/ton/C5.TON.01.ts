@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_TON_01_IDENTITY: SkillIdentity = {
+  code: "C5.TON.01",
+  strand_code: "C5.TON",
+  competency_code: "C5",
+  name: "Nghe ra hai tiếng khác thanh",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["listen", "compare"],
+  tier: "core",
+  prerequisites: ["C5.PHO.01"],
+  learning_objectives: [
+    {
+      code: "LO-C5.TON.01-01",
+      behaviour:
+        "Nhận biết và thực hành Nghe ra hai tiếng khác thanh ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.TON.01-02",
+      behaviour:
+        "Vận dụng Nghe ra hai tiếng khác thanh trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.TON.01-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Nghe ra hai tiếng khác thanh",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_TON_01_DATASET: SkillDataset = {
   skill_code: "C5.TON.01",
@@ -94,6 +133,7 @@ export const C5_TON_01_DATASET: SkillDataset = {
 };
 
 export const C5_TON_01_SEED: SkillSeed = {
+  identity: C5_TON_01_IDENTITY,
   dataset: C5_TON_01_DATASET,
   levels: [
     {

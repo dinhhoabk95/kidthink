@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C3_ALG_01_IDENTITY: SkillIdentity = {
+  code: "C3.ALG.01",
+  strand_code: "C3.ALG",
+  competency_code: "C3",
+  name: "Làm theo chuỗi 2 lệnh",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 2,
+  thinking_processes: ["sequence", "plan"],
+  tier: "basic",
+  prerequisites: ["C5.LIS.02"],
+  learning_objectives: [
+    {
+      code: "LO-C3.ALG.01-01",
+      behaviour: "Nhận biết và thực hành Làm theo chuỗi 2 lệnh ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C3.ALG.01-02",
+      behaviour: "Vận dụng Làm theo chuỗi 2 lệnh trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C3.ALG.01-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Làm theo chuỗi 2 lệnh",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C3_ALG_01_DATASET: SkillDataset = {
   skill_code: "C3.ALG.01",
@@ -98,6 +135,7 @@ export const C3_ALG_01_DATASET: SkillDataset = {
 };
 
 export const C3_ALG_01_SEED: SkillSeed = {
+  identity: C3_ALG_01_IDENTITY,
   dataset: C3_ALG_01_DATASET,
   levels: [
     {

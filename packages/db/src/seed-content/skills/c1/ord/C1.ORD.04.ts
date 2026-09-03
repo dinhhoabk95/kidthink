@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_ORD_04_IDENTITY: SkillIdentity = {
+  code: "C1.ORD.04",
+  strand_code: "C1.ORD",
+  competency_code: "C1",
+  name: "Thứ tự đến thứ mười",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 3,
+  thinking_processes: ["sequence", "count"],
+  tier: "core",
+  prerequisites: ["C1.ORD.03", "C1.NREC.03"],
+  learning_objectives: [
+    {
+      code: "LO-C1.ORD.04-01",
+      behaviour: "Nhận biết và thực hành Thứ tự đến thứ mười ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.ORD.04-02",
+      behaviour: "Vận dụng Thứ tự đến thứ mười trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.ORD.04-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Thứ tự đến thứ mười",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_ORD_04_DATASET: SkillDataset = {
   skill_code: "C1.ORD.04",
@@ -98,6 +134,7 @@ export const C1_ORD_04_DATASET: SkillDataset = {
 };
 
 export const C1_ORD_04_SEED: SkillSeed = {
+  identity: C1_ORD_04_IDENTITY,
   dataset: C1_ORD_04_DATASET,
   levels: [
     {

@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_PRN_05_IDENTITY: SkillIdentity = {
+  code: "C5.PRN.05",
+  strand_code: "C5.PRN",
+  competency_code: "C5",
+  name: "Dấu chấm, dấu hỏi",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 4,
+  thinking_processes: ["observe", "infer"],
+  tier: "advanced",
+  prerequisites: ["C5.PRN.04", "C5.GRM.04"],
+  learning_objectives: [
+    {
+      code: "LO-C5.PRN.05-01",
+      behaviour: "Nhận biết và thực hành Dấu chấm, dấu hỏi ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.PRN.05-02",
+      behaviour: "Vận dụng Dấu chấm, dấu hỏi trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.PRN.05-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Dấu chấm, dấu hỏi",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_PRN_05_DATASET: SkillDataset = {
   skill_code: "C5.PRN.05",
@@ -93,6 +129,7 @@ export const C5_PRN_05_DATASET: SkillDataset = {
 };
 
 export const C5_PRN_05_SEED: SkillSeed = {
+  identity: C5_PRN_05_IDENTITY,
   dataset: C5_PRN_05_DATASET,
   levels: [
     {

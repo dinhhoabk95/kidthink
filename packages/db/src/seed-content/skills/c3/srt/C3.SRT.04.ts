@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C3_SRT_04_IDENTITY: SkillIdentity = {
+  code: "C3.SRT.04",
+  strand_code: "C3.SRT",
+  competency_code: "C3",
+  name: "Sắp xếp theo chiều dài",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 2,
+  thinking_processes: ["sequence", "compare"],
+  tier: "basic",
+  prerequisites: ["C1.MEAS.01"],
+  learning_objectives: [
+    {
+      code: "LO-C3.SRT.04-01",
+      behaviour: "Nhận biết và thực hành Sắp xếp theo chiều dài ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C3.SRT.04-02",
+      behaviour: "Vận dụng Sắp xếp theo chiều dài trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C3.SRT.04-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Sắp xếp theo chiều dài",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C3_SRT_04_DATASET: SkillDataset = {
   skill_code: "C3.SRT.04",
@@ -99,6 +136,7 @@ export const C3_SRT_04_DATASET: SkillDataset = {
 };
 
 export const C3_SRT_04_SEED: SkillSeed = {
+  identity: C3_SRT_04_IDENTITY,
   dataset: C3_SRT_04_DATASET,
   levels: [
     {

@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C3_RULE_01_IDENTITY: SkillIdentity = {
+  code: "C3.RULE.01",
+  strand_code: "C3.RULE",
+  competency_code: "C3",
+  name: "Tìm quy luật",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["infer", "observe"],
+  tier: "core",
+  prerequisites: ["C1.PAT.01"],
+  learning_objectives: [
+    {
+      code: "LO-C3.RULE.01-01",
+      behaviour: "Nhận biết và thực hành Tìm quy luật ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C3.RULE.01-02",
+      behaviour: "Vận dụng Tìm quy luật trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C3.RULE.01-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Tìm quy luật",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C3_RULE_01_DATASET: SkillDataset = {
   skill_code: "C3.RULE.01",
@@ -98,6 +134,7 @@ export const C3_RULE_01_DATASET: SkillDataset = {
 };
 
 export const C3_RULE_01_SEED: SkillSeed = {
+  identity: C3_RULE_01_IDENTITY,
   dataset: C3_RULE_01_DATASET,
   levels: [
     {

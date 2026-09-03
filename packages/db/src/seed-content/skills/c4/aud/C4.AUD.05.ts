@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_AUD_05_IDENTITY: SkillIdentity = {
+  code: "C4.AUD.05",
+  strand_code: "C4.AUD",
+  competency_code: "C4",
+  name: "Cao – thấp",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["listen", "compare"],
+  tier: "core",
+  prerequisites: ["C4.AUD.01"],
+  learning_objectives: [
+    {
+      code: "LO-C4.AUD.05-01",
+      behaviour: "Nhận biết và thực hành Cao – thấp ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.AUD.05-02",
+      behaviour: "Vận dụng Cao – thấp trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.AUD.05-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Cao – thấp",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_AUD_05_DATASET: SkillDataset = {
   skill_code: "C4.AUD.05",
@@ -98,6 +134,7 @@ export const C4_AUD_05_DATASET: SkillDataset = {
 };
 
 export const C4_AUD_05_SEED: SkillSeed = {
+  identity: C4_AUD_05_IDENTITY,
   dataset: C4_AUD_05_DATASET,
   levels: [
     {

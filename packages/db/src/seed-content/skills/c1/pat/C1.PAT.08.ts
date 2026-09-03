@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_PAT_08_IDENTITY: SkillIdentity = {
+  code: "C1.PAT.08",
+  strand_code: "C1.PAT",
+  competency_code: "C1",
+  name: "Pattern số",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 4,
+  thinking_processes: ["infer"],
+  tier: "advanced",
+  prerequisites: ["C1.NREC.09", "C1.PAT.01"],
+  learning_objectives: [
+    {
+      code: "LO-C1.PAT.08-01",
+      behaviour: "Nhận biết và thực hành Pattern số ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.PAT.08-02",
+      behaviour: "Vận dụng Pattern số trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.PAT.08-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Pattern số",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_PAT_08_DATASET: SkillDataset = {
   skill_code: "C1.PAT.08",
@@ -98,6 +134,7 @@ export const C1_PAT_08_DATASET: SkillDataset = {
 };
 
 export const C1_PAT_08_SEED: SkillSeed = {
+  identity: C1_PAT_08_IDENTITY,
   dataset: C1_PAT_08_DATASET,
   levels: [
     {

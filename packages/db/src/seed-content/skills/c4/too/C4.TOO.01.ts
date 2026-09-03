@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_TOO_01_IDENTITY: SkillIdentity = {
+  code: "C4.TOO.01",
+  strand_code: "C4.TOO",
+  competency_code: "C4",
+  name: "Ngồi đúng, nghỉ mắt",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 2,
+  thinking_processes: ["plan", "inhibit"],
+  tier: "basic",
+  prerequisites: [],
+  learning_objectives: [
+    {
+      code: "LO-C4.TOO.01-01",
+      behaviour: "Nhận biết và thực hành Ngồi đúng, nghỉ mắt ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.TOO.01-02",
+      behaviour: "Vận dụng Ngồi đúng, nghỉ mắt trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.TOO.01-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Ngồi đúng, nghỉ mắt",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_TOO_01_DATASET: SkillDataset = {
   skill_code: "C4.TOO.01",
@@ -98,6 +134,7 @@ export const C4_TOO_01_DATASET: SkillDataset = {
 };
 
 export const C4_TOO_01_SEED: SkillSeed = {
+  identity: C4_TOO_01_IDENTITY,
   dataset: C4_TOO_01_DATASET,
   levels: [
     {

@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C2_CON_04_IDENTITY: SkillIdentity = {
+  code: "C2.CON.04",
+  strand_code: "C2.CON",
+  competency_code: "C2",
+  name: "Ghép khối 3D",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 4,
+  thinking_processes: ["create", "infer"],
+  tier: "advanced",
+  prerequisites: ["C2.CON.03"],
+  learning_objectives: [
+    {
+      code: "LO-C2.CON.04-01",
+      behaviour: "Nhận biết và thực hành Ghép khối 3D ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C2.CON.04-02",
+      behaviour: "Vận dụng Ghép khối 3D trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C2.CON.04-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Ghép khối 3D",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C2_CON_04_DATASET: SkillDataset = {
   skill_code: "C2.CON.04",
@@ -98,6 +134,7 @@ export const C2_CON_04_DATASET: SkillDataset = {
 };
 
 export const C2_CON_04_SEED: SkillSeed = {
+  identity: C2_CON_04_IDENTITY,
   dataset: C2_CON_04_DATASET,
   levels: [
     {

@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_CMP_03_IDENTITY: SkillIdentity = {
+  code: "C1.CMP.03",
+  strand_code: "C1.CMP",
+  competency_code: "C1",
+  name: "Bằng nhau",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 2,
+  thinking_processes: ["compare"],
+  tier: "basic",
+  prerequisites: ["C1.CMP.01", "C1.CMP.02"],
+  learning_objectives: [
+    {
+      code: "LO-C1.CMP.03-01",
+      behaviour: "Nhận biết và thực hành Bằng nhau ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.CMP.03-02",
+      behaviour: "Vận dụng Bằng nhau trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.CMP.03-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Bằng nhau",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_CMP_03_DATASET: SkillDataset = {
   skill_code: "C1.CMP.03",
@@ -98,6 +134,7 @@ export const C1_CMP_03_DATASET: SkillDataset = {
 };
 
 export const C1_CMP_03_SEED: SkillSeed = {
+  identity: C1_CMP_03_IDENTITY,
   dataset: C1_CMP_03_DATASET,
   levels: [
     {

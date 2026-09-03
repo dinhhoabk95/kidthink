@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_LIV_04_IDENTITY: SkillIdentity = {
+  code: "C4.LIV.04",
+  strand_code: "C4.LIV",
+  competency_code: "C4",
+  name: "Con vật ăn gì",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 2,
+  thinking_processes: ["match", "infer"],
+  tier: "basic",
+  prerequisites: ["C4.LIV.02"],
+  learning_objectives: [
+    {
+      code: "LO-C4.LIV.04-01",
+      behaviour: "Nhận biết và thực hành Con vật ăn gì ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.LIV.04-02",
+      behaviour: "Vận dụng Con vật ăn gì trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.LIV.04-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Con vật ăn gì",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_LIV_04_DATASET: SkillDataset = {
   skill_code: "C4.LIV.04",
@@ -98,6 +134,7 @@ export const C4_LIV_04_DATASET: SkillDataset = {
 };
 
 export const C4_LIV_04_SEED: SkillSeed = {
+  identity: C4_LIV_04_IDENTITY,
   dataset: C4_LIV_04_DATASET,
   levels: [
     {

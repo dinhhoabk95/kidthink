@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_RHY_08_IDENTITY: SkillIdentity = {
+  code: "C5.RHY.08",
+  strand_code: "C5.RHY",
+  competency_code: "C5",
+  name: "Tự nghĩ tiếng cùng vần",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 5,
+  thinking_processes: ["create", "listen"],
+  tier: "advanced",
+  prerequisites: ["C5.RHY.02"],
+  learning_objectives: [
+    {
+      code: "LO-C5.RHY.08-01",
+      behaviour: "Nhận biết và thực hành Tự nghĩ tiếng cùng vần ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.RHY.08-02",
+      behaviour: "Vận dụng Tự nghĩ tiếng cùng vần trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.RHY.08-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Tự nghĩ tiếng cùng vần",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_RHY_08_DATASET: SkillDataset = {
   skill_code: "C5.RHY.08",
@@ -94,6 +131,7 @@ export const C5_RHY_08_DATASET: SkillDataset = {
 };
 
 export const C5_RHY_08_SEED: SkillSeed = {
+  identity: C5_RHY_08_IDENTITY,
   dataset: C5_RHY_08_DATASET,
   levels: [
     {

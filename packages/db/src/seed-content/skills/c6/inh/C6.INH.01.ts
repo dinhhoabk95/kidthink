@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C6_INH_01_IDENTITY: SkillIdentity = {
+  code: "C6.INH.01",
+  strand_code: "C6.INH",
+  competency_code: "C6",
+  name: "Không chọn màu bị cấm",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["inhibit"],
+  tier: "core",
+  prerequisites: ["C3.CLS.01"],
+  learning_objectives: [
+    {
+      code: "LO-C6.INH.01-01",
+      behaviour: "Nhận biết và thực hành Không chọn màu bị cấm ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C6.INH.01-02",
+      behaviour: "Vận dụng Không chọn màu bị cấm trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C6.INH.01-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Không chọn màu bị cấm",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C6_INH_01_DATASET: SkillDataset = {
   skill_code: "C6.INH.01",
@@ -98,6 +135,7 @@ export const C6_INH_01_DATASET: SkillDataset = {
 };
 
 export const C6_INH_01_SEED: SkillSeed = {
+  identity: C6_INH_01_IDENTITY,
   dataset: C6_INH_01_DATASET,
   levels: [
     {

@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C6_WM_02_IDENTITY: SkillIdentity = {
+  code: "C6.WM.02",
+  strand_code: "C6.WM",
+  competency_code: "C6",
+  name: "Nhớ và thực hiện 3 bước",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 4,
+  thinking_processes: ["recall", "plan"],
+  tier: "advanced",
+  prerequisites: ["C6.WM.01"],
+  learning_objectives: [
+    {
+      code: "LO-C6.WM.02-01",
+      behaviour: "Nhận biết và thực hành Nhớ và thực hiện 3 bước ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C6.WM.02-02",
+      behaviour: "Vận dụng Nhớ và thực hiện 3 bước trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C6.WM.02-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Nhớ và thực hiện 3 bước",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C6_WM_02_DATASET: SkillDataset = {
   skill_code: "C6.WM.02",
@@ -99,6 +136,7 @@ export const C6_WM_02_DATASET: SkillDataset = {
 };
 
 export const C6_WM_02_SEED: SkillSeed = {
+  identity: C6_WM_02_IDENTITY,
   dataset: C6_WM_02_DATASET,
   levels: [
     {

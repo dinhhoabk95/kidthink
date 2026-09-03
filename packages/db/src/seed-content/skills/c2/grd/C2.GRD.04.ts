@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C2_GRD_04_IDENTITY: SkillIdentity = {
+  code: "C2.GRD.04",
+  strand_code: "C2.GRD",
+  competency_code: "C2",
+  name: "Sơ đồ lưới của lớp học",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 4,
+  thinking_processes: ["infer", "plan"],
+  tier: "advanced",
+  prerequisites: ["C2.GRD.03", "C2.DIR.06"],
+  learning_objectives: [
+    {
+      code: "LO-C2.GRD.04-01",
+      behaviour: "Nhận biết và thực hành Sơ đồ lưới của lớp học ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C2.GRD.04-02",
+      behaviour: "Vận dụng Sơ đồ lưới của lớp học trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C2.GRD.04-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Sơ đồ lưới của lớp học",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C2_GRD_04_DATASET: SkillDataset = {
   skill_code: "C2.GRD.04",
@@ -99,6 +136,7 @@ export const C2_GRD_04_DATASET: SkillDataset = {
 };
 
 export const C2_GRD_04_SEED: SkillSeed = {
+  identity: C2_GRD_04_IDENTITY,
   dataset: C2_GRD_04_DATASET,
   levels: [
     {

@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_ADD_03_IDENTITY: SkillIdentity = {
+  code: "C1.ADD.03",
+  strand_code: "C1.ADD",
+  competency_code: "C1",
+  name: "Cộng trên trục số",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 3,
+  thinking_processes: ["sequence", "solve"],
+  tier: "core",
+  prerequisites: ["C1.CNT.08"],
+  learning_objectives: [
+    {
+      code: "LO-C1.ADD.03-01",
+      behaviour: "Nhận biết và thực hành Cộng trên trục số ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.ADD.03-02",
+      behaviour: "Vận dụng Cộng trên trục số trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.ADD.03-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Cộng trên trục số",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_ADD_03_DATASET: SkillDataset = {
   skill_code: "C1.ADD.03",
@@ -153,6 +189,7 @@ export const C1_ADD_03_DATASET: SkillDataset = {
 };
 
 export const C1_ADD_03_SEED: SkillSeed = {
+  identity: C1_ADD_03_IDENTITY,
   dataset: C1_ADD_03_DATASET,
   levels: [
     {

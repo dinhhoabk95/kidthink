@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_MEAS_12_IDENTITY: SkillIdentity = {
+  code: "C1.MEAS.12",
+  strand_code: "C1.MEAS",
+  competency_code: "C1",
+  name: "Buổi trong ngày: sáng · trưa · chiều · tối",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 2,
+  thinking_processes: ["sequence", "observe"],
+  tier: "basic",
+  prerequisites: ["C1.MEAS.10"],
+  learning_objectives: [
+    {
+      code: "LO-C1.MEAS.12-01",
+      behaviour:
+        "Nhận biết và thực hành Buổi trong ngày: sáng · trưa · chiều · tối ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.MEAS.12-02",
+      behaviour:
+        "Vận dụng Buổi trong ngày: sáng · trưa · chiều · tối trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.MEAS.12-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Buổi trong ngày: sáng · trưa · chiều · tối",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_MEAS_12_DATASET: SkillDataset = {
   skill_code: "C1.MEAS.12",
@@ -101,6 +140,7 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
 };
 
 export const C1_MEAS_12_SEED: SkillSeed = {
+  identity: C1_MEAS_12_IDENTITY,
   dataset: C1_MEAS_12_DATASET,
   levels: [
     {

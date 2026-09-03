@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_SEN_04_IDENTITY: SkillIdentity = {
+  code: "C4.SEN.04",
+  strand_code: "C4.SEN",
+  competency_code: "C4",
+  name: "Phân biệt cao độ / âm sắc",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 4,
+  thinking_processes: ["compare", "listen"],
+  tier: "advanced",
+  prerequisites: [],
+  learning_objectives: [
+    {
+      code: "LO-C4.SEN.04-01",
+      behaviour:
+        "Nhận biết và thực hành Phân biệt cao độ / âm sắc ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.SEN.04-02",
+      behaviour:
+        "Vận dụng Phân biệt cao độ / âm sắc trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.SEN.04-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Phân biệt cao độ / âm sắc",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_SEN_04_DATASET: SkillDataset = {
   skill_code: "C4.SEN.04",
@@ -99,6 +138,7 @@ export const C4_SEN_04_DATASET: SkillDataset = {
 };
 
 export const C4_SEN_04_SEED: SkillSeed = {
+  identity: C4_SEN_04_IDENTITY,
   dataset: C4_SEN_04_DATASET,
   levels: [
     {

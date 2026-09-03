@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C6_PER_01_IDENTITY: SkillIdentity = {
+  code: "C6.PER.01",
+  strand_code: "C6.PER",
+  competency_code: "C6",
+  name: "Làm hết nhiệm vụ",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 2,
+  thinking_processes: ["plan", "inhibit"],
+  tier: "basic",
+  prerequisites: ["C6.ATT.01"],
+  learning_objectives: [
+    {
+      code: "LO-C6.PER.01-01",
+      behaviour: "Nhận biết và thực hành Làm hết nhiệm vụ ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C6.PER.01-02",
+      behaviour: "Vận dụng Làm hết nhiệm vụ trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C6.PER.01-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Làm hết nhiệm vụ",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C6_PER_01_DATASET: SkillDataset = {
   skill_code: "C6.PER.01",
@@ -98,6 +134,7 @@ export const C6_PER_01_DATASET: SkillDataset = {
 };
 
 export const C6_PER_01_SEED: SkillSeed = {
+  identity: C6_PER_01_IDENTITY,
   dataset: C6_PER_01_DATASET,
   levels: [
     {

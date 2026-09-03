@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_OBS_04_IDENTITY: SkillIdentity = {
+  code: "C4.OBS.04",
+  strand_code: "C4.OBS",
+  competency_code: "C4",
+  name: "Ghi lại bằng hình vẽ",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 3,
+  thinking_processes: ["observe", "create"],
+  tier: "core",
+  prerequisites: ["C4.OBS.01"],
+  learning_objectives: [
+    {
+      code: "LO-C4.OBS.04-01",
+      behaviour: "Nhận biết và thực hành Ghi lại bằng hình vẽ ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.OBS.04-02",
+      behaviour: "Vận dụng Ghi lại bằng hình vẽ trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.OBS.04-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Ghi lại bằng hình vẽ",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_OBS_04_DATASET: SkillDataset = {
   skill_code: "C4.OBS.04",
@@ -98,6 +135,7 @@ export const C4_OBS_04_DATASET: SkillDataset = {
 };
 
 export const C4_OBS_04_SEED: SkillSeed = {
+  identity: C4_OBS_04_IDENTITY,
   dataset: C4_OBS_04_DATASET,
   levels: [
     {

@@ -20,6 +20,8 @@
     "lint:deps": "depcruise apps packages scripts --config .dependency-cruiser.cjs",
     "typecheck": "node scripts/typecheck/typecheck-gate.ts",
     "typecheck:update": "node scripts/typecheck/typecheck-gate.ts --update",
+    "check:taxonomy-docs": "tsx scripts/taxonomy/sync-taxonomy-docs.ts --check",
+    "gen:taxonomy-docs": "tsx scripts/taxonomy/sync-taxonomy-docs.ts --write",
     "verify": "tsx scripts/verify.ts",
     "test": "NODE_OPTIONS=--max-old-space-size=4096 vitest run --bail 1",
     "test:watch": "vitest",

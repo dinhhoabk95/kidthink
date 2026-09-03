@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_MEAS_11_IDENTITY: SkillIdentity = {
+  code: "C1.MEAS.11",
+  strand_code: "C1.MEAS",
+  competency_code: "C1",
+  name: "Hôm qua · hôm nay · ngày mai",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["sequence"],
+  tier: "core",
+  prerequisites: ["C1.MEAS.10"],
+  learning_objectives: [
+    {
+      code: "LO-C1.MEAS.11-01",
+      behaviour:
+        "Nhận biết và thực hành Hôm qua · hôm nay · ngày mai ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.MEAS.11-02",
+      behaviour:
+        "Vận dụng Hôm qua · hôm nay · ngày mai trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.MEAS.11-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Hôm qua · hôm nay · ngày mai",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_MEAS_11_DATASET: SkillDataset = {
   skill_code: "C1.MEAS.11",
@@ -99,6 +138,7 @@ export const C1_MEAS_11_DATASET: SkillDataset = {
 };
 
 export const C1_MEAS_11_SEED: SkillSeed = {
+  identity: C1_MEAS_11_IDENTITY,
   dataset: C1_MEAS_11_DATASET,
   levels: [
     {

@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_NCOMP_03_IDENTITY: SkillIdentity = {
+  code: "C1.NCOMP.03",
+  strand_code: "C1.NCOMP",
+  competency_code: "C1",
+  name: "Tách số 4",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 2,
+  thinking_processes: ["solve"],
+  tier: "basic",
+  prerequisites: ["C1.NCOMP.02"],
+  learning_objectives: [
+    {
+      code: "LO-C1.NCOMP.03-01",
+      behaviour: "Nhận biết và thực hành Tách số 4 ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.NCOMP.03-02",
+      behaviour: "Vận dụng Tách số 4 trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.NCOMP.03-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Tách số 4",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_NCOMP_03_DATASET: SkillDataset = {
   skill_code: "C1.NCOMP.03",
@@ -153,6 +189,7 @@ export const C1_NCOMP_03_DATASET: SkillDataset = {
 };
 
 export const C1_NCOMP_03_SEED: SkillSeed = {
+  identity: C1_NCOMP_03_IDENTITY,
   dataset: C1_NCOMP_03_DATASET,
   levels: [],
 };

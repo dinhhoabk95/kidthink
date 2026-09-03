@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_AUD_02_IDENTITY: SkillIdentity = {
+  code: "C4.AUD.02",
+  strand_code: "C4.AUD",
+  competency_code: "C4",
+  name: "Tiếng con vật",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 1,
+  thinking_processes: ["listen", "match"],
+  tier: "basic",
+  prerequisites: [],
+  learning_objectives: [
+    {
+      code: "LO-C4.AUD.02-01",
+      behaviour: "Nhận biết và thực hành Tiếng con vật ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.AUD.02-02",
+      behaviour: "Vận dụng Tiếng con vật trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.AUD.02-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Tiếng con vật",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_AUD_02_DATASET: SkillDataset = {
   skill_code: "C4.AUD.02",
@@ -98,6 +134,7 @@ export const C4_AUD_02_DATASET: SkillDataset = {
 };
 
 export const C4_AUD_02_SEED: SkillSeed = {
+  identity: C4_AUD_02_IDENTITY,
   dataset: C4_AUD_02_DATASET,
   levels: [
     {

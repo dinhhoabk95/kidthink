@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C2_GRD_05_IDENTITY: SkillIdentity = {
+  code: "C2.GRD.05",
+  strand_code: "C2.GRD",
+  competency_code: "C2",
+  name: "Ghi lại đường đi bằng ô",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 5,
+  thinking_processes: ["plan", "create"],
+  tier: "advanced",
+  prerequisites: ["C2.GRD.02", "C2.GRD.03"],
+  learning_objectives: [
+    {
+      code: "LO-C2.GRD.05-01",
+      behaviour: "Nhận biết và thực hành Ghi lại đường đi bằng ô ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C2.GRD.05-02",
+      behaviour: "Vận dụng Ghi lại đường đi bằng ô trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C2.GRD.05-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Ghi lại đường đi bằng ô",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C2_GRD_05_DATASET: SkillDataset = {
   skill_code: "C2.GRD.05",
@@ -99,6 +136,7 @@ export const C2_GRD_05_DATASET: SkillDataset = {
 };
 
 export const C2_GRD_05_SEED: SkillSeed = {
+  identity: C2_GRD_05_IDENTITY,
   dataset: C2_GRD_05_DATASET,
   levels: [
     {

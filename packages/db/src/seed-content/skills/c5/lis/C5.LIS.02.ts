@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_LIS_02_IDENTITY: SkillIdentity = {
+  code: "C5.LIS.02",
+  strand_code: "C5.LIS",
+  competency_code: "C5",
+  name: "Nghe và làm theo",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 2,
+  thinking_processes: ["listen", "plan"],
+  tier: "basic",
+  prerequisites: ["C5.LIS.01"],
+  learning_objectives: [
+    {
+      code: "LO-C5.LIS.02-01",
+      behaviour: "Nhận biết và thực hành Nghe và làm theo ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.LIS.02-02",
+      behaviour: "Vận dụng Nghe và làm theo trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.LIS.02-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Nghe và làm theo",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_LIS_02_DATASET: SkillDataset = {
   skill_code: "C5.LIS.02",
@@ -98,6 +134,7 @@ export const C5_LIS_02_DATASET: SkillDataset = {
 };
 
 export const C5_LIS_02_SEED: SkillSeed = {
+  identity: C5_LIS_02_IDENTITY,
   dataset: C5_LIS_02_DATASET,
   levels: [
     {

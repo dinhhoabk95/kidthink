@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_RHY_01_IDENTITY: SkillIdentity = {
+  code: "C5.RHY.01",
+  strand_code: "C5.RHY",
+  competency_code: "C5",
+  name: "Nghe ra hai tiếng cùng vần",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["listen", "match"],
+  tier: "core",
+  prerequisites: ["C5.PHO.01"],
+  learning_objectives: [
+    {
+      code: "LO-C5.RHY.01-01",
+      behaviour:
+        "Nhận biết và thực hành Nghe ra hai tiếng cùng vần ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.RHY.01-02",
+      behaviour:
+        "Vận dụng Nghe ra hai tiếng cùng vần trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.RHY.01-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Nghe ra hai tiếng cùng vần",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_RHY_01_DATASET: SkillDataset = {
   skill_code: "C5.RHY.01",
@@ -94,6 +133,7 @@ export const C5_RHY_01_DATASET: SkillDataset = {
 };
 
 export const C5_RHY_01_SEED: SkillSeed = {
+  identity: C5_RHY_01_IDENTITY,
   dataset: C5_RHY_01_DATASET,
   levels: [
     {

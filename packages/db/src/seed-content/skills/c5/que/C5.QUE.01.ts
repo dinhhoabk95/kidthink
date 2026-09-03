@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_QUE_01_IDENTITY: SkillIdentity = {
+  code: "C5.QUE.01",
+  strand_code: "C5.QUE",
+  competency_code: "C5",
+  name: 'Trả lời "Ai?"',
+  age_min: 3,
+  age_max: 3,
+  difficulty: 2,
+  thinking_processes: ["listen", "infer"],
+  tier: "basic",
+  prerequisites: ["C5.LIS.01"],
+  learning_objectives: [
+    {
+      code: "LO-C5.QUE.01-01",
+      behaviour: 'Nhận biết và thực hành Trả lời "Ai?" ở mức cơ bản',
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.QUE.01-02",
+      behaviour: 'Vận dụng Trả lời "Ai?" trong môi trường tương tác',
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.QUE.01-03",
+      behaviour: 'Giải quyết vấn đề nâng cao liên quan tới Trả lời "Ai?"',
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_QUE_01_DATASET: SkillDataset = {
   skill_code: "C5.QUE.01",
@@ -98,6 +134,7 @@ export const C5_QUE_01_DATASET: SkillDataset = {
 };
 
 export const C5_QUE_01_SEED: SkillSeed = {
+  identity: C5_QUE_01_IDENTITY,
   dataset: C5_QUE_01_DATASET,
   levels: [
     {

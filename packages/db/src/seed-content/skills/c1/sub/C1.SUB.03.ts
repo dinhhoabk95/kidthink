@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_SUB_03_IDENTITY: SkillIdentity = {
+  code: "C1.SUB.03",
+  strand_code: "C1.SUB",
+  competency_code: "C1",
+  name: "Trừ trong phạm vi 5",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 3,
+  thinking_processes: ["solve"],
+  tier: "core",
+  prerequisites: ["C1.SUB.01"],
+  learning_objectives: [
+    {
+      code: "LO-C1.SUB.03-01",
+      behaviour: "Nhận biết và thực hành Trừ trong phạm vi 5 ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.SUB.03-02",
+      behaviour: "Vận dụng Trừ trong phạm vi 5 trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.SUB.03-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Trừ trong phạm vi 5",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_SUB_03_DATASET: SkillDataset = {
   skill_code: "C1.SUB.03",
@@ -153,6 +189,7 @@ export const C1_SUB_03_DATASET: SkillDataset = {
 };
 
 export const C1_SUB_03_SEED: SkillSeed = {
+  identity: C1_SUB_03_IDENTITY,
   dataset: C1_SUB_03_DATASET,
   levels: [
     {

@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C3_MTX_02_IDENTITY: SkillIdentity = {
+  code: "C3.MTX.02",
+  strand_code: "C3.MTX",
+  competency_code: "C3",
+  name: "Ma trận 3×3",
+  age_min: 6,
+  age_max: 6,
+  difficulty: 5,
+  thinking_processes: ["infer", "deduce"],
+  tier: "advanced",
+  prerequisites: ["C3.MTX.01"],
+  learning_objectives: [
+    {
+      code: "LO-C3.MTX.02-01",
+      behaviour: "Nhận biết và thực hành Ma trận 3×3 ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C3.MTX.02-02",
+      behaviour: "Vận dụng Ma trận 3×3 trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C3.MTX.02-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Ma trận 3×3",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C3_MTX_02_DATASET: SkillDataset = {
   skill_code: "C3.MTX.02",
@@ -98,6 +134,7 @@ export const C3_MTX_02_DATASET: SkillDataset = {
 };
 
 export const C3_MTX_02_SEED: SkillSeed = {
+  identity: C3_MTX_02_IDENTITY,
   dataset: C3_MTX_02_DATASET,
   levels: [
     {

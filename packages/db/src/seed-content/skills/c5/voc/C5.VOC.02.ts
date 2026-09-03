@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_VOC_02_IDENTITY: SkillIdentity = {
+  code: "C5.VOC.02",
+  strand_code: "C5.VOC",
+  competency_code: "C5",
+  name: "Từ vựng trái cây",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 1,
+  thinking_processes: ["match", "recall"],
+  tier: "basic",
+  prerequisites: [],
+  learning_objectives: [
+    {
+      code: "LO-C5.VOC.02-01",
+      behaviour: "Nhận biết và thực hành Từ vựng trái cây ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.VOC.02-02",
+      behaviour: "Vận dụng Từ vựng trái cây trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.VOC.02-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Từ vựng trái cây",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_VOC_02_DATASET: SkillDataset = {
   skill_code: "C5.VOC.02",
@@ -98,6 +134,7 @@ export const C5_VOC_02_DATASET: SkillDataset = {
 };
 
 export const C5_VOC_02_SEED: SkillSeed = {
+  identity: C5_VOC_02_IDENTITY,
   dataset: C5_VOC_02_DATASET,
   levels: [
     {

@@ -76,21 +76,21 @@ Không đổi hành vi. Chỉ **gỡ**, chưa **dời** file nào.
 
 ## G3 — Chuyển danh tính kỹ năng sang TypeScript
 
-- [ ] Khai kiểu đầy đủ cho danh tính một kỹ năng: mã · nhóm kỹ năng · năng lực · tên · tuổi ·
+- [x] Khai kiểu đầy đủ cho danh tính một kỹ năng: mã · nhóm kỹ năng · năng lực · tên · tuổi ·
       độ khó · quá trình tư duy · mục tiêu học tập · điều kiện tiên quyết
   - Nghiệm thu: không `any`, không `unknown` mới (`type-safety.md`)
-- [ ] Bộ chuyển đổi đọc `docs/taxonomy/c1..c6.md`, ghi phần danh tính vào **đúng file kỹ năng
+- [x] Bộ chuyển đổi đọc `docs/taxonomy/c1..c6.md`, ghi phần danh tính vào **đúng file kỹ năng
       đang có** ở `skills/c<n>/<nhóm>/<KỸ-NĂNG>.ts`
-- [ ] Lệnh sinh ngược `docs/taxonomy/*.md` từ TypeScript — chỉ ghi vào vùng đánh dấu, giữ nguyên
+- [x] Lệnh sinh ngược `docs/taxonomy/*.md` từ TypeScript — chỉ ghi vào vùng đánh dấu, giữ nguyên
       phần văn xuôi (giải thích phạm vi C4, ghi chú sư phạm)
-- [ ] Gỡ code phân tích Markdown khỏi đường nạp dữ liệu
-- [ ] Phép kiểm tra chống lệch giữa Markdown và TypeScript
+- [x] Gỡ code phân tích Markdown khỏi đường nạp dữ liệu
+- [x] Phép kiểm tra chống lệch giữa Markdown và TypeScript
 
 **Điểm dừng G3**
 
-- [ ] So **từng trường của từng kỹ năng**: trùng khít **408/408**. Lệch một dòng thì dừng và in ra
-- [ ] Sinh ngược Markdown cho ra **byte giống hệt** file trong repo
-- [ ] **Test chứng minh bắt lỗi**: sửa tay một ô trong bảng Markdown ⟹ phép kiểm tra đỏ
+- [x] So **từng trường của từng kỹ năng**: trùng khít **408/408**. Lệch một dòng thì dừng và in ra
+- [x] Sinh ngược Markdown cho ra **byte giống hệt** file trong repo
+- [x] **Test chứng minh bắt lỗi**: sửa tay một ô trong bảng Markdown ⟹ phép kiểm tra đỏ
 
 ---
 

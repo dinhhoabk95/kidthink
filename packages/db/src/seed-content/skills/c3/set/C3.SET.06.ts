@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C3_SET_06_IDENTITY: SkillIdentity = {
+  code: "C3.SET.06",
+  strand_code: "C3.SET",
+  competency_code: "C3",
+  name: "Không phải … cũng không …",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 5,
+  thinking_processes: ["deduce", "inhibit"],
+  tier: "advanced",
+  prerequisites: ["C3.SET.05", "C3.DED.02"],
+  learning_objectives: [
+    {
+      code: "LO-C3.SET.06-01",
+      behaviour:
+        "Nhận biết và thực hành Không phải … cũng không … ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C3.SET.06-02",
+      behaviour:
+        "Vận dụng Không phải … cũng không … trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C3.SET.06-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Không phải … cũng không …",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C3_SET_06_DATASET: SkillDataset = {
   skill_code: "C3.SET.06",
@@ -99,6 +138,7 @@ export const C3_SET_06_DATASET: SkillDataset = {
 };
 
 export const C3_SET_06_SEED: SkillSeed = {
+  identity: C3_SET_06_IDENTITY,
   dataset: C3_SET_06_DATASET,
   levels: [
     {

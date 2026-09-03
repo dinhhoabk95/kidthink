@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C2_ORI_06_IDENTITY: SkillIdentity = {
+  code: "C2.ORI.06",
+  strand_code: "C2.ORI",
+  competency_code: "C2",
+  name: "Sau",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 2,
+  thinking_processes: ["observe"],
+  tier: "basic",
+  prerequisites: [],
+  learning_objectives: [
+    {
+      code: "LO-C2.ORI.06-01",
+      behaviour: "Nhận biết và thực hành Sau ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C2.ORI.06-02",
+      behaviour: "Vận dụng Sau trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C2.ORI.06-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Sau",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C2_ORI_06_DATASET: SkillDataset = {
   skill_code: "C2.ORI.06",
@@ -98,6 +134,7 @@ export const C2_ORI_06_DATASET: SkillDataset = {
 };
 
 export const C2_ORI_06_SEED: SkillSeed = {
+  identity: C2_ORI_06_IDENTITY,
   dataset: C2_ORI_06_DATASET,
   levels: [
     {

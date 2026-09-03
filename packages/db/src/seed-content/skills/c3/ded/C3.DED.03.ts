@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C3_DED_03_IDENTITY: SkillIdentity = {
+  code: "C3.DED.03",
+  strand_code: "C3.DED",
+  competency_code: "C3",
+  name: "Chọn đáp án đúng có giải thích",
+  age_min: 6,
+  age_max: 6,
+  difficulty: 5,
+  thinking_processes: ["deduce", "describe"],
+  tier: "advanced",
+  prerequisites: ["C3.DED.01", "C3.DED.02"],
+  learning_objectives: [
+    {
+      code: "LO-C3.DED.03-01",
+      behaviour:
+        "Nhận biết và thực hành Chọn đáp án đúng có giải thích ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C3.DED.03-02",
+      behaviour:
+        "Vận dụng Chọn đáp án đúng có giải thích trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C3.DED.03-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Chọn đáp án đúng có giải thích",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C3_DED_03_DATASET: SkillDataset = {
   skill_code: "C3.DED.03",
@@ -99,6 +138,7 @@ export const C3_DED_03_DATASET: SkillDataset = {
 };
 
 export const C3_DED_03_SEED: SkillSeed = {
+  identity: C3_DED_03_IDENTITY,
   dataset: C3_DED_03_DATASET,
   levels: [],
 };

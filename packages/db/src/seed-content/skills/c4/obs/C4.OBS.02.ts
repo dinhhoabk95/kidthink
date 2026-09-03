@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_OBS_02_IDENTITY: SkillIdentity = {
+  code: "C4.OBS.02",
+  strand_code: "C4.OBS",
+  competency_code: "C4",
+  name: "So hai vật cùng loại",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["compare", "observe"],
+  tier: "core",
+  prerequisites: ["C4.OBS.01", "C4.SEN.02"],
+  learning_objectives: [
+    {
+      code: "LO-C4.OBS.02-01",
+      behaviour: "Nhận biết và thực hành So hai vật cùng loại ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.OBS.02-02",
+      behaviour: "Vận dụng So hai vật cùng loại trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.OBS.02-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới So hai vật cùng loại",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_OBS_02_DATASET: SkillDataset = {
   skill_code: "C4.OBS.02",
@@ -98,6 +135,7 @@ export const C4_OBS_02_DATASET: SkillDataset = {
 };
 
 export const C4_OBS_02_SEED: SkillSeed = {
+  identity: C4_OBS_02_IDENTITY,
   dataset: C4_OBS_02_DATASET,
   levels: [
     {

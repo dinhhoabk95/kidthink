@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_SAF_04_IDENTITY: SkillIdentity = {
+  code: "C4.SAF.04",
+  strand_code: "C4.SAF",
+  competency_code: "C4",
+  name: "Biển báo quen thuộc",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 3,
+  thinking_processes: ["match", "infer"],
+  tier: "core",
+  prerequisites: ["C4.SAF.02"],
+  learning_objectives: [
+    {
+      code: "LO-C4.SAF.04-01",
+      behaviour: "Nhận biết và thực hành Biển báo quen thuộc ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.SAF.04-02",
+      behaviour: "Vận dụng Biển báo quen thuộc trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.SAF.04-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Biển báo quen thuộc",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_SAF_04_DATASET: SkillDataset = {
   skill_code: "C4.SAF.04",
@@ -98,6 +134,7 @@ export const C4_SAF_04_DATASET: SkillDataset = {
 };
 
 export const C4_SAF_04_SEED: SkillSeed = {
+  identity: C4_SAF_04_IDENTITY,
   dataset: C4_SAF_04_DATASET,
   levels: [
     {

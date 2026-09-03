@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C2_DIR_02_IDENTITY: SkillIdentity = {
+  code: "C2.DIR.02",
+  strand_code: "C2.DIR",
+  competency_code: "C2",
+  name: "Đi xuống",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 1,
+  thinking_processes: ["plan"],
+  tier: "basic",
+  prerequisites: ["C2.ORI.04"],
+  learning_objectives: [
+    {
+      code: "LO-C2.DIR.02-01",
+      behaviour: "Nhận biết và thực hành Đi xuống ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C2.DIR.02-02",
+      behaviour: "Vận dụng Đi xuống trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C2.DIR.02-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Đi xuống",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C2_DIR_02_DATASET: SkillDataset = {
   skill_code: "C2.DIR.02",
@@ -98,6 +134,7 @@ export const C2_DIR_02_DATASET: SkillDataset = {
 };
 
 export const C2_DIR_02_SEED: SkillSeed = {
+  identity: C2_DIR_02_IDENTITY,
   dataset: C2_DIR_02_DATASET,
   levels: [
     {

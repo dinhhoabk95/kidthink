@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C3_CLS_04_IDENTITY: SkillIdentity = {
+  code: "C3.CLS.04",
+  strand_code: "C3.CLS",
+  competency_code: "C3",
+  name: "Phân loại theo chức năng",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["sort", "infer"],
+  tier: "core",
+  prerequisites: [],
+  learning_objectives: [
+    {
+      code: "LO-C3.CLS.04-01",
+      behaviour: "Nhận biết và thực hành Phân loại theo chức năng ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C3.CLS.04-02",
+      behaviour: "Vận dụng Phân loại theo chức năng trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C3.CLS.04-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Phân loại theo chức năng",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C3_CLS_04_DATASET: SkillDataset = {
   skill_code: "C3.CLS.04",
@@ -99,6 +136,7 @@ export const C3_CLS_04_DATASET: SkillDataset = {
 };
 
 export const C3_CLS_04_SEED: SkillSeed = {
+  identity: C3_CLS_04_IDENTITY,
   dataset: C3_CLS_04_DATASET,
   levels: [
     {

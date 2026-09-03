@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C6_WM_04_IDENTITY: SkillIdentity = {
+  code: "C6.WM.04",
+  strand_code: "C6.WM",
+  competency_code: "C6",
+  name: "Nhớ hình sau khi biến mất",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["recall"],
+  tier: "core",
+  prerequisites: ["C4.MEM.02"],
+  learning_objectives: [
+    {
+      code: "LO-C6.WM.04-01",
+      behaviour:
+        "Nhận biết và thực hành Nhớ hình sau khi biến mất ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C6.WM.04-02",
+      behaviour:
+        "Vận dụng Nhớ hình sau khi biến mất trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C6.WM.04-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Nhớ hình sau khi biến mất",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C6_WM_04_DATASET: SkillDataset = {
   skill_code: "C6.WM.04",
@@ -99,6 +138,7 @@ export const C6_WM_04_DATASET: SkillDataset = {
 };
 
 export const C6_WM_04_SEED: SkillSeed = {
+  identity: C6_WM_04_IDENTITY,
   dataset: C6_WM_04_DATASET,
   levels: [
     {

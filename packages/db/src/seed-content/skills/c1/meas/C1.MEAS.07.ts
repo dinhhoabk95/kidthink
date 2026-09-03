@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_MEAS_07_IDENTITY: SkillIdentity = {
+  code: "C1.MEAS.07",
+  strand_code: "C1.MEAS",
+  competency_code: "C1",
+  name: "Cân bằng",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 3,
+  thinking_processes: ["compare", "verify"],
+  tier: "core",
+  prerequisites: ["C1.MEAS.03"],
+  learning_objectives: [
+    {
+      code: "LO-C1.MEAS.07-01",
+      behaviour: "Nhận biết và thực hành Cân bằng ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.MEAS.07-02",
+      behaviour: "Vận dụng Cân bằng trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.MEAS.07-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Cân bằng",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_MEAS_07_DATASET: SkillDataset = {
   skill_code: "C1.MEAS.07",
@@ -98,6 +134,7 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
 };
 
 export const C1_MEAS_07_SEED: SkillSeed = {
+  identity: C1_MEAS_07_IDENTITY,
   dataset: C1_MEAS_07_DATASET,
   levels: [
     {

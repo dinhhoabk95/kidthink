@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_VIS_03_IDENTITY: SkillIdentity = {
+  code: "C4.VIS.03",
+  strand_code: "C4.VIS",
+  competency_code: "C4",
+  name: "Tìm vật ẩn trong tranh (Hidden Object)",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["observe"],
+  tier: "core",
+  prerequisites: ["C4.VIS.02"],
+  learning_objectives: [
+    {
+      code: "LO-C4.VIS.03-01",
+      behaviour:
+        "Nhận biết và thực hành Tìm vật ẩn trong tranh (Hidden Object) ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.VIS.03-02",
+      behaviour:
+        "Vận dụng Tìm vật ẩn trong tranh (Hidden Object) trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.VIS.03-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Tìm vật ẩn trong tranh (Hidden Object)",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_VIS_03_DATASET: SkillDataset = {
   skill_code: "C4.VIS.03",
@@ -100,6 +139,7 @@ export const C4_VIS_03_DATASET: SkillDataset = {
 };
 
 export const C4_VIS_03_SEED: SkillSeed = {
+  identity: C4_VIS_03_IDENTITY,
   dataset: C4_VIS_03_DATASET,
   levels: [
     {

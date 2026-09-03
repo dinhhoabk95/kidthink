@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C6_FLX_03_IDENTITY: SkillIdentity = {
+  code: "C6.FLX.03",
+  strand_code: "C6.FLX",
+  competency_code: "C6",
+  name: "Chuyển giữa hai nhiệm vụ",
+  age_min: 6,
+  age_max: 6,
+  difficulty: 5,
+  thinking_processes: ["shift", "plan"],
+  tier: "advanced",
+  prerequisites: ["C6.FLX.01"],
+  learning_objectives: [
+    {
+      code: "LO-C6.FLX.03-01",
+      behaviour: "Nhận biết và thực hành Chuyển giữa hai nhiệm vụ ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C6.FLX.03-02",
+      behaviour: "Vận dụng Chuyển giữa hai nhiệm vụ trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C6.FLX.03-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Chuyển giữa hai nhiệm vụ",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C6_FLX_03_DATASET: SkillDataset = {
   skill_code: "C6.FLX.03",
@@ -99,6 +136,7 @@ export const C6_FLX_03_DATASET: SkillDataset = {
 };
 
 export const C6_FLX_03_SEED: SkillSeed = {
+  identity: C6_FLX_03_IDENTITY,
   dataset: C6_FLX_03_DATASET,
   levels: [
     {

@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_SAF_02_IDENTITY: SkillIdentity = {
+  code: "C4.SAF.02",
+  strand_code: "C4.SAF",
+  competency_code: "C4",
+  name: "Đèn giao thông",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 2,
+  thinking_processes: ["match", "inhibit"],
+  tier: "basic",
+  prerequisites: ["C3.CLS.01"],
+  learning_objectives: [
+    {
+      code: "LO-C4.SAF.02-01",
+      behaviour: "Nhận biết và thực hành Đèn giao thông ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.SAF.02-02",
+      behaviour: "Vận dụng Đèn giao thông trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.SAF.02-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Đèn giao thông",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_SAF_02_DATASET: SkillDataset = {
   skill_code: "C4.SAF.02",
@@ -98,6 +134,7 @@ export const C4_SAF_02_DATASET: SkillDataset = {
 };
 
 export const C4_SAF_02_SEED: SkillSeed = {
+  identity: C4_SAF_02_IDENTITY,
   dataset: C4_SAF_02_DATASET,
   levels: [
     {

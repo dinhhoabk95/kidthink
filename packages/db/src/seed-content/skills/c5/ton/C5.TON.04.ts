@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_TON_04_IDENTITY: SkillIdentity = {
+  code: "C5.TON.04",
+  strand_code: "C5.TON",
+  competency_code: "C5",
+  name: "Thanh hỏi và thanh ngã",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 5,
+  thinking_processes: ["listen", "compare"],
+  tier: "advanced",
+  prerequisites: ["C5.TON.03"],
+  learning_objectives: [
+    {
+      code: "LO-C5.TON.04-01",
+      behaviour: "Nhận biết và thực hành Thanh hỏi và thanh ngã ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.TON.04-02",
+      behaviour: "Vận dụng Thanh hỏi và thanh ngã trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.TON.04-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Thanh hỏi và thanh ngã",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_TON_04_DATASET: SkillDataset = {
   skill_code: "C5.TON.04",
@@ -94,6 +131,7 @@ export const C5_TON_04_DATASET: SkillDataset = {
 };
 
 export const C5_TON_04_SEED: SkillSeed = {
+  identity: C5_TON_04_IDENTITY,
   dataset: C5_TON_04_DATASET,
   levels: [
     {

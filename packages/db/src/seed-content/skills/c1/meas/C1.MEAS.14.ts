@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_MEAS_14_IDENTITY: SkillIdentity = {
+  code: "C1.MEAS.14",
+  strand_code: "C1.MEAS",
+  competency_code: "C1",
+  name: "Tiền xu đơn giản",
+  age_min: 6,
+  age_max: 6,
+  difficulty: 4,
+  thinking_processes: ["count", "compare"],
+  tier: "advanced",
+  prerequisites: ["C1.NREC.03", "C1.CNT.01"],
+  learning_objectives: [
+    {
+      code: "LO-C1.MEAS.14-01",
+      behaviour: "Nhận biết và thực hành Tiền xu đơn giản ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.MEAS.14-02",
+      behaviour: "Vận dụng Tiền xu đơn giản trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.MEAS.14-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Tiền xu đơn giản",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_MEAS_14_DATASET: SkillDataset = {
   skill_code: "C1.MEAS.14",
@@ -98,6 +134,7 @@ export const C1_MEAS_14_DATASET: SkillDataset = {
 };
 
 export const C1_MEAS_14_SEED: SkillSeed = {
+  identity: C1_MEAS_14_IDENTITY,
   dataset: C1_MEAS_14_DATASET,
   levels: [
     {

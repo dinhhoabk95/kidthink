@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_ECO_05_IDENTITY: SkillIdentity = {
+  code: "C4.ECO.05",
+  strand_code: "C4.ECO",
+  competency_code: "C4",
+  name: "Vật dùng lại được",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 4,
+  thinking_processes: ["infer", "create"],
+  tier: "advanced",
+  prerequisites: ["C4.ECO.03"],
+  learning_objectives: [
+    {
+      code: "LO-C4.ECO.05-01",
+      behaviour: "Nhận biết và thực hành Vật dùng lại được ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.ECO.05-02",
+      behaviour: "Vận dụng Vật dùng lại được trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.ECO.05-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Vật dùng lại được",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_ECO_05_DATASET: SkillDataset = {
   skill_code: "C4.ECO.05",
@@ -98,6 +134,7 @@ export const C4_ECO_05_DATASET: SkillDataset = {
 };
 
 export const C4_ECO_05_SEED: SkillSeed = {
+  identity: C4_ECO_05_IDENTITY,
   dataset: C4_ECO_05_DATASET,
   levels: [
     {

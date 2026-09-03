@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_ALP_03_IDENTITY: SkillIdentity = {
+  code: "C5.ALP.03",
+  strand_code: "C5.ALP",
+  competency_code: "C5",
+  name: "Nhận nhóm nguyên âm: a ă â e ê i o ô ơ u ư y",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 3,
+  thinking_processes: ["observe", "match"],
+  tier: "core",
+  prerequisites: ["C5.ALP.01"],
+  learning_objectives: [
+    {
+      code: "LO-C5.ALP.03-01",
+      behaviour:
+        "Nhận biết và thực hành Nhận nhóm nguyên âm: a ă â e ê i o ô ơ u ư y ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.ALP.03-02",
+      behaviour:
+        "Vận dụng Nhận nhóm nguyên âm: a ă â e ê i o ô ơ u ư y trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.ALP.03-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Nhận nhóm nguyên âm: a ă â e ê i o ô ơ u ư y",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_ALP_03_DATASET: SkillDataset = {
   skill_code: "C5.ALP.03",
@@ -96,6 +135,7 @@ export const C5_ALP_03_DATASET: SkillDataset = {
 };
 
 export const C5_ALP_03_SEED: SkillSeed = {
+  identity: C5_ALP_03_IDENTITY,
   dataset: C5_ALP_03_DATASET,
   levels: [
     {

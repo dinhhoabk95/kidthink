@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_WRD_04_IDENTITY: SkillIdentity = {
+  code: "C5.WRD.04",
+  strand_code: "C5.WRD",
+  competency_code: "C5",
+  name: "Đọc tiếng có dấu thanh",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 5,
+  thinking_processes: ["solve", "verify"],
+  tier: "advanced",
+  prerequisites: ["C5.WRD.03", "C5.TON.05"],
+  learning_objectives: [
+    {
+      code: "LO-C5.WRD.04-01",
+      behaviour: "Nhận biết và thực hành Đọc tiếng có dấu thanh ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.WRD.04-02",
+      behaviour: "Vận dụng Đọc tiếng có dấu thanh trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.WRD.04-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Đọc tiếng có dấu thanh",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_WRD_04_DATASET: SkillDataset = {
   skill_code: "C5.WRD.04",
@@ -99,6 +136,7 @@ export const C5_WRD_04_DATASET: SkillDataset = {
 };
 
 export const C5_WRD_04_SEED: SkillSeed = {
+  identity: C5_WRD_04_IDENTITY,
   dataset: C5_WRD_04_DATASET,
   levels: [
     {

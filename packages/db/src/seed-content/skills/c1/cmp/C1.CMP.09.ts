@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_CMP_09_IDENTITY: SkillIdentity = {
+  code: "C1.CMP.09",
+  strand_code: "C1.CMP",
+  competency_code: "C1",
+  name: "Thấp hơn",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 1,
+  thinking_processes: ["compare"],
+  tier: "basic",
+  prerequisites: [],
+  learning_objectives: [
+    {
+      code: "LO-C1.CMP.09-01",
+      behaviour: "Nhận biết và thực hành Thấp hơn ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.CMP.09-02",
+      behaviour: "Vận dụng Thấp hơn trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.CMP.09-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Thấp hơn",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_CMP_09_DATASET: SkillDataset = {
   skill_code: "C1.CMP.09",
@@ -98,6 +134,7 @@ export const C1_CMP_09_DATASET: SkillDataset = {
 };
 
 export const C1_CMP_09_SEED: SkillSeed = {
+  identity: C1_CMP_09_IDENTITY,
   dataset: C1_CMP_09_DATASET,
   levels: [
     {

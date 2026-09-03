@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_MEAS_13_IDENTITY: SkillIdentity = {
+  code: "C1.MEAS.13",
+  strand_code: "C1.MEAS",
+  competency_code: "C1",
+  name: "Đồng hồ: giờ đúng",
+  age_min: 6,
+  age_max: 6,
+  difficulty: 4,
+  thinking_processes: ["observe", "match"],
+  tier: "advanced",
+  prerequisites: ["C1.NREC.03", "C1.MEAS.10"],
+  learning_objectives: [
+    {
+      code: "LO-C1.MEAS.13-01",
+      behaviour: "Nhận biết và thực hành Đồng hồ: giờ đúng ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.MEAS.13-02",
+      behaviour: "Vận dụng Đồng hồ: giờ đúng trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.MEAS.13-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Đồng hồ: giờ đúng",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_MEAS_13_DATASET: SkillDataset = {
   skill_code: "C1.MEAS.13",
@@ -98,6 +134,7 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
 };
 
 export const C1_MEAS_13_SEED: SkillSeed = {
+  identity: C1_MEAS_13_IDENTITY,
   dataset: C1_MEAS_13_DATASET,
   levels: [
     {

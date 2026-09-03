@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_WRD_02_IDENTITY: SkillIdentity = {
+  code: "C5.WRD.02",
+  strand_code: "C5.WRD",
+  competency_code: "C5",
+  name: "Đọc tiếng quen thuộc",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 4,
+  thinking_processes: ["recall", "match"],
+  tier: "advanced",
+  prerequisites: ["C5.ALP.06"],
+  learning_objectives: [
+    {
+      code: "LO-C5.WRD.02-01",
+      behaviour: "Nhận biết và thực hành Đọc tiếng quen thuộc ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.WRD.02-02",
+      behaviour: "Vận dụng Đọc tiếng quen thuộc trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.WRD.02-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Đọc tiếng quen thuộc",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_WRD_02_DATASET: SkillDataset = {
   skill_code: "C5.WRD.02",
@@ -98,6 +135,7 @@ export const C5_WRD_02_DATASET: SkillDataset = {
 };
 
 export const C5_WRD_02_SEED: SkillSeed = {
+  identity: C5_WRD_02_IDENTITY,
   dataset: C5_WRD_02_DATASET,
   levels: [
     {

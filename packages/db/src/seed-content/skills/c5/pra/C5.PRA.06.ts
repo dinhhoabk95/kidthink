@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_PRA_06_IDENTITY: SkillIdentity = {
+  code: "C5.PRA.06",
+  strand_code: "C5.PRA",
+  competency_code: "C5",
+  name: "Nói ý kiến kèm lý do",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 5,
+  thinking_processes: ["describe", "deduce"],
+  tier: "advanced",
+  prerequisites: ["C5.DES.04"],
+  learning_objectives: [
+    {
+      code: "LO-C5.PRA.06-01",
+      behaviour: "Nhận biết và thực hành Nói ý kiến kèm lý do ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.PRA.06-02",
+      behaviour: "Vận dụng Nói ý kiến kèm lý do trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.PRA.06-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Nói ý kiến kèm lý do",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_PRA_06_DATASET: SkillDataset = {
   skill_code: "C5.PRA.06",
@@ -98,6 +135,7 @@ export const C5_PRA_06_DATASET: SkillDataset = {
 };
 
 export const C5_PRA_06_SEED: SkillSeed = {
+  identity: C5_PRA_06_IDENTITY,
   dataset: C5_PRA_06_DATASET,
   levels: [],
 };

@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_ECO_03_IDENTITY: SkillIdentity = {
+  code: "C4.ECO.03",
+  strand_code: "C4.ECO",
+  competency_code: "C4",
+  name: "Phân loại rác",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 4,
+  thinking_processes: ["sort", "deduce"],
+  tier: "advanced",
+  prerequisites: ["C4.ECO.01", "C3.CLS.06"],
+  learning_objectives: [
+    {
+      code: "LO-C4.ECO.03-01",
+      behaviour: "Nhận biết và thực hành Phân loại rác ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.ECO.03-02",
+      behaviour: "Vận dụng Phân loại rác trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.ECO.03-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Phân loại rác",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_ECO_03_DATASET: SkillDataset = {
   skill_code: "C4.ECO.03",
@@ -98,6 +134,7 @@ export const C4_ECO_03_DATASET: SkillDataset = {
 };
 
 export const C4_ECO_03_SEED: SkillSeed = {
+  identity: C4_ECO_03_IDENTITY,
   dataset: C4_ECO_03_DATASET,
   levels: [
     {

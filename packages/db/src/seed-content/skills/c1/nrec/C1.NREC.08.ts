@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_NREC_08_IDENTITY: SkillIdentity = {
+  code: "C1.NREC.08",
+  strand_code: "C1.NREC",
+  competency_code: "C1",
+  name: "Viết số theo nét",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 3,
+  thinking_processes: ["observe"],
+  tier: "core",
+  prerequisites: ["C1.NREC.03"],
+  learning_objectives: [
+    {
+      code: "LO-C1.NREC.08-01",
+      behaviour: "Nhận biết và thực hành Viết số theo nét ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.NREC.08-02",
+      behaviour: "Vận dụng Viết số theo nét trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.NREC.08-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Viết số theo nét",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_NREC_08_DATASET: SkillDataset = {
   skill_code: "C1.NREC.08",
@@ -153,6 +189,7 @@ export const C1_NREC_08_DATASET: SkillDataset = {
 };
 
 export const C1_NREC_08_SEED: SkillSeed = {
+  identity: C1_NREC_08_IDENTITY,
   dataset: C1_NREC_08_DATASET,
   levels: [
     {

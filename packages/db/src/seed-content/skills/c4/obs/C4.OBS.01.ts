@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_OBS_01_IDENTITY: SkillIdentity = {
+  code: "C4.OBS.01",
+  strand_code: "C4.OBS",
+  competency_code: "C4",
+  name: "Quan sát có mục đích",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 2,
+  thinking_processes: ["observe", "plan"],
+  tier: "basic",
+  prerequisites: ["C4.DET.01"],
+  learning_objectives: [
+    {
+      code: "LO-C4.OBS.01-01",
+      behaviour: "Nhận biết và thực hành Quan sát có mục đích ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.OBS.01-02",
+      behaviour: "Vận dụng Quan sát có mục đích trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.OBS.01-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Quan sát có mục đích",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_OBS_01_DATASET: SkillDataset = {
   skill_code: "C4.OBS.01",
@@ -98,6 +135,7 @@ export const C4_OBS_01_DATASET: SkillDataset = {
 };
 
 export const C4_OBS_01_SEED: SkillSeed = {
+  identity: C4_OBS_01_IDENTITY,
   dataset: C4_OBS_01_DATASET,
   levels: [
     {

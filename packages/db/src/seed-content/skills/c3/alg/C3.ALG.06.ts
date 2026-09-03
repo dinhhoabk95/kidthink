@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C3_ALG_06_IDENTITY: SkillIdentity = {
+  code: "C3.ALG.06",
+  strand_code: "C3.ALG",
+  competency_code: "C3",
+  name: "Tự viết chuỗi lệnh tới đích",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 5,
+  thinking_processes: ["plan", "create"],
+  tier: "advanced",
+  prerequisites: ["C3.ALG.04", "C2.GRD.02"],
+  learning_objectives: [
+    {
+      code: "LO-C3.ALG.06-01",
+      behaviour:
+        "Nhận biết và thực hành Tự viết chuỗi lệnh tới đích ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C3.ALG.06-02",
+      behaviour:
+        "Vận dụng Tự viết chuỗi lệnh tới đích trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C3.ALG.06-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Tự viết chuỗi lệnh tới đích",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C3_ALG_06_DATASET: SkillDataset = {
   skill_code: "C3.ALG.06",
@@ -99,6 +138,7 @@ export const C3_ALG_06_DATASET: SkillDataset = {
 };
 
 export const C3_ALG_06_SEED: SkillSeed = {
+  identity: C3_ALG_06_IDENTITY,
   dataset: C3_ALG_06_DATASET,
   levels: [
     {

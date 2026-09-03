@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_WRT_07_IDENTITY: SkillIdentity = {
+  code: "C5.WRT.07",
+  strand_code: "C5.WRT",
+  competency_code: "C5",
+  name: "Viết chữ cái trong ô li",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 5,
+  thinking_processes: ["create", "verify"],
+  tier: "advanced",
+  prerequisites: ["C5.WRT.06", "C5.ALP.04"],
+  learning_objectives: [
+    {
+      code: "LO-C5.WRT.07-01",
+      behaviour: "Nhận biết và thực hành Viết chữ cái trong ô li ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.WRT.07-02",
+      behaviour: "Vận dụng Viết chữ cái trong ô li trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.WRT.07-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Viết chữ cái trong ô li",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_WRT_07_DATASET: SkillDataset = {
   skill_code: "C5.WRT.07",
@@ -99,6 +136,7 @@ export const C5_WRT_07_DATASET: SkillDataset = {
 };
 
 export const C5_WRT_07_SEED: SkillSeed = {
+  identity: C5_WRT_07_IDENTITY,
   dataset: C5_WRT_07_DATASET,
   levels: [
     {

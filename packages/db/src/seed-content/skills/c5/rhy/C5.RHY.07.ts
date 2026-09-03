@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_RHY_07_IDENTITY: SkillIdentity = {
+  code: "C5.RHY.07",
+  strand_code: "C5.RHY",
+  competency_code: "C5",
+  name: "Vần có nguyên âm đôi: ia · ua · ưa",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 5,
+  thinking_processes: ["solve", "compare"],
+  tier: "advanced",
+  prerequisites: ["C5.RHY.05"],
+  learning_objectives: [
+    {
+      code: "LO-C5.RHY.07-01",
+      behaviour:
+        "Nhận biết và thực hành Vần có nguyên âm đôi: ia · ua · ưa ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.RHY.07-02",
+      behaviour:
+        "Vận dụng Vần có nguyên âm đôi: ia · ua · ưa trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.RHY.07-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Vần có nguyên âm đôi: ia · ua · ưa",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_RHY_07_DATASET: SkillDataset = {
   skill_code: "C5.RHY.07",
@@ -94,6 +133,7 @@ export const C5_RHY_07_DATASET: SkillDataset = {
 };
 
 export const C5_RHY_07_SEED: SkillSeed = {
+  identity: C5_RHY_07_IDENTITY,
   dataset: C5_RHY_07_DATASET,
   levels: [
     {

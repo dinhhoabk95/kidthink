@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_NREC_07_IDENTITY: SkillIdentity = {
+  code: "C1.NREC.07",
+  strand_code: "C1.NREC",
+  competency_code: "C1",
+  name: "Đọc số",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 2,
+  thinking_processes: ["describe"],
+  tier: "basic",
+  prerequisites: ["C1.NREC.03"],
+  learning_objectives: [
+    {
+      code: "LO-C1.NREC.07-01",
+      behaviour: "Nhận biết và thực hành Đọc số ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.NREC.07-02",
+      behaviour: "Vận dụng Đọc số trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.NREC.07-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Đọc số",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_NREC_07_DATASET: SkillDataset = {
   skill_code: "C1.NREC.07",
@@ -103,6 +139,7 @@ export const C1_NREC_07_DATASET: SkillDataset = {
 };
 
 export const C1_NREC_07_SEED: SkillSeed = {
+  identity: C1_NREC_07_IDENTITY,
   dataset: C1_NREC_07_DATASET,
   levels: [],
 };

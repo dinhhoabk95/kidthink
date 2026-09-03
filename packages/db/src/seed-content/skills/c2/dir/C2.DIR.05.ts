@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C2_DIR_05_IDENTITY: SkillIdentity = {
+  code: "C2.DIR.05",
+  strand_code: "C2.DIR",
+  competency_code: "C2",
+  name: "Theo mũi tên",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 2,
+  thinking_processes: ["observe", "plan"],
+  tier: "basic",
+  prerequisites: ["C2.DIR.01", "C2.DIR.02"],
+  learning_objectives: [
+    {
+      code: "LO-C2.DIR.05-01",
+      behaviour: "Nhận biết và thực hành Theo mũi tên ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C2.DIR.05-02",
+      behaviour: "Vận dụng Theo mũi tên trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C2.DIR.05-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Theo mũi tên",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C2_DIR_05_DATASET: SkillDataset = {
   skill_code: "C2.DIR.05",
@@ -98,6 +134,7 @@ export const C2_DIR_05_DATASET: SkillDataset = {
 };
 
 export const C2_DIR_05_SEED: SkillSeed = {
+  identity: C2_DIR_05_IDENTITY,
   dataset: C2_DIR_05_DATASET,
   levels: [
     {

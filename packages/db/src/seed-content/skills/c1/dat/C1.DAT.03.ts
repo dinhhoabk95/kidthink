@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_DAT_03_IDENTITY: SkillIdentity = {
+  code: "C1.DAT.03",
+  strand_code: "C1.DAT",
+  competency_code: "C1",
+  name: "So cột cao – thấp",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 3,
+  thinking_processes: ["compare", "observe"],
+  tier: "core",
+  prerequisites: ["C1.DAT.02", "C1.CMP.08"],
+  learning_objectives: [
+    {
+      code: "LO-C1.DAT.03-01",
+      behaviour: "Nhận biết và thực hành So cột cao – thấp ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.DAT.03-02",
+      behaviour: "Vận dụng So cột cao – thấp trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.DAT.03-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới So cột cao – thấp",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_DAT_03_DATASET: SkillDataset = {
   skill_code: "C1.DAT.03",
@@ -98,6 +134,7 @@ export const C1_DAT_03_DATASET: SkillDataset = {
 };
 
 export const C1_DAT_03_SEED: SkillSeed = {
+  identity: C1_DAT_03_IDENTITY,
   dataset: C1_DAT_03_DATASET,
   levels: [
     {

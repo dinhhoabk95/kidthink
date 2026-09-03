@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_SOC_07_IDENTITY: SkillIdentity = {
+  code: "C4.SOC.07",
+  strand_code: "C4.SOC",
+  competency_code: "C4",
+  name: "Bạn khác mình ở điểm nào",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 4,
+  thinking_processes: ["compare", "describe"],
+  tier: "advanced",
+  prerequisites: ["C4.SOC.01", "C4.SEN.02"],
+  learning_objectives: [
+    {
+      code: "LO-C4.SOC.07-01",
+      behaviour: "Nhận biết và thực hành Bạn khác mình ở điểm nào ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.SOC.07-02",
+      behaviour: "Vận dụng Bạn khác mình ở điểm nào trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.SOC.07-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Bạn khác mình ở điểm nào",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_SOC_07_DATASET: SkillDataset = {
   skill_code: "C4.SOC.07",
@@ -99,6 +136,7 @@ export const C4_SOC_07_DATASET: SkillDataset = {
 };
 
 export const C4_SOC_07_SEED: SkillSeed = {
+  identity: C4_SOC_07_IDENTITY,
   dataset: C4_SOC_07_DATASET,
   levels: [
     {

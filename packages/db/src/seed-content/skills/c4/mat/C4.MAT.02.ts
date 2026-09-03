@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_MAT_02_IDENTITY: SkillIdentity = {
+  code: "C4.MAT.02",
+  strand_code: "C4.MAT",
+  competency_code: "C4",
+  name: "Nóng – lạnh",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 2,
+  thinking_processes: ["compare", "observe"],
+  tier: "basic",
+  prerequisites: ["C4.TAC.03"],
+  learning_objectives: [
+    {
+      code: "LO-C4.MAT.02-01",
+      behaviour: "Nhận biết và thực hành Nóng – lạnh ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.MAT.02-02",
+      behaviour: "Vận dụng Nóng – lạnh trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.MAT.02-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Nóng – lạnh",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_MAT_02_DATASET: SkillDataset = {
   skill_code: "C4.MAT.02",
@@ -98,6 +134,7 @@ export const C4_MAT_02_DATASET: SkillDataset = {
 };
 
 export const C4_MAT_02_SEED: SkillSeed = {
+  identity: C4_MAT_02_IDENTITY,
   dataset: C4_MAT_02_DATASET,
   levels: [
     {

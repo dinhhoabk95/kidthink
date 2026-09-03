@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_RHY_03_IDENTITY: SkillIdentity = {
+  code: "C5.RHY.03",
+  strand_code: "C5.RHY",
+  competency_code: "C5",
+  name: "Đọc đồng dao có vần",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["listen", "recall"],
+  tier: "core",
+  prerequisites: ["C5.RHY.01"],
+  learning_objectives: [
+    {
+      code: "LO-C5.RHY.03-01",
+      behaviour: "Nhận biết và thực hành Đọc đồng dao có vần ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.RHY.03-02",
+      behaviour: "Vận dụng Đọc đồng dao có vần trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.RHY.03-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Đọc đồng dao có vần",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_RHY_03_DATASET: SkillDataset = {
   skill_code: "C5.RHY.03",
@@ -93,6 +129,7 @@ export const C5_RHY_03_DATASET: SkillDataset = {
 };
 
 export const C5_RHY_03_SEED: SkillSeed = {
+  identity: C5_RHY_03_IDENTITY,
   dataset: C5_RHY_03_DATASET,
   levels: [
     {

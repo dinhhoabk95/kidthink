@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_DAT_04_IDENTITY: SkillIdentity = {
+  code: "C1.DAT.04",
+  strand_code: "C1.DAT",
+  competency_code: "C1",
+  name: "Đọc bảng hai cột",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 4,
+  thinking_processes: ["observe", "compare"],
+  tier: "advanced",
+  prerequisites: ["C1.DAT.03"],
+  learning_objectives: [
+    {
+      code: "LO-C1.DAT.04-01",
+      behaviour: "Nhận biết và thực hành Đọc bảng hai cột ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.DAT.04-02",
+      behaviour: "Vận dụng Đọc bảng hai cột trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.DAT.04-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Đọc bảng hai cột",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_DAT_04_DATASET: SkillDataset = {
   skill_code: "C1.DAT.04",
@@ -98,6 +134,7 @@ export const C1_DAT_04_DATASET: SkillDataset = {
 };
 
 export const C1_DAT_04_SEED: SkillSeed = {
+  identity: C1_DAT_04_IDENTITY,
   dataset: C1_DAT_04_DATASET,
   levels: [
     {

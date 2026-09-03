@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C6_ATT_02_IDENTITY: SkillIdentity = {
+  code: "C6.ATT.02",
+  strand_code: "C6.ATT",
+  competency_code: "C6",
+  name: "Tìm mục tiêu giữa nhiều vật",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 2,
+  thinking_processes: ["observe"],
+  tier: "basic",
+  prerequisites: ["C4.VIS.02"],
+  learning_objectives: [
+    {
+      code: "LO-C6.ATT.02-01",
+      behaviour:
+        "Nhận biết và thực hành Tìm mục tiêu giữa nhiều vật ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C6.ATT.02-02",
+      behaviour:
+        "Vận dụng Tìm mục tiêu giữa nhiều vật trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C6.ATT.02-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Tìm mục tiêu giữa nhiều vật",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C6_ATT_02_DATASET: SkillDataset = {
   skill_code: "C6.ATT.02",
@@ -99,6 +138,7 @@ export const C6_ATT_02_DATASET: SkillDataset = {
 };
 
 export const C6_ATT_02_SEED: SkillSeed = {
+  identity: C6_ATT_02_IDENTITY,
   dataset: C6_ATT_02_DATASET,
   levels: [
     {

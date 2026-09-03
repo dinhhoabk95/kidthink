@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C3_SEQ_03_IDENTITY: SkillIdentity = {
+  code: "C3.SEQ.03",
+  strand_code: "C3.SEQ",
+  competency_code: "C3",
+  name: "Chuỗi hành động",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["sequence", "infer"],
+  tier: "core",
+  prerequisites: ["C1.MEAS.10"],
+  learning_objectives: [
+    {
+      code: "LO-C3.SEQ.03-01",
+      behaviour: "Nhận biết và thực hành Chuỗi hành động ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C3.SEQ.03-02",
+      behaviour: "Vận dụng Chuỗi hành động trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C3.SEQ.03-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Chuỗi hành động",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C3_SEQ_03_DATASET: SkillDataset = {
   skill_code: "C3.SEQ.03",
@@ -98,6 +134,7 @@ export const C3_SEQ_03_DATASET: SkillDataset = {
 };
 
 export const C3_SEQ_03_SEED: SkillSeed = {
+  identity: C3_SEQ_03_IDENTITY,
   dataset: C3_SEQ_03_DATASET,
   levels: [
     {

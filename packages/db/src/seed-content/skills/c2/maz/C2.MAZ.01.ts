@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C2_MAZ_01_IDENTITY: SkillIdentity = {
+  code: "C2.MAZ.01",
+  strand_code: "C2.MAZ",
+  competency_code: "C2",
+  name: "Mê cung một đường",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 2,
+  thinking_processes: ["plan"],
+  tier: "basic",
+  prerequisites: ["C2.DIR.05"],
+  learning_objectives: [
+    {
+      code: "LO-C2.MAZ.01-01",
+      behaviour: "Nhận biết và thực hành Mê cung một đường ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C2.MAZ.01-02",
+      behaviour: "Vận dụng Mê cung một đường trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C2.MAZ.01-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Mê cung một đường",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C2_MAZ_01_DATASET: SkillDataset = {
   skill_code: "C2.MAZ.01",
@@ -98,6 +134,7 @@ export const C2_MAZ_01_DATASET: SkillDataset = {
 };
 
 export const C2_MAZ_01_SEED: SkillSeed = {
+  identity: C2_MAZ_01_IDENTITY,
   dataset: C2_MAZ_01_DATASET,
   levels: [
     {

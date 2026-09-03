@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C5_BOK_01_IDENTITY: SkillIdentity = {
+  code: "C5.BOK.01",
+  strand_code: "C5.BOK",
+  competency_code: "C5",
+  name: "Bìa · trang · tên truyện",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 1,
+  thinking_processes: ["observe", "match"],
+  tier: "basic",
+  prerequisites: [],
+  learning_objectives: [
+    {
+      code: "LO-C5.BOK.01-01",
+      behaviour: "Nhận biết và thực hành Bìa · trang · tên truyện ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C5.BOK.01-02",
+      behaviour: "Vận dụng Bìa · trang · tên truyện trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C5.BOK.01-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Bìa · trang · tên truyện",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C5_BOK_01_DATASET: SkillDataset = {
   skill_code: "C5.BOK.01",
@@ -99,6 +136,7 @@ export const C5_BOK_01_DATASET: SkillDataset = {
 };
 
 export const C5_BOK_01_SEED: SkillSeed = {
+  identity: C5_BOK_01_IDENTITY,
   dataset: C5_BOK_01_DATASET,
   levels: [
     {

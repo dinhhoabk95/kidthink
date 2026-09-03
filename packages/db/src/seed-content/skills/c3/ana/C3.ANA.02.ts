@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C3_ANA_02_IDENTITY: SkillIdentity = {
+  code: "C3.ANA.02",
+  strand_code: "C3.ANA",
+  competency_code: "C3",
+  name: "Quan hệ tương tự",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 4,
+  thinking_processes: ["infer"],
+  tier: "advanced",
+  prerequisites: ["C3.ANA.01", "C3.CLS.04"],
+  learning_objectives: [
+    {
+      code: "LO-C3.ANA.02-01",
+      behaviour: "Nhận biết và thực hành Quan hệ tương tự ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C3.ANA.02-02",
+      behaviour: "Vận dụng Quan hệ tương tự trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C3.ANA.02-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Quan hệ tương tự",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C3_ANA_02_DATASET: SkillDataset = {
   skill_code: "C3.ANA.02",
@@ -98,6 +134,7 @@ export const C3_ANA_02_DATASET: SkillDataset = {
 };
 
 export const C3_ANA_02_SEED: SkillSeed = {
+  identity: C3_ANA_02_IDENTITY,
   dataset: C3_ANA_02_DATASET,
   levels: [
     {

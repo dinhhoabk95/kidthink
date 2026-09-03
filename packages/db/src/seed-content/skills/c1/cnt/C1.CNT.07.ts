@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_CNT_07_IDENTITY: SkillIdentity = {
+  code: "C1.CNT.07",
+  strand_code: "C1.CNT",
+  competency_code: "C1",
+  name: "Đếm từ điểm bất kỳ",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 3,
+  thinking_processes: ["count"],
+  tier: "core",
+  prerequisites: ["C1.CNT.01", "C1.NREC.09"],
+  learning_objectives: [
+    {
+      code: "LO-C1.CNT.07-01",
+      behaviour: "Nhận biết và thực hành Đếm từ điểm bất kỳ ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.CNT.07-02",
+      behaviour: "Vận dụng Đếm từ điểm bất kỳ trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.CNT.07-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Đếm từ điểm bất kỳ",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_CNT_07_DATASET: SkillDataset = {
   skill_code: "C1.CNT.07",
@@ -153,6 +189,7 @@ export const C1_CNT_07_DATASET: SkillDataset = {
 };
 
 export const C1_CNT_07_SEED: SkillSeed = {
+  identity: C1_CNT_07_IDENTITY,
   dataset: C1_CNT_07_DATASET,
   levels: [
     {

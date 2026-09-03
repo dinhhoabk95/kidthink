@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C6_WM_03_IDENTITY: SkillIdentity = {
+  code: "C6.WM.03",
+  strand_code: "C6.WM",
+  competency_code: "C6",
+  name: "Nhớ vị trí sau khi bị che",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["recall"],
+  tier: "core",
+  prerequisites: ["C4.MEM.01"],
+  learning_objectives: [
+    {
+      code: "LO-C6.WM.03-01",
+      behaviour:
+        "Nhận biết và thực hành Nhớ vị trí sau khi bị che ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C6.WM.03-02",
+      behaviour:
+        "Vận dụng Nhớ vị trí sau khi bị che trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C6.WM.03-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Nhớ vị trí sau khi bị che",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C6_WM_03_DATASET: SkillDataset = {
   skill_code: "C6.WM.03",
@@ -99,6 +138,7 @@ export const C6_WM_03_DATASET: SkillDataset = {
 };
 
 export const C6_WM_03_SEED: SkillSeed = {
+  identity: C6_WM_03_IDENTITY,
   dataset: C6_WM_03_DATASET,
   levels: [
     {

@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_TAC_05_IDENTITY: SkillIdentity = {
+  code: "C4.TAC.05",
+  strand_code: "C4.TAC",
+  competency_code: "C4",
+  name: "Đoán vật trong túi bí mật",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 4,
+  thinking_processes: ["infer", "deduce"],
+  tier: "advanced",
+  prerequisites: ["C4.TAC.01", "C4.TAC.02"],
+  learning_objectives: [
+    {
+      code: "LO-C4.TAC.05-01",
+      behaviour:
+        "Nhận biết và thực hành Đoán vật trong túi bí mật ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.TAC.05-02",
+      behaviour:
+        "Vận dụng Đoán vật trong túi bí mật trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.TAC.05-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Đoán vật trong túi bí mật",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_TAC_05_DATASET: SkillDataset = {
   skill_code: "C4.TAC.05",
@@ -99,6 +138,7 @@ export const C4_TAC_05_DATASET: SkillDataset = {
 };
 
 export const C4_TAC_05_SEED: SkillSeed = {
+  identity: C4_TAC_05_IDENTITY,
   dataset: C4_TAC_05_DATASET,
   levels: [
     {

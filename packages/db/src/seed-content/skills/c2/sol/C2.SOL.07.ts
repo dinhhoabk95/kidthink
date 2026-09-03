@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C2_SOL_07_IDENTITY: SkillIdentity = {
+  code: "C2.SOL.07",
+  strand_code: "C2.SOL",
+  competency_code: "C2",
+  name: "Mặt · cạnh · đỉnh của khối",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 4,
+  thinking_processes: ["count", "observe"],
+  tier: "advanced",
+  prerequisites: ["C2.SOL.04", "C1.CNT.01"],
+  learning_objectives: [
+    {
+      code: "LO-C2.SOL.07-01",
+      behaviour:
+        "Nhận biết và thực hành Mặt · cạnh · đỉnh của khối ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C2.SOL.07-02",
+      behaviour:
+        "Vận dụng Mặt · cạnh · đỉnh của khối trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C2.SOL.07-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Mặt · cạnh · đỉnh của khối",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C2_SOL_07_DATASET: SkillDataset = {
   skill_code: "C2.SOL.07",
@@ -88,6 +127,7 @@ export const C2_SOL_07_DATASET: SkillDataset = {
 };
 
 export const C2_SOL_07_SEED: SkillSeed = {
+  identity: C2_SOL_07_IDENTITY,
   dataset: C2_SOL_07_DATASET,
   levels: [
     {

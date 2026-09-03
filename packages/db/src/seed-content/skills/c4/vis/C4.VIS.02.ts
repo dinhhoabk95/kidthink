@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_VIS_02_IDENTITY: SkillIdentity = {
+  code: "C4.VIS.02",
+  strand_code: "C4.VIS",
+  competency_code: "C4",
+  name: "Tìm vật giống nhau trong nhóm",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 2,
+  thinking_processes: ["observe", "match"],
+  tier: "basic",
+  prerequisites: [],
+  learning_objectives: [
+    {
+      code: "LO-C4.VIS.02-01",
+      behaviour:
+        "Nhận biết và thực hành Tìm vật giống nhau trong nhóm ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.VIS.02-02",
+      behaviour:
+        "Vận dụng Tìm vật giống nhau trong nhóm trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.VIS.02-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Tìm vật giống nhau trong nhóm",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_VIS_02_DATASET: SkillDataset = {
   skill_code: "C4.VIS.02",
@@ -99,6 +138,7 @@ export const C4_VIS_02_DATASET: SkillDataset = {
 };
 
 export const C4_VIS_02_SEED: SkillSeed = {
+  identity: C4_VIS_02_IDENTITY,
   dataset: C4_VIS_02_DATASET,
   levels: [
     {

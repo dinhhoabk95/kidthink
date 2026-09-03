@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_MEM_03_IDENTITY: SkillIdentity = {
+  code: "C4.MEM.03",
+  strand_code: "C4.MEM",
+  competency_code: "C4",
+  name: "Nhớ chuỗi màu",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["recall", "sequence"],
+  tier: "core",
+  prerequisites: ["C4.DET.01"],
+  learning_objectives: [
+    {
+      code: "LO-C4.MEM.03-01",
+      behaviour: "Nhận biết và thực hành Nhớ chuỗi màu ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.MEM.03-02",
+      behaviour: "Vận dụng Nhớ chuỗi màu trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.MEM.03-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Nhớ chuỗi màu",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_MEM_03_DATASET: SkillDataset = {
   skill_code: "C4.MEM.03",
@@ -98,6 +134,7 @@ export const C4_MEM_03_DATASET: SkillDataset = {
 };
 
 export const C4_MEM_03_SEED: SkillSeed = {
+  identity: C4_MEM_03_IDENTITY,
   dataset: C4_MEM_03_DATASET,
   levels: [
     {

@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C2_MAZ_02_IDENTITY: SkillIdentity = {
+  code: "C2.MAZ.02",
+  strand_code: "C2.MAZ",
+  competency_code: "C2",
+  name: "Mê cung nhiều nhánh",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 4,
+  thinking_processes: ["plan", "deduce"],
+  tier: "advanced",
+  prerequisites: ["C2.MAZ.01"],
+  learning_objectives: [
+    {
+      code: "LO-C2.MAZ.02-01",
+      behaviour: "Nhận biết và thực hành Mê cung nhiều nhánh ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C2.MAZ.02-02",
+      behaviour: "Vận dụng Mê cung nhiều nhánh trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C2.MAZ.02-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Mê cung nhiều nhánh",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C2_MAZ_02_DATASET: SkillDataset = {
   skill_code: "C2.MAZ.02",
@@ -98,6 +134,7 @@ export const C2_MAZ_02_DATASET: SkillDataset = {
 };
 
 export const C2_MAZ_02_SEED: SkillSeed = {
+  identity: C2_MAZ_02_IDENTITY,
   dataset: C2_MAZ_02_DATASET,
   levels: [
     {

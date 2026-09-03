@@ -18,6 +18,7 @@ import {
   skills,
   strands,
 } from "#src/schema/taxonomy";
+import { SKILL_IDENTITIES } from "#src/seed-content/skills/index";
 
 export interface ParsedSkill {
   code: string;
@@ -269,6 +270,27 @@ export function parseTaxonomyDocs(docsDir = "docs/taxonomy"): ParsedSkill[] {
   }
 
   return parsedSkills;
+}
+
+/**
+ * Loads all 408 skills directly from TypeScript SkillIdentities (Task #208 / Q2).
+ */
+export function getAllTaxonomySkills(): ParsedSkill[] {
+  return Object.values(SKILL_IDENTITIES).map((s) => ({
+    code: s.code,
+    strand_code: s.strand_code,
+    competency_code: s.competency_code,
+    name: s.name,
+    age_min: s.age_min,
+    age_max: s.age_max,
+    difficulty: s.difficulty,
+    thinking_processes: [...s.thinking_processes],
+    tier: s.tier,
+    prerequisites: [...s.prerequisites],
+    learning_objectives: s.learning_objectives
+      ? [...s.learning_objectives]
+      : generateDefaultLOs(s.code, s.name),
+  }));
 }
 
 function validateCounts(skillsToSeed: ParsedSkill[]): void {
@@ -664,13 +686,9 @@ export async function seedTaxonomyMasterData(
   loCount: number;
   datasetCount: number;
 }> {
-  const defaultDocsDir = fs.existsSync(
-    path.resolve(process.cwd(), "docs/taxonomy")
-  )
-    ? path.resolve(process.cwd(), "docs/taxonomy")
-    : path.resolve(process.cwd(), "../../docs/taxonomy");
-  const rootDocsDir = docsDir ?? defaultDocsDir;
-  const allParsedSkills = parseTaxonomyDocs(rootDocsDir);
+  const allParsedSkills = docsDir
+    ? parseTaxonomyDocs(docsDir)
+    : getAllTaxonomySkills();
 
   validateTaxonomyInvariants(allParsedSkills);
 

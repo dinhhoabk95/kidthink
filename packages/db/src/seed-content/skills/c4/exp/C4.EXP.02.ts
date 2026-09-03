@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_EXP_02_IDENTITY: SkillIdentity = {
+  code: "C4.EXP.02",
+  strand_code: "C4.EXP",
+  competency_code: "C4",
+  name: "Chìm – nổi",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["predict", "verify"],
+  tier: "core",
+  prerequisites: ["C4.EXP.01"],
+  learning_objectives: [
+    {
+      code: "LO-C4.EXP.02-01",
+      behaviour: "Nhận biết và thực hành Chìm – nổi ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.EXP.02-02",
+      behaviour: "Vận dụng Chìm – nổi trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.EXP.02-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Chìm – nổi",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_EXP_02_DATASET: SkillDataset = {
   skill_code: "C4.EXP.02",
@@ -98,6 +134,7 @@ export const C4_EXP_02_DATASET: SkillDataset = {
 };
 
 export const C4_EXP_02_SEED: SkillSeed = {
+  identity: C4_EXP_02_IDENTITY,
   dataset: C4_EXP_02_DATASET,
   levels: [
     {

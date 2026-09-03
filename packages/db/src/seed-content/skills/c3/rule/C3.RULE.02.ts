@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C3_RULE_02_IDENTITY: SkillIdentity = {
+  code: "C3.RULE.02",
+  strand_code: "C3.RULE",
+  competency_code: "C3",
+  name: "Hoàn thành quy luật",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["predict", "create"],
+  tier: "core",
+  prerequisites: ["C3.RULE.01"],
+  learning_objectives: [
+    {
+      code: "LO-C3.RULE.02-01",
+      behaviour: "Nhận biết và thực hành Hoàn thành quy luật ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C3.RULE.02-02",
+      behaviour: "Vận dụng Hoàn thành quy luật trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C3.RULE.02-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Hoàn thành quy luật",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C3_RULE_02_DATASET: SkillDataset = {
   skill_code: "C3.RULE.02",
@@ -98,6 +134,7 @@ export const C3_RULE_02_DATASET: SkillDataset = {
 };
 
 export const C3_RULE_02_SEED: SkillSeed = {
+  identity: C3_RULE_02_IDENTITY,
   dataset: C3_RULE_02_DATASET,
   levels: [
     {

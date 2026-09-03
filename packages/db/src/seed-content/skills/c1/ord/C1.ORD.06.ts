@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_ORD_06_IDENTITY: SkillIdentity = {
+  code: "C1.ORD.06",
+  strand_code: "C1.ORD",
+  competency_code: "C1",
+  name: "Thứ tự ngược từ cuối lên",
+  age_min: 6,
+  age_max: 7,
+  difficulty: 4,
+  thinking_processes: ["sequence", "shift"],
+  tier: "advanced",
+  prerequisites: ["C1.ORD.04", "C1.CNT.04"],
+  learning_objectives: [
+    {
+      code: "LO-C1.ORD.06-01",
+      behaviour: "Nhận biết và thực hành Thứ tự ngược từ cuối lên ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.ORD.06-02",
+      behaviour: "Vận dụng Thứ tự ngược từ cuối lên trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.ORD.06-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Thứ tự ngược từ cuối lên",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_ORD_06_DATASET: SkillDataset = {
   skill_code: "C1.ORD.06",
@@ -99,6 +136,7 @@ export const C1_ORD_06_DATASET: SkillDataset = {
 };
 
 export const C1_ORD_06_SEED: SkillSeed = {
+  identity: C1_ORD_06_IDENTITY,
   dataset: C1_ORD_06_DATASET,
   levels: [
     {

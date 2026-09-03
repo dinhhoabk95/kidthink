@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_SOC_02_IDENTITY: SkillIdentity = {
+  code: "C4.SOC.02",
+  strand_code: "C4.SOC",
+  competency_code: "C4",
+  name: "Thành viên trong gia đình",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 2,
+  thinking_processes: ["match", "describe"],
+  tier: "basic",
+  prerequisites: ["C4.SOC.01"],
+  learning_objectives: [
+    {
+      code: "LO-C4.SOC.02-01",
+      behaviour:
+        "Nhận biết và thực hành Thành viên trong gia đình ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.SOC.02-02",
+      behaviour:
+        "Vận dụng Thành viên trong gia đình trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.SOC.02-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Thành viên trong gia đình",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_SOC_02_DATASET: SkillDataset = {
   skill_code: "C4.SOC.02",
@@ -99,6 +138,7 @@ export const C4_SOC_02_DATASET: SkillDataset = {
 };
 
 export const C4_SOC_02_SEED: SkillSeed = {
+  identity: C4_SOC_02_IDENTITY,
   dataset: C4_SOC_02_DATASET,
   levels: [
     {

@@ -1,4 +1,41 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C3_DED_01_IDENTITY: SkillIdentity = {
+  code: "C3.DED.01",
+  strand_code: "C3.DED",
+  competency_code: "C3",
+  name: "Loại trừ để tìm đáp án",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 4,
+  thinking_processes: ["deduce"],
+  tier: "advanced",
+  prerequisites: ["C3.CLS.06"],
+  learning_objectives: [
+    {
+      code: "LO-C3.DED.01-01",
+      behaviour: "Nhận biết và thực hành Loại trừ để tìm đáp án ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C3.DED.01-02",
+      behaviour: "Vận dụng Loại trừ để tìm đáp án trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C3.DED.01-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Loại trừ để tìm đáp án",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C3_DED_01_DATASET: SkillDataset = {
   skill_code: "C3.DED.01",
@@ -99,6 +136,7 @@ export const C3_DED_01_DATASET: SkillDataset = {
 };
 
 export const C3_DED_01_SEED: SkillSeed = {
+  identity: C3_DED_01_IDENTITY,
   dataset: C3_DED_01_DATASET,
   levels: [],
 };

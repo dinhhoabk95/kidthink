@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C3_SRT_03_IDENTITY: SkillIdentity = {
+  code: "C3.SRT.03",
+  strand_code: "C3.SRT",
+  competency_code: "C3",
+  name: "Sắp xếp theo màu (đậm→nhạt)",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["sequence", "observe"],
+  tier: "core",
+  prerequisites: ["C3.CLS.01"],
+  learning_objectives: [
+    {
+      code: "LO-C3.SRT.03-01",
+      behaviour:
+        "Nhận biết và thực hành Sắp xếp theo màu (đậm→nhạt) ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C3.SRT.03-02",
+      behaviour:
+        "Vận dụng Sắp xếp theo màu (đậm→nhạt) trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C3.SRT.03-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Sắp xếp theo màu (đậm→nhạt)",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C3_SRT_03_DATASET: SkillDataset = {
   skill_code: "C3.SRT.03",
@@ -99,6 +138,7 @@ export const C3_SRT_03_DATASET: SkillDataset = {
 };
 
 export const C3_SRT_03_SEED: SkillSeed = {
+  identity: C3_SRT_03_IDENTITY,
   dataset: C3_SRT_03_DATASET,
   levels: [
     {

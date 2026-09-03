@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_LIV_03_IDENTITY: SkillIdentity = {
+  code: "C4.LIV.03",
+  strand_code: "C4.LIV",
+  competency_code: "C4",
+  name: "Sống – không sống",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["sort", "infer"],
+  tier: "core",
+  prerequisites: ["C3.CLS.04"],
+  learning_objectives: [
+    {
+      code: "LO-C4.LIV.03-01",
+      behaviour: "Nhận biết và thực hành Sống – không sống ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.LIV.03-02",
+      behaviour: "Vận dụng Sống – không sống trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.LIV.03-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Sống – không sống",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_LIV_03_DATASET: SkillDataset = {
   skill_code: "C4.LIV.03",
@@ -98,6 +134,7 @@ export const C4_LIV_03_DATASET: SkillDataset = {
 };
 
 export const C4_LIV_03_SEED: SkillSeed = {
+  identity: C4_LIV_03_IDENTITY,
   dataset: C4_LIV_03_DATASET,
   levels: [
     {

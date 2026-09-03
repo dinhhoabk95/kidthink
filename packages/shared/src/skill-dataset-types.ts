@@ -5,7 +5,33 @@
  * Invariant: Strict TypeScript — NO `any`, NO `unknown`.
  */
 
+import type {
+  SkillProgressionTier,
+  ThinkingProcess,
+} from "./taxonomy-types.js";
+
 export type SkillDatasetSurface = "game" | "worksheet";
+
+export interface SkillLearningObjective {
+  readonly code: string;
+  readonly behaviour: string;
+  readonly observable_criteria: string;
+  readonly position: number;
+}
+
+export interface SkillIdentity {
+  readonly code: string;
+  readonly strand_code: string;
+  readonly competency_code: string;
+  readonly name: string;
+  readonly age_min: number;
+  readonly age_max: number;
+  readonly difficulty: number;
+  readonly thinking_processes: readonly ThinkingProcess[];
+  readonly tier: SkillProgressionTier;
+  readonly prerequisites: readonly string[];
+  readonly learning_objectives?: readonly SkillLearningObjective[];
+}
 
 export type DatasetAsset =
   | { readonly kind: "emoji"; readonly ref: string }
@@ -123,6 +149,7 @@ export interface SkillLevelPlan {
 }
 
 export interface SkillSeed {
+  readonly identity?: SkillIdentity;
   readonly dataset: SkillDataset;
   readonly levels: readonly SkillLevelPlan[];
 }

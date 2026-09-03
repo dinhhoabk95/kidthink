@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_MEAS_04_IDENTITY: SkillIdentity = {
+  code: "C1.MEAS.04",
+  strand_code: "C1.MEAS",
+  competency_code: "C1",
+  name: "Nhiều ít",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 1,
+  thinking_processes: ["compare"],
+  tier: "basic",
+  prerequisites: ["C1.CMP.04", "C1.CMP.05"],
+  learning_objectives: [
+    {
+      code: "LO-C1.MEAS.04-01",
+      behaviour: "Nhận biết và thực hành Nhiều ít ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.MEAS.04-02",
+      behaviour: "Vận dụng Nhiều ít trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.MEAS.04-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Nhiều ít",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_MEAS_04_DATASET: SkillDataset = {
   skill_code: "C1.MEAS.04",
@@ -98,6 +134,7 @@ export const C1_MEAS_04_DATASET: SkillDataset = {
 };
 
 export const C1_MEAS_04_SEED: SkillSeed = {
+  identity: C1_MEAS_04_IDENTITY,
   dataset: C1_MEAS_04_DATASET,
   levels: [
     {

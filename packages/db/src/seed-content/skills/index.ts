@@ -3,7 +3,7 @@
  * Tự động đồng bộ với docs/taxonomy/ (BR-SDS-07).
  */
 
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
 import { C1_ADD_01_DATASET, C1_ADD_01_SEED } from "./c1/add/C1.ADD.01.js";
 import { C1_ADD_02_DATASET, C1_ADD_02_SEED } from "./c1/add/C1.ADD.02.js";
 import { C1_ADD_03_DATASET, C1_ADD_03_SEED } from "./c1/add/C1.ADD.03.js";
@@ -1277,4 +1277,16 @@ export function getSkillDataset(code: string): SkillDataset | undefined {
 
 export function getSkillSeed(code: string): SkillSeed | undefined {
   return SKILL_SEEDS[code];
+}
+
+export const SKILL_IDENTITIES: Record<string, SkillIdentity> =
+  Object.fromEntries(
+    Object.entries(SKILL_SEEDS).map(([code, seed]) => [
+      code,
+      seed.identity as SkillIdentity,
+    ])
+  );
+
+export function getSkillIdentity(code: string): SkillIdentity | undefined {
+  return SKILL_IDENTITIES[code];
 }

@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_DET_01_IDENTITY: SkillIdentity = {
+  code: "C4.DET.01",
+  strand_code: "C4.DET",
+  competency_code: "C4",
+  name: "Quan sát màu",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 1,
+  thinking_processes: ["observe"],
+  tier: "basic",
+  prerequisites: [],
+  learning_objectives: [
+    {
+      code: "LO-C4.DET.01-01",
+      behaviour: "Nhận biết và thực hành Quan sát màu ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.DET.01-02",
+      behaviour: "Vận dụng Quan sát màu trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.DET.01-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Quan sát màu",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_DET_01_DATASET: SkillDataset = {
   skill_code: "C4.DET.01",
@@ -98,6 +134,7 @@ export const C4_DET_01_DATASET: SkillDataset = {
 };
 
 export const C4_DET_01_SEED: SkillSeed = {
+  identity: C4_DET_01_IDENTITY,
   dataset: C4_DET_01_DATASET,
   levels: [
     {

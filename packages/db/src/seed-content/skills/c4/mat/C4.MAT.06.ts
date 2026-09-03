@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C4_MAT_06_IDENTITY: SkillIdentity = {
+  code: "C4.MAT.06",
+  strand_code: "C4.MAT",
+  competency_code: "C4",
+  name: "Ánh sáng và bóng",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 3,
+  thinking_processes: ["observe", "predict"],
+  tier: "core",
+  prerequisites: ["C4.OBS.01", "C2.PER.01"],
+  learning_objectives: [
+    {
+      code: "LO-C4.MAT.06-01",
+      behaviour: "Nhận biết và thực hành Ánh sáng và bóng ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C4.MAT.06-02",
+      behaviour: "Vận dụng Ánh sáng và bóng trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C4.MAT.06-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Ánh sáng và bóng",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C4_MAT_06_DATASET: SkillDataset = {
   skill_code: "C4.MAT.06",
@@ -98,6 +134,7 @@ export const C4_MAT_06_DATASET: SkillDataset = {
 };
 
 export const C4_MAT_06_SEED: SkillSeed = {
+  identity: C4_MAT_06_IDENTITY,
   dataset: C4_MAT_06_DATASET,
   levels: [
     {

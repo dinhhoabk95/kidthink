@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_CNT_08_IDENTITY: SkillIdentity = {
+  code: "C1.CNT.08",
+  strand_code: "C1.CNT",
+  competency_code: "C1",
+  name: "Đếm trên đường số",
+  age_min: 5,
+  age_max: 5,
+  difficulty: 3,
+  thinking_processes: ["count", "sequence"],
+  tier: "core",
+  prerequisites: ["C1.NREC.09"],
+  learning_objectives: [
+    {
+      code: "LO-C1.CNT.08-01",
+      behaviour: "Nhận biết và thực hành Đếm trên đường số ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.CNT.08-02",
+      behaviour: "Vận dụng Đếm trên đường số trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.CNT.08-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Đếm trên đường số",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_CNT_08_DATASET: SkillDataset = {
   skill_code: "C1.CNT.08",
@@ -153,6 +189,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
 };
 
 export const C1_CNT_08_SEED: SkillSeed = {
+  identity: C1_CNT_08_IDENTITY,
   dataset: C1_CNT_08_DATASET,
   levels: [
     {

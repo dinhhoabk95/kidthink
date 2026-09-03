@@ -1,4 +1,43 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_CNT_11_IDENTITY: SkillIdentity = {
+  code: "C1.CNT.11",
+  strand_code: "C1.CNT",
+  competency_code: "C1",
+  name: "Subitizing — nhận lượng tức thì (1–5)",
+  age_min: 4,
+  age_max: 4,
+  difficulty: 3,
+  thinking_processes: ["observe", "count"],
+  tier: "core",
+  prerequisites: ["C1.CNT.01"],
+  learning_objectives: [
+    {
+      code: "LO-C1.CNT.11-01",
+      behaviour:
+        "Nhận biết và thực hành Subitizing — nhận lượng tức thì (1–5) ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.CNT.11-02",
+      behaviour:
+        "Vận dụng Subitizing — nhận lượng tức thì (1–5) trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.CNT.11-03",
+      behaviour:
+        "Giải quyết vấn đề nâng cao liên quan tới Subitizing — nhận lượng tức thì (1–5)",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_CNT_11_DATASET: SkillDataset = {
   skill_code: "C1.CNT.11",
@@ -105,6 +144,7 @@ export const C1_CNT_11_DATASET: SkillDataset = {
 };
 
 export const C1_CNT_11_SEED: SkillSeed = {
+  identity: C1_CNT_11_IDENTITY,
   dataset: C1_CNT_11_DATASET,
   levels: [
     {

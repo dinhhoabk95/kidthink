@@ -1,4 +1,40 @@
-import type { SkillDataset, SkillSeed } from "@mindkid/shared";
+import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+
+export const C1_CNT_03_IDENTITY: SkillIdentity = {
+  code: "C1.CNT.03",
+  strand_code: "C1.CNT",
+  competency_code: "C1",
+  name: "Đếm không bỏ sót",
+  age_min: 3,
+  age_max: 3,
+  difficulty: 2,
+  thinking_processes: ["count", "verify"],
+  tier: "basic",
+  prerequisites: ["C1.CNT.01"],
+  learning_objectives: [
+    {
+      code: "LO-C1.CNT.03-01",
+      behaviour: "Nhận biết và thực hành Đếm không bỏ sót ở mức cơ bản",
+      observable_criteria:
+        "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
+      position: 1,
+    },
+    {
+      code: "LO-C1.CNT.03-02",
+      behaviour: "Vận dụng Đếm không bỏ sót trong môi trường tương tác",
+      observable_criteria:
+        "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
+      position: 2,
+    },
+    {
+      code: "LO-C1.CNT.03-03",
+      behaviour: "Giải quyết vấn đề nâng cao liên quan tới Đếm không bỏ sót",
+      observable_criteria:
+        "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
+      position: 3,
+    },
+  ],
+};
 
 export const C1_CNT_03_DATASET: SkillDataset = {
   skill_code: "C1.CNT.03",
@@ -153,6 +189,7 @@ export const C1_CNT_03_DATASET: SkillDataset = {
 };
 
 export const C1_CNT_03_SEED: SkillSeed = {
+  identity: C1_CNT_03_IDENTITY,
   dataset: C1_CNT_03_DATASET,
   levels: [
     {
