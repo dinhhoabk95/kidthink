@@ -5,7 +5,6 @@ import {
   entitlementKeys,
   entitlements,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
   lessons,
   users,
@@ -159,19 +158,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
       .returning();
     childBUuid = cB.uuid;
 
-    // 3. Seed template & game level
-    const [gt] = await db
-      .insert(gameTemplates)
-      .values({
-        code: "GT-998",
-        name: "Game template test API",
-        mechanic: "drag_drop",
-        contentContract: {},
-      })
-      .onConflictDoNothing()
-      .returning();
-    const templateId = gt?.id ?? 1;
-
+    // 3. Seed game level
     let glCode = `GL-C1-NUM-CNT-${String(Math.floor(1000 + Math.random() * 8999))}`;
     for (let attempt = 0; attempt < 50; attempt++) {
       const candidate = `GL-C1-NUM-CNT-${String(Math.floor(1000 + Math.random() * 8999))}`;
@@ -191,7 +178,7 @@ describe("Personal Curriculum API Endpoints (Task #65 / P4.4)", () => {
       .values({
         code: glCode,
         entityId: Math.floor(100_000 + Math.random() * 800_000),
-        templateId,
+        templateCode: "GT-001",
         difficulty: 1,
         title: "Đếm số mẫu",
         accessTier: "standard",

@@ -7,7 +7,6 @@ import {
   entitlementKeys,
   entitlements,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
   users,
 } from "@mindkid/db";
@@ -99,27 +98,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
       })
       .returning();
 
-    // 2. Templates & Levels
-    const [template] = await db
-      .insert(gameTemplates)
-      .values({
-        code: "GT-001",
-        name: "Template Cur",
-        mechanic: "tap_target",
-      })
-      .onConflictDoNothing()
-      .returning();
-
-    const templateId = template
-      ? template.id
-      : (
-          await db
-            .select()
-            .from(gameTemplates)
-            .where(eq(gameTemplates.code, "GT-001"))
-        )[0].id;
-
-    // Create 6 published levels
+    // 2. Levels
     const createdLevels: (typeof gameLevels.$inferSelect)[] = [];
     for (let i = 1; i <= 6; i++) {
       const num4 = (Math.floor(Math.random() * 8999) + 1000).toString();
@@ -132,7 +111,7 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
           entityId: uid + 100 + i,
           code: glCode,
           contentVersion: 1,
-          templateId,
+          templateCode: "GT-001",
           title: `Trò chơi ${i}`,
           instruction: "Hướng dẫn",
           contentPack: { level: i },
