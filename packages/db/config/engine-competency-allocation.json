@@ -1182,5 +1182,7 @@
       ],
       "prohibited_competencies": []
     }
-  ]
+  ],
+  "k": 3,
+  "exceptions": []
 }

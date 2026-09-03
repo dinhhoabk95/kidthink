@@ -198,6 +198,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [montessori-lesson-batch](05-content/montessori-lesson-batch.md) | P3 | 21 lesson, thay giáo cụ bằng vật liệu trong nhà |
 | [concept-intro-model](05-content/concept-intro-model.md) | P4 | Bài làm quen ba nhịp, 2–5 vật, trần 90 giây |
 | **[skill-dataset-model](05-content/skill-dataset-model.md)** | P1 | Vật của level đến từ dataset kỹ năng; bộ chiếu thay bộ sinh theo khuôn; hai cổng trung thực |
+| [engine-competency-allocation](05-content/engine-competency-allocation.md) | P4 | Bản đồ tương hợp engine -> competency, sàn K lĩnh vực mỗi ô, trần ngoại lệ |
 
 ## 06-admin — Manager
 

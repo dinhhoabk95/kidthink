@@ -35,7 +35,7 @@ trục `thinking`. Ba level là con số mà bước 4 của mục 4 trong
 contract dùng được*. Nó là bằng chứng kỹ thuật, và nó đang bị dùng như nội dung sản phẩm.
 
 File này sở hữu sàn theo trục **engine**, và ma trận đa dạng **bên trong** một engine. Nó
-cộng thêm vào ma trận phủ competency, cấm — NEVER thay thế.
+cộng thêm vào ma trận phủ competency, cấm — NEVER thay thế. Ràng buộc phân bổ các lĩnh vực tư duy C1–C6 theo từng ô (engine × band) được quy định tại [`engine-competency-allocation.md`](engine-competency-allocation.md).
 
 ## 2. Actors
 

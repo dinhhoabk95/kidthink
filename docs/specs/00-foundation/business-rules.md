@@ -170,6 +170,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-RSD` | [`round-set-corpus-depth.md`](../05-content/round-set-corpus-depth.md) | | `BR-CIM` | [`concept-intro-model.md`](../05-content/concept-intro-model.md) |
 | `BR-SDS` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) | | `BR-SKQ` | [`engine-content-depth.md`](../05-content/engine-content-depth.md) mục 6.1 |
 | `BR-STA` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) §7.5 | | `BR-ALC` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) §7.4 |
+| `BR-ECA` | [`engine-competency-allocation.md`](../05-content/engine-competency-allocation.md) | | | |
 
 **Admin**
 
