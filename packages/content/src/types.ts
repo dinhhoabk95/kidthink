@@ -100,3 +100,8 @@ export interface LessonSeed {
   kind: "lesson";
   header: LessonSeedHeader;
 }
+
+export type AnyContentSeed =
+  | ContentSeed<unknown, unknown>
+  | ActivitySeed
+  | LessonSeed;

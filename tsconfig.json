@@ -29,6 +29,8 @@
       ],
       "@mindkid/content": ["./packages/content/src/index.ts"],
       "@mindkid/content/*": ["./packages/content/src/*"],
+      "@mindkid/content-build": ["./packages/content-build/src/index.ts"],
+      "@mindkid/content-build/*": ["./packages/content-build/src/*"],
       "@mindkid/db": ["./packages/db/src/index.ts"],
       "@mindkid/emoji": ["./packages/emoji/src/index.ts"],
       "@mindkid/game-engine": ["./packages/game-engine/src/index.ts"],

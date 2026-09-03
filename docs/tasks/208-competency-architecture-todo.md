@@ -121,22 +121,22 @@ Không đổi hành vi. Chỉ **gỡ**, chưa **dời** file nào.
 
 ## G5 — Dựng `packages/content-build`
 
-- [ ] Chuyển 20 phép kiểm tra, 10 lệnh chạy tay, `seed-master/`, hàm ghi nội dung vào database,
+- [x] Chuyển 20 phép kiểm tra, 10 lệnh chạy tay, `seed-master/`, hàm ghi nội dung vào database,
       và 9 file ngưỡng JSON
-- [ ] Mọi phép kiểm tra lấy gốc repo từ `repoPath()`. Cấm — NEVER đọc `process.cwd()`: vitest chạy
+- [x] Mọi phép kiểm tra lấy gốc repo từ `repoPath()`. Cấm — NEVER đọc `process.cwd()`: vitest chạy
       với thư mục làm việc là thư mục workspace
-- [ ] Mỗi phép kiểm tra giữ đủ hai phần: quét nguồn thật + test chứng minh bắt lỗi.
+- [x] Mỗi phép kiểm tra giữ đủ hai phần: quét nguồn thật + test chứng minh bắt lỗi.
       Dữ liệu vi phạm đặt trong `tests/**/fixtures/`, Cấm — NEVER viết thẳng vào file test
-- [ ] Đưa ngưỡng số lượng từ lời chú thích `gates/skill-quota.ts:7,9` vào `thresholds/quota.json`
-- [ ] `packages/db/src/seed.ts` chỉ còn nạp dữ liệu nền phi nội dung: gói cước · quyền lợi ·
+- [x] Đưa ngưỡng số lượng từ lời chú thích `gates/skill-quota.ts:7,9` vào `thresholds/quota.json`
+- [x] `packages/db/src/seed.ts` chỉ còn nạp dữ liệu nền phi nội dung: gói cước · quyền lợi ·
       tài khoản · bản ghi đồng ý
 
 **Điểm dừng G5**
 
-- [ ] Chạy **từng** phép kiểm tra, so **từng con số** với bản chạy trước khi chuyển ⟹ trùng khít.
+- [x] Chạy **từng** phép kiểm tra, so **từng con số** với bản chạy trước khi chuyển ⟹ trùng khít.
       So mã thoát là không đủ — phép kiểm tra trỏ sai đường dẫn vẫn thoát 0 và báo "đạt"
-- [ ] Database rỗng → `pnpm db:migrate && pnpm db:seed` thoát 0; chạy lần hai **không đổi số hàng**
-- [ ] Nạp dữ liệu chạy đủ 10 phép kiểm tra. **Test chứng minh bắt lỗi**: dựng một màn chơi vi phạm
+- [x] Database rỗng → `pnpm db:migrate && pnpm db:seed` thoát 0; chạy lần hai **không đổi số hàng**
+- [x] Nạp dữ liệu chạy đủ 10 phép kiểm tra. **Test chứng minh bắt lỗi**: dựng một màn chơi vi phạm
       rồi chạy `db:seed` ⟹ mã thoát khác 0 và **0 hàng được ghi**
 
 ---

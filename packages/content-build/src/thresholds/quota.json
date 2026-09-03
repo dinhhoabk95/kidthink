@@ -1,0 +1,12 @@
+{
+  "c1": {
+    "requiredLevels": 20,
+    "requiredTemplates": 4
+  },
+  "default": {
+    "requiredLevels": 10,
+    "requiredTemplates": 2
+  },
+  "maxLevelsPerPair": 5,
+  "minDistinctPairsCatalog": 658
+}

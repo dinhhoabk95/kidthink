@@ -425,6 +425,46 @@ importers:
         specifier: workspace:*
         version: link:../config
 
+  packages/content-build:
+    dependencies:
+      '@mindkid/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@mindkid/config':
+        specifier: workspace:*
+        version: link:../config
+      '@mindkid/content':
+        specifier: workspace:*
+        version: link:../content
+      '@mindkid/db':
+        specifier: workspace:*
+        version: link:../db
+      '@mindkid/game-engine':
+        specifier: workspace:*
+        version: link:../game-engine
+      '@mindkid/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@mindkid/taxonomy':
+        specifier: workspace:*
+        version: link:../taxonomy
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.2(@opentelemetry/api@1.9.1)(postgres@3.4.9)
+      postgres:
+        specifier: 'catalog:'
+        version: 3.4.9
+      zod:
+        specifier: 'catalog:'
+        version: 3.25.76
+    devDependencies:
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.2)(tsx@4.23.11)(yaml@2.9.0))
+
   packages/db:
     dependencies:
       '@mindkid/adaptive':

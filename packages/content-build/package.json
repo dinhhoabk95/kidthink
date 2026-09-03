@@ -1,0 +1,53 @@
+{
+  "name": "@mindkid/content-build",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./gates/*": "./src/gates/*.ts",
+    "./cli/*": "./src/cli/*.ts",
+    "./thresholds/*": "./src/thresholds/*"
+  },
+  "dependencies": {
+    "@mindkid/auth": "workspace:*",
+    "@mindkid/config": "workspace:*",
+    "@mindkid/content": "workspace:*",
+    "@mindkid/db": "workspace:*",
+    "@mindkid/game-engine": "workspace:*",
+    "@mindkid/shared": "workspace:*",
+    "@mindkid/taxonomy": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "postgres": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "vitest": "catalog:",
+    "typescript": "catalog:"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "check:skill-quota": "tsx src/gates/skill-quota.ts",
+    "check:engine-depth": "tsx src/cli/check-engine-depth.ts",
+    "check:lesson-supply": "tsx src/cli/check-lesson-supply.ts",
+    "check:go-live": "tsx src/cli/check-go-live.ts",
+    "check:round-sets": "tsx src/gates/round-sets.ts",
+    "check:legacy-v1": "tsx src/gates/legacy-v1-coverage.ts",
+    "check:engine-allocation": "tsx src/gates/allocation.ts",
+    "check:age-band-fit": "tsx src/gates/age-band-fit.ts",
+    "check:skill-progression": "tsx src/gates/skill-progression.ts",
+    "seed:all": "tsx src/cli/seed-all.ts",
+    "seed:check": "tsx src/cli/seed-check.ts",
+    "seed:content": "tsx src/cli/seed-content.ts",
+    "seed:report": "tsx src/cli/seed-report.ts",
+    "gen:levels": "tsx src/cli/gen-levels.ts",
+    "gen:corpus": "tsx src/cli/gen-corpus.ts",
+    "reset-content": "tsx scripts/reset-content.ts",
+    "report:tags": "tsx scripts/report-tag-vocabulary.ts"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts",
+    "#scripts/*": "./scripts/*.ts"
+  }
+}

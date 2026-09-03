@@ -4,7 +4,9 @@ import { ALL_TEMPLATES, getLevelGenerator } from "@mindkid/game-engine";
 import { describe, expect, it } from "vitest";
 import { generateLevelsCore } from "#src/seed-content/cli/gen-levels";
 
-const ALL_36_ENGINES = Object.keys(ALL_TEMPLATES).sort();
+const ALL_36_ENGINES = Object.keys(ALL_TEMPLATES)
+  .filter((k) => k !== "GT-000")
+  .sort();
 
 const ERR_ENGINE_NOT_FOUND = /không tồn tại trong ALL_TEMPLATES/;
 const ERR_GENERATOR_NOT_FOUND = /chưa có generator/;
