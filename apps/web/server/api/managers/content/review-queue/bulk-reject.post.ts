@@ -1,10 +1,5 @@
-import {
-  contentReviewLog,
-  gameLevels,
-  getOwnerDb,
-  lessons,
-  writeAudit,
-} from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { contentReviewLog, gameLevels, getOwnerDb, lessons } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, readBody } from "h3";
 import { z } from "zod";

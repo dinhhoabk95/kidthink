@@ -1,6 +1,7 @@
-import { getOwnerDb, saveLibraryItem } from "@mindkid/db";
+import { getOwnerDb } from "@mindkid/db";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
+import { saveLibraryItem } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const SaveLibraryItemSchema = z.object({

@@ -145,24 +145,24 @@ Không đổi hành vi. Chỉ **gỡ**, chưa **dời** file nào.
 
 Thứ tự bắt buộc: `audit` trước (9 service khác phụ thuộc nó), rồi `play` và `export`.
 
-- [ ] `@mindkid/audit` — `services/audit.ts`. Dùng bởi web + worker + 9 service khác
-- [ ] `@mindkid/play` — `services/play-session.ts` (1.456 dòng). Dùng bởi web + worker
-- [ ] `@mindkid/export` — `pdf-export` + `pdf-renderer` + `worksheet-renderer`. Dùng bởi web + worker
-- [ ] `notification-dispatch` → `packages/notification` **đã có sẵn**
-- [ ] 20 file chỉ web dùng → `apps/web/server/services/`
-- [ ] `payment-jobs` · `rollup` (chỉ worker dùng) → `apps/worker/src/services/`
-- [ ] Thay danh sách 79 bảng viết cứng ở `tests/global-setup.ts:35-116` bằng đọc từ `schema/`
+- [x] `@mindkid/audit` — `services/audit.ts`. Dùng bởi web + worker + 9 service khác
+- [x] `@mindkid/play` — `services/play-session.ts` (1.456 dòng). Dùng bởi web + worker
+- [x] `@mindkid/export` — `pdf-export` + `pdf-renderer` + `worksheet-renderer`. Dùng bởi web + worker
+- [x] `notification-dispatch` → `packages/notification` **đã có sẵn**
+- [x] 20 file chỉ web dùng → `apps/web/server/services/`
+- [x] `payment-jobs` · `rollup` (chỉ worker dùng) → `apps/worker/src/services/`
+- [x] Thay danh sách 79 bảng viết cứng ở `tests/global-setup.ts:35-116` bằng đọc từ `schema/`
       lúc chạy — việc này đóng luôn lỗi thiếu `skill_datasets` và `content_objective_map`
-- [ ] Thay 22 đường dẫn schema viết tay ở `src/index.ts:9-24` bằng danh mục sinh có kiểm tra
+- [x] Thay 22 đường dẫn schema viết tay ở `src/index.ts:9-24` bằng danh mục sinh có kiểm tra
 
 **Điểm dừng G6**
 
-- [ ] Script so danh sách tên xuất ra trước/sau: **không tên nào trong 138 tên biến mất**, chỉ đổi
+- [x] Script so danh sách tên xuất ra trước/sau: **không tên nào trong 138 tên biến mất**, chỉ đổi
       đường nhập
-- [ ] Danh sách bảng cần xoá suy ra lúc chạy có đủ **82** bảng. **Test chứng minh bắt lỗi**: thêm
+- [x] Danh sách bảng cần xoá suy ra lúc chạy có đủ **82** bảng. **Test chứng minh bắt lỗi**: thêm
       một bảng giả vào `schema/` ⟹ nó xuất hiện trong danh sách
-- [ ] `pnpm lint:deps` xác nhận không có vòng phụ thuộc
-- [ ] `packages/db/src` còn khoảng 5.000 dòng (từ 133.277)
+- [x] `pnpm lint:deps` xác nhận không có vòng phụ thuộc
+- [x] `packages/db/src` còn khoảng 5.000 dòng (từ 133.277)
 
 ---
 

@@ -1,4 +1,5 @@
-import { errorLogs, getOwnerDb, writeAudit } from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { errorLogs, getOwnerDb } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";

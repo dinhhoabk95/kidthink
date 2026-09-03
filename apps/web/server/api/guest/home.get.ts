@@ -1,8 +1,4 @@
-import {
-  countPublishedLevels,
-  getOwnerDb,
-  roundedLibrarySize,
-} from "@mindkid/db";
+import { getOwnerDb } from "@mindkid/db";
 import {
   COMPETENCY_CATALOG,
   FAQ_ITEMS,
@@ -10,6 +6,10 @@ import {
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
 import { defineEventHandler, setHeader } from "h3";
+import {
+  countPublishedLevels,
+  roundedLibrarySize,
+} from "#server/services/index.js";
 
 /** Thứ tự ba lớp mầm non — trùng với band tuổi của `game_levels`. */
 const PROGRAM_BANDS = [

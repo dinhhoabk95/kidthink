@@ -1,8 +1,4 @@
-import {
-  childProfiles,
-  getOwnerDb,
-  getRecommendationsForChild,
-} from "@mindkid/db";
+import { childProfiles, getOwnerDb } from "@mindkid/db";
 import { allowedTiers } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import {
@@ -13,6 +9,7 @@ import {
   getQuery,
   setResponseStatus,
 } from "h3";
+import { getRecommendationsForChild } from "#server/services/index.js";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";

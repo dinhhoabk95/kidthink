@@ -1,10 +1,10 @@
-import { deletePersonalCurriculum } from "@mindkid/db";
 import {
   defineEventHandler,
   getRequestHeader,
   getRequestIP,
   getRouterParam,
 } from "h3";
+import { deletePersonalCurriculum } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {

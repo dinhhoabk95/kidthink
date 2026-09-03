@@ -1,6 +1,6 @@
-import { createLessonPlan } from "@mindkid/db";
 import { CreateLessonPlanSchema } from "@mindkid/shared";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
+import { createLessonPlan } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";

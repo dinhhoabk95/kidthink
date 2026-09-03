@@ -3,11 +3,11 @@ import {
   gameLevelRounds,
   gameLevels,
   getOwnerDb,
-  transitionContent,
 } from "@mindkid/db";
 import { validatePublishChecklist } from "@mindkid/shared";
 import { and, asc, eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
+import { transitionContent } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {

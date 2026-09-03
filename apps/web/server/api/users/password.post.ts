@@ -3,12 +3,8 @@ import {
   hashPassword,
   validatePasswordStrength,
 } from "@mindkid/auth";
-import {
-  activeSessions,
-  dispatchTransactionalEmail,
-  getOwnerDb,
-  users,
-} from "@mindkid/db";
+import { activeSessions, getOwnerDb, users } from "@mindkid/db";
+import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { and, eq, ne } from "drizzle-orm";
 import {
   createError,

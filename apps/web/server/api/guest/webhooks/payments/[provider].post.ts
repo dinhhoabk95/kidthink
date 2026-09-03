@@ -1,6 +1,5 @@
 import { appError } from "@mindkid/auth";
 import { requireFirstEnv } from "@mindkid/config";
-import { processAutomatedPaymentWebhook } from "@mindkid/db";
 import {
   AUTOMATED_PAYMENT_PROVIDERS,
   type AutomatedPaymentProvider,
@@ -8,6 +7,7 @@ import {
   verifyPaymentWebhookSignature,
 } from "@mindkid/shared";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
+import { processAutomatedPaymentWebhook } from "#server/services/index.js";
 
 export default defineEventHandler(async (event) => {
   const providerParam = getRouterParam(event, "provider");

@@ -89,7 +89,9 @@
       "includes": [
         "packages/*/src/index.ts",
         "packages/*/src/client.ts",
-        "packages/content/src/**/index.ts"
+        "packages/content/src/**/index.ts",
+        "packages/db/src/schema/index.ts",
+        "apps/web/server/services/index.ts"
       ],
       "linter": {
         "rules": {

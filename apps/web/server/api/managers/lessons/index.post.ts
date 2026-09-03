@@ -1,9 +1,9 @@
+import { writeAudit } from "@mindkid/audit";
 import {
   contentSkillMap,
   getOwnerDb,
   lessonActivities,
   lessons,
-  writeAudit,
 } from "@mindkid/db";
 import {
   createError,

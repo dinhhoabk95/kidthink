@@ -1,5 +1,5 @@
-import { resolveChildPersonalCurriculumNextStep } from "@mindkid/db";
 import { defineEventHandler, getRouterParam } from "h3";
+import { resolveChildPersonalCurriculumNextStep } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 

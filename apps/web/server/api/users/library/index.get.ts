@@ -1,7 +1,8 @@
-import { getOwnerDb, getUserLibrary } from "@mindkid/db";
+import { getOwnerDb } from "@mindkid/db";
 import { allowedTiers } from "@mindkid/shared";
 import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
+import { getUserLibrary } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 

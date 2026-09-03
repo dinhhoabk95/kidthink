@@ -1,5 +1,6 @@
-import { getGuestRecommendations, getOwnerDb } from "@mindkid/db";
+import { getOwnerDb } from "@mindkid/db";
 import { defineEventHandler, getQuery } from "h3";
+import { getGuestRecommendations } from "#server/services/index.js";
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);

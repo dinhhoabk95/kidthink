@@ -1,6 +1,6 @@
-import { performSemanticSearch } from "@mindkid/db";
 import { AiSearchQuerySchema } from "@mindkid/shared";
 import { defineEventHandler, getQuery, setHeader } from "h3";
+import { performSemanticSearch } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 

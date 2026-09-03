@@ -1,5 +1,6 @@
-import { getOwnerDb, searchGameLevels } from "@mindkid/db";
+import { getOwnerDb } from "@mindkid/db";
 import { defineEventHandler, getQuery, setHeader } from "h3";
+import { searchGameLevels } from "#server/services/index.js";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";

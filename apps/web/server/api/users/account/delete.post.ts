@@ -1,9 +1,5 @@
-import {
-  dispatchTransactionalEmail,
-  getOwnerDb,
-  requestUserDeletion,
-  users,
-} from "@mindkid/db";
+import { getOwnerDb, requestUserDeletion, users } from "@mindkid/db";
+import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { eq } from "drizzle-orm";
 import {
   createError,

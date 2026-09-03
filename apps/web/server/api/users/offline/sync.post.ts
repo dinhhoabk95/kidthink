@@ -1,6 +1,6 @@
-import { syncOfflinePlayEvents } from "@mindkid/db";
 import { OfflineSyncRequestSchema } from "@mindkid/shared";
 import { defineEventHandler, readBody } from "h3";
+import { syncOfflinePlayEvents } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 

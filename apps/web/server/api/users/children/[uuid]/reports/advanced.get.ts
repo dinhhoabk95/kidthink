@@ -1,4 +1,4 @@
-import { buildAdvancedReport, childProfiles, getOwnerDb } from "@mindkid/db";
+import { childProfiles, getOwnerDb } from "@mindkid/db";
 import { and, eq, inArray } from "drizzle-orm";
 import {
   createError,
@@ -7,6 +7,7 @@ import {
   getRouterParam,
   setResponseStatus,
 } from "h3";
+import { buildAdvancedReport } from "#server/services/index.js";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";

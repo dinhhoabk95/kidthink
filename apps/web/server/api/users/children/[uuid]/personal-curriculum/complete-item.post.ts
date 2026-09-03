@@ -1,4 +1,3 @@
-import { completeChildPersonalCurriculumItem } from "@mindkid/db";
 import {
   defineEventHandler,
   getRequestHeader,
@@ -7,6 +6,7 @@ import {
   readBody,
 } from "h3";
 import { z } from "zod";
+import { completeChildPersonalCurriculumItem } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 

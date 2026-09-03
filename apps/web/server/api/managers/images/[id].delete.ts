@@ -1,3 +1,4 @@
+import { writeAudit } from "@mindkid/audit";
 import {
   contentAssetRefs,
   contentImages,
@@ -7,7 +8,6 @@ import {
   type OwnerDb,
   seoPages,
   worksheets,
-  writeAudit,
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";

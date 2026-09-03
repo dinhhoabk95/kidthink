@@ -1,4 +1,3 @@
-import { createPersonalCurriculum } from "@mindkid/db";
 import { createPersonalCurriculumSchema } from "@mindkid/shared";
 import {
   defineEventHandler,
@@ -7,6 +6,7 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
+import { createPersonalCurriculum } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";

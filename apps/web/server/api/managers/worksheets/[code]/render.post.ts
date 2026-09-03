@@ -1,5 +1,8 @@
-import { getWorksheetByCode, renderWorksheetArtifact } from "@mindkid/db";
 import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
+import {
+  getWorksheetByCode,
+  renderWorksheetArtifact,
+} from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {

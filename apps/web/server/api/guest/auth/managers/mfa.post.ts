@@ -1,3 +1,4 @@
+import { writeAudit } from "@mindkid/audit";
 import {
   appError,
   decryptTotpSecret,
@@ -15,7 +16,6 @@ import {
   mfaRecoveryCodes,
   mfaSettings,
   PostgresSessionStore,
-  writeAudit,
 } from "@mindkid/db";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq, isNull } from "drizzle-orm";

@@ -5,10 +5,9 @@ import {
   getOwnerDb,
   lessonPlanItems,
   lessonPlans,
-  MONTHLY_PDF_EXPORT_QUOTA,
-  processPdfRenderJob,
   users,
 } from "@mindkid/db";
+import { MONTHLY_PDF_EXPORT_QUOTA, processPdfRenderJob } from "@mindkid/export";
 import { ENTITLEMENT_KEYS } from "@mindkid/shared";
 import { beforeEach, describe, expect, it } from "vitest";
 import getExportStatusHandler from "#server/api/users/exports/[uuid].get";

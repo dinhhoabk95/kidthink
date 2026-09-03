@@ -1,3 +1,4 @@
+import { writeAudit } from "@mindkid/audit";
 import {
   appError,
   getAuthRedisClient,
@@ -10,7 +11,6 @@ import {
   getOwnerDb,
   managers,
   PostgresSessionStore,
-  writeAudit,
 } from "@mindkid/db";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { eq } from "drizzle-orm";

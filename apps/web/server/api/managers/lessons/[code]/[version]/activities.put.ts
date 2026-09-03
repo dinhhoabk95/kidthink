@@ -1,10 +1,5 @@
-import {
-  activities,
-  getOwnerDb,
-  lessonActivities,
-  lessons,
-  writeAudit,
-} from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { activities, getOwnerDb, lessonActivities, lessons } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";

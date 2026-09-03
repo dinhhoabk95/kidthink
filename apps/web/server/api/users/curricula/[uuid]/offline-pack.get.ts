@@ -1,6 +1,6 @@
 import { appError } from "@mindkid/auth";
-import { generateOfflineCurriculumPackManifest } from "@mindkid/db";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
+import { generateOfflineCurriculumPackManifest } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 

@@ -1,7 +1,7 @@
 import { appError } from "@mindkid/auth";
-import { updateLessonPlanMeta } from "@mindkid/db";
 import { UpdateLessonPlanMetaSchema } from "@mindkid/shared";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
+import { updateLessonPlanMeta } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 

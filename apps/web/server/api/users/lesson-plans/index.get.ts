@@ -1,5 +1,5 @@
-import { listLessonPlans } from "@mindkid/db";
 import { defineEventHandler } from "h3";
+import { listLessonPlans } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {

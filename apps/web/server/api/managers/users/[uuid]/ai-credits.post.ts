@@ -1,5 +1,4 @@
 import { appError } from "@mindkid/auth";
-import { manualGrantCredits } from "@mindkid/db";
 import { manualGrantCreditsSchema } from "@mindkid/shared";
 import {
   defineEventHandler,
@@ -8,6 +7,7 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
+import { manualGrantCredits } from "#server/services/index.js";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,

@@ -1,10 +1,6 @@
 import { appError, generateSecureToken, hashSecureToken } from "@mindkid/auth";
-import {
-  dispatchTransactionalEmail,
-  getOwnerDb,
-  users,
-  verificationTokens,
-} from "@mindkid/db";
+import { getOwnerDb, users, verificationTokens } from "@mindkid/db";
+import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { and, eq, isNull } from "drizzle-orm";
 import {
   createError,

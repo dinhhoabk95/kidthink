@@ -1,5 +1,6 @@
-import { getOwnerDb, searchActivities } from "@mindkid/db";
+import { getOwnerDb } from "@mindkid/db";
 import { defineEventHandler, getQuery } from "h3";
+import { searchActivities } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {

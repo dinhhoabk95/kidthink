@@ -1,5 +1,5 @@
-import { listCustomGames } from "@mindkid/db";
 import { defineEventHandler, getQuery } from "h3";
+import { listCustomGames } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {

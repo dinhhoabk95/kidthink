@@ -1,4 +1,4 @@
-import { processPdfRenderJob } from "@mindkid/db";
+import { processPdfRenderJob } from "@mindkid/export";
 import { logJobDone } from "#src/log";
 import type { Consumer } from "./types.js";
 

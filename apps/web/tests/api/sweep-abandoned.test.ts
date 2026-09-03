@@ -3,8 +3,8 @@ import {
   gameTemplates,
   getOwnerDb,
   playSessions,
-  sweepAbandonedSessions,
 } from "@mindkid/db";
+import { sweepAbandonedSessions } from "@mindkid/play";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 

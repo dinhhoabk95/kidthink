@@ -1,3 +1,4 @@
+import { writeAudit } from "@mindkid/audit";
 import {
   auditLogs,
   curricula,
@@ -8,7 +9,6 @@ import {
   paymentOrders,
   skills,
   users,
-  writeAudit,
 } from "@mindkid/db";
 import { getPrivateSignedUrl, uploadPrivateAsset } from "@mindkid/storage";
 import { desc, eq, sql } from "drizzle-orm";

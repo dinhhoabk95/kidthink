@@ -13,9 +13,13 @@
     "backup:manual": "tsx src/scripts/backup-manual.ts"
   },
   "dependencies": {
+    "@mindkid/audit": "workspace:*",
     "@mindkid/cache": "workspace:*",
     "@mindkid/config": "workspace:*",
     "@mindkid/db": "workspace:*",
+    "@mindkid/export": "workspace:*",
+    "@mindkid/notification": "workspace:*",
+    "@mindkid/play": "workspace:*",
     "@mindkid/queue": "workspace:*",
     "@mindkid/shared": "workspace:*",
     "@mindkid/storage": "workspace:*",

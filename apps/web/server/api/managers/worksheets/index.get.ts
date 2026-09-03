@@ -1,5 +1,5 @@
-import { listWorksheets } from "@mindkid/db";
 import { defineEventHandler, getQuery } from "h3";
+import { listWorksheets } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {

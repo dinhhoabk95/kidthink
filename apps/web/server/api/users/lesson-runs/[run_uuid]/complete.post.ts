@@ -1,6 +1,6 @@
 import { requireUserAuth } from "@mindkid/auth";
-import { LessonSessionRunnerService } from "@mindkid/db";
 import { createError, defineEventHandler, getRouterParam } from "h3";
+import { LessonSessionRunnerService } from "#server/services/index.js";
 
 export default defineEventHandler(async (event) => {
   const auth = requireUserAuth(event);

@@ -1,0 +1,4 @@
+{
+  "extends": "@mindkid/config/tsconfig.base.json",
+  "include": ["src/**/*.ts", "tests/**/*.ts", "*.ts"]
+}

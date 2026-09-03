@@ -2,8 +2,6 @@ import {
   activities,
   childProfiles,
   getAppDb,
-  LessonExemplarService,
-  LessonSessionRunnerService,
   lessonActivities,
   lessonRuns,
   lessons,
@@ -12,6 +10,10 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import {
+  LessonExemplarService,
+  LessonSessionRunnerService,
+} from "#server/services/index.js";
 
 describe("Task #96 — Lesson Exemplar Set (BR-LEX-01..11)", () => {
   const db = getAppDb();

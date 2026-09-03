@@ -1,4 +1,3 @@
-import { replacePersonalCurriculumItems } from "@mindkid/db";
 import { replacePersonalCurriculumItemsSchema } from "@mindkid/shared";
 import {
   defineEventHandler,
@@ -7,6 +6,7 @@ import {
   getRouterParam,
   readBody,
 } from "h3";
+import { replacePersonalCurriculumItems } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";

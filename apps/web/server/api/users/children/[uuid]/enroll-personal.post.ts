@@ -1,4 +1,3 @@
-import { enrollChildInPersonalCurriculum } from "@mindkid/db";
 import { enrollPersonalCurriculumSchema } from "@mindkid/shared";
 import {
   defineEventHandler,
@@ -8,6 +7,7 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
+import { enrollChildInPersonalCurriculum } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 

@@ -1,4 +1,5 @@
-import { curricula, getOwnerDb, writeAudit } from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { curricula, getOwnerDb } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";

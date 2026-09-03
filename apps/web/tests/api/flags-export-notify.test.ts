@@ -1,7 +1,6 @@
 import {
   featureFlags,
   getOwnerDb,
-  isEnabled,
   managers,
   notificationDeliveries,
   notifications,
@@ -18,6 +17,7 @@ import notificationTemplatesPreviewHandler from "#server/api/managers/notificati
 import notificationTemplatesGetHandler from "#server/api/managers/notification-templates/index.get";
 import notificationResendHandler from "#server/api/managers/notifications/[id]/resend.post";
 import notificationsGetHandler from "#server/api/managers/notifications/index.get";
+import { isEnabled } from "#server/services/index.js";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";

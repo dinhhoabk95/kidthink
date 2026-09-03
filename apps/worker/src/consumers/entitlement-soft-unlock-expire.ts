@@ -1,5 +1,5 @@
-import { runExpireSoftUnlockEntitlements } from "@mindkid/db";
 import { logJobDone } from "#src/log";
+import { runExpireSoftUnlockEntitlements } from "../services/payment-jobs.js";
 import type { Consumer } from "./types.js";
 
 export const entitlementSoftUnlockExpire: Consumer<

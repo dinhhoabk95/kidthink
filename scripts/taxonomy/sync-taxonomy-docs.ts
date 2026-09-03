@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
+import { SKILL_IDENTITIES } from "@mindkid/content";
 import type { SkillIdentity } from "@mindkid/shared";
-import { SKILL_IDENTITIES } from "../../packages/db/src/seed-content/skills/index.ts";
 import {
   type ParsedSkill,
   parseTaxonomyDocs,
-} from "../../packages/db/src/seed-master/taxonomy/index.ts";
+} from "../../packages/content-build/src/seed-master/taxonomy/index.ts";
 
 export const COMPETENCY_DOC_FILES = [
   "c1-mathematical-thinking.md",

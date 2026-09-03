@@ -1,6 +1,6 @@
-import { aiAssistantService } from "@mindkid/db";
 import { explainReportInputSchema } from "@mindkid/shared";
 import { defineEventHandler, readBody, setHeader } from "h3";
+import { aiAssistantService } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 

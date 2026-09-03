@@ -205,6 +205,9 @@ importers:
       '@mindkid/adaptive':
         specifier: workspace:*
         version: link:../../packages/adaptive
+      '@mindkid/audit':
+        specifier: workspace:*
+        version: link:../../packages/audit
       '@mindkid/auth':
         specifier: workspace:*
         version: link:../../packages/auth
@@ -220,12 +223,21 @@ importers:
       '@mindkid/emoji':
         specifier: workspace:*
         version: link:../../packages/emoji
+      '@mindkid/export':
+        specifier: workspace:*
+        version: link:../../packages/export
       '@mindkid/game-engine':
         specifier: workspace:*
         version: link:../../packages/game-engine
+      '@mindkid/moderation':
+        specifier: workspace:*
+        version: link:../../packages/moderation
       '@mindkid/notification':
         specifier: workspace:*
         version: link:../../packages/notification
+      '@mindkid/play':
+        specifier: workspace:*
+        version: link:../../packages/play
       '@mindkid/queue':
         specifier: workspace:*
         version: link:../../packages/queue
@@ -284,6 +296,9 @@ importers:
 
   apps/worker:
     dependencies:
+      '@mindkid/audit':
+        specifier: workspace:*
+        version: link:../../packages/audit
       '@mindkid/cache':
         specifier: workspace:*
         version: link:../../packages/cache
@@ -293,6 +308,15 @@ importers:
       '@mindkid/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@mindkid/export':
+        specifier: workspace:*
+        version: link:../../packages/export
+      '@mindkid/notification':
+        specifier: workspace:*
+        version: link:../../packages/notification
+      '@mindkid/play':
+        specifier: workspace:*
+        version: link:../../packages/play
       '@mindkid/queue':
         specifier: workspace:*
         version: link:../../packages/queue
@@ -346,6 +370,28 @@ importers:
       fast-check:
         specifier: 'catalog:'
         version: 3.23.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.2)(tsx@4.23.11)(yaml@2.9.0))
+
+  packages/audit:
+    dependencies:
+      '@mindkid/db':
+        specifier: workspace:*
+        version: link:../db
+      '@mindkid/shared':
+        specifier: workspace:*
+        version: link:../shared
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.2(@opentelemetry/api@1.9.1)(postgres@3.4.9)
+    devDependencies:
+      '@mindkid/config':
+        specifier: workspace:*
+        version: link:../config
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -523,6 +569,43 @@ importers:
         specifier: 'catalog:'
         version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.2)(tsx@4.23.11)(yaml@2.9.0))
 
+  packages/export:
+    dependencies:
+      '@mindkid/audit':
+        specifier: workspace:*
+        version: link:../audit
+      '@mindkid/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@mindkid/db':
+        specifier: workspace:*
+        version: link:../db
+      '@mindkid/queue':
+        specifier: workspace:*
+        version: link:../queue
+      '@mindkid/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@mindkid/storage':
+        specifier: workspace:*
+        version: link:../storage
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.2(@opentelemetry/api@1.9.1)(postgres@3.4.9)
+      zod:
+        specifier: 'catalog:'
+        version: 3.25.76
+    devDependencies:
+      '@mindkid/config':
+        specifier: workspace:*
+        version: link:../config
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.2)(tsx@4.23.11)(yaml@2.9.0))
+
   packages/game-engine:
     dependencies:
       '@mindkid/emoji':
@@ -562,9 +645,18 @@ importers:
 
   packages/notification:
     dependencies:
+      '@mindkid/db':
+        specifier: workspace:*
+        version: link:../db
+      '@mindkid/queue':
+        specifier: workspace:*
+        version: link:../queue
       '@mindkid/shared':
         specifier: workspace:*
         version: link:../shared
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.2(@opentelemetry/api@1.9.1)(postgres@3.4.9)
       firebase-admin:
         specifier: 'catalog:'
         version: 13.10.0(@firebase/app-compat@0.4.2)(@firebase/app@0.13.2)(supports-color@10.2.2)
@@ -587,6 +679,43 @@ importers:
       fast-check:
         specifier: 'catalog:'
         version: 3.23.2
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.2)(tsx@4.23.11)(yaml@2.9.0))
+
+  packages/play:
+    dependencies:
+      '@mindkid/adaptive':
+        specifier: workspace:*
+        version: link:../adaptive
+      '@mindkid/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@mindkid/db':
+        specifier: workspace:*
+        version: link:../db
+      '@mindkid/game-engine':
+        specifier: workspace:*
+        version: link:../game-engine
+      '@mindkid/queue':
+        specifier: workspace:*
+        version: link:../queue
+      '@mindkid/shared':
+        specifier: workspace:*
+        version: link:../shared
+      drizzle-orm:
+        specifier: 'catalog:'
+        version: 0.45.2(@opentelemetry/api@1.9.1)(postgres@3.4.9)
+      zod:
+        specifier: 'catalog:'
+        version: 3.25.76
+    devDependencies:
+      '@mindkid/config':
+        specifier: workspace:*
+        version: link:../config
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

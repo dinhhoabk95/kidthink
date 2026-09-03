@@ -1,10 +1,10 @@
 import { appError } from "@mindkid/auth";
-import { adminCancelSubscription } from "@mindkid/db";
 import {
   type AdminSubscriptionCancelReason,
   AdminSubscriptionCancelRequestSchema,
 } from "@mindkid/shared";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
+import { adminCancelSubscription } from "#server/services/index.js";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {

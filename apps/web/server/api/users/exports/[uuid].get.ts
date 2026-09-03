@@ -1,5 +1,5 @@
 import { appError } from "@mindkid/auth";
-import { getExportJobByUuid } from "@mindkid/db";
+import { getExportJobByUuid } from "@mindkid/export";
 import { defineEventHandler, getRouterParam } from "h3";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 

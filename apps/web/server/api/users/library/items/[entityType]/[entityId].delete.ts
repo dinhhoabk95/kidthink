@@ -1,10 +1,11 @@
-import { getOwnerDb, removeLibraryItem } from "@mindkid/db";
+import { getOwnerDb } from "@mindkid/db";
 import {
   createError,
   defineEventHandler,
   getRouterParam,
   setResponseStatus,
 } from "h3";
+import { removeLibraryItem } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {

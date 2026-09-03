@@ -1,4 +1,4 @@
-import { getWorksheetByCode, renderWorksheetPdf } from "@mindkid/db";
+import { renderWorksheetPdf } from "@mindkid/export";
 import {
   createError,
   defineEventHandler,
@@ -6,6 +6,7 @@ import {
   getRouterParam,
   setHeader,
 } from "h3";
+import { getWorksheetByCode } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {

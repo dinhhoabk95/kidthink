@@ -1,6 +1,6 @@
-import { LessonExemplarService } from "@mindkid/db";
 import { createError, defineEventHandler, readBody } from "h3";
 import { z } from "zod";
+import { LessonExemplarService } from "#server/services/index.js";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 const revokeBodySchema = z.object({

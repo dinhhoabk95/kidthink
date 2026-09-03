@@ -32,88 +32,22 @@ import postgres from "postgres";
  * `global-setup.test.ts` đối chiếu nó với `pg_tables` và đỏ ngay khi thiếu một tên.
  */
 
-export const TABLES = [
-  "active_sessions",
-  "activities",
-  "ai_credit_balance",
-  "ai_credit_ledger",
-  "ai_usage_log",
-  "audit_logs",
-  "backup_log",
-  "child_badges",
-  "child_daily_stats",
-  "child_profiles",
-  "child_session_summaries",
-  "collections",
-  "competencies",
-  "consent_logs",
-  "consent_requirements",
-  "content_asset_refs",
-  "content_embeddings",
-  "content_images",
-  "content_review_log",
-  "content_seed_batches",
-  "content_skill_map",
-  "content_tag_map",
-  "content_tags",
-  "curricula",
-  "curriculum_enrollments",
-  "curriculum_item_progress",
-  "curriculum_items",
-  "curriculum_weeks",
-  "custom_games",
-  "entitlement_keys",
-  "entitlements",
-  "error_logs",
-  "export_jobs",
-  "feature_flags",
-  "game_level_rounds",
-  "game_levels",
-  "learning_objectives",
-  "lesson_activities",
-  "lesson_plan_items",
-  "lesson_plans",
-  "lesson_run_observations",
-  "lesson_run_steps",
-  "lesson_runs",
-  "lessons",
-  "level_daily_stats",
-  "level_params",
-  "library_items",
-  "managers",
-  "mastery_state",
-  "mfa_recovery_codes",
-  "mfa_recovery_requests",
-  "mfa_settings",
-  "notification_deliveries",
-  "notification_endpoints",
-  "notification_reads",
-  "notifications",
-  "package_entitlements",
-  "packages",
-  "payment_orders",
-  "payment_transactions",
-  "personal_curricula",
-  "personal_curriculum_enrollments",
-  "personal_curriculum_item_progress",
-  "personal_curriculum_items",
-  "play_sessions",
-  "quota_usage",
-  "recurring_subscriptions",
-  "seo_pages",
-  "skill_action_suggestions",
-  "skill_daily_stats",
-  "skill_prerequisites",
-  "skills",
-  "social_identities",
-  "strands",
-  "telemetry_events",
-  "user_tag_map",
-  "user_tags",
-  "users",
-  "verification_tokens",
-  "worksheets",
-] as const;
+import { getTableName, is } from "drizzle-orm";
+import { PgTable } from "drizzle-orm/pg-core";
+// biome-ignore lint/performance/noNamespaceImport: dynamically iterates all schema tables
+import * as schema from "#src/schema/index";
+
+export function extractTableNamesFromSchema(schemaObj: object): string[] {
+  const tableNames = new Set<string>();
+  for (const value of Object.values(schemaObj)) {
+    if (is(value, PgTable)) {
+      tableNames.add(getTableName(value));
+    }
+  }
+  return Array.from(tableNames).sort();
+}
+
+export const TABLES = extractTableNamesFromSchema(schema);
 
 const LOOPBACK_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]", "::1"]);
 
@@ -145,8 +79,9 @@ export async function truncateAllTestTables(
       try {
         await sql`truncate table ${sql(tables)} restart identity cascade`;
         break;
-      } catch (err: unknown) {
-        const pgErr = err as { code?: string };
+      } catch (err) {
+        const pgErr =
+          err instanceof Error ? (err as Error & { code?: string }) : null;
         if (pgErr?.code === "40P01" && attempt < 3) {
           await new Promise((resolve) => setTimeout(resolve, 100 * attempt));
           continue;

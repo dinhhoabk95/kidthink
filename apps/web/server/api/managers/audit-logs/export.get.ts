@@ -1,4 +1,5 @@
-import { auditLogs, getOwnerDb, writeAudit } from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { auditLogs, getOwnerDb } from "@mindkid/db";
 import { and, desc, eq, gte, ilike, inArray, lte, type SQL } from "drizzle-orm";
 import {
   createError,

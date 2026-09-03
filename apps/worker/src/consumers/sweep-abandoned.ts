@@ -1,4 +1,4 @@
-import { sweepAbandonedSessions } from "@mindkid/db";
+import { sweepAbandonedSessions } from "@mindkid/play";
 import { logJobDone } from "#src/log";
 import type { Consumer } from "./types.js";
 

@@ -1,5 +1,5 @@
 import { AppError } from "@mindkid/auth";
-import { ingestPlayEvents } from "@mindkid/db";
+import { ingestPlayEvents } from "@mindkid/play";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 

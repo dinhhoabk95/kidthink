@@ -1,4 +1,5 @@
-import { gameLevels, getOwnerDb, writeAudit } from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { and, eq, sql } from "drizzle-orm";
 import {
   createError,

@@ -5,12 +5,12 @@ import {
   getOwnerDb,
   lessons,
   seoPages,
-  transitionContentStatus,
 } from "@mindkid/db";
 import type { ContentLifecycleStatus, ManagerRole } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { transitionContentStatus } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { verifyPreviewToken } from "#server/utils/preview-token";
 

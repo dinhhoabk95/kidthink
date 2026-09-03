@@ -1,4 +1,4 @@
-import { requestExportJob } from "@mindkid/db";
+import { requestExportJob } from "@mindkid/export";
 import { RequestExportSchema } from "@mindkid/shared";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { throwValidationError } from "#server/utils/api-error";

@@ -1,4 +1,5 @@
-import { gameLevels, getOwnerDb, writeAudit } from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { validateContentPack } from "@mindkid/game-engine";
 import type { AccessTier } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";

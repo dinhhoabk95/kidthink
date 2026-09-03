@@ -5,12 +5,12 @@ import { getOwnerDb } from "#src/client";
 import { entitlementKeys, entitlements, packages } from "#src/schema/billing";
 import { childProfiles } from "#src/schema/child";
 import { consentLogs, managers, users } from "#src/schema/identity";
-import { SEED_ENTITLEMENT_KEYS, SEED_PACKAGES } from "#src/seed-catalog";
 import {
   SEED_MANAGERS,
   SEED_USERS,
   seedInitialAccounts,
-} from "#src/seed-master/accounts";
+} from "#src/seed-accounts";
+import { SEED_ENTITLEMENT_KEYS, SEED_PACKAGES } from "#src/seed-catalog";
 
 describe("Seed Initial Accounts Integration Tests", () => {
   beforeAll(async () => {

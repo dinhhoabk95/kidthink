@@ -1,0 +1,31 @@
+{
+  "name": "@mindkid/play",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@mindkid/adaptive": "workspace:*",
+    "@mindkid/auth": "workspace:*",
+    "@mindkid/db": "workspace:*",
+    "@mindkid/game-engine": "workspace:*",
+    "@mindkid/queue": "workspace:*",
+    "@mindkid/shared": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@mindkid/config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts"
+  }
+}

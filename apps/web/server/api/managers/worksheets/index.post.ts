@@ -1,4 +1,3 @@
-import { createWorksheetDraft } from "@mindkid/db";
 import { worksheetFormSchema } from "@mindkid/shared";
 import {
   createError,
@@ -6,6 +5,7 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
+import { createWorksheetDraft } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
 

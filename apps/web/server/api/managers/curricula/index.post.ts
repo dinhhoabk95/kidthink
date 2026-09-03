@@ -1,9 +1,9 @@
+import { writeAudit } from "@mindkid/audit";
 import {
   curricula,
   curriculumItems,
   curriculumWeeks,
   getOwnerDb,
-  writeAudit,
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import {

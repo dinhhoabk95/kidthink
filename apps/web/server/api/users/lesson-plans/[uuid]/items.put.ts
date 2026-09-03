@@ -1,7 +1,7 @@
 import { appError } from "@mindkid/auth";
-import { replaceLessonPlanItems } from "@mindkid/db";
 import { ReplaceLessonPlanItemsSchema } from "@mindkid/shared";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
+import { replaceLessonPlanItems } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";

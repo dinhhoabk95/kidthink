@@ -1,10 +1,11 @@
-import { getOwnerDb, searchGameLevels } from "@mindkid/db";
+import { getOwnerDb } from "@mindkid/db";
 import {
   type AccessTier,
   GUEST_CTA_VIEWER,
   resolveLevelCta,
 } from "@mindkid/shared";
 import { defineEventHandler, getQuery, setHeader } from "h3";
+import { searchGameLevels } from "#server/services/index.js";
 
 /**
  * Danh mục công khai — `docs/specs/02-public/game-catalog-public.md`.

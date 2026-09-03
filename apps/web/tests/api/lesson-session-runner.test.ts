@@ -4,7 +4,6 @@ import {
   gameLevels,
   gameTemplates,
   getAppDb,
-  LessonSessionRunnerService,
   lessonActivities,
   lessonRuns,
   lessons,
@@ -12,6 +11,7 @@ import {
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { LessonSessionRunnerService } from "#server/services/index.js";
 
 describe("Task #95 — Lesson Session Runner (BR-LSR-01..16)", () => {
   const db = getAppDb();

@@ -1,13 +1,10 @@
-import {
-  featureFlags,
-  getOwnerDb,
-  invalidateFlagCache,
-  writeAudit,
-} from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { featureFlags, getOwnerDb } from "@mindkid/db";
 import { CODE_FEATURE_FLAGS } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
+import { invalidateFlagCache } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const patchFlagSchema = z.object({

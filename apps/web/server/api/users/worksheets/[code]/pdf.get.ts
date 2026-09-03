@@ -1,7 +1,8 @@
 import { appError } from "@mindkid/auth";
-import { getPublishedWorksheetByCode, renderWorksheetPdf } from "@mindkid/db";
+import { renderWorksheetPdf } from "@mindkid/export";
 import { canAccessTier } from "@mindkid/shared";
 import { defineEventHandler, getRouterParam, setHeader } from "h3";
+import { getPublishedWorksheetByCode } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 

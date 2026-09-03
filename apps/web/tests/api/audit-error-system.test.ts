@@ -1,11 +1,5 @@
-import {
-  auditLogs,
-  errorLogs,
-  getOwnerDb,
-  managers,
-  users,
-  writeAudit,
-} from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { auditLogs, errorLogs, getOwnerDb, managers, users } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import clientErrorsPostHandler from "#server/api/guest/client-errors.post";

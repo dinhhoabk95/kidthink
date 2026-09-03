@@ -1,7 +1,7 @@
 import {
   isEmailAlreadyDispatched,
   recordEmailDeliveryOutcome,
-} from "@mindkid/db";
+} from "@mindkid/notification";
 import { runSendEmail } from "@mindkid/shared";
 import { readErrorMessage } from "#src/errors";
 import { logJobDone } from "#src/log";

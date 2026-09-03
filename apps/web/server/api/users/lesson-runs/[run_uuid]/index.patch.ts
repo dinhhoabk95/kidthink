@@ -1,7 +1,7 @@
 import { requireUserAuth } from "@mindkid/auth";
-import { LessonSessionRunnerService } from "@mindkid/db";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
+import { LessonSessionRunnerService } from "#server/services/index.js";
 
 const UpdateStepSchema = z.object({
   step_index: z.number().int().min(0),

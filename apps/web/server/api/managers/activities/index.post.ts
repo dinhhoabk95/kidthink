@@ -1,10 +1,9 @@
+import { writeAudit } from "@mindkid/audit";
 import {
   activities,
   contentSkillMap,
   gameLevels,
   getOwnerDb,
-  isEnabled as isFeatureEnabled,
-  writeAudit,
 } from "@mindkid/db";
 import { activityFormSchema, resolveActivityRefType } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
@@ -14,6 +13,7 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
+import { isEnabled as isFeatureEnabled } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
 

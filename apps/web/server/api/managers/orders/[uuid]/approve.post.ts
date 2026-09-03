@@ -4,7 +4,6 @@ import {
   auditLogs,
   entitlements,
   getDb,
-  grantCredits,
   notifications,
   paymentOrders,
 } from "@mindkid/db";
@@ -18,6 +17,7 @@ import { and, eq } from "drizzle-orm";
 import type { PgTransaction } from "drizzle-orm/pg-core";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
+import { grantCredits } from "#server/services/index.js";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,

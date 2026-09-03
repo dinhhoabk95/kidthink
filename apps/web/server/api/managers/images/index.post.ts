@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
-import { contentImages, getOwnerDb, writeAudit } from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { contentImages, getOwnerDb } from "@mindkid/db";
 import {
   detectImageMimeType,
   isSvgContent,

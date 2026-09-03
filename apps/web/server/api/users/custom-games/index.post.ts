@@ -1,7 +1,7 @@
 import { appError } from "@mindkid/auth";
-import { createCustomGame } from "@mindkid/db";
 import { createCustomGameSchema } from "@mindkid/shared";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
+import { createCustomGame } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";

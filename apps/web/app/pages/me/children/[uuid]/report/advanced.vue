@@ -692,7 +692,7 @@
 </template>
 
 <script lang="ts" setup>
-  import type { AdvancedReportResult } from "@mindkid/db";
+  import type { AdvancedReportResult } from "@mindkid/shared";
   import { findCompetency } from "@mindkid/shared/client";
   import { computed, ref } from "vue";
   import { useRoute } from "vue-router";

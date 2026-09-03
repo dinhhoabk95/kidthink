@@ -1,6 +1,6 @@
 import { appError } from "@mindkid/auth";
-import { getCustomGamePlayConfig } from "@mindkid/db";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
+import { getCustomGamePlayConfig } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {

@@ -1,6 +1,9 @@
-import { getCreditBalance, listCreditTransactions } from "@mindkid/db";
 import { listCreditsQuerySchema } from "@mindkid/shared";
 import { defineEventHandler, getQuery, setHeader } from "h3";
+import {
+  getCreditBalance,
+  listCreditTransactions,
+} from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {

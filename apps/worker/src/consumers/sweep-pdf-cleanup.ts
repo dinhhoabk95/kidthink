@@ -1,4 +1,4 @@
-import { runPdfCleanupJob } from "@mindkid/db";
+import { runPdfCleanupJob } from "@mindkid/export";
 import { logJobDone } from "#src/log";
 import type { Consumer } from "./types.js";
 

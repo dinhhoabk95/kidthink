@@ -1,9 +1,5 @@
-import {
-  contentAssetRefs,
-  contentImages,
-  getOwnerDb,
-  writeAudit,
-} from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { contentAssetRefs, contentImages, getOwnerDb } from "@mindkid/db";
 import { AUDIT_ACTIONS } from "@mindkid/shared";
 import { deletePrivateAsset, deletePublicImage } from "@mindkid/storage";
 import { and, eq, lte, ne } from "drizzle-orm";

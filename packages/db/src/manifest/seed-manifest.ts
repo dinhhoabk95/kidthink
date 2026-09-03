@@ -4,12 +4,12 @@
  */
 
 export const SEED_MANIFEST_MAP: Record<string, string> = {
-  C1: "packages/db/src/seed-content/c1/levels.ts",
-  C2: "packages/db/src/seed-content/c2/levels.ts",
-  C3: "packages/db/src/seed-content/c3/levels.ts",
-  C4: "packages/db/src/seed-content/c4/levels.ts",
-  C5: "packages/db/src/seed-content/c5/levels.ts",
-  C6: "packages/db/src/seed-content/c6/levels.ts",
+  C1: "packages/content/src/levels/c1.ts",
+  C2: "packages/content/src/levels/c2.ts",
+  C3: "packages/content/src/levels/c3.ts",
+  C4: "packages/content/src/levels/c4.ts",
+  C5: "packages/content/src/levels/c5.ts",
+  C6: "packages/content/src/levels/c6.ts",
 };
 
 const LEVEL_COMPETENCY_REGEX = /^GL-(C[1-6])-/;

@@ -1,4 +1,5 @@
-import { getOwnerDb, seoPages, writeAudit } from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { getOwnerDb, seoPages } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import {
   createError,

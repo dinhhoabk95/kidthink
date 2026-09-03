@@ -6,12 +6,12 @@ import {
   packages,
 } from "./schema/billing.ts";
 import { consentRequirements, managers } from "./schema/identity.ts";
+import { seedInitialAccounts } from "./seed-accounts.ts";
 import {
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGE_ENTITLEMENTS,
   SEED_PACKAGES,
 } from "./seed-catalog.ts";
-import { seedInitialAccounts } from "./seed-master/accounts.ts";
 
 export async function seed() {
   const db = getOwnerDb();

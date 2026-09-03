@@ -1,6 +1,6 @@
-import { updateCustomGame } from "@mindkid/db";
 import { updateCustomGameSchema } from "@mindkid/shared";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
+import { updateCustomGame } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 

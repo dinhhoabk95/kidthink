@@ -5,10 +5,8 @@ import {
   curriculumItems,
   gameLevels,
   gameTemplates,
-  generateOfflineCurriculumPackManifest,
   getOwnerDb,
   playSessions,
-  syncOfflinePlayEvents,
   telemetryEvents,
   users,
 } from "@mindkid/db";
@@ -26,6 +24,10 @@ import {
 } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import {
+  generateOfflineCurriculumPackManifest,
+  syncOfflinePlayEvents,
+} from "#server/services/index.js";
 
 describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
   const db = getOwnerDb();

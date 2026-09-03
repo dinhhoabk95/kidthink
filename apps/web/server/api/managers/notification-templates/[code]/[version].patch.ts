@@ -1,4 +1,5 @@
-import { getOwnerDb, writeAudit } from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { getOwnerDb } from "@mindkid/db";
 import {
   type NotificationCode,
   TEMPLATE_REGISTRY,

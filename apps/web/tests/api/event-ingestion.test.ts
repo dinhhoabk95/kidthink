@@ -2,10 +2,10 @@ import {
   gameLevels,
   gameTemplates,
   getOwnerDb,
-  ingestPlayEvents,
   playSessions,
   telemetryEvents,
 } from "@mindkid/db";
+import { ingestPlayEvents } from "@mindkid/play";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 

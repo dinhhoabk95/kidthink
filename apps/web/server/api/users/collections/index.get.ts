@@ -1,5 +1,6 @@
-import { getOwnerDb, getUserCollections } from "@mindkid/db";
+import { getOwnerDb } from "@mindkid/db";
 import { defineEventHandler } from "h3";
+import { getUserCollections } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {

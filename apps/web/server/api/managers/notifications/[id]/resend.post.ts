@@ -1,9 +1,9 @@
+import { writeAudit } from "@mindkid/audit";
 import {
   getOwnerDb,
   notificationDeliveries,
   notifications,
   users,
-  writeAudit,
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";

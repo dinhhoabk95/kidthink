@@ -4,6 +4,7 @@ export * from "./access-ladder.js";
 export * from "./activity-model.js";
 export * from "./activity-schemas.js";
 export * from "./admin-child-projection.js";
+export * from "./advanced-report.js";
 export * from "./ai.js";
 export * from "./ai-credit.js";
 export * from "./alerts-config.js";

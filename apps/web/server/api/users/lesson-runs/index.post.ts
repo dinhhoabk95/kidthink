@@ -1,5 +1,4 @@
 import { requireUserAuth } from "@mindkid/auth";
-import { LessonSessionRunnerService } from "@mindkid/db";
 import {
   createError,
   defineEventHandler,
@@ -7,6 +6,7 @@ import {
   setResponseStatus,
 } from "h3";
 import { z } from "zod";
+import { LessonSessionRunnerService } from "#server/services/index.js";
 
 import { getOptionalActiveChildUuid } from "#server/utils/auth-runtime";
 

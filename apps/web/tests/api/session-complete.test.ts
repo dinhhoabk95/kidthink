@@ -1,10 +1,10 @@
 import {
-  completePlaySession,
   gameLevels,
   gameTemplates,
   getOwnerDb,
   playSessions,
 } from "@mindkid/db";
+import { completePlaySession } from "@mindkid/play";
 import { describe, expect, it } from "vitest";
 
 async function createTestLevel(db: ReturnType<typeof getOwnerDb>) {
