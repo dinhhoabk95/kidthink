@@ -163,3 +163,9 @@ Trên 500 dòng thì viết codemod, đừng sửa tay. Bài học đã trả gi
   biến. Bỏ comment và chuỗi trước khi đếm.
 - Cây làm việc thường đang có thay đổi dở của người khác → **đừng** dùng
   `git checkout` để hoàn tác. Sao lưu file ra ngoài repo trước khi ghi.
+
+## Git workflow — Luôn commit vào nhánh main
+
+- **Tất cả code phải commit trực tiếp vào nhánh `main`** — làm việc trực tiếp trên `main` hoặc merge mọi branch vào `main` trước khi hoàn tất task và push lên remote.
+- Không để code dở dang hoặc tồn đọng ở branch riêng mà chưa merge vào `main`.
+
