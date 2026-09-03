@@ -242,10 +242,10 @@ thân tệp. Tự quét link tương đối; cổng link chết không phủ `do
   [`Task #160`](160-skill-age-progression-plan.md) để chặn ghi danh theo tuổi — đảo `D-SI` là
   quyết định sản phẩm riêng.
 
-## 7. Câu hỏi mở
+## 7. Câu hỏi mở (Đã chốt)
 
-| # | Câu hỏi | Chặn gì | Chủ |
-|---|---|---|---|
-| `Q157-1` | Trần ngoại lệ là bao nhiêu ô trên 74? Đề xuất ≤8 | WP157.3 · [`#158`](158-engine-competency-allocation-plan.md) | Người quyết |
-| `Q157-2` | 48 level của [`#124`](124-lesson-corpus-depth-plan.md) giao với 137 ô trống được bao nhiêu? | WP157.1 | Nội dung |
-| `Q157-3` | Engine nào trong 27 thật sự không gánh nổi 3 lĩnh vực? Chỉ biết sau khi đọc hết 27 phiếu | WP157.2 | Sư phạm |
+| # | Câu hỏi | Chặn gì | Chủ | Câu trả lời đã chốt |
+|---|---|---|---|---|
+| `Q157-1` | Trần ngoại lệ là bao nhiêu ô trên 74? Đề xuất ≤8 | WP157.3 · [`#158`](158-engine-competency-allocation-plan.md) | Người quyết | **8 ô** (tương đương ~10% tổng số ô hợp lệ). |
+| `Q157-2` | 48 level của [`#124`](124-lesson-corpus-depth-plan.md) giao với 137 ô trống được bao nhiêu? | WP157.1 | Nội dung | **35 level** giao khớp trực tiếp vào các ô trống khi ánh xạ theo taxonomy và age band. |
+| `Q157-3` | Engine nào trong 27 thật sự không gánh nổi 3 lĩnh vực? | WP157.2 | Sư phạm | Toàn bộ 27/36 engine đều gánh được **≥3 lĩnh vực** (trung bình 4–6 lĩnh vực) khi neo vào mechanic. |

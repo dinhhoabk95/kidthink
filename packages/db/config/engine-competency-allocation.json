@@ -1,0 +1,1186 @@
+{
+  "date": "2026-09-03",
+  "version": "1.0",
+  "exception_cap": 8,
+  "description": "Bản đồ tương hợp engine -> lĩnh vực tư duy (C1-C6) neo theo mechanic (Task #157 / WP157.2)",
+  "engines": [
+    {
+      "code": "GT-001",
+      "name": "Chọn một đáp án",
+      "mechanic": "tap-select",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế tap-select hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác tap-select hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi tap-select hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác tap-select"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-002",
+      "name": "Chọn nhiều đáp án",
+      "mechanic": "tap-select-multi",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế tap-select-multi hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác tap-select-multi hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi tap-select-multi hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác tap-select-multi"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-003",
+      "name": "Kéo vào đích",
+      "mechanic": "drag-to-container",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế drag-to-container hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác drag-to-container hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi drag-to-container hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác drag-to-container"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-004",
+      "name": "Phân loại vào nhóm",
+      "mechanic": "sort-groups",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế sort-groups hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác sort-groups hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi sort-groups hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác sort-groups"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-005",
+      "name": "Ghép cặp",
+      "mechanic": "pair-match",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế pair-match hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác pair-match hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi pair-match hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác pair-match"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-006",
+      "name": "Sắp xếp thứ tự",
+      "mechanic": "sequence-order",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế sequence-order hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác sequence-order hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi sequence-order hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác sequence-order"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-007",
+      "name": "Tách gộp số",
+      "mechanic": "number-bond",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế number-bond hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác number-bond hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi number-bond hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác number-bond"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-008",
+      "name": "Kéo vào ô chứa",
+      "mechanic": "drag-to-slot",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế drag-to-slot hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác drag-to-slot hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi drag-to-slot hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác drag-to-slot"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-009",
+      "name": "Loại trừ theo manh mối",
+      "mechanic": "clue-deduction",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế clue-deduction hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác clue-deduction hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi clue-deduction hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác clue-deduction"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-010",
+      "name": "Thay thế biểu tượng",
+      "mechanic": "substitution",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế substitution hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác substitution hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi substitution hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác substitution"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-011",
+      "name": "Ma trận chọn hình",
+      "mechanic": "matrix-choice",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế matrix-choice hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác matrix-choice hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi matrix-choice hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác matrix-choice"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-012",
+      "name": "Nhìn chớp rồi nhớ lại",
+      "mechanic": "flash-recall",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế flash-recall hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác flash-recall hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi flash-recall hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác flash-recall"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-013",
+      "name": "Tìm đường mê cung",
+      "mechanic": "maze-route",
+      "allowed_competencies": [
+        {
+          "comp": "C2",
+          "reason": "Tìm đường mê cung rèn luyện tư duy không gian và định hướng bản đồ"
+        },
+        {
+          "comp": "C3",
+          "reason": "Phân tích đường đi và loại trừ đường cụt là suy luận logic"
+        },
+        {
+          "comp": "C6",
+          "reason": "Lập kế hoạch đường đi và kiểm soát ức chế quay đầu khi gặp ngõ cụt"
+        },
+        {
+          "comp": "C1",
+          "reason": "Tìm đường theo thứ tự số đếm"
+        }
+      ],
+      "prohibited_competencies": [
+        {
+          "comp": "C4",
+          "reason": "Cơ chế mê cung không hỗ trợ đo lường hoặc xử lý dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Mê cung thuần trực quan không tối ưu cho ngôn ngữ âm tiết"
+        }
+      ]
+    },
+    {
+      "code": "GT-014",
+      "name": "Cân hai bên",
+      "mechanic": "balance-scale",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế balance-scale hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác balance-scale hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi balance-scale hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác balance-scale"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-015",
+      "name": "Lưới không lặp",
+      "mechanic": "sudoku-mini",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế sudoku-mini hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác sudoku-mini hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi sudoku-mini hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác sudoku-mini"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-016",
+      "name": "Xoay kim đồng hồ",
+      "mechanic": "clock-hands",
+      "allowed_competencies": [
+        {
+          "comp": "C4",
+          "reason": "Xoay kim đồng hồ là kỹ năng cốt lõi đo lường thời gian (giờ/phút)"
+        },
+        {
+          "comp": "C1",
+          "reason": "Nhận biết các con số 1-12 trên mặt đồng hồ"
+        },
+        {
+          "comp": "C3",
+          "reason": "Hiểu quy luật chu kỳ thời gian 12 giờ và chuyển động tròn"
+        },
+        {
+          "comp": "C2",
+          "reason": "Góc quay và vị trí kim đồng hồ trong không gian phẳng"
+        }
+      ],
+      "prohibited_competencies": [
+        {
+          "comp": "C5",
+          "reason": "Mặt đồng hồ không phục vụ học âm tiết hoặc ngữ âm"
+        },
+        {
+          "comp": "C6",
+          "reason": "Xoay kim tĩnh không kích hoạt ức chế phản ứng hoặc trí nhớ làm việc phức tạp"
+        }
+      ]
+    },
+    {
+      "code": "GT-017",
+      "name": "Xếp khối và phối cảnh",
+      "mechanic": "block-stack",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế block-stack hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác block-stack hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi block-stack hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác block-stack"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-018",
+      "name": "Nghe rồi làm",
+      "mechanic": "listen-respond",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế listen-respond hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác listen-respond hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi listen-respond hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác listen-respond"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-019",
+      "name": "Xoay và lật mảnh",
+      "mechanic": "rotate-transform",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế rotate-transform hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác rotate-transform hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi rotate-transform hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác rotate-transform"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-020",
+      "name": "Lật thẻ tìm cặp",
+      "mechanic": "memory-flip",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế memory-flip hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác memory-flip hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi memory-flip hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác memory-flip"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-021",
+      "name": "Hoàn thiện đối xứng",
+      "mechanic": "mirror-complete",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế mirror-complete hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác mirror-complete hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi mirror-complete hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác mirror-complete"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-022",
+      "name": "Tìm vật thể ẩn",
+      "mechanic": "hidden-object",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế hidden-object hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác hidden-object hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi hidden-object hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác hidden-object"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-023",
+      "name": "Lắp ghép hình thể",
+      "mechanic": "construct",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế construct hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác construct hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi construct hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác construct"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-024",
+      "name": "Vẽ theo nét",
+      "mechanic": "trace-path",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế trace-path hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác trace-path hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi trace-path hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác trace-path"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-025",
+      "name": "Tìm điểm khác biệt",
+      "mechanic": "spot-difference",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế spot-difference hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác spot-difference hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi spot-difference hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác spot-difference"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-026",
+      "name": "Chỉ chạm khi đúng dấu",
+      "mechanic": "go-nogo",
+      "allowed_competencies": [
+        {
+          "comp": "C6",
+          "reason": "Ức chế phản ứng và phản xạ nhanh là bản chất lõi của cơ chế go-nogo"
+        },
+        {
+          "comp": "C4",
+          "reason": "Phân biệt dấu đi và dừng dưới sức ép thời gian rèn luyện chú ý chi tiết"
+        },
+        {
+          "comp": "C5",
+          "reason": "Phản xạ theo tín hiệu phát bằng lời nói nghe hiểu"
+        },
+        {
+          "comp": "C1",
+          "reason": "Chỉ chạm khi xuất hiện số chẵn hoặc số lượng chỉ định"
+        }
+      ],
+      "prohibited_competencies": [
+        {
+          "comp": "C2",
+          "reason": "Cơ chế không có trục không gian hoặc hình khối"
+        }
+      ]
+    },
+    {
+      "code": "GT-027",
+      "name": "Đổi luật giữa chừng",
+      "mechanic": "rule-switch",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế rule-switch hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác rule-switch hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi rule-switch hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác rule-switch"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-028",
+      "name": "Chạm đếm tích luỹ",
+      "mechanic": "tap-count",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế tap-count hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác tap-count hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi tap-count hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác tap-count"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-029",
+      "name": "Bớt khỏi nhóm",
+      "mechanic": "remove-from-set",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế remove-from-set hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác remove-from-set hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi remove-from-set hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác remove-from-set"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-030",
+      "name": "Đo bằng đơn vị lặp",
+      "mechanic": "measure-with-unit",
+      "allowed_competencies": [
+        {
+          "comp": "C4",
+          "reason": "Đặt vật đo lặp lại là thao tác đo lường cơ bản nhất của C4"
+        },
+        {
+          "comp": "C1",
+          "reason": "Đếm số đơn vị đo để ra kết quả chiều dài"
+        },
+        {
+          "comp": "C2",
+          "reason": "Xếp các đơn vị đo thẳng hàng dọc theo chiều dài vật thể"
+        },
+        {
+          "comp": "C3",
+          "reason": "So sánh độ dài gián tiếp qua số lượng đơn vị đo"
+        }
+      ],
+      "prohibited_competencies": [
+        {
+          "comp": "C5",
+          "reason": "Thao tác đo chiều dài không phục vụ nhận diện chữ cái"
+        }
+      ]
+    },
+    {
+      "code": "GT-031",
+      "name": "Gộp tiền xu",
+      "mechanic": "coin-compose",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Gộp các mệnh giá tiền xu là bài toán số học cộng trừ tiền tệ"
+        },
+        {
+          "comp": "C4",
+          "reason": "Tiền tệ và giá trị quy đổi là một nhánh của đo lường thực tế"
+        },
+        {
+          "comp": "C3",
+          "reason": "Tư duy tối ưu số lượng đồng xu cần dùng"
+        },
+        {
+          "comp": "C6",
+          "reason": "Lập kế hoạch đổi tiền và kiểm tra đáp án"
+        }
+      ],
+      "prohibited_competencies": [
+        {
+          "comp": "C2",
+          "reason": "Gộp giá trị tiền xu không liên quan tới hình học không gian"
+        },
+        {
+          "comp": "C5",
+          "reason": "Không phục vụ kỹ năng ngôn ngữ ngữ âm"
+        }
+      ]
+    },
+    {
+      "code": "GT-032",
+      "name": "So lượng chất lỏng",
+      "mechanic": "pour-quantity",
+      "allowed_competencies": [
+        {
+          "comp": "C4",
+          "reason": "So sánh dung tích và lượng chất lỏng trong bình chứa là nội dung đo lường chuẩn"
+        },
+        {
+          "comp": "C1",
+          "reason": "Đo đếm số vạch dung tích hoặc số ca nước"
+        },
+        {
+          "comp": "C3",
+          "reason": "Bảo toàn thể tích chất lỏng dù thay đổi hình dạng bình chứa"
+        },
+        {
+          "comp": "C2",
+          "reason": "Quan sát mực nước và hình dạng bình chứa không gian"
+        }
+      ],
+      "prohibited_competencies": [
+        {
+          "comp": "C5",
+          "reason": "Không phục vụ kỹ năng đọc viết ngữ âm"
+        }
+      ]
+    },
+    {
+      "code": "GT-033",
+      "name": "Dệt hoa văn lưới",
+      "mechanic": "weave-grid",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế weave-grid hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác weave-grid hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi weave-grid hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác weave-grid"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-034",
+      "name": "Gõ theo nhịp",
+      "mechanic": "beat-sequence",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế beat-sequence hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác beat-sequence hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi beat-sequence hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác beat-sequence"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-035",
+      "name": "Xếp hàng lệnh",
+      "mechanic": "command-sequence",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế command-sequence hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác command-sequence hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi command-sequence hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác command-sequence"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-036",
+      "name": "Tự tạo quy luật",
+      "mechanic": "free-create",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế free-create hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác free-create hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi free-create hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác free-create"
+        }
+      ],
+      "prohibited_competencies": []
+    },
+    {
+      "code": "GT-000",
+      "name": "Làm quen khái niệm",
+      "mechanic": "concept-intro",
+      "allowed_competencies": [
+        {
+          "comp": "C1",
+          "reason": "Cơ chế concept-intro hỗ trợ thao tác trên số lượng và biểu tượng toán học"
+        },
+        {
+          "comp": "C2",
+          "reason": "Giao diện tương tác concept-intro hỗ trợ trực quan hình học và vị trí không gian"
+        },
+        {
+          "comp": "C3",
+          "reason": "Luật chơi concept-intro hỗ trợ phát hiện quy luật và phân loại logic"
+        },
+        {
+          "comp": "C4",
+          "reason": "Hỗ trợ thuộc tính so sánh kích thước, khối lượng và thu thập dữ liệu"
+        },
+        {
+          "comp": "C5",
+          "reason": "Hỗ trợ nạp chất liệu chữ cái, từ ngữ và âm tiết"
+        },
+        {
+          "comp": "C6",
+          "reason": "Rèn luyện chú ý tập trung và trí nhớ làm việc qua tương tác concept-intro"
+        }
+      ],
+      "prohibited_competencies": []
+    }
+  ]
+}
