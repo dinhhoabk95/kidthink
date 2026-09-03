@@ -2,7 +2,7 @@
 spec: CONCEPT-INTRO-RUNNER
 title: Chạy dãy hành động của một bài làm quen — bề mặt của trẻ
 area: play
-status: draft
+status: approved
 mvp: false
 phase: P4
 reviewed: 2026-09-02

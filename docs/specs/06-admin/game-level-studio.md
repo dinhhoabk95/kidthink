@@ -68,7 +68,7 @@ Studio ghi `game_levels` ở trạng thái `draft`. Publish là bề mặt khác
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-STU-01` | Studio ghi `game_levels`. Cấm — **NEVER ghi `game_templates`** | Template là Lớp 1, do seed và migration sở hữu |
+| `BR-STU-01` | Studio ghi `game_levels`. Template là code-owned (registry `ALL_TEMPLATES` trong `@mindkid/game-engine`), cấm sửa/ghi từ API/UI | Template là Lớp 1 trong code |
 | `BR-STU-02` | `content_pack` validate bằng `content_contract` ở **server** trước khi ghi | Sai schema làm crash engine trong lúc trẻ đang chơi |
 | `BR-STU-03` | Cấm — **NEVER mất công việc.** Lưu fail giữ nguyên form | Manager mất 20 phút biên soạn vì lỗi mạng sẽ không tin studio nữa |
 | `BR-STU-04` | Preview dùng **engine thật**, không mock, không ảnh tĩnh | Preview xấp xỉ để lọt level không chơi được, và người phát hiện sẽ là một đứa trẻ 4 tuổi |
@@ -153,7 +153,7 @@ Scenario: BR-STU-06 — access_tier bắt buộc
 
 Scenario: BR-STU-01 — studio không ghi template
   When quét mọi route studio
-  Then không route nào ghi bảng game_templates
+  Then templateCode được validate đối chiếu trực tiếp với registry ALL_TEMPLATES
 
 Scenario: BR-STU-07 — không publish trực tiếp
   Given một level ở draft
@@ -190,7 +190,7 @@ Scenario: sửa level published tạo version mới
 - Nới danh sách bắt buộc §7.2.
 
 **Never**
-- Ghi `game_templates` từ studio.
+- Sửa template code từ studio.
 - Publish trực tiếp từ studio.
 - Mock preview.
 - Mất dữ liệu form khi lưu fail.

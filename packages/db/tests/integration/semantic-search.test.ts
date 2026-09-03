@@ -5,7 +5,6 @@ import {
   aiCreditBalance,
   contentEmbeddings,
   gameLevels,
-  gameTemplates,
   users,
 } from "#src/index";
 import { grantAiCredits } from "#src/services/ai-credit";
@@ -46,29 +45,8 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
       feature: "test_setup",
     });
 
-    // 2. Ensure template exists
-    const [template] = await db
-      .insert(gameTemplates)
-      .values({
-        code: "GT-001",
-        name: "Game Template Đếm",
-        mechanic: "count",
-      })
-      .onConflictDoNothing()
-      .returning();
-
-    let templateId = template?.id;
-    if (!templateId) {
-      const [existingTemplate] = await db
-        .select()
-        .from(gameTemplates)
-        .where(sql`code = 'GT-001'`)
-        .limit(1);
-      if (!existingTemplate) {
-        throw new Error("Failed to find or create GT-001");
-      }
-      templateId = existingTemplate.id;
-    }
+    // 2. Template code
+    const templateCode = "GT-001";
 
     // 3. Create game levels
     const freeEntityId = Math.floor(Math.random() * 900_000) + 100_000;
@@ -79,7 +57,7 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
         entityId: freeEntityId,
         code: `GL-C1-CNT-CARD-${numSuffix}`,
         contentVersion: 1,
-        templateId,
+        templateCode,
         title: "Đếm hoa quả nông trại",
         instruction: "Em hãy đếm các quả táo màu đỏ.",
         ageMin: 3,
@@ -104,7 +82,7 @@ describe("Task P4.8 — Semantic Search Service (BR-SEM-01..08)", () => {
         entityId: premEntityId,
         code: `GL-C1-CNT-CARD-${numSuffix2}`,
         contentVersion: 1,
-        templateId,
+        templateCode,
         title: "Thử thách đếm hoa quả nâng cao",
         instruction: "Em hãy đếm số lượng hoa quả và tìm quy luật.",
         ageMin: 5,

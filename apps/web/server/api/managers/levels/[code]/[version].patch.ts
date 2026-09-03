@@ -1,4 +1,4 @@
-import { gameLevels, gameTemplates, getOwnerDb, writeAudit } from "@mindkid/db";
+import { gameLevels, getOwnerDb, writeAudit } from "@mindkid/db";
 import { validateContentPack } from "@mindkid/game-engine";
 import type { AccessTier } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
@@ -84,9 +84,8 @@ export default defineEventHandler(async (event) => {
   const db = getOwnerDb();
 
   const [existing] = await db
-    .select({ level: gameLevels, templateCode: gameTemplates.code })
+    .select()
     .from(gameLevels)
-    .leftJoin(gameTemplates, eq(gameLevels.templateId, gameTemplates.id))
     .where(
       and(eq(gameLevels.code, code), eq(gameLevels.contentVersion, version))
     );
@@ -101,16 +100,16 @@ export default defineEventHandler(async (event) => {
 
   if (
     body.expected_version !== undefined &&
-    body.expected_version !== existing.level.contentVersion
+    body.expected_version !== existing.contentVersion
   ) {
     throw createError({
       statusCode: 409,
       statusMessage: "VERSION_CONFLICT",
-      message: `Version conflict: expected v${body.expected_version}, but current is v${existing.level.contentVersion}`,
+      message: `Version conflict: expected v${body.expected_version}, but current is v${existing.contentVersion}`,
     });
   }
 
-  if (existing.level.status === "published") {
+  if (existing.status === "published") {
     throw createError({
       statusCode: 409,
       statusMessage: "CONTENT_IMMUTABLE",
@@ -138,7 +137,7 @@ export default defineEventHandler(async (event) => {
   const [updated] = await db
     .update(gameLevels)
     .set(updates)
-    .where(eq(gameLevels.id, existing.level.id))
+    .where(eq(gameLevels.id, existing.id))
     .returning();
 
   if (!updated) {
@@ -160,8 +159,9 @@ export default defineEventHandler(async (event) => {
       entity_type: "game_level",
       entity_id: updated.id.toString(),
       before_data: {
-        title: existing.level.title,
-        status: existing.level.status,
+        code: existing.code,
+        version: existing.contentVersion,
+        status: existing.status,
       },
       after_data: {
         title: updated.title,

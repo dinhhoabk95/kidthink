@@ -4,7 +4,6 @@ import {
   contentAssetRefs,
   contentImages,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
@@ -140,27 +139,8 @@ describe("P2.7 Image Storage, Upload & Asset Usage Tracking Invariants (BR-IMG, 
 
   describe("Asset Usage Tracking Invariants (BR-AUT2-01..05 & D-KB)", () => {
     it("Scenario: D-KB & BR-AUT2-03 — index table content_asset_refs supports fast reverse lookups", async () => {
-      // 1. Ensure template exists
-      let [tpl] = await db
-        .select()
-        .from(gameTemplates)
-        .where(eq(gameTemplates.code, "GT-001"));
-      if (!tpl) {
-        [tpl] = await db
-          .insert(gameTemplates)
-          .values({
-            code: "GT-001",
-            name: "GT001",
-            mechanic: "tap-select",
-            layouts: ["grid"],
-            ageMin: 3,
-            ageMax: 6,
-          })
-          .returning();
-      }
-      if (!tpl) {
-        throw new Error("Failed to find or insert tpl");
-      }
+      // 1. Template code
+      const templateCode = "GT-001";
 
       const assetRef = `content/2026/08/shared_icon_${Date.now()}.webp`;
 
@@ -171,7 +151,7 @@ describe("P2.7 Image Storage, Upload & Asset Usage Tracking Invariants (BR-IMG, 
           entityId: Date.now() + 50,
           code: `GL-C1-CNT-LVL-${Date.now().toString().slice(-4)}`,
           contentVersion: 1,
-          templateId: tpl.id,
+          templateCode,
           title: "Level phát hành dùng icon",
           contentPack: { prompt: "Tìm icon", image_path: assetRef },
           difficultyParams: {},
@@ -189,7 +169,7 @@ describe("P2.7 Image Storage, Upload & Asset Usage Tracking Invariants (BR-IMG, 
           entityId: Date.now() + 51,
           code: `GL-C1-CNT-LVL-${(Date.now() + 1).toString().slice(-4)}`,
           contentVersion: 1,
-          templateId: tpl.id,
+          templateCode,
           title: "Level nháp dùng icon",
           contentPack: { prompt: "Tìm icon nháp", image_path: assetRef },
           difficultyParams: {},

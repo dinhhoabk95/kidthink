@@ -4,7 +4,7 @@ import { and, eq, gte, lte, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { z } from "zod";
 import { activities, lessons } from "#src/schema/content";
-import { gameLevels, gameTemplates } from "#src/schema/game";
+import { gameLevels } from "#src/schema/game";
 
 export type SearchViewerRole = "guest" | "user" | "manager";
 
@@ -85,7 +85,7 @@ function buildBasicConditions(
     conditions.push(eq(gameLevels.accessTier, params.access_tier));
   }
   if (params.template) {
-    conditions.push(eq(gameTemplates.code, params.template));
+    conditions.push(eq(gameLevels.templateCode, params.template));
   }
   if (params.age_min !== undefined) {
     conditions.push(gte(gameLevels.ageMin, params.age_min));
@@ -278,7 +278,6 @@ export async function searchGameLevels(
       createdAt: gameLevels.createdAt,
     })
     .from(gameLevels)
-    .leftJoin(gameTemplates, eq(gameLevels.templateId, gameTemplates.id))
     .where(whereClause)
     .limit(limit + 1);
 
@@ -347,7 +346,6 @@ async function buildGameLevelFacets(
         accessTier: gameLevels.accessTier,
       })
       .from(gameLevels)
-      .leftJoin(gameTemplates, eq(gameLevels.templateId, gameTemplates.id))
       .where(conditions.length > 0 ? and(...conditions) : undefined);
     return rows.map((row) => ({
       key: row.code,

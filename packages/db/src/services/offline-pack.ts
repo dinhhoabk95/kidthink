@@ -312,7 +312,7 @@ async function syncSingleSessionEvents(
           childUuid: null,
           gameLevelId: session.gameLevelId,
           contentVersion: session.contentVersion,
-          templateId: session.templateId,
+          templateCode: session.templateCode,
           eventName: ev.event_name,
           occurredAtMs: ev.occurred_at_ms ?? null,
           payload: ev.payload || {},

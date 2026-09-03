@@ -89,13 +89,11 @@ Không có.
 | `content_objective_map` | `(entity_type, entity_id, learning_objective_id)` PK ghép — đóng `BR-SDS-15` (mục tiêu học tập phải ghi được): trước đó `learning_objective_codes` chỉ được cổng seed kiểm rồi vứt, không bảng nào giữ |
 | `user_tags` | `id` · `user_id` FK · `label` · UNIQUE `(user_id, label)` |
 
-### 7.3 `game_templates` — Lớp 1
+### 7.3 Templates — Lớp 1 (Code Registry)
 
-`id` bigserial PK · `code` UNIQUE (hiển thị) · `name` · `mechanic` · `layouts` text[] ·
-`content_contract` JSONB (JSON Schema export) · `difficulty_contract` JSONB ·
-`limits` JSONB · `age_min` `age_max` · `banned_age_bands` text[] ·
-`requires_tap_fallback` bool · `asset_kinds` text[] · `scoring` JSONB · `events` text[] ·
-`engine_session` · `status` enum (`active`\|`deprecated`) · `version` int.
+Templates được quản lý thuần trong mã nguồn qua registry `ALL_TEMPLATES` của `@mindkid/game-engine` (không lưu bảng DB `game_templates`).
+Mỗi template định nghĩa `code`, `name`, `mechanic`, `layouts`, `content_contract`, `difficulty_contract`, `limits`, `age_min`/`age_max`,
+`requires_tap_fallback`, `asset_kinds`, `kind`, `scoring`, `engine_session`, `status`, `version`.
 
 ### 7.4 `game_levels` — Lớp 2, có version
 
@@ -107,7 +105,7 @@ Không có.
 | `content_version` | int NOT NULL |
 | — | UNIQUE `(code, content_version)` |
 | — | UNIQUE `(code) WHERE status = 'published'` — partial |
-| `template_id` | FK `game_templates(id)` |
+| `template_code` | varchar(20) NOT NULL — mã template trong registry `ALL_TEMPLATES` (không FK) |
 | `title` `description` `instruction` | |
 | `instruction_audio_path` | |
 | `content_pack` | JSONB NOT NULL |

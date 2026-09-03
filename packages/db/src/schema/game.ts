@@ -1,7 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
   bigint,
-  boolean,
   check,
   index,
   integer,
@@ -18,16 +17,6 @@ import { timestamps } from "./columns.ts";
 import { managers } from "./identity.ts";
 import { skillDatasets } from "./taxonomy.ts";
 import { versioningConstraints } from "./versioning.ts";
-
-export const gameTemplateStatusEnum = pgEnum("game_template_status", [
-  "active",
-  "deprecated",
-]);
-
-export const gameTemplateKindEnum = pgEnum("game_template_kind", [
-  "assess",
-  "teach",
-]);
 
 export const contentLifecycleStatusEnum = pgEnum("content_lifecycle_status", [
   "draft",
@@ -52,40 +41,6 @@ export const contentOriginEnum = pgEnum("content_origin", [
 
 export const authoredInEnum = pgEnum("authored_in", ["repo_seed", "studio"]);
 
-export const gameTemplates = pgTable(
-  "game_templates",
-  {
-    id: bigint("id", { mode: "number" })
-      .primaryKey()
-      .generatedAlwaysAsIdentity(),
-    code: varchar("code", { length: 20 }).notNull().unique(),
-    name: varchar("name", { length: 100 }).notNull(),
-    mechanic: varchar("mechanic", { length: 50 }).notNull(),
-    layouts: text("layouts").array(),
-    contentContract: jsonb("content_contract"),
-    difficultyContract: jsonb("difficulty_contract"),
-    limits: jsonb("limits"),
-    ageMin: smallint("age_min"),
-    ageMax: smallint("age_max"),
-    bannedAgeBands: text("banned_age_bands").array(),
-    requiresTapFallback: boolean("requires_tap_fallback").default(false),
-    assetKinds: text("asset_kinds").array(),
-    scoring: jsonb("scoring"),
-    events: text("events").array(),
-    engineSession: text("engine_session"),
-    kind: gameTemplateKindEnum("kind").notNull().default("assess"),
-    status: gameTemplateStatusEnum("status").notNull().default("active"),
-    version: integer("version").notNull().default(1),
-    ...timestamps(),
-  },
-  (table) => [
-    check(
-      "check_game_templates_code_format",
-      sql`${table.code} ~ '^GT-\\d{3}$'`
-    ),
-  ]
-);
-
 export const gameLevels = pgTable(
   "game_levels",
   {
@@ -95,9 +50,7 @@ export const gameLevels = pgTable(
     entityId: bigint("entity_id", { mode: "number" }).notNull(),
     code: varchar("code", { length: 50 }).notNull(),
     contentVersion: integer("content_version").notNull().default(1),
-    templateId: bigint("template_id", { mode: "number" })
-      .notNull()
-      .references(() => gameTemplates.id),
+    templateCode: varchar("template_code", { length: 20 }).notNull(),
     title: varchar("title", { length: 200 }).notNull(),
     description: text("description"),
     instruction: text("instruction"),

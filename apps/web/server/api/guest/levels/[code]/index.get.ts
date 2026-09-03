@@ -1,5 +1,6 @@
 import { requireUserAuth } from "@mindkid/auth";
-import { gameLevels, gameTemplates, getOwnerDb } from "@mindkid/db";
+import { gameLevels, getOwnerDb } from "@mindkid/db";
+import { getGameTemplate } from "@mindkid/game-engine";
 import {
   type AccessTier,
   allowedTiers,
@@ -82,10 +83,7 @@ export default defineEventHandler(async (event) => {
       ageMin: gameLevels.ageMin,
       ageMax: gameLevels.ageMax,
       themeId: gameLevels.themeId,
-      templateId: gameLevels.templateId,
-      templateCode: gameTemplates.code,
-      templateName: gameTemplates.name,
-      mechanic: gameTemplates.mechanic,
+      templateCode: gameLevels.templateCode,
       contentVersion: gameLevels.contentVersion,
       // WP167.1: cần cho vòng mặc định khi level chưa có hàng game_level_rounds
       instruction: gameLevels.instruction,
@@ -94,7 +92,6 @@ export default defineEventHandler(async (event) => {
       difficultyParams: gameLevels.difficultyParams,
     })
     .from(gameLevels)
-    .leftJoin(gameTemplates, eq(gameLevels.templateId, gameTemplates.id))
     .where(eq(gameLevels.code, code));
 
   if (!level) {
@@ -150,6 +147,8 @@ export default defineEventHandler(async (event) => {
   // của cùng truy vấn, kèm cả dòng `rounds.length > 1 ? "rounds" : "attempts"`.
   const rounds = await loadRoundSet(db, level);
 
+  const template = getGameTemplate(level.templateCode);
+
   return {
     code: level.code,
     title: level.title,
@@ -163,8 +162,8 @@ export default defineEventHandler(async (event) => {
     difficulty: level.difficulty,
     theme_id: level.themeId,
     template_code: level.templateCode,
-    template_name: level.templateName,
-    mechanic_type: level.mechanic,
+    template_name: template?.name || "",
+    mechanic_type: template?.mechanic || "",
     access_tier: level.accessTier,
     locked: isLocked,
     required_entitlement: isLocked

@@ -49,8 +49,7 @@ Bốn game level, bốn competency, không dòng code mới.
 
 | Nơi | Ghi chú |
 |---|---|
-| `packages/game-engine/src/templates/` | Định nghĩa template + Session class |
-| `packages/db/src/seed-master/game-templates.ts` | Seed Lớp 1 |
+| `packages/game-engine/src/templates/` | Nguồn sự thật duy nhất (code registry `ALL_TEMPLATES`) |
 | [`game-level-studio.md`](../06-admin/game-level-studio.md) | Manager chọn template |
 | [`content-seed-authoring.md`](content-seed-authoring.md) | Cổng 1 dùng `content_contract`; seeder lấy kiểu từ nó |
 
@@ -63,7 +62,7 @@ Bốn game level, bốn competency, không dòng code mới.
 5. Viết E2E journey cho template.
 6. Viết phiếu spec `engines/GT-<nnn>.md` — `BR-ESS-07` (phiếu là một phần của định nghĩa xong)
    làm PR thiếu phiếu không merge được.
-7. Seed vào `game_templates` qua PR.
+7. Đăng ký vào registry `ALL_TEMPLATES` trong `packages/game-engine/src/templates/index.ts`.
 
 Ba level mẫu ở bước 4 là **bằng chứng contract chạy**, cấm — NEVER dùng làm nội dung sản phẩm.
 Sàn nội dung thật của một engine ở [`engine-content-depth.md`](../05-content/engine-content-depth.md);

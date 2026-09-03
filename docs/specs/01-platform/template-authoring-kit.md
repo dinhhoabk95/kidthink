@@ -68,7 +68,7 @@ Con số template khi đó là quyết định sản phẩm, không phải trầ
 8. Dev viết phiếu spec `docs/specs/01-platform/engines/GT-007.md` theo mười mục ở mục 7.1 của
    [`engine-spec-sheet.md`](engine-spec-sheet.md), rồi chạy
    `pnpm --filter @mindkid/game-engine gen:engine-index`.
-9. Seed vào `game_templates` qua PR, như `BR-GTC` bước 6.
+9. Đăng ký vào registry `ALL_TEMPLATES` qua PR, như `BR-GTC` bước 7.
 
 Bước 2, 3, 4, 8 viết tay. Bước 5, 6, 7 không viết dòng nào.
 
@@ -101,13 +101,13 @@ trích; phần phán đoán do người review PR đọc.
 | `BR-TAK-08` | Session class nạp **động theo mã**. Bundle bề mặt chơi không tăng tuyến tính theo số template | Trẻ mở một màn chơi không cần tải mã của ba mươi chín template khác. Đây là ràng buộc ngân sách hiệu năng, không phải tối ưu sớm |
 | `BR-TAK-09` | Mọi template mới **bắt buộc** có ≥3 game level mẫu trước khi được sinh vào registry | Contract chưa từng có dữ liệu thật là contract chưa được kiểm. Giữ nguyên `BR-GTC` bước 4 |
 | `BR-TAK-10` | Template mới **cấm** đổi bất kỳ `content_contract` nào đã publish | `BR-GTC-08` breaking change. Thêm không phải sửa |
-| `BR-TAK-11` | File mô tả template là **nguồn sự thật duy nhất** cho hàng seed `game_templates` | Hai nguồn cho cùng một hàng thì chúng sẽ lệch, và lệch lộ ra lúc trẻ mở màn chơi |
+| `BR-TAK-11` | File mô tả template là **nguồn sự thật duy nhất** cho registry code `ALL_TEMPLATES` | Hai nguồn cho cùng một đối tượng thì chúng sẽ lệch, và lệch lộ ra lúc trẻ mở màn chơi |
 | `BR-TAK-12` | Mọi `LayoutId` template khai phải cài đặt được, và mọi `shuffle_*` khai phải có luồng tương ứng | Trạng thái "cờ khai rồi bỏ đó" là thứ file này ngăn tái diễn |
 
 ## 7. Data
 
 **Đọc:** thư mục `packages/game-engine/src/templates/*/template.ts`.
-**Ghi:** `packages/game-engine/src/generated/*` · hàng seed `game_templates`.
+**Ghi:** `packages/game-engine/src/generated/*` · registry `ALL_TEMPLATES`.
 
 ### 7.1 File mô tả
 

@@ -2,12 +2,12 @@ import {
   childProfiles,
   contentSkillMap,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
   playSessions,
   skillPrerequisites,
   skills,
 } from "@mindkid/db";
+import { ALL_TEMPLATES, getGameTemplate } from "@mindkid/game-engine";
 import type {
   CallerIdentity,
   IntroCheckResult,
@@ -232,13 +232,8 @@ export async function checkLevelIntroRequired(
 
   const db = getOwnerDb();
 
-  const [templateRow] = await db
-    .select({ kind: gameTemplates.kind })
-    .from(gameTemplates)
-    .where(eq(gameTemplates.id, level.templateId))
-    .limit(1);
-
-  if (templateRow?.kind === "teach") {
+  const templateDef = getGameTemplate(level.templateCode);
+  if (templateDef?.kind === "teach") {
     return { intro_required: false };
   }
 
@@ -268,6 +263,14 @@ export async function checkLevelIntroRequired(
     initialSkillIds
   );
 
+  const teachTemplateCodes = Object.values(ALL_TEMPLATES)
+    .filter((t) => t.kind === "teach")
+    .map((t) => t.code as string);
+
+  if (teachTemplateCodes.length === 0) {
+    return { intro_required: false };
+  }
+
   const introLevels: IntroLevelRow[] = await db
     .select({
       levelId: gameLevels.id,
@@ -279,7 +282,6 @@ export async function checkLevelIntroRequired(
       skillName: skills.name,
     })
     .from(gameLevels)
-    .innerJoin(gameTemplates, eq(gameLevels.templateId, gameTemplates.id))
     .innerJoin(
       contentSkillMap,
       and(
@@ -290,7 +292,7 @@ export async function checkLevelIntroRequired(
     .innerJoin(skills, eq(contentSkillMap.skillId, skills.id))
     .where(
       and(
-        eq(gameTemplates.kind, "teach"),
+        inArray(gameLevels.templateCode, teachTemplateCodes),
         eq(gameLevels.status, "published"),
         inArray(contentSkillMap.skillId, transitiveSkillIds)
       )

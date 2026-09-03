@@ -2,7 +2,7 @@ import { eq, sql } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "#src/index";
 import { childProfiles } from "#src/schema/child";
-import { gameLevels, gameTemplates } from "#src/schema/game";
+import { gameLevels } from "#src/schema/game";
 import { users } from "#src/schema/identity";
 import { playSessions, telemetryEvents } from "#src/schema/play";
 
@@ -36,7 +36,7 @@ describe("Play Schema Integration Tests", () => {
       db.insert(playSessions).values({
         gameLevelId: 1,
         contentVersion: 1,
-        templateId: 1,
+        templateCode: "GT-001",
       })
     ).rejects.toThrow();
   });
@@ -77,30 +77,8 @@ describe("Play Schema Integration Tests", () => {
       throw new Error("Failed to insert child");
     }
 
-    // 2. Create Game Template & Level
-    const gtCode = `GT-${Math.floor(Math.random() * 899 + 100)}`;
-    let [gt] = await db
-      .insert(gameTemplates)
-      .values({
-        code: gtCode,
-        name: "Template Play Test",
-        mechanic: "drag_drop",
-      })
-      .onConflictDoNothing()
-      .returning();
-
-    if (!gt) {
-      const [existingGt] = await db
-        .select()
-        .from(gameTemplates)
-        .where(eq(gameTemplates.code, gtCode));
-      if (existingGt) {
-        gt = existingGt;
-      }
-    }
-    if (!gt) {
-      throw new Error("Failed to find or create gt");
-    }
+    // 2. Template code
+    const gtCode = "GT-001";
 
     const glCode = `GL-C1-NUM-DRAG-${Math.floor(Math.random() * 8999 + 1000)}`;
     let [gl] = await db
@@ -109,7 +87,7 @@ describe("Play Schema Integration Tests", () => {
         entityId: Math.floor(Math.random() * 900_000) + 100_000,
         code: glCode,
         contentVersion: 1,
-        templateId: gt.id,
+        templateCode: gtCode,
         title: "Level Play Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
@@ -139,7 +117,7 @@ describe("Play Schema Integration Tests", () => {
         childProfileId: child.id,
         gameLevelId: gl.id,
         contentVersion: 1,
-        templateId: gt.id,
+        templateCode: gtCode,
         completionStatus: "in_progress",
       })
       .returning();

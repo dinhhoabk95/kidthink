@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb, transitionContent } from "#src/index";
 import { activities, lessonActivities, lessons } from "#src/schema/content";
-import { gameLevels, gameTemplates } from "#src/schema/game";
+import { gameLevels } from "#src/schema/game";
 import { managers } from "#src/schema/identity";
 import { contentSkillMap } from "#src/schema/tagging";
 import { competencies, skills, strands } from "#src/schema/taxonomy";
@@ -100,41 +100,12 @@ async function setupTestEnvironment() {
   }
 
   // 3. Game Template & Level
-  const randNum = Math.floor(Math.random() * 900) + 100;
   const num4 = (Math.floor(Math.random() * 9000) + 1000).toString();
   const letters = ["AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ"];
   const l1 = letters[Math.floor(Math.random() * letters.length)];
   const l2 = letters[Math.floor(Math.random() * letters.length)];
-  const gtCode = `GT-${randNum}`;
+  const gtCode = "GT-001";
   const glCode = `GL-C1-${l1}-${l2}-${num4}`;
-
-  const [tmpl] = await db
-    .insert(gameTemplates)
-    .values({
-      code: gtCode,
-      name: "Template đếm số",
-      mechanic: "tap_select",
-    })
-    .onConflictDoUpdate({
-      target: gameTemplates.code,
-      set: { name: "Template đếm số" },
-    })
-    .returning();
-
-  let tmplId: number;
-  if (tmpl) {
-    tmplId = tmpl.id;
-  } else {
-    const tmplRows = await db
-      .select({ id: gameTemplates.id })
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, gtCode));
-    const firstTmpl = tmplRows[0];
-    if (!firstTmpl) {
-      throw new Error("Failed to find template");
-    }
-    tmplId = firstTmpl.id;
-  }
 
   const [level] = await db
     .insert(gameLevels)
@@ -142,7 +113,7 @@ async function setupTestEnvironment() {
       entityId: Math.floor(Math.random() * 900_000_000) + 100_000_000,
       code: glCode,
       contentVersion: 1,
-      templateId: tmplId,
+      templateCode: gtCode,
       title: "Đếm số lượng 1-5",
       accessTier: "standard",
       ageMin: 3,

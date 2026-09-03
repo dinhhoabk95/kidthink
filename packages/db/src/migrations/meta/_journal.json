@@ -43,6 +43,13 @@
       "when": 1788600000000,
       "tag": "0005_skill_datasets_and_objective_map",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1788700000000,
+      "tag": "0006_drop_game_templates",
+      "breakpoints": true
     }
   ]
 }

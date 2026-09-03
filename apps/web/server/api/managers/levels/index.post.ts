@@ -1,11 +1,4 @@
-import {
-  gameLevels,
-  gameTemplates,
-  getOwnerDb,
-  managers,
-  type OwnerDb,
-  writeAudit,
-} from "@mindkid/db";
+import { gameLevels, getOwnerDb, managers, writeAudit } from "@mindkid/db";
 import { getGameTemplate } from "@mindkid/game-engine";
 import { eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler, setResponseStatus } from "h3";
@@ -54,52 +47,6 @@ function generateLevelCode(
   return `GL-C${tNum}-STD-LVL-${numStr}`;
 }
 
-async function ensureDbTemplate(db: OwnerDb, templateCode: string) {
-  const template = getGameTemplate(templateCode);
-  if (!template) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "TEMPLATE_NOT_SUPPORTED",
-      message: `Template ${templateCode} is not supported`,
-    });
-  }
-
-  let [dbTemplate] = await db
-    .select()
-    .from(gameTemplates)
-    .where(eq(gameTemplates.code, templateCode));
-
-  if (!dbTemplate) {
-    await db
-      .insert(gameTemplates)
-      .values({
-        code: template.code,
-        name: template.name,
-        mechanic: template.mechanic,
-        layouts: template.layouts,
-        ageMin: template.age_min,
-        ageMax: template.age_max,
-      })
-      .onConflictDoNothing();
-
-    const [found] = await db
-      .select()
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, templateCode));
-    dbTemplate = found;
-  }
-
-  if (!dbTemplate) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "TEMPLATE_NOT_FOUND",
-      message: `Không tìm thấy template '${templateCode}' trong cơ sở dữ liệu`,
-    });
-  }
-
-  return { template, dbTemplate };
-}
-
 const DEFAULT_DIFFICULTY_PARAMS = {
   distractor_count: 1,
   hint_after_ms: 10_000,
@@ -115,7 +62,7 @@ const DEFAULT_CONTENT_PACK = {
 function buildInsertValues(
   input: CreateLevelInput,
   levelCode: string,
-  templateId: number,
+  templateCode: string,
   templateAgeMin: number,
   templateAgeMax: number,
   managerId?: number
@@ -124,7 +71,7 @@ function buildInsertValues(
     entityId: Date.now(),
     code: levelCode,
     contentVersion: 1,
-    templateId,
+    templateCode,
     title: input.title ?? "Màn chơi mới",
     instruction: input.instruction ?? "Hãy hoàn thành thử thách",
     contentPack: input.content_pack ?? DEFAULT_CONTENT_PACK,
@@ -190,7 +137,6 @@ async function insertLevelWithRetry(
   input: CreateLevelInput,
   initialCode: string,
   templateCode: string,
-  templateId: number,
   templateAgeMin: number,
   templateAgeMax: number,
   validManagerId: number | undefined,
@@ -202,7 +148,7 @@ async function insertLevelWithRetry(
       const insertValues = buildInsertValues(
         input,
         currentCode,
-        templateId,
+        templateCode,
         templateAgeMin,
         templateAgeMax,
         validManagerId
@@ -234,8 +180,15 @@ export default defineEventHandler(async (event) => {
   }
   const input = parsed.data;
   const templateCode = input.template_code;
+  const template = getGameTemplate(templateCode);
+  if (!template) {
+    throw createError({
+      statusCode: 422,
+      statusMessage: "TEMPLATE_NOT_SUPPORTED",
+      message: `Template ${templateCode} is not supported`,
+    });
+  }
   const db = getOwnerDb();
-  const { template, dbTemplate } = await ensureDbTemplate(db, templateCode);
 
   const rawLayoutId = input.difficulty_params?.layout_id;
   const requestedLayoutId =
@@ -263,7 +216,6 @@ export default defineEventHandler(async (event) => {
     input,
     levelCode,
     templateCode,
-    dbTemplate.id,
     template.age_min,
     template.age_max,
     validManagerId,

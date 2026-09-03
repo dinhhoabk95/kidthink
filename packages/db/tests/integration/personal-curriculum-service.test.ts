@@ -6,7 +6,6 @@ import {
   curricula,
   curriculumItems,
   gameLevels,
-  gameTemplates,
   lessons,
   users,
 } from "#src/index";
@@ -104,30 +103,8 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
     }
     childBUuid = cB.uuid;
 
-    // 3. Create or get game template
-    const [gt] = await db
-      .insert(gameTemplates)
-      .values({
-        code: "GT-999",
-        name: "Game template test",
-        mechanic: "drag_drop",
-        contentContract: {},
-      })
-      .onConflictDoNothing()
-      .returning();
-    let templateId = gt?.id;
-    if (!templateId) {
-      const [existing] = await db
-        .select({ id: gameTemplates.id })
-        .from(gameTemplates)
-        .where(eq(gameTemplates.code, "GT-999"))
-        .limit(1);
-      if (!existing) {
-        throw new Error("Failed to find or insert GT-999");
-      }
-      templateId = existing.id;
-    }
-    const safeTemplateId: number = templateId;
+    // 3. Game template code
+    const safeTemplateCode = "GT-001";
 
     // 4. Create standard & premium game levels
     async function insertUniqueGameLevel(
@@ -149,7 +126,7 @@ describe("Personal Curriculum Service & Lifecycle Integration Tests (Task #65 / 
             .values({
               code,
               entityId,
-              templateId: safeTemplateId,
+              templateCode: safeTemplateCode,
               difficulty,
               title,
               accessTier,

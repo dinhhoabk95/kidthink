@@ -7,7 +7,6 @@ import {
   curriculumItems,
   curriculumWeeks,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
   getUserCollections,
   getUserLibrary,
@@ -128,29 +127,15 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
     }
     childBId = cB.id;
 
-    // 3. Seed Templates & Levels
+    // 3. Seed Template code
     const templateCode = "GT-001";
-    await db
-      .insert(gameTemplates)
-      .values({
-        code: templateCode,
-        name: "Game template test P3",
-        mechanic: "drag_drop",
-        contentContract: {},
-      })
-      .onConflictDoNothing();
-    const [gt] = await db
-      .select({ id: gameTemplates.id })
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, templateCode));
-    const templateId = gt?.id ?? 1;
 
     const [gl1] = await db
       .insert(gameLevels)
       .values({
         code: await makeLevelCode("GL-C1-NUM-CNT"),
         entityId: Math.floor(80_000_000 + Math.random() * 10_000_000),
-        templateId,
+        templateCode,
         difficulty: 1,
         title: "Đếm số vui vẻ",
         accessTier: "standard",
@@ -169,7 +154,7 @@ describe("Task #82 — P3 Account & Curriculum Integration (BR-MDB, BR-MLB, BR-C
       .values({
         code: await makeLevelCode("GL-C2-SHP-REC"),
         entityId: Math.floor(80_000_000 + Math.random() * 10_000_000),
-        templateId,
+        templateCode,
         difficulty: 2,
         title: "Nhận biết hình khối",
         accessTier: "premium",

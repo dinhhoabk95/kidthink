@@ -2,7 +2,7 @@
 spec: CONCEPT-INTRO-GATE
 title: Bắt buộc làm quen khái niệm trước khi vào màn chơi
 area: play
-status: draft
+status: approved
 mvp: false
 phase: P4
 reviewed: 2026-09-02
@@ -126,7 +126,7 @@ thành hình phạt.
 
 ## 7. Data
 
-**Đọc:** `game_levels` · `game_templates.kind` · `content_skill_map` · `skills` · `strands` · `skill_prerequisites` ·
+**Đọc:** `game_levels` · registry `ALL_TEMPLATES` (`kind`) · `content_skill_map` · `skills` · `strands` · `skill_prerequisites` ·
 `play_sessions` · `lesson_runs`.
 **Ghi:** không ghi gì ở đường đọc config. Hàng hoàn thành do
 [`concept-intro-runner.md`](concept-intro-runner.md) ghi qua `play_sessions`.
@@ -195,9 +195,8 @@ lỗi kiểu bằng đúng cơ chế đó.
 -- Những strand trong tập S mà trẻ ĐÃ đi hết bài làm quen (BR-CIG-10)
 SELECT DISTINCT gl.content_pack -> 'concept' ->> 'strand_code' AS strand_code
 FROM play_sessions ps
-JOIN game_levels gl    ON gl.id = ps.game_level_id
-JOIN game_templates gt ON gt.id = ps.template_id
-WHERE gt.kind = 'teach'
+JOIN game_levels gl ON gl.id = ps.game_level_id
+WHERE ps.template_code = ANY($4) -- teachTemplateCodes từ registry ALL_TEMPLATES
   AND ps.completion_status = 'completed'
   AND ps.is_preview = false
   AND (ps.child_profile_id = $1 OR ps.guest_device_id = $2)

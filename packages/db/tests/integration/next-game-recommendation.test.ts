@@ -11,7 +11,7 @@ import {
   curriculumItems,
   curriculumWeeks,
 } from "#src/schema/curriculum";
-import { gameLevels, gameTemplates } from "#src/schema/game";
+import { gameLevels } from "#src/schema/game";
 import { users } from "#src/schema/identity";
 import { levelDailyStats, playSessions } from "#src/schema/play";
 import { contentSkillMap } from "#src/schema/tagging";
@@ -166,27 +166,8 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         .onConflictDoNothing();
     }
 
-    // 3. Game Template
-    let [tmpl] = await db
-      .select()
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, "GT-001"))
-      .limit(1);
-
-    if (!tmpl) {
-      [tmpl] = await db
-        .insert(gameTemplates)
-        .values({
-          code: "GT-001",
-          name: "Nối cặp",
-          mechanic: "match",
-          status: "active",
-        })
-        .returning();
-    }
-    if (!tmpl) {
-      throw new Error("Failed to find or insert tmpl");
-    }
+    // 3. Game Template Code
+    const templateCode = "GT-001";
 
     // Helper to generate unique valid level code
     const makeLevelCode = async (subStrand: string) => {
@@ -211,7 +192,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         entityId: Math.floor(100_000 + Math.random() * 800_000),
         code: await makeLevelCode("FREA"),
         contentVersion: 1,
-        templateId: tmpl.id,
+        templateCode,
         title: "Đếm táo miễn phí",
         contentPack: {},
         difficultyParams: {},
@@ -233,7 +214,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         entityId: Math.floor(100_000 + Math.random() * 800_000),
         code: await makeLevelCode("FREB"),
         contentVersion: 1,
-        templateId: tmpl.id,
+        templateCode,
         title: "Đếm chuối miễn phí",
         contentPack: {},
         difficultyParams: {},
@@ -255,7 +236,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         entityId: Math.floor(100_000 + Math.random() * 800_000),
         code: await makeLevelCode("STDA"),
         contentVersion: 1,
-        templateId: tmpl.id,
+        templateCode,
         title: "Đếm cam tiêu chuẩn",
         contentPack: {},
         difficultyParams: {},
@@ -277,7 +258,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         entityId: Math.floor(100_000 + Math.random() * 800_000),
         code: await makeLevelCode("PRMA"),
         contentVersion: 1,
-        templateId: tmpl.id,
+        templateCode,
         title: "Đếm dâu cao cấp",
         contentPack: {},
         difficultyParams: {},
@@ -424,7 +405,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         childProfileId: child.id,
         gameLevelId: levelFree1.id,
         contentVersion: 1,
-        templateId: levelFree1.templateId,
+        templateCode: levelFree1.templateCode,
         startedAt: new Date(Date.now() - 3000),
         completionStatus: "completed",
       },
@@ -432,7 +413,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         childProfileId: child.id,
         gameLevelId: levelFree2.id,
         contentVersion: 1,
-        templateId: levelFree2.templateId,
+        templateCode: levelFree2.templateCode,
         startedAt: new Date(Date.now() - 2000),
         completionStatus: "completed",
       },
@@ -440,7 +421,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
         childProfileId: child.id,
         gameLevelId: levelStandard.id,
         contentVersion: 1,
-        templateId: levelStandard.templateId,
+        templateCode: levelStandard.templateCode,
         startedAt: new Date(Date.now() - 1000),
         completionStatus: "completed",
       },
@@ -544,7 +525,7 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
       childProfileId: child.id,
       gameLevelId: levelFree1.id,
       contentVersion: 1,
-      templateId: levelFree1.templateId,
+      templateCode: levelFree1.templateCode,
       startedAt: new Date(),
       completionStatus: "completed",
     });

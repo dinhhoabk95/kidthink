@@ -108,7 +108,7 @@ Bước 3c không đổi một dòng nào so với hôm nay. Toàn bộ phần m
 
 ## 7. Data
 
-**Đọc:** `game_levels` · `game_level_rounds` · `game_templates`.
+**Đọc:** `game_levels` · `game_level_rounds` · registry `ALL_TEMPLATES`.
 **Ghi:** `telemetry_events` (qua ingestion) · `play_sessions`.
 
 Không thêm bảng. Round set là dữ liệu **đọc**; thứ duy nhất ghi thêm là event vòng, và

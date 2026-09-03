@@ -1,4 +1,4 @@
-import { gameLevels, gameTemplates, getOwnerDb, writeAudit } from "@mindkid/db";
+import { gameLevels, getOwnerDb, writeAudit } from "@mindkid/db";
 import { and, eq, sql } from "drizzle-orm";
 import {
   createError,
@@ -20,10 +20,7 @@ function generateLevelCode(
 
 async function createClonedLevel(
   db: ReturnType<typeof getOwnerDb>,
-  existing: {
-    level: typeof gameLevels.$inferSelect;
-    templateCode: string | null;
-  },
+  existing: typeof gameLevels.$inferSelect,
   managerId: number
 ) {
   const countRes = await db
@@ -59,18 +56,18 @@ async function createClonedLevel(
           entityId: Math.floor(10_000_000 + Math.random() * 89_000_000),
           code: candidateCode,
           contentVersion: 1,
-          templateId: existing.level.templateId,
-          title: `Bản sao - ${existing.level.title}`,
-          description: existing.level.description,
-          instruction: existing.level.instruction,
-          contentPack: existing.level.contentPack,
-          difficultyParams: existing.level.difficultyParams,
-          themeId: existing.level.themeId,
-          ageMin: existing.level.ageMin,
-          ageMax: existing.level.ageMax,
-          difficulty: existing.level.difficulty,
-          accessTier: existing.level.accessTier,
-          thumbnailEmoji: existing.level.thumbnailEmoji,
+          templateCode: existing.templateCode,
+          title: `Bản sao - ${existing.title}`,
+          description: existing.description,
+          instruction: existing.instruction,
+          contentPack: existing.contentPack,
+          difficultyParams: existing.difficultyParams,
+          themeId: existing.themeId,
+          ageMin: existing.ageMin,
+          ageMax: existing.ageMax,
+          difficulty: existing.difficulty,
+          accessTier: existing.accessTier,
+          thumbnailEmoji: existing.thumbnailEmoji,
           status: "draft",
           origin: "human",
           authoredIn: "studio",
@@ -109,12 +106,8 @@ export default defineEventHandler(async (event) => {
   const db = getOwnerDb();
 
   const [existing] = await db
-    .select({
-      level: gameLevels,
-      templateCode: gameTemplates.code,
-    })
+    .select()
     .from(gameLevels)
-    .leftJoin(gameTemplates, eq(gameLevels.templateId, gameTemplates.id))
     .where(
       and(eq(gameLevels.code, code), eq(gameLevels.contentVersion, version))
     );

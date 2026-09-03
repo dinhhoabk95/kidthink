@@ -243,14 +243,14 @@ trong studio rồi gán.
 | Admin làm được gì | **Chỉ đọc.** Không tạo, không sửa, không xoá                                                                                                                                                 | CRUD đầy đủ + duyệt + publish                                                                                 |
 | Đổi bằng cách nào | Sửa hằng số → PR → migration/seed → deploy                                                                                                                                                   | Studio, không cần deploy                                                                                      |
 | Có version không  | Version của code                                                                                                                                                                             | **Có** — §2.7                                                                                                 |
-| Bảng              | `competencies` `strands` `skills` `learning_objectives` `skill_prerequisites` `game_templates` `packages` `package_entitlements` `entitlement_keys` `themes` `content_tags` | `game_levels` `lessons` `activities` `curricula` `curriculum_items` `worksheets` `content_images` `seo_pages` |
+| Bảng              | `competencies` `strands` `skills` `learning_objectives` `skill_prerequisites` `packages` `package_entitlements` `entitlement_keys` `themes` `content_tags` | `game_levels` `lessons` `activities` `curricula` `curriculum_items` `worksheets` `content_images` `seo_pages` |
 
 **Ở MVP Lớp 2 được seed sẵn** đủ số lượng §1.8, **và** studio hoạt động để mở rộng tiếp.
 Seeder là cách nạp lô đầu; studio là cách nội dung lớn về sau. Hai đường ghi vào cùng một
 bảng, cùng một validation, cùng một audit trail.
 
 **Mã bất biến sau khi phát hành:** `skills.code` · `learning_objectives.code` ·
-`game_templates.code` · `packages.code` · `entitlement_keys.key` · `game_levels.code` ·
+`packages.code` · `entitlement_keys.key` · `game_levels.code` ·
 `lessons.code`.
 
 Đặt rồi không đổi, không chèn giữa, không tái dùng số của bản đã xoá.
@@ -627,7 +627,7 @@ giữ lại (nghĩa vụ pháp lý), không chứa PII của trẻ.
 | **Billing**            | `packages` `package_entitlements` `entitlement_keys` `entitlements` `payment_orders`                            |
 | **Taxonomy** (L1)      | `competencies` `strands` `skills` `skill_prerequisites` `learning_objectives`                                   |
 | **Tagging** (L1)       | `content_tags` `content_tag_map` `content_skill_map`                                                            |
-| **Game**               | `game_templates` (L1) · `game_levels` `game_level_versions` (L2)                                                |
+| **Game**               | `ALL_TEMPLATES` (code registry) · `game_levels` `game_level_versions` (L2)                                     |
 | **Content**            | `lessons` `activities` `lesson_activities` `worksheets` `content_images`                                        |
 | **Curriculum**         | `curricula` `curriculum_items` `curriculum_enrollments` `curriculum_item_progress`                              |
 | **Play**               | `play_sessions` `telemetry_events`                                                                              |

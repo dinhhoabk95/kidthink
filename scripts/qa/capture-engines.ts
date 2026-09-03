@@ -80,17 +80,16 @@ async function loadRepresentativeLevels(
   sql: postgres.Sql
 ): Promise<LevelRow[]> {
   return (await sql`
-    SELECT DISTINCT ON (t.code)
-      t.code            AS template_code,
+    SELECT DISTINCT ON (l.template_code)
+      l.template_code   AS template_code,
       l.code            AS code,
       l.content_pack    AS content_pack,
       l.difficulty_params AS difficulty_params,
       l.theme_id        AS theme_id,
       l.age_min || '-' || l.age_max AS age_band
-    FROM game_templates t
-    JOIN game_levels l ON l.template_id = t.id
+    FROM game_levels l
     WHERE l.status = 'published'
-    ORDER BY t.code, (l.access_tier <> 'free'), l.code
+    ORDER BY l.template_code, (l.access_tier <> 'free'), l.code
   `) as unknown as LevelRow[];
 }
 

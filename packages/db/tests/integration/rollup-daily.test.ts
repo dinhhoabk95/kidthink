@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "#src/index";
 import { childProfiles } from "#src/schema/child";
-import { gameLevels, gameTemplates } from "#src/schema/game";
+import { gameLevels } from "#src/schema/game";
 import { users } from "#src/schema/identity";
 import {
   childDailyStats,
@@ -40,21 +40,8 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       throw new Error("Failed to insert child");
     }
 
-    // 2. Create Game Template & Level
-    let [gt] = await db.select().from(gameTemplates).limit(1);
-    if (!gt) {
-      [gt] = await db
-        .insert(gameTemplates)
-        .values({
-          code: "GT-001",
-          name: "Template Rollup Test",
-          mechanic: "tap_target",
-        })
-        .returning();
-    }
-    if (!gt) {
-      throw new Error("Failed to find or insert gt");
-    }
+    // 2. Game template code & Level
+    const gtCode = "GT-001";
 
     const num4 = Math.floor(Math.random() * 8999) + 1000;
     const glCode = `GL-C1-CNT-RLLP-${num4}`;
@@ -64,7 +51,7 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
         entityId: Math.floor(Math.random() * 900_000) + 100_000,
         code: glCode,
         contentVersion: 1,
-        templateId: gt.id,
+        templateCode: gtCode,
         title: "Level Rollup Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
@@ -81,7 +68,7 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       childProfileId: child.id,
       gameLevelId: gl.id,
       contentVersion: 1,
-      templateId: gt.id,
+      templateCode: gtCode,
       completionStatus: "completed",
       durationSeconds: 120,
       score: 100,
@@ -95,7 +82,7 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       guestDeviceId: `guest-dev-${Date.now()}`,
       gameLevelId: gl.id,
       contentVersion: 1,
-      templateId: gt.id,
+      templateCode: gtCode,
       completionStatus: "completed",
       durationSeconds: 90,
       score: 80,

@@ -16,7 +16,6 @@ import { seedInitialAccounts } from "./seed-master/accounts.ts";
 import { seedSkillActionSuggestions } from "./seed-master/action-suggestions.ts";
 import { seedContentTags } from "./seed-master/content-tags.ts";
 import { seedCurriculaMasterData } from "./seed-master/curricula.ts";
-import { seedGameTemplatesMasterData } from "./seed-master/game-templates.ts";
 import { seedTaxonomyMasterData } from "./seed-master/taxonomy/index.ts";
 
 export const PENDING_PRICE_VND = PENDING_PRICE;
@@ -92,12 +91,6 @@ export async function seed() {
   const taxStats = await seedTaxonomyMasterData(db);
   console.log(
     `[db:seed] Taxonomy seeded: ${taxStats.competencyCount} competencies, ${taxStats.strandCount} strands, ${taxStats.skillCount} skills, ${taxStats.loCount} LOs, ${taxStats.datasetCount} skill datasets.`
-  );
-
-  // 5. Seed Game Templates master data
-  const templateStats = await seedGameTemplatesMasterData(db);
-  console.log(
-    `[db:seed] Game Templates seeded: ${templateStats.templateCount} templates.`
   );
 
   // 7. Seed Content Tags master vocabulary

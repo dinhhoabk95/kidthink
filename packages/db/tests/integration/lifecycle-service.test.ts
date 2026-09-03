@@ -7,7 +7,7 @@ import {
   rollbackVersion,
   transitionContent,
 } from "#src/index";
-import { gameLevels, gameTemplates } from "#src/schema/game";
+import { gameLevels } from "#src/schema/game";
 import { managers } from "#src/schema/identity";
 import { contentSkillMap } from "#src/schema/tagging";
 import { competencies, skills, strands } from "#src/schema/taxonomy";
@@ -20,7 +20,6 @@ async function setupTestData() {
   const letters = ["AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ"];
   const l1 = letters[Math.floor(Math.random() * letters.length)];
   const l2 = letters[Math.floor(Math.random() * letters.length)];
-  const gtCode = `GT-${randNum}`;
   const glCode = `GL-C1-${l1}-${l2}-${num4}`;
 
   // Insert competency, strand, skill
@@ -98,25 +97,8 @@ async function setupTestData() {
     throw new Error("Failed to find skill id");
   }
 
-  // Insert template
-  const [gt] = await db
-    .insert(gameTemplates)
-    .values({
-      code: gtCode,
-      name: "Template Lifecycle Test",
-      mechanic: "drag_drop",
-    })
-    .onConflictDoNothing()
-    .returning();
-
-  const templateRows = await db
-    .select()
-    .from(gameTemplates)
-    .where(eq(gameTemplates.code, gtCode));
-  const templateId = gt ? gt.id : templateRows[0]?.id;
-  if (!templateId) {
-    throw new Error("Failed to find template id");
-  }
+  // Template code
+  const templateCode = "GT-001";
 
   // Insert manager
   const [mgr] = await db
@@ -153,7 +135,7 @@ async function setupTestData() {
       entityId: randNum * 10,
       code: glCode,
       contentVersion: 1,
-      templateId,
+      templateCode,
       title: "Mức chơi thử nghiệm 1",
       description: "Mô tả",
       accessTier: "standard",
@@ -181,7 +163,7 @@ async function setupTestData() {
     weight: "1.00",
   });
 
-  return { gt, mgr, admin, level, glCode };
+  return { templateCode, mgr, admin, level, glCode };
 }
 
 describe("P0.6 Tasks 5, 6, 7 — Lifecycle & Versioning Services Integration Tests", () => {

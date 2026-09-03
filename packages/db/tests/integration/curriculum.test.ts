@@ -8,7 +8,7 @@ import {
   curriculumItemProgress,
   curriculumItems,
 } from "#src/schema/curriculum";
-import { gameLevels, gameTemplates } from "#src/schema/game";
+import { gameLevels } from "#src/schema/game";
 import { users } from "#src/schema/identity";
 
 describe("Curriculum Schema Integration Tests", () => {
@@ -83,26 +83,8 @@ describe("Curriculum Schema Integration Tests", () => {
   it("BR-SCT-06: curriculum_items references entity_id (lineage anchor) so it sees new published versions automatically", async () => {
     const db = getOwnerDb();
 
-    // 1. Create Game Template & Published Game Level Version 1
-    const gtCode = `GT-${(Math.floor(Math.random() * 899) + 100).toString()}`;
-    const [gt] = await db
-      .insert(gameTemplates)
-      .values({
-        code: gtCode,
-        name: "Template Lineage Test",
-        mechanic: "drag_drop",
-      })
-      .onConflictDoNothing()
-      .returning();
-
-    const templateRows = await db
-      .select()
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, gtCode));
-    const gtId = gt ? gt.id : templateRows[0]?.id;
-    if (!gtId) {
-      throw new Error("Failed to find template id");
-    }
+    // 1. Template Code
+    const gtCode = "GT-001";
 
     const glCode = await getUniqueGameLevelCode();
     const lineageAnchorEntityId = Math.floor(Math.random() * 900_000) + 100_000;
@@ -113,7 +95,7 @@ describe("Curriculum Schema Integration Tests", () => {
         entityId: lineageAnchorEntityId,
         code: glCode,
         contentVersion: 1,
-        templateId: gtId,
+        templateCode: gtCode,
         title: "Version 1",
         contentPack: { v: 1 },
         difficultyParams: { speed: 1 },
@@ -175,7 +157,7 @@ describe("Curriculum Schema Integration Tests", () => {
       entityId: lineageAnchorEntityId,
       code: glCode,
       contentVersion: 2,
-      templateId: gtId,
+      templateCode: gtCode,
       title: "Version 2 (New Published)",
       contentPack: { v: 2 },
       difficultyParams: { speed: 2 },

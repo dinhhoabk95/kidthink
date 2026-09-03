@@ -304,12 +304,6 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     legalBasis: "BR-CUR-01",
   },
   {
-    tableName: "game_templates",
-    classification: "retain",
-    reason: "Khuôn mẫu trò chơi tương tác Canvas",
-    legalBasis: "BR-GTC-01",
-  },
-  {
     tableName: "game_levels",
     classification: "retain",
     reason: "Màn chơi tương tác được biên soạn",

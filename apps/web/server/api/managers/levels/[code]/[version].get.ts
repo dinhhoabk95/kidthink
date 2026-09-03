@@ -1,4 +1,4 @@
-import { gameLevels, gameTemplates, getOwnerDb } from "@mindkid/db";
+import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { and, desc, eq } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
@@ -21,8 +21,7 @@ export default defineEventHandler(async (event) => {
       id: gameLevels.id,
       code: gameLevels.code,
       contentVersion: gameLevels.contentVersion,
-      templateId: gameLevels.templateId,
-      templateCode: gameTemplates.code,
+      templateCode: gameLevels.templateCode,
       title: gameLevels.title,
       description: gameLevels.description,
       instruction: gameLevels.instruction,
@@ -41,8 +40,7 @@ export default defineEventHandler(async (event) => {
       createdAt: gameLevels.createdAt,
       updatedAt: gameLevels.updatedAt,
     })
-    .from(gameLevels)
-    .leftJoin(gameTemplates, eq(gameLevels.templateId, gameTemplates.id));
+    .from(gameLevels);
 
   const rows =
     Number.isInteger(version) && version > 0

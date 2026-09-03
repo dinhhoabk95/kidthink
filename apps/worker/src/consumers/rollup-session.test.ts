@@ -2,7 +2,6 @@ import {
   childProfiles,
   childSessionSummaries,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
   playSessions,
   telemetryEvents,
@@ -45,17 +44,8 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
       return;
     }
 
-    // 2. Create game template & level
-    const gtCode = `GT-${Math.floor(Math.random() * 899 + 100)}`;
-    const [gt] = await db
-      .insert(gameTemplates)
-      .values({
-        code: gtCode,
-        name: "Template Rollup",
-        mechanic: "tap",
-      })
-      .onConflictDoNothing()
-      .returning();
+    // 2. Game template code & level
+    const gtCode = "GT-001";
 
     const randNum = String(Math.floor(Math.random() * 8999 + 1000));
     const glCode = `GL-C1-NUM-DRAG-${randNum}`;
@@ -65,7 +55,7 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
         entityId: Math.floor(Math.random() * 899_000 + 100_000),
         code: glCode,
         contentVersion: 1,
-        templateId: gt ? gt.id : 1,
+        templateCode: gtCode,
         title: "Level Rollup Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
@@ -96,7 +86,7 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
         childProfileId: child.id,
         gameLevelId: gl.id,
         contentVersion: 1,
-        templateId: gt ? gt.id : 1,
+        templateCode: gtCode,
         completionStatus: "in_progress",
       })
       .returning();

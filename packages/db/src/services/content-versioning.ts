@@ -90,7 +90,7 @@ export async function createNewVersion(
       entityId: sourceLevel.entityId, // Lineage anchor preserved
       code: sourceLevel.code,
       contentVersion: nextVersion,
-      templateId: sourceLevel.templateId,
+      templateCode: sourceLevel.templateCode,
       title: sourceLevel.title,
       description: sourceLevel.description,
       instruction: sourceLevel.instruction,

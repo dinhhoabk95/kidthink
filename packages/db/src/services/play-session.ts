@@ -5,6 +5,7 @@ import {
   selectNext,
 } from "@mindkid/adaptive";
 import { AppError } from "@mindkid/auth";
+import { getGameTemplate } from "@mindkid/game-engine";
 import { enqueue } from "@mindkid/queue";
 import {
   computeSessionResult,
@@ -16,7 +17,6 @@ import { z } from "zod";
 import { getOwnerDb } from "#src/client";
 import { childBadges, masteryState } from "#src/schema/adaptive";
 import { childProfiles } from "#src/schema/child";
-import { gameTemplates } from "#src/schema/game";
 import {
   childDailyStats,
   playSessions,
@@ -949,7 +949,7 @@ async function insertIngestedEventsBatch(
           childUuid,
           gameLevelId: session.gameLevelId,
           contentVersion: session.contentVersion,
-          templateId: session.templateId,
+          templateCode: session.templateCode,
           eventName: ev.event_name,
           occurredAtMs: ev.occurred_at_ms ?? null,
           payload: cleanEventPayload(ev.event_name, ev.payload),
@@ -1340,13 +1340,8 @@ export async function completePlaySession(
   }
 
   let nextSuggestion: ReturnType<typeof selectNext> | null = null;
-  const [templateRow] = await db
-    .select({ kind: gameTemplates.kind })
-    .from(gameTemplates)
-    .where(eq(gameTemplates.id, session.templateId))
-    .limit(1);
-
-  const isTeachTemplate = templateRow?.kind === "teach";
+  const templateDef = getGameTemplate(session.templateCode);
+  const isTeachTemplate = templateDef?.kind === "teach";
 
   if (session.childProfileId && !session.isPreview && !isTeachTemplate) {
     nextSuggestion = await applySessionMasteryAndBadges({

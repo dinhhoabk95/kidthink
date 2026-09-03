@@ -15,7 +15,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { childProfiles } from "./child.ts";
 import { timestamps } from "./columns.ts";
-import { gameLevels, gameTemplates } from "./game.ts";
+import { gameLevels } from "./game.ts";
 import { skills } from "./taxonomy.ts";
 
 export const playSessions = pgTable(
@@ -34,9 +34,7 @@ export const playSessions = pgTable(
       .notNull()
       .references(() => gameLevels.id),
     contentVersion: integer("content_version").notNull(),
-    templateId: bigint("template_id", { mode: "number" })
-      .notNull()
-      .references(() => gameTemplates.id),
+    templateCode: varchar("template_code", { length: 20 }).notNull(),
     isPreview: boolean("is_preview").notNull().default(false),
     completionStatus: varchar("completion_status", { length: 20 })
       .notNull()
@@ -72,7 +70,7 @@ export const telemetryEvents = pgTable(
     childUuid: uuid("child_uuid"),
     gameLevelId: bigint("game_level_id", { mode: "number" }),
     contentVersion: integer("content_version"),
-    templateId: bigint("template_id", { mode: "number" }),
+    templateCode: varchar("template_code", { length: 20 }),
     eventName: varchar("event_name", { length: 100 }).notNull(),
     occurredAtMs: integer("occurred_at_ms"),
     payload: jsonb("payload"),
@@ -99,9 +97,7 @@ export const childSessionSummaries = pgTable(
       .notNull()
       .references(() => gameLevels.id),
     contentVersion: integer("content_version").notNull(),
-    templateId: bigint("template_id", { mode: "number" })
-      .notNull()
-      .references(() => gameTemplates.id),
+    templateCode: varchar("template_code", { length: 20 }).notNull(),
     completionStatus: varchar("completion_status", { length: 20 }).notNull(),
     score: integer("score").notNull().default(0),
     durationSeconds: integer("duration_seconds").notNull().default(0),

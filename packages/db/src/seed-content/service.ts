@@ -1,8 +1,9 @@
 import { AppError } from "@mindkid/auth";
+import { ALL_TEMPLATES } from "@mindkid/game-engine";
 import { eq, inArray } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { activities, lessonActivities, lessons } from "#src/schema/content";
-import { gameLevelRounds, gameLevels, gameTemplates } from "#src/schema/game";
+import { gameLevelRounds, gameLevels } from "#src/schema/game";
 import { contentReviewLog, contentSeedBatches } from "#src/schema/ops";
 import {
   contentSkillMap,
@@ -101,14 +102,12 @@ export async function executeSeedBatch(
     .transaction(async (tx) => {
       // 2. Preload all lookup tables in parallel
       const [
-        allTemplates,
         allSkills,
         allTags,
         allExistingLevels,
         allExistingActivities,
         allExistingLessons,
       ] = await Promise.all([
-        tx.select().from(gameTemplates),
         tx.select().from(skills),
         tx.select().from(contentTags),
         tx
@@ -140,7 +139,6 @@ export async function executeSeedBatch(
           .from(lessons),
       ]);
 
-      const templateMap = new Map(allTemplates.map((t) => [t.code, t]));
       const skillMap = new Map(allSkills.map((s) => [s.code, s]));
       const tagMap = new Map(allTags.map((t) => [t.code, t]));
 
@@ -249,7 +247,7 @@ export async function executeSeedBatch(
         for (const { seed: glSeed, sequenceIndex } of chunk) {
           const { header, content_pack, difficulty_params } = glSeed;
 
-          const template = templateMap.get(header.template_code);
+          const template = ALL_TEMPLATES[header.template_code];
           if (!template) {
             throw new AppError(
               "VALIDATION_FAILED",
@@ -343,7 +341,7 @@ export async function executeSeedBatch(
             entityId,
             code: header.code,
             contentVersion: header.content_version,
-            templateId: template.id,
+            templateCode: template.code,
             title: header.title,
             instruction: header.instruction,
             ageMin: header.age_min,

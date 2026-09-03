@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "#src/index";
-import { gameLevelRounds, gameLevels, gameTemplates } from "#src/schema/game";
+import { gameLevelRounds, gameLevels } from "#src/schema/game";
 import { executeSeedBatch } from "#src/seed-content/service";
 import type { ContentSeed } from "#src/seed-content/types";
 import { seedContentTags } from "#src/seed-master/content-tags";
@@ -23,44 +23,9 @@ describe("Game Schema Integration Tests", () => {
     }
   }
 
-  async function getUniqueGameTemplateCode() {
-    const db = getOwnerDb();
-    while (true) {
-      const code = `GT-${Math.floor(100 + Math.random() * 899)}`;
-      const [existing] = await db
-        .select({ id: gameTemplates.id })
-        .from(gameTemplates)
-        .where(eq(gameTemplates.code, code))
-        .limit(1);
-      if (!existing) {
-        return code;
-      }
-    }
-  }
-
   it("access_tier has no default and rejects omitted value", async () => {
     const db = getOwnerDb();
-    const gtCode = await getUniqueGameTemplateCode();
     const code = await getUniqueGameLevelCode();
-
-    const [gt] = await db
-      .insert(gameTemplates)
-      .values({
-        code: gtCode,
-        name: "Template Test 1",
-        mechanic: "drag_drop",
-      })
-      .onConflictDoNothing()
-      .returning();
-
-    const gtId = gt
-      ? gt.id
-      : (
-          await db
-            .select()
-            .from(gameTemplates)
-            .where(eq(gameTemplates.code, gtCode))
-        )[0]?.id;
 
     // Inserting gameLevel without access_tier must fail NOT NULL constraint
     await expect(
@@ -69,7 +34,7 @@ describe("Game Schema Integration Tests", () => {
         entityId: 1,
         code,
         contentVersion: 1,
-        templateId: gtId,
+        templateCode: "GT-001",
         title: "Level Test",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
@@ -80,27 +45,7 @@ describe("Game Schema Integration Tests", () => {
 
   it("BR-SCT-03: partial unique index enforces only one published version per code", async () => {
     const db = getOwnerDb();
-    const gtCode = await getUniqueGameTemplateCode();
     const code = await getUniqueGameLevelCode();
-
-    const [gt] = await db
-      .insert(gameTemplates)
-      .values({
-        code: gtCode,
-        name: "Template Test 2",
-        mechanic: "drag_drop",
-      })
-      .onConflictDoNothing()
-      .returning();
-
-    const templateRows = await db
-      .select()
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, gtCode));
-    const gtId = gt ? gt.id : templateRows[0]?.id;
-    if (!gtId) {
-      throw new Error("Failed to find template id");
-    }
 
     // 1. Insert version 1 published
     const [gl1] = await db
@@ -109,7 +54,7 @@ describe("Game Schema Integration Tests", () => {
         entityId: 100,
         code,
         contentVersion: 1,
-        templateId: gtId,
+        templateCode: "GT-001",
         title: "Level V1",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
@@ -126,7 +71,7 @@ describe("Game Schema Integration Tests", () => {
         entityId: 100,
         code,
         contentVersion: 2,
-        templateId: gtId,
+        templateCode: "GT-001",
         title: "Level V2",
         contentPack: { test: true },
         difficultyParams: { speed: 2 },
@@ -138,27 +83,7 @@ describe("Game Schema Integration Tests", () => {
 
   it("BR-SCT-05: trigger prevents UPDATE on published game_levels row", async () => {
     const db = getOwnerDb();
-    const gtCode = await getUniqueGameTemplateCode();
     const code = await getUniqueGameLevelCode();
-
-    const [gt] = await db
-      .insert(gameTemplates)
-      .values({
-        code: gtCode,
-        name: "Template Test 3",
-        mechanic: "drag_drop",
-      })
-      .onConflictDoNothing()
-      .returning();
-
-    const templateRows3 = await db
-      .select()
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, gtCode));
-    const gtId = gt ? gt.id : templateRows3[0]?.id;
-    if (!gtId) {
-      throw new Error("Failed to find template id");
-    }
 
     const [gl] = await db
       .insert(gameLevels)
@@ -166,7 +91,7 @@ describe("Game Schema Integration Tests", () => {
         entityId: Math.floor(Math.random() * 800_000) + 100_000,
         code,
         contentVersion: 1,
-        templateId: gtId,
+        templateCode: "GT-001",
         title: "Original Published Title",
         contentPack: { test: true },
         difficultyParams: { speed: 1 },
@@ -199,23 +124,6 @@ describe("Game Schema Integration Tests", () => {
     await seedContentTags(db);
 
     const gtCode = "GT-001";
-    let [template] = await db
-      .select()
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, gtCode));
-    if (!template) {
-      const [t] = await db
-        .insert(gameTemplates)
-        .values({
-          code: gtCode,
-          name: "Tap Select",
-          engineSession: "GT-001",
-          mechanic: "tap_select",
-          status: "active",
-        })
-        .returning();
-      template = t;
-    }
 
     const validGt001Content = {
       prompt: "Tìm quả táo",

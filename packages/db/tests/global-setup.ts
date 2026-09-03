@@ -69,7 +69,6 @@ export const TABLES = [
   "feature_flags",
   "game_level_rounds",
   "game_levels",
-  "game_templates",
   "learning_objectives",
   "lesson_activities",
   "lesson_plan_items",

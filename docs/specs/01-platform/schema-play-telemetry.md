@@ -79,7 +79,8 @@ Không có.
 | `user_id` | nullable — NULL cho guest |
 | `child_profile_id` | nullable — NULL cho guest |
 | `guest_device_id` | nullable — cookie `tm_did` |
-| `game_level_id` `content_version` `template_id` | NOT NULL — FK hàng version cụ thể lúc chơi (D-AE), kể cả `template_id` (`game_templates.id`) |
+| `game_level_id` `content_version` | NOT NULL — FK hàng version cụ thể lúc chơi (D-AE) |
+| `template_code` | varchar(20) NOT NULL — mã template từ registry `ALL_TEMPLATES` |
 | `curriculum_id` `curriculum_item_id` `lesson_id` | nullable — FK hàng version cụ thể lúc chơi (D-AE) |
 | `access_tier_at_start` | Bậc lúc mở phiên |
 | `started_at` `completed_at` `duration_ms` | |

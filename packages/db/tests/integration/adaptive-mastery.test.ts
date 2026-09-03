@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { getOwnerDb } from "#src/index";
 import { masteryState } from "#src/schema/adaptive";
 import { childProfiles } from "#src/schema/child";
-import { gameLevels, gameTemplates } from "#src/schema/game";
+import { gameLevels } from "#src/schema/game";
 import { users } from "#src/schema/identity";
 import { playSessions, telemetryEvents } from "#src/schema/play";
 import { contentSkillMap } from "#src/schema/tagging";
@@ -108,31 +108,8 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       throw new Error("Failed to insert skill");
     }
 
-    // 3. Create game template and level
-    let template: typeof gameTemplates.$inferSelect | undefined;
-    const templateCode = `GT-${String(Math.floor(Math.random() * 899 + 100)).padStart(3, "0")}`;
-    const [existingTemplate] = await db
-      .select()
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, templateCode))
-      .limit(1);
-
-    if (existingTemplate) {
-      template = existingTemplate;
-    } else {
-      [template] = await db
-        .insert(gameTemplates)
-        .values({
-          code: templateCode,
-          name: "Tap To Count",
-          mechanic: "tap_select",
-          status: "active",
-        })
-        .returning();
-    }
-    if (!template) {
-      throw new Error("Failed to insert template");
-    }
+    // 3. Game template code
+    const templateCode = "GT-001";
 
     let level: typeof gameLevels.$inferSelect | undefined;
     const levelCode = `GL-C1-CNT-TAP-${String(Math.floor(Math.random() * 8999 + 1000)).padStart(4, "0")}`;
@@ -150,7 +127,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
         .values({
           entityId: Math.floor(Math.random() * 800_000 + 100_000),
           code: levelCode,
-          templateId: template.id,
+          templateCode,
           title: "Level Test 1",
           contentPack: {},
           difficultyParams: {},
@@ -185,12 +162,12 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       });
     }
 
-    return { u, child, comp, strand, skill, level, template };
+    return { u, child, comp, strand, skill, level, templateCode };
   }
 
   it("Scenario: BR-ADP-03 & D-MH — completePlaySession writes mastery_state synchronously with calculated p_learn and attempts_total", async () => {
     const db = getOwnerDb();
-    const { u, child, skill, level, template } = await createTestFixtures();
+    const { u, child, skill, level, templateCode } = await createTestFixtures();
 
     const sessionUuid = crypto.randomUUID();
 
@@ -200,7 +177,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       childProfileId: child.id,
       gameLevelId: level.id,
       contentVersion: 1,
-      templateId: template.id,
+      templateCode,
       completionStatus: "in_progress",
     });
 
@@ -257,7 +234,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
 
   it("Scenario: BR-PRG-03 — best_p_learn is strictly monotonic when subsequent sessions yield lower performance", async () => {
     const db = getOwnerDb();
-    const { u, child, skill, level, template } = await createTestFixtures();
+    const { u, child, skill, level, templateCode } = await createTestFixtures();
 
     const session1Uuid = crypto.randomUUID();
 
@@ -267,7 +244,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       childProfileId: child.id,
       gameLevelId: level.id,
       contentVersion: 1,
-      templateId: template.id,
+      templateCode,
       completionStatus: "in_progress",
     });
 
@@ -333,7 +310,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       childProfileId: child.id,
       gameLevelId: level.id,
       contentVersion: 1,
-      templateId: template.id,
+      templateCode,
       completionStatus: "in_progress",
     });
 
@@ -396,7 +373,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
 
   it("Scenario: BR-ADP-06 & BR-PRG-01 — guest play sessions and manager preview sessions NEVER write to mastery_state", async () => {
     const db = getOwnerDb();
-    const { skill, level, template } = await createTestFixtures();
+    const { skill, level, templateCode } = await createTestFixtures();
 
     // Guest Session (no childProfileId)
     const guestSessionUuid = crypto.randomUUID();
@@ -405,7 +382,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       guestDeviceId: "device-123",
       gameLevelId: level.id,
       contentVersion: 1,
-      templateId: template.id,
+      templateCode,
       completionStatus: "in_progress",
     });
 
@@ -435,7 +412,7 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       guestDeviceId: "device-preview",
       gameLevelId: level.id,
       contentVersion: 1,
-      templateId: template.id,
+      templateCode,
       completionStatus: "in_progress",
       isPreview: true,
     });

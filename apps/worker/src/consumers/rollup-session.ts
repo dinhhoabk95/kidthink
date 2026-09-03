@@ -16,7 +16,7 @@ async function upsertChildSessionSummary(
     sessionUuid: string;
     gameLevelId: number;
     contentVersion: number;
-    templateId: number;
+    templateCode: string;
     targetStatus: string;
     rawScore: number;
     durationSec: number;
@@ -33,7 +33,7 @@ async function upsertChildSessionSummary(
       sessionUuid: params.sessionUuid,
       gameLevelId: params.gameLevelId,
       contentVersion: params.contentVersion,
-      templateId: params.templateId,
+      templateCode: params.templateCode,
       completionStatus: params.targetStatus,
       score: params.rawScore,
       durationSeconds: params.durationSec,
@@ -132,7 +132,7 @@ export async function runSessionRollup(
       sessionUuid: targetUuid,
       gameLevelId: session.gameLevelId,
       contentVersion: session.contentVersion,
-      templateId: session.templateId,
+      templateCode: session.templateCode,
       targetStatus,
       rawScore: result.raw_score,
       durationSec,

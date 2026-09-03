@@ -3,11 +3,14 @@ import { AppError, appError } from "@mindkid/auth";
 import {
   childProfiles,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
   playSessions,
 } from "@mindkid/db";
-import { validateContentPack } from "@mindkid/game-engine";
+import {
+  type GameTemplate,
+  getGameTemplate,
+  validateContentPack,
+} from "@mindkid/game-engine";
 import {
   assertContentAccess,
   type CallerIdentity,
@@ -37,7 +40,7 @@ export interface GameConfigDeliveryOptions {
 
 interface LevelTemplateRow {
   level: typeof gameLevels.$inferSelect;
-  template: typeof gameTemplates.$inferSelect;
+  template: GameTemplate;
 }
 
 async function resolveOwnedChild(
@@ -72,15 +75,9 @@ async function fetchLevelAndTemplate(
   options: GameConfigDeliveryOptions
 ): Promise<LevelTemplateRow> {
   const db = getOwnerDb();
-  const baseQuery = db
-    .select({
-      level: gameLevels,
-      template: gameTemplates,
-    })
-    .from(gameLevels)
-    .innerJoin(gameTemplates, eq(gameLevels.templateId, gameTemplates.id));
+  const baseQuery = db.select().from(gameLevels);
 
-  let rows: LevelTemplateRow[] = [];
+  let rows: (typeof gameLevels.$inferSelect)[] = [];
   if (options.isManagerPreview && options.version !== undefined) {
     rows = await baseQuery.where(
       and(
@@ -109,7 +106,19 @@ async function fetchLevelAndTemplate(
     });
   }
 
-  return levelRow;
+  const template = getGameTemplate(levelRow.templateCode);
+  if (!template) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "TEMPLATE_NOT_FOUND",
+      data: {
+        code: "TEMPLATE_NOT_FOUND",
+        message: `Template ${levelRow.templateCode} not found in registry`,
+      },
+    });
+  }
+
+  return { level: levelRow, template };
 }
 
 async function runContentAccessGuard(
@@ -167,7 +176,7 @@ async function createPlaySessionRecord(
   db: ReturnType<typeof getOwnerDb>,
   params: {
     level: { id: number; contentVersion: number; accessTier: string };
-    templateId: number;
+    templateCode: string;
     ownedChild: { id: number } | null;
     options: GameConfigDeliveryOptions;
     isPreview: boolean;
@@ -190,7 +199,7 @@ async function createPlaySessionRecord(
     guestDeviceId,
     gameLevelId: params.level.id,
     contentVersion: params.level.contentVersion,
-    templateId: params.templateId,
+    templateCode: params.templateCode,
     layoutSeed,
     isPreview: params.isPreview,
     completionStatus: "in_progress",
@@ -328,7 +337,7 @@ export async function deliverGameConfig(
     db,
     {
       level,
-      templateId: template.id,
+      templateCode: template.code,
       ownedChild,
       options,
       isPreview: accessResult.is_preview,
@@ -359,9 +368,7 @@ export async function deliverGameConfig(
     theme_id: level.themeId || "general",
     age_band: `${level.ageMin ?? 3}-${level.ageMax ?? 6}`,
     scoring: {
-      ...(typeof template.scoring === "object" && template.scoring !== null
-        ? (template.scoring as Record<string, unknown>)
-        : {}),
+      ...template.scoring,
       mode: RUNTIME_SCORING_MODE,
     },
     rounds: rounds.map((r) => ({
@@ -379,7 +386,7 @@ export async function deliverGameConfig(
     flags: {
       reduced_motion: false,
       audio_enabled: true,
-      tap_fallback: template.requiresTapFallback ?? true,
+      tap_fallback: template.requires_tap_fallback ?? true,
     },
     assets,
     age_mismatch: accessResult.age_mismatch,

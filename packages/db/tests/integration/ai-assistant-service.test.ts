@@ -6,7 +6,6 @@ import {
   aiUsageLog,
   childProfiles,
   gameLevels,
-  gameTemplates,
   getDb,
   getOwnerDb,
   grantCredits,
@@ -191,30 +190,19 @@ describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {
     const db = getOwnerDb();
     const uid = Math.floor(Math.random() * 800_000) + 100_000;
 
-    // Seed dummy game template & level
-    const [gt] = await db
-      .insert(gameTemplates)
-      .values({
-        code: `GT-${String(uid).padStart(3, "0").slice(0, 3)}`,
-        name: "Game AI Test",
-        mechanic: "drag_drop",
-      })
-      .onConflictDoNothing()
-      .returning();
-
-    if (gt) {
-      await db.insert(gameLevels).values({
-        entityId: uid,
-        code: `GL-C1-CNT-NUM-${String(uid).slice(0, 4)}`,
-        templateId: gt.id,
-        contentVersion: 1,
-        title: "Mức chơi AI Test",
-        contentPack: {},
-        difficultyParams: {},
-        status: "published",
-        accessTier: "free",
-      });
-    }
+    // Seed dummy game level
+    const templateCode = "GT-001";
+    await db.insert(gameLevels).values({
+      entityId: uid,
+      code: `GL-C1-CNT-NUM-${String(uid).slice(0, 4)}`,
+      templateCode,
+      contentVersion: 1,
+      title: "Mức chơi AI Test",
+      contentPack: {},
+      difficultyParams: {},
+      status: "published",
+      accessTier: "free",
+    });
 
     const res = await aiAssistantService.suggestContent(user.id, {
       contentType: "game",
