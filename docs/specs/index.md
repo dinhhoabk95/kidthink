@@ -200,6 +200,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | **[skill-dataset-model](05-content/skill-dataset-model.md)** | P1 | Vật của level đến từ dataset kỹ năng; bộ chiếu thay bộ sinh theo khuôn; hai cổng trung thực |
 | [engine-competency-allocation](05-content/engine-competency-allocation.md) | P4 | Bản đồ tương hợp engine -> competency, sàn K lĩnh vực mỗi ô, trần ngoại lệ |
 | [preschool-age-bands](05-content/preschool-age-bands.md) | P4 | Ràng buộc biên soạn theo band tuổi mầm non (difficulty, thời lượng, số bước) |
+| [skill-age-progression](05-content/skill-age-progression.md) | P4 | Thứ tự giới thiệu kỹ năng theo tháng tuổi (36-48m, 48-60m, 60-72m) |
 
 ## 06-admin — Manager
 
