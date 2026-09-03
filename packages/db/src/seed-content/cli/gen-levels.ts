@@ -13,6 +13,7 @@ import {
 } from "@mindkid/game-engine";
 import { CANONICAL_THEME_CODES } from "@mindkid/shared";
 import { getThemeVocabulary } from "../vocab/themes.js";
+import { printCellMatrixReport, validateCellSpec } from "./cell-generator.js";
 
 /**
  * Số lần rút lại tối đa khi ứng viên trùng hoặc trượt contract.
@@ -63,6 +64,8 @@ export interface GenOptions {
   out?: string;
   silent?: boolean;
   rounds?: number;
+  report?: boolean;
+  cell?: string;
 }
 
 export interface GenResult {
@@ -239,6 +242,7 @@ function generateLevelItem(params: {
     contractRejectedCount: number;
     duplicatesCount: number;
   };
+  isCellMode?: boolean;
 }): unknown | undefined {
   const {
     engine,
@@ -254,6 +258,7 @@ function generateLevelItem(params: {
     vocab,
     seenHashes,
     stats,
+    isCellMode,
   } = params;
 
   const levelRounds: RoundCandidate[] = [];
@@ -296,7 +301,7 @@ function generateLevelItem(params: {
       learning_objective_codes: [],
       what_tags: [],
       thinking_tags: [],
-      theme_tag: theme,
+      theme_tag: isCellMode ? "" : theme,
       origin: "ai_assisted",
       authored_in: "repo_seed",
     },
@@ -307,7 +312,30 @@ function generateLevelItem(params: {
 }
 
 export function generateLevelsCore(options: GenOptions): GenResult {
-  const { engine, count, seed, theme, band, out } = options;
+  if (options.report) {
+    printCellMatrixReport();
+    return {
+      engine: "",
+      countRequested: 0,
+      candidatesGenerated: 0,
+      contractRejectedCount: 0,
+      duplicatesCount: 0,
+      writtenCount: 0,
+      items: [],
+    };
+  }
+
+  let engine = options.engine;
+  let band = options.band;
+  const isCellMode = !!options.cell;
+
+  if (options.cell) {
+    const cellSpec = validateCellSpec(options.cell);
+    engine = cellSpec.engine;
+    band = cellSpec.band;
+  }
+
+  const { count, seed, theme, out } = options;
 
   const template = ALL_TEMPLATES[engine];
   if (!template) {
@@ -351,6 +379,7 @@ export function generateLevelsCore(options: GenOptions): GenResult {
       vocab,
       seenHashes,
       stats,
+      isCellMode,
     });
 
     if (!levelSeed) {
@@ -360,7 +389,7 @@ export function generateLevelsCore(options: GenOptions): GenResult {
   }
 
   let finalOutputPath: string | undefined = out;
-  if (out || candidates.length > 0) {
+  if (!options.silent && (out || candidates.length > 0)) {
     finalOutputPath = writeGeneratedFile(
       engine,
       seed,
@@ -414,6 +443,16 @@ function readFlag(arg: string, name: string): string | undefined {
 }
 
 function applyFlag(arg: string, options: GenOptions): void {
+  if (arg === "--report") {
+    options.report = true;
+    return;
+  }
+
+  const cell = readFlag(arg, "cell");
+  if (cell !== undefined) {
+    options.cell = cell;
+  }
+
   const engine = readFlag(arg, "engine");
   if (engine !== undefined) {
     options.engine = engine;
@@ -458,8 +497,22 @@ export function parseArgs(args: string[]): GenOptions {
     theme: "school",
   };
 
-  for (const arg of args) {
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i] ?? "";
+    if (arg === "--report") {
+      options.report = true;
+      continue;
+    }
+    if (arg === "--cell" && i + 1 < args.length) {
+      options.cell = args[i + 1];
+      i++;
+      continue;
+    }
     applyFlag(arg, options);
+  }
+
+  if (options.report) {
+    return options;
   }
 
   if (!CANONICAL_THEME_CODES.has(options.theme)) {
@@ -474,6 +527,11 @@ export function parseArgs(args: string[]): GenOptions {
 // CLI execution
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
   const options = parseArgs(process.argv.slice(2));
+  if (options.report) {
+    printCellMatrixReport();
+    process.exit(0);
+  }
+
   const res = generateLevelsCore(options);
 
   console.log(

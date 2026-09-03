@@ -129,9 +129,9 @@ Ví dụ: `gen:levels --cell GT-014/4-5/C3`.
 - Sinh vào ô đã đủ K trong khi ô khác còn trống.
 - Ghi tệp trước khi parse contract.
 
-## 6. Câu hỏi mở
+## 6. Câu hỏi mở (Đã chốt)
 
-| # | Câu hỏi | Chặn gì | Chủ |
-|---|---|---|---|
-| `Q161-1` | Khung sinh ra ghi thẳng vào `packages/db/src/seed-content/c{1..6}/` hay ra thư mục nháp cho người soạn duyệt rồi mới chuyển? | WP161.2 | Nội dung |
-| `Q161-2` | Ô của `GT-013` và `GT-015` soạn tay trong task engine — có cần cờ đánh dấu để `--report` không đề xuất sinh máy? | WP161.1 | Backend |
+| # | Câu hỏi | Chặn gì | Chủ | Quyết định |
+|---|---|---|---|---|
+| `Q161-1` | Khung sinh ra ghi thẳng vào `packages/db/src/seed-content/c{1..6}/` hay ra thư mục nháp? | WP161.2 | Nội dung | **Chốt:** Ghi ra thư mục nháp hoặc đường dẫn qua `--out` để người soạn duyệt và điền đủ 6 trường trước khi commit vào seeder chính thức. |
+| `Q161-2` | Ô của `GT-013` và `GT-015` soạn tay trong task engine — có cần cờ đánh dấu? | WP161.1 | Backend | **Chốt:** Đã đánh dấu `soạn tay` trong `--report` và từ chối `--cell` đối với GT-013 và GT-015. |

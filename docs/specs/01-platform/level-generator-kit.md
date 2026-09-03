@@ -108,6 +108,7 @@ Bước 6 là bước không bỏ được. Mọi thứ trước nó là dựng 
 | `BR-LGK-09` (vốn từ là Lớp 1) | Vốn từ chủ đề và emoji theo chủ đề là dữ liệu Lớp 1, sửa qua PR, cấm sửa qua giao diện | Vốn từ quyết định mọi ứng viên sinh ra sau đó. Sửa từ giao diện là sửa nguồn mà không ai review |
 | `BR-LGK-10` (bộ sinh không đặt tag) | Bộ sinh cấm — NEVER tự đặt `thinking_tags`, `what_tags`, `skill_codes` | Ba trục là thứ ma trận phủ đo. Máy tự gắn tag làm phép đo tự nói về chính nó |
 | `BR-LGK-11` (vật đến từ dataset kỹ năng) | Bộ sinh lấy vật từ `SkillDataset` của kỹ năng level đó. Vốn từ chủ đề chỉ cấp **hình minh hoạ**, cấm — NEVER cấp vật học | Đường cũ lấy vật từ vốn từ chủ đề và sinh ra 5.013 level trượt `BR-SDS-02` (vật phải là vật của kỹ năng). Bộ sinh là chỗ vi phạm đó vào corpus, nên nó là chỗ phải chặn |
+| `BR-LGK-12` (sinh level theo ô ma trận) | Bộ sinh theo ô (`--cell`) từ chối ô ngoài bản đồ tương hợp, từ chối ô đã đạt K=3, và bắt buộc chừa trống sáu trường (`title`, `instruction`, `skill_codes`, `what_tags`, `thinking_tags`, `theme_tag`) | Ngăn chặn việc sinh level sai lĩnh vực sư phạm và bảo đảm sáu trường phân loại phải do người biên tập hoàn thiện |
 
 `BR-LGK-10` là ranh giới quan trọng nhất trong file này. Bộ sinh dựng **hình dạng** màn chơi;
 việc màn chơi đó rèn tiến trình tư duy nào là phán đoán sư phạm, và nó thuộc về người.
@@ -245,6 +246,12 @@ Scenario: BR-LGK-05 — nội dung sinh máy đi qua đủ bộ cổng
   When chạy seed:content
   Then cổng 7 chặn cả batch
   And không hàng nào được ghi
+
+Scenario: BR-LGK-12 — sinh level theo ô ma trận từ chối ô cấm và chừa trống sáu trường
+  Given engine GT-026 cấm lĩnh vực C2 trong bản đồ tương hợp
+  When chạy gen:levels --cell GT-026/4-5/C2
+  Then lệnh bị từ chối với thông báo lỗi
+  And khi sinh thành công cho ô hợp lệ thì title, instruction, skill_codes, what_tags, thinking_tags, theme_tag đều để trống
 ```
 
 ## 10. Boundaries
