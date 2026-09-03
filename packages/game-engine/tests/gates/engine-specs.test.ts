@@ -29,15 +29,15 @@ describe("Gate check:engine-specs (BR-ESS-01..15)", () => {
       plannedPath,
       repoRoot
     );
-    expect(result.totalTemplates).toBe(36);
-    expect(result.totalSpecs).toBe(36);
+    expect(result.totalTemplates).toBe(37);
+    expect(result.totalSpecs).toBe(37);
     expect(result.plannedCount).toBe(0);
     expect(result.orphanCount).toBe(0);
     expect(result.readyCount).toBeGreaterThanOrEqual(1);
     expect(result.violations).toHaveLength(0);
 
     const report = formatEngineSpecsReport(result);
-    expect(report).toContain("36 mã trong registry, 36 spec tồn tại, 0 mồ côi");
+    expect(report).toContain("37 mã trong registry, 37 spec tồn tại, 0 mồ côi");
     expect(report).toContain("0 spec chờ template");
   });
 
