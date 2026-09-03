@@ -88,13 +88,13 @@ cũng là tài sản và cũng cần review: code.
 
 | Nơi | Ghi chú |
 |---|---|
-| `packages/db/src/seed-content/c1..c6/gt-001..gt-006.ts` | Game level, chia theo **năng lực đã chốt C1–C6** × template |
+| `packages/content/src/skills/c1..c6/<strand>/<SKILL>.ts` | Game level theo từng kỹ năng, gom theo cây năng lực C1–C6 |
 | `packages/db/src/seed-master/taxonomy/learning-objectives/c1..c6.ts` | LO Lớp 1 do [`taxonomy-service.md`](taxonomy-service.md) sở hữu; P0 dùng cùng quy tắc PR review, không tính là lô Lớp 2 của spec này |
-| `packages/db/src/seed-content/lessons/*.ts` · `curricula/*.ts` | P3 |
-| `pnpm --filter @mindkid/db seed:check` | Chạy 10 cổng, không chạm DB |
-| `pnpm --filter @mindkid/db seed:content --dry-run` | DB tạm → seed → checklist publish → rollback |
-| `pnpm --filter @mindkid/db seed:content --batch=SEED-*` | Ghi thật |
-| `pnpm --filter @mindkid/db seed:report` | Phủ theo competency · skill · template; chỉ ra khoảng trống |
+| `packages/content/src/lessons/c1..c6.ts` · `activities/c1..c6.ts` | Giáo án và hoạt động theo năng lực |
+| `pnpm --filter @mindkid/content-build seed:check` | Chạy các cổng kiểm tra, không chạm DB |
+| `pnpm --filter @mindkid/content-build seed:content --dry-run` | DB tạm → seed → checklist publish → rollback |
+| `pnpm --filter @mindkid/content-build seed:content --batch=SEED-*` | Ghi thật |
+| `pnpm --filter @mindkid/content-build seed:report` | Phủ theo competency · skill · template; chỉ ra khoảng trống |
 | [`game-level-studio.md`](../06-admin/game-level-studio.md) | Nơi admin quản lý **sau khi** seed |
 
 Cấm — **NEVER trong đường request.** Seed là lệnh vận hành, chạy lúc dựng môi trường hoặc lúc
@@ -153,30 +153,19 @@ deploy một lô nội dung đã merge.
 ## 7. Data
 
 ### 7.1 Bố cục — theo năng lực đã chốt
-
+ 
 ```
-packages/db/src/seed-content/
-├── c1/  gt-001.ts  gt-003.ts  gt-005.ts  …     Tư duy toán học
-├── c2/  …
-├── c3/  …
-├── c4/  …
-├── c5/  …
-├── c6/  …                                       Chức năng điều hành
-├── learning-objectives/  c1.ts … c6.ts
-├── lessons/       (P3)
-└── curricula/     (P3)
+packages/content/src/
+├── skills/c1..c6/<strand>/<SKILL>.ts    408 file: danh tính + vốn liệu + ma trận màn chơi
+├── builders/<GT>.ts                     34 bộ dựng màn chơi
+├── manual/c1..c6/<strand>/              Màn chơi soạn tay
+├── activities/c1..c6.ts                 Hoạt động theo năng lực
+└── lessons/c1..c6.ts                    Giáo án theo năng lực
 ```
 
-Chia theo **competency × template**, không theo skill: một file skill sinh ra 230 file
-nhỏ không ai mở, còn một file competency thì soạn được trọn một mảng năng lực trong một
-lượt. Danh sách competency: [`taxonomy-service.md`](taxonomy-service.md) §7.
-
-> **Bố cục này đã bị thay cho game level, 2026-09-03.** Lý do ở trên vẫn đúng về chi phí mở
-> file, nhưng nó trả giá bằng việc không ai trả lời được *kỹ năng này đã soạn tới đâu*, và
-> nội dung lấy vật từ vốn từ chủ đề thay vì từ kỹ năng. Seeder game level chuyển sang
-> `seed-content/skills/<c>/<strand>/<SKILL>.ts` theo `BR-SDS-06` (một kỹ năng một file) —
-> mục 3 của [`skill-dataset-model.md`](../05-content/skill-dataset-model.md). Seeder
-> `learning-objectives/`, `lessons/`, `curricula/` giữ nguyên bố cục theo competency.
+Chia theo **competency → strand → skill** (Task #208): mỗi kỹ năng có đúng một file
+chứa trọn vẹn danh tính, vốn liệu và ma trận màn chơi. Danh sách competency:
+[`taxonomy-service.md`](taxonomy-service.md) §7.
 
 ### 7.2 Hình dạng một seeder
 

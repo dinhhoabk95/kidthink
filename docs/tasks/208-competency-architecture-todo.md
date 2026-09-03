@@ -55,21 +55,21 @@ Không đổi hành vi. Chỉ **gỡ**, chưa **dời** file nào.
 
 ## G2 — Sửa spec và luật ranh giới *(chạy song song G1)*
 
-- [ ] `monorepo-package-architecture.md` §7.1 — thêm 5 dòng: `content` · `content-build` ·
+- [x] `monorepo-package-architecture.md` §7.1 — thêm 5 dòng: `content` · `content-build` ·
       `audit` · `play` · `export`
-- [ ] `SPEC.md` §8.1 — thêm 5 hàng ranh giới; hàng `packages/db/` bỏ chữ "seed" và bỏ vai nghiệp vụ
-- [ ] `content-seed-authoring.md` và `skill-dataset-model.md` — đổi đường dẫn
+- [x] `SPEC.md` §8.1 — thêm 5 hàng ranh giới; hàng `packages/db/` bỏ chữ "seed" và bỏ vai nghiệp vụ
+- [x] `content-seed-authoring.md` và `skill-dataset-model.md` — đổi đường dẫn
       `packages/db/src/seed-content/…` sang `packages/content/src/…`
-- [ ] `taxonomy-service.md` — ghi quyết định `Q2`: TypeScript là nguồn sự thật cho danh tính kỹ
+- [x] `taxonomy-service.md` — ghi quyết định `Q2`: TypeScript là nguồn sự thật cho danh tính kỹ
       năng, Markdown sinh ra từ đó
-- [ ] `business-rules.md` — đăng ký prefix mới nếu phát sinh rule
-- [ ] `.dependency-cruiser.cjs` — thêm 4 luật ranh giới ở mục 4.4 của kế hoạch; mở rộng mẫu
+- [x] `business-rules.md` — đăng ký prefix mới nếu phát sinh rule
+- [x] `.dependency-cruiser.cjs` — thêm 4 luật ranh giới ở mục 4.4 của kế hoạch; mở rộng mẫu
       `^packages/(db|storage)/` ở dòng 79 cho 5 package mới
 
 **Điểm dừng G2**
 
-- [ ] Tìm chuỗi `packages/db/src/seed-content` trong `docs/` trả rỗng
-- [ ] **Test chứng minh bắt lỗi cho từng luật ranh giới**: dựng tạm một import vi phạm, đòi
+- [x] Tìm chuỗi `packages/db/src/seed-content` trong `docs/` trả rỗng
+- [x] **Test chứng minh bắt lỗi cho từng luật ranh giới**: dựng tạm một import vi phạm, đòi
       `pnpm lint:deps` báo đỏ. Luật không có test chứng minh là luật sẽ trôi
 
 ---

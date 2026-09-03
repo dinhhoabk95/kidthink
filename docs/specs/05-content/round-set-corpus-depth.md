@@ -31,7 +31,7 @@ Cả hai đều `status: implemented`. Không file nào sở hữu câu hỏi th
 vòng nào không, và một chuỗi phải có hình dạng gì thì mới rèn được tư duy.**
 
 Chênh lệch đo được ngày 2026-09-02: tập gieo có **3.600 hạt game level**, và **0 hạt** khai
-`rounds`. Toàn bộ 5 chỗ nhắc `rounds` trong `packages/db/src/seed-content/` đều là hạ tầng
+`rounds`. Toàn bộ 5 chỗ nhắc `rounds` trong `packages/content/src/` đều là hạ tầng
 (`types.ts`, `service.ts`, `gates/round-sets.ts`, `cli/gen-levels.ts`) — không có một dòng
 nội dung nào. Nghĩa là mỗi bài tập hôm nay là **đúng một câu hỏi**: trẻ chọn một con vật một
 lần rồi màn chơi kết thúc. Bộ máy nhiều vòng đã dựng xong và đang chạy rỗng.
@@ -62,7 +62,7 @@ ra sao.
 
 ## 4. Main flow
 
-1. Cổng đọc corpus seed từ `packages/db/src/seed-content/` — cả hạt `.ts` lẫn hạt `.json`
+1. Cổng đọc corpus seed từ `packages/content/src/` — cả hạt `.ts` lẫn hạt `.json`
    dưới `corpus/c1..c6`.
 2. Nguồn không đọc được, hoặc một hạt không parse được, thì cổng **dừng với mã thoát khác 0**
    kèm tên file. Cấm — NEVER nuốt lỗi parse rồi báo xanh; `corpus/index.ts` hôm nay có đúng
@@ -106,8 +106,8 @@ ra sao.
 
 ## 7. Data
 
-**Đọc:** `packages/db/src/seed-content/**` · registry engine ·
-`packages/db/config/round-set-depth.json`.
+**Đọc:** `packages/content/src/**` · registry engine ·
+`packages/content-build/config/round-set-depth.json`.
 **Ghi:** không ghi vào database. Đầu ra là báo cáo và mã thoát.
 
 ### 7.1 Cơ sở của con số `4 · 6 · 8`
@@ -171,7 +171,7 @@ Bậc 0 ghi ra để `BR-RSD-11` (không tụt) có mốc so. Nó là mức hôm
 
 ### 7.5 Vì sao cổng hiện có không bắt được gì
 
-`packages/db/src/seed-content/gates/round-sets.ts` gọi `validateRoundSet` cho từng level. Với
+`packages/content-build/src/gates/round-sets.ts` gọi `validateRoundSet` cho từng level. Với
 level vắng `rounds`, nó tự dựng một set một phần tử — và một set một phần tử **hợp lệ** theo
 `BR-RSM-09`. Nên cổng chạy hết 3.600 hạt, đếm `multiRoundLevelsCount = 0`, in con số đó ra
 báo cáo, rồi kết luận ĐẠT. Đây là dạng cổng xanh giả thứ sáu: **cổng đo đúng thứ nó đo, và
@@ -182,9 +182,9 @@ Hai chỗ hỏng kèm theo, đo cùng ngày:
 - Cổng **không chạy được** dưới `tsx`: chuỗi import đứt ở
   `packages/game-engine/src/templates/GT-001/session.ts:10`, nó import
   `#src/layout/constants.js` trong khi file là `constants.ts`, nên resolver tìm
-  `constants.js.ts`. `pnpm --filter @mindkid/db check:round-sets` thoát khác 0 vì lỗi module,
+  `constants.js.ts`. `pnpm --filter @mindkid/content-build check:round-sets` thoát khác 0 vì lỗi module,
   không vì nội dung.
-- `packages/db/src/seed-content/generated/*.ts` chứa **430 level** mà **không file nào
+- `packages/content/src/generated/*.ts` chứa **430 level** mà **không file nào
   import**. Chúng không vào `ALL_SEED_LEVELS`, nên không vào cả tập gieo lẫn tập cổng đo.
 
 ### 7.6 Giá phải trả của mỗi bậc

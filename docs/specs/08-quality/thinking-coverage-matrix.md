@@ -90,7 +90,7 @@ Nó đo **catalog**, không đo trẻ. Trẻ học được gì thuộc [`pedago
 
 ## 7. Data
 
-**Đọc:** corpus seed trong repo (`packages/db/src/seed-content/`) kèm registry template của
+**Đọc:** corpus seed trong repo (`packages/content/src/`) kèm registry template của
 engine. Chế độ `--from-db` đọc `game_levels` · `lessons` · `content_tag_map` ·
 `content_skill_map` · `skills` · `competencies`.
 **Ghi:** không ghi vào cơ sở dữ liệu. Đầu ra là báo cáo và mã thoát.

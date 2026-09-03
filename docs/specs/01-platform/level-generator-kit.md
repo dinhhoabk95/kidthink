@@ -61,9 +61,9 @@ qua đúng con đường mà một level viết tay đi qua.
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
 | `packages/game-engine/src/templates/<code>/generator.ts` | Dev | Bộ sinh của một engine, cạnh `template.ts` và `fixtures.ts` |
-| `packages/db/src/seed-content/vocab/<axis>.ts` | Người soạn | Vốn từ dùng chung giữa các engine: chủ đề, emoji theo chủ đề, mẫu câu lệnh |
-| `pnpm --filter @mindkid/db gen:levels --engine=GT-014 --count=9` | Người soạn | Sinh ứng viên ra file seeder, **không** ghi database |
-| `pnpm --filter @mindkid/db seed:content` | Người phát hành | Không đổi. Bộ sinh dừng trước bước này |
+| `packages/content/src/vocab/<axis>.ts` | Người soạn | Vốn từ dùng chung giữa các engine: chủ đề, emoji theo chủ đề, mẫu câu lệnh |
+| `pnpm --filter @mindkid/content-build gen:levels --engine=GT-014 --count=9` | Người soạn | Sinh ứng viên ra file seeder, **không** ghi database |
+| `pnpm --filter @mindkid/content-build seed:content` | Người phát hành | Không đổi. Bộ sinh dừng trước bước này |
 
 ## 4. Main flow
 
@@ -115,8 +115,8 @@ việc màn chơi đó rèn tiến trình tư duy nào là phán đoán sư ph�
 
 ## 7. Data
 
-**Đọc:** `content_contract` của engine · vốn từ ở `seed-content/vocab/` · `@mindkid/emoji` Lớp 1.
-**Ghi:** file seeder TS trong `packages/db/src/seed-content/<competency>/`. Không ghi database.
+**Đọc:** `content_contract` của engine · vốn từ ở `packages/content/src/vocab/` · `@mindkid/emoji` Lớp 1.
+**Ghi:** file seeder TS trong `packages/content/src/manual/<competency>/`. Không ghi database.
 
 ### 7.1 Hình dạng một bộ sinh
 
@@ -163,7 +163,7 @@ gen:levels --engine=GT-014 --count=9 --band=4-5 --seed=20260829
   ứng viên dựng      12
   trượt content_contract  2   (weight_span vượt limits)
   trùng ứng viên đã có     1
-  ghi ra                   9   packages/db/src/seed-content/c4/gen-gt014-20260829.ts
+  ghi ra                   9   packages/content/src/manual/c4/gen-gt014-20260829.ts
   chưa đặt mã, chưa đặt tag, chưa có instruction — bước 6 thuộc về người
 ```
 

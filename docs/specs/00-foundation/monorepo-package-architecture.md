@@ -123,6 +123,11 @@ tiếp `jose`; mọi first-party auth credential đều opaque.
 | Form sinh từ schema (admin) | **Không cần driver** — dùng trực tiếp trong `apps/admin` | `UForm` (Nuxt UI v4) + Zod 4 | [`schema-driven-form.md`](../06-admin/schema-driven-form.md) |
 | Rich text hạn chế (admin) | **Không cần driver** — dùng trực tiếp trong `apps/admin` | `Editor` (Nuxt UI v4, nền Tiptap 3) | [`seo-content-admin.md`](../06-admin/seo-content-admin.md) |
 | DB | `packages/db` | Drizzle + driver `postgres.js` | [`data-model-overview.md`](../01-platform/data-model-overview.md) và các `schema-*` |
+| Kho nội dung học | `packages/content` | Pure TS, không thư viện ngoài, không chạm database | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md), [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) |
+| Nạp & kiểm tra nội dung | `packages/content-build` | Drizzle + Node scripts + test gates | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) |
+| Nhật ký kiểm toán | `packages/audit` | Ghi nhật ký kiểm toán, quét dữ liệu nhạy cảm | [`audit-logs.md`](../06-admin/audit-logs.md) |
+| Phiên chơi & thành thạo | `packages/play` | Xử lý sự kiện chơi, cập nhật BKT mastery và huy hiệu | [`gameplay-session.md`](../04-play/gameplay-session.md) |
+| Kết xuất tài liệu | `packages/export` | Dựng PDF giáo án, phiếu bài tập | [`pdf-export.md`](../04-play/pdf-export.md) |
 | Kiểm duyệt nội dung UGC (P4, ngoài MVP) | `packages/moderation` | **Chưa chốt** — tự xây danh sách đóng tiếng Việt hay API bên thứ ba, xem [`custom-game-builder.md`](../07-addon/custom-game-builder.md) Q4 (`D-CF`) | [`custom-game-builder.md`](../07-addon/custom-game-builder.md) `BR-CGB-09` |
 
 Package không thuộc bảng trên (`shared`, `config`, `ui`) không bọc thư viện nền theo nghĩa

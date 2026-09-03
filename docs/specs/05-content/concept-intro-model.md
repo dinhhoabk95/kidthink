@@ -58,7 +58,7 @@ với máy**, trong dưới hai phút, ngay trước màn chơi.
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `packages/db/src/seed-content/**` | Người soạn | Đường soạn chính ở P4, giống mọi level khác |
+| `packages/content/src/**` | Người soạn | Đường soạn chính ở P4, giống mọi level khác |
 | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | Người soạn | Quy ước hạt seed, không đổi |
 | [`game-level-studio.md`](../06-admin/game-level-studio.md) | Người soạn | Studio, dùng chung form của level |
 

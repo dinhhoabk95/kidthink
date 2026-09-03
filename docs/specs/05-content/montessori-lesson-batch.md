@@ -47,8 +47,8 @@ theo tuổi. Lý do ở mục 7.4.
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `packages/db/src/seed-content/lessons/` | Người biên soạn | File seeder lesson |
-| `packages/db/src/seed-content/activities/` | Người biên soạn | File seeder activity |
+| `packages/content/src/lessons/` | Người biên soạn | File seeder lesson |
+| `packages/content/src/activities/` | Người biên soạn | File seeder activity |
 | [`lesson-authoring.md`](../06-admin/lesson-authoring.md) | Người biên soạn | Nơi sửa sau khi seed, bằng version mới |
 | [`activity-authoring.md`](../06-admin/activity-authoring.md) | Người biên soạn | Cùng vậy, cho activity |
 

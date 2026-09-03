@@ -72,7 +72,7 @@ Hai con số 45 và 48 là toàn bộ món nợ nội dung của trục giáo á
 |---|---|---|
 | `pnpm --filter @mindkid/db check:lesson-supply` | Cổng cung cầu | Chạy trong cổng tự động trước khi merge |
 | `packages/db/src/seed-master/curricula.ts` | Dev | Nguồn của cầu: `durationWeeks × sessionsPerWeek` |
-| `packages/db/src/seed-content/lessons/` | Người soạn | Nguồn của cung |
+| `packages/content/src/lessons/` | Người soạn | Nguồn của cung |
 | [`curriculum-builder.md`](../06-admin/curriculum-builder.md) | Manager | Studio phải chặn publish khi thiếu |
 
 ## 4. Main flow
@@ -113,7 +113,7 @@ Hai con số 45 và 48 là toàn bộ món nợ nội dung của trục giáo á
 
 ## 7. Data
 
-**Đọc:** `packages/db/src/seed-master/curricula.ts` · `packages/db/src/seed-content/lessons/`.
+**Đọc:** `packages/db/src/seed-master/curricula.ts` · `packages/content/src/lessons/`.
 **Ghi:** không ghi database. Đầu ra là báo cáo và mã thoát.
 
 ### 7.1 Công thức cầu

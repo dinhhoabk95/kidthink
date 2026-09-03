@@ -56,7 +56,7 @@ cộng thêm vào ma trận phủ competency, cấm — NEVER thay thế. Ràng 
 
 ## 4. Main flow
 
-1. Cổng đọc corpus seed từ `packages/db/src/seed-content/` và registry engine.
+1. Cổng đọc corpus seed từ `packages/content/src/` và registry engine.
 2. Nguồn không đọc được, hoặc có level trỏ tới mã engine không tồn tại, thì cổng **dừng với mã
    thoát khác 0**. Cấm — NEVER nhánh trả danh sách rỗng rồi báo xanh.
 3. Cổng nhóm level đã `published` theo `template_code`.
@@ -96,7 +96,7 @@ cộng thêm vào ma trận phủ competency, cấm — NEVER thay thế. Ràng 
 ### 6.1 Hạn ngạch theo kỹ năng — `BR-SKQ-*`
 
 Bộ luật này đo theo **kỹ năng**, còn `BR-ECD-*` đo theo **engine**. Cổng:
-`packages/db/src/seed-content/gates/skill-quota.ts` · `pnpm --filter @mindkid/db
+`packages/content-build/src/gates/skill-quota.ts` · `pnpm --filter @mindkid/content-build
 check:skill-quota`.
 
 | ID | Rule | Vì sao |
@@ -124,7 +124,7 @@ check:skill-quota`.
 
 ## 7. Data
 
-**Đọc:** `packages/db/src/seed-content/` · registry engine ·
+**Đọc:** `packages/content/src/` · registry engine ·
 `packages/db/config/engine-depth.json`.
 **Ghi:** không ghi vào database. Đầu ra là báo cáo và mã thoát.
 

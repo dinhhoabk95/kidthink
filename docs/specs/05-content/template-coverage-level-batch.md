@@ -28,7 +28,7 @@ depends_on:
 
 Engine có 24 khuôn trò chơi. Corpus nội dung dùng **tám**.
 
-Đo ngày 2026-08-22 trên `packages/db/src/seed-content/`: mọi hàng `template_code` đều nằm
+Đo ngày 2026-08-22 trên `packages/content/src/`: mọi hàng `template_code` đều nằm
 trong `GT-001` tới `GT-008` — chạm chọn, kéo thả, ghép cặp, sắp thứ tự. `GT-009` tới `GT-024`
 có `template.ts`, có `session.ts`, có `fixtures.ts` đủ ba mẫu để qua `BR-TAK-09`, và **không
 một game level nào** trẻ mở được. Mê cung, cân hai bên, lưới không lặp, xoay kim đồng hồ,
@@ -82,8 +82,8 @@ Nó **không** định nghĩa khuôn — đó là việc của mục 7.1 của
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `packages/db/src/seed-content/c<n>/` | Người soạn nội dung | Nơi level mới được thêm |
-| `pnpm --filter @mindkid/db seed:check` | Cổng seed | Bộ cổng nội dung, xem mục 7.3 của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) |
+| `packages/content/src/skills/c<n>/` · `manual/` | Người soạn nội dung | Nơi level mới được thêm |
+| `pnpm --filter @mindkid/content-build seed:check` | Cổng seed | Bộ cổng nội dung, xem mục 7.3 của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) |
 | `pnpm --filter @mindkid/db test` | Cổng phủ | Ma trận phủ, xem mục 7.2 của [`thinking-coverage-matrix.md`](../08-quality/thinking-coverage-matrix.md) |
 | [`game-level-studio.md`](../06-admin/game-level-studio.md) | Người soạn nội dung | Bề mặt soạn level |
 
@@ -127,7 +127,7 @@ Trình tự cho **một** khuôn trong lô:
 ## 7. Data
 
 **Đọc:** `packages/game-engine/src/templates/*/template.ts` · `docs/taxonomy/`.
-**Ghi:** `packages/db/src/seed-content/c<n>/` · hàng seed `game_levels`.
+**Ghi:** `packages/content/src/skills/c<n>/` · hàng seed `game_levels`.
 
 ### 7.1 Số đo trước lô
 

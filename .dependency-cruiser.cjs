@@ -76,7 +76,47 @@ module.exports = {
         "là dấu hiệu vai trò đã trộn. Consumer sống ở apps/worker/src/consumers/.",
       severity: "error",
       from: { path: "^packages/queue/" },
-      to: { path: "^packages/(db|storage)/" },
+      to: {
+        path: "(^packages/(db|storage|audit|play|export)/|^@mindkid/(db|storage|audit|play|export))",
+      },
+    },
+    {
+      name: "no-content-package-forbidden-imports",
+      comment:
+        "BR-MPA-05: packages/content chỉ chứa nội dung học thuần. Cấm nhập db, " +
+        "content-build, drizzle-orm, postgres, và mọi module node:*.",
+      severity: "error",
+      from: { path: "^packages/content/" },
+      to: {
+        path: "(^packages/(db|content-build)/|^@mindkid/(db|content-build)|^node_modules/(drizzle-orm|postgres)(/|$)|node:)",
+      },
+    },
+    {
+      name: "no-db-package-forbidden-imports",
+      comment:
+        "BR-MPA-05: packages/db chỉ là tầng kết nối PostgreSQL. Cấm nhập content, " +
+        "content-build, audit, play, export.",
+      severity: "error",
+      from: { path: "^packages/db/" },
+      to: {
+        path: "(^packages/(content|content-build|audit|play|export)/|^@mindkid/(content|content-build|audit|play|export))",
+      },
+    },
+    {
+      name: "no-domain-services-forbidden-imports",
+      comment:
+        "BR-MPA-05: Domain packages (audit, play, export) cấm nhập content-build " +
+        "và cấm phụ thuộc lẫn nhau (trừ export -> audit).",
+      severity: "error",
+      from: { path: "^packages/(audit|play|export)/" },
+      to: { path: "(^packages/content-build/|^@mindkid/content-build)" },
+    },
+    {
+      name: "no-content-build-to-apps",
+      comment: "BR-MPA-06: packages/content-build NEVER phụ thuộc vào apps/*.",
+      severity: "error",
+      from: { path: "^packages/content-build/" },
+      to: { path: "(^apps/|^@mindkid/(web|admin|worker))" },
     },
     {
       name: "no-http-in-worker",

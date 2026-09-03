@@ -46,9 +46,9 @@ ngược từ cổng phủ chứ không từ độ dày của nguồn.
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `packages/db/src/seed-content/c1/` tới `c6/` | Người biên soạn | File seeder, chia theo competency như quy ước hiện có |
-| `pnpm --filter @mindkid/db seed:report` | Người biên soạn | Xem khoảng trống và mức tiêu thụ hạn ngạch |
-| `pnpm --filter @mindkid/db seed:check` | Người biên soạn | Bộ cổng seed, không chạm database |
+| `packages/content/src/skills/c1/` tới `c6/` | Người biên soạn | File seeder theo từng kỹ năng, gom theo competency |
+| `pnpm --filter @mindkid/content-build seed:report` | Người biên soạn | Xem khoảng trống và mức tiêu thụ hạn ngạch |
+| `pnpm --filter @mindkid/content-build seed:check` | Người biên soạn | Bộ cổng seed, không chạm database |
 | `pnpm --filter @mindkid/db test` | Cổng phủ | Ba ma trận và sàn |
 
 ## 4. Main flow

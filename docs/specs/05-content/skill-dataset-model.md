@@ -29,7 +29,7 @@ Kho bài tập là lõi sản phẩm; trò chơi chỉ là **cách trình bày**
 ống đi ngược: nội dung sinh theo **khuôn game** rồi mới gắn nhãn kỹ năng, nên nhãn đúng mà
 bài thì không dạy gì.
 
-Đo trên corpus hiện tại (`packages/db/src/seed-content/corpus/`, 71 file, 5.013 level, đo
+Đo trên corpus hiện tại (`packages/content/src/corpus/`, 71 file, 5.013 level, đo
 2026-09-03):
 
 | #   | Đo                                                                | Con số                                     |
@@ -71,12 +71,12 @@ lấy từ chính sáu vật đó.
 
 | Nơi                                                           | Ghi chú                                                                                          |
 | ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `packages/db/src/seed-content/skills/<c>/<strand>/<SKILL>.ts` | **Một file cho một kỹ năng**, gom trong thư mục strand                                           |
-| `packages/db/src/seed-content/projections/<GT>.ts`            | Một bộ chiếu cho một khuôn. 34 bộ — ba khuôn nhóm G không có, xem mục 7.5                        |
-| `packages/db/src/seed-content/skills/index.ts`                | Registry sinh ra từ thư mục, **có ca âm cho file không đăng ký**                                 |
-| `pnpm --filter @mindkid/db seed:check`                        | 10 cổng, không chạm database                                                                     |
-| `pnpm --filter @mindkid/db seed:content`                      | Ghi thật — đường ghi của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) |
-| `pnpm --filter @mindkid/db check:skill-fidelity`              | Cổng 8 và 9 ở mục 7.6, chạy riêng được                                                           |
+| `packages/content/src/skills/<c>/<strand>/<SKILL>.ts`         | **Một file cho một kỹ năng**, gom trong thư mục strand                                           |
+| `packages/content/src/builders/<GT>.ts`                       | Một bộ dựng cho một khuôn. 34 bộ — ba khuôn nhóm G không có, xem mục 7.5                         |
+| `packages/content/src/skills/index.ts`                        | Registry sinh ra từ thư mục, **có ca âm cho file không đăng ký**                                 |
+| `pnpm --filter @mindkid/content-build seed:check`             | 10 cổng, không chạm database                                                                     |
+| `pnpm --filter @mindkid/content-build seed:content`           | Ghi thật — đường ghi của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) |
+| `pnpm --filter @mindkid/content-build check:skill-fidelity`   | Cổng 8 và 9 ở mục 7.6, chạy riêng được                                                           |
 
 ## 4. Main flow
 
@@ -117,12 +117,12 @@ sai, và đó là việc của người.
 | `BR-SDS-05` (cấm thử lại)                    | Bộ chiếu trượt `content_contract` thì **dừng**, không tự sinh lại                                            | Vòng thử-lại-tới-khi-xanh biến cổng thành hàm mục tiêu; đó là cách corpus hiện tại thành ra như vậy. Nối tiếp `BR-LGK-03` (parse trước khi ghi, không sửa ứng viên cho vừa contract)                                 |
 | `BR-SDS-06` (một kỹ năng một file)           | Seeder của một kỹ năng nằm trong đúng một file `skills/<c>/<strand>/<SKILL>.ts`                              | Trả lời được "kỹ năng này đã soạn tới đâu" bằng một lần mở file. Bố cục theo `competency × khuôn` ở mục 7.1 của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) không trả lời được câu đó    |
 | `BR-SDS-07` (registry có ca âm)              | File kỹ năng không nằm trong registry phải làm cổng **đỏ**                                                   | Thư mục sinh tự động từng chứa 430 level không file nào import, im lặng suốt 5 ngày                                                                                                                                  |
-| `BR-SDS-08` (cấm nuốt lỗi nạp)               | Nạp dataset hoặc corpus gặp lỗi parse thì **ném**, không bỏ qua                                              | [`corpus/index.ts:35`](../../../packages/db/src/seed-content/corpus/index.ts) đang `catch {}`: một file JSON hỏng đóng góp 0 level và không có tín hiệu nào                                                          |
+| `BR-SDS-08` (cấm nuốt lỗi nạp)               | Nạp dataset hoặc corpus gặp lỗi parse thì **ném**, không bỏ qua                                              | `packages/content/src/corpus/index.ts:35` đang `catch {}`: một file JSON hỏng đóng góp 0 level và không có tín hiệu nào                                                          |
 | `BR-SDS-09` (bậc khó một chiều)              | Bậc khó của một kỹ năng leo theo **một** chiều mỗi mức, khai trong `dataset.ladder`                          | Kế thừa `BR-GLM-08` (độ khó tăng một chiều mỗi lần) và `BR-RSM-05`; khai ở dataset thì mọi khuôn leo cùng một thang                                                                                                  |
 | `BR-SDS-10` (chủ đề là lớp áo)               | `theme` chỉ đổi **hình minh hoạ** của vật, cấm — NEVER đổi vật                                               | Chủ đề đang là **nguồn** vật; đó là gốc của `BR-SDS-02` bị vi phạm 5.013 lần. Cùng ranh giới mà `BR-CTR-06` (giá trị nội dung học không nằm ở trục theme) đã đặt                                                     |
 | `BR-SDS-11` (chỉ dẫn theo kỹ năng)           | Câu chỉ dẫn dựng từ `dataset.phrasing`, không từ bảng câu theo khuôn                                         | 182 câu phân biệt cho 5.013 level là câu của khuôn, không phải câu của bài. Không nới `BR-LGK-08` (câu tiếng Việt do người viết)                                                                                     |
 | `BR-SDS-12` (cổng có ca âm)                  | `BR-SDS-02` và `BR-SDS-03` mỗi luật phải có ≥1 ca âm dựng nội dung vi phạm và khẳng định cổng đỏ             | `BR-CSA-15` (mỗi cổng có ca âm). Cổng không có ca âm là cổng in "đạt" mãi mãi                                                                                                                                        |
-| `BR-SDS-13` (cổng chạy lúc gieo)             | `db:seed` phải chạy 10 cổng                                                                                  | [`cli/seed-content.ts:9`](../../../packages/db/src/seed-content/cli/seed-content.ts) khai `skipGates = true` và [`seed.ts:160`](../../../packages/db/src/seed.ts) gọi thiếu tham số đó: gieo hôm nay chạy **0 cổng** |
+| `BR-SDS-13` (cổng chạy lúc gieo)             | `content-build` phải chạy 10 cổng                                                                            | `packages/content-build/src/cli/seed-content.ts:9` khai `skipGates = true`: gieo hôm nay chạy **0 cổng** |
 | `BR-SDS-14` (mã level bất biến)              | Đổi bố cục seeder cấm — NEVER đổi `game_levels.code` đã publish                                              | `BR-ID-01` (mã bất biến sau khi phát hành), mục 5 của [`id-conventions.md`](../00-foundation/id-conventions.md). Mã mã hoá lịch sử, không mã hoá phân loại                                                           |
 | `BR-SDS-15` (mục tiêu học tập phải ghi được) | `learning_objective_codes` của một level phải ghi xuống database                                             | Hiện chỉ được cổng kiểm rồi vứt; không bảng nào giữ, nên lộ trình học không truy được về mục tiêu                                                                                                                    |
 | `BR-STA-01` (tương thích theo thinking & age) | Khuôn hợp lệ khi `thinking_processes ∩ template.thinking ≠ ∅` và tuổi không thuộc `banned_age_bands`         | Tránh sinh bài chơi không phù hợp lứa tuổi hoặc sai mục tiêu tư duy                                                                                                                   |

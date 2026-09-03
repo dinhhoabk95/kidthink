@@ -45,6 +45,13 @@ Hai trục cắt ngang cây, không phải tầng:
 > game level thật. Trạng thái nội dung suy từ corpus qua `check:skill-quota`,
 > Cấm — NEVER viết tay.
 
+### 1.1 Quyết định nguồn sự thật (Q2 — Task #208)
+
+TypeScript là **nguồn sự thật duy nhất** cho danh tính của 408 kỹ năng
+(`packages/content/src/skills/**`). Bảng Markdown tại `docs/taxonomy/c1..c6.md` là
+**tài liệu được sinh tự động** từ TypeScript bằng lệnh `gen:taxonomy-docs`. Cổng
+`check:taxonomy-docs` đối chiếu chống lệch byte-for-byte; cấm sửa tay bảng Markdown.
+
 ## 2. Actors
 
 | Actor | Làm gì |

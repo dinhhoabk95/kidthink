@@ -60,7 +60,7 @@ C1.CNT.03
 | | **Tổng** | | **71** | **408** | **230** | **178** |
 
 Cột **Chưa có level** là nợ nội dung có trần: `BR-SKQ-06` giữ nó ở
-`packages/db/src/seed-content/gates/skill-coverage-ratchet.json` và trần **chỉ
+`packages/content-build/src/gates/skill-coverage-ratchet.json` và trần **chỉ
 được giảm**. Ưu tiên soạn theo thứ tự C5 → C4 → C2 → C3 → C6 → C1.
 
 **C4 đổi phạm vi** từ *Observation* sang *Discovery*: nhận thêm khám phá khoa

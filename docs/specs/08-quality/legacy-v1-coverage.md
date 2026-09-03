@@ -27,7 +27,7 @@ owns:
 
 1. **Registry 60 Game Types:** Lưu trữ tại `packages/shared/src/constants/legacy-v1-game-types.ts` làm nguồn sự thật bất biến (song ánh 60 `legacy_id` ↔ 60 `competency_id`).
 2. **Trường `legacy_v1_ref`:**
-   - Thuộc `ContentSeedHeader` (`packages/db/src/seed-content/types.ts`).
+   - Thuộc `ContentSeedHeader` (`packages/content/src/types.ts`).
    - Lưu trữ tại cột `legacy_v1_ref text` trong bảng `game_levels`.
    - Cấm — NEVER lưu trữ `legacy_v1_ref` trong `content_pack`.
 

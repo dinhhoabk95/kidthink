@@ -820,7 +820,12 @@ Thêm lại **khi** tính năng của chúng vào scope, không trước.
 | `packages/taxonomy/`    | Pure TS traversal, DAG check                                                   | Ghi DB                                                                                    |
 | `packages/game-engine/` | Canvas 2D thuần TS                                                             | Vue, Pinia, VueUse, reactivity, ghi DB, network call lúc chơi                             |
 | `packages/adaptive/`    | Pure TS algorithm                                                              | Ghi DB · `new Date()` (truyền `now`)                                                      |
-| `packages/db/`          | Drizzle schema, migration, seed                                                | Raw SQL, business logic                                                                   |
+| `packages/db/`          | Drizzle schema, migration, connection                                          | Raw SQL, business logic, nội dung học                                                     |
+| `packages/content/`     | Kho nội dung học (skills, builders, activities, lessons)                       | Ghi DB, Drizzle, node:* modules                                                           |
+| `packages/content-build/`| Nạp nội dung vào DB, gate chất lượng                                          | apps/*                                                                                    |
+| `packages/audit/`       | Ghi nhật ký kiểm toán, quét dữ liệu nhạy cảm                                   | Ghi content, UI logic                                                                     |
+| `packages/play/`        | Phiên chơi, sự kiện chơi, BKT mastery, huy hiệu                                 | Ghi content, direct HTTP                                                                  |
+| `packages/export/`      | Kết xuất PDF giáo án, worksheet                                                | Thao tác DB ngoài context kết xuất                                                        |
 | `packages/auth/`        | Opaque session/remember/challenge Redis adapter fail-closed, guard, hash, CSRF | Supabase / Better-Auth · JWT/JWS credential · `jose` · fallback auth sang cache fail-open |
 | `packages/queue/`       | Job definition, producer                                                       | Consumer                                                                                  |
 | `apps/web/server/api/`  | Drizzle + Zod                                                                  | Frontend logic                                                                            |
