@@ -409,6 +409,22 @@ importers:
         specifier: 'catalog:'
         version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.2)(tsx@4.23.11)(yaml@2.9.0))
 
+  packages/content:
+    dependencies:
+      '@mindkid/game-engine':
+        specifier: workspace:*
+        version: link:../game-engine
+      '@mindkid/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@mindkid/taxonomy':
+        specifier: workspace:*
+        version: link:../taxonomy
+    devDependencies:
+      '@mindkid/config':
+        specifier: workspace:*
+        version: link:../config
+
   packages/db:
     dependencies:
       '@mindkid/adaptive':

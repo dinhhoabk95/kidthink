@@ -352,3 +352,22 @@ export function invalidateSkillTreeCache(): void {
   cachedVersion = null;
   cacheTimestamp = 0;
 }
+
+export const MECHANIC_TAG_MAP: Record<string, string> = {
+  "tap-select": "tap_select",
+  "tap-select-multi": "tap_select",
+  "drag-to-container": "drag_drop",
+  "sort-groups": "matching",
+  "pair-match": "matching",
+  "sequence-order": "sequence_order",
+  match: "matching",
+  tap: "tap_select",
+  drag: "drag_drop",
+};
+
+export function normalizeMechanicTagCode(code?: string): string | undefined {
+  if (!code) {
+    return undefined;
+  }
+  return MECHANIC_TAG_MAP[code] || code.replace(/-/g, "_");
+}

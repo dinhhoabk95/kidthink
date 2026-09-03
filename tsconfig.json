@@ -27,6 +27,8 @@
         "./packages/config/*",
         "./packages/config/src/*.ts"
       ],
+      "@mindkid/content": ["./packages/content/src/index.ts"],
+      "@mindkid/content/*": ["./packages/content/src/*"],
       "@mindkid/db": ["./packages/db/src/index.ts"],
       "@mindkid/emoji": ["./packages/emoji/src/index.ts"],
       "@mindkid/game-engine": ["./packages/game-engine/src/index.ts"],

@@ -1,0 +1,28 @@
+{
+  "name": "@mindkid/content",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./skills/*": "./src/skills/*.js",
+    "./builders/*": "./src/builders/*.js",
+    "./activities/*": "./src/activities/*.js",
+    "./lessons/*": "./src/lessons/*.js"
+  },
+  "dependencies": {
+    "@mindkid/game-engine": "workspace:*",
+    "@mindkid/shared": "workspace:*",
+    "@mindkid/taxonomy": "workspace:*"
+  },
+  "devDependencies": {
+    "@mindkid/config": "workspace:*"
+  },
+  "imports": {
+    "#src/*": "./src/*.ts",
+    "#tests/*": "./tests/*.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  }
+}

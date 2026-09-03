@@ -86,7 +86,11 @@
       // tree-shake ở dev) — apps/web chết lúc khởi tạo, và bản build từng ship
       // native addon argon2 xuống trình duyệt. `client.ts` vẫn là bề mặt export
       // được khai báo trong `exports`, không phải path sâu vào internal.
-      "includes": ["packages/*/src/index.ts", "packages/*/src/client.ts"],
+      "includes": [
+        "packages/*/src/index.ts",
+        "packages/*/src/client.ts",
+        "packages/content/src/**/index.ts"
+      ],
       "linter": {
         "rules": {
           "performance": {
@@ -106,9 +110,12 @@
       }
     },
     {
-      // skill-dataset-model.md §3: "File: packages/db/src/seed-content/skills/<c>/<strand>/<SKILL>.ts".
+      // skill-dataset-model.md §3: "File: packages/content/src/skills/<c>/<strand>/<SKILL>.ts".
       // Tên file kỹ năng mang mã taxonomy bất biến C[1-6].[STRAND].[NN].ts.
-      "includes": ["packages/db/src/seed-content/skills/**/*.ts"],
+      "includes": [
+        "packages/db/src/seed-content/skills/**/*.ts",
+        "packages/content/src/skills/**/*.ts"
+      ],
       "linter": {
         "rules": {
           "style": {

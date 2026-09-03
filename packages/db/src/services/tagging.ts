@@ -19,24 +19,15 @@ export interface TagAssignmentInput {
  * BR-TAG-01: Reject tag codes outside active content_tags vocabulary with 422 UNPROCESSABLE_ENTITY.
  * BR-TAG-02: Require >= 1 tag on each pedagogical axis (what, thinking, mechanic) before publication. (theme exempt - D-HB).
  */
-const MECHANIC_TAG_MAP: Record<string, string> = {
-  "tap-select": "tap_select",
-  "tap-select-multi": "tap_select",
-  "drag-to-container": "drag_drop",
-  "sort-groups": "matching",
-  "pair-match": "matching",
-  "sequence-order": "sequence_order",
-  match: "matching",
-  tap: "tap_select",
-  drag: "drag_drop",
-};
+import {
+  MECHANIC_TAG_MAP as TAXONOMY_MECHANIC_TAG_MAP,
+  normalizeMechanicTagCode as taxonomyNormalizeMechanicTagCode,
+} from "@mindkid/taxonomy";
 
-export function normalizeMechanicTagCode(code?: string): string | undefined {
-  if (!code) {
-    return undefined;
-  }
-  return MECHANIC_TAG_MAP[code] || code.replace(/-/g, "_");
-}
+export const MECHANIC_TAG_MAP: Record<string, string> =
+  TAXONOMY_MECHANIC_TAG_MAP;
+export const normalizeMechanicTagCode: (code?: string) => string | undefined =
+  taxonomyNormalizeMechanicTagCode;
 
 async function resolveAndEnsureTags(
   db: NodePgDatabase<Record<string, unknown>>,

@@ -96,26 +96,26 @@ Không đổi hành vi. Chỉ **gỡ**, chưa **dời** file nào.
 
 ## G4 — Dựng `packages/content`
 
-- [ ] Chuyển hàm chuẩn hoá mã thẻ từ `services/tagging.ts` sang `@mindkid/taxonomy`;
+- [x] Chuyển hàm chuẩn hoá mã thẻ từ `services/tagging.ts` sang `@mindkid/taxonomy`;
       `services/tagging.ts` xuất lại để 261 chỗ gọi ở `apps/*` không phải sửa
-- [ ] Tạo package — phụ thuộc **chỉ** `shared` · `taxonomy` · `game-engine`
-- [ ] Chuyển 408 file kỹ năng và 33 bộ dựng màn chơi. Trên 500 dòng ⟹ **viết bộ chuyển đổi tự
+- [x] Tạo package — phụ thuộc **chỉ** `shared` · `taxonomy` · `game-engine`
+- [x] Chuyển 408 file kỹ năng và 33 bộ dựng màn chơi. Trên 500 dòng ⟹ **viết bộ chuyển đổi tự
       động, Cấm — NEVER sửa tay**
-- [ ] Đổi `projections/` thành `builders/`; danh mục viết cứng thành danh mục sinh từ thư mục
-- [ ] Viết `buildLevelsForSkill(skill)` — gọi bộ dựng của khuôn tương ứng cho từng dòng `levels[]`.
+- [x] Đổi `projections/` thành `builders/`; danh mục viết cứng thành danh mục sinh từ thư mục
+- [x] Viết `buildLevelsForSkill(skill)` — gọi bộ dựng của khuôn tương ứng cho từng dòng `levels[]`.
       Không khớp hợp đồng của khuôn thì **ném lỗi và dừng**, Cấm — NEVER thử lại
-- [ ] Tách `activities/pedagogy-activities-45.ts` (4.529 dòng) và `digital-game-activities.ts`
+- [x] Tách `activities/pedagogy-activities-45.ts` (4.529 dòng) và `digital-game-activities.ts`
       (1.964) theo năng lực thành `activities/c1..c6.ts`
-- [ ] Gom 15 file `lessons/batch-NN.ts` thành `lessons/c1..c6.ts`
-- [ ] Test đi cùng code trong cùng giai đoạn
+- [x] Gom 15 file `lessons/batch-NN.ts` thành `lessons/c1..c6.ts`
+- [x] Test đi cùng code trong cùng giai đoạn
 
 **Điểm dừng G4**
 
-- [ ] `packages/content` có **0 import** drizzle, `node:*`, `@mindkid/db` — `pnpm lint:deps` xác nhận
-- [ ] **Test chứng minh bắt lỗi**: bộ dữ liệu 2 vật dựng cho khuôn đòi ≥4 vật ⟹ ném lỗi, **0** màn
+- [x] `packages/content` có **0 import** drizzle, `node:*`, `@mindkid/db` — `pnpm lint:deps` xác nhận
+- [x] **Test chứng minh bắt lỗi**: bộ dữ liệu 2 vật dựng cho khuôn đòi ≥4 vật ⟹ ném lỗi, **0** màn
       chơi sinh ra
-- [ ] Cùng hạt ngẫu nhiên ⟹ **byte giống hệt** giữa hai lần chạy
-- [ ] Số hoạt động và số giáo án trước/sau **bằng nhau**; mã của chúng không đổi
+- [x] Cùng hạt ngẫu nhiên ⟹ **byte giống hệt** giữa hai lần chạy
+- [x] Số hoạt động và số giáo án trước/sau **bằng nhau**; mã của chúng không đổi
 
 ---
 
