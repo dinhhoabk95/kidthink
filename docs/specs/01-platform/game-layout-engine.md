@@ -130,6 +130,7 @@ type LayoutFn = (input: LayoutInput) => Slot[];
 | `LOGIC_WIDTH` `LOGIC_HEIGHT` | 960 × 540, đã có trong `RenderSystem` |
 | `SLOT_GAP_PX` | Khoảng cách tối thiểu giữa hai vùng chạm |
 | `SAFE_MARGIN_PX` | Lề an toàn quanh mép canvas, tránh cạnh màn hình |
+| `CONTENT_TOP_PX` | Lề trên an toàn (84px), bảo lưu dải hiển thị pill hướng dẫn và khoảng thở |
 | Sàn chạm | Không khai ở đây. Lấy qua hàm của [`accessibility.md`](../08-quality/accessibility.md) `BR-A11-04` |
 
 ### 7.3 Vai trò slot theo layout
@@ -190,9 +191,9 @@ Scenario: BR-LAY-08 — vị trí ổn định theo chỉ số
   When sinh slot hai lần và so sánh theo index
   Then slot thứ i có cùng x và y ở cả hai lần
 
-Scenario: BR-LAY-09 — slot nằm trong không gian logic
+Scenario: BR-LAY-09 — slot nằm trong không gian logic an toàn
   When sinh slot cho mọi LayoutId
-  Then mọi slot nằm trọn trong hình chữ nhật 960x540 trừ SAFE_MARGIN_PX
+  Then mọi slot nằm trọn trong hình chữ nhật 960x540 dưới CONTENT_TOP_PX và cách các mép SAFE_MARGIN_PX
 
 Scenario: LAYOUT_NOT_SUPPORTED khi layout_id ngoài danh sách template
   Given template GT-001 khai layouts grid và horizontal-row

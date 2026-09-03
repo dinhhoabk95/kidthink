@@ -1,6 +1,7 @@
 /* biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: geometry calculations */
 
 import {
+  CONTENT_TOP_PX,
   DEFAULT_LOGIC_SPACE,
   getTouchFloor,
   SAFE_MARGIN_PX,
@@ -49,7 +50,7 @@ export function computeGridLayout(
   const minH = touchFloor;
 
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
-  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
   // Tính số cột và hàng tối đa có thể vừa trên 1 trang với kích thước sàn chạm
   let maxCapRows = 4;
@@ -131,7 +132,7 @@ export function computeGridLayout(
     const totalGridH = pageRows * slotH + (pageRows - 1) * SLOT_GAP_PX;
 
     const startX = SAFE_MARGIN_PX + (availW - totalGridW) / 2;
-    const startY = SAFE_MARGIN_PX + (availH - totalGridH) / 2;
+    const startY = CONTENT_TOP_PX + (availH - totalGridH) / 2;
 
     const centerX = startX + col * (slotW + SLOT_GAP_PX) + slotW / 2;
     const centerY = startY + row * (slotH + SLOT_GAP_PX) + slotH / 2;
@@ -180,15 +181,15 @@ export function computeBipartiteLayout(
   const touchFloor = getTouchFloor(ageBand);
 
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
-  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
   const slots: Slot[] = [];
 
   if (options.orientation === "vertical") {
     // Nguồn ở trên, Đích ở dưới
     const zoneH = (availH - SLOT_GAP_PX) / 2;
-    const topStartY = SAFE_MARGIN_PX;
-    const botStartY = SAFE_MARGIN_PX + zoneH + SLOT_GAP_PX;
+    const topStartY = CONTENT_TOP_PX;
+    const botStartY = CONTENT_TOP_PX + zoneH + SLOT_GAP_PX;
 
     // Nguồn slots
     const sourceCols = Math.max(1, slotCount);
@@ -260,7 +261,7 @@ export function computeBipartiteLayout(
     );
     const totalSourceH =
       sourceRows * sourceSlotH + (sourceRows - 1) * SLOT_GAP_PX;
-    const sourceStartY = SAFE_MARGIN_PX + (availH - totalSourceH) / 2;
+    const sourceStartY = CONTENT_TOP_PX + (availH - totalSourceH) / 2;
 
     for (let i = 0; i < slotCount; i++) {
       const cx = leftStartX + zoneW / 2;
@@ -288,7 +289,7 @@ export function computeBipartiteLayout(
     );
     const totalTargetH =
       targetRows * targetSlotH + (targetRows - 1) * SLOT_GAP_PX;
-    const targetStartY = SAFE_MARGIN_PX + (availH - totalTargetH) / 2;
+    const targetStartY = CONTENT_TOP_PX + (availH - totalTargetH) / 2;
 
     for (let j = 0; j < targetCount; j++) {
       const cx = rightStartX + zoneW / 2;
@@ -324,7 +325,7 @@ export function computeMultiBucketLayout(input: LayoutInput): Slot[] {
   const touchFloor = getTouchFloor(ageBand);
 
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
-  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
   const slots: Slot[] = [];
 
@@ -344,7 +345,7 @@ export function computeMultiBucketLayout(input: LayoutInput): Slot[] {
 
   for (let i = 0; i < slotCount; i++) {
     const cx = sourceStartX + i * (sourceSlotW + SLOT_GAP_PX) + sourceSlotW / 2;
-    const cy = SAFE_MARGIN_PX + topZoneH / 2;
+    const cy = CONTENT_TOP_PX + topZoneH / 2;
     slots.push({
       index: i,
       x: Math.round(cx),
@@ -368,7 +369,7 @@ export function computeMultiBucketLayout(input: LayoutInput): Slot[] {
   const totalBucketW = bCols * bucketW + (bCols - 1) * SLOT_GAP_PX;
   const bucketStartX = SAFE_MARGIN_PX + (availW - totalBucketW) / 2;
   const bucketStartY =
-    SAFE_MARGIN_PX + topZoneH + (availH - topZoneH - bucketH) / 2;
+    CONTENT_TOP_PX + topZoneH + (availH - topZoneH - bucketH) / 2;
 
   for (let b = 0; b < bucketCount; b++) {
     const cx = bucketStartX + b * (bucketW + SLOT_GAP_PX) + bucketW / 2;
@@ -407,7 +408,7 @@ export function computeTrackLayout(
 
   const touchFloor = getTouchFloor(ageBand);
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
-  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
   const slotW = Math.max(
     touchFloor,
@@ -440,7 +441,7 @@ export function computeTrackLayout(
     }
   } else {
     // Dạng đường ray ngang (horizontal-track)
-    const centerY = LOGIC_HEIGHT / 2;
+    const centerY = CONTENT_TOP_PX + availH / 2;
     for (let i = 0; i < slotCount; i++) {
       const cx = startX + i * (slotW + SLOT_GAP_PX) + slotW / 2;
       slots.push({
@@ -481,7 +482,7 @@ export function computeNumberBondTreeLayout(input: LayoutInput): Slot[] {
 
   // Slot 0: Whole (Ô tổng) ở đỉnh
   const wholeX = LOGIC_WIDTH / 2;
-  const wholeY = SAFE_MARGIN_PX + slotH / 2 + 10;
+  const wholeY = CONTENT_TOP_PX + slotH / 2 + 10;
   slots.push({
     index: 0,
     x: Math.round(wholeX),
@@ -563,7 +564,7 @@ export function computeTenFrameSplitLayout(input: LayoutInput): Slot[] {
   const rows = 2;
   const gridW = cols * slotW + (cols - 1) * SLOT_GAP_PX;
   const gridStartX = (LOGIC_WIDTH - gridW) / 2;
-  const gridStartY = SAFE_MARGIN_PX + 20;
+  const gridStartY = CONTENT_TOP_PX + 20;
 
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
@@ -683,7 +684,7 @@ export function computeMatrixSlotGridLayout(input: LayoutInput): Slot[] {
   const { slotCount, ageBand, targetCount: rawGridSize } = input;
   const gridSize = rawGridSize === 9 ? 3 : 2; // 2x2 hoặc 3x3
   const touchFloor = getTouchFloor(ageBand);
-  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
   const cell = Math.max(touchFloor, MATRIX_SLOT_CELL_PX);
   const slots: Slot[] = [];
@@ -693,7 +694,7 @@ export function computeMatrixSlotGridLayout(input: LayoutInput): Slot[] {
   const matrixTotalH = gridSize * cell + (gridSize - 1) * SLOT_GAP_PX;
   const matrixStartX = SAFE_MARGIN_PX;
   const matrixStartY =
-    SAFE_MARGIN_PX + Math.max(0, (availH - matrixTotalH) / 2);
+    CONTENT_TOP_PX + Math.max(0, (availH - matrixTotalH) / 2);
 
   for (let r = 0; r < gridSize; r++) {
     for (let c = 0; c < gridSize; c++) {
@@ -724,7 +725,7 @@ export function computeMatrixSlotGridLayout(input: LayoutInput): Slot[] {
   );
   const trayRows = Math.max(1, Math.ceil(slotCount / trayCols));
   const trayTotalH = trayRows * cell + (trayRows - 1) * SLOT_GAP_PX;
-  const trayStartY = SAFE_MARGIN_PX + Math.max(0, (availH - trayTotalH) / 2);
+  const trayStartY = CONTENT_TOP_PX + Math.max(0, (availH - trayTotalH) / 2);
 
   for (let o = 0; o < slotCount; o++) {
     const row = Math.floor(o / trayCols);
@@ -770,7 +771,7 @@ export function computeClueBoardLayout(input: LayoutInput): Slot[] {
   );
   const touchFloor = getTouchFloor(ageBand);
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
-  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
   const clueZoneH = Math.max(
     touchFloor,
@@ -788,7 +789,7 @@ export function computeClueBoardLayout(input: LayoutInput): Slot[] {
       touchFloor,
       availW,
       boardZoneH,
-      boardStartY: SAFE_MARGIN_PX + clueZoneH + SLOT_GAP_PX,
+      boardStartY: CONTENT_TOP_PX + clueZoneH + SLOT_GAP_PX,
     })
   );
   return slots;
@@ -814,7 +815,7 @@ function computeClueStrip(args: {
   );
   const totalW = clueCount * clueW + (clueCount - 1) * SLOT_GAP_PX;
   const startX = SAFE_MARGIN_PX + (availW - totalW) / 2;
-  const centerY = SAFE_MARGIN_PX + clueZoneH / 2;
+  const centerY = CONTENT_TOP_PX + clueZoneH / 2;
 
   const slots: Slot[] = [];
   for (let i = 0; i < clueCount; i++) {
@@ -911,9 +912,12 @@ export function computeMatrix3x3Layout(input: LayoutInput): Slot[] {
   const gridSize = (rawGridSize ?? 0) >= 9 ? 3 : 2;
   const touchFloor = getTouchFloor(ageBand);
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
-  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
-  const cell = Math.max(touchFloor, MATRIX_3X3_CELL_PX);
+  const maxCellH = Math.floor(
+    (availH - gridSize * SLOT_GAP_PX) / (gridSize + 1)
+  );
+  const cell = Math.max(touchFloor, Math.min(MATRIX_3X3_CELL_PX, maxCellH));
   const matrixH = gridSize * cell + (gridSize - 1) * SLOT_GAP_PX;
   const matrixW = matrixH;
 
@@ -928,7 +932,7 @@ export function computeMatrix3x3Layout(input: LayoutInput): Slot[] {
   const trayH = trayRows * cell + (trayRows - 1) * SLOT_GAP_PX;
 
   const blockH = matrixH + SLOT_GAP_PX + trayH;
-  const blockStartY = SAFE_MARGIN_PX + Math.max(0, (availH - blockH) / 2);
+  const blockStartY = CONTENT_TOP_PX + Math.max(0, (availH - blockH) / 2);
   const matrixStartX = SAFE_MARGIN_PX + (availW - matrixW) / 2;
 
   const slots: Slot[] = [];
@@ -984,13 +988,13 @@ export function computeEquationRowsLayout(input: LayoutInput): Slot[] {
   const eqCount = Math.max(1, rawEqCount ?? 2);
   const touchFloor = getTouchFloor(ageBand);
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
-  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
   const rowH = Math.min(80, Math.floor((availH * 0.6) / eqCount));
   const card = Math.max(touchFloor, 64);
 
   const slots: Slot[] = [];
-  const eqStartY = SAFE_MARGIN_PX + 10;
+  const eqStartY = CONTENT_TOP_PX + 10;
   const eqGap = 12;
 
   // Slots cho phương trình
@@ -1044,7 +1048,7 @@ export function computeMirrorAxisSplitLayout(input: LayoutInput): Slot[] {
   const targetCount = Math.max(1, rawTargetCount ?? 2);
   const touchFloor = getTouchFloor(ageBand);
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
-  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
   const slots: Slot[] = [];
 
@@ -1057,7 +1061,7 @@ export function computeMirrorAxisSplitLayout(input: LayoutInput): Slot[] {
   slots.push({
     index: 0,
     x: Math.round(SAFE_MARGIN_PX + halfW / 2),
-    y: Math.round(SAFE_MARGIN_PX + mainH / 2),
+    y: Math.round(CONTENT_TOP_PX + mainH / 2),
     w: Math.round(halfW),
     h: Math.round(mainH),
     hitW: Math.round(halfW),
@@ -1077,7 +1081,7 @@ export function computeMirrorAxisSplitLayout(input: LayoutInput): Slot[] {
       index: 1 + t,
       x: Math.round(targetStartX + col * (cell + SLOT_GAP_PX) + cell / 2),
       y: Math.round(
-        SAFE_MARGIN_PX + 20 + row * (cell + SLOT_GAP_PX) + cell / 2
+        CONTENT_TOP_PX + 20 + row * (cell + SLOT_GAP_PX) + cell / 2
       ),
       w: Math.round(cell),
       h: Math.round(cell),
@@ -1089,7 +1093,7 @@ export function computeMirrorAxisSplitLayout(input: LayoutInput): Slot[] {
   }
 
   // 3. Khay mảnh lựa chọn bên dưới (Source)
-  const trayStartY = SAFE_MARGIN_PX + mainH + 16;
+  const trayStartY = CONTENT_TOP_PX + mainH + 16;
   const sourceCols = Math.max(1, slotCount);
   const totalSourceW = sourceCols * cell + (sourceCols - 1) * SLOT_GAP_PX;
   const sourceStartX =
@@ -1127,7 +1131,7 @@ export function computeFreeSceneLayout(input: LayoutInput): Slot[] {
   }
   const touchFloor = getTouchFloor(ageBand);
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
-  const availH = LOGIC_HEIGHT - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
   const cell = Math.max(touchFloor, 64);
 
   // Phân bố đều lưới mở rộng làm các điểm neo trong khung cảnh
@@ -1143,7 +1147,7 @@ export function computeFreeSceneLayout(input: LayoutInput): Slot[] {
     slots.push({
       index: i,
       x: Math.round(SAFE_MARGIN_PX + c * colStep + colStep / 2),
-      y: Math.round(SAFE_MARGIN_PX + r * rowStep + rowStep / 2),
+      y: Math.round(CONTENT_TOP_PX + r * rowStep + rowStep / 2),
       w: Math.round(cell),
       h: Math.round(cell),
       hitW: Math.max(touchFloor, Math.round(cell)),
@@ -1302,7 +1306,7 @@ export function computeWeaveGridLayout(input: LayoutInput): Slot[] {
   const gridTotalH = rows * cell + (rows - 1) * gap;
   const gridStartX = Math.max(SAFE_MARGIN_PX, (LOGIC_WIDTH - gridTotalW) / 2);
   const gridStartY = Math.max(
-    SAFE_MARGIN_PX + 40,
+    CONTENT_TOP_PX + 16,
     100 + (availGridH - gridTotalH) / 2
   );
 

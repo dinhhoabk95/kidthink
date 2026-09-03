@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { AgeBand } from "#src/contracts/types";
 import { ALL_TEMPLATES } from "#src/generated/template-registry";
 import {
+  CONTENT_TOP_PX,
   LOGIC_HEIGHT,
   LOGIC_WIDTH,
   SAFE_MARGIN_PX,
@@ -37,7 +38,7 @@ function isOutsideSafeArea(slot: {
   return (
     slot.x - slot.w / 2 < SAFE_MARGIN_PX - 2 ||
     slot.x + slot.w / 2 > LOGIC_WIDTH - SAFE_MARGIN_PX + 2 ||
-    slot.y - slot.h / 2 < SAFE_MARGIN_PX - 2 ||
+    slot.y - slot.h / 2 < CONTENT_TOP_PX - 2 ||
     slot.y + slot.h / 2 > LOGIC_HEIGHT - SAFE_MARGIN_PX + 2
   );
 }

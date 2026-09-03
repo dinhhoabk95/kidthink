@@ -6,6 +6,12 @@ export const SLOT_GAP_PX = 16;
 export const SAFE_MARGIN_PX = 32;
 
 /**
+ * Lề an toàn đỉnh màn hình dành riêng cho prompt pill và khoảng thở (Task #203 / #203.11).
+ * Đáy pill hướng dẫn: 540 * 0.045 + 54 = 78.3px + 5.7px khoảng thở = 84px.
+ */
+export const CONTENT_TOP_PX = 84;
+
+/**
  * Sàn chạm tối thiểu theo band tuổi (BR-A11-04 & BR-ENG-05)
  * - Band 3-4: 96px
  * - Band 4-5: 76px

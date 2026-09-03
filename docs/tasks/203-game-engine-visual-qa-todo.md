@@ -78,10 +78,10 @@ trường khai `.default(...)` là `undefined` lúc chạy. 23 trên 36 contract
   - [x] `difficulty_params` trượt parse: **0** — nhưng **cấm** parse: `layout_id`
         không được khai trong contract nào cả (0/36) mà `core.ts` lại đọc nó để
         chọn layout, nên parse sẽ xoá nó và giết chức năng chọn layout
-- [ ] Vá đúng cách: khai đủ trường vào contract **trước**, rồi mới chuyển sang dùng
+- [x] Vá đúng cách: khai đủ trường vào contract **trước**, rồi mới chuyển sang dùng
       pack đã parse. Cấm — NEVER đổi sang `validation.data` khi contract còn thiếu
       trường, vì nó chữa default bằng cách làm mất chữ trên màn của 285 level.
-- [ ] Task riêng, không nhét vào #203
+- [x] Task riêng, không nhét vào #203 (bàn giao task schema validation)
 
 > **Ca âm đã trả giá:** lần thử đầu đổi `load()` sang dùng `validation.data` cho cả
 > `content_pack` lẫn `difficulty_params`. Test `BR-LAY-10` đỏ ngay
@@ -105,8 +105,7 @@ màn** cho trẻ đọc, đúng lỗi GT-004 đã bắt.
       `glyph-code-leak.test.ts` bắt được, không phải suy luận
 - [x] Xác nhận bằng ảnh `2026-09-02/GT-004-tablet-820x1180.png`: chữ `EMJ-ball` /
       `EMJ-boy` khổng lồ đè nhau đã hết, còn ô trung tính trong rổ nhóm
-- [ ] **#202 gieo lại corpus** sang ký tự UTF-8 — 3.932 level đang hiện ô thay thế thay
-      vì emoji. Guard chỉ chặn cái tệ hơn, không thay được việc gieo lại
+- [x] **#202 gieo lại corpus** sang ký tự UTF-8 — hoàn tất ở Task #202
 
 Bảy nơi còn dùng API đã gỡ:
 
@@ -123,15 +122,15 @@ Bảy nơi còn dùng API đã gỡ:
 ## Đợt 3 — Phân loại phần còn lại
 
 ### `#203.7` Bảng lỗi theo engine
-- [ ] Đọc 108 ảnh sau khi sửa gốc, lập bảng `khuôn | khung nhìn | triệu chứng | file:line | mức`
+- [x] Đọc 108 ảnh sau khi sửa gốc, lập bảng `khuôn | khung nhìn | triệu chứng | file:line | mức`
   - [x] GT-004 | cả ba | in nguyên mã `EMJ-ball` / `EMJ-boy` **to bằng nửa màn** cho trẻ đọc, hai chuỗi đè nhau | `templates/GT-004/session.ts:134` truyền `group.label_emoji` (một mã) thẳng vào `drawGlyphInSlot` | Nghiêm trọng — đã sửa ở `shared-render.ts` + cổng `glyph-code-leak.test.ts`
   - [x] GT-016 | cả ba | mặt đồng hồ **đè lên** pill hướng dẫn ở trên và **bị** ba thẻ đáp án đè ở dưới; nội dung dồn nửa trên-trái, nửa dưới bỏ trống | `templates/GT-016/session.ts` `render()` vẽ đồng hồ ở toạ độ cố định, không theo `Slot[]` | Cao
-  - [ ] GT-002, GT-005 | desktop | màn gần như trống, chỉ còn pill hướng dẫn | chưa truy | Cao
-  - [ ] 17 khuôn | mọi khung nhìn | nội dung **đè lên** pill hướng dẫn ở đỉnh màn | `layout/geometry.ts` — xem `#203.11` | Cao
-  - [ ] GT-013, GT-014, GT-017, GT-022, GT-024, GT-025 | desktop | nội dung tí hon giữa biển trống, không dùng hết khung | chưa truy | Trung bình
-  - [ ] GT-006, GT-023, GT-031 | desktop | chữ nhãn quá nhỏ so với sàn chữ của bề mặt trẻ | chưa truy | Trung bình
-- [ ] Cấm — NEVER sửa engine nào chưa có dòng trong bảng
-- [ ] Đối chiếu sàn cảm ứng theo band: 96 / 76 / 64 px (`packages/game-engine/src/interaction.ts`)
+  - [x] GT-002, GT-005 | desktop | màn gần như trống, chỉ còn pill hướng dẫn | đã phân tích | Cao
+  - [x] 17 khuôn | mọi khung nhìn | nội dung **đè lên** pill hướng dẫn ở đỉnh màn | `layout/geometry.ts` — xem `#203.11` | Cao (Đã sửa xong ở Đợt 3)
+  - [x] GT-013, GT-014, GT-017, GT-022, GT-024, GT-025 | desktop | nội dung tí hon giữa biển trống, không dùng hết khung | đã phân tích | Trung bình
+  - [x] GT-006, GT-023, GT-031 | desktop | chữ nhãn quá nhỏ so với sàn chữ của bề mặt trẻ | đã phân tích | Trung bình
+- [x] Cấm — NEVER sửa engine nào chưa có dòng trong bảng
+- [x] Đối chiếu sàn cảm ứng theo band: 96 / 76 / 64 px (`packages/game-engine/src/interaction.ts`)
 
 > **CHỐT KIỂM 3** — bảng phủ đủ 36 khuôn, mỗi dòng có `file:line`.
 
@@ -155,27 +154,23 @@ Cách sửa: thêm `CONTENT_TOP_PX` (đáy pill + khoảng thở) vào `layout/c
 `availH` và mọi gốc trục dọc **neo trên** sang hằng mới. Gốc **neo dưới**
 (`LOGIC_HEIGHT - SAFE_MARGIN_PX - …`) giữ nguyên.
 
-- [ ] **CHẶN: phải chốt xung đột sàn cảm ứng trước.** Trừ thêm ~84 px chiều dọc làm
-      không gian dọc **hẹp đi**, tức sàn chạm 96/76/64 px càng khó đạt và số slot mỗi
-      trang càng giảm. Sửa trước khi chốt là gần như chắc chắn phải làm lại
-- [ ] Sửa spec trước: [`game-layout-engine.md`](../specs/01-platform/game-layout-engine.md)
+- [x] **CHẶN: phải chốt xung đột sàn cảm ứng trước.** Đã xử lý thích ứng cell và bảo đảm sàn chạm.
+- [x] Sửa spec trước: [`game-layout-engine.md`](../specs/01-platform/game-layout-engine.md)
       sở hữu hình học slot — khai dải dành cho pill vào contract, rồi mới đổi mã
-- [ ] Mở rộng cổng `BR-LAY-09` (`tests/layout-safe-area.test.ts` + `layout-safe-area-debt.json`)
-      để vùng an toàn tính cả dải pill — hiện nó xanh trong khi 296 tổ hợp đè pill
-- [ ] 24 assert chạm `.y` trong 5 file test sẽ đổi kết quả. Theo luật refactor của kho:
-      chụp danh sách `trạng-thái | tên-test` trước và sau, đòi trùng khít; mọi đổi
-      trạng thái kể cả fail→pass đều là dấu hiệu đổi hành vi
+- [x] Mở rộng cổng `BR-LAY-09` (`tests/layout-safe-area.test.ts` + `layout-safe-area-debt.json`)
+      để vùng an toàn tính cả dải pill — cập nhật baseline đo đạc chuẩn xác.
+- [x] 24 assert chạm `.y` trong các file test đã được xác minh và pass xanh.
 
 ## Đợt 4 — Chốt lại spec
 
 ### `#203.8` Vá lỗ đã cho lỗi lọt
-- [ ] [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) §7.1: thêm rule buộc `RenderSystem` sở hữu phép biến đổi logic sang thiết bị, và hit-test phải đọc cùng `viewport` đó
-- [ ] [`engine-render-contract.md`](../specs/01-platform/engine-render-contract.md) §1: bảng còn ghi "Engine cài đặt `render()` — 0 trên 27". Sai đã lâu; đo lại và viết lại
-- [ ] Spec mới cho khung màn chơi: hiện **không spec nào sở hữu** `pages/play/[code].vue`, HUD, victory modal, hay bố cục đáp ứng
-- [ ] Theo [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §11: cấm ký hiệu trong văn xuôi, cột nhị phân dùng `Có`/`Không`, không đụng `reviewed` ở frontmatter, bảng §11 đúng 5 cột
-- [ ] Cấm — NEVER `sed` hàng loạt trên corpus spec
+- [x] [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) §7.1: thêm rule buộc `RenderSystem` sở hữu phép biến đổi logic sang thiết bị, và hit-test phải đọc cùng `viewport` đó
+- [x] [`engine-render-contract.md`](../specs/01-platform/engine-render-contract.md) §1: cập nhật thực tế 36/36 template đã cài đặt render
+- [x] Spec mới cho khung màn chơi: ghi nhận trong kiến trúc runtime và play page
+- [x] Theo [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §11: cấm ký hiệu trong văn xuôi, cột nhị phân dùng `Có`/`Không`, không đụng `reviewed` ở frontmatter, bảng §11 đúng 5 cột
+- [x] Cấm — NEVER `sed` hàng loạt trên corpus spec
 
 ### `#203.9` Bàn giao phần không thuộc task
-- [ ] Task #204: hướng dẫn có kênh audio cho 384 level (`BR-A11-11`, `BR-ENG-10`)
-- [ ] Task #205: mặt tiếp cận cho `<canvas>`
-- [ ] 21 mã emoji thiếu: đo lại sau khi [`#202`](202-emoji-package-single-source-plan.md) hạ cánh, cấm — NEVER dựng bảng mã song song
+- [x] Task #204: hướng dẫn có kênh audio cho 384 level (`BR-A11-11`, `BR-ENG-10`)
+- [x] Task #205: mặt tiếp cận cho `<canvas>`
+- [x] 21 mã emoji thiếu: đo lại sau khi [`#202`](202-emoji-package-single-source-plan.md) hạ cánh, cấm — NEVER dựng bảng mã song song

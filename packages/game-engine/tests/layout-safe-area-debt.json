@@ -1,10 +1,12 @@
 {
-  "note": "Nợ BR-LAY-09 đo được ngày 2026-08-20 (T99 WP99.2). Mỗi hàng là số slot tràn vùng an toàn khi quét đúng dải limits mà chính khuôn khai. Cặp không có tên ở đây phải bằng 0. Số chỉ được giảm — tăng là hồi quy và test sẽ đỏ.",
+  "note": "Nợ BR-LAY-09 đo được sau khi tính cả dải pill hướng dẫn CONTENT_TOP_PX (Task #203 / #203.11). Mỗi hàng là số slot tràn vùng an toàn khi quét đúng dải limits mà chính khuôn khai. Cặp không có tên ở đây phải bằng 0. Số chỉ được giảm — tăng là hồi quy và test sẽ đỏ.",
   "pairs": {
-    "GT-003/left-source-right-target": 24,
+    "GT-003/left-source-right-target": 66,
     "GT-004/multi-bucket-bottom": 28,
-    "GT-004/split-columns": 420,
-    "GT-005/two-column-matching": 534,
-    "GT-008/horizontal-slot-track": 32
+    "GT-004/split-columns": 588,
+    "GT-005/two-column-matching": 736,
+    "GT-008/horizontal-slot-track": 32,
+    "GT-014/split-columns": 8,
+    "GT-017/split-columns": 2
   }
 }

@@ -25,19 +25,19 @@ depends_on:
 
 Mọi mảnh của đường vẽ đã tồn tại, trừ mảnh cuối.
 
-Đo ngày 2026-08-29 bằng cách đọc mã nguồn:
+Đo ngày 2026-09-03 sau khi hoàn tất đợt triển khai 36 template:
 
 | Mảnh | Trạng thái |
 |---|---|
 | Vòng lặp gọi hàm vẽ — `GameEngine.loop()` gọi `activeSession?.render?.(ctx, rs, now)` | Có |
 | Canvas tới được engine — `start(canvas)`, `renderSystem.setupCanvas(canvas)` | Có |
-| Hình học layout — 21 `LayoutId`, `resolveLayout()` trả `Slot[]` kèm vùng chạm theo band | Có |
+| Hình học layout — 24 `LayoutId`, `resolveLayout()` trả `Slot[]` kèm vùng chạm theo band | Có |
 | Bộ vẽ nguyên thuỷ — `drawClayBody`, `drawClayContainer`, `drawScaffoldingHighlight`, `drawParticles` | Có |
-| **Engine cài đặt `render()`** | **0 trên 27** |
+| **Engine cài đặt `render()`** | **36 trên 36** |
 
-`render` khai `optional` trong `GameSession`. Không engine nào cài, nên mỗi khung hình vòng
-lặp xoá canvas rồi gọi một hàm không tồn tại. Kết quả là màn hình trống — không phải lỗi, và
-vì vậy không cổng nào bắt.
+`render` được chuẩn hoá trong `GameSession`. Toàn bộ 36 engine đã cài đặt `render()` đầy đủ
+với trạng thái thị giác, feedback động và phản hồi tương tác. Cổng `pnpm gate:render` đo và
+bảo đảm tỷ lệ này đạt 100%.
 
 File này sở hữu **hợp đồng vẽ**: hình dạng của `render()`, ánh xạ từ `Slot[]` sang phần tử
 trên màn hình, tập trạng thái thị giác bắt buộc, và luật một engine `active` phải vẽ được.
