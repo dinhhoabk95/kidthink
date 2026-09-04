@@ -96,7 +96,7 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
       sampleFixture.difficulty,
       "5-6"
     );
-    session.setupEntities();
+    session.prepareRound("5-6");
 
     const { rows, cols } = sampleFixture.content.grid;
     const gridSlotCount = rows * cols;

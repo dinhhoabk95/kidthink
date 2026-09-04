@@ -90,7 +90,6 @@ export class GT035Session extends TemplateGameSession<
   }
 
   setupEntities(): void {
-    this.resolveSlots("5-6");
     this.robotState = { ...this.content.start };
     this.isExecuting = false;
     this.activeExecutingStep = null;

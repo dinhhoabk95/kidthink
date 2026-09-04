@@ -233,6 +233,9 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
           }
 
           // 6. Purity Assertions: validateAction does not mutate state or trigger win
+          // NOTE (Task #209 / BR-EIC-04): Testing with "nonexistent_action_type_test" only verifies early-return
+          // for unknown action types (does not prove purity for genuine domain actions). Real action purity
+          // is asserted by checkValidateActionPurity in gate tests (BR-EIC-04).
           const unknownResult = session.validateAction({
             type: "nonexistent_action_type_test",
             data: { foo: "bar" },

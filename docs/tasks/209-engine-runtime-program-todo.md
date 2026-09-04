@@ -208,23 +208,23 @@ nó thuộc nhóm `validateAction` thuần nên lát này không kiêm việc s�
 
 ### `#219` Cổng bậc thang hai nửa
 
-- [ ] `packages/game-engine/tests/gates/engine-input.ts` + `.test.ts`
-  - [ ] `BR-EIC-01` mã trong `config/engine-input-ready.json` phải có `getView(` — ca âm
-  - [ ] `BR-EIC-02` không còn export tên `on*` đã chuyển — ca âm
-  - [ ] `BR-EIC-04` **purity làm cho đúng**: với **mọi action type thật** của khuôn, chụp trạng thái
+- [x] `packages/game-engine/tests/gates/engine-input.ts` + `.test.ts`
+  - [x] `BR-EIC-01` mã trong `config/engine-input-ready.json` phải có `getView(` — ca âm
+  - [x] `BR-EIC-02` không còn export tên `on*` đã chuyển — ca âm
+  - [x] `BR-EIC-04` **purity làm cho đúng**: với **mọi action type thật** của khuôn, chụp trạng thái
         cộng `getTelemetry().events.length`, gọi `previewGesture`, đòi không đổi — ca âm là một session
         cố tình ghi event trong `previewGesture`, và cổng phải đỏ với thông điệp nêu đúng lý do
-  - [ ] `BR-EIC-05` cấm `this.resolveSlots(` trong `setupEntities` — ca âm
-- [ ] `BR-EIC-04` **thay** `all-templates-interactive-harness.test.ts:233-240`
+  - [x] `BR-EIC-05` cấm `this.resolveSlots(` trong `setupEntities` — ca âm
+- [x] `BR-EIC-04` **thay** `all-templates-interactive-harness.test.ts:233-240`
   - Ghi lại vì sao ca cũ vô dụng: nó mang chú thích *"validateAction does not mutate state"* nhưng chỉ
     gọi với `type: "nonexistent_action_type_test"` rồi chỉ kiểm `checkWinCondition()`. Mọi khuôn nhóm
     B và C trả `ACTION_IGNORED` cho type lạ ở đầu switch mà không đụng gì, nên cổng xanh trong khi
     `GT-031/session.ts:60-93` sửa bốn field và ghi telemetry trên type **có thật**.
     Dạng lỗi: *assert đúng thứ, trên đầu vào sai*
-- [ ] `apps/web/tests/gates/engine-input-dispatch.ts` + `.test.ts`
-  - [ ] `BR-EIC-03` trang chơi không còn `typeof session.<tên>` cho tên thuộc mã đã sẵn sàng
-  - [ ] Số đầu dò ghim **chính xác**, chỉ được giảm — ca âm
-- [ ] Nghiệm thu: `BR-EIC-04` đỏ cho **13 khuôn** ngay ngày đầu (`GT-025`…`GT-036`). Đó là đúng —
+- [x] `apps/web/tests/gates/engine-input-dispatch.ts` + `.test.ts`
+  - [x] `BR-EIC-03` trang chơi không còn `typeof session.<tên>` cho tên thuộc mã đã sẵn sàng
+  - [x] Số đầu dò ghim **chính xác**, chỉ được giảm — ca âm
+- [x] Nghiệm thu: `BR-EIC-04` đỏ cho **13 khuôn** ngay ngày đầu (`GT-025`…`GT-036`). Đó là đúng —
       chỉ đưa mã vào `engine-input-ready.json` khi lát của nó hạ cánh
 
 > **CHỐT KIỂM 2** — trước khi mở loạt chuyển khuôn. Xác nhận công thức bảy bước của `#218` lặp lại

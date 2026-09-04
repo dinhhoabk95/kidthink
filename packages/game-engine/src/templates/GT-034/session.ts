@@ -65,7 +65,6 @@ export class GT034Session extends TemplateGameSession<
   }
 
   setupEntities(): void {
-    this.resolveSlots("5-6");
     this.userSteps = [];
     this.replaysUsed = 0;
     this.showVisualPattern = false;

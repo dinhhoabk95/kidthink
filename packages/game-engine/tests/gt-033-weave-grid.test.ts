@@ -110,7 +110,7 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
     it("sets up slots properly with target grid and source palette", () => {
       const f = getFixture(0); // 2x2 grid (4 cells) + 2 palette items = 6 slots
       const session = new GT033Session(f.content, f.difficulty);
-      session.setupEntities();
+      session.prepareRound("5-6");
 
       expect(session.slots.length).toBe(6);
       expect(session.slots.slice(0, 4).every((s) => s.role === "target")).toBe(

@@ -41,7 +41,6 @@ export class GT033Session extends TemplateGameSession<
   private particles: Particle[] = [];
 
   setupEntities(): void {
-    this.resolveSlots("5-6");
     this.placedCells = [...this.content.cells];
     this.selectedColorId = this.content.palette[0]?.color_id ?? null;
     this.selectedCellIndex = null;

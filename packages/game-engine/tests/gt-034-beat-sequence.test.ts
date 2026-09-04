@@ -106,7 +106,7 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
       sampleFixture.difficulty,
       "5-6"
     );
-    session.setupEntities();
+    session.prepareRound("5-6");
 
     const patternLen = sampleFixture.content.target_pattern.length;
     const instCount = sampleFixture.content.instruments.length;
