@@ -6,8 +6,24 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
+
+function toCellRole(
+  isGoal: boolean,
+  isRequired: boolean,
+  isStart: boolean
+): ViewEntity["role"] {
+  if (isGoal || isRequired) {
+    return "target";
+  }
+  if (isStart) {
+    return "source";
+  }
+  return "neutral";
+}
+
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import type { DegradationState } from "#src/systems/degradation";
 import {
@@ -159,6 +175,87 @@ export class GT013Session extends TemplateGameSession<
       return ACTION_IGNORED;
     }
     return this.isLegalStep(cell) ? ACTION_CORRECT : ACTION_IGNORED;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type !== "tap") {
+      return null;
+    }
+    const { rows, cols } = this.content.grid;
+    for (let i = 0; i < this.slots.length; i++) {
+      const slot = this.slots[i];
+      if (!slot) {
+        continue;
+      }
+      const dx = Math.abs(gesture.x - slot.x);
+      const dy = Math.abs(gesture.y - slot.y);
+      const radius = Math.max(slot.hitW ?? slot.w, slot.hitH ?? slot.h) / 2;
+      if (dx <= radius && dy <= radius) {
+        const r = Math.floor(i / cols);
+        const c = i % cols;
+        if (r < rows && c < cols) {
+          return {
+            type: "tap_cell",
+            data: { row: r, col: c },
+          };
+        }
+      }
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    const cell = this.actionCell(action);
+    if (cell) {
+      this.onPathStep(cell);
+      if (this.checkWinCondition()) {
+        this.onPathSubmitted();
+      }
+    } else if (action.type === "submit_path") {
+      this.onPathSubmitted();
+    }
+  }
+
+  override getView(): EngineView {
+    const { rows, cols, start, goal } = this.content.grid;
+    const entities: ViewEntity[] = [];
+    const pathKeys = new Set(this.tracker.getPath().map(cellKey));
+
+    for (let i = 0; i < this.slots.length; i++) {
+      const slot = this.slots[i];
+      if (!slot) {
+        continue;
+      }
+      const r = Math.floor(i / cols);
+      const c = i % cols;
+      if (r >= rows || c >= cols) {
+        continue;
+      }
+      const isStart = r === start.row && c === start.col;
+      const isGoal = r === goal.row && c === goal.col;
+      const isRequired = this.content.required_cells.some(
+        (rc) => rc.row === r && rc.col === c
+      );
+      const isInPath = pathKeys.has(cellKey({ row: r, col: c }));
+      const role = toCellRole(isGoal, isRequired, isStart);
+      const state: ViewEntity["state"] = isInPath ? "active" : "idle";
+
+      entities.push({
+        id: `cell_${r}_${c}`,
+        slotIndex: i,
+        role,
+        state,
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   override checkWinCondition(): boolean {

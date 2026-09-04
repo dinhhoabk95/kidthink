@@ -21,6 +21,8 @@ import { GT011_FIXTURES } from "#src/templates/GT-011/fixtures";
 import { GT011Session } from "#src/templates/GT-011/session";
 import { GT012_FIXTURES } from "#src/templates/GT-012/fixtures";
 import { GT012Session } from "#src/templates/GT-012/session";
+import { GT013_FIXTURES } from "#src/templates/GT-013/fixtures";
+import { GT013Session } from "#src/templates/GT-013/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -35,7 +37,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
     throw new Error("GT001_FIXTURES[0] must exist");
   }
 
-  describe("Scenario Outline: Chạm nền thì không method nào chạy (Examples: GT-001, GT-002, GT-009, GT-010, GT-011, GT-012)", () => {
+  describe("Scenario Outline: Chạm nền thì không method nào chạy (Examples: GT-001, GT-002, GT-009, GT-010, GT-011, GT-012, GT-013)", () => {
     it("GT-001: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
       const session = new GT001Session(fixture.content, fixture.difficulty);
       session.prepareRound("3-4");
@@ -341,6 +343,57 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       expect(result?.valid).toBe(true);
       expect(session.getSelectedValue()).toBe(3);
       expect(session.checkWinCondition()).toBe(true);
+    });
+
+    it("GT-013: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f13 = GT013_FIXTURES[0];
+      if (!f13) {
+        throw new Error("GT013_FIXTURES[0] must exist");
+      }
+      const session = new GT013Session(f13.content, f13.difficulty);
+      session.prepareRound("4-5");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.getPath().length).toBe(1); // Chỉ có start cell
+    });
+
+    it("GT-013: chạm vào ô liền kề hợp lệ commit tap_cell và mở rộng path", () => {
+      const f13 = GT013_FIXTURES[0];
+      if (!f13) {
+        throw new Error("GT013_FIXTURES[0] must exist");
+      }
+      const session = new GT013Session(f13.content, f13.difficulty);
+      session.prepareRound("4-5");
+
+      // Với f13, start=(0,0), ô kề hợp lệ duy nhất là (1,0).
+      // index trong grid 3x3 là 1 * 3 + 0 = 3.
+      const nextSlot = session.slots[3];
+      if (!nextSlot) {
+        throw new Error("nextSlot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: nextSlot.x,
+        y: nextSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.getPath().length).toBe(2);
+      expect(session.getPath()[1]).toEqual({ row: 1, col: 0 });
     });
   });
 

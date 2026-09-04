@@ -140,6 +140,11 @@ export default defineTemplate({
     "path_submitted",
     "game_completed",
   ],
+  input: {
+    family: "tap",
+    verbs: ["tap"],
+    tolerance_px: 24,
+  },
   engine_session: "MazeRouteSession",
   status: "published",
   version: 1,
