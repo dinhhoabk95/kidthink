@@ -42,6 +42,11 @@ export default defineTemplate({
   age_max: 6,
   banned_age_bands: ["3-4", "4-5"],
   requires_tap_fallback: true,
+  input: {
+    family: "drag",
+    verbs: ["drop", "tap", "commit"],
+    tolerance_px: 24,
+  },
   asset_kinds: ["emoji", "image", "audio"],
   scoring: {
     max_score: 100,

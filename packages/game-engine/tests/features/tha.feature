@@ -11,6 +11,7 @@ Feature: Hành vi kéo thả (drop) và fallback chạm-chạm của họ engine
       | GT-003        |
       | GT-004        |
       | GT-005        |
+      | GT-006        |
 
   Scenario Outline: Thả ngoài mọi đích thì không commit và vật về chỗ cũ
     Given session <template_code> được khởi tạo với cấu hình hợp lệ
@@ -23,6 +24,7 @@ Feature: Hành vi kéo thả (drop) và fallback chạm-chạm của họ engine
       | GT-003        |
       | GT-004        |
       | GT-005        |
+      | GT-006        |
 
   Scenario Outline: Fallback chạm-chạm (tap-tap fallback)
     Given session <template_code> hỗ trợ fallback chạm-chạm
@@ -34,3 +36,4 @@ Feature: Hành vi kéo thả (drop) và fallback chạm-chạm của họ engine
       | GT-003        |
       | GT-004        |
       | GT-005        |
+      | GT-006        |

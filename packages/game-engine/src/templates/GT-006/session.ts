@@ -3,6 +3,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
@@ -28,6 +29,7 @@ export class GT006Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+  private stagedIndex: number | null = null;
 
   private readonly mechanic = new OrderingMechanic();
 
@@ -40,10 +42,15 @@ export class GT006Session extends TemplateGameSession<
       this.mechanic.setInitialSequence(shuffle(steps, rng));
     }
     this.isWon = false;
+    this.stagedIndex = null;
   }
 
   getCurrentSequence(): readonly string[] {
     return this.mechanic.getCurrentSequence();
+  }
+
+  getStagedIndex(): number | null {
+    return this.stagedIndex;
   }
 
   private isInBounds(index: number): boolean {
@@ -96,6 +103,159 @@ export class GT006Session extends TemplateGameSession<
       slotCount: this.content.sequence.length,
       ageBand,
     });
+  }
+
+  private toSlotIndex(x: number, y: number, hitTolerance: number): number {
+    for (let i = 0; i < this.slots.length; i++) {
+      const slot = this.slots[i];
+      if (!slot) {
+        continue;
+      }
+      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+      if (Math.abs(x - slot.x) <= halfW && Math.abs(y - slot.y) <= halfH) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>,
+    hitTolerance: number
+  ): GameAction | null {
+    const fromIndex = this.toSlotIndex(
+      gesture.fromX,
+      gesture.fromY,
+      hitTolerance
+    );
+    const toIndex = this.toSlotIndex(gesture.toX, gesture.toY, hitTolerance);
+
+    if (fromIndex >= 0 && toIndex >= 0 && fromIndex !== toIndex) {
+      return {
+        type: "reorder_step",
+        data: {
+          from_index: fromIndex,
+          to_index: toIndex,
+        },
+      };
+    }
+    return null;
+  }
+
+  private toTapAction(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    hitTolerance: number
+  ): GameAction | null {
+    const hitIndex = this.toSlotIndex(gesture.x, gesture.y, hitTolerance);
+    if (hitIndex < 0) {
+      return null;
+    }
+
+    if (this.stagedIndex === null) {
+      this.stagedIndex = hitIndex;
+      return null;
+    }
+
+    if (this.stagedIndex === hitIndex) {
+      this.stagedIndex = null;
+      return null;
+    }
+
+    const fromIndex = this.stagedIndex;
+    const toIndex = hitIndex;
+    return {
+      type: "reorder_step",
+      data: {
+        from_index: fromIndex,
+        to_index: toIndex,
+      },
+    };
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    const hitTolerance = 24;
+    if (gesture.type === "drop") {
+      return this.toDropAction(gesture, hitTolerance);
+    }
+    if (gesture.type === "tap") {
+      return this.toTapAction(gesture, hitTolerance);
+    }
+    if (gesture.type === "commit") {
+      return {
+        type: "check_sequence",
+        data: {},
+      };
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (
+      action.type === "reorder_step" &&
+      action.data &&
+      typeof action.data === "object"
+    ) {
+      const data = action.data as {
+        from_index?: number;
+        to_index?: number;
+      };
+      if (data.from_index !== undefined && data.to_index !== undefined) {
+        this.reorderSteps(data.from_index, data.to_index);
+        this.stagedIndex = null;
+      }
+    }
+    if (action.type === "check_sequence") {
+      this.onSubmitSequence();
+    }
+  }
+
+  private toItemEntityState(
+    isStaged: boolean,
+    rawState: ItemVisualState
+  ): ViewEntity["state"] {
+    if (isStaged || rawState === "selected") {
+      return "selected";
+    }
+    if (rawState === "correct") {
+      return "correct";
+    }
+    if (rawState === "wrong") {
+      return "incorrect";
+    }
+    return "idle";
+  }
+
+  override getView(): EngineView {
+    const order = this.mechanic.getCurrentSequence();
+    const entities: ViewEntity[] = [];
+
+    for (let i = 0; i < order.length; i++) {
+      const stepId = order[i];
+      const slot = this.slots[i];
+      if (!(stepId && slot)) {
+        continue;
+      }
+      const rawState = this.getRenderItemState(stepId);
+      const isStaged = this.stagedIndex === i;
+      const state = this.toItemEntityState(isStaged, rawState);
+
+      entities.push({
+        id: stepId,
+        slotIndex: i,
+        role: "target",
+        state,
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+
+    return {
+      entities,
+      activePrompt: this.content.prompt,
+    };
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {
