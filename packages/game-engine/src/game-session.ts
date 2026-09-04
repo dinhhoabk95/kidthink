@@ -1,3 +1,5 @@
+import type { AgeBand } from "./contracts/types";
+import type { Slot } from "./layout/types";
 import type { RenderSystem } from "./systems/render-system";
 
 export type FeedbackKind =
@@ -119,6 +121,17 @@ export abstract class TemplateGameSession<
   readonly themeId?: string;
   protected isWon = false;
 
+  /** Backing store for slots — do NOT assign directly, use prepareRound. */
+  private _slots: readonly Slot[] = [];
+
+  /** Increases by 1 every prepareRound. Tests use this to assert slot recomputation count. */
+  roundGeneration = 0;
+
+  /** Read-only view of the current round's slots. */
+  get slots(): readonly Slot[] {
+    return this._slots;
+  }
+
   constructor(
     content: TContent,
     difficulty: TDifficulty,
@@ -132,6 +145,48 @@ export abstract class TemplateGameSession<
     this.themeId = themeId;
   }
 
+  /**
+   * Final — orchestrates a round: setup entities → compute slots → derived state.
+   * Called by RoundRunner and GameEngine instead of raw setupEntities+resolveSlots.
+   */
+  prepareRound(band: AgeBand): void {
+    this.setupEntities();
+    this._slots = this.computeSlots(band);
+    this.computeRoundDerived?.();
+    this.roundGeneration++;
+  }
+
+  /**
+   * Compute the layout slots for this round.
+   *
+   * SHIM: delegates to resolveSlots if the subclass still uses the old pattern.
+   * Once all 37 templates migrate to computeSlots, this becomes abstract.
+   */
+  protected computeSlots(band: AgeBand): readonly Slot[] {
+    // Shim: if subclass has resolveSlots, call it and read back slots.
+    // Subclasses declare `slots: readonly Slot[] = []` as own property,
+    // which shadows the prototype getter. resolveSlots writes to that
+    // own property. We read it back after resolveSlots runs.
+    const self = this as unknown as {
+      resolveSlots?: (b: AgeBand) => void;
+      slots?: readonly Slot[];
+    };
+    if (typeof self.resolveSlots === "function") {
+      self.resolveSlots(band);
+      // Read back the own-property slots that resolveSlots assigned
+      const ownSlots = (self.slots ?? []) as readonly Slot[];
+      return ownSlots;
+    }
+    // Subclass must override this method
+    return [];
+  }
+
+  /**
+   * Override to cache values derived from the round's entity/slot state.
+   * Called after computeSlots inside prepareRound.
+   */
+  protected computeRoundDerived?(): void;
+
   /** Pure — safe to call every frame (BR-ENG-13). */
   checkWinCondition(): boolean {
     return this.isWon;
@@ -141,5 +196,13 @@ export abstract class TemplateGameSession<
   protected winSession(): void {
     this.isWon = true;
     this.completeSession();
+  }
+
+  /**
+   * Internal setter for slots — used by shim and resolveSlots migration path.
+   * @internal
+   */
+  protected set _slotsInternal(value: readonly Slot[]) {
+    this._slots = value;
   }
 }

@@ -12,6 +12,7 @@
  * Spec sở hữu: round-sequence-play.md §4
  */
 
+import type { AgeBand } from "./contracts/types";
 import type {
   ActionResult,
   GameAction,
@@ -36,6 +37,8 @@ export type SessionFactory = (
 export interface RoundRunnerOptions {
   rounds: RoundConfig[];
   sessionFactory: SessionFactory;
+  /** Band tuổi — truyền tới prepareRound. Mặc định '4-5'. */
+  ageBand?: AgeBand;
   layoutSeed?: number;
   onRoundStarted?: (roundIndex: number, roundConfig: RoundConfig) => void;
   onRoundCompleted?: (roundIndex: number, wasSkipped: boolean) => void;
@@ -66,6 +69,7 @@ export interface RoundRunnerState {
 export class RoundRunner {
   private readonly rounds: RoundConfig[];
   private readonly sessionFactory: SessionFactory;
+  private readonly ageBand: AgeBand;
   private readonly layoutSeed: number;
   private readonly onRoundStarted?: (
     roundIndex: number,
@@ -95,6 +99,7 @@ export class RoundRunner {
       (a, b) => a.round_index - b.round_index
     );
     this.sessionFactory = options.sessionFactory;
+    this.ageBand = options.ageBand ?? "4-5";
     this.layoutSeed = options.layoutSeed ?? 0;
     this.onRoundStarted = options.onRoundStarted;
     this.onRoundCompleted = options.onRoundCompleted;
@@ -239,7 +244,15 @@ export class RoundRunner {
       config.difficulty_params,
       this.layoutSeed + index
     );
-    this.currentSession.setupEntities();
+    // prepareRound does setupEntities + computeSlots + computeRoundDerived
+    const sessionWithPrepare = this.currentSession as unknown as {
+      prepareRound?: (band: AgeBand) => void;
+    };
+    if (typeof sessionWithPrepare.prepareRound === "function") {
+      sessionWithPrepare.prepareRound(this.ageBand);
+    } else {
+      this.currentSession.setupEntities();
+    }
 
     this.onRoundStarted?.(index, config);
   }

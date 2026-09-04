@@ -1232,6 +1232,7 @@
 
     roundRunner = new RoundRunner({
       rounds: roundConfigs,
+      ageBand: engineConfig.age_band,
       sessionFactory: (contentPack, difficultyParams, seed) => {
         const roundCfg: EngineConfig = {
           ...engineConfig,

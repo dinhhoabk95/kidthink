@@ -161,16 +161,15 @@ export class GameEngine {
     }
 
     this.activeSession = sessionFactory(config);
-    if (
-      "resolveSlots" in this.activeSession &&
-      typeof (this.activeSession as { resolveSlots?: (band: AgeBand) => void })
-        .resolveSlots === "function"
-    ) {
-      (
-        this.activeSession as { resolveSlots: (band: AgeBand) => void }
-      ).resolveSlots(config.age_band);
+    // prepareRound does setupEntities + computeSlots(ageBand) + computeRoundDerived
+    const sessionWithPrepare = this.activeSession as unknown as {
+      prepareRound?: (band: AgeBand) => void;
+    };
+    if (typeof sessionWithPrepare.prepareRound === "function") {
+      sessionWithPrepare.prepareRound(config.age_band);
+    } else {
+      this.activeSession.setupEntities();
     }
-    this.activeSession.setupEntities();
   }
 
   /**
