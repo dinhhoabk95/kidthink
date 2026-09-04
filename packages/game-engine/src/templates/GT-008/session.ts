@@ -6,6 +6,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
@@ -49,13 +50,19 @@ export class GT008Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+  private stagedItemId: string | null = null;
 
   placedSlots: Map<string, string> = new Map(); // slot_id -> item_id
 
   setupEntities(): void {
     this.placedSlots.clear();
+    this.stagedItemId = null;
     this.isWon = false;
     this.renderParticles = [];
+  }
+
+  getStagedItemId(): string | null {
+    return this.stagedItemId;
   }
 
   validateAction(action: GameAction): ActionResult {
@@ -128,6 +135,223 @@ export class GT008Session extends TemplateGameSession<
       targetCount: this.content.slots.length,
       ageBand,
     });
+  }
+
+  private findDraggedItem(
+    x: number,
+    y: number,
+    sources: readonly Slot[],
+    hitTolerance: number
+  ): GT008Content["items"][number] | null {
+    const placedItemIds = new Set(this.placedSlots.values());
+    for (let i = 0; i < this.content.items.length; i++) {
+      const item = this.content.items[i];
+      const slot = sources[i];
+      if (!(item && slot) || placedItemIds.has(item.item_id)) {
+        continue;
+      }
+      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+      if (Math.abs(x - slot.x) <= halfW && Math.abs(y - slot.y) <= halfH) {
+        return item;
+      }
+    }
+    return null;
+  }
+
+  private findTargetSlot(
+    x: number,
+    y: number,
+    targets: readonly Slot[],
+    hitTolerance: number
+  ): GT008Content["slots"][number] | null {
+    for (let i = 0; i < this.content.slots.length; i++) {
+      const slotDef = this.content.slots[i];
+      const slot = targets[i];
+      if (!(slotDef && slot) || this.placedSlots.has(slotDef.slot_id)) {
+        continue;
+      }
+      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+      if (Math.abs(x - slot.x) <= halfW && Math.abs(y - slot.y) <= halfH) {
+        return slotDef;
+      }
+    }
+    return null;
+  }
+
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>,
+    sources: readonly Slot[],
+    targets: readonly Slot[],
+    hitTolerance: number
+  ): GameAction | null {
+    const item = this.findDraggedItem(
+      gesture.fromX,
+      gesture.fromY,
+      sources,
+      hitTolerance
+    );
+    if (!item) {
+      return null;
+    }
+    const target = this.findTargetSlot(
+      gesture.toX,
+      gesture.toY,
+      targets,
+      hitTolerance
+    );
+    if (!target) {
+      return null;
+    }
+    return {
+      type: "place_item",
+      data: { item_id: item.item_id, slot_id: target.slot_id },
+    };
+  }
+
+  private handleTapTarget(
+    target: GT008Content["slots"][number]
+  ): GameAction | null {
+    if (!this.stagedItemId) {
+      return null;
+    }
+    return {
+      type: "place_item",
+      data: { item_id: this.stagedItemId, slot_id: target.slot_id },
+    };
+  }
+
+  private handleTapSource(item: GT008Content["items"][number]): null {
+    if (this.stagedItemId === item.item_id) {
+      this.stagedItemId = null;
+    } else {
+      this.stagedItemId = item.item_id;
+    }
+    return null;
+  }
+
+  private toTapAction(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    sources: readonly Slot[],
+    targets: readonly Slot[],
+    hitTolerance: number
+  ): GameAction | null {
+    const target = this.findTargetSlot(
+      gesture.x,
+      gesture.y,
+      targets,
+      hitTolerance
+    );
+    if (target && this.stagedItemId) {
+      return this.handleTapTarget(target);
+    }
+    const item = this.findDraggedItem(
+      gesture.x,
+      gesture.y,
+      sources,
+      hitTolerance
+    );
+    if (item) {
+      return this.handleTapSource(item);
+    }
+    this.stagedItemId = null;
+    return null;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    const hitTolerance = 24;
+    const sources = this.slots.filter((s) => s.role === "source");
+    const targets = this.slots.filter((s) => s.role === "target");
+
+    if (gesture.type === "drop") {
+      return this.toDropAction(gesture, sources, targets, hitTolerance);
+    }
+    if (gesture.type === "tap") {
+      return this.toTapAction(gesture, sources, targets, hitTolerance);
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    const result = this.validateAction(action);
+    const data = extractSlotData(action.data);
+
+    if (result.valid && data) {
+      this.onItemPlaced(data.item_id, data.slot_id);
+      this.stagedItemId = null;
+      return;
+    }
+
+    if (data) {
+      this.recordEvent("item_placed", {
+        item_id: data.item_id,
+        slot_id: data.slot_id,
+        is_correct: false,
+      });
+    }
+  }
+
+  override getView(): EngineView {
+    const targets = this.slots.filter((s) => s.role === "target");
+    const sources = this.slots.filter((s) => s.role === "source");
+    const placedItemIds = new Set(this.placedSlots.values());
+    const entities: ViewEntity[] = [];
+
+    this.content.slots.forEach((defSlot, i) => {
+      const slot = targets[i];
+      if (!slot) {
+        return;
+      }
+      const isPlaced = this.placedSlots.has(defSlot.slot_id);
+      entities.push({
+        id: defSlot.slot_id,
+        slotIndex: this.slots.indexOf(slot),
+        role: "target",
+        state: isPlaced ? "correct" : "idle",
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    });
+
+    this.content.items.forEach((item, i) => {
+      const slot = sources[i];
+      if (!slot) {
+        return;
+      }
+      const isPlaced = placedItemIds.has(item.item_id);
+      const isStaged = this.stagedItemId === item.item_id;
+      entities.push({
+        id: item.item_id,
+        slotIndex: this.slots.indexOf(slot),
+        role: "source",
+        state: this.toSourceEntityState(isPlaced, isStaged),
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    });
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
+  }
+
+  private toSourceEntityState(
+    isPlaced: boolean,
+    isStaged: boolean
+  ): ViewEntity["state"] {
+    if (isPlaced) {
+      return "correct";
+    }
+    if (isStaged) {
+      return "selected";
+    }
+    return "idle";
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {

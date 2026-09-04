@@ -644,38 +644,6 @@
     return bestIdx;
   }
 
-  function getRelativeTargetIndex(
-    slots: readonly Slot[],
-    targetIdx: number
-  ): number {
-    const targetSlots = slots.filter((s) => s.role === "target");
-    const targetSlot = slots[targetIdx];
-    if (targetSlots.length > 0 && targetSlot) {
-      const idx = targetSlots.indexOf(targetSlot);
-      if (idx >= 0) {
-        return idx;
-      }
-    }
-    return targetIdx;
-  }
-
-  function handlePlacementBySlot(
-    session: GameSession & InteractiveSession,
-    dragged: DragItemInfo,
-    relTargetIdx: number,
-    targetIdx: number
-  ): boolean {
-    if (typeof session.onItemPlaced !== "function") {
-      return false;
-    }
-    const targetSlotDef = session.content?.slots?.[relTargetIdx] ||
-      session.content?.slots?.[targetIdx] || {
-        slot_id: `slot-${relTargetIdx + 1}`,
-      };
-    session.onItemPlaced(dragged.item_id, targetSlotDef.slot_id);
-    return true;
-  }
-
   function handlePlacementByContainer(
     session: GameSession & InteractiveSession,
     dragged: DragItemInfo
@@ -693,15 +661,11 @@
 
   function handleDropPlacement(
     session: GameSession & InteractiveSession,
-    slots: readonly Slot[],
+    _slots: readonly Slot[],
     dragged: DragItemInfo,
-    targetIdx: number
+    _targetIdx: number
   ): void {
-    const relTargetIdx = getRelativeTargetIndex(slots, targetIdx);
-    if (
-      handlePlacementBySlot(session, dragged, relTargetIdx, targetIdx) ||
-      handlePlacementByContainer(session, dragged)
-    ) {
+    if (handlePlacementByContainer(session, dragged)) {
       engine?.audio.playSnapSound();
       engine?.audio.playPopCelebrateSound();
       return;
@@ -841,10 +805,7 @@
       return;
     }
 
-    if (
-      typeof session.onItemPlaced === "function" ||
-      typeof session.onItemDropped === "function"
-    ) {
+    if (typeof session.onItemDropped === "function") {
       handlePlacementTap(session, slots, hitIdx);
       return;
     }

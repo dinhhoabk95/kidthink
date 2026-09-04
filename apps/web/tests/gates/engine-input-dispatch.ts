@@ -21,10 +21,10 @@ export const ENGINE_INPUT_READY_CONFIG_PATH = resolve(
 );
 
 /**
- * Baseline ratchet: currently 11 duck-typing typeof session.* branches exist in play/[code].vue.
+ * Baseline ratchet: currently 9 duck-typing typeof session.* branches exist in play/[code].vue.
  * This number must never increase; as templates migrate to input contracts, it will decrease.
  */
-export const MAX_TYPEOF_SESSION_BRANCHES = 11;
+export const MAX_TYPEOF_SESSION_BRANCHES = 9;
 
 const TYPEOF_SESSION_REGEX = /typeof\s+session\.\w+/;
 const HANDLE_TAP_OPTION_FN_REGEX =

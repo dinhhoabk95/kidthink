@@ -40,6 +40,11 @@ export default defineTemplate({
   code: "GT-008",
   name: "Kéo vào ô chứa",
   mechanic: "drag-to-slot",
+  input: {
+    family: "drag",
+    verbs: ["drop", "tap"],
+    tolerance_px: 24,
+  },
   layouts: ["horizontal-slot-track", "matrix-slot-grid"],
   content_contract: GT008ContentSchema,
   difficulty_contract: GT008DifficultySchema,

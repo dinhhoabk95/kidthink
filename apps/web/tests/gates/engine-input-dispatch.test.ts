@@ -10,8 +10,8 @@ describe("Gate check:engine-input-dispatch (Ratchet Duck-typing in play/[code].v
     expect(result.totalTypeOfSessionCount).toBeLessThanOrEqual(
       MAX_TYPEOF_SESSION_BRANCHES
     );
-    // Baseline is strictly pinned at 11 after GT-005 migration
-    expect(result.totalTypeOfSessionCount).toBe(11);
+    // Baseline is strictly pinned at 9 after GT-008 migration
+    expect(result.totalTypeOfSessionCount).toBe(9);
   });
 
   it("ensures typeof session.onItemLocked is eliminated from handleTapOptionOrToggle for GT-001", () => {
@@ -19,7 +19,7 @@ describe("Gate check:engine-input-dispatch (Ratchet Duck-typing in play/[code].v
     expect(result.hasOnItemLockedInTapOptions).toBe(false);
   });
 
-  it("verifies ready templates includes GT-001, GT-002, GT-003, GT-004, GT-005, GT-006, GT-007", () => {
+  it("verifies ready templates includes GT-001, GT-002, GT-003, GT-004, GT-005, GT-006, GT-007, GT-008", () => {
     const result = scanEngineInputDispatch();
     expect(result.readyCodes).toContain("GT-001");
     expect(result.readyCodes).toContain("GT-002");
@@ -28,5 +28,6 @@ describe("Gate check:engine-input-dispatch (Ratchet Duck-typing in play/[code].v
     expect(result.readyCodes).toContain("GT-005");
     expect(result.readyCodes).toContain("GT-006");
     expect(result.readyCodes).toContain("GT-007");
+    expect(result.readyCodes).toContain("GT-008");
   });
 });
