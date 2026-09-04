@@ -100,6 +100,8 @@ export interface EngineConfig {
 
 export type EventCallback = (event: TelemetryEvent) => void;
 
+const WILDCARD_EVENT_KEY = "*";
+
 export class GameEngine {
   config?: EngineConfig;
   activeSession?: GameSession;
@@ -263,12 +265,15 @@ export class GameEngine {
   }
 
   emitEvent(event: TelemetryEvent): void {
-    for (const key of [event.event_name, "*"]) {
-      const listeners = this.eventListeners.get(key);
-      if (!listeners) {
-        continue;
+    const directListeners = this.eventListeners.get(event.event_name);
+    if (directListeners) {
+      for (const cb of directListeners) {
+        cb(event);
       }
-      for (const cb of listeners) {
+    }
+    const wildcardListeners = this.eventListeners.get(WILDCARD_EVENT_KEY);
+    if (wildcardListeners) {
+      for (const cb of wildcardListeners) {
         cb(event);
       }
     }

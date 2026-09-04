@@ -786,13 +786,14 @@ export function drawGridCell(
   ctx.restore();
 }
 
+const PARTICLE_COLORS = [
+  designTokens.colors.semantic.success[400],
+  designTokens.colors.cta[400],
+  designTokens.colors.brand[400],
+] as const;
+
 export function spawnParticlesAtSlot(slot: Slot, count: number): Particle[] {
   const particles: Particle[] = [];
-  const colors = [
-    designTokens.colors.semantic.success[400],
-    designTokens.colors.cta[400],
-    designTokens.colors.brand[400],
-  ];
   for (let i = 0; i < count; i++) {
     const angle = (Math.PI * 2 * i) / count;
     const spread = 1.5 + ((i * 7 + 3) % 5) * 0.4;
@@ -802,7 +803,8 @@ export function spawnParticlesAtSlot(slot: Slot, count: number): Particle[] {
       vx: Math.cos(angle) * spread,
       vy: Math.sin(angle) * spread,
       color:
-        colors[i % colors.length] ?? designTokens.colors.semantic.success[400],
+        PARTICLE_COLORS[i % PARTICLE_COLORS.length] ??
+        designTokens.colors.semantic.success[400],
       size: 3 + ((i * 3 + 1) % 4),
       life: 1,
       maxLife: 1,

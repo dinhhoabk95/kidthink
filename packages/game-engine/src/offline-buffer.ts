@@ -55,6 +55,7 @@ function stripSensitiveKeys(
 
 export class OfflineEventBuffer {
   private memoryEvents: BufferedEvent[] = [];
+  private estimatedBytes = 0;
   private currentSeq = 0;
   private sessionMeta: SessionMeta | null = null;
   private flushTimer: ReturnType<typeof setInterval> | null = null;
@@ -76,6 +77,7 @@ export class OfflineEventBuffer {
     this.sessionMeta = meta;
     this.currentSeq = 0;
     this.memoryEvents = [];
+    this.estimatedBytes = 0;
     if (meta.is_guest) {
       this.apiEndpoint = GUEST_ENDPOINT;
     }
@@ -112,7 +114,15 @@ export class OfflineEventBuffer {
     };
 
     this.memoryEvents.push(ev);
-    this.pruneBuffer();
+    this.estimatedBytes += JSON.stringify(ev).length + 1;
+
+    // Prune on count threshold or when exceeding byte budget
+    if (
+      this.memoryEvents.length % FLUSH_THRESHOLD === 0 ||
+      this.estimatedBytes > MAX_BUFFER_BYTES
+    ) {
+      this.pruneBuffer();
+    }
 
     if (this.memoryEvents.length >= FLUSH_THRESHOLD) {
       this.flush();
@@ -121,8 +131,17 @@ export class OfflineEventBuffer {
     return ev;
   }
 
-  pruneBuffer() {
+  private recalcEstimatedBytes(): void {
+    let bytes = 2;
+    for (const e of this.memoryEvents) {
+      bytes += JSON.stringify(e).length + 1;
+    }
+    this.estimatedBytes = bytes;
+  }
+
+  pruneBuffer(): void {
     const now = Date.now();
+    const beforeLen = this.memoryEvents.length;
 
     this.memoryEvents = this.memoryEvents.filter((e) => {
       if (now - e.queued_at > MAX_EVENT_AGE_MS) {
@@ -134,7 +153,11 @@ export class OfflineEventBuffer {
       return true;
     });
 
-    if (JSON.stringify(this.memoryEvents).length <= MAX_BUFFER_BYTES) {
+    if (this.memoryEvents.length !== beforeLen) {
+      this.recalcEstimatedBytes();
+    }
+
+    if (this.estimatedBytes <= MAX_BUFFER_BYTES) {
       return;
     }
 
@@ -146,6 +169,7 @@ export class OfflineEventBuffer {
     }
     other.splice(0, Math.floor(other.length / 2));
     this.memoryEvents = [...critical, ...other].sort((a, b) => a.seq - b.seq);
+    this.recalcEstimatedBytes();
   }
 
   async flush(): Promise<{ accepted: number; skipped: number }> {
@@ -180,6 +204,7 @@ export class OfflineEventBuffer {
         this.memoryEvents = this.memoryEvents.filter(
           (e) => !sentSeqs.has(e.seq)
         );
+        this.recalcEstimatedBytes();
         return {
           accepted: data.accepted ?? batch.length,
           skipped: data.skipped ?? 0,
@@ -213,6 +238,7 @@ export class OfflineEventBuffer {
     const sent = navigator.sendBeacon(this.eventsUrl(this.sessionMeta), blob);
     if (sent) {
       this.memoryEvents = [];
+      this.estimatedBytes = 0;
     }
     return sent;
   }
