@@ -691,25 +691,6 @@
     return true;
   }
 
-  function handlePlacementByPair(
-    session: GameSession & InteractiveSession,
-    dragged: DragItemInfo,
-    relTargetIdx: number,
-    targetIdx: number
-  ): boolean {
-    if (typeof session.onPairMatched !== "function") {
-      return false;
-    }
-    const rightItems =
-      session.displayRight || session.content?.pairs?.map((p) => p.right);
-    const targetItem = rightItems?.[relTargetIdx] || rightItems?.[targetIdx];
-    if (!targetItem?.item_id) {
-      return false;
-    }
-    session.onPairMatched(dragged.item_id, targetItem.item_id);
-    return true;
-  }
-
   function handleDropPlacement(
     session: GameSession & InteractiveSession,
     slots: readonly Slot[],
@@ -719,8 +700,7 @@
     const relTargetIdx = getRelativeTargetIndex(slots, targetIdx);
     if (
       handlePlacementBySlot(session, dragged, relTargetIdx, targetIdx) ||
-      handlePlacementByContainer(session, dragged) ||
-      handlePlacementByPair(session, dragged, relTargetIdx, targetIdx)
+      handlePlacementByContainer(session, dragged)
     ) {
       engine?.audio.playSnapSound();
       engine?.audio.playPopCelebrateSound();
@@ -834,33 +814,6 @@
     }
   }
 
-  function handlePairTap(
-    session: GameSession & InteractiveSession,
-    hitIdx: number
-  ): void {
-    const isLeft = hitIdx < (session.displayLeft?.length || 0);
-    if (isLeft) {
-      const item = session.displayLeft?.[hitIdx];
-      if (item) {
-        selectedSourceIndex = hitIdx;
-        session.stageItem?.(item.item_id);
-        engine?.audio.playTapSound();
-      }
-    } else if (selectedSourceIndex !== null) {
-      const leftItem = session.displayLeft?.[selectedSourceIndex];
-      const rightItems =
-        session.displayRight || session.content?.pairs?.map((p) => p.right);
-      const rightIdx = hitIdx - (session.displayLeft?.length || 0);
-      const rightItem = rightItems?.[rightIdx] || rightItems?.[hitIdx];
-      if (leftItem && rightItem) {
-        session.onPairMatched?.(leftItem.item_id, rightItem.item_id);
-        engine?.audio.playPopCelebrateSound();
-      }
-      selectedSourceIndex = null;
-      session.stageItem?.(null);
-    }
-  }
-
   function handleTapInteraction(
     session: GameSession & InteractiveSession,
     slots: readonly Slot[],
@@ -893,11 +846,6 @@
       typeof session.onItemDropped === "function"
     ) {
       handlePlacementTap(session, slots, hitIdx);
-      return;
-    }
-
-    if (typeof session.onPairMatched === "function") {
-      handlePairTap(session, hitIdx);
       return;
     }
 

@@ -3,6 +3,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PairingMechanic } from "#src/mechanics/pairing-mechanic";
@@ -99,6 +100,289 @@ export class GT005Session extends TemplateGameSession<
       targetCount: this.displayRight.length,
       ageBand,
     });
+  }
+
+  getMatchedPairs(): ReadonlyMap<string, string> {
+    return this.mechanic.getMatchedPairs();
+  }
+
+  getStagedLeftId(): string | null {
+    return this.mechanic.getStagedLeftId();
+  }
+
+  private toItemEntityState(
+    isMatched: boolean,
+    isStaged: boolean,
+    rawState: ItemVisualState
+  ): ViewEntity["state"] {
+    if (isMatched || rawState === "correct") {
+      return "correct";
+    }
+    if (isStaged || rawState === "selected") {
+      return "selected";
+    }
+    if (rawState === "wrong") {
+      return "incorrect";
+    }
+    return "idle";
+  }
+
+  private buildSourceEntities(sources: readonly Slot[]): ViewEntity[] {
+    const stagedLeftId = this.mechanic.getStagedLeftId();
+    const result: ViewEntity[] = [];
+    for (let i = 0; i < this.displayLeft.length; i++) {
+      const item = this.displayLeft[i];
+      const slot = sources[i];
+      if (!(item && slot)) {
+        continue;
+      }
+      const isMatched = this.mechanic.isLeftMatched(item.item_id);
+      const isStaged = item.item_id === stagedLeftId;
+      result.push({
+        id: item.item_id,
+        slotIndex: this.slots.indexOf(slot),
+        role: "source",
+        state: this.toItemEntityState(
+          isMatched,
+          isStaged,
+          this.getRenderItemState(item.item_id)
+        ),
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+    return result;
+  }
+
+  private buildTargetEntities(targets: readonly Slot[]): ViewEntity[] {
+    const result: ViewEntity[] = [];
+    for (let i = 0; i < this.displayRight.length; i++) {
+      const item = this.displayRight[i];
+      const slot = targets[i];
+      if (!(item && slot)) {
+        continue;
+      }
+      const isMatched = this.mechanic.isRightMatched(item.item_id);
+      result.push({
+        id: item.item_id,
+        slotIndex: this.slots.indexOf(slot),
+        role: "target",
+        state: this.toItemEntityState(
+          isMatched,
+          false,
+          this.getRenderItemState(item.item_id)
+        ),
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+    return result;
+  }
+
+  override getView(): EngineView {
+    const sources = this.slots.filter((s) => s.role === "source");
+    const targets = this.slots.filter((s) => s.role === "target");
+
+    return {
+      entities: [
+        ...this.buildSourceEntities(sources),
+        ...this.buildTargetEntities(targets),
+      ],
+      activePrompt: this.content.prompt,
+    };
+  }
+
+  private findDraggedLeft(
+    gesture: Extract<Gesture, { type: "drop" }>,
+    sources: readonly Slot[],
+    hitTolerance: number
+  ): LeftItem | null {
+    for (let i = 0; i < this.displayLeft.length; i++) {
+      const slot = sources[i];
+      const item = this.displayLeft[i];
+      if (!(slot && item)) {
+        continue;
+      }
+      if (this.mechanic.isLeftMatched(item.item_id)) {
+        continue;
+      }
+      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+      if (
+        Math.abs(gesture.fromX - slot.x) <= halfW &&
+        Math.abs(gesture.fromY - slot.y) <= halfH
+      ) {
+        return item;
+      }
+    }
+    return null;
+  }
+
+  private findTargetRight(
+    gesture: Extract<Gesture, { type: "drop" }>,
+    targets: readonly Slot[],
+    hitTolerance: number
+  ): RightItem | null {
+    for (let i = 0; i < this.displayRight.length; i++) {
+      const slot = targets[i];
+      const item = this.displayRight[i];
+      if (!(slot && item)) {
+        continue;
+      }
+      if (this.mechanic.isRightMatched(item.item_id)) {
+        continue;
+      }
+      const halfW = Math.max(slot.hitW, slot.w, 140) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, slot.h, 100) / 2 + hitTolerance;
+      if (
+        Math.abs(gesture.toX - slot.x) <= halfW &&
+        Math.abs(gesture.toY - slot.y) <= halfH
+      ) {
+        return item;
+      }
+    }
+    return null;
+  }
+
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>,
+    sources: readonly Slot[],
+    targets: readonly Slot[],
+    hitTolerance: number
+  ): GameAction | null {
+    const draggedLeft = this.findDraggedLeft(gesture, sources, hitTolerance);
+    if (!draggedLeft) {
+      return null;
+    }
+
+    const targetRight = this.findTargetRight(gesture, targets, hitTolerance);
+    if (!targetRight) {
+      return null;
+    }
+
+    return {
+      type: "match_pair",
+      data: {
+        left_item_id: draggedLeft.item_id,
+        right_item_id: targetRight.item_id,
+      },
+    };
+  }
+
+  private handleTapTarget(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    targets: readonly Slot[],
+    hitTolerance: number
+  ): GameAction | null {
+    const stagedLeftId = this.mechanic.getStagedLeftId();
+    if (!stagedLeftId) {
+      return null;
+    }
+
+    for (let i = 0; i < this.displayRight.length; i++) {
+      const slot = targets[i];
+      const item = this.displayRight[i];
+      if (!(slot && item)) {
+        continue;
+      }
+      if (this.mechanic.isRightMatched(item.item_id)) {
+        continue;
+      }
+      const halfW = Math.max(slot.hitW, slot.w, 140) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, slot.h, 100) / 2 + hitTolerance;
+      if (
+        Math.abs(gesture.x - slot.x) <= halfW &&
+        Math.abs(gesture.y - slot.y) <= halfH
+      ) {
+        return {
+          type: "match_pair",
+          data: {
+            left_item_id: stagedLeftId,
+            right_item_id: item.item_id,
+          },
+        };
+      }
+    }
+    return null;
+  }
+
+  private handleTapSource(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    sources: readonly Slot[],
+    hitTolerance: number
+  ): void {
+    for (let i = 0; i < this.displayLeft.length; i++) {
+      const slot = sources[i];
+      const item = this.displayLeft[i];
+      if (!(slot && item)) {
+        continue;
+      }
+      if (this.mechanic.isLeftMatched(item.item_id)) {
+        continue;
+      }
+      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+      if (
+        Math.abs(gesture.x - slot.x) <= halfW &&
+        Math.abs(gesture.y - slot.y) <= halfH
+      ) {
+        if (this.mechanic.getStagedLeftId() === item.item_id) {
+          this.mechanic.stageLeft(null);
+        } else {
+          this.mechanic.stageLeft(item.item_id);
+        }
+        return;
+      }
+    }
+  }
+
+  private toTapAction(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    sources: readonly Slot[],
+    targets: readonly Slot[],
+    hitTolerance: number
+  ): GameAction | null {
+    const targetAction = this.handleTapTarget(gesture, targets, hitTolerance);
+    if (targetAction) {
+      return targetAction;
+    }
+    this.handleTapSource(gesture, sources, hitTolerance);
+    return null;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    const hitTolerance = 24;
+    const sources = this.slots.filter((s) => s.role === "source");
+    const targets = this.slots.filter((s) => s.role === "target");
+
+    if (gesture.type === "drop") {
+      return this.toDropAction(gesture, sources, targets, hitTolerance);
+    }
+    if (gesture.type === "tap") {
+      return this.toTapAction(gesture, sources, targets, hitTolerance);
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (
+      action.type === "match_pair" &&
+      action.data &&
+      typeof action.data === "object"
+    ) {
+      const data = action.data as {
+        left_item_id?: string;
+        right_item_id?: string;
+      };
+      if (data.left_item_id && data.right_item_id) {
+        this.onPairMatched(data.left_item_id, data.right_item_id);
+        this.mechanic.stageLeft(null);
+      }
+    }
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {
