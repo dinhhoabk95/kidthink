@@ -6,6 +6,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
@@ -144,6 +145,93 @@ export class FlashRecallSession extends TemplateGameSession<
         : ACTION_RETRY;
     }
     return ACTION_IGNORED;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type !== "tap") {
+      return null;
+    }
+    if (this.timer.isVisible()) {
+      return null;
+    }
+    for (let i = 0; i < this.content.options.length; i++) {
+      const slot = this.slots[i];
+      const opt = this.content.options[i];
+      if (!(slot && opt)) {
+        continue;
+      }
+      const dx = Math.abs(gesture.x - slot.x);
+      const dy = Math.abs(gesture.y - slot.y);
+      const radius = Math.max(slot.hitW ?? slot.w, slot.hitH ?? slot.h) / 2;
+      if (dx <= radius && dy <= radius) {
+        return {
+          type: "select_value",
+          data: opt.value,
+        };
+      }
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (action.type === "select_value" && typeof action.data === "number") {
+      this.selectValue(action.data);
+    } else if (action.type === "replay_flash") {
+      this.replayFlash();
+    }
+  }
+
+  override getView(): EngineView {
+    if (this.timer.isVisible()) {
+      const entities: ViewEntity[] = [];
+      this.content.flash_items.forEach((item, i) => {
+        const slot = this.slots[i];
+        if (!slot) {
+          return;
+        }
+        entities.push({
+          id: item.item_id,
+          slotIndex: i,
+          role: "neutral",
+          state: "idle",
+          x: slot.x,
+          y: slot.y,
+          w: slot.w,
+          h: slot.h,
+        });
+      });
+      return {
+        activePrompt: "Nhìn nhanh!",
+        entities,
+      };
+    }
+
+    const entities: ViewEntity[] = [];
+    this.content.options.forEach((opt, i) => {
+      const slot = this.slots[i];
+      if (!slot) {
+        return;
+      }
+      let state: ViewEntity["state"] = "idle";
+      if (this.selectedValue === opt.value) {
+        state = opt.is_correct ? "correct" : "incorrect";
+      }
+      entities.push({
+        id: `opt-${opt.value}`,
+        slotIndex: i,
+        role: "source",
+        state,
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    });
+
+    return {
+      activePrompt: "Bé nhớ có bao nhiêu đồ vật?",
+      entities,
+    };
   }
 
   override checkWinCondition(): boolean {

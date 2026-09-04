@@ -81,6 +81,11 @@ export default defineTemplate({
     "value_selected",
     "game_completed",
   ],
+  input: {
+    family: "tap",
+    verbs: ["tap"],
+    tolerance_px: 24,
+  },
   engine_session: "FlashRecallSession",
   status: "published",
   version: 1,

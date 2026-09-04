@@ -19,6 +19,8 @@ import { GT010_FIXTURES } from "#src/templates/GT-010/fixtures";
 import { GT010Session } from "#src/templates/GT-010/session";
 import { GT011_FIXTURES } from "#src/templates/GT-011/fixtures";
 import { GT011Session } from "#src/templates/GT-011/session";
+import { GT012_FIXTURES } from "#src/templates/GT-012/fixtures";
+import { GT012Session } from "#src/templates/GT-012/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -33,7 +35,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
     throw new Error("GT001_FIXTURES[0] must exist");
   }
 
-  describe("Scenario Outline: Chạm nền thì không method nào chạy (Examples: GT-001, GT-002, GT-009, GT-010, GT-011)", () => {
+  describe("Scenario Outline: Chạm nền thì không method nào chạy (Examples: GT-001, GT-002, GT-009, GT-010, GT-011, GT-012)", () => {
     it("GT-001: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
       const session = new GT001Session(fixture.content, fixture.difficulty);
       session.prepareRound("3-4");
@@ -286,6 +288,58 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
 
       expect(result?.valid).toBe(true);
       expect(session.getPreview()?.option_id).toBe("o1");
+      expect(session.checkWinCondition()).toBe(true);
+    });
+
+    it("GT-012: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f12 = GT012_FIXTURES[0];
+      if (!f12) {
+        throw new Error("GT012_FIXTURES[0] must exist");
+      }
+      const session = new GT012Session(f12.content, f12.difficulty);
+      session.prepareRound("3-4");
+      session.update(f12.difficulty.flash_ms + 100);
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.getSelectedValue()).toBeNull();
+    });
+
+    it("GT-012: chạm vào option đúng commit select_value và win session", () => {
+      const f12 = GT012_FIXTURES[0];
+      if (!f12) {
+        throw new Error("GT012_FIXTURES[0] must exist");
+      }
+      const session = new GT012Session(f12.content, f12.difficulty);
+      session.prepareRound("3-4");
+      session.update(f12.difficulty.flash_ms + 100);
+
+      const correctIndex = f12.content.options.findIndex((o) => o.is_correct);
+      const correctSlot = session.slots[correctIndex];
+      if (!correctSlot) {
+        throw new Error("correctSlot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: correctSlot.x,
+        y: correctSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.getSelectedValue()).toBe(3);
       expect(session.checkWinCondition()).toBe(true);
     });
   });

@@ -214,7 +214,6 @@
     displayLeft?: InteractiveSessionItem[];
     displayRight?: InteractiveSessionItem[];
     getOptions?: () => Array<{ value: number; item_id?: string }>;
-    selectValue?: (val: number) => boolean | undefined;
     selectOption?: (opt: number | string) => boolean | undefined;
     onItemLocked?: (id: string) => void;
     flipCard?: (idx: number) => void;
@@ -676,23 +675,6 @@
     }
   }
 
-  function trySelectValue(
-    session: GameSession & InteractiveSession,
-    hitIdx: number
-  ): boolean {
-    if (typeof session.selectValue !== "function") {
-      return false;
-    }
-    const options = session.getOptions
-      ? session.getOptions()
-      : session.content?.options;
-    const opt = options?.[hitIdx];
-    if (opt !== undefined && typeof opt.value === "number") {
-      session.selectValue(opt.value);
-    }
-    return true;
-  }
-
   function tryOtherAction(
     session: GameSession & InteractiveSession,
     hitIdx: number
@@ -712,9 +694,6 @@
     session: GameSession & InteractiveSession,
     hitIdx: number
   ): void {
-    if (trySelectValue(session, hitIdx)) {
-      return;
-    }
     tryOtherAction(session, hitIdx);
   }
 
