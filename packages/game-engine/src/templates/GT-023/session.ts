@@ -31,7 +31,6 @@ export class GT023Session extends TemplateGameSession<
   GT023Content,
   GT023Difficulty
 > {
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -133,9 +132,9 @@ export class GT023Session extends TemplateGameSession<
     return this.assemblySystem.isAllAssembled();
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("top-source-bottom-target");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.content.parts.length,
       targetCount: this.content.anchors.length,
       ageBand,

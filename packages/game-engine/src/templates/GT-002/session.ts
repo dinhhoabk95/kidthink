@@ -28,7 +28,6 @@ export class GT002Session extends TemplateGameSession<
 > {
   displayItems: readonly TargetItem[] = [];
   private readonly mechanic = new SelectionMechanic({ mode: "multi" });
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private particles: Particle[] = [];
   private itemStates: Map<string, ItemVisualState> = new Map();
@@ -41,9 +40,9 @@ export class GT002Session extends TemplateGameSession<
     this.displayItems = [...this.content.items];
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("grid-2x4");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.displayItems.length,
       ageBand,
     });

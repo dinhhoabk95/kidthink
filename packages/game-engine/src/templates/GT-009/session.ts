@@ -32,7 +32,6 @@ export class GT009Session extends TemplateGameSession<
   GT009Content,
   GT009Difficulty
 > {
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -156,9 +155,9 @@ export class GT009Session extends TemplateGameSession<
     }));
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("clue-board");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.content.candidates.length,
       targetCount: this.content.clues.length,
       ageBand,

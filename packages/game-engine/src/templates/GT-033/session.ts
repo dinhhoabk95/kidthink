@@ -31,7 +31,6 @@ export class GT033Session extends TemplateGameSession<
   GT033Content,
   GT033Difficulty
 > {
-  slots: Slot[] = [];
   degradation: DegradationState | null = null;
   placedCells: (string | null)[] = [];
   selectedColorId: string | null = null;
@@ -43,7 +42,6 @@ export class GT033Session extends TemplateGameSession<
 
   setupEntities(): void {
     this.resolveSlots("5-6");
-
     this.placedCells = [...this.content.cells];
     this.selectedColorId = this.content.palette[0]?.color_id ?? null;
     this.selectedCellIndex = null;
@@ -62,10 +60,10 @@ export class GT033Session extends TemplateGameSession<
     });
   }
 
-  resolveSlots(band: AgeBand): void {
+  protected computeSlots(band: AgeBand): readonly Slot[] {
     const totalCells = this.content.grid.rows * this.content.grid.cols;
     const layoutFn = resolveLayout("weave-grid");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.content.palette.length,
       ageBand: band,
       targetCount: totalCells,

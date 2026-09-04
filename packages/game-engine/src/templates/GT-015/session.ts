@@ -62,7 +62,6 @@ export class SudokuMiniSession extends TemplateGameSession<
   GT015Content,
   GT015Difficulty
 > {
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -247,9 +246,9 @@ export class SudokuMiniSession extends TemplateGameSession<
     this.selectedSymbolId = null;
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("matrix-slot-grid");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.content.symbols.length,
       targetCount: this.content.grid_size,
       ageBand,

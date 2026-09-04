@@ -7,6 +7,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { getTouchFloor } from "#src/layout/constants";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
@@ -33,7 +34,6 @@ export class GT036Session extends TemplateGameSession<
   GT036Content,
   GT036Difficulty
 > {
-  slots: Slot[] = [];
   degradation: DegradationState | null = null;
 
   placedItems: (string | null)[] = [];
@@ -43,9 +43,8 @@ export class GT036Session extends TemplateGameSession<
   isWin = false;
   sessionScore = 0;
   sessionStars = 0;
-
-  private readonly sfxEngine: SFXEngine;
   private particles: Particle[] = [];
+  private readonly sfxEngine: SFXEngine;
 
   constructor(
     content: GT036Content,
@@ -57,7 +56,6 @@ export class GT036Session extends TemplateGameSession<
   }
 
   setupEntities(): void {
-    this.resolveSlots("5-6");
     this.placedItems = new Array(this.content.track_length).fill(null);
     this.selectedPaletteId = this.content.palette[0]?.id ?? null;
     this.submitted = false;
@@ -77,8 +75,9 @@ export class GT036Session extends TemplateGameSession<
     });
   }
 
-  resolveSlots(_band: AgeBand): void {
-    this.slots = [];
+  protected computeSlots(band: AgeBand): readonly Slot[] {
+    const floor = getTouchFloor(band);
+    const slots: Slot[] = [];
     const count = this.content.track_length;
     const palCount = this.content.palette.length;
 
@@ -89,15 +88,15 @@ export class GT036Session extends TemplateGameSession<
     const trackY = 170;
 
     for (let i = 0; i < count; i++) {
-      this.slots.push({
+      slots.push({
         index: i,
         role: "target",
         x: trackStartX + i * (trackSlotSize + 8) + trackSlotSize / 2,
         y: trackY + trackSlotSize / 2,
         w: trackSlotSize,
         h: trackSlotSize,
-        hitW: trackSlotSize,
-        hitH: trackSlotSize,
+        hitW: Math.max(trackSlotSize, floor),
+        hitH: Math.max(trackSlotSize, floor),
         page: 0,
       });
     }
@@ -109,44 +108,46 @@ export class GT036Session extends TemplateGameSession<
     const palY = 320;
 
     for (let i = 0; i < palCount; i++) {
-      this.slots.push({
+      slots.push({
         index: count + i,
         role: "source",
         x: palStartX + i * (palSlotSize + 16) + palSlotSize / 2,
         y: palY + palSlotSize / 2,
         w: palSlotSize,
         h: palSlotSize,
-        hitW: palSlotSize,
-        hitH: palSlotSize,
+        hitW: Math.max(palSlotSize, floor),
+        hitH: Math.max(palSlotSize, floor),
         page: 0,
       });
     }
 
     // 3. Submit button slot
-    this.slots.push({
+    slots.push({
       index: count + palCount,
       role: "target",
       x: 480 - 70,
       y: 465,
       w: 120,
       h: 50,
-      hitW: 120,
-      hitH: 50,
+      hitW: Math.max(120, floor),
+      hitH: Math.max(50, floor),
       page: 0,
     });
 
     // 4. Clear button slot
-    this.slots.push({
+    slots.push({
       index: count + palCount + 1,
       role: "target",
       x: 480 + 70,
       y: 465,
       w: 120,
       h: 50,
-      hitW: 120,
-      hitH: 50,
+      hitW: Math.max(120, floor),
+      hitH: Math.max(50, floor),
       page: 0,
     });
+
+    return slots;
   }
 
   override validateAction(action: GameAction): ActionResult {

@@ -36,7 +36,6 @@ export class BalanceScaleSession extends TemplateGameSession<
   GT014Content,
   GT014Difficulty
 > {
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -200,9 +199,9 @@ export class BalanceScaleSession extends TemplateGameSession<
     this.selectedSide = null;
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("split-columns");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.trayItems.length,
       targetCount: 2,
       ageBand,

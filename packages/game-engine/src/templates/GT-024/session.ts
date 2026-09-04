@@ -30,7 +30,6 @@ export class GT024Session extends TemplateGameSession<
   GT024Content,
   GT024Difficulty
 > {
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -112,9 +111,9 @@ export class GT024Session extends TemplateGameSession<
     return this.traceSystem.isComplete();
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.content.waypoints.length,
       ageBand,
     });

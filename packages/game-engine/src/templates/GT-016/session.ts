@@ -32,7 +32,6 @@ export class ClockHandsSession extends TemplateGameSession<
   GT016Content,
   GT016Difficulty
 > {
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -205,14 +204,14 @@ export class ClockHandsSession extends TemplateGameSession<
     this.matchedCardIds.clear();
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
     // `options` và `activity_cards` khai `.default([])` trong contract, nhưng
     // session nhận `content_pack` **thô** nên default không bao giờ tới nơi:
     // level ở `mode: "read"` không có `activity_cards`, và đọc thẳng `.length`
     // ném "Cannot read properties of undefined". Bắt được khi chụp thật
     // `GL-C1-ADD-BAL-0001` trên cả ba khung nhìn, 2026-09-01.
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: Math.max(
         this.content.options?.length ?? 0,
         this.content.activity_cards?.length ?? 0,

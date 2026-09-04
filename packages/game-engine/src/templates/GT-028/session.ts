@@ -26,7 +26,6 @@ export class GT028Session extends TemplateGameSession<
   GT028Content,
   GT028Difficulty
 > {
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   selectedItemIds: string[] = [];
   private renderParticles: Particle[] = [];
@@ -136,9 +135,9 @@ export class GT028Session extends TemplateGameSession<
     this.selectedItemIds = [];
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.content.items.length,
       ageBand,
     });

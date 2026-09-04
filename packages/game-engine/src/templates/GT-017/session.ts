@@ -32,7 +32,6 @@ export class BlockStackSession extends TemplateGameSession<
   GT017Content,
   GT017Difficulty
 > {
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -154,9 +153,9 @@ export class BlockStackSession extends TemplateGameSession<
     this.currentRotation = 0;
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("split-columns");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.content.options.length,
       targetCount: 1,
       ageBand,

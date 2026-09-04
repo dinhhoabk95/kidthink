@@ -7,6 +7,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { getTouchFloor } from "#src/layout/constants";
 import type { Slot } from "#src/layout/types";
 import { type BeatInstrument, BeatSystem } from "#src/systems/beat-system";
 import type { DegradationState } from "#src/systems/degradation";
@@ -27,7 +28,6 @@ export class GT034Session extends TemplateGameSession<
   GT034Content,
   GT034Difficulty
 > {
-  slots: Slot[] = [];
   degradation: DegradationState | null = null;
   userSteps: (string | null)[] = [];
   replaysUsed = 0;
@@ -37,9 +37,9 @@ export class GT034Session extends TemplateGameSession<
   playbackElapsedSec = 0;
   isWin = false;
 
+  private particles: Particle[] = [];
   private readonly beatSystem: BeatSystem;
   private readonly sfxEngine: SFXEngine;
-  private particles: Particle[] = [];
 
   constructor(
     content: GT034Content,
@@ -85,23 +85,24 @@ export class GT034Session extends TemplateGameSession<
     });
   }
 
-  resolveSlots(_band: AgeBand): void {
-    this.slots = [];
+  protected computeSlots(band: AgeBand): readonly Slot[] {
+    const floor = getTouchFloor(band);
+    const slots: Slot[] = [];
     const patternLen = this.content.target_pattern.length;
     const instCount = this.content.instruments.length;
 
     // 1. Target pattern track slots
     const startX = 480 - (patternLen * 72) / 2;
     for (let i = 0; i < patternLen; i++) {
-      this.slots.push({
+      slots.push({
         index: i,
         role: "target",
         x: startX + i * 72 + 36,
         y: 220,
         w: 64,
         h: 64,
-        hitW: 64,
-        hitH: 64,
+        hitW: Math.max(64, floor),
+        hitH: Math.max(64, floor),
         page: 0,
       });
     }
@@ -113,31 +114,33 @@ export class GT034Session extends TemplateGameSession<
       if (!inst) {
         continue;
       }
-      this.slots.push({
+      slots.push({
         index: patternLen + i,
         role: "source",
         x: instStartX + i * 110 + 55,
         y: 380,
         w: 88,
         h: 88,
-        hitW: 88,
-        hitH: 88,
+        hitW: Math.max(88, floor),
+        hitH: Math.max(88, floor),
         page: 0,
       });
     }
 
     // 3. Replay button slot
-    this.slots.push({
+    slots.push({
       index: patternLen + instCount,
       role: "source",
       x: 480,
       y: 120,
       w: 64,
       h: 64,
-      hitW: 64,
-      hitH: 64,
+      hitW: Math.max(64, floor),
+      hitH: Math.max(64, floor),
       page: 0,
     });
+
+    return slots;
   }
 
   update(deltaMs: number): void {

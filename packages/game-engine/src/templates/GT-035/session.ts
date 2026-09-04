@@ -7,6 +7,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import { getTouchFloor } from "#src/layout/constants";
 import type { Slot } from "#src/layout/types";
 import {
   CommandQueueSystem,
@@ -50,7 +51,6 @@ export class GT035Session extends TemplateGameSession<
   GT035Content,
   GT035Difficulty
 > {
-  slots: Slot[] = [];
   degradation: DegradationState | null = null;
 
   robotState: RobotState;
@@ -110,8 +110,9 @@ export class GT035Session extends TemplateGameSession<
     });
   }
 
-  resolveSlots(_band: AgeBand): void {
-    this.slots = [];
+  protected computeSlots(band: AgeBand): readonly Slot[] {
+    const floor = getTouchFloor(band);
+    const slots: Slot[] = [];
     const { rows, cols } = this.content.grid;
 
     // 1. Grid slots (Tâm tại (320, 240))
@@ -122,15 +123,15 @@ export class GT035Session extends TemplateGameSession<
     let slotIdx = 0;
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
-        this.slots.push({
+        slots.push({
           index: slotIdx++,
           role: "target",
           x: gridStartX + c * cellSize + cellSize / 2,
           y: gridStartY + r * cellSize + cellSize / 2,
           w: cellSize - 4,
           h: cellSize - 4,
-          hitW: cellSize,
-          hitH: cellSize,
+          hitW: Math.max(cellSize, floor),
+          hitH: Math.max(cellSize, floor),
           page: 0,
         });
       }
@@ -145,15 +146,15 @@ export class GT035Session extends TemplateGameSession<
     for (let i = 0; i < maxCmd; i++) {
       const qCol = i % 4;
       const qRow = Math.floor(i / 4);
-      this.slots.push({
+      slots.push({
         index: slotIdx++,
         role: "target",
         x: queueStartX + qCol * (qSlotSize + 8) + qSlotSize / 2,
         y: queueStartY + qRow * (qSlotSize + 12) + qSlotSize / 2,
         w: qSlotSize,
         h: qSlotSize,
-        hitW: qSlotSize,
-        hitH: qSlotSize,
+        hitW: Math.max(qSlotSize, floor),
+        hitH: Math.max(qSlotSize, floor),
         page: 0,
       });
     }
@@ -162,31 +163,33 @@ export class GT035Session extends TemplateGameSession<
     const allowed = this.content.allowed_commands;
     const palStartX = 480 - (allowed.length * 90) / 2;
     for (let p = 0; p < allowed.length; p++) {
-      this.slots.push({
+      slots.push({
         index: slotIdx++,
         role: "source",
         x: palStartX + p * 90 + 45,
         y: 450,
         w: 80,
         h: 60,
-        hitW: 80,
-        hitH: 60,
+        hitW: Math.max(80, floor),
+        hitH: Math.max(60, floor),
         page: 0,
       });
     }
 
     // 4. Run program button slot
-    this.slots.push({
+    slots.push({
       index: slotIdx++,
       role: "source",
       x: 780,
       y: 120,
       w: 96,
       h: 56,
-      hitW: 96,
-      hitH: 56,
+      hitW: Math.max(96, floor),
+      hitH: Math.max(56, floor),
       page: 0,
     });
+
+    return slots;
   }
 
   update(_deltaMs: number): void {

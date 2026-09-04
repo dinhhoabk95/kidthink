@@ -27,7 +27,6 @@ export class GT030Session extends TemplateGameSession<
   GT030Content,
   GT030Difficulty
 > {
-  slots: Slot[] = [];
   degradation: DegradationState | null = null;
   placedUnitsCount = 0;
   selectedOptionId: string | null = null;
@@ -40,7 +39,6 @@ export class GT030Session extends TemplateGameSession<
     this.selectedOptionId = null;
     this.isWin = false;
     this.particles = [];
-    this.resolveSlots("5-6");
     this.recordEvent("game_started", {
       template_code: "GT-030",
       target_length: this.content.object.length_in_units,
@@ -48,9 +46,9 @@ export class GT030Session extends TemplateGameSession<
     });
   }
 
-  resolveSlots(band: AgeBand): void {
+  protected computeSlots(band: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("measure-strip");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.content.answer_options.length,
       ageBand: band,
       targetCount: this.content.object.length_in_units,

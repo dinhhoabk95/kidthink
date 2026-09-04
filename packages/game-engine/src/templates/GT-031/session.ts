@@ -27,7 +27,6 @@ export class GT031Session extends TemplateGameSession<
   GT031Content,
   GT031Difficulty
 > {
-  slots: Slot[] = [];
   degradation: DegradationState | null = null;
   depositedCoinIds: string[] = [];
   currentTotal = 0;
@@ -40,7 +39,6 @@ export class GT031Session extends TemplateGameSession<
     this.currentTotal = 0;
     this.isWin = false;
     this.particles = [];
-    this.resolveSlots("5-6");
     this.recordEvent("game_started", {
       template_code: "GT-031",
       target_amount: this.content.target_amount,
@@ -48,9 +46,9 @@ export class GT031Session extends TemplateGameSession<
     });
   }
 
-  resolveSlots(band: AgeBand): void {
+  protected computeSlots(band: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("multi-bucket-bottom");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.content.coins.length,
       ageBand: band,
       targetCount: 1,

@@ -1,3 +1,4 @@
+import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
@@ -79,7 +80,6 @@ export class GT000Session extends TemplateGameSession<
   GT000Content,
   GT000Difficulty
 > {
-  slots: readonly Slot[] = [];
   currentStepIndex = 0;
   selectedAssetId: string | null = null;
   readonly missCounts = new Map<string, number>();
@@ -89,6 +89,7 @@ export class GT000Session extends TemplateGameSession<
   private renderParticles: Particle[] = [];
   private readonly renderItemStates = new Map<string, ItemVisualState>();
   private activePeriod: 1 | 2 | 3 = 1;
+  private currentAgeBand: AgeBand = "3-4";
 
   setupEntities(): void {
     this.isWon = false;
@@ -107,6 +108,20 @@ export class GT000Session extends TemplateGameSession<
     });
 
     this.updateCurrentStepLayout();
+  }
+
+  protected computeSlots(band: AgeBand): readonly Slot[] {
+    this.currentAgeBand = band;
+    const step = this.getCurrentStep();
+    if (!step) {
+      return [];
+    }
+    const itemCount = getStepItemCount(step);
+    const layoutId = itemCount <= 1 ? "single-focus" : "grid";
+    return resolveLayout(layoutId)({
+      slotCount: itemCount,
+      ageBand: band,
+    });
   }
 
   private getCurrentStep(): GT000Step | undefined {
@@ -132,12 +147,7 @@ export class GT000Session extends TemplateGameSession<
       });
     }
 
-    const itemCount = getStepItemCount(step);
-    const layoutId = itemCount <= 1 ? "single-focus" : "grid";
-    this.slots = resolveLayout(layoutId)({
-      slotCount: itemCount,
-      ageBand: "3-4",
-    });
+    this.resolveSlots(this.currentAgeBand);
 
     if (step.action === "present") {
       this.recordEvent("intro_item_presented", {

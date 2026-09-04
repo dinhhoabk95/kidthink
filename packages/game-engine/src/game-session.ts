@@ -157,29 +157,18 @@ export abstract class TemplateGameSession<
   }
 
   /**
-   * Compute the layout slots for this round.
-   *
-   * SHIM: delegates to resolveSlots if the subclass still uses the old pattern.
-   * Once all 37 templates migrate to computeSlots, this becomes abstract.
+   * Backward compatibility for callers/tests calling resolveSlots directly.
+   * Delegates to computeSlots and caches the result on this._slots.
    */
-  protected computeSlots(band: AgeBand): readonly Slot[] {
-    // Shim: if subclass has resolveSlots, call it and read back slots.
-    // Subclasses declare `slots: readonly Slot[] = []` as own property,
-    // which shadows the prototype getter. resolveSlots writes to that
-    // own property. We read it back after resolveSlots runs.
-    const self = this as unknown as {
-      resolveSlots?: (b: AgeBand) => void;
-      slots?: readonly Slot[];
-    };
-    if (typeof self.resolveSlots === "function") {
-      self.resolveSlots(band);
-      // Read back the own-property slots that resolveSlots assigned
-      const ownSlots = (self.slots ?? []) as readonly Slot[];
-      return ownSlots;
-    }
-    // Subclass must override this method
-    return [];
+  resolveSlots(band: AgeBand): void {
+    this._slots = this.computeSlots(band);
   }
+
+  /**
+   * Compute the layout slots for this round.
+   * All 37 template sessions implement this method (Task #216).
+   */
+  protected abstract computeSlots(band: AgeBand): readonly Slot[];
 
   /**
    * Override to cache values derived from the round's entity/slot state.

@@ -27,7 +27,6 @@ export class GT029Session extends TemplateGameSession<
   GT029Content,
   GT029Difficulty
 > {
-  slots: Slot[] = [];
   degradation: DegradationState | null = null;
   removedItemIds: Set<string> = new Set();
   selectedOptionId: string | null = null;
@@ -40,7 +39,6 @@ export class GT029Session extends TemplateGameSession<
     this.selectedOptionId = null;
     this.isWin = false;
     this.particles = [];
-    this.resolveSlots("4-5");
     this.recordEvent("game_started", {
       template_code: "GT-029",
       initial_count: this.content.initial_items.length,
@@ -48,7 +46,7 @@ export class GT029Session extends TemplateGameSession<
     });
   }
 
-  resolveSlots(band: AgeBand): void {
+  protected computeSlots(band: AgeBand): readonly Slot[] {
     const totalItems = this.content.initial_items.length;
     const optionCount = this.content.answer_options.length;
 
@@ -58,7 +56,7 @@ export class GT029Session extends TemplateGameSession<
     const flexFn = resolveLayout("flex-wrap");
     const optionSlots = flexFn({ slotCount: optionCount, ageBand: band });
 
-    this.slots = [...itemSlots, ...optionSlots];
+    return [...itemSlots, ...optionSlots];
   }
 
   private handleItemRemoval(itemId: string): ActionResult {

@@ -32,7 +32,6 @@ export class GT021Session extends TemplateGameSession<
   GT021Content,
   GT021Difficulty
 > {
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -127,9 +126,9 @@ export class GT021Session extends TemplateGameSession<
     return this.mirrorSystem.isComplete();
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("mirror-axis-split");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.content.options.length,
       targetCount: this.content.target_slots.length,
       ageBand,

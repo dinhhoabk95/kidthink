@@ -27,7 +27,6 @@ export class GT003Session extends TemplateGameSession<
 > {
   displayItems: readonly DraggableItem[] = [];
   private readonly mechanic = new PlacementMechanic();
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private particles: Particle[] = [];
   private itemStates: Map<string, ItemVisualState> = new Map();
@@ -42,11 +41,11 @@ export class GT003Session extends TemplateGameSession<
     this.hoveredContainer = false;
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("top-source-bottom-target");
     // `slotCount` của bố cục lưỡng phân là số slot **nguồn**, còn `targetCount`
     // là số slot đích — layout tự cộng hai vế.
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.displayItems.length,
       ageBand,
       targetCount: 1,

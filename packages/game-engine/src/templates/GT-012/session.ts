@@ -27,7 +27,6 @@ export class FlashRecallSession extends TemplateGameSession<
   GT012Content,
   GT012Difficulty
 > {
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -161,9 +160,9 @@ export class FlashRecallSession extends TemplateGameSession<
     this.wasVisible = false;
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: Math.max(
         this.content.flash_items.length,
         this.content.options.length

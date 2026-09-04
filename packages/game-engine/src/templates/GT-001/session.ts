@@ -36,7 +36,6 @@ export class GT001Session extends TemplateGameSession<
   selectedItemId: string | null = null;
   displayOptions: readonly OptionItem[] = [];
   private readonly mechanic = new SelectionMechanic({ mode: "single" });
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private particles: Particle[] = [];
   private itemStates: Map<string, ItemVisualState> = new Map();
@@ -77,7 +76,7 @@ export class GT001Session extends TemplateGameSession<
     }
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const count = this.displayOptions.length;
     if (this.content.target_item && count > 0) {
       const touchFloor = getTouchFloor(ageBand);
@@ -106,14 +105,14 @@ export class GT001Session extends TemplateGameSession<
           role: "source",
         });
       }
-      this.slots = slots;
-    } else {
-      const layoutFn = resolveLayout("grid");
-      this.slots = layoutFn({
-        slotCount: this.displayOptions.length,
-        ageBand,
-      });
+      return slots;
     }
+
+    const layoutFn = resolveLayout("grid");
+    return layoutFn({
+      slotCount: this.displayOptions.length,
+      ageBand,
+    });
   }
 
   private getItemState(itemId: string): ItemVisualState {

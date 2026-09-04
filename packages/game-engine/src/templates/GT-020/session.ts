@@ -38,7 +38,6 @@ export class GT020Session extends TemplateGameSession<
   GT020Content,
   GT020Difficulty
 > {
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -134,9 +133,9 @@ export class GT020Session extends TemplateGameSession<
     return this.cardSystem.isAllMatched();
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("card-flip-grid");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.displayCards.length,
       ageBand,
     });

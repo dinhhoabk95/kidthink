@@ -26,7 +26,6 @@ export class GT032Session extends TemplateGameSession<
   GT032Content,
   GT032Difficulty
 > {
-  slots: Slot[] = [];
   degradation: DegradationState | null = null;
   selectedCupId: string | null = null;
   isWin = false;
@@ -39,7 +38,6 @@ export class GT032Session extends TemplateGameSession<
     this.isWin = false;
     this.showHintMarks = false;
     this.particles = [];
-    this.resolveSlots("5-6");
     this.recordEvent("game_started", {
       template_code: "GT-032",
       question_type: this.content.question_type,
@@ -47,9 +45,9 @@ export class GT032Session extends TemplateGameSession<
     });
   }
 
-  resolveSlots(band: AgeBand): void {
+  protected computeSlots(band: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("horizontal-row");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.content.cups.length,
       ageBand: band,
     });

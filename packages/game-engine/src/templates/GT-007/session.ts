@@ -34,7 +34,6 @@ export class GT007Session extends TemplateGameSession<
   GT007Content,
   GT007Difficulty
 > {
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -108,9 +107,9 @@ export class GT007Session extends TemplateGameSession<
     });
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("number-bond-tree");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.content.options.length,
       targetCount: this.content.parts.length,
       ageBand,

@@ -28,7 +28,6 @@ export class SubstitutionSession extends TemplateGameSession<
   GT010Content,
   GT010Difficulty
 > {
-  slots: readonly Slot[] = [];
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -142,9 +141,9 @@ export class SubstitutionSession extends TemplateGameSession<
     this.selectedValue = null;
   }
 
-  resolveSlots(ageBand: "3-4" | "4-5" | "5-6"): void {
+  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("equation-rows");
-    this.slots = layoutFn({
+    return layoutFn({
       slotCount: this.content.options.length,
       targetCount: this.content.equations.length,
       ageBand,
