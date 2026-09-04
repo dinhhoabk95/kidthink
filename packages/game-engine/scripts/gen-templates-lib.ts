@@ -307,6 +307,27 @@ export function generateStudioOptionsCode(
   return `${GENERATED_BANNER + imports.join("\n")}\n\nexport const STUDIO_TEMPLATE_OPTIONS = [\n${entries}\n];\n`;
 }
 
+export function generateInputRegistryCode(
+  templates: readonly DiscoveredTemplate[]
+): string {
+  const imports: string[] = [
+    'import type { EngineInputConfig } from "#src/contracts/types";',
+  ];
+  for (const t of templates) {
+    const varName = `${t.code.replace("-", "")}Template`;
+    imports.push(`import ${varName} from "#src/templates/${t.code}/template";`);
+  }
+
+  const entries = templates
+    .map((t) => {
+      const varName = `${t.code.replace("-", "")}Template`;
+      return `  "${t.code}": ${varName}.input,`;
+    })
+    .join("\n");
+
+  return `${GENERATED_BANNER + imports.join("\n")}\n\nexport const TEMPLATE_INPUT_REGISTRY: Record<string, EngineInputConfig | undefined> = {\n${entries}\n};\n\nexport function getTemplateInput(code: string): EngineInputConfig | undefined {\n  return TEMPLATE_INPUT_REGISTRY[code];\n}\n`;
+}
+
 export function generateAllTemplateArtifacts(
   gameEngineDir: string
 ): Map<string, string> {
@@ -338,6 +359,10 @@ export function generateAllTemplateArtifacts(
   files.set(
     join(generatedDir, "studio-options.ts"),
     generateStudioOptionsCode(templates)
+  );
+  files.set(
+    join(generatedDir, "input-registry.ts"),
+    generateInputRegistryCode(templates)
   );
 
   return files;

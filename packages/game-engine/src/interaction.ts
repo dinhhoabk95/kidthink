@@ -12,6 +12,114 @@ const MIN_TOUCH_PX = {
 
 const DEFAULT_LONG_PRESS_EXIT_MS = 800;
 
+export type PlayVerb =
+  | "tap"
+  | "drop"
+  | "stroke"
+  | "adjust"
+  | "commit"
+  | "revert";
+
+export type SystemBeat = "reveal" | "hint" | "timeout";
+export type Beat = SystemBeat;
+
+export type EntityVisual =
+  | "idle"
+  | "active"
+  | "selected"
+  | "correct"
+  | "incorrect";
+
+export type Gesture =
+  | {
+      readonly type: "tap";
+      readonly x: number;
+      readonly y: number;
+      readonly timeMs: number;
+    }
+  | {
+      readonly type: "drop";
+      readonly fromX: number;
+      readonly fromY: number;
+      readonly toX: number;
+      readonly toY: number;
+      readonly timeMs: number;
+    }
+  | {
+      readonly type: "stroke";
+      readonly points: readonly { readonly x: number; readonly y: number }[];
+      readonly timeMs: number;
+    }
+  | {
+      readonly type: "adjust";
+      readonly delta: number;
+      readonly timeMs: number;
+    }
+  | {
+      readonly type: "commit";
+      readonly timeMs: number;
+    }
+  | {
+      readonly type: "revert";
+      readonly timeMs: number;
+    };
+
+export interface ViewEntity {
+  readonly id: string;
+  readonly slotIndex: number;
+  readonly role: "source" | "target" | "neutral";
+  readonly state: EntityVisual;
+  readonly x: number;
+  readonly y: number;
+  readonly w: number;
+  readonly h: number;
+}
+
+export interface EngineView {
+  readonly entities: readonly ViewEntity[];
+  readonly activePrompt?: string;
+  readonly focusIndex?: number;
+}
+
+export interface EngineInput {
+  readonly gesture: Gesture;
+  readonly targetEntityId?: string;
+}
+
+export interface ClientPoint {
+  readonly x: number;
+  readonly y: number;
+}
+
+export interface ElementRect {
+  readonly left: number;
+  readonly top: number;
+  readonly width: number;
+  readonly height: number;
+}
+
+export function toLogicPoint(
+  client: ClientPoint,
+  rect: ElementRect,
+  logicWidth = 960,
+  logicHeight = 540
+): { x: number; y: number } {
+  const scaleX = rect.width > 0 ? logicWidth / rect.width : 1;
+  const scaleY = rect.height > 0 ? logicHeight / rect.height : 1;
+  return {
+    x: Math.round((client.x - rect.left) * scaleX),
+    y: Math.round((client.y - rect.top) * scaleY),
+  };
+}
+
+export const LIFECYCLE = {
+  tap: {
+    toGesture(logicX: number, logicY: number, timeMs: number): Gesture {
+      return { type: "tap", x: logicX, y: logicY, timeMs };
+    },
+  },
+} as const;
+
 export interface TouchTarget {
   id: string;
   x: number;

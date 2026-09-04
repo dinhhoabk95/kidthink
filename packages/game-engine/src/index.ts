@@ -22,6 +22,10 @@ export {
   TemplateGameSession,
 } from "./game-session";
 export {
+  getTemplateInput,
+  TEMPLATE_INPUT_REGISTRY,
+} from "./generated/input-registry.js";
+export {
   createGameSessionSync,
   loadGameSession,
 } from "./generated/session-loader.js";
@@ -48,7 +52,21 @@ export {
   type ThemeVocabulary,
   type VocabularyEntry,
 } from "./generators/index.js";
-export { getMinTouchTargetSize, InteractionManager } from "./interaction";
+export {
+  type Beat,
+  type ClientPoint,
+  type ElementRect,
+  type EngineInput,
+  type EngineView,
+  type EntityVisual,
+  type Gesture,
+  getMinTouchTargetSize,
+  InteractionManager,
+  LIFECYCLE,
+  type PlayVerb,
+  toLogicPoint,
+  type ViewEntity,
+} from "./interaction";
 export {
   getTouchFloor,
   LOGIC_HEIGHT,

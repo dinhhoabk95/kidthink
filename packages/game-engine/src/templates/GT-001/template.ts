@@ -55,4 +55,9 @@ export default defineTemplate({
   engine_session: "TapSelectSession",
   status: "published",
   version: 1,
+  input: {
+    family: "tap",
+    verbs: ["tap"],
+    tolerance_px: 24,
+  },
 });

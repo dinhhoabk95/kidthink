@@ -1,4 +1,5 @@
 import type { AgeBand } from "./contracts/types";
+import type { EngineView, Gesture } from "./interaction";
 import type { Slot } from "./layout/types";
 import type { RenderSystem } from "./systems/render-system";
 
@@ -65,6 +66,8 @@ export interface GameSession {
   getTelemetry(): SessionTelemetry;
   completeSession(): void;
   destroy(): void;
+  getView?(): EngineView;
+  dispatch?(gesture: Gesture): ActionResult | undefined;
 }
 
 export abstract class BaseGameSession implements GameSession {
@@ -193,5 +196,36 @@ export abstract class TemplateGameSession<
    */
   protected set _slotsInternal(value: readonly Slot[]) {
     this._slots = value;
+  }
+
+  /** Optional view snapshot of active entities (BR-EIC-01). */
+  getView?(): EngineView;
+
+  /** Convert a physical gesture into a logical GameAction. */
+  toAction?(gesture: Gesture): GameAction | null;
+
+  /** Commit the action state change and record events. */
+  commit?(action: GameAction): void;
+
+  /**
+   * Unified input dispatcher (BR-EIC-04):
+   * 1. Swallows gestures if session/round is won.
+   * 2. Maps gesture to logical action via `toAction`.
+   * 3. Validates action purely via `validateAction`.
+   * 4. If valid, commits state mutation via `commit`.
+   */
+  dispatch(gesture: Gesture): ActionResult | undefined {
+    if (this.checkWinCondition() || this.isWon) {
+      return ACTION_IGNORED;
+    }
+
+    const action = this.toAction?.(gesture);
+    if (!action) {
+      return ACTION_IGNORED;
+    }
+
+    const verdict = this.validateAction(action);
+    this.commit?.(action);
+    return verdict;
   }
 }

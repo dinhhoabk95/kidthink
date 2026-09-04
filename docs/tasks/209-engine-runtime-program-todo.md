@@ -176,35 +176,35 @@ Vì sao `GT-001`: [`166-vi-du.md`](166-vi-du.md) §6.3 đã chọn nó; nó nằ
 chỉ nên đo được bằng luật trùng khít; nó là khuôn **duy nhất** chứng minh được lỗi vòng-hai đầu-cuối;
 nó thuộc nhóm `validateAction` thuần nên lát này không kiêm việc sửa `BR-ENG-13`.
 
-- [ ] Feature file **đỏ trước**, ở `packages/game-engine/tests/features/cham.feature`
-  - [ ] Cấm — NEVER đặt ở `packages/game-engine/features/`: `WORKSPACE_TEST_INCLUDE`
+- [x] Feature file **đỏ trước**, ở `packages/game-engine/tests/features/cham.feature`
+  - [x] Cấm — NEVER đặt ở `packages/game-engine/features/`: `WORKSPACE_TEST_INCLUDE`
         (`packages/config/vitest/base.ts:142-145`) chỉ quét `src/**` và `tests/**`
-  - [ ] Dùng DSL `Given`/`When`/`Then` tự viết trên vitest. `@amiceli/vitest-cucumber` **không có**
+  - [x] Dùng DSL `Given`/`When`/`Then` tự viết trên vitest. `@amiceli/vitest-cucumber` **không có**
         trong catalog lẫn lockfile
-  - [ ] Bảng `Examples` một hàng: `GT-001`
-  - [ ] Ba kịch bản: chạm nền thì không method nào chạy · chạm lại vào đích đã chọn thì giữ ·
+  - [x] Bảng `Examples` một hàng: `GT-001`
+  - [x] Ba kịch bản: chạm nền thì không method nào chạy · chạm lại vào đích đã chọn thì giữ ·
         vòng hai dùng hình học vòng hai (hàng `n=4`, bất khả thi trong hình học vòng một)
-  - [ ] Binding lái **toạ độ con trỏ thật** qua `toLogicPoint`. Cấm — NEVER gọi tắt method session
-  - Nghiệm thu: ba ca đỏ, và ghi lại **vì sao** từng ca đỏ
-- [ ] `src/interaction.ts` thêm `PlayVerb`, `Gesture`, `Beat`, `EngineInput`, `EngineView`,
+  - [x] Binding lái **toạ độ con trỏ thật** qua `toLogicPoint`. Cấm — NEVER gọi tắt method session
+  - [x] Nghiệm thu: ba ca đỏ, và ghi lại **vì sao** từng ca đỏ
+- [x] `src/interaction.ts` thêm `PlayVerb`, `Gesture`, `Beat`, `EngineInput`, `EngineView`,
       `ViewEntity`, `EntityVisual`, `LIFECYCLE.tap`
-  - [ ] `Gesture` là **một** union sáu nhánh, không trường `data`
-  - [ ] Cấm — NEVER dùng Zod trên đường này: `BR-ENG-15` cấm cấp phát mỗi khung và `safeParse` cấp
+  - [x] `Gesture` là **một** union sáu nhánh, không trường `data`
+  - [x] Cấm — NEVER dùng Zod trên đường này: `BR-ENG-15` cấm cấp phát mỗi khung và `safeParse` cấp
         phát mỗi lần gọi; và `Gesture` không đi qua biên tin cậy nào
-- [ ] `dispatch()` cài **một lần** ở lớp cơ sở của họ: nuốt sau thắng → `toAction` → `validateAction`
+- [x] `dispatch()` cài **một lần** ở lớp cơ sở của họ: nuốt sau thắng → `toAction` → `validateAction`
       → `commit`. `validateAction` giữ nguyên chữ ký, thành thuần **theo cấu trúc**
-- [ ] `GT-001/template.ts` khai `input: { family: "tap", verbs: ["tap"], tolerance_px: 24 }`
-- [ ] `gen-templates-lib.ts` sinh artifact thứ 7 `src/generated/input-registry.ts`
-  - Nghiệm thu: `pnpm gen:templates && git diff --exit-code packages/game-engine/src/generated` — cổng
-    so byte `BR-TAK-03` phủ file mới mà không phải sửa cổng
-- [ ] `GT-001/session.ts` cài `getView()`, `toAction()`, `commit()`
-  - [ ] `getView` khai **optional** (`getView?(): EngineView`) ở lát này; chỉ siết thành bắt buộc ở
+- [x] `GT-001/template.ts` khai `input: { family: "tap", verbs: ["tap"], tolerance_px: 24 }`
+- [x] `gen-templates-lib.ts` sinh artifact thứ 7 `src/generated/input-registry.ts`
+  - [x] Nghiệm thu: `pnpm gen:templates && git diff --exit-code packages/game-engine/src/generated` — cổng
+        so byte `BR-TAK-03` phủ file mới mà không phải sửa cổng
+- [x] `GT-001/session.ts` cài `getView()`, `toAction()`, `commit()`
+  - [x] `getView` khai **optional** (`getView?(): EngineView`) ở lát này; chỉ siết thành bắt buộc ở
         lát chuyển khuôn thứ 37, vì baseline typecheck rỗng
-- [ ] `[code].vue` thêm một nhánh: có `template.input` thì đi `LIFECYCLE[family]` + `dispatch`; không
+- [x] `[code].vue` thêm một nhánh: có `template.input` thì đi `LIFECYCLE[family]` + `dispatch`; không
       thì rơi về duck-typing cũ cho 36 khuôn còn lại
-- [ ] Nghiệm thu: ba ca feature xanh; `diff /tmp/before.txt` mọi thứ khác trùng khít
-- [ ] Nghiệm thu quan sát được: `grep -c 'typeof session\.' 'apps/web/app/pages/play/[code].vue'`
-      giảm từ **17** xuống **16**
+- [x] Nghiệm thu: ba ca feature xanh; `diff /tmp/before.txt` mọi thứ khác trùng khít
+- [x] Nghiệm thu quan sát được: `grep -c 'typeof session\.' 'apps/web/app/pages/play/[code].vue'`
+      giảm từ **17** xuống **16** (15 xuống 14)
 
 ### `#219` Cổng bậc thang hai nửa
 

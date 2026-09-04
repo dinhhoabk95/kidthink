@@ -62,6 +62,12 @@ export const STANDARD_SCORING: ScoringSchema = {
   star_thresholds: [60, 80, 100],
 };
 
+export interface EngineInputConfig {
+  readonly family: string;
+  readonly verbs: readonly string[];
+  readonly tolerance_px?: number;
+}
+
 export interface GameTemplate<
   C extends z.ZodType = z.ZodType,
   D extends z.ZodType = z.ZodType,
@@ -84,6 +90,7 @@ export interface GameTemplate<
   engine_session: string;
   status: ContentStatus;
   version: number;
+  input?: EngineInputConfig;
 }
 
 export interface TemplateDefinition<

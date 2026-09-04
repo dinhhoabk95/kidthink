@@ -3,6 +3,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import {
   getTouchFloor,
   LOGIC_HEIGHT,
@@ -136,6 +137,9 @@ export class GT001Session extends TemplateGameSession<
   }
 
   onItemLocked(itemId: string): void {
+    if (this.selectedItemId === itemId) {
+      return;
+    }
     this.selectedItemId = itemId;
     this.mechanic.select(itemId);
     const isCorrect = this.findOption(itemId)?.is_correct === true;
@@ -155,6 +159,84 @@ export class GT001Session extends TemplateGameSession<
       this.setItemState(itemId, "wrong");
       this.wrongItemId = itemId;
       this.wrongTimestamp = this.lastFrameMs;
+    }
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = [];
+    const stateMap: Record<
+      string,
+      "idle" | "selected" | "correct" | "incorrect"
+    > = {
+      wrong: "incorrect",
+      correct: "correct",
+      selected: "selected",
+    };
+
+    for (let i = 0; i < this.displayOptions.length; i++) {
+      const opt = this.displayOptions[i];
+      const slot = this.slots[i];
+      if (!(opt && slot)) {
+        continue;
+      }
+      const rawState = this.getItemState(opt.item_id);
+      const state = stateMap[rawState] ?? "idle";
+      entities.push({
+        id: opt.item_id,
+        slotIndex: i,
+        role: "source",
+        state,
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+    return {
+      entities,
+      activePrompt: this.content.prompt,
+    };
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type !== "tap") {
+      return null;
+    }
+
+    const hitTolerance = 24;
+    for (let i = 0; i < this.slots.length; i++) {
+      const slot = this.slots[i];
+      const opt = this.displayOptions[i];
+      if (!(slot && opt)) {
+        continue;
+      }
+
+      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+
+      if (
+        Math.abs(gesture.x - slot.x) <= halfW &&
+        Math.abs(gesture.y - slot.y) <= halfH
+      ) {
+        return {
+          type: "select_item",
+          data: { item_id: opt.item_id },
+        };
+      }
+    }
+
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (
+      action.type === "select_item" &&
+      action.data &&
+      typeof action.data === "object" &&
+      "item_id" in action.data
+    ) {
+      const itemId = String((action.data as { item_id: unknown }).item_id);
+      this.onItemLocked(itemId);
     }
   }
 

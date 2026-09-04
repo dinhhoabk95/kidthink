@@ -111,6 +111,8 @@
     type EngineConfig,
     GameEngine,
     type GameSession,
+    getTemplateInput,
+    LIFECYCLE,
     type RoundConfig,
     RoundRunner,
     type Slot,
@@ -773,14 +775,6 @@
     session: GameSession & InteractiveSession,
     hitIdx: number
   ): boolean {
-    if (typeof session.onItemLocked === "function") {
-      const opts = session.displayOptions || session.content?.options;
-      const opt = opts?.[hitIdx];
-      if (opt?.item_id) {
-        session.onItemLocked(opt.item_id);
-      }
-      return true;
-    }
     if (typeof session.toggleItemSelection === "function") {
       const items = session.displayItems || session.content?.items;
       const item = items?.[hitIdx];
@@ -907,8 +901,24 @@
   function handleTapInteraction(
     session: GameSession & InteractiveSession,
     slots: readonly Slot[],
-    hitIdx: number
+    hitIdx: number,
+    x: number,
+    y: number
   ): void {
+    const templateCode = cachedPayload?.template_code;
+    const inputConfig = templateCode
+      ? getTemplateInput(templateCode)
+      : undefined;
+    if (inputConfig) {
+      const lifecycleFamily =
+        LIFECYCLE[inputConfig.family as keyof typeof LIFECYCLE];
+      if (lifecycleFamily) {
+        const gesture = lifecycleFamily.toGesture(x, y, performance.now());
+        session.dispatch?.(gesture);
+        return;
+      }
+    }
+
     if (hitIdx < 0) {
       selectedSourceIndex = null;
       session.stageItem?.(null);
@@ -1069,7 +1079,7 @@
     const hitIdx = findHitSlot(slots, x, y);
 
     if (timeHeld < 350 && distance < 20) {
-      handleTapInteraction(session, slots, hitIdx);
+      handleTapInteraction(session, slots, hitIdx, x, y);
     } else if (isDragging && draggedItem) {
       handleDragDropRelease(session, slots, draggedItem, x, y);
     }
