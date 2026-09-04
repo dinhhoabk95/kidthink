@@ -1001,6 +1001,55 @@
     }
   }
 
+  function tryDispatchDrop(
+    session: GameSession & InteractiveSession,
+    slots: readonly Slot[],
+    dragged: DragItemInfo,
+    x: number,
+    y: number
+  ): boolean {
+    const templateCode = cachedPayload?.template_code;
+    const inputConfig = templateCode
+      ? getTemplateInput(templateCode)
+      : undefined;
+    if (!inputConfig) {
+      return false;
+    }
+    const lifecycleFamily =
+      LIFECYCLE[inputConfig.family as keyof typeof LIFECYCLE];
+    if (!(lifecycleFamily && "toDropGesture" in lifecycleFamily)) {
+      return false;
+    }
+
+    const originSlot = slots[dragged.slotIndex];
+    const fromX = originSlot?.x ?? pointerDownX;
+    const fromY = originSlot?.y ?? pointerDownY;
+    const gesture = lifecycleFamily.toDropGesture(
+      fromX,
+      fromY,
+      x,
+      y,
+      performance.now()
+    );
+    const result = session.dispatch?.(gesture);
+    if (!result?.valid) {
+      engine?.audio.playSoftFeedbackSound();
+      if (originSlot) {
+        returningItem = {
+          item: dragged,
+          startX: x,
+          startY: y,
+          targetX: originSlot.x,
+          targetY: originSlot.y,
+          startTime: performance.now(),
+          duration: 240,
+        };
+        engine?.audio.playWhooshSound();
+      }
+    }
+    return true;
+  }
+
   function handleDragDropRelease(
     session: GameSession & InteractiveSession,
     slots: readonly Slot[],
@@ -1008,6 +1057,10 @@
     x: number,
     y: number
   ): void {
+    if (tryDispatchDrop(session, slots, dragged, x, y)) {
+      return;
+    }
+
     const targetIdx = findNearestTargetSlot(session, slots, x, y);
     if (targetIdx !== null) {
       handleDropPlacement(session, slots, dragged, targetIdx);

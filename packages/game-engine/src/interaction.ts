@@ -118,6 +118,20 @@ export const LIFECYCLE = {
       return { type: "tap", x: logicX, y: logicY, timeMs };
     },
   },
+  drag: {
+    toGesture(logicX: number, logicY: number, timeMs: number): Gesture {
+      return { type: "tap", x: logicX, y: logicY, timeMs };
+    },
+    toDropGesture(
+      fromX: number,
+      fromY: number,
+      toX: number,
+      toY: number,
+      timeMs: number
+    ): Gesture {
+      return { type: "drop", fromX, fromY, toX, toY, timeMs };
+    },
+  },
 } as const;
 
 export interface TouchTarget {

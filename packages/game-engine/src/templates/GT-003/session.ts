@@ -3,6 +3,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
@@ -129,6 +130,213 @@ export class GT003Session extends TemplateGameSession<
       }
     } else {
       this.setItemState(itemId, "wrong");
+    }
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = [];
+    const stateMap: Record<
+      string,
+      "idle" | "selected" | "correct" | "incorrect"
+    > = {
+      wrong: "incorrect",
+      correct: "correct",
+      selected: "selected",
+    };
+
+    for (let i = 0; i < this.displayItems.length; i++) {
+      const item = this.displayItems[i];
+      const slot = this.slots[i];
+      if (!(item && slot)) {
+        continue;
+      }
+      const rawState = this.getItemState(item.item_id);
+      const state = stateMap[rawState] ?? "idle";
+      entities.push({
+        id: item.item_id,
+        slotIndex: i,
+        role: "source",
+        state,
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+
+    const containerSlot = this.slots.at(-1);
+    if (containerSlot) {
+      entities.push({
+        id: this.content.container.container_id,
+        slotIndex: this.slots.length - 1,
+        role: "target",
+        state: "idle",
+        x: containerSlot.x,
+        y: containerSlot.y,
+        w: containerSlot.w,
+        h: containerSlot.h,
+      });
+    }
+
+    return {
+      entities,
+      activePrompt: this.content.prompt,
+    };
+  }
+
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>,
+    containerSlot: Slot,
+    hitTolerance: number
+  ): GameAction | null {
+    let draggedItem: DraggableItem | null = null;
+    for (let i = 0; i < this.displayItems.length; i++) {
+      const slot = this.slots[i];
+      const item = this.displayItems[i];
+      if (!(slot && item)) {
+        continue;
+      }
+      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+      if (
+        Math.abs(gesture.fromX - slot.x) <= halfW &&
+        Math.abs(gesture.fromY - slot.y) <= halfH
+      ) {
+        draggedItem = item;
+        break;
+      }
+    }
+
+    if (!draggedItem) {
+      return null;
+    }
+
+    const targetHalfW =
+      Math.max(containerSlot.hitW, containerSlot.w, 240) / 2 + hitTolerance;
+    const targetHalfH =
+      Math.max(containerSlot.hitH, containerSlot.h, 120) / 2 + hitTolerance;
+
+    if (
+      Math.abs(gesture.toX - containerSlot.x) <= targetHalfW &&
+      Math.abs(gesture.toY - containerSlot.y) <= targetHalfH
+    ) {
+      return {
+        type: "drop_item",
+        data: {
+          item_id: draggedItem.item_id,
+          container_id: this.content.container.container_id,
+        },
+      };
+    }
+
+    return null;
+  }
+
+  private handleTapContainer(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    containerSlot: Slot | undefined,
+    hitTolerance: number
+  ): GameAction | null {
+    if (!containerSlot) {
+      return null;
+    }
+    const targetHalfW =
+      Math.max(containerSlot.hitW, containerSlot.w, 240) / 2 + hitTolerance;
+    const targetHalfH =
+      Math.max(containerSlot.hitH, containerSlot.h, 120) / 2 + hitTolerance;
+    if (
+      Math.abs(gesture.x - containerSlot.x) <= targetHalfW &&
+      Math.abs(gesture.y - containerSlot.y) <= targetHalfH
+    ) {
+      const stagedId = this.getStagedItemId();
+      if (stagedId) {
+        return {
+          type: "tap_tap_item",
+          data: {
+            item_id: stagedId,
+            container_id: this.content.container.container_id,
+          },
+        };
+      }
+    }
+    return null;
+  }
+
+  private handleTapItem(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    hitTolerance: number
+  ): void {
+    for (let i = 0; i < this.displayItems.length; i++) {
+      const slot = this.slots[i];
+      const item = this.displayItems[i];
+      if (!(slot && item)) {
+        continue;
+      }
+      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+      if (
+        Math.abs(gesture.x - slot.x) <= halfW &&
+        Math.abs(gesture.y - slot.y) <= halfH
+      ) {
+        if (this.getStagedItemId() === item.item_id) {
+          this.stageItem(null);
+        } else {
+          this.stageItem(item.item_id);
+        }
+        return;
+      }
+    }
+  }
+
+  private toTapAction(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    containerSlot: Slot | undefined,
+    hitTolerance: number
+  ): GameAction | null {
+    const containerAction = this.handleTapContainer(
+      gesture,
+      containerSlot,
+      hitTolerance
+    );
+    if (containerAction) {
+      return containerAction;
+    }
+    this.handleTapItem(gesture, hitTolerance);
+    return null;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    const hitTolerance = 24;
+    const containerSlot = this.slots.at(-1);
+
+    if (gesture.type === "drop") {
+      if (!containerSlot) {
+        return null;
+      }
+      return this.toDropAction(gesture, containerSlot, hitTolerance);
+    }
+
+    if (gesture.type === "tap") {
+      return this.toTapAction(gesture, containerSlot, hitTolerance);
+    }
+
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (
+      (action.type === "drop_item" || action.type === "tap_tap_item") &&
+      action.data &&
+      typeof action.data === "object"
+    ) {
+      const data = action.data as {
+        item_id?: string;
+        container_id?: string;
+      };
+      if (data.item_id && data.container_id) {
+        this.onItemDropped(data.item_id, data.container_id);
+        this.stageItem(null);
+      }
     }
   }
 
