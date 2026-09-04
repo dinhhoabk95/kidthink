@@ -6,6 +6,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
@@ -148,6 +149,90 @@ export class SubstitutionSession extends TemplateGameSession<
       targetCount: this.content.equations.length,
       ageBand,
     });
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type !== "tap") {
+      return null;
+    }
+    const hitTolerance = 24;
+    const optionSlots = this.slots.filter((s) => s.role === "source");
+    for (let i = 0; i < this.content.options.length; i++) {
+      const opt = this.content.options[i];
+      const slot = optionSlots[i];
+      if (!(opt && slot)) {
+        continue;
+      }
+      const hw = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+      const hh = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+      if (
+        Math.abs(gesture.x - slot.x) <= hw &&
+        Math.abs(gesture.y - slot.y) <= hh
+      ) {
+        return { type: "select_value", data: opt.value };
+      }
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (action.type === "select_value" && typeof action.data === "number") {
+      this.selectValue(action.data);
+    }
+  }
+
+  private toOptionState(
+    opt: GT010Content["options"][number]
+  ): ViewEntity["state"] {
+    if (this.selectedValue === opt.value) {
+      return opt.is_correct ? "correct" : "incorrect";
+    }
+    return "idle";
+  }
+
+  override getView(): EngineView {
+    const eqSlots = this.slots.filter((s) => s.role === "target");
+    const optionSlots = this.slots.filter((s) => s.role === "source");
+    const entities: ViewEntity[] = [];
+
+    this.content.equations.forEach((eq, i) => {
+      const slot = eqSlots[i];
+      if (!slot) {
+        return;
+      }
+      entities.push({
+        id: eq.equation_id,
+        slotIndex: this.slots.indexOf(slot),
+        role: "target",
+        state: "idle",
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    });
+
+    this.content.options.forEach((opt, i) => {
+      const slot = optionSlots[i];
+      if (!slot) {
+        return;
+      }
+      entities.push({
+        id: `opt-${i}`,
+        slotIndex: this.slots.indexOf(slot),
+        role: "source",
+        state: this.toOptionState(opt),
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    });
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {

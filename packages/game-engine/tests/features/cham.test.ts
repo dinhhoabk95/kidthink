@@ -15,6 +15,8 @@ import { GT002_FIXTURES } from "#src/templates/GT-002/fixtures";
 import { GT002Session } from "#src/templates/GT-002/session";
 import { GT009_FIXTURES } from "#src/templates/GT-009/fixtures";
 import { GT009Session } from "#src/templates/GT-009/session";
+import { GT010_FIXTURES } from "#src/templates/GT-010/fixtures";
+import { GT010Session } from "#src/templates/GT-010/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -29,7 +31,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
     throw new Error("GT001_FIXTURES[0] must exist");
   }
 
-  describe("Scenario Outline: Chạm nền thì không method nào chạy (Examples: GT-001, GT-002)", () => {
+  describe("Scenario Outline: Chạm nền thì không method nào chạy (Examples: GT-001, GT-002, GT-009, GT-010)", () => {
     it("GT-001: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
       const session = new GT001Session(fixture.content, fixture.difficulty);
       session.prepareRound("3-4");
@@ -180,6 +182,56 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       });
 
       expect(result?.valid).toBe(true);
+      expect(session.checkWinCondition()).toBe(true);
+    });
+
+    it("GT-010: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f10 = GT010_FIXTURES[0];
+      if (!f10) {
+        throw new Error("GT010_FIXTURES[0] must exist");
+      }
+      const session = new GT010Session(f10.content, f10.difficulty);
+      session.prepareRound("4-5");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.getSelectedValue()).toBeNull();
+    });
+
+    it("GT-010: chạm vào option đúng commit select_value và win session", () => {
+      const f10 = GT010_FIXTURES[0];
+      if (!f10) {
+        throw new Error("GT010_FIXTURES[0] must exist");
+      }
+      const session = new GT010Session(f10.content, f10.difficulty);
+      session.prepareRound("4-5");
+
+      const optionSlots = session.slots.filter((s) => s.role === "source");
+      const correctSlot = optionSlots[1]; // option value 3 (is_correct: true)
+      if (!correctSlot) {
+        throw new Error("correctSlot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: correctSlot.x,
+        y: correctSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.getSelectedValue()).toBe(3);
       expect(session.checkWinCondition()).toBe(true);
     });
   });

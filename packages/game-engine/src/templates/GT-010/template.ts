@@ -109,6 +109,11 @@ export default defineTemplate({
   code: "GT-010",
   name: "Thay thế biểu tượng",
   mechanic: "substitution",
+  input: {
+    family: "tap",
+    verbs: ["tap"],
+    tolerance_px: 24,
+  },
   layouts: ["equation-rows", "grid"],
   content_contract: GT010ContentSchema,
   difficulty_contract: GT010DifficultySchema,
