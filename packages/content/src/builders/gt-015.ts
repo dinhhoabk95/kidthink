@@ -41,8 +41,7 @@ export const projectGT015: Projection<"GT-015"> = {
 
     return {
       content_pack: {
-        prompt:
-          "Mỗi hàng và mỗi cột đều có đủ các hình, bé hãy tìm hình còn thiếu nhé!",
+        prompt: "Bé tìm hình còn thiếu vào ô trống nhé!",
         grid_size: 2 as const,
         symbols,
         cells,
@@ -50,7 +49,7 @@ export const projectGT015: Projection<"GT-015"> = {
       },
       difficulty_params: {
         grid_size: 2,
-        missing_count: 1,
+        blank_count: 1,
         hint_after_ms: 10_000,
         allow_retry: true,
       },

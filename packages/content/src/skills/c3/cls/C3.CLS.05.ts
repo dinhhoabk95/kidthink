@@ -140,18 +140,22 @@ export const C3_CLS_05_SEED: SkillSeed = {
   dataset: C3_CLS_05_DATASET,
   levels: [
     {
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 3,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 3,
+      code: "GL-C3-COL-BSK-0001",
+      template: "GT-003",
+      band: "3-4",
+      difficulty: 1,
       theme: "school",
       rounds: 3,
+      legacy_v1_ref: "D4-01",
+    },
+    {
+      code: "GL-C3-COL-BSK-0002",
+      template: "GT-003",
+      band: "3-4",
+      difficulty: 2,
+      theme: "farm",
+      rounds: 3,
+      legacy_v1_ref: "D4-01",
     },
   ],
 };

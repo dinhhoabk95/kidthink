@@ -138,18 +138,13 @@ export const C2_PER_01_SEED: SkillSeed = {
   dataset: C2_PER_01_DATASET,
   levels: [
     {
-      template: "GT-001",
-      band: "4-5",
-      difficulty: 2,
-      theme: "farm",
+      code: "GL-C2-PER-MATCH-0103",
+      template: "GT-005",
+      band: "5-6",
+      difficulty: 3,
+      theme: "nature",
       rounds: 3,
-    },
-    {
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
+      montessori_ref: "WB19-D2",
     },
   ],
 };

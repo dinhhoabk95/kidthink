@@ -24,7 +24,11 @@ export interface TaxonomyRefViolation {
 /** Bắt cả mã sai khuôn (`C2.3D.01`) lẫn mã đúng khuôn nhưng không tồn tại. */
 const SKILL_REF_REGEX = /\bC[1-6]\.[A-Z0-9]{1,5}\.\d{2}\b/g;
 
-const SCAN_DIRS = ["docs", "packages/db/src/seed-content"] as const;
+const SCAN_DIRS = [
+  "docs",
+  "packages/content/src",
+  "packages/content-build/src",
+] as const;
 const SCAN_EXTENSIONS = new Set([".md", ".ts", ".json"]);
 const SKIP_DIR_REGEX = /^(node_modules|\.nuxt|\.output|dist|generated)$/;
 

@@ -141,11 +141,14 @@ export interface Projection<
 }
 
 export interface SkillLevelPlan {
+  readonly code?: string;
   readonly template: string;
   readonly band: AgeBandString;
   readonly difficulty: number;
   readonly theme: string;
   readonly rounds?: number;
+  readonly montessori_ref?: string;
+  readonly legacy_v1_ref?: string;
 }
 
 export interface SkillSeed {

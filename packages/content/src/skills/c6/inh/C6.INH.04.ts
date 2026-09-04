@@ -138,18 +138,22 @@ export const C6_INH_04_SEED: SkillSeed = {
   dataset: C6_INH_04_DATASET,
   levels: [
     {
-      template: "GT-018",
+      code: "GL-C3-SHP-BSK-0009",
+      template: "GT-003",
       band: "5-6",
-      difficulty: 4,
-      theme: "farm",
+      difficulty: 3,
+      theme: "space",
       rounds: 3,
+      legacy_v1_ref: "D4-02",
     },
     {
-      template: "GT-022",
+      code: "GL-C3-SHP-BSK-0010",
+      template: "GT-003",
       band: "5-6",
-      difficulty: 4,
-      theme: "school",
+      difficulty: 1,
+      theme: "festival",
       rounds: 3,
+      legacy_v1_ref: "D4-02",
     },
   ],
 };

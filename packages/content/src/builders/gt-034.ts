@@ -41,12 +41,12 @@ export const projectGT034: Projection<"GT-034"> = {
       },
     ];
 
-    // Pattern: A, B, A, null (motif AB repeats)
-    const target_pattern = [itemA.id, itemB.id, itemA.id, null];
+    // Pattern: A, B, A, B (motif AB repeats)
+    const target_pattern = [itemA.id, itemB.id, itemA.id, itemB.id];
 
     return {
       content_pack: {
-        prompt: "Bé hãy lắng nghe và hoàn thành chuỗi âm thanh lặp lại nhé!",
+        prompt: "Bé hãy hoàn thành chuỗi âm thanh lặp lại nhé!",
         instruments,
         target_pattern,
         tempo_bpm: 80,

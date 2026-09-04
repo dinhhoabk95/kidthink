@@ -138,16 +138,18 @@ export const C2_DIR_05_SEED: SkillSeed = {
   dataset: C2_DIR_05_DATASET,
   levels: [
     {
-      template: "GT-001",
+      code: "GL-C2-DIR-NAV-0010",
+      template: "GT-022",
       band: "4-5",
       difficulty: 2,
       theme: "farm",
       rounds: 3,
     },
     {
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
+      code: "GL-C2-DIR-NAV-0016",
+      template: "GT-022",
+      band: "5-6",
+      difficulty: 3,
       theme: "school",
       rounds: 3,
     },

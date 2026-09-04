@@ -138,18 +138,22 @@ export const C2_ROT_02_SEED: SkillSeed = {
   dataset: C2_ROT_02_DATASET,
   levels: [
     {
-      template: "GT-011",
+      code: "GL-C2-PRJ-TAP-0009",
+      template: "GT-001",
       band: "5-6",
-      difficulty: 4,
-      theme: "farm",
+      difficulty: 3,
+      theme: "home",
       rounds: 3,
+      legacy_v1_ref: "D2-06",
     },
     {
-      template: "GT-013",
+      code: "GL-C2-PRJ-TAP-0010",
+      template: "GT-001",
       band: "5-6",
-      difficulty: 4,
-      theme: "school",
+      difficulty: 1,
+      theme: "festival",
       rounds: 3,
+      legacy_v1_ref: "D2-06",
     },
   ],
 };

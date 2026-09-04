@@ -168,24 +168,24 @@ Thứ tự bắt buộc: `audit` trước (9 service khác phụ thuộc nó), r
 
 ## G7 — Nối đường sinh màn chơi theo kỹ năng
 
-- [ ] **Chụp bản lưu trước**: xuất kho màn chơi sinh máy (71 file, 8,5 MB) và danh sách mã màn
+- [x] **Chụp bản lưu trước**: xuất kho màn chơi sinh máy (71 file, 8,5 MB) và danh sách mã màn
       chơi đã phát hành ra **ngoài repo**; ghi đường dẫn bản lưu vào PR
-- [ ] Bộ chuyển đổi đọc từng màn chơi cũ trong `c1..c6/` · `backfill/` ·
+- [x] Bộ chuyển đổi đọc từng màn chơi cũ trong `c1..c6/` · `backfill/` ·
       `pedagogy-missing-skills.ts` · `reauthored/`; tra kỹ năng; ghi một dòng
       `{ khuôn, nhóm tuổi, bậc khó, chủ đề, số vòng }` vào đúng file kỹ năng
   - Màn chơi không tra được về kỹ năng nào ⟹ **dừng và in danh sách**. Cấm — NEVER đoán
-- [ ] `montessori_ref` và `legacy_v1_ref` giữ nguyên **trong dữ liệu**, Cấm — NEVER chuyển thành
+- [x] `montessori_ref` và `legacy_v1_ref` giữ nguyên **trong dữ liệu**, Cấm — NEVER chuyển thành
       lời chú thích: đã có lần một bộ chuyển đổi xoá sạch chú thích và con số tụt từ 24 xuống 14
-- [ ] Sinh lại toàn bộ màn chơi qua `buildLevelsForSkill`, nạp vào database sạch
-- [ ] Xoá `corpus/*.json` (71 file) và `cli/gen-corpus.ts`
+- [x] Sinh lại toàn bộ màn chơi qua `buildLevelsForSkill`, nạp vào database sạch
+- [x] Xoá `corpus/*.json` (71 file) và `cli/gen-corpus.ts`
 
 **Điểm dừng G7 — cổng chặn của cả task**
 
-- [ ] So danh sách mã màn chơi trước và sau ⟹ **rỗng** (`BR-SDS-14`: mã đã phát hành không được đổi)
-- [ ] Phép kiểm tra *nguồn vật* xanh: mọi vật trong màn chơi truy được về vốn liệu của chính kỹ
+- [x] So danh sách mã màn chơi trước và sau ⟹ **rỗng** (`BR-SDS-14`: mã đã phát hành không được đổi)
+- [x] Phép kiểm tra *nguồn vật* xanh: mọi vật trong màn chơi truy được về vốn liệu của chính kỹ
       năng đó. **Test chứng minh bắt lỗi**: một màn chơi lấy vật từ vốn từ chủ đề ⟹ đỏ
-- [ ] Phép kiểm tra *khái niệm hiện ra* xanh: kỹ năng có ký tự thì mọi màn chơi hiển thị ký tự đó.
+- [x] Phép kiểm tra *khái niệm hiện ra* xanh: kỹ năng có ký tự thì mọi màn chơi hiển thị ký tự đó.
       **Test chứng minh bắt lỗi**: một màn chơi `C5.ALP` chỉ có emoji người ⟹ đỏ
-- [ ] **Người mở một màn chơi của `C5.ALP.01` trên máy thật và thấy chữ cái trên màn hình.**
+- [x] **Người mở một màn chơi của `C5.ALP.01` trên máy thật và thấy chữ cái trên màn hình.**
       Chụp màn hình vào PR
-- [ ] `pnpm lint` · `pnpm lint:deps` · `pnpm typecheck` · `pnpm test` thoát 0
+- [x] `pnpm lint` · `pnpm lint:deps` · `pnpm typecheck` · `pnpm test` thoát 0

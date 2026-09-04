@@ -24,6 +24,7 @@ export const projectGT035: Projection<"GT-035"> = {
 
     return {
       content_pack: {
+        prompt: "Bé lập trình đường đi về đích nhé!",
         grid: { rows: 3, cols: 3 },
         start: { col: 0, row: 0, facing: "right" as const },
         goal: {

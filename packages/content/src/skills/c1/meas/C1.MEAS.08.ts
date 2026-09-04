@@ -140,32 +140,13 @@ export const C1_MEAS_08_SEED: SkillSeed = {
   dataset: C1_MEAS_08_DATASET,
   levels: [
     {
+      code: "GL-C1-HGT-TAP-0005",
       template: "GT-001",
-      band: "5-6",
-      difficulty: 3,
-      theme: "farm",
+      band: "4-5",
+      difficulty: 2,
+      theme: "nature",
       rounds: 3,
-    },
-    {
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      template: "GT-003",
-      band: "5-6",
-      difficulty: 3,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      template: "GT-004",
-      band: "5-6",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
+      legacy_v1_ref: "D5-02",
     },
   ],
 };

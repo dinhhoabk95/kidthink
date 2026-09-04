@@ -14,11 +14,16 @@ import { projectGT006 } from "./gt-006.js";
 import { projectGT007 } from "./gt-007.js";
 import { projectGT008 } from "./gt-008.js";
 import { projectGT009 } from "./gt-009.js";
+import { projectGT010 } from "./gt-010.js";
 import { projectGT011 } from "./gt-011.js";
 import { projectGT012 } from "./gt-012.js";
+import { projectGT013 } from "./gt-013.js";
 import { projectGT014 } from "./gt-014.js";
 import { projectGT015 } from "./gt-015.js";
+import { projectGT016 } from "./gt-016.js";
+import { projectGT017 } from "./gt-017.js";
 import { projectGT018 } from "./gt-018.js";
+import { projectGT019 } from "./gt-019.js";
 import { projectGT020 } from "./gt-020.js";
 import { projectGT021 } from "./gt-021.js";
 import { projectGT022 } from "./gt-022.js";
@@ -31,6 +36,7 @@ import { projectGT028 } from "./gt-028.js";
 import { projectGT029 } from "./gt-029.js";
 import { projectGT030 } from "./gt-030.js";
 import { projectGT031 } from "./gt-031.js";
+import { projectGT032 } from "./gt-032.js";
 import { projectGT033 } from "./gt-033.js";
 import { projectGT034 } from "./gt-034.js";
 import { projectGT035 } from "./gt-035.js";
@@ -47,11 +53,16 @@ export const ALL_BUILDERS: Record<string, Projection> = {
   "GT-007": projectGT007,
   "GT-008": projectGT008,
   "GT-009": projectGT009,
+  "GT-010": projectGT010,
   "GT-011": projectGT011,
   "GT-012": projectGT012,
+  "GT-013": projectGT013,
   "GT-014": projectGT014,
   "GT-015": projectGT015,
+  "GT-016": projectGT016,
+  "GT-017": projectGT017,
   "GT-018": projectGT018,
+  "GT-019": projectGT019,
   "GT-020": projectGT020,
   "GT-021": projectGT021,
   "GT-022": projectGT022,
@@ -64,6 +75,7 @@ export const ALL_BUILDERS: Record<string, Projection> = {
   "GT-029": projectGT029,
   "GT-030": projectGT030,
   "GT-031": projectGT031,
+  "GT-032": projectGT032,
   "GT-033": projectGT033,
   "GT-034": projectGT034,
   "GT-035": projectGT035,

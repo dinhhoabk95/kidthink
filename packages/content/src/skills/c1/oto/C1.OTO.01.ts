@@ -138,32 +138,13 @@ export const C1_OTO_01_SEED: SkillSeed = {
   dataset: C1_OTO_01_DATASET,
   levels: [
     {
-      template: "GT-001",
+      code: "GL-C1-OTO-CARD-0103",
+      template: "GT-012",
       band: "3-4",
       difficulty: 1,
-      theme: "farm",
+      theme: "nature",
       rounds: 3,
-    },
-    {
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      template: "GT-005",
-      band: "3-4",
-      difficulty: 1,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      template: "GT-008",
-      band: "3-4",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
+      montessori_ref: "WB01-D2",
     },
   ],
 };

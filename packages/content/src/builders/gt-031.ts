@@ -43,9 +43,9 @@ export const projectGT031: Projection<"GT-031"> = {
         },
       },
       difficulty_params: {
-        coin_count: 4,
-        max_coin_value: 2,
-        exact_match_only: true,
+        target_amount: targetAmount,
+        coin_kind_count: 2,
+        exact_change: true,
         hint_after_ms: 8000,
         allow_retry: true,
       },

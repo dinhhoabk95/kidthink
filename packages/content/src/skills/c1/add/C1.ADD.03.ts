@@ -207,14 +207,14 @@ export const C1_ADD_03_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      template: "GT-013",
+      template: "GT-001",
       band: "5-6",
       difficulty: 3,
       theme: "farm",
       rounds: 3,
     },
     {
-      template: "GT-016",
+      template: "GT-004",
       band: "5-6",
       difficulty: 3,
       theme: "school",

@@ -141,5 +141,24 @@ export const C1_NCOMP_02_DATASET: SkillDataset = {
 export const C1_NCOMP_02_SEED: SkillSeed = {
   identity: C1_NCOMP_02_IDENTITY,
   dataset: C1_NCOMP_02_DATASET,
-  levels: [],
+  levels: [
+    {
+      code: "GL-C1-ORD-SLOT-0009",
+      template: "GT-008",
+      band: "5-6",
+      difficulty: 3,
+      theme: "home",
+      rounds: 3,
+      legacy_v1_ref: "D1-05",
+    },
+    {
+      code: "GL-C1-ORD-SLOT-0010",
+      template: "GT-008",
+      band: "5-6",
+      difficulty: 1,
+      theme: "festival",
+      rounds: 3,
+      legacy_v1_ref: "D1-05",
+    },
+  ],
 };

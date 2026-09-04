@@ -41,7 +41,6 @@
     "seed:content": "tsx src/cli/seed-content.ts",
     "seed:report": "tsx src/cli/seed-report.ts",
     "gen:levels": "tsx src/cli/gen-levels.ts",
-    "gen:corpus": "tsx src/cli/gen-corpus.ts",
     "reset-content": "tsx scripts/reset-content.ts",
     "report:tags": "tsx scripts/report-tag-vocabulary.ts"
   },

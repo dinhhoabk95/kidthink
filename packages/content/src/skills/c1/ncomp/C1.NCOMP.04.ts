@@ -313,5 +313,24 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
 export const C1_NCOMP_04_SEED: SkillSeed = {
   identity: C1_NCOMP_04_IDENTITY,
   dataset: C1_NCOMP_04_DATASET,
-  levels: [],
+  levels: [
+    {
+      code: "GL-C1-NCOMP-BOND-0125",
+      template: "GT-007",
+      band: "3-4",
+      difficulty: 2,
+      theme: "home",
+      rounds: 3,
+      montessori_ref: "WB07-D1",
+    },
+    {
+      code: "GL-C1-NCOMP-BOND-0126",
+      template: "GT-007",
+      band: "3-4",
+      difficulty: 3,
+      theme: "home",
+      rounds: 3,
+      montessori_ref: "WB07-D1",
+    },
+  ],
 };

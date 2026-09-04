@@ -138,18 +138,13 @@ export const C5_LIS_01_SEED: SkillSeed = {
   dataset: C5_LIS_01_DATASET,
   levels: [
     {
-      template: "GT-001",
-      band: "3-4",
-      difficulty: 2,
-      theme: "farm",
+      code: "GL-C5-LIS-AUDIO-0022",
+      template: "GT-018",
+      band: "4-5",
+      difficulty: 1,
+      theme: "animal",
       rounds: 3,
-    },
-    {
-      template: "GT-003",
-      band: "3-4",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
+      legacy_v1_ref: "D6-09",
     },
   ],
 };

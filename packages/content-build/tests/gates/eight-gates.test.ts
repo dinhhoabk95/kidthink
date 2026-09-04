@@ -236,6 +236,37 @@ describe("Tám cổng thẩm định nội dung seed (BR-CSA-02, Task #117)", ()
         true
       );
     });
+
+    it("fails when a level takes an item from a theme vocabulary instead of its skill dataset", async () => {
+      const { checkGateItemOrigin } = await import(
+        "#src/gates/gate-08-item-origin"
+      );
+      const dataset: SkillDataset = {
+        skill_code: "C5.ALP.01",
+        concept_label: "Chữ cái A-D",
+        surface: "game",
+        items: [
+          { id: "let_a", label: "chữ a", glyph: "a" },
+          { id: "let_b", label: "chữ b", glyph: "b" },
+        ],
+        ladder: [],
+        phrasing: { prompt_template: "Bé chọn chữ {label}" },
+      };
+      const seedWithThemeItem: ContentSeed = {
+        ...VALID_GAME_LEVEL_SEED,
+        content_pack: {
+          prompt: "Bé chọn nhé",
+          options: [
+            { item_id: "apple_theme", asset: { kind: "emoji", ref: "🍎" } },
+          ],
+        },
+      };
+      const result = checkGateItemOrigin(seedWithThemeItem, dataset);
+      expect(result.passed).toBe(false);
+      expect(result.issues.some((i) => i.code === "ITEM_ORIGIN_INVALID")).toBe(
+        true
+      );
+    });
   });
 
   describe("Gate 9: Khái niệm hiện ra (BR-SDS-03, Task #207)", () => {
@@ -259,6 +290,38 @@ describe("Tám cổng thẩm định nội dung seed (BR-CSA-02, Task #117)", ()
         },
       };
       const result = checkGateConceptPresent(seedWithoutGlyph, dataset);
+      expect(result.passed).toBe(false);
+      expect(
+        result.issues.some((i) => i.code === "CONCEPT_GLYPH_MISSING")
+      ).toBe(true);
+    });
+
+    it("fails when C5.ALP level only displays person emojis instead of letter glyphs", async () => {
+      const { checkGateConceptPresent } = await import(
+        "#src/gates/gate-09-concept-present"
+      );
+      const dataset: SkillDataset = {
+        skill_code: "C5.ALP.01",
+        concept_label: "Chữ cái A-D",
+        surface: "game",
+        items: [
+          { id: "let_a", label: "chữ a", glyph: "a" },
+          { id: "let_b", label: "chữ b", glyph: "b" },
+        ],
+        ladder: [],
+        phrasing: { prompt_template: "Bé chọn chữ {label}" },
+      };
+      const seedWithPersonEmojiOnly: ContentSeed = {
+        ...VALID_GAME_LEVEL_SEED,
+        content_pack: {
+          prompt: "Bé tìm bạn nhỏ nhé",
+          options: [
+            { item_id: "let_a", asset: { kind: "emoji", ref: "👶" } },
+            { item_id: "let_b", asset: { kind: "emoji", ref: "👧" } },
+          ],
+        },
+      };
+      const result = checkGateConceptPresent(seedWithPersonEmojiOnly, dataset);
       expect(result.passed).toBe(false);
       expect(
         result.issues.some((i) => i.code === "CONCEPT_GLYPH_MISSING")

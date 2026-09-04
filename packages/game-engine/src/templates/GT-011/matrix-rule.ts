@@ -12,6 +12,7 @@ export interface MatrixAsset {
   readonly kind: string;
   readonly ref?: string;
   readonly path?: string;
+  readonly text?: string;
 }
 
 export interface MatrixCell {
@@ -37,9 +38,9 @@ export interface MatrixContentShape {
   readonly options: readonly MatrixOption[];
 }
 
-/** Khoá so sánh của một ký hiệu — `ref` cho emoji, `path` cho ảnh. */
+/** Khoá so sánh của một ký hiệu — `ref` cho emoji, `path` cho ảnh, `text` cho chữ/glyph. */
 export function assetKey(asset: MatrixAsset): string {
-  return `${asset.kind}:${asset.ref ?? asset.path ?? ""}`;
+  return `${asset.kind}:${asset.ref ?? asset.path ?? asset.text ?? ""}`;
 }
 
 export function findBlankCell(matrix: MatrixShape): MatrixCell | undefined {

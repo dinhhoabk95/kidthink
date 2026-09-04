@@ -78,7 +78,7 @@ export const projectGT027: Projection<"GT-027"> = {
 
     return {
       content_pack: {
-        prompt: "Bé hãy chú ý tín hiệu để phân loại theo quy luật nhé!",
+        prompt: "Bé phân loại theo tín hiệu quy luật nhé!",
         rules,
         items: shuffleDeterministic(items, rng),
         switch_after_trials: 2,

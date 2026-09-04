@@ -27,7 +27,8 @@ import { checkGateItemOrigin } from "./gate-08-item-origin.js";
 import { checkGateConceptPresent } from "./gate-09-concept-present.js";
 import { checkGateMontessori } from "./montessori-gate.js";
 
-const CODE_REGEX = /^GL-(?:\d{4}|C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\d{4})$/;
+const CODE_REGEX =
+  /^(?:GL-(?:\d{4}|C[1-6]-[A-Z]{2,5}-[A-Z]{2,5}-\d{4})|C[1-6]\.[A-Z]{2,5}\.\d{2}-GT-\d{3}-\d)$/;
 const ACTIVITY_CODE_REGEX = /^ACT-(?:\d{4}|C[1-6]-[A-Z]{2,5}-\d{4})$/;
 const LESSON_CODE_REGEX = /^LES-(?:\d{4}|C[1-6]-[A-Z]{2,5}-\d{4})$/;
 

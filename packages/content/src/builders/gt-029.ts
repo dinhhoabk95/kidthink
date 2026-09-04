@@ -68,7 +68,7 @@ export const projectGT029: Projection<"GT-029"> = {
         answer_options: shuffleDeterministic(answer_options, rng),
       },
       difficulty_params: {
-        item_count: initialCount,
+        initial_count: initialCount,
         remove_count: removeCount,
         show_crossed_items: true,
         hint_after_ms: 8000,

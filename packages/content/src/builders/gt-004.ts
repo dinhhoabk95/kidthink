@@ -74,6 +74,7 @@ export const projectGT004: Projection<"GT-004"> = {
         distractor_count: 0,
         hint_after_ms: 10_000,
         allow_retry: true,
+        shuffle_items: true,
       },
     };
   },

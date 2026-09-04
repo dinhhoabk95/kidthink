@@ -31,7 +31,7 @@ export const projectGT024: Projection<"GT-024"> = {
 
     return {
       content_pack: {
-        prompt: `Bé hãy vẽ theo các điểm nối để tạo thành hình ${baseItem.label} nhé!`,
+        prompt: `Bé hãy vẽ nối điểm tạo hình ${baseItem.label} nhé!`,
         shape_name: baseItem.label,
         guide_asset: resolveItemAsset(baseItem, true),
         waypoints,

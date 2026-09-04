@@ -47,7 +47,7 @@ export const projectGT009: Projection<"GT-009"> = {
 
     return {
       content_pack: {
-        prompt: "Bé hãy dựa vào các manh mối để tìm ra số bí mật nhé!",
+        prompt: "Bé hãy tìm ra số bí mật nhé!",
         candidates,
         clues,
         answer_candidate_id: answerCandidateId,

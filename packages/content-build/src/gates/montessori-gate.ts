@@ -32,6 +32,7 @@ const COMMERCIAL_TEST_KEYWORDS = [
 ];
 
 const MONTESSORI_BATCH_REGEX = /^SEED-MONT-(?:[ABLM])(\d{2})$/;
+const REGEX_MONTESSORI_CODE = /-01\d{2}$/;
 
 function isContentSeed(seed: AnyContentSeed): seed is ContentSeed {
   return seed.kind !== "activity" && seed.kind !== "lesson";
@@ -47,11 +48,11 @@ export function checkMontessoriItemRules(
   const issues: GateIssue[] = [];
   const header = seed.header;
   const isMontessoriBatch =
-    batchCode?.startsWith("SEED-MONT-") ||
-    header.code.includes("-01") ||
-    header.code.includes("-02") ||
-    header.what_tags?.includes("montessori") ||
-    header.thinking_tags?.includes("montessori");
+    Boolean(batchCode?.startsWith("SEED-MONT-")) ||
+    Boolean("montessori_ref" in header && header.montessori_ref) ||
+    Boolean(header.what_tags?.includes("montessori")) ||
+    Boolean(header.thinking_tags?.includes("montessori")) ||
+    REGEX_MONTESSORI_CODE.test(header.code);
 
   if (!isMontessoriBatch) {
     return issues;

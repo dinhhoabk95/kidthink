@@ -142,16 +142,18 @@ export const C6_PLN_03_SEED: SkillSeed = {
   dataset: C6_PLN_03_DATASET,
   levels: [
     {
-      template: "GT-006",
+      code: "GL-C6-PLN-FIN-0001",
+      template: "GT-024",
       band: "5-6",
-      difficulty: 5,
-      theme: "farm",
+      difficulty: 3,
+      theme: "food",
       rounds: 3,
     },
     {
-      template: "GT-007",
+      code: "GL-C6-PLN-FIN-0002",
+      template: "GT-020",
       band: "5-6",
-      difficulty: 5,
+      difficulty: 3,
       theme: "school",
       rounds: 3,
     },

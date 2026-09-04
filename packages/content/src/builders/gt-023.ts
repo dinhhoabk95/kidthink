@@ -61,7 +61,7 @@ export const projectGT023: Projection<"GT-023"> = {
 
     return {
       content_pack: {
-        prompt: `Bé hãy ghép các mảnh để tạo thành hình ${baseItem.label} nhé!`,
+        prompt: `Bé hãy ghép các mảnh thành ${baseItem.label} nhé!`,
         target_model: {
           name: baseItem.label,
           asset: resolveItemAsset(baseItem, true),

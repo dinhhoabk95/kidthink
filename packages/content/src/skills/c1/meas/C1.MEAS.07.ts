@@ -138,28 +138,16 @@ export const C1_MEAS_07_SEED: SkillSeed = {
   dataset: C1_MEAS_07_DATASET,
   levels: [
     {
+      code: "GL-C1-MEAS-SCALE-0001",
+      template: "GT-006",
+      band: "5-6",
+      difficulty: 3,
+      theme: "nature",
+      rounds: 3,
+    },
+    {
+      code: "GL-C1-MEAS-SCALE-0002",
       template: "GT-001",
-      band: "5-6",
-      difficulty: 3,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      template: "GT-002",
-      band: "5-6",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      template: "GT-004",
-      band: "5-6",
-      difficulty: 3,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      template: "GT-005",
       band: "5-6",
       difficulty: 3,
       theme: "school",

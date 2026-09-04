@@ -138,18 +138,22 @@ export const C4_DET_04_SEED: SkillSeed = {
   dataset: C4_DET_04_DATASET,
   levels: [
     {
-      template: "GT-001",
+      code: "GL-C4-PIC-SLOT-0005",
+      template: "GT-008",
       band: "4-5",
-      difficulty: 3,
-      theme: "farm",
+      difficulty: 2,
+      theme: "nature",
       rounds: 3,
+      legacy_v1_ref: "D6-04",
     },
     {
-      template: "GT-002",
+      code: "GL-C4-PIC-SLOT-0006",
+      template: "GT-008",
       band: "4-5",
       difficulty: 3,
-      theme: "school",
+      theme: "ocean",
       rounds: 3,
+      legacy_v1_ref: "D6-04",
     },
   ],
 };

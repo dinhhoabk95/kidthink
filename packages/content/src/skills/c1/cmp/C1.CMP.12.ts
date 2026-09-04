@@ -138,32 +138,13 @@ export const C1_CMP_12_SEED: SkillSeed = {
   dataset: C1_CMP_12_DATASET,
   levels: [
     {
+      code: "GL-C1-VOL-TAP-0003",
       template: "GT-001",
-      band: "4-5",
-      difficulty: 2,
-      theme: "farm",
+      band: "3-4",
+      difficulty: 3,
+      theme: "food",
       rounds: 3,
-    },
-    {
-      template: "GT-002",
-      band: "4-5",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
-    },
-    {
-      template: "GT-004",
-      band: "4-5",
-      difficulty: 2,
-      theme: "farm",
-      rounds: 3,
-    },
-    {
-      template: "GT-005",
-      band: "4-5",
-      difficulty: 2,
-      theme: "school",
-      rounds: 3,
+      legacy_v1_ref: "D5-01",
     },
   ],
 };

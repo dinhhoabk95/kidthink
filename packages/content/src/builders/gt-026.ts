@@ -13,7 +13,7 @@ import {
 
 export const projectGT026: Projection<"GT-026"> = {
   template: "GT-026",
-  requires: { min_items: 2, max_items: 12, needs: ["glyph"] },
+  requires: { min_items: 2, max_items: 12 },
   project(dataset: SkillDataset, opts: ProjectOptions): ProjectedPack {
     if (dataset.items.length < 2) {
       throw new Error(
@@ -35,7 +35,7 @@ export const projectGT026: Projection<"GT-026"> = {
 
     return {
       content_pack: {
-        prompt: `Bé chỉ chạm khi thấy ${goItem.label}, không chạm khi thấy ${nogoItem.label} nhé!`,
+        prompt: `Bé chạm ${goItem.label}, bỏ qua ${nogoItem.label} nhé!`,
         go_stimulus: {
           label: goItem.label,
           asset: resolveItemAsset(goItem, true),

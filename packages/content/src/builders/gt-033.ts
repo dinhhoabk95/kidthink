@@ -44,7 +44,7 @@ export const projectGT033: Projection<"GT-033"> = {
 
     return {
       content_pack: {
-        prompt: "Bé hãy điền màu thích hợp vào ô trống theo quy luật nhé!",
+        prompt: "Bé điền màu thích hợp vào ô trống nhé!",
         grid: { rows: 2, cols: 2 },
         palette,
         cells,

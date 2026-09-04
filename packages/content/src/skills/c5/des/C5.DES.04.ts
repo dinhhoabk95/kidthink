@@ -137,5 +137,22 @@ export const C5_DES_04_DATASET: SkillDataset = {
 export const C5_DES_04_SEED: SkillSeed = {
   identity: C5_DES_04_IDENTITY,
   dataset: C5_DES_04_DATASET,
-  levels: [],
+  levels: [
+    {
+      code: "GL-C5-DES-RSN-0001",
+      template: "GT-001",
+      band: "5-6",
+      difficulty: 3,
+      theme: "job",
+      rounds: 3,
+    },
+    {
+      code: "GL-C5-DES-RSN-0002",
+      template: "GT-003",
+      band: "5-6",
+      difficulty: 3,
+      theme: "homeland",
+      rounds: 3,
+    },
+  ],
 };
