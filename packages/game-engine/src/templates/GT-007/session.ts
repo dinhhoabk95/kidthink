@@ -6,6 +6,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
@@ -37,12 +38,18 @@ export class GT007Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+  private stagedOptionId: string | null = null;
 
   filledParts: Map<string, number> = new Map();
 
   setupEntities(): void {
     this.filledParts.clear();
+    this.stagedOptionId = null;
     this.isWon = false;
+  }
+
+  getStagedOptionId(): string | null {
+    return this.stagedOptionId;
   }
 
   validateAction(action: GameAction): ActionResult {
@@ -114,6 +121,253 @@ export class GT007Session extends TemplateGameSession<
       targetCount: this.content.parts.length,
       ageBand,
     });
+  }
+
+  private findDraggedOption(
+    gesture: Extract<Gesture, { type: "drop" }>,
+    sources: readonly Slot[],
+    hitTolerance: number
+  ): GT007Content["options"][number] | null {
+    for (let i = 0; i < this.content.options.length; i++) {
+      const slot = sources[i];
+      const opt = this.content.options[i];
+      if (!(slot && opt)) {
+        continue;
+      }
+      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+      if (
+        Math.abs(gesture.fromX - slot.x) <= halfW &&
+        Math.abs(gesture.fromY - slot.y) <= halfH
+      ) {
+        return opt;
+      }
+    }
+    return null;
+  }
+
+  private findTargetPart(
+    x: number,
+    y: number,
+    targets: readonly Slot[],
+    hitTolerance: number
+  ): GT007Content["parts"][number] | null {
+    for (let i = 0; i < this.content.parts.length; i++) {
+      const part = this.content.parts[i];
+      const slot = targets[i + 1];
+      if (!(part && slot)) {
+        continue;
+      }
+      if (!part.is_target || this.filledParts.has(part.id)) {
+        continue;
+      }
+      const halfW = Math.max(slot.hitW, slot.w, 100) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, slot.h, 100) / 2 + hitTolerance;
+      if (Math.abs(x - slot.x) <= halfW && Math.abs(y - slot.y) <= halfH) {
+        return part;
+      }
+    }
+    return null;
+  }
+
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>,
+    sources: readonly Slot[],
+    targets: readonly Slot[],
+    hitTolerance: number
+  ): GameAction | null {
+    const opt = this.findDraggedOption(gesture, sources, hitTolerance);
+    if (!opt) {
+      return null;
+    }
+    const part = this.findTargetPart(
+      gesture.toX,
+      gesture.toY,
+      targets,
+      hitTolerance
+    );
+    if (!part) {
+      return null;
+    }
+    return {
+      type: "fill_part",
+      data: {
+        option_id: opt.id,
+        part_id: part.id,
+      },
+    };
+  }
+
+  private handleTapTarget(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    targets: readonly Slot[],
+    hitTolerance: number
+  ): GameAction | null {
+    if (!this.stagedOptionId) {
+      return null;
+    }
+    const part = this.findTargetPart(
+      gesture.x,
+      gesture.y,
+      targets,
+      hitTolerance
+    );
+    if (!part) {
+      return null;
+    }
+    return {
+      type: "fill_part",
+      data: {
+        option_id: this.stagedOptionId,
+        part_id: part.id,
+      },
+    };
+  }
+
+  private handleTapSource(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    sources: readonly Slot[],
+    hitTolerance: number
+  ): void {
+    for (let i = 0; i < this.content.options.length; i++) {
+      const slot = sources[i];
+      const opt = this.content.options[i];
+      if (!(slot && opt)) {
+        continue;
+      }
+      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+      if (
+        Math.abs(gesture.x - slot.x) <= halfW &&
+        Math.abs(gesture.y - slot.y) <= halfH
+      ) {
+        if (this.stagedOptionId === opt.id) {
+          this.stagedOptionId = null;
+        } else {
+          this.stagedOptionId = opt.id;
+        }
+        return;
+      }
+    }
+  }
+
+  private toTapAction(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    sources: readonly Slot[],
+    targets: readonly Slot[],
+    hitTolerance: number
+  ): GameAction | null {
+    const targetAction = this.handleTapTarget(gesture, targets, hitTolerance);
+    if (targetAction) {
+      return targetAction;
+    }
+    this.handleTapSource(gesture, sources, hitTolerance);
+    return null;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    const hitTolerance = 24;
+    const sources = this.slots.filter((s) => s.role === "source");
+    const targets = this.slots.filter((s) => s.role === "target");
+
+    if (gesture.type === "drop") {
+      return this.toDropAction(gesture, sources, targets, hitTolerance);
+    }
+    if (gesture.type === "tap") {
+      return this.toTapAction(gesture, sources, targets, hitTolerance);
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (
+      action.type === "fill_part" &&
+      action.data &&
+      typeof action.data === "object"
+    ) {
+      const data = action.data as { option_id?: string; part_id?: string };
+      if (data.option_id) {
+        this.onPartFilled(data.option_id, data.part_id);
+        this.stagedOptionId = null;
+      }
+    }
+  }
+
+  private toOptionEntityState(
+    optId: string,
+    rawState: ItemVisualState
+  ): ViewEntity["state"] {
+    if (this.stagedOptionId === optId || rawState === "selected") {
+      return "selected";
+    }
+    if (rawState === "correct") {
+      return "correct";
+    }
+    if (rawState === "wrong") {
+      return "incorrect";
+    }
+    return "idle";
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = [];
+    const targets = this.slots.filter((s) => s.role === "target");
+    const sources = this.slots.filter((s) => s.role === "source");
+
+    const wholeSlot = targets[0];
+    if (wholeSlot) {
+      entities.push({
+        id: this.content.whole.id,
+        slotIndex: this.slots.indexOf(wholeSlot),
+        role: "target",
+        state: "idle",
+        x: wholeSlot.x,
+        y: wholeSlot.y,
+        w: wholeSlot.w,
+        h: wholeSlot.h,
+      });
+    }
+
+    this.content.parts.forEach((part, i) => {
+      const slot = targets[i + 1];
+      if (!slot) {
+        return;
+      }
+      const isFilled = this.filledParts.has(part.id);
+      entities.push({
+        id: part.id,
+        slotIndex: this.slots.indexOf(slot),
+        role: "target",
+        state: isFilled ? "correct" : "idle",
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    });
+
+    this.content.options.forEach((opt, i) => {
+      const slot = sources[i];
+      if (!slot) {
+        return;
+      }
+      const rawState = this.getRenderItemState(opt.id);
+      entities.push({
+        id: opt.id,
+        slotIndex: this.slots.indexOf(slot),
+        role: "source",
+        state: this.toOptionEntityState(opt.id, rawState),
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    });
+
+    return {
+      entities,
+      activePrompt: this.content.prompt,
+    };
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {

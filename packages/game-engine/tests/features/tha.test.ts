@@ -7,6 +7,8 @@ import { GT005_FIXTURES } from "#src/templates/GT-005/fixtures";
 import { GT005Session } from "#src/templates/GT-005/session";
 import { GT006_FIXTURES } from "#src/templates/GT-006/fixtures";
 import { GT006Session } from "#src/templates/GT-006/session";
+import { GT007_FIXTURES } from "#src/templates/GT-007/fixtures";
+import { GT007Session } from "#src/templates/GT-007/session";
 
 describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha.feature", () => {
   const f3 = GT003_FIXTURES[0];
@@ -25,8 +27,12 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
   if (!f6) {
     throw new Error("GT006_FIXTURES[2] must exist");
   }
+  const f7 = GT007_FIXTURES[0];
+  if (!f7) {
+    throw new Error("GT007_FIXTURES[0] must exist");
+  }
 
-  describe("Scenario Outline: Kéo thả trúng đích thì commit action tương ứng (Examples: GT-003, GT-004, GT-005, GT-006)", () => {
+  describe("Scenario Outline: Kéo thả trúng đích thì commit action tương ứng (Examples: GT-003, GT-004, GT-005, GT-006, GT-007)", () => {
     it("GT-003: kéo từ slot nguồn và thả vào container slot commit drop_item thành công", () => {
       const session = new GT003Session(f3.content, f3.difficulty);
       session.prepareRound("3-4");
@@ -146,9 +152,39 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
       );
       expect(session.getCurrentSequence()).toEqual(["s1", "s2", "s3"]);
     });
+
+    it("GT-007: kéo từ option nguồn và thả vào part đích commit place_number thành công", () => {
+      const session = new GT007Session(f7.content, f7.difficulty);
+      session.prepareRound("3-4");
+
+      const sourceSlots = session.slots.filter((s) => s.role === "source");
+      const targetSlots = session.slots.filter((s) => s.role === "target");
+      const sourceSlot = sourceSlots[1];
+      const targetSlot = targetSlots[2];
+      if (!(sourceSlot && targetSlot)) {
+        throw new Error("slots must exist");
+      }
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "drop",
+        fromX: sourceSlot.x,
+        fromY: sourceSlot.y,
+        toX: targetSlot.x,
+        toY: targetSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result).toBeDefined();
+      expect(result?.valid).toBe(true);
+      expect(session.getTelemetry().events.length).toBeGreaterThan(
+        eventsBefore
+      );
+      expect(session.filledParts.get("p2")).toBe(2);
+    });
   });
 
-  describe("Scenario Outline: Thả ngoài mọi đích thì không commit và vật về chỗ cũ (Examples: GT-003, GT-004, GT-005, GT-006)", () => {
+  describe("Scenario Outline: Thả ngoài mọi đích thì không commit và vật về chỗ cũ (Examples: GT-003, GT-004, GT-005, GT-006, GT-007)", () => {
     it("GT-003: kéo từ slot nguồn và thả ra ngoài toạ độ container thì không commit", () => {
       const session = new GT003Session(f3.content, f3.difficulty);
       session.prepareRound("3-4");
@@ -245,9 +281,33 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
       expect(session.getTelemetry().events.length).toBe(eventsBefore);
       expect(session.getCurrentSequence()).toEqual(["s2", "s3", "s1"]);
     });
+
+    it("GT-007: kéo từ slot nguồn và thả ra ngoài part đích thì không commit", () => {
+      const session = new GT007Session(f7.content, f7.difficulty);
+      session.prepareRound("3-4");
+
+      const sourceSlot = session.slots.find((s) => s.role === "source");
+      if (!sourceSlot) {
+        throw new Error("sourceSlot must exist");
+      }
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "drop",
+        fromX: sourceSlot.x,
+        fromY: sourceSlot.y,
+        toX: 50,
+        toY: 50,
+        timeMs: 200,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.filledParts.size).toBe(0);
+    });
   });
 
-  describe("Scenario Outline: Fallback chạm-chạm (tap-tap fallback) (Examples: GT-003, GT-004, GT-005, GT-006)", () => {
+  describe("Scenario Outline: Fallback chạm-chạm (tap-tap fallback) (Examples: GT-003, GT-004, GT-005, GT-006, GT-007)", () => {
     it("GT-003: chạm nguồn lần 1 để nhắm, chạm container lần 2 để thả", () => {
       const session = new GT003Session(f3.content, f3.difficulty);
       session.prepareRound("3-4");
@@ -382,6 +442,40 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
       expect(tap2Result?.valid).toBe(true);
       expect(session.getStagedIndex()).toBeNull();
       expect(session.getCurrentSequence()).toEqual(["s1", "s2", "s3"]);
+    });
+
+    it("GT-007: chạm option lần 1 để nhắm, chạm part đích lần 2 để điền", () => {
+      const session = new GT007Session(f7.content, f7.difficulty);
+      session.prepareRound("3-4");
+
+      const sourceSlots = session.slots.filter((s) => s.role === "source");
+      const targetSlots = session.slots.filter((s) => s.role === "target");
+      const sourceSlot = sourceSlots[1];
+      const targetSlot = targetSlots[2];
+      if (!(sourceSlot && targetSlot)) {
+        throw new Error("slots must exist");
+      }
+
+      // Tap 1: chạm option o2
+      const tap1Result = session.dispatch({
+        type: "tap",
+        x: sourceSlot.x,
+        y: sourceSlot.y,
+        timeMs: 100,
+      });
+      expect(tap1Result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getStagedOptionId()).toBe("o2");
+
+      // Tap 2: chạm part p2
+      const tap2Result = session.dispatch({
+        type: "tap",
+        x: targetSlot.x,
+        y: targetSlot.y,
+        timeMs: 300,
+      });
+      expect(tap2Result?.valid).toBe(true);
+      expect(session.getStagedOptionId()).toBeNull();
+      expect(session.filledParts.get("p2")).toBe(2);
     });
   });
 });
