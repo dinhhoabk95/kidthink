@@ -217,7 +217,6 @@
     selectValue?: (val: number) => boolean | undefined;
     selectOption?: (opt: number | string) => boolean | undefined;
     onItemLocked?: (id: string) => void;
-    toggleItemSelection?: (id: string) => void;
     flipCard?: (idx: number) => void;
     tapObject?: (id: string) => void;
     onItemDropped?: (itemId: string, containerId: string) => void;
@@ -771,21 +770,6 @@
     return true;
   }
 
-  function tryItemAction(
-    session: GameSession & InteractiveSession,
-    hitIdx: number
-  ): boolean {
-    if (typeof session.toggleItemSelection === "function") {
-      const items = session.displayItems || session.content?.items;
-      const item = items?.[hitIdx];
-      if (item?.item_id) {
-        session.toggleItemSelection(item.item_id);
-      }
-      return true;
-    }
-    return false;
-  }
-
   function tryOtherAction(
     session: GameSession & InteractiveSession,
     hitIdx: number
@@ -805,7 +789,7 @@
     session: GameSession & InteractiveSession,
     hitIdx: number
   ): void {
-    if (trySelectValue(session, hitIdx) || tryItemAction(session, hitIdx)) {
+    if (trySelectValue(session, hitIdx)) {
       return;
     }
     tryOtherAction(session, hitIdx);

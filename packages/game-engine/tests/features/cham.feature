@@ -9,6 +9,7 @@ Feature: Hành vi chạm (tap) của họ engine tap
     Examples:
       | template_code |
       | GT-001        |
+      | GT-002        |
 
   Scenario Outline: Chạm lại vào đích đã chọn thì giữ
     Given session <template_code> đã chọn một đích hợp lệ

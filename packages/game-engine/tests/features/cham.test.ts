@@ -11,6 +11,8 @@ import type {
   GT001Content,
   GT001Difficulty,
 } from "#src/templates/GT-001/template";
+import { GT002_FIXTURES } from "#src/templates/GT-002/fixtures";
+import { GT002Session } from "#src/templates/GT-002/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -25,7 +27,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
     throw new Error("GT001_FIXTURES[0] must exist");
   }
 
-  describe("Scenario Outline: Chạm nền thì không method nào chạy (Examples: GT-001)", () => {
+  describe("Scenario Outline: Chạm nền thì không method nào chạy (Examples: GT-001, GT-002)", () => {
     it("GT-001: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
       const session = new GT001Session(fixture.content, fixture.difficulty);
       session.prepareRound("3-4");
@@ -44,6 +46,71 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       expect(result).toEqual({ valid: false, feedback: "none" });
       expect(session.selectedItemId).toBeNull();
       expect(session.getTelemetry().events.length).toBe(eventsBefore);
+    });
+
+    it("GT-002: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f2 = GT002_FIXTURES[0];
+      if (!f2) {
+        throw new Error("GT002_FIXTURES[0] must exist");
+      }
+      const session = new GT002Session(f2.content, f2.difficulty);
+      session.prepareRound("4-5");
+
+      const pointer: ClientPoint = { x: 50, y: 50 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+    });
+
+    it("GT-002: chạm slot để toggle chọn và gửi gesture commit để chốt", () => {
+      const f2 = GT002_FIXTURES[0];
+      if (!f2) {
+        throw new Error("GT002_FIXTURES[0] must exist");
+      }
+      const session = new GT002Session(f2.content, f2.difficulty);
+      session.prepareRound("4-5");
+
+      const firstSlot = session.slots[0];
+      if (!firstSlot) {
+        throw new Error("firstSlot must exist");
+      }
+
+      // Tap slot 1 -> toggle to selected
+      session.dispatch({
+        type: "tap",
+        x: firstSlot.x,
+        y: firstSlot.y,
+        timeMs: 100,
+      });
+
+      const firstItem = f2.content.items[0];
+      if (!firstItem) {
+        throw new Error("firstItem must exist");
+      }
+      const view = session.getView();
+      const entity = view.entities.find((e) => e.id === firstItem.item_id);
+      expect(entity?.state).toBe("selected");
+
+      // Tap slot 1 again -> toggle to idle
+      session.dispatch({
+        type: "tap",
+        x: firstSlot.x,
+        y: firstSlot.y,
+        timeMs: 200,
+      });
+      const entityAfterSecondTap = session
+        .getView()
+        .entities.find((e) => e.id === firstItem.item_id);
+      expect(entityAfterSecondTap?.state).toBe("idle");
     });
   });
 
