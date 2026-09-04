@@ -42,6 +42,12 @@ file này — nhưng file chưa từng được tạo. Đây là file đó.
 | `packages/db/tests/gates/corpus-truth.test.ts` | `BR-LCD-01`, `BR-LCD-10`, `BR-GLR-06` | 2 |
 | `packages/db/tests/gates/cli-gates.test.ts` | ba cổng CLI thực sự chạy | 1 |
 | `packages/ui/tests/tokens.test.ts` | `BR-DSC-03/06/14` | có |
+| `packages/game-engine/tests/gates/render.test.ts` | `BR-ERC-01..05` | có |
+| `packages/game-engine/tests/gates/engine-specs.test.ts` | `BR-ESS-01..15` | có |
+| `packages/game-engine/tests/gates/templates.test.ts` | `BR-TAK-01..14` | có |
+| `packages/game-engine/tests/gates/render-viewport.test.ts` | `BR-ERC-04` | có |
+| `packages/game-engine/tests/gates/logic-space.test.ts` | `BR-ENG-14` | có |
+| `packages/game-engine/tests/gates/glyph-code-leak.test.ts` | `BR-EMJ-04` | có |
 
 ## 3. Luật đã MẤT cưỡng chế
 

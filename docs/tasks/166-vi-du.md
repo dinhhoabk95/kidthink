@@ -1,6 +1,6 @@
 ---
 task: 166
-title: Bảng ví dụ — bảy câu hành vi × 27 engine
+title: Bảng ví dụ — bảy câu hành vi × 37 engine
 status: draft
 created: 2026-08-31
 depends_on:
@@ -645,8 +645,8 @@ là dữ liệu mà engine đo.
 
 | # | Engine | Lỗ | Vi phạm | Mức |
 |---:|---|---|---|---|
-| 1 | mọi engine | Không level nào kết thúc được: `completeCurrentRound()` không ai gọi, `engine.on()` không đăng ký | — | chặn |
-| 2 | mọi engine | Vẽ và chạm lệch 1,25 lần ở khung 1200×675 | `BR-ENG-14` §7.1 | chặn |
+| 1 | mọi engine | ~~Không level nào kết thúc được: `completeCurrentRound()` không ai gọi, `engine.on()` không đăng ký~~ — **ĐÃ ĐÓNG**: `completeCurrentRound` đã nối ở `[code].vue:839` | — | chặn |
+| 2 | mọi engine | ~~Vẽ và chạm lệch 1,25 lần ở khung 1200×675~~ — **ĐÃ ĐÓNG**: lỗi hệ toạ độ đã chữa 2026-09-01 | `BR-ENG-14` §7.1 | chặn |
 | 3 | GT-020 | `flip_back_delay_ms` không ai đọc, không `update()` → thẻ sai nằm mở vĩnh viễn | — | chặn |
 | 4 | GT-014 | `select_side` luôn kỳ vọng bên **nặng**, kể cả `goal: pick_lighter` → phản hồi ngược kết quả | — | chặn |
 | 5 | GT-014 | `slotCount` lấy từ `trayItems.length` (state) → vật còn lại nhảy chỗ sau mỗi lần đặt | `BR-ENG-13` | cao |
@@ -666,18 +666,21 @@ là dữ liệu mà engine đo.
 | 19 | GT-006 | `reorderSteps` thất bại im lặng; chốt sai không đổi state | `BR-ENG-07` | cao |
 | 20 | GT-023 · GT-024 | `render` dựng slot riêng, bỏ qua layout → sàn chạm không đi qua `getTouchFloor` | `BR-A11-04` | cao |
 | 21 | GT-002 · GT-006 · GT-013 | Cử chỉ **chốt** không có bề mặt nào → chơi mãi không kết thúc | — | cao |
+| 22 | GT-001…GT-036 | Lỗi vòng-hai: không chuẩn bị ô cho vòng hai khi chuyển round | `BR-ENG-14` | chặn |
+| 23 | GT-000 | Tự tính layout với band cứng "3-4", không nhận `ageBand` động từ runner | `BR-A11-04` | cao |
 
 Chín engine im lặng khi bé trả lời sai. `BR-ENG-07` viết đúng chữ: **"im lặng cũng
 là defect"**. Không cổng nào đang đo câu đó.
 
-### 6.2 Ô lệch giữa "hôm nay" và "phải là"
+### 6.2 Ô lệch giữa "hôm nay" và "phải là" (37 engine = 259 ô)
 
 | Họ | Engine | Ô lệch mỗi engine | Tổng |
 |---|:--:|:--:|:--:|
 | `tap` | 14 | 2 (câu 5, câu 7) | 28 |
 | `drag-drop` | 11 | 6 (câu 1–5, 7) | 66 |
 | `stroke` | 2 | 5 | 10 |
-| | | | **104 / 189** |
+| Khác | 10 | — | — |
+| | | | **104 / 259** |
 
 Cộng 21 lỗ ở §6.1. Đó là số kịch bản **kỳ vọng đỏ** ở P6. Nếu P6 đỏ ít hơn nhiều thì
 binding đang gọi tắt ở đâu đó — kiểm lại trước khi mừng.

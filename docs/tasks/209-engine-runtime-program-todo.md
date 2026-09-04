@@ -148,26 +148,26 @@ Phụ thuộc `#210`.
 
 ### `#217` Hai spec còn thiếu
 
-- [ ] `docs/specs/01-platform/engine-play-language.md` — sáu cử chỉ, ba nhịp, năm trạng thái vật
+- [x] `docs/specs/01-platform/engine-play-language.md` — sáu cử chỉ, ba nhịp, năm trạng thái vật
       **suy ra từ** [`engine-render-contract.md`](../specs/01-platform/engine-render-contract.md) §7.3.
       Cấm — NEVER dựng bộ trạng thái thứ hai. Rule `BR-EPL-01`…
-- [ ] `docs/specs/01-platform/engine-input-contract.md` — `EngineInput`, `EngineView`, ba vòng đời con
+- [x] `docs/specs/01-platform/engine-input-contract.md` — `EngineInput`, `EngineView`, ba vòng đời con
       trỏ, hit band trỏ `BR-A11-04`, fallback chạm-chạm trỏ `BR-ENG-06`, nuốt nhập sau thắng, purity
       trỏ `BR-ENG-13`. Rule `BR-EIC-01`…
-- [ ] Cả hai đủ 11 mục theo [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §4, và đăng ký vào
+- [x] Cả hai đủ 11 mục theo [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §4, và đăng ký vào
       [`index.md`](../specs/index.md) (§9 bước 5)
-- [ ] Sửa §7.4 của [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) cho khớp cây
+- [x] Sửa §7.4 của [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) cho khớp cây
       thật: nó thiếu `layout/`, `rng/`, `contracts/`, `generated/`, `generators/`, `round-runner.ts`,
       `offline-buffer.ts`; kê `gameSession.ts` (thật: `game-session.ts`); kê hai class
       `DragDropSession`/`TapSelectSession` không tồn tại; kê `templates/{GT-001…GT-006}` (thật: 37)
-- [ ] §10 "Always" của cùng file: *"tính lại chỉ khi resize"* → *"khi khung đổi **hoặc vòng đổi**"*
-- [ ] Bổ sung sáu cổng game-engine còn thiếu vào §2 của
+- [x] §10 "Always" của cùng file: *"tính lại chỉ khi resize"* → *"khi khung đổi **hoặc vòng đổi**"*
+- [x] Bổ sung sáu cổng game-engine còn thiếu vào §2 của
       [`runtime-gates.md`](../specs/08-quality/runtime-gates.md): `render`, `engine-specs`,
       `templates`, `render-viewport`, `logic-space`, `glyph-code-leak`
-- [ ] [`166-vi-du.md`](166-vi-du.md): 27 → 37 engine (189 → 259 ô); gạch hai hàng §6.1 đã đóng kèm
+- [x] [`166-vi-du.md`](166-vi-du.md): 27 → 37 engine (189 → 259 ô); gạch hai hàng §6.1 đã đóng kèm
       bằng chứng (`completeCurrentRound` đã nối ở `[code].vue:839`; lỗi hệ toạ độ đã chữa
       2026-09-01); thêm hàng lỗi vòng-hai và hàng `GT-000`
-- [ ] Nghiệm thu: `pnpm --filter @mindkid/game-engine check:engine-specs` xanh; mọi liên kết trong hai
+- [x] Nghiệm thu: `pnpm --filter @mindkid/game-engine check:engine-specs` xanh; mọi liên kết trong hai
       spec mới resolve được
 
 ### `#218` Lát dọc đầu: họ `tap`, hành vi `chạm`, khuôn `GT-001`

@@ -113,7 +113,8 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-RBK` | [`release-rollback.md`](../01-platform/release-rollback.md) | | `BR-MTB` | [`montessori-template-batch.md`](../01-platform/montessori-template-batch.md) |
 | `BR-LVB` | [`legacy-v1-template-batch.md`](../01-platform/legacy-v1-template-batch.md) | | `BR-TGB` | [`taxonomy-gap-batch.md`](../01-platform/taxonomy-gap-batch.md) |
 | `BR-ESS` | [`engine-spec-sheet.md`](../01-platform/engine-spec-sheet.md) | | `BR-LGK` | [`level-generator-kit.md`](../01-platform/level-generator-kit.md) |
-| `BR-ERC` | [`engine-render-contract.md`](../01-platform/engine-render-contract.md) | | `BR-E000`…`BR-E036` | [`engines/index.md`](../01-platform/engines/index.md) (27 spec engine trong registry, 9 spec đặt trước) |
+| `BR-ERC` | [`engine-render-contract.md`](../01-platform/engine-render-contract.md) | | `BR-EPL` | [`engine-play-language.md`](../01-platform/engine-play-language.md) |
+| `BR-EIC` | [`engine-input-contract.md`](../01-platform/engine-input-contract.md) | | `BR-E000`…`BR-E036` | [`engines/index.md`](../01-platform/engines/index.md) (37 spec engine trong registry) |
 
 **Public**
 

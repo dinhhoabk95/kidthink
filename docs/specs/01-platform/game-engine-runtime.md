@@ -143,13 +143,19 @@ Chi tiết: [`scaffolding-and-hints.md`](../04-play/scaffolding-and-hints.md).
 
 ```
 packages/game-engine/src/
-├── core.ts               GameEngine — RAF, buffer, render
-├── interaction.ts        drag/tap/snap, validateDrop, onSnap
-├── gameSession.ts        BaseGameSession / StatefulGameSession
-├── templates/{GT-001…GT-006}/
-├── mechanics/            DragDropSession · TapSelectSession
-├── pipeline/             ProcessPipeline + stage
+├── core.ts               GameEngine — RAF loop, buffer, render
+├── round-runner.ts       RoundRunner — vòng đời vòng chơi, prepareRound
+├── game-session.ts       TemplateGameSession / GameSession
+├── interaction.ts        InteractionManager — toLogicPoint, dispatch, con trỏ
+├── offline-buffer.ts     OfflineBuffer — đệm sự kiện ngoại tuyến
+├── contracts/            hợp đồng kiểu, slot, layout
+├── generated/            artifact sinh tự động (registry, theme, layout...)
+├── generators/           bộ sinh level tự động
+├── layout/               engine bố cục slot, sizing, sàn chạm
+├── mechanics/            các cơ chế tương tác tái sử dụng (selection, placement...)
+├── rng/                  bộ sinh số ngẫu nhiên tất định
 ├── systems/              renderSystem · audioController · sceneManager · scaffolding · designTokens
+├── templates/{GT-000…GT-036}/  37 khuôn mẫu trò chơi
 ├── utils/                layoutUtils · winCondition · shuffle
 └── index.ts              barrel — entry public DUY NHẤT
 ```
@@ -227,7 +233,7 @@ Scenario: BR-ENG-10 — audio fallback sang visual khi thiếu voice tiếng Vi�
 ## 10. Boundaries
 
 **Always**
-- Tính layout ở `setupEntities()`, tính lại chỉ khi resize.
+- Tính layout ở `prepareRound(band)`, tính lại khi khung đổi hoặc vòng đổi.
 - Object pool cho sprite và particle.
 - Preload asset round kế tiếp.
 - `destroy()` gỡ mọi listener và system.

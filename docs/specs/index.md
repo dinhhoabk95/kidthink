@@ -23,7 +23,7 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | Khu vực | Spec | MVP |
 |---|---:|---:|
 | `00-foundation` | 17 | 17 |
-| `01-platform` | 45 | 33 |
+| `01-platform` | 47 | 35 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
 | `04-play` | 17 | 13 |
@@ -31,7 +31,7 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | `06-admin` | 31 | 30 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 9 | 7 |
-| **Tổng** | **176** | **133** |
+| **Tổng** | **178** | **135** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 4 spec cộng thêm 2026-08-29 (Task #113) lấp lỗ hổng chiều sâu nội dung mỗi engine: [`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md), [`engine-content-depth.md`](05-content/engine-content-depth.md), [`level-generator-kit.md`](01-platform/level-generator-kit.md), [`content-theme-registry.md`](05-content/content-theme-registry.md). Kèm 27 phiếu engine ở [`engines/index.md`](01-platform/engines/index.md).
@@ -96,6 +96,8 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [engine-spec-sheet](01-platform/engine-spec-sheet.md) | P4 | Mỗi mã GT một phiếu, cổng đối chiếu với registry |
 | [level-generator-kit](01-platform/level-generator-kit.md) | P4 | Chi phí soạn level thứ 4 tới thứ 40 |
 | [engine-render-contract](01-platform/engine-render-contract.md) | P4 | Hợp đồng vẽ, bốn lớp, 5 trạng thái thị giác |
+| [engine-play-language](01-platform/engine-play-language.md) | P1 | Ngôn ngữ chơi, 6 cử chỉ, 3 nhịp, 5 trạng thái |
+| [engine-input-contract](01-platform/engine-input-contract.md) | P1 | Hợp đồng nhập, ba vòng đời con trỏ, toLogicPoint, dispatch thuần |
 | [telemetry-pipeline](01-platform/telemetry-pipeline.md) | P1 | Rollup, KPI nội dung |
 | [content-tagging](01-platform/content-tagging.md) | P1 | Ba trục what/thinking/mechanic |
 | [content-search](01-platform/content-search.md) | P1 | Bộ lọc, lọc theo quyền |
