@@ -3,6 +3,7 @@ import {
   ALL_TEMPLATE_CODES,
   createGameSessionSync,
   type EngineConfig,
+  GT000_FIXTURES,
   GT001_FIXTURES,
   GT002_FIXTURES,
   GT003_FIXTURES,
@@ -47,6 +48,7 @@ const FIXTURES_MAP: Record<
   string,
   { content: unknown; difficulty: unknown }[]
 > = {
+  "GT-000": GT000_FIXTURES,
   "GT-001": GT001_FIXTURES,
   "GT-002": GT002_FIXTURES,
   "GT-003": GT003_FIXTURES,
@@ -88,6 +90,7 @@ const FIXTURES_MAP: Record<
 describe("Universal Template Compliance Test Suite (§7.4, BR-TAK-01..14)", () => {
   it("registers all MVP template codes", () => {
     expect(ALL_TEMPLATE_CODES).toEqual([
+      "GT-000",
       "GT-001",
       "GT-002",
       "GT-003",

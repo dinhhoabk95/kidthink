@@ -172,8 +172,8 @@ describe("Task 2 — Game Template Contracts (BR-GTC-01..07)", () => {
       }
     });
 
-    it("ALL_GAME_MECHANICS contains exactly 36 values", () => {
-      expect(ALL_GAME_MECHANICS).toHaveLength(36);
+    it("ALL_GAME_MECHANICS contains exactly 37 values", () => {
+      expect(ALL_GAME_MECHANICS).toHaveLength(37);
     });
   });
 });

@@ -1,6 +1,7 @@
 /** @generated from TEMPLATES@a1b2c3d4 — DO NOT EDIT MANUALLY (BR-TAK-03) */
 
 export const ALL_TEMPLATE_CODES = [
+  "GT-000",
   "GT-001",
   "GT-002",
   "GT-003",
@@ -37,7 +38,6 @@ export const ALL_TEMPLATE_CODES = [
   "GT-034",
   "GT-035",
   "GT-036",
-  "GT-000",
 ] as const;
 
 export type TemplateCode = (typeof ALL_TEMPLATE_CODES)[number];

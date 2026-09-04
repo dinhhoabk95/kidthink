@@ -1,5 +1,6 @@
 /** @generated from TEMPLATES@a1b2c3d4 — DO NOT EDIT MANUALLY (BR-TAK-03) */
 
+import GT000Template from "#src/templates/GT-000/template";
 import GT001Template from "#src/templates/GT-001/template";
 import GT002Template from "#src/templates/GT-002/template";
 import GT003Template from "#src/templates/GT-003/template";
@@ -36,9 +37,14 @@ import GT033Template from "#src/templates/GT-033/template";
 import GT034Template from "#src/templates/GT-034/template";
 import GT035Template from "#src/templates/GT-035/template";
 import GT036Template from "#src/templates/GT-036/template";
-import GT037Template from "#src/templates/GT-000/template";
 
 export const STUDIO_TEMPLATE_OPTIONS = [
+  {
+    value: GT000Template.code,
+    label: `${GT000Template.code}: ${GT000Template.name}`,
+    mechanic: GT000Template.mechanic,
+    ageRange: `${GT000Template.age_min}-${GT000Template.age_max}`,
+  },
   {
     value: GT001Template.code,
     label: `${GT001Template.code}: ${GT001Template.name}`,
@@ -254,11 +260,5 @@ export const STUDIO_TEMPLATE_OPTIONS = [
     label: `${GT036Template.code}: ${GT036Template.name}`,
     mechanic: GT036Template.mechanic,
     ageRange: `${GT036Template.age_min}-${GT036Template.age_max}`,
-  },
-  {
-    value: GT037Template.code,
-    label: `${GT037Template.code}: ${GT037Template.name}`,
-    mechanic: GT037Template.mechanic,
-    ageRange: `${GT037Template.age_min}-${GT037Template.age_max}`,
   },
 ];

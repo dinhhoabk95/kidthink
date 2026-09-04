@@ -221,6 +221,12 @@ export {
   TraceSystem,
   type TraceWaypoint,
 } from "./systems/trace-system.js";
+export { GT000_FIXTURES } from "./templates/GT-000/fixtures.js";
+export { GT000Session } from "./templates/GT-000/session.js";
+export type {
+  GT000Content,
+  GT000Difficulty,
+} from "./templates/GT-000/template.js";
 export { GT001_FIXTURES } from "./templates/GT-001/fixtures.js";
 export { GT001Session } from "./templates/GT-001/session.js";
 export type {

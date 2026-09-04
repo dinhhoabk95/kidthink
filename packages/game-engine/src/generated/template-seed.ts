@@ -1,5 +1,6 @@
 /** @generated from TEMPLATES@a1b2c3d4 — DO NOT EDIT MANUALLY (BR-TAK-03) */
 
+import GT000Template from "#src/templates/GT-000/template";
 import GT001Template from "#src/templates/GT-001/template";
 import GT002Template from "#src/templates/GT-002/template";
 import GT003Template from "#src/templates/GT-003/template";
@@ -36,9 +37,25 @@ import GT033Template from "#src/templates/GT-033/template";
 import GT034Template from "#src/templates/GT-034/template";
 import GT035Template from "#src/templates/GT-035/template";
 import GT036Template from "#src/templates/GT-036/template";
-import GT037Template from "#src/templates/GT-000/template";
 
 export const TEMPLATE_SEED_ENTRIES = [
+  {
+    templateCode: GT000Template.code,
+    nameVi: GT000Template.name,
+    mechanic: GT000Template.mechanic,
+    layouts: GT000Template.layouts,
+    limits: GT000Template.limits,
+    ageMin: GT000Template.age_min,
+    ageMax: GT000Template.age_max,
+    bannedAgeBands: GT000Template.banned_age_bands ?? [],
+    requiresTapFallback: GT000Template.requires_tap_fallback,
+    assetKinds: GT000Template.asset_kinds,
+    scoring: GT000Template.scoring,
+    events: GT000Template.events,
+    engineSession: GT000Template.engine_session,
+    status: GT000Template.status,
+    version: GT000Template.version,
+  },
   {
     templateCode: GT001Template.code,
     nameVi: GT001Template.name,
@@ -650,22 +667,5 @@ export const TEMPLATE_SEED_ENTRIES = [
     engineSession: GT036Template.engine_session,
     status: GT036Template.status,
     version: GT036Template.version,
-  },
-  {
-    templateCode: GT037Template.code,
-    nameVi: GT037Template.name,
-    mechanic: GT037Template.mechanic,
-    layouts: GT037Template.layouts,
-    limits: GT037Template.limits,
-    ageMin: GT037Template.age_min,
-    ageMax: GT037Template.age_max,
-    bannedAgeBands: GT037Template.banned_age_bands ?? [],
-    requiresTapFallback: GT037Template.requires_tap_fallback,
-    assetKinds: GT037Template.asset_kinds,
-    scoring: GT037Template.scoring,
-    events: GT037Template.events,
-    engineSession: GT037Template.engine_session,
-    status: GT037Template.status,
-    version: GT037Template.version,
   },
 ];

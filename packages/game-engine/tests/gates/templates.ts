@@ -15,7 +15,7 @@ export interface TemplateLintViolation {
 
 const GT_CODE_REGEX = /^GT-\d{3}$/;
 const LAYOUTS_REGEX = /layouts:\s*\[([^\]]+)\]/;
-const PROMPT_REGEX = /prompt:\s*["']/g;
+const PROMPT_REGEX = /(?:prompt|prompt_line|narration_line):\s*["']/g;
 
 function lintTemplateFixtures(
   entry: string,

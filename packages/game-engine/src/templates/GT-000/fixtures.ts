@@ -1,8 +1,8 @@
-import type { GT037Content, GT037Difficulty } from "./template.js";
+import type { GT000Content, GT000Difficulty } from "./template.js";
 
-export const GT037_FIXTURES: {
-  content: GT037Content;
-  difficulty: GT037Difficulty;
+export const GT000_FIXTURES: {
+  content: GT000Content;
+  difficulty: GT000Difficulty;
 }[] = [
   // Fixture 1: Nhận biết số 1, 2, 3 (C1.NUM.01)
   {

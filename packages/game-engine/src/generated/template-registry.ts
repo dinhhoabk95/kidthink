@@ -2,6 +2,7 @@
 
 import { zodToJsonSchema } from "zod-to-json-schema";
 import type { AgeBand, GameTemplate } from "#src/contracts/types";
+import GT000Template from "#src/templates/GT-000/template";
 import GT001Template from "#src/templates/GT-001/template";
 import GT002Template from "#src/templates/GT-002/template";
 import GT003Template from "#src/templates/GT-003/template";
@@ -38,9 +39,9 @@ import GT033Template from "#src/templates/GT-033/template";
 import GT034Template from "#src/templates/GT-034/template";
 import GT035Template from "#src/templates/GT-035/template";
 import GT036Template from "#src/templates/GT-036/template";
-import GT037Template from "#src/templates/GT-000/template";
 
 export const ALL_TEMPLATES: Record<string, GameTemplate> = {
+  "GT-000": GT000Template,
   "GT-001": GT001Template,
   "GT-002": GT002Template,
   "GT-003": GT003Template,
@@ -77,7 +78,6 @@ export const ALL_TEMPLATES: Record<string, GameTemplate> = {
   "GT-034": GT034Template,
   "GT-035": GT035Template,
   "GT-036": GT036Template,
-  "GT-000": GT037Template,
 };
 
 export const MVP_TEMPLATES = ALL_TEMPLATES;

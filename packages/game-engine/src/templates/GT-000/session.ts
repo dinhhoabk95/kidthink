@@ -20,13 +20,13 @@ import {
   updateParticles,
 } from "../shared-render.js";
 import type {
-  GT037Asset,
-  GT037Content,
-  GT037Difficulty,
-  GT037Step,
+  GT000Asset,
+  GT000Content,
+  GT000Difficulty,
+  GT000Step,
 } from "./template.js";
 
-function resolveRenderAsset(asset: GT037Asset): RenderAsset | null {
+function resolveRenderAsset(asset: GT000Asset): RenderAsset | null {
   if (!asset.image_ref) {
     return null;
   }
@@ -40,7 +40,7 @@ function resolveRenderAsset(asset: GT037Asset): RenderAsset | null {
 }
 
 function createRenderItem(
-  asset: GT037Asset,
+  asset: GT000Asset,
   state: ItemVisualState = "idle"
 ): RenderItem {
   return {
@@ -52,7 +52,7 @@ function createRenderItem(
   };
 }
 
-function getStepPeriod(action: GT037Step["action"]): 1 | 2 | 3 {
+function getStepPeriod(action: GT000Step["action"]): 1 | 2 | 3 {
   if (action === "present") {
     return 1;
   }
@@ -62,7 +62,7 @@ function getStepPeriod(action: GT037Step["action"]): 1 | 2 | 3 {
   return 2;
 }
 
-function getStepItemCount(step: GT037Step): number {
+function getStepItemCount(step: GT000Step): number {
   if (step.action === "recognise") {
     return 1 + step.distractor_asset_ids.length;
   }
@@ -75,9 +75,9 @@ function getStepItemCount(step: GT037Step): number {
   return 1;
 }
 
-export class GT037Session extends TemplateGameSession<
-  GT037Content,
-  GT037Difficulty
+export class GT000Session extends TemplateGameSession<
+  GT000Content,
+  GT000Difficulty
 > {
   slots: readonly Slot[] = [];
   currentStepIndex = 0;
@@ -109,11 +109,11 @@ export class GT037Session extends TemplateGameSession<
     this.updateCurrentStepLayout();
   }
 
-  private getCurrentStep(): GT037Step | undefined {
+  private getCurrentStep(): GT000Step | undefined {
     return this.content.steps[this.currentStepIndex];
   }
 
-  private getAsset(assetId: string): GT037Asset | undefined {
+  private getAsset(assetId: string): GT000Asset | undefined {
     return this.content.assets.find((a) => a.asset_id === assetId);
   }
 
@@ -175,7 +175,7 @@ export class GT037Session extends TemplateGameSession<
 
   private handlePresentAction(
     _payload: Record<string, string | boolean | number>,
-    step: GT037Step & { action: "present" }
+    step: GT000Step & { action: "present" }
   ): ActionResult {
     this.recordEvent("intro_item_acknowledged", {
       item_id: step.target_asset_id,
@@ -186,7 +186,7 @@ export class GT037Session extends TemplateGameSession<
 
   private handleRecogniseAction(
     payload: Record<string, string | boolean | number>,
-    step: GT037Step & { action: "recognise" }
+    step: GT000Step & { action: "recognise" }
   ): ActionResult {
     const selectedId = String(payload.item_id ?? payload.asset_id ?? "");
     const isCorrect = selectedId === step.target_asset_id;
@@ -225,7 +225,7 @@ export class GT037Session extends TemplateGameSession<
 
   private handleLinkAction(
     payload: Record<string, string | boolean | number>,
-    step: GT037Step & { action: "link" }
+    step: GT000Step & { action: "link" }
   ): ActionResult {
     const sourceId = String(payload.source_id ?? "");
     const targetId = String(payload.target_id ?? "");
@@ -249,7 +249,7 @@ export class GT037Session extends TemplateGameSession<
 
   private handleRecallAction(
     payload: Record<string, string | boolean | number>,
-    step: GT037Step & { action: "recall" }
+    step: GT000Step & { action: "recall" }
   ): ActionResult {
     const isPeriod3 = this.activePeriod === 3;
     if (!isPeriod3) {
@@ -293,7 +293,7 @@ export class GT037Session extends TemplateGameSession<
     return this.isWon || this.currentStepIndex >= this.content.steps.length;
   }
 
-  private getStepPromptText(step: GT037Step): string {
+  private getStepPromptText(step: GT000Step): string {
     if (step.action === "present") {
       const label = this.getAsset(step.target_asset_id)?.label ?? "";
       return step.narration_line ?? `Đây là ${label}`;
@@ -308,7 +308,7 @@ export class GT037Session extends TemplateGameSession<
     return step.prompt_line ?? "Đây là gì?";
   }
 
-  private getStepAssetIds(step: GT037Step): string[] {
+  private getStepAssetIds(step: GT000Step): string[] {
     if (step.action === "recognise") {
       return [step.target_asset_id, ...step.distractor_asset_ids];
     }
@@ -321,7 +321,7 @@ export class GT037Session extends TemplateGameSession<
     return [];
   }
 
-  private collectRenderItems(step: GT037Step): RenderItem[] {
+  private collectRenderItems(step: GT000Step): RenderItem[] {
     const renderItems: RenderItem[] = [];
 
     if (step.action === "present") {
