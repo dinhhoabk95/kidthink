@@ -106,6 +106,11 @@ export default defineTemplate({
     "option_selected",
     "game_completed",
   ],
+  input: {
+    family: "tap",
+    verbs: ["tap"],
+    tolerance_px: 24,
+  },
   engine_session: "MatrixChoiceSession",
   status: "published",
   version: 1,

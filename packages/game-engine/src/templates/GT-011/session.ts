@@ -3,6 +3,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
@@ -20,6 +21,20 @@ import {
 import { boxFromSlots, drawShapeTray } from "../shared-render-shapes.js";
 import { colMatches, findBlankCell, rowMatches } from "./matrix-rule.js";
 import type { GT011Content, GT011Difficulty } from "./template.js";
+
+function toOptionViewState(
+  isSelected: boolean,
+  isCorrect: boolean,
+  isPreviewed: boolean
+): ViewEntity["state"] {
+  if (isSelected) {
+    return isCorrect ? "correct" : "incorrect";
+  }
+  if (isPreviewed) {
+    return "selected";
+  }
+  return "idle";
+}
 
 export interface MatrixPreview {
   /** Option đang được đặt thử vào ô trống. */
@@ -87,6 +102,108 @@ export class GT011Session extends TemplateGameSession<
 
   validateAction(action: GameAction): ActionResult {
     return this.mechanic.validate(action, this.selectionItems());
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type !== "tap") {
+      return null;
+    }
+    const cellCount = this.content.matrix.rows * this.content.matrix.cols;
+    const optionSlots = this.slots.slice(cellCount);
+    for (let i = 0; i < this.content.options.length; i++) {
+      const slot = optionSlots[i];
+      const option = this.content.options[i];
+      if (!(slot && option)) {
+        continue;
+      }
+      const dx = Math.abs(gesture.x - slot.x);
+      const dy = Math.abs(gesture.y - slot.y);
+      const radius = Math.max(slot.hitW ?? slot.w, slot.hitH ?? slot.h) / 2;
+      if (dx <= radius && dy <= radius) {
+        return {
+          type: "select_item",
+          data: { item_id: option.option_id },
+        };
+      }
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    const data = action.data;
+    const itemId =
+      typeof data === "object" && data !== null
+        ? Reflect.get(data, "item_id")
+        : undefined;
+    if (typeof itemId === "string" && itemId.length > 0) {
+      this.onOptionPreviewed(itemId);
+      this.onOptionSelected(itemId);
+    }
+  }
+
+  override getView(): EngineView {
+    const cellCount = this.content.matrix.rows * this.content.matrix.cols;
+    const cellSlots = this.slots.slice(0, cellCount);
+    const optionSlots = this.slots.slice(cellCount);
+    const { cols } = this.content.matrix;
+    const entities: ViewEntity[] = [];
+
+    for (const cell of this.content.matrix.cells) {
+      const slotIndex = cell.row * cols + cell.col;
+      const slot = cellSlots[slotIndex];
+      if (!slot) {
+        continue;
+      }
+      if (cell.asset === null) {
+        entities.push({
+          id: "matrix_blank",
+          slotIndex,
+          role: "target",
+          state: this.preview === null ? "idle" : "active",
+          x: slot.x,
+          y: slot.y,
+          w: slot.w,
+          h: slot.h,
+        });
+      } else {
+        entities.push({
+          id: `c${cell.row}-${cell.col}`,
+          slotIndex,
+          role: "neutral",
+          state: "idle",
+          x: slot.x,
+          y: slot.y,
+          w: slot.w,
+          h: slot.h,
+        });
+      }
+    }
+
+    this.content.options.forEach((opt, i) => {
+      const slot = optionSlots[i];
+      if (!slot) {
+        return;
+      }
+      const isSelected = this.mechanic.isSelected(opt.option_id);
+      const isPreviewed = this.preview?.option_id === opt.option_id;
+      const state = toOptionViewState(isSelected, opt.is_correct, isPreviewed);
+
+      entities.push({
+        id: opt.option_id,
+        slotIndex: cellCount + i,
+        role: "source",
+        state,
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    });
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   onOptionSelected(optionId: string): void {
