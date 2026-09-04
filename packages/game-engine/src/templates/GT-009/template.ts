@@ -76,6 +76,11 @@ export default defineTemplate({
   code: "GT-009",
   name: "Loại trừ theo manh mối",
   mechanic: "clue-deduction",
+  input: {
+    family: "tap",
+    verbs: ["tap"],
+    tolerance_px: 24,
+  },
   layouts: ["clue-board"],
   content_contract: GT009ContentSchema,
   difficulty_contract: GT009DifficultySchema,

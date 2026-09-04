@@ -13,6 +13,8 @@ import type {
 } from "#src/templates/GT-001/template";
 import { GT002_FIXTURES } from "#src/templates/GT-002/fixtures";
 import { GT002Session } from "#src/templates/GT-002/session";
+import { GT009_FIXTURES } from "#src/templates/GT-009/fixtures";
+import { GT009Session } from "#src/templates/GT-009/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -111,6 +113,74 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
         .getView()
         .entities.find((e) => e.id === firstItem.item_id);
       expect(entityAfterSecondTap?.state).toBe("idle");
+    });
+
+    it("GT-009: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f9 = GT009_FIXTURES[0];
+      if (!f9) {
+        throw new Error("GT009_FIXTURES[0] must exist");
+      }
+      const session = new GT009Session(f9.content, f9.difficulty);
+      session.prepareRound("4-5");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.getRevealedClueIds().length).toBe(0);
+    });
+
+    it("GT-009: chạm manh mối để lật và gạch ứng viên vi phạm, rồi chạm đáp án để thắng", () => {
+      const f9 = GT009_FIXTURES[0];
+      if (!f9) {
+        throw new Error("GT009_FIXTURES[0] must exist");
+      }
+      const session = new GT009Session(f9.content, f9.difficulty);
+      session.prepareRound("4-5");
+
+      const clueSlot = session.slots[0];
+      if (!clueSlot) {
+        throw new Error("clueSlot must exist");
+      }
+      session.dispatch({
+        type: "tap",
+        x: clueSlot.x,
+        y: clueSlot.y,
+        timeMs: 100,
+      });
+
+      expect(session.getRevealedClueIds()).toContain("k1");
+      expect(session.getEliminatedIds()).toContain("c1");
+      expect(session.getEliminatedIds()).toContain("c2");
+      expect(session.getEliminatedIds()).toContain("c3");
+      expect(session.getSurvivingIds()).toEqual(["c5"]);
+
+      const candIdx = f9.content.candidates.findIndex(
+        (c) => c.candidate_id === "c5"
+      );
+      const candSlot = session.slots[f9.content.clues.length + candIdx];
+      if (!candSlot) {
+        throw new Error("candSlot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: candSlot.x,
+        y: candSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.checkWinCondition()).toBe(true);
     });
   });
 

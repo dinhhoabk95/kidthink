@@ -4,6 +4,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
@@ -132,6 +133,16 @@ export class GT009Session extends TemplateGameSession<
 
   validateAction(action: GameAction): ActionResult {
     if (action.type === "reveal_clue") {
+      const clueId =
+        typeof action.data === "object" && action.data !== null
+          ? Reflect.get(action.data, "clue_id")
+          : undefined;
+      if (
+        typeof clueId === "string" &&
+        this.content.clues.some((c) => c.clue_id === clueId)
+      ) {
+        return { valid: true, feedback: "none" };
+      }
       return ACTION_IGNORED;
     }
     return this.mechanic.validate(action, this.selectionItems());
@@ -162,6 +173,141 @@ export class GT009Session extends TemplateGameSession<
       targetCount: this.content.clues.length,
       ageBand,
     });
+  }
+
+  private findHitClue(
+    x: number,
+    y: number,
+    hitTolerance: number
+  ): GT009Content["clues"][number] | null {
+    const clueCount = this.content.clues.length;
+    for (let i = 0; i < clueCount; i++) {
+      const clue = this.content.clues[i];
+      const slot = this.slots[i];
+      if (!(clue && slot)) {
+        continue;
+      }
+      const hw = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+      const hh = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+      if (Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh) {
+        return clue;
+      }
+    }
+    return null;
+  }
+
+  private findHitCandidate(
+    x: number,
+    y: number,
+    hitTolerance: number
+  ): GT009Content["candidates"][number] | null {
+    const clueCount = this.content.clues.length;
+    for (let i = 0; i < this.content.candidates.length; i++) {
+      const cand = this.content.candidates[i];
+      const slot = this.slots[clueCount + i];
+      if (!(cand && slot)) {
+        continue;
+      }
+      const hw = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+      const hh = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+      if (Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh) {
+        return cand;
+      }
+    }
+    return null;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type !== "tap") {
+      return null;
+    }
+    const hitTolerance = 24;
+    const hitClue = this.findHitClue(gesture.x, gesture.y, hitTolerance);
+    if (hitClue) {
+      return { type: "reveal_clue", data: { clue_id: hitClue.clue_id } };
+    }
+    const hitCand = this.findHitCandidate(gesture.x, gesture.y, hitTolerance);
+    if (hitCand && !this.eliminatedIds.has(hitCand.candidate_id)) {
+      return { type: "select_item", data: { item_id: hitCand.candidate_id } };
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (action.type === "reveal_clue") {
+      const clueId =
+        typeof action.data === "object" && action.data !== null
+          ? Reflect.get(action.data, "clue_id")
+          : undefined;
+      if (typeof clueId === "string") {
+        this.onClueRevealed(clueId);
+      }
+      return;
+    }
+    if (action.type === "select_item" || action.type === "tap_option") {
+      const itemId =
+        typeof action.data === "object" && action.data !== null
+          ? Reflect.get(action.data, "item_id")
+          : undefined;
+      if (typeof itemId === "string") {
+        this.onCandidateSelected(itemId);
+      }
+    }
+  }
+
+  private toCandidateState(candId: string): ViewEntity["state"] {
+    if (this.eliminatedIds.has(candId)) {
+      return "incorrect";
+    }
+    if (this.mechanic.isSelected(candId)) {
+      return "selected";
+    }
+    return "idle";
+  }
+
+  override getView(): EngineView {
+    const clueCount = this.content.clues.length;
+    const entities: ViewEntity[] = [];
+
+    this.content.clues.forEach((clue, i) => {
+      const slot = this.slots[i];
+      if (!slot) {
+        return;
+      }
+      const isRevealed = this.revealedClueIds.includes(clue.clue_id);
+      entities.push({
+        id: clue.clue_id,
+        slotIndex: i,
+        role: "target",
+        state: isRevealed ? "selected" : "idle",
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    });
+
+    this.content.candidates.forEach((cand, i) => {
+      const slot = this.slots[clueCount + i];
+      if (!slot) {
+        return;
+      }
+      entities.push({
+        id: cand.candidate_id,
+        slotIndex: clueCount + i,
+        role: "source",
+        state: this.toCandidateState(cand.candidate_id),
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    });
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {
