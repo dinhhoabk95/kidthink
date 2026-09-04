@@ -691,26 +691,6 @@
     return true;
   }
 
-  function handlePlacementByGroup(
-    session: GameSession & InteractiveSession,
-    dragged: DragItemInfo,
-    relTargetIdx: number
-  ): boolean {
-    const withSort = session as {
-      onItemSorted?: (i: string, g: string) => void;
-    };
-    if (typeof withSort.onItemSorted !== "function") {
-      return false;
-    }
-    const group = (session.content as { groups?: Array<{ group_id: string }> })
-      ?.groups?.[relTargetIdx];
-    if (!group?.group_id) {
-      return false;
-    }
-    withSort.onItemSorted(dragged.item_id, group.group_id);
-    return true;
-  }
-
   function handlePlacementByPair(
     session: GameSession & InteractiveSession,
     dragged: DragItemInfo,
@@ -740,7 +720,6 @@
     if (
       handlePlacementBySlot(session, dragged, relTargetIdx, targetIdx) ||
       handlePlacementByContainer(session, dragged) ||
-      handlePlacementByGroup(session, dragged, relTargetIdx) ||
       handlePlacementByPair(session, dragged, relTargetIdx, targetIdx)
     ) {
       engine?.audio.playSnapSound();
@@ -911,9 +890,7 @@
 
     if (
       typeof session.onItemPlaced === "function" ||
-      typeof session.onItemDropped === "function" ||
-      typeof (session as { onItemSorted?: (i: string, g: string) => void })
-        .onItemSorted === "function"
+      typeof session.onItemDropped === "function"
     ) {
       handlePlacementTap(session, slots, hitIdx);
       return;
