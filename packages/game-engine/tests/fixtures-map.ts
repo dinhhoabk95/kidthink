@@ -37,10 +37,17 @@ import { GT034_FIXTURES } from "#src/templates/GT-034/fixtures.js";
 import { GT035_FIXTURES } from "#src/templates/GT-035/fixtures.js";
 import { GT036_FIXTURES } from "#src/templates/GT-036/fixtures.js";
 
-export const FIXTURES_BY_CODE: Record<
+export type FixturePayload = Record<
   string,
-  readonly { content: unknown; difficulty: unknown }[]
-> = {
+  string | number | boolean | null | undefined | object
+>;
+
+export interface FixtureRecord {
+  readonly content: FixturePayload;
+  readonly difficulty: FixturePayload;
+}
+
+export const FIXTURES_BY_CODE: Record<string, readonly FixtureRecord[]> = {
   "GT-000": GT000_FIXTURES,
   "GT-001": GT001_FIXTURES,
   "GT-002": GT002_FIXTURES,

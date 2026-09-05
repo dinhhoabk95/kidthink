@@ -6,6 +6,8 @@ import {
   preloadGameSession,
   RenderSystem,
 } from "#src/index";
+import { GT006_FIXTURES } from "#src/templates/GT-006/fixtures.js";
+import { GT034_FIXTURES } from "#src/templates/GT-034/fixtures.js";
 import { FIXTURES_BY_CODE } from "./fixtures-map.js";
 
 function expectDefined<T>(val: T | undefined | null, msg?: string): T {
@@ -345,7 +347,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-006 wins when sequence is ordered and submitted", () => {
-      const f = getFixture("GT-006", 0);
+      const f = expectDefined(GT006_FIXTURES[0]);
       const s = createGameSessionSync("GT-006", {
         level_code: "GT-006-TEST",
         content_version: 1,
@@ -1261,7 +1263,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-034: beat sequence tapping simulation succeeds", () => {
-      const f = getFixture("GT-034", 0); // Fixture 0: ["drum", "cymbal", "drum", "cymbal"]
+      const f = expectDefined(GT034_FIXTURES[0]); // Fixture 0: ["drum", "cymbal", "drum", "cymbal"]
       const s = createGameSessionSync("GT-034", {
         level_code: "GT-034-TEST",
         content_version: 1,

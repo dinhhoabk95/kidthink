@@ -28,7 +28,7 @@ describe("cổng hình học khung vẽ (game-engine-runtime.md §7.1)", () => {
     if (!ctx) {
       throw new Error("canvas giả phải trả ngữ cảnh");
     }
-    const probe = probeViewport(ctx.transform, 1440, 810, 2);
+    const probe = probeViewport(ctx.transformMatrix, 1440, 810, 2);
 
     expect(viewport.scale).toBeCloseTo(1.5, 5);
     expect(probe.originX).toBeCloseTo(0, 5);
@@ -47,7 +47,7 @@ describe("cổng hình học khung vẽ (game-engine-runtime.md §7.1)", () => {
     if (!ctx) {
       throw new Error("canvas giả phải trả ngữ cảnh");
     }
-    const probe = probeViewport(ctx.transform, 390, 844, 2);
+    const probe = probeViewport(ctx.transformMatrix, 390, 844, 2);
 
     // Đây là con số mà bản lỗi làm sai: nó vẽ 246% bề rộng hộp.
     expect(probe.fillX).toBeCloseTo(1, 5);
@@ -66,7 +66,7 @@ describe("cổng hình học khung vẽ (game-engine-runtime.md §7.1)", () => {
     if (!ctx) {
       throw new Error("canvas giả phải trả ngữ cảnh");
     }
-    const once = { ...ctx.transform };
+    const once = { ...ctx.transformMatrix };
 
     // Dựng lại nhiều lần phải ra đúng cùng ma trận — cấm cộng dồn.
     rs.setupCanvas(asCanvas(canvas));
@@ -74,8 +74,8 @@ describe("cổng hình học khung vẽ (game-engine-runtime.md §7.1)", () => {
 
     expect(canvas.width).toBe(2880);
     expect(canvas.height).toBe(1620);
-    expect(ctx.transform).toEqual(once);
-    expect(ctx.transform.a).toBeCloseTo(3, 5);
+    expect(ctx.transformMatrix).toEqual(once);
+    expect(ctx.transformMatrix.a).toBeCloseTo(3, 5);
   });
 
   it("xoá hết backing store, không chỉ hình chữ nhật logic", () => {
@@ -141,7 +141,7 @@ describe("cổng hình học khung vẽ (game-engine-runtime.md §7.1)", () => {
     if (!ctx) {
       throw new Error("canvas giả phải trả ngữ cảnh");
     }
-    const probe = probeViewport(ctx.transform, 1440, 810, 2);
+    const probe = probeViewport(ctx.transformMatrix, 1440, 810, 2);
 
     expect(probe.fillX).not.toBeCloseTo(1, 2);
     expect(probe.fillX).toBeCloseTo(960 / 1440, 5);

@@ -25,6 +25,8 @@
     ".": "./src/index.ts"
   },
   "imports": {
+    "#src/*/*.js": "./src/*/*.ts",
+    "#src/*/*.ts": "./src/*/*.ts",
     "#src/*": "./src/*.ts",
     "#tests/*": "./tests/*.ts"
   }

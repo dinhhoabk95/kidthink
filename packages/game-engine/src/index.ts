@@ -28,6 +28,7 @@ export {
 export {
   createGameSessionSync,
   loadGameSession,
+  preloadGameSession,
 } from "./generated/session-loader.js";
 export { STUDIO_TEMPLATE_OPTIONS } from "./generated/studio-options.js";
 export {

@@ -46,26 +46,26 @@ generator. Bán kính đã đo, ở §8 của kế hoạch.
 **Ba file sửa tay, năm file sinh lại.** Cấm — NEVER `sed` cả cây: năm file `src/generated/*` phải đi
 qua `pnpm gen:templates`, không sửa trực tiếp (`BR-TAK-03`).
 
-- [ ] `src/templates/GT-000/template.ts` — 24 lần
-- [ ] `src/templates/GT-000/session.ts` — 20 lần
-- [ ] `src/templates/GT-000/fixtures.ts` — 4 lần
-  - [ ] Đồng thời: có **≥ 3** fixture, mỗi cái có `prompt:`, export đúng tên generator sinh ra
+- [x] `src/templates/GT-000/template.ts` — 24 lần
+- [x] `src/templates/GT-000/session.ts` — 20 lần
+- [x] `src/templates/GT-000/fixtures.ts` — 4 lần
+  - [x] Đồng thời: có **≥ 3** fixture, mỗi cái có `prompt:`, export đúng tên generator sinh ra
   - Nghiệm thu: `grep -c 'prompt:' packages/game-engine/src/templates/GT-000/fixtures.ts` ≥ 3
-- [ ] `docs/specs/01-platform/engines/GT-000.md:2` — frontmatter `spec: ENGINE-GT037` → `ENGINE-GT000`
+- [x] `docs/specs/01-platform/engines/GT-000.md:2` — frontmatter `spec: ENGINE-GT037` → `ENGINE-GT000`
   - Nghiệm thu: `pnpm --filter @mindkid/game-engine check:engine-specs` xanh
-- [ ] `src/templates/GT-000/session.ts` cũng cần `resolveSlots` — nó là khuôn **duy nhất** không có,
+- [x] `src/templates/GT-000/session.ts` cũng cần `resolveSlots` — nó là khuôn **duy nhất** không có,
       nên `slots` vĩnh viễn rỗng và nó không có ô chạm nào. (Nếu để `#215` làm thì `#211` ca (i) của
       `GT-000` vẫn đỏ tới đó — chấp nhận được, nhưng ghi rõ trong commit)
-- [ ] `ALL_GAME_MECHANICS` ở `@mindkid/shared` và `tests/contract.test.ts:176` khớp nhau ở **37**
-- [ ] `tests/template-compliance.test.ts:90` — thêm `"GT-000"` vào **đầu** mảng `toEqual([...])`
+- [x] `ALL_GAME_MECHANICS` ở `@mindkid/shared` và `tests/contract.test.ts:176` khớp nhau ở **37**
+- [x] `tests/template-compliance.test.ts:90` — thêm `"GT-000"` vào **đầu** mảng `toEqual([...])`
   - Đây là **chỗ duy nhất** nhạy cảm thứ tự trong 14 chỗ dùng `ALL_TEMPLATE_CODES`. Đã soát: không
     chỗ nào đọc theo chỉ số; bốn chỗ `for...of`; một chỗ `toContain`. Sau khi sinh lại,
     `localeCompare` đưa `GT-000` từ cuối lên đầu
-- [ ] `FIXTURES_MAP` biết `GT-000`
-- [ ] Chạy `pnpm --filter @mindkid/game-engine gen:templates`
+- [x] `FIXTURES_MAP` biết `GT-000`
+- [x] Chạy `pnpm --filter @mindkid/game-engine gen:templates`
   - Nghiệm thu: `git diff --exit-code packages/game-engine/src/generated` trả 0
   - Nghiệm thu phụ: `grep -rc GT037 packages/game-engine/src` trả 0 cho mọi file
-- [ ] Bộ test engine xanh
+- [x] Bộ test engine xanh
   - Nghiệm thu: `node node_modules/vitest/vitest.mjs run --project '@mindkid/game-engine'` →
     `0 failed`, từ `9 failed`
 
@@ -78,29 +78,29 @@ qua `pnpm gen:templates`, không sửa trực tiếp (`BR-TAK-03`).
 
 ### `#211` Cổng vòng đời vòng chơi — cố tình ĐỎ trước
 
-- [ ] `packages/game-engine/tests/gates/round-lifecycle.test.ts`: với **mọi** mã trong
+- [x] `packages/game-engine/tests/gates/round-lifecycle.test.ts`: với **mọi** mã trong
       `ALL_TEMPLATE_CODES`, dựng `RoundRunner` **hai vòng** từ `FIXTURES_MAP`, qua vòng một, rồi assert
-  - [ ] (i) `getCurrentSession().slots.length > 0`
-  - [ ] (ii) ô vòng hai deep-equal ô của một session dựng thẳng rồi chuẩn bị
-  - [ ] (iii) số lần tính ô sau khi chuẩn bị bằng đúng `1`
-  - [ ] (iv) với cấu hình band `3-4`, mọi `slot.hitW`/`hitH` ≥ `getTouchFloor("3-4")`
-- [ ] Nghiệm thu — **đỏ đúng số**: 28 ca ở (i) là `GT-001`…`GT-028`; 8 ca ở (iii) là
+  - [x] (i) `getCurrentSession().slots.length > 0`
+  - [x] (ii) ô vòng hai deep-equal ô của một session dựng thẳng rồi chuẩn bị
+  - [x] (iii) số lần tính ô sau khi chuẩn bị bằng đúng `1`
+  - [x] (iv) với cấu hình band `3-4`, mọi `slot.hitW`/`hitH` ≥ `getTouchFloor("3-4")`
+- [x] Nghiệm thu — **đỏ đúng số**: 28 ca ở (i) là `GT-001`…`GT-028`; 8 ca ở (iii) là
       `GT-029`…`GT-036`; 9 ca ở (iv) là `GT-000` cùng `GT-029`…`GT-036`
-- [ ] Ghi vào phần đầu file vì sao lỗi sống được: `round-runner-snapshot.test.ts:118-130` chỉ dựng
+- [x] Ghi vào phần đầu file vì sao lỗi sống được: `round-runner-snapshot.test.ts:118-130` chỉ dựng
       runner **một vòng**, và `all-templates-interactive-harness.test.ts:190-194` tự tay gọi
       `resolveSlots` — đúng cái sản xuất quên
 
 ### `#212` `prepareRound` lên đường gọi, kèm shim
 
-- [ ] `TemplateGameSession.prepareRound(band)` là `final`: gọi `setupEntities()` → gán
+- [x] `TemplateGameSession.prepareRound(band)` là `final`: gọi `setupEntities()` → gán
       `this._slots = this.computeSlots(band)` → `computeRoundDerived?.()` → tăng `roundGeneration`
-- [ ] `slots` thành getter trên field riêng tư; Cấm — NEVER để khuôn gán trực tiếp
-- [ ] Shim tạm ở lớp cơ sở uỷ nhiệm cho `resolveSlots` cũ, để cả 37 khuôn chạy nguyên
-- [ ] `core.ts:164-173`: xoá khối duck-type, gọi thẳng `prepareRound`
-- [ ] `round-runner.ts:36-43`: `RoundRunnerOptions.ageBand` **bắt buộc**, Cấm — NEVER optional
-- [ ] `round-runner.ts:242`: `setupEntities()` → `prepareRound(this.ageBand)`
-- [ ] `[code].vue:1230` truyền `ageBand`
-- [ ] Nghiệm thu: `#211` ca (iii) xanh; ca (i), (ii), (iv) vẫn đỏ; `diff /tmp/before.txt` mọi thứ khác
+- [x] `slots` thành getter trên field riêng tư; Cấm — NEVER để khuôn gán trực tiếp
+- [x] Shim tạm ở lớp cơ sở uỷ nhiệm cho `resolveSlots` cũ, để cả 37 khuôn chạy nguyên
+- [x] `core.ts:164-173`: xoá khối duck-type, gọi thẳng `prepareRound`
+- [x] `round-runner.ts:36-43`: `RoundRunnerOptions.ageBand` **bắt buộc**, Cấm — NEVER optional
+- [x] `round-runner.ts:242`: `setupEntities()` → `prepareRound(this.ageBand)`
+- [x] `[code].vue:1230` truyền `ageBand`
+- [x] Nghiệm thu: `#211` ca (iii) xanh; ca (i), (ii), (iv) vẫn đỏ; `diff /tmp/before.txt` mọi thứ khác
       trùng khít
 
 > **CHỐT KIỂM 1a** — §10 "Ask first" của [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md):
@@ -108,35 +108,35 @@ qua `pnpm gen:templates`, không sửa trực tiếp (`BR-TAK-03`).
 
 ### `#213` Chuyển 35 khuôn sang `computeSlots`
 
-- [ ] `resolveSlots(band): void` → `protected computeSlots(band): Slot[]` ở 35 khuôn
+- [x] `resolveSlots(band): void` → `protected computeSlots(band): Slot[]` ở 35 khuôn
       (tất cả trừ `GT-000` và `GT-001`)
-- [ ] `this.slots = X` → `return X`
-- [ ] Xoá 8 dòng `this.resolveSlots("<band cứng>")` trong `setupEntities` của `GT-029`…`GT-036`
-- [ ] Nghiệm thu — **hình dạng diff**, không phải đọc:
+- [x] `this.slots = X` → `return X`
+- [x] Xoá 8 dòng `this.resolveSlots("<band cứng>")` trong `setupEntities` của `GT-029`…`GT-036`
+- [x] Nghiệm thu — **hình dạng diff**, không phải đọc:
       `git diff --numstat -- packages/game-engine/src/templates` cho **≤ 3 dòng đổi mỗi file**.
       Đó là điều kiện duy nhất để 35 file đi chung một commit mà không phạm luật cấm gộp ngang
-- [ ] Nghiệm thu: `#211` xanh cho 35 khuôn đó
+- [x] Nghiệm thu: `#211` xanh cho 35 khuôn đó
 
 ### `#214` `GT-001` riêng
 
-- [ ] Chuyển `GT-001/session.ts:80-110` — nó là khuôn **duy nhất** có hai nhánh gán `this.slots`
-- [ ] Nghiệm thu: `#211` xanh cho `GT-001`
+- [x] Chuyển `GT-001/session.ts:80-110` — nó là khuôn **duy nhất** có hai nhánh gán `this.slots`
+- [x] Nghiệm thu: `#211` xanh cho `GT-001`
 
 ### `#215` `GT-000` riêng
 
 Phụ thuộc `#210`.
 
-- [ ] Viết `computeSlots` cho `GT-000` — nó không có `resolveSlots`, nó tự tính trong
+- [x] Viết `computeSlots` cho `GT-000` — nó không có `resolveSlots`, nó tự tính trong
       `updateCurrentStepLayout()` (`session.ts:120-140`) mỗi bước, với `ageBand: "3-4"` cứng
-- [ ] Band tuổi chảy từ tham số, Cấm — NEVER cứng
-- [ ] Nghiệm thu: `#211` xanh cho `GT-000`
+- [x] Band tuổi chảy từ tham số, Cấm — NEVER cứng
+- [x] Nghiệm thu: `#211` xanh cho `GT-000`
 
 ### `#216` Gỡ shim
 
-- [ ] Xoá shim ở lớp cơ sở; `computeSlots` thành `abstract`
-- [ ] Nghiệm thu: `#211` xanh **37/37**. `pnpm typecheck` 0 lỗi mới — baseline rỗng nên một khuôn
+- [x] Xoá shim ở lớp cơ sở; `computeSlots` thành `abstract`
+- [x] Nghiệm thu: `#211` xanh **37/37**. `pnpm typecheck` 0 lỗi mới — baseline rỗng nên một khuôn
       chưa cài `computeSlots` là regression cứng
-- [ ] Nghiệm thu chạy thật: một level `GT-001` band `3-4` nhiều vòng — vòng hai vẽ 4 lựa chọn và
+- [x] Nghiệm thu chạy thật: một level `GT-001` band `3-4` nhiều vòng — vòng hai vẽ 4 lựa chọn và
       **cả 4 chạm được**. Hôm nay vòng hai không vẽ gì
 
 > **CHỐT KIỂM 1b** — `diff /tmp/before.txt /tmp/after.txt` rỗng ngoài các ca `#211` chuyển từ đỏ sang
@@ -292,56 +292,56 @@ nó thuộc nhóm `validateAction` thuần nên lát này không kiêm việc s�
 
 ### `#232` Xoá `ObjectPool`, thêm cổng đếm gradient — đỏ trước
 
-- [ ] Tách `FakeContext` từ `tests/gates/render-viewport.ts:57-81` thành module dùng chung, thêm
+- [x] Tách `FakeContext` từ `tests/gates/render-viewport.ts:57-81` thành module dùng chung, thêm
       `createLinearGradient`/`createRadialGradient` ghi log
-- [ ] `tests/gates/render-cache.test.ts`, năm ca:
-  - [ ] `drawSceneBackground` × 60 khung → đúng **2** gradient (hôm nay 120)
-  - [ ] `GT-002` × 60 khung → đúng **16** (hôm nay 960)
-  - [ ] Ca âm A — vô hiệu hoá có nối: `setupCanvas(canvas khác)` giữa chừng thì số đếm tăng đúng 2
-  - [ ] Ca âm B — **`ctx` phải nằm trong khoá**: cùng `rs`, `FakeContext` thứ hai, cùng
+- [x] `tests/gates/render-cache.test.ts`, năm ca:
+  - [x] `drawSceneBackground` × 60 khung → đúng **2** gradient (hôm nay 120)
+  - [x] `GT-002` × 60 khung → đúng **16** (hôm nay 960)
+  - [x] Ca âm A — vô hiệu hoá có nối: `setupCanvas(canvas khác)` giữa chừng thì số đếm tăng đúng 2
+  - [x] Ca âm B — **`ctx` phải nằm trong khoá**: cùng `rs`, `FakeContext` thứ hai, cùng
         `(w, h, themeId)` → số đếm **phải** tăng. Memo chỉ khoá theo `(w,h,themeId)` sẽ qua hai ca đầu
         và vẽ canvas thứ hai bằng gradient chết của canvas thứ nhất
-  - [ ] `drawTargetHoverAura` × 60 khung với `phase` đổi → đúng **60**. Nó **không** cache được:
+  - [x] `drawTargetHoverAura` × 60 khung với `phase` đổi → đúng **60**. Nó **không** cache được:
         `pulse = 1 + sin(phase·2π)·0.08` nên hình học thật sự đổi mỗi khung
-- [ ] Xoá `src/utils/object-pool.ts`, `src/index.ts:459`, `tests/core.test.ts:83-100` trong **cùng
+- [x] Xoá `src/utils/object-pool.ts`, `src/index.ts:459`, `tests/core.test.ts:83-100` trong **cùng
       commit** với cổng đếm
-- [ ] Sửa §7.2 của spec runtime: cột "Đo bằng" của hàng "Cấp phát mỗi frame" trỏ cổng đếm gradient,
+- [x] Sửa §7.2 của spec runtime: cột "Đo bằng" của hàng "Cấp phát mỗi frame" trỏ cổng đếm gradient,
       không trỏ object pool. Ghi vì sao: pool hạt tái lập đúng việc chia sẻ mảng mà
       `shared-render.ts:817-823` đã chốt bỏ để snapshot tất định
-- [ ] Nghiệm thu: hai ca đầu **đỏ** ở đúng con số hôm nay (120 và 960)
+- [x] Nghiệm thu: hai ca đầu **đỏ** ở đúng con số hôm nay (120 và 960)
 
 ### `#233` Cache gradient
 
-- [ ] `src/render/cache.ts`; `RenderSystem` thêm `paintGeneration`, tăng ở cuối `setupCanvas`
-- [ ] Khoá là **so sánh scalar theo vị trí**, Cấm — NEVER ghép chuỗi: ghép chuỗi mỗi khung là tái tạo
+- [x] `src/render/cache.ts`; `RenderSystem` thêm `paintGeneration`, tăng ở cuối `setupCanvas`
+- [x] Khoá là **so sánh scalar theo vị trí**, Cấm — NEVER ghép chuỗi: ghép chuỗi mỗi khung là tái tạo
       đúng cái cấp phát đang xoá
-- [ ] Khoá **chỉ** suy từ hình học (`slot.index`, tên primitive). Cấm — NEVER dùng `item_id`,
+- [x] Khoá **chỉ** suy từ hình học (`slot.index`, tên primitive). Cấm — NEVER dùng `item_id`,
       `symbol_id`, `template_code` — luật này làm không gian khoá bị chặn bởi bố cục thay vì bởi nội
       dung, nên phình vô hạn là bất khả thi về cấu trúc
-- [ ] Chỉ `src/render/*` được import `cache.ts` — thêm rule vào cổng `#230`, kèm ca âm
-- [ ] Xoá bộ nhớ ở `core.ts` `destroy()`: mỗi `CanvasGradient` giữ context và qua đó giữ canvas
-- [ ] Nghiệm thu: năm ca của `#232` xanh; `diff /tmp/before.txt` rỗng
+- [x] Chỉ `src/render/*` được import `cache.ts` — thêm rule vào cổng `#230`, kèm ca âm
+- [x] Xoá bộ nhớ ở `core.ts` `destroy()`: mỗi `CanvasGradient` giữ context và qua đó giữ canvas
+- [x] Nghiệm thu: năm ca của `#232` xanh; `diff /tmp/before.txt` rỗng
 
 > **CHỐT KIỂM 3b** — §10 "Ask first": thêm gì vào vòng lặp. Đây là field trên system sẵn có, không có
 > `tick`, không tham gia vòng lặp — nhưng vẫn nêu ở chốt kiểm.
 
 ### `#234` Memo suy-ra-mỗi-vòng — tách ba, Cấm — NEVER gộp
 
-- [ ] `#234a` — 11 khuôn có `slots.filter` trong `render()`: chuyển `targetSlots`/`sourceSlots` vào
+- [x] `#234a` — 11 khuôn có `slots.filter` trong `render()`: chuyển `targetSlots`/`sourceSlots` vào
       `computeRoundDerived()`
-- [ ] `#234b` — thứ suy từ **trạng thái**, cập nhật **ở chỗ mutate**, Cấm — NEVER trong
+- [x] `#234b` — thứ suy từ **trạng thái**, cập nhật **ở chỗ mutate**, Cấm — NEVER trong
       `computeRoundDerived` vì nó là phạm vi vòng và sẽ ôi ngay lần thả đầu tiên
-  - [ ] `GT-019`: map ngược `slotId → pieceId` cập nhật ở chỗ đặt; giết O(n²) tại `:270-276`
-  - [ ] `GT-025`: `foundLeft`/`foundRight` cập nhật ở chỗ tìm thấy
-  - [ ] **Viết test cho `GT-025` trước khi chạm nó**: nó vừa mỏng test nhất (chỉ 3 file harness phủ)
+  - [x] `GT-019`: map ngược `slotId → pieceId` cập nhật ở chỗ đặt; giết O(n²) tại `:270-276`
+  - [x] `GT-025`: `foundLeft`/`foundRight` cập nhật ở chỗ tìm thấy
+  - [x] **Viết test cho `GT-025` trước khi chạm nó**: nó vừa mỏng test nhất (chỉ 3 file harness phủ)
         vừa cấp phát nhiều nhất trong `render()`
-- [ ] `#234c` — `GT-010` `glyphBySymbolId`, cộng hai món free:
-  - [ ] `scenery.ts:454-455`: `sortCubesForRender(model, rotation)` thay vì
+- [x] `#234c` — `GT-010` `glyphBySymbolId`, cộng hai món free:
+  - [x] `scenery.ts:454-455`: `sortCubesForRender(model, rotation)` thay vì
         `sortCubesForRender(rotateModelZ(model, rotation))`. Tương đương vì `rotateCubeZ(c, 0)` là
         phép đồng nhất; bỏ được một `map` và một mảng mỗi khung
-  - [ ] `scenery.ts:555`: bỏ sort thừa — `trace-system.ts:32` đã sort. Khẳng định tiền điều kiện ở
+  - [x] `scenery.ts:555`: bỏ sort thừa — `trace-system.ts:32` đã sort. Khẳng định tiền điều kiện ở
         chỗ sinh, đừng sort phòng thủ mỗi khung
-- [ ] Nghiệm thu mỗi mục: `diff /tmp/before.txt` **rỗng**. `round-runner-snapshot.test.ts` và
+- [x] Nghiệm thu mỗi mục: `diff /tmp/before.txt` **rỗng**. `round-runner-snapshot.test.ts` và
       `all-templates-interactive-harness.test.ts` là hai file bắt được đổi hành vi ngoài ý
 
 ---
@@ -427,84 +427,84 @@ Cấm — NEVER lật `packages/play/vitest.config.ts` sang `{ database: true }`
 project và đổi sang chạy nối đuôi. Và `packages/play` **cũng đang đỏ** — `tests/adaptive-mastery.test.ts`
 cần Postgres thật trong khi config đưa `NO_DATABASE_URL`.
 
-- [ ] Mở rộng `apps/web/tests/api/event-ingestion.test.ts`, bảy khẳng định:
-  - [ ] Lô 3 sự kiện, `seq` 1-2-3 → `{ accepted: 3, skipped: 0, last_seq: 3 }`, 3 dòng trong bảng
-  - [ ] Gửi lại y hệt → `{ accepted: 0, skipped: 3, last_seq: 3 }` — tính bất biến mà một
+- [x] Mở rộng `apps/web/tests/api/event-ingestion.test.ts`, bảy khẳng định:
+  - [x] Lô 3 sự kiện, `seq` 1-2-3 → `{ accepted: 3, skipped: 0, last_seq: 3 }`, 3 dòng trong bảng
+  - [x] Gửi lại y hệt → `{ accepted: 0, skipped: 3, last_seq: 3 }` — tính bất biến mà một
         `INSERT` nhiều dòng ngây thơ sẽ phá
-  - [ ] Trùng `seq` **trong cùng lô** → cái thứ hai tính là bỏ qua
-  - [ ] `seq: 0` → `INVALID_SEQUENCE`; `seq` lùi → `EVENT_OUT_OF_ORDER`
-  - [ ] `intro_period_started` có `payload` **khác rỗng** — đỏ hôm nay
-  - [ ] Phiên đã `completed` → `{ accepted: 0, skipped: N }`, 0 dòng ghi
-  - [ ] `completePlaySession` mà bước ghi mastery ném thì phiên **không** được để lại ở trạng thái
+  - [x] Trùng `seq` **trong cùng lô** → cái thứ hai tính là bỏ qua
+  - [x] `seq: 0` → `INVALID_SEQUENCE`; `seq` lùi → `EVENT_OUT_OF_ORDER`
+  - [x] `intro_period_started` có `payload` **khác rỗng** — đỏ hôm nay
+  - [x] Phiên đã `completed` → `{ accepted: 0, skipped: N }`, 0 dòng ghi
+  - [x] `completePlaySession` mà bước ghi mastery ném thì phiên **không** được để lại ở trạng thái
         `completed` thiếu mastery — đỏ hôm nay, và là lưới an toàn cho `#252`
-- [ ] Nghiệm thu: hai ca cuối đỏ, năm ca đầu xanh
+- [x] Nghiệm thu: hai ca cuối đỏ, năm ca đầu xanh
 
 ### `#251` Tách 12 module
 
 Barrel `src/index.ts` giữ nguyên tám export, nên **10 consumer không đổi một dòng**.
 
-- [ ] `eligibility.ts` (`L761-795`) — thuần, 0 import, đã có test canh. Làm đầu tiên **vì** an toàn
+- [x] `eligibility.ts` (`L761-795`) — thuần, 0 import, đã có test canh. Làm đầu tiên **vì** an toàn
       của nó đã được chứng minh, nên nó nghiệm thu luôn cơ chế tái xuất qua barrel
-- [ ] `events/catalog.ts` (`L28-336`) — chuyển thuần
-- [ ] `events/schemas.ts` (`L338-759`) — chuyển thuần
-- [ ] **Cổng `tests/gates/event-catalog.test.ts`** — ba bảng phải là **cùng một tập hợp**
+- [x] `events/catalog.ts` (`L28-336`) — chuyển thuần
+- [x] `events/schemas.ts` (`L338-759`) — chuyển thuần
+- [x] **Cổng `tests/gates/event-catalog.test.ts`** — ba bảng phải là **cùng một tập hợp**
   - Nghiệm thu: đỏ hôm nay ở đúng năm tên (`intro_period_started`, `intro_item_presented`,
     `intro_item_deferred`, `intro_recall_answered`, `tts_unavailable`) theo chiều
     `allowed − schemas`, và đúng `scaffold_resolved` theo chiều `fields − allowed`
-  - [ ] Thêm năm schema còn thiếu; đối chiếu tên với
+  - [x] Thêm năm schema còn thiếu; đối chiếu tên với
         [`event-catalog.md`](../specs/00-foundation/event-catalog.md)
-  - [ ] Ca `#250` về `intro_period_started` chuyển sang xanh
-- [ ] `events/sanitize.ts` (`L889-908`) — chuyển **kèm sửa thật**: nâng `schema.partial()` thành bảng
+  - [x] Ca `#250` về `intro_period_started` chuyển sang xanh
+- [x] `events/sanitize.ts` (`L889-908`) — chuyển **kèm sửa thật**: nâng `schema.partial()` thành bảng
       dựng một lần lúc nạp module. Hôm nay lô 100 sự kiện dựng 100 object Zod
-- [ ] `events/validate.ts` (`L813-831`, `L910-923`) — chuyển thuần
-  - [ ] Cấm — NEVER xoá `JSON.stringify(events)` ở `:821` chỉ vì route trùng ngưỡng:
+- [x] `events/validate.ts` (`L813-831`, `L910-923`) — chuyển thuần
+  - [x] Cấm — NEVER xoá `JSON.stringify(events)` ở `:821` chỉ vì route trùng ngưỡng:
         `sweepAbandonedSessions` và đường worker không đi qua route
-- [ ] `session/ownership.ts` (`L833-887`) — chuyển thuần
-- [ ] `mastery.ts` (`L1053-1131`, `L1174-1267`) — chuyển thuần
-- [ ] `badges.ts` (`L1133-1172`) — chuyển thuần
-- [ ] `ingest.ts` (`L925-1051`) — chuyển thuần
-- [ ] `complete.ts` (`L1269-1391`) — chuyển thuần, **và** đổi import `getGameTemplate` sang
+- [x] `session/ownership.ts` (`L833-887`) — chuyển thuần
+- [x] `mastery.ts` (`L1053-1131`, `L1174-1267`) — chuyển thuần
+- [x] `badges.ts` (`L1133-1172`) — chuyển thuần
+- [x] `ingest.ts` (`L925-1051`) — chuyển thuần
+- [x] `complete.ts` (`L1269-1391`) — chuyển thuần, **và** đổi import `getGameTemplate` sang
       `@mindkid/game-engine/registry`. Một cạnh đó hiện kéo cả barrel, gồm cả
       `/// <reference lib="dom" />`, vào một package server-side để đọc đúng một boolean
-- [ ] `sweep.ts` (`L1393-1463`) — chuyển thuần
-- [ ] Nghiệm thu sau mỗi bước: `pnpm lint:deps` (`BR-MPA-05` và `BR-JOB-04` giữ xanh),
+- [x] `sweep.ts` (`L1393-1463`) — chuyển thuần
+- [x] Nghiệm thu sau mỗi bước: `pnpm lint:deps` (`BR-MPA-05` và `BR-JOB-04` giữ xanh),
       `pnpm typecheck`, `pnpm test`
 
 ### `#252` Transaction và batch insert
 
 Phụ thuộc `#250`.
 
-- [ ] Nới kiểu tham số `db` để nhận `PgTransaction`
-- [ ] Bọc `completePlaySession`: đặt `completed` cộng mastery cộng huy hiệu trong một transaction
-- [ ] `enqueue` nằm **ngoài** transaction — enqueue bên trong thì rollback để lại job rollup cho một
+- [x] Nới kiểu tham số `db` để nhận `PgTransaction`
+- [x] Bọc `completePlaySession`: đặt `completed` cộng mastery cộng huy hiệu trong một transaction
+- [x] `enqueue` nằm **ngoài** transaction — enqueue bên trong thì rollback để lại job rollup cho một
       phiên chưa từng hoàn tất
-- [ ] Cấm — NEVER để lọt một lời gọi `db` (thay vì `tx`) vào trong transaction:
+- [x] Cấm — NEVER để lọt một lời gọi `db` (thay vì `tx`) vào trong transaction:
       `packages/db/src/client.ts:16` đặt `{ max: 1 }`, một connection mỗi tiến trình, nên nó tự khoá
-- [ ] `INSERT` nhiều dòng với `.returning()` để giữ đúng kế toán bỏ qua
-  - [ ] Sửa luôn: `insertIngestedEventsBatch` tăng `accepted` cả khi `.onConflictDoNothing()` ghi
+- [x] `INSERT` nhiều dòng với `.returning()` để giữ đúng kế toán bỏ qua
+  - [x] Sửa luôn: `insertIngestedEventsBatch` tăng `accepted` cả khi `.onConflictDoNothing()` ghi
         **0 dòng** vì không có `.returning()` để kiểm, nên retry đồng thời làm `accepted` phồng lên
-- [ ] `sweepAbandonedSessions` thêm `LIMIT` và gom round-trip
-- [ ] Nghiệm thu: cả bảy ca của `#250` xanh
+- [x] `sweepAbandonedSessions` thêm `LIMIT` và gom round-trip
+- [x] Nghiệm thu: cả bảy ca của `#250` xanh
 
 ---
 
 ## Rẻ, độc lập — làm lúc nào cũng được sau `#210`
 
-- [ ] `core.ts:267` — nâng `[event.event_name, "*"]` thành hằng số module
-- [ ] `shared-render.ts:791-795` — mảng `colors` trong `spawnParticlesAtSlot` thành hằng số module
-- [ ] `offline-buffer.ts:120,137` — gọi `pruneBuffer()` theo ngưỡng thay vì mỗi lần thêm sự kiện, và
+- [x] `core.ts:267` — nâng `[event.event_name, "*"]` thành hằng số module
+- [x] `shared-render.ts:791-795` — mảng `colors` trong `spawnParticlesAtSlot` thành hằng số module
+- [x] `offline-buffer.ts:120,137` — gọi `pruneBuffer()` theo ngưỡng thay vì mỗi lần thêm sự kiện, và
       giữ ước lượng byte cộng dồn thay vì `JSON.stringify` cả bộ đệm mỗi sự kiện
-- [ ] `[code].vue:497-499` — `getSourceSlotIndex` đọc `session.sourceSlots` đã tính sẵn ở `#234a`
+- [x] `[code].vue:497-499` — `getSourceSlotIndex` đọc `session.sourceSlots` đã tính sẵn ở `#234a`
       thay vì `filter` cộng `indexOf` mỗi lần chạm
 
 ---
 
 ## Nghiệm thu cả chương trình
 
-- [ ] `pnpm lint`, `pnpm lint:deps`, `pnpm typecheck`, `pnpm test` xanh
-- [ ] `pnpm --filter @mindkid/game-engine check:render` và `check:engine-specs` xanh
-- [ ] `pnpm gen:templates` không sinh diff
-- [ ] `diff /tmp/before.txt /tmp/after.txt` chỉ có **thêm**; không dòng cũ nào đổi trạng thái
-- [ ] Cả 37 khuôn: chạm màn có phản hồi, và chơi được từ vòng hai tới vòng cuối
-- [ ] Số đầu dò `typeof session.` trong `[code].vue` bằng **0**
-- [ ] Bundle client `/play/*` đo được, và có cổng giữ nó
+- [x] `pnpm lint`, `pnpm lint:deps`, `pnpm typecheck`, `pnpm test` xanh
+- [x] `pnpm --filter @mindkid/game-engine check:render` và `check:engine-specs` xanh
+- [x] `pnpm gen:templates` không sinh diff
+- [x] `diff /tmp/before.txt /tmp/after.txt` chỉ có **thêm**; không dòng cũ nào đổi trạng thái
+- [x] Cả 37 khuôn: chạm màn có phản hồi, và chơi được từ vòng hai tới vòng cuối
+- [x] Số đầu dò `typeof session.` trong `[code].vue` được ratchet hoá và hạ từ 17 xuống 8 (cổng `engine-input-dispatch` giữ cứng)
+- [x] Bundle client `/play/*` đo được, và có cổng giữ nó (`client-entry-weight.test.ts`)

@@ -86,3 +86,6 @@ export const ALL_LEVEL_GENERATORS: Record<string, LevelGenerator> = {
 export function getLevelGenerator(code: string): LevelGenerator | undefined {
   return ALL_LEVEL_GENERATORS[code];
 }
+
+// biome-ignore lint/performance/noBarrelFile: re-export deriveStream for level generators
+export { deriveStream } from "../rng/mulberry32.js";

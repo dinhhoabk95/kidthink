@@ -1,3 +1,5 @@
+import { getGradientCache } from "#src/render/cache.js";
+
 export function leakCache(): void {
-  // invalid import outside src/render
+  getGradientCache();
 }

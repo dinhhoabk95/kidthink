@@ -17,7 +17,7 @@ export interface FakeGradient extends Partial<CanvasGradient> {
 }
 
 export interface FakeContext extends Partial<CanvasRenderingContext2D> {
-  canvas: { height: number; width: number };
+  canvas: HTMLCanvasElement;
   clearRect(x: number, y: number, w: number, h: number): void;
   readonly clears: Array<{ h: number; w: number; x: number; y: number }>;
   restore(): void;
@@ -30,7 +30,16 @@ export interface FakeContext extends Partial<CanvasRenderingContext2D> {
     e: number,
     f: number
   ): void;
-  readonly transform: FakeMatrix;
+  setTransform(transform?: DOMMatrix2DInit): void;
+  transform(
+    a: number,
+    b: number,
+    c: number,
+    d: number,
+    e: number,
+    f: number
+  ): void;
+  readonly transformMatrix: FakeMatrix;
   createLinearGradient(
     x0: number,
     y0: number,
@@ -74,7 +83,7 @@ export interface FakeContext extends Partial<CanvasRenderingContext2D> {
   strokeRect(x: number, y: number, w: number, h: number): void;
   fillText(text: string, x: number, y: number): void;
   strokeText(text: string, x: number, y: number): void;
-  measureText(text: string): { width: number };
+  measureText(text: string): TextMetrics;
   setLineDash(segments: number[]): void;
   getLineDash(): number[];
   scale(x: number, y: number): void;
@@ -123,7 +132,7 @@ export interface FakeContext extends Partial<CanvasRenderingContext2D> {
   shadowOffsetY: number;
 }
 
-export interface FakeCanvas extends Partial<HTMLCanvasElement> {
+export interface FakeCanvas {
   getBoundingClientRect(): DOMRect;
   getContext(kind: string): FakeContext | null;
   height: number;
@@ -131,6 +140,34 @@ export interface FakeCanvas extends Partial<HTMLCanvasElement> {
 }
 
 const IDENTITY: FakeMatrix = { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 };
+
+function resolveMatrix(
+  a?: number | DOMMatrix2DInit,
+  b?: number,
+  c?: number,
+  d?: number,
+  e?: number,
+  f?: number
+): FakeMatrix {
+  if (typeof a === "object" && a !== null) {
+    return {
+      a: a.a ?? 1,
+      b: a.b ?? 0,
+      c: a.c ?? 0,
+      d: a.d ?? 1,
+      e: a.e ?? 0,
+      f: a.f ?? 0,
+    };
+  }
+  return {
+    a: typeof a === "number" ? a : 1,
+    b: b ?? 0,
+    c: c ?? 0,
+    d: d ?? 1,
+    e: e ?? 0,
+    f: f ?? 0,
+  };
+}
 
 export function createFakeCanvas(
   cssWidth: number,
@@ -141,24 +178,76 @@ export function createFakeCanvas(
   let matrix: FakeMatrix = { ...IDENTITY };
   const stack: FakeMatrix[] = [];
 
-  const ctx: FakeContext = {
-    canvas: { height: 150, width: 300 },
+  let width = 300;
+  let height = 150;
+  let ctx: FakeContext;
+
+  const fakeCanvas: FakeCanvas = {
+    getBoundingClientRect: () =>
+      ({
+        bottom: cssHeight,
+        height: cssHeight,
+        left: 0,
+        right: cssWidth,
+        top: 0,
+        width: cssWidth,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }) as DOMRect,
+    getContext: () => ctx,
+    get height() {
+      return height;
+    },
+    set height(value: number) {
+      height = value;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+    },
+    get width() {
+      return width;
+    },
+    set width(value: number) {
+      width = value;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+    },
+  };
+
+  ctx = {
+    canvas: fakeCanvas as HTMLCanvasElement,
     clearRect(x, y, w, h) {
       clears.push({ h, w, x, y });
     },
     clears,
     restore() {
       matrix = stack.pop() ?? { ...IDENTITY };
-      Object.assign(ctx.transform, matrix);
+      Object.assign(ctx.transformMatrix, matrix);
     },
     save() {
       stack.push({ ...matrix });
     },
-    setTransform(a, b, c, d, e, f) {
-      matrix = { a, b, c, d, e, f };
-      Object.assign(ctx.transform, matrix);
+    setTransform(
+      a?: number | DOMMatrix2DInit,
+      b?: number,
+      c?: number,
+      d?: number,
+      e?: number,
+      f?: number
+    ) {
+      matrix = resolveMatrix(a, b, c, d, e, f);
+      Object.assign(ctx.transformMatrix, matrix);
     },
-    transform: { ...IDENTITY },
+    transform(a, b, c, d, e, f) {
+      matrix = {
+        a: matrix.a * a + matrix.c * b,
+        b: matrix.b * a + matrix.d * b,
+        c: matrix.a * c + matrix.c * d,
+        d: matrix.b * c + matrix.d * d,
+        e: matrix.a * e + matrix.c * f + matrix.e,
+        f: matrix.b * e + matrix.d * f + matrix.f,
+      };
+      Object.assign(ctx.transformMatrix, matrix);
+    },
+    transformMatrix: { ...IDENTITY },
     createLinearGradient(x0, y0, x1, y1) {
       gradientCalls.push({ type: "linear", args: [x0, y0, x1, y1] });
       return {
@@ -223,7 +312,20 @@ export function createFakeCanvas(
       // No-op for mock
     },
     measureText(text) {
-      return { width: text.length * 10 };
+      return {
+        width: text.length * 10,
+        actualBoundingBoxAscent: 0,
+        actualBoundingBoxDescent: 0,
+        actualBoundingBoxLeft: 0,
+        actualBoundingBoxRight: 0,
+        alphabeticBaseline: 0,
+        emHeightAscent: 0,
+        emHeightDescent: 0,
+        fontBoundingBoxAscent: 0,
+        fontBoundingBoxDescent: 0,
+        hangingBaseline: 0,
+        ideographicBaseline: 0,
+      };
     },
     setLineDash() {
       // No-op for mock
@@ -271,38 +373,5 @@ export function createFakeCanvas(
     shadowOffsetY: 0,
   };
 
-  let width = 300;
-  let height = 150;
-
-  return {
-    getBoundingClientRect: () =>
-      ({
-        bottom: cssHeight,
-        height: cssHeight,
-        left: 0,
-        right: cssWidth,
-        top: 0,
-        width: cssWidth,
-        x: 0,
-        y: 0,
-        toJSON: () => ({}),
-      }) as DOMRect,
-    getContext: () => ctx,
-    get height() {
-      return height;
-    },
-    set height(value: number) {
-      height = value;
-      ctx.canvas.height = value;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-    },
-    get width() {
-      return width;
-    },
-    set width(value: number) {
-      width = value;
-      ctx.canvas.width = value;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-    },
-  };
+  return fakeCanvas;
 }

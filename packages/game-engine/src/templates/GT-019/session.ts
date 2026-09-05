@@ -36,6 +36,8 @@ import {
 } from "#src/systems/rotation-system";
 import type { GT019Content, GT019Difficulty } from "./template.js";
 
+type GT019Piece = GT019Content["pieces"][number];
+
 function toRotationAngle(val: number | undefined): RotationAngle90 {
   if (val === 90 || val === 180 || val === 270) {
     return val;
