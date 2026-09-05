@@ -6,6 +6,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
@@ -27,6 +33,29 @@ import {
 } from "../shared-render.js";
 import { drawIsometricModel, insetBox } from "../shared-render-shapes.js";
 import type { GT017Content, GT017Difficulty } from "./template.js";
+
+function isPointInSlot(slot: Slot, x: number, y: number): boolean {
+  const hw = (slot.hitW ?? slot.w) / 2;
+  const hh = (slot.hitH ?? slot.h) / 2;
+  return (
+    x >= slot.x - hw && x <= slot.x + hw && y >= slot.y - hh && y <= slot.y + hh
+  );
+}
+
+function findHitOptionId(
+  slots: readonly Slot[],
+  options: readonly { option_id: string }[],
+  x: number,
+  y: number
+): string | null {
+  for (let i = 0; i < options.length; i++) {
+    const slot = slots[i];
+    if (slot && isPointInSlot(slot, x, y)) {
+      return options[i]?.option_id ?? null;
+    }
+  }
+  return null;
+}
 
 export class BlockStackSession extends TemplateGameSession<
   GT017Content,
@@ -122,19 +151,100 @@ export class BlockStackSession extends TemplateGameSession<
     return opt.is_correct;
   }
 
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "tap") {
+      const optionSlots = this.slots.filter((s) => s.role === "source");
+      const slotsToCheck = optionSlots.length > 0 ? optionSlots : this.slots;
+      const hitId = findHitOptionId(
+        slotsToCheck,
+        this.content.options,
+        gesture.x,
+        gesture.y
+      );
+      return hitId ? { type: "select_option", data: hitId } : null;
+    }
+    if (gesture.type === "adjust" && this.difficulty.allow_rotate) {
+      return {
+        type: "rotate_model",
+        data: gesture.delta > 0 ? "cw" : "ccw",
+      };
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (action.type === "select_option" && typeof action.data === "string") {
+      this.selectOption(action.data);
+      return;
+    }
+    if (
+      action.type === "rotate_model" &&
+      (action.data === "cw" || action.data === "ccw")
+    ) {
+      this.rotateModel(action.data);
+    }
+  }
+
   validateAction(action: GameAction): ActionResult {
     if (action.type === "rotate_model") {
-      return ACTION_IGNORED;
+      return this.difficulty.allow_rotate ? ACTION_CORRECT : ACTION_IGNORED;
     }
     if (action.type === "select_option") {
       if (typeof action.data !== "string") {
         return ACTION_RETRY;
       }
-      const id = action.data;
-      const opt = this.content.options.find((o) => o.option_id === id);
+      const opt = this.content.options.find((o) => o.option_id === action.data);
       return opt?.is_correct ? ACTION_CORRECT : ACTION_RETRY;
     }
     return ACTION_IGNORED;
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = [];
+
+    const targetSlot =
+      this.slots.find((s) => s.role === "target") ?? this.slots[0];
+    if (targetSlot) {
+      entities.push({
+        id: "model-view",
+        slotIndex: 0,
+        role: "target",
+        state: "idle",
+        x: targetSlot.x,
+        y: targetSlot.y,
+        w: targetSlot.w,
+        h: targetSlot.h,
+      });
+    }
+
+    const optionSlots = this.slots.filter((s) => s.role === "source");
+    const slotsToUse = optionSlots.length > 0 ? optionSlots : this.slots;
+
+    this.content.options.forEach((opt, i) => {
+      const slot = slotsToUse[i];
+      if (slot) {
+        const chosen = this.selectedOptionId === opt.option_id;
+        let state: EntityVisual = "idle";
+        if (chosen) {
+          state = opt.is_correct ? "correct" : "incorrect";
+        }
+        entities.push({
+          id: opt.option_id,
+          slotIndex: i + 1,
+          role: "source",
+          state,
+          x: slot.x,
+          y: slot.y,
+          w: slot.w,
+          h: slot.h,
+        });
+      }
+    });
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   override checkWinCondition(): boolean {
