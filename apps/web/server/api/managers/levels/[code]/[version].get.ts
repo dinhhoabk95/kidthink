@@ -1,7 +1,9 @@
 import { gameLevels, getOwnerDb } from "@mindkid/db";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, or } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+
+const NUMERIC_REGEX = /^\d+$/;
 
 export default defineEventHandler(async (event) => {
   await requireManagerSession(event);
@@ -42,18 +44,22 @@ export default defineEventHandler(async (event) => {
     })
     .from(gameLevels);
 
+  const isNumeric = NUMERIC_REGEX.test(code);
+  const codeFilter = isNumeric
+    ? or(
+        eq(gameLevels.code, code),
+        eq(gameLevels.id, Number(code)),
+        eq(gameLevels.entityId, Number(code))
+      )
+    : eq(gameLevels.code, code);
+
   const rows =
     Number.isInteger(version) && version > 0
       ? await query
-          .where(
-            and(
-              eq(gameLevels.code, code),
-              eq(gameLevels.contentVersion, version)
-            )
-          )
+          .where(and(codeFilter, eq(gameLevels.contentVersion, version)))
           .limit(1)
       : await query
-          .where(eq(gameLevels.code, code))
+          .where(codeFilter)
           .orderBy(desc(gameLevels.contentVersion))
           .limit(1);
 

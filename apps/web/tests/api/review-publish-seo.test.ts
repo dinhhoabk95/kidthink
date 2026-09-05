@@ -16,8 +16,8 @@ import {
 import { eq } from "drizzle-orm";
 import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import guestSeoHandler from "#server/api/guest/seo-pages/[slug].get";
-import versionsHandler from "#server/api/managers/content/[type]/[code]/versions.get";
 import transitionHandler from "#server/api/managers/content/[type]/[id]/transition.post";
+import versionsHandler from "#server/api/managers/content/[type]/[id]/versions.get";
 import bulkRejectHandler from "#server/api/managers/content/review-queue/bulk-reject.post";
 import reviewQueueHandler from "#server/api/managers/content/review-queue/index.get";
 import levelConfigHandler from "#server/api/managers/levels/[code]/config.get";

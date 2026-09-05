@@ -1,20 +1,36 @@
 import { appError } from "@mindkid/auth";
-import { getOwnerDb, recurringSubscriptions } from "@mindkid/db";
-import { desc, eq } from "drizzle-orm";
+import { getOwnerDb, recurringSubscriptions, users } from "@mindkid/db";
+import { desc, eq, or } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
+
+const NUMERIC_REGEX = /^\d+$/;
 
 export default defineEventHandler(async (event) => {
   await requireSuperAdminSession(event);
 
-  const idParam = getRouterParam(event, "id");
-  const userId = Number(idParam);
-
-  if (!idParam || Number.isNaN(userId) || userId <= 0) {
+  const uuidParam =
+    getRouterParam(event, "uuid") || getRouterParam(event, "id");
+  if (!uuidParam) {
     throw appError("VALIDATION_FAILED", "ID người dùng không hợp lệ");
   }
 
   const db = getOwnerDb();
+  const [targetUser] = await db
+    .select({ id: users.id, uuid: users.uuid })
+    .from(users)
+    .where(
+      NUMERIC_REGEX.test(uuidParam)
+        ? or(eq(users.id, Number(uuidParam)), eq(users.uuid, uuidParam))
+        : eq(users.uuid, uuidParam)
+    )
+    .limit(1);
+
+  if (!targetUser) {
+    throw appError("NOT_FOUND", "Không tìm thấy người dùng");
+  }
+
+  const userId = targetUser.id;
 
   const userSubs = await db
     .select()
@@ -24,6 +40,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     user_id: userId,
+    user_uuid: targetUser.uuid,
     subscriptions: userSubs.map((s) => ({
       id: s.id,
       package_code: s.packageCode,

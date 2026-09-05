@@ -5,7 +5,7 @@ import {
   lessons,
   playSessions,
 } from "@mindkid/db";
-import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, or, sql } from "drizzle-orm";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -28,6 +28,8 @@ export interface ContentVersionItem {
     created_at: string;
   }>;
 }
+
+const NUMERIC_REGEX = /^\d+$/;
 
 function computeLevelDiff(
   prevRow: typeof gameLevels.$inferSelect,
@@ -65,14 +67,23 @@ async function fetchGameLevelVersions(
   code: string,
   db: ReturnType<typeof getOwnerDb>
 ): Promise<ContentVersionItem[]> {
+  const isNumeric = NUMERIC_REGEX.test(code);
   const rows = await db
     .select()
     .from(gameLevels)
-    .where(eq(gameLevels.code, code))
+    .where(
+      isNumeric
+        ? or(
+            eq(gameLevels.code, code),
+            eq(gameLevels.id, Number(code)),
+            eq(gameLevels.entityId, Number(code))
+          )
+        : eq(gameLevels.code, code)
+    )
     .orderBy(asc(gameLevels.contentVersion));
 
   const versionItems: ContentVersionItem[] = [];
-  let prevRow: (typeof rows)[0] | null = null;
+  let prevRow: typeof gameLevels.$inferSelect | undefined;
 
   for (const r of rows) {
     const [playCountRes] = await db
@@ -127,10 +138,19 @@ async function fetchLessonVersions(
   code: string,
   db: ReturnType<typeof getOwnerDb>
 ): Promise<ContentVersionItem[]> {
+  const isNumeric = NUMERIC_REGEX.test(code);
   const rows = await db
     .select()
     .from(lessons)
-    .where(eq(lessons.code, code))
+    .where(
+      isNumeric
+        ? or(
+            eq(lessons.code, code),
+            eq(lessons.id, Number(code)),
+            eq(lessons.entityId, Number(code))
+          )
+        : eq(lessons.code, code)
+    )
     .orderBy(asc(lessons.contentVersion));
 
   const versionItems: ContentVersionItem[] = [];
@@ -153,9 +173,9 @@ async function fetchLessonVersions(
       version: r.contentVersion,
       status: r.status,
       title: r.title,
-      created_by_manager_id: r.createdByManagerId,
-      reviewed_by_manager_id: r.reviewedByManagerId,
-      published_at: r.publishedAt?.toISOString() || null,
+      created_by_manager_id: null,
+      reviewed_by_manager_id: null,
+      published_at: null,
       created_at: r.createdAt.toISOString(),
       play_count: 0,
       review_logs: logs.map((l) => ({
@@ -172,7 +192,7 @@ async function fetchLessonVersions(
 export default defineEventHandler(async (event) => {
   await requireManagerSession(event);
   const typeParam = getRouterParam(event, "type");
-  const code = getRouterParam(event, "code");
+  const code = getRouterParam(event, "id") || getRouterParam(event, "code");
 
   if (!(typeParam && code)) {
     throw createError({

@@ -197,6 +197,7 @@ async function getViewerAllowedTiers(viewer: {
 
 interface RawRow {
   id: number;
+  entityId?: number;
   code: string;
   title: string;
   description?: string | null;
@@ -244,6 +245,7 @@ function formatSearchItem(row: RawRow, userAllowedTiers: AccessTier[]) {
 
   const card = {
     id: row.id,
+    entity_id: row.entityId ?? row.id,
     code: row.code,
     title: row.title,
     description: row.description,
@@ -287,6 +289,7 @@ export async function searchGameLevels(
   const rawRows = await db
     .select({
       id: gameLevels.id,
+      entityId: gameLevels.entityId,
       code: gameLevels.code,
       title: gameLevels.title,
       description: gameLevels.description,
