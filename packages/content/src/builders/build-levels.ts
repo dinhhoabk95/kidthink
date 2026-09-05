@@ -160,7 +160,7 @@ const STRAND_WHAT_TAG_MAP: Record<string, string> = {
   "C1.ADD": "number",
   "C1.SUB": "number",
   "C1.CMP": "size",
-  "C1.ORD": "sequence",
+  "C1.ORD": "cmp",
   "C1.OTO": "quantity",
   "C1.PAT": "pattern",
   "C1.MEAS": "size",
@@ -171,13 +171,13 @@ const STRAND_WHAT_TAG_MAP: Record<string, string> = {
   // C2
   "C2.GEO": "geometry",
   "C2.CON": "geometry",
-  "C2.DIR": "space",
-  "C2.GRD": "space",
-  "C2.MAZ": "space",
+  "C2.DIR": "spt",
+  "C2.GRD": "spt",
+  "C2.MAZ": "spt",
   "C2.MIR": "geometry",
-  "C2.ORI": "space",
-  "C2.PER": "space",
-  "C2.ROT": "space",
+  "C2.ORI": "spt",
+  "C2.PER": "spt",
+  "C2.ROT": "spt",
   "C2.SOL": "geometry",
   // C3
   "C3.ALG": "rule",
@@ -187,7 +187,7 @@ const STRAND_WHAT_TAG_MAP: Record<string, string> = {
   "C3.INF": "rule",
   "C3.MTX": "pattern",
   "C3.RULE": "rule",
-  "C3.SEQ": "sequence",
+  "C3.SEQ": "pattern",
   "C3.SET": "category",
   "C3.SRT": "category",
   // C4
@@ -231,7 +231,7 @@ const STRAND_WHAT_TAG_MAP: Record<string, string> = {
   "C6.MON": "rule",
   "C6.PER": "rule",
   "C6.PLN": "rule",
-  "C6.WM": "sequence",
+  "C6.WM": "mem",
 };
 
 const CANONICAL_THINKING_TAGS = new Set([
@@ -280,6 +280,68 @@ function resolveWhatTag(strandCode: string): string {
   return STRAND_WHAT_TAG_MAP[strandCode] ?? "rule";
 }
 
+const TEMPLATE_CODE_SEGMENT_MAP: Record<string, string> = {
+  "GT-000": "INTRO",
+  "GT-001": "TAP",
+  "GT-002": "MULTI",
+  "GT-003": "DROP",
+  "GT-004": "SORT",
+  "GT-005": "MATCH",
+  "GT-006": "ORD",
+  "GT-007": "BOND",
+  "GT-008": "SLOT",
+  "GT-009": "DED",
+  "GT-010": "SYM",
+  "GT-011": "CHO",
+  "GT-012": "FLASH",
+  "GT-013": "MAZE",
+  "GT-014": "SCL",
+  "GT-015": "MIN",
+  "GT-016": "CLK",
+  "GT-017": "STK",
+  "GT-018": "AUDIO",
+  "GT-019": "TRANS",
+  "GT-020": "FLIP",
+  "GT-021": "MIR",
+  "GT-022": "SCENE",
+  "GT-023": "BLD",
+  "GT-024": "TRC",
+  "GT-025": "SPOT",
+  "GT-026": "NOGO",
+  "GT-027": "SWT",
+  "GT-028": "TAP",
+  "GT-029": "SET",
+  "GT-030": "UNIT",
+  "GT-031": "CMP",
+  "GT-032": "POUR",
+  "GT-033": "WEAVE",
+  "GT-034": "BEAT",
+  "GT-035": "CMD",
+  "GT-036": "FCR",
+};
+
+const assignedFallbackCodes = new Set<string>();
+
+function generateFallbackLevelCode(
+  identity: SkillIdentity,
+  levelPlan: SkillLevelPlan
+): string {
+  const comp = identity.competency_code;
+  const strand = identity.strand_code.split(".")[1] || "GEN";
+  const tplSeg = TEMPLATE_CODE_SEGMENT_MAP[levelPlan.template] || "GAME";
+  const prefix = `GL-${comp}-${strand}-${tplSeg}`;
+
+  const skillNum = Number.parseInt(identity.code.split(".")[2] || "1", 10);
+  let seq = 5000 + skillNum * 10 + levelPlan.difficulty;
+  let code = `${prefix}-${String(seq).padStart(4, "0")}`;
+  while (assignedFallbackCodes.has(code)) {
+    seq++;
+    code = `${prefix}-${String(seq).padStart(4, "0")}`;
+  }
+  assignedFallbackCodes.add(code);
+  return code;
+}
+
 function buildSingleLevel(
   builder: Projection,
   dataset: SkillDataset,
@@ -299,8 +361,7 @@ function buildSingleLevel(
   }
 
   const levelCode =
-    levelPlan.code ??
-    `${identity.code}-${levelPlan.template}-${levelPlan.difficulty}`;
+    levelPlan.code ?? generateFallbackLevelCode(identity, levelPlan);
 
   const isMontessori =
     Boolean(levelPlan.montessori_ref) ||
