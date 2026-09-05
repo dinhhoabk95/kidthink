@@ -37,6 +37,8 @@ import { GT025_FIXTURES } from "#src/templates/GT-025/fixtures";
 import { GT025Session } from "#src/templates/GT-025/session";
 import { GT026_FIXTURES } from "#src/templates/GT-026/fixtures";
 import { GT026Session } from "#src/templates/GT-026/session";
+import { GT027_FIXTURES } from "#src/templates/GT-027/fixtures";
+import { GT027Session } from "#src/templates/GT-027/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -797,6 +799,53 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
 
       expect(result?.valid).toBe(true);
       expect(session.getState()).toBe("isi");
+    });
+
+    it("GT-027: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f27 = GT027_FIXTURES[0];
+      if (!f27) {
+        throw new Error("GT027_FIXTURES[0] must exist");
+      }
+      const session = new GT027Session(f27.content, f27.difficulty);
+      session.prepareRound("5-6");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+    });
+
+    it("GT-027: chạm vào slot đúng theo luật commit select_item thành công", () => {
+      const f27 = GT027_FIXTURES[0];
+      if (!f27) {
+        throw new Error("GT027_FIXTURES[0] must exist");
+      }
+      const session = new GT027Session(f27.content, f27.difficulty);
+      session.prepareRound("5-6");
+
+      const slot = session.slots[0];
+      if (!slot) {
+        throw new Error("slot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: slot.x,
+        y: slot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.getRenderItemState("it-1")).toBe("correct");
     });
   });
 
