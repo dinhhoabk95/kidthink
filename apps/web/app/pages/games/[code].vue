@@ -210,10 +210,22 @@
 </template>
 
 <script lang="ts" setup>
-  import { findCompetency } from "@mindkid/shared/client";
-  import { computed } from "vue";
+  import {
+    type AccessTier,
+    type CtaViewer,
+    type EntitlementKey,
+    findCompetency,
+    resolveLevelCta,
+  } from "@mindkid/shared/client";
+  import { computed, onMounted, ref } from "vue";
   import { useRoute } from "vue-router";
-  import { definePageMeta, useFetch, useHead, useSeoMeta } from "#imports";
+  import {
+    definePageMeta,
+    useFetch,
+    useHead,
+    useSeoMeta,
+    useUserSession,
+  } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
@@ -305,7 +317,56 @@
     ];
   });
 
-  const game = computed(() => gameData.value);
+  interface UserAccessContext {
+    is_authenticated: boolean;
+    has_active_child: boolean;
+    active_keys: string[];
+    allowed_tiers: AccessTier[];
+  }
+
+  const userAccessContext = ref<UserAccessContext | null>(null);
+  const { loggedIn } = useUserSession();
+
+  onMounted(async () => {
+    if (loggedIn.value) {
+      try {
+        const ctx = await $fetch<UserAccessContext>(
+          "/api/users/access-context",
+          {
+            credentials: "include",
+          }
+        );
+        userAccessContext.value = ctx;
+      } catch {
+        // Giữ góc nhìn guest nếu fetch thất bại
+      }
+    }
+  });
+
+  const game = computed(() => {
+    const raw = gameData.value;
+    if (!raw) {
+      return undefined;
+    }
+    if (!userAccessContext.value) {
+      return raw;
+    }
+
+    const ctx = userAccessContext.value;
+    const viewer: CtaViewer = {
+      is_authenticated: true,
+      has_active_child: ctx.has_active_child,
+      active_keys: ctx.active_keys as EntitlementKey[],
+    };
+    const tier = raw.access_tier as AccessTier;
+    const isLocked = !ctx.allowed_tiers.includes(tier);
+
+    return {
+      ...raw,
+      locked: isLocked,
+      cta: resolveLevelCta(raw.code, tier, viewer),
+    };
+  });
   const relatedGames = computed(() => gameData.value?.related_games ?? []);
 
   function getCtaButtonClass(action?: string): string {

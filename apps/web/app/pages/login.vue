@@ -333,7 +333,19 @@
   }
 
   async function resolvePostLoginDestination(): Promise<string> {
-    const destination = targetDestination.value;
+    let destination = targetDestination.value;
+
+    if (destination.startsWith("/me/children")) {
+      try {
+        const url = new URL(destination, "http://localhost");
+        const nestedRedirect = url.searchParams.get("redirect");
+        if (nestedRedirect?.startsWith("/play")) {
+          destination = nestedRedirect;
+        }
+      } catch {
+        // bỏ qua nếu destination không phải định dạng URL query chuẩn
+      }
+    }
 
     // BR-LGN-08: Nếu đích đến nằm trong khu vực chơi (/play) mà chưa có active_child_id,
     // chuyển hướng qua màn hình chọn hồ sơ bé kèm destination.

@@ -1235,11 +1235,88 @@
     }
   }
 
+  interface IntroQueueItemDetails {
+    readonly intro_level_code: string;
+    readonly skill_code?: string;
+    readonly title?: string;
+    readonly thumbnail_emoji?: string;
+  }
+
+  interface ApiErrorDetails {
+    intro_level_code?: string;
+    intro_queue?: IntroQueueItemDetails[];
+    intro_remaining?: number;
+    return_level_code?: string;
+    primary_skill_code?: string;
+    [key: string]:
+      | string
+      | number
+      | boolean
+      | IntroQueueItemDetails[]
+      | undefined;
+  }
+
+  interface ApiErrorPayload {
+    code?: string;
+    statusMessage?: string;
+    message?: string;
+    details?: ApiErrorDetails;
+    data?: {
+      code?: string;
+      message?: string;
+      details?: ApiErrorDetails;
+    };
+  }
+
+  function handleConceptOrChildError(
+    statusMessage?: string,
+    details?: ApiErrorDetails
+  ): Error {
+    if (
+      statusMessage === "INTRO_REQUIRED" ||
+      details?.intro_level_code ||
+      details?.intro_queue
+    ) {
+      const queue = details?.intro_queue;
+      const introCode = String(
+        details?.intro_level_code ?? queue?.[0]?.intro_level_code ?? ""
+      );
+      errorTitle.value = "Làm quen khái niệm trước";
+      errorEmoji.value = "📖";
+      errorActionLink.value = introCode
+        ? `/play/${introCode}?return_to=${levelCode}`
+        : "/games";
+      errorActionText.value = "Bắt đầu bài làm quen";
+      return new Error(
+        "Bé hãy hoàn thành bài làm quen ngắn để hiểu khái niệm trước khi bước vào màn chơi nhé!"
+      );
+    }
+
+    // Guest / chưa đăng nhập bắt buộc đi qua luồng đăng nhập trước, không gửi sang /me/children
+    if (!loggedIn.value) {
+      errorTitle.value = "Yêu cầu đăng nhập";
+      errorEmoji.value = "🔒";
+      errorActionLink.value = `/login?redirect=/play/${levelCode}`;
+      errorActionText.value = "Đăng nhập để chơi";
+      return new Error(
+        "Trò chơi này yêu cầu đăng nhập tài khoản để bé có thể tham gia và lưu tiến độ."
+      );
+    }
+
+    errorTitle.value = "Chưa chọn hồ sơ bé";
+    errorEmoji.value = "👶";
+    errorActionLink.value = `/me/children?redirect=/play/${levelCode}`;
+    errorActionText.value = "Chọn hồ sơ bé";
+    return new Error(
+      "Vui lòng chọn hoặc tạo hồ sơ của bé trước khi bắt đầu bài học."
+    );
+  }
+
   function handleApiError(
     status: number,
     message?: string,
     statusMessage?: string,
-    details?: Record<string, unknown>
+    details?: ApiErrorDetails
   ): Error {
     errorActionLink.value = null;
     errorActionText.value = "Thử lại";
@@ -1285,35 +1362,7 @@
     }
 
     if (status === 428) {
-      if (
-        statusMessage === "INTRO_REQUIRED" ||
-        details?.intro_level_code ||
-        details?.intro_queue
-      ) {
-        const queue = details?.intro_queue as
-          | Array<{ intro_level_code: string }>
-          | undefined;
-        const introCode = String(
-          details?.intro_level_code ?? queue?.[0]?.intro_level_code ?? ""
-        );
-        errorTitle.value = "Làm quen khái niệm trước";
-        errorEmoji.value = "📖";
-        errorActionLink.value = introCode
-          ? `/play/${introCode}?return_to=${levelCode}`
-          : "/games";
-        errorActionText.value = "Bắt đầu bài làm quen";
-        return new Error(
-          "Bé hãy hoàn thành bài làm quen ngắn để hiểu khái niệm trước khi bước vào màn chơi nhé!"
-        );
-      }
-
-      errorTitle.value = "Chưa chọn hồ sơ bé";
-      errorEmoji.value = "👶";
-      errorActionLink.value = `/me/children?redirect=/play/${levelCode}`;
-      errorActionText.value = "Chọn hồ sơ bé";
-      return new Error(
-        "Vui lòng chọn hoặc tạo hồ sơ của bé trước khi bắt đầu bài học."
-      );
+      return handleConceptOrChildError(statusMessage, details);
     }
 
     if (status === 404) {
@@ -1363,21 +1412,11 @@
 
     const res = await fetch(endpoint, { credentials: "include" });
     if (!res.ok) {
-      const errJson = (await res.json().catch(() => ({}))) as {
-        statusMessage?: string;
-        message?: string;
-        data?: {
-          code?: string;
-          message?: string;
-          details?: Record<string, unknown>;
-        };
-      };
-      throw handleApiError(
-        res.status,
-        errJson.message ?? errJson.data?.message,
-        errJson.statusMessage ?? errJson.data?.code,
-        errJson.data?.details
-      );
+      const errJson = (await res.json().catch(() => ({}))) as ApiErrorPayload;
+      const code = errJson.code ?? errJson.statusMessage ?? errJson.data?.code;
+      const message = errJson.message ?? errJson.data?.message;
+      const details = errJson.details ?? errJson.data?.details;
+      throw handleApiError(res.status, message, code, details);
     }
 
     const payload: ConfigPayload = await res.json();
