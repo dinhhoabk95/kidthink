@@ -480,4 +480,3 @@ export type {
   GT036Difficulty,
   GT036PaletteItem,
 } from "./templates/GT-036/template.js";
-export { ObjectPool } from "./utils/object-pool.js";

@@ -1,10 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { RenderSystem } from "#src/systems/render-system";
-import {
-  createFakeCanvas,
-  type FakeCanvas,
-  probeViewport,
-} from "./render-viewport.ts";
+import { createFakeCanvas, type FakeCanvas } from "./fake-canvas.ts";
+import { probeViewport } from "./render-viewport.ts";
 
 /** `setupCanvas` đọc `window.devicePixelRatio`; test chạy ở env node. */
 function withDpr(dpr: number): void {
@@ -13,7 +10,7 @@ function withDpr(dpr: number): void {
 
 /** Ép kiểu tại đúng một chỗ: canvas giả không cài đủ mặt DOM. */
 function asCanvas(fake: FakeCanvas): HTMLCanvasElement {
-  return fake as unknown as HTMLCanvasElement;
+  return fake as HTMLCanvasElement;
 }
 
 describe("cổng hình học khung vẽ (game-engine-runtime.md §7.1)", () => {
@@ -91,7 +88,7 @@ describe("cổng hình học khung vẽ (game-engine-runtime.md §7.1)", () => {
       throw new Error("canvas giả phải trả ngữ cảnh");
     }
 
-    rs.clear(ctx as unknown as CanvasRenderingContext2D);
+    rs.clear(ctx as CanvasRenderingContext2D);
 
     const last = ctx.clears.at(-1);
     expect(last).toEqual({ h: 1620, w: 2880, x: 0, y: 0 });

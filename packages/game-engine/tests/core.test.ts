@@ -1,12 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import {
-  GameEngine,
-  GT001_FIXTURES,
-  GT001Session,
-  ObjectPool,
-} from "#src/index";
+import { GameEngine, GT001_FIXTURES, GT001Session } from "#src/index";
 
 const RE_VUE = /from\s+['"]vue['"]/;
 const RE_PINIA = /from\s+['"]pinia['"]/;
@@ -78,37 +73,6 @@ describe("Task 3 & Task 4 — Core Engine & GT-001 End-to-End (BR-ENG-01..17)", 
     }
 
     expect(session.getTelemetry().events.length).toBe(initialTelemetryCount);
-  });
-
-  it("BR-ENG-15: ObjectPool supports zero allocation per frame pattern", () => {
-    interface Sprite {
-      id: string;
-      x: number;
-      y: number;
-    }
-
-    const pool = new ObjectPool<Sprite>(
-      () => ({ id: "", x: 0, y: 0 }),
-      10,
-      (s) => {
-        s.id = "";
-        s.x = 0;
-        s.y = 0;
-      }
-    );
-
-    pool.resetFrameAllocationCount();
-
-    for (let frame = 0; frame < 60; frame++) {
-      const s1 = pool.acquire();
-      const s2 = pool.acquire();
-      s1.x = frame;
-      s2.y = frame * 2;
-      pool.release(s1);
-      pool.release(s2);
-    }
-
-    expect(pool.getAllocationsThisFrame()).toBe(0);
   });
 
   it("Task 4 — GT-001 E2E Journey: load -> start -> select correct option -> complete", () => {

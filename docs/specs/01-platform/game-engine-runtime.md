@@ -126,7 +126,7 @@ Layout tính một lần lúc nạp là sai.
 | Thời gian frame | P95 < 16 ms | `performance.now()` mỗi tick |
 | Thời gian tới màn hình đầu | < 2,5 s trên 4G | Playwright throttle |
 | Bundle mỗi template | ≤ 80 KB gz | cổng tự động size check |
-| Cấp phát mỗi frame | 0 | Object pool cho sprite/particle |
+| Cấp phát mỗi frame | 0 | Cổng đếm gradient (`render-cache.test.ts`) — bỏ object pool vì pool hạt tái lập việc chia sẻ mảng mà `shared-render.ts:817-823` đã chốt bỏ để snapshot tất định |
 
 ### 7.3 Scaffolding — leo thang theo đồng hồ hoặc miss
 
