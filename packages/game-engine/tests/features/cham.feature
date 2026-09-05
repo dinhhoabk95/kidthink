@@ -25,6 +25,7 @@ Feature: Hành vi chạm (tap) của họ engine tap
       | GT-027        |
       | GT-028        |
       | GT-029        |
+      | GT-030        |
 
   Scenario Outline: Chạm lại vào đích đã chọn thì giữ
     Given session <template_code> đã chọn một đích hợp lệ

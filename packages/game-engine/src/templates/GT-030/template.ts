@@ -79,4 +79,9 @@ export default defineTemplate({
     "answer_selected",
     "game_completed",
   ],
+  input: {
+    family: "tap",
+    verbs: ["tap"],
+    tolerance_px: 24,
+  },
 });

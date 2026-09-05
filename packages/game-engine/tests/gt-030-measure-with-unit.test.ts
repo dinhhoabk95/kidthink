@@ -112,6 +112,21 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
   });
 
   describe("Session Gameplay, Placement, Undo & Scoring", () => {
+    it("validates actions purely without mutating state (BR-ENG-13)", () => {
+      const f = getFixture(0);
+      const session = new GT030Session(f.content, f.difficulty);
+      session.setupEntities();
+
+      expect(session.getPlacedUnitsCount()).toBe(0);
+
+      const v = session.validateAction({
+        type: "place_unit",
+        data: {},
+      });
+      expect(v.valid).toBe(true);
+      expect(session.getPlacedUnitsCount()).toBe(0); // State unchanged
+    });
+
     it("runs complete measurement loop with unit placement and answer selection", () => {
       const f = getFixture(0); // 4 units target length
       const session = new GT030Session(f.content, f.difficulty);
@@ -134,6 +149,7 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
         data: {},
       });
       expect(place1.valid).toBe(true);
+      session.commit({ type: "place_unit", data: {} });
       expect(session.getPlacedUnitsCount()).toBe(1);
 
       // Undo / Remove 1st unit
@@ -142,6 +158,7 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
         data: {},
       });
       expect(undo1.valid).toBe(true);
+      session.commit({ type: "remove_unit", data: {} });
       expect(session.getPlacedUnitsCount()).toBe(0);
 
       // Place all 4 units
@@ -151,6 +168,7 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
           data: {},
         });
         expect(place.valid).toBe(true);
+        session.commit({ type: "place_unit", data: {} });
         expect(session.getPlacedUnitsCount()).toBe(i);
       }
 
@@ -176,6 +194,10 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
         data: { option_id: "opt_4" },
       });
       expect(correctChoice.valid).toBe(true);
+      session.commit({
+        type: "select_option",
+        data: { option_id: "opt_4" },
+      });
       expect(session.checkWinCondition()).toBe(true);
 
       // Purity check
@@ -199,12 +221,12 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
       session.setupEntities();
 
       for (let i = 0; i < 10; i++) {
-        session.validateAction({ type: "place_unit", data: {} });
+        session.commit({ type: "place_unit", data: {} });
       }
       expect(session.getPlacedUnitsCount()).toBe(5);
 
       for (let i = 0; i < 10; i++) {
-        session.validateAction({ type: "remove_unit", data: {} });
+        session.commit({ type: "remove_unit", data: {} });
       }
       expect(session.getPlacedUnitsCount()).toBe(0);
     });
@@ -219,6 +241,72 @@ describe("GT-030: Đo bằng đơn vị lặp (measure-with-unit)", () => {
         data: {},
       });
       expect(invalid.valid).toBe(false);
+    });
+
+    it("handles unified tap gesture dispatch", () => {
+      const f = getFixture(0); // 4 units, answer 4 is opt_4
+      const session = new GT030Session(f.content, f.difficulty);
+      session.prepareRound("5-6");
+
+      // Tap outside slots -> ignored
+      const miss = session.dispatch({
+        type: "tap",
+        x: 10,
+        y: 10,
+        timeMs: 100,
+      });
+      expect(miss).toEqual({ valid: false, feedback: "none" });
+
+      const targetLength = f.content.object.length_in_units;
+      const sourceSlot = session.slots[1 + targetLength];
+      if (!sourceSlot) {
+        throw new Error("sourceSlot must exist");
+      }
+
+      // Tap source slot 4 times to place 4 units
+      for (let i = 1; i <= targetLength; i++) {
+        const tapSource = session.dispatch({
+          type: "tap",
+          x: sourceSlot.x,
+          y: sourceSlot.y,
+          timeMs: 200 + i * 50,
+        });
+        expect(tapSource?.valid).toBe(true);
+        expect(session.getPlacedUnitsCount()).toBe(i);
+      }
+
+      // 5th tap on source slot -> rejected (already full)
+      const tapExtra = session.dispatch({
+        type: "tap",
+        x: sourceSlot.x,
+        y: sourceSlot.y,
+        timeMs: 500,
+      });
+      expect(tapExtra?.valid).toBe(false);
+      expect(session.getPlacedUnitsCount()).toBe(targetLength);
+
+      const view = session.getView();
+      expect(view.activePrompt).toBe(f.content.prompt);
+      expect(view.entities.length).toBeGreaterThan(0);
+
+      // Find correct option slot
+      const correctOptIdx = f.content.answer_options.findIndex(
+        (o) => o.is_correct
+      );
+      const optSlot = session.slots[2 + targetLength + correctOptIdx];
+      if (!optSlot) {
+        throw new Error("optSlot must exist");
+      }
+
+      // Tap correct option -> win
+      const tapOpt = session.dispatch({
+        type: "tap",
+        x: optSlot.x,
+        y: optSlot.y,
+        timeMs: 600,
+      });
+      expect(tapOpt?.valid).toBe(true);
+      expect(session.checkWinCondition()).toBe(true);
     });
   });
 });

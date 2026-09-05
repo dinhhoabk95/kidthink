@@ -43,6 +43,8 @@ import { GT028_FIXTURES } from "#src/templates/GT-028/fixtures";
 import { GT028Session } from "#src/templates/GT-028/session";
 import { GT029_FIXTURES } from "#src/templates/GT-029/fixtures";
 import { GT029Session } from "#src/templates/GT-029/session";
+import { GT030_FIXTURES } from "#src/templates/GT-030/fixtures";
+import { GT030Session } from "#src/templates/GT-030/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -947,6 +949,55 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
 
       expect(result?.valid).toBe(true);
       expect(session.getRemovedCount()).toBe(1);
+    });
+
+    it("GT-030: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f30 = GT030_FIXTURES[0];
+      if (!f30) {
+        throw new Error("GT030_FIXTURES[0] must exist");
+      }
+      const session = new GT030Session(f30.content, f30.difficulty);
+      session.prepareRound("5-6");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.getPlacedUnitsCount()).toBe(0);
+    });
+
+    it("GT-030: chạm vào slot source unit commit place_unit thành công", () => {
+      const f30 = GT030_FIXTURES[0];
+      if (!f30) {
+        throw new Error("GT030_FIXTURES[0] must exist");
+      }
+      const session = new GT030Session(f30.content, f30.difficulty);
+      session.prepareRound("5-6");
+
+      const targetLength = f30.content.object.length_in_units;
+      const sourceSlot = session.slots[1 + targetLength];
+      if (!sourceSlot) {
+        throw new Error("sourceSlot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: sourceSlot.x,
+        y: sourceSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.getPlacedUnitsCount()).toBe(1);
     });
   });
 
