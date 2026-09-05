@@ -496,9 +496,18 @@
   let hoveredTargetIndex: number | null = null;
   let isSettlingRound = false;
 
-  function getSourceSlotIndex(slots: readonly Slot[], hitIdx: number): number {
+  function getSourceSlotIndex(
+    slots: readonly Slot[],
+    hitIdx: number,
+    session?: GameSession
+  ): number {
     const slot = slots[hitIdx];
-    const sourceSlots = slots.filter((s) => s.role === "source");
+    const sourceSlots =
+      session &&
+      "sourceSlots" in session &&
+      Array.isArray((session as { sourceSlots: readonly Slot[] }).sourceSlots)
+        ? (session as { sourceSlots: readonly Slot[] }).sourceSlots
+        : slots.filter((s) => s.role === "source");
     if (sourceSlots.length > 0 && slot?.role === "source") {
       const idx = sourceSlots.indexOf(slot);
       if (idx >= 0) {
@@ -537,7 +546,7 @@
     hitIdx: number,
     slots: readonly Slot[]
   ): InteractiveSessionItem | undefined {
-    const itemIndex = getSourceSlotIndex(slots, hitIdx);
+    const itemIndex = getSourceSlotIndex(slots, hitIdx, session);
     return getItemFromCollection(session, itemIndex);
   }
 

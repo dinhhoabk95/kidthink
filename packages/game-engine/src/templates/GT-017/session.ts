@@ -154,7 +154,7 @@ export class BlockStackSession extends TemplateGameSession<
 
   override toAction(gesture: Gesture): GameAction | null {
     if (gesture.type === "tap") {
-      const optionSlots = this.slots.filter((s) => s.role === "source");
+      const optionSlots = this.sourceSlots;
       const slotsToCheck = optionSlots.length > 0 ? optionSlots : this.slots;
       const hitId = findHitOptionId(
         slotsToCheck,
@@ -176,7 +176,6 @@ export class BlockStackSession extends TemplateGameSession<
   override commit(action: GameAction): void {
     if (action.type === "select_option" && typeof action.data === "string") {
       this.selectOption(action.data);
-      return;
     }
     if (
       action.type === "rotate_model" &&
@@ -218,7 +217,7 @@ export class BlockStackSession extends TemplateGameSession<
       });
     }
 
-    const optionSlots = this.slots.filter((s) => s.role === "source");
+    const optionSlots = this.sourceSlots;
     const slotsToUse = optionSlots.length > 0 ? optionSlots : this.slots;
 
     this.content.options.forEach((opt, i) => {
@@ -296,7 +295,7 @@ export class BlockStackSession extends TemplateGameSession<
       this.currentRotation
     );
 
-    const optionSlots = this.slots.filter((s) => s.role === "source");
+    const optionSlots = this.sourceSlots;
     this.content.options.forEach((opt, i) => {
       const slot = optionSlots[i] ?? this.slots[i];
       if (!slot) {

@@ -93,10 +93,12 @@ export class GT023Session extends TemplateGameSession<
 
   readonly assemblySystem = new AssemblySystem();
   private readonly placementMechanic = new PlacementMechanic();
+  private partById: Map<string, GT023Content["parts"][number]> = new Map();
 
   setupEntities(): void {
     this.isWon = false;
     this.placementMechanic.reset();
+    this.partById = new Map(this.content.parts.map((p) => [p.part_id, p]));
 
     const anchors = this.content.anchors.map((a) => ({
       anchorId: a.anchor_id,
@@ -302,7 +304,7 @@ export class GT023Session extends TemplateGameSession<
 
   override getView(): EngineView {
     const placements = this.assemblySystem.getPlacements();
-    const sources = this.slots.filter((s) => s.role === "source");
+    const sources = this.sourceSlots;
     const stagedId = this.placementMechanic.getStagedItemId();
     const placedPartIds = new Set(placements.values());
     const entities: ViewEntity[] = [];
@@ -380,9 +382,9 @@ export class GT023Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs);
     drawPromptText(ctx, rs, this.content.prompt);
-    const sources = this.slots.filter((s) => s.role === "source");
+    const sources = this.sourceSlots;
     const placements = this.assemblySystem.getPlacements();
-    const partById = new Map(this.content.parts.map((p) => [p.part_id, p]));
+    const partById = this.partById;
     const placedPartIds = new Set(placements.values());
 
     // Mỏ neo có toạ độ riêng trong content — đó là hình dạng của mô hình đích.

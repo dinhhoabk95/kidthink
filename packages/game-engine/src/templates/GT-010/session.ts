@@ -36,11 +36,20 @@ export class SubstitutionSession extends TemplateGameSession<
 
   private readonly pinnedSymbols: Map<string, number> = new Map();
   private selectedValue: number | null = null;
+  private glyphBySymbolId: Map<string, string> = new Map();
 
   setupEntities(): void {
     this.pinnedSymbols.clear();
     this.selectedValue = null;
     this.isWon = false;
+    this.glyphBySymbolId = new Map(
+      this.content.symbols.map((s) => [
+        s.symbol_id,
+        s.asset.kind === "emoji"
+          ? (resolveEmojiGlyph(s.asset.ref) ?? "?")
+          : "?",
+      ])
+    );
 
     this.recordEvent("game_started", {
       template_code: "GT-010",
@@ -157,7 +166,7 @@ export class SubstitutionSession extends TemplateGameSession<
       return null;
     }
     const hitTolerance = 24;
-    const optionSlots = this.slots.filter((s) => s.role === "source");
+    const optionSlots = this.sourceSlots;
     for (let i = 0; i < this.content.options.length; i++) {
       const opt = this.content.options[i];
       const slot = optionSlots[i];
@@ -192,8 +201,8 @@ export class SubstitutionSession extends TemplateGameSession<
   }
 
   override getView(): EngineView {
-    const eqSlots = this.slots.filter((s) => s.role === "target");
-    const optionSlots = this.slots.filter((s) => s.role === "source");
+    const eqSlots = this.targetSlots;
+    const optionSlots = this.sourceSlots;
     const entities: ViewEntity[] = [];
 
     this.content.equations.forEach((eq, i) => {
@@ -251,20 +260,15 @@ export class SubstitutionSession extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs);
     drawPromptText(ctx, rs, this.content.prompt);
-    const eqSlots = this.slots.filter((s) => s.role === "target");
-    const optionSlots = this.slots.filter((s) => s.role === "source");
+    const eqSlots = this.targetSlots;
+    const optionSlots = this.sourceSlots;
     const eqBox = boxFromSlots(eqSlots);
     if (eqBox) {
       drawEquationTray(ctx, eqBox);
     }
     drawWoodenTokenDock(ctx, rs);
-    const glyphOf = (symbolId: string): string => {
-      const sym = this.content.symbols.find((s) => s.symbol_id === symbolId);
-      if (sym?.asset.kind !== "emoji") {
-        return "?";
-      }
-      return resolveEmojiGlyph(sym.asset.ref) ?? "?";
-    };
+    const glyphOf = (symbolId: string): string =>
+      this.glyphBySymbolId.get(symbolId) ?? "?";
 
     this.content.equations.forEach((eq, i) => {
       const slot = eqSlots[i];

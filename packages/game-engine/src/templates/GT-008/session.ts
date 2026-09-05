@@ -107,7 +107,7 @@ export class GT008Session extends TemplateGameSession<
       const slotDefIdx = this.content.slots.findIndex(
         (s) => s.slot_id === slotId
       );
-      const targets = this.slots.filter((s) => s.role === "target");
+      const targets = this.targetSlots;
       const targetSlot = targets[slotDefIdx];
       if (targetSlot) {
         this.renderParticles.push(...spawnParticlesAtSlot(targetSlot, 12));
@@ -262,8 +262,8 @@ export class GT008Session extends TemplateGameSession<
 
   override toAction(gesture: Gesture): GameAction | null {
     const hitTolerance = 24;
-    const sources = this.slots.filter((s) => s.role === "source");
-    const targets = this.slots.filter((s) => s.role === "target");
+    const sources = this.sourceSlots;
+    const targets = this.targetSlots;
 
     if (gesture.type === "drop") {
       return this.toDropAction(gesture, sources, targets, hitTolerance);
@@ -294,8 +294,8 @@ export class GT008Session extends TemplateGameSession<
   }
 
   override getView(): EngineView {
-    const targets = this.slots.filter((s) => s.role === "target");
-    const sources = this.slots.filter((s) => s.role === "source");
+    const targets = this.targetSlots;
+    const sources = this.sourceSlots;
     const placedItemIds = new Set(this.placedSlots.values());
     const entities: ViewEntity[] = [];
 
@@ -370,8 +370,8 @@ export class GT008Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
-    const targets = this.slots.filter((s) => s.role === "target");
-    const sources = this.slots.filter((s) => s.role === "source");
+    const targets = this.targetSlots;
+    const sources = this.sourceSlots;
     const targetBox = boxFromSlots(targets);
     if (targetBox) {
       drawShapeTray(ctx, targetBox);

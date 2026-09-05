@@ -9,7 +9,6 @@ import {
   type CubeCoord,
   projectIsometric,
   type RotationAngle,
-  rotateModelZ,
   sortCubesForRender,
 } from "#src/systems/isometric-system";
 import type { MazeCell, MazeGrid } from "#src/systems/maze-system";
@@ -457,8 +456,7 @@ export function drawIsometricModel(
   if (model.length === 0) {
     return;
   }
-  const rotated = rotateModelZ(model, rotation);
-  const ordered = sortCubesForRender(rotated);
+  const ordered = sortCubesForRender(model, rotation);
   const size = Math.min(box.w, box.h) / 6;
   const cx = box.x + box.w / 2;
   const cy = box.y + box.h * 0.62;
@@ -558,7 +556,7 @@ export function drawWaypointPath(
   if (waypoints.length === 0) {
     return;
   }
-  const ordered = [...waypoints].sort((a, b) => a.order - b.order);
+  const ordered = waypoints;
 
   ctx.save();
   // Đường dẫn nét đứt mềm mại

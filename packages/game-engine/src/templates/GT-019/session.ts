@@ -107,11 +107,17 @@ export class GT019Session extends TemplateGameSession<
 
   private readonly placementMechanic = new PlacementMechanic();
   private readonly pieceTransforms: Map<string, PieceTransform> = new Map();
+  private pieceById: Map<string, GT019Piece> = new Map();
+  private readonly pieceIdBySlotId: Map<string, string> = new Map();
+  private readonly placedPieceIds: Set<string> = new Set();
 
   setupEntities(): void {
     this.isWon = false;
     this.placementMechanic.reset();
     this.pieceTransforms.clear();
+    this.pieceById = new Map(this.content.pieces.map((p) => [p.piece_id, p]));
+    this.pieceIdBySlotId.clear();
+    this.placedPieceIds.clear();
 
     for (const p of this.content.pieces) {
       this.pieceTransforms.set(p.piece_id, {
@@ -401,8 +407,8 @@ export class GT019Session extends TemplateGameSession<
   }
 
   override getView(): EngineView {
-    const targets = this.slots.filter((s) => s.role === "target");
-    const sources = this.slots.filter((s) => s.role === "source");
+    const targets = this.targetSlots;
+    const sources = this.sourceSlots;
     const placements = this.placementMechanic.getPlacements();
     const stagedId = this.placementMechanic.getStagedItemId();
     const entities: ViewEntity[] = [];
@@ -465,6 +471,8 @@ export class GT019Session extends TemplateGameSession<
     }
 
     this.placementMechanic.place(pieceId, slotId);
+    this.pieceIdBySlotId.set(slotId, pieceId);
+    this.placedPieceIds.add(pieceId);
     const transform = this.pieceTransforms.get(pieceId) ?? {
       rotation: 0,
       flip: "none",
@@ -551,23 +559,16 @@ export class GT019Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs);
     drawPromptText(ctx, rs, this.content.prompt);
-    const targets = this.slots.filter((s) => s.role === "target");
-    const sources = this.slots.filter((s) => s.role === "source");
-    const placements = this.placementMechanic.getPlacements();
-    const pieceById = new Map(this.content.pieces.map((p) => [p.piece_id, p]));
-    const placedPieceIds = new Set(placements.keys());
-    const pieceIdBySlotId = new Map<string, string>();
-    for (const [pieceId, slotId] of placements.entries()) {
-      pieceIdBySlotId.set(slotId, pieceId);
-    }
+    const targets = this.targetSlots;
+    const sources = this.sourceSlots;
 
     this.content.target_slots.forEach((target, i) => {
       const slot = targets[i];
       if (!slot) {
         return;
       }
-      const pieceId = pieceIdBySlotId.get(target.slot_id);
-      const piece = pieceId ? pieceById.get(pieceId) : undefined;
+      const pieceId = this.pieceIdBySlotId.get(target.slot_id);
+      const piece = pieceId ? this.pieceById.get(pieceId) : undefined;
       if (!piece) {
         drawEmptyTargetSlot(ctx, slot);
         drawSlotLabel(ctx, `${target.target_rotation}°`, slot);
@@ -582,7 +583,7 @@ export class GT019Session extends TemplateGameSession<
 
     this.content.pieces.forEach((piece, i) => {
       const slot = sources[i];
-      if (!slot || placedPieceIds.has(piece.piece_id)) {
+      if (!slot || this.placedPieceIds.has(piece.piece_id)) {
         return;
       }
       const transform = this.pieceTransforms.get(piece.piece_id);

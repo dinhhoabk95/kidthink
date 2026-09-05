@@ -89,10 +89,20 @@ export class GT021Session extends TemplateGameSession<
 
   readonly mirrorSystem = new MirrorSystem();
   private readonly placementMechanic = new PlacementMechanic();
+  neutralSlots: readonly Slot[] = [];
+  private assetByRef: Map<string, GT021Content["options"][number]["asset"]> =
+    new Map();
+
+  protected override computeRoundDerived(): void {
+    this.neutralSlots = this.slots.filter((s) => s.role === "neutral");
+  }
 
   setupEntities(): void {
     this.isWon = false;
     this.placementMechanic.reset();
+    this.assetByRef = new Map(
+      this.content.options.map((o) => [o.asset_ref, o.asset])
+    );
 
     const symmetricPairs = this.content.target_slots.map((t, idx) => ({
       referenceSlotId:
@@ -289,9 +299,9 @@ export class GT021Session extends TemplateGameSession<
   }
 
   override getView(): EngineView {
-    const targets = this.slots.filter((s) => s.role === "target");
-    const sources = this.slots.filter((s) => s.role === "source");
-    const neutral = this.slots.filter((s) => s.role === "neutral");
+    const targets = this.targetSlots;
+    const sources = this.sourceSlots;
+    const neutral = this.neutralSlots;
     const stagedId = this.placementMechanic.getStagedItemId();
     const entities: ViewEntity[] = [];
 
@@ -384,12 +394,10 @@ export class GT021Session extends TemplateGameSession<
     drawMirrorAxis(ctx, rs, this.content.axis);
     drawWoodenTokenDock(ctx, rs);
 
-    const targets = this.slots.filter((s) => s.role === "target");
-    const sources = this.slots.filter((s) => s.role === "source");
-    const neutral = this.slots.filter((s) => s.role === "neutral");
-    const assetByRef = new Map(
-      this.content.options.map((o) => [o.asset_ref, o.asset])
-    );
+    const targets = this.targetSlots;
+    const sources = this.sourceSlots;
+    const neutral = this.neutralSlots;
+    const assetByRef = this.assetByRef;
 
     // Mẫu tham chiếu nằm ở vùng neutral bên kia trục.
     this.content.reference_pattern.forEach((ref, i) => {

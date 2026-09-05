@@ -148,6 +148,9 @@ export abstract class TemplateGameSession<
     this.themeId = themeId;
   }
 
+  sourceSlots: readonly Slot[] = [];
+  targetSlots: readonly Slot[] = [];
+
   /**
    * Final — orchestrates a round: setup entities → compute slots → derived state.
    * Called by RoundRunner and GameEngine instead of raw setupEntities+resolveSlots.
@@ -155,6 +158,8 @@ export abstract class TemplateGameSession<
   prepareRound(band: AgeBand): void {
     this.setupEntities();
     this._slots = this.computeSlots(band);
+    this.sourceSlots = this._slots.filter((s) => s.role === "source");
+    this.targetSlots = this._slots.filter((s) => s.role === "target");
     this.computeRoundDerived?.();
     this.roundGeneration++;
   }
@@ -165,6 +170,9 @@ export abstract class TemplateGameSession<
    */
   resolveSlots(band: AgeBand): void {
     this._slots = this.computeSlots(band);
+    this.sourceSlots = this._slots.filter((s) => s.role === "source");
+    this.targetSlots = this._slots.filter((s) => s.role === "target");
+    this.computeRoundDerived?.();
   }
 
   /**

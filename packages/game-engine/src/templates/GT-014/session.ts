@@ -359,11 +359,8 @@ export class BalanceScaleSession extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
-    const targets = this.slots
-      .filter((s) => s.role === "target")
-      .slice()
-      .sort((a, b) => a.x - b.x);
-    const sources = this.slots.filter((s) => s.role === "source");
+    const targets = this.targetSlots.slice().sort((a, b) => a.x - b.x);
+    const sources = this.sourceSlots;
     const leftPanSlot = targets[0];
     const rightPanSlot = targets[1];
 
@@ -400,11 +397,8 @@ export class BalanceScaleSession extends TemplateGameSession<
   }
 
   override getView(): EngineView {
-    const targets = this.slots
-      .filter((s) => s.role === "target")
-      .slice()
-      .sort((a, b) => a.x - b.x);
-    const sources = this.slots.filter((s) => s.role === "source");
+    const targets = this.targetSlots.slice().sort((a, b) => a.x - b.x);
+    const sources = this.sourceSlots;
     const entities: ViewEntity[] = [];
 
     const leftPanSlot = targets[0];
@@ -512,7 +506,7 @@ export class BalanceScaleSession extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs);
     drawPromptText(ctx, rs, this.content.prompt);
-    const sources = this.slots.filter((s) => s.role === "source");
+    const sources = this.sourceSlots;
     // `WeightedItem` chỉ mang id + khối lượng; asset nằm ở content.
     const assetById = new Map(
       [

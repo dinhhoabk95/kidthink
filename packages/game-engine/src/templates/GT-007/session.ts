@@ -267,8 +267,8 @@ export class GT007Session extends TemplateGameSession<
 
   override toAction(gesture: Gesture): GameAction | null {
     const hitTolerance = 24;
-    const sources = this.slots.filter((s) => s.role === "source");
-    const targets = this.slots.filter((s) => s.role === "target");
+    const sources = this.sourceSlots;
+    const targets = this.targetSlots;
 
     if (gesture.type === "drop") {
       return this.toDropAction(gesture, sources, targets, hitTolerance);
@@ -311,8 +311,8 @@ export class GT007Session extends TemplateGameSession<
 
   override getView(): EngineView {
     const entities: ViewEntity[] = [];
-    const targets = this.slots.filter((s) => s.role === "target");
-    const sources = this.slots.filter((s) => s.role === "source");
+    const targets = this.targetSlots;
+    const sources = this.sourceSlots;
 
     const wholeSlot = targets[0];
     if (wholeSlot) {
@@ -385,8 +385,8 @@ export class GT007Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs);
     drawPromptText(ctx, rs, this.content.prompt);
-    const targets = this.slots.filter((s) => s.role === "target");
-    const sources = this.slots.filter((s) => s.role === "source");
+    const targets = this.targetSlots;
+    const sources = this.sourceSlots;
 
     // Slot 0 của number-bond-tree là ô tổng, các ô sau là nhánh.
     const wholeSlot = targets[0];

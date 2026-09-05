@@ -83,8 +83,8 @@ export class GT025Session extends TemplateGameSession<
   }
 
   private updateResolvedObjects(): void {
-    const sources = this.slots.filter((s) => s.role === "source");
-    const targets = this.slots.filter((s) => s.role === "target");
+    const sources = this.sourceSlots;
+    const targets = this.targetSlots;
     const resolved: ResolvedDifferenceObject[] = [];
 
     this.content.left_objects.forEach((obj, i) => {
@@ -294,8 +294,8 @@ export class GT025Session extends TemplateGameSession<
       w: scene.w / 2,
       h: scene.h,
     };
-    const sources = this.slots.filter((s) => s.role === "source");
-    const targets = this.slots.filter((s) => s.role === "target");
+    const sources = this.sourceSlots;
+    const targets = this.targetSlots;
 
     drawDividerLine(ctx, scene.w / 2, scene.y, scene.w / 2, scene.y + scene.h);
 
