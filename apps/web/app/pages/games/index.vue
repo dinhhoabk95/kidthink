@@ -77,6 +77,7 @@
             :facet-counts="competencyFacetCounts"
             :selected-competency="selectedCompetency"
             :selected-strand="selectedStrand"
+            :strand-facet-counts="strandFacetCounts"
             :total-count="totalCount"
             @select-competency="selectCompetency"
             @select-strand="selectStrand"
@@ -197,7 +198,7 @@
 
                 <!-- Tag Mạch kỹ năng -->
                 <span class="active-tag" v-if="selectedStrand">
-                  Kỹ năng: {{ selectedStrand }}
+                  Kỹ năng: {{ selectedStrandLabel }}
                   <button
                     aria-label="Bỏ lọc kỹ năng"
                     class="tag-close-btn"
@@ -347,6 +348,7 @@
     type CtaViewer,
     type EntitlementKey,
     findCompetency,
+    findStrand,
     type LevelCta,
     resolveLevelCta,
   } from "@mindkid/shared/client";
@@ -385,6 +387,7 @@
     age_band: Record<string, number>;
     age: Record<string, number>;
     access_tier: Record<string, number>;
+    strand?: Record<string, number>;
   }
 
   interface CatalogResponse {
@@ -431,8 +434,18 @@
   const router = useRouter();
   const { loggedIn } = useUserSession();
 
+  function normalizeStrandCode(raw: string | undefined): string {
+    if (!raw) {
+      return "";
+    }
+    const found = findStrand(raw);
+    return found ? found.code : raw;
+  }
+
   const selectedCompetency = ref((route.query.competency as string) || "");
-  const selectedStrand = ref((route.query.strand as string) || "");
+  const selectedStrand = ref(
+    normalizeStrandCode(route.query.strand as string | undefined)
+  );
   const selectedAgeBand = ref((route.query.age_band as string) || "");
   const legacyAge = ref((route.query.age as string) || "");
   const selectedTier = ref((route.query.access_tier as string) || "");
@@ -467,8 +480,8 @@
     updateFilters();
   }
 
-  function selectStrand(strandName: string): void {
-    selectedStrand.value = strandName;
+  function selectStrand(strandCode: string): void {
+    selectedStrand.value = strandCode;
     updateFilters();
   }
 
@@ -505,10 +518,9 @@
         query.competency = selectedCompetency.value;
       }
       if (selectedStrand.value) {
-        query.q = searchKeyword.value
-          ? `${searchKeyword.value} ${selectedStrand.value}`
-          : selectedStrand.value;
-      } else if (searchKeyword.value) {
+        query.strand = selectedStrand.value;
+      }
+      if (searchKeyword.value) {
         query.q = searchKeyword.value;
       }
       if (selectedAgeBand.value) {
@@ -582,6 +594,18 @@
 
   const competencyFacetCounts = computed<Record<string, number>>(() => {
     return facets.value?.competency ?? {};
+  });
+
+  const strandFacetCounts = computed<Record<string, number>>(() => {
+    return facets.value?.strand ?? {};
+  });
+
+  const selectedStrandLabel = computed(() => {
+    if (!selectedStrand.value) {
+      return "";
+    }
+    const found = findStrand(selectedStrand.value);
+    return found?.name || selectedStrand.value;
   });
 
   const cursorStack = ref<string[]>([]);
@@ -693,7 +717,9 @@
     () => route.query,
     (newQuery) => {
       selectedCompetency.value = (newQuery.competency as string) || "";
-      selectedStrand.value = (newQuery.strand as string) || "";
+      selectedStrand.value = normalizeStrandCode(
+        newQuery.strand as string | undefined
+      );
       selectedAgeBand.value = (newQuery.age_band as string) || "";
       legacyAge.value = (newQuery.age as string) || "";
       selectedTier.value = (newQuery.access_tier as string) || "";

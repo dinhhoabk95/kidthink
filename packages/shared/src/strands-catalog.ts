@@ -470,7 +470,9 @@ export function findStrandsByCompetency(
   );
 }
 
-/** Tra một strand theo mã. */
-export function findStrand(code: string): StrandCatalogEntry | undefined {
-  return STRANDS_CATALOG.find((entry) => entry.code === code);
+/** Tra một strand theo mã hoặc tên. */
+export function findStrand(codeOrName: string): StrandCatalogEntry | undefined {
+  return STRANDS_CATALOG.find(
+    (entry) => entry.code === codeOrName || entry.name === codeOrName
+  );
 }

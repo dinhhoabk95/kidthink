@@ -78,10 +78,16 @@
                 type="button"
                 v-for="strand in getStrands(comp.code)"
                 :key="strand.code"
-                :class="['strand-pill', { active: selectedStrand === strand.name }]"
-                @click="onSelectStrand(strand.name)"
+                :class="[
+                  'strand-pill',
+                  { active: selectedStrand === strand.code }
+                ]"
+                @click="onSelectStrand(strand.code)"
               >
-                {{ strand.name }}
+                <span>{{ strand.name }}</span>
+                <span class="strand-pill-count" v-if="getStrandCount(strand)">
+                  ({{ getStrandCount(strand) }})
+                </span>
               </button>
             </div>
           </div>
@@ -98,28 +104,39 @@
     type StrandCatalogEntry,
   } from "@mindkid/shared/client";
 
-  defineProps<{
-    selectedCompetency: string;
-    selectedStrand: string;
-    totalCount: number;
-    facetCounts: Record<string, number>;
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      selectedCompetency: string;
+      selectedStrand: string;
+      totalCount: number;
+      facetCounts: Record<string, number>;
+      strandFacetCounts?: Record<string, number>;
+    }>(),
+    {
+      strandFacetCounts: () => ({}),
+    }
+  );
 
   const emit = defineEmits<{
     "select-competency": [code: string];
-    "select-strand": [name: string];
+    "select-strand": [code: string];
   }>();
 
   function onSelectCompetency(code: string): void {
     emit("select-competency", code);
   }
 
-  function onSelectStrand(name: string): void {
-    emit("select-strand", name);
+  function onSelectStrand(code: string): void {
+    emit("select-strand", code);
   }
 
   function getStrands(compCode: string): readonly StrandCatalogEntry[] {
     return findStrandsByCompetency(compCode);
+  }
+
+  function getStrandCount(strand: StrandCatalogEntry): number | null {
+    const count = props.strandFacetCounts[strand.code];
+    return count && count > 0 ? count : null;
   }
 </script>
 
@@ -322,5 +339,11 @@
     background-color: var(--color-brand-600);
     border-color: var(--color-brand-600);
     color: white;
+  }
+
+  .strand-pill-count {
+    font-size: 0.7rem;
+    opacity: 0.8;
+    margin-left: 0.2rem;
   }
 </style>

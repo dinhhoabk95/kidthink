@@ -2,6 +2,7 @@ import { AppError } from "@mindkid/auth";
 import { SKILL_DATASETS } from "@mindkid/content";
 import {
   activities,
+  contentObjectiveMap,
   contentReviewLog,
   contentSeedBatches,
   contentSkillMap,
@@ -9,9 +10,11 @@ import {
   contentTags,
   gameLevelRounds,
   gameLevels,
+  learningObjectives,
   lessonActivities,
   lessons,
   normalizeMechanicTagCode,
+  skillDatasets,
   skills,
   validateAndAssignTags,
   validateContentSkillMap,
@@ -127,6 +130,8 @@ export async function executeSeedBatch(
         allExistingLevels,
         allExistingActivities,
         allExistingLessons,
+        allSkillDatasets,
+        allLearningObjectives,
       ] = await Promise.all([
         tx.select().from(skills),
         tx.select().from(contentTags),
@@ -157,10 +162,14 @@ export async function executeSeedBatch(
             status: lessons.status,
           })
           .from(lessons),
+        tx.select().from(skillDatasets),
+        tx.select().from(learningObjectives),
       ]);
 
       const skillMap = new Map(allSkills.map((s) => [s.code, s]));
       const tagMap = new Map(allTags.map((t) => [t.code, t]));
+      const skillDatasetMap = new Map(allSkillDatasets.map((d) => [d.code, d]));
+      const loMap = new Map(allLearningObjectives.map((lo) => [lo.code, lo]));
 
       const existingLevelsByCode = new Map<
         string,
@@ -262,6 +271,7 @@ export async function executeSeedBatch(
           difficultyParams: unknown;
           skillMapEntries: Array<{ skillId: number; weight: number }>;
           matchedTags: (typeof contentTags.$inferSelect)[];
+          learningObjectiveCodes: string[];
         }> = [];
 
         for (const { seed: glSeed, sequenceIndex } of chunk) {
@@ -357,6 +367,11 @@ export async function executeSeedBatch(
           }
           validatePublishAxes(matchedTags);
 
+          const primarySkillCode = header.skill_codes[0];
+          const matchedDataset = primarySkillCode
+            ? skillDatasetMap.get(primarySkillCode)
+            : undefined;
+
           levelsToInsert.push({
             entityId,
             code: header.code,
@@ -370,6 +385,8 @@ export async function executeSeedBatch(
             accessTier: header.access_tier,
             themeId: header.theme_tag || null,
             legacyV1Ref: header.legacy_v1_ref || null,
+            skillDatasetId: matchedDataset?.id ?? null,
+            projectionRef: template.code,
             contentPack: content_pack,
             difficultyParams: difficulty_params,
             status: "published",
@@ -388,6 +405,7 @@ export async function executeSeedBatch(
             difficultyParams: difficulty_params,
             skillMapEntries,
             matchedTags,
+            learningObjectiveCodes: header.learning_objective_codes ?? [],
           });
         }
 
@@ -416,6 +434,8 @@ export async function executeSeedBatch(
           const allRounds: (typeof gameLevelRounds.$inferInsert)[] = [];
           const allSkillsToLink: (typeof contentSkillMap.$inferInsert)[] = [];
           const allTagsToLink: (typeof contentTagMap.$inferInsert)[] = [];
+          const allObjectivesToLink: (typeof contentObjectiveMap.$inferInsert)[] =
+            [];
           const allReviewLogs: (typeof contentReviewLog.$inferInsert)[] = [];
 
           for (const meta of preparedMeta) {
@@ -483,6 +503,18 @@ export async function executeSeedBatch(
               });
             }
 
+            // Objectives
+            for (const loCode of meta.learningObjectiveCodes) {
+              const lo = loMap.get(loCode);
+              if (lo) {
+                allObjectivesToLink.push({
+                  entityType: "game_level",
+                  entityId: inserted.id,
+                  learningObjectiveId: lo.id,
+                });
+              }
+            }
+
             // Review log
             allReviewLogs.push({
               entityType: "game_level",
@@ -500,6 +532,9 @@ export async function executeSeedBatch(
           }
           if (allSkillsToLink.length > 0) {
             await tx.insert(contentSkillMap).values(allSkillsToLink);
+          }
+          if (allObjectivesToLink.length > 0) {
+            await tx.insert(contentObjectiveMap).values(allObjectivesToLink);
           }
           if (allTagsToLink.length > 0) {
             await tx.insert(contentTagMap).values(allTagsToLink);

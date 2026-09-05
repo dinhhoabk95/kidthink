@@ -31,6 +31,7 @@ const CONTENT_TABLES = [
   "lessons",
   "content_seed_batches",
   "content_skill_map",
+  "content_objective_map",
   "content_tag_map",
   "content_review_log",
   "lesson_activities",

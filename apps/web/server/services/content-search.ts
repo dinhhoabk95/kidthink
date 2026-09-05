@@ -1,4 +1,11 @@
-import { activities, gameLevels, lessons } from "@mindkid/db";
+import {
+  activities,
+  contentSkillMap,
+  gameLevels,
+  lessons,
+  skills,
+  strands,
+} from "@mindkid/db";
 import type { AccessTier } from "@mindkid/shared";
 import { allowedTiers } from "@mindkid/shared";
 import { and, eq, gte, lte, sql } from "drizzle-orm";
@@ -119,6 +126,25 @@ function buildSearchWhereConditions(
   if (params.competency) {
     const compPattern = `GL-${params.competency}-%`;
     conditions.push(sql`${gameLevels.code} LIKE ${compPattern}`);
+  }
+
+  if (params.strand) {
+    const rawStrand = params.strand.trim();
+    const suffixPattern = `%.${rawStrand}`;
+    conditions.push(
+      sql`EXISTS (
+        SELECT 1 FROM ${contentSkillMap}
+        JOIN ${skills} ON ${contentSkillMap.skillId} = ${skills.id}
+        JOIN ${strands} ON ${skills.strandId} = ${strands.id}
+        WHERE ${contentSkillMap.entityType} = 'game_level'
+          AND ${contentSkillMap.entityId} = ${gameLevels.id}
+          AND (
+            ${strands.code} = ${rawStrand} OR 
+            ${strands.code} ILIKE ${suffixPattern} OR
+            ${strands.name} ILIKE ${rawStrand}
+          )
+      )`
+    );
   }
 
   if (params.q && params.q.trim().length > 0) {
@@ -317,6 +343,7 @@ export interface GameLevelFacets {
   age: Record<string, number>;
   age_band: Record<string, number>;
   access_tier: Record<string, number>;
+  strand?: Record<string, number>;
 }
 
 /**
@@ -400,7 +427,41 @@ async function buildGameLevelFacets(
     access_tier[row.accessTier] = (access_tier[row.accessTier] ?? 0) + 1;
   }
 
-  return { total: totalRows.length, competency, age, age_band, access_tier };
+  const strandConditions = buildSearchWhereConditions(
+    { ...params, strand: undefined, cursor: undefined },
+    viewerRole
+  );
+  const strandRows = await db
+    .select({
+      code: strands.code,
+      count: sql<number>`count(distinct ${gameLevels.id})`.mapWith(Number),
+    })
+    .from(gameLevels)
+    .innerJoin(
+      contentSkillMap,
+      and(
+        eq(contentSkillMap.entityId, gameLevels.id),
+        eq(contentSkillMap.entityType, "game_level")
+      )
+    )
+    .innerJoin(skills, eq(contentSkillMap.skillId, skills.id))
+    .innerJoin(strands, eq(skills.strandId, strands.id))
+    .where(strandConditions.length > 0 ? and(...strandConditions) : undefined)
+    .groupBy(strands.code);
+
+  const strand: Record<string, number> = {};
+  for (const row of strandRows) {
+    strand[row.code] = row.count;
+  }
+
+  return {
+    total: totalRows.length,
+    competency,
+    age,
+    age_band,
+    access_tier,
+    strand,
+  };
 }
 
 function buildActivityConditions(
