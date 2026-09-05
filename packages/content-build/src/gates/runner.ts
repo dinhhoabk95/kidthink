@@ -135,7 +135,10 @@ function checkLessonGate1(les: LessonSeed, issues: GateIssue[]): void {
   }
 }
 
-import { ALL_TEMPLATES, type GameTemplate } from "@mindkid/game-engine";
+import {
+  ALL_TEMPLATES,
+  type GameTemplate,
+} from "@mindkid/game-engine/registry";
 
 function parseContractIssues(
   prefix: string,

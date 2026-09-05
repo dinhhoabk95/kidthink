@@ -1,6 +1,6 @@
 import { requireUserAuth } from "@mindkid/auth";
 import { gameLevels, getOwnerDb } from "@mindkid/db";
-import { getGameTemplate } from "@mindkid/game-engine";
+import { getGameTemplate } from "@mindkid/game-engine/registry";
 import {
   type AccessTier,
   allowedTiers,

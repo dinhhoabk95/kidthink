@@ -245,67 +245,56 @@ export {
   TraceSystem,
   type TraceWaypoint,
 } from "./systems/trace-system.js";
-export { GT000_FIXTURES } from "./templates/GT-000/fixtures.js";
 export { GT000Session } from "./templates/GT-000/session.js";
 export type {
   GT000Content,
   GT000Difficulty,
 } from "./templates/GT-000/template.js";
-export { GT001_FIXTURES } from "./templates/GT-001/fixtures.js";
 export { GT001Session } from "./templates/GT-001/session.js";
 export type {
   GT001Content,
   GT001Difficulty,
 } from "./templates/GT-001/template.js";
-export { GT002_FIXTURES } from "./templates/GT-002/fixtures.js";
 export { GT002Session } from "./templates/GT-002/session.js";
 export type {
   GT002Content,
   GT002Difficulty,
 } from "./templates/GT-002/template.js";
-export { GT003_FIXTURES } from "./templates/GT-003/fixtures.js";
 export { GT003Session } from "./templates/GT-003/session.js";
 export type {
   GT003Content,
   GT003Difficulty,
 } from "./templates/GT-003/template.js";
-export { GT004_FIXTURES } from "./templates/GT-004/fixtures.js";
 export { GT004Session } from "./templates/GT-004/session.js";
 export type {
   GT004Content,
   GT004Difficulty,
 } from "./templates/GT-004/template.js";
-export { GT005_FIXTURES } from "./templates/GT-005/fixtures.js";
 export { GT005Session } from "./templates/GT-005/session.js";
 export type {
   GT005Content,
   GT005Difficulty,
 } from "./templates/GT-005/template.js";
-export { GT006_FIXTURES } from "./templates/GT-006/fixtures.js";
 export { GT006Session } from "./templates/GT-006/session.js";
 export type {
   GT006Content,
   GT006Difficulty,
 } from "./templates/GT-006/template.js";
-export { GT007_FIXTURES } from "./templates/GT-007/fixtures.js";
 export { GT007Session } from "./templates/GT-007/session.js";
 export type {
   GT007Content,
   GT007Difficulty,
 } from "./templates/GT-007/template.js";
-export { GT008_FIXTURES } from "./templates/GT-008/fixtures.js";
 export { GT008Session } from "./templates/GT-008/session.js";
 export type {
   GT008Content,
   GT008Difficulty,
 } from "./templates/GT-008/template.js";
-export { GT009_FIXTURES } from "./templates/GT-009/fixtures.js";
 export { GT009Session } from "./templates/GT-009/session.js";
 export type {
   GT009Content,
   GT009Difficulty,
 } from "./templates/GT-009/template.js";
-export { GT010_FIXTURES } from "./templates/GT-010/fixtures.js";
 export {
   GT010Session,
   SubstitutionSession,
@@ -314,13 +303,11 @@ export type {
   GT010Content,
   GT010Difficulty,
 } from "./templates/GT-010/template.js";
-export { GT011_FIXTURES } from "./templates/GT-011/fixtures.js";
 export { GT011Session } from "./templates/GT-011/session.js";
 export type {
   GT011Content,
   GT011Difficulty,
 } from "./templates/GT-011/template.js";
-export { GT012_FIXTURES } from "./templates/GT-012/fixtures.js";
 export {
   FlashRecallSession,
   GT012Session,
@@ -329,7 +316,6 @@ export type {
   GT012Content,
   GT012Difficulty,
 } from "./templates/GT-012/template.js";
-export { GT013_FIXTURES } from "./templates/GT-013/fixtures.js";
 export {
   GT013Session,
   type MazeScaffoldHint,
@@ -338,7 +324,6 @@ export type {
   GT013Content,
   GT013Difficulty,
 } from "./templates/GT-013/template.js";
-export { GT014_FIXTURES } from "./templates/GT-014/fixtures.js";
 export {
   BalanceScaleSession,
   GT014Session,
@@ -347,133 +332,108 @@ export type {
   GT014Content,
   GT014Difficulty,
 } from "./templates/GT-014/template.js";
-export { GT015_FIXTURES } from "./templates/GT-015/fixtures.js";
 export { GT015Session, SudokuMiniSession } from "./templates/GT-015/session.js";
 export type {
   GT015Content,
   GT015Difficulty,
 } from "./templates/GT-015/template.js";
-export { GT016_FIXTURES } from "./templates/GT-016/fixtures.js";
 export { ClockHandsSession, GT016Session } from "./templates/GT-016/session.js";
 export type {
   GT016Content,
   GT016Difficulty,
 } from "./templates/GT-016/template.js";
-export { GT017_FIXTURES } from "./templates/GT-017/fixtures.js";
 export { BlockStackSession, GT017Session } from "./templates/GT-017/session.js";
 export type {
   GT017Content,
   GT017Difficulty,
 } from "./templates/GT-017/template.js";
-export { GT018_FIXTURES } from "./templates/GT-018/fixtures.js";
 export { GT018Session } from "./templates/GT-018/session.js";
 export type {
   GT018Content,
   GT018Difficulty,
 } from "./templates/GT-018/template.js";
-export { GT019_FIXTURES } from "./templates/GT-019/fixtures.js";
 export { GT019Session } from "./templates/GT-019/session.js";
 export type {
   GT019Content,
   GT019Difficulty,
 } from "./templates/GT-019/template.js";
-export { GT020_FIXTURES } from "./templates/GT-020/fixtures.js";
 export { GT020Session } from "./templates/GT-020/session.js";
 export type {
   GT020Content,
   GT020Difficulty,
 } from "./templates/GT-020/template.js";
-export { GT021_FIXTURES } from "./templates/GT-021/fixtures.js";
 export { GT021Session } from "./templates/GT-021/session.js";
 export type {
   GT021Content,
   GT021Difficulty,
 } from "./templates/GT-021/template.js";
-export { GT022_FIXTURES } from "./templates/GT-022/fixtures.js";
 export { GT022Session } from "./templates/GT-022/session.js";
 export type {
   GT022Content,
   GT022Difficulty,
 } from "./templates/GT-022/template.js";
-export { GT023_FIXTURES } from "./templates/GT-023/fixtures.js";
 export { GT023Session } from "./templates/GT-023/session.js";
 export type {
   GT023Content,
   GT023Difficulty,
 } from "./templates/GT-023/template.js";
-export { GT024_FIXTURES } from "./templates/GT-024/fixtures.js";
 export { GT024Session } from "./templates/GT-024/session.js";
 export type {
   GT024Content,
   GT024Difficulty,
 } from "./templates/GT-024/template.js";
-export { GT025_FIXTURES } from "./templates/GT-025/fixtures.js";
 export { GT025Session } from "./templates/GT-025/session.js";
 export type {
   GT025Content,
   GT025Difficulty,
 } from "./templates/GT-025/template.js";
-export { GT026_FIXTURES } from "./templates/GT-026/fixtures.js";
 export { GT026Session } from "./templates/GT-026/session.js";
-export { GT027_FIXTURES } from "./templates/GT-027/fixtures.js";
 export { GT027Session } from "./templates/GT-027/session.js";
 export type {
   GT027Content,
   GT027Difficulty,
 } from "./templates/GT-027/template.js";
-export { GT028_FIXTURES } from "./templates/GT-028/fixtures.js";
 export { GT028Session } from "./templates/GT-028/session.js";
 export type {
   GT028Content,
   GT028Difficulty,
 } from "./templates/GT-028/template.js";
-export { GT029_FIXTURES } from "./templates/GT-029/fixtures.js";
 export { GT029Session } from "./templates/GT-029/session.js";
 export type {
   GT029Content,
   GT029Difficulty,
 } from "./templates/GT-029/template.js";
-export { GT030_FIXTURES } from "./templates/GT-030/fixtures.js";
 export { GT030Session } from "./templates/GT-030/session.js";
 export type {
   GT030Content,
   GT030Difficulty,
 } from "./templates/GT-030/template.js";
-export { GT031_FIXTURES } from "./templates/GT-031/fixtures.js";
 export { GT031Session } from "./templates/GT-031/session.js";
 export type {
   GT031Content,
   GT031Difficulty,
 } from "./templates/GT-031/template.js";
-export { GT032_FIXTURES } from "./templates/GT-032/fixtures.js";
 export { GT032Session } from "./templates/GT-032/session.js";
 export type {
   GT032Content,
   GT032Difficulty,
 } from "./templates/GT-032/template.js";
-export { GT033_FIXTURES } from "./templates/GT-033/fixtures.js";
 export { GT033Session } from "./templates/GT-033/session.js";
 export type {
   GT033Content,
   GT033Difficulty,
 } from "./templates/GT-033/template.js";
-export { GT034_FIXTURES } from "./templates/GT-034/fixtures.js";
 export { GT034Session } from "./templates/GT-034/session.js";
 export type {
   GT034Content,
   GT034Difficulty,
   GT034Instrument,
 } from "./templates/GT-034/template.js";
-export { GT035_FIXTURES } from "./templates/GT-035/fixtures.js";
 export { GT035Session } from "./templates/GT-035/session.js";
 export type {
   GT035Content,
   GT035Difficulty,
 } from "./templates/GT-035/template.js";
-export {
-  GT036Fixtures,
-  GT036Fixtures as GT036_FIXTURES,
-} from "./templates/GT-036/fixtures.js";
 export { GT036Session } from "./templates/GT-036/session.js";
 export type {
   GT036Content,

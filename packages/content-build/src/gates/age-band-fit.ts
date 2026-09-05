@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
-import type { AgeBand } from "@mindkid/game-engine";
+import type { AgeBand } from "@mindkid/game-engine/contracts";
 import { z } from "zod";
 import { ALL_SEED_LESSONS, ALL_SEED_LEVELS } from "../catalog.js";
 

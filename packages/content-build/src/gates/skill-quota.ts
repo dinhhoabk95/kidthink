@@ -17,7 +17,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { repoPath } from "@mindkid/config/paths";
-import { ALL_TEMPLATES } from "@mindkid/game-engine";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import {
   type ParsedSkill,
   parseTaxonomyDocs,

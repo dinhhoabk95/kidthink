@@ -76,7 +76,7 @@ export function generateTemplateRegistryCode(
     .map((t) => `  "${t.code}": ${t.code.replace("-", "")}Template,`)
     .join("\n");
 
-  return `${GENERATED_BANNER + imports.join("\n")}\n\nexport const ALL_TEMPLATES: Record<string, GameTemplate> = {\n${entries}\n};\n\nexport const MVP_TEMPLATES = ALL_TEMPLATES;\n\nexport function getGameTemplate(code: string): GameTemplate | undefined {
+  return `${GENERATED_BANNER + imports.join("\n")}\n\nexport type { AgeBand, GameTemplate } from "#src/contracts/types.js";\n\nexport const ALL_TEMPLATES: Record<string, GameTemplate> = {\n${entries}\n};\n\nexport const MVP_TEMPLATES = ALL_TEMPLATES;\n\nexport function getGameTemplate(code: string): GameTemplate | undefined {
   return ALL_TEMPLATES[code];
 }
 
@@ -157,28 +157,6 @@ export function validateAgeBandForTemplate(
 `;
 }
 
-export function generateTemplateExportsCode(
-  templates: readonly DiscoveredTemplate[]
-): string {
-  const imports: string[] = [];
-  const exports: string[] = [];
-
-  for (const t of templates) {
-    const codeNum = t.code.replace("-", "");
-    imports.push(
-      `import ${codeNum}Template, { type ${codeNum}Content, type ${codeNum}Difficulty } from "#src/templates/${t.code}/template";`
-    );
-    imports.push(
-      `import { ${codeNum}Session } from "#src/templates/${t.code}/session";`
-    );
-    exports.push(
-      `export { ${codeNum}Template, ${codeNum}Session, type ${codeNum}Content, type ${codeNum}Difficulty };`
-    );
-  }
-
-  return `${GENERATED_BANNER + imports.join("\n")}\n\n${exports.join("\n")}\n`;
-}
-
 export function generateSessionLoaderCode(
   templates: readonly DiscoveredTemplate[]
 ): string {
@@ -186,35 +164,29 @@ export function generateSessionLoaderCode(
     .map((t) => {
       const codeNum = t.code.replace("-", "");
       return `    case "${t.code}": {
-      const mod = await import("#src/templates/${t.code}/session");
+      const mod = await import("#src/templates/${t.code}/session.js");
       return mod.${codeNum}Session;
     }`;
     })
     .join("\n");
 
-  const syncImports = templates
-    .map(
-      (t) =>
-        `import { ${t.code.replace("-", "")}Session } from "#src/templates/${t.code}/session";`
-    )
-    .join("\n");
+  return `${GENERATED_BANNER}import type { EngineConfig } from "#src/core.js";
+import type { GameSession } from "#src/game-session.js";
 
-  const syncCases = templates
-    .map(
-      (t) => `    case "${t.code}":
-      return Reflect.construct(${t.code.replace("-", "")}Session, [cfg.content_pack, cfg.difficulty_params, cfg.layout_seed, cfg.theme_id]);`
-    )
-    .join("\n");
+export type GameSessionConstructor = new (
+  content: never,
+  difficulty: never,
+  layoutSeed?: number,
+  themeId?: string
+) => GameSession;
 
-  return `${GENERATED_BANNER}import type { EngineConfig } from "#src/core";
-import type { GameSession } from "#src/game-session";
-${syncImports}
+const sessionCache = new Map<string, GameSessionConstructor>();
 
 /**
  * Dynamic lazy loader for GameSession classes by template code (BR-TAK-08).
  * Ensures play surfaces only download the code for the active game template.
  */
-export async function loadGameSession(templateCode: string): Promise<new (...args: any[]) => GameSession> {
+export async function loadGameSession(templateCode: string): Promise<GameSessionConstructor> {
   switch (templateCode) {
 ${switchBranches}
     default:
@@ -223,14 +195,30 @@ ${switchBranches}
 }
 
 /**
+ * Preload GameSession class into cache so synchronous creation succeeds.
+ */
+export async function preloadGameSession(templateCode: string): Promise<void> {
+  if (sessionCache.has(templateCode)) {
+    return;
+  }
+  const sessionClass = await loadGameSession(templateCode);
+  sessionCache.set(templateCode, sessionClass);
+}
+
+/**
  * Synchronous session creator using preloaded session classes.
  */
 export function createGameSessionSync(templateCode: string, cfg: EngineConfig): GameSession {
-  switch (templateCode) {
-${syncCases}
-    default:
-      throw new Error(\`TEMPLATE_NOT_SUPPORTED: \${templateCode}\`);
+  const SessionClass = sessionCache.get(templateCode);
+  if (!SessionClass) {
+    throw new Error(\`TEMPLATE_NOT_LOADED: Template \${templateCode} must be preloaded before synchronous creation\`);
   }
+  return Reflect.construct(SessionClass, [
+    cfg.content_pack,
+    cfg.difficulty_params,
+    cfg.layout_seed,
+    cfg.theme_id,
+  ]);
 }
 `;
 }
@@ -339,10 +327,6 @@ export function generateAllTemplateArtifacts(
   files.set(
     join(generatedDir, "template-registry.ts"),
     generateTemplateRegistryCode(templates)
-  );
-  files.set(
-    join(generatedDir, "template-exports.ts"),
-    generateTemplateExportsCode(templates)
   );
   files.set(
     join(generatedDir, "session-loader.ts"),

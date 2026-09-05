@@ -1,4 +1,7 @@
-import { ALL_TEMPLATES, type GameTemplate } from "@mindkid/game-engine";
+import {
+  ALL_TEMPLATES,
+  type GameTemplate,
+} from "@mindkid/game-engine/registry";
 import { describe, expect, it } from "vitest";
 import { isLevelOutOfBand, toAgeBand } from "#src/gates/engine-content-depth";
 import {

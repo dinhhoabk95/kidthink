@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
-import { ALL_TEMPLATES } from "@mindkid/game-engine";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { describe, expect, it } from "vitest";
 import {
   generateLevelAllocationPlan,

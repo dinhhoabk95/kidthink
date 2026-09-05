@@ -3,14 +3,13 @@ import { createHash } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { AGE_BANDS, type AgeBand } from "@mindkid/game-engine/contracts";
 import {
-  AGE_BANDS,
-  type AgeBand,
   ALL_LEVEL_GENERATORS,
-  ALL_TEMPLATES,
   deriveStream,
   getLevelGenerator,
-} from "@mindkid/game-engine";
+} from "@mindkid/game-engine/generators";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { CANONICAL_THEME_CODES } from "@mindkid/shared";
 import { getThemeVocabulary } from "../vocab/themes.js";
 import { printCellMatrixReport, validateCellSpec } from "./cell-generator.js";

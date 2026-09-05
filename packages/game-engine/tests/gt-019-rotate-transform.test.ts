@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  GT019_FIXTURES,
-  GT019Session,
-  rotatePiece90,
-  togglePieceFlip,
-} from "#src/index";
+import { GT019Session, rotatePiece90, togglePieceFlip } from "#src/index";
+import { GT019_FIXTURES } from "#src/templates/GT-019/fixtures.js";
 import template from "#src/templates/GT-019/template";
 
 const f1 = GT019_FIXTURES[0];

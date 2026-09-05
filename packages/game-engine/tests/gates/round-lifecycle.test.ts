@@ -1,3 +1,4 @@
+import { GT001_FIXTURES } from "#src/templates/GT-001/fixtures.js";
 /**
  * Gate #211 — Round lifecycle: mọi khuôn phải chơi được từ vòng hai.
  *
@@ -19,7 +20,6 @@ import {
   createGameSessionSync,
   type EngineConfig,
   GT000_FIXTURES,
-  GT001_FIXTURES,
   GT002_FIXTURES,
   GT003_FIXTURES,
   GT004_FIXTURES,

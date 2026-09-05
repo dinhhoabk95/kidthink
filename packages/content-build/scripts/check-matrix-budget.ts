@@ -1,4 +1,4 @@
-import { type AgeBand, ALL_TEMPLATES } from "@mindkid/game-engine";
+import { type AgeBand, ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { ALL_SEED_LEVELS } from "../src/index.js";
 
 export interface CellReport {

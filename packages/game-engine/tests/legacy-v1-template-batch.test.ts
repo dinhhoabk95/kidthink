@@ -3,25 +3,25 @@ import {
   ALL_TEMPLATE_CODES,
   AssemblySystem,
   CardSystem,
-  GT018_FIXTURES,
   GT018Session,
-  GT019_FIXTURES,
   GT019Session,
-  GT020_FIXTURES,
   GT020Session,
-  GT021_FIXTURES,
   GT021Session,
-  GT022_FIXTURES,
   GT022Session,
-  GT023_FIXTURES,
   GT023Session,
-  GT024_FIXTURES,
   GT024Session,
   getGameTemplate,
   MirrorSystem,
   SceneSystem,
   TraceSystem,
 } from "#src/index";
+import { GT018_FIXTURES } from "#src/templates/GT-018/fixtures.js";
+import { GT019_FIXTURES } from "#src/templates/GT-019/fixtures.js";
+import { GT020_FIXTURES } from "#src/templates/GT-020/fixtures.js";
+import { GT021_FIXTURES } from "#src/templates/GT-021/fixtures.js";
+import { GT022_FIXTURES } from "#src/templates/GT-022/fixtures.js";
+import { GT023_FIXTURES } from "#src/templates/GT-023/fixtures.js";
+import { GT024_FIXTURES } from "#src/templates/GT-024/fixtures.js";
 
 describe("Legacy V1 Template Batch (§7.4, BR-LVB-01..15)", () => {
   const BATCH_CODES = [

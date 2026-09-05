@@ -522,9 +522,6 @@ importers:
       '@mindkid/config':
         specifier: workspace:*
         version: link:../config
-      '@mindkid/game-engine':
-        specifier: workspace:*
-        version: link:../game-engine
       '@mindkid/moderation':
         specifier: workspace:*
         version: link:../moderation

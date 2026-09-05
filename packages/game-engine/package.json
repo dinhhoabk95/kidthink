@@ -23,7 +23,14 @@
     "zod-to-json-schema": "catalog:"
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./tokens": "./src/systems/designTokens.ts",
+    "./contracts": "./src/contracts/index.ts",
+    "./registry": "./src/generated/template-registry.ts",
+    "./generators": "./src/generators/index.ts",
+    "./render": "./src/render/index.ts",
+    "./runtime": "./src/runtime.ts",
+    "./loader": "./src/generated/session-loader.ts"
   },
   "imports": {
     "#src/*.js": "./src/*.ts",

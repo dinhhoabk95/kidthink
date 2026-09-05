@@ -9,7 +9,7 @@
 import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { repoPath } from "@mindkid/config/paths";
-import { ALL_TEMPLATES } from "@mindkid/game-engine";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import {
   evaluateEngineDepth,
   loadEngineDepthConfig,

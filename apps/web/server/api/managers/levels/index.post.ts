@@ -1,6 +1,6 @@
 import { writeAudit } from "@mindkid/audit";
 import { gameLevels, getOwnerDb, managers } from "@mindkid/db";
-import { getGameTemplate } from "@mindkid/game-engine";
+import { getGameTemplate } from "@mindkid/game-engine/registry";
 import { eq, sql } from "drizzle-orm";
 import { createError, defineEventHandler, setResponseStatus } from "h3";
 import { z } from "zod";

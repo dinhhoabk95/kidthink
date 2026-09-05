@@ -1,4 +1,4 @@
-import { ALL_TEMPLATES } from "@mindkid/game-engine";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { describe, expect, it } from "vitest";
 import { ALL_SEED_LEVELS } from "#src/catalog";
 import type { ContentSeed } from "#src/types";

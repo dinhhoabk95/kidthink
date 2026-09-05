@@ -1,10 +1,8 @@
 import fs from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
-import {
-  type AgeBand,
-  ALL_TEMPLATES,
-  getLevelGenerator,
-} from "@mindkid/game-engine";
+import type { AgeBand } from "@mindkid/game-engine/contracts";
+import { getLevelGenerator } from "@mindkid/game-engine/generators";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import {
   type CellReport,
   generateMatrixReport,

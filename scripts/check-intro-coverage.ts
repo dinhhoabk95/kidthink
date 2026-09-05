@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { ALL_SEED_LEVELS } from "@mindkid/content-build";
-import { ALL_TEMPLATES } from "@mindkid/game-engine";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 
 interface BaselineData {
   uncovered_skills_count: number;

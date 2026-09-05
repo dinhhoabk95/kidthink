@@ -1,4 +1,4 @@
-import { MVP_TEMPLATES } from "@mindkid/game-engine";
+import { MVP_TEMPLATES } from "@mindkid/game-engine/registry";
 import { describe, expect, it } from "vitest";
 import {
   type CustomGameValidationInput,

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { GT009_FIXTURES, GT009Session } from "#src/index";
+import { GT009Session } from "#src/index";
+import { GT009_FIXTURES } from "#src/templates/GT-009/fixtures.js";
 import GT009Template, {
   GT009BaseSchema,
   GT009ContentSchema,

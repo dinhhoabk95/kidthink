@@ -7,7 +7,7 @@ import {
   skillPrerequisites,
   skills,
 } from "@mindkid/db";
-import { ALL_TEMPLATES, getGameTemplate } from "@mindkid/game-engine";
+import { ALL_TEMPLATES, getGameTemplate } from "@mindkid/game-engine/registry";
 import type {
   CallerIdentity,
   IntroCheckResult,

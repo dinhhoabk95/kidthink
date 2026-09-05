@@ -28,6 +28,7 @@ file này — nhưng file chưa từng được tạo. Đây là file đó.
 | `pnpm typecheck` | `tsc` + `vue-tsc` trên 10 project, bậc thang nợ | `scripts/typecheck/typecheck-gate.test.ts` — 12 ca, gồm OOM kill và `--update` tăng nợ |
 | `pnpm test` | Unit/integration + cổng trong `<workspace>/tests/gates/` | theo từng cổng |
 | `pnpm test:deploy` | Script hạ tầng (`infra/scripts/tests/run.sh`) | 64 ca |
+| `pnpm check:bundle` | Đo kích thước gzip từng chunk Nuxt client theo `BR-ENG-17` (80 KB) | có |
 
 ## 2. Cổng trong `<workspace>/tests/gates/`
 
@@ -48,6 +49,7 @@ file này — nhưng file chưa từng được tạo. Đây là file đó.
 | `packages/game-engine/tests/gates/render-viewport.test.ts` | `BR-ERC-04` | có |
 | `packages/game-engine/tests/gates/logic-space.test.ts` | `BR-ENG-14` | có |
 | `packages/game-engine/tests/gates/glyph-code-leak.test.ts` | `BR-EMJ-04` | có |
+| `packages/game-engine/tests/gates/client-entry-weight.test.ts` | `BR-TAK-08`, `BR-PRF-01` (nhịp 1) | có |
 
 ## 3. Luật đã MẤT cưỡng chế
 
@@ -77,8 +79,8 @@ bỏ sót ít nhất tám khoản; bảng dưới là bản đủ.
 
 ## 4. Câu hỏi mở
 
-| # | Câu hỏi | Chủ |
-| --- | --- | --- |
-| `Q-RG-1` | Bốn khoản "MẤT — thiếu trong §4" có dựng lại không, hay hạ luật xuống "chưa dựng"? | người quyết |
-| `Q-RG-2` | `BR-PRF-01` khai "vượt ngân sách chặn merge" nhưng `size-limit`/`k6` không có trong repo. Wire vào hay hạ luật? | người quyết |
-| `Q-RG-3` | Nợ `emoji_ref`: 7 glyph (🐭 ⬆️ ⬇️ ⬅️ ➡️ 💎 🐮) chưa có trong registry emoji. Bổ sung registry hay đổi nội dung? | Nội dung |
+| # | Câu hỏi | Chủ | Trạng thái |
+| --- | --- | --- | --- |
+| `Q-RG-1` | Bốn khoản "MẤT — thiếu trong §4" có dựng lại không, hay hạ luật xuống "chưa dựng"? | người quyết | mở |
+| `Q-RG-2` | `BR-PRF-01` khai "vượt ngân sách chặn merge" nhưng `size-limit`/`k6` không có trong repo. Wire vào hay hạ luật? | người quyết | **Đóng ở #209**: Tách hai nhịp — quét import tĩnh tại `pnpm test` (`client-entry-weight`), đo gzip thật tại `pnpm check:bundle`. |
+| `Q-RG-3` | Nợ `emoji_ref`: 7 glyph (🐭 ⬆️ ⬇️ ⬅️ ➡️ 💎 🐮) chưa có trong registry emoji. Bổ sung registry hay đổi nội dung? | Nội dung | mở |

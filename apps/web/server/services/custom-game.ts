@@ -11,7 +11,7 @@ import {
   customGames,
   getDb,
 } from "@mindkid/db";
-import { getGameTemplate } from "@mindkid/game-engine";
+import { getGameTemplate } from "@mindkid/game-engine/registry";
 import {
   type CreateCustomGameInput,
   type CustomGameValidationResult,

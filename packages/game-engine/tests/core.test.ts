@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { GameEngine, GT001_FIXTURES, GT001Session } from "#src/index";
+import { GameEngine, GT001Session } from "#src/index";
+import { GT001_FIXTURES } from "#src/templates/GT-001/fixtures.js";
 
 const RE_VUE = /from\s+['"]vue['"]/;
 const RE_PINIA = /from\s+['"]pinia['"]/;

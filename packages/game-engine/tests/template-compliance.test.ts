@@ -1,93 +1,40 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import {
   ALL_TEMPLATE_CODES,
   createGameSessionSync,
   type EngineConfig,
-  GT000_FIXTURES,
-  GT001_FIXTURES,
-  GT002_FIXTURES,
-  GT003_FIXTURES,
-  GT004_FIXTURES,
-  GT005_FIXTURES,
-  GT006_FIXTURES,
-  GT007_FIXTURES,
-  GT008_FIXTURES,
-  GT009_FIXTURES,
-  GT010_FIXTURES,
-  GT011_FIXTURES,
-  GT012_FIXTURES,
-  GT013_FIXTURES,
-  GT014_FIXTURES,
-  GT015_FIXTURES,
-  GT016_FIXTURES,
-  GT017_FIXTURES,
-  GT018_FIXTURES,
-  GT019_FIXTURES,
-  GT020_FIXTURES,
-  GT021_FIXTURES,
-  GT022_FIXTURES,
-  GT023_FIXTURES,
-  GT024_FIXTURES,
-  GT025_FIXTURES,
-  GT026_FIXTURES,
-  GT027_FIXTURES,
-  GT028_FIXTURES,
-  GT029_FIXTURES,
-  GT030_FIXTURES,
-  GT031_FIXTURES,
-  GT032_FIXTURES,
-  GT033_FIXTURES,
-  GT034_FIXTURES,
-  GT035_FIXTURES,
-  GT036_FIXTURES,
   getGameTemplate,
   loadGameSession,
+  preloadGameSession,
 } from "#src/index";
+import { FIXTURES_BY_CODE } from "./fixtures-map.js";
 
-const FIXTURES_MAP: Record<
-  string,
-  { content: unknown; difficulty: unknown }[]
-> = {
-  "GT-000": GT000_FIXTURES,
-  "GT-001": GT001_FIXTURES,
-  "GT-002": GT002_FIXTURES,
-  "GT-003": GT003_FIXTURES,
-  "GT-004": GT004_FIXTURES,
-  "GT-005": GT005_FIXTURES,
-  "GT-006": GT006_FIXTURES,
-  "GT-007": GT007_FIXTURES,
-  "GT-008": GT008_FIXTURES,
-  "GT-009": GT009_FIXTURES,
-  "GT-010": GT010_FIXTURES,
-  "GT-011": GT011_FIXTURES,
-  "GT-012": GT012_FIXTURES,
-  "GT-013": GT013_FIXTURES,
-  "GT-014": GT014_FIXTURES,
-  "GT-015": GT015_FIXTURES,
-  "GT-016": GT016_FIXTURES,
-  "GT-017": GT017_FIXTURES,
-  "GT-018": GT018_FIXTURES,
-  "GT-019": GT019_FIXTURES,
-  "GT-020": GT020_FIXTURES,
-  "GT-021": GT021_FIXTURES,
-  "GT-022": GT022_FIXTURES,
-  "GT-023": GT023_FIXTURES,
-  "GT-024": GT024_FIXTURES,
-  "GT-025": GT025_FIXTURES,
-  "GT-026": GT026_FIXTURES,
-  "GT-027": GT027_FIXTURES,
-  "GT-028": GT028_FIXTURES,
-  "GT-029": GT029_FIXTURES,
-  "GT-030": GT030_FIXTURES,
-  "GT-031": GT031_FIXTURES,
-  "GT-032": GT032_FIXTURES,
-  "GT-033": GT033_FIXTURES,
-  "GT-034": GT034_FIXTURES,
-  "GT-035": GT035_FIXTURES,
-  "GT-036": GT036_FIXTURES,
-};
+const FIXTURES_MAP = FIXTURES_BY_CODE;
 
 describe("Universal Template Compliance Test Suite (§7.4, BR-TAK-01..14)", () => {
+  beforeAll(async () => {
+    for (const c of ALL_TEMPLATE_CODES) {
+      await preloadGameSession(c);
+    }
+  });
+
+  it("throws TEMPLATE_NOT_LOADED if synchronous creation called without preload", () => {
+    const pattern = "TEMPLATE_NOT_LOADED";
+    expect(() =>
+      createGameSessionSync("GT-999", {
+        level_code: "GT-999-LV1",
+        content_version: 1,
+        template_code: "GT-999",
+        content_pack: {},
+        difficulty_params: {},
+        theme_id: "default",
+        age_band: "4-5",
+        reduced_motion: false,
+        audio_enabled: true,
+      })
+    ).toThrow(pattern);
+  });
+
   it("registers all MVP template codes", () => {
     expect(ALL_TEMPLATE_CODES).toEqual([
       "GT-000",

@@ -1,4 +1,4 @@
-import { ALL_TEMPLATES } from "@mindkid/game-engine";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { describe, expect, it } from "vitest";
 import { ENGINE_PHRASES, resolveEnginePhrases } from "#src/vocab/phrases";
 import { getThemeVocabulary } from "#src/vocab/themes";

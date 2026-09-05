@@ -1,47 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import {
   ALL_TEMPLATE_CODES,
   createGameSessionSync,
   type EngineConfig,
-  GT000_FIXTURES,
-  GT001_FIXTURES,
-  GT002_FIXTURES,
-  GT003_FIXTURES,
-  GT004_FIXTURES,
-  GT005_FIXTURES,
-  GT006_FIXTURES,
-  GT007_FIXTURES,
-  GT008_FIXTURES,
-  GT009_FIXTURES,
-  GT010_FIXTURES,
-  GT011_FIXTURES,
-  GT012_FIXTURES,
-  GT013_FIXTURES,
-  GT014_FIXTURES,
-  GT015_FIXTURES,
-  GT016_FIXTURES,
-  GT017_FIXTURES,
-  GT018_FIXTURES,
-  GT019_FIXTURES,
-  GT020_FIXTURES,
-  GT021_FIXTURES,
-  GT022_FIXTURES,
-  GT023_FIXTURES,
-  GT024_FIXTURES,
-  GT025_FIXTURES,
-  GT026_FIXTURES,
-  GT027_FIXTURES,
-  GT028_FIXTURES,
-  GT029_FIXTURES,
-  GT030_FIXTURES,
-  GT031_FIXTURES,
-  GT032_FIXTURES,
-  GT033_FIXTURES,
-  GT034_FIXTURES,
-  GT035_FIXTURES,
-  GT036_FIXTURES,
+  preloadGameSession,
   RenderSystem,
 } from "#src/index";
+import { FIXTURES_BY_CODE } from "./fixtures-map.js";
 
 function expectDefined<T>(val: T | undefined | null, msg?: string): T {
   if (val === undefined || val === null) {
@@ -50,55 +15,18 @@ function expectDefined<T>(val: T | undefined | null, msg?: string): T {
   return val;
 }
 
-function getFixture<T>(fixtures: readonly T[], index: number): T {
+function getFixture(templateCode: string, index: number) {
+  const fixtures = expectDefined(
+    FIXTURES_BY_CODE[templateCode],
+    `Fixtures for ${templateCode} must be defined`
+  );
   return expectDefined(
     fixtures[index],
-    `Fixture at index ${index} must be defined`
+    `Fixture at index ${index} for ${templateCode} must be defined`
   );
 }
 
-const FIXTURES_MAP: Record<
-  string,
-  { content: unknown; difficulty: unknown }[]
-> = {
-  "GT-000": GT000_FIXTURES,
-  "GT-001": GT001_FIXTURES,
-  "GT-002": GT002_FIXTURES,
-  "GT-003": GT003_FIXTURES,
-  "GT-004": GT004_FIXTURES,
-  "GT-005": GT005_FIXTURES,
-  "GT-006": GT006_FIXTURES,
-  "GT-007": GT007_FIXTURES,
-  "GT-008": GT008_FIXTURES,
-  "GT-009": GT009_FIXTURES,
-  "GT-010": GT010_FIXTURES,
-  "GT-011": GT011_FIXTURES,
-  "GT-012": GT012_FIXTURES,
-  "GT-013": GT013_FIXTURES,
-  "GT-014": GT014_FIXTURES,
-  "GT-015": GT015_FIXTURES,
-  "GT-016": GT016_FIXTURES,
-  "GT-017": GT017_FIXTURES,
-  "GT-018": GT018_FIXTURES,
-  "GT-019": GT019_FIXTURES,
-  "GT-020": GT020_FIXTURES,
-  "GT-021": GT021_FIXTURES,
-  "GT-022": GT022_FIXTURES,
-  "GT-023": GT023_FIXTURES,
-  "GT-024": GT024_FIXTURES,
-  "GT-025": GT025_FIXTURES,
-  "GT-026": GT026_FIXTURES,
-  "GT-027": GT027_FIXTURES,
-  "GT-028": GT028_FIXTURES,
-  "GT-029": GT029_FIXTURES,
-  "GT-030": GT030_FIXTURES,
-  "GT-031": GT031_FIXTURES,
-  "GT-032": GT032_FIXTURES,
-  "GT-033": GT033_FIXTURES,
-  "GT-034": GT034_FIXTURES,
-  "GT-035": GT035_FIXTURES,
-  "GT-036": GT036_FIXTURES,
-};
+const FIXTURES_MAP = FIXTURES_BY_CODE;
 
 function createMockCanvasContext(): CanvasRenderingContext2D {
   return {
@@ -152,6 +80,12 @@ function createMockCanvasContext(): CanvasRenderingContext2D {
 describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
   const rs = new RenderSystem();
   const ctx = createMockCanvasContext();
+
+  beforeAll(async () => {
+    for (const c of ALL_TEMPLATE_CODES) {
+      await preloadGameSession(c);
+    }
+  });
 
   for (const code of ALL_TEMPLATE_CODES) {
     describe(`Template ${code} Exhaustive Simulation`, () => {
@@ -269,7 +203,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
 
   describe("Complete Gameplay Winning Simulation (GT-001..GT-027)", () => {
     it("GT-001 wins when correct option is locked", () => {
-      const f = getFixture(GT001_FIXTURES, 0);
+      const f = getFixture("GT-001", 0);
       const s = createGameSessionSync("GT-001", {
         level_code: "GT-001-TEST",
         content_version: 1,
@@ -295,7 +229,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-002 wins when correct items are selected and submitted", () => {
-      const f = getFixture(GT002_FIXTURES, 0);
+      const f = getFixture("GT-002", 0);
       const s = createGameSessionSync("GT-002", {
         level_code: "GT-002-TEST",
         content_version: 1,
@@ -324,7 +258,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-003 wins when correct items are placed in container", () => {
-      const f = getFixture(GT003_FIXTURES, 0);
+      const f = getFixture("GT-003", 0);
       const s = createGameSessionSync("GT-003", {
         level_code: "GT-003-TEST",
         content_version: 1,
@@ -354,7 +288,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-004 wins when items are placed into correct groups", () => {
-      const f = getFixture(GT004_FIXTURES, 0);
+      const f = getFixture("GT-004", 0);
       const s = createGameSessionSync("GT-004", {
         level_code: "GT-004-TEST",
         content_version: 1,
@@ -381,7 +315,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-005 wins when all pairs are matched", () => {
-      const f = getFixture(GT005_FIXTURES, 0);
+      const f = getFixture("GT-005", 0);
       const s = createGameSessionSync("GT-005", {
         level_code: "GT-005-TEST",
         content_version: 1,
@@ -411,7 +345,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-006 wins when sequence is ordered and submitted", () => {
-      const f = getFixture(GT006_FIXTURES, 0);
+      const f = getFixture("GT-006", 0);
       const s = createGameSessionSync("GT-006", {
         level_code: "GT-006-TEST",
         content_version: 1,
@@ -433,7 +367,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-007 wins when target part is filled with correct value", () => {
-      const f = getFixture(GT007_FIXTURES, 0);
+      const f = getFixture("GT-007", 0);
       const s = createGameSessionSync("GT-007", {
         level_code: "GT-007-TEST",
         content_version: 1,
@@ -465,7 +399,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-008 wins when expected items are placed in slots", () => {
-      const f = getFixture(GT008_FIXTURES, 0);
+      const f = getFixture("GT-008", 0);
       const s = createGameSessionSync("GT-008", {
         level_code: "GT-008-TEST",
         content_version: 1,
@@ -492,7 +426,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-009 wins when answer candidate is selected", () => {
-      const f = getFixture(GT009_FIXTURES, 0);
+      const f = getFixture("GT-009", 0);
       const s = createGameSessionSync("GT-009", {
         level_code: "GT-009-TEST",
         content_version: 1,
@@ -515,7 +449,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-010 wins when expected equation value is selected", () => {
-      const f = getFixture(GT010_FIXTURES, 0);
+      const f = getFixture("GT-010", 0);
       const s = createGameSessionSync("GT-010", {
         level_code: "GT-010-TEST",
         content_version: 1,
@@ -539,7 +473,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-011 wins when correct matrix option is selected", () => {
-      const f = getFixture(GT011_FIXTURES, 0);
+      const f = getFixture("GT-011", 0);
       const s = createGameSessionSync("GT-011", {
         level_code: "GT-011-TEST",
         content_version: 1,
@@ -565,7 +499,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-012 wins when flash count value is selected", () => {
-      const f = getFixture(GT012_FIXTURES, 0);
+      const f = getFixture("GT-012", 0);
       const s = createGameSessionSync("GT-012", {
         level_code: "GT-012-TEST",
         content_version: 1,
@@ -588,7 +522,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-013 wins when valid path through required cells is submitted", () => {
-      const f = getFixture(GT013_FIXTURES, 0);
+      const f = getFixture("GT-013", 0);
       const s = createGameSessionSync("GT-013", {
         level_code: "GT-013-TEST",
         content_version: 1,
@@ -626,7 +560,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-014 wins when heavier side is chosen", () => {
-      const f = getFixture(GT014_FIXTURES, 0);
+      const f = getFixture("GT-014", 0);
       const s = createGameSessionSync("GT-014", {
         level_code: "GT-014-TEST",
         content_version: 1,
@@ -651,7 +585,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-015 wins when sudoku cells are filled with valid symbols", () => {
-      const f = getFixture(GT015_FIXTURES, 0);
+      const f = getFixture("GT-015", 0);
       const s = createGameSessionSync("GT-015", {
         level_code: "GT-015-TEST",
         content_version: 1,
@@ -682,7 +616,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-016 wins when correct clock option is selected", () => {
-      const f = getFixture(GT016_FIXTURES, 0);
+      const f = getFixture("GT-016", 0);
       const s = createGameSessionSync("GT-016", {
         level_code: "GT-016-TEST",
         content_version: 1,
@@ -706,7 +640,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-017 wins when correct block count option is selected", () => {
-      const f = getFixture(GT017_FIXTURES, 0);
+      const f = getFixture("GT-017", 0);
       const s = createGameSessionSync("GT-017", {
         level_code: "GT-017-TEST",
         content_version: 1,
@@ -732,7 +666,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-018 wins when correct option is selected", () => {
-      const f = getFixture(GT018_FIXTURES, 0);
+      const f = getFixture("GT-018", 0);
       const s = createGameSessionSync("GT-018", {
         level_code: "GT-018-TEST",
         content_version: 1,
@@ -758,7 +692,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-019 wins when pieces are placed with matching rotation", () => {
-      const f = getFixture(GT019_FIXTURES, 0);
+      const f = getFixture("GT-019", 0);
       const s = createGameSessionSync("GT-019", {
         level_code: "GT-019-TEST",
         content_version: 1,
@@ -802,7 +736,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-020 wins when all memory card pairs are flipped", () => {
-      const f = getFixture(GT020_FIXTURES, 0);
+      const f = getFixture("GT-020", 0);
       const s = createGameSessionSync("GT-020", {
         level_code: "GT-020-TEST",
         content_version: 1,
@@ -830,7 +764,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-021 wins when options are placed into symmetric target slots", () => {
-      const f = getFixture(GT021_FIXTURES, 0);
+      const f = getFixture("GT-021", 0);
       const s = createGameSessionSync("GT-021", {
         level_code: "GT-021-TEST",
         content_version: 1,
@@ -863,7 +797,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-022 wins when all hidden/target objects are found", () => {
-      const f = getFixture(GT022_FIXTURES, 0);
+      const f = getFixture("GT-022", 0);
       const s = createGameSessionSync("GT-022", {
         level_code: "GT-022-TEST",
         content_version: 1,
@@ -900,7 +834,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-023 wins when all parts are assembled onto anchors", () => {
-      const f = getFixture(GT023_FIXTURES, 0);
+      const f = getFixture("GT-023", 0);
       const s = createGameSessionSync("GT-023", {
         level_code: "GT-023-TEST",
         content_version: 1,
@@ -927,7 +861,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-024 wins when waypoints are traced sequentially", () => {
-      const f = getFixture(GT024_FIXTURES, 0);
+      const f = getFixture("GT-024", 0);
       const s = createGameSessionSync("GT-024", {
         level_code: "GT-024-TEST",
         content_version: 1,
@@ -957,7 +891,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-025 wins when all difference objects are tapped", () => {
-      const f = getFixture(GT025_FIXTURES, 0);
+      const f = getFixture("GT-025", 0);
       const s = createGameSessionSync("GT-025", {
         level_code: "GT-025-TEST",
         content_version: 1,
@@ -984,7 +918,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-026 wins when go trials are tapped and nogo trials timed out", () => {
-      const f = getFixture(GT026_FIXTURES, 0);
+      const f = getFixture("GT-026", 0);
       const s = createGameSessionSync("GT-026", {
         level_code: "GT-026-TEST",
         content_version: 1,
@@ -1018,7 +952,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-027 wins when rule matches are selected across rule switches", () => {
-      const f = getFixture(GT027_FIXTURES, 0);
+      const f = getFixture("GT-027", 0);
       const s = createGameSessionSync("GT-027", {
         level_code: "GT-027-TEST",
         content_version: 1,
@@ -1060,7 +994,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-028 wins when tapped count equals target_total and submitted", () => {
-      const f = getFixture(GT028_FIXTURES, 0);
+      const f = getFixture("GT-028", 0);
       const s = createGameSessionSync("GT-028", {
         level_code: "GT-028-TEST",
         content_version: 1,
@@ -1094,7 +1028,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-029 wins when remove_count items are removed and correct answer is chosen", () => {
-      const f = getFixture(GT029_FIXTURES, 0);
+      const f = getFixture("GT-029", 0);
       const s = createGameSessionSync("GT-029", {
         level_code: "GT-029-TEST",
         content_version: 1,
@@ -1146,7 +1080,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-030: placement and answer selection simulation succeeds", () => {
-      const f = getFixture(GT030_FIXTURES, 0);
+      const f = getFixture("GT-030", 0);
       const s = createGameSessionSync("GT-030", {
         level_code: "GT-030-TEST",
         content_version: 1,
@@ -1196,7 +1130,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-031: coin composition to target amount simulation succeeds", () => {
-      const f = getFixture(GT031_FIXTURES, 0);
+      const f = getFixture("GT-031", 0);
       const s = createGameSessionSync("GT-031", {
         level_code: "GT-031-TEST",
         content_version: 1,
@@ -1247,7 +1181,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-032: cup selection for quantity comparison simulation succeeds", () => {
-      const f = getFixture(GT032_FIXTURES, 0); // Fixture 0: question_type is "more", cup_b has 5 (more than cup_a with 2)
+      const f = getFixture("GT-032", 0); // Fixture 0: question_type is "more", cup_b has 5 (more than cup_a with 2)
       const s = createGameSessionSync("GT-032", {
         level_code: "GT-032-TEST",
         content_version: 1,
@@ -1287,7 +1221,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-033: yarn placement in weave grid simulation succeeds", () => {
-      const f = getFixture(GT033_FIXTURES, 0); // Fixture 0: 2x2 grid, blank at index 3, solution is "red"
+      const f = getFixture("GT-033", 0); // Fixture 0: 2x2 grid, blank at index 3, solution is "red"
       const s = createGameSessionSync("GT-033", {
         level_code: "GT-033-TEST",
         content_version: 1,
@@ -1327,7 +1261,7 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
     });
 
     it("GT-034: beat sequence tapping simulation succeeds", () => {
-      const f = getFixture(GT034_FIXTURES, 0); // Fixture 0: ["drum", "cymbal", "drum", "cymbal"]
+      const f = getFixture("GT-034", 0); // Fixture 0: ["drum", "cymbal", "drum", "cymbal"]
       const s = createGameSessionSync("GT-034", {
         level_code: "GT-034-TEST",
         content_version: 1,

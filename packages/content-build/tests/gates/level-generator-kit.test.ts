@@ -1,7 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import { repoPath } from "@mindkid/config/paths";
-import { ALL_TEMPLATES, getLevelGenerator } from "@mindkid/game-engine";
+import { getLevelGenerator } from "@mindkid/game-engine/generators";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { describe, expect, it } from "vitest";
 import { generateLevelsCore } from "#src/cli/gen-levels";
 

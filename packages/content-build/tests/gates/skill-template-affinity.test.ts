@@ -4,7 +4,7 @@ import {
   type AgeBand,
   ALL_TEMPLATES,
   type GameTemplate,
-} from "@mindkid/game-engine";
+} from "@mindkid/game-engine/registry";
 import { describe, expect, it } from "vitest";
 import {
   buildSkillTemplateAffinityMatrix,

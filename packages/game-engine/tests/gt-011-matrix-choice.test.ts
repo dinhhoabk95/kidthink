@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { GT011_FIXTURES, GT011Session } from "#src/index";
+import { GT011Session } from "#src/index";
+import { GT011_FIXTURES } from "#src/templates/GT-011/fixtures.js";
 import { colMatches, rowMatches } from "#src/templates/GT-011/matrix-rule";
 import GT011Template, {
   GT011ContentSchema,

@@ -6,7 +6,7 @@ import {
   lessons,
   skills,
 } from "@mindkid/db";
-import { ALL_TEMPLATES } from "@mindkid/game-engine";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { count } from "drizzle-orm";
 import { ALL_SEED_LEVELS } from "../index.js";
 

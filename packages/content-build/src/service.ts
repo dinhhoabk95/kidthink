@@ -15,7 +15,7 @@ import {
   validateAndAssignTags,
   validateContentSkillMap,
 } from "@mindkid/db";
-import { ALL_TEMPLATES } from "@mindkid/game-engine";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { eq, inArray } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { runEightGates } from "./gates/runner.js";

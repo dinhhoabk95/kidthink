@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { GT025_FIXTURES, GT025Session } from "#src/index";
+import { GT025Session } from "#src/index";
+import { GT025_FIXTURES } from "#src/templates/GT-025/fixtures.js";
 import template from "#src/templates/GT-025/template";
 
 const f1 = GT025_FIXTURES[0];

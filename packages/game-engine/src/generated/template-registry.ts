@@ -40,6 +40,8 @@ import GT034Template from "#src/templates/GT-034/template";
 import GT035Template from "#src/templates/GT-035/template";
 import GT036Template from "#src/templates/GT-036/template";
 
+export type { AgeBand, GameTemplate } from "#src/contracts/types.js";
+
 export const ALL_TEMPLATES: Record<string, GameTemplate> = {
   "GT-000": GT000Template,
   "GT-001": GT001Template,

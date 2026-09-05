@@ -36,6 +36,26 @@
       "@mindkid/emoji": ["./packages/emoji/src/index.ts"],
       "@mindkid/export": ["./packages/export/src/index.ts"],
       "@mindkid/game-engine": ["./packages/game-engine/src/index.ts"],
+      "@mindkid/game-engine/tokens": [
+        "./packages/game-engine/src/systems/designTokens.ts"
+      ],
+      "@mindkid/game-engine/contracts": [
+        "./packages/game-engine/src/contracts/index.ts"
+      ],
+      "@mindkid/game-engine/registry": [
+        "./packages/game-engine/src/generated/template-registry.ts"
+      ],
+      "@mindkid/game-engine/generators": [
+        "./packages/game-engine/src/generators/index.ts"
+      ],
+      "@mindkid/game-engine/render": [
+        "./packages/game-engine/src/render/index.ts"
+      ],
+      "@mindkid/game-engine/runtime": ["./packages/game-engine/src/runtime.ts"],
+      "@mindkid/game-engine/loader": [
+        "./packages/game-engine/src/generated/session-loader.ts"
+      ],
+      "@mindkid/game-engine/*": ["./packages/game-engine/src/*"],
       "@mindkid/moderation": ["./packages/moderation/src/index.ts"],
       "@mindkid/notification": ["./packages/notification/src/index.ts"],
       "@mindkid/play": ["./packages/play/src/index.ts"],

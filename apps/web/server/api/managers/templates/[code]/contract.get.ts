@@ -1,4 +1,7 @@
-import { exportTemplateContracts, getGameTemplate } from "@mindkid/game-engine";
+import {
+  exportTemplateContracts,
+  getGameTemplate,
+} from "@mindkid/game-engine/registry";
 import { CONFIG_DICTIONARY, introspectZodSchema } from "@mindkid/shared";
 import { createError, defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";

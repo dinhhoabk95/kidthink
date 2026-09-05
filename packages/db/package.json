@@ -11,7 +11,6 @@
     "@mindkid/adaptive": "workspace:*",
     "@mindkid/auth": "workspace:*",
     "@mindkid/config": "workspace:*",
-    "@mindkid/game-engine": "workspace:*",
     "@mindkid/moderation": "workspace:*",
     "@mindkid/queue": "workspace:*",
     "@mindkid/shared": "workspace:*",

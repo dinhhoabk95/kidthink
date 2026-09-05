@@ -5,7 +5,7 @@
 
 import fs from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
-import { type AgeBand, ALL_TEMPLATES } from "@mindkid/game-engine";
+import { type AgeBand, ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { CONTENT_THEMES } from "@mindkid/shared";
 import {
   type ParsedSkill,

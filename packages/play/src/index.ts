@@ -15,7 +15,7 @@ import {
   playSessions,
   telemetryEvents,
 } from "@mindkid/db";
-import { getGameTemplate } from "@mindkid/game-engine";
+import { getGameTemplate } from "@mindkid/game-engine/registry";
 import { enqueue } from "@mindkid/queue";
 import {
   computeSessionResult,

@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
-import { type AgeBand, ALL_TEMPLATES } from "@mindkid/game-engine";
+import { type AgeBand, ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { z } from "zod";
 import { ALL_SEED_LEVELS } from "../catalog.js";
 import type { ContentSeed } from "../types.js";

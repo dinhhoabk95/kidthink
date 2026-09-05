@@ -1,5 +1,5 @@
 // @mindkid/ui — Canonical UI contracts, tokens, and surface rules
-import { designTokens } from "@mindkid/game-engine";
+import { designTokens } from "@mindkid/game-engine/tokens";
 
 export const DESIGN_TOKENS = {
   colors: designTokens.colors,

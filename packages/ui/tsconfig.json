@@ -8,7 +8,11 @@
     "baseUrl": ".",
     // @mindkid/game-engine là dependency workspace nhưng chưa có build output;
     // trỏ thẳng vào nguồn để tsc đọc được kiểu thật.
-    "paths": { "@mindkid/game-engine": ["../game-engine/src/index.ts"] }
+    "paths": {
+      "@mindkid/game-engine/tokens": [
+        "../game-engine/src/systems/designTokens.ts"
+      ]
+    }
   },
   "include": ["src/**/*.ts", "tests/**/*.ts", "scripts/**/*.ts", "*.ts"],
   "exclude": [

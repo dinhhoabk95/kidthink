@@ -10,7 +10,7 @@ import {
   type GameTemplate,
   getGameTemplate,
   validateContentPack,
-} from "@mindkid/game-engine";
+} from "@mindkid/game-engine/registry";
 import {
   assertContentAccess,
   type CallerIdentity,

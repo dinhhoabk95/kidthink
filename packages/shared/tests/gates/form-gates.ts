@@ -1,6 +1,9 @@
 import { readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { type GameTemplate, MVP_TEMPLATES } from "@mindkid/game-engine";
+import {
+  type GameTemplate,
+  MVP_TEMPLATES,
+} from "@mindkid/game-engine/registry";
 
 import {
   CONFIG_DICTIONARY,

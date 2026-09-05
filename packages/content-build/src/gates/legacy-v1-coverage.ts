@@ -8,7 +8,7 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { repoPath } from "@mindkid/config/paths";
-import { ALL_TEMPLATES } from "@mindkid/game-engine";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { LEGACY_V1_GAME_TYPES, type LegacyV1GameType } from "@mindkid/shared";
 import { ALL_SEED_LEVELS } from "../catalog.js";
 import type { ContentSeed } from "../types.js";

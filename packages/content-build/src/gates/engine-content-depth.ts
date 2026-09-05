@@ -11,7 +11,7 @@ import {
   type AgeBand,
   ALL_TEMPLATES,
   type GameTemplate,
-} from "@mindkid/game-engine";
+} from "@mindkid/game-engine/registry";
 import type { ContentSeed } from "../types.js";
 
 export interface EngineStepCriteria {

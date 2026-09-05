@@ -136,6 +136,19 @@ module.exports = {
       from: {},
       to: { circular: true },
     },
+    {
+      name: "no-unresolvable",
+      comment:
+        "BR-MPA-08: Cấm import không giải quyết được (unresolvable dependency) — " +
+        "bao gồm cả subpath exports chưa được khai báo.",
+      severity: "error",
+      from: { pathNot: "^scripts/" },
+      to: {
+        couldNotResolve: true,
+        pathNot:
+          "^(#imports$|#server/|#app/|#build/|~|vue$|vue-router$|nitropack$)",
+      },
+    },
   ],
   options: {
     // doNotFollow ≠ exclude. `exclude` XOÁ cạnh khỏi graph nên rule không bao giờ

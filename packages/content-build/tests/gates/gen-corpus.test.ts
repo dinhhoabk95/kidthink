@@ -1,5 +1,5 @@
 import { ALL_SKILL_SEEDS, buildLevelsForSkill } from "@mindkid/content";
-import { ALL_TEMPLATES } from "@mindkid/game-engine";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { describe, expect, it } from "vitest";
 import { runEightGates } from "#src/gates/runner";
 

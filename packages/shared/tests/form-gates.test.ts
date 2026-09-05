@@ -1,4 +1,7 @@
-import { type GameTemplate, MVP_TEMPLATES } from "@mindkid/game-engine";
+import {
+  type GameTemplate,
+  MVP_TEMPLATES,
+} from "@mindkid/game-engine/registry";
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import {

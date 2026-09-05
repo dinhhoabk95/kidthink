@@ -1,5 +1,5 @@
 import { contentTags, normalizeMechanicTagCode } from "@mindkid/db";
-import { ALL_TEMPLATES } from "@mindkid/game-engine";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { CONTENT_THEMES } from "@mindkid/shared";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { TAG_VOCABULARY } from "../vocabulary.js";

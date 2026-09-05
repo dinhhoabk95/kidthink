@@ -7,6 +7,7 @@
     ".": "./src/index.ts",
     "./gates/*": "./src/gates/*.ts",
     "./cli/*": "./src/cli/*.ts",
+    "./seed-master/*": "./src/seed-master/*.ts",
     "./thresholds/*": "./src/thresholds/*"
   },
   "dependencies": {

@@ -352,13 +352,13 @@ Cấm — NEVER phụ thuộc đợt 1 và 2; chạy song song được.
 
 ### `#240` `./tokens`
 
-- [ ] `packages/game-engine/package.json` thêm `"./tokens": "./src/systems/designTokens.ts"`
-- [ ] `tsconfig.json` gốc thêm `"@mindkid/game-engine/*"` — hôm nay chỉ có specifier trần, không có
+- [x] `packages/game-engine/package.json` thêm `"./tokens": "./src/systems/designTokens.ts"`
+- [x] `tsconfig.json` gốc thêm `"@mindkid/game-engine/*"` — hôm nay chỉ có specifier trần, không có
       dòng `/*` anh em. Tiền lệ ngay trên: `@mindkid/config/*`, `@mindkid/content/*`
-- [ ] `packages/ui/tsconfig.json:11` — map `paths` cứng đang đi vòng qua `exports`. Đổi sang trỏ
+- [x] `packages/ui/tsconfig.json:11` — map `paths` cứng đang đi vòng qua `exports`. Đổi sang trỏ
       `designTokens.ts`, bỏ ánh xạ trần
-- [ ] `packages/ui/src/index.ts:2` và `packages/ui/tests/tokens.test.ts:3` dùng `./tokens`
-- [ ] Nghiệm thu: `pnpm typecheck` xanh; `node node_modules/vitest/vitest.mjs run --project '@mindkid/ui'`
+- [x] `packages/ui/src/index.ts:2` và `packages/ui/tests/tokens.test.ts:3` dùng `./tokens`
+- [x] Nghiệm thu: `pnpm typecheck` xanh; `node node_modules/vitest/vitest.mjs run --project '@mindkid/ui'`
       xanh — **đây là phép thử resolver cho toàn bộ đợt 4**. `packages/config/vitest/base.ts:27-35`
       ghi rõ subpath phải đi qua `exports`; nếu chỗ này hỏng thì `#242`…`#246` cần hình dạng khác
 
@@ -367,54 +367,54 @@ Cấm — NEVER phụ thuộc đợt 1 và 2; chạy song song được.
 
 ### `#241` Rule `no-unresolvable` cho dependency-cruiser
 
-- [ ] `.dependency-cruiser.cjs` đặt `exportsFields: ["exports"]` nhưng **không có** rule
+- [x] `.dependency-cruiser.cjs` đặt `exportsFields: ["exports"]` nhưng **không có** rule
       `no-unresolvable`, nên một subpath chưa khai thành cạnh bị **âm thầm bỏ**: `lint:deps` vẫn xanh
       trong khi `no-circular` và `BR-MPA-05/06/07` mất tầm nhìn
-- [ ] Nghiệm thu: `pnpm lint:deps` xanh, và một subpath cố tình sai làm nó đỏ
+- [x] Nghiệm thu: `pnpm lint:deps` xanh, và một subpath cố tình sai làm nó đỏ
 
 ### `#242`–`#246` Các subpath còn lại
 
-- [ ] `#242` `./contracts` — 4 chỗ chỉ dùng kiểu
-- [ ] `#243` `./registry` — khoảng 35 chỗ: 8 route/util server của `apps/web`, ~25 chỗ của
+- [x] `#242` `./contracts` — 4 chỗ chỉ dùng kiểu
+- [x] `#243` `./registry` — khoảng 35 chỗ: 8 route/util server của `apps/web`, ~25 chỗ của
       `packages/content-build`, `packages/shared/tests`, `scripts/check-intro-coverage.ts`,
       và `packages/play` (chuyển vào `complete.ts` ở `#251`)
-- [ ] `#244` `./generators`
-- [ ] `#245` Gỡ **cả 37** `GT0xx_FIXTURES` khỏi `src/index.ts:224-452`; test trong package chuyển sang
+- [x] `#244` `./generators`
+- [x] `#245` Gỡ **cả 37** `GT0xx_FIXTURES` khỏi `src/index.ts:224-452`; test trong package chuyển sang
       `#src/templates/GT-0xx/fixtures`. Xoá `generateTemplateExportsCode` —
       `template-exports.ts` cũng static-import cả 37 `template.ts` và 37 `session.ts`, nên sửa mỗi
       `session-loader.ts` không đổi được gì
   - Nghiệm thu: `grep -c FIXTURES packages/game-engine/src/index.ts` → 0
-- [ ] `#246` `./render` + `./runtime` + loader lười
-  - [ ] `gen-templates-lib.ts` sinh loader chỉ còn `loadGameSession` cộng `preloadGameSession`
-  - [ ] Cấm — NEVER làm factory async: `GameEngine.load` → `sessionFactory` → `startRound` →
+- [x] `#246` `./render` + `./runtime` + loader lười
+  - [x] `gen-templates-lib.ts` sinh loader chỉ còn `loadGameSession` cộng `preloadGameSession`
+  - [x] Cấm — NEVER làm factory async: `GameEngine.load` → `sessionFactory` → `startRound` →
         `advanceToNextRound` → `completeCurrentRound` đều đồng bộ và mắt cuối gọi từ đường `pointerup`
-  - [ ] `createGameSessionSync` đọc từ `Map` đã nạp, ném `TEMPLATE_NOT_LOADED` nếu chưa
-  - [ ] `[code].vue` thêm **một dòng** `await preloadGameSession(...)` trước `startRounds`;
+  - [x] `createGameSessionSync` đọc từ `Map` đã nạp, ném `TEMPLATE_NOT_LOADED` nếu chưa
+  - [x] `[code].vue` thêm **một dòng** `await preloadGameSession(...)` trước `startRounds`;
         `preview-sandbox.vue` cũng vậy
-  - [ ] Ca âm: gọi `createGameSessionSync` mà chưa preload **phải ném**, Cấm — NEVER lặng lẽ dựng
-- [ ] `packages/db/package.json:14` — khai `@mindkid/game-engine` mà không import gì. Xoá
+  - [x] Ca âm: gọi `createGameSessionSync` mà chưa preload **phải ném**, Cấm — NEVER lặng lẽ dựng
+- [x] `packages/db/package.json:14` — khai `@mindkid/game-engine` mà không import gì. Xoá
 
 ### `#247` Cưỡng chế ngân sách bundle — hai cổng, hai nhịp (`D-NO`)
 
 `Q209-2` đã đóng: **không hạ `BR-PRF-01`**, tách cưỡng chế theo chi phí đo. Lý lẽ ở §9 của kế hoạch.
 
-- [ ] **Cổng rẻ, vào `pnpm test`** — `packages/game-engine/tests/gates/client-entry-weight.ts` + `.test.ts`
-  - [ ] Quét: không module nào tới được từ entry client được phép static-import
+- [x] **Cổng rẻ, vào `pnpm test`** — `packages/game-engine/tests/gates/client-entry-weight.ts` + `.test.ts`
+  - [x] Quét: không module nào tới được từ entry client được phép static-import
         `templates/GT-*/session` hoặc `templates/GT-*/fixtures`
-  - [ ] Ca âm: fixture thêm lại một `import ... from "./templates/GT-001/session"` vào một module
+  - [x] Ca âm: fixture thêm lại một `import ... from "./templates/GT-001/session"` vào một module
         trong đường tới entry client — cổng **phải** đỏ
   - Nghiệm thu: chạy tính bằng mili giây; và nó làm lời khai `BR-TAK-08` ở `session-loader.ts:43-46`
     thành **thật** lần đầu tiên
-- [ ] **Cổng đắt, KHÔNG vào `pnpm test`** — script `check:bundle` chạy `nuxt build` rồi đo gzip từng
+- [x] **Cổng đắt, KHÔNG vào `pnpm test`** — script `check:bundle` chạy `nuxt build` rồi đo gzip từng
       chunk theo `BR-ENG-17` (80 KB mỗi khuôn)
-  - [ ] Cấm — NEVER nhét vào `pnpm test`: `apps/web` build hàng phút, và [`#204`](204-verify-loop-runtime-plan.md)
+  - [x] Cấm — NEVER nhét vào `pnpm test`: `apps/web` build hàng phút, và [`#204`](204-verify-loop-runtime-plan.md)
         đang rút vòng verify (typecheck đã 73 giây root cộng 256 giây `apps/web`), mới xong 48/97 việc
-  - [ ] Cấm — NEVER nhét vào `pnpm test:deploy`: `infra/scripts/tests/run.sh` tự khai
+  - [x] Cấm — NEVER nhét vào `pnpm test:deploy`: `infra/scripts/tests/run.sh` tự khai
         *"Nothing here touches a real server"*, chạy trên binary giả trong `fakebin/`, không dựng app
-  - [ ] Chạy trước phát hành và trong CI
+  - [x] Chạy trước phát hành và trong CI
   - Nghiệm thu: in ra con số gzip thật cho `/play/*`. Đây là **con số đầu tiên** của chỉ số này —
     chưa cổng nào trong repo từng đo nó
-- [ ] Ghi cả hai cổng vào §1 và §2 của [`runtime-gates.md`](../specs/08-quality/runtime-gates.md),
+- [x] Ghi cả hai cổng vào §1 và §2 của [`runtime-gates.md`](../specs/08-quality/runtime-gates.md),
       và đóng `Q-RG-2` ở §4 của file đó
 
 ---

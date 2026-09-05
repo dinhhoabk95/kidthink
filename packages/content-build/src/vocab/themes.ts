@@ -1,4 +1,4 @@
-import type { ThemeVocabulary } from "@mindkid/game-engine";
+import type { ThemeVocabulary } from "@mindkid/game-engine/generators";
 import { CONTENT_THEMES } from "@mindkid/shared";
 
 /**

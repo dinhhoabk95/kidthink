@@ -1,4 +1,4 @@
-import type { AgeBand } from "@mindkid/game-engine";
+import type { AgeBand } from "@mindkid/game-engine/contracts";
 import { getThemeVocabulary } from "./themes.js";
 
 export interface EnginePhrases {

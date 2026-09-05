@@ -1,5 +1,15 @@
+<template>
+  <div class="preview-sandbox-container">
+    <div class="error-state" v-if="errorMessage">
+      <p>{{ errorMessage }}</p>
+    </div>
+    <canvas class="game-canvas" ref="canvasRef"></canvas>
+  </div>
+</template>
+
 <script lang="ts" setup>
   import { type EngineConfig, GameEngine } from "@mindkid/game-engine";
+  import { preloadGameSession } from "@mindkid/game-engine/runtime";
   import { onMounted, onUnmounted, ref } from "vue";
   import { useRoute } from "vue-router";
   import { definePageMeta } from "#imports";
@@ -26,7 +36,7 @@
   let currentConfig: EngineConfig | null = null;
   let currentTemplateCode = (route.query.template as string) || "GT-001";
 
-  function startSession(config: EngineConfig, templateCode: string) {
+  async function startSession(config: EngineConfig, templateCode: string) {
     if (!canvasRef.value) {
       return;
     }
@@ -37,6 +47,8 @@
         engine.destroy();
         engine = null;
       }
+
+      await preloadGameSession(templateCode);
 
       engine = new GameEngine();
       engine.load(config, createSessionFactory(templateCode));
@@ -56,49 +68,35 @@
     }
   }
 
-  function buildEngineConfig(
-    payload: StudioUpdatePayload,
-    tCode: string
-  ): EngineConfig {
-    const levelData = payload.levelData || {};
-    const versionNum =
-      Number(levelData.contentVersion || levelData.content_version) || 1;
-    const themeId =
-      (levelData.theme_id as string) ||
-      (levelData.themeId as string) ||
-      "nature";
-    const ageBand =
-      payload.ageBand || (levelData.age_band as "3-4" | "4-5" | "5-6") || "3-4";
-
-    return {
-      level_code: (levelData.code as string) || "PREVIEW-SANDBOX",
-      content_version: versionNum,
-      template_code: tCode,
-      content_pack: levelData.content_pack || levelData.contentPack || {},
-      difficulty_params:
-        levelData.difficulty_params || levelData.difficultyParams || {},
-      theme_id: themeId,
-      age_band: ageBand,
-      reduced_motion: Boolean(payload.reducedMotion),
-      audio_enabled: !payload.muted,
-    };
-  }
-
   function handleMessage(event: MessageEvent) {
-    const data = event.data;
-    if (!data || typeof data !== "object") {
+    // Nhận cấu hình từ iframe cha (Studio Preview Frame)
+    if (!event.data || typeof event.data !== "object") {
       return;
     }
 
-    if (data.type === "MindKid_STUDIO_UPDATE") {
-      const payload: StudioUpdatePayload = data.payload || {};
-      const tCode = payload.templateCode || currentTemplateCode || "GT-001";
+    const { type, payload } = event.data;
+    if (type === "MindKid_STUDIO_UPDATE_CONFIG" && payload) {
+      const data = payload as StudioUpdatePayload;
+      const tCode = data.templateCode || currentTemplateCode;
       currentTemplateCode = tCode;
 
-      const config = buildEngineConfig(payload, tCode);
+      const levelData = data.levelData || {};
+      const config: EngineConfig = {
+        level_code: `PREVIEW-${tCode}`,
+        content_version: 1,
+        template_code: tCode,
+        content_pack: (levelData.content_pack as Record<string, unknown>) || {},
+        difficulty_params:
+          (levelData.difficulty_params as Record<string, unknown>) || {},
+        theme_id: (levelData.theme_id as string) || "default",
+        age_band: data.ageBand || "3-4",
+        reduced_motion: data.reducedMotion ?? false,
+        audio_enabled: !(data.muted ?? false),
+      };
+
       currentConfig = config;
       startSession(config, tCode);
-    } else if (data.type === "MindKid_STUDIO_REPLAY" && currentConfig) {
+    } else if (type === "MindKid_STUDIO_RELOAD" && currentConfig) {
       startSession(currentConfig, currentTemplateCode);
     }
   }
@@ -106,15 +104,21 @@
   onMounted(() => {
     window.addEventListener("message", handleMessage);
 
+    // Thông báo cho Studio biết sandbox đã sẵn sàng
+    if (window.parent) {
+      window.parent.postMessage({ type: "MindKid_STUDIO_SANDBOX_READY" }, "*");
+    }
+
+    // Khởi tạo một phiên mặc định nếu được gọi với ?template=GT-xxx
     const tCode = (route.query.template as string) || "GT-001";
     currentTemplateCode = tCode;
     currentConfig = {
-      level_code: "PREVIEW-INIT",
+      level_code: `PREVIEW-${tCode}`,
       content_version: 1,
       template_code: tCode,
       content_pack: {},
       difficulty_params: {},
-      theme_id: "nature",
+      theme_id: "default",
       age_band: "3-4",
       reduced_motion: false,
       audio_enabled: true,
@@ -130,15 +134,6 @@
     }
   });
 </script>
-
-<template>
-  <div class="preview-sandbox-container">
-    <div class="error-state" v-if="errorMessage">
-      <p>{{ errorMessage }}</p>
-    </div>
-    <canvas class="game-canvas" ref="canvasRef"></canvas>
-  </div>
-</template>
 
 <style scoped>
   .preview-sandbox-container {

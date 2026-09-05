@@ -117,6 +117,7 @@
     RoundRunner,
     type Slot,
   } from "@mindkid/game-engine";
+  import { preloadGameSession } from "@mindkid/game-engine/loader";
   import { nextTick, onMounted, onUnmounted, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { definePageMeta, useUserSession } from "#imports";
@@ -1398,6 +1399,7 @@
         "Cấu hình trò chơi thiếu danh sách câu hỏi. Bé thử lại sau nhé!"
       );
     }
+    await preloadGameSession(payload.template_code);
     startRounds(payload, rounds, buildEngineConfig(payload, rounds[0]));
   }
 
