@@ -25,6 +25,15 @@ function toCellRole(
 }
 
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
+import {
+  boxFromSlots,
+  drawMazeBoard,
+  drawPromptText,
+  drawRequiredCells,
+  drawSceneBackground,
+  type ItemVisualState,
+  updateParticles,
+} from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   canMove,
@@ -39,17 +48,6 @@ import {
   type MazeStepResult,
 } from "#src/systems/maze-system";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
-import {
-  drawPromptText,
-  drawSceneBackground,
-  type ItemVisualState,
-  updateParticles,
-} from "../shared-render.js";
-import {
-  boxFromSlots,
-  drawMazeBoard,
-  drawRequiredCells,
-} from "../shared-render-shapes.js";
 import type { GT013Content, GT013Difficulty } from "./template.js";
 
 export interface MazeScaffoldHint {

@@ -15,6 +15,14 @@ import type {
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import {
+  drawEmptyTargetSlot,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  type ItemVisualState,
+  updateParticles,
+} from "#src/render/index.js";
+import {
   type ConstraintViolation,
   findConstraintViolations,
   isSudokuCompleteAndValid,
@@ -23,14 +31,6 @@ import {
 } from "#src/systems/constraint-system";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
-import {
-  drawEmptyTargetSlot,
-  drawPromptText,
-  drawSceneBackground,
-  drawSlotItem,
-  type ItemVisualState,
-  updateParticles,
-} from "../shared-render.js";
 import type { GT015Content, GT015Difficulty } from "./template.js";
 
 export interface SudokuCellState {

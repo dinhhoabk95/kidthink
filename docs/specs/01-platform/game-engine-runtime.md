@@ -153,6 +153,7 @@ packages/game-engine/src/
 ├── generators/           bộ sinh level tự động
 ├── layout/               engine bố cục slot, sizing, sàn chạm
 ├── mechanics/            các cơ chế tương tác tái sử dụng (selection, placement...)
+├── render/               thư viện vẽ nguyên thuỷ (shared-render, shared-render-shapes)
 ├── rng/                  bộ sinh số ngẫu nhiên tất định
 ├── systems/              renderSystem · audioController · sceneManager · scaffolding · designTokens
 ├── templates/{GT-000…GT-036}/  37 khuôn mẫu trò chơi

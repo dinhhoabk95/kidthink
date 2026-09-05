@@ -9,7 +9,6 @@ import {
 } from "#src/game-session";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   drawPromptText,
   drawSceneBackground,
@@ -19,7 +18,8 @@ import {
   type RenderAsset,
   type RenderItem,
   updateParticles,
-} from "../shared-render.js";
+} from "#src/render/index.js";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type {
   GT000Asset,
   GT000Content,

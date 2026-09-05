@@ -7,19 +7,20 @@ import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
+import {
+  drawLocomotive,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  drawTrainRailway,
+  type ItemVisualState,
+  sceneBox,
+  updateParticles,
+} from "#src/render/index.js";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
-import {
-  drawPromptText,
-  drawSceneBackground,
-  drawSlotItem,
-  type ItemVisualState,
-  sceneBox,
-  updateParticles,
-} from "../shared-render.js";
-import { drawLocomotive, drawTrainRailway } from "../shared-render-shapes.js";
 import type { GT006Content, GT006Difficulty } from "./template.js";
 
 export class GT006Session extends TemplateGameSession<

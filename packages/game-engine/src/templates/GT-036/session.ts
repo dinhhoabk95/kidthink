@@ -10,13 +10,6 @@ import {
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { getTouchFloor } from "#src/layout/constants";
 import type { Slot } from "#src/layout/types";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
-import {
-  detectRule,
-  type RuleDetectionResult,
-} from "#src/systems/rule-detection-system";
-import { SFXEngine } from "#src/systems/sfx-engine";
 import {
   drawPromptText,
   drawSceneBackground,
@@ -24,7 +17,14 @@ import {
   drawSubPromptText,
   drawWoodenTokenDock,
   spawnParticlesAtSlot,
-} from "../shared-render.js";
+} from "#src/render/index.js";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  detectRule,
+  type RuleDetectionResult,
+} from "#src/systems/rule-detection-system";
+import { SFXEngine } from "#src/systems/sfx-engine";
 import type {
   GT036Content,
   GT036Difficulty,

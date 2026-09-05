@@ -9,17 +9,17 @@ import {
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   drawDividerLine,
   drawPromptText,
   drawSceneBackground,
+  drawSceneObjectAt,
   type ItemVisualState,
   sceneBox,
   updateParticles,
-} from "../shared-render.js";
-import { drawSceneObjectAt } from "../shared-render-shapes.js";
+} from "#src/render/index.js";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT025Content, GT025Difficulty } from "./template.js";
 
 interface ResolvedDifferenceObject {

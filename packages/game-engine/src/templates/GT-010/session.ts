@@ -9,9 +9,9 @@ import {
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
+  boxFromSlots,
+  drawEquationTray,
   drawLabelText,
   drawPromptText,
   drawSceneBackground,
@@ -20,8 +20,9 @@ import {
   type ItemVisualState,
   resolveEmojiGlyph,
   updateParticles,
-} from "../shared-render.js";
-import { boxFromSlots, drawEquationTray } from "../shared-render-shapes.js";
+} from "#src/render/index.js";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { evaluateQuestionAnswer, solveEquationSystem } from "./solver.js";
 import type { GT010Content, GT010Difficulty } from "./template.js";
 

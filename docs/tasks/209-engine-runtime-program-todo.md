@@ -280,14 +280,14 @@ nó thuộc nhóm `validateAction` thuần nên lát này không kiêm việc s�
 
 ### `#231` Chuyển primitive sang `src/render/`
 
-- [ ] `git mv` hai file; thêm `src/render/index.ts` tái xuất nguyên vẹn bề mặt
-- [ ] Sửa specifier: **37** file import `../shared-render.js`; **17** file import
+- [x] `git mv` hai file; thêm `src/render/index.ts` tái xuất nguyên vẹn bề mặt
+- [x] Sửa specifier: **37** file import `../shared-render.js`; **17** file import
       `../shared-render-shapes.js` (không phải 37); `src/index.ts:458`; và một chỗ dễ sót là
       `tests/gates/glyph-code-leak.test.ts:6` dùng `#src/templates/shared-render`
-- [ ] Dùng `#src/render/index.js`. Cấm — NEVER dùng `../`: `lint-import-paths.ts` đã mất cưỡng chế
+- [x] Dùng `#src/render/index.js`. Cấm — NEVER dùng `../`: `lint-import-paths.ts` đã mất cưỡng chế
       nên không ai bắt hộ
-- [ ] Sửa §7.4 của spec runtime cho khớp (nếu `#217` chưa làm)
-- [ ] Nghiệm thu: `git diff --numstat -- packages/game-engine/src/templates` cho **≤ 2 dòng đổi mỗi
+- [x] Sửa §7.4 của spec runtime cho khớp (nếu `#217` chưa làm)
+- [x] Nghiệm thu: `git diff --numstat -- packages/game-engine/src/templates` cho **≤ 2 dòng đổi mỗi
       file**; `diff /tmp/before.txt` rỗng; `pnpm lint:deps` xanh
 
 ### `#232` Xoá `ObjectPool`, thêm cổng đếm gradient — đỏ trước

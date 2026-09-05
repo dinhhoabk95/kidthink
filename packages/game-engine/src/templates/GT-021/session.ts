@@ -15,11 +15,10 @@ import type {
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
-import type { DegradationState } from "#src/systems/degradation";
-import { MirrorSystem } from "#src/systems/mirror-system";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
+  drawButterflyWingsBoard,
   drawEmptyTargetSlot,
+  drawMirrorAxis,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
@@ -27,11 +26,10 @@ import {
   type ItemVisualState,
   sceneBox,
   updateParticles,
-} from "../shared-render.js";
-import {
-  drawButterflyWingsBoard,
-  drawMirrorAxis,
-} from "../shared-render-shapes.js";
+} from "#src/render/index.js";
+import type { DegradationState } from "#src/systems/degradation";
+import { MirrorSystem } from "#src/systems/mirror-system";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT021Content, GT021Difficulty } from "./template.js";
 
 function isPointInSlot(

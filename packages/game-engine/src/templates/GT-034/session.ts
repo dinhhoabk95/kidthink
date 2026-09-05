@@ -15,10 +15,6 @@ import type {
 } from "#src/interaction";
 import { getTouchFloor } from "#src/layout/constants";
 import type { Slot } from "#src/layout/types";
-import { type BeatInstrument, BeatSystem } from "#src/systems/beat-system";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
-import { SFXEngine } from "#src/systems/sfx-engine";
 import {
   drawPromptText,
   drawSceneBackground,
@@ -27,7 +23,11 @@ import {
   drawWoodenTokenDock,
   spawnParticlesAtSlot,
   updateParticles,
-} from "../shared-render.js";
+} from "#src/render/index.js";
+import { type BeatInstrument, BeatSystem } from "#src/systems/beat-system";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import { SFXEngine } from "#src/systems/sfx-engine";
 import type { GT034Content, GT034Difficulty } from "./template.js";
 
 interface GT034ActionPayload {

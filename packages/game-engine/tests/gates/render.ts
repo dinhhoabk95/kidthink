@@ -49,8 +49,8 @@ const HARDCODED_COORD_DRAW_REGEX =
  */
 const PRIMITIVE_MODULES: readonly string[] = [
   "systems/render-system.ts",
-  "templates/shared-render.ts",
-  "templates/shared-render-shapes.ts",
+  "render/shared-render.ts",
+  "render/shared-render-shapes.ts",
 ];
 
 function checkSessionDrawLines(

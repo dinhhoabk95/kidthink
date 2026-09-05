@@ -10,6 +10,17 @@ import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import {
+  drawBalanceScale,
+  drawPanItems,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  type ItemVisualState,
+  insetBox,
+  sceneBox,
+  updateParticles,
+} from "#src/render/index.js";
+import {
   type BalanceState,
   computeTiltAngle,
   getBalanceState,
@@ -18,19 +29,6 @@ import {
 } from "#src/systems/balance-system";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
-import {
-  drawPromptText,
-  drawSceneBackground,
-  drawSlotItem,
-  type ItemVisualState,
-  sceneBox,
-  updateParticles,
-} from "../shared-render.js";
-import {
-  drawBalanceScale,
-  drawPanItems,
-  insetBox,
-} from "../shared-render-shapes.js";
 import type { GT014Content, GT014Difficulty } from "./template.js";
 
 function validateSelectSide(

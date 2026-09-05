@@ -16,9 +16,8 @@ import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
+  drawGramophone,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
@@ -26,8 +25,9 @@ import {
   drawWoodenTokenDock,
   type ItemVisualState,
   updateParticles,
-} from "../shared-render.js";
-import { drawGramophone } from "../shared-render-shapes.js";
+} from "#src/render/index.js";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT018Content, GT018Difficulty } from "./template.js";
 
 function isPointInSlot(slot: Slot, x: number, y: number): boolean {

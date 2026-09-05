@@ -14,8 +14,6 @@ import type {
 } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   drawProgressBadge,
   drawPromptText,
@@ -25,7 +23,9 @@ import {
   drawWoodenTokenDock,
   type ItemVisualState,
   updateParticles,
-} from "../shared-render.js";
+} from "#src/render/index.js";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT028Content, GT028Difficulty } from "./template.js";
 
 interface ItemActionPayload {

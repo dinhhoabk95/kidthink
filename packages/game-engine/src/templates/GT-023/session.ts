@@ -16,21 +16,21 @@ import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
-  type AssemblyPlacementResult,
-  AssemblySystem,
-} from "#src/systems/assembly-system";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
-import {
   drawEmptyTargetSlot,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSlotLabel,
   type ItemVisualState,
+  slotAtPoint,
   updateParticles,
-} from "../shared-render.js";
-import { slotAtPoint } from "../shared-render-shapes.js";
+} from "#src/render/index.js";
+import {
+  type AssemblyPlacementResult,
+  AssemblySystem,
+} from "#src/systems/assembly-system";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT023Content, GT023Difficulty } from "./template.js";
 
 interface HitSourcePart {

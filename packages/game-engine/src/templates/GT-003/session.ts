@@ -7,17 +7,17 @@ import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
+  drawNestTarget,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
-} from "../shared-render.js";
-import { drawNestTarget } from "../shared-render-shapes.js";
+} from "#src/render/index.js";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT003Content, GT003Difficulty } from "./template.js";
 
 type DraggableItem = GT003Content["items"][number];

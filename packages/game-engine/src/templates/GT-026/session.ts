@@ -9,13 +9,8 @@ import {
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
-import type { DegradationState } from "#src/systems/degradation";
 import {
-  InhibitionSystem,
-  type TrialItem,
-} from "#src/systems/inhibition-system";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
-import {
+  drawPedestalTarget,
   drawProgressBadge,
   drawPromptText,
   drawSceneBackground,
@@ -23,8 +18,13 @@ import {
   drawSubPromptText,
   type ItemVisualState,
   updateParticles,
-} from "../shared-render.js";
-import { drawPedestalTarget } from "../shared-render-shapes.js";
+} from "#src/render/index.js";
+import type { DegradationState } from "#src/systems/degradation";
+import {
+  InhibitionSystem,
+  type TrialItem,
+} from "#src/systems/inhibition-system";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT026Content, GT026Difficulty } from "./template.js";
 
 export class GT026Session extends TemplateGameSession<

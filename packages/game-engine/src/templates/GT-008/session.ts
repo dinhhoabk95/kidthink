@@ -9,20 +9,21 @@ import {
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
+  boxFromSlots,
   drawEmptyTargetSlot,
   drawPromptText,
   drawSceneBackground,
+  drawShapeTray,
   drawSlotItem,
   drawSlotLabel,
   drawWoodenTokenDock,
   type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
-} from "../shared-render.js";
-import { boxFromSlots, drawShapeTray } from "../shared-render-shapes.js";
+} from "#src/render/index.js";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT008Content, GT008Difficulty } from "./template.js";
 
 function extractSlotData(

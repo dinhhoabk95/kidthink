@@ -7,10 +7,6 @@ import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PairingMechanic } from "#src/mechanics/pairing-mechanic";
-import { deriveStream } from "#src/rng/mulberry32";
-import { shuffle } from "#src/rng/shuffle";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   drawMatchLine,
   drawPromptText,
@@ -18,7 +14,11 @@ import {
   drawSlotItem,
   type ItemVisualState,
   updateParticles,
-} from "../shared-render.js";
+} from "#src/render/index.js";
+import { deriveStream } from "#src/rng/mulberry32";
+import { shuffle } from "#src/rng/shuffle";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT005Content, GT005Difficulty } from "./template.js";
 
 type LeftItem = GT005Content["pairs"][number]["left"];

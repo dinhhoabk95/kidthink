@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Slot } from "#src/layout/types";
-import {
-  drawGlyphInSlot,
-  setEmojiResolver,
-} from "#src/templates/shared-render";
+import { drawGlyphInSlot, setEmojiResolver } from "#src/render/index.js";
 
 /**
  * Cổng: mã `EMJ-*` cấm — NEVER hiện thành chữ trên màn của trẻ.

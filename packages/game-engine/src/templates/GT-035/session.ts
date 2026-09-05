@@ -11,6 +11,15 @@ import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { getTouchFloor } from "#src/layout/constants";
 import type { Slot } from "#src/layout/types";
 import {
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  drawSubPromptText,
+  drawWoodenTokenDock,
+  spawnParticlesAtSlot,
+  updateParticles,
+} from "#src/render/index.js";
+import {
   type CommandQueueConfig,
   CommandQueueSystem,
   type CommandType,
@@ -21,15 +30,6 @@ import {
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { SFXEngine } from "#src/systems/sfx-engine";
-import {
-  drawPromptText,
-  drawSceneBackground,
-  drawSlotItem,
-  drawSubPromptText,
-  drawWoodenTokenDock,
-  spawnParticlesAtSlot,
-  updateParticles,
-} from "../shared-render.js";
 import type {
   GT035Collectible,
   GT035Content,

@@ -8,8 +8,6 @@ import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   drawLabelText,
   drawPromptText,
@@ -18,7 +16,9 @@ import {
   getColorsForState,
   type ItemVisualState,
   updateParticles,
-} from "../shared-render.js";
+} from "#src/render/index.js";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { survivingCandidates } from "./deduction.js";
 import type { GT009Content, GT009Difficulty } from "./template.js";
 

@@ -14,6 +14,16 @@ import type {
 } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
+import {
+  drawIsometricModel,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  type ItemVisualState,
+  insetBox,
+  sceneBox,
+  updateParticles,
+} from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   type CubeCoord,
@@ -23,15 +33,6 @@ import {
   sortCubesForRender,
 } from "#src/systems/isometric-system";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
-import {
-  drawPromptText,
-  drawSceneBackground,
-  drawSlotItem,
-  type ItemVisualState,
-  sceneBox,
-  updateParticles,
-} from "../shared-render.js";
-import { drawIsometricModel, insetBox } from "../shared-render-shapes.js";
 import type { GT017Content, GT017Difficulty } from "./template.js";
 
 function isPointInSlot(slot: Slot, x: number, y: number): boolean {

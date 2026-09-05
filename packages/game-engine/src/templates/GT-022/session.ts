@@ -15,6 +15,14 @@ import type {
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
+import {
+  drawPromptText,
+  drawSceneBackground,
+  drawSceneObjectAt,
+  type ItemVisualState,
+  sceneBox,
+  updateParticles,
+} from "#src/render/index.js";
 import { deriveStream } from "#src/rng/mulberry32";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
@@ -23,14 +31,6 @@ import {
   type SceneObject,
   SceneSystem,
 } from "#src/systems/scene-system";
-import {
-  drawPromptText,
-  drawSceneBackground,
-  type ItemVisualState,
-  sceneBox,
-  updateParticles,
-} from "../shared-render.js";
-import { drawSceneObjectAt } from "../shared-render-shapes.js";
 import type { GT022Content, GT022Difficulty } from "./template.js";
 
 function findHitSceneObject(

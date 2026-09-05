@@ -14,6 +14,17 @@ import type {
 } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
+import {
+  drawClockFace,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  type ItemVisualState,
+  insetBox,
+  sceneBox,
+  squareBox,
+  updateParticles,
+} from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
@@ -23,15 +34,6 @@ import {
   isSameTime,
   timeToAngles,
 } from "#src/systems/rotation-system";
-import {
-  drawPromptText,
-  drawSceneBackground,
-  drawSlotItem,
-  type ItemVisualState,
-  sceneBox,
-  updateParticles,
-} from "../shared-render.js";
-import { drawClockFace, insetBox, squareBox } from "../shared-render-shapes.js";
 import type { GT016Content, GT016Difficulty } from "./template.js";
 
 function isPointInSlot(slot: Slot, x: number, y: number): boolean {

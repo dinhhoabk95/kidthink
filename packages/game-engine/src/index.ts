@@ -124,6 +124,12 @@ export {
   OfflineEventBuffer,
   type SessionMeta,
 } from "./offline-buffer";
+export {
+  drawCentralTargetCard,
+  drawSceneBackground,
+  drawTargetHoverAura,
+  drawWoodenTokenDock,
+} from "./render/index.js";
 export { createRng, deriveStream } from "./rng/mulberry32.js";
 export { shuffle } from "./rng/shuffle.js";
 export type { Rng, RngStreamName } from "./rng/types.js";
@@ -474,10 +480,4 @@ export type {
   GT036Difficulty,
   GT036PaletteItem,
 } from "./templates/GT-036/template.js";
-export {
-  drawCentralTargetCard,
-  drawSceneBackground,
-  drawTargetHoverAura,
-  drawWoodenTokenDock,
-} from "./templates/shared-render.js";
 export { ObjectPool } from "./utils/object-pool.js";

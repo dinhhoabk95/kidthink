@@ -7,12 +7,8 @@ import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
-import { deriveStream } from "#src/rng/mulberry32";
-import { shuffle } from "#src/rng/shuffle";
-import type { DegradationState } from "#src/systems/degradation";
-import { designTokens } from "#src/systems/designTokens";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
+  drawBasketSlot,
   drawEmptyTargetSlot,
   drawGlyphInSlot,
   drawPromptText,
@@ -20,8 +16,12 @@ import {
   drawSlotItem,
   type ItemVisualState,
   updateParticles,
-} from "../shared-render.js";
-import { drawBasketSlot } from "../shared-render-shapes.js";
+} from "#src/render/index.js";
+import { deriveStream } from "#src/rng/mulberry32";
+import { shuffle } from "#src/rng/shuffle";
+import type { DegradationState } from "#src/systems/degradation";
+import { designTokens } from "#src/systems/designTokens";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT004Content, GT004Difficulty } from "./template.js";
 
 type SortItem = GT004Content["items"][number];

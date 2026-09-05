@@ -12,10 +12,6 @@ import {
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
-import { deriveStream } from "#src/rng/mulberry32";
-import { shuffle } from "#src/rng/shuffle";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   drawCentralTargetCard,
   drawPromptText,
@@ -25,7 +21,11 @@ import {
   type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
-} from "../shared-render.js";
+} from "#src/render/index.js";
+import { deriveStream } from "#src/rng/mulberry32";
+import { shuffle } from "#src/rng/shuffle";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT001Content, GT001Difficulty } from "./template.js";
 
 type OptionItem = GT001Content["options"][number];

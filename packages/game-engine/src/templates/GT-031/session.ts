@@ -15,8 +15,6 @@ import type {
 } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   drawPromptText,
   drawSceneBackground,
@@ -26,7 +24,9 @@ import {
   type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
-} from "../shared-render.js";
+} from "#src/render/index.js";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT031Content, GT031Difficulty } from "./template.js";
 
 interface GT031ActionPayload {

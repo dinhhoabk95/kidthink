@@ -9,9 +9,6 @@ import {
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
-import type { DegradationState } from "#src/systems/degradation";
-import { designTokens } from "#src/systems/designTokens";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
   drawEmptyTargetSlot,
   drawMatchLine,
@@ -20,7 +17,10 @@ import {
   drawSlotItem,
   type ItemVisualState,
   updateParticles,
-} from "../shared-render.js";
+} from "#src/render/index.js";
+import type { DegradationState } from "#src/systems/degradation";
+import { designTokens } from "#src/systems/designTokens";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT007Content, GT007Difficulty } from "./template.js";
 
 function extractOptionId(data: unknown): string | undefined {

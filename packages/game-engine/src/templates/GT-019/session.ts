@@ -15,6 +15,15 @@ import type {
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
+import {
+  drawEmptyTargetSlot,
+  drawPromptText,
+  drawSceneBackground,
+  drawSlotItem,
+  drawSlotLabel,
+  type ItemVisualState,
+  updateParticles,
+} from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
@@ -25,15 +34,6 @@ import {
   rotatePiece90,
   togglePieceFlip,
 } from "#src/systems/rotation-system";
-import {
-  drawEmptyTargetSlot,
-  drawPromptText,
-  drawSceneBackground,
-  drawSlotItem,
-  drawSlotLabel,
-  type ItemVisualState,
-  updateParticles,
-} from "../shared-render.js";
 import type { GT019Content, GT019Difficulty } from "./template.js";
 
 function toRotationAngle(val: number | undefined): RotationAngle90 {

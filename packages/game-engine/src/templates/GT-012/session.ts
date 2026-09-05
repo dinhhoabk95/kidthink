@@ -9,10 +9,8 @@ import {
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
-import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
-import { FlashTimer } from "#src/systems/timer-system";
 import {
+  drawClocheScene,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
@@ -20,8 +18,10 @@ import {
   drawWoodenTokenDock,
   type ItemVisualState,
   updateParticles,
-} from "../shared-render.js";
-import { drawClocheScene } from "../shared-render-shapes.js";
+} from "#src/render/index.js";
+import type { DegradationState } from "#src/systems/degradation";
+import type { Particle, RenderSystem } from "#src/systems/render-system";
+import { FlashTimer } from "#src/systems/timer-system";
 import type { GT012Content, GT012Difficulty } from "./template.js";
 
 export class FlashRecallSession extends TemplateGameSession<

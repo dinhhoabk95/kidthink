@@ -15,6 +15,14 @@ import type {
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
+import {
+  drawPromptText,
+  drawSceneBackground,
+  drawSubPromptText,
+  drawWaypointPath,
+  type ItemVisualState,
+  updateParticles,
+} from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
@@ -22,14 +30,6 @@ import {
   type TracePoint,
   TraceSystem,
 } from "#src/systems/trace-system";
-import {
-  drawPromptText,
-  drawSceneBackground,
-  drawSubPromptText,
-  type ItemVisualState,
-  updateParticles,
-} from "../shared-render.js";
-import { drawWaypointPath } from "../shared-render-shapes.js";
 import type { GT024Content, GT024Difficulty } from "./template.js";
 
 function findHitStrokePoint(
