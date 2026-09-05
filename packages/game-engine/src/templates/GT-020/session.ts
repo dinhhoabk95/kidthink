@@ -5,6 +5,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PairingMechanic } from "#src/mechanics/pairing-mechanic";
@@ -32,6 +38,17 @@ export interface FlatCard {
   readonly cardId: string;
   readonly pairKey: string;
   readonly asset: GT020Content["pairs"][number]["card_a"]["asset"];
+}
+
+function isPointInSlot(
+  slot: Slot,
+  x: number,
+  y: number,
+  tolerance = 24
+): boolean {
+  const hw = (slot.hitW ?? slot.w) / 2 + tolerance;
+  const hh = (slot.hitH ?? slot.h) / 2 + tolerance;
+  return Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh;
 }
 
 export class GT020Session extends TemplateGameSession<
@@ -131,6 +148,60 @@ export class GT020Session extends TemplateGameSession<
 
   override checkWinCondition(): boolean {
     return this.cardSystem.isAllMatched();
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "tap") {
+      for (let i = 0; i < this.displayCards.length; i++) {
+        const slot = this.slots[i];
+        const card = this.displayCards[i];
+        if (slot && card && isPointInSlot(slot, gesture.x, gesture.y)) {
+          return { type: "tap_card", data: { card_id: card.cardId } };
+        }
+      }
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (action.type === "tap_card" || action.type === "flip_card") {
+      const data = action.data;
+      const cardId =
+        typeof data === "object" && data !== null
+          ? Reflect.get(data, "card_id")
+          : undefined;
+      if (typeof cardId === "string") {
+        this.onTapCard(cardId);
+      }
+    }
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = this.displayCards.map((card, i) => {
+      const slot = this.slots[i];
+      const cardState =
+        this.cardSystem.getCard(card.cardId)?.state ?? "face_down";
+      let state: EntityVisual = "idle";
+      if (cardState === "matched") {
+        state = "correct";
+      } else if (cardState === "face_up") {
+        state = "selected";
+      }
+      return {
+        id: card.cardId,
+        slotIndex: i,
+        role: "source",
+        state,
+        x: slot?.x ?? 0,
+        y: slot?.y ?? 0,
+        w: slot?.w ?? 80,
+        h: slot?.h ?? 80,
+      };
+    });
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {

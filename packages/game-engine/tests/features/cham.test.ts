@@ -29,6 +29,8 @@ import { GT017_FIXTURES } from "#src/templates/GT-017/fixtures";
 import { GT017Session } from "#src/templates/GT-017/session";
 import { GT018_FIXTURES } from "#src/templates/GT-018/fixtures";
 import { GT018Session } from "#src/templates/GT-018/session";
+import { GT020_FIXTURES } from "#src/templates/GT-020/fixtures";
+import { GT020Session } from "#src/templates/GT-020/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -592,6 +594,56 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       expect(result?.valid).toBe(true);
       expect(session.checkWinCondition()).toBe(true);
       expect(session.selectedItemId).toBe("cat");
+    });
+
+    it("GT-020: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f20 = GT020_FIXTURES[0];
+      if (!f20) {
+        throw new Error("GT020_FIXTURES[0] must exist");
+      }
+      const session = new GT020Session(f20.content, f20.difficulty);
+      session.prepareRound("3-4");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+    });
+
+    it("GT-020: chạm vào card slot lật thẻ thành công (tap_card)", () => {
+      const f20 = GT020_FIXTURES[0];
+      if (!f20) {
+        throw new Error("GT020_FIXTURES[0] must exist");
+      }
+      const session = new GT020Session(f20.content, f20.difficulty);
+      session.prepareRound("3-4");
+
+      const firstSlot = session.slots[0];
+      const firstCard = session.displayCards[0];
+      if (!(firstSlot && firstCard)) {
+        throw new Error("firstSlot and firstCard must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: firstSlot.x,
+        y: firstSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.cardSystem.getCard(firstCard.cardId)?.state).toBe(
+        "face_up"
+      );
     });
   });
 
