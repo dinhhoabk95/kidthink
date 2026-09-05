@@ -7,6 +7,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
@@ -21,6 +27,12 @@ import {
   updateParticles,
 } from "../shared-render.js";
 import type { GT032Content, GT032Cup, GT032Difficulty } from "./template.js";
+
+interface GT032ActionPayload {
+  readonly cup_id?: string;
+  readonly id?: string;
+  readonly option_id?: string;
+}
 
 export class GT032Session extends TemplateGameSession<
   GT032Content,
@@ -77,10 +89,50 @@ export class GT032Session extends TemplateGameSession<
     return cup.fill_units === cup.capacity_units;
   }
 
-  private handleSelectCup(cupId: string): ActionResult {
+  private validateSelectCup(cupId: string): ActionResult {
     const cup = this.content.cups.find((c) => c.cup_id === cupId);
     if (!cup) {
       return ACTION_IGNORED;
+    }
+
+    if (this.isCupCorrect(cup)) {
+      return ACTION_CORRECT;
+    }
+
+    return ACTION_RETRY;
+  }
+
+  validateAction(action: GameAction): ActionResult {
+    if (this.isWin || this.isWon) {
+      return ACTION_IGNORED;
+    }
+
+    const type = action.type;
+    const data = (
+      typeof action.data === "object" && action.data !== null ? action.data : {}
+    ) as GT032ActionPayload;
+
+    if (
+      type === "select_cup" ||
+      type === "tap_cup" ||
+      type === "choose_cup" ||
+      type === "select_option"
+    ) {
+      const cupId = data.cup_id ?? data.id ?? data.option_id ?? "";
+      return this.validateSelectCup(cupId);
+    }
+
+    if (type === "show_hint") {
+      return ACTION_CORRECT;
+    }
+
+    return ACTION_IGNORED;
+  }
+
+  private commitSelectCup(cupId: string): void {
+    const cup = this.content.cups.find((c) => c.cup_id === cupId);
+    if (!cup) {
+      return;
     }
 
     const correct = this.isCupCorrect(cup);
@@ -92,25 +144,23 @@ export class GT032Session extends TemplateGameSession<
 
     if (correct) {
       this.isWin = true;
+      this.isWon = true;
       this.selectedCupId = cupId;
       const cupIdx = this.content.cups.findIndex((c) => c.cup_id === cupId);
       const slot = this.slots[cupIdx];
       if (slot) {
         this.particles.push(...spawnParticlesAtSlot(slot, 16));
       }
-      return ACTION_CORRECT;
+      this.recordEvent("game_completed", { score: 100 });
+      this.winSession();
     }
-
-    return ACTION_RETRY;
   }
 
-  validateAction(action: GameAction): ActionResult {
-    if (this.isWin) {
-      return ACTION_IGNORED;
-    }
-
+  override commit(action: GameAction): void {
     const type = action.type;
-    const data = (action.data as Record<string, unknown>) ?? {};
+    const data = (
+      typeof action.data === "object" && action.data !== null ? action.data : {}
+    ) as GT032ActionPayload;
 
     if (
       type === "select_cup" ||
@@ -118,24 +168,83 @@ export class GT032Session extends TemplateGameSession<
       type === "choose_cup" ||
       type === "select_option"
     ) {
-      const cupId =
-        (data.cup_id as string) ||
-        (data.id as string) ||
-        (data.option_id as string) ||
-        "";
-      return this.handleSelectCup(cupId);
+      const cupId = data.cup_id ?? data.id ?? data.option_id ?? "";
+      this.commitSelectCup(cupId);
+      return;
     }
 
     if (type === "show_hint") {
       this.showHintMarks = true;
-      return ACTION_CORRECT;
+    }
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type !== "tap") {
+      return null;
     }
 
-    return ACTION_IGNORED;
+    const hitTolerance = 24;
+    for (let i = 0; i < this.content.cups.length; i++) {
+      const cup = this.content.cups[i];
+      const slot = this.slots[i];
+      if (!(cup && slot)) {
+        continue;
+      }
+      const hw = (slot.hitW ?? slot.w) / 2 + hitTolerance;
+      const hh = (slot.hitH ?? slot.h) / 2 + hitTolerance;
+      if (
+        Math.abs(gesture.x - slot.x) <= hw &&
+        Math.abs(gesture.y - slot.y) <= hh
+      ) {
+        return {
+          type: "select_cup",
+          data: { cup_id: cup.cup_id },
+        };
+      }
+    }
+
+    return null;
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = [];
+
+    for (let i = 0; i < this.content.cups.length; i++) {
+      const cup = this.content.cups[i];
+      const slot = this.slots[i];
+      if (!(cup && slot)) {
+        continue;
+      }
+
+      let state: EntityVisual = "idle";
+      if (this.selectedCupId === cup.cup_id) {
+        state = this.isCupCorrect(cup) ? "correct" : "selected";
+      }
+
+      entities.push({
+        id: cup.cup_id,
+        slotIndex: i,
+        role: "source",
+        state,
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   override checkWinCondition(): boolean {
-    return this.isWin;
+    return this.isWin || this.isWon;
+  }
+
+  getSelectedCupId(): string | null {
+    return this.selectedCupId;
   }
 
   render(

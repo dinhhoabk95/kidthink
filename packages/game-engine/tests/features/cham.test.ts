@@ -47,6 +47,8 @@ import { GT030_FIXTURES } from "#src/templates/GT-030/fixtures";
 import { GT030Session } from "#src/templates/GT-030/session";
 import { GT031_FIXTURES } from "#src/templates/GT-031/fixtures";
 import { GT031Session } from "#src/templates/GT-031/session";
+import { GT032_FIXTURES } from "#src/templates/GT-032/fixtures";
+import { GT032Session } from "#src/templates/GT-032/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -1048,6 +1050,61 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
 
       expect(result?.valid).toBe(true);
       expect(session.getCurrentTotal()).toBe(1);
+    });
+
+    it("GT-032: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f32 = GT032_FIXTURES[0];
+      if (!f32) {
+        throw new Error("GT032_FIXTURES[0] must exist");
+      }
+      const session = new GT032Session(f32.content, f32.difficulty);
+      session.prepareRound("5-6");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.getSelectedCupId()).toBeNull();
+    });
+
+    it("GT-032: chạm vào slot cup đúng commit select_cup thành công", () => {
+      const f32 = GT032_FIXTURES[0];
+      if (!f32) {
+        throw new Error("GT032_FIXTURES[0] must exist");
+      }
+      const session = new GT032Session(f32.content, f32.difficulty);
+      session.prepareRound("5-6");
+
+      // cup_b is correct in fixture 0 (more, fill 5 vs 2)
+      const correctIdx = f32.content.cups.findIndex((c) =>
+        session.isCupCorrect(c)
+      );
+      const cupSlot = session.slots[correctIdx];
+      if (!cupSlot) {
+        throw new Error("cupSlot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: cupSlot.x,
+        y: cupSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.checkWinCondition()).toBe(true);
+      expect(session.getSelectedCupId()).toBe(
+        f32.content.cups[correctIdx]?.cup_id
+      );
     });
   });
 

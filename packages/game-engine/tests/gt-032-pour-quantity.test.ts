@@ -31,6 +31,11 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
       expect(template.age_max).toBe(6);
       expect(template.banned_age_bands).toEqual(["3-4", "4-5"]);
       expect(template.requires_tap_fallback).toBe(false);
+      expect(template.input).toEqual({
+        family: "tap",
+        verbs: ["tap"],
+        tolerance_px: 24,
+      });
       expect(template.events).toEqual([
         "game_started",
         "cup_selected",
@@ -123,6 +128,25 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
   });
 
   describe("Session Gameplay & Comparison Rules", () => {
+    it("validates actions purely without mutating state (BR-ENG-13)", () => {
+      const f = getFixture(0);
+      const session = new GT032Session(f.content, f.difficulty);
+      session.setupEntities();
+
+      expect(session.checkWinCondition()).toBe(false);
+      expect(session.getSelectedCupId()).toBeNull();
+      const eventsBefore = session.getTelemetry().events.length;
+
+      const v = session.validateAction({
+        type: "select_cup",
+        data: { cup_id: "cup_b" },
+      });
+      expect(v.valid).toBe(true);
+      expect(session.checkWinCondition()).toBe(false);
+      expect(session.getSelectedCupId()).toBeNull();
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+    });
+
     it("runs question_type 'more' correctly", () => {
       const f = getFixture(0); // cup_a fill: 2, cup_b fill: 5
       const session = new GT032Session(f.content, f.difficulty);
@@ -144,7 +168,9 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
         data: { cup_id: "cup_b" },
       });
       expect(correct.valid).toBe(true);
+      session.commit({ type: "select_cup", data: { cup_id: "cup_b" } });
       expect(session.checkWinCondition()).toBe(true);
+      expect(session.getSelectedCupId()).toBe("cup_b");
 
       // Win condition purity
       for (let i = 0; i < 100; i++) {
@@ -174,6 +200,7 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
         data: { cup_id: "cup_2" },
       });
       expect(correct.valid).toBe(true);
+      session.commit({ type: "select_cup", data: { cup_id: "cup_2" } });
       expect(session.checkWinCondition()).toBe(true);
     });
 
@@ -195,6 +222,7 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
         data: { cup_id: "cup_tall" },
       });
       expect(correct1.valid).toBe(true);
+      session.commit({ type: "select_cup", data: { cup_id: "cup_tall" } });
       expect(session.checkWinCondition()).toBe(true);
     });
 
@@ -206,6 +234,7 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
       expect(session.showHintMarks).toBe(false);
       const res = session.validateAction({ type: "show_hint", data: {} });
       expect(res.valid).toBe(true);
+      session.commit({ type: "show_hint", data: {} });
       expect(session.showHintMarks).toBe(true);
     });
 
@@ -219,6 +248,54 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
         data: {},
       });
       expect(invalid.valid).toBe(false);
+    });
+
+    it("handles unified tap gesture dispatch and view generation", () => {
+      const f = getFixture(0);
+      const session = new GT032Session(f.content, f.difficulty);
+      session.prepareRound("5-6");
+
+      // Tap outside -> miss
+      const miss = session.dispatch({
+        type: "tap",
+        x: 10,
+        y: 10,
+        timeMs: 100,
+      });
+      expect(miss).toEqual({ valid: false, feedback: "none" });
+
+      const cup0Slot = session.slots[0];
+      const cup1Slot = session.slots[1]; // cup_b (correct)
+      if (!(cup0Slot && cup1Slot)) {
+        throw new Error("cup slots must exist");
+      }
+
+      // Tap wrong cup (cup_a) -> retry
+      const tapWrong = session.dispatch({
+        type: "tap",
+        x: cup0Slot.x,
+        y: cup0Slot.y,
+        timeMs: 200,
+      });
+      expect(tapWrong?.valid).toBe(false);
+      expect(session.checkWinCondition()).toBe(false);
+
+      // Tap correct cup (cup_b) -> correct & win
+      const tapCorrect = session.dispatch({
+        type: "tap",
+        x: cup1Slot.x,
+        y: cup1Slot.y,
+        timeMs: 300,
+      });
+      expect(tapCorrect?.valid).toBe(true);
+      expect(session.checkWinCondition()).toBe(true);
+      expect(session.getSelectedCupId()).toBe("cup_b");
+
+      const view = session.getView();
+      expect(view.activePrompt).toBe(f.content.prompt);
+      expect(view.entities.length).toBe(f.content.cups.length);
+      const correctEntity = view.entities.find((e) => e.id === "cup_b");
+      expect(correctEntity?.state).toBe("correct");
     });
   });
 });
