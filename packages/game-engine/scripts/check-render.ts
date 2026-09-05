@@ -10,12 +10,12 @@ import { repoPath } from "@mindkid/config/paths";
 import { formatRenderReport, scanRenderGate } from "../tests/gates/render.js";
 
 function main(): void {
-  const templatesDir = repoPath("packages/game-engine/src/templates");
+  const srcDir = repoPath("packages/game-engine/src");
   const configPath = repoPath(
     "packages/game-engine/config/render-implemented.json"
   );
 
-  const result = scanRenderGate(templatesDir, configPath);
+  const result = scanRenderGate(srcDir, configPath);
   const report = formatRenderReport(result);
 
   console.log("check:render");

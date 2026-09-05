@@ -232,28 +232,28 @@ nó thuộc nhóm `validateAction` thuần nên lát này không kiêm việc s�
 
 ### `#220`… Chuyển từng khuôn, thứ tự lô 1 → 2 → 3 → 4
 
-- [ ] Lô 1 (`GT-002`…`GT-008`) và lô 2 (`GT-009`…`GT-017`): chỉ `getView` + `toAction`, vì
+- [x] Lô 1 (`GT-002`…`GT-008`) và lô 2 (`GT-009`…`GT-017`): chỉ `getView` + `toAction`, vì
       `validateAction` của chúng đã thuần
-- [ ] Lô 3 (`GT-018`…`GT-028`) và lô 4 (`GT-029`…`GT-036`): kiêm sửa `BR-ENG-13` — đưa mutation ra
+- [x] Lô 3 (`GT-018`…`GT-028`) và lô 4 (`GT-029`…`GT-036`): kiêm sửa `BR-ENG-13` — đưa mutation ra
       khỏi `validateAction` vào `commit`
-- [ ] Lô 4 kiêm thêm: win regime B (trường `isWin` riêng, không bao giờ gọi `winSession()`) và lệch
+- [x] Lô 4 kiêm thêm: win regime B (trường `isWin` riêng, không bao giờ gọi `winSession()`) và lệch
       arity constructor của `GT-034`/`GT-035`/`GT-036`
-- [ ] Cấm — NEVER đưa lô khó lên trước: công thức sẽ bị viết lại giữa chừng
-- [ ] Nghiệm thu mỗi khuôn: hàng `Examples` của nó xanh; số đầu dò trong `[code].vue` giảm đúng một
+- [x] Cấm — NEVER đưa lô khó lên trước: công thức sẽ bị viết lại giữa chừng
+- [x] Nghiệm thu mỗi khuôn: hàng `Examples` của nó xanh; số đầu dò trong `[code].vue` giảm đúng một
       bậc; mã vào `engine-input-ready.json`
-- [ ] **`GT-016` là ngoại lệ có chủ đích (`D-NP`): một engine, một phiếu, ba hàng `Examples`.**
+- [x] **`GT-016` là ngoại lệ có chủ đích (`D-NP`): một engine, một phiếu, ba hàng `Examples`.**
       `template.ts:29` khai `mode: z.enum(["read","set","match"])` là **trường trong content contract**,
       và `GT016ContentSchema` đã `.refine()` điều kiện riêng từng chế độ. Nên:
-  - [ ] `input.verbs` khai **hợp** động từ cả ba chế độ: `tap`, `adjust`, `commit`
-  - [ ] Thu hẹp theo chế độ xảy ra **lúc chạy** trong `toAction`: động từ không hợp lệ với `mode`
+  - [x] `input.verbs` khai **hợp** động từ cả ba chế độ: `tap`, `adjust`, `commit`
+  - [x] Thu hẹp theo chế độ xảy ra **lúc chạy** trong `toAction`: động từ không hợp lệ với `mode`
         hiện tại thì trả `null`, `dispatch` biến thành `ACTION_IGNORED`
-  - [ ] Bảng `Examples` có **ba hàng** cho `GT-016` — bảy câu hành vi có đáp án khác nhau theo chế độ
+  - [x] Bảng `Examples` có **ba hàng** cho `GT-016` — bảy câu hành vi có đáp án khác nhau theo chế độ
         (`166-vi-du.md` hàng 2, 3, 4 chỉ áp cho `set`; hàng 6 chỉ áp cho `read` và `match`)
-  - [ ] §17 của phiếu spec có ba nhánh; `BR-ESS-13` vốn đòi mỗi rule một `Scenario`
-  - [ ] Cấm — NEVER tách thành ba engine: sẽ phá `render.test.ts` (ghim 37/37/0), thêm hai thư mục
+  - [x] §17 của phiếu spec có ba nhánh; `BR-ESS-13` vốn đòi mỗi rule một `Scenario`
+  - [x] Cấm — NEVER tách thành ba engine: sẽ phá `render.test.ts` (ghim 37/37/0), thêm hai thư mục
         template, đòi hai phiếu spec cho song ánh `BR-ESS-01`, đổi `engine-spec-ready.json`, đổi
         `template-seed.ts` (cột cơ sở dữ liệu, bị so byte), và đổi mọi `content_pack` đã gieo có `mode`
-  - [ ] `GT-016` cũng xuất hiện ở `chinh.feature` (kim đồng hồ) và `chot.feature` (chế độ `set`) —
+  - [x] `GT-016` cũng xuất hiện ở `chinh.feature` (kim đồng hồ) và `chot.feature` (chế độ `set`) —
         `166-vi-du.md` §6.3 đã xếp sẵn nó vào hai file, tức trục động từ chứ không phải trục engine
 
 ---
@@ -262,16 +262,16 @@ nó thuộc nhóm `validateAction` thuần nên lát này không kiêm việc s�
 
 ### `#230` Nới gốc quét `BR-ERC-05` lên `src/` — không chuyển một dòng mã
 
-- [ ] `scripts/check-render.ts:12`: gốc quét `src/templates` → `src`
-- [ ] `PRIMITIVE_MODULES` (danh sách tên file) → danh sách **đường dẫn**, gieo bằng đúng ba file đo
+- [x] `scripts/check-render.ts:12`: gốc quét `src/templates` → `src`
+- [x] `PRIMITIVE_MODULES` (danh sách tên file) → danh sách **đường dẫn**, gieo bằng đúng ba file đo
       được: `systems/render-system.ts`, `templates/shared-render.ts`, `templates/shared-render-shapes.ts`
-- [ ] Ca âm mới: `tests/gates/fixtures/raw-canvas-outside-templates/` chứa một `ctx.fillRect(...)`
+- [x] Ca âm mới: `tests/gates/fixtures/raw-canvas-outside-templates/` chứa một `ctx.fillRect(...)`
       **ngoài** `templates/`, và cổng phải đỏ
-- [ ] Giữ nguyên phần đếm `BR-ERC-01` để chuỗi báo cáo `"37 engine active, 37 cài render, 0 thiếu"`
+- [x] Giữ nguyên phần đếm `BR-ERC-01` để chuỗi báo cáo `"37 engine active, 37 cài render, 0 thiếu"`
       không đổi
-- [ ] Nghiệm thu: `pnpm --filter @mindkid/game-engine check:render` xanh với đúng chuỗi đó;
+- [x] Nghiệm thu: `pnpm --filter @mindkid/game-engine check:render` xanh với đúng chuỗi đó;
       `tests/gates/render.test.ts` thêm một ca
-- [ ] Ghi vào commit message: cổng này lần đầu tiên quét `src/systems/render-system.ts` — **41 chỗ gọi
+- [x] Ghi vào commit message: cổng này lần đầu tiên quét `src/systems/render-system.ts` — **41 chỗ gọi
       `ctx` thô** chưa từng được quét — và bịt lối lách `src/templates/<thư-mục-khác>/`
 
 > **CHỐT KIỂM 3a** — comment ở `tests/gates/render.ts:44-49` nói thêm file vào danh sách miễn trừ là

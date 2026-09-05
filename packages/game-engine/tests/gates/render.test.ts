@@ -10,7 +10,7 @@ import {
 
 const rootDir = REPO_ROOT;
 const gameEngineDir = resolve(rootDir, "packages", "game-engine");
-const templatesDir = resolve(gameEngineDir, "src", "templates");
+const srcDir = resolve(gameEngineDir, "src");
 const configPath = resolve(gameEngineDir, "config", "render-implemented.json");
 const fixturesDir = resolve(gameEngineDir, "tests", "gates", "fixtures");
 
@@ -24,7 +24,7 @@ describe("Engine Render Quality Gates (BR-ERC-01..05)", () => {
    * làm test đỏ, và đó là điều bậc thang tồn tại để làm.
    */
   it("passes cleanly on canonical repository templates with current ratchet", () => {
-    const result = scanRenderGate(templatesDir, configPath);
+    const result = scanRenderGate(srcDir, configPath);
     expect(result.violations).toEqual([]);
     expect(result.activeCount).toBe(37);
     expect(result.implementedCount).toBe(37);
@@ -32,6 +32,12 @@ describe("Engine Render Quality Gates (BR-ERC-01..05)", () => {
 
     const report = formatRenderReport(result);
     expect(report).toBe("37 engine active, 37 cài render, 0 thiếu");
+  });
+
+  it("ca âm mới: file ngoài templates/ chứa ctx thô làm cổng đỏ (BR-ERC-05)", () => {
+    const fixtureDir = resolve(fixturesDir, "raw-canvas-outside-templates");
+    const result = scanRenderGate(fixtureDir);
+    expect(result.violations.some((v) => v.rule === "BR-ERC-05")).toBe(true);
   });
 
   it("ca âm: file phụ cạnh session.ts chứa ctx thô vẫn bị bắt (BR-ERC-05)", () => {

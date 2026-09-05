@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 
 export interface RenderLintViolation {
   readonly templateCode?: string;
@@ -48,8 +48,9 @@ const HARDCODED_COORD_DRAW_REGEX =
  * miễn — thêm file vào đây là một quyết định phải review, không phải mặc định.
  */
 const PRIMITIVE_MODULES: readonly string[] = [
-  "shared-render.ts",
-  "shared-render-shapes.ts",
+  "systems/render-system.ts",
+  "templates/shared-render.ts",
+  "templates/shared-render-shapes.ts",
 ];
 
 function checkSessionDrawLines(
@@ -188,25 +189,58 @@ function lintTemplateDirectory(
   return violations;
 }
 
-function lintRootTemplateFiles(templatesDir: string): RenderLintViolation[] {
-  const violations: RenderLintViolation[] = [];
-  for (const file of readdirSync(templatesDir)) {
-    if (file.endsWith(".ts") && !PRIMITIVE_MODULES.includes(file)) {
-      violations.push(
-        ...lintAuxiliaryFile(undefined, join(templatesDir, file))
-      );
+function collectTsFiles(dir: string): string[] {
+  const files: string[] = [];
+  const entries = readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...collectTsFiles(fullPath));
+    } else if (entry.isFile() && entry.name.endsWith(".ts")) {
+      files.push(fullPath);
     }
   }
+  return files;
+}
+
+function lintNonTemplateFiles(
+  srcDir: string,
+  templatesDir: string
+): RenderLintViolation[] {
+  const violations: RenderLintViolation[] = [];
+  const allFiles = collectTsFiles(srcDir);
+
+  for (const file of allFiles) {
+    const relToSrc = relative(srcDir, file).replace(/\\/g, "/");
+    const relToTemplates = relative(templatesDir, file).replace(/\\/g, "/");
+
+    if (
+      relToTemplates.startsWith("GT-") ||
+      relToSrc.startsWith("templates/GT-")
+    ) {
+      continue;
+    }
+
+    if (
+      PRIMITIVE_MODULES.includes(relToSrc) ||
+      PRIMITIVE_MODULES.includes(relToTemplates)
+    ) {
+      continue;
+    }
+
+    violations.push(...lintAuxiliaryFile(undefined, file));
+  }
+
   return violations;
 }
 
 export function scanRenderGate(
-  templatesDir: string,
+  srcOrTemplatesDir: string,
   renderImplementedConfigPath?: string
 ): RenderGateResult {
   const violations: RenderLintViolation[] = [];
 
-  if (!existsSync(templatesDir)) {
+  if (!existsSync(srcOrTemplatesDir)) {
     return {
       activeCount: 0,
       implementedCount: 0,
@@ -215,11 +249,15 @@ export function scanRenderGate(
       violations: [
         {
           rule: "BR-ERC-01",
-          message: `Templates directory does not exist: ${templatesDir}`,
+          message: `Templates directory does not exist: ${srcOrTemplatesDir}`,
         },
       ],
     };
   }
+
+  const templatesDir = existsSync(join(srcOrTemplatesDir, "templates"))
+    ? join(srcOrTemplatesDir, "templates")
+    : srcOrTemplatesDir;
 
   const implementedCodes = loadImplementedCodes(
     renderImplementedConfigPath,
@@ -256,7 +294,7 @@ export function scanRenderGate(
     );
   }
 
-  violations.push(...lintRootTemplateFiles(templatesDir));
+  violations.push(...lintNonTemplateFiles(srcOrTemplatesDir, templatesDir));
 
   const activeCount = entries.length;
   const implementedCount = implementedCodes.length;
