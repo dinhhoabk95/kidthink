@@ -6,6 +6,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
@@ -21,6 +22,36 @@ import {
 import { drawSceneObjectAt } from "../shared-render-shapes.js";
 import type { GT025Content, GT025Difficulty } from "./template.js";
 
+interface ResolvedDifferenceObject {
+  readonly id: string;
+  readonly x: number;
+  readonly y: number;
+  readonly w: number;
+  readonly h: number;
+  readonly role: "source" | "target";
+  readonly slotIndex: number;
+}
+
+function findHitDifferenceObject(
+  objects: readonly ResolvedDifferenceObject[],
+  x: number,
+  y: number,
+  tolerance = 24
+): ResolvedDifferenceObject | null {
+  for (let i = objects.length - 1; i >= 0; i--) {
+    const obj = objects[i];
+    if (!obj) {
+      continue;
+    }
+    const hw = obj.w / 2 + tolerance;
+    const hh = obj.h / 2 + tolerance;
+    if (Math.abs(x - obj.x) <= hw && Math.abs(y - obj.y) <= hh) {
+      return obj;
+    }
+  }
+  return null;
+}
+
 export class GT025Session extends TemplateGameSession<
   GT025Content,
   GT025Difficulty
@@ -30,15 +61,63 @@ export class GT025Session extends TemplateGameSession<
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private readonly foundDifferenceIds = new Set<string>();
+  private readonly foundLeftIds = new Set<string>();
+  private readonly foundRightIds = new Set<string>();
+  resolvedObjects: ResolvedDifferenceObject[] = [];
 
   setupEntities(): void {
     this.isWon = false;
     this.foundDifferenceIds.clear();
+    this.foundLeftIds.clear();
+    this.foundRightIds.clear();
+    this.updateResolvedObjects();
 
     this.recordEvent("round_started", {
       round_index: 0,
       total_differences: this.content.differences.length,
     });
+  }
+
+  protected override computeRoundDerived(): void {
+    this.updateResolvedObjects();
+  }
+
+  private updateResolvedObjects(): void {
+    const sources = this.slots.filter((s) => s.role === "source");
+    const targets = this.slots.filter((s) => s.role === "target");
+    const resolved: ResolvedDifferenceObject[] = [];
+
+    this.content.left_objects.forEach((obj, i) => {
+      const slot = sources[i];
+      const x = obj.x ?? slot?.x ?? 200;
+      const y = obj.y ?? slot?.y ?? 250;
+      resolved.push({
+        id: obj.id,
+        x,
+        y,
+        w: 64,
+        h: 64,
+        role: "source",
+        slotIndex: slot?.index ?? i,
+      });
+    });
+
+    this.content.right_objects.forEach((obj, i) => {
+      const slot = targets[i];
+      const x = obj.x === undefined ? (slot?.x ?? 680) : obj.x + 480;
+      const y = obj.y ?? slot?.y ?? 250;
+      resolved.push({
+        id: obj.id,
+        x,
+        y,
+        w: 64,
+        h: 64,
+        role: "target",
+        slotIndex: slot?.index ?? this.content.left_objects.length + i,
+      });
+    });
+
+    this.resolvedObjects = resolved;
   }
 
   private validateTapObject(data: unknown): ActionResult {
@@ -84,6 +163,8 @@ export class GT025Session extends TemplateGameSession<
     }
 
     this.foundDifferenceIds.add(diff.id);
+    this.foundLeftIds.add(diff.left_id);
+    this.foundRightIds.add(diff.right_id);
     this.recordEvent("item_selected", {
       object_id: objectId,
       is_correct: true,
@@ -118,12 +199,67 @@ export class GT025Session extends TemplateGameSession<
     );
   }
 
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "tap") {
+      const hitObj = findHitDifferenceObject(
+        this.resolvedObjects,
+        gesture.x,
+        gesture.y
+      );
+      if (hitObj) {
+        return {
+          type: "tap_object",
+          data: { object_id: hitObj.id },
+        };
+      }
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (action.type === "tap_object" || action.type === "select_item") {
+      const data = action.data;
+      const objectId =
+        typeof data === "object" && data !== null
+          ? (Reflect.get(data, "object_id") ?? Reflect.get(data, "item_id"))
+          : undefined;
+      if (typeof objectId === "string") {
+        this.onTapObject(objectId);
+      }
+    }
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = this.resolvedObjects.map((obj) => {
+      const isFound =
+        obj.role === "source"
+          ? this.foundLeftIds.has(obj.id)
+          : this.foundRightIds.has(obj.id);
+      return {
+        id: obj.id,
+        slotIndex: obj.slotIndex,
+        role: obj.role,
+        state: isFound ? "correct" : "idle",
+        x: obj.x,
+        y: obj.y,
+        w: obj.w,
+        h: obj.h,
+      };
+    });
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
+  }
+
   getFoundCount(): number {
     return this.foundDifferenceIds.size;
   }
 
   override destroy(): void {
     this.foundDifferenceIds.clear();
+    this.foundLeftIds.clear();
+    this.foundRightIds.clear();
   }
 
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
@@ -163,25 +299,14 @@ export class GT025Session extends TemplateGameSession<
 
     drawDividerLine(ctx, scene.w / 2, scene.y, scene.w / 2, scene.y + scene.h);
 
-    const foundLeft = new Set(
-      this.content.differences
-        .filter((d) => this.foundDifferenceIds.has(d.id))
-        .map((d) => d.left_id)
-    );
-    const foundRight = new Set(
-      this.content.differences
-        .filter((d) => this.foundDifferenceIds.has(d.id))
-        .map((d) => d.right_id)
-    );
-
     this.content.left_objects.forEach((obj, i) => {
       drawSceneObjectAt(ctx, rs, half, obj, sources[i], {
-        found: foundLeft.has(obj.id),
+        found: this.foundLeftIds.has(obj.id),
       });
     });
     this.content.right_objects.forEach((obj, i) => {
       drawSceneObjectAt(ctx, rs, rightHalf, obj, targets[i], {
-        found: foundRight.has(obj.id),
+        found: this.foundRightIds.has(obj.id),
       });
     });
     this.drawRenderFeedback(rs, ctx);
