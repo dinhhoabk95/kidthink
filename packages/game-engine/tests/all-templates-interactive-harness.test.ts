@@ -1111,6 +1111,10 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
           type: string;
           data: Record<string, unknown>;
         }) => { valid: boolean; feedback: string };
+        commit?: (action: {
+          type: string;
+          data: Record<string, unknown>;
+        }) => void;
         checkWinCondition: () => boolean;
         content: {
           initial_items: { item_id: string }[];
@@ -1121,19 +1125,23 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
       s.setupEntities();
       for (let i = 0; i < s.content.remove_count; i++) {
         const item = expectDefined(s.content.initial_items[i]);
-        s.validateAction({
+        const act = {
           type: "remove_item",
           data: { item_id: item.item_id },
-        });
+        };
+        s.validateAction(act);
+        s.commit?.(act);
       }
       const correctOpt = expectDefined(
         s.content.answer_options.find((o) => o.is_correct)
       );
-      const res = s.validateAction({
+      const actOpt = {
         type: "select_option",
         data: { option_id: correctOpt.option_id },
-      });
+      };
+      const res = s.validateAction(actOpt);
       expect(res.valid).toBe(true);
+      s.commit?.(actOpt);
       expect(s.checkWinCondition()).toBe(true);
     });
 
@@ -1155,6 +1163,10 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
           type: string;
           data: Record<string, unknown>;
         }) => { valid: boolean; feedback: string };
+        commit?: (action: {
+          type: string;
+          data: Record<string, unknown>;
+        }) => void;
         checkWinCondition: () => boolean;
         content: {
           object: { length_in_units: number };
@@ -1163,19 +1175,23 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
       };
       s.setupEntities();
       for (let i = 0; i < s.content.object.length_in_units; i++) {
-        s.validateAction({
+        const act = {
           type: "place_unit",
           data: {},
-        });
+        };
+        s.validateAction(act);
+        s.commit?.(act);
       }
       const correctOpt = expectDefined(
         s.content.answer_options.find((o) => o.is_correct)
       );
-      const res = s.validateAction({
+      const actOpt = {
         type: "select_option",
         data: { option_id: correctOpt.option_id },
-      });
+      };
+      const res = s.validateAction(actOpt);
       expect(res.valid).toBe(true);
+      s.commit?.(actOpt);
       expect(s.checkWinCondition()).toBe(true);
     });
 
@@ -1197,6 +1213,10 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
           type: string;
           data: Record<string, unknown>;
         }) => { valid: boolean; feedback: string };
+        commit?: (action: {
+          type: string;
+          data: Record<string, unknown>;
+        }) => void;
         checkWinCondition: () => boolean;
         content: {
           target_amount: number;
@@ -1209,15 +1229,20 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
       const c1 = expectDefined(s.content.coins.find((c) => c.value === 1));
       const c2 = expectDefined(s.content.coins.find((c) => c.value === 2));
 
-      s.validateAction({
+      const c1Act = {
         type: "deposit_coin",
         data: { coin_id: c1.coin_id },
-      });
-      const res = s.validateAction({
+      };
+      s.validateAction(c1Act);
+      s.commit?.(c1Act);
+
+      const c2Act = {
         type: "deposit_coin",
         data: { coin_id: c2.coin_id },
-      });
+      };
+      const res = s.validateAction(c2Act);
       expect(res.valid).toBe(true);
+      s.commit?.(c2Act);
       expect(s.checkWinCondition()).toBe(true);
     });
 
@@ -1239,6 +1264,10 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
           type: string;
           data: Record<string, unknown>;
         }) => { valid: boolean; feedback: string };
+        commit?: (action: {
+          type: string;
+          data: Record<string, unknown>;
+        }) => void;
         checkWinCondition: () => boolean;
         content: {
           question_type: string;
@@ -1247,11 +1276,13 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
       };
       s.setupEntities();
 
-      const res = s.validateAction({
+      const act = {
         type: "select_cup",
         data: { cup_id: "cup_b" },
-      });
+      };
+      const res = s.validateAction(act);
       expect(res.valid).toBe(true);
+      s.commit?.(act);
       expect(s.checkWinCondition()).toBe(true);
     });
 
@@ -1273,6 +1304,10 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
           type: string;
           data: Record<string, unknown>;
         }) => { valid: boolean; feedback: string };
+        commit?: (action: {
+          type: string;
+          data: Record<string, unknown>;
+        }) => void;
         checkWinCondition: () => boolean;
         content: {
           cells: (string | null)[];
@@ -1281,11 +1316,13 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
       };
       s.setupEntities();
 
-      const res = s.validateAction({
+      const act = {
         type: "place_yarn",
         data: { cell_index: 3, color_id: "red" },
-      });
+      };
+      const res = s.validateAction(act);
       expect(res.valid).toBe(true);
+      s.commit?.(act);
       expect(s.checkWinCondition()).toBe(true);
     });
 
@@ -1307,6 +1344,10 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
           type: string;
           data: Record<string, unknown>;
         }) => { valid: boolean; feedback: string };
+        commit?: (action: {
+          type: string;
+          data: Record<string, unknown>;
+        }) => void;
         checkWinCondition: () => boolean;
         content: {
           target_pattern: (string | null)[];
@@ -1315,11 +1356,13 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
       s.setupEntities();
 
       for (const step of f.content.target_pattern) {
-        const res = s.validateAction({
+        const act = {
           type: "tap_instrument",
           data: { instrument_id: step },
-        });
+        };
+        const res = s.validateAction(act);
         expect(res.valid).toBe(true);
+        s.commit?.(act);
       }
       expect(s.checkWinCondition()).toBe(true);
     });
