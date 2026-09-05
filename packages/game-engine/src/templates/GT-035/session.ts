@@ -59,6 +59,27 @@ export class GT035Session extends TemplateGameSession<
   GT035Content,
   GT035Difficulty
 > {
+  private static readonly DEFAULT_ALLOWED_COMMANDS: readonly CommandType[] = [
+    "forward",
+    "turn_left",
+    "turn_right",
+    "loop",
+  ];
+
+  private get allowedCommands(): readonly CommandType[] {
+    const fromContent = this.content.allowed_commands;
+    if (fromContent && Array.isArray(fromContent) && fromContent.length > 0) {
+      return fromContent;
+    }
+    const fromDiff = (
+      this.difficulty as { readonly allowed_commands?: readonly CommandType[] }
+    ).allowed_commands;
+    if (fromDiff && Array.isArray(fromDiff) && fromDiff.length > 0) {
+      return fromDiff;
+    }
+    return GT035Session.DEFAULT_ALLOWED_COMMANDS;
+  }
+
   degradation: DegradationState | null = null;
 
   robotState: RobotState;
@@ -179,7 +200,7 @@ export class GT035Session extends TemplateGameSession<
     }
 
     // 3. Command palette buttons (khay dưới)
-    const allowed = this.content.allowed_commands;
+    const allowed = this.allowedCommands;
     const palStartX = 480 - (allowed.length * 90) / 2;
     for (let p = 0; p < allowed.length; p++) {
       slots.push({
@@ -216,11 +237,7 @@ export class GT035Session extends TemplateGameSession<
   }
 
   private validateAddCommand(cmd?: CommandType): ActionResult {
-    if (
-      this.isExecuting ||
-      !cmd ||
-      !this.content.allowed_commands.includes(cmd)
-    ) {
+    if (this.isExecuting || !cmd || !this.allowedCommands.includes(cmd)) {
       return ACTION_IGNORED;
     }
     const maxCmd = this.difficulty.max_commands ?? 8;
@@ -278,7 +295,7 @@ export class GT035Session extends TemplateGameSession<
     if (
       !command ||
       this.isExecuting ||
-      !this.content.allowed_commands.includes(command)
+      !this.allowedCommands.includes(command)
     ) {
       return;
     }
@@ -401,7 +418,7 @@ export class GT035Session extends TemplateGameSession<
     tol: number,
     palStartIndex: number
   ): CommandType | null {
-    const allowed = this.content.allowed_commands;
+    const allowed = this.allowedCommands;
     for (let p = 0; p < allowed.length; p++) {
       const slot = this.slots[palStartIndex + p];
       const cmd = allowed[p];
@@ -447,7 +464,7 @@ export class GT035Session extends TemplateGameSession<
     const { rows, cols } = this.content.grid;
     const gridSlotCount = rows * cols;
     const maxCmd = this.difficulty.max_commands ?? 8;
-    const allowed = this.content.allowed_commands;
+    const allowed = this.allowedCommands;
     const runSlotIdx = gridSlotCount + maxCmd + allowed.length;
 
     // Check Run button
@@ -538,7 +555,7 @@ export class GT035Session extends TemplateGameSession<
     entities: ViewEntity[],
     palStartIndex: number
   ): void {
-    const allowed = this.content.allowed_commands;
+    const allowed = this.allowedCommands;
     for (let p = 0; p < allowed.length; p++) {
       const slot = this.slots[palStartIndex + p];
       const cmd = allowed[p];
@@ -563,7 +580,7 @@ export class GT035Session extends TemplateGameSession<
     const { rows, cols } = this.content.grid;
     const gridSlotCount = rows * cols;
     const maxCmd = this.difficulty.max_commands ?? 8;
-    const allowed = this.content.allowed_commands;
+    const allowed = this.allowedCommands;
 
     this.appendGridEntities(entities, gridSlotCount);
     this.appendQueueEntities(entities, gridSlotCount, maxCmd);
@@ -751,7 +768,7 @@ export class GT035Session extends TemplateGameSession<
     const { rows, cols } = this.content.grid;
     const maxCmd = this.difficulty.max_commands ?? 8;
     const paletteStartIdx = rows * cols + maxCmd;
-    const allowed = this.content.allowed_commands;
+    const allowed = this.allowedCommands;
 
     for (let i = 0; i < allowed.length; i++) {
       const slot = this.slots[paletteStartIdx + i];

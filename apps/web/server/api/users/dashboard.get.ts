@@ -112,6 +112,7 @@ async function resolveCurriculumBlock(
     const { enrollment, items, weeks, completedItemIds, userAllowedTiers } =
       await resolveEnrolledChildCurriculum(event, userId, activeChild.uuid, {
         requireActive: false,
+        requireEnrollment: false,
       });
 
     if (!enrollment) {
@@ -149,6 +150,7 @@ async function resolveCurriculumBlock(
         : null,
     };
   } catch (_err) {
+    setResponseStatus(event, 200);
     return { enrolled: false, curriculum: null };
   }
 }

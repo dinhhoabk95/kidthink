@@ -63,6 +63,17 @@
       engine = new GameEngine();
       engine.load(config, createSessionFactory(templateCode));
       engine.start(canvasRef.value);
+
+      if (window.parent) {
+        window.parent.postMessage(
+          {
+            type: "MindKid_STUDIO_SESSION_LOADED",
+            levelCode: config.level_code,
+            templateCode,
+          },
+          "*"
+        );
+      }
     } catch (err) {
       errorMessage.value =
         err instanceof Error ? err.message : "Lỗi khởi chạy engine";
@@ -78,6 +89,26 @@
     }
   }
 
+  function parseConfigFromPayload(
+    payload: StudioUpdatePayload,
+    templateCode: string
+  ): EngineConfig {
+    const levelData = (payload.levelData || {}) as JsonObject;
+    return {
+      level_code:
+        (typeof levelData.code === "string" ? levelData.code : null) ||
+        `PREVIEW-${templateCode}`,
+      content_version: 1,
+      template_code: templateCode,
+      content_pack: (levelData.content_pack as JsonObject) || {},
+      difficulty_params: (levelData.difficulty_params as JsonObject) || {},
+      theme_id: (levelData.theme_id as string) || "default",
+      age_band: payload.ageBand || "3-4",
+      reduced_motion: payload.reducedMotion ?? false,
+      audio_enabled: !(payload.muted ?? false),
+    };
+  }
+
   function handleMessage(event: MessageEvent) {
     const data = event.data;
     if (!data || typeof data !== "object") {
@@ -85,31 +116,31 @@
     }
 
     const type = data.type;
-    if (type === "MindKid_STUDIO_CONFIG_UPDATE") {
-      const tCode = data.templateCode || currentTemplateCode;
+    if (
+      type === "MindKid_STUDIO_UPDATE" ||
+      type === "MindKid_STUDIO_CONFIG_UPDATE"
+    ) {
+      const payload = (data.payload || data) as StudioUpdatePayload;
+      const tCode = payload.templateCode || currentTemplateCode;
       currentTemplateCode = tCode;
-
-      const levelData = data.levelData || {};
-      const config: EngineConfig = {
-        level_code: `PREVIEW-${tCode}`,
-        content_version: 1,
-        template_code: tCode,
-        content_pack: (levelData.content_pack as JsonObject) || {},
-        difficulty_params: (levelData.difficulty_params as JsonObject) || {},
-        theme_id: (levelData.theme_id as string) || "default",
-        age_band: data.ageBand || "3-4",
-        reduced_motion: data.reducedMotion ?? false,
-        audio_enabled: !(data.muted ?? false),
-      };
-
+      const config = parseConfigFromPayload(payload, tCode);
       currentConfig = config;
       startSession(config, tCode);
-    } else if (type === "MindKid_STUDIO_RELOAD" && currentConfig) {
+      return;
+    }
+
+    if (
+      (type === "MindKid_STUDIO_REPLAY" || type === "MindKid_STUDIO_RELOAD") &&
+      currentConfig
+    ) {
       startSession(currentConfig, currentTemplateCode);
     }
   }
 
   onMounted(() => {
+    (
+      window as Window & { __mindkidSandboxReady?: boolean }
+    ).__mindkidSandboxReady = true;
     window.addEventListener("message", handleMessage);
 
     // Thông báo cho Studio biết sandbox đã sẵn sàng
@@ -117,21 +148,8 @@
       window.parent.postMessage({ type: "MindKid_STUDIO_SANDBOX_READY" }, "*");
     }
 
-    // Khởi tạo một phiên mặc định nếu được gọi với ?template=GT-xxx
     const tCode = (route.query.template as string) || "GT-001";
     currentTemplateCode = tCode;
-    currentConfig = {
-      level_code: `PREVIEW-${tCode}`,
-      content_version: 1,
-      template_code: tCode,
-      content_pack: {},
-      difficulty_params: {},
-      theme_id: "default",
-      age_band: "3-4",
-      reduced_motion: false,
-      audio_enabled: true,
-    };
-    startSession(currentConfig, tCode);
   });
 
   onUnmounted(() => {

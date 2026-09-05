@@ -19,20 +19,31 @@ import { and, desc, eq, inArray } from "drizzle-orm";
 import { createError, type H3Event, setResponseStatus } from "h3";
 import { resolveUserActiveEntitlements } from "./entitlements-runtime.js";
 
+export interface EnrolledChildCurriculumDetails {
+  id: number;
+  childId: number;
+  curriculumId: number;
+  enrolledAt: Date;
+  status: (typeof curriculumEnrollments.$inferSelect)["status"];
+  curriculum_code: string;
+  curriculum_version: number;
+  curriculum_title: string;
+  duration_weeks: number;
+  sessions_per_week: number;
+}
+
 export interface ResolvedCurriculumData {
   child: typeof childProfiles.$inferSelect;
-  enrollment: {
-    id: number;
-    childId: number;
-    curriculumId: number;
-    enrolledAt: Date;
-    status: (typeof curriculumEnrollments.$inferSelect)["status"];
-    curriculum_code: string;
-    curriculum_version: number;
-    curriculum_title: string;
-    duration_weeks: number;
-    sessions_per_week: number;
-  };
+  enrollment: EnrolledChildCurriculumDetails;
+  items: CurriculumPlayerItemRef[];
+  weeks: CurriculumPlayerWeekGoal[];
+  completedItemIds: Set<number>;
+  userAllowedTiers: AccessTier[];
+}
+
+export interface OptionalEnrollmentCurriculumData {
+  child: typeof childProfiles.$inferSelect;
+  enrollment: EnrolledChildCurriculumDetails | null;
   items: CurriculumPlayerItemRef[];
   weeks: CurriculumPlayerWeekGoal[];
   completedItemIds: Set<number>;
@@ -43,8 +54,23 @@ export async function resolveEnrolledChildCurriculum(
   event: H3Event,
   userId: number,
   childUuid: string,
-  options: { requireActive?: boolean } = { requireActive: true }
-): Promise<ResolvedCurriculumData> {
+  options: { requireActive?: boolean; requireEnrollment: false }
+): Promise<OptionalEnrollmentCurriculumData>;
+export async function resolveEnrolledChildCurriculum(
+  event: H3Event,
+  userId: number,
+  childUuid: string,
+  options?: { requireActive?: boolean; requireEnrollment?: true }
+): Promise<ResolvedCurriculumData>;
+export async function resolveEnrolledChildCurriculum(
+  event: H3Event,
+  userId: number,
+  childUuid: string,
+  options: { requireActive?: boolean; requireEnrollment?: boolean } = {
+    requireActive: true,
+    requireEnrollment: true,
+  }
+): Promise<ResolvedCurriculumData | OptionalEnrollmentCurriculumData> {
   const db = getOwnerDb();
 
   // 1. Verify child belongs to user (BR-ERR-05 / BR-ACT-03 -> 404)
@@ -100,6 +126,25 @@ export async function resolveEnrolledChildCurriculum(
   const [enrollment] = await enrollmentQuery;
 
   if (!enrollment) {
+    if (options.requireEnrollment === false) {
+      const allowed = await resolveUserActiveEntitlements(userId);
+      const userAllowedTiers = await allowedTiers(
+        {
+          kind: "user",
+          user_id: String(userId),
+          active_child_id: String(child.id),
+        },
+        allowed
+      );
+      return {
+        child,
+        enrollment: null,
+        items: [],
+        weeks: [],
+        completedItemIds: new Set<number>(),
+        userAllowedTiers,
+      };
+    }
     setResponseStatus(event, 404);
     throw createError({
       statusCode: 404,

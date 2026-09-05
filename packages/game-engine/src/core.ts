@@ -136,8 +136,11 @@ export class GameEngine {
       config.content_pack
     );
     if (!validation.success) {
+      const detailsStr = validation.error?.details
+        ? JSON.stringify(validation.error.details)
+        : "";
       throw new Error(
-        `CONTENT_PACK_INVALID: ${validation.error?.message || "Invalid content pack"}`
+        `CONTENT_PACK_INVALID: ${validation.error?.message || "Invalid content pack"}${detailsStr ? ` — ${detailsStr}` : ""}`
       );
     }
 
