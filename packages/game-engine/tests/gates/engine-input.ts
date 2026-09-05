@@ -17,7 +17,7 @@ export interface InputGateResult {
 const RESOLVE_SLOTS_CALL_REGEX = /this\.resolveSlots\s*\(/;
 const GET_VIEW_REGEX = /\bgetView\s*\(/;
 const EXPORT_ON_HANDLER_REGEX =
-  /export\s+(?:interface|type)\s+.*\{[^}]*\bon[A-Z]\w*\s*[:(]/s;
+  /export\s+(?:interface|type)\s+[^{]+\{[^}]*\bon[A-Z]\w*\s*[:(]/;
 const SETUP_ENTITIES_METHOD_REGEX =
   /setupEntities\s*\([^)]*\)\s*:\s*void\s*\{([\s\S]*?)\n\s*\}/;
 

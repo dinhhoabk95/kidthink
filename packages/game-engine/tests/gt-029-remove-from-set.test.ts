@@ -38,6 +38,11 @@ describe("GT-029: Bớt khỏi nhóm (remove-from-set)", () => {
         "answer_selected",
         "game_completed",
       ]);
+      expect(template.input).toEqual({
+        family: "tap",
+        verbs: ["tap"],
+        tolerance_px: 24,
+      });
     });
   });
 
@@ -115,6 +120,21 @@ describe("GT-029: Bớt khỏi nhóm (remove-from-set)", () => {
   });
 
   describe("Session Gameplay, Removal, Restore & Scoring", () => {
+    it("validates actions purely without mutating state (BR-ENG-13)", () => {
+      const f = getFixture(0);
+      const session = new GT029Session(f.content, f.difficulty);
+      session.setupEntities();
+
+      expect(session.getRemovedCount()).toBe(0);
+
+      const v1 = session.validateAction({
+        type: "remove_item",
+        data: { item_id: "apple_1" },
+      });
+      expect(v1.valid).toBe(true);
+      expect(session.getRemovedCount()).toBe(0); // State unchanged
+    });
+
     it("runs complete gameplay loop with item removal and option choice", () => {
       const f = getFixture(0); // 5 items, remove 2, correct answer is 3
       const session = new GT029Session(f.content, f.difficulty);
@@ -133,29 +153,27 @@ describe("GT-029: Bớt khỏi nhóm (remove-from-set)", () => {
       expect(session.checkWinCondition()).toBe(false);
 
       // Remove item 1
-      const remove1 = session.validateAction({
+      session.commit({
         type: "remove_item",
         data: { item_id: "apple_1" },
       });
-      expect(remove1.valid).toBe(true);
       expect(session.getRemovedCount()).toBe(1);
       expect(session.getRemainingCount()).toBe(4);
 
       // Restore item 1 (tap again)
-      const restore1 = session.validateAction({
+      session.commit({
         type: "remove_item",
         data: { item_id: "apple_1" },
       });
-      expect(restore1.valid).toBe(true);
       expect(session.getRemovedCount()).toBe(0);
       expect(session.getRemainingCount()).toBe(5);
 
       // Remove apple_1 and apple_2
-      session.validateAction({
+      session.commit({
         type: "remove_item",
         data: { item_id: "apple_1" },
       });
-      session.validateAction({
+      session.commit({
         type: "remove_item",
         data: { item_id: "apple_2" },
       });
@@ -183,6 +201,11 @@ describe("GT-029: Bớt khỏi nhóm (remove-from-set)", () => {
         data: { option_id: "opt_3" },
       });
       expect(correctAnswer.valid).toBe(true);
+
+      session.commit({
+        type: "select_option",
+        data: { option_id: "opt_3" },
+      });
       expect(session.checkWinCondition()).toBe(true);
 
       // Purity check
@@ -227,6 +250,73 @@ describe("GT-029: Bớt khỏi nhóm (remove-from-set)", () => {
       expect(session.slots.length).toBe(
         f.content.initial_items.length + f.content.answer_options.length
       );
+    });
+
+    it("handles unified tap gesture dispatch", () => {
+      const f = getFixture(0);
+      const session = new GT029Session(f.content, f.difficulty);
+      session.prepareRound("4-5");
+
+      // Tap outside slots -> ignored
+      const missResult = session.dispatch({
+        type: "tap",
+        x: 10,
+        y: 10,
+        timeMs: 100,
+      });
+      expect(missResult).toEqual({ valid: false, feedback: "none" });
+
+      const slot0 = session.slots[0];
+      const slot1 = session.slots[1];
+      if (!(slot0 && slot1)) {
+        throw new Error("slot0 and slot1 must exist");
+      }
+
+      // Tap item 0 -> removed
+      const tap0 = session.dispatch({
+        type: "tap",
+        x: slot0.x,
+        y: slot0.y,
+        timeMs: 200,
+      });
+      expect(tap0?.valid).toBe(true);
+      expect(session.getRemovedCount()).toBe(1);
+
+      // Tap item 1 -> removed (now reached remove_count = 2)
+      const tap1 = session.dispatch({
+        type: "tap",
+        x: slot1.x,
+        y: slot1.y,
+        timeMs: 300,
+      });
+      expect(tap1?.valid).toBe(true);
+      expect(session.getRemovedCount()).toBe(2);
+
+      const view = session.getView();
+      expect(view.activePrompt).toBe(f.content.prompt);
+      expect(view.entities.length).toBe(
+        f.content.initial_items.length + f.content.answer_options.length
+      );
+
+      // Correct option index: f.content.answer_options find is_correct
+      const correctOptIdx = f.content.answer_options.findIndex(
+        (o) => o.is_correct
+      );
+      const optSlot =
+        session.slots[f.content.initial_items.length + correctOptIdx];
+      if (!optSlot) {
+        throw new Error("optSlot must exist");
+      }
+
+      // Tap correct option -> win
+      const tapOpt = session.dispatch({
+        type: "tap",
+        x: optSlot.x,
+        y: optSlot.y,
+        timeMs: 400,
+      });
+      expect(tapOpt?.valid).toBe(true);
+      expect(session.checkWinCondition()).toBe(true);
     });
   });
 });
