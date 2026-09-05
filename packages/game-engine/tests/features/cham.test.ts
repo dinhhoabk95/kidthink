@@ -35,6 +35,8 @@ import { GT022_FIXTURES } from "#src/templates/GT-022/fixtures";
 import { GT022Session } from "#src/templates/GT-022/session";
 import { GT025_FIXTURES } from "#src/templates/GT-025/fixtures";
 import { GT025Session } from "#src/templates/GT-025/session";
+import { GT026_FIXTURES } from "#src/templates/GT-026/fixtures";
+import { GT026Session } from "#src/templates/GT-026/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -747,6 +749,54 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       expect(result?.valid).toBe(true);
       expect(session.checkWinCondition()).toBe(true);
       expect(session.getFoundCount()).toBe(1);
+    });
+
+    it("GT-026: khi chạm ngoài vùng stimulus slot, không commit action và state không đổi", () => {
+      const f26 = GT026_FIXTURES[0];
+      if (!f26) {
+        throw new Error("GT026_FIXTURES[0] must exist");
+      }
+      const session = new GT026Session(f26.content, f26.difficulty);
+      session.prepareRound("4-5");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.getState()).toBe("stimulus");
+    });
+
+    it("GT-026: chạm vào stimulus slot commit tap_stimulus cho go trial thành công", () => {
+      const f26 = GT026_FIXTURES[0];
+      if (!f26) {
+        throw new Error("GT026_FIXTURES[0] must exist");
+      }
+      const session = new GT026Session(f26.content, f26.difficulty);
+      session.prepareRound("4-5");
+
+      const slot = session.slots[0];
+      if (!slot) {
+        throw new Error("slot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: slot.x,
+        y: slot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.getState()).toBe("isi");
     });
   });
 

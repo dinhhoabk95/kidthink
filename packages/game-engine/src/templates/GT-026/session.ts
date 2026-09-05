@@ -6,6 +6,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
@@ -145,6 +146,61 @@ export class GT026Session extends TemplateGameSession<
 
   override checkWinCondition(): boolean {
     return this.isWon;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "tap") {
+      if (this.inhibitionSystem?.getState() !== "stimulus") {
+        return null;
+      }
+      const slot = this.slots[0];
+      if (slot) {
+        const hw = Math.max(slot.hitW, slot.w) / 2 + 24;
+        const hh = Math.max(slot.hitH, slot.h) / 2 + 24;
+        if (
+          Math.abs(gesture.x - slot.x) <= hw &&
+          Math.abs(gesture.y - slot.y) <= hh
+        ) {
+          return { type: "tap_stimulus", data: {} };
+        }
+      }
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (
+      action.type === "tap_stimulus" ||
+      action.type === "tap_card" ||
+      action.type === "select_item"
+    ) {
+      this.onTapStimulus();
+    }
+  }
+
+  override getView(): EngineView {
+    const slot = this.slots[0];
+    const trial = this.inhibitionSystem?.getCurrentTrial();
+    const isStimulus = this.inhibitionSystem?.getState() === "stimulus";
+    const entities: ViewEntity[] = [];
+
+    if (slot && trial && isStimulus) {
+      entities.push({
+        id: trial.id,
+        slotIndex: 0,
+        role: "source",
+        state: "idle",
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   override destroy(): void {
