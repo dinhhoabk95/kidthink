@@ -19,6 +19,8 @@ import { GT019_FIXTURES } from "#src/templates/GT-019/fixtures";
 import { GT019Session } from "#src/templates/GT-019/session";
 import { GT021_FIXTURES } from "#src/templates/GT-021/fixtures";
 import { GT021Session } from "#src/templates/GT-021/session";
+import { GT023_FIXTURES } from "#src/templates/GT-023/fixtures";
+import { GT023Session } from "#src/templates/GT-023/session";
 
 describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha.feature", () => {
   const f3 = GT003_FIXTURES[0];
@@ -61,8 +63,12 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
   if (!f21) {
     throw new Error("GT021_FIXTURES[0] must exist");
   }
+  const f23 = GT023_FIXTURES[0];
+  if (!f23) {
+    throw new Error("GT023_FIXTURES[0] must exist");
+  }
 
-  describe("Scenario Outline: Kéo thả trúng đích thì commit action tương ứng (Examples: GT-003, GT-004, GT-005, GT-006, GT-007, GT-008, GT-014, GT-015, GT-019, GT-021)", () => {
+  describe("Scenario Outline: Kéo thả trúng đích thì commit action tương ứng (Examples: GT-003, GT-004, GT-005, GT-006, GT-007, GT-008, GT-014, GT-015, GT-019, GT-021, GT-023)", () => {
     it("GT-003: kéo từ slot nguồn và thả vào container slot commit drop_item thành công", () => {
       const session = new GT003Session(f3.content, f3.difficulty);
       session.prepareRound("3-4");
@@ -369,9 +375,39 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
       expect(session.getPlacements().get("opt-wing")).toBe("right-wing");
       expect(session.checkWinCondition()).toBe(true);
     });
+
+    it("GT-023: kéo từ part nguồn và thả vào anchor commit drop_item thành công", () => {
+      const session = new GT023Session(f23.content, f23.difficulty);
+      session.prepareRound("4-5");
+
+      const sourceSlot = session.slots.find((s) => s.role === "source");
+      const targetAnchor = f23.content.anchors[0];
+      if (!(sourceSlot && targetAnchor)) {
+        throw new Error("slot and anchor must exist");
+      }
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "drop",
+        fromX: sourceSlot.x,
+        fromY: sourceSlot.y,
+        toX: targetAnchor.x,
+        toY: targetAnchor.y,
+        timeMs: 200,
+      });
+
+      expect(result).toBeDefined();
+      expect(result?.valid).toBe(true);
+      expect(session.getTelemetry().events.length).toBeGreaterThan(
+        eventsBefore
+      );
+      expect(session.getPlacements().get(targetAnchor.anchor_id)).toBe(
+        "part-roof"
+      );
+    });
   });
 
-  describe("Scenario Outline: Thả ngoài mọi đích thì không commit và vật về chỗ cũ (Examples: GT-003, GT-004, GT-005, GT-006, GT-007, GT-008, GT-014, GT-015, GT-019, GT-021)", () => {
+  describe("Scenario Outline: Thả ngoài mọi đích thì không commit và vật về chỗ cũ (Examples: GT-003, GT-004, GT-005, GT-006, GT-007, GT-008, GT-014, GT-015, GT-019, GT-021, GT-023)", () => {
     it("GT-003: kéo từ slot nguồn và thả ra ngoài toạ độ container thì không commit", () => {
       const session = new GT003Session(f3.content, f3.difficulty);
       session.prepareRound("3-4");
@@ -614,9 +650,33 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
       expect(session.getTelemetry().events.length).toBe(eventsBefore);
       expect(session.getPlacements().size).toBe(0);
     });
+
+    it("GT-023: kéo part từ nguồn và thả ra ngoài mọi anchor thì không commit", () => {
+      const session = new GT023Session(f23.content, f23.difficulty);
+      session.prepareRound("4-5");
+
+      const sourceSlot = session.slots.find((s) => s.role === "source");
+      if (!sourceSlot) {
+        throw new Error("sourceSlot must exist");
+      }
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "drop",
+        fromX: sourceSlot.x,
+        fromY: sourceSlot.y,
+        toX: 50,
+        toY: 50,
+        timeMs: 200,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.getPlacements().size).toBe(0);
+    });
   });
 
-  describe("Scenario Outline: Fallback chạm-chạm (tap-tap fallback) (Examples: GT-003, GT-004, GT-005, GT-006, GT-007, GT-008, GT-014, GT-015, GT-019, GT-021)", () => {
+  describe("Scenario Outline: Fallback chạm-chạm (tap-tap fallback) (Examples: GT-003, GT-004, GT-005, GT-006, GT-007, GT-008, GT-014, GT-015, GT-019, GT-021, GT-023)", () => {
     it("GT-003: chạm nguồn lần 1 để nhắm, chạm container lần 2 để thả", () => {
       const session = new GT003Session(f3.content, f3.difficulty);
       session.prepareRound("3-4");
@@ -963,6 +1023,40 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
       expect(session.getStagedItemId()).toBeNull();
       expect(session.getPlacements().get("opt-wing")).toBe("right-wing");
       expect(session.checkWinCondition()).toBe(true);
+    });
+
+    it("GT-023: chạm part nguồn lần 1 để nhắm, chạm anchor lần 2 để đặt", () => {
+      const session = new GT023Session(f23.content, f23.difficulty);
+      session.prepareRound("4-5");
+
+      const sourceSlot = session.slots.find((s) => s.role === "source");
+      const targetAnchor = f23.content.anchors[0];
+      if (!(sourceSlot && targetAnchor)) {
+        throw new Error("slot and anchor must exist");
+      }
+
+      // Tap 1: chạm part nguồn
+      const tap1Result = session.dispatch({
+        type: "tap",
+        x: sourceSlot.x,
+        y: sourceSlot.y,
+        timeMs: 100,
+      });
+      expect(tap1Result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getStagedItemId()).toBe("part-roof");
+
+      // Tap 2: chạm anchor
+      const tap2Result = session.dispatch({
+        type: "tap",
+        x: targetAnchor.x,
+        y: targetAnchor.y,
+        timeMs: 300,
+      });
+      expect(tap2Result?.valid).toBe(true);
+      expect(session.getStagedItemId()).toBeNull();
+      expect(session.getPlacements().get(targetAnchor.anchor_id)).toBe(
+        "part-roof"
+      );
     });
   });
 });

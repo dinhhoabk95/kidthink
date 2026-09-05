@@ -6,6 +6,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
@@ -26,6 +32,56 @@ import {
 } from "../shared-render.js";
 import { slotAtPoint } from "../shared-render-shapes.js";
 import type { GT023Content, GT023Difficulty } from "./template.js";
+
+interface HitSourcePart {
+  readonly part: GT023Content["parts"][number];
+  readonly slot: Slot;
+}
+
+function findHitSourcePart(
+  slots: readonly Slot[],
+  parts: readonly GT023Content["parts"][number][],
+  placements: ReadonlyMap<string, string>,
+  x: number,
+  y: number,
+  tolerance = 24
+): HitSourcePart | null {
+  const sources = slots.filter((s) => s.role === "source");
+  const placedPartIds = new Set(placements.values());
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    const slot = sources[i];
+    if (!(part && slot) || placedPartIds.has(part.part_id)) {
+      continue;
+    }
+    const hw = Math.max(slot.hitW, slot.w) / 2 + tolerance;
+    const hh = Math.max(slot.hitH, slot.h) / 2 + tolerance;
+    if (Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh) {
+      return { part, slot };
+    }
+  }
+  return null;
+}
+
+function findHitAnchor(
+  anchors: readonly GT023Content["anchors"][number][],
+  x: number,
+  y: number,
+  snapRadius = 60,
+  tolerance = 24
+): GT023Content["anchors"][number] | null {
+  const maxDist = Math.max(snapRadius, 64) + tolerance;
+  for (const anchor of anchors) {
+    if (!anchor) {
+      continue;
+    }
+    const dist = Math.hypot(anchor.x - x, anchor.y - y);
+    if (dist <= maxDist) {
+      return anchor;
+    }
+  }
+  return null;
+}
 
 export class GT023Session extends TemplateGameSession<
   GT023Content,
@@ -130,6 +186,174 @@ export class GT023Session extends TemplateGameSession<
 
   override checkWinCondition(): boolean {
     return this.assemblySystem.isAllAssembled();
+  }
+
+  getStagedItemId(): string | null {
+    return this.placementMechanic.getStagedItemId();
+  }
+
+  getPlacements(): ReadonlyMap<string, string> {
+    return this.assemblySystem.getPlacements();
+  }
+
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>
+  ): GameAction | null {
+    const hitSource = findHitSourcePart(
+      this.slots,
+      this.content.parts,
+      this.assemblySystem.getPlacements(),
+      gesture.fromX,
+      gesture.fromY
+    );
+    if (!hitSource) {
+      return null;
+    }
+    const hitAnchor = findHitAnchor(
+      this.content.anchors,
+      gesture.toX,
+      gesture.toY,
+      this.difficulty.snap_radius_px
+    );
+    if (!hitAnchor) {
+      return null;
+    }
+    return {
+      type: "drop_item",
+      data: {
+        item_id: hitSource.part.part_id,
+        target_id: hitAnchor.anchor_id,
+      },
+    };
+  }
+
+  private toTapAction(
+    gesture: Extract<Gesture, { type: "tap" }>
+  ): GameAction | null {
+    const stagedId = this.placementMechanic.getStagedItemId();
+
+    if (stagedId) {
+      const hitAnchor = findHitAnchor(
+        this.content.anchors,
+        gesture.x,
+        gesture.y,
+        this.difficulty.snap_radius_px
+      );
+      if (hitAnchor) {
+        return {
+          type: "tap_tap_item",
+          data: {
+            item_id: stagedId,
+            target_id: hitAnchor.anchor_id,
+          },
+        };
+      }
+    }
+
+    const hitSource = findHitSourcePart(
+      this.slots,
+      this.content.parts,
+      this.assemblySystem.getPlacements(),
+      gesture.x,
+      gesture.y
+    );
+    if (hitSource) {
+      if (stagedId === hitSource.part.part_id) {
+        this.placementMechanic.stageItem(null);
+      } else {
+        this.placementMechanic.stageItem(hitSource.part.part_id);
+      }
+      return null;
+    }
+
+    this.placementMechanic.stageItem(null);
+    return null;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "drop") {
+      return this.toDropAction(gesture);
+    }
+    if (gesture.type === "tap") {
+      return this.toTapAction(gesture);
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (
+      action.type === "place_item" ||
+      action.type === "drop_item" ||
+      action.type === "tap_tap_item"
+    ) {
+      const data = action.data as
+        | { item_id?: string; target_id?: string }
+        | undefined;
+      const itemId = data?.item_id;
+      const targetId = data?.target_id;
+      if (itemId && targetId) {
+        this.onAssemblePart(itemId, targetId);
+        if (this.placementMechanic.getStagedItemId() === itemId) {
+          this.placementMechanic.stageItem(null);
+        }
+      }
+    }
+  }
+
+  override getView(): EngineView {
+    const placements = this.assemblySystem.getPlacements();
+    const sources = this.slots.filter((s) => s.role === "source");
+    const stagedId = this.placementMechanic.getStagedItemId();
+    const placedPartIds = new Set(placements.values());
+    const entities: ViewEntity[] = [];
+
+    for (let i = 0; i < this.content.anchors.length; i++) {
+      const anchor = this.content.anchors[i];
+      if (!anchor) {
+        continue;
+      }
+      const isPlaced = placements.has(anchor.anchor_id);
+      entities.push({
+        id: anchor.anchor_id,
+        slotIndex: i,
+        role: "target",
+        state: isPlaced ? "correct" : "idle",
+        x: anchor.x,
+        y: anchor.y,
+        w: 80,
+        h: 80,
+      });
+    }
+
+    for (let i = 0; i < this.content.parts.length; i++) {
+      const part = this.content.parts[i];
+      const slot = sources[i];
+      if (!(part && slot)) {
+        continue;
+      }
+      const isPlaced = placedPartIds.has(part.part_id);
+      let state: EntityVisual = "idle";
+      if (isPlaced) {
+        state = "correct";
+      } else if (part.part_id === stagedId) {
+        state = "selected";
+      }
+      entities.push({
+        id: part.part_id,
+        slotIndex: slot.index,
+        role: "source",
+        state,
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
