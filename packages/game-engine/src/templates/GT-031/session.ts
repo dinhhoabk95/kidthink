@@ -7,6 +7,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
@@ -22,6 +28,11 @@ import {
   updateParticles,
 } from "../shared-render.js";
 import type { GT031Content, GT031Difficulty } from "./template.js";
+
+interface GT031ActionPayload {
+  readonly coin_id?: string;
+  readonly id?: string;
+}
 
 export class GT031Session extends TemplateGameSession<
   GT031Content,
@@ -55,7 +66,7 @@ export class GT031Session extends TemplateGameSession<
     });
   }
 
-  private handleDepositCoin(coinId: string): ActionResult {
+  private validateDepositAction(coinId: string): ActionResult {
     const coin = this.content.coins.find((c) => c.coin_id === coinId);
     if (!coin) {
       return ACTION_IGNORED;
@@ -63,6 +74,69 @@ export class GT031Session extends TemplateGameSession<
 
     if (this.depositedCoinIds.includes(coinId)) {
       return ACTION_IGNORED;
+    }
+
+    if (this.currentTotal + coin.value > this.content.target_amount) {
+      return ACTION_RETRY;
+    }
+
+    return ACTION_CORRECT;
+  }
+
+  private validateRemoveAction(coinId?: string): ActionResult {
+    if (this.depositedCoinIds.length === 0) {
+      return ACTION_IGNORED;
+    }
+
+    const targetId = coinId ?? this.depositedCoinIds.at(-1);
+    if (!targetId) {
+      return ACTION_IGNORED;
+    }
+
+    if (!this.depositedCoinIds.includes(targetId)) {
+      return ACTION_IGNORED;
+    }
+
+    return ACTION_CORRECT;
+  }
+
+  validateAction(action: GameAction): ActionResult {
+    if (this.isWin || this.isWon) {
+      return ACTION_IGNORED;
+    }
+
+    const type = action.type;
+    const data = (
+      typeof action.data === "object" && action.data !== null ? action.data : {}
+    ) as GT031ActionPayload;
+
+    if (
+      type === "deposit_coin" ||
+      type === "place_coin" ||
+      type === "tap_coin" ||
+      type === "select_coin" ||
+      type === "drag_coin"
+    ) {
+      const coinId = data.coin_id ?? data.id ?? "";
+      return this.validateDepositAction(coinId);
+    }
+
+    if (
+      type === "remove_coin" ||
+      type === "undo_coin" ||
+      type === "withdraw_coin"
+    ) {
+      const coinId = data.coin_id ?? data.id;
+      return this.validateRemoveAction(coinId);
+    }
+
+    return ACTION_IGNORED;
+  }
+
+  private commitDepositCoin(coinId: string): void {
+    const coin = this.content.coins.find((c) => c.coin_id === coinId);
+    if (!coin || this.depositedCoinIds.includes(coinId)) {
+      return;
     }
 
     this.depositedCoinIds.push(coinId);
@@ -77,38 +151,34 @@ export class GT031Session extends TemplateGameSession<
 
     if (this.currentTotal === this.content.target_amount) {
       this.isWin = true;
+      this.isWon = true;
       const targetSlot = this.slots[0];
       if (targetSlot) {
         this.particles.push(...spawnParticlesAtSlot(targetSlot, 16));
       }
-      return ACTION_CORRECT;
+      this.recordEvent("game_completed", { score: 100 });
+      this.winSession();
     }
-
-    if (this.currentTotal > this.content.target_amount) {
-      return ACTION_RETRY;
-    }
-
-    return ACTION_CORRECT;
   }
 
-  private handleRemoveCoin(coinId?: string): ActionResult {
+  private commitRemoveCoin(coinId?: string): void {
     if (this.depositedCoinIds.length === 0) {
-      return ACTION_IGNORED;
+      return;
     }
 
     const targetId = coinId ?? this.depositedCoinIds.at(-1);
     if (!targetId) {
-      return ACTION_IGNORED;
+      return;
     }
 
     const coinIndex = this.depositedCoinIds.indexOf(targetId);
     if (coinIndex === -1) {
-      return ACTION_IGNORED;
+      return;
     }
 
     const coin = this.content.coins.find((c) => c.coin_id === targetId);
     if (!coin) {
-      return ACTION_IGNORED;
+      return;
     }
 
     this.depositedCoinIds.splice(coinIndex, 1);
@@ -121,17 +191,13 @@ export class GT031Session extends TemplateGameSession<
       current_total: this.currentTotal,
       target_amount: this.content.target_amount,
     });
-
-    return ACTION_CORRECT;
   }
 
-  validateAction(action: GameAction): ActionResult {
-    if (this.isWin) {
-      return ACTION_IGNORED;
-    }
-
+  override commit(action: GameAction): void {
     const type = action.type;
-    const data = (action.data as Record<string, unknown>) ?? {};
+    const data = (
+      typeof action.data === "object" && action.data !== null ? action.data : {}
+    ) as GT031ActionPayload;
 
     if (
       type === "deposit_coin" ||
@@ -140,8 +206,9 @@ export class GT031Session extends TemplateGameSession<
       type === "select_coin" ||
       type === "drag_coin"
     ) {
-      const coinId = (data.coin_id as string) || (data.id as string) || "";
-      return this.handleDepositCoin(coinId);
+      const coinId = data.coin_id ?? data.id ?? "";
+      this.commitDepositCoin(coinId);
+      return;
     }
 
     if (
@@ -149,15 +216,95 @@ export class GT031Session extends TemplateGameSession<
       type === "undo_coin" ||
       type === "withdraw_coin"
     ) {
-      const coinId = (data.coin_id as string) || (data.id as string);
-      return this.handleRemoveCoin(coinId);
+      const coinId = data.coin_id ?? data.id;
+      this.commitRemoveCoin(coinId);
+    }
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type !== "tap") {
+      return null;
     }
 
-    return ACTION_IGNORED;
+    const hitTolerance = 24;
+    for (let i = 0; i < this.content.coins.length; i++) {
+      const coin = this.content.coins[i];
+      const slot = this.slots[1 + i];
+      if (!(coin && slot)) {
+        continue;
+      }
+      const hw = (slot.hitW ?? slot.w) / 2 + hitTolerance;
+      const hh = (slot.hitH ?? slot.h) / 2 + hitTolerance;
+      if (
+        Math.abs(gesture.x - slot.x) <= hw &&
+        Math.abs(gesture.y - slot.y) <= hh
+      ) {
+        if (this.depositedCoinIds.includes(coin.coin_id)) {
+          return {
+            type: "remove_coin",
+            data: { coin_id: coin.coin_id },
+          };
+        }
+        return {
+          type: "deposit_coin",
+          data: { coin_id: coin.coin_id },
+        };
+      }
+    }
+
+    return null;
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = [];
+
+    const targetSlot = this.slots[0];
+    if (targetSlot) {
+      let state: EntityVisual = "idle";
+      if (this.currentTotal === this.content.target_amount) {
+        state = "correct";
+      } else if (this.currentTotal > this.content.target_amount) {
+        state = "incorrect";
+      }
+      entities.push({
+        id: "payment_target",
+        slotIndex: 0,
+        role: "target",
+        state,
+        x: targetSlot.x,
+        y: targetSlot.y,
+        w: targetSlot.w,
+        h: targetSlot.h,
+      });
+    }
+
+    for (let i = 0; i < this.content.coins.length; i++) {
+      const coin = this.content.coins[i];
+      const slot = this.slots[1 + i];
+      if (!(coin && slot)) {
+        continue;
+      }
+      const isDeposited = this.depositedCoinIds.includes(coin.coin_id);
+      entities.push({
+        id: coin.coin_id,
+        slotIndex: 1 + i,
+        role: "source",
+        state: isDeposited ? "selected" : "idle",
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   override checkWinCondition(): boolean {
-    return this.isWin;
+    return this.isWin || this.isWon;
   }
 
   getCurrentTotal(): number {

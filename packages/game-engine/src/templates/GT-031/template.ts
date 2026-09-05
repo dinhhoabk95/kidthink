@@ -82,4 +82,9 @@ export default defineTemplate({
   asset_kinds: ["emoji", "image"],
   scoring: STANDARD_SCORING,
   events: ["game_started", "coin_placed", "coin_removed", "game_completed"],
+  input: {
+    family: "tap",
+    verbs: ["tap"],
+    tolerance_px: 24,
+  },
 });

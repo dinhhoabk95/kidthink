@@ -30,12 +30,11 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
       expect(template.age_max).toBe(6);
       expect(template.banned_age_bands).toEqual(["3-4", "4-5"]);
       expect(template.requires_tap_fallback).toBe(true);
-      expect(template.events).toEqual([
-        "game_started",
-        "coin_placed",
-        "coin_removed",
-        "game_completed",
-      ]);
+      expect(template.input).toEqual({
+        family: "tap",
+        verbs: ["tap"],
+        tolerance_px: 24,
+      });
     });
   });
 
@@ -96,6 +95,23 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
   });
 
   describe("Session Gameplay, Deposit, Undo & Win Condition", () => {
+    it("validates actions purely without mutating state (BR-ENG-13)", () => {
+      const f = getFixture(0);
+      const session = new GT031Session(f.content, f.difficulty);
+      session.setupEntities();
+
+      expect(session.getCurrentTotal()).toBe(0);
+      expect(session.getDepositedCoinIds()).toEqual([]);
+
+      const v = session.validateAction({
+        type: "deposit_coin",
+        data: { coin_id: "c1_1" },
+      });
+      expect(v.valid).toBe(true);
+      expect(session.getCurrentTotal()).toBe(0); // State unchanged
+      expect(session.getDepositedCoinIds()).toEqual([]);
+    });
+
     it("runs full deposit and undo flow to win", () => {
       const f = getFixture(0); // Coins: 1, 1, 2. Target: 3.
       const session = new GT031Session(f.content, f.difficulty);
@@ -111,6 +127,7 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
         data: { coin_id: "c1_1" },
       });
       expect(dep1.valid).toBe(true);
+      session.commit({ type: "deposit_coin", data: { coin_id: "c1_1" } });
       expect(session.getCurrentTotal()).toBe(1);
       expect(session.checkWinCondition()).toBe(false);
 
@@ -128,6 +145,7 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
         data: { coin_id: "c1_1" },
       });
       expect(undo1.valid).toBe(true);
+      session.commit({ type: "remove_coin", data: { coin_id: "c1_1" } });
       expect(session.getCurrentTotal()).toBe(0);
 
       // Deposit 2-coin
@@ -136,6 +154,7 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
         data: { coin_id: "c2_1" },
       });
       expect(dep2.valid).toBe(true);
+      session.commit({ type: "deposit_coin", data: { coin_id: "c2_1" } });
       expect(session.getCurrentTotal()).toBe(2);
 
       // Deposit 1-coin -> Total = 3 === target
@@ -144,6 +163,7 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
         data: { coin_id: "c1_2" },
       });
       expect(dep3.valid).toBe(true);
+      session.commit({ type: "deposit_coin", data: { coin_id: "c1_2" } });
       expect(session.getCurrentTotal()).toBe(3);
       expect(session.checkWinCondition()).toBe(true);
 
@@ -167,10 +187,12 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
       session.setupEntities();
 
       // Deposit 5-coin -> hits 5 (win)
-      session.validateAction({
+      const dep5 = session.validateAction({
         type: "deposit_coin",
         data: { coin_id: "c5_1" },
       });
+      expect(dep5.valid).toBe(true);
+      session.commit({ type: "deposit_coin", data: { coin_id: "c5_1" } });
       expect(session.getCurrentTotal()).toBe(5);
       expect(session.checkWinCondition()).toBe(true);
 
@@ -178,11 +200,11 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
       const session2 = new GT031Session(f.content, f.difficulty);
       session2.setupEntities();
 
-      session2.validateAction({
+      session2.commit({
         type: "deposit_coin",
         data: { coin_id: "c2_1" },
       });
-      session2.validateAction({
+      session2.commit({
         type: "deposit_coin",
         data: { coin_id: "c2_2" },
       });
@@ -194,13 +216,21 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
         data: { coin_id: "c5_1" },
       });
       expect(overPay.valid).toBe(false);
-      expect(session2.getCurrentTotal()).toBe(9);
+      // Purity check: total remains 4
+      expect(session2.getCurrentTotal()).toBe(4);
       expect(session2.checkWinCondition()).toBe(false);
 
-      // Undo 5-coin -> total returns to 4
-      session2.validateAction({
+      // Undo c2_2 -> total becomes 2
+      session2.commit({
         type: "remove_coin",
-        data: { coin_id: "c5_1" },
+        data: { coin_id: "c2_2" },
+      });
+      expect(session2.getCurrentTotal()).toBe(2);
+
+      // Deposit c2_2 again -> 4
+      session2.commit({
+        type: "deposit_coin",
+        data: { coin_id: "c2_2" },
       });
       expect(session2.getCurrentTotal()).toBe(4);
 
@@ -210,6 +240,10 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
         data: { coin_id: "c1_1" },
       });
       expect(winAct.valid).toBe(true);
+      session2.commit({
+        type: "deposit_coin",
+        data: { coin_id: "c1_1" },
+      });
       expect(session2.getCurrentTotal()).toBe(5);
       expect(session2.checkWinCondition()).toBe(true);
     });
@@ -242,13 +276,13 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
       const session = new GT031Session(customContent, customDiff);
       session.setupEntities();
 
-      session.validateAction({
+      session.commit({
         type: "deposit_coin",
         data: { coin_id: "custom_7" },
       });
       expect(session.getCurrentTotal()).toBe(7);
 
-      session.validateAction({
+      session.commit({
         type: "deposit_coin",
         data: { coin_id: "custom_6" },
       });
@@ -266,6 +300,71 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
         data: {},
       });
       expect(invalid.valid).toBe(false);
+    });
+
+    it("handles unified tap gesture dispatch", () => {
+      const f = getFixture(0); // Coins: c1_1 (1), c1_2 (1), c2_1 (2). Target: 3.
+      const session = new GT031Session(f.content, f.difficulty);
+      session.prepareRound("5-6");
+
+      // Tap outside slots -> ignored
+      const miss = session.dispatch({
+        type: "tap",
+        x: 10,
+        y: 10,
+        timeMs: 100,
+      });
+      expect(miss).toEqual({ valid: false, feedback: "none" });
+
+      const coin0Slot = session.slots[1];
+      const coin2Slot = session.slots[3]; // c2_1
+      if (!(coin0Slot && coin2Slot)) {
+        throw new Error("coin slots must exist");
+      }
+
+      // Tap coin0 (c1_1) -> deposited
+      const tap0 = session.dispatch({
+        type: "tap",
+        x: coin0Slot.x,
+        y: coin0Slot.y,
+        timeMs: 200,
+      });
+      expect(tap0?.valid).toBe(true);
+      expect(session.getCurrentTotal()).toBe(1);
+
+      // Tap coin0 again -> removed
+      const tap0Again = session.dispatch({
+        type: "tap",
+        x: coin0Slot.x,
+        y: coin0Slot.y,
+        timeMs: 300,
+      });
+      expect(tap0Again?.valid).toBe(true);
+      expect(session.getCurrentTotal()).toBe(0);
+
+      // Tap coin0 again -> deposited (1)
+      session.dispatch({
+        type: "tap",
+        x: coin0Slot.x,
+        y: coin0Slot.y,
+        timeMs: 400,
+      });
+      expect(session.getCurrentTotal()).toBe(1);
+
+      // Tap coin2 (c2_1, 2) -> deposited (1 + 2 = 3 === target -> win)
+      const tap2 = session.dispatch({
+        type: "tap",
+        x: coin2Slot.x,
+        y: coin2Slot.y,
+        timeMs: 500,
+      });
+      expect(tap2?.valid).toBe(true);
+      expect(session.getCurrentTotal()).toBe(3);
+      expect(session.checkWinCondition()).toBe(true);
+
+      const view = session.getView();
+      expect(view.activePrompt).toBe(f.content.prompt);
+      expect(view.entities.length).toBe(1 + f.content.coins.length);
     });
   });
 });

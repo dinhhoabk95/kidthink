@@ -45,6 +45,8 @@ import { GT029_FIXTURES } from "#src/templates/GT-029/fixtures";
 import { GT029Session } from "#src/templates/GT-029/session";
 import { GT030_FIXTURES } from "#src/templates/GT-030/fixtures";
 import { GT030Session } from "#src/templates/GT-030/session";
+import { GT031_FIXTURES } from "#src/templates/GT-031/fixtures";
+import { GT031Session } from "#src/templates/GT-031/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -998,6 +1000,54 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
 
       expect(result?.valid).toBe(true);
       expect(session.getPlacedUnitsCount()).toBe(1);
+    });
+
+    it("GT-031: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f31 = GT031_FIXTURES[0];
+      if (!f31) {
+        throw new Error("GT031_FIXTURES[0] must exist");
+      }
+      const session = new GT031Session(f31.content, f31.difficulty);
+      session.prepareRound("5-6");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.getCurrentTotal()).toBe(0);
+    });
+
+    it("GT-031: chạm vào slot coin commit deposit_coin thành công", () => {
+      const f31 = GT031_FIXTURES[0];
+      if (!f31) {
+        throw new Error("GT031_FIXTURES[0] must exist");
+      }
+      const session = new GT031Session(f31.content, f31.difficulty);
+      session.prepareRound("5-6");
+
+      const coinSlot = session.slots[1];
+      if (!coinSlot) {
+        throw new Error("coinSlot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: coinSlot.x,
+        y: coinSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.getCurrentTotal()).toBe(1);
     });
   });
 
