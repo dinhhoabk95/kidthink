@@ -97,6 +97,11 @@ export default defineTemplate({
   },
   asset_kinds: ["emoji", "image", "audio"],
   scoring: STANDARD_SCORING,
+  input: {
+    family: "tap",
+    verbs: ["tap"],
+    tolerance_px: 24,
+  },
   events: [
     "game_started",
     "pattern_played",

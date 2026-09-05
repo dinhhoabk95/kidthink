@@ -51,6 +51,8 @@ import { GT032_FIXTURES } from "#src/templates/GT-032/fixtures";
 import { GT032Session } from "#src/templates/GT-032/session";
 import { GT033_FIXTURES } from "#src/templates/GT-033/fixtures";
 import { GT033Session } from "#src/templates/GT-033/session";
+import { GT034_FIXTURES } from "#src/templates/GT-034/fixtures";
+import { GT034Session } from "#src/templates/GT-034/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -1176,6 +1178,57 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       expect(session.getPlacedCells()[blankIdx]).toBe(
         f33.content.palette[1]?.color_id
       );
+    });
+
+    it("GT-034: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f34 = GT034_FIXTURES[0];
+      if (!f34) {
+        throw new Error("GT034_FIXTURES[0] must exist");
+      }
+      const session = new GT034Session(f34.content, f34.difficulty);
+      session.prepareRound("5-6");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.userSteps).toEqual([]);
+    });
+
+    it("GT-034: chạm vào instrument slot commit tap_instrument thành công", () => {
+      const f34 = GT034_FIXTURES[0];
+      if (!f34) {
+        throw new Error("GT034_FIXTURES[0] must exist");
+      }
+      const session = new GT034Session(f34.content, f34.difficulty);
+      session.prepareRound("5-6");
+
+      const patternLen = f34.content.target_pattern.length;
+      const instSlot = session.slots[patternLen]; // First instrument
+      if (!instSlot) {
+        throw new Error("instSlot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: instSlot.x,
+        y: instSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.userSteps).toEqual([
+        f34.content.instruments[0]?.instrument_id,
+      ]);
     });
   });
 

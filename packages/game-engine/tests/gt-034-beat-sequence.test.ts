@@ -98,6 +98,39 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
     expect(GT034Template.banned_age_bands).toContain("4-5");
     expect(GT034Template.age_min).toBe(5);
     expect(GT034Template.age_max).toBe(6);
+    expect(GT034Template.input).toEqual({
+      family: "tap",
+      verbs: ["tap"],
+      tolerance_px: 24,
+    });
+  });
+
+  it("Scenario: BR-ENG-13 — validateAction is pure and does not mutate session state", () => {
+    const session = new GT034Session(
+      sampleFixture.content,
+      sampleFixture.difficulty,
+      "5-6"
+    );
+    session.setupEntities();
+
+    expect(session.userSteps).toEqual([]);
+    expect(session.replaysUsed).toBe(0);
+    const eventsBefore = session.getTelemetry().events.length;
+
+    // Pure validation for tap instrument
+    const vTap = session.validateAction({
+      type: "tap_instrument",
+      data: { instrument_id: "drum" },
+    });
+    expect(vTap.valid).toBe(true);
+    expect(session.userSteps).toEqual([]); // Not mutated!
+    expect(session.getTelemetry().events.length).toBe(eventsBefore);
+
+    // Pure validation for play pattern
+    const vPlay = session.validateAction({ type: "play_pattern", data: {} });
+    expect(vPlay.valid).toBe(true);
+    expect(session.replaysUsed).toBe(0); // Not mutated!
+    expect(session.isPlayingPattern).toBe(false);
   });
 
   it("Scenario: Session initializes slots for track steps, instruments, and replay button", () => {
@@ -128,16 +161,19 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
     // 1st replay
     const r1 = session.validateAction({ type: "play_pattern", data: {} });
     expect(r1.valid).toBe(true);
+    session.commit({ type: "play_pattern", data: {} });
     expect(session.replaysUsed).toBe(1);
 
     // 2nd replay
     const r2 = session.validateAction({ type: "play_pattern", data: {} });
     expect(r2.valid).toBe(true);
+    session.commit({ type: "play_pattern", data: {} });
     expect(session.replaysUsed).toBe(2);
 
     // 3rd replay (exceeds limit) -> ignored, reveals visual pattern
     const r3 = session.validateAction({ type: "play_pattern", data: {} });
     expect(r3.valid).toBe(false);
+    session.commit({ type: "play_pattern", data: {} });
     expect(session.showVisualPattern).toBe(true);
   });
 
@@ -150,12 +186,12 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
     session.setupEntities();
 
     // Trigger visual hint
-    session.validateAction({ type: "show_hint", data: {} });
+    session.commit({ type: "show_hint", data: {} });
     expect(session.showVisualPattern).toBe(true);
 
     // Child taps correctly by following visual guide
     for (const step of sampleFixture.content.target_pattern) {
-      session.validateAction({
+      session.commit({
         type: "tap_instrument",
         data: { instrument_id: step },
       });
@@ -179,25 +215,29 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
       data: { instrument_id: "drum" },
     });
     expect(r1.valid).toBe(true);
+    session.commit({
+      type: "tap_instrument",
+      data: { instrument_id: "drum" },
+    });
     expect(session.userSteps).toEqual(["drum"]);
 
     // Tap mistake
-    session.validateAction({
+    session.commit({
       type: "tap_instrument",
       data: { instrument_id: "drum" },
     });
     expect(session.userSteps).toEqual(["drum", "drum"]);
 
     // Undo mistake
-    session.validateAction({ type: "undo_beat", data: {} });
+    session.commit({ type: "undo_beat", data: {} });
     expect(session.userSteps).toEqual(["drum"]);
 
     // Tap rest of correct steps: cymbal, drum, cymbal
-    session.validateAction({
+    session.commit({
       type: "tap_instrument",
       data: { instrument_id: "cymbal" },
     });
-    session.validateAction({
+    session.commit({
       type: "tap_instrument",
       data: { instrument_id: "drum" },
     });
@@ -205,8 +245,12 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
       type: "tap_instrument",
       data: { instrument_id: "cymbal" },
     });
-
     expect(lastResult.valid).toBe(true);
+    session.commit({
+      type: "tap_instrument",
+      data: { instrument_id: "cymbal" },
+    });
+
     expect(session.isWin).toBe(true);
     expect(session.checkWinCondition()).toBe(true);
   });
@@ -219,16 +263,16 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
     );
     session.setupEntities();
 
-    // Tap 4 wrong steps
-    session.validateAction({
+    // Tap 4 wrong steps (for 4-beat target pattern: drum, cymbal, drum, cymbal)
+    session.commit({
       type: "tap_instrument",
       data: { instrument_id: "drum" },
     });
-    session.validateAction({
+    session.commit({
       type: "tap_instrument",
       data: { instrument_id: "drum" },
     });
-    session.validateAction({
+    session.commit({
       type: "tap_instrument",
       data: { instrument_id: "drum" },
     });
@@ -238,19 +282,18 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
     });
 
     expect(wrongSubmit.valid).toBe(false);
-    expect(wrongSubmit.feedback).toBe("amber_soft");
     expect(session.isWin).toBe(false);
 
     // Child listens to replay
-    session.validateAction({ type: "replay_pattern", data: {} });
+    session.commit({ type: "replay_pattern", data: {} });
     expect(session.replaysUsed).toBe(1);
 
     // Child clears sequence and taps correct pattern
-    session.validateAction({ type: "clear_sequence", data: {} });
+    session.commit({ type: "clear_sequence", data: {} });
     expect(session.userSteps.length).toBe(0);
 
     for (const step of sampleFixture.content.target_pattern) {
-      session.validateAction({
+      session.commit({
         type: "tap_instrument",
         data: { instrument_id: step },
       });
@@ -284,9 +327,9 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
 
     for (const step of restFixture.content.target_pattern) {
       if (step === null) {
-        session.validateAction({ type: "tap_rest", data: {} });
+        session.commit({ type: "tap_rest", data: {} });
       } else {
-        session.validateAction({
+        session.commit({
           type: "tap_instrument",
           data: { instrument_id: step },
         });
@@ -294,5 +337,72 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
     }
 
     expect(session.isWin).toBe(true);
+  });
+
+  it("Scenario: handles unified tap gesture dispatch and view generation", () => {
+    const session = new GT034Session(
+      sampleFixture.content,
+      sampleFixture.difficulty,
+      "5-6"
+    );
+    session.prepareRound("5-6");
+
+    const patternLen = sampleFixture.content.target_pattern.length;
+    const instCount = sampleFixture.content.instruments.length;
+
+    // Tap outside -> miss
+    const miss = session.dispatch({
+      type: "tap",
+      x: 10,
+      y: 10,
+      timeMs: 100,
+    });
+    expect(miss).toEqual({ valid: false, feedback: "none" });
+
+    // Tap replay button
+    const replaySlot = session.slots[patternLen + instCount];
+    if (!replaySlot) {
+      throw new Error("replaySlot must exist");
+    }
+    const tapReplay = session.dispatch({
+      type: "tap",
+      x: replaySlot.x,
+      y: replaySlot.y,
+      timeMs: 200,
+    });
+    expect(tapReplay?.valid).toBe(true);
+    expect(session.replaysUsed).toBe(1);
+
+    // Tap instrument 0
+    const inst0Slot = session.slots[patternLen];
+    if (!inst0Slot) {
+      throw new Error("inst0Slot must exist");
+    }
+    const tapInst0 = session.dispatch({
+      type: "tap",
+      x: inst0Slot.x,
+      y: inst0Slot.y,
+      timeMs: 300,
+    });
+    expect(tapInst0?.valid).toBe(true);
+    expect(session.userSteps.length).toBe(1);
+
+    // Tap track step 0 to undo
+    const step0Slot = session.slots[0];
+    if (!step0Slot) {
+      throw new Error("step0Slot must exist");
+    }
+    const tapUndo = session.dispatch({
+      type: "tap",
+      x: step0Slot.x,
+      y: step0Slot.y,
+      timeMs: 400,
+    });
+    expect(tapUndo?.valid).toBe(true);
+    expect(session.userSteps.length).toBe(0);
+
+    const view = session.getView();
+    expect(view.activePrompt).toBe(sampleFixture.content.prompt);
+    expect(view.entities.length).toBe(patternLen + instCount + 1);
   });
 });

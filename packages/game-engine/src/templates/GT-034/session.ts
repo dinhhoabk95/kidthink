@@ -7,6 +7,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { getTouchFloor } from "#src/layout/constants";
 import type { Slot } from "#src/layout/types";
 import { type BeatInstrument, BeatSystem } from "#src/systems/beat-system";
@@ -23,6 +29,11 @@ import {
   updateParticles,
 } from "../shared-render.js";
 import type { GT034Content, GT034Difficulty } from "./template.js";
+
+interface GT034ActionPayload {
+  readonly instrument_id?: string;
+  readonly id?: string;
+}
 
 export class GT034Session extends TemplateGameSession<
   GT034Content,
@@ -44,7 +55,7 @@ export class GT034Session extends TemplateGameSession<
   constructor(
     content: GT034Content,
     difficulty: GT034Difficulty,
-    _ageBand: AgeBand = "5-6"
+    _ageBandOrSeed?: AgeBand | number
   ) {
     super(content, difficulty);
 
@@ -165,48 +176,114 @@ export class GT034Session extends TemplateGameSession<
       currentIndex < this.content.target_pattern.length ? currentIndex : null;
   }
 
+  private verifyPatternMatched(
+    steps: readonly (string | null)[] = this.userSteps
+  ): boolean {
+    const target = this.content.target_pattern;
+    if (steps.length !== target.length) {
+      return false;
+    }
+    for (let i = 0; i < target.length; i++) {
+      if (steps[i] !== target[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private validatePlayPattern(): ActionResult {
+    const replayLimit = this.difficulty.replay_limit ?? 3;
+    if (this.replaysUsed >= replayLimit) {
+      return ACTION_IGNORED;
+    }
+    return ACTION_CORRECT;
+  }
+
+  private validateTapInstrument(instrumentId: string): ActionResult {
+    const instrument = this.content.instruments.find(
+      (inst) => inst.instrument_id === instrumentId
+    );
+    if (
+      !instrument ||
+      this.userSteps.length >= this.content.target_pattern.length
+    ) {
+      return ACTION_IGNORED;
+    }
+
+    if (this.userSteps.length + 1 === this.content.target_pattern.length) {
+      const nextSteps = [...this.userSteps, instrumentId];
+      return this.verifyPatternMatched(nextSteps)
+        ? ACTION_CORRECT
+        : ACTION_RETRY;
+    }
+
+    return ACTION_CORRECT;
+  }
+
+  private validateTapRest(): ActionResult {
+    if (this.userSteps.length >= this.content.target_pattern.length) {
+      return ACTION_IGNORED;
+    }
+
+    if (this.userSteps.length + 1 === this.content.target_pattern.length) {
+      const nextSteps = [...this.userSteps, null];
+      return this.verifyPatternMatched(nextSteps)
+        ? ACTION_CORRECT
+        : ACTION_RETRY;
+    }
+
+    return ACTION_CORRECT;
+  }
+
+  private validateInstrumentAction(data: GT034ActionPayload): ActionResult {
+    const instrumentId = data.instrument_id ?? data.id ?? "";
+    return this.validateTapInstrument(instrumentId);
+  }
+
   validateAction(action: GameAction): ActionResult {
+    if (this.isWin || this.isWon) {
+      return ACTION_IGNORED;
+    }
+
     const type = action.type;
-    const data = (action.data as Record<string, unknown>) ?? {};
+    const data = (
+      typeof action.data === "object" && action.data !== null ? action.data : {}
+    ) as GT034ActionPayload;
 
     switch (type) {
       case "play_pattern":
       case "replay_pattern":
       case "listen":
-        return this.handlePlayPattern(type);
+        return this.validatePlayPattern();
       case "show_hint":
-        this.showVisualPattern = true;
         return ACTION_CORRECT;
       case "tap_instrument":
       case "play_instrument":
-      case "tap_item": {
-        const instrumentId =
-          (data.instrument_id as string) || (data.id as string) || "";
-        return this.handleTapInstrument(instrumentId);
-      }
+      case "tap_item":
+        return this.validateInstrumentAction(data);
       case "tap_rest":
       case "rest":
-        return this.handleTapRest();
+        return this.validateTapRest();
       case "undo_beat":
       case "undo_step":
       case "undo":
-        return this.handleUndoBeat();
+        return this.userSteps.length === 0 ? ACTION_IGNORED : ACTION_CORRECT;
       case "clear_sequence":
       case "reset":
-        return this.handleClearSequence();
+        return ACTION_CORRECT;
       case "submit_sequence":
       case "submit":
-        return this.handleSubmitSequence();
+        return this.verifyPatternMatched() ? ACTION_CORRECT : ACTION_RETRY;
       default:
         return ACTION_IGNORED;
     }
   }
 
-  private handlePlayPattern(_type: string): ActionResult {
+  private commitPlayPattern(): void {
     const replayLimit = this.difficulty.replay_limit ?? 3;
     if (this.replaysUsed >= replayLimit) {
       this.showVisualPattern = true;
-      return ACTION_IGNORED;
+      return;
     }
 
     this.replaysUsed++;
@@ -225,20 +302,41 @@ export class GT034Session extends TemplateGameSession<
       is_replay: this.replaysUsed > 1,
       round_index: 0,
     });
-
-    return ACTION_CORRECT;
   }
 
-  private handleTapInstrument(instrumentId: string): ActionResult {
+  private commitStepCompletion(stepIndex: number): void {
+    if (this.userSteps.length !== this.content.target_pattern.length) {
+      return;
+    }
+
+    if (this.verifyPatternMatched()) {
+      this.isWin = true;
+      this.isWon = true;
+      this.recordEvent("game_completed", {
+        duration_ms: 12_000,
+        rounds_total: 1,
+        rounds_correct: 1,
+      });
+      this.sfxEngine.play("pop_celebrate");
+      const lastSlot = this.slots[stepIndex];
+      if (lastSlot) {
+        this.particles.push(...spawnParticlesAtSlot(lastSlot, 20));
+      }
+      this.winSession();
+    } else {
+      this.sfxEngine.play("amber_soft");
+    }
+  }
+
+  private commitTapInstrument(instrumentId: string): void {
     const instrument = this.content.instruments.find(
       (inst) => inst.instrument_id === instrumentId
     );
-
     if (
       !instrument ||
       this.userSteps.length >= this.content.target_pattern.length
     ) {
-      return ACTION_IGNORED;
+      return;
     }
 
     const stepIndex = this.userSteps.length;
@@ -258,12 +356,12 @@ export class GT034Session extends TemplateGameSession<
       round_index: 0,
     });
 
-    return this.checkCompletionAtStep(stepIndex);
+    this.commitStepCompletion(stepIndex);
   }
 
-  private handleTapRest(): ActionResult {
+  private commitTapRest(): void {
     if (this.userSteps.length >= this.content.target_pattern.length) {
-      return ACTION_IGNORED;
+      return;
     }
 
     const stepIndex = this.userSteps.length;
@@ -277,49 +375,11 @@ export class GT034Session extends TemplateGameSession<
       round_index: 0,
     });
 
-    return this.checkCompletionAtStep(stepIndex);
+    this.commitStepCompletion(stepIndex);
   }
 
-  private checkCompletionAtStep(stepIndex: number): ActionResult {
-    if (this.userSteps.length !== this.content.target_pattern.length) {
-      return ACTION_CORRECT;
-    }
-
-    if (this.checkWinCondition()) {
-      this.isWin = true;
-      this.recordEvent("game_completed", {
-        duration_ms: 12_000,
-        rounds_total: 1,
-        rounds_correct: 1,
-      });
-      this.sfxEngine.play("pop_celebrate");
-      const lastSlot = this.slots[stepIndex];
-      if (lastSlot) {
-        this.particles.push(...spawnParticlesAtSlot(lastSlot, 20));
-      }
-      return ACTION_CORRECT;
-    }
-
-    this.sfxEngine.play("amber_soft");
-    return ACTION_RETRY;
-  }
-
-  private handleUndoBeat(): ActionResult {
-    if (this.userSteps.length === 0) {
-      return ACTION_IGNORED;
-    }
-
-    this.userSteps.pop();
-    return ACTION_CORRECT;
-  }
-
-  private handleClearSequence(): ActionResult {
-    this.userSteps = [];
-    return ACTION_CORRECT;
-  }
-
-  private handleSubmitSequence(): ActionResult {
-    const isCorrect = this.checkWinCondition();
+  private commitSubmitSequence(): void {
+    const isCorrect = this.verifyPatternMatched();
 
     this.recordEvent("sequence_submitted", {
       is_correct: isCorrect,
@@ -328,30 +388,221 @@ export class GT034Session extends TemplateGameSession<
 
     if (isCorrect) {
       this.isWin = true;
+      this.isWon = true;
       this.recordEvent("game_completed", {
         duration_ms: 12_000,
         rounds_total: 1,
         rounds_correct: 1,
       });
       this.sfxEngine.play("pop_celebrate");
-      return ACTION_CORRECT;
+      this.winSession();
+    } else {
+      this.sfxEngine.play("amber_soft");
+    }
+  }
+
+  override commit(action: GameAction): void {
+    const type = action.type;
+    const data = (
+      typeof action.data === "object" && action.data !== null ? action.data : {}
+    ) as GT034ActionPayload;
+
+    switch (type) {
+      case "play_pattern":
+      case "replay_pattern":
+      case "listen":
+        this.commitPlayPattern();
+        break;
+      case "show_hint":
+        this.showVisualPattern = true;
+        break;
+      case "tap_instrument":
+      case "play_instrument":
+      case "tap_item":
+        this.commitTapInstrument(data.instrument_id ?? data.id ?? "");
+        break;
+      case "tap_rest":
+      case "rest":
+        this.commitTapRest();
+        break;
+      case "undo_beat":
+      case "undo_step":
+      case "undo":
+        this.userSteps.pop();
+        break;
+      case "clear_sequence":
+      case "reset":
+        this.userSteps = [];
+        break;
+      case "submit_sequence":
+      case "submit":
+        this.commitSubmitSequence();
+        break;
+      default:
+        break;
+    }
+  }
+
+  private findTappedReplay(
+    gx: number,
+    gy: number,
+    tol: number,
+    replaySlot?: Slot
+  ): boolean {
+    if (!replaySlot) {
+      return false;
+    }
+    const hw = (replaySlot.hitW ?? replaySlot.w) / 2 + tol;
+    const hh = (replaySlot.hitH ?? replaySlot.h) / 2 + tol;
+    return (
+      Math.abs(gx - replaySlot.x) <= hw && Math.abs(gy - replaySlot.y) <= hh
+    );
+  }
+
+  private findTappedInstrumentId(
+    gx: number,
+    gy: number,
+    tol: number,
+    patternLen: number,
+    instCount: number
+  ): string | null {
+    for (let i = 0; i < instCount; i++) {
+      const inst = this.content.instruments[i];
+      const slot = this.slots[patternLen + i];
+      if (!(inst && slot)) {
+        continue;
+      }
+      const hw = (slot.hitW ?? slot.w) / 2 + tol;
+      const hh = (slot.hitH ?? slot.h) / 2 + tol;
+      if (Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh) {
+        return inst.instrument_id;
+      }
+    }
+    return null;
+  }
+
+  private isTappedLastStep(gx: number, gy: number, tol: number): boolean {
+    if (this.userSteps.length === 0) {
+      return false;
+    }
+    const slot = this.slots[this.userSteps.length - 1];
+    if (!slot) {
+      return false;
+    }
+    const hw = (slot.hitW ?? slot.w) / 2 + tol;
+    const hh = (slot.hitH ?? slot.h) / 2 + tol;
+    return Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type !== "tap") {
+      return null;
     }
 
-    this.sfxEngine.play("amber_soft");
-    return ACTION_RETRY;
+    const hitTolerance = 24;
+    const patternLen = this.content.target_pattern.length;
+    const instCount = this.content.instruments.length;
+
+    if (
+      this.findTappedReplay(
+        gesture.x,
+        gesture.y,
+        hitTolerance,
+        this.slots[patternLen + instCount]
+      )
+    ) {
+      return { type: "play_pattern", data: {} };
+    }
+
+    const instId = this.findTappedInstrumentId(
+      gesture.x,
+      gesture.y,
+      hitTolerance,
+      patternLen,
+      instCount
+    );
+    if (instId) {
+      return {
+        type: "tap_instrument",
+        data: { instrument_id: instId },
+      };
+    }
+
+    if (this.isTappedLastStep(gesture.x, gesture.y, hitTolerance)) {
+      return { type: "undo_beat", data: {} };
+    }
+
+    return null;
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = [];
+    const patternLen = this.content.target_pattern.length;
+    const instCount = this.content.instruments.length;
+
+    for (let i = 0; i < patternLen; i++) {
+      const slot = this.slots[i];
+      if (!slot) {
+        continue;
+      }
+      let state: EntityVisual = "idle";
+      if (this.activePlayingIndex === i) {
+        state = "selected";
+      } else if (this.userSteps[i] !== undefined) {
+        state = "correct";
+      }
+      entities.push({
+        id: `step_${i}`,
+        slotIndex: i,
+        role: "target",
+        state,
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+
+    for (let i = 0; i < instCount; i++) {
+      const inst = this.content.instruments[i];
+      const slot = this.slots[patternLen + i];
+      if (!(inst && slot)) {
+        continue;
+      }
+      entities.push({
+        id: inst.instrument_id,
+        slotIndex: patternLen + i,
+        role: "source",
+        state: "idle",
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+
+    const replaySlot = this.slots[patternLen + instCount];
+    if (replaySlot) {
+      entities.push({
+        id: "replay_btn",
+        slotIndex: patternLen + instCount,
+        role: "source",
+        state: this.isPlayingPattern ? "selected" : "idle",
+        x: replaySlot.x,
+        y: replaySlot.y,
+        w: replaySlot.w,
+        h: replaySlot.h,
+      });
+    }
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   override checkWinCondition(): boolean {
-    const target = this.content.target_pattern;
-    if (this.userSteps.length !== target.length) {
-      return false;
-    }
-    for (let i = 0; i < target.length; i++) {
-      if (this.userSteps[i] !== target[i]) {
-        return false;
-      }
-    }
-    return true;
+    return this.isWin || this.isWon || this.verifyPatternMatched();
   }
 
   render(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
