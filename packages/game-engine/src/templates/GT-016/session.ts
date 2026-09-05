@@ -6,6 +6,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
@@ -27,6 +33,114 @@ import {
 } from "../shared-render.js";
 import { drawClockFace, insetBox, squareBox } from "../shared-render-shapes.js";
 import type { GT016Content, GT016Difficulty } from "./template.js";
+
+function isPointInSlot(slot: Slot, x: number, y: number): boolean {
+  const hw = (slot.hitW ?? slot.w) / 2;
+  const hh = (slot.hitH ?? slot.h) / 2;
+  return (
+    x >= slot.x - hw && x <= slot.x + hw && y >= slot.y - hh && y <= slot.y + hh
+  );
+}
+
+function findHitSlotIndex(
+  slots: readonly Slot[],
+  count: number,
+  x: number,
+  y: number
+): number {
+  for (let i = 0; i < count; i++) {
+    const slot = slots[i];
+    if (slot && isPointInSlot(slot, x, y)) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+function stepClockTime(
+  current: ClockTime,
+  delta: number,
+  step: 30 | 60
+): ClockTime {
+  let totalMinutes = current.hour * 60 + current.minute;
+  if (delta > 0) {
+    totalMinutes += step;
+  } else if (delta < 0) {
+    totalMinutes -= step;
+  }
+  let hour = Math.floor(totalMinutes / 60) % 12;
+  if (hour <= 0) {
+    hour = 12;
+  }
+  const minute = (totalMinutes % 60 >= 30 && step === 30 ? 30 : 0) as 0 | 30;
+  return { hour, minute };
+}
+
+function validateSelectOption(
+  data: unknown,
+  options: readonly { is_correct: boolean }[]
+): ActionResult {
+  if (typeof data !== "number") {
+    return ACTION_RETRY;
+  }
+  const opt = options[data];
+  return opt?.is_correct ? ACTION_CORRECT : ACTION_RETRY;
+}
+
+function validateMatchCard(
+  data: unknown,
+  cards: readonly { card_id: string; hour: number; minute: number }[],
+  currentTime: ClockTime
+): ActionResult {
+  if (typeof data !== "string") {
+    return ACTION_RETRY;
+  }
+  const card = cards.find((c) => c.card_id === data);
+  if (!card) {
+    return ACTION_IGNORED;
+  }
+  return isSameTime(currentTime, { hour: card.hour, minute: card.minute })
+    ? ACTION_CORRECT
+    : ACTION_RETRY;
+}
+
+function toReadAction(
+  gesture: Gesture,
+  slots: readonly Slot[],
+  optionCount: number
+): GameAction | null {
+  if (gesture.type !== "tap") {
+    return null;
+  }
+  const hitIdx = findHitSlotIndex(slots, optionCount, gesture.x, gesture.y);
+  return hitIdx >= 0 ? { type: "select_option", data: hitIdx } : null;
+}
+
+function toMatchAction(
+  gesture: Gesture,
+  slots: readonly Slot[],
+  cards: readonly { card_id: string }[]
+): GameAction | null {
+  if (gesture.type !== "tap") {
+    return null;
+  }
+  const hitIdx = findHitSlotIndex(slots, cards.length, gesture.x, gesture.y);
+  if (hitIdx < 0) {
+    return null;
+  }
+  const card = cards[hitIdx];
+  return card ? { type: "match_card", data: card.card_id } : null;
+}
+
+function toSetAction(gesture: Gesture): GameAction | null {
+  if (gesture.type === "adjust") {
+    return { type: "adjust_time", data: { delta: gesture.delta } };
+  }
+  if (gesture.type === "commit" || gesture.type === "tap") {
+    return { type: "submit_time", data: null };
+  }
+  return null;
+}
 
 export class ClockHandsSession extends TemplateGameSession<
   GT016Content,
@@ -158,17 +272,128 @@ export class ClockHandsSession extends TemplateGameSession<
     return false;
   }
 
+  applyTimeDelta(delta: number): void {
+    this.currentTime = stepClockTime(
+      this.currentTime,
+      delta,
+      this.difficulty.minute_step
+    );
+    this.recordEvent("hand_rotated", {
+      hand: "minute",
+      time: formatClockTime(this.currentTime),
+    });
+  }
+
+  override commit(action: GameAction): void {
+    if (action.type === "select_option" && typeof action.data === "number") {
+      this.selectOption(action.data);
+      return;
+    }
+    if (action.type === "match_card" && typeof action.data === "string") {
+      this.matchCard(action.data);
+      return;
+    }
+    if (action.type === "adjust_time") {
+      const delta =
+        typeof action.data === "object" &&
+        action.data !== null &&
+        "delta" in action.data
+          ? Number(Reflect.get(action.data, "delta"))
+          : 0;
+      this.applyTimeDelta(delta);
+      return;
+    }
+    if (action.type === "submit_time") {
+      this.submitCurrentTime();
+    }
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (this.content.mode === "read") {
+      return toReadAction(gesture, this.slots, this.content.options.length);
+    }
+    if (this.content.mode === "match") {
+      return toMatchAction(gesture, this.slots, this.content.activity_cards);
+    }
+    if (this.content.mode === "set") {
+      return toSetAction(gesture);
+    }
+    return null;
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = [];
+
+    if (this.content.mode === "match") {
+      this.content.activity_cards.forEach((card, i) => {
+        const slot = this.slots[i];
+        if (slot) {
+          const isMatched = this.matchedCardIds.has(card.card_id);
+          entities.push({
+            id: card.card_id,
+            slotIndex: i,
+            role: "target",
+            state: isMatched ? "correct" : "idle",
+            x: slot.x,
+            y: slot.y,
+            w: slot.w,
+            h: slot.h,
+          });
+        }
+      });
+    } else if (this.content.mode === "read") {
+      this.content.options.forEach((opt, i) => {
+        const slot = this.slots[i];
+        if (slot) {
+          const chosen = this.selectedOptionIndex === i;
+          let state: EntityVisual = "idle";
+          if (chosen) {
+            state = opt.is_correct ? "correct" : "incorrect";
+          }
+          entities.push({
+            id: `opt-${i}`,
+            slotIndex: i,
+            role: "source",
+            state,
+            x: slot.x,
+            y: slot.y,
+            w: slot.w,
+            h: slot.h,
+          });
+        }
+      });
+    } else {
+      entities.push({
+        id: "clock-face",
+        slotIndex: 0,
+        role: "neutral",
+        state: "idle",
+        x: 480,
+        y: 180,
+        w: 240,
+        h: 240,
+      });
+    }
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
+  }
+
   validateAction(action: GameAction): ActionResult {
-    if (action.type === "set_time") {
-      return ACTION_IGNORED;
+    if (action.type === "adjust_time") {
+      return ACTION_CORRECT;
     }
     if (action.type === "select_option") {
-      if (typeof action.data !== "number") {
-        return ACTION_RETRY;
-      }
-      const idx = action.data;
-      const opt = this.content.options[idx];
-      return opt?.is_correct ? ACTION_CORRECT : ACTION_RETRY;
+      return validateSelectOption(action.data, this.content.options);
+    }
+    if (action.type === "match_card") {
+      return validateMatchCard(
+        action.data,
+        this.content.activity_cards,
+        this.currentTime
+      );
     }
     if (action.type === "submit_time") {
       return isSameTime(this.currentTime, this.content.target_time)
