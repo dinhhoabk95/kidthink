@@ -114,6 +114,11 @@ export default defineTemplate({
   age_min: 5,
   age_max: 6,
   requires_tap_fallback: true,
+  input: {
+    family: "drag",
+    verbs: ["drag", "drop", "tap"],
+    tolerance_px: 24,
+  },
   asset_kinds: ["emoji", "image", "audio"],
   scoring: {
     max_score: 100,

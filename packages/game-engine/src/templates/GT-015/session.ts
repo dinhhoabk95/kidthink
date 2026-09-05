@@ -6,6 +6,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import {
@@ -56,6 +62,83 @@ function extractFillCellData(
     }
   }
   return null;
+}
+
+function isPointInSlot(slot: Slot, x: number, y: number): boolean {
+  const hw = (slot.hitW ?? slot.w) / 2;
+  const hh = (slot.hitH ?? slot.h) / 2;
+  return (
+    x >= slot.x - hw && x <= slot.x + hw && y >= slot.y - hh && y <= slot.y + hh
+  );
+}
+
+function findHitPaletteIndex(
+  slots: readonly Slot[],
+  cellCount: number,
+  symbolCount: number,
+  x: number,
+  y: number
+): number {
+  for (let i = 0; i < symbolCount; i++) {
+    const slot = slots[cellCount + i];
+    if (slot && isPointInSlot(slot, x, y)) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+function findHitCellCoords(
+  slots: readonly Slot[],
+  size: number,
+  x: number,
+  y: number
+): { row: number; col: number } | null {
+  for (let r = 0; r < size; r++) {
+    for (let c = 0; c < size; c++) {
+      const slot = slots[r * size + c];
+      if (slot && isPointInSlot(slot, x, y)) {
+        return { row: r, col: c };
+      }
+    }
+  }
+  return null;
+}
+
+function resolveDropSymbolId(
+  gesture: Extract<Gesture, { type: "drop" }>,
+  selectedSymbolId: string | null,
+  slots: readonly Slot[],
+  cellCount: number,
+  symbols: readonly { symbol_id: string }[]
+): string | null {
+  if (selectedSymbolId) {
+    return selectedSymbolId;
+  }
+  const paletteIndex = findHitPaletteIndex(
+    slots,
+    cellCount,
+    symbols.length,
+    gesture.fromX,
+    gesture.fromY
+  );
+  if (paletteIndex >= 0) {
+    return symbols[paletteIndex]?.symbol_id ?? null;
+  }
+  return null;
+}
+
+function resolveCellVisualState(
+  isWrong: boolean,
+  hasValue: boolean
+): EntityVisual {
+  if (isWrong) {
+    return "incorrect";
+  }
+  if (hasValue) {
+    return "correct";
+  }
+  return "idle";
 }
 
 export class SudokuMiniSession extends TemplateGameSession<
@@ -244,6 +327,164 @@ export class SudokuMiniSession extends TemplateGameSession<
     this.cellStates.clear();
     this.activeViolations = [];
     this.selectedSymbolId = null;
+  }
+
+  getStagedItemId(): string | null {
+    return this.selectedSymbolId;
+  }
+
+  override commit(action: GameAction): void {
+    if (action.type === "fill_cell") {
+      const payload = extractFillCellData(action.data);
+      if (payload) {
+        this.fillCell(payload.row, payload.col, payload.symbol_id);
+        this.selectedSymbolId = null;
+      }
+    }
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    const cellCount = this.content.grid_size * this.content.grid_size;
+    if (gesture.type === "drop") {
+      return this.toDropAction(gesture, cellCount);
+    }
+    if (gesture.type === "tap") {
+      return this.toTapAction(gesture, cellCount);
+    }
+    return null;
+  }
+
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>,
+    cellCount: number
+  ): GameAction | null {
+    const symbolId = resolveDropSymbolId(
+      gesture,
+      this.selectedSymbolId,
+      this.slots,
+      cellCount,
+      this.content.symbols
+    );
+    if (!symbolId) {
+      return null;
+    }
+    const targetCell = findHitCellCoords(
+      this.slots,
+      this.content.grid_size,
+      gesture.toX,
+      gesture.toY
+    );
+    if (!targetCell) {
+      return null;
+    }
+    const state = this.cellStates.get(`${targetCell.row},${targetCell.col}`);
+    if (!state || state.isInitial) {
+      return null;
+    }
+    return {
+      type: "fill_cell",
+      data: {
+        row: targetCell.row,
+        col: targetCell.col,
+        symbol_id: symbolId,
+      },
+    };
+  }
+
+  private toTapAction(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    cellCount: number
+  ): GameAction | null {
+    const paletteIndex = findHitPaletteIndex(
+      this.slots,
+      cellCount,
+      this.content.symbols.length,
+      gesture.x,
+      gesture.y
+    );
+    if (paletteIndex >= 0) {
+      const sym = this.content.symbols[paletteIndex];
+      this.selectedSymbolId = sym?.symbol_id ?? null;
+      return null;
+    }
+
+    if (!this.selectedSymbolId) {
+      return null;
+    }
+
+    const targetCell = findHitCellCoords(
+      this.slots,
+      this.content.grid_size,
+      gesture.x,
+      gesture.y
+    );
+    if (!targetCell) {
+      return null;
+    }
+    const state = this.cellStates.get(`${targetCell.row},${targetCell.col}`);
+    if (!state || state.isInitial) {
+      return null;
+    }
+    return {
+      type: "fill_cell",
+      data: {
+        row: targetCell.row,
+        col: targetCell.col,
+        symbol_id: this.selectedSymbolId,
+      },
+    };
+  }
+
+  override getView(): EngineView {
+    const cellCount = this.content.grid_size * this.content.grid_size;
+    const cellSlots = this.slots.slice(0, cellCount);
+    const paletteSlots = this.slots.slice(cellCount);
+    const size = this.content.grid_size;
+    const entities: ViewEntity[] = [];
+
+    this.content.symbols.forEach((sym, i) => {
+      const slot = paletteSlots[i];
+      if (slot) {
+        entities.push({
+          id: sym.symbol_id,
+          slotIndex: cellCount + i,
+          role: "source",
+          state: this.selectedSymbolId === sym.symbol_id ? "selected" : "idle",
+          x: slot.x,
+          y: slot.y,
+          w: slot.w,
+          h: slot.h,
+        });
+      }
+    });
+
+    for (const cell of this.content.cells) {
+      const slotIndex = cell.row * size + cell.col;
+      const slot = cellSlots[slotIndex];
+      if (slot) {
+        const state = this.cellStates.get(`${cell.row},${cell.col}`);
+        const isWrong = this.isConflicted(cell.row, cell.col);
+        const entityState = resolveCellVisualState(
+          isWrong,
+          Boolean(state?.value)
+        );
+        entities.push({
+          id: `cell-${cell.row}-${cell.col}`,
+          slotIndex,
+          role: "target",
+          state: entityState,
+          x: slot.x,
+          y: slot.y,
+          w: slot.w,
+          h: slot.h,
+        });
+      }
+    }
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {

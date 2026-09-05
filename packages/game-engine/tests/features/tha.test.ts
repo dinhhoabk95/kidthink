@@ -13,6 +13,8 @@ import { GT008_FIXTURES } from "#src/templates/GT-008/fixtures";
 import { GT008Session } from "#src/templates/GT-008/session";
 import { GT014_FIXTURES } from "#src/templates/GT-014/fixtures";
 import { GT014Session } from "#src/templates/GT-014/session";
+import { GT015_FIXTURES } from "#src/templates/GT-015/fixtures";
+import { GT015Session } from "#src/templates/GT-015/session";
 
 describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha.feature", () => {
   const f3 = GT003_FIXTURES[0];
@@ -43,8 +45,12 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
   if (!f14) {
     throw new Error("GT014_FIXTURES[1] must exist");
   }
+  const f15 = GT015_FIXTURES[0];
+  if (!f15) {
+    throw new Error("GT015_FIXTURES[0] must exist");
+  }
 
-  describe("Scenario Outline: Kéo thả trúng đích thì commit action tương ứng (Examples: GT-003, GT-004, GT-005, GT-006, GT-007, GT-008, GT-014)", () => {
+  describe("Scenario Outline: Kéo thả trúng đích thì commit action tương ứng (Examples: GT-003, GT-004, GT-005, GT-006, GT-007, GT-008, GT-014, GT-015)", () => {
     it("GT-003: kéo từ slot nguồn và thả vào container slot commit drop_item thành công", () => {
       const session = new GT003Session(f3.content, f3.difficulty);
       session.prepareRound("3-4");
@@ -258,9 +264,40 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
       expect(session.getRightWeight()).toBe(8);
       expect(session.checkWinCondition()).toBe(true);
     });
+
+    it("GT-015: kéo symbol từ palette và thả vào ô trống commit fill_cell thành công", () => {
+      const session = new GT015Session(f15.content, f15.difficulty);
+      session.prepareRound("4-5");
+
+      const cellCount = f15.content.grid_size * f15.content.grid_size;
+      const cellSlots = session.slots.slice(0, cellCount);
+      const paletteSlots = session.slots.slice(cellCount);
+      const dogSlot = paletteSlots[1]; // dog
+      const targetCellSlot = cellSlots[1]; // row 0, col 1 (blank)
+      if (!(dogSlot && targetCellSlot)) {
+        throw new Error("slots must exist");
+      }
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "drop",
+        fromX: dogSlot.x,
+        fromY: dogSlot.y,
+        toX: targetCellSlot.x,
+        toY: targetCellSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result).toBeDefined();
+      expect(result?.valid).toBe(true);
+      expect(session.getTelemetry().events.length).toBeGreaterThan(
+        eventsBefore
+      );
+      expect(session.getCellState(0, 1)?.value).toBe("dog");
+    });
   });
 
-  describe("Scenario Outline: Thả ngoài mọi đích thì không commit và vật về chỗ cũ (Examples: GT-003, GT-004, GT-005, GT-006, GT-007, GT-008, GT-014)", () => {
+  describe("Scenario Outline: Thả ngoài mọi đích thì không commit và vật về chỗ cũ (Examples: GT-003, GT-004, GT-005, GT-006, GT-007, GT-008, GT-014, GT-015)", () => {
     it("GT-003: kéo từ slot nguồn và thả ra ngoài toạ độ container thì không commit", () => {
       const session = new GT003Session(f3.content, f3.difficulty);
       session.prepareRound("3-4");
@@ -429,9 +466,35 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
       expect(session.getTelemetry().events.length).toBe(eventsBefore);
       expect(session.getRightWeight()).toBe(5);
     });
+
+    it("GT-015: kéo symbol từ palette và thả ra ngoài lưới thì không commit", () => {
+      const session = new GT015Session(f15.content, f15.difficulty);
+      session.prepareRound("4-5");
+
+      const cellCount = f15.content.grid_size * f15.content.grid_size;
+      const paletteSlots = session.slots.slice(cellCount);
+      const dogSlot = paletteSlots[1]; // dog
+      if (!dogSlot) {
+        throw new Error("dogSlot must exist");
+      }
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "drop",
+        fromX: dogSlot.x,
+        fromY: dogSlot.y,
+        toX: 50,
+        toY: 50,
+        timeMs: 200,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.getCellState(0, 1)?.value).toBeNull();
+    });
   });
 
-  describe("Scenario Outline: Fallback chạm-chạm (tap-tap fallback) (Examples: GT-003, GT-004, GT-005, GT-006, GT-007, GT-008, GT-014)", () => {
+  describe("Scenario Outline: Fallback chạm-chạm (tap-tap fallback) (Examples: GT-003, GT-004, GT-005, GT-006, GT-007, GT-008, GT-014, GT-015)", () => {
     it("GT-003: chạm nguồn lần 1 để nhắm, chạm container lần 2 để thả", () => {
       const session = new GT003Session(f3.content, f3.difficulty);
       session.prepareRound("3-4");
@@ -672,6 +735,41 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
       expect(session.getStagedItemId()).toBeNull();
       expect(session.getRightWeight()).toBe(8);
       expect(session.checkWinCondition()).toBe(true);
+    });
+
+    it("GT-015: chạm symbol ở palette lần 1 để nhắm, chạm ô trống lần 2 để điền", () => {
+      const session = new GT015Session(f15.content, f15.difficulty);
+      session.prepareRound("4-5");
+
+      const cellCount = f15.content.grid_size * f15.content.grid_size;
+      const cellSlots = session.slots.slice(0, cellCount);
+      const paletteSlots = session.slots.slice(cellCount);
+      const dogSlot = paletteSlots[1]; // dog
+      const targetCellSlot = cellSlots[1]; // row 0, col 1 (blank)
+      if (!(dogSlot && targetCellSlot)) {
+        throw new Error("slots must exist");
+      }
+
+      // Tap 1: chạm symbol dog ở palette
+      const tap1Result = session.dispatch({
+        type: "tap",
+        x: dogSlot.x,
+        y: dogSlot.y,
+        timeMs: 100,
+      });
+      expect(tap1Result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getStagedItemId()).toBe("dog");
+
+      // Tap 2: chạm ô trống (row 0, col 1)
+      const tap2Result = session.dispatch({
+        type: "tap",
+        x: targetCellSlot.x,
+        y: targetCellSlot.y,
+        timeMs: 300,
+      });
+      expect(tap2Result?.valid).toBe(true);
+      expect(session.getStagedItemId()).toBeNull();
+      expect(session.getCellState(0, 1)?.value).toBe("dog");
     });
   });
 });
