@@ -106,18 +106,20 @@
 
 <script lang="ts" setup>
   import {
+    getTemplateInput,
+    type RoundConfig,
+    type Slot,
+  } from "@mindkid/game-engine";
+  import { drawTargetHoverAura } from "@mindkid/game-engine/render";
+  import {
     createGameSessionSync,
-    drawTargetHoverAura,
     type EngineConfig,
     GameEngine,
     type GameSession,
-    getTemplateInput,
     LIFECYCLE,
-    type RoundConfig,
+    preloadGameSession,
     RoundRunner,
-    type Slot,
-  } from "@mindkid/game-engine";
-  import { preloadGameSession } from "@mindkid/game-engine/loader";
+  } from "@mindkid/game-engine/runtime";
   import { nextTick, onMounted, onUnmounted, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { definePageMeta, useUserSession } from "#imports";

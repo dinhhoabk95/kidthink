@@ -14,6 +14,7 @@ import {
   checkSessionOwnership,
   type IngestOptions,
 } from "./session/ownership.js";
+import type { EventPayload } from "./types.js";
 
 export async function completePlaySession(
   sessionUuid: string,
@@ -65,7 +66,7 @@ export async function completePlaySession(
       seq: e.seq,
       eventName: e.eventName,
       occurredAtMs: e.occurredAtMs,
-      payload: e.payload as Record<string, unknown> | null,
+      payload: (e.payload as EventPayload | null) ?? null,
       clientTimestamp: e.clientTimestamp,
     }))
   );

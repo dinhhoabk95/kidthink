@@ -7,7 +7,7 @@ export interface StaticImportViolation {
 }
 
 const STATIC_IMPORT_REGEX =
-  /(?:^|\n)\s*import\s+(?:(?:(?:\*\s+as\s+\w+|[\w$,\s{}]+)\s+from\s+)|)['"]([^'"]+)['"]/g;
+  /(?:^|\n)\s*(?:import|export)\s+(?:(?:(?:\*\s+as\s+\w+|[\w$,\s{}]+)\s+from\s+)|)['"]([^'"]+)['"]/g;
 
 const FORBIDDEN_IMPORT_PATTERN =
   /(?:templates\/GT-[^/]+\/(?:session|fixtures)|#src\/templates\/GT-[^/]+\/(?:session|fixtures))/;

@@ -2,7 +2,7 @@ import {
   createGameSessionSync,
   type EngineConfig,
   type GameSession,
-} from "@mindkid/game-engine";
+} from "@mindkid/game-engine/runtime";
 
 /**
  * Build the Session class for a template code.

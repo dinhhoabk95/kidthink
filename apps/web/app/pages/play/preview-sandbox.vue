@@ -8,16 +8,26 @@
 </template>
 
 <script lang="ts" setup>
-  import { type EngineConfig, GameEngine } from "@mindkid/game-engine";
-  import { preloadGameSession } from "@mindkid/game-engine/runtime";
+  import {
+    type EngineConfig,
+    GameEngine,
+    preloadGameSession,
+  } from "@mindkid/game-engine/runtime";
   import { onMounted, onUnmounted, ref } from "vue";
   import { useRoute } from "vue-router";
   import { definePageMeta } from "#imports";
   import { createSessionFactory } from "~/utils/game-session-factory";
 
+  type JsonPrimitive = string | number | boolean | null;
+  type JsonValue = JsonPrimitive | JsonObject | JsonArray;
+  interface JsonObject {
+    [key: string]: JsonValue;
+  }
+  type JsonArray = JsonValue[];
+
   interface StudioUpdatePayload {
     templateCode?: string;
-    levelData?: Record<string, unknown>;
+    levelData?: JsonObject;
     ageBand?: "3-4" | "4-5" | "5-6";
     reducedMotion?: boolean;
     muted?: boolean;
@@ -53,7 +63,7 @@
       engine = new GameEngine();
       engine.load(config, createSessionFactory(templateCode));
       engine.start(canvasRef.value);
-    } catch (err: unknown) {
+    } catch (err) {
       errorMessage.value =
         err instanceof Error ? err.message : "Lỗi khởi chạy engine";
       if (window.parent) {
@@ -69,14 +79,13 @@
   }
 
   function handleMessage(event: MessageEvent) {
-    // Nhận cấu hình từ iframe cha (Studio Preview Frame)
-    if (!event.data || typeof event.data !== "object") {
+    const data = event.data;
+    if (!data || typeof data !== "object") {
       return;
     }
 
-    const { type, payload } = event.data;
-    if (type === "MindKid_STUDIO_UPDATE_CONFIG" && payload) {
-      const data = payload as StudioUpdatePayload;
+    const type = data.type;
+    if (type === "MindKid_STUDIO_CONFIG_UPDATE") {
       const tCode = data.templateCode || currentTemplateCode;
       currentTemplateCode = tCode;
 
@@ -85,9 +94,8 @@
         level_code: `PREVIEW-${tCode}`,
         content_version: 1,
         template_code: tCode,
-        content_pack: (levelData.content_pack as Record<string, unknown>) || {},
-        difficulty_params:
-          (levelData.difficulty_params as Record<string, unknown>) || {},
+        content_pack: (levelData.content_pack as JsonObject) || {},
+        difficulty_params: (levelData.difficulty_params as JsonObject) || {},
         theme_id: (levelData.theme_id as string) || "default",
         age_band: data.ageBand || "3-4",
         reduced_motion: data.reducedMotion ?? false,

@@ -1,5 +1,5 @@
 import { AppError } from "@mindkid/auth";
-import { ingestPlayEvents } from "@mindkid/play";
+import { EventPayloadSchema, ingestPlayEvents } from "@mindkid/play";
 import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 
@@ -17,7 +17,7 @@ const EventsSchema = z
             seq: z.number().int().positive(),
             event_name: z.string().min(1).max(64),
             occurred_at_ms: z.number().int().nonnegative().optional(),
-            payload: z.record(z.unknown()).optional(),
+            payload: EventPayloadSchema.optional(),
             client_timestamp: z.string().datetime().optional(),
           })
           .strict()

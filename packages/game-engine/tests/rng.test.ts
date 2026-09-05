@@ -1,16 +1,14 @@
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import {
-  FeedbackSystem,
-  GT001Session,
-  GT004Session,
-  GT005Session,
-  GT006Session,
-} from "#src/index";
+import { FeedbackSystem } from "#src/index";
 import { createRng, deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { RngStreamName } from "#src/rng/types";
+import { GT001Session } from "#src/templates/GT-001/session.js";
+import { GT004Session } from "#src/templates/GT-004/session.js";
+import { GT005Session } from "#src/templates/GT-005/session.js";
+import { GT006Session } from "#src/templates/GT-006/session.js";
 
 function findFilesRecursive(dir: string): string[] {
   let results: string[] = [];

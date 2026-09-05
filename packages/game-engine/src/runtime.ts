@@ -21,6 +21,7 @@ export {
   type EngineView,
   type Gesture,
   InteractionManager,
+  LIFECYCLE,
   type ViewEntity,
 } from "./interaction.js";
 export {

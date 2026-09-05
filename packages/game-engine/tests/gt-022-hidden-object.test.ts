@@ -1,10 +1,7 @@
 import { describe, expect, it } from "vitest";
-import {
-  computeFreeSceneLayout,
-  GT022Session,
-  resolveLayout,
-} from "#src/index";
+import { computeFreeSceneLayout, resolveLayout } from "#src/index";
 import { GT022_FIXTURES } from "#src/templates/GT-022/fixtures.js";
+import { GT022Session } from "#src/templates/GT-022/session.js";
 import template from "#src/templates/GT-022/template";
 
 const f2 = GT022_FIXTURES[1];

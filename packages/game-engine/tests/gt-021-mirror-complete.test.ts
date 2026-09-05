@@ -1,10 +1,7 @@
 import { describe, expect, it } from "vitest";
-import {
-  computeMirrorAxisSplitLayout,
-  GT021Session,
-  resolveLayout,
-} from "#src/index";
+import { computeMirrorAxisSplitLayout, resolveLayout } from "#src/index";
 import { GT021_FIXTURES } from "#src/templates/GT-021/fixtures.js";
+import { GT021Session } from "#src/templates/GT-021/session.js";
 import template from "#src/templates/GT-021/template";
 
 const f2 = GT021_FIXTURES[1];

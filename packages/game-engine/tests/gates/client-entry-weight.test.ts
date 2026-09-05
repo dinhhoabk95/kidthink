@@ -43,4 +43,18 @@ export function dummy() { return GT001Session; }
       "./templates/GT-001/session.js"
     );
   });
+
+  it("negative test case: detects static export of GT-*/session in client reachable path", () => {
+    const dummyContent = `
+export { GT001Session } from "./templates/GT-001/session.js";
+`;
+    const violations = findDirectForbiddenStaticImports(
+      "/fake/entry.ts",
+      dummyContent
+    );
+    expect(violations.length).toBe(1);
+    expect(violations[0]?.importedSpecifier).toBe(
+      "./templates/GT-001/session.js"
+    );
+  });
 });

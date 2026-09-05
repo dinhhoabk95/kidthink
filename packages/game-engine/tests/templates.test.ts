@@ -1,18 +1,16 @@
 import { describe, expect, it } from "vitest";
-import {
-  GT001Session,
-  GT002Session,
-  GT003Session,
-  GT004Session,
-  GT005Session,
-  GT006Session,
-  GT007Session,
-  GT008Session,
-  InteractionManager,
-} from "#src/index";
+import { InteractionManager } from "#src/index";
 import { GT001_FIXTURES } from "#src/templates/GT-001/fixtures.js";
+import { GT001Session } from "#src/templates/GT-001/session.js";
+import { GT002Session } from "#src/templates/GT-002/session.js";
+import { GT003Session } from "#src/templates/GT-003/session.js";
+import { GT004Session } from "#src/templates/GT-004/session.js";
+import { GT005Session } from "#src/templates/GT-005/session.js";
+import { GT006Session } from "#src/templates/GT-006/session.js";
 import { GT007_FIXTURES } from "#src/templates/GT-007/fixtures.js";
+import { GT007Session } from "#src/templates/GT-007/session.js";
 import { GT008_FIXTURES } from "#src/templates/GT-008/fixtures.js";
+import { GT008Session } from "#src/templates/GT-008/session.js";
 
 function getFixture<T>(fixtures: readonly T[], index: number): T {
   const item = fixtures[index];

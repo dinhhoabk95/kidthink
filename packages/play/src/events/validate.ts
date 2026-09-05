@@ -1,11 +1,29 @@
 import { AppError } from "@mindkid/auth";
+import { z } from "zod";
 import { ALLOWED_EVENT_NAMES } from "./catalog.js";
+
+const JsonPrimitiveSchema = z.union([
+  z.string(),
+  z.number(),
+  z.boolean(),
+  z.null(),
+]);
+
+export const EventPayloadValueSchema = z.union([
+  JsonPrimitiveSchema,
+  z.array(JsonPrimitiveSchema),
+  z.record(JsonPrimitiveSchema),
+]);
+export type EventPayloadValue = z.infer<typeof EventPayloadValueSchema>;
+
+export const EventPayloadSchema = z.record(EventPayloadValueSchema);
+export type EventPayload = z.infer<typeof EventPayloadSchema>;
 
 export interface IngestEventItem {
   readonly seq: number;
   readonly event_name: string;
   readonly occurred_at_ms?: number;
-  readonly payload?: Record<string, unknown>;
+  readonly payload?: EventPayload;
   readonly client_timestamp?: string;
 }
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { GT011Session } from "#src/index";
 import { GT011_FIXTURES } from "#src/templates/GT-011/fixtures.js";
 import { colMatches, rowMatches } from "#src/templates/GT-011/matrix-rule";
+import { GT011Session } from "#src/templates/GT-011/session.js";
 import GT011Template, {
   GT011ContentSchema,
   GT011DifficultySchema,
