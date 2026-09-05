@@ -6,6 +6,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
@@ -21,6 +27,24 @@ import {
   updateParticles,
 } from "../shared-render.js";
 import type { GT028Content, GT028Difficulty } from "./template.js";
+
+interface ItemActionPayload {
+  item_id?: string;
+  id?: string;
+}
+
+function getItemId(data: object | null | undefined): string | undefined {
+  if (data && typeof data === "object") {
+    const payload = data as ItemActionPayload;
+    if (typeof payload.item_id === "string") {
+      return payload.item_id;
+    }
+    if (typeof payload.id === "string") {
+      return payload.id;
+    }
+  }
+  return undefined;
+}
 
 export class GT028Session extends TemplateGameSession<
   GT028Content,
@@ -51,25 +75,121 @@ export class GT028Session extends TemplateGameSession<
     switch (action.type) {
       case "tap_item":
       case "select_item": {
-        const itemId =
-          typeof action.data === "object" && action.data !== null
-            ? (Reflect.get(action.data, "item_id") ??
-              Reflect.get(action.data, "id"))
-            : undefined;
+        const itemId = getItemId(action.data as object | null | undefined);
 
         if (typeof itemId !== "string") {
           return ACTION_IGNORED;
         }
 
-        return this.onTapItem(itemId);
+        const itemExists = this.content.items.some((i) => i.item_id === itemId);
+        if (!itemExists) {
+          return ACTION_IGNORED;
+        }
+
+        const isAlreadySelected = this.selectedItemIds.includes(itemId);
+        if (isAlreadySelected && !this.difficulty.allow_undo) {
+          return ACTION_IGNORED;
+        }
+
+        return ACTION_CORRECT;
       }
       case "submit_count":
       case "submit": {
-        return this.onSubmitCount();
+        const currentTotal = this.getCurrentCount();
+        const isCorrect = currentTotal === this.content.target_total;
+        return isCorrect ? ACTION_CORRECT : ACTION_RETRY;
       }
       default:
         return ACTION_IGNORED;
     }
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "commit") {
+      return {
+        type: "submit_count",
+        data: {},
+      };
+    }
+
+    if (gesture.type === "tap") {
+      const hitTolerance = 24;
+      for (let i = 0; i < this.slots.length; i++) {
+        const slot = this.slots[i];
+        const item = this.content.items[i];
+        if (!(slot && item)) {
+          continue;
+        }
+
+        const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
+        const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+
+        if (
+          Math.abs(gesture.x - slot.x) <= halfW &&
+          Math.abs(gesture.y - slot.y) <= halfH
+        ) {
+          return {
+            type: "tap_item",
+            data: { item_id: item.item_id },
+          };
+        }
+      }
+    }
+
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    switch (action.type) {
+      case "tap_item":
+      case "select_item": {
+        const itemId = getItemId(action.data as object | null | undefined);
+        if (typeof itemId === "string") {
+          this.onTapItem(itemId);
+        }
+        break;
+      }
+      case "submit_count":
+      case "submit": {
+        this.onSubmitCount();
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = this.content.items.map((item, i) => {
+      const slot = this.slots[i];
+      const isSelected = this.selectedItemIds.includes(item.item_id);
+      let state: EntityVisual = "idle";
+      if (isSelected) {
+        state = "selected";
+      } else {
+        const renderState = this.getRenderItemState(item.item_id);
+        if (renderState === "correct") {
+          state = "correct";
+        } else if (renderState === "wrong") {
+          state = "incorrect";
+        }
+      }
+      return {
+        id: item.item_id,
+        slotIndex: slot?.index ?? i,
+        role: "source",
+        state,
+        x: slot?.x ?? 0,
+        y: slot?.y ?? 0,
+        w: slot?.w ?? 80,
+        h: slot?.h ?? 80,
+      };
+    });
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   onTapItem(itemId: string): ActionResult {

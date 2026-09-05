@@ -39,6 +39,8 @@ import { GT026_FIXTURES } from "#src/templates/GT-026/fixtures";
 import { GT026Session } from "#src/templates/GT-026/session";
 import { GT027_FIXTURES } from "#src/templates/GT-027/fixtures";
 import { GT027Session } from "#src/templates/GT-027/session";
+import { GT028_FIXTURES } from "#src/templates/GT-028/fixtures";
+import { GT028Session } from "#src/templates/GT-028/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -846,6 +848,55 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
 
       expect(result?.valid).toBe(true);
       expect(session.getRenderItemState("it-1")).toBe("correct");
+    });
+
+    it("GT-028: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f28 = GT028_FIXTURES[0];
+      if (!f28) {
+        throw new Error("GT028_FIXTURES[0] must exist");
+      }
+      const session = new GT028Session(f28.content, f28.difficulty);
+      session.prepareRound("4-5");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.getCurrentCount()).toBe(0);
+    });
+
+    it("GT-028: chạm vào slot item commit tap_item thành công", () => {
+      const f28 = GT028_FIXTURES[0];
+      if (!f28) {
+        throw new Error("GT028_FIXTURES[0] must exist");
+      }
+      const session = new GT028Session(f28.content, f28.difficulty);
+      session.prepareRound("4-5");
+
+      const slot = session.slots[0];
+      if (!slot) {
+        throw new Error("slot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: slot.x,
+        y: slot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.getCurrentCount()).toBe(2);
+      expect(session.selectedItemIds).toContain("apple_1");
     });
   });
 

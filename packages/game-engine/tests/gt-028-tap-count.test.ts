@@ -35,6 +35,11 @@ describe("GT-028: Chạm đếm tích luỹ (tap-count)", () => {
         "count_submitted",
         "game_completed",
       ]);
+      expect(template.input).toEqual({
+        family: "tap",
+        verbs: ["tap", "commit"],
+        tolerance_px: 24,
+      });
     });
   });
 
@@ -84,6 +89,28 @@ describe("GT-028: Chạm đếm tích luỹ (tap-count)", () => {
   });
 
   describe("Session Gameplay, Undo & Win Condition (BR-E028-03)", () => {
+    it("validates actions purely without mutating state (BR-ENG-13)", () => {
+      const f = getFixture(0);
+      const session = new GT028Session(f.content, f.difficulty);
+      session.setupEntities();
+
+      expect(session.getCurrentCount()).toBe(0);
+
+      const v1 = session.validateAction({
+        type: "tap_item",
+        data: { item_id: "apple_1" },
+      });
+      expect(v1.valid).toBe(true);
+      expect(session.getCurrentCount()).toBe(0); // State unchanged
+
+      const vSubmit = session.validateAction({
+        type: "submit_count",
+        data: {},
+      });
+      expect(vSubmit.valid).toBe(false);
+      expect(session.checkWinCondition()).toBe(false);
+    });
+
     it("runs complete gameplay loop with undo and submit", () => {
       const f = getFixture(0);
       const session = new GT028Session(f.content, f.difficulty);
@@ -93,63 +120,31 @@ describe("GT-028: Chạm đếm tích luỹ (tap-count)", () => {
       expect(session.checkWinCondition()).toBe(false);
 
       // Tap first 3 items (step = 2) -> count becomes 6
-      expect(
-        session.validateAction({
-          type: "tap_item",
-          data: { item_id: "apple_1" },
-        }).valid
-      ).toBe(true);
+      expect(session.onTapItem("apple_1").valid).toBe(true);
       expect(session.getCurrentCount()).toBe(2);
 
-      expect(
-        session.validateAction({
-          type: "tap_item",
-          data: { item_id: "apple_2" },
-        }).valid
-      ).toBe(true);
+      expect(session.onTapItem("apple_2").valid).toBe(true);
       expect(session.getCurrentCount()).toBe(4);
 
-      expect(
-        session.validateAction({
-          type: "tap_item",
-          data: { item_id: "apple_3" },
-        }).valid
-      ).toBe(true);
+      expect(session.onTapItem("apple_3").valid).toBe(true);
       expect(session.getCurrentCount()).toBe(6);
 
       // Submit prematurely -> target is 8, current is 6 -> retry
-      const premature = session.validateAction({
-        type: "submit_count",
-        data: {},
-      });
+      const premature = session.onSubmitCount();
       expect(premature.valid).toBe(false);
       expect(session.checkWinCondition()).toBe(false);
 
       // Undo apple_3 -> count back to 4
-      expect(
-        session.validateAction({
-          type: "tap_item",
-          data: { item_id: "apple_3" },
-        }).valid
-      ).toBe(true);
+      expect(session.onTapItem("apple_3").valid).toBe(true);
       expect(session.getCurrentCount()).toBe(4);
 
       // Tap apple_3, apple_4 -> count = 8 (4 items * 2 = 8)
-      session.validateAction({
-        type: "tap_item",
-        data: { item_id: "apple_3" },
-      });
-      session.validateAction({
-        type: "tap_item",
-        data: { item_id: "apple_4" },
-      });
+      session.onTapItem("apple_3");
+      session.onTapItem("apple_4");
       expect(session.getCurrentCount()).toBe(8);
 
       // Submit correct count -> wins
-      const submitRes = session.validateAction({
-        type: "submit_count",
-        data: {},
-      });
+      const submitRes = session.onSubmitCount();
       expect(submitRes.valid).toBe(true);
       expect(session.checkWinCondition()).toBe(true);
 
@@ -176,17 +171,11 @@ describe("GT-028: Chạm đếm tích luỹ (tap-count)", () => {
       });
       session.setupEntities();
 
-      session.validateAction({
-        type: "tap_item",
-        data: { item_id: "apple_1" },
-      });
+      session.onTapItem("apple_1");
       expect(session.getCurrentCount()).toBe(2);
 
       // Tap again when allow_undo is false -> ignored
-      const retryTap = session.validateAction({
-        type: "tap_item",
-        data: { item_id: "apple_1" },
-      });
+      const retryTap = session.onTapItem("apple_1");
       expect(retryTap.valid).toBe(false);
       expect(session.getCurrentCount()).toBe(2);
     });
@@ -197,6 +186,72 @@ describe("GT-028: Chạm đếm tích luỹ (tap-count)", () => {
       session.setupEntities();
       session.resolveSlots("4-5");
       expect(session.slots.length).toBe(f.content.items.length);
+    });
+
+    it("handles unified tap and commit gesture dispatch", () => {
+      const f = getFixture(0);
+      const session = new GT028Session(f.content, f.difficulty);
+      session.prepareRound("4-5");
+
+      // Tap outside slots -> ignored
+      const missResult = session.dispatch({
+        type: "tap",
+        x: 10,
+        y: 10,
+        timeMs: 100,
+      });
+      expect(missResult).toEqual({ valid: false, feedback: "none" });
+
+      const slot0 = session.slots[0];
+      if (!slot0) {
+        throw new Error("slot0 must exist");
+      }
+
+      // Tap on slot 0 -> selects apple_1
+      const hitResult = session.dispatch({
+        type: "tap",
+        x: slot0.x,
+        y: slot0.y,
+        timeMs: 200,
+      });
+      expect(hitResult?.valid).toBe(true);
+      expect(session.getCurrentCount()).toBe(2);
+
+      const view = session.getView();
+      expect(view.activePrompt).toBe(f.content.prompt);
+      expect(view.entities.length).toBe(f.content.items.length);
+      expect(view.entities[0]?.state).toBe("selected");
+
+      // Submit prematurely -> invalid
+      const commitPremature = session.dispatch({
+        type: "commit",
+        timeMs: 300,
+      });
+      expect(commitPremature?.valid).toBe(false);
+      expect(session.checkWinCondition()).toBe(false);
+
+      // Tap remaining items to reach target 8 (apple_2, apple_3, apple_4)
+      for (let i = 1; i <= 3; i++) {
+        const s = session.slots[i];
+        if (!s) {
+          throw new Error(`slot ${i} must exist`);
+        }
+        session.dispatch({
+          type: "tap",
+          x: s.x,
+          y: s.y,
+          timeMs: 400 + i * 100,
+        });
+      }
+      expect(session.getCurrentCount()).toBe(8);
+
+      // Commit when target is reached -> wins
+      const commitWin = session.dispatch({
+        type: "commit",
+        timeMs: 800,
+      });
+      expect(commitWin?.valid).toBe(true);
+      expect(session.checkWinCondition()).toBe(true);
     });
   });
 });
