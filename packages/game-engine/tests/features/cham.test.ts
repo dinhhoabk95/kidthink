@@ -53,6 +53,8 @@ import { GT033_FIXTURES } from "#src/templates/GT-033/fixtures";
 import { GT033Session } from "#src/templates/GT-033/session";
 import { GT034_FIXTURES } from "#src/templates/GT-034/fixtures";
 import { GT034Session } from "#src/templates/GT-034/session";
+import { GT035_FIXTURES } from "#src/templates/GT-035/fixtures";
+import { GT035Session } from "#src/templates/GT-035/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -1229,6 +1231,57 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       expect(session.userSteps).toEqual([
         f34.content.instruments[0]?.instrument_id,
       ]);
+    });
+
+    it("GT-035: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f35 = GT035_FIXTURES[0];
+      if (!f35) {
+        throw new Error("GT035_FIXTURES[0] must exist");
+      }
+      const session = new GT035Session(f35.content, f35.difficulty);
+      session.prepareRound("5-6");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.queueSystem.commandCount).toBe(0);
+    });
+
+    it("GT-035: chạm vào palette slot commit add_command thành công", () => {
+      const f35 = GT035_FIXTURES[0];
+      if (!f35) {
+        throw new Error("GT035_FIXTURES[0] must exist");
+      }
+      const session = new GT035Session(f35.content, f35.difficulty);
+      session.prepareRound("5-6");
+
+      const { rows, cols } = f35.content.grid;
+      const gridSlotCount = rows * cols;
+      const maxCmd = f35.difficulty.max_commands ?? 8;
+      const palSlot = session.slots[gridSlotCount + maxCmd];
+      if (!palSlot) {
+        throw new Error("palSlot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: palSlot.x,
+        y: palSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.queueSystem.commandCount).toBe(1);
     });
   });
 

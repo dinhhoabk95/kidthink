@@ -117,21 +117,29 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
     );
     session.setupEntities();
 
-    session.validateAction({
+    const a1 = {
       type: "add_command",
       data: { command: "forward" },
-    });
-    session.validateAction({
+    };
+    expect(session.validateAction(a1).valid).toBe(true);
+    session.commit(a1);
+
+    const a2 = {
       type: "add_command",
       data: { command: "turn_right" },
-    });
+    };
+    expect(session.validateAction(a2).valid).toBe(true);
+    session.commit(a2);
 
     const addEvents = session
       .getEvents()
       .filter((e) => e.event_name === "command_added");
     expect(addEvents.length).toBe(2);
 
-    session.validateAction({ type: "remove_command", data: { index: 1 } });
+    const aRemove = { type: "remove_command", data: { index: 1 } };
+    expect(session.validateAction(aRemove).valid).toBe(true);
+    session.commit(aRemove);
+
     const removeEvents = session
       .getEvents()
       .filter((e) => e.event_name === "command_removed");
@@ -147,11 +155,11 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
     session.setupEntities();
 
     // 1. Child adds wrong command (moves out of bounds or wrong direction)
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "turn_left" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
@@ -160,28 +168,29 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
     const runFail = session.validateAction({ type: "run_program", data: {} });
     expect(runFail.valid).toBe(false);
     expect(runFail.feedback).toBe("amber_soft");
+    session.commit({ type: "run_program", data: {} });
     expect(session.isWin).toBe(false);
 
     // 2. Child clears and builds correct sequence:
     // start (0,0) facing right -> forward(1,0) -> forward(2,0) -> turn_right(facing down) -> forward(2,1) -> forward(2,2, goal!)
-    session.validateAction({ type: "clear_commands", data: {} });
-    session.validateAction({
+    session.commit({ type: "clear_commands", data: {} });
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "turn_right" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
@@ -189,6 +198,7 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
     // Run -> wins
     const runWin = session.validateAction({ type: "run_program", data: {} });
     expect(runWin.valid).toBe(true);
+    session.commit({ type: "run_program", data: {} });
     expect(session.isWin).toBe(true);
 
     const completedEvent = session
@@ -207,56 +217,58 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
     session.setupEntities();
 
     // Path avoiding collectible: starts (0,0) facing right -> forward(1,0) -> forward(2,0 obstacle collision!)
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
 
     const runFail = session.validateAction({ type: "run_program", data: {} });
     expect(runFail.valid).toBe(false);
+    session.commit({ type: "run_program", data: {} });
     expect(session.isWin).toBe(false);
 
     // Path collecting gem and reaching goal:
-    session.validateAction({ type: "clear_commands", data: {} });
-    session.validateAction({
+    session.commit({ type: "clear_commands", data: {} });
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "turn_right" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "turn_left" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "turn_left" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
 
     const runWin = session.validateAction({ type: "run_program", data: {} });
     expect(runWin.valid).toBe(true);
+    session.commit({ type: "run_program", data: {} });
     expect(session.isWin).toBe(true);
   });
 
@@ -270,29 +282,30 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
     session.setupEntities();
 
     // start (0,2) facing up -> forward -> loop -> turn_right -> forward -> loop
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "loop" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "turn_right" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "forward" },
     });
-    session.validateAction({
+    session.commit({
       type: "add_command",
       data: { command: "loop" },
     });
 
     const runRes = session.validateAction({ type: "run_program", data: {} });
     expect(runRes.valid).toBe(true);
+    session.commit({ type: "run_program", data: {} });
     expect(session.isWin).toBe(true);
   });
 
@@ -323,5 +336,44 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
       .getEvents()
       .find((e) => e.event_name === "game_completed");
     expect(completed).toBeDefined();
+  });
+
+  it("Scenario 13: handles unified tap gesture dispatch and view generation", () => {
+    const session = new GT035Session(
+      sampleFixture.content,
+      sampleFixture.difficulty,
+      "5-6"
+    );
+    session.prepareRound("5-6");
+
+    // Tap outside -> ignored
+    const miss = session.dispatch({
+      type: "tap",
+      x: 10,
+      y: 10,
+      timeMs: 100,
+    });
+    expect(miss).toEqual({ valid: false, feedback: "none" });
+
+    // Tap palette command slot (first command in allowed_commands: "forward")
+    const { rows, cols } = sampleFixture.content.grid;
+    const gridSlotCount = rows * cols;
+    const maxCmd = sampleFixture.difficulty.max_commands ?? 8;
+    const pal0Slot = session.slots[gridSlotCount + maxCmd];
+    if (!pal0Slot) {
+      throw new Error("pal0Slot must exist");
+    }
+
+    const tapPal = session.dispatch({
+      type: "tap",
+      x: pal0Slot.x,
+      y: pal0Slot.y,
+      timeMs: 200,
+    });
+    expect(tapPal?.valid).toBe(true);
+
+    const view = session.getView();
+    expect(view.activePrompt).toBe(sampleFixture.content.prompt);
+    expect(view.entities.length).toBeGreaterThan(0);
   });
 });

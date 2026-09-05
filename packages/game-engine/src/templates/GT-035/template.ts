@@ -174,6 +174,11 @@ const GT035Template = defineTemplate({
   },
   asset_kinds: ["emoji", "image"],
   scoring: STANDARD_SCORING,
+  input: {
+    family: "tap",
+    verbs: ["tap"],
+    tolerance_px: 24,
+  },
   events: [
     "game_started",
     "command_added",

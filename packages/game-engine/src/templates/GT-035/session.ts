@@ -7,12 +7,15 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { getTouchFloor } from "#src/layout/constants";
 import type { Slot } from "#src/layout/types";
 import {
+  type CommandQueueConfig,
   CommandQueueSystem,
   type CommandType,
   type ExecutionResult,
+  executeProgram,
   type RobotState,
 } from "#src/systems/command-queue-system";
 import type { DegradationState } from "#src/systems/degradation";
@@ -47,6 +50,11 @@ const COMMAND_ICONS: Record<CommandType, string> = {
   loop: "🔁",
 };
 
+interface GT035ActionPayload {
+  readonly command?: CommandType;
+  readonly index?: number;
+}
+
 export class GT035Session extends TemplateGameSession<
   GT035Content,
   GT035Difficulty
@@ -60,14 +68,14 @@ export class GT035Session extends TemplateGameSession<
   executionResult: ExecutionResult | null = null;
   isWin = false;
 
-  private readonly queueSystem: CommandQueueSystem;
+  readonly queueSystem: CommandQueueSystem;
   private readonly sfxEngine: SFXEngine;
   private particles: Particle[] = [];
 
   constructor(
     content: GT035Content,
     difficulty: GT035Difficulty,
-    _ageBand: AgeBand = "5-6"
+    _ageBandOrSeed?: AgeBand | number
   ) {
     super(content, difficulty);
 
@@ -87,6 +95,18 @@ export class GT035Session extends TemplateGameSession<
 
   getEvents() {
     return this.events;
+  }
+
+  private get queueConfig(): CommandQueueConfig {
+    return {
+      rows: this.content.grid.rows,
+      cols: this.content.grid.cols,
+      start: this.content.start,
+      goal: this.content.goal,
+      obstacles: this.content.obstacles,
+      collectibles: this.content.collectibles,
+      maxCommands: this.difficulty.max_commands ?? 8,
+    };
   }
 
   setupEntities(): void {
@@ -195,41 +215,77 @@ export class GT035Session extends TemplateGameSession<
     this.particles = updateParticles(this.particles);
   }
 
+  private validateAddCommand(cmd?: CommandType): ActionResult {
+    if (
+      this.isExecuting ||
+      !cmd ||
+      !this.content.allowed_commands.includes(cmd)
+    ) {
+      return ACTION_IGNORED;
+    }
+    const maxCmd = this.difficulty.max_commands ?? 8;
+    if (this.queueSystem.commandCount >= maxCmd) {
+      return ACTION_IGNORED;
+    }
+    return ACTION_CORRECT;
+  }
+
+  private validateRemoveCommand(): ActionResult {
+    if (this.isExecuting || this.queueSystem.commandCount === 0) {
+      return ACTION_IGNORED;
+    }
+    return ACTION_CORRECT;
+  }
+
+  private validateRunProgram(): ActionResult {
+    if (this.isExecuting || this.queueSystem.commandCount === 0) {
+      return ACTION_IGNORED;
+    }
+    const res = executeProgram(this.queueConfig, [...this.queueSystem.queue]);
+    return res.success ? ACTION_CORRECT : ACTION_RETRY;
+  }
+
   validateAction(action: GameAction): ActionResult {
+    if (this.isWin || this.isWon) {
+      return ACTION_IGNORED;
+    }
+
     const type = action.type;
-    const data = (action.data as Record<string, unknown>) ?? {};
+    const data = (
+      typeof action.data === "object" && action.data !== null ? action.data : {}
+    ) as GT035ActionPayload;
 
     switch (type) {
       case "add_command":
       case "tap_command":
-      case "command": {
-        const cmd = data.command as CommandType;
-        return this.handleAddCommand(cmd);
-      }
+      case "command":
+        return this.validateAddCommand(data.command);
       case "remove_command":
-      case "undo": {
-        const index = typeof data.index === "number" ? data.index : -1;
-        return this.handleRemoveCommand(index);
-      }
+      case "undo":
+        return this.validateRemoveCommand();
       case "clear_commands":
       case "reset":
-        return this.handleClearCommands();
+        return this.isExecuting ? ACTION_IGNORED : ACTION_CORRECT;
       case "run_program":
       case "run":
-        return this.handleRunProgram();
+        return this.validateRunProgram();
       default:
         return ACTION_IGNORED;
     }
   }
 
-  private handleAddCommand(command: CommandType): ActionResult {
-    if (this.isExecuting || !this.content.allowed_commands.includes(command)) {
-      return ACTION_IGNORED;
+  private commitAddCommand(command?: CommandType): void {
+    if (
+      !command ||
+      this.isExecuting ||
+      !this.content.allowed_commands.includes(command)
+    ) {
+      return;
     }
 
     const added = this.queueSystem.addCommand({ type: command });
     if (!added) {
-      return ACTION_IGNORED;
+      return;
     }
 
     const cmdIdx = this.queueSystem.commandCount - 1;
@@ -238,19 +294,20 @@ export class GT035Session extends TemplateGameSession<
       command_index: cmdIdx,
       round_index: 0,
     });
-
-    return ACTION_CORRECT;
   }
 
-  private handleRemoveCommand(index: number): ActionResult {
+  private commitRemoveCommand(index?: number): void {
     if (this.isExecuting || this.queueSystem.commandCount === 0) {
-      return ACTION_IGNORED;
+      return;
     }
 
-    const removeIdx = index >= 0 ? index : this.queueSystem.commandCount - 1;
+    const removeIdx =
+      typeof index === "number" && index >= 0
+        ? index
+        : this.queueSystem.commandCount - 1;
     const removed = this.queueSystem.removeCommand(removeIdx);
     if (!removed) {
-      return ACTION_IGNORED;
+      return;
     }
 
     this.recordEvent("command_removed", {
@@ -258,22 +315,19 @@ export class GT035Session extends TemplateGameSession<
       command_index: removeIdx,
       round_index: 0,
     });
-
-    return ACTION_CORRECT;
   }
 
-  private handleClearCommands(): ActionResult {
+  private commitClearCommands(): void {
     if (this.isExecuting) {
-      return ACTION_IGNORED;
+      return;
     }
     this.queueSystem.clear();
     this.robotState = { ...this.content.start };
-    return ACTION_CORRECT;
   }
 
-  private handleRunProgram(): ActionResult {
+  private commitRunProgram(): void {
     if (this.isExecuting || this.queueSystem.commandCount === 0) {
-      return ACTION_IGNORED;
+      return;
     }
 
     this.recordEvent("program_run", {
@@ -288,6 +342,7 @@ export class GT035Session extends TemplateGameSession<
 
     if (result.success) {
       this.isWin = true;
+      this.isWon = true;
       this.recordEvent("game_completed", {
         duration_ms: 12_000,
         rounds_total: 1,
@@ -295,13 +350,12 @@ export class GT035Session extends TemplateGameSession<
       });
       this.sfxEngine.play("pop_celebrate");
 
-      // Spawn particles at Goal
       const goalSlot = this.getGoalSlot();
       if (goalSlot) {
         this.particles.push(...spawnParticlesAtSlot(goalSlot, 25));
       }
-
-      return ACTION_CORRECT;
+      this.winSession();
+      return;
     }
 
     this.recordEvent("program_failed", {
@@ -309,9 +363,231 @@ export class GT035Session extends TemplateGameSession<
       reason: result.failureReason ?? "unknown",
       round_index: 0,
     });
-
     this.sfxEngine.play("amber_soft");
-    return ACTION_RETRY;
+  }
+
+  override commit(action: GameAction): void {
+    const type = action.type;
+    const data = (
+      typeof action.data === "object" && action.data !== null ? action.data : {}
+    ) as GT035ActionPayload;
+
+    switch (type) {
+      case "add_command":
+      case "tap_command":
+      case "command":
+        this.commitAddCommand(data.command);
+        break;
+      case "remove_command":
+      case "undo":
+        this.commitRemoveCommand(data.index);
+        break;
+      case "clear_commands":
+      case "reset":
+        this.commitClearCommands();
+        break;
+      case "run_program":
+      case "run":
+        this.commitRunProgram();
+        break;
+      default:
+        break;
+    }
+  }
+
+  private findTappedPaletteCommand(
+    gx: number,
+    gy: number,
+    tol: number,
+    palStartIndex: number
+  ): CommandType | null {
+    const allowed = this.content.allowed_commands;
+    for (let p = 0; p < allowed.length; p++) {
+      const slot = this.slots[palStartIndex + p];
+      const cmd = allowed[p];
+      if (!(slot && cmd)) {
+        continue;
+      }
+      const hw = (slot.hitW ?? slot.w) / 2 + tol;
+      const hh = (slot.hitH ?? slot.h) / 2 + tol;
+      if (Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh) {
+        return cmd;
+      }
+    }
+    return null;
+  }
+
+  private findTappedQueueIndex(
+    gx: number,
+    gy: number,
+    tol: number,
+    queueStartIndex: number,
+    maxCmd: number
+  ): number | null {
+    for (let i = 0; i < maxCmd; i++) {
+      const slot = this.slots[queueStartIndex + i];
+      if (!slot) {
+        continue;
+      }
+      const hw = (slot.hitW ?? slot.w) / 2 + tol;
+      const hh = (slot.hitH ?? slot.h) / 2 + tol;
+      if (Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh) {
+        return i;
+      }
+    }
+    return null;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type !== "tap") {
+      return null;
+    }
+
+    const hitTolerance = 24;
+    const { rows, cols } = this.content.grid;
+    const gridSlotCount = rows * cols;
+    const maxCmd = this.difficulty.max_commands ?? 8;
+    const allowed = this.content.allowed_commands;
+    const runSlotIdx = gridSlotCount + maxCmd + allowed.length;
+
+    // Check Run button
+    const runSlot = this.slots[runSlotIdx];
+    if (runSlot) {
+      const hw = (runSlot.hitW ?? runSlot.w) / 2 + hitTolerance;
+      const hh = (runSlot.hitH ?? runSlot.h) / 2 + hitTolerance;
+      if (
+        Math.abs(gesture.x - runSlot.x) <= hw &&
+        Math.abs(gesture.y - runSlot.y) <= hh
+      ) {
+        return { type: "run_program", data: {} };
+      }
+    }
+
+    // Check Palette buttons
+    const palCmd = this.findTappedPaletteCommand(
+      gesture.x,
+      gesture.y,
+      hitTolerance,
+      gridSlotCount + maxCmd
+    );
+    if (palCmd) {
+      return { type: "add_command", data: { command: palCmd } };
+    }
+
+    // Check Queue slots (tapping removes command)
+    const queueIdx = this.findTappedQueueIndex(
+      gesture.x,
+      gesture.y,
+      hitTolerance,
+      gridSlotCount,
+      maxCmd
+    );
+    if (queueIdx !== null && queueIdx < this.queueSystem.commandCount) {
+      return { type: "remove_command", data: { index: queueIdx } };
+    }
+
+    return null;
+  }
+
+  private appendGridEntities(
+    entities: ViewEntity[],
+    gridSlotCount: number
+  ): void {
+    for (let i = 0; i < gridSlotCount; i++) {
+      const slot = this.slots[i];
+      if (!slot) {
+        continue;
+      }
+      entities.push({
+        id: `grid_cell_${i}`,
+        slotIndex: i,
+        role: "target",
+        state: "idle",
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+  }
+
+  private appendQueueEntities(
+    entities: ViewEntity[],
+    gridSlotCount: number,
+    maxCmd: number
+  ): void {
+    for (let i = 0; i < maxCmd; i++) {
+      const slot = this.slots[gridSlotCount + i];
+      if (!slot) {
+        continue;
+      }
+      entities.push({
+        id: `queue_${i}`,
+        slotIndex: gridSlotCount + i,
+        role: "target",
+        state: i < this.queueSystem.commandCount ? "selected" : "idle",
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+  }
+
+  private appendPaletteEntities(
+    entities: ViewEntity[],
+    palStartIndex: number
+  ): void {
+    const allowed = this.content.allowed_commands;
+    for (let p = 0; p < allowed.length; p++) {
+      const slot = this.slots[palStartIndex + p];
+      const cmd = allowed[p];
+      if (!(slot && cmd)) {
+        continue;
+      }
+      entities.push({
+        id: `pal_${cmd}`,
+        slotIndex: palStartIndex + p,
+        role: "source",
+        state: "idle",
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = [];
+    const { rows, cols } = this.content.grid;
+    const gridSlotCount = rows * cols;
+    const maxCmd = this.difficulty.max_commands ?? 8;
+    const allowed = this.content.allowed_commands;
+
+    this.appendGridEntities(entities, gridSlotCount);
+    this.appendQueueEntities(entities, gridSlotCount, maxCmd);
+    this.appendPaletteEntities(entities, gridSlotCount + maxCmd);
+
+    // Run slot
+    const runSlot = this.slots[gridSlotCount + maxCmd + allowed.length];
+    if (runSlot) {
+      entities.push({
+        id: "run_btn",
+        slotIndex: gridSlotCount + maxCmd + allowed.length,
+        role: "source",
+        state: this.isExecuting ? "selected" : "idle",
+        x: runSlot.x,
+        y: runSlot.y,
+        w: runSlot.w,
+        h: runSlot.h,
+      });
+    }
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   private getGoalSlot(): Slot | undefined {
@@ -321,7 +597,7 @@ export class GT035Session extends TemplateGameSession<
   }
 
   override checkWinCondition(): boolean {
-    return this.isWin;
+    return this.isWin || this.isWon;
   }
 
   render(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
