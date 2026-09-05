@@ -79,5 +79,10 @@ export default defineTemplate({
   },
   asset_kinds: ["emoji", "image"],
   scoring: STANDARD_SCORING,
+  input: {
+    family: "tap",
+    verbs: ["tap"],
+    tolerance_px: 24,
+  },
   events: ["game_started", "yarn_placed", "yarn_removed", "game_completed"],
 });

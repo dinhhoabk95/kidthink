@@ -7,6 +7,7 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import type { DegradationState } from "#src/systems/degradation";
@@ -26,6 +27,14 @@ import type {
   GT033Difficulty,
   GT033PaletteItem,
 } from "./template.js";
+
+interface GT033ActionPayload {
+  readonly color_id?: string;
+  readonly id?: string;
+  readonly cell_index?: number | string;
+  readonly index?: number | string;
+  readonly slot_index?: number | string;
+}
 
 export class GT033Session extends TemplateGameSession<
   GT033Content,
@@ -69,52 +78,15 @@ export class GT033Session extends TemplateGameSession<
     });
   }
 
-  validateAction(action: GameAction): ActionResult {
-    const type = action.type;
-    const data = (action.data as Record<string, unknown>) ?? {};
-
-    if (
-      type === "select_palette" ||
-      type === "select_color" ||
-      type === "pick_yarn"
-    ) {
-      const colorId = (data.color_id as string) || (data.id as string) || "";
-      return this.handleSelectColor(colorId);
-    }
-
-    if (
-      type === "place_yarn" ||
-      type === "tap_cell" ||
-      type === "fill_cell" ||
-      type === "drop_yarn"
-    ) {
-      const cellIndex = Number(
-        data.cell_index ?? data.index ?? data.slot_index
-      );
-      const colorId = (data.color_id as string) || this.selectedColorId;
-      return this.handlePlaceYarn(cellIndex, colorId);
-    }
-
-    if (type === "remove_yarn" || type === "undo_yarn") {
-      const cellIndex = Number(
-        data.cell_index ?? data.index ?? data.slot_index
-      );
-      return this.handleRemoveYarn(cellIndex);
-    }
-
-    return ACTION_IGNORED;
-  }
-
-  private handleSelectColor(colorId: string): ActionResult {
+  private validateSelectColor(colorId: string): ActionResult {
     const exists = this.content.palette.some((p) => p.color_id === colorId);
     if (!exists) {
       return ACTION_IGNORED;
     }
-    this.selectedColorId = colorId;
     return ACTION_CORRECT;
   }
 
-  private handlePlaceYarn(
+  private validatePlaceYarn(
     cellIndex: number,
     colorId: string | null
   ): ActionResult {
@@ -128,9 +100,98 @@ export class GT033Session extends TemplateGameSession<
       return ACTION_IGNORED;
     }
 
-    // Original non-null cells from content cannot be changed
     if (this.content.cells[cellIndex] !== null) {
       return ACTION_IGNORED;
+    }
+
+    const expectedColor = this.content.solution
+      ? this.content.solution[cellIndex]
+      : null;
+    const isCellCorrect = expectedColor === null || expectedColor === colorId;
+
+    if (!isCellCorrect) {
+      return ACTION_RETRY;
+    }
+
+    return ACTION_CORRECT;
+  }
+
+  private validateRemoveYarn(cellIndex: number): ActionResult {
+    const totalCells = this.content.grid.rows * this.content.grid.cols;
+    if (Number.isNaN(cellIndex) || cellIndex < 0 || cellIndex >= totalCells) {
+      return ACTION_IGNORED;
+    }
+
+    if (this.content.cells[cellIndex] !== null) {
+      return ACTION_IGNORED;
+    }
+
+    if (!this.placedCells[cellIndex]) {
+      return ACTION_IGNORED;
+    }
+
+    return ACTION_CORRECT;
+  }
+
+  validateAction(action: GameAction): ActionResult {
+    if (this.isWin || this.isWon) {
+      return ACTION_IGNORED;
+    }
+
+    const type = action.type;
+    const data = (
+      typeof action.data === "object" && action.data !== null ? action.data : {}
+    ) as GT033ActionPayload;
+
+    if (
+      type === "select_palette" ||
+      type === "select_color" ||
+      type === "pick_yarn"
+    ) {
+      const colorId = data.color_id ?? data.id ?? "";
+      return this.validateSelectColor(colorId);
+    }
+
+    if (
+      type === "place_yarn" ||
+      type === "tap_cell" ||
+      type === "fill_cell" ||
+      type === "drop_yarn"
+    ) {
+      const cellIndex = Number(
+        data.cell_index ?? data.index ?? data.slot_index
+      );
+      const colorId = data.color_id ?? this.selectedColorId;
+      return this.validatePlaceYarn(cellIndex, colorId);
+    }
+
+    if (type === "remove_yarn" || type === "undo_yarn") {
+      const cellIndex = Number(
+        data.cell_index ?? data.index ?? data.slot_index
+      );
+      return this.validateRemoveYarn(cellIndex);
+    }
+
+    return ACTION_IGNORED;
+  }
+
+  private commitSelectColor(colorId: string): void {
+    const exists = this.content.palette.some((p) => p.color_id === colorId);
+    if (!exists) {
+      return;
+    }
+    this.selectedColorId = colorId;
+  }
+
+  private commitPlaceYarn(cellIndex: number, colorId: string): void {
+    const totalCells = this.content.grid.rows * this.content.grid.cols;
+    if (
+      Number.isNaN(cellIndex) ||
+      cellIndex < 0 ||
+      cellIndex >= totalCells ||
+      this.content.cells[cellIndex] !== null
+    ) {
+      return;
     }
 
     this.placedCells[cellIndex] = colorId;
@@ -139,7 +200,6 @@ export class GT033Session extends TemplateGameSession<
     const row = Math.floor(cellIndex / this.content.grid.cols);
     const col = cellIndex % this.content.grid.cols;
 
-    // Check solution match (or rule verification)
     const expectedColor = this.content.solution
       ? this.content.solution[cellIndex]
       : null;
@@ -164,6 +224,7 @@ export class GT033Session extends TemplateGameSession<
     const isAllFilled = this.placedCells.every((c) => c !== null);
     if (isAllFilled && this.verifyGridSolved()) {
       this.isWin = true;
+      this.isWon = true;
       this.recordEvent("game_completed", {
         duration_ms: 0,
         rounds_total: 1,
@@ -174,30 +235,24 @@ export class GT033Session extends TemplateGameSession<
       if (slot) {
         this.particles.push(...spawnParticlesAtSlot(slot, 20));
       }
-      return ACTION_CORRECT;
+      this.winSession();
     }
-
-    if (!isCellCorrect) {
-      return ACTION_RETRY;
-    }
-
-    return ACTION_CORRECT;
   }
 
-  private handleRemoveYarn(cellIndex: number): ActionResult {
+  private commitRemoveYarn(cellIndex: number): void {
     const totalCells = this.content.grid.rows * this.content.grid.cols;
-    if (Number.isNaN(cellIndex) || cellIndex < 0 || cellIndex >= totalCells) {
-      return ACTION_IGNORED;
-    }
-
-    // Cannot remove original fixed cells
-    if (this.content.cells[cellIndex] !== null) {
-      return ACTION_IGNORED;
+    if (
+      Number.isNaN(cellIndex) ||
+      cellIndex < 0 ||
+      cellIndex >= totalCells ||
+      this.content.cells[cellIndex] !== null
+    ) {
+      return;
     }
 
     const prevColor = this.placedCells[cellIndex];
     if (!prevColor) {
-      return ACTION_IGNORED;
+      return;
     }
 
     this.placedCells[cellIndex] = null;
@@ -213,8 +268,185 @@ export class GT033Session extends TemplateGameSession<
       row,
       col,
     });
+  }
 
-    return ACTION_CORRECT;
+  override commit(action: GameAction): void {
+    const type = action.type;
+    const data = (
+      typeof action.data === "object" && action.data !== null ? action.data : {}
+    ) as GT033ActionPayload;
+
+    if (
+      type === "select_palette" ||
+      type === "select_color" ||
+      type === "pick_yarn"
+    ) {
+      const colorId = data.color_id ?? data.id ?? "";
+      this.commitSelectColor(colorId);
+      return;
+    }
+
+    if (
+      type === "place_yarn" ||
+      type === "tap_cell" ||
+      type === "fill_cell" ||
+      type === "drop_yarn"
+    ) {
+      const cellIndex = Number(
+        data.cell_index ?? data.index ?? data.slot_index
+      );
+      const colorId = data.color_id ?? this.selectedColorId;
+      if (colorId) {
+        this.commitPlaceYarn(cellIndex, colorId);
+      }
+      return;
+    }
+
+    if (type === "remove_yarn" || type === "undo_yarn") {
+      const cellIndex = Number(
+        data.cell_index ?? data.index ?? data.slot_index
+      );
+      this.commitRemoveYarn(cellIndex);
+    }
+  }
+
+  private findTappedPalette(
+    gx: number,
+    gy: number,
+    tolerance: number,
+    totalCells: number
+  ): GT033PaletteItem | null {
+    for (let p = 0; p < this.content.palette.length; p++) {
+      const item = this.content.palette[p];
+      const slot = this.slots[totalCells + p];
+      if (!(item && slot)) {
+        continue;
+      }
+      const hw = (slot.hitW ?? slot.w) / 2 + tolerance;
+      const hh = (slot.hitH ?? slot.h) / 2 + tolerance;
+      if (Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh) {
+        return item;
+      }
+    }
+    return null;
+  }
+
+  private findTappedCellIndex(
+    gx: number,
+    gy: number,
+    tolerance: number,
+    totalCells: number
+  ): number | null {
+    for (let i = 0; i < totalCells; i++) {
+      const slot = this.slots[i];
+      if (!slot) {
+        continue;
+      }
+      const hw = (slot.hitW ?? slot.w) / 2 + tolerance;
+      const hh = (slot.hitH ?? slot.h) / 2 + tolerance;
+      if (Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh) {
+        return i;
+      }
+    }
+    return null;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type !== "tap") {
+      return null;
+    }
+
+    const hitTolerance = 24;
+    const totalCells = this.content.grid.rows * this.content.grid.cols;
+
+    const paletteItem = this.findTappedPalette(
+      gesture.x,
+      gesture.y,
+      hitTolerance,
+      totalCells
+    );
+    if (paletteItem) {
+      return {
+        type: "select_color",
+        data: { color_id: paletteItem.color_id },
+      };
+    }
+
+    const cellIdx = this.findTappedCellIndex(
+      gesture.x,
+      gesture.y,
+      hitTolerance,
+      totalCells
+    );
+    if (cellIdx !== null) {
+      if (this.content.cells[cellIdx] !== null) {
+        return null;
+      }
+      if (
+        this.placedCells[cellIdx] !== null &&
+        this.placedCells[cellIdx] === this.selectedColorId
+      ) {
+        return {
+          type: "remove_yarn",
+          data: { cell_index: cellIdx },
+        };
+      }
+      if (this.selectedColorId) {
+        return {
+          type: "place_yarn",
+          data: { cell_index: cellIdx, color_id: this.selectedColorId },
+        };
+      }
+    }
+
+    return null;
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = [];
+    const totalCells = this.content.grid.rows * this.content.grid.cols;
+
+    for (let i = 0; i < totalCells; i++) {
+      const slot = this.slots[i];
+      if (!slot) {
+        continue;
+      }
+      const isPlaced = this.placedCells[i] !== null;
+      entities.push({
+        id: `cell_${i}`,
+        slotIndex: i,
+        role: "target",
+        state: isPlaced ? "selected" : "idle",
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+
+    for (let p = 0; p < this.content.palette.length; p++) {
+      const item = this.content.palette[p];
+      const slot = this.slots[totalCells + p];
+      if (!(item && slot)) {
+        continue;
+      }
+      const isSelected = this.selectedColorId === item.color_id;
+      entities.push({
+        id: item.color_id,
+        slotIndex: totalCells + p,
+        role: "source",
+        state: isSelected ? "selected" : "idle",
+        x: slot.x,
+        y: slot.y,
+        w: slot.w,
+        h: slot.h,
+      });
+    }
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   private verifyGridSolved(): boolean {
@@ -227,12 +459,15 @@ export class GT033Session extends TemplateGameSession<
   }
 
   override checkWinCondition(): boolean {
-    if (this.content.solution) {
-      return this.placedCells.every(
-        (cell, idx) => cell === this.content.solution?.[idx]
-      );
-    }
-    return this.isWin;
+    return this.isWin || this.isWon || this.verifyGridSolved();
+  }
+
+  getSelectedColorId(): string | null {
+    return this.selectedColorId;
+  }
+
+  getPlacedCells(): readonly (string | null)[] {
+    return this.placedCells;
   }
 
   private renderGridCells(

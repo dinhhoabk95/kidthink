@@ -49,6 +49,8 @@ import { GT031_FIXTURES } from "#src/templates/GT-031/fixtures";
 import { GT031Session } from "#src/templates/GT-031/session";
 import { GT032_FIXTURES } from "#src/templates/GT-032/fixtures";
 import { GT032Session } from "#src/templates/GT-032/session";
+import { GT033_FIXTURES } from "#src/templates/GT-033/fixtures";
+import { GT033Session } from "#src/templates/GT-033/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -1104,6 +1106,75 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       expect(session.checkWinCondition()).toBe(true);
       expect(session.getSelectedCupId()).toBe(
         f32.content.cups[correctIdx]?.cup_id
+      );
+    });
+
+    it("GT-033: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f33 = GT033_FIXTURES[0];
+      if (!f33) {
+        throw new Error("GT033_FIXTURES[0] must exist");
+      }
+      const session = new GT033Session(f33.content, f33.difficulty);
+      session.prepareRound("5-6");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.getPlacedCells()).toEqual(f33.content.cells);
+    });
+
+    it("GT-033: chạm vào palette slot và ô trống commit select_color và place_yarn thành công", () => {
+      const f33 = GT033_FIXTURES[0];
+      if (!f33) {
+        throw new Error("GT033_FIXTURES[0] must exist");
+      }
+      const session = new GT033Session(f33.content, f33.difficulty);
+      session.prepareRound("5-6");
+
+      const totalCells = f33.content.grid.rows * f33.content.grid.cols;
+      // Palette item 1
+      const paletteSlot = session.slots[totalCells + 1];
+      if (!paletteSlot) {
+        throw new Error("paletteSlot must exist");
+      }
+
+      const resPalette = session.dispatch({
+        type: "tap",
+        x: paletteSlot.x,
+        y: paletteSlot.y,
+        timeMs: 200,
+      });
+      expect(resPalette?.valid).toBe(true);
+      expect(session.getSelectedColorId()).toBe(
+        f33.content.palette[1]?.color_id
+      );
+
+      // Find first blank cell
+      const blankIdx = f33.content.cells.indexOf(null);
+      const cellSlot = session.slots[blankIdx];
+      if (!cellSlot) {
+        throw new Error("cellSlot must exist");
+      }
+
+      const resCell = session.dispatch({
+        type: "tap",
+        x: cellSlot.x,
+        y: cellSlot.y,
+        timeMs: 300,
+      });
+      expect(resCell).toBeDefined();
+      expect(session.getPlacedCells()[blankIdx]).toBe(
+        f33.content.palette[1]?.color_id
       );
     });
   });

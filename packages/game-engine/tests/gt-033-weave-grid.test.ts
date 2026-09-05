@@ -29,6 +29,11 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
       expect(template.age_max).toBe(6);
       expect(template.banned_age_bands).toEqual(["3-4", "4-5"]);
       expect(template.requires_tap_fallback).toBe(true);
+      expect(template.input).toEqual({
+        family: "tap",
+        verbs: ["tap"],
+        tolerance_px: 24,
+      });
       expect(template.events).toEqual([
         "game_started",
         "yarn_placed",
@@ -121,6 +126,33 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
       );
     });
 
+    it("validates actions purely without mutating state (BR-ENG-13)", () => {
+      const f = getFixture(0);
+      const session = new GT033Session(f.content, f.difficulty);
+      session.setupEntities();
+
+      expect(session.getSelectedColorId()).toBe("red");
+      expect(session.getPlacedCells()[3]).toBeNull();
+      const eventsBefore = session.getTelemetry().events.length;
+
+      // Pure validation for color selection
+      const vColor = session.validateAction({
+        type: "select_palette",
+        data: { color_id: "blue" },
+      });
+      expect(vColor.valid).toBe(true);
+      expect(session.getSelectedColorId()).toBe("red"); // Not mutated!
+
+      // Pure validation for yarn placement
+      const vPlace = session.validateAction({
+        type: "place_yarn",
+        data: { cell_index: 3, color_id: "red" },
+      });
+      expect(vPlace.valid).toBe(true);
+      expect(session.getPlacedCells()[3]).toBeNull(); // Not mutated!
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+    });
+
     it("selects color from palette", () => {
       const f = getFixture(0);
       const session = new GT033Session(f.content, f.difficulty);
@@ -131,6 +163,7 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
         data: { color_id: "blue" },
       });
       expect(res.valid).toBe(true);
+      session.commit({ type: "select_palette", data: { color_id: "blue" } });
       expect(session.selectedColorId).toBe("blue");
 
       const invalid = session.validateAction({
@@ -164,6 +197,10 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
         data: { cell_index: 3, color_id: "blue" },
       });
       expect(wrong.valid).toBe(false);
+      session.commit({
+        type: "place_yarn",
+        data: { cell_index: 3, color_id: "blue" },
+      });
       expect(session.brokenRowIndex).toBe(1);
       expect(session.brokenColIndex).toBe(1);
       expect(session.checkWinCondition()).toBe(false);
@@ -174,6 +211,7 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
         data: { cell_index: 3 },
       });
       expect(undo.valid).toBe(true);
+      session.commit({ type: "remove_yarn", data: { cell_index: 3 } });
       expect(session.placedCells[3]).toBeNull();
       expect(session.brokenRowIndex).toBeNull();
 
@@ -183,6 +221,10 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
         data: { cell_index: 3, color_id: "red" },
       });
       expect(correct.valid).toBe(true);
+      session.commit({
+        type: "place_yarn",
+        data: { cell_index: 3, color_id: "red" },
+      });
       expect(session.checkWinCondition()).toBe(true);
     });
 
@@ -204,7 +246,7 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
       const session = new GT033Session(f.content, f.difficulty);
       session.setupEntities();
 
-      session.validateAction({
+      session.commit({
         type: "place_yarn",
         data: { cell_index: 3, color_id: "red" },
       });
@@ -220,7 +262,7 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
       const session = new GT033Session(f.content, f.difficulty);
       session.setupEntities();
 
-      session.validateAction({
+      session.commit({
         type: "place_yarn",
         data: { cell_index: 3, color_id: "red" },
       });
@@ -243,6 +285,56 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
         data: {},
       });
       expect(invalid.valid).toBe(false);
+    });
+
+    it("handles unified tap gesture dispatch and view generation", () => {
+      const f = getFixture(0); // 2x2 grid, cell 3 blank (solution red)
+      const session = new GT033Session(f.content, f.difficulty);
+      session.prepareRound("5-6");
+
+      const totalCells = f.content.grid.rows * f.content.grid.cols;
+
+      // Tap outside -> miss
+      const miss = session.dispatch({
+        type: "tap",
+        x: 10,
+        y: 10,
+        timeMs: 100,
+      });
+      expect(miss).toEqual({ valid: false, feedback: "none" });
+
+      // Tap palette item 0 (red)
+      const palSlot0 = session.slots[totalCells];
+      if (!palSlot0) {
+        throw new Error("palSlot0 must exist");
+      }
+      const tapPal = session.dispatch({
+        type: "tap",
+        x: palSlot0.x,
+        y: palSlot0.y,
+        timeMs: 200,
+      });
+      expect(tapPal?.valid).toBe(true);
+      expect(session.getSelectedColorId()).toBe("red");
+
+      // Tap blank cell (index 3) -> places red and completes grid
+      const cell3Slot = session.slots[3];
+      if (!cell3Slot) {
+        throw new Error("cell3Slot must exist");
+      }
+      const tapCell = session.dispatch({
+        type: "tap",
+        x: cell3Slot.x,
+        y: cell3Slot.y,
+        timeMs: 300,
+      });
+      expect(tapCell?.valid).toBe(true);
+      expect(session.checkWinCondition()).toBe(true);
+      expect(session.getPlacedCells()[3]).toBe("red");
+
+      const view = session.getView();
+      expect(view.activePrompt).toBe(f.content.prompt);
+      expect(view.entities.length).toBe(totalCells + f.content.palette.length);
     });
   });
 });
