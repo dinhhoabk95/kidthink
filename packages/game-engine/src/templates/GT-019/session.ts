@@ -6,6 +6,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
@@ -42,6 +48,53 @@ function toFlipAxis(val: string | undefined): FlipAxis {
     return val;
   }
   return "none";
+}
+
+function isPointInSlot(
+  slot: Slot,
+  x: number,
+  y: number,
+  tolerance = 24
+): boolean {
+  const hw = (slot.hitW ?? slot.w) / 2 + tolerance;
+  const hh = (slot.hitH ?? slot.h) / 2 + tolerance;
+  return Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh;
+}
+
+function findHitSourcePiece(
+  slots: readonly Slot[],
+  pieces: readonly { piece_id: string }[],
+  x: number,
+  y: number,
+  tolerance = 24
+): { piece: { piece_id: string }; index: number } | null {
+  const sourceSlots = slots.filter((s) => s.role === "source");
+  for (let i = 0; i < pieces.length; i++) {
+    const slot = sourceSlots[i];
+    const piece = pieces[i];
+    if (slot && piece && isPointInSlot(slot, x, y, tolerance)) {
+      return { piece, index: i };
+    }
+  }
+  return null;
+}
+
+function findHitTargetSlot(
+  slots: readonly Slot[],
+  targets: readonly { slot_id: string }[],
+  x: number,
+  y: number,
+  tolerance = 24
+): { target: { slot_id: string }; index: number } | null {
+  const targetSlots = slots.filter((s) => s.role === "target");
+  for (let i = 0; i < targets.length; i++) {
+    const slot = targetSlots[i];
+    const target = targets[i];
+    if (slot && target && isPointInSlot(slot, x, y, tolerance)) {
+      return { target, index: i };
+    }
+  }
+  return null;
 }
 
 export class GT019Session extends TemplateGameSession<
@@ -152,14 +205,252 @@ export class GT019Session extends TemplateGameSession<
       action.type === "drop_item" ||
       action.type === "tap_tap_item"
     ) {
-      const items = this.content.pieces.map((p) => ({
-        id: p.piece_id,
-        targetId: p.target_slot_id,
-      }));
+      const items = this.content.pieces.map((p) => {
+        const slot = this.content.target_slots.find(
+          (s) => s.slot_id === p.target_slot_id
+        );
+        const transform = this.pieceTransforms.get(p.piece_id) ?? {
+          rotation: 0,
+          flip: "none",
+        };
+        const targetTransform: PieceTransform = {
+          rotation: toRotationAngle(slot?.target_rotation),
+          flip: toFlipAxis(slot?.target_flip),
+        };
+        const transformMatch = isPieceTransformMatch(
+          transform,
+          targetTransform
+        );
+        return {
+          id: p.piece_id,
+          targetId: p.target_slot_id,
+          isCorrect: transformMatch,
+        };
+      });
       return this.placementMechanic.validate(action, items);
     }
 
     return ACTION_IGNORED;
+  }
+
+  getStagedItemId(): string | null {
+    return this.placementMechanic.getStagedItemId();
+  }
+
+  stageItem(pieceId: string | null): void {
+    this.placementMechanic.stageItem(pieceId);
+  }
+
+  getPlacements(): ReadonlyMap<string, string> {
+    return this.placementMechanic.getPlacements();
+  }
+
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>
+  ): GameAction | null {
+    const hitSource = findHitSourcePiece(
+      this.slots,
+      this.content.pieces,
+      gesture.fromX,
+      gesture.fromY
+    );
+    if (
+      !hitSource ||
+      this.placementMechanic.getPlacedContainer(hitSource.piece.piece_id)
+    ) {
+      return null;
+    }
+    const hitTarget = findHitTargetSlot(
+      this.slots,
+      this.content.target_slots,
+      gesture.toX,
+      gesture.toY
+    );
+    if (!hitTarget) {
+      return null;
+    }
+    return {
+      type: "drop_item",
+      data: {
+        piece_id: hitSource.piece.piece_id,
+        target_slot_id: hitTarget.target.slot_id,
+        item_id: hitSource.piece.piece_id,
+        target_id: hitTarget.target.slot_id,
+      },
+    };
+  }
+
+  private toTapAction(
+    gesture: Extract<Gesture, { type: "tap" }>
+  ): GameAction | null {
+    const hitTarget = findHitTargetSlot(
+      this.slots,
+      this.content.target_slots,
+      gesture.x,
+      gesture.y
+    );
+    if (hitTarget) {
+      const stagedId = this.placementMechanic.getStagedItemId();
+      if (stagedId) {
+        return {
+          type: "tap_tap_item",
+          data: {
+            piece_id: stagedId,
+            target_slot_id: hitTarget.target.slot_id,
+            item_id: stagedId,
+            target_id: hitTarget.target.slot_id,
+          },
+        };
+      }
+      return null;
+    }
+
+    const hitSource = findHitSourcePiece(
+      this.slots,
+      this.content.pieces,
+      gesture.x,
+      gesture.y
+    );
+    if (
+      hitSource &&
+      !this.placementMechanic.getPlacedContainer(hitSource.piece.piece_id)
+    ) {
+      const stagedId = this.placementMechanic.getStagedItemId();
+      if (stagedId === hitSource.piece.piece_id) {
+        return {
+          type: "rotate_piece",
+          data: { piece_id: hitSource.piece.piece_id, direction: "cw" },
+        };
+      }
+      this.placementMechanic.stageItem(hitSource.piece.piece_id);
+      return null;
+    }
+
+    this.placementMechanic.stageItem(null);
+    return null;
+  }
+
+  private toAdjustAction(
+    gesture: Extract<Gesture, { type: "adjust" }>
+  ): GameAction | null {
+    const stagedId = this.placementMechanic.getStagedItemId();
+    const targetPieceId =
+      stagedId ??
+      this.content.pieces.find(
+        (p) => !this.placementMechanic.getPlacedContainer(p.piece_id)
+      )?.piece_id;
+    if (!targetPieceId) {
+      return null;
+    }
+    return {
+      type: "rotate_piece",
+      data: {
+        piece_id: targetPieceId,
+        direction: gesture.delta >= 0 ? "cw" : "ccw",
+      },
+    };
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "drop") {
+      return this.toDropAction(gesture);
+    }
+    if (gesture.type === "tap") {
+      return this.toTapAction(gesture);
+    }
+    if (gesture.type === "adjust") {
+      return this.toAdjustAction(gesture);
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (
+      action.type === "place_item" ||
+      action.type === "drop_item" ||
+      action.type === "tap_tap_item"
+    ) {
+      const data = action.data as
+        | {
+            piece_id?: string;
+            target_slot_id?: string;
+            item_id?: string;
+            target_id?: string;
+          }
+        | undefined;
+      const pieceId = data?.piece_id ?? data?.item_id;
+      const slotId = data?.target_slot_id ?? data?.target_id;
+      if (pieceId && slotId) {
+        this.onPlacePiece(pieceId, slotId);
+      }
+    } else if (action.type === "rotate_piece") {
+      const data = action.data as
+        | { piece_id?: string; direction?: "cw" | "ccw" }
+        | undefined;
+      if (data?.piece_id) {
+        this.onRotatePiece(data.piece_id, data.direction ?? "cw");
+      }
+    } else if (action.type === "flip_piece") {
+      const data = action.data as
+        | { piece_id?: string; axis?: "horizontal" | "vertical" }
+        | undefined;
+      if (data?.piece_id) {
+        this.onFlipPiece(data.piece_id, data.axis ?? "horizontal");
+      }
+    }
+  }
+
+  override getView(): EngineView {
+    const targets = this.slots.filter((s) => s.role === "target");
+    const sources = this.slots.filter((s) => s.role === "source");
+    const placements = this.placementMechanic.getPlacements();
+    const stagedId = this.placementMechanic.getStagedItemId();
+    const entities: ViewEntity[] = [];
+
+    targets.forEach((slot, i) => {
+      const target = this.content.target_slots[i];
+      if (target) {
+        entities.push({
+          id: target.slot_id,
+          slotIndex: i,
+          role: "target",
+          state: "idle",
+          x: slot.x,
+          y: slot.y,
+          w: slot.w,
+          h: slot.h,
+        });
+      }
+    });
+
+    sources.forEach((slot, i) => {
+      const piece = this.content.pieces[i];
+      if (piece) {
+        const isPlaced = placements.has(piece.piece_id);
+        const isStaged = stagedId === piece.piece_id;
+        let state: EntityVisual = "idle";
+        if (isPlaced) {
+          state = "correct";
+        } else if (isStaged) {
+          state = "selected";
+        }
+        entities.push({
+          id: piece.piece_id,
+          slotIndex: targets.length + i,
+          role: "source",
+          state,
+          x: slot.x,
+          y: slot.y,
+          w: slot.w,
+          h: slot.h,
+        });
+      }
+    });
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   /**
@@ -237,7 +528,7 @@ export class GT019Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
-    const layoutFn = resolveLayout("grid");
+    const layoutFn = resolveLayout("top-source-bottom-target");
     return layoutFn({
       slotCount: this.content.pieces.length,
       targetCount: this.content.target_slots.length,
@@ -265,15 +556,17 @@ export class GT019Session extends TemplateGameSession<
     const placements = this.placementMechanic.getPlacements();
     const pieceById = new Map(this.content.pieces.map((p) => [p.piece_id, p]));
     const placedPieceIds = new Set(placements.keys());
+    const pieceIdBySlotId = new Map<string, string>();
+    for (const [pieceId, slotId] of placements.entries()) {
+      pieceIdBySlotId.set(slotId, pieceId);
+    }
 
     this.content.target_slots.forEach((target, i) => {
       const slot = targets[i];
       if (!slot) {
         return;
       }
-      const pieceId = [...placements.entries()].find(
-        ([, slotId]) => slotId === target.slot_id
-      )?.[0];
+      const pieceId = pieceIdBySlotId.get(target.slot_id);
       const piece = pieceId ? pieceById.get(pieceId) : undefined;
       if (!piece) {
         drawEmptyTargetSlot(ctx, slot);
