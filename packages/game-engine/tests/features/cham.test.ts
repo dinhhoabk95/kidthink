@@ -55,6 +55,8 @@ import { GT034_FIXTURES } from "#src/templates/GT-034/fixtures";
 import { GT034Session } from "#src/templates/GT-034/session";
 import { GT035_FIXTURES } from "#src/templates/GT-035/fixtures";
 import { GT035Session } from "#src/templates/GT-035/session";
+import { GT036_FIXTURES } from "#src/templates/GT-036/fixtures";
+import { GT036Session } from "#src/templates/GT-036/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -1282,6 +1284,55 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
 
       expect(result?.valid).toBe(true);
       expect(session.queueSystem.commandCount).toBe(1);
+    });
+
+    it("GT-036: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f36 = GT036_FIXTURES[0];
+      if (!f36) {
+        throw new Error("GT036_FIXTURES[0] must exist");
+      }
+      const session = new GT036Session(f36.content, f36.difficulty);
+      session.prepareRound("5-6");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.placedElements.every((el) => el === null)).toBe(true);
+    });
+
+    it("GT-036: chạm vào palette slot commit select_palette thành công", () => {
+      const f36 = GT036_FIXTURES[0];
+      if (!f36) {
+        throw new Error("GT036_FIXTURES[0] must exist");
+      }
+      const session = new GT036Session(f36.content, f36.difficulty);
+      session.prepareRound("5-6");
+
+      const count = f36.content.track_length;
+      const palSlot = session.slots[count + 1]; // Second palette item
+      if (!palSlot) {
+        throw new Error("palSlot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: palSlot.x,
+        y: palSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.selectedPaletteId).toBe(f36.content.palette[1]?.id);
     });
   });
 

@@ -56,6 +56,16 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
       data: { paletteId: "moon" },
     });
     expect(res.valid).toBe(true);
+    // Pure: not yet mutated
+    expect(session.selectedPaletteId).toBe(
+      sampleFixture.content.palette[0]?.id
+    );
+
+    session.commit({
+      type: "select_palette",
+      data: { paletteId: "moon" },
+    });
+    expect(session.selectedPaletteId).toBe("moon");
 
     const badRes = session.validateAction({
       type: "select_palette",
@@ -72,10 +82,15 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
     );
     session.setupEntities();
 
-    session.validateAction({
+    const action = {
       type: "place_element",
       data: { slotIndex: 0, elementId: "star" },
-    });
+    };
+    const vRes = session.validateAction(action);
+    expect(vRes.valid).toBe(true);
+    expect(session.placedElements[0]).toBe(null); // Pure!
+
+    session.commit(action);
     expect(session.placedElements[0]).toBe("star");
 
     const placedEvent = session
@@ -92,13 +107,13 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
     );
     session.setupEntities();
 
-    session.validateAction({
+    session.commit({
       type: "place_element",
       data: { slotIndex: 0, elementId: "star" },
     });
     expect(session.placedElements[0]).toBe("star");
 
-    session.validateAction({
+    session.commit({
       type: "remove_element",
       data: { slotIndex: 0 },
     });
@@ -118,16 +133,16 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
     );
     session.setupEntities();
 
-    session.validateAction({
+    session.commit({
       type: "place_element",
       data: { slotIndex: 0, elementId: "star" },
     });
-    session.validateAction({
+    session.commit({
       type: "place_element",
       data: { slotIndex: 1, elementId: "moon" },
     });
 
-    session.validateAction({
+    session.commit({
       type: "clear_track",
       data: {},
     });
@@ -143,19 +158,19 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
     );
     session.setupEntities();
 
-    session.validateAction({
+    session.commit({
       type: "place_element",
       data: { slotIndex: 2, elementId: "star" },
     });
     expect(session.placedElements[2]).toBe("star");
 
-    session.validateAction({
+    session.commit({
       type: "remove_element",
       data: { slotIndex: 2 },
     });
     expect(session.placedElements[2]).toBe(null);
 
-    session.validateAction({
+    session.commit({
       type: "place_element",
       data: { slotIndex: 2, elementId: "moon" },
     });
@@ -173,7 +188,7 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
     // Place star, moon, star, moon, star, moon (3 repetitions of star-moon)
     const items = ["star", "moon", "star", "moon", "star", "moon"];
     for (let i = 0; i < items.length; i++) {
-      session.validateAction({
+      session.commit({
         type: "place_element",
         data: { slotIndex: i, elementId: items[i] },
       });
@@ -185,6 +200,13 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
     });
 
     expect(subRes.valid).toBe(true);
+    expect(session.isWin).toBe(false); // Pure!
+
+    session.commit({
+      type: "submit_creation",
+      data: {},
+    });
+
     expect(session.isWin).toBe(true);
     expect(session.score).toBeGreaterThanOrEqual(60);
     expect(session.stars).toBeGreaterThanOrEqual(1);
@@ -215,7 +237,7 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
     // Place non-repeating pattern (star, star, star, moon, star, star)
     const items = ["star", "star", "star", "moon", "star", "star"];
     for (let i = 0; i < items.length; i++) {
-      session.validateAction({
+      session.commit({
         type: "place_element",
         data: { slotIndex: i, elementId: items[i] },
       });
@@ -228,6 +250,10 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
 
     expect(subRes.valid).toBe(false);
     expect(subRes.feedback).toBe("amber_soft");
+    session.commit({
+      type: "submit_creation",
+      data: {},
+    });
     expect(session.isWin).toBe(false);
   });
 
@@ -249,7 +275,7 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
       "leaf",
     ];
     for (let i = 0; i < seq.length; i++) {
-      session.validateAction({
+      session.commit({
         type: "place_element",
         data: { slotIndex: i, elementId: seq[i] },
       });
@@ -260,6 +286,10 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
       data: {},
     });
     expect(subRes.valid).toBe(true);
+    session.commit({
+      type: "submit_creation",
+      data: {},
+    });
     expect(session.isWin).toBe(true);
   });
 
@@ -271,7 +301,7 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
     // Place 5 items (apple, orange, apple, orange, apple) -> trailing partial motif
     const partialItems = ["apple", "orange", "apple", "orange", "apple"];
     for (let i = 0; i < partialItems.length; i++) {
-      session.validateAction({
+      session.commit({
         type: "place_element",
         data: { slotIndex: i, elementId: partialItems[i] },
       });
@@ -284,7 +314,7 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
     expect(failRes.valid).toBe(false);
 
     // Complete the 6th item (orange) -> 3 exact repetitions
-    session.validateAction({
+    session.commit({
       type: "place_element",
       data: { slotIndex: 5, elementId: "orange" },
     });
@@ -294,6 +324,10 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
       data: {},
     });
     expect(passRes.valid).toBe(true);
+    session.commit({
+      type: "submit_creation",
+      data: {},
+    });
     expect(session.isWin).toBe(true);
   });
 
@@ -337,5 +371,58 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
         }
       }
     }
+  });
+
+  it("Scenario 14: handles unified tap gesture dispatch and view generation", () => {
+    const session = new GT036Session(
+      sampleFixture.content,
+      sampleFixture.difficulty,
+      "5-6"
+    );
+    session.prepareRound("5-6");
+
+    // Tap outside -> miss
+    const miss = session.dispatch({
+      type: "tap",
+      x: 10,
+      y: 10,
+      timeMs: 100,
+    });
+    expect(miss).toEqual({ valid: false, feedback: "none" });
+
+    // Tap palette 1 slot (second palette item: "moon")
+    const count = sampleFixture.content.track_length;
+    const pal1Slot = session.slots[count + 1];
+    if (!pal1Slot) {
+      throw new Error("pal1Slot must exist");
+    }
+
+    const tapPal = session.dispatch({
+      type: "tap",
+      x: pal1Slot.x,
+      y: pal1Slot.y,
+      timeMs: 200,
+    });
+    expect(tapPal?.valid).toBe(true);
+    expect(session.selectedPaletteId).toBe("moon");
+
+    // Tap track slot 0 -> places "moon"
+    const track0Slot = session.slots[0];
+    if (!track0Slot) {
+      throw new Error("track0Slot must exist");
+    }
+
+    const tapTrack = session.dispatch({
+      type: "tap",
+      x: track0Slot.x,
+      y: track0Slot.y,
+      timeMs: 300,
+    });
+    expect(tapTrack?.valid).toBe(true);
+    expect(session.placedElements[0]).toBe("moon");
+
+    const view = session.getView();
+    expect(view.activePrompt).toBe(sampleFixture.content.prompt);
+    expect(view.entities.length).toBeGreaterThan(0);
   });
 });
