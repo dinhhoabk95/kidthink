@@ -1,6 +1,12 @@
 import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
+import {
+  getCachedGradient,
+  PRIMITIVE_GRADIENTS,
+  setCachedGradient,
+  setContextGeneration,
+} from "./cache.js";
 
 /**
  * Nguyên thuỷ vẽ dùng chung cho `render()` của mọi engine.
@@ -122,29 +128,75 @@ export function drawSceneBackground(
   rs: RenderSystem,
   themeId?: string
 ): void {
+  setContextGeneration(ctx, rs.paintGeneration);
   ctx.save();
   if (themeId === "farm" || themeId === "nature") {
     // Farm / Nature: soft pasture sky & sunlit meadow gradient
-    const skyGrad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT);
-    skyGrad.addColorStop(0, "#f0fdf4");
-    skyGrad.addColorStop(0.55, "#fbf9f5");
-    skyGrad.addColorStop(1, "#ecfdf5");
+    let skyGrad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_SKY,
+      0
+    );
+    if (!skyGrad) {
+      skyGrad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT);
+      skyGrad.addColorStop(0, "#f0fdf4");
+      skyGrad.addColorStop(0.55, "#fbf9f5");
+      skyGrad.addColorStop(1, "#ecfdf5");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_SKY,
+        0,
+        skyGrad
+      );
+    }
     ctx.fillStyle = skyGrad;
     ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
   } else if (themeId === "space") {
     // Space: soft pastel starlight
-    const spaceGrad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT);
-    spaceGrad.addColorStop(0, "#e0e7ff");
-    spaceGrad.addColorStop(0.6, "#fbf9f5");
-    spaceGrad.addColorStop(1, "#ede9fe");
+    let spaceGrad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_SPACE,
+      0
+    );
+    if (!spaceGrad) {
+      spaceGrad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT);
+      spaceGrad.addColorStop(0, "#e0e7ff");
+      spaceGrad.addColorStop(0.6, "#fbf9f5");
+      spaceGrad.addColorStop(1, "#ede9fe");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_SPACE,
+        0,
+        spaceGrad
+      );
+    }
     ctx.fillStyle = spaceGrad;
     ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
   } else if (themeId === "ocean") {
     // Ocean: gentle aquamarine
-    const seaGrad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT);
-    seaGrad.addColorStop(0, "#e0f2fe");
-    seaGrad.addColorStop(0.6, "#fbf9f5");
-    seaGrad.addColorStop(1, "#ccfbf1");
+    let seaGrad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_SEA,
+      0
+    );
+    if (!seaGrad) {
+      seaGrad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT);
+      seaGrad.addColorStop(0, "#e0f2fe");
+      seaGrad.addColorStop(0.6, "#fbf9f5");
+      seaGrad.addColorStop(1, "#ccfbf1");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_SEA,
+        0,
+        seaGrad
+      );
+    }
     ctx.fillStyle = seaGrad;
     ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
   } else {
@@ -152,24 +204,54 @@ export function drawSceneBackground(
     ctx.fillStyle = designTokens.colors.surface[50];
     ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
 
-    const grad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT * 0.45);
-    grad.addColorStop(0, "rgba(255, 250, 240, 0.65)");
-    grad.addColorStop(1, "rgba(251, 249, 245, 0)");
+    let grad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_DEFAULT,
+      0
+    );
+    if (!grad) {
+      grad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT * 0.45);
+      grad.addColorStop(0, "rgba(255, 250, 240, 0.65)");
+      grad.addColorStop(1, "rgba(251, 249, 245, 0)");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_DEFAULT,
+        0,
+        grad
+      );
+    }
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
   }
 
   // Soft subtle corner accents (Kinder-Tactile Montessori vignette)
-  const vignette = ctx.createRadialGradient(
-    rs.LOGIC_WIDTH / 2,
-    rs.LOGIC_HEIGHT / 2,
-    rs.LOGIC_HEIGHT * 0.4,
-    rs.LOGIC_WIDTH / 2,
-    rs.LOGIC_HEIGHT / 2,
-    rs.LOGIC_WIDTH * 0.65
+  let vignette = getCachedGradient(
+    ctx,
+    rs.paintGeneration,
+    PRIMITIVE_GRADIENTS.BG_VIGNETTE,
+    0
   );
-  vignette.addColorStop(0, "rgba(255, 255, 255, 0)");
-  vignette.addColorStop(1, "rgba(212, 197, 171, 0.12)");
+  if (!vignette) {
+    vignette = ctx.createRadialGradient(
+      rs.LOGIC_WIDTH / 2,
+      rs.LOGIC_HEIGHT / 2,
+      rs.LOGIC_HEIGHT * 0.4,
+      rs.LOGIC_WIDTH / 2,
+      rs.LOGIC_HEIGHT / 2,
+      rs.LOGIC_WIDTH * 0.65
+    );
+    vignette.addColorStop(0, "rgba(255, 255, 255, 0)");
+    vignette.addColorStop(1, "rgba(212, 197, 171, 0.12)");
+    setCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_VIGNETTE,
+      0,
+      vignette
+    );
+  }
   ctx.fillStyle = vignette;
   ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
 

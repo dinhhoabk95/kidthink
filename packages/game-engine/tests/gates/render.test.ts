@@ -40,6 +40,12 @@ describe("Engine Render Quality Gates (BR-ERC-01..05)", () => {
     expect(result.violations.some((v) => v.rule === "BR-ERC-05")).toBe(true);
   });
 
+  it("ca âm mới: file ngoài src/render/ import cache.ts làm cổng đỏ (BR-ERC-06)", () => {
+    const fixtureDir = resolve(fixturesDir, "cache-import-outside-render");
+    const result = scanRenderGate(fixtureDir);
+    expect(result.violations.some((v) => v.rule === "BR-ERC-06")).toBe(true);
+  });
+
   it("ca âm: file phụ cạnh session.ts chứa ctx thô vẫn bị bắt (BR-ERC-05)", () => {
     // Đây là lối đi vòng đã từng dùng: dời mọi lời gọi `ctx.*` sang một file
     // bên cạnh, vì cổng cũ chỉ quét `session.ts`.

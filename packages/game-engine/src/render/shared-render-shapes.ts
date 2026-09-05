@@ -17,6 +17,12 @@ import type { RenderSystem } from "#src/systems/render-system";
 import type { ClockTime } from "#src/systems/rotation-system";
 import { timeToAngles } from "#src/systems/rotation-system";
 import {
+  getCachedGradient,
+  getContextGeneration,
+  PRIMITIVE_GRADIENTS,
+  setCachedGradient,
+} from "./cache.js";
+import {
   drawSlotItem,
   type RenderAsset,
   resolveEmojiGlyph,
@@ -721,17 +727,33 @@ export function drawWoodenPlate(
   ctx.restore();
 
   // 3. Plate Rim (Warm Oak Wood)
-  const plateGrad = ctx.createRadialGradient(
-    cx - r * 0.3,
-    cy - r * 0.3,
-    r * 0.1,
-    cx,
-    cy,
-    r
+  const gen = getContextGeneration(ctx);
+  let plateGrad = getCachedGradient(
+    ctx,
+    gen,
+    PRIMITIVE_GRADIENTS.PLATE_RIM,
+    slot.index
   );
-  plateGrad.addColorStop(0, "#fff8ee");
-  plateGrad.addColorStop(0.7, "#f5edd8");
-  plateGrad.addColorStop(1, "#e6d7b8");
+  if (!plateGrad) {
+    plateGrad = ctx.createRadialGradient(
+      cx - r * 0.3,
+      cy - r * 0.3,
+      r * 0.1,
+      cx,
+      cy,
+      r
+    );
+    plateGrad.addColorStop(0, "#fff8ee");
+    plateGrad.addColorStop(0.7, "#f5edd8");
+    plateGrad.addColorStop(1, "#e6d7b8");
+    setCachedGradient(
+      ctx,
+      gen,
+      PRIMITIVE_GRADIENTS.PLATE_RIM,
+      slot.index,
+      plateGrad
+    );
+  }
   ctx.fillStyle = plateGrad;
   ctx.strokeStyle = isSelected
     ? designTokens.colors.montessori.amber
@@ -744,16 +766,24 @@ export function drawWoodenPlate(
 
   // 4. Inner Indented Recess
   const innerR = r * 0.75;
-  const innerGrad = ctx.createRadialGradient(
-    cx,
-    cy,
-    innerR * 0.2,
-    cx,
-    cy,
-    innerR
+  let innerGrad = getCachedGradient(
+    ctx,
+    gen,
+    PRIMITIVE_GRADIENTS.PLATE_INNER,
+    slot.index
   );
-  innerGrad.addColorStop(0, "#efe5cc");
-  innerGrad.addColorStop(1, "#dfd3b4");
+  if (!innerGrad) {
+    innerGrad = ctx.createRadialGradient(cx, cy, innerR * 0.2, cx, cy, innerR);
+    innerGrad.addColorStop(0, "#efe5cc");
+    innerGrad.addColorStop(1, "#dfd3b4");
+    setCachedGradient(
+      ctx,
+      gen,
+      PRIMITIVE_GRADIENTS.PLATE_INNER,
+      slot.index,
+      innerGrad
+    );
+  }
   ctx.fillStyle = innerGrad;
   ctx.strokeStyle = "rgba(130, 118, 96, 0.35)";
   ctx.lineWidth = 2;
@@ -789,17 +819,33 @@ export function drawClocheScene(
     // Nắp bạc đậy kín
     ctx.save();
     const clocheR = r * 0.78;
-    const clocheGrad = ctx.createRadialGradient(
-      cx - clocheR * 0.3,
-      cy - clocheR * 0.4,
-      clocheR * 0.1,
-      cx,
-      cy,
-      clocheR
+    const gen = getContextGeneration(ctx);
+    let clocheGrad = getCachedGradient(
+      ctx,
+      gen,
+      PRIMITIVE_GRADIENTS.PLATE_CLOCHE,
+      slot.index
     );
-    clocheGrad.addColorStop(0, "#ffffff");
-    clocheGrad.addColorStop(0.5, "#dcdfe4");
-    clocheGrad.addColorStop(1, "#9aa0a6");
+    if (!clocheGrad) {
+      clocheGrad = ctx.createRadialGradient(
+        cx - clocheR * 0.3,
+        cy - clocheR * 0.4,
+        clocheR * 0.1,
+        cx,
+        cy,
+        clocheR
+      );
+      clocheGrad.addColorStop(0, "#ffffff");
+      clocheGrad.addColorStop(0.5, "#dcdfe4");
+      clocheGrad.addColorStop(1, "#9aa0a6");
+      setCachedGradient(
+        ctx,
+        gen,
+        PRIMITIVE_GRADIENTS.PLATE_CLOCHE,
+        slot.index,
+        clocheGrad
+      );
+    }
     ctx.fillStyle = clocheGrad;
     ctx.strokeStyle = "#80868b";
     ctx.lineWidth = 3;
@@ -1139,17 +1185,33 @@ export function drawGramophone(
   ctx.stroke();
 
   // Loa kèn đồng thau Honey Amber
-  const hornGrad = ctx.createRadialGradient(
-    cx + r * 0.2,
-    cy - r * 0.3,
-    r * 0.1,
-    cx,
-    cy,
-    r * 0.7
+  const gen = getContextGeneration(ctx);
+  let hornGrad = getCachedGradient(
+    ctx,
+    gen,
+    PRIMITIVE_GRADIENTS.PARTY_HORN,
+    slot.index
   );
-  hornGrad.addColorStop(0, "#fff5cc");
-  hornGrad.addColorStop(0.5, "#ffbf00");
-  hornGrad.addColorStop(1, "#b38600");
+  if (!hornGrad) {
+    hornGrad = ctx.createRadialGradient(
+      cx + r * 0.2,
+      cy - r * 0.3,
+      r * 0.1,
+      cx,
+      cy,
+      r * 0.7
+    );
+    hornGrad.addColorStop(0, "#fff5cc");
+    hornGrad.addColorStop(0.5, "#ffbf00");
+    hornGrad.addColorStop(1, "#b38600");
+    setCachedGradient(
+      ctx,
+      gen,
+      PRIMITIVE_GRADIENTS.PARTY_HORN,
+      slot.index,
+      hornGrad
+    );
+  }
   ctx.fillStyle = hornGrad;
   ctx.beginPath();
   ctx.moveTo(cx - r * 0.1, cy + r * 0.1);

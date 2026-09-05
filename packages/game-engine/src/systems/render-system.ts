@@ -44,6 +44,12 @@ export class RenderSystem {
   viewport?: CanvasViewport;
 
   /**
+   * Thế hệ dựng hình hiện tại. Tăng mỗi lần `setupCanvas` được gọi để vô
+   * hiệu hoá cache gradient giữa các lần đổi kích thước hoặc đổi canvas.
+   */
+  paintGeneration = 0;
+
+  /**
    * Đặt canvas về không gian logic 960x540 (`game-engine-runtime.md` §7.1).
    *
    * Trước đây hàm này tính `scale` rồi trả về mà không áp dụng, và nơi gọi thì
@@ -80,6 +86,8 @@ export class RenderSystem {
         dpr * offsetY
       );
     }
+
+    this.paintGeneration++;
 
     const viewport: CanvasViewport = {
       cssHeight: height,

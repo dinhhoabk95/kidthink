@@ -27,6 +27,12 @@ const RAW_CANVAS_METHOD_REGEX =
   /\bctx\.(fillRect|fillText|strokeRect|strokeText|clearRect|arc|arcTo|ellipse|rect|roundRect|beginPath|closePath|moveTo|lineTo|quadraticCurveTo|bezierCurveTo|fill|stroke|clip|drawImage|putImageData|setLineDash|createLinearGradient|createRadialGradient|createPattern)\b/;
 
 /**
+ * Cấm import trực tiếp `cache.ts` ngoài `src/render/*` (BR-ERC-06 / #233).
+ */
+const CACHE_IMPORT_REGEX =
+  /\bfrom\s+['"][^'"]*\/cache(?:\.[jt]s)?['"]|\bimport\s+['"][^'"]*\/cache(?:\.[jt]s)?['"]/;
+
+/**
  * Toạ độ cứng trong lời gọi vẽ — **bất kỳ** hàm `draw*` nào nhận hai số liền
  * nhau ở vị trí x, y, chứ không phải danh sách ba tên như bản trước.
  *
@@ -295,6 +301,21 @@ export function scanRenderGate(
   }
 
   violations.push(...lintNonTemplateFiles(srcOrTemplatesDir, templatesDir));
+
+  const allFiles = collectTsFiles(srcOrTemplatesDir);
+  for (const file of allFiles) {
+    const rel = relative(srcOrTemplatesDir, file).replace(/\\/g, "/");
+    if (!rel.startsWith("render/")) {
+      const content = readFileSync(file, "utf-8");
+      if (CACHE_IMPORT_REGEX.test(content)) {
+        violations.push({
+          file,
+          rule: "BR-ERC-06",
+          message: `Direct import of cache.ts in "${rel}". Only modules inside src/render/* may import cache.ts.`,
+        });
+      }
+    }
+  }
 
   const activeCount = entries.length;
   const implementedCount = implementedCodes.length;

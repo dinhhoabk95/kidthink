@@ -7,6 +7,7 @@ import {
 import { InteractionManager } from "./interaction.js";
 import { isLayoutId, resolveLayout } from "./layout/registry.js";
 import type { LayoutId, Slot } from "./layout/types.js";
+import { clearRenderCache } from "./render/index.js";
 import { AudioController } from "./systems/audio-controller.js";
 import { RenderSystem } from "./systems/render-system.js";
 import { ScaffoldingSystem } from "./systems/scaffolding.js";
@@ -294,6 +295,7 @@ export class GameEngine {
     }
     this.eventListeners.clear();
     this.interaction.clearSelection();
+    clearRenderCache();
   }
 
   private cancelFrame(): void {
