@@ -6,6 +6,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
@@ -25,6 +31,19 @@ import {
 } from "../shared-render.js";
 import { drawWaypointPath } from "../shared-render-shapes.js";
 import type { GT024Content, GT024Difficulty } from "./template.js";
+
+function findHitStrokePoint(
+  points: readonly { readonly x: number; readonly y: number }[],
+  target: { readonly x: number; readonly y: number },
+  tolerance: number
+): { readonly x: number; readonly y: number } | null {
+  for (const pt of points) {
+    if (Math.hypot(target.x - pt.x, target.y - pt.y) <= tolerance) {
+      return pt;
+    }
+  }
+  return null;
+}
 
 export class GT024Session extends TemplateGameSession<
   GT024Content,
@@ -109,6 +128,77 @@ export class GT024Session extends TemplateGameSession<
 
   override checkWinCondition(): boolean {
     return this.traceSystem.isComplete();
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    const target = this.traceSystem.getCurrentTargetWaypoint();
+    if (!target) {
+      return null;
+    }
+    const tolerance = this.difficulty.tolerance_px;
+
+    if (gesture.type === "stroke") {
+      const hitPt = findHitStrokePoint(gesture.points, target, tolerance);
+      if (hitPt) {
+        return {
+          type: "trace_point",
+          data: { x: hitPt.x, y: hitPt.y },
+        };
+      }
+    } else if (
+      gesture.type === "tap" &&
+      Math.hypot(target.x - gesture.x, target.y - gesture.y) <= tolerance
+    ) {
+      return {
+        type: "trace_point",
+        data: { x: gesture.x, y: gesture.y },
+      };
+    }
+
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (action.type === "trace_point" || action.type === "point_touched") {
+      const data = action.data;
+      const x =
+        typeof data === "object" && data !== null
+          ? Reflect.get(data, "x")
+          : undefined;
+      const y =
+        typeof data === "object" && data !== null
+          ? Reflect.get(data, "y")
+          : undefined;
+      if (typeof x === "number" && typeof y === "number") {
+        this.onTracePoint({ x, y });
+      }
+    }
+  }
+
+  override getView(): EngineView {
+    const currentOrder = this.traceSystem.getCurrentOrderIndex();
+    const entities: ViewEntity[] = this.content.waypoints.map((w, idx) => {
+      let state: EntityVisual = "idle";
+      if (w.order < currentOrder) {
+        state = "correct";
+      } else if (w.order === currentOrder) {
+        state = "active";
+      }
+      return {
+        id: w.id,
+        slotIndex: idx,
+        role: "target",
+        state,
+        x: w.x,
+        y: w.y,
+        w: 48,
+        h: 48,
+      };
+    });
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {

@@ -44,5 +44,6 @@ describe("Gate check:engine-input-dispatch (Ratchet Duck-typing in play/[code].v
     expect(result.readyCodes).toContain("GT-021");
     expect(result.readyCodes).toContain("GT-022");
     expect(result.readyCodes).toContain("GT-023");
+    expect(result.readyCodes).toContain("GT-024");
   });
 });

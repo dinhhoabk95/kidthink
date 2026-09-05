@@ -47,6 +47,11 @@ export default defineTemplate({
   age_max: 6,
   banned_age_bands: ["3-4"],
   requires_tap_fallback: false,
+  input: {
+    family: "stroke",
+    verbs: ["stroke", "tap"],
+    tolerance_px: 40,
+  },
   asset_kinds: ["emoji", "image"],
   scoring: STANDARD_SCORING,
   events: [

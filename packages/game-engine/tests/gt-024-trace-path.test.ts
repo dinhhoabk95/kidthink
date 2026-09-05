@@ -61,4 +61,51 @@ describe("GT-024: Vẽ theo nét (trace-path)", () => {
     );
     expect(traceCompleted).toBeDefined();
   });
+
+  it("handles stroke and tap gestures via unified input dispatch", () => {
+    if (!f1) {
+      throw new Error("Missing fixture");
+    }
+    const session = new GT024Session(f1.content, f1.difficulty);
+    session.prepareRound("5-6");
+
+    // Gesture tap outside waypoint -> invalid
+    const missTap = session.dispatch({
+      type: "tap",
+      x: 50,
+      y: 50,
+      timeMs: 100,
+    });
+    expect(missTap).toEqual({ valid: false, feedback: "none" });
+
+    // Gesture stroke across wp-top (480, 150)
+    const stroke1 = session.dispatch({
+      type: "stroke",
+      points: [
+        { x: 470, y: 140 },
+        { x: 480, y: 150 },
+        { x: 490, y: 160 },
+      ],
+      timeMs: 200,
+    });
+    expect(stroke1?.valid).toBe(true);
+    expect(session.traceSystem.getCurrentOrderIndex()).toBe(1);
+
+    // Gesture tap wp-right (650, 380)
+    const tap2 = session.dispatch({
+      type: "tap",
+      x: 650,
+      y: 380,
+      timeMs: 300,
+    });
+    expect(tap2?.valid).toBe(true);
+    expect(session.traceSystem.getCurrentOrderIndex()).toBe(2);
+
+    const view = session.getView();
+    expect(view.activePrompt).toBe(f1.content.prompt);
+    expect(view.entities.length).toBe(f1.content.waypoints.length);
+    expect(view.entities[0]?.state).toBe("correct");
+    expect(view.entities[1]?.state).toBe("correct");
+    expect(view.entities[2]?.state).toBe("active");
+  });
 });
