@@ -6,6 +6,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
@@ -26,6 +32,26 @@ import {
 } from "../shared-render.js";
 import { drawSceneObjectAt } from "../shared-render-shapes.js";
 import type { GT022Content, GT022Difficulty } from "./template.js";
+
+function findHitSceneObject(
+  objects: readonly SceneObject[],
+  x: number,
+  y: number,
+  tolerance = 24
+): SceneObject | null {
+  for (let i = objects.length - 1; i >= 0; i--) {
+    const obj = objects[i];
+    if (!obj) {
+      continue;
+    }
+    const hw = obj.width / 2 + tolerance;
+    const hh = obj.height / 2 + tolerance;
+    if (Math.abs(x - obj.x) <= hw && Math.abs(y - obj.y) <= hh) {
+      return obj;
+    }
+  }
+  return null;
+}
 
 export class GT022Session extends TemplateGameSession<
   GT022Content,
@@ -140,6 +166,70 @@ export class GT022Session extends TemplateGameSession<
 
   override checkWinCondition(): boolean {
     return this.sceneSystem.isAllFound();
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "tap") {
+      const hitObj = findHitSceneObject(
+        this.resolvedObjects,
+        gesture.x,
+        gesture.y
+      );
+      if (hitObj) {
+        const state = this.sceneSystem.getObjectState(hitObj.id);
+        if (hitObj.isHidden && state?.isRevealed !== true) {
+          return { type: "reveal_object", data: { item_id: hitObj.id } };
+        }
+        return { type: "tap_object", data: { item_id: hitObj.id } };
+      }
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (action.type === "tap_object" || action.type === "select_item") {
+      const data = action.data;
+      const itemId =
+        typeof data === "object" && data !== null
+          ? Reflect.get(data, "item_id")
+          : undefined;
+      if (typeof itemId === "string") {
+        this.onTapObject(itemId);
+      }
+    } else if (action.type === "reveal_object") {
+      const data = action.data;
+      const itemId =
+        typeof data === "object" && data !== null
+          ? Reflect.get(data, "item_id")
+          : undefined;
+      if (typeof itemId === "string") {
+        this.onRevealObject(itemId);
+      }
+    }
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = this.resolvedObjects.map((obj, i) => {
+      const state = this.sceneSystem.getObjectState(obj.id);
+      let visual: EntityVisual = "idle";
+      if (state?.isFound) {
+        visual = "correct";
+      }
+      return {
+        id: obj.id,
+        slotIndex: i,
+        role: "source",
+        state: visual,
+        x: obj.x,
+        y: obj.y,
+        w: obj.width,
+        h: obj.height,
+      };
+    });
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {

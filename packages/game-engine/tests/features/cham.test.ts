@@ -31,6 +31,8 @@ import { GT018_FIXTURES } from "#src/templates/GT-018/fixtures";
 import { GT018Session } from "#src/templates/GT-018/session";
 import { GT020_FIXTURES } from "#src/templates/GT-020/fixtures";
 import { GT020Session } from "#src/templates/GT-020/session";
+import { GT022_FIXTURES } from "#src/templates/GT-022/fixtures";
+import { GT022Session } from "#src/templates/GT-022/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -644,6 +646,55 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
       expect(session.cardSystem.getCard(firstCard.cardId)?.state).toBe(
         "face_up"
       );
+    });
+
+    it("GT-022: khi chạm ngoài vùng object, không commit action và state không đổi", () => {
+      const f22 = GT022_FIXTURES[0];
+      if (!f22) {
+        throw new Error("GT022_FIXTURES[0] must exist");
+      }
+      const session = new GT022Session(f22.content, f22.difficulty);
+      session.prepareRound("4-5");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.sceneSystem.getFoundCount()).toBe(0);
+    });
+
+    it("GT-022: chạm vào target scene object commit tap_object và win session", () => {
+      const f22 = GT022_FIXTURES[0];
+      if (!f22) {
+        throw new Error("GT022_FIXTURES[0] must exist");
+      }
+      const session = new GT022Session(f22.content, f22.difficulty);
+      session.prepareRound("4-5");
+
+      const targetObj = session.resolvedObjects.find((o) => o.isTarget);
+      if (!targetObj) {
+        throw new Error("targetObj must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: targetObj.x,
+        y: targetObj.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.checkWinCondition()).toBe(true);
+      expect(session.sceneSystem.getFoundCount()).toBe(1);
     });
   });
 
