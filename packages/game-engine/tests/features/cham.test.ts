@@ -27,6 +27,8 @@ import { GT016_FIXTURES } from "#src/templates/GT-016/fixtures";
 import { GT016Session } from "#src/templates/GT-016/session";
 import { GT017_FIXTURES } from "#src/templates/GT-017/fixtures";
 import { GT017Session } from "#src/templates/GT-017/session";
+import { GT018_FIXTURES } from "#src/templates/GT-018/fixtures";
+import { GT018Session } from "#src/templates/GT-018/session";
 
 describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature", () => {
   const canvasRect: ElementRect = {
@@ -540,6 +542,56 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
 
       expect(result?.valid).toBe(true);
       expect(session.getCurrentRotation()).toBe(90);
+    });
+
+    it("GT-018: khi chạm ngoài vùng slot, không commit action và state không đổi", () => {
+      const f18 = GT018_FIXTURES[0];
+      if (!f18) {
+        throw new Error("GT018_FIXTURES[0] must exist");
+      }
+      const session = new GT018Session(f18.content, f18.difficulty);
+      session.prepareRound("4-5");
+
+      const pointer: ClientPoint = { x: 10, y: 10 };
+      const logicPt = toLogicPoint(pointer, canvasRect);
+
+      const eventsBefore = session.getTelemetry().events.length;
+      const result = session.dispatch({
+        type: "tap",
+        x: logicPt.x,
+        y: logicPt.y,
+        timeMs: 100,
+      });
+
+      expect(result).toEqual({ valid: false, feedback: "none" });
+      expect(session.getTelemetry().events.length).toBe(eventsBefore);
+      expect(session.selectedItemId).toBeNull();
+    });
+
+    it("GT-018: chạm vào option đúng commit tap_option và win session", () => {
+      const f18 = GT018_FIXTURES[0];
+      if (!f18) {
+        throw new Error("GT018_FIXTURES[0] must exist");
+      }
+      const session = new GT018Session(f18.content, f18.difficulty);
+      session.prepareRound("4-5");
+
+      const correctIdx = f18.content.options.findIndex((o) => o.is_correct);
+      const targetSlot = session.slots[correctIdx];
+      if (!targetSlot) {
+        throw new Error("targetSlot must exist");
+      }
+
+      const result = session.dispatch({
+        type: "tap",
+        x: targetSlot.x,
+        y: targetSlot.y,
+        timeMs: 200,
+      });
+
+      expect(result?.valid).toBe(true);
+      expect(session.checkWinCondition()).toBe(true);
+      expect(session.selectedItemId).toBe("cat");
     });
   });
 

@@ -46,6 +46,11 @@ export default defineTemplate({
   age_min: 4,
   age_max: 6,
   requires_tap_fallback: false,
+  input: {
+    family: "tap",
+    verbs: ["tap", "commit"],
+    tolerance_px: 24,
+  },
   asset_kinds: ["emoji", "image", "audio"],
   scoring: STANDARD_SCORING,
   events: [

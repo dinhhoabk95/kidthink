@@ -6,6 +6,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
@@ -23,6 +29,29 @@ import {
 } from "../shared-render.js";
 import { drawGramophone } from "../shared-render-shapes.js";
 import type { GT018Content, GT018Difficulty } from "./template.js";
+
+function isPointInSlot(slot: Slot, x: number, y: number): boolean {
+  const hw = (slot.hitW ?? slot.w) / 2;
+  const hh = (slot.hitH ?? slot.h) / 2;
+  return (
+    x >= slot.x - hw && x <= slot.x + hw && y >= slot.y - hh && y <= slot.y + hh
+  );
+}
+
+function findHitOptionId(
+  slots: readonly Slot[],
+  options: readonly { item_id: string }[],
+  x: number,
+  y: number
+): string | null {
+  for (let i = 0; i < options.length; i++) {
+    const slot = slots[i];
+    if (slot && isPointInSlot(slot, x, y)) {
+      return options[i]?.item_id ?? null;
+    }
+  }
+  return null;
+}
 
 export class GT018Session extends TemplateGameSession<
   GT018Content,
@@ -143,6 +172,72 @@ export class GT018Session extends TemplateGameSession<
       isCorrect: opt.is_correct === true,
     }));
     return this.selectionMechanic.isSelectionComplete(items);
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "tap") {
+      const hitId = findHitOptionId(
+        this.slots,
+        this.content.options,
+        gesture.x,
+        gesture.y
+      );
+      if (hitId) {
+        return { type: "tap_option", data: { item_id: hitId } };
+      }
+    }
+    if (
+      gesture.type === "commit" &&
+      this.content.response_mode === "sequence"
+    ) {
+      return { type: "submit_order", data: null };
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (action.type === "tap_option" || action.type === "select_item") {
+      const data = action.data;
+      const itemId =
+        typeof data === "object" && data !== null
+          ? Reflect.get(data, "item_id")
+          : undefined;
+      if (typeof itemId === "string") {
+        this.onItemSelect(itemId);
+      }
+    } else if (
+      action.type === "submit_order" ||
+      action.type === "sequence_submitted"
+    ) {
+      this.onSubmitSequence();
+    }
+  }
+
+  override getView(): EngineView {
+    const entities: ViewEntity[] = this.content.options.map((opt, i) => {
+      const slot = this.slots[i];
+      const selected =
+        this.selectedItemId === opt.item_id ||
+        this.selectionMechanic.isSelected(opt.item_id);
+      let state: EntityVisual = "idle";
+      if (selected) {
+        state = opt.is_correct ? "correct" : "incorrect";
+      }
+      return {
+        id: opt.item_id,
+        slotIndex: i,
+        role: "source",
+        state,
+        x: slot?.x ?? 0,
+        y: slot?.y ?? 0,
+        w: slot?.w ?? 80,
+        h: slot?.h ?? 80,
+      };
+    });
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
