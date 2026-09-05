@@ -19,10 +19,16 @@ function nodeContainsGlyph(
       }
     }
   }
-  return (
-    (typeof obj.value === "number" || typeof obj.value === "string") &&
-    glyphs.has(String(obj.value))
-  );
+  for (const key of ["value", "hour", "fill_units", "count", "quantity"]) {
+    const v = obj[key];
+    if (
+      (typeof v === "number" || typeof v === "string") &&
+      glyphs.has(String(v))
+    ) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function processStackItem(
@@ -35,13 +41,26 @@ function processStackItem(
     return false;
   }
 
+  if (typeof current === "string") {
+    for (const glyph of glyphs) {
+      if (current.includes(glyph)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  if (!current || typeof current !== "object") {
+    return false;
+  }
+
   const obj = current as Record<string, unknown>;
   if (nodeContainsGlyph(obj, glyphs)) {
     return true;
   }
 
   for (const val of Object.values(obj)) {
-    if (val && typeof val === "object") {
+    if (val && (typeof val === "object" || typeof val === "string")) {
       stack.push(val);
     }
   }
@@ -58,8 +77,8 @@ function packContainsAnyGlyph(pack: unknown, glyphs: Set<string>): boolean {
   while (stack.length > 0) {
     const current = stack.pop();
     if (
-      current &&
-      typeof current === "object" &&
+      current !== undefined &&
+      current !== null &&
       processStackItem(current, stack, glyphs)
     ) {
       return true;

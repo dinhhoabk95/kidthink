@@ -212,18 +212,14 @@ export function checkGateMontessori(
   };
 }
 
-/**
- * Sàn số thứ tự của mã Montessori (BR-MGL-02). Level nền dừng ở 0020, nên sàn này
- * tách hai lô mà không cần cột đánh dấu riêng.
- */
-const MONTESSORI_SEQ_FLOOR = 101;
-
 export function isMontessoriLevel(seed: AnyContentSeed): boolean {
   if (seed.kind === "activity" || seed.kind === "lesson") {
     return false;
   }
-  const seq = Number.parseInt(seed.header.code.split("-").at(-1) ?? "", 10);
-  return Number.isInteger(seq) && seq >= MONTESSORI_SEQ_FLOOR;
+  const header = seed.header;
+  return (
+    Boolean(header.montessori_ref) || REGEX_MONTESSORI_CODE.test(header.code)
+  );
 }
 
 /**

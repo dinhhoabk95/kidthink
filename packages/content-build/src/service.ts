@@ -1,4 +1,5 @@
 import { AppError } from "@mindkid/auth";
+import { SKILL_DATASETS } from "@mindkid/content";
 import {
   activities,
   contentReviewLog,
@@ -61,16 +62,46 @@ function validatePublishAxes(matchedTags: Array<{ axis: string }>) {
   }
 }
 
+function validateSeedsWithGates(
+  seeds: AnyContentSeed[],
+  batchCode?: string
+): GateResult[] {
+  const existingCodes = new Set<string>();
+  const allGateResults: GateResult[] = [];
+  for (const seed of seeds) {
+    const primarySkillCode = seed.header.skill_codes?.[0];
+    const dataset = primarySkillCode
+      ? SKILL_DATASETS[primarySkillCode]
+      : undefined;
+    const gates = runEightGates(
+      seed,
+      existingCodes,
+      batchCode,
+      ALL_TEMPLATES,
+      dataset
+    );
+    allGateResults.push(...gates);
+    existingCodes.add(seed.header.code);
+
+    const firstFailed = gates.find((g) => !g.passed);
+    if (firstFailed) {
+      throw new AppError(
+        "VALIDATION_FAILED",
+        `Nội dung ${seed.header.code} trượt Cổng ${firstFailed.gate}: ${firstFailed.issues[0]?.message ?? ""}`
+      );
+    }
+  }
+  return allGateResults;
+}
+
 export async function executeSeedBatch(
   db: NodePgDatabase<Record<string, unknown>>,
   input: SeedBatchInput,
   dryRun = false
 ): Promise<SeedExecutionResult> {
   const { batchCode, kind, gitSha, prUrl, approvedByManagerId, seeds } = input;
-  const existingCodes = new Set<string>();
   let totalInserted = 0;
   let totalSkipped = 0;
-  const allGateResults: GateResult[] = [];
 
   let inferredKind: "game_level" | "activity" | "lesson" = kind || "game_level";
   if (!kind && seeds[0]) {
@@ -82,22 +113,9 @@ export async function executeSeedBatch(
   }
 
   // 1. Run eight gates first for all seeds (unless explicitly skipped, e.g. in seeder)
-  if (!input.skipGates) {
-    for (const seed of seeds) {
-      const gates = runEightGates(seed, existingCodes);
-      allGateResults.push(...gates);
-      existingCodes.add(seed.header.code);
-
-      const failed = gates.filter((g) => !g.passed);
-      const firstFailed = failed[0];
-      if (firstFailed) {
-        throw new AppError(
-          "VALIDATION_FAILED",
-          `Nội dung ${seed.header.code} trượt Cổng ${firstFailed.gate}: ${firstFailed.issues[0]?.message ?? ""}`
-        );
-      }
-    }
-  }
+  const allGateResults = input.skipGates
+    ? []
+    : validateSeedsWithGates(seeds, input.batchCode);
 
   const result = await db
     // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: batch seeder workflow requires single-transaction orchestration
@@ -819,7 +837,11 @@ export function validateSingleSeed(
   existingCodes?: Set<string>
 ): GateResult[] {
   const codes = existingCodes || new Set<string>();
-  const gates = runEightGates(seed, codes);
+  const primarySkillCode = seed.header.skill_codes?.[0];
+  const dataset = primarySkillCode
+    ? SKILL_DATASETS[primarySkillCode]
+    : undefined;
+  const gates = runEightGates(seed, codes, undefined, ALL_TEMPLATES, dataset);
   const failed = gates.filter((g) => !g.passed);
   if (failed.length > 0) {
     const msg = failed

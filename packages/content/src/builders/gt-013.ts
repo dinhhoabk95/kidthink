@@ -9,7 +9,7 @@ import { createRng } from "./utils.js";
 export const projectGT013: Projection<"GT-013"> = {
   template: "GT-013",
   requires: { min_items: 0, max_items: 10 },
-  project(_dataset: SkillDataset, opts: ProjectOptions): ProjectedPack {
+  project(dataset: SkillDataset, opts: ProjectOptions): ProjectedPack {
     const _rng = createRng(opts.seed + (opts.round_index ?? 0));
     const size = opts.band === "5-6" ? 5 : 4;
 
@@ -36,9 +36,14 @@ export const projectGT013: Projection<"GT-013"> = {
       );
     }
 
+    const item = dataset.items.find((i) => i.glyph) ?? dataset.items[0];
+    const prompt = item?.glyph
+      ? `Bé hãy tìm đường qua mê cung đến ô ${item.glyph} nhé!`
+      : "Bé hãy tìm đường đi qua mê cung đến đích nhé!";
+
     return {
       content_pack: {
-        prompt: "Bé hãy tìm đường đi qua mê cung đến đích nhé!",
+        prompt,
         grid: {
           rows: size,
           cols: size,

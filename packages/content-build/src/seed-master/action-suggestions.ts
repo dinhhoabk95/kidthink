@@ -37,7 +37,7 @@ export const ACTION_SUGGESTIONS_SEED_DATA: SkillActionSeedItem[] = [
     kind: "home_activity",
   },
   {
-    skillCode: "C1.NUM.01",
+    skillCode: "C1.NREC.01",
     orderNo: 1,
     text: "Chỉ cho bé các chữ số trên bảng số nhà hoặc lịch treo tường.",
     kind: "home_activity",
@@ -49,7 +49,7 @@ export const ACTION_SUGGESTIONS_SEED_DATA: SkillActionSeedItem[] = [
     kind: "home_activity",
   },
   {
-    skillCode: "C1.CAL.01",
+    skillCode: "C1.ADD.01",
     orderNo: 1,
     text: "Cho bé chia 4 chiếc bánh quy đều cho 2 bạn búp bê.",
     kind: "home_activity",
@@ -57,13 +57,13 @@ export const ACTION_SUGGESTIONS_SEED_DATA: SkillActionSeedItem[] = [
 
   // C2: Spatial Thinking
   {
-    skillCode: "C2.SHP.01",
+    skillCode: "C2.GEO.01",
     orderNo: 1,
     text: "Tìm các đồ vật có dạng hình tròn và hình vuông trong phòng khách.",
     kind: "home_activity",
   },
   {
-    skillCode: "C2.POS.01",
+    skillCode: "C2.ORI.03",
     orderNo: 1,
     text: "Chơi trò trốn tìm đồ chơi: đồ vật ở trên bàn hay dưới ghế.",
     kind: "home_activity",
@@ -83,13 +83,13 @@ export const ACTION_SUGGESTIONS_SEED_DATA: SkillActionSeedItem[] = [
     kind: "home_activity",
   },
   {
-    skillCode: "C3.PAT.01",
+    skillCode: "C3.SEQ.01",
     orderNo: 1,
     text: "Xếp các khối lego lặp lại theo quy luật: đỏ - xanh - đỏ - xanh.",
     kind: "home_activity",
   },
   {
-    skillCode: "C3.RSN.01",
+    skillCode: "C3.RULE.01",
     orderNo: 1,
     text: "Hỏi bé xem chuyện gì xảy ra tiếp theo khi nhân vật trong truyện gặp trời mưa.",
     kind: "home_activity",
@@ -117,7 +117,7 @@ export const ACTION_SUGGESTIONS_SEED_DATA: SkillActionSeedItem[] = [
     kind: "home_activity",
   },
   {
-    skillCode: "C5.STR.01",
+    skillCode: "C5.STO.01",
     orderNo: 1,
     text: "Khuyến khích bé kể lại 2 chi tiết thú vị trong câu chuyện vừa nghe.",
     kind: "home_activity",
@@ -125,7 +125,7 @@ export const ACTION_SUGGESTIONS_SEED_DATA: SkillActionSeedItem[] = [
 
   // C6: Executive Function
   {
-    skillCode: "C6.FOC.01",
+    skillCode: "C6.ATT.01",
     orderNo: 1,
     text: "Tập cho bé tập trung hoàn thành bức tranh tô màu trong 5 phút yên tĩnh.",
     kind: "home_activity",

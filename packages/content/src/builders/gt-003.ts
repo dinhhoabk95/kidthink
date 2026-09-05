@@ -31,7 +31,8 @@ export const projectGT003: Projection<"GT-003"> = {
     const targetCount = 2;
     const distractorCount = Math.min(
       Math.max(1, opts.difficulty),
-      dataset.items.length - 1
+      dataset.items.length - 1,
+      4
     );
 
     const otherItems = dataset.items.filter((i) => i.id !== targetItem.id);

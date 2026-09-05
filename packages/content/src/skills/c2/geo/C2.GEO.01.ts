@@ -338,5 +338,13 @@ export const C2_GEO_01_SEED: SkillSeed = {
       theme: "school",
       rounds: 3,
     },
+    {
+      code: "GL-C2-GEO-PATT-0001",
+      template: "GT-005",
+      band: "3-4",
+      difficulty: 1,
+      theme: "food",
+      rounds: 3,
+    },
   ],
 };

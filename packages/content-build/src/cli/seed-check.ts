@@ -1,5 +1,7 @@
+import { SKILL_DATASETS } from "@mindkid/content";
 import { activities, gameLevels, getOwnerDb, lessons } from "@mindkid/db";
 import { eq } from "drizzle-orm";
+import { checkSkillRegistry } from "../gates/check-skill-registry.js";
 import { GATE_1_LADDER_BASELINES } from "../gates/ladder";
 import {
   checkLegacyV1Coverage,
@@ -219,7 +221,17 @@ export async function runSeedCheck(againstDb = false) {
   };
 
   for (const seed of ALL_SEED_CONTENT) {
-    const gates = runEightGates(seed, existingCodes);
+    const primarySkillCode = seed.header.skill_codes?.[0];
+    const dataset = primarySkillCode
+      ? SKILL_DATASETS[primarySkillCode]
+      : undefined;
+    const gates = runEightGates(
+      seed,
+      existingCodes,
+      undefined,
+      undefined,
+      dataset
+    );
     existingCodes.add(seed.header.code);
 
     if (seed.kind !== "activity" && seed.kind !== "lesson") {
@@ -240,8 +252,6 @@ export async function runSeedCheck(againstDb = false) {
     blockingIssues++;
   }
 
-  const { checkSkillRegistry } = await import("../gates/check-skill-registry");
-  const { SKILL_DATASETS } = await import("@mindkid/content");
   const skillRegistryGate = checkSkillRegistry(SKILL_DATASETS);
   if (!skillRegistryGate.passed) {
     for (const issue of skillRegistryGate.issues) {
