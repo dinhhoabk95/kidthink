@@ -19,7 +19,7 @@ describe("Gate check:engine-input-dispatch (Ratchet Duck-typing in play/[code].v
     expect(result.hasOnItemLockedInTapOptions).toBe(false);
   });
 
-  it("verifies ready templates includes GT-001 through GT-020", () => {
+  it("verifies ready templates includes GT-001 through GT-021", () => {
     const result = scanEngineInputDispatch();
     expect(result.readyCodes).toContain("GT-001");
     expect(result.readyCodes).toContain("GT-002");
@@ -41,5 +41,6 @@ describe("Gate check:engine-input-dispatch (Ratchet Duck-typing in play/[code].v
     expect(result.readyCodes).toContain("GT-018");
     expect(result.readyCodes).toContain("GT-019");
     expect(result.readyCodes).toContain("GT-020");
+    expect(result.readyCodes).toContain("GT-021");
   });
 });

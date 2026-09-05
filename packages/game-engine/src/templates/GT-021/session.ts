@@ -6,6 +6,12 @@ import {
   type GameAction,
   TemplateGameSession,
 } from "#src/game-session";
+import type {
+  EngineView,
+  EntityVisual,
+  Gesture,
+  ViewEntity,
+} from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
@@ -27,6 +33,53 @@ import {
   drawMirrorAxis,
 } from "../shared-render-shapes.js";
 import type { GT021Content, GT021Difficulty } from "./template.js";
+
+function isPointInSlot(
+  slot: Slot,
+  x: number,
+  y: number,
+  tolerance = 24
+): boolean {
+  const hw = (slot.hitW ?? slot.w) / 2 + tolerance;
+  const hh = (slot.hitH ?? slot.h) / 2 + tolerance;
+  return Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh;
+}
+
+function findHitSourceOption(
+  slots: readonly Slot[],
+  options: readonly { item_id: string }[],
+  x: number,
+  y: number,
+  tolerance = 24
+): { option: { item_id: string }; index: number } | null {
+  const sourceSlots = slots.filter((s) => s.role === "source");
+  for (let i = 0; i < options.length; i++) {
+    const slot = sourceSlots[i];
+    const option = options[i];
+    if (slot && option && isPointInSlot(slot, x, y, tolerance)) {
+      return { option, index: i };
+    }
+  }
+  return null;
+}
+
+function findHitTargetSlot(
+  slots: readonly Slot[],
+  targets: readonly { slot_id: string }[],
+  x: number,
+  y: number,
+  tolerance = 24
+): { target: { slot_id: string }; index: number } | null {
+  const targetSlots = slots.filter((s) => s.role === "target");
+  for (let i = 0; i < targets.length; i++) {
+    const slot = targetSlots[i];
+    const target = targets[i];
+    if (slot && target && isPointInSlot(slot, x, y, tolerance)) {
+      return { target, index: i };
+    }
+  }
+  return null;
+}
 
 export class GT021Session extends TemplateGameSession<
   GT021Content,
@@ -124,6 +177,185 @@ export class GT021Session extends TemplateGameSession<
 
   override checkWinCondition(): boolean {
     return this.mirrorSystem.isComplete();
+  }
+
+  getStagedItemId(): string | null {
+    return this.placementMechanic.getStagedItemId();
+  }
+
+  getPlacements(): ReadonlyMap<string, string> {
+    return this.placementMechanic.getPlacements();
+  }
+
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>
+  ): GameAction | null {
+    const hitSource = findHitSourceOption(
+      this.slots,
+      this.content.options,
+      gesture.fromX,
+      gesture.fromY
+    );
+    if (!hitSource) {
+      return null;
+    }
+    const hitTarget = findHitTargetSlot(
+      this.slots,
+      this.content.target_slots,
+      gesture.toX,
+      gesture.toY
+    );
+    if (!hitTarget) {
+      return null;
+    }
+    return {
+      type: "drop_item",
+      data: {
+        item_id: hitSource.option.item_id,
+        target_id: hitTarget.target.slot_id,
+      },
+    };
+  }
+
+  private toTapAction(
+    gesture: Extract<Gesture, { type: "tap" }>
+  ): GameAction | null {
+    const hitTarget = findHitTargetSlot(
+      this.slots,
+      this.content.target_slots,
+      gesture.x,
+      gesture.y
+    );
+    if (hitTarget) {
+      const stagedId = this.placementMechanic.getStagedItemId();
+      if (stagedId) {
+        return {
+          type: "tap_tap_item",
+          data: {
+            item_id: stagedId,
+            target_id: hitTarget.target.slot_id,
+          },
+        };
+      }
+      return null;
+    }
+
+    const hitSource = findHitSourceOption(
+      this.slots,
+      this.content.options,
+      gesture.x,
+      gesture.y
+    );
+    if (hitSource) {
+      const stagedId = this.placementMechanic.getStagedItemId();
+      if (stagedId === hitSource.option.item_id) {
+        this.placementMechanic.stageItem(null);
+      } else {
+        this.placementMechanic.stageItem(hitSource.option.item_id);
+      }
+      return null;
+    }
+
+    this.placementMechanic.stageItem(null);
+    return null;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "drop") {
+      return this.toDropAction(gesture);
+    }
+    if (gesture.type === "tap") {
+      return this.toTapAction(gesture);
+    }
+    return null;
+  }
+
+  override commit(action: GameAction): void {
+    if (
+      action.type === "place_item" ||
+      action.type === "drop_item" ||
+      action.type === "tap_tap_item"
+    ) {
+      const data = action.data as
+        | { item_id?: string; target_id?: string }
+        | undefined;
+      const itemId = data?.item_id;
+      const targetId = data?.target_id;
+      if (itemId && targetId) {
+        this.onPlaceOption(itemId, targetId);
+        if (this.placementMechanic.getStagedItemId() === itemId) {
+          this.placementMechanic.stageItem(null);
+        }
+      }
+    }
+  }
+
+  override getView(): EngineView {
+    const targets = this.slots.filter((s) => s.role === "target");
+    const sources = this.slots.filter((s) => s.role === "source");
+    const neutral = this.slots.filter((s) => s.role === "neutral");
+    const stagedId = this.placementMechanic.getStagedItemId();
+    const entities: ViewEntity[] = [];
+
+    neutral.forEach((slot, i) => {
+      const ref = this.content.reference_pattern[i];
+      if (ref) {
+        entities.push({
+          id: ref.slot_id,
+          slotIndex: slot.index,
+          role: "neutral",
+          state: "idle",
+          x: slot.x,
+          y: slot.y,
+          w: slot.w,
+          h: slot.h,
+        });
+      }
+    });
+
+    targets.forEach((slot, i) => {
+      const target = this.content.target_slots[i];
+      if (target) {
+        const placedRef = this.mirrorSystem.getPlacement(target.slot_id);
+        let state: EntityVisual = "idle";
+        if (placedRef) {
+          state =
+            placedRef === target.expected_asset_ref ? "correct" : "incorrect";
+        }
+        entities.push({
+          id: target.slot_id,
+          slotIndex: slot.index,
+          role: "target",
+          state,
+          x: slot.x,
+          y: slot.y,
+          w: slot.w,
+          h: slot.h,
+        });
+      }
+    });
+
+    sources.forEach((slot, i) => {
+      const opt = this.content.options[i];
+      if (opt) {
+        const isStaged = stagedId === opt.item_id;
+        entities.push({
+          id: opt.item_id,
+          slotIndex: slot.index,
+          role: "source",
+          state: isStaged ? "selected" : "idle",
+          x: slot.x,
+          y: slot.y,
+          w: slot.w,
+          h: slot.h,
+        });
+      }
+    });
+
+    return {
+      activePrompt: this.content.prompt,
+      entities,
+    };
   }
 
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
