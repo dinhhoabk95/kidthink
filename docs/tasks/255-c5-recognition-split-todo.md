@@ -104,10 +104,10 @@
 
 ## WP255.6 — Lát cắt dọc 2: `C5.DGR` (2 kỹ năng)
 
-- [ ] 2 dataset, 11 chữ ghép; `ng`/`ngh` tách riêng theo luật chính tả
-- [ ] 20 level chấm + 2 level dạy
-- [ ] Bật prerequisite `C5.ALP.07` ← `C5.DGR.01`, `C5.ALP.08` ← `C5.DGR.02`
-- [ ] **Nghiệm thu:** ratchet 30 → 28; `C5.ALP.07` bị chặn khi chưa qua `C5.DGR.01`
+- [x] 2 dataset, 11 chữ ghép; `ng`/`ngh` tách riêng theo luật chính tả
+- [x] 20 level chấm + 2 level dạy
+- [x] Bật prerequisite `C5.ALP.07` ← `C5.DGR.01`, `C5.ALP.08` ← `C5.DGR.02`
+- [x] **Nghiệm thu:** ratchet 30 → 28; `C5.ALP.07` bị chặn khi chưa qua `C5.DGR.01`
 
 ## WP255.7 — Đường audio
 
