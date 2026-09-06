@@ -4,6 +4,7 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
+import { formatPromptLabel } from "@mindkid/shared";
 import {
   createRng,
   resolveItemAsset,
@@ -35,7 +36,7 @@ export const projectGT026: Projection<"GT-026"> = {
 
     return {
       content_pack: {
-        prompt: `Bé chạm ${goItem.label}, bỏ qua ${nogoItem.label} nhé!`,
+        prompt: `Bé hãy chạm vào ${formatPromptLabel(goItem.label)}, bỏ qua ${formatPromptLabel(nogoItem.label)} nhé!`,
         go_stimulus: {
           label: goItem.label,
           asset: resolveItemAsset(goItem, true),

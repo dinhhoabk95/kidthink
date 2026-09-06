@@ -3,7 +3,7 @@ import type { EmojiEntry } from "#src/types";
 export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   {
     emoji: "🦆",
-    name: "Vịt",
+    name: "Con vịt",
     categories: ["animal-bird", "animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
@@ -23,7 +23,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐤",
-    name: "Gà con",
+    name: "Con gà con",
     categories: ["animal-bird", "animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
@@ -41,7 +41,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦃",
-    name: "Gà lôi",
+    name: "Con gà lôi",
     categories: ["animal-bird", "animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["turkey", "gà lôi", "gà tây", "lông đẹp"],
@@ -49,7 +49,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐓",
-    name: "Gà trống",
+    name: "Con gà trống",
     categories: ["animal-bird", "animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
@@ -65,7 +65,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐥",
-    name: "Chim con vàng",
+    name: "Con chim con",
     categories: ["animal-bird", "animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
@@ -81,7 +81,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐶",
-    name: "Chó",
+    name: "Con chó",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["dog", "puppy", "chó", "cún", "cún con"],
@@ -89,7 +89,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐕",
-    name: "Chó nhà",
+    name: "Con chó nhà",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["dog", "pet dog", "chó", "chó nhà", "thú cưng"],
@@ -97,7 +97,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐩",
-    name: "Chó xù",
+    name: "Con chó xù",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["poodle", "chó xù", "chó cảnh"],
@@ -105,7 +105,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐱",
-    name: "Mèo",
+    name: "Con mèo",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["cat", "kitten", "mèo", "mèo con", "miu"],
@@ -113,7 +113,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐈",
-    name: "Mèo nhà",
+    name: "Con mèo nhà",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["cat", "house cat", "mèo", "mèo nhà", "thú cưng"],
@@ -121,7 +121,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐔",
-    name: "Gà mái",
+    name: "Con gà mái",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["chicken", "hen", "gà", "gà mái", "đẻ trứng"],
@@ -129,7 +129,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐣",
-    name: "Gà con nở",
+    name: "Con gà con nở",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["hatching chick", "gà con", "nở", "trứng"],
@@ -137,7 +137,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐷",
-    name: "Lợn",
+    name: "Con lợn",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["pig", "lợn", "heo", "con lợn"],
@@ -145,7 +145,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐖",
-    name: "Heo nhà",
+    name: "Con heo",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["pig", "domestic pig", "heo", "lợn nhà", "nuôi"],
@@ -153,7 +153,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐄",
-    name: "Bò sữa",
+    name: "Con bò sữa",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["cow", "dairy cow", "bò", "bò sữa", "sữa bò"],
@@ -161,7 +161,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐂",
-    name: "Bò",
+    name: "Con bò",
     categories: ["animal-farm", "animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
@@ -178,7 +178,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐃",
-    name: "Trâu nước",
+    name: "Con trâu",
     categories: ["animal-farm", "animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat", "que_huong_dat_nuoc"],
     keywords: ["water buffalo", "trâu", "trâu nước", "cày ruộng", "đồng"],
@@ -186,7 +186,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐑",
-    name: "Cừu",
+    name: "Con cừu",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["sheep", "ewe", "cừu", "con cừu", "lông cừu"],
@@ -194,7 +194,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐐",
-    name: "Dê",
+    name: "Con dê",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["goat", "dê", "con dê", "sừng"],
@@ -202,7 +202,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐴",
-    name: "Ngựa",
+    name: "Con ngựa",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["horse", "ngựa", "con ngựa", "phi"],
@@ -210,7 +210,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐎",
-    name: "Ngựa đua",
+    name: "Con ngựa đua",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["racehorse", "horse racing", "ngựa", "đua ngựa", "chạy"],
@@ -218,7 +218,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐇",
-    name: "Thỏ",
+    name: "Con thỏ",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["rabbit", "bunny", "thỏ", "con thỏ", "thỏ trắng"],
@@ -234,7 +234,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐕‍🦺",
-    name: "Chó dẫn đường",
+    name: "Con chó dẫn đường",
     categories: ["animal-farm"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["service dog", "guide dog", "chó dẫn đường", "chó hỗ trợ"],
@@ -242,7 +242,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦙",
-    name: "Lạc đà không bướu",
+    name: "Con lạc đà",
     categories: ["animal-farm", "animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["llama", "alpaca", "lạc đà", "lông mềm"],
@@ -258,7 +258,7 @@ export const ANIMAL_FARM_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🛖",
-    name: "Nhà lá",
+    name: "Ngôi nhà lá",
     categories: ["animal-farm", "nature-landscape"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat", "que_huong_dat_nuoc"],
     keywords: [

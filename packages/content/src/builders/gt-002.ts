@@ -4,6 +4,7 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
+import { formatPluralNoun, formatPromptLabel } from "@mindkid/shared";
 import { createRng, resolveItemAsset, shuffleDeterministic } from "./utils.js";
 
 export const projectGT002: Projection<"GT-002"> = {
@@ -30,7 +31,19 @@ export const projectGT002: Projection<"GT-002"> = {
       targetCount + distractorCount
     );
 
-    const targetLabel = targets[0]?.label ?? dataset.concept_label;
+    const firstTarget = targets[0];
+    const targetLabel = firstTarget
+      ? formatPromptLabel(firstTarget.label, {
+          value: firstTarget.value,
+          glyph: firstTarget.glyph,
+        })
+      : formatPromptLabel(dataset.concept_label);
+    const pluralTarget = firstTarget
+      ? formatPluralNoun(firstTarget.label, {
+          value: firstTarget.value,
+          glyph: firstTarget.glyph,
+        })
+      : `tất cả ${targetLabel}`;
 
     const items = [
       ...targets.map((t) => ({
@@ -48,12 +61,13 @@ export const projectGT002: Projection<"GT-002"> = {
     const prompt =
       dataset.phrasing.prompt_template.length >= 4
         ? dataset.phrasing.prompt_template.replace("{label}", targetLabel)
-        : `Bé hãy chọn tất cả các hình ${targetLabel}`;
+        : `Bé hãy chọn ${pluralTarget} nhé!`;
 
     return {
       content_pack: {
-        prompt: prompt.length >= 4 ? prompt : `Bé hãy chọn hình ${targetLabel}`,
-        target_criterion: `Chọn tất cả ${targetLabel}`,
+        prompt:
+          prompt.length >= 4 ? prompt : `Bé hãy chọn ${pluralTarget} nhé!`,
+        target_criterion: `Chọn ${pluralTarget}`,
         items: shuffleDeterministic(items, rng),
       },
       difficulty_params: {

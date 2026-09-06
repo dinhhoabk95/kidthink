@@ -43,7 +43,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
   items: [
     {
       id: "n11",
-      label: "mười một",
+      label: "Số mười một",
       glyph: "11",
       value: 11,
       audio_path: "/audio/voice/common/numbers/11.mp3",
@@ -54,7 +54,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
     },
     {
       id: "n12",
-      label: "mười hai",
+      label: "Số mười hai",
       glyph: "12",
       value: 12,
       audio_path: "/audio/voice/common/numbers/12.mp3",
@@ -65,7 +65,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
     },
     {
       id: "n13",
-      label: "mười ba",
+      label: "Số mười ba",
       glyph: "13",
       value: 13,
       audio_path: "/audio/voice/common/numbers/13.mp3",
@@ -76,7 +76,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
     },
     {
       id: "n14",
-      label: "mười bốn",
+      label: "Số mười bốn",
       glyph: "14",
       value: 14,
       audio_path: "/audio/voice/common/numbers/14.mp3",
@@ -87,7 +87,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
     },
     {
       id: "n15",
-      label: "mười lăm",
+      label: "Số mười lăm",
       glyph: "15",
       value: 15,
       audio_path: "/audio/voice/common/numbers/15.mp3",
@@ -98,7 +98,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
     },
     {
       id: "n16",
-      label: "mười sáu",
+      label: "Số mười sáu",
       glyph: "16",
       value: 16,
       audio_path: "/audio/voice/common/numbers/16.mp3",
@@ -109,7 +109,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
     },
     {
       id: "n17",
-      label: "mười bảy",
+      label: "Số mười bảy",
       glyph: "17",
       value: 17,
       audio_path: "/audio/voice/common/numbers/17.mp3",
@@ -120,7 +120,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
     },
     {
       id: "n18",
-      label: "mười tám",
+      label: "Số mười tám",
       glyph: "18",
       value: 18,
       audio_path: "/audio/voice/common/numbers/18.mp3",
@@ -131,7 +131,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
     },
     {
       id: "n19",
-      label: "mười chín",
+      label: "Số mười chín",
       glyph: "19",
       value: 19,
       audio_path: "/audio/voice/common/numbers/19.mp3",
@@ -142,7 +142,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
     },
     {
       id: "n20",
-      label: "hai mươi",
+      label: "Số hai mươi",
       glyph: "20",
       value: 20,
       audio_path: "/audio/voice/common/numbers/20.mp3",
@@ -183,7 +183,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Nhận biết số 11–20 nhé",
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
+    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   },
   ordering: [
     "n0",
@@ -224,7 +224,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
   items: [
     {
       id: "n11",
-      label: "mười một",
+      label: "Số mười một",
       glyph: "11",
       value: 11,
       audio_path: "/audio/voice/common/numbers/11.mp3",
@@ -235,7 +235,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
     },
     {
       id: "n12",
-      label: "mười hai",
+      label: "Số mười hai",
       glyph: "12",
       value: 12,
       audio_path: "/audio/voice/common/numbers/12.mp3",
@@ -246,7 +246,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
     },
     {
       id: "n13",
-      label: "mười ba",
+      label: "Số mười ba",
       glyph: "13",
       value: 13,
       audio_path: "/audio/voice/common/numbers/13.mp3",
@@ -257,7 +257,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
     },
     {
       id: "n14",
-      label: "mười bốn",
+      label: "Số mười bốn",
       glyph: "14",
       value: 14,
       audio_path: "/audio/voice/common/numbers/14.mp3",
@@ -268,7 +268,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
     },
     {
       id: "n15",
-      label: "mười lăm",
+      label: "Số mười lăm",
       glyph: "15",
       value: 15,
       audio_path: "/audio/voice/common/numbers/15.mp3",
@@ -279,7 +279,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
     },
     {
       id: "n16",
-      label: "mười sáu",
+      label: "Số mười sáu",
       glyph: "16",
       value: 16,
       audio_path: "/audio/voice/common/numbers/16.mp3",
@@ -290,7 +290,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
     },
     {
       id: "n17",
-      label: "mười bảy",
+      label: "Số mười bảy",
       glyph: "17",
       value: 17,
       audio_path: "/audio/voice/common/numbers/17.mp3",
@@ -301,7 +301,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
     },
     {
       id: "n18",
-      label: "mười tám",
+      label: "Số mười tám",
       glyph: "18",
       value: 18,
       audio_path: "/audio/voice/common/numbers/18.mp3",
@@ -312,7 +312,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
     },
     {
       id: "n19",
-      label: "mười chín",
+      label: "Số mười chín",
       glyph: "19",
       value: 19,
       audio_path: "/audio/voice/common/numbers/19.mp3",
@@ -323,7 +323,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
     },
     {
       id: "n20",
-      label: "hai mươi",
+      label: "Số hai mươi",
       glyph: "20",
       value: 20,
       audio_path: "/audio/voice/common/numbers/20.mp3",

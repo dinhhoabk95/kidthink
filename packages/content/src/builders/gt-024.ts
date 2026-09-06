@@ -4,6 +4,7 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
+import { formatPromptLabel } from "@mindkid/shared";
 import { createRng, resolveItemAsset, safeGetItem } from "./utils.js";
 
 export const projectGT024: Projection<"GT-024"> = {
@@ -31,7 +32,7 @@ export const projectGT024: Projection<"GT-024"> = {
 
     return {
       content_pack: {
-        prompt: `Bé hãy vẽ nối điểm tạo hình ${baseItem.label} nhé!`,
+        prompt: `Bé hãy vẽ nối điểm để tạo ${formatPromptLabel(baseItem.label)} nhé!`,
         shape_name: baseItem.label,
         guide_asset: resolveItemAsset(baseItem, true),
         waypoints,

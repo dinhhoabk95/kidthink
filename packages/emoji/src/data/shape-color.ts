@@ -3,7 +3,7 @@ import type { EmojiEntry } from "#src/types";
 export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   {
     emoji: "❤️",
-    name: "Tim đỏ",
+    name: "Hình trái tim đỏ",
     categories: ["flag-symbol", "shape-color"],
     curriculum_themes: ["que_huong_dat_nuoc", "ban_than"],
     keywords: ["red heart", "love", "trái tim", "yêu", "thương", "tim", "đỏ"],
@@ -86,7 +86,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔴",
-    name: "Tròn đỏ",
+    name: "Hình tròn đỏ",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["red circle", "tròn", "đỏ", "hình tròn"],
@@ -94,7 +94,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟠",
-    name: "Tròn cam",
+    name: "Hình tròn cam",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["orange circle", "tròn", "cam", "hình tròn"],
@@ -102,7 +102,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟡",
-    name: "Tròn vàng",
+    name: "Hình tròn vàng",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["yellow circle", "tròn", "vàng", "hình tròn"],
@@ -110,7 +110,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟢",
-    name: "Tròn xanh lá",
+    name: "Hình tròn xanh lá",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["green circle", "tròn", "xanh lá", "hình tròn"],
@@ -118,7 +118,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔵",
-    name: "Tròn xanh dương",
+    name: "Hình tròn xanh dương",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["blue circle", "tròn", "xanh dương", "xanh"],
@@ -126,7 +126,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟣",
-    name: "Tròn tím",
+    name: "Hình tròn tím",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["purple circle", "tròn", "tím", "hình tròn"],
@@ -134,7 +134,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟤",
-    name: "Tròn nâu",
+    name: "Hình tròn nâu",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["brown circle", "tròn", "nâu", "hình tròn"],
@@ -142,7 +142,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⚫",
-    name: "Tròn đen",
+    name: "Hình tròn đen",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["black circle", "tròn", "đen", "hình tròn"],
@@ -150,7 +150,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⚪",
-    name: "Tròn trắng",
+    name: "Hình tròn trắng",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["white circle", "tròn", "trắng", "hình tròn"],
@@ -158,7 +158,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟥",
-    name: "Vuông đỏ",
+    name: "Hình vuông đỏ",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["red square", "vuông", "đỏ", "hình vuông"],
@@ -166,7 +166,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟧",
-    name: "Vuông cam",
+    name: "Hình vuông cam",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["orange square", "vuông", "cam", "hình vuông"],
@@ -174,7 +174,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟨",
-    name: "Vuông vàng",
+    name: "Hình vuông vàng",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["yellow square", "vuông", "vàng", "hình vuông"],
@@ -182,7 +182,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟩",
-    name: "Vuông xanh lá",
+    name: "Hình vuông xanh lá",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["green square", "vuông", "xanh lá", "hình vuông"],
@@ -190,7 +190,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟦",
-    name: "Vuông xanh dương",
+    name: "Hình vuông xanh dương",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["blue square", "vuông", "xanh dương", "hình vuông"],
@@ -198,7 +198,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟪",
-    name: "Vuông tím",
+    name: "Hình vuông tím",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["purple square", "vuông", "tím", "hình vuông"],
@@ -206,7 +206,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🟫",
-    name: "Vuông nâu",
+    name: "Hình vuông nâu",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["brown square", "vuông", "nâu", "hình vuông"],
@@ -214,7 +214,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⬛",
-    name: "Vuông đen",
+    name: "Hình vuông đen",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["black square", "vuông", "đen", "hình vuông"],
@@ -222,7 +222,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⬜",
-    name: "Vuông trắng",
+    name: "Hình vuông trắng",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["white square", "vuông", "trắng", "hình vuông"],
@@ -230,7 +230,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔺",
-    name: "Tam giác đỏ",
+    name: "Hình tam giác đỏ",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["red triangle up", "tam giác", "đỏ", "hình tam giác"],
@@ -238,7 +238,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔻",
-    name: "Tam giác đỏ xuống",
+    name: "Hình tam giác đỏ ngược",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["red triangle down", "tam giác", "đỏ", "xuống"],
@@ -246,7 +246,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "💠",
-    name: "Kim cương",
+    name: "Hình kim cương",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["diamond", "gem", "kim cương", "hình thoi", "xanh"],
@@ -254,7 +254,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔶",
-    name: "Thoi cam",
+    name: "Hình thoi cam",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["orange diamond", "hình thoi", "cam", "thoi"],
@@ -262,7 +262,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🔷",
-    name: "Thoi xanh",
+    name: "Hình thoi xanh",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["blue diamond", "hình thoi", "xanh", "thoi"],
@@ -270,7 +270,7 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "⭕",
-    name: "Vòng tròn",
+    name: "Hình vòng tròn",
     categories: ["shape-color"],
     curriculum_themes: ["ban_than"],
     keywords: ["hollow circle", "vòng tròn", "hình tròn rỗng"],

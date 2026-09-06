@@ -56,7 +56,7 @@ export const projectGT012: Projection<"GT-012"> = {
 
     return {
       content_pack: {
-        prompt: "Bé hãy nhớ xem có bao nhiêu hình vừa xuất hiện nhé!",
+        prompt: "Bé hãy nhớ xem có bao nhiêu đồ vật vừa xuất hiện nhé!",
         flash_items: flashItems,
         arrangement: "dice" as const,
         options: shuffledOptions,

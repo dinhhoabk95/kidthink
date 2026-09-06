@@ -43,7 +43,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
   items: [
     {
       id: "n0",
-      label: "không",
+      label: "Số không",
       glyph: "0",
       value: 0,
       image: {
@@ -53,7 +53,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n1",
-      label: "một",
+      label: "Số một",
       glyph: "1",
       value: 1,
       image: {
@@ -63,7 +63,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n2",
-      label: "hai",
+      label: "Số hai",
       glyph: "2",
       value: 2,
       image: {
@@ -73,7 +73,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n3",
-      label: "ba",
+      label: "Số ba",
       glyph: "3",
       value: 3,
       image: {
@@ -83,7 +83,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n4",
-      label: "bốn",
+      label: "Số bốn",
       glyph: "4",
       value: 4,
       image: {
@@ -93,7 +93,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n5",
-      label: "năm",
+      label: "Số năm",
       glyph: "5",
       value: 5,
       image: {
@@ -103,7 +103,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n6",
-      label: "sáu",
+      label: "Số sáu",
       glyph: "6",
       value: 6,
       image: {
@@ -113,7 +113,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n7",
-      label: "bảy",
+      label: "Số bảy",
       glyph: "7",
       value: 7,
       image: {
@@ -123,7 +123,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n8",
-      label: "tám",
+      label: "Số tám",
       glyph: "8",
       value: 8,
       image: {
@@ -133,7 +133,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n9",
-      label: "chín",
+      label: "Số chín",
       glyph: "9",
       value: 9,
       image: {
@@ -143,7 +143,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n10",
-      label: "mười",
+      label: "Số mười",
       glyph: "10",
       value: 10,
       image: {
@@ -153,7 +153,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n11",
-      label: "mười một",
+      label: "Số mười một",
       glyph: "11",
       value: 11,
       image: {
@@ -163,7 +163,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n12",
-      label: "mười hai",
+      label: "Số mười hai",
       glyph: "12",
       value: 12,
       image: {
@@ -173,7 +173,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n13",
-      label: "mười ba",
+      label: "Số mười ba",
       glyph: "13",
       value: 13,
       image: {
@@ -183,7 +183,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n14",
-      label: "mười bốn",
+      label: "Số mười bốn",
       glyph: "14",
       value: 14,
       image: {
@@ -193,7 +193,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n15",
-      label: "mười lăm",
+      label: "Số mười lăm",
       glyph: "15",
       value: 15,
       image: {
@@ -203,7 +203,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n16",
-      label: "mười sáu",
+      label: "Số mười sáu",
       glyph: "16",
       value: 16,
       image: {
@@ -213,7 +213,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n17",
-      label: "mười bảy",
+      label: "Số mười bảy",
       glyph: "17",
       value: 17,
       image: {
@@ -223,7 +223,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n18",
-      label: "mười tám",
+      label: "Số mười tám",
       glyph: "18",
       value: 18,
       image: {
@@ -233,7 +233,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n19",
-      label: "mười chín",
+      label: "Số mười chín",
       glyph: "19",
       value: 19,
       image: {
@@ -243,7 +243,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     },
     {
       id: "n20",
-      label: "hai mươi",
+      label: "Số hai mươi",
       glyph: "20",
       value: 20,
       image: {
@@ -283,7 +283,7 @@ export const C1_NCOMP_04_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Tách số 5 nhé",
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
+    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   },
   ordering: [
     "n0",

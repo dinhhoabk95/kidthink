@@ -65,7 +65,7 @@ export const projectGT004: Projection<"GT-004"> = {
 
     return {
       content_pack: {
-        prompt: "Bé hãy phân loại các hình vào đúng nhóm nhé!",
+        prompt: "Bé hãy phân loại vào đúng nhóm nhé!",
         groups,
         items: shuffleDeterministic(items, rng),
       },

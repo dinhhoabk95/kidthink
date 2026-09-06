@@ -5,6 +5,11 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
+import {
+  formatDisplayLabel,
+  formatPromptLabel,
+  formatSpokenLabel,
+} from "@mindkid/shared";
 import { resolveItemAsset } from "./utils.js";
 
 /**
@@ -38,10 +43,11 @@ const WHITESPACE_SPLIT_REGEX = /\s+/;
 
 export function buildConceptIntroPrompt(label: string): string {
   const normalized = label.trim();
-  const base = normalized.toLowerCase().startsWith("làm quen")
-    ? normalized
-    : `làm quen ${normalized}`;
-  const candidate = `Bé ${base} nhé!`;
+  const lower = normalized.toLowerCase();
+  if (lower.startsWith("làm quen") || lower.startsWith("nhận biết")) {
+    return `Bé cùng ${normalized} nhé!`;
+  }
+  const candidate = `Bé cùng làm quen với ${normalized} nhé!`;
   const wordCount = candidate
     .split(WHITESPACE_SPLIT_REGEX)
     .filter(Boolean).length;
@@ -64,7 +70,10 @@ export const projectGT000: Projection<"GT-000"> = {
     const assets = dataset.items.map((item) => ({
       asset_id: `asset_${item.id}`,
       kind: (item.glyph ? "glyph" : "image") as "glyph" | "image",
-      label: item.label,
+      label: formatDisplayLabel(item.label, {
+        value: item.value,
+        glyph: item.glyph,
+      }),
       glyph: item.glyph,
       contrast_group: item.contrast_group ?? "primary",
       image_ref: resolveItemAsset(item, true),
@@ -77,38 +86,56 @@ export const projectGT000: Projection<"GT-000"> = {
       const segAssetIds = chunk.map((item) => `asset_${item.id}`);
 
       // Giới thiệu và tập nói liền mạch theo từng chất liệu
-      const teachSteps = chunk.flatMap((item) => [
-        {
-          action: "present" as const,
-          target_asset_id: `asset_${item.id}`,
-          narration_line: `Đây là ${item.label}`,
-        },
-        {
-          action: "echo" as const,
-          target_asset_id: `asset_${item.id}`,
-          repeat_count: 1,
-          prompt_line: `Bé nói theo cô nhé: ${item.label}`,
-        },
-      ]);
+      const teachSteps = chunk.flatMap((item) => {
+        const pLabel = formatPromptLabel(item.label, {
+          value: item.value,
+          glyph: item.glyph,
+        });
+        const sLabel = formatSpokenLabel(item.label, {
+          value: item.value,
+          glyph: item.glyph,
+        });
+        return [
+          {
+            action: "present" as const,
+            target_asset_id: `asset_${item.id}`,
+            narration_line: `Đây là ${pLabel}`,
+          },
+          {
+            action: "echo" as const,
+            target_asset_id: `asset_${item.id}`,
+            repeat_count: 1,
+            prompt_line: `Bé nói theo cô nhé: ${sLabel}`,
+          },
+        ];
+      });
 
       const recogniseSteps = chunk.map((item) => {
         const distractors = chunk
           .filter((other) => other.id !== item.id)
           .map((other) => `asset_${other.id}`);
+        const pLabel = formatPromptLabel(item.label, {
+          value: item.value,
+          glyph: item.glyph,
+        });
         return {
           action: "recognise" as const,
           target_asset_id: `asset_${item.id}`,
           distractor_asset_ids: distractors.slice(0, 3),
-          prompt_line: `Bé hãy chạm vào ${item.label} nhé!`,
+          prompt_line: `Bé hãy chạm vào ${pLabel} nhé!`,
         };
       });
 
       const recallSteps = chunk.map((item) => {
+        const pLabel = formatPromptLabel(item.label, {
+          value: item.value,
+          glyph: item.glyph,
+        });
         return {
           action: "recall" as const,
           target_asset_id: `asset_${item.id}`,
           option_asset_ids: segAssetIds.slice(0, 4),
-          prompt_line: `Hình nào là ${item.label}?`,
+          prompt_line: `Đâu là ${pLabel}?`,
         };
       });
 
@@ -149,19 +176,29 @@ export const projectGT000: Projection<"GT-000"> = {
         const distractors = reviewItems
           .filter((other) => other.id !== item.id)
           .map((other) => `asset_${other.id}`);
+        const pLabel = formatPromptLabel(item.label, {
+          value: item.value,
+          glyph: item.glyph,
+        });
         return {
           action: "recognise" as const,
           target_asset_id: `asset_${item.id}`,
           distractor_asset_ids: distractors.slice(0, 3),
-          prompt_line: `Ôn tập: Bé hãy tìm ${item.label}`,
+          prompt_line: `Bé hãy tìm ${pLabel} nhé!`,
         };
       }),
-      ...reviewItems.map((item) => ({
-        action: "recall" as const,
-        target_asset_id: `asset_${item.id}`,
-        option_asset_ids: reviewAssetIds.slice(0, 4),
-        prompt_line: `Ôn tập: Hình nào là ${item.label}?`,
-      })),
+      ...reviewItems.map((item) => {
+        const pLabel = formatPromptLabel(item.label, {
+          value: item.value,
+          glyph: item.glyph,
+        });
+        return {
+          action: "recall" as const,
+          target_asset_id: `asset_${item.id}`,
+          option_asset_ids: reviewAssetIds.slice(0, 4),
+          prompt_line: `Đâu là ${pLabel}?`,
+        };
+      }),
     ];
 
     segments.push({

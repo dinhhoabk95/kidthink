@@ -43,7 +43,7 @@ export const C1_CNT_01_DATASET: SkillDataset = {
   items: [
     {
       id: "n0",
-      label: "không",
+      label: "Số không",
       glyph: "0",
       value: 0,
       audio_path: "/audio/voice/common/numbers/0.mp3",
@@ -54,7 +54,7 @@ export const C1_CNT_01_DATASET: SkillDataset = {
     },
     {
       id: "n1",
-      label: "một",
+      label: "Số một",
       glyph: "1",
       value: 1,
       audio_path: "/audio/voice/common/numbers/1.mp3",
@@ -65,7 +65,7 @@ export const C1_CNT_01_DATASET: SkillDataset = {
     },
     {
       id: "n2",
-      label: "hai",
+      label: "Số hai",
       glyph: "2",
       value: 2,
       audio_path: "/audio/voice/common/numbers/2.mp3",
@@ -76,7 +76,7 @@ export const C1_CNT_01_DATASET: SkillDataset = {
     },
     {
       id: "n3",
-      label: "ba",
+      label: "Số ba",
       glyph: "3",
       value: 3,
       audio_path: "/audio/voice/common/numbers/3.mp3",
@@ -117,7 +117,7 @@ export const C1_CNT_01_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Đếm đồ vật nhé",
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
+    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   },
   ordering: ["n0", "n1", "n2", "n3"],
 };

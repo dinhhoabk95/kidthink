@@ -4,6 +4,7 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
+import { formatPluralNoun } from "@mindkid/shared";
 import {
   createRng,
   resolveItemAsset,
@@ -58,7 +59,10 @@ export const projectGT022: Projection<"GT-022"> = {
 
     return {
       content_pack: {
-        prompt: `Bé hãy tìm các hình ${targetItem.label} nhé!`,
+        prompt: `Bé hãy tìm ${formatPluralNoun(targetItem.label, {
+          value: targetItem.value,
+          glyph: targetItem.glyph,
+        })} nhé!`,
         target_description: targetItem.label,
         scene_objects: shuffleDeterministic(scene_objects, rng),
       },

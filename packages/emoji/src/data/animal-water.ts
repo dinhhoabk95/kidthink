@@ -3,7 +3,7 @@ import type { EmojiEntry } from "#src/types";
 export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   {
     emoji: "🐟",
-    name: "Cá",
+    name: "Con cá",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["fish", "cá", "con cá", "bơi"],
@@ -11,7 +11,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐠",
-    name: "Cá nhiệt đới",
+    name: "Con cá nhiệt đới",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["tropical fish", "cá", "cá nhiệt đới", "sặc sỡ"],
@@ -19,7 +19,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐡",
-    name: "Cá nóc",
+    name: "Con cá nóc",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
@@ -35,7 +35,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦈",
-    name: "Cá mập",
+    name: "Con cá mập",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
@@ -51,7 +51,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐳",
-    name: "Cá voi",
+    name: "Con cá voi",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["whale", "spouting whale", "cá voi", "phun nước", "đại dương"],
@@ -59,7 +59,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐋",
-    name: "Cá voi lưng gù",
+    name: "Con cá voi",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["whale", "humpback whale", "cá voi", "lớn", "biển"],
@@ -67,7 +67,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐬",
-    name: "Cá heo",
+    name: "Con cá heo",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["dolphin", "cá heo", "thông minh", "jumping", "nhảy"],
@@ -75,7 +75,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦭",
-    name: "Hải cẩu",
+    name: "Con hải cẩu",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["seal", "hải cẩu", "bịt mắt", "biển"],
@@ -83,7 +83,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐙",
-    name: "Bạch tuộc",
+    name: "Con bạch tuộc",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
@@ -99,7 +99,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦑",
-    name: "Mực",
+    name: "Con mực",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["squid", "mực", "mực ống", "biển"],
@@ -107,7 +107,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦐",
-    name: "Tôm",
+    name: "Con tôm",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat", "dinh_duong_suc_khoe"],
     keywords: [
@@ -123,7 +123,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦞",
-    name: "Tôm hùm",
+    name: "Con tôm hùm",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["lobster", "tôm hùm", "càng", "biển", "red", "đỏ", "càng lớn"],
@@ -131,7 +131,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦀",
-    name: "Cua",
+    name: "Con cua",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
@@ -175,7 +175,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐸",
-    name: "Ếch",
+    name: "Con ếch",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
@@ -193,7 +193,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🪼",
-    name: "Sứa",
+    name: "Con sứa",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["jellyfish", "sứa", "con sứa", "biển"],
@@ -201,7 +201,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦪",
-    name: "Hàu",
+    name: "Con hàu",
     categories: ["animal-water"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["oyster", "hàu", "sò", "hải sản"],
@@ -209,7 +209,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐊",
-    name: "Cá sấu",
+    name: "Con cá sấu",
     categories: ["animal-water", "animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["crocodile", "cá sấu", "nước", "sông", "alligator", "nguy hiểm"],
@@ -217,7 +217,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦦",
-    name: "Rái cá",
+    name: "Con rái cá",
     categories: ["animal-water", "animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["otter", "rái cá", "bơi", "dễ thương"],
@@ -225,7 +225,7 @@ export const ANIMAL_WATER_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐢",
-    name: "Rùa",
+    name: "Con rùa",
     categories: ["animal-water", "animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [

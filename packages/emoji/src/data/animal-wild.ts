@@ -3,7 +3,7 @@ import type { EmojiEntry } from "#src/types";
 export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   {
     emoji: "🐂",
-    name: "Bò",
+    name: "Con bò",
     categories: ["animal-farm", "animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
@@ -20,7 +20,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐃",
-    name: "Trâu nước",
+    name: "Con trâu",
     categories: ["animal-farm", "animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat", "que_huong_dat_nuoc"],
     keywords: ["water buffalo", "trâu", "trâu nước", "cày ruộng", "đồng"],
@@ -28,7 +28,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦙",
-    name: "Lạc đà không bướu",
+    name: "Con lạc đà",
     categories: ["animal-farm", "animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["llama", "alpaca", "lạc đà", "lông mềm"],
@@ -36,7 +36,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐊",
-    name: "Cá sấu",
+    name: "Con cá sấu",
     categories: ["animal-water", "animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["crocodile", "cá sấu", "nước", "sông", "alligator", "nguy hiểm"],
@@ -44,7 +44,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦦",
-    name: "Rái cá",
+    name: "Con rái cá",
     categories: ["animal-water", "animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["otter", "rái cá", "bơi", "dễ thương"],
@@ -52,7 +52,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐢",
-    name: "Rùa",
+    name: "Con rùa",
     categories: ["animal-water", "animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
@@ -69,7 +69,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦁",
-    name: "Sư tử",
+    name: "Con sư tử",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["lion", "sư tử", "vua rừng", "mạnh mẽ"],
@@ -77,7 +77,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐯",
-    name: "Hổ",
+    name: "Con hổ",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["tiger", "hổ", "cọp", "con hổ"],
@@ -85,7 +85,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐅",
-    name: "Hổ hoang dã",
+    name: "Con hổ",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["tiger", "wild tiger", "hổ", "cọp", "hoang dã"],
@@ -93,7 +93,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐻",
-    name: "Gấu",
+    name: "Con gấu",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["bear", "gấu", "con gấu", "gấu nâu"],
@@ -101,7 +101,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐼",
-    name: "Gấu trúc",
+    name: "Con gấu trúc",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["panda", "gấu trúc", "dễ thương"],
@@ -109,7 +109,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐻‍❄️",
-    name: "Gấu tuyết",
+    name: "Con gấu Bắc Cực",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: [
@@ -126,7 +126,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐨",
-    name: "Gấu túi",
+    name: "Con gấu túi",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["koala", "gấu túi", "Úc"],
@@ -134,7 +134,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦊",
-    name: "Cáo",
+    name: "Con cáo",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["fox", "cáo", "con cáo", "khôn"],
@@ -142,7 +142,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐺",
-    name: "Sói",
+    name: "Con chó sói",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["wolf", "sói", "con sói", "hú"],
@@ -150,7 +150,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐵",
-    name: "Khỉ",
+    name: "Con khỉ",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["monkey", "khỉ", "con khỉ", "leo trèo"],
@@ -158,7 +158,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🙈",
-    name: "Khỉ bịt mắt",
+    name: "Con khỉ bịt mắt",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["see no evil monkey", "khỉ", "bịt mắt", "xấu hổ"],
@@ -166,7 +166,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦍",
-    name: "Khỉ đột",
+    name: "Con khỉ đột",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["gorilla", "khỉ đột", "khỏe"],
@@ -174,7 +174,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐘",
-    name: "Voi",
+    name: "Con voi",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["elephant", "voi", "con voi", "vòi"],
@@ -182,7 +182,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦒",
-    name: "Hươu cao cổ",
+    name: "Con hươu cao cổ",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["giraffe", "hươu cao cổ", "cổ dài", "cao"],
@@ -190,7 +190,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦛",
-    name: "Hà mã",
+    name: "Con hà mã",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["hippopotamus", "hippo", "hà mã", "nặng"],
@@ -198,7 +198,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦏",
-    name: "Tê giác",
+    name: "Con tê giác",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["rhinoceros", "rhino", "tê giác", "sừng", "to lớn"],
@@ -206,7 +206,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐆",
-    name: "Báo",
+    name: "Con báo",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["leopard", "cheetah", "báo", "báo đốm", "nhanh"],
@@ -214,7 +214,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦘",
-    name: "Kanguru",
+    name: "Con chuột túi",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["kangaroo", "kanguru", "chuột túi", "nhảy"],
@@ -222,7 +222,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦥",
-    name: "Lười",
+    name: "Con lười",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["sloth", "con lười", "lười biếng", "chậm"],
@@ -230,7 +230,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐿️",
-    name: "Sóc",
+    name: "Con sóc",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["chipmunk", "squirrel", "sóc", "con sóc", "hạt dẻ"],
@@ -238,7 +238,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦔",
-    name: "Nhím",
+    name: "Con nhím",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["hedgehog", "nhím", "con nhím", "gai"],
@@ -246,7 +246,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦇",
-    name: "Dơi",
+    name: "Con dơi",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["bat", "dơi", "con dơi", "bay đêm"],
@@ -254,7 +254,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐍",
-    name: "Rắn",
+    name: "Con rắn",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["snake", "rắn", "con rắn", "bò"],
@@ -262,7 +262,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦎",
-    name: "Thằn lằn",
+    name: "Con thằn lằn",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["lizard", "gecko", "thằn lằn", "tắc kè", "bò sát"],
@@ -270,7 +270,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐒",
-    name: "Khỉ con",
+    name: "Con khỉ con",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["monkey", "khỉ", "khỉ con", "tinh nghịch"],
@@ -278,7 +278,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦓",
-    name: "Ngựa vằn",
+    name: "Con ngựa vằn",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["zebra", "ngựa vằn", "sọc", "đen trắng"],
@@ -286,7 +286,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦣",
-    name: "Voi ma mút",
+    name: "Con voi ma mút",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["mammoth", "voi ma mút", "cổ đại", "tuyệt chủng"],
@@ -294,7 +294,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦫",
-    name: "Hải ly",
+    name: "Con hải ly",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["beaver", "hải ly", "xây đập", "nước"],
@@ -302,7 +302,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫎",
-    name: "Nai sừng tấm",
+    name: "Con nai",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["moose", "nai", "sừng tấm"],
@@ -310,7 +310,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦬",
-    name: "Bò rừng",
+    name: "Con bò rừng",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["bison", "buffalo", "bò rừng", "lớn"],
@@ -318,7 +318,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐫",
-    name: "Lạc đà",
+    name: "Con lạc đà",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["camel", "lạc đà", "sa mạc", "bướu"],
@@ -326,7 +326,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐪",
-    name: "Lạc đà một bướu",
+    name: "Con lạc đà một bướu",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["dromedary camel", "lạc đà", "một bướu", "sa mạc"],
@@ -334,7 +334,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦝",
-    name: "Gấu mèo",
+    name: "Con gấu mèo",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["raccoon", "gấu mèo", "tinh nghịch"],
@@ -342,7 +342,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🐗",
-    name: "Lợn rừng",
+    name: "Con lợn rừng",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["boar", "wild pig", "lợn rừng", "heo rừng", "hoang"],
@@ -350,7 +350,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🙉",
-    name: "Khỉ bịt tai",
+    name: "Con khỉ bịt tai",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["hear no evil monkey", "khỉ", "bịt tai", "không nghe"],
@@ -358,7 +358,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🙊",
-    name: "Khỉ bịt miệng",
+    name: "Con khỉ bịt miệng",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["speak no evil monkey", "khỉ", "bịt miệng", "bí mật"],
@@ -366,7 +366,7 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🦧",
-    name: "Đười ươi",
+    name: "Con đười ươi",
     categories: ["animal-wild"],
     curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
     keywords: ["orangutan", "đười ươi", "rừng"],

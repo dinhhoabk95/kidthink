@@ -4,6 +4,7 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
+import { formatDisplayLabel, formatPluralNoun } from "@mindkid/shared";
 import {
   createRng,
   resolveItemAsset,
@@ -58,10 +59,10 @@ export const projectGT003: Projection<"GT-003"> = {
 
     return {
       content_pack: {
-        prompt: `Bé hãy kéo các hình ${targetAttr} vào giỏ nhé!`,
+        prompt: `Bé hãy kéo ${formatPluralNoun(targetAttr)} vào giỏ nhé!`,
         container: {
           container_id: "basket_1",
-          label: `Giỏ ${targetAttr}`,
+          label: `Giỏ ${formatDisplayLabel(targetAttr)}`,
           accepts_attribute: targetAttr,
         },
         items: shuffleDeterministic(items, rng),

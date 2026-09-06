@@ -47,7 +47,7 @@ export const projectGT006: Projection<"GT-006"> = {
 
     return {
       content_pack: {
-        prompt: "Bé hãy sắp xếp các hình theo đúng thứ tự nhé!",
+        prompt: "Bé hãy sắp xếp theo đúng thứ tự nhé!",
         sequence,
       },
       difficulty_params: {

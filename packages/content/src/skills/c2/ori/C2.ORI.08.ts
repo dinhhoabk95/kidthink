@@ -38,7 +38,7 @@ export const C2_ORI_08_IDENTITY: SkillIdentity = {
 
 export const C2_ORI_08_DATASET: SkillDataset = {
   skill_code: "C2.ORI.08",
-  concept_label: "Ngoài",
+  concept_label: "Bên ngoài",
   surface: "game",
   items: [
     {
@@ -128,7 +128,7 @@ export const C2_ORI_08_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Ngoài nhé",
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
+    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   },
   ordering: ["carrot", "corn", "dog", "cat", "chicken"],
 };

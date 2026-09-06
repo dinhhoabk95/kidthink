@@ -30,7 +30,7 @@ export const projectGT036: Projection<"GT-036"> = {
 
     return {
       content_pack: {
-        prompt: "Bé hãy xếp các hình lặp lại theo quy luật nhé!",
+        prompt: "Bé hãy xếp lặp lại theo đúng quy luật nhé!",
         palette,
         track_length: 8,
         min_repetitions: 2,

@@ -4,6 +4,7 @@ import type {
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
+import { formatPromptLabel } from "@mindkid/shared";
 import {
   createRng,
   resolveItemAsset,
@@ -53,11 +54,16 @@ export const projectGT001: Projection<"GT-001"> = {
 
     const shuffledOptions = shuffleDeterministic(options, rng);
 
+    const targetLabel = formatPromptLabel(targetItem.label, {
+      value: targetItem.value,
+      glyph: targetItem.glyph,
+    });
+
     const rawPrompt = dataset.phrasing.prompt_template
-      ? dataset.phrasing.prompt_template.replace("{label}", targetItem.label)
-      : `Bé hãy chọn ${targetItem.label}`;
+      ? dataset.phrasing.prompt_template.replace("{label}", targetLabel)
+      : `Bé hãy chọn ${targetLabel} nhé!`;
     const prompt =
-      rawPrompt.length >= 4 ? rawPrompt : `Bé hãy chọn ${targetItem.label}`;
+      rawPrompt.length >= 4 ? rawPrompt : `Bé hãy chọn ${targetLabel} nhé!`;
 
     return {
       content_pack: {

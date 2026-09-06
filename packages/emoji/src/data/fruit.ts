@@ -3,7 +3,7 @@ import type { EmojiEntry } from "#src/types";
 export const FRUIT_EMOJIS: EmojiEntry[] = [
   {
     emoji: "🍎",
-    name: "Táo đỏ",
+    name: "Quả táo đỏ",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["red apple", "apple", "táo", "táo đỏ", "trái cây"],
@@ -11,7 +11,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍏",
-    name: "Táo xanh",
+    name: "Quả táo xanh",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["green apple", "táo xanh", "táo", "chua"],
@@ -19,7 +19,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍊",
-    name: "Cam",
+    name: "Quả cam",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["orange", "tangerine", "cam", "quả cam", "nước cam"],
@@ -27,7 +27,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍋",
-    name: "Chanh",
+    name: "Quả chanh",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["lemon", "chanh", "chanh vàng", "chua"],
@@ -35,7 +35,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍌",
-    name: "Chuối",
+    name: "Quả chuối",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["banana", "chuối", "quả chuối", "vàng"],
@@ -43,7 +43,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍉",
-    name: "Dưa hấu",
+    name: "Quả dưa hấu",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["watermelon", "dưa hấu", "dưa", "mùa hè"],
@@ -51,7 +51,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍇",
-    name: "Nho",
+    name: "Chùm nho",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["grapes", "nho", "chùm nho", "ngọt"],
@@ -59,7 +59,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍓",
-    name: "Dâu tây",
+    name: "Quả dâu tây",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["strawberry", "dâu tây", "dâu", "đỏ"],
@@ -67,7 +67,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫐",
-    name: "Việt quất",
+    name: "Quả việt quất",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["blueberries", "việt quất", "blueberry", "berry"],
@@ -75,7 +75,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍑",
-    name: "Đào",
+    name: "Quả đào",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["peach", "đào", "quả đào", "mềm"],
@@ -83,7 +83,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥭",
-    name: "Xoài",
+    name: "Quả xoài",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["mango", "xoài", "quả xoài", "ngọt"],
@@ -91,7 +91,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍍",
-    name: "Dứa",
+    name: "Quả dứa",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["pineapple", "dứa", "thơm", "khóm"],
@@ -99,7 +99,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥥",
-    name: "Dừa",
+    name: "Quả dừa",
     categories: ["fruit"],
     curriculum_themes: [
       "thuc_vat",
@@ -111,7 +111,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥝",
-    name: "Kiwi",
+    name: "Quả kiwi",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["kiwi fruit", "kiwi", "quả kiwi", "xanh"],
@@ -119,7 +119,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍐",
-    name: "Lê",
+    name: "Quả lê",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["pear", "lê", "quả lê", "ngọt"],
@@ -127,7 +127,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍈",
-    name: "Dưa lưới",
+    name: "Quả dưa lưới",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["melon", "dưa lưới", "dưa", "ngọt"],
@@ -135,7 +135,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍒",
-    name: "Anh đào",
+    name: "Quả anh đào",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["cherries", "anh đào", "cherry", "đỏ"],
@@ -143,7 +143,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🫒",
-    name: "Ô liu",
+    name: "Quả ô liu",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["olive", "ô liu", "xanh"],
@@ -151,7 +151,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🥑",
-    name: "Bơ",
+    name: "Quả bơ",
     categories: ["fruit", "vegetable"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["avocado", "bơ", "quả bơ", "rau"],
@@ -159,7 +159,7 @@ export const FRUIT_EMOJIS: EmojiEntry[] = [
   },
   {
     emoji: "🍋‍🟩",
-    name: "Chanh xanh",
+    name: "Quả chanh xanh",
     categories: ["fruit"],
     curriculum_themes: ["thuc_vat", "dinh_duong_suc_khoe"],
     keywords: ["lime", "chanh", "chanh xanh"],
