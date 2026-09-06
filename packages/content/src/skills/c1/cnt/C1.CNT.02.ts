@@ -151,14 +151,6 @@ export const C1_CNT_02_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-CNT-INTRO-0002",
-      template: "GT-000",
-      band: "3-5",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
-    },
-    {
       code: "GL-C1-CNT-STEP-0005",
       template: "GT-001",
       band: "4-5",

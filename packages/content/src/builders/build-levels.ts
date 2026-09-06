@@ -54,7 +54,8 @@ function buildLevelRounds(
   levelPlan: SkillLevelPlan,
   baseSeed: number
 ): ContentSeedRound[] {
-  const roundCount = levelPlan.rounds ?? 3;
+  const roundCount =
+    levelPlan.template === "GT-000" ? 1 : (levelPlan.rounds ?? 3);
   const rounds: ContentSeedRound[] = [];
 
   for (let r = 0; r < roundCount; r++) {
@@ -66,13 +67,23 @@ function buildLevelRounds(
       round_index: r,
     });
 
-    let instruction =
+    let instruction: string;
+    if (
       typeof projected.content_pack === "object" &&
       projected.content_pack !== null &&
       "prompt" in projected.content_pack &&
       typeof (projected.content_pack as { prompt: unknown }).prompt === "string"
-        ? (projected.content_pack as { prompt: string }).prompt
-        : dataset.phrasing?.prompt_template || dataset.concept_label;
+    ) {
+      instruction = (projected.content_pack as { prompt: string }).prompt;
+    } else if (levelPlan.template === "GT-000") {
+      instruction = `Bé hãy lắng nghe và cùng làm quen với ${dataset.concept_label} nhé!`;
+    } else {
+      instruction = dataset.phrasing?.prompt_template || dataset.concept_label;
+    }
+
+    if (instruction.includes("{label}")) {
+      instruction = instruction.replace(/\{label\}/g, dataset.concept_label);
+    }
 
     // Sanitize instruction: replace standalone "không" with "số 0" for child friendliness
     instruction = instruction.replace(/\bkhông\b/gi, "số 0");
@@ -115,7 +126,7 @@ function resolveAccessTier(
     return "premium";
   }
   if (difficulty === 1) {
-    return tier === "basic" ? "free" : "login";
+    return tier === "basic" || tier === "pre" ? "free" : "login";
   }
   if (difficulty === 2) {
     return "login";

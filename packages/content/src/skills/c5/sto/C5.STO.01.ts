@@ -261,14 +261,6 @@ export const C5_STO_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-STO-INTRO-0001",
-      template: "GT-000",
-      band: "3-5",
-      difficulty: 1,
-      theme: "school",
-      rounds: 3,
-    },
-    {
       code: "GL-C3-SER-ORD-0005",
       template: "GT-006",
       band: "5-6",

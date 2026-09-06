@@ -145,6 +145,7 @@ export const projectGT000: Projection<"GT-000"> = {
           pre_skill_code: dataset.skill_code,
           label: dataset.concept_label,
         },
+        prompt: `Bé hãy lắng nghe và cùng làm quen với ${dataset.concept_label} nhé!`,
         assets,
         segments,
         requires_reintro: false,

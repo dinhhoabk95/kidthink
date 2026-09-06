@@ -90,6 +90,7 @@ export const GT000ContentSchema = z
       .refine((c) => Boolean(c.skill_code || c.pre_skill_code), {
         message: "concept phải có skill_code hoặc pre_skill_code",
       }),
+    prompt: z.string().optional(),
     assets: z.array(GT000AssetSchema).min(2).max(21),
     segments: z.array(GT000SegmentSchema).min(1).max(6).optional(),
     steps: z.array(GT000StepSchema).min(3).max(12).optional(),

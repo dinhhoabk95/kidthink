@@ -169,7 +169,7 @@ export const C4_DET_05_SEED: SkillSeed = {
   dataset: C4_DET_05_DATASET,
   levels: [
     {
-      code: "GL-C4-DET-05-0001",
+      code: "GL-C4-DET-INTRO-0001",
       template: "GT-000",
       band: "3-4",
       difficulty: 1,

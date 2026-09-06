@@ -194,7 +194,7 @@ export const C1_NREC_14_SEED: SkillSeed = {
   dataset: C1_NREC_14_DATASET,
   levels: [
     {
-      code: "GL-C1-NREC-14-0001",
+      code: "GL-C1-NREC-INTRO-0002",
       template: "GT-000",
       band: "4-5",
       difficulty: 1,

@@ -158,7 +158,7 @@ export const C2_GEO_09_SEED: SkillSeed = {
   dataset: C2_GEO_09_DATASET,
   levels: [
     {
-      code: "GL-C2-GEO-09-0001",
+      code: "GL-C2-GEO-INTRO-0001",
       template: "GT-000",
       band: "3-4",
       difficulty: 1,
