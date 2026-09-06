@@ -192,15 +192,15 @@ export const C5_LET_02_SEED: SkillSeed = {
     {
       code: "GL-C5-LET-MULTI-0006",
       template: "GT-002",
-      band: "3-4",
+      band: "4-5",
       difficulty: 1,
-      theme: "space",
+      theme: "food",
       rounds: 3,
     },
     {
       code: "GL-C5-LET-MULTI-0007",
       template: "GT-002",
-      band: "3-4",
+      band: "4-5",
       difficulty: 1,
       theme: "family",
       rounds: 3,
@@ -208,7 +208,7 @@ export const C5_LET_02_SEED: SkillSeed = {
     {
       code: "GL-C5-LET-MULTI-0008",
       template: "GT-002",
-      band: "3-4",
+      band: "4-5",
       difficulty: 2,
       theme: "home",
       rounds: 3,
