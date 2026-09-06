@@ -12,6 +12,9 @@ function nodeContainsGlyph(
   obj: Record<string, unknown>,
   glyphs: Set<string>
 ): boolean {
+  if (typeof obj.glyph === "string" && glyphs.has(obj.glyph)) {
+    return true;
+  }
   if (obj.kind === "text" && typeof obj.text === "string") {
     for (const glyph of glyphs) {
       if (obj.text.includes(glyph)) {
@@ -31,39 +34,65 @@ function nodeContainsGlyph(
   return false;
 }
 
+const IGNORED_KEYS = new Set([
+  "prompt",
+  "instruction",
+  "prompt_audio_ref",
+  "audio_path",
+  "title",
+  "item_id",
+  "id",
+]);
+
+function processArrayItem(
+  arr: unknown[],
+  stack: unknown[],
+  glyphs: Set<string>
+): boolean {
+  for (const item of arr) {
+    if (typeof item === "string" && glyphs.has(item)) {
+      return true;
+    }
+    if (item && typeof item === "object") {
+      stack.push(item);
+    }
+  }
+  return false;
+}
+
+function processObjectItem(
+  obj: Record<string, unknown>,
+  stack: unknown[],
+  glyphs: Set<string>
+): boolean {
+  if (nodeContainsGlyph(obj, glyphs)) {
+    return true;
+  }
+
+  for (const [key, val] of Object.entries(obj)) {
+    if (IGNORED_KEYS.has(key)) {
+      continue;
+    }
+    if (val && typeof val === "object") {
+      stack.push(val);
+    }
+  }
+  return false;
+}
+
 function processStackItem(
   current: unknown,
   stack: unknown[],
   glyphs: Set<string>
 ): boolean {
   if (Array.isArray(current)) {
-    stack.push(...current);
-    return false;
+    return processArrayItem(current, stack, glyphs);
   }
 
-  if (typeof current === "string") {
-    for (const glyph of glyphs) {
-      if (current.includes(glyph)) {
-        return true;
-      }
-    }
-    return false;
+  if (current && typeof current === "object") {
+    return processObjectItem(current as Record<string, unknown>, stack, glyphs);
   }
 
-  if (!current || typeof current !== "object") {
-    return false;
-  }
-
-  const obj = current as Record<string, unknown>;
-  if (nodeContainsGlyph(obj, glyphs)) {
-    return true;
-  }
-
-  for (const val of Object.values(obj)) {
-    if (val && (typeof val === "object" || typeof val === "string")) {
-      stack.push(val);
-    }
-  }
   return false;
 }
 

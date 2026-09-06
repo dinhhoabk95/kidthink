@@ -10,7 +10,7 @@ export const C1_NREC_04_IDENTITY: SkillIdentity = {
   difficulty: 3,
   thinking_processes: ["observe"],
   tier: "core",
-  prerequisites: ["C1.NREC.03"],
+  prerequisites: ["C1.NREC.15", "C1.NREC.03"],
   learning_objectives: [
     {
       code: "LO-C1.NREC.04-01",
@@ -42,120 +42,11 @@ export const C1_NREC_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "n0",
-      label: "không",
-      glyph: "0",
-      value: 0,
-      image: {
-        kind: "emoji",
-        ref: "0️⃣",
-      },
-    },
-    {
-      id: "n1",
-      label: "một",
-      glyph: "1",
-      value: 1,
-      image: {
-        kind: "emoji",
-        ref: "1️⃣",
-      },
-    },
-    {
-      id: "n2",
-      label: "hai",
-      glyph: "2",
-      value: 2,
-      image: {
-        kind: "emoji",
-        ref: "2️⃣",
-      },
-    },
-    {
-      id: "n3",
-      label: "ba",
-      glyph: "3",
-      value: 3,
-      image: {
-        kind: "emoji",
-        ref: "3️⃣",
-      },
-    },
-    {
-      id: "n4",
-      label: "bốn",
-      glyph: "4",
-      value: 4,
-      image: {
-        kind: "emoji",
-        ref: "4️⃣",
-      },
-    },
-    {
-      id: "n5",
-      label: "năm",
-      glyph: "5",
-      value: 5,
-      image: {
-        kind: "emoji",
-        ref: "5️⃣",
-      },
-    },
-    {
-      id: "n6",
-      label: "sáu",
-      glyph: "6",
-      value: 6,
-      image: {
-        kind: "emoji",
-        ref: "6️⃣",
-      },
-    },
-    {
-      id: "n7",
-      label: "bảy",
-      glyph: "7",
-      value: 7,
-      image: {
-        kind: "emoji",
-        ref: "7️⃣",
-      },
-    },
-    {
-      id: "n8",
-      label: "tám",
-      glyph: "8",
-      value: 8,
-      image: {
-        kind: "emoji",
-        ref: "8️⃣",
-      },
-    },
-    {
-      id: "n9",
-      label: "chín",
-      glyph: "9",
-      value: 9,
-      image: {
-        kind: "emoji",
-        ref: "9️⃣",
-      },
-    },
-    {
-      id: "n10",
-      label: "mười",
-      glyph: "10",
-      value: 10,
-      image: {
-        kind: "emoji",
-        ref: "🔟",
-      },
-    },
-    {
       id: "n11",
       label: "mười một",
       glyph: "11",
       value: 11,
+      audio_path: "/audio/voice/common/numbers/11.mp3",
       image: {
         kind: "emoji",
         ref: "1️⃣",
@@ -166,6 +57,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "mười hai",
       glyph: "12",
       value: 12,
+      audio_path: "/audio/voice/common/numbers/12.mp3",
       image: {
         kind: "emoji",
         ref: "2️⃣",
@@ -176,6 +68,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "mười ba",
       glyph: "13",
       value: 13,
+      audio_path: "/audio/voice/common/numbers/13.mp3",
       image: {
         kind: "emoji",
         ref: "3️⃣",
@@ -186,6 +79,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "mười bốn",
       glyph: "14",
       value: 14,
+      audio_path: "/audio/voice/common/numbers/14.mp3",
       image: {
         kind: "emoji",
         ref: "4️⃣",
@@ -196,6 +90,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "mười lăm",
       glyph: "15",
       value: 15,
+      audio_path: "/audio/voice/common/numbers/15.mp3",
       image: {
         kind: "emoji",
         ref: "5️⃣",
@@ -206,6 +101,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "mười sáu",
       glyph: "16",
       value: 16,
+      audio_path: "/audio/voice/common/numbers/16.mp3",
       image: {
         kind: "emoji",
         ref: "6️⃣",
@@ -216,6 +112,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "mười bảy",
       glyph: "17",
       value: 17,
+      audio_path: "/audio/voice/common/numbers/17.mp3",
       image: {
         kind: "emoji",
         ref: "7️⃣",
@@ -226,6 +123,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "mười tám",
       glyph: "18",
       value: 18,
+      audio_path: "/audio/voice/common/numbers/18.mp3",
       image: {
         kind: "emoji",
         ref: "8️⃣",
@@ -236,6 +134,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "mười chín",
       glyph: "19",
       value: 19,
+      audio_path: "/audio/voice/common/numbers/19.mp3",
       image: {
         kind: "emoji",
         ref: "9️⃣",
@@ -246,6 +145,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       label: "hai mươi",
       glyph: "20",
       value: 20,
+      audio_path: "/audio/voice/common/numbers/20.mp3",
       image: {
         kind: "emoji",
         ref: "2️⃣",

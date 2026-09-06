@@ -47,12 +47,44 @@ export const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     miss_count: NON_NEGATIVE_INT,
   }),
   intro_recall_answered: z.object({
-    item_id: CONTENT_ID,
+    item_id: CONTENT_ID.optional(),
+    step_id: z.string().max(64).optional(),
+    target_asset_id: CONTENT_ID.optional(),
     answer_correct: z.boolean(),
+  }),
+  intro_step_started: z.object({
+    step_id: z.string().max(64),
+    action: z.string().max(32),
+    target_asset_id: CONTENT_ID,
+    asset_kind: z.string().max(32).optional(),
+  }),
+  intro_step_answered: z.object({
+    step_id: z.string().max(64),
+    action: z.string().max(32),
+    answer_correct: z.boolean(),
+    miss_count: NON_NEGATIVE_INT,
+    tts_used: z.boolean().optional(),
+  }),
+  intro_step_deferred: z.object({
+    step_id: z.string().max(64),
+    reason: z.string().max(64),
+  }),
+  intro_segment_started: z.object({
+    segment_id: z.string().max(64),
+    segment_index: NON_NEGATIVE_INT,
+    asset_count: NON_NEGATIVE_INT,
+    is_review: z.boolean(),
+  }),
+  intro_segment_completed: z.object({
+    segment_id: z.string().max(64),
+    segment_index: NON_NEGATIVE_INT,
+    miss_count: NON_NEGATIVE_INT,
   }),
   tts_unavailable: z.object({
     prompt_id: z.string().max(64).optional(),
     reason: z.string().max(64).optional(),
+    lang: z.string().max(32).optional(),
+    asset_id: CONTENT_ID.optional(),
   }),
   round_started: z.object({
     round_index: NON_NEGATIVE_INT,

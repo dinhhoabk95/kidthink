@@ -149,6 +149,7 @@ export interface SkillLevelPlan {
   readonly rounds?: number;
   readonly montessori_ref?: string;
   readonly legacy_v1_ref?: string;
+  readonly skill_codes?: readonly string[];
 }
 
 export interface SkillSeed {

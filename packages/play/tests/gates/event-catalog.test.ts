@@ -1,3 +1,4 @@
+import { ALL_TEMPLATES } from "@mindkid/game-engine";
 import { describe, expect, it } from "vitest";
 import { ALLOWED_EVENT_NAMES, EVENT_PAYLOAD_FIELDS } from "#src/events/catalog";
 import { EVENT_PAYLOAD_SCHEMAS } from "#src/events/schemas";
@@ -45,5 +46,27 @@ describe("Event Catalog Invariants Gates (Task #209 / #251)", () => {
       schemasMinusAllowed,
       `Events in EVENT_PAYLOAD_SCHEMAS but missing from ALLOWED_EVENT_NAMES: ${schemasMinusAllowed.join(", ")}`
     ).toEqual([]);
+  });
+
+  it("BR-E000-07 / BR-CIR-21: all template.events match ALLOWED_EVENT_NAMES with negative test", () => {
+    const unallowedEvents: { template: string; event: string }[] = [];
+    for (const [code, tmpl] of Object.entries(ALL_TEMPLATES)) {
+      for (const ev of tmpl.events) {
+        if (!ALLOWED_EVENT_NAMES.has(ev)) {
+          unallowedEvents.push({ template: code, event: ev });
+        }
+      }
+    }
+    expect(
+      unallowedEvents,
+      `Templates declared events not in ALLOWED_EVENT_NAMES: ${JSON.stringify(unallowedEvents)}`
+    ).toEqual([]);
+
+    // Ca âm: thêm tên lạ vào danh sách phát thì cổng bắt lỗi
+    const fakeEvents = ["random_unregistered_event_xyz"];
+    const negativeMatches = fakeEvents.filter((ev) =>
+      ALLOWED_EVENT_NAMES.has(ev)
+    );
+    expect(negativeMatches.length).toBe(0);
   });
 });

@@ -170,48 +170,114 @@ interface SkillEvaluationResult {
   readonly deficit?: SkillQuotaDeficit;
 }
 
-function evaluateSingleSkill(
-  skill: ParsedSkill,
+function collectTemplateStats(
+  skillCode: string,
   tMap: Map<string, number>,
-  quota: QuotaConfig
-): SkillEvaluationResult {
+  maxLevelsPerPair: number
+): {
+  totalLevels: number;
+  templateCodes: string[];
+  distinctPairs: string[];
+  pairViolations: Array<{ template_code: string; level_count: number }>;
+  pairViolationsList: SkillQuotaViolation[];
+} {
   let totalLevels = 0;
   const templateCodes: string[] = [];
   const pairViolations: Array<{ template_code: string; level_count: number }> =
     [];
   const distinctPairs: string[] = [];
-  const violations: SkillQuotaViolation[] = [];
+  const pairViolationsList: SkillQuotaViolation[] = [];
 
   for (const [tCode, count] of tMap.entries()) {
     totalLevels += count;
     templateCodes.push(tCode);
-    distinctPairs.push(`${skill.code}:${tCode}`);
+    distinctPairs.push(`${skillCode}:${tCode}`);
 
-    if (count > quota.maxLevelsPerPair) {
+    if (count > maxLevelsPerPair) {
       pairViolations.push({ template_code: tCode, level_count: count });
-      violations.push({
+      pairViolationsList.push({
         ruleId: "BR-SKQ-04",
-        skill_code: skill.code,
+        skill_code: skillCode,
         template_code: tCode,
-        message: `Cặp (${skill.code}, ${tCode}) có ${count} level, vượt trần ${quota.maxLevelsPerPair}`,
+        message: `Cặp (${skillCode}, ${tCode}) có ${count} level, vượt trần ${maxLevelsPerPair}`,
         actual: count,
-        expected: quota.maxLevelsPerPair,
+        expected: maxLevelsPerPair,
       });
     }
   }
+
+  return {
+    totalLevels,
+    templateCodes,
+    distinctPairs,
+    pairViolations,
+    pairViolationsList,
+  };
+}
+
+function checkDeficitViolations(
+  skill: ParsedSkill,
+  totalLevels: number,
+  templateCount: number,
+  requiredLevels: number,
+  requiredTemplates: number,
+  isTeachOnly: boolean,
+  meetsQuota: boolean,
+  meetsDiversity: boolean,
+  violations: SkillQuotaViolation[]
+): void {
+  if (!(meetsQuota || isTeachOnly)) {
+    violations.push({
+      ruleId: "BR-SKQ-02",
+      skill_code: skill.code,
+      message: `Skill ${skill.code} có ${totalLevels} level, thiếu so với hạn ngạch ${requiredLevels}`,
+      actual: totalLevels,
+      expected: requiredLevels,
+    });
+  }
+
+  if (!(meetsDiversity || isTeachOnly)) {
+    violations.push({
+      ruleId: "BR-SKQ-03",
+      skill_code: skill.code,
+      message: `Skill ${skill.code} trải trên ${templateCount} khuôn, thiếu so với yêu cầu ${requiredTemplates}`,
+      actual: templateCount,
+      expected: requiredTemplates,
+    });
+  }
+}
+
+function evaluateSingleSkill(
+  skill: ParsedSkill,
+  tMap: Map<string, number>,
+  quota: QuotaConfig
+): SkillEvaluationResult {
+  const {
+    totalLevels,
+    templateCodes,
+    distinctPairs,
+    pairViolations,
+    pairViolationsList,
+  } = collectTemplateStats(skill.code, tMap, quota.maxLevelsPerPair);
+  const violations: SkillQuotaViolation[] = [...pairViolationsList];
 
   const isC1 = skill.competency_code === "C1";
   const quotaRule = isC1 ? quota.c1 : quota.default;
   const requiredLevels = quotaRule.requiredLevels;
   const requiredTemplates = quotaRule.requiredTemplates;
 
-  const meetsQuota = totalLevels >= requiredLevels;
-  const meetsDiversity = templateCodes.length >= requiredTemplates;
+  const isTeachOnly =
+    skill.tier === "pre" ||
+    (templateCodes.length > 0 &&
+      templateCodes.every((tc) => ALL_TEMPLATES[tc]?.kind === "teach"));
 
-  // Kỹ năng chưa có level nào là **nợ nội dung**, không phải kỹ năng xây dở.
-  // Nó bị đếm và bị chặn bởi bậc thang `BR-SKQ-06`, không bởi hạn ngạch từng
-  // kỹ năng. Không tách hai luật này thì mỗi kỹ năng vừa khai báo lập tức đẻ
-  // ra 10–20 level nợ và kho không bao giờ mở được.
+  const meetsQuota = isTeachOnly
+    ? totalLevels >= 1
+    : totalLevels >= requiredLevels;
+  const meetsDiversity = isTeachOnly
+    ? templateCodes.length >= 1
+    : templateCodes.length >= requiredTemplates;
+
   if (totalLevels === 0) {
     return {
       meetsQuota: false,
@@ -224,34 +290,26 @@ function evaluateSingleSkill(
         skill_code: skill.code,
         competency_code: skill.competency_code,
         current_levels: 0,
-        required_levels: requiredLevels,
+        required_levels: isTeachOnly ? 1 : requiredLevels,
         current_templates: 0,
-        required_templates: requiredTemplates,
+        required_templates: isTeachOnly ? 1 : requiredTemplates,
         template_codes: [],
         pair_violations: [],
       },
     };
   }
 
-  if (!meetsQuota) {
-    violations.push({
-      ruleId: "BR-SKQ-02",
-      skill_code: skill.code,
-      message: `Skill ${skill.code} có ${totalLevels} level, thiếu so với hạn ngạch ${requiredLevels}`,
-      actual: totalLevels,
-      expected: requiredLevels,
-    });
-  }
-
-  if (!meetsDiversity) {
-    violations.push({
-      ruleId: "BR-SKQ-03",
-      skill_code: skill.code,
-      message: `Skill ${skill.code} trải trên ${templateCodes.length} khuôn, thiếu so với yêu cầu ${requiredTemplates}`,
-      actual: templateCodes.length,
-      expected: requiredTemplates,
-    });
-  }
+  checkDeficitViolations(
+    skill,
+    totalLevels,
+    templateCodes.length,
+    requiredLevels,
+    requiredTemplates,
+    isTeachOnly,
+    meetsQuota,
+    meetsDiversity,
+    violations
+  );
 
   const hasDeficit =
     !(meetsQuota && meetsDiversity) || pairViolations.length > 0;
@@ -272,7 +330,7 @@ function evaluateSingleSkill(
     meetsQuota,
     meetsDiversity,
     isZeroLevels: totalLevels === 0,
-    isSingleTemplate: templateCodes.length === 1,
+    isSingleTemplate: !isTeachOnly && templateCodes.length === 1,
     distinctPairs,
     violations,
     deficit,

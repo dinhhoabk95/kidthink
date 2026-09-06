@@ -243,6 +243,18 @@ function applyUpdate(
   process.stdout.write("\n✅ đã ghi typecheck-baseline.json\n");
 }
 
+function printReportDetails(report: ProjectReport): void {
+  process.stdout.write(`${describe(report)}\n`);
+  for (const line of report.errors.global) {
+    process.stdout.write(`   ⛔ ${line}\n`);
+  }
+  if (report.regressed) {
+    for (const [file, count] of Object.entries(report.errors.files)) {
+      process.stdout.write(`      - ${file}: ${count} lỗi\n`);
+    }
+  }
+}
+
 function main(): void {
   const args = process.argv.slice(2);
   const update = args.includes("--update");
@@ -262,10 +274,7 @@ function main(): void {
   const reports = projects.map((project) => reportProject(project, baseline));
 
   for (const report of reports) {
-    process.stdout.write(`${describe(report)}\n`);
-    for (const line of report.errors.global) {
-      process.stdout.write(`   ⛔ ${line}\n`);
-    }
+    printReportDetails(report);
   }
 
   if (update) {

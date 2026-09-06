@@ -46,14 +46,15 @@ Nhận biết và phân biệt hình.
 
 | Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
 |---|---|---|---|---|---|---|
-| C2.GEO.01 | Hình tròn | 3 | 1 | — | `observe` | b |
-| C2.GEO.02 | Hình vuông | 3 | 1 | — | `observe` | b |
-| C2.GEO.03 | Hình tam giác | 3 | 1 | — | `observe` | b |
-| C2.GEO.04 | Hình chữ nhật | 4 | 2 | C2.GEO.02 | `observe` `compare` | b |
-| C2.GEO.05 | Hình oval | 4 | 2 | C2.GEO.01 | `observe` `compare` | b |
-| C2.GEO.06 | Hình ngũ giác | 5 | 3 | C2.GEO.03 | `observe` `count` | c |
-| C2.GEO.07 | Hình lục giác | 5 | 3 | C2.GEO.06 | `observe` `count` | c |
-| C2.GEO.08 | Đa giác — đếm cạnh | 6 | 4 | C2.GEO.07 · C1.CNT.01 | `count` `infer` | a |
+| C2.GEO.01 | Hình tròn | 3 | 1 | C2.GEO.09 | `observe` | b |
+| C2.GEO.02 | Hình vuông | 3 | 1 | C2.GEO.09 | `observe` | b |
+| C2.GEO.03 | Hình tam giác | 3 | 1 | C2.GEO.09 | `observe` | b |
+| C2.GEO.04 | Hình chữ nhật | 4 | 2 | C2.GEO.09 · C2.GEO.02 | `observe` `compare` | b |
+| C2.GEO.05 | Hình oval | 4 | 2 | C2.GEO.09 · C2.GEO.01 | `observe` `compare` | b |
+| C2.GEO.06 | Hình ngũ giác | 5 | 3 | C2.GEO.09 · C2.GEO.03 | `observe` `count` | c |
+| C2.GEO.07 | Hình lục giác | 5 | 3 | C2.GEO.09 · C2.GEO.06 | `observe` `count` | c |
+| C2.GEO.08 | Đa giác — đếm cạnh | 6 | 4 | C2.GEO.09 · C2.GEO.07 · C1.CNT.01 | `count` `infer` | a |
+| C2.GEO.09 | Làm quen hình phẳng | 3–5 | 1 | — | `observe` | p |
 
 ## C2.CON — Construction (5)
 

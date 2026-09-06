@@ -5,9 +5,10 @@ area: play
 status: approved
 mvp: false
 phase: P4
-reviewed: 2026-09-02
+reviewed: 2026-09-05
 owns:
-  - Vòng chạy một dãy hành động của `GT-000`
+  - Vòng chạy các phân đoạn và dãy hành động của `GT-000`
+  - Bắt buộc phát tiếng ở bước giới thiệu
   - Hành vi của bốn hành động trên ba loại chất liệu
   - Điều kiện một lượt làm quen tính là đã đi hết
   - Event của bài làm quen
@@ -101,17 +102,22 @@ tự thoát không nổi.
 | `BR-CIR-01` (không cần người lớn) | Mọi step phải chạy được với **chỉ trẻ và máy** | Đây là điểm khác `lesson-session-runner.md`. Step nào cần người lớn diễn giải thì step đó không tồn tại trên đường danh mục |
 | `BR-CIR-02` (trẻ giữ nhịp) | Cấm — **NEVER** tự chuyển step theo đồng hồ | `BR-LSR-02` cùng lý do: nhịp của trẻ ba tuổi không đoán trước được |
 | `BR-CIR-03` (một step một màn) | Runner hiện **đúng một** step tại một thời điểm, và `present` hiện **đúng một** chất liệu | `BR-ENG-09` — một phần tử động thu hút chú ý tại một thời điểm. Giới thiệu ba thứ cùng lúc là không giới thiệu thứ nào |
+| `BR-CIR-17` (phân đoạn chạy nối tiếp) | Runner chạy hết `steps` của một phân đoạn rồi mới mở phân đoạn kế. Cuối mỗi phân đoạn là một **mốc**: ăn mừng nhẹ, ghi `segment_id` đã xong | Chủ đề dài hơn một lần ngồi của trẻ ba tuổi. Không có mốc thì trẻ rời giữa chừng và lần sau phải học lại từ giá trị đầu tiên |
+| `BR-CIR-18` (quay lại đúng mốc) | Trẻ mở lại một bài làm quen đang dở thì runner bắt đầu từ **phân đoạn kế tiếp mốc cuối cùng đã xong**, Cấm — **NEVER** từ đầu bài | `BR-CIM-06` đổi trần thời lượng thành trần mỗi phân đoạn; trần đó chỉ có nghĩa khi chỗ dừng được giữ lại |
+| `BR-CIR-19` (giới thiệu phải nghe được) | Mỗi `present` BẮT BUỘC phát tiếng **trước khi** nhận chạm: `audio_path` của chất liệu nếu có, không thì bộ đọc `vi-VN` đọc `label`. Cấm — **NEVER** chỉ vẽ lời dẫn ra chữ | Đo 2026-09-05: `narration_line` và `prompt_line` chỉ được vẽ bằng `drawPromptText`, không đường mã nào gọi bộ đọc từ trong session. Bài dạy bằng kênh tai đang câm |
+| `BR-CIR-20` (`tts_used` là kết quả thật) | Trường `tts_used` trong payload event BẮT BUỘC là kết quả trả về của lần phát. Cấm — **NEVER** là hằng số | Đo 2026-09-05: `session.ts` ghi cứng `tts_used: true` trong `intro_item_presented` dù session không hề phát tiếng. Số liệu phủ audio đọc từ đúng trường này |
+| `BR-CIR-21` (tên event đã đăng ký) | Mọi tên event runner phát BẮT BUỘC có trong danh mục event chung **và** trong danh sách `events` của khuôn | Đo 2026-09-05: session phát bốn tên không có trong danh mục; tầng nhận ném cả lô, nên bước đóng phiên không chạy và mọi lượt làm quen treo ở `in_progress` |
 | `BR-CIR-04` (`present` không có đáp án) | `present` Cấm — **NEVER** có đáp án đúng/sai | Đây là định nghĩa của bước giới thiệu. Biến nó thành câu hỏi là bỏ mất bước dạy và chỉ còn bước kiểm — đúng cái lỗi của 36 engine kia |
 | `BR-CIR-05` (sai thì nhắc lại chính nó) | Sai ở `recognise` hoặc `link` dẫn tới **chạy lại `present` của chính target**, rồi hỏi lại **chính step đó** | Trẻ sai nghĩa là chưa nghe rõ hoặc chưa nhớ. Thứ nó cần là nghe lại đúng thứ đó, không phải một câu hỏi khác |
 | `BR-CIR-06` (Cấm âm báo sai) | Cấm — **NEVER** âm buzzer, rung, màu đỏ, hay mặt buồn | `BR-SCF-08` và `BR-CIM-09`. Đây là lần đầu trẻ gặp khái niệm |
 | `BR-CIR-07` (`recall` không chặn) | Trả lời sai ở `recall` **không** dừng bài và **không** làm bài phải chạy lại | `recall` là phép đo, không phải cửa. Điều kiện của cổng là **đã đi hết**, không phải **đã đúng** — `D-206-04` |
-| `BR-CIR-08` (đã đi hết = hết dãy + phiên completed) | Một lượt tính là đã đi hết chỉ khi vòng lặp chạy hết `steps` **và** `play_sessions.completion_status = 'completed'` **và** `is_preview = false`. Step bị bỏ theo mục 5 **vẫn tính** là đã đi qua | Đây là thứ duy nhất cổng đọc. Định nghĩa lỏng hơn thì cổng mở nhầm; chặt tới mức đòi không step nào bị bỏ thì trẻ kẹt vĩnh viễn ở một step khó |
+| `BR-CIR-08` (đã đi hết = hết mọi phân đoạn + phiên completed) | Một lượt tính là đã đi hết chỉ khi vòng lặp chạy hết `steps` của **mọi** phân đoạn **và** `play_sessions.completion_status = 'completed'` **và** `is_preview = false`. Step bị bỏ theo mục 5 **vẫn tính** là đã đi qua | Đây là thứ duy nhất cổng đọc. Định nghĩa lỏng hơn thì cổng mở nhầm; chặt tới mức đòi không step nào bị bỏ thì trẻ kẹt vĩnh viễn ở một step khó |
 | `BR-CIR-09` (Cấm micro) | Runtime Cấm — **NEVER** gọi `getUserMedia`, Cấm — **NEVER** xin quyền micro | `BR-CDC-04`, `BR-AST-04`, `BR-CIM-10` |
 | `BR-CIR-10` (Cấm chữ bắt buộc đọc) | Mọi chữ trên bề mặt này Cấm — **NEVER** là kênh thông tin duy nhất; luôn có tiếng nói song song | `BR-LSM-07`, `BR-LSR-10`. Bài làm quen là bề mặt dễ vi phạm nhất vì nó là bài **dạy chữ** |
 | `BR-CIR-11` (không mastery) | Lượt làm quen Cấm — **NEVER** ghi `mastery_state` | [`progress-and-mastery.md`](progress-and-mastery.md) ghi thành thạo từ **kết quả chơi**. Trẻ vừa được cho biết đáp án ngay trước đó — coi đó là bằng chứng thành thạo là nói dối báo cáo gửi phụ huynh |
 | `BR-CIR-12` (không scaffolding leo thang) | Hệ trợ giúp ba cấp của [`scaffolding-and-hints.md`](scaffolding-and-hints.md) **tắt** ở `present`, bật rút gọn ở `recognise` và `link` (chỉ L1 highlight) | Leo thang tồn tại để trẻ không kẹt trong một **thử thách**. `present` không phải thử thách, và ghost hand làm hộ sẽ phá `BR-SCF-04` |
 | `BR-CIR-13` (Cấm điểm và đồng hồ) | Cấm — **NEVER** hiện sao, điểm, phần trăm, hay đồng hồ | `BR-ENG-11`, `BR-CIM-08` |
-| `BR-CIR-14` (chạy đúng thứ tự khai) | Runner chạy `steps` **theo đúng thứ tự trong `content_pack`**. Cấm — **NEVER** tự sắp lại, tự trộn, hay tự bỏ step | `BR-CIM-14` đảm bảo thứ tự đó thoả "giới thiệu trước, hỏi sau". Runner sắp lại là phá bất biến mà cổng publish vừa kiểm |
+| `BR-CIR-14` (chạy đúng thứ tự khai) | Runner chạy các phân đoạn và `steps` trong mỗi phân đoạn **theo đúng thứ tự trong `content_pack`**. Cấm — **NEVER** tự sắp lại, tự trộn, hay tự bỏ step | `BR-CIM-14` đảm bảo thứ tự đó thoả "giới thiệu trước, hỏi sau". Runner sắp lại là phá bất biến mà cổng publish vừa kiểm |
 | `BR-CIR-15` (một khuôn cho ba loại chất liệu) | Bốn hành động chạy **cùng một đường mã** cho `glyph`, `word`, `image`; chỉ tầng render đọc field riêng của từng loại | Ba nhánh xử lý riêng cho ba loại là ba chỗ để hành vi lệch nhau. Loại chất liệu là **dữ liệu**, không phải nhánh điều khiển |
 | `BR-CIR-16` (`word` đọc theo âm tiết) | Chất liệu `kind = 'word'` có `syllables` thì `present` đọc **chậm từng âm tiết** rồi đọc trọn từ | Trẻ học âm tiết cần nghe ranh giới giữa các tiếng. Đọc trọn một lần là bỏ mất đúng thứ đang được dạy |
 
@@ -144,7 +150,16 @@ Cấm — **NEVER** gửi `recallCorrectCount` lên như điểm số. Nó đi t
 | `intro_step_answered` | `{ step_id, action, answer_correct, miss_count, tts_used }` | Step `recognise` hoặc `link` kết thúc |
 | `intro_step_deferred` | `{ step_id, reason }` | Bỏ step — `reason ∈ miss_limit \| asset_missing` |
 | `intro_recall_answered` | `{ step_id, target_asset_id, answer_correct }` | Mỗi step `recall` |
-| `tts_unavailable` | `{ lang }` | Máy không có giọng `vi-VN` |
+| `intro_segment_started` | `{ segment_id, segment_index, asset_count, is_review }` | Mỗi phân đoạn bắt đầu |
+| `intro_segment_completed` | `{ segment_id, segment_index, miss_count }` | Mỗi phân đoạn kết thúc — đây là mốc `BR-CIR-17` |
+| `tts_unavailable` | `{ lang, asset_id }` | Không phát được tiếng cho một chất liệu |
+
+Bảy tên trên là **bộ tên duy nhất**. Đo 2026-09-05 thấy ba bộ tên song song: bộ trong file
+này, bộ khai ở `events` của khuôn (`intro_period_started`, `intro_item_presented`,
+`intro_item_deferred`), và bộ session thật sự phát (thêm `intro_item_acknowledged`,
+`intro_item_missed`, `intro_recognise_succeeded`, `intro_link_completed`). Hai bộ sau **bị
+bỏ**; `BR-CIR-21` giữ cho chuyện đó không tái diễn. Việc đổi tên trong mã nguồn là một mục
+của [`253-gt000-concept-theme-todo.md`](../../tasks/253-gt000-concept-theme-todo.md).
 
 `asset_kind` trong `intro_step_started` là thứ trả lời được câu *"trẻ vướng ở ký tự, ở từ,
 hay ở hình?"* — không có nó thì mọi bài dạy hỏng đều trông giống nhau.
@@ -156,8 +171,10 @@ lớn trẻ trả lời sai ở `recall` là bài dạy chưa đạt, không ph�
 
 | Thứ | Trần |
 |---|---|
-| Tổng thời lượng khi trẻ trả lời ngay | 120 giây — `BR-CIM-06` |
-| Số step một bài | 12 — `BR-CIM-03` |
+| Thời lượng **một phân đoạn** khi trẻ trả lời ngay | 120 giây — `BR-CIM-06` |
+| Số step một phân đoạn | 12 — `BR-CIM-03` |
+| Số phân đoạn một bài | 6 — `BR-CIM-03` |
+| Số chất liệu phân biệt một bài | 21 — `BR-CIM-03` |
 | Thời gian tới khung hình đầu | Cùng ngân sách level thường, [`game-engine-runtime.md`](../01-platform/game-engine-runtime.md) |
 | Request mạng trong lúc chạy | **0** — `BR-ENG-03` |
 
@@ -180,6 +197,34 @@ Scenario: BR-CIR-03 — một step một màn
   When bài đang chạy
   Then đúng một step hiện trên màn tại mọi thời điểm
   And step present hiện đúng một chất liệu
+
+Scenario: BR-CIR-17 — phân đoạn chạy nối tiếp và có mốc
+  Given một bài làm quen có ba phân đoạn
+  When trẻ đi hết phân đoạn thứ nhất
+  Then runner phát intro_segment_completed mang segment_id của phân đoạn đó
+  And chỉ sau đó phân đoạn thứ hai mới mở
+
+Scenario: BR-CIR-18 — quay lại đúng mốc
+  Given trẻ đã đi hết phân đoạn thứ nhất rồi thoát
+  When trẻ mở lại chính bài làm quen đó
+  Then runner bắt đầu từ phân đoạn thứ hai
+
+Scenario: BR-CIR-19 — bước giới thiệu phải nghe được
+  Given một step present của chất liệu có label tiếng Việt
+  When runner mở step đó
+  Then runner phát audio_path nếu có, không thì gọi bộ đọc vi-VN
+  And runner chỉ nhận chạm sau khi lệnh phát đã được gọi
+
+Scenario: BR-CIR-20 — tts_used phản ánh lần phát thật
+  Given máy không có giọng vi-VN và chất liệu không có audio_path
+  When runner mở một step present
+  Then event mang tts_used bằng false
+  And runner phát thêm tts_unavailable mang asset_id của chất liệu đó
+
+Scenario: BR-CIR-21 — tên event chưa đăng ký thì cổng chặn
+  Given runner phát một tên event không có trong danh mục event chung
+  When cổng danh mục event chạy
+  Then cổng đỏ và nêu đúng tên event chưa đăng ký
 
 Scenario: BR-CIR-04 — present không có đáp án sai
   Given trẻ chạm vào chỗ bất kỳ ở một step present

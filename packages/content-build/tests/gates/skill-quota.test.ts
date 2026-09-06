@@ -12,7 +12,7 @@ describe("Task #196 — Cổng hạn ngạch và đa dạng skill (check:skill-q
     const report = evaluateSkillQuota(ALL_SEED_LEVELS);
     const ratchet = readCoverageRatchet();
 
-    expect(report.totalSkills).toBe(408);
+    expect(report.totalSkills).toBe(413);
     expect(report.totalValidLevels).toBeGreaterThanOrEqual(3550);
     expect(report.skillsSingleTemplateCount).toBe(0);
     // Kỹ năng chưa có nội dung là nợ có trần, không phải vi phạm hạn ngạch.
@@ -167,6 +167,32 @@ describe("Task #196 — Cổng hạn ngạch và đa dạng skill (check:skill-q
         (violation) => violation.ruleId === "BR-SKQ-02"
       );
       expect(quotaViolations).toHaveLength(0);
+    });
+
+    it("Ca âm 7: kỹ năng bậc pre / teach-only chỉ cần 1 level và 1 template, miễn hạn ngạch 10-20 level (BR-PRE-07)", () => {
+      // Giả lập 1 level GT-000 cho kỹ năng pre C1.NREC.13
+      const preLevel: ContentSeed = {
+        ...VALID_GAME_LEVEL_SEED,
+        header: {
+          ...VALID_GAME_LEVEL_SEED.header,
+          code: "GL-C1-PRE-0001",
+          template_code: "GT-000",
+          skill_codes: ["C1.NREC.13"],
+        },
+        content_pack: {
+          target_concept: "number_1",
+          intro_type: "visual_demonstration",
+          audio_prompt: "Đây là số 1",
+          interactive_element: "tap_to_continue",
+        },
+      };
+
+      const report = evaluateSkillQuota([preLevel]);
+      // C1.NREC.13 không được báo vi phạm BR-SKQ-02 (thiếu level) hay BR-SKQ-03 (thiếu template)
+      const preViolations = report.violations.filter(
+        (v) => v.skill_code === "C1.NREC.13"
+      );
+      expect(preViolations).toHaveLength(0);
     });
   });
 });

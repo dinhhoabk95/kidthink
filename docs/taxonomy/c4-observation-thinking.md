@@ -25,10 +25,11 @@
 
 | Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
 |---|---|---|---|---|---|---|
-| C4.DET.01 | Quan sát màu | 3 | 1 | — | `observe` | b |
+| C4.DET.01 | Quan sát màu | 3 | 1 | C4.DET.05 | `observe` | b |
 | C4.DET.02 | Quan sát hình | 3 | 1 | C2.GEO.01 | `observe` | b |
 | C4.DET.03 | Quan sát kích thước | 3 | 2 | C1.CMP.01 | `observe` `compare` | b |
 | C4.DET.04 | Quan sát vị trí | 4 | 3 | C2.ORI.03 | `observe` | c |
+| C4.DET.05 | Làm quen màu cơ bản | 3–4 | 1 | — | `observe` | p |
 
 ## C4.MEM — Memory (4)
 

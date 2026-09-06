@@ -33,9 +33,9 @@ export function generateSkillsIndex(
   scanDir(contentSkillsDir);
   skillFiles.sort((a, b) => a.code.localeCompare(b.code));
 
-  if (skillFiles.length !== 408) {
+  if (skillFiles.length !== 413) {
     throw new Error(
-      `Expected 408 skill files, found ${skillFiles.length} (BR-SDS-07)`
+      `Expected 413 skill files, found ${skillFiles.length} (BR-SDS-07)`
     );
   }
 
@@ -59,7 +59,7 @@ export function generateSkillsIndex(
     .join("\n");
 
   return `/**
- * Generated registry of all 408 skills (Task #208 / BR-SDS-07).
+ * Generated registry of all 413 skills (Task #208 / BR-SDS-07).
  * Single Source of Truth: Generated from directory structure.
  */
 
@@ -94,8 +94,8 @@ export function getSkillIdentity(code: string): SkillIdentity | undefined {
 
 export function verifyAllSkillsRegistered(): { total: number; valid: boolean } {
   const count = Object.keys(SKILL_SEEDS).length;
-  if (count !== 408) {
-    throw new Error(\`BR-SDS-07 violation: Expected 408 registered skills, found \${count}\`);
+  if (count !== 413) {
+    throw new Error(\`BR-SDS-07 violation: Expected 413 registered skills, found \${count}\`);
   }
   return { total: count, valid: true };
 }

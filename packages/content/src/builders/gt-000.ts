@@ -1,14 +1,36 @@
 import type {
+  DatasetItem,
   ProjectedPack,
   Projection,
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
-import { resolveItemAsset, safeGetItem } from "./utils.js";
+import { resolveItemAsset } from "./utils.js";
+
+function chunkItems<T>(items: readonly T[], maxChunk = 4): T[][] {
+  const chunks: T[][] = [];
+  let i = 0;
+  while (i < items.length) {
+    const remaining = items.length - i;
+    if (remaining <= maxChunk) {
+      chunks.push(items.slice(i));
+      break;
+    }
+    if (remaining === 5) {
+      chunks.push(items.slice(i, i + 3));
+      chunks.push(items.slice(i + 3, i + 5));
+      break;
+    }
+    const chunkSize = remaining >= 7 ? 4 : 3;
+    chunks.push(items.slice(i, i + chunkSize));
+    i += chunkSize;
+  }
+  return chunks;
+}
 
 export const projectGT000: Projection<"GT-000"> = {
   template: "GT-000",
-  requires: { min_items: 2, max_items: 6 },
+  requires: { min_items: 2, max_items: 21 },
   project(dataset: SkillDataset, _opts: ProjectOptions): ProjectedPack {
     if (dataset.items.length < 2) {
       throw new Error(
@@ -16,63 +38,121 @@ export const projectGT000: Projection<"GT-000"> = {
       );
     }
 
-    const item1 = safeGetItem(dataset.items, 0);
-    const item2 = safeGetItem(dataset.items, 1);
+    const assets = dataset.items.map((item) => ({
+      asset_id: `asset_${item.id}`,
+      kind: (item.glyph ? "glyph" : "image") as "glyph" | "image",
+      label: item.label,
+      glyph: item.glyph,
+      contrast_group: item.contrast_group ?? "primary",
+      image_ref: resolveItemAsset(item, true),
+      audio_path: item.audio_path,
+    }));
 
-    const assets = [
-      {
-        asset_id: `asset_${item1.id}`,
-        kind: (item1.glyph ? "glyph" : "image") as "glyph" | "image",
-        label: item1.label,
-        glyph: item1.glyph,
-        contrast_group: item1.contrast_group ?? "primary",
-        image_ref: resolveItemAsset(item1, true),
-      },
-      {
-        asset_id: `asset_${item2.id}`,
-        kind: (item2.glyph ? "glyph" : "image") as "glyph" | "image",
-        label: item2.label,
-        glyph: item2.glyph,
-        contrast_group: item2.contrast_group ?? "contrast",
-        image_ref: resolveItemAsset(item2, true),
-      },
-    ];
+    const itemChunks = chunkItems(dataset.items, 4);
+    const segments = itemChunks.map((chunk, segIdx) => {
+      const segAssetIds = chunk.map((item) => `asset_${item.id}`);
 
-    const steps = [
-      {
+      const presentSteps = chunk.map((item) => ({
         action: "present" as const,
-        target_asset_id: `asset_${item1.id}`,
-        narration_line: `Đây là ${item1.label}`,
-      },
-      {
-        action: "recognise" as const,
-        target_asset_id: `asset_${item1.id}`,
-        distractor_asset_ids: [`asset_${item2.id}`],
-        prompt_line: `Bé hãy chạm vào ${item1.label} nhé!`,
-      },
-      {
+        target_asset_id: `asset_${item.id}`,
+        narration_line: `Đây là ${item.label}`,
+      }));
+
+      const recogniseSteps = chunk.map((item) => {
+        const distractors = chunk
+          .filter((other) => other.id !== item.id)
+          .map((other) => `asset_${other.id}`);
+        return {
+          action: "recognise" as const,
+          target_asset_id: `asset_${item.id}`,
+          distractor_asset_ids: distractors.slice(0, 3),
+          prompt_line: `Bé hãy chạm vào ${item.label} nhé!`,
+        };
+      });
+
+      const recallSteps = chunk.map((item) => {
+        return {
+          action: "recall" as const,
+          target_asset_id: `asset_${item.id}`,
+          option_asset_ids: segAssetIds.slice(0, 4),
+          prompt_line: `Hình nào là ${item.label}?`,
+        };
+      });
+
+      return {
+        segment_id: `seg_${segIdx + 1}`,
+        asset_ids: segAssetIds,
+        steps: [...presentSteps, ...recogniseSteps, ...recallSteps],
+        is_review: false,
+      };
+    });
+
+    // Phân đoạn ôn cuối (review segment): gộp tối đa 4-6 giá trị tiêu biểu đã dạy
+    const reviewItems: DatasetItem[] = [];
+    if (dataset.items.length <= 6) {
+      reviewItems.push(...dataset.items);
+    } else {
+      const first = dataset.items[0];
+      const mid1 = dataset.items[Math.floor(dataset.items.length / 3)];
+      const mid2 = dataset.items[Math.floor((dataset.items.length * 2) / 3)];
+      const last = dataset.items.at(-1);
+      if (first) {
+        reviewItems.push(first);
+      }
+      if (mid1) {
+        reviewItems.push(mid1);
+      }
+      if (mid2) {
+        reviewItems.push(mid2);
+      }
+      if (last) {
+        reviewItems.push(last);
+      }
+    }
+
+    const reviewAssetIds = reviewItems.map((item) => `asset_${item.id}`);
+    const reviewSteps = [
+      ...reviewItems.map((item) => {
+        const distractors = reviewItems
+          .filter((other) => other.id !== item.id)
+          .map((other) => `asset_${other.id}`);
+        return {
+          action: "recognise" as const,
+          target_asset_id: `asset_${item.id}`,
+          distractor_asset_ids: distractors.slice(0, 3),
+          prompt_line: `Ôn tập: Bé hãy tìm ${item.label}`,
+        };
+      }),
+      ...reviewItems.map((item) => ({
         action: "recall" as const,
-        target_asset_id: `asset_${item1.id}`,
-        option_asset_ids: [`asset_${item1.id}`, `asset_${item2.id}`],
-        prompt_line: `Hình nào là ${item1.label}?`,
-      },
+        target_asset_id: `asset_${item.id}`,
+        option_asset_ids: reviewAssetIds.slice(0, 4),
+        prompt_line: `Ôn tập: Hình nào là ${item.label}?`,
+      })),
     ];
+
+    segments.push({
+      segment_id: "seg_review",
+      asset_ids: reviewAssetIds,
+      steps: reviewSteps,
+      is_review: true,
+    });
 
     return {
       content_pack: {
         concept: {
           skill_code: dataset.skill_code,
+          pre_skill_code: dataset.skill_code,
           label: dataset.concept_label,
         },
         assets,
-        steps,
+        segments,
         requires_reintro: false,
       },
       difficulty_params: {
-        pacing: "standard" as const,
-        max_errors_before_remediation: 2,
-        interaction_timeout_ms: 15_000,
-        show_scaffolding: true,
+        hint_after_ms: 12_000,
+        allow_retry: true,
+        auto_play_audio: true,
       },
     };
   },

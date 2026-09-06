@@ -72,7 +72,7 @@ function buildLevelRounds(
       "prompt" in projected.content_pack &&
       typeof (projected.content_pack as { prompt: unknown }).prompt === "string"
         ? (projected.content_pack as { prompt: string }).prompt
-        : dataset.phrasing.prompt_template || dataset.concept_label;
+        : dataset.phrasing?.prompt_template || dataset.concept_label;
 
     // Sanitize instruction: replace standalone "không" with "số 0" for child friendliness
     instruction = instruction.replace(/\bkhông\b/gi, "số 0");
@@ -385,7 +385,9 @@ function buildSingleLevel(
         isMontessori,
         identity.tier
       ),
-      skill_codes: [identity.code],
+      skill_codes: levelPlan.skill_codes
+        ? [...levelPlan.skill_codes]
+        : [identity.code],
       learning_objective_codes: (identity.learning_objectives ?? []).map(
         (lo) => lo.code
       ),

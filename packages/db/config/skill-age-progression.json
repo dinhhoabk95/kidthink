@@ -3,7 +3,7 @@
   "version": "1.0",
   "description": "Bảng thứ tự kỹ năng theo tháng tuổi (Task #160 / BR-SAP-01..07)",
   "source_framework": "Khung GDMN Thông tư 51/2020/TT-BGDDT & Montessori Early Learning Framework",
-  "total_skills": 408,
+  "total_skills": 413,
   "progressions": [
     {
       "skill_code": "C1.CMP.01",
@@ -2451,6 +2451,36 @@
       "skill_code": "C6.PLN.03",
       "age_slice": "60-72m",
       "rank_in_slice": 207,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C1.NREC.13",
+      "age_slice": "36-48m",
+      "rank_in_slice": 101,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C1.NREC.14",
+      "age_slice": "48-60m",
+      "rank_in_slice": 101,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C1.NREC.15",
+      "age_slice": "60-72m",
+      "rank_in_slice": 208,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C2.GEO.09",
+      "age_slice": "36-48m",
+      "rank_in_slice": 102,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C4.DET.05",
+      "age_slice": "36-48m",
+      "rank_in_slice": 103,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     }
   ]

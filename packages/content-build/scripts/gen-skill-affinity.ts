@@ -4,12 +4,16 @@ import { buildSkillTemplateAffinityMatrix } from "../src/gates/skill-template-af
 
 function main(): void {
   const matrix = buildSkillTemplateAffinityMatrix();
-  const outputPath = repoPath(
-    "packages/content-build/src/thresholds/skill-template-affinity.json"
-  );
-  fs.writeFileSync(outputPath, `${JSON.stringify(matrix, null, 2)}\n`, "utf8");
-
-  console.log(`Đã sinh ${outputPath}:`);
+  const outputPaths = [
+    repoPath(
+      "packages/content-build/src/thresholds/skill-template-affinity.json"
+    ),
+    repoPath("packages/db/config/skill-template-affinity.json"),
+  ];
+  for (const p of outputPaths) {
+    fs.writeFileSync(p, `${JSON.stringify(matrix, null, 2)}\n`, "utf8");
+    console.log(`Đã sinh ${p}:`);
+  }
   console.log(`- Tổng skills: ${matrix.total_skills}`);
   console.log(`- Tổng templates: ${matrix.total_templates}`);
   console.log(`- Skills band 3-4: ${matrix.metrics.band_3_4_skills_count}`);

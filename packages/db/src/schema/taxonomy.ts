@@ -23,6 +23,7 @@ import { timestamps } from "./columns.ts";
  * lộ trình học.
  */
 export const skillTierEnum = pgEnum("skill_tier", [
+  "pre",
   "basic",
   "core",
   "advanced",

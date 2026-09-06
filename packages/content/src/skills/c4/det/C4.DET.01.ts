@@ -10,7 +10,7 @@ export const C4_DET_01_IDENTITY: SkillIdentity = {
   difficulty: 1,
   thinking_processes: ["observe"],
   tier: "basic",
-  prerequisites: [],
+  prerequisites: ["C4.DET.05"],
   learning_objectives: [
     {
       code: "LO-C4.DET.01-01",
@@ -42,58 +42,91 @@ export const C4_DET_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "red",
+      label: "màu đỏ",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "🔴",
       },
       category: {
-        type: "đồ dùng",
+        type: "màu sắc",
       },
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "blue",
+      label: "màu xanh dương",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🔵",
       },
       category: {
-        type: "đồ dùng",
+        type: "màu sắc",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "yellow",
+      label: "màu vàng",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🟡",
       },
       category: {
-        type: "đồ dùng",
+        type: "màu sắc",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "green",
+      label: "màu xanh lá",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🟢",
       },
       category: {
-        type: "đồ dùng",
+        type: "màu sắc",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "orange",
+      label: "màu cam",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🟠",
       },
       category: {
-        type: "hoa quả",
+        type: "màu sắc",
+      },
+    },
+    {
+      id: "purple",
+      label: "màu tím",
+      image: {
+        kind: "emoji",
+        ref: "🟣",
+      },
+      category: {
+        type: "màu sắc",
+      },
+    },
+    {
+      id: "pink",
+      label: "màu hồng",
+      image: {
+        kind: "emoji",
+        ref: "🌸",
+      },
+      category: {
+        type: "màu sắc",
+      },
+    },
+    {
+      id: "brown",
+      label: "màu nâu",
+      image: {
+        kind: "emoji",
+        ref: "🟤",
+      },
+      category: {
+        type: "màu sắc",
       },
     },
   ],

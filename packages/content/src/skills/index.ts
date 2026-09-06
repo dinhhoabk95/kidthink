@@ -385,6 +385,21 @@ import {
   C1_NREC_12_SEED,
 } from "./c1/nrec/C1.NREC.12.js";
 import {
+  C1_NREC_13_DATASET,
+  C1_NREC_13_IDENTITY,
+  C1_NREC_13_SEED,
+} from "./c1/nrec/C1.NREC.13.js";
+import {
+  C1_NREC_14_DATASET,
+  C1_NREC_14_IDENTITY,
+  C1_NREC_14_SEED,
+} from "./c1/nrec/C1.NREC.14.js";
+import {
+  C1_NREC_15_DATASET,
+  C1_NREC_15_IDENTITY,
+  C1_NREC_15_SEED,
+} from "./c1/nrec/C1.NREC.15.js";
+import {
   C1_ORD_01_DATASET,
   C1_ORD_01_IDENTITY,
   C1_ORD_01_SEED,
@@ -654,6 +669,11 @@ import {
   C2_GEO_08_IDENTITY,
   C2_GEO_08_SEED,
 } from "./c2/geo/C2.GEO.08.js";
+import {
+  C2_GEO_09_DATASET,
+  C2_GEO_09_IDENTITY,
+  C2_GEO_09_SEED,
+} from "./c2/geo/C2.GEO.09.js";
 import {
   C2_GRD_01_DATASET,
   C2_GRD_01_IDENTITY,
@@ -1119,6 +1139,11 @@ import {
   C4_DET_04_IDENTITY,
   C4_DET_04_SEED,
 } from "./c4/det/C4.DET.04.js";
+import {
+  C4_DET_05_DATASET,
+  C4_DET_05_IDENTITY,
+  C4_DET_05_SEED,
+} from "./c4/det/C4.DET.05.js";
 import {
   C4_ECO_01_DATASET,
   C4_ECO_01_IDENTITY,
@@ -2122,6 +2147,9 @@ export const SKILL_DATASETS: Record<string, SkillDataset> = {
   "C1.NREC.10": C1_NREC_10_DATASET,
   "C1.NREC.11": C1_NREC_11_DATASET,
   "C1.NREC.12": C1_NREC_12_DATASET,
+  "C1.NREC.13": C1_NREC_13_DATASET,
+  "C1.NREC.14": C1_NREC_14_DATASET,
+  "C1.NREC.15": C1_NREC_15_DATASET,
   "C1.ORD.01": C1_ORD_01_DATASET,
   "C1.ORD.02": C1_ORD_02_DATASET,
   "C1.ORD.03": C1_ORD_03_DATASET,
@@ -2176,6 +2204,7 @@ export const SKILL_DATASETS: Record<string, SkillDataset> = {
   "C2.GEO.06": C2_GEO_06_DATASET,
   "C2.GEO.07": C2_GEO_07_DATASET,
   "C2.GEO.08": C2_GEO_08_DATASET,
+  "C2.GEO.09": C2_GEO_09_DATASET,
   "C2.GRD.01": C2_GRD_01_DATASET,
   "C2.GRD.02": C2_GRD_02_DATASET,
   "C2.GRD.03": C2_GRD_03_DATASET,
@@ -2269,6 +2298,7 @@ export const SKILL_DATASETS: Record<string, SkillDataset> = {
   "C4.DET.02": C4_DET_02_DATASET,
   "C4.DET.03": C4_DET_03_DATASET,
   "C4.DET.04": C4_DET_04_DATASET,
+  "C4.DET.05": C4_DET_05_DATASET,
   "C4.ECO.01": C4_ECO_01_DATASET,
   "C4.ECO.02": C4_ECO_02_DATASET,
   "C4.ECO.03": C4_ECO_03_DATASET,
@@ -2533,6 +2563,9 @@ export const SKILL_SEEDS: Record<string, SkillSeed> = {
   "C1.NREC.10": C1_NREC_10_SEED,
   "C1.NREC.11": C1_NREC_11_SEED,
   "C1.NREC.12": C1_NREC_12_SEED,
+  "C1.NREC.13": C1_NREC_13_SEED,
+  "C1.NREC.14": C1_NREC_14_SEED,
+  "C1.NREC.15": C1_NREC_15_SEED,
   "C1.ORD.01": C1_ORD_01_SEED,
   "C1.ORD.02": C1_ORD_02_SEED,
   "C1.ORD.03": C1_ORD_03_SEED,
@@ -2587,6 +2620,7 @@ export const SKILL_SEEDS: Record<string, SkillSeed> = {
   "C2.GEO.06": C2_GEO_06_SEED,
   "C2.GEO.07": C2_GEO_07_SEED,
   "C2.GEO.08": C2_GEO_08_SEED,
+  "C2.GEO.09": C2_GEO_09_SEED,
   "C2.GRD.01": C2_GRD_01_SEED,
   "C2.GRD.02": C2_GRD_02_SEED,
   "C2.GRD.03": C2_GRD_03_SEED,
@@ -2680,6 +2714,7 @@ export const SKILL_SEEDS: Record<string, SkillSeed> = {
   "C4.DET.02": C4_DET_02_SEED,
   "C4.DET.03": C4_DET_03_SEED,
   "C4.DET.04": C4_DET_04_SEED,
+  "C4.DET.05": C4_DET_05_SEED,
   "C4.ECO.01": C4_ECO_01_SEED,
   "C4.ECO.02": C4_ECO_02_SEED,
   "C4.ECO.03": C4_ECO_03_SEED,
@@ -2944,6 +2979,9 @@ export const SKILL_IDENTITIES: Record<string, SkillIdentity> = {
   "C1.NREC.10": C1_NREC_10_IDENTITY,
   "C1.NREC.11": C1_NREC_11_IDENTITY,
   "C1.NREC.12": C1_NREC_12_IDENTITY,
+  "C1.NREC.13": C1_NREC_13_IDENTITY,
+  "C1.NREC.14": C1_NREC_14_IDENTITY,
+  "C1.NREC.15": C1_NREC_15_IDENTITY,
   "C1.ORD.01": C1_ORD_01_IDENTITY,
   "C1.ORD.02": C1_ORD_02_IDENTITY,
   "C1.ORD.03": C1_ORD_03_IDENTITY,
@@ -2998,6 +3036,7 @@ export const SKILL_IDENTITIES: Record<string, SkillIdentity> = {
   "C2.GEO.06": C2_GEO_06_IDENTITY,
   "C2.GEO.07": C2_GEO_07_IDENTITY,
   "C2.GEO.08": C2_GEO_08_IDENTITY,
+  "C2.GEO.09": C2_GEO_09_IDENTITY,
   "C2.GRD.01": C2_GRD_01_IDENTITY,
   "C2.GRD.02": C2_GRD_02_IDENTITY,
   "C2.GRD.03": C2_GRD_03_IDENTITY,
@@ -3091,6 +3130,7 @@ export const SKILL_IDENTITIES: Record<string, SkillIdentity> = {
   "C4.DET.02": C4_DET_02_IDENTITY,
   "C4.DET.03": C4_DET_03_IDENTITY,
   "C4.DET.04": C4_DET_04_IDENTITY,
+  "C4.DET.05": C4_DET_05_IDENTITY,
   "C4.ECO.01": C4_ECO_01_IDENTITY,
   "C4.ECO.02": C4_ECO_02_IDENTITY,
   "C4.ECO.03": C4_ECO_03_IDENTITY,
@@ -3294,9 +3334,9 @@ export function getSkillIdentity(code: string): SkillIdentity | undefined {
 
 export function verifyAllSkillsRegistered(): { total: number; valid: boolean } {
   const count = Object.keys(SKILL_SEEDS).length;
-  if (count !== 408) {
+  if (count !== 413) {
     throw new Error(
-      `BR-SDS-07 violation: Expected 408 registered skills, found ${count}`
+      `BR-SDS-07 violation: Expected 413 registered skills, found ${count}`
     );
   }
   return { total: count, valid: true };

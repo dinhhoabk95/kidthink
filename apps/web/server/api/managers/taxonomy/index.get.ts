@@ -7,6 +7,7 @@ import {
   skills,
   strands,
 } from "@mindkid/db";
+import type { SkillProgressionTier } from "@mindkid/shared";
 import { sql } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
@@ -24,7 +25,7 @@ export interface TaxonomySkillSummary {
   difficulty: number;
   thinking_processes: string[];
   what_axis: string[];
-  tier: "basic" | "core" | "advanced";
+  tier: SkillProgressionTier;
   is_deprecated: boolean;
   published_count: number;
   draft_count: number;

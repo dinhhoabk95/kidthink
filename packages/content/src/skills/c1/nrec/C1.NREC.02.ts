@@ -10,7 +10,7 @@ export const C1_NREC_02_IDENTITY: SkillIdentity = {
   difficulty: 1,
   thinking_processes: ["observe"],
   tier: "basic",
-  prerequisites: ["C1.NREC.01"],
+  prerequisites: ["C1.NREC.13", "C1.NREC.01"],
   learning_objectives: [
     {
       code: "LO-C1.NREC.02-01",

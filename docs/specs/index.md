@@ -27,17 +27,18 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
 | `04-play` | 17 | 13 |
-| `05-content` | 19 | 5 |
+| `05-content` | 23 | 5 |
 | `06-admin` | 31 | 30 |
 | `07-addon` | 7 | 0 |
-| `08-quality` | 9 | 7 |
-| **Tổng** | **178** | **135** |
+| `08-quality` | 11 | 9 |
+| **Tổng** | **184** | **137** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 4 spec cộng thêm 2026-08-29 (Task #113) lấp lỗ hổng chiều sâu nội dung mỗi engine: [`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md), [`engine-content-depth.md`](05-content/engine-content-depth.md), [`level-generator-kit.md`](01-platform/level-generator-kit.md), [`content-theme-registry.md`](05-content/content-theme-registry.md). Kèm 27 phiếu engine ở [`engines/index.md`](01-platform/engines/index.md).
 2 spec cộng thêm cùng ngày cho go-live: [`engine-render-contract.md`](01-platform/engine-render-contract.md) và [`go-live-readiness.md`](08-quality/go-live-readiness.md) — corpus trước đó chỉ sở hữu tới mức MVP, không ai sở hữu câu "trẻ mở được chưa".
 1 spec cộng thêm 2026-09-03 cho trục kỹ năng: [`skill-dataset-model.md`](05-content/skill-dataset-model.md) — corpus đạt 100% phủ kỹ năng và 0% trung thực kỹ năng (0 trên 5.013 level mang chữ số hay chữ cái) vì không spec nào sở hữu câu hỏi *vật trong màn chơi đến từ đâu*.
 2 spec cộng thêm cùng ngày cho trục giáo án: [`lesson-flow-model.md`](05-content/lesson-flow-model.md) (thư viện master, tuổi là đề xuất — quyết định `D-SI`) và [`lesson-corpus-depth.md`](05-content/lesson-corpus-depth.md) (cầu 126 tiết, cung 81, và 48 level phải soạn thêm — `D-SJ`).
+1 spec cộng thêm 2026-09-05 cho trục làm quen khái niệm: [`concept-pre-skill.md`](05-content/concept-pre-skill.md) — corpus có 404 trên 408 kỹ năng chỉ có bài chấm mà không có bài dạy, và không spec nào sở hữu câu hỏi *trẻ phải học gì trước khi được chơi*.
 2 spec cộng thêm 2026-08-05 ([`repo-bootstrap.md`](00-foundation/repo-bootstrap.md), [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md)) lấp lỗ hổng
 "Dựng repo, migration, cổng tự động" không có spec sở hữu ở [`roadmap.md`](roadmap.md) §P0 — xem `../../SPEC.md` §0 D9–D10.
 
@@ -198,7 +199,10 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [montessori-corpus-mapping](05-content/montessori-corpus-mapping.md) | P3 | Ánh xạ 21 workbook sang strand, band tuổi, khuôn; ranh giới lô A và lô B |
 | [montessori-game-level-batch](05-content/montessori-game-level-batch.md) | P3 | Hạn ngạch theo competency, khối mã, thứ tự nạp |
 | [montessori-lesson-batch](05-content/montessori-lesson-batch.md) | P3 | 21 lesson, thay giáo cụ bằng vật liệu trong nhà |
-| [concept-intro-model](05-content/concept-intro-model.md) | P4 | Bài làm quen ba nhịp, 2–5 vật, trần 90 giây |
+| [concept-intro-model](05-content/concept-intro-model.md) | P4 | Bài làm quen ba giai đoạn, phân đoạn 2–6 chất liệu, trần 120 giây mỗi phân đoạn |
+| **[concept-pre-skill](05-content/concept-pre-skill.md)** | P4 | Bậc `pre`, chủ đề làm quen, prerequisite làm cửa chặn, hạn ngạch riêng |
+| [template-coverage-level-batch](05-content/template-coverage-level-batch.md) | P5 | Lô level phủ khuôn chưa có nội dung |
+| [lesson-template-variety](05-content/lesson-template-variety.md) | P5 | Cùng một kỹ năng, nhiều hình dạng chơi trong một bài học |
 | **[skill-dataset-model](05-content/skill-dataset-model.md)** | P1 | Vật của level đến từ dataset kỹ năng; bộ chiếu thay bộ sinh theo khuôn; hai cổng trung thực |
 | [engine-competency-allocation](05-content/engine-competency-allocation.md) | P4 | Bản đồ tương hợp engine -> competency, sàn K lĩnh vực mỗi ô, trần ngoại lệ |
 | [preschool-age-bands](05-content/preschool-age-bands.md) | P4 | Ràng buộc biên soạn theo band tuổi mầm non (difficulty, thời lượng, số bước) |
@@ -266,6 +270,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [go-live-readiness](08-quality/go-live-readiness.md) | P4 | Điều kiện trẻ mở được, khác sàn MVP |
 | [type-safety](08-quality/type-safety.md) | P0 | Cấm any, nợ ép kiểu chỉ giảm, dữ liệu vào qua schema |
 | [legacy-v1-coverage](08-quality/legacy-v1-coverage.md) | P0 | Cổng phủ 60 game types v1 và xương truy vết |
+| [runtime-gates](08-quality/runtime-gates.md) | P0 | Sổ cưỡng chế: luật nào còn cổng, luật nào đã mất |
 
 ---
 

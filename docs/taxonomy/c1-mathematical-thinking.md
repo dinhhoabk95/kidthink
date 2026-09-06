@@ -15,10 +15,10 @@ Nhận biết ký hiệu số và gắn ký hiệu với lượng.
 
 | Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
 |---|---|---|---|---|---|---|
-| C1.NREC.01 | Nhận biết số 0–3 | 3 | 1 | — | `observe` | b |
-| C1.NREC.02 | Nhận biết số 0–5 | 3 | 1 | C1.NREC.01 | `observe` | b |
-| C1.NREC.03 | Nhận biết số 0–10 | 4 | 2 | C1.NREC.02 | `observe` | b |
-| C1.NREC.04 | Nhận biết số 11–20 | 5 | 3 | C1.NREC.03 | `observe` | c |
+| C1.NREC.01 | Nhận biết số 0–3 | 3 | 1 | C1.NREC.13 | `observe` | b |
+| C1.NREC.02 | Nhận biết số 0–5 | 3 | 1 | C1.NREC.13 · C1.NREC.01 | `observe` | b |
+| C1.NREC.03 | Nhận biết số 0–10 | 4 | 2 | C1.NREC.14 · C1.NREC.02 | `observe` | b |
+| C1.NREC.04 | Nhận biết số 11–20 | 5 | 3 | C1.NREC.15 · C1.NREC.03 | `observe` | c |
 | C1.NREC.05 | Ghép số với lượng | 3 | 2 | C1.NREC.02 · C1.CNT.01 | `match` | b |
 | C1.NREC.06 | Chọn đúng ký hiệu số | 4 | 2 | C1.NREC.03 | `observe` `match` | b |
 | C1.NREC.07 | Đọc số | 4 | 2 | C1.NREC.03 | `describe` | b |
@@ -27,6 +27,9 @@ Nhận biết ký hiệu số và gắn ký hiệu với lượng.
 | C1.NREC.10 | Số trước | 4 | 3 | C1.NREC.09 | `infer` | c |
 | C1.NREC.11 | Số sau | 4 | 3 | C1.NREC.09 | `infer` | c |
 | C1.NREC.12 | Số ở giữa | 5 | 3 | C1.NREC.10 · C1.NREC.11 | `infer` | c |
+| C1.NREC.13 | Làm quen số 0–5 | 3–4 | 1 | — | `observe` | p |
+| C1.NREC.14 | Làm quen số 0–10 | 3–5 | 1 | C1.NREC.13 | `observe` | p |
+| C1.NREC.15 | Làm quen số 11–20 | 4–6 | 1 | C1.NREC.14 | `observe` | p |
 
 ## C1.CNT — Counting (11)
 

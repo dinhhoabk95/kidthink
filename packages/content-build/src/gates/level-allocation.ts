@@ -175,7 +175,9 @@ export function generateLevelAllocationPlan(
   docsDir?: string,
   affinityData?: SkillAffinityMatrixData
 ): LevelAllocationPlan {
-  const skills = parseTaxonomyDocs(docsDir ?? repoPath("docs/taxonomy"));
+  const skills = parseTaxonomyDocs(docsDir ?? repoPath("docs/taxonomy")).filter(
+    (s) => s.tier !== "pre"
+  );
   const matrix = affinityData ?? buildSkillTemplateAffinityMatrix();
   const themeCodes = CONTENT_THEMES.map((t) => t.code);
 

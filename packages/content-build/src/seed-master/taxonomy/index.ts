@@ -49,10 +49,10 @@ const COMPETENCY_FILES = [
 ];
 
 const EXPECTED_SKILL_COUNTS: Record<string, number> = {
-  C1: 110,
-  C2: 56,
+  C1: 113,
+  C2: 57,
   C3: 42,
-  C4: 86,
+  C4: 87,
   C5: 84,
   C6: 30,
 };
@@ -158,6 +158,9 @@ function extractTableCells(line: string): string[] | null {
  */
 function parseSkillTier(tierStr: string): SkillProgressionTier {
   const token = tierStr.trim().toLowerCase();
+  if (token === "p" || token === "pre") {
+    return "pre";
+  }
   if (token === "a" || token === "advanced") {
     return "advanced";
   }

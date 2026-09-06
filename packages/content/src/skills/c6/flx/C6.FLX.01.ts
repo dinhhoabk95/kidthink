@@ -143,7 +143,7 @@ export const C6_FLX_01_SEED: SkillSeed = {
       code: "GL-C6-FLX-SWT-0033",
       template: "GT-027",
       band: "5-6",
-      difficulty: 3,
+      difficulty: 2,
       theme: "school",
       rounds: 3,
     },

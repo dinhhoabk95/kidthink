@@ -10,7 +10,7 @@ export const C2_GEO_07_IDENTITY: SkillIdentity = {
   difficulty: 3,
   thinking_processes: ["observe", "count"],
   tier: "core",
-  prerequisites: ["C2.GEO.06"],
+  prerequisites: ["C2.GEO.09", "C2.GEO.06"],
   learning_objectives: [
     {
       code: "LO-C2.GEO.07-01",

@@ -19,6 +19,9 @@ export const COMPETENCY_DOC_FILES = [
 const STRAND_HEADER_REGEX = /^##\s+(C[1-6]\.[A-Z]{2,5})\s+—/;
 
 function formatTier(tier: string): string {
+  if (tier === "pre") {
+    return "p";
+  }
   if (tier === "basic") {
     return "b";
   }
@@ -90,7 +93,7 @@ function assertSkillMatches(ts: SkillIdentity, md: ParsedSkill): void {
 }
 
 /**
- * Validates that all 408 TypeScript skill identities match markdown tables field-by-field.
+ * Validates that all 413 TypeScript skill identities match markdown tables field-by-field.
  */
 export function verifyIdentitiesVsMarkdown(docsDir = "docs/taxonomy"): {
   total: number;
@@ -99,9 +102,9 @@ export function verifyIdentitiesVsMarkdown(docsDir = "docs/taxonomy"): {
   const parsedMarkdownSkills = parseTaxonomyDocs(docsDir);
   const tsSkills = Object.values(SKILL_IDENTITIES);
 
-  if (tsSkills.length !== 408 || parsedMarkdownSkills.length !== 408) {
+  if (tsSkills.length !== 413 || parsedMarkdownSkills.length !== 413) {
     throw new Error(
-      `Counts mismatch: TS=${tsSkills.length} MD=${parsedMarkdownSkills.length} (expected 408)`
+      `Counts mismatch: TS=${tsSkills.length} MD=${parsedMarkdownSkills.length} (expected 413)`
     );
   }
 
@@ -119,7 +122,7 @@ export function verifyIdentitiesVsMarkdown(docsDir = "docs/taxonomy"): {
     assertSkillMatches(ts, md);
   }
 
-  return { total: 408, matches: 408 };
+  return { total: 413, matches: 413 };
 }
 
 function buildSkillsByStrand(): Map<string, SkillIdentity[]> {
@@ -206,7 +209,9 @@ export function syncTaxonomyDocs(options: {
   const isWrite = Boolean(options.write);
   const modifiedFiles: string[] = [];
 
-  verifyIdentitiesVsMarkdown(docsDir);
+  if (!isWrite) {
+    verifyIdentitiesVsMarkdown(docsDir);
+  }
 
   for (const filename of COMPETENCY_DOC_FILES) {
     const filePath = path.join(docsDir, filename);
@@ -225,6 +230,10 @@ export function syncTaxonomyDocs(options: {
     }
   }
 
+  if (isWrite) {
+    verifyIdentitiesVsMarkdown(docsDir);
+  }
+
   return { success: true, modifiedFiles };
 }
 
@@ -241,7 +250,7 @@ if (process.argv[1]?.endsWith("sync-taxonomy-docs.ts")) {
       );
     } else {
       console.log(
-        "[taxonomy-docs] Check passed! 408/408 skills byte-identical with TypeScript."
+        "[taxonomy-docs] Check passed! 413/413 skills byte-identical with TypeScript."
       );
     }
     process.exit(0);

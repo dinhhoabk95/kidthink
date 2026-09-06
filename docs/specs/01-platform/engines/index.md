@@ -11,6 +11,7 @@ Sàn nội dung mỗi engine: [`engine-content-depth.md`](../../05-content/engin
 
 | Mã | Tên | Cơ chế | Band | Band bị cấm | Fallback tap | Lô |
 |---|---|---|:--:|---|:--:|---|
+| [`GT-000`](GT-000.md) | Làm quen khái niệm | `concept-intro` | 3–6 | — | Không | core-pedagogy |
 | [`GT-001`](GT-001.md) | Chọn một đáp án | `tap-select` | 3–6 | — | Không | mvp |
 | [`GT-002`](GT-002.md) | Chọn nhiều đáp án | `tap-select-multi` | 4–6 | 3-4 | Không | mvp |
 | [`GT-003`](GT-003.md) | Kéo vào đích | `drag-to-container` | 3–6 | — | Có | mvp |
@@ -47,7 +48,6 @@ Sàn nội dung mỗi engine: [`engine-content-depth.md`](../../05-content/engin
 | [`GT-034`](GT-034.md) | Gõ theo nhịp | `beat-sequence` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
 | [`GT-035`](GT-035.md) | Xếp hàng lệnh | `command-sequence` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
 | [`GT-036`](GT-036.md) | Tự tạo quy luật | `free-create` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
-| [`GT-000`](GT-000.md) | Làm quen khái niệm | `concept-intro` | 3–6 | — | Không | preschool-pedagogy |
 
 ## Engine đặt trước — spec có, `template.ts` chưa
 

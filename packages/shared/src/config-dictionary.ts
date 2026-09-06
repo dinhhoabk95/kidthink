@@ -993,6 +993,68 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Độ nghiêm ngặt ranh giới",
     help: "Chế độ kiểm tra ranh giới quy luật (relaxed hoặc strict).",
   },
+
+  // GT-000: Concept Intro
+  concept: {
+    label: "Khái niệm bài học",
+    help: "Thông tin kỹ năng và khái niệm cốt lõi cần làm quen.",
+  },
+  skill_code: {
+    label: "Mã kỹ năng",
+    help: "Mã định danh kỹ năng theo bảng taxonomy.",
+  },
+  pre_skill_code: {
+    label: "Mã kỹ năng làm quen bậc pre",
+    help: "Mã kỹ năng bậc pre tương ứng của chủ đề.",
+  },
+  assets: {
+    label: "Danh sách chất liệu",
+    help: "Các chất liệu (số, chữ, hình, màu) được dạy trong bài.",
+  },
+  asset_id: {
+    label: "Mã chất liệu",
+    help: "Mã định danh duy nhất của chất liệu.",
+  },
+  audio_path: {
+    label: "Đường dẫn file âm thanh",
+    help: "Đường dẫn file âm thanh phát âm mẫu cho chất liệu.",
+  },
+  glyph: {
+    label: "Ký tự hiển thị",
+    help: "Mặt chữ số hoặc chữ cái đại diện cho khái niệm.",
+  },
+  image_ref: {
+    label: "Mã tham chiếu ảnh",
+    help: "Đường dẫn ảnh minh hoạ cho chất liệu.",
+  },
+  contrast_group: {
+    label: "Nhóm tương phản",
+    help: "Nhóm các chất liệu dễ nhầm lẫn để dạy phân biệt.",
+  },
+  segments: {
+    label: "Danh sách phân đoạn",
+    help: "Các phân đoạn học nhỏ trong toàn bài.",
+  },
+  segment_id: {
+    label: "Mã phân đoạn",
+    help: "Mã định danh của phân đoạn bài học.",
+  },
+  asset_ids: {
+    label: "Danh sách mã chất liệu",
+    help: "Các chất liệu xuất hiện trong phân đoạn.",
+  },
+  steps: {
+    label: "Danh sách bước tương tác",
+    help: "Các bước thực hiện trong phân đoạn (present, recognise, link, recall).",
+  },
+  is_review: {
+    label: "Phân đoạn ôn tập",
+    help: "Đánh dấu phân đoạn ôn tập tổng hợp ở cuối bài.",
+  },
+  requires_reintro: {
+    label: "Yêu cầu làm quen lại",
+    help: "Bắt buộc học lại bài làm quen khi làm sai nhiều lần.",
+  },
 };
 
 /**
@@ -1000,6 +1062,14 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
  * Every entry must have a clear documented rationale.
  */
 export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
+  asset_id: "Mã định danh duy nhất của chất liệu bài học.",
+  audio_path: "Đường dẫn file âm thanh giọng đọc phát âm mẫu.",
+  glyph: "Ký tự mặt số hoặc chữ cái hiển thị trực quan.",
+  image_ref: "Đường dẫn ảnh minh hoạ cho chất liệu.",
+  contrast_group: "Tên nhóm các chất liệu tương phản.",
+  segment_id: "Mã định danh phân đoạn trong bài học.",
+  skill_code: "Mã kỹ năng theo bảng taxonomy.",
+  pre_skill_code: "Mã kỹ năng làm quen bậc pre.",
   strictness: "Chế độ nghiêm ngặt ranh giới quy luật (relaxed hoặc strict).",
   facing: "Hướng nhìn của nhân vật trên lưới.",
   allowed_commands: "Danh sách khối lệnh cho phép.",
