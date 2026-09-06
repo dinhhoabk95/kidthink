@@ -46,57 +46,57 @@ export const C5_BOK_03_DATASET: SkillDataset = {
   items: [
     {
       id: "bok_tranh_gau_con",
-      label: "bìa truyện gấu con tìm mật",
+      label: "truyện gấu con tìm mật",
       image: {
         kind: "emoji",
         ref: "🐻",
       },
       category: {
-        type: "đoán truyện",
+        type: "bìa truyện",
       },
     },
     {
       id: "bok_tranh_tho_trang",
-      label: "bìa truyện thỏ trắng chạy thi",
+      label: "truyện thỏ và rùa",
       image: {
         kind: "emoji",
         ref: "🐰",
       },
       category: {
-        type: "đoán truyện",
+        type: "bìa truyện",
       },
     },
     {
       id: "bok_tranh_rua_con",
-      label: "bìa truyện rùa con bơi lội",
+      label: "truyện rùa con bơi lội",
       image: {
         kind: "emoji",
         ref: "🐢",
       },
       category: {
-        type: "đoán truyện",
+        type: "bìa truyện",
       },
     },
     {
       id: "bok_tranh_chim_sau",
-      label: "bìa truyện chim sâu chăm chỉ",
+      label: "truyện chim sâu nhỏ",
       image: {
         kind: "emoji",
         ref: "🐦",
       },
       category: {
-        type: "đoán truyện",
+        type: "bìa truyện",
       },
     },
     {
       id: "bok_tranh_ong_vang",
-      label: "bìa truyện ong vàng chăm chỉ",
+      label: "truyện ong vàng chăm chỉ",
       image: {
         kind: "emoji",
         ref: "🐝",
       },
       category: {
-        type: "đoán truyện",
+        type: "bìa truyện",
       },
     },
   ],

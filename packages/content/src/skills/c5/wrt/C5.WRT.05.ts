@@ -43,7 +43,7 @@ export const C5_WRT_05_DATASET: SkillDataset = {
   items: [
     {
       id: "wrt_to_net_thang",
-      label: "tô theo nét chấm thẳng",
+      label: "tô nét chấm thẳng",
       image: {
         kind: "emoji",
         ref: "📏",
@@ -54,7 +54,7 @@ export const C5_WRT_05_DATASET: SkillDataset = {
     },
     {
       id: "wrt_to_net_cong",
-      label: "tô theo nét chấm cong",
+      label: "tô nét chấm cong",
       image: {
         kind: "emoji",
         ref: "🌙",
@@ -65,7 +65,7 @@ export const C5_WRT_05_DATASET: SkillDataset = {
     },
     {
       id: "wrt_to_net_hinh_tron",
-      label: "tô theo nét chấm hình tròn",
+      label: "tô nét chấm tròn",
       image: {
         kind: "emoji",
         ref: "⭕",
@@ -76,7 +76,7 @@ export const C5_WRT_05_DATASET: SkillDataset = {
     },
     {
       id: "wrt_to_chu_cai",
-      label: "tô chữ cái theo nét chấm",
+      label: "tô chữ cái chấm",
       image: {
         kind: "emoji",
         ref: "🔤",
@@ -87,7 +87,7 @@ export const C5_WRT_05_DATASET: SkillDataset = {
     },
     {
       id: "wrt_to_chu_so",
-      label: "tô chữ số theo nét chấm",
+      label: "tô chữ số chấm",
       image: {
         kind: "emoji",
         ref: "🔢",

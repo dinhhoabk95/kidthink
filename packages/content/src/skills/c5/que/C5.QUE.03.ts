@@ -43,7 +43,7 @@ export const C5_QUE_03_DATASET: SkillDataset = {
   items: [
     {
       id: "que_chim_tren_cay",
-      label: "chú chim làm tổ trên cành cây",
+      label: "chú chim trên cành cây",
       image: {
         kind: "emoji",
         ref: "🌳",
@@ -54,7 +54,7 @@ export const C5_QUE_03_DATASET: SkillDataset = {
     },
     {
       id: "que_ca_duoi_nuoc",
-      label: "đàn cá bơi lội dưới dòng nước",
+      label: "đàn cá bơi dưới nước",
       image: {
         kind: "emoji",
         ref: "🌊",
@@ -65,7 +65,7 @@ export const C5_QUE_03_DATASET: SkillDataset = {
     },
     {
       id: "que_sach_tren_gia",
-      label: "sách truyện xếp ngay ngắn trên giá",
+      label: "sách truyện trên giá",
       image: {
         kind: "emoji",
         ref: "📚",
@@ -76,7 +76,7 @@ export const C5_QUE_03_DATASET: SkillDataset = {
     },
     {
       id: "que_be_ngu_tren_giuong",
-      label: "bé ngủ ngoan trên giường ấm",
+      label: "bé ngủ trên giường",
       image: {
         kind: "emoji",
         ref: "🛏️",

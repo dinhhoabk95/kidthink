@@ -44,7 +44,7 @@ export const C5_DES_02_DATASET: SkillDataset = {
   items: [
     {
       id: "des_canh_dong_que",
-      label: "bức tranh cánh đồng lúa chín",
+      label: "tranh cánh đồng lúa",
       image: {
         kind: "emoji",
         ref: "🌾",
@@ -55,7 +55,7 @@ export const C5_DES_02_DATASET: SkillDataset = {
     },
     {
       id: "des_canh_bien_xanh",
-      label: "bức tranh bãi biển xanh ngát",
+      label: "tranh bãi biển xanh",
       image: {
         kind: "emoji",
         ref: "🏖️",
@@ -66,7 +66,7 @@ export const C5_DES_02_DATASET: SkillDataset = {
     },
     {
       id: "des_canh_nha_truong",
-      label: "bức tranh trường mầm non rực rỡ",
+      label: "tranh trường mầm non",
       image: {
         kind: "emoji",
         ref: "🏫",
@@ -77,7 +77,7 @@ export const C5_DES_02_DATASET: SkillDataset = {
     },
     {
       id: "des_canh_vuon_hoa",
-      label: "bức tranh vườn hoa đua nở",
+      label: "tranh vườn hoa nở",
       image: {
         kind: "emoji",
         ref: "🌸",
@@ -88,7 +88,7 @@ export const C5_DES_02_DATASET: SkillDataset = {
     },
     {
       id: "des_canh_bau_troi_dem",
-      label: "bức tranh bầu trời sao lấp lánh",
+      label: "tranh trời đêm đầy sao",
       image: {
         kind: "emoji",
         ref: "🌌",

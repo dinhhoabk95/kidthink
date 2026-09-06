@@ -46,7 +46,7 @@ export const C5_STO_04_DATASET: SkillDataset = {
   items: [
     {
       id: "sto_vi_troi_mua",
-      label: "vì trời đổ mưa to -> đường phố ướt sũng",
+      label: "mưa to -> đường ướt",
       image: {
         kind: "emoji",
         ref: "🌧️",
@@ -57,7 +57,7 @@ export const C5_STO_04_DATASET: SkillDataset = {
     },
     {
       id: "sto_vi_nang_nong",
-      label: "vì trời nắng gắt -> hoa lá cần tưới nước",
+      label: "nắng -> cần tưới cây",
       image: {
         kind: "emoji",
         ref: "☀️",
@@ -68,7 +68,7 @@ export const C5_STO_04_DATASET: SkillDataset = {
     },
     {
       id: "sto_vi_cham_chi",
-      label: "vì gà con chăm chỉ -> tìm được nhiều mồi ngon",
+      label: "chăm chỉ -> có mồi ngon",
       image: {
         kind: "emoji",
         ref: "🐛",
@@ -79,7 +79,7 @@ export const C5_STO_04_DATASET: SkillDataset = {
     },
     {
       id: "sto_vi_chu_quan",
-      label: "vì thỏ mải chơi ngủ quên -> rùa về đích trước",
+      label: "thỏ ngủ -> rùa thắng",
       image: {
         kind: "emoji",
         ref: "🐢",
@@ -90,7 +90,7 @@ export const C5_STO_04_DATASET: SkillDataset = {
     },
     {
       id: "sto_vi_se_chia",
-      label: "vì biết chia sẻ bánh -> bạn bè đều vui vẻ",
+      label: "chia sẻ -> bạn bè vui",
       image: {
         kind: "emoji",
         ref: "🍰",

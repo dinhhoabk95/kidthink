@@ -44,7 +44,7 @@ export const C5_DES_04_DATASET: SkillDataset = {
   items: [
     {
       id: "des_ly_do_mua",
-      label: "chọn áo mưa vì trời mưa",
+      label: "chọn áo mưa vì mưa",
       image: {
         kind: "emoji",
         ref: "🌧️",
@@ -55,7 +55,7 @@ export const C5_DES_04_DATASET: SkillDataset = {
     },
     {
       id: "des_ly_do_nang",
-      label: "chọn mũ rộng vành vì trời nắng",
+      label: "chọn mũ vì trời nắng",
       image: {
         kind: "emoji",
         ref: "🧢",
@@ -66,7 +66,7 @@ export const C5_DES_04_DATASET: SkillDataset = {
     },
     {
       id: "des_ly_do_ret",
-      label: "chọn khăn len ấm vì trời lạnh",
+      label: "chọn khăn vì trời lạnh",
       image: {
         kind: "emoji",
         ref: "🧣",
@@ -77,7 +77,7 @@ export const C5_DES_04_DATASET: SkillDataset = {
     },
     {
       id: "des_ly_do_uong",
-      label: "chọn cốc nước vì khát nước",
+      label: "chọn nước vì khát",
       image: {
         kind: "emoji",
         ref: "🥛",
@@ -88,7 +88,7 @@ export const C5_DES_04_DATASET: SkillDataset = {
     },
     {
       id: "des_ly_do_an",
-      label: "chọn thìa để xúc cơm ăn",
+      label: "chọn thìa để xúc cơm",
       image: {
         kind: "emoji",
         ref: "🥄",

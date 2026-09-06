@@ -104,7 +104,7 @@ export const C5_TMK_02_SEED: SkillSeed = {
     {
       code: "GL-C5-TMK-INTRO-0002",
       template: "GT-000",
-      band: "4-5",
+      band: "5-6",
       difficulty: 1,
       theme: "family",
       rounds: 1,
@@ -114,7 +114,7 @@ export const C5_TMK_02_SEED: SkillSeed = {
     {
       code: "GL-C5-TMK-TAP-0006",
       template: "GT-001",
-      band: "4-5",
+      band: "5-6",
       difficulty: 2,
       theme: "school",
       rounds: 3,
@@ -122,7 +122,7 @@ export const C5_TMK_02_SEED: SkillSeed = {
     {
       code: "GL-C5-TMK-TAP-0007",
       template: "GT-001",
-      band: "4-5",
+      band: "5-6",
       difficulty: 2,
       theme: "family",
       rounds: 3,
@@ -130,7 +130,7 @@ export const C5_TMK_02_SEED: SkillSeed = {
     {
       code: "GL-C5-TMK-TAP-0008",
       template: "GT-001",
-      band: "4-5",
+      band: "5-6",
       difficulty: 3,
       theme: "home",
       rounds: 3,
@@ -138,7 +138,7 @@ export const C5_TMK_02_SEED: SkillSeed = {
     {
       code: "GL-C5-TMK-TAP-0009",
       template: "GT-001",
-      band: "4-5",
+      band: "5-6",
       difficulty: 3,
       theme: "animal",
       rounds: 3,
@@ -146,7 +146,7 @@ export const C5_TMK_02_SEED: SkillSeed = {
     {
       code: "GL-C5-TMK-TAP-0010",
       template: "GT-001",
-      band: "4-5",
+      band: "5-6",
       difficulty: 4,
       theme: "farm",
       rounds: 3,
@@ -154,7 +154,7 @@ export const C5_TMK_02_SEED: SkillSeed = {
     {
       code: "GL-C5-TMK-PAIR-0006",
       template: "GT-003",
-      band: "4-5",
+      band: "5-6",
       difficulty: 2,
       theme: "food",
       rounds: 3,
@@ -162,7 +162,7 @@ export const C5_TMK_02_SEED: SkillSeed = {
     {
       code: "GL-C5-TMK-PAIR-0007",
       template: "GT-003",
-      band: "4-5",
+      band: "5-6",
       difficulty: 2,
       theme: "nature",
       rounds: 3,
@@ -170,7 +170,7 @@ export const C5_TMK_02_SEED: SkillSeed = {
     {
       code: "GL-C5-TMK-PAIR-0008",
       template: "GT-003",
-      band: "4-5",
+      band: "5-6",
       difficulty: 3,
       theme: "body",
       rounds: 3,
@@ -178,7 +178,7 @@ export const C5_TMK_02_SEED: SkillSeed = {
     {
       code: "GL-C5-TMK-PAIR-0009",
       template: "GT-003",
-      band: "4-5",
+      band: "5-6",
       difficulty: 3,
       theme: "art",
       rounds: 3,
@@ -186,7 +186,7 @@ export const C5_TMK_02_SEED: SkillSeed = {
     {
       code: "GL-C5-TMK-PAIR-0010",
       template: "GT-003",
-      band: "4-5",
+      band: "5-6",
       difficulty: 4,
       theme: "weather",
       rounds: 3,

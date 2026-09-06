@@ -43,7 +43,7 @@ export const C5_QUE_04_DATASET: SkillDataset = {
   items: [
     {
       id: "que_buoi_sang",
-      label: "buổi sáng thức dậy đi học",
+      label: "buổi sáng thức dậy",
       image: {
         kind: "emoji",
         ref: "🌅",
@@ -54,7 +54,7 @@ export const C5_QUE_04_DATASET: SkillDataset = {
     },
     {
       id: "que_buoi_trua",
-      label: "buổi trưa ăn cơm nghỉ ngơi",
+      label: "buổi trưa ăn cơm",
       image: {
         kind: "emoji",
         ref: "☀️",
@@ -65,7 +65,7 @@ export const C5_QUE_04_DATASET: SkillDataset = {
     },
     {
       id: "que_buoi_chieu",
-      label: "buổi chiều tan trường về nhà",
+      label: "buổi chiều tan trường",
       image: {
         kind: "emoji",
         ref: "🌇",
@@ -76,7 +76,7 @@ export const C5_QUE_04_DATASET: SkillDataset = {
     },
     {
       id: "que_buoi_toi",
-      label: "buổi tối đi ngủ cùng gia đình",
+      label: "buổi tối đi ngủ",
       image: {
         kind: "emoji",
         ref: "🌙",
@@ -87,7 +87,7 @@ export const C5_QUE_04_DATASET: SkillDataset = {
     },
     {
       id: "que_tet_den",
-      label: "ngày Tết đến xuân về sum vầy",
+      label: "ngày Tết sum vầy",
       image: {
         kind: "emoji",
         ref: "🎆",

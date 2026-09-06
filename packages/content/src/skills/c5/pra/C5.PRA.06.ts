@@ -44,7 +44,7 @@ export const C5_PRA_06_DATASET: SkillDataset = {
   items: [
     {
       id: "pra_thich_ve_tranh",
-      label: "con thích vẽ tranh vì được tô nhiều màu đẹp",
+      label: "thích vẽ vì nhiều màu",
       image: {
         kind: "emoji",
         ref: "🎨",
@@ -55,7 +55,7 @@ export const C5_PRA_06_DATASET: SkillDataset = {
     },
     {
       id: "pra_thich_da_bong",
-      label: "con thích đá bóng vì được chạy nhảy cùng bạn",
+      label: "thích đá bóng vì vui",
       image: {
         kind: "emoji",
         ref: "⚽",
@@ -66,7 +66,7 @@ export const C5_PRA_06_DATASET: SkillDataset = {
     },
     {
       id: "pra_thich_doc_sach",
-      label: "con thích đọc sách vì có nhiều câu chuyện hay",
+      label: "thích đọc sách vì hay",
       image: {
         kind: "emoji",
         ref: "📖",
@@ -77,7 +77,7 @@ export const C5_PRA_06_DATASET: SkillDataset = {
     },
     {
       id: "pra_thich_an_tao",
-      label: "con thích ăn táo vì táo giòn và ngọt mát",
+      label: "thích ăn táo vì ngọt",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -88,7 +88,7 @@ export const C5_PRA_06_DATASET: SkillDataset = {
     },
     {
       id: "pra_thich_nghe_nhac",
-      label: "con thích nghe nhạc vì giai điệu vui tươi",
+      label: "thích nghe nhạc vui tai",
       image: {
         kind: "emoji",
         ref: "🎵",

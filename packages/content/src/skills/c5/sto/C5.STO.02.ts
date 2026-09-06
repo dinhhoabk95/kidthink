@@ -46,7 +46,7 @@ export const C5_STO_02_DATASET: SkillDataset = {
   items: [
     {
       id: "sto_gieo_hat",
-      label: "bước 1: gieo hạt xuống đất",
+      label: "bước 1: gieo hạt đất",
       image: {
         kind: "emoji",
         ref: "🌱",
@@ -57,7 +57,7 @@ export const C5_STO_02_DATASET: SkillDataset = {
     },
     {
       id: "sto_nay_mam",
-      label: "bước 2: hạt mầm nhú lên xanh tươi",
+      label: "bước 2: nảy mầm xanh",
       image: {
         kind: "emoji",
         ref: "🌿",
@@ -68,7 +68,7 @@ export const C5_STO_02_DATASET: SkillDataset = {
     },
     {
       id: "sto_cay_ra_hoa",
-      label: "bước 3: cây nở hoa rực rỡ",
+      label: "bước 3: cây nở hoa",
       image: {
         kind: "emoji",
         ref: "🌸",
@@ -79,7 +79,7 @@ export const C5_STO_02_DATASET: SkillDataset = {
     },
     {
       id: "sto_ket_qua",
-      label: "bước 4: cây kết quả ngọt lành",
+      label: "bước 4: cây kết quả",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -90,7 +90,7 @@ export const C5_STO_02_DATASET: SkillDataset = {
     },
     {
       id: "sto_thu_hoach",
-      label: "bước 5: thu hoạch quả chín thơm",
+      label: "bước 5: thu hoạch quả",
       image: {
         kind: "emoji",
         ref: "🧺",

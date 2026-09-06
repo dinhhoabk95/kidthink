@@ -30,12 +30,12 @@ export const projectGT008: Projection<"GT-008"> = {
     const slots = chosenItems.map((item, idx) => ({
       slot_id: `slot_${idx + 1}`,
       expected_item_id: item.id,
-      label: item.label,
+      label: item.label.length > 30 ? item.label.slice(0, 30) : item.label,
     }));
 
     const items = chosenItems.map((item) => ({
       item_id: item.id,
-      label: item.label,
+      label: item.label.length > 30 ? item.label.slice(0, 30) : item.label,
       asset: resolveItemAsset(item, true),
     }));
 

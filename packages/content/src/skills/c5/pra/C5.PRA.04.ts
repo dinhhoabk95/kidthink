@@ -44,7 +44,7 @@ export const C5_PRA_04_DATASET: SkillDataset = {
   items: [
     {
       id: "pra_thua_co",
-      label: "thưa cô con chưa nghe rõ ạ",
+      label: "thưa cô con chưa rõ",
       image: {
         kind: "emoji",
         ref: "🙋",
@@ -55,7 +55,7 @@ export const C5_PRA_04_DATASET: SkillDataset = {
     },
     {
       id: "pra_nho_nhac_lai",
-      label: "cô có thể nhắc lại giúp con được không ạ?",
+      label: "nhờ cô nhắc lại giúp",
       image: {
         kind: "emoji",
         ref: "👂",
@@ -66,7 +66,7 @@ export const C5_PRA_04_DATASET: SkillDataset = {
     },
     {
       id: "pra_cam_on_chi_dan",
-      label: "con cảm ơn cô đã hướng dẫn ạ",
+      label: "con cảm ơn cô chỉ dẫn",
       image: {
         kind: "emoji",
         ref: "🙏",
@@ -77,7 +77,7 @@ export const C5_PRA_04_DATASET: SkillDataset = {
     },
     {
       id: "pra_hoi_ban",
-      label: "bạn ơi chỉ giúp tớ bước này với",
+      label: "bạn ơi chỉ giúp tớ với",
       image: {
         kind: "emoji",
         ref: "🤝",
@@ -88,7 +88,7 @@ export const C5_PRA_04_DATASET: SkillDataset = {
     },
     {
       id: "pra_lang_nghe_ky",
-      label: "con tập trung chú ý lắng nghe lời dặn",
+      label: "con chú ý lắng nghe",
       image: {
         kind: "emoji",
         ref: "👀",

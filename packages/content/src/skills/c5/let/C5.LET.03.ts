@@ -142,7 +142,7 @@ export const C5_LET_03_SEED: SkillSeed = {
     {
       code: "GL-C5-LET-INTRO-0003",
       template: "GT-000",
-      band: "4-5",
+      band: "5-6",
       difficulty: 1,
       theme: "school",
       rounds: 1,
@@ -152,7 +152,7 @@ export const C5_LET_03_SEED: SkillSeed = {
     {
       code: "GL-C5-LET-TAP-0011",
       template: "GT-001",
-      band: "4-5",
+      band: "5-6",
       difficulty: 1,
       theme: "school",
       rounds: 3,
@@ -160,7 +160,7 @@ export const C5_LET_03_SEED: SkillSeed = {
     {
       code: "GL-C5-LET-TAP-0012",
       template: "GT-001",
-      band: "4-5",
+      band: "5-6",
       difficulty: 2,
       theme: "family",
       rounds: 3,
@@ -168,7 +168,7 @@ export const C5_LET_03_SEED: SkillSeed = {
     {
       code: "GL-C5-LET-TAP-0013",
       template: "GT-001",
-      band: "4-5",
+      band: "5-6",
       difficulty: 2,
       theme: "home",
       rounds: 3,
@@ -192,7 +192,7 @@ export const C5_LET_03_SEED: SkillSeed = {
     {
       code: "GL-C5-LET-MULTI-0011",
       template: "GT-002",
-      band: "4-5",
+      band: "5-6",
       difficulty: 1,
       theme: "nature",
       rounds: 3,
@@ -200,7 +200,7 @@ export const C5_LET_03_SEED: SkillSeed = {
     {
       code: "GL-C5-LET-MULTI-0012",
       template: "GT-002",
-      band: "4-5",
+      band: "5-6",
       difficulty: 2,
       theme: "body",
       rounds: 3,
@@ -208,7 +208,7 @@ export const C5_LET_03_SEED: SkillSeed = {
     {
       code: "GL-C5-LET-MULTI-0013",
       template: "GT-002",
-      band: "4-5",
+      band: "5-6",
       difficulty: 2,
       theme: "weather",
       rounds: 3,

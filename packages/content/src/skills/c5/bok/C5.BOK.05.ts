@@ -46,7 +46,7 @@ export const C5_BOK_05_DATASET: SkillDataset = {
   items: [
     {
       id: "bok_tim_nhan_vat",
-      label: "tìm nhân vật trong tranh",
+      label: "tìm nhân vật tranh",
       image: {
         kind: "emoji",
         ref: "🔍",
@@ -57,7 +57,7 @@ export const C5_BOK_05_DATASET: SkillDataset = {
     },
     {
       id: "bok_tim_hanh_dong",
-      label: "tìm hành động của nhân vật",
+      label: "hành động nhân vật",
       image: {
         kind: "emoji",
         ref: "🏃",
@@ -68,7 +68,7 @@ export const C5_BOK_05_DATASET: SkillDataset = {
     },
     {
       id: "bok_tim_do_vat",
-      label: "tìm đồ vật ẩn trong tranh",
+      label: "đồ vật trong tranh",
       image: {
         kind: "emoji",
         ref: "🎁",
@@ -79,7 +79,7 @@ export const C5_BOK_05_DATASET: SkillDataset = {
     },
     {
       id: "bok_tim_thoi_tiet",
-      label: "quan sát thời tiết trong tranh",
+      label: "thời tiết trong tranh",
       image: {
         kind: "emoji",
         ref: "⛅",
@@ -90,7 +90,7 @@ export const C5_BOK_05_DATASET: SkillDataset = {
     },
     {
       id: "bok_tim_cam_xuc",
-      label: "nhận biết cảm xúc nhân vật",
+      label: "cảm xúc nhân vật",
       image: {
         kind: "emoji",
         ref: "😊",

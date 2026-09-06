@@ -65,7 +65,7 @@ export const C5_QUE_01_DATASET: SkillDataset = {
     },
     {
       id: "que_ai_lai_xe",
-      label: "chú tài xế đang lái xe buýt",
+      label: "chú tài xế lái xe",
       image: {
         kind: "emoji",
         ref: "🚌",
@@ -76,7 +76,7 @@ export const C5_QUE_01_DATASET: SkillDataset = {
     },
     {
       id: "que_ai_nau_an",
-      label: "đầu bếp đang nấu món ngon",
+      label: "đầu bếp nấu món ngon",
       image: {
         kind: "emoji",
         ref: "👨‍🍳",
@@ -87,7 +87,7 @@ export const C5_QUE_01_DATASET: SkillDataset = {
     },
     {
       id: "que_ai_tuoi_cay",
-      label: "bác làm vườn đang tưới cây",
+      label: "bác làm vườn tưới cây",
       image: {
         kind: "emoji",
         ref: "🧑‍🌾",

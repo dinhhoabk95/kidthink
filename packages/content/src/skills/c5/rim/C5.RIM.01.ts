@@ -208,7 +208,7 @@ export const C5_RIM_01_SEED: SkillSeed = {
     {
       code: "GL-C5-RIM-INTRO-0001",
       template: "GT-000",
-      band: "4-5",
+      band: "5-6",
       difficulty: 1,
       theme: "school",
       rounds: 1,
@@ -218,7 +218,7 @@ export const C5_RIM_01_SEED: SkillSeed = {
     {
       code: "GL-C5-RIM-TAP-0001",
       template: "GT-001",
-      band: "4-5",
+      band: "5-6",
       difficulty: 2,
       theme: "school",
       rounds: 3,
@@ -226,7 +226,7 @@ export const C5_RIM_01_SEED: SkillSeed = {
     {
       code: "GL-C5-RIM-TAP-0002",
       template: "GT-001",
-      band: "4-5",
+      band: "5-6",
       difficulty: 2,
       theme: "family",
       rounds: 3,
@@ -234,7 +234,7 @@ export const C5_RIM_01_SEED: SkillSeed = {
     {
       code: "GL-C5-RIM-TAP-0003",
       template: "GT-001",
-      band: "4-5",
+      band: "5-6",
       difficulty: 3,
       theme: "home",
       rounds: 3,
@@ -242,7 +242,7 @@ export const C5_RIM_01_SEED: SkillSeed = {
     {
       code: "GL-C5-RIM-TAP-0004",
       template: "GT-001",
-      band: "4-5",
+      band: "5-6",
       difficulty: 3,
       theme: "animal",
       rounds: 3,
@@ -250,7 +250,7 @@ export const C5_RIM_01_SEED: SkillSeed = {
     {
       code: "GL-C5-RIM-TAP-0005",
       template: "GT-001",
-      band: "4-5",
+      band: "5-6",
       difficulty: 4,
       theme: "farm",
       rounds: 3,
@@ -258,7 +258,7 @@ export const C5_RIM_01_SEED: SkillSeed = {
     {
       code: "GL-C5-RIM-MULTI-0001",
       template: "GT-002",
-      band: "4-5",
+      band: "5-6",
       difficulty: 2,
       theme: "food",
       rounds: 3,
@@ -266,7 +266,7 @@ export const C5_RIM_01_SEED: SkillSeed = {
     {
       code: "GL-C5-RIM-MULTI-0002",
       template: "GT-002",
-      band: "4-5",
+      band: "5-6",
       difficulty: 2,
       theme: "nature",
       rounds: 3,
@@ -274,7 +274,7 @@ export const C5_RIM_01_SEED: SkillSeed = {
     {
       code: "GL-C5-RIM-MULTI-0003",
       template: "GT-002",
-      band: "4-5",
+      band: "5-6",
       difficulty: 3,
       theme: "body",
       rounds: 3,
@@ -282,7 +282,7 @@ export const C5_RIM_01_SEED: SkillSeed = {
     {
       code: "GL-C5-RIM-MULTI-0004",
       template: "GT-002",
-      band: "4-5",
+      band: "5-6",
       difficulty: 3,
       theme: "art",
       rounds: 3,
@@ -290,7 +290,7 @@ export const C5_RIM_01_SEED: SkillSeed = {
     {
       code: "GL-C5-RIM-MULTI-0005",
       template: "GT-002",
-      band: "4-5",
+      band: "5-6",
       difficulty: 4,
       theme: "weather",
       rounds: 3,

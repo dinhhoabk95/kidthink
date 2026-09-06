@@ -44,7 +44,7 @@ export const C5_STO_03_DATASET: SkillDataset = {
   items: [
     {
       id: "sto_ket_vui_ve",
-      label: "cả nhà sum vầy ăn bữa cơm ấm áp",
+      label: "cả nhà sum vầy ăn cơm",
       image: {
         kind: "emoji",
         ref: "🍲",
@@ -55,7 +55,7 @@ export const C5_STO_03_DATASET: SkillDataset = {
     },
     {
       id: "sto_ket_giup_do",
-      label: "bạn bè cùng nhau giúp đỡ vượt qua khó khăn",
+      label: "bạn bè giúp đỡ nhau",
       image: {
         kind: "emoji",
         ref: "🤝",
@@ -66,7 +66,7 @@ export const C5_STO_03_DATASET: SkillDataset = {
     },
     {
       id: "sto_ket_hoa_thuan",
-      label: "hai bạn bắt tay làm hòa vui vẻ",
+      label: "hai bạn bắt tay làm hòa",
       image: {
         kind: "emoji",
         ref: "🕊️",
@@ -77,7 +77,7 @@ export const C5_STO_03_DATASET: SkillDataset = {
     },
     {
       id: "sto_ket_khen_thuong",
-      label: "bé ngoan được cô giáo tặng hoa điểm mười",
+      label: "bé ngoan được cô khen",
       image: {
         kind: "emoji",
         ref: "⭐",
@@ -88,7 +88,7 @@ export const C5_STO_03_DATASET: SkillDataset = {
     },
     {
       id: "sto_ket_chia_se",
-      label: "các bạn chia sẻ đồ chơi cùng nhau",
+      label: "chia sẻ đồ chơi cùng bạn",
       image: {
         kind: "emoji",
         ref: "🧸",

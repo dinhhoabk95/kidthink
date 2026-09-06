@@ -46,7 +46,7 @@ export const C5_LIS_03_DATASET: SkillDataset = {
   items: [
     {
       id: "lis_rua_tay_xa_phong",
-      label: "bước 1: rửa tay bằng xà phòng sạch sẽ",
+      label: "bước 1: rửa xà phòng",
       image: {
         kind: "emoji",
         ref: "🧼",
@@ -57,7 +57,7 @@ export const C5_LIS_03_DATASET: SkillDataset = {
     },
     {
       id: "lis_lau_kho_tay",
-      label: "bước 2: lau khô tay bằng khăn mềm",
+      label: "bước 2: lau khô tay",
       image: {
         kind: "emoji",
         ref: "🧻",
@@ -68,7 +68,7 @@ export const C5_LIS_03_DATASET: SkillDataset = {
     },
     {
       id: "lis_ngoi_vao_ban_an",
-      label: "bước 3: ngồi vào bàn ăn ngay ngắn",
+      label: "bước 3: ngồi vào bàn",
       image: {
         kind: "emoji",
         ref: "🪑",
@@ -79,7 +79,7 @@ export const C5_LIS_03_DATASET: SkillDataset = {
     },
     {
       id: "lis_cam_thia_xuc_com",
-      label: "bước 4: cầm thìa xúc cơm gọn gàng",
+      label: "bước 4: xúc cơm ăn",
       image: {
         kind: "emoji",
         ref: "🥄",
@@ -90,7 +90,7 @@ export const C5_LIS_03_DATASET: SkillDataset = {
     },
     {
       id: "lis_cat_bat_dung_noi",
-      label: "bước 5: cất bát đĩa đúng nơi quy định",
+      label: "bước 5: cất bát đĩa",
       image: {
         kind: "emoji",
         ref: "🥣",

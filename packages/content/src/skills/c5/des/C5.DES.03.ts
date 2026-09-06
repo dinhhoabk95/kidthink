@@ -43,7 +43,7 @@ export const C5_DES_03_DATASET: SkillDataset = {
   items: [
     {
       id: "des_to_nho",
-      label: "con voi to hơn con chuột",
+      label: "voi to hơn chuột",
       image: {
         kind: "emoji",
         ref: "🐘",
@@ -54,7 +54,7 @@ export const C5_DES_03_DATASET: SkillDataset = {
     },
     {
       id: "des_cao_thap",
-      label: "hươu cao cổ cao hơn chú vịt",
+      label: "hươu cao hơn vịt",
       image: {
         kind: "emoji",
         ref: "🦒",
@@ -65,7 +65,7 @@ export const C5_DES_03_DATASET: SkillDataset = {
     },
     {
       id: "des_dai_ngan",
-      label: "chiếc thước dài hơn cái bút chì",
+      label: "thước dài hơn bút",
       image: {
         kind: "emoji",
         ref: "📏",
@@ -76,7 +76,7 @@ export const C5_DES_03_DATASET: SkillDataset = {
     },
     {
       id: "des_nhanh_cham",
-      label: "chú thỏ chạy nhanh hơn rùa",
+      label: "thỏ nhanh hơn rùa",
       image: {
         kind: "emoji",
         ref: "🐇",
@@ -87,7 +87,7 @@ export const C5_DES_03_DATASET: SkillDataset = {
     },
     {
       id: "des_nang_nhe",
-      label: "tảng đá nặng hơn chiếc lông vũ",
+      label: "đá nặng hơn lông",
       image: {
         kind: "emoji",
         ref: "🪨",

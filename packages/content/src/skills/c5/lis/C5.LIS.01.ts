@@ -87,7 +87,7 @@ export const C5_LIS_01_DATASET: SkillDataset = {
     },
     {
       id: "lis_tieng_song_vo",
-      label: "tiếng sóng biển vỗ dập dềnh",
+      label: "tiếng sóng biển vỗ",
       image: {
         kind: "emoji",
         ref: "🌊",

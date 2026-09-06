@@ -46,7 +46,7 @@ export const C5_BOK_04_DATASET: SkillDataset = {
   items: [
     {
       id: "bok_sach_dong_vat",
-      label: "cuốn sách về các loài động vật",
+      label: "sách về động vật",
       image: {
         kind: "emoji",
         ref: "🦁",
@@ -57,7 +57,7 @@ export const C5_BOK_04_DATASET: SkillDataset = {
     },
     {
       id: "bok_sach_phuong_tien",
-      label: "cuốn sách về xe cộ và tàu bay",
+      label: "sách về phương tiện",
       image: {
         kind: "emoji",
         ref: "🚗",
@@ -68,7 +68,7 @@ export const C5_BOK_04_DATASET: SkillDataset = {
     },
     {
       id: "bok_sach_co_tich",
-      label: "cuốn sách truyện cổ tích thần tiên",
+      label: "sách truyện cổ tích",
       image: {
         kind: "emoji",
         ref: "🧚",
@@ -79,7 +79,7 @@ export const C5_BOK_04_DATASET: SkillDataset = {
     },
     {
       id: "bok_sach_vu_tru",
-      label: "cuốn sách về các vì sao vũ trụ",
+      label: "sách về vũ trụ sao",
       image: {
         kind: "emoji",
         ref: "🚀",
@@ -90,7 +90,7 @@ export const C5_BOK_04_DATASET: SkillDataset = {
     },
     {
       id: "bok_sach_khung_long",
-      label: "cuốn sách về thế giới khủng long",
+      label: "sách về khủng long",
       image: {
         kind: "emoji",
         ref: "🦖",

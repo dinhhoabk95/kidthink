@@ -43,7 +43,7 @@ export const C5_LIS_02_DATASET: SkillDataset = {
   items: [
     {
       id: "lis_vo_tay",
-      label: "lắng nghe và vỗ tay nhịp nhàng",
+      label: "nghe hiệu lệnh vỗ tay",
       image: {
         kind: "emoji",
         ref: "👏",
@@ -54,7 +54,7 @@ export const C5_LIS_02_DATASET: SkillDataset = {
     },
     {
       id: "lis_dam_chan",
-      label: "lắng nghe và dậm chân theo nhịp",
+      label: "nghe hiệu lệnh dậm chân",
       image: {
         kind: "emoji",
         ref: "🦶",
@@ -65,7 +65,7 @@ export const C5_LIS_02_DATASET: SkillDataset = {
     },
     {
       id: "lis_ngoi_xuong",
-      label: "lắng nghe hiệu lệnh ngồi xuống ghế",
+      label: "nghe hiệu lệnh ngồi xuống",
       image: {
         kind: "emoji",
         ref: "🪑",
@@ -76,7 +76,7 @@ export const C5_LIS_02_DATASET: SkillDataset = {
     },
     {
       id: "lis_dung_len",
-      label: "lắng nghe hiệu lệnh đứng lên ngay ngắn",
+      label: "nghe hiệu lệnh đứng lên",
       image: {
         kind: "emoji",
         ref: "🧍",
@@ -87,7 +87,7 @@ export const C5_LIS_02_DATASET: SkillDataset = {
     },
     {
       id: "lis_gio_tay",
-      label: "lắng nghe hiệu lệnh giơ tay phát biểu",
+      label: "nghe hiệu lệnh giơ tay",
       image: {
         kind: "emoji",
         ref: "🙋",

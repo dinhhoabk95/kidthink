@@ -43,7 +43,7 @@ export const C5_DES_01_DATASET: SkillDataset = {
   items: [
     {
       id: "des_bong_tron_do",
-      label: "quả bóng tròn màu đỏ",
+      label: "quả bóng tròn đỏ",
       image: {
         kind: "emoji",
         ref: "⚽",
@@ -54,7 +54,7 @@ export const C5_DES_01_DATASET: SkillDataset = {
     },
     {
       id: "des_o_to_xanh",
-      label: "xe ô tô con màu xanh",
+      label: "xe ô tô màu xanh",
       image: {
         kind: "emoji",
         ref: "🚗",
@@ -65,7 +65,7 @@ export const C5_DES_01_DATASET: SkillDataset = {
     },
     {
       id: "des_gau_bong_nau",
-      label: "chú gấu bông màu nâu mềm mại",
+      label: "gấu bông màu nâu",
       image: {
         kind: "emoji",
         ref: "🧸",
@@ -76,7 +76,7 @@ export const C5_DES_01_DATASET: SkillDataset = {
     },
     {
       id: "des_dong_ho_vang",
-      label: "chiếc đồng hồ tròn màu vàng",
+      label: "đồng hồ màu vàng",
       image: {
         kind: "emoji",
         ref: "⏰",
@@ -87,7 +87,7 @@ export const C5_DES_01_DATASET: SkillDataset = {
     },
     {
       id: "des_hop_qua_vuong",
-      label: "hộp quà vuông thắt nơ xinh",
+      label: "hộp quà màu hồng",
       image: {
         kind: "emoji",
         ref: "🎁",

@@ -54,7 +54,7 @@ export const C5_QUE_02_DATASET: SkillDataset = {
     },
     {
       id: "que_cai_uong_nuoc",
-      label: "cái cốc dùng để uống nước",
+      label: "cái cốc để uống nước",
       image: {
         kind: "emoji",
         ref: "🥛",
@@ -76,7 +76,7 @@ export const C5_QUE_02_DATASET: SkillDataset = {
     },
     {
       id: "que_cai_di_chan",
-      label: "đôi dép dùng để đi vào chân",
+      label: "đôi dép để đi vào chân",
       image: {
         kind: "emoji",
         ref: "🩴",
@@ -87,7 +87,7 @@ export const C5_QUE_02_DATASET: SkillDataset = {
     },
     {
       id: "que_cai_de_viet",
-      label: "chiếc bút dùng để vẽ tranh",
+      label: "chiếc bút để vẽ tranh",
       image: {
         kind: "emoji",
         ref: "✏️",

@@ -46,7 +46,7 @@ export const C5_GRM_03_DATASET: SkillDataset = {
   items: [
     {
       id: "grm_tu_noi_va",
-      label: "từ nối 'và' (chó và mèo)",
+      label: "từ và (chó và mèo)",
       image: {
         kind: "emoji",
         ref: "➕",
@@ -57,7 +57,7 @@ export const C5_GRM_03_DATASET: SkillDataset = {
     },
     {
       id: "grm_tu_noi_roi",
-      label: "từ nối 'rồi' (rửa tay rồi ăn cơm)",
+      label: "từ rồi (rửa rồi ăn)",
       image: {
         kind: "emoji",
         ref: "➡️",
@@ -68,7 +68,7 @@ export const C5_GRM_03_DATASET: SkillDataset = {
     },
     {
       id: "grm_tu_noi_nhung",
-      label: "từ nối 'nhưng' (trời mưa nhưng bé vui)",
+      label: "từ nhưng (mưa nhưng vui)",
       image: {
         kind: "emoji",
         ref: "⛅",
@@ -79,7 +79,7 @@ export const C5_GRM_03_DATASET: SkillDataset = {
     },
     {
       id: "grm_tu_noi_vi",
-      label: "từ nối 'vì' (bé cười vì được khen)",
+      label: "từ vì (cười vì vui)",
       image: {
         kind: "emoji",
         ref: "😊",
@@ -90,7 +90,7 @@ export const C5_GRM_03_DATASET: SkillDataset = {
     },
     {
       id: "grm_tu_noi_hoac",
-      label: "từ nối 'hoặc' (chọn táo hoặc cam)",
+      label: "từ hoặc (táo hoặc cam)",
       image: {
         kind: "emoji",
         ref: "🔀",

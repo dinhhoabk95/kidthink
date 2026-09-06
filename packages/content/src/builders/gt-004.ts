@@ -30,12 +30,12 @@ export const projectGT004: Projection<"GT-004"> = {
     const groups = [
       {
         group_id: "g1",
-        label: itemA.label,
+        label: itemA.label.length > 24 ? itemA.label.slice(0, 24) : itemA.label,
         label_emoji: itemA.image?.kind === "emoji" ? itemA.image.ref : "📁",
       },
       {
         group_id: "g2",
-        label: itemB.label,
+        label: itemB.label.length > 24 ? itemB.label.slice(0, 24) : itemB.label,
         label_emoji: itemB.image?.kind === "emoji" ? itemB.image.ref : "📂",
       },
     ];

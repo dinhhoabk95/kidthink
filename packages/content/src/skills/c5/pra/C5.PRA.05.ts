@@ -46,7 +46,7 @@ export const C5_PRA_05_DATASET: SkillDataset = {
   items: [
     {
       id: "pra_ke_chuyen_truong",
-      label: "kể cho mẹ nghe chuyện ở lớp học",
+      label: "kể mẹ nghe chuyện lớp",
       image: {
         kind: "emoji",
         ref: "🏫",
@@ -57,7 +57,7 @@ export const C5_PRA_05_DATASET: SkillDataset = {
     },
     {
       id: "pra_ke_tro_choi",
-      label: "kể cho bố nghe trò chơi đuổi bắt cùng bạn",
+      label: "kể bố nghe trò đuổi bắt",
       image: {
         kind: "emoji",
         ref: "🏃",
@@ -68,7 +68,7 @@ export const C5_PRA_05_DATASET: SkillDataset = {
     },
     {
       id: "pra_ke_bua_an",
-      label: "kể cho bà nghe món súp rau củ ngon tuyệt",
+      label: "kể bà nghe món súp rau",
       image: {
         kind: "emoji",
         ref: "🥣",
@@ -79,7 +79,7 @@ export const C5_PRA_05_DATASET: SkillDataset = {
     },
     {
       id: "pra_ke_khen_thuong",
-      label: "kể cho ông nghe bé được phiếu bé ngoan",
+      label: "kể ông nghe phiếu ngoan",
       image: {
         kind: "emoji",
         ref: "⭐",
@@ -90,7 +90,7 @@ export const C5_PRA_05_DATASET: SkillDataset = {
     },
     {
       id: "pra_ke_chuyen_tham_quan",
-      label: "kể về chuyến đi thăm công viên thú vị",
+      label: "kể chuyến đi công viên",
       image: {
         kind: "emoji",
         ref: "🌳",

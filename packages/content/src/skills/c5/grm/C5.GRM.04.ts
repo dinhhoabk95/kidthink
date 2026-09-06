@@ -43,7 +43,7 @@ export const C5_GRM_04_DATASET: SkillDataset = {
   items: [
     {
       id: "grm_cau_ke",
-      label: "câu kể (trời hôm nay nắng đẹp)",
+      label: "câu kể (hôm nay nắng)",
       image: {
         kind: "emoji",
         ref: "☀️",
@@ -54,7 +54,7 @@ export const C5_GRM_04_DATASET: SkillDataset = {
     },
     {
       id: "grm_cau_hoi",
-      label: "câu hỏi (bạn tên là gì?)",
+      label: "câu hỏi (bạn tên gì?)",
       image: {
         kind: "emoji",
         ref: "❓",
@@ -65,7 +65,7 @@ export const C5_GRM_04_DATASET: SkillDataset = {
     },
     {
       id: "grm_cau_cam_than",
-      label: "câu cảm thán (bông hoa đẹp quá!)",
+      label: "câu khen (hoa đẹp quá!)",
       image: {
         kind: "emoji",
         ref: "🌸",
@@ -76,7 +76,7 @@ export const C5_GRM_04_DATASET: SkillDataset = {
     },
     {
       id: "grm_cau_cau_khien",
-      label: "câu cầu khiến (chúng mình cùng chơi nhé!)",
+      label: "câu rủ (cùng chơi nhé!)",
       image: {
         kind: "emoji",
         ref: "🤝",
@@ -87,7 +87,7 @@ export const C5_GRM_04_DATASET: SkillDataset = {
     },
     {
       id: "grm_cau_phu_dinh",
-      label: "câu phủ định (con không thích ăn ớt)",
+      label: "câu từ chối (con không ăn)",
       image: {
         kind: "emoji",
         ref: "🌶️",
