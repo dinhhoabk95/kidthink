@@ -8,8 +8,11 @@ export const GT000_FIXTURES: {
   {
     content: {
       concept: {
-        skill_code: "C1.NUM.01",
+        skill_code: "C1.NREC.01",
         label: "Số 1, 2, 3",
+        teaches: ["C1.NREC.01"],
+        values: ["num_1", "num_2", "num_3"],
+        sequence_no: 1,
       },
       assets: [
         {
@@ -54,6 +57,12 @@ export const GT000_FIXTURES: {
           narration_line: "Đây là số ba.",
         },
         {
+          action: "echo",
+          target_asset_id: "num_1",
+          repeat_count: 1,
+          prompt_line: "Bé nói theo cô nhé: số một",
+        },
+        {
           action: "recognise",
           target_asset_id: "num_1",
           distractor_asset_ids: ["num_2", "num_3"],
@@ -81,6 +90,9 @@ export const GT000_FIXTURES: {
       concept: {
         skill_code: "C5.ALP.01",
         label: "Chữ A - Con Cá",
+        teaches: ["C5.ALP.01"],
+        values: ["letter_a", "letter_o", "img_fish"],
+        sequence_no: 1,
       },
       assets: [
         {
@@ -119,6 +131,12 @@ export const GT000_FIXTURES: {
           narration_line: "Đây là con cá. Trong từ cá có chữ A.",
         },
         {
+          action: "echo",
+          target_asset_id: "letter_a",
+          repeat_count: 1,
+          prompt_line: "Bé nói theo cô nhé: chữ A",
+        },
+        {
           action: "recognise",
           target_asset_id: "letter_a",
           distractor_asset_ids: ["letter_o"],
@@ -152,6 +170,9 @@ export const GT000_FIXTURES: {
       concept: {
         skill_code: "C2.GEO.01",
         label: "Hình tròn và hình vuông",
+        teaches: ["C2.GEO.01"],
+        values: ["shape_circle", "shape_square"],
+        sequence_no: 1,
       },
       assets: [
         {
@@ -179,6 +200,12 @@ export const GT000_FIXTURES: {
           action: "present",
           target_asset_id: "shape_square",
           narration_line: "Đây là hình vuông.",
+        },
+        {
+          action: "echo",
+          target_asset_id: "shape_circle",
+          repeat_count: 1,
+          prompt_line: "Bé nói theo cô nhé: hình tròn",
         },
         {
           action: "recognise",

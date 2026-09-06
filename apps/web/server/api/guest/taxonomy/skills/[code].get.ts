@@ -1,6 +1,10 @@
 import { getOwnerDb, learningObjectives, skills } from "@mindkid/db";
+import {
+  InvalidCodeFormatError,
+  SkillNotFoundError,
+} from "@mindkid/errors/content";
 import { eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam, setHeader } from "h3";
+import { defineEventHandler, getRouterParam, setHeader } from "h3";
 
 const SKILL_CODE_REGEX = /^C[1-6]\.[A-Z]{2,5}\.\d{2}$/;
 
@@ -10,11 +14,7 @@ export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");
 
   if (!code?.match(SKILL_CODE_REGEX)) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "INVALID_CODE_FORMAT",
-      data: { code: "INVALID_CODE_FORMAT" },
-    });
+    throw new InvalidCodeFormatError();
   }
 
   const db = getOwnerDb();
@@ -22,11 +22,7 @@ export default defineEventHandler(async (event) => {
   const skillRows = await db.select().from(skills).where(eq(skills.code, code));
   const targetSkill = skillRows[0];
   if (!targetSkill) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      data: { code: "NOT_FOUND" },
-    });
+    throw new SkillNotFoundError(code);
   }
 
   const loRows = await db

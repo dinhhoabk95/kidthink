@@ -44,3 +44,27 @@ export const ChildNotFoundError = defineModelNotFound(
   "child_profiles",
   "Không tìm thấy hồ sơ bé."
 );
+
+export const ChildFieldNotAllowedError = defineError<{
+  readonly unallowedFields?: readonly string[];
+}>({
+  code: "CHILD_FIELD_NOT_ALLOWED",
+  message: "Thông tin hồ sơ chứa trường không được phép.",
+  status: 400,
+});
+
+export const ChildAgeOutOfRangeError = defineError<{
+  readonly birth_year?: number;
+}>({
+  code: "CHILD_AGE_OUT_OF_RANGE",
+  message: "Độ tuổi của bé phải từ 3 đến 6 tuổi.",
+  status: 422,
+});
+
+export const AvatarNotInPresetError = defineError<{
+  readonly avatar_id?: string;
+}>({
+  code: "AVATAR_NOT_IN_PRESET",
+  message: "Ảnh đại diện không thuộc danh sách cho phép.",
+  status: 400,
+});

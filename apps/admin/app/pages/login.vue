@@ -347,20 +347,12 @@
   } {
     if (
       isApiError(err, "MFA_REQUIRED") ||
-      (isApiError(err) &&
-        err.statusCode === 428 &&
-        (err.details?.challenge ||
-          (err.data as Record<string, unknown> | undefined)?.challenge))
+      (isApiError(err) && err.statusCode === 428)
     ) {
-      const details = isApiError(err)
-        ? (err.details as Record<string, unknown> | undefined)
-        : undefined;
-      const dataObj = isApiError(err)
-        ? (err.data as Record<string, unknown> | undefined)
-        : undefined;
+      const details = err.details as Record<string, unknown> | undefined;
       return {
-        challenge: String(details?.challenge ?? dataObj?.challenge ?? ""),
-        mfaEnabled: Boolean(details?.mfa_enabled ?? dataObj?.mfa_enabled),
+        challenge: String(details?.challenge ?? ""),
+        mfaEnabled: Boolean(details?.mfa_enabled),
       };
     }
     throw err;

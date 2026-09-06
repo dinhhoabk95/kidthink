@@ -5,14 +5,10 @@ import {
   gameLevels,
   getOwnerDb,
 } from "@mindkid/db";
+import { InternalError, ValidationError } from "@mindkid/errors/common";
 import { activityFormSchema, resolveActivityRefType } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { isEnabled as isFeatureEnabled } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
@@ -29,11 +25,9 @@ async function validateActivityCreation(
   if (data.kind === "worksheet") {
     const isWorksheetEnabled = await isFeatureEnabled("worksheet_activity");
     if (!isWorksheetEnabled) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "WORKSHEET_ACTIVITY_DISABLED",
-        message: "Tính năng hoạt động worksheet hiện đang bị khoá ở MVP (D-LN)",
-      });
+      throw new ValidationError(
+        "Tính năng hoạt động worksheet hiện đang bị khoá ở MVP (D-LN)"
+      );
     }
   }
 
@@ -45,12 +39,9 @@ async function validateActivityCreation(
       .limit(1);
 
     if (level?.status !== "published") {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "REFERENCED_LEVEL_NOT_PUBLISHED",
-        message:
-          "Hoạt động digital_game bắt buộc phải liên kết tới game level đã xuất bản (BR-ACA-02)",
-      });
+      throw new ValidationError(
+        "Hoạt động digital_game bắt buộc phải liên kết tới game level đã xuất bản (BR-ACA-02)"
+      );
     }
   }
 }
@@ -95,10 +86,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!created) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "ACTIVITY_CREATE_FAILED",
-    });
+    throw new InternalError("ACTIVITY_CREATE_FAILED");
   }
 
   if (data.skill_ids && data.skill_ids.length > 0) {

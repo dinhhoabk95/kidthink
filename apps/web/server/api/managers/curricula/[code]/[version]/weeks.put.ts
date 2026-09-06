@@ -1,7 +1,10 @@
 import { writeAudit } from "@mindkid/audit";
 import { curricula, curriculumWeeks, getOwnerDb } from "@mindkid/db";
+import { ValidationError } from "@mindkid/errors/common";
+import { VersionConflictError } from "@mindkid/errors/content";
+import { CurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -24,22 +27,16 @@ export default defineEventHandler(async (event) => {
   const version = Number(versionParam) || 1;
 
   if (!code) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "BAD_REQUEST",
-      message: "Thiếu tham số mã chương trình",
-    });
+    throw new ValidationError("Thiếu tham số mã chương trình");
   }
 
   const rawBody =
     event.context?.body ?? (await readBody(event).catch(() => ({}))) ?? {};
   const parsed = putCurriculumWeeksSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: parsed.error.issues[0]?.message || "Dữ liệu weeks không hợp lệ",
-    });
+    throw new ValidationError(
+      parsed.error.issues[0]?.message || "Dữ liệu weeks không hợp lệ"
+    );
   }
 
   const data = parsed.data;
@@ -54,29 +51,23 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!curr) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "CURRICULUM_NOT_FOUND",
-      message: `Không tìm thấy chương trình ${code} version ${version}`,
-    });
+    throw new CurriculumNotFoundError(
+      `Không tìm thấy chương trình ${code} version ${version}`
+    );
   }
 
   if (curr.contentVersion !== data.expected_version) {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "VERSION_CONFLICT",
-      message: `Xung đột phiên bản: version hiện tại là ${curr.contentVersion}, nhưng bạn đang lưu trên version ${data.expected_version}`,
-    });
+    throw new VersionConflictError(
+      `Xung đột phiên bản: version hiện tại là ${curr.contentVersion}`
+    );
   }
 
   // Validation: week_no <= duration_weeks
   for (const wk of data.weeks) {
     if (wk.week_no > curr.durationWeeks) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "WEEK_OUT_OF_BOUNDS",
-        message: `Tuần ${wk.week_no} vượt quá tổng số tuần của chương trình (${curr.durationWeeks} tuần)`,
-      });
+      throw new ValidationError(
+        `Tuần ${wk.week_no} vượt quá tổng số tuần của chương trình (${curr.durationWeeks} tuần)`
+      );
     }
   }
 
@@ -84,11 +75,7 @@ export default defineEventHandler(async (event) => {
   const weekSet = new Set<number>();
   for (const wk of data.weeks) {
     if (weekSet.has(wk.week_no)) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "DUPLICATE_WEEK",
-        message: `Trùng lặp mục tiêu tuần ${wk.week_no}`,
-      });
+      throw new ValidationError(`Trùng lặp mục tiêu tuần ${wk.week_no}`);
     }
     weekSet.add(wk.week_no);
   }
@@ -102,11 +89,7 @@ export default defineEventHandler(async (event) => {
       .for("update");
 
     if (!lockedCurr || lockedCurr.contentVersion !== data.expected_version) {
-      throw createError({
-        statusCode: 409,
-        statusMessage: "VERSION_CONFLICT",
-        message: "Xung đột phiên bản khi ghi đồng thời",
-      });
+      throw new VersionConflictError("Xung đột phiên bản khi ghi đồng thời");
     }
 
     await tx

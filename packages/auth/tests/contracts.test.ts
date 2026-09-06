@@ -2,10 +2,7 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { describe, expect, expectTypeOf, it } from "vitest";
 import {
-  AppError,
-  AUTH_ERROR_DEFINITIONS,
   type AuditPort,
-  appError,
   type ChildOwnershipPort,
   createAuthContext,
   type EntitlementPort,
@@ -77,28 +74,6 @@ describe("Task 16 contract boundaries", () => {
     expect(user).not.toHaveProperty("package");
     expect(user).not.toHaveProperty("tier");
     expect(user).not.toHaveProperty("entitlement");
-  });
-
-  it.each([
-    ["UNAUTHENTICATED", 401],
-    ["INSUFFICIENT_ROLE", 403],
-    ["NO_ACTIVE_CHILD", 428],
-    ["NOT_FOUND", 404],
-    ["SESSION_REVOKED", 401],
-    ["REAUTH_REQUIRED", 428],
-  ] as const)("maps %s to HTTP %i", (code, status) => {
-    const error = appError(code);
-
-    expect(error).toBeInstanceOf(AppError);
-    expect(error).toMatchObject({
-      code,
-      status,
-      message: AUTH_ERROR_DEFINITIONS[code].message,
-    });
-    expect(error.toResponse()).toEqual({
-      code,
-      message: AUTH_ERROR_DEFINITIONS[code].message,
-    });
   });
 
   it("defines async seams for external state without implementing adapters", async () => {

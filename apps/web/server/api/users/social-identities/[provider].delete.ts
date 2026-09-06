@@ -1,13 +1,9 @@
-import { appError, isOAuthProvider } from "@mindkid/auth";
+import { isOAuthProvider } from "@mindkid/auth";
 import { auditLogs, getOwnerDb, socialIdentities, users } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
+import { LastLoginMethodError } from "@mindkid/errors/social";
 import { eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  getHeader,
-  getRouterParam,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, getHeader, getRouterParam } from "h3";
 import {
   getVerifiedRemoteIp,
   requireWebUserSession,
@@ -23,15 +19,7 @@ export default defineEventHandler(async (event) => {
 
   const rawProvider = getRouterParam(event, "provider") || "";
   if (!isOAuthProvider(rawProvider)) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      data: {
-        code: "NOT_FOUND",
-        message: "Không tìm thấy nhà cung cấp.",
-      },
-    });
+    throw new NotFoundError("Không tìm thấy nhà cung cấp.");
   }
 
   const db = getOwnerDb();
@@ -51,7 +39,7 @@ export default defineEventHandler(async (event) => {
       .for("update");
 
     if (!user) {
-      throw appError("NOT_FOUND");
+      throw new NotFoundError();
     }
 
     // 2. Fetch current social identities for this user
@@ -64,15 +52,7 @@ export default defineEventHandler(async (event) => {
       (si) => si.provider === rawProvider
     );
     if (!targetIdentity) {
-      setResponseStatus(event, 404);
-      throw createError({
-        statusCode: 404,
-        statusMessage: "NOT_FOUND",
-        data: {
-          code: "NOT_FOUND",
-          message: "Tài khoản chưa liên kết với nhà cung cấp này.",
-        },
-      });
+      throw new NotFoundError("Tài khoản chưa liên kết với nhà cung cấp này.");
     }
 
     const hasPassword = Boolean(user.passwordHash);
@@ -81,19 +61,9 @@ export default defineEventHandler(async (event) => {
 
     // BR-SLK-04: NEVER remove the last login method
     if (loginMethodsLeft < 1) {
-      setResponseStatus(event, 409);
-      throw createError({
-        statusCode: 409,
-        statusMessage: "LAST_LOGIN_METHOD",
-        data: {
-          code: "LAST_LOGIN_METHOD",
-          message:
-            "Không thể gỡ phương thức đăng nhập cuối cùng. Vui lòng đặt mật khẩu trước khi gỡ.",
-          details: {
-            set_password_url: "/me/settings",
-          },
-        },
-      });
+      throw new LastLoginMethodError(
+        "Không thể gỡ phương thức đăng nhập cuối cùng. Vui lòng đặt mật khẩu trước khi gỡ."
+      );
     }
 
     // BR-SLK-10: Hard delete identity

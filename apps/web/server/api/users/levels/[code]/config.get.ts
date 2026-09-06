@@ -1,4 +1,5 @@
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { NotFoundError } from "@mindkid/errors/common";
+import { defineEventHandler, getRouterParam } from "h3";
 import {
   getOptionalActiveChildUuid,
   requireWebUserSession,
@@ -11,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const activeChildUuid = getOptionalActiveChildUuid(event);
   const code = getRouterParam(event, "code");
   if (!code) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const activeKeys = await resolveUserActiveEntitlements(user.user_id);

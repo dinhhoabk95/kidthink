@@ -1,10 +1,4 @@
-import { AppError } from "@mindkid/auth";
-import {
-  createError,
-  defineEventHandler,
-  getRequestURL,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, getRequestURL } from "h3";
 import {
   assertUserTermsAndPrivacyConsent,
   isAllowedConsentExemptPath,
@@ -29,18 +23,6 @@ export default defineEventHandler(async (event) => {
     return;
   }
 
-  try {
-    const userId = Number(user.user_id);
-    await assertUserTermsAndPrivacyConsent(userId);
-  } catch (err: unknown) {
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: err.toResponse(),
-      });
-    }
-    throw err;
-  }
+  const userId = Number(user.user_id);
+  await assertUserTermsAndPrivacyConsent(userId);
 });

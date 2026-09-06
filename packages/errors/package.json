@@ -14,7 +14,21 @@
   "exports": {
     ".": "./src/index.ts",
     "./client": "./src/client.ts",
-    "./registry": "./src/registry.ts"
+    "./registry": "./src/registry.ts",
+    "./base": "./src/base.ts",
+    "./model": "./src/model.ts",
+    "./codes": "./src/codes.ts",
+    "./common": "./src/domains/common.ts",
+    "./account": "./src/domains/account.ts",
+    "./auth": "./src/domains/auth.ts",
+    "./billing": "./src/domains/billing.ts",
+    "./child": "./src/domains/child.ts",
+    "./content": "./src/domains/content.ts",
+    "./curriculum": "./src/domains/curriculum.ts",
+    "./game-level": "./src/domains/game-level.ts",
+    "./offline-pack": "./src/domains/offline-pack.ts",
+    "./play": "./src/domains/play.ts",
+    "./social": "./src/domains/social.ts"
   },
   "imports": {
     "#src/*": "./src/*.ts",

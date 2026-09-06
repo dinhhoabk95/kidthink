@@ -5,8 +5,17 @@ import {
   lessonActivities,
   lessons,
 } from "@mindkid/db";
+import {
+  InternalError,
+  NotFoundError,
+  ValidationError,
+} from "@mindkid/errors/common";
+import {
+  LessonNotFoundError,
+  VersionConflictError,
+} from "@mindkid/errors/content";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
@@ -95,11 +104,7 @@ async function handlePublishedLessonFork(
     .returning();
 
   if (!created) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "LESSON_CREATE_FAILED",
-      message: "Tạo phiên bản bài học mới thất bại",
-    });
+    throw new InternalError("Tạo phiên bản bài học mới thất bại");
   }
 
   const existingActivities = await db
@@ -187,11 +192,7 @@ async function handleDraftLessonUpdate(
     .returning();
 
   if (!updated) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "LESSON_UPDATE_FAILED",
-      message: "Cập nhật bài học thất bại",
-    });
+    throw new InternalError("Cập nhật bài học thất bại");
   }
 
   await syncLessonSkills(db, existing.entityId, data.skill_ids);
@@ -218,12 +219,12 @@ export default defineEventHandler(async (event) => {
   const versionParam = getRouterParam(event, "version");
 
   if (!(code && versionParam)) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const version = Number(versionParam);
   if (!Number.isInteger(version) || version <= 0) {
-    throw createError({ statusCode: 400, statusMessage: "INVALID_VERSION" });
+    throw new ValidationError("INVALID_VERSION");
   }
 
   const rawBody = await readBody(event);
@@ -242,22 +243,18 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!existing) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "LESSON_NOT_FOUND",
-      message: `Lesson ${code} version ${version} not found`,
-    });
+    throw new LessonNotFoundError(
+      `Lesson ${code} version ${version} not found`
+    );
   }
 
   if (
     data.expected_version !== undefined &&
     data.expected_version !== existing.contentVersion
   ) {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "VERSION_CONFLICT",
-      message: `Expected version ${data.expected_version} but found ${existing.contentVersion}`,
-    });
+    throw new VersionConflictError(
+      `Expected version ${data.expected_version}, but found ${existing.contentVersion}`
+    );
   }
 
   if (existing.status === "published") {

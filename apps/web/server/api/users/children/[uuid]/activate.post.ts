@@ -1,15 +1,15 @@
 import { isValidParentGateToken } from "@mindkid/auth";
 import { childProfiles, getOwnerDb, playSessions } from "@mindkid/db";
+import { ParentGateRequiredError } from "@mindkid/errors/auth";
+import { NotFoundError } from "@mindkid/errors/common";
 import { deriveAgeBand } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import {
-  createError,
   defineEventHandler,
   getCookie,
   getRouterParam,
   readBody,
   setCookie,
-  setResponseStatus,
 } from "h3";
 import { z } from "zod";
 import {
@@ -29,8 +29,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const userId = Number(user.user_id);
@@ -49,15 +48,9 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!targetChild) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      data: {
-        code: "NOT_FOUND",
-        message: "Không tìm thấy hồ sơ trẻ hoặc hồ sơ đã bị lưu trữ.",
-      },
-    });
+    throw new NotFoundError(
+      "Không tìm thấy hồ sơ trẻ hoặc hồ sơ đã bị lưu trữ."
+    );
   }
 
   const currentActiveUuid = getCookie(event, "active_child_id");
@@ -75,15 +68,9 @@ export default defineEventHandler(async (event) => {
         isValidParentGateToken(gateToken, userId, getParentGateSecret(event))
       )
     ) {
-      setResponseStatus(event, 403);
-      throw createError({
-        statusCode: 403,
-        statusMessage: "PARENT_GATE_REQUIRED",
-        data: {
-          code: "PARENT_GATE_REQUIRED",
-          message: "Cần xác nhận cổng người lớn khi đổi hồ sơ trẻ.",
-        },
-      });
+      throw new ParentGateRequiredError(
+        "Cần xác nhận cổng người lớn khi đổi hồ sơ trẻ."
+      );
     }
 
     // BR-CPS-04: Mark previous child's active play sessions as abandoned

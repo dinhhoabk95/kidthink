@@ -1,4 +1,5 @@
-import { AppError } from "@mindkid/auth";
+import { PayloadTooLargeError, ValidationError } from "@mindkid/errors/common";
+
 import { z } from "zod";
 import { ALLOWED_EVENT_NAMES } from "./catalog.js";
 
@@ -32,17 +33,17 @@ export function validateBatchPayload(events: readonly IngestEventItem[]): void {
     return;
   }
   if (events.length > 100) {
-    throw new AppError("BATCH_TOO_LARGE");
+    throw new ValidationError();
   }
 
   const payloadSize = JSON.stringify(events).length;
   if (payloadSize > 64 * 1024) {
-    throw new AppError("PAYLOAD_TOO_LARGE");
+    throw new PayloadTooLargeError();
   }
 
   for (const ev of events) {
     if (!ALLOWED_EVENT_NAMES.has(ev.event_name)) {
-      throw new AppError("UNKNOWN_EVENT_NAME");
+      throw new ValidationError();
     }
   }
 }
@@ -54,10 +55,10 @@ export function validateSequenceNumbers(
 ): void {
   for (const ev of events) {
     if (ev.seq < 1) {
-      throw new AppError("INVALID_SEQUENCE");
+      throw new ValidationError();
     }
     if (ev.seq < currentMaxSeq && !existingSeqs.has(ev.seq)) {
-      throw new AppError("EVENT_OUT_OF_ORDER");
+      throw new ValidationError();
     }
   }
 }

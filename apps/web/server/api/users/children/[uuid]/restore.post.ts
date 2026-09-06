@@ -1,11 +1,8 @@
 import { childProfiles, entitlements, getOwnerDb } from "@mindkid/db";
+import { ChildLimitExceededError } from "@mindkid/errors/billing";
+import { InternalError, NotFoundError } from "@mindkid/errors/common";
 import { and, count, eq, gt, isNull, or } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
@@ -13,8 +10,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const userId = Number(user.user_id);
@@ -27,8 +23,7 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(childProfiles.uuid, uuid), eq(childProfiles.userId, userId)));
 
   if (!child) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   // BR-CPR-02: Quota check on restore
@@ -62,15 +57,9 @@ export default defineEventHandler(async (event) => {
   const activeChildCount = activeChildRow?.value ?? 0;
 
   if (activeChildCount >= maxAllowedChildren) {
-    setResponseStatus(event, 402);
-    throw createError({
-      statusCode: 402,
-      statusMessage: "CHILD_LIMIT_EXCEEDED",
-      data: {
-        code: "CHILD_LIMIT_EXCEEDED",
-        message: `Không thể khôi phục. Gói dịch vụ đã đạt hạn mức tối đa ${maxAllowedChildren} hồ sơ trẻ đang hoạt động.`,
-      },
-    });
+    throw new ChildLimitExceededError(
+      `Không thể khôi phục. Gói dịch vụ đã đạt hạn mức tối đa ${maxAllowedChildren} hồ sơ trẻ đang hoạt động.`
+    );
   }
 
   const [updated] = await db
@@ -84,7 +73,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!updated) {
-    throw createError({ statusCode: 500, statusMessage: "RESTORE_FAILED" });
+    throw new InternalError("RESTORE_FAILED");
   }
 
   return {

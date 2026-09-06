@@ -60,3 +60,10 @@ export const PayloadTooLargeError = defineError({
   message: "Dữ liệu vượt quá giới hạn cho phép.",
   status: 413,
 });
+
+// biome-ignore lint/performance/noBarrelFile: re-export ValidationError for common HTTP errors
+export {
+  type ValidationDetails,
+  ValidationError,
+  type ValidationFieldError,
+} from "../model.ts";

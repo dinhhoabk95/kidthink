@@ -1,5 +1,6 @@
-import { appError } from "@mindkid/auth";
 import { entitlements, getDb, users } from "@mindkid/db";
+import { PackageNotFoundError } from "@mindkid/errors/billing";
+import { ValidationError } from "@mindkid/errors/common";
 import { PACKAGE_CATALOG } from "@mindkid/shared";
 import { and, desc, eq, gte, inArray, isNull, lt, or } from "drizzle-orm";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
@@ -9,12 +10,12 @@ export default defineEventHandler(async (event) => {
   await requireSuperAdminSession(event);
   const code = getRouterParam(event, "code");
   if (!code) {
-    throw appError("VALIDATION_FAILED", "Mã gói là bắt buộc.");
+    throw new ValidationError("Mã gói là bắt buộc.");
   }
 
   const pkg = PACKAGE_CATALOG[code];
   if (!pkg) {
-    throw appError("PACKAGE_NOT_FOUND", "Gói không tồn tại trong catalog.");
+    throw new PackageNotFoundError("Gói không tồn tại trong catalog.");
   }
 
   const query = getQuery(event) || {};

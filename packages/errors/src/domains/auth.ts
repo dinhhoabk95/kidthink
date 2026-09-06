@@ -81,3 +81,31 @@ export const PasswordAlreadySetError = defineError({
   message: "Tài khoản đã có mật khẩu. Hãy dùng Đổi mật khẩu.",
   status: 409,
 });
+
+export const MfaRequiredError = defineError<{
+  readonly user_id?: number;
+}>({
+  code: "MFA_REQUIRED",
+  message: "Vui lòng hoàn tất xác thực đa yếu tố để tiếp tục.",
+  status: 428,
+});
+
+export const ParentGateRequiredError = defineError({
+  code: "PARENT_GATE_REQUIRED",
+  message: "Cần xác nhận của người lớn để tiếp tục.",
+  status: 403,
+});
+
+export const MfaInvalidCodeError = defineError({
+  code: "MFA_INVALID_CODE",
+  message: "Mã không đúng. Thử lại hoặc dùng mã khôi phục.",
+  status: 401,
+});
+
+export const MfaLockedError = defineError<{
+  readonly retry_after_s?: number;
+}>({
+  code: "MFA_LOCKED",
+  message: "Sai mã quá nhiều lần. Thử lại sau 15 phút.",
+  status: 429,
+});

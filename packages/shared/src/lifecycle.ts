@@ -62,15 +62,23 @@ export function canTransition(
   return true;
 }
 
-export class InvalidStatusTransitionError extends Error {
-  readonly code = "INVALID_STATUS_TRANSITION";
-  readonly status = 409;
+import { AppError } from "@mindkid/errors/base";
+
+export class InvalidStatusTransitionError extends AppError<{
+  readonly from: ContentLifecycleStatus;
+  readonly to: ContentLifecycleStatus;
+}> {
   readonly from: ContentLifecycleStatus;
   readonly to: ContentLifecycleStatus;
 
   constructor(from: ContentLifecycleStatus, to: ContentLifecycleStatus) {
-    super(`BR-CLC-02: Invalid status transition from '${from}' to '${to}'`);
-    this.name = "InvalidStatusTransitionError";
+    super({
+      code: "INVALID_STATUS_TRANSITION",
+      status: 409,
+      message: `BR-CLC-02: Chuyển trạng thái nội dung không hợp lệ từ '${from}' sang '${to}'.`,
+      details: { from, to },
+      name: "InvalidStatusTransitionError",
+    });
     this.from = from;
     this.to = to;
   }

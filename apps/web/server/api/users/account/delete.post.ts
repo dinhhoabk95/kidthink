@@ -1,12 +1,9 @@
 import { getOwnerDb, requestUserDeletion, users } from "@mindkid/db";
+import { UserAlreadyDeletedError } from "@mindkid/errors/account";
+import { NotFoundError } from "@mindkid/errors/common";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  deleteCookie,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, deleteCookie } from "h3";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
@@ -26,20 +23,11 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!currentUser) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   if (currentUser.status === "deleted") {
-    setResponseStatus(event, 400);
-    throw createError({
-      statusCode: 400,
-      statusMessage: "ALREADY_DELETED",
-      data: {
-        code: "ALREADY_DELETED",
-        message: "Tài khoản đã trong trạng thái chờ xoá.",
-      },
-    });
+    throw new UserAlreadyDeletedError("Tài khoản đã trong trạng thái chờ xoá.");
   }
 
   const now = new Date();

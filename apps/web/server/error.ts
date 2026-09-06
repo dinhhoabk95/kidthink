@@ -2,9 +2,8 @@ import {
   type ApiErrorBody,
   type AppError,
   isAppError,
-  isModelBoundError,
-  modelErrorContext,
-} from "@mindkid/errors";
+} from "@mindkid/errors/base";
+import { isModelBoundError, modelErrorContext } from "@mindkid/errors/model";
 import { getRequestURL, send, setResponseHeaders, setResponseStatus } from "h3";
 import type { NitroErrorHandler } from "nitropack";
 import { readPostgresErrorCode } from "#server/utils/pg-error";
@@ -91,7 +90,7 @@ function mapPostgresError(
 }
 
 /**
- * Body §7.1 cho lỗi h3 thường (`createError({ statusMessage: "SOME_CODE" })`).
+ * Body §7.1 cho lỗi h3 thường (`createError` với `statusMessage: "SOME_CODE"`).
  * Nhiều route vẫn dựng lỗi kiểu này; chúng cũng phải ra đúng một hình dạng.
  */
 function bodyFromH3Error(

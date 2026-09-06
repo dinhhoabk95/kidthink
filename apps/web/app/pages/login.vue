@@ -359,16 +359,11 @@
     if (
       isApiError(err, "MFA_REQUIRED") ||
       isApiError(err, "REAUTH_REQUIRED") ||
-      (isApiError(err) &&
-        err.statusCode === 428 &&
-        (err.details?.challenge ||
-          (err.data as Record<string, unknown> | undefined)?.challenge))
+      (isApiError(err) && err.statusCode === 428)
     ) {
-      const challenge = (isApiError(err) &&
-        (err.details?.challenge ??
-          (err.data as Record<string, unknown> | undefined)?.challenge)) as
-        | string
-        | undefined;
+      const challenge = isApiError(err)
+        ? (err.details?.challenge as string | undefined)
+        : undefined;
       return challenge || null;
     }
     return null;

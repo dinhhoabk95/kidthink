@@ -2,12 +2,17 @@ import crypto from "node:crypto";
 import { writeAudit } from "@mindkid/audit";
 import { contentImages, getOwnerDb } from "@mindkid/db";
 import {
+  InternalError,
+  PayloadTooLargeError,
+  ValidationError,
+} from "@mindkid/errors/common";
+import { UnsupportedMediaTypeError } from "@mindkid/errors/content";
+import {
   detectImageMimeType,
   isSvgContent,
   uploadPublicImage,
 } from "@mindkid/storage";
 import {
-  createError,
   defineEventHandler,
   readMultipartFormData,
   setResponseStatus,
@@ -72,44 +77,30 @@ function validateUpload(
   alt: string
 ) {
   if (!fileBuffer || fileBuffer.length === 0) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: "No file provided for upload",
-    });
+    throw new ValidationError("No file provided for upload");
   }
 
   if (fileBuffer.length > MAX_FILE_SIZE) {
-    throw createError({
-      statusCode: 413,
-      statusMessage: "PAYLOAD_TOO_LARGE",
-      message: "Image file exceeds 2MB limit",
-    });
+    throw new PayloadTooLargeError("Image file exceeds 2MB limit");
   }
 
   if (isSvgContent(fileBuffer) || fileName.toLowerCase().endsWith(".svg")) {
-    throw createError({
-      statusCode: 415,
-      statusMessage: "UNSUPPORTED_MEDIA_TYPE",
-      message: "SVG files are strictly forbidden (BR-IMG-02)",
-    });
+    throw new UnsupportedMediaTypeError(
+      "SVG files are strictly forbidden (BR-IMG-02)"
+    );
   }
 
   const detectedMime = detectImageMimeType(fileBuffer);
   if (!detectedMime) {
-    throw createError({
-      statusCode: 415,
-      statusMessage: "UNSUPPORTED_MEDIA_TYPE",
-      message: "Invalid image format. Allowed: JPEG, PNG, WebP",
-    });
+    throw new UnsupportedMediaTypeError(
+      "Invalid image format. Allowed: JPEG, PNG, WebP"
+    );
   }
 
   if (!alt) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: "Alt text is required for accessibility (BR-IMG-04, BR-IUP-05)",
-    });
+    throw new ValidationError(
+      "Alt text is required for accessibility (BR-IMG-04, BR-IUP-05)"
+    );
   }
 }
 
@@ -169,11 +160,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!imageRecord) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "IMAGE_INSERT_FAILED",
-      message: "Lưu bản ghi ảnh thất bại",
-    });
+    throw new InternalError("Lưu bản ghi ảnh thất bại");
   }
 
   await db.transaction(async (tx) => {

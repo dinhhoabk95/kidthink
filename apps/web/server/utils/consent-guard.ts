@@ -1,5 +1,5 @@
-import { appError } from "@mindkid/auth";
 import { consentLogs, consentRequirements, getOwnerDb } from "@mindkid/db";
+import { ConsentRequiredError } from "@mindkid/errors/account";
 import type { ConsentType } from "@mindkid/shared";
 import { and, desc, eq } from "drizzle-orm";
 
@@ -62,7 +62,7 @@ export async function requireConsentActive(
 
   if (!latestLog || latestLog.action === "withdrawn") {
     const consentName = CONSENT_NAMES[type] || "văn bản pháp lý";
-    throw appError("CONSENT_REQUIRED", {
+    throw new ConsentRequiredError({
       reason: `Chưa đồng ý với ${consentName}.`,
       consent_type: type,
     });
@@ -72,7 +72,7 @@ export async function requireConsentActive(
     req?.reconsentRequiredAt &&
     latestLog.createdAt.getTime() < req.reconsentRequiredAt.getTime()
   ) {
-    throw appError("CONSENT_REQUIRED", {
+    throw new ConsentRequiredError({
       reason: "Chính sách đã cập nhật yêu cầu tái đồng ý.",
       consent_type: type,
       requirement_at: req.reconsentRequiredAt.toISOString(),

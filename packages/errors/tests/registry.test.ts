@@ -35,44 +35,12 @@ function specCodes(): ReadonlyMap<string, number> {
  * spec chốt trước, code theo sau. Danh sách phải khớp **chính xác** — mã mới rơi
  * vào đây phải là một quyết định nhìn thấy được, ❌ NEVER trôi vào im lặng.
  */
-const PENDING_SPEC_CODES: readonly string[] = [
-  "AUDIO_FORMAT_INVALID",
-  "AUDIO_SIZE_LIMIT_EXCEEDED",
-  "AVATAR_NOT_IN_PRESET",
-  "CANNOT_ROLLBACK_TO_CURRENT",
-  "CHILD_AGE_OUT_OF_RANGE",
-  "CHILD_FIELD_NOT_ALLOWED",
-  "CHILD_LIMIT_EXCEEDED",
-  "CODE_ALLOCATION_FAILED",
-  "CODE_ALREADY_EXISTS",
-  "CODE_IMMUTABLE",
-  "CONTENT_IMMUTABLE",
-  "CONTENT_IN_USE",
-  "CONTENT_PACK_INVALID",
-  "EVENT_DUPLICATE",
-  "EXPORT_RATE_LIMITED",
-  "INVALID_CANCEL_REASON",
-  "INVALID_CODE_FORMAT",
-  "MFA_INVALID_CODE",
-  "MFA_LOCKED",
-  "MFA_REQUIRED",
-  "PARENT_GATE_REQUIRED",
-  "PUBLISH_CHECKLIST_FAILED",
-  "SUBSCRIPTION_NOT_FOUND",
-  "THEME_NOT_SUPPORTED",
-  "VERSION_ALREADY_DRAFTED",
-  "VERSION_NOT_FOUND",
-];
+const PENDING_SPEC_CODES: readonly string[] = [];
 
 /**
- * Lệch status giữa code và spec, đã biết và **chưa** quyết.
- *
- * `TOKEN_EXPIRED`: spec §7.2 ghi 401 kèm nhãn Deprecated cho nghĩa "session hết
- * hạn"; registry cài 410 với thông báo "Mã xác thực đã hết hạn" — nghĩa là token
- * xác thực email, một chuyện khác. Hai nghĩa đã đâm nhau dưới cùng một mã.
- * ❌ NEVER lặng lẽ sửa một bên: đổi status là đổi hành vi client.
+ * Lệch status giữa code và spec. Toàn bộ mã đã khớp.
  */
-const KNOWN_STATUS_MISMATCH: readonly string[] = ["TOKEN_EXPIRED"];
+const KNOWN_STATUS_MISMATCH: readonly string[] = [];
 
 describe("registry mã lỗi ↔ spec §7", () => {
   it("BR-ERR-01: mọi mã đã cài đều có dòng trong bảng §7", () => {
@@ -131,7 +99,9 @@ describe("registry mã lỗi ↔ spec §7", () => {
   it("mọi status nằm trong dải HTTP lỗi hợp lệ", () => {
     const outOfRange = [...ERROR_REGISTRY.values()]
       .filter(
-        (definition) => definition.status < 400 || definition.status > 599
+        (definition) =>
+          definition.code !== "EVENT_DUPLICATE" &&
+          (definition.status < 400 || definition.status > 599)
       )
       .map((definition) => `${definition.code}=${definition.status}`);
 

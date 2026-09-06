@@ -1,5 +1,6 @@
+import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { TEMPLATE_REGISTRY } from "@mindkid/notification";
-import { createError, defineEventHandler } from "h3";
+import { defineEventHandler } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
@@ -7,11 +8,9 @@ export default defineEventHandler(async (event) => {
 
   // BR-NTA-05: super_admin only
   if (manager.role !== "super_admin") {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "INSUFFICIENT_ROLE",
-      message: "Chỉ super_admin mới có quyền quản lý mẫu thông báo (BR-NTA-05)",
-    });
+    throw new InsufficientRoleError(
+      "Chỉ super_admin mới có quyền quản lý mẫu thông báo (BR-NTA-05)"
+    );
   }
 
   const templates = Object.entries(TEMPLATE_REGISTRY).map(([code, def]) => {

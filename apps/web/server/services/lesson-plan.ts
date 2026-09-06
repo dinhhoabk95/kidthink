@@ -4,7 +4,6 @@
  */
 
 import { writeAudit } from "@mindkid/audit";
-import { appError } from "@mindkid/auth";
 import {
   activities,
   gameLevels,
@@ -16,6 +15,19 @@ import {
   notificationDeliveries,
   notifications,
 } from "@mindkid/db";
+import {
+  EntitlementRequiredError,
+  QuotaExceededError,
+  TierLockedError,
+} from "@mindkid/errors/billing";
+import { ValidationError } from "@mindkid/errors/common";
+import {
+  ActivityNotFoundError,
+  LessonNotFoundError,
+  LessonPlanNotFoundError,
+  VersionConflictError,
+} from "@mindkid/errors/content";
+import { GameLevelNotFoundError } from "@mindkid/errors/game-level";
 import {
   type ActivitySnapshot,
   buildActivitySnapshot,
@@ -78,11 +90,10 @@ async function checkMonthlyQuota(
 
   const currentCount = countResult?.count ?? 0;
   if (currentCount >= quotaLimit) {
-    throw appError("QUOTA_EXCEEDED", {
-      quota_key: "lesson_plans_per_month",
-      limit: quotaLimit,
-      current: currentCount,
-      resets_at: getNextMonthStartIct(now).toISOString(),
+    throw new QuotaExceededError("Đã đạt giới hạn tạo giáo án trong tháng.", {
+      cause: {
+        resets_at: getNextMonthStartIct(now).toISOString(),
+      },
     });
   }
 }
@@ -96,8 +107,7 @@ async function resolveActivityItem(
   const itemCode = item.item_code;
   const sourceEntityId = item.source_entity_id;
   if (!itemCode && sourceEntityId === undefined) {
-    throw appError(
-      "VALIDATION_FAILED",
+    throw new ValidationError(
       "Mục activity cần có item_code hoặc source_entity_id."
     );
   }
@@ -114,16 +124,15 @@ async function resolveActivityItem(
     .limit(1);
 
   if (!act) {
-    throw appError(
-      "NOT_FOUND",
-      `Không tìm thấy hoạt động ${itemCode || sourceEntityId} đã duyệt.`
-    );
+    throw new ActivityNotFoundError(String(itemCode || sourceEntityId));
   }
 
   if (!canAccessTier(act.accessTier, entitlements)) {
-    throw appError("TIER_LOCKED", {
-      access_tier: act.accessTier,
-      required_entitlement: `play_${act.accessTier}_games`,
+    throw new TierLockedError("Nội dung hoạt động thuộc gói cao hơn.", {
+      cause: {
+        access_tier: act.accessTier,
+        required_entitlement: `play_${act.accessTier}_games`,
+      },
     });
   }
 
@@ -147,8 +156,7 @@ async function resolveGameLevelItem(
   const itemCode = item.item_code;
   const sourceEntityId = item.source_entity_id;
   if (!itemCode && sourceEntityId === undefined) {
-    throw appError(
-      "VALIDATION_FAILED",
+    throw new ValidationError(
       "Mục game_level cần có item_code hoặc source_entity_id."
     );
   }
@@ -165,16 +173,15 @@ async function resolveGameLevelItem(
     .limit(1);
 
   if (!level) {
-    throw appError(
-      "NOT_FOUND",
-      `Không tìm thấy trò chơi ${itemCode || sourceEntityId} đã duyệt.`
-    );
+    throw new GameLevelNotFoundError(String(itemCode || sourceEntityId));
   }
 
   if (!canAccessTier(level.accessTier, entitlements)) {
-    throw appError("TIER_LOCKED", {
-      access_tier: level.accessTier,
-      required_entitlement: `play_${level.accessTier}_games`,
+    throw new TierLockedError("Nội dung trò chơi thuộc gói cao hơn.", {
+      cause: {
+        access_tier: level.accessTier,
+        required_entitlement: `play_${level.accessTier}_games`,
+      },
     });
   }
 
@@ -241,13 +248,15 @@ async function copyFromSourceLesson(
     .limit(1);
 
   if (!sourceLesson) {
-    throw appError("NOT_FOUND", "Không tìm thấy bài học nguồn đã duyệt.");
+    throw new LessonNotFoundError(input.source_lesson_code ?? "");
   }
 
   if (!canAccessTier(sourceLesson.accessTier, entitlements)) {
-    throw appError("TIER_LOCKED", {
-      access_tier: sourceLesson.accessTier,
-      required_entitlement: `play_${sourceLesson.accessTier}_games`,
+    throw new TierLockedError("Bài học thuộc gói cao hơn.", {
+      cause: {
+        access_tier: sourceLesson.accessTier,
+        required_entitlement: `play_${sourceLesson.accessTier}_games`,
+      },
     });
   }
 
@@ -268,9 +277,11 @@ async function copyFromSourceLesson(
 
   for (const item of attachedActivities) {
     if (!canAccessTier(item.activity.accessTier, entitlements)) {
-      throw appError("TIER_LOCKED", {
-        access_tier: item.activity.accessTier,
-        required_entitlement: `play_${item.activity.accessTier}_games`,
+      throw new TierLockedError("Hoạt động trong bài học thuộc gói cao hơn.", {
+        cause: {
+          access_tier: item.activity.accessTier,
+          required_entitlement: `play_${item.activity.accessTier}_games`,
+        },
       });
     }
   }
@@ -443,9 +454,14 @@ export async function createLessonPlan(
       entitlements.includes("create_lesson_plan")
     )
   ) {
-    throw appError("ENTITLEMENT_REQUIRED", {
-      required_entitlement: requiredEntitlement,
-    });
+    throw new EntitlementRequiredError(
+      "Tính năng này thuộc gói dịch vụ bổ sung.",
+      {
+        cause: {
+          required_entitlement: requiredEntitlement,
+        },
+      }
+    );
   }
 
   await checkMonthlyQuota(db, userId, quotaLimit, now);
@@ -578,7 +594,7 @@ export async function getLessonPlanByUuid(
     .limit(1);
 
   if (!plan) {
-    throw appError("NOT_FOUND", "Không tìm thấy giáo án.");
+    throw new LessonPlanNotFoundError(planUuid);
   }
 
   const rawItems = await db
@@ -664,15 +680,14 @@ export async function updateLessonPlanMeta(
     .limit(1);
 
   if (!plan) {
-    throw appError("NOT_FOUND", "Không tìm thấy giáo án.");
+    throw new LessonPlanNotFoundError(planUuid);
   }
 
   if (
     input.expected_version !== undefined &&
     plan.version !== input.expected_version
   ) {
-    throw appError(
-      "VERSION_CONFLICT",
+    throw new VersionConflictError(
       "Phiên bản giáo án đã thay đổi. Vui lòng tải lại trang."
     );
   }
@@ -761,7 +776,7 @@ export async function replaceLessonPlanItems(
       entitlements.includes("create_lesson_plan")
     )
   ) {
-    throw appError("ENTITLEMENT_REQUIRED", {
+    throw new EntitlementRequiredError({
       required_entitlement: "customize_lesson",
     });
   }
@@ -773,12 +788,11 @@ export async function replaceLessonPlanItems(
     .limit(1);
 
   if (!plan) {
-    throw appError("NOT_FOUND", "Không tìm thấy giáo án.");
+    throw new LessonPlanNotFoundError(planUuid);
   }
 
   if (plan.version !== input.expected_version) {
-    throw appError(
-      "VERSION_CONFLICT",
+    throw new VersionConflictError(
       "Phiên bản giáo án đã thay đổi. Vui lòng tải lại trang."
     );
   }
@@ -886,13 +900,15 @@ async function fetchRefreshedActivitySnapshot(
     .limit(1);
 
   if (!act) {
-    throw appError("NOT_FOUND", "Không tìm thấy phiên bản hoạt động đã duyệt.");
+    throw new ActivityNotFoundError(code);
   }
 
   if (!canAccessTier(act.accessTier, entitlements)) {
-    throw appError("TIER_LOCKED", {
-      access_tier: act.accessTier,
-      required_entitlement: `play_${act.accessTier}_games`,
+    throw new TierLockedError("Hoạt động thuộc gói cao hơn.", {
+      cause: {
+        access_tier: act.accessTier,
+        required_entitlement: `play_${act.accessTier}_games`,
+      },
     });
   }
 
@@ -915,13 +931,15 @@ async function fetchRefreshedGameLevelSnapshot(
     .limit(1);
 
   if (!level) {
-    throw appError("NOT_FOUND", "Không tìm thấy phiên bản trò chơi đã duyệt.");
+    throw new GameLevelNotFoundError(code);
   }
 
   if (!canAccessTier(level.accessTier, entitlements)) {
-    throw appError("TIER_LOCKED", {
-      access_tier: level.accessTier,
-      required_entitlement: `play_${level.accessTier}_games`,
+    throw new TierLockedError("Trò chơi thuộc gói cao hơn.", {
+      cause: {
+        access_tier: level.accessTier,
+        required_entitlement: `play_${level.accessTier}_games`,
+      },
     });
   }
 
@@ -958,7 +976,7 @@ export async function refreshLessonPlanItem(
     .limit(1);
 
   if (!plan) {
-    throw appError("NOT_FOUND", "Không tìm thấy giáo án.");
+    throw new LessonPlanNotFoundError(planUuid);
   }
 
   const [item] = await db
@@ -973,7 +991,7 @@ export async function refreshLessonPlanItem(
     .limit(1);
 
   if (!item) {
-    throw appError("NOT_FOUND", "Không tìm thấy mục cần cập nhật.");
+    throw new ActivityNotFoundError(String(position));
   }
 
   if (item.itemType === "custom_note") {
@@ -1026,7 +1044,7 @@ export async function deleteLessonPlan(
     .limit(1);
 
   if (!plan) {
-    throw appError("NOT_FOUND", "Không tìm thấy giáo án.");
+    throw new LessonPlanNotFoundError(planUuid);
   }
 
   await db.transaction(async (tx) => {
@@ -1061,9 +1079,14 @@ export async function exportLessonPlan(
   ];
 
   if (!entitlements.includes("export_pdf")) {
-    throw appError("ENTITLEMENT_REQUIRED", {
-      required_entitlement: "export_pdf",
-    });
+    throw new EntitlementRequiredError(
+      "Tính năng này thuộc gói dịch vụ bổ sung.",
+      {
+        cause: {
+          required_entitlement: "export_pdf",
+        },
+      }
+    );
   }
 
   const detail = await getLessonPlanByUuid(userId, planUuid);

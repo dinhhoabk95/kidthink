@@ -143,6 +143,14 @@ export const C1_CNT_02_SEED: SkillSeed = {
   dataset: C1_CNT_02_DATASET,
   levels: [
     {
+      code: "GL-C1-CNT-INTRO-0002",
+      template: "GT-000",
+      band: "3-5",
+      difficulty: 1,
+      theme: "school",
+      rounds: 1,
+    },
+    {
       code: "GL-C1-CNT-CARD-0004",
       template: "GT-012",
       band: "4-5",

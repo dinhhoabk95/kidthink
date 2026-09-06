@@ -1,5 +1,6 @@
-import { appError } from "@mindkid/auth";
 import { requireFirstEnv } from "@mindkid/config";
+import { WebhookSignatureInvalidError } from "@mindkid/errors/billing";
+import { ValidationError } from "@mindkid/errors/common";
 import {
   AUTOMATED_PAYMENT_PROVIDERS,
   type AutomatedPaymentProvider,
@@ -20,8 +21,7 @@ export default defineEventHandler(async (event) => {
       )
     )
   ) {
-    throw appError(
-      "VALIDATION_FAILED",
+    throw new ValidationError(
       `Payment provider không được hỗ trợ: ${providerParam}`
     );
   }
@@ -61,9 +61,8 @@ export default defineEventHandler(async (event) => {
   );
 
   if (!isSignatureValid) {
-    throw appError(
-      "WEBHOOK_SIGNATURE_INVALID",
-      "Chữ ký số webhook không hợp lệ (BR-APM-01)"
+    throw new WebhookSignatureInvalidError(
+      "Chữ ký số webhook không hợp lệ (BR-APM-01);"
     );
   }
 
@@ -72,8 +71,7 @@ export default defineEventHandler(async (event) => {
   if (!parseResult.success) {
     // `INVALID_WEBHOOK_PAYLOAD` chưa đăng ký trong error-codes.md, nên chưa
     // dùng được; `VALIDATION_FAILED` là mã 422 đã có.
-    throw appError(
-      "VALIDATION_FAILED",
+    throw new ValidationError(
       "Dữ liệu webhook không đúng định dạng schema chuẩn"
     );
   }

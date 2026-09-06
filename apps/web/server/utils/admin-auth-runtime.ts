@@ -1,6 +1,4 @@
 import {
-  AppError,
-  appError,
   CSRF_HEADER_NAME,
   generateCsrfToken,
   getAuthNamespaceConfig,
@@ -9,15 +7,20 @@ import {
   validateCsrfToken,
 } from "@mindkid/auth";
 import { requireEnv } from "@mindkid/config";
+import { CsrfInvalidError, SessionRevokedError } from "@mindkid/errors/auth";
+import { isAppError } from "@mindkid/errors/base";
+import {
+  PayloadTooLargeError,
+  RateLimitedError,
+  ServiceUnavailableError,
+} from "@mindkid/errors/common";
 
 import {
-  createError,
   deleteCookie,
   getCookie,
   getHeader,
   type H3Event,
   setCookie,
-  setResponseStatus,
 } from "h3";
 
 import { isAllowedApiOrigin, MANAGER_REMEMBER_COOKIE } from "./auth-runtime.js";
@@ -43,7 +46,7 @@ export function assertManagerRequestBodySize(
     INTEGER_TEXT.test(rawLength) &&
     Number(rawLength) > maxBytes
   ) {
-    throw appError("PAYLOAD_TOO_LARGE");
+    throw new PayloadTooLargeError();
   }
 }
 
@@ -51,13 +54,15 @@ export function assertManagerRateLimitAllowed(statusCode: number): void {
   if (statusCode === 200) {
     return;
   }
-  throw appError(statusCode === 429 ? "RATE_LIMITED" : "SERVICE_UNAVAILABLE");
+  throw statusCode === 429
+    ? new RateLimitedError({ retry_after_s: 60 })
+    : new ServiceUnavailableError();
 }
 
 export function assertManagerSameOriginRequest(event: H3Event): void {
   const fetchSite = getHeader(event, "sec-fetch-site")?.toLowerCase();
   if (fetchSite === "cross-site") {
-    throw appError("CSRF_INVALID");
+    throw new CsrfInvalidError();
   }
 
   const origin = getHeader(event, "origin");
@@ -67,13 +72,13 @@ export function assertManagerSameOriginRequest(event: H3Event): void {
   }
   try {
     if (!isAllowedApiOrigin(origin, host)) {
-      throw appError("CSRF_INVALID");
+      throw new CsrfInvalidError();
     }
   } catch (error) {
-    if (error instanceof AppError) {
+    if (isAppError(error)) {
       throw error;
     }
-    throw appError("CSRF_INVALID");
+    throw new CsrfInvalidError();
   }
 }
 
@@ -142,7 +147,7 @@ export function clearManagerRememberCookie(event: H3Event): void {
 export function getManagerRememberCookie(event: H3Event): string {
   const token = getCookie(event, MANAGER_REMEMBER_COOKIE);
   if (!token) {
-    throw appError("SESSION_REVOKED");
+    throw new SessionRevokedError();
   }
   return token;
 }
@@ -159,18 +164,11 @@ export function requireSuperAdminSession(event: H3Event) {
 }
 
 export function respondToManagerAuthError(
-  event: H3Event,
+  _event: H3Event,
   error: unknown
 ): never {
-  if (error instanceof AppError) {
-    if (event?.node?.res) {
-      setResponseStatus(event, error.status);
-    }
-    throw createError({
-      statusCode: error.status,
-      statusMessage: error.message,
-      data: error.toResponse(),
-    });
+  if (isAppError(error)) {
+    throw error;
   }
   throw error as Error;
 }

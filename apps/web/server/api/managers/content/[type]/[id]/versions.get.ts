@@ -5,8 +5,9 @@ import {
   lessons,
   playSessions,
 } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
 import { and, asc, desc, eq, or, sql } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export interface ContentVersionItem {
@@ -195,10 +196,7 @@ export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "id") || getRouterParam(event, "code");
 
   if (!(typeParam && code)) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-    });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const db = getOwnerDb();

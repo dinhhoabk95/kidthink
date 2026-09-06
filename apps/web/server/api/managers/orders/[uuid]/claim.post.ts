@@ -1,5 +1,5 @@
-import { appError } from "@mindkid/auth";
 import { getDb, paymentOrders } from "@mindkid/db";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);
   const orderUuid = getRouterParam(event, "uuid");
   if (!orderUuid) {
-    throw appError("VALIDATION_FAILED", "Order UUID is required");
+    throw new ValidationError("Order UUID is required");
   }
 
   const db = getDb();
@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!order) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   let warning: string | undefined;

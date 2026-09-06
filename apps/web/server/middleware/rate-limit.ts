@@ -1,4 +1,8 @@
-import { appError } from "@mindkid/auth";
+import {
+  RateLimitedError,
+  ServiceUnavailableError,
+} from "@mindkid/errors/common";
+
 import {
   enforceTwoAxisRateLimit,
   resolveRateLimitRouteClass,
@@ -59,10 +63,10 @@ export default defineEventHandler(async (event) => {
   if (retryAfter !== undefined) {
     // BR-RTL-03 — client cần biết chờ bao lâu.
     setHeader(event, "Retry-After", retryAfter);
-    throw appError("RATE_LIMITED", { retry_after_s: retryAfter });
+    throw new RateLimitedError({ retry_after_s: retryAfter });
   }
 
-  throw appError(
-    result.statusCode === 429 ? "RATE_LIMITED" : "SERVICE_UNAVAILABLE"
-  );
+  throw result.statusCode === 429
+    ? new RateLimitedError({ retry_after_s: 60 })
+    : new ServiceUnavailableError();
 });

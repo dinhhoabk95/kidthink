@@ -1,14 +1,8 @@
 import { childProfiles, getOwnerDb } from "@mindkid/db";
+import { NoActiveChildError } from "@mindkid/errors/child";
 import { allowedTiers } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  deleteCookie,
-  getCookie,
-  getQuery,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, deleteCookie, getCookie, getQuery } from "h3";
 import { getRecommendationsForChild } from "#server/services/index.js";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
@@ -19,15 +13,9 @@ export default defineEventHandler(async (event) => {
   const candidateUuid = getCookie(event, "active_child_id");
 
   if (!candidateUuid) {
-    setResponseStatus(event, 428);
-    throw createError({
-      statusCode: 428,
-      statusMessage: "NO_ACTIVE_CHILD",
-      data: {
-        code: "NO_ACTIVE_CHILD",
-        message: "Vui lòng chọn hồ sơ trẻ trước khi lấy gợi ý chơi.",
-      },
-    });
+    throw new NoActiveChildError(
+      "Vui lòng chọn hồ sơ trẻ trước khi lấy gợi ý chơi."
+    );
   }
 
   const userId = Number(user.user_id);
@@ -47,16 +35,9 @@ export default defineEventHandler(async (event) => {
 
   if (!activeChild) {
     deleteCookie(event, "active_child_id", { path: "/" });
-    setResponseStatus(event, 428);
-    throw createError({
-      statusCode: 428,
-      statusMessage: "NO_ACTIVE_CHILD",
-      data: {
-        code: "NO_ACTIVE_CHILD",
-        message:
-          "Hồ sơ trẻ không tồn tại hoặc đã bị lưu trữ. Vui lòng chọn lại.",
-      },
-    });
+    throw new NoActiveChildError(
+      "Hồ sơ trẻ không tồn tại hoặc đã bị lưu trữ. Vui lòng chọn lại."
+    );
   }
 
   // 2. Parse query parameters (clamped limit <= 5)

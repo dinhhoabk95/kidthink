@@ -9,15 +9,14 @@ import {
   sanitizeReturnTo,
 } from "@mindkid/auth";
 import { requireEnv } from "@mindkid/config";
+import { OauthProviderDisabledError } from "@mindkid/errors/social";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import {
-  createError,
   defineEventHandler,
   getQuery,
   getRouterParam,
   sendRedirect,
   setCookie,
-  setResponseStatus,
 } from "h3";
 import {
   assertRateLimitAllowed,
@@ -32,28 +31,12 @@ function getOAuthStateSecret(): string {
 export default defineEventHandler(async (event) => {
   const rawProvider = getRouterParam(event, "provider") || "";
   if (!isOAuthProvider(rawProvider)) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "OAUTH_PROVIDER_DISABLED",
-      data: {
-        code: "OAUTH_PROVIDER_DISABLED",
-        message: "Nhà cung cấp đăng nhập này hiện chưa khả dụng.",
-      },
-    });
+    throw new OauthProviderDisabledError();
   }
 
   const registry = getOAuthRegistry();
   if (!registry.isProviderEnabled(rawProvider)) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "OAUTH_PROVIDER_DISABLED",
-      data: {
-        code: "OAUTH_PROVIDER_DISABLED",
-        message: "Nhà cung cấp đăng nhập này hiện chưa khả dụng.",
-      },
-    });
+    throw new OauthProviderDisabledError();
   }
 
   // Rate limiting (BR-OAP-12)

@@ -1,7 +1,12 @@
 # Task #253 — Danh sách việc: GT-000 dạy trọn một chủ đề
 
+> **Thay bởi [`Task #254`](254-skill-opening-lesson-plan.md), 2026-09-06.** Bậc `pre` bị gỡ:
+> bài học mở đầu là thêm game level gắn thẳng vào kỹ năng chơi, không phải thêm kỹ năng.
+> File này giữ nguyên làm nhật ký của đợt đã làm; mọi `BR-PRE-*` nhắc ở đây đã hết hiệu lực.
+
+
 Kế hoạch: [`253-gt000-concept-theme-plan.md`](253-gt000-concept-theme-plan.md) ·
-Spec: [`concept-pre-skill.md`](../specs/05-content/concept-pre-skill.md) ·
+Spec: [`concept-topic-model.md`](../specs/05-content/concept-topic-model.md) ·
 [`GT-000.md`](../specs/01-platform/engines/GT-000.md) ·
 [`concept-intro-model.md`](../specs/05-content/concept-intro-model.md) ·
 [`concept-intro-runner.md`](../specs/04-play/concept-intro-runner.md)
@@ -82,7 +87,7 @@ Sau mốc này bài làm quen **nghe được**.
       có level dạy thì miễn hạn ngạch số level và miễn ràng buộc trải nhiều khuôn (`BR-PRE-07`).
   - Nghiệm thu: ca âm bắt buộc — một kỹ năng bậc `core` thuộc C1 có đúng 1 level **vẫn** bị
     cổng bắt lỗi, trong khi một kỹ năng bậc `pre` có đúng 1 level `GT-000` thì không.
-- [x] Soạn 5 kỹ năng bậc `pre` theo bảng mục 7.3 của `concept-pre-skill.md`, mỗi kỹ năng đủ
+- [x] Soạn 5 kỹ năng bậc `pre` theo bảng mục 7.3 của `concept-topic-model.md`, mỗi kỹ năng đủ
       3 mục tiêu học tập.
   - Nghiệm thu: property test taxonomy xanh; đồ thị prerequisite vẫn là DAG; ca âm — đặt
     `difficulty` của một kỹ năng `pre` lên 3 thì test đỏ.

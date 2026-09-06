@@ -1,4 +1,6 @@
-import { appError } from "@mindkid/auth";
+import { TierLockedError } from "@mindkid/errors/billing";
+import { ValidationError } from "@mindkid/errors/common";
+import { WorksheetNotFoundError } from "@mindkid/errors/content";
 import { renderWorksheetPdf } from "@mindkid/export";
 import { canAccessTier } from "@mindkid/shared";
 import { defineEventHandler, getRouterParam, setHeader } from "h3";
@@ -11,15 +13,12 @@ export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");
 
   if (!code) {
-    throw appError("VALIDATION_FAILED", "Worksheet code is required");
+    throw ValidationError.field("code", "Worksheet code is required");
   }
 
   const ws = await getPublishedWorksheetByCode(code);
   if (!ws) {
-    throw appError(
-      "NOT_FOUND",
-      `Worksheet with code ${code} not found or not published`
-    );
+    throw new WorksheetNotFoundError(code);
   }
 
   // Check user active entitlements
@@ -29,8 +28,7 @@ export default defineEventHandler(async (event) => {
 
   const hasAccess = canAccessTier(ws.accessTier, entitlements);
   if (!hasAccess) {
-    throw appError(
-      "TIER_LOCKED",
+    throw new TierLockedError(
       "Cần nâng cấp gói tài khoản để tải phiếu bài tập này."
     );
   }

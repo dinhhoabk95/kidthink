@@ -59,7 +59,8 @@ export interface ProgramListPublicResponse {
   groups: ProgramGroupPublic[];
 }
 
-export interface ProgramAlternativeSuggestion {
+// biome-ignore lint/style/useConsistentTypeDefinitions: type alias needed for index signature compatibility
+export type ProgramAlternativeSuggestion = {
   code: string;
   title: string;
   access_tier: AccessTier;
@@ -67,12 +68,13 @@ export interface ProgramAlternativeSuggestion {
     min: number;
     max: number;
   };
-}
+};
 
-export interface ProgramArchivedResponse {
+// biome-ignore lint/style/useConsistentTypeDefinitions: type alias needed for index signature compatibility
+export type ProgramArchivedResponse = {
   code: string;
   suggestions: ProgramAlternativeSuggestion[];
-}
+};
 
 /**
  * Nhãn năng lực cho trang chương trình — dẫn xuất từ `COMPETENCY_CATALOG`.

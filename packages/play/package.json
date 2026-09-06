@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@mindkid/adaptive": "workspace:*",
-    "@mindkid/auth": "workspace:*",
     "@mindkid/db": "workspace:*",
+    "@mindkid/errors": "workspace:*",
     "@mindkid/game-engine": "workspace:*",
     "@mindkid/queue": "workspace:*",
     "@mindkid/shared": "workspace:*",

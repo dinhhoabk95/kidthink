@@ -1,7 +1,9 @@
 import { writeAudit } from "@mindkid/audit";
 import { errorLogs, getOwnerDb } from "@mindkid/db";
+import { InsufficientRoleError } from "@mindkid/errors/auth";
+import { NotFoundError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -18,19 +20,14 @@ export default defineEventHandler(async (event) => {
 
   // BR-ELV-06: super_admin only
   if (manager.role !== "super_admin") {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "INSUFFICIENT_ROLE",
-      message: "Chỉ super_admin mới có quyền xử lý nhật ký lỗi (BR-ELV-06)",
-    });
+    throw new InsufficientRoleError(
+      "Chỉ super_admin mới có quyền xử lý nhật ký lỗi (BR-ELV-06)"
+    );
   }
 
   const fingerprint = getRouterParam(event, "fingerprint");
   if (!fingerprint) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "FINGERPRINT_NOT_FOUND",
-    });
+    throw new NotFoundError("FINGERPRINT_NOT_FOUND");
   }
 
   const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));

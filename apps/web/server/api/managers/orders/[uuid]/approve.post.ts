@@ -1,4 +1,3 @@
-import { appError } from "@mindkid/auth";
 import { MAX_BONUS_DAYS, MIN_ADMIN_NOTE_LENGTH } from "@mindkid/config";
 import {
   auditLogs,
@@ -7,6 +6,9 @@ import {
   notifications,
   paymentOrders,
 } from "@mindkid/db";
+import { AdminNoteRequiredError } from "@mindkid/errors/account";
+import { OrderAlreadyProcessedError } from "@mindkid/errors/billing";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import {
   assertPaymentOrderTransition,
   computeStackedExpiryDate,
@@ -83,12 +85,12 @@ async function fetchAndLockOrder(
     .for("update");
 
   if (!order) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const currentStatus = order.status as PaymentOrderStatus;
   if (currentStatus !== "submitted" && currentStatus !== "under_review") {
-    throw appError("ORDER_ALREADY_PROCESSED", {
+    throw new OrderAlreadyProcessedError({
       current_status: currentStatus,
       reason: "Đơn hàng đã được xử lý hoặc không ở trạng thái có thể duyệt.",
     });
@@ -290,7 +292,7 @@ export default defineEventHandler(async (event) => {
   const session = requireSuperAdminSession(event);
   const orderUuid = getRouterParam(event, "uuid");
   if (!orderUuid) {
-    throw appError("VALIDATION_FAILED", "Order UUID is required");
+    throw new ValidationError("Order UUID is required");
   }
 
   const customEvent = event as unknown as {
@@ -305,9 +307,9 @@ export default defineEventHandler(async (event) => {
   if (!parsed.success) {
     const fieldErrors = parsed.error.flatten().fieldErrors;
     if (fieldErrors.admin_note) {
-      throw appError("ADMIN_NOTE_REQUIRED", fieldErrors.admin_note[0]);
+      throw new AdminNoteRequiredError(fieldErrors.admin_note[0]);
     }
-    throw appError("VALIDATION_FAILED", {
+    throw new ValidationError({
       errors: fieldErrors,
     });
   }

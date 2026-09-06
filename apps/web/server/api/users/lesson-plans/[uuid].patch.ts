@@ -1,4 +1,4 @@
-import { appError } from "@mindkid/auth";
+import { LessonPlanNotFoundError } from "@mindkid/errors/content";
 import { UpdateLessonPlanMetaSchema } from "@mindkid/shared";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { updateLessonPlanMeta } from "#server/services/index.js";
@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    throw appError("NOT_FOUND", "Thiếu mã định danh giáo án.");
+    throw new LessonPlanNotFoundError();
   }
 
   const eventBody =

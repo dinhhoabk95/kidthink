@@ -33,15 +33,23 @@ export const PAYMENT_ORDER_TRANSITIONS: Record<
   expired: [],
 };
 
-export class PaymentOrderTransitionError extends Error {
+import { AppError } from "@mindkid/errors/base";
+
+export class PaymentOrderTransitionError extends AppError<{
+  readonly from: PaymentOrderStatus;
+  readonly to: PaymentOrderStatus;
+}> {
   readonly from: PaymentOrderStatus;
   readonly to: PaymentOrderStatus;
 
   constructor(from: PaymentOrderStatus, to: PaymentOrderStatus) {
-    super(
-      `INVALID_STATUS_TRANSITION: Cannot transition payment order from "${from}" to "${to}".`
-    );
-    this.name = "PaymentOrderTransitionError";
+    super({
+      code: "INVALID_STATUS_TRANSITION",
+      status: 409,
+      message: `Chuyển trạng thái đơn hàng từ "${from}" sang "${to}" không hợp lệ.`,
+      details: { from, to },
+      name: "PaymentOrderTransitionError",
+    });
     this.from = from;
     this.to = to;
   }

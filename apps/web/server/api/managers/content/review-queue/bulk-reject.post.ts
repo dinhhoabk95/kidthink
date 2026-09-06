@@ -1,7 +1,9 @@
 import { writeAudit } from "@mindkid/audit";
 import { contentReviewLog, gameLevels, getOwnerDb, lessons } from "@mindkid/db";
+import { AdminNoteRequiredError } from "@mindkid/errors/account";
+import { ValidationError } from "@mindkid/errors/common";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, readBody } from "h3";
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -18,17 +20,11 @@ export default defineEventHandler(async (event) => {
   if (!parsedResult.success) {
     const issues = parsedResult.error.issues;
     if (issues.some((i) => i.path.includes("reason"))) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "REJECTED_REASON_TOO_SHORT",
-        message: "Từ chối bắt buộc lý do tối thiểu 10 ký tự (BR-CRQ-03)",
-      });
+      throw new AdminNoteRequiredError(
+        "Từ chối bắt buộc lý do tối thiểu 10 ký tự (BR-CRQ-03)"
+      );
     }
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: "created_by_manager_id is required",
-    });
+    throw new ValidationError("created_by_manager_id is required");
   }
 
   const { created_by_manager_id: createdByManagerId, reason } =

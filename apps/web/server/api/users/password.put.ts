@@ -1,16 +1,9 @@
-import {
-  appError,
-  hashPassword,
-  validatePasswordStrength,
-} from "@mindkid/auth";
+import { hashPassword, validatePasswordStrength } from "@mindkid/auth";
 import { getOwnerDb, users } from "@mindkid/db";
+import { PasswordAlreadySetError } from "@mindkid/errors/auth";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
 
 import {
@@ -38,28 +31,14 @@ export default defineEventHandler(async (event) => {
 
   const parsed = SetPasswordSchema.safeParse(rawBody);
   if (!parsed.success) {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "Mật khẩu mới phải có ít nhất 8 ký tự.",
-      },
-    });
+    throw new ValidationError("Mật khẩu mới phải có ít nhất 8 ký tự.");
   }
 
   const passwordValidation = validatePasswordStrength(parsed.data.new_password);
   if (!passwordValidation.valid) {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: passwordValidation.reason || "Mật khẩu không đủ mạnh.",
-      },
-    });
+    throw new ValidationError(
+      passwordValidation.reason || "Mật khẩu không đủ mạnh."
+    );
   }
 
   const db = getOwnerDb();
@@ -73,13 +52,12 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!account) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   // If account already has a password, reject with 409 PASSWORD_ALREADY_SET
   if (account.passwordHash) {
-    throw appError("PASSWORD_ALREADY_SET");
+    throw new PasswordAlreadySetError();
   }
 
   const newHash = await hashPassword(parsed.data.new_password);

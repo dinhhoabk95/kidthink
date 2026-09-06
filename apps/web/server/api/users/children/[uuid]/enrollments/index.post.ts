@@ -9,13 +9,18 @@ import {
   lessons,
 } from "@mindkid/db";
 import {
+  InternalError,
+  NotFoundError,
+  ValidationError,
+} from "@mindkid/errors/common";
+import { AlreadyEnrolledError } from "@mindkid/errors/curriculum";
+import {
   type AccessTier,
   allowedTiers,
   buildAgeRecommendationWarning,
 } from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
 import {
-  createError,
   defineEventHandler,
   getRouterParam,
   type H3Event,
@@ -34,7 +39,7 @@ async function assertChildOwnership(
   db: ReturnType<typeof getOwnerDb>,
   uuid: string,
   userId: number,
-  event: H3Event
+  _event: H3Event
 ) {
   const [child] = await db
     .select()
@@ -48,12 +53,7 @@ async function assertChildOwnership(
     );
 
   if (!child) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      data: { code: "NOT_FOUND", message: "Không tìm thấy hồ sơ trẻ." },
-    });
+    throw new NotFoundError("Không tìm thấy hồ sơ trẻ.");
   }
   return child;
 }
@@ -61,7 +61,7 @@ async function assertChildOwnership(
 async function assertNoActiveEnrollment(
   db: ReturnType<typeof getOwnerDb>,
   childId: number,
-  event: H3Event
+  _event: H3Event
 ) {
   const [existingActive] = await db
     .select({
@@ -79,16 +79,9 @@ async function assertNoActiveEnrollment(
     );
 
   if (existingActive) {
-    setResponseStatus(event, 409);
-    throw createError({
-      statusCode: 409,
-      statusMessage: "ALREADY_ENROLLED",
-      data: {
-        code: "ALREADY_ENROLLED",
-        message: "Trẻ đang tham gia một chương trình học khác.",
-        details: { curriculum_code: existingActive.code },
-      },
-    });
+    throw new AlreadyEnrolledError(
+      "Trẻ đang tham gia một chương trình học khác."
+    );
   }
 }
 
@@ -114,7 +107,7 @@ async function assertGatingAllowance(
   userId: number,
   childId: number,
   curriculumId: number,
-  event: H3Event
+  _event: H3Event
 ) {
   const activeKeys = await resolveUserActiveEntitlements(userId);
   const userAllowedTiers = await allowedTiers(
@@ -190,16 +183,9 @@ async function assertGatingAllowance(
   });
 
   if (!hasAccessibleMandatoryItem) {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message:
-          "Không có bài học bắt buộc nào mở được với gói tài khoản hiện tại.",
-      },
-    });
+    throw new ValidationError(
+      "Không có bài học bắt buộc nào mở được với gói tài khoản hiện tại."
+    );
   }
 }
 
@@ -214,8 +200,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const userId = Number(user.user_id);
@@ -229,14 +214,7 @@ export default defineEventHandler(async (event) => {
   const parsed = createEnrollmentSchema.safeParse(raw);
 
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "Mã chương trình là bắt buộc.",
-      },
-    });
+    throw new ValidationError("Mã chương trình là bắt buộc.");
   }
 
   const curriculumCode = parsed.data.curriculum_code.trim();
@@ -253,15 +231,7 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!curriculum) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      data: {
-        code: "NOT_FOUND",
-        message: "Không tìm thấy chương trình học.",
-      },
-    });
+    throw new NotFoundError("Không tìm thấy chương trình học.");
   }
 
   // 4. Compute age recommendation warning (BR-LFM-02, BR-LFM-03, BR-LFM-04 - tuổi không chặn ghi danh)
@@ -282,11 +252,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!enrollment) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "ENROLLMENT_FAILED",
-      message: "Ghi danh lộ trình thất bại",
-    });
+    throw new InternalError("Ghi danh lộ trình thất bại");
   }
 
   // 7. Audit log (INSERT-only)

@@ -1,5 +1,5 @@
 import { appError, ChildNotFoundError } from "@mindkid/auth";
-import { RateLimitedError } from "@mindkid/errors";
+import { RateLimitedError } from "@mindkid/errors/common";
 import { createError } from "h3";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import errorHandler from "#server/error";

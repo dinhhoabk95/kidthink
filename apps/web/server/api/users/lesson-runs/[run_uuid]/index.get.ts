@@ -1,5 +1,6 @@
 import { requireUserAuth } from "@mindkid/auth";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
+import { defineEventHandler, getRouterParam } from "h3";
 import { LessonSessionRunnerService } from "#server/services/index.js";
 
 export default defineEventHandler(async (event) => {
@@ -7,11 +8,7 @@ export default defineEventHandler(async (event) => {
   const runUuid = getRouterParam(event, "run_uuid");
 
   if (!runUuid) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "VALIDATION_FAILED",
-      data: { code: "VALIDATION_FAILED", message: "Thiếu run_uuid." },
-    });
+    throw new ValidationError("Thiếu run_uuid.");
   }
 
   try {
@@ -24,11 +21,7 @@ export default defineEventHandler(async (event) => {
   } catch (err: unknown) {
     const errorName = err instanceof Error ? err.name : "";
     if (errorName === "NOT_FOUND") {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "NOT_FOUND",
-        data: { code: "NOT_FOUND", message: "Không tìm thấy lượt chạy." },
-      });
+      throw new NotFoundError("Không tìm thấy lượt chạy.");
     }
     throw err;
   }

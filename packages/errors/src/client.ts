@@ -1,16 +1,18 @@
 import type { JsonValue } from "./base.ts";
 
-export interface ApiErrorField {
+// biome-ignore lint/style/useConsistentTypeDefinitions: type alias để thoả ràng buộc JsonValue
+export type ApiErrorField = {
   readonly field: string;
   readonly message: string;
-}
+};
 
-export interface ApiErrorDetails {
+// biome-ignore lint/style/useConsistentTypeDefinitions: type alias để thoả ràng buộc JsonValue
+export type ApiErrorDetails = {
   readonly fields?: readonly ApiErrorField[];
   readonly retry_after_s?: number;
   readonly return_level_code?: string;
   readonly [key: string]: JsonValue | undefined;
-}
+};
 
 export class ApiError extends Error {
   readonly code: string;

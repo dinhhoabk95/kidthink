@@ -1,27 +1,4 @@
 export {
-  ActivityNotFoundError,
-  ChildNotFoundError,
-  CurriculumNotFoundError,
-  CustomGameNotFoundError,
-  EntitlementNotFoundError,
-  ExportNotFoundError,
-  GameLevelNotFoundError,
-  isModelBoundError,
-  LessonNotFoundError,
-  LessonPlanNotFoundError,
-  type ModelBoundError,
-  ModelNotFoundError,
-  modelErrorContext,
-  OrderNotFoundError,
-  PersonalCurriculumNotFoundError,
-  PlaySessionNotFoundError,
-  SubscriptionNotFoundError,
-  UserNotFoundError,
-  ValidationError,
-  type ValidationFieldError,
-  WorksheetNotFoundError,
-} from "@mindkid/errors";
-export {
   assertActiveChild,
   checkUserEntitlement,
   verifyChildOwnership,
@@ -59,14 +36,6 @@ export {
   type ValidateCsrfOptions,
   validateCsrfToken,
 } from "./csrf.js";
-export {
-  AppError,
-  AUTH_ERROR_DEFINITIONS,
-  type AuthErrorCode,
-  type AuthErrorDetails,
-  type AuthErrorResponse,
-  appError,
-} from "./errors.js";
 export {
   type CreatedMfaChallengeOutput,
   type CreateMfaChallengeInput,

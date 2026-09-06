@@ -1,12 +1,9 @@
 import { writeAudit } from "@mindkid/audit";
 import { getOwnerDb, seoPages } from "@mindkid/db";
+import { InternalError, ValidationError } from "@mindkid/errors/common";
+import { CodeAlreadyExistsError } from "@mindkid/errors/content";
 import { and, eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, readBody } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const FORBIDDEN_LEGAL_SLUGS = [
@@ -30,11 +27,9 @@ function sanitizeRichText(html: string | undefined): string | undefined {
     lower.includes("onclick=") ||
     lower.includes("onerror=")
   ) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: "Nội dung chứa mã script hoặc HTML không được phép (BR-SEO-02)",
-    });
+    throw new ValidationError(
+      "Nội dung chứa mã script hoặc HTML không được phép (BR-SEO-02)"
+    );
   }
   return html;
 }
@@ -66,11 +61,7 @@ function validateAndBuildSeoInsert(
 ): typeof seoPages.$inferInsert {
   const parsedResult = createSeoPageSchema.safeParse(rawBody);
   if (!parsedResult.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: "Slug, title và meta_description là bắt buộc",
-    });
+    throw new ValidationError("Slug, title và meta_description là bắt buộc");
   }
 
   const body = parsedResult.data;
@@ -80,11 +71,7 @@ function validateAndBuildSeoInsert(
   }
 
   if (!rawSlug) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: "Slug là bắt buộc",
-    });
+    throw new ValidationError("Slug là bắt buộc");
   }
 
   // BR-SEO-09: Legal documents forbidden in SEO pages
@@ -92,12 +79,9 @@ function validateAndBuildSeoInsert(
     FORBIDDEN_LEGAL_SLUGS.includes(rawSlug) ||
     FORBIDDEN_LEGAL_SLUGS.includes(`/${rawSlug}`)
   ) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "FORBIDDEN_LEGAL_SLUG",
-      message:
-        "Các trang pháp lý (terms, privacy, child-privacy) được quản lý qua code PR, không được tạo qua SEO Studio (BR-SEO-09)",
-    });
+    throw new ValidationError(
+      "Các trang pháp lý (terms, privacy, child-privacy) được quản lý qua code PR, không được tạo qua SEO Studio (BR-SEO-09)"
+    );
   }
 
   const title = body.title.trim();
@@ -146,21 +130,15 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(seoPages.slug, rawSlug), eq(seoPages.contentVersion, 1)));
 
   if (existing) {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "CODE_ALREADY_EXISTS",
-      message: `SEO page với slug '${rawSlug}' đã tồn tại`,
-    });
+    throw new CodeAlreadyExistsError(
+      `SEO page với slug '${rawSlug}' đã tồn tại`
+    );
   }
 
   const [created] = await db.insert(seoPages).values(insertData).returning();
 
   if (!created) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "SEO_PAGE_CREATE_FAILED",
-      message: "Tạo trang SEO thất bại",
-    });
+    throw new InternalError("Tạo trang SEO thất bại");
   }
 
   await db.transaction(async (tx) => {

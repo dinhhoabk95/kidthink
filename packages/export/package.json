@@ -10,6 +10,7 @@
     "@mindkid/audit": "workspace:*",
     "@mindkid/auth": "workspace:*",
     "@mindkid/db": "workspace:*",
+    "@mindkid/errors": "workspace:*",
     "@mindkid/queue": "workspace:*",
     "@mindkid/shared": "workspace:*",
     "@mindkid/storage": "workspace:*",

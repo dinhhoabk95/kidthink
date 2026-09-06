@@ -1,16 +1,18 @@
 import { createHash } from "node:crypto";
 import { auditLogs } from "@mindkid/db";
+import { AppError } from "@mindkid/errors/base";
 import type { AuditAction, AuditInput } from "@mindkid/shared";
 import { ACTIONS_REQUIRING_REASON } from "@mindkid/shared";
 import type { PgTransaction } from "drizzle-orm/pg-core";
 
-export class AuditError extends Error {
-  readonly code: string;
-
+export class AuditError extends AppError {
   constructor(message: string, code: string) {
-    super(message);
-    this.name = "AuditError";
-    this.code = code;
+    super({
+      code,
+      status: 500,
+      message,
+      name: "AuditError",
+    });
   }
 }
 

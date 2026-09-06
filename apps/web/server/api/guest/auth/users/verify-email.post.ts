@@ -1,5 +1,7 @@
-import { appError, hashSecureToken } from "@mindkid/auth";
+import { hashSecureToken } from "@mindkid/auth";
 import { getAppDb, users, verificationTokens } from "@mindkid/db";
+import { TokenExpiredError } from "@mindkid/errors/auth";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, type H3Event, readBody } from "h3";
 import { z } from "zod";
@@ -21,14 +23,14 @@ export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
     (await readBody(event).catch(() => null));
 
   if (!rawBody || typeof rawBody !== "object") {
-    throw appError("VALIDATION_FAILED", {
+    throw new ValidationError({
       reason: "Dữ liệu yêu cầu không hợp lệ.",
     });
   }
 
   const parsed = VerifyEmailSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw appError("VALIDATION_FAILED");
+    throw new ValidationError();
   }
   const token = parsed.data.token;
 
@@ -48,12 +50,12 @@ export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
 
   if (tokenRows.length === 0) {
     // BR-EVF-05: Generic NOT_FOUND error, never leak token or email
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const vToken = tokenRows[0];
   if (!vToken) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
   const now = new Date();
   const [user] = await db
@@ -62,7 +64,7 @@ export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
     .where(eq(users.id, vToken.accountId));
 
   if (!user) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   // BR-EVF-04: If token already used BUT user is active, return active smoothly
@@ -70,12 +72,12 @@ export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
     if (user.status === "active") {
       return { status: "active" };
     }
-    throw appError("TOKEN_EXPIRED");
+    throw new TokenExpiredError();
   }
 
   // Check expiration
   if (vToken.expiresAt <= now) {
-    throw appError("TOKEN_EXPIRED");
+    throw new TokenExpiredError();
   }
 
   await db.transaction(async (tx) => {
@@ -95,7 +97,7 @@ export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
       if (user.status === "active") {
         return;
       }
-      throw appError("TOKEN_EXPIRED");
+      throw new TokenExpiredError();
     }
 
     await tx

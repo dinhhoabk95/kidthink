@@ -7,6 +7,7 @@
 
 import { writeAudit } from "@mindkid/audit";
 import { getOwnerDb, worksheets } from "@mindkid/db";
+import { AppError, type JsonValue } from "@mindkid/errors/base";
 import {
   computeWorksheetRenderHash,
   inspectWorksheetPdf,
@@ -22,14 +23,29 @@ import type {
 import { validateWorksheetContent } from "@mindkid/shared";
 import { and, desc, eq, ilike, or, type SQL, sql } from "drizzle-orm";
 
-export class WorksheetServiceError extends Error {
-  readonly statusCode: number;
-  readonly details?: unknown;
+function resolveWorksheetErrorCode(
+  statusCode: number
+): "NOT_FOUND" | "VALIDATION_FAILED" | "INTERNAL_ERROR" {
+  if (statusCode === 404) {
+    return "NOT_FOUND";
+  }
+  if (statusCode === 422) {
+    return "VALIDATION_FAILED";
+  }
+  return "INTERNAL_ERROR";
+}
 
-  constructor(message: string, statusCode = 500, details?: unknown) {
-    super(message);
-    this.name = "WorksheetServiceError";
-    this.statusCode = statusCode;
+export class WorksheetServiceError extends AppError<JsonValue> {
+  override readonly details?: JsonValue;
+
+  constructor(message: string, statusCode = 500, details?: JsonValue) {
+    super({
+      code: resolveWorksheetErrorCode(statusCode),
+      status: statusCode,
+      message,
+      details,
+      name: "WorksheetServiceError",
+    });
     this.details = details;
   }
 }

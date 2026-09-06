@@ -6,6 +6,8 @@ import {
   getOwnerDb,
   lessons,
 } from "@mindkid/db";
+import { ContentArchivedError } from "@mindkid/errors/content";
+import { CurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import {
   type AccessTier,
   COMPETENCY_LABELS,
@@ -15,7 +17,7 @@ import {
   toProgramDetailPublic,
 } from "@mindkid/shared";
 import { and, asc, eq, inArray, ne } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam, setHeader } from "h3";
+import { defineEventHandler, getRouterParam, setHeader } from "h3";
 
 const CURRICULUM_CODE_REGEX = /^CUR-[A-Za-z0-9_-]+$/;
 const COMPETENCY_REGEX = /^(?:GL-|LES-)?(C[1-6])/i;
@@ -142,15 +144,9 @@ async function handleArchivedCurriculum(
     })
   );
 
-  throw createError({
-    statusCode: 410,
-    statusMessage: "GONE",
-    message: "Chương trình học này đã ngừng phát hành.",
-    data: {
-      code: "CONTENT_ARCHIVED",
-      curriculum_code: curriculumCode,
-      suggestions,
-    },
+  throw new ContentArchivedError("Chương trình học này đã ngừng phát hành.", {
+    curriculum_code: curriculumCode,
+    suggestions,
   });
 }
 
@@ -207,12 +203,7 @@ function resolveSingleItem(
 export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");
   if (!(code && CURRICULUM_CODE_REGEX.test(code))) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      message: "Không tìm thấy chương trình học.",
-      data: { code: "NOT_FOUND" },
-    });
+    throw new CurriculumNotFoundError(code);
   }
 
   setHeader(event, "Cache-Control", "public, max-age=600");
@@ -237,12 +228,7 @@ export default defineEventHandler(async (event) => {
     .where(eq(curricula.code, code));
 
   if (!curriculum || curriculum.status === "draft") {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      message: "Không tìm thấy chương trình học.",
-      data: { code: "NOT_FOUND" },
-    });
+    throw new CurriculumNotFoundError(code);
   }
 
   if (curriculum.status === "archived") {

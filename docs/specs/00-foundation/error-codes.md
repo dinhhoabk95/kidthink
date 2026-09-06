@@ -80,7 +80,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | Mã | HTTP | Khi nào | Thông báo |
 |---|:--:|---|---|
 | `UNAUTHENTICATED` | 401 | Thiếu / hỏng / hết hạn / sai namespace session | "Bạn cần đăng nhập để tiếp tục." |
-| `TOKEN_EXPIRED` | 401 | **Deprecated** — giữ mã cho compatibility trong lúc Task #85 cutover; browser session mới dùng `UNAUTHENTICATED` | — |
+| `TOKEN_EXPIRED` | 410 | Mã xác thực email hoặc liên kết xác minh đã hết hạn | "Mã xác thực đã hết hạn hoặc không còn hiệu lực." |
 | `SESSION_REVOKED` | 401 | Session/remember generation lệch, device bị revoke hoặc phát hiện remember reuse | "Phiên đăng nhập đã kết thúc. Vui lòng đăng nhập lại." |
 | `INSUFFICIENT_ROLE` | 403 | Manager role không đủ | "Bạn không có quyền truy cập mục này." |
 | `CSRF_INVALID` | 403 | Thiếu hoặc sai double-submit CSRF token trên request đổi trạng thái | "Phiên bảo mật không hợp lệ. Vui lòng tải lại trang và thử lại." |
@@ -98,6 +98,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `MFA_SECRET_CORRUPTED` | 500 | Giải mã TOTP secret hỏng — sai khoá hoặc dữ liệu hỏng (`BR-MFA-13`). Chi tiết chỉ vào audit, client nhận mã lỗi chung | "Hệ thống không đọc được khoá xác thực. Vui lòng liên hệ hỗ trợ." |
 | `REAUTH_REQUIRED` | 428 | Thao tác nhạy cảm, phiên chưa reauth trong 5 phút. `details.methods[]` ∈ `password`\|`social`\|`totp` | "Vui lòng xác minh lại danh tính để tiếp tục." |
 | `NOT_FOUND` | 404 | Không tồn tại **hoặc** không thuộc caller | "Không tìm thấy nội dung." |
+| `RESTRICTED_MODE` | 403 | Tài khoản chưa xác thực email gọi thao tác cần email đã xác thực (`server/utils/auth-runtime.ts`) | "Vui lòng xác thực email để thực hiện thao tác này." |
 
 ### 7.2a Mạng xã hội và OAuth
 
@@ -111,6 +112,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `OAUTH_STATE_INVALID` | 400 | `state` lệch, thiếu, hoặc đã dùng (`BR-OAP-03` `BR-OAP-14`) | "Phiên đăng nhập đã hết hạn. Vui lòng thử lại." |
 | `OAUTH_PROVIDER_DISABLED` | 404 | Provider tắt **hoặc** không có trong danh sách đóng — không phân biệt hai ca | "Cách đăng nhập này hiện không khả dụng." |
 | `OAUTH_PROVIDER_ERROR` | 502 | Provider 5xx / timeout / trả lỗi ngoài `access_denied` | "Không kết nối được với {provider}. Bạn có thể đăng nhập bằng email và mật khẩu." |
+| `PASSWORD_ALREADY_SET` | 409 | Gọi "đặt mật khẩu" trên tài khoản đã có `password_hash` — đối xứng với `PASSWORD_NOT_SET` | "Tài khoản đã có mật khẩu. Hãy dùng Đổi mật khẩu." |
 
 ### 7.3 Quota và thanh toán
 
@@ -137,6 +139,9 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `OFFLINE_PACK_EXPIRED` | 410 | Gói học tập offline đã hết hạn lease ([`offline-curriculum-pack.md`](../01-platform/offline-curriculum-pack.md)) |
 | `OFFLINE_PACK_CORRUPTED` | 422 | Gói học tập offline bị lỗi toàn vẹn hoặc sai checksum ([`offline-curriculum-pack.md`](../01-platform/offline-curriculum-pack.md)) |
 | `STORAGE_QUOTA_INSUFFICIENT` | 422 | Bộ nhớ thiết bị không đủ để tải gói offline ([`offline-curriculum-pack.md`](../01-platform/offline-curriculum-pack.md)) |
+| `ORDER_CANNOT_BE_CANCELLED` | 409 | Huỷ đơn không ở trạng thái chờ thanh toán |
+| `REFUND_EXCEEDS_CAPTURED_AMOUNT` | 422 | Số tiền hoàn vượt số thực thu của đơn ([`automated-payment.md`](../01-platform/automated-payment.md)) |
+| `REFUND_ALREADY_PROCESSED` | 409 | Lệnh hoàn tiền đã xử lý trước đó ([`automated-payment.md`](../01-platform/automated-payment.md)) |
 
 ### 7.4 Nội dung
 
@@ -159,6 +164,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `AUDIO_FORMAT_INVALID` | 415 | Magic bytes không phải định dạng audio được hỗ trợ ([`audio-storage.md`](../01-platform/audio-storage.md)) |
 | `AUDIO_SIZE_LIMIT_EXCEEDED` | 413 | Dung lượng file audio vượt quá 500 KB hoặc thời lượng > 30s ([`audio-storage.md`](../01-platform/audio-storage.md)) |
 | `THEME_NOT_SUPPORTED` | 422 | Lọc hoặc gắn chủ đề ngoài từ vựng đóng ([`content-theme-registry.md`](../05-content/content-theme-registry.md)) |
+| `MODERATION_BLOCKED` | 422 | Nội dung do AI sinh không qua bộ lọc kiểm duyệt an toàn (`server/services/ai-assistant.ts`) |
 
 ### 7.5 Chơi
 
@@ -173,6 +179,9 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `TEMPLATE_NOT_SUPPORTED` | 422 | Client yêu cầu template không có |
 | `LAYOUT_NOT_SUPPORTED` | 422 | `layout_id` không thuộc `layouts` của template ([`game-layout-engine.md`](../01-platform/game-layout-engine.md)) |
 | `INTRO_REQUIRED` | 428 | Trẻ chưa đi qua bài làm quen của một hoặc nhiều strand mà level chạm tới; `details.{intro_queue, intro_remaining, return_level_code}` ([`concept-intro-gate.md`](../04-play/concept-intro-gate.md)) |
+| `UNKNOWN_EVENT_NAME` | 422 | Tên sự kiện ngoài từ vựng đóng của `packages/play` |
+| `INVALID_SEQUENCE` | 400 | `seq` không phải số nguyên hợp lệ — khác `EVENT_OUT_OF_ORDER` (đúng kiểu nhưng lùi) |
+| `BATCH_TOO_LARGE` | 413 | Số sự kiện trong một lô vượt trần |
 
 ### 7.6 Dữ liệu trẻ và tài khoản
 
@@ -184,6 +193,15 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `EXPORT_RATE_LIMITED` | 429 | Quá 1 lần / 24h |
 | `EMAIL_ALREADY_REGISTERED` | 409 | **Chỉ ở luồng đăng ký** — xem `BR-ERR-02` |
 | `INVALID_CREDENTIALS` | 401 | Sai email **hoặc** sai mật khẩu — **không phân biệt** |
+| `ACCOUNT_DELETED` | 403 | Đăng nhập vào tài khoản đang trong thời gian chờ xoá |
+| `ACCOUNT_PURGED` | 410 | Huỷ yêu cầu xoá sau khi dữ liệu đã bị xoá vĩnh viễn |
+| `USER_ALREADY_DELETED` | 409 | Thao tác quản trị trên User đã xoá |
+| `EMAIL_ALREADY_IN_USE` | 409 | **Ở luồng đổi email** — khác `EMAIL_ALREADY_REGISTERED` (luồng đăng ký) |
+| `CHILD_PENDING_DELETION` | 409 | Thao tác trên hồ sơ trẻ đang chờ xoá |
+| `PARENT_GATE_INVALID` | 400 | Thử thách cổng người lớn sai định dạng hoặc không tồn tại |
+| `PARENT_GATE_EXPIRED` | 410 | Thử thách cổng người lớn đã hết hạn |
+| `PARENT_GATE_FAILED` | 403 | Trả lời thử thách cổng người lớn sai |
+| `TRANSACTIONAL_NOTIFICATION_CANNOT_BE_DISABLED` | 422 | Tắt loại thông báo giao dịch bắt buộc |
 
 ### 7.7 Chung
 
@@ -198,14 +216,22 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 
 ## 8. API contract
 
-Middleware lỗi là nơi duy nhất dựng body. Handler chỉ ném mã.
+Tầng API ném trực tiếp các lớp domain từ package `@mindkid/errors`. Mỗi lớp tự mang mã lỗi, HTTP status và message mặc định chuẩn hoá; handler trung tâm của server (`apps/web/server/error.ts`) tự động render thành body chuẩn `ApiErrorBody` mà route không phải bắt lại.
 
 ```ts
-throw appError("TIER_LOCKED", { access_tier: "premium", required_entitlement: "play_premium_games" });
+import { TierLockedError } from "@mindkid/errors/billing";
+import { ChildNotFoundError } from "@mindkid/errors/child";
+
+// Ném lỗi domain kèm details nghiệp vụ:
+throw new TierLockedError("Nội dung thuộc gói cao hơn.", {
+  cause: { access_tier: "premium", required_entitlement: "play_premium_games" },
+});
+
+// Ném lỗi model:
+throw new ChildNotFoundError(childUuid);
 ```
 
-`appError` tra registry để lấy HTTP status và `message` mặc định. Mã không có trong registry
-→ throw ở **dev**, log + `INTERNAL_ERROR` ở **prod**.
+Mỗi lớp domain đều được kiểm tra tính hợp lệ và đồng bộ với bảng đăng ký ở §7 qua cổng `check:error-codes`.
 
 ## 9. Acceptance criteria
 
@@ -271,6 +297,7 @@ Scenario: REAUTH_REQUIRED nói được làm gì tiếp
 - Trả 404 cho record của người khác.
 - Log đầy đủ ngữ cảnh ở server, trả tối thiểu cho client.
 - Thông báo tiếng Việt nói rõ làm gì tiếp.
+- Client bắt lỗi bằng `isApiError(err, 'CODE')` / `isApiErrorCode(err, 'CODE')` từ `@mindkid/errors/client` (`BR-ERR-06`, `BR-AEC-01`).
 
 **Ask first**
 - Thêm mã lỗi mới.

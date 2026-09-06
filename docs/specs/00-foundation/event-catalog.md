@@ -174,6 +174,10 @@ set một vòng — xem `BR-RSP-02` ở [`round-sequence-play.md`](../04-play/ro
 | `intro_step_answered` | `{ step_id, action, answer_correct, miss_count, tts_used }` | `GT-000` |
 | `intro_step_deferred` | `{ step_id, reason }` | `GT-000` |
 | `intro_recall_answered` | `{ step_id, target_asset_id, answer_correct }` | `GT-000` |
+| `intro_segment_started` | `{ segment_id, segment_index, asset_count, is_review }` | `GT-000` |
+| `intro_segment_completed` | `{ segment_id, segment_index, miss_count }` | `GT-000` |
+| `intro_echo_started` | `{ step_id, target_asset_id, tts_used }` | `GT-000` |
+| `intro_echo_completed` | `{ step_id, target_asset_id, replay_count }` | `GT-000` |
 | `tts_unavailable` | `{ lang }` | `GT-000` |
 
 

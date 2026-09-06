@@ -1,10 +1,12 @@
 import { writeAudit } from "@mindkid/audit";
 import { getOwnerDb } from "@mindkid/db";
+import { InsufficientRoleError } from "@mindkid/errors/auth";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import {
   type NotificationCode,
   TEMPLATE_REGISTRY,
 } from "@mindkid/notification";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const SCRIPT_TAG_REGEX = /<script/i;
@@ -12,19 +14,14 @@ const EXTERNAL_IMG_REGEX = /<img[^>]+src=["']http/i;
 
 function validateTemplateSecurity(content: string): void {
   if (SCRIPT_TAG_REGEX.test(content)) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "INVALID_TAG_SCRIPT",
-      message: "Nội dung thông báo không được chứa thẻ script độc hại (D-KL)",
-    });
+    throw new ValidationError(
+      "Nội dung thông báo không được chứa thẻ script độc hại (D-KL)"
+    );
   }
   if (EXTERNAL_IMG_REGEX.test(content)) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "INVALID_EXTERNAL_IMAGE",
-      message:
-        "Nội dung thông báo không được chứa hình ảnh theo dõi bên ngoài (D-KL)",
-    });
+    throw new ValidationError(
+      "Nội dung thông báo không được chứa hình ảnh theo dõi bên ngoài (D-KL)"
+    );
   }
 }
 
@@ -43,12 +40,9 @@ function validateRequiredVariables(
   );
 
   if (missingVars.length > 0) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "MISSING_REQUIRED_VARIABLES",
-      message: `Mẫu thông báo thiếu các biến bắt buộc: ${missingVars.join(", ")} (BR-NTA-07)`,
-      data: { missing_variables: missingVars },
-    });
+    throw new ValidationError(
+      `Mẫu thông báo thiếu các biến bắt buộc: ${missingVars.join(", ")} (BR-NTA-07)`
+    );
   }
 }
 
@@ -66,43 +60,29 @@ export default defineEventHandler(async (event) => {
 
   // BR-NTA-05: super_admin only
   if (manager.role !== "super_admin") {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "INSUFFICIENT_ROLE",
-      message:
-        "Chỉ super_admin mới có quyền cập nhật mẫu thông báo (BR-NTA-05)",
-    });
+    throw new InsufficientRoleError(
+      "Chỉ super_admin mới có quyền cập nhật mẫu thông báo (BR-NTA-05)"
+    );
   }
 
   const code = getRouterParam(event, "code") as NotificationCode;
   const version = Number(getRouterParam(event, "version")) || 1;
 
   if (!(code && code in TEMPLATE_REGISTRY)) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "TEMPLATE_NOT_FOUND",
-      message: `Không tìm thấy mẫu thông báo mã '${code}'`,
-    });
+    throw new NotFoundError(`Không tìm thấy mẫu thông báo mã '${code}'`);
   }
 
   if (code.startsWith("child_")) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "CHILD_RECIPIENT_FORBIDDEN",
-      message:
-        "Hệ thống nghiêm cấm tạo hoặc gửi mẫu thông báo trực tiếp tới trẻ em (BR-NTA-06, BR-NOT-02)",
-    });
+    throw new ValidationError(
+      "Hệ thống nghiêm cấm tạo hoặc gửi mẫu thông báo trực tiếp tới trẻ em (BR-NTA-06)"
+    );
   }
 
   const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
   const parsedResult = patchNotificationTemplateSchema.safeParse(raw);
   if (!parsedResult.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "SUBJECT_REQUIRED",
-      message: "Tiêu đề mẫu thông báo không được để trống",
-    });
+    throw new ValidationError("Tiêu đề mẫu thông báo không được để trống");
   }
 
   const {

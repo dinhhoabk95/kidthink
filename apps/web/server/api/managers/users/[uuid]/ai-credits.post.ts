@@ -1,4 +1,4 @@
-import { appError } from "@mindkid/auth";
+import { UserNotFoundError } from "@mindkid/errors/account";
 import { manualGrantCreditsSchema } from "@mindkid/shared";
 import {
   defineEventHandler,
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const session = requireSuperAdminSession(event);
   const userUuid = getRouterParam(event, "uuid");
   if (!userUuid) {
-    throw appError("NOT_FOUND", "User UUID is required");
+    throw new UserNotFoundError();
   }
 
   const customEvent = event as unknown as {

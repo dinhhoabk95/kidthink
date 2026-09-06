@@ -1,5 +1,4 @@
 import {
-  appError,
   getAuthRedisClient,
   getBrowserSessionService,
   MfaChallengeService,
@@ -12,6 +11,11 @@ import {
   PostgresSessionStore,
   users,
 } from "@mindkid/db";
+import {
+  AccountDeletedError,
+  AccountSuspendedError,
+} from "@mindkid/errors/account";
+import { InvalidCredentialsError } from "@mindkid/errors/auth";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import {
@@ -49,7 +53,7 @@ function parseLoginCredentials(rawBody: unknown): {
 } {
   const parsed = LoginSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
   return {
     email: parsed.data.email.toLowerCase(),
@@ -86,19 +90,19 @@ export async function handleLogin(event: H3Event, testBody?: unknown) {
   // BR-LGN-03 / D-EP: Timing mitigation for missing user or missing passwordHash
   if (!user?.passwordHash) {
     await verifyPassword(password, DUMMY_HASH).catch(() => false);
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
 
   const validPassword = await verifyPassword(password, user.passwordHash);
   if (!validPassword) {
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
 
   if (user.status === "suspended") {
-    throw appError("ACCOUNT_SUSPENDED");
+    throw new AccountSuspendedError();
   }
   if (user.status === "deleted") {
-    throw appError("ACCOUNT_DELETED");
+    throw new AccountDeletedError();
   }
 
   // BR-MFA-09 / D-KY: Check if user has MFA enabled

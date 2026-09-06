@@ -1,13 +1,10 @@
-import { appError, generateSecureToken, hashSecureToken } from "@mindkid/auth";
+import { generateSecureToken, hashSecureToken } from "@mindkid/auth";
 import { getOwnerDb, users, verificationTokens } from "@mindkid/db";
+import { EmailAlreadyInUseError } from "@mindkid/errors/account";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { and, eq, isNull } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
 import {
@@ -35,15 +32,7 @@ export default defineEventHandler(async (event) => {
 
   const parsed = ChangeEmailSchema.safeParse(rawBody);
   if (!parsed.success) {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "Địa chỉ email không hợp lệ.",
-      },
-    });
+    throw new ValidationError("Địa chỉ email không hợp lệ.");
   }
 
   const newEmail = parsed.data.new_email.toLowerCase();
@@ -56,20 +45,11 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!currentUser) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   if (currentUser.email.toLowerCase() === newEmail) {
-    setResponseStatus(event, 400);
-    throw createError({
-      statusCode: 400,
-      statusMessage: "SAME_EMAIL",
-      data: {
-        code: "SAME_EMAIL",
-        message: "Địa chỉ email mới trùng với địa chỉ hiện tại.",
-      },
-    });
+    throw new ValidationError("Địa chỉ email mới trùng với địa chỉ hiện tại.");
   }
 
   // Check if new_email is already used by another user
@@ -80,7 +60,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (existing) {
-    throw appError("EMAIL_ALREADY_IN_USE");
+    throw new EmailAlreadyInUseError();
   }
 
   // Generate token valid for 24h (BR-ACS-03, BR-ACS-04)

@@ -140,6 +140,14 @@ export const C5_STO_01_SEED: SkillSeed = {
   dataset: C5_STO_01_DATASET,
   levels: [
     {
+      code: "GL-C5-STO-INTRO-0001",
+      template: "GT-000",
+      band: "3-5",
+      difficulty: 1,
+      theme: "school",
+      rounds: 1,
+    },
+    {
       code: "GL-C5-VOC-CARD-0001",
       template: "GT-012",
       band: "3-4",

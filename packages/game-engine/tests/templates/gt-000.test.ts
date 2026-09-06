@@ -4,6 +4,9 @@ import { GT000_FIXTURES } from "#src/templates/GT-000/fixtures";
 import { GT000Session } from "#src/templates/GT-000/session";
 import type { GT000Content } from "#src/templates/GT-000/template";
 
+const FORBIDDEN_AUDIO_REGEX =
+  /audio_blob|recording|record_url|mic|voice_sample/i;
+
 describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
   const fixture = GT000_FIXTURES[0];
   if (!fixture) {
@@ -175,6 +178,14 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
       contrast_group: "g1",
     };
 
+    const validConcept = {
+      skill_code: "C1.NREC.01",
+      label: "Số 0 đến 5",
+      teaches: ["C1.NREC.01", "C1.NREC.02"],
+      values: ["a1", "a2"],
+      sequence_no: 1,
+    };
+
     const validSegment = {
       segment_id: "seg_1",
       asset_ids: ["a1", "a2"],
@@ -218,7 +229,7 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
         contrast_group: "numbers",
       }));
       const res = GT000ContentSchema.safeParse({
-        concept: { skill_code: "C1.NREC.13", label: "Số" },
+        concept: { skill_code: "C1.NREC.01", label: "Số" },
         assets: manyAssets,
         segments: [validSegment],
       });
@@ -256,7 +267,7 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
         is_review: false,
       };
       const res = GT000ContentSchema.safeParse({
-        concept: { skill_code: "C1.NREC.13", label: "Số" },
+        concept: validConcept,
         assets: [validAsset, validAsset2],
         segments: [nonReviewSegment],
       });
@@ -302,7 +313,7 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
         "#src/templates/GT-000/template"
       );
       const validContent = {
-        concept: { pre_skill_code: "C1.NREC.13", label: "Số 0 đến 5" },
+        concept: validConcept,
         assets: [validAsset, validAsset2],
         segments: [validSegment],
       };
@@ -313,6 +324,150 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
       };
       expect(GT000ContentSchema.safeParse(validContent).success).toBe(true);
       expect(GT000DifficultySchema.safeParse(validDiff).success).toBe(true);
+    });
+
+    it("Ca âm BR-E000-10: phân đoạn dạy không có bước echo bị từ chối", async () => {
+      const { GT000SegmentSchema } = await import(
+        "#src/templates/GT-000/template"
+      );
+      const teachingSegmentWithoutEcho = {
+        ...validSegment,
+        segment_id: "seg_teach",
+        is_review: false,
+      };
+      const res = GT000SegmentSchema.safeParse(teachingSegmentWithoutEcho);
+      expect(res.success).toBe(false);
+      if (!res.success) {
+        expect(res.error.message).toContain("echo");
+      }
+    });
+
+    it("Ca dương BR-E000-10: phân đoạn dạy có bước echo được chấp nhận", async () => {
+      const { GT000SegmentSchema } = await import(
+        "#src/templates/GT-000/template"
+      );
+      const teachingSegmentWithEcho = {
+        segment_id: "seg_teach",
+        asset_ids: ["a1", "a2"],
+        steps: [
+          { action: "present" as const, target_asset_id: "a1" },
+          {
+            action: "echo" as const,
+            target_asset_id: "a1",
+            repeat_count: 1,
+          },
+          {
+            action: "recall" as const,
+            target_asset_id: "a1",
+            option_asset_ids: ["a1", "a2"],
+          },
+        ],
+        is_review: false,
+      };
+      expect(
+        GT000SegmentSchema.safeParse(teachingSegmentWithEcho).success
+      ).toBe(true);
+    });
+
+    it("Ca âm BR-CTM-09: concept.values có giá trị không được dạy thì bị từ chối", async () => {
+      const { GT000ContentSchema } = await import(
+        "#src/templates/GT-000/template"
+      );
+      const res = GT000ContentSchema.safeParse({
+        concept: { ...validConcept, values: ["a1", "a2", "a3_khong_day"] },
+        assets: [validAsset, validAsset2],
+        segments: [validSegment],
+      });
+      expect(res.success).toBe(false);
+      if (!res.success) {
+        expect(res.error.message).toContain("concept.values");
+      }
+    });
+
+    it("Ca âm BR-CTM-03: concept thiếu skill_code thì bị từ chối", async () => {
+      const { GT000ContentSchema } = await import(
+        "#src/templates/GT-000/template"
+      );
+      const res = GT000ContentSchema.safeParse({
+        concept: {
+          label: "Số 0 đến 5",
+          teaches: ["C1.NREC.01"],
+          values: ["a1", "a2"],
+        },
+        assets: [validAsset, validAsset2],
+        segments: [validSegment],
+      });
+      expect(res.success).toBe(false);
+    });
+  });
+
+  describe("Tập nói theo — BR-CIR-21, BR-CIR-22", () => {
+    const echoFixture = GT000_FIXTURES[0];
+    if (!echoFixture) {
+      throw new Error("Fixture GT-000 not found");
+    }
+
+    it("BR-CIR-21: đi qua bước echo không phát sinh event mang dữ liệu âm thanh", () => {
+      const session = new GT000Session(
+        echoFixture.content,
+        echoFixture.difficulty
+      );
+      session.prepareRound("3-4");
+
+      // Đi hết bài, gồm cả bước echo.
+      for (let i = 0; i < 40 && !session.checkWinCondition(); i++) {
+        const view = session.getView();
+        const entity = view.entities[0];
+        session.dispatch({
+          type: "tap",
+          x: entity?.x ?? 0,
+          y: entity?.y ?? 0,
+          timeMs: i * 100,
+        });
+      }
+
+      const { events } = session.getTelemetry();
+      expect(events.some((e) => e.event_name === "intro_echo_completed")).toBe(
+        true
+      );
+
+      for (const event of events) {
+        expect(
+          FORBIDDEN_AUDIO_REGEX.test(JSON.stringify(event.data ?? {}))
+        ).toBe(false);
+      }
+    });
+
+    it("BR-CIR-22: nghe lại quá repeat_count thì bị bỏ qua, step không tự đi tiếp", () => {
+      const session = new GT000Session(
+        echoFixture.content,
+        echoFixture.difficulty
+      );
+      session.prepareRound("3-4");
+
+      // Nhảy tới bước echo đầu tiên: fixture 1 có 3 present rồi tới echo.
+      const echoIndex = echoFixture.content.steps?.findIndex(
+        (step) => step.action === "echo"
+      );
+      expect(echoIndex).toBeGreaterThan(-1);
+
+      while (session.currentStepIndex < (echoIndex ?? 0)) {
+        const before = session.currentStepIndex;
+        session.validateAction({ type: "tap_item", data: {} });
+        expect(session.currentStepIndex).toBe(before + 1);
+      }
+
+      const atEcho = session.currentStepIndex;
+      session.validateAction({ type: "tap_item", data: { intent: "replay" } });
+      expect(session.currentStepIndex).toBe(atEcho);
+
+      // Lần replay thứ hai vượt repeat_count = 1 → bị bỏ qua, vẫn không đi tiếp.
+      session.validateAction({ type: "tap_item", data: { intent: "replay" } });
+      expect(session.currentStepIndex).toBe(atEcho);
+
+      // Chạm bình thường thì đi tiếp.
+      session.validateAction({ type: "tap_item", data: {} });
+      expect(session.currentStepIndex).toBe(atEcho + 1);
     });
   });
 });

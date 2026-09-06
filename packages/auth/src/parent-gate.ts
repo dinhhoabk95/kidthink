@@ -1,5 +1,10 @@
 import crypto from "node:crypto";
-import { appError } from "./errors";
+import { isAppError } from "@mindkid/errors/base";
+import {
+  ParentGateExpiredError,
+  ParentGateFailedError,
+  ParentGateInvalidError,
+} from "@mindkid/errors/child";
 
 export interface ParentGateChallenge {
   challengeId: string;
@@ -61,7 +66,7 @@ function decodeChallenge(
     hmac.length !== expectedHmac.length ||
     !crypto.timingSafeEqual(Buffer.from(hmac), Buffer.from(expectedHmac))
   ) {
-    throw appError("PARENT_GATE_INVALID");
+    throw new ParentGateInvalidError();
   }
   const payload = JSON.parse(dataJson) as ParentGateChallenge;
   const validShape =
@@ -74,7 +79,7 @@ function decodeChallenge(
     payload.factorB <= 9 &&
     Number.isSafeInteger(payload.expiresAt);
   if (!validShape) {
-    throw appError("PARENT_GATE_INVALID");
+    throw new ParentGateInvalidError();
   }
   return payload;
 }
@@ -90,23 +95,23 @@ export function verifyParentGateChallenge(
 ): { gateToken: string; expiresAt: number } {
   const [dataB64, hmac] = challengePayload.split(".");
   if (!(dataB64 && hmac)) {
-    throw appError("PARENT_GATE_INVALID");
+    throw new ParentGateInvalidError();
   }
 
   try {
     const payload = decodeChallenge(dataB64, hmac, secret);
 
     if (Date.now() > payload.expiresAt) {
-      throw appError("PARENT_GATE_EXPIRED");
+      throw new ParentGateExpiredError();
     }
 
     const consumedAt = consumedChallenges.get(payload.challengeId);
     if (consumedAt && consumedAt > Date.now()) {
-      throw appError("PARENT_GATE_INVALID");
+      throw new ParentGateInvalidError();
     }
 
     if (Number(answer) !== payload.factorA * payload.factorB) {
-      throw appError("PARENT_GATE_FAILED");
+      throw new ParentGateFailedError();
     }
 
     consumedChallenges.set(payload.challengeId, payload.expiresAt);
@@ -122,10 +127,10 @@ export function verifyParentGateChallenge(
 
     return { gateToken, expiresAt: tokenExpiresAt };
   } catch (err) {
-    if (err instanceof Error && err.name === "AppError") {
+    if (isAppError(err)) {
       throw err;
     }
-    throw appError("PARENT_GATE_INVALID");
+    throw new ParentGateInvalidError();
   }
 }
 

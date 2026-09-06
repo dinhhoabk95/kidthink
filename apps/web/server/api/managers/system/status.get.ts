@@ -1,6 +1,7 @@
 import { backupLog, errorLogs, getOwnerDb } from "@mindkid/db";
+import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { and, desc, eq, gte, sql } from "drizzle-orm";
-import { createError, defineEventHandler, setResponseHeader } from "h3";
+import { defineEventHandler, setResponseHeader } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export type SystemHealthStatus = "ok" | "unknown" | "bad";
@@ -56,12 +57,9 @@ export default defineEventHandler(async (event) => {
 
   // BR-SYS-05: super_admin only
   if (manager.role !== "super_admin") {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "INSUFFICIENT_ROLE",
-      message:
-        "Chỉ super_admin mới có quyền xem trạng thái hệ thống (BR-SYS-05)",
-    });
+    throw new InsufficientRoleError(
+      "Chỉ super_admin mới có quyền xem trạng thái hệ thống (BR-SYS-05)"
+    );
   }
 
   setResponseHeader(event, "Cache-Control", "no-store");

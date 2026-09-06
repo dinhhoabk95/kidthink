@@ -10,7 +10,7 @@ export const C4_DET_01_IDENTITY: SkillIdentity = {
   difficulty: 1,
   thinking_processes: ["observe"],
   tier: "basic",
-  prerequisites: ["C4.DET.05"],
+  prerequisites: [],
   learning_objectives: [
     {
       code: "LO-C4.DET.01-01",
@@ -166,10 +166,157 @@ export const C4_DET_01_DATASET: SkillDataset = {
   ordering: ["spoon", "cup", "bed", "chair", "apple"],
 };
 
+/**
+ * Chủ đề làm quen — dataset của bài học mở đầu GL-C4-DET-INTRO-0001.
+ *
+ * Chủ đề không có hàng `skills` riêng (`BR-CTM-01`): nó sống trên chính level dạy
+ * qua `SkillLevelPlan.dataset`. Trước 2026-09-06 dataset này treo ở kỹ năng bậc
+ * `pre` C4.DET.05, kỹ năng đó đã bị gỡ.
+ */
+const TOPIC_BASIC_COLOURS_DATASET: SkillDataset = {
+  skill_code: "C4.DET.01",
+  concept_label: "Làm quen màu cơ bản",
+  surface: "game",
+  items: [
+    {
+      id: "red",
+      label: "màu đỏ",
+      image: {
+        kind: "emoji",
+        ref: "🔴",
+      },
+      category: {
+        type: "màu sắc",
+      },
+    },
+    {
+      id: "blue",
+      label: "màu xanh dương",
+      image: {
+        kind: "emoji",
+        ref: "🔵",
+      },
+      category: {
+        type: "màu sắc",
+      },
+    },
+    {
+      id: "yellow",
+      label: "màu vàng",
+      image: {
+        kind: "emoji",
+        ref: "🟡",
+      },
+      category: {
+        type: "màu sắc",
+      },
+    },
+    {
+      id: "green",
+      label: "màu xanh lá",
+      image: {
+        kind: "emoji",
+        ref: "🟢",
+      },
+      category: {
+        type: "màu sắc",
+      },
+    },
+    {
+      id: "orange",
+      label: "màu cam",
+      image: {
+        kind: "emoji",
+        ref: "🟠",
+      },
+      category: {
+        type: "màu sắc",
+      },
+    },
+    {
+      id: "purple",
+      label: "màu tím",
+      image: {
+        kind: "emoji",
+        ref: "🟣",
+      },
+      category: {
+        type: "màu sắc",
+      },
+    },
+    {
+      id: "pink",
+      label: "màu hồng",
+      image: {
+        kind: "emoji",
+        ref: "🌸",
+      },
+      category: {
+        type: "màu sắc",
+      },
+    },
+    {
+      id: "brown",
+      label: "màu nâu",
+      image: {
+        kind: "emoji",
+        ref: "🟤",
+      },
+      category: {
+        type: "màu sắc",
+      },
+    },
+  ],
+  ladder: [
+    {
+      rung: 1,
+      dimension: "range",
+      description: "Giới thiệu 8 màu cơ bản qua tai và mắt",
+    },
+    {
+      rung: 2,
+      dimension: "range",
+      description: "Nhận biết và chọn đúng màu sắc",
+    },
+    {
+      rung: 3,
+      dimension: "range",
+      description: "Gọi tên và phân biệt các màu sắc",
+    },
+  ],
+  phrasing: {
+    prompt_template: "Bé hãy làm quen với các màu sắc nhé!",
+    narration_template: "Chúng mình cùng làm quen với các màu sắc cơ bản nhé",
+    success_message: "Hoan hô, bé đã nhận biết đúng màu rồi!",
+    hint_message: "Bé hãy lắng nghe và nhìn kỹ màu sắc nhé!",
+  },
+  ordering: [
+    "red",
+    "blue",
+    "yellow",
+    "green",
+    "orange",
+    "purple",
+    "pink",
+    "brown",
+  ],
+};
+
 export const C4_DET_01_SEED: SkillSeed = {
   identity: C4_DET_01_IDENTITY,
   dataset: C4_DET_01_DATASET,
   levels: [
+    {
+      code: "GL-C4-DET-INTRO-0001",
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      theme: "nature",
+      rounds: 1,
+      dataset: TOPIC_BASIC_COLOURS_DATASET,
+      sequence_no: 1,
+      skill_codes: ["C4.DET.01"],
+    },
     {
       code: "GL-C4-HID-OBJ-0006",
       template: "GT-022",

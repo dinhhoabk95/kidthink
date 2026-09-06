@@ -1,4 +1,4 @@
-import { appError, generateSecureToken, hashSecureToken } from "@mindkid/auth";
+import { generateSecureToken, hashSecureToken } from "@mindkid/auth";
 import {
   auditLogs,
   getOwnerDb,
@@ -7,6 +7,8 @@ import {
   users,
   verificationTokens,
 } from "@mindkid/db";
+import { UserAlreadyDeletedError } from "@mindkid/errors/account";
+import { NotFoundError } from "@mindkid/errors/common";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam } from "h3";
 import {
@@ -18,7 +20,7 @@ export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);
   const userUuid = getRouterParam(event, "uuid");
   if (!userUuid) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const db = getOwnerDb();
@@ -29,11 +31,11 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!targetUser) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   if (targetUser.status === "deleted") {
-    throw appError("USER_ALREADY_DELETED");
+    throw new UserAlreadyDeletedError();
   }
 
   const now = new Date();

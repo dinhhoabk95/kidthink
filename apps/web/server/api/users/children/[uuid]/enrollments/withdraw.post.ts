@@ -5,13 +5,9 @@ import {
   curriculumEnrollments,
   getOwnerDb,
 } from "@mindkid/db";
+import { InternalError, NotFoundError } from "@mindkid/errors/common";
 import { and, eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 
 import {
   getVerifiedRemoteIp,
@@ -22,8 +18,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const userId = Number(user.user_id);
@@ -42,12 +37,7 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!child) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      data: { code: "NOT_FOUND", message: "Không tìm thấy hồ sơ trẻ." },
-    });
+    throw new NotFoundError("Không tìm thấy hồ sơ trẻ.");
   }
 
   // 2. Find active enrollment
@@ -68,15 +58,7 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!activeEnrollment) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      data: {
-        code: "NOT_FOUND",
-        message: "Bé không có lộ trình học nào đang hoạt động.",
-      },
-    });
+    throw new NotFoundError("Bé không có lộ trình học nào đang hoạt động.");
   }
 
   // 3. Mark enrollment as withdrawn (progress is retained)
@@ -87,7 +69,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!updated) {
-    throw createError({ statusCode: 500, statusMessage: "WITHDRAW_FAILED" });
+    throw new InternalError("WITHDRAW_FAILED");
   }
 
   // 4. Audit log

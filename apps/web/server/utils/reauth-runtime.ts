@@ -1,4 +1,5 @@
-import { appError, REAUTH_MAX_AGE_SECONDS } from "@mindkid/auth";
+import { REAUTH_MAX_AGE_SECONDS } from "@mindkid/auth";
+import { ReauthRequiredError } from "@mindkid/errors/auth";
 import type { H3Event } from "h3";
 
 export function requireReauth(
@@ -19,7 +20,7 @@ export function requireReauth(
     context?.superadmin?.reauth_at ??
     context?.manager?.reauth_at;
   if (!rawReauthAt) {
-    throw appError("REAUTH_REQUIRED", {
+    throw new ReauthRequiredError({
       methods: ["password", "mfa_totp"],
     });
   }
@@ -28,14 +29,14 @@ export function requireReauth(
     rawReauthAt instanceof Date ? rawReauthAt : new Date(rawReauthAt);
 
   if (Number.isNaN(reauthAt.getTime())) {
-    throw appError("REAUTH_REQUIRED", {
+    throw new ReauthRequiredError({
       methods: ["password", "mfa_totp"],
     });
   }
 
   const ageMs = now.getTime() - reauthAt.getTime();
   if (ageMs < 0 || ageMs > maxAgeSeconds * 1000) {
-    throw appError("REAUTH_REQUIRED", {
+    throw new ReauthRequiredError({
       methods: ["password", "mfa_totp"],
     });
   }

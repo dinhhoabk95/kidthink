@@ -1,18 +1,13 @@
-import { appError } from "@mindkid/auth";
 import {
   childProfiles,
   consentLogs,
   consentRequirements,
   getOwnerDb,
 } from "@mindkid/db";
+import { ConsentRequirementChangedError } from "@mindkid/errors/account";
+import { ValidationError } from "@mindkid/errors/common";
 import { and, eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  getHeader,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, getHeader, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
 
 import {
@@ -40,14 +35,7 @@ export default defineEventHandler(async (event) => {
 
   const parsed = SubmitConsentSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "Dữ liệu đồng ý không hợp lệ.",
-      },
-    });
+    throw new ValidationError("Dữ liệu đồng ý không hợp lệ.");
   }
 
   const { consent_type: consentType, requirement_at: clientReqAt } =
@@ -77,7 +65,7 @@ export default defineEventHandler(async (event) => {
       : null;
 
     if (dbMarker !== clientMarkerNorm) {
-      throw appError("CONSENT_REQUIREMENT_CHANGED");
+      throw new ConsentRequirementChangedError();
     }
 
     // BR-CSM-01 & BR-CSM-07: INSERT-only into consent_logs

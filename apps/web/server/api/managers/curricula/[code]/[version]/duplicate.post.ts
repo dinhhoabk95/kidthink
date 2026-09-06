@@ -5,14 +5,10 @@ import {
   curriculumWeeks,
   getOwnerDb,
 } from "@mindkid/db";
+import { ValidationError } from "@mindkid/errors/common";
+import { CurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import { and, eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -140,22 +136,16 @@ export default defineEventHandler(async (event) => {
   const version = Number(versionParam) || 1;
 
   if (!code) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "BAD_REQUEST",
-      message: "Thiếu tham số mã chương trình",
-    });
+    throw new ValidationError("Thiếu tham số mã chương trình");
   }
 
   const rawBody =
     event.context?.body ?? (await readBody(event).catch(() => ({}))) ?? {};
   const parsed = duplicateCurriculumSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: parsed.error.issues[0]?.message || "Dữ liệu không hợp lệ",
-    });
+    throw new ValidationError(
+      parsed.error.issues[0]?.message || "Dữ liệu không hợp lệ"
+    );
   }
 
   const db = getOwnerDb();
@@ -169,11 +159,9 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!source) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "CURRICULUM_NOT_FOUND",
-      message: `Không tìm thấy chương trình ${code} version ${version}`,
-    });
+    throw new CurriculumNotFoundError(
+      `Không tìm thấy chương trình ${code} version ${version}`
+    );
   }
 
   const newTitle = parsed.data.title || `${source.title} (Bản sao)`;

@@ -1,9 +1,18 @@
-import { appError } from "@mindkid/auth";
 import {
   PROOF_ALLOWED_MIME_TYPES,
   PROOF_MAX_IMAGE_SIZE_BYTES,
 } from "@mindkid/config";
 import { entitlements, getDb, paymentOrders } from "@mindkid/db";
+import { PaymentProofRequiredError } from "@mindkid/errors/billing";
+import {
+  NotFoundError,
+  PayloadTooLargeError,
+  ValidationError,
+} from "@mindkid/errors/common";
+import {
+  InvalidStatusTransitionError,
+  UnsupportedMediaTypeError,
+} from "@mindkid/errors/content";
 import {
   computeSoftUnlockExpiresAt,
   PACKAGE_CATALOG,
@@ -44,9 +53,8 @@ async function extractProofFormData(event: H3Event): Promise<ParsedProofInput> {
   }
 
   if (!bankTxnRef || bankTxnRef.length < 4 || bankTxnRef.length > 64) {
-    throw appError(
-      "PAYMENT_PROOF_REQUIRED",
-      "Mã giao dịch ngân hàng là bắt buộc (từ 4 đến 64 ký tự)."
+    throw new PaymentProofRequiredError(
+      "Mã giao dịch ngân hàng là bắt buộc (từ 4 đến 64 ký tự);."
     );
   }
 
@@ -62,10 +70,7 @@ async function uploadProofFileIfProvided(
   }
 
   if (proofFile.data.length > PROOF_MAX_IMAGE_SIZE_BYTES) {
-    throw appError(
-      "PAYLOAD_TOO_LARGE",
-      "Ảnh chứng từ không được vượt quá 5 MB."
-    );
+    throw new PayloadTooLargeError("Ảnh chứng từ không được vượt quá 5 MB.");
   }
 
   const mimeType = proofFile.type?.toLowerCase() || "";
@@ -74,8 +79,7 @@ async function uploadProofFileIfProvided(
       mimeType as (typeof PROOF_ALLOWED_MIME_TYPES)[number]
     )
   ) {
-    throw appError(
-      "UNSUPPORTED_MEDIA_TYPE",
+    throw new UnsupportedMediaTypeError(
       "Chỉ chấp nhận tệp ảnh định dạng JPEG, PNG hoặc WEBP."
     );
   }
@@ -95,7 +99,7 @@ export default defineEventHandler(async (event) => {
   const session = requireWebUserSession(event);
   const orderUuid = getRouterParam(event, "uuid");
   if (!orderUuid) {
-    throw appError("VALIDATION_FAILED", "Order UUID is required");
+    throw new ValidationError("Order UUID is required");
   }
 
   const db = getDb();
@@ -111,7 +115,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!order) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const currentStatus = order.status as PaymentOrderStatus;
@@ -121,7 +125,7 @@ export default defineEventHandler(async (event) => {
     currentStatus === "rejected" ||
     currentStatus === "cancelled"
   ) {
-    throw appError("INVALID_STATUS_TRANSITION", {
+    throw new InvalidStatusTransitionError({
       current_status: currentStatus,
       reason: "Đơn hàng đã kết thúc xử lý hoặc đã hết hạn.",
     });

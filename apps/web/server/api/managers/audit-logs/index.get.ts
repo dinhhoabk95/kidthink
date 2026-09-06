@@ -1,6 +1,8 @@
 import { auditLogs, getOwnerDb } from "@mindkid/db";
+import { InsufficientRoleError } from "@mindkid/errors/auth";
+import { ValidationError } from "@mindkid/errors/common";
 import { and, desc, eq, gte, ilike, inArray, lte, type SQL } from "drizzle-orm";
-import { createError, defineEventHandler } from "h3";
+import { defineEventHandler } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { readRequestQuery } from "#server/utils/request-body";
 
@@ -39,11 +41,9 @@ function validateAuditDateRange(
     const diffDays =
       (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24);
     if (diffDays > 90) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "TIME_RANGE_TOO_LARGE",
-        message: "Khoảng thời gian tra cứu tối đa là 90 ngày (BR-ALV-03)",
-      });
+      throw new ValidationError(
+        "Khoảng thời gian tra cứu tối đa là 90 ngày (BR-ALV-03)"
+      );
     }
   }
   return { fromDate, toDate };
@@ -125,11 +125,9 @@ export default defineEventHandler(async (event) => {
 
   // BR-ALV-02: super_admin only
   if (manager.role !== "super_admin") {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "INSUFFICIENT_ROLE",
-      message: "Chỉ super_admin mới có quyền xem nhật ký kiểm toán (BR-ALV-02)",
-    });
+    throw new InsufficientRoleError(
+      "Chỉ super_admin mới có quyền xem nhật ký kiểm toán (BR-ALV-02)"
+    );
   }
 
   const query = readRequestQuery(event);

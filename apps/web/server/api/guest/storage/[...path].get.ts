@@ -1,21 +1,18 @@
+import { NotFoundError } from "@mindkid/errors/common";
 import { getPublicImage } from "@mindkid/storage";
-import { createError, defineEventHandler, getRouterParam, setHeader } from "h3";
+import { defineEventHandler, getRouterParam, setHeader } from "h3";
 
 export default defineEventHandler((event) => {
   const rawPath = getRouterParam(event, "path");
   if (!rawPath) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError();
   }
 
   const normalized = decodeURIComponent(rawPath);
   const found = getPublicImage(normalized);
 
   if (!found) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "ASSET_NOT_FOUND",
-      message: `Asset at path '${normalized}' not found`,
-    });
+    throw new NotFoundError("Không tìm thấy tệp tin được yêu cầu.");
   }
 
   setHeader(event, "Content-Type", found.contentType || "image/webp");

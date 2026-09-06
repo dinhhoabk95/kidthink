@@ -1,12 +1,7 @@
 import { childProfiles, consentLogs, getOwnerDb } from "@mindkid/db";
+import { ValidationError } from "@mindkid/errors/common";
 import { and, eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  deleteCookie,
-  getHeader,
-  readBody,
-} from "h3";
+import { defineEventHandler, deleteCookie, getHeader, readBody } from "h3";
 import { z } from "zod";
 
 import {
@@ -38,14 +33,9 @@ export default defineEventHandler(async (event) => {
 
   const parsed = WithdrawConsentSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "Yêu cầu rút đồng ý không hợp lệ hoặc thiếu xác nhận.",
-      },
-    });
+    throw new ValidationError(
+      "Yêu cầu rút đồng ý không hợp lệ hoặc thiếu xác nhận."
+    );
   }
 
   const { consent_type: consentType } = parsed.data;

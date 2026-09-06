@@ -1,5 +1,4 @@
 import {
-  appError,
   decryptTotpSecret,
   getAuthRedisClient,
   getBrowserSessionService,
@@ -15,6 +14,10 @@ import {
   PostgresSessionStore,
   users,
 } from "@mindkid/db";
+import {
+  InvalidCredentialsError,
+  MfaSecretCorruptedError,
+} from "@mindkid/errors/auth";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
@@ -54,7 +57,7 @@ async function verifyUserMfa(
       }
     } catch {
       // BR-MFA-13: decryption failure is a system error, not a wrong code
-      throw appError("MFA_SECRET_CORRUPTED");
+      throw new MfaSecretCorruptedError();
     }
   }
 
@@ -80,7 +83,7 @@ export default defineEventHandler(async (event) => {
   const body = (await readBody(event).catch(() => null)) ?? {};
   const parsed = MfaSchema.safeParse(body);
   if (!parsed.success) {
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
   const { challenge, code } = parsed.data;
 
@@ -98,13 +101,13 @@ export default defineEventHandler(async (event) => {
     .where(eq(users.id, challengePayload.accountId));
 
   if (!user || user.status === "deleted" || user.status === "suspended") {
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
 
   const mfaResult = await verifyUserMfa(db, user.id, code);
 
   if (!mfaResult.verified) {
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
 
   // If recovery code used, mark it as consumed (BR-MFA-02)

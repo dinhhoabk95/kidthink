@@ -1,5 +1,4 @@
 import {
-  appError,
   getBrowserSessionService,
   isOAuthProvider,
   type NormalizedProfile,
@@ -13,10 +12,15 @@ import {
   socialIdentities,
   users,
 } from "@mindkid/db";
+import { ValidationError } from "@mindkid/errors/common";
+import {
+  OauthStateInvalidError,
+  SocialEmailConflictError,
+  SocialIdentityAlreadyLinkedError,
+} from "@mindkid/errors/social";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import {
-  createError,
   defineEventHandler,
   deleteCookie,
   getCookie,
@@ -27,6 +31,7 @@ import {
 } from "h3";
 import { z } from "zod";
 import { OAUTH_TICKET_COOKIE_NAME } from "#server/api/guest/auth/oauth/[provider]/callback.get";
+import { throwValidationError } from "#server/utils/api-error";
 import {
   assertRateLimitAllowed,
   assertRequestBodySize,
@@ -50,26 +55,14 @@ type SocialRegisterInput = z.infer<typeof SocialRegisterSchema>;
 function parseRegistrationPayload(rawBody: unknown): SocialRegisterInput {
   const parsed = SocialRegisterSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "Dữ liệu đăng ký mạng xã hội không hợp lệ.",
-      },
-    });
+    throwValidationError(parsed.error);
   }
 
   if (!(parsed.data.accept_terms && parsed.data.accept_privacy)) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message:
-          "Bạn cần đồng ý với Điều khoản dịch vụ và Chính sách quyền riêng tư.",
-      },
-    });
+    throw ValidationError.field(
+      "accept_terms",
+      "Bạn cần đồng ý với Điều khoản dịch vụ và Chính sách quyền riêng tư."
+    );
   }
 
   return parsed.data;
@@ -89,14 +82,9 @@ function resolveProfileFromTicket(
 
   const ticketCookie = getCookie(event, OAUTH_TICKET_COOKIE_NAME);
   if (!ticketCookie) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "OAUTH_STATE_INVALID",
-      data: {
-        code: "OAUTH_STATE_INVALID",
-        message: "Phiên đăng ký mạng xã hội đã hết hạn. Vui lòng thử lại.",
-      },
-    });
+    throw new OauthStateInvalidError(
+      "Phiên đăng ký mạng xã hội đã hết hạn. Vui lòng thử lại."
+    );
   }
 
   try {
@@ -115,14 +103,9 @@ function resolveProfileFromTicket(
     return profile;
   } catch {
     deleteCookie(event, OAUTH_TICKET_COOKIE_NAME, { path: "/" });
-    throw createError({
-      statusCode: 400,
-      statusMessage: "OAUTH_STATE_INVALID",
-      data: {
-        code: "OAUTH_STATE_INVALID",
-        message: "Phiên đăng ký mạng xã hội đã hết hạn. Vui lòng thử lại.",
-      },
-    });
+    throw new OauthStateInvalidError(
+      "Phiên đăng ký mạng xã hội đã hết hạn. Vui lòng thử lại."
+    );
   }
 }
 
@@ -138,7 +121,7 @@ async function assertNoRegistrationConflicts(
     .where(eq(users.email, email));
 
   if (existingEmailUser) {
-    throw appError("SOCIAL_EMAIL_CONFLICT", {
+    throw new SocialEmailConflictError({
       provider: profile.provider,
       masked_email: `${email[0]}***@${email.split("@")[1]}`,
     });
@@ -155,7 +138,7 @@ async function assertNoRegistrationConflicts(
     );
 
   if (existingIdentity) {
-    throw appError("SOCIAL_IDENTITY_ALREADY_LINKED");
+    throw new SocialIdentityAlreadyLinkedError();
   }
 }
 
@@ -303,15 +286,10 @@ export async function handleSocialLogin(event: H3Event, testBody?: unknown) {
   ).toLowerCase();
 
   if (!finalEmail) {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "Vui lòng nhập địa chỉ email để tiếp tục.",
-      },
-    });
+    throw ValidationError.field(
+      "email",
+      "Vui lòng nhập địa chỉ email để tiếp tục."
+    );
   }
 
   const finalDisplayName = (

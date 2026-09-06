@@ -1,11 +1,7 @@
+import { ValidationError } from "@mindkid/errors/common";
+import { WorksheetNotFoundError } from "@mindkid/errors/content";
 import { renderWorksheetPdf } from "@mindkid/export";
-import {
-  createError,
-  defineEventHandler,
-  getQuery,
-  getRouterParam,
-  setHeader,
-} from "h3";
+import { defineEventHandler, getQuery, getRouterParam, setHeader } from "h3";
 import { getWorksheetByCode } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -14,11 +10,7 @@ export default defineEventHandler(async (event) => {
 
   const code = getRouterParam(event, "code");
   if (!code) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "CODE_REQUIRED",
-      message: "Worksheet code is required",
-    });
+    throw new ValidationError("Worksheet code is required");
   }
 
   const query = getQuery(event);
@@ -26,11 +18,7 @@ export default defineEventHandler(async (event) => {
 
   const ws = await getWorksheetByCode(code, version);
   if (!ws) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "WORKSHEET_NOT_FOUND",
-      message: `Worksheet with code ${code} not found`,
-    });
+    throw new WorksheetNotFoundError(`Worksheet with code ${code} not found`);
   }
 
   const renderResult = renderWorksheetPdf({

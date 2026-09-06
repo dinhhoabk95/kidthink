@@ -1,3 +1,4 @@
+import { AppError } from "@mindkid/errors/base";
 import { z } from "zod";
 
 /**
@@ -120,16 +121,19 @@ export const createChildProfileSchema = z
 
 export type CreateChildProfileInput = z.infer<typeof createChildProfileSchema>;
 
-export class ChildFieldNotAllowedError extends Error {
-  readonly code = "CHILD_FIELD_NOT_ALLOWED";
-  readonly statusCode = 400;
-  readonly unallowedFields: string[];
+export class ChildFieldNotAllowedError extends AppError<{
+  readonly unallowedFields: readonly string[];
+}> {
+  readonly unallowedFields: readonly string[];
 
-  constructor(unallowedFields: string[]) {
-    super(
-      `Child profile payload contains unallowed fields: [${unallowedFields.join(", ")}]`
-    );
-    this.name = "ChildFieldNotAllowedError";
+  constructor(unallowedFields: readonly string[]) {
+    super({
+      code: "CHILD_FIELD_NOT_ALLOWED",
+      status: 400,
+      message: `Child profile payload contains unallowed fields: [${unallowedFields.join(", ")}]`,
+      details: { unallowedFields },
+      name: "ChildFieldNotAllowedError",
+    });
     this.unallowedFields = unallowedFields;
   }
 }

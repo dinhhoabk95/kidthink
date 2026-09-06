@@ -58,21 +58,24 @@ export type LifecycleErrorCode =
   | "MACHINE_TRANSITION_FORBIDDEN"
   | "CONTENT_IN_USE";
 
-export class LifecycleError extends Error {
-  readonly code: LifecycleErrorCode;
-  readonly statusCode: number;
-  readonly details?: Record<string, unknown>;
+import { AppError, type ErrorDetails } from "@mindkid/errors/base";
+
+export class LifecycleError extends AppError {
+  override readonly details?: ErrorDetails;
 
   constructor(
     message: string,
     code: LifecycleErrorCode,
     statusCode: number,
-    details?: Record<string, unknown>
+    details?: ErrorDetails
   ) {
-    super(message);
-    this.name = "LifecycleError";
-    this.code = code;
-    this.statusCode = statusCode;
+    super({
+      code,
+      status: statusCode,
+      message,
+      details: details as ErrorDetails,
+      name: "LifecycleError",
+    });
     this.details = details;
   }
 }

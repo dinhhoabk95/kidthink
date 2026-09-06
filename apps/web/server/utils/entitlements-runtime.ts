@@ -1,6 +1,9 @@
-import { appError } from "@mindkid/auth";
 import { getClient } from "@mindkid/cache";
 import { auditLogs, entitlements, getDb } from "@mindkid/db";
+import {
+  EntitlementNotFoundError,
+  PackageNotFoundError,
+} from "@mindkid/errors/billing";
 import {
   computeStackedExpiryDate,
   type EntitlementKey,
@@ -101,7 +104,7 @@ export async function mutateUserEntitlements(
 ): Promise<MutatedEntitlementResult[]> {
   const pkg = PACKAGE_CATALOG[params.packageCode];
   if (!pkg) {
-    throw appError("PACKAGE_NOT_FOUND", "Gói không tồn tại trong catalog");
+    throw new PackageNotFoundError("Gói không tồn tại trong catalog");
   }
 
   const now = new Date();
@@ -225,7 +228,7 @@ export async function revokeUserEntitlementById(
       .limit(1);
 
     if (!existing) {
-      throw appError("NOT_FOUND", "Không tìm thấy quyền cần thu hồi");
+      throw new EntitlementNotFoundError(String(id));
     }
 
     const previousStatus = existing.status;

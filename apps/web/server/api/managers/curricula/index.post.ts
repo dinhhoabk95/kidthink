@@ -5,13 +5,9 @@ import {
   curriculumWeeks,
   getOwnerDb,
 } from "@mindkid/db";
+import { ValidationError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -181,11 +177,9 @@ export default defineEventHandler(async (event) => {
 
   const parsed = createCurriculumSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: parsed.error.issues[0]?.message || "Dữ liệu không hợp lệ",
-    });
+    throw new ValidationError(
+      parsed.error.issues[0]?.message || "Dữ liệu không hợp lệ"
+    );
   }
 
   const db = getOwnerDb();

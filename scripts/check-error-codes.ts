@@ -152,7 +152,7 @@ function collectBareExtendsError(): Counts {
     let count = 0;
     for (const match of matches) {
       const className = match[1];
-      if (!BARE_EXTENDS_ERROR_EXCEPTIONS.has(className)) {
+      if (className && !BARE_EXTENDS_ERROR_EXCEPTIONS.has(className)) {
         count++;
       }
     }

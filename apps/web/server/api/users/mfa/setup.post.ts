@@ -4,8 +4,9 @@ import {
   generateTotpUri,
 } from "@mindkid/auth";
 import { getOwnerDb, mfaSettings, users } from "@mindkid/db";
+import { UserNotFoundError } from "@mindkid/errors/account";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler } from "h3";
+import { defineEventHandler } from "h3";
 import { getMfaEncryptionKey } from "#server/utils/admin-auth-runtime";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
@@ -26,7 +27,7 @@ export default defineEventHandler(async (event) => {
     .where(eq(users.id, userId));
 
   if (!user) {
-    throw createError({ statusCode: 404, statusMessage: "USER_NOT_FOUND" });
+    throw new UserNotFoundError("USER_NOT_FOUND");
   }
 
   // Generate TOTP secret via otpauth (BR-MFA-12)

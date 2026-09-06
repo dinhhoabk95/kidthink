@@ -1,6 +1,8 @@
 import { getOwnerDb, notificationReads, notifications } from "@mindkid/db";
+import { NotificationNotFoundError } from "@mindkid/errors/account";
+import { ValidationError } from "@mindkid/errors/common";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
@@ -10,14 +12,7 @@ export default defineEventHandler(async (event) => {
   const uuidParam = getRouterParam(event, "uuid");
 
   if (!uuidParam) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "NOTIFICATION_UUID_REQUIRED",
-      data: {
-        code: "NOTIFICATION_UUID_REQUIRED",
-        message: "Thiếu notification UUID",
-      },
-    });
+    throw new ValidationError("Thiếu notification UUID");
   }
 
   const db = getOwnerDb();
@@ -36,14 +31,7 @@ export default defineEventHandler(async (event) => {
 
   if (!notif) {
     // BR-NIB-02: 404 for cross-user or missing notification to prevent IDOR
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOTIFICATION_NOT_FOUND",
-      data: {
-        code: "NOTIFICATION_NOT_FOUND",
-        message: "Thông báo không tồn tại",
-      },
-    });
+    throw new NotificationNotFoundError("Thông báo không tồn tại");
   }
 
   // Check existing read row

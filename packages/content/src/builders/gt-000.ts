@@ -7,7 +7,17 @@ import type {
 } from "@mindkid/shared";
 import { resolveItemAsset } from "./utils.js";
 
-function chunkItems<T>(items: readonly T[], maxChunk = 4): T[][] {
+/**
+ * Cắt dãy giá trị của chủ đề thành phân đoạn.
+ *
+ * Trần 3 vật một phân đoạn, không phải 4: từ khi có bước `echo` (BR-CIM-19)
+ * mỗi vật tốn bốn hành động — `present` · `echo` · `recognise` · `recall` —
+ * nên 4 vật là 16 hành động, vượt trần 12 của `BR-CIM-03`. 3 vật là đúng 12.
+ *
+ * Phân đoạn cuối Cấm — NEVER còn lại một vật: một vật thì không có gì để phân
+ * biệt (`BR-CIM-03` đòi tối thiểu 2 chất liệu mỗi phân đoạn).
+ */
+function chunkItems<T>(items: readonly T[], maxChunk = 3): T[][] {
   const chunks: T[][] = [];
   let i = 0;
   while (i < items.length) {
@@ -16,12 +26,8 @@ function chunkItems<T>(items: readonly T[], maxChunk = 4): T[][] {
       chunks.push(items.slice(i));
       break;
     }
-    if (remaining === 5) {
-      chunks.push(items.slice(i, i + 3));
-      chunks.push(items.slice(i + 3, i + 5));
-      break;
-    }
-    const chunkSize = remaining >= 7 ? 4 : 3;
+    // Tránh để dư đúng 1 vật ở phân đoạn cuối.
+    const chunkSize = remaining === maxChunk + 1 ? maxChunk - 1 : maxChunk;
     chunks.push(items.slice(i, i + chunkSize));
     i += chunkSize;
   }
@@ -31,7 +37,7 @@ function chunkItems<T>(items: readonly T[], maxChunk = 4): T[][] {
 export const projectGT000: Projection<"GT-000"> = {
   template: "GT-000",
   requires: { min_items: 2, max_items: 21 },
-  project(dataset: SkillDataset, _opts: ProjectOptions): ProjectedPack {
+  project(dataset: SkillDataset, opts: ProjectOptions): ProjectedPack {
     if (dataset.items.length < 2) {
       throw new Error(
         `[BR-SDS-05] Dataset ${dataset.skill_code} có ${dataset.items.length} vật, nhưng GT-000 đòi hỏi tối thiểu 2 vật`
@@ -48,7 +54,7 @@ export const projectGT000: Projection<"GT-000"> = {
       audio_path: item.audio_path,
     }));
 
-    const itemChunks = chunkItems(dataset.items, 4);
+    const itemChunks = chunkItems(dataset.items, 3);
     const segments = itemChunks.map((chunk, segIdx) => {
       const segAssetIds = chunk.map((item) => `asset_${item.id}`);
 
@@ -56,6 +62,15 @@ export const projectGT000: Projection<"GT-000"> = {
         action: "present" as const,
         target_asset_id: `asset_${item.id}`,
         narration_line: `Đây là ${item.label}`,
+      }));
+
+      // BR-CIM-19 / BR-E000-10: mỗi phân đoạn dạy có bước tập nói theo.
+      // Máy đọc mẫu, trẻ nói theo thành tiếng — máy Cấm — NEVER nghe.
+      const echoSteps = chunk.map((item) => ({
+        action: "echo" as const,
+        target_asset_id: `asset_${item.id}`,
+        repeat_count: 1,
+        prompt_line: `Bé nói theo cô nhé: ${item.label}`,
       }));
 
       const recogniseSteps = chunk.map((item) => {
@@ -82,7 +97,12 @@ export const projectGT000: Projection<"GT-000"> = {
       return {
         segment_id: `seg_${segIdx + 1}`,
         asset_ids: segAssetIds,
-        steps: [...presentSteps, ...recogniseSteps, ...recallSteps],
+        steps: [
+          ...presentSteps,
+          ...echoSteps,
+          ...recogniseSteps,
+          ...recallSteps,
+        ],
         is_review: false,
       };
     });
@@ -142,8 +162,10 @@ export const projectGT000: Projection<"GT-000"> = {
       content_pack: {
         concept: {
           skill_code: dataset.skill_code,
-          pre_skill_code: dataset.skill_code,
           label: dataset.concept_label,
+          teaches: [...(opts.teaches ?? [dataset.skill_code])],
+          values: dataset.items.map((item) => item.id),
+          sequence_no: opts.sequence_no ?? 1,
         },
         prompt: `Bé hãy lắng nghe và cùng làm quen với ${dataset.concept_label} nhé!`,
         assets,

@@ -158,9 +158,6 @@ function extractTableCells(line: string): string[] | null {
  */
 function parseSkillTier(tierStr: string): SkillProgressionTier {
   const token = tierStr.trim().toLowerCase();
-  if (token === "p" || token === "pre") {
-    return "pre";
-  }
   if (token === "a" || token === "advanced") {
     return "advanced";
   }

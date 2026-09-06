@@ -1,7 +1,10 @@
 import { writeAudit } from "@mindkid/audit";
 import { curricula, getOwnerDb } from "@mindkid/db";
+import { ValidationError } from "@mindkid/errors/common";
+import { ContentImmutableError } from "@mindkid/errors/content";
+import { CurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
@@ -11,11 +14,7 @@ export default defineEventHandler(async (event) => {
   const version = Number(versionParam) || 1;
 
   if (!code) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "BAD_REQUEST",
-      message: "Thiếu tham số mã chương trình",
-    });
+    throw new ValidationError("Thiếu tham số mã chương trình");
   }
 
   const db = getOwnerDb();
@@ -29,19 +28,15 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!curr) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "CURRICULUM_NOT_FOUND",
-      message: `Không tìm thấy chương trình ${code} version ${version}`,
-    });
+    throw new CurriculumNotFoundError(
+      `Không tìm thấy chương trình ${code} version ${version}`
+    );
   }
 
   if (curr.status !== "draft") {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "CANNOT_DELETE_NON_DRAFT",
-      message: `Chỉ được xoá chương trình ở trạng thái draft (trạng thái hiện tại: ${curr.status})`,
-    });
+    throw new ContentImmutableError(
+      `Chỉ được xoá chương trình ở trạng thái draft (trạng thái hiện tại: ${curr.status})`
+    );
   }
 
   await db.delete(curricula).where(eq(curricula.id, curr.id));

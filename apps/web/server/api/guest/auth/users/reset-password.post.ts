@@ -1,5 +1,4 @@
 import {
-  appError,
   hashPassword,
   hashSecureToken,
   validatePasswordStrength,
@@ -12,6 +11,8 @@ import {
   users,
   verificationTokens,
 } from "@mindkid/db";
+import { TokenExpiredError } from "@mindkid/errors/auth";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, type H3Event, readBody } from "h3";
 import { z } from "zod";
@@ -36,13 +37,13 @@ export async function handleResetPassword(event: H3Event, testBody?: unknown) {
     (await readBody(event).catch(() => null));
   const parsed = ResetPasswordSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw appError("VALIDATION_FAILED");
+    throw new ValidationError();
   }
   const { token, new_password: newPassword } = parsed.data;
 
   const passVal = validatePasswordStrength(newPassword);
   if (!passVal.valid) {
-    throw appError("VALIDATION_FAILED", {
+    throw new ValidationError({
       reason: passVal.reason || "Mật khẩu mới không đạt yêu cầu an toàn.",
     });
   }
@@ -62,16 +63,16 @@ export async function handleResetPassword(event: H3Event, testBody?: unknown) {
     );
 
   if (tokenRows.length === 0) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const vToken = tokenRows[0];
   if (!vToken) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   if (vToken.usedAt !== null || vToken.expiresAt <= new Date()) {
-    throw appError("TOKEN_EXPIRED");
+    throw new TokenExpiredError();
   }
 
   const [user] = await db
@@ -80,7 +81,7 @@ export async function handleResetPassword(event: H3Event, testBody?: unknown) {
     .where(eq(users.id, vToken.accountId));
 
   if (!user) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const newPassHash = await hashPassword(newPassword);
@@ -101,7 +102,7 @@ export async function handleResetPassword(event: H3Event, testBody?: unknown) {
       )
       .returning({ id: verificationTokens.id });
     if (!claimed) {
-      throw appError("TOKEN_EXPIRED");
+      throw new TokenExpiredError();
     }
 
     await tx

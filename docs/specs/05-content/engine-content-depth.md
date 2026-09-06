@@ -108,6 +108,7 @@ check:skill-quota`.
 | `BR-SKQ-05` (sàn cặp toàn catalog) | Số cặp (kỹ năng, khuôn) phân biệt ≥ sàn đã ghi | Đo độ phủ ngang, không chỉ độ sâu dọc |
 | `BR-SKQ-06` (bậc thang nợ nội dung) | Số kỹ năng **0 level** ≤ trần trong `skill-coverage-ratchet.json`. Trần **chỉ giảm**; tăng phải sửa file kèm lý do trong PR | Không tách khỏi `BR-SKQ-02` thì mỗi kỹ năng vừa khai báo lập tức đẻ 10–20 level nợ và kho không mở được. Cùng khuôn bậc thang đã đưa nợ typecheck từ 2.931 về 0 |
 | `BR-SKQ-07` (cổng có ca âm) | Phải có ca âm cho `BR-SKQ-02` **và** `BR-SKQ-06`, cộng một ca chứng minh kỹ năng 0 level Cấm — NEVER bị báo là thiếu hạn ngạch | Nới cổng mà không có ca âm là tắt cổng. `BR-TYP-07` |
+| `BR-SKQ-08` (level dạy ngoài hạn ngạch) | Level thuộc template `kind = 'teach'` Cấm — NEVER được tính vào số level hay số khuôn phân biệt của `BR-SKQ-02` · `BR-SKQ-03` · `BR-SKQ-04` · `BR-SKQ-05`. Kỹ năng chỉ có level dạy thì tính như kỹ năng 0 level ở `BR-SKQ-06` | Hạn ngạch đo **cầu chơi** của một kỹ năng. Từ 2026-09-06 level dạy gắn thẳng vào kỹ năng chơi (`BR-CTM-01`), nên nếu đếm chung thì một kỹ năng C1 có 19 bài chơi cộng 1 bài dạy sẽ báo đủ 20 trong khi thiếu một bài chơi. Trước đó level dạy nằm trên kỹ năng bậc `pre` riêng nên lỗ này không tồn tại |
 
 > **Hạn ngạch đo độ phủ, không đo độ trung thực.** Mọi luật `BR-SKQ-*` đếm level và khuôn;
 > không luật nào hỏi *level này có dạy đúng kỹ năng nó gắn không*. Hệ quả đo ngày 2026-09-03:

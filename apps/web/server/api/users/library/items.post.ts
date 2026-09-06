@@ -1,4 +1,5 @@
 import { getOwnerDb } from "@mindkid/db";
+import { InternalError } from "@mindkid/errors/common";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
 import { saveLibraryItem } from "#server/services/index.js";
@@ -28,11 +29,7 @@ export default defineEventHandler(async (event) => {
   });
 
   if (!saved) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "SAVE_FAILED",
-      message: "Lưu mục thư viện thất bại",
-    });
+    throw new InternalError("Lưu mục thư viện thất bại");
   }
 
   setResponseStatus(event, 201);

@@ -1,13 +1,17 @@
 import { childProfiles, getOwnerDb } from "@mindkid/db";
+import {
+  AvatarNotInPresetError,
+  ChildAgeOutOfRangeError,
+  ChildFieldNotAllowedError,
+} from "@mindkid/errors/child";
+import {
+  InternalError,
+  NotFoundError,
+  ValidationError,
+} from "@mindkid/errors/common";
 import { deriveAgeBand, isValidAvatarPreset } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 
 import {
   assertRequestBodySize,
@@ -17,14 +21,7 @@ import {
 function validatePatchDisplayName(name: string): string {
   const trimmed = name.trim();
   if (trimmed.length < 1 || trimmed.length > 40) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "Tên gọi từ 1 đến 40 ký tự.",
-      },
-    });
+    throw new ValidationError("Tên gọi từ 1 đến 40 ký tự.");
   }
   return trimmed;
 }
@@ -34,18 +31,13 @@ function validatePatchBirthYear(
   currentYear: number
 ): number {
   if (typeof birthYear !== "number" || !Number.isInteger(birthYear)) {
-    throw createError({ statusCode: 400, statusMessage: "VALIDATION_FAILED" });
+    throw new ValidationError("VALIDATION_FAILED");
   }
   const age = currentYear - birthYear;
   if (age < 3 || age > 6) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "CHILD_AGE_OUT_OF_RANGE",
-      data: {
-        code: "CHILD_AGE_OUT_OF_RANGE",
-        message: "MindKid là sản phẩm dành riêng cho trẻ từ 3–6 tuổi.",
-      },
-    });
+    throw new ChildAgeOutOfRangeError(
+      "MindKid là sản phẩm dành riêng cho trẻ từ 3–6 tuổi."
+    );
   }
   return birthYear;
 }
@@ -64,15 +56,9 @@ const patchChildSchema = z
 function buildChildUpdates(rawBody: unknown, currentYear: number) {
   const parsedResult = patchChildSchema.safeParse(rawBody);
   if (!parsedResult.success) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "CHILD_FIELD_NOT_ALLOWED",
-      data: {
-        code: "CHILD_FIELD_NOT_ALLOWED",
-        message:
-          "Chỉ cho phép cập nhật: display_name, birth_year, avatar_id, relationship.",
-      },
-    });
+    throw new ChildFieldNotAllowedError(
+      "Chỉ cho phép cập nhật: display_name, birth_year, avatar_id, relationship."
+    );
   }
 
   const body = parsedResult.data;
@@ -87,14 +73,9 @@ function buildChildUpdates(rawBody: unknown, currentYear: number) {
       typeof body.avatar_id !== "string" ||
       !isValidAvatarPreset(body.avatar_id)
     ) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "AVATAR_NOT_IN_PRESET",
-        data: {
-          code: "AVATAR_NOT_IN_PRESET",
-          message: "Hình đại diện phải thuộc bộ 12 preset minh hoạ có sẵn.",
-        },
-      });
+      throw new AvatarNotInPresetError(
+        "Hình đại diện phải thuộc bộ 12 preset minh hoạ có sẵn."
+      );
     }
     updates.avatarId = body.avatar_id;
   }
@@ -109,10 +90,7 @@ function buildChildUpdates(rawBody: unknown, currentYear: number) {
       body.relationship !== "student" &&
       body.relationship !== "other"
     ) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "VALIDATION_FAILED",
-      });
+      throw new ValidationError("VALIDATION_FAILED");
     }
     updates.relationship = body.relationship;
   }
@@ -125,8 +103,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const userId = Number(user.user_id);
@@ -139,8 +116,7 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(childProfiles.uuid, uuid), eq(childProfiles.userId, userId)));
 
   if (!child) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
@@ -157,11 +133,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!updated) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "CHILD_UPDATE_FAILED",
-      message: "Cập nhật thông tin trẻ thất bại",
-    });
+    throw new InternalError("Cập nhật thông tin trẻ thất bại");
   }
 
   return {

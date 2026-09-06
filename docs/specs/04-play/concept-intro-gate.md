@@ -5,12 +5,13 @@ area: play
 status: approved
 mvp: false
 phase: P4
-reviewed: 2026-09-02
+reviewed: 2026-09-06
 owns:
   - Bước 8 của thứ tự kiểm quyền — điều kiện sư phạm
   - Hàng đợi bài làm quen của một trò chơi
   - Điều kiện miễn cổng
   - Cổng bậc thang độ phủ bài làm quen
+  - Điều kiện cổng bậc thang phải được một script có tên gọi chạy
 depends_on:
   - ACCESS-GATING
   - CONCEPT-INTRO-MODEL
@@ -38,10 +39,12 @@ Hôm nay có **hai đường** dẫn trẻ tới một màn chơi, và chỉ m�
 ký tự lẫn bài về từ; một màn chơi khối 3D cần bài về hình phẳng trước. Nên bước 8 không trả
 về *một* bài — nó dựng một **hàng đợi** theo thứ tự prerequisite, và trẻ đi lần lượt.
 
-Đơn vị của hàng đợi là **strand**, không phải skill (`A-206-01`, chốt 2026-09-02). Bao đóng
-prerequisite vẫn tính ở mức **skill** — `skill_prerequisites` là nơi duy nhất có cạnh — rồi
-**gom về strand** trước khi xếp hàng. Gom ở bước cuối giữ được độ chính xác của cạnh mà vẫn
-cho hàng đợi ngắn.
+Đơn vị của hàng đợi là **level dạy**, xếp theo **kỹ năng** (`D-SK`, chốt 2026-09-06).
+Quyết định `A-206-01` gom về strand (2026-09-02) bị thay: người đặt việc yêu cầu **mỗi kỹ
+năng** có bài học mở đầu, và mã nguồn `checkLevelIntroRequired` vốn đã làm việc ở mức level
+chứ chưa bao giờ gom về strand. Bao đóng prerequisite tính ở mức **skill** —
+`skill_prerequisites` là nơi duy nhất có cạnh — rồi tra thẳng ra các level dạy gắn vào
+những kỹ năng đó.
 
 Nguyên tắc chốt của cả file: cổng đòi trẻ **đã đi qua** bài làm quen, Cấm — **NEVER** đòi
 trẻ **trả lời đúng**. Khoá một đứa trẻ ba tuổi khỏi trò chơi vì nó chạm sai là biến bài dạy
@@ -72,18 +75,18 @@ thành hình phạt.
 3. Có nhánh miễn nào không (mục 5)? Có → **mở**.
 4. Dựng **tập kỹ năng cần**: mọi `skill_code` của level trong `content_skill_map`, **cộng**
    bao đóng prerequisite bắc cầu của chúng theo `skill_prerequisites`.
-5. **Gom về strand**: mỗi kỹ năng trong tập quy về `strand_code` của nó, khử trùng lặp.
-6. Lọc còn những strand **có bài làm quen `published`** (`concept-intro-model.md` mục 7.5).
-   Strand chưa có bài thì bỏ khỏi tập — Cấm — **NEVER** chặn trẻ vì thư viện còn thiếu.
-7. Bỏ tiếp những strand trẻ **đã đi hết** bài làm quen (`BR-CIR-08`). Còn lại là
-   **`intro_queue`**.
-8. `intro_queue` rỗng → **mở**.
-9. Không rỗng → sắp theo **thứ tự topo trên strand** (cạnh strand suy từ `skill_prerequisites`,
-   strand nền đứng trước), cắt còn **2 bài đầu**, trả **428 `INTRO_REQUIRED`** kèm
+5. Tra ra mọi level **`published`** thuộc template `kind = 'teach'` có `content_skill_map`
+   chạm một kỹ năng trong tập. Kỹ năng chưa có bài dạy thì đơn giản là không góp level nào —
+   Cấm — **NEVER** chặn trẻ vì thư viện còn thiếu (`BR-CIG-04`).
+6. Bỏ những level trẻ **đã đi hết** (`BR-CIR-08`). Còn lại là **`intro_queue`**.
+7. `intro_queue` rỗng → **mở**.
+8. Không rỗng → sắp theo **thứ tự topo trên kỹ năng** (cạnh lấy thẳng từ
+   `skill_prerequisites`, kỹ năng nền đứng trước); các tiết của cùng một chủ đề sắp theo
+   `concept.sequence_no` (`BR-CIM-20`). Cắt còn **2 bài đầu**, trả **428 `INTRO_REQUIRED`** kèm
    `details.intro_queue[]`, `details.intro_remaining` và `details.return_level_code`.
-10. Client cho trẻ đi lần lượt hàng đợi. Xong bài cuối trong hàng → quay lại
-    `return_level_code`.
-11. Nếu `intro_remaining > 0`, lần vào sau bước 8 dựng lại hàng đợi với hai bài kế. Trẻ đi
+9. Client cho trẻ đi lần lượt hàng đợi. Xong bài cuối trong hàng → quay lại
+   `return_level_code`.
+10. Nếu `intro_remaining > 0`, lần vào sau bước 8 dựng lại hàng đợi với hai bài kế. Trẻ đi
     dần cho tới khi hàng rỗng.
 
 ## 5. Alternative flows
@@ -91,9 +94,9 @@ thành hình phạt.
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
 | Level là bài làm quen | `kind = 'teach'` | Mở. Nếu không, không trò chơi nào vào được |
-| Level chạy trong tiết giáo án | Request mang `lesson_run_id` hợp lệ đang mở | **Miễn.** Ghi hoàn thành cho mọi strand trong hàng đợi với `source = 'lesson_run'` — người lớn vừa dạy đúng thứ cổng này đi tìm |
+| Level chạy trong tiết giáo án | Request mang `lesson_run_id` hợp lệ đang mở | **Miễn.** Ghi hoàn thành cho mọi level trong hàng đợi với `source = 'lesson_run'` — người lớn vừa dạy đúng thứ cổng này đi tìm |
 | Manager preview | `is_preview = true` | Miễn, và Cấm — **NEVER** ghi hoàn thành — `BR-GAT-08` |
-| Không strand nào trong tập có bài làm quen | Thư viện thiếu | Mở. Đếm vào sổ nợ của cổng bậc thang mục 7.4 |
+| Không kỹ năng nào trong tập có bài làm quen | Thư viện thiếu | Mở. Đếm vào sổ nợ của cổng bậc thang mục 7.4 |
 | Level không gắn kỹ năng nào | Lỗi dữ liệu | Mở, và **log cảnh báo**. Cổng publish lẽ ra đã chặn — cùng lập trường `progress-and-mastery.md` mục 5 |
 | Bao đóng prerequisite có chu trình | Lỗi dữ liệu taxonomy | Mở, log cảnh báo. Cấm — **NEVER** vòng lặp vô hạn khi sắp topo |
 | Bài làm quen bị `archived` sau khi trẻ đã đi hết | Nội dung gỡ | Trạng thái đã hoàn thành **giữ nguyên**. Cấm — **NEVER** chặn lại trẻ vì người soạn gỡ bài |
@@ -108,8 +111,8 @@ thành hình phạt.
 |---|---|---|
 | `BR-CIG-01` (bước 8, không sớm hơn) | Điều kiện sư phạm chạy **sau** cả bảy bước đang có | Bước 5 trả 403 và bước 6 trả 402 là rào người lớn **tự gỡ được bằng tiền**. Đẩy rào sư phạm lên trước là nói sai thứ đang chặn họ — `BR-GAT-09` đã đóng lập trường này |
 | `BR-CIG-02` (đi qua, không phải thắng) | Điều kiện là `BR-CIR-08` (đã đi hết dãy step), Cấm — **NEVER** là số câu `recall` đúng | Trẻ ba tuổi gặp khái niệm lần đầu sẽ sai. Lấy kết quả lần đầu làm cửa là khoá đúng đứa trẻ cần bài học nhất |
-| `BR-CIG-03` (hàng đợi, không phải một bài) | Cổng đòi **mọi** strand mà level chạm tới — kể cả strand đến từ bao đóng prerequisite bắc cầu. Strand nào có bài làm quen published thì strand đó phải đi qua | Một màn chơi ghép vần đứng trên cả ký tự lẫn từ. Đòi mỗi kỹ năng chính là dạy nửa nền rồi thả trẻ vào phần còn lại |
-| `BR-CIG-04` (thiếu bài thì mở) | Strand chưa có bài làm quen `published` → **bỏ khỏi hàng đợi**, không chặn | Cổng tồn tại để thêm bài dạy, không phải để gỡ trò chơi. Nợ độ phủ đo ở mục 7.4, không đo bằng cách chặn trẻ |
+| `BR-CIG-03` (hàng đợi, không phải một bài) | Cổng đòi **mọi** kỹ năng mà level chạm tới — kể cả kỹ năng đến từ bao đóng prerequisite bắc cầu. Kỹ năng nào có bài làm quen published thì **mọi** tiết dạy của nó phải đi qua | Một màn chơi ghép vần đứng trên cả ký tự lẫn từ. Đòi mỗi kỹ năng chính là dạy nửa nền rồi thả trẻ vào phần còn lại |
+| `BR-CIG-04` (thiếu bài thì mở) | Kỹ năng chưa có bài làm quen `published` → **bỏ khỏi hàng đợi**, không chặn | Cổng tồn tại để thêm bài dạy, không phải để gỡ trò chơi. Nợ độ phủ đo ở mục 7.4, không đo bằng cách chặn trẻ |
 | `BR-CIG-05` (cổng chạy ở server) | Bước 8 chạy trong `assertContentAccess`, Cấm — **NEVER** chỉ ở client | `BR-GAT-01`. Ẩn nút chơi bằng CSS không phải là cổng |
 | `BR-CIG-06` (bài làm quen không tự chắn) | Level `kind = 'teach'` **luôn** qua bước 8 | Nếu không thì không có đường nào vào bài làm quen, và toàn bộ thư viện đóng |
 | `BR-CIG-07` (giáo án miễn cổng) | Level mở từ trong một `lesson_run` đang chạy được **miễn**, và ghi hoàn thành cho cả hàng đợi với `source = 'lesson_run'` | Tiết giáo án có đủ ba pha và có người lớn (`BR-LSM-01`). Bắt trẻ xem thêm hai bài làm quen ngay sau khi người lớn vừa dạy đúng khái niệm đó là lặp vô nghĩa |
@@ -118,15 +121,16 @@ thành hình phạt.
 | `BR-CIG-10` (nguồn sự thật là `play_sessions`) | Trạng thái làm quen suy ra từ `play_sessions` (`completion_status = 'completed'`, `is_preview = false`) của level `kind = 'teach'`. Cấm — **NEVER** dựng bảng đếm song song đồng bộ tay | `play_sessions` đã có đủ ba thứ cần: chủ thể, trạng thái, và cờ preview. Bảng thứ hai là hai nguồn sự thật, và nó sẽ lệch |
 | `BR-CIG-11` (mã lỗi nói đúng việc) | Chưa làm quen trả **428 `INTRO_REQUIRED`**, Cấm — **NEVER** 403 | 403 nghĩa là "bạn không có quyền", và người dùng sẽ đi mua gói. Đây là điều kiện tiên quyết người dùng **tự làm xong trong vài phút** — đúng ngữ nghĩa 428 mà `NO_ACTIVE_CHILD` và `CONSENT_REQUIRED` đang dùng |
 | `BR-CIG-12` (bốn ô mới phải có test) | Ma trận mục 7.3 phải có test, cộng **ca âm** cho từng nhánh miễn | `BR-GAT-05` đã đóng lập trường: gating là ma trận, test vài ô sẽ để lọt ô còn lại |
-| `BR-CIG-13` (bậc thang chỉ đi xuống) | Số strand có level nhưng thiếu bài làm quen chỉ được **giảm**. Level mới cho strand chưa có bài làm quen làm cổng **đỏ** | Không có bậc thang thì `BR-CIG-04` biến thành cửa thoát vĩnh viễn: mọi kỹ năng cứ thiếu bài là cổng cứ mở |
-| `BR-CIG-14` (Cấm nới để qua cổng) | Cấm — **NEVER** thêm strand vào danh sách miễn trừ chỉ để một đợt nội dung kịp phát hành | `AGENTS.md`: không nới rule chỉ để code hiện tại qua được cổng |
-| `BR-CIG-15` (thứ tự nền trước) | Hàng đợi sắp theo **thứ tự topo trên strand**: có cạnh `A → B` khi một kỹ năng của strand `A` là prerequisite của một kỹ năng của strand `B` | Dạy từ trước khi dạy ký tự là dạy ngược. `BR-LFM-06` đã đóng lập trường prerequisite là ràng buộc sư phạm không được nới. Cạnh chỉ có ở mức skill, nên thứ tự strand phải **suy ra** từ đó chứ không khai riêng |
+| `BR-CIG-13` (bậc thang chỉ đi xuống) | Số **kỹ năng** có level chấm nhưng thiếu bài làm quen chỉ được **giảm**. Level chấm mới cho kỹ năng chưa có bài làm quen làm cổng **đỏ** | Không có bậc thang thì `BR-CIG-04` biến thành cửa thoát vĩnh viễn: mọi kỹ năng cứ thiếu bài là cổng cứ mở |
+| `BR-CIG-14` (Cấm nới để qua cổng) | Cấm — **NEVER** thêm kỹ năng vào danh sách miễn trừ chỉ để một đợt nội dung kịp phát hành | `AGENTS.md`: không nới rule chỉ để code hiện tại qua được cổng |
+| `BR-CIG-15` (thứ tự nền trước) | Hàng đợi sắp theo **thứ tự topo trên kỹ năng**, cạnh lấy thẳng từ `skill_prerequisites`. Hai tiết cùng một chủ đề — không có cạnh nào giữa chúng — sắp theo `concept.sequence_no` | Dạy từ trước khi dạy ký tự là dạy ngược. `BR-LFM-06` đã đóng lập trường prerequisite là ràng buộc sư phạm không được nới. Topo không phân biệt được hai tiết cùng chủ đề, nên phải có số thứ tự tường minh — `BR-CIM-20` |
 | `BR-CIG-16` (tối đa 2 bài mỗi lần vào) | Một lần vào trả tối đa **2** bài trong `intro_queue`; phần còn lại đòi ở lần vào sau, kèm `intro_remaining` | Bao đóng prerequisite có thể dài. Chắn một đứa trẻ sau sáu phút bài dạy để tới màn chơi 90 giây là cách chắc chắn nhất làm nó bỏ. Trẻ đi dần vẫn phải qua hết, chỉ là không qua hết trong một hơi |
-| `BR-CIG-17` (bao đóng, không phải một tầng) | Tập kỹ năng gồm cả prerequisite **bắc cầu**, không chỉ tầng liền kề. Gom về strand làm **sau** khi bao đóng xong, Cấm — **NEVER** gom trước | Chặn ở một tầng thì trẻ vào được màn chơi mà vẫn thiếu nền hai tầng dưới — đúng lỗ hổng file này đang vá. Gom trước khi lấy bao đóng sẽ mất cạnh giữa hai kỹ năng cùng strand và cắt cụt bao đóng |
+| `BR-CIG-18` (cổng phải có người gọi) | Cổng bậc thang mục 7.4 BẮT BUỘC được gọi bởi một script có tên trong `package.json` và chạy trong `scripts/check.sh`. Ca âm mục 7.4 BẮT BUỘC tồn tại | Đo 2026-09-06: `scripts/check-intro-coverage.ts` cài đặt đúng `BR-CIG-13` nhưng **không script nào gọi nó** — không `package.json`, không `lefthook.yml`, không `check.sh`. Nợ 392 tăng tự do suốt thời gian đó. Một cổng không ai gọi là tài liệu, không phải cổng |
+| `BR-CIG-17` (bao đóng, không phải một tầng) | Tập kỹ năng gồm cả prerequisite **bắc cầu**, không chỉ tầng liền kề. Cấm — **NEVER** gom về strand ở bất cứ bước nào | Chặn ở một tầng thì trẻ vào được màn chơi mà vẫn thiếu nền hai tầng dưới — đúng lỗ hổng file này đang vá. Gom về strand thì mất cạnh giữa hai kỹ năng cùng strand, và một bài dạy của strand mở khoá cho cả 11 kỹ năng khác chưa được dạy |
 
 ## 7. Data
 
-**Đọc:** `game_levels` · registry `ALL_TEMPLATES` (`kind`) · `content_skill_map` · `skills` · `strands` · `skill_prerequisites` ·
+**Đọc:** `game_levels` · registry `ALL_TEMPLATES` (`kind`) · `content_skill_map` · `skills` · `skill_prerequisites` ·
 `play_sessions` · `lesson_runs`.
 **Ghi:** không ghi gì ở đường đọc config. Hàng hoàn thành do
 [`concept-intro-runner.md`](concept-intro-runner.md) ghi qua `play_sessions`.
@@ -152,22 +156,20 @@ cuối**, không chèn vào giữa, và không bước nào đang có đổi v�
 ```
 K  = { skill_code của level trong content_skill_map }
 K+ = K ∪ bao đóng bắc cầu qua skill_prerequisites          [BR-CIG-17]
-S  = { strand_code(k) : k ∈ K+ }, khử trùng lặp            [A-206-01]
-E  = { (strand(a), strand(b)) : (a,b) ∈ skill_prerequisites, a,b ∈ K+ }
-P  = { s ∈ S : s có bài làm quen published }               [BR-CIG-04]
-Q  = { s ∈ P : trẻ chưa đi hết bài của s }                 [BR-CIG-02, BR-CIR-08]
-intro_queue = topo_sort(Q, E)[0..2]                        [BR-CIG-15, BR-CIG-16]
+E  = { (a, b) ∈ skill_prerequisites : a, b ∈ K+ }
+L  = { level dạy published chạm một kỹ năng trong K+ }     [BR-CIG-04]
+Q  = { l ∈ L : trẻ chưa đi hết l }                         [BR-CIG-02, BR-CIR-08]
+intro_queue = topo_sort(Q by skill, E, then sequence_no)[0..2]   [BR-CIG-15, BR-CIG-16]
 intro_remaining = |Q| − |intro_queue|
 ```
 
-Bao đóng lấy ở mức **skill** rồi mới gom về **strand** (`BR-CIG-17`): gom trước sẽ nuốt mất
-cạnh giữa hai kỹ năng cùng một strand và cắt cụt bao đóng. Cạnh `E` bỏ vòng tự thân
-(`strand(a) = strand(b)`). `topo_sort` gặp chu trình thì bỏ cạnh gây chu trình, log cảnh báo,
-và chạy tiếp — mục 5.
+Bao đóng lấy ở mức **skill** (`BR-CIG-17`), và hàng đợi giữ nguyên mức **level**: một kỹ
+năng có nhiều tiết dạy thì cả mấy tiết đều phải đi qua (`BR-CTM-07`). `topo_sort` gặp chu
+trình thì bỏ cạnh gây chu trình, log cảnh báo, và chạy tiếp — mục 5.
 
 ### 7.3 Ô phải có test
 
-| Trạng thái trẻ \ Hàng đợi | Rỗng vì không strand nào có bài | Rỗng vì đã đi hết | 1 bài | 3 bài (cắt còn 2) | Trong `lesson_run` |
+| Trạng thái trẻ \ Hàng đợi | Rỗng vì không kỹ năng nào có bài | Rỗng vì đã đi hết | 1 bài | 3 bài (cắt còn 2) | Trong `lesson_run` |
 |---|:--:|:--:|:--:|:--:|:--:|
 | Khách (`guest_device_id`) | 200 | 200 | **428** | **428** + `intro_remaining = 1` | 200 |
 | Trẻ đã chọn hồ sơ | 200 | 200 | **428** | **428** + `intro_remaining = 1` | 200 |
@@ -183,32 +185,43 @@ lỗi kiểu bằng đúng cơ chế đó.
 
 | Thứ | Giá trị |
 |---|---|
-| Đo gì | Số strand **có ít nhất một level `kind = 'assess'` published** nhưng **không có** bài làm quen published |
-| Baseline khởi điểm | **41** — số strand đang có nội dung game. 30 strand còn lại của taxonomy chưa có level nào nên chưa vào sổ nợ |
+| Đo gì | Số **kỹ năng** có ít nhất một level `kind = 'assess'` nhưng **không có** level `kind = 'teach'` nào gắn vào |
+| Cài đặt | [`scripts/check-intro-coverage.ts`](../../../scripts/check-intro-coverage.ts) — `measureIntroCoverageDebt()` |
+| Baseline | **392**, đo 2026-09-06. Mốc khởi điểm là 408 |
+| Ai gọi | `pnpm check:intro-coverage`, chạy trong Phase 1 của [`scripts/check.sh`](../../../scripts/check.sh) — `BR-CIG-18` |
 | Tăng | **Đỏ.** Muốn tăng phải có cờ tường minh kèm lý do trong PR |
-| Giảm | Xanh, kèm nhắc cập nhật baseline |
-| Ca âm bắt buộc | Thêm một level cho strand chưa có bài làm quen → cổng phải đỏ |
+| Giảm | Xanh, kèm nhắc hạ baseline bằng `--update` |
+| Ca âm bắt buộc | Thêm một level chấm cho kỹ năng chưa có bài làm quen → cổng phải đỏ |
+
+Đơn vị đo là **kỹ năng**, không phải strand. Bản 2026-09-02 chốt strand vì hàng đợi gom về
+strand; nhưng nợ độ phủ đo *thư viện còn thiếu bài dạy ở đâu*, và chỗ đó là kỹ năng — một
+strand có một bài dạy vẫn để 11 kỹ năng khác trần. Mã nguồn đã đo theo kỹ năng từ đầu; luật
+này đi theo mã nguồn.
 
 ### 7.5 Truy vấn trạng thái làm quen
 
 ```sql
--- Những strand trong tập S mà trẻ ĐÃ đi hết bài làm quen (BR-CIG-10)
-SELECT DISTINCT gl.content_pack -> 'concept' ->> 'strand_code' AS strand_code
+-- Những level dạy mà trẻ ĐÃ đi hết (BR-CIG-10)
+SELECT DISTINCT ps.game_level_id
 FROM play_sessions ps
 JOIN game_levels gl ON gl.id = ps.game_level_id
 WHERE ps.template_code = ANY($4) -- teachTemplateCodes từ registry ALL_TEMPLATES
   AND ps.completion_status = 'completed'
   AND ps.is_preview = false
   AND (ps.child_profile_id = $1 OR ps.guest_device_id = $2)
-  AND gl.content_pack -> 'concept' ->> 'strand_code' = ANY($3);
+  AND ps.game_level_id = ANY($3);   -- id của các level dạy ứng viên
 ```
 
-Một truy vấn cho cả tập, Cấm — **NEVER** một truy vấn mỗi strand: bao đóng prerequisite có
-thể chạm nhiều strand, và mỗi round-trip trước màn chơi là một lần trả giá.
+Một truy vấn cho cả tập, Cấm — **NEVER** một truy vấn mỗi kỹ năng: bao đóng prerequisite có
+thể chạm nhiều kỹ năng, và mỗi round-trip trước màn chơi là một lần trả giá. Cài đặt hiện
+hành là `findCompletedLevelIds` ở
+[`concept-intro-runtime.ts`](../../../apps/web/server/utils/concept-intro-runtime.ts) —
+**dùng lại hàm đó**, cả ở đường đọc danh mục của
+[`progress-and-mastery.md`](progress-and-mastery.md) mục 7.1.
 
-Cần index trên `(child_profile_id, template_id, completion_status)` và expression index trên
-`gl.content_pack -> 'concept' ->> 'strand_code'`. Nếu vượt ngân sách `BR-PRF-*`, khoản
-denormalise mở lại ở mục 11 câu 2 — Cấm — **NEVER** thêm bảng đếm trước khi có số đo.
+Cần index trên `(child_profile_id, game_level_id, completion_status)`. Nếu vượt ngân sách
+`BR-PRF-*`, khoản denormalise mở lại ở mục 11 câu 2 — Cấm — **NEVER** thêm bảng đếm trước
+khi có số đo.
 
 ## 8. API contract
 
@@ -217,11 +230,13 @@ denormalise mở lại ở mục 11 câu 2 — Cấm — **NEVER** thêm bảng 
 | | |
 |---|---|
 | Auth | `requireUserAuth()` cộng một hồ sơ trẻ đang chọn |
-| 200 | `{ intro_required: boolean, intro_queue: IntroQueueItem[], intro_remaining: number, required_strand_codes: string[] }` |
+| 200 | `{ intro_required: boolean, intro_queue: IntroQueueItem[], intro_remaining: number, required_skill_codes: string[] }` |
 | 404 | Level không tồn tại hoặc không `published` |
 | 428 | `NO_ACTIVE_CHILD` |
 
-`IntroQueueItem` = `{ level_code, strand_code, concept_label, estimated_seconds }`.
+`IntroQueueItem` = `{ intro_level_code, skill_code, title, thumbnail_emoji? }` — tên trường
+theo đúng `IntroQueueItem` trong
+[`packages/shared/src/access-gating.ts`](../../../packages/shared/src/access-gating.ts).
 
 Route này tồn tại để danh mục hiện nhãn "Học trước — 2 bài" **mà không phải ăn một 428**. Nó
 Cấm — **NEVER** là nơi cưỡng chế; cưỡng chế ở bước 8 của `assertContentAccess` (`BR-CIG-05`).
@@ -247,61 +262,80 @@ lớn**, không cho trẻ: *"Bé cần làm quen với {khái niệm} trước. 
 
 ```gherkin
 Scenario: BR-CIG-01 — thiếu gói thì báo thiếu gói, không báo thiếu bài làm quen
-  Given một trẻ chưa mua gói và chưa làm quen strand của một level premium
+  Given một trẻ chưa mua gói và chưa làm quen kỹ năng của một level premium
   When client xin config của level đó
   Then trả 403 TIER_LOCKED
   And không trả INTRO_REQUIRED
 
 Scenario: BR-CIG-02 — sai hết recall vẫn vào được trò chơi
   Given trẻ đã đi hết bài làm quen nhưng trả lời sai mọi step recall
-  When client xin config của trò chơi cùng strand
+  When client xin config của trò chơi cùng kỹ năng
   Then trả 200
 
-Scenario: BR-CIG-03 — level chạm hai strand đòi cả hai bài làm quen
-  Given một level gắn C5.PHO.02 và C5.VOC.01, hai kỹ năng thuộc hai strand khác nhau
-  And cả hai strand đều có bài làm quen published
-  And trẻ mới đi hết bài của strand C5.PHO
+Scenario: BR-CIG-03 — level chạm hai kỹ năng đòi cả hai bài làm quen
+  Given một level gắn C5.PHO.02 và C5.VOC.01
+  And cả hai kỹ năng đều có bài làm quen published
+  And trẻ mới đi hết bài của C5.PHO.02
   When client xin config
   Then trả 428 INTRO_REQUIRED
-  And intro_queue chứa bài của strand C5.VOC
+  And intro_queue chứa bài của C5.VOC.01
 
-Scenario: BR-CIG-03 — hai kỹ năng cùng một strand chỉ đòi một bài
-  Given một level gắn C1.NREC.01 và C1.NREC.03, cùng strand C1.NREC
-  And strand đó có bài làm quen published, trẻ chưa đi
+Scenario: BR-CIG-03 — hai kỹ năng dùng chung một bài dạy chỉ đòi một lượt
+  Given một level gắn C1.NREC.01 và C1.NREC.02
+  And một bài làm quen published gắn cả hai kỹ năng đó, trẻ chưa đi
   When client xin config
   Then intro_queue có đúng 1 phần tử
 
+Scenario: BR-CTM-07 — chủ đề hai tiết thì đi hết tiết đầu vẫn bị chặn
+  Given một kỹ năng có hai level dạy published, sequence_no 1 và 2
+  And trẻ đã đi hết tiết sequence_no 1
+  When client xin config của trò chơi thuộc kỹ năng đó
+  Then trả 428 INTRO_REQUIRED
+  And intro_queue trỏ tiết sequence_no 2
+
 Scenario: BR-CIG-17 — prerequisite bắc cầu vào hàng đợi
   Given level gắn kỹ năng X, X có prerequisite Y, Y có prerequisite Z
-  And ba kỹ năng đó thuộc ba strand khác nhau, cả ba đều có bài làm quen published
+  And cả ba kỹ năng đều có bài làm quen published
   And trẻ chưa đi bài nào
   When client xin config
-  Then intro_queue cộng intro_remaining phủ cả ba strand
+  Then intro_queue cộng intro_remaining phủ cả ba kỹ năng
 
-Scenario: BR-CIG-17 — gom về strand làm sau khi lấy bao đóng
+Scenario: BR-CIG-17 — hai kỹ năng cùng strand không nuốt mất bao đóng
   Given X và prerequisite Y của nó cùng thuộc strand S
   And Y có prerequisite Z thuộc strand T
   When cổng dựng hàng đợi
-  Then T nằm trong tập, không bị mất vì X và Y cùng strand
+  Then bài dạy của Z nằm trong tập, không bị mất vì X và Y cùng strand
+
+Scenario: BR-CIG-18 — cổng bậc thang phải có người gọi
+  Given repo ở trạng thái hiện hành
+  When đọc package.json và scripts/check.sh
+  Then có script check:intro-coverage
+  And check.sh gọi script đó
+
+Scenario: BR-CIG-18 — ca âm của cổng bậc thang
+  Given một kỹ năng chưa có bài làm quen nào
+  When thêm cho nó một level kind assess
+  Then pnpm check đỏ
+  And lý do nêu nợ độ phủ tăng
 
 Scenario: BR-CIG-15 — nền đứng trước
-  Given một kỹ năng của strand Z là prerequisite của một kỹ năng của strand Y
+  Given kỹ năng Z là prerequisite của kỹ năng Y
   When cổng dựng hàng đợi
   Then bài của Z đứng trước bài của Y
 
 Scenario: BR-CIG-16 — tối đa hai bài một lần vào
-  Given hàng đợi có 5 strand còn thiếu
+  Given hàng đợi có 5 bài dạy còn thiếu
   When client xin config
   Then intro_queue có đúng 2 phần tử
   And intro_remaining bằng 3
 
-Scenario: BR-CIG-04 — strand chưa có bài làm quen thì không chặn
-  Given mọi strand trong tập đều chưa có bài làm quen published
+Scenario: BR-CIG-04 — kỹ năng chưa có bài làm quen thì không chặn
+  Given mọi kỹ năng trong tập đều chưa có bài làm quen published
   When client xin config
   Then trả 200
 
 Scenario: BR-CIG-06 — bài làm quen không tự chặn chính nó
-  Given trẻ chưa làm quen strand nào
+  Given trẻ chưa làm quen kỹ năng nào
   When client xin config của một level kind = teach
   Then trả 200
 
@@ -313,19 +347,19 @@ Scenario: BR-CIG-07 — trong tiết giáo án thì miễn cổng
   And ghi hoàn thành cho cả hàng đợi với source = lesson_run
 
 Scenario: BR-CIG-08 — hồ sơ em không dùng được trạng thái của anh
-  Given hồ sơ A đã làm quen strand C1.NREC, hồ sơ B thì chưa
-  When hồ sơ B xin config của level thuộc strand đó
+  Given hồ sơ A đã làm quen kỹ năng C1.NREC.01, hồ sơ B thì chưa
+  When hồ sơ B xin config của level thuộc kỹ năng đó
   Then trả 428 INTRO_REQUIRED
 
 Scenario: BR-CIG-09 — preview miễn cổng và không ghi
-  Given manager mở preview một level, chưa ai làm quen strand đó
+  Given manager mở preview một level, chưa ai làm quen kỹ năng đó
   When manager chạy hết bài
   Then trả 200
   And không hàng hoàn thành nào được ghi
 
 Scenario: BR-CIG-10 — phiên bỏ dở không mở cổng
   Given trẻ thoát bài làm quen giữa chừng, phiên là abandoned
-  When client xin config của trò chơi cùng strand
+  When client xin config của trò chơi cùng kỹ năng
   Then trả 428 INTRO_REQUIRED
 
 Scenario: BR-CIG-11 — mã lỗi và payload quay lại
@@ -335,14 +369,14 @@ Scenario: BR-CIG-11 — mã lỗi và payload quay lại
   And details mang intro_queue, intro_remaining và return_level_code
 
 Scenario: Bao đóng có chu trình thì không treo
-  Given taxonomy có chu trình prerequisite giữa hai kỹ năng khác strand
+  Given taxonomy có chu trình prerequisite giữa hai kỹ năng
   When cổng dựng hàng đợi
   Then request trả về trong ngân sách bình thường
   And ghi log cảnh báo
 
-Scenario: BR-CIG-13 — thêm level cho strand chưa có bài làm quen thì cổng đỏ
-  Given baseline hiện tại là N strand thiếu bài làm quen
-  When thêm một level assess cho một strand chưa có bài làm quen nào
+Scenario: BR-CIG-13 — thêm level cho kỹ năng chưa có bài làm quen thì cổng đỏ
+  Given baseline hiện tại là N kỹ năng thiếu bài làm quen
+  When thêm một level assess cho một kỹ năng chưa có bài làm quen nào
   Then cổng bậc thang đỏ
 
 Scenario: Bảy bước cũ không đổi trạng thái
@@ -356,13 +390,13 @@ Scenario: Bảy bước cũ không đổi trạng thái
 - Luôn chạy bước 8 **sau** bảy bước đang có, trong cùng `assertContentAccess`.
 - Luôn sắp hàng đợi theo thứ tự prerequisite, nền trước.
 - Luôn trả `intro_remaining` để người lớn biết còn bao nhiêu bài nữa.
-- Luôn lấy bao đóng ở mức skill rồi mới gom về strand.
-- Luôn hỏi trạng thái làm quen bằng **một** truy vấn cho cả tập strand.
+- Luôn lấy bao đóng ở mức skill, rồi tra thẳng ra level dạy.
+- Luôn hỏi trạng thái làm quen bằng **một** truy vấn cho cả tập level dạy.
 - Luôn chụp danh sách `trạng-thái | tên-test` của 20 ô cũ trước và sau khi thêm bước 8, và đòi **trùng khít**.
 
 **Ask first**
 - Đổi trần 2 bài mỗi lần vào của `BR-CIG-16`, hoặc đòi hết hàng đợi trong một lần.
-- Miễn cổng cho một strand cụ thể (`BR-CIG-14` cấm làm việc này để kịp phát hành).
+- Miễn cổng cho một kỹ năng cụ thể (`BR-CIG-14` cấm làm việc này để kịp phát hành).
 - Đổi `BR-CIG-02` sang đòi trả lời đúng ở `recall`.
 - Denormalise trạng thái làm quen thành bảng riêng (cần số đo hiệu năng trước).
 - Cho phép người lớn bấm bỏ qua hàng đợi qua [`parent-gate.md`](parent-gate.md).
@@ -372,8 +406,8 @@ Scenario: Bảy bước cũ không đổi trạng thái
 - Cấm — **NEVER** trả 403 cho việc chưa làm quen.
 - Cấm — **NEVER** chặn trẻ vì thư viện thiếu bài làm quen.
 - Cấm — **NEVER** cưỡng chế chỉ ở client.
-- Cấm — **NEVER** một truy vấn cho mỗi strand trong tập.
-- Cấm — **NEVER** gom về strand trước khi lấy bao đóng prerequisite.
+- Cấm — **NEVER** một truy vấn cho mỗi kỹ năng trong tập.
+- Cấm — **NEVER** gom về strand ở bất cứ bước nào của hàng đợi.
 
 ## 11. Open questions
 
@@ -382,5 +416,5 @@ Scenario: Bảy bước cũ không đổi trạng thái
 | 1 | Người lớn có được bỏ qua hàng đợi qua Parent Gate không? | Thiết kế UI danh mục | P4 | người quyết |
 | 2 | Truy vấn mục 7.5 cộng bao đóng prerequisite có vượt ngân sách `BR-PRF-*` không? | Quyết định denormalise | P4 | Backend |
 | 3 | Bài làm quen có tính vào hạn mức phút chơi trong ngày không? | [`healthy-play-limits.md`](healthy-play-limits.md) | P4 | người quyết |
-| 4 | Bao đóng prerequisite sâu bao nhiêu tầng là hợp lý trước khi cắt? | Độ dài hàng đợi thực tế | P4 | hoãn — mở lại khi đo được phân bố độ dài hàng đợi trên 41 strand |
+| 4 | Bao đóng prerequisite sâu bao nhiêu tầng là hợp lý trước khi cắt? | Độ dài hàng đợi thực tế | P4 | hoãn — mở lại khi đo được phân bố độ dài hàng đợi trên lô `C1.CMP` |
 | 5 | Khách chuyển thành hồ sơ trẻ thì chuyển trạng thái cho hồ sơ nào khi tạo nhiều hồ sơ cùng lúc? | Luồng đăng ký | P4 | Backend |

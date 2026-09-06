@@ -36,10 +36,16 @@ const SENSITIVE_KEYS = new Set([
   "raw_event",
 ]);
 
-export class AiEgressViolationError extends Error {
+import { AppError } from "@mindkid/errors/base";
+
+export class AiEgressViolationError extends AppError {
   constructor(message: string) {
-    super(message);
-    this.name = "AiEgressViolationError";
+    super({
+      code: "AI_EGRESS_VIOLATION",
+      status: 400,
+      message,
+      name: "AiEgressViolationError",
+    });
   }
 }
 

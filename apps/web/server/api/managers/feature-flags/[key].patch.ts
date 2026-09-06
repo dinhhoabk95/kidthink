@@ -1,8 +1,11 @@
 import { writeAudit } from "@mindkid/audit";
 import { featureFlags, getOwnerDb } from "@mindkid/db";
+import { AdminNoteRequiredError } from "@mindkid/errors/account";
+import { InsufficientRoleError } from "@mindkid/errors/auth";
+import { InternalError, NotFoundError } from "@mindkid/errors/common";
 import { CODE_FEATURE_FLAGS } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { invalidateFlagCache } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
@@ -22,28 +25,23 @@ export default defineEventHandler(async (event) => {
 
   // BR-FFA-03, BR-FLG-07: super_admin only
   if (manager.role !== "super_admin") {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "INSUFFICIENT_ROLE",
-      message: "Chỉ super_admin mới có quyền thay đổi cờ tính năng (BR-FFA-03)",
-    });
+    throw new InsufficientRoleError(
+      "Chỉ super_admin mới có quyền thay đổi cờ tính năng (BR-FFA-03)"
+    );
   }
 
   const key = getRouterParam(event, "key");
   if (!key) {
-    throw createError({ statusCode: 404, statusMessage: "FLAG_NOT_FOUND" });
+    throw new NotFoundError("FLAG_NOT_FOUND");
   }
 
   const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
   const parsedResult = patchFlagSchema.safeParse(raw);
   if (!parsedResult.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "REASON_REQUIRED",
-      message:
-        "Đổi cờ tính năng bắt buộc lý do tối thiểu 10 ký tự (BR-FFA-01, BR-FLG-04)",
-    });
+    throw new AdminNoteRequiredError(
+      "Đổi cờ tính năng bắt buộc lý do tối thiểu 10 ký tự (BR-FFA-01)"
+    );
   }
 
   const { reason, enabled, scope, scope_value: scopeValue } = parsedResult.data;
@@ -77,10 +75,7 @@ export default defineEventHandler(async (event) => {
       .where(eq(featureFlags.id, existing.id))
       .returning();
     if (!upd) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: "FLAG_UPDATE_FAILED",
-      });
+      throw new InternalError("FLAG_UPDATE_FAILED");
     }
     updatedRecord = upd;
   } else {
@@ -98,10 +93,7 @@ export default defineEventHandler(async (event) => {
       })
       .returning();
     if (!ins) {
-      throw createError({
-        statusCode: 500,
-        statusMessage: "FLAG_INSERT_FAILED",
-      });
+      throw new InternalError("FLAG_INSERT_FAILED");
     }
     updatedRecord = ins;
   }

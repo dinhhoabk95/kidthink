@@ -1,5 +1,9 @@
-import { AppError } from "@mindkid/auth";
 import { childProfiles, entitlements, getOwnerDb } from "@mindkid/db";
+import {
+  InternalError,
+  NotFoundError,
+  ValidationError,
+} from "@mindkid/errors/common";
 import { validateCustomPlayCap } from "@mindkid/shared";
 import { and, eq, gt, isNull, or } from "drizzle-orm";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
@@ -18,7 +22,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    throw new AppError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const eventBody = (event.context as { body?: unknown })?.body;
@@ -26,7 +30,7 @@ export default defineEventHandler(async (event) => {
   const parsed = patchSettingsSchema.safeParse(raw);
 
   if (!parsed.success) {
-    throw new AppError("VALIDATION_FAILED", {
+    throw new ValidationError({
       message: "daily_play_cap_minutes là bắt buộc.",
     });
   }
@@ -41,7 +45,7 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(childProfiles.uuid, uuid), eq(childProfiles.userId, userId)));
 
   if (!child) {
-    throw new AppError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   // Determine user tier
@@ -68,7 +72,7 @@ export default defineEventHandler(async (event) => {
 
   // Validate cap <= package max cap (BR-HPL-08 -> 422 if exceeded)
   if (!validateCustomPlayCap(requestedCap, tier)) {
-    throw new AppError("VALIDATION_FAILED", {
+    throw new ValidationError({
       message: `Hạn mức ${requestedCap} phút vượt quá trần của gói (${tier}).`,
     });
   }
@@ -83,11 +87,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!updatedChild) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "SETTINGS_UPDATE_FAILED",
-      message: "Cập nhật cài đặt thất bại",
-    });
+    throw new InternalError("Cập nhật cài đặt thất bại");
   }
 
   return {

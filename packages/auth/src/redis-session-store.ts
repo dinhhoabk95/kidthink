@@ -1,11 +1,13 @@
 import crypto from "node:crypto";
+import { SessionRevokedError } from "@mindkid/errors/auth";
+import { isAppError } from "@mindkid/errors/base";
+import { ServiceUnavailableError } from "@mindkid/errors/common";
 import type {
   AuthContext,
   ManagerRole,
   ManagerTokenPayload,
   UserTokenPayload,
 } from "./contracts";
-import { appError } from "./errors";
 import type { AccountReference } from "./ports";
 
 export type AuthNamespace = "user" | "manager";
@@ -304,10 +306,10 @@ export class RedisSessionStore {
         deviceId,
       };
     } catch (err) {
-      if (err instanceof Error && err.name === "AppError") {
+      if (isAppError(err)) {
         throw err;
       }
-      throw appError("SERVICE_UNAVAILABLE");
+      throw new ServiceUnavailableError();
     }
   }
 
@@ -357,10 +359,10 @@ export class RedisSessionStore {
 
       return null;
     } catch (err) {
-      if (err instanceof Error && err.name === "AppError") {
+      if (isAppError(err)) {
         throw err;
       }
-      throw appError("SERVICE_UNAVAILABLE");
+      throw new ServiceUnavailableError();
     }
   }
 
@@ -386,7 +388,7 @@ export class RedisSessionStore {
         account_type: namespace,
         account_id: rememberData.accountId,
       });
-      throw appError("SESSION_REVOKED");
+      throw new SessionRevokedError();
     }
 
     if (!isCurrent) {
@@ -423,7 +425,7 @@ export class RedisSessionStore {
     try {
       const parts = options.rememberToken.split(":");
       if (parts.length !== 2 || !parts[0] || !parts[1]) {
-        throw appError("SESSION_REVOKED");
+        throw new SessionRevokedError();
       }
 
       const [selector, verifier] = parts;
@@ -432,7 +434,7 @@ export class RedisSessionStore {
 
       const raw = await this.redis.get(rememberKey);
       if (!raw) {
-        throw appError("SESSION_REVOKED");
+        throw new SessionRevokedError();
       }
 
       const rememberData: RememberData = JSON.parse(raw);
@@ -440,7 +442,7 @@ export class RedisSessionStore {
 
       if (now >= rememberData.absoluteExpiresAt) {
         await this.redis.del(rememberKey);
-        throw appError("SESSION_REVOKED");
+        throw new SessionRevokedError();
       }
 
       const nextRememberToken = await this.validateAndRotateVerifier(
@@ -486,10 +488,10 @@ export class RedisSessionStore {
         },
       };
     } catch (err) {
-      if (err instanceof Error && err.name === "AppError") {
+      if (isAppError(err)) {
         throw err;
       }
-      throw appError("SERVICE_UNAVAILABLE");
+      throw new ServiceUnavailableError();
     }
   }
 
@@ -516,10 +518,10 @@ export class RedisSessionStore {
         deviceId
       );
     } catch (err) {
-      if (err instanceof Error && err.name === "AppError") {
+      if (isAppError(err)) {
         throw err;
       }
-      throw appError("SERVICE_UNAVAILABLE");
+      throw new ServiceUnavailableError();
     }
   }
 
@@ -537,10 +539,10 @@ export class RedisSessionStore {
       );
       await this.redis.incr(this.accountGenKey(namespace, account.account_id));
     } catch (err) {
-      if (err instanceof Error && err.name === "AppError") {
+      if (isAppError(err)) {
         throw err;
       }
-      throw appError("SERVICE_UNAVAILABLE");
+      throw new ServiceUnavailableError();
     }
   }
 }

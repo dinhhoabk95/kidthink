@@ -1,4 +1,5 @@
-import { AppError } from "@mindkid/auth";
+import { ValidationError } from "@mindkid/errors/common";
+
 import { and, eq, inArray, sql } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { contentTagMap, contentTags } from "#src/schema/tagging";
@@ -67,8 +68,7 @@ async function resolveAndEnsureTags(
     return matchedTags;
   }
 
-  throw new AppError(
-    "VALIDATION_FAILED",
+  throw new ValidationError(
     `Tag không hợp lệ hoặc chưa được duyệt trong từ vựng Lớp 1: ${missing.join(", ")}`
   );
 }
@@ -82,8 +82,7 @@ function validatePublishAxes(matchedTags: Array<{ axis: string }>) {
   ];
   const missingAxes = requiredAxes.filter((axis) => !axesPresent.has(axis));
   if (missingAxes.length > 0) {
-    throw new AppError(
-      "VALIDATION_FAILED",
+    throw new ValidationError(
       `Thiếu tag cho trục sư phạm: ${missingAxes.join(", ")}. theme là trục tuỳ chọn.`
     );
   }
@@ -105,9 +104,8 @@ export async function validateAndAssignTags(
   const tagList = Array.from(allCodes);
   if (tagList.length === 0) {
     if (isPublishing) {
-      throw new AppError(
-        "VALIDATION_FAILED",
-        "Nội dung phải có ít nhất 1 tag cho mỗi trục sư phạm (what, thinking, mechanic)."
+      throw new ValidationError(
+        "Nội dung phải có ít nhất 1 tag cho mỗi trục sư phạm (what, thinking, mechanic);."
       );
     }
     return;
@@ -145,17 +143,13 @@ export async function validateAndAssignTags(
  */
 export function validateContentSkillMap(entries: SkillMapInput[]) {
   if (entries.length === 0) {
-    throw new AppError(
-      "VALIDATION_FAILED",
-      "Nội dung phải liên kết với ít nhất 1 kỹ năng."
-    );
+    throw new ValidationError("Nội dung phải liên kết với ít nhất 1 kỹ năng.");
   }
 
   let primaryCount = 0;
   for (const entry of entries) {
     if (entry.weight <= 0 || entry.weight > 1) {
-      throw new AppError(
-        "VALIDATION_FAILED",
+      throw new ValidationError(
         `Trọng số skill_id ${entry.skillId} phải nằm trong (0, 1].`
       );
     }
@@ -165,9 +159,8 @@ export function validateContentSkillMap(entries: SkillMapInput[]) {
   }
 
   if (primaryCount !== 1) {
-    throw new AppError(
-      "VALIDATION_FAILED",
-      `Nội dung phải có đúng 1 kỹ năng chính với weight = 1.0 (hiện có ${primaryCount}).`
+    throw new ValidationError(
+      `Nội dung phải có đúng 1 kỹ năng chính với weight = 1.0 (hiện có ${primaryCount});.`
     );
   }
 }

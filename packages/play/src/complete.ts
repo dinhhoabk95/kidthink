@@ -1,6 +1,10 @@
 import type { selectNext } from "@mindkid/adaptive";
-import { AppError } from "@mindkid/auth";
 import { getOwnerDb, playSessions, telemetryEvents } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
+import {
+  SessionAlreadyCompletedError,
+  SessionExpiredError,
+} from "@mindkid/errors/play";
 import { getGameTemplate } from "@mindkid/game-engine/registry";
 import { enqueue } from "@mindkid/queue";
 import {
@@ -31,7 +35,7 @@ export async function completePlaySession(
 
   const session = sessionRows[0];
   if (!session) {
-    throw new AppError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   await checkSessionOwnership(db, session, options);
@@ -40,7 +44,7 @@ export async function completePlaySession(
     session.completionStatus === "completed" ||
     session.completionStatus === "abandoned"
   ) {
-    throw new AppError("SESSION_ALREADY_COMPLETED");
+    throw new SessionAlreadyCompletedError();
   }
 
   const now = new Date();
@@ -51,7 +55,7 @@ export async function completePlaySession(
       .set({ completionStatus: "abandoned", updatedAt: now })
       .where(eq(playSessions.id, session.id));
 
-    throw new AppError("SESSION_EXPIRED");
+    throw new SessionExpiredError();
   }
 
   const events = await db
@@ -99,7 +103,7 @@ export async function completePlaySession(
       .returning({ id: playSessions.id });
 
     if (!completed) {
-      throw new AppError("SESSION_ALREADY_COMPLETED");
+      throw new SessionAlreadyCompletedError();
     }
 
     if (session.childProfileId && !session.isPreview && !isTeachTemplate) {

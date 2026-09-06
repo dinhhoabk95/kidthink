@@ -1,4 +1,5 @@
-import { AppError, verifyParentGateChallenge } from "@mindkid/auth";
+import { verifyParentGateChallenge } from "@mindkid/auth";
+import { ValidationError } from "@mindkid/errors/common";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
 
   const parsed = ParentGateVerifySchema.safeParse(body);
   if (!parsed.success) {
-    throw new AppError("VALIDATION_FAILED");
+    throw new ValidationError();
   }
   const { challenge_payload: challengePayload, answer } = parsed.data;
 

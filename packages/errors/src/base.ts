@@ -144,12 +144,52 @@ export interface ErrorSpec {
   readonly className?: string;
 }
 
+export interface AppErrorCause<D> {
+  readonly cause?: D;
+}
+
 export interface AppErrorConstructor<D extends JsonValue> {
   new (details?: D, messageOverride?: string): AppError<D>;
+  new (message: string, detailsOrOptions?: D | AppErrorCause<D>): AppError<D>;
+  new (arg1?: D | string, arg2?: D | AppErrorCause<D> | string): AppError<D>;
   readonly code: string;
   readonly status: number;
   readonly defaultMessage: string;
   readonly __h3_error__: boolean;
+}
+
+function extractDetails<D>(value: unknown): D | undefined {
+  if (value && typeof value === "object") {
+    return (
+      "cause" in value && value.cause !== undefined ? value.cause : value
+    ) as D;
+  }
+  return undefined;
+}
+
+function resolveErrorArgs<D>(
+  defaultMessage: string,
+  arg1?: D | string,
+  arg2?: D | { readonly cause?: D } | string
+): { readonly details: D | undefined; readonly message: string } {
+  if (typeof arg1 === "string") {
+    return {
+      message: arg1,
+      details: extractDetails<D>(arg2),
+    };
+  }
+
+  if (arg1 && typeof arg1 === "object") {
+    return {
+      details: extractDetails<D>(arg1),
+      message: typeof arg2 === "string" ? arg2 : defaultMessage,
+    };
+  }
+
+  return {
+    message: typeof arg2 === "string" ? arg2 : defaultMessage,
+    details: extractDetails<D>(arg2),
+  };
 }
 
 /**
@@ -170,12 +210,13 @@ export function defineError<D extends JsonValue = ErrorDetails>(
     static readonly status = status;
     static readonly defaultMessage = spec.message;
 
-    constructor(details?: D, messageOverride?: string) {
+    constructor(arg1?: D | string, arg2?: D | { readonly cause?: D } | string) {
+      const resolved = resolveErrorArgs<D>(spec.message, arg1, arg2);
       super({
         code: spec.code,
-        message: messageOverride ?? spec.message,
+        message: resolved.message,
         status,
-        details,
+        details: resolved.details,
         name: className,
       });
     }

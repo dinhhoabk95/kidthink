@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@mindkid/db": "workspace:*",
+    "@mindkid/errors": "workspace:*",
     "@mindkid/shared": "workspace:*",
     "drizzle-orm": "catalog:"
   },

@@ -1,6 +1,8 @@
 import { activities, contentSkillMap, getOwnerDb, skills } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
+import { ActivityNotFoundError } from "@mindkid/errors/content";
 import { and, desc, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
@@ -10,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const versionParam = getRouterParam(event, "version");
 
   if (!code) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const db = getOwnerDb();
@@ -37,11 +39,7 @@ export default defineEventHandler(async (event) => {
 
   const activity = rows[0];
   if (!activity) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "ACTIVITY_NOT_FOUND",
-      message: `Activity ${code} (version ${versionParam || "latest"}) not found`,
-    });
+    throw new ActivityNotFoundError();
   }
 
   // Fetch attached skills

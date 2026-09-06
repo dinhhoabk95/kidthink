@@ -326,9 +326,10 @@
         requirements.value = data.requirements;
       }
     } catch (err: unknown) {
-      const fetchErr = err as FetchErrorPayload;
       errorMessage.value =
-        fetchErr?.data?.message || "Không thể tải danh sách yêu cầu pháp lý.";
+        err instanceof Error
+          ? err.message
+          : "Không thể tải danh sách yêu cầu pháp lý.";
     } finally {
       loading.value = false;
     }

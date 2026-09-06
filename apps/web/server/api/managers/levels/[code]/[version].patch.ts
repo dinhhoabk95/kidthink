@@ -1,9 +1,18 @@
 import { writeAudit } from "@mindkid/audit";
 import { gameLevels, getOwnerDb } from "@mindkid/db";
+import { InternalError, NotFoundError } from "@mindkid/errors/common";
+import {
+  ContentImmutableError,
+  VersionConflictError,
+} from "@mindkid/errors/content";
+import {
+  ContentPackInvalidError,
+  GameLevelNotFoundError,
+} from "@mindkid/errors/game-level";
 import { validateContentPack } from "@mindkid/game-engine/registry";
 import type { AccessTier } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { syncContentAssetRefs } from "#server/utils/asset-refs";
 
@@ -74,7 +83,7 @@ export default defineEventHandler(async (event) => {
   const versionParam = getRouterParam(event, "version");
 
   if (!(code && versionParam)) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const version = Number(versionParam);
@@ -92,31 +101,22 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!existing) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "LEVEL_NOT_FOUND",
-      message: `Level ${code} v${version} not found`,
-    });
+    throw new GameLevelNotFoundError(`Level ${code} v${version} not found`);
   }
 
   if (
     body.expected_version !== undefined &&
     body.expected_version !== existing.contentVersion
   ) {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "VERSION_CONFLICT",
-      message: `Version conflict: expected v${body.expected_version}, but current is v${existing.contentVersion}`,
-    });
+    throw new VersionConflictError(
+      `Version conflict: expected v${body.expected_version}, but current is v${existing.contentVersion}`
+    );
   }
 
   if (existing.status === "published") {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "CONTENT_IMMUTABLE",
-      message:
-        "Cannot modify published level directly. Create a new version instead.",
-    });
+    throw new ContentImmutableError(
+      "Cannot modify published level directly. Create a new version instead."
+    );
   }
 
   if (body.content_pack && existing.templateCode) {
@@ -125,12 +125,9 @@ export default defineEventHandler(async (event) => {
       body.content_pack
     );
     if (!valResult.success) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "CONTENT_PACK_INVALID",
-        message: "Content pack schema validation failed",
-        data: valResult.error,
-      });
+      throw new ContentPackInvalidError(
+        "Content pack schema validation failed"
+      );
     }
   }
 
@@ -142,11 +139,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!updated) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "LEVEL_UPDATE_FAILED",
-      message: "Cập nhật màn chơi thất bại",
-    });
+    throw new InternalError("Cập nhật màn chơi thất bại");
   }
 
   await syncContentAssetRefs(db, "game_level", updated.id, updated.contentPack);

@@ -1,6 +1,5 @@
 import { writeAudit } from "@mindkid/audit";
 import {
-  appError,
   decryptTotpSecret,
   generateRecoveryCodes,
   getAuthRedisClient,
@@ -17,6 +16,11 @@ import {
   mfaSettings,
   PostgresSessionStore,
 } from "@mindkid/db";
+import {
+  InsufficientRoleError,
+  InvalidCredentialsError,
+  MfaSecretCorruptedError,
+} from "@mindkid/errors/auth";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
@@ -64,7 +68,7 @@ async function verifyManagerMfa(
       }
     } catch {
       // BR-MFA-13: decryption failure is a system error, not a wrong code
-      throw appError("MFA_SECRET_CORRUPTED");
+      throw new MfaSecretCorruptedError();
     }
   }
 
@@ -91,7 +95,7 @@ export default defineEventHandler(async (event) => {
   const body = (await readBody(event).catch(() => null)) ?? {};
   const parsed = MfaSchema.safeParse(body);
   if (!parsed.success) {
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
   const { challenge, code } = parsed.data;
 
@@ -100,7 +104,7 @@ export default defineEventHandler(async (event) => {
   const challengePayload = await mfaChallengeService
     .consumeChallenge("manager", challenge)
     .catch(() => {
-      throw appError("INVALID_CREDENTIALS");
+      throw new InvalidCredentialsError();
     });
 
   const db = getOwnerDb();
@@ -110,11 +114,11 @@ export default defineEventHandler(async (event) => {
     .where(eq(managers.id, challengePayload.accountId));
 
   if (!manager) {
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
 
   if (!manager.isActive) {
-    throw appError("INSUFFICIENT_ROLE");
+    throw new InsufficientRoleError();
   }
 
   const rateLimit = await enforceTwoAxisRateLimit({
@@ -152,7 +156,7 @@ export default defineEventHandler(async (event) => {
         reason: "Invalid MFA code or recovery code",
       });
     });
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
 
   let recoveryCodesToReturn: string[] | undefined;
@@ -218,7 +222,7 @@ export default defineEventHandler(async (event) => {
         )
         .returning({ id: mfaRecoveryCodes.id });
       if (!claimed) {
-        throw appError("INVALID_CREDENTIALS");
+        throw new InvalidCredentialsError();
       }
       await writeAudit(tx, {
         actor_type: "manager",

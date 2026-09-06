@@ -1,11 +1,16 @@
 # Kế hoạch — Task #253: GT-000 dạy trọn một chủ đề, và kỹ năng bậc pre chặn trước khi chơi
 
+> **Thay bởi [`Task #254`](254-skill-opening-lesson-plan.md), 2026-09-06.** Bậc `pre` bị gỡ:
+> bài học mở đầu là thêm game level gắn thẳng vào kỹ năng chơi, không phải thêm kỹ năng.
+> File này giữ nguyên làm nhật ký của đợt đã làm; mọi `BR-PRE-*` nhắc ở đây đã hết hiệu lực.
+
+
 > **Danh sách việc:** [`253-gt000-concept-theme-todo.md`](253-gt000-concept-theme-todo.md)
 > **Loại task:** lát dọc (S). Một chủ đề đi trọn đường từ taxonomy tới màn hình.
 > **File này cấm — NEVER chứa contract.** Contract ở `docs/specs/`; ở đây chỉ có bằng chứng,
 > thứ tự, và quyết định.
 > Spec sở hữu:
-> [`concept-pre-skill.md`](../specs/05-content/concept-pre-skill.md) ·
+> [`concept-topic-model.md`](../specs/05-content/concept-topic-model.md) ·
 > [`GT-000.md`](../specs/01-platform/engines/GT-000.md) ·
 > [`concept-intro-model.md`](../specs/05-content/concept-intro-model.md) ·
 > [`concept-intro-runner.md`](../specs/04-play/concept-intro-runner.md)
@@ -51,7 +56,7 @@ khuôn không nhận nổi một chủ đề.
 
 | Spec | Sửa gì |
 |---|---|
-| [`concept-pre-skill.md`](../specs/05-content/concept-pre-skill.md) | Spec mới. Bậc `pre`, từ vựng chủ đề, 5 chủ đề đợt 1, 10 luật `BR-PRE-` |
+| [`concept-topic-model.md`](../specs/05-content/concept-topic-model.md) | Spec mới. Bậc `pre`, từ vựng chủ đề, 5 chủ đề đợt 1, 10 luật `BR-PRE-` |
 | [`GT-000.md`](../specs/01-platform/engines/GT-000.md) | Viết lại 16 mục. 3 luật cũ thành 9 luật, mỗi luật một kịch bản nghiệm thu. §15 đọc lại đúng từ mã nguồn |
 | [`concept-intro-model.md`](../specs/05-content/concept-intro-model.md) | `BR-CIM-02` đổi đơn vị gắn sang kỹ năng bậc `pre`; `-03` thành trần theo phân đoạn; `-06` thành trần mỗi phân đoạn; `-13` thành một chủ đề một bài; `-18` thêm phân đoạn ôn. §7 đồng bộ tên trường với mã nguồn. Câu hỏi mở 3 đóng |
 | [`concept-intro-runner.md`](../specs/04-play/concept-intro-runner.md) | Thêm `BR-CIR-17`…`-21`: phân đoạn nối tiếp, quay lại đúng mốc, giới thiệu phải nghe được, `tts_used` thật, tên event đã đăng ký. Chốt một bộ tên event |

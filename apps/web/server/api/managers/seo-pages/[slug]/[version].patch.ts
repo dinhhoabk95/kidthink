@@ -1,7 +1,13 @@
 import { writeAudit } from "@mindkid/audit";
 import { getOwnerDb, seoPages } from "@mindkid/db";
+import {
+  InternalError,
+  NotFoundError,
+  ValidationError,
+} from "@mindkid/errors/common";
+import { SeoPageNotFoundError } from "@mindkid/errors/content";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const FORBIDDEN_LEGAL_SLUGS = [
@@ -25,11 +31,9 @@ function sanitizeRichText(html: string | undefined): string | undefined {
     lower.includes("onclick=") ||
     lower.includes("onerror=")
   ) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: "Nội dung chứa mã script hoặc HTML không được phép (BR-SEO-02)",
-    });
+    throw new ValidationError(
+      "Nội dung chứa mã script hoặc HTML không được phép (BR-SEO-02)"
+    );
   }
   return html;
 }
@@ -48,11 +52,9 @@ function handleSlugChange(
     FORBIDDEN_LEGAL_SLUGS.includes(newSlug) ||
     FORBIDDEN_LEGAL_SLUGS.includes(`/${newSlug}`)
   ) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "FORBIDDEN_LEGAL_SLUG",
-      message: "Không được sử dụng slug của trang pháp lý (BR-SEO-09)",
-    });
+    throw new ValidationError(
+      "Không được sử dụng slug của trang pháp lý (BR-SEO-09)"
+    );
   }
   updates.slug = newSlug;
   if (existing.status === "published") {
@@ -135,7 +137,7 @@ export default defineEventHandler(async (event) => {
   const version = Number(getRouterParam(event, "version"));
 
   if (!(slug && version)) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const db = getOwnerDb();
@@ -145,10 +147,7 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(seoPages.slug, slug), eq(seoPages.contentVersion, version)));
 
   if (!existing) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "SEO_PAGE_NOT_FOUND",
-    });
+    throw new SeoPageNotFoundError("SEO_PAGE_NOT_FOUND");
   }
 
   const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
@@ -164,11 +163,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!updated) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "SEO_PAGE_UPDATE_FAILED",
-      message: "Cập nhật trang SEO thất bại",
-    });
+    throw new InternalError("Cập nhật trang SEO thất bại");
   }
 
   const managerId = manager.manager_id;

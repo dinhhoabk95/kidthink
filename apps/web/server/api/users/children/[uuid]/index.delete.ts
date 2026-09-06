@@ -1,14 +1,14 @@
 import { verifyPassword } from "@mindkid/auth";
 import { childProfiles, getOwnerDb, users } from "@mindkid/db";
+import { InvalidCredentialsError } from "@mindkid/errors/auth";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { and, eq } from "drizzle-orm";
 import {
-  createError,
   defineEventHandler,
   deleteCookie,
   getCookie,
   getRouterParam,
   readBody,
-  setResponseStatus,
 } from "h3";
 import { z } from "zod";
 import {
@@ -26,8 +26,7 @@ export default defineEventHandler(async (event) => {
   const userSession = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const userId = Number(userSession.user_id);
@@ -40,8 +39,7 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(childProfiles.uuid, uuid), eq(childProfiles.userId, userId)));
 
   if (!child) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const eventBody = (event.context as { body?: unknown })?.body;
@@ -63,28 +61,14 @@ export default defineEventHandler(async (event) => {
       (await verifyPassword(password, userRecord.passwordHash))
     )
   ) {
-    setResponseStatus(event, 401);
-    throw createError({
-      statusCode: 401,
-      statusMessage: "INVALID_CREDENTIALS",
-      data: {
-        code: "INVALID_CREDENTIALS",
-        message: "Mật khẩu xác nhận không đúng.",
-      },
-    });
+    throw new InvalidCredentialsError("Mật khẩu xác nhận không đúng.");
   }
 
   // BR-CPR-04: Confirmation requires typing exact child display_name
   if (confirmName !== child.displayName) {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "CONFIRM_NAME_MISMATCH",
-      data: {
-        code: "CONFIRM_NAME_MISMATCH",
-        message: "Tên xác nhận không trùng khớp với tên hồ sơ trẻ.",
-      },
-    });
+    throw new ValidationError(
+      "Tên xác nhận không trùng khớp với tên hồ sơ trẻ."
+    );
   }
 
   // Clear active_child_id cookie if target child is active

@@ -1,5 +1,5 @@
-import { appError } from "@mindkid/auth";
 import { getOwnerDb, notificationDeliveries } from "@mindkid/db";
+import { WebhookSignatureInvalidError } from "@mindkid/errors/billing";
 import { type SnsMessage, verifySnsSignature } from "@mindkid/notification";
 import { eq } from "drizzle-orm";
 import { defineEventHandler } from "h3";
@@ -114,16 +114,12 @@ async function handleComplaint(
 export default defineEventHandler(async (event) => {
   const envelope = SnsEnvelopeSchema.safeParse(await readRequestBody(event));
   if (!envelope.success) {
-    throw appError(
-      "WEBHOOK_SIGNATURE_INVALID",
-      "Yêu cầu thiếu phong bì SNS đã ký."
-    );
+    throw new WebhookSignatureInvalidError("Yêu cầu thiếu phong bì SNS đã ký.");
   }
 
   const message = envelope.data as SnsMessage;
   if (!(await verifySnsSignature(message))) {
-    throw appError(
-      "WEBHOOK_SIGNATURE_INVALID",
+    throw new WebhookSignatureInvalidError(
       "Chữ ký SNS không hợp lệ hoặc chứng chỉ ký không thuộc AWS."
     );
   }

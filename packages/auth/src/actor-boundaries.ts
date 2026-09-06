@@ -1,12 +1,12 @@
+import { ChildNotFoundError, NoActiveChildError } from "@mindkid/errors/child";
 import type { AuthEvent } from "./contracts";
 import { requireUserAuth } from "./contracts";
-import { appError } from "./errors";
 import type { ChildOwnershipPort, EntitlementPort } from "./ports";
 
 export function assertActiveChild(event: AuthEvent): number {
   const user = requireUserAuth(event);
   if (user.active_child_db_id === undefined || user.active_child_db_id <= 0) {
-    throw appError("NO_ACTIVE_CHILD");
+    throw new NoActiveChildError();
   }
   return user.active_child_db_id;
 }
@@ -19,7 +19,7 @@ export async function verifyChildOwnership(
   const user = requireUserAuth(event);
   const isOwned = await ownershipPort.isOwnedByUser(user.user_id, childId);
   if (!isOwned) {
-    throw appError("NOT_FOUND");
+    throw new ChildNotFoundError(childId);
   }
 }
 

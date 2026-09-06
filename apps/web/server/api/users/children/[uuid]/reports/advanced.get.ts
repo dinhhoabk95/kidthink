@@ -1,12 +1,9 @@
 import { childProfiles, getOwnerDb } from "@mindkid/db";
+import { EntitlementRequiredError } from "@mindkid/errors/billing";
+import { ChildNotFoundError } from "@mindkid/errors/child";
+import { ValidationError } from "@mindkid/errors/common";
 import { and, eq, inArray } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  getQuery,
-  getRouterParam,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, getQuery, getRouterParam } from "h3";
 import { buildAdvancedReport } from "#server/services/index.js";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
@@ -25,15 +22,7 @@ export default defineEventHandler(async (event) => {
   const childUuid = getRouterParam(event, "uuid");
 
   if (!childUuid) {
-    setResponseStatus(event, 400);
-    throw createError({
-      statusCode: 400,
-      statusMessage: "CHILD_UUID_REQUIRED",
-      data: {
-        code: "CHILD_UUID_REQUIRED",
-        message: "Mã định danh trẻ là bắt buộc.",
-      },
-    });
+    throw new ValidationError("Mã định danh trẻ là bắt buộc.");
   }
 
   const userId = Number(user.user_id);
@@ -52,15 +41,7 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!child) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "CHILD_NOT_FOUND",
-      data: {
-        code: "CHILD_NOT_FOUND",
-        message: "Không tìm thấy hồ sơ trẻ.",
-      },
-    });
+    throw new ChildNotFoundError("Không tìm thấy hồ sơ trẻ.");
   }
 
   // 2. Gate report access via view_advanced_report entitlement (D-NB)
@@ -68,17 +49,9 @@ export default defineEventHandler(async (event) => {
   const hasReportAccess = userEntitlements.includes("view_advanced_report");
 
   if (!hasReportAccess) {
-    setResponseStatus(event, 403);
-    throw createError({
-      statusCode: 403,
-      statusMessage: "ENTITLEMENT_REQUIRED",
-      data: {
-        code: "ENTITLEMENT_REQUIRED",
-        message:
-          "Tài khoản cần có gói Standard hoặc Premium để xem báo cáo nâng cao.",
-        upgrade_package_codes: ["standard", "premium"],
-      },
-    });
+    throw new EntitlementRequiredError(
+      "Tài khoản cần có gói Standard hoặc Premium để xem báo cáo nâng cao."
+    );
   }
 
   // 3. Validate period query parameter (30d | 90d)
@@ -93,16 +66,9 @@ export default defineEventHandler(async (event) => {
   }
 
   if (rawPeriod !== "30d" && rawPeriod !== "90d") {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "INVALID_PERIOD",
-      data: {
-        code: "INVALID_PERIOD",
-        message:
-          "Khoảng thời gian không hợp lệ. Báo cáo nâng cao chỉ chấp nhận '30d' hoặc '90d'.",
-      },
-    });
+    throw new ValidationError(
+      "Khoảng thời gian không hợp lệ. Báo cáo nâng cao chỉ chấp nhận '30d' hoặc '90d'."
+    );
   }
 
   const period = rawPeriod as "30d" | "90d";

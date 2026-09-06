@@ -1,6 +1,8 @@
 import { gameLevels, getOwnerDb } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
+import { GameLevelNotFoundError } from "@mindkid/errors/game-level";
 import { and, desc, eq, or } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const NUMERIC_REGEX = /^\d+$/;
@@ -12,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const versionParam = getRouterParam(event, "version");
 
   if (!code) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const db = getOwnerDb();
@@ -64,11 +66,7 @@ export default defineEventHandler(async (event) => {
           .limit(1);
 
   if (!rows || rows.length === 0) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "LEVEL_NOT_FOUND",
-      message: `Level ${code} (version ${versionParam || "latest"}) not found`,
-    });
+    throw new GameLevelNotFoundError();
   }
 
   return rows[0];

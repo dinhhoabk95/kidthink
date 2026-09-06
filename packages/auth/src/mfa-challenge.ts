@@ -1,5 +1,7 @@
+import { TokenExpiredError } from "@mindkid/errors/auth";
+import { isAppError } from "@mindkid/errors/base";
+import { ServiceUnavailableError } from "@mindkid/errors/common";
 import type { ManagerRole } from "./contracts";
-import { appError } from "./errors";
 import {
   type AuthNamespace,
   generateTokenHex,
@@ -74,10 +76,10 @@ export class MfaChallengeService {
         expiresAt: new Date(expiresAtMs),
       };
     } catch (err) {
-      if (err instanceof Error && err.name === "AppError") {
+      if (isAppError(err)) {
         throw err;
       }
-      throw appError("SERVICE_UNAVAILABLE");
+      throw new ServiceUnavailableError();
     }
   }
 
@@ -87,7 +89,7 @@ export class MfaChallengeService {
   ): Promise<MfaChallengePayload> {
     try {
       if (!challengeToken || typeof challengeToken !== "string") {
-        throw appError("TOKEN_EXPIRED");
+        throw new TokenExpiredError();
       }
 
       const digest = sha256(challengeToken);
@@ -95,7 +97,7 @@ export class MfaChallengeService {
       const raw = await this.redis.get(key);
 
       if (!raw) {
-        throw appError("TOKEN_EXPIRED");
+        throw new TokenExpiredError();
       }
 
       // Atomic one-time consume: delete immediately!
@@ -103,15 +105,15 @@ export class MfaChallengeService {
 
       const payload: MfaChallengePayload = JSON.parse(raw);
       if (Date.now() - payload.createdAt >= MFA_CHALLENGE_TTL_SECONDS * 1000) {
-        throw appError("TOKEN_EXPIRED");
+        throw new TokenExpiredError();
       }
 
       return payload;
     } catch (err) {
-      if (err instanceof Error && err.name === "AppError") {
+      if (isAppError(err)) {
         throw err;
       }
-      throw appError("SERVICE_UNAVAILABLE");
+      throw new ServiceUnavailableError();
     }
   }
 }

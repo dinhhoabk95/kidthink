@@ -1,6 +1,8 @@
 import { getOwnerDb, seoPages } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
+import { SeoPageNotFoundError } from "@mindkid/errors/content";
 import { and, desc, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
@@ -9,7 +11,7 @@ export default defineEventHandler(async (event) => {
   const versionParam = getRouterParam(event, "version");
 
   if (!(slug && versionParam)) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const db = getOwnerDb();
@@ -35,11 +37,7 @@ export default defineEventHandler(async (event) => {
   }
 
   if (!row) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "SEO_PAGE_NOT_FOUND",
-      message: `SEO page '${slug}' version '${versionParam}' not found`,
-    });
+    throw new SeoPageNotFoundError(`SEO page '${slug}`);
   }
 
   return row;

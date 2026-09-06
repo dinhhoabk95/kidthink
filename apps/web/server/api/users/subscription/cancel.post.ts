@@ -1,4 +1,5 @@
-import { appError } from "@mindkid/auth";
+import { ValidationError } from "@mindkid/errors/common";
+
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import { userCancelRecurringSubscription } from "#server/services/index.js";
@@ -30,8 +31,7 @@ export default defineEventHandler(async (event) => {
     // là `AuthErrorCode`. Truyền `422` vào làm `AUTH_ERROR_DEFINITIONS[422]`
     // undefined → `status` undefined → Nitro trả 500. `VALIDATION_ERROR` cũng
     // chưa đăng ký; mã 422 đã có là `VALIDATION_FAILED`.
-    throw appError(
-      "VALIDATION_FAILED",
+    throw new ValidationError(
       parsed.error.errors[0]?.message ?? "Dữ liệu yêu cầu huỷ không hợp lệ"
     );
   }

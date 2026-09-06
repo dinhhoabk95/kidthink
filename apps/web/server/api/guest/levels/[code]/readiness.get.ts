@@ -1,13 +1,14 @@
 import { gameLevels, getOwnerDb } from "@mindkid/db";
+import { GameLevelNotFoundError } from "@mindkid/errors/game-level";
 import { and, desc, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { getOrSetGuestDeviceId } from "#server/utils/auth-runtime";
 import { checkLevelIntroRequired } from "#server/utils/concept-intro-runtime";
 
 export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");
   if (!code) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new GameLevelNotFoundError();
   }
 
   const db = getOwnerDb();
@@ -19,7 +20,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!level) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new GameLevelNotFoundError(code);
   }
 
   const guestDeviceId = getOrSetGuestDeviceId(event);

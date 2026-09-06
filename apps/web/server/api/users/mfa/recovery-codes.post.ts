@@ -1,13 +1,17 @@
 import {
-  appError,
   decryptTotpSecret,
   generateRecoveryCodes,
   hashRecoveryCode,
   verifyTotpCode,
 } from "@mindkid/auth";
 import { getOwnerDb, mfaRecoveryCodes, mfaSettings } from "@mindkid/db";
+import {
+  MfaInvalidCodeError,
+  MfaRequiredError,
+  MfaSecretCorruptedError,
+} from "@mindkid/errors/auth";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, readBody } from "h3";
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import { getMfaEncryptionKey } from "#server/utils/admin-auth-runtime";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
@@ -28,11 +32,7 @@ export default defineEventHandler(async (event) => {
 
   const parsedResult = recoveryCodesSchema.safeParse(raw);
   if (!parsedResult.success) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "MFA_INVALID_CODE",
-      message: "Mã xác thực không hợp lệ",
-    });
+    throw new MfaInvalidCodeError("Mã xác thực không hợp lệ");
   }
 
   const code = parsedResult.data.code.trim();
@@ -49,11 +49,7 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!setting?.confirmedAt) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "MFA_NOT_ENABLED",
-      message: "Xác thực hai lớp chưa được bật",
-    });
+    throw new MfaRequiredError("Xác thực hai lớp chưa được bật");
   }
 
   let decryptedSecret: string;
@@ -64,15 +60,11 @@ export default defineEventHandler(async (event) => {
     );
   } catch {
     // BR-MFA-13: decryption failure is a system error, not a wrong code
-    throw appError("MFA_SECRET_CORRUPTED");
+    throw new MfaSecretCorruptedError();
   }
   const isValid = verifyTotpCode(code, decryptedSecret);
   if (!isValid) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "MFA_INVALID_CODE",
-      message: "Mã xác thực không chính xác",
-    });
+    throw new MfaInvalidCodeError("Mã xác thực không chính xác");
   }
 
   // BR-MFA-11: Invalidate ALL old recovery codes

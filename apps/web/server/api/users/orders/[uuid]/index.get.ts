@@ -1,5 +1,5 @@
-import { appError } from "@mindkid/auth";
 import { getDb, paymentOrders } from "@mindkid/db";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { generateVietQrPayload } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   const session = requireWebUserSession(event);
   const orderUuid = getRouterParam(event, "uuid");
   if (!orderUuid) {
-    throw appError("VALIDATION_FAILED", "Order UUID is required");
+    throw new ValidationError("Order UUID is required");
   }
 
   const db = getDb();
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!order) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const vietQr =

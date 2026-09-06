@@ -1,11 +1,7 @@
 import { getOwnerDb, notificationEndpoints } from "@mindkid/db";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { and, eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
@@ -15,14 +11,7 @@ export default defineEventHandler(async (event) => {
   const uuidParam = getRouterParam(event, "uuid");
 
   if (!uuidParam) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "ENDPOINT_UUID_REQUIRED",
-      data: {
-        code: "ENDPOINT_UUID_REQUIRED",
-        message: "Thiếu endpoint UUID",
-      },
-    });
+    throw new ValidationError("Thiếu endpoint UUID");
   }
 
   const db = getOwnerDb();
@@ -39,11 +28,7 @@ export default defineEventHandler(async (event) => {
 
   if (!existing) {
     // 404 for missing or cross-user endpoint
-    throw createError({
-      statusCode: 404,
-      statusMessage: "ENDPOINT_NOT_FOUND",
-      data: { code: "ENDPOINT_NOT_FOUND", message: "Endpoint không tồn tại" },
-    });
+    throw new NotFoundError("Endpoint không tồn tại");
   }
 
   // Revoke endpoint (idempotent if already revoked)

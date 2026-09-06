@@ -222,9 +222,10 @@
         }
       }
     } catch (err: unknown) {
-      const fetchErr = err as FetchErrorPayload;
       errorMessage.value =
-        fetchErr?.data?.message || "Không thể tải danh sách điều khoản.";
+        err instanceof Error
+          ? err.message
+          : "Không thể tải danh sách điều khoản.";
     } finally {
       loading.value = false;
     }

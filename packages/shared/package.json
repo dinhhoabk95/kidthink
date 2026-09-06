@@ -11,10 +11,11 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@mindkid/cache": "workspace:*",
     "@mindkid/emoji": "workspace:*",
+    "@mindkid/errors": "workspace:*",
     "@mindkid/moderation": "workspace:*",
-    "zod": "catalog:",
-    "@mindkid/cache": "workspace:*"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",

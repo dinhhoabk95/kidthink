@@ -1,5 +1,6 @@
-import { appError } from "@mindkid/auth";
 import { getOwnerDb, recurringSubscriptions, users } from "@mindkid/db";
+import { UserNotFoundError } from "@mindkid/errors/account";
+import { ValidationError } from "@mindkid/errors/common";
 import { desc, eq, or } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
@@ -12,7 +13,7 @@ export default defineEventHandler(async (event) => {
   const uuidParam =
     getRouterParam(event, "uuid") || getRouterParam(event, "id");
   if (!uuidParam) {
-    throw appError("VALIDATION_FAILED", "ID người dùng không hợp lệ");
+    throw ValidationError.field("uuid", "ID người dùng không hợp lệ");
   }
 
   const db = getOwnerDb();
@@ -27,7 +28,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!targetUser) {
-    throw appError("NOT_FOUND", "Không tìm thấy người dùng");
+    throw new UserNotFoundError(uuidParam);
   }
 
   const userId = targetUser.id;

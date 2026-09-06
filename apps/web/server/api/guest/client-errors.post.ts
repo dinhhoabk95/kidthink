@@ -1,6 +1,7 @@
 import { checkRateLimit } from "@mindkid/cache";
 import { errorLogs, getOwnerDb } from "@mindkid/db";
-import { createError, defineEventHandler, readBody } from "h3";
+import { RateLimitedError } from "@mindkid/errors/common";
+import { defineEventHandler, readBody } from "h3";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 
 // Rate limiting: 10 req / min / IP (BR-ELV-05)
@@ -19,11 +20,10 @@ async function checkClientErrorRateLimit(ip: string): Promise<void> {
     CLIENT_ERROR_WINDOW_SECONDS
   );
   if (!result.allowed) {
-    throw createError({
-      statusCode: 429,
-      statusMessage: "RATE_LIMIT_EXCEEDED",
-      message: "Quá giới hạn gửi báo cáo lỗi client (tối đa 10 lần/phút)",
-    });
+    throw new RateLimitedError(
+      "Quá giới hạn gửi báo cáo lỗi client (tối đa 10 lần/phút)",
+      { retry_after_s: CLIENT_ERROR_WINDOW_SECONDS }
+    );
   }
 }
 

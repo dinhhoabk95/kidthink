@@ -1,4 +1,5 @@
-import { appError } from "@mindkid/auth";
+import { ValidationError } from "@mindkid/errors/common";
+
 import {
   type AdminSubscriptionCancelReason,
   AdminSubscriptionCancelRequestSchema,
@@ -14,7 +15,7 @@ export default defineEventHandler(async (event) => {
   const subscriptionId = Number(idParam);
 
   if (!idParam || Number.isNaN(subscriptionId) || subscriptionId <= 0) {
-    throw appError("VALIDATION_FAILED", "ID gói thuê bao định kỳ không hợp lệ");
+    throw new ValidationError("ID gói thuê bao định kỳ không hợp lệ");
   }
 
   const rawBody =
@@ -35,10 +36,9 @@ export default defineEventHandler(async (event) => {
   });
 
   if (!parseResult.success) {
-    throw appError(
-      "VALIDATION_FAILED",
+    throw new ValidationError(
       parseResult.error.errors[0]?.message ??
-        "Lý do huỷ hoặc ghi chú quản trị không hợp lệ (BR-ASC-03)"
+        "Lý do huỷ hoặc ghi chú quản trị không hợp lệ (BR-ASC-03);"
     );
   }
 

@@ -1,15 +1,12 @@
-import { appError, hashSecureToken } from "@mindkid/auth";
+import { hashSecureToken } from "@mindkid/auth";
 import { getOwnerDb, users, verificationTokens } from "@mindkid/db";
+import { EmailAlreadyInUseError } from "@mindkid/errors/account";
+import { TokenExpiredError } from "@mindkid/errors/auth";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { and, eq, gt, isNull } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
-
+import { throwValidationError } from "#server/utils/api-error";
 import {
   assertRequestBodySize,
   assertSameOriginRequest,
@@ -32,15 +29,7 @@ export default defineEventHandler(async (event) => {
 
   const parsed = VerifyEmailChangeSchema.safeParse(rawBody);
   if (!parsed.success) {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "Dữ liệu xác nhận không hợp lệ.",
-      },
-    });
+    throwValidationError(parsed.error);
   }
 
   const tokenHash = hashSecureToken(parsed.data.token);
@@ -65,7 +54,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!tokenRecord) {
-    throw appError("TOKEN_EXPIRED");
+    throw new TokenExpiredError();
   }
 
   const userId = tokenRecord.accountId;
@@ -77,7 +66,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!currentUser) {
-    throw appError("TOKEN_EXPIRED");
+    throw new TokenExpiredError();
   }
 
   const oldEmail = currentUser.email;
@@ -90,7 +79,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (conflict && conflict.id !== userId) {
-    throw appError("EMAIL_ALREADY_IN_USE");
+    throw new EmailAlreadyInUseError();
   }
 
   // Update user email and mark token used

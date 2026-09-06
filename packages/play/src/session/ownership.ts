@@ -1,5 +1,5 @@
-import { AppError } from "@mindkid/auth";
 import { childProfiles, type playSessions } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
 import { and, eq } from "drizzle-orm";
 
 import type { DbOrTx } from "../types.js";
@@ -18,7 +18,7 @@ export async function checkUserSessionOwnership(
   options: IngestOptions
 ): Promise<void> {
   if (!session.childProfileId) {
-    throw new AppError("NOT_FOUND");
+    throw new NotFoundError();
   }
   const callerAccountId = options.callerAccountId;
   if (
@@ -26,7 +26,7 @@ export async function checkUserSessionOwnership(
     !Number.isInteger(callerAccountId) ||
     callerAccountId <= 0
   ) {
-    throw new AppError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const [ownedChild] = await db
@@ -42,7 +42,7 @@ export async function checkUserSessionOwnership(
     .limit(1);
 
   if (!ownedChild) {
-    throw new AppError("NOT_FOUND");
+    throw new NotFoundError();
   }
 }
 
@@ -57,13 +57,13 @@ export async function checkSessionOwnership(
     session.childProfileId !== null &&
     session.childProfileId !== undefined
   ) {
-    throw new AppError("NOT_FOUND");
+    throw new NotFoundError();
   } else if (
     !(options.guestDeviceId && session.guestDeviceId) ||
     session.guestDeviceId !== options.guestDeviceId
   ) {
     // A guest session is bearer-bound to its device cookie. Omitting the
     // device id must never degrade into "any guest session" access.
-    throw new AppError("NOT_FOUND");
+    throw new NotFoundError();
   }
 }

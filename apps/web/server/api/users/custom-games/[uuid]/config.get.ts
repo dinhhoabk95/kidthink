@@ -1,4 +1,5 @@
-import { appError } from "@mindkid/auth";
+import { NoActiveChildError } from "@mindkid/errors/child";
+
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
 import { getCustomGamePlayConfig } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
@@ -15,7 +16,7 @@ export default defineEventHandler(async (event) => {
     "";
 
   if (!childUuid) {
-    throw appError("NO_ACTIVE_CHILD", "Hãy chọn hồ sơ bé trước khi tiếp tục.");
+    throw new NoActiveChildError("Hãy chọn hồ sơ bé trước khi tiếp tục.");
   }
 
   const config = await getCustomGamePlayConfig(userId, childUuid, uuid);

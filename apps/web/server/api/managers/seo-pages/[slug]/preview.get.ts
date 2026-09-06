@@ -1,6 +1,8 @@
 import { getOwnerDb, seoPages } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
+import { SeoPageNotFoundError } from "@mindkid/errors/content";
 import { desc, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { issuePreviewToken } from "#server/utils/preview-token";
 
@@ -62,7 +64,7 @@ export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, "slug");
 
   if (!slug) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const db = getOwnerDb();
@@ -74,10 +76,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!page) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "SEO_PAGE_NOT_FOUND",
-    });
+    throw new SeoPageNotFoundError("SEO_PAGE_NOT_FOUND");
   }
 
   const structuredData = buildStructuredData(page);

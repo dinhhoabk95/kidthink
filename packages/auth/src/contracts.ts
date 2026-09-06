@@ -1,4 +1,7 @@
-import { appError } from "./errors";
+import {
+  InsufficientRoleError,
+  UnauthenticatedError,
+} from "@mindkid/errors/auth";
 
 export type ManagerRole = "super_admin" | "content_reviewer";
 
@@ -52,7 +55,7 @@ export function createAuthContext(context: AuthContext): AuthContext {
 
   if (hasUser === hasManager) {
     if (hasUser) {
-      throw appError("UNAUTHENTICATED");
+      throw new UnauthenticatedError();
     }
     return {};
   }
@@ -70,7 +73,7 @@ export function createAuthContext(context: AuthContext): AuthContext {
 
 export function requireUserAuth(event: AuthEvent): UserTokenPayload {
   if (event.context.manager || !event.context.user) {
-    throw appError("UNAUTHENTICATED");
+    throw new UnauthenticatedError();
   }
 
   return event.context.user;
@@ -78,7 +81,7 @@ export function requireUserAuth(event: AuthEvent): UserTokenPayload {
 
 export function requireManagerAuth(event: AuthEvent): ManagerTokenPayload {
   if (event.context.user || !event.context.manager) {
-    throw appError("UNAUTHENTICATED");
+    throw new UnauthenticatedError();
   }
 
   return event.context.manager;
@@ -89,6 +92,6 @@ export function requireRole(event: AuthEvent, role: ManagerRole): void {
   const isAllowed = manager.role === "super_admin" || manager.role === role;
 
   if (!isAllowed) {
-    throw appError("INSUFFICIENT_ROLE");
+    throw new InsufficientRoleError();
   }
 }

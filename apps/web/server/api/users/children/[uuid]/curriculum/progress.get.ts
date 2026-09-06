@@ -1,15 +1,11 @@
+import { NotFoundError } from "@mindkid/errors/common";
 import {
   type AccessTier,
   type CurriculumPlayerItemRef,
   type CurriculumPlayerWeekGoal,
   computeCurriculumProgress,
 } from "@mindkid/shared";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveEnrolledChildCurriculum } from "#server/utils/curriculum-runtime";
@@ -175,8 +171,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const userId = Number(user.user_id);

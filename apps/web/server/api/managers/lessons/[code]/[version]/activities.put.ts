@@ -1,7 +1,13 @@
 import { writeAudit } from "@mindkid/audit";
 import { activities, getOwnerDb, lessonActivities, lessons } from "@mindkid/db";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
+import {
+  ActivityNotFoundError,
+  LessonNotFoundError,
+  VersionConflictError,
+} from "@mindkid/errors/content";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
@@ -49,19 +55,15 @@ async function resolveActivityItems(
     }
 
     if (!resolvedEntityId) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "ACTIVITY_NOT_FOUND",
-        message: `Activity ${item.activity_code || item.activity_id} not found`,
-      });
+      throw new ActivityNotFoundError(
+        `Activity ${item.activity_code || item.activity_id} not found`
+      );
     }
 
     if (seenActivityIds.has(resolvedEntityId)) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "DUPLICATE_ACTIVITY_IN_LESSON",
-        message: `Activity ${resolvedEntityId} cannot be attached multiple times to the same lesson`,
-      });
+      throw new ValidationError(
+        `Duplicate activity in lesson items: ${resolvedEntityId}`
+      );
     }
 
     seenActivityIds.add(resolvedEntityId);
@@ -82,12 +84,12 @@ export default defineEventHandler(async (event) => {
   const versionParam = getRouterParam(event, "version");
 
   if (!(code && versionParam)) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const version = Number(versionParam);
   if (!Number.isInteger(version) || version <= 0) {
-    throw createError({ statusCode: 400, statusMessage: "INVALID_VERSION" });
+    throw new ValidationError("INVALID_VERSION");
   }
 
   const rawBody = await readBody(event);
@@ -106,22 +108,18 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!lesson) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "LESSON_NOT_FOUND",
-      message: `Lesson ${code} version ${version} not found`,
-    });
+    throw new LessonNotFoundError(
+      `Lesson ${code} version ${version} not found`
+    );
   }
 
   if (
     expected_version !== undefined &&
     expected_version !== lesson.contentVersion
   ) {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "VERSION_CONFLICT",
-      message: `Expected version ${expected_version} but found ${lesson.contentVersion}`,
-    });
+    throw new VersionConflictError(
+      `Expected version ${expected_version}, but found ${lesson.contentVersion}`
+    );
   }
 
   const resolvedItems = await resolveActivityItems(db, items);

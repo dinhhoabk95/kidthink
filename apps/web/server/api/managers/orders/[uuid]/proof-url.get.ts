@@ -1,6 +1,7 @@
-import { appError } from "@mindkid/auth";
 import { PROOF_SIGNED_URL_TTL_MINUTES } from "@mindkid/config";
 import { auditLogs, getDb, paymentOrders } from "@mindkid/db";
+import { OrderNotFoundError } from "@mindkid/errors/billing";
+import { ValidationError } from "@mindkid/errors/common";
 import { getPrivateSignedUrl } from "@mindkid/storage";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam } from "h3";
@@ -13,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const session = requireSuperAdminSession(event);
   const orderUuid = getRouterParam(event, "uuid");
   if (!orderUuid) {
-    throw appError("VALIDATION_FAILED", "Order UUID is required");
+    throw ValidationError.field("uuid", "Order UUID is required");
   }
 
   const db = getDb();
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!order?.proofPath) {
-    throw appError("NOT_FOUND", "Không tìm thấy ảnh chứng từ cho đơn này.");
+    throw new OrderNotFoundError(orderUuid);
   }
 
   const signed = await getPrivateSignedUrl({

@@ -1,4 +1,6 @@
-import { createError, defineEventHandler, readBody } from "h3";
+import { InsufficientRoleError } from "@mindkid/errors/auth";
+import { ValidationError } from "@mindkid/errors/common";
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import { LessonExemplarService } from "#server/services/index.js";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
@@ -16,11 +18,7 @@ export default defineEventHandler(async (event) => {
   const parsed = nominateBodySchema.safeParse(rawBody);
 
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "Dữ liệu đề cử không hợp lệ",
-      data: parsed.error.format(),
-    });
+    throw new ValidationError("Dữ liệu đề cử không hợp lệ");
   }
 
   try {
@@ -39,24 +37,17 @@ export default defineEventHandler(async (event) => {
   } catch (err: unknown) {
     if (err instanceof Error) {
       if (err.name === "VALIDATION_FAILED") {
-        throw createError({
-          statusCode: 422,
-          statusMessage: err.message,
-        });
+        throw new ValidationError();
       }
       if (err.name === "EXEMPLAR_CELL_LIMIT_EXCEEDED") {
-        throw createError({
-          statusCode: 422,
-          statusMessage:
-            "Ô ma trận đã đạt trần tối đa 2 tiết học mẫu (BR-LEX-08).",
-        });
+        throw new ValidationError(
+          "Ô ma trận đã đạt trần tối đa 2 tiết học mẫu (BR-LEX-08)."
+        );
       }
       if (err.name === "INSUFFICIENT_ROLE") {
-        throw createError({
-          statusCode: 403,
-          statusMessage:
-            "Chỉ chuyên gia thẩm định sư phạm mới có quyền đề cử (BR-LEX-10).",
-        });
+        throw new InsufficientRoleError(
+          "Chỉ chuyên gia thẩm định sư phạm mới có quyền đề cử (BR-LEX-10)."
+        );
       }
     }
     throw err;

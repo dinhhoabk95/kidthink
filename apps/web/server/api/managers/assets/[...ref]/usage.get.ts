@@ -6,8 +6,9 @@ import {
   seoPages,
   worksheets,
 } from "@mindkid/db";
+import { ValidationError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
-import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
+import { defineEventHandler, getQuery, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export interface AssetUsageItem {
@@ -123,11 +124,7 @@ export default defineEventHandler(
     const rawRef = (query.ref as string) || paramRef;
 
     if (!rawRef) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "VALIDATION_FAILED",
-        message: "Asset reference (ref) is required",
-      });
+      throw new ValidationError("Asset reference (ref) is required");
     }
 
     const assetRef = decodeURIComponent(rawRef).replace(

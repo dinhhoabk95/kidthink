@@ -1,6 +1,5 @@
 import { createHash } from "node:crypto";
 import { writeAudit } from "@mindkid/audit";
-import { appError } from "@mindkid/auth";
 import {
   childProfiles,
   curricula,
@@ -14,6 +13,7 @@ import {
   playSessions,
   telemetryEvents,
 } from "@mindkid/db";
+import { PersonalCurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import {
   OFFLINE_PACK_MAX_LEASE_DAYS,
   type OfflineAssetItem,
@@ -215,10 +215,7 @@ export async function generateOfflineCurriculumPackManifest(
     ));
 
   if (!resolved || resolved.rawItems.length === 0) {
-    throw appError(
-      "NOT_FOUND",
-      `Không tìm thấy chương trình học hoặc tuần học ${weekNo}.`
-    );
+    throw new PersonalCurriculumNotFoundError(curriculumIdOrCode);
   }
 
   const { curriculumCode, contentVersion, rawItems } = resolved;

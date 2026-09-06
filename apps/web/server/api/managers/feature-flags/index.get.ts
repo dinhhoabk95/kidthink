@@ -1,6 +1,7 @@
 import { featureFlags, getOwnerDb } from "@mindkid/db";
+import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { CODE_FEATURE_FLAGS } from "@mindkid/shared";
-import { createError, defineEventHandler } from "h3";
+import { defineEventHandler } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export interface MergedFeatureFlag {
@@ -93,12 +94,9 @@ export default defineEventHandler(async (event) => {
 
   // BR-FFA-03, BR-FLG-07: super_admin only, content_reviewer gets 403
   if (manager.role !== "super_admin") {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "INSUFFICIENT_ROLE",
-      message:
-        "Chỉ super_admin mới có quyền xem và quản lý cờ tính năng (BR-FFA-03)",
-    });
+    throw new InsufficientRoleError(
+      "Chỉ super_admin mới có quyền xem và quản lý cờ tính năng (BR-FFA-03)"
+    );
   }
 
   const db = getOwnerDb();

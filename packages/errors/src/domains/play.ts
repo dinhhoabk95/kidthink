@@ -67,3 +67,9 @@ export const PlaySessionNotFoundError = defineModelNotFound(
   "Không tìm thấy phiên chơi.",
   "SESSION_NOT_FOUND"
 );
+
+export const EventDuplicateError = defineError({
+  code: "EVENT_DUPLICATE",
+  message: "Sự kiện đã được ghi nhận trước đó.",
+  status: 200,
+});

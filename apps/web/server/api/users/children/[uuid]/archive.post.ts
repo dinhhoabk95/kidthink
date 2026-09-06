@@ -1,12 +1,11 @@
 import { childProfiles, getOwnerDb } from "@mindkid/db";
+import { InternalError, NotFoundError } from "@mindkid/errors/common";
 import { and, eq } from "drizzle-orm";
 import {
-  createError,
   defineEventHandler,
   deleteCookie,
   getCookie,
   getRouterParam,
-  setResponseStatus,
 } from "h3";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
@@ -15,8 +14,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const userId = Number(user.user_id);
@@ -29,8 +27,7 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(childProfiles.uuid, uuid), eq(childProfiles.userId, userId)));
 
   if (!child) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   // Clear active_child_id cookie if target child is active
@@ -50,7 +47,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!updated) {
-    throw createError({ statusCode: 500, statusMessage: "ARCHIVE_FAILED" });
+    throw new InternalError("ARCHIVE_FAILED");
   }
 
   return {

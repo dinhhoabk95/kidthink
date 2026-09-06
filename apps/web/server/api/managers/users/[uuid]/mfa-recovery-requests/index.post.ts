@@ -1,5 +1,4 @@
 import crypto from "node:crypto";
-import { appError } from "@mindkid/auth";
 import {
   auditLogs,
   getOwnerDb,
@@ -7,14 +6,18 @@ import {
   mfaSettings,
   users,
 } from "@mindkid/db";
-import { and, eq, inArray } from "drizzle-orm";
 import {
-  createError,
-  defineEventHandler,
-  getHeader,
-  getRouterParam,
-  readBody,
-} from "h3";
+  AdminNoteRequiredError,
+  UserAlreadyDeletedError,
+} from "@mindkid/errors/account";
+import { MfaRequiredError } from "@mindkid/errors/auth";
+import {
+  InternalError,
+  NotFoundError,
+  ValidationError,
+} from "@mindkid/errors/common";
+import { and, eq, inArray } from "drizzle-orm";
+import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import {
   getManagerRemoteIp,
@@ -29,7 +32,7 @@ export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);
   const userUuid = getRouterParam(event, "uuid");
   if (!userUuid) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const rawBody =
@@ -37,11 +40,9 @@ export default defineEventHandler(async (event) => {
   const parsed = createMfaRecoverySchema.safeParse(rawBody);
 
   if (!parsed.success) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "REASON_REQUIRED",
-      message: "Lý do khôi phục MFA bắt buộc tối thiểu 10 ký tự",
-    });
+    throw new AdminNoteRequiredError(
+      "Lý do khôi phục MFA bắt buộc tối thiểu 10 ký tự"
+    );
   }
   const reason = parsed.data.reason.trim();
 
@@ -53,11 +54,11 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!targetUser) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   if (targetUser.status === "deleted") {
-    throw appError("USER_ALREADY_DELETED");
+    throw new UserAlreadyDeletedError();
   }
 
   // Check user has MFA enabled
@@ -72,11 +73,9 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!mfa?.confirmedAt) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "MFA_NOT_ENABLED",
-      message: "Tài khoản người dùng này chưa bật xác thực hai lớp",
-    });
+    throw new MfaRequiredError(
+      "Tài khoản người dùng này chưa bật xác thực hai lớp"
+    );
   }
 
   // Check active request does not already exist (BR-MFA-11)
@@ -91,11 +90,9 @@ export default defineEventHandler(async (event) => {
     );
 
   if (activeReq) {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "MFA_RECOVERY_REQUEST_ACTIVE",
-      message: "Đang có một yêu cầu khôi phục MFA đang chờ xử lý",
-    });
+    throw new ValidationError(
+      "Đang có một yêu cầu khôi phục MFA đang chờ xử lý"
+    );
   }
 
   const now = new Date();
@@ -120,11 +117,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!createdRequest) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "REQUEST_CREATE_FAILED",
-      message: "Tạo yêu cầu khôi phục thất bại",
-    });
+    throw new InternalError("Tạo yêu cầu khôi phục thất bại");
   }
 
   await db.insert(auditLogs).values({

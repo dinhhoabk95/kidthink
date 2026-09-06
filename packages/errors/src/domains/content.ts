@@ -62,3 +62,97 @@ export const LessonPlanNotFoundError = defineModelNotFound(
   "lesson_plans",
   "Không tìm thấy giáo án."
 );
+
+export const SkillNotFoundError = defineModelNotFound(
+  "SkillNotFoundError",
+  "skills",
+  "Không tìm thấy kỹ năng."
+);
+
+export const SeoPageNotFoundError = defineModelNotFound(
+  "SeoPageNotFoundError",
+  "seo_pages",
+  "Không tìm thấy trang SEO."
+);
+
+export const InvalidCodeFormatError = defineError({
+  code: "INVALID_CODE_FORMAT",
+  message: "Định dạng mã không hợp lệ.",
+  status: 400,
+});
+
+export const VersionAlreadyDraftedError = defineError({
+  code: "VERSION_ALREADY_DRAFTED",
+  message: "Đã có bản nháp chưa phát hành.",
+  status: 409,
+});
+
+export const VersionNotFoundError = defineError({
+  code: "VERSION_NOT_FOUND",
+  message: "Phiên bản nội dung không tồn tại.",
+  status: 404,
+});
+
+export const CannotRollbackToCurrentError = defineError({
+  code: "CANNOT_ROLLBACK_TO_CURRENT",
+  message: "Không thể khôi phục về chính phiên bản hiện tại.",
+  status: 409,
+});
+
+export const ContentImmutableError = defineError({
+  code: "CONTENT_IMMUTABLE",
+  message: "Nội dung đã phát hành không thể chỉnh sửa trực tiếp.",
+  status: 409,
+});
+
+export const ContentInUseError = defineError<{
+  readonly used_by?: readonly string[];
+}>({
+  code: "CONTENT_IN_USE",
+  message: "Nội dung đang được sử dụng và không thể xoá.",
+  status: 409,
+});
+
+export const CodeImmutableError = defineError({
+  code: "CODE_IMMUTABLE",
+  message: "Mã định danh đã phát hành không thể thay đổi.",
+  status: 409,
+});
+
+export const CodeAlreadyExistsError = defineError({
+  code: "CODE_ALREADY_EXISTS",
+  message: "Mã định danh đã tồn tại trong hệ thống.",
+  status: 409,
+});
+
+export const CodeAllocationFailedError = defineError({
+  code: "CODE_ALLOCATION_FAILED",
+  message: "Cấp mã tự động thất bại do trùng lặp.",
+  status: 500,
+});
+
+export const PublishChecklistFailedError = defineError<{
+  readonly missing?: readonly string[];
+}>({
+  code: "PUBLISH_CHECKLIST_FAILED",
+  message: "Chưa đạt đủ điều kiện để phát hành nội dung.",
+  status: 422,
+});
+
+export const ThemeNotSupportedError = defineError({
+  code: "THEME_NOT_SUPPORTED",
+  message: "Chủ đề nội dung không được hỗ trợ.",
+  status: 422,
+});
+
+export const AudioFormatInvalidError = defineError({
+  code: "AUDIO_FORMAT_INVALID",
+  message: "Định dạng âm thanh không hợp lệ.",
+  status: 415,
+});
+
+export const AudioSizeLimitExceededError = defineError({
+  code: "AUDIO_SIZE_LIMIT_EXCEEDED",
+  message: "Dung lượng âm thanh vượt quá giới hạn cho phép.",
+  status: 413,
+});

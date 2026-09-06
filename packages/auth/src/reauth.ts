@@ -1,9 +1,9 @@
+import { ReauthRequiredError, SessionRevokedError } from "@mindkid/errors/auth";
 import {
   type AuthEvent,
   requireManagerAuth,
   requireUserAuth,
 } from "./contracts";
-import { appError } from "./errors";
 import type {
   AccountReference,
   ReauthMethod,
@@ -25,12 +25,12 @@ export function verifyReauthWindow(
   maxAgeSeconds: number = REAUTH_MAX_AGE_SECONDS
 ): void {
   if (!reauthAt) {
-    throw appError("REAUTH_REQUIRED", { methods });
+    throw new ReauthRequiredError({ methods });
   }
 
   const ageMs = now.getTime() - reauthAt.getTime();
   if (ageMs < 0 || ageMs > maxAgeSeconds * 1000) {
-    throw appError("REAUTH_REQUIRED", { methods });
+    throw new ReauthRequiredError({ methods });
   }
 }
 
@@ -53,7 +53,7 @@ export class CurrentSessionReauthService {
       current.account
     );
     if (!state) {
-      throw appError("SESSION_REVOKED");
+      throw new SessionRevokedError();
     }
 
     const methods = await this.availability.getAvailableMethods(

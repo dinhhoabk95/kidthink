@@ -1,7 +1,8 @@
 import { getOwnerDb, notificationEndpoints } from "@mindkid/db";
+import { InternalError, ValidationError } from "@mindkid/errors/common";
 import { encryptFcmToken } from "@mindkid/notification";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, readBody } from "h3";
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
@@ -23,14 +24,7 @@ export default defineEventHandler(async (event) => {
   const parsed = endpointRegistrationSchema.safeParse(body);
 
   if (!parsed.success) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "INVALID_ENDPOINT_PAYLOAD",
-      data: {
-        code: "INVALID_ENDPOINT_PAYLOAD",
-        message: parsed.error.issues[0]?.message,
-      },
-    });
+    throw new ValidationError(parsed.error.issues[0]?.message);
   }
 
   const {
@@ -92,7 +86,7 @@ export default defineEventHandler(async (event) => {
   }
 
   if (!resultEndpoint) {
-    throw createError({ statusCode: 500, statusMessage: "ENDPOINT_FAILED" });
+    throw new InternalError("ENDPOINT_FAILED");
   }
 
   // BR-BPS-04: Token is NEVER echoed back in response

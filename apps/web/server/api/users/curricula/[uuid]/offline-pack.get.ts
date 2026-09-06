@@ -1,4 +1,6 @@
-import { appError } from "@mindkid/auth";
+import { EntitlementRequiredError } from "@mindkid/errors/billing";
+import { ValidationError } from "@mindkid/errors/common";
+
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
 import { generateOfflineCurriculumPackManifest } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
@@ -15,9 +17,8 @@ export default defineEventHandler(async (event) => {
   const weekNo = Number(query.week);
 
   if (!weekNo || Number.isNaN(weekNo) || weekNo < 1 || weekNo > 42) {
-    throw appError(
-      "VALIDATION_FAILED",
-      "Số thứ tự tuần học không hợp lệ (phải từ 1 đến 42)."
+    throw new ValidationError(
+      "Số thứ tự tuần học không hợp lệ (phải từ 1 đến 42);."
     );
   }
 
@@ -29,7 +30,7 @@ export default defineEventHandler(async (event) => {
     entitlements.includes("access_premium_curriculum");
 
   if (!hasOfflineAccess) {
-    throw appError("ENTITLEMENT_REQUIRED", {
+    throw new EntitlementRequiredError({
       required_package: "PKG-standard",
       message:
         "Tính năng tải gói học tập ngoại tuyến thuộc gói Tiêu chuẩn hoặc Premium.",

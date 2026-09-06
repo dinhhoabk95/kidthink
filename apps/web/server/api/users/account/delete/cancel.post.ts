@@ -1,13 +1,14 @@
-import { appError, verifyPassword } from "@mindkid/auth";
+import { verifyPassword } from "@mindkid/auth";
 import { cancelUserDeletion, getOwnerDb, users } from "@mindkid/db";
+import { AccountPurgedError } from "@mindkid/errors/account";
+import {
+  InvalidCredentialsError,
+  UnauthenticatedError,
+} from "@mindkid/errors/auth";
+import { NotFoundError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
 import { assertRequestBodySize } from "#server/utils/auth-runtime";
@@ -36,16 +37,9 @@ async function resolveTargetUserId(
   const parsed = CancelDeletionSchema.safeParse(rawBody);
 
   if (!(parsed.success && parsed.data.email)) {
-    setResponseStatus(event, 401);
-    throw createError({
-      statusCode: 401,
-      statusMessage: "UNAUTHENTICATED",
-      data: {
-        code: "UNAUTHENTICATED",
-        message:
-          "Cần đăng nhập hoặc cung cấp thông tin tài khoản để huỷ yêu cầu xoá.",
-      },
-    });
+    throw new UnauthenticatedError(
+      "Cần đăng nhập hoặc cung cấp thông tin tài khoản để huỷ yêu cầu xoá."
+    );
   }
 
   const [foundUser] = await db
@@ -55,8 +49,7 @@ async function resolveTargetUserId(
     .limit(1);
 
   if (!foundUser) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   if (parsed.data.password && foundUser.passwordHash) {
@@ -65,7 +58,7 @@ async function resolveTargetUserId(
       foundUser.passwordHash
     );
     if (!isValid) {
-      throw appError("INVALID_CREDENTIALS");
+      throw new InvalidCredentialsError();
     }
   }
 
@@ -88,13 +81,12 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!account) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const now = new Date();
   if (account.purgeAt && account.purgeAt.getTime() <= now.getTime()) {
-    throw appError("ACCOUNT_PURGED");
+    throw new AccountPurgedError();
   }
 
   // BR-ADL-02: Cancel deletion within 30-day grace period restores active state

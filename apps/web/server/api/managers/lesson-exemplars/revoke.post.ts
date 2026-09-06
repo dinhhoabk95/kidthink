@@ -1,4 +1,6 @@
-import { createError, defineEventHandler, readBody } from "h3";
+import { InsufficientRoleError } from "@mindkid/errors/auth";
+import { ValidationError } from "@mindkid/errors/common";
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import { LessonExemplarService } from "#server/services/index.js";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
@@ -14,11 +16,7 @@ export default defineEventHandler(async (event) => {
   const parsed = revokeBodySchema.safeParse(rawBody);
 
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "Dữ liệu gỡ cờ mẫu không hợp lệ",
-      data: parsed.error.format(),
-    });
+    throw new ValidationError("Dữ liệu gỡ cờ mẫu không hợp lệ");
   }
 
   try {
@@ -34,11 +32,9 @@ export default defineEventHandler(async (event) => {
     };
   } catch (err: unknown) {
     if (err instanceof Error && err.name === "INSUFFICIENT_ROLE") {
-      throw createError({
-        statusCode: 403,
-        statusMessage:
-          "Chỉ chuyên gia thẩm định sư phạm mới có quyền gỡ cờ mẫu.",
-      });
+      throw new InsufficientRoleError(
+        "Chỉ chuyên gia thẩm định sư phạm mới có quyền gỡ cờ mẫu."
+      );
     }
     throw err;
   }

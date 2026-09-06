@@ -1,3 +1,4 @@
+import { AppError, type ErrorDetails } from "@mindkid/errors/base";
 import {
   allowedTiers,
   buildTierLockedResponse,
@@ -11,37 +12,20 @@ import {
 import type { EntitlementKey } from "./entitlement-catalog.js";
 import type { AccessTier } from "./taxonomy-types.js";
 
-export class AccessGatingError extends Error {
-  static readonly __h3_error__ = true;
-  readonly code: string;
-  readonly status: number;
-  readonly statusCode: number;
-  readonly statusMessage: string;
-  readonly data: {
-    code: string;
-    message: string;
-    details?: Record<string, unknown>;
-  };
-  readonly details?: Record<string, unknown>;
-
+export class AccessGatingError extends AppError {
   constructor(
     code: string,
     status: number,
     message: string,
     details?: Record<string, unknown>
   ) {
-    super(message);
-    this.name = "AccessGatingError";
-    this.code = code;
-    this.status = status;
-    this.statusCode = status;
-    this.statusMessage = code;
-    this.details = details;
-    this.data = {
+    super({
       code,
+      status,
       message,
-      ...(details ? { details } : {}),
-    };
+      details: details as ErrorDetails,
+      name: "AccessGatingError",
+    });
   }
 }
 

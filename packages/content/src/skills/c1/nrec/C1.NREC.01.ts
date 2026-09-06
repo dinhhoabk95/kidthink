@@ -10,7 +10,7 @@ export const C1_NREC_01_IDENTITY: SkillIdentity = {
   difficulty: 1,
   thinking_processes: ["observe"],
   tier: "basic",
-  prerequisites: ["C1.NREC.13"],
+  prerequisites: [],
   learning_objectives: [
     {
       code: "LO-C1.NREC.01-01",
@@ -118,10 +118,126 @@ export const C1_NREC_01_DATASET: SkillDataset = {
   ordering: ["n0", "n1", "n2", "n3"],
 };
 
+/**
+ * Chủ đề làm quen — dataset của bài học mở đầu GL-C1-NREC-INTRO-0001.
+ *
+ * Chủ đề không có hàng `skills` riêng (`BR-CTM-01`): nó sống trên chính level dạy
+ * qua `SkillLevelPlan.dataset`. Trước 2026-09-06 dataset này treo ở kỹ năng bậc
+ * `pre` C1.NREC.13, kỹ năng đó đã bị gỡ.
+ */
+const TOPIC_NUMBER_0_5_DATASET: SkillDataset = {
+  skill_code: "C1.NREC.01",
+  concept_label: "Làm quen số 0–5",
+  surface: "game",
+  items: [
+    {
+      id: "n0",
+      label: "không",
+      glyph: "0",
+      value: 0,
+      audio_path: "/audio/voice/common/numbers/0.mp3",
+      image: {
+        kind: "emoji",
+        ref: "0️⃣",
+      },
+    },
+    {
+      id: "n1",
+      label: "một",
+      glyph: "1",
+      value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
+      image: {
+        kind: "emoji",
+        ref: "1️⃣",
+      },
+    },
+    {
+      id: "n2",
+      label: "hai",
+      glyph: "2",
+      value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
+      image: {
+        kind: "emoji",
+        ref: "2️⃣",
+      },
+    },
+    {
+      id: "n3",
+      label: "ba",
+      glyph: "3",
+      value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "3️⃣",
+      },
+    },
+    {
+      id: "n4",
+      label: "bốn",
+      glyph: "4",
+      value: 4,
+      audio_path: "/audio/voice/common/numbers/4.mp3",
+      image: {
+        kind: "emoji",
+        ref: "4️⃣",
+      },
+    },
+    {
+      id: "n5",
+      label: "năm",
+      glyph: "5",
+      value: 5,
+      audio_path: "/audio/voice/common/numbers/5.mp3",
+      image: {
+        kind: "emoji",
+        ref: "5️⃣",
+      },
+    },
+  ],
+  ladder: [
+    {
+      rung: 1,
+      dimension: "range",
+      description: "Giới thiệu chữ số 0 đến 5 qua tai và mắt",
+    },
+    {
+      rung: 2,
+      dimension: "range",
+      description: "Nhận biết chữ số 0 đến 5 giữa các phương án",
+    },
+    {
+      rung: 3,
+      dimension: "range",
+      description: "Gọi tên và củng cố chữ số 0 đến 5",
+    },
+  ],
+  phrasing: {
+    prompt_template: "Bé hãy làm quen với chữ số nhé!",
+    narration_template: "Chúng mình cùng làm quen với các số từ 0 đến 5 nhé",
+    success_message: "Hoan hô, bé đã nhận biết rất tốt!",
+    hint_message: "Bé hãy lắng nghe và nhìn kỹ chữ số nhé!",
+  },
+  ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
+};
+
 export const C1_NREC_01_SEED: SkillSeed = {
   identity: C1_NREC_01_IDENTITY,
   dataset: C1_NREC_01_DATASET,
   levels: [
+    {
+      code: "GL-C1-NREC-INTRO-0001",
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      theme: "farm",
+      rounds: 1,
+      dataset: TOPIC_NUMBER_0_5_DATASET,
+      sequence_no: 1,
+      skill_codes: ["C1.NREC.01", "C1.NREC.02"],
+    },
     {
       code: "GL-C1-NREC-CARD-0101",
       template: "GT-001",

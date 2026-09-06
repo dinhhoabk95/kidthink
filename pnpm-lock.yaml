@@ -388,6 +388,9 @@ importers:
       '@mindkid/db':
         specifier: workspace:*
         version: link:../db
+      '@mindkid/errors':
+        specifier: workspace:*
+        version: link:../errors
       '@mindkid/shared':
         specifier: workspace:*
         version: link:../shared
@@ -494,6 +497,9 @@ importers:
       '@mindkid/db':
         specifier: workspace:*
         version: link:../db
+      '@mindkid/errors':
+        specifier: workspace:*
+        version: link:../errors
       '@mindkid/game-engine':
         specifier: workspace:*
         version: link:../game-engine
@@ -531,6 +537,9 @@ importers:
       '@mindkid/config':
         specifier: workspace:*
         version: link:../config
+      '@mindkid/errors':
+        specifier: workspace:*
+        version: link:../errors
       '@mindkid/moderation':
         specifier: workspace:*
         version: link:../moderation
@@ -598,6 +607,9 @@ importers:
       '@mindkid/db':
         specifier: workspace:*
         version: link:../db
+      '@mindkid/errors':
+        specifier: workspace:*
+        version: link:../errors
       '@mindkid/queue':
         specifier: workspace:*
         version: link:../queue
@@ -709,12 +721,12 @@ importers:
       '@mindkid/adaptive':
         specifier: workspace:*
         version: link:../adaptive
-      '@mindkid/auth':
-        specifier: workspace:*
-        version: link:../auth
       '@mindkid/db':
         specifier: workspace:*
         version: link:../db
+      '@mindkid/errors':
+        specifier: workspace:*
+        version: link:../errors
       '@mindkid/game-engine':
         specifier: workspace:*
         version: link:../game-engine
@@ -771,6 +783,9 @@ importers:
       '@mindkid/emoji':
         specifier: workspace:*
         version: link:../emoji
+      '@mindkid/errors':
+        specifier: workspace:*
+        version: link:../errors
       '@mindkid/moderation':
         specifier: workspace:*
         version: link:../moderation

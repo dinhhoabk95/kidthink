@@ -1,4 +1,3 @@
-import { appError } from "@mindkid/auth";
 import {
   competencies,
   contentSkillMap,
@@ -9,6 +8,7 @@ import {
   skills,
   strands,
 } from "@mindkid/db";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
 
   const code = getRouterParam(event, "code");
   if (!code) {
-    throw appError("VALIDATION_FAILED");
+    throw new ValidationError();
   }
 
   const db = getOwnerDb();
@@ -51,7 +51,7 @@ export default defineEventHandler(async (event) => {
 
   const skill = skillRows[0];
   if (!skill) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   // 2. Fetch learning objectives

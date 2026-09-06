@@ -1,10 +1,7 @@
-import { appError } from "@mindkid/auth";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { TransactionalNotificationCannotBeDisabledError } from "@mindkid/errors/account";
+import { ValidationError } from "@mindkid/errors/common";
+
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
 import {
@@ -32,21 +29,13 @@ export default defineEventHandler(async (event) => {
   // Check for disallowed / transactional keys (BR-ACS-06)
   for (const key of Object.keys(rawBody)) {
     if (!ALLOWED_PREFERENCE_KEYS.has(key)) {
-      throw appError("TRANSACTIONAL_NOTIFICATION_CANNOT_BE_DISABLED");
+      throw new TransactionalNotificationCannotBeDisabledError();
     }
   }
 
   const parsed = NotificationPreferencesSchema.safeParse(rawBody);
   if (!parsed.success) {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "Tuỳ chọn thông báo không hợp lệ.",
-      },
-    });
+    throw new ValidationError("Tuỳ chọn thông báo không hợp lệ.");
   }
 
   const weeklyProgress = parsed.data.weekly_progress ?? true;

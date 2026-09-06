@@ -1,10 +1,8 @@
 import { requireUserAuth } from "@mindkid/auth";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { NoActiveChildError } from "@mindkid/errors/child";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
+import { ContentArchivedError } from "@mindkid/errors/content";
+import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
 import { LessonSessionRunnerService } from "#server/services/index.js";
 
@@ -21,11 +19,7 @@ export default defineEventHandler(async (event) => {
   const parsed = StartRunSchema.safeParse(rawBody);
 
   if (!parsed.success) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "VALIDATION_FAILED",
-      data: { code: "VALIDATION_FAILED", issues: parsed.error.issues },
-    });
+    throw new ValidationError("VALIDATION_FAILED");
   }
 
   try {
@@ -46,34 +40,15 @@ export default defineEventHandler(async (event) => {
   } catch (err: unknown) {
     const errorName = err instanceof Error ? err.name : "";
     if (errorName === "NO_ACTIVE_CHILD") {
-      throw createError({
-        statusCode: 409,
-        statusMessage: "NO_ACTIVE_CHILD",
-        data: {
-          code: "NO_ACTIVE_CHILD",
-          message: "Vui lòng chọn một hồ sơ trẻ trước khi bắt đầu tiết học.",
-        },
-      });
+      throw new NoActiveChildError(
+        "Vui lòng chọn một hồ sơ trẻ trước khi bắt đầu tiết học."
+      );
     }
     if (errorName === "CONTENT_ARCHIVED") {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "CONTENT_ARCHIVED",
-        data: {
-          code: "CONTENT_ARCHIVED",
-          message: "Tiết học này đã được lưu trữ.",
-        },
-      });
+      throw new ContentArchivedError("Tiết học này đã được lưu trữ.");
     }
     if (errorName === "NOT_FOUND") {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "NOT_FOUND",
-        data: {
-          code: "NOT_FOUND",
-          message: "Không tìm thấy bài học tương ứng.",
-        },
-      });
+      throw new NotFoundError("Không tìm thấy bài học tương ứng.");
     }
     throw err;
   }

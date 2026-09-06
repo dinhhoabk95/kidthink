@@ -10,7 +10,7 @@ export const C2_GEO_01_IDENTITY: SkillIdentity = {
   difficulty: 1,
   thinking_processes: ["observe"],
   tier: "basic",
-  prerequisites: ["C2.GEO.09"],
+  prerequisites: [],
   learning_objectives: [
     {
       code: "LO-C2.GEO.01-01",
@@ -122,10 +122,155 @@ export const C2_GEO_01_DATASET: SkillDataset = {
   ordering: ["circle", "square", "triangle", "rectangle"],
 };
 
+/**
+ * Chủ đề làm quen — dataset của bài học mở đầu GL-C2-GEO-INTRO-0001.
+ *
+ * Chủ đề không có hàng `skills` riêng (`BR-CTM-01`): nó sống trên chính level dạy
+ * qua `SkillLevelPlan.dataset`. Trước 2026-09-06 dataset này treo ở kỹ năng bậc
+ * `pre` C2.GEO.09, kỹ năng đó đã bị gỡ.
+ */
+const TOPIC_PLANAR_SHAPES_DATASET: SkillDataset = {
+  skill_code: "C2.GEO.01",
+  concept_label: "Làm quen hình phẳng",
+  surface: "game",
+  items: [
+    {
+      id: "circle",
+      label: "hình tròn",
+      image: {
+        kind: "emoji",
+        ref: "🔴",
+      },
+      category: {
+        type: "hình học",
+      },
+    },
+    {
+      id: "square",
+      label: "hình vuông",
+      image: {
+        kind: "emoji",
+        ref: "🟦",
+      },
+      category: {
+        type: "hình học",
+      },
+    },
+    {
+      id: "triangle",
+      label: "hình tam giác",
+      image: {
+        kind: "emoji",
+        ref: "🔺",
+      },
+      category: {
+        type: "hình học",
+      },
+    },
+    {
+      id: "rectangle",
+      label: "hình chữ nhật",
+      image: {
+        kind: "emoji",
+        ref: "🟧",
+      },
+      category: {
+        type: "hình học",
+      },
+    },
+    {
+      id: "oval",
+      label: "hình bầu dục",
+      image: {
+        kind: "emoji",
+        ref: "🥚",
+      },
+      category: {
+        type: "hình học",
+      },
+    },
+    {
+      id: "diamond",
+      label: "hình thoi",
+      image: {
+        kind: "emoji",
+        ref: "🔶",
+      },
+      category: {
+        type: "hình học",
+      },
+    },
+    {
+      id: "star",
+      label: "hình ngôi sao",
+      image: {
+        kind: "emoji",
+        ref: "⭐",
+      },
+      category: {
+        type: "hình học",
+      },
+    },
+  ],
+  ladder: [
+    {
+      rung: 1,
+      dimension: "range",
+      description: "Giới thiệu 7 hình phẳng qua tai và mắt",
+    },
+    {
+      rung: 2,
+      dimension: "range",
+      description: "Nhận biết và chọn đúng hình phẳng",
+    },
+    {
+      rung: 3,
+      dimension: "range",
+      description: "Gọi tên và phân biệt các hình phẳng",
+    },
+  ],
+  phrasing: {
+    prompt_template: "Bé hãy làm quen với các hình phẳng nhé!",
+    narration_template:
+      "Chúng mình cùng làm quen với các hình phẳng cơ bản nhé",
+    success_message: "Hoan hô, bé đã nhận biết đúng hình rồi!",
+    hint_message: "Bé hãy lắng nghe và nhìn kỹ hình dạng nhé!",
+  },
+  ordering: [
+    "circle",
+    "square",
+    "triangle",
+    "rectangle",
+    "oval",
+    "diamond",
+    "star",
+  ],
+};
+
 export const C2_GEO_01_SEED: SkillSeed = {
   identity: C2_GEO_01_IDENTITY,
   dataset: C2_GEO_01_DATASET,
   levels: [
+    {
+      code: "GL-C2-GEO-INTRO-0001",
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      theme: "school",
+      rounds: 1,
+      dataset: TOPIC_PLANAR_SHAPES_DATASET,
+      sequence_no: 1,
+      skill_codes: [
+        "C2.GEO.01",
+        "C2.GEO.02",
+        "C2.GEO.03",
+        "C2.GEO.04",
+        "C2.GEO.05",
+        "C2.GEO.06",
+        "C2.GEO.07",
+        "C2.GEO.08",
+      ],
+    },
     {
       code: "GL-C2-SHP-CARD-0001",
       template: "GT-012",

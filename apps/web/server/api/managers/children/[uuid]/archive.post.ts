@@ -1,5 +1,7 @@
-import { appError } from "@mindkid/auth";
 import { auditLogs, childProfiles, getOwnerDb } from "@mindkid/db";
+import { AdminNoteRequiredError } from "@mindkid/errors/account";
+import { ChildPendingDeletionError } from "@mindkid/errors/child";
+import { NotFoundError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
@@ -17,7 +19,7 @@ export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);
   const childUuid = getRouterParam(event, "uuid");
   if (!childUuid) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const rawBody =
@@ -26,7 +28,7 @@ export default defineEventHandler(async (event) => {
 
   // BR-CPA-07 & Task 5: reason is required (>= 10 chars per ADMIN_NOTE_REQUIRED)
   if (!parsed.success) {
-    throw appError("ADMIN_NOTE_REQUIRED");
+    throw new AdminNoteRequiredError();
   }
   const reason = parsed.data.reason.trim();
 
@@ -38,11 +40,11 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!targetChild) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   if (targetChild.status === "pending_deletion") {
-    throw appError("CHILD_PENDING_DELETION");
+    throw new ChildPendingDeletionError();
   }
 
   // Reuse canonical archive execution (D-IG, P1.9)

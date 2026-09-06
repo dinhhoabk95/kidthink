@@ -5,6 +5,15 @@ import {
   getOwnerDb,
   users,
 } from "@mindkid/db";
+import { ConsentRequiredError } from "@mindkid/errors/account";
+import { RestrictedModeError } from "@mindkid/errors/auth";
+import { ChildLimitExceededError } from "@mindkid/errors/billing";
+import {
+  AvatarNotInPresetError,
+  ChildAgeOutOfRangeError,
+  ChildFieldNotAllowedError,
+} from "@mindkid/errors/child";
+import { InternalError, ValidationError } from "@mindkid/errors/common";
 import {
   deriveAgeBand,
   isValidAvatarPreset,
@@ -12,7 +21,6 @@ import {
 } from "@mindkid/shared";
 import { and, count, eq, gt, isNull, ne, or } from "drizzle-orm";
 import {
-  createError,
   defineEventHandler,
   type H3Event,
   readBody,
@@ -29,36 +37,20 @@ function parseAndValidateInput(rawBody: unknown, currentYear: number) {
   } catch (err: unknown) {
     const errorObj = err as { code?: string; message?: string };
     if (errorObj?.code === "CHILD_FIELD_NOT_ALLOWED") {
-      throw createError({
-        statusCode: 400,
-        statusMessage: "CHILD_FIELD_NOT_ALLOWED",
-        data: {
-          code: "CHILD_FIELD_NOT_ALLOWED",
-          message:
-            "Form chỉ chấp nhận 4 trường: display_name, birth_year, avatar_id, relationship.",
-        },
-      });
+      throw new ChildFieldNotAllowedError(
+        "Form chỉ chấp nhận 4 trường: display_name, birth_year, avatar_id, relationship."
+      );
     }
     if (errorObj?.message === "INVALID_BIRTH_YEAR") {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "CHILD_AGE_OUT_OF_RANGE",
-        data: {
-          code: "CHILD_AGE_OUT_OF_RANGE",
-          message:
-            "MindKid là sản phẩm dành riêng cho trẻ từ 3–6 tuổi. Vui lòng chọn năm sinh phù hợp.",
-        },
-      });
+      throw new ChildAgeOutOfRangeError(
+        "MindKid là sản phẩm dành riêng cho trẻ từ 3–6 tuổi. Vui lòng chọn năm sinh phù hợp."
+      );
     }
-    throw createError({
-      statusCode: 400,
-      statusMessage: "VALIDATION_FAILED",
-      data: { code: "VALIDATION_FAILED", message: errorObj?.message || "" },
-    });
+    throw new ValidationError(errorObj?.message || "");
   }
 }
 
-async function verifyChildConsentAndQuota(event: H3Event, userId: number) {
+async function verifyChildConsentAndQuota(_event: H3Event, userId: number) {
   const db = getOwnerDb();
 
   // Check child_data consent (BR-CPC-05)
@@ -74,15 +66,9 @@ async function verifyChildConsentAndQuota(event: H3Event, userId: number) {
     .limit(1);
 
   if (!existingConsent) {
-    setResponseStatus(event, 428);
-    throw createError({
-      statusCode: 428,
-      statusMessage: "CONSENT_REQUIRED",
-      data: {
-        code: "CONSENT_REQUIRED",
-        message: "Cần đồng ý thu thập dữ liệu trẻ em trước khi tạo hồ sơ.",
-      },
-    });
+    throw new ConsentRequiredError(
+      "Cần đồng ý thu thập dữ liệu trẻ em trước khi tạo hồ sơ."
+    );
   }
 
   // Quota check (BR-CPC-07)
@@ -119,15 +105,9 @@ async function verifyChildConsentAndQuota(event: H3Event, userId: number) {
   const childCount = childCountRow?.value ?? 0;
 
   if (childCount >= maxAllowedChildren) {
-    setResponseStatus(event, 402);
-    throw createError({
-      statusCode: 402,
-      statusMessage: "CHILD_LIMIT_EXCEEDED",
-      data: {
-        code: "CHILD_LIMIT_EXCEEDED",
-        message: `Gói dịch vụ hiện tại cho phép tối đa ${maxAllowedChildren} hồ sơ trẻ. Nâng cấp gói để thêm hồ sơ mới.`,
-      },
-    });
+    throw new ChildLimitExceededError(
+      `Gói dịch vụ hiện tại cho phép tối đa ${maxAllowedChildren} hồ sơ trẻ. Nâng cấp gói để thêm hồ sơ mới.`
+    );
   }
 }
 
@@ -142,15 +122,9 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (account?.status !== "active") {
-    setResponseStatus(event, 403);
-    throw createError({
-      statusCode: 403,
-      statusMessage: "EMAIL_NOT_VERIFIED",
-      data: {
-        code: "EMAIL_NOT_VERIFIED",
-        message: "Tài khoản cần xác thực email trước khi tạo hồ sơ trẻ.",
-      },
-    });
+    throw new RestrictedModeError(
+      "Tài khoản cần xác thực email trước khi tạo hồ sơ trẻ."
+    );
   }
 
   const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
@@ -161,29 +135,16 @@ export default defineEventHandler(async (event) => {
   const parsedInput = parseAndValidateInput(rawBody, currentYear);
 
   if (!isValidAvatarPreset(parsedInput.avatar_id)) {
-    setResponseStatus(event, 400);
-    throw createError({
-      statusCode: 400,
-      statusMessage: "AVATAR_NOT_IN_PRESET",
-      data: {
-        code: "AVATAR_NOT_IN_PRESET",
-        message: "Hình đại diện phải thuộc bộ 12 preset minh hoạ có sẵn.",
-      },
-    });
+    throw new AvatarNotInPresetError(
+      "Hình đại diện phải thuộc bộ 12 preset minh hoạ có sẵn."
+    );
   }
 
   const age = currentYear - parsedInput.birth_year;
   if (age < 3 || age > 6) {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "CHILD_AGE_OUT_OF_RANGE",
-      data: {
-        code: "CHILD_AGE_OUT_OF_RANGE",
-        message:
-          "MindKid là sản phẩm dành riêng cho trẻ từ 3–6 tuổi. Vui lòng chọn năm sinh phù hợp.",
-      },
-    });
+    throw new ChildAgeOutOfRangeError(
+      "MindKid là sản phẩm dành riêng cho trẻ từ 3–6 tuổi. Vui lòng chọn năm sinh phù hợp."
+    );
   }
 
   const userId = Number(user.user_id);
@@ -205,11 +166,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!newChild) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "CHILD_CREATE_FAILED",
-      message: "Tạo hồ sơ trẻ thất bại",
-    });
+    throw new InternalError("Tạo hồ sơ trẻ thất bại");
   }
 
   setResponseStatus(event, 201);

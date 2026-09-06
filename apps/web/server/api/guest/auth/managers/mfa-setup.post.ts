@@ -1,5 +1,4 @@
 import {
-  appError,
   encryptTotpSecret,
   generateTotpSecret,
   generateTotpUri,
@@ -7,6 +6,11 @@ import {
   MfaChallengeService,
 } from "@mindkid/auth";
 import { getOwnerDb, managers, mfaSettings } from "@mindkid/db";
+import {
+  InsufficientRoleError,
+  InvalidCredentialsError,
+  MfaAlreadyEnabledError,
+} from "@mindkid/errors/auth";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler } from "h3";
@@ -32,7 +36,7 @@ export default defineEventHandler(async (event) => {
   const body = await readRequestBody(event);
   const parsed = MfaSetupSchema.safeParse(body);
   if (!parsed.success) {
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
   const { challenge } = parsed.data;
 
@@ -41,7 +45,7 @@ export default defineEventHandler(async (event) => {
   const challengePayload = await mfaChallengeService
     .consumeChallenge("manager", challenge)
     .catch(() => {
-      throw appError("INVALID_CREDENTIALS");
+      throw new InvalidCredentialsError();
     });
 
   const db = getOwnerDb();
@@ -51,11 +55,11 @@ export default defineEventHandler(async (event) => {
     .where(eq(managers.id, challengePayload.accountId));
 
   if (!manager) {
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
 
   if (!manager.isActive) {
-    throw appError("INSUFFICIENT_ROLE");
+    throw new InsufficientRoleError();
   }
 
   // Check rate limit (BR-MME-07)
@@ -81,7 +85,7 @@ export default defineEventHandler(async (event) => {
     manager.mfaEnabled ||
     (existingSetting && existingSetting.confirmedAt !== null)
   ) {
-    throw appError("MFA_ALREADY_ENABLED");
+    throw new MfaAlreadyEnabledError();
   }
 
   // Generate TOTP secret and encrypt (BR-MFA-12, BR-MME-04)

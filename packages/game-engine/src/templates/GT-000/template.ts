@@ -27,6 +27,19 @@ export const GT000StepPresentSchema = z.object({
   narration_line: z.string().optional(),
 });
 
+/**
+ * Tập nói theo — `BR-CIM-19`, `BR-E000-10`.
+ *
+ * Máy đọc mẫu, trẻ nói theo thành tiếng, rồi chạm để đi tiếp.
+ * Cấm — NEVER yêu cầu micro, NEVER ghi âm, NEVER chấm phát âm (`BR-CIR-21`).
+ */
+export const GT000StepEchoSchema = z.object({
+  action: z.literal("echo"),
+  target_asset_id: z.string().min(1),
+  repeat_count: z.number().int().min(1).max(3).default(1),
+  prompt_line: z.string().optional(),
+});
+
 export const GT000StepRecogniseSchema = z.object({
   action: z.literal("recognise"),
   target_asset_id: z.string().min(1),
@@ -50,6 +63,7 @@ export const GT000StepRecallSchema = z.object({
 
 export const GT000StepSchema = z.discriminatedUnion("action", [
   GT000StepPresentSchema,
+  GT000StepEchoSchema,
   GT000StepRecogniseSchema,
   GT000StepLinkSchema,
   GT000StepRecallSchema,
@@ -71,28 +85,32 @@ export const GT000SegmentSchema = z
       message:
         "Mọi phân đoạn BẮT BUỘC kết thúc bằng ít nhất một hành động recall (BR-E000-04)",
     }
+  )
+  .refine(
+    (seg) => seg.is_review || seg.steps.some((step) => step.action === "echo"),
+    {
+      message:
+        "Mọi phân đoạn dạy BẮT BUỘC có ít nhất một hành động echo — tập nói theo (BR-E000-10)",
+    }
   );
 
 export const GT000ContentSchema = z
   .object({
-    concept: z
-      .object({
-        skill_code: z
-          .string()
-          .regex(/^C[1-6]\.[A-Z]{2,5}\.\d{2}$/)
-          .optional(),
-        pre_skill_code: z
-          .string()
-          .regex(/^C[1-6]\.[A-Z]{2,5}\.\d{2}$/)
-          .optional(),
-        label: z.string().min(1),
-      })
-      .refine((c) => Boolean(c.skill_code || c.pre_skill_code), {
-        message: "concept phải có skill_code hoặc pre_skill_code",
-      }),
+    concept: z.object({
+      // BR-CTM-03: neo vào một kỹ năng chơi thật. Bậc `pre` đã bị gỡ 2026-09-06,
+      // nên `pre_skill_code` không còn là trường hợp lệ.
+      skill_code: z.string().regex(/^C[1-6]\.[A-Z]{2,5}\.\d{2}$/),
+      label: z.string().min(1),
+      /** Mã mọi kỹ năng chơi mà chủ đề này dạy — BR-CTM-04. */
+      teaches: z.array(z.string().regex(/^C[1-6]\.[A-Z]{2,5}\.\d{2}$/)).min(1),
+      /** Dãy giá trị có thứ tự của chủ đề — BR-CTM-09. */
+      values: z.array(z.string().min(1)).min(2).max(21),
+      /** Thứ tự tiết trong chủ đề nhiều tiết — BR-CIM-20. */
+      sequence_no: z.number().int().min(1).default(1),
+    }),
     prompt: z.string().optional(),
     assets: z.array(GT000AssetSchema).min(2).max(21),
-    segments: z.array(GT000SegmentSchema).min(1).max(6).optional(),
+    segments: z.array(GT000SegmentSchema).min(1).max(8).optional(),
     steps: z.array(GT000StepSchema).min(3).max(12).optional(),
     requires_reintro: z.boolean().default(false),
   })
@@ -111,6 +129,26 @@ export const GT000ContentSchema = z
       message:
         "Level BẮT BUỘC đóng bằng một phân đoạn ôn gộp mọi giá trị đã dạy (is_review = true) (BR-E000-04)",
     }
+  )
+  .refine(
+    (data) => !data.steps || data.steps.some((step) => step.action === "echo"),
+    {
+      message:
+        "Bài dùng dãy `steps` phẳng BẮT BUỘC có ít nhất một hành động echo (BR-E000-10)",
+    }
+  )
+  .refine(
+    (data) => {
+      // BR-CTM-09: mọi giá trị của chủ đề phải được dạy trong bài.
+      const taught = new Set(data.assets.map((a) => a.asset_id));
+      return data.concept.values.every(
+        (v) => taught.has(v) || taught.has(`asset_${v}`)
+      );
+    },
+    {
+      message:
+        "content_pack BẮT BUỘC dạy mọi giá trị khai trong concept.values (BR-CTM-09)",
+    }
   );
 
 export const GT000DifficultySchema = z
@@ -121,6 +159,7 @@ export const GT000DifficultySchema = z
   })
   .strict();
 
+export type GT000StepEcho = z.infer<typeof GT000StepEchoSchema>;
 export type GT000Asset = z.infer<typeof GT000AssetSchema>;
 export type GT000Step = z.infer<typeof GT000StepSchema>;
 export type GT000Segment = z.infer<typeof GT000SegmentSchema>;
@@ -156,6 +195,8 @@ export default defineTemplate({
     "intro_step_started",
     "intro_step_answered",
     "intro_step_deferred",
+    "intro_echo_started",
+    "intro_echo_completed",
     "intro_recall_answered",
     "intro_segment_started",
     "intro_segment_completed",

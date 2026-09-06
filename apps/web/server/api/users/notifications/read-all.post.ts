@@ -1,6 +1,7 @@
 import { getOwnerDb, notificationReads, notifications } from "@mindkid/db";
+import { ValidationError } from "@mindkid/errors/common";
 import { and, eq, isNull, lte } from "drizzle-orm";
-import { createError, defineEventHandler, readBody } from "h3";
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
@@ -18,14 +19,7 @@ export default defineEventHandler(async (event) => {
   const parsed = readAllSchema.safeParse(body);
 
   if (!parsed.success) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "INVALID_READ_ALL_PAYLOAD",
-      data: {
-        code: "INVALID_READ_ALL_PAYLOAD",
-        message: parsed.error.issues[0]?.message,
-      },
-    });
+    throw new ValidationError(parsed.error.issues[0]?.message);
   }
 
   const snapshotDate = new Date(parsed.data.snapshot_at);

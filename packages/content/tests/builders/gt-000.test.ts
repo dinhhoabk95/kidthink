@@ -27,7 +27,7 @@ interface TestParsedDifficulty {
 
 describe("Task #253 M3: projectGT000 Builder Tests", () => {
   const mockDataset11: SkillDataset = {
-    skill_code: "C1.NREC.14",
+    skill_code: "C1.NREC.03",
     concept_label: "Làm quen số 0–10",
     surface: "game",
     ladder: [{ rung: 1, dimension: "size", description: "11 numbers 0-10" }],

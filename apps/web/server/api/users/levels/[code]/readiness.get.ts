@@ -1,6 +1,7 @@
 import { gameLevels, getOwnerDb } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
 import { and, desc, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import {
   getOptionalActiveChildUuid,
   requireWebUserSession,
@@ -12,7 +13,7 @@ export default defineEventHandler(async (event) => {
   const activeChildUuid = getOptionalActiveChildUuid(event);
   const code = getRouterParam(event, "code");
   if (!code) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const db = getOwnerDb();
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!level) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const introStatus = await checkLevelIntroRequired(level, {

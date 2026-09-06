@@ -6,11 +6,20 @@ import {
   getOwnerDb,
 } from "@mindkid/db";
 import {
+  InternalError,
+  NotFoundError,
+  ValidationError,
+} from "@mindkid/errors/common";
+import {
+  ActivityNotFoundError,
+  VersionConflictError,
+} from "@mindkid/errors/content";
+import {
   resolveActivityRefType,
   updateActivityFormSchema,
 } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import type { z } from "zod";
 import { isEnabled as isFeatureEnabled } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
@@ -27,22 +36,18 @@ async function validateActivityPatch(
   if (targetKind === "worksheet") {
     const isWorksheetEnabled = await isFeatureEnabled("worksheet_activity");
     if (!isWorksheetEnabled) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "WORKSHEET_ACTIVITY_DISABLED",
-        message: "Tính năng hoạt động worksheet hiện đang bị khoá ở MVP (D-LN)",
-      });
+      throw new ValidationError(
+        "Tính năng hoạt động worksheet hiện đang bị khoá ở MVP (D-LN)"
+      );
     }
   }
 
   if (targetKind === "digital_game") {
     const refId = data.ref_id === undefined ? existingRefId : data.ref_id;
     if (!refId) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "REFERENCED_LEVEL_REQUIRED",
-        message: "Hoạt động digital_game bắt buộc có ref_id trỏ game level",
-      });
+      throw new ValidationError(
+        "Hoạt động digital_game bắt buộc có ref_id trỏ game level"
+      );
     }
     const [level] = await db
       .select({ id: gameLevels.id, status: gameLevels.status })
@@ -51,12 +56,9 @@ async function validateActivityPatch(
       .limit(1);
 
     if (level?.status !== "published") {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "REFERENCED_LEVEL_NOT_PUBLISHED",
-        message:
-          "Hoạt động digital_game bắt buộc phải liên kết tới game level đã xuất bản (BR-ACA-02)",
-      });
+      throw new ValidationError(
+        "Hoạt động digital_game bắt buộc phải liên kết tới game level đã xuất bản (BR-ACA-02)"
+      );
     }
   }
 }
@@ -129,10 +131,7 @@ async function handlePublishedActivityFork(
     .returning();
 
   if (!created) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "ACTIVITY_CREATE_FAILED",
-    });
+    throw new InternalError("ACTIVITY_CREATE_FAILED");
   }
 
   await syncActivitySkills(db, existing.entityId, data.skill_ids);
@@ -193,10 +192,7 @@ async function handleDraftActivityUpdate(
     .returning();
 
   if (!updated) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "ACTIVITY_UPDATE_FAILED",
-    });
+    throw new InternalError("ACTIVITY_UPDATE_FAILED");
   }
 
   await syncActivitySkills(db, existing.entityId, data.skill_ids);
@@ -223,12 +219,12 @@ export default defineEventHandler(async (event) => {
   const versionParam = getRouterParam(event, "version");
 
   if (!(code && versionParam)) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const version = Number(versionParam);
   if (!Number.isInteger(version) || version <= 0) {
-    throw createError({ statusCode: 400, statusMessage: "INVALID_VERSION" });
+    throw new ValidationError("INVALID_VERSION");
   }
 
   const rawBody = await readBody(event);
@@ -249,22 +245,18 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!existing) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "ACTIVITY_NOT_FOUND",
-      message: `Activity ${code} version ${version} not found`,
-    });
+    throw new ActivityNotFoundError(
+      `Activity ${code} version ${version} not found`
+    );
   }
 
   if (
     data.expected_version !== undefined &&
     data.expected_version !== existing.contentVersion
   ) {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "VERSION_CONFLICT",
-      message: `Expected version ${data.expected_version} but found ${existing.contentVersion}`,
-    });
+    throw new VersionConflictError(
+      `Activity ${code} version ${version} not found`
+    );
   }
 
   const targetKind = data.kind || existing.kind;

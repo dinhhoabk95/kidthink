@@ -77,6 +77,8 @@ export class GT000Session extends TemplateGameSession<
   readonly missCounts = new Map<string, number>();
   readonly deferredAssetIds: string[] = [];
   readonly recallAnswers: { asset_id: string; correct: boolean }[] = [];
+  /** Số lần trẻ bấm nghe lại ở từng bước tập nói — BR-CIR-22. */
+  private readonly echoReplayCounts = new Map<string, number>();
 
   readonly audio = new AudioController();
   audioPromptCalled = false;
@@ -105,6 +107,7 @@ export class GT000Session extends TemplateGameSession<
     this.missCounts.clear();
     this.deferredAssetIds.length = 0;
     this.recallAnswers.length = 0;
+    this.echoReplayCounts.clear();
     this.renderItemStates.clear();
     this.audioPromptCalled = false;
     this.lastTtsUsed = false;
@@ -178,9 +181,45 @@ export class GT000Session extends TemplateGameSession<
 
     if (step.action === "present") {
       this.playPresentAudio(step);
+    } else if (step.action === "echo") {
+      this.playEchoModel(step);
     } else {
       this.audioPromptCalled = true;
     }
+  }
+
+  /**
+   * Phát mẫu cho bước tập nói theo — BR-CIR-21.
+   *
+   * Máy đọc, trẻ nói theo thành tiếng, rồi chạm để đi tiếp.
+   * Cấm — NEVER mở micro, NEVER ghi âm, NEVER chấm phát âm.
+   */
+  private playEchoModel(step: GT000Step & { action: "echo" }): void {
+    this.audioPromptCalled = true;
+    const asset = this.getAsset(step.target_asset_id);
+    if (!asset) {
+      return;
+    }
+
+    if (asset.audio_path) {
+      this.lastTtsUsed = false;
+      this.audio.playPromptAudio(asset.audio_path);
+    } else {
+      const spoke = this.audio.speakPrompt(asset.label);
+      this.lastTtsUsed = spoke;
+      if (!spoke) {
+        this.recordEvent("tts_unavailable", {
+          lang: "vi-VN",
+          asset_id: asset.asset_id,
+        });
+      }
+    }
+
+    this.recordEvent("intro_echo_started", {
+      step_id: `step_${this.currentStepIndex}`,
+      target_asset_id: asset.asset_id,
+      tts_used: this.lastTtsUsed,
+    });
   }
 
   private playPresentAudio(step: GT000Step & { action: "present" }): void {
@@ -314,6 +353,8 @@ export class GT000Session extends TemplateGameSession<
     switch (step.action) {
       case "present":
         return this.handlePresentAction(payload, step);
+      case "echo":
+        return this.handleEchoAction(payload, step);
       case "recognise":
         return this.handleRecogniseAction(payload, step);
       case "link":
@@ -335,6 +376,37 @@ export class GT000Session extends TemplateGameSession<
       answer_correct: true,
       miss_count: 0,
       tts_used: this.lastTtsUsed,
+    });
+    this.advanceStep();
+    return ACTION_CORRECT;
+  }
+
+  /**
+   * Bước tập nói theo không có đáp án để sai (BR-E000-10).
+   *
+   * `replay` là yêu cầu nghe lại; nó Cấm — NEVER đẩy step đi tiếp, và bị chặn
+   * ở trần `repeat_count` (BR-CIR-22). Mọi thao tác khác là "bé nói xong rồi".
+   */
+  private handleEchoAction(
+    payload: Record<string, string | boolean | number>,
+    step: GT000Step & { action: "echo" }
+  ): ActionResult {
+    const stepId = `step_${this.currentStepIndex}`;
+
+    if (payload.intent === "replay") {
+      const used = this.echoReplayCounts.get(stepId) ?? 0;
+      if (used >= step.repeat_count) {
+        return ACTION_IGNORED;
+      }
+      this.echoReplayCounts.set(stepId, used + 1);
+      this.playEchoModel(step);
+      return ACTION_CORRECT;
+    }
+
+    this.recordEvent("intro_echo_completed", {
+      step_id: stepId,
+      target_asset_id: step.target_asset_id,
+      replay_count: this.echoReplayCounts.get(stepId) ?? 0,
     });
     this.advanceStep();
     return ACTION_CORRECT;
@@ -461,6 +533,10 @@ export class GT000Session extends TemplateGameSession<
       const label = this.getAsset(step.target_asset_id)?.label ?? "";
       return step.narration_line ?? `Đây là ${label}`;
     }
+    if (step.action === "echo") {
+      const label = this.getAsset(step.target_asset_id)?.label ?? "";
+      return step.prompt_line ?? `Bé nói theo cô nhé: ${label}`;
+    }
     if (step.action === "recognise") {
       const label = this.getAsset(step.target_asset_id)?.label ?? "";
       return step.prompt_line ?? `Bé hãy chỉ cho cô ${label}`;
@@ -487,7 +563,7 @@ export class GT000Session extends TemplateGameSession<
   private collectRenderItems(step: GT000Step): RenderItem[] {
     const renderItems: RenderItem[] = [];
 
-    if (step.action === "present") {
+    if (step.action === "present" || step.action === "echo") {
       const asset = this.getAsset(step.target_asset_id);
       if (asset) {
         renderItems.push(createRenderItem(asset, "idle"));

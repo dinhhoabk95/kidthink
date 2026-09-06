@@ -1,4 +1,6 @@
-import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
+import { InternalError, ValidationError } from "@mindkid/errors/common";
+import { WorksheetNotFoundError } from "@mindkid/errors/content";
+import { defineEventHandler, getQuery, getRouterParam } from "h3";
 import {
   getWorksheetByCode,
   renderWorksheetArtifact,
@@ -9,11 +11,7 @@ export default defineEventHandler(async (event) => {
   const session = await requireManagerSession(event);
   const code = getRouterParam(event, "code");
   if (!code) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "CODE_REQUIRED",
-      message: "Worksheet code is required",
-    });
+    throw new ValidationError("Worksheet code is required");
   }
 
   const query = getQuery(event);
@@ -21,11 +19,7 @@ export default defineEventHandler(async (event) => {
 
   const ws = await getWorksheetByCode(code, version);
   if (!ws) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "WORKSHEET_NOT_FOUND",
-      message: `Worksheet with code ${code} not found`,
-    });
+    throw new WorksheetNotFoundError(`Worksheet with code ${code} not found`);
   }
 
   try {
@@ -50,11 +44,6 @@ export default defineEventHandler(async (event) => {
       message?: string;
       details?: unknown;
     };
-    throw createError({
-      statusCode: errorObj.statusCode || 500,
-      statusMessage: errorObj.message || "RENDER_FAILED",
-      message: errorObj.message,
-      data: errorObj.details,
-    });
+    throw new InternalError(errorObj.message);
   }
 });

@@ -1,10 +1,10 @@
-import { AppError } from "@mindkid/auth";
 import {
   childProfiles,
   getOwnerDb,
   playSessions,
   telemetryEvents,
 } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
 import { desc, eq } from "drizzle-orm";
 import { cleanEventPayload } from "./events/sanitize.js";
 import {
@@ -99,7 +99,7 @@ export async function ingestPlayEvents(
 
   const session = sessionRows[0];
   if (!session) {
-    throw new AppError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   await checkSessionOwnership(db, session, options);

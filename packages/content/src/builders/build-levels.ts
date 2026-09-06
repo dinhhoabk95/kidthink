@@ -65,6 +65,8 @@ function buildLevelRounds(
       theme: levelPlan.theme,
       seed: baseSeed,
       round_index: r,
+      teaches: levelPlan.skill_codes,
+      sequence_no: levelPlan.sequence_no,
     });
 
     let instruction: string;
@@ -359,10 +361,24 @@ function buildSingleLevel(
   identity: SkillIdentity,
   levelPlan: SkillLevelPlan
 ): ContentSeed {
-  validateContract(builder, dataset, levelPlan.template, identity.code);
+  // Level dạy mang dataset chủ đề của riêng nó (BR-CTM-01): chủ đề không có
+  // hàng `skills` để treo dataset, nên nó nằm trên chính level plan.
+  const effectiveDataset = levelPlan.dataset ?? dataset;
+
+  validateContract(
+    builder,
+    effectiveDataset,
+    levelPlan.template,
+    identity.code
+  );
 
   const baseSeed = computeSeedNumber(identity.code, levelPlan.difficulty);
-  const rounds = buildLevelRounds(builder, dataset, levelPlan, baseSeed);
+  const rounds = buildLevelRounds(
+    builder,
+    effectiveDataset,
+    levelPlan,
+    baseSeed
+  );
   const firstRound = rounds[0];
 
   if (!firstRound) {

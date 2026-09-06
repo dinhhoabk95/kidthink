@@ -6,12 +6,14 @@ import {
   getOwnerDb,
   lessons,
 } from "@mindkid/db";
+import { ValidationError } from "@mindkid/errors/common";
+import { CurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import {
   type CurriculumItemMetadata,
   calculateCurriculumBalance,
 } from "@mindkid/shared";
 import { and, asc, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const LES_COMPETENCY_REGEX = /LES-(C[1-6])/i;
@@ -119,11 +121,7 @@ export default defineEventHandler(async (event) => {
   const version = Number(versionParam) || 1;
 
   if (!code) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "BAD_REQUEST",
-      message: "Thiếu tham số mã chương trình",
-    });
+    throw new ValidationError("Thiếu tham số mã chương trình");
   }
 
   const db = getOwnerDb();
@@ -135,11 +133,9 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!curr) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "CURRICULUM_NOT_FOUND",
-      message: `Không tìm thấy chương trình ${code} version ${version}`,
-    });
+    throw new CurriculumNotFoundError(
+      `Không tìm thấy chương trình ${code} version ${version}`
+    );
   }
 
   const weeks = await db

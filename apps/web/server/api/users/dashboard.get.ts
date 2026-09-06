@@ -7,11 +7,11 @@ import {
   recurringSubscriptions,
   users,
 } from "@mindkid/db";
+import { ChildNotFoundError } from "@mindkid/errors/child";
 import { allowedTiers, resolveNextStep } from "@mindkid/shared";
 import { and, desc, eq, gte } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import {
-  createError,
   defineEventHandler,
   getQuery,
   type H3Event,
@@ -156,7 +156,7 @@ async function resolveCurriculumBlock(
 }
 
 function resolveActiveChild(
-  event: H3Event,
+  _event: H3Event,
   userChildren: ChildRecord[],
   query: Record<string, unknown>
 ): ChildRecord | null {
@@ -166,11 +166,7 @@ function resolveActiveChild(
   } else if (query.child_uuid) {
     const found = userChildren.find((c) => c.uuid === query.child_uuid);
     if (!found) {
-      setResponseStatus(event, 404);
-      throw createError({
-        statusCode: 404,
-        statusMessage: "CHILD_NOT_FOUND",
-      });
+      throw new ChildNotFoundError("CHILD_NOT_FOUND");
     }
     requestedChildId = found.id;
   }
@@ -178,11 +174,7 @@ function resolveActiveChild(
   if (requestedChildId) {
     const belongs = userChildren.some((c) => c.id === requestedChildId);
     if (!belongs) {
-      setResponseStatus(event, 404);
-      throw createError({
-        statusCode: 404,
-        statusMessage: "CHILD_NOT_FOUND",
-      });
+      throw new ChildNotFoundError("CHILD_NOT_FOUND");
     }
   }
 

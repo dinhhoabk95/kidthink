@@ -1,6 +1,8 @@
 import { getOwnerDb, lessonActivities, lessons } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
+import { LessonNotFoundError } from "@mindkid/errors/content";
 import { and, desc, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { loadLatestActivitiesByEntityId } from "#server/utils/lesson-activities";
 
@@ -23,7 +25,7 @@ export default defineEventHandler(async (event) => {
   const versionParam = getRouterParam(event, "version");
 
   if (!code) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const db = getOwnerDb();
@@ -47,11 +49,7 @@ export default defineEventHandler(async (event) => {
 
   const lesson = rows[0];
   if (!lesson) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "LESSON_NOT_FOUND",
-      message: `Lesson ${code} (version ${versionParam || "latest"}) not found`,
-    });
+    throw new LessonNotFoundError();
   }
 
   // Fetch attached activities

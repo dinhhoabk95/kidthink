@@ -4,13 +4,21 @@
  */
 
 import { writeAudit } from "@mindkid/audit";
-import { appError } from "@mindkid/auth";
+
 import {
   type CustomGame,
   childProfiles,
   customGames,
   getDb,
 } from "@mindkid/db";
+import { QuotaExceededError } from "@mindkid/errors/billing";
+import { ChildNotFoundError } from "@mindkid/errors/child";
+import {
+  ServiceUnavailableError,
+  ValidationError,
+} from "@mindkid/errors/common";
+import { VersionConflictError } from "@mindkid/errors/content";
+import { CustomGameNotFoundError } from "@mindkid/errors/game-level";
 import { getGameTemplate } from "@mindkid/game-engine/registry";
 import {
   type CreateCustomGameInput,
@@ -37,7 +45,7 @@ export async function checkCustomGamesQuota(
 
   const currentCount = countResult?.count ?? 0;
   if (currentCount >= quotaLimit) {
-    throw appError("QUOTA_EXCEEDED", {
+    throw new QuotaExceededError({
       quota_key: "custom_games_saved",
       limit: quotaLimit,
       current: currentCount,
@@ -79,7 +87,7 @@ export async function createCustomGame(
     );
 
     if (!valResult.ok) {
-      throw appError("VALIDATION_FAILED", {
+      throw new ValidationError({
         message: "Không thể đánh dấu sẵn sàng: dữ liệu trò chơi chưa hợp lệ.",
         issues: valResult.issues,
         missing: valResult.missing,
@@ -108,10 +116,7 @@ export async function createCustomGame(
       .returning();
 
     if (!row) {
-      throw appError(
-        "SERVICE_UNAVAILABLE",
-        "Không thể tạo trò chơi tùy chỉnh."
-      );
+      throw new ServiceUnavailableError("Không thể tạo trò chơi tùy chỉnh.");
     }
 
     await writeAudit(tx, {
@@ -147,7 +152,7 @@ export async function getCustomGameByUuid(
     .where(and(eq(customGames.uuid, uuid), eq(customGames.userId, userId)));
 
   if (!game) {
-    throw appError("NOT_FOUND", "Không tìm thấy trò chơi tùy chỉnh.");
+    throw new CustomGameNotFoundError(uuid);
   }
 
   return game;
@@ -211,8 +216,7 @@ export async function updateCustomGame(
     input.expected_version !== undefined &&
     input.expected_version !== existing.version
   ) {
-    throw appError(
-      "VERSION_CONFLICT",
+    throw new VersionConflictError(
       "Trò chơi đã được cập nhật bởi một phiên làm việc khác. Vui lòng tải lại trang."
     );
   }
@@ -238,7 +242,7 @@ export async function updateCustomGame(
   if (merged.status === "ready") {
     const valResult = validateCustomGameContent(merged, getGameTemplate);
     if (!valResult.ok) {
-      throw appError("VALIDATION_FAILED", {
+      throw new ValidationError({
         message: "Không thể lưu ở trạng thái sẵn sàng: dữ liệu chưa hợp lệ.",
         issues: valResult.issues,
         missing: valResult.missing,
@@ -268,8 +272,7 @@ export async function updateCustomGame(
       .returning();
 
     if (!row) {
-      throw appError(
-        "SERVICE_UNAVAILABLE",
+      throw new ServiceUnavailableError(
         "Không thể cập nhật trò chơi tùy chỉnh."
       );
     }
@@ -362,16 +365,15 @@ export async function getCustomGamePlayConfig(
     );
 
   if (!child) {
-    throw appError("NOT_FOUND", "Không tìm thấy hồ sơ bé.");
+    throw new ChildNotFoundError(childUuid);
   }
 
   // 2. Verify custom game belongs to caller (BR-CGB-01)
   const game = await getCustomGameByUuid(userId, gameUuid);
 
   if (game.status !== "ready") {
-    throw appError(
-      "VALIDATION_FAILED",
-      "Trò chơi này đang ở trạng thái bản nháp (draft), chưa sẵn sàng để chơi."
+    throw new ValidationError(
+      "Trò chơi này đang ở trạng thái bản nháp (draft);, chưa sẵn sàng để chơi."
     );
   }
 

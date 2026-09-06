@@ -1,11 +1,18 @@
 import { randomUUID } from "node:crypto";
-import { AppError, appError } from "@mindkid/auth";
 import {
   childProfiles,
   gameLevels,
   getOwnerDb,
   playSessions,
 } from "@mindkid/db";
+import { isAppError, type JsonValue } from "@mindkid/errors/base";
+import { ChildNotFoundError } from "@mindkid/errors/child";
+import { PayloadTooLargeError } from "@mindkid/errors/common";
+import {
+  ContentPackInvalidError,
+  GameLevelNotFoundError,
+  TemplateNotSupportedError,
+} from "@mindkid/errors/game-level";
 import {
   type GameTemplate,
   getGameTemplate,
@@ -21,7 +28,7 @@ import {
   resolveAssets,
 } from "@mindkid/shared";
 import { and, desc, eq } from "drizzle-orm";
-import { createError, type H3Event, setHeader, setResponseStatus } from "h3";
+import { type H3Event, setHeader } from "h3";
 import { checkLevelIntroRequired } from "#server/utils/concept-intro-runtime";
 import {
   loadRoundSet,
@@ -52,7 +59,7 @@ async function resolveOwnedChild(
   }
   const userId = Number(caller.user_id);
   if (!Number.isInteger(userId) || userId <= 0) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new ChildNotFoundError();
   }
   const [child] = await db
     .select()
@@ -65,7 +72,7 @@ async function resolveOwnedChild(
     )
     .limit(1);
   if (!child || child.status === "archived") {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new ChildNotFoundError(caller.active_child_id);
   }
   return child;
 }
@@ -99,22 +106,13 @@ async function fetchLevelAndTemplate(
 
   const levelRow = rows[0];
   if (!levelRow) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      data: { code: "NOT_FOUND", message: `Level ${code} not found` },
-    });
+    throw new GameLevelNotFoundError(code);
   }
 
   const template = getGameTemplate(levelRow.templateCode);
   if (!template) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "TEMPLATE_NOT_FOUND",
-      data: {
-        code: "TEMPLATE_NOT_FOUND",
-        message: `Template ${levelRow.templateCode} not found in registry`,
-      },
+    throw new TemplateNotSupportedError({
+      template_code: levelRow.templateCode,
     });
   }
 
@@ -124,7 +122,7 @@ async function fetchLevelAndTemplate(
 async function runContentAccessGuard(
   level: typeof gameLevels.$inferSelect,
   options: GameConfigDeliveryOptions,
-  event: H3Event,
+  _event: H3Event,
   ownedChild: typeof childProfiles.$inferSelect | null
 ): Promise<ContentAccessResult> {
   try {
@@ -158,15 +156,8 @@ async function runContentAccessGuard(
       }
     );
   } catch (err) {
-    if (err instanceof AppError) {
-      setResponseStatus(event, err.status);
-      throw createError({
-        statusCode: err.status,
-        statusMessage: err.code,
-        data: err.toResponse
-          ? err.toResponse()
-          : { code: err.code, message: err.message },
-      });
+    if (isAppError(err)) {
+      throw err;
     }
     throw err;
   }
@@ -211,7 +202,7 @@ async function createPlaySessionRecord(
 }
 
 function validateLevelAndRounds(
-  event: H3Event,
+  _event: H3Event,
   templateCode: string,
   level: { code: string; contentVersion: number; contentPack: unknown },
   rounds: Array<{ round_index: number; content_pack: unknown }>
@@ -222,16 +213,12 @@ function validateLevelAndRounds(
       `[ALERT] CONTENT_PACK_INVALID for level ${level.code} v${level.contentVersion}:`,
       validation.error
     );
-    setResponseStatus(event, 500);
-    throw createError({
-      statusCode: 500,
-      statusMessage: "CONTENT_PACK_INVALID",
-      data: {
-        code: "CONTENT_PACK_INVALID",
-        message: `Content pack invalid for level ${level.code}`,
-        details: validation.error?.details,
-      },
-    });
+    throw new ContentPackInvalidError(
+      `Content pack invalid for level ${level.code}`,
+      {
+        details: validation.error?.details as unknown as JsonValue,
+      }
+    );
   }
 
   for (const round of rounds) {
@@ -240,16 +227,13 @@ function validateLevelAndRounds(
       round.content_pack
     );
     if (!roundValidation.success) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "CONTENT_PACK_INVALID",
-        data: {
-          code: "CONTENT_PACK_INVALID",
-          message: `Round ${round.round_index} content pack invalid`,
+      throw new ContentPackInvalidError(
+        `Round ${round.round_index} content pack invalid`,
+        {
           round_index: round.round_index,
-          details: roundValidation.error?.details,
-        },
-      });
+          details: roundValidation.error?.details as unknown as JsonValue,
+        }
+      );
     }
   }
 }
@@ -281,11 +265,7 @@ function assertPayloadWithinCap(
   console.error(
     `[ALERT] PAYLOAD_TOO_LARGE for level ${levelCode}: ${bytes} bytes gzipped over ${MAX_PAYLOAD_BYTES_GZIPPED}`
   );
-  throw appError("PAYLOAD_TOO_LARGE", {
-    level_code: levelCode,
-    measured_bytes: bytes,
-    limit_bytes: MAX_PAYLOAD_BYTES_GZIPPED,
-  });
+  throw new PayloadTooLargeError();
 }
 
 function applyGameConfigCacheHeader(

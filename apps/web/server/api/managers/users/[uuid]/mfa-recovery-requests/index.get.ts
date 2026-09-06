@@ -1,5 +1,5 @@
-import { appError } from "@mindkid/auth";
 import { getOwnerDb, mfaRecoveryRequests, users } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
 import { desc, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   await requireManagerSession(event);
   const userUuid = getRouterParam(event, "uuid");
   if (!userUuid) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const db = getOwnerDb();
@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!targetUser) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const requests = await db

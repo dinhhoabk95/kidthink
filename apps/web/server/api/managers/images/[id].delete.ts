@@ -9,8 +9,10 @@ import {
   seoPages,
   worksheets,
 } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
+import { ContentInUseError } from "@mindkid/errors/content";
 import { eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 interface PublishedUsageRef {
@@ -123,7 +125,7 @@ export default defineEventHandler(async (event) => {
   const id = Number(idParam);
 
   if (!Number.isInteger(id) || id <= 0) {
-    throw createError({ statusCode: 404, statusMessage: "IMAGE_NOT_FOUND" });
+    throw new NotFoundError("IMAGE_NOT_FOUND");
   }
 
   const db = getOwnerDb();
@@ -133,22 +135,16 @@ export default defineEventHandler(async (event) => {
     .where(eq(contentImages.id, id));
 
   if (!imageRecord) {
-    throw createError({ statusCode: 404, statusMessage: "IMAGE_NOT_FOUND" });
+    throw new NotFoundError("IMAGE_NOT_FOUND");
   }
 
   // Check if used by published content via dedicated reverse index (BR-AUT2-01, BR-AUT2-03, D-KB)
   const usedBy = await findPublishedUsage(db, imageRecord.storagePath);
 
   if (usedBy.length > 0) {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "CONTENT_IN_USE",
-      message:
-        "Cannot delete image that is currently in use by published content",
-      data: {
-        used_by: usedBy,
-      },
-    });
+    throw new ContentInUseError(
+      "Cannot delete image that is currently in use by published content"
+    );
   }
 
   await db.delete(contentImages).where(eq(contentImages.id, id));

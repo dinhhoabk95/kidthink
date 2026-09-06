@@ -1,8 +1,13 @@
 import { writeAudit } from "@mindkid/audit";
 import { gameLevels, getOwnerDb, managers } from "@mindkid/db";
+import { InternalError } from "@mindkid/errors/common";
+import {
+  LayoutNotSupportedError,
+  TemplateNotSupportedError,
+} from "@mindkid/errors/game-level";
 import { getGameTemplate } from "@mindkid/game-engine/registry";
 import { eq, sql } from "drizzle-orm";
-import { createError, defineEventHandler, setResponseStatus } from "h3";
+import { defineEventHandler, setResponseStatus } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
@@ -183,11 +188,9 @@ export default defineEventHandler(async (event) => {
   const templateCode = input.template_code;
   const template = getGameTemplate(templateCode);
   if (!template) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "TEMPLATE_NOT_SUPPORTED",
-      message: `Template ${templateCode} is not supported`,
-    });
+    throw new TemplateNotSupportedError(
+      `Template ${templateCode} is not supported`
+    );
   }
   const db = getOwnerDb();
 
@@ -198,11 +201,9 @@ export default defineEventHandler(async (event) => {
     requestedLayoutId &&
     !template.layouts.some((layoutId) => layoutId === requestedLayoutId)
   ) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "LAYOUT_NOT_SUPPORTED",
-      message: `Layout '${requestedLayoutId}' is not supported by template '${templateCode}' (BR-LAY-02)`,
-    });
+    throw new LayoutNotSupportedError(
+      `Layout '${requestedLayoutId}' is not supported by template '${templateCode}' (BR-LAY-02)`
+    );
   }
 
   const { levelCode, count } = await resolveLevelCode(
@@ -224,10 +225,7 @@ export default defineEventHandler(async (event) => {
   );
 
   if (!newLevel) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "LEVEL_CREATE_FAILED",
-    });
+    throw new InternalError("LEVEL_CREATE_FAILED");
   }
 
   await syncContentAssetRefs(

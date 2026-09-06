@@ -1,5 +1,7 @@
 import { requireUserAuth } from "@mindkid/auth";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
+import { SessionAlreadyCompletedError } from "@mindkid/errors/play";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { LessonSessionRunnerService } from "#server/services/index.js";
 
@@ -13,22 +15,14 @@ export default defineEventHandler(async (event) => {
   const runUuid = getRouterParam(event, "run_uuid");
 
   if (!runUuid) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "VALIDATION_FAILED",
-      data: { code: "VALIDATION_FAILED", message: "Thiếu run_uuid." },
-    });
+    throw new ValidationError("Thiếu run_uuid.");
   }
 
   const rawBody = await readBody(event);
   const parsed = UpdateStepSchema.safeParse(rawBody);
 
   if (!parsed.success) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "VALIDATION_FAILED",
-      data: { code: "VALIDATION_FAILED", issues: parsed.error.issues },
-    });
+    throw new ValidationError("VALIDATION_FAILED");
   }
 
   try {
@@ -43,31 +37,13 @@ export default defineEventHandler(async (event) => {
   } catch (err: unknown) {
     const errorName = err instanceof Error ? err.name : "";
     if (errorName === "NOT_FOUND") {
-      throw createError({
-        statusCode: 404,
-        statusMessage: "NOT_FOUND",
-        data: { code: "NOT_FOUND", message: "Không tìm thấy lượt chạy." },
-      });
+      throw new NotFoundError("Không tìm thấy lượt chạy.");
     }
     if (errorName === "SESSION_ALREADY_COMPLETED") {
-      throw createError({
-        statusCode: 409,
-        statusMessage: "SESSION_ALREADY_COMPLETED",
-        data: {
-          code: "SESSION_ALREADY_COMPLETED",
-          message: "Lượt chạy tiết học đã kết thúc.",
-        },
-      });
+      throw new SessionAlreadyCompletedError("Lượt chạy tiết học đã kết thúc.");
     }
     if (errorName === "VALIDATION_FAILED") {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "VALIDATION_FAILED",
-        data: {
-          code: "VALIDATION_FAILED",
-          message: "Bước không hợp lệ trong tiết học này.",
-        },
-      });
+      throw new ValidationError("Bước không hợp lệ trong tiết học này.");
     }
     throw err;
   }

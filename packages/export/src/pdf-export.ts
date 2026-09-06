@@ -1,5 +1,4 @@
 import { writeAudit } from "@mindkid/audit";
-import { appError } from "@mindkid/auth";
 import {
   exportJobs,
   getDb,
@@ -8,6 +7,13 @@ import {
   notificationDeliveries,
   notifications,
 } from "@mindkid/db";
+import { ExportNotFoundError } from "@mindkid/errors/account";
+import { TokenExpiredError } from "@mindkid/errors/auth";
+import {
+  EntitlementRequiredError,
+  QuotaExceededError,
+} from "@mindkid/errors/billing";
+import { LessonPlanNotFoundError } from "@mindkid/errors/content";
 import { enqueue } from "@mindkid/queue";
 import { storage } from "@mindkid/storage";
 import { and, asc, count, eq, gte, isNotNull, lte, ne } from "drizzle-orm";
@@ -29,7 +35,7 @@ export async function loadLessonPlanForExport(
     .limit(1);
 
   if (!plan) {
-    throw appError("NOT_FOUND", "Không tìm thấy giáo án.");
+    throw new LessonPlanNotFoundError(planUuid);
   }
 
   const rawItems = await db
@@ -129,21 +135,18 @@ export async function requestExportJob(
 
   // 1. Entitlement check
   if (!entitlements.includes("export_pdf")) {
-    throw appError("ENTITLEMENT_REQUIRED", {
-      required_entitlement: "export_pdf",
-      message: "Tài khoản cần có quyền xuất PDF (add-on).",
-    });
+    throw new EntitlementRequiredError(
+      { required_entitlement: "export_pdf" },
+      "Tài khoản cần có quyền xuất PDF (add-on)."
+    );
   }
 
   // 2. Monthly Quota check (BR-PDF-02)
   const currentUsage = await getUserMonthlyExportCount(userId, db);
   if (currentUsage >= MONTHLY_PDF_EXPORT_QUOTA) {
-    throw appError("QUOTA_EXCEEDED", {
-      quota_key: "pdf_exports_per_month",
-      current_usage: currentUsage,
-      limit: MONTHLY_PDF_EXPORT_QUOTA,
-      message: `Đã đạt giới hạn tối đa ${MONTHLY_PDF_EXPORT_QUOTA} lượt xuất PDF trong tháng này.`,
-    });
+    throw new QuotaExceededError(
+      `Đã đạt giới hạn tối đa ${MONTHLY_PDF_EXPORT_QUOTA} lượt xuất PDF trong tháng này.`
+    );
   }
 
   // 3. Verify refId exists and belongs to user (for lesson_plan)
@@ -216,17 +219,14 @@ export async function getExportJobByUuid(
 
   if (!job) {
     // IDOR protection: returns 404 if not found or not owner
-    throw appError("NOT_FOUND", "Không tìm thấy yêu cầu xuất file.");
+    throw new ExportNotFoundError(jobUuid);
   }
 
   let downloadUrl: string | null = null;
   if (job.status === "done" && job.filePath) {
     // Check expiration (BR-PDF-08)
     if (job.expiresAt && new Date() > job.expiresAt) {
-      throw appError(
-        "TOKEN_EXPIRED",
-        "File xuất PDF đã hết hạn lưu trữ (7 ngày)."
-      );
+      throw new TokenExpiredError("File xuất PDF đã hết hạn lưu trữ (7 ngày).");
     }
     // Generate signed URL with TTL 60 minutes (3600 seconds) (BR-PDF-03)
     downloadUrl = storage.signedUrl(job.filePath, 3600);

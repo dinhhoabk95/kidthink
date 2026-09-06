@@ -1,4 +1,4 @@
-import { appError, generateSecureToken, hashSecureToken } from "@mindkid/auth";
+import { generateSecureToken, hashSecureToken } from "@mindkid/auth";
 import {
   getAppDb,
   notificationDeliveries,
@@ -6,6 +6,7 @@ import {
   users,
   verificationTokens,
 } from "@mindkid/db";
+import { ValidationError } from "@mindkid/errors/common";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, type H3Event, readBody } from "h3";
@@ -36,7 +37,7 @@ export async function handleForgotPassword(event: H3Event, testBody?: unknown) {
     (await readBody(event).catch(() => null));
   const parsed = EmailSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw appError("VALIDATION_FAILED");
+    throw new ValidationError();
   }
   const email = parsed.data.email.toLowerCase();
 

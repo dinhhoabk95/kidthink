@@ -63,3 +63,13 @@ export const IntroRequiredError = defineError<{
   message: "Bé cần hoàn thành bài làm quen trước khi chơi.",
   status: 428,
 });
+
+export const ContentPackInvalidError = defineError<{
+  readonly details?: JsonValue;
+  readonly round_index?: number;
+  readonly issues?: readonly JsonValue[];
+}>({
+  code: "CONTENT_PACK_INVALID",
+  message: "Gói nội dung màn chơi không hợp lệ.",
+  status: 422,
+});

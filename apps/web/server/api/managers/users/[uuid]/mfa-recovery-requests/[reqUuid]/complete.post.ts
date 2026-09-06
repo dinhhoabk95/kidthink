@@ -1,4 +1,3 @@
-import { appError } from "@mindkid/auth";
 import {
   auditLogs,
   getOwnerDb,
@@ -7,8 +6,11 @@ import {
   mfaSettings,
   users,
 } from "@mindkid/db";
+import { RestrictedModeError } from "@mindkid/errors/auth";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
+import { InvalidStatusTransitionError } from "@mindkid/errors/content";
 import { and, eq, sql } from "drizzle-orm";
-import { createError, defineEventHandler, getHeader, getRouterParam } from "h3";
+import { defineEventHandler, getHeader, getRouterParam } from "h3";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
@@ -20,7 +22,7 @@ export default defineEventHandler(async (event) => {
   const reqUuid = getRouterParam(event, "reqUuid");
 
   if (!(userUuid && reqUuid)) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const db = getOwnerDb();
@@ -31,7 +33,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!targetUser) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const [recoveryReq] = await db
@@ -46,35 +48,24 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!recoveryReq) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   if (recoveryReq.status === "pending_verification") {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "EMAIL_NOT_VERIFIED",
-      message: "Người dùng chưa xác thực email cho yêu cầu khôi phục này",
-    });
+    throw new RestrictedModeError(
+      "Người dùng chưa xác thực email cho yêu cầu khôi phục này"
+    );
   }
 
   if (recoveryReq.status !== "waiting") {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "REQUEST_TERMINAL",
-      message: "Yêu cầu khôi phục đã hoàn tất hoặc đã bị huỷ",
-    });
+    throw new InvalidStatusTransitionError(
+      "Yêu cầu khôi phục đã hoàn tất hoặc đã bị huỷ"
+    );
   }
 
   const now = new Date();
   if (now.getTime() < recoveryReq.eligibleAt.getTime()) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "WAITING_PERIOD_NOT_ELAPSED",
-      message: "Chưa đủ 48 giờ chờ kể từ thời điểm tạo yêu cầu",
-      data: {
-        eligible_at: recoveryReq.eligibleAt.toISOString(),
-      },
-    });
+    throw new ValidationError("Chưa đủ 48 giờ chờ kể từ thời điểm tạo yêu cầu");
   }
 
   // Execute atomic complete: remove MFA, remove recovery codes, bump sessionVersion, mark complete

@@ -189,6 +189,13 @@ function collectTemplateStats(
   const pairViolationsList: SkillQuotaViolation[] = [];
 
   for (const [tCode, count] of tMap.entries()) {
+    // BR-SKQ-08: level dạy đứng ngoài hạn ngạch level chơi. Từ khi bậc `pre` bị gỡ
+    // (BR-CTM-01), level dạy gắn thẳng vào kỹ năng chơi; đếm chung thì một kỹ năng
+    // C1 có 19 bài chơi cộng 1 bài dạy sẽ báo đủ 20 trong khi thiếu một bài chơi.
+    if (ALL_TEMPLATES[tCode]?.kind === "teach") {
+      continue;
+    }
+
     totalLevels += count;
     templateCodes.push(tCode);
     distinctPairs.push(`${skillCode}:${tCode}`);
@@ -266,17 +273,12 @@ function evaluateSingleSkill(
   const requiredLevels = quotaRule.requiredLevels;
   const requiredTemplates = quotaRule.requiredTemplates;
 
-  const isTeachOnly =
-    skill.tier === "pre" ||
-    (templateCodes.length > 0 &&
-      templateCodes.every((tc) => ALL_TEMPLATES[tc]?.kind === "teach"));
-
-  const meetsQuota = isTeachOnly
-    ? totalLevels >= 1
-    : totalLevels >= requiredLevels;
-  const meetsDiversity = isTeachOnly
-    ? templateCodes.length >= 1
-    : templateCodes.length >= requiredTemplates;
+  // BR-SKQ-08: `collectTemplateStats` đã loại level dạy, nên `templateCodes` chỉ còn
+  // khuôn chơi. Kỹ năng chỉ có level dạy rơi về 0 level và đi theo nhánh
+  // `isZeroLevels` bên dưới — đúng BR-SKQ-06, không phải một ngoại lệ riêng.
+  const meetsQuota = totalLevels >= requiredLevels;
+  const meetsDiversity = templateCodes.length >= requiredTemplates;
+  const isTeachOnly = false;
 
   if (totalLevels === 0) {
     return {

@@ -1,4 +1,3 @@
-import { appError } from "@mindkid/auth";
 import {
   childProfiles,
   entitlementKeys,
@@ -8,6 +7,7 @@ import {
   recurringSubscriptions,
   users,
 } from "@mindkid/db";
+import { UnauthenticatedError } from "@mindkid/errors/auth";
 import { PACKAGE_CATALOG, type PackageDefinition } from "@mindkid/shared";
 import { and, count, desc, eq, inArray } from "drizzle-orm";
 import { defineEventHandler } from "h3";
@@ -231,7 +231,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!userRecord) {
-    throw appError("UNAUTHENTICATED");
+    throw new UnauthenticatedError();
   }
 
   const userEntitlementRows = await db

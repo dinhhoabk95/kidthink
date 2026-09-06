@@ -5,7 +5,7 @@ area: play
 status: approved
 mvp: false
 phase: P4
-reviewed: 2026-09-05
+reviewed: 2026-09-06
 owns:
   - Vòng chạy các phân đoạn và dãy hành động của `GT-000`
   - Bắt buộc phát tiếng ở bước giới thiệu
@@ -29,7 +29,7 @@ chất liệu `assets` và dãy hành động `steps`. File này sở hữu **c�
 một đứa trẻ ba tuổi đang ngồi một mình với cái máy tính bảng**.
 
 Runner của `GT-000` là **một vòng lặp trên `steps`**, không phải ba màn cố định. Mỗi step là
-một hành động nhỏ; bốn hành động (`present` · `recognise` · `link` · `recall`) chạy **cùng
+một hành động nhỏ; năm hành động (`present` · `echo` · `recognise` · `link` · `recall`) chạy **cùng
 một khuôn** trên cả ba loại chất liệu — ký tự, từ khoá học, hình minh hoạ. Người soạn đổi
 dãy thì trẻ thấy bài khác; runner không đổi.
 
@@ -72,11 +72,12 @@ tự thoát không nổi.
    [`concept-intro-gate.md`](concept-intro-gate.md): còn bài trong hàng thì vào bài kế, hết
    hàng thì quay lại đúng trò chơi trẻ muốn vào.
 
-### 4.1 Bốn hành động
+### 4.1 Năm hành động
 
 | `action` | Màn dựng gì | Trẻ thao tác | Đúng thì | Sai thì |
 |---|---|---|---|---|
 | `present` | **Một** chất liệu giữa màn. `glyph` và `word` hiện mặt chữ; `word` đọc chậm từng `syllables` | Chạm bất kỳ đâu | Sang step kế | Không có nhánh sai — `BR-CIR-04` |
+| `echo` | **Một** chất liệu giữa màn, nhịp sóng âm chạy trong lúc phát mẫu rồi dừng. Hiện nút "Bé nói theo" và nút nghe lại | Nói theo thành tiếng, rồi chạm nút đi tiếp. Nghe lại được tối đa `repeat_count` lần | Sang step kế | Không có nhánh sai — máy Cấm — **NEVER** nghe, `BR-CIR-21` |
 | `recognise` | Target cùng `distractors`, xáo vị trí | Chạm chất liệu đúng | Âm mừng ngắn, sang step kế | Chạy lại `present` của **chính target** rồi hỏi lại step này |
 | `link` | Target một bên, `pair_with` cùng 1–2 mồi nhử bên kia | Kéo hoặc chạm nối hai bên | Nối sáng lên, sang step kế | Như `recognise` — nhắc lại rồi hỏi lại |
 | `recall` | **Một** chất liệu, rồi đọc lần lượt hai `name_options` gắn hai nút hình | Chạm nút | Sang step kế | **Cũng sang step kế**; kết quả vào `intro_recall_answered` — `BR-CIR-07` |
@@ -115,6 +116,8 @@ tự thoát không nổi.
 | `BR-CIR-09` (Cấm micro) | Runtime Cấm — **NEVER** gọi `getUserMedia`, Cấm — **NEVER** xin quyền micro | `BR-CDC-04`, `BR-AST-04`, `BR-CIM-10` |
 | `BR-CIR-10` (Cấm chữ bắt buộc đọc) | Mọi chữ trên bề mặt này Cấm — **NEVER** là kênh thông tin duy nhất; luôn có tiếng nói song song | `BR-LSM-07`, `BR-LSR-10`. Bài làm quen là bề mặt dễ vi phạm nhất vì nó là bài **dạy chữ** |
 | `BR-CIR-11` (không mastery) | Lượt làm quen Cấm — **NEVER** ghi `mastery_state` | [`progress-and-mastery.md`](progress-and-mastery.md) ghi thành thạo từ **kết quả chơi**. Trẻ vừa được cho biết đáp án ngay trước đó — coi đó là bằng chứng thành thạo là nói dối báo cáo gửi phụ huynh |
+| `BR-CIR-21` (tập nói: máy không nghe) | Step `echo` phát mẫu rồi **chờ trẻ chạm**. Cấm — **NEVER** yêu cầu quyền micro, Cấm — **NEVER** ghi âm, Cấm — **NEVER** chấm phát âm, Cấm — **NEVER** phát event nào mang dữ liệu âm thanh hay đường dẫn ghi âm | `BR-CIM-10`, `BR-CDC-04`, Luật 91/2025/QH15 và Nghị định 13/2023. Trẻ tập nói được mà máy không cần nghe; xin micro để "chấm cho vui" là thu dữ liệu sinh trắc của trẻ, thứ không rút lại được sau khi đã ghi |
+| `BR-CIR-22` (tập nói có chỗ nghe lại) | Step `echo` BẮT BUỘC có nút nghe lại, tối đa `repeat_count` lần, mặc định 1. Nút đi tiếp Cấm — **NEVER** bị khoá theo đồng hồ | Trẻ ba tuổi nghe hụt một lần là mất cả mẫu. Nhưng khoá nút đi tiếp cho tới khi hết một khoảng thời gian là biến bước dạy thành bước chờ, và trẻ học được rằng chờ là cách qua màn |
 | `BR-CIR-12` (không scaffolding leo thang) | Hệ trợ giúp ba cấp của [`scaffolding-and-hints.md`](scaffolding-and-hints.md) **tắt** ở `present`, bật rút gọn ở `recognise` và `link` (chỉ L1 highlight) | Leo thang tồn tại để trẻ không kẹt trong một **thử thách**. `present` không phải thử thách, và ghost hand làm hộ sẽ phá `BR-SCF-04` |
 | `BR-CIR-13` (Cấm điểm và đồng hồ) | Cấm — **NEVER** hiện sao, điểm, phần trăm, hay đồng hồ | `BR-ENG-11`, `BR-CIM-08` |
 | `BR-CIR-14` (chạy đúng thứ tự khai) | Runner chạy các phân đoạn và `steps` trong mỗi phân đoạn **theo đúng thứ tự trong `content_pack`**. Cấm — **NEVER** tự sắp lại, tự trộn, hay tự bỏ step | `BR-CIM-14` đảm bảo thứ tự đó thoả "giới thiệu trước, hỏi sau". Runner sắp lại là phá bất biến mà cổng publish vừa kiểm |
@@ -150,11 +153,13 @@ Cấm — **NEVER** gửi `recallCorrectCount` lên như điểm số. Nó đi t
 | `intro_step_answered` | `{ step_id, action, answer_correct, miss_count, tts_used }` | Step `recognise` hoặc `link` kết thúc |
 | `intro_step_deferred` | `{ step_id, reason }` | Bỏ step — `reason ∈ miss_limit \| asset_missing` |
 | `intro_recall_answered` | `{ step_id, target_asset_id, answer_correct }` | Mỗi step `recall` |
+| `intro_echo_started` | `{ step_id, target_asset_id, tts_used }` | Mỗi step `echo` bắt đầu phát mẫu |
+| `intro_echo_completed` | `{ step_id, target_asset_id, replay_count }` | Trẻ chạm đi tiếp ở một step `echo` |
 | `intro_segment_started` | `{ segment_id, segment_index, asset_count, is_review }` | Mỗi phân đoạn bắt đầu |
 | `intro_segment_completed` | `{ segment_id, segment_index, miss_count }` | Mỗi phân đoạn kết thúc — đây là mốc `BR-CIR-17` |
 | `tts_unavailable` | `{ lang, asset_id }` | Không phát được tiếng cho một chất liệu |
 
-Bảy tên trên là **bộ tên duy nhất**. Đo 2026-09-05 thấy ba bộ tên song song: bộ trong file
+Chín tên trên là **bộ tên duy nhất**. Đo 2026-09-05 thấy ba bộ tên song song: bộ trong file
 này, bộ khai ở `events` của khuôn (`intro_period_started`, `intro_item_presented`,
 `intro_item_deferred`), và bộ session thật sự phát (thêm `intro_item_acknowledged`,
 `intro_item_missed`, `intro_recognise_succeeded`, `intro_link_completed`). Hai bộ sau **bị
@@ -225,6 +230,17 @@ Scenario: BR-CIR-21 — tên event chưa đăng ký thì cổng chặn
   Given runner phát một tên event không có trong danh mục event chung
   When cổng danh mục event chạy
   Then cổng đỏ và nêu đúng tên event chưa đăng ký
+
+Scenario: BR-CIR-21 — step echo không xin micro
+  Given trẻ đi vào một step echo
+  When runner dựng màn
+  Then runner không gọi API micro nào
+  And không event nào mang dữ liệu âm thanh
+
+Scenario: BR-CIR-22 — nút đi tiếp của echo không bị khoá theo đồng hồ
+  Given trẻ đang ở một step echo và mẫu vừa phát xong
+  When trẻ chạm nút đi tiếp ngay lập tức
+  Then runner sang step kế
 
 Scenario: BR-CIR-04 — present không có đáp án sai
   Given trẻ chạm vào chỗ bất kỳ ở một step present

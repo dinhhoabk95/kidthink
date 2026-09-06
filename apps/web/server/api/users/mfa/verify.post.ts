@@ -1,13 +1,17 @@
 import {
-  appError,
   decryptTotpSecret,
   generateRecoveryCodes,
   hashRecoveryCode,
   verifyTotpCode,
 } from "@mindkid/auth";
 import { getOwnerDb, mfaRecoveryCodes, mfaSettings, users } from "@mindkid/db";
+import {
+  MfaInvalidCodeError,
+  MfaRequiredError,
+  MfaSecretCorruptedError,
+} from "@mindkid/errors/auth";
 import { and, eq, sql } from "drizzle-orm";
-import { createError, defineEventHandler, readBody } from "h3";
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
 import { getMfaEncryptionKey } from "#server/utils/admin-auth-runtime";
@@ -25,11 +29,7 @@ export default defineEventHandler(async (event) => {
 
   const parsedResult = verifyMfaSchema.safeParse(raw);
   if (!parsedResult.success) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "MFA_INVALID_CODE",
-      message: "Mã xác thực không đúng hoặc đã hết hạn",
-    });
+    throw new MfaInvalidCodeError("Mã xác thực không đúng hoặc đã hết hạn");
   }
 
   const code = parsedResult.data.code.trim();
@@ -46,11 +46,7 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!setting) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "MFA_NOT_SETUP",
-      message: "Chưa khởi tạo thiết lập MFA",
-    });
+    throw new MfaRequiredError("Chưa khởi tạo thiết lập MFA");
   }
 
   let decryptedSecret: string;
@@ -61,16 +57,12 @@ export default defineEventHandler(async (event) => {
     );
   } catch {
     // BR-MFA-13: decryption failure is a system error, not a wrong code
-    throw appError("MFA_SECRET_CORRUPTED");
+    throw new MfaSecretCorruptedError();
   }
   const isValid = verifyTotpCode(code, decryptedSecret); // BR-MFA-04, BR-MFA-12
 
   if (!isValid) {
-    throw createError({
-      statusCode: 401,
-      statusMessage: "MFA_INVALID_CODE",
-      message: "Mã xác thực không chính xác",
-    });
+    throw new MfaInvalidCodeError("Mã xác thực không chính xác");
   }
 
   // Confirm MFA setting

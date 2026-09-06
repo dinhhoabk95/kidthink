@@ -1,6 +1,7 @@
-import { AppError } from "@mindkid/auth";
+import { ValidationError } from "@mindkid/errors/common";
+import { SessionNotFoundError } from "@mindkid/errors/play";
 import { completePlaySession } from "@mindkid/play";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 
 import {
@@ -18,13 +19,13 @@ export default defineEventHandler(async (event) => {
   assertRequestBodySize(event, 16 * 1024);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new SessionNotFoundError();
   }
 
   const guestDeviceId = getOrSetGuestDeviceId(event);
   const parsed = CompleteSchema.safeParse((await readBody(event)) || {});
   if (!parsed.success) {
-    throw new AppError("VALIDATION_FAILED");
+    throw new ValidationError();
   }
   const lastSeq = parsed.data.last_seq;
 

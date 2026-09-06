@@ -46,8 +46,12 @@ export const UserAlreadyDeletedError = defineError({
 });
 
 export const ConsentRequiredError = defineError<{
-  readonly types: readonly string[];
-  readonly url: string;
+  readonly types?: readonly string[];
+  readonly url?: string;
+  readonly reason?: string;
+  readonly consent_type?: string;
+  readonly requirement_at?: string;
+  readonly notice?: string | null;
 }>({
   code: "CONSENT_REQUIRED",
   message: "Vui lòng đọc và đồng ý chính sách bảo vệ dữ liệu trẻ em.",
@@ -84,4 +88,18 @@ export const ExportNotFoundError = defineModelNotFound(
   "ExportNotFoundError",
   "export_jobs",
   "Không tìm thấy yêu cầu xuất file."
+);
+
+export const ExportRateLimitedError = defineError<{
+  readonly retry_after_s?: number;
+}>({
+  code: "EXPORT_RATE_LIMITED",
+  message: "Bạn chỉ có thể xuất dữ liệu 1 lần trong vòng 24 giờ.",
+  status: 429,
+});
+
+export const NotificationNotFoundError = defineModelNotFound(
+  "NotificationNotFoundError",
+  "notifications",
+  "Không tìm thấy thông báo."
 );

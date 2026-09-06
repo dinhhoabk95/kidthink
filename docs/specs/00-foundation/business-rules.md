@@ -80,6 +80,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-CLC` | [`content-lifecycle.md`](content-lifecycle.md) |
 | `BR-VER` | [`content-versioning.md`](content-versioning.md) |
 | `BR-ERR` | [`error-codes.md`](error-codes.md) |
+| `BR-AEC` | [`api-error-client.md`](api-error-client.md) |
 | `BR-EVT` | [`event-catalog.md`](event-catalog.md) |
 | `BR-MVP` | [`mvp-scope.md`](mvp-scope.md) |
 | `BR-REG2` | [`business-rules.md`](business-rules.md) (file này) |
@@ -172,7 +173,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-SDS` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) | | `BR-SKQ` | [`engine-content-depth.md`](../05-content/engine-content-depth.md) mục 6.1 |
 | `BR-STA` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) §7.5 | | `BR-ALC` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) §7.4 |
 | `BR-ECA` | [`engine-competency-allocation.md`](../05-content/engine-competency-allocation.md) | | `BR-PAR` | [`preschool-age-bands.md`](../05-content/preschool-age-bands.md) |
-| `BR-SAP` | [`skill-age-progression.md`](../05-content/skill-age-progression.md) | | `BR-PRE` | [`concept-pre-skill.md`](../05-content/concept-pre-skill.md) |
+| `BR-SAP` | [`skill-age-progression.md`](../05-content/skill-age-progression.md) | | `BR-CTM` | [`concept-topic-model.md`](../05-content/concept-topic-model.md) |
 
 **Admin**
 

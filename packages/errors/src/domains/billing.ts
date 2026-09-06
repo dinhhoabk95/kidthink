@@ -49,7 +49,13 @@ export const PaymentProofRequiredError = defineError({
   status: 422,
 });
 
-export const QuotaExceededError = defineError<{ readonly resets_at: string }>({
+export const QuotaExceededError = defineError<{
+  readonly resets_at?: string;
+  readonly quota_key?: string;
+  readonly limit?: number;
+  readonly current?: number;
+  readonly message?: string;
+}>({
   code: "QUOTA_EXCEEDED",
   message: "Bạn đã dùng hết hạn mức của gói dịch vụ.",
   status: 402,
@@ -62,7 +68,9 @@ export const InsufficientCreditsError = defineError({
 });
 
 export const EntitlementRequiredError = defineError<{
-  readonly required_entitlement: string;
+  readonly required_entitlement?: string;
+  readonly required_package?: string;
+  readonly message?: string;
 }>({
   code: "ENTITLEMENT_REQUIRED",
   message: "Tính năng này thuộc gói dịch vụ bổ sung.",
@@ -126,10 +134,17 @@ export const OrderNotFoundError = defineModelNotFound(
   "Không tìm thấy đơn hàng."
 );
 
-export const SubscriptionNotFoundError = defineModelNotFound(
-  "SubscriptionNotFoundError",
+export const SubscriptionNotFoundError = defineError({
+  code: "SUBSCRIPTION_NOT_FOUND",
+  message: "Không tìm thấy gói thuê bao định kỳ.",
+  status: 404,
+});
+
+export const SubscriptionModelNotFoundError = defineModelNotFound(
+  "SubscriptionModelNotFoundError",
   "subscriptions",
-  "Không tìm thấy gói thuê bao định kỳ."
+  "Không tìm thấy gói thuê bao định kỳ.",
+  "SUBSCRIPTION_NOT_FOUND"
 );
 
 export const EntitlementNotFoundError = defineModelNotFound(
@@ -137,3 +152,15 @@ export const EntitlementNotFoundError = defineModelNotFound(
   "user_entitlements",
   "Không tìm thấy quyền cần thu hồi."
 );
+
+export const ChildLimitExceededError = defineError({
+  code: "CHILD_LIMIT_EXCEEDED",
+  message: "Số lượng hồ sơ bé đã đạt giới hạn tối đa của gói hiện tại.",
+  status: 402,
+});
+
+export const InvalidCancelReasonError = defineError({
+  code: "INVALID_CANCEL_REASON",
+  message: "Lý do huỷ không hợp lệ.",
+  status: 422,
+});

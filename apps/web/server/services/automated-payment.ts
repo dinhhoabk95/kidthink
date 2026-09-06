@@ -1,4 +1,3 @@
-import { appError } from "@mindkid/auth";
 import {
   auditLogs,
   entitlements,
@@ -6,6 +5,11 @@ import {
   paymentOrders,
   paymentTransactions,
 } from "@mindkid/db";
+import {
+  OrderNotFoundError,
+  ReconciliationMismatchError,
+  WebhookReplayDetectedError,
+} from "@mindkid/errors/billing";
 import {
   type AutomatedPaymentProvider,
   type AutomatedPaymentWebhookPayload,
@@ -146,10 +150,7 @@ export async function processAutomatedPaymentWebhook(
       currentTimestampSeconds
     )
   ) {
-    throw appError(
-      "WEBHOOK_REPLAY_DETECTED",
-      "Webhook gửi quá thời gian cho phép hoặc phát lại"
-    );
+    throw new WebhookReplayDetectedError();
   }
 
   const db = getOwnerDb();
@@ -191,18 +192,12 @@ export async function processAutomatedPaymentWebhook(
       .limit(1);
 
     if (!order) {
-      throw appError(
-        "NOT_FOUND",
-        "Đơn hàng trong webhook không tồn tại trong hệ thống"
-      );
+      throw new OrderNotFoundError(payload.order_uuid);
     }
 
     // 4. Validate Amount from server-side catalog & order
     if (order.amountVnd !== payload.amount_vnd) {
-      throw appError(
-        "RECONCILIATION_MISMATCH",
-        "Số tiền trong webhook không khớp với số tiền thực thu của đơn hàng"
-      );
+      throw new ReconciliationMismatchError();
     }
 
     // 5. If webhook status is failed or cancelled

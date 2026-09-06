@@ -5,12 +5,8 @@ import {
   lessonActivities,
   lessons,
 } from "@mindkid/db";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { InternalError, ValidationError } from "@mindkid/errors/common";
+import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
@@ -102,11 +98,9 @@ export default defineEventHandler(async (event) => {
 
   const data = parsed.data;
   if (data.target_age_min > data.target_age_max) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "INVALID_AGE_RANGE",
-      message: "target_age_min không được lớn hơn target_age_max",
-    });
+    throw new ValidationError(
+      "target_age_min không được lớn hơn target_age_max"
+    );
   }
 
   const db = getOwnerDb();
@@ -138,11 +132,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!created) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "LESSON_CREATE_FAILED",
-      message: "Tạo bài học thất bại",
-    });
+    throw new InternalError("Tạo bài học thất bại");
   }
 
   await attachLessonActivitiesAndSkills(

@@ -1,5 +1,6 @@
 import { auditLogs, consentRequirements, getOwnerDb } from "@mindkid/db";
-import { createError, defineEventHandler, getHeader, readBody } from "h3";
+import { ValidationError } from "@mindkid/errors/common";
+import { defineEventHandler, getHeader, readBody } from "h3";
 import { z } from "zod";
 import {
   assertManagerRequestBodySize,
@@ -34,14 +35,7 @@ export default defineEventHandler(async (event) => {
 
   const parsed = ForceReconsentSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "Dữ liệu yêu cầu tái đồng ý không hợp lệ.",
-      },
-    });
+    throw new ValidationError("Dữ liệu yêu cầu tái đồng ý không hợp lệ.");
   }
 
   const { consent_type: consentType, notice, reason } = parsed.data;

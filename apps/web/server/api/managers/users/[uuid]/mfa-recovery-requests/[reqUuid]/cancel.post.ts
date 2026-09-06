@@ -1,7 +1,8 @@
-import { appError } from "@mindkid/auth";
 import { auditLogs, getOwnerDb, mfaRecoveryRequests, users } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
+import { InvalidStatusTransitionError } from "@mindkid/errors/content";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getHeader, getRouterParam } from "h3";
+import { defineEventHandler, getHeader, getRouterParam } from "h3";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
@@ -13,7 +14,7 @@ export default defineEventHandler(async (event) => {
   const reqUuid = getRouterParam(event, "reqUuid");
 
   if (!(userUuid && reqUuid)) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const db = getOwnerDb();
@@ -24,7 +25,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!targetUser) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const [recoveryReq] = await db
@@ -39,18 +40,16 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!recoveryReq) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   if (
     recoveryReq.status !== "pending_verification" &&
     recoveryReq.status !== "waiting"
   ) {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "REQUEST_TERMINAL",
-      message: "Yêu cầu khôi phục đã hoàn tất hoặc đã bị huỷ",
-    });
+    throw new InvalidStatusTransitionError(
+      "Yêu cầu khôi phục đã hoàn tất hoặc đã bị huỷ"
+    );
   }
 
   const now = new Date();

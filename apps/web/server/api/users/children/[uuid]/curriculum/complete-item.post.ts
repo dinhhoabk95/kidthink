@@ -5,14 +5,9 @@ import {
   curriculumItems,
   getOwnerDb,
 } from "@mindkid/db";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { and, eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import {
   assertRequestBodySize,
@@ -28,8 +23,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const userId = Number(user.user_id);
@@ -48,12 +42,7 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!child) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      data: { code: "NOT_FOUND", message: "Không tìm thấy hồ sơ trẻ." },
-    });
+    throw new NotFoundError("Không tìm thấy hồ sơ trẻ.");
   }
 
   const eventBody = (event.context as { body?: unknown })?.body;
@@ -61,14 +50,7 @@ export default defineEventHandler(async (event) => {
   const parsed = completeItemSchema.safeParse(raw);
 
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "curriculum_item_id là bắt buộc.",
-      },
-    });
+    throw new ValidationError("curriculum_item_id là bắt buộc.");
   }
 
   const curriculumItemId = parsed.data.curriculum_item_id;
@@ -85,15 +67,7 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!enrollment) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      data: {
-        code: "NOT_FOUND",
-        message: "Bé chưa ghi danh chương trình nào.",
-      },
-    });
+    throw new NotFoundError("Bé chưa ghi danh chương trình nào.");
   }
 
   // 3. Verify curriculum_item belongs to enrolled curriculum
@@ -108,15 +82,7 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!item) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      data: {
-        code: "NOT_FOUND",
-        message: "Không tìm thấy hoạt động trong chương trình học.",
-      },
-    });
+    throw new NotFoundError("Không tìm thấy hoạt động trong chương trình học.");
   }
 
   // 4. Upsert progress idempotently (D-MC)

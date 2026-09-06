@@ -3,7 +3,6 @@
  * Business rules: BR-AIA-01..11
  */
 
-import { appError } from "@mindkid/auth";
 import {
   aiUsageLog,
   childProfiles,
@@ -14,6 +13,9 @@ import {
   playSessions,
   skills,
 } from "@mindkid/db";
+import { ChildNotFoundError } from "@mindkid/errors/child";
+import { ServiceUnavailableError } from "@mindkid/errors/common";
+import { ModerationBlockedError } from "@mindkid/errors/content";
 import { moderateText } from "@mindkid/moderation";
 import {
   type AccessTier,
@@ -64,10 +66,7 @@ export class AiAssistantService {
       .limit(1);
 
     if (!child) {
-      throw appError(
-        "NOT_FOUND",
-        "Hồ sơ trẻ không tồn tại hoặc không thuộc quyền quản lý."
-      );
+      throw new ChildNotFoundError(childUuid);
     }
 
     return child;
@@ -198,8 +197,7 @@ export class AiAssistantService {
         reason: "Lỗi kết nối nhà cung cấp AI",
         idempotencyKey: `refund-sum:${debit.ledgerEntry.id}`,
       });
-      throw appError(
-        "SERVICE_UNAVAILABLE",
+      throw new ServiceUnavailableError(
         "Dịch vụ trợ lý AI tạm thời không khả dụng. Credit đã được hoàn trả."
       );
     }
@@ -229,8 +227,7 @@ export class AiAssistantService {
         moderationPassed: false,
       });
 
-      throw appError(
-        "MODERATION_BLOCKED",
+      throw new ModerationBlockedError(
         "Nội dung từ trợ lý AI không qua được bộ lọc kiểm duyệt an toàn. Credit đã được hoàn lại."
       );
     }
@@ -288,8 +285,7 @@ export class AiAssistantService {
         reason: "Lỗi kết nối nhà cung cấp AI",
         idempotencyKey: `refund-exp:${debit.ledgerEntry.id}`,
       });
-      throw appError(
-        "SERVICE_UNAVAILABLE",
+      throw new ServiceUnavailableError(
         "Dịch vụ trợ lý AI tạm thời không khả dụng. Credit đã được hoàn trả."
       );
     }
@@ -318,8 +314,7 @@ export class AiAssistantService {
         moderationPassed: false,
       });
 
-      throw appError(
-        "MODERATION_BLOCKED",
+      throw new ModerationBlockedError(
         "Nội dung từ trợ lý AI không qua được bộ lọc kiểm duyệt an toàn. Credit đã được hoàn lại."
       );
     }
@@ -488,8 +483,7 @@ export class AiAssistantService {
         reason: "Lỗi kết nối nhà cung cấp AI",
         idempotencyKey: `refund-rew:${debit.ledgerEntry.id}`,
       });
-      throw appError(
-        "SERVICE_UNAVAILABLE",
+      throw new ServiceUnavailableError(
         "Dịch vụ trợ lý AI tạm thời không khả dụng. Credit đã được hoàn trả."
       );
     }
@@ -518,8 +512,7 @@ export class AiAssistantService {
         moderationPassed: false,
       });
 
-      throw appError(
-        "MODERATION_BLOCKED",
+      throw new ModerationBlockedError(
         "Nội dung từ trợ lý AI không qua được bộ lọc kiểm duyệt an toàn. Credit đã được hoàn lại."
       );
     }

@@ -1,5 +1,7 @@
+import { InternalError, ValidationError } from "@mindkid/errors/common";
+import { WorksheetNotFoundError } from "@mindkid/errors/content";
 import { worksheetFormSchema } from "@mindkid/shared";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import {
   getWorksheetByCode,
   updateWorksheetDraft,
@@ -11,20 +13,12 @@ export default defineEventHandler(async (event) => {
   const session = await requireManagerSession(event);
   const code = getRouterParam(event, "code");
   if (!code) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "CODE_REQUIRED",
-      message: "Worksheet code is required",
-    });
+    throw new ValidationError("Worksheet code is required");
   }
 
   const existing = await getWorksheetByCode(code);
   if (!existing) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "WORKSHEET_NOT_FOUND",
-      message: `Worksheet with code ${code} not found`,
-    });
+    throw new WorksheetNotFoundError(`Worksheet with code ${code} not found`);
   }
 
   const rawBody = (await readBody(event).catch(() => ({}))) || {};
@@ -46,11 +40,6 @@ export default defineEventHandler(async (event) => {
       message?: string;
       details?: unknown;
     };
-    throw createError({
-      statusCode: errorObj.statusCode || 500,
-      statusMessage: errorObj.message || "INTERNAL_SERVER_ERROR",
-      message: errorObj.message,
-      data: errorObj.details,
-    });
+    throw new InternalError(errorObj.message);
   }
 });

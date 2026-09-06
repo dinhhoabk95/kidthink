@@ -30,7 +30,7 @@ export interface StrandTier {
  * Thay cho cột `status` viết tay đã bị gỡ. Trục này mô tả **nhiệm vụ**, không
  * mô tả đứa trẻ — Cấm — NEVER viết "con đang ở mức làm quen" trong báo cáo.
  */
-export type SkillProgressionTier = "pre" | "basic" | "core" | "advanced";
+export type SkillProgressionTier = "basic" | "core" | "advanced";
 
 /** Dải tuổi của một kỹ năng. `6-7` là band tiền tiểu học. */
 export type SkillAge = 3 | 4 | 5 | 6 | 7;

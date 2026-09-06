@@ -1,6 +1,5 @@
 import { writeAudit } from "@mindkid/audit";
 import {
-  appError,
   getAuthRedisClient,
   getBrowserSessionService,
   MfaChallengeService,
@@ -12,6 +11,10 @@ import {
   managers,
   PostgresSessionStore,
 } from "@mindkid/db";
+import {
+  InsufficientRoleError,
+  InvalidCredentialsError,
+} from "@mindkid/errors/auth";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
@@ -42,7 +45,7 @@ export default defineEventHandler(async (event) => {
   const body = (await readBody(event).catch(() => null)) ?? {};
   const parsed = ManagerLoginSchema.safeParse(body);
   if (!parsed.success) {
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
   const { email, password, rememberMe } = parsed.data;
 
@@ -70,7 +73,7 @@ export default defineEventHandler(async (event) => {
         reason: "Unknown manager or invalid password",
       });
     });
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
 
   const isValid = await verifyPassword(password, manager.passwordHash);
@@ -85,11 +88,11 @@ export default defineEventHandler(async (event) => {
         reason: "Invalid password",
       });
     });
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
 
   if (!manager.isActive) {
-    throw appError("INSUFFICIENT_ROLE");
+    throw new InsufficientRoleError();
   }
 
   if (!manager.mfaEnabled) {

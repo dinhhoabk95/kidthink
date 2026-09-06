@@ -4,7 +4,6 @@
  */
 
 import { writeAudit } from "@mindkid/audit";
-import { appError } from "@mindkid/auth";
 import {
   type AiCreditBalance,
   type AiCreditLedgerEntry,
@@ -14,6 +13,9 @@ import {
   notifications,
   users,
 } from "@mindkid/db";
+import { UserNotFoundError } from "@mindkid/errors/account";
+import { InsufficientCreditsError } from "@mindkid/errors/billing";
+import { ValidationError } from "@mindkid/errors/common";
 import {
   type AiCreditReason,
   LOW_CREDIT_WARNING_THRESHOLD_PERCENT,
@@ -288,11 +290,15 @@ export async function debitCredits(params: DebitCreditsParams): Promise<{
 
     const currentBalance = existingBal?.balance ?? 0;
     if (currentBalance < params.cost) {
-      throw appError("INSUFFICIENT_CREDITS", {
-        required: params.cost,
-        current: currentBalance,
-        message: `Số dư AI credit không đủ. Bạn cần ${params.cost} credit nhưng hiện chỉ còn ${currentBalance} credit.`,
-      });
+      throw new InsufficientCreditsError(
+        `Số dư AI credit không đủ. Bạn cần ${params.cost} credit nhưng hiện chỉ còn ${currentBalance} credit.`,
+        {
+          cause: {
+            required: params.cost,
+            current: currentBalance,
+          },
+        }
+      );
     }
 
     const [ledgerEntry] = await activeTx
@@ -483,9 +489,9 @@ export async function manualGrantCredits(params: ManualGrantParams): Promise<{
   if (
     params.input.grant_reason.trim().length < MIN_MANUAL_GRANT_REASON_LENGTH
   ) {
-    throw appError("VALIDATION_FAILED", {
-      grant_reason: `Lý do cấp bù bắt buộc tối thiểu ${MIN_MANUAL_GRANT_REASON_LENGTH} ký tự (BR-ACL-07).`,
-    });
+    throw new ValidationError(
+      `Lý do cấp bù bắt buộc tối thiểu ${MIN_MANUAL_GRANT_REASON_LENGTH} ký tự (BR-ACL-07).`
+    );
   }
 
   const [user] = await db
@@ -495,7 +501,7 @@ export async function manualGrantCredits(params: ManualGrantParams): Promise<{
     .limit(1);
 
   if (!user) {
-    throw appError("NOT_FOUND", "Không tìm thấy người dùng.");
+    throw new UserNotFoundError(params.userUuid);
   }
 
   const result = await db.transaction(async (tx) => {

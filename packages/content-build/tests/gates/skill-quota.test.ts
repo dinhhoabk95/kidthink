@@ -169,15 +169,31 @@ describe("Task #196 — Cổng hạn ngạch và đa dạng skill (check:skill-q
       expect(quotaViolations).toHaveLength(0);
     });
 
-    it("Ca âm 7: kỹ năng bậc pre / teach-only chỉ cần 1 level và 1 template, miễn hạn ngạch 10-20 level (BR-PRE-07)", () => {
-      // Giả lập 1 level GT-000 cho kỹ năng pre C1.NREC.13
-      const preLevel: ContentSeed = {
+    it("Ca âm 7: level dạy KHÔNG được tính vào hạn ngạch level chơi (BR-SKQ-08)", () => {
+      // 19 level chơi cộng 1 level dạy cho một kỹ năng C1 (hạn ngạch 20).
+      // Đếm chung thì đủ 20; BR-SKQ-08 loại level dạy nên vẫn phải báo thiếu 1.
+      const skillCode = "C1.NREC.01";
+      const assessLevels: ContentSeed[] = Array.from(
+        { length: 19 },
+        (_, i) => ({
+          ...VALID_GAME_LEVEL_SEED,
+          header: {
+            ...VALID_GAME_LEVEL_SEED.header,
+            code: `GL-C1-NREC-PLAY-${String(i + 1).padStart(4, "0")}`,
+            template_code:
+              ["GT-001", "GT-003", "GT-004", "GT-005"][i % 4] ?? "GT-001",
+            skill_codes: [skillCode],
+          },
+        })
+      );
+
+      const teachLevel: ContentSeed = {
         ...VALID_GAME_LEVEL_SEED,
         header: {
           ...VALID_GAME_LEVEL_SEED.header,
-          code: "GL-C1-PRE-0001",
+          code: "GL-C1-NREC-INTRO-9001",
           template_code: "GT-000",
-          skill_codes: ["C1.NREC.13"],
+          skill_codes: [skillCode],
         },
         content_pack: {
           target_concept: "number_1",
@@ -187,12 +203,12 @@ describe("Task #196 — Cổng hạn ngạch và đa dạng skill (check:skill-q
         },
       };
 
-      const report = evaluateSkillQuota([preLevel]);
-      // C1.NREC.13 không được báo vi phạm BR-SKQ-02 (thiếu level) hay BR-SKQ-03 (thiếu template)
-      const preViolations = report.violations.filter(
-        (v) => v.skill_code === "C1.NREC.13"
+      const report = evaluateSkillQuota([...assessLevels, teachLevel]);
+      const quotaViolations = report.violations.filter(
+        (v) => v.skill_code === skillCode && v.ruleId === "BR-SKQ-02"
       );
-      expect(preViolations).toHaveLength(0);
+      expect(quotaViolations).toHaveLength(1);
+      expect(quotaViolations[0]?.actual).toBe(19);
     });
   });
 });

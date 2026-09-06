@@ -88,7 +88,14 @@ export function useApiClient() {
       ...options,
       credentials: "include",
       headers,
-      async onResponseError(context) {
+      async onResponseError(context: {
+        error?: unknown;
+        response?: {
+          status: number;
+          statusText?: string;
+          _data?: unknown;
+        };
+      }) {
         const rawError =
           context.error ??
           (context.response

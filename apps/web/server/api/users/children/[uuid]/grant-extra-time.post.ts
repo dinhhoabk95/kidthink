@@ -1,5 +1,7 @@
-import { AppError, isValidParentGateToken } from "@mindkid/auth";
+import { isValidParentGateToken } from "@mindkid/auth";
 import { childDailyStats, childProfiles, getOwnerDb } from "@mindkid/db";
+import { InsufficientRoleError } from "@mindkid/errors/auth";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { getDateIct } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
@@ -23,7 +25,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    throw new AppError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
@@ -31,7 +33,7 @@ export default defineEventHandler(async (event) => {
     eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
   const parsed = GrantExtraTimeSchema.safeParse(body);
   if (!parsed.success) {
-    throw new AppError("VALIDATION_FAILED");
+    throw new ValidationError();
   }
   const { minutes, gate_token: gateToken } = parsed.data;
   const userId = Number(user.user_id);
@@ -43,7 +45,7 @@ export default defineEventHandler(async (event) => {
       isValidParentGateToken(gateToken, userId, getParentGateSecret(event))
     )
   ) {
-    throw new AppError("INSUFFICIENT_ROLE", {
+    throw new InsufficientRoleError({
       message: "Cần xác minh cổng người lớn.",
     });
   }
@@ -55,7 +57,7 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(childProfiles.uuid, uuid), eq(childProfiles.userId, userId)));
 
   if (!child) {
-    throw new AppError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const dateIct = getDateIct();
@@ -71,7 +73,7 @@ export default defineEventHandler(async (event) => {
 
   const alreadyGranted = stats?.extraTimeGrantedMinutes || 0;
   if (alreadyGranted + minutes > 30) {
-    throw new AppError("VALIDATION_FAILED", {
+    throw new ValidationError({
       message: `Đã cấp ${alreadyGranted} phút hôm nay; tối đa 30 phút/ngày.`,
     });
   }

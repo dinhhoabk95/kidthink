@@ -1,5 +1,5 @@
-import { AppError } from "@mindkid/auth";
 import { childDailyStats, childProfiles, getOwnerDb } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
 import { getDateIct, parseDateIct } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
-    throw new AppError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const db = getOwnerDb();
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(childProfiles.uuid, uuid), eq(childProfiles.userId, userId)));
 
   if (!child) {
-    throw new AppError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const dateIct = getDateIct();

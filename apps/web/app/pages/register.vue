@@ -404,8 +404,8 @@
       } else {
         await router.push(dest);
       }
-    } catch (err) {
-      errorMessage.value = parseRegisterError(err as ApiErrorResponse);
+    } catch (err: unknown) {
+      errorMessage.value = parseRegisterError(err);
     } finally {
       isLoading.value = false;
     }

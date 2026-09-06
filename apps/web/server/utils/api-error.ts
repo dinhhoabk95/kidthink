@@ -1,4 +1,7 @@
-import { ValidationError, type ValidationFieldError } from "@mindkid/auth";
+import {
+  ValidationError,
+  type ValidationFieldError,
+} from "@mindkid/errors/common";
 import type { ZodError } from "zod";
 
 /**

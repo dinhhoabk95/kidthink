@@ -1,5 +1,10 @@
-import { appError } from "@mindkid/auth";
 import { getDb, paymentOrders } from "@mindkid/db";
+import { OrderCannotBeCancelledError } from "@mindkid/errors/billing";
+import {
+  InternalError,
+  NotFoundError,
+  ValidationError,
+} from "@mindkid/errors/common";
 import {
   assertPaymentOrderTransition,
   type PaymentOrderStatus,
@@ -12,7 +17,7 @@ export default defineEventHandler(async (event) => {
   const session = requireWebUserSession(event);
   const orderUuid = getRouterParam(event, "uuid");
   if (!orderUuid) {
-    throw appError("VALIDATION_FAILED", "Order UUID is required");
+    throw new ValidationError("Order UUID is required");
   }
 
   const db = getDb();
@@ -28,7 +33,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!order) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const currentStatus = order.status as PaymentOrderStatus;
@@ -36,7 +41,7 @@ export default defineEventHandler(async (event) => {
     currentStatus !== "pending" &&
     (currentStatus as string) !== "pending_proof"
   ) {
-    throw appError("ORDER_CANNOT_BE_CANCELLED", {
+    throw new OrderCannotBeCancelledError({
       status: currentStatus,
       reason: "Chỉ có thể huỷ đơn hàng ở trạng thái chờ thanh toán.",
     });
@@ -57,11 +62,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!updatedOrder) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "ORDER_CANCEL_FAILED",
-      message: "Huỷ đơn hàng thất bại",
-    });
+    throw new InternalError("Huỷ đơn hàng thất bại");
   }
 
   return {

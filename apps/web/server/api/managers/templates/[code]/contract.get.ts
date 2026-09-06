@@ -1,9 +1,10 @@
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import {
   exportTemplateContracts,
   getGameTemplate,
 } from "@mindkid/game-engine/registry";
 import { CONFIG_DICTIONARY, introspectZodSchema } from "@mindkid/shared";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
@@ -11,20 +12,12 @@ export default defineEventHandler(async (event) => {
 
   const code = getRouterParam(event, "code");
   if (!code) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "BAD_REQUEST",
-      message: "Template code is required",
-    });
+    throw new ValidationError("Template code is required");
   }
 
   const template = getGameTemplate(code);
   if (!template) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      message: `Template ${code} not found`,
-    });
+    throw new NotFoundError(`Template ${code} not found`);
   }
 
   const exported = exportTemplateContracts(code);

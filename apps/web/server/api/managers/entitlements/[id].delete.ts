@@ -1,4 +1,5 @@
-import { appError } from "@mindkid/auth";
+import { ValidationError } from "@mindkid/errors/common";
+
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import {
@@ -19,7 +20,7 @@ export default defineEventHandler(async (event) => {
   const idParam = getRouterParam(event, "id");
   const entitlementId = Number(idParam);
   if (!idParam || Number.isNaN(entitlementId) || entitlementId <= 0) {
-    throw appError("VALIDATION_FAILED", "Mã entitlement không hợp lệ.");
+    throw new ValidationError("Mã entitlement không hợp lệ.");
   }
 
   const customEvent = event as unknown as {

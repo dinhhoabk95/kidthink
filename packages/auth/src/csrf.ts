@@ -1,5 +1,5 @@
 import { randomBytes, timingSafeEqual } from "node:crypto";
-import { appError } from "./errors";
+import { CsrfInvalidError } from "@mindkid/errors/auth";
 
 export const USER_CSRF_COOKIE_NAME = "tm_u_csrf";
 export const MANAGER_CSRF_COOKIE_NAME = "tm_m_csrf";
@@ -30,7 +30,7 @@ export function validateCsrfToken(options: ValidateCsrfOptions): void {
       constantTimeEqual(options.cookieToken, options.headerToken)
     )
   ) {
-    throw appError("CSRF_INVALID");
+    throw new CsrfInvalidError();
   }
 }
 

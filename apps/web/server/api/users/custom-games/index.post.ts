@@ -1,4 +1,5 @@
-import { appError } from "@mindkid/auth";
+import { EntitlementRequiredError } from "@mindkid/errors/billing";
+
 import { createCustomGameSchema } from "@mindkid/shared";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { createCustomGame } from "#server/services/index.js";
@@ -12,7 +13,7 @@ export default defineEventHandler(async (event) => {
 
   const entitlements = await resolveUserActiveEntitlements(userId);
   if (!entitlements.includes("create_custom_game")) {
-    throw appError("ENTITLEMENT_REQUIRED", {
+    throw new EntitlementRequiredError({
       required_entitlement: "create_custom_game",
       message:
         "Tính năng tạo trò chơi tùy chỉnh thuộc gói Add-on Trò chơi tùy chỉnh.",

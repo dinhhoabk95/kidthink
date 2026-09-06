@@ -4,15 +4,10 @@ import {
   getOwnerDb,
   playSessions,
 } from "@mindkid/db";
+import { NoActiveChildError } from "@mindkid/errors/child";
 import { COMPETENCY_CATALOG, deriveAgeBand } from "@mindkid/shared";
 import { and, desc, eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  deleteCookie,
-  getCookie,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, deleteCookie, getCookie } from "h3";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
@@ -33,15 +28,9 @@ export default defineEventHandler(async (event) => {
   const candidateUuid = getCookie(event, "active_child_id");
 
   if (!candidateUuid) {
-    setResponseStatus(event, 428);
-    throw createError({
-      statusCode: 428,
-      statusMessage: "CHILD_SELECTION_REQUIRED",
-      data: {
-        code: "CHILD_SELECTION_REQUIRED",
-        message: "Vui lòng chọn hồ sơ trẻ trước khi vào sảnh chơi.",
-      },
-    });
+    throw new NoActiveChildError(
+      "Vui lòng chọn hồ sơ trẻ trước khi vào sảnh chơi."
+    );
   }
 
   const userId = Number(user.user_id);
@@ -61,16 +50,9 @@ export default defineEventHandler(async (event) => {
 
   if (!activeChild) {
     deleteCookie(event, "active_child_id", { path: "/" });
-    setResponseStatus(event, 428);
-    throw createError({
-      statusCode: 428,
-      statusMessage: "CHILD_SELECTION_REQUIRED",
-      data: {
-        code: "CHILD_SELECTION_REQUIRED",
-        message:
-          "Hồ sơ trẻ không tồn tại hoặc đã bị lưu trữ. Vui lòng chọn lại.",
-      },
-    });
+    throw new NoActiveChildError(
+      "Hồ sơ trẻ không tồn tại hoặc đã bị lưu trữ. Vui lòng chọn lại."
+    );
   }
 
   const currentYear = new Date().getFullYear();

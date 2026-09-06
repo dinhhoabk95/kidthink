@@ -1,4 +1,3 @@
-import { AppError } from "@mindkid/auth";
 import { SKILL_DATASETS } from "@mindkid/content";
 import {
   activities,
@@ -19,6 +18,7 @@ import {
   validateAndAssignTags,
   validateContentSkillMap,
 } from "@mindkid/db";
+import { ValidationError } from "@mindkid/errors/common";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { eq, inArray } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
@@ -58,8 +58,7 @@ function validatePublishAxes(matchedTags: Array<{ axis: string }>) {
   ];
   const missingAxes = requiredAxes.filter((axis) => !axesPresent.has(axis));
   if (missingAxes.length > 0) {
-    throw new AppError(
-      "VALIDATION_FAILED",
+    throw new ValidationError(
       `Thiếu tag cho trục sư phạm: ${missingAxes.join(", ")}. theme là trục tuỳ chọn.`
     );
   }
@@ -88,8 +87,7 @@ function validateSeedsWithGates(
 
     const firstFailed = gates.find((g) => !g.passed);
     if (firstFailed) {
-      throw new AppError(
-        "VALIDATION_FAILED",
+      throw new ValidationError(
         `Nội dung ${seed.header.code} trượt Cổng ${firstFailed.gate}: ${firstFailed.issues[0]?.message ?? ""}`
       );
     }
@@ -279,8 +277,7 @@ export async function executeSeedBatch(
 
           const template = ALL_TEMPLATES[header.template_code];
           if (!template) {
-            throw new AppError(
-              "VALIDATION_FAILED",
+            throw new ValidationError(
               `Template ${header.template_code} không tồn tại.`
             );
           }
@@ -300,9 +297,8 @@ export async function executeSeedBatch(
           const latest = sortedExisting[0];
           if (latest) {
             if (latest.contentVersion > header.content_version) {
-              throw new AppError(
-                "VALIDATION_FAILED",
-                `Mã ${header.code} đã có version lớn hơn (${latest.contentVersion} > ${header.content_version}).`
+              throw new ValidationError(
+                `Mã ${header.code} đã có version lớn hơn (${latest.contentVersion} > ${header.content_version});.`
               );
             }
             toArchiveLevelIds.push(latest.id);
@@ -322,10 +318,7 @@ export async function executeSeedBatch(
             }
             const skill = skillMap.get(sc);
             if (!skill) {
-              throw new AppError(
-                "VALIDATION_FAILED",
-                `Skill ${sc} không tồn tại.`
-              );
+              throw new ValidationError(`Skill ${sc} không tồn tại.`);
             }
             skillMapEntries.push({
               skillId: skill.id,
@@ -360,8 +353,7 @@ export async function executeSeedBatch(
           }
 
           if (missingTags.length > 0) {
-            throw new AppError(
-              "VALIDATION_FAILED",
+            throw new ValidationError(
               `Tag không hợp lệ hoặc chưa được duyệt trong từ vựng Lớp 1: ${missingTags.join(", ")}`
             );
           }
@@ -564,8 +556,7 @@ export async function executeSeedBatch(
         const latest = sortedExisting[0];
         if (latest) {
           if (latest.contentVersion > header.content_version) {
-            throw new AppError(
-              "VALIDATION_FAILED",
+            throw new ValidationError(
               `Mã activity ${header.code} đã có version lớn hơn.`
             );
           }
@@ -702,8 +693,7 @@ export async function executeSeedBatch(
         const latest = sortedExisting[0];
         if (latest) {
           if (latest.contentVersion > header.content_version) {
-            throw new AppError(
-              "VALIDATION_FAILED",
+            throw new ValidationError(
               `Mã lesson ${header.code} đã có version lớn hơn.`
             );
           }
@@ -884,7 +874,7 @@ export function validateSingleSeed(
         g.issues.map((i) => `[Gate ${g.gate}] ${i.code}: ${i.message}`)
       )
       .join("; ");
-    throw new AppError("VALIDATION_FAILED", `Seed validation failed: ${msg}`);
+    throw new ValidationError(`Seed validation failed: ${msg}`);
   }
   return gates;
 }

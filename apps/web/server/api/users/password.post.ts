@@ -1,17 +1,10 @@
-import {
-  appError,
-  hashPassword,
-  validatePasswordStrength,
-} from "@mindkid/auth";
+import { hashPassword, validatePasswordStrength } from "@mindkid/auth";
 import { activeSessions, getOwnerDb, users } from "@mindkid/db";
+import { PasswordNotSetError } from "@mindkid/errors/auth";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { and, eq, ne } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
 import {
@@ -39,28 +32,14 @@ export default defineEventHandler(async (event) => {
 
   const parsed = ChangePasswordSchema.safeParse(rawBody);
   if (!parsed.success) {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "Mật khẩu mới phải có ít nhất 8 ký tự.",
-      },
-    });
+    throw new ValidationError("Mật khẩu mới phải có ít nhất 8 ký tự.");
   }
 
   const passwordValidation = validatePasswordStrength(parsed.data.new_password);
   if (!passwordValidation.valid) {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: passwordValidation.reason || "Mật khẩu không đủ mạnh.",
-      },
-    });
+    throw new ValidationError(
+      passwordValidation.reason || "Mật khẩu không đủ mạnh."
+    );
   }
 
   const db = getOwnerDb();
@@ -76,13 +55,12 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!account) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   // BR-ACS-09: Calling change password on account without password returns 409 PASSWORD_NOT_SET
   if (!account.passwordHash) {
-    throw appError("PASSWORD_NOT_SET");
+    throw new PasswordNotSetError();
   }
 
   const newHash = await hashPassword(parsed.data.new_password);

@@ -9,6 +9,8 @@ import {
   getOwnerDb,
   lessons,
 } from "@mindkid/db";
+import { ChildNotFoundError } from "@mindkid/errors/child";
+import { CurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import {
   type AccessTier,
   allowedTiers,
@@ -16,7 +18,7 @@ import {
   type CurriculumPlayerWeekGoal,
 } from "@mindkid/shared";
 import { and, desc, eq, inArray } from "drizzle-orm";
-import { createError, type H3Event, setResponseStatus } from "h3";
+import type { H3Event } from "h3";
 import { resolveUserActiveEntitlements } from "./entitlements-runtime.js";
 
 export interface EnrolledChildCurriculumDetails {
@@ -51,19 +53,19 @@ export interface OptionalEnrollmentCurriculumData {
 }
 
 export async function resolveEnrolledChildCurriculum(
-  event: H3Event,
+  _event: H3Event,
   userId: number,
   childUuid: string,
   options: { requireActive?: boolean; requireEnrollment: false }
 ): Promise<OptionalEnrollmentCurriculumData>;
 export async function resolveEnrolledChildCurriculum(
-  event: H3Event,
+  _event: H3Event,
   userId: number,
   childUuid: string,
   options?: { requireActive?: boolean; requireEnrollment?: true }
 ): Promise<ResolvedCurriculumData>;
 export async function resolveEnrolledChildCurriculum(
-  event: H3Event,
+  _event: H3Event,
   userId: number,
   childUuid: string,
   options: { requireActive?: boolean; requireEnrollment?: boolean } = {
@@ -86,12 +88,7 @@ export async function resolveEnrolledChildCurriculum(
     );
 
   if (!child) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      data: { code: "NOT_FOUND", message: "Không tìm thấy hồ sơ trẻ." },
-    });
+    throw new ChildNotFoundError(childUuid);
   }
 
   // 2. Find enrollment (active or most recent)
@@ -145,15 +142,7 @@ export async function resolveEnrolledChildCurriculum(
         userAllowedTiers,
       };
     }
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOT_FOUND",
-      data: {
-        code: "NOT_FOUND",
-        message: "Bé chưa ghi danh chương trình nào.",
-      },
-    });
+    throw new CurriculumNotFoundError();
   }
 
   // 3. Batch load curriculum items & weeks (D-MA: pinned curriculum_id)

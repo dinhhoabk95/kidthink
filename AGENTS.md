@@ -27,23 +27,23 @@ hữu hành vi đó. Tra một `BR-*` về spec nào: `docs/specs/00-foundation/
 
 ## Lỗi: không try/catch trong route
 
-`AppError` (`packages/auth/src/errors.ts`) là **H3Error hạng nhất** — nó khai
+`AppError` và các lớp exception domain nằm ở package `@mindkid/errors` — tất cả đều là **H3Error hạng nhất**: khai
 `static __h3_error__` cùng getter `statusCode` / `statusMessage` / `data`. Nên:
 
 ```ts
-// ĐÚNG — service hoặc route chỉ ném mã
-throw appError("TIER_LOCKED", { access_tier: "premium" });
+// ĐÚNG — service hoặc route ném trực tiếp lớp domain
+throw new TierLockedError({ access_tier: "premium" });
 throw new ChildNotFoundError(childUuid);
 
 // SAI — route tự chuyển lỗi domain sang lỗi HTTP
 try { ... } catch (err) {
-  if (err instanceof AppError) { setResponseStatus(...); throw createError({ ... }); }
+  if (isAppError(err)) { setResponseStatus(...); throw createError({ ... }); }
 }
 ```
 
 `apps/web/server/error.ts` là chỗ **duy nhất** dựng body lỗi cho `/api/*`
 (ERROR-CODES §4, §8). Body luôn đúng ba trường `{ code, message, details? }` (§7.1).
-Lớp exception theo model nằm ở `packages/auth/src/model-errors.ts`
+Lớp exception theo model nằm ở `@mindkid/errors`
 (`ModelNotFoundError`, `ValidationError`, và lớp con cho từng model).
 
 Còn 33 khối `catch` trong `apps/*/server` — tất cả đều có logic thật (retry SQLSTATE

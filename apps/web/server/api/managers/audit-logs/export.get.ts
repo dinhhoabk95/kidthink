@@ -1,12 +1,8 @@
 import { writeAudit } from "@mindkid/audit";
 import { auditLogs, getOwnerDb } from "@mindkid/db";
+import { ValidationError } from "@mindkid/errors/common";
 import { and, desc, eq, gte, ilike, inArray, lte, type SQL } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  getQuery,
-  setResponseHeader,
-} from "h3";
+import { defineEventHandler, getQuery, setResponseHeader } from "h3";
 import {
   getManagerRemoteIp,
   requireSuperAdminSession,
@@ -43,11 +39,9 @@ function validateAuditDateRange(
     const diffDays =
       (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24);
     if (diffDays > 90) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "TIME_RANGE_TOO_LARGE",
-        message: "Khoảng thời gian tra cứu tối đa là 90 ngày (BR-ALV-03)",
-      });
+      throw new ValidationError(
+        "Khoảng thời gian tra cứu tối đa là 90 ngày (BR-ALV-03)"
+      );
     }
   }
   return { fromDate, toDate };

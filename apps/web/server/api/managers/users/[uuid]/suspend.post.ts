@@ -1,5 +1,9 @@
-import { appError } from "@mindkid/auth";
 import { auditLogs, getOwnerDb, users } from "@mindkid/db";
+import {
+  AdminNoteRequiredError,
+  UserAlreadyDeletedError,
+} from "@mindkid/errors/account";
+import { InternalError, NotFoundError } from "@mindkid/errors/common";
 import { eq, sql } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
@@ -16,7 +20,7 @@ export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);
   const userUuid = getRouterParam(event, "uuid");
   if (!userUuid) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const rawBody =
@@ -25,7 +29,7 @@ export default defineEventHandler(async (event) => {
 
   // BR-USM-03: reason must be >= 10 characters
   if (!parsed.success) {
-    throw appError("ADMIN_NOTE_REQUIRED");
+    throw new AdminNoteRequiredError();
   }
   const reason = parsed.data.reason.trim();
 
@@ -37,11 +41,11 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!targetUser) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   if (targetUser.status === "deleted") {
-    throw appError("USER_ALREADY_DELETED");
+    throw new UserAlreadyDeletedError();
   }
 
   // BR-USM-05: Increment session_version to revoke all active sessions immediately
@@ -58,11 +62,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!updatedUser) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "USER_UPDATE_FAILED",
-      message: "Đình chỉ tài khoản thất bại",
-    });
+    throw new InternalError("Đình chỉ tài khoản thất bại");
   }
 
   // Insert audit log

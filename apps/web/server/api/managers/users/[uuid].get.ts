@@ -1,4 +1,3 @@
-import { appError } from "@mindkid/auth";
 import {
   activeSessions,
   auditLogs,
@@ -10,6 +9,7 @@ import {
   paymentOrders,
   users,
 } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
 import { projectChildForAdmin } from "@mindkid/shared";
 import { and, count, desc, eq, gt, isNull, sql } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, setHeader } from "h3";
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);
   const userUuid = getRouterParam(event, "uuid");
   if (!userUuid) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   // D-JD: Cache-Control: no-store on user detail endpoint
@@ -47,7 +47,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!targetUser) {
-    throw appError("NOT_FOUND");
+    throw new NotFoundError();
   }
 
   const now = new Date();

@@ -1,5 +1,4 @@
 import {
-  appError,
   generateSecureToken,
   getBrowserSessionService,
   hashPassword,
@@ -16,6 +15,14 @@ import {
   users,
   verificationTokens,
 } from "@mindkid/db";
+import {
+  ConsentRequirementChangedError,
+  EmailAlreadyRegisteredError,
+} from "@mindkid/errors/account";
+import {
+  ServiceUnavailableError,
+  ValidationError,
+} from "@mindkid/errors/common";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import {
@@ -51,7 +58,7 @@ export type RegisterPayload = z.infer<typeof registerSchema>;
 function parseAndValidateRegisterBody(body: unknown): RegisterPayload {
   const result = registerSchema.safeParse(body);
   if (!result.success) {
-    throw appError("VALIDATION_FAILED", {
+    throw new ValidationError({
       reason: "Dữ liệu yêu cầu không hợp lệ hoặc thiếu thông tin bắt buộc.",
     });
   }
@@ -59,7 +66,7 @@ function parseAndValidateRegisterBody(body: unknown): RegisterPayload {
   const payload = result.data;
   const passVal = validatePasswordStrength(payload.password);
   if (!passVal.valid) {
-    throw appError("VALIDATION_FAILED", {
+    throw new ValidationError({
       reason: passVal.reason || "Mật khẩu không đạt yêu cầu an toàn.",
     });
   }
@@ -106,7 +113,7 @@ export async function handleRegister(event: H3Event, testBody?: unknown) {
       new Date(validated.terms_requirement_at).getTime() !==
         termsReq.reconsentRequiredAt.getTime())
   ) {
-    throw appError("CONSENT_REQUIREMENT_CHANGED");
+    throw new ConsentRequirementChangedError();
   }
   if (
     validated.privacy_requirement_at !== undefined &&
@@ -115,7 +122,7 @@ export async function handleRegister(event: H3Event, testBody?: unknown) {
       new Date(validated.privacy_requirement_at).getTime() !==
         privReq.reconsentRequiredAt.getTime())
   ) {
-    throw appError("CONSENT_REQUIREMENT_CHANGED");
+    throw new ConsentRequirementChangedError();
   }
 
   // BR-REG-07: Check if email already exists
@@ -125,7 +132,7 @@ export async function handleRegister(event: H3Event, testBody?: unknown) {
     .where(eq(users.email, validated.email));
 
   if (existing.length > 0) {
-    throw appError("EMAIL_ALREADY_REGISTERED");
+    throw new EmailAlreadyRegisteredError();
   }
 
   const passHash = await hashPassword(validated.password);
@@ -142,7 +149,7 @@ export async function handleRegister(event: H3Event, testBody?: unknown) {
     .returning();
 
   if (!newUser) {
-    throw appError("SERVICE_UNAVAILABLE");
+    throw new ServiceUnavailableError();
   }
 
   const userAgent = getHeader(event, "user-agent") || "unknown";

@@ -1,6 +1,4 @@
 import {
-  AppError,
-  appError,
   CSRF_HEADER_NAME,
   generateCsrfToken,
   getAuthNamespaceConfig,
@@ -9,13 +7,23 @@ import {
 } from "@mindkid/auth";
 import { requireEnv } from "@mindkid/config";
 import {
-  createError,
+  CsrfInvalidError,
+  RestrictedModeError,
+  SessionRevokedError,
+} from "@mindkid/errors/auth";
+import { isAppError } from "@mindkid/errors/base";
+import { NoActiveChildError } from "@mindkid/errors/child";
+import {
+  PayloadTooLargeError,
+  RateLimitedError,
+  ServiceUnavailableError,
+} from "@mindkid/errors/common";
+import {
   deleteCookie,
   getCookie,
   getHeader,
   type H3Event,
   setCookie,
-  setResponseStatus,
 } from "h3";
 
 const userConfig = getAuthNamespaceConfig("user");
@@ -85,13 +93,15 @@ export function assertRateLimitAllowed(statusCode: number): void {
   if (statusCode === 200) {
     return;
   }
-  throw appError(statusCode === 429 ? "RATE_LIMITED" : "SERVICE_UNAVAILABLE");
+  throw statusCode === 429
+    ? new RateLimitedError({ retry_after_s: 60 })
+    : new ServiceUnavailableError();
 }
 
 export function assertSameOriginRequest(event: H3Event): void {
   const fetchSite = getHeader(event, "sec-fetch-site")?.toLowerCase();
   if (fetchSite === "cross-site") {
-    throw appError("CSRF_INVALID");
+    throw new CsrfInvalidError();
   }
 
   const origin = getHeader(event, "origin");
@@ -101,13 +111,13 @@ export function assertSameOriginRequest(event: H3Event): void {
   }
   try {
     if (!isAllowedApiOrigin(origin, host)) {
-      throw appError("CSRF_INVALID");
+      throw new CsrfInvalidError();
     }
   } catch (error) {
-    if (error instanceof AppError) {
+    if (isAppError(error)) {
       throw error;
     }
-    throw appError("CSRF_INVALID");
+    throw new CsrfInvalidError();
   }
 }
 
@@ -138,7 +148,7 @@ export function assertRequestBodySize(
     INTEGER_TEXT.test(rawLength) &&
     Number(rawLength) > maxBytes
   ) {
-    throw appError("PAYLOAD_TOO_LARGE");
+    throw new PayloadTooLargeError();
   }
 }
 
@@ -198,7 +208,7 @@ export function clearUserRememberCookie(event: H3Event): void {
 export function getUserRememberCookie(event: H3Event): string {
   const token = getCookie(event, USER_REMEMBER_COOKIE);
   if (!token) {
-    throw appError("SESSION_REVOKED");
+    throw new SessionRevokedError();
   }
   return token;
 }
@@ -210,9 +220,7 @@ export function requireWebUserSession(event: H3Event) {
 
 export function assertUnrestrictedUser(status: string): void {
   if (status === "pending_verification") {
-    throw appError("RESTRICTED_MODE", {
-      reason: "Tài khoản cần xác thực email để thực hiện thao tác này.",
-    });
+    throw new RestrictedModeError();
   }
 }
 
@@ -234,9 +242,7 @@ export function getOptionalActiveChildUuid(event: H3Event): string | null {
 export function getActiveChildUuid(event: H3Event): string {
   const val = getOptionalActiveChildUuid(event);
   if (!val) {
-    throw appError("NO_ACTIVE_CHILD", {
-      reason: "Yêu cầu cần chọn hồ sơ trẻ đang hoạt động.",
-    });
+    throw new NoActiveChildError();
   }
   return val;
 }
@@ -262,24 +268,9 @@ export function getParentGateSecret(_event?: H3Event): string {
   return requireEnv("PARENT_GATE_SECRET");
 }
 
-export function respondToUserAuthError(event: H3Event, error: unknown): never {
-  if (
-    error instanceof AppError ||
-    (typeof error === "object" &&
-      error !== null &&
-      "isAppError" in error &&
-      "status" in error &&
-      "toResponse" in error)
-  ) {
-    const err = error as AppError;
-    if (event?.node?.res) {
-      setResponseStatus(event, err.status);
-    }
-    throw createError({
-      statusCode: err.status,
-      statusMessage: err.message,
-      data: err.toResponse(),
-    });
+export function respondToUserAuthError(_event: H3Event, error: unknown): never {
+  if (isAppError(error)) {
+    throw error;
   }
   throw error as Error;
 }

@@ -1,7 +1,10 @@
 import { writeAudit } from "@mindkid/audit";
 import { curricula, getOwnerDb } from "@mindkid/db";
+import { InternalError, ValidationError } from "@mindkid/errors/common";
+import { VersionConflictError } from "@mindkid/errors/content";
+import { CurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import { and, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -68,19 +71,15 @@ async function getExistingCurriculumForPatch(
     );
 
   if (!existing) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "CURRICULUM_NOT_FOUND",
-      message: `Không tìm thấy chương trình ${code} version ${version}`,
-    });
+    throw new CurriculumNotFoundError(
+      `Không tìm thấy chương trình ${code} version ${version}`
+    );
   }
 
   if (existing.contentVersion !== expectedVersion) {
-    throw createError({
-      statusCode: 409,
-      statusMessage: "VERSION_CONFLICT",
-      message: `Xung đột phiên bản: version hiện tại là ${existing.contentVersion}, nhưng bạn đang sửa trên version ${expectedVersion}`,
-    });
+    throw new VersionConflictError(
+      `Xung đột phiên bản: version hiện tại là ${existing.contentVersion}`
+    );
   }
 
   return existing;
@@ -93,11 +92,7 @@ export default defineEventHandler(async (event) => {
   const version = Number(versionParam) || 1;
 
   if (!code) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "BAD_REQUEST",
-      message: "Thiếu tham số mã chương trình",
-    });
+    throw new ValidationError("Thiếu tham số mã chương trình");
   }
 
   const rawBody =
@@ -107,11 +102,9 @@ export default defineEventHandler(async (event) => {
     {};
   const parsed = patchCurriculumSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      message: parsed.error.issues[0]?.message || "Dữ liệu không hợp lệ",
-    });
+    throw new ValidationError(
+      parsed.error.issues[0]?.message || "Dữ liệu không hợp lệ"
+    );
   }
 
   const data = parsed.data;
@@ -134,11 +127,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!updated) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "CURRICULUM_UPDATE_FAILED",
-      message: "Cập nhật chương trình thất bại",
-    });
+    throw new InternalError("Cập nhật chương trình thất bại");
   }
 
   await db.transaction(async (tx) => {

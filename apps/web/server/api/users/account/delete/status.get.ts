@@ -1,6 +1,7 @@
 import { getOwnerDb, users } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
-import { createError, defineEventHandler, setResponseStatus } from "h3";
+import { defineEventHandler } from "h3";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
@@ -20,8 +21,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!account) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   return {

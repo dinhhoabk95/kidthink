@@ -1,12 +1,9 @@
 import { writeAudit } from "@mindkid/audit";
 import { gameLevels, getOwnerDb } from "@mindkid/db";
+import { InternalError, NotFoundError } from "@mindkid/errors/common";
+import { GameLevelNotFoundError } from "@mindkid/errors/game-level";
 import { and, eq, sql } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { syncContentAssetRefs } from "#server/utils/asset-refs";
 
@@ -86,11 +83,9 @@ async function createClonedLevel(
     }
   }
 
-  throw createError({
-    statusCode: 500,
-    statusMessage: "DUPLICATE_FAILED",
-    message: "Failed to generate a unique level code for duplication",
-  });
+  throw new InternalError(
+    "Failed to generate a unique level code for duplication"
+  );
 }
 
 export default defineEventHandler(async (event) => {
@@ -100,7 +95,7 @@ export default defineEventHandler(async (event) => {
   const versionParam = getRouterParam(event, "version");
 
   if (!(code && versionParam)) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const version = Number(versionParam);
@@ -114,21 +109,13 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!existing) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "LEVEL_NOT_FOUND",
-      message: `Level ${code} v${version} not found`,
-    });
+    throw new GameLevelNotFoundError(`Level ${code} v${version} not found`);
   }
 
   const managerId = manager.manager_id;
   const cloned = await createClonedLevel(db, existing, managerId);
   if (!cloned) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "LEVEL_DUPLICATE_FAILED",
-      message: "Nhân bản màn chơi thất bại",
-    });
+    throw new InternalError("Nhân bản màn chơi thất bại");
   }
   await syncContentAssetRefs(db, "game_level", cloned.id, cloned.contentPack);
 

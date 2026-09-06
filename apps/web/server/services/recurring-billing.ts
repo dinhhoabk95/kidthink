@@ -1,10 +1,14 @@
-import { appError } from "@mindkid/auth";
 import {
   auditLogs,
   entitlements,
   getOwnerDb,
   recurringSubscriptions,
 } from "@mindkid/db";
+import {
+  SubscriptionAlreadyCancelledError,
+  SubscriptionModelNotFoundError,
+} from "@mindkid/errors/billing";
+import { ValidationError } from "@mindkid/errors/common";
 import {
   type AdminSubscriptionCancelReason,
   canCancelRecurringSubscription,
@@ -95,15 +99,11 @@ export async function userCancelRecurringSubscription(
       .limit(1);
 
     if (!sub) {
-      throw appError(
-        "NOT_FOUND",
-        "Không tìm thấy gói thuê bao định kỳ của người dùng"
-      );
+      throw new SubscriptionModelNotFoundError(String(subscriptionId));
     }
 
     if (!canCancelRecurringSubscription(sub.status)) {
-      throw appError(
-        "SUBSCRIPTION_ALREADY_CANCELLED",
+      throw new SubscriptionAlreadyCancelledError(
         "Gói thuê bao định kỳ đã được huỷ trước đó"
       );
     }
@@ -159,8 +159,7 @@ export async function adminCancelSubscription(
   now = new Date()
 ) {
   if (!params.adminNote || params.adminNote.trim().length < 20) {
-    throw appError(
-      "VALIDATION_FAILED",
+    throw new ValidationError(
       "Ghi chú quản trị huỷ gói bắt buộc tối thiểu 20 ký tự"
     );
   }
@@ -175,12 +174,11 @@ export async function adminCancelSubscription(
       .limit(1);
 
     if (!sub) {
-      throw appError("NOT_FOUND", "Không tìm thấy gói thuê bao định kỳ");
+      throw new SubscriptionModelNotFoundError(String(params.subscriptionId));
     }
 
     if (sub.status === "cancelled") {
-      throw appError(
-        "SUBSCRIPTION_ALREADY_CANCELLED",
+      throw new SubscriptionAlreadyCancelledError(
         "Gói thuê bao định kỳ đã được huỷ trước đó"
       );
     }

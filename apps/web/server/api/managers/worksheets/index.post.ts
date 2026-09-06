@@ -1,10 +1,6 @@
+import { InternalError } from "@mindkid/errors/common";
 import { worksheetFormSchema } from "@mindkid/shared";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { createWorksheetDraft } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
@@ -28,11 +24,6 @@ export default defineEventHandler(async (event) => {
       message?: string;
       details?: unknown;
     };
-    throw createError({
-      statusCode: errorObj.statusCode || 500,
-      statusMessage: errorObj.message || "INTERNAL_SERVER_ERROR",
-      message: errorObj.message,
-      data: errorObj.details,
-    });
+    throw new InternalError(errorObj.message);
   }
 });

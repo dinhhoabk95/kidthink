@@ -1,5 +1,6 @@
-import { appError } from "@mindkid/auth";
 import { getDb, notifications, users } from "@mindkid/db";
+import { UserNotFoundError } from "@mindkid/errors/account";
+import { PackageNotFoundError } from "@mindkid/errors/billing";
 import { PACKAGE_CATALOG } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import {
@@ -40,7 +41,7 @@ export default defineEventHandler(async (event) => {
   const session = requireSuperAdminSession(event);
   const userUuid = getRouterParam(event, "uuid");
   if (!userUuid) {
-    throw appError("NOT_FOUND", "User UUID is required");
+    throw new UserNotFoundError();
   }
 
   const customEvent = event as unknown as {
@@ -63,7 +64,7 @@ export default defineEventHandler(async (event) => {
   // Check package in catalog (gồm cả add-on chưa bán is_public: false)
   const pkg = PACKAGE_CATALOG[package_code];
   if (!pkg) {
-    throw appError("PACKAGE_NOT_FOUND", "Gói không tồn tại trong catalog.");
+    throw new PackageNotFoundError();
   }
 
   const db = getDb();
@@ -74,7 +75,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!user) {
-    throw appError("NOT_FOUND", "Không tìm thấy người dùng.");
+    throw new UserNotFoundError(userUuid);
   }
 
   // Mutate entitlements using shared helper (D-JM, BR-EGR-08: no payment_orders created)

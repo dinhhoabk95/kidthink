@@ -1,6 +1,7 @@
 import { gameLevels, getOwnerDb } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
 import { and, desc, eq } from "drizzle-orm";
-import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
+import { defineEventHandler, getQuery, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { deliverGameConfig } from "#server/utils/game-config-runtime";
 import { issuePreviewToken } from "#server/utils/preview-token";
@@ -9,7 +10,7 @@ export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
   const code = getRouterParam(event, "code");
   if (!code) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const query = getQuery(event);

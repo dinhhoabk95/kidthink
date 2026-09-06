@@ -7,6 +7,7 @@
  */
 
 import { defineError } from "../base.ts";
+import { defineModelNotFound } from "../model.ts";
 
 export const OfflinePackExpiredError = defineError({
   code: "OFFLINE_PACK_EXPIRED",
@@ -25,3 +26,9 @@ export const StorageQuotaInsufficientError = defineError({
   message: "Bộ nhớ thiết bị không đủ để tải gói offline.",
   status: 422,
 });
+
+export const OfflinePackNotFoundError = defineModelNotFound(
+  "OfflinePackNotFoundError",
+  "offline_packs",
+  "Không tìm thấy gói học tập ngoại tuyến."
+);

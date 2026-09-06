@@ -223,6 +223,33 @@ Hạ phép đo 4 về **0** (hoặc 1 nếu `AuditError` ở lại, ghi lý do v
 - **`AGENTS.md` đang sai**: dòng 30 trỏ `packages/auth/src/errors.ts` (nay là shim), dòng 46
   trỏ `packages/auth/src/model-errors.ts` (**đã xoá**). Cập nhật sang `@mindkid/errors`.
 
+### Phase F — Chia nhỏ import theo domain error module (`@mindkid/errors/*` subpaths)
+
+#### WP254.13 — Chia nhỏ import lỗi theo domain
+
+- **Lý do:** Tránh gom tất cả vào barrel lớn `@mindkid/errors`. Mỗi route/service/component chỉ import đúng lỗi từ file domain tương ứng, tăng độ tường minh và ranh giới nghiệp vụ.
+- **Khai báo subpath exports trong `packages/errors/package.json`:**
+  - `./common`: `src/domains/common.ts` (lỗi HTTP chung: `ValidationError`, `NotFoundError`, `InternalError`, `RateLimitedError`, `ForbiddenError`, `ConflictError`, `BadRequestError`, etc.)
+  - `./account`: `src/domains/account.ts` (`UserNotFoundError`, `ManagerNotFoundError`, `AccountSuspendedError`, `AccountDeletedError`, etc.)
+  - `./auth`: `src/domains/auth.ts` (`UnauthenticatedError`, `SessionRevokedError`, `MfaRequiredError`, `TokenExpiredError`, etc.)
+  - `./billing`: `src/domains/billing.ts` (`ChildLimitExceededError`, `TierLockedError`, `QuotaExceededError`, etc.)
+  - `./child`: `src/domains/child.ts` (`ChildNotFoundError`, `ChildAgeOutOfRangeError`, `ChildFieldNotAllowedError`, `AvatarNotInPresetError`, etc.)
+  - `./content`: `src/domains/content.ts` (`LessonNotFoundError`, `ActivityNotFoundError`, `WorksheetNotFoundError`, `SkillNotFoundError`, etc.)
+  - `./curriculum`: `src/domains/curriculum.ts` (`CurriculumNotFoundError`, etc.)
+  - `./game-level`: `src/domains/game-level.ts` (`GameLevelNotFoundError`, `TemplateNotSupportedError`, `LayoutNotSupportedError`, etc.)
+  - `./offline-pack`: `src/domains/offline-pack.ts` (`OfflinePackNotFoundError`, etc.)
+  - `./play`: `src/domains/play.ts` (`PlaySessionNotFoundError`, etc.)
+  - `./social`: `src/domains/social.ts` (`SocialEmailConflictError`, `SocialIdentityNotFoundError`, etc.)
+  - `./base`: `src/base.ts` (`AppError`, `defineError`, `isAppError`)
+  - `./model`: `src/model.ts` (`ModelNotFoundError`, `defineModelNotFound`)
+  - `./client`: `src/client.ts` (`normalizeApiError`, `isApiError`, `getFieldErrors`)
+  - `./registry`: `src/registry.ts`
+- **Di trú toàn bộ call site:**
+  - `apps/web/server/**`: Chuyển import từ `@mindkid/errors` sang subpath tương ứng (ví dụ: lỗi trẻ từ `@mindkid/errors/child`, lỗi chung từ `@mindkid/errors/common`).
+  - `apps/web/app/**`: `useApi` và các page chuyển sang `@mindkid/errors/client` hoặc domain error subpath.
+  - `apps/admin/app/**`: `useApiClient` và các trang studio/login chuyển sang subpath.
+  - `packages/**`: `packages/play`, `packages/db`, `packages/export`, `packages/content-build`, `packages/auth`, `packages/shared`, `packages/audit` chuyển sang subpath domain tương ứng.
+
 ## 6. Phụ thuộc
 
 ```
@@ -236,6 +263,8 @@ Hạ phép đo 4 về **0** (hoặc 1 nếu `AuditError` ở lại, ghi lý do v
                                         WP254.8 ngoài api/ → WP254.9 → WP254.10 → WP254.11
                                                           ↓
                                                      WP254.12 spec + AGENTS.md
+                                                          ↓
+                                                     WP254.13 chia nhỏ import domain
 ```
 
 ## 7. Rủi ro

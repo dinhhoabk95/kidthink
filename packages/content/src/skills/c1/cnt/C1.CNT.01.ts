@@ -10,7 +10,7 @@ export const C1_CNT_01_IDENTITY: SkillIdentity = {
   difficulty: 1,
   thinking_processes: ["count"],
   tier: "basic",
-  prerequisites: ["C1.NREC.13"],
+  prerequisites: [],
   learning_objectives: [
     {
       code: "LO-C1.CNT.01-01",
@@ -122,6 +122,14 @@ export const C1_CNT_01_SEED: SkillSeed = {
   identity: C1_CNT_01_IDENTITY,
   dataset: C1_CNT_01_DATASET,
   levels: [
+    {
+      code: "GL-C1-CNT-INTRO-0001",
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      theme: "farm",
+      rounds: 1,
+    },
     {
       code: "GL-C1-CNT-CARD-0001",
       template: "GT-012",

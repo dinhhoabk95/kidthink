@@ -617,8 +617,7 @@
     const details = err.details as
       | { in_use_by?: { code: string }[] }
       | undefined;
-    const dataObj = err.data as { in_use_by?: { code: string }[] } | undefined;
-    const inUse = details?.in_use_by ?? dataObj?.in_use_by ?? [];
+    const inUse = details?.in_use_by ?? [];
     return inUse.map((l) => l.code).join(", ");
   }
 

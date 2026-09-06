@@ -1,11 +1,7 @@
 import { getOwnerDb, users } from "@mindkid/db";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  readBody,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
 import {
@@ -30,15 +26,7 @@ export default defineEventHandler(async (event) => {
 
   const parsed = ProfileUpdateSchema.safeParse(rawBody);
   if (!parsed.success) {
-    setResponseStatus(event, 422);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "VALIDATION_FAILED",
-      data: {
-        code: "VALIDATION_FAILED",
-        message: "Tên hiển thị không hợp lệ (1–60 ký tự).",
-      },
-    });
+    throw new ValidationError("Tên hiển thị không hợp lệ (1–60 ký tự).");
   }
 
   const db = getOwnerDb();
@@ -52,8 +40,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!updated) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   return {

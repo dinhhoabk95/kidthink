@@ -4,9 +4,12 @@ import {
   gameLevels,
   getOwnerDb,
 } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
+import { PublishChecklistFailedError } from "@mindkid/errors/content";
+import { GameLevelNotFoundError } from "@mindkid/errors/game-level";
 import { validatePublishChecklist } from "@mindkid/shared";
 import { and, asc, eq, sql } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { transitionContent } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -17,7 +20,7 @@ export default defineEventHandler(async (event) => {
   const versionParam = getRouterParam(event, "version");
 
   if (!(code && versionParam)) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   const version = Number(versionParam);
@@ -31,11 +34,7 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!level) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "LEVEL_NOT_FOUND",
-      message: `Level ${code} v${version} not found`,
-    });
+    throw new GameLevelNotFoundError(`Level ${code} v${version} not found`);
   }
 
   // Check skills attached
@@ -90,12 +89,9 @@ export default defineEventHandler(async (event) => {
   });
 
   if (!checklistResult.ok) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "PUBLISH_CHECKLIST_FAILED",
-      message: `Publish checklist failed: missing [${checklistResult.missing.join(", ")}]`,
-      data: { missing: checklistResult.missing },
-    });
+    throw new PublishChecklistFailedError(
+      `Publish checklist failed: missing [${checklistResult.missing.join(", ")}]`
+    );
   }
 
   const res = await transitionContent({

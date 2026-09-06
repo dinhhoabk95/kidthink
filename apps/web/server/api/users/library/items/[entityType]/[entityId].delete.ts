@@ -1,10 +1,6 @@
 import { getOwnerDb } from "@mindkid/db";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  setResponseStatus,
-} from "h3";
+import { ValidationError } from "@mindkid/errors/common";
+import { defineEventHandler, getRouterParam } from "h3";
 import { removeLibraryItem } from "#server/services/index.js";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
@@ -17,29 +13,17 @@ export default defineEventHandler(async (event) => {
   const entityIdStr = getRouterParam(event, "entityId");
 
   if (!(entityType && entityIdStr)) {
-    setResponseStatus(event, 400);
-    throw createError({
-      statusCode: 400,
-      statusMessage: "VALIDATION_FAILED",
-    });
+    throw new ValidationError("VALIDATION_FAILED");
   }
 
   const validTypes = ["game_level", "lesson", "curriculum", "activity"];
   if (!validTypes.includes(entityType)) {
-    setResponseStatus(event, 400);
-    throw createError({
-      statusCode: 400,
-      statusMessage: "INVALID_ENTITY_TYPE",
-    });
+    throw new ValidationError("INVALID_ENTITY_TYPE");
   }
 
   const entityId = Number(entityIdStr);
   if (Number.isNaN(entityId) || entityId <= 0) {
-    setResponseStatus(event, 400);
-    throw createError({
-      statusCode: 400,
-      statusMessage: "INVALID_ENTITY_ID",
-    });
+    throw new ValidationError("INVALID_ENTITY_ID");
   }
 
   await removeLibraryItem(db, {

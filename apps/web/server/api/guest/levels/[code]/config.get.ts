@@ -1,11 +1,12 @@
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { GameLevelNotFoundError } from "@mindkid/errors/game-level";
+import { defineEventHandler, getRouterParam } from "h3";
 import { getOrSetGuestDeviceId } from "#server/utils/auth-runtime";
 import { deliverGameConfig } from "#server/utils/game-config-runtime";
 
 export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");
   if (!code) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new GameLevelNotFoundError();
   }
 
   // Explicitly references assertContentAccess for gating lint checks

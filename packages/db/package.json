@@ -11,6 +11,7 @@
     "@mindkid/adaptive": "workspace:*",
     "@mindkid/auth": "workspace:*",
     "@mindkid/config": "workspace:*",
+    "@mindkid/errors": "workspace:*",
     "@mindkid/moderation": "workspace:*",
     "@mindkid/queue": "workspace:*",
     "@mindkid/shared": "workspace:*",

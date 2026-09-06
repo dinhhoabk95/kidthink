@@ -1,11 +1,7 @@
 import { gameLevels, getOwnerDb, seoPages } from "@mindkid/db";
+import { SeoPageNotFoundError } from "@mindkid/errors/content";
 import { and, desc, eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  sendRedirect,
-} from "h3";
+import { defineEventHandler, getRouterParam, sendRedirect } from "h3";
 
 function sanitizeHtmlForRender(html: string | null | undefined): string {
   if (!html) {
@@ -74,7 +70,7 @@ function buildStructuredData(page: typeof seoPages.$inferSelect) {
 export default defineEventHandler(async (event) => {
   const slugParam = getRouterParam(event, "slug");
   if (!slugParam) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new SeoPageNotFoundError();
   }
 
   const slug = slugParam.toLowerCase().trim();
@@ -162,9 +158,5 @@ export default defineEventHandler(async (event) => {
     return sendRedirect(event, `/seo/${redirectPage.slug}`, 301);
   }
 
-  throw createError({
-    statusCode: 404,
-    statusMessage: "PAGE_NOT_FOUND",
-    message: `Trang SEO '${slug}' không tồn tại hoặc chưa xuất bản`,
-  });
+  throw new SeoPageNotFoundError(slug);
 });

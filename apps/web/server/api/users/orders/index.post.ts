@@ -1,5 +1,12 @@
-import { appError } from "@mindkid/auth";
 import { getDb, paymentOrders, users } from "@mindkid/db";
+import { UnauthenticatedError } from "@mindkid/errors/auth";
+import {
+  OfferNotFoundError,
+  OrderAlreadyPendingError,
+  PackageNotFoundError,
+  PackageNotSellableError,
+} from "@mindkid/errors/billing";
+import { InternalError } from "@mindkid/errors/common";
 import {
   computeOrderPendingExpiresAt,
   formatTransferNote,
@@ -34,7 +41,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!userRecord) {
-    throw appError("UNAUTHENTICATED");
+    throw new UnauthenticatedError();
   }
 
   assertUnrestrictedUser(userRecord.status);
@@ -57,16 +64,16 @@ export default defineEventHandler(async (event) => {
   // Validate package in catalog
   const pkg = PACKAGE_CATALOG[package_code];
   if (!pkg) {
-    throw appError("PACKAGE_NOT_FOUND");
+    throw new PackageNotFoundError();
   }
 
   if (!pkg.is_public || pkg.status !== "active") {
-    throw appError("PACKAGE_NOT_SELLABLE");
+    throw new PackageNotSellableError();
   }
 
   const offer = pkg.offers.find((o) => o.offer_code === offer_code);
   if (!offer) {
-    throw appError("OFFER_NOT_FOUND");
+    throw new OfferNotFoundError();
   }
 
   // Check for existing pending/submitted order for the same package (BR-POC-04)
@@ -89,7 +96,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (existingOrder) {
-    throw appError("ORDER_ALREADY_PENDING", {
+    throw new OrderAlreadyPendingError({
       existing_order_uuid: existingOrder.uuid,
       package_code,
     });
@@ -117,11 +124,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!insertedOrder) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "ORDER_CREATE_FAILED",
-      message: "Tạo đơn hàng thất bại",
-    });
+    throw new InternalError("Tạo đơn hàng thất bại");
   }
 
   const vietQr = generateVietQrPayload({

@@ -4,7 +4,6 @@
  */
 
 import { writeAudit } from "@mindkid/audit";
-import { appError } from "@mindkid/auth";
 import {
   childProfiles,
   curricula,
@@ -17,6 +16,18 @@ import {
   personalCurriculumItemProgress,
   personalCurriculumItems,
 } from "@mindkid/db";
+import {
+  EntitlementRequiredError,
+  QuotaExceededError,
+  TierLockedError,
+} from "@mindkid/errors/billing";
+import { ChildNotFoundError } from "@mindkid/errors/child";
+import { ValidationError } from "@mindkid/errors/common";
+import { VersionConflictError } from "@mindkid/errors/content";
+import {
+  CurriculumNotFoundError,
+  PersonalCurriculumNotFoundError,
+} from "@mindkid/errors/curriculum";
 import {
   type AccessTier,
   type CopySystemCurriculumInput,
@@ -84,12 +95,9 @@ async function checkSavedQuota(
 
   const currentCount = countResult?.count ?? 0;
   if (currentCount >= quotaLimit) {
-    throw appError("QUOTA_EXCEEDED", {
-      quota_key: "custom_curricula_saved",
-      limit: quotaLimit,
-      current: currentCount,
-      message: `Bạn đã đạt giới hạn tối đa ${quotaLimit} lộ trình cá nhân đã lưu.`,
-    });
+    throw new QuotaExceededError(
+      `Bạn đã đạt giới hạn tối đa ${quotaLimit} lộ trình cá nhân đã lưu.`
+    );
   }
 }
 
@@ -225,15 +233,18 @@ async function validateLessons(
     .where(inArray(lessons.id, lessonIds));
   for (const l of fetchedLessons) {
     if (l.status !== "published") {
-      throw appError(
-        "VALIDATION_FAILED",
+      throw new ValidationError(
         `BR-PCU-01: Bài học '${l.title}' (${l.code}) chưa được xuất bản (status: ${l.status}).`
       );
     }
     if (!allowedTiers.includes(l.accessTier as AccessTier)) {
-      throw appError(
-        "TIER_LOCKED",
-        `BR-PCU-01: Bài học '${l.title}' yêu cầu gói ${l.accessTier}, vượt quyền tài khoản của bạn.`
+      throw new TierLockedError(
+        `BR-PCU-01: Bài học '${l.title}' yêu cầu gói ${l.accessTier}, vượt quyền tài khoản của bạn.`,
+        {
+          cause: {
+            access_tier: l.accessTier,
+          },
+        }
       );
     }
   }
@@ -253,15 +264,18 @@ async function validateGameLevels(
     .where(inArray(gameLevels.id, gameLevelIds));
   for (const g of fetchedGameLevels) {
     if (g.status !== "published") {
-      throw appError(
-        "VALIDATION_FAILED",
+      throw new ValidationError(
         `BR-PCU-01: Trò chơi '${g.title}' (${g.code}) chưa được xuất bản (status: ${g.status}).`
       );
     }
     if (!allowedTiers.includes(g.accessTier as AccessTier)) {
-      throw appError(
-        "TIER_LOCKED",
-        `BR-PCU-01: Trò chơi '${g.title}' yêu cầu gói ${g.accessTier}, vượt quyền tài khoản của bạn.`
+      throw new TierLockedError(
+        `BR-PCU-01: Trò chơi '${g.title}' yêu cầu gói ${g.accessTier}, vượt quyền tài khoản của bạn.`,
+        {
+          cause: {
+            access_tier: g.accessTier,
+          },
+        }
       );
     }
   }
@@ -290,9 +304,13 @@ export async function createPersonalCurriculum(
 ): Promise<PersonalCurriculumDetail> {
   const entitlements = context.entitlements || [];
   if (!entitlements.includes("create_custom_curriculum")) {
-    throw appError(
-      "ENTITLEMENT_REQUIRED",
-      "Tính năng tạo lộ trình học cá nhân yêu cầu gói bổ trợ Add-on Curriculum."
+    throw new EntitlementRequiredError(
+      "Tính năng tạo lộ trình học cá nhân yêu cầu gói bổ trợ Add-on Curriculum.",
+      {
+        cause: {
+          required_entitlement: "create_custom_curriculum",
+        },
+      }
     );
   }
 
@@ -425,7 +443,7 @@ export async function getPersonalCurriculumByUuid(
     );
 
   if (!curriculum) {
-    throw appError("NOT_FOUND", "Không tìm thấy lộ trình học cá nhân.");
+    throw new PersonalCurriculumNotFoundError(uuid);
   }
 
   const rawItems = await db
@@ -477,15 +495,14 @@ export async function updatePersonalCurriculumMeta(
     );
 
   if (!existing) {
-    throw appError("NOT_FOUND", "Không tìm thấy lộ trình học cá nhân.");
+    throw new PersonalCurriculumNotFoundError(uuid);
   }
 
   if (
     input.expected_version !== undefined &&
     input.expected_version !== existing.version
   ) {
-    throw appError(
-      "VERSION_CONFLICT",
+    throw new VersionConflictError(
       `Xung đột phiên bản: phiên bản hiện tại là ${existing.version}, kỳ vọng ${input.expected_version}. Vui lòng tải lại dữ liệu.`
     );
   }
@@ -553,15 +570,14 @@ export async function replacePersonalCurriculumItems(
     );
 
   if (!existing) {
-    throw appError("NOT_FOUND", "Không tìm thấy lộ trình học cá nhân.");
+    throw new PersonalCurriculumNotFoundError(uuid);
   }
 
   if (
     input.expected_version !== undefined &&
     input.expected_version !== existing.version
   ) {
-    throw appError(
-      "VERSION_CONFLICT",
+    throw new VersionConflictError(
       `Xung đột phiên bản: phiên bản hiện tại là ${existing.version}, kỳ vọng ${input.expected_version}. Vui lòng tải lại dữ liệu.`
     );
   }
@@ -620,9 +636,13 @@ export async function copySystemCurriculum(
 ): Promise<PersonalCurriculumDetail> {
   const entitlements = context.entitlements || [];
   if (!entitlements.includes("create_custom_curriculum")) {
-    throw appError(
-      "ENTITLEMENT_REQUIRED",
-      "Tính năng sao chép lộ trình yêu cầu gói Add-on Curriculum."
+    throw new EntitlementRequiredError(
+      "Tính năng sao chép lộ trình yêu cầu gói Add-on Curriculum.",
+      {
+        cause: {
+          required_entitlement: "create_custom_curriculum",
+        },
+      }
     );
   }
 
@@ -640,10 +660,7 @@ export async function copySystemCurriculum(
     );
 
   if (!systemCurriculum) {
-    throw appError(
-      "NOT_FOUND",
-      `Không tìm thấy chương trình hệ thống '${input.system_curriculum_code}' đã xuất bản.`
-    );
+    throw new CurriculumNotFoundError(input.system_curriculum_code);
   }
 
   const sysItems = await db
@@ -742,7 +759,7 @@ export async function deletePersonalCurriculum(
     );
 
   if (!existing) {
-    throw appError("NOT_FOUND", "Không tìm thấy lộ trình học cá nhân.");
+    throw new PersonalCurriculumNotFoundError(uuid);
   }
 
   await db.transaction(async (tx) => {
@@ -785,7 +802,7 @@ export async function enrollChildInPersonalCurriculum(
     );
 
   if (!child) {
-    throw appError("NOT_FOUND", "Không tìm thấy hồ sơ trẻ thuộc tài khoản.");
+    throw new ChildNotFoundError(childUuid);
   }
 
   // 2. Verify curriculum ownership (BR-PCU-02)
@@ -800,15 +817,11 @@ export async function enrollChildInPersonalCurriculum(
     );
 
   if (!curriculum) {
-    throw appError(
-      "NOT_FOUND",
-      "Không tìm thấy lộ trình học cá nhân thuộc tài khoản."
-    );
+    throw new PersonalCurriculumNotFoundError(personalCurriculumUuid);
   }
 
   if (curriculum.status !== "ready") {
-    throw appError(
-      "VALIDATION_FAILED",
+    throw new ValidationError(
       "Lộ trình học cá nhân cần ở trạng thái 'ready' (sẵn sàng) để ghi danh cho trẻ."
     );
   }
@@ -887,7 +900,7 @@ export async function resolveChildPersonalCurriculumNextStep(
     );
 
   if (!child) {
-    throw appError("NOT_FOUND", "Không tìm thấy hồ sơ trẻ thuộc tài khoản.");
+    throw new ChildNotFoundError(childUuid);
   }
 
   const [enrollment] = await db
@@ -995,7 +1008,7 @@ export async function completeChildPersonalCurriculumItem(
     );
 
   if (!child) {
-    throw appError("NOT_FOUND", "Không tìm thấy hồ sơ trẻ thuộc tài khoản.");
+    throw new ChildNotFoundError(childUuid);
   }
 
   const [enrollment] = await db
@@ -1009,10 +1022,7 @@ export async function completeChildPersonalCurriculumItem(
     );
 
   if (!enrollment) {
-    throw appError(
-      "NOT_FOUND",
-      "Trẻ chưa có lộ trình cá nhân nào đang hoạt động."
-    );
+    throw new PersonalCurriculumNotFoundError("active_enrollment");
   }
 
   const [item] = await db
@@ -1029,10 +1039,7 @@ export async function completeChildPersonalCurriculumItem(
     );
 
   if (!item) {
-    throw appError(
-      "NOT_FOUND",
-      "Mục bài học không thuộc lộ trình cá nhân mà trẻ đang học."
-    );
+    throw new PersonalCurriculumNotFoundError(String(personalCurriculumItemId));
   }
 
   const now = new Date();

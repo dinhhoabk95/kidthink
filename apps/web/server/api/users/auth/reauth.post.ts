@@ -1,5 +1,9 @@
-import { appError, verifyPassword } from "@mindkid/auth";
+import { verifyPassword } from "@mindkid/auth";
 import { getOwnerDb, users } from "@mindkid/db";
+import {
+  InvalidCredentialsError,
+  PasswordNotSetError,
+} from "@mindkid/errors/auth";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
@@ -27,7 +31,7 @@ export default defineEventHandler(async (event) => {
 
   const parsed = ReauthSchema.safeParse(rawBody);
   if (!parsed.success) {
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
 
   const db = getOwnerDb();
@@ -38,7 +42,7 @@ export default defineEventHandler(async (event) => {
     .limit(1);
 
   if (!account?.passwordHash) {
-    throw appError("PASSWORD_NOT_SET");
+    throw new PasswordNotSetError();
   }
 
   const isValid = await verifyPassword(
@@ -46,7 +50,7 @@ export default defineEventHandler(async (event) => {
     account.passwordHash
   );
   if (!isValid) {
-    throw appError("INVALID_CREDENTIALS");
+    throw new InvalidCredentialsError();
   }
 
   const now = new Date();

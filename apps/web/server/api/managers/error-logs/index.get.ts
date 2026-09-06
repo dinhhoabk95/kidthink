@@ -1,6 +1,7 @@
 import { errorLogs, getOwnerDb } from "@mindkid/db";
+import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { and, desc, eq, gte, ilike, lte, or, type SQL, sql } from "drizzle-orm";
-import { createError, defineEventHandler, getQuery } from "h3";
+import { defineEventHandler, getQuery } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export interface ErrorGroupItem {
@@ -83,12 +84,9 @@ export default defineEventHandler(async (event) => {
 
   // BR-ELV-06: super_admin only
   if (manager.role !== "super_admin") {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "INSUFFICIENT_ROLE",
-      message:
-        "Chỉ super_admin mới có quyền xem nhật ký lỗi hệ thống (BR-ELV-06)",
-    });
+    throw new InsufficientRoleError(
+      "Chỉ super_admin mới có quyền xem nhật ký lỗi hệ thống (BR-ELV-06)"
+    );
   }
 
   const query = getQuery(event);

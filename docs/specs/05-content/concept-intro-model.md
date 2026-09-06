@@ -5,14 +5,15 @@ area: content
 status: approved
 mvp: false
 phase: P4
-reviewed: 2026-09-05
+reviewed: 2026-09-06
 owns:
   - Ràng buộc biên tập của một bài làm quen khái niệm
+  - Hành động `echo` — tập nói theo, không thu giọng
   - Input format chung của `GT-000` — kho chất liệu và dãy hành động
   - Ba loại chất liệu: ký tự, từ khoá học, hình minh hoạ
   - Điều kiện một chủ đề được coi là "đã có bài làm quen"
 depends_on:
-  - CONCEPT-PRE-SKILL
+  - CONCEPT-TOPIC-MODEL
   - GAME-LEVEL-MODEL
   - GAME-TEMPLATE-CONTRACT
   - SCHEMA-CONTENT-TAXONOMY
@@ -28,16 +29,21 @@ trẻ chưa biết. Hệ quả đo được: 3.156 vòng chơi mang chỉ dẫn 
 dẫn audio — trong khi `BR-LSM-07` đã chốt Cấm — **NEVER giả định trẻ đọc được chữ**.
 
 Bài làm quen là **một game level** chạy trên engine dạy **`GT-000`** — mã `000` vì nó đứng
-trước mọi mã còn lại, cả trong danh sách lẫn trong đường đi của trẻ. Nó gắn theo **kỹ năng bậc `pre` của một chủ đề** —
-quyết định `A-206-01` (gắn theo strand, chốt 2026-09-02) **bị thay** ngày 2026-09-05, xem
-mục 11 câu 3. Từ vựng chủ đề và bậc `pre` ở
-[`concept-pre-skill.md`](concept-pre-skill.md).
+trước mọi mã còn lại, cả trong danh sách lẫn trong đường đi của trẻ. Nó gắn theo **một chủ đề**,
+và chủ đề neo vào **các kỹ năng chơi thật** mà nó dạy — quyết định `A-206-01` (gắn theo strand,
+chốt 2026-09-02) bị thay ngày 2026-09-05 bằng bậc `pre`, rồi bậc `pre` bị gỡ ngày 2026-09-06.
+Xem mục 11 câu 3 và câu 5. Từ vựng chủ đề ở
+[`concept-topic-model.md`](concept-topic-model.md) mục 7.2.
 
 Một bài làm quen **không phải một màn chơi đơn**. Nó là **dãy nhiều hành động nhỏ nối tiếp
 nhau trong cùng một level**, chạy trên **ba loại chất liệu**: **ký tự** (`glyph`), **từ khoá
 học** (`word`), **hình minh hoạ** (`image`). Cả ba loại đi qua **cùng một input format** —
 đó là điểm khiến người soạn viết một lần rồi dùng cho chữ, cho số, cho hình khối, cho âm
 tiết mà không phải học ba khuôn.
+
+Một trong các hành động là **`echo` — tập nói theo**: máy đọc mẫu, trẻ nói theo thành tiếng,
+rồi chạm để đi tiếp. Máy Cấm — **NEVER** nghe. Đây là bậc "tập phát âm" mà chương trình
+tham chiếu đặt ngay sau bậc giới thiệu, và là thứ người đặt việc yêu cầu ngày 2026-09-06.
 
 File này sở hữu **input format và ràng buộc biên tập**. Bề mặt chạy ở
 [`concept-intro-runner.md`](../04-play/concept-intro-runner.md); việc nó là bắt buộc, và
@@ -78,23 +84,24 @@ Không có.
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-CIM-01` (là một level) | Bài làm quen là một hàng `game_levels` với `template_code = 'GT-000'`. Cấm — **NEVER** dựng entity nội dung riêng cho nó | Versioning, tier, seeder, QA ảnh chụp, studio và engine runtime đã có sẵn cho level. Entity riêng là bản sao của tất cả những thứ đó, và bản sao sẽ drift |
-| `BR-CIM-02` (một chủ đề) | Một bài làm quen gắn **đúng một** kỹ năng bậc `pre`, và mọi giá trị của nó thuộc **cùng một** strand | Quyết định `A-206-01` gắn theo strand vì một strand "đủ hẹp để 12 hành động phủ được". Đo lại 2026-09-05: strand `C1.NREC` có 12 kỹ năng trải ba dải số 0–5, 0–10, 11–20 — 21 giá trị, không phủ nổi bằng 12 hành động. Đơn vị đúng là **chủ đề**, và mã của chủ đề là kỹ năng bậc `pre` — `BR-PRE-02` (luật một chủ đề một strand). Mã nguồn khuôn `GT-000` vốn đã gắn theo mã kỹ năng từ đầu; luật này đi theo mã nguồn, không ngược lại |
-| `BR-CIM-03` (phân đoạn 2–6 chất liệu, ≤ 12 hành động) | Một `segment` có 2–6 chất liệu và 3–12 hành động. Một bài có 1–6 phân đoạn và tối đa **21** chất liệu phân biệt | Một chất liệu thì không có gì để phân biệt; trên 6 chất liệu trong **một mạch liền** thì vượt trí nhớ làm việc của trẻ 3 tuổi. Nhưng trần đó là trần của một mạch, không phải trần của một chủ đề: dãy số 0–10 có 11 giá trị và trẻ vẫn phải học đủ cả 11. Chia phân đoạn giữ được lý do gốc mà không cắt mất hai phần ba chủ đề |
+| `BR-CIM-02` (một chủ đề) | Một bài làm quen khai **đúng một** khối `content_pack.concept`, và mọi giá trị của nó thuộc **cùng một** strand | Quyết định `A-206-01` gắn theo strand vì một strand "đủ hẹp để 12 hành động phủ được". Đo lại 2026-09-05: strand `C1.NREC` có 12 kỹ năng trải ba dải số 0–5, 0–10, 11–20 — 21 giá trị, không phủ nổi bằng 12 hành động. Đơn vị đúng là **chủ đề** — `BR-CTM-02` (luật một chủ đề một strand). Mã nguồn khuôn `GT-000` vốn đã gắn theo mã kỹ năng từ đầu; luật này đi theo mã nguồn, không ngược lại |
+| `BR-CIM-03` (phân đoạn 2–3 chất liệu, ≤ 12 hành động) | Một `segment` có 2–3 chất liệu và 3–12 hành động. Một bài có 1–8 phân đoạn và tối đa **21** chất liệu phân biệt | Một chất liệu thì không có gì để phân biệt; trên 6 chất liệu trong **một mạch liền** thì vượt trí nhớ làm việc của trẻ 3 tuổi. Nhưng trần đó là trần của một mạch, không phải trần của một chủ đề: dãy số 0–10 có 11 giá trị và trẻ vẫn phải học đủ cả 11. Chia phân đoạn giữ được lý do gốc mà không cắt mất hai phần ba chủ đề. Trần chất liệu hạ từ 6 xuống **3** ngày 2026-09-06 vì `BR-CIM-19` thêm bước `echo`: mỗi chất liệu giờ tốn bốn hành động, nên 4 chất liệu là 16 hành động và vượt trần 12. Trần phân đoạn lên **8** theo cùng phép tính — chủ đề 21 giá trị chia 3 là 7 phân đoạn dạy cộng một phân đoạn ôn |
 | `BR-CIM-04` (mỗi chất liệu có tên nói được) | Mỗi asset BẮT BUỘC có `label` là tiếng Việt đọc lên được. `audio_path` là tuỳ chọn — thiếu thì runner đọc bằng TTS | Kênh dạy duy nhất mà trẻ chưa đọc chữ nhận được là kênh tai. Chất liệu không có tên nói được là chất liệu không dạy được |
 | `BR-CIM-05` (đổi một chiều) | Chất liệu cùng `contrast_group` chỉ được khác nhau ở **một** chiều: số lượng, hoặc hình, hoặc màu, hoặc âm — Cấm — **NEVER** hai chiều trở lên. Distractor của một step `recognise` BẮT BUỘC lấy trong cùng `contrast_group` với target | Nguyên tắc cô lập khó của Montessori. Đổi hai chiều thì trẻ không biết mình đang được dạy chiều nào; distractor ngoài nhóm biến bước nhận biết thành câu đố mẹo |
 | `BR-CIM-06` (trần 120 giây mỗi phân đoạn) | Mỗi phân đoạn ≤ 120 giây với trẻ trả lời ngay, và cuối mỗi phân đoạn là một chỗ trẻ dừng lại được rồi quay lại đúng chỗ đó | Bài làm quen đứng **giữa** trẻ và trò chơi. Trần thời lượng là để trẻ không bỏ cuộc, nên nó phải là trần của **một lần ngồi**, không phải trần của cả chủ đề. Chủ đề dài mà không có chỗ dừng thì trẻ bỏ ở giữa và mất sạch |
 | `BR-CIM-07` (mặt chữ được thấy, không được đòi) | Chất liệu `glyph` và `word` BẮT BUỘC hiện mặt chữ. Cấm — **NEVER** dùng việc đọc được mặt chữ làm điều kiện đi tiếp | Người đặt việc muốn trẻ làm quen ký tự và từ; `BR-LSM-07` cấm giả định trẻ đọc được. Hai điều sống chung được đúng theo cách này: cho thấy, không bắt đọc |
 | `BR-CIM-08` (Cấm chấm điểm) | `scoring` của bài làm quen là `none`. Cấm — **NEVER** có sao, điểm, đồng hồ, hay trạng thái thua | `BR-ENG-11` cấm điểm ở nơi trẻ nhìn thấy. Bài làm quen còn chặt hơn: hành động `present` **không có đáp án để sai** |
 | `BR-CIM-09` (Cấm giọng chê) | Phản hồi khi trẻ chạm sai là **nhắc lại**, Cấm — **NEVER** là lời chê hay âm báo sai | `BR-SCF-08`. Trẻ đang gặp khái niệm lần đầu; báo sai ở lần đầu dạy trẻ rằng thử là rủi ro |
-| `BR-CIM-10` (Cấm thu giọng trẻ) | Hành động `recall` là **nghe rồi chạm**. Cấm — **NEVER** yêu cầu micro, Cấm — **NEVER** lưu giọng trẻ | `BR-CDC-04` và `BR-AST-04`. Luật 91/2025/QH15 và Nghị định 13/2023 |
+| `BR-CIM-10` (Cấm thu giọng trẻ) | Hành động `recall` là **nghe rồi chạm**; hành động `echo` là **nghe rồi tự nói**. Cấm — **NEVER** yêu cầu micro, Cấm — **NEVER** lưu giọng trẻ, Cấm — **NEVER** chấm phát âm | `BR-CDC-04` và `BR-AST-04`. Luật 91/2025/QH15 và Nghị định 13/2023. Trẻ vẫn tập nói được mà máy không cần nghe: giá trị sư phạm nằm ở việc trẻ phát ra tiếng, không ở việc máy chấm tiếng đó |
 | `BR-CIM-11` (tier không cao hơn game) | `access_tier` của bài làm quen ≤ tier thấp nhất trong các level thuộc những kỹ năng mà chủ đề đó dạy | Bài làm quen `premium` đứng trước một trò chơi `free` là dựng tường thu phí ở chỗ `access-ladder.md` không cho phép |
 | `BR-CIM-12` (asset đã đăng ký) | Mọi hình kiểu emoji phải có trong [`emoji-registry.md`](../01-platform/emoji-registry.md) | Emoji ngoài registry hiển thị khác nhau giữa Android và iOS — chất liệu được dạy phải là **cùng một thứ** trên mọi máy |
-| `BR-CIM-13` (một chủ đề, một bài publish) | Một kỹ năng bậc `pre` có tối đa **một** bài làm quen ở trạng thái `published` | Cổng phải trỏ được tới **một** mã level cho mỗi chủ đề còn thiếu. Hai bài cùng publish thì cổng phải chọn, và không có luật nào để chọn |
 | `BR-CIM-14` (giới thiệu trước, hỏi sau) | Mọi asset xuất hiện trong step `recognise`, `link` hay `recall` BẮT BUỘC có một step `present` của chính nó **đứng trước** trong `steps` | Đây là bất biến sư phạm của cả engine: hỏi một thứ chưa từng giới thiệu là quay về đúng cái lỗi mà 36 engine kia đang mắc. Kiểm được bằng máy, nên nó là cổng chứ không phải lời khuyên |
 | `BR-CIM-15` (input format chung) | Mọi step trỏ chất liệu bằng `asset_id`. Cấm — **NEVER** nhúng nhãn, hình, hay đường dẫn audio thẳng vào một step | Đây là thứ làm ký tự, từ và hình dùng chung một khuôn. Nhúng thẳng thì mỗi loại chất liệu sinh một biến thể step, và người soạn phải học ba khuôn |
 | `BR-CIM-16` (ba loại chất liệu, đóng) | `kind ∈ glyph \| word \| image`. Thêm loại phải sửa spec này trước | Trục đóng thì cổng và runner đối chiếu được. Trục mở là chỗ loại thứ tư lọt vào mà không ai dựng đường render cho nó |
 | `BR-CIM-17` (từ phải có hình neo nghĩa) | Bài có asset `kind = 'word'` BẮT BUỘC có ít nhất một asset `kind = 'image'`, và có ít nhất một step `link` nối từ đó với hình | Trẻ chưa đọc không neo được nghĩa của một từ vào mặt chữ. Không có hình thì "mẹ" chỉ là hai nét vẽ |
 | `BR-CIM-18` (mỗi phân đoạn có kết, cả bài có ôn) | Mỗi `segment` BẮT BUỘC kết thúc bằng ít nhất một step `recall`. Phân đoạn cuối của bài BẮT BUỘC là **phân đoạn ôn**, gộp mọi giá trị đã dạy trong bài | `recall` là phép đo xếp chỗ của phân đoạn. Không có phân đoạn ôn thì trẻ học sáu giá trị rời rạc và chưa lần nào thấy chúng đứng cạnh nhau — mà chủ đề chính là chỗ chúng đứng cạnh nhau |
+| `BR-CIM-19` (tập nói theo) | Mỗi phân đoạn **không** phải phân đoạn ôn BẮT BUỘC có ít nhất một step `echo`. Một step `echo` trỏ một asset đã được `present` trước đó trong cùng bài, không có đáp án, không chấm, và Cấm — **NEVER** phát sinh event mang dữ liệu âm thanh | Nghe rồi chạm dạy trẻ **nhận ra** một cái tên; nói theo dạy trẻ **gọi** được nó. Chương trình tham chiếu tách hai bậc đó ra làm hai chế độ riêng, và bậc thứ hai là thứ corpus hiện không có. Miễn cho phân đoạn ôn vì ôn là đo xếp chỗ, không phải dạy thêm |
+| `BR-CIM-20` (nhiều tiết thì phải có thứ tự) | Chủ đề chia làm nhiều tiết thì mỗi tiết khai `content_pack.concept.sequence_no`, duy nhất và liên tục từ 1 — `BR-CTM-06` | Hàng đợi bài làm quen sắp theo topo trên kỹ năng; hai tiết của **cùng** một chủ đề không có cạnh nào giữa chúng, nên topo không phân biệt được. Thiếu số thứ tự thì trẻ học tiết 2 trước tiết 1 tuỳ thứ tự truy vấn trả về |
 
 ## 7. Data
 
@@ -103,7 +110,8 @@ Không có.
 
 ### 7.1 Input format chung — ba khối
 
-`content_pack` của `GT-000` có đúng ba khối: **chủ đề** (`concept`), **kho chất liệu**
+`content_pack` của `GT-000` có đúng ba khối: **chủ đề** (`concept`, hình dạng đầy đủ ở
+[`concept-topic-model.md`](concept-topic-model.md) mục 7.2), **kho chất liệu**
 (`assets`) của cả bài, và **các phân đoạn** (`segments`). Kho khai *cái gì được dạy*; mỗi
 phân đoạn khai *lát nào được dạy trong một lần ngồi, theo trình tự nào*. Ba loại chất
 liệu đi qua cùng một hình dạng asset, và mọi step trỏ chất liệu bằng `asset_id`
@@ -111,12 +119,14 @@ liệu đi qua cùng một hình dạng asset, và mọi step trỏ chất liệ
 
 | Field | Kiểu | Ràng buộc |
 |---|---|---|
-| `concept.pre_skill_code` | `string` | Mã kỹ năng bậc `pre` của chủ đề, tồn tại trong `skills` — `BR-CIM-02` |
+| `concept.skill_code` | `string` | Mã một kỹ năng chơi thật của chủ đề, tồn tại trong `skills` — `BR-CTM-03` |
 | `concept.label` | `string` | Tên chủ đề nói được, ví dụ `"số 0 đến 10"` |
+| `concept.teaches[]` | `array` | Mã mọi kỹ năng chơi chủ đề dạy; khớp `skill_codes` của level — `BR-CTM-04` |
+| `concept.sequence_no` | `integer?` | Thứ tự tiết trong chủ đề; bắt buộc khi chủ đề có hơn một tiết — `BR-CIM-20` |
 | `assets[]` | `array` | Kho chất liệu của cả bài, 2–21 phần tử — `BR-CIM-03` |
-| `segments[]` | `array` | 1–6 phân đoạn, có thứ tự — `BR-CIM-03` |
+| `segments[]` | `array` | 1–8 phân đoạn, có thứ tự — `BR-CIM-03` |
 | `segments[].segment_id` | `string` | Duy nhất trong bài; là mốc trẻ quay lại được — `BR-CIM-06` |
-| `segments[].asset_ids[]` | `array` | 2–6 mã chất liệu của phân đoạn — `BR-CIM-03` |
+| `segments[].asset_ids[]` | `array` | 2–3 mã chất liệu của phân đoạn — `BR-CIM-03` |
 | `segments[].steps[]` | `array` | 3–12 phần tử, có thứ tự — `BR-CIM-03` |
 | `segments[].is_review` | `boolean` | Mặc định `false`. Phân đoạn cuối BẮT BUỘC `true` — `BR-CIM-18` |
 | `narration` | `object` | Mẫu câu mặc định cho từng hành động, mục 7.3 |
@@ -136,11 +146,12 @@ liệu đi qua cùng một hình dạng asset, và mọi step trỏ chất liệ
 | `syllables` | `string[]?` | Chỉ với `kind = 'word'`. Tách âm tiết để runner đọc chậm từng tiếng |
 | `image` | `{ kind, ref }?` | Bắt buộc khi `kind = 'image'`. `kind ∈ emoji \| image \| shape`; emoji phải trong registry — `BR-CIM-12` |
 
-### 7.3 Bốn hành động — workflow chung
+### 7.3 Năm hành động — workflow chung
 
 | `action` | Trẻ làm gì | Field riêng | Sai được không |
 |---|---|---|---|
 | `present` | Nghe và nhìn một chất liệu, chạm để đi tiếp | — | Không có đáp án để sai |
+| `echo` | Nghe mẫu rồi **nói theo thành tiếng**, chạm để đi tiếp | `repeat_count` — 1–3, mặc định 1 | Không có đáp án để sai. Máy Cấm — **NEVER** nghe — `BR-CIM-10` |
 | `recognise` | Chạm đúng chất liệu trong 2–4 lựa chọn | `distractor_asset_ids[]` — cùng `contrast_group` (`BR-CIM-05`) | Sai thì nhắc lại `present` của chính target rồi hỏi lại |
 | `link` | Ghép hai chất liệu khác loại: ký tự ↔ hình, từ ↔ hình | `source_asset_id` | Như `recognise` |
 | `recall` | Nghe tên, chạm tên đúng | `option_asset_ids[]` — 2–4 mã chất liệu | Sai vẫn đi tiếp; kết quả là tín hiệu, không phải cửa |
@@ -154,10 +165,11 @@ Lời dẫn của một step lấy theo thứ tự: `narration_line` (với `pre
 trong khối `narration`; không có nữa thì runner dùng câu mặc định của engine.
 
 **Workflow mặc định** mà bộ chiếu dựng khi người soạn không khai `segments`: cắt dãy giá trị
-của chủ đề thành các phân đoạn 3–4 giá trị theo đúng thứ tự, rồi dựng trong mỗi phân đoạn:
+của chủ đề thành các phân đoạn 2–3 giá trị theo đúng thứ tự, rồi dựng trong mỗi phân đoạn:
 
 ```
 present(mọi chất liệu của phân đoạn, theo thứ tự khai)
+  → echo(mọi chất liệu của phân đoạn)                     [BR-CIM-19]
   → link(mỗi cặp word↔image trong phân đoạn)
   → recognise(mọi chất liệu của phân đoạn)
   → recall(mọi chất liệu của phân đoạn)
@@ -167,13 +179,18 @@ Rồi thêm **một phân đoạn ôn** ở cuối, gồm `recognise` và `recal
 
 Người soạn được xen kẽ khác đi — dạy xong ký tự thì hỏi ngay ký tự, rồi mới sang từ — miễn
 là giữ `BR-CIM-14`: mỗi asset phải được `present` trước khi bị hỏi. Cấm — **NEVER** để bộ
-chiếu dừng ở hai giá trị đầu của dataset rồi coi là xong chủ đề (`BR-PRE-09`).
+chiếu dừng ở hai giá trị đầu của dataset rồi coi là xong chủ đề (`BR-CTM-09`).
 
 ### 7.4 Ví dụ — chủ đề `C5.PHO`, âm /m/ qua cả ba loại chất liệu
 
 ```json
 {
-  "concept": { "pre_skill_code": "C5.PHO.04", "label": "âm mờ" },
+  "concept": {
+    "skill_code": "C5.PHO.01",
+    "label": "âm mờ",
+    "teaches": ["C5.PHO.01", "C5.PHO.02"],
+    "values": ["m", "n", "mẹ"]
+  },
   "assets": [
     { "asset_id": "g_m",  "kind": "glyph", "label": "chữ mờ", "glyph": "m", "contrast_group": "phu_am_moi" },
     { "asset_id": "g_n",  "kind": "glyph", "label": "chữ nờ", "glyph": "n", "contrast_group": "phu_am_moi" },
@@ -186,7 +203,9 @@ chiếu dừng ở hai giá trị đầu của dataset rồi coi là xong chủ 
       "asset_ids": ["g_m", "g_n"],
       "steps": [
         { "action": "present",   "target_asset_id": "g_m" },
+        { "action": "echo",      "target_asset_id": "g_m" },
         { "action": "present",   "target_asset_id": "g_n" },
+        { "action": "echo",      "target_asset_id": "g_n" },
         { "action": "recognise", "target_asset_id": "g_m", "distractor_asset_ids": ["g_n"] },
         { "action": "recall",    "target_asset_id": "g_m", "option_asset_ids": ["g_m", "g_n"] }
       ]
@@ -197,6 +216,7 @@ chiếu dừng ở hai giá trị đầu của dataset rồi coi là xong chủ 
       "steps": [
         { "action": "present", "target_asset_id": "i_me" },
         { "action": "present", "target_asset_id": "w_me" },
+        { "action": "echo",    "target_asset_id": "w_me" },
         { "action": "link",    "target_asset_id": "w_me", "source_asset_id": "i_me" },
         { "action": "recall",  "target_asset_id": "w_me", "option_asset_ids": ["w_me", "g_n"] }
       ]
@@ -214,6 +234,7 @@ chiếu dừng ở hai giá trị đầu của dataset rồi coi là xong chủ 
   ],
   "narration": {
     "present": "Đây là {label}",
+    "echo": "Bé nói theo cô nhé: {label}",
     "recognise": "Chỉ cho cô {label}",
     "link": "Từ này là của hình nào?",
     "recall": "Đây là gì?"
@@ -234,12 +255,14 @@ Một chủ đề được coi là **đã phủ** khi tồn tại một `game_le
 |---|---|
 | 1 | `template_code = 'GT-000'` |
 | 2 | `status = 'published'` |
-| 3 | `content_pack.concept.pre_skill_code` bằng đúng mã kỹ năng bậc `pre` của chủ đề |
+| 3 | `content_skill_map` của level chứa **mọi** mã trong `content_pack.concept.teaches[]` (`BR-CTM-04`) |
 | 4 | `access_tier` ≤ tier thấp nhất của các level thuộc kỹ năng mà chủ đề dạy (`BR-CIM-11`) |
 
-Đợt 1 là **5 chủ đề**, liệt kê ở [`concept-pre-skill.md`](concept-pre-skill.md) mục 7.3.
-Cầu đầy đủ chưa chốt: nó phụ thuộc thời lượng thật của một chủ đề, đo được sau đợt 1 — câu 3
-mục 11 của file đó. Cổng bậc thang ở
+Chủ đề chia làm nhiều tiết thì **mọi** tiết phải thoả cả bốn — `BR-CTM-07`.
+
+Đợt 1 là **5 chủ đề**, liệt kê ở [`concept-topic-model.md`](concept-topic-model.md) mục 7.3.
+Cầu đầy đủ chưa chốt: nó phụ thuộc thời lượng thật của một chủ đề, đo được sau lô `C1.CMP` —
+câu 2 mục 11 của file đó. Cổng bậc thang ở
 [`concept-intro-gate.md`](../04-play/concept-intro-gate.md) mục 7.4 giữ con số thiếu chỉ đi xuống.
 
 ### 7.6 Checklist người duyệt
@@ -252,6 +275,7 @@ mục 11 của file đó. Cổng bậc thang ở
 6. Mặt chữ có hiện không, và có bắt trẻ đọc nó để đi tiếp không?
 7. Đếm giá trị: bài có dạy **đủ** mọi giá trị của chủ đề không, hay dừng ở vài giá trị đầu?
 8. Phân đoạn cuối có ôn lại **mọi** giá trị đã dạy không, hay chỉ ôn phân đoạn ngay trước nó?
+9. Mỗi phân đoạn dạy có ít nhất một bước `echo` không, và bước đó có đòi micro không? Đòi là trượt.
 
 ## 8. API contract
 
@@ -264,10 +288,29 @@ publish.
 
 ```gherkin
 Scenario: BR-CIM-02 — bài làm quen gắn hai chủ đề thì không publish được
-  Given một level GT-000 có content_pack khai hai pre_skill_code
+  Given một level GT-000 có content_pack khai hai khối concept
   When gửi publish
   Then trả 422
   And lý do nêu bài làm quen chỉ được gắn một chủ đề
+
+Scenario: BR-CIM-19 — phân đoạn dạy thiếu bước tập nói thì không publish được
+  Given một level GT-000 có một phân đoạn không phải phân đoạn ôn
+  And phân đoạn đó không có step nào action echo
+  When gửi publish
+  Then trả 422
+  And lý do nêu phân đoạn còn thiếu bước tập nói
+
+Scenario: BR-CIM-19 — bước tập nói không phát sinh dữ liệu âm thanh
+  Given một trẻ đi qua một step echo
+  When phiên chơi đẩy telemetry lên
+  Then không event nào mang trường ghi âm hay đường dẫn ghi âm
+  And engine không yêu cầu quyền micro
+
+Scenario: BR-CIM-20 — chủ đề nhiều tiết mà thiếu sequence_no thì không publish được
+  Given một chủ đề đã có một tiết published
+  When gửi publish tiết thứ hai không khai concept.sequence_no
+  Then trả 422
+  And lý do nêu tiết còn thiếu số thứ tự
 
 Scenario: BR-CIM-03 — phân đoạn quá 12 hành động thì bị từ chối
   Given một level GT-000 có một phân đoạn với 13 step
@@ -370,6 +413,8 @@ Scenario: BR-CIM-13 — hai bài làm quen cùng publish cho một chủ đề
 - Cấm — **NEVER** hỏi một chất liệu chưa được giới thiệu trong cùng bài.
 - Cấm — **NEVER** dựng entity nội dung riêng song song với `game_levels`.
 - Cấm — **NEVER** để bài làm quen có tier cao hơn trò chơi mà nó đứng chắn.
+- Cấm — **NEVER** yêu cầu micro hay chấm phát âm ở bước `echo`.
+- Cấm — **NEVER** tạo kỹ năng mới trong taxonomy để làm chỗ neo cho một chủ đề — `BR-CTM-01`.
 
 ## 11. Open questions
 
@@ -377,5 +422,7 @@ Scenario: BR-CIM-13 — hai bài làm quen cùng publish cho một chủ đề
 |---|---|---|---|---|
 | ~~1~~ | ~~Gắn theo skill (230 bài) hay theo strand (71 bài)?~~ **Đóng 2026-09-02 (Task #206)**: Chốt gắn theo **Strand** cho giai đoạn ban đầu để tinh gọn chi phí và đảm bảo độ phủ nhanh. Cầu thật là **41 bài** — số strand đang có nội dung game (mục 7.5); 71 là tổng strand của taxonomy, 30 trong đó chưa có level nào. | — | Đã đóng | Người quyết |
 | 2 | `syllables` có cần cho tiếng Việt đa âm tiết, hay tách âm tiết là việc của runner? | Hình dạng asset `word` | P4 | Nội dung |
-| ~~3~~ | ~~Strand rộng (trên 10 kỹ năng, ví dụ `C1.NREC` có 12) có phủ nổi bằng 12 hành động không, hay phải tách theo band tuổi?~~ **Đóng 2026-09-05**: không phủ nổi. `C1.NREC` trải ba dải số 0–5, 0–10, 11–20 — 21 giá trị. Tách theo **chủ đề**, không theo band tuổi; đơn vị gắn đổi từ strand sang kỹ năng bậc `pre`, xem [`concept-pre-skill.md`](concept-pre-skill.md). | — | Đã đóng | người quyết |
+| ~~3~~ | ~~Strand rộng (trên 10 kỹ năng, ví dụ `C1.NREC` có 12) có phủ nổi bằng 12 hành động không, hay phải tách theo band tuổi?~~ **Đóng 2026-09-05**: không phủ nổi. `C1.NREC` trải ba dải số 0–5, 0–10, 11–20 — 21 giá trị. Tách theo **chủ đề**, không theo band tuổi; đơn vị gắn đổi từ strand sang kỹ năng bậc `pre`. | — | Đã đóng | người quyết |
 | 4 | Giọng thu sẵn thay TTS ở mốc nào? | Ngân sách audio | P5 | hoãn — mở lại khi `audio-storage.md` P2 chạy |
+| ~~5~~ | ~~Neo chủ đề vào một kỹ năng bậc `pre` mới, hay vào các kỹ năng chơi sẵn có?~~ **Đóng 2026-09-06**: neo vào **kỹ năng chơi sẵn có**. Bậc `pre` bị gỡ khỏi từ vựng bậc; bài học mở đầu là thêm game level, không phải thêm kỹ năng. Xem [`concept-topic-model.md`](concept-topic-model.md) `BR-CTM-01`. | — | Đã đóng | D-SK |
+| 6 | `repeat_count` của `echo` nên để người soạn khai, hay cố định 1 cho mọi bài? | Hình dạng step `echo` | P4 | Nội dung |

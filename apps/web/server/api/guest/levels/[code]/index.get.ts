@@ -1,5 +1,7 @@
 import { requireUserAuth } from "@mindkid/auth";
 import { gameLevels, getOwnerDb } from "@mindkid/db";
+import { ContentArchivedError } from "@mindkid/errors/content";
+import { GameLevelNotFoundError } from "@mindkid/errors/game-level";
 import { getGameTemplate } from "@mindkid/game-engine/registry";
 import {
   type AccessTier,
@@ -10,12 +12,7 @@ import {
   TIER_ENTITLEMENT,
 } from "@mindkid/shared";
 import { and, eq, ne } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  getRouterParam,
-  type H3Event,
-} from "h3";
+import { defineEventHandler, getRouterParam, type H3Event } from "h3";
 import { getOptionalActiveChildUuid } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 import {
@@ -66,7 +63,7 @@ async function resolveCallerContext(event: H3Event): Promise<CallerContext> {
 export default defineEventHandler(async (event) => {
   const code = getRouterParam(event, "code");
   if (!code) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new GameLevelNotFoundError();
   }
 
   const db = getOwnerDb();
@@ -95,7 +92,7 @@ export default defineEventHandler(async (event) => {
     .where(eq(gameLevels.code, code));
 
   if (!level) {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new GameLevelNotFoundError(code);
   }
 
   if (level.status === "archived") {
@@ -109,19 +106,14 @@ export default defineEventHandler(async (event) => {
       .where(and(eq(gameLevels.status, "published"), ne(gameLevels.code, code)))
       .limit(3);
 
-    throw createError({
-      statusCode: 410,
-      statusMessage: "GONE",
-      message: "Trò chơi này đã ngừng phát hành",
-      data: {
-        code: level.code,
-        alternatives,
-      },
+    throw new ContentArchivedError("Trò chơi này đã ngừng phát hành", {
+      code: level.code,
+      alternatives,
     });
   }
 
   if (level.status !== "published") {
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new GameLevelNotFoundError(code);
   }
 
   const { allowed, viewer } = await resolveCallerContext(event);

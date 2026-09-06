@@ -5,8 +5,14 @@ import {
   notifications,
   users,
 } from "@mindkid/db";
+import {
+  NotificationNotFoundError,
+  UserAlreadyDeletedError,
+} from "@mindkid/errors/account";
+import { InsufficientRoleError } from "@mindkid/errors/auth";
+import { InternalError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
-import { createError, defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
@@ -14,19 +20,14 @@ export default defineEventHandler(async (event) => {
 
   // BR-NTA-05: super_admin only
   if (manager.role !== "super_admin") {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "INSUFFICIENT_ROLE",
-      message: "Chỉ super_admin mới có quyền gửi lại thông báo (BR-NTA-05)",
-    });
+    throw new InsufficientRoleError(
+      "Chỉ super_admin mới có quyền gửi lại thông báo (BR-NTA-05)"
+    );
   }
 
   const id = Number(getRouterParam(event, "id"));
   if (!id || id <= 0) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOTIFICATION_NOT_FOUND",
-    });
+    throw new NotificationNotFoundError("NOTIFICATION_NOT_FOUND");
   }
 
   const db = getOwnerDb();
@@ -36,10 +37,7 @@ export default defineEventHandler(async (event) => {
     .where(eq(notifications.id, id));
 
   if (!original) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "NOTIFICATION_NOT_FOUND",
-    });
+    throw new NotificationNotFoundError("NOTIFICATION_NOT_FOUND");
   }
 
   // Check if recipient user still exists
@@ -50,11 +48,9 @@ export default defineEventHandler(async (event) => {
       .where(eq(users.id, original.recipientId));
 
     if (!user || user.status === "deleted") {
-      throw createError({
-        statusCode: 409,
-        statusMessage: "RECIPIENT_DELETED",
-        message: "Người nhận đã bị vô hiệu hoá hoặc xoá tài khoản",
-      });
+      throw new UserAlreadyDeletedError(
+        "Người nhận đã bị vô hiệu hoá hoặc xoá tài khoản"
+      );
     }
   }
 
@@ -70,11 +66,7 @@ export default defineEventHandler(async (event) => {
     .returning();
 
   if (!newNotification) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: "NOTIFICATION_INSERT_FAILED",
-      message: "Tạo bản ghi thông báo mới thất bại",
-    });
+    throw new InternalError("Tạo bản ghi thông báo mới thất bại");
   }
 
   await db.insert(notificationDeliveries).values({

@@ -1,7 +1,9 @@
 import crypto from "node:crypto";
 import { auditLogs, getOwnerDb, mfaRecoveryRequests } from "@mindkid/db";
+import { TokenExpiredError } from "@mindkid/errors/auth";
+import { ValidationError } from "@mindkid/errors/common";
 import { and, eq, gt } from "drizzle-orm";
-import { createError, defineEventHandler, getHeader, getQuery } from "h3";
+import { defineEventHandler, getHeader, getQuery } from "h3";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
@@ -16,11 +18,10 @@ export default defineEventHandler(async (event) => {
       : "";
 
   if (!token) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "TOKEN_REQUIRED",
-      message: "Mã xác thực token không được để trống",
-    });
+    throw ValidationError.field(
+      "token",
+      "Mã xác thực token không được để trống"
+    );
   }
 
   const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
@@ -39,11 +40,7 @@ export default defineEventHandler(async (event) => {
     );
 
   if (!matchingReq) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "TOKEN_INVALID_OR_EXPIRED",
-      message: "Mã xác thực không hợp lệ hoặc đã hết hạn",
-    });
+    throw new TokenExpiredError("Mã xác thực không hợp lệ hoặc đã hết hạn");
   }
 
   // Update status to waiting and clear token hash

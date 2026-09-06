@@ -10,9 +10,13 @@ import {
   skills,
   users,
 } from "@mindkid/db";
+import { AdminNoteRequiredError } from "@mindkid/errors/account";
+import { InsufficientRoleError } from "@mindkid/errors/auth";
+import { NotFoundError, RateLimitedError } from "@mindkid/errors/common";
+import { BatchTooLargeError } from "@mindkid/errors/play";
 import { getPrivateSignedUrl, uploadPrivateAsset } from "@mindkid/storage";
 import { desc, eq, sql } from "drizzle-orm";
-import { createError, defineEventHandler, getQuery, getRouterParam } from "h3";
+import { defineEventHandler, getQuery } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const CLOSED_EXPORT_KINDS = [
@@ -35,12 +39,9 @@ function checkExportRateLimit(managerId: number): void {
 
   if (record && record.date === today) {
     if (record.count >= 5) {
-      throw createError({
-        statusCode: 429,
-        statusMessage: "RATE_LIMIT_EXCEEDED",
-        message:
-          "Giới hạn xuất dữ liệu tối đa 5 lần/ngày mỗi Manager (BR-EXP-07)",
-      });
+      throw new RateLimitedError(
+        "Giới hạn xuất dữ liệu tối đa 5 lần/ngày mỗi Manager (BR-EXP-07)"
+      );
     }
     record.count++;
   } else {
@@ -249,30 +250,24 @@ export default defineEventHandler(async (event) => {
 
   // BR-EXP-06: super_admin only
   if (manager.role !== "super_admin") {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "INSUFFICIENT_ROLE",
-      message: "Chỉ super_admin mới có quyền trích xuất dữ liệu (BR-EXP-06)",
-    });
+    throw new InsufficientRoleError(
+      "Chỉ super_admin mới có quyền trích xuất dữ liệu (BR-EXP-06)"
+    );
   }
 
   const kind = getRouterParam(event, "kind");
   if (!(kind && CLOSED_EXPORT_KINDS.includes(kind))) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "EXPORT_KIND_NOT_FOUND",
-      message: `Loại xuất dữ liệu '${kind}' không thuộc danh sách đóng cho phép (BR-EXP-01)`,
-    });
+    throw new NotFoundError(
+      `Loại xuất dữ liệu '${kind}' không thuộc danh sách đóng cho phép (BR-EXP-01)`
+    );
   }
 
   const query = getQuery(event);
   const reason = typeof query.reason === "string" ? query.reason.trim() : "";
   if (!reason || reason.length < 10) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "REASON_REQUIRED",
-      message: "Xuất dữ liệu bắt buộc lý do tối thiểu 10 ký tự (BR-EXP-03)",
-    });
+    throw new AdminNoteRequiredError(
+      "Xuất dữ liệu bắt buộc lý do tối thiểu 10 ký tự (BR-EXP-03)"
+    );
   }
 
   const managerId = manager.manager_id;
@@ -282,12 +277,9 @@ export default defineEventHandler(async (event) => {
   const { csvContent, rowCount } = await generateCsvData(kind, db);
 
   if (rowCount > MAX_EXPORT_ROWS) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "EXPORT_ROW_LIMIT_EXCEEDED",
-      message:
-        "Số lượng dòng xuất vượt quá giới hạn 100.000 dòng. Vui lòng thu hẹp khoảng thời gian (BR-EXP-05)",
-    });
+    throw new BatchTooLargeError(
+      "Số lượng dòng xuất vượt quá giới hạn 100.000 dòng. Vui lòng thu hẹp khoảng thời gian (BR-EXP-05)"
+    );
   }
 
   // Save CSV to private storage and create 15-min signed URL (BR-EXP-04)

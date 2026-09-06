@@ -1,5 +1,4 @@
 import {
-  appError,
   decodeOAuthStatePayload,
   getBrowserSessionService,
   getOAuthRegistry,
@@ -19,10 +18,21 @@ import {
   socialIdentities,
   users,
 } from "@mindkid/db";
+import {
+  AccountDeletedError,
+  AccountSuspendedError,
+} from "@mindkid/errors/account";
+import { MfaRequiredError, UnauthenticatedError } from "@mindkid/errors/auth";
+import { NotFoundError } from "@mindkid/errors/common";
+import {
+  OauthProviderDisabledError,
+  OauthStateInvalidError,
+  SocialIdentityAlreadyLinkedError,
+  SocialProviderAlreadyLinkedError,
+} from "@mindkid/errors/social";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import {
-  createError,
   defineEventHandler,
   deleteCookie,
   getCookie,
@@ -33,7 +43,6 @@ import {
   type H3Event,
   sendRedirect,
   setCookie,
-  setResponseStatus,
 } from "h3";
 import {
   assertRateLimitAllowed,
@@ -57,32 +66,16 @@ export function maskEmail(email: string | null): string {
 export const OAUTH_TICKET_COOKIE_NAME = "tm_oauth_ticket";
 
 function validateOAuthProvider(
-  event: H3Event,
+  _event: H3Event,
   rawProvider: string
 ): OAuthProvider {
   if (!isOAuthProvider(rawProvider)) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "OAUTH_PROVIDER_DISABLED",
-      data: {
-        code: "OAUTH_PROVIDER_DISABLED",
-        message: "Nhà cung cấp đăng nhập này hiện chưa khả dụng.",
-      },
-    });
+    throw new OauthProviderDisabledError();
   }
 
   const registry = getOAuthRegistry();
   if (!registry.isProviderEnabled(rawProvider)) {
-    setResponseStatus(event, 404);
-    throw createError({
-      statusCode: 404,
-      statusMessage: "OAUTH_PROVIDER_DISABLED",
-      data: {
-        code: "OAUTH_PROVIDER_DISABLED",
-        message: "Nhà cung cấp đăng nhập này hiện chưa khả dụng.",
-      },
-    });
+    throw new OauthProviderDisabledError();
   }
 
   return rawProvider;
@@ -95,15 +88,7 @@ function parseAndValidateState(
 ): OAuthStatePayload {
   const stateCookie = getCookie(event, OAUTH_COOKIE_NAME);
   if (!stateCookie) {
-    setResponseStatus(event, 400);
-    throw createError({
-      statusCode: 400,
-      statusMessage: "OAUTH_STATE_INVALID",
-      data: {
-        code: "OAUTH_STATE_INVALID",
-        message: "Phiên xác thực mạng xã hội không hợp lệ hoặc đã hết hạn.",
-      },
-    });
+    throw new OauthStateInvalidError();
   }
 
   const statePayload = decodeOAuthStatePayload(
@@ -118,15 +103,7 @@ function parseAndValidateState(
     statePayload.provider !== rawProvider ||
     statePayload.state !== queryState
   ) {
-    setResponseStatus(event, 400);
-    throw createError({
-      statusCode: 400,
-      statusMessage: "OAUTH_STATE_INVALID",
-      data: {
-        code: "OAUTH_STATE_INVALID",
-        message: "Phiên xác thực mạng xã hội không hợp lệ hoặc đã hết hạn.",
-      },
-    });
+    throw new OauthStateInvalidError();
   }
 
   return statePayload;
@@ -140,7 +117,7 @@ async function handleOAuthLinkFlow(
   returnTo: string
 ) {
   if (!currentUserId) {
-    throw appError("UNAUTHENTICATED");
+    throw new UnauthenticatedError();
   }
 
   const db = getAppDb();
@@ -158,7 +135,7 @@ async function handleOAuthLinkFlow(
     );
 
   if (existingUserProvider) {
-    throw appError("SOCIAL_PROVIDER_ALREADY_LINKED");
+    throw new SocialProviderAlreadyLinkedError();
   }
 
   // Check BR-SLK-06: UNIQUE (provider, provider_user_id) attached to another user
@@ -173,7 +150,7 @@ async function handleOAuthLinkFlow(
     );
 
   if (existingIdentity) {
-    throw appError("SOCIAL_IDENTITY_ALREADY_LINKED");
+    throw new SocialIdentityAlreadyLinkedError();
   }
 
   // Insert social identity (BR-SLK-03: NEVER overwrite users.email)
@@ -275,14 +252,14 @@ async function handleOAuthLoginFlow(
       .where(eq(users.id, existingIdentity.userId));
 
     if (!user) {
-      throw appError("NOT_FOUND");
+      throw new NotFoundError();
     }
 
     if (user.status === "suspended") {
-      throw appError("ACCOUNT_SUSPENDED");
+      throw new AccountSuspendedError();
     }
     if (user.status === "deleted") {
-      throw appError("ACCOUNT_DELETED", {
+      throw new AccountDeletedError({
         cancel_url: "/me/settings/delete/cancel",
         purge_at: user.purgeAt?.toISOString(),
       });
@@ -300,16 +277,10 @@ async function handleOAuthLoginFlow(
       );
 
     if (mfa?.confirmedAt) {
-      setResponseStatus(event, 428);
-      throw createError({
-        statusCode: 428,
-        statusMessage: "MFA_REQUIRED",
-        data: {
-          code: "MFA_REQUIRED",
-          message: "Vui lòng hoàn tất xác thực đa yếu tố để tiếp tục.",
-          details: { user_id: user.id },
-        },
-      });
+      throw new MfaRequiredError(
+        "Vui lòng hoàn tất xác thực đa yếu tố để tiếp tục.",
+        { user_id: user.id }
+      );
     }
 
     await establishUserSession(event, user, existingIdentity.id);

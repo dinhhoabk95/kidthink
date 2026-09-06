@@ -4,8 +4,9 @@ import {
   notifications,
   users,
 } from "@mindkid/db";
+import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { and, desc, eq, gte, ilike, lte, or, type SQL } from "drizzle-orm";
-import { createError, defineEventHandler, getQuery } from "h3";
+import { defineEventHandler, getQuery } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 /**
@@ -130,11 +131,9 @@ export default defineEventHandler(async (event) => {
 
   // BR-NTA-05: super_admin only
   if (manager.role !== "super_admin") {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "INSUFFICIENT_ROLE",
-      message: "Chỉ super_admin mới có quyền xem lịch sử thông báo (BR-NTA-05)",
-    });
+    throw new InsufficientRoleError(
+      "Chỉ super_admin mới có quyền xem lịch sử thông báo (BR-NTA-05)"
+    );
   }
 
   const query = getQuery(event);

@@ -1,11 +1,7 @@
 import { childProfiles, consentLogs, getOwnerDb, users } from "@mindkid/db";
+import { NotFoundError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
-import {
-  createError,
-  defineEventHandler,
-  setHeader,
-  setResponseStatus,
-} from "h3";
+import { defineEventHandler, setHeader } from "h3";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
@@ -54,8 +50,7 @@ export default defineEventHandler(async (event) => {
   const user = userRows[0];
 
   if (!user) {
-    setResponseStatus(event, 404);
-    throw createError({ statusCode: 404, statusMessage: "NOT_FOUND" });
+    throw new NotFoundError("NOT_FOUND");
   }
 
   setHeader(event, "Content-Type", "application/json");

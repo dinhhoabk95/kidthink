@@ -6,10 +6,12 @@ import {
   lessons,
   seoPages,
 } from "@mindkid/db";
+import { NotFoundError, ValidationError } from "@mindkid/errors/common";
+import { PublishChecklistFailedError } from "@mindkid/errors/content";
 import type { ContentLifecycleStatus, ManagerRole } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { transitionContentStatus } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { verifyPreviewToken } from "#server/utils/preview-token";
@@ -46,12 +48,9 @@ function validateChecklist(
   checklist?: Record<string, boolean>
 ): void {
   if (!checklist || typeof checklist !== "object") {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "CHECKLIST_REQUIRED",
-      message:
-        "Duyệt nội dung bắt buộc hoàn thành 6 nhóm checklist duyệt (BR-CRQ-07)",
-    });
+    throw new PublishChecklistFailedError(
+      "Duyệt nội dung bắt buộc hoàn thành 6 nhóm checklist duyệt (BR-CRQ-07)"
+    );
   }
   const requiredGroups =
     entityType === "lesson" || entityType === "activity"
@@ -60,11 +59,9 @@ function validateChecklist(
 
   for (const grp of requiredGroups) {
     if (!checklist[grp]) {
-      throw createError({
-        statusCode: 422,
-        statusMessage: "CHECKLIST_INCOMPLETE",
-        message: `Checklist duyệt thiếu nhóm bắt buộc '${grp}' (BR-CRQ-07)`,
-      });
+      throw new PublishChecklistFailedError(
+        `Checklist duyệt thiếu nhóm bắt buộc '${grp}'`
+      );
     }
   }
 }
@@ -134,12 +131,9 @@ async function ensureApprovalRequirements(options: {
   });
 
   if (!isPreviewValid) {
-    throw createError({
-      statusCode: 422,
-      statusMessage: "PREVIEW_TOKEN_REQUIRED",
-      message:
-        "Duyệt nội dung bắt buộc mở preview trước khi duyệt (BR-CRQ-02, D-KG)",
-    });
+    throw new ValidationError(
+      "Duyệt nội dung bắt buộc mở preview trước khi duyệt (BR-CRQ-02, D-KG)"
+    );
   }
 }
 
@@ -179,11 +173,7 @@ export default defineEventHandler(async (event) => {
   const id = Number(idParam);
 
   if (!(typeParam && VALID_TYPES.includes(typeParam) && id) || id <= 0) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "ENTITY_NOT_FOUND",
-      message: `Unknown content entity '${typeParam}' with id '${idParam}'`,
-    });
+    throw new NotFoundError(`Unknown content entity '${typeParam}'`);
   }
 
   const { toStatus, reason, expectedVersion, checklist, previewToken } =

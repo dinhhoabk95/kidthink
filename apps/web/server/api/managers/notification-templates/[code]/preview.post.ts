@@ -1,9 +1,11 @@
+import { InsufficientRoleError } from "@mindkid/errors/auth";
+import { InternalError, NotFoundError } from "@mindkid/errors/common";
 import {
   type NotificationCode,
   renderEmailTemplate,
   TEMPLATE_REGISTRY,
 } from "@mindkid/notification";
-import { createError, defineEventHandler, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getRouterParam } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -19,21 +21,14 @@ export default defineEventHandler(async (event) => {
 
   // BR-NTA-05: super_admin only
   if (manager.role !== "super_admin") {
-    throw createError({
-      statusCode: 403,
-      statusMessage: "INSUFFICIENT_ROLE",
-      message:
-        "Chỉ super_admin mới có quyền xem trước mẫu thông báo (BR-NTA-05)",
-    });
+    throw new InsufficientRoleError(
+      "Chỉ super_admin mới có quyền xem trước mẫu thông báo (BR-NTA-05)"
+    );
   }
 
   const code = getRouterParam(event, "code") as NotificationCode;
   if (!(code && code in TEMPLATE_REGISTRY)) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "TEMPLATE_NOT_FOUND",
-      message: `Không tìm thấy mẫu thông báo mã '${code}'`,
-    });
+    throw new NotFoundError(`Không tìm thấy mẫu thông báo mã '${code}'`);
   }
 
   const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
@@ -47,11 +42,7 @@ export default defineEventHandler(async (event) => {
   // Provide sensible defaults for preview if missing
   const templateDef = TEMPLATE_REGISTRY[code];
   if (!templateDef) {
-    throw createError({
-      statusCode: 404,
-      statusMessage: "TEMPLATE_NOT_FOUND",
-      message: `Không tìm thấy mẫu thông báo mã '${code}'`,
-    });
+    throw new NotFoundError(`Không tìm thấy mẫu thông báo mã '${code}'`);
   }
   const previewPayload: Record<string, unknown> = { ...sampleData };
   for (const reqVar of templateDef.requiredVars) {
@@ -70,10 +61,6 @@ export default defineEventHandler(async (event) => {
     };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
-    throw createError({
-      statusCode: 422,
-      statusMessage: "TEMPLATE_RENDER_ERROR",
-      message: `Lỗi khi biên dịch mẫu thông báo: ${msg}`,
-    });
+    throw new InternalError(`Lỗi khi biên dịch mẫu thông báo: ${msg}`);
   }
 });

@@ -15,6 +15,7 @@
     "@mindkid/config": "workspace:*",
     "@mindkid/content": "workspace:*",
     "@mindkid/db": "workspace:*",
+    "@mindkid/errors": "workspace:*",
     "@mindkid/game-engine": "workspace:*",
     "@mindkid/shared": "workspace:*",
     "@mindkid/taxonomy": "workspace:*",

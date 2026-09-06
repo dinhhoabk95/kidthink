@@ -99,6 +99,10 @@ export interface ProjectOptions {
   readonly theme: string;
   readonly seed: number;
   readonly round_index?: number;
+  /** Mã các kỹ năng chơi mà một level dạy thực sự dạy — `BR-CTM-04`. */
+  readonly teaches?: readonly string[];
+  /** Thứ tự tiết trong một chủ đề nhiều tiết — `BR-CIM-20`. */
+  readonly sequence_no?: number;
 }
 
 export interface ProjectionRequires {
@@ -150,6 +154,19 @@ export interface SkillLevelPlan {
   readonly montessori_ref?: string;
   readonly legacy_v1_ref?: string;
   readonly skill_codes?: readonly string[];
+  /**
+   * Dataset riêng của level này, thay cho dataset của kỹ năng sở hữu.
+   *
+   * Dùng cho level dạy (`kind = 'teach'`): một bài làm quen dạy trọn một **chủ đề**
+   * — số 0–10, bảy hình phẳng, tám màu — chứ không dạy dataset của một kỹ năng lẻ.
+   * Chủ đề không có hàng `skills` riêng (`BR-CTM-01`), nên nó sống ở đây.
+   *
+   * Cấm — NEVER dùng cho level chấm: level chấm phải đo đúng dataset của kỹ năng
+   * nó gắn vào, nếu không báo cáo tiến bộ mất neo.
+   */
+  readonly dataset?: SkillDataset;
+  /** Thứ tự tiết trong một chủ đề nhiều tiết — `BR-CIM-20`. Chỉ dùng cho level dạy. */
+  readonly sequence_no?: number;
 }
 
 export interface SkillSeed {

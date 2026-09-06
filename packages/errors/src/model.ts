@@ -36,21 +36,102 @@ export type ValidationDetails = {
  * `ZodError` sang `fields[]` nằm ở tầng app
  * (`apps/web/server/utils/api-error.ts`).
  */
+export interface ValidationObjectInput {
+  readonly reason?: string;
+  readonly message?: string;
+  readonly errors?: unknown;
+  readonly fields?: readonly ValidationFieldError[];
+  readonly [key: string]: unknown;
+}
+
+export type ValidationInput =
+  | readonly ValidationFieldError[]
+  | string
+  | ValidationObjectInput;
+
+function parseValidationFieldsFromObject(inputObj: ValidationObjectInput): {
+  readonly fields: readonly ValidationFieldError[];
+  readonly message?: string;
+} {
+  if (typeof inputObj.reason === "string") {
+    return {
+      fields: [{ path: "", message: inputObj.reason }],
+      message: inputObj.reason,
+    };
+  }
+  if (typeof inputObj.message === "string") {
+    return {
+      fields: [{ path: "", message: inputObj.message }],
+      message: inputObj.message,
+    };
+  }
+  if (Array.isArray(inputObj.fields)) {
+    return { fields: inputObj.fields };
+  }
+  if (Array.isArray(inputObj.errors)) {
+    return {
+      fields: inputObj.errors.map((e: unknown) => {
+        if (typeof e === "string") {
+          return { path: "", message: e };
+        }
+        const rec = e as Record<string, unknown>;
+        return {
+          path: String(rec.path ?? ""),
+          message: String(rec.message ?? ""),
+        };
+      }),
+    };
+  }
+  return { fields: [] };
+}
+
+function parseValidationInput(
+  fieldsOrInput?: ValidationInput,
+  messageOverride?: string
+): {
+  readonly fields: readonly ValidationFieldError[];
+  readonly message: string;
+} {
+  const defaultMsg = messageOverride ?? "Dữ liệu yêu cầu không hợp lệ.";
+
+  if (typeof fieldsOrInput === "string") {
+    return {
+      fields: [{ path: "", message: fieldsOrInput }],
+      message: messageOverride ?? fieldsOrInput,
+    };
+  }
+  if (Array.isArray(fieldsOrInput)) {
+    return { fields: fieldsOrInput, message: defaultMsg };
+  }
+  if (
+    fieldsOrInput &&
+    typeof fieldsOrInput === "object" &&
+    !Array.isArray(fieldsOrInput)
+  ) {
+    const parsed = parseValidationFieldsFromObject(
+      fieldsOrInput as ValidationObjectInput
+    );
+    return {
+      fields: parsed.fields,
+      message: messageOverride ?? parsed.message ?? defaultMsg,
+    };
+  }
+  return { fields: [], message: defaultMsg };
+}
+
 export class ValidationError extends AppError<ValidationDetails> {
   readonly fields: readonly ValidationFieldError[];
 
-  constructor(
-    fields: readonly ValidationFieldError[],
-    message = "Dữ liệu yêu cầu không hợp lệ."
-  ) {
+  constructor(fieldsOrInput?: ValidationInput, messageOverride?: string) {
+    const parsed = parseValidationInput(fieldsOrInput, messageOverride);
     super({
       code: "VALIDATION_FAILED",
-      message,
+      message: parsed.message,
       status: VALIDATION_STATUS,
-      details: { fields },
+      details: { fields: parsed.fields },
       name: "ValidationError",
     });
-    this.fields = fields;
+    this.fields = parsed.fields;
   }
 
   /** Lỗi một trường — dùng cho ràng buộc nghiệp vụ ngoài schema. */
