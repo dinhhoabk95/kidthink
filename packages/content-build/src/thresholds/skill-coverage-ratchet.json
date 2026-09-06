@@ -1,5 +1,5 @@
 {
-  "max_skills_without_levels": 35,
+  "max_skills_without_levels": 30,
   "recorded_at": "2026-09-06",
-  "note": "Trần nợ nội dung cho BR-SKQ-06. Gieo 35 kỹ năng nhận biết C5 ở Phase 1 (Task #255). Trần nâng lên 35 có kiểm soát và giảm dần về 0 qua các lát cắt WP255.5-WP255.9."
+  "note": "Trần nợ nội dung cho BR-SKQ-06. WP255.5 hoàn tất lát cắt C5.LET (5 kỹ năng), trần giảm từ 35 xuống 30. Giảm dần về 0 qua các lát cắt tiếp theo."
 }

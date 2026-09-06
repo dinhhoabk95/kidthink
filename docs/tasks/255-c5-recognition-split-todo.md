@@ -88,11 +88,11 @@
 
 ## WP255.5 — Lát cắt dọc 1: `C5.LET` (5 kỹ năng)
 
-- [ ] 5 dataset thật, đủ 29 chữ, mỗi kỹ năng đúng nhóm của nó
-- [ ] 50 level chấm (≥10 mỗi kỹ năng, ≥2 khuôn, ≤5 mỗi cặp)
-- [ ] 5 level dạy `GT-000`, `difficulty: 1`, `teaches` khai đủ, `access_tier` ≤ tier thấp
+- [x] 5 dataset thật, đủ 29 chữ, mỗi kỹ năng đúng nhóm của nó
+- [x] 50 level chấm (≥10 mỗi kỹ năng, ≥2 khuôn, ≤5 mỗi cặp)
+- [x] 5 level dạy `GT-000`, `difficulty: 1`, `teaches` khai đủ, `access_tier` ≤ tier thấp
       nhất của nhóm
-- [ ] **Nghiệm thu:** ratchet 35 → 30 · `check:intro-coverage` không tăng ·
+- [x] **Nghiệm thu:** ratchet 35 → 30 · `check:intro-coverage` không tăng ·
       thư mục `c5/let/` có 29 glyph phân biệt ·
       chơi thật: hồ sơ trẻ mới vào `C5.ALP.01` bị `428 INTRO_REQUIRED` vì chưa qua
       `C5.LET.01`; học xong bài dạy, chơi đạt, mở được `ALP.01`; mở lại trình duyệt vẫn
