@@ -83,6 +83,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import { AI_SUGGESTION_LABEL } from "@mindkid/shared/client";
   import { ref } from "vue";
 
@@ -121,32 +122,63 @@
     emit("dismissed");
   }
 
+  function buildAiRequestPayload(
+    feature: string,
+    childUuid?: string,
+    skillCode?: string
+  ): { endpoint: string; body: Record<string, unknown> } {
+    if (feature === "explain_report") {
+      return {
+        endpoint: "/api/users/ai/explain-report",
+        body: { child_uuid: childUuid, skill_code: skillCode },
+      };
+    }
+    if (feature === "suggest_content") {
+      return {
+        endpoint: "/api/users/ai/suggest-content",
+        body: { child_uuid: childUuid, content_type: "game_level" },
+      };
+    }
+    return {
+      endpoint: "/api/users/ai/summarize-report",
+      body: { child_uuid: childUuid, period: "7d" },
+    };
+  }
+
+  function extractAiErrorMessage(err: unknown): string {
+    if (
+      isApiError(err, "QUOTA_EXCEEDED") ||
+      (isApiError(err) && err.statusCode === 402)
+    ) {
+      return "Tài khoản không đủ credits AI. Vui lòng nạp thêm để tiếp tục.";
+    }
+    if (isApiError(err)) {
+      return err.message;
+    }
+    if (err instanceof Error) {
+      return err.message;
+    }
+    return "Không thể kết nối trợ lý AI. Vui lòng thử lại.";
+  }
+
+  interface AiResponsePayload {
+    summary?: string;
+    explanation?: string;
+    tip?: string;
+    rewritten_guide?: string;
+    [key: string]: unknown;
+  }
+
   async function requestAi() {
     isLoading.value = true;
     errorMessage.value = null;
 
     try {
-      let endpoint = "/api/users/ai/summarize-report";
-      let body: Record<string, unknown> = {
-        child_uuid: props.childUuid,
-        period: "7d",
-      };
-
-      if (props.feature === "explain_report") {
-        endpoint = "/api/users/ai/explain-report";
-        body = { child_uuid: props.childUuid, skill_code: props.skillCode };
-      } else if (props.feature === "suggest_content") {
-        endpoint = "/api/users/ai/suggest-content";
-        body = { child_uuid: props.childUuid, content_type: "game_level" };
-      }
-
-      interface AiResponsePayload {
-        summary?: string;
-        explanation?: string;
-        tip?: string;
-        rewritten_guide?: string;
-        [key: string]: unknown;
-      }
+      const { endpoint, body } = buildAiRequestPayload(
+        props.feature,
+        props.childUuid,
+        props.skillCode
+      );
 
       const res = await $fetch<AiResponsePayload>(endpoint, {
         method: "POST",
@@ -161,18 +193,7 @@
         null;
       emit("completed", res);
     } catch (err: unknown) {
-      const errObj = err as
-        | { statusCode?: number; data?: { message?: string }; message?: string }
-        | undefined;
-      if (errObj?.statusCode === 402) {
-        errorMessage.value =
-          "Tài khoản không đủ credits AI. Vui lòng nạp thêm để tiếp tục.";
-      } else {
-        errorMessage.value =
-          errObj?.data?.message ||
-          errObj?.message ||
-          "Không thể kết nối trợ lý AI. Vui lòng thử lại.";
-      }
+      errorMessage.value = extractAiErrorMessage(err);
     } finally {
       isLoading.value = false;
     }

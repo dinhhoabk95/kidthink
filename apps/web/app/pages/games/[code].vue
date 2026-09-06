@@ -210,6 +210,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import {
     type AccessTier,
     type CtaViewer,
@@ -302,7 +303,7 @@
   const hasError = computed(() => Boolean(error.value));
 
   const isArchived = computed(() => {
-    return error.value?.statusCode === 410;
+    return isApiError(error.value, "CONTENT_ARCHIVED");
   });
 
   const alternatives = computed<AlternativeGame[]>(() => {

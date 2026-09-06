@@ -303,6 +303,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import { ref } from "vue";
   import { useRouter } from "vue-router";
   import { useAdminAuth } from "~/composables/use-admin-auth";
@@ -334,32 +335,48 @@
   const copyStatus = ref("");
   const copyRecoveryStatus = ref("");
 
-  interface ApiErrorData {
-    status?: string;
-    challenge?: string;
-    mfa_enabled?: boolean;
-    message?: string;
-    reason?: string;
-    code?: string;
-  }
-
-  interface ApiFetchError {
-    statusCode?: number;
-    status?: number;
-    data?: ApiErrorData;
-  }
-
   interface LoginSuccessResponse {
     status: string;
     challenge: string;
     mfa_enabled: boolean;
   }
 
-  function parseFetchError(error: unknown): ApiFetchError {
-    if (typeof error === "object" && error !== null) {
-      return error as ApiFetchError;
+  function extractManagerChallenge(err: unknown): {
+    challenge: string;
+    mfaEnabled: boolean;
+  } {
+    if (
+      isApiError(err, "MFA_REQUIRED") ||
+      (isApiError(err) &&
+        err.statusCode === 428 &&
+        (err.details?.challenge ||
+          (err.data as Record<string, unknown> | undefined)?.challenge))
+    ) {
+      const details = isApiError(err)
+        ? (err.details as Record<string, unknown> | undefined)
+        : undefined;
+      const dataObj = isApiError(err)
+        ? (err.data as Record<string, unknown> | undefined)
+        : undefined;
+      return {
+        challenge: String(details?.challenge ?? dataObj?.challenge ?? ""),
+        mfaEnabled: Boolean(details?.mfa_enabled ?? dataObj?.mfa_enabled),
+      };
     }
-    return {};
+    throw err;
+  }
+
+  async function handleMfaSetup(challenge: string) {
+    const setupRes = await api.post<{
+      otpauth_uri: string;
+      challenge: string;
+    }>("/api/guest/auth/managers/mfa-setup", {
+      body: { challenge },
+    });
+    otpauthUri.value = setupRes.otpauth_uri;
+    currentChallenge.value = setupRes.challenge;
+    totpCode.value = "";
+    authState.value = "enroll";
   }
 
   async function handlePasswordLogin() {
@@ -386,17 +403,10 @@
         }
         challenge = res.challenge;
         mfaEnabled = Boolean(res.mfa_enabled);
-      } catch (err) {
-        const fetchError = parseFetchError(err);
-        if (
-          (fetchError.statusCode === 428 || fetchError.status === 428) &&
-          fetchError.data?.challenge
-        ) {
-          challenge = fetchError.data.challenge;
-          mfaEnabled = Boolean(fetchError.data.mfa_enabled);
-        } else {
-          throw err;
-        }
+      } catch (err: unknown) {
+        const extracted = extractManagerChallenge(err);
+        challenge = extracted.challenge;
+        mfaEnabled = extracted.mfaEnabled;
       }
 
       currentChallenge.value = challenge;
@@ -405,27 +415,26 @@
         totpCode.value = "";
         authState.value = "mfa";
       } else {
-        // Manager has not enrolled MFA yet -> Request enrollment setup
-        const setupRes = await api.post<{
-          otpauth_uri: string;
-          challenge: string;
-        }>("/api/guest/auth/managers/mfa-setup", {
-          body: { challenge },
-        });
-        otpauthUri.value = setupRes.otpauth_uri;
-        currentChallenge.value = setupRes.challenge;
-        totpCode.value = "";
-        authState.value = "enroll";
+        await handleMfaSetup(challenge);
       }
-    } catch (err) {
-      const fetchError = parseFetchError(err);
-      errorMessage.value =
-        fetchError.data?.message ||
-        fetchError.data?.reason ||
-        "Email hoặc mật khẩu không chính xác.";
+    } catch (err: unknown) {
+      errorMessage.value = extractLoginErrorMessage(
+        err,
+        "Email hoặc mật khẩu không chính xác."
+      );
     } finally {
       isLoading.value = false;
     }
+  }
+
+  function extractLoginErrorMessage(err: unknown, fallback: string): string {
+    if (isApiError(err)) {
+      return err.message;
+    }
+    if (err instanceof Error) {
+      return err.message;
+    }
+    return fallback;
   }
 
   async function handleMfaSubmit() {
@@ -449,12 +458,11 @@
       } else {
         await finishEnrollmentAndRedirect();
       }
-    } catch (err) {
-      const fetchError = parseFetchError(err);
-      errorMessage.value =
-        fetchError.data?.message ||
-        fetchError.data?.reason ||
-        "Mã xác thực không hợp lệ. Vui lòng thử lại.";
+    } catch (err: unknown) {
+      errorMessage.value = extractLoginErrorMessage(
+        err,
+        "Mã xác thực không hợp lệ. Vui lòng thử lại."
+      );
     } finally {
       isLoading.value = false;
     }

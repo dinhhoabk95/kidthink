@@ -1,4 +1,5 @@
 import { appError, ChildNotFoundError } from "@mindkid/auth";
+import { RateLimitedError } from "@mindkid/errors";
 import { createError } from "h3";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import errorHandler from "#server/error";
@@ -136,6 +137,35 @@ describe("handler lỗi chung /api/*", () => {
 
     expect(sent.status).toBeUndefined();
     expect(sent.body).toBeUndefined();
+  });
+
+  it("lớp domain mới từ @mindkid/errors ra đúng body §7.1", async () => {
+    await callHandler(new RateLimitedError({ retry_after_s: 30 }));
+
+    expect(sent.status).toBe(429);
+    expect(sent.statusText).toBe("RATE_LIMITED");
+    expect(bodyOf()).toEqual({
+      code: "RATE_LIMITED",
+      message: "Bạn thao tác hơi nhanh. Vui lòng thử lại sau ít phút.",
+      details: { retry_after_s: 30 },
+    });
+  });
+
+  it("lỗi unique Postgres map sang mã nghiệp vụ CODE_ALREADY_EXISTS và không chứa tên constraint", async () => {
+    const pgError = Object.assign(
+      new Error(
+        'duplicate key value violates unique constraint "users_email_unique"'
+      ),
+      { code: "23505" }
+    );
+    await callHandler(pgError);
+
+    expect(sent.status).toBe(409);
+    expect(sent.statusText).toBe("CODE_ALREADY_EXISTS");
+    const body = bodyOf();
+    expect(body.code).toBe("CODE_ALREADY_EXISTS");
+    expect(JSON.stringify(body)).not.toContain("users_email_unique");
+    expect(JSON.stringify(body)).not.toContain("23505");
   });
 
   it("đặt đủ header bảo vệ trang lỗi", async () => {

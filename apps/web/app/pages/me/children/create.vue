@@ -139,6 +139,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { normalizeApiError } from "@mindkid/errors/client";
   import { sanitizeRedirectTarget } from "@mindkid/shared/client";
   import { computed, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
@@ -161,12 +162,6 @@
     display_name: string;
     age_band: string;
     avatar_id: string;
-  }
-
-  interface ApiErrorShape {
-    data?: {
-      message?: string;
-    };
   }
 
   const MIN_AGE = 3;
@@ -227,9 +222,8 @@
 
       await router.push(destination.value);
     } catch (err) {
-      const failure = err as ApiErrorShape;
       errorMessage.value =
-        failure.data?.message ||
+        normalizeApiError(err).message ||
         "Chưa tạo được hồ sơ bé. Anh chị kiểm tra lại thông tin giúp em nhé.";
     } finally {
       isSaving.value = false;

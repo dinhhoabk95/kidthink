@@ -33,7 +33,7 @@ phase_end() {
 TOTAL_START=$(date +%s)
 
 # ── Phase 1: Lint (song song) ─────────────────────────────────────────────
-echo "▸ Phase 1: lint"
+echo "▸ Phase 1: lint + intro-coverage"
 phase_start
 
 pnpm lint &
@@ -41,6 +41,16 @@ PID_LINT=$!
 
 pnpm lint:deps &
 PID_DEPS=$!
+
+# Cổng bậc thang độ phủ bài làm quen khái niệm — BR-CIG-18.
+# Nợ chỉ được giảm; thêm level chấm cho kỹ năng chưa có bài dạy làm cổng đỏ.
+pnpm check:intro-coverage &
+PID_INTRO=$!
+
+# Cổng bậc thang mã lỗi — Task #254 (WP254.2).
+# Đo 5 phép đo nợ lỗi; nợ chỉ được giảm.
+pnpm check:error-codes &
+PID_ERRORS=$!
 
 LINT_OK=true
 if ! wait $PID_LINT; then
@@ -53,10 +63,20 @@ if ! wait $PID_DEPS; then
   LINT_OK=false
 fi
 
+if ! wait $PID_INTRO; then
+  echo "✗ intro-coverage ratchet failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_ERRORS; then
+  echo "✗ check:error-codes ratchet failed" >&2
+  LINT_OK=false
+fi
+
 if [ "$LINT_OK" = false ]; then
   exit 1
 fi
-echo "✓ lint"
+echo "✓ lint + intro-coverage + error-codes"
 phase_end
 
 # ── Phase 2: Typecheck (cổng bậc thang + incremental) ─────────────────────

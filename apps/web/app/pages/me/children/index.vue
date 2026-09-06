@@ -142,6 +142,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError, normalizeApiError } from "@mindkid/errors/client";
   import { sanitizeRedirectTarget } from "@mindkid/shared/client";
   import { computed, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
@@ -175,13 +176,6 @@
 
   interface ChildListResponse {
     children: ChildListItem[];
-  }
-
-  interface ApiErrorShape {
-    data?: {
-      code?: string;
-      message?: string;
-    };
   }
 
   const route = useRoute();
@@ -227,14 +221,13 @@
       pendingChildUuid.value = null;
       await router.push(destination.value);
     } catch (err) {
-      const failure = err as ApiErrorShape;
-      if (failure.data?.code === "PARENT_GATE_REQUIRED") {
+      if (isApiError(err, "PARENT_GATE_REQUIRED")) {
         pendingChildUuid.value = childUuid;
         return;
       }
       pendingChildUuid.value = null;
       errorMessage.value =
-        failure.data?.message ||
+        normalizeApiError(err).message ||
         "Chưa chuyển được sang hồ sơ bé. Anh chị thử lại giúp em nhé.";
     } finally {
       isActivating.value = false;

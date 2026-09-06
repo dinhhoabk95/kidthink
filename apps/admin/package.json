@@ -10,6 +10,7 @@
     "typecheck": "vue-tsc -b"
   },
   "dependencies": {
+    "@mindkid/errors": "workspace:*",
     "@mindkid/shared": "workspace:*",
     "@mindkid/ui": "workspace:*"
   },

@@ -229,6 +229,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import {
     DEFAULT_REDIRECT_TARGET,
     sanitizeRedirectTarget,
@@ -264,16 +265,6 @@
       uuid: string;
       displayName: string;
       status: string;
-    };
-  }
-
-  interface ApiErrorResponse {
-    statusCode?: number;
-    statusMessage?: string;
-    data?: {
-      code?: string;
-      message?: string;
-      reason?: string;
     };
   }
 
@@ -350,29 +341,23 @@
     return { termConsentId, privacyConsentId };
   }
 
-  function parseRegisterError(
-    err:
-      | ApiErrorResponse
-      | Error
-      | {
-          data?: { reason?: string; message?: string; code?: string };
-          statusCode?: number;
-        }
-  ): string {
-    const fetchError = err as ApiErrorResponse;
-
+  function parseRegisterError(err: unknown): string {
     if (
-      fetchError?.statusCode === 409 ||
-      fetchError?.data?.code === "EMAIL_ALREADY_REGISTERED"
+      isApiError(err, "EMAIL_ALREADY_REGISTERED") ||
+      (isApiError(err) && err.statusCode === 409)
     ) {
       return "Email này đã được đăng ký tài khoản. Vui lòng chuyển sang trang Đăng nhập hoặc sử dụng tính năng Quên mật khẩu.";
     }
 
-    return (
-      fetchError?.data?.reason ||
-      fetchError?.data?.message ||
-      "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin và thử lại."
-    );
+    if (isApiError(err)) {
+      return err.message;
+    }
+
+    if (err instanceof Error) {
+      return err.message;
+    }
+
+    return "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin và thử lại.";
   }
 
   async function handleRegister() {

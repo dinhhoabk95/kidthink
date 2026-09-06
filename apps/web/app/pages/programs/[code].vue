@@ -360,6 +360,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import type {
     ProgramAlternativeSuggestion,
     ProgramDetailPublic,
@@ -387,7 +388,9 @@
     }
   );
 
-  const isArchived = computed(() => fetchError.value?.statusCode === 410);
+  const isArchived = computed(() =>
+    isApiError(fetchError.value, "CONTENT_ARCHIVED")
+  );
 
   const archivedSuggestions = computed<ProgramAlternativeSuggestion[]>(() => {
     const errData = fetchError.value?.data as

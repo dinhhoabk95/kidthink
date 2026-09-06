@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@mindkid/config": "workspace:*",
+    "@mindkid/errors": "workspace:*",
     "@mindkid/shared": "workspace:*",
     "argon2": "catalog:",
     "ioredis": "catalog:",

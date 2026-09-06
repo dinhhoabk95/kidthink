@@ -105,6 +105,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import {
     getTemplateInput,
     type RoundConfig,
@@ -123,6 +124,7 @@
   import { nextTick, onMounted, onUnmounted, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { definePageMeta, useUserSession } from "#imports";
+  import { useApi } from "~/composables/use-api";
 
   definePageMeta({ layout: false });
 
@@ -1312,26 +1314,8 @@
     );
   }
 
-  function handleApiError(
-    status: number,
-    message?: string,
-    statusMessage?: string,
-    details?: ApiErrorDetails
-  ): Error {
-    errorActionLink.value = null;
-    errorActionText.value = "Thử lại";
-
-    if (status === 410) {
-      errorTitle.value = "Trò chơi đã ngừng phát hành";
-      errorEmoji.value = "📦";
-      errorActionLink.value = "/games";
-      errorActionText.value = "Xem danh sách trò chơi";
-      return new Error(
-        "Nội dung bài học này đã hoàn thành chu kỳ sử dụng hoặc được thay thế."
-      );
-    }
-
-    if (status === 401) {
+  function handleTierLockedError(): Error {
+    if (!loggedIn.value) {
       errorTitle.value = "Yêu cầu đăng nhập";
       errorEmoji.value = "🔒";
       errorActionLink.value = `/login?redirect=/play/${levelCode}`;
@@ -1341,31 +1325,65 @@
       );
     }
 
-    if (status === 403) {
-      if (!loggedIn.value) {
-        errorTitle.value = "Yêu cầu đăng nhập";
-        errorEmoji.value = "🔒";
-        errorActionLink.value = `/login?redirect=/play/${levelCode}`;
-        errorActionText.value = "Đăng nhập để chơi";
-        return new Error(
-          "Trò chơi này yêu cầu đăng nhập tài khoản để bé có thể tham gia và lưu tiến độ."
-        );
-      }
+    errorTitle.value = "Cần nâng cấp gói học";
+    errorEmoji.value = "⭐";
+    errorActionLink.value = "/pricing";
+    errorActionText.value = "Xem các gói học";
+    return new Error(
+      "Trò chơi này thuộc gói nâng cấp. Phụ huynh vui lòng mở khoá gói học để bé tiếp tục trải nghiệm."
+    );
+  }
 
-      errorTitle.value = "Cần nâng cấp gói học";
-      errorEmoji.value = "⭐";
-      errorActionLink.value = "/pricing";
-      errorActionText.value = "Xem các gói học";
+  function extractPlayErrorMessage(err: unknown): string {
+    if (isApiError(err)) {
+      return err.message;
+    }
+    if (err instanceof Error) {
+      return err.message;
+    }
+    return "Lỗi tải cấu hình trò chơi";
+  }
+
+  function handleApiError(err: unknown): Error {
+    errorActionLink.value = null;
+    errorActionText.value = "Thử lại";
+
+    if (isApiError(err, "CONTENT_ARCHIVED")) {
+      errorTitle.value = "Trò chơi đã ngừng phát hành";
+      errorEmoji.value = "📦";
+      errorActionLink.value = "/games";
+      errorActionText.value = "Xem danh sách trò chơi";
       return new Error(
-        "Trò chơi này thuộc gói nâng cấp. Phụ huynh vui lòng mở khoá gói học để bé tiếp tục trải nghiệm."
+        "Nội dung bài học này đã hoàn thành chu kỳ sử dụng hoặc được thay thế."
       );
     }
 
-    if (status === 428) {
-      return handleConceptOrChildError(statusMessage, details);
+    if (
+      isApiError(err, "TIER_LOCKED") ||
+      (isApiError(err) && err.statusCode === 403)
+    ) {
+      return handleTierLockedError();
     }
 
-    if (status === 404) {
+    if (
+      isApiError(err, "INTRO_REQUIRED") ||
+      isApiError(err, "NO_ACTIVE_CHILD") ||
+      (isApiError(err) && err.statusCode === 428)
+    ) {
+      const details = isApiError(err)
+        ? (err.details as ApiErrorDetails | undefined)
+        : undefined;
+      return handleConceptOrChildError(
+        isApiError(err) ? err.code : undefined,
+        details
+      );
+    }
+
+    if (
+      isApiError(err, "LEVEL_NOT_FOUND") ||
+      isApiError(err, "NOT_FOUND") ||
+      (isApiError(err) && err.statusCode === 404)
+    ) {
       errorTitle.value = "Không tìm thấy trò chơi";
       errorEmoji.value = "🔍";
       errorActionLink.value = "/games";
@@ -1377,7 +1395,7 @@
 
     errorTitle.value = "Lỗi tải trò chơi";
     errorEmoji.value = "⚠️";
-    return new Error(message || `Lỗi tải cấu hình trò chơi (${status})`);
+    return new Error(extractPlayErrorMessage(err));
   }
 
   function buildEngineConfig(
@@ -1410,16 +1428,8 @@
       ? `/api/users/levels/${levelCode}/config`
       : `/api/guest/levels/${levelCode}/config`;
 
-    const res = await fetch(endpoint, { credentials: "include" });
-    if (!res.ok) {
-      const errJson = (await res.json().catch(() => ({}))) as ApiErrorPayload;
-      const code = errJson.code ?? errJson.statusMessage ?? errJson.data?.code;
-      const message = errJson.message ?? errJson.data?.message;
-      const details = errJson.details ?? errJson.data?.details;
-      throw handleApiError(res.status, message, code, details);
-    }
-
-    const payload: ConfigPayload = await res.json();
+    const api = useApi();
+    const payload = await api<ConfigPayload>(endpoint);
     cachedPayload = payload;
     displayTitle.value =
       payload.title || payload.name || `Bài học: ${levelCode}`;
@@ -1458,8 +1468,8 @@
       await fetchAndStartGame();
     } catch (err) {
       isLoading.value = false;
-      errorMessage.value =
-        err instanceof Error ? err.message : "Lỗi tải cấu hình game";
+      const appErr = handleApiError(err);
+      errorMessage.value = appErr.message;
     }
   });
 

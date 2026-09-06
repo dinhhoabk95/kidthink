@@ -154,6 +154,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import { computed, onMounted, reactive, ref } from "vue";
 
   definePageMeta({
@@ -168,14 +169,6 @@
     requirement_at: string | null;
     notice: string | null;
     status: "active" | "required" | "withdrawn";
-  }
-
-  interface FetchErrorPayload {
-    statusCode?: number;
-    data?: {
-      code?: string;
-      message?: string;
-    };
   }
 
   const route = useRoute();
@@ -250,6 +243,45 @@
     }
   }
 
+  async function submitConsentItems(items: ConsentItem[]) {
+    for (const item of items) {
+      await globalThis.$fetch("/api/users/consents", {
+        method: "POST",
+        body: {
+          consent_type: item.consent_type,
+          requirement_at: item.requirement_at,
+          accept: true,
+        },
+      });
+    }
+  }
+
+  async function handleConsentError(err: unknown) {
+    if (
+      isApiError(err, "CONSENT_REQUIREMENT_CHANGED") ||
+      (isApiError(err) && err.statusCode === 409)
+    ) {
+      markerChanged.value = true;
+      errorMessage.value =
+        "Yêu cầu điều khoản vừa được cập nhật bởi quản trị viên. Vui lòng xem lại nội dung mới.";
+      await loadConsents();
+      return;
+    }
+
+    if (isApiError(err)) {
+      errorMessage.value = err.message;
+      return;
+    }
+
+    if (err instanceof Error) {
+      errorMessage.value = err.message;
+      return;
+    }
+
+    errorMessage.value =
+      "Xảy ra lỗi khi xác nhận điều khoản. Vui lòng thử lại.";
+  }
+
   async function handleSubmit() {
     if (!canSubmit.value) {
       return;
@@ -260,37 +292,13 @@
     markerChanged.value = false;
 
     try {
-      for (const item of requiredConsents.value) {
-        await globalThis.$fetch("/api/users/consents", {
-          method: "POST",
-          body: {
-            consent_type: item.consent_type,
-            requirement_at: item.requirement_at,
-            accept: true,
-          },
-        });
-      }
-
-      // Check if all are now accepted
+      await submitConsentItems(requiredConsents.value);
       await loadConsents();
       if (requiredConsents.value.length === 0) {
         handleRedirect();
       }
     } catch (err: unknown) {
-      const fetchErr = err as FetchErrorPayload;
-      if (
-        fetchErr?.statusCode === 409 ||
-        fetchErr?.data?.code === "CONSENT_REQUIREMENT_CHANGED"
-      ) {
-        markerChanged.value = true;
-        errorMessage.value =
-          "Yêu cầu điều khoản vừa được cập nhật bởi quản trị viên. Vui lòng xem lại nội dung mới.";
-        await loadConsents();
-      } else {
-        errorMessage.value =
-          fetchErr?.data?.message ||
-          "Xảy ra lỗi khi xác nhận điều khoản. Vui lòng thử lại.";
-      }
+      await handleConsentError(err);
     } finally {
       submitting.value = false;
     }

@@ -220,6 +220,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import {
     DEFAULT_REDIRECT_TARGET,
     sanitizeRedirectTarget,
@@ -256,18 +257,6 @@
     has_active_child: boolean;
     active_keys: string[];
     allowed_tiers: string[];
-  }
-
-  interface ApiErrorResponse {
-    statusCode?: number;
-    statusMessage?: string;
-    data?: {
-      code?: string;
-      message?: string;
-      reason?: string;
-      status?: string;
-      challenge?: string;
-    };
   }
 
   const route = useRoute();
@@ -366,6 +355,35 @@
     return destination;
   }
 
+  function extractMfaChallenge(err: unknown): string | null {
+    if (
+      isApiError(err, "MFA_REQUIRED") ||
+      isApiError(err, "REAUTH_REQUIRED") ||
+      (isApiError(err) &&
+        err.statusCode === 428 &&
+        (err.details?.challenge ||
+          (err.data as Record<string, unknown> | undefined)?.challenge))
+    ) {
+      const challenge = (isApiError(err) &&
+        (err.details?.challenge ??
+          (err.data as Record<string, unknown> | undefined)?.challenge)) as
+        | string
+        | undefined;
+      return challenge || null;
+    }
+    return null;
+  }
+
+  function extractWebLoginErrorMessage(err: unknown, fallback: string): string {
+    if (isApiError(err)) {
+      return err.message;
+    }
+    if (err instanceof Error) {
+      return err.message;
+    }
+    return fallback;
+  }
+
   async function handleLogin() {
     errorMessage.value = "";
     isLoading.value = true;
@@ -393,18 +411,18 @@
       await fetchSession();
       const nextDest = await resolvePostLoginDestination();
       await navigateTo(nextDest);
-    } catch (err) {
-      const fetchError = err as ApiErrorResponse;
-      if (fetchError?.statusCode === 428 && fetchError.data?.challenge) {
+    } catch (err: unknown) {
+      const challenge = extractMfaChallenge(err);
+      if (challenge) {
         isMfaStep.value = true;
-        mfaChallengeToken.value = fetchError.data.challenge;
+        mfaChallengeToken.value = challenge;
         return;
       }
 
-      errorMessage.value =
-        fetchError?.data?.reason ||
-        fetchError?.data?.message ||
-        "Đăng nhập không thành công. Vui lòng kiểm tra lại email và mật khẩu.";
+      errorMessage.value = extractWebLoginErrorMessage(
+        err,
+        "Đăng nhập không thành công. Vui lòng kiểm tra lại email và mật khẩu."
+      );
     } finally {
       isLoading.value = false;
     }
@@ -431,12 +449,11 @@
       await fetchSession();
       const nextDest = await resolvePostLoginDestination();
       await navigateTo(nextDest);
-    } catch (err) {
-      const fetchError = err as ApiErrorResponse;
-      errorMessage.value =
-        fetchError?.data?.reason ||
-        fetchError?.data?.message ||
-        "Mã xác thực không hợp lệ hoặc đã hết hạn. Vui lòng thử lại.";
+    } catch (err: unknown) {
+      errorMessage.value = extractWebLoginErrorMessage(
+        err,
+        "Mã xác thực không hợp lệ hoặc đã hết hạn. Vui lòng thử lại."
+      );
     } finally {
       isLoading.value = false;
     }

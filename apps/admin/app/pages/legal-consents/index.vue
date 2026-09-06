@@ -257,6 +257,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import { computed, onMounted, reactive, ref } from "vue";
   import { definePageMeta } from "#imports";
 
@@ -272,14 +273,6 @@
     notice: string | null;
     updated_at: string | null;
     affected_users_count?: number;
-  }
-
-  interface FetchErrorPayload {
-    statusCode?: number;
-    data?: {
-      code?: string;
-      message?: string;
-    };
   }
 
   const requirements = ref<RequirementItem[]>([]);
@@ -355,6 +348,39 @@
     successMessage.value = null;
   }
 
+  async function handleForceConsentError(err: unknown) {
+    if (
+      isApiError(err, "REAUTH_REQUIRED") ||
+      (isApiError(err) && err.statusCode === 428)
+    ) {
+      errorMessage.value =
+        "Yêu cầu xác thực lại danh tính quản trị viên trước khi thực hiện thao tác nhạy cảm.";
+      return;
+    }
+
+    if (
+      isApiError(err, "CONSENT_REQUIREMENT_CHANGED") ||
+      (isApiError(err) && err.statusCode === 409)
+    ) {
+      errorMessage.value =
+        "Mốc yêu cầu đã được thay đổi bởi quản trị viên khác. Đã tải lại dữ liệu mới nhất.";
+      await loadRequirements();
+      return;
+    }
+
+    if (isApiError(err)) {
+      errorMessage.value = err.message;
+      return;
+    }
+
+    if (err instanceof Error) {
+      errorMessage.value = err.message;
+      return;
+    }
+
+    errorMessage.value = "Xảy ra lỗi khi thực thi force re-consent.";
+  }
+
   async function handleForceSubmit() {
     if (!(selectedRequirement.value && canSubmitForce.value)) {
       return;
@@ -382,25 +408,7 @@
       selectedRequirement.value = null;
       await loadRequirements();
     } catch (err: unknown) {
-      const fetchErr = err as FetchErrorPayload;
-      if (
-        fetchErr?.statusCode === 428 ||
-        fetchErr?.data?.code === "REAUTH_REQUIRED"
-      ) {
-        errorMessage.value =
-          "Yêu cầu xác thực lại danh tính quản trị viên trước khi thực hiện thao tác nhạy cảm.";
-      } else if (
-        fetchErr?.statusCode === 409 ||
-        fetchErr?.data?.code === "CONSENT_REQUIREMENT_CHANGED"
-      ) {
-        errorMessage.value =
-          "Mốc yêu cầu đã được thay đổi bởi quản trị viên khác. Đã tải lại dữ liệu mới nhất.";
-        await loadRequirements();
-      } else {
-        errorMessage.value =
-          fetchErr?.data?.message ||
-          "Xảy ra lỗi khi thực thi force re-consent.";
-      }
+      await handleForceConsentError(err);
     } finally {
       submitting.value = false;
     }

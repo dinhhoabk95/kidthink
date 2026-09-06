@@ -17,6 +17,7 @@
     "@mindkid/config": "workspace:*",
     "@mindkid/db": "workspace:*",
     "@mindkid/emoji": "workspace:*",
+    "@mindkid/errors": "workspace:*",
     "@mindkid/export": "workspace:*",
     "@mindkid/game-engine": "workspace:*",
     "@mindkid/moderation": "workspace:*",

@@ -119,15 +119,11 @@
     challenge_payload: string;
   }
 
+  import { normalizeApiError } from "@mindkid/errors/client";
+
   interface ParentGateToken {
     gate_token: string;
     expires_at: string;
-  }
-
-  interface ApiErrorShape {
-    data?: {
-      message?: string;
-    };
   }
 
   const emit = defineEmits<{
@@ -142,12 +138,9 @@
   const isVerifying = ref(false);
   const errorMessage = ref<string | null>(null);
 
-  function readErrorMessage(
-    err: ApiErrorShape | Error | { data?: { message?: string } },
-    fallback: string
-  ): string {
-    const failure = err as ApiErrorShape;
-    return failure?.data?.message || fallback;
+  function readErrorMessage(err: unknown, fallback: string): string {
+    const apiError = normalizeApiError(err);
+    return apiError.message || fallback;
   }
 
   async function loadChallenge() {
@@ -163,7 +156,7 @@
       );
     } catch (err) {
       errorMessage.value = readErrorMessage(
-        err as ApiErrorShape,
+        err,
         "Chưa tải được câu hỏi xác nhận. Anh chị thử lại giúp em nhé."
       );
     }
@@ -192,7 +185,7 @@
       emit("verified", result.gate_token);
     } catch (err) {
       errorMessage.value = readErrorMessage(
-        err as ApiErrorShape,
+        err,
         "Câu trả lời chưa đúng. Anh chị thử lại giúp em nhé."
       );
       answer.value = null;

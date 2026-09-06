@@ -692,6 +692,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import type { AdvancedReportResult } from "@mindkid/shared";
   import { findCompetency } from "@mindkid/shared/client";
   import { computed, ref } from "vue";
@@ -719,11 +720,11 @@
   );
 
   const is403Blocked = computed(() => {
-    const err = fetchError.value as {
-      statusCode?: number;
-      status?: number;
-    } | null;
-    return err?.statusCode === 403 || err?.status === 403;
+    return (
+      isApiError(fetchError.value, "TIER_LOCKED") ||
+      isApiError(fetchError.value, "FORBIDDEN") ||
+      (isApiError(fetchError.value) && fetchError.value.statusCode === 403)
+    );
   });
 
   function getTrendIcon(direction?: string) {

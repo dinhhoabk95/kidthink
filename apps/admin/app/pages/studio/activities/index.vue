@@ -381,6 +381,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import { computed, onMounted, onUnmounted, ref } from "vue";
 
   definePageMeta({
@@ -609,6 +610,43 @@
     }
   }
 
+  function extractInUseLessonCodes(err: unknown): string {
+    if (!isApiError(err)) {
+      return "";
+    }
+    const details = err.details as
+      | { in_use_by?: { code: string }[] }
+      | undefined;
+    const dataObj = err.data as { in_use_by?: { code: string }[] } | undefined;
+    const inUse = details?.in_use_by ?? dataObj?.in_use_by ?? [];
+    return inUse.map((l) => l.code).join(", ");
+  }
+
+  function handleArchiveError(err: unknown) {
+    if (
+      isApiError(err, "CONTENT_IN_USE") ||
+      isApiError(err, "VERSION_CONFLICT") ||
+      (isApiError(err) && err.statusCode === 409)
+    ) {
+      const lessonCodes = extractInUseLessonCodes(err);
+      if (lessonCodes) {
+        actionNotification.value = `Không thể lưu trữ: Hoạt động đang được dùng trong các bài học (${lessonCodes})`;
+        return;
+      }
+      actionNotification.value = isApiError(err)
+        ? err.message
+        : "Xung đột phiên bản nội dung hoặc hoạt động đang được sử dụng";
+      return;
+    }
+
+    if (isApiError(err) || err instanceof Error) {
+      actionNotification.value = err.message;
+      return;
+    }
+
+    actionNotification.value = "Lỗi lưu trữ hoạt động";
+  }
+
   async function promptArchiveActivity(act: ActivityItem) {
     try {
       await apiFetch(`/api/managers/content/activity/${act.id}/transition`, {
@@ -621,25 +659,7 @@
       actionNotification.value = `Đã lưu trữ hoạt động ${act.code}`;
       fetchActivities();
     } catch (err: unknown) {
-      const errorObj = err as {
-        statusCode?: number;
-        data?: {
-          statusMessage?: string;
-          data?: { in_use_by?: { code: string }[] };
-          message?: string;
-        };
-      };
-      if (
-        errorObj?.statusCode === 409 ||
-        errorObj?.data?.statusMessage === "CONTENT_IN_USE"
-      ) {
-        const inUse = errorObj?.data?.data?.in_use_by || [];
-        const lessonCodes = inUse.map((l) => l.code).join(", ");
-        actionNotification.value = `Không thể lưu trữ: Hoạt động đang được dùng trong các bài học (${lessonCodes})`;
-      } else {
-        actionNotification.value =
-          errorObj?.data?.message || "Lỗi lưu trữ hoạt động";
-      }
+      handleArchiveError(err);
     }
   }
 </script>

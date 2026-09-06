@@ -1,4 +1,11 @@
-import { $fetch, useAsyncData, useRuntimeConfig, useState } from "#imports";
+import { normalizeApiError } from "@mindkid/errors/client";
+import {
+  $fetch,
+  navigateTo,
+  useAsyncData,
+  useRuntimeConfig,
+  useState,
+} from "#imports";
 
 interface ApiRequestOptions {
   method?: string;
@@ -81,6 +88,30 @@ export function useApiClient() {
       ...options,
       credentials: "include",
       headers,
+      async onResponseError(context) {
+        const rawError =
+          context.error ??
+          (context.response
+            ? {
+                status: context.response.status,
+                statusCode: context.response.status,
+                data: context.response._data,
+                message: context.response.statusText,
+              }
+            : undefined);
+
+        const apiError = normalizeApiError(rawError);
+
+        if (
+          apiError.code === "UNAUTHENTICATED" ||
+          apiError.code === "SESSION_REVOKED"
+        ) {
+          csrfToken.value = undefined;
+          await navigateTo("/login");
+        }
+
+        throw apiError;
+      },
     } as never);
   }
 
