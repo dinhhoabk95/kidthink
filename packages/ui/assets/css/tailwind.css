@@ -30,6 +30,11 @@
   --color-cta-900: #431407;
   --color-cta-950: #270b04;
 
+  /* CTA semantic aliases (BR-DSC-02, BR-A11-04) */
+  --color-cta: #c2410c;
+  --color-cta-hover: #9a3412;
+  --color-cta-light: #ffedd5;
+
   /* Surface palette (Warm stone - surface-400 is border/placeholder only) */
   --color-surface-0: #ffffff;
   --color-surface-50: #fafaf9;
@@ -56,6 +61,7 @@
   --color-retry-800: #92400e;
   --color-retry-900: #78350f;
   --color-retry-950: #451a03;
+  --color-retry: #d97706;
 
   /* Semantic palette — Success (Adult surfaces) */
   --color-success-50: #f0fdf4;

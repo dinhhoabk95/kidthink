@@ -139,7 +139,7 @@
     justify-content: center;
     min-height: 44px;
     padding: 0.5rem 1.25rem;
-    background-color: var(--color-cta);
+    background-color: var(--color-cta, #c2410c);
     color: white;
     font-weight: 700;
     font-size: 0.95rem;
@@ -152,7 +152,7 @@
   }
 
   .btn-play-trial:hover {
-    background-color: var(--color-cta-hover);
+    background-color: var(--color-cta-hover, #9a3412);
     transform: translateY(-1px);
   }
 

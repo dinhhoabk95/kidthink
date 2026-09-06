@@ -116,7 +116,7 @@
     position: absolute;
     top: -0.75rem;
     right: 1.5rem;
-    background-color: var(--color-cta);
+    background-color: var(--color-cta, #c2410c);
     color: white;
     font-size: 0.75rem;
     font-weight: 700;

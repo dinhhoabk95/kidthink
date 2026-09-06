@@ -936,7 +936,12 @@
         LIFECYCLE[inputConfig.family as keyof typeof LIFECYCLE];
       if (lifecycleFamily) {
         const gesture = lifecycleFamily.toGesture(x, y, performance.now());
-        session.dispatch?.(gesture);
+        const res = session.dispatch?.(gesture);
+        if (res?.valid) {
+          engine?.audio.playTapSound();
+        } else if (res && !res.valid && res.feedback !== "none") {
+          engine?.audio.playSoftFeedbackSound();
+        }
         return;
       }
     }

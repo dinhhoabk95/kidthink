@@ -556,22 +556,33 @@
   }
 
   .btn-cta-play {
-    background-color: var(--color-cta);
+    background-color: var(--color-cta, #c2410c);
     color: white;
+    box-shadow: 0 4px 12px rgba(194, 65, 12, 0.25);
   }
 
   .btn-cta-play:hover {
-    background-color: var(--color-cta-hover);
+    background-color: var(--color-cta-hover, #9a3412);
   }
 
   .btn-cta-login {
-    background-color: var(--color-brand-600);
+    background-color: var(--color-brand-600, #1a7f6b);
     color: white;
+    box-shadow: 0 4px 12px rgba(26, 127, 107, 0.25);
+  }
+
+  .btn-cta-login:hover {
+    background-color: var(--color-brand-700, #166657);
   }
 
   .btn-cta-upgrade {
-    background-color: var(--color-primary-700, purple);
+    background-color: var(--color-brand-800, #145247);
     color: white;
+    box-shadow: 0 4px 12px rgba(20, 82, 71, 0.25);
+  }
+
+  .btn-cta-upgrade:hover {
+    background-color: var(--color-brand-900, #13443b);
   }
 
   .cta-subtext {

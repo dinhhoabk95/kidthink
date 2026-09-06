@@ -130,20 +130,20 @@
     justify-content: center;
     min-height: 48px;
     padding: 0.75rem 1.75rem;
-    background-color: var(--color-cta);
+    background-color: var(--color-cta, #c2410c);
     color: white;
     font-weight: 700;
     font-size: 1.05rem;
     border-radius: 1rem;
     text-decoration: none;
-    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.25);
+    box-shadow: 0 4px 12px rgba(194, 65, 12, 0.25);
     transition:
       transform 0.15s,
       background-color 0.15s;
   }
 
   .btn-cta-primary:hover {
-    background-color: var(--color-cta-hover);
+    background-color: var(--color-cta-hover, #9a3412);
     transform: translateY(-2px);
   }
 

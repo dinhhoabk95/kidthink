@@ -279,13 +279,13 @@
   }
 
   .btn-play-free {
-    background-color: var(--color-cta);
+    background-color: var(--color-cta, #c2410c);
     color: white;
-    box-shadow: 0 3px 0 var(--color-cta-hover);
+    box-shadow: 0 3px 0 var(--color-cta-hover, #9a3412);
   }
 
   .btn-play-free:hover {
-    background-color: var(--color-cta-hover);
+    background-color: var(--color-cta-hover, #9a3412);
   }
 
   .btn-view-detail {
