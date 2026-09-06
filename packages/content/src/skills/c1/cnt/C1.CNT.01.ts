@@ -46,9 +46,10 @@ export const C1_CNT_01_DATASET: SkillDataset = {
       label: "không",
       glyph: "0",
       value: 0,
+      audio_path: "/audio/voice/common/numbers/0.mp3",
       image: {
         kind: "emoji",
-        ref: "0️⃣",
+        ref: "⚽",
       },
     },
     {
@@ -56,9 +57,10 @@ export const C1_CNT_01_DATASET: SkillDataset = {
       label: "một",
       glyph: "1",
       value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
-        ref: "1️⃣",
+        ref: "⚽",
       },
     },
     {
@@ -66,9 +68,10 @@ export const C1_CNT_01_DATASET: SkillDataset = {
       label: "hai",
       glyph: "2",
       value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
         kind: "emoji",
-        ref: "2️⃣",
+        ref: "⚽",
       },
     },
     {
@@ -76,9 +79,10 @@ export const C1_CNT_01_DATASET: SkillDataset = {
       label: "ba",
       glyph: "3",
       value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
         kind: "emoji",
-        ref: "3️⃣",
+        ref: "⚽",
       },
     },
   ],

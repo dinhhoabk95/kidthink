@@ -21,6 +21,7 @@ import {
   updateParticles,
 } from "#src/render/index.js";
 import { AudioController } from "#src/systems/audio-controller";
+import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type {
   GT000Asset,
@@ -53,6 +54,170 @@ function createRenderItem(
     asset: resolveRenderAsset(asset),
     state,
   };
+}
+
+const DIGIT_REGEX = /^\d+$/;
+
+function drawFlashcardFrame(
+  ctx: CanvasRenderingContext2D,
+  left: number,
+  top: number,
+  cardW: number,
+  cardH: number
+): void {
+  // 1. Warm ambient drop shadow
+  ctx.save();
+  ctx.shadowColor = "rgba(30, 27, 75, 0.12)";
+  ctx.shadowBlur = 18;
+  ctx.shadowOffsetY = 8;
+  ctx.fillStyle = designTokens.colors.surface[200];
+  ctx.beginPath();
+  ctx.roundRect(left, top, cardW, cardH, 28);
+  ctx.fill();
+  ctx.restore();
+
+  // 2. 3D bottom slab
+  ctx.save();
+  ctx.fillStyle = designTokens.colors.surface[200];
+  ctx.beginPath();
+  ctx.roundRect(left, top + 5, cardW, cardH, 28);
+  ctx.fill();
+  ctx.restore();
+
+  // 3. Main card white body
+  ctx.save();
+  ctx.fillStyle = designTokens.colors.surface[0];
+  ctx.strokeStyle = designTokens.colors.surface[200];
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.roundRect(left, top, cardW, cardH, 28);
+  ctx.fill();
+  ctx.stroke();
+
+  // 4. White top specular highlight
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(left + 28, top + 4);
+  ctx.lineTo(left + cardW - 28, top + 4);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawNumberContent(
+  ctx: CanvasRenderingContext2D,
+  asset: GT000Asset,
+  val: number,
+  x: number,
+  y: number,
+  cardW: number
+): void {
+  // Large orange numeral
+  ctx.save();
+  ctx.font = `bold 100px ${designTokens.fonts.heading}`;
+  ctx.fillStyle = designTokens.colors.cta[500];
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(String(val), x, y - 50);
+  ctx.restore();
+
+  if (val === 0) {
+    ctx.save();
+    ctx.font = `18px ${designTokens.fonts.sans}`;
+    ctx.fillStyle = designTokens.colors.surface[500];
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("(Không có đồ vật nào)", x, y + 55);
+    ctx.restore();
+  } else {
+    const itemEmoji =
+      asset.image_ref?.kind === "emoji" &&
+      asset.image_ref.ref &&
+      !asset.image_ref.ref.includes("️⃣")
+        ? asset.image_ref.ref
+        : "⚽";
+
+    const maxCount = Math.min(val, 10);
+    const gap = Math.min(60, (cardW - 60) / maxCount);
+    const startX = x - ((maxCount - 1) * gap) / 2;
+
+    ctx.save();
+    ctx.font = `44px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for (let i = 0; i < maxCount; i++) {
+      ctx.fillText(itemEmoji, startX + i * gap, y + 55);
+    }
+    ctx.restore();
+  }
+
+  // Label at bottom
+  ctx.save();
+  ctx.font = `bold 22px ${designTokens.fonts.sans}`;
+  ctx.fillStyle = designTokens.colors.surface[700];
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(asset.label, x, y + 115);
+  ctx.restore();
+}
+
+function drawNonNumberContent(
+  ctx: CanvasRenderingContext2D,
+  asset: GT000Asset,
+  x: number,
+  y: number
+): void {
+  if (asset.image_ref?.kind === "emoji") {
+    ctx.save();
+    ctx.font = `84px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(asset.image_ref.ref, x, y - 25);
+    ctx.restore();
+  } else if (asset.glyph) {
+    ctx.save();
+    ctx.font = `bold 100px ${designTokens.fonts.heading}`;
+    ctx.fillStyle = designTokens.colors.brand[600];
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(asset.glyph, x, y - 25);
+    ctx.restore();
+  }
+
+  ctx.save();
+  ctx.font = `bold 24px ${designTokens.fonts.sans}`;
+  ctx.fillStyle = designTokens.colors.surface[800];
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(asset.label, x, y + 80);
+  ctx.restore();
+}
+
+function drawFlashcard(
+  ctx: CanvasRenderingContext2D,
+  _rs: RenderSystem,
+  slot: Slot,
+  asset: GT000Asset
+): void {
+  const cardW = 350;
+  const cardH = 320;
+  const x = slot.x;
+  const y = slot.y;
+  const left = x - cardW / 2;
+  const top = y - cardH / 2;
+
+  drawFlashcardFrame(ctx, left, top, cardW, cardH);
+
+  const hasDigit = Boolean(asset.glyph && DIGIT_REGEX.test(asset.glyph));
+  const val =
+    asset.value ??
+    (hasDigit ? Number.parseInt(asset.glyph as string, 10) : undefined);
+
+  if (val === undefined) {
+    drawNonNumberContent(ctx, asset, x, y);
+  } else {
+    drawNumberContent(ctx, asset, val, x, y, cardW);
+  }
 }
 
 function getStepItemCount(step: GT000Step): number {
@@ -275,6 +440,7 @@ export class GT000Session extends TemplateGameSession<
       const item = renderItems[i];
       const slot = this.slots[i];
       if (item && slot) {
+        const isCard = step.action === "present" || step.action === "echo";
         entities.push({
           id: item.id,
           slotIndex: i,
@@ -282,8 +448,8 @@ export class GT000Session extends TemplateGameSession<
           state: this.resolveItemState(item.state),
           x: slot.x,
           y: slot.y,
-          w: slot.w,
-          h: slot.h,
+          w: isCard ? 350 : slot.w,
+          h: isCard ? 320 : slot.h,
         });
       }
     }
@@ -319,8 +485,11 @@ export class GT000Session extends TemplateGameSession<
         continue;
       }
 
-      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
+      const isCard = step.action === "present" || step.action === "echo";
+      const targetW = isCard ? 350 : slot.w;
+      const targetH = isCard ? 320 : slot.h;
+      const halfW = Math.max(slot.hitW, targetW) / 2 + hitTolerance;
+      const halfH = Math.max(slot.hitH, targetH) / 2 + hitTolerance;
 
       if (
         Math.abs(gesture.x - slot.x) <= halfW &&
@@ -349,6 +518,27 @@ export class GT000Session extends TemplateGameSession<
       typeof action.data === "object" && action.data !== null
         ? (action.data as Record<string, string | boolean | number>)
         : {};
+
+    if (payload.intent === "prev") {
+      this.prevStep();
+      return ACTION_CORRECT;
+    }
+    if (payload.intent === "replay") {
+      if (step.action === "echo") {
+        return this.handleEchoAction(payload, step);
+      }
+      if (step.action === "present") {
+        this.playPresentAudio(step);
+        return ACTION_CORRECT;
+      }
+    }
+    if (
+      payload.intent === "advance" &&
+      (step.action === "present" || step.action === "echo")
+    ) {
+      this.advanceStep();
+      return ACTION_CORRECT;
+    }
 
     switch (step.action) {
       case "present":
@@ -503,6 +693,9 @@ export class GT000Session extends TemplateGameSession<
   }
 
   private advanceStep(): void {
+    this.audio.stopAll();
+    this.renderItemStates.clear();
+    this.selectedAssetId = null;
     this.currentStepIndex += 1;
     if (this.currentStepIndex >= this.steps.length) {
       this.isWon = true;
@@ -522,6 +715,22 @@ export class GT000Session extends TemplateGameSession<
     } else {
       this.updateCurrentStepLayout();
     }
+  }
+
+  prevStep(): void {
+    if (this.currentStepIndex <= 0) {
+      return;
+    }
+    this.audio.stopAll();
+    this.renderItemStates.clear();
+    this.selectedAssetId = null;
+    this.currentStepIndex -= 1;
+    this.updateCurrentStepLayout();
+  }
+
+  override destroy(): void {
+    this.audio.stopAll();
+    super.destroy();
   }
 
   override checkWinCondition(): boolean {
@@ -600,11 +809,22 @@ export class GT000Session extends TemplateGameSession<
     drawSubPromptText(ctx, rs, `Khái niệm: ${this.content.concept.label}`);
 
     const renderItems = this.collectRenderItems(step);
-    for (let i = 0; i < renderItems.length; i++) {
-      const item = renderItems[i];
-      const slot = this.slots[i];
-      if (item && slot) {
-        drawSlotItem(ctx, rs, slot, item);
+    const isCard = step.action === "present" || step.action === "echo";
+
+    if (isCard) {
+      const item = renderItems[0];
+      const slot = this.slots[0];
+      const asset = this.getAsset(step.target_asset_id);
+      if (item && slot && asset) {
+        drawFlashcard(ctx, rs, slot, asset);
+      }
+    } else {
+      for (let i = 0; i < renderItems.length; i++) {
+        const item = renderItems[i];
+        const slot = this.slots[i];
+        if (item && slot) {
+          drawSlotItem(ctx, rs, slot, item);
+        }
       }
     }
 

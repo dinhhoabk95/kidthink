@@ -83,11 +83,24 @@
             @pointermove="handlePointerMove"
             @pointerup="handlePointerUp"
           />
-          <!-- Echo Step Controls (Bé nói theo) — BR-CIR-21, BR-CIR-22 -->
+          <!-- Intro Flashcard & Echo Step Controls — BR-CIR-21, BR-CIR-22 -->
           <div
             class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-6 z-20 pointer-events-auto"
-            v-if="isEchoStep"
+            v-if="isIntroCardStep"
           >
+            <!-- Nút Lùi (Prev) nếu không phải thẻ đầu -->
+            <button
+              aria-label="Quay lại thẻ trước"
+              class="min-h-16 px-6 rounded-2xl border-[3px] border-surface-200 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_theme(colors.surface.200),0_10px_18px_rgba(30,27,75,0.12)] active:translate-y-1 active:shadow-[0_2px_0_theme(colors.surface.200)] flex items-center gap-2 cursor-pointer transition-all"
+              type="button"
+              v-if="introStepIndex > 0"
+              @click="handleIntroPrev"
+            >
+              <span class="text-2xl">←</span>
+              <span>Trước</span>
+            </button>
+
+            <!-- Nút Nghe lại mẫu MP3 -->
             <button
               aria-label="Nghe lại mẫu"
               class="min-h-16 px-6 rounded-2xl border-[3px] border-surface-200 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_theme(colors.surface.200),0_10px_18px_rgba(30,27,75,0.12)] active:translate-y-1 active:shadow-[0_2px_0_theme(colors.surface.200)] flex items-center gap-2 cursor-pointer transition-all"
@@ -97,14 +110,16 @@
               <span class="text-2xl">🔊</span>
               <span>Nghe lại</span>
             </button>
+
+            <!-- Nút Đi tiếp / Bé nói theo -->
             <button
-              aria-label="Bé nói theo"
               class="min-h-16 px-8 rounded-2xl border-[3px] border-cta-hover bg-cta text-white font-heading font-bold text-xl shadow-[0_6px_0_theme(colors.cta-hover),0_10px_18px_rgba(249,115,22,0.25)] active:translate-y-1 active:shadow-[0_2px_0_theme(colors.cta-hover)] flex items-center gap-3 cursor-pointer transition-all"
               type="button"
+              :aria-label="isEchoStep ? 'Bé nói theo' : 'Tiếp tục'"
               @click="handleEchoDone"
             >
-              <span class="text-2xl">🗣️</span>
-              <span>Bé nói theo</span>
+              <span class="text-2xl" v-if="isEchoStep">🗣️</span>
+              <span>{{ isEchoStep ? "Bé nói theo" : "Tiếp tục" }}</span>
               <span>➔</span>
             </button>
           </div>
@@ -292,6 +307,8 @@
   let currentInstructionAudio: string | null = null;
 
   const isEchoStep = ref(false);
+  const isIntroCardStep = ref(false);
+  const introStepIndex = ref(0);
   const isIntroLevel = computed(() => {
     return (
       cachedPayload?.template_code === "GT-000" ||
@@ -314,6 +331,15 @@
       engine.activeSession.validateAction({
         type: "tap_item",
         data: { intent: "advance" },
+      });
+    }
+  }
+
+  function handleIntroPrev() {
+    if (engine?.activeSession) {
+      engine.activeSession.validateAction({
+        type: "tap_item",
+        data: { intent: "prev" },
       });
     }
   }
@@ -438,14 +464,41 @@
     }
   }
 
+  let activeNarrationAudio: HTMLAudioElement | null = null;
+
+  function stopNarrationAudio() {
+    if (activeNarrationAudio) {
+      try {
+        activeNarrationAudio.pause();
+        activeNarrationAudio.currentTime = 0;
+      } catch {
+        // Safe ignore
+      }
+      activeNarrationAudio = null;
+    }
+  }
+
   function playInstructionNarration(promptText?: string) {
+    stopNarrationAudio();
     if (currentInstructionAudio) {
-      const aud = new Audio(currentInstructionAudio);
-      aud.play().catch(() => {
+      try {
+        const aud = new Audio(currentInstructionAudio);
+        activeNarrationAudio = aud;
+        aud.onended = () => {
+          if (activeNarrationAudio === aud) {
+            activeNarrationAudio = null;
+          }
+        };
+        aud.play().catch(() => {
+          if (promptText && engine) {
+            engine.audio.speakPrompt(promptText);
+          }
+        });
+      } catch {
         if (promptText && engine) {
           engine.audio.speakPrompt(promptText);
         }
-      });
+      }
     } else if (promptText && engine) {
       engine.audio.speakPrompt(promptText);
     }
@@ -1235,9 +1288,12 @@
           (currentRoundCfg?.content_pack as { prompt?: string })?.prompt ||
           currentRoundCfg?.instruction ||
           cachedPayload?.title;
-        setTimeout(() => {
-          playInstructionNarration(prompt);
-        }, 350);
+        // Tránh nói đè lên narration của chính bước GT-000
+        if (cachedPayload?.template_code !== "GT-000") {
+          setTimeout(() => {
+            playInstructionNarration(prompt);
+          }, 350);
+        }
       },
       onRoundCompleted: (_roundIndex, _wasSkipped) => {
         engine?.scaffolding?.resetOnSuccess();
@@ -1293,9 +1349,14 @@
             steps?: readonly { action: string }[];
             currentStepIndex?: number;
           };
-          const step = s.steps?.[s.currentStepIndex ?? 0];
+          const stepIdx = s.currentStepIndex ?? 0;
+          const step = s.steps?.[stepIdx];
+          introStepIndex.value = stepIdx;
           isEchoStep.value = step?.action === "echo";
-        } else if (isEchoStep.value) {
+          isIntroCardStep.value =
+            step?.action === "present" || step?.action === "echo";
+        } else if (isIntroCardStep.value) {
+          isIntroCardStep.value = false;
           isEchoStep.value = false;
         }
       };
@@ -1544,11 +1605,13 @@
 
   onUnmounted(() => {
     window.removeEventListener("resize", handleResize);
+    stopNarrationAudio();
     if (roundRunner) {
       roundRunner.destroy();
       roundRunner = null;
     }
     if (engine) {
+      engine.audio.stopAll();
       engine.destroy();
       engine = null;
     }

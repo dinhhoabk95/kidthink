@@ -13,6 +13,7 @@ export const GT000AssetSchema = z
     audio_path: z.string().optional(),
     glyph: z.string().optional(),
     text: z.string().optional(),
+    value: z.number().optional(),
     image_ref: assetSchema().optional(),
     contrast_group: z.string().min(1),
   })

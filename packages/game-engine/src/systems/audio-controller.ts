@@ -15,6 +15,7 @@ export class AudioController {
   private readonly speechAdapter: SpeechSynthesisAdapter;
   private readonly bufferCache: Map<string, AudioBuffer> = new Map();
   private readonly masterVolume = 0.85; // Clamped to safe ceiling (BR-ENG-16)
+  private currentAudio: HTMLAudioElement | null = null;
 
   constructor(enabled = true) {
     this.enabled = enabled;
@@ -30,7 +31,7 @@ export class AudioController {
       this.sfxEngine.toggleMute();
     }
     if (!enabled) {
-      this.speechAdapter.cancel();
+      this.stopAll();
     }
   }
 
@@ -85,6 +86,15 @@ export class AudioController {
   /** Cancel any ongoing speech or sounds */
   stopAll(): void {
     this.speechAdapter.cancel();
+    if (this.currentAudio) {
+      try {
+        this.currentAudio.pause();
+        this.currentAudio.currentTime = 0;
+      } catch {
+        // Safe ignore
+      }
+      this.currentAudio = null;
+    }
   }
 
   /** Cache an AudioBuffer for fast offline playback */
@@ -112,10 +122,49 @@ export class AudioController {
     this.sfxEngine.play(type);
   }
 
-  playPromptAudio(ref?: string): void {
-    if (ref) {
-      this.play("tap");
+  /** Play recorded MP3 prompt audio if available, with tap SFX fallback */
+  playPromptAudio(ref?: string, onEnd?: () => void): void {
+    if (!(this.enabled && ref)) {
+      onEnd?.();
+      return;
     }
+
+    this.stopAll();
+
+    if (typeof Audio !== "undefined") {
+      try {
+        const audio = new Audio(ref);
+        audio.volume = this.masterVolume;
+        this.currentAudio = audio;
+
+        audio.onended = () => {
+          if (this.currentAudio === audio) {
+            this.currentAudio = null;
+          }
+          onEnd?.();
+        };
+
+        audio.onerror = () => {
+          if (this.currentAudio === audio) {
+            this.currentAudio = null;
+          }
+          onEnd?.();
+        };
+
+        audio.play().catch(() => {
+          if (this.currentAudio === audio) {
+            this.currentAudio = null;
+          }
+          onEnd?.();
+        });
+        return;
+      } catch {
+        this.currentAudio = null;
+      }
+    }
+
+    this.play("tap");
+    onEnd?.();
   }
 
   /** Soft amber chime on retry (BR-ENG-07 non-punitive) */

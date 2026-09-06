@@ -69,26 +69,27 @@ export const projectGT000: Projection<"GT-000"> = {
       contrast_group: item.contrast_group ?? "primary",
       image_ref: resolveItemAsset(item, true),
       audio_path: item.audio_path,
+      value: item.value,
     }));
 
     const itemChunks = chunkItems(dataset.items, 3);
     const segments = itemChunks.map((chunk, segIdx) => {
       const segAssetIds = chunk.map((item) => `asset_${item.id}`);
 
-      const presentSteps = chunk.map((item) => ({
-        action: "present" as const,
-        target_asset_id: `asset_${item.id}`,
-        narration_line: `Đây là ${item.label}`,
-      }));
-
-      // BR-CIM-19 / BR-E000-10: mỗi phân đoạn dạy có bước tập nói theo.
-      // Máy đọc mẫu, trẻ nói theo thành tiếng — máy Cấm — NEVER nghe.
-      const echoSteps = chunk.map((item) => ({
-        action: "echo" as const,
-        target_asset_id: `asset_${item.id}`,
-        repeat_count: 1,
-        prompt_line: `Bé nói theo cô nhé: ${item.label}`,
-      }));
+      // Giới thiệu và tập nói liền mạch theo từng chất liệu
+      const teachSteps = chunk.flatMap((item) => [
+        {
+          action: "present" as const,
+          target_asset_id: `asset_${item.id}`,
+          narration_line: `Đây là ${item.label}`,
+        },
+        {
+          action: "echo" as const,
+          target_asset_id: `asset_${item.id}`,
+          repeat_count: 1,
+          prompt_line: `Bé nói theo cô nhé: ${item.label}`,
+        },
+      ]);
 
       const recogniseSteps = chunk.map((item) => {
         const distractors = chunk
@@ -114,12 +115,7 @@ export const projectGT000: Projection<"GT-000"> = {
       return {
         segment_id: `seg_${segIdx + 1}`,
         asset_ids: segAssetIds,
-        steps: [
-          ...presentSteps,
-          ...echoSteps,
-          ...recogniseSteps,
-          ...recallSteps,
-        ],
+        steps: [...teachSteps, ...recogniseSteps, ...recallSteps],
         is_review: false,
       };
     });
