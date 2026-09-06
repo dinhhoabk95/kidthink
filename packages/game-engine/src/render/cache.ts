@@ -15,6 +15,19 @@ export const PRIMITIVE_GRADIENTS = {
   PLATE_INNER: 7,
   PLATE_CLOCHE: 8,
   PARTY_HORN: 9,
+  BG_SCHOOL: 10,
+  BG_FARM: 11,
+  BG_HOME: 12,
+  BG_ANIMAL: 13,
+  BG_NATURE: 14,
+  BG_OCEAN: 15,
+  BG_FOOD: 16,
+  BG_VEHICLE: 17,
+  BG_ART: 18,
+  BG_FAMILY: 19,
+  BG_BODY: 20,
+  BG_WEATHER: 21,
+  BG_FESTIVAL: 22,
 } as const;
 
 export type PrimitiveGradientId =

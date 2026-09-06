@@ -357,7 +357,7 @@ export class GT003Session extends TemplateGameSession<
     timeMs: number
   ): void {
     const slots = this.slots;
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     this.drawContainer(rs, ctx, slots);
     this.drawInteractive(rs, ctx, slots);

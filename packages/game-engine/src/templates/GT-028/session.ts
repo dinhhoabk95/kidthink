@@ -276,7 +276,7 @@ export class GT028Session extends TemplateGameSession<
     rs: RenderSystem,
     _timeMs: number
   ): void {
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     drawProgressBadge(
       ctx,

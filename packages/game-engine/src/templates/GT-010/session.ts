@@ -258,7 +258,7 @@ export class SubstitutionSession extends TemplateGameSession<
     rs: RenderSystem,
     _timeMs: number
   ): void {
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     const eqSlots = this.targetSlots;
     const optionSlots = this.sourceSlots;

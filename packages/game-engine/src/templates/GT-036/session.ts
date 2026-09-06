@@ -538,7 +538,7 @@ export class GT036Session extends TemplateGameSession<
   }
 
   render(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
 
     drawPromptText(ctx, rs, this.content.prompt);
     drawSubPromptText(

@@ -40,6 +40,9 @@ export class RenderSystem {
   readonly LOGIC_WIDTH = 960;
   readonly LOGIC_HEIGHT = 540;
 
+  /** Active theme ID for thematic rendering fallback. */
+  themeId?: string;
+
   /** Đặt bởi `setupCanvas`. Chưa dựng khung thì chưa có. */
   viewport?: CanvasViewport;
 

@@ -1,3 +1,8 @@
+import {
+  formatDisplayLabel,
+  formatPromptLabel,
+  formatSpokenLabel,
+} from "@mindkid/shared";
 import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
@@ -11,6 +16,7 @@ import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import {
+  drawFlashcard,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
@@ -21,7 +27,6 @@ import {
   updateParticles,
 } from "#src/render/index.js";
 import { AudioController } from "#src/systems/audio-controller";
-import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type {
   GT000Asset,
@@ -49,175 +54,14 @@ function createRenderItem(
 ): RenderItem {
   return {
     id: asset.asset_id,
-    label: asset.label,
+    label: formatDisplayLabel(asset.label, {
+      value: asset.value,
+      glyph: asset.glyph,
+    }),
     text: asset.glyph ?? asset.text,
     asset: resolveRenderAsset(asset),
     state,
   };
-}
-
-const DIGIT_REGEX = /^\d+$/;
-
-function drawFlashcardFrame(
-  ctx: CanvasRenderingContext2D,
-  left: number,
-  top: number,
-  cardW: number,
-  cardH: number
-): void {
-  // 1. Warm ambient drop shadow
-  ctx.save();
-  ctx.shadowColor = "rgba(30, 27, 75, 0.12)";
-  ctx.shadowBlur = 18;
-  ctx.shadowOffsetY = 8;
-  ctx.fillStyle = designTokens.colors.surface[200];
-  ctx.beginPath();
-  ctx.roundRect(left, top, cardW, cardH, 28);
-  ctx.fill();
-  ctx.restore();
-
-  // 2. 3D bottom slab
-  ctx.save();
-  ctx.fillStyle = designTokens.colors.surface[200];
-  ctx.beginPath();
-  ctx.roundRect(left, top + 5, cardW, cardH, 28);
-  ctx.fill();
-  ctx.restore();
-
-  // 3. Main card white body
-  ctx.save();
-  ctx.fillStyle = designTokens.colors.surface[0];
-  ctx.strokeStyle = designTokens.colors.surface[200];
-  ctx.lineWidth = 4;
-  ctx.beginPath();
-  ctx.roundRect(left, top, cardW, cardH, 28);
-  ctx.fill();
-  ctx.stroke();
-
-  // 4. White top specular highlight
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(left + 28, top + 4);
-  ctx.lineTo(left + cardW - 28, top + 4);
-  ctx.stroke();
-  ctx.restore();
-}
-
-function drawNumberContent(
-  ctx: CanvasRenderingContext2D,
-  asset: GT000Asset,
-  val: number,
-  x: number,
-  y: number,
-  cardW: number
-): void {
-  // Large orange numeral
-  ctx.save();
-  ctx.font = `bold 100px ${designTokens.fonts.heading}`;
-  ctx.fillStyle = designTokens.colors.cta[500];
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(String(val), x, y - 50);
-  ctx.restore();
-
-  if (val === 0) {
-    ctx.save();
-    ctx.font = `18px ${designTokens.fonts.sans}`;
-    ctx.fillStyle = designTokens.colors.surface[500];
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("(Không có đồ vật nào)", x, y + 55);
-    ctx.restore();
-  } else {
-    const itemEmoji =
-      asset.image_ref?.kind === "emoji" &&
-      asset.image_ref.ref &&
-      !asset.image_ref.ref.includes("️⃣")
-        ? asset.image_ref.ref
-        : "⚽";
-
-    const maxCount = Math.min(val, 10);
-    const gap = Math.min(60, (cardW - 60) / maxCount);
-    const startX = x - ((maxCount - 1) * gap) / 2;
-
-    ctx.save();
-    ctx.font = `44px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    for (let i = 0; i < maxCount; i++) {
-      ctx.fillText(itemEmoji, startX + i * gap, y + 55);
-    }
-    ctx.restore();
-  }
-
-  // Label at bottom
-  ctx.save();
-  ctx.font = `bold 22px ${designTokens.fonts.sans}`;
-  ctx.fillStyle = designTokens.colors.surface[700];
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(asset.label, x, y + 115);
-  ctx.restore();
-}
-
-function drawNonNumberContent(
-  ctx: CanvasRenderingContext2D,
-  asset: GT000Asset,
-  x: number,
-  y: number
-): void {
-  if (asset.image_ref?.kind === "emoji") {
-    ctx.save();
-    ctx.font = `84px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(asset.image_ref.ref, x, y - 25);
-    ctx.restore();
-  } else if (asset.glyph) {
-    ctx.save();
-    ctx.font = `bold 100px ${designTokens.fonts.heading}`;
-    ctx.fillStyle = designTokens.colors.brand[600];
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(asset.glyph, x, y - 25);
-    ctx.restore();
-  }
-
-  ctx.save();
-  ctx.font = `bold 24px ${designTokens.fonts.sans}`;
-  ctx.fillStyle = designTokens.colors.surface[800];
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(asset.label, x, y + 80);
-  ctx.restore();
-}
-
-function drawFlashcard(
-  ctx: CanvasRenderingContext2D,
-  _rs: RenderSystem,
-  slot: Slot,
-  asset: GT000Asset
-): void {
-  const cardW = 350;
-  const cardH = 320;
-  const x = slot.x;
-  const y = slot.y;
-  const left = x - cardW / 2;
-  const top = y - cardH / 2;
-
-  drawFlashcardFrame(ctx, left, top, cardW, cardH);
-
-  const hasDigit = Boolean(asset.glyph && DIGIT_REGEX.test(asset.glyph));
-  const val =
-    asset.value ??
-    (hasDigit ? Number.parseInt(asset.glyph as string, 10) : undefined);
-
-  if (val === undefined) {
-    drawNonNumberContent(ctx, asset, x, y);
-  } else {
-    drawNumberContent(ctx, asset, val, x, y, cardW);
-  }
 }
 
 function getStepItemCount(step: GT000Step): number {
@@ -370,7 +214,11 @@ export class GT000Session extends TemplateGameSession<
       this.lastTtsUsed = false;
       this.audio.playPromptAudio(asset.audio_path);
     } else {
-      const spoke = this.audio.speakPrompt(asset.label);
+      const spokenTerm = formatSpokenLabel(asset.label, {
+        value: asset.value,
+        glyph: asset.glyph,
+      });
+      const spoke = this.audio.speakPrompt(spokenTerm);
       this.lastTtsUsed = spoke;
       if (!spoke) {
         this.recordEvent("tts_unavailable", {
@@ -398,7 +246,13 @@ export class GT000Session extends TemplateGameSession<
       this.lastTtsUsed = false;
       this.audio.playPromptAudio(asset.audio_path);
     } else {
-      const spoke = this.audio.speakPrompt(asset.label);
+      const promptToSpeak =
+        step.narration_line ??
+        `Đây là ${formatPromptLabel(asset.label, {
+          value: asset.value,
+          glyph: asset.glyph,
+        })}`;
+      const spoke = this.audio.speakPrompt(promptToSpeak);
       this.lastTtsUsed = spoke;
       if (!spoke) {
         this.recordEvent("tts_unavailable", {
@@ -738,22 +592,36 @@ export class GT000Session extends TemplateGameSession<
   }
 
   private getStepPromptText(step: GT000Step): string {
+    const asset = this.getAsset(step.target_asset_id);
+    const label = asset
+      ? formatPromptLabel(asset.label, {
+          value: asset.value,
+          glyph: asset.glyph,
+        })
+      : "";
+    const spokenLabel = asset
+      ? formatSpokenLabel(asset.label, {
+          value: asset.value,
+          glyph: asset.glyph,
+        })
+      : "";
+
     if (step.action === "present") {
-      const label = this.getAsset(step.target_asset_id)?.label ?? "";
       return step.narration_line ?? `Đây là ${label}`;
     }
     if (step.action === "echo") {
-      const label = this.getAsset(step.target_asset_id)?.label ?? "";
-      return step.prompt_line ?? `Bé nói theo cô nhé: ${label}`;
+      return step.prompt_line ?? `Bé nói theo cô nhé: ${spokenLabel}`;
     }
     if (step.action === "recognise") {
-      const label = this.getAsset(step.target_asset_id)?.label ?? "";
-      return step.prompt_line ?? `Bé hãy chỉ cho cô ${label}`;
+      return step.prompt_line ?? `Bé hãy chỉ cho cô ${label} nhé!`;
+    }
+    if (step.action === "recall") {
+      return step.prompt_line ?? `Đâu là ${label}?`;
     }
     if (step.action === "link") {
       return step.prompt_line ?? "Nối đối tượng tương ứng";
     }
-    return step.prompt_line ?? "Đây là gì?";
+    return "Đây là gì?";
   }
 
   private getStepAssetIds(step: GT000Step): string[] {
@@ -797,7 +665,7 @@ export class GT000Session extends TemplateGameSession<
     rs: RenderSystem,
     _timeMs: number
   ): void {
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
 
     const step = this.getCurrentStep();
     if (!step) {
@@ -806,7 +674,7 @@ export class GT000Session extends TemplateGameSession<
     }
 
     drawPromptText(ctx, rs, this.getStepPromptText(step));
-    drawSubPromptText(ctx, rs, `Khái niệm: ${this.content.concept.label}`);
+    drawSubPromptText(ctx, rs, this.content.concept.label);
 
     const renderItems = this.collectRenderItems(step);
     const isCard = step.action === "present" || step.action === "echo";
@@ -816,7 +684,7 @@ export class GT000Session extends TemplateGameSession<
       const slot = this.slots[0];
       const asset = this.getAsset(step.target_asset_id);
       if (item && slot && asset) {
-        drawFlashcard(ctx, rs, slot, asset);
+        drawFlashcard(ctx, rs, slot, asset, item.label);
       }
     } else {
       for (let i = 0; i < renderItems.length; i++) {

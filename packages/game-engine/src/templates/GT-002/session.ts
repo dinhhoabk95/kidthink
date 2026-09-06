@@ -215,7 +215,7 @@ export class GT002Session extends TemplateGameSession<
     timeMs: number
   ): void {
     const slots = this.slots;
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     drawProgressBadge(
       ctx,

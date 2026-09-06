@@ -398,7 +398,7 @@ export class GT005Session extends TemplateGameSession<
     rs: RenderSystem,
     _timeMs: number
   ): void {
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     const sources = this.sourceSlots;
     const targets = this.targetSlots;

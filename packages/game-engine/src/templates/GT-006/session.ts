@@ -272,7 +272,7 @@ export class GT006Session extends TemplateGameSession<
     rs: RenderSystem,
     _timeMs: number
   ): void {
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     drawTrainRailway(ctx, sceneBox(rs));
     const firstSlot = this.slots[0];

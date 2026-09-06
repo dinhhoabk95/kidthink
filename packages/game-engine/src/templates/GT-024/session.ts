@@ -222,7 +222,7 @@ export class GT024Session extends TemplateGameSession<
     rs: RenderSystem,
     _timeMs: number
   ): void {
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     drawSubPromptText(ctx, rs, this.content.shape_name);
     drawWaypointPath(

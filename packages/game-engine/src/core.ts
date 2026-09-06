@@ -159,6 +159,7 @@ export class GameEngine {
     this.slots = computeEngineSlots(config);
 
     this.config = config;
+    this.renderSystem.themeId = config.theme_id;
     this.audio.setEnabled(config.audio_enabled);
     this.scaffolding = new ScaffoldingSystem(config.age_band);
 

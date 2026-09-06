@@ -255,7 +255,7 @@ export class GT011Session extends TemplateGameSession<
     rs: RenderSystem,
     _timeMs: number
   ): void {
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     const cellCount = this.content.matrix.rows * this.content.matrix.cols;
     const cellSlots = this.slots.slice(0, cellCount);

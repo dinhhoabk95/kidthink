@@ -123,6 +123,7 @@ export function sceneBox(rs: RenderSystem): SceneBox {
   return { x: 0, y: 0, w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT };
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: multi-theme background visual renderer
 export function drawSceneBackground(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
@@ -130,31 +131,192 @@ export function drawSceneBackground(
 ): void {
   setContextGeneration(ctx, rs.paintGeneration);
   ctx.save();
-  if (themeId === "farm" || themeId === "nature") {
-    // Farm / Nature: soft pasture sky & sunlit meadow gradient
-    let skyGrad = getCachedGradient(
+
+  const w = rs.LOGIC_WIDTH;
+  const h = rs.LOGIC_HEIGHT;
+  const activeTheme = themeId ?? rs.themeId;
+
+  if (activeTheme === "nature") {
+    let grad = getCachedGradient(
       ctx,
       rs.paintGeneration,
-      PRIMITIVE_GRADIENTS.BG_SKY,
+      PRIMITIVE_GRADIENTS.BG_NATURE,
       0
     );
-    if (!skyGrad) {
-      skyGrad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT);
-      skyGrad.addColorStop(0, "#f0fdf4");
-      skyGrad.addColorStop(0.55, "#fbf9f5");
-      skyGrad.addColorStop(1, "#ecfdf5");
+    if (!grad) {
+      grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "#e0f2fe");
+      grad.addColorStop(0.55, "#f0fdf4");
+      grad.addColorStop(1, "#bbf7d0");
       setCachedGradient(
         ctx,
         rs.paintGeneration,
-        PRIMITIVE_GRADIENTS.BG_SKY,
+        PRIMITIVE_GRADIENTS.BG_NATURE,
         0,
-        skyGrad
+        grad
       );
     }
-    ctx.fillStyle = skyGrad;
-    ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
-  } else if (themeId === "space") {
-    // Space: soft pastel starlight
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Clouds
+    drawScenicCloud(ctx, 140, 75, 1.0);
+    drawScenicCloud(ctx, 810, 85, 0.85);
+
+    // Far rolling hill
+    ctx.fillStyle = "rgba(134, 239, 172, 0.35)";
+    ctx.beginPath();
+    ctx.moveTo(0, 480);
+    ctx.bezierCurveTo(240, 420, 600, 490, w, 450);
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Near green hill
+    ctx.fillStyle = "rgba(74, 222, 128, 0.25)";
+    ctx.beginPath();
+    ctx.moveTo(0, 500);
+    ctx.bezierCurveTo(400, 520, 700, 460, w, 490);
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Wildflower dots
+    drawScenicFlowerDots(ctx, [
+      [80, 495, "rgba(253, 224, 71, 0.5)"],
+      [220, 480, "rgba(255, 255, 255, 0.6)"],
+      [450, 505, "rgba(251, 146, 60, 0.5)"],
+      [720, 475, "rgba(253, 224, 71, 0.5)"],
+      [880, 490, "rgba(255, 255, 255, 0.6)"],
+    ]);
+  } else if (activeTheme === "farm") {
+    let grad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_FARM,
+      0
+    );
+    if (!grad) {
+      grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "#fef3c7");
+      grad.addColorStop(0.5, "#fef9c3");
+      grad.addColorStop(1, "#dcfce7");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_FARM,
+        0,
+        grad
+      );
+    }
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Morning Sun
+    ctx.fillStyle = "rgba(254, 240, 138, 0.25)";
+    ctx.beginPath();
+    ctx.arc(860, 65, 54, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "rgba(253, 224, 71, 0.4)";
+    ctx.beginPath();
+    ctx.arc(860, 65, 36, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Rolling pasture
+    ctx.fillStyle = "rgba(187, 247, 208, 0.42)";
+    ctx.beginPath();
+    ctx.moveTo(0, 470);
+    ctx.bezierCurveTo(300, 430, 650, 490, w, 460);
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Rustic wooden fence rails & pickets along bottom
+    ctx.strokeStyle = "rgba(180, 130, 80, 0.25)";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(0, 495);
+    ctx.lineTo(w, 495);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(180, 130, 80, 0.22)";
+    for (let x = 60; x < w; x += 130) {
+      ctx.fillRect(x, 480, 8, 32);
+    }
+  } else if (activeTheme === "ocean") {
+    let seaGrad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_OCEAN,
+      0
+    );
+    if (!seaGrad) {
+      seaGrad = ctx.createLinearGradient(0, 0, 0, h);
+      seaGrad.addColorStop(0, "#bae6fd");
+      seaGrad.addColorStop(0.5, "#7dd3fc");
+      seaGrad.addColorStop(1, "#38bdf8");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_OCEAN,
+        0,
+        seaGrad
+      );
+    }
+    ctx.fillStyle = seaGrad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Underwater light rays
+    ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
+    ctx.beginPath();
+    ctx.moveTo(180, 0);
+    ctx.lineTo(260, 0);
+    ctx.lineTo(380, h);
+    ctx.lineTo(220, h);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(680, 0);
+    ctx.lineTo(760, 0);
+    ctx.lineTo(890, h);
+    ctx.lineTo(730, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Sandy seabed at bottom
+    ctx.fillStyle = "rgba(254, 240, 138, 0.32)";
+    ctx.beginPath();
+    ctx.moveTo(0, 485);
+    ctx.bezierCurveTo(320, 470, 680, 500, w, 480);
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Coral silhouettes at corners
+    ctx.fillStyle = "rgba(251, 113, 133, 0.28)";
+    ctx.beginPath();
+    ctx.arc(60, 490, 24, 0, Math.PI * 2);
+    ctx.arc(80, 480, 18, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "rgba(20, 184, 166, 0.28)";
+    ctx.beginPath();
+    ctx.arc(900, 490, 24, 0, Math.PI * 2);
+    ctx.arc(880, 480, 18, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Translucent bubbles
+    drawScenicBubble(ctx, 120, 320, 12);
+    drawScenicBubble(ctx, 280, 200, 16);
+    drawScenicBubble(ctx, 450, 120, 10);
+    drawScenicBubble(ctx, 660, 280, 14);
+    drawScenicBubble(ctx, 840, 160, 18);
+  } else if (activeTheme === "space") {
     let spaceGrad = getCachedGradient(
       ctx,
       rs.paintGeneration,
@@ -162,10 +324,10 @@ export function drawSceneBackground(
       0
     );
     if (!spaceGrad) {
-      spaceGrad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT);
-      spaceGrad.addColorStop(0, "#e0e7ff");
-      spaceGrad.addColorStop(0.6, "#fbf9f5");
-      spaceGrad.addColorStop(1, "#ede9fe");
+      spaceGrad = ctx.createLinearGradient(0, 0, 0, h);
+      spaceGrad.addColorStop(0, "#0f172a");
+      spaceGrad.addColorStop(0.5, "#1e1b4b");
+      spaceGrad.addColorStop(1, "#312e81");
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -175,34 +337,509 @@ export function drawSceneBackground(
       );
     }
     ctx.fillStyle = spaceGrad;
-    ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
-  } else if (themeId === "ocean") {
-    // Ocean: gentle aquamarine
-    let seaGrad = getCachedGradient(
+    ctx.fillRect(0, 0, w, h);
+
+    // Crescent moon (upper left)
+    ctx.fillStyle = "rgba(254, 240, 138, 0.7)";
+    ctx.beginPath();
+    ctx.arc(120, 75, 22, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = spaceGrad;
+    ctx.beginPath();
+    ctx.arc(128, 70, 18, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Ringed planet (upper right)
+    ctx.fillStyle = "rgba(251, 191, 36, 0.65)";
+    ctx.beginPath();
+    ctx.arc(820, 80, 22, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(253, 230, 138, 0.45)";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.ellipse(820, 80, 38, 10, -0.3, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Stars
+    drawScenicStars(ctx, [
+      [240, 60, 3],
+      [350, 110, 2],
+      [490, 70, 3],
+      [630, 130, 2],
+      [720, 60, 3],
+      [180, 180, 2],
+      [880, 180, 2],
+      [320, 230, 3],
+      [680, 220, 2],
+      [140, 380, 3],
+      [840, 360, 3],
+    ]);
+
+    // Cosmic horizon crest
+    ctx.fillStyle = "rgba(49, 46, 129, 0.45)";
+    ctx.beginPath();
+    ctx.moveTo(0, 490);
+    ctx.bezierCurveTo(320, 460, 640, 510, w, 480);
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fill();
+  } else if (activeTheme === "school") {
+    let grad = getCachedGradient(
       ctx,
       rs.paintGeneration,
-      PRIMITIVE_GRADIENTS.BG_SEA,
+      PRIMITIVE_GRADIENTS.BG_SCHOOL,
       0
     );
-    if (!seaGrad) {
-      seaGrad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT);
-      seaGrad.addColorStop(0, "#e0f2fe");
-      seaGrad.addColorStop(0.6, "#fbf9f5");
-      seaGrad.addColorStop(1, "#ccfbf1");
+    if (!grad) {
+      grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "#fefce8");
+      grad.addColorStop(0.55, "#fef9c3");
+      grad.addColorStop(1, "#fed7aa");
       setCachedGradient(
         ctx,
         rs.paintGeneration,
-        PRIMITIVE_GRADIENTS.BG_SEA,
+        PRIMITIVE_GRADIENTS.BG_SCHOOL,
         0,
-        seaGrad
+        grad
       );
     }
-    ctx.fillStyle = seaGrad;
-    ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Blackboard banner at top
+    ctx.fillStyle = "rgba(30, 41, 59, 0.85)";
+    ctx.fillRect(0, 0, w, 24);
+    ctx.fillStyle = "rgba(180, 130, 80, 0.5)";
+    ctx.fillRect(0, 24, w, 4);
+
+    // Chalk dots
+    drawScenicFlowerDots(ctx, [
+      [60, 12, "rgba(255, 255, 255, 0.6)"],
+      [140, 12, "rgba(254, 240, 138, 0.6)"],
+      [820, 12, "rgba(110, 231, 183, 0.6)"],
+      [900, 12, "rgba(244, 114, 182, 0.6)"],
+    ]);
+
+    // Wooden classroom floor
+    ctx.fillStyle = "rgba(217, 119, 6, 0.15)";
+    ctx.fillRect(0, 480, w, 60);
+    ctx.strokeStyle = "rgba(180, 130, 80, 0.15)";
+    ctx.lineWidth = 2;
+    for (let x = 160; x < w; x += 160) {
+      ctx.beginPath();
+      ctx.moveTo(x, 480);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+  } else if (activeTheme === "home") {
+    let grad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_HOME,
+      0
+    );
+    if (!grad) {
+      grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "#fff7ed");
+      grad.addColorStop(0.5, "#ffedd5");
+      grad.addColorStop(1, "#fed7aa");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_HOME,
+        0,
+        grad
+      );
+    }
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Sunbeam through window
+    ctx.fillStyle = "rgba(254, 240, 138, 0.14)";
+    ctx.beginPath();
+    ctx.moveTo(60, 0);
+    ctx.lineTo(190, 0);
+    ctx.lineTo(390, h);
+    ctx.lineTo(160, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Wooden toy shelf baseboard
+    ctx.fillStyle = "rgba(180, 110, 60, 0.18)";
+    ctx.fillRect(0, 480, w, 60);
+    ctx.strokeStyle = "rgba(180, 110, 60, 0.3)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, 480);
+    ctx.lineTo(w, 480);
+    ctx.stroke();
+  } else if (activeTheme === "animal") {
+    let grad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_ANIMAL,
+      0
+    );
+    if (!grad) {
+      grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "#ffedd5");
+      grad.addColorStop(0.45, "#fef08a");
+      grad.addColorStop(1, "#dcfce7");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_ANIMAL,
+        0,
+        grad
+      );
+    }
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Golden savanna sun on horizon
+    ctx.fillStyle = "rgba(251, 191, 36, 0.2)";
+    ctx.beginPath();
+    ctx.arc(480, 380, 80, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Savanna hill
+    ctx.fillStyle = "rgba(217, 119, 6, 0.16)";
+    ctx.beginPath();
+    ctx.moveTo(0, 470);
+    ctx.bezierCurveTo(280, 420, 680, 480, w, 450);
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Tropical leaves in corners
+    ctx.fillStyle = "rgba(34, 197, 94, 0.18)";
+    ctx.beginPath();
+    ctx.arc(0, 0, 90, 0, Math.PI / 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(w, 0, 90, Math.PI / 2, Math.PI);
+    ctx.fill();
+  } else if (activeTheme === "food") {
+    let grad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_FOOD,
+      0
+    );
+    if (!grad) {
+      grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "#fff1f2");
+      grad.addColorStop(0.5, "#fef3c7");
+      grad.addColorStop(1, "#ecfdf5");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_FOOD,
+        0,
+        grad
+      );
+    }
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Picnic cloth strip along bottom
+    ctx.fillStyle = "rgba(244, 63, 94, 0.14)";
+    ctx.fillRect(0, 485, w, 55);
+    ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
+    for (let x = 0; x < w; x += 40) {
+      ctx.fillRect(x, 485, 20, 55);
+    }
+
+    // Gentle berry dots in background
+    drawScenicFlowerDots(ctx, [
+      [90, 200, "rgba(251, 113, 133, 0.2)"],
+      [860, 220, "rgba(251, 113, 133, 0.2)"],
+      [140, 360, "rgba(251, 191, 36, 0.2)"],
+      [820, 350, "rgba(251, 191, 36, 0.2)"],
+    ]);
+  } else if (activeTheme === "vehicle") {
+    let grad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_VEHICLE,
+      0
+    );
+    if (!grad) {
+      grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "#e0f2fe");
+      grad.addColorStop(0.5, "#bae6fd");
+      grad.addColorStop(1, "#f1f5f9");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_VEHICLE,
+        0,
+        grad
+      );
+    }
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Travel clouds
+    drawScenicCloud(ctx, 160, 65, 1.0);
+    drawScenicCloud(ctx, 750, 90, 0.85);
+
+    // Winding paved travel road
+    ctx.fillStyle = "rgba(71, 85, 105, 0.18)";
+    ctx.beginPath();
+    ctx.moveTo(0, 480);
+    ctx.bezierCurveTo(340, 460, 620, 510, w, 475);
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fill();
+
+    // Road dash line
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.45)";
+    ctx.lineWidth = 3;
+    ctx.setLineDash([16, 12]);
+    ctx.beginPath();
+    ctx.moveTo(0, 510);
+    ctx.bezierCurveTo(340, 490, 620, 540, w, 505);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  } else if (activeTheme === "art") {
+    let grad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_ART,
+      0
+    );
+    if (!grad) {
+      grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "#fdf4ff");
+      grad.addColorStop(0.4, "#fae8ff");
+      grad.addColorStop(1, "#e0e7ff");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_ART,
+        0,
+        grad
+      );
+    }
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Watercolor splash arcs
+    ctx.fillStyle = "rgba(192, 132, 252, 0.16)";
+    ctx.beginPath();
+    ctx.arc(80, 80, 65, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "rgba(56, 189, 248, 0.16)";
+    ctx.beginPath();
+    ctx.arc(880, 90, 75, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "rgba(250, 204, 21, 0.16)";
+    ctx.beginPath();
+    ctx.arc(840, 470, 70, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "rgba(244, 114, 182, 0.16)";
+    ctx.beginPath();
+    ctx.arc(100, 480, 65, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (activeTheme === "family") {
+    let grad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_FAMILY,
+      0
+    );
+    if (!grad) {
+      grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "#fff7ed");
+      grad.addColorStop(0.5, "#ffe4e6");
+      grad.addColorStop(1, "#fed7aa");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_FAMILY,
+        0,
+        grad
+      );
+    }
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Warm sunset orb
+    ctx.fillStyle = "rgba(251, 146, 60, 0.14)";
+    ctx.beginPath();
+    ctx.arc(480, 180, 110, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Garden terrace strip at bottom
+    ctx.fillStyle = "rgba(180, 120, 80, 0.16)";
+    ctx.fillRect(0, 485, w, 55);
+    ctx.strokeStyle = "rgba(180, 120, 80, 0.22)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(0, 485);
+    ctx.lineTo(w, 485);
+    ctx.stroke();
+  } else if (activeTheme === "body") {
+    let grad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_BODY,
+      0
+    );
+    if (!grad) {
+      grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "#f0fdfa");
+      grad.addColorStop(0.5, "#ccfbf1");
+      grad.addColorStop(1, "#dcfce7");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_BODY,
+        0,
+        grad
+      );
+    }
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Energizing sunrise aura
+    ctx.strokeStyle = "rgba(253, 224, 71, 0.22)";
+    ctx.lineWidth = 26;
+    ctx.beginPath();
+    ctx.arc(480, 0, 220, 0, Math.PI);
+    ctx.stroke();
+
+    // Active park lawn
+    ctx.fillStyle = "rgba(52, 211, 153, 0.22)";
+    ctx.beginPath();
+    ctx.moveTo(0, 480);
+    ctx.bezierCurveTo(340, 460, 620, 505, w, 475);
+    ctx.lineTo(w, h);
+    ctx.lineTo(0, h);
+    ctx.closePath();
+    ctx.fill();
+  } else if (activeTheme === "weather") {
+    let grad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_WEATHER,
+      0
+    );
+    if (!grad) {
+      grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "#e0f2fe");
+      grad.addColorStop(0.5, "#bae6fd");
+      grad.addColorStop(1, "#fef9c3");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_WEATHER,
+        0,
+        grad
+      );
+    }
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Rainbow arc
+    ctx.lineWidth = 14;
+    ctx.strokeStyle = "rgba(248, 113, 113, 0.12)";
+    ctx.beginPath();
+    ctx.arc(480, 540, 420, Math.PI, 0);
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(250, 204, 21, 0.12)";
+    ctx.beginPath();
+    ctx.arc(480, 540, 440, Math.PI, 0);
+    ctx.stroke();
+
+    ctx.strokeStyle = "rgba(96, 165, 250, 0.12)";
+    ctx.beginPath();
+    ctx.arc(480, 540, 460, Math.PI, 0);
+    ctx.stroke();
+
+    // Cheerful sun in upper left
+    ctx.fillStyle = "rgba(251, 191, 36, 0.35)";
+    ctx.beginPath();
+    ctx.arc(120, 70, 34, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Puffy clouds
+    drawScenicCloud(ctx, 160, 80, 0.9);
+    drawScenicCloud(ctx, 780, 85, 0.95);
+  } else if (activeTheme === "festival") {
+    let grad = getCachedGradient(
+      ctx,
+      rs.paintGeneration,
+      PRIMITIVE_GRADIENTS.BG_FESTIVAL,
+      0
+    );
+    if (!grad) {
+      grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "#fff1f2");
+      grad.addColorStop(0.5, "#fefce8");
+      grad.addColorStop(1, "#e0f2fe");
+      setCachedGradient(
+        ctx,
+        rs.paintGeneration,
+        PRIMITIVE_GRADIENTS.BG_FESTIVAL,
+        0,
+        grad
+      );
+    }
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    // Party bunting string across top
+    ctx.strokeStyle = "rgba(148, 163, 184, 0.45)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, 12);
+    ctx.bezierCurveTo(240, 28, 720, 28, w, 12);
+    ctx.stroke();
+
+    // Pennant flags along bunting
+    const flagColors = [
+      "rgba(244, 63, 94, 0.45)",
+      "rgba(251, 191, 36, 0.45)",
+      "rgba(52, 211, 153, 0.45)",
+      "rgba(59, 130, 246, 0.45)",
+      "rgba(168, 85, 247, 0.45)",
+    ];
+    for (let i = 0; i < 9; i++) {
+      const fx = 60 + i * 100;
+      const fy = 14 + Math.sin((i / 8) * Math.PI) * 10;
+      const color =
+        flagColors[i % flagColors.length] ?? "rgba(244, 63, 94, 0.45)";
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(fx - 14, fy);
+      ctx.lineTo(fx + 14, fy);
+      ctx.lineTo(fx, fy + 22);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    // Confetti dots
+    drawScenicFlowerDots(ctx, [
+      [120, 180, "rgba(244, 63, 94, 0.3)"],
+      [220, 280, "rgba(59, 130, 246, 0.3)"],
+      [780, 240, "rgba(234, 179, 8, 0.3)"],
+      [860, 160, "rgba(168, 85, 247, 0.3)"],
+      [100, 390, "rgba(52, 211, 153, 0.3)"],
+      [880, 390, "rgba(244, 63, 94, 0.3)"],
+    ]);
   } else {
-    // Default / home / wood / classroom: Warm oatmeal paper base
+    // Default / general / classroom: Warm oatmeal paper base
     ctx.fillStyle = designTokens.colors.surface[50];
-    ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
+    ctx.fillRect(0, 0, w, h);
 
     let grad = getCachedGradient(
       ctx,
@@ -211,7 +848,7 @@ export function drawSceneBackground(
       0
     );
     if (!grad) {
-      grad = ctx.createLinearGradient(0, 0, 0, rs.LOGIC_HEIGHT * 0.45);
+      grad = ctx.createLinearGradient(0, 0, 0, h * 0.45);
       grad.addColorStop(0, "rgba(255, 250, 240, 0.65)");
       grad.addColorStop(1, "rgba(251, 249, 245, 0)");
       setCachedGradient(
@@ -223,7 +860,7 @@ export function drawSceneBackground(
       );
     }
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
+    ctx.fillRect(0, 0, w, h);
   }
 
   // Soft subtle corner accents (Kinder-Tactile Montessori vignette)
@@ -235,12 +872,12 @@ export function drawSceneBackground(
   );
   if (!vignette) {
     vignette = ctx.createRadialGradient(
-      rs.LOGIC_WIDTH / 2,
-      rs.LOGIC_HEIGHT / 2,
-      rs.LOGIC_HEIGHT * 0.4,
-      rs.LOGIC_WIDTH / 2,
-      rs.LOGIC_HEIGHT / 2,
-      rs.LOGIC_WIDTH * 0.65
+      w / 2,
+      h / 2,
+      h * 0.4,
+      w / 2,
+      h / 2,
+      w * 0.65
     );
     vignette.addColorStop(0, "rgba(255, 255, 255, 0)");
     vignette.addColorStop(1, "rgba(212, 197, 171, 0.12)");
@@ -253,9 +890,80 @@ export function drawSceneBackground(
     );
   }
   ctx.fillStyle = vignette;
-  ctx.fillRect(0, 0, rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT);
+  ctx.fillRect(0, 0, w, h);
 
   ctx.restore();
+}
+
+function drawScenicCloud(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  scale: number
+): void {
+  ctx.fillStyle = "rgba(255, 255, 255, 0.68)";
+  ctx.beginPath();
+  ctx.arc(cx, cy, 20 * scale, 0, Math.PI * 2);
+  ctx.arc(cx + 18 * scale, cy - 8 * scale, 17 * scale, 0, Math.PI * 2);
+  ctx.arc(cx + 36 * scale, cy, 19 * scale, 0, Math.PI * 2);
+  ctx.arc(cx + 18 * scale, cy + 6 * scale, 15 * scale, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawScenicBubble(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  radius: number
+): void {
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
+  ctx.beginPath();
+  ctx.arc(
+    cx - radius * 0.35,
+    cy - radius * 0.35,
+    radius * 0.28,
+    0,
+    Math.PI * 2
+  );
+  ctx.fill();
+}
+
+function drawScenicStars(
+  ctx: CanvasRenderingContext2D,
+  stars: readonly [number, number, number][]
+): void {
+  for (const s of stars) {
+    if (!s) {
+      continue;
+    }
+    const [sx, sy, sr] = s;
+    ctx.fillStyle = "rgba(254, 240, 138, 0.65)";
+    ctx.beginPath();
+    ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawScenicFlowerDots(
+  ctx: CanvasRenderingContext2D,
+  dots: readonly [number, number, string][]
+): void {
+  for (const d of dots) {
+    if (!d) {
+      continue;
+    }
+    const [dx, dy, color] = d;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(dx, dy, 4, 0, Math.PI * 2);
+    ctx.fill();
+  }
 }
 
 /** Hào quang màu hổ phách khi kéo vật phẩm qua ô đích */
@@ -1122,5 +1830,220 @@ function getColorForYarn(colorId: string): string {
       return designTokens.colors.cta[500];
     default:
       return designTokens.colors.brand[400];
+  }
+}
+
+const DIGIT_REGEX = /^\d+$/;
+
+export function drawFlashcardFrame(
+  ctx: CanvasRenderingContext2D,
+  left: number,
+  top: number,
+  cardW: number,
+  cardH: number
+): void {
+  // 1. Warm ambient drop shadow
+  ctx.save();
+  ctx.shadowColor = "rgba(30, 27, 75, 0.12)";
+  ctx.shadowBlur = 18;
+  ctx.shadowOffsetY = 8;
+  ctx.fillStyle = designTokens.colors.surface[200];
+  ctx.beginPath();
+  ctx.roundRect(left, top, cardW, cardH, 28);
+  ctx.fill();
+  ctx.restore();
+
+  // 2. 3D bottom slab
+  ctx.save();
+  ctx.fillStyle = designTokens.colors.surface[200];
+  ctx.beginPath();
+  ctx.roundRect(left, top + 5, cardW, cardH, 28);
+  ctx.fill();
+  ctx.restore();
+
+  // 3. Main card white body
+  ctx.save();
+  ctx.fillStyle = designTokens.colors.surface[0];
+  ctx.strokeStyle = designTokens.colors.surface[200];
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.roundRect(left, top, cardW, cardH, 28);
+  ctx.fill();
+  ctx.stroke();
+
+  // 4. White top specular highlight
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(left + 28, top + 4);
+  ctx.lineTo(left + cardW - 28, top + 4);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawFlashcardNonNumberContent(
+  ctx: CanvasRenderingContext2D,
+  asset: {
+    asset_id: string;
+    label: string;
+    value?: number;
+    glyph?: string;
+    image_ref?: {
+      kind: string;
+      ref?: string;
+      path?: string;
+      text?: string;
+      url?: string;
+    };
+  },
+  x: number,
+  y: number,
+  labelToDraw: string
+): void {
+  if (asset.image_ref?.kind === "emoji" && asset.image_ref.ref) {
+    ctx.save();
+    ctx.font = `84px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(asset.image_ref.ref, x, y - 25);
+    ctx.restore();
+  } else if (asset.glyph) {
+    ctx.save();
+    ctx.font = `bold 100px ${designTokens.fonts.heading}`;
+    ctx.fillStyle = designTokens.colors.brand[600];
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(asset.glyph, x, y - 25);
+    ctx.restore();
+  }
+
+  ctx.save();
+  ctx.font = `bold 24px ${designTokens.fonts.sans}`;
+  ctx.fillStyle = designTokens.colors.surface[800];
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(labelToDraw, x, y + 80);
+  ctx.restore();
+}
+
+function drawFlashcardCounterItems(
+  ctx: CanvasRenderingContext2D,
+  itemEmoji: string,
+  val: number,
+  cardW: number,
+  x: number,
+  y: number
+): void {
+  const maxCount = Math.min(val, 10);
+  const gap = Math.min(60, (cardW - 60) / maxCount);
+  const startX = x - ((maxCount - 1) * gap) / 2;
+
+  ctx.save();
+  ctx.font = `44px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  for (let i = 0; i < maxCount; i++) {
+    ctx.fillText(itemEmoji, startX + i * gap, y + 55);
+  }
+  ctx.restore();
+}
+
+function drawFlashcardNumberContent(
+  ctx: CanvasRenderingContext2D,
+  asset: {
+    asset_id: string;
+    label: string;
+    value?: number;
+    glyph?: string;
+    image_ref?: {
+      kind: string;
+      ref?: string;
+      path?: string;
+      text?: string;
+      url?: string;
+    };
+  },
+  val: number,
+  cardW: number,
+  x: number,
+  y: number,
+  labelToDraw: string
+): void {
+  // Large orange numeral
+  ctx.save();
+  ctx.font = `bold 100px ${designTokens.fonts.heading}`;
+  ctx.fillStyle = designTokens.colors.cta[500];
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(String(val), x, y - 50);
+  ctx.restore();
+
+  if (val === 0) {
+    ctx.save();
+    ctx.font = `18px ${designTokens.fonts.sans}`;
+    ctx.fillStyle = designTokens.colors.surface[500];
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("(Không có đồ vật nào)", x, y + 55);
+    ctx.restore();
+  } else {
+    const itemEmoji =
+      asset.image_ref?.kind === "emoji" &&
+      asset.image_ref.ref &&
+      !asset.image_ref.ref.includes("️⃣")
+        ? asset.image_ref.ref
+        : "⚽";
+    drawFlashcardCounterItems(ctx, itemEmoji, val, cardW, x, y);
+  }
+
+  // Label at bottom
+  ctx.save();
+  ctx.font = `bold 22px ${designTokens.fonts.sans}`;
+  ctx.fillStyle = designTokens.colors.surface[700];
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(labelToDraw, x, y + 115);
+  ctx.restore();
+}
+
+export function drawFlashcard(
+  ctx: CanvasRenderingContext2D,
+  _rs: RenderSystem,
+  slot: Slot,
+  asset: {
+    asset_id: string;
+    label: string;
+    value?: number;
+    glyph?: string;
+    image_ref?: {
+      kind: string;
+      ref?: string;
+      path?: string;
+      text?: string;
+      url?: string;
+    };
+  },
+  displayLabel?: string
+): void {
+  const cardW = 350;
+  const cardH = 320;
+  const x = slot.x;
+  const y = slot.y;
+  const left = x - cardW / 2;
+  const top = y - cardH / 2;
+
+  drawFlashcardFrame(ctx, left, top, cardW, cardH);
+
+  const hasDigit = Boolean(asset.glyph && DIGIT_REGEX.test(asset.glyph));
+  const val =
+    asset.value ??
+    (hasDigit ? Number.parseInt(asset.glyph as string, 10) : undefined);
+
+  const labelToDraw = displayLabel ?? asset.label;
+
+  if (val === undefined) {
+    drawFlashcardNonNumberContent(ctx, asset, x, y, labelToDraw);
+  } else {
+    drawFlashcardNumberContent(ctx, asset, val, cardW, x, y, labelToDraw);
   }
 }

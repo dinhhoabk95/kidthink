@@ -504,7 +504,7 @@ export class BalanceScaleSession extends TemplateGameSession<
     rs: RenderSystem,
     _timeMs: number
   ): void {
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     const sources = this.sourceSlots;
     // `WeightedItem` chỉ mang id + khối lượng; asset nằm ở content.

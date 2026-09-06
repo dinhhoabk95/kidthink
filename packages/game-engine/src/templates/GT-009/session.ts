@@ -323,7 +323,7 @@ export class GT009Session extends TemplateGameSession<
     rs: RenderSystem,
     _timeMs: number
   ): void {
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     // clue-board xếp dải manh mối trước, rồi tới bàn ứng viên.
     const clueSlots = this.slots.slice(0, this.content.clues.length);

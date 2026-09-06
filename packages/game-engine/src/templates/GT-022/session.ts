@@ -253,7 +253,7 @@ export class GT022Session extends TemplateGameSession<
     rs: RenderSystem,
     _timeMs: number
   ): void {
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     // free-scene: toạ độ tới từ content (đã ở không gian logic), ô nào thiếu
     // toạ độ thì rơi về slot của layout.

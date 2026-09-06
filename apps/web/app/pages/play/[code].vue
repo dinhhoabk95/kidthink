@@ -1,5 +1,12 @@
 <template>
-  <div class="game-play-container">
+  <div :class="['game-play-container', `theme-${currentThemeId}`]">
+    <!-- Ambient theme background decorative elements -->
+    <div aria-hidden="true" class="ambient-theme-layer">
+      <div class="ambient-shape shape-1" />
+      <div class="ambient-shape shape-2" />
+      <div class="ambient-shape shape-3" />
+    </div>
+
     <!-- Loading State -->
     <div class="loading-state" v-if="isLoading">
       <div class="loading-box">
@@ -31,14 +38,19 @@
 
     <!-- Active Game Viewport -->
     <div class="game-viewport" v-show="!(isLoading || errorMessage)">
-      <!-- TOP HUD BAR (Stitch MCP Kinder-Tactile) -->
+      <!-- TOP HUD BAR (Kinder-Tactile Montessori) -->
       <header class="top-hud-bar">
-        <!-- Left: Lesson Info Pill -->
+        <!-- Left: Lesson Info Pill with Theme Badge -->
         <div class="lesson-info-pill">
           <div class="avatar-circle">
-            <span aria-hidden="true" class="avatar-emoji">🐻</span>
+            <span aria-hidden="true" class="avatar-emoji"
+              >{{ currentThemeInfo.icon }}</span
+            >
           </div>
-          <span class="lesson-title-text">{{ displayTitle }}</span>
+          <div class="lesson-meta-box">
+            <span class="theme-tag-text">{{ currentThemeInfo.label_vi }}</span>
+            <span class="lesson-title-text">{{ displayTitle }}</span>
+          </div>
         </div>
 
         <!-- Center: Star Progress Track -->
@@ -57,7 +69,7 @@
             type="button"
             @click="replayInstructionAudio"
           >
-            <span class="btn-icon">🔊</span>
+            <UIcon class="w-6 h-6 shrink-0" name="i-lucide-volume-2" />
             <span class="btn-label">Nghe lại</span>
           </button>
 
@@ -67,7 +79,7 @@
             type="button"
             @click="showParentGate = true"
           >
-            <span class="lock-icon">🔒</span>
+            <UIcon class="w-6 h-6 text-surface-600" name="i-lucide-lock" />
           </button>
         </div>
       </header>
@@ -96,7 +108,7 @@
               v-if="introStepIndex > 0"
               @click="handleIntroPrev"
             >
-              <span class="text-2xl">←</span>
+              <UIcon class="w-6 h-6" name="i-lucide-arrow-left" />
               <span>Trước</span>
             </button>
 
@@ -107,7 +119,7 @@
               type="button"
               @click="handleEchoReplay"
             >
-              <span class="text-2xl">🔊</span>
+              <UIcon class="w-6 h-6 text-cta" name="i-lucide-volume-2" />
               <span>Nghe lại</span>
             </button>
 
@@ -118,9 +130,9 @@
               :aria-label="isEchoStep ? 'Bé nói theo' : 'Tiếp tục'"
               @click="handleEchoDone"
             >
-              <span class="text-2xl" v-if="isEchoStep">🗣️</span>
+              <UIcon class="w-6 h-6" name="i-lucide-mic" v-if="isEchoStep" />
               <span>{{ isEchoStep ? "Bé nói theo" : "Tiếp tục" }}</span>
-              <span>➔</span>
+              <UIcon class="w-6 h-6" name="i-lucide-arrow-right" />
             </button>
           </div>
         </div>
@@ -162,7 +174,8 @@
     preloadGameSession,
     RoundRunner,
   } from "@mindkid/game-engine/runtime";
-  import { nextTick, onMounted, onUnmounted, ref } from "vue";
+  import { CONTENT_THEMES } from "@mindkid/shared";
+  import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { definePageMeta, useUserSession } from "#imports";
   import { useApi } from "~/composables/use-api";
@@ -215,6 +228,7 @@
     kind: string;
     ref?: string;
     path?: string;
+    text?: string;
   }
 
   interface InteractiveSessionItem {
@@ -315,6 +329,24 @@
       Boolean(route.query.return_to) ||
       Boolean(route.query.return_level_code)
     );
+  });
+
+  const currentThemeId = ref<string>("default");
+
+  const currentThemeInfo = computed(() => {
+    const matched = CONTENT_THEMES.find((t) => t.code === currentThemeId.value);
+    if (matched) {
+      return {
+        code: matched.code,
+        label_vi: matched.label_vi,
+        icon: matched.icon_emoji_ref,
+      };
+    }
+    return {
+      code: "default",
+      label_vi: "Toán tư duy",
+      icon: "🧩",
+    };
   });
 
   function handleEchoReplay() {
@@ -600,6 +632,7 @@
   let pointerDownY = 0;
   let isDragging = false;
   let isMoved = false;
+  let pendingDragItem: DragItemInfo | null = null;
   let draggedItem: DragItemInfo | null = null;
   let returningItem: ReturningItem | null = null;
   let currentDragPos = { x: 0, y: 0 };
@@ -646,10 +679,20 @@
         item_id: opt.item_id ?? `opt-${itemIndex}`,
         asset: opt.asset,
         label: opt.label,
-        text: opt.text,
+        text:
+          opt.text ?? (opt.asset?.kind === "text" ? opt.asset.text : undefined),
       };
     }
-    return session.content?.items?.[itemIndex];
+    const item = session.content?.items?.[itemIndex];
+    if (item) {
+      return {
+        ...item,
+        text:
+          item.text ??
+          (item.asset?.kind === "text" ? item.asset.text : undefined),
+      };
+    }
+    return undefined;
   }
 
   function getItemForSlot(
@@ -912,6 +955,48 @@
     dispatchSlotAction(session, hitIdx);
   }
 
+  function isDragSupported(
+    session?: GameSession & InteractiveSession
+  ): boolean {
+    const templateCode = cachedPayload?.template_code;
+    if (templateCode) {
+      const inputConfig = getTemplateInput(templateCode);
+      if (inputConfig) {
+        return (
+          inputConfig.family === "drag" ||
+          inputConfig.verbs.includes("drag") ||
+          inputConfig.verbs.includes("drop")
+        );
+      }
+    }
+    return typeof session?.onItemDropped === "function";
+  }
+
+  function tryInitPendingDrag(
+    session: GameSession & InteractiveSession,
+    slots: readonly Slot[],
+    x: number,
+    y: number
+  ): DragItemInfo | null {
+    const hitIdx = findHitSlot(slots, x, y);
+    if (hitIdx < 0 || !isSourceSlot(session, hitIdx, slots)) {
+      return null;
+    }
+    const item = getItemForSlot(session, hitIdx, slots);
+    if (!item || isItemLocked(session, item.item_id)) {
+      return null;
+    }
+    return {
+      item_id: item.item_id,
+      slotIndex: hitIdx,
+      asset: item.asset,
+      label: item.label,
+      text:
+        item.text ??
+        (item.asset?.kind === "text" ? item.asset.text : undefined),
+    };
+  }
+
   function handlePointerDown(event: PointerEvent): void {
     if (!(engine?.activeSession && canvasRef.value)) {
       return;
@@ -928,6 +1013,9 @@
     pointerDownY = y;
     currentDragPos = { x, y };
     isMoved = false;
+    isDragging = false;
+    draggedItem = null;
+    pendingDragItem = null;
 
     try {
       canvasRef.value.setPointerCapture(event.pointerId);
@@ -935,26 +1023,12 @@
       /* ignore pointer capture error on devices without capture support */
     }
 
-    const slots = session.slots || engine.slots || [];
-    const hitIdx = findHitSlot(slots, x, y);
-
-    if (hitIdx >= 0) {
-      const isSource = isSourceSlot(session, hitIdx, slots);
-      if (isSource) {
-        const item = getItemForSlot(session, hitIdx, slots);
-        if (item && !isItemLocked(session, item.item_id)) {
-          isDragging = true;
-          draggedItem = {
-            item_id: item.item_id,
-            slotIndex: hitIdx,
-            asset: item.asset,
-            label: item.label,
-            text: item.text,
-          };
-          engine?.audio.playTapSound();
-        }
-      }
+    if (!isDragSupported(session)) {
+      return;
     }
+
+    const slots = session.slots || engine.slots || [];
+    pendingDragItem = tryInitPendingDrag(session, slots, x, y);
   }
 
   function handlePointerMove(event: PointerEvent): void {
@@ -973,8 +1047,21 @@
     );
     currentDragPos = { x, y };
 
-    if (!isMoved && Math.hypot(x - pointerDownX, y - pointerDownY) > 8) {
+    const dragDist = Math.hypot(x - pointerDownX, y - pointerDownY);
+    if (!isMoved && dragDist > 8) {
       isMoved = true;
+    }
+
+    if (
+      !isDragging &&
+      pendingDragItem &&
+      isDragSupported(session) &&
+      dragDist > 10
+    ) {
+      isDragging = true;
+      draggedItem = pendingDragItem;
+      engine?.audio.playTapSound();
+      session.stageItem?.(draggedItem.item_id);
     }
 
     if (isDragging && draggedItem) {
@@ -1043,12 +1130,14 @@
     y: number
   ): void {
     if (tryDispatchDrop(session, slots, dragged, x, y)) {
+      session.stageItem?.(null);
       return;
     }
 
     const targetIdx = findNearestTargetSlot(session, slots, x, y);
     if (targetIdx !== null) {
       handleDropPlacement(session, slots, dragged, targetIdx);
+      session.stageItem?.(null);
       return;
     }
     if (
@@ -1056,8 +1145,10 @@
       Math.hypot(x - pointerDownX, y - pointerDownY) > 40
     ) {
       session.onItemLocked(dragged.item_id);
+      session.stageItem?.(null);
       return;
     }
+    session.stageItem?.(null);
     engine?.audio.playSoftFeedbackSound();
     const originSlot = slots[dragged.slotIndex];
     if (originSlot) {
@@ -1095,19 +1186,18 @@
       /* ignore pointer capture release error */
     }
 
-    const timeHeld = performance.now() - pointerDownTime;
-    const distance = Math.hypot(x - pointerDownX, y - pointerDownY);
     const slots = session.slots || engine.slots || [];
     const hitIdx = findHitSlot(slots, x, y);
 
-    if (timeHeld < 350 && distance < 20) {
-      handleTapInteraction(session, slots, hitIdx, x, y);
-    } else if (isDragging && draggedItem) {
+    if (isDragging && draggedItem) {
       handleDragDropRelease(session, slots, draggedItem, x, y);
+    } else {
+      handleTapInteraction(session, slots, hitIdx, x, y);
     }
 
     isDragging = false;
     draggedItem = null;
+    pendingDragItem = null;
     activePointerId = null;
     hoveredTargetIndex = null;
     if (session.hoveredContainer !== undefined) {
@@ -1118,8 +1208,15 @@
 
   function handlePointerCancel(event: PointerEvent): void {
     if (activePointerId === event.pointerId) {
+      if (isDragging && draggedItem) {
+        const session = engine?.activeSession as
+          | (GameSession & InteractiveSession)
+          | undefined;
+        session?.stageItem?.(null);
+      }
       isDragging = false;
       draggedItem = null;
+      pendingDragItem = null;
       activePointerId = null;
       hoveredTargetIndex = null;
     }
@@ -1171,23 +1268,24 @@
     ctx.arc(x, y - 6, radius * 0.7, -Math.PI * 0.75, -Math.PI * 0.25);
     ctx.stroke();
 
-    // Content: Emoji or Text
-    if (item.asset?.kind === "emoji" && item.asset.ref) {
+    // Content: Emoji, Text or Image
+    const emojiRef = item.asset?.kind === "emoji" ? item.asset.ref : undefined;
+    const textContent =
+      (item.asset?.kind === "text" ? item.asset.text : undefined) ||
+      item.text ||
+      item.label;
+
+    if (emojiRef) {
       ctx.font = `${Math.round(52 * scale)}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(item.asset.ref, x, y);
-    } else if (item.text || item.label) {
+      ctx.fillText(emojiRef, x, y);
+    } else if (textContent) {
       ctx.font = `bold ${Math.round(28 * scale)}px "Fredoka", "Quicksand", sans-serif`;
       ctx.fillStyle = "#1b1c1a";
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.fillText(item.text || item.label || "", x, y);
-    } else {
-      ctx.font = `${Math.round(48 * scale)}px "Noto Color Emoji", "Apple Color Emoji", sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("⭐", x, y);
+      ctx.fillText(textContent, x, y);
     }
     ctx.restore();
   }
@@ -1242,6 +1340,54 @@
     ctx.restore();
     if (progress >= 1) {
       returningItem = null;
+    }
+  }
+
+  function renderActiveDrag(ctx: CanvasRenderingContext2D): void {
+    if (!(isDragging && draggedItem)) {
+      return;
+    }
+    const slots =
+      (engine?.activeSession as { slots?: readonly Slot[] })?.slots ||
+      engine?.slots ||
+      [];
+    const originSlot = slots[draggedItem.slotIndex];
+    if (originSlot) {
+      ctx.save();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
+      ctx.beginPath();
+      const r = Math.max(originSlot.w, originSlot.h) / 2 + 4;
+      ctx.arc(originSlot.x, originSlot.y, r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    ctx.save();
+    renderDragAvatar(
+      ctx,
+      currentDragPos.x,
+      currentDragPos.y,
+      draggedItem,
+      1.15
+    );
+    ctx.restore();
+  }
+
+  function syncIntroStepState(): void {
+    if (cachedPayload?.template_code === "GT-000" && engine?.activeSession) {
+      const s = engine.activeSession as {
+        steps?: readonly { action: string }[];
+        currentStepIndex?: number;
+      };
+      const stepIdx = s.currentStepIndex ?? 0;
+      const step = s.steps?.[stepIdx];
+      introStepIndex.value = stepIdx;
+      isEchoStep.value = step?.action === "echo";
+      isIntroCardStep.value =
+        step?.action === "present" || step?.action === "echo";
+    } else if (isIntroCardStep.value) {
+      isIntroCardStep.value = false;
+      isEchoStep.value = false;
     }
   }
 
@@ -1326,39 +1472,9 @@
       engine = new GameEngine();
       engine.onAfterRender = (ctx, _rs, nowMs) => {
         renderHoverAura(ctx, nowMs);
-
-        if (isDragging && draggedItem) {
-          ctx.save();
-          renderDragAvatar(
-            ctx,
-            currentDragPos.x,
-            currentDragPos.y,
-            draggedItem,
-            1.15
-          );
-          ctx.restore();
-        }
-
+        renderActiveDrag(ctx);
         renderReturningAnimation(ctx, nowMs);
-
-        if (
-          cachedPayload?.template_code === "GT-000" &&
-          engine?.activeSession
-        ) {
-          const s = engine.activeSession as {
-            steps?: readonly { action: string }[];
-            currentStepIndex?: number;
-          };
-          const stepIdx = s.currentStepIndex ?? 0;
-          const step = s.steps?.[stepIdx];
-          introStepIndex.value = stepIdx;
-          isEchoStep.value = step?.action === "echo";
-          isIntroCardStep.value =
-            step?.action === "present" || step?.action === "echo";
-        } else if (isIntroCardStep.value) {
-          isIntroCardStep.value = false;
-          isEchoStep.value = false;
-        }
+        syncIntroStepState();
       };
       engine.load(engineConfig, factory);
       engine.start(canvasRef.value);
@@ -1563,6 +1679,7 @@
     cachedPayload = payload;
     displayTitle.value =
       payload.title || payload.name || `Bài học: ${levelCode}`;
+    currentThemeId.value = payload.theme_id || "default";
 
     if (payload.assets && Array.isArray(payload.assets)) {
       await preloadAssets(payload.assets);
@@ -1629,12 +1746,161 @@
     position: relative;
     overflow: hidden;
     user-select: none;
+    transition: background 0.5s ease;
+  }
+
+  /* 14 THEME AMBIENT GRADIENTS */
+  .game-play-container.theme-nature {
+    background: linear-gradient(145deg, #eef7ee 0%, #f4faf4 50%, #e5f2e5 100%);
+    --ambient-1: #c8e6c9;
+    --ambient-2: #dcedc8;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-farm {
+    background: linear-gradient(145deg, #fdf8eb 0%, #fffcf2 50%, #f7eed7 100%);
+    --ambient-1: #ffe082;
+    --ambient-2: #c8e6c9;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-ocean {
+    background: linear-gradient(145deg, #e8f4f8 0%, #f0f9fb 50%, #d8ecf4 100%);
+    --ambient-1: #b3e5fc;
+    --ambient-2: #b2dfdb;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-space {
+    background: linear-gradient(145deg, #edeaf5 0%, #f5f2fb 50%, #e0daf0 100%);
+    --ambient-1: #d1c4e9;
+    --ambient-2: #c5cae9;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-school {
+    background: linear-gradient(145deg, #fdf6ec 0%, #fffcf5 50%, #f9edd7 100%);
+    --ambient-1: #ffe0b2;
+    --ambient-2: #ffecb3;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-home {
+    background: linear-gradient(145deg, #faf4ec 0%, #fffdfa 50%, #f2e7d8 100%);
+    --ambient-1: #ffccbc;
+    --ambient-2: #ffe0b2;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-animal {
+    background: linear-gradient(145deg, #fbf7ee 0%, #fffef8 50%, #f2ebda 100%);
+    --ambient-1: #ffe082;
+    --ambient-2: #d7ccc8;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-food {
+    background: linear-gradient(145deg, #fdf2f0 0%, #fff8f6 50%, #fae2de 100%);
+    --ambient-1: #ffcdd2;
+    --ambient-2: #ffe0b2;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-vehicle {
+    background: linear-gradient(145deg, #edf4f7 0%, #f4f9fb 50%, #dfecf2 100%);
+    --ambient-1: #b0bec5;
+    --ambient-2: #b3e5fc;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-art {
+    background: linear-gradient(145deg, #fdf0f5 0%, #fff8fa 50%, #fae1ed 100%);
+    --ambient-1: #f8bbd0;
+    --ambient-2: #e1bee7;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-family {
+    background: linear-gradient(145deg, #fcf4ee 0%, #fffaf6 50%, #fae6da 100%);
+    --ambient-1: #ffccbc;
+    --ambient-2: #ffe0b2;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-body {
+    background: linear-gradient(145deg, #f5f6fa 0%, #fafbff 50%, #eaeef8 100%);
+    --ambient-1: #c5cae9;
+    --ambient-2: #bbdefb;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-weather {
+    background: linear-gradient(145deg, #ebf5fb 0%, #f5faff 50%, #ddedf7 100%);
+    --ambient-1: #bbdefb;
+    --ambient-2: #e1f5fe;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-festival {
+    background: linear-gradient(145deg, #fef4e8 0%, #fffaf2 50%, #fde7ce 100%);
+    --ambient-1: #ffe082;
+    --ambient-2: #ffccbc;
+    --ambient-3: #ffffff;
+  }
+
+  .game-play-container.theme-default {
+    background: linear-gradient(145deg, #f7f5f0 0%, #fbf9f5 50%, #ede8de 100%);
+    --ambient-1: #e0d8cc;
+    --ambient-2: #eae4d8;
+    --ambient-3: #ffffff;
+  }
+
+  /* AMBIENT SHAPES */
+  .ambient-theme-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .ambient-shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.38;
+    transition: all 0.8s ease;
+  }
+
+  .shape-1 {
+    width: 440px;
+    height: 440px;
+    top: -100px;
+    left: -80px;
+    background: var(--ambient-1, rgba(255, 230, 180, 0.4));
+  }
+
+  .shape-2 {
+    width: 480px;
+    height: 480px;
+    bottom: -120px;
+    right: -100px;
+    background: var(--ambient-2, rgba(200, 240, 220, 0.4));
+  }
+
+  .shape-3 {
+    width: 320px;
+    height: 320px;
+    top: 40%;
+    left: 60%;
+    background: var(--ambient-3, rgba(255, 255, 255, 0.5));
   }
 
   .game-viewport {
     width: 100%;
     height: 100%;
     position: relative;
+    z-index: 5;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -1650,42 +1916,63 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem 0 2rem;
+    padding: 0.75rem 2rem 0 2rem;
   }
 
   .lesson-info-pill {
     display: flex;
     align-items: center;
-    background-color: #f5f3ef;
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(12px);
     border-radius: 9999px;
     padding: 0.35rem 1.25rem 0.35rem 0.5rem;
-    border: 2px solid #d4c5ab;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    border: 3px solid #e7dfcf;
+    box-shadow: 0 4px 12px rgba(80, 69, 50, 0.08);
   }
 
   .avatar-circle {
-    width: 2.75rem;
-    height: 2.75rem;
+    width: 3.25rem;
+    height: 3.25rem;
+    min-width: 3.25rem;
     border-radius: 50%;
-    background-color: #ffbf00;
+    background: linear-gradient(135deg, #fef08a 0%, #f59e0b 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     margin-right: 0.75rem;
-    border: 2px solid white;
-    box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.5);
+    border: 3px solid white;
+    box-shadow: 0 4px 8px rgba(245, 158, 11, 0.25);
   }
 
   .avatar-emoji {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lesson-meta-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.2;
+  }
+
+  .theme-tag-text {
+    font-family: var(--font-heading, "Fredoka", sans-serif);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #927546;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
   }
 
   .lesson-title-text {
     font-family: var(--font-heading, "Fredoka", "Quicksand", sans-serif);
     font-size: 1.15rem;
     font-weight: 700;
-    color: #504532;
+    color: #3b3223;
   }
 
   .progress-container {
@@ -1696,62 +1983,67 @@
   .hud-actions {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.85rem;
   }
 
+  /* 64px TOUCH ACTIONS */
   .btn-audio-replay {
-    background-color: #ffbf00;
-    color: #1b1c1a;
+    min-height: 4rem; /* 64px touch target */
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 100%);
+    color: #451a03;
     font-family: var(--font-heading, "Fredoka", sans-serif);
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     font-weight: 700;
-    padding: 0.6rem 1.25rem;
     border-radius: 9999px;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     cursor: pointer;
-    border: none;
-    transition: all 0.15s ease;
+    border: 3px solid #fef3c7;
+    box-shadow:
+      0 6px 0 #b45309,
+      0 10px 18px rgba(180, 83, 9, 0.25);
+    transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .btn-audio-replay:active {
+    transform: translateY(4px);
+    box-shadow:
+      0 2px 0 #b45309,
+      0 4px 8px rgba(180, 83, 9, 0.2);
   }
 
   .btn-parent-lock {
-    width: 3rem;
-    height: 3rem;
+    width: 4rem; /* 64px */
+    height: 4rem; /* 64px */
+    min-width: 4rem;
+    min-height: 4rem;
     border-radius: 50%;
-    background-color: #eae8e4;
-    border: 2px solid #d4c5ab;
+    background: linear-gradient(180deg, #ffffff 0%, #f5f3ef 100%);
+    border: 3px solid #d4c5ab;
+    box-shadow:
+      0 6px 0 #baa88c,
+      0 10px 18px rgba(80, 69, 50, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: background-color 0.15s ease;
+    transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   .btn-parent-lock:hover {
-    background-color: #e4e2de;
+    background: #faf8f5;
   }
 
-  .lock-icon {
-    font-size: 1.25rem;
-  }
-
-  .clay-button {
+  .btn-parent-lock:active {
+    transform: translateY(4px);
     box-shadow:
-      inset -2px -2px 4px rgba(0, 0, 0, 0.1),
-      inset 2px 2px 4px rgba(255, 255, 255, 0.8),
-      0 4px 0 #d4c5ab;
+      0 2px 0 #baa88c,
+      0 4px 8px rgba(80, 69, 50, 0.1);
   }
 
-  .clay-button:active {
-    transform: translateY(3px);
-    box-shadow:
-      inset -1px -1px 2px rgba(0, 0, 0, 0.1),
-      inset 1px 1px 2px rgba(255, 255, 255, 0.8),
-      0 1px 0 #d4c5ab;
-  }
-
-  /* MAIN ARENA */
+  /* MAIN ARENA - MONTESSORI TRAY */
   .main-arena {
     position: relative;
     z-index: 10;
@@ -1771,20 +2063,28 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 10px;
+    background: #e9dfcb;
+    border-radius: 2.5rem;
+    box-shadow:
+      inset 0 4px 10px rgba(80, 60, 30, 0.18),
+      inset 0 -3px 6px rgba(255, 255, 255, 0.7),
+      0 12px 28px rgba(80, 69, 50, 0.12),
+      0 2px 4px rgba(80, 69, 50, 0.08);
+    border: 4px solid #f6eedf;
   }
 
   .game-canvas {
-    /* `height` phải là `auto`: khai cả `width:100%` lẫn `height:100%` thì
-       `aspect-ratio` bị vô hiệu, hộp canvas giãn theo container và lệch khỏi
-       tỉ lệ mà engine vẽ. */
     width: 100%;
     height: auto;
-    max-height: 85vh;
+    max-height: calc(85vh - 20px);
     aspect-ratio: 16 / 9;
     object-fit: contain;
     touch-action: none;
     border-radius: 2rem;
-    box-shadow: 0 12px 32px rgba(130, 118, 96, 0.15);
+    box-shadow:
+      0 8px 24px rgba(70, 55, 35, 0.14),
+      0 2px 6px rgba(70, 55, 35, 0.08);
   }
 
   /* Loading & Error States */
@@ -1796,6 +2096,7 @@
     padding: 1.5rem;
     width: 100%;
     max-width: 32rem;
+    z-index: 10;
   }
 
   .loading-box {

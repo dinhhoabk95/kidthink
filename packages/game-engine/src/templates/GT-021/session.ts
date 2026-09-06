@@ -388,7 +388,7 @@ export class GT021Session extends TemplateGameSession<
     rs: RenderSystem,
     _timeMs: number
   ): void {
-    drawSceneBackground(ctx, rs);
+    drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     drawButterflyWingsBoard(ctx, sceneBox(rs));
     drawMirrorAxis(ctx, rs, this.content.axis);
