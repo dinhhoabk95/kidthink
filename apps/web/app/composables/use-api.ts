@@ -27,15 +27,6 @@ async function handleUnauthenticatedRedirect() {
   await navigateTo(`/login${redirect}`);
 }
 
-async function handleIntroRequiredRedirect(apiError: ApiError) {
-  const returnCode = apiError.details?.return_level_code;
-  const target =
-    typeof returnCode === "string" && returnCode.length > 0
-      ? `/play/intro?return_level_code=${encodeURIComponent(returnCode)}`
-      : "/play";
-  await navigateTo(target);
-}
-
 /**
  * Client API fetcher chuẩn hoá của `apps/web` — Task #254 (WP254.3).
  *
@@ -90,7 +81,8 @@ export function useApi() {
         }
 
         case "INTRO_REQUIRED": {
-          await handleIntroRequiredRedirect(apiError);
+          // Không điều hướng toàn cục ở interceptor — call site (play/[code].vue)
+          // tự xử lý hiển thị giao diện làm quen khái niệm và điều hướng tới bài intro tương ứng
           break;
         }
 

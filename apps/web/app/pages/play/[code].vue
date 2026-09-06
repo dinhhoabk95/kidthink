@@ -295,7 +295,8 @@
   const isIntroLevel = computed(() => {
     return (
       cachedPayload?.template_code === "GT-000" ||
-      Boolean(route.query.return_to)
+      Boolean(route.query.return_to) ||
+      Boolean(route.query.return_level_code)
     );
   });
 
@@ -462,7 +463,7 @@
 
   function handleContinueNext() {
     showVictoryModal.value = false;
-    const returnTo = route.query.return_to;
+    const returnTo = route.query.return_to || route.query.return_level_code;
     if (typeof returnTo === "string" && returnTo) {
       router.push(`/play/${returnTo}`);
       return;
@@ -1354,7 +1355,9 @@
       errorActionLink.value = introCode
         ? `/play/${introCode}?return_to=${levelCode}`
         : "/games";
-      errorActionText.value = "Bắt đầu bài làm quen";
+      errorActionText.value = introCode
+        ? "Bắt đầu bài làm quen"
+        : "Xem danh sách trò chơi";
       return new Error(
         "Bé hãy hoàn thành bài làm quen ngắn để hiểu khái niệm trước khi bước vào màn chơi nhé!"
       );

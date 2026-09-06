@@ -11,6 +11,10 @@ export type ApiErrorDetails = {
   readonly fields?: readonly ApiErrorField[];
   readonly retry_after_s?: number;
   readonly return_level_code?: string;
+  readonly intro_level_code?: string;
+  readonly intro_queue?: readonly JsonValue[];
+  readonly intro_remaining?: number;
+  readonly primary_skill_code?: string;
   readonly [key: string]: JsonValue | undefined;
 };
 

@@ -200,4 +200,66 @@ describe("useApi composable", () => {
 
     $fetch.create = originalCreate;
   });
+
+  it("428 INTRO_REQUIRED: không điều hướng toàn cục, giữ nguyên details cho màn chơi xử lý", async () => {
+    let capturedOnResponseError:
+      | ((ctx: {
+          error?: unknown;
+          response?: { status: number; _data: unknown };
+        }) => Promise<void>)
+      | undefined;
+
+    const originalCreate = $fetch.create;
+    $fetch.create = vi.fn((config: unknown) => {
+      const opts = config as {
+        onResponseError: (ctx: {
+          error?: unknown;
+          response?: { status: number; _data: unknown };
+        }) => Promise<void>;
+      };
+      capturedOnResponseError = opts.onResponseError;
+      return vi.fn();
+    }) as unknown as typeof $fetch.create;
+
+    useApi();
+
+    const introData = {
+      code: "INTRO_REQUIRED",
+      message: "Bé cần hoàn thành bài làm quen trước khi chơi.",
+      details: {
+        intro_level_code: "GL-C1-CNT-INTRO-0001",
+        return_level_code: "GL-C1-CNT-CARD-0001",
+        intro_queue: [
+          {
+            intro_level_code: "GL-C1-CNT-INTRO-0001",
+            skill_code: "C1.CNT.01",
+            title: "Làm quen số 1",
+          },
+        ],
+      },
+    };
+
+    const errorContext = {
+      response: {
+        status: 428,
+        _data: introData,
+      },
+    };
+
+    let thrownError: unknown;
+    try {
+      await capturedOnResponseError?.(errorContext);
+    } catch (err) {
+      thrownError = err;
+    }
+
+    expect(thrownError).toBeDefined();
+    expect(navigateToMock).not.toHaveBeenCalled();
+    expect((thrownError as { code: string }).code).toBe("INTRO_REQUIRED");
+    expect((thrownError as { details: unknown }).details).toEqual(
+      introData.details
+    );
+
+    $fetch.create = originalCreate;
+  });
 });
