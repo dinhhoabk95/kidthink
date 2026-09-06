@@ -1,5 +1,5 @@
 /**
- * Bảng nhãn 71 mạch kỹ năng (Strands) — nguồn duy nhất cho mọi bề mặt.
+ * Bảng nhãn 76 mạch kỹ năng (Strands) — nguồn duy nhất cho mọi bề mặt.
  *
  * `name` và `description` chép nguyên văn `docs/taxonomy/index.md`.
  * Module này Cấm — NEVER import gì ngoài type, để `@mindkid/shared/client`
@@ -317,7 +317,7 @@ export const STRANDS_CATALOG: readonly StrandCatalogEntry[] = [
     name: "Môi trường và bảo vệ",
   },
 
-  // C5 — Language Thinking (15 strands)
+  // C5 — Language Thinking (20 strands)
   {
     code: "C5.LIS" as StrandCode,
     competency_code: "C5" as CompetencyCode,
@@ -408,6 +408,36 @@ export const STRANDS_CATALOG: readonly StrandCatalogEntry[] = [
     competency_code: "C5" as CompetencyCode,
     description: "Word Reading",
     name: "Đọc tiếng và từ",
+  },
+  {
+    code: "C5.LET" as StrandCode,
+    competency_code: "C5" as CompetencyCode,
+    description: "Letter Recognition",
+    name: "Nhận biết mặt chữ",
+  },
+  {
+    code: "C5.DGR" as StrandCode,
+    competency_code: "C5" as CompetencyCode,
+    description: "Digraph Recognition",
+    name: "Nhận biết chữ ghép",
+  },
+  {
+    code: "C5.TMK" as StrandCode,
+    competency_code: "C5" as CompetencyCode,
+    description: "Tone Mark Recognition",
+    name: "Nhận biết dấu thanh",
+  },
+  {
+    code: "C5.RIM" as StrandCode,
+    competency_code: "C5" as CompetencyCode,
+    description: "Rime Recognition",
+    name: "Nhận biết vần",
+  },
+  {
+    code: "C5.ONS" as StrandCode,
+    competency_code: "C5" as CompetencyCode,
+    description: "Onset Recognition",
+    name: "Nhận biết âm đầu",
   },
 
   // C6 — Executive Function (8 strands)

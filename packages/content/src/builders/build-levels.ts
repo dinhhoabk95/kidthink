@@ -6,6 +6,7 @@ import type {
   SkillSeed,
 } from "@mindkid/shared";
 import type { ContentSeed, ContentSeedRound } from "../types.js";
+import { buildConceptIntroPrompt } from "./gt-000.js";
 import { ALL_BUILDERS } from "./registry.js";
 
 const REGEX_MONTESSORI_CODE = /-01\d{2}$/;
@@ -78,7 +79,7 @@ function buildLevelRounds(
     ) {
       instruction = (projected.content_pack as { prompt: string }).prompt;
     } else if (levelPlan.template === "GT-000") {
-      instruction = `Bé hãy lắng nghe và cùng làm quen với ${dataset.concept_label} nhé!`;
+      instruction = buildConceptIntroPrompt(dataset.concept_label);
     } else {
       instruction = dataset.phrasing?.prompt_template || dataset.concept_label;
     }

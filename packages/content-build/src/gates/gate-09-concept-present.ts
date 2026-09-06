@@ -150,7 +150,19 @@ export function checkGateConceptPresent(
     };
   }
 
-  const hasGlyph = packContainsAnyGlyph(seed.content_pack, glyphs);
+  let hasGlyph = packContainsAnyGlyph(seed.content_pack, glyphs);
+  if (!hasGlyph && seed.header.template_code === "GT-013") {
+    const prompt = (seed.content_pack as Record<string, unknown> | null)
+      ?.prompt;
+    if (typeof prompt === "string") {
+      for (const glyph of glyphs) {
+        if (prompt.includes(glyph)) {
+          hasGlyph = true;
+          break;
+        }
+      }
+    }
+  }
 
   if (!hasGlyph) {
     issues.push({

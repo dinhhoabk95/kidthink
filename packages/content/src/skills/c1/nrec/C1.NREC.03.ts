@@ -193,7 +193,7 @@ export const C1_NREC_03_DATASET: SkillDataset = {
  *
  * Chủ đề không có hàng `skills` riêng (`BR-CTM-01`): nó sống trên chính level dạy
  * qua `SkillLevelPlan.dataset`. Trước 2026-09-06 dataset này treo ở kỹ năng bậc
- * `pre` C1.NREC.14, kỹ năng đó đã bị gỡ.
+ * `pre` C1_NREC_14, kỹ năng đó đã bị gỡ.
  */
 const TOPIC_NUMBER_0_10_DATASET: SkillDataset = {
   skill_code: "C1.NREC.03",

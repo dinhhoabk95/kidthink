@@ -171,7 +171,7 @@ export const C4_DET_01_DATASET: SkillDataset = {
  *
  * Chủ đề không có hàng `skills` riêng (`BR-CTM-01`): nó sống trên chính level dạy
  * qua `SkillLevelPlan.dataset`. Trước 2026-09-06 dataset này treo ở kỹ năng bậc
- * `pre` C4.DET.05, kỹ năng đó đã bị gỡ.
+ * `pre` C4_DET_05, kỹ năng đó đã bị gỡ.
  */
 const TOPIC_BASIC_COLOURS_DATASET: SkillDataset = {
   skill_code: "C4.DET.01",

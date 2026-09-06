@@ -91,8 +91,8 @@ Không có. Spec ràng buộc.
 | `BR-CTM-06` (một hoặc nhiều tiết) | Một chủ đề được có **nhiều** level dạy `published`. Khi có hơn một, mỗi level BẮT BUỘC khai `content_pack.concept.sequence_no` là số nguyên dương, duy nhất trong chủ đề | Người đặt việc yêu cầu "một hoặc nhiều tiết học". Trần một-bài của bản `pre` cũ chặn đúng thứ được yêu cầu. Nhưng hàng đợi phải có thứ tự, nếu không hai tiết của cùng một chủ đề trả về theo thứ tự ngẫu nhiên của truy vấn |
 | `BR-CTM-07` (đi hết mọi tiết) | Chủ đề coi là đã học xong khi trẻ đi hết **mọi** tiết `published` của nó, không phải tiết đầu | Chia tiết là để trẻ không bỏ giữa chừng, không phải để rút ngắn thứ phải học. Tính xong ở tiết đầu là biến việc chia tiết thành lỗ hổng |
 | `BR-CTM-08` (khó không vượt) | `difficulty` của level dạy = 1 và ≤ `difficulty` nhỏ nhất trong nhóm kỹ năng nó dạy | Bài làm quen khó hơn trò chơi là cửa ải, không phải cửa vào |
-| `BR-CTM-09` (phủ hết giá trị) | Các tiết của một chủ đề cộng lại BẮT BUỘC dạy **mọi** giá trị khai trong chủ đề. Thiếu một giá trị là vi phạm | Đây là chính điều người đặt việc yêu cầu: một chủ đề học cho trọn. Không có luật này thì bộ chiếu lấy hai vật đầu rồi dừng, đúng như nó từng làm |
-| `BR-CTM-10` (dataset trung thực) | Dataset dùng cho level dạy BẮT BUỘC chứa đúng các giá trị của chủ đề, Cấm — NEVER mượn vật từ vốn từ chủ đề trang trí | Đo ngày 2026-09-05: dataset của kỹ năng "Quan sát màu" chứa thìa, cốc, giường, ghế, táo — không một màu nào, mà cổng phủ vẫn xanh. Đó là cách một kho đạt 100% phủ mà dạy 0% |
+| `BR-CTM-09` (phủ hết giá trị) | Các tiết của một chủ đề cộng lại BẮT BUỘC dạy **mọi** giá trị khai trong chủ đề. Đối chiếu tự động với kho giá trị tương ứng ([`skill-value-inventory.md`](skill-value-inventory.md)), không đối chiếu bằng mắt người duyệt. Thiếu một giá trị là vi phạm | Đây là chính điều người đặt việc yêu cầu: một chủ đề học cho trọn. Không có luật này thì bộ chiếu lấy hai vật đầu rồi dừng, đúng như nó từng làm |
+| `BR-CTM-10` (dataset trung thực) | Dataset dùng cho level dạy và các kỹ năng con BẮT BUỘC chứa đúng các giá trị của kho giá trị chủ đề, đối chiếu tự động với kho giá trị tương ứng ([`skill-value-inventory.md`](skill-value-inventory.md)), Cấm — NEVER mượn vật từ vốn từ chủ đề trang trí | Đo ngày 2026-09-05: dataset của kỹ năng "Quan sát màu" chứa thìa, cốc, giường, ghế, táo — không một màu nào, mà cổng phủ vẫn xanh. Đó là cách một kho đạt 100% phủ mà dạy 0% |
 | `BR-CTM-11` (hạn ngạch loại hẳn level dạy) | Level `kind = 'teach'` **không** được tính vào `totalLevels` hay số khuôn phân biệt khi đo hạn ngạch level chơi của một kỹ năng | Với bản `pre` cũ, level dạy nằm trên một kỹ năng riêng nên không đụng hạn ngạch. Gắn thẳng vào kỹ năng thật thì nó đội số đếm lên: một kỹ năng C1 có 9 bài chơi cộng 1 bài dạy sẽ đạt hạn ngạch 10 trong khi thực chất thiếu một bài chơi |
 | `BR-CTM-12` (tier không cao hơn game) | `access_tier` của level dạy ≤ tier thấp nhất trong các level của những kỹ năng mà chủ đề đó dạy | Bài làm quen `premium` đứng trước một trò chơi `free` là dựng tường thu phí ở chỗ [`access-ladder.md`](../00-foundation/access-ladder.md) không cho phép |
 
@@ -109,6 +109,7 @@ Không có. Spec ràng buộc.
 | `c` | `core` | Thành thạo | Chuẩn của band, làm độc lập, độ khó 3 |
 | `a` | `advanced` | Thử thách | Nhiều thuộc tính hoặc nhiều bước, độ khó 4–5 |
 
+<!-- taxonomy-refs:historical -->
 Giá trị `pre` bị gỡ khỏi `SkillProgressionTier`. Năm kỹ năng đã tạo theo bản cũ —
 `C1.NREC.13` `C1.NREC.14` `C1.NREC.15` `C2.GEO.09` `C4.DET.05` — bị xoá, level `GT-000`
 của chúng chuyển sang file kỹ năng chơi đầu tiên của cùng chủ đề. Chưa mã nào trong

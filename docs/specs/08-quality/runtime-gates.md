@@ -29,6 +29,7 @@ file này — nhưng file chưa từng được tạo. Đây là file đó.
 | `pnpm test` | Unit/integration + cổng trong `<workspace>/tests/gates/` | theo từng cổng |
 | `pnpm test:deploy` | Script hạ tầng (`infra/scripts/tests/run.sh`) | 64 ca |
 | `pnpm check:bundle` | Đo kích thước gzip từng chunk Nuxt client theo `BR-ENG-17` (80 KB) | có |
+| `pnpm check:intro-coverage` | Độ phủ bài làm quen khái niệm (`BR-CIG-18`), nợ chỉ giảm | có — thêm level chấm không có bài dạy làm cổng đỏ |
 
 ## 2. Cổng trong `<workspace>/tests/gates/`
 

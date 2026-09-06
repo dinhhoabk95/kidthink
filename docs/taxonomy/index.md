@@ -55,9 +55,9 @@ C1.CNT.03
 | [C2](c2-spatial-thinking.md) | Spatial Thinking | Tư duy không gian | 10 | 56 | 44 | 12 |
 | [C3](c3-logical-thinking.md) | Logical Thinking | Tư duy logic | 10 | 42 | 30 | 12 |
 | [C4](c4-observation-thinking.md) | Discovery Thinking | Tư duy khám phá | 16 | 86 | 16 | 70 |
-| [C5](c5-language-thinking.md) | Language Thinking | Tư duy ngôn ngữ | 15 | 84 | 21 | 63 |
+| [C5](c5-language-thinking.md) | Language Thinking | Tư duy ngôn ngữ | 20 | 119 | 21 | 98 |
 | [C6](c6-executive-function.md) | Executive Function | Tư duy điều hành | 8 | 30 | 20 | 10 |
-| | **Tổng** | | **71** | **408** | **230** | **178** |
+| | **Tổng** | | **76** | **443** | **230** | **213** |
 
 Cột **Chưa có level** là nợ nội dung có trần: `BR-SKQ-06` giữ nó ở
 `packages/content-build/src/gates/skill-coverage-ratchet.json` và trần **chỉ

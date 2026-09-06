@@ -10,7 +10,7 @@ export const C5_RHY_05_IDENTITY: SkillIdentity = {
   difficulty: 5,
   thinking_processes: ["solve", "observe"],
   tier: "advanced",
-  prerequisites: ["C5.RHY.04"],
+  prerequisites: ["C5.RHY.04", "C5.RIM.02", "C5.RIM.03"],
   learning_objectives: [
     {
       code: "LO-C5.RHY.05-01",

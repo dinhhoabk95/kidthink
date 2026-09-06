@@ -93,7 +93,7 @@ function assertSkillMatches(ts: SkillIdentity, md: ParsedSkill): void {
 }
 
 /**
- * Validates that all 413 TypeScript skill identities match markdown tables field-by-field.
+ * Validates that all 408 TypeScript skill identities match markdown tables field-by-field.
  */
 export function verifyIdentitiesVsMarkdown(docsDir = "docs/taxonomy"): {
   total: number;
@@ -102,9 +102,10 @@ export function verifyIdentitiesVsMarkdown(docsDir = "docs/taxonomy"): {
   const parsedMarkdownSkills = parseTaxonomyDocs(docsDir);
   const tsSkills = Object.values(SKILL_IDENTITIES);
 
-  if (tsSkills.length !== 413 || parsedMarkdownSkills.length !== 413) {
+  const expectedTotal = tsSkills.length;
+  if (tsSkills.length !== parsedMarkdownSkills.length) {
     throw new Error(
-      `Counts mismatch: TS=${tsSkills.length} MD=${parsedMarkdownSkills.length} (expected 413)`
+      `Counts mismatch: TS=${tsSkills.length} MD=${parsedMarkdownSkills.length} (expected ${expectedTotal})`
     );
   }
 
@@ -122,7 +123,7 @@ export function verifyIdentitiesVsMarkdown(docsDir = "docs/taxonomy"): {
     assertSkillMatches(ts, md);
   }
 
-  return { total: 413, matches: 413 };
+  return { total: expectedTotal, matches: expectedTotal };
 }
 
 function buildSkillsByStrand(): Map<string, SkillIdentity[]> {
@@ -204,13 +205,14 @@ export function syncTaxonomyDocs(options: {
   write?: boolean;
   check?: boolean;
   docsDir?: string;
-}): { success: boolean; modifiedFiles: string[] } {
+}): { success: boolean; modifiedFiles: string[]; total: number } {
   const docsDir = options.docsDir ?? "docs/taxonomy";
   const isWrite = Boolean(options.write);
   const modifiedFiles: string[] = [];
 
+  let verifyResult = { total: 0, matches: 0 };
   if (!isWrite) {
-    verifyIdentitiesVsMarkdown(docsDir);
+    verifyResult = verifyIdentitiesVsMarkdown(docsDir);
   }
 
   for (const filename of COMPETENCY_DOC_FILES) {
@@ -231,10 +233,10 @@ export function syncTaxonomyDocs(options: {
   }
 
   if (isWrite) {
-    verifyIdentitiesVsMarkdown(docsDir);
+    verifyResult = verifyIdentitiesVsMarkdown(docsDir);
   }
 
-  return { success: true, modifiedFiles };
+  return { success: true, modifiedFiles, total: verifyResult.total };
 }
 
 // CLI execution
@@ -250,11 +252,11 @@ if (process.argv[1]?.endsWith("sync-taxonomy-docs.ts")) {
       );
     } else {
       console.log(
-        "[taxonomy-docs] Check passed! 413/413 skills byte-identical with TypeScript."
+        `[taxonomy-docs] Check passed! ${res.total}/${res.total} skills byte-identical with TypeScript.`
       );
     }
     process.exit(0);
-  } catch (err: unknown) {
+  } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error(`[taxonomy-docs] Error: ${message}`);
     process.exit(1);

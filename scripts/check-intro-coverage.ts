@@ -1,5 +1,6 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { SKILL_IDENTITIES } from "@mindkid/content";
 import { ALL_SEED_LEVELS } from "@mindkid/content-build";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 
@@ -51,7 +52,9 @@ function main(): void {
   const args = process.argv.slice(2);
   const isUpdate = args.includes("--update");
 
-  let baseline: BaselineData = { uncovered_skills_count: 408 };
+  let baseline: BaselineData = {
+    uncovered_skills_count: Object.keys(SKILL_IDENTITIES).length,
+  };
   if (existsSync(BASELINE_PATH)) {
     try {
       baseline = JSON.parse(

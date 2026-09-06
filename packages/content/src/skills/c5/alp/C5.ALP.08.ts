@@ -4,18 +4,18 @@ export const C5_ALP_08_IDENTITY: SkillIdentity = {
   code: "C5.ALP.08",
   strand_code: "C5.ALP",
   competency_code: "C5",
-  name: "Chữ ghép ba: ngh · gh · gi · qu",
+  name: "Chữ ghép: ngh · gh · gi · qu",
   age_min: 6,
   age_max: 7,
   difficulty: 5,
   thinking_processes: ["observe", "solve"],
   tier: "advanced",
-  prerequisites: ["C5.ALP.07"],
+  prerequisites: ["C5.ALP.07", "C5.DGR.02"],
   learning_objectives: [
     {
       code: "LO-C5.ALP.08-01",
       behaviour:
-        "Nhận biết và thực hành Chữ ghép ba: ngh · gh · gi · qu ở mức cơ bản",
+        "Nhận biết và thực hành Chữ ghép: ngh · gh · gi · qu ở mức cơ bản",
       observable_criteria:
         "Trẻ thực hiện đúng không qua gợi ý trong 3 lần thử liên tiếp.",
       position: 1,
@@ -23,7 +23,7 @@ export const C5_ALP_08_IDENTITY: SkillIdentity = {
     {
       code: "LO-C5.ALP.08-02",
       behaviour:
-        "Vận dụng Chữ ghép ba: ngh · gh · gi · qu trong môi trường tương tác",
+        "Vận dụng Chữ ghép: ngh · gh · gi · qu trong môi trường tương tác",
       observable_criteria:
         "Trẻ hoàn thành thử thách độc lập trong vòng 2 phút.",
       position: 2,
@@ -31,7 +31,7 @@ export const C5_ALP_08_IDENTITY: SkillIdentity = {
     {
       code: "LO-C5.ALP.08-03",
       behaviour:
-        "Giải quyết vấn đề nâng cao liên quan tới Chữ ghép ba: ngh · gh · gi · qu",
+        "Giải quyết vấn đề nâng cao liên quan tới Chữ ghép: ngh · gh · gi · qu",
       observable_criteria:
         "Trẻ trả lời chính xác câu hỏi phân loại/suy luận liên quan.",
       position: 3,
@@ -41,7 +41,7 @@ export const C5_ALP_08_IDENTITY: SkillIdentity = {
 
 export const C5_ALP_08_DATASET: SkillDataset = {
   skill_code: "C5.ALP.08",
-  concept_label: "Chữ ghép ba: ngh · gh · gi · qu",
+  concept_label: "Chữ ghép: ngh · gh · gi · qu",
   surface: "game",
   items: [
     {

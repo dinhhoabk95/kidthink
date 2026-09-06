@@ -23,6 +23,8 @@
     "check:taxonomy-docs": "tsx scripts/taxonomy/sync-taxonomy-docs.ts --check",
     "check:intro-coverage": "tsx scripts/check-intro-coverage.ts",
     "check:intro-coverage:update": "tsx scripts/check-intro-coverage.ts --update",
+    "check:value-inventory": "tsx scripts/check-value-inventory.ts",
+    "check:value-inventory:update": "tsx scripts/check-value-inventory.ts --update",
     "check:error-codes": "tsx scripts/check-error-codes.ts",
     "check:error-codes:update": "tsx scripts/check-error-codes.ts --update",
     "gen:taxonomy-docs": "tsx scripts/taxonomy/sync-taxonomy-docs.ts --write",

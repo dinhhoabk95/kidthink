@@ -10,7 +10,7 @@ export const C5_TON_05_IDENTITY: SkillIdentity = {
   difficulty: 5,
   thinking_processes: ["observe", "match"],
   tier: "advanced",
-  prerequisites: ["C5.TON.03", "C5.ALP.04"],
+  prerequisites: ["C5.TON.03", "C5.ALP.04", "C5.TMK.03"],
   learning_objectives: [
     {
       code: "LO-C5.TON.05-01",

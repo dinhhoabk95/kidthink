@@ -387,7 +387,7 @@ Scenario: BR-CIM-11 — tier không cao hơn game của cùng chủ đề
   Then trả 422
 
 Scenario: BR-CIM-13 — hai bài làm quen cùng publish cho một chủ đề
-  Given C1.NREC.14 đã có một bài làm quen published
+  Given C1.NREC.04 đã có một bài làm quen published
   When publish bài thứ hai cho cùng kỹ năng bậc pre đó
   Then trả 409
 ```

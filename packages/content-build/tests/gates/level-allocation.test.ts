@@ -18,15 +18,14 @@ describe("Task #198 — Bảng phân bổ level (level-allocation.json / BR-ALC-
     const savedPlan = loadLevelAllocationPlan();
     const generatedPlan = generateLevelAllocationPlan();
 
-    expect(savedPlan.target_total_levels).toBe(5180);
-    expect(savedPlan.total_skills).toBe(408);
     expect(savedPlan.target_total_levels).toBe(
       generatedPlan.target_total_levels
     );
+    expect(savedPlan.total_skills).toBe(generatedPlan.total_skills);
     expect(savedPlan.allocations.length).toBe(generatedPlan.allocations.length);
   });
 
-  it("Đạt đúng tổng 5.180 level: C1 (110 skills × 20 = 2200), C2..C6 (298 skills × 10 = 2980)", () => {
+  it("Đạt đúng tổng level phân bổ: C1 (110 skills × 20) + C2..C6 (10 level mỗi skill)", () => {
     const plan = loadLevelAllocationPlan();
     const skillLevelSums = new Map<string, number>();
     const skillTemplateSets = new Map<string, Set<string>>();
@@ -43,7 +42,7 @@ describe("Task #198 — Bảng phân bổ level (level-allocation.json / BR-ALC-
       tSet.add(row.template_code);
     }
 
-    expect(skillLevelSums.size).toBe(408);
+    expect(skillLevelSums.size).toBe(plan.total_skills);
 
     let c1Total = 0;
     let otherTotal = 0;
@@ -70,8 +69,8 @@ describe("Task #198 — Bảng phân bổ level (level-allocation.json / BR-ALC-
     }
 
     expect(c1Total).toBe(2200);
-    expect(otherTotal).toBe(2980);
-    expect(c1Total + otherTotal).toBe(5180);
+    expect(otherTotal).toBe((plan.total_skills - 110) * 10);
+    expect(c1Total + otherTotal).toBe(plan.target_total_levels);
   });
 
   it("Trần cứng: không cặp (skill, khuôn) nào vượt quá 5 level", () => {

@@ -83,11 +83,37 @@
             @pointermove="handlePointerMove"
             @pointerup="handlePointerUp"
           />
+          <!-- Echo Step Controls (Bé nói theo) — BR-CIR-21, BR-CIR-22 -->
+          <div
+            class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-6 z-20 pointer-events-auto"
+            v-if="isEchoStep"
+          >
+            <button
+              aria-label="Nghe lại mẫu"
+              class="min-h-16 px-6 rounded-2xl border-[3px] border-surface-200 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_theme(colors.surface.200),0_10px_18px_rgba(30,27,75,0.12)] active:translate-y-1 active:shadow-[0_2px_0_theme(colors.surface.200)] flex items-center gap-2 cursor-pointer transition-all"
+              type="button"
+              @click="handleEchoReplay"
+            >
+              <span class="text-2xl">🔊</span>
+              <span>Nghe lại</span>
+            </button>
+            <button
+              aria-label="Bé nói theo"
+              class="min-h-16 px-8 rounded-2xl border-[3px] border-cta-hover bg-cta text-white font-heading font-bold text-xl shadow-[0_6px_0_theme(colors.cta-hover),0_10px_18px_rgba(249,115,22,0.25)] active:translate-y-1 active:shadow-[0_2px_0_theme(colors.cta-hover)] flex items-center gap-3 cursor-pointer transition-all"
+              type="button"
+              @click="handleEchoDone"
+            >
+              <span class="text-2xl">🗣️</span>
+              <span>Bé nói theo</span>
+              <span>➔</span>
+            </button>
+          </div>
         </div>
       </main>
 
       <!-- Victory Celebration Modal -->
       <KidVictoryModal
+        :is-intro="isIntroLevel"
         :show="showVictoryModal"
         :stars="earnedStars ?? undefined"
         @continue="handleContinueNext"
@@ -264,6 +290,32 @@
   let roundRunner: RoundRunner | null = null;
   let cachedPayload: ConfigPayload | null = null;
   let currentInstructionAudio: string | null = null;
+
+  const isEchoStep = ref(false);
+  const isIntroLevel = computed(() => {
+    return (
+      cachedPayload?.template_code === "GT-000" ||
+      Boolean(route.query.return_to)
+    );
+  });
+
+  function handleEchoReplay() {
+    if (engine?.activeSession) {
+      engine.activeSession.validateAction({
+        type: "tap_item",
+        data: { intent: "replay" },
+      });
+    }
+  }
+
+  function handleEchoDone() {
+    if (engine?.activeSession) {
+      engine.activeSession.validateAction({
+        type: "tap_item",
+        data: { intent: "advance" },
+      });
+    }
+  }
 
   async function preloadAssets(
     assets: Array<{ ref: string; kind: string; url?: string; glyph?: string }>
@@ -1231,6 +1283,20 @@
         }
 
         renderReturningAnimation(ctx, nowMs);
+
+        if (
+          cachedPayload?.template_code === "GT-000" &&
+          engine?.activeSession
+        ) {
+          const s = engine.activeSession as {
+            steps?: readonly { action: string }[];
+            currentStepIndex?: number;
+          };
+          const step = s.steps?.[s.currentStepIndex ?? 0];
+          isEchoStep.value = step?.action === "echo";
+        } else if (isEchoStep.value) {
+          isEchoStep.value = false;
+        }
       };
       engine.load(engineConfig, factory);
       engine.start(canvasRef.value);

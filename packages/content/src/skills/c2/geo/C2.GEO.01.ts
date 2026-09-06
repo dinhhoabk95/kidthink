@@ -127,7 +127,7 @@ export const C2_GEO_01_DATASET: SkillDataset = {
  *
  * Chủ đề không có hàng `skills` riêng (`BR-CTM-01`): nó sống trên chính level dạy
  * qua `SkillLevelPlan.dataset`. Trước 2026-09-06 dataset này treo ở kỹ năng bậc
- * `pre` C2.GEO.09, kỹ năng đó đã bị gỡ.
+ * `pre` C2_GEO_09, kỹ năng đó đã bị gỡ.
  */
 const TOPIC_PLANAR_SHAPES_DATASET: SkillDataset = {
   skill_code: "C2.GEO.01",

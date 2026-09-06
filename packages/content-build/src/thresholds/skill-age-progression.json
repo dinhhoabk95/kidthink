@@ -3,7 +3,7 @@
   "version": "1.0",
   "description": "Bảng thứ tự kỹ năng theo tháng tuổi (Task #160 / BR-SAP-01..07)",
   "source_framework": "Khung GDMN Thông tư 51/2020/TT-BGDDT & Montessori Early Learning Framework",
-  "total_skills": 413,
+  "total_skills": 408,
   "progressions": [
     {
       "skill_code": "C1.CMP.01",

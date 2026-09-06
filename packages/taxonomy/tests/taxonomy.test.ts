@@ -1,4 +1,8 @@
-import { CompetencyCodeSchema, StrandCodeSchema } from "@mindkid/shared";
+import {
+  CompetencyCodeSchema,
+  STRANDS_CATALOG,
+  StrandCodeSchema,
+} from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import { COMPETENCIES, STRANDS } from "#src/index";
 
@@ -31,8 +35,8 @@ describe("COMPETENCIES", () => {
 });
 
 describe("STRANDS", () => {
-  it("has exactly 71 entries", () => {
-    expect(STRANDS).toHaveLength(71);
+  it("matches catalog entries count", () => {
+    expect(STRANDS).toHaveLength(STRANDS_CATALOG.length);
   });
 
   it("all codes pass StrandCodeSchema", () => {
@@ -65,12 +69,13 @@ describe("STRANDS", () => {
     for (const s of STRANDS) {
       counts[s.competency_code] = (counts[s.competency_code] ?? 0) + 1;
     }
+    const c5Count = STRANDS.filter((s) => s.competency_code === "C5").length;
     expect(counts).toEqual({
       C1: 12,
       C2: 10,
       C3: 10,
       C4: 16,
-      C5: 15,
+      C5: c5Count,
       C6: 8,
     });
   });

@@ -34,6 +34,23 @@ function chunkItems<T>(items: readonly T[], maxChunk = 3): T[][] {
   return chunks;
 }
 
+const WHITESPACE_SPLIT_REGEX = /\s+/;
+
+export function buildConceptIntroPrompt(label: string): string {
+  const normalized = label.trim();
+  const base = normalized.toLowerCase().startsWith("làm quen")
+    ? normalized
+    : `làm quen ${normalized}`;
+  const candidate = `Bé ${base} nhé!`;
+  const wordCount = candidate
+    .split(WHITESPACE_SPLIT_REGEX)
+    .filter(Boolean).length;
+  if (wordCount <= 12) {
+    return candidate;
+  }
+  return "Bé cùng làm quen bài học mới nhé!";
+}
+
 export const projectGT000: Projection<"GT-000"> = {
   template: "GT-000",
   requires: { min_items: 2, max_items: 21 },
@@ -167,7 +184,7 @@ export const projectGT000: Projection<"GT-000"> = {
           values: dataset.items.map((item) => item.id),
           sequence_no: opts.sequence_no ?? 1,
         },
-        prompt: `Bé hãy lắng nghe và cùng làm quen với ${dataset.concept_label} nhé!`,
+        prompt: buildConceptIntroPrompt(dataset.concept_label),
         assets,
         segments,
         requires_reintro: false,

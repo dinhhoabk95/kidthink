@@ -31,11 +31,11 @@ export const projectGT010: Projection<"GT-010"> = {
 
     const symA = {
       symbol_id: itemA.id,
-      asset: resolveItemAsset(itemA, false),
+      asset: resolveItemAsset(itemA, true),
     };
     const symB = {
       symbol_id: itemB.id,
-      asset: resolveItemAsset(itemB, false),
+      asset: resolveItemAsset(itemB, true),
     };
 
     const equations = [

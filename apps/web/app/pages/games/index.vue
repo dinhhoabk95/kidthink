@@ -545,18 +545,37 @@
     }),
   });
 
+  const completedLevelCodes = ref<string[]>([]);
+
   onMounted(async () => {
     if (loggedIn.value) {
       try {
-        const ctx = await $fetch<UserAccessContext>(
-          "/api/users/access-context",
-          {
+        const [ctx, playMap] = await Promise.all([
+          $fetch<UserAccessContext>("/api/users/access-context", {
             credentials: "include",
-          }
-        );
+          }),
+          $fetch<{ completed_level_codes?: string[] }>("/api/users/play/map", {
+            credentials: "include",
+          }).catch(() => null),
+        ]);
         userAccessContext.value = ctx;
+        if (playMap?.completed_level_codes) {
+          completedLevelCodes.value = playMap.completed_level_codes;
+        }
       } catch {
         // Keep guest perspective if access-context fails
+      }
+    } else {
+      try {
+        const guestMap = await $fetch<{ completed_level_codes?: string[] }>(
+          "/api/guest/play/map",
+          { credentials: "include" }
+        );
+        if (guestMap?.completed_level_codes) {
+          completedLevelCodes.value = guestMap.completed_level_codes;
+        }
+      } catch {
+        // Ignore guest map errors
       }
     }
   });
@@ -565,7 +584,10 @@
   const levels = computed<CatalogItem[]>(() => {
     const rawItems = data.value?.items ?? [];
     if (!userAccessContext.value) {
-      return rawItems;
+      return rawItems.map((item) => ({
+        ...item,
+        is_completed: completedLevelCodes.value.includes(item.code),
+      }));
     }
 
     const ctx = userAccessContext.value;
@@ -580,6 +602,7 @@
       const isLocked = !ctx.allowed_tiers.includes(tier);
       return {
         ...item,
+        is_completed: completedLevelCodes.value.includes(item.code),
         locked: isLocked,
         cta: resolveLevelCta(item.code, tier, viewer),
       };

@@ -1,0 +1,41 @@
+{
+  "total_missing_items": 30,
+  "missing_by_target": {
+    "C5.ALP.04": [
+      "let_a",
+      "let_e",
+      "let_i",
+      "let_o",
+      "let_u",
+      "let_y",
+      "let_ă",
+      "let_â",
+      "let_ê",
+      "let_ô",
+      "let_ơ",
+      "let_ư",
+      "let_b",
+      "let_c",
+      "let_h",
+      "let_k",
+      "let_l",
+      "let_m",
+      "let_n",
+      "let_p",
+      "let_q",
+      "let_r",
+      "let_s",
+      "let_t",
+      "let_v",
+      "let_x"
+    ],
+    "C5.TON": [
+      "tmk_ngang",
+      "tmk_huyen",
+      "tmk_sac",
+      "tmk_nang",
+      "tmk_hoi",
+      "tmk_nga"
+    ]
+  }
+}

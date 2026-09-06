@@ -35,7 +35,7 @@ export const projectGT012: Projection<"GT-012"> = {
     );
     const flashItems = Array.from({ length: targetCount }, (_, i) => ({
       item_id: `${baseItem.id}-${i + 1}`,
-      asset: resolveItemAsset(baseItem, false),
+      asset: resolveItemAsset(baseItem, true),
     }));
 
     // Options: correct count + distractors

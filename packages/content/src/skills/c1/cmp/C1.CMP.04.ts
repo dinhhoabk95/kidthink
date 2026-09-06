@@ -133,10 +133,131 @@ export const C1_CMP_04_DATASET: SkillDataset = {
   ordering: ["chair", "apple", "banana", "watermelon", "carrot"],
 };
 
+/**
+ * Chủ đề làm quen — dataset của bài học mở đầu GL-C1-CMP-INTRO-0002.
+ * Dạy so sánh số lượng: Nhiều hơn, ít hơn.
+ * Phủ 2 kỹ năng: C1.CMP.04, C1.CMP.05.
+ */
+const TOPIC_CMP_QUANTITY_DATASET: SkillDataset = {
+  skill_code: "C1.CMP.04",
+  concept_label: "Nhiều hơn, ít hơn",
+  surface: "game",
+  items: [
+    {
+      id: "many_apples",
+      label: "nhiều quả táo",
+      glyph: "🍎",
+      image: {
+        kind: "emoji",
+        ref: "🍎",
+      },
+      category: {
+        type: "hoa quả",
+      },
+    },
+    {
+      id: "few_apples",
+      label: "ít quả táo",
+      glyph: "🍏",
+      image: {
+        kind: "emoji",
+        ref: "🍏",
+      },
+      category: {
+        type: "hoa quả",
+      },
+    },
+    {
+      id: "many_stars",
+      label: "nhiều ngôi sao",
+      glyph: "⭐",
+      image: {
+        kind: "emoji",
+        ref: "⭐",
+      },
+      category: {
+        type: "hình ảnh",
+      },
+    },
+    {
+      id: "few_stars",
+      label: "ít ngôi sao",
+      glyph: "🌟",
+      image: {
+        kind: "emoji",
+        ref: "🌟",
+      },
+      category: {
+        type: "hình ảnh",
+      },
+    },
+    {
+      id: "many_candies",
+      label: "nhiều viên kẹo",
+      glyph: "🍬",
+      image: {
+        kind: "emoji",
+        ref: "🍬",
+      },
+      category: {
+        type: "đồ ăn",
+      },
+    },
+    {
+      id: "few_candies",
+      label: "ít viên kẹo",
+      glyph: "🍭",
+      image: {
+        kind: "emoji",
+        ref: "🍭",
+      },
+      category: {
+        type: "đồ ăn",
+      },
+    },
+  ],
+  ladder: [
+    {
+      rung: 1,
+      dimension: "range",
+      description: "Nhận biết nhiều hơn và ít hơn",
+    },
+    {
+      rung: 2,
+      dimension: "range",
+      description: "So sánh nhiều hơn và ít hơn",
+    },
+  ],
+  phrasing: {
+    prompt_template: "Bé hãy làm quen với {label}",
+    success_message: "Hoan hô, bé đã nhận biết rất tốt!",
+    hint_message: "Bé hãy lắng nghe và nhìn kỹ nhé!",
+  },
+  ordering: [
+    "many_apples",
+    "few_apples",
+    "many_stars",
+    "few_stars",
+    "many_candies",
+    "few_candies",
+  ],
+};
+
 export const C1_CMP_04_SEED: SkillSeed = {
   identity: C1_CMP_04_IDENTITY,
   dataset: C1_CMP_04_DATASET,
   levels: [
+    {
+      code: "GL-C1-CMP-INTRO-0002",
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      theme: "food",
+      rounds: 1,
+      dataset: TOPIC_CMP_QUANTITY_DATASET,
+      sequence_no: 1,
+      skill_codes: ["C1.CMP.04", "C1.CMP.05"],
+    },
     {
       code: "GL-C1-CMP-CARD-0115",
       template: "GT-012",

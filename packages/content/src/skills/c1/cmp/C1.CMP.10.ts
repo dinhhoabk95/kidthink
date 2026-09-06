@@ -133,10 +133,138 @@ export const C1_CMP_10_DATASET: SkillDataset = {
   ordering: ["spoon", "cup", "bed", "chair", "apple"],
 };
 
+/**
+ * Chủ đề làm quen — dataset của bài học mở đầu GL-C1-CMP-INTRO-0004.
+ * Dạy so sánh sức nặng, khoảng cách và tốc độ: Nặng hơn, nhẹ hơn, xa hơn, gần hơn, nhanh hơn, chậm hơn.
+ * Phủ 6 kỹ năng: C1.CMP.10, C1.CMP.11, C1.CMP.12, C1.CMP.13, C1.CMP.14, C1.CMP.15.
+ */
+const TOPIC_CMP_MEASURE_SPEED_DATASET: SkillDataset = {
+  skill_code: "C1.CMP.10",
+  concept_label: "Nặng hơn, nhẹ hơn, xa hơn, gần hơn, nhanh hơn, chậm hơn",
+  surface: "game",
+  items: [
+    {
+      id: "heavy_truck",
+      label: "xe tải nặng",
+      glyph: "🚛",
+      image: {
+        kind: "emoji",
+        ref: "🚛",
+      },
+      category: {
+        type: "phương tiện",
+      },
+    },
+    {
+      id: "light_leaf",
+      label: "chiếc lá nhẹ",
+      glyph: "🍃",
+      image: {
+        kind: "emoji",
+        ref: "🍃",
+      },
+      category: {
+        type: "thiên nhiên",
+      },
+    },
+    {
+      id: "far_plane",
+      label: "máy bay ở xa",
+      glyph: "✈️",
+      image: {
+        kind: "emoji",
+        ref: "✈️",
+      },
+      category: {
+        type: "phương tiện",
+      },
+    },
+    {
+      id: "near_flower",
+      label: "bông hoa ở gần",
+      glyph: "🌺",
+      image: {
+        kind: "emoji",
+        ref: "🌺",
+      },
+      category: {
+        type: "thiên nhiên",
+      },
+    },
+    {
+      id: "fast_cheetah",
+      label: "chú báo chạy nhanh",
+      glyph: "🐆",
+      image: {
+        kind: "emoji",
+        ref: "🐆",
+      },
+      category: {
+        type: "động vật",
+      },
+    },
+    {
+      id: "slow_turtle",
+      label: "chú rùa bò chậm",
+      glyph: "🐢",
+      image: {
+        kind: "emoji",
+        ref: "🐢",
+      },
+      category: {
+        type: "động vật",
+      },
+    },
+  ],
+  ladder: [
+    {
+      rung: 1,
+      dimension: "range",
+      description: "Nhận biết nặng hơn, nhẹ hơn, bằng nhau",
+    },
+    {
+      rung: 2,
+      dimension: "range",
+      description: "So sánh trọng lượng và cân bằng",
+    },
+  ],
+  phrasing: {
+    prompt_template: "Bé hãy làm quen với {label}",
+    success_message: "Hoan hô, bé đã nhận biết rất tốt!",
+    hint_message: "Bé hãy lắng nghe và nhìn kỹ nhé!",
+  },
+  ordering: [
+    "heavy_truck",
+    "light_leaf",
+    "far_plane",
+    "near_flower",
+    "fast_cheetah",
+    "slow_turtle",
+  ],
+};
+
 export const C1_CMP_10_SEED: SkillSeed = {
   identity: C1_CMP_10_IDENTITY,
   dataset: C1_CMP_10_DATASET,
   levels: [
+    {
+      code: "GL-C1-CMP-INTRO-0004",
+      template: "GT-000",
+      band: "3-4",
+      difficulty: 1,
+      theme: "nature",
+      rounds: 1,
+      dataset: TOPIC_CMP_MEASURE_SPEED_DATASET,
+      sequence_no: 1,
+      skill_codes: [
+        "C1.CMP.10",
+        "C1.CMP.11",
+        "C1.CMP.12",
+        "C1.CMP.13",
+        "C1.CMP.14",
+        "C1.CMP.15",
+      ],
+    },
     {
       code: "GL-C1-VOL-TAP-0001",
       template: "GT-001",

@@ -47,6 +47,11 @@ PID_DEPS=$!
 pnpm check:intro-coverage &
 PID_INTRO=$!
 
+# Cổng bậc thang kho giá trị kỹ năng — Task #255 (BR-SVI-01..05).
+# Đối chiếu hai chiều: dataset ⊆ inventory và inventory ⊆ ⋃ dataset.
+pnpm check:value-inventory &
+PID_INVENTORY=$!
+
 # Cổng bậc thang mã lỗi — Task #254 (WP254.2).
 # Đo 5 phép đo nợ lỗi; nợ chỉ được giảm.
 pnpm check:error-codes &
@@ -68,6 +73,11 @@ if ! wait $PID_INTRO; then
   LINT_OK=false
 fi
 
+if ! wait $PID_INVENTORY; then
+  echo "✗ value-inventory ratchet failed" >&2
+  LINT_OK=false
+fi
+
 if ! wait $PID_ERRORS; then
   echo "✗ check:error-codes ratchet failed" >&2
   LINT_OK=false
@@ -76,7 +86,7 @@ fi
 if [ "$LINT_OK" = false ]; then
   exit 1
 fi
-echo "✓ lint + intro-coverage + error-codes"
+echo "✓ lint + intro-coverage + value-inventory + error-codes"
 phase_end
 
 # ── Phase 2: Typecheck (cổng bậc thang + incremental) ─────────────────────

@@ -10,7 +10,7 @@ export const C5_PHO_05_IDENTITY: SkillIdentity = {
   difficulty: 4,
   thinking_processes: ["listen", "match"],
   tier: "advanced",
-  prerequisites: ["C5.PHO.04"],
+  prerequisites: ["C5.PHO.04", "C5.ONS.02"],
   learning_objectives: [
     {
       code: "LO-C5.PHO.05-01",

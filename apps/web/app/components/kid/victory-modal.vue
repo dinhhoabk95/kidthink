@@ -33,12 +33,16 @@
 
         <!-- Headline -->
         <h1 class="victory-title">
-          <span class="victory-gradient-text">Bé Giỏi Quá!</span>
-          <span class="victory-subtitle">Hoàn Thành Xuất Sắc! 🎉</span>
+          <span class="victory-gradient-text"
+            >{{ isIntro ? 'Đã Học Xong!' : 'Bé Giỏi Quá!' }}</span
+          >
+          <span class="victory-subtitle"
+            >{{ isIntro ? 'Bé đã hoàn thành bài làm quen! 🎉' : 'Hoàn Thành Xuất Sắc! 🎉' }}</span
+          >
         </h1>
 
         <!-- Score / Mastery Badge -->
-        <div class="score-badge">
+        <div class="score-badge" v-if="!isIntro">
           <span class="score-icon">🌟</span>
           <span class="score-text">+100 Điểm Tư Duy</span>
         </div>
@@ -50,7 +54,9 @@
             type="button"
             @click="emit('continue')"
           >
-            <span class="btn-text">Tiếp Tục Chơi</span>
+            <span class="btn-text"
+              >{{ isIntro ? 'Vào Trò Chơi' : 'Tiếp Tục Chơi' }}</span
+            >
             <span class="btn-icon">➔</span>
           </button>
           <button class="btn-replay" type="button" @click="emit('replay')">
@@ -67,6 +73,7 @@
   defineProps<{
     show: boolean;
     stars?: number;
+    isIntro?: boolean;
   }>();
 
   const emit = defineEmits<{

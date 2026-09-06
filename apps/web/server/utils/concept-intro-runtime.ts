@@ -128,7 +128,7 @@ async function resolveCallerChildId(
   return child?.id ?? null;
 }
 
-async function findCompletedLevelIds(
+export async function findCompletedLevelIds(
   db: ReturnType<typeof getOwnerDb>,
   levelIds: number[],
   childProfileId: number | null,
@@ -158,6 +158,33 @@ async function findCompletedLevelIds(
     .where(and(...conditions));
 
   return new Set(completedSessions.map((s) => s.gameLevelId));
+}
+
+export async function findCompletedLevelCodes(
+  db: ReturnType<typeof getOwnerDb>,
+  childProfileId: number | null,
+  guestDeviceId?: string
+): Promise<string[]> {
+  const conditions = [
+    eq(playSessions.completionStatus, "completed"),
+    eq(playSessions.isPreview, false),
+  ];
+
+  if (childProfileId !== null) {
+    conditions.push(eq(playSessions.childProfileId, childProfileId));
+  } else if (guestDeviceId) {
+    conditions.push(eq(playSessions.guestDeviceId, guestDeviceId));
+  } else {
+    return [];
+  }
+
+  const rows = await db
+    .select({ code: gameLevels.code })
+    .from(playSessions)
+    .innerJoin(gameLevels, eq(gameLevels.id, playSessions.gameLevelId))
+    .where(and(...conditions));
+
+  return Array.from(new Set(rows.map((r) => r.code)));
 }
 
 async function sortIntroLevelsTopologically(

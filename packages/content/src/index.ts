@@ -6,6 +6,7 @@
 
 export * from "./activities/index.js";
 export * from "./builders/index.js";
+export * from "./inventories/index.js";
 export * from "./lessons/index.js";
 export * from "./skills/index.js";
 export * from "./types.js";

@@ -26,9 +26,9 @@ Một sai sót ở đây lan ra mọi nơi và không sửa ngược được ch
 
 ```
 L1 COMPETENCY          6      C1..C6
-   └ L2 STRAND        71      C1.CNT
-       └ L3 SKILL    408      C1.CNT.03
-           └ L4 LEARNING OBJECTIVE  ≥1.224
+   └ L2 STRAND        76      C1.CNT, C5.LET...
+       └ L3 SKILL    443      C1.CNT.03, C5.LET.01...
+           └ L4 LEARNING OBJECTIVE  ≥1.329
                └ L5 ASSET   game_level | lesson | worksheet
 ```
 
@@ -47,10 +47,22 @@ Hai trục cắt ngang cây, không phải tầng:
 
 ### 1.1 Quyết định nguồn sự thật (Q2 — Task #208)
 
-TypeScript là **nguồn sự thật duy nhất** cho danh tính của 408 kỹ năng
+TypeScript là **nguồn sự thật duy nhất** cho danh tính của 443 kỹ năng
 (`packages/content/src/skills/**`). Bảng Markdown tại `docs/taxonomy/c1..c6.md` là
 **tài liệu được sinh tự động** từ TypeScript bằng lệnh `gen:taxonomy-docs`. Cổng
 `check:taxonomy-docs` đối chiếu chống lệch byte-for-byte; cấm sửa tay bảng Markdown.
+
+### 1.2 Nhận biết C5 và ranh giới với bài học mở đầu (Task #255)
+
+C5 nhận 5 strand nhận biết mới (`C5.LET`, `C5.DGR`, `C5.TMK`, `C5.RIM`, `C5.ONS`) gồm
+35 kỹ năng mới ở Phase 1. Ranh giới với bài học mở đầu (`GT-000` / Task #254):
+
+| | `#254` — level dạy `GT-000` | `#255` — kỹ năng nhận biết |
+|---|---|---|
+| Trả lời câu | "trẻ được **giới thiệu** khái niệm này chưa" | "trẻ **nhận ra** được nhóm chữ/dấu/vần/âm này chưa" |
+| Sinh ra | 1 hàng `game_levels`, `kind = 'teach'` | 1 hàng `skills` + ≥10 level chấm + 1 level dạy |
+| Có `mastery_state` riêng | Không | Có |
+| Có trên báo cáo phụ huynh | Không | Có |
 
 ## 2. Actors
 

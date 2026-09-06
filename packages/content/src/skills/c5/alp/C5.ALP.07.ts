@@ -10,7 +10,7 @@ export const C5_ALP_07_IDENTITY: SkillIdentity = {
   difficulty: 5,
   thinking_processes: ["observe", "solve"],
   tier: "advanced",
-  prerequisites: ["C5.ALP.06"],
+  prerequisites: ["C5.ALP.06", "C5.DGR.01"],
   learning_objectives: [
     {
       code: "LO-C5.ALP.07-01",

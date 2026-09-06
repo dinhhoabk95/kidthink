@@ -10,7 +10,7 @@ export const C5_WRD_04_IDENTITY: SkillIdentity = {
   difficulty: 5,
   thinking_processes: ["solve", "verify"],
   tier: "advanced",
-  prerequisites: ["C5.WRD.03", "C5.TON.05"],
+  prerequisites: ["C5.WRD.03", "C5.TON.05", "C5.TMK.03"],
   learning_objectives: [
     {
       code: "LO-C5.WRD.04-01",

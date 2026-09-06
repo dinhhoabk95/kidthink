@@ -12,6 +12,7 @@ import { and, eq } from "drizzle-orm";
 import { defineEventHandler, deleteCookie, getCookie } from "h3";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { findCompletedLevelCodes } from "#server/utils/concept-intro-runtime";
 
 export type StageVisualStatus = "not_started" | "learning" | "stable";
 
@@ -41,6 +42,7 @@ export interface ChildPlayMapResponse {
     stages: MapMilestoneStage[];
   }>;
   badges: MapBadgePayload[];
+  completed_level_codes: string[];
 }
 
 interface SkillMasteryInfo {
@@ -197,21 +199,28 @@ export default defineEventHandler(async (event) => {
   // 2+3+4. Taxonomy, mastery và badge không phụ thuộc nhau — chỉ phụ thuộc
   // `childId` ở bước 1. Chờ tuần tự là năm lượt round-trip nối đuôi trên pool
   // `max: 1`; gom vào một `Promise.all` để driver pipeline chúng.
-  const [allCompetencies, allStrands, allSkills, childMasteryRows, badgeRows] =
-    await Promise.all([
-      db.select().from(competencies).orderBy(competencies.position),
-      db.select().from(strands).orderBy(strands.position),
-      db.select().from(skills).orderBy(skills.position),
-      db
-        .select()
-        .from(masteryState)
-        .where(eq(masteryState.childProfileId, childId)),
-      db
-        .select()
-        .from(childBadges)
-        .where(eq(childBadges.childProfileId, childId))
-        .orderBy(childBadges.awardedAt),
-    ]);
+  const [
+    allCompetencies,
+    allStrands,
+    allSkills,
+    childMasteryRows,
+    badgeRows,
+    completedCodes,
+  ] = await Promise.all([
+    db.select().from(competencies).orderBy(competencies.position),
+    db.select().from(strands).orderBy(strands.position),
+    db.select().from(skills).orderBy(skills.position),
+    db
+      .select()
+      .from(masteryState)
+      .where(eq(masteryState.childProfileId, childId)),
+    db
+      .select()
+      .from(childBadges)
+      .where(eq(childBadges.childProfileId, childId))
+      .orderBy(childBadges.awardedAt),
+    findCompletedLevelCodes(db, childId),
+  ]);
 
   const masteryBySkillId = new Map(
     childMasteryRows.map((row) => [
@@ -243,6 +252,7 @@ export default defineEventHandler(async (event) => {
     },
     active_regions: activeRegions,
     badges,
+    completed_level_codes: completedCodes,
   };
 
   return response;

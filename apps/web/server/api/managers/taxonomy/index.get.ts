@@ -189,7 +189,7 @@ function computeEnhancedTaxonomy(
       difficulty: s.difficulty,
       thinking_processes: s.thinkingProcesses || [],
       what_axis: s.whatAxis || [],
-      tier: s.tier === "pre" ? "basic" : s.tier,
+      tier: s.tier,
       is_deprecated: false,
       published_count: counts.published,
       draft_count: counts.draft,

@@ -4,7 +4,7 @@
 > quá trình suy nghĩ), Reggio Emilia (trăm ngôn ngữ của trẻ).
 > Legend + quy ước mã: [`index.md`](index.md).
 
-**Strand:** 5 · **Skill đã đặt tên:** 21 · **Mục tiêu:** ~60 · **Còn thiếu:** 39
+**Strand:** 20 · **Skill đã đặt tên:** 119 · **Mục tiêu:** ~160 · **Còn thiếu:** 41
 **Game type hiện có:** 1 (D6-09 — bài toán lời văn audio)
 
 > Lưu ý: **Competency yếu nhất: 1/60 game type.** Cần đầu tư audio tiếng Việt trước
@@ -22,7 +22,7 @@ Nghe hiểu và hành động theo. Không yêu cầu đọc chữ.
 | C5.LIS.02 | Nghe và làm theo | 3 | 2 | C5.LIS.01 | `listen` `plan` | b |
 | C5.LIS.03 | Nghe theo trình tự nhiều bước | 5 | 4 | C5.LIS.02 | `listen` `sequence` `recall` | a |
 
-## C5.VOC — Vocabulary (5)
+## C5.VOC — Vocabulary (20)
 
 Từ vựng theo chủ đề. Gắn với `THEME_REGISTRY` của engine.
 
@@ -33,6 +33,21 @@ Từ vựng theo chủ đề. Gắn với `THEME_REGISTRY` của engine.
 | C5.VOC.03 | Từ vựng nghề nghiệp | 4 | 3 | — | `match` `infer` | c |
 | C5.VOC.04 | Từ vựng gia đình | 3 | 2 | — | `match` `recall` | b |
 | C5.VOC.05 | Từ vựng phương tiện | 3 | 2 | — | `match` `recall` | b |
+| C5.VOC.06 | Từ vựng đồ dùng học tập | 4 | 2 | — | `match` `recall` | b |
+| C5.VOC.07 | Từ vựng đồ dùng nhà bếp | 4 | 2 | — | `match` `recall` | b |
+| C5.VOC.08 | Từ vựng trang phục quần áo | 4 | 2 | — | `match` `recall` | b |
+| C5.VOC.09 | Từ vựng bộ phận cơ thể | 3 | 1 | — | `match` `recall` | b |
+| C5.VOC.10 | Từ vựng hiện tượng thời tiết | 4 | 2 | — | `match` `recall` | b |
+| C5.VOC.11 | Từ vựng cây cối hoa lá | 4 | 2 | — | `match` `recall` | b |
+| C5.VOC.12 | Từ vựng các loài côn trùng | 4 | 2 | — | `match` `recall` | b |
+| C5.VOC.13 | Từ vựng động vật biển | 4 | 2 | — | `match` `recall` | b |
+| C5.VOC.14 | Từ vựng nhạc cụ quen thuộc | 5 | 3 | — | `match` `recall` | c |
+| C5.VOC.15 | Từ vựng môn thể thao | 5 | 3 | — | `match` `recall` | c |
+| C5.VOC.16 | Từ vựng lễ hội Việt Nam | 5 | 3 | — | `match` `recall` | c |
+| C5.VOC.17 | Từ vựng màu sắc mở rộng | 4 | 2 | — | `match` `recall` | b |
+| C5.VOC.18 | Từ vựng hình dạng bằng lời | 4 | 2 | — | `match` `recall` | b |
+| C5.VOC.19 | Từ vựng cảm xúc biểu cảm | 5 | 3 | — | `match` `recall` | c |
+| C5.VOC.20 | Từ vựng vị trí không gian bằng lời | 5 | 3 | — | `match` `recall` | c |
 
 ## C5.STO — Story (4)
 
@@ -101,10 +116,10 @@ Nhận thức âm thanh của tiếng Việt **bằng tai**, chưa cần chữ.
 | C5.PHO.01 | Nghe ra từng tiếng trong câu | 4 | 3 | C5.LIS.01 | `listen` `sequence` | c |
 | C5.PHO.02 | Đếm tiếng trong từ | 4 | 3 | C5.PHO.01 · C1.CNT.01 | `listen` `count` | c |
 | C5.PHO.03 | Tiếng dài – tiếng ngắn | 4 | 3 | C5.PHO.01 | `listen` `compare` | c |
-| C5.PHO.04 | Nghe ra âm đầu của tiếng | 5 | 4 | C5.PHO.02 | `listen` `compare` | a |
-| C5.PHO.05 | Tìm tiếng cùng âm đầu | 5 | 4 | C5.PHO.04 | `listen` `match` | a |
-| C5.PHO.06 | Tách tiếng thành âm đầu và vần | 6–7 | 5 | C5.PHO.04 · C5.RHY.02 | `listen` `deduce` | a |
-| C5.PHO.07 | Ghép âm đầu với vần thành tiếng | 6–7 | 5 | C5.PHO.06 | `listen` `solve` | a |
+| C5.PHO.04 | Nghe ra âm đầu của tiếng | 5 | 4 | C5.PHO.02 · C5.ONS.01 | `listen` `compare` | a |
+| C5.PHO.05 | Tìm tiếng cùng âm đầu | 5 | 4 | C5.PHO.04 · C5.ONS.02 | `listen` `match` | a |
+| C5.PHO.06 | Tách tiếng thành âm đầu và vần | 6–7 | 5 | C5.PHO.04 · C5.RHY.02 · C5.ONS.03 | `listen` `deduce` | a |
+| C5.PHO.07 | Ghép âm đầu với vần thành tiếng | 6–7 | 5 | C5.PHO.06 · C5.ONS.04 | `listen` `solve` | a |
 
 ## C5.RHY — Rhyme & Rime (8)
 
@@ -115,10 +130,10 @@ Vần tiếng Việt — bộ phận sau âm đầu. Vần gồm âm đệm, âm
 | C5.RHY.01 | Nghe ra hai tiếng cùng vần | 4 | 3 | C5.PHO.01 | `listen` `match` | c |
 | C5.RHY.02 | Tìm tiếng cùng vần trong nhóm | 5 | 4 | C5.RHY.01 | `listen` `match` | a |
 | C5.RHY.03 | Đọc đồng dao có vần | 4 | 3 | C5.RHY.01 | `listen` `recall` | c |
-| C5.RHY.04 | Vần một âm: a · o · e · i · u | 5 | 4 | C5.RHY.02 · C5.ALP.03 | `match` `observe` | a |
-| C5.RHY.05 | Vần có âm cuối: an · am · ang · ac | 6–7 | 5 | C5.RHY.04 | `solve` `observe` | a |
-| C5.RHY.06 | Vần có âm đệm: oa · oe · uy | 6–7 | 5 | C5.RHY.04 | `solve` `observe` | a |
-| C5.RHY.07 | Vần có nguyên âm đôi: ia · ua · ưa | 6–7 | 5 | C5.RHY.05 | `solve` `compare` | a |
+| C5.RHY.04 | Vần một âm: a · o · e · i · u | 5 | 4 | C5.RHY.02 · C5.ALP.03 · C5.RIM.01 | `match` `observe` | a |
+| C5.RHY.05 | Vần có âm cuối: an · am · ang · ac | 6–7 | 5 | C5.RHY.04 · C5.RIM.02 · C5.RIM.03 | `solve` `observe` | a |
+| C5.RHY.06 | Vần có âm đệm: oa · oe · uy | 6–7 | 5 | C5.RHY.04 · C5.RIM.05 | `solve` `observe` | a |
+| C5.RHY.07 | Vần có nguyên âm đôi: ia · ua · ưa | 6–7 | 5 | C5.RHY.05 · C5.RIM.06 | `solve` `compare` | a |
 | C5.RHY.08 | Tự nghĩ tiếng cùng vần | 6–7 | 5 | C5.RHY.02 | `create` `listen` | a |
 
 ## C5.TON — Tone (6)
@@ -132,7 +147,7 @@ Thanh đổi thì nghĩa đổi — trục này không có tương đương tron
 | C5.TON.02 | Thanh ngang và thanh huyền | 5 | 4 | C5.TON.01 | `listen` `match` | a |
 | C5.TON.03 | Thanh sắc và thanh nặng | 5 | 4 | C5.TON.02 | `listen` `match` | a |
 | C5.TON.04 | Thanh hỏi và thanh ngã | 6–7 | 5 | C5.TON.03 | `listen` `compare` | a |
-| C5.TON.05 | Nhận dấu thanh trên chữ | 6–7 | 5 | C5.TON.03 · C5.ALP.04 | `observe` `match` | a |
+| C5.TON.05 | Nhận dấu thanh trên chữ | 6–7 | 5 | C5.TON.03 · C5.ALP.04 · C5.TMK.03 | `observe` `match` | a |
 | C5.TON.06 | Đổi thanh, đổi nghĩa | 6–7 | 5 | C5.TON.04 | `compare` `infer` | a |
 
 ## C5.ALP — Alphabet (8)
@@ -141,14 +156,14 @@ Hai mươi chín chữ cái tiếng Việt và các chữ ghép thường gặp.
 
 | Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
 |---|---|---|---|---|---|---|
-| C5.ALP.01 | Chữ khác hình, khác số | 4 | 2 | C4.DET.02 | `compare` `sort` | b |
+| C5.ALP.01 | Chữ khác hình, khác số | 4 | 2 | C4.DET.02 · C5.LET.01 | `compare` `sort` | b |
 | C5.ALP.02 | Nhận mặt chữ trong tên mình | 4 | 2 | C5.ALP.01 | `observe` `match` | b |
-| C5.ALP.03 | Nhận nhóm nguyên âm: a ă â e ê i o ô ơ u ư y | 5 | 3 | C5.ALP.01 | `observe` `match` | c |
-| C5.ALP.04 | Nhận đủ 29 chữ cái | 6–7 | 4 | C5.ALP.03 | `observe` `recall` | a |
+| C5.ALP.03 | Nhận nhóm nguyên âm: a ă â e ê i o ô ơ u ư y | 5 | 3 | C5.ALP.01 · C5.LET.02 | `observe` `match` | c |
+| C5.ALP.04 | Nhận đủ 29 chữ cái | 6–7 | 4 | C5.ALP.03 · C5.LET.05 | `observe` `recall` | a |
 | C5.ALP.05 | Chữ hoa – chữ thường | 6–7 | 4 | C5.ALP.04 | `match` `compare` | a |
 | C5.ALP.06 | Âm của chữ | 6–7 | 4 | C5.ALP.04 · C5.PHO.04 | `listen` `match` | a |
-| C5.ALP.07 | Chữ ghép: ch · kh · nh · th · tr · ph | 6–7 | 5 | C5.ALP.06 | `observe` `solve` | a |
-| C5.ALP.08 | Chữ ghép ba: ngh · gh · gi · qu | 6–7 | 5 | C5.ALP.07 | `observe` `solve` | a |
+| C5.ALP.07 | Chữ ghép: ch · kh · nh · th · tr · ph | 6–7 | 5 | C5.ALP.06 · C5.DGR.01 | `observe` `solve` | a |
+| C5.ALP.08 | Chữ ghép: ngh · gh · gi · qu | 6–7 | 5 | C5.ALP.07 · C5.DGR.02 | `observe` `solve` | a |
 
 ## C5.PRN — Print Concepts (5)
 
@@ -194,20 +209,74 @@ Từ nét cơ bản tới viết tên. Vận động tinh cộng kiểm soát m�
 
 | Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
 |---|---|---|---|---|---|---|
-| C5.WRD.01 | Nối từ với hình | 6–7 | 4 | C5.PRN.01 · C5.ALP.04 | `match` `observe` | a |
-| C5.WRD.02 | Đọc tiếng quen thuộc | 6–7 | 4 | C5.ALP.06 | `recall` `match` | a |
-| C5.WRD.03 | Đánh vần tiếng đơn giản | 6–7 | 5 | C5.WRD.02 · C5.PHO.07 | `solve` `sequence` | a |
-| C5.WRD.04 | Đọc tiếng có dấu thanh | 6–7 | 5 | C5.WRD.03 · C5.TON.05 | `solve` `verify` | a |
+| C5.WRD.01 | Nối từ với hình | 6–7 | 4 | C5.PRN.01 · C5.ALP.04 · C5.LET.05 | `match` `observe` | a |
+| C5.WRD.02 | Đọc tiếng quen thuộc | 6–7 | 4 | C5.ALP.06 · C5.LET.05 | `recall` `match` | a |
+| C5.WRD.03 | Đánh vần tiếng đơn giản | 6–7 | 5 | C5.WRD.02 · C5.PHO.07 · C5.RIM.01 | `solve` `sequence` | a |
+| C5.WRD.04 | Đọc tiếng có dấu thanh | 6–7 | 5 | C5.WRD.03 · C5.TON.05 · C5.TMK.03 | `solve` `verify` | a |
 | C5.WRD.05 | Đọc từ hai tiếng | 6–7 | 5 | C5.WRD.04 | `solve` `sequence` | a |
 | C5.WRD.06 | Đọc câu ngắn ba tiếng | 6–7 | 5 | C5.WRD.05 · C5.PRN.04 | `solve` `infer` | a |
 
+## C5.LET — Letter Recognition (5)
+
+Nhận biết mặt chữ cái tiếng Việt.
+
+| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
+|---|---|---|---|---|---|---|
+| C5.LET.01 | Nhận biết a · e · i · o · u · y | 4 | 1 | — | `observe` `match` | b |
+| C5.LET.02 | Nhận biết ă · â · ê · ô · ơ · ư | 4 | 2 | C5.LET.01 | `observe` `compare` | b |
+| C5.LET.03 | Nhận biết b · c · d · đ · g · h | 5 | 2 | C5.LET.01 | `observe` `match` | c |
+| C5.LET.04 | Nhận biết k · l · m · n · p · q | 5 | 2 | C5.LET.03 | `observe` `match` | c |
+| C5.LET.05 | Nhận biết r · s · t · v · x | 5 | 3 | C5.LET.04 | `observe` `recall` | c |
+
+## C5.DGR — Digraph Recognition (2)
+
+Nhận biết chữ ghép tiếng Việt.
+
+| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
+|---|---|---|---|---|---|---|
+| C5.DGR.01 | Chữ ghép hai: ch · gh · gi · kh · nh · ph · th · tr · qu | 6–7 | 3 | C5.LET.05 | `observe` `match` | a |
+| C5.DGR.02 | Chữ ghép có ng: ng · ngh | 6–7 | 4 | C5.DGR.01 | `observe` `compare` | a |
+
+## C5.TMK — Tone Mark Recognition (3)
+
+Nhận biết dấu thanh tiếng Việt bằng mắt.
+
+| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
+|---|---|---|---|---|---|---|
+| C5.TMK.01 | Dấu ngang và dấu huyền | 5 | 2 | C5.LET.01 | `observe` `compare` | c |
+| C5.TMK.02 | Dấu sắc và dấu nặng | 5 | 3 | C5.TMK.01 | `observe` `compare` | c |
+| C5.TMK.03 | Dấu hỏi và dấu ngã | 6–7 | 4 | C5.TMK.02 | `observe` `compare` | a |
+
+## C5.RIM — Rime Recognition (6)
+
+Nhận biết vần tiếng Việt.
+
+| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
+|---|---|---|---|---|---|---|
+| C5.RIM.01 | Vần một âm: 12 nguyên âm | 5 | 2 | C5.LET.02 | `observe` `match` | c |
+| C5.RIM.02 | Vần đóng bằng n: an ăn ân en ên in on ôn ơn un ưn | 6–7 | 3 | C5.RIM.01 | `observe` `compare` | a |
+| C5.RIM.03 | Vần đóng bằng m · ng: am ăm âm ang ăng âng ong ông ung ưng | 6–7 | 3 | C5.RIM.02 | `observe` `compare` | a |
+| C5.RIM.04 | Vần đóng bằng c · t · p: ac ăc âc at ăt ât ap ăp âp | 6–7 | 4 | C5.RIM.03 | `observe` `sort` | a |
+| C5.RIM.05 | Vần có âm đệm: oa oe uy uê uơ | 6–7 | 4 | C5.RIM.01 | `observe` `compare` | a |
+| C5.RIM.06 | Vần nguyên âm đôi: ia iê ua uô ưa ươ | 6–7 | 5 | C5.RIM.04 | `observe` `deduce` | a |
+
+## C5.ONS — Onset Recognition (4)
+
+Nhận biết âm đầu tiếng Việt bằng tai.
+
+| Code | Skill | Tuổi | Khó | Prerequisite | Thinking | Bậc |
+|---|---|---|---|---|---|---|
+| C5.ONS.01 | Tách tiếng ra âm đầu và vần | 5 | 3 | C5.PHO.02 | `listen` `deduce` | c |
+| C5.ONS.02 | Âm đầu nhóm 1: b · c/k/q · d/gi · đ · g/gh · h | 5 | 3 | C5.ONS.01 | `listen` `match` | c |
+| C5.ONS.03 | Âm đầu nhóm 2: l · m · n · ng/ngh · nh · p | 6–7 | 4 | C5.ONS.02 | `listen` `match` | a |
+| C5.ONS.04 | Âm đầu nhóm 3: ph · r · s · t · th · tr · v · x · ch · kh | 6–7 | 4 | C5.ONS.03 | `listen` `compare` | a |
+
 ---
 
-## Khoảng trống cần biên soạn (39 skill)
+## Khoảng trống cần biên soạn (24 skill)
 
 | Strand | Thêm | Hướng mở rộng |
 |---|---:|---|
-| C5.VOC | +15 | Đồ dùng học tập · đồ dùng nhà bếp · quần áo · bộ phận cơ thể · thời tiết · cây cối · côn trùng · động vật biển · nhạc cụ · thể thao · lễ hội Việt Nam · màu sắc mở rộng · hình dạng bằng lời · cảm xúc · vị trí bằng lời |
 | C5.STO | +8 | Đoán chuyện từ một tranh · sắp xếp 5 tranh · tìm tranh không thuộc chuyện · kể chuyện theo tranh mình chọn · nhận ra nhân vật chính · chuỗi cảm xúc nhân vật · truyện có hai kết thúc · nối lời thoại với nhân vật |
 | C5.LIS | +6 | Nghe phân biệt hai chỉ dẫn gần giống · nghe rồi bỏ qua chỉ dẫn sai · nghe số rồi lấy đúng lượng · nghe mô tả rồi tìm vật · nghe chỉ dẫn có phủ định · nghe chỉ dẫn ba bước |
 | C5.DES | +6 | Miêu tả để bạn đoán · miêu tả theo thứ tự từ tổng thể đến chi tiết · miêu tả sự thay đổi · giải thích cách làm · kể lại quy trình · nêu ý kiến kèm lý do |

@@ -4,10 +4,20 @@
       <span aria-hidden="true" class="card-emoji">
         {{ game.thumbnail_emoji || '🎲' }}
       </span>
-      <!-- Neutral lock badge (BR-GCP-05) -->
-      <span :class="['lock-badge', `tier-${game.access_tier}`]">
-        {{ getTierLabel(game.access_tier) }}
-      </span>
+      <div class="flex items-center gap-1.5">
+        <!-- Huy hiệu "Đã học xong" trên thẻ bài dạy (BR-CIG-08, Task #254) -->
+        <span
+          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-success-500 text-white font-heading text-xs font-bold shadow-sm"
+          v-if="game.is_completed"
+        >
+          <span>✓</span>
+          <span>Đã học xong</span>
+        </span>
+        <!-- Neutral lock badge (BR-GCP-05) -->
+        <span :class="['lock-badge', `tier-${game.access_tier}`]">
+          {{ getTierLabel(game.access_tier) }}
+        </span>
+      </div>
     </div>
 
     <div class="card-body">
@@ -72,6 +82,7 @@
     thumbnail_emoji: string | null;
     locked: boolean;
     cta: LevelCta;
+    is_completed?: boolean;
   }
 
   defineProps<{

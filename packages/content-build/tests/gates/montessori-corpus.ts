@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 /**
@@ -171,6 +171,9 @@ function seederFiles(dirPath: string): string[] {
 }
 
 function competencyDirs(seedContentDir: string): string[] {
+  if (!existsSync(seedContentDir)) {
+    return [];
+  }
   return readdirSync(seedContentDir)
     .sort()
     .filter(

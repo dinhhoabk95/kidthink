@@ -49,11 +49,11 @@ const COMPETENCY_FILES = [
 ];
 
 const EXPECTED_SKILL_COUNTS: Record<string, number> = {
-  C1: 113,
-  C2: 57,
+  C1: 110,
+  C2: 56,
   C3: 42,
-  C4: 87,
-  C5: 84,
+  C4: 86,
+  C5: 119,
   C6: 30,
 };
 
