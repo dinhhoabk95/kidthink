@@ -45,58 +45,58 @@ export const C5_BOK_05_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "apple",
-      label: "quả táo",
+      id: "bok_tim_nhan_vat",
+      label: "tìm nhân vật trong tranh",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🔍",
       },
       category: {
-        type: "hoa quả",
+        type: "tìm thông tin",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "bok_tim_hanh_dong",
+      label: "tìm hành động của nhân vật",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🏃",
       },
       category: {
-        type: "hoa quả",
+        type: "tìm thông tin",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "bok_tim_do_vat",
+      label: "tìm đồ vật ẩn trong tranh",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🎁",
       },
       category: {
-        type: "hoa quả",
+        type: "tìm thông tin",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "bok_tim_thoi_tiet",
+      label: "quan sát thời tiết trong tranh",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "⛅",
       },
       category: {
-        type: "rau củ",
+        type: "tìm thông tin",
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "bok_tim_cam_xuc",
+      label: "nhận biết cảm xúc nhân vật",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "😊",
       },
       category: {
-        type: "rau củ",
+        type: "tìm thông tin",
       },
     },
   ],
@@ -134,7 +134,13 @@ export const C5_BOK_05_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["apple", "banana", "watermelon", "carrot", "corn"],
+  ordering: [
+    "bok_tim_nhan_vat",
+    "bok_tim_hanh_dong",
+    "bok_tim_do_vat",
+    "bok_tim_thoi_tiet",
+    "bok_tim_cam_xuc",
+  ],
 };
 
 export const C5_BOK_05_SEED: SkillSeed = {

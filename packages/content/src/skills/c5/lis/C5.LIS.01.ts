@@ -42,58 +42,58 @@ export const C5_LIS_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "lis_tieng_mua_roi",
+      label: "tiếng mưa rơi tí tách",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🌧️",
       },
       category: {
-        type: "đồ dùng",
+        type: "âm thanh",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "lis_tieng_gio_thoi",
+      label: "tiếng gió thổi rì rào",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🍃",
       },
       category: {
-        type: "đồ dùng",
+        type: "âm thanh",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "lis_tieng_chim_hot",
+      label: "tiếng chim hót líu lo",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🐦",
       },
       category: {
-        type: "đồ dùng",
+        type: "âm thanh",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "lis_tieng_suoi_chay",
+      label: "tiếng suối chảy róc rách",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🏞️",
       },
       category: {
-        type: "hoa quả",
+        type: "âm thanh",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "lis_tieng_song_vo",
+      label: "tiếng sóng biển vỗ dập dềnh",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🌊",
       },
       category: {
-        type: "hoa quả",
+        type: "âm thanh",
       },
     },
   ],
@@ -130,7 +130,13 @@ export const C5_LIS_01_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["cup", "bed", "chair", "apple", "banana"],
+  ordering: [
+    "lis_tieng_mua_roi",
+    "lis_tieng_gio_thoi",
+    "lis_tieng_chim_hot",
+    "lis_tieng_suoi_chay",
+    "lis_tieng_song_vo",
+  ],
 };
 
 export const C5_LIS_01_SEED: SkillSeed = {

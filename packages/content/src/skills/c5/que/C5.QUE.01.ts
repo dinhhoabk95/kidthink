@@ -42,58 +42,58 @@ export const C5_QUE_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "apple",
-      label: "quả táo",
+      id: "que_ai_day_hoc",
+      label: "cô giáo đang dạy học",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "👩‍🏫",
       },
       category: {
-        type: "hoa quả",
+        type: "câu hỏi ai",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "que_ai_kham_benh",
+      label: "bác sĩ đang khám bệnh",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "👨‍⚕️",
       },
       category: {
-        type: "hoa quả",
+        type: "câu hỏi ai",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "que_ai_lai_xe",
+      label: "chú tài xế đang lái xe buýt",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🚌",
       },
       category: {
-        type: "hoa quả",
+        type: "câu hỏi ai",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "que_ai_nau_an",
+      label: "đầu bếp đang nấu món ngon",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "👨‍🍳",
       },
       category: {
-        type: "rau củ",
+        type: "câu hỏi ai",
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "que_ai_tuoi_cay",
+      label: "bác làm vườn đang tưới cây",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🧑‍🌾",
       },
       category: {
-        type: "rau củ",
+        type: "câu hỏi ai",
       },
     },
   ],
@@ -130,7 +130,13 @@ export const C5_QUE_01_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["apple", "banana", "watermelon", "carrot", "corn"],
+  ordering: [
+    "que_ai_day_hoc",
+    "que_ai_kham_benh",
+    "que_ai_lai_xe",
+    "que_ai_nau_an",
+    "que_ai_tuoi_cay",
+  ],
 };
 
 export const C5_QUE_01_SEED: SkillSeed = {

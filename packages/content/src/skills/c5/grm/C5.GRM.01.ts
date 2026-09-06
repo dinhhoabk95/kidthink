@@ -42,58 +42,58 @@ export const C5_GRM_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bowl",
-      label: "cái bát",
+      id: "grm_chao_hoi",
+      label: "cháu chào ông bà ạ",
       image: {
         kind: "emoji",
-        ref: "🥣",
+        ref: "🙋",
       },
       category: {
-        type: "đồ dùng",
+        type: "câu đủ ý",
       },
     },
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "grm_cam_on",
+      label: "con cảm ơn mẹ ạ",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "🙏",
       },
       category: {
-        type: "đồ dùng",
+        type: "câu đủ ý",
       },
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "grm_xin_phep",
+      label: "con xin phép cô giáo ạ",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🙇",
       },
       category: {
-        type: "đồ dùng",
+        type: "câu đủ ý",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "grm_gioi_thieu",
+      label: "con tên là bé An ạ",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🧒",
       },
       category: {
-        type: "đồ dùng",
+        type: "câu đủ ý",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "grm_mong_muon",
+      label: "con muốn uống nước ạ",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "💭",
       },
       category: {
-        type: "đồ dùng",
+        type: "câu đủ ý",
       },
     },
   ],
@@ -130,7 +130,13 @@ export const C5_GRM_01_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["bowl", "spoon", "cup", "bed", "chair"],
+  ordering: [
+    "grm_chao_hoi",
+    "grm_cam_on",
+    "grm_xin_phep",
+    "grm_gioi_thieu",
+    "grm_mong_muon",
+  ],
 };
 
 export const C5_GRM_01_SEED: SkillSeed = {

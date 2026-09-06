@@ -505,7 +505,7 @@ export const FEATURED_GUEST_LEVELS = [
     emoji: "🍓",
   },
   {
-    code: "GL-C5-VOC-CARD-0001",
+    code: "GL-C5-STO-CARD-0001",
     title: "Từ vựng phương tiện",
     competency: "C5",
     template: "GT-012",

@@ -43,58 +43,58 @@ export const C5_STO_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "apple",
-      label: "quả táo",
+      id: "sto_nhan_vat",
+      label: "nhân vật chính",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🐻",
       },
       category: {
-        type: "hoa quả",
+        type: "câu chuyện",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "sto_mo_dau",
+      label: "mở đầu câu chuyện",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🌅",
       },
       category: {
-        type: "hoa quả",
+        type: "câu chuyện",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "sto_dien_bien",
+      label: "diễn biến câu chuyện",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "📖",
       },
       category: {
-        type: "hoa quả",
+        type: "câu chuyện",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "sto_ket_thuc",
+      label: "kết thúc có hậu",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🌈",
       },
       category: {
-        type: "rau củ",
+        type: "câu chuyện",
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "sto_bai_hoc",
+      label: "bài học câu chuyện",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "⭐",
       },
       category: {
-        type: "rau củ",
+        type: "câu chuyện",
       },
     },
   ],
@@ -132,7 +132,13 @@ export const C5_STO_01_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["apple", "banana", "watermelon", "carrot", "corn"],
+  ordering: [
+    "sto_nhan_vat",
+    "sto_mo_dau",
+    "sto_dien_bien",
+    "sto_ket_thuc",
+    "sto_bai_hoc",
+  ],
 };
 
 export const C5_STO_01_SEED: SkillSeed = {
@@ -142,13 +148,15 @@ export const C5_STO_01_SEED: SkillSeed = {
     {
       code: "GL-C5-STO-INTRO-0001",
       template: "GT-000",
-      band: "3-5",
+      band: "3-4",
       difficulty: 1,
       theme: "school",
       rounds: 1,
+      sequence_no: 1,
+      skill_codes: ["C5.STO.01"],
     },
     {
-      code: "GL-C5-VOC-CARD-0001",
+      code: "GL-C5-STO-CARD-0001",
       template: "GT-012",
       band: "3-4",
       difficulty: 1,
@@ -156,7 +164,7 @@ export const C5_STO_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-CARD-0002",
+      code: "GL-C5-STO-CARD-0002",
       template: "GT-012",
       band: "3-4",
       difficulty: 1,
@@ -164,7 +172,7 @@ export const C5_STO_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-CARD-0003",
+      code: "GL-C5-STO-CARD-0003",
       template: "GT-012",
       band: "3-4",
       difficulty: 1,
@@ -172,7 +180,7 @@ export const C5_STO_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-BOX-0004",
+      code: "GL-C5-STO-BOX-0004",
       template: "GT-003",
       band: "4-5",
       difficulty: 1,
@@ -180,7 +188,7 @@ export const C5_STO_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-BOX-0005",
+      code: "GL-C5-STO-BOX-0005",
       template: "GT-003",
       band: "4-5",
       difficulty: 2,
@@ -188,7 +196,7 @@ export const C5_STO_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-SEQ-0008",
+      code: "GL-C5-STO-SEQ-0008",
       template: "GT-008",
       band: "4-5",
       difficulty: 2,
@@ -196,7 +204,7 @@ export const C5_STO_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-LOC-0009",
+      code: "GL-C5-STO-LOC-0009",
       template: "GT-022",
       band: "4-5",
       difficulty: 2,
@@ -212,7 +220,7 @@ export const C5_STO_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-CARD-0011",
+      code: "GL-C5-STO-CARD-0011",
       template: "GT-012",
       band: "4-5",
       difficulty: 3,
@@ -220,7 +228,7 @@ export const C5_STO_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-BOX-0012",
+      code: "GL-C5-STO-BOX-0012",
       template: "GT-003",
       band: "4-5",
       difficulty: 3,
@@ -228,7 +236,7 @@ export const C5_STO_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-LOC-0015",
+      code: "GL-C5-STO-LOC-0015",
       template: "GT-022",
       band: "5-6",
       difficulty: 3,
@@ -236,7 +244,7 @@ export const C5_STO_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-BOX-0018",
+      code: "GL-C5-STO-BOX-0018",
       template: "GT-003",
       band: "5-6",
       difficulty: 4,
@@ -244,7 +252,7 @@ export const C5_STO_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-SEQ-0019",
+      code: "GL-C5-STO-SEQ-0019",
       template: "GT-006",
       band: "5-6",
       difficulty: 4,
@@ -252,7 +260,7 @@ export const C5_STO_01_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C5-VOC-FLIP-0033",
+      code: "GL-C5-STO-FLIP-0033",
       template: "GT-020",
       band: "3-4",
       difficulty: 1,
@@ -261,7 +269,7 @@ export const C5_STO_01_SEED: SkillSeed = {
       legacy_v1_ref: "D6-11",
     },
     {
-      code: "GL-C5-VOC-SLOT-0034",
+      code: "GL-C5-STO-SLOT-0034",
       template: "GT-008",
       band: "3-4",
       difficulty: 1,

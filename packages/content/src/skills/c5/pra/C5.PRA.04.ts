@@ -43,58 +43,58 @@ export const C5_PRA_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bowl",
-      label: "cái bát",
+      id: "pra_thua_co",
+      label: "thưa cô con chưa nghe rõ ạ",
       image: {
         kind: "emoji",
-        ref: "🥣",
+        ref: "🙋",
       },
       category: {
-        type: "đồ dùng",
+        type: "giao tiếp lịch sự",
       },
     },
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "pra_nho_nhac_lai",
+      label: "cô có thể nhắc lại giúp con được không ạ?",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "👂",
       },
       category: {
-        type: "đồ dùng",
+        type: "giao tiếp lịch sự",
       },
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "pra_cam_on_chi_dan",
+      label: "con cảm ơn cô đã hướng dẫn ạ",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🙏",
       },
       category: {
-        type: "đồ dùng",
+        type: "giao tiếp lịch sự",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "pra_hoi_ban",
+      label: "bạn ơi chỉ giúp tớ bước này với",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🤝",
       },
       category: {
-        type: "đồ dùng",
+        type: "giao tiếp lịch sự",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "pra_lang_nghe_ky",
+      label: "con tập trung chú ý lắng nghe lời dặn",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "👀",
       },
       category: {
-        type: "đồ dùng",
+        type: "giao tiếp lịch sự",
       },
     },
   ],
@@ -131,7 +131,13 @@ export const C5_PRA_04_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["bowl", "spoon", "cup", "bed", "chair"],
+  ordering: [
+    "pra_thua_co",
+    "pra_nho_nhac_lai",
+    "pra_cam_on_chi_dan",
+    "pra_hoi_ban",
+    "pra_lang_nghe_ky",
+  ],
 };
 
 export const C5_PRA_04_SEED: SkillSeed = {

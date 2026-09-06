@@ -42,58 +42,58 @@ export const C5_DES_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "des_bong_tron_do",
+      label: "quả bóng tròn màu đỏ",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "⚽",
       },
       category: {
-        type: "đồ dùng",
+        type: "miêu tả vật",
       },
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "des_o_to_xanh",
+      label: "xe ô tô con màu xanh",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🚗",
       },
       category: {
-        type: "đồ dùng",
+        type: "miêu tả vật",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "des_gau_bong_nau",
+      label: "chú gấu bông màu nâu mềm mại",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🧸",
       },
       category: {
-        type: "đồ dùng",
+        type: "miêu tả vật",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "des_dong_ho_vang",
+      label: "chiếc đồng hồ tròn màu vàng",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "⏰",
       },
       category: {
-        type: "đồ dùng",
+        type: "miêu tả vật",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "des_hop_qua_vuong",
+      label: "hộp quà vuông thắt nơ xinh",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🎁",
       },
       category: {
-        type: "hoa quả",
+        type: "miêu tả vật",
       },
     },
   ],
@@ -130,7 +130,13 @@ export const C5_DES_01_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["spoon", "cup", "bed", "chair", "apple"],
+  ordering: [
+    "des_bong_tron_do",
+    "des_o_to_xanh",
+    "des_gau_bong_nau",
+    "des_dong_ho_vang",
+    "des_hop_qua_vuong",
+  ],
 };
 
 export const C5_DES_01_SEED: SkillSeed = {

@@ -45,58 +45,58 @@ export const C5_GRM_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "grm_tu_noi_va",
+      label: "từ nối 'và' (chó và mèo)",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "➕",
       },
       category: {
-        type: "đồ dùng",
+        type: "từ nối",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "grm_tu_noi_roi",
+      label: "từ nối 'rồi' (rửa tay rồi ăn cơm)",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "➡️",
       },
       category: {
-        type: "đồ dùng",
+        type: "từ nối",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "grm_tu_noi_nhung",
+      label: "từ nối 'nhưng' (trời mưa nhưng bé vui)",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "⛅",
       },
       category: {
-        type: "đồ dùng",
+        type: "từ nối",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "grm_tu_noi_vi",
+      label: "từ nối 'vì' (bé cười vì được khen)",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "😊",
       },
       category: {
-        type: "hoa quả",
+        type: "từ nối",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "grm_tu_noi_hoac",
+      label: "từ nối 'hoặc' (chọn táo hoặc cam)",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🔀",
       },
       category: {
-        type: "hoa quả",
+        type: "từ nối",
       },
     },
   ],
@@ -134,7 +134,13 @@ export const C5_GRM_03_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["cup", "bed", "chair", "apple", "banana"],
+  ordering: [
+    "grm_tu_noi_va",
+    "grm_tu_noi_roi",
+    "grm_tu_noi_nhung",
+    "grm_tu_noi_vi",
+    "grm_tu_noi_hoac",
+  ],
 };
 
 export const C5_GRM_03_SEED: SkillSeed = {

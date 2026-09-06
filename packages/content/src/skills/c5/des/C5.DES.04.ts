@@ -43,58 +43,58 @@ export const C5_DES_04_DATASET: SkillDataset = {
   surface: "worksheet",
   items: [
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "des_ly_do_mua",
+      label: "chọn áo mưa vì trời mưa",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🌧️",
       },
       category: {
-        type: "đồ dùng",
+        type: "giải thích lý do",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "des_ly_do_nang",
+      label: "chọn mũ rộng vành vì trời nắng",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🧢",
       },
       category: {
-        type: "hoa quả",
+        type: "giải thích lý do",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "des_ly_do_ret",
+      label: "chọn khăn len ấm vì trời lạnh",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🧣",
       },
       category: {
-        type: "hoa quả",
+        type: "giải thích lý do",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "des_ly_do_uong",
+      label: "chọn cốc nước vì khát nước",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🥛",
       },
       category: {
-        type: "hoa quả",
+        type: "giải thích lý do",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "des_ly_do_an",
+      label: "chọn thìa để xúc cơm ăn",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🥄",
       },
       category: {
-        type: "rau củ",
+        type: "giải thích lý do",
       },
     },
   ],
@@ -131,7 +131,13 @@ export const C5_DES_04_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["chair", "apple", "banana", "watermelon", "carrot"],
+  ordering: [
+    "des_ly_do_mua",
+    "des_ly_do_nang",
+    "des_ly_do_ret",
+    "des_ly_do_uong",
+    "des_ly_do_an",
+  ],
 };
 
 export const C5_DES_04_SEED: SkillSeed = {

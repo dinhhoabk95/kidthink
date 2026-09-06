@@ -42,58 +42,58 @@ export const C5_WRD_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "wrd_ba",
+      label: "từ ba",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "👨",
       },
       category: {
-        type: "hoa quả",
+        type: "tiếng viết",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "wrd_me",
+      label: "từ mẹ",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "👩",
       },
       category: {
-        type: "rau củ",
+        type: "tiếng viết",
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "wrd_be",
+      label: "từ bé",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "👶",
       },
       category: {
-        type: "rau củ",
+        type: "tiếng viết",
       },
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "wrd_ca",
+      label: "từ cá",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🐟",
       },
       category: {
-        type: "động vật",
+        type: "tiếng viết",
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "wrd_ga",
+      label: "từ gà",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "🐔",
       },
       category: {
-        type: "động vật",
+        type: "tiếng viết",
       },
     },
   ],
@@ -130,7 +130,7 @@ export const C5_WRD_01_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["watermelon", "carrot", "corn", "dog", "cat"],
+  ordering: ["wrd_ba", "wrd_me", "wrd_be", "wrd_ca", "wrd_ga"],
 };
 
 export const C5_WRD_01_SEED: SkillSeed = {

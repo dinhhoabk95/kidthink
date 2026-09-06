@@ -43,58 +43,58 @@ export const C5_STO_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "sto_ket_vui_ve",
+      label: "cả nhà sum vầy ăn bữa cơm ấm áp",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🍲",
       },
       category: {
-        type: "hoa quả",
+        type: "kết thúc truyện",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "sto_ket_giup_do",
+      label: "bạn bè cùng nhau giúp đỡ vượt qua khó khăn",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🤝",
       },
       category: {
-        type: "rau củ",
+        type: "kết thúc truyện",
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "sto_ket_hoa_thuan",
+      label: "hai bạn bắt tay làm hòa vui vẻ",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🕊️",
       },
       category: {
-        type: "rau củ",
+        type: "kết thúc truyện",
       },
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "sto_ket_khen_thuong",
+      label: "bé ngoan được cô giáo tặng hoa điểm mười",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "⭐",
       },
       category: {
-        type: "động vật",
+        type: "kết thúc truyện",
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "sto_ket_chia_se",
+      label: "các bạn chia sẻ đồ chơi cùng nhau",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "🧸",
       },
       category: {
-        type: "động vật",
+        type: "kết thúc truyện",
       },
     },
   ],
@@ -131,7 +131,13 @@ export const C5_STO_03_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["watermelon", "carrot", "corn", "dog", "cat"],
+  ordering: [
+    "sto_ket_vui_ve",
+    "sto_ket_giup_do",
+    "sto_ket_hoa_thuan",
+    "sto_ket_khen_thuong",
+    "sto_ket_chia_se",
+  ],
 };
 
 export const C5_STO_03_SEED: SkillSeed = {

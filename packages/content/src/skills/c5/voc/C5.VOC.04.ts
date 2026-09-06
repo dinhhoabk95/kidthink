@@ -42,58 +42,58 @@ export const C5_VOC_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "apple",
-      label: "quả táo",
+      id: "voc_ong",
+      label: "ông",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "👴",
       },
       category: {
-        type: "hoa quả",
+        type: "gia đình",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "voc_ba",
+      label: "bà",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "👵",
       },
       category: {
-        type: "hoa quả",
+        type: "gia đình",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "voc_bo",
+      label: "bố",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "👨",
       },
       category: {
-        type: "hoa quả",
+        type: "gia đình",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "voc_me",
+      label: "mẹ",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "👩",
       },
       category: {
-        type: "rau củ",
+        type: "gia đình",
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "voc_be",
+      label: "em bé",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "👶",
       },
       category: {
-        type: "rau củ",
+        type: "gia đình",
       },
     },
   ],
@@ -130,7 +130,7 @@ export const C5_VOC_04_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["apple", "banana", "watermelon", "carrot", "corn"],
+  ordering: ["voc_ong", "voc_ba", "voc_bo", "voc_me", "voc_be"],
 };
 
 export const C5_VOC_04_SEED: SkillSeed = {

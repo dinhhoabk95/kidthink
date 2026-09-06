@@ -43,58 +43,58 @@ export const C5_PRA_06_DATASET: SkillDataset = {
   surface: "worksheet",
   items: [
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "pra_thich_ve_tranh",
+      label: "con thích vẽ tranh vì được tô nhiều màu đẹp",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🎨",
       },
       category: {
-        type: "đồ dùng",
+        type: "ý kiến kèm lý do",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "pra_thich_da_bong",
+      label: "con thích đá bóng vì được chạy nhảy cùng bạn",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "⚽",
       },
       category: {
-        type: "đồ dùng",
+        type: "ý kiến kèm lý do",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "pra_thich_doc_sach",
+      label: "con thích đọc sách vì có nhiều câu chuyện hay",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "📖",
       },
       category: {
-        type: "đồ dùng",
+        type: "ý kiến kèm lý do",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "pra_thich_an_tao",
+      label: "con thích ăn táo vì táo giòn và ngọt mát",
       image: {
         kind: "emoji",
         ref: "🍎",
       },
       category: {
-        type: "hoa quả",
+        type: "ý kiến kèm lý do",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "pra_thich_nghe_nhac",
+      label: "con thích nghe nhạc vì giai điệu vui tươi",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🎵",
       },
       category: {
-        type: "hoa quả",
+        type: "ý kiến kèm lý do",
       },
     },
   ],
@@ -131,7 +131,13 @@ export const C5_PRA_06_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["cup", "bed", "chair", "apple", "banana"],
+  ordering: [
+    "pra_thich_ve_tranh",
+    "pra_thich_da_bong",
+    "pra_thich_doc_sach",
+    "pra_thich_an_tao",
+    "pra_thich_nghe_nhac",
+  ],
 };
 
 export const C5_PRA_06_SEED: SkillSeed = {

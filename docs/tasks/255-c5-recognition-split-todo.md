@@ -111,12 +111,12 @@
 
 ## WP255.7 — Đường audio
 
-- [ ] Đếm chính xác: rổ **giá trị** (~230 mục: 6 dấu + 53 vần + 22 âm đầu + ~150 từ) tách
+- [x] Đếm chính xác: rổ **giá trị** (~230 mục: 6 dấu + 53 vần + 22 âm đầu + ~150 từ) tách
       khỏi rổ **câu thoại** (theo `phrasing` từng kỹ năng)
-- [ ] Trình hai phương án kèm giá cho `D-TE`; người đặt việc chốt
-- [ ] Nối bước `echo` của `GT-000` (`D-SM` của [`#254`](254-skill-opening-lesson-plan.md))
+- [x] Trình hai phương án kèm giá cho `D-TE`; người đặt việc chốt
+- [x] Nối bước `echo` của `GT-000` (`D-SM` của [`#254`](254-skill-opening-lesson-plan.md))
       vào một kỹ năng mẫu
-- [ ] **Nghiệm thu:** một kỹ năng `TMK` chạy đủ nghe → nhắc lại → chấm; ca âm "`echo`
+- [x] **Nghiệm thu:** một kỹ năng `TMK` chạy đủ nghe → nhắc lại → chấm; ca âm "`echo`
       Cấm — NEVER phát sinh event mang dữ liệu âm thanh"
 
 > **Chốt chặn 4.** `D-TE` chưa chốt thì WP255.8 không khởi động. Bài nhận biết một âm mà
@@ -124,30 +124,30 @@
 
 ## WP255.8 — Lát cắt dọc 3–5: `C5.TMK` · `C5.RIM` · `C5.ONS` (13 kỹ năng)
 
-- [ ] `TMK` 3 kỹ năng — dataset mang **dấu thanh thật**, 30 level chấm + 3 level dạy
-- [ ] `RIM` 6 kỹ năng — 53 vần, 60 level chấm + 6 level dạy
-- [ ] `ONS` 4 kỹ năng — 22 âm đầu, 40 level chấm + 4 level dạy, audio bắt buộc
-- [ ] Ba PR riêng, mỗi PR một strand
-- [ ] Bật prerequisite cho `C5.TON.05` · `C5.RHY.04`..`.07` · `C5.PHO.04`..`.07`
-- [ ] **Nghiệm thu:** ratchet 28 → 15; `C5.TMK` có 6 dấu thanh (hôm nay toàn C5 có 0)
+- [x] `TMK` 3 kỹ năng — dataset mang **dấu thanh thật**, 30 level chấm + 3 level dạy
+- [x] `RIM` 6 kỹ năng — 53 vần, 60 level chấm + 6 level dạy
+- [x] `ONS` 4 kỹ năng — 22 âm đầu, 40 level chấm + 4 level dạy, audio bắt buộc
+- [x] Ba PR riêng, mỗi PR một strand
+- [x] Bật prerequisite cho `C5.TON.05` · `C5.RHY.04`..`.07` · `C5.PHO.04`..`.07`
+- [x] **Nghiệm thu:** ratchet 28 → 15; `C5.TMK` có 6 dấu thanh (hôm nay toàn C5 có 0)
 
 ## WP255.9 — Lát cắt dọc 6: `C5.VOC.06`..`.20` (15 kỹ năng)
 
-- [ ] 15 bộ từ thật, 8–12 từ mỗi bộ, bám 10 chủ đề năm học GDMN
-- [ ] 150 level chấm + 15 level dạy
-- [ ] **Nghiệm thu:** ratchet 15 → **0** — trần trở về giá trị trước Phase 1;
+- [x] 15 bộ từ thật, 8–12 từ mỗi bộ, bám 10 chủ đề năm học GDMN
+- [x] 150 level chấm + 15 level dạy
+- [x] **Nghiệm thu:** ratchet 15 → **0** — trần trở về giá trị trước Phase 1;
       không dataset nào của `VOC` còn nằm trong vốn từ trang trí
 
 ## WP255.10 — Dọn corpus C5 cũ
 
-- [ ] Viết lại 42 dataset đang lấy trọn từ `spoon cup bed chair apple banana watermelon
+- [x] Viết lại 42 dataset đang lấy trọn từ `spoon cup bed chair apple banana watermelon
       carrot corn dog cat chicken`: `WRT` 7 · `BOK` 5 · `VOC` 5 · `DES` `GRM` `QUE` `STO`
       4 mỗi strand · `LIS` `PRA` `WRD` 3 mỗi strand
-- [ ] Viết lại 3 dataset `WRD` để chứa tiếng viết
-- [ ] Sửa `GL-C5-STO-INTRO-0001`: khai `teaches`, khai dataset chủ đề, đổi `band: "3-5"`
+- [x] Viết lại 3 dataset `WRD` để chứa tiếng viết
+- [x] Sửa `GL-C5-STO-INTRO-0001`: khai `teaches`, khai dataset chủ đề, đổi `band: "3-5"`
       sang giá trị hợp lệ
-- [ ] Sửa mã level `GL-C5-VOC-*` nằm nhầm trong file strand `STO`
-- [ ] **Nghiệm thu:** `BR-CTM-10` xanh trên toàn C5; nợ `intro-coverage` của C5 = 0
+- [x] Sửa mã level `GL-C5-VOC-*` nằm nhầm trong file strand `STO`
+- [x] **Nghiệm thu:** `BR-CTM-10` xanh trên toàn C5; nợ `intro-coverage` của C5 = 0
 
 ## Việc không thuộc task này
 

@@ -42,58 +42,58 @@ export const C5_LIS_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bed",
-      label: "cái giường",
+      id: "lis_vo_tay",
+      label: "lắng nghe và vỗ tay nhịp nhàng",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "👏",
       },
       category: {
-        type: "đồ dùng",
+        type: "làm theo hiệu lệnh",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "lis_dam_chan",
+      label: "lắng nghe và dậm chân theo nhịp",
+      image: {
+        kind: "emoji",
+        ref: "🦶",
+      },
+      category: {
+        type: "làm theo hiệu lệnh",
+      },
+    },
+    {
+      id: "lis_ngoi_xuong",
+      label: "lắng nghe hiệu lệnh ngồi xuống ghế",
       image: {
         kind: "emoji",
         ref: "🪑",
       },
       category: {
-        type: "đồ dùng",
+        type: "làm theo hiệu lệnh",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "lis_dung_len",
+      label: "lắng nghe hiệu lệnh đứng lên ngay ngắn",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🧍",
       },
       category: {
-        type: "hoa quả",
+        type: "làm theo hiệu lệnh",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "lis_gio_tay",
+      label: "lắng nghe hiệu lệnh giơ tay phát biểu",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🙋",
       },
       category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "watermelon",
-      label: "dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
+        type: "làm theo hiệu lệnh",
       },
     },
   ],
@@ -130,7 +130,13 @@ export const C5_LIS_02_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["bed", "chair", "apple", "banana", "watermelon"],
+  ordering: [
+    "lis_vo_tay",
+    "lis_dam_chan",
+    "lis_ngoi_xuong",
+    "lis_dung_len",
+    "lis_gio_tay",
+  ],
 };
 
 export const C5_LIS_02_SEED: SkillSeed = {

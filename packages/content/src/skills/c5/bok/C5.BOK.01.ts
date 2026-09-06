@@ -43,58 +43,58 @@ export const C5_BOK_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "bok_bia_sach",
+      label: "bìa sách",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "📕",
       },
       category: {
-        type: "đồ dùng",
+        type: "cấu tạo sách",
       },
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "bok_gay_sach",
+      label: "gáy sách",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "📙",
       },
       category: {
-        type: "đồ dùng",
+        type: "cấu tạo sách",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "bok_trang_sach",
+      label: "trang sách",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "📄",
       },
       category: {
-        type: "đồ dùng",
+        type: "cấu tạo sách",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "bok_ten_sach",
+      label: "tên cuốn sách",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🏷️",
       },
       category: {
-        type: "đồ dùng",
+        type: "cấu tạo sách",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "bok_tac_gia",
+      label: "tác giả viết sách",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "✍️",
       },
       category: {
-        type: "hoa quả",
+        type: "cấu tạo sách",
       },
     },
   ],
@@ -132,7 +132,13 @@ export const C5_BOK_01_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["spoon", "cup", "bed", "chair", "apple"],
+  ordering: [
+    "bok_bia_sach",
+    "bok_gay_sach",
+    "bok_trang_sach",
+    "bok_ten_sach",
+    "bok_tac_gia",
+  ],
 };
 
 export const C5_BOK_01_SEED: SkillSeed = {

@@ -42,58 +42,58 @@ export const C5_VOC_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "voc_cho",
+      label: "con chó",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🐕",
       },
       category: {
-        type: "đồ dùng",
+        type: "động vật",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "voc_meo",
+      label: "con mèo",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🐈",
       },
       category: {
-        type: "đồ dùng",
+        type: "động vật",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "voc_ga",
+      label: "con gà",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🐔",
       },
       category: {
-        type: "đồ dùng",
+        type: "động vật",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "voc_vit",
+      label: "con vịt",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🦆",
       },
       category: {
-        type: "hoa quả",
+        type: "động vật",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "voc_lon",
+      label: "con lợn",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🐷",
       },
       category: {
-        type: "hoa quả",
+        type: "động vật",
       },
     },
   ],
@@ -130,7 +130,7 @@ export const C5_VOC_01_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["cup", "bed", "chair", "apple", "banana"],
+  ordering: ["voc_cho", "voc_meo", "voc_ga", "voc_vit", "voc_lon"],
 };
 
 export const C5_VOC_01_SEED: SkillSeed = {

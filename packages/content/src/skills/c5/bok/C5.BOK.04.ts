@@ -45,58 +45,58 @@ export const C5_BOK_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "bok_sach_dong_vat",
+      label: "cuốn sách về các loài động vật",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🦁",
       },
       category: {
-        type: "đồ dùng",
+        type: "chọn sách",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "bok_sach_phuong_tien",
+      label: "cuốn sách về xe cộ và tàu bay",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🚗",
       },
       category: {
-        type: "hoa quả",
+        type: "chọn sách",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "bok_sach_co_tich",
+      label: "cuốn sách truyện cổ tích thần tiên",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🧚",
       },
       category: {
-        type: "hoa quả",
+        type: "chọn sách",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "bok_sach_vu_tru",
+      label: "cuốn sách về các vì sao vũ trụ",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🚀",
       },
       category: {
-        type: "hoa quả",
+        type: "chọn sách",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "bok_sach_khung_long",
+      label: "cuốn sách về thế giới khủng long",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🦖",
       },
       category: {
-        type: "rau củ",
+        type: "chọn sách",
       },
     },
   ],
@@ -134,7 +134,13 @@ export const C5_BOK_04_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["chair", "apple", "banana", "watermelon", "carrot"],
+  ordering: [
+    "bok_sach_dong_vat",
+    "bok_sach_phuong_tien",
+    "bok_sach_co_tich",
+    "bok_sach_vu_tru",
+    "bok_sach_khung_long",
+  ],
 };
 
 export const C5_BOK_04_SEED: SkillSeed = {

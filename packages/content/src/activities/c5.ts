@@ -388,7 +388,7 @@ export const C5_ACTIVITIES: readonly ActivitySeed[] = [
       title: "Trò chơi số: Thẻ từ vựng con vật",
       activity_kind: "digital_game",
       ref_type: "game_level",
-      ref_code: "GL-C5-VOC-CARD-0001",
+      ref_code: "GL-C5-STO-CARD-0001",
       instruction: {
         preparation: "Mở màn chơi số trên thiết bị.",
         steps: [
@@ -421,7 +421,7 @@ export const C5_ACTIVITIES: readonly ActivitySeed[] = [
       title: "Trò chơi số: Phân loại thú nuôi và thú rừng",
       activity_kind: "digital_game",
       ref_type: "game_level",
-      ref_code: "GL-C5-VOC-BOX-0004",
+      ref_code: "GL-C5-STO-BOX-0004",
       instruction: {
         preparation: "Mở màn chơi số trên thiết bị.",
         steps: [
@@ -487,7 +487,7 @@ export const C5_ACTIVITIES: readonly ActivitySeed[] = [
       title: "Trò chơi số: Kể chuyện theo tranh thứ tự",
       activity_kind: "digital_game",
       ref_type: "game_level",
-      ref_code: "GL-C5-VOC-SEQ-0008",
+      ref_code: "GL-C5-STO-SEQ-0008",
       instruction: {
         preparation: "Mở màn chơi số trên thiết bị.",
         steps: [
@@ -521,7 +521,7 @@ export const C5_ACTIVITIES: readonly ActivitySeed[] = [
       title: "Trò chơi số: Đặt đồ vật theo lời mô tả",
       activity_kind: "digital_game",
       ref_type: "game_level",
-      ref_code: "GL-C5-VOC-LOC-0009",
+      ref_code: "GL-C5-STO-LOC-0009",
       instruction: {
         preparation: "Mở màn chơi số trên thiết bị.",
         steps: [
@@ -620,7 +620,7 @@ export const C5_ACTIVITIES: readonly ActivitySeed[] = [
       title: "Trò chơi số: Thẻ từ vựng đồ dùng học tập",
       activity_kind: "digital_game",
       ref_type: "game_level",
-      ref_code: "GL-C5-VOC-CARD-0002",
+      ref_code: "GL-C5-STO-CARD-0002",
       instruction: {
         preparation: "Mở màn chơi số trên thiết bị.",
         steps: [
@@ -653,7 +653,7 @@ export const C5_ACTIVITIES: readonly ActivitySeed[] = [
       title: "Trò chơi số: Phân loại rau quả theo màu",
       activity_kind: "digital_game",
       ref_type: "game_level",
-      ref_code: "GL-C5-VOC-BOX-0005",
+      ref_code: "GL-C5-STO-BOX-0005",
       instruction: {
         preparation: "Mở màn chơi số trên thiết bị.",
         steps: [
@@ -785,7 +785,7 @@ export const C5_ACTIVITIES: readonly ActivitySeed[] = [
       title: "Trò chơi số: Thẻ phương tiện giao thông",
       activity_kind: "digital_game",
       ref_type: "game_level",
-      ref_code: "GL-C5-VOC-CARD-0003",
+      ref_code: "GL-C5-STO-CARD-0003",
       instruction: {
         preparation: "Mở màn chơi số trên thiết bị.",
         steps: [
@@ -818,7 +818,7 @@ export const C5_ACTIVITIES: readonly ActivitySeed[] = [
       title: "Trò chơi số: Đặt xe vào bãi đỗ",
       activity_kind: "digital_game",
       ref_type: "game_level",
-      ref_code: "GL-C5-VOC-LOC-0015",
+      ref_code: "GL-C5-STO-LOC-0015",
       instruction: {
         preparation: "Mở màn chơi số trên thiết bị.",
         steps: [
@@ -918,7 +918,7 @@ export const C5_ACTIVITIES: readonly ActivitySeed[] = [
       title: "Trò chơi số: Thu gom đồ dùng vào vali",
       activity_kind: "digital_game",
       ref_type: "game_level",
-      ref_code: "GL-C5-VOC-BOX-0012",
+      ref_code: "GL-C5-STO-BOX-0012",
       instruction: {
         preparation: "Mở màn chơi số trên thiết bị.",
         steps: [
@@ -984,7 +984,7 @@ export const C5_ACTIVITIES: readonly ActivitySeed[] = [
       title: "Trò chơi số: Dãy câu chuyện hạt mầm",
       activity_kind: "digital_game",
       ref_type: "game_level",
-      ref_code: "GL-C5-VOC-SEQ-0019",
+      ref_code: "GL-C5-STO-SEQ-0019",
       instruction: {
         preparation: "Mở màn chơi số trên thiết bị.",
         steps: [
@@ -1051,7 +1051,7 @@ export const C5_ACTIVITIES: readonly ActivitySeed[] = [
       title: "Trò chơi số: Thẻ ngành nghề bác sĩ, cô giáo",
       activity_kind: "digital_game",
       ref_type: "game_level",
-      ref_code: "GL-C5-VOC-CARD-0011",
+      ref_code: "GL-C5-STO-CARD-0011",
       instruction: {
         preparation: "Mở màn chơi số trên thiết bị.",
         steps: [
@@ -1084,7 +1084,7 @@ export const C5_ACTIVITIES: readonly ActivitySeed[] = [
       title: "Trò chơi số: Đồ dùng cho từng nghề nghiệp",
       activity_kind: "digital_game",
       ref_type: "game_level",
-      ref_code: "GL-C5-VOC-BOX-0018",
+      ref_code: "GL-C5-STO-BOX-0018",
       instruction: {
         preparation: "Mở màn chơi số trên thiết bị.",
         steps: [

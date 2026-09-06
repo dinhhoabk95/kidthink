@@ -42,58 +42,58 @@ export const C5_WRT_05_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "apple",
-      label: "quả táo",
+      id: "wrt_to_net_thang",
+      label: "tô theo nét chấm thẳng",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "📏",
       },
       category: {
-        type: "hoa quả",
+        type: "tô nét chấm",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "wrt_to_net_cong",
+      label: "tô theo nét chấm cong",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🌙",
       },
       category: {
-        type: "hoa quả",
+        type: "tô nét chấm",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "wrt_to_net_hinh_tron",
+      label: "tô theo nét chấm hình tròn",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "⭕",
       },
       category: {
-        type: "hoa quả",
+        type: "tô nét chấm",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "wrt_to_chu_cai",
+      label: "tô chữ cái theo nét chấm",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🔤",
       },
       category: {
-        type: "rau củ",
+        type: "tô nét chấm",
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "wrt_to_chu_so",
+      label: "tô chữ số theo nét chấm",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🔢",
       },
       category: {
-        type: "rau củ",
+        type: "tô nét chấm",
       },
     },
   ],
@@ -130,7 +130,13 @@ export const C5_WRT_05_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["apple", "banana", "watermelon", "carrot", "corn"],
+  ordering: [
+    "wrt_to_net_thang",
+    "wrt_to_net_cong",
+    "wrt_to_net_hinh_tron",
+    "wrt_to_chu_cai",
+    "wrt_to_chu_so",
+  ],
 };
 
 export const C5_WRT_05_SEED: SkillSeed = {

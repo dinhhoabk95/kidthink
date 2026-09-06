@@ -42,58 +42,58 @@ export const C5_DES_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bed",
-      label: "cái giường",
+      id: "des_to_nho",
+      label: "con voi to hơn con chuột",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🐘",
       },
       category: {
-        type: "đồ dùng",
+        type: "so sánh",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "des_cao_thap",
+      label: "hươu cao cổ cao hơn chú vịt",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🦒",
       },
       category: {
-        type: "đồ dùng",
+        type: "so sánh",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "des_dai_ngan",
+      label: "chiếc thước dài hơn cái bút chì",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "📏",
       },
       category: {
-        type: "hoa quả",
+        type: "so sánh",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "des_nhanh_cham",
+      label: "chú thỏ chạy nhanh hơn rùa",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🐇",
       },
       category: {
-        type: "hoa quả",
+        type: "so sánh",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "des_nang_nhe",
+      label: "tảng đá nặng hơn chiếc lông vũ",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🪨",
       },
       category: {
-        type: "hoa quả",
+        type: "so sánh",
       },
     },
   ],
@@ -130,7 +130,13 @@ export const C5_DES_03_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["bed", "chair", "apple", "banana", "watermelon"],
+  ordering: [
+    "des_to_nho",
+    "des_cao_thap",
+    "des_dai_ngan",
+    "des_nhanh_cham",
+    "des_nang_nhe",
+  ],
 };
 
 export const C5_DES_03_SEED: SkillSeed = {

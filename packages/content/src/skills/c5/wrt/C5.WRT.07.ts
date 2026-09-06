@@ -43,58 +43,58 @@ export const C5_WRT_07_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "wrt_o_li_vuong",
+      label: "ô li vuông vắn",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🔲",
       },
       category: {
-        type: "hoa quả",
+        type: "ô li",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "wrt_duong_ke_ngang",
+      label: "đường kẻ ngang đậm",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "➖",
       },
       category: {
-        type: "rau củ",
+        type: "ô li",
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "wrt_duong_ke_doc",
+      label: "đường kẻ dọc ô li",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "📏",
       },
       category: {
-        type: "rau củ",
+        type: "ô li",
       },
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "wrt_do_cao_chu",
+      label: "chiều cao chữ cái 2 ô li",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "📊",
       },
       category: {
-        type: "động vật",
+        type: "ô li",
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "wrt_khoang_cach_chu",
+      label: "khoảng cách giữa các chữ",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "↔️",
       },
       category: {
-        type: "động vật",
+        type: "ô li",
       },
     },
   ],
@@ -132,7 +132,13 @@ export const C5_WRT_07_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["watermelon", "carrot", "corn", "dog", "cat"],
+  ordering: [
+    "wrt_o_li_vuong",
+    "wrt_duong_ke_ngang",
+    "wrt_duong_ke_doc",
+    "wrt_do_cao_chu",
+    "wrt_khoang_cach_chu",
+  ],
 };
 
 export const C5_WRT_07_SEED: SkillSeed = {

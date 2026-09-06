@@ -45,58 +45,58 @@ export const C5_STO_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "sto_vi_troi_mua",
+      label: "vì trời đổ mưa to -> đường phố ướt sũng",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🌧️",
       },
       category: {
-        type: "rau củ",
+        type: "nguyên nhân kết quả",
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "sto_vi_nang_nong",
+      label: "vì trời nắng gắt -> hoa lá cần tưới nước",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "☀️",
       },
       category: {
-        type: "rau củ",
+        type: "nguyên nhân kết quả",
       },
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "sto_vi_cham_chi",
+      label: "vì gà con chăm chỉ -> tìm được nhiều mồi ngon",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🐛",
       },
       category: {
-        type: "động vật",
+        type: "nguyên nhân kết quả",
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "sto_vi_chu_quan",
+      label: "vì thỏ mải chơi ngủ quên -> rùa về đích trước",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "🐢",
       },
       category: {
-        type: "động vật",
+        type: "nguyên nhân kết quả",
       },
     },
     {
-      id: "chicken",
-      label: "con gà",
+      id: "sto_vi_se_chia",
+      label: "vì biết chia sẻ bánh -> bạn bè đều vui vẻ",
       image: {
         kind: "emoji",
-        ref: "🐓",
+        ref: "🍰",
       },
       category: {
-        type: "động vật",
+        type: "nguyên nhân kết quả",
       },
     },
   ],
@@ -134,7 +134,13 @@ export const C5_STO_04_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["carrot", "corn", "dog", "cat", "chicken"],
+  ordering: [
+    "sto_vi_troi_mua",
+    "sto_vi_nang_nong",
+    "sto_vi_cham_chi",
+    "sto_vi_chu_quan",
+    "sto_vi_se_chia",
+  ],
 };
 
 export const C5_STO_04_SEED: SkillSeed = {

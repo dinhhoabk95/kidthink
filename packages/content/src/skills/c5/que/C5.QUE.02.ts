@@ -42,58 +42,58 @@ export const C5_QUE_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "que_cai_che_mua",
+      label: "cái ô dùng để che mưa",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "☂️",
       },
       category: {
-        type: "hoa quả",
+        type: "câu hỏi cái gì",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "que_cai_uong_nuoc",
+      label: "cái cốc dùng để uống nước",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🥛",
       },
       category: {
-        type: "hoa quả",
+        type: "câu hỏi cái gì",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "que_cai_doi_dau",
+      label: "cái mũ dùng để đội đầu",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🧢",
       },
       category: {
-        type: "rau củ",
+        type: "câu hỏi cái gì",
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "que_cai_di_chan",
+      label: "đôi dép dùng để đi vào chân",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🩴",
       },
       category: {
-        type: "rau củ",
+        type: "câu hỏi cái gì",
       },
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "que_cai_de_viet",
+      label: "chiếc bút dùng để vẽ tranh",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "✏️",
       },
       category: {
-        type: "động vật",
+        type: "câu hỏi cái gì",
       },
     },
   ],
@@ -130,7 +130,13 @@ export const C5_QUE_02_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["banana", "watermelon", "carrot", "corn", "dog"],
+  ordering: [
+    "que_cai_che_mua",
+    "que_cai_uong_nuoc",
+    "que_cai_doi_dau",
+    "que_cai_di_chan",
+    "que_cai_de_viet",
+  ],
 };
 
 export const C5_QUE_02_SEED: SkillSeed = {

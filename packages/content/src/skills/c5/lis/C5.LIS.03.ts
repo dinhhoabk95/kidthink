@@ -45,58 +45,58 @@ export const C5_LIS_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "lis_rua_tay_xa_phong",
+      label: "bước 1: rửa tay bằng xà phòng sạch sẽ",
+      image: {
+        kind: "emoji",
+        ref: "🧼",
+      },
+      category: {
+        type: "trình tự nhiều bước",
+      },
+    },
+    {
+      id: "lis_lau_kho_tay",
+      label: "bước 2: lau khô tay bằng khăn mềm",
+      image: {
+        kind: "emoji",
+        ref: "🧻",
+      },
+      category: {
+        type: "trình tự nhiều bước",
+      },
+    },
+    {
+      id: "lis_ngoi_vao_ban_an",
+      label: "bước 3: ngồi vào bàn ăn ngay ngắn",
       image: {
         kind: "emoji",
         ref: "🪑",
       },
       category: {
-        type: "đồ dùng",
+        type: "trình tự nhiều bước",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "lis_cam_thia_xuc_com",
+      label: "bước 4: cầm thìa xúc cơm gọn gàng",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🥄",
       },
       category: {
-        type: "hoa quả",
+        type: "trình tự nhiều bước",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "lis_cat_bat_dung_noi",
+      label: "bước 5: cất bát đĩa đúng nơi quy định",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🥣",
       },
       category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "watermelon",
-      label: "dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "carrot",
-      label: "củ cà rốt",
-      image: {
-        kind: "emoji",
-        ref: "🥕",
-      },
-      category: {
-        type: "rau củ",
+        type: "trình tự nhiều bước",
       },
     },
   ],
@@ -134,7 +134,13 @@ export const C5_LIS_03_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["chair", "apple", "banana", "watermelon", "carrot"],
+  ordering: [
+    "lis_rua_tay_xa_phong",
+    "lis_lau_kho_tay",
+    "lis_ngoi_vao_ban_an",
+    "lis_cam_thia_xuc_com",
+    "lis_cat_bat_dung_noi",
+  ],
 };
 
 export const C5_LIS_03_SEED: SkillSeed = {

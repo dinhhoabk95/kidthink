@@ -43,58 +43,58 @@ export const C5_DES_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "des_canh_dong_que",
+      label: "bức tranh cánh đồng lúa chín",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🌾",
       },
       category: {
-        type: "đồ dùng",
+        type: "miêu tả tranh",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "des_canh_bien_xanh",
+      label: "bức tranh bãi biển xanh ngát",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🏖️",
       },
       category: {
-        type: "đồ dùng",
+        type: "miêu tả tranh",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "des_canh_nha_truong",
+      label: "bức tranh trường mầm non rực rỡ",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🏫",
       },
       category: {
-        type: "đồ dùng",
+        type: "miêu tả tranh",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "des_canh_vuon_hoa",
+      label: "bức tranh vườn hoa đua nở",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🌸",
       },
       category: {
-        type: "hoa quả",
+        type: "miêu tả tranh",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "des_canh_bau_troi_dem",
+      label: "bức tranh bầu trời sao lấp lánh",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🌌",
       },
       category: {
-        type: "hoa quả",
+        type: "miêu tả tranh",
       },
     },
   ],
@@ -131,7 +131,13 @@ export const C5_DES_02_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["cup", "bed", "chair", "apple", "banana"],
+  ordering: [
+    "des_canh_dong_que",
+    "des_canh_bien_xanh",
+    "des_canh_nha_truong",
+    "des_canh_vuon_hoa",
+    "des_canh_bau_troi_dem",
+  ],
 };
 
 export const C5_DES_02_SEED: SkillSeed = {

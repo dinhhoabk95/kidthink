@@ -45,58 +45,58 @@ export const C5_PRA_05_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "pra_ke_chuyen_truong",
+      label: "kể cho mẹ nghe chuyện ở lớp học",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "🏫",
       },
       category: {
-        type: "đồ dùng",
+        type: "kể chuyện vắng mặt",
       },
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "pra_ke_tro_choi",
+      label: "kể cho bố nghe trò chơi đuổi bắt cùng bạn",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🏃",
       },
       category: {
-        type: "đồ dùng",
+        type: "kể chuyện vắng mặt",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "pra_ke_bua_an",
+      label: "kể cho bà nghe món súp rau củ ngon tuyệt",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🥣",
       },
       category: {
-        type: "đồ dùng",
+        type: "kể chuyện vắng mặt",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "pra_ke_khen_thuong",
+      label: "kể cho ông nghe bé được phiếu bé ngoan",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "⭐",
       },
       category: {
-        type: "đồ dùng",
+        type: "kể chuyện vắng mặt",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "pra_ke_chuyen_tham_quan",
+      label: "kể về chuyến đi thăm công viên thú vị",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🌳",
       },
       category: {
-        type: "hoa quả",
+        type: "kể chuyện vắng mặt",
       },
     },
   ],
@@ -134,7 +134,13 @@ export const C5_PRA_05_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["spoon", "cup", "bed", "chair", "apple"],
+  ordering: [
+    "pra_ke_chuyen_truong",
+    "pra_ke_tro_choi",
+    "pra_ke_bua_an",
+    "pra_ke_khen_thuong",
+    "pra_ke_chuyen_tham_quan",
+  ],
 };
 
 export const C5_PRA_05_SEED: SkillSeed = {

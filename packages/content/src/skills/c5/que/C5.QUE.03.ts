@@ -42,58 +42,58 @@ export const C5_QUE_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "que_chim_tren_cay",
+      label: "chú chim làm tổ trên cành cây",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🌳",
       },
       category: {
-        type: "hoa quả",
+        type: "câu hỏi ở đâu",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "que_ca_duoi_nuoc",
+      label: "đàn cá bơi lội dưới dòng nước",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🌊",
       },
       category: {
-        type: "rau củ",
+        type: "câu hỏi ở đâu",
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "que_sach_tren_gia",
+      label: "sách truyện xếp ngay ngắn trên giá",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "📚",
       },
       category: {
-        type: "rau củ",
+        type: "câu hỏi ở đâu",
       },
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "que_be_ngu_tren_giuong",
+      label: "bé ngủ ngoan trên giường ấm",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🛏️",
       },
       category: {
-        type: "động vật",
+        type: "câu hỏi ở đâu",
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "que_xe_o_gara",
+      label: "xe ô tô đỗ trong nhà xe",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "🏠",
       },
       category: {
-        type: "động vật",
+        type: "câu hỏi ở đâu",
       },
     },
   ],
@@ -130,7 +130,13 @@ export const C5_QUE_03_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["watermelon", "carrot", "corn", "dog", "cat"],
+  ordering: [
+    "que_chim_tren_cay",
+    "que_ca_duoi_nuoc",
+    "que_sach_tren_gia",
+    "que_be_ngu_tren_giuong",
+    "que_xe_o_gara",
+  ],
 };
 
 export const C5_QUE_03_SEED: SkillSeed = {

@@ -42,58 +42,58 @@ export const C5_VOC_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "apple",
+      id: "voc_tao",
       label: "quả táo",
       image: {
         kind: "emoji",
         ref: "🍎",
       },
       category: {
-        type: "hoa quả",
+        type: "trái cây",
       },
     },
     {
-      id: "banana",
+      id: "voc_chuoi",
       label: "quả chuối",
       image: {
         kind: "emoji",
         ref: "🍌",
       },
       category: {
-        type: "hoa quả",
+        type: "trái cây",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "voc_cam",
+      label: "quả cam",
+      image: {
+        kind: "emoji",
+        ref: "🍊",
+      },
+      category: {
+        type: "trái cây",
+      },
+    },
+    {
+      id: "voc_dua_hau",
+      label: "quả dưa hấu",
       image: {
         kind: "emoji",
         ref: "🍉",
       },
       category: {
-        type: "hoa quả",
+        type: "trái cây",
+      },
+    },
+    {
+      id: "voc_nho",
+      label: "chùm nho",
+      image: {
+        kind: "emoji",
+        ref: "🍇",
+      },
+      category: {
+        type: "trái cây",
       },
     },
   ],
@@ -130,7 +130,7 @@ export const C5_VOC_02_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["bed", "chair", "apple", "banana", "watermelon"],
+  ordering: ["voc_tao", "voc_chuoi", "voc_cam", "voc_dua_hau", "voc_nho"],
 };
 
 export const C5_VOC_02_SEED: SkillSeed = {

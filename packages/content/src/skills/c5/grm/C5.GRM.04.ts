@@ -42,58 +42,58 @@ export const C5_GRM_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bed",
-      label: "cái giường",
+      id: "grm_cau_ke",
+      label: "câu kể (trời hôm nay nắng đẹp)",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "☀️",
       },
       category: {
-        type: "đồ dùng",
+        type: "kiểu câu",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "grm_cau_hoi",
+      label: "câu hỏi (bạn tên là gì?)",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "❓",
       },
       category: {
-        type: "đồ dùng",
+        type: "kiểu câu",
       },
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "grm_cau_cam_than",
+      label: "câu cảm thán (bông hoa đẹp quá!)",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🌸",
       },
       category: {
-        type: "hoa quả",
+        type: "kiểu câu",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "grm_cau_cau_khien",
+      label: "câu cầu khiến (chúng mình cùng chơi nhé!)",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🤝",
       },
       category: {
-        type: "hoa quả",
+        type: "kiểu câu",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "grm_cau_phu_dinh",
+      label: "câu phủ định (con không thích ăn ớt)",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🌶️",
       },
       category: {
-        type: "hoa quả",
+        type: "kiểu câu",
       },
     },
   ],
@@ -130,7 +130,13 @@ export const C5_GRM_04_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["bed", "chair", "apple", "banana", "watermelon"],
+  ordering: [
+    "grm_cau_ke",
+    "grm_cau_hoi",
+    "grm_cau_cam_than",
+    "grm_cau_cau_khien",
+    "grm_cau_phu_dinh",
+  ],
 };
 
 export const C5_GRM_04_SEED: SkillSeed = {
