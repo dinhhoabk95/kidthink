@@ -238,6 +238,10 @@
     RoundRunner,
     type Slot,
   } from "@mindkid/game-engine";
+  import {
+    preloadPlayAssets,
+    usePlayAudio,
+  } from "~/composables/play/use-play-audio";
   import { usePlayError } from "~/composables/play/use-play-error";
   import { usePlayGesture } from "~/composables/play/use-play-gesture";
   import { usePlayTelemetry } from "~/composables/play/use-play-telemetry";
@@ -310,8 +314,6 @@
 
   let holdTimer: ReturnType<typeof setInterval> | null = null;
   let pulseTimer: ReturnType<typeof setTimeout> | null = null;
-  let activeNarrationAudio: HTMLAudioElement | null = null;
-  let currentInstructionAudio: string | null = null;
   let cachedPayload: ConfigPayload | null = null;
   let roundRunner: RoundRunner | null = null;
   let engine: GameEngine | null = null;
@@ -326,6 +328,15 @@
     handleApiError,
   } = usePlayError();
   const { uploadTelemetry, finishSession } = usePlayTelemetry();
+  const {
+    setInstructionAudio,
+    stopNarrationAudio,
+    playInstructionNarration,
+    speakErrorPrompt,
+  } = usePlayAudio({
+    getEngine: () => engine,
+    onFallbackCue: triggerVisualFallbackCue,
+  });
 
   const isIntroLevel = computed(() => {
     return (
@@ -402,52 +413,6 @@
     router.push("/games");
   }
 
-  function stopNarrationAudio(): void {
-    if (activeNarrationAudio) {
-      try {
-        activeNarrationAudio.pause();
-        activeNarrationAudio.currentTime = 0;
-      } catch {
-        // Safe ignore
-      }
-      activeNarrationAudio = null;
-    }
-  }
-
-  function playInstructionNarration(promptText?: string): void {
-    stopNarrationAudio();
-    if (currentInstructionAudio) {
-      try {
-        const aud = new Audio(currentInstructionAudio);
-        activeNarrationAudio = aud;
-        aud.onended = () => {
-          if (activeNarrationAudio === aud) {
-            activeNarrationAudio = null;
-          }
-        };
-        aud.play().catch(() => {
-          if (promptText && engine) {
-            engine.audio.speakPrompt(
-              promptText,
-              undefined,
-              triggerVisualFallbackCue
-            );
-          }
-        });
-      } catch {
-        if (promptText && engine) {
-          engine.audio.speakPrompt(
-            promptText,
-            undefined,
-            triggerVisualFallbackCue
-          );
-        }
-      }
-    } else if (promptText && engine) {
-      engine.audio.speakPrompt(promptText, undefined, triggerVisualFallbackCue);
-    }
-  }
-
   function replayInstructionAudio(): void {
     engine?.audio.playTapSound();
     const currentRoundCfg = roundRunner?.getCurrentRoundConfig();
@@ -456,14 +421,6 @@
       currentRoundCfg?.instruction ||
       cachedPayload?.title;
     playInstructionNarration(prompt);
-  }
-
-  function speakErrorPrompt(): void {
-    if (engine) {
-      engine.audio.speakPrompt(
-        "Bé ơi, chưa tải được trò chơi. Bé bấm nút màu vàng để thử lại nhé!"
-      );
-    }
   }
 
   function handleSkipRound(): void {
@@ -554,55 +511,6 @@
     showVictoryModal.value = true;
   }
 
-  async function preloadAssets(
-    assets: Array<{ ref: string; kind: string; url?: string; glyph?: string }>
-  ): Promise<void> {
-    const promises: Promise<void>[] = [];
-    for (const asset of assets) {
-      if (asset.kind === "image" && asset.url) {
-        const srcUrl = asset.url;
-        promises.push(
-          new Promise<void>((resolve) => {
-            const img = new Image();
-            const timer = setTimeout(() => resolve(), 3000);
-            img.onload = () => {
-              clearTimeout(timer);
-              resolve();
-            };
-            img.onerror = () => {
-              clearTimeout(timer);
-              resolve();
-            };
-            img.src = srcUrl;
-          })
-        );
-      } else if (asset.kind === "audio" && asset.url) {
-        const srcUrl = asset.url;
-        promises.push(
-          new Promise<void>((resolve) => {
-            const aud = new Audio();
-            const timer = setTimeout(() => resolve(), 3000);
-            aud.oncanplaythrough = () => {
-              clearTimeout(timer);
-              resolve();
-            };
-            aud.onerror = () => {
-              clearTimeout(timer);
-              resolve();
-            };
-            aud.src = srcUrl;
-          })
-        );
-      }
-    }
-
-    const overallTimeout = new Promise<void>((resolve) =>
-      setTimeout(resolve, 5000)
-    );
-
-    await Promise.race([Promise.all(promises), overallTimeout]);
-  }
-
   function renderScaffoldingAura(
     ctx: CanvasRenderingContext2D,
     nowMs: number
@@ -680,8 +588,7 @@
       onRoundStarted: (roundIndex) => {
         currentRound.value = roundIndex;
         canSkipRound.value = false;
-        currentInstructionAudio =
-          rounds[roundIndex]?.instruction_audio_path || null;
+        setInstructionAudio(rounds[roundIndex]?.instruction_audio_path);
         const session = roundRunner?.getCurrentSession();
         if (session && engine) {
           engine.activeSession = session;
@@ -780,7 +687,7 @@
     currentThemeId.value = payload.theme_id || "default";
 
     if (payload.assets && Array.isArray(payload.assets)) {
-      await preloadAssets(payload.assets);
+      await preloadPlayAssets(payload.assets);
     }
 
     isLoading.value = false;
@@ -873,432 +780,5 @@
 </script>
 
 <style scoped>
-  .game-play-container {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--color-surface-50);
-    position: relative;
-    overflow: hidden;
-    user-select: none;
-    transition: background 0.5s ease;
-  }
-
-  /* THEME GRADIENTS */
-  .game-play-container.theme-nature {
-    background: linear-gradient(
-      145deg,
-      rgba(238, 247, 238, 0.95),
-      rgba(229, 242, 229, 0.95)
-    );
-    --ambient-1: rgba(200, 230, 201, 0.5);
-    --ambient-2: rgba(220, 237, 200, 0.5);
-  }
-
-  .game-play-container.theme-farm {
-    background: linear-gradient(
-      145deg,
-      rgba(253, 248, 235, 0.95),
-      rgba(247, 238, 215, 0.95)
-    );
-    --ambient-1: rgba(255, 224, 130, 0.5);
-    --ambient-2: rgba(200, 230, 201, 0.5);
-  }
-
-  .game-play-container.theme-ocean {
-    background: linear-gradient(
-      145deg,
-      rgba(232, 244, 248, 0.95),
-      rgba(216, 236, 244, 0.95)
-    );
-    --ambient-1: rgba(179, 229, 252, 0.5);
-    --ambient-2: rgba(178, 223, 219, 0.5);
-  }
-
-  .game-play-container.theme-space {
-    background: linear-gradient(
-      145deg,
-      rgba(237, 234, 245, 0.95),
-      rgba(224, 218, 240, 0.95)
-    );
-    --ambient-1: rgba(209, 196, 233, 0.5);
-    --ambient-2: rgba(197, 202, 233, 0.5);
-  }
-
-  .game-play-container.theme-school {
-    background: linear-gradient(
-      145deg,
-      rgba(253, 246, 236, 0.95),
-      rgba(249, 237, 215, 0.95)
-    );
-    --ambient-1: rgba(255, 224, 178, 0.5);
-    --ambient-2: rgba(255, 236, 179, 0.5);
-  }
-
-  .game-play-container.theme-default {
-    background: linear-gradient(
-      145deg,
-      rgba(247, 245, 240, 0.95),
-      rgba(237, 232, 222, 0.95)
-    );
-    --ambient-1: rgba(224, 216, 204, 0.5);
-    --ambient-2: rgba(234, 228, 216, 0.5);
-  }
-
-  /* AMBIENT SHAPES */
-  .ambient-theme-layer {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    overflow: hidden;
-    z-index: 1;
-  }
-
-  .ambient-shape {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(60px);
-    opacity: 0.38;
-    transition: all 0.8s ease;
-  }
-
-  .shape-1 {
-    width: 440px;
-    height: 440px;
-    top: -100px;
-    left: -80px;
-    background: var(--ambient-1, rgba(255, 230, 180, 0.4));
-  }
-
-  .shape-2 {
-    width: 480px;
-    height: 480px;
-    bottom: -120px;
-    right: -100px;
-    background: var(--ambient-2, rgba(200, 240, 220, 0.4));
-  }
-
-  .game-viewport {
-    position: relative;
-    z-index: 10;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* TOP HUD BAR */
-  .top-hud-bar {
-    width: 100%;
-    height: 5.5rem;
-    min-height: 5.5rem;
-    padding: 0.5rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    background-color: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(12px);
-    border-bottom: 3px solid var(--color-surface-200);
-  }
-
-  @media (max-width: 640px) {
-    .top-hud-bar {
-      height: auto;
-      min-height: 4.5rem;
-      padding: 0.5rem 0.75rem;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-    .lesson-meta-box {
-      display: none;
-    }
-  }
-
-  .lesson-info-pill {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    background-color: rgba(255, 255, 255, 0.85);
-    border: 3px solid var(--color-surface-200);
-    border-radius: 9999px;
-    padding: 0.35rem 1rem 0.35rem 0.45rem;
-    box-shadow: 0 4px 6px rgba(30, 27, 75, 0.05);
-    transition: all 0.2s ease;
-  }
-
-  .avatar-circle {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    background-color: var(--color-brand-50);
-    border: 2px solid var(--color-brand-200);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .avatar-emoji {
-    font-size: 1.5rem;
-    line-height: 1;
-  }
-
-  .lesson-meta-box {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .theme-tag-text {
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--color-surface-500);
-  }
-
-  .lesson-title-text {
-    font-family: var(--font-heading, sans-serif);
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--color-surface-900);
-  }
-
-  .progress-container {
-    display: flex;
-    align-items: center;
-  }
-
-  .hud-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .btn-audio-replay,
-  .btn-skip-round {
-    min-height: 4rem;
-    min-width: 4rem;
-    padding: 0.75rem 1.25rem;
-    font-family: var(--font-heading, sans-serif);
-    font-size: 1.1rem;
-    font-weight: 700;
-    border-radius: 9999px;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .btn-audio-replay {
-    background: linear-gradient(
-      180deg,
-      var(--color-warning-400),
-      var(--color-warning-500)
-    );
-    color: var(--color-surface-900);
-    border: 3px solid var(--color-warning-200);
-    box-shadow: 0 4px 0 var(--color-warning-600);
-  }
-
-  .btn-audio-replay:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 var(--color-warning-600);
-  }
-
-  .btn-skip-round {
-    background: linear-gradient(
-      180deg,
-      var(--color-surface-100),
-      var(--color-surface-200)
-    );
-    color: var(--color-surface-800);
-    border: 3px solid var(--color-surface-300);
-    box-shadow: 0 4px 0 var(--color-surface-400);
-  }
-
-  .btn-skip-round:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 var(--color-surface-400);
-  }
-
-  .btn-parent-lock {
-    width: 4rem;
-    height: 4rem;
-    min-width: 4rem;
-    min-height: 4rem;
-    border-radius: 50%;
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.95),
-      var(--color-surface-100)
-    );
-    border: 3px solid var(--color-surface-300);
-    box-shadow: 0 4px 0 var(--color-surface-400);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative;
-  }
-
-  .btn-parent-lock:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 var(--color-surface-400);
-  }
-
-  /* MAIN ARENA */
-  .main-arena {
-    position: relative;
-    z-index: 10;
-    flex: 1;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem 1rem 1rem 1rem;
-  }
-
-  .wooden-tray-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    max-width: 1200px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 8px;
-    background: rgba(233, 223, 203, 0.9);
-    border-radius: 2rem;
-    box-shadow:
-      inset 0 4px 10px rgba(80, 60, 30, 0.18),
-      0 10px 24px rgba(80, 69, 50, 0.1);
-    border: 4px solid rgba(246, 238, 223, 0.95);
-  }
-
-  .game-canvas {
-    width: 100%;
-    height: 100%;
-    max-width: 100%;
-    max-height: calc(85vh - 20px);
-    object-fit: contain;
-    touch-action: none;
-    border-radius: 1.75rem;
-    box-shadow: 0 6px 18px rgba(70, 55, 35, 0.12);
-  }
-
-  /* Loading & Error States */
-  .loading-state,
-  .error-state {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 1.5rem;
-    width: 100%;
-    max-width: 32rem;
-    z-index: 10;
-  }
-
-  .loading-box,
-  .error-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    background-color: white;
-    padding: 2.5rem 2rem;
-    border-radius: 1.5rem;
-    border: 3px solid var(--color-surface-300);
-    box-shadow: 0 8px 16px rgba(130, 118, 96, 0.08);
-    text-align: center;
-    width: 100%;
-  }
-
-  .loading-emoji,
-  .error-emoji {
-    font-size: 3.5rem;
-    line-height: 1;
-  }
-
-  .loading-text,
-  .error-title {
-    font-family: var(--font-heading, sans-serif);
-    font-size: 1.35rem;
-    font-weight: 700;
-    color: var(--color-surface-900);
-    margin: 0;
-  }
-
-  .error-desc {
-    font-size: 1rem;
-    line-height: 1.5;
-    color: var(--color-surface-700);
-    margin: 0 0 1rem 0;
-  }
-
-  .error-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    width: 100%;
-  }
-
-  .btn-audio-speak,
-  .btn-primary,
-  .btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    min-height: 48px;
-    padding: 0.75rem 1.5rem;
-    border-radius: 1rem;
-    font-family: var(--font-heading, sans-serif);
-    font-weight: 700;
-    font-size: 1rem;
-    text-decoration: none;
-    transition: all 0.15s ease;
-    cursor: pointer;
-  }
-
-  .btn-audio-speak {
-    background-color: var(--color-brand-50);
-    color: var(--color-brand-700);
-    border: 2px solid var(--color-brand-200);
-  }
-
-  .btn-primary {
-    background-color: var(--color-cta);
-    color: white;
-    border: 2px solid transparent;
-    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
-  }
-
-  .btn-primary:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.15);
-  }
-
-  .btn-secondary {
-    background-color: var(--color-surface-100);
-    color: var(--color-surface-800);
-    border: 2px solid var(--color-surface-300);
-  }
-
-  .btn-secondary:active {
-    transform: translateY(2px);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    *,
-    *::before,
-    *::after {
-      animation-duration: 0.01ms !important;
-      animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
-    }
-  }
+  @import "~/assets/css/play-surface.css";
 </style>

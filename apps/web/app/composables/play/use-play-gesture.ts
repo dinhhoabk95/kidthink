@@ -102,7 +102,7 @@ export function usePlayGesture(options: GestureOptions) {
     activePointerId = e.pointerId;
     startClientX = e.clientX;
     startClientY = e.clientY;
-    pointerDownTime = Date.now();
+    pointerDownTime = e.timeStamp;
     isDragging = false;
 
     const pt = getLogicPoint(e);
@@ -131,7 +131,7 @@ export function usePlayGesture(options: GestureOptions) {
 
     const endPt = getLogicPoint(e);
     const timeMs = Date.now();
-    const elapsed = timeMs - pointerDownTime;
+    const elapsed = e.timeStamp - pointerDownTime;
     const dist = Math.hypot(e.clientX - startClientX, e.clientY - startClientY);
 
     if (!isDragging && dist <= 14 && elapsed < 500) {

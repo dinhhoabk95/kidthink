@@ -117,7 +117,6 @@
 </template>
 
 <script lang="ts" setup>
-  import { normalizeApiError } from "@mindkid/errors/client";
   import { computed, onMounted, onUnmounted, ref } from "vue";
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
 
@@ -171,14 +170,6 @@
   const remainingLockSeconds = computed(() =>
     Math.max(0, Math.ceil((lockUntil.value - currentTime.value) / 1000))
   );
-
-  function readErrorMessage(
-    err: Error | Record<string, string | number>,
-    fallback: string
-  ): string {
-    const apiError = normalizeApiError(err);
-    return apiError.message || fallback;
-  }
 
   function generateLocalChallenge(): void {
     const factor_a = Math.floor(Math.random() * 8) + 2;
