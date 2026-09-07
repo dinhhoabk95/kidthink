@@ -39,6 +39,8 @@ export class GT007Session extends TemplateGameSession<
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
   private stagedOptionId: string | null = null;
+  private wrongOptionId: string | null = null;
+  private wrongTimestamp = 0;
 
   filledParts: Map<string, number> = new Map();
 
@@ -99,7 +101,14 @@ export class GT007Session extends TemplateGameSession<
       if (this.checkWinCondition()) {
         this.winSession();
       }
+    } else {
+      this.wrongOptionId = optionId;
+      this.wrongTimestamp = Date.now();
     }
+  }
+
+  onItemPlaced(itemId: string, slotId?: string): void {
+    this.onPartFilled(itemId, slotId);
   }
 
   override checkWinCondition(): boolean {
@@ -297,6 +306,10 @@ export class GT007Session extends TemplateGameSession<
     optId: string,
     rawState: ItemVisualState
   ): ViewEntity["state"] {
+    const now = Date.now();
+    if (this.wrongOptionId === optId && now - this.wrongTimestamp < 400) {
+      return "incorrect";
+    }
     if (this.stagedOptionId === optId || rawState === "selected") {
       return "selected";
     }
@@ -434,10 +447,17 @@ export class GT007Session extends TemplateGameSession<
       if (!slot) {
         return;
       }
-      drawSlotItem(ctx, rs, slot, {
+      const now = Date.now();
+      const isWrong =
+        this.wrongOptionId === opt.id && now - this.wrongTimestamp < 400;
+      const shakeX = isWrong
+        ? Math.sin((now - this.wrongTimestamp) / 30) * 4
+        : 0;
+      const renderSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
+      drawSlotItem(ctx, rs, renderSlot, {
         id: opt.id,
         text: String(opt.value),
-        state: this.getRenderItemState(opt.id),
+        state: isWrong ? "wrong" : this.getRenderItemState(opt.id),
       });
     });
     this.drawRenderFeedback(rs, ctx);

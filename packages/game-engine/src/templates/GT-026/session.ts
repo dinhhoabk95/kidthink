@@ -34,6 +34,7 @@ export class GT026Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+  private wrongTimestamp = 0;
 
   private inhibitionSystem!: InhibitionSystem;
 
@@ -95,6 +96,10 @@ export class GT026Session extends TemplateGameSession<
     const result = this.inhibitionSystem.handleAction();
     if (!result) {
       return ACTION_IGNORED;
+    }
+
+    if (!result.isCorrect) {
+      this.wrongTimestamp = Date.now();
     }
 
     this.recordEvent("item_selected", {
@@ -184,12 +189,15 @@ export class GT026Session extends TemplateGameSession<
     const isStimulus = this.inhibitionSystem?.getState() === "stimulus";
     const entities: ViewEntity[] = [];
 
+    const now = Date.now();
+    const isWrong = now - this.wrongTimestamp < 400;
+
     if (slot && trial && isStimulus) {
       entities.push({
         id: trial.id,
         slotIndex: 0,
         role: "source",
-        state: "idle",
+        state: isWrong ? "incorrect" : "idle",
         x: slot.x,
         y: slot.y,
         w: slot.w,
@@ -251,10 +259,17 @@ export class GT026Session extends TemplateGameSession<
     drawSubPromptText(ctx, rs, stimulus.label);
     const slot = this.slots[0];
     if (slot) {
-      drawPedestalTarget(ctx, slot);
-      drawSlotItem(ctx, rs, slot, {
+      const now = Date.now();
+      const isWrong = now - this.wrongTimestamp < 400;
+      const shakeX = isWrong
+        ? Math.sin((now - this.wrongTimestamp) / 30) * 4
+        : 0;
+      const renderSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
+      drawPedestalTarget(ctx, renderSlot);
+      drawSlotItem(ctx, rs, renderSlot, {
         id: trial.id,
         asset: stimulus.asset,
+        state: isWrong ? "wrong" : "idle",
       });
     }
     this.drawRenderFeedback(rs, ctx);

@@ -62,9 +62,13 @@ export class GT020Session extends TemplateGameSession<
   readonly cardSystem = new CardSystem();
   private readonly pairingMechanic = new PairingMechanic();
   displayCards: readonly FlatCard[] = [];
+  private mismatchCardId: string | null = null;
+  private mismatchTimestamp = 0;
 
   setupEntities(): void {
     this.isWon = false;
+    this.mismatchCardId = null;
+    this.mismatchTimestamp = 0;
     const flat: FlatCard[] = this.content.pairs.flatMap((p) => [
       { cardId: p.card_a.card_id, pairKey: p.pair_key, asset: p.card_a.asset },
       { cardId: p.card_b.card_id, pairKey: p.pair_key, asset: p.card_b.asset },
@@ -121,6 +125,7 @@ export class GT020Session extends TemplateGameSession<
     });
 
     if (result.isSecondFlip && result.isMatch) {
+      this.mismatchCardId = null;
       const pair = this.content.pairs.find(
         (p) => p.pair_key === result.matchedPairKey
       );
@@ -137,6 +142,9 @@ export class GT020Session extends TemplateGameSession<
         this.recordEvent("round_completed", { round_index: 0 });
         this.winSession();
       }
+    } else if (result.isSecondFlip && !result.isMatch) {
+      this.mismatchCardId = cardId;
+      this.mismatchTimestamp = performance.now();
     }
 
     return result;
@@ -220,45 +228,86 @@ export class GT020Session extends TemplateGameSession<
     return this.renderItemStates.get(itemId) ?? "idle";
   }
 
+  private getCardItemState(
+    state: string,
+    isMismatch: boolean
+  ): ItemVisualState {
+    if (state === "matched") {
+      return "correct";
+    }
+    if (isMismatch) {
+      return "wrong";
+    }
+    return "selected";
+  }
+
+  private renderCardSlot(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    card: FlatCard,
+    slot: Slot,
+    timeMs: number
+  ): void {
+    const state = this.cardSystem.getCard(card.cardId)?.state ?? "face_down";
+    if (state === "face_down") {
+      // Mặt úp: thân bài trơn, ❌ NEVER lộ asset — đó là cả trò chơi.
+      const { fill, border } = getColorsForState("locked");
+      rs.drawClayBody(
+        ctx,
+        slot.x,
+        slot.y,
+        Math.min(slot.w, slot.h) / 2,
+        fill,
+        border,
+        "square"
+      );
+      drawLabelText(ctx, "?", slot.x, slot.y, 28);
+      return;
+    }
+    const isMismatch = card.cardId === this.mismatchCardId;
+    const elapsed = isMismatch ? timeMs - this.mismatchTimestamp : 0;
+    const shakeX =
+      isMismatch && elapsed < 400 ? Math.sin(elapsed * 0.05) * 4 : 0;
+    const drawSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
+
+    drawSlotItem(
+      ctx,
+      rs,
+      drawSlot,
+      {
+        id: card.cardId,
+        asset: card.asset,
+        state: this.getCardItemState(state, isMismatch),
+      },
+      "square"
+    );
+
+    if (isMismatch && elapsed < 400) {
+      rs.drawScaffoldingHighlight(
+        ctx,
+        slot.x + shakeX,
+        slot.y,
+        Math.min(slot.hitW, slot.hitH) / 2 + 4,
+        (elapsed % 1000) / 1000
+      );
+    }
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    if (this.mismatchCardId && timeMs - this.mismatchTimestamp >= 400) {
+      this.mismatchCardId = null;
+    }
     drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     this.displayCards.forEach((card, i) => {
       const slot = this.slots[i];
-      if (!slot) {
-        return;
+      if (slot) {
+        this.renderCardSlot(ctx, rs, card, slot, timeMs);
       }
-      const state = this.cardSystem.getCard(card.cardId)?.state ?? "face_down";
-      if (state === "face_down") {
-        // Mặt úp: thân bài trơn, ❌ NEVER lộ asset — đó là cả trò chơi.
-        const { fill, border } = getColorsForState("locked");
-        rs.drawClayBody(
-          ctx,
-          slot.x,
-          slot.y,
-          Math.min(slot.w, slot.h) / 2,
-          fill,
-          border,
-          "square"
-        );
-        drawLabelText(ctx, "?", slot.x, slot.y, 28);
-        return;
-      }
-      drawSlotItem(
-        ctx,
-        rs,
-        slot,
-        {
-          id: card.cardId,
-          asset: card.asset,
-          state: state === "matched" ? "correct" : "selected",
-        },
-        "square"
-      );
     });
     this.drawRenderFeedback(rs, ctx);
   }

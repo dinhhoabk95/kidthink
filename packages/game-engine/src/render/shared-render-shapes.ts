@@ -23,6 +23,7 @@ import {
 } from "./cache.js";
 import {
   drawSlotItem,
+  type ItemVisualState,
   type RenderAsset,
   resolveEmojiGlyph,
   type SceneBox,
@@ -652,7 +653,7 @@ export function drawSceneObjectAt(
   box: SceneBox,
   obj: PositionedObject,
   fallback: Slot | undefined,
-  opts: { found?: boolean } = {}
+  opts: { found?: boolean; wrong?: boolean } = {}
 ): void {
   const slot =
     obj.x === undefined || obj.y === undefined
@@ -664,10 +665,16 @@ export function drawSceneObjectAt(
   if (!slot) {
     return;
   }
+  let state: ItemVisualState = "idle";
+  if (opts.found) {
+    state = "correct";
+  } else if (opts.wrong) {
+    state = "wrong";
+  }
   drawSlotItem(ctx, rs, slot, {
     id: obj.id,
     asset: obj.asset,
-    state: opts.found ? "correct" : "idle",
+    state,
   });
 }
 

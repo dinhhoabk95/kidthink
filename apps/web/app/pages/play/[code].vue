@@ -160,6 +160,7 @@
 <script lang="ts" setup>
   import { isApiError } from "@mindkid/errors/client";
   import {
+    type Gesture,
     getTemplateInput,
     type RoundConfig,
     type Slot,
@@ -821,17 +822,110 @@
     return true;
   }
 
+  function tryDispatchSyntheticDrop(
+    session: GameSession & InteractiveSession,
+    sourceSlot?: Slot,
+    targetSlot?: Slot
+  ): boolean {
+    if (!(sourceSlot && targetSlot && typeof session.dispatch === "function")) {
+      return false;
+    }
+    const gesture: Gesture = {
+      type: "drop",
+      fromX: sourceSlot.x,
+      fromY: sourceSlot.y,
+      toX: targetSlot.x,
+      toY: targetSlot.y,
+      timeMs: performance.now(),
+    };
+    const res = session.dispatch(gesture);
+    if (res?.valid) {
+      engine?.audio.playSnapSound();
+      engine?.audio.playPopCelebrateSound();
+      return true;
+    }
+    if (res && !res.valid && res.feedback !== "none") {
+      engine?.audio.playSoftFeedbackSound();
+      return true;
+    }
+    return false;
+  }
+
+  function tryDispatchItemPlacement(
+    session: GameSession & InteractiveSession,
+    dragged: DragItemInfo,
+    targetSlot?: Slot,
+    targetIdx?: number
+  ): boolean {
+    if (
+      typeof session.onItemPlaced !== "function" ||
+      !targetSlot ||
+      targetIdx === undefined
+    ) {
+      return false;
+    }
+    const slotDef =
+      session.content?.slots?.[targetIdx] || session.slots?.[targetIdx];
+    const slotId =
+      slotDef && "slot_id" in slotDef
+        ? (slotDef as { slot_id: string }).slot_id
+        : `slot-${targetIdx}`;
+    session.onItemPlaced(dragged.item_id, slotId);
+    engine?.audio.playSnapSound();
+    engine?.audio.playPopCelebrateSound();
+    return true;
+  }
+
+  function tryDispatchPairConnect(
+    session: GameSession & InteractiveSession,
+    dragged: DragItemInfo,
+    targetSlot?: Slot,
+    targetIdx?: number
+  ): boolean {
+    if (
+      typeof session.connectPair !== "function" ||
+      !targetSlot ||
+      targetIdx === undefined
+    ) {
+      return false;
+    }
+    const targetItem = getItemFromCollection(session, targetIdx);
+    if (!targetItem) {
+      return false;
+    }
+    session.connectPair(dragged.item_id, targetItem.item_id);
+    engine?.audio.playSnapSound();
+    engine?.audio.playPopCelebrateSound();
+    return true;
+  }
+
   function handleDropPlacement(
     session: GameSession & InteractiveSession,
-    _slots: readonly Slot[],
+    slots: readonly Slot[],
     dragged: DragItemInfo,
-    _targetIdx: number
+    targetIdx: number
   ): void {
     if (handlePlacementByContainer(session, dragged)) {
       engine?.audio.playSnapSound();
       engine?.audio.playPopCelebrateSound();
       return;
     }
+
+    const sourceSlot = slots[dragged.slotIndex];
+    const targetSlot = slots[targetIdx];
+
+    if (tryDispatchSyntheticDrop(session, sourceSlot, targetSlot)) {
+      return;
+    }
+
+    if (tryDispatchItemPlacement(session, dragged, targetSlot, targetIdx)) {
+      return;
+    }
+
+    if (tryDispatchPairConnect(session, dragged, targetSlot, targetIdx)) {
+      return;
+    }
+
     if (typeof session.onItemLocked === "function") {
       session.onItemLocked(dragged.item_id);
       engine?.audio.playTapSound();
@@ -920,6 +1014,41 @@
     }
   }
 
+  function tryDispatchLifecycleTap(
+    session: GameSession & InteractiveSession,
+    x: number,
+    y: number
+  ): boolean {
+    const templateCode = cachedPayload?.template_code;
+    const inputConfig = templateCode
+      ? getTemplateInput(templateCode)
+      : undefined;
+    if (!inputConfig) {
+      return false;
+    }
+    const lifecycleFamily =
+      LIFECYCLE[inputConfig.family as keyof typeof LIFECYCLE];
+    if (!lifecycleFamily) {
+      return false;
+    }
+    const gesture = lifecycleFamily.toGesture(x, y, performance.now());
+    const res = session.dispatch?.(gesture);
+    if (res?.valid) {
+      if (
+        res.feedback === "pop_celebrate" ||
+        res.feedback === "level_celebrate"
+      ) {
+        engine?.audio.playSnapSound();
+        engine?.audio.playPopCelebrateSound();
+      } else {
+        engine?.audio.playTapSound();
+      }
+    } else if (res && !res.valid && res.feedback !== "none") {
+      engine?.audio.playSoftFeedbackSound();
+    }
+    return true;
+  }
+
   function handleTapInteraction(
     session: GameSession & InteractiveSession,
     slots: readonly Slot[],
@@ -927,23 +1056,8 @@
     x: number,
     y: number
   ): void {
-    const templateCode = cachedPayload?.template_code;
-    const inputConfig = templateCode
-      ? getTemplateInput(templateCode)
-      : undefined;
-    if (inputConfig) {
-      const lifecycleFamily =
-        LIFECYCLE[inputConfig.family as keyof typeof LIFECYCLE];
-      if (lifecycleFamily) {
-        const gesture = lifecycleFamily.toGesture(x, y, performance.now());
-        const res = session.dispatch?.(gesture);
-        if (res?.valid) {
-          engine?.audio.playTapSound();
-        } else if (res && !res.valid && res.feedback !== "none") {
-          engine?.audio.playSoftFeedbackSound();
-        }
-        return;
-      }
+    if (tryDispatchLifecycleTap(session, x, y)) {
+      return;
     }
 
     if (hitIdx < 0) {
@@ -952,7 +1066,11 @@
       return;
     }
 
-    if (typeof session.onItemDropped === "function") {
+    if (
+      typeof session.onItemDropped === "function" ||
+      typeof session.onItemPlaced === "function" ||
+      isDragSupported(session)
+    ) {
       handlePlacementTap(session, slots, hitIdx);
       return;
     }
@@ -1109,7 +1227,10 @@
       performance.now()
     );
     const result = session.dispatch?.(gesture);
-    if (!result?.valid) {
+    if (result?.valid) {
+      engine?.audio.playSnapSound();
+      engine?.audio.playPopCelebrateSound();
+    } else {
       engine?.audio.playSoftFeedbackSound();
       if (originSlot) {
         returningItem = {

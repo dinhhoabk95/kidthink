@@ -63,6 +63,8 @@ export class GT025Session extends TemplateGameSession<
   private readonly foundDifferenceIds = new Set<string>();
   private readonly foundLeftIds = new Set<string>();
   private readonly foundRightIds = new Set<string>();
+  private wrongObjectId: string | null = null;
+  private wrongTimestamp = 0;
   resolvedObjects: ResolvedDifferenceObject[] = [];
 
   setupEntities(): void {
@@ -151,6 +153,8 @@ export class GT025Session extends TemplateGameSession<
     );
 
     if (!diff) {
+      this.wrongObjectId = objectId;
+      this.wrongTimestamp = Date.now();
       this.recordEvent("item_selected", {
         object_id: objectId,
         is_correct: false,
@@ -230,16 +234,25 @@ export class GT025Session extends TemplateGameSession<
   }
 
   override getView(): EngineView {
+    const now = Date.now();
+    const isWrongNow = now - this.wrongTimestamp < 400;
     const entities: ViewEntity[] = this.resolvedObjects.map((obj) => {
       const isFound =
         obj.role === "source"
           ? this.foundLeftIds.has(obj.id)
           : this.foundRightIds.has(obj.id);
+      const isWrong = isWrongNow && this.wrongObjectId === obj.id;
+      let state: ViewEntity["state"] = "idle";
+      if (isFound) {
+        state = "correct";
+      } else if (isWrong) {
+        state = "incorrect";
+      }
       return {
         id: obj.id,
         slotIndex: obj.slotIndex,
         role: obj.role,
-        state: isFound ? "correct" : "idle",
+        state,
         x: obj.x,
         y: obj.y,
         w: obj.w,
@@ -299,14 +312,19 @@ export class GT025Session extends TemplateGameSession<
 
     drawDividerLine(ctx, scene.w / 2, scene.y, scene.w / 2, scene.y + scene.h);
 
+    const now = Date.now();
+    const isWrongNow = now - this.wrongTimestamp < 400;
+
     this.content.left_objects.forEach((obj, i) => {
       drawSceneObjectAt(ctx, rs, half, obj, sources[i], {
         found: this.foundLeftIds.has(obj.id),
+        wrong: isWrongNow && this.wrongObjectId === obj.id,
       });
     });
     this.content.right_objects.forEach((obj, i) => {
       drawSceneObjectAt(ctx, rs, rightHalf, obj, targets[i], {
         found: this.foundRightIds.has(obj.id),
+        wrong: isWrongNow && this.wrongObjectId === obj.id,
       });
     });
     this.drawRenderFeedback(rs, ctx);

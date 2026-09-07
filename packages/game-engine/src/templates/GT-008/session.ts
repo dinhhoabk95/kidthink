@@ -52,12 +52,16 @@ export class GT008Session extends TemplateGameSession<
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
   private stagedItemId: string | null = null;
+  private wrongItemId: string | null = null;
+  private wrongTimestamp = 0;
 
   placedSlots: Map<string, string> = new Map(); // slot_id -> item_id
 
   setupEntities(): void {
     this.placedSlots.clear();
     this.stagedItemId = null;
+    this.wrongItemId = null;
+    this.wrongTimestamp = 0;
     this.isWon = false;
     this.renderParticles = [];
   }
@@ -281,6 +285,7 @@ export class GT008Session extends TemplateGameSession<
     if (result.valid && data) {
       this.onItemPlaced(data.item_id, data.slot_id);
       this.stagedItemId = null;
+      this.wrongItemId = null;
       return;
     }
 
@@ -290,6 +295,9 @@ export class GT008Session extends TemplateGameSession<
         slot_id: data.slot_id,
         is_correct: false,
       });
+      this.wrongItemId = data.item_id;
+      this.wrongTimestamp = performance.now();
+      this.setRenderItemState(data.item_id, "wrong");
     }
   }
 
@@ -366,8 +374,12 @@ export class GT008Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    if (this.wrongItemId && timeMs - this.wrongTimestamp >= 400) {
+      this.setRenderItemState(this.wrongItemId, "idle");
+      this.wrongItemId = null;
+    }
     drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     const targets = this.targetSlots;
@@ -409,12 +421,28 @@ export class GT008Session extends TemplateGameSession<
       if (!slot || placedItemIds.has(item.item_id)) {
         return;
       }
-      drawSlotItem(ctx, rs, slot, {
+      const isWrong = item.item_id === this.wrongItemId;
+      const elapsed = isWrong ? timeMs - this.wrongTimestamp : 0;
+      const shakeX =
+        isWrong && elapsed < 400 ? Math.sin(elapsed * 0.05) * 4 : 0;
+      const drawSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
+
+      drawSlotItem(ctx, rs, drawSlot, {
         id: item.item_id,
         asset: item.asset,
         label: item.label,
         state: this.getRenderItemState(item.item_id),
       });
+
+      if (isWrong && elapsed < 400) {
+        rs.drawScaffoldingHighlight(
+          ctx,
+          slot.x + shakeX,
+          slot.y,
+          Math.min(slot.hitW, slot.hitH) / 2 + 4,
+          (elapsed % 1000) / 1000
+        );
+      }
     });
     this.drawRenderFeedback(rs, ctx);
   }

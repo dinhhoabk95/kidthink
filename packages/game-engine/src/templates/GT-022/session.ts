@@ -64,9 +64,13 @@ export class GT022Session extends TemplateGameSession<
   readonly sceneSystem = new SceneSystem();
   private readonly selectionMechanic = new SelectionMechanic();
   resolvedObjects: SceneObject[] = [];
+  private wrongItemId: string | null = null;
+  private wrongTimestamp = 0;
 
   setupEntities(): void {
     this.isWon = false;
+    this.wrongItemId = null;
+    this.wrongTimestamp = 0;
     this.selectionMechanic.reset();
 
     const rng = deriveStream(this.layoutSeed, "items");
@@ -154,6 +158,9 @@ export class GT022Session extends TemplateGameSession<
 
     if (result.isNewFind) {
       this.selectionMechanic.select(itemId);
+    } else if (!result.isTarget) {
+      this.wrongItemId = itemId;
+      this.wrongTimestamp = performance.now();
     }
 
     if (this.checkWinCondition()) {
@@ -251,8 +258,11 @@ export class GT022Session extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    if (this.wrongItemId && timeMs - this.wrongTimestamp >= 400) {
+      this.wrongItemId = null;
+    }
     drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     // free-scene: toạ độ tới từ content (đã ở không gian logic), ô nào thiếu
@@ -275,6 +285,19 @@ export class GT022Session extends TemplateGameSession<
         this.slots[i],
         { found: state?.isFound === true }
       );
+
+      if (obj.id === this.wrongItemId) {
+        const elapsed = timeMs - this.wrongTimestamp;
+        if (elapsed < 400) {
+          rs.drawScaffoldingHighlight(
+            ctx,
+            obj.x,
+            obj.y,
+            36,
+            (elapsed % 1000) / 1000
+          );
+        }
+      }
     });
     this.drawRenderFeedback(rs, ctx);
   }

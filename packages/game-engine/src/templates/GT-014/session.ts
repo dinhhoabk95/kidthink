@@ -150,6 +150,8 @@ export class BalanceScaleSession extends TemplateGameSession<
   private trayItems: WeightedItem[] = [];
   private selectedSide: "left" | "right" | null = null;
   private stagedItemId: string | null = null;
+  private wrongSide: "left" | "right" | null = null;
+  private wrongTimestamp = 0;
 
   setupEntities(): void {
     this.leftItems = [...this.content.left_pan];
@@ -157,6 +159,8 @@ export class BalanceScaleSession extends TemplateGameSession<
     this.trayItems = [...this.content.tray];
     this.selectedSide = null;
     this.stagedItemId = null;
+    this.wrongSide = null;
+    this.wrongTimestamp = 0;
     this.isWon = false;
 
     this.recordEvent("game_started", {
@@ -251,7 +255,11 @@ export class BalanceScaleSession extends TemplateGameSession<
   selectSide(side: "left" | "right"): void {
     this.selectedSide = side;
     if (this.checkWinCondition()) {
+      this.wrongSide = null;
       this.winSession();
+    } else {
+      this.wrongSide = side;
+      this.wrongTimestamp = performance.now();
     }
   }
 
@@ -502,8 +510,11 @@ export class BalanceScaleSession extends TemplateGameSession<
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
-    _timeMs: number
+    timeMs: number
   ): void {
+    if (this.wrongSide && timeMs - this.wrongTimestamp >= 400) {
+      this.wrongSide = null;
+    }
     drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
     const sources = this.sourceSlots;
@@ -527,6 +538,20 @@ export class BalanceScaleSession extends TemplateGameSession<
     );
     drawPanItems(ctx, rs, leftPan, positioned(this.leftItems));
     drawPanItems(ctx, rs, rightPan, positioned(this.rightItems));
+
+    if (this.wrongSide) {
+      const elapsed = timeMs - this.wrongTimestamp;
+      if (elapsed < 400) {
+        const pan = this.wrongSide === "left" ? leftPan : rightPan;
+        rs.drawScaffoldingHighlight(
+          ctx,
+          pan.x + pan.w / 2,
+          pan.y + pan.h / 2,
+          Math.max(pan.w, pan.h) / 2 + 6,
+          (elapsed % 1000) / 1000
+        );
+      }
+    }
 
     this.trayItems.forEach((item, i) => {
       const slot = sources[i];
