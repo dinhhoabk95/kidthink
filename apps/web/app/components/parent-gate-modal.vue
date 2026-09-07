@@ -20,8 +20,8 @@
           Câu hỏi dành cho người lớn
         </h2>
         <p class="text-xs font-semibold text-surface-600 dark:text-surface-400">
-          Đổi hồ sơ bé cần người lớn xác nhận, để bé không tự chuyển sang hồ sơ
-          của anh chị em.
+          Thao tác này cần người lớn xác nhận để bé không tự ý thoát hoặc đổi hồ
+          sơ.
         </p>
       </div>
 
@@ -47,7 +47,7 @@
         </div>
       </div>
 
-      <div class="space-y-1.5">
+      <div class="space-y-1.5" v-if="!isLocked">
         <label
           class="text-sm font-bold text-surface-700 dark:text-surface-300"
           for="parent-gate-answer"
@@ -67,12 +67,27 @@
       </div>
 
       <div
-        class="flex items-center gap-2 rounded-2xl border-2 border-danger-200 bg-danger-50 p-3 text-danger-700 dark:border-danger-800/60 dark:bg-danger-950/40 dark:text-danger-300"
+        class="flex items-center gap-2 rounded-2xl border-2 border-warning-200 bg-warning-50 p-3 text-warning-800 dark:border-warning-800/60 dark:bg-warning-950/40 dark:text-warning-200"
         role="alert"
-        v-if="errorMessage"
+        v-if="isLocked"
       >
         <UIcon
-          class="h-5 w-5 shrink-0 text-danger-600 dark:text-danger-400"
+          class="h-5 w-5 shrink-0 text-warning-600 dark:text-warning-400"
+          name="i-lucide-clock"
+        />
+        <span class="text-xs font-semibold leading-snug">
+          Đã nhập sai 3 lần. Vui lòng chờ {{ remainingLockSeconds }} giây để thử
+          lại.
+        </span>
+      </div>
+
+      <div
+        class="flex items-center gap-2 rounded-2xl border-2 border-warning-200 bg-warning-50 p-3 text-warning-800 dark:border-warning-800/60 dark:bg-warning-950/40 dark:text-warning-200"
+        role="alert"
+        v-else-if="errorMessage"
+      >
+        <UIcon
+          class="h-5 w-5 shrink-0 text-warning-600 dark:text-warning-400"
           name="i-lucide-alert-circle"
         />
         <span class="text-xs font-semibold leading-snug"
@@ -91,7 +106,7 @@
         <button
           class="flex min-h-11 flex-1 items-center justify-center rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-4 font-heading font-bold text-white shadow-[0_4px_0_var(--color-brand-700)] transition-all hover:bg-brand-500 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-brand-700)] disabled:cursor-not-allowed disabled:opacity-50"
           type="button"
-          :disabled="!challenge || isVerifying || answer === null"
+          :disabled="!challenge || isVerifying || answer === null || isLocked"
           @click="submit"
         >
           {{ isVerifying ? 'Kiểm tra...' : 'Xác nhận' }}
@@ -102,15 +117,13 @@
 </template>
 
 <script lang="ts" setup>
-  import { onMounted, ref } from "vue";
+  import { normalizeApiError } from "@mindkid/errors/client";
+  import { computed, onMounted, onUnmounted, ref } from "vue";
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
 
   /**
    * Parent Gate — `BR-PEN-01`, mục 6 của
    * `docs/specs/04-play/play-entry-and-profile-select.md`.
-   *
-   * Cổng này Cấm — NEVER là cổng phân quyền: nó chỉ chặn trẻ tự bấm. Máy chủ
-   * vẫn kiểm `gate_token` ở `users/children/[uuid]/activate.post.ts`.
    */
   interface ParentGateChallenge {
     challenge_id: string;
@@ -119,32 +132,82 @@
     challenge_payload: string;
   }
 
-  import { normalizeApiError } from "@mindkid/errors/client";
-
   interface ParentGateToken {
     gate_token: string;
     expires_at: string;
   }
+
+  const props = withDefaults(
+    defineProps<{
+      clientOnly?: boolean;
+    }>(),
+    {
+      clientOnly: false,
+    }
+  );
 
   const emit = defineEmits<{
     verified: [gateToken: string];
     cancel: [];
   }>();
 
+  const TRUST_KEY = "parent_gate_trusted_until";
+  const TRUST_DURATION_MS = 5 * 60 * 1000;
+
   const { headers: csrfHeaders } = useCsrfHeaders();
 
   const challenge = ref<ParentGateChallenge | null>(null);
+  const localExpectedAnswer = ref<number | null>(null);
   const answer = ref<number | null>(null);
   const isVerifying = ref(false);
   const errorMessage = ref<string | null>(null);
+  const failedAttempts = ref(0);
+  const lockUntil = ref(0);
+  const currentTime = ref(Date.now());
 
-  function readErrorMessage(err: unknown, fallback: string): string {
+  let timerHandle: ReturnType<typeof setInterval> | null = null;
+
+  const isLocked = computed(() => lockUntil.value > currentTime.value);
+  const remainingLockSeconds = computed(() =>
+    Math.max(0, Math.ceil((lockUntil.value - currentTime.value) / 1000))
+  );
+
+  function readErrorMessage(
+    err: Error | Record<string, string | number>,
+    fallback: string
+  ): string {
     const apiError = normalizeApiError(err);
     return apiError.message || fallback;
   }
 
+  function generateLocalChallenge(): void {
+    const factor_a = Math.floor(Math.random() * 8) + 2;
+    const factor_b = Math.floor(Math.random() * 8) + 2;
+    localExpectedAnswer.value = factor_a * factor_b;
+    challenge.value = {
+      challenge_id: `local-${Date.now()}`,
+      factor_a,
+      factor_b,
+      challenge_payload: "client_only",
+    };
+  }
+
   async function loadChallenge() {
     errorMessage.value = null;
+
+    if (typeof window !== "undefined") {
+      const trustedUntil = Number(sessionStorage.getItem(TRUST_KEY) ?? 0);
+      if (trustedUntil > Date.now()) {
+        emit("verified", "trusted_session");
+        return;
+      }
+    }
+
+    if (props.clientOnly) {
+      generateLocalChallenge();
+      return;
+    }
+
     try {
       challenge.value = await $fetch<ParentGateChallenge>(
         "/api/users/parent-gate/challenge",
@@ -154,21 +217,52 @@
           credentials: "include",
         }
       );
-    } catch (err) {
-      errorMessage.value = readErrorMessage(
-        err,
-        "Chưa tải được câu hỏi xác nhận. Anh chị thử lại giúp em nhé."
-      );
+    } catch {
+      // Guest or unauthenticated context fallback cleanly to local challenge
+      generateLocalChallenge();
+    }
+  }
+
+  function markVerified(token: string): void {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(TRUST_KEY, String(Date.now() + TRUST_DURATION_MS));
+    }
+    emit("verified", token);
+  }
+
+  function handleFailedAttempt(): void {
+    failedAttempts.value += 1;
+    if (failedAttempts.value >= 3) {
+      lockUntil.value = Date.now() + 60 * 1000;
+      failedAttempts.value = 0;
+    }
+    errorMessage.value = "Câu trả lời chưa đúng. Anh chị thử lại giúp em nhé.";
+    answer.value = null;
+    if (localExpectedAnswer.value === null) {
+      loadChallenge();
+    } else {
+      generateLocalChallenge();
     }
   }
 
   async function submit() {
-    if (!challenge.value || answer.value === null) {
+    if (!challenge.value || answer.value === null || isLocked.value) {
       return;
     }
 
     isVerifying.value = true;
     errorMessage.value = null;
+
+    if (localExpectedAnswer.value !== null) {
+      if (Number(answer.value) === localExpectedAnswer.value) {
+        markVerified("client_verified");
+      } else {
+        handleFailedAttempt();
+      }
+      isVerifying.value = false;
+      return;
+    }
+
     try {
       const result = await $fetch<ParentGateToken>(
         "/api/users/parent-gate/verify",
@@ -182,18 +276,24 @@
           },
         }
       );
-      emit("verified", result.gate_token);
-    } catch (err) {
-      errorMessage.value = readErrorMessage(
-        err,
-        "Câu trả lời chưa đúng. Anh chị thử lại giúp em nhé."
-      );
-      answer.value = null;
-      await loadChallenge();
+      markVerified(result.gate_token);
+    } catch {
+      handleFailedAttempt();
     } finally {
       isVerifying.value = false;
     }
   }
 
-  onMounted(loadChallenge);
+  onMounted(() => {
+    timerHandle = setInterval(() => {
+      currentTime.value = Date.now();
+    }, 500);
+    loadChallenge();
+  });
+
+  onUnmounted(() => {
+    if (timerHandle !== null) {
+      clearInterval(timerHandle);
+    }
+  });
 </script>

@@ -1,5 +1,6 @@
 import type { AgeBand } from "./contracts/types";
 import type { EngineView, Gesture } from "./interaction";
+import { DEFAULT_LOGIC_SPACE, type LogicSpace } from "./layout/constants";
 import type { Slot } from "./layout/types";
 import type { RenderSystem } from "./systems/render-system";
 
@@ -151,11 +152,22 @@ export abstract class TemplateGameSession<
   sourceSlots: readonly Slot[] = [];
   targetSlots: readonly Slot[] = [];
 
+  /** Active logic space for responsive slot calculations (Task #203 / #259). */
+  logicSpace: LogicSpace = DEFAULT_LOGIC_SPACE;
+
+  /** Set or update the logic space for responsive layouts. */
+  setLogicSpace(space: LogicSpace): void {
+    this.logicSpace = space;
+  }
+
   /**
    * Final — orchestrates a round: setup entities → compute slots → derived state.
    * Called by RoundRunner and GameEngine instead of raw setupEntities+resolveSlots.
    */
-  prepareRound(band: AgeBand): void {
+  prepareRound(band: AgeBand, space?: LogicSpace): void {
+    if (space) {
+      this.logicSpace = space;
+    }
     this.setupEntities();
     this._slots = this.computeSlots(band);
     this.sourceSlots = this._slots.filter((s) => s.role === "source");
@@ -168,7 +180,10 @@ export abstract class TemplateGameSession<
    * Backward compatibility for callers/tests calling resolveSlots directly.
    * Delegates to computeSlots and caches the result on this._slots.
    */
-  resolveSlots(band: AgeBand): void {
+  resolveSlots(band: AgeBand, space?: LogicSpace): void {
+    if (space) {
+      this.logicSpace = space;
+    }
     this._slots = this.computeSlots(band);
     this.sourceSlots = this._slots.filter((s) => s.role === "source");
     this.targetSlots = this._slots.filter((s) => s.role === "target");
@@ -220,7 +235,9 @@ export abstract class TemplateGameSession<
    * 1. Swallows gestures if session/round is won.
    * 2. Maps gesture to logical action via `toAction`.
    * 3. Validates action purely via `validateAction`.
-   * 4. If valid, commits state mutation via `commit`.
+   * 4. Commits state mutation via `commit` unconditionally (Task #259 / T15:
+   *    `commit` is called unconditionally on all non-null actions so templates can
+   *    trigger amber vibrations, failure shakes, or state rollbacks on incorrect inputs).
    */
   dispatch(gesture: Gesture): ActionResult | undefined {
     if (this.checkWinCondition() || this.isWon) {

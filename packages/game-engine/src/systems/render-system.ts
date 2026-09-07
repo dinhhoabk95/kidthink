@@ -5,6 +5,11 @@
  * Pure Vanilla TS — ZERO Vue / Pinia dependencies (BR-ENG-01).
  */
 
+import {
+  DEFAULT_LOGIC_SPACE,
+  deriveLogicSpace,
+  type LogicSpace,
+} from "#src/layout/constants";
 import { designTokens } from "./designTokens";
 
 export interface Particle {
@@ -19,7 +24,7 @@ export interface Particle {
 }
 
 /**
- * Hình học của một khung vẽ: cách đưa toạ độ logic 960x540 về pixel CSS.
+ * Hình học của một khung vẽ: cách đưa toạ độ logic về pixel CSS.
  *
  * Đây là **nguồn sự thật duy nhất** cho cả vẽ lẫn hit-test. Nơi nào cần đổi
  * toạ độ thì đọc ở đây; cấm — NEVER tự dựng lại công thức letterbox, vì hai
@@ -29,16 +34,27 @@ export interface CanvasViewport {
   cssHeight: number;
   cssWidth: number;
   dpr: number;
-  /** Lề letterbox theo pixel CSS, do khung không đúng tỉ lệ 16:9. */
+  /** Lề letterbox theo pixel CSS. */
   offsetX: number;
   offsetY: number;
   /** Pixel CSS trên một đơn vị logic. */
   scale: number;
+  logicSpace?: LogicSpace;
 }
 
 export class RenderSystem {
-  readonly LOGIC_WIDTH = 960;
-  readonly LOGIC_HEIGHT = 540;
+  logicSpace: LogicSpace = DEFAULT_LOGIC_SPACE;
+
+  get LOGIC_WIDTH(): number {
+    return this.logicSpace.w;
+  }
+
+  get LOGIC_HEIGHT(): number {
+    return this.logicSpace.h;
+  }
+
+  /** Global reduced-motion toggle — reduces particles, confetti, and float speed (BR-FBK-09, BR-SCF-06). */
+  reducedMotion = false;
 
   /** Active theme ID for thematic rendering fallback. */
   themeId?: string;
@@ -53,29 +69,27 @@ export class RenderSystem {
   paintGeneration = 0;
 
   /**
-   * Đặt canvas về không gian logic 960x540 (`game-engine-runtime.md` §7.1).
-   *
-   * Trước đây hàm này tính `scale` rồi trả về mà không áp dụng, và nơi gọi thì
-   * vứt giá trị trả về đi — ngữ cảnh ở lại không gian pixel CSS trong khi mọi
-   * `render()` vẽ theo toạ độ logic. Hậu quả đo được ngày 2026-09-01: cảnh chỉ
-   * lấp 67%x60% khung ở `1440x900`, và tràn 246% chiều ngang ở `390x844`.
+   * Đặt canvas về không gian logic đáp ứng theo kích thước khung nhìn (BR-A11-04 & Task #259).
    */
   setupCanvas(canvas: HTMLCanvasElement): CanvasViewport {
     const dpr =
       typeof window === "undefined" ? 1 : window.devicePixelRatio || 1;
     const rect = canvas.getBoundingClientRect();
-    const width = rect.width || this.LOGIC_WIDTH;
-    const height = rect.height || this.LOGIC_HEIGHT;
+    const width = rect.width || 960;
+    const height = rect.height || 540;
+
+    const space = deriveLogicSpace(width, height);
+    this.logicSpace = space;
 
     // Gán width/height reset luôn transform của ngữ cảnh về identity.
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
 
-    const scaleX = width / this.LOGIC_WIDTH;
-    const scaleY = height / this.LOGIC_HEIGHT;
+    const scaleX = width / space.w;
+    const scaleY = height / space.h;
     const scale = Math.min(scaleX, scaleY);
-    const offsetX = (width - this.LOGIC_WIDTH * scale) / 2;
-    const offsetY = (height - this.LOGIC_HEIGHT * scale) / 2;
+    const offsetX = (width - space.w * scale) / 2;
+    const offsetY = (height - space.h * scale) / 2;
 
     const ctx = canvas.getContext("2d");
     if (ctx) {
@@ -99,6 +113,7 @@ export class RenderSystem {
       offsetX,
       offsetY,
       scale,
+      logicSpace: space,
     };
     this.viewport = viewport;
     return viewport;
@@ -255,21 +270,32 @@ export class RenderSystem {
     ctx.restore();
   }
 
-  /** Confetti & star particle burst celebration renderer */
-  drawParticles(ctx: CanvasRenderingContext2D, particles: Particle[]): void {
+  /** Confetti & star particle burst celebration renderer (reduces density when reducedMotion is active - BR-FBK-09) */
+  drawParticles(ctx: CanvasRenderingContext2D, particles: Particle[]): number {
     ctx.save();
-    for (const p of particles) {
-      if (p.life <= 0) {
+    let rendered = 0;
+    const step = this.reducedMotion ? 2 : 1;
+    for (let i = 0; i < particles.length; i += step) {
+      const p = particles[i];
+      if (!p || p.life <= 0) {
         continue;
       }
+      rendered++;
       const alpha = p.life / p.maxLife;
-      ctx.globalAlpha = alpha;
+      ctx.globalAlpha = this.reducedMotion ? alpha * 0.7 : alpha;
       ctx.fillStyle = p.color;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.arc(
+        p.x,
+        p.y,
+        this.reducedMotion ? p.size * 0.8 : p.size,
+        0,
+        Math.PI * 2
+      );
       ctx.fill();
     }
     ctx.restore();
+    return rendered;
   }
 
   /** Trace (never paints) — caller picks fill or stroke. Matches traceContainerBody. */

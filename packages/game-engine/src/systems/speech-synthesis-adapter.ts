@@ -63,7 +63,7 @@ export class SpeechSynthesisAdapter {
 
   /** Whether a vi-VN voice is detected and ready */
   hasVietnameseVoice(): boolean {
-    if (!this.isInitialized) {
+    if (!(this.isInitialized && this.isVoiceAvailable)) {
       this.initVoices();
     }
     return this.isVoiceAvailable;

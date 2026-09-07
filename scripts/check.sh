@@ -103,19 +103,32 @@ fi
 echo "✓ typecheck"
 phase_end
 
-# ── Phase 3: Test (Tạm thời vô hiệu hóa - chuyển sang Manual Test) ─────────
-# echo "▸ Phase 3: test"
-# phase_start
-# 
-# NODE_OPTIONS=--max-old-space-size=4096 pnpm exec vitest run --bail 1
-# TEST_STATUS=$?
-# 
-# if [ $TEST_STATUS -ne 0 ]; then
-#   echo "✗ test failed" >&2
-#   exit 1
-# fi
-# echo "✓ test"
-# phase_end
+# ── Phase 3: Test ─────────────────────────────────────────────────────────
+echo "▸ Phase 3: test"
+phase_start
+
+if [ "$FAST" = true ]; then
+  echo "  (chế độ --fast: chạy test không phụ thuộc database)"
+  NODE_OPTIONS=--max-old-space-size=4096 npx vitest run --project=@mindkid/game-engine
+  TEST_STATUS=$?
+else
+  if pnpm services >/dev/null 2>&1; then
+    NODE_OPTIONS=--max-old-space-size=4096 pnpm exec vitest run --bail 1
+    TEST_STATUS=$?
+  else
+    echo "  ℹ PostgreSQL / Valkey chưa chạy ('docker compose up -d' để chạy toàn bộ suite DB)."
+    echo "  Chạy test suite game-engine (không cần database)..."
+    NODE_OPTIONS=--max-old-space-size=4096 npx vitest run --project=@mindkid/game-engine
+    TEST_STATUS=$?
+  fi
+fi
+
+if [ $TEST_STATUS -ne 0 ]; then
+  echo "✗ test failed" >&2
+  exit 1
+fi
+echo "✓ test"
+phase_end
 
 # ── Phase 4: Deploy test (Tạm thời vô hiệu hóa) ───────────────────────────
 # if [ "$FAST" = false ]; then

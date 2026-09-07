@@ -4,11 +4,7 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
-import {
-  getTouchFloor,
-  LOGIC_HEIGHT,
-  LOGIC_WIDTH,
-} from "#src/layout/constants";
+import { getTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
@@ -79,6 +75,7 @@ export class GT001Session extends TemplateGameSession<
 
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const count = this.displayOptions.length;
+    const { w: LOGIC_WIDTH, h: LOGIC_HEIGHT } = this.logicSpace;
     if (this.content.target_item && count > 0) {
       const touchFloor = getTouchFloor(ageBand);
       const dockH = 130;
@@ -113,6 +110,7 @@ export class GT001Session extends TemplateGameSession<
     return layoutFn({
       slotCount: this.displayOptions.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

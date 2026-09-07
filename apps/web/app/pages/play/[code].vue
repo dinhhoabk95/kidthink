@@ -4,7 +4,6 @@
     <div aria-hidden="true" class="ambient-theme-layer">
       <div class="ambient-shape shape-1" />
       <div class="ambient-shape shape-2" />
-      <div class="ambient-shape shape-3" />
     </div>
 
     <!-- Loading State -->
@@ -15,13 +14,22 @@
       </div>
     </div>
 
-    <!-- Error State -->
+    <!-- Error State (Pre-reader friendly) -->
     <div class="error-state" v-else-if="errorMessage">
       <div class="error-card">
         <span aria-hidden="true" class="error-emoji">{{ errorEmoji }}</span>
         <h2 class="error-title">{{ errorTitle }}</h2>
         <p class="error-desc">{{ errorMessage }}</p>
         <div class="error-actions">
+          <button
+            aria-label="Nghe hướng dẫn"
+            class="btn-audio-speak"
+            type="button"
+            @click="speakErrorPrompt"
+          >
+            <UIcon class="w-6 h-6 text-brand-600" name="i-lucide-volume-2" />
+            <span>Nghe giải thích</span>
+          </button>
           <NuxtLink
             class="btn-primary"
             v-if="errorActionLink"
@@ -41,11 +49,14 @@
       <!-- TOP HUD BAR (Kinder-Tactile Montessori) -->
       <header class="top-hud-bar">
         <!-- Left: Lesson Info Pill with Theme Badge -->
-        <div class="lesson-info-pill">
+        <div
+          class="lesson-info-pill"
+          :class="{ 'ring-4 ring-brand-400 animate-pulse': isPromptPillPulsing }"
+        >
           <div class="avatar-circle">
-            <span aria-hidden="true" class="avatar-emoji"
-              >{{ currentThemeInfo.icon }}</span
-            >
+            <span aria-hidden="true" class="avatar-emoji">
+              {{ currentThemeInfo.icon }}
+            </span>
           </div>
           <div class="lesson-meta-box">
             <span class="theme-tag-text">{{ currentThemeInfo.label_vi }}</span>
@@ -53,7 +64,7 @@
           </div>
         </div>
 
-        <!-- Center: Star Progress Track -->
+        <!-- Center: Round Progress Indicator -->
         <div class="progress-container">
           <KidRoundProgressIndicator
             :current="currentRound"
@@ -61,8 +72,21 @@
           />
         </div>
 
-        <!-- Right: Actions (Audio Replay & Parent Lock) -->
+        <!-- Right: Actions (Audio Replay, Skip Round, Parent Lock) -->
         <div class="hud-actions">
+          <!-- Skip button when scaffolding exhausted -->
+          <button
+            aria-label="Bỏ qua câu này"
+            class="btn-skip-round clay-button"
+            type="button"
+            v-if="canSkipRound"
+            @click="handleSkipRound"
+          >
+            <UIcon class="w-6 h-6 shrink-0" name="i-lucide-forward" />
+            <span class="btn-label">Bỏ qua</span>
+          </button>
+
+          <!-- Audio Replay -->
           <button
             aria-label="Nghe lại hướng dẫn"
             class="btn-audio-replay clay-button"
@@ -73,13 +97,43 @@
             <span class="btn-label">Nghe lại</span>
           </button>
 
+          <!-- Parent Lock (800ms Long-Press) -->
           <button
-            aria-label="Cổng phụ huynh / Thoát"
+            aria-label="Cổng phụ huynh / Thoát (nhấn giữ 1 giây)"
             class="btn-parent-lock"
             type="button"
-            @click="showParentGate = true"
+            @pointercancel="cancelParentLockHold"
+            @pointerdown="startParentLockHold"
+            @pointerleave="cancelParentLockHold"
+            @pointerup="cancelParentLockHold"
           >
-            <UIcon class="w-6 h-6 text-surface-600" name="i-lucide-lock" />
+            <div class="relative flex items-center justify-center">
+              <svg
+                aria-hidden="true"
+                class="absolute -inset-1 w-14 h-14 -rotate-90 pointer-events-none"
+                viewBox="0 0 36 36"
+                v-if="parentLockHoldProgress > 0"
+              >
+                <path
+                  class="text-surface-300"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="3.5"
+                />
+                <path
+                  class="text-brand-600 transition-all duration-75"
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-width="3.5"
+                  :stroke-dasharray="100"
+                  :stroke-dashoffset="100 - parentLockHoldProgress"
+                />
+              </svg>
+              <UIcon class="w-6 h-6 text-surface-600" name="i-lucide-lock" />
+            </div>
           </button>
         </div>
       </header>
@@ -95,15 +149,32 @@
             @pointermove="handlePointerMove"
             @pointerup="handlePointerUp"
           />
-          <!-- Intro Flashcard & Echo Step Controls — BR-CIR-21, BR-CIR-22 -->
+
+          <!-- Visually hidden accessible buttons for assistive tech -->
+          <section
+            aria-label="Các đối tượng tương tác"
+            aria-live="polite"
+            class="sr-only"
+          >
+            <button
+              type="button"
+              v-for="entity in viewEntities"
+              :key="entity.id"
+              :aria-label="`Chọn đối tượng ${entity.id}`"
+              @click="handleAccessibleEntityTap(entity)"
+            >
+              Chọn đối tượng {{ entity.id }}
+            </button>
+          </section>
+
+          <!-- Intro Flashcard & Echo Step Controls (GT-000) -->
           <div
             class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-6 z-20 pointer-events-auto"
             v-if="isIntroCardStep"
           >
-            <!-- Nút Lùi (Prev) nếu không phải thẻ đầu -->
             <button
               aria-label="Quay lại thẻ trước"
-              class="min-h-16 px-6 rounded-2xl border-[3px] border-surface-200 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_theme(colors.surface.200),0_10px_18px_rgba(30,27,75,0.12)] active:translate-y-1 active:shadow-[0_2px_0_theme(colors.surface.200)] flex items-center gap-2 cursor-pointer transition-all"
+              class="min-h-16 px-6 rounded-2xl border-[3px] border-surface-300 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_var(--color-surface-300)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-surface-300)] flex items-center gap-2 cursor-pointer transition-all"
               type="button"
               v-if="introStepIndex > 0"
               @click="handleIntroPrev"
@@ -112,10 +183,9 @@
               <span>Trước</span>
             </button>
 
-            <!-- Nút Nghe lại mẫu MP3 -->
             <button
               aria-label="Nghe lại mẫu"
-              class="min-h-16 px-6 rounded-2xl border-[3px] border-surface-200 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_theme(colors.surface.200),0_10px_18px_rgba(30,27,75,0.12)] active:translate-y-1 active:shadow-[0_2px_0_theme(colors.surface.200)] flex items-center gap-2 cursor-pointer transition-all"
+              class="min-h-16 px-6 rounded-2xl border-[3px] border-surface-300 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_var(--color-surface-300)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-surface-300)] flex items-center gap-2 cursor-pointer transition-all"
               type="button"
               @click="handleEchoReplay"
             >
@@ -123,9 +193,8 @@
               <span>Nghe lại</span>
             </button>
 
-            <!-- Nút Đi tiếp / Bé nói theo -->
             <button
-              class="min-h-16 px-8 rounded-2xl border-[3px] border-cta-hover bg-cta text-white font-heading font-bold text-xl shadow-[0_6px_0_theme(colors.cta-hover),0_10px_18px_rgba(249,115,22,0.25)] active:translate-y-1 active:shadow-[0_2px_0_theme(colors.cta-hover)] flex items-center gap-3 cursor-pointer transition-all"
+              class="min-h-16 px-8 rounded-2xl border-[3px] border-cta-hover bg-cta text-white font-heading font-bold text-xl shadow-[0_6px_0_var(--color-cta-hover)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-cta-hover)] flex items-center gap-3 cursor-pointer transition-all"
               type="button"
               :aria-label="isEchoStep ? 'Bé nói theo' : 'Tiếp tục'"
               @click="handleEchoDone"
@@ -140,9 +209,10 @@
 
       <!-- Victory Celebration Modal -->
       <KidVictoryModal
+        :celebration="earnedCelebration"
         :is-intro="isIntroLevel"
         :show="showVictoryModal"
-        :stars="earnedStars ?? undefined"
+        :stars="earnedStars"
         @continue="handleContinueNext"
         @replay="handleReplayGame"
       />
@@ -150,6 +220,7 @@
       <!-- Parent Gate Exit Modal -->
       <ParentGateModal
         v-if="showParentGate"
+        :client-only="true"
         @cancel="showParentGate = false"
         @verified="handleParentVerified"
       />
@@ -158,36 +229,24 @@
 </template>
 
 <script lang="ts" setup>
-  import { isApiError } from "@mindkid/errors/client";
-  import {
-    type Gesture,
-    getTemplateInput,
-    type RoundConfig,
-    type Slot,
-  } from "@mindkid/game-engine";
-  import { drawTargetHoverAura } from "@mindkid/game-engine/render";
   import {
     createGameSessionSync,
     type EngineConfig,
     GameEngine,
-    type GameSession,
-    LIFECYCLE,
     preloadGameSession,
+    type RoundConfig,
     RoundRunner,
-  } from "@mindkid/game-engine/runtime";
-  import { CONTENT_THEMES } from "@mindkid/shared";
-  import { computed, nextTick, onMounted, onUnmounted, ref } from "vue";
-  import { useRoute, useRouter } from "vue-router";
-  import { definePageMeta, useUserSession } from "#imports";
+    type Slot,
+  } from "@mindkid/game-engine";
+  import { usePlayError } from "~/composables/play/use-play-error";
+  import { usePlayGesture } from "~/composables/play/use-play-gesture";
+  import { usePlayTelemetry } from "~/composables/play/use-play-telemetry";
+  import { usePlayThemes } from "~/composables/play/use-play-themes";
   import { useApi } from "~/composables/use-api";
 
-  definePageMeta({ layout: false });
-
-  type JsonPrimitive = string | number | boolean | null;
   interface JsonObject {
-    [key: string]: JsonPrimitive | JsonObject | JsonArray;
+    [key: string]: string | number | boolean | readonly string[] | undefined;
   }
-  type JsonArray = Array<JsonPrimitive | JsonObject | JsonArray>;
 
   interface RoundPayload {
     round_index: number;
@@ -195,7 +254,6 @@
     instruction_audio_path?: string | null;
     content_pack: JsonObject;
     difficulty_params: JsonObject;
-    difficulty?: number;
   }
 
   interface ConfigPayload {
@@ -225,105 +283,50 @@
     }>;
   }
 
-  interface ItemAsset {
-    kind: string;
-    ref?: string;
-    path?: string;
-    text?: string;
-  }
-
-  interface InteractiveSessionItem {
-    item_id: string;
-    attribute?: string;
-    asset?: ItemAsset;
-    label?: string;
-    text?: string;
-    is_correct?: boolean;
-  }
-
-  interface InteractiveSession {
-    slots?: readonly Slot[];
-    content?: {
-      container?: { container_id: string; label?: string };
-      options?: Array<{
-        value: number;
-        item_id?: string;
-        label?: string;
-        text?: string;
-        asset?: ItemAsset;
-      }>;
-      items?: InteractiveSessionItem[];
-      pairs?: Array<{
-        left: { item_id: string; asset?: ItemAsset };
-        right: { item_id: string; asset?: ItemAsset };
-      }>;
-      slots?: Array<{
-        slot_id: string;
-        expected_item_id?: string;
-        label?: string;
-      }>;
-      objects?: Array<{ object_id: string }>;
-    };
-    displayOptions?: Array<{
-      item_id: string;
-      value?: number;
-      asset?: ItemAsset;
-      label?: string;
-      text?: string;
-    }>;
-    displayItems?: InteractiveSessionItem[];
-    displayLeft?: InteractiveSessionItem[];
-    displayRight?: InteractiveSessionItem[];
-    getOptions?: () => Array<{ value: number; item_id?: string }>;
-    selectOption?: (opt: number | string) => boolean | undefined;
-    onItemLocked?: (id: string) => void;
-    flipCard?: (idx: number) => void;
-    tapObject?: (id: string) => void;
-    onItemDropped?: (itemId: string, containerId: string) => void;
-    onItemPlaced?: (itemId: string, slotId: string) => void;
-    connectPair?: (leftId: string, rightId: string) => void;
-    onPairMatched?: (leftId: string, rightId: string) => void;
-    stageItem?: (itemId: string | null) => void;
-    getStagedItemId?: () => string | null;
-    getContainerId?: () => string;
-    getPlacements?: () => ReadonlyMap<string, string>;
-    placedSlots?: Map<string, string>;
-    hoveredContainer?: boolean;
-  }
-
   const route = useRoute();
   const router = useRouter();
   const levelCode = route.params.code as string;
   const { loggedIn, fetch: fetchSession } = useUserSession();
 
   const isLoading = ref(true);
-  const errorMessage = ref<string | null>(null);
-  const errorTitle = ref<string>("Đã có lỗi xảy ra");
-  const errorEmoji = ref<string>("😢");
-  const errorActionLink = ref<string | null>(null);
-  const errorActionText = ref<string>("Thử lại");
-
-  const displayTitle = ref<string>("Bài học toán tư duy");
-  const showVictoryModal = ref(false);
-  const showParentGate = ref(false);
-
   const canvasRef = ref<HTMLCanvasElement | null>(null);
+  const displayTitle = ref("");
   const currentRound = ref(0);
   const totalRounds = ref(1);
-  /** Sao do **server** tính (BR-SCO-01, BR-RSP-12). Client Cấm — NEVER tự tính. */
+
+  const showVictoryModal = ref(false);
+  const showParentGate = ref(false);
+  const earnedCelebration = ref<"great" | "good" | "nice_try">("good");
   const earnedStars = ref<number | null>(null);
 
-  /** `EventsSchema` của endpoint event chặn ở `.max(100)`. */
-  const MAX_EVENTS_PER_REQUEST = 100;
-
-  let engine: GameEngine | null = null;
-  let roundRunner: RoundRunner | null = null;
-  let cachedPayload: ConfigPayload | null = null;
-  let currentInstructionAudio: string | null = null;
-
-  const isEchoStep = ref(false);
   const isIntroCardStep = ref(false);
+  const isEchoStep = ref(false);
   const introStepIndex = ref(0);
+
+  const currentThemeId = ref<string>("default");
+  const canSkipRound = ref(false);
+  const isPromptPillPulsing = ref(false);
+  const parentLockHoldProgress = ref(0);
+
+  let holdTimer: ReturnType<typeof setInterval> | null = null;
+  let pulseTimer: ReturnType<typeof setTimeout> | null = null;
+  let activeNarrationAudio: HTMLAudioElement | null = null;
+  let currentInstructionAudio: string | null = null;
+  let cachedPayload: ConfigPayload | null = null;
+  let roundRunner: RoundRunner | null = null;
+  let engine: GameEngine | null = null;
+
+  const { currentThemeInfo } = usePlayThemes(currentThemeId);
+  const {
+    errorMessage,
+    errorTitle,
+    errorEmoji,
+    errorActionLink,
+    errorActionText,
+    handleApiError,
+  } = usePlayError();
+  const { uploadTelemetry, finishSession } = usePlayTelemetry();
+
   const isIntroLevel = computed(() => {
     return (
       cachedPayload?.template_code === "GT-000" ||
@@ -332,174 +335,74 @@
     );
   });
 
-  const currentThemeId = ref<string>("default");
-
-  const currentThemeInfo = computed(() => {
-    const matched = CONTENT_THEMES.find((t) => t.code === currentThemeId.value);
-    if (matched) {
-      return {
-        code: matched.code,
-        label_vi: matched.label_vi,
-        icon: matched.icon_emoji_ref,
-      };
-    }
-    return {
-      code: "default",
-      label_vi: "Toán tư duy",
-      icon: "🧩",
-    };
+  const {
+    viewEntities,
+    syncView,
+    handlePointerDown,
+    handlePointerMove,
+    handlePointerUp,
+    handlePointerCancel,
+    handleAccessibleEntityTap,
+  } = usePlayGesture({
+    getEngine: () => engine,
+    canvasRef,
+    onRoundWon: handleRoundWonInternal,
   });
 
-  function handleEchoReplay() {
-    if (engine?.activeSession) {
-      engine.activeSession.validateAction({
-        type: "tap_item",
-        data: { intent: "replay" },
-      });
+  function triggerVisualFallbackCue(): void {
+    isPromptPillPulsing.value = true;
+    if (pulseTimer) {
+      clearTimeout(pulseTimer);
     }
+    pulseTimer = setTimeout(() => {
+      isPromptPillPulsing.value = false;
+    }, 1200);
   }
 
-  function handleEchoDone() {
-    if (engine?.activeSession) {
-      engine.activeSession.validateAction({
-        type: "tap_item",
-        data: { intent: "advance" },
-      });
-    }
-  }
+  function startParentLockHold(): void {
+    parentLockHoldProgress.value = 0;
+    const startTime = Date.now();
+    const duration = 800;
 
-  function handleIntroPrev() {
-    if (engine?.activeSession) {
-      engine.activeSession.validateAction({
-        type: "tap_item",
-        data: { intent: "prev" },
-      });
+    if (holdTimer !== null) {
+      clearInterval(holdTimer);
     }
-  }
 
-  async function preloadAssets(
-    assets: Array<{ ref: string; kind: string; url?: string; glyph?: string }>
-  ) {
-    const promises: Promise<void>[] = [];
-    for (const asset of assets) {
-      if (asset.kind === "image" && asset.url) {
-        const srcUrl = asset.url;
-        promises.push(
-          new Promise<void>((resolve) => {
-            const img = new Image();
-            img.onload = () => resolve();
-            img.onerror = () => resolve();
-            img.src = srcUrl;
-          })
-        );
-      } else if (asset.kind === "audio" && asset.url) {
-        const srcUrl = asset.url;
-        promises.push(
-          new Promise<void>((resolve) => {
-            const aud = new Audio();
-            aud.oncanplaythrough = () => resolve();
-            aud.onerror = () => resolve();
-            aud.src = srcUrl;
-          })
-        );
+    holdTimer = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(100, Math.round((elapsed / duration) * 100));
+      parentLockHoldProgress.value = progress;
+
+      if (progress >= 100) {
+        if (holdTimer !== null) {
+          clearInterval(holdTimer);
+          holdTimer = null;
+        }
+        parentLockHoldProgress.value = 0;
+        showParentGate.value = true;
       }
+    }, 40);
+  }
+
+  function cancelParentLockHold(): void {
+    if (holdTimer !== null) {
+      clearInterval(holdTimer);
+      holdTimer = null;
     }
-    await Promise.all(promises);
+    parentLockHoldProgress.value = 0;
   }
 
-  function playSessionApiBase(): string {
-    return loggedIn.value ? "/api/users" : "/api/guest";
-  }
-
-  /**
-   * Đẩy chuỗi event của cả phiên lên server.
-   *
-   * Tới 2026-08-31 `apps/web/app` **không tham chiếu `play-sessions` một lần
-   * nào** — bốn endpoint `events` và `complete` tồn tại và không ai gọi. Hệ quả:
-   * server mở một hàng `play_sessions` mỗi lần trẻ vào chơi rồi bỏ đó
-   * `in_progress` mãi, và toàn bộ đường điểm ở `scoring.ts` là mã không ai chạm.
-   *
-   * `seq` đánh từ 1 và tăng dần: `validateSequenceNumbers` chặn `seq < 1` và
-   * chặn lùi xuống dưới `currentMaxSeq`, còn seq trùng thì bị skip — nên gửi lại
-   * cùng một chuỗi là idempotent.
-   */
-  async function uploadTelemetry(sessionUuid: string): Promise<void> {
-    if (!roundRunner) {
+  function handleParentVerified(): void {
+    showParentGate.value = false;
+    const returnTo = route.query.return_to || route.query.return_level_code;
+    if (typeof returnTo === "string" && returnTo) {
+      router.push(`/play/${returnTo}`);
       return;
     }
-    const events = roundRunner.getAllTelemetry().map((e, index) => ({
-      seq: index + 1,
-      event_name: e.event_name,
-      occurred_at_ms: e.timestamp_ms,
-      payload: e.data,
-    }));
-
-    for (let from = 0; from < events.length; from += MAX_EVENTS_PER_REQUEST) {
-      const chunk = events.slice(from, from + MAX_EVENTS_PER_REQUEST);
-      const res = await fetch(
-        `${playSessionApiBase()}/play-sessions/${sessionUuid}/events`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ events: chunk }),
-        }
-      );
-      if (!res.ok) {
-        throw new Error(
-          `Gửi chuỗi sự kiện thất bại: ${res.status} ${res.statusText}`
-        );
-      }
-    }
+    router.push("/games");
   }
 
-  /**
-   * Đóng phiên và nhận sao.
-   *
-   * Sao đến từ server (`BR-SCO-01`), và client Cấm — NEVER gửi kết quả vòng lên
-   * (`BR-RSP-12`) — chỉ gửi chuỗi event, server tự dựng `rounds_total` và
-   * `rounds_correct` từ đó.
-   *
-   * Lỗi mạng Cấm — NEVER chặn phần ăn mừng của trẻ: `BR-RSP` đã chốt lập trường
-   * đó ở nhánh "mất mạng giữa set" — chạy hết set bình thường. Nhưng lỗi vẫn
-   * phải kêu ở console, Cấm — NEVER nuốt im lặng.
-   */
-  async function finishSession(): Promise<void> {
-    const sessionUuid = cachedPayload?.session?.uuid;
-    if (!sessionUuid) {
-      console.error(
-        "[play] payload config thiếu session.uuid — không đóng được phiên"
-      );
-      showVictoryModal.value = true;
-      return;
-    }
-
-    try {
-      await uploadTelemetry(sessionUuid);
-      const res = await fetch(
-        `${playSessionApiBase()}/play-sessions/${sessionUuid}/complete`,
-        {
-          method: "POST",
-          credentials: "include",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({}),
-        }
-      );
-      if (!res.ok) {
-        throw new Error(`Đóng phiên thất bại: ${res.status} ${res.statusText}`);
-      }
-      const result = (await res.json()) as { stars?: number | null };
-      earnedStars.value = result.stars ?? null;
-    } catch (err) {
-      console.error("[play] không đóng được phiên chơi:", err);
-    } finally {
-      showVictoryModal.value = true;
-    }
-  }
-
-  let activeNarrationAudio: HTMLAudioElement | null = null;
-
-  function stopNarrationAudio() {
+  function stopNarrationAudio(): void {
     if (activeNarrationAudio) {
       try {
         activeNarrationAudio.pause();
@@ -511,7 +414,7 @@
     }
   }
 
-  function playInstructionNarration(promptText?: string) {
+  function playInstructionNarration(promptText?: string): void {
     stopNarrationAudio();
     if (currentInstructionAudio) {
       try {
@@ -524,20 +427,28 @@
         };
         aud.play().catch(() => {
           if (promptText && engine) {
-            engine.audio.speakPrompt(promptText);
+            engine.audio.speakPrompt(
+              promptText,
+              undefined,
+              triggerVisualFallbackCue
+            );
           }
         });
       } catch {
         if (promptText && engine) {
-          engine.audio.speakPrompt(promptText);
+          engine.audio.speakPrompt(
+            promptText,
+            undefined,
+            triggerVisualFallbackCue
+          );
         }
       }
     } else if (promptText && engine) {
-      engine.audio.speakPrompt(promptText);
+      engine.audio.speakPrompt(promptText, undefined, triggerVisualFallbackCue);
     }
   }
 
-  function replayInstructionAudio() {
+  function replayInstructionAudio(): void {
     engine?.audio.playTapSound();
     const currentRoundCfg = roundRunner?.getCurrentRoundConfig();
     const prompt =
@@ -547,7 +458,61 @@
     playInstructionNarration(prompt);
   }
 
-  function handleContinueNext() {
+  function speakErrorPrompt(): void {
+    if (engine) {
+      engine.audio.speakPrompt(
+        "Bé ơi, chưa tải được trò chơi. Bé bấm nút màu vàng để thử lại nhé!"
+      );
+    }
+  }
+
+  function handleSkipRound(): void {
+    canSkipRound.value = false;
+    engine?.audio.playTapSound();
+    engine?.scaffolding?.reset();
+    roundRunner?.skipCurrentRound("scaffold_exhausted");
+  }
+
+  function handleEchoReplay(): void {
+    if (engine?.activeSession) {
+      engine.activeSession.validateAction({
+        type: "tap_item",
+        data: { intent: "replay" },
+      });
+    }
+  }
+
+  function handleEchoDone(): void {
+    if (engine?.activeSession) {
+      engine.activeSession.validateAction({
+        type: "tap_item",
+        data: { intent: "advance" },
+      });
+    }
+  }
+
+  function handleIntroPrev(): void {
+    if (engine?.activeSession) {
+      engine.activeSession.validateAction({
+        type: "tap_item",
+        data: { intent: "prev" },
+      });
+    }
+  }
+
+  function handleRoundWonInternal(): void {
+    if (!roundRunner) {
+      return;
+    }
+    const sessionUuid = cachedPayload?.session?.uuid;
+    if (sessionUuid) {
+      uploadTelemetry(sessionUuid, roundRunner, loggedIn.value).catch(() => {
+        // Telemetry errors should not block completion
+      });
+    }
+  }
+
+  function handleContinueNext(): void {
     showVictoryModal.value = false;
     const returnTo = route.query.return_to || route.query.return_level_code;
     if (typeof returnTo === "string" && returnTo) {
@@ -557,946 +522,112 @@
     router.push("/games");
   }
 
-  function handleReplayGame() {
+  function handleReplayGame(): void {
     showVictoryModal.value = false;
-    if (cachedPayload) {
-      const rounds = cachedPayload.rounds ?? [];
-      if (rounds.length === 0) {
-        return;
+    fetchAndStartGame().catch(
+      (err: Error | Record<string, string | number>) => {
+        const appErr = handleApiError(err, levelCode, loggedIn.value);
+        errorMessage.value = appErr.message;
       }
-      startRounds(
-        cachedPayload,
-        rounds,
-        buildEngineConfig(cachedPayload, rounds[0])
-      );
-    }
-  }
-
-  function handleParentVerified() {
-    showParentGate.value = false;
-    router.push("/games");
-  }
-
-  /**
-   * Đổi điểm chạm sang toạ độ logic bằng chính hình học mà engine đang vẽ.
-   */
-  function getLogicCoordinates(
-    canvas: HTMLCanvasElement,
-    clientX: number,
-    clientY: number
-  ): { x: number; y: number } {
-    const rect = canvas.getBoundingClientRect();
-    const boxX = clientX - rect.left;
-    const boxY = clientY - rect.top;
-    if (engine) {
-      return engine.renderSystem.toLogicPoint(boxX, boxY);
-    }
-    return { x: boxX, y: boxY };
-  }
-
-  function findHitSlot(slots: readonly Slot[], x: number, y: number): number {
-    for (let i = 0; i < slots.length; i++) {
-      const s = slots[i];
-      if (!s) {
-        continue;
-      }
-      const hw = (s.hitW || s.w || 80) / 2;
-      const hh = (s.hitH || s.h || 80) / 2;
-      if (Math.abs(x - s.x) <= hw && Math.abs(y - s.y) <= hh) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  interface DragItemInfo {
-    item_id: string;
-    slotIndex: number;
-    asset?: ItemAsset;
-    label?: string;
-    text?: string;
-  }
-
-  interface ReturningItem {
-    item: DragItemInfo;
-    startX: number;
-    startY: number;
-    targetX: number;
-    targetY: number;
-    startTime: number;
-    duration: number;
-  }
-
-  let activePointerId: number | null = null;
-  let pointerDownTime = 0;
-  let pointerDownX = 0;
-  let pointerDownY = 0;
-  let isDragging = false;
-  let isMoved = false;
-  let pendingDragItem: DragItemInfo | null = null;
-  let draggedItem: DragItemInfo | null = null;
-  let returningItem: ReturningItem | null = null;
-  let currentDragPos = { x: 0, y: 0 };
-  let selectedSourceIndex: number | null = null;
-  let hoveredTargetIndex: number | null = null;
-  let isSettlingRound = false;
-
-  function getSourceSlotIndex(
-    slots: readonly Slot[],
-    hitIdx: number,
-    session?: GameSession
-  ): number {
-    const slot = slots[hitIdx];
-    const sourceSlots =
-      session &&
-      "sourceSlots" in session &&
-      Array.isArray((session as { sourceSlots: readonly Slot[] }).sourceSlots)
-        ? (session as { sourceSlots: readonly Slot[] }).sourceSlots
-        : slots.filter((s) => s.role === "source");
-    if (sourceSlots.length > 0 && slot?.role === "source") {
-      const idx = sourceSlots.indexOf(slot);
-      if (idx >= 0) {
-        return idx;
-      }
-    }
-    return hitIdx;
-  }
-
-  function getItemFromCollection(
-    session: GameSession & InteractiveSession,
-    itemIndex: number
-  ): InteractiveSessionItem | undefined {
-    const directItem =
-      session.displayLeft?.[itemIndex] || session.displayItems?.[itemIndex];
-    if (directItem) {
-      return directItem;
-    }
-
-    const opt =
-      session.displayOptions?.[itemIndex] ||
-      session.content?.options?.[itemIndex];
-    if (opt) {
-      return {
-        item_id: opt.item_id ?? `opt-${itemIndex}`,
-        asset: opt.asset,
-        label: opt.label,
-        text:
-          opt.text ?? (opt.asset?.kind === "text" ? opt.asset.text : undefined),
-      };
-    }
-    const item = session.content?.items?.[itemIndex];
-    if (item) {
-      return {
-        ...item,
-        text:
-          item.text ??
-          (item.asset?.kind === "text" ? item.asset.text : undefined),
-      };
-    }
-    return undefined;
-  }
-
-  function getItemForSlot(
-    session: GameSession & InteractiveSession,
-    hitIdx: number,
-    slots: readonly Slot[]
-  ): InteractiveSessionItem | undefined {
-    const itemIndex = getSourceSlotIndex(slots, hitIdx, session);
-    return getItemFromCollection(session, itemIndex);
-  }
-
-  function isSourceSlot(
-    session: GameSession & InteractiveSession,
-    hitIdx: number,
-    slots: readonly Slot[]
-  ): boolean {
-    const slot = slots[hitIdx];
-    if (slot?.role === "source") {
-      return true;
-    }
-    if (slot?.role === "target") {
-      return false;
-    }
-    if (
-      slots.length > 1 &&
-      hitIdx === slots.length - 1 &&
-      typeof session.onItemDropped === "function"
-    ) {
-      return false;
-    }
-    const hasExplicitTarget = slots.some((s) => s.role === "target");
-    if (hasExplicitTarget) {
-      return false;
-    }
-    const itemCount =
-      session.displayItems?.length ||
-      session.displayOptions?.length ||
-      session.displayLeft?.length ||
-      session.content?.items?.length ||
-      session.content?.options?.length ||
-      0;
-    return hitIdx < itemCount;
-  }
-
-  function isItemLocked(
-    session: GameSession & InteractiveSession,
-    itemId: string
-  ): boolean {
-    const placements = session.getPlacements?.();
-    if (placements?.has(itemId)) {
-      return true;
-    }
-    if (session.placedSlots) {
-      for (const [key, val] of session.placedSlots.entries()) {
-        if (key === itemId || val === itemId) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  function isTargetSlot(
-    session: GameSession & InteractiveSession,
-    slots: readonly Slot[],
-    idx: number
-  ): boolean {
-    const slot = slots[idx];
-    if (!slot) {
-      return false;
-    }
-    if (slot.role === "target") {
-      return true;
-    }
-    if (
-      slots.length > 1 &&
-      idx === slots.length - 1 &&
-      typeof session.onItemDropped === "function"
-    ) {
-      return true;
-    }
-    const leftCount = session.displayLeft?.length || 0;
-    return Boolean(session.displayRight && idx >= leftCount);
-  }
-
-  function findNearestTargetSlot(
-    session: GameSession & InteractiveSession,
-    slots: readonly Slot[],
-    x: number,
-    y: number
-  ): number | null {
-    let bestIdx: number | null = null;
-    let bestDist = Number.POSITIVE_INFINITY;
-
-    for (let i = 0; i < slots.length; i++) {
-      const slot = slots[i];
-      if (!(slot && isTargetSlot(session, slots, i))) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW || slot.w || 80, 240) / 2 + 24;
-      const halfH = Math.max(slot.hitH || slot.h || 80, 120) / 2 + 24;
-
-      if (Math.abs(x - slot.x) <= halfW && Math.abs(y - slot.y) <= halfH) {
-        const dist = Math.hypot(x - slot.x, y - slot.y);
-        if (dist < bestDist) {
-          bestDist = dist;
-          bestIdx = i;
-        }
-      }
-    }
-    return bestIdx;
-  }
-
-  function handlePlacementByContainer(
-    session: GameSession & InteractiveSession,
-    dragged: DragItemInfo
-  ): boolean {
-    if (typeof session.onItemDropped !== "function") {
-      return false;
-    }
-    const containerId =
-      session.getContainerId?.() ||
-      session.content?.container?.container_id ||
-      "coop";
-    session.onItemDropped(dragged.item_id, containerId);
-    return true;
-  }
-
-  function tryDispatchSyntheticDrop(
-    session: GameSession & InteractiveSession,
-    sourceSlot?: Slot,
-    targetSlot?: Slot
-  ): boolean {
-    if (!(sourceSlot && targetSlot && typeof session.dispatch === "function")) {
-      return false;
-    }
-    const gesture: Gesture = {
-      type: "drop",
-      fromX: sourceSlot.x,
-      fromY: sourceSlot.y,
-      toX: targetSlot.x,
-      toY: targetSlot.y,
-      timeMs: performance.now(),
-    };
-    const res = session.dispatch(gesture);
-    if (res?.valid) {
-      engine?.audio.playSnapSound();
-      engine?.audio.playPopCelebrateSound();
-      return true;
-    }
-    if (res && !res.valid && res.feedback !== "none") {
-      engine?.audio.playSoftFeedbackSound();
-      return true;
-    }
-    return false;
-  }
-
-  function tryDispatchItemPlacement(
-    session: GameSession & InteractiveSession,
-    dragged: DragItemInfo,
-    targetSlot?: Slot,
-    targetIdx?: number
-  ): boolean {
-    if (
-      typeof session.onItemPlaced !== "function" ||
-      !targetSlot ||
-      targetIdx === undefined
-    ) {
-      return false;
-    }
-    const slotDef =
-      session.content?.slots?.[targetIdx] || session.slots?.[targetIdx];
-    const slotId =
-      slotDef && "slot_id" in slotDef
-        ? (slotDef as { slot_id: string }).slot_id
-        : `slot-${targetIdx}`;
-    session.onItemPlaced(dragged.item_id, slotId);
-    engine?.audio.playSnapSound();
-    engine?.audio.playPopCelebrateSound();
-    return true;
-  }
-
-  function tryDispatchPairConnect(
-    session: GameSession & InteractiveSession,
-    dragged: DragItemInfo,
-    targetSlot?: Slot,
-    targetIdx?: number
-  ): boolean {
-    if (
-      typeof session.connectPair !== "function" ||
-      !targetSlot ||
-      targetIdx === undefined
-    ) {
-      return false;
-    }
-    const targetItem = getItemFromCollection(session, targetIdx);
-    if (!targetItem) {
-      return false;
-    }
-    session.connectPair(dragged.item_id, targetItem.item_id);
-    engine?.audio.playSnapSound();
-    engine?.audio.playPopCelebrateSound();
-    return true;
-  }
-
-  function handleDropPlacement(
-    session: GameSession & InteractiveSession,
-    slots: readonly Slot[],
-    dragged: DragItemInfo,
-    targetIdx: number
-  ): void {
-    if (handlePlacementByContainer(session, dragged)) {
-      engine?.audio.playSnapSound();
-      engine?.audio.playPopCelebrateSound();
-      return;
-    }
-
-    const sourceSlot = slots[dragged.slotIndex];
-    const targetSlot = slots[targetIdx];
-
-    if (tryDispatchSyntheticDrop(session, sourceSlot, targetSlot)) {
-      return;
-    }
-
-    if (tryDispatchItemPlacement(session, dragged, targetSlot, targetIdx)) {
-      return;
-    }
-
-    if (tryDispatchPairConnect(session, dragged, targetSlot, targetIdx)) {
-      return;
-    }
-
-    if (typeof session.onItemLocked === "function") {
-      session.onItemLocked(dragged.item_id);
-      engine?.audio.playTapSound();
-    }
-  }
-
-  function tryOtherAction(
-    session: GameSession & InteractiveSession,
-    hitIdx: number
-  ): void {
-    if (typeof session.flipCard === "function") {
-      session.flipCard(hitIdx);
-    } else if (typeof session.tapObject === "function") {
-      const objs = session.content?.objects;
-      const obj = objs?.[hitIdx];
-      if (obj?.object_id) {
-        session.tapObject(obj.object_id);
-      }
-    }
-  }
-
-  function dispatchSlotAction(
-    session: GameSession & InteractiveSession,
-    hitIdx: number
-  ): void {
-    tryOtherAction(session, hitIdx);
-  }
-
-  function settleRoundIfWon(): void {
-    if (isSettlingRound || !roundRunner?.isCurrentRoundWon()) {
-      return;
-    }
-    isSettlingRound = true;
-
-    const state = roundRunner.getState();
-    const isFinalRound = state.currentRoundIndex >= state.roundsTotal - 1;
-
-    if (isFinalRound) {
-      engine?.audio.playLevelCelebrateSound();
-    } else {
-      engine?.audio.playPopCelebrateSound();
-    }
-
-    setTimeout(
-      () => {
-        isSettlingRound = false;
-        if (roundRunner) {
-          roundRunner.completeCurrentRound();
-        }
-      },
-      isFinalRound ? 1100 : 850
     );
   }
 
-  function handlePlacementTap(
-    session: GameSession & InteractiveSession,
-    slots: readonly Slot[],
-    hitIdx: number
-  ): void {
-    const isSource = isSourceSlot(session, hitIdx, slots);
-    if (isSource) {
-      const item = getItemForSlot(session, hitIdx, slots);
-      if (!item || isItemLocked(session, item.item_id)) {
-        return;
+  async function completeSessionOnFinish(): Promise<void> {
+    const sessionUuid = cachedPayload?.session?.uuid;
+    if (sessionUuid && roundRunner) {
+      try {
+        await uploadTelemetry(sessionUuid, roundRunner, loggedIn.value);
+      } catch {
+        // Continue to finish
       }
-      if (selectedSourceIndex === hitIdx) {
-        selectedSourceIndex = null;
-        session.stageItem?.(null);
-      } else {
-        selectedSourceIndex = hitIdx;
-        session.stageItem?.(item.item_id);
-        engine?.audio.playTapSound();
+
+      const resp = await finishSession(
+        sessionUuid,
+        roundRunner,
+        loggedIn.value
+      );
+      if (resp) {
+        earnedCelebration.value = resp.celebration ?? "good";
+        earnedStars.value = typeof resp.stars === "number" ? resp.stars : null;
       }
-    } else if (selectedSourceIndex !== null) {
-      const dragged = getItemForSlot(session, selectedSourceIndex, slots);
-      if (dragged) {
-        handleDropPlacement(
-          session,
-          slots,
-          { item_id: dragged.item_id, slotIndex: selectedSourceIndex },
-          hitIdx
+    }
+    showVictoryModal.value = true;
+  }
+
+  async function preloadAssets(
+    assets: Array<{ ref: string; kind: string; url?: string; glyph?: string }>
+  ): Promise<void> {
+    const promises: Promise<void>[] = [];
+    for (const asset of assets) {
+      if (asset.kind === "image" && asset.url) {
+        const srcUrl = asset.url;
+        promises.push(
+          new Promise<void>((resolve) => {
+            const img = new Image();
+            const timer = setTimeout(() => resolve(), 3000);
+            img.onload = () => {
+              clearTimeout(timer);
+              resolve();
+            };
+            img.onerror = () => {
+              clearTimeout(timer);
+              resolve();
+            };
+            img.src = srcUrl;
+          })
         );
-      }
-      selectedSourceIndex = null;
-      session.stageItem?.(null);
-    }
-  }
-
-  function tryDispatchLifecycleTap(
-    session: GameSession & InteractiveSession,
-    x: number,
-    y: number
-  ): boolean {
-    const templateCode = cachedPayload?.template_code;
-    const inputConfig = templateCode
-      ? getTemplateInput(templateCode)
-      : undefined;
-    if (!inputConfig) {
-      return false;
-    }
-    const lifecycleFamily =
-      LIFECYCLE[inputConfig.family as keyof typeof LIFECYCLE];
-    if (!lifecycleFamily) {
-      return false;
-    }
-    const gesture = lifecycleFamily.toGesture(x, y, performance.now());
-    const res = session.dispatch?.(gesture);
-    if (res?.valid) {
-      if (
-        res.feedback === "pop_celebrate" ||
-        res.feedback === "level_celebrate"
-      ) {
-        engine?.audio.playSnapSound();
-        engine?.audio.playPopCelebrateSound();
-      } else {
-        engine?.audio.playTapSound();
-      }
-    } else if (res && !res.valid && res.feedback !== "none") {
-      engine?.audio.playSoftFeedbackSound();
-    }
-    return true;
-  }
-
-  function handleTapInteraction(
-    session: GameSession & InteractiveSession,
-    slots: readonly Slot[],
-    hitIdx: number,
-    x: number,
-    y: number
-  ): void {
-    if (tryDispatchLifecycleTap(session, x, y)) {
-      return;
-    }
-
-    if (hitIdx < 0) {
-      selectedSourceIndex = null;
-      session.stageItem?.(null);
-      return;
-    }
-
-    if (
-      typeof session.onItemDropped === "function" ||
-      typeof session.onItemPlaced === "function" ||
-      isDragSupported(session)
-    ) {
-      handlePlacementTap(session, slots, hitIdx);
-      return;
-    }
-
-    dispatchSlotAction(session, hitIdx);
-  }
-
-  function isDragSupported(
-    session?: GameSession & InteractiveSession
-  ): boolean {
-    const templateCode = cachedPayload?.template_code;
-    if (templateCode) {
-      const inputConfig = getTemplateInput(templateCode);
-      if (inputConfig) {
-        return (
-          inputConfig.family === "drag" ||
-          inputConfig.verbs.includes("drag") ||
-          inputConfig.verbs.includes("drop")
+      } else if (asset.kind === "audio" && asset.url) {
+        const srcUrl = asset.url;
+        promises.push(
+          new Promise<void>((resolve) => {
+            const aud = new Audio();
+            const timer = setTimeout(() => resolve(), 3000);
+            aud.oncanplaythrough = () => {
+              clearTimeout(timer);
+              resolve();
+            };
+            aud.onerror = () => {
+              clearTimeout(timer);
+              resolve();
+            };
+            aud.src = srcUrl;
+          })
         );
       }
     }
-    return typeof session?.onItemDropped === "function";
-  }
 
-  function tryInitPendingDrag(
-    session: GameSession & InteractiveSession,
-    slots: readonly Slot[],
-    x: number,
-    y: number
-  ): DragItemInfo | null {
-    const hitIdx = findHitSlot(slots, x, y);
-    if (hitIdx < 0 || !isSourceSlot(session, hitIdx, slots)) {
-      return null;
-    }
-    const item = getItemForSlot(session, hitIdx, slots);
-    if (!item || isItemLocked(session, item.item_id)) {
-      return null;
-    }
-    return {
-      item_id: item.item_id,
-      slotIndex: hitIdx,
-      asset: item.asset,
-      label: item.label,
-      text:
-        item.text ??
-        (item.asset?.kind === "text" ? item.asset.text : undefined),
-    };
-  }
-
-  function handlePointerDown(event: PointerEvent): void {
-    if (!(engine?.activeSession && canvasRef.value)) {
-      return;
-    }
-    const session = engine.activeSession as GameSession & InteractiveSession;
-    const { x, y } = getLogicCoordinates(
-      canvasRef.value,
-      event.clientX,
-      event.clientY
-    );
-    activePointerId = event.pointerId;
-    pointerDownTime = performance.now();
-    pointerDownX = x;
-    pointerDownY = y;
-    currentDragPos = { x, y };
-    isMoved = false;
-    isDragging = false;
-    draggedItem = null;
-    pendingDragItem = null;
-
-    try {
-      canvasRef.value.setPointerCapture(event.pointerId);
-    } catch {
-      /* ignore pointer capture error on devices without capture support */
-    }
-
-    if (!isDragSupported(session)) {
-      return;
-    }
-
-    const slots = session.slots || engine.slots || [];
-    pendingDragItem = tryInitPendingDrag(session, slots, x, y);
-  }
-
-  function handlePointerMove(event: PointerEvent): void {
-    if (
-      activePointerId !== event.pointerId ||
-      !canvasRef.value ||
-      !engine?.activeSession
-    ) {
-      return;
-    }
-    const session = engine.activeSession as GameSession & InteractiveSession;
-    const { x, y } = getLogicCoordinates(
-      canvasRef.value,
-      event.clientX,
-      event.clientY
-    );
-    currentDragPos = { x, y };
-
-    const dragDist = Math.hypot(x - pointerDownX, y - pointerDownY);
-    if (!isMoved && dragDist > 8) {
-      isMoved = true;
-    }
-
-    if (
-      !isDragging &&
-      pendingDragItem &&
-      isDragSupported(session) &&
-      dragDist > 10
-    ) {
-      isDragging = true;
-      draggedItem = pendingDragItem;
-      engine?.audio.playTapSound();
-      session.stageItem?.(draggedItem.item_id);
-    }
-
-    if (isDragging && draggedItem) {
-      const slots = session.slots || engine.slots || [];
-      hoveredTargetIndex = findNearestTargetSlot(session, slots, x, y);
-      if (session.hoveredContainer !== undefined) {
-        session.hoveredContainer = hoveredTargetIndex !== null;
-      }
-    }
-  }
-
-  function tryDispatchDrop(
-    session: GameSession & InteractiveSession,
-    slots: readonly Slot[],
-    dragged: DragItemInfo,
-    x: number,
-    y: number
-  ): boolean {
-    const templateCode = cachedPayload?.template_code;
-    const inputConfig = templateCode
-      ? getTemplateInput(templateCode)
-      : undefined;
-    if (!inputConfig) {
-      return false;
-    }
-    const lifecycleFamily =
-      LIFECYCLE[inputConfig.family as keyof typeof LIFECYCLE];
-    if (!(lifecycleFamily && "toDropGesture" in lifecycleFamily)) {
-      return false;
-    }
-
-    const originSlot = slots[dragged.slotIndex];
-    const fromX = originSlot?.x ?? pointerDownX;
-    const fromY = originSlot?.y ?? pointerDownY;
-    const gesture = lifecycleFamily.toDropGesture(
-      fromX,
-      fromY,
-      x,
-      y,
-      performance.now()
-    );
-    const result = session.dispatch?.(gesture);
-    if (result?.valid) {
-      engine?.audio.playSnapSound();
-      engine?.audio.playPopCelebrateSound();
-    } else {
-      engine?.audio.playSoftFeedbackSound();
-      if (originSlot) {
-        returningItem = {
-          item: dragged,
-          startX: x,
-          startY: y,
-          targetX: originSlot.x,
-          targetY: originSlot.y,
-          startTime: performance.now(),
-          duration: 240,
-        };
-        engine?.audio.playWhooshSound();
-      }
-    }
-    return true;
-  }
-
-  function handleDragDropRelease(
-    session: GameSession & InteractiveSession,
-    slots: readonly Slot[],
-    dragged: DragItemInfo,
-    x: number,
-    y: number
-  ): void {
-    if (tryDispatchDrop(session, slots, dragged, x, y)) {
-      session.stageItem?.(null);
-      return;
-    }
-
-    const targetIdx = findNearestTargetSlot(session, slots, x, y);
-    if (targetIdx !== null) {
-      handleDropPlacement(session, slots, dragged, targetIdx);
-      session.stageItem?.(null);
-      return;
-    }
-    if (
-      typeof session.onItemLocked === "function" &&
-      Math.hypot(x - pointerDownX, y - pointerDownY) > 40
-    ) {
-      session.onItemLocked(dragged.item_id);
-      session.stageItem?.(null);
-      return;
-    }
-    session.stageItem?.(null);
-    engine?.audio.playSoftFeedbackSound();
-    const originSlot = slots[dragged.slotIndex];
-    if (originSlot) {
-      returningItem = {
-        item: dragged,
-        startX: x,
-        startY: y,
-        targetX: originSlot.x,
-        targetY: originSlot.y,
-        startTime: performance.now(),
-        duration: 240,
-      };
-      engine?.audio.playWhooshSound();
-    }
-  }
-
-  function handlePointerUp(event: PointerEvent): void {
-    if (
-      activePointerId !== event.pointerId ||
-      !canvasRef.value ||
-      !engine?.activeSession
-    ) {
-      return;
-    }
-    const session = engine.activeSession as GameSession & InteractiveSession;
-    const { x, y } = getLogicCoordinates(
-      canvasRef.value,
-      event.clientX,
-      event.clientY
+    const overallTimeout = new Promise<void>((resolve) =>
+      setTimeout(resolve, 5000)
     );
 
-    try {
-      canvasRef.value.releasePointerCapture(event.pointerId);
-    } catch {
-      /* ignore pointer capture release error */
-    }
-
-    const slots = session.slots || engine.slots || [];
-    const hitIdx = findHitSlot(slots, x, y);
-
-    if (isDragging && draggedItem) {
-      handleDragDropRelease(session, slots, draggedItem, x, y);
-    } else {
-      handleTapInteraction(session, slots, hitIdx, x, y);
-    }
-
-    isDragging = false;
-    draggedItem = null;
-    pendingDragItem = null;
-    activePointerId = null;
-    hoveredTargetIndex = null;
-    if (session.hoveredContainer !== undefined) {
-      session.hoveredContainer = false;
-    }
-    settleRoundIfWon();
+    await Promise.race([Promise.all(promises), overallTimeout]);
   }
 
-  function handlePointerCancel(event: PointerEvent): void {
-    if (activePointerId === event.pointerId) {
-      if (isDragging && draggedItem) {
-        const session = engine?.activeSession as
-          | (GameSession & InteractiveSession)
-          | undefined;
-        session?.stageItem?.(null);
-      }
-      isDragging = false;
-      draggedItem = null;
-      pendingDragItem = null;
-      activePointerId = null;
-      hoveredTargetIndex = null;
-    }
-  }
-
-  function renderDragAvatar(
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    item: DragItemInfo,
-    scale = 1.15
-  ): void {
-    const baseRadius = 48;
-    const radius = baseRadius * scale;
-
-    ctx.save();
-    // 1. Deep floating 3D drop shadow
-    ctx.save();
-    ctx.shadowColor = "rgba(130, 118, 96, 0.38)";
-    ctx.shadowBlur = 24;
-    ctx.shadowOffsetY = 14;
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // 2. 3D Bottom Slab
-    ctx.save();
-    ctx.fillStyle = "#d4c5ab";
-    ctx.beginPath();
-    ctx.arc(x, y + 4, radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-
-    // 3. Main Avatar Body
-    ctx.fillStyle = "#ffffff";
-    ctx.strokeStyle = "#ffbf00"; // Honey amber border
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.stroke();
-
-    // Specular highlight
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.arc(x, y - 6, radius * 0.7, -Math.PI * 0.75, -Math.PI * 0.25);
-    ctx.stroke();
-
-    // Content: Emoji, Text or Image
-    const emojiRef = item.asset?.kind === "emoji" ? item.asset.ref : undefined;
-    const textContent =
-      (item.asset?.kind === "text" ? item.asset.text : undefined) ||
-      item.text ||
-      item.label;
-
-    if (emojiRef) {
-      ctx.font = `${Math.round(52 * scale)}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(emojiRef, x, y);
-    } else if (textContent) {
-      ctx.font = `bold ${Math.round(28 * scale)}px "Fredoka", "Quicksand", sans-serif`;
-      ctx.fillStyle = "#1b1c1a";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(textContent, x, y);
-    }
-    ctx.restore();
-  }
-
-  function renderHoverAura(ctx: CanvasRenderingContext2D, nowMs: number): void {
-    if (!isDragging || hoveredTargetIndex === null) {
-      return;
-    }
-    const slots =
-      (engine?.activeSession as { slots?: readonly Slot[] })?.slots ||
-      engine?.slots ||
-      [];
-    const targetSlot = slots[hoveredTargetIndex];
-    if (targetSlot) {
-      const auraR = Math.max(targetSlot.w, targetSlot.h) / 2 + 16;
-      drawTargetHoverAura(
-        ctx,
-        targetSlot.x,
-        targetSlot.y,
-        auraR,
-        (nowMs % 1000) / 1000
-      );
-    }
-  }
-
-  function renderReturningAnimation(
+  function renderScaffoldingAura(
     ctx: CanvasRenderingContext2D,
     nowMs: number
   ): void {
-    if (!returningItem) {
-      return;
-    }
-    const progress = Math.min(
-      1,
-      (nowMs - returningItem.startTime) / returningItem.duration
-    );
-    const easeProgress = 1 - (1 - progress) ** 3;
-    const curX =
-      returningItem.startX +
-      (returningItem.targetX - returningItem.startX) * easeProgress;
-    const curY =
-      returningItem.startY +
-      (returningItem.targetY - returningItem.startY) * easeProgress;
-    ctx.save();
-    renderDragAvatar(
-      ctx,
-      curX,
-      curY,
-      returningItem.item,
-      1 + (1 - progress) * 0.15
-    );
-    ctx.restore();
-    if (progress >= 1) {
-      returningItem = null;
-    }
-  }
-
-  function renderActiveDrag(ctx: CanvasRenderingContext2D): void {
-    if (!(isDragging && draggedItem)) {
+    if (!engine || engine.focusIndex === null) {
       return;
     }
     const slots =
-      (engine?.activeSession as { slots?: readonly Slot[] })?.slots ||
-      engine?.slots ||
+      (engine.activeSession as { slots?: readonly Slot[] })?.slots ||
+      engine.slots ||
       [];
-    const originSlot = slots[draggedItem.slotIndex];
-    if (originSlot) {
+    const focusSlot = slots[engine.focusIndex];
+    if (focusSlot) {
+      const r = Math.max(focusSlot.w, focusSlot.h) / 2 + 18;
       ctx.save();
-      ctx.fillStyle = "rgba(255, 255, 255, 0.65)";
+      const pulse = 0.5 + 0.5 * Math.sin((nowMs / 1000) * Math.PI * 2);
+      ctx.strokeStyle = `rgba(245, 158, 11, ${0.4 + pulse * 0.4})`;
+      ctx.lineWidth = 4 + pulse * 2;
+      ctx.setLineDash([8, 6]);
+      ctx.lineDashOffset = -(nowMs / 50) % 14;
       ctx.beginPath();
-      const r = Math.max(originSlot.w, originSlot.h) / 2 + 4;
-      ctx.arc(originSlot.x, originSlot.y, r, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.arc(focusSlot.x, focusSlot.y, r, 0, Math.PI * 2);
+      ctx.stroke();
       ctx.restore();
     }
-
-    ctx.save();
-    renderDragAvatar(
-      ctx,
-      currentDragPos.x,
-      currentDragPos.y,
-      draggedItem,
-      1.15
-    );
-    ctx.restore();
   }
 
   function syncIntroStepState(): void {
@@ -1521,7 +652,7 @@
     payload: ConfigPayload,
     rounds: RoundPayload[],
     engineConfig: EngineConfig
-  ) {
+  ): void {
     totalRounds.value = rounds.length;
     currentRound.value = 0;
     earnedStars.value = null;
@@ -1548,6 +679,7 @@
       },
       onRoundStarted: (roundIndex) => {
         currentRound.value = roundIndex;
+        canSkipRound.value = false;
         currentInstructionAudio =
           rounds[roundIndex]?.instruction_audio_path || null;
         const session = roundRunner?.getCurrentSession();
@@ -1555,26 +687,27 @@
           engine.activeSession = session;
           engine.audio.playStartSound();
         }
+        syncView();
         const currentRoundCfg = rounds[roundIndex];
         const prompt =
           (currentRoundCfg?.content_pack as { prompt?: string })?.prompt ||
           currentRoundCfg?.instruction ||
           cachedPayload?.title;
-        // Tránh nói đè lên narration của chính bước GT-000
         if (cachedPayload?.template_code !== "GT-000") {
           setTimeout(() => {
             playInstructionNarration(prompt);
           }, 350);
         }
       },
-      onRoundCompleted: (_roundIndex, _wasSkipped) => {
+      onRoundCompleted: () => {
         engine?.scaffolding?.resetOnSuccess();
+        canSkipRound.value = false;
+        syncView();
       },
       onAllRoundsCompleted: () => {
         engine?.audio.playLevelCelebrateSound();
         setTimeout(() => {
-          finishSession().catch((err) => {
-            console.error("[play] finishSession thất bại:", err);
+          completeSessionOnFinish().catch(() => {
             showVictoryModal.value = true;
           });
         }, 500);
@@ -1596,178 +729,17 @@
         engine = null;
       }
       engine = new GameEngine();
+      engine.on("skip_suggested", () => {
+        canSkipRound.value = true;
+      });
       engine.onAfterRender = (ctx, _rs, nowMs) => {
-        renderHoverAura(ctx, nowMs);
-        renderActiveDrag(ctx);
-        renderReturningAnimation(ctx, nowMs);
+        renderScaffoldingAura(ctx, nowMs);
         syncIntroStepState();
       };
       engine.load(engineConfig, factory);
       engine.start(canvasRef.value);
+      syncView();
     }
-  }
-
-  interface IntroQueueItemDetails {
-    readonly intro_level_code: string;
-    readonly skill_code?: string;
-    readonly title?: string;
-    readonly thumbnail_emoji?: string;
-  }
-
-  interface ApiErrorDetails {
-    intro_level_code?: string;
-    intro_queue?: IntroQueueItemDetails[];
-    intro_remaining?: number;
-    return_level_code?: string;
-    primary_skill_code?: string;
-    [key: string]:
-      | string
-      | number
-      | boolean
-      | IntroQueueItemDetails[]
-      | undefined;
-  }
-
-  interface ApiErrorPayload {
-    code?: string;
-    statusMessage?: string;
-    message?: string;
-    details?: ApiErrorDetails;
-    data?: {
-      code?: string;
-      message?: string;
-      details?: ApiErrorDetails;
-    };
-  }
-
-  function handleConceptOrChildError(
-    statusMessage?: string,
-    details?: ApiErrorDetails
-  ): Error {
-    if (
-      statusMessage === "INTRO_REQUIRED" ||
-      details?.intro_level_code ||
-      details?.intro_queue
-    ) {
-      const queue = details?.intro_queue;
-      const introCode = String(
-        details?.intro_level_code ?? queue?.[0]?.intro_level_code ?? ""
-      );
-      errorTitle.value = "Làm quen khái niệm trước";
-      errorEmoji.value = "📖";
-      errorActionLink.value = introCode
-        ? `/play/${introCode}?return_to=${levelCode}`
-        : "/games";
-      errorActionText.value = introCode
-        ? "Bắt đầu bài làm quen"
-        : "Xem danh sách trò chơi";
-      return new Error(
-        "Bé hãy hoàn thành bài làm quen ngắn để hiểu khái niệm trước khi bước vào màn chơi nhé!"
-      );
-    }
-
-    // Guest / chưa đăng nhập bắt buộc đi qua luồng đăng nhập trước, không gửi sang /me/children
-    if (!loggedIn.value) {
-      errorTitle.value = "Yêu cầu đăng nhập";
-      errorEmoji.value = "🔒";
-      errorActionLink.value = `/login?redirect=/play/${levelCode}`;
-      errorActionText.value = "Đăng nhập để chơi";
-      return new Error(
-        "Trò chơi này yêu cầu đăng nhập tài khoản để bé có thể tham gia và lưu tiến độ."
-      );
-    }
-
-    errorTitle.value = "Chưa chọn hồ sơ bé";
-    errorEmoji.value = "👶";
-    errorActionLink.value = `/me/children?redirect=/play/${levelCode}`;
-    errorActionText.value = "Chọn hồ sơ bé";
-    return new Error(
-      "Vui lòng chọn hoặc tạo hồ sơ của bé trước khi bắt đầu bài học."
-    );
-  }
-
-  function handleTierLockedError(): Error {
-    if (!loggedIn.value) {
-      errorTitle.value = "Yêu cầu đăng nhập";
-      errorEmoji.value = "🔒";
-      errorActionLink.value = `/login?redirect=/play/${levelCode}`;
-      errorActionText.value = "Đăng nhập để chơi";
-      return new Error(
-        "Trò chơi này yêu cầu đăng nhập tài khoản để bé có thể tham gia và lưu tiến độ."
-      );
-    }
-
-    errorTitle.value = "Cần nâng cấp gói học";
-    errorEmoji.value = "⭐";
-    errorActionLink.value = "/pricing";
-    errorActionText.value = "Xem các gói học";
-    return new Error(
-      "Trò chơi này thuộc gói nâng cấp. Phụ huynh vui lòng mở khoá gói học để bé tiếp tục trải nghiệm."
-    );
-  }
-
-  function extractPlayErrorMessage(err: unknown): string {
-    if (isApiError(err)) {
-      return err.message;
-    }
-    if (err instanceof Error) {
-      return err.message;
-    }
-    return "Lỗi tải cấu hình trò chơi";
-  }
-
-  function handleApiError(err: unknown): Error {
-    errorActionLink.value = null;
-    errorActionText.value = "Thử lại";
-
-    if (isApiError(err, "CONTENT_ARCHIVED")) {
-      errorTitle.value = "Trò chơi đã ngừng phát hành";
-      errorEmoji.value = "📦";
-      errorActionLink.value = "/games";
-      errorActionText.value = "Xem danh sách trò chơi";
-      return new Error(
-        "Nội dung bài học này đã hoàn thành chu kỳ sử dụng hoặc được thay thế."
-      );
-    }
-
-    if (
-      isApiError(err, "TIER_LOCKED") ||
-      (isApiError(err) && err.statusCode === 403)
-    ) {
-      return handleTierLockedError();
-    }
-
-    if (
-      isApiError(err, "INTRO_REQUIRED") ||
-      isApiError(err, "NO_ACTIVE_CHILD") ||
-      (isApiError(err) && err.statusCode === 428)
-    ) {
-      const details = isApiError(err)
-        ? (err.details as ApiErrorDetails | undefined)
-        : undefined;
-      return handleConceptOrChildError(
-        isApiError(err) ? err.code : undefined,
-        details
-      );
-    }
-
-    if (
-      isApiError(err, "LEVEL_NOT_FOUND") ||
-      isApiError(err, "NOT_FOUND") ||
-      (isApiError(err) && err.statusCode === 404)
-    ) {
-      errorTitle.value = "Không tìm thấy trò chơi";
-      errorEmoji.value = "🔍";
-      errorActionLink.value = "/games";
-      errorActionText.value = "Xem danh sách trò chơi";
-      return new Error(
-        "Trò chơi không tồn tại hoặc chưa được phát hành công khai."
-      );
-    }
-
-    errorTitle.value = "Lỗi tải trò chơi";
-    errorEmoji.value = "⚠️";
-    return new Error(extractPlayErrorMessage(err));
   }
 
   function buildEngineConfig(
@@ -1789,7 +761,7 @@
     };
   }
 
-  async function fetchAndStartGame() {
+  async function fetchAndStartGame(): Promise<void> {
     if (!loggedIn.value) {
       await fetchSession().catch(() => {
         // session not established yet
@@ -1816,9 +788,6 @@
 
     const rounds = payload.rounds ?? [];
     if (rounds.length === 0) {
-      // Delivery bảo đảm set Cấm — NEVER rỗng (WP167.1). Rỗng ở đây nghĩa là
-      // payload không đúng hợp đồng, và im lặng dựng vòng ở client sẽ che đúng
-      // cái lỗi cần thấy.
       throw new Error(
         "Cấu hình trò chơi thiếu danh sách câu hỏi. Bé thử lại sau nhé!"
       );
@@ -1827,27 +796,69 @@
     startRounds(payload, rounds, buildEngineConfig(payload, rounds[0]));
   }
 
-  function handleResize() {
+  function handleResize(): void {
     if (engine && canvasRef.value) {
       engine.renderSystem.setupCanvas(canvasRef.value);
     }
   }
 
+  function handleVisibilityChange(): void {
+    if (!engine) {
+      return;
+    }
+    if (
+      typeof document !== "undefined" &&
+      document.visibilityState === "hidden"
+    ) {
+      engine.pause("tab_hidden");
+    } else if (!(showVictoryModal.value || showParentGate.value)) {
+      engine.resume();
+    }
+  }
+
+  watch([showVictoryModal, showParentGate], ([victoryOpen, gateOpen]) => {
+    if (!engine) {
+      return;
+    }
+    if (victoryOpen || gateOpen) {
+      engine.pause(victoryOpen ? "victory_modal" : "parent_gate");
+    } else if (
+      typeof document !== "undefined" &&
+      document.visibilityState === "visible"
+    ) {
+      engine.resume();
+    }
+  });
+
   onMounted(async () => {
     window.addEventListener("resize", handleResize);
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+    }
     try {
       isLoading.value = true;
       errorMessage.value = null;
       await fetchAndStartGame();
     } catch (err) {
       isLoading.value = false;
-      const appErr = handleApiError(err);
+      const appErr = handleApiError(
+        err as Error | Record<string, string | number>,
+        levelCode,
+        loggedIn.value
+      );
       errorMessage.value = appErr.message;
     }
   });
 
   onUnmounted(() => {
     window.removeEventListener("resize", handleResize);
+    if (typeof document !== "undefined") {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    }
+    cancelParentLockHold();
+    if (pulseTimer !== null) {
+      clearTimeout(pulseTimer);
+    }
     stopNarrationAudio();
     if (roundRunner) {
       roundRunner.destroy();
@@ -1868,117 +879,72 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #fbf9f5;
+    background-color: var(--color-surface-50);
     position: relative;
     overflow: hidden;
     user-select: none;
     transition: background 0.5s ease;
   }
 
-  /* 14 THEME AMBIENT GRADIENTS */
+  /* THEME GRADIENTS */
   .game-play-container.theme-nature {
-    background: linear-gradient(145deg, #eef7ee 0%, #f4faf4 50%, #e5f2e5 100%);
-    --ambient-1: #c8e6c9;
-    --ambient-2: #dcedc8;
-    --ambient-3: #ffffff;
+    background: linear-gradient(
+      145deg,
+      rgba(238, 247, 238, 0.95),
+      rgba(229, 242, 229, 0.95)
+    );
+    --ambient-1: rgba(200, 230, 201, 0.5);
+    --ambient-2: rgba(220, 237, 200, 0.5);
   }
 
   .game-play-container.theme-farm {
-    background: linear-gradient(145deg, #fdf8eb 0%, #fffcf2 50%, #f7eed7 100%);
-    --ambient-1: #ffe082;
-    --ambient-2: #c8e6c9;
-    --ambient-3: #ffffff;
+    background: linear-gradient(
+      145deg,
+      rgba(253, 248, 235, 0.95),
+      rgba(247, 238, 215, 0.95)
+    );
+    --ambient-1: rgba(255, 224, 130, 0.5);
+    --ambient-2: rgba(200, 230, 201, 0.5);
   }
 
   .game-play-container.theme-ocean {
-    background: linear-gradient(145deg, #e8f4f8 0%, #f0f9fb 50%, #d8ecf4 100%);
-    --ambient-1: #b3e5fc;
-    --ambient-2: #b2dfdb;
-    --ambient-3: #ffffff;
+    background: linear-gradient(
+      145deg,
+      rgba(232, 244, 248, 0.95),
+      rgba(216, 236, 244, 0.95)
+    );
+    --ambient-1: rgba(179, 229, 252, 0.5);
+    --ambient-2: rgba(178, 223, 219, 0.5);
   }
 
   .game-play-container.theme-space {
-    background: linear-gradient(145deg, #edeaf5 0%, #f5f2fb 50%, #e0daf0 100%);
-    --ambient-1: #d1c4e9;
-    --ambient-2: #c5cae9;
-    --ambient-3: #ffffff;
+    background: linear-gradient(
+      145deg,
+      rgba(237, 234, 245, 0.95),
+      rgba(224, 218, 240, 0.95)
+    );
+    --ambient-1: rgba(209, 196, 233, 0.5);
+    --ambient-2: rgba(197, 202, 233, 0.5);
   }
 
   .game-play-container.theme-school {
-    background: linear-gradient(145deg, #fdf6ec 0%, #fffcf5 50%, #f9edd7 100%);
-    --ambient-1: #ffe0b2;
-    --ambient-2: #ffecb3;
-    --ambient-3: #ffffff;
-  }
-
-  .game-play-container.theme-home {
-    background: linear-gradient(145deg, #faf4ec 0%, #fffdfa 50%, #f2e7d8 100%);
-    --ambient-1: #ffccbc;
-    --ambient-2: #ffe0b2;
-    --ambient-3: #ffffff;
-  }
-
-  .game-play-container.theme-animal {
-    background: linear-gradient(145deg, #fbf7ee 0%, #fffef8 50%, #f2ebda 100%);
-    --ambient-1: #ffe082;
-    --ambient-2: #d7ccc8;
-    --ambient-3: #ffffff;
-  }
-
-  .game-play-container.theme-food {
-    background: linear-gradient(145deg, #fdf2f0 0%, #fff8f6 50%, #fae2de 100%);
-    --ambient-1: #ffcdd2;
-    --ambient-2: #ffe0b2;
-    --ambient-3: #ffffff;
-  }
-
-  .game-play-container.theme-vehicle {
-    background: linear-gradient(145deg, #edf4f7 0%, #f4f9fb 50%, #dfecf2 100%);
-    --ambient-1: #b0bec5;
-    --ambient-2: #b3e5fc;
-    --ambient-3: #ffffff;
-  }
-
-  .game-play-container.theme-art {
-    background: linear-gradient(145deg, #fdf0f5 0%, #fff8fa 50%, #fae1ed 100%);
-    --ambient-1: #f8bbd0;
-    --ambient-2: #e1bee7;
-    --ambient-3: #ffffff;
-  }
-
-  .game-play-container.theme-family {
-    background: linear-gradient(145deg, #fcf4ee 0%, #fffaf6 50%, #fae6da 100%);
-    --ambient-1: #ffccbc;
-    --ambient-2: #ffe0b2;
-    --ambient-3: #ffffff;
-  }
-
-  .game-play-container.theme-body {
-    background: linear-gradient(145deg, #f5f6fa 0%, #fafbff 50%, #eaeef8 100%);
-    --ambient-1: #c5cae9;
-    --ambient-2: #bbdefb;
-    --ambient-3: #ffffff;
-  }
-
-  .game-play-container.theme-weather {
-    background: linear-gradient(145deg, #ebf5fb 0%, #f5faff 50%, #ddedf7 100%);
-    --ambient-1: #bbdefb;
-    --ambient-2: #e1f5fe;
-    --ambient-3: #ffffff;
-  }
-
-  .game-play-container.theme-festival {
-    background: linear-gradient(145deg, #fef4e8 0%, #fffaf2 50%, #fde7ce 100%);
-    --ambient-1: #ffe082;
-    --ambient-2: #ffccbc;
-    --ambient-3: #ffffff;
+    background: linear-gradient(
+      145deg,
+      rgba(253, 246, 236, 0.95),
+      rgba(249, 237, 215, 0.95)
+    );
+    --ambient-1: rgba(255, 224, 178, 0.5);
+    --ambient-2: rgba(255, 236, 179, 0.5);
   }
 
   .game-play-container.theme-default {
-    background: linear-gradient(145deg, #f7f5f0 0%, #fbf9f5 50%, #ede8de 100%);
-    --ambient-1: #e0d8cc;
-    --ambient-2: #eae4d8;
-    --ambient-3: #ffffff;
+    background: linear-gradient(
+      145deg,
+      rgba(247, 245, 240, 0.95),
+      rgba(237, 232, 222, 0.95)
+    );
+    --ambient-1: rgba(224, 216, 204, 0.5);
+    --ambient-2: rgba(234, 228, 216, 0.5);
   }
 
   /* AMBIENT SHAPES */
@@ -2014,91 +980,89 @@
     background: var(--ambient-2, rgba(200, 240, 220, 0.4));
   }
 
-  .shape-3 {
-    width: 320px;
-    height: 320px;
-    top: 40%;
-    left: 60%;
-    background: var(--ambient-3, rgba(255, 255, 255, 0.5));
-  }
-
   .game-viewport {
+    position: relative;
+    z-index: 10;
     width: 100%;
     height: 100%;
-    position: relative;
-    z-index: 5;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
   }
 
   /* TOP HUD BAR */
   .top-hud-bar {
-    position: relative;
-    z-index: 20;
     width: 100%;
     height: 5.5rem;
+    min-height: 5.5rem;
+    padding: 0.5rem 1.5rem;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 0.75rem 2rem 0 2rem;
+    justify-content: space-between;
+    gap: 1rem;
+    background-color: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    border-bottom: 3px solid var(--color-surface-200);
+  }
+
+  @media (max-width: 640px) {
+    .top-hud-bar {
+      height: auto;
+      min-height: 4.5rem;
+      padding: 0.5rem 0.75rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .lesson-meta-box {
+      display: none;
+    }
   }
 
   .lesson-info-pill {
     display: flex;
     align-items: center;
-    background-color: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
+    gap: 0.75rem;
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 3px solid var(--color-surface-200);
     border-radius: 9999px;
-    padding: 0.35rem 1.25rem 0.35rem 0.5rem;
-    border: 3px solid #e7dfcf;
-    box-shadow: 0 4px 12px rgba(80, 69, 50, 0.08);
+    padding: 0.35rem 1rem 0.35rem 0.45rem;
+    box-shadow: 0 4px 6px rgba(30, 27, 75, 0.05);
+    transition: all 0.2s ease;
   }
 
   .avatar-circle {
-    width: 3.25rem;
-    height: 3.25rem;
-    min-width: 3.25rem;
+    width: 3rem;
+    height: 3rem;
     border-radius: 50%;
-    background: linear-gradient(135deg, #fef08a 0%, #f59e0b 100%);
+    background-color: var(--color-brand-50);
+    border: 2px solid var(--color-brand-200);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 0.75rem;
-    border: 3px solid white;
-    box-shadow: 0 4px 8px rgba(245, 158, 11, 0.25);
   }
 
   .avatar-emoji {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   .lesson-meta-box {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    line-height: 1.2;
   }
 
   .theme-tag-text {
-    font-family: var(--font-heading, "Fredoka", sans-serif);
     font-size: 0.75rem;
     font-weight: 700;
-    color: #927546;
-    letter-spacing: 0.04em;
     text-transform: uppercase;
+    color: var(--color-surface-500);
   }
 
   .lesson-title-text {
-    font-family: var(--font-heading, "Fredoka", "Quicksand", sans-serif);
-    font-size: 1.15rem;
+    font-family: var(--font-heading, sans-serif);
+    font-size: 1.1rem;
     font-weight: 700;
-    color: #3b3223;
+    color: var(--color-surface-900);
   }
 
   .progress-container {
@@ -2109,67 +1073,84 @@
   .hud-actions {
     display: flex;
     align-items: center;
-    gap: 0.85rem;
+    gap: 0.75rem;
   }
 
-  /* 64px TOUCH ACTIONS */
-  .btn-audio-replay {
-    min-height: 4rem; /* 64px touch target */
-    padding: 0.75rem 1.5rem;
-    background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 100%);
-    color: #451a03;
-    font-family: var(--font-heading, "Fredoka", sans-serif);
-    font-size: 1.15rem;
+  .btn-audio-replay,
+  .btn-skip-round {
+    min-height: 4rem;
+    min-width: 4rem;
+    padding: 0.75rem 1.25rem;
+    font-family: var(--font-heading, sans-serif);
+    font-size: 1.1rem;
     font-weight: 700;
     border-radius: 9999px;
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
     cursor: pointer;
-    border: 3px solid #fef3c7;
-    box-shadow:
-      0 6px 0 #b45309,
-      0 10px 18px rgba(180, 83, 9, 0.25);
     transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
+  .btn-audio-replay {
+    background: linear-gradient(
+      180deg,
+      var(--color-warning-400),
+      var(--color-warning-500)
+    );
+    color: var(--color-surface-900);
+    border: 3px solid var(--color-warning-200);
+    box-shadow: 0 4px 0 var(--color-warning-600);
+  }
+
   .btn-audio-replay:active {
-    transform: translateY(4px);
-    box-shadow:
-      0 2px 0 #b45309,
-      0 4px 8px rgba(180, 83, 9, 0.2);
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--color-warning-600);
+  }
+
+  .btn-skip-round {
+    background: linear-gradient(
+      180deg,
+      var(--color-surface-100),
+      var(--color-surface-200)
+    );
+    color: var(--color-surface-800);
+    border: 3px solid var(--color-surface-300);
+    box-shadow: 0 4px 0 var(--color-surface-400);
+  }
+
+  .btn-skip-round:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--color-surface-400);
   }
 
   .btn-parent-lock {
-    width: 4rem; /* 64px */
-    height: 4rem; /* 64px */
+    width: 4rem;
+    height: 4rem;
     min-width: 4rem;
     min-height: 4rem;
     border-radius: 50%;
-    background: linear-gradient(180deg, #ffffff 0%, #f5f3ef 100%);
-    border: 3px solid #d4c5ab;
-    box-shadow:
-      0 6px 0 #baa88c,
-      0 10px 18px rgba(80, 69, 50, 0.12);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.95),
+      var(--color-surface-100)
+    );
+    border: 3px solid var(--color-surface-300);
+    box-shadow: 0 4px 0 var(--color-surface-400);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .btn-parent-lock:hover {
-    background: #faf8f5;
+    position: relative;
   }
 
   .btn-parent-lock:active {
-    transform: translateY(4px);
-    box-shadow:
-      0 2px 0 #baa88c,
-      0 4px 8px rgba(80, 69, 50, 0.1);
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 var(--color-surface-400);
   }
 
-  /* MAIN ARENA - MONTESSORI TRAY */
+  /* MAIN ARENA */
   .main-arena {
     position: relative;
     z-index: 10;
@@ -2178,7 +1159,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem 2rem 1.5rem 2rem;
+    padding: 0.5rem 1rem 1rem 1rem;
   }
 
   .wooden-tray-container {
@@ -2189,28 +1170,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 10px;
-    background: #e9dfcb;
-    border-radius: 2.5rem;
+    padding: 8px;
+    background: rgba(233, 223, 203, 0.9);
+    border-radius: 2rem;
     box-shadow:
       inset 0 4px 10px rgba(80, 60, 30, 0.18),
-      inset 0 -3px 6px rgba(255, 255, 255, 0.7),
-      0 12px 28px rgba(80, 69, 50, 0.12),
-      0 2px 4px rgba(80, 69, 50, 0.08);
-    border: 4px solid #f6eedf;
+      0 10px 24px rgba(80, 69, 50, 0.1);
+    border: 4px solid rgba(246, 238, 223, 0.95);
   }
 
   .game-canvas {
     width: 100%;
-    height: auto;
+    height: 100%;
+    max-width: 100%;
     max-height: calc(85vh - 20px);
-    aspect-ratio: 16 / 9;
     object-fit: contain;
     touch-action: none;
-    border-radius: 2rem;
-    box-shadow:
-      0 8px 24px rgba(70, 55, 35, 0.14),
-      0 2px 6px rgba(70, 55, 35, 0.08);
+    border-radius: 1.75rem;
+    box-shadow: 0 6px 18px rgba(70, 55, 35, 0.12);
   }
 
   /* Loading & Error States */
@@ -2225,7 +1202,8 @@
     z-index: 10;
   }
 
-  .loading-box {
+  .loading-box,
+  .error-card {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2233,56 +1211,32 @@
     background-color: white;
     padding: 2.5rem 2rem;
     border-radius: 1.5rem;
-    border: 3px solid #d4c5ab;
+    border: 3px solid var(--color-surface-300);
     box-shadow: 0 8px 16px rgba(130, 118, 96, 0.08);
-    text-align: center;
-  }
-
-  .loading-emoji {
-    font-size: 3.5rem;
-    line-height: 1;
-  }
-
-  .loading-text {
-    font-family: var(--font-heading, "Fredoka", sans-serif);
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #504532;
-    margin: 0;
-  }
-
-  .error-card {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: white;
-    padding: 2.5rem 2rem;
-    border-radius: 1.5rem;
-    border: 3px solid #d4c5ab;
-    box-shadow: 0 8px 0 #d4c5ab;
     text-align: center;
     width: 100%;
   }
 
+  .loading-emoji,
   .error-emoji {
     font-size: 3.5rem;
-    margin-bottom: 0.75rem;
     line-height: 1;
   }
 
+  .loading-text,
   .error-title {
-    font-family: var(--font-heading, "Fredoka", system-ui, sans-serif);
-    font-size: 1.5rem;
+    font-family: var(--font-heading, sans-serif);
+    font-size: 1.35rem;
     font-weight: 700;
-    color: #1b1c1a;
-    margin: 0 0 0.5rem 0;
+    color: var(--color-surface-900);
+    margin: 0;
   }
 
   .error-desc {
     font-size: 1rem;
     line-height: 1.5;
-    color: #504532;
-    margin: 0 0 1.75rem 0;
+    color: var(--color-surface-700);
+    margin: 0 0 1rem 0;
   }
 
   .error-actions {
@@ -2292,30 +1246,35 @@
     width: 100%;
   }
 
+  .btn-audio-speak,
   .btn-primary,
   .btn-secondary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 52px;
+    gap: 0.5rem;
+    min-height: 48px;
     padding: 0.75rem 1.5rem;
     border-radius: 1rem;
-    font-family: var(--font-heading, "Fredoka", sans-serif);
+    font-family: var(--font-heading, sans-serif);
     font-weight: 700;
     font-size: 1rem;
     text-decoration: none;
     transition: all 0.15s ease;
+    cursor: pointer;
+  }
+
+  .btn-audio-speak {
+    background-color: var(--color-brand-50);
+    color: var(--color-brand-700);
+    border: 2px solid var(--color-brand-200);
   }
 
   .btn-primary {
-    background-color: #f97316;
+    background-color: var(--color-cta);
     color: white;
     border: 2px solid transparent;
     box-shadow: 0 4px 0 rgba(0, 0, 0, 0.15);
-  }
-
-  .btn-primary:hover {
-    background-color: #ea580c;
   }
 
   .btn-primary:active {
@@ -2324,16 +1283,22 @@
   }
 
   .btn-secondary {
-    background-color: #f5f3ef;
-    color: #504532;
-    border: 2px solid #d4c5ab;
-  }
-
-  .btn-secondary:hover {
-    background-color: #eae8e4;
+    background-color: var(--color-surface-100);
+    color: var(--color-surface-800);
+    border: 2px solid var(--color-surface-300);
   }
 
   .btn-secondary:active {
     transform: translateY(2px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 </style>

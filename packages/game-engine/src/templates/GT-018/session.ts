@@ -245,6 +245,7 @@ export class GT018Session extends TemplateGameSession<
     return layoutFn({
       slotCount: this.content.options.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

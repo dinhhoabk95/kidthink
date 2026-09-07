@@ -1,5 +1,9 @@
 import type { AgeBand } from "./contracts/types.js";
-import type { GameSession, TelemetryEvent } from "./game-session.js";
+import {
+  type GameSession,
+  type TelemetryEvent,
+  TemplateGameSession,
+} from "./game-session.js";
 import {
   getGameTemplate,
   validateContentPack,
@@ -111,6 +115,8 @@ export class GameEngine {
   readonly interaction = new InteractionManager();
   readonly audio = new AudioController();
   scaffolding?: ScaffoldingSystem;
+  focusIndex: number | null = null;
+  skipSuggested = false;
   onAfterRender?: (
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -160,8 +166,17 @@ export class GameEngine {
 
     this.config = config;
     this.renderSystem.themeId = config.theme_id;
+    const effectiveReducedMotion =
+      Boolean(config.reduced_motion) ||
+      (typeof window !== "undefined" &&
+        Boolean(
+          window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
+        ));
+    this.renderSystem.reducedMotion = effectiveReducedMotion;
     this.audio.setEnabled(config.audio_enabled);
     this.scaffolding = new ScaffoldingSystem(config.age_band);
+    this.focusIndex = null;
+    this.skipSuggested = false;
 
     if (this.activeSession) {
       this.activeSession.destroy();
@@ -188,8 +203,15 @@ export class GameEngine {
       throw new Error("No active session loaded in engine");
     }
     if (canvas) {
-      this.renderSystem.setupCanvas(canvas);
+      const vp = this.renderSystem.setupCanvas(canvas);
       this.ctx = canvas.getContext("2d") ?? undefined;
+      if (this.activeSession instanceof TemplateGameSession) {
+        this.activeSession.logicSpace =
+          vp.logicSpace ?? this.renderSystem.logicSpace;
+        if (this.config) {
+          this.activeSession.resolveSlots(this.config.age_band);
+        }
+      }
     }
     this.isRunning = true;
     this.isPaused = false;
@@ -197,6 +219,45 @@ export class GameEngine {
     this.emitEvent({ event_name: "game_started", timestamp_ms: Date.now() });
 
     this.loop();
+  }
+
+  private tickScaffolding(deltaMs: number): void {
+    if (!this.scaffolding) {
+      return;
+    }
+    const prevLevel = this.scaffolding.getCurrentLevel();
+    const prevSkip = this.scaffolding.isSkipSuggested;
+    const level = this.scaffolding.tick(deltaMs);
+
+    if (level > 0) {
+      if (this.scaffolding.focusIndex === null) {
+        this.scaffolding.setFocusIndex(0);
+      }
+      this.focusIndex = this.scaffolding.focusIndex;
+    } else {
+      this.focusIndex = null;
+    }
+
+    if (level !== prevLevel && level > 0) {
+      this.emitEvent({
+        event_name: "hint_escalated",
+        timestamp_ms: Date.now(),
+        data: {
+          level,
+          focus_index: this.focusIndex,
+          miss_streak: this.scaffolding.missStreak,
+        },
+      });
+    }
+
+    if (this.scaffolding.isSkipSuggested && !prevSkip) {
+      this.skipSuggested = true;
+      this.emitEvent({
+        event_name: "skip_suggested",
+        timestamp_ms: Date.now(),
+        data: { reason: "scaffold_exhausted" },
+      });
+    }
   }
 
   private readonly loop = (): void => {
@@ -208,7 +269,8 @@ export class GameEngine {
     const deltaMs = now - this.lastFrameTimeMs;
     this.lastFrameTimeMs = now;
 
-    this.scaffolding?.tick();
+    this.tickScaffolding(deltaMs);
+
     this.activeSession?.update?.(deltaMs);
 
     if (this.ctx) {

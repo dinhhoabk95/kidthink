@@ -19,33 +19,34 @@
       <!-- Modal Card -->
       <div class="clay-card">
         <!-- 3-Star Arc -->
-        <div class="stars-arc">
-          <div class="star-pill star-pill--left star-anim">
-            <span class="star-icon">⭐</span>
+        <div class="stars-arc" v-if="stars != null && stars > 0">
+          <div
+            class="star-pill star-pill--left star-anim"
+            :class="{ 'star-pill--dim': (stars ?? 0) < 1 }"
+          >
+            <span class="star-icon" v-if="(stars ?? 0) >= 1">⭐</span>
           </div>
-          <div class="star-pill star-pill--center star-anim">
-            <span class="star-icon star-icon--big">⭐</span>
+          <div
+            class="star-pill star-pill--center star-anim"
+            :class="{ 'star-pill--dim': (stars ?? 0) < 2 }"
+          >
+            <span class="star-icon star-icon--big" v-if="(stars ?? 0) >= 2"
+              >⭐</span
+            >
           </div>
-          <div class="star-pill star-pill--right star-anim">
-            <span class="star-icon">⭐</span>
+          <div
+            class="star-pill star-pill--right star-anim"
+            :class="{ 'star-pill--dim': (stars ?? 0) < 3 }"
+          >
+            <span class="star-icon" v-if="(stars ?? 0) >= 3">⭐</span>
           </div>
         </div>
 
         <!-- Headline -->
         <h1 class="victory-title">
-          <span class="victory-gradient-text"
-            >{{ isIntro ? 'Đã Học Xong!' : 'Bé Giỏi Quá!' }}</span
-          >
-          <span class="victory-subtitle"
-            >{{ isIntro ? 'Bé đã hoàn thành bài làm quen! 🎉' : 'Hoàn Thành Xuất Sắc! 🎉' }}</span
-          >
+          <span class="victory-gradient-text">{{ celebrationTitle }}</span>
+          <span class="victory-subtitle">{{ celebrationSubtitle }}</span>
         </h1>
-
-        <!-- Score / Mastery Badge -->
-        <div class="score-badge" v-if="!isIntro">
-          <span class="score-icon">🌟</span>
-          <span class="score-text">+100 Điểm Tư Duy</span>
-        </div>
 
         <!-- Action Buttons -->
         <div class="action-buttons">
@@ -70,16 +71,52 @@
 </template>
 
 <script lang="ts" setup>
-  defineProps<{
-    show: boolean;
-    stars?: number;
-    isIntro?: boolean;
-  }>();
+  import { computed } from "vue";
+
+  const props = withDefaults(
+    defineProps<{
+      show: boolean;
+      stars?: number | null;
+      isIntro?: boolean;
+      celebration?: string | null;
+    }>(),
+    {
+      stars: null,
+      isIntro: false,
+      celebration: "great",
+    }
+  );
 
   const emit = defineEmits<{
     continue: [];
     replay: [];
   }>();
+
+  const celebrationTitle = computed(() => {
+    if (props.isIntro) {
+      return "Đã Học Xong!";
+    }
+    if (props.celebration === "good") {
+      return "Bé Làm Tốt Lắm!";
+    }
+    if (props.celebration === "nice_try") {
+      return "Bé Đã Hoàn Thành!";
+    }
+    return "Bé Giỏi Quá!";
+  });
+
+  const celebrationSubtitle = computed(() => {
+    if (props.isIntro) {
+      return "Bé đã hoàn thành bài làm quen! 🎉";
+    }
+    if (props.celebration === "good") {
+      return "Bé đã hoàn thành cả bài rồi! 🎉";
+    }
+    if (props.celebration === "nice_try") {
+      return "Bé đi hết chặng đường rồi, giỏi lắm! 🎉";
+    }
+    return "Bé làm đúng hết rồi! 🎉";
+  });
 </script>
 
 <style scoped>
@@ -129,9 +166,9 @@
   }
 
   .clay-card {
-    background-color: #fdfbf7;
+    background-color: var(--color-surface-50);
     border-radius: 2.5rem;
-    border: 4px solid #d4c5ab;
+    border: 4px solid var(--color-surface-300);
     padding: 3rem 2rem 2rem 2rem;
     display: flex;
     flex-direction: column;
@@ -157,12 +194,12 @@
   .star-pill {
     width: 3.5rem;
     height: 3.5rem;
-    background-color: #ffbf00;
+    background-color: var(--color-warning-400);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 4px solid #fdfbf7;
+    border: 4px solid var(--color-surface-50);
     box-shadow:
       inset 0 2px 4px rgba(255, 255, 255, 0.5),
       0 6px 12px rgba(121, 89, 0, 0.25);
@@ -205,35 +242,20 @@
 
   .victory-gradient-text {
     font-size: 2rem;
-    color: #006d37;
+    color: var(--color-success-700);
   }
 
   .victory-subtitle {
     font-size: 1.5rem;
-    color: #795900;
+    color: var(--color-warning-700);
   }
 
-  .score-badge {
-    background-color: #eae8e4;
-    border: 2px solid #d4c5ab;
-    border-radius: 9999px;
-    padding: 0.6rem 1.5rem;
-    margin-bottom: 1.75rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
-  }
-
-  .score-icon {
-    font-size: 1.4rem;
-  }
-
-  .score-text {
-    font-family: var(--font-sans, "Quicksand", sans-serif);
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #795900;
+  .star-pill--dim {
+    background-color: var(--color-surface-200);
+    border-color: var(--color-surface-300);
+    box-shadow: none;
+    opacity: 0.35;
+    animation: none;
   }
 
   .action-buttons {
@@ -248,7 +270,7 @@
       inset 0 4px 6px rgba(255, 255, 255, 0.4),
       inset 0 -6px 8px rgba(0, 0, 0, 0.2),
       0 8px 15px rgba(121, 89, 0, 0.2);
-    border-bottom: 6px solid #d97706;
+    border-bottom: 6px solid var(--color-warning-600);
   }
 
   .clay-button:active {
@@ -261,8 +283,8 @@
   }
 
   .btn-continue {
-    background-color: #ffbf00;
-    color: #1b1c1a;
+    background-color: var(--color-warning-400);
+    color: var(--color-surface-950);
     border-radius: 9999px;
     height: 4.5rem;
     width: 100%;
@@ -284,9 +306,9 @@
     height: 3.5rem;
     width: 100%;
     border-radius: 9999px;
-    border: 3px solid #d4c5ab;
-    background-color: #f5f3ef;
-    color: #504532;
+    border: 3px solid var(--color-surface-300);
+    background-color: var(--color-surface-100);
+    color: var(--color-surface-800);
     font-family: var(--font-sans, "Quicksand", sans-serif);
     font-size: 1.15rem;
     font-weight: 700;
@@ -299,7 +321,7 @@
   }
 
   .btn-replay:hover {
-    background-color: #eae8e4;
+    background-color: var(--color-surface-200);
   }
 
   .btn-replay:active {

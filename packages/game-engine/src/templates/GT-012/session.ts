@@ -256,6 +256,7 @@ export class FlashRecallSession extends TemplateGameSession<
         this.content.options.length
       ),
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

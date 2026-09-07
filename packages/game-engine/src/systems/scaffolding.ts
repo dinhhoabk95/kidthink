@@ -241,6 +241,22 @@ export class ScaffoldingSystem {
     };
   }
 
+  get focusIndex(): number | null {
+    return this.internalState.focusIndex;
+  }
+
+  setFocusIndex(index: number | null): void {
+    this.internalState.focusIndex = index;
+  }
+
+  get isSkipSuggested(): boolean {
+    return this.internalState.skipSuggested;
+  }
+
+  get missStreak(): number {
+    return this.internalState.missStreak;
+  }
+
   recordMiss(): ScaffoldingLevel {
     this.internalState.missStreak += 1;
     this.tick(DEFAULT_FRAME_MS);
@@ -250,6 +266,14 @@ export class ScaffoldingSystem {
   onMiss(state?: ScaffoldState): void {
     const target = state || this.internalState;
     target.missStreak += 1;
+  }
+
+  onMatch(state?: ScaffoldState): void {
+    this.onSuccess(state);
+  }
+
+  reset(): void {
+    this.resetOnSuccess();
   }
 
   resetOnSuccess(): void {
