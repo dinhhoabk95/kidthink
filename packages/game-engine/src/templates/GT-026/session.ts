@@ -50,6 +50,7 @@ export class GT026Session extends TemplateGameSession<
       trials,
       stimulusWindowMs: this.difficulty.stimulus_window_ms,
       isiMs: this.difficulty.isi_ms,
+      untimed: this.difficulty.untimed,
     });
 
     this.recordEvent("round_started", {
@@ -67,25 +68,34 @@ export class GT026Session extends TemplateGameSession<
   }
 
   validateAction(action: GameAction): ActionResult {
-    switch (action.type) {
-      case "tap_stimulus":
-      case "tap_card":
-      case "select_item": {
-        if (!this.inhibitionSystem || this.inhibitionSystem.isFinished()) {
-          return ACTION_IGNORED;
-        }
-        if (this.inhibitionSystem.getState() !== "stimulus") {
-          return ACTION_IGNORED;
-        }
-        const trial = this.inhibitionSystem.getCurrentTrial();
-        if (!trial) {
-          return ACTION_IGNORED;
-        }
-        return trial.kind === "go" ? ACTION_CORRECT : ACTION_RETRY;
-      }
-      default:
-        return ACTION_IGNORED;
+    if (!this.inhibitionSystem || this.inhibitionSystem.isFinished()) {
+      return ACTION_IGNORED;
     }
+    if (this.inhibitionSystem.getState() !== "stimulus") {
+      return ACTION_IGNORED;
+    }
+    const trial = this.inhibitionSystem.getCurrentTrial();
+    if (!trial) {
+      return ACTION_IGNORED;
+    }
+
+    if (
+      action.type === "tap_stimulus" ||
+      action.type === "tap_card" ||
+      action.type === "select_item"
+    ) {
+      return trial.kind === "go" ? ACTION_CORRECT : ACTION_RETRY;
+    }
+
+    if (
+      action.type === "pass" ||
+      action.type === "skip" ||
+      action.type === "confirm_nogo"
+    ) {
+      return trial.kind === "nogo" ? ACTION_CORRECT : ACTION_RETRY;
+    }
+
+    return ACTION_IGNORED;
   }
 
   onTapStimulus(): ActionResult {
@@ -93,7 +103,7 @@ export class GT026Session extends TemplateGameSession<
       return ACTION_IGNORED;
     }
 
-    const result = this.inhibitionSystem.handleAction();
+    const result = this.inhibitionSystem.handleAction("tap");
     if (!result) {
       return ACTION_IGNORED;
     }
@@ -106,6 +116,37 @@ export class GT026Session extends TemplateGameSession<
       outcome: result.outcome,
       is_correct: result.isCorrect,
       action_type: "tap",
+    });
+
+    if (this.inhibitionSystem.isFinished()) {
+      this.isWon =
+        this.inhibitionSystem.getCorrectCount() >=
+        Math.ceil(this.content.trials.length * 0.6);
+      this.recordEvent("round_completed", { round_index: 0 });
+      this.winSession();
+    }
+
+    return result.isCorrect ? ACTION_CORRECT : ACTION_RETRY;
+  }
+
+  onPass(): ActionResult {
+    if (!this.inhibitionSystem || this.inhibitionSystem.isFinished()) {
+      return ACTION_IGNORED;
+    }
+
+    const result = this.inhibitionSystem.handleAction("pass");
+    if (!result) {
+      return ACTION_IGNORED;
+    }
+
+    if (!result.isCorrect) {
+      this.wrongTimestamp = Date.now();
+    }
+
+    this.recordEvent("item_selected", {
+      outcome: result.outcome,
+      is_correct: result.isCorrect,
+      action_type: "pass",
     });
 
     if (this.inhibitionSystem.isFinished()) {
@@ -168,6 +209,9 @@ export class GT026Session extends TemplateGameSession<
         ) {
           return { type: "tap_stimulus", data: {} };
         }
+        if (this.difficulty.untimed) {
+          return { type: "pass", data: {} };
+        }
       }
     }
     return null;
@@ -180,6 +224,12 @@ export class GT026Session extends TemplateGameSession<
       action.type === "select_item"
     ) {
       this.onTapStimulus();
+    } else if (
+      action.type === "pass" ||
+      action.type === "skip" ||
+      action.type === "confirm_nogo"
+    ) {
+      this.onPass();
     }
   }
 

@@ -31,6 +31,7 @@ export const GT026_FIXTURES: {
       isi_ms: 500,
       hint_after_ms: 8000,
       allow_retry: true,
+      untimed: false,
     },
   },
   {
@@ -58,6 +59,7 @@ export const GT026_FIXTURES: {
       isi_ms: 400,
       hint_after_ms: 8000,
       allow_retry: true,
+      untimed: false,
     },
   },
   {
@@ -88,6 +90,7 @@ export const GT026_FIXTURES: {
       isi_ms: 500,
       hint_after_ms: 8000,
       allow_retry: true,
+      untimed: false,
     },
   },
 ];

@@ -33,12 +33,14 @@ export interface InhibitionSystemConfig<T = unknown> {
   readonly trials: readonly TrialItem<T>[];
   readonly stimulusWindowMs: number;
   readonly isiMs?: number;
+  readonly untimed?: boolean;
 }
 
 export class InhibitionSystem<T = unknown> {
   private readonly trials: readonly TrialItem<T>[];
   private readonly stimulusWindowMs: number;
   private readonly isiMs: number;
+  private readonly untimed: boolean;
 
   private currentTrialIndex = 0;
   private trialElapsedMs = 0;
@@ -53,6 +55,7 @@ export class InhibitionSystem<T = unknown> {
     this.trials = config.trials;
     this.stimulusWindowMs = Math.max(500, config.stimulusWindowMs);
     this.isiMs = Math.max(0, config.isiMs ?? 500);
+    this.untimed = Boolean(config.untimed);
   }
 
   getCurrentTrial(): TrialItem<T> | null {
@@ -85,15 +88,22 @@ export class InhibitionSystem<T = unknown> {
     return this.state === "finished";
   }
 
+  isUntimed(): boolean {
+    return this.untimed;
+  }
+
   getCorrectCount(): number {
     return this.results.filter((r) => r.isCorrect).length;
   }
 
   /**
-   * Trẻ thực hiện hành động (chạm).
-   * Trả về kết quả phán quyết tương ứng.
+   * Trẻ thực hiện hành động:
+   * - "tap": chạm vào kích thích (Go choice)
+   * - "pass": quyết định dừng / không chạm (No-Go choice)
    */
-  handleAction(): { isCorrect: boolean; outcome: TrialOutcome } | null {
+  handleAction(
+    actionType: "tap" | "pass" = "tap"
+  ): { isCorrect: boolean; outcome: TrialOutcome } | null {
     if (this.state !== "stimulus" || this.hasActedCurrentTrial) {
       return null;
     }
@@ -103,8 +113,13 @@ export class InhibitionSystem<T = unknown> {
       return null;
     }
 
-    const outcome: TrialOutcome = current.kind === "go" ? "hit" : "false_alarm";
-    const isCorrect = outcome === "hit";
+    let outcome: TrialOutcome;
+    if (actionType === "pass") {
+      outcome = current.kind === "nogo" ? "correct_rejection" : "miss";
+    } else {
+      outcome = current.kind === "go" ? "hit" : "false_alarm";
+    }
+    const isCorrect = outcome === "hit" || outcome === "correct_rejection";
 
     this.results.push({
       trialIndex: this.currentTrialIndex,
@@ -119,9 +134,39 @@ export class InhibitionSystem<T = unknown> {
     return { isCorrect, outcome };
   }
 
+  handlePass(): { isCorrect: boolean; outcome: TrialOutcome } | null {
+    return this.handleAction("pass");
+  }
+
+  private handleStimulusTimeout(): {
+    isCorrect: boolean;
+    outcome: TrialOutcome;
+  } | null {
+    const current = this.trials[this.currentTrialIndex];
+    if (!current) {
+      return null;
+    }
+
+    const outcome: TrialOutcome =
+      current.kind === "go" ? "miss" : "correct_rejection";
+    const isCorrect = outcome === "correct_rejection";
+
+    this.results.push({
+      trialIndex: this.currentTrialIndex,
+      stimulusId: current.id,
+      kind: current.kind,
+      outcome,
+      reactionTimeMs: undefined,
+      isCorrect,
+    });
+
+    this.transitionToNext();
+    return { isCorrect, outcome };
+  }
+
   /**
    * Cập nhật thời gian mỗi frame.
-   * Nếu hết thời gian kích thích mà trẻ KHÔNG chạm:
+   * Nếu hết thời gian kích thích mà trẻ KHÔNG chạm (chỉ khi có tính giờ):
    * - Go: miss (sai, omission)
    * - No-Go: correct_rejection (đúng kìm chế)
    */
@@ -133,29 +178,13 @@ export class InhibitionSystem<T = unknown> {
     this.trialElapsedMs += deltaMs;
 
     if (this.state === "stimulus") {
-      if (this.trialElapsedMs >= this.stimulusWindowMs) {
-        const current = this.trials[this.currentTrialIndex];
-        if (!current) {
-          return null;
-        }
-
-        const outcome: TrialOutcome =
-          current.kind === "go" ? "miss" : "correct_rejection";
-        const isCorrect = outcome === "correct_rejection";
-
-        this.results.push({
-          trialIndex: this.currentTrialIndex,
-          stimulusId: current.id,
-          kind: current.kind,
-          outcome,
-          reactionTimeMs: undefined,
-          isCorrect,
-        });
-
-        this.transitionToNext();
-        return { isCorrect, outcome };
+      if (!this.untimed && this.trialElapsedMs >= this.stimulusWindowMs) {
+        return this.handleStimulusTimeout();
       }
-    } else if (this.state === "isi" && this.trialElapsedMs >= this.isiMs) {
+      return null;
+    }
+
+    if (this.state === "isi" && this.trialElapsedMs >= this.isiMs) {
       this.currentTrialIndex++;
       if (this.currentTrialIndex >= this.trials.length) {
         this.state = "finished";

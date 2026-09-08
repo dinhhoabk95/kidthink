@@ -342,24 +342,30 @@ band `5-6`. Theo quyết định 2 đây là corpus thiếu — soạn bù, cấ
 `GT026DifficultySchema` không có trường nào tắt đồng hồ; `InhibitionSystem` luôn chạy cửa sổ.
 13 level band `4-5` đang publish nằm trong diện này.
 
+### T17 — `GT-026` lối chơi không đếm giờ · M · phụ thuộc: T2
+
+`BR-EBD-11` và mục 17, 18 của phiếu đòi band `4-5` có biến thể không đếm giờ.
+`GT026DifficultySchema` không có trường nào tắt đồng hồ; `InhibitionSystem` luôn chạy cửa sổ.
+13 level band `4-5` đang publish nằm trong diện này.
+
 **Tiêu chí nghiệm thu**
-- [ ] `GT026DifficultySchema` thêm `untimed: z.boolean().default(false)`; 18 level hiện có vẫn parse
-- [ ] `InhibitionSystem` giữ kích thích tới khi trẻ quyết định khi `untimed` bật; vẫn chấm đúng/sai trên dấu đi và dấu dừng
-- [ ] 13 level band `4-5` chuyển sang `untimed: true`, hoặc dùng cửa sổ rộng nhất kèm lý do ghi trong phiếu
-- [ ] Mục 7 của phiếu ghi trường mới; thêm `BR-E026-03` cùng một `Scenario` mục 9
-- [ ] Test phủ cả hai lối: hết cửa sổ ở lối tính giờ, và không có ràng buộc thời gian ở lối kia
+- [x] `GT026DifficultySchema` thêm `untimed: z.boolean().default(false)`; 18 level hiện có vẫn parse
+- [x] `InhibitionSystem` giữ kích thích tới khi trẻ quyết định khi `untimed` bật; vẫn chấm đúng/sai trên dấu đi và dấu dừng
+- [x] 13 level band `4-5` chuyển sang `untimed: true`, hoặc dùng cửa sổ rộng nhất kèm lý do ghi trong phiếu
+- [x] Mục 7 của phiếu ghi trường mới; thêm `BR-E026-03` cùng một `Scenario` mục 9
+- [x] Test phủ cả hai lối: hết cửa sổ ở lối tính giờ, và không có ràng buộc thời gian ở lối kia
 
 **Kiểm chứng**
-- [ ] `npx vitest run --project=@mindkid/game-engine -t GT-026` xanh
-- [ ] `check:engine-specs` xanh sau khi thêm luật
+- [x] `npx vitest run --project=@mindkid/game-engine -t GT-026` xanh
+- [x] `check:engine-specs` xanh sau khi thêm luật
 
 **File**: `packages/game-engine/src/templates/GT-026/{template,session}.ts`, `src/systems/inhibition-system.ts`, seed `GT-026`, `docs/specs/01-platform/engines/GT-026.md`, test mới
 
 ---
 
 ### Điểm dừng E
-- [ ] `GT-026` chơi được cả hai lối, có test
-- [ ] `BR-EBD-11` của #261 xác nhận `GT-026` đã hết vi phạm
+- [x] `GT-026` chơi được cả hai lối, có test
+- [x] `BR-EBD-11` của #261 xác nhận `GT-026` đã hết vi phạm
 - [ ] Người đặt việc duyệt trước giai đoạn F
 
 ---

@@ -63,6 +63,7 @@ export const projectGT026: Projection<"GT-026"> = {
         isi_ms: params.isi_ms ?? 600,
         hint_after_ms: 8000,
         allow_retry: true,
+        untimed: opts.band === "4-5",
       },
     };
   },

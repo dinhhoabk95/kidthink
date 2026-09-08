@@ -100,4 +100,64 @@ describe("InhibitionSystem (BR-TGB-08, BR-TGB-04, BR-TGB-05)", () => {
     expect(sys.getCurrentTrial()).toBeNull();
     expect(sys.getCorrectCount()).toBe(1);
   });
+
+  it("handles untimed mode (BR-EBD-11, BR-E026-03): stimulus does not expire automatically and handles pass/tap", () => {
+    const sys = new InhibitionSystem({
+      trials: [
+        { id: "t1", kind: "go" },
+        { id: "t2", kind: "nogo" },
+        { id: "t3", kind: "nogo" },
+        { id: "t4", kind: "go" },
+      ],
+      stimulusWindowMs: 1000,
+      isiMs: 100,
+      untimed: true,
+    });
+
+    expect(sys.isUntimed()).toBe(true);
+    expect(sys.getCurrentTrial()?.id).toBe("t1");
+    expect(sys.getState()).toBe("stimulus");
+
+    // Elapsed time far exceeds stimulusWindowMs, but stimulus does not timeout
+    const tickResult = sys.tick(10_000);
+    expect(tickResult).toBeNull();
+    expect(sys.getState()).toBe("stimulus");
+    expect(sys.getCurrentTrial()?.id).toBe("t1");
+
+    // Child taps Go -> hit (correct)
+    const hitRes = sys.handleAction("tap");
+    expect(hitRes).toEqual({ isCorrect: true, outcome: "hit" });
+    expect(sys.getState()).toBe("isi");
+
+    sys.tick(100);
+    expect(sys.getCurrentTrial()?.id).toBe("t2");
+    expect(sys.getCurrentTrial()?.kind).toBe("nogo");
+
+    // Stimulus stays again
+    expect(sys.tick(5000)).toBeNull();
+
+    // Child passes on No-Go -> correct_rejection (correct)
+    const passRes = sys.handlePass();
+    expect(passRes).toEqual({ isCorrect: true, outcome: "correct_rejection" });
+
+    sys.tick(100);
+    expect(sys.getCurrentTrial()?.id).toBe("t3");
+    expect(sys.getCurrentTrial()?.kind).toBe("nogo");
+
+    // Child taps on No-Go -> false_alarm (incorrect)
+    const falseAlarmRes = sys.handleAction("tap");
+    expect(falseAlarmRes).toEqual({ isCorrect: false, outcome: "false_alarm" });
+
+    sys.tick(100);
+    expect(sys.getCurrentTrial()?.id).toBe("t4");
+    expect(sys.getCurrentTrial()?.kind).toBe("go");
+
+    // Child passes on Go -> miss (incorrect)
+    const missRes = sys.handlePass();
+    expect(missRes).toEqual({ isCorrect: false, outcome: "miss" });
+
+    sys.tick(100);
+    expect(sys.isFinished()).toBe(true);
+    expect(sys.getCorrectCount()).toBe(2);
+  });
 });

@@ -94,4 +94,68 @@ describe("GT-026: Chỉ chạm khi đúng dấu (go-nogo)", () => {
     const view = session.getView();
     expect(view.activePrompt).toBe(f1.content.prompt);
   });
+
+  it("BR-E026-03: handles untimed mode without timeout, staying on stimulus until decision", () => {
+    if (!f1) {
+      throw new Error("Missing fixture");
+    }
+    const untimedDifficulty = { ...f1.difficulty, untimed: true };
+    const session = new GT026Session(f1.content, untimedDifficulty);
+    session.prepareRound("4-5");
+
+    const slot = session.slots[0];
+    if (!slot) {
+      throw new Error("slot must exist");
+    }
+
+    // Trial 1: "go"
+    expect(session.getCurrentTrial()?.kind).toBe("go");
+
+    // Let 10 seconds elapse - in untimed mode, verdict is null and stimulus does not expire
+    const noTimeoutVerdict = session.update(10_000);
+    expect(noTimeoutVerdict).toBeNull();
+    expect(session.getState()).toBe("stimulus");
+    expect(session.getCurrentTrial()?.kind).toBe("go");
+
+    // Tap on stimulus for "go" -> correct
+    const resGo = session.dispatch({
+      type: "tap",
+      x: slot.x,
+      y: slot.y,
+      timeMs: 10_100,
+    });
+    expect(resGo?.valid).toBe(true);
+    expect(session.getState()).toBe("isi");
+
+    // Advance through ISI
+    session.update(550);
+
+    // Trial 2: "go"
+    expect(session.getCurrentTrial()?.kind).toBe("go");
+    const resGo2 = session.dispatch({
+      type: "tap",
+      x: slot.x,
+      y: slot.y,
+      timeMs: 11_000,
+    });
+    expect(resGo2?.valid).toBe(true);
+
+    // Advance to Trial 3 ("nogo")
+    session.update(550);
+    expect(session.getCurrentTrial()?.kind).toBe("nogo");
+
+    // 15 seconds elapse without timeout
+    expect(session.update(15_000)).toBeNull();
+    expect(session.getState()).toBe("stimulus");
+
+    // Tap outside slot in untimed mode dispatches "pass" -> correct for No-Go!
+    const passResult = session.dispatch({
+      type: "tap",
+      x: 10,
+      y: 10,
+      timeMs: 26_000,
+    });
+    expect(passResult?.valid).toBe(true);
+    expect(session.getState()).toBe("isi");
+  });
 });
