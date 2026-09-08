@@ -98,12 +98,12 @@ export class GT026Session extends TemplateGameSession<
     return ACTION_IGNORED;
   }
 
-  onTapStimulus(): ActionResult {
+  private handleTrialAction(actionType: "tap" | "pass"): ActionResult {
     if (!this.inhibitionSystem || this.inhibitionSystem.isFinished()) {
       return ACTION_IGNORED;
     }
 
-    const result = this.inhibitionSystem.handleAction("tap");
+    const result = this.inhibitionSystem.handleAction(actionType);
     if (!result) {
       return ACTION_IGNORED;
     }
@@ -115,7 +115,7 @@ export class GT026Session extends TemplateGameSession<
     this.recordEvent("item_selected", {
       outcome: result.outcome,
       is_correct: result.isCorrect,
-      action_type: "tap",
+      action_type: actionType,
     });
 
     if (this.inhibitionSystem.isFinished()) {
@@ -129,35 +129,12 @@ export class GT026Session extends TemplateGameSession<
     return result.isCorrect ? ACTION_CORRECT : ACTION_RETRY;
   }
 
+  onTapStimulus(): ActionResult {
+    return this.handleTrialAction("tap");
+  }
+
   onPass(): ActionResult {
-    if (!this.inhibitionSystem || this.inhibitionSystem.isFinished()) {
-      return ACTION_IGNORED;
-    }
-
-    const result = this.inhibitionSystem.handleAction("pass");
-    if (!result) {
-      return ACTION_IGNORED;
-    }
-
-    if (!result.isCorrect) {
-      this.wrongTimestamp = Date.now();
-    }
-
-    this.recordEvent("item_selected", {
-      outcome: result.outcome,
-      is_correct: result.isCorrect,
-      action_type: "pass",
-    });
-
-    if (this.inhibitionSystem.isFinished()) {
-      this.isWon =
-        this.inhibitionSystem.getCorrectCount() >=
-        Math.ceil(this.content.trials.length * 0.6);
-      this.recordEvent("round_completed", { round_index: 0 });
-      this.winSession();
-    }
-
-    return result.isCorrect ? ACTION_CORRECT : ACTION_RETRY;
+    return this.handleTrialAction("pass");
   }
 
   // biome-ignore lint/suspicious/noConfusingVoidType: void needed for compatibility with update

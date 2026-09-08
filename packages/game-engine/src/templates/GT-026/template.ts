@@ -29,7 +29,7 @@ export const GT026DifficultySchema = z.object({
   isi_ms: z.number().int().min(200).max(1500).default(500),
   hint_after_ms: z.number().int().min(5000).max(30_000).default(8000),
   allow_retry: z.boolean().default(true),
-  untimed: z.boolean().default(false),
+  untimed: z.boolean().optional(),
 });
 
 export type GT026Content = z.infer<typeof GT026ContentSchema>;
