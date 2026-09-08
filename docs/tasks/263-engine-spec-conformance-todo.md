@@ -36,14 +36,14 @@ nằm trong đường chạy nào. Đo: `check:engine-specs` 1,8s · `check:rend
 Mục 6 của 16 phiếu ghi band rộng hơn registry. Cổng chỉ đối chiếu `limits` nên không thấy.
 
 **Tiêu chí nghiệm thu**
-- [ ] 16 phiếu (`GT-009` `GT-010` `GT-011` `GT-013` `GT-014` `GT-015` `GT-016` `GT-017` `GT-018` `GT-019` `GT-021` `GT-022` `GT-023` `GT-024` `GT-025` `GT-027`) ghi đúng band của registry ở mục 6
-- [ ] `GT-034` mục 15 sửa `requires_tap_fallback` thành `true`
-- [ ] `lintSingleEngineSpec` đối chiếu thêm `mechanic`, `layouts`, `age_min`/`age_max`, `banned_age_bands`, `requires_tap_fallback`, `asset_kinds`, `engine_session`
-- [ ] ≥5 ca âm: mỗi trường trên lệch một lần thì cổng đỏ
+- [x] 16 phiếu (`GT-009` `GT-010` `GT-011` `GT-013` `GT-014` `GT-015` `GT-016` `GT-017` `GT-018` `GT-019` `GT-021` `GT-022` `GT-023` `GT-024` `GT-025` `GT-027`) ghi đúng band của registry ở mục 6
+- [x] `GT-034` mục 15 sửa `requires_tap_fallback` thành `true`
+- [x] `lintSingleEngineSpec` đối chiếu thêm `mechanic`, `layouts`, `age_min`/`age_max`, `banned_age_bands`, `requires_tap_fallback`, `asset_kinds`, `engine_session`
+- [x] ≥5 ca âm: mỗi trường trên lệch một lần thì cổng đỏ (đã có 7 ca âm: 2b..2h)
 
 **Kiểm chứng**
-- [ ] `npx tsx packages/game-engine/scripts/check-engine-specs.ts` xanh
-- [ ] `npx vitest run --project=@mindkid/game-engine -t engine-specs` xanh, có ca âm mới
+- [x] `npx tsx packages/game-engine/scripts/check-engine-specs.ts` xanh
+- [x] `npx vitest run --project=@mindkid/game-engine -t engine-specs` xanh, có ca âm mới
 
 **File**: 17 phiếu trong `docs/specs/01-platform/engines/`, `packages/game-engine/tests/gates/engine-specs.ts` + `.test.ts`
 

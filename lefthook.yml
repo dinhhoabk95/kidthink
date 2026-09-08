@@ -31,13 +31,16 @@ pre-commit:
     - name: format
       glob: "*.{ts,tsx,js,jsx,mjs,cjs,vue,json,jsonc,css}"
       stage_fixed: true
-      run: pnpm exec biome check --write --no-errors-on-unmatched {staged_files}
+      run: |
+        [ -d "${HOME}/.nvm/versions/node/v24.15.0/bin" ] && export PATH="${HOME}/.nvm/versions/node/v24.15.0/bin:$PATH"
+        pnpm exec biome check --write --no-errors-on-unmatched {staged_files}
 
     # Cổng thật vẫn là lượt đo trên toàn cây: `--write` chỉ sửa được thứ Biome
     # coi là an toàn, phần còn lại phải đỏ ở đây.
     # lint + deps chạy song song (không phụ thuộc nhau), tiết kiệm ~2s.
     - name: lint-and-deps
       run: |
+        [ -d "${HOME}/.nvm/versions/node/v24.15.0/bin" ] && export PATH="${HOME}/.nvm/versions/node/v24.15.0/bin:$PATH"
         pnpm lint &
         PID_LINT=$!
         pnpm lint:deps &

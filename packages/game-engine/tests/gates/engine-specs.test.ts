@@ -64,6 +64,112 @@ describe("Gate check:engine-specs (BR-ESS-01..15)", () => {
     ).toBe(true);
   });
 
+  it("Ca âm 2b: mechanic trích lệch registry làm cổng đỏ (BR-ESS-02)", () => {
+    const specPath = repoPath("docs/specs/01-platform/engines/GT-001.md");
+    const violations = lintSingleEngineSpec("GT-001", specPath, true, {
+      mechanic: "fake-mechanic",
+    });
+    expect(
+      violations.some(
+        (v) =>
+          v.rule === "BR-ESS-02" &&
+          v.message.includes("mechanic") &&
+          v.message.includes("LỆCH")
+      )
+    ).toBe(true);
+  });
+
+  it("Ca âm 2c: layouts trích lệch registry làm cổng đỏ (BR-ESS-02)", () => {
+    const specPath = repoPath("docs/specs/01-platform/engines/GT-001.md");
+    const violations = lintSingleEngineSpec("GT-001", specPath, true, {
+      layouts: ["fake-layout"],
+    });
+    expect(
+      violations.some(
+        (v) =>
+          v.rule === "BR-ESS-02" &&
+          v.message.includes("layouts") &&
+          v.message.includes("LỆCH")
+      )
+    ).toBe(true);
+  });
+
+  it("Ca âm 2d: age_min/age_max trích lệch registry làm cổng đỏ (BR-ESS-02)", () => {
+    const specPath = repoPath("docs/specs/01-platform/engines/GT-001.md");
+    const violations = lintSingleEngineSpec("GT-001", specPath, true, {
+      age_min: 5,
+      age_max: 6,
+    });
+    expect(
+      violations.some(
+        (v) =>
+          v.rule === "BR-ESS-02" &&
+          v.message.includes("age_min · age_max") &&
+          v.message.includes("LỆCH")
+      )
+    ).toBe(true);
+  });
+
+  it("Ca âm 2e: banned_age_bands trích lệch registry làm cổng đỏ (BR-ESS-02)", () => {
+    const specPath = repoPath("docs/specs/01-platform/engines/GT-001.md");
+    const violations = lintSingleEngineSpec("GT-001", specPath, true, {
+      banned_age_bands: ["3-4"],
+    });
+    expect(
+      violations.some(
+        (v) =>
+          v.rule === "BR-ESS-02" &&
+          v.message.includes("banned_age_bands") &&
+          v.message.includes("LỆCH")
+      )
+    ).toBe(true);
+  });
+
+  it("Ca âm 2f: requires_tap_fallback trích lệch registry làm cổng đỏ (BR-ESS-02)", () => {
+    const specPath = repoPath("docs/specs/01-platform/engines/GT-001.md");
+    const violations = lintSingleEngineSpec("GT-001", specPath, true, {
+      requires_tap_fallback: true, // spec ghi false
+    });
+    expect(
+      violations.some(
+        (v) =>
+          v.rule === "BR-ESS-02" &&
+          v.message.includes("requires_tap_fallback") &&
+          v.message.includes("LỆCH")
+      )
+    ).toBe(true);
+  });
+
+  it("Ca âm 2g: asset_kinds trích lệch registry làm cổng đỏ (BR-ESS-02)", () => {
+    const specPath = repoPath("docs/specs/01-platform/engines/GT-001.md");
+    const violations = lintSingleEngineSpec("GT-001", specPath, true, {
+      asset_kinds: ["emoji"], // spec ghi emoji, image, audio
+    });
+    expect(
+      violations.some(
+        (v) =>
+          v.rule === "BR-ESS-02" &&
+          v.message.includes("asset_kinds") &&
+          v.message.includes("LỆCH")
+      )
+    ).toBe(true);
+  });
+
+  it("Ca âm 2h: engine_session trích lệch registry làm cổng đỏ (BR-ESS-02)", () => {
+    const specPath = repoPath("docs/specs/01-platform/engines/GT-001.md");
+    const violations = lintSingleEngineSpec("GT-001", specPath, true, {
+      engine_session: "WrongSession",
+    });
+    expect(
+      violations.some(
+        (v) =>
+          v.rule === "BR-ESS-02" &&
+          v.message.includes("engine_session") &&
+          v.message.includes("LỆCH")
+      )
+    ).toBe(true);
+  });
+
   // Ca âm 3: Spec thiếu owns hoặc frontmatter không đủ -> Đỏ (BR-ESS-11)
   it("Ca âm 3: spec thiếu trường frontmatter hoặc owns rỗng làm cổng đỏ (BR-ESS-11)", () => {
     // Dùng fixture spec không có owns/mvp/phase
