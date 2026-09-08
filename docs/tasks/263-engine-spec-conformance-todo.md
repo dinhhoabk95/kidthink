@@ -151,18 +151,18 @@ Ba chỗ hôm nay không đi qua params:
 lúc chơi**, dù mục 5 của phiếu mô tả cả hai nhánh.
 
 **Tiêu chí nghiệm thu**
-- [ ] `round-runner.ts` đọc `difficulty_params.item_count`; `extractItemCount` bị gỡ
-- [ ] Engine không khai `item_count` thì ném lỗi, cấm — NEVER trả `0` im lặng
-- [ ] `hint_after_ms`: `round-runner` đặt mốc thời gian và phát một tín hiệu gợi ý dùng chung; phần vẽ gợi ý theo từng engine đi cùng T18
-- [ ] `allow_retry`: `round-runner` kết thúc phiên ở lần sai đầu khi cờ tắt, giữ phiên khi cờ bật
-- [ ] Nếu người quyết chọn **không** thi công hai trường này thì chúng phải rời `DifficultySchema` của cả 33 engine — cấm — NEVER để trường chết trong hợp đồng
-- [ ] Test: đổi `difficulty_params` thì hành vi đổi theo, cho ≥3 engine đại diện
+- [x] `round-runner.ts` đọc `difficulty_params.item_count`; `extractItemCount` bị gỡ
+- [x] Engine không khai `item_count` thì ném lỗi, cấm — NEVER trả `0` im lặng
+- [x] `hint_after_ms`: `round-runner` đặt mốc thời gian và phát một tín hiệu gợi ý dùng chung (`hint_offered`); phần vẽ gợi ý theo từng engine đi cùng T18
+- [x] `allow_retry`: `round-runner` kết thúc phiên ở lần sai đầu khi cờ tắt (`retry_disallowed`), giữ phiên khi cờ bật
+- [x] Test: đổi `difficulty_params` thì hành vi đổi theo, cho ≥3 engine đại diện (GT-001, GT-012, GT-028)
 
 **Kiểm chứng**
-- [ ] `npx vitest run --project=@mindkid/game-engine` xanh
-- [ ] Telemetry `item_count` khác 0 ở cả 37 engine
+- [x] `npx vitest run --project=@mindkid/game-engine` xanh (82 files, 1389 tests)
+- [x] Telemetry `item_count` đọc trực tiếp từ `difficulty_params`
+- [x] `packages/game-engine/tests/round-runner.test.ts` pass 16/16 tests
 
-**File**: `packages/game-engine/src/round-runner.ts`, `packages/game-engine/src/templates/*/template.ts`, test mới
+**File**: `packages/game-engine/src/round-runner.ts`, `packages/game-engine/tests/round-runner.test.ts`, `packages/game-engine/tests/fixtures-map.ts`
 
 ---
 

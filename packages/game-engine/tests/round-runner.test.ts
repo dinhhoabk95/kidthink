@@ -8,6 +8,8 @@ import {
 } from "#src/game-session";
 import { type RoundConfig, RoundRunner } from "#src/round-runner";
 
+const ERR_MISSING_ITEM_COUNT = /thiếu difficulty_params\.item_count bắt buộc/;
+
 class MockSession extends BaseGameSession {
   private won = false;
   private destroyed = false;
@@ -304,5 +306,149 @@ describe("RoundRunner (BR-RSP)", () => {
 
     expect(sessions[0]?.isDestroyed()).toBe(true);
     expect(runner.getState().isFinished).toBe(true);
+  });
+
+  describe("Hợp đồng độ khó & tham số hóa (Task #263 T7 / BR-LDC-02, BR-LDC-06)", () => {
+    it("ném lỗi khi thiếu difficulty_params.item_count bắt buộc (BR-LDC-02)", () => {
+      const runner = new RoundRunner({
+        rounds: [
+          {
+            round_index: 0,
+            content_pack: { options: [{ id: "1" }] },
+            difficulty_params: {}, // thiếu item_count
+          },
+        ],
+        sessionFactory: mockFactory,
+      });
+
+      expect(() => runner.startFirstRound()).toThrow(ERR_MISSING_ITEM_COUNT);
+    });
+
+    it("hint_after_ms: phát event hint_offered và tăng hintCountTotal", () => {
+      vi.useFakeTimers();
+      try {
+        const runner = new RoundRunner({
+          rounds: [
+            {
+              round_index: 0,
+              content_pack: { options: [{ id: "1" }] },
+              difficulty_params: { item_count: 3, hint_after_ms: 2000 },
+            },
+          ],
+          sessionFactory: mockFactory,
+        });
+
+        runner.startFirstRound();
+        expect(runner.getState().hintCountTotal).toBe(0);
+
+        // Chưa tới 2000ms
+        vi.advanceTimersByTime(1500);
+        expect(runner.getState().hintCountTotal).toBe(0);
+
+        // Qua 2000ms
+        vi.advanceTimersByTime(600);
+        expect(runner.getState().hintCountTotal).toBe(1);
+
+        const events = runner.getAllTelemetry();
+        const hintEvt = events.find((e) => e.event_name === "hint_offered");
+        expect(hintEvt).toBeDefined();
+        expect(hintEvt?.data?.hint_after_ms).toBe(2000);
+      } finally {
+        vi.useRealTimers();
+      }
+    });
+
+    it("allow_retry = false: kết thúc round ở lần sai đầu tiên", () => {
+      const onRoundCompleted = vi.fn();
+      const runner = new RoundRunner({
+        rounds: [
+          {
+            round_index: 0,
+            content_pack: { options: [{ id: "1" }] },
+            difficulty_params: { item_count: 3, allow_retry: false },
+          },
+          makeRound(1),
+        ],
+        sessionFactory: mockFactory,
+        onRoundCompleted,
+      });
+
+      runner.startFirstRound();
+      // Gửi action sai
+      const res = runner.handleAction({ type: "wrong", data: null });
+      expect(res.valid).toBe(false);
+
+      // Round 0 bị skip do retry_disallowed và chuyển sang round 1
+      expect(onRoundCompleted).toHaveBeenCalledWith(0, true);
+      expect(runner.getState().roundsSkipped).toBe(1);
+      expect(runner.getState().currentRoundIndex).toBe(1);
+
+      const events = runner.getAllTelemetry();
+      const skipEvt = events.find((e) => e.event_name === "round_skipped");
+      expect(skipEvt).toBeDefined();
+      expect(skipEvt?.data?.reason).toBe("retry_disallowed");
+    });
+
+    it("allow_retry = true: giữ round để trẻ thử lại khi sai", () => {
+      const onRoundCompleted = vi.fn();
+      const runner = new RoundRunner({
+        rounds: [
+          {
+            round_index: 0,
+            content_pack: { options: [{ id: "1" }] },
+            difficulty_params: { item_count: 3, allow_retry: true },
+          },
+        ],
+        sessionFactory: mockFactory,
+        onRoundCompleted,
+      });
+
+      runner.startFirstRound();
+      // Gửi action sai
+      const res = runner.handleAction({ type: "wrong", data: null });
+      expect(res.valid).toBe(false);
+
+      // Không skip round, vẫn ở round 0
+      expect(onRoundCompleted).not.toHaveBeenCalled();
+      expect(runner.getState().roundsSkipped).toBe(0);
+      expect(runner.getState().currentRoundIndex).toBe(0);
+    });
+
+    it("đổi difficulty_params (item_count, hint_after_ms, allow_retry) hành vi đổi theo trên 3 engine", () => {
+      const testEngines = ["GT-001", "GT-012", "GT-028"];
+      for (const code of testEngines) {
+        // Cấu hình A: 4 item, retry cho phép
+        const runnerA = new RoundRunner({
+          rounds: [
+            {
+              round_index: 0,
+              content_pack: { engine: code },
+              difficulty_params: { item_count: 4, allow_retry: true },
+            },
+          ],
+          sessionFactory: mockFactory,
+        });
+        runnerA.startFirstRound();
+        expect(runnerA.getAllTelemetry()[0]?.data?.item_count).toBe(4);
+        runnerA.handleAction({ type: "wrong", data: null });
+        expect(runnerA.getState().roundsSkipped).toBe(0);
+
+        // Cấu hình B: 6 item, retry không cho phép
+        const runnerB = new RoundRunner({
+          rounds: [
+            {
+              round_index: 0,
+              content_pack: { engine: code },
+              difficulty_params: { item_count: 6, allow_retry: false },
+            },
+          ],
+          sessionFactory: mockFactory,
+        });
+        runnerB.startFirstRound();
+        expect(runnerB.getAllTelemetry()[0]?.data?.item_count).toBe(6);
+        runnerB.handleAction({ type: "wrong", data: null });
+        expect(runnerB.getState().roundsSkipped).toBe(1);
+      }
+    });
   });
 });

@@ -53,12 +53,12 @@ describe("RoundRunner logicSpace propagation (T6, BR-RSP & Task #260)", () => {
         {
           round_index: 0,
           content_pack: { round: 1 },
-          difficulty_params: {},
+          difficulty_params: { item_count: 1 },
         },
         {
           round_index: 1,
           content_pack: { round: 2 },
-          difficulty_params: {},
+          difficulty_params: { item_count: 1 },
         },
       ],
       ageBand: "3-4",
@@ -100,12 +100,12 @@ describe("RoundRunner logicSpace propagation (T6, BR-RSP & Task #260)", () => {
         {
           round_index: 0,
           content_pack: { round: 1 },
-          difficulty_params: {},
+          difficulty_params: { item_count: 1 },
         },
         {
           round_index: 1,
           content_pack: { round: 2 },
-          difficulty_params: {},
+          difficulty_params: { item_count: 1 },
         },
       ],
       ageBand: "4-5",

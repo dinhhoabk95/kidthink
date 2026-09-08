@@ -93,6 +93,7 @@ export class RoundRunner {
   private currentSession: GameSession | null = null;
   private readonly allEvents: TelemetryEvent[] = [];
   private sessionStartMs = 0;
+  private hintTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(options: RoundRunnerOptions) {
     if (options.rounds.length === 0) {
@@ -158,7 +159,17 @@ export class RoundRunner {
     if (!this.currentSession || this.isFinished) {
       return { valid: false, feedback: "none" };
     }
-    return this.currentSession.validateAction(action);
+    const result = this.currentSession.validateAction(action);
+    if (!result.valid) {
+      const config = this.rounds[this.currentRoundIndex];
+      const params = config?.difficulty_params as
+        | Record<string, unknown>
+        | undefined;
+      if (params?.allow_retry === false) {
+        this.skipCurrentRound("retry_disallowed");
+      }
+    }
+    return result;
   }
 
   /** Check if the current round is won. */
@@ -178,6 +189,7 @@ export class RoundRunner {
       return false;
     }
 
+    this.clearHintTimer();
     this.collectSessionTelemetry();
     this.recordEvent("round_completed", {
       round_index: this.currentRoundIndex,
@@ -198,11 +210,14 @@ export class RoundRunner {
    * Skip the current round (scaffold exhaustion).
    * Returns true if there are more rounds, false if finished.
    */
-  skipCurrentRound(reason: "scaffold_exhausted" | "user"): boolean {
+  skipCurrentRound(
+    reason: "scaffold_exhausted" | "user" | "retry_disallowed"
+  ): boolean {
     if (!this.currentSession || this.isFinished) {
       return false;
     }
 
+    this.clearHintTimer();
     this.collectSessionTelemetry();
     this.recordEvent("round_skipped", {
       round_index: this.currentRoundIndex,
@@ -242,11 +257,19 @@ export class RoundRunner {
 
   /** Clean up. Must be called when the level is done or abandoned. */
   destroy(): void {
+    this.clearHintTimer();
     if (this.currentSession) {
       this.currentSession.destroy();
       this.currentSession = null;
     }
     this.isFinished = true;
+  }
+
+  private clearHintTimer(): void {
+    if (this.hintTimer !== null) {
+      clearTimeout(this.hintTimer);
+      this.hintTimer = null;
+    }
   }
 
   private startRound(index: number): void {
@@ -256,16 +279,55 @@ export class RoundRunner {
       return;
     }
 
+    this.clearHintTimer();
     this.currentRoundIndex = index;
     const config = this.rounds[index];
     if (!config) {
       return;
     }
 
+    const rawParams = config.difficulty_params as
+      | Record<string, unknown>
+      | undefined;
+    let itemCount =
+      typeof rawParams?.item_count === "number"
+        ? rawParams.item_count
+        : undefined;
+
+    // Ngoại lệ cho GT-000 (concept-intro) vì difficulty_fixed và schema strict không có item_count
+    if (itemCount === undefined) {
+      const isConceptIntro =
+        typeof config.content_pack === "object" &&
+        config.content_pack !== null &&
+        "concept" in config.content_pack;
+      if (isConceptIntro) {
+        itemCount = 1;
+      }
+    }
+
+    if (itemCount === undefined) {
+      throw new Error(
+        `Round ${index} thiếu difficulty_params.item_count bắt buộc (BR-LDC-02).`
+      );
+    }
+
     this.recordEvent("round_started", {
       round_index: index,
-      item_count: this.extractItemCount(config.content_pack),
+      item_count: itemCount,
     });
+
+    if (
+      typeof rawParams.hint_after_ms === "number" &&
+      rawParams.hint_after_ms > 0
+    ) {
+      this.hintTimer = setTimeout(() => {
+        this.recordEvent("hint_offered", {
+          round_index: index,
+          hint_after_ms: rawParams.hint_after_ms,
+        });
+        this.recordHint();
+      }, rawParams.hint_after_ms);
+    }
 
     this.sessionStartMs = Date.now();
     this.currentSession = this.sessionFactory(
@@ -321,18 +383,5 @@ export class RoundRunner {
       timestamp_ms: Date.now(),
       data,
     });
-  }
-
-  private extractItemCount(contentPack: unknown): number {
-    if (typeof contentPack !== "object" || contentPack === null) {
-      return 0;
-    }
-    if ("items" in contentPack && Array.isArray(contentPack.items)) {
-      return contentPack.items.length;
-    }
-    if ("options" in contentPack && Array.isArray(contentPack.options)) {
-      return contentPack.options.length;
-    }
-    return 0;
   }
 }

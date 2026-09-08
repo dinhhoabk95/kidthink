@@ -1401,12 +1401,12 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
           {
             round_index: 0,
             content_pack: round1Content,
-            difficulty_params: difficultyNoShuffle,
+            difficulty_params: { item_count: 3, ...difficultyNoShuffle },
           },
           {
             round_index: 1,
             content_pack: round2Content,
-            difficulty_params: difficultyNoShuffle,
+            difficulty_params: { item_count: 4, ...difficultyNoShuffle },
           },
         ],
         sessionFactory: (content, difficulty, seed) => {

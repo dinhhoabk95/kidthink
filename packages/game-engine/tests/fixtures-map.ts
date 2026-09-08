@@ -37,6 +37,8 @@ import { GT034_FIXTURES } from "#src/templates/GT-034/fixtures.js";
 import { GT035_FIXTURES } from "#src/templates/GT-035/fixtures.js";
 import { GT036_FIXTURES } from "#src/templates/GT-036/fixtures.js";
 
+import ENGINE_DIFFICULTY_PARAMS from "../config/engine-difficulty-params.json";
+
 export type FixturePayload = Record<
   string,
   string | number | boolean | null | undefined | object
@@ -47,7 +49,7 @@ export interface FixtureRecord {
   readonly difficulty: FixturePayload;
 }
 
-export const FIXTURES_BY_CODE: Record<string, readonly FixtureRecord[]> = {
+const RAW_FIXTURES_BY_CODE: Record<string, readonly FixtureRecord[]> = {
   "GT-000": GT000_FIXTURES,
   "GT-001": GT001_FIXTURES,
   "GT-002": GT002_FIXTURES,
@@ -86,3 +88,25 @@ export const FIXTURES_BY_CODE: Record<string, readonly FixtureRecord[]> = {
   "GT-035": GT035_FIXTURES,
   "GT-036": GT036_FIXTURES,
 };
+
+export const FIXTURES_BY_CODE: Record<string, readonly FixtureRecord[]> =
+  Object.fromEntries(
+    Object.entries(RAW_FIXTURES_BY_CODE).map(([code, list]) => {
+      if (code === "GT-000") {
+        return [code, list];
+      }
+      const engineEntry =
+        ENGINE_DIFFICULTY_PARAMS.engines[
+          code as keyof typeof ENGINE_DIFFICULTY_PARAMS.engines
+        ];
+      const fallbackCount = engineEntry?.levels["1"]?.item_count ?? 3;
+      const enriched = list.map((f) => ({
+        ...f,
+        difficulty: {
+          item_count: fallbackCount,
+          ...f.difficulty,
+        },
+      }));
+      return [code, enriched];
+    })
+  );

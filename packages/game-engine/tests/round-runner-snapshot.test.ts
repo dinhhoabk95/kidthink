@@ -12,6 +12,7 @@ import {
   preloadGameSession,
   RoundRunner,
 } from "#src/index";
+import ENGINE_DIFFICULTY_PARAMS from "../config/engine-difficulty-params.json";
 import { FIXTURES_BY_CODE } from "./fixtures-map.js";
 
 const FIXTURES_MAP = FIXTURES_BY_CODE;
@@ -34,12 +35,22 @@ describe("WP100.5 — RoundRunner snapshot comparison for 17 templates", () => {
       }
 
       const nonNullFixture = fixture;
+      const engineEntry =
+        ENGINE_DIFFICULTY_PARAMS.engines[
+          code as keyof typeof ENGINE_DIFFICULTY_PARAMS.engines
+        ];
+      const fallbackItemCount = engineEntry?.levels["1"]?.item_count ?? 3;
+      const difficultyWithItemCount = {
+        item_count: fallbackItemCount,
+        ...nonNullFixture.difficulty,
+      };
+
       const baseCfg: EngineConfig = {
         level_code: `${code}-LV1`,
         content_version: 1,
         template_code: code,
         content_pack: nonNullFixture.content,
-        difficulty_params: nonNullFixture.difficulty,
+        difficulty_params: difficultyWithItemCount,
         theme_id: "default",
         age_band: "4-5",
         reduced_motion: false,
@@ -56,7 +67,7 @@ describe("WP100.5 — RoundRunner snapshot comparison for 17 templates", () => {
             {
               round_index: 0,
               content_pack: nonNullFixture.content,
-              difficulty_params: nonNullFixture.difficulty,
+              difficulty_params: difficultyWithItemCount,
             },
           ],
           sessionFactory: (contentPack, difficultyParams, _seed) => {
