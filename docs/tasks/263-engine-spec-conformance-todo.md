@@ -16,16 +16,16 @@ nằm trong đường chạy nào. Đo: `check:engine-specs` 1,8s · `check:rend
 `check:engine-depth` 4,0s.
 
 **Tiêu chí nghiệm thu**
-- [ ] `lefthook.yml` thêm một job `pre-commit` chạy ba cổng song song
-- [ ] Job dựng sẵn chỗ cho cổng của #261 (`check:engine-behavior`) và #262 (`check:engine-turn`) — hai plan đó nối vào cùng job này, cấm — NEVER dựng job thứ hai
-- [ ] Job có `glob` giới hạn ở `docs/specs/01-platform/engines/**`, `packages/game-engine/src/**`, `packages/content/src/**`
-- [ ] Bất kỳ cổng nào đỏ thì job đỏ và in tên cổng đỏ
-- [ ] Ba cổng gọi thẳng binary node 24.15, không qua `pnpm --filter` (node trên PATH là v20, `pnpm` gãy với `node:sqlite`)
+- [x] `lefthook.yml` thêm một job `pre-commit` chạy ba cổng song song
+- [x] Job dựng sẵn chỗ cho cổng của #261 (`check:engine-behavior`) và #262 (`check:engine-turn`) — hai plan đó nối vào cùng job này, cấm — NEVER dựng job thứ hai
+- [x] Job có `glob` giới hạn ở `docs/specs/01-platform/engines/**`, `packages/game-engine/src/**`, `packages/content/src/**`
+- [x] Bất kỳ cổng nào đỏ thì job đỏ và in tên cổng đỏ
+- [x] Ba cổng gọi thẳng binary node 24.15, không qua `pnpm --filter` (node trên PATH là v20, `pnpm` gãy với `node:sqlite`)
 
 **Kiểm chứng**
-- [ ] Commit một file `.md` thường: job bỏ qua, commit không chậm thêm
-- [ ] Commit một file trong `packages/game-engine/src/`: job chạy, tổng thời gian ≤8s
-- [ ] Sửa tạm một phiếu cho lệch `limits`, `git commit` bị chặn; hoàn nguyên
+- [x] Commit một file `.md` thường: job bỏ qua, commit không chậm thêm
+- [x] Commit một file trong `packages/game-engine/src/`: job chạy, tổng thời gian ≤8s (đo được 2.61s)
+- [x] Sửa tạm một phiếu cho lệch `limits`, `git commit` bị chặn; hoàn nguyên
 
 **File**: `lefthook.yml`
 

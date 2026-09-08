@@ -47,6 +47,54 @@ pre-commit:
         wait $PID_DEPS || FAIL=1
         exit $FAIL
 
+    # Cổng đối chiếu engine — Task #263 (T1), chạy song song, chỉ khi chạm engine/corpus.
+    # Dựng sẵn chỗ cho #261 (check:engine-behavior) và #262 (check:engine-turn).
+    - name: engine-gates
+      glob: "{docs/specs/01-platform/engines/**,packages/game-engine/src/**,packages/content/src/**,packages/content-build/src/**}"
+      run: |
+        NODE_DIR="${HOME}/.nvm/versions/node/v24.15.0/bin"
+        if [ -d "$NODE_DIR" ]; then
+          export PATH="$NODE_DIR:$PATH"
+        else
+          NVM_NODE_DIR="${NVM_DIR:-${HOME}/.nvm}/versions/node"
+          if [ -d "${NVM_NODE_DIR}" ]; then
+            for candidate in $(ls -1 "${NVM_NODE_DIR}" 2>/dev/null | grep "^v24\." | sort -V -r); do
+              candidate_bin="${NVM_NODE_DIR}/${candidate}/bin"
+              if [ -x "${candidate_bin}/node" ]; then
+                export PATH="${candidate_bin}:${PATH}"
+                break
+              fi
+            done
+          fi
+        fi
+
+        TSX="./node_modules/.bin/tsx"
+        FAIL=0
+
+        $TSX packages/game-engine/scripts/check-engine-specs.ts || { echo "✗ check:engine-specs failed" >&2; FAIL=1; } &
+        PID_SPECS=$!
+
+        $TSX packages/game-engine/scripts/check-render.ts || { echo "✗ check:render failed" >&2; FAIL=1; } &
+        PID_RENDER=$!
+
+        $TSX packages/content-build/src/cli/check-engine-depth.ts || { echo "✗ check:engine-depth failed" >&2; FAIL=1; } &
+        PID_DEPTH=$!
+
+        # Chỗ dựng sẵn cho #261 (check:engine-behavior) và #262 (check:engine-turn)
+        $TSX packages/game-engine/scripts/check-engine-turn.ts || { echo "✗ check:engine-turn failed" >&2; FAIL=1; } &
+        PID_TURN=$!
+
+        $TSX packages/game-engine/scripts/check-engine-behavior.ts || { echo "✗ check:engine-behavior failed" >&2; FAIL=1; } &
+        PID_BEHAVIOR=$!
+
+        wait $PID_SPECS || FAIL=1
+        wait $PID_RENDER || FAIL=1
+        wait $PID_DEPTH || FAIL=1
+        wait $PID_TURN || FAIL=1
+        wait $PID_BEHAVIOR || FAIL=1
+
+        exit $FAIL
+
 # pre-push:
 #   parallel: false
 #   jobs:
