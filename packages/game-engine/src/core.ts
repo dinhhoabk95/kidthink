@@ -225,20 +225,50 @@ export class GameEngine {
     if (!this.scaffolding) {
       return;
     }
+    const targetIdx =
+      this.activeSession instanceof TemplateGameSession
+        ? this.activeSession.getHintTargetIndex()
+        : null;
+
+    this.scaffolding.setFocusIndex(targetIdx);
+
     const prevLevel = this.scaffolding.getCurrentLevel();
     const prevSkip = this.scaffolding.isSkipSuggested;
     const level = this.scaffolding.tick(deltaMs);
 
-    if (level > 0) {
-      if (this.scaffolding.focusIndex === null) {
-        this.scaffolding.setFocusIndex(0);
-      }
-      this.focusIndex = this.scaffolding.focusIndex;
+    if (level > 0 && targetIdx !== null) {
+      this.focusIndex = targetIdx;
     } else {
       this.focusIndex = null;
+      this.scaffolding.setFocusIndex(null);
     }
 
     if (level !== prevLevel && level > 0) {
+      const roundIdx =
+        (this.activeSession as { roundIndex?: number })?.roundIndex ?? 0;
+      this.emitEvent({
+        event_name: "scaffold_escalated",
+        timestamp_ms: Date.now(),
+        data: {
+          round_index: roundIdx,
+          level,
+          trigger: this.scaffolding.missStreak > 0 ? "miss_streak" : "timer",
+          focus_index: this.focusIndex,
+          miss_streak: this.scaffolding.missStreak,
+        },
+      });
+      if (level === 2) {
+        this.emitEvent({
+          event_name: "demo_shown",
+          timestamp_ms: Date.now(),
+          data: {
+            round_index: roundIdx,
+            level,
+            focus_index: this.focusIndex,
+          },
+        });
+      }
+      // Backward compatibility event
       this.emitEvent({
         event_name: "hint_escalated",
         timestamp_ms: Date.now(),
@@ -252,6 +282,12 @@ export class GameEngine {
 
     if (this.scaffolding.isSkipSuggested && !prevSkip) {
       this.skipSuggested = true;
+      this.emitEvent({
+        event_name: "round_skipped",
+        timestamp_ms: Date.now(),
+        data: { reason: "scaffold_exhausted" },
+      });
+      // Backward compatibility event
       this.emitEvent({
         event_name: "skip_suggested",
         timestamp_ms: Date.now(),
@@ -276,6 +312,22 @@ export class GameEngine {
     if (this.ctx) {
       this.renderSystem.clear(this.ctx);
       this.activeSession?.render?.(this.ctx, this.renderSystem, now);
+      if (
+        this.focusIndex !== null &&
+        this.activeSession instanceof TemplateGameSession
+      ) {
+        const slot = this.activeSession.slots[this.focusIndex];
+        if (slot) {
+          const radius = Math.min(slot.hitW, slot.hitH) / 2 + 6;
+          this.renderSystem.renderScaffoldingAura(
+            this.ctx,
+            slot.x,
+            slot.y,
+            radius,
+            (now % 1000) / 1000
+          );
+        }
+      }
       this.onAfterRender?.(this.ctx, this.renderSystem, now);
     }
 

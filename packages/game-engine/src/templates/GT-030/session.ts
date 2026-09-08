@@ -58,12 +58,30 @@ export class GT030Session extends TemplateGameSession<
     });
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWin || this.isWon) {
+      return null;
+    }
+    const targetLength = this.content.object.length_in_units;
+    if (this.placedUnitsCount < targetLength) {
+      return 0;
+    }
+    const correctOptIdx = this.content.answer_options.findIndex(
+      (opt) => opt.is_correct
+    );
+    if (correctOptIdx >= 0) {
+      return 2 + targetLength + correctOptIdx;
+    }
+    return null;
+  }
+
   protected computeSlots(band: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("measure-strip");
     return layoutFn({
       slotCount: this.content.answer_options.length,
       ageBand: band,
       targetCount: this.content.object.length_in_units,
+      logic: this.logicSpace,
     });
   }
 

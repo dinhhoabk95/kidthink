@@ -1,11 +1,11 @@
 import {
   type GameEngine,
-  type GameSession,
   type Gesture,
+  TemplateGameSession,
   toLogicPoint,
   type ViewEntity,
 } from "@mindkid/game-engine";
-import { type Ref, ref } from "vue";
+import { computed, type Ref, ref } from "vue";
 
 export interface GestureOptions {
   readonly getEngine: () => GameEngine | null;
@@ -28,11 +28,9 @@ export function usePlayGesture(options: GestureOptions) {
 
   function syncView(): void {
     const engine = getEngine();
-    const session = engine?.activeSession as
-      | (GameSession & { getView?: () => { entities: readonly ViewEntity[] } })
-      | null;
-    if (session?.getView) {
-      viewEntities.value = session.getView().entities ?? [];
+    const session = engine?.activeSession;
+    if (session instanceof TemplateGameSession) {
+      viewEntities.value = session.getView?.().entities ?? [];
     } else {
       viewEntities.value = [];
     }
@@ -65,15 +63,18 @@ export function usePlayGesture(options: GestureOptions) {
 
   function dispatchGesture(gesture: Gesture): void {
     const engine = getEngine();
-    const session = engine?.activeSession as
-      | (GameSession & {
-          dispatch?: (
-            g: Gesture
-          ) => { valid: boolean; feedback?: string } | undefined;
-        })
-      | null;
+    const session = engine?.activeSession;
 
-    if (!session || typeof session.dispatch !== "function") {
+    if (!session) {
+      console.warn(
+        "[play-gesture] dispatchGesture called without active session"
+      );
+      return;
+    }
+    if (!(session instanceof TemplateGameSession)) {
+      console.warn(
+        "[play-gesture] session is not an instance of TemplateGameSession"
+      );
       return;
     }
 
@@ -82,7 +83,7 @@ export function usePlayGesture(options: GestureOptions) {
     if (verdict?.valid) {
       engine?.audio.playSnapSound();
       engine?.audio.playPopCelebrateSound();
-      engine?.scaffolding?.onMatch();
+      engine?.scaffolding?.onSuccess();
       syncView();
 
       if (session.checkWinCondition()) {
@@ -165,18 +166,63 @@ export function usePlayGesture(options: GestureOptions) {
     }
   }
 
+  const stagedSourceEntity = ref<ViewEntity | null>(null);
+  const stagedEntityId = computed(() => stagedSourceEntity.value?.id ?? null);
+
   function handleAccessibleEntityTap(entity: ViewEntity): void {
+    const timeMs = Date.now();
+    const staged = stagedSourceEntity.value;
+
+    if (staged) {
+      if (entity.role === "target") {
+        // Step 2: Drop onto target
+        dispatchGesture({
+          type: "drop",
+          fromX: staged.x,
+          fromY: staged.y,
+          toX: entity.x,
+          toY: entity.y,
+          timeMs,
+        });
+        stagedSourceEntity.value = null;
+        return;
+      }
+
+      if (entity.role === "source") {
+        if (entity.id === staged.id) {
+          // Deselect
+          stagedSourceEntity.value = null;
+          dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
+          return;
+        }
+        // Switch staged source
+        stagedSourceEntity.value = entity;
+        dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
+        return;
+      }
+
+      stagedSourceEntity.value = null;
+      dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
+      return;
+    }
+
+    // No staged source yet
+    if (entity.role === "source") {
+      stagedSourceEntity.value = entity;
+    }
     dispatchGesture({
       type: "tap",
       x: entity.x,
       y: entity.y,
-      timeMs: Date.now(),
+      timeMs,
     });
   }
 
   return {
     viewEntities,
+    stagedEntityId,
     syncView,
+    dispatchGesture,
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,

@@ -57,11 +57,20 @@ export class GT032Session extends TemplateGameSession<
     });
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWin || this.isWon) {
+      return null;
+    }
+    const idx = this.content.cups.findIndex((c) => this.isCupCorrect(c));
+    return idx >= 0 ? idx : null;
+  }
+
   protected computeSlots(band: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("horizontal-row");
     return layoutFn({
       slotCount: this.content.cups.length,
       ageBand: band,
+      logic: this.logicSpace,
     });
   }
 

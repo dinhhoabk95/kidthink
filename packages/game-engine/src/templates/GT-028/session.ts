@@ -255,11 +255,26 @@ export class GT028Session extends TemplateGameSession<
     this.selectedItemIds = [];
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWon) {
+      return null;
+    }
+    const currentTotal = this.getCurrentCount();
+    if (currentTotal < this.content.target_total) {
+      const nextUnselectedIdx = this.content.items.findIndex(
+        (it) => !this.selectedItemIds.includes(it.item_id)
+      );
+      return nextUnselectedIdx >= 0 ? nextUnselectedIdx : null;
+    }
+    return null;
+  }
+
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
     return layoutFn({
       slotCount: this.content.items.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

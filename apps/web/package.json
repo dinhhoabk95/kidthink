@@ -41,6 +41,8 @@
     "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:",
+    "happy-dom": "catalog:",
+    "@vue/test-utils": "catalog:",
     "vue-tsc": "catalog:",
     "zod": "catalog:"
   }

@@ -286,6 +286,11 @@ export class ClockHandsSession extends TemplateGameSession<
     });
   }
 
+  override getHintTargetIndex(): number | null {
+    const idx = this.content.options.findIndex((o) => o.is_correct);
+    return idx >= 0 ? idx : null;
+  }
+
   override commit(action: GameAction): void {
     if (action.type === "select_option" && typeof action.data === "number") {
       this.selectOption(action.data);
@@ -445,6 +450,7 @@ export class ClockHandsSession extends TemplateGameSession<
         1
       ),
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

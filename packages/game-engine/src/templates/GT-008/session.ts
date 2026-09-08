@@ -279,6 +279,19 @@ export class GT008Session extends TemplateGameSession<
     return null;
   }
 
+  override getHintTargetIndex(): number | null {
+    const unplaced = this.content.slots.find(
+      (s) => !this.placedSlots.has(s.slot_id)
+    );
+    if (!unplaced) {
+      return null;
+    }
+    const idx = this.content.items.findIndex(
+      (it) => it.item_id === unplaced.expected_item_id
+    );
+    return idx >= 0 ? idx : null;
+  }
+
   override commit(action: GameAction): void {
     const result = this.validateAction(action);
     const data = extractSlotData(action.data);

@@ -158,6 +158,7 @@ export class SubstitutionSession extends TemplateGameSession<
       slotCount: this.content.options.length,
       targetCount: this.content.equations.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 
@@ -183,6 +184,11 @@ export class SubstitutionSession extends TemplateGameSession<
       }
     }
     return null;
+  }
+
+  override getHintTargetIndex(): number | null {
+    const idx = this.content.options.findIndex((o) => o.is_correct);
+    return idx >= 0 ? idx : null;
   }
 
   override commit(action: GameAction): void {

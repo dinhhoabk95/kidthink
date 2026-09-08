@@ -2,7 +2,7 @@ import {
   formatDisplayLabel,
   formatPromptLabel,
   formatSpokenLabel,
-} from "@mindkid/shared";
+} from "@mindkid/shared/client";
 import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
@@ -152,6 +152,7 @@ export class GT000Session extends TemplateGameSession<
     return resolveLayout(layoutId)({
       slotCount: itemCount,
       ageBand: band,
+      logic: this.logicSpace,
     });
   }
 
@@ -218,7 +219,9 @@ export class GT000Session extends TemplateGameSession<
         value: asset.value,
         glyph: asset.glyph,
       });
-      const spoke = this.audio.speakPrompt(spokenTerm);
+      const spoke = this.audio.speakPrompt(spokenTerm, undefined, () => {
+        this.renderItemStates.set(asset.asset_id, "correct");
+      });
       this.lastTtsUsed = spoke;
       if (!spoke) {
         this.recordEvent("tts_unavailable", {
@@ -252,7 +255,9 @@ export class GT000Session extends TemplateGameSession<
           value: asset.value,
           glyph: asset.glyph,
         })}`;
-      const spoke = this.audio.speakPrompt(promptToSpeak);
+      const spoke = this.audio.speakPrompt(promptToSpeak, undefined, () => {
+        this.renderItemStates.set(asset.asset_id, "correct");
+      });
       this.lastTtsUsed = spoke;
       if (!spoke) {
         this.recordEvent("tts_unavailable", {
@@ -314,21 +319,10 @@ export class GT000Session extends TemplateGameSession<
     };
   }
 
-  override toAction(gesture: Gesture): GameAction | null {
-    if (gesture.type !== "tap") {
-      return null;
-    }
-
-    // Chặn chạm cho tới khi lệnh phát âm thanh đã được gọi (BR-CIR-19)
-    if (!this.audioPromptCalled) {
-      return null;
-    }
-
-    const step = this.getCurrentStep();
-    if (!step) {
-      return null;
-    }
-
+  private findTappedItem(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    step: GT000Step
+  ): GameAction | null {
     const renderItems = this.collectRenderItems(step);
     const hitTolerance = 24;
 
@@ -360,6 +354,27 @@ export class GT000Session extends TemplateGameSession<
     }
 
     return null;
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "commit") {
+      const intent = gesture.intent ?? "advance";
+      return {
+        type: "tap_item",
+        data: { intent },
+      };
+    }
+
+    if (gesture.type !== "tap" || !this.audioPromptCalled) {
+      return null;
+    }
+
+    const step = this.getCurrentStep();
+    if (!step) {
+      return null;
+    }
+
+    return this.findTappedItem(gesture, step);
   }
 
   validateAction(action: GameAction): ActionResult {
@@ -589,6 +604,18 @@ export class GT000Session extends TemplateGameSession<
 
   override checkWinCondition(): boolean {
     return this.isWon || this.currentStepIndex >= this.steps.length;
+  }
+
+  override commit(action: GameAction): void {
+    this.validateAction(action);
+  }
+
+  override getHintTargetIndex(): number | null {
+    const step = this.getCurrentStep();
+    if (!step) {
+      return null;
+    }
+    return 0;
   }
 
   private getStepPromptText(step: GT000Step): string {

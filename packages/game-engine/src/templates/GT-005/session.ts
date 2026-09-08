@@ -99,6 +99,7 @@ export class GT005Session extends TemplateGameSession<
       slotCount: this.displayLeft.length,
       targetCount: this.displayRight.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 
@@ -366,6 +367,20 @@ export class GT005Session extends TemplateGameSession<
       return this.toTapAction(gesture, sources, targets, hitTolerance);
     }
     return null;
+  }
+
+  override getHintTargetIndex(): number | null {
+    const matched = this.getMatchedPairs();
+    const staged = this.getStagedLeftId();
+    if (staged) {
+      const pair = this.content.pairs.find((p) => p.left.item_id === staged);
+      const rightIdx = this.displayRight.findIndex(
+        (r) => r.item_id === pair?.right.item_id
+      );
+      return rightIdx >= 0 ? this.displayLeft.length + rightIdx : null;
+    }
+    const leftIdx = this.displayLeft.findIndex((l) => !matched.has(l.item_id));
+    return leftIdx >= 0 ? leftIdx : null;
   }
 
   override commit(action: GameAction): void {

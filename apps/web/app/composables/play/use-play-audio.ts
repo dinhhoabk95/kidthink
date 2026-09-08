@@ -57,7 +57,9 @@ export function usePlayAudio(options: PlayAudioOptions) {
     const engine = getEngine();
     if (engine) {
       engine.audio.speakPrompt(
-        "Bé ơi, chưa tải được trò chơi. Bé bấm nút màu vàng để thử lại nhé!"
+        "Bé ơi, chưa tải được trò chơi. Bé bấm nút màu vàng để thử lại nhé!",
+        undefined,
+        onFallbackCue
       );
     }
   }
@@ -91,6 +93,7 @@ export async function preloadPlayAssets(
             resolve();
           };
           img.onerror = () => {
+            console.warn(`[preload] Không tải được hình ảnh: ${srcUrl}`);
             clearTimeout(timer);
             resolve();
           };
@@ -108,6 +111,7 @@ export async function preloadPlayAssets(
             resolve();
           };
           aud.onerror = () => {
+            console.warn(`[preload] Không tải được âm thanh: ${srcUrl}`);
             clearTimeout(timer);
             resolve();
           };
@@ -117,9 +121,13 @@ export async function preloadPlayAssets(
     }
   }
 
-  const overallTimeout = new Promise<void>((resolve) =>
-    setTimeout(resolve, 5000)
-  );
+  let overallTimer: ReturnType<typeof setTimeout> | undefined;
+  const overallTimeout = new Promise<void>((resolve) => {
+    overallTimer = setTimeout(resolve, 5000);
+  });
 
   await Promise.race([Promise.all(promises), overallTimeout]);
+  if (overallTimer) {
+    clearTimeout(overallTimer);
+  }
 }

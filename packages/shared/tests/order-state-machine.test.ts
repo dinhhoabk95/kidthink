@@ -10,9 +10,10 @@ import {
   PAYMENT_ORDER_TERMINAL_STATES,
   PAYMENT_ORDER_TRANSITIONS,
   type PaymentOrderStatus,
+  PaymentOrderTransitionError,
 } from "#src/payment-state-machine";
 
-const ERR_INVALID_TRANSITION = /INVALID_STATUS_TRANSITION/;
+const ERR_INVALID_TRANSITION = PaymentOrderTransitionError;
 const TRANSFER_NOTE_PATTERN = /^TM[A-Z0-9]{8}$/;
 
 describe("Payment Order State Machine (BR-PAY-01, BR-PAY-08, Spec §7.1)", () => {

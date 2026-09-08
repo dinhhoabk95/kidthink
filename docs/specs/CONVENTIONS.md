@@ -53,8 +53,9 @@ Khi phân vân: **tách**. Hai file nhỏ dễ gộp lại hơn một file to d�
 | `08-quality/` | Contract chất lượng cắt ngang: test, bảo mật, a11y, hiệu năng, design |
 
 **Một thư mục con duy nhất được phép:** `01-platform/engines/` chứa phiếu spec của từng game
-engine, một file cho một mã `GT`. Phiếu là spec **rút gọn** mười mục, không phải spec đủ 11
-mục — hình dạng và luật đối chiếu ở [`01-platform/engine-spec-sheet.md`](01-platform/engine-spec-sheet.md).
+engine, một file cho một mã `GT`. Phiếu là spec **mở rộng** mười tám mục — 11 mục chuẩn cộng 7
+mục engine chuyên biệt; hình dạng và luật đối chiếu ở
+[`01-platform/engine-spec-sheet.md`](01-platform/engine-spec-sheet.md).
 Thư mục con khác cần quyết định, vì mỗi tầng lồng thêm là một chỗ nữa để một outcome trốn được.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
@@ -105,9 +106,9 @@ v2 là greenfield — không có code để đối chiếu, và spec không mang
 
 Không bỏ section nào. Dùng `Không có.` khi sự vắng mặt là có ý nghĩa.
 Spec `07-addon/**` được rút gọn còn 1–2–6–7–8–9–11 (không có flow chi tiết).
-Phiếu engine `01-platform/engines/GT-*.md` dùng khuôn rút gọn riêng, mười mục, khai ở mục 7.1
+Phiếu engine `01-platform/engines/GT-*.md` dùng khuôn riêng mười tám mục, khai ở mục 7.1
 của [`01-platform/engine-spec-sheet.md`](01-platform/engine-spec-sheet.md). Lý do tách khuôn:
-bốn trong mười mục là **trích** từ registry engine và có cổng đối chiếu, nên chúng phải nằm
+ba trong mười tám mục là **trích** từ registry engine và có cổng đối chiếu, nên chúng phải nằm
 đúng chỗ cổng biết tìm.
 
 ## 5. Business rule — đánh số và tra chéo được

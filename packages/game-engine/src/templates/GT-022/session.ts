@@ -239,11 +239,23 @@ export class GT022Session extends TemplateGameSession<
     };
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWon) {
+      return null;
+    }
+    const idx = this.resolvedObjects.findIndex((obj) => {
+      const state = this.sceneSystem.getObjectState(obj.id);
+      return obj.isTarget && !state?.isFound;
+    });
+    return idx >= 0 ? idx : null;
+  }
+
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("free-scene");
     return layoutFn({
       slotCount: this.content.scene_objects.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

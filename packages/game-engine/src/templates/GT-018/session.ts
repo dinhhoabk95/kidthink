@@ -195,6 +195,14 @@ export class GT018Session extends TemplateGameSession<
     return null;
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.content.response_mode === "select") {
+      const idx = this.content.options.findIndex((o) => o.is_correct === true);
+      return idx >= 0 ? idx : null;
+    }
+    return 0;
+  }
+
   override commit(action: GameAction): void {
     if (action.type === "tap_option" || action.type === "select_item") {
       const data = action.data;

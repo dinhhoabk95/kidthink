@@ -59,15 +59,43 @@ export class GT029Session extends TemplateGameSession<
     });
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWin || this.isWon) {
+      return null;
+    }
+    const totalItems = this.content.initial_items.length;
+    if (this.removedItemIds.size < this.content.remove_count) {
+      const unremovedIdx = this.content.initial_items.findIndex(
+        (it) => !this.removedItemIds.has(it.item_id)
+      );
+      return unremovedIdx >= 0 ? unremovedIdx : null;
+    }
+    const correctOptIdx = this.content.answer_options.findIndex(
+      (opt) => opt.is_correct
+    );
+    if (correctOptIdx >= 0) {
+      return totalItems + correctOptIdx;
+    }
+    return null;
+  }
+
   protected computeSlots(band: AgeBand): readonly Slot[] {
     const totalItems = this.content.initial_items.length;
     const optionCount = this.content.answer_options.length;
 
     const gridFn = resolveLayout("grid");
-    const itemSlots = gridFn({ slotCount: totalItems, ageBand: band });
+    const itemSlots = gridFn({
+      slotCount: totalItems,
+      ageBand: band,
+      logic: this.logicSpace,
+    });
 
     const flexFn = resolveLayout("flex-wrap");
-    const optionSlots = flexFn({ slotCount: optionCount, ageBand: band });
+    const optionSlots = flexFn({
+      slotCount: optionCount,
+      ageBand: band,
+      logic: this.logicSpace,
+    });
 
     return [...itemSlots, ...optionSlots];
   }

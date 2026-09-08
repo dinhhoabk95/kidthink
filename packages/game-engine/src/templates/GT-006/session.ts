@@ -103,6 +103,7 @@ export class GT006Session extends TemplateGameSession<
     return layoutFn({
       slotCount: this.content.sequence.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 
@@ -187,6 +188,22 @@ export class GT006Session extends TemplateGameSession<
         type: "check_sequence",
         data: {},
       };
+    }
+    return null;
+  }
+
+  override getHintTargetIndex(): number | null {
+    const targetSequence = this.content.sequence
+      .slice()
+      .sort((a, b) => a.order_index - b.order_index)
+      .map((s) => s.step_id);
+    const current = this.getCurrentSequence();
+    for (let i = 0; i < targetSequence.length; i++) {
+      const expectedStepId = targetSequence[i];
+      if (expectedStepId !== undefined && current[i] !== expectedStepId) {
+        const fromIdx = current.indexOf(expectedStepId);
+        return fromIdx >= 0 ? fromIdx : null;
+      }
     }
     return null;
   }

@@ -275,12 +275,29 @@ export class GT025Session extends TemplateGameSession<
     this.foundRightIds.clear();
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWon) {
+      return null;
+    }
+    const unfoundDiff = this.content.differences.find(
+      (d) => !this.foundDifferenceIds.has(d.id)
+    );
+    if (!unfoundDiff) {
+      return null;
+    }
+    const targetObj = this.resolvedObjects.find(
+      (obj) => obj.id === unfoundDiff.right_id || obj.id === unfoundDiff.left_id
+    );
+    return targetObj ? targetObj.slotIndex : null;
+  }
+
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("split-columns");
     return layoutFn({
       slotCount: this.content.left_objects.length,
       targetCount: this.content.right_objects.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

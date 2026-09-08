@@ -73,7 +73,7 @@ export class RoundRunner {
   private readonly sessionFactory: SessionFactory;
   private readonly ageBand: AgeBand;
   private readonly layoutSeed: number;
-  private readonly logicSpace?: LogicSpace;
+  private logicSpace?: LogicSpace;
   private readonly onRoundStarted?: (
     roundIndex: number,
     roundConfig: RoundConfig
@@ -135,6 +135,27 @@ export class RoundRunner {
   /** Start the first round. Call once after construction. */
   startFirstRound(): void {
     this.startRound(0);
+  }
+
+  /** Update logicSpace for the running session and upcoming rounds */
+  setLogicSpace(space: LogicSpace): void {
+    this.logicSpace = space;
+    const sessionWithPrepare = this.currentSession as {
+      setLogicSpace?: (space: LogicSpace) => void;
+      resolveSlots?: (band: AgeBand, space?: LogicSpace) => void;
+    } | null;
+    if (sessionWithPrepare) {
+      if (typeof sessionWithPrepare.setLogicSpace === "function") {
+        sessionWithPrepare.setLogicSpace(space);
+      }
+      if (typeof sessionWithPrepare.resolveSlots === "function") {
+        sessionWithPrepare.resolveSlots(this.ageBand, space);
+      }
+    }
+  }
+
+  getLogicSpace(): LogicSpace | undefined {
+    return this.logicSpace;
   }
 
   /** Delegate action to the current session. */

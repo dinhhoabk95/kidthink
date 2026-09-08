@@ -130,6 +130,11 @@ export class GT011Session extends TemplateGameSession<
     return null;
   }
 
+  override getHintTargetIndex(): number | null {
+    const idx = this.content.options.findIndex((o) => o.is_correct);
+    return idx >= 0 ? idx : null;
+  }
+
   override commit(action: GameAction): void {
     const data = action.data;
     const itemId =
@@ -239,6 +244,7 @@ export class GT011Session extends TemplateGameSession<
       slotCount: this.content.options.length,
       targetCount: this.content.matrix.rows * this.content.matrix.cols,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

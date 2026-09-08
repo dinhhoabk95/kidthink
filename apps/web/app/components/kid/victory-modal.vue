@@ -5,6 +5,7 @@
     class="victory-overlay"
     role="dialog"
     v-if="show"
+    ref="modalRef"
   >
     <!-- Background Backdrop with warm dark indigo tint -->
     <div class="backdrop-glow" />
@@ -71,14 +72,16 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed } from "vue";
+  import { computed, ref, toRef } from "vue";
+  import { useFocusTrap } from "~/composables/play/use-focus-trap";
+  import type { CelebrationTier } from "~/composables/play/use-play-telemetry";
 
   const props = withDefaults(
     defineProps<{
       show: boolean;
       stars?: number | null;
       isIntro?: boolean;
-      celebration?: string | null;
+      celebration?: CelebrationTier;
     }>(),
     {
       stars: null,
@@ -91,6 +94,9 @@
     continue: [];
     replay: [];
   }>();
+
+  const modalRef = ref<HTMLElement | null>(null);
+  useFocusTrap(modalRef, toRef(props, "show"));
 
   const celebrationTitle = computed(() => {
     if (props.isIntro) {

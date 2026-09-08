@@ -3,12 +3,18 @@ import { useApi } from "~/composables/use-api";
 
 const MAX_EVENTS_PER_REQUEST = 50;
 
+export type CelebrationTier = "great" | "good" | "nice_try";
+
 export interface SessionCompleteResponse {
   readonly rounds_correct?: number;
   readonly rounds_total?: number;
-  readonly celebration?: "great" | "good" | "nice_try";
+  readonly celebration?: CelebrationTier;
   readonly stars?: number;
 }
+
+export type FinishSessionResult =
+  | { readonly ok: true; readonly data: SessionCompleteResponse }
+  | { readonly ok: false; readonly error: string };
 
 export function usePlayTelemetry() {
   const api = useApi();
@@ -31,13 +37,22 @@ export function usePlayTelemetry() {
 
     for (let from = 0; from < events.length; from += MAX_EVENTS_PER_REQUEST) {
       const chunk = events.slice(from, from + MAX_EVENTS_PER_REQUEST);
-      await api(
-        `${playSessionApiBase(loggedIn)}/play-sessions/${sessionUuid}/events`,
-        {
+      const endpoint = `${playSessionApiBase(loggedIn)}/play-sessions/${sessionUuid}/events`;
+      try {
+        await api(endpoint, {
           method: "POST",
           body: { events: chunk },
-        }
-      );
+        });
+      } catch (err) {
+        const status =
+          typeof err === "object" && err !== null && "status" in err
+            ? String(err.status)
+            : "unknown_status";
+        const message = err instanceof Error ? err.message : String(err);
+        console.error(
+          `[play-telemetry] uploadTelemetry thất bại — session: ${sessionUuid}, endpoint: ${endpoint}, status: ${status}, error: ${message}`
+        );
+      }
     }
   }
 
@@ -45,7 +60,7 @@ export function usePlayTelemetry() {
     sessionUuid: string,
     roundRunner: RoundRunner,
     loggedIn: boolean
-  ): Promise<SessionCompleteResponse | null> {
+  ): Promise<FinishSessionResult> {
     const state = roundRunner.getState();
     const payload = {
       rounds_completed: state.roundsCompleted,
@@ -54,17 +69,23 @@ export function usePlayTelemetry() {
       hint_count: state.hintCountTotal,
     };
 
+    const endpoint = `${playSessionApiBase(loggedIn)}/play-sessions/${sessionUuid}/complete`;
     try {
-      const resp = await api<SessionCompleteResponse>(
-        `${playSessionApiBase(loggedIn)}/play-sessions/${sessionUuid}/complete`,
-        {
-          method: "POST",
-          body: payload,
-        }
+      const resp = await api<SessionCompleteResponse>(endpoint, {
+        method: "POST",
+        body: payload,
+      });
+      return { ok: true, data: resp };
+    } catch (err) {
+      const status =
+        typeof err === "object" && err !== null && "status" in err
+          ? String(err.status)
+          : "unknown_status";
+      const message = err instanceof Error ? err.message : String(err);
+      console.error(
+        `[play-telemetry] finishSession thất bại — session: ${sessionUuid}, endpoint: ${endpoint}, status: ${status}, error: ${message}`
       );
-      return resp;
-    } catch {
-      return null;
+      return { ok: false, error: message };
     }
   }
 

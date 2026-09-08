@@ -25,6 +25,7 @@ import {
   type CommandType,
   type ExecutionResult,
   executeProgram,
+  findShortestSolution,
   type RobotState,
 } from "#src/systems/command-queue-system";
 import type { DegradationState } from "#src/systems/degradation";
@@ -150,6 +151,34 @@ export class GT035Session extends TemplateGameSession<
     });
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWin || this.isWon || this.isExecuting) {
+      return null;
+    }
+    const sol = findShortestSolution(this.queueConfig);
+    const { rows, cols } = this.content.grid;
+    const gridCount = rows * cols;
+    const queueCount = this.difficulty.max_commands ?? 8;
+    const allowed = this.allowedCommands;
+    const runBtnSlotIdx = gridCount + queueCount + allowed.length;
+
+    if (sol && sol.length > 0) {
+      const currentCmdCount = this.queueSystem.commandCount;
+      if (currentCmdCount < sol.length) {
+        const nextCmd = sol[currentCmdCount]?.type;
+        if (nextCmd) {
+          const palIdx = allowed.indexOf(nextCmd);
+          if (palIdx >= 0) {
+            return gridCount + queueCount + palIdx;
+          }
+        }
+      } else {
+        return runBtnSlotIdx;
+      }
+    }
+    return null;
+  }
+
   protected computeSlots(band: AgeBand): readonly Slot[] {
     const floor = getTouchFloor(band);
     const slots: Slot[] = [];
@@ -201,7 +230,8 @@ export class GT035Session extends TemplateGameSession<
 
     // 3. Command palette buttons (khay dưới)
     const allowed = this.allowedCommands;
-    const palStartX = 480 - (allowed.length * 90) / 2;
+    const centerX = this.logicSpace.w / 2;
+    const palStartX = centerX - (allowed.length * 90) / 2;
     for (let p = 0; p < allowed.length; p++) {
       slots.push({
         index: slotIdx++,

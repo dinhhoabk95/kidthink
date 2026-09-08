@@ -23,7 +23,7 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | Khu vực | Spec | MVP |
 |---|---:|---:|
 | `00-foundation` | 18 | 18 |
-| `01-platform` | 47 | 35 |
+| `01-platform` | 49 | 35 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
 | `04-play` | 17 | 13 |
@@ -31,13 +31,15 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | `06-admin` | 31 | 30 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 11 | 9 |
-| **Tổng** | **186** | **139** |
+| **Tổng** | **188** | **139** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 4 spec cộng thêm 2026-08-29 (Task #113) lấp lỗ hổng chiều sâu nội dung mỗi engine: [`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md), [`engine-content-depth.md`](05-content/engine-content-depth.md), [`level-generator-kit.md`](01-platform/level-generator-kit.md), [`content-theme-registry.md`](05-content/content-theme-registry.md). Kèm 27 phiếu engine ở [`engines/index.md`](01-platform/engines/index.md).
 2 spec cộng thêm cùng ngày cho go-live: [`engine-render-contract.md`](01-platform/engine-render-contract.md) và [`go-live-readiness.md`](08-quality/go-live-readiness.md) — corpus trước đó chỉ sở hữu tới mức MVP, không ai sở hữu câu "trẻ mở được chưa".
 1 spec cộng thêm 2026-09-03 cho trục kỹ năng: [`skill-dataset-model.md`](05-content/skill-dataset-model.md) — corpus đạt 100% phủ kỹ năng và 0% trung thực kỹ năng (0 trên 5.013 level mang chữ số hay chữ cái) vì không spec nào sở hữu câu hỏi *vật trong màn chơi đến từ đâu*.
 2 spec cộng thêm cùng ngày cho trục giáo án: [`lesson-flow-model.md`](05-content/lesson-flow-model.md) (thư viện master, tuổi là đề xuất — quyết định `D-SI`) và [`lesson-corpus-depth.md`](05-content/lesson-corpus-depth.md) (cầu 126 tiết, cung 81, và 48 level phải soạn thêm — `D-SJ`).
+1 spec cộng thêm 2026-09-08 cho kịch bản lượt chơi: [`engine-turn-script.md`](01-platform/engine-turn-script.md) — mục 4 của **26 trên 37** phiếu engine là bản sao chữ chỉ khác tên cơ chế, và nhịp *"hệ thống tự đọc gì"* có hai trường song song (`prompt_audio_ref` khai ở 36/37 contract mà không ai đọc, `instruction_audio_path` mới là đường sống).
+1 spec cộng thêm 2026-09-07 cho trục hành vi: [`engine-behavior-domain.md`](01-platform/engine-behavior-domain.md) — 37 phiếu engine tả **cơ chế** mà không tả nổi *đứa trẻ đang làm gì*, nên không ai đo được câu "trẻ 3–4 tuổi được làm mấy kiểu hành vi". Số đo đầu tiên: **2 trên 6 miền** ở band `3-4`, và **1 trên 37** engine cho trẻ tự tạo ra thứ gì đó.
 1 spec cộng thêm 2026-09-05 cho trục làm quen khái niệm, viết lại 2026-09-06 thành [`concept-topic-model.md`](05-content/concept-topic-model.md) — corpus có 392 trên 408 kỹ năng chỉ có bài chấm mà không có bài dạy, và không spec nào sở hữu câu hỏi *trẻ phải học gì trước khi được chơi*.
 2 spec cộng thêm 2026-08-05 ([`repo-bootstrap.md`](00-foundation/repo-bootstrap.md), [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md)) lấp lỗ hổng
 "Dựng repo, migration, cổng tự động" không có spec sở hữu ở [`roadmap.md`](roadmap.md) §P0 — xem `../../SPEC.md` §0 D9–D10.
@@ -99,6 +101,8 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [level-generator-kit](01-platform/level-generator-kit.md) | P4 | Chi phí soạn level thứ 4 tới thứ 40 |
 | [engine-render-contract](01-platform/engine-render-contract.md) | P4 | Hợp đồng vẽ, bốn lớp, 5 trạng thái thị giác |
 | [engine-play-language](01-platform/engine-play-language.md) | P1 | Ngôn ngữ chơi, 6 cử chỉ, 3 nhịp, 5 trạng thái |
+| [engine-behavior-domain](01-platform/engine-behavior-domain.md) | P4 | Sáu miền hành vi, bằng chứng quan sát, trục biến thể và độ mở |
+| [engine-turn-script](01-platform/engine-turn-script.md) | P4 | Bảy nhịp một lượt chơi, tự đọc đề, tám nhánh bắt buộc |
 | [engine-input-contract](01-platform/engine-input-contract.md) | P1 | Hợp đồng nhập, ba vòng đời con trỏ, toLogicPoint, dispatch thuần |
 | [telemetry-pipeline](01-platform/telemetry-pipeline.md) | P1 | Rollup, KPI nội dung |
 | [content-tagging](01-platform/content-tagging.md) | P1 | Ba trục what/thinking/mechanic |

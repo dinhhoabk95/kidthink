@@ -30,6 +30,18 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Chủ đề giao diện",
     help: "Bộ hình nền và chủ đề thẩm mỹ của màn chơi.",
   },
+  teaches: {
+    label: "Kỹ năng giảng dạy",
+    help: "Danh sách mã kỹ năng mà bài học làm quen này hướng tới.",
+  },
+  values: {
+    label: "Các giá trị khái niệm",
+    help: "Danh sách các giá trị hoặc đối tượng thuộc khái niệm cần giới thiệu.",
+  },
+  sequence_no: {
+    label: "Số thứ tự tiến trình",
+    help: "Thứ tự của bài làm quen trong chuỗi phân đoạn học tập.",
+  },
 
   // Item / Asset / Options / Common IDs
   id: {
@@ -1070,6 +1082,9 @@ export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
   segment_id: "Mã định danh phân đoạn trong bài học.",
   skill_code: "Mã kỹ năng theo bảng taxonomy.",
   pre_skill_code: "Mã kỹ năng làm quen bậc pre.",
+  teaches: "Mã kỹ năng mục tiêu giảng dạy.",
+  values: "Giá trị khái niệm cần giới thiệu.",
+  sequence_no: "Số thứ tự tiến trình phân đoạn bài học.",
   strictness: "Chế độ nghiêm ngặt ranh giới quy luật (relaxed hoặc strict).",
   facing: "Hướng nhìn của nhân vật trên lưới.",
   allowed_commands: "Danh sách khối lệnh cho phép.",

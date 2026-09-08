@@ -3,6 +3,7 @@
     aria-modal="true"
     class="fixed inset-0 z-50 flex items-center justify-center bg-surface-950/60 p-4 backdrop-blur-sm transition-all"
     role="dialog"
+    ref="dialogRef"
     :aria-label="'Xác nhận người lớn'"
   >
     <div
@@ -117,7 +118,9 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, onMounted, onUnmounted, ref } from "vue";
+  import { onMounted, ref } from "vue";
+  import { useParentGateState } from "~/composables/play/parent-gate-state";
+  import { useFocusTrap } from "~/composables/play/use-focus-trap";
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
 
   /**
@@ -148,28 +151,27 @@
   const emit = defineEmits<{
     verified: [gateToken: string];
     cancel: [];
+    parent_gate_shown: [];
+    parent_gate_passed: [];
+    parent_gate_failed: [reason: string];
   }>();
 
-  const TRUST_KEY = "parent_gate_trusted_until";
-  const TRUST_DURATION_MS = 5 * 60 * 1000;
+  const dialogRef = ref<HTMLElement | null>(null);
+  useFocusTrap(dialogRef, ref(true), {
+    onEscape: () => emit("cancel"),
+  });
 
   const { headers: csrfHeaders } = useCsrfHeaders();
+  const gateState = useParentGateState({ clientOnly: props.clientOnly });
 
   const challenge = ref<ParentGateChallenge | null>(null);
   const localExpectedAnswer = ref<number | null>(null);
   const answer = ref<number | null>(null);
   const isVerifying = ref(false);
   const errorMessage = ref<string | null>(null);
-  const failedAttempts = ref(0);
-  const lockUntil = ref(0);
-  const currentTime = ref(Date.now());
 
-  let timerHandle: ReturnType<typeof setInterval> | null = null;
-
-  const isLocked = computed(() => lockUntil.value > currentTime.value);
-  const remainingLockSeconds = computed(() =>
-    Math.max(0, Math.ceil((lockUntil.value - currentTime.value) / 1000))
-  );
+  const isLocked = gateState.isLocked;
+  const remainingLockSeconds = gateState.remainingLockSeconds;
 
   function generateLocalChallenge(): void {
     const factor_a = Math.floor(Math.random() * 8) + 2;
@@ -186,12 +188,10 @@
   async function loadChallenge() {
     errorMessage.value = null;
 
-    if (typeof window !== "undefined") {
-      const trustedUntil = Number(sessionStorage.getItem(TRUST_KEY) ?? 0);
-      if (trustedUntil > Date.now()) {
-        emit("verified", "trusted_session");
-        return;
-      }
+    if (gateState.isTrusted()) {
+      emit("parent_gate_passed");
+      emit("verified", "trusted_session");
+      return;
     }
 
     if (props.clientOnly) {
@@ -209,26 +209,33 @@
         }
       );
     } catch {
-      // Guest or unauthenticated context fallback cleanly to local challenge
       generateLocalChallenge();
     }
   }
 
   function markVerified(token: string): void {
-    if (typeof window !== "undefined") {
-      sessionStorage.setItem(TRUST_KEY, String(Date.now() + TRUST_DURATION_MS));
-    }
+    gateState.recordSuccess();
+    gateState.setTrusted();
+    emit("parent_gate_passed");
     emit("verified", token);
   }
 
   function handleFailedAttempt(): void {
-    failedAttempts.value += 1;
-    if (failedAttempts.value >= 3) {
-      lockUntil.value = Date.now() + 60 * 1000;
-      failedAttempts.value = 0;
-    }
-    errorMessage.value = "Câu trả lời chưa đúng. Anh chị thử lại giúp em nhé.";
+    const { locked } = gateState.recordFailedAttempt();
     answer.value = null;
+
+    if (locked) {
+      errorMessage.value =
+        "Đã nhập sai 3 lần. Quay lại trò chơi và vui lòng chờ 60 giây.";
+      emit("parent_gate_failed", "locked_3_attempts");
+      setTimeout(() => {
+        emit("cancel");
+      }, 1000);
+      return;
+    }
+
+    errorMessage.value = "Câu trả lời chưa đúng. Anh chị thử lại giúp em nhé.";
+    emit("parent_gate_failed", "wrong_answer");
     if (localExpectedAnswer.value === null) {
       loadChallenge();
     } else {
@@ -276,15 +283,7 @@
   }
 
   onMounted(() => {
-    timerHandle = setInterval(() => {
-      currentTime.value = Date.now();
-    }, 500);
+    emit("parent_gate_shown");
     loadChallenge();
-  });
-
-  onUnmounted(() => {
-    if (timerHandle !== null) {
-      clearInterval(timerHandle);
-    }
   });
 </script>

@@ -293,11 +293,26 @@ export class GT027Session extends TemplateGameSession<
     this.renderItemStates.clear();
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWon) {
+      return null;
+    }
+    const activeRule = this.ruleSystem?.getActiveRule();
+    if (!activeRule) {
+      return null;
+    }
+    const validIdx = this.content.items.findIndex((item) =>
+      activeRule.validator(item)
+    );
+    return validIdx >= 0 ? validIdx : null;
+  }
+
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
     return layoutFn({
       slotCount: this.content.items.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

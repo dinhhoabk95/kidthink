@@ -268,14 +268,6 @@ export class ScaffoldingSystem {
     target.missStreak += 1;
   }
 
-  onMatch(state?: ScaffoldState): void {
-    this.onSuccess(state);
-  }
-
-  reset(): void {
-    this.resetOnSuccess();
-  }
-
   resetOnSuccess(): void {
     this.onSuccess(this.internalState);
   }

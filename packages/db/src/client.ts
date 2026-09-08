@@ -12,7 +12,12 @@ import postgres from "postgres";
  */
 
 /** `max: 1` — mỗi tiến trình Node giữ đúng một connection, khớp t3.small. */
-const POOL_OPTIONS = { max: 1 } as const;
+const POOL_OPTIONS = {
+  max: 1,
+  onnotice: () => {
+    // Suppress noisy postgres notice dumps
+  },
+} as const;
 
 function lazy<T>(create: () => T): () => T {
   let instance: T | undefined;

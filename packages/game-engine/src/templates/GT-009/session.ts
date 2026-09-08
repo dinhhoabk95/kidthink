@@ -172,6 +172,7 @@ export class GT009Session extends TemplateGameSession<
       slotCount: this.content.candidates.length,
       targetCount: this.content.clues.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 
@@ -231,6 +232,20 @@ export class GT009Session extends TemplateGameSession<
       return { type: "select_item", data: { item_id: hitCand.candidate_id } };
     }
     return null;
+  }
+
+  override getHintTargetIndex(): number | null {
+    const nextClue =
+      this.content.clues.find(
+        (c) => !this.revealedClueIds.includes(c.clue_id)
+      ) ?? this.content.clues.at(-1);
+    if (!nextClue) {
+      return null;
+    }
+    const idx = this.content.clues.findIndex(
+      (c) => c.clue_id === nextClue.clue_id
+    );
+    return idx >= 0 ? idx : null;
   }
 
   override commit(action: GameAction): void {

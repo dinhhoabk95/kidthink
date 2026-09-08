@@ -367,12 +367,38 @@ export class GT023Session extends TemplateGameSession<
     };
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWon) {
+      return null;
+    }
+    const placements = this.assemblySystem.getPlacements();
+    const stagedId = this.placementMechanic.getStagedItemId();
+    if (stagedId) {
+      const anchorIdx = this.content.anchors.findIndex(
+        (a) => !placements.has(a.anchor_id) && a.accepted_part_id === stagedId
+      );
+      if (anchorIdx >= 0) {
+        return anchorIdx;
+      }
+    }
+    const placedPartIds = new Set(placements.values());
+    const unplacedPartIdx = this.content.parts.findIndex(
+      (p) => !placedPartIds.has(p.part_id)
+    );
+    if (unplacedPartIdx >= 0) {
+      const slot = this.sourceSlots[unplacedPartIdx];
+      return slot ? slot.index : null;
+    }
+    return null;
+  }
+
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("top-source-bottom-target");
     return layoutFn({
       slotCount: this.content.parts.length,
       targetCount: this.content.anchors.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

@@ -95,14 +95,35 @@ export class GT034Session extends TemplateGameSession<
     });
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWin || this.isWon) {
+      return null;
+    }
+    const patternLen = this.content.target_pattern.length;
+    if (this.userSteps.length >= patternLen) {
+      return null;
+    }
+    const nextInstId = this.content.target_pattern[this.userSteps.length];
+    if (nextInstId) {
+      const instIdx = this.content.instruments.findIndex(
+        (inst) => inst.instrument_id === nextInstId
+      );
+      if (instIdx >= 0) {
+        return patternLen + instIdx;
+      }
+    }
+    return null;
+  }
+
   protected computeSlots(band: AgeBand): readonly Slot[] {
     const floor = getTouchFloor(band);
     const slots: Slot[] = [];
     const patternLen = this.content.target_pattern.length;
     const instCount = this.content.instruments.length;
+    const centerX = this.logicSpace.w / 2;
 
     // 1. Target pattern track slots
-    const startX = 480 - (patternLen * 72) / 2;
+    const startX = centerX - (patternLen * 72) / 2;
     for (let i = 0; i < patternLen; i++) {
       slots.push({
         index: i,
@@ -118,7 +139,7 @@ export class GT034Session extends TemplateGameSession<
     }
 
     // 2. Instrument source slots
-    const instStartX = 480 - (instCount * 110) / 2;
+    const instStartX = centerX - (instCount * 110) / 2;
     for (let i = 0; i < instCount; i++) {
       const inst = this.content.instruments[i];
       if (!inst) {
@@ -141,7 +162,7 @@ export class GT034Session extends TemplateGameSession<
     slots.push({
       index: patternLen + instCount,
       role: "source",
-      x: 480,
+      x: centerX,
       y: 120,
       w: 64,
       h: 64,

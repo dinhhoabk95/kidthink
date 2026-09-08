@@ -333,6 +333,13 @@ export class SudokuMiniSession extends TemplateGameSession<
     return this.selectedSymbolId;
   }
 
+  override getHintTargetIndex(): number | null {
+    const emptyIdx = this.content.cells.findIndex(
+      (c) => this.cellStates.get(`${c.row},${c.col}`)?.value === null
+    );
+    return emptyIdx >= 0 ? emptyIdx : null;
+  }
+
   override commit(action: GameAction): void {
     if (action.type === "fill_cell") {
       const payload = extractFillCellData(action.data);
@@ -493,6 +500,7 @@ export class SudokuMiniSession extends TemplateGameSession<
       slotCount: this.content.symbols.length,
       targetCount: this.content.grid_size,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

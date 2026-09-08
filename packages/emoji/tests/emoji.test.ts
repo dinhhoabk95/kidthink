@@ -98,7 +98,7 @@ describe("@mindkid/emoji", () => {
     it("getByGlyph returns entry by exact NFC glyph", () => {
       const entry = getByGlyph("🍎");
       expect(entry).not.toBeNull();
-      expect(entry?.name).toBe("Táo đỏ");
+      expect(entry?.name).toBe("Quả táo đỏ");
     });
 
     it("getByGlyph matches both with and without VS16 (U+FE0F)", () => {

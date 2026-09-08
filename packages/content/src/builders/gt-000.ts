@@ -44,10 +44,10 @@ const WHITESPACE_SPLIT_REGEX = /\s+/;
 export function buildConceptIntroPrompt(label: string): string {
   const normalized = label.trim();
   const lower = normalized.toLowerCase();
-  if (lower.startsWith("làm quen") || lower.startsWith("nhận biết")) {
-    return `Bé cùng ${normalized} nhé!`;
-  }
-  const candidate = `Bé cùng làm quen với ${normalized} nhé!`;
+  const candidate =
+    lower.startsWith("làm quen") || lower.startsWith("nhận biết")
+      ? `Bé cùng ${normalized} nhé!`
+      : `Bé cùng làm quen với ${normalized} nhé!`;
   const wordCount = candidate
     .split(WHITESPACE_SPLIT_REGEX)
     .filter(Boolean).length;

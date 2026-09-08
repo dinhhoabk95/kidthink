@@ -226,6 +226,11 @@ export class GT001Session extends TemplateGameSession<
     return null;
   }
 
+  override getHintTargetIndex(): number | null {
+    const idx = this.displayOptions.findIndex((opt) => opt.is_correct);
+    return idx >= 0 ? idx : null;
+  }
+
   override commit(action: GameAction): void {
     if (
       action.type === "select_item" &&

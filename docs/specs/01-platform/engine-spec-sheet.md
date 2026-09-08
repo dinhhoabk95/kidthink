@@ -8,6 +8,8 @@ phase: P4
 reviewed: 2026-08-31
 owns:
   - Hình dạng spec chuẩn của một game engine
+  - Luật phiếu engine phải mang mục miền hành vi và mục trục biến thể
+  - Luật mục 4 và mục 5 của phiếu phải theo kịch bản lượt chơi
   - Luật mọi mã GT đã đăng ký phải có đúng một spec
   - Luật spec đặt trước cho engine chưa có template
   - Cổng đối chiếu spec với registry engine
@@ -28,13 +30,23 @@ nội dung hình dạng gì, người soạn phải mở `packages/game-engine/s
 và đọc Zod schema. Đó là mã nguồn đang làm nhiệm vụ của spec, và nó chặn đúng người cần đọc
 nhất: người biên soạn nội dung, không phải dev.
 
-File này sở hữu **hình dạng spec engine** — một spec độc lập cho một mã `GT`, đủ khuôn 16 mục
-(11 mục chuẩn `CONVENTIONS.md` + 5 mục engine chuyên biệt), đủ để soạn nội dung và cài đặt `render()`
+File này sở hữu **hình dạng spec engine** — một spec độc lập cho một mã `GT`, đủ khuôn 18 mục
+(11 mục chuẩn `CONVENTIONS.md` + 7 mục engine chuyên biệt), đủ để soạn nội dung và cài đặt `render()`
 cho engine đó mà không cần phỏng đoán — và **luật đối chiếu**: mã có trong registry mà không có
 spec thì cổng đỏ, spec mô tả sai contract thì cổng đỏ.
 
 Nó cấm — NEVER định nghĩa lại contract. Contract sống ở
 [`game-template-contract.md`](game-template-contract.md) và ở `template.ts`. Spec **trích** nó.
+
+Mục 4 và mục 5 chịu thêm một hợp đồng nữa: chúng phải kể được **một lượt chơi thật** — vào
+màn hiện gì, hệ thống tự đọc gì, trẻ chạm được từ lúc nào, xong rồi còn gì trên màn, chơi lại
+khác gì. Bảy nhịp và tám nhánh của [`engine-turn-script.md`](engine-turn-script.md) là khuôn
+đó; file này chỉ ép **phiếu phải theo khuôn**.
+
+Hai mục cuối, 17 và 18, trả lời câu hỏi mà mười sáu mục trước không chạm tới: *đứa trẻ **làm**
+gì*, và *cùng hành vi đó soạn được bao nhiêu cách*. Từ vựng và luật của hai mục đó thuộc
+[`engine-behavior-domain.md`](engine-behavior-domain.md); file này chỉ sở hữu **chỗ ngồi** của
+chúng trong phiếu và luật phiếu thiếu mục thì cổng đỏ.
 
 ## 2. Actors
 
@@ -60,11 +72,13 @@ Nó cấm — NEVER định nghĩa lại contract. Contract sống ở
 
 1. Dev cấp mã `GT-<nnn>` và viết `template.ts` theo
    [`template-authoring-kit.md`](template-authoring-kit.md).
-2. Dev tạo `engines/GT-<nnn>.md` theo 16 mục ở mục 7.1 hoặc dùng `scripts/create-template.ts`.
+2. Dev tạo `engines/GT-<nnn>.md` theo 18 mục ở mục 7.1 hoặc dùng `scripts/create-template.ts`.
 3. Dev điền phần **trích** (mục 3, 7, 15) từ `template.ts`. Cổng đối chiếu kiểm phần này, sai là đỏ.
-4. Dev điền phần **viết tay** (mục 1, 2, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 16) — mục tiêu sư phạm,
-   luật riêng `BR-E<nnn>-*`, Gherkin scenario, ma trận seed, hợp đồng vẽ. Cổng và reviewer kiểm tra.
-5. Chạy `check:engine-specs`. Cổng đỏ nếu thiếu spec, thừa spec, thiếu rule, thiếu Gherkin, hoặc trường trích lệch.
+4. Dev điền phần **viết tay** (mục 1, 2, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 16, 17, 18) — mục tiêu
+   sư phạm, luật riêng `BR-E<nnn>-*`, Gherkin scenario, ma trận seed, hợp đồng vẽ, miền hành vi,
+   trục biến thể. Cổng và reviewer kiểm tra.
+5. Chạy `check:engine-specs`. Cổng đỏ nếu thiếu spec, thừa spec, thiếu rule, thiếu Gherkin, hoặc
+   trường trích lệch. Chạy `check:engine-behavior` cho nội dung của mục 17 và 18.
 6. Sinh lại `engines/index.md`.
 
 ## 5. Alternative flows
@@ -93,10 +107,14 @@ Nó cấm — NEVER định nghĩa lại contract. Contract sống ở
 | `BR-ESS-08` (index sinh tự động) | `engines/index.md` sinh từ các spec, cấm — NEVER sửa tay | Bảng tổng sửa tay là nơi thứ 12 phải nhớ cập nhật, theo đúng lỗi mà [`template-authoring-kit.md`](template-authoring-kit.md) mục 1 đã đo |
 | `BR-ESS-09` (cổng có ca âm) | Cổng đối chiếu phải có test ca âm: bỏ một spec, đổi một `limits` — cả hai phải làm cổng đỏ | Cổng không có ca âm là cổng không biết mình hỏng. Bài học đã trả giá với công cụ lint trước đó |
 | `BR-ESS-10` (mục hợp đồng vẽ bắt buộc) | Mục 12 của spec phải nêu slot dùng, bảng bốn lớp, và trạng thái thị giác riêng của engine | `BR-ERC-10` (mỗi engine có mục 12) của [`engine-render-contract.md`](engine-render-contract.md): một hợp đồng vẽ chung không đủ để cài `render()` cho `GT-013` mê cung |
-| `BR-ESS-11` (spec đủ khuôn SDD) | File engine là spec đủ khuôn `CONVENTIONS.md` (16 mục), frontmatter có đủ 9 trường gồm `owns` và `depends_on` | Spec thiếu cấu trúc sẽ mất đi các ràng buộc bảo vệ chất lượng |
+| `BR-ESS-11` (spec đủ khuôn SDD) | File engine là spec đủ khuôn `CONVENTIONS.md` (18 mục), frontmatter có đủ 9 trường gồm `owns` và `depends_on` | Spec thiếu cấu trúc sẽ mất đi các ràng buộc bảo vệ chất lượng |
 | `BR-ESS-12` (rule riêng engine) | Mục 6 của spec có ≥1 `BR-E<nnn>-*`. Rule của engine cấm — NEVER trùng rule của spec lô | Mỗi engine có bất biến nghiệp vụ riêng cần bảo vệ |
 | `BR-ESS-13` (Gherkin bắt buộc) | Mỗi `BR-E<nnn>-*` phải có ≥1 scenario Gherkin tương ứng ở mục 9 | Kiểm chứng tính đúng đắn qua kịch bản hành vi rõ ràng |
 | `BR-ESS-14` (không sở hữu chồng) | `owns` của spec engine cấm chứa thứ mà spec lô hoặc `game-template-contract` đã sở hữu | Tránh xung đột phạm vi sở hữu giữa các spec |
+| `BR-ESS-18` (mục 4 theo bảy nhịp) | Mục 4 của phiếu đánh số theo bảy nhịp `N1`…`N7` của [`engine-turn-script.md`](engine-turn-script.md), mỗi nhịp nói nội dung **riêng** của engine. Cấm — NEVER để lại chuỗi bản sao `Trẻ tương tác theo cơ chế <mechanic>` | Đo 2026-09-08: **26 trên 37** phiếu có mục 4 giống hệt nhau, chỉ khác tên cơ chế. Sáu bước đó đúng về mặt hình thức và rỗng về mặt nội dung — cổng cũ không bắt được vì nó chỉ kiểm mục có tồn tại hay không |
+| `BR-ESS-19` (mục 5 phủ tám nhánh) | Mục 5 phủ đủ tám nhánh bắt buộc ở mục 7.4 của [`engine-turn-script.md`](engine-turn-script.md), mỗi nhánh một hàng | Trung vị hôm nay là 4 nhánh, và hai nhánh trẻ gặp nhiều nhất — **bỏ dở giữa lượt** và **chơi lại lần thứ n** — không có ở phiếu nào |
+| `BR-ESS-16` (mục miền hành vi bắt buộc) | Mục 17 của phiếu phải khai miền chủ đạo, ≥1 câu quan sát được, bảng điều kiện phát triển tiên quyết và bậc biểu diễn theo band. Giá trị miền phải thuộc từ vựng đóng của [`engine-behavior-domain.md`](engine-behavior-domain.md) | Mười sáu mục trước đó mô tả **cơ chế**. Một phiếu tả đủ `tap-select` mà không tả nổi đứa trẻ đang làm gì thì người soạn nội dung vẫn phải đoán bài này hợp lứa nào — và `BR-GTC-05` chỉ nói cấm band, không nói cấm vì đâu |
+| `BR-ESS-17` (mục trục biến thể bắt buộc) | Mục 18 phải khai ≥3 trục biến thể có giá trị cụ thể, một giá trị `do_mo`, và ≥1 quyền quyết định thuộc về trẻ | "Đa dạng cách thức" không soạn được và không đếm được khi nó là một tính từ. Ba trục có giá trị thì ma trận seed ở mục 13 có chỗ bám, và cổng đo được |
 | `BR-ESS-15` (spec đặt trước) | Spec **được phép** ra đời trước `template.ts` khi mã có mặt trong `engine-spec-planned.json`. Mỗi hàng phải trỏ tới một plan **có thật**, và mã phải **rời danh sách trong cùng PR** dựng khuôn. Mã không khai đặt trước mà không có khuôn vẫn là spec mồ côi | `BR-ESS-07` nói spec là một phần của định nghĩa xong, nhưng nó chỉ chặn được PR *thêm* engine. Chín engine của chương trình `#168` có plan trước khuôn hàng tháng, và khoản mồ côi của `BR-ESS-01` khiến viết spec sớm **làm cổng đỏ** — tức hợp đồng đang phạt đúng thứ nó muốn khuyến khích. Hai ràng buộc kèm theo giữ cho "đặt trước" cấm — NEVER thành lối đi vòng: có plan thật, và tự rỗng đi |
 
 ## 7. Data
@@ -109,15 +127,15 @@ Nó cấm — NEVER định nghĩa lại contract. Contract sống ở
 
 ### 7.1 Mười sáu mục của một spec engine
 
-Spec engine gồm 11 mục theo chuẩn [`CONVENTIONS.md`](../CONVENTIONS.md) và 5 mục engine chuyên biệt:
+Spec engine gồm 11 mục theo chuẩn [`CONVENTIONS.md`](../CONVENTIONS.md) và 7 mục engine chuyên biệt:
 
 | # | Mục | Nội dung | Nguồn | Cổng kiểm |
 |---:|---|---|---|:--:|
 | 1 | Objective | Tiến trình tư duy dạy trẻ, điểm khác biệt với engine gần nhất | Viết tay | Có |
 | 2 | Actors | Trẻ · Người soạn nội dung · Bộ sinh level · Cổng | Viết tay | Có |
 | 3 | Entry points | Thư mục engine, `content_contract`, layout dùng, phiếu này | Trích | Có |
-| 4 | Main flow | Một lượt chơi đúng từ `content_pack` tới thắng | Viết tay | Có |
-| 5 | Alternative flows | Sai, hết giờ, gợi ý, thiết bị yếu, asset hỏng | Viết tay | Có |
+| 4 | Main flow | Bảy nhịp `N1`…`N7` của một lượt chơi (`BR-ESS-18`) | Viết tay | Có |
+| 5 | Alternative flows | Tám nhánh bắt buộc cộng nhánh riêng (`BR-ESS-19`) | Viết tay | Có |
 | 6 | Business rules | `BR-E<nnn>-01`… — luật riêng engine kèm lý do | Viết tay | Có |
 | 7 | Data | Hình dạng `content_pack` và `difficulty_params`, band, `limits` | Trích | Có |
 | 8 | API contract | Thường không có ("không có, engine chạy trong tiến trình") | Viết tay | Có |
@@ -129,6 +147,8 @@ Spec engine gồm 11 mục theo chuẩn [`CONVENTIONS.md`](../CONVENTIONS.md) v�
 | 14 | Ca sai không bắt được bằng schema | ≥1 ca parse sạch mà sai sư phạm kèm lý do (`BR-ESS-06`) | Viết tay | Có |
 | 15 | Trường trích từ registry | `layouts`, `limits`, `banned_age_bands`, `asset_kinds`, nguồn dòng (`BR-ESS-02`) | Trích | Có |
 | 16 | Chiều sâu nội dung | Sáu số đo hiện tại và mục tiêu bậc đang bật (`BR-ECD-01`…`-06`) | Trích/Viết tay | Có |
+| 17 | Miền hành vi | Miền chủ đạo, câu quan sát được, điều kiện phát triển tiên quyết, bậc biểu diễn (`BR-ESS-16`) | Viết tay | Có |
+| 18 | Trục biến thể và độ mở | ≥3 trục có giá trị, `do_mo`, quyền của trẻ (`BR-ESS-17`) | Viết tay | Có |
 
 ### 7.2 Bảng ánh xạ 11 mục phiếu cũ → 16 mục spec mới
 
@@ -145,7 +165,7 @@ Spec engine gồm 11 mục theo chuẩn [`CONVENTIONS.md`](../CONVENTIONS.md) v�
 | 9. Boundaries | 10. Boundaries |
 | 10. Câu hỏi còn mở | 11. Open questions |
 | 11. Hợp đồng vẽ | 12. Hợp đồng vẽ |
-| *(chưa có)* | 2. Actors · 4. Main flow · 5. Alternative flows · 6. Business rules (`BR-E<nnn>-*`) · 8. API contract · 16. Chiều sâu nội dung |
+| *(chưa có)* | 2. Actors · 4. Main flow · 5. Alternative flows · 6. Business rules (`BR-E<nnn>-*`) · 8. API contract · 16. Chiều sâu nội dung · 17. Miền hành vi · 18. Trục biến thể và độ mở |
 
 ### 7.3 Trường trích và nguồn của nó
 
@@ -226,6 +246,41 @@ Scenario: BR-ESS-14 — owns của spec engine chồng chéo với spec lô làm
   When chạy check:engine-specs
   Then cổng thoát với mã khác 0
 
+Scenario: BR-ESS-18 — mục 4 không đủ bảy nhịp làm cổng đỏ
+  Given phiếu GT-011 có mục 4 đánh số tới N5
+  When chạy check:engine-specs
+  Then cổng thoát với mã khác 0
+
+Scenario: BR-ESS-18 — mục 4 còn chuỗi bản sao làm cổng đỏ
+  Given phiếu GT-011 có mục 4 chứa "Trẻ tương tác theo cơ chế"
+  When chạy check:engine-specs
+  Then cổng thoát với mã khác 0
+
+Scenario: BR-ESS-19 — mục 5 thiếu nhánh bắt buộc làm cổng đỏ
+  Given phiếu GT-011 có mục 5 không có hàng cho nhánh chơi lại lần thứ n
+  When chạy check:engine-specs
+  Then cổng thoát với mã khác 0
+
+Scenario: BR-ESS-16 — phiếu thiếu mục 17 làm cổng đỏ
+  Given phiếu GT-011 không có mục 17
+  When chạy check:engine-specs
+  Then cổng thoát với mã khác 0
+
+Scenario: BR-ESS-16 — miền hành vi ngoài từ vựng làm cổng đỏ
+  Given phiếu GT-011 khai miền chủ đạo là "quan-sat"
+  When chạy check:engine-behavior
+  Then cổng thoát với mã khác 0
+
+Scenario: BR-ESS-17 — phiếu thiếu mục 18 làm cổng đỏ
+  Given phiếu GT-011 không có mục 18
+  When chạy check:engine-specs
+  Then cổng thoát với mã khác 0
+
+Scenario: BR-ESS-17 — mục 18 chỉ có hai trục biến thể làm cổng đỏ
+  Given phiếu GT-011 khai đúng hai trục biến thể
+  When chạy check:engine-behavior
+  Then cổng thoát với mã khác 0
+
 Scenario: BR-ESS-10 — spec thiếu mục hợp đồng vẽ làm cổng đỏ
   Given spec GT-014 không có mục 12
   When chạy check:engine-specs
@@ -285,16 +340,21 @@ Scenario: BR-ESS-03 — spec không khai schema riêng
 - Ghi nguồn dòng cho mọi trường trích.
 - Nêu ít nhất một ca sai không bắt được bằng schema ở mục 14.
 - Nêu hợp đồng vẽ riêng của engine ở mục 12.
+- Viết mục 4 theo bảy nhịp `N1`…`N7`, mỗi nhịp bằng nội dung riêng của engine.
+- Phủ đủ tám nhánh bắt buộc ở mục 5.
+- Khai miền hành vi và câu quan sát được ở mục 17.
+- Khai ≥3 trục biến thể, độ mở và quyền của trẻ ở mục 18.
 - Giữ ca âm trong bộ test của cổng.
 
 **Ask first**
-- Bỏ một mục trong khuôn 16 mục.
+- Bỏ một mục trong khuôn 18 mục.
 - Cho một engine `deprecated` giữ spec ở dạng rút gọn hơn.
 
 **Never**
 - Khai contract mới trong spec (`BR-ESS-03`).
 - Gắn skill hay competency vào spec (`BR-ESS-04`).
 - Sửa tay `engines/index.md` (`BR-ESS-08`).
+- Đặt từ vựng miền hành vi mới trong phiếu engine — từ vựng thuộc [`engine-behavior-domain.md`](engine-behavior-domain.md).
 - Merge PR thêm engine mà thiếu spec (`BR-ESS-07`).
 - Thêm mã vào `engine-spec-planned.json` mà không có plan sở hữu (`BR-ESS-15`).
 - Để AI agent IDE sinh spec thay người.

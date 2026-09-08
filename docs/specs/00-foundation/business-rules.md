@@ -115,7 +115,9 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-LVB` | [`legacy-v1-template-batch.md`](../01-platform/legacy-v1-template-batch.md) | | `BR-TGB` | [`taxonomy-gap-batch.md`](../01-platform/taxonomy-gap-batch.md) |
 | `BR-ESS` | [`engine-spec-sheet.md`](../01-platform/engine-spec-sheet.md) | | `BR-LGK` | [`level-generator-kit.md`](../01-platform/level-generator-kit.md) |
 | `BR-ERC` | [`engine-render-contract.md`](../01-platform/engine-render-contract.md) | | `BR-EPL` | [`engine-play-language.md`](../01-platform/engine-play-language.md) |
-| `BR-EIC` | [`engine-input-contract.md`](../01-platform/engine-input-contract.md) | | `BR-E000`…`BR-E036` | [`engines/index.md`](../01-platform/engines/index.md) (37 spec engine trong registry) |
+| `BR-EIC` | [`engine-input-contract.md`](../01-platform/engine-input-contract.md) | | `BR-EBD` | [`engine-behavior-domain.md`](../01-platform/engine-behavior-domain.md) |
+| `BR-ETS` | [`engine-turn-script.md`](../01-platform/engine-turn-script.md) | | | |
+| `BR-E000`…`BR-E036` | [`engines/index.md`](../01-platform/engines/index.md) (37 spec engine trong registry) | | | |
 
 **Public**
 

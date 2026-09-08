@@ -3,7 +3,7 @@ import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { InternalError, NotFoundError } from "@mindkid/errors/common";
 import { GameLevelNotFoundError } from "@mindkid/errors/game-level";
 import { and, eq, sql } from "drizzle-orm";
-import { defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { syncContentAssetRefs } from "#server/utils/asset-refs";
 

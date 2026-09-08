@@ -129,6 +129,7 @@ export class GT007Session extends TemplateGameSession<
       slotCount: this.content.options.length,
       targetCount: this.content.parts.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 
@@ -286,6 +287,11 @@ export class GT007Session extends TemplateGameSession<
       return this.toTapAction(gesture, sources, targets, hitTolerance);
     }
     return null;
+  }
+
+  override getHintTargetIndex(): number | null {
+    const idx = this.content.options.findIndex((o) => o.is_correct);
+    return idx >= 0 ? idx : null;
   }
 
   override commit(action: GameAction): void {

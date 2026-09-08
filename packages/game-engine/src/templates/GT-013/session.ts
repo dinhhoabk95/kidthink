@@ -202,6 +202,12 @@ export class GT013Session extends TemplateGameSession<
     return null;
   }
 
+  override getHintTargetIndex(): number | null {
+    const goal = this.content.grid.goal;
+    const idx = goal.row * this.content.grid.cols + goal.col;
+    return idx >= 0 && idx < this.slots.length ? idx : null;
+  }
+
   override commit(action: GameAction): void {
     const cell = this.actionCell(action);
     if (cell) {
@@ -318,6 +324,7 @@ export class GT013Session extends TemplateGameSession<
       slotCount: this.content.grid.rows * this.content.grid.cols,
       targetCount: this.content.grid.cols,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

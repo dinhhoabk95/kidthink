@@ -40,11 +40,31 @@ depends_on:
 
 ## 4. Main flow
 
-<!-- Một lượt chơi đúng: từ content_pack tới thắng. -->
+Bảy nhịp của [`engine-turn-script.md`](../engine-turn-script.md). Mỗi nhịp viết bằng nội dung
+**riêng** của engine; cấm — NEVER để lại câu bản sao `Trẻ tương tác theo cơ chế <mechanic>`.
+
+1. **`N1` Mở màn** — <thứ tự dựng cảnh của engine, phần tử nào hiện sau cùng, nhận chạm từ lúc nào>
+2. **`N2` Ra đề** — <câu đề nói gì, kênh hình song song, nút nghe lại>
+3. **`N3` Thao tác** — <cử chỉ nào ánh xạ sang hành động nào>
+4. **`N4` Phản hồi tức thì** — <đúng thì gì, sai thì gì, trong ≤100ms>
+5. **`N5` Trợ giúp** — <`L1` highlight cái gì · `L2` bàn tay ma làm động tác gì · `L3` chậm lại ra sao>
+6. **`N6` Kết lượt** — <điều kiện thắng, thứ còn lại trên màn, event phát ra>
+7. **`N7` Chơi lại** — <cái gì đổi theo seed mới, cái gì giữ nguyên>
 
 ## 5. Alternative flows
 
-<!-- Sai, hết giờ, gợi ý, thiết bị yếu, asset hỏng. -->
+Tám nhánh bắt buộc (`BR-ESS-19`), cộng nhánh riêng của engine.
+
+| # | Nhánh | Điều kiện | Hành vi |
+|---|---|---|---|
+| 1 | Thao tác sai, còn lượt | | |
+| 2 | Thao tác sai, hết lượt | | |
+| 3 | Trẻ dừng lại, không thao tác | | |
+| 4 | Không nghe được lời đọc | | |
+| 5 | Asset hỏng | | |
+| 6 | Thiết bị yếu hoặc `prefers-reduced-motion` | | |
+| 7 | Bỏ dở giữa lượt | | |
+| 8 | Chơi lại lần thứ n | | |
 
 ## 6. Business rules
 
@@ -142,3 +162,39 @@ Sáu số đo hiện tại và mục tiêu bậc 1 (`BR-ECD-01`…`-06`):
 - `what_span`: hiện có W, mục tiêu ≥2
 - `theme_span`: hiện có T, mục tiêu ≥2
 - `access_tier`: ≥1 level `free` hoặc `login`
+
+## 17. Miền hành vi
+
+Từ vựng và luật: [`engine-behavior-domain.md`](../engine-behavior-domain.md).
+
+**Miền chủ đạo:** `<chi-dinh | van-chuyen | sap-dat | dieu-chinh | lan-net | kien-tao>` ·
+**Miền phụ:** `<mã hoặc —>` · **Cử chỉ chủ đạo:** `<tap | drop | stroke | adjust>` ·
+**Ràng buộc nhịp:** `<tự do | có nhịp … | thời-gian-thật>`
+
+**Câu quan sát được** (`BR-EBD-05` — viết như dòng cô giáo ghi vào sổ):
+
+| Câu quan sát | Band | Là bằng chứng của |
+|---|:--:|---|
+| "<Con … >" | `3-4` | <năng lực hành vi tương ứng> |
+
+**Điều kiện phát triển tiên quyết** (`BR-EBD-06` — bảng này phải giải thích `age_min` và band cấm):
+
+| Điều kiện | Ngưỡng band nhỏ nhất | Hệ quả thiết kế |
+|---|:--:|---|
+| Vận động | `<band>` | <fallback, dung sai, kích thước vùng chạm> |
+| Chú ý | `<band>` | <độ dài lượt chơi> |
+| Bộ nhớ làm việc | `<band>` | <số điều kiện giữ song song> |
+| Ngôn ngữ | `<band>` | <độ dài câu lệnh, kênh âm> |
+
+**Bậc biểu diễn theo band** (`BR-EBD-12`): `3-4` <vật/hình> · `4-5` <…> · `5-6` <…>
+
+## 18. Trục biến thể và độ mở
+
+| Trục | Giá trị dùng ở engine này | Đã có trong corpus |
+|---|---|:--:|
+| `boi-canh` | <≥2 giá trị cụ thể> | <số level> |
+| `vai-tro` | <≥2 giá trị cụ thể> | <số level> |
+| `kenh-de` | <≥2 giá trị cụ thể> | <số level> |
+
+**Độ mở (`do_mo`):** `<đóng | bán mở | mở>` — <nếu `đóng` thì nêu lý do cơ chế, `BR-EBD-08`>
+**Quyền của trẻ (`BR-EBD-09`):** <trẻ tự quyết cái gì>

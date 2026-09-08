@@ -150,7 +150,7 @@ describe("Game Schema Integration Tests", () => {
       shuffle_items: true,
     };
 
-    const codeMulti = await getUniqueGameLevelCode("GL-C1-CNT-NUM");
+    const codeMulti = await getUniqueGameLevelCode("GL-C3-SET-APP");
     const seedWithRounds: ContentSeed = {
       kind: "game_level",
       header: {
@@ -163,10 +163,10 @@ describe("Game Schema Integration Tests", () => {
         age_max: 4,
         difficulty: 1,
         access_tier: "free",
-        skill_codes: ["C1.CNT.01"],
-        learning_objective_codes: ["LO-C1.CNT.01-01"],
-        what_tags: ["fruits"],
-        thinking_tags: ["counting"],
+        skill_codes: ["C3.SET.01"],
+        learning_objective_codes: ["LO-C3.SET.01-01"],
+        what_tags: ["category"],
+        thinking_tags: ["sort"],
         origin: "human",
         authored_in: "studio",
       },
@@ -200,7 +200,7 @@ describe("Game Schema Integration Tests", () => {
       ],
     };
 
-    const codeSingle = await getUniqueGameLevelCode("GL-C1-CNT-NUM");
+    const codeSingle = await getUniqueGameLevelCode("GL-C3-SET-APP");
     const seedWithoutRounds: ContentSeed = {
       kind: "game_level",
       header: {
@@ -213,10 +213,10 @@ describe("Game Schema Integration Tests", () => {
         age_max: 4,
         difficulty: 1,
         access_tier: "free",
-        skill_codes: ["C1.CNT.01"],
-        learning_objective_codes: ["LO-C1.CNT.01-01"],
-        what_tags: ["fruits"],
-        thinking_tags: ["counting"],
+        skill_codes: ["C3.SET.01"],
+        learning_objective_codes: ["LO-C3.SET.01-01"],
+        what_tags: ["category"],
+        thinking_tags: ["sort"],
         origin: "human",
         authored_in: "studio",
       },

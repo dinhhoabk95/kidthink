@@ -215,11 +215,24 @@ export class GT026Session extends TemplateGameSession<
     // cleanup
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWon) {
+      return null;
+    }
+    const trial = this.inhibitionSystem?.getCurrentTrial();
+    const isStimulus = this.inhibitionSystem?.getState() === "stimulus";
+    if (isStimulus && trial?.kind === "go") {
+      return 0;
+    }
+    return null;
+  }
+
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
     return layoutFn({
       slotCount: 1,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

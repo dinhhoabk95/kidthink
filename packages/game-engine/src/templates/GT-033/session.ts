@@ -68,6 +68,32 @@ export class GT033Session extends TemplateGameSession<
     });
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWin || this.isWon) {
+      return null;
+    }
+    const totalCells = this.content.grid.rows * this.content.grid.cols;
+    const solution = this.content.solution;
+    if (!solution) {
+      return null;
+    }
+    for (let i = 0; i < totalCells; i++) {
+      if (this.placedCells[i] !== solution[i]) {
+        const expectedColor = solution[i];
+        if (this.selectedColorId !== expectedColor) {
+          const palIdx = this.content.palette.findIndex(
+            (p) => p.color_id === expectedColor
+          );
+          if (palIdx >= 0) {
+            return totalCells + palIdx;
+          }
+        }
+        return i;
+      }
+    }
+    return null;
+  }
+
   protected computeSlots(band: AgeBand): readonly Slot[] {
     const totalCells = this.content.grid.rows * this.content.grid.cols;
     const layoutFn = resolveLayout("weave-grid");
@@ -75,6 +101,7 @@ export class GT033Session extends TemplateGameSession<
       slotCount: this.content.palette.length,
       ageBand: band,
       targetCount: totalCells,
+      logic: this.logicSpace,
     });
   }
 

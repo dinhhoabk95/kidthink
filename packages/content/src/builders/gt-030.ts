@@ -11,6 +11,24 @@ import {
   shuffleDeterministic,
 } from "./utils.js";
 
+const WHITESPACE_SPLIT_REGEX = /\s+/;
+
+function buildGT030Prompt(unitLabel: string): string {
+  const candidate1 = `Đồ vật này dài bằng mấy lần ${unitLabel} nhé?`;
+  if (
+    candidate1.trim().split(WHITESPACE_SPLIT_REGEX).filter(Boolean).length <= 12
+  ) {
+    return candidate1;
+  }
+  const candidate2 = `Vật này dài bằng mấy lần ${unitLabel} nhé?`;
+  if (
+    candidate2.trim().split(WHITESPACE_SPLIT_REGEX).filter(Boolean).length <= 12
+  ) {
+    return candidate2;
+  }
+  return "Đồ vật này dài bằng mấy đơn vị nhé?";
+}
+
 export const projectGT030: Projection<"GT-030"> = {
   template: "GT-030",
   requires: { min_items: 2, max_items: 6 },
@@ -51,7 +69,7 @@ export const projectGT030: Projection<"GT-030"> = {
 
     return {
       content_pack: {
-        prompt: `Đồ vật này dài bằng mấy lần ${unitItem.label} nhé?`,
+        prompt: buildGT030Prompt(unitItem.label),
         object: {
           object_id: objectItem.id,
           asset: resolveItemAsset(objectItem, true),

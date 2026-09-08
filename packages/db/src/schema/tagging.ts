@@ -86,6 +86,7 @@ export const contentObjectiveMap = pgTable(
   },
   (table) => [
     primaryKey({
+      name: "content_objective_map_entity_type_entity_id_learning_objective_",
       columns: [table.entityType, table.entityId, table.learningObjectiveId],
     }),
   ]

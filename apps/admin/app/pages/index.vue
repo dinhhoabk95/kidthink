@@ -35,7 +35,9 @@
             aria-hidden="true"
             class="w-2 h-2 rounded-full bg-success-500"
           />
-          <span class="text-surface-400 dark:text-surface-500">As-of:</span>
+          <span class="text-surface-400 dark:text-surface-500"
+            >Dữ liệu tính đến (as of):</span
+          >
           <span
             class="font-mono font-semibold text-surface-900 dark:text-surface-100"
           >
@@ -139,7 +141,7 @@
               class="pt-2 border-t border-surface-100 dark:border-surface-800/80 flex items-center justify-between"
             >
               <span class="text-xs text-surface-400 italic">
-                Chưa có nguồn (P2.3)
+                Chưa có nguồn — bước P2.3
               </span>
               <NuxtLink
                 class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300 hover:bg-surface-200 dark:hover:bg-surface-700 transition-colors"
@@ -181,7 +183,7 @@
               class="pt-2 border-t border-surface-100 dark:border-surface-800/80 flex items-center justify-between"
             >
               <span class="text-xs text-surface-400 italic">
-                Chưa có nguồn (P2.8)
+                Chưa có nguồn — bước P2.8
               </span>
               <NuxtLink
                 class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/60 transition-colors"
@@ -618,7 +620,7 @@
             <div
               class="text-xs font-mono text-surface-400 dark:text-surface-500 italic"
             >
-              P3.1 Sắp có
+              Bước P3.1
             </div>
           </div>
         </div>

@@ -201,11 +201,26 @@ export class GT024Session extends TemplateGameSession<
     };
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWon) {
+      return null;
+    }
+    const currentTarget = this.traceSystem.getCurrentTargetWaypoint();
+    if (!currentTarget) {
+      return null;
+    }
+    const idx = this.content.waypoints.findIndex(
+      (w) => w.id === currentTarget.id
+    );
+    return idx >= 0 ? idx : null;
+  }
+
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
     return layoutFn({
       slotCount: this.content.waypoints.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

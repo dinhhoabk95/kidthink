@@ -58,33 +58,27 @@ try {
     END;
     $$ LANGUAGE plpgsql;
 
-    DROP TRIGGER IF EXISTS trg_prevent_published_game_levels ON game_levels;
-    CREATE TRIGGER trg_prevent_published_game_levels
+    CREATE OR REPLACE TRIGGER trg_prevent_published_game_levels
       BEFORE UPDATE ON game_levels
       FOR EACH ROW EXECUTE FUNCTION prevent_published_update();
 
-    DROP TRIGGER IF EXISTS trg_prevent_published_lessons ON lessons;
-    CREATE TRIGGER trg_prevent_published_lessons
+    CREATE OR REPLACE TRIGGER trg_prevent_published_lessons
       BEFORE UPDATE ON lessons
       FOR EACH ROW EXECUTE FUNCTION prevent_published_update();
 
-    DROP TRIGGER IF EXISTS trg_prevent_published_activities ON activities;
-    CREATE TRIGGER trg_prevent_published_activities
+    CREATE OR REPLACE TRIGGER trg_prevent_published_activities
       BEFORE UPDATE ON activities
       FOR EACH ROW EXECUTE FUNCTION prevent_published_update();
 
-    DROP TRIGGER IF EXISTS trg_prevent_published_curricula ON curricula;
-    CREATE TRIGGER trg_prevent_published_curricula
+    CREATE OR REPLACE TRIGGER trg_prevent_published_curricula
       BEFORE UPDATE ON curricula
       FOR EACH ROW EXECUTE FUNCTION prevent_published_update();
 
-    DROP TRIGGER IF EXISTS trg_prevent_published_worksheets ON worksheets;
-    CREATE TRIGGER trg_prevent_published_worksheets
+    CREATE OR REPLACE TRIGGER trg_prevent_published_worksheets
       BEFORE UPDATE ON worksheets
       FOR EACH ROW EXECUTE FUNCTION prevent_published_update();
 
-    DROP TRIGGER IF EXISTS trg_prevent_completed_play_sessions ON play_sessions;
-    CREATE TRIGGER trg_prevent_completed_play_sessions
+    CREATE OR REPLACE TRIGGER trg_prevent_completed_play_sessions
       BEFORE UPDATE ON play_sessions
       FOR EACH ROW EXECUTE FUNCTION prevent_completed_play_session_update();
   `);

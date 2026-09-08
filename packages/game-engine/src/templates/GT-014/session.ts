@@ -381,6 +381,10 @@ export class BalanceScaleSession extends TemplateGameSession<
     return null;
   }
 
+  override getHintTargetIndex(): number | null {
+    return this.trayItems.length > 0 ? 0 : null;
+  }
+
   override commit(action: GameAction): void {
     if (action.type === "place_item") {
       const place = extractPlaceItemData(action.data);
@@ -496,6 +500,7 @@ export class BalanceScaleSession extends TemplateGameSession<
       slotCount: this.trayItems.length,
       targetCount: 2,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

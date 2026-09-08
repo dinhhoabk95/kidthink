@@ -19,6 +19,7 @@ export class SpeechSynthesisAdapter {
   private isVoiceAvailable = false;
   private selectedVoice: SpeechSynthesisVoice | null = null;
   private isInitialized = false;
+  private hasListeningVoicesChanged = false;
   private currentTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
@@ -56,14 +57,18 @@ export class SpeechSynthesisAdapter {
 
     checkVoices();
 
-    if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    if (
+      !this.hasListeningVoicesChanged &&
+      window.speechSynthesis.onvoiceschanged !== undefined
+    ) {
       window.speechSynthesis.onvoiceschanged = checkVoices;
+      this.hasListeningVoicesChanged = true;
     }
   }
 
   /** Whether a vi-VN voice is detected and ready */
   hasVietnameseVoice(): boolean {
-    if (!(this.isInitialized && this.isVoiceAvailable)) {
+    if (!this.isInitialized) {
       this.initVoices();
     }
     return this.isVoiceAvailable;

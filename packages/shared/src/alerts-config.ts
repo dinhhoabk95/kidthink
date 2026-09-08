@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import fs from "node:fs";
 
 export type AlertSeverityType = "critical" | "warning" | "info";
 
@@ -252,7 +252,7 @@ export function validateAlertsConfig(
 export function loadAndValidateAlertsFile(
   filePath: string
 ): AlertsValidationResult {
-  const content = readFileSync(filePath, "utf-8");
+  const content = fs.readFileSync(filePath, "utf-8");
   const parsed = parseAlertsYaml(content);
   return validateAlertsConfig(parsed);
 }

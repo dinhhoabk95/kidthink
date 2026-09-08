@@ -693,8 +693,10 @@
 
 <script lang="ts" setup>
   import { isApiError } from "@mindkid/errors/client";
-  import type { AdvancedReportResult } from "@mindkid/shared";
-  import { findCompetency } from "@mindkid/shared/client";
+  import {
+    type AdvancedReportResult,
+    findCompetency,
+  } from "@mindkid/shared/client";
   import { computed, ref } from "vue";
   import { useRoute } from "vue-router";
 

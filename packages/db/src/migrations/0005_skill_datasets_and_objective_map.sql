@@ -62,11 +62,11 @@ CREATE TABLE IF NOT EXISTS "content_objective_map" (
 	"learning_objective_id" bigint NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "content_objective_map_entity_type_entity_id_learning_objective_id_pk" PRIMARY KEY("entity_type","entity_id","learning_objective_id")
+	CONSTRAINT "content_objective_map_entity_type_entity_id_learning_objective_" PRIMARY KEY("entity_type","entity_id","learning_objective_id")
 );
 --> statement-breakpoint
 DO $$ BEGIN
-  ALTER TABLE "content_objective_map" ADD CONSTRAINT "content_objective_map_learning_objective_id_learning_objectives_id_fk" FOREIGN KEY ("learning_objective_id") REFERENCES "public"."learning_objectives"("id") ON DELETE cascade ON UPDATE no action;
+  ALTER TABLE "content_objective_map" ADD CONSTRAINT "content_objective_map_learning_objective_id_learning_objectives" FOREIGN KEY ("learning_objective_id") REFERENCES "public"."learning_objectives"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
   WHEN duplicate_object THEN null;
 END $$;

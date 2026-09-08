@@ -150,20 +150,33 @@
             @pointerup="handlePointerUp"
           />
 
-          <!-- Visually hidden accessible buttons for assistive tech -->
+          <!-- Accessible DOM buttons for assistive tech & keyboard navigation -->
           <section
             aria-label="Các đối tượng tương tác"
             aria-live="polite"
-            class="sr-only"
+            class="absolute inset-0 pointer-events-none z-10"
           >
             <button
+              class="sr-only focus:not-sr-only focus:fixed focus:z-40 focus:px-4 focus:py-2 focus:rounded-2xl focus:bg-white focus:text-surface-900 focus:border-[3px] focus:border-brand-600 focus:shadow-2xl focus:ring-4 focus:ring-brand-500/30 focus:ring-offset-2 focus:outline-none focus:font-heading focus:font-bold focus:text-base pointer-events-auto transition-all active:scale-95"
               type="button"
               v-for="entity in viewEntities"
               :key="entity.id"
-              :aria-label="`Chọn đối tượng ${entity.id}`"
+              :aria-label="getAccessibleLabel(entity)"
+              :class="{
+                'ring-4 ring-warning-500 ring-offset-2 !bg-warning-50':
+                  stagedEntityId === entity.id,
+              }"
               @click="handleAccessibleEntityTap(entity)"
+              @keydown.enter.prevent="handleAccessibleEntityTap(entity)"
+              @keydown.space.prevent="handleAccessibleEntityTap(entity)"
             >
-              Chọn đối tượng {{ entity.id }}
+              {{ getAccessibleLabel(entity) }}
+              <span
+                class="ml-1 text-xs text-warning-700"
+                v-if="stagedEntityId === entity.id"
+              >
+                (Đang chọn)
+              </span>
             </button>
           </section>
 
@@ -229,96 +242,29 @@
 </template>
 
 <script lang="ts" setup>
-  import {
-    createGameSessionSync,
-    type EngineConfig,
-    GameEngine,
-    preloadGameSession,
-    type RoundConfig,
-    RoundRunner,
-    type Slot,
-  } from "@mindkid/game-engine";
-  import {
-    preloadPlayAssets,
-    usePlayAudio,
-  } from "~/composables/play/use-play-audio";
+  import type { ViewEntity } from "@mindkid/game-engine";
+  import { TemplateGameSession } from "@mindkid/game-engine";
+  import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+  import { usePlayAudio } from "~/composables/play/use-play-audio";
   import { usePlayError } from "~/composables/play/use-play-error";
   import { usePlayGesture } from "~/composables/play/use-play-gesture";
-  import { usePlayTelemetry } from "~/composables/play/use-play-telemetry";
+  import { usePlaySession } from "~/composables/play/use-play-session";
   import { usePlayThemes } from "~/composables/play/use-play-themes";
-  import { useApi } from "~/composables/use-api";
-
-  interface JsonObject {
-    [key: string]: string | number | boolean | readonly string[] | undefined;
-  }
-
-  interface RoundPayload {
-    round_index: number;
-    instruction?: string | null;
-    instruction_audio_path?: string | null;
-    content_pack: JsonObject;
-    difficulty_params: JsonObject;
-  }
-
-  interface ConfigPayload {
-    level_code: string;
-    code: string;
-    title?: string;
-    name?: string;
-    content_version?: number;
-    template_code: string;
-    content_pack?: JsonObject;
-    difficulty_params?: JsonObject;
-    theme_id: string;
-    age_band?: "3-4" | "4-5" | "5-6";
-    scoring?: { mode: "rounds" | "attempts" };
-    rounds?: RoundPayload[];
-    session?: { uuid: string; started_at?: string };
-    flags?: {
-      reduced_motion?: boolean;
-      audio_enabled?: boolean;
-      tap_fallback?: boolean;
-    };
-    assets?: Array<{
-      ref: string;
-      kind: string;
-      url?: string;
-      glyph?: string;
-    }>;
-  }
 
   const route = useRoute();
   const router = useRouter();
   const levelCode = route.params.code as string;
   const { loggedIn, fetch: fetchSession } = useUserSession();
 
-  const isLoading = ref(true);
   const canvasRef = ref<HTMLCanvasElement | null>(null);
-  const displayTitle = ref("");
-  const currentRound = ref(0);
-  const totalRounds = ref(1);
-
-  const showVictoryModal = ref(false);
   const showParentGate = ref(false);
-  const earnedCelebration = ref<"great" | "good" | "nice_try">("good");
-  const earnedStars = ref<number | null>(null);
-
-  const isIntroCardStep = ref(false);
-  const isEchoStep = ref(false);
-  const introStepIndex = ref(0);
-
-  const currentThemeId = ref<string>("default");
-  const canSkipRound = ref(false);
   const isPromptPillPulsing = ref(false);
   const parentLockHoldProgress = ref(0);
 
   let holdTimer: ReturnType<typeof setInterval> | null = null;
   let pulseTimer: ReturnType<typeof setTimeout> | null = null;
-  let cachedPayload: ConfigPayload | null = null;
-  let roundRunner: RoundRunner | null = null;
-  let engine: GameEngine | null = null;
+  let resizeTimer: ReturnType<typeof setTimeout> | null = null;
 
-  const { currentThemeInfo } = usePlayThemes(currentThemeId);
   const {
     errorMessage,
     errorTitle,
@@ -327,40 +273,97 @@
     errorActionText,
     handleApiError,
   } = usePlayError();
-  const { uploadTelemetry, finishSession } = usePlayTelemetry();
-  const {
-    setInstructionAudio,
-    stopNarrationAudio,
-    playInstructionNarration,
-    speakErrorPrompt,
-  } = usePlayAudio({
-    getEngine: () => engine,
-    onFallbackCue: triggerVisualFallbackCue,
+
+  const playSession = usePlaySession({
+    canvasRef,
+    loggedIn,
+    syncView: () => gesture.syncView(),
   });
 
-  const isIntroLevel = computed(() => {
-    return (
-      cachedPayload?.template_code === "GT-000" ||
-      Boolean(route.query.return_to) ||
-      Boolean(route.query.return_level_code)
-    );
+  const {
+    isLoading,
+    displayTitle,
+    currentThemeId,
+    totalRounds,
+    currentRound,
+    canSkipRound,
+    isEchoStep,
+    isIntroCardStep,
+    introStepIndex,
+    showVictoryModal,
+    earnedCelebration,
+    earnedStars,
+    getEngine,
+    getRoundRunner,
+    getCachedPayload,
+    fetchAndStartGame,
+    handleSkipRound,
+    setPaused,
+    cleanupSession,
+  } = playSession;
+
+  const { currentThemeInfo } = usePlayThemes(currentThemeId);
+
+  const gesture = usePlayGesture({
+    getEngine,
+    canvasRef,
+    onRoundWon: playSession.handleRoundWonInternal,
   });
 
   const {
     viewEntities,
-    syncView,
+    stagedEntityId,
+    dispatchGesture,
     handlePointerDown,
     handlePointerMove,
     handlePointerUp,
     handlePointerCancel,
     handleAccessibleEntityTap,
-  } = usePlayGesture({
-    getEngine: () => engine,
-    canvasRef,
-    onRoundWon: handleRoundWonInternal,
+  } = gesture;
+
+  const { stopNarrationAudio, playInstructionNarration, speakErrorPrompt } =
+    usePlayAudio({
+      getEngine,
+      onFallbackCue: triggerVisualFallbackCue,
+    });
+
+  const isIntroLevel = computed(() => {
+    const cached = getCachedPayload();
+    return (
+      cached?.template_code === "GT-000" ||
+      Boolean(route.query.return_to) ||
+      Boolean(route.query.return_level_code)
+    );
   });
 
+  function getAccessibleLabel(entity: ViewEntity): string {
+    if (entity.spokenLabel) {
+      return entity.spokenLabel;
+    }
+    if (entity.glyph) {
+      return `Ký hiệu ${entity.glyph}`;
+    }
+    if (entity.label) {
+      return entity.label;
+    }
+    if (entity.role === "target") {
+      return `Ô đích ${entity.id}`;
+    }
+    if (entity.role === "source") {
+      return `Vật phẩm ${entity.id}`;
+    }
+    return `Đối tượng ${entity.id}`;
+  }
+
   function triggerVisualFallbackCue(): void {
+    const engine = getEngine();
+    if (engine?.scaffolding) {
+      const targetIdx =
+        engine.activeSession instanceof TemplateGameSession
+          ? engine.activeSession.getHintTargetIndex()
+          : null;
+      engine.scaffolding.triggerVisualFallback(targetIdx ?? undefined);
+    }
     isPromptPillPulsing.value = true;
     if (pulseTimer) {
       clearTimeout(pulseTimer);
@@ -414,59 +417,38 @@
   }
 
   function replayInstructionAudio(): void {
+    const engine = getEngine();
     engine?.audio.playTapSound();
-    const currentRoundCfg = roundRunner?.getCurrentRoundConfig();
+    const currentRoundCfg = getRoundRunner()?.getCurrentRoundConfig();
     const prompt =
       (currentRoundCfg?.content_pack as { prompt?: string })?.prompt ||
       currentRoundCfg?.instruction ||
-      cachedPayload?.title;
+      getCachedPayload()?.title;
     playInstructionNarration(prompt);
   }
 
-  function handleSkipRound(): void {
-    canSkipRound.value = false;
-    engine?.audio.playTapSound();
-    engine?.scaffolding?.reset();
-    roundRunner?.skipCurrentRound("scaffold_exhausted");
-  }
-
   function handleEchoReplay(): void {
-    if (engine?.activeSession) {
-      engine.activeSession.validateAction({
-        type: "tap_item",
-        data: { intent: "replay" },
-      });
-    }
+    dispatchGesture({
+      type: "commit",
+      timeMs: Date.now(),
+      intent: "replay",
+    });
   }
 
   function handleEchoDone(): void {
-    if (engine?.activeSession) {
-      engine.activeSession.validateAction({
-        type: "tap_item",
-        data: { intent: "advance" },
-      });
-    }
+    dispatchGesture({
+      type: "commit",
+      timeMs: Date.now(),
+      intent: "advance",
+    });
   }
 
   function handleIntroPrev(): void {
-    if (engine?.activeSession) {
-      engine.activeSession.validateAction({
-        type: "tap_item",
-        data: { intent: "prev" },
-      });
-    }
-  }
-
-  function handleRoundWonInternal(): void {
-    if (!roundRunner) {
-      return;
-    }
-    const sessionUuid = cachedPayload?.session?.uuid;
-    if (sessionUuid) {
-      uploadTelemetry(sessionUuid, roundRunner, loggedIn.value).catch(() => {
-        // Telemetry errors should not block completion
-      });
-    }
+    dispatchGesture({
+      type: "commit",
+      timeMs: Date.now(),
+      intent: "prev",
+    });
   }
 
   function handleContinueNext(): void {
@@ -481,259 +463,51 @@
 
   function handleReplayGame(): void {
     showVictoryModal.value = false;
-    fetchAndStartGame().catch(
+    isLoading.value = true;
+    fetchAndStartGame(levelCode).catch(
       (err: Error | Record<string, string | number>) => {
+        isLoading.value = false;
         const appErr = handleApiError(err, levelCode, loggedIn.value);
         errorMessage.value = appErr.message;
       }
     );
   }
 
-  async function completeSessionOnFinish(): Promise<void> {
-    const sessionUuid = cachedPayload?.session?.uuid;
-    if (sessionUuid && roundRunner) {
-      try {
-        await uploadTelemetry(sessionUuid, roundRunner, loggedIn.value);
-      } catch {
-        // Continue to finish
-      }
-
-      const resp = await finishSession(
-        sessionUuid,
-        roundRunner,
-        loggedIn.value
-      );
-      if (resp) {
-        earnedCelebration.value = resp.celebration ?? "good";
-        earnedStars.value = typeof resp.stars === "number" ? resp.stars : null;
-      }
-    }
-    showVictoryModal.value = true;
-  }
-
-  function renderScaffoldingAura(
-    ctx: CanvasRenderingContext2D,
-    nowMs: number
-  ): void {
-    if (!engine || engine.focusIndex === null) {
-      return;
-    }
-    const slots =
-      (engine.activeSession as { slots?: readonly Slot[] })?.slots ||
-      engine.slots ||
-      [];
-    const focusSlot = slots[engine.focusIndex];
-    if (focusSlot) {
-      const r = Math.max(focusSlot.w, focusSlot.h) / 2 + 18;
-      ctx.save();
-      const pulse = 0.5 + 0.5 * Math.sin((nowMs / 1000) * Math.PI * 2);
-      ctx.strokeStyle = `rgba(245, 158, 11, ${0.4 + pulse * 0.4})`;
-      ctx.lineWidth = 4 + pulse * 2;
-      ctx.setLineDash([8, 6]);
-      ctx.lineDashOffset = -(nowMs / 50) % 14;
-      ctx.beginPath();
-      ctx.arc(focusSlot.x, focusSlot.y, r, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-    }
-  }
-
-  function syncIntroStepState(): void {
-    if (cachedPayload?.template_code === "GT-000" && engine?.activeSession) {
-      const s = engine.activeSession as {
-        steps?: readonly { action: string }[];
-        currentStepIndex?: number;
-      };
-      const stepIdx = s.currentStepIndex ?? 0;
-      const step = s.steps?.[stepIdx];
-      introStepIndex.value = stepIdx;
-      isEchoStep.value = step?.action === "echo";
-      isIntroCardStep.value =
-        step?.action === "present" || step?.action === "echo";
-    } else if (isIntroCardStep.value) {
-      isIntroCardStep.value = false;
-      isEchoStep.value = false;
-    }
-  }
-
-  function startRounds(
-    payload: ConfigPayload,
-    rounds: RoundPayload[],
-    engineConfig: EngineConfig
-  ): void {
-    totalRounds.value = rounds.length;
-    currentRound.value = 0;
-    earnedStars.value = null;
-
-    const roundConfigs: RoundConfig[] = rounds.map((r) => ({
-      round_index: r.round_index,
-      instruction: r.instruction,
-      instruction_audio_path: r.instruction_audio_path,
-      content_pack: r.content_pack,
-      difficulty_params: r.difficulty_params,
-    }));
-
-    roundRunner = new RoundRunner({
-      rounds: roundConfigs,
-      ageBand: engineConfig.age_band,
-      sessionFactory: (contentPack, difficultyParams, seed) => {
-        const roundCfg: EngineConfig = {
-          ...engineConfig,
-          content_pack: contentPack,
-          difficulty_params: difficultyParams,
-          layout_seed: seed,
-        };
-        return createGameSessionSync(payload.template_code, roundCfg);
-      },
-      onRoundStarted: (roundIndex) => {
-        currentRound.value = roundIndex;
-        canSkipRound.value = false;
-        setInstructionAudio(rounds[roundIndex]?.instruction_audio_path);
-        const session = roundRunner?.getCurrentSession();
-        if (session && engine) {
-          engine.activeSession = session;
-          engine.audio.playStartSound();
-        }
-        syncView();
-        const currentRoundCfg = rounds[roundIndex];
-        const prompt =
-          (currentRoundCfg?.content_pack as { prompt?: string })?.prompt ||
-          currentRoundCfg?.instruction ||
-          cachedPayload?.title;
-        if (cachedPayload?.template_code !== "GT-000") {
-          setTimeout(() => {
-            playInstructionNarration(prompt);
-          }, 350);
-        }
-      },
-      onRoundCompleted: () => {
-        engine?.scaffolding?.resetOnSuccess();
-        canSkipRound.value = false;
-        syncView();
-      },
-      onAllRoundsCompleted: () => {
-        engine?.audio.playLevelCelebrateSound();
-        setTimeout(() => {
-          completeSessionOnFinish().catch(() => {
-            showVictoryModal.value = true;
-          });
-        }, 500);
-      },
-    });
-
-    const factory = (cfg: EngineConfig) => {
-      roundRunner?.startFirstRound();
-      const session = roundRunner?.getCurrentSession();
-      if (!session) {
-        return createGameSessionSync(payload.template_code, cfg);
-      }
-      return session;
-    };
-
-    if (canvasRef.value) {
-      if (engine) {
-        engine.destroy();
-        engine = null;
-      }
-      engine = new GameEngine();
-      engine.on("skip_suggested", () => {
-        canSkipRound.value = true;
-      });
-      engine.onAfterRender = (ctx, _rs, nowMs) => {
-        renderScaffoldingAura(ctx, nowMs);
-        syncIntroStepState();
-      };
-      engine.load(engineConfig, factory);
-      engine.start(canvasRef.value);
-      syncView();
-    }
-  }
-
-  function buildEngineConfig(
-    payload: ConfigPayload,
-    firstRound?: RoundPayload
-  ): EngineConfig {
-    return {
-      level_code: payload.code || payload.level_code || levelCode,
-      content_version: payload.content_version ?? 1,
-      template_code: payload.template_code,
-      content_pack: (firstRound?.content_pack ??
-        payload.content_pack) as EngineConfig["content_pack"],
-      difficulty_params: (firstRound?.difficulty_params ??
-        payload.difficulty_params) as EngineConfig["difficulty_params"],
-      theme_id: payload.theme_id,
-      age_band: payload.age_band || "3-4",
-      reduced_motion: payload.flags?.reduced_motion ?? false,
-      audio_enabled: payload.flags?.audio_enabled ?? true,
-    };
-  }
-
-  async function fetchAndStartGame(): Promise<void> {
-    if (!loggedIn.value) {
-      await fetchSession().catch(() => {
-        // session not established yet
-      });
-    }
-
-    const endpoint = loggedIn.value
-      ? `/api/users/levels/${levelCode}/config`
-      : `/api/guest/levels/${levelCode}/config`;
-
-    const api = useApi();
-    const payload = await api<ConfigPayload>(endpoint);
-    cachedPayload = payload;
-    displayTitle.value =
-      payload.title || payload.name || `Bài học: ${levelCode}`;
-    currentThemeId.value = payload.theme_id || "default";
-
-    if (payload.assets && Array.isArray(payload.assets)) {
-      await preloadPlayAssets(payload.assets);
-    }
-
-    isLoading.value = false;
-    await nextTick();
-
-    const rounds = payload.rounds ?? [];
-    if (rounds.length === 0) {
-      throw new Error(
-        "Cấu hình trò chơi thiếu danh sách câu hỏi. Bé thử lại sau nhé!"
-      );
-    }
-    await preloadGameSession(payload.template_code);
-    startRounds(payload, rounds, buildEngineConfig(payload, rounds[0]));
-  }
-
   function handleResize(): void {
-    if (engine && canvasRef.value) {
-      engine.renderSystem.setupCanvas(canvasRef.value);
+    if (resizeTimer !== null) {
+      clearTimeout(resizeTimer);
     }
+    resizeTimer = setTimeout(() => {
+      const engine = getEngine();
+      const roundRunner = getRoundRunner();
+      if (engine && canvasRef.value) {
+        const vp = engine.renderSystem.setupCanvas(canvasRef.value);
+        if (vp.logicSpace && roundRunner) {
+          roundRunner.setLogicSpace(vp.logicSpace);
+        }
+      }
+    }, 150);
   }
 
   function handleVisibilityChange(): void {
-    if (!engine) {
-      return;
-    }
     if (
       typeof document !== "undefined" &&
       document.visibilityState === "hidden"
     ) {
-      engine.pause("tab_hidden");
+      setPaused(true, "tab_hidden");
     } else if (!(showVictoryModal.value || showParentGate.value)) {
-      engine.resume();
+      setPaused(false);
     }
   }
 
   watch([showVictoryModal, showParentGate], ([victoryOpen, gateOpen]) => {
-    if (!engine) {
-      return;
-    }
     if (victoryOpen || gateOpen) {
-      engine.pause(victoryOpen ? "victory_modal" : "parent_gate");
+      setPaused(true, victoryOpen ? "victory_modal" : "parent_gate");
     } else if (
       typeof document !== "undefined" &&
       document.visibilityState === "visible"
     ) {
-      engine.resume();
+      setPaused(false);
     }
   });
 
@@ -742,10 +516,15 @@
     if (typeof document !== "undefined") {
       document.addEventListener("visibilitychange", handleVisibilityChange);
     }
+    if (!loggedIn.value) {
+      await fetchSession().catch(() => {
+        // guest session
+      });
+    }
     try {
       isLoading.value = true;
       errorMessage.value = null;
-      await fetchAndStartGame();
+      await fetchAndStartGame(levelCode);
     } catch (err) {
       isLoading.value = false;
       const appErr = handleApiError(
@@ -766,16 +545,11 @@
     if (pulseTimer !== null) {
       clearTimeout(pulseTimer);
     }
+    if (resizeTimer !== null) {
+      clearTimeout(resizeTimer);
+    }
     stopNarrationAudio();
-    if (roundRunner) {
-      roundRunner.destroy();
-      roundRunner = null;
-    }
-    if (engine) {
-      engine.audio.stopAll();
-      engine.destroy();
-      engine = null;
-    }
+    cleanupSession();
   });
 </script>
 

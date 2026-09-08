@@ -366,12 +366,38 @@ export class GT021Session extends TemplateGameSession<
     };
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWon) {
+      return null;
+    }
+    const unplacedTarget = this.content.target_slots.find(
+      (t) => this.mirrorSystem.getPlacement(t.slot_id) !== t.expected_asset_ref
+    );
+    if (!unplacedTarget) {
+      return null;
+    }
+    const stagedId = this.placementMechanic.getStagedItemId();
+    if (stagedId) {
+      const targetIdx = this.content.target_slots.findIndex(
+        (t) => t.slot_id === unplacedTarget.slot_id
+      );
+      const targetSlot = this.targetSlots[targetIdx];
+      return targetSlot ? targetSlot.index : null;
+    }
+    const optIdx = this.content.options.findIndex(
+      (o) => o.asset_ref === unplacedTarget.expected_asset_ref
+    );
+    const sourceSlot = this.sourceSlots[optIdx];
+    return sourceSlot ? sourceSlot.index : null;
+  }
+
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("mirror-axis-split");
     return layoutFn({
       slotCount: this.content.options.length,
       targetCount: this.content.target_slots.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

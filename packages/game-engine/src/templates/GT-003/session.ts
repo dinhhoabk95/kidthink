@@ -50,6 +50,7 @@ export class GT003Session extends TemplateGameSession<
       slotCount: this.displayItems.length,
       ageBand,
       targetCount: 1,
+      logic: this.logicSpace,
     });
   }
 
@@ -321,6 +322,14 @@ export class GT003Session extends TemplateGameSession<
     }
 
     return null;
+  }
+
+  override getHintTargetIndex(): number | null {
+    const placed = this.mechanic.getPlacements();
+    const idx = this.displayItems.findIndex(
+      (it) => it.is_correct && !placed.has(it.item_id)
+    );
+    return idx >= 0 ? idx : null;
   }
 
   override commit(action: GameAction): void {

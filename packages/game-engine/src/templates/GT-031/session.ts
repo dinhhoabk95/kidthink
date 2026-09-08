@@ -57,12 +57,31 @@ export class GT031Session extends TemplateGameSession<
     });
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWin || this.isWon) {
+      return null;
+    }
+    const remaining = this.content.target_amount - this.currentTotal;
+    if (remaining <= 0) {
+      return null;
+    }
+    const suitableCoinIdx = this.content.coins.findIndex(
+      (c) => !this.depositedCoinIds.includes(c.coin_id) && c.value <= remaining
+    );
+    if (suitableCoinIdx >= 0) {
+      const slot = this.sourceSlots[suitableCoinIdx];
+      return slot ? slot.index : null;
+    }
+    return null;
+  }
+
   protected computeSlots(band: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("multi-bucket-bottom");
     return layoutFn({
       slotCount: this.content.coins.length,
       ageBand: band,
       targetCount: 1,
+      logic: this.logicSpace,
     });
   }
 

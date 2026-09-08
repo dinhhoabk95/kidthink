@@ -76,6 +76,22 @@ export class GT036Session extends TemplateGameSession<
     });
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWin || this.isWon || this.submitted) {
+      return null;
+    }
+    const count = this.content.track_length;
+    const palCount = this.content.palette.length;
+    const emptyTrackIdx = this.placedItems.indexOf(null);
+    if (emptyTrackIdx >= 0) {
+      if (!this.selectedPaletteId && palCount > 0) {
+        return count;
+      }
+      return emptyTrackIdx;
+    }
+    return count + palCount;
+  }
+
   protected computeSlots(band: AgeBand): readonly Slot[] {
     const floor = getTouchFloor(band);
     const slots: Slot[] = [];
@@ -83,9 +99,12 @@ export class GT036Session extends TemplateGameSession<
     const palCount = this.content.palette.length;
 
     // 1. Track slots (horizontal track)
-    const trackSlotSize = Math.min(68, Math.floor((960 - 160) / count));
+    const trackSlotSize = Math.min(
+      68,
+      Math.floor((this.logicSpace.w - 160) / count)
+    );
     const trackTotalWidth = count * (trackSlotSize + 8) - 8;
-    const trackStartX = (960 - trackTotalWidth) / 2;
+    const trackStartX = (this.logicSpace.w - trackTotalWidth) / 2;
     const trackY = 170;
 
     for (let i = 0; i < count; i++) {
@@ -105,7 +124,7 @@ export class GT036Session extends TemplateGameSession<
     // 2. Palette slots
     const palSlotSize = 80;
     const palTotalWidth = palCount * (palSlotSize + 16) - 16;
-    const palStartX = (960 - palTotalWidth) / 2;
+    const palStartX = (this.logicSpace.w - palTotalWidth) / 2;
     const palY = 320;
 
     for (let i = 0; i < palCount; i++) {
@@ -126,7 +145,7 @@ export class GT036Session extends TemplateGameSession<
     slots.push({
       index: count + palCount,
       role: "target",
-      x: 480 - 70,
+      x: this.logicSpace.w / 2 - 70,
       y: 465,
       w: 120,
       h: 50,

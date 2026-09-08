@@ -212,11 +212,36 @@ export class GT020Session extends TemplateGameSession<
     };
   }
 
+  override getHintTargetIndex(): number | null {
+    if (this.isWon) {
+      return null;
+    }
+    const faceUpCard = this.displayCards.find((c) => {
+      const state = this.cardSystem.getCard(c.cardId)?.state;
+      return state === "face_up";
+    });
+    if (faceUpCard) {
+      const matchingIdx = this.displayCards.findIndex((c) => {
+        const state = this.cardSystem.getCard(c.cardId)?.state;
+        return c.pairKey === faceUpCard.pairKey && state === "face_down";
+      });
+      if (matchingIdx >= 0) {
+        return matchingIdx;
+      }
+    }
+    const firstFaceDown = this.displayCards.findIndex((c) => {
+      const state = this.cardSystem.getCard(c.cardId)?.state;
+      return state === "face_down";
+    });
+    return firstFaceDown >= 0 ? firstFaceDown : null;
+  }
+
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
     const layoutFn = resolveLayout("card-flip-grid");
     return layoutFn({
       slotCount: this.displayCards.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

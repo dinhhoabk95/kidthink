@@ -1,4 +1,4 @@
-import { CONTENT_THEMES } from "@mindkid/shared";
+import { CONTENT_THEMES } from "@mindkid/shared/client";
 import { computed, type Ref } from "vue";
 
 export interface ThemeInfo {

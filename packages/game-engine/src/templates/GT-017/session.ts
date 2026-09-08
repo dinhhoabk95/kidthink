@@ -173,6 +173,11 @@ export class BlockStackSession extends TemplateGameSession<
     return null;
   }
 
+  override getHintTargetIndex(): number | null {
+    const idx = this.content.options.findIndex((o) => o.is_correct);
+    return idx >= 0 ? idx : null;
+  }
+
   override commit(action: GameAction): void {
     if (action.type === "select_option" && typeof action.data === "string") {
       this.selectOption(action.data);
@@ -269,6 +274,7 @@ export class BlockStackSession extends TemplateGameSession<
       slotCount: this.content.options.length,
       targetCount: 1,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

@@ -270,13 +270,25 @@ export class RenderSystem {
     ctx.restore();
   }
 
+  /** Renders golden amber scaffolding aura around the target (or nothing if target is invalid). */
+  renderScaffoldingAura(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    radius: number,
+    pulsePhase: number
+  ): void {
+    if (!(Number.isFinite(x) && Number.isFinite(y)) || radius <= 0) {
+      return;
+    }
+    this.drawScaffoldingHighlight(ctx, x, y, radius, pulsePhase);
+  }
+
   /** Confetti & star particle burst celebration renderer (reduces density when reducedMotion is active - BR-FBK-09) */
   drawParticles(ctx: CanvasRenderingContext2D, particles: Particle[]): number {
     ctx.save();
     let rendered = 0;
-    const step = this.reducedMotion ? 2 : 1;
-    for (let i = 0; i < particles.length; i += step) {
-      const p = particles[i];
+    for (const p of particles) {
       if (!p || p.life <= 0) {
         continue;
       }

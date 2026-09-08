@@ -58,6 +58,7 @@ export type Gesture =
   | {
       readonly type: "commit";
       readonly timeMs: number;
+      readonly intent?: string;
     }
   | {
       readonly type: "revert";
@@ -73,6 +74,9 @@ export interface ViewEntity {
   readonly y: number;
   readonly w: number;
   readonly h: number;
+  readonly label?: string;
+  readonly spokenLabel?: string;
+  readonly glyph?: string;
 }
 
 export interface EngineView {

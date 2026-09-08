@@ -4135,8 +4135,8 @@
         }
       },
       "foreignKeys": {
-        "curriculum_item_progress_enrollment_id_curriculum_enrollments_id_fk": {
-          "name": "curriculum_item_progress_enrollment_id_curriculum_enrollments_id_fk",
+        "curriculum_item_progress_enrollment_id_curriculum_enrollments_i": {
+          "name": "curriculum_item_progress_enrollment_id_curriculum_enrollments_i",
           "tableFrom": "curriculum_item_progress",
           "tableTo": "curriculum_enrollments",
           "columnsFrom": ["enrollment_id"],
@@ -4153,8 +4153,8 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "curriculum_item_progress_curriculum_item_id_curriculum_items_id_fk": {
-          "name": "curriculum_item_progress_curriculum_item_id_curriculum_items_id_fk",
+        "curriculum_item_progress_curriculum_item_id_curriculum_items_id": {
+          "name": "curriculum_item_progress_curriculum_item_id_curriculum_items_id",
           "tableFrom": "curriculum_item_progress",
           "tableTo": "curriculum_items",
           "columnsFrom": ["curriculum_item_id"],
@@ -8668,8 +8668,8 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "personal_curriculum_enrollments_personal_curriculum_id_personal_curricula_id_fk": {
-          "name": "personal_curriculum_enrollments_personal_curriculum_id_personal_curricula_id_fk",
+        "personal_curriculum_enrollments_personal_curriculum_id_personal": {
+          "name": "personal_curriculum_enrollments_personal_curriculum_id_personal",
           "tableFrom": "personal_curriculum_enrollments",
           "tableTo": "personal_curricula",
           "columnsFrom": ["personal_curriculum_id"],
@@ -8791,8 +8791,8 @@
         }
       },
       "foreignKeys": {
-        "personal_curriculum_item_progress_enrollment_id_personal_curriculum_enrollments_id_fk": {
-          "name": "personal_curriculum_item_progress_enrollment_id_personal_curriculum_enrollments_id_fk",
+        "personal_curriculum_item_progress_enrollment_id_personal_curric": {
+          "name": "personal_curriculum_item_progress_enrollment_id_personal_curric",
           "tableFrom": "personal_curriculum_item_progress",
           "tableTo": "personal_curriculum_enrollments",
           "columnsFrom": ["enrollment_id"],
@@ -8809,8 +8809,8 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "personal_curriculum_item_progress_personal_curriculum_item_id_personal_curriculum_items_id_fk": {
-          "name": "personal_curriculum_item_progress_personal_curriculum_item_id_personal_curriculum_items_id_fk",
+        "personal_curriculum_item_progress_personal_curriculum_item_id_p": {
+          "name": "personal_curriculum_item_progress_personal_curriculum_item_id_p",
           "tableFrom": "personal_curriculum_item_progress",
           "tableTo": "personal_curriculum_items",
           "columnsFrom": ["personal_curriculum_item_id"],
@@ -8970,8 +8970,8 @@
         }
       },
       "foreignKeys": {
-        "personal_curriculum_items_personal_curriculum_id_personal_curricula_id_fk": {
-          "name": "personal_curriculum_items_personal_curriculum_id_personal_curricula_id_fk",
+        "personal_curriculum_items_personal_curriculum_id_personal_curri": {
+          "name": "personal_curriculum_items_personal_curriculum_id_personal_curri",
           "tableFrom": "personal_curriculum_items",
           "tableTo": "personal_curricula",
           "columnsFrom": ["personal_curriculum_id"],

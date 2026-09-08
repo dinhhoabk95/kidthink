@@ -372,6 +372,13 @@ export class GT019Session extends TemplateGameSession<
     return null;
   }
 
+  override getHintTargetIndex(): number | null {
+    const unplaced = this.content.pieces.findIndex(
+      (p) => !this.placedPieceIds.has(p.piece_id)
+    );
+    return unplaced >= 0 ? unplaced : null;
+  }
+
   override commit(action: GameAction): void {
     if (
       action.type === "place_item" ||
@@ -543,6 +550,7 @@ export class GT019Session extends TemplateGameSession<
       slotCount: this.content.pieces.length,
       targetCount: this.content.target_slots.length,
       ageBand,
+      logic: this.logicSpace,
     });
   }
 

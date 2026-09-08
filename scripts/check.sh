@@ -57,6 +57,10 @@ PID_INVENTORY=$!
 pnpm check:error-codes &
 PID_ERRORS=$!
 
+# Cổng bậc thang không gian logic — Task #260 (T7).
+pnpm check:logic-space &
+PID_LOGIC_SPACE=$!
+
 LINT_OK=true
 if ! wait $PID_LINT; then
   echo "✗ biome lint failed" >&2
@@ -83,10 +87,15 @@ if ! wait $PID_ERRORS; then
   LINT_OK=false
 fi
 
+if ! wait $PID_LOGIC_SPACE; then
+  echo "✗ check:logic-space ratchet failed" >&2
+  LINT_OK=false
+fi
+
 if [ "$LINT_OK" = false ]; then
   exit 1
 fi
-echo "✓ lint + intro-coverage + value-inventory + error-codes"
+echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space"
 phase_end
 
 # ── Phase 2: Typecheck (cổng bậc thang + incremental) ─────────────────────

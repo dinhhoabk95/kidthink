@@ -80,6 +80,16 @@ export const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     segment_index: NON_NEGATIVE_INT,
     miss_count: NON_NEGATIVE_INT,
   }),
+  intro_echo_started: z.object({
+    step_id: z.string().max(64),
+    target_asset_id: CONTENT_ID,
+    tts_used: z.boolean(),
+  }),
+  intro_echo_completed: z.object({
+    step_id: z.string().max(64),
+    target_asset_id: CONTENT_ID,
+    replay_count: NON_NEGATIVE_INT,
+  }),
   tts_unavailable: z.object({
     prompt_id: z.string().max(64).optional(),
     reason: z.string().max(64).optional(),

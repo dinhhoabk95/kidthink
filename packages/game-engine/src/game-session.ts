@@ -161,6 +161,14 @@ export abstract class TemplateGameSession<
   }
 
   /**
+   * Returns the index of the slot/entity that hints/scaffolding should target, or null if unknown/none.
+   * Default implementation returns null (no guess).
+   */
+  getHintTargetIndex(): number | null {
+    return null;
+  }
+
+  /**
    * Final — orchestrates a round: setup entities → compute slots → derived state.
    * Called by RoundRunner and GameEngine instead of raw setupEntities+resolveSlots.
    */
