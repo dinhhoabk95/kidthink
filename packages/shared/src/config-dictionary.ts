@@ -494,10 +494,6 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Lời nhắc âm thanh",
     help: "Cấu hình âm thanh lời nhắc hoặc chỉ dẫn nghe cho bé.",
   },
-  audio_url: {
-    label: "Đường dẫn file âm thanh",
-    help: "Đường dẫn file âm thanh chỉ dẫn.",
-  },
   response_mode: {
     label: "Chế độ phản hồi",
     help: "Chế độ phản hồi: chọn một (select) hoặc sắp xếp chuỗi (sequence).",
@@ -1176,7 +1172,6 @@ export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
   target_anchor_id: "Mã điểm neo đích.",
   shape_name: "Tên hình cần vẽ.",
   name: "Tên hiển thị đối tượng.",
-  audio_url: "Đường dẫn URL âm thanh.",
   response_mode: "Chế độ phản hồi ('select' | 'sequence').",
   target_sequence: "Mã định danh vật phẩm trong chuỗi mục tiêu.",
   left_id: "Mã định danh vật thể bên trái.",

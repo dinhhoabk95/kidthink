@@ -3,13 +3,12 @@ import { gzipSync } from "node:zlib";
 import {
   gameLevelRounds,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
   playSessions,
 } from "@mindkid/db";
 import { resolveAssets } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import guestConfigHandler from "#server/api/guest/levels/[code]/config.get";
 import managerConfigHandler from "#server/api/managers/levels/[code]/config.get";
 import userConfigHandler from "#server/api/users/levels/[code]/config.get";
@@ -84,23 +83,9 @@ async function seedTestLevel(options: {
   contentPack?: any;
 }) {
   const db = getOwnerDb();
+  // Khuôn engine sống trong registry mã nguồn, không còn bảng `game_templates`:
+  // `game_levels` trỏ tới nó bằng `template_code` (Task #167).
   const gtCode = "GT-001";
-
-  let [gt] = await db
-    .select()
-    .from(gameTemplates)
-    .where(eq(gameTemplates.code, gtCode));
-
-  if (!gt) {
-    [gt] = await db
-      .insert(gameTemplates)
-      .values({
-        code: gtCode,
-        name: "Chọn một đáp án",
-        mechanic: "tap-select",
-      })
-      .returning();
-  }
 
   const validGT001Pack = options.contentPack || {
     prompt: "Bé hãy chọn quả táo đỏ",
@@ -146,7 +131,7 @@ async function seedTestLevel(options: {
       entityId: Math.floor(Math.random() * 900_000) + 100_000,
       code: options.code,
       contentVersion,
-      templateId: gt.id,
+      templateCode: gtCode,
       title: "Level Test Config",
       instruction: "Hướng dẫn làm bài",
       contentPack: validGT001Pack,
@@ -161,7 +146,7 @@ async function seedTestLevel(options: {
     })
     .returning();
 
-  return { level, template: gt };
+  return { level, templateCode: gtCode };
 }
 
 /**
@@ -333,7 +318,14 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
   });
 
   describe("Task 3 — Content Pack Validation & Error Handling (BR-CFG-03 / D-FS)", () => {
-    it("returns 500 CONTENT_PACK_INVALID when content_pack in DB is invalid schema", async () => {
+    /**
+     * Status là **422**, không phải 500. `defineError` giữ cặp (mã, status,
+     * thông báo) ở đúng một chỗ, nên `CONTENT_PACK_INVALID` Cấm — NEVER mang
+     * hai status khác nhau ở hai route. `error-codes.md` là sổ đăng ký:
+     * 422 + `details.issues[]`. Nửa còn lại của `BR-CFG-03` — **một alert được
+     * phát** — vẫn phải đúng, và test đo cả nửa đó.
+     */
+    it("trả 422 CONTENT_PACK_INVALID và phát alert khi content_pack trong DB hỏng", async () => {
       const code = `GL-C1-CNT-BAD-${Math.floor(Math.random() * 8999 + 1000)}`;
       const corruptedPack = { invalid: "schema_without_required_fields" };
       await seedTestLevel({
@@ -342,16 +334,26 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
         contentPack: corruptedPack,
       });
 
+      const alertSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => undefined);
+
       const event = mockEvent("GET", undefined, { code });
       try {
         await guestConfigHandler(event);
-        expect.fail("Should throw 500 CONTENT_PACK_INVALID");
+        expect.fail("Should throw 422 CONTENT_PACK_INVALID");
       } catch (err: any) {
-        expect(err.statusCode || err.status).toBe(500);
+        expect(err.statusCode || err.status).toBe(422);
         expect(err.data?.code || err.statusMessage).toBe(
           "CONTENT_PACK_INVALID"
         );
       }
+
+      const alerted = alertSpy.mock.calls.some((call) =>
+        String(call[0]).includes("[ALERT] CONTENT_PACK_INVALID")
+      );
+      alertSpy.mockRestore();
+      expect(alerted).toBe(true);
     });
   });
 

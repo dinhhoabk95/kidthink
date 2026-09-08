@@ -128,6 +128,10 @@ Cổng còn lại, **đây là toàn bộ**:
 | `pnpm check:logic-space` | Mỗi `LayoutInput` trong thân `computeSlots` phải có `logic:` | 1 |
 | `pnpm check:hint-target` | 37 template phải cài `getHintTargetIndex` thật, không stub | 1 |
 | `pnpm check:migration-hashes` | Migration đã apply Cấm — NEVER bị sửa nội dung | 1 |
+| `pnpm check:engine-specs` | 37 mã engine có phiếu đủ khuôn SDD, 0 mồ côi (`BR-ESS-*`) | 1 |
+| `pnpm check:engine-turn` | Mục 4 và mục 5 của 37 phiếu theo bảy nhịp `N1`…`N7` và tám nhánh (`BR-ETS-*`) | 1 |
+| `pnpm check:engine-behavior` | Miền hành vi theo registry, bậc thang kênh thắng cuộc (`BR-EBD-*`) | 1 |
+| `pnpm check:engine-behavior-corpus` | Nửa corpus của `BR-EBD-04`: miền phải có level thật để chơi | 1 |
 | `pnpm typecheck` | `tsc` + `vue-tsc` trên 10 project, bậc thang nợ | 2 |
 | `pnpm check:test-ratchet` | Toàn bộ vitest, không `--bail`; file đỏ mới hoặc số suite tụt → đỏ | 3 |
 | `pnpm test:deploy` | Script hạ tầng | 4 (đang tắt) |

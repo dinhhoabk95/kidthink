@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { repoPath } from "@mindkid/config/paths";
 
@@ -16,6 +16,8 @@ export interface EngineTurnGateResult {
 
 export interface ScanEngineTurnGateOptions {
   readonly specsDir?: string;
+  /** Danh sách mã engine phải có phiếu. Cổng đối chiếu với nó nên thư mục rỗng là ĐỎ. */
+  readonly readyCodesPath?: string;
 }
 
 const SECTION_4_HEADER_REGEX = /##\s*4\.\s*Main flow/i;
@@ -28,8 +30,21 @@ const N_BEATS_REGEX = /\bN([1-7])\b/g;
 const L1_REGEX = /\bL1\b/;
 const L2_REGEX = /\bL2\b/;
 const L3_REGEX = /\bL3\b/;
-const PROMPT_AUDIO_REF_REGEX =
-  /instruction_audio_path|instruction|prompt|lời đọc|câu lệnh|câu đề|audio_prompt|lời giới thiệu/i;
+/** Trường lời đọc còn sống sau khi `prompt_audio_ref` bị khai tử (`BR-ETS-04`). */
+const LIVE_NARRATION_FIELD = "instruction_audio_path";
+const LIVE_NARRATION_FIELD_REGEX = /instruction_audio_path/;
+/**
+ * Các trường lời đọc đã khai tử — phiếu trỏ vào đây là dẫn người soạn vào chỗ câm.
+ * So khớp theo **định danh trọn vẹn**: `instruction_audio_url` của payload không
+ * phải là `audio_url` của `content_pack`.
+ */
+const DEAD_NARRATION_FIELDS = [
+  {
+    name: "prompt_audio_ref",
+    pattern: /(?<![A-Za-z0-9_])prompt_audio_ref(?![A-Za-z0-9_])/,
+  },
+  { name: "audio_url", pattern: /(?<![A-Za-z0-9_])audio_url(?![A-Za-z0-9_])/ },
+] as const;
 const VISUAL_CHANNEL_REGEX = /kênh hình|thị giác|\bhình ảnh\b|\bkhung hình\b/i;
 const HINH_WORD_REGEX = /\bhình\b/i;
 const MAN_HINH_REGEX = /màn hình/i;
@@ -86,6 +101,7 @@ const REQUIRED_M5_BRANCHES = [
 ] as const;
 
 const MIN_BEAT_LENGTH = 30;
+const MD_EXTENSION_REGEX = /\.md$/;
 
 interface SpecSections {
   readonly m4Content: string;
@@ -180,16 +196,26 @@ function checkBeatPresenceAndOrder(
     }
   }
 
+  // Chỉ lần xuất hiện ĐẦU TIÊN của mỗi nhịp mới định thứ tự. Nhắc lại `N3` trong
+  // thân `N5` là văn xuôi hợp lệ, không phải nhịp đặt sai chỗ.
+  const firstOccurrences: number[] = [];
+  const seen = new Set<number>();
+  for (const beat of foundBeats) {
+    if (!seen.has(beat.beatNum)) {
+      seen.add(beat.beatNum);
+      firstOccurrences.push(beat.beatNum);
+    }
+  }
+
   let orderCorrect = true;
-  for (let i = 0; i < foundBeats.length; i++) {
-    const cur = foundBeats[i];
-    if (cur !== undefined && cur.beatNum !== i + 1) {
+  for (let i = 0; i < firstOccurrences.length; i++) {
+    if (firstOccurrences[i] !== i + 1) {
       orderCorrect = false;
       break;
     }
   }
 
-  if (foundBeats.length > 0 && !orderCorrect) {
+  if (firstOccurrences.length > 0 && !orderCorrect) {
     violations.push({
       templateCode,
       file: filename,
@@ -220,16 +246,16 @@ function validateBeatContent(
   }
 
   if (beatNum === 2) {
-    const hasPromptAudio = PROMPT_AUDIO_REF_REGEX.test(beatText);
+    const hasLiveNarrationField = LIVE_NARRATION_FIELD_REGEX.test(beatText);
     const hasVisual =
       VISUAL_CHANNEL_REGEX.test(beatText) ||
       (HINH_WORD_REGEX.test(beatText) && !MAN_HINH_REGEX.test(beatText));
-    if (!(hasPromptAudio && hasVisual)) {
+    if (!(hasLiveNarrationField && hasVisual)) {
       violations.push({
         templateCode,
         file: filename,
         rule: "BR-ETS-04",
-        message: "Nhịp N2 phải nêu trường lời đọc và kênh hình song song",
+        message: `Nhịp N2 phải gọi đúng tên trường lời đọc còn sống \`${LIVE_NARRATION_FIELD}\` và nêu kênh hình song song`,
       });
     }
   }
@@ -337,18 +363,30 @@ export function lintSingleTurnSpec(
     ...checkBeatPresenceAndOrder(foundBeats, filename, templateCode)
   );
 
-  for (let i = 0; i < foundBeats.length; i++) {
-    const cur = foundBeats[i];
+  // Một nhịp được chấm theo lần xuất hiện đầu tiên của nó, kéo dài tới lần xuất
+  // hiện đầu tiên của nhịp kế tiếp. Nhắc lại nhịp cũ giữa văn xuôi không cắt đoạn.
+  const firstIndexByBeat = new Map<number, number>();
+  for (const beat of foundBeats) {
+    if (!firstIndexByBeat.has(beat.beatNum)) {
+      firstIndexByBeat.set(beat.beatNum, beat.index);
+    }
+  }
+  const orderedBeats = [...firstIndexByBeat.entries()].sort(
+    (a, b) => a[1] - b[1]
+  );
+
+  for (let i = 0; i < orderedBeats.length; i++) {
+    const cur = orderedBeats[i];
     if (!cur) {
       continue;
     }
-    const next = foundBeats[i + 1];
+    const next = orderedBeats[i + 1];
     const beatText = m4Content
-      .slice(cur.index, next ? next.index : m4Content.length)
+      .slice(cur[1], next ? next[1] : m4Content.length)
       .trim();
 
     violations.push(
-      ...validateBeatContent(cur.beatNum, beatText, filename, templateCode)
+      ...validateBeatContent(cur[0], beatText, filename, templateCode)
     );
   }
 
@@ -356,7 +394,33 @@ export function lintSingleTurnSpec(
     ...checkM5AlternativeFlows(m5Content, filename, templateCode)
   );
 
+  for (const dead of DEAD_NARRATION_FIELDS) {
+    if (dead.pattern.test(specContent)) {
+      violations.push({
+        templateCode,
+        file: filename,
+        rule: "BR-ETS-04",
+        message: `Phiếu còn trỏ vào trường lời đọc đã khai tử \`${dead.name}\`; lời đọc chỉ đến từ \`${LIVE_NARRATION_FIELD}\``,
+      });
+    }
+  }
+
   return violations;
+}
+
+/**
+ * Mã engine phải có phiếu. Cổng đọc danh sách này thay vì tin thư mục: thư mục
+ * đổi tên hay rỗng thì cổng phải ĐỎ, không được xanh vì không quét được gì.
+ */
+function readRequiredCodes(readyCodesPath: string): readonly string[] {
+  if (!existsSync(readyCodesPath)) {
+    return [];
+  }
+  const parsed: unknown = JSON.parse(readFileSync(readyCodesPath, "utf-8"));
+  if (!Array.isArray(parsed)) {
+    return [];
+  }
+  return parsed.filter((code): code is string => typeof code === "string");
 }
 
 export function scanEngineTurnGate(
@@ -364,11 +428,41 @@ export function scanEngineTurnGate(
 ): EngineTurnGateResult {
   const specsDir =
     options.specsDir ?? repoPath("docs/specs/01-platform/engines");
+  const readyCodesPath =
+    options.readyCodesPath ??
+    repoPath("packages/game-engine/config/engine-spec-ready.json");
+
   const files = readdirSync(specsDir)
     .filter((f) => f.startsWith("GT-") && f.endsWith(".md"))
     .sort();
 
   const allViolations: EngineTurnViolation[] = [];
+
+  const requiredCodes = readRequiredCodes(readyCodesPath);
+  if (requiredCodes.length === 0) {
+    allViolations.push({
+      file: readyCodesPath,
+      rule: "BR-ETS-01",
+      message:
+        "Không đọc được danh sách mã engine bắt buộc; cổng từ chối chạy trên tập rỗng",
+    });
+  }
+
+  const scannedCodes = new Set(
+    files
+      .map((f) => f.replace(MD_EXTENSION_REGEX, ""))
+      .filter((c) => c !== "TEMPLATE")
+  );
+  for (const code of requiredCodes) {
+    if (!scannedCodes.has(code)) {
+      allViolations.push({
+        templateCode: code,
+        file: `${code}.md`,
+        rule: "BR-ETS-01",
+        message: `Mã ${code} có trong engine-spec-ready.json nhưng không quét được phiếu trong ${specsDir}`,
+      });
+    }
+  }
 
   for (const file of files) {
     const fullPath = join(specsDir, file);
@@ -391,7 +485,7 @@ export function formatEngineTurnReport(result: EngineTurnGateResult): string {
 
   if (result.violations.length === 0) {
     lines.push(
-      "✓ Tất cả 37 phiếu engine đạt chuẩn kịch bản lượt chơi (N1..N7, 8 nhánh)."
+      `✓ Tất cả ${result.totalSpecs} phiếu engine đạt chuẩn kịch bản lượt chơi (N1..N7, 8 nhánh).`
     );
   } else {
     lines.push("\nDanh sách vi phạm:");

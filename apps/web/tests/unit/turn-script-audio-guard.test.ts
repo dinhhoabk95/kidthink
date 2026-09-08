@@ -1,23 +1,13 @@
-import { readFileSync } from "node:fs";
-import { repoPath } from "@mindkid/config/paths";
 import { describe, expect, it, vi } from "vitest";
 import { usePlayAudio } from "~/composables/play/use-play-audio";
 
-const GAME_VIEWPORT_VSHOW_REGEX =
-  /class="game-viewport"[^>]*v-show="!\(isLoading \|\| errorMessage\)"/;
-
-describe("Turn Script Invariants — BR-ETS-02 & BR-ETS-03", () => {
-  describe("BR-ETS-02 (Cấm nhận chạm lúc còn preload/loading)", () => {
-    it("bề mặt chơi [code].vue bọc game-viewport bằng v-show='!(isLoading || errorMessage)', nuốt cử chỉ lúc preload", () => {
-      const pagePath = repoPath("apps/web/app/pages/play/[code].vue");
-      const content = readFileSync(pagePath, "utf-8");
-
-      // Bắt buộc game-viewport phải được bảo vệ bởi guard !(isLoading || errorMessage)
-      expect(content).toContain('v-show="!(isLoading || errorMessage)"');
-      expect(content).toMatch(GAME_VIEWPORT_VSHOW_REGEX);
-    });
-  });
-
+/**
+ * `BR-ETS-02` **không** ở đây nữa. Nó từng được giữ bằng cách so khớp chuỗi
+ * nguồn của `[code].vue` — đo được là đổi thứ tự thuộc tính làm test đỏ oan,
+ * còn thêm một lớp bắt chạm thì test vẫn xanh. Nay giữ bằng DOM thật ở
+ * `tests/component/play-surface-preload-guard.test.ts`.
+ */
+describe("Turn Script Invariants — BR-ETS-03", () => {
   describe("BR-ETS-03 (Đề tự phát một lần & dừng lời cũ khi bấm nghe lại)", () => {
     it("nghe lại giữa lúc đang đọc thì dừng lời cũ trước, không bao giờ có hai HTMLAudioElement cùng sống", () => {
       const audioInstances: Array<{

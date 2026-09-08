@@ -181,7 +181,7 @@ fi
 if [ "$LINT_OK" = false ]; then
   exit 1
 fi
-echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space + hint-target + migration-hashes + engine-specs + engine-behavior + engine-behavior-corpus"
+echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space + hint-target + migration-hashes + engine-specs + engine-turn + engine-behavior + engine-behavior-corpus"
 phase_end
 
 # ── Phase 2: Typecheck (cổng bậc thang + incremental) ─────────────────────

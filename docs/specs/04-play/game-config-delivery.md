@@ -56,7 +56,7 @@ Payload phải nhỏ (tablet trên 4G) và đã qua gating (không rò nội dun
 |---|---|
 | Bị chặn bậc | 403 + metadata gate, không có config |
 | Level `archived` giữa lúc mở | Vẫn trả nếu client đang có phiên; yêu cầu mới 404 |
-| `content_pack` không parse được | **500** + alert — dữ liệu hỏng ở production là sự cố nội dung |
+| `content_pack` không parse được | **422** `CONTENT_PACK_INVALID` + alert — dữ liệu hỏng ở production là sự cố nội dung, nên alert là phần bắt buộc chứ không phải status |
 | Asset thiếu | Vẫn trả config, đánh dấu asset lỗi để engine dùng placeholder |
 | Preview version cũ | Cho phép với `?version=`, chỉ Manager |
 
@@ -121,7 +121,15 @@ Asset không phân giải được → `{ ref, kind, error: "not_found" }`, engi
 | 404 | `NOT_FOUND` |
 | 428 | `NO_ACTIVE_CHILD` |
 | 402 | `DAILY_PLAY_CAP_REACHED` |
-| 500 | `CONTENT_PACK_INVALID` — dữ liệu hỏng, kèm alert |
+| 422 | `CONTENT_PACK_INVALID` — dữ liệu hỏng, kèm alert |
+
+> **Sửa 2026-09-08 (lượt review #262).** Ba chỗ trong spec này từng ghi **500**. Không cài
+> được: `defineError` giữ cặp (mã, status, thông báo) ở đúng **một** chỗ, nên
+> `CONTENT_PACK_INVALID` Cấm — NEVER mang 422 ở studio và 500 ở đây. Sổ đăng ký
+> [`error-codes.md`](../00-foundation/error-codes.md) ghi 422, bảy spec khác cũng ghi 422, và
+> mã nguồn trả 422. Nửa **alert** của `BR-CFG-03` giữ nguyên và nay có test đo
+> (`apps/web/tests/api/game-config-delivery.test.ts`). Muốn status riêng cho đường phát thì
+> phải khai một **mã lỗi mới** trong sổ đăng ký, không phải đổi status của mã đang dùng.
 
 ## 9. Acceptance criteria
 
@@ -138,7 +146,7 @@ Scenario: BR-CFG-02 — payload luôn có content_version
 Scenario: BR-CFG-03 — content_pack hỏng bị chặn ở server
   Given một level published có content_pack không parse được
   When client gọi config
-  Then trả 500 CONTENT_PACK_INVALID
+  Then trả 422 CONTENT_PACK_INVALID
   And một alert được phát
   And engine không nhận payload hỏng
 

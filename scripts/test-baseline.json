@@ -1,11 +1,10 @@
 {
-  "totalFailed": 45,
+  "totalFailed": 44,
   "failedFiles": [
     "apps/web/tests/api/advanced-report.test.ts",
     "apps/web/tests/api/curricula-builder.test.ts",
     "apps/web/tests/api/event-ingestion.test.ts",
     "apps/web/tests/api/flags-export-notify.test.ts",
-    "apps/web/tests/api/game-config-delivery.test.ts",
     "apps/web/tests/api/guest-level-detail-cta.test.ts",
     "apps/web/tests/api/guest-levels-catalog.test.ts",
     "apps/web/tests/api/guest/curricula.test.ts",
@@ -47,5 +46,5 @@
     "apps/web/tests/unit/server/personal-curriculum-service.test.ts",
     "apps/web/tests/unit/server/tagging-seed.test.ts"
   ],
-  "minTotalSuites": 1391
+  "minTotalSuites": 1412
 }

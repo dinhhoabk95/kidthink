@@ -36,6 +36,15 @@ class TurnTrackingSession extends BaseGameSession {
   }
 }
 
+/**
+ * `BR-ETS-10` có hai nửa và chúng ở hai chỗ khác nhau:
+ *
+ * - **Bàn mới** sinh ở route config (`createLayoutSeed`) — giữ bởi
+ *   `apps/web/tests/unit/turn-script-replay-seed.test.ts`.
+ * - **Độ khó giữ nguyên** là việc của runner: nó chuyển `difficulty_params` cho
+ *   session **y nguyên**, và số lần nhận trợ giúp ở lượt trước Cấm — NEVER
+ *   chạm vào nó. Đó là nửa mà file này giữ.
+ */
 describe("Turn Script Invariant — BR-ETS-10 (Chơi lại không đổi độ khó)", () => {
   const roundConfig: RoundConfig = {
     round_index: 0,
@@ -53,7 +62,7 @@ describe("Turn Script Invariant — BR-ETS-10 (Chơi lại không đổi độ k
     },
   };
 
-  it("hai lượt liên tiếp cùng level: layout_seed khác nhau, difficulty_params bằng nhau, trợ giúp về L0", () => {
+  it("hai lượt liên tiếp cùng level: seed đi qua nguyên vẹn, difficulty_params bằng nhau, trợ giúp về L0", () => {
     let turn1Session: TurnTrackingSession | null = null;
     let turn2Session: TurnTrackingSession | null = null;
 
@@ -104,8 +113,8 @@ describe("Turn Script Invariant — BR-ETS-10 (Chơi lại không đổi độ k
     const s1: TurnTrackingSession = turn1Session;
     const s2: TurnTrackingSession = turn2Session;
 
-    // Invariant 1: layout_seed khác nhau giữa hai lượt
-    expect(s1.receivedSeed).not.toBe(s2.receivedSeed);
+    // Invariant 1: runner chuyển đúng seed nó nhận xuống session, không tự chế
+    // seed riêng — nếu không, seed mới của route sẽ bị nuốt và bàn không đổi.
     expect(s1.receivedSeed).toBe(turn1Seed);
     expect(s2.receivedSeed).toBe(turn2Seed);
 

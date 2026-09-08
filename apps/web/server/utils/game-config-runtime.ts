@@ -163,6 +163,24 @@ async function runContentAccessGuard(
   }
 }
 
+/** Bàn của bản xem trước phải lặp lại được, nên nó khoá vào một seed cố định. */
+export const PREVIEW_LAYOUT_SEED = 42;
+
+const LAYOUT_SEED_MAX = 0xff_ff_ff_ff;
+
+/**
+ * Seed dựng bàn cho một lượt chơi.
+ *
+ * `BR-ETS-10`: bấm chơi lại đi qua `handleReplayGame()` → `fetchAndStartGame()` →
+ * route config, nên **bàn mới** là thuộc tính của hàm này. Độ khó Cấm — NEVER
+ * đi qua đây: nó đọc thẳng từ level, nên chơi lại không đổi độ khó.
+ */
+export function createLayoutSeed(isManagerPreview: boolean): number {
+  return isManagerPreview
+    ? PREVIEW_LAYOUT_SEED
+    : Math.floor(Math.random() * LAYOUT_SEED_MAX);
+}
+
 async function createPlaySessionRecord(
   db: ReturnType<typeof getOwnerDb>,
   params: {
@@ -180,9 +198,7 @@ async function createPlaySessionRecord(
     ? null
     : params.options.guestDeviceId ||
       (params.options.isManagerPreview ? "preview-manager" : "guest-device");
-  const layoutSeed = params.options.isManagerPreview
-    ? 42
-    : Math.floor(Math.random() * 0xff_ff_ff_ff);
+  const layoutSeed = createLayoutSeed(params.options.isManagerPreview === true);
 
   await db.insert(playSessions).values({
     sessionUuid,

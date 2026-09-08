@@ -50,6 +50,16 @@ Engine duy nhất **không** khai `prompt_audio_ref` là `GT-000`, và nó lại
 tự gọi `playPromptAudio()` trong `session.ts`. Nghĩa là: 36 engine mang một trường cho lời
 đọc mà không bao giờ đọc nó, còn engine đọc thật thì không mang trường đó.
 
+> **ĐÃ ĐÓNG 2026-09-08 (Task #262).** Chốt giữ `game_levels.instruction_audio_path`.
+> `content_pack.prompt_audio_ref` bị khai tử khỏi `promptFields()`, khỏi 36 contract,
+> khỏi `gate-09-concept-present.ts` và `config-dictionary.ts`. Lượt review cùng ngày đo
+> thêm hai chỗ và đóng nốt: `GT-018.audio_prompt.audio_url` là **đường thứ ba** cũng
+> soạn được mà không ai đọc — đã gỡ; và mục 4 của **cả 37 phiếu** nay gọi đúng tên
+> `instruction_audio_path`. Bậc thang giữ: `check:engine-turn` (nhịp `N2` + cấm tên đã
+> khai tử) và `packages/game-engine/tests/gates/one-narration-source.test.ts` (quét
+> contract nội dung của 37 engine). `GT-000.assets[].audio_path` **không** thuộc luật
+> này: đó là âm của từng chất liệu, và `GT000Session` thật sự phát nó.
+
 Spec này sở hữu **kịch bản**: bảy nhịp, thứ tự giữa chúng, và ba nhịp chưa ai sở hữu — mở
 màn, tự đọc đề, chơi lại. Nó **cấm — NEVER** định nghĩa lại thứ đã có chủ: cử chỉ là của
 [`engine-play-language.md`](engine-play-language.md), leo thang trợ giúp là của
@@ -125,7 +135,7 @@ N1 mở màn    → N2 ra đề → N3 thao tác ⇄ N4 phản hồi → N6 kế
 | `BR-ETS-01` (bảy nhịp, đóng) | Mục 4 của phiếu engine đánh số theo đúng bảy nhịp `N1`…`N7`, đúng thứ tự. Cấm — NEVER đặt nhịp thứ tám, cấm bỏ nhịp; nhịp không áp dụng thì ghi lý do tại chỗ | 26 trên 37 phiếu hôm nay có mục 4 là bản sao sáu bước. Bản sao không sai — nó **rỗng**, và rỗng thì không ai phát hiện ra khi đọc diff |
 | `BR-ETS-02` (chạm sau khi cảnh xong) | Bề mặt chỉ nhận cử chỉ khi asset đã preload **và** cảnh đã dựng. Cử chỉ trước đó bị nuốt, cấm — NEVER tính là lần sai | Trẻ ba tuổi chạm vào chỗ trống trong lúc chờ. Tính đó là sai thì bài mở đầu bằng một lần thua mà trẻ không hiểu vì đâu |
 | `BR-ETS-03` (đề tự phát một lần) | Lời đọc phát **tự động đúng một lần** khi vào lượt; cấm tự lặp. Nút nghe lại có mặt suốt lượt, không giới hạn số lần trừ khi engine khai `replay_limit` | Lặp tự động cắt ngang lúc trẻ đang nghĩ. Nhưng trẻ chưa đọc chữ thì phải nghe lại được — bỏ nút nghe lại là bỏ luôn đề |
-| `BR-ETS-04` (một nguồn lời đọc) | Lời đọc đến từ **một** trường. Hôm nay có hai: `content_pack.prompt_audio_ref` (36/37 contract khai, **không ai đọc**) và `game_levels.instruction_audio_path` (đường đang chạy). Một trong hai phải bị khai tử, và phiếu engine trỏ tới trường còn sống | Hai trường cho một việc là một trường luôn rỗng. Người soạn nội dung điền `prompt_audio_ref` hôm nay sẽ không nghe thấy gì và không có gì báo cho họ biết |
+| `BR-ETS-04` (một nguồn lời đọc) | Lời đọc đến từ **một** trường: `game_levels.instruction_audio_path`. `content_pack` Cấm — NEVER khai lại một đường tệp âm cho lời đề (`prompt_audio_ref`, `audio_url`, `*_audio_ref` đã khai tử 2026-09-08); mục 4 của phiếu engine phải gọi đúng tên trường còn sống | Hai trường cho một việc là một trường luôn rỗng. Người soạn nội dung điền `prompt_audio_ref` hôm nay sẽ không nghe thấy gì và không có gì báo cho họ biết |
 | `BR-ETS-05` (tắt âm không mất bài) | Mọi thứ lời đọc nói ra phải có kênh hình song song. Mất giọng, tắt âm, hay không có TTS `vi-VN` đều **không** chặn lượt chơi hoàn thành | `BR-ENG-10` cấm chữ đứng một mình; luật này cấm **âm** đứng một mình. Lớp học mầm non thường tắt tiếng máy |
 | `BR-ETS-06` (một cử chỉ một hành động) | Nhịp `N3` của phiếu ánh xạ mỗi cử chỉ engine dùng sang **đúng một** hành động, bằng từ vựng của [`engine-play-language.md`](engine-play-language.md) | `BR-EPL-01` đã dọn 47 động từ duck-typing về 6 cử chỉ. Phiếu viết động từ riêng là đường quay lại chỗ cũ |
 | `BR-ETS-07` (im lặng là defect) | Mọi cử chỉ hợp lệ đổi ≥1 trạng thái thị giác trong **≤100ms**, kể cả khi kết quả là sai | Không phản hồi thì trẻ tưởng máy hỏng và chạm mạnh hơn. Đây là `BR-FBK` nói bằng một con số kiểm được |
@@ -300,7 +310,7 @@ Scenario: BR-ETS-12 — cổng có ca âm
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Khai tử trường nào: `prompt_audio_ref` trong contract (36/37 engine khai, không ai đọc) hay `instruction_audio_path` ở cấp vòng (đang chạy)? Trường contract soạn được cùng nội dung, trường vòng thì đã có dữ liệu và đã có đường phát | `BR-ETS-04`, và việc người soạn nội dung biết điền vào đâu | P4 | Backend |
+| ~~1~~ | **ĐÃ TRẢ LỜI 2026-09-08 (Task #262)** — giữ `instruction_audio_path`, khai tử `prompt_audio_ref` và `GT-018.audio_prompt.audio_url` | — | — | Backend |
 | 2 | Nút nghe lại thuộc bề mặt chơi hay thuộc engine? Hôm nay nó ở `[code].vue`, nên engine chạy trong studio preview không có nó | Nhất quán giữa preview và bản thật | P4 | Backend |
 | 3 | `N6` giữ thành quả "ít nhất một nhịp" là bao nhiêu mili giây? Quá ngắn thì không kịp nhìn, quá dài thì trẻ sốt ruột chạm bừa | Ngưỡng trong runner vòng | P4 | Nội dung |
 | 4 | Lần chơi thứ n có nên đổi **chủ đề** (cùng cơ chế, cùng độ khó, khác bối cảnh) thay vì chỉ đổi seed? Trục `boi-canh` của mục 18 làm được điều đó | Quan hệ giữa `BR-ETS-10` và trục biến thể | P5 | Nội dung |

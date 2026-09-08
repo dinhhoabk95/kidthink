@@ -1,4 +1,6 @@
-import { readFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { repoPath } from "@mindkid/config/paths";
 import { describe, expect, it } from "vitest";
 import {
@@ -6,6 +8,10 @@ import {
   lintSingleTurnSpec,
   scanEngineTurnGate,
 } from "./engine-turn.js";
+import {
+  DEAD_NARRATION_FIELD,
+  LIVE_NARRATION_FIELD,
+} from "./fixtures/turn-script-violations.js";
 
 const N4_BLOCK_REGEX = /4\.\s*\*\*`N4`[\s\S]*?(?=5\.\s*\*\*`N5`)/;
 const N2_MATCH_REGEX = /2\.\s*\*\*`N2`[^\n]+(\n[^\d\n][^\n]*)*/;
@@ -172,5 +178,88 @@ describe("Gate check:engine-turn (BR-ETS-01..12, BR-ESS-18..19)", () => {
         (v) => v.rule === "BR-ETS-11" && v.message.includes("ít nhất 8 hàng")
       )
     ).toBe(true);
+  });
+
+  // Ca âm 11: Phiếu trỏ lại trường lời đọc đã khai tử (BR-ETS-04)
+  it("Ca âm 11: phiếu trỏ lại trường lời đọc đã khai tử làm cổng đỏ (BR-ETS-04)", () => {
+    const badContent = sampleSpecContent.replaceAll(
+      LIVE_NARRATION_FIELD,
+      DEAD_NARRATION_FIELD
+    );
+    const violations = lintSingleTurnSpec(badContent, "GT-001.md");
+    expect(
+      violations.some(
+        (v) =>
+          v.rule === "BR-ETS-04" && v.message.includes(DEAD_NARRATION_FIELD)
+      )
+    ).toBe(true);
+  });
+
+  // Ca âm 12: N2 không gọi tên trường lời đọc còn sống (BR-ETS-04)
+  it("Ca âm 12: N2 chỉ nói 'prompt' mà không gọi tên trường còn sống làm cổng đỏ (BR-ETS-04)", () => {
+    const n2Block = sampleSpecContent.match(N2_BLOCK_REGEX);
+    expect(n2Block).not.toBeNull();
+
+    const strippedN2 = (n2Block?.[0] ?? "").replace(
+      new RegExp(`\\s*Lời đọc phát từ \`${LIVE_NARRATION_FIELD}\`[^\n]*\n`),
+      "\n"
+    );
+    const badContent = sampleSpecContent.replace(
+      N2_BLOCK_REGEX,
+      () => strippedN2
+    );
+
+    expect(badContent).not.toContain(
+      `Lời đọc phát từ \`${LIVE_NARRATION_FIELD}\``
+    );
+    const violations = lintSingleTurnSpec(badContent, "GT-001.md");
+    expect(
+      violations.some(
+        (v) =>
+          v.rule === "BR-ETS-04" && v.message.includes(LIVE_NARRATION_FIELD)
+      )
+    ).toBe(true);
+  });
+
+  // Ca âm 13: thư mục phiếu rỗng (đổi tên, dời chỗ) Cấm — NEVER xanh
+  it("Ca âm 13: thư mục phiếu rỗng làm cổng đỏ, không xanh giả (BR-ETS-01)", () => {
+    const emptyDir = mkdtempSync(join(tmpdir(), "engine-turn-empty-"));
+    try {
+      const result = scanEngineTurnGate({ specsDir: emptyDir });
+      expect(result.totalSpecs).toBe(0);
+      expect(result.violations.length).toBeGreaterThan(0);
+      expect(
+        result.violations.some((v) =>
+          v.message.includes("không quét được phiếu")
+        )
+      ).toBe(true);
+    } finally {
+      rmSync(emptyDir, { recursive: true, force: true });
+    }
+  });
+
+  // Ca âm 14: danh sách mã bắt buộc đọc không được thì cổng ĐỎ
+  it("Ca âm 14: không đọc được engine-spec-ready.json làm cổng đỏ (BR-ETS-01)", () => {
+    const result = scanEngineTurnGate({
+      specsDir,
+      readyCodesPath: join(tmpdir(), "khong-ton-tai-engine-spec-ready.json"),
+    });
+    expect(
+      result.violations.some((v) =>
+        v.message.includes("từ chối chạy trên tập rỗng")
+      )
+    ).toBe(true);
+  });
+
+  // Ca dương: nhắc lại một nhịp cũ giữa văn xuôi KHÔNG phải sai thứ tự
+  it("Ca dương: nhắc lại `N3` trong thân `N5` không làm cổng đỏ", () => {
+    const withCrossRef = sampleSpecContent.replace(
+      "5. **`N5` Trợ giúp**",
+      "5. **`N5` Trợ giúp** — vẫn dùng đúng cử chỉ của `N3`;"
+    );
+    expect(withCrossRef).not.toBe(sampleSpecContent);
+
+    const violations = lintSingleTurnSpec(withCrossRef, "GT-001.md");
+    expect(violations).toEqual([]);
   });
 });

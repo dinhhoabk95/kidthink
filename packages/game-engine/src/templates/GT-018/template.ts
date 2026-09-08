@@ -4,9 +4,12 @@ import { defineTemplate, STANDARD_SCORING } from "#src/contracts/types";
 
 export const GT018ContentSchema = z.object({
   ...promptFields(),
+  /**
+   * Chỉ mang **chữ** của lời nghe. Tệp âm đi theo `instruction_audio_path` ở cấp
+   * vòng — một nguồn lời đọc duy nhất (`BR-ETS-04`).
+   */
   audio_prompt: z.object({
     text: z.string().min(1),
-    audio_url: z.string().optional(),
   }),
   response_mode: z.enum(["select", "sequence"]).default("select"),
   target_sequence: z.array(z.string()).optional(),
