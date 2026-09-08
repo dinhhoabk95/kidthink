@@ -226,5 +226,21 @@ export const C2_GRD_01_SEED: SkillSeed = {
       rounds: 3,
       legacy_v1_ref: "D2-05",
     },
+    {
+      code: "GL-C2-GRD-SLOT-0003",
+      template: "GT-008",
+      band: "5-6",
+      difficulty: 3,
+      theme: "school",
+      rounds: 3,
+    },
+    {
+      code: "GL-C2-GRD-SLOT-0004",
+      template: "GT-008",
+      band: "5-6",
+      difficulty: 4,
+      theme: "farm",
+      rounds: 3,
+    },
   ],
 };

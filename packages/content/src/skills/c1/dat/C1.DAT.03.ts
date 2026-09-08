@@ -297,5 +297,21 @@ export const C1_DAT_03_SEED: SkillSeed = {
       theme: "homeland",
       rounds: 3,
     },
+    {
+      code: "GL-C1-DAT-MIR-0001",
+      template: "GT-021",
+      band: "5-6",
+      difficulty: 3,
+      theme: "school",
+      rounds: 3,
+    },
+    {
+      code: "GL-C1-DAT-SPOT-0001",
+      template: "GT-025",
+      band: "5-6",
+      difficulty: 3,
+      theme: "home",
+      rounds: 3,
+    },
   ],
 };

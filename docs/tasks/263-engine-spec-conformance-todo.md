@@ -319,11 +319,18 @@ band `5-6`. Theo quyết định 2 đây là corpus thiếu — soạn bù, cấ
 
 `GT-003` `GT-004` `GT-008`, `GT-019`..`GT-027`. Tiêu chí như T14.
 
+**Tiêu chí nghiệm thu**
+- [x] Nợ ô thủng của lô về 0 (xóa sạch toàn bộ ô thủng lô mvp và taxonomy-gap)
+- [x] Level mới qua `check:skill-quota`, `check:age-band-fit`, `check:engine-allocation`, `check:difficulty-ladder`
+
+**Kiểm chứng**
+- [x] `check:engine-seed-matrix` giảm trần từ 22 xuống đúng 0 ô thủng
+
 ---
 
 ### Điểm dừng D
-- [ ] `check:engine-seed-matrix` trần 0
-- [ ] Cổng nằm trong `pre-commit`
+- [x] `check:engine-seed-matrix` trần 0
+- [x] Cổng nằm trong `pre-commit`
 
 ---
 

@@ -217,5 +217,13 @@ export const C4_HOM_04_SEED: SkillSeed = {
       theme: "ocean",
       rounds: 3,
     },
+    {
+      code: "GL-C4-HOM-GNG-0001",
+      template: "GT-026",
+      band: "5-6",
+      difficulty: 3,
+      theme: "homeland",
+      rounds: 3,
+    },
   ],
 };

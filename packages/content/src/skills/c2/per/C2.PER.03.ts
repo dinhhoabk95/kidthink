@@ -244,5 +244,21 @@ export const C2_PER_03_SEED: SkillSeed = {
       theme: "vehicle",
       rounds: 3,
     },
+    {
+      code: "GL-C2-PER-BLD-0001",
+      template: "GT-023",
+      band: "5-6",
+      difficulty: 2,
+      theme: "school",
+      rounds: 3,
+    },
+    {
+      code: "GL-C2-PER-BLD-0002",
+      template: "GT-023",
+      band: "5-6",
+      difficulty: 3,
+      theme: "home",
+      rounds: 3,
+    },
   ],
 };

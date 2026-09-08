@@ -297,5 +297,21 @@ export const C1_OTO_07_SEED: SkillSeed = {
       theme: "vehicle",
       rounds: 3,
     },
+    {
+      code: "GL-C1-OTO-MIR-0003",
+      template: "GT-021",
+      band: "5-6",
+      difficulty: 2,
+      theme: "school",
+      rounds: 3,
+    },
+    {
+      code: "GL-C1-OTO-MIR-0004",
+      template: "GT-021",
+      band: "5-6",
+      difficulty: 3,
+      theme: "space",
+      rounds: 3,
+    },
   ],
 };

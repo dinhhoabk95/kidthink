@@ -262,5 +262,13 @@ export const C4_MEM_03_SEED: SkillSeed = {
       theme: "art",
       rounds: 3,
     },
+    {
+      code: "GL-C4-MEM-GNG-0001",
+      template: "GT-026",
+      band: "4-5",
+      difficulty: 2,
+      theme: "traffic",
+      rounds: 3,
+    },
   ],
 };

@@ -396,5 +396,13 @@ export const C1_CNT_07_SEED: SkillSeed = {
       theme: "body",
       rounds: 3,
     },
+    {
+      code: "GL-C1-CNT-HIDE-0001",
+      template: "GT-022",
+      band: "5-6",
+      difficulty: 3,
+      theme: "nature",
+      rounds: 3,
+    },
   ],
 };

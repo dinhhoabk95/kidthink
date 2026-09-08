@@ -233,5 +233,13 @@ export const C4_MEM_02_SEED: SkillSeed = {
       theme: "homeland",
       rounds: 3,
     },
+    {
+      code: "GL-C4-MEM-SPOT-0001",
+      template: "GT-025",
+      band: "4-5",
+      difficulty: 2,
+      theme: "farm",
+      rounds: 3,
+    },
   ],
 };

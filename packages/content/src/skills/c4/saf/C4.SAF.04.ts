@@ -217,5 +217,21 @@ export const C4_SAF_04_SEED: SkillSeed = {
       theme: "farm",
       rounds: 3,
     },
+    {
+      code: "GL-C4-SAF-TRACE-0001",
+      template: "GT-024",
+      band: "5-6",
+      difficulty: 2,
+      theme: "traffic",
+      rounds: 3,
+    },
+    {
+      code: "GL-C4-SAF-TRACE-0002",
+      template: "GT-024",
+      band: "5-6",
+      difficulty: 3,
+      theme: "school",
+      rounds: 3,
+    },
   ],
 };

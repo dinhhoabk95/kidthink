@@ -228,5 +228,13 @@ export const C2_DIR_06_SEED: SkillSeed = {
       theme: "vehicle",
       rounds: 3,
     },
+    {
+      code: "GL-C2-DIR-TRACE-0001",
+      template: "GT-024",
+      band: "5-6",
+      difficulty: 3,
+      theme: "traffic",
+      rounds: 3,
+    },
   ],
 };

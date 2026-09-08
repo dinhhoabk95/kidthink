@@ -15,7 +15,6 @@ import {
   formatSeedMatrixReport,
   loadSeedMatrixBaseline,
   parseSeedMatrixFromSpec,
-  type SeedMatrixBaselineConfig,
 } from "../../src/gates/engine-seed-matrix.js";
 import { ALL_SEED_LEVELS } from "../../src/index.js";
 
@@ -24,8 +23,8 @@ const repoRoot = path.resolve(__dirname, "../../../../");
 const specsDir = path.join(repoRoot, "docs/specs/01-platform/engines");
 const skillThinkingMap = buildSkillThinkingMap(ALL_SKILL_SEEDS);
 
-describe("Cổng check:engine-seed-matrix — Task #263 T13, T14 & T15", () => {
-  it("Khảo sát chuẩn: quét 37 phiếu, 241 ô có mục tiêu, đúng 22 ô thủng trên 12 engine (đã xóa nợ montessori GT-011..GT-017)", () => {
+describe("Cổng check:engine-seed-matrix — Task #263 T13..T16", () => {
+  it("Khảo sát chuẩn: quét 37 phiếu, 241 ô có mục tiêu, đúng 0 ô thủng trên 0 engine (hoàn tất xóa nợ toàn diện T16)", () => {
     const baseline = loadSeedMatrixBaseline();
     const report = evaluateEngineSeedMatrix(
       ALL_SEED_LEVELS,
@@ -36,20 +35,17 @@ describe("Cổng check:engine-seed-matrix — Task #263 T13, T14 & T15", () => {
 
     expect(report.totalEngines).toBe(37);
     expect(report.totalTargetCells).toBe(241);
-    expect(report.totalHoles).toBe(22);
+    expect(report.totalHoles).toBe(0);
     expect(report.passed).toBe(true);
     expect(report.newHoles.length).toBe(0);
 
     const enginesWithHoles = new Set(report.deficits.map((d) => d.engine));
-    expect(enginesWithHoles.size).toBe(12);
+    expect(enginesWithHoles.size).toBe(0);
 
     const formatted = formatSeedMatrixReport(report);
     expect(formatted).toContain("CHECK:ENGINE-SEED-MATRIX");
     expect(formatted).toContain("Tổng số ô có mục tiêu: 241");
-    expect(formatted).toContain("Số ô thủng: 22");
-    expect(formatted).toContain("GT-019 4-5 match: có 0, cần 2");
-    expect(formatted).toContain("GT-020 4-5 match: có 0, cần 2");
-    expect(formatted).toContain("GT-021 4-5 match: có 0, cần 2");
+    expect(formatted).toContain("Số ô thủng: 0");
   });
 
   it("Ca âm 1: bảng thiếu cột tag → ném lỗi (ERR_MISSING_TAG_COLUMNS)", () => {
@@ -110,41 +106,33 @@ describe("Cổng check:engine-seed-matrix — Task #263 T13, T14 & T15", () => {
   });
 
   it("Ca âm 4: xuất hiện ô thủng mới ngoài baseline → report.passed = false (Ratchet)", () => {
-    // Giả lập baseline chỉ chấp nhận 27 ô thủng (bỏ ô GT-003 5-6 sort)
+    // Giả lập tập level bị thiếu (bỏ toàn bộ level của GT-001)
+    const levelsMissingGT001 = ALL_SEED_LEVELS.filter(
+      (l) => l.header.template_code !== "GT-001"
+    );
     const baseline = loadSeedMatrixBaseline();
-    const restrictedBaseline: SeedMatrixBaselineConfig = {
-      ...baseline,
-      baseline_deficits: baseline.baseline_deficits.filter(
-        (d) => !(d.engine === "GT-003" && d.band === "5-6" && d.tag === "sort")
-      ),
-    };
 
     const report = evaluateEngineSeedMatrix(
-      ALL_SEED_LEVELS,
+      levelsMissingGT001,
       specsDir,
-      restrictedBaseline,
+      baseline,
       skillThinkingMap
     );
     expect(report.passed).toBe(false);
     expect(report.newHoles.length).toBeGreaterThan(0);
-    expect(
-      report.newHoles.some(
-        (h) => h.engine === "GT-003" && h.band === "5-6" && h.tag === "sort"
-      )
-    ).toBe(true);
+    expect(report.newHoles.some((h) => h.engine === "GT-001")).toBe(true);
   });
 
   it("Ca âm 5: tổng ô thủng vượt trần ratchet → report.passed = false", () => {
-    const baseline = loadSeedMatrixBaseline();
-    const lowerCeilingBaseline: SeedMatrixBaselineConfig = {
-      ...baseline,
-      max_deficits: 15, // Đặt trần 15 trong khi thực tế có 22
-    };
+    const levelsMissingGT001 = ALL_SEED_LEVELS.filter(
+      (l) => l.header.template_code !== "GT-001"
+    );
+    const baseline = loadSeedMatrixBaseline(); // max_deficits: 0
 
     const report = evaluateEngineSeedMatrix(
-      ALL_SEED_LEVELS,
+      levelsMissingGT001,
       specsDir,
-      lowerCeilingBaseline,
+      baseline,
       skillThinkingMap
     );
     expect(report.passed).toBe(false);

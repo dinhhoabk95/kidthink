@@ -1,29 +1,6 @@
 {
-  "max_deficits": 22,
+  "max_deficits": 0,
   "date": "2026-09-09",
-  "note": "Baseline nợ ô ma trận seed mục 13 (Task #263 T15). Đã xóa sạch ô thủng lô montessori GT-011..GT-017, chốt trần 22 ô.",
-  "baseline_deficits": [
-    { "engine": "GT-003", "band": "5-6", "tag": "sort", "target": 2 },
-    { "engine": "GT-004", "band": "5-6", "tag": "sort", "target": 3 },
-    { "engine": "GT-008", "band": "5-6", "tag": "sort", "target": 2 },
-    { "engine": "GT-019", "band": "4-5", "tag": "match", "target": 2 },
-    { "engine": "GT-019", "band": "5-6", "tag": "match", "target": 2 },
-    { "engine": "GT-020", "band": "4-5", "tag": "match", "target": 2 },
-    { "engine": "GT-020", "band": "5-6", "tag": "match", "target": 1 },
-    { "engine": "GT-021", "band": "4-5", "tag": "match", "target": 2 },
-    { "engine": "GT-021", "band": "5-6", "tag": "match", "target": 2 },
-    { "engine": "GT-021", "band": "5-6", "tag": "compare", "target": 1 },
-    { "engine": "GT-022", "band": "5-6", "tag": "count", "target": 1 },
-    { "engine": "GT-023", "band": "5-6", "tag": "predict", "target": 2 },
-    { "engine": "GT-023", "band": "5-6", "tag": "sequence", "target": 1 },
-    { "engine": "GT-024", "band": "5-6", "tag": "plan", "target": 3 },
-    { "engine": "GT-024", "band": "5-6", "tag": "match", "target": 2 },
-    { "engine": "GT-025", "band": "4-5", "tag": "compare", "target": 3 },
-    { "engine": "GT-025", "band": "4-5", "tag": "recall", "target": 1 },
-    { "engine": "GT-025", "band": "5-6", "tag": "compare", "target": 2 },
-    { "engine": "GT-025", "band": "5-6", "tag": "recall", "target": 1 },
-    { "engine": "GT-026", "band": "4-5", "tag": "recall", "target": 1 },
-    { "engine": "GT-026", "band": "5-6", "tag": "recall", "target": 1 },
-    { "engine": "GT-027", "band": "5-6", "tag": "infer", "target": 2 }
-  ]
+  "note": "Baseline nợ ô ma trận seed mục 13 (Task #263 T16). Đã xóa sạch toàn bộ 49 ô thủng trên cả 37 engine, đưa trần nợ về đúng 0.",
+  "baseline_deficits": []
 }

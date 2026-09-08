@@ -226,5 +226,13 @@ export const C2_GEO_04_SEED: SkillSeed = {
       theme: "art",
       rounds: 3,
     },
+    {
+      code: "GL-C2-GEO-SPOT-0001",
+      template: "GT-025",
+      band: "4-5",
+      difficulty: 2,
+      theme: "school",
+      rounds: 3,
+    },
   ],
 };

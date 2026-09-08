@@ -244,5 +244,13 @@ export const C4_MEM_04_SEED: SkillSeed = {
       rounds: 3,
       legacy_v1_ref: "D4-04",
     },
+    {
+      code: "GL-C4-MEM-SPOT-0002",
+      template: "GT-025",
+      band: "5-6",
+      difficulty: 3,
+      theme: "nature",
+      rounds: 3,
+    },
   ],
 };

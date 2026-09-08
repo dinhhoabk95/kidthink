@@ -306,5 +306,21 @@ export const C1_OTO_04_SEED: SkillSeed = {
       theme: "body",
       rounds: 3,
     },
+    {
+      code: "GL-C1-OTO-FLIP-0001",
+      template: "GT-020",
+      band: "4-5",
+      difficulty: 1,
+      theme: "school",
+      rounds: 3,
+    },
+    {
+      code: "GL-C1-OTO-FLIP-0002",
+      template: "GT-020",
+      band: "4-5",
+      difficulty: 2,
+      theme: "farm",
+      rounds: 3,
+    },
   ],
 };
