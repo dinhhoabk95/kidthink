@@ -36,7 +36,7 @@
       <button
         class="min-h-11 rounded-2xl border-2 border-danger-300 bg-white px-5 font-bold text-danger-800 transition-all hover:bg-danger-50 active:scale-95 dark:border-danger-700 dark:bg-surface-800 dark:text-danger-200"
         type="button"
-        @click="refresh"
+        @click="() => refresh()"
       >
         Thử lại
       </button>

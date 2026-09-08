@@ -151,9 +151,15 @@
           />
 
           <!-- Accessible DOM buttons for assistive tech & keyboard navigation -->
+          <!-- Vùng thông báo riêng: `aria-live` Cấm — NEVER đặt trên container
+               chứa button, vì mỗi lần đổi vòng screen reader sẽ đọc lại cả
+               danh sách đối tượng (BR-A11). -->
+          <div aria-live="polite" class="sr-only" role="status">
+            {{ liveAnnouncement }}
+          </div>
+
           <section
             aria-label="Các đối tượng tương tác"
-            aria-live="polite"
             class="absolute inset-0 pointer-events-none z-10"
           >
             <button
@@ -334,6 +340,17 @@
       Boolean(route.query.return_to) ||
       Boolean(route.query.return_level_code)
     );
+  });
+
+  /** Câu thông báo cho screen reader — đổi theo lượt chọn và theo vòng chơi. */
+  const liveAnnouncement = computed(() => {
+    const staged = viewEntities.value.find(
+      (entity) => entity.id === stagedEntityId.value
+    );
+    if (staged) {
+      return `Đã chọn ${getAccessibleLabel(staged)}. Chọn ô đích rồi bấm Enter để thả.`;
+    }
+    return `Vòng ${currentRound.value + 1} trên ${totalRounds.value}.`;
   });
 
   function getAccessibleLabel(entity: ViewEntity): string {

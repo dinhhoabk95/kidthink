@@ -169,53 +169,67 @@ export function usePlayGesture(options: GestureOptions) {
   const stagedSourceEntity = ref<ViewEntity | null>(null);
   const stagedEntityId = computed(() => stagedSourceEntity.value?.id ?? null);
 
-  function handleAccessibleEntityTap(entity: ViewEntity): void {
-    const timeMs = Date.now();
-    const staged = stagedSourceEntity.value;
+  /**
+   * Bề mặt hai bước (kéo-thả) nhận ra qua việc view có ô đích.
+   * Ở đó, chọn nguồn Cấm — NEVER gửi kèm gesture `tap`: template kéo-thả chấm
+   * tap là sai, nên `scaffolding.onMiss()` chạy và hint leo thang chỉ vì trẻ
+   * dùng bàn phím. Template chạm-chọn (không có ô đích) thì tap CHÍNH là đáp án.
+   */
+  function isTwoStepSurface(): boolean {
+    return viewEntities.value.some((entity) => entity.role === "target");
+  }
 
-    if (staged) {
-      if (entity.role === "target") {
-        // Step 2: Drop onto target
-        dispatchGesture({
-          type: "drop",
-          fromX: staged.x,
-          fromY: staged.y,
-          toX: entity.x,
-          toY: entity.y,
-          timeMs,
-        });
-        stagedSourceEntity.value = null;
-        return;
-      }
-
-      if (entity.role === "source") {
-        if (entity.id === staged.id) {
-          // Deselect
-          stagedSourceEntity.value = null;
-          dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
-          return;
-        }
-        // Switch staged source
-        stagedSourceEntity.value = entity;
-        dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
-        return;
-      }
-
+  /** Bước 2 của đường bàn phím: đã có nguồn đang chọn. */
+  function handleTapWithStagedSource(
+    staged: ViewEntity,
+    entity: ViewEntity,
+    twoStep: boolean,
+    timeMs: number
+  ): void {
+    if (entity.role === "target") {
+      dispatchGesture({
+        type: "drop",
+        fromX: staged.x,
+        fromY: staged.y,
+        toX: entity.x,
+        toY: entity.y,
+        timeMs,
+      });
       stagedSourceEntity.value = null;
-      dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
       return;
     }
 
-    // No staged source yet
+    if (entity.role === "source") {
+      // Bỏ chọn, hoặc đổi nguồn đang chọn.
+      stagedSourceEntity.value = entity.id === staged.id ? null : entity;
+      if (!twoStep) {
+        dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
+      }
+      return;
+    }
+
+    stagedSourceEntity.value = null;
+    dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
+  }
+
+  function handleAccessibleEntityTap(entity: ViewEntity): void {
+    const timeMs = Date.now();
+    const staged = stagedSourceEntity.value;
+    const twoStep = isTwoStepSurface();
+
+    if (staged) {
+      handleTapWithStagedSource(staged, entity, twoStep, timeMs);
+      return;
+    }
+
     if (entity.role === "source") {
       stagedSourceEntity.value = entity;
+      if (twoStep) {
+        return;
+      }
     }
-    dispatchGesture({
-      type: "tap",
-      x: entity.x,
-      y: entity.y,
-      timeMs,
-    });
+
+    dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
   }
 
   return {
