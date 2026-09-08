@@ -51,7 +51,7 @@ export class GT002Session extends TemplateGameSession<
     });
   }
 
-  private getItemState(itemId: string): ItemVisualState {
+  getItemState(itemId: string): ItemVisualState {
     return this.itemStates.get(itemId) ?? "idle";
   }
 
