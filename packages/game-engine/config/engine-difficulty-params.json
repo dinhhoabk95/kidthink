@@ -1,0 +1,699 @@
+{
+  "engines": {
+    "GT-000": {
+      "difficulty_fixed": true,
+      "reason": "Bài học giới thiệu khái niệm theo phương pháp 3 bước Montessori, tập trung 1 khái niệm trọng tâm; số lượng chất liệu giữ mức thấp để trẻ dễ tiếp thu",
+      "levels": {
+        "1": { "item_count": 2, "distractor_count": 1 },
+        "2": { "item_count": 2, "distractor_count": 1 },
+        "3": { "item_count": 3, "distractor_count": 2 },
+        "4": { "item_count": 3, "distractor_count": 2 },
+        "5": { "item_count": 4, "distractor_count": 3 }
+      }
+    },
+    "GT-001": {
+      "difficulty_fixed": false,
+      "reason": "Số lượng phương án lựa chọn tăng từ 2 (1 đúng, 1 sai) lên 6 (1 đúng, 5 sai) đòi hỏi quét thị giác rộng hơn và ức chế phản xạ tốt hơn",
+      "levels": {
+        "1": { "item_count": 2, "distractor_count": 1 },
+        "2": { "item_count": 3, "distractor_count": 2 },
+        "3": { "item_count": 4, "distractor_count": 3 },
+        "4": { "item_count": 5, "distractor_count": 4 },
+        "5": { "item_count": 6, "distractor_count": 5 }
+      }
+    },
+    "GT-002": {
+      "difficulty_fixed": false,
+      "reason": "Số thẻ tăng từ 3 (2 đúng, 1 sai) lên 8 (4 đúng, 4 sai) đòi hỏi trẻ ghi nhớ và chọn đủ nhiều mục tiêu thỏa mãn tiêu chí",
+      "levels": {
+        "1": { "item_count": 3, "target_count": 2, "distractor_count": 1 },
+        "2": { "item_count": 4, "target_count": 2, "distractor_count": 2 },
+        "3": { "item_count": 5, "target_count": 3, "distractor_count": 2 },
+        "4": { "item_count": 6, "target_count": 3, "distractor_count": 3 },
+        "5": { "item_count": 8, "target_count": 4, "distractor_count": 4 }
+      }
+    },
+    "GT-003": {
+      "difficulty_fixed": false,
+      "reason": "Số vật cần kéo và vật gây nhiễu tăng dần từ 2 lên 6 đòi hỏi kiểm soát vận động tinh và phân loại chính xác vào vùng đích",
+      "levels": {
+        "1": { "item_count": 2, "target_count": 2, "distractor_count": 0 },
+        "2": { "item_count": 3, "target_count": 2, "distractor_count": 1 },
+        "3": { "item_count": 4, "target_count": 3, "distractor_count": 1 },
+        "4": { "item_count": 5, "target_count": 3, "distractor_count": 2 },
+        "5": { "item_count": 6, "target_count": 4, "distractor_count": 2 }
+      }
+    },
+    "GT-004": {
+      "difficulty_fixed": false,
+      "reason": "Số lượng vật phân loại tăng từ 4 (2 nhóm x 2) lên 10 (2-3 nhóm) với vật gây nhiễu tăng dần độ khó phân biệt",
+      "levels": {
+        "1": { "item_count": 4, "distractor_count": 0 },
+        "2": { "item_count": 6, "distractor_count": 0 },
+        "3": { "item_count": 7, "distractor_count": 1 },
+        "4": { "item_count": 8, "distractor_count": 1 },
+        "5": { "item_count": 10, "distractor_count": 2 }
+      }
+    },
+    "GT-005": {
+      "difficulty_fixed": false,
+      "reason": "Số lượng cặp tương ứng tăng từ 2 cặp (4 thẻ) lên 6 cặp (12 thẻ) đòi hỏi duy trì chú ý và thiết lập nhiều ánh xạ 1-1 liên tiếp",
+      "levels": {
+        "1": { "item_count": 4, "target_count": 2 },
+        "2": { "item_count": 6, "target_count": 3 },
+        "3": { "item_count": 8, "target_count": 4 },
+        "4": { "item_count": 10, "target_count": 5 },
+        "5": { "item_count": 12, "target_count": 6 }
+      }
+    },
+    "GT-006": {
+      "difficulty_fixed": false,
+      "reason": "Độ dài chuỗi thứ tự tăng từ 3 phần tử (đầu - giữa - cuối) lên 5 phần tử đòi hỏi khả năng sắp xếp nối tiếp và tư duy logic tiến triển",
+      "levels": {
+        "1": { "item_count": 3, "target_count": 3 },
+        "2": { "item_count": 3, "target_count": 3 },
+        "3": { "item_count": 4, "target_count": 4 },
+        "4": { "item_count": 4, "target_count": 4 },
+        "5": { "item_count": 5, "target_count": 5 }
+      }
+    },
+    "GT-007": {
+      "difficulty_fixed": false,
+      "reason": "Số lượng phần tử tách gộp và tổng số lượng tăng dần từ 2 lên 6, chuyển từ tách gộp trực quan 2 phần sang tách gộp có nhiễu",
+      "levels": {
+        "1": { "item_count": 2, "part_count": 2, "distractor_count": 0 },
+        "2": { "item_count": 3, "part_count": 2, "distractor_count": 1 },
+        "3": { "item_count": 4, "part_count": 2, "distractor_count": 1 },
+        "4": { "item_count": 5, "part_count": 3, "distractor_count": 2 },
+        "5": { "item_count": 6, "part_count": 3, "distractor_count": 2 }
+      }
+    },
+    "GT-008": {
+      "difficulty_fixed": false,
+      "reason": "Số lượng ô chứa và vật kéo khớp tăng từ 2 lên 9 ô, đòi hỏi quan sát vị trí không gian và điều phối vận động kéo thả chính xác",
+      "levels": {
+        "1": { "item_count": 2, "slot_count": 2, "distractor_count": 0 },
+        "2": { "item_count": 3, "slot_count": 3, "distractor_count": 0 },
+        "3": { "item_count": 5, "slot_count": 4, "distractor_count": 1 },
+        "4": { "item_count": 7, "slot_count": 5, "distractor_count": 2 },
+        "5": { "item_count": 9, "slot_count": 6, "distractor_count": 3 }
+      }
+    },
+    "GT-009": {
+      "difficulty_fixed": false,
+      "reason": "Số lượng ứng viên tăng từ 4 lên 10 cùng số lượng manh mối suy luận tăng dần đòi hỏi loại trừ nhiều bước",
+      "levels": {
+        "1": {
+          "item_count": 4,
+          "clue_count": 1,
+          "candidate_count": 4,
+          "distractor_count": 3
+        },
+        "2": {
+          "item_count": 5,
+          "clue_count": 2,
+          "candidate_count": 5,
+          "distractor_count": 4
+        },
+        "3": {
+          "item_count": 6,
+          "clue_count": 2,
+          "candidate_count": 6,
+          "distractor_count": 5
+        },
+        "4": {
+          "item_count": 8,
+          "clue_count": 3,
+          "candidate_count": 8,
+          "distractor_count": 7
+        },
+        "5": {
+          "item_count": 10,
+          "clue_count": 3,
+          "candidate_count": 10,
+          "distractor_count": 9
+        }
+      }
+    },
+    "GT-010": {
+      "difficulty_fixed": false,
+      "reason": "Số biểu tượng thay thế tăng từ 2 (1 bước thế) lên 6 (nhiều biểu tượng và phương trình trung gian) đòi hỏi tư duy trừu tượng đại số sớm",
+      "levels": {
+        "1": {
+          "item_count": 2,
+          "equation_count": 1,
+          "step_count": 1,
+          "distractor_count": 1
+        },
+        "2": {
+          "item_count": 3,
+          "equation_count": 1,
+          "step_count": 1,
+          "distractor_count": 2
+        },
+        "3": {
+          "item_count": 4,
+          "equation_count": 2,
+          "step_count": 2,
+          "distractor_count": 3
+        },
+        "4": {
+          "item_count": 5,
+          "equation_count": 2,
+          "step_count": 2,
+          "distractor_count": 4
+        },
+        "5": {
+          "item_count": 6,
+          "equation_count": 3,
+          "step_count": 2,
+          "distractor_count": 5
+        }
+      }
+    },
+    "GT-011": {
+      "difficulty_fixed": false,
+      "reason": "Số phương án chọn tăng từ 3 lên 6 và kích thước ma trận chuyển từ 2x2 đơn giản sang ma trận đa quy luật hàng/cột",
+      "levels": {
+        "1": { "item_count": 3, "grid_size": 2, "distractor_count": 2 },
+        "2": { "item_count": 4, "grid_size": 2, "distractor_count": 3 },
+        "3": { "item_count": 4, "grid_size": 3, "distractor_count": 3 },
+        "4": { "item_count": 5, "grid_size": 3, "distractor_count": 4 },
+        "5": { "item_count": 6, "grid_size": 3, "distractor_count": 5 }
+      }
+    },
+    "GT-012": {
+      "difficulty_fixed": false,
+      "reason": "Số lượng vật xuất hiện chớp nhoáng tăng từ 1 lên 6 và thời gian flash_ms giảm dần đòi hỏi tăng dung lượng bộ nhớ làm việc thị giác",
+      "levels": {
+        "1": { "item_count": 1, "flash_ms": 3000, "distractor_count": 1 },
+        "2": { "item_count": 2, "flash_ms": 2500, "distractor_count": 2 },
+        "3": { "item_count": 3, "flash_ms": 2000, "distractor_count": 3 },
+        "4": { "item_count": 4, "flash_ms": 1500, "distractor_count": 4 },
+        "5": { "item_count": 6, "flash_ms": 1200, "distractor_count": 5 }
+      }
+    },
+    "GT-013": {
+      "difficulty_fixed": true,
+      "reason": "Mê cung luôn có đúng 1 điểm xuất phát và 1 đích đến (item_count = 1); độ khó tăng qua số ngã rẽ cụt và độ dài đường đi tối thiểu",
+      "levels": {
+        "1": { "item_count": 1, "dead_end_count": 0, "required_cell_count": 6 },
+        "2": { "item_count": 1, "dead_end_count": 1, "required_cell_count": 9 },
+        "3": {
+          "item_count": 1,
+          "dead_end_count": 2,
+          "required_cell_count": 12
+        },
+        "4": {
+          "item_count": 1,
+          "dead_end_count": 4,
+          "required_cell_count": 16
+        },
+        "5": { "item_count": 1, "dead_end_count": 6, "required_cell_count": 20 }
+      }
+    },
+    "GT-014": {
+      "difficulty_fixed": false,
+      "reason": "Số lượng vật thể trên 2 đĩa cân tăng từ 2 (1-1 so sánh trực quan) lên 6 (tổng hợp nhiều quả cân hoặc vật nặng khác nhau)",
+      "levels": {
+        "1": {
+          "item_count": 2,
+          "tray_count": 2,
+          "weight_span": 1,
+          "distractor_count": 0
+        },
+        "2": {
+          "item_count": 3,
+          "tray_count": 2,
+          "weight_span": 2,
+          "distractor_count": 1
+        },
+        "3": {
+          "item_count": 4,
+          "tray_count": 2,
+          "weight_span": 2,
+          "distractor_count": 1
+        },
+        "4": {
+          "item_count": 5,
+          "tray_count": 2,
+          "weight_span": 3,
+          "distractor_count": 2
+        },
+        "5": {
+          "item_count": 6,
+          "tray_count": 2,
+          "weight_span": 3,
+          "distractor_count": 2
+        }
+      }
+    },
+    "GT-015": {
+      "difficulty_fixed": false,
+      "reason": "Số lượng ô trống cần điền tăng từ 1 ô (item_count = 2) lên 3 ô (item_count = 4) trên lưới 2x2 và 3x3",
+      "levels": {
+        "1": { "item_count": 2, "blank_count": 1, "distractor_count": 0 },
+        "2": { "item_count": 2, "blank_count": 1, "distractor_count": 1 },
+        "3": { "item_count": 3, "blank_count": 2, "distractor_count": 1 },
+        "4": { "item_count": 3, "blank_count": 2, "distractor_count": 2 },
+        "5": { "item_count": 4, "blank_count": 3, "distractor_count": 2 }
+      }
+    },
+    "GT-016": {
+      "difficulty_fixed": false,
+      "reason": "Số phương án chọn tăng từ 2 lên 4 và độ chia bước phút tinh chỉnh từ giờ chẵn (60p) sang nửa giờ (30p) và 15p",
+      "levels": {
+        "1": { "item_count": 2, "minute_step": 60, "distractor_count": 1 },
+        "2": { "item_count": 3, "minute_step": 60, "distractor_count": 2 },
+        "3": { "item_count": 3, "minute_step": 30, "distractor_count": 2 },
+        "4": { "item_count": 4, "minute_step": 30, "distractor_count": 3 },
+        "5": { "item_count": 4, "minute_step": 15, "distractor_count": 3 }
+      }
+    },
+    "GT-017": {
+      "difficulty_fixed": false,
+      "reason": "Số phương án đáp án tăng từ 2 lên 6 và số khối lập phương bị che khuất tăng dần đòi hỏi hình dung không gian 3D",
+      "levels": {
+        "1": { "item_count": 2, "hidden_cube_count": 0, "distractor_count": 1 },
+        "2": { "item_count": 3, "hidden_cube_count": 0, "distractor_count": 2 },
+        "3": { "item_count": 4, "hidden_cube_count": 1, "distractor_count": 3 },
+        "4": { "item_count": 5, "hidden_cube_count": 2, "distractor_count": 4 },
+        "5": { "item_count": 6, "hidden_cube_count": 3, "distractor_count": 5 }
+      }
+    },
+    "GT-018": {
+      "difficulty_fixed": false,
+      "reason": "Số lượng âm thanh và vật phản hồi tăng từ 2 lên 8 đòi hỏi phân biệt thính giác tinh tế hơn giữa các âm thanh tương tự",
+      "levels": {
+        "1": { "item_count": 2, "distractor_count": 1, "target_count": 1 },
+        "2": { "item_count": 3, "distractor_count": 2, "target_count": 1 },
+        "3": { "item_count": 4, "distractor_count": 2, "target_count": 2 },
+        "4": { "item_count": 6, "distractor_count": 3, "target_count": 3 },
+        "5": { "item_count": 8, "distractor_count": 4, "target_count": 4 }
+      }
+    },
+    "GT-019": {
+      "difficulty_fixed": false,
+      "reason": "Số lượng hình và góc quay tăng từ 1 hình (quay 90 độ) lên 4 hình (quay 90/180/270 độ và lật gương) đòi hỏi khả năng xoay trong tâm trí",
+      "levels": {
+        "1": { "item_count": 1, "rotation_step": 90, "allow_flip": false },
+        "2": { "item_count": 2, "rotation_step": 90, "allow_flip": false },
+        "3": { "item_count": 2, "rotation_step": 180, "allow_flip": false },
+        "4": { "item_count": 3, "rotation_step": 90, "allow_flip": true },
+        "5": { "item_count": 4, "rotation_step": 45, "allow_flip": true }
+      }
+    },
+    "GT-020": {
+      "difficulty_fixed": false,
+      "reason": "Số thẻ lật tăng từ 4 thẻ (2 cặp) lên 12 thẻ (6 cặp) và thời gian liếc ban đầu giảm dần đòi hỏi ghi nhớ vị trí không gian chính xác",
+      "levels": {
+        "1": {
+          "item_count": 4,
+          "target_count": 2,
+          "peek_all_initial_ms": 2000
+        },
+        "2": {
+          "item_count": 6,
+          "target_count": 3,
+          "peek_all_initial_ms": 2000
+        },
+        "3": {
+          "item_count": 8,
+          "target_count": 4,
+          "peek_all_initial_ms": 1500
+        },
+        "4": {
+          "item_count": 10,
+          "target_count": 5,
+          "peek_all_initial_ms": 1000
+        },
+        "5": { "item_count": 12, "target_count": 6, "peek_all_initial_ms": 0 }
+      }
+    },
+    "GT-021": {
+      "difficulty_fixed": false,
+      "reason": "Số mảnh ghép đối xứng tăng từ 2 lên 8 mảnh và ẩn dần đường trục dẫn hướng đối xứng",
+      "levels": {
+        "1": {
+          "item_count": 2,
+          "show_axis_guide": true,
+          "distractor_count": 1
+        },
+        "2": {
+          "item_count": 3,
+          "show_axis_guide": true,
+          "distractor_count": 1
+        },
+        "3": {
+          "item_count": 4,
+          "show_axis_guide": false,
+          "distractor_count": 2
+        },
+        "4": {
+          "item_count": 6,
+          "show_axis_guide": false,
+          "distractor_count": 3
+        },
+        "5": {
+          "item_count": 8,
+          "show_axis_guide": false,
+          "distractor_count": 4
+        }
+      }
+    },
+    "GT-022": {
+      "difficulty_fixed": false,
+      "reason": "Tổng số vật thể trong bối cảnh tăng từ 3 lên 12 và số vật mục tiêu cần tìm tăng từ 1 lên 5 đòi hỏi khả năng quét nền - hình",
+      "levels": {
+        "1": { "item_count": 3, "target_count": 1, "distractor_count": 2 },
+        "2": { "item_count": 5, "target_count": 2, "distractor_count": 3 },
+        "3": { "item_count": 7, "target_count": 2, "distractor_count": 5 },
+        "4": { "item_count": 9, "target_count": 3, "distractor_count": 6 },
+        "5": { "item_count": 12, "target_count": 4, "distractor_count": 8 }
+      }
+    },
+    "GT-023": {
+      "difficulty_fixed": false,
+      "reason": "Số mảnh kiến tạo lắp ghép tăng từ 2 lên 8 và thu hẹp bán kính bắt dính (snap_radius_px) để rèn luyện độ chính xác",
+      "levels": {
+        "1": {
+          "item_count": 2,
+          "snap_radius_px": 40,
+          "show_anchor_outline": true
+        },
+        "2": {
+          "item_count": 3,
+          "snap_radius_px": 36,
+          "show_anchor_outline": true
+        },
+        "3": {
+          "item_count": 4,
+          "snap_radius_px": 32,
+          "show_anchor_outline": true
+        },
+        "4": {
+          "item_count": 6,
+          "snap_radius_px": 28,
+          "show_anchor_outline": false
+        },
+        "5": {
+          "item_count": 8,
+          "snap_radius_px": 24,
+          "show_anchor_outline": false
+        }
+      }
+    },
+    "GT-024": {
+      "difficulty_fixed": false,
+      "reason": "Số điểm nối trên đường nét tăng từ 3 lên 12 điểm và thu hẹp dung sai nét vẽ, ẩn số thứ tự chấm ở mức cao",
+      "levels": {
+        "1": {
+          "item_count": 3,
+          "tolerance_px": 32,
+          "show_numbered_dots": true
+        },
+        "2": {
+          "item_count": 4,
+          "tolerance_px": 28,
+          "show_numbered_dots": true
+        },
+        "3": {
+          "item_count": 6,
+          "tolerance_px": 24,
+          "show_numbered_dots": true
+        },
+        "4": {
+          "item_count": 8,
+          "tolerance_px": 20,
+          "show_numbered_dots": false
+        },
+        "5": {
+          "item_count": 12,
+          "tolerance_px": 16,
+          "show_numbered_dots": false
+        }
+      }
+    },
+    "GT-025": {
+      "difficulty_fixed": false,
+      "reason": "Số điểm khác biệt giữa 2 bức tranh tăng từ 1 lên 2 điểm và các chi tiết khác biệt trở nên tinh vi hơn",
+      "levels": {
+        "1": { "item_count": 2, "target_count": 1, "distractor_count": 0 },
+        "2": { "item_count": 2, "target_count": 1, "distractor_count": 1 },
+        "3": { "item_count": 3, "target_count": 2, "distractor_count": 0 },
+        "4": { "item_count": 3, "target_count": 2, "distractor_count": 1 },
+        "5": { "item_count": 4, "target_count": 2, "distractor_count": 2 }
+      }
+    },
+    "GT-026": {
+      "difficulty_fixed": false,
+      "reason": "Số kích thích trong chuỗi tăng từ 4 lên 12 và cửa sổ hiển thị (stimulus_window_ms) rút ngắn từ 1800ms xuống 800ms",
+      "levels": {
+        "1": { "item_count": 4, "stimulus_window_ms": 1800, "isi_ms": 1000 },
+        "2": { "item_count": 6, "stimulus_window_ms": 1500, "isi_ms": 900 },
+        "3": { "item_count": 8, "stimulus_window_ms": 1200, "isi_ms": 800 },
+        "4": { "item_count": 10, "stimulus_window_ms": 1000, "isi_ms": 700 },
+        "5": { "item_count": 12, "stimulus_window_ms": 800, "isi_ms": 600 }
+      }
+    },
+    "GT-027": {
+      "difficulty_fixed": false,
+      "reason": "Số kích thích tăng từ 4 lên 12 và số lần đổi quy tắc phân loại bất ngờ tăng từ 1 lên 3 lần",
+      "levels": {
+        "1": { "item_count": 4, "signal_duration_ms": 2500, "target_count": 2 },
+        "2": { "item_count": 6, "signal_duration_ms": 2200, "target_count": 3 },
+        "3": { "item_count": 8, "signal_duration_ms": 1800, "target_count": 4 },
+        "4": {
+          "item_count": 10,
+          "signal_duration_ms": 1500,
+          "target_count": 5
+        },
+        "5": { "item_count": 12, "signal_duration_ms": 1200, "target_count": 6 }
+      }
+    },
+    "GT-028": {
+      "difficulty_fixed": false,
+      "reason": "Số lượng vật cần đếm chạm tăng dần từ 4 lên 20 và bước đếm nâng từ 1 lên 2",
+      "levels": {
+        "1": { "item_count": 4, "step": 1 },
+        "2": { "item_count": 6, "step": 1 },
+        "3": { "item_count": 10, "step": 1 },
+        "4": { "item_count": 15, "step": 2 },
+        "5": { "item_count": 20, "step": 2 }
+      }
+    },
+    "GT-029": {
+      "difficulty_fixed": false,
+      "reason": "Tập hợp ban đầu tăng từ 3 lên 10 vật và số lượng bớt đi tăng dần để hình thành khái niệm phép trừ sớm",
+      "levels": {
+        "1": { "item_count": 3, "initial_count": 3, "remove_count": 1 },
+        "2": { "item_count": 4, "initial_count": 4, "remove_count": 1 },
+        "3": { "item_count": 6, "initial_count": 6, "remove_count": 2 },
+        "4": { "item_count": 8, "initial_count": 8, "remove_count": 3 },
+        "5": { "item_count": 10, "initial_count": 10, "remove_count": 4 }
+      }
+    },
+    "GT-030": {
+      "difficulty_fixed": false,
+      "reason": "Số loại đơn vị đo tăng từ 2 lên 5 và độ dài vật cần đo tăng từ 3 đơn vị lên 10 đơn vị lặp lại",
+      "levels": {
+        "1": { "item_count": 2, "length_in_units": 3, "gap_tolerance_pct": 15 },
+        "2": { "item_count": 2, "length_in_units": 4, "gap_tolerance_pct": 12 },
+        "3": { "item_count": 3, "length_in_units": 6, "gap_tolerance_pct": 10 },
+        "4": { "item_count": 4, "length_in_units": 8, "gap_tolerance_pct": 8 },
+        "5": { "item_count": 5, "length_in_units": 10, "gap_tolerance_pct": 6 }
+      }
+    },
+    "GT-031": {
+      "difficulty_fixed": false,
+      "reason": "Số mệnh giá đồng xu hiển thị tăng từ 2 lên 8 và số tiền mục tiêu cần tạo thành tăng dần",
+      "levels": {
+        "1": { "item_count": 2, "coin_kind_count": 1, "target_amount": 3 },
+        "2": { "item_count": 3, "coin_kind_count": 2, "target_amount": 5 },
+        "3": { "item_count": 4, "coin_kind_count": 2, "target_amount": 7 },
+        "4": { "item_count": 6, "coin_kind_count": 3, "target_amount": 10 },
+        "5": { "item_count": 8, "coin_kind_count": 3, "target_amount": 15 }
+      }
+    },
+    "GT-032": {
+      "difficulty_fixed": false,
+      "reason": "Số cốc nước so sánh tăng từ 2 lên 4 và đưa thêm bẫy bảo tồn chất lỏng (cốc cao hẹp vs cốc thấp rộng)",
+      "levels": {
+        "1": {
+          "item_count": 2,
+          "cup_count": 2,
+          "level_steps": 3,
+          "conservation_trap": false
+        },
+        "2": {
+          "item_count": 2,
+          "cup_count": 2,
+          "level_steps": 4,
+          "conservation_trap": true
+        },
+        "3": {
+          "item_count": 3,
+          "cup_count": 3,
+          "level_steps": 4,
+          "conservation_trap": true
+        },
+        "4": {
+          "item_count": 3,
+          "cup_count": 3,
+          "level_steps": 5,
+          "conservation_trap": true
+        },
+        "5": {
+          "item_count": 4,
+          "cup_count": 4,
+          "level_steps": 6,
+          "conservation_trap": true
+        }
+      }
+    },
+    "GT-033": {
+      "difficulty_fixed": false,
+      "reason": "Số màu đan tăng từ 2 lên 4 và kích thước ma trận đan tăng từ 2x2 (4 ô) lên 4x4 (16 ô) và 5x5 (25 ô)",
+      "levels": {
+        "1": {
+          "item_count": 2,
+          "grid_size": 2,
+          "color_count": 2,
+          "blank_count": 1
+        },
+        "2": {
+          "item_count": 2,
+          "grid_size": 3,
+          "color_count": 2,
+          "blank_count": 2
+        },
+        "3": {
+          "item_count": 3,
+          "grid_size": 3,
+          "color_count": 3,
+          "blank_count": 3
+        },
+        "4": {
+          "item_count": 3,
+          "grid_size": 4,
+          "color_count": 3,
+          "blank_count": 4
+        },
+        "5": {
+          "item_count": 4,
+          "grid_size": 4,
+          "color_count": 4,
+          "blank_count": 6
+        }
+      }
+    },
+    "GT-034": {
+      "difficulty_fixed": false,
+      "reason": "Số nhạc cụ tăng từ 2 lên 4, độ dài mẫu tiết tấu tăng từ 4 lên 8 nốt và nhịp độ tempo_bpm tăng nhanh hơn",
+      "levels": {
+        "1": {
+          "item_count": 2,
+          "instrument_count": 2,
+          "pattern_length": 4,
+          "tempo_bpm": 80
+        },
+        "2": {
+          "item_count": 2,
+          "instrument_count": 2,
+          "pattern_length": 5,
+          "tempo_bpm": 90
+        },
+        "3": {
+          "item_count": 3,
+          "instrument_count": 3,
+          "pattern_length": 6,
+          "tempo_bpm": 95
+        },
+        "4": {
+          "item_count": 3,
+          "instrument_count": 3,
+          "pattern_length": 7,
+          "tempo_bpm": 105
+        },
+        "5": {
+          "item_count": 4,
+          "instrument_count": 4,
+          "pattern_length": 8,
+          "tempo_bpm": 115
+        }
+      }
+    },
+    "GT-035": {
+      "difficulty_fixed": false,
+      "reason": "Số lệnh lập trình đường đi tăng từ 2 lên 8 lệnh và số chướng ngại vật xuất hiện nhiều hơn",
+      "levels": {
+        "1": {
+          "item_count": 2,
+          "max_commands": 3,
+          "obstacle_count": 0,
+          "collectible_count": 1
+        },
+        "2": {
+          "item_count": 3,
+          "max_commands": 4,
+          "obstacle_count": 1,
+          "collectible_count": 1
+        },
+        "3": {
+          "item_count": 4,
+          "max_commands": 5,
+          "obstacle_count": 2,
+          "collectible_count": 2
+        },
+        "4": {
+          "item_count": 6,
+          "max_commands": 7,
+          "obstacle_count": 3,
+          "collectible_count": 2
+        },
+        "5": {
+          "item_count": 8,
+          "max_commands": 8,
+          "obstacle_count": 4,
+          "collectible_count": 3
+        }
+      }
+    },
+    "GT-036": {
+      "difficulty_fixed": false,
+      "reason": "Bảng màu lựa chọn tăng từ 2 lên 6 màu và độ dài đường ray sáng tạo tăng từ 4 lên 12 khối lặp lại",
+      "levels": {
+        "1": {
+          "item_count": 2,
+          "palette_size": 2,
+          "track_length": 4,
+          "min_repetitions": 2
+        },
+        "2": {
+          "item_count": 3,
+          "palette_size": 3,
+          "track_length": 6,
+          "min_repetitions": 2
+        },
+        "3": {
+          "item_count": 4,
+          "palette_size": 4,
+          "track_length": 8,
+          "min_repetitions": 2
+        },
+        "4": {
+          "item_count": 5,
+          "palette_size": 5,
+          "track_length": 10,
+          "min_repetitions": 3
+        },
+        "5": {
+          "item_count": 6,
+          "palette_size": 6,
+          "track_length": 12,
+          "min_repetitions": 3
+        }
+      }
+    }
+  }
+}

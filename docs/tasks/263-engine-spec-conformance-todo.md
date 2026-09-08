@@ -108,16 +108,16 @@ Bảng tra, không phải công thức. Mỗi ô rút từ phân tích nghiệp 
 engine ra cùng một dãy số là bình thường; cấm — NEVER lấy đó làm lý do gộp hàng.
 
 **Tiêu chí nghiệm thu**
-- [ ] `packages/game-engine/config/engine-difficulty-params.json` có đủ 37 hàng
-- [ ] Mỗi hàng: 5 mức, mỗi mức khai `item_count` và các trường điều khiển độ khó khác của engine đó (`distractor_count`, `grid_size`, `step_count`… tuỳ engine)
-- [ ] Mỗi ô nằm trong `limits.item_count` của engine đó và không giảm khi mức tăng
-- [ ] Mỗi hàng kèm một dòng `reason` nói vì sao dãy đó đúng với cơ chế này — cấm — NEVER để trống
-- [ ] Engine không nới được số item vì cơ chế (ví dụ `GT-014` cân hai bên luôn 2 vật) khai `difficulty_fixed: true` kèm lý do cơ chế
-- [ ] `GT-000` khai `difficulty_fixed: true`
+- [x] `packages/game-engine/config/engine-difficulty-params.json` có đủ 37 hàng
+- [x] Mỗi hàng: 5 mức, mỗi mức khai `item_count` và các trường điều khiển độ khó khác của engine đó (`distractor_count`, `grid_size`, `step_count`… tuỳ engine)
+- [x] Mỗi ô nằm trong `limits.item_count` của engine đó và không giảm khi mức tăng
+- [x] Mỗi hàng kèm một dòng `reason` nói vì sao dãy đó đúng với cơ chế này — cấm — NEVER để trống
+- [x] Engine không nới được số item vì cơ chế (ví dụ `GT-013` mê cung luôn 1 đích) khai `difficulty_fixed: true` kèm lý do cơ chế
+- [x] `GT-000` khai `difficulty_fixed: true`
 
 **Kiểm chứng**
-- [ ] Zod schema parse sạch cả 37 hàng
-- [ ] So từng ô với `limits` của registry: 0 ô vượt biên
+- [x] Zod schema parse sạch cả 37 hàng (tests/difficulty-params.test.ts)
+- [x] So từng ô với `limits` của registry: 0 ô vượt biên
 
 **File**: `packages/game-engine/config/engine-difficulty-params.json`, schema trong `packages/game-engine/src/contracts/`
 
