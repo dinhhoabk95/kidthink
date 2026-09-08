@@ -378,7 +378,7 @@ band `5-6`. Theo quyết định 2 đây là corpus thiếu — soạn bù, cấ
 nào trỏ tới; 27 engine có 0. Khuôn tham chiếu là `GT-001`.
 
 - [x] **T18.1 lô `mvp`** — `GT-002`..`GT-006` · M (15 luật thật, 15 scenario mục 9, 15 unit tests pass)
-**T18.2 lô `montessori`** — `GT-007`..`GT-017` · L
+- [x] **T18.2 lô `montessori`** — `GT-007`..`GT-017` · L (33 luật thật, 33 scenario mục 9, 33 unit tests pass)
 **T18.3 lô `legacy-v1`** — `GT-018`..`GT-024` · L
 **T18.4 lô `taxonomy-gap`** — `GT-025`..`GT-027` · M
 
