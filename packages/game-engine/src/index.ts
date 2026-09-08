@@ -10,7 +10,12 @@ export type {
   ScoringSchema,
 } from "./contracts/types";
 export { AGE_BANDS } from "./contracts/types";
-export { type EngineConfig, type EventCallback, GameEngine } from "./core";
+export {
+  ENGINE_EVENT_WILDCARD,
+  type EngineConfig,
+  type EventCallback,
+  GameEngine,
+} from "./core";
 export {
   type ActionResult,
   BaseGameSession,

@@ -1,11 +1,11 @@
 import {
   createGameSessionSync,
+  ENGINE_EVENT_WILDCARD,
   type EngineConfig,
   GameEngine,
   preloadGameSession,
   type RoundConfig,
   RoundRunner,
-  type Slot,
 } from "@mindkid/game-engine";
 import { nextTick, type Ref, ref } from "vue";
 import {
@@ -106,33 +106,6 @@ export function usePlaySession(options: UsePlaySessionOptions) {
 
   function getCachedPayload(): ConfigPayload | null {
     return cachedPayload;
-  }
-
-  function renderScaffoldingAura(
-    ctx: CanvasRenderingContext2D,
-    nowMs: number
-  ): void {
-    if (!engine || engine.focusIndex === null) {
-      return;
-    }
-    const slots =
-      (engine.activeSession as { slots?: readonly Slot[] })?.slots ||
-      engine.slots ||
-      [];
-    const focusSlot = slots[engine.focusIndex];
-    if (focusSlot) {
-      const r = Math.max(focusSlot.w, focusSlot.h) / 2 + 18;
-      ctx.save();
-      const pulse = 0.5 + 0.5 * Math.sin((nowMs / 1000) * Math.PI * 2);
-      ctx.strokeStyle = `rgba(245, 158, 11, ${0.4 + pulse * 0.4})`;
-      ctx.lineWidth = 4 + pulse * 2;
-      ctx.setLineDash([8, 6]);
-      ctx.lineDashOffset = -(nowMs / 50) % 14;
-      ctx.beginPath();
-      ctx.arc(focusSlot.x, focusSlot.y, r, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.restore();
-    }
   }
 
   function syncIntroStepState(): void {
@@ -260,6 +233,9 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       onRoundStarted: (roundIndex) => {
         currentRound.value = roundIndex;
         canSkipRound.value = false;
+        if (engine) {
+          engine.roundIndex = roundIndex;
+        }
         setInstructionAudio(rounds[roundIndex]?.instruction_audio_path);
         const session = roundRunner?.getCurrentSession();
         if (session && engine) {
@@ -313,14 +289,15 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         engine = null;
       }
       engine = new GameEngine();
-      engine.on("round_skipped", () => {
+      engine.onSkipAvailable = () => {
         canSkipRound.value = true;
+      };
+      // `GameEngine.emitEvent` chỉ gọi listener; không có đường này thì event
+      // scaffolding của engine không bao giờ tới `/events`.
+      engine.on(ENGINE_EVENT_WILDCARD, (event) => {
+        roundRunner?.recordExternalEvent(event);
       });
-      engine.on("skip_suggested", () => {
-        canSkipRound.value = true;
-      });
-      engine.onAfterRender = (ctx, _rs, nowMs) => {
-        renderScaffoldingAura(ctx, nowMs);
+      engine.onAfterRender = () => {
         syncIntroStepState();
       };
       engine.load(engineConfig, factory);

@@ -229,6 +229,15 @@ export class RoundRunner {
   }
 
   /** Get all accumulated telemetry events across all rounds. */
+  /**
+   * Nhận một event do GameEngine phát (scaffolding, demo...) vào dòng telemetry
+   * của lượt chơi. `GameEngine.emitEvent` chỉ gọi listener, nên nếu không có
+   * đường này thì mọi event của engine không bao giờ tới `/events`.
+   */
+  recordExternalEvent(event: TelemetryEvent): void {
+    this.allEvents.push(event);
+  }
+
   getAllTelemetry(): TelemetryEvent[] {
     if (this.currentSession) {
       this.collectSessionTelemetry();

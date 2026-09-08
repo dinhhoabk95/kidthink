@@ -105,7 +105,8 @@ export interface EngineConfig {
 
 export type EventCallback = (event: TelemetryEvent) => void;
 
-const WILDCARD_EVENT_KEY = "*";
+/** Khoá listener nhận MỌI event của engine — dùng để nối telemetry ra ngoài. */
+export const ENGINE_EVENT_WILDCARD = "*";
 
 export class GameEngine {
   config?: EngineConfig;
@@ -117,6 +118,16 @@ export class GameEngine {
   scaffolding?: ScaffoldingSystem;
   focusIndex: number | null = null;
   skipSuggested = false;
+  /**
+   * Vòng đang chơi — bề mặt chơi gán khi RoundRunner mở vòng mới.
+   * Event telemetry của engine cần `round_index` thật; đọc từ session bằng cách
+   * đoán kiểu luôn cho 0 vì session Cấm — NEVER mang chỉ số vòng.
+   */
+  roundIndex = 0;
+
+  /** Gọi khi scaffolding đã cạn và nút "bỏ qua" nên hiện. Không phải telemetry. */
+  onSkipAvailable?: () => void;
+
   onAfterRender?: (
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -244,8 +255,10 @@ export class GameEngine {
     }
 
     if (level !== prevLevel && level > 0) {
-      const roundIdx =
-        (this.activeSession as { roundIndex?: number })?.roundIndex ?? 0;
+      // Payload phải khớp `EVENT_PAYLOAD_FIELDS`/`EVENT_PAYLOAD_SCHEMAS` của
+      // @mindkid/play: field lạ bị `cleanEventPayload` bỏ im lặng, field thiếu
+      // bị `.partial()` che — cả hai đều không báo lỗi ở đâu.
+      const roundIdx = this.currentRoundIndex();
       this.emitEvent({
         event_name: "scaffold_escalated",
         timestamp_ms: Date.now(),
@@ -253,8 +266,7 @@ export class GameEngine {
           round_index: roundIdx,
           level,
           trigger: this.scaffolding.missStreak > 0 ? "miss_streak" : "timer",
-          focus_index: this.focusIndex,
-          miss_streak: this.scaffolding.missStreak,
+          elapsed_ms: Math.round(this.scaffolding.elapsedMs),
         },
       });
       if (level === 2) {
@@ -263,37 +275,23 @@ export class GameEngine {
           timestamp_ms: Date.now(),
           data: {
             round_index: roundIdx,
-            level,
-            focus_index: this.focusIndex,
+            speed: this.scaffolding.ghostHandSpeed,
           },
         });
       }
-      // Backward compatibility event
-      this.emitEvent({
-        event_name: "hint_escalated",
-        timestamp_ms: Date.now(),
-        data: {
-          level,
-          focus_index: this.focusIndex,
-          miss_streak: this.scaffolding.missStreak,
-        },
-      });
     }
 
     if (this.scaffolding.isSkipSuggested && !prevSkip) {
       this.skipSuggested = true;
-      this.emitEvent({
-        event_name: "round_skipped",
-        timestamp_ms: Date.now(),
-        data: { reason: "scaffold_exhausted" },
-      });
-      // Backward compatibility event
-      this.emitEvent({
-        event_name: "skip_suggested",
-        timestamp_ms: Date.now(),
-        data: { reason: "scaffold_exhausted" },
-      });
+      // Cấm — NEVER phát `round_skipped` ở đây: RoundRunner sở hữu vòng đời
+      // vòng chơi và đã ghi event đó kèm `round_index` khi vòng bị bỏ thật.
+      // Phát thêm ở engine làm `validateRoundEvents` đếm thừa vòng đã kết thúc.
+      this.onSkipAvailable?.();
     }
+  }
+
+  private currentRoundIndex(): number {
+    return this.roundIndex;
   }
 
   private readonly loop = (): void => {
@@ -362,11 +360,19 @@ export class GameEngine {
     return this.activeSession?.checkWinCondition() ?? false;
   }
 
-  handleAssetLoadError(assetRef: string): void {
+  handleAssetLoadError(
+    assetRef: string,
+    assetKind: "emoji" | "image" | "audio" = "image",
+    retryCount = 0
+  ): void {
     this.emitEvent({
       event_name: "asset_load_failed",
       timestamp_ms: Date.now(),
-      data: { asset_ref: assetRef, fallback: "neutral_placeholder" },
+      data: {
+        asset_kind: assetKind,
+        asset_ref: assetRef,
+        retry_count: retryCount,
+      },
     });
   }
 
@@ -390,7 +396,7 @@ export class GameEngine {
         cb(event);
       }
     }
-    const wildcardListeners = this.eventListeners.get(WILDCARD_EVENT_KEY);
+    const wildcardListeners = this.eventListeners.get(ENGINE_EVENT_WILDCARD);
     if (wildcardListeners) {
       for (const cb of wildcardListeners) {
         cb(event);
