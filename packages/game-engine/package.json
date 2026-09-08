@@ -6,6 +6,7 @@
   "scripts": {
     "gen:templates": "tsx scripts/gen-templates.ts",
     "gen:engine-index": "tsx scripts/gen-engine-index.ts",
+    "gen:engine-depth-section": "tsx scripts/gen-engine-depth-section.ts",
     "check:render": "tsx scripts/check-render.ts",
     "check:engine-specs": "tsx scripts/check-engine-specs.ts",
     "check:engine-behavior": "tsx scripts/check-engine-behavior.ts",
@@ -15,6 +16,7 @@
   },
   "devDependencies": {
     "@mindkid/config": "workspace:*",
+    "@mindkid/content-build": "workspace:*",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

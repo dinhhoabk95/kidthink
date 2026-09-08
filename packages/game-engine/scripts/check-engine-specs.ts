@@ -11,6 +11,7 @@ import {
   formatEngineSpecsReport,
   scanEngineSpecsGate,
 } from "../tests/gates/engine-specs.js";
+import { runEngineDepthSection } from "./gen-engine-depth-section.js";
 
 function main(): void {
   const specsDir = repoPath("docs/specs/01-platform/engines");
@@ -34,7 +35,9 @@ function main(): void {
   console.log("check:engine-specs");
   console.log(report);
 
-  if (result.violations.length > 0) {
+  const s16Ok = runEngineDepthSection({ check: true });
+
+  if (result.violations.length > 0 || !s16Ok) {
     process.exit(1);
   }
 }

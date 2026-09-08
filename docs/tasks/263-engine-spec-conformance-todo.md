@@ -55,23 +55,23 @@ Mục 6 của 16 phiếu ghi band rộng hơn registry. Cổng chỉ đối chi�
 trong khi thực tế 992.
 
 **Tiêu chí nghiệm thu**
-- [ ] `packages/game-engine/scripts/gen-engine-depth-section.ts` ghi lại khối mục 16 của 37 phiếu từ số đo của `evaluateEngineDepth`
-- [ ] Khối sinh ra mang dấu `@generated` và câu `Cấm sửa tay`, giống `engines/index.md`
-- [ ] Chế độ `--check` thoát khác 0 khi phiếu lệch corpus, và được gọi trong `check:engine-specs`
-- [ ] 0 phiếu còn chuỗi `cần đo`
+- [x] `packages/game-engine/scripts/gen-engine-depth-section.ts` ghi lại khối mục 16 của 37 phiếu từ số đo của `evaluateEngineDepth`
+- [x] Khối sinh ra mang dấu `@generated` và câu `Cấm sửa tay`, giống `engines/index.md`
+- [x] Chế độ `--check` thoát khác 0 khi phiếu lệch corpus, và được gọi trong `check:engine-specs`
+- [x] 0 phiếu còn chuỗi `cần đo`
 
 **Kiểm chứng**
-- [ ] `npx tsx .../gen-engine-depth-section.ts --check` xanh
-- [ ] Sửa tay một con số trong `GT-001.md`, chạy `--check`, đỏ
+- [x] `npx tsx .../gen-engine-depth-section.ts --check` xanh
+- [x] Sửa tay một con số trong `GT-001.md`, chạy `--check`, đỏ (đã thử và hoàn nguyên)
 
 **File**: `packages/game-engine/scripts/gen-engine-depth-section.ts`, `packages/game-engine/package.json`, 37 phiếu
 
 ---
 
 ### Điểm dừng A
-- [ ] Ba cổng chạy trong `pre-commit`, có `glob`, ≤8s
-- [ ] 0 phiếu tự mâu thuẫn với registry
-- [ ] Mục 16 khớp corpus ở 37/37
+- [x] Ba cổng chạy trong `pre-commit`, có `glob`, ≤8s
+- [x] 0 phiếu tự mâu thuẫn với registry
+- [x] Mục 16 khớp corpus ở 37/37
 - [ ] Người đặt việc duyệt trước khi sang B
 
 ---

@@ -678,6 +678,9 @@ importers:
       '@mindkid/config':
         specifier: workspace:*
         version: link:../config
+      '@mindkid/content-build':
+        specifier: workspace:*
+        version: link:../content-build
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
