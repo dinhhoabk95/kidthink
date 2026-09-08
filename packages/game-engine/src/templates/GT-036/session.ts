@@ -158,7 +158,7 @@ export class GT036Session extends TemplateGameSession<
     slots.push({
       index: count + palCount + 1,
       role: "target",
-      x: 480 + 70,
+      x: this.logicSpace.w / 2 + 70,
       y: 465,
       w: 120,
       h: 50,

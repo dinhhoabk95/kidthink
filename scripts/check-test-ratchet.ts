@@ -40,25 +40,64 @@ interface VitestJsonReport {
   testResults: VitestSuiteResult[];
 }
 
-interface TestBaseline {
+export interface TestBaseline {
   failedFiles: string[];
   totalFailed: number;
+  /**
+   * Sàn số test suite phải chạy. Không có sàn này, xoá một file test, đổi nó
+   * thành `describe.skip`, hay để cả một project lỗi collection đều làm file
+   * rơi khỏi `failedFiles` và cổng xanh hơn — nợ giảm giả.
+   */
+  minTotalSuites?: number;
 }
 
-function parseArgs(): { isUpdate: boolean; reportPath: string | null } {
+export interface RatchetVerdict {
+  readonly ok: boolean;
+  readonly newFailedFiles: readonly string[];
+  readonly missingSuites: number;
+  readonly reasons: readonly string[];
+}
+
+function parseArgs(): {
+  isUpdate: boolean;
+  isForce: boolean;
+  reportPath: string | null;
+} {
   const args = process.argv.slice(2);
   let isUpdate = false;
+  let isForce = false;
   let reportPath: string | null = null;
 
   for (const arg of args) {
     if (arg === "--update") {
       isUpdate = true;
+    } else if (arg === "--force") {
+      isForce = true;
     } else if (arg.startsWith("--report=")) {
       reportPath = arg.slice("--report=".length);
     }
   }
 
-  return { isUpdate, reportPath };
+  return { isUpdate, isForce, reportPath };
+}
+
+function reportVerdictReasons(
+  baselineData: TestBaseline,
+  failedFiles: readonly string[],
+  totalSuites: number
+): void {
+  const verdict = verifyAgainstBaseline(baselineData, failedFiles, totalSuites);
+  for (const reason of verdict.reasons) {
+    console.error(`     • ${reason}`);
+  }
+  for (const file of verdict.newFailedFiles) {
+    console.error(`     • đỏ mới: ${file}`);
+  }
+  if (failedFiles.length > (baselineData.totalFailed ?? 0)) {
+    console.error(
+      `     • tổng file đỏ tăng: ${baselineData.totalFailed} → ${failedFiles.length}`
+    );
+  }
 }
 
 function runVitestAndGetReport(): string {
@@ -107,10 +146,15 @@ function extractFailedFiles(report: VitestJsonReport): string[] {
   return uniqueFiles.sort();
 }
 
-function updateBaseline(baselinePath: string, failedFiles: string[]): void {
+function updateBaseline(
+  baselinePath: string,
+  failedFiles: string[],
+  totalSuites: number
+): void {
   const updatedBaseline: TestBaseline = {
     totalFailed: failedFiles.length,
     failedFiles,
+    minTotalSuites: totalSuites,
   };
   fs.writeFileSync(
     baselinePath,
@@ -122,24 +166,65 @@ function updateBaseline(baselinePath: string, failedFiles: string[]): void {
   );
 }
 
-function verifyAgainstBaseline(
+export function verifyAgainstBaseline(
   baselineData: TestBaseline,
-  failedFiles: string[]
-): void {
+  failedFiles: readonly string[],
+  totalSuites: number
+): RatchetVerdict {
   const baselineFilesSet = new Set<string>(baselineData.failedFiles || []);
   const newFailedFiles = failedFiles.filter(
     (file: string) => !baselineFilesSet.has(file)
   );
+  const minTotalSuites = baselineData.minTotalSuites ?? 0;
+  const missingSuites = Math.max(0, minTotalSuites - totalSuites);
+  const reasons: string[] = [];
+
+  if (newFailedFiles.length > 0) {
+    reasons.push(
+      `${newFailedFiles.length} file test đỏ MỚI không nằm trong baseline`
+    );
+  }
+  if (missingSuites > 0) {
+    reasons.push(
+      `số suite chạy được tụt từ ${minTotalSuites} xuống ${totalSuites} (thiếu ${missingSuites})`
+    );
+  }
+
+  return {
+    ok: reasons.length === 0,
+    newFailedFiles,
+    missingSuites,
+    reasons,
+  };
+}
+
+/** Ratchet chỉ được siết: --update từ chối ghi khi nợ xấu hơn baseline. */
+export function isLoosening(
+  baselineData: TestBaseline,
+  failedFiles: readonly string[],
+  totalSuites: number
+): boolean {
+  const verdict = verifyAgainstBaseline(baselineData, failedFiles, totalSuites);
+  return !verdict.ok || failedFiles.length > (baselineData.totalFailed ?? 0);
+}
+
+function reportVerdict(
+  baselineData: TestBaseline,
+  failedFiles: readonly string[],
+  totalSuites: number
+): void {
+  const verdict = verifyAgainstBaseline(baselineData, failedFiles, totalSuites);
 
   console.log("\n📊 Kết quả kiểm tra Test Ratchet:");
   console.log(`   - Tổng số file test đỏ hiện tại: ${failedFiles.length}`);
   console.log(`   - Baseline cho phép: ${baselineData.totalFailed}`);
+  console.log(
+    `   - Suite chạy được: ${totalSuites} (sàn: ${baselineData.minTotalSuites ?? 0})`
+  );
 
-  if (newFailedFiles.length > 0) {
-    console.error(
-      `\n✗ Test ratchet THẤT BẠI: Phát hiện ${newFailedFiles.length} file test đỏ MỚI không nằm trong baseline:`
-    );
-    for (const file of newFailedFiles) {
+  if (!verdict.ok) {
+    console.error(`\n✗ Test ratchet THẤT BẠI: ${verdict.reasons.join("; ")}`);
+    for (const file of verdict.newFailedFiles) {
       console.error(`     • ${file}`);
     }
     process.exit(1);
@@ -159,8 +244,36 @@ function verifyAgainstBaseline(
   }
 }
 
+/**
+ * Ghi baseline mới. Ratchet chỉ được siết: từ chối khi trạng thái xấu hơn,
+ * trừ khi người chạy nói rõ `--force`.
+ */
+function runUpdate(
+  baselinePath: string,
+  failedFiles: string[],
+  totalSuites: number,
+  isForce: boolean
+): void {
+  if (fs.existsSync(baselinePath) && !isForce) {
+    const previous = JSON.parse(
+      fs.readFileSync(baselinePath, "utf8")
+    ) as TestBaseline;
+    if (isLoosening(previous, failedFiles, totalSuites)) {
+      console.error(
+        "\n✗ Từ chối nới baseline: trạng thái hiện tại xấu hơn baseline."
+      );
+      reportVerdictReasons(previous, failedFiles, totalSuites);
+      console.error(
+        "  Sửa test đỏ mới, hoặc chạy lại với --force nếu thật sự muốn nới."
+      );
+      process.exit(1);
+    }
+  }
+  updateBaseline(baselinePath, failedFiles, totalSuites);
+}
+
 function main(): void {
-  const { isUpdate, reportPath: passedReportPath } = parseArgs();
+  const { isUpdate, isForce, reportPath: passedReportPath } = parseArgs();
   const baselinePath = path.join(REPO_ROOT, "scripts/test-baseline.json");
 
   let reportFile = passedReportPath;
@@ -181,8 +294,10 @@ function main(): void {
     const report = JSON.parse(rawData) as VitestJsonReport;
     const failedFiles = extractFailedFiles(report);
 
+    const totalSuites = report.numTotalTestSuites ?? 0;
+
     if (isUpdate) {
-      updateBaseline(baselinePath, failedFiles);
+      runUpdate(baselinePath, failedFiles, totalSuites, isForce);
       process.exit(0);
     }
 
@@ -196,7 +311,7 @@ function main(): void {
     const baselineData = JSON.parse(
       fs.readFileSync(baselinePath, "utf8")
     ) as TestBaseline;
-    verifyAgainstBaseline(baselineData, failedFiles);
+    reportVerdict(baselineData, failedFiles, totalSuites);
   } finally {
     if (shouldCleanupTemp && reportFile && fs.existsSync(reportFile)) {
       try {
@@ -208,4 +323,6 @@ function main(): void {
   }
 }
 
-main();
+if (process.argv[1]?.includes("check-test-ratchet")) {
+  main();
+}
