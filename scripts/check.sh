@@ -61,6 +61,12 @@ PID_ERRORS=$!
 pnpm check:logic-space &
 PID_LOGIC_SPACE=$!
 
+# Cổng bậc thang ô cần chỉ — Task #260 (T9). Mặc định của
+# `getHintTargetIndex()` là null, nên template quên cài KHÔNG làm test nào đỏ,
+# nó chỉ âm thầm không bao giờ chỉ chỗ cho trẻ.
+pnpm check:hint-target &
+PID_HINT_TARGET=$!
+
 LINT_OK=true
 if ! wait $PID_LINT; then
   echo "✗ biome lint failed" >&2
@@ -92,10 +98,15 @@ if ! wait $PID_LOGIC_SPACE; then
   LINT_OK=false
 fi
 
+if ! wait $PID_HINT_TARGET; then
+  echo "✗ check:hint-target ratchet failed" >&2
+  LINT_OK=false
+fi
+
 if [ "$LINT_OK" = false ]; then
   exit 1
 fi
-echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space"
+echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space + hint-target"
 phase_end
 
 # ── Phase 2: Typecheck (cổng bậc thang + incremental) ─────────────────────

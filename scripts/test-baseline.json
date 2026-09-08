@@ -46,5 +46,6 @@
     "apps/web/tests/unit/server/p3-account-curriculum-integration.test.ts",
     "apps/web/tests/unit/server/personal-curriculum-service.test.ts",
     "apps/web/tests/unit/server/tagging-seed.test.ts"
-  ]
+  ],
+  "minTotalSuites": 1391
 }

@@ -31,6 +31,8 @@
     "check:test-ratchet:update": "tsx scripts/check-test-ratchet.ts --update",
     "check:logic-space": "tsx scripts/check-logic-space.ts",
     "check:logic-space:update": "tsx scripts/check-logic-space.ts --update",
+    "check:hint-target": "tsx scripts/check-hint-target.ts",
+    "check:hint-target:update": "tsx scripts/check-hint-target.ts --update",
     "gen:taxonomy-docs": "tsx scripts/taxonomy/sync-taxonomy-docs.ts --write",
     "verify": "tsx scripts/verify.ts",
     "test": "NODE_OPTIONS=--max-old-space-size=4096 vitest run --bail 1",
