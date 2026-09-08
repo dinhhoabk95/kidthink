@@ -13,8 +13,32 @@ set -uo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
-if [ -d "/Users/macbook/.nvm/versions/node/v24.15.0/bin" ]; then
-  export PATH="/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH"
+# Cổng đòi Node >=24 (package.json engines). `node` trên PATH có thể là bản cũ,
+# nên thử nạp một bản 24 từ nvm trước khi bỏ cuộc. Cấm chạy im lặng dưới 24:
+# ở đó pnpm gãy và cổng xanh giả.
+node_major() {
+  node --version 2>/dev/null | sed 's/^v//; s/\..*//'
+}
+
+NODE_MAJOR="$(node_major)"
+if [ -z "${NODE_MAJOR}" ] || [ "${NODE_MAJOR}" -lt 24 ]; then
+  NVM_NODE_DIR="${NVM_DIR:-${HOME}/.nvm}/versions/node"
+  if [ -d "${NVM_NODE_DIR}" ]; then
+    for candidate in $(ls -1 "${NVM_NODE_DIR}" | grep '^v24\.' | sort -V -r); do
+      candidate_bin="${NVM_NODE_DIR}/${candidate}/bin"
+      # Probe bản thật: một binary hỏng vẫn tồn tại trên đĩa nhưng không chạy được.
+      if [ -x "${candidate_bin}/node" ] && "${candidate_bin}/node" --version >/dev/null 2>&1; then
+        export PATH="${candidate_bin}:${PATH}"
+        break
+      fi
+    done
+  fi
+  NODE_MAJOR="$(node_major)"
+fi
+
+if [ -z "${NODE_MAJOR}" ] || [ "${NODE_MAJOR}" -lt 24 ]; then
+  echo "✗ check.sh đòi Node >=24, đang thấy: $(node --version 2>/dev/null || echo 'không có node trên PATH')" >&2
+  exit 1
 fi
 
 FAST=false
@@ -81,9 +105,17 @@ PID_MIGRATION_HASHES=$!
 pnpm check:engine-specs &
 PID_ENGINE_SPECS=$!
 
+# Cổng kịch bản lượt chơi engine — Task #262 (BR-ETS-01..12).
+pnpm check:engine-turn &
+PID_ENGINE_TURN=$!
+
 # Cổng miền hành vi engine — Task #261 (BR-EBD-01..13).
 pnpm check:engine-behavior &
 PID_ENGINE_BEHAVIOR=$!
+
+# Cổng miền hành vi × corpus — nửa corpus của BR-EBD-04 (miền phải có bài để chơi).
+pnpm check:engine-behavior-corpus &
+PID_ENGINE_BEHAVIOR_CORPUS=$!
 
 LINT_OK=true
 if ! wait $PID_LINT; then
@@ -131,15 +163,25 @@ if ! wait $PID_ENGINE_SPECS; then
   LINT_OK=false
 fi
 
+if ! wait $PID_ENGINE_TURN; then
+  echo "✗ check:engine-turn failed" >&2
+  LINT_OK=false
+fi
+
 if ! wait $PID_ENGINE_BEHAVIOR; then
   echo "✗ check:engine-behavior failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_ENGINE_BEHAVIOR_CORPUS; then
+  echo "✗ check:engine-behavior-corpus failed" >&2
   LINT_OK=false
 fi
 
 if [ "$LINT_OK" = false ]; then
   exit 1
 fi
-echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space + hint-target + migration-hashes + engine-specs + engine-behavior"
+echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space + hint-target + migration-hashes + engine-specs + engine-behavior + engine-behavior-corpus"
 phase_end
 
 # ── Phase 2: Typecheck (cổng bậc thang + incremental) ─────────────────────

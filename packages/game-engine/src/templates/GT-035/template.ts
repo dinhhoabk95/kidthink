@@ -78,7 +78,6 @@ function validateObstaclesAndCollectibles(
 export const GT035ContentSchema = z
   .object({
     prompt: z.string().min(1),
-    prompt_audio_ref: z.string().optional(),
     grid: z.object({
       rows: z.number().int().min(3).max(6),
       cols: z.number().int().min(3).max(6),

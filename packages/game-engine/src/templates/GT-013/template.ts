@@ -124,8 +124,8 @@ export default defineTemplate({
   requires_tap_fallback: true,
   /**
    * Lưới, tường và nét vẽ đều vẽ bằng canvas trong Session class (`D-RL`), nên
-   * `content_pack` không mang emoji hay ảnh nào. Asset duy nhất nó mang là
-   * `prompt_audio_ref`.
+   * `content_pack` không mang emoji hay ảnh nào. Asset duy nhất của vòng là
+   * `instruction_audio_path`.
    */
   asset_kinds: ["audio"],
   scoring: {

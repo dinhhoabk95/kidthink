@@ -188,6 +188,13 @@ Từ vựng và luật: [`engine-behavior-domain.md`](../engine-behavior-domain.
 
 **Bậc biểu diễn theo band** (`BR-EBD-12`): `3-4` <vật/hình> · `4-5` <…> · `5-6` <…>
 
+**Kênh thắng cuộc** (`BR-EBD-07`): `<hình | âm | ký hiệu>` · `<kênh thứ hai>` — <thông tin nào
+cần để thắng, và mỗi kênh mang phần nào của nó>
+
+> Tối thiểu **hai** kênh trong ba kênh `hình` · `âm` · `ký hiệu`. Màu sắc cấm — NEVER là kênh
+> duy nhất: một phần trẻ không phân biệt được màu. Engine chưa đủ hai kênh ghi `**NỢ**:` kèm
+> lý do; bậc thang ở `scripts/engine-behavior-baseline.json` cấm số engine nợ tăng lên.
+
 ## 18. Trục biến thể và độ mở
 
 | Trục | Giá trị dùng ở engine này | Đã có trong corpus |

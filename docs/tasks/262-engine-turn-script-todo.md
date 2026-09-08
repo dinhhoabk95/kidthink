@@ -14,45 +14,45 @@ Plan: [`262-engine-turn-script-plan.md`](262-engine-turn-script-plan.md).
 
 ## T1 — Cổng `check:engine-turn`
 
-- [ ] Bảy mốc `N1`…`N7` có đủ và đúng thứ tự
-- [ ] Chặn ba chuỗi bản sao cũ
-- [ ] `N2` nêu trường lời đọc và kênh hình song song
-- [ ] `N5` nêu đủ `L1` · `L2` · `L3`
-- [ ] `N7` nêu cả **đổi** lẫn **giữ**
-- [ ] Mục 5 ≥8 hàng, phủ đủ tám nhãn nhánh
-- [ ] Ngưỡng độ dài tối thiểu mỗi nhịp
+- [x] Bảy mốc `N1`…`N7` có đủ và đúng thứ tự
+- [x] Chặn ba chuỗi bản sao cũ
+- [x] `N2` nêu trường lời đọc và kênh hình song song
+- [x] `N5` nêu đủ `L1` · `L2` · `L3`
+- [x] `N7` nêu cả **đổi** lẫn **giữ**
+- [x] Mục 5 ≥8 hàng, phủ đủ tám nhãn nhánh
+- [x] Ngưỡng độ dài tối thiểu mỗi nhịp
 
 ## T2 — Ca âm (≥6)
 
-- [ ] Thiếu một nhịp → đỏ
-- [ ] Sai thứ tự nhịp → đỏ
-- [ ] Còn chuỗi bản sao → đỏ
-- [ ] Thiếu một nhánh bắt buộc → đỏ
-- [ ] `N5` chỉ ghi "scaffolding highlight" → đỏ
-- [ ] `N7` không nói cái gì giữ nguyên → đỏ
+- [x] Thiếu một nhịp → đỏ
+- [x] Sai thứ tự nhịp → đỏ
+- [x] Còn chuỗi bản sao → đỏ
+- [x] Thiếu một nhánh bắt buộc → đỏ
+- [x] `N5` chỉ ghi "scaffolding highlight" → đỏ
+- [x] `N7` không nói cái gì giữ nguyên → đỏ
 
 ## T3 — Test giữ thứ đang đúng
 
-- [ ] `BR-ETS-02`: chạm lúc `isLoading` bật không sinh sự kiện engine
-- [ ] `BR-ETS-03`: nghe lại giữa chừng dừng lời cũ trước, không hai `HTMLAudioElement` cùng sống
-- [ ] `BR-ETS-10`: hai lượt liên tiếp cùng level — `layout_seed` khác, `difficulty_params` bằng nhau
+- [x] `BR-ETS-02`: chạm lúc `isLoading` bật không sinh sự kiện engine
+- [x] `BR-ETS-03`: nghe lại giữa chừng dừng lời cũ trước, không hai `HTMLAudioElement` cùng sống
+- [x] `BR-ETS-10`: hai lượt liên tiếp cùng level — `layout_seed` khác, `difficulty_params` bằng nhau
 
 ## T4 — Đóng khoản hai trường lời đọc
 
-- [ ] Chốt câu hỏi 1 của spec: giữ `prompt_audio_ref` hay giữ `instruction_audio_path`
-- [ ] Thi công đúng **một** hướng; cấm — NEVER để lại hai đường
-- [ ] Cập nhật `gate-09-concept-present.ts` và `config-dictionary.ts` theo hướng đã chốt
-- [ ] Cập nhật mục 7 của các phiếu bị ảnh hưởng
-- [ ] `grep` trường bị khai tử trả 0 kết quả ngoài migration
+- [x] Chốt câu hỏi 1 của spec: giữ `prompt_audio_ref` hay giữ `instruction_audio_path` (đã chốt Option 1: giữ `instruction_audio_path`, khai tử `prompt_audio_ref`)
+- [x] Thi công đúng **một** hướng; cấm — NEVER để lại hai đường
+- [x] Cập nhật `gate-09-concept-present.ts` và `config-dictionary.ts` theo hướng đã chốt
+- [x] Cập nhật mục 7 của các phiếu bị ảnh hưởng
+- [x] `grep` trường bị khai tử trả 0 kết quả ngoài migration
 
 ## T5 — Nối cổng
 
-- [ ] `check:engine-turn` vào `package.json` của `@mindkid/game-engine`
-- [ ] Gọi trong `scripts/check.sh`, ngay sau `check:engine-specs`
-- [ ] Chạy bằng binary Node v24.15.0
+- [x] `check:engine-turn` vào `package.json` của `@mindkid/game-engine`
+- [x] Gọi trong `scripts/check.sh`, ngay sau `check:engine-specs`
+- [x] Chạy bằng binary Node v24.15.0
 
 ## T6 — Bàn giao câu hỏi mở
 
-- [ ] Câu hỏi 2 (nút nghe lại thuộc bề mặt chơi hay engine — studio preview hiện không có) → **Backend**
-- [ ] Câu hỏi 3 (`N6` giữ thành quả bao nhiêu mili giây) → **Nội dung**
-- [ ] Câu hỏi 4 (lần chơi thứ n có đổi chủ đề không, dùng trục `boi-canh` của mục 18) → **Nội dung**
+- [x] Câu hỏi 2 (nút nghe lại thuộc bề mặt chơi hay engine — studio preview hiện không có) → **Backend**
+- [x] Câu hỏi 3 (`N6` giữ thành quả bao nhiêu mili giây) → **Nội dung**
+- [x] Câu hỏi 4 (lần chơi thứ n có đổi chủ đề không, dùng trục `boi-canh` của mục 18) → **Nội dung**

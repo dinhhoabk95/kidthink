@@ -37,7 +37,6 @@ function nodeContainsGlyph(
 const IGNORED_KEYS = new Set([
   "prompt",
   "instruction",
-  "prompt_audio_ref",
   "audio_path",
   "title",
   "item_id",

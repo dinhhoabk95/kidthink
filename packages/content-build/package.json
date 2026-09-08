@@ -44,7 +44,8 @@
     "seed:report": "tsx src/cli/seed-report.ts",
     "gen:levels": "tsx src/cli/gen-levels.ts",
     "reset-content": "tsx scripts/reset-content.ts",
-    "report:tags": "tsx scripts/report-tag-vocabulary.ts"
+    "report:tags": "tsx scripts/report-tag-vocabulary.ts",
+    "check:engine-behavior-corpus": "tsx src/gates/engine-behavior-corpus.ts"
   },
   "imports": {
     "#src/*": "./src/*.ts",

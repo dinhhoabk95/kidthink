@@ -10,7 +10,6 @@ export const GT036PaletteItemSchema = z.object({
 export const GT036ContentSchema = z
   .object({
     prompt: z.string().min(1).max(200),
-    prompt_audio_ref: z.string().optional(),
     palette: z.array(GT036PaletteItemSchema).min(2).max(6),
     track_length: z.number().int().min(4).max(16).default(8),
     min_repetitions: z.number().int().min(2).max(4).default(2),

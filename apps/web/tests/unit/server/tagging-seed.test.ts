@@ -38,7 +38,6 @@ describe("Task P1.10 — Content Tagging & Seed Authoring Pipeline (BR-TAG-* & B
     },
     content_pack: {
       prompt: "Em hãy chọn quả táo đúng nhé",
-      prompt_audio_ref: "aud_prompt_apple",
       target_item: {
         item_id: "apple_1",
         asset: { kind: "emoji", ref: "🍎" },

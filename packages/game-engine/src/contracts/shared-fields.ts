@@ -20,8 +20,7 @@ export const assetSchema = () =>
     z.object({ kind: z.literal("text"), text: z.string().min(1) }),
   ]);
 
-/** `prompt` + `prompt_audio_ref`, present on every template content contract. */
+/** `prompt`, present on every template content contract. */
 export const promptFields = () => ({
   prompt: z.string().min(4).max(80),
-  prompt_audio_ref: z.string().optional(),
 });

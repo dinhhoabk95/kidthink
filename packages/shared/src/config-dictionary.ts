@@ -10,10 +10,6 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Câu hỏi / lời nhắc cho bé",
     help: "Ngắn gọn, dưới 12 từ, đọc thành tiếng được.",
   },
-  prompt_audio_ref: {
-    label: "Âm thanh đọc câu hỏi",
-    help: "File ghi âm đọc câu hỏi tiếng Việt cho bé.",
-  },
   title: {
     label: "Tiêu đề bài học",
     help: "Tiêu đề ngắn gọn hiển thị trong danh mục.",

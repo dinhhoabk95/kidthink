@@ -18,7 +18,7 @@ describe("Task 1 — Server Asset Resolution (BR-CFG-07, Task #202 D-EE)", () =>
   it("resolves image and audio references via lookup functions", () => {
     const contentPack = {
       prompt: "Nghe và xem hình",
-      prompt_audio_ref: "AUD-instr-001",
+      audio_item: { kind: "audio", ref: "AUD-instr-001" },
       image: { kind: "image", ref: "IMG-farm-bg" },
     };
 

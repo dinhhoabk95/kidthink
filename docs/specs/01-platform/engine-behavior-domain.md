@@ -106,7 +106,7 @@ nào (`BR-EBD-03`).
 | `BR-EBD-04` (sàn miền theo band) | Mỗi band có ≥K miền khả dụng (engine không cấm band đó **và** có ≥1 level `published`). K là **bậc thang**, đo 2026-09-07: `3-4` = 2, `4-5` = 5, `5-6` = 6. Cấm tụt | Trẻ 3–4 tuổi chỉ được chỉ và mang là một khoảng trống vận động, không phải một lựa chọn thiết kế. Bậc thang biến nó thành số theo dõi được thay vì một nhận xét |
 | `BR-EBD-05` (câu quan sát bằng lời người) | Mục 17 có ≥1 **câu quan sát**: động từ trẻ làm + đối tượng + điều kiện, viết như dòng cô giáo ghi vào sổ. Cấm — NEVER viết bằng từ kỹ thuật (`chọn đáp án đúng`, `hoàn thành lượt`) | Một câu ghi được là một câu kiểm được. Bằng chứng phát triển của trẻ là hành vi, không phải mã trạng thái |
 | `BR-EBD-06` (điều kiện phát triển tiên quyết) | Mục 17 khai điều kiện **vận động · chú ý · bộ nhớ làm việc · ngôn ngữ** tối thiểu của band nhỏ nhất engine nhận, và `age_min` cùng `banned_age_bands` phải **suy ra được** từ bảng đó | Hôm nay band bị cấm được biện luận bằng một câu văn xuôi khác nhau ở mỗi phiếu, nên không đối chiếu được giữa 37 engine. `BR-GTC-05` nói cấm band vì mechanic sai lứa; nó không nói *sai ở chỗ nào* |
-| `BR-EBD-07` (hai kênh cho thông tin thắng cuộc) | Mọi thông tin **cần để thắng** phải đến qua ≥2 kênh trong ba kênh hình · âm · ký hiệu. Màu sắc cấm — NEVER là kênh duy nhất | Trẻ mầm non chưa đọc, một phần trẻ không phân biệt được màu, và thiết bị lớp học thường tắt âm. `BR-EPL-03` lo hai kênh cho **trạng thái**; luật này lo hai kênh cho **nội dung** |
+| `BR-EBD-07` (hai kênh cho thông tin thắng cuộc) | Mọi thông tin **cần để thắng** phải đến qua ≥2 kênh trong ba kênh hình · âm · ký hiệu. Màu sắc cấm — NEVER là kênh duy nhất. Mục 17 khai dòng **Kênh thắng cuộc**; engine chưa đủ hai kênh ghi `**NỢ**:` và đếm vào `max_engines_below_two_channels` | Trẻ mầm non chưa đọc, một phần trẻ không phân biệt được màu, và thiết bị lớp học thường tắt âm. `BR-EPL-03` lo hai kênh cho **trạng thái**; luật này lo hai kênh cho **nội dung** |
 | `BR-EBD-08` (độ mở phải khai) | Mục 18 khai `do_mo` ∈ `đóng` · `bán mở` · `mở`. Engine `đóng` phải nêu **lý do cơ chế**; cấm bỏ trống | Một corpus toàn đáp án đơn nhất là một tập đề kiểm tra, không phải một môi trường chơi. Đo 2026-09-07: 1 trên 37 engine ở mức `mở` |
 | `BR-EBD-09` (quyền của trẻ) | Mục 18 khai ≥1 quyết định thuộc về **trẻ**: thứ tự làm, vật liệu, chủ đề, mức khó, hoặc thời điểm nộp | Tự chủ là điều kiện của động cơ trong ở lứa tuổi này. Engine mà hệ thống quyết mọi thứ biến trẻ thành người thi hành |
 | `BR-EBD-10` (trục biến thể đếm được) | Mục 18 khai ≥3 trục biến thể, mỗi trục ≥2 **giá trị cụ thể**. Cấm — NEVER ghi "đa dạng" hay "nhiều chủ đề" | Cùng lý do với `BR-ESS-05`: ô ghi chữ không soạn được, ô ghi giá trị thì soạn được và đếm được |
@@ -116,9 +116,20 @@ nào (`BR-EBD-03`).
 
 ## 7. Data
 
-**Đọc:** `packages/game-engine/config/engine-behavior-domain.json` · registry engine ·
-`docs/specs/01-platform/engines/GT-*.md` mục 17 và 18 · corpus `game_levels` để đo band khả dụng.
+**Đọc:** `packages/game-engine/config/engine-behavior-domain.json` (miền của từng engine) ·
+`scripts/engine-behavior-baseline.json` (bậc thang — để riêng khỏi dữ liệu nó canh) · registry
+engine · `docs/specs/01-platform/engines/GT-*.md` mục 17 và 18 · corpus seed để đo band **có
+nội dung thật**.
 **Ghi:** không ghi database. Cổng in báo cáo.
+
+**Hai cổng, không một:**
+
+| Cổng | Đo gì | Nguồn |
+|---|---|---|
+| `check:engine-behavior` | Từ vựng, phiếu khớp cấu hình, hình dạng mục 17 và 18, miền theo **registry** | phiếu + cấu hình + registry |
+| `check:engine-behavior-corpus` | Miền theo engine **có ≥1 level** ở band đó — nửa corpus của `BR-EBD-04` | corpus seed + cấu hình |
+
+Tách vì `content-build` phụ thuộc `game-engine`; cổng trong `game-engine` cấm import ngược lại.
 
 ### 7.1 Sáu miền hành vi
 

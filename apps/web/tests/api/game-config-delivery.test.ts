@@ -216,7 +216,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
   describe("Task 1 — Server Asset Resolution (BR-CFG-07)", () => {
     it("resolves emoji, image, audio asset refs without hardcoding CDN strings in client", () => {
       const pack = {
-        prompt_audio_ref: "AUD-prompt-1",
+        audio_ref: "AUD-prompt-1",
         target_item: {
           item_id: "i1",
           asset: { kind: "emoji", ref: "🍎" },

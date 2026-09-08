@@ -53,3 +53,43 @@ Plan: [`261-engine-behavior-domain-plan.md`](261-engine-behavior-domain-plan.md)
 - [x] Đưa câu hỏi 2 (`GT-036`: cơ chế chặn hay thang chấm chặn) cho chủ **Nội dung**: Thống nhất chuyển thành cơ chế phản hồi nhịp rung/amber thay vì chặn cứng tương tác.
 - [x] Đưa câu hỏi 3 (hành vi **nói** ở giai đoạn ba của `GT-000` không quan sát được vì cấm micro) cho chủ **Sư phạm**: Đề xuất chuyển thành quan sát qua hành động tap/chọn hoặc hướng dẫn phụ huynh ghi nhận ở chế độ đồng hành.
 
+## T7 — Vòng review (2026-09-08)
+
+Cổng của T2 đã xanh nhưng đo lại bằng ca đột biến thì thủng ở sáu chỗ; sáu chỗ đó đã bịt và
+mỗi chỗ có một ca âm riêng.
+
+- [x] Cổng đối chiếu **registry ↔ cấu hình** hai chiều — trước đó bỏ một hàng khỏi cấu hình thì cổng còn 36 engine mà vẫn xanh, nên engine mới thêm vào registry sẽ trượt toàn bộ phép kiểm
+- [x] Báo cáo in số đo thật; dòng đạt trước đây ghi cứng "37 engine" kể cả khi chỉ soi 36
+- [x] `domains` và `nhip` trong cấu hình được đối chiếu với từ vựng đóng — trước đó là hai trường trang trí
+- [x] `do_mo` so khớp đúng từ vựng, không so tiền tố — `mở toang tùy tiện` từng lọt và né luôn đòi hỏi "lý do cơ chế"
+- [x] Miền phụ viết không đặt trong backtick không còn lọt
+- [x] Hàng câu quan sát bỏ trống ô câu không còn tính là câu quan sát
+- [x] `scripts/check.sh` thôi ghi cứng đường dẫn nvm của một máy; giải Node ≥24 theo `NVM_DIR` và **dừng hẳn** thay vì lặng lẽ chạy dưới v20
+
+## T8 — Đóng ba luật còn treo (2026-09-08)
+
+- [x] **`BR-EBD-03`** cưỡng chế: soi `tag_axis` và spec `content-tagging.md`; trục thứ năm hay chữ `behavior_domain` là đỏ. Báo cáo nói rõ luật có được đo hay không, cấm bỏ qua trong im lặng
+- [x] **`BR-EBD-07`** cưỡng chế: mục 17 của cả 37 phiếu khai dòng **Kênh thắng cuộc**; từ vựng đóng `hình` · `âm` · `ký hiệu`; màu cấm — NEVER là kênh. Nợ hiện tại **4** engine (`GT-019`, `GT-021`, `GT-023`, `GT-036`), ghim ở `max_engines_below_two_channels`
+- [x] **`BR-EBD-04` nửa corpus**: cổng mới `check:engine-behavior-corpus` ở `packages/content-build` đếm miền theo engine **có level thật** ở band đó. Đặt bên content-build vì `content-build` phụ thuộc `game-engine`, cổng trong `game-engine` cấm import ngược
+- [x] Bậc thang rời khỏi tệp dữ liệu nó canh, sang `scripts/engine-behavior-baseline.json`
+- [x] Cả hai cổng vào `scripts/check.sh`
+
+### Số đo sau vòng này
+
+| Đo | Kết quả |
+|---|---|
+| Miền theo registry | `3-4` 2 · `4-5` 5 · `5-6` 6 |
+| Miền theo corpus (engine có level thật) | `3-4` 2 · `4-5` 5 · `5-6` 6 — trùng khít |
+| Engine có ≥1 level published | 37/37 |
+| Engine nợ kênh thứ hai | 4/37 |
+| Ca âm của cổng miền hành vi | 23 test |
+
+### Câu hỏi mở mới cho chủ Nội dung và Sư phạm
+
+**Kênh âm rỗng toàn corpus.** `instruction_audio_path` null ở **0/6.313** level published và
+**0/18.845** round, trong khi đường phát đã nối đủ (`setInstructionAudio`, `instruction_audio_url`)
+và 6 engine khai `âm` là kênh thắng cuộc. Gốc: khuôn `ContentSeedHeader` của corpus seed **không
+có trường âm nào**, nên người soạn không có chỗ để khai. Hệ quả sư phạm: với trẻ chưa đọc, câu
+lệnh hiện chỉ đến bằng chữ — một kênh mà trẻ không dùng được. Cần một task riêng mở trường âm
+trong khuôn seed trước khi `BR-EBD-07` xuống được 0 nợ.
+

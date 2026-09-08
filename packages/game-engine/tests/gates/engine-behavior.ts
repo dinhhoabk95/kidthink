@@ -21,6 +21,11 @@ export interface BandDomainSummary {
 
 export interface EngineBehaviorGateResult {
   readonly totalEngines: number;
+  readonly registryEngineCount: number;
+  /** Số nguồn từ vựng tag đã soi cho BR-EBD-03. 0 nghĩa là luật KHÔNG được đo. */
+  readonly taggingSourcesChecked: number;
+  /** Engine chưa đủ hai kênh thắng cuộc (BR-EBD-07). Bậc thang cấm tăng. */
+  readonly channelDebt: readonly string[];
   readonly bandSummaries: readonly BandDomainSummary[];
   readonly violations: readonly EngineBehaviorViolation[];
 }
@@ -51,17 +56,29 @@ export const EngineBehaviorEntrySchema = z.object({
 export type EngineBehaviorEntry = z.infer<typeof EngineBehaviorEntrySchema>;
 
 export const EngineBehaviorConfigSchema = z.object({
-  ratchet: z.object({
-    "3-4": z.number().int().positive(),
-    "4-5": z.number().int().positive(),
-    "5-6": z.number().int().positive(),
-  }),
   domains: z.array(z.string()).min(1),
   nhip: z.array(z.string()).min(1),
   engines: z.record(z.string().regex(GT_CODE_REGEX), EngineBehaviorEntrySchema),
 });
 
 export type EngineBehaviorConfig = z.infer<typeof EngineBehaviorConfigSchema>;
+
+/**
+ * Bậc thang nằm ở tệp riêng, không nằm cùng tệp dữ liệu nó canh. Cùng một sửa
+ * đổi vừa bỏ một miền vừa hạ sàn là cách bậc thang chết lặng lẽ.
+ */
+export const EngineBehaviorBaselineSchema = z.object({
+  min_domains_per_band: z.object({
+    "3-4": z.number().int().positive(),
+    "4-5": z.number().int().positive(),
+    "5-6": z.number().int().positive(),
+  }),
+  max_engines_below_two_channels: z.number().int().nonnegative(),
+});
+
+export type EngineBehaviorBaseline = z.infer<
+  typeof EngineBehaviorBaselineSchema
+>;
 
 export interface TemplateAgeLimits {
   readonly age_min: number;
@@ -71,9 +88,13 @@ export interface TemplateAgeLimits {
 
 export interface ScanEngineBehaviorGateOptions {
   readonly specsDir?: string;
+  /** Nguồn từ vựng tag để kiểm BR-EBD-03 (schema tagging + spec content-tagging). */
+  readonly taggingSources?: readonly string[];
   readonly configPath?: string;
+  readonly baselinePath?: string;
   readonly templatesRegistry?: Record<string, TemplateAgeLimits>;
   readonly customConfig?: EngineBehaviorConfig;
+  readonly customBaseline?: EngineBehaviorBaseline;
 }
 
 const SECTION_17_HEADER_REGEX = /##\s*17\.\s*Miền hành vi/i;
@@ -110,6 +131,30 @@ const FORBIDDEN_OBSERVATION_TERMS = [
 ];
 
 const FORBIDDEN_VARIANT_TERMS = ["đa dạng", "nhiều chủ đề", "phong phú"];
+
+const ALLOWED_DO_MO = ["đóng", "bán mở", "mở"] as const;
+
+const TAG_AXIS_ENUM_REGEX = /pgEnum\(\s*"tag_axis"\s*,\s*\[([^\]]*)\]/;
+const TAG_AXIS_VALUE_REGEX = /"([^"]+)"/g;
+
+/** Bốn trục tag đã đóng. Miền hành vi cấm trở thành trục thứ năm (BR-EBD-03). */
+const ALLOWED_TAG_AXES = ["what", "thinking", "mechanic", "theme"] as const;
+
+/** Tên gợi ý một trục tag miền hành vi đang bị lén thêm vào. */
+/** Ba kênh mang thông tin thắng cuộc. Màu KHÔNG phải kênh (BR-EBD-07). */
+const WIN_CHANNELS = ["hình", "âm", "ký hiệu"] as const;
+
+const WIN_CHANNEL_REGEX = /\*\*Kênh thắng cuộc\*\*[^:]*:\s*([^\n]+)/;
+const BACKTICK_ALL_REGEX = /`([^`]+)`/g;
+const MIN_WIN_CHANNELS = 2;
+
+const BEHAVIOR_TAG_TERMS = [
+  "behavior_domain",
+  "behavior-domain",
+  "behaviour_domain",
+  "mien_hanh_vi",
+  "mien-hanh-vi",
+];
 
 const NHIP_SPEC_MAP: Record<string, string> = {
   "tu-do": "tự do",
@@ -178,6 +223,54 @@ function parseConfig(
       file: configPath,
       rule: "BR-EBD-01",
       message: `Failed to read or parse config file: ${errMsg}`,
+    });
+    return null;
+  }
+}
+
+function parseBaseline(
+  baselinePath?: string,
+  customBaseline?: EngineBehaviorBaseline,
+  violations: EngineBehaviorViolation[] = []
+): EngineBehaviorBaseline | null {
+  if (customBaseline) {
+    const result = EngineBehaviorBaselineSchema.safeParse(customBaseline);
+    if (result.success) {
+      return result.data;
+    }
+    violations.push({
+      rule: "BR-EBD-04",
+      message: `Bậc thang truyền vào sai schema: ${result.error.message}`,
+    });
+    return null;
+  }
+
+  if (!(baselinePath && existsSync(baselinePath))) {
+    violations.push({
+      file: baselinePath,
+      rule: "BR-EBD-04",
+      message: `Tệp bậc thang không tồn tại: ${baselinePath}`,
+    });
+    return null;
+  }
+
+  try {
+    const parsed: unknown = JSON.parse(readFileSync(baselinePath, "utf-8"));
+    const result = EngineBehaviorBaselineSchema.safeParse(parsed);
+    if (result.success) {
+      return result.data;
+    }
+    violations.push({
+      file: baselinePath,
+      rule: "BR-EBD-04",
+      message: `Bậc thang sai schema: ${result.error.message}`,
+    });
+    return null;
+  } catch (err: unknown) {
+    violations.push({
+      file: baselinePath,
+      rule: "BR-EBD-04",
+      message: `Không đọc được tệp bậc thang: ${err instanceof Error ? err.message : String(err)}`,
     });
     return null;
   }
@@ -260,7 +353,14 @@ function checkSecondaryDomain(
     specMienPhuRaw.toLowerCase().includes("không");
 
   if (entry.mien_phu === null) {
-    if (!isNone && specMienPhu !== null) {
+    if (specMienPhuRaw.length === 0) {
+      violations.push({
+        templateCode: code,
+        file: specPath,
+        rule: "BR-ESS-16",
+        message: `${code} mục 17 bỏ trống miền phụ, phải ghi rõ "—" khi không có`,
+      });
+    } else if (!isNone) {
       violations.push({
         templateCode: code,
         file: specPath,
@@ -364,6 +464,16 @@ function validateObservationRows(
   violations: EngineBehaviorViolation[]
 ): void {
   for (const row of dataRows) {
+    const sentence = row.split("|")[1]?.trim() ?? "";
+    if (sentence.length === 0) {
+      violations.push({
+        templateCode: code,
+        file: specPath,
+        rule: "BR-EBD-05",
+        message: `${code} bảng câu quan sát có hàng bỏ trống ô câu quan sát`,
+      });
+    }
+
     const lower = row.toLowerCase();
     for (const forbidden of FORBIDDEN_OBSERVATION_TERMS) {
       if (lower.includes(forbidden)) {
@@ -556,6 +666,71 @@ function checkRhythmConstraints(
   }
 }
 
+/**
+ * BR-EBD-07: thông tin cần để thắng phải đến qua >=2 kênh trong `hình` · `âm` ·
+ * `ký hiệu`. Trẻ mầm non chưa đọc, một phần trẻ không phân biệt được màu, và
+ * máy trong lớp thường tắt âm — một kênh duy nhất là một cửa đóng.
+ *
+ * Trả về true khi phiếu chưa đủ hai kênh, để cổng đếm nợ theo bậc thang.
+ */
+function checkWinChannels(
+  code: string,
+  specPath: string,
+  section17: string,
+  violations: EngineBehaviorViolation[]
+): boolean {
+  const match = WIN_CHANNEL_REGEX.exec(section17);
+  if (!match?.[1]) {
+    violations.push({
+      templateCode: code,
+      file: specPath,
+      rule: "BR-EBD-07",
+      message: `${code} mục 17 thiếu dòng **Kênh thắng cuộc**`,
+    });
+    return true;
+  }
+
+  const line = match[1];
+  const declaredBeforeDash = line.split("—")[0] ?? "";
+  const declared = [...declaredBeforeDash.matchAll(BACKTICK_ALL_REGEX)].map(
+    (m) => (m[1] ?? "").trim()
+  );
+
+  const unknown = declared.filter(
+    (value) => !WIN_CHANNELS.includes(value as (typeof WIN_CHANNELS)[number])
+  );
+  for (const value of unknown) {
+    violations.push({
+      templateCode: code,
+      file: specPath,
+      rule: "BR-EBD-07",
+      message: `${code} khai kênh "${value}" ngoài ba kênh đóng (${WIN_CHANNELS.join(", ")}) — màu sắc cấm là kênh`,
+    });
+  }
+
+  const valid = new Set(
+    declared.filter((value) =>
+      WIN_CHANNELS.includes(value as (typeof WIN_CHANNELS)[number])
+    )
+  );
+
+  if (valid.size < MIN_WIN_CHANNELS) {
+    // Chưa đủ hai kênh: đếm vào nợ bậc thang thay vì đỏ ngay, nhưng phiếu phải
+    // tự khai NỢ để khoản nợ đó đọc được ở chính chỗ nó nằm.
+    if (!line.includes("NỢ")) {
+      violations.push({
+        templateCode: code,
+        file: specPath,
+        rule: "BR-EBD-07",
+        message: `${code} chỉ khai ${valid.size} kênh thắng cuộc, dưới mức hai kênh mà không ghi **NỢ**`,
+      });
+    }
+    return true;
+  }
+
+  return false;
+}
+
 function checkSpecSection17(
   code: string,
   specPath: string,
@@ -563,7 +738,7 @@ function checkSpecSection17(
   entry: EngineBehaviorEntry,
   templateInfo: TemplateAgeLimits | undefined,
   violations: EngineBehaviorViolation[]
-): void {
+): boolean {
   checkPrimaryDomain(code, specPath, section17, entry, violations);
   checkSecondaryDomain(code, specPath, section17, entry, violations);
   checkRhythmDeclaration(code, specPath, section17, entry, violations);
@@ -584,6 +759,7 @@ function checkSpecSection17(
     templateInfo,
     violations
   );
+  return checkWinChannels(code, specPath, section17, violations);
 }
 
 function parseVariantRows(
@@ -748,16 +924,14 @@ function checkOpenness(
   }
 
   const doMoVal = doMoMatch[1]?.trim() ?? "";
-  const isClosed = doMoVal.startsWith("đóng");
-  const isSemi = doMoVal.startsWith("bán mở");
-  const isOpen = doMoVal.startsWith("mở");
+  const isClosed = doMoVal === "đóng";
 
-  if (!(isClosed || isSemi || isOpen)) {
+  if (!ALLOWED_DO_MO.includes(doMoVal as (typeof ALLOWED_DO_MO)[number])) {
     violations.push({
       templateCode: code,
       file: specPath,
       rule: "BR-EBD-08",
-      message: `${code} độ mở "${doMoVal}" không thuộc {đóng, bán mở, mở}`,
+      message: `${code} độ mở "${doMoVal}" không thuộc {${ALLOWED_DO_MO.join(", ")}}`,
     });
   }
 
@@ -812,7 +986,9 @@ export function lintSingleBehaviorSpec(
   content: string,
   entry: EngineBehaviorEntry,
   templateInfo?: TemplateAgeLimits,
-  specPath = `${code}.md`
+  specPath = `${code}.md`,
+  /** Nhận mã engine chưa đủ hai kênh thắng cuộc, để cổng đếm nợ bậc thang. */
+  channelDebt?: string[]
 ): EngineBehaviorViolation[] {
   const violations: EngineBehaviorViolation[] = [];
 
@@ -822,7 +998,7 @@ export function lintSingleBehaviorSpec(
       SECTION_17_HEADER_REGEX,
       SECTION_18_HEADER_REGEX
     );
-    checkSpecSection17(
+    const inDebt = checkSpecSection17(
       code,
       specPath,
       section17,
@@ -830,6 +1006,9 @@ export function lintSingleBehaviorSpec(
       templateInfo,
       violations
     );
+    if (inDebt) {
+      channelDebt?.push(code);
+    }
   } else {
     violations.push({
       templateCode: code,
@@ -837,6 +1016,7 @@ export function lintSingleBehaviorSpec(
       rule: "BR-ESS-16",
       message: `${code} thiếu mục 17: Miền hành vi`,
     });
+    channelDebt?.push(code);
   }
 
   if (SECTION_18_HEADER_REGEX.test(content)) {
@@ -897,12 +1077,130 @@ function validateConfigVocabulary(
   }
 }
 
+function sameVocabulary(
+  declared: readonly string[],
+  allowed: readonly string[]
+): boolean {
+  return (
+    declared.length === allowed.length &&
+    allowed.every((value) => declared.includes(value))
+  );
+}
+
+/**
+ * `domains` và `nhip` trong cấu hình phải trùng đúng từ vựng đóng của
+ * `engine-behavior-domain.md`. Không có phép kiểm này thì hai trường đó là
+ * trang trí: sửa chúng không làm cổng đỏ (BR-EBD-01).
+ */
+function validateConfigVocabularyLists(
+  config: EngineBehaviorConfig,
+  violations: EngineBehaviorViolation[]
+): void {
+  if (!sameVocabulary(config.domains, ALLOWED_DOMAINS)) {
+    violations.push({
+      rule: "BR-EBD-01",
+      message: `Cấu hình khai domains [${config.domains.join(", ")}], từ vựng đóng là [${ALLOWED_DOMAINS.join(", ")}]   LỆCH`,
+    });
+  }
+
+  if (!sameVocabulary(config.nhip, ALLOWED_NHIP)) {
+    violations.push({
+      rule: "BR-EBD-01",
+      message: `Cấu hình khai nhip [${config.nhip.join(", ")}], từ vựng đóng là [${ALLOWED_NHIP.join(", ")}]   LỆCH`,
+    });
+  }
+}
+
+/**
+ * Registry và cấu hình phải phủ đúng cùng một tập mã. Thiếu phép kiểm này thì
+ * một engine mới thêm vào registry không có hàng cấu hình sẽ bỏ qua toàn bộ
+ * mười phép kiểm mà cổng vẫn xanh (BR-EBD-01).
+ */
+function checkRegistryReconciliation(
+  config: EngineBehaviorConfig,
+  templatesRegistry: Record<string, TemplateAgeLimits>,
+  violations: EngineBehaviorViolation[]
+): void {
+  for (const code of Object.keys(templatesRegistry).sort()) {
+    if (!config.engines[code]) {
+      violations.push({
+        templateCode: code,
+        rule: "BR-EBD-01",
+        message: `${code} có trong registry nhưng thiếu hàng trong engine-behavior-domain.json`,
+      });
+    }
+  }
+
+  for (const code of Object.keys(config.engines).sort()) {
+    if (!templatesRegistry[code]) {
+      violations.push({
+        templateCode: code,
+        rule: "BR-EBD-01",
+        message: `${code} có trong engine-behavior-domain.json nhưng không có trong registry`,
+      });
+    }
+  }
+}
+
+/**
+ * BR-EBD-03: miền hành vi là **cách nhóm** một từ vựng đã đóng, cấm trở thành
+ * trục tag thứ năm. Người soạn nội dung đã gánh bốn trục; trục thứ năm là ô bắt
+ * buộc nữa trên vai họ, và corpus đã trả giá một lần vì trục nới lỏng.
+ */
+function checkBehaviorDomainNotATagAxis(
+  taggingSources: readonly string[],
+  violations: EngineBehaviorViolation[]
+): void {
+  for (const sourcePath of taggingSources) {
+    if (!existsSync(sourcePath)) {
+      violations.push({
+        file: sourcePath,
+        rule: "BR-EBD-03",
+        message: `Không đọc được nguồn từ vựng tag để kiểm BR-EBD-03: ${sourcePath}`,
+      });
+      continue;
+    }
+
+    const content = readFileSync(sourcePath, "utf-8");
+    const lower = content.toLowerCase();
+    for (const term of BEHAVIOR_TAG_TERMS) {
+      if (lower.includes(term)) {
+        violations.push({
+          file: sourcePath,
+          rule: "BR-EBD-03",
+          message: `Từ vựng tag nhắc "${term}" — miền hành vi cấm trở thành trục tag nội dung`,
+        });
+      }
+    }
+
+    const axisMatch = TAG_AXIS_ENUM_REGEX.exec(content);
+    if (!axisMatch?.[1]) {
+      continue;
+    }
+    const declared = [...axisMatch[1].matchAll(TAG_AXIS_VALUE_REGEX)].map(
+      (m) => m[1] ?? ""
+    );
+    for (const axis of declared) {
+      if (
+        !ALLOWED_TAG_AXES.includes(axis as (typeof ALLOWED_TAG_AXES)[number])
+      ) {
+        violations.push({
+          file: sourcePath,
+          rule: "BR-EBD-03",
+          message: `tag_axis khai trục "${axis}" ngoài bốn trục đóng (${ALLOWED_TAG_AXES.join(", ")})`,
+        });
+      }
+    }
+  }
+}
+
 function scanSpecSheets(
   specsDir: string | undefined,
   config: EngineBehaviorConfig,
   engineCodes: readonly string[],
   templatesRegistry: Record<string, TemplateAgeLimits>,
-  violations: EngineBehaviorViolation[]
+  violations: EngineBehaviorViolation[],
+  channelDebt: string[]
 ): void {
   if (!(specsDir && existsSync(specsDir))) {
     return;
@@ -931,7 +1229,8 @@ function scanSpecSheets(
       content,
       entry,
       templateInfo,
-      specPath
+      specPath,
+      channelDebt
     );
     violations.push(...specViolations);
   }
@@ -939,6 +1238,7 @@ function scanSpecSheets(
 
 function checkBandDomainFloors(
   config: EngineBehaviorConfig,
+  baseline: EngineBehaviorBaseline,
   templatesRegistry: Record<string, TemplateAgeLimits>,
   violations: EngineBehaviorViolation[]
 ): BandDomainSummary[] {
@@ -946,7 +1246,7 @@ function checkBandDomainFloors(
   const bandSummaries: BandDomainSummary[] = [];
 
   for (const band of bands) {
-    const target = config.ratchet[band];
+    const target = baseline.min_domains_per_band[band];
     const activeEngines: string[] = [];
     const domainSet = new Set<string>();
 
@@ -995,10 +1295,18 @@ export function scanEngineBehaviorGate(
     options.customConfig,
     violations
   );
+  const baseline = parseBaseline(
+    options.baselinePath,
+    options.customBaseline,
+    violations
+  );
 
-  if (!config) {
+  if (!(config && baseline)) {
     return {
       totalEngines: 0,
+      registryEngineCount: 0,
+      taggingSourcesChecked: 0,
+      channelDebt: [],
       bandSummaries: [],
       violations,
     };
@@ -1007,6 +1315,11 @@ export function scanEngineBehaviorGate(
   const templatesRegistry = options.templatesRegistry ?? MVP_TEMPLATES;
   const engineCodes = Object.keys(config.engines).sort();
 
+  validateConfigVocabularyLists(config, violations);
+  checkRegistryReconciliation(config, templatesRegistry, violations);
+  const taggingSources = options.taggingSources ?? [];
+  checkBehaviorDomainNotATagAxis(taggingSources, violations);
+
   for (const code of engineCodes) {
     const entry = config.engines[code];
     if (entry) {
@@ -1014,22 +1327,36 @@ export function scanEngineBehaviorGate(
     }
   }
 
+  const channelDebt: string[] = [];
   scanSpecSheets(
     options.specsDir,
     config,
     engineCodes,
     templatesRegistry,
-    violations
+    violations,
+    channelDebt
   );
+
+  const channelCeiling = baseline.max_engines_below_two_channels;
+  if (channelDebt.length > channelCeiling) {
+    violations.push({
+      rule: "BR-EBD-07",
+      message: `${channelDebt.length} engine chưa đủ hai kênh thắng cuộc (${channelDebt.join(", ")}), vượt trần bậc thang ${channelCeiling}`,
+    });
+  }
 
   const bandSummaries = checkBandDomainFloors(
     config,
+    baseline,
     templatesRegistry,
     violations
   );
 
   return {
     totalEngines: engineCodes.length,
+    registryEngineCount: Object.keys(templatesRegistry).length,
+    taggingSourcesChecked: taggingSources.length,
+    channelDebt,
     bandSummaries,
     violations,
   };
@@ -1048,7 +1375,19 @@ export function formatEngineBehaviorReport(
   lines.push(
     "═════════════════════════════════════════════════════════════════"
   );
-  lines.push(`Tổng engine trong cấu hình: ${result.totalEngines}`);
+  lines.push(
+    `Tổng engine trong cấu hình: ${result.totalEngines} · trong registry: ${result.registryEngineCount}`
+  );
+  lines.push(
+    result.taggingSourcesChecked > 0
+      ? `BR-EBD-03 (miền không phải trục tag): đã soi ${result.taggingSourcesChecked} nguồn từ vựng tag`
+      : "BR-EBD-03 (miền không phải trục tag): ✗ KHÔNG ĐO — thiếu nguồn từ vựng tag"
+  );
+  lines.push(
+    `BR-EBD-07 (hai kênh thắng cuộc): ${result.channelDebt.length} engine còn nợ${
+      result.channelDebt.length > 0 ? ` — ${result.channelDebt.join(", ")}` : ""
+    }`
+  );
   lines.push("");
   lines.push("Số miền hành vi theo band tuổi (BR-EBD-04):");
 
@@ -1063,7 +1402,7 @@ export function formatEngineBehaviorReport(
 
   if (result.violations.length === 0) {
     lines.push(
-      "✓ Toàn bộ 37 engine đạt 10 phép kiểm miền hành vi (0 vi phạm)."
+      `✓ Toàn bộ ${result.totalEngines} engine đạt mọi phép kiểm miền hành vi (0 vi phạm).`
     );
   } else {
     lines.push(`✗ Phát hiện ${result.violations.length} vi phạm:`);

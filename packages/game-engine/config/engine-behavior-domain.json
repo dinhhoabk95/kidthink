@@ -1,9 +1,4 @@
 {
-  "ratchet": {
-    "3-4": 2,
-    "4-5": 5,
-    "5-6": 6
-  },
   "domains": [
     "chi-dinh",
     "van-chuyen",
@@ -14,54 +9,190 @@
   ],
   "nhip": ["tu-do", "nhip-de", "thoi-gian-that"],
   "engines": {
-    "GT-000": { "mien": "chi-dinh", "mien_phu": null, "nhip": "tu-do" },
-    "GT-001": { "mien": "chi-dinh", "mien_phu": null, "nhip": "tu-do" },
-    "GT-002": { "mien": "chi-dinh", "mien_phu": null, "nhip": "tu-do" },
-    "GT-003": { "mien": "van-chuyen", "mien_phu": null, "nhip": "tu-do" },
-    "GT-004": { "mien": "van-chuyen", "mien_phu": null, "nhip": "tu-do" },
-    "GT-005": { "mien": "van-chuyen", "mien_phu": "chi-dinh", "nhip": "tu-do" },
-    "GT-006": { "mien": "sap-dat", "mien_phu": null, "nhip": "tu-do" },
-    "GT-007": { "mien": "van-chuyen", "mien_phu": null, "nhip": "tu-do" },
-    "GT-008": { "mien": "van-chuyen", "mien_phu": null, "nhip": "tu-do" },
-    "GT-009": { "mien": "chi-dinh", "mien_phu": null, "nhip": "tu-do" },
-    "GT-010": { "mien": "chi-dinh", "mien_phu": null, "nhip": "tu-do" },
-    "GT-011": { "mien": "chi-dinh", "mien_phu": null, "nhip": "tu-do" },
-    "GT-012": { "mien": "chi-dinh", "mien_phu": null, "nhip": "nhip-de" },
-    "GT-013": { "mien": "lan-net", "mien_phu": "chi-dinh", "nhip": "tu-do" },
+    "GT-000": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-001": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-002": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-003": {
+      "mien": "van-chuyen",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-004": {
+      "mien": "van-chuyen",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-005": {
+      "mien": "van-chuyen",
+      "mien_phu": "chi-dinh",
+      "nhip": "tu-do"
+    },
+    "GT-006": {
+      "mien": "sap-dat",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-007": {
+      "mien": "van-chuyen",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-008": {
+      "mien": "van-chuyen",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-009": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-010": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-011": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-012": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "nhip-de"
+    },
+    "GT-013": {
+      "mien": "lan-net",
+      "mien_phu": "chi-dinh",
+      "nhip": "tu-do"
+    },
     "GT-014": {
       "mien": "van-chuyen",
       "mien_phu": "dieu-chinh",
       "nhip": "tu-do"
     },
-    "GT-015": { "mien": "sap-dat", "mien_phu": null, "nhip": "tu-do" },
-    "GT-016": { "mien": "dieu-chinh", "mien_phu": null, "nhip": "tu-do" },
-    "GT-017": { "mien": "chi-dinh", "mien_phu": null, "nhip": "tu-do" },
-    "GT-018": { "mien": "chi-dinh", "mien_phu": null, "nhip": "nhip-de" },
+    "GT-015": {
+      "mien": "sap-dat",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-016": {
+      "mien": "dieu-chinh",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-017": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-018": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "nhip-de"
+    },
     "GT-019": {
       "mien": "dieu-chinh",
       "mien_phu": "van-chuyen",
       "nhip": "tu-do"
     },
-    "GT-020": { "mien": "chi-dinh", "mien_phu": null, "nhip": "nhip-de" },
-    "GT-021": { "mien": "sap-dat", "mien_phu": "van-chuyen", "nhip": "tu-do" },
-    "GT-022": { "mien": "chi-dinh", "mien_phu": null, "nhip": "tu-do" },
-    "GT-023": { "mien": "sap-dat", "mien_phu": "van-chuyen", "nhip": "tu-do" },
-    "GT-024": { "mien": "lan-net", "mien_phu": null, "nhip": "tu-do" },
-    "GT-025": { "mien": "chi-dinh", "mien_phu": null, "nhip": "tu-do" },
+    "GT-020": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "nhip-de"
+    },
+    "GT-021": {
+      "mien": "sap-dat",
+      "mien_phu": "van-chuyen",
+      "nhip": "tu-do"
+    },
+    "GT-022": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-023": {
+      "mien": "sap-dat",
+      "mien_phu": "van-chuyen",
+      "nhip": "tu-do"
+    },
+    "GT-024": {
+      "mien": "lan-net",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-025": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
     "GT-026": {
       "mien": "chi-dinh",
       "mien_phu": null,
       "nhip": "thoi-gian-that"
     },
-    "GT-027": { "mien": "chi-dinh", "mien_phu": null, "nhip": "tu-do" },
-    "GT-028": { "mien": "chi-dinh", "mien_phu": null, "nhip": "tu-do" },
-    "GT-029": { "mien": "van-chuyen", "mien_phu": null, "nhip": "tu-do" },
-    "GT-030": { "mien": "van-chuyen", "mien_phu": "sap-dat", "nhip": "tu-do" },
-    "GT-031": { "mien": "van-chuyen", "mien_phu": null, "nhip": "tu-do" },
-    "GT-032": { "mien": "chi-dinh", "mien_phu": "dieu-chinh", "nhip": "tu-do" },
-    "GT-033": { "mien": "sap-dat", "mien_phu": null, "nhip": "tu-do" },
-    "GT-034": { "mien": "sap-dat", "mien_phu": null, "nhip": "thoi-gian-that" },
-    "GT-035": { "mien": "sap-dat", "mien_phu": null, "nhip": "tu-do" },
-    "GT-036": { "mien": "kien-tao", "mien_phu": "sap-dat", "nhip": "tu-do" }
+    "GT-027": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-028": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-029": {
+      "mien": "van-chuyen",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-030": {
+      "mien": "van-chuyen",
+      "mien_phu": "sap-dat",
+      "nhip": "tu-do"
+    },
+    "GT-031": {
+      "mien": "van-chuyen",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-032": {
+      "mien": "chi-dinh",
+      "mien_phu": "dieu-chinh",
+      "nhip": "tu-do"
+    },
+    "GT-033": {
+      "mien": "sap-dat",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-034": {
+      "mien": "sap-dat",
+      "mien_phu": null,
+      "nhip": "thoi-gian-that"
+    },
+    "GT-035": {
+      "mien": "sap-dat",
+      "mien_phu": null,
+      "nhip": "tu-do"
+    },
+    "GT-036": {
+      "mien": "kien-tao",
+      "mien_phu": "sap-dat",
+      "nhip": "tu-do"
+    }
   }
 }

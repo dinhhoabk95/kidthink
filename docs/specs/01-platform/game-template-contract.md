@@ -153,7 +153,6 @@ trí nhớ làm việc; sắp xếp thứ tự cần biểu diễn quan hệ th�
 ```ts
 const SortGroupsContent = z.object({
   prompt: z.string().min(4).max(80),
-  prompt_audio_ref: z.string().optional(),
   groups: z.array(z.object({
     group_id: z.string().regex(/^g[0-9]$/),
     label: z.string().max(24),

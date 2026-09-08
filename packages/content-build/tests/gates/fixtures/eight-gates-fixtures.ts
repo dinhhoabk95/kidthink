@@ -22,7 +22,6 @@ export const VALID_GAME_LEVEL_SEED: ContentSeed = {
   },
   content_pack: {
     prompt: "Em hãy chọn hình tròn đúng nhé",
-    prompt_audio_ref: "aud_prompt_1",
     target_item: {
       item_id: "circle_1",
       asset: { kind: "emoji", ref: "🔴" },

@@ -18,9 +18,18 @@ function main(): void {
     "packages/game-engine/config/engine-behavior-domain.json"
   );
 
+  const baselinePath = repoPath("scripts/engine-behavior-baseline.json");
+
+  const taggingSources = [
+    repoPath("packages/db/src/schema/tagging.ts"),
+    repoPath("docs/specs/01-platform/content-tagging.md"),
+  ];
+
   const result = scanEngineBehaviorGate({
     specsDir,
     configPath,
+    baselinePath,
+    taggingSources,
   });
   const report = formatEngineBehaviorReport(result);
 

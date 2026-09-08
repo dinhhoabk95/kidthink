@@ -26,7 +26,7 @@ describe("zodIntrospect — Schema to uiHint Engine (BR-SDF-02, BR-SDF-08, Spec 
     expect(colorField.hint).toBe("color");
 
     // 4. _audio or _audio_ref -> audio
-    const audioField = resolveUiHintForField("prompt_audio_ref", z.string());
+    const audioField = resolveUiHintForField("sample_audio_ref", z.string());
     expect(audioField.hint).toBe("audio");
 
     // 5. _ms or _seconds -> duration
