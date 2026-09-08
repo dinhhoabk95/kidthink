@@ -21,6 +21,11 @@ const PLANNED_CONFIG = path.join(
   "packages/game-engine/config/engine-spec-planned.json"
 );
 
+const BEHAVIOR_CONFIG = path.join(
+  REPO_ROOT,
+  "packages/game-engine/config/engine-behavior-domain.json"
+);
+
 interface Sheet {
   code: string;
   batch: string;
@@ -57,17 +62,38 @@ function readPlanned(): Record<string, string> {
   if (!fs.existsSync(PLANNED_CONFIG)) {
     return {};
   }
-  const raw: unknown = JSON.parse(fs.readFileSync(PLANNED_CONFIG, "utf-8"));
-  if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
+  const parsed: Record<string, string> = JSON.parse(
+    fs.readFileSync(PLANNED_CONFIG, "utf-8")
+  );
+  if (parsed === null || typeof parsed !== "object" || Array.isArray(parsed)) {
     console.error(`Cấu hình đặt trước sai hình dạng: ${PLANNED_CONFIG}`);
     process.exit(1);
   }
-  return raw as Record<string, string>;
+  return parsed;
+}
+
+interface BehaviorConfig {
+  engines?: Record<string, { mien: string }>;
+}
+
+function readBehaviorDomains(): Record<string, string> {
+  if (!fs.existsSync(BEHAVIOR_CONFIG)) {
+    return {};
+  }
+  const cfg: BehaviorConfig = JSON.parse(
+    fs.readFileSync(BEHAVIOR_CONFIG, "utf-8")
+  );
+  const domains: Record<string, string> = {};
+  for (const [code, entry] of Object.entries(cfg.engines ?? {})) {
+    domains[code] = entry.mien;
+  }
+  return domains;
 }
 
 function main(): void {
   const sheets = readSheets();
   const planned = readPlanned();
+  const behaviorDomains = readBehaviorDomains();
   const sheetCodes = new Set(sheets.map((s) => s.code));
   const registryCodes = new Set(Object.keys(MVP_TEMPLATES));
 
@@ -95,7 +121,10 @@ function main(): void {
       requires_tap_fallback: boolean;
     };
     const banned = (t.banned_age_bands ?? []).join(" · ") || "—";
-    return `| [\`${s.code}\`](${s.code}.md) | ${s.title} | \`${t.mechanic}\` | ${t.age_min}–${t.age_max} | ${banned} | ${t.requires_tap_fallback ? "Có" : "Không"} | ${s.batch} |`;
+    const domain = behaviorDomains[s.code]
+      ? `\`${behaviorDomains[s.code]}\``
+      : "—";
+    return `| [\`${s.code}\`](${s.code}.md) | ${s.title} | \`${t.mechanic}\` | ${domain} | ${t.age_min}–${t.age_max} | ${banned} | ${t.requires_tap_fallback ? "Có" : "Không"} | ${s.batch} |`;
   });
 
   const plannedRows = sheets
@@ -119,8 +148,8 @@ function main(): void {
     "",
     "## Engine trong registry",
     "",
-    "| Mã | Tên | Cơ chế | Band | Band bị cấm | Fallback tap | Lô |",
-    "|---|---|---|:--:|---|:--:|---|",
+    "| Mã | Tên | Cơ chế | Miền | Band | Band bị cấm | Fallback tap | Lô |",
+    "|---|---|---|---|:--:|---|:--:|---|",
     ...rows,
     "",
     "## Engine đặt trước — spec có, `template.ts` chưa",
