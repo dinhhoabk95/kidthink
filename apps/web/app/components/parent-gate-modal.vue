@@ -188,16 +188,21 @@
   async function loadChallenge() {
     errorMessage.value = null;
 
-    if (gateState.isTrusted()) {
-      emit("parent_gate_passed");
-      emit("verified", "trusted_session");
-      return;
-    }
-
     if (props.clientOnly) {
+      // Chỉ đường client mới được đi tắt bằng trust đã có: không có ai chấm
+      // token ở phía server nên "trusted_session" là đủ.
+      if (gateState.isTrusted()) {
+        emit("parent_gate_passed");
+        emit("verified", "trusted_session");
+        return;
+      }
       generateLocalChallenge();
       return;
     }
+
+    // Cấm — NEVER đi tắt trên đường server: `isValidParentGateToken` chấm HMAC
+    // nên "trusted_session" luôn bị từ chối, và người dùng mắc kẹt ở modal
+    // trống cho tới khi trust hết hạn.
 
     try {
       challenge.value = await $fetch<ParentGateChallenge>(

@@ -1,6 +1,5 @@
 import { computed, onMounted, onUnmounted, ref } from "vue";
 
-const TRUST_KEY = "parent_gate_trusted_until";
 const DEFAULT_TRUST_MS = 5 * 60 * 1000;
 const LOCK_DURATION_MS = 60 * 1000;
 const MAX_ATTEMPTS = 3;
@@ -13,6 +12,10 @@ export function useParentGateState(options: ParentGateStateOptions = {}) {
   const prefix = options.clientOnly ? "pg_client" : "pg_server";
   const attemptsKey = `${prefix}_failed_attempts`;
   const lockKey = `${prefix}_lock_until`;
+  // Khoá tin cậy PHẢI tách theo mode. Đường `clientOnly` tự sinh đố toán ngay
+  // trong browser, nên dùng chung khoá với đường server là để một lần qua cổng
+  // ở trang chơi mở luôn cổng của khu phụ huynh.
+  const trustKey = `${prefix}_trusted_until`;
 
   const failedAttempts = ref(0);
   const lockUntil = ref(0);
@@ -47,7 +50,7 @@ export function useParentGateState(options: ParentGateStateOptions = {}) {
     if (typeof window === "undefined") {
       return false;
     }
-    const trustedUntil = Number(sessionStorage.getItem(TRUST_KEY) ?? 0);
+    const trustedUntil = Number(sessionStorage.getItem(trustKey) ?? 0);
     return trustedUntil > Date.now();
   }
 
@@ -55,7 +58,7 @@ export function useParentGateState(options: ParentGateStateOptions = {}) {
     if (typeof window === "undefined") {
       return;
     }
-    sessionStorage.setItem(TRUST_KEY, String(Date.now() + durationMs));
+    sessionStorage.setItem(trustKey, String(Date.now() + durationMs));
   }
 
   function recordFailedAttempt(): {
