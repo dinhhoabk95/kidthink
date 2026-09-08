@@ -85,17 +85,17 @@ Chưa spec nào định nghĩa `difficulty` 1..5. Cột đó là `smallint` vớ
 Quyết định 5: mọi cấu hình đi qua params, cấm — NEVER fix cứng.
 
 **Tiêu chí nghiệm thu**
-- [ ] Spec mới ở `docs/specs/05-content/level-difficulty-contract.md`, mã `BR-LDC-nn`
-- [ ] `difficulty` 1..5 tra từ config theo từng engine — bảng tra, cấm — NEVER công thức tỷ lệ dùng chung
-- [ ] `difficulty_params.item_count` thành trường **bắt buộc khai**; hôm nay chỉ 318/6.313 level có
-- [ ] Luật: `session.ts` lấy mọi ngưỡng từ `difficulty_params`; `.default(...)` chỉ dùng cho trường tuỳ chọn thật sự, cấm cho trường điều khiển độ khó
-- [ ] Luật thang theo kỹ năng: mỗi kỹ năng ≥2 mức, đi từ thấp lên. Hôm nay 443 kỹ năng, 0 kỹ năng một mức, nhưng 221 kỹ năng mới có 2 mức
-- [ ] Ngoại lệ `difficulty_fixed` cho engine dạy khái niệm, khai trong config có cổng canh — cấm — NEVER là một câu văn xuôi trong phiếu
-- [ ] Mục "ca sai không bắt được bằng schema": level `difficulty: 5` với số item bằng mức 1
-- [ ] Xác nhận `adaptive-engine.md` (`BR-ADP-09`) chỉ đọc `difficulty_params`, không đọc cột `difficulty` — ghi kết luận vào spec
+- [x] Spec mới ở `docs/specs/05-content/level-difficulty-contract.md`, mã `BR-LDC-nn`
+- [x] `difficulty` 1..5 tra từ config theo từng engine — bảng tra, cấm — NEVER công thức tỷ lệ dùng chung
+- [x] `difficulty_params.item_count` thành trường **bắt buộc khai**; hôm nay chỉ 318/6.313 level có
+- [x] Luật: `session.ts` lấy mọi ngưỡng từ `difficulty_params`; `.default(...)` chỉ dùng cho trường tuỳ chọn thật sự, cấm cho trường điều khiển độ khó
+- [x] Luật thang theo kỹ năng: mỗi kỹ năng ≥2 mức, đi từ thấp lên. Hôm nay 443 kỹ năng, 0 kỹ năng một mức, nhưng 221 kỹ năng mới có 2 mức
+- [x] Ngoại lệ `difficulty_fixed` cho engine dạy khái niệm, khai trong config có cổng canh — cấm — NEVER là một câu văn xuôi trong phiếu
+- [x] Mục "ca sai không bắt được bằng schema": level `difficulty: 5` với số item bằng mức 1
+- [x] Xác nhận `adaptive-engine.md` (`BR-ADP-09`) chỉ đọc `difficulty_params`, không đọc cột `difficulty` — ghi kết luận vào spec
 
 **Kiểm chứng**
-- [ ] `npx tsx packages/game-engine/scripts/check-engine-specs.ts` xanh
+- [x] `npx tsx packages/game-engine/scripts/check-engine-specs.ts` xanh
 - [ ] Người nội dung duyệt phần ánh xạ mức ↔ số item
 
 **File**: `docs/specs/05-content/level-difficulty-contract.md`, tham chiếu chéo trong `engine-content-depth.md` và `content-seed-authoring.md`

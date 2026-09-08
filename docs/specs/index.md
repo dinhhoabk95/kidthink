@@ -27,13 +27,14 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
 | `04-play` | 17 | 13 |
-| `05-content` | 24 | 6 |
+| `05-content` | 25 | 7 |
 | `06-admin` | 31 | 30 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 11 | 9 |
-| **Tổng** | **188** | **139** |
+| **Tổng** | **189** | **140** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
+1 spec cộng thêm 2026-09-08 cho hợp đồng độ khó game level: [`level-difficulty-contract.md`](05-content/level-difficulty-contract.md) (Task #263) — ánh xạ mức khó 1..5 về số item hiển thị và tham số điều khiển qua bảng tra 37 engine × 5 mức.
 4 spec cộng thêm 2026-08-29 (Task #113) lấp lỗ hổng chiều sâu nội dung mỗi engine: [`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md), [`engine-content-depth.md`](05-content/engine-content-depth.md), [`level-generator-kit.md`](01-platform/level-generator-kit.md), [`content-theme-registry.md`](05-content/content-theme-registry.md). Kèm 27 phiếu engine ở [`engines/index.md`](01-platform/engines/index.md).
 2 spec cộng thêm cùng ngày cho go-live: [`engine-render-contract.md`](01-platform/engine-render-contract.md) và [`go-live-readiness.md`](08-quality/go-live-readiness.md) — corpus trước đó chỉ sở hữu tới mức MVP, không ai sở hữu câu "trẻ mở được chưa".
 1 spec cộng thêm 2026-09-03 cho trục kỹ năng: [`skill-dataset-model.md`](05-content/skill-dataset-model.md) — corpus đạt 100% phủ kỹ năng và 0% trung thực kỹ năng (0 trên 5.013 level mang chữ số hay chữ cái) vì không spec nào sở hữu câu hỏi *vật trong màn chơi đến từ đâu*.
@@ -213,6 +214,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [preschool-age-bands](05-content/preschool-age-bands.md) | P4 | Ràng buộc biên soạn theo band tuổi mầm non (difficulty, thời lượng, số bước) |
 | [skill-age-progression](05-content/skill-age-progression.md) | P4 | Thứ tự giới thiệu kỹ năng theo tháng tuổi (36-48m, 48-60m, 60-72m) |
 | **[skill-value-inventory](05-content/skill-value-inventory.md)** | P1 | Kho giá trị kỹ năng: nguồn sự thật cho các dãy giá trị học thuật, đối chiếu hai chiều |
+| **[level-difficulty-contract](05-content/level-difficulty-contract.md)** | P1 | Hợp đồng độ khó 1..5: ánh xạ item_count qua bảng tra 37 engine, thang tiến bộ theo kỹ năng |
 
 ## 06-admin — Manager
 

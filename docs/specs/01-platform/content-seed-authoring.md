@@ -21,6 +21,7 @@ depends_on:
   - TAXONOMY-SERVICE
   - EMOJI-REGISTRY
   - AI-CODEGEN-PIPELINE
+  - LEVEL-DIFFICULTY-CONTRACT
 ---
 
 # Biên soạn nội dung nền bằng seeder trong repo

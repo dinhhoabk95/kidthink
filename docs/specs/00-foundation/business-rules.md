@@ -176,7 +176,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-STA` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) §7.5 | | `BR-ALC` | [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) §7.4 |
 | `BR-ECA` | [`engine-competency-allocation.md`](../05-content/engine-competency-allocation.md) | | `BR-PAR` | [`preschool-age-bands.md`](../05-content/preschool-age-bands.md) |
 | `BR-SAP` | [`skill-age-progression.md`](../05-content/skill-age-progression.md) | | `BR-CTM` | [`concept-topic-model.md`](../05-content/concept-topic-model.md) |
-| `BR-SVI` | [`skill-value-inventory.md`](../05-content/skill-value-inventory.md) | | | |
+| `BR-SVI` | [`skill-value-inventory.md`](../05-content/skill-value-inventory.md) | | `BR-LDC` | [`level-difficulty-contract.md`](../05-content/level-difficulty-contract.md) |
 
 **Admin**
 
