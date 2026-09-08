@@ -273,16 +273,16 @@ Sau T8, chỉ còn hai engine chặn bậc 1.
 Không cổng nào đọc mục 13. Đối chiếu tay: 241 ô có số mục tiêu, **49 ô thủng**, trên 26 engine.
 
 **Tiêu chí nghiệm thu**
-- [ ] Cổng đọc bảng mục 13 của từng phiếu, đối chiếu corpus theo band × `thinking` tag
-- [ ] Báo cáo in `<engine> <band> <tag>: có N, cần M` cho từng ô thủng
-- [ ] Nguồn không đọc được thì thoát khác 0. Cấm — NEVER nhánh trả rỗng rồi báo xanh
-- [ ] ≥3 ca âm: bảng thiếu cột tag, ô ghi chữ thay số, bảng thiếu một band hợp lệ
-- [ ] Chế độ bậc thang: chốt nợ 49 và chỉ cho giảm
-- [ ] Cổng vào job `pre-commit` của T1
+- [x] Cổng đọc bảng mục 13 của từng phiếu, đối chiếu corpus theo band × `thinking` tag
+- [x] Báo cáo in `<engine> <band> <tag>: có N, cần M` cho từng ô thủng
+- [x] Nguồn không đọc được thì thoát khác 0. Cấm — NEVER nhánh trả rỗng rồi báo xanh
+- [x] ≥3 ca âm: bảng thiếu cột tag, ô ghi chữ thay số, bảng thiếu một band hợp lệ
+- [x] Chế độ bậc thang: chốt nợ 49 và chỉ cho giảm
+- [x] Cổng vào job `pre-commit` của T1
 
 **Kiểm chứng**
-- [ ] Lượt chạy đầu in đúng 49 ô thủng
-- [ ] Thêm một ô thủng mới thì đỏ dù tổng vẫn dưới trần
+- [x] Lượt chạy đầu in đúng 49 ô thủng
+- [x] Thêm một ô thủng mới thì đỏ dù tổng vẫn dưới trần
 
 **File**: `packages/content-build/src/gates/engine-seed-matrix.ts` + cli + test, `package.json`, `lefthook.yml`
 

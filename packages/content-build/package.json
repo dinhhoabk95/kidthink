@@ -31,6 +31,7 @@
     "test": "vitest run",
     "check:skill-quota": "tsx src/gates/skill-quota.ts",
     "check:engine-depth": "tsx src/cli/check-engine-depth.ts",
+    "check:engine-seed-matrix": "tsx src/cli/check-engine-seed-matrix.ts",
     "check:lesson-supply": "tsx src/cli/check-lesson-supply.ts",
     "check:go-live": "tsx src/cli/check-go-live.ts",
     "check:round-sets": "tsx src/gates/round-sets.ts",

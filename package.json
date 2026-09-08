@@ -39,6 +39,7 @@
     "check:engine-turn": "pnpm --filter @mindkid/game-engine check:engine-turn",
     "check:engine-behavior": "pnpm --filter @mindkid/game-engine check:engine-behavior",
     "check:engine-behavior-corpus": "pnpm --filter @mindkid/content-build check:engine-behavior-corpus",
+    "check:engine-seed-matrix": "pnpm --filter @mindkid/content-build check:engine-seed-matrix",
     "gen:taxonomy-docs": "tsx scripts/taxonomy/sync-taxonomy-docs.ts --write",
     "verify": "tsx scripts/verify.ts",
     "test": "NODE_OPTIONS=--max-old-space-size=4096 vitest run --bail 1",

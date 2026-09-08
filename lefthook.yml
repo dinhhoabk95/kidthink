@@ -97,6 +97,10 @@ pre-commit:
         $TSX packages/game-engine/scripts/check-hardcoded-params.ts || { echo "✗ check:hardcoded-params failed" >&2; FAIL=1; } &
         PID_HARDCODED=$!
 
+        # Cổng ma trận seed mục 13 — Task #263 T13 (BR-CSM-03)
+        $TSX packages/content-build/src/cli/check-engine-seed-matrix.ts || { echo "✗ check:engine-seed-matrix failed" >&2; FAIL=1; } &
+        PID_SEED_MATRIX=$!
+
         wait $PID_SPECS || FAIL=1
         wait $PID_RENDER || FAIL=1
         wait $PID_DEPTH || FAIL=1
@@ -104,6 +108,7 @@ pre-commit:
         wait $PID_BEHAVIOR || FAIL=1
         wait $PID_LADDER || FAIL=1
         wait $PID_HARDCODED || FAIL=1
+        wait $PID_SEED_MATRIX || FAIL=1
 
         exit $FAIL
 
