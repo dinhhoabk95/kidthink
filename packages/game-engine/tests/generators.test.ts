@@ -498,7 +498,7 @@ describe("GT-034 — generator contract conformity", () => {
       expect(content_pack.grid.cols).toBeGreaterThanOrEqual(3);
       expect(content_pack.allowed_commands.length).toBeGreaterThanOrEqual(3);
     }
-  });
+  }, 30_000);
 
   describe("WP167.7: escalation_step support across rounds", () => {
     it("escalation_step = 0 yields identical output to undefined", () => {

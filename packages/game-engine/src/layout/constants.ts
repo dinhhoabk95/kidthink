@@ -73,7 +73,7 @@ export function deriveLogicSpace(
   const longSide = Math.max(cssWidth, cssHeight);
   const derivedLong = Math.min(
     LOGIC_LONG_SIDE_MAX,
-    Math.round((LOGIC_SHORT_SIDE * longSide) / shortSide)
+    Math.floor((LOGIC_SHORT_SIDE * longSide) / shortSide)
   );
   return cssWidth >= cssHeight
     ? { h: LOGIC_SHORT_SIDE, w: derivedLong }

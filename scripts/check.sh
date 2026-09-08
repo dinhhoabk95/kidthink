@@ -113,13 +113,11 @@ if [ "$FAST" = true ]; then
   TEST_STATUS=$?
 else
   if pnpm services >/dev/null 2>&1; then
-    NODE_OPTIONS=--max-old-space-size=4096 pnpm exec vitest run --bail 1
+    pnpm check:test-ratchet
     TEST_STATUS=$?
   else
-    echo "  ℹ PostgreSQL / Valkey chưa chạy ('docker compose up -d' để chạy toàn bộ suite DB)."
-    echo "  Chạy test suite game-engine (không cần database)..."
-    NODE_OPTIONS=--max-old-space-size=4096 npx vitest run --project=@mindkid/game-engine
-    TEST_STATUS=$?
+    echo "✗ PostgreSQL / Valkey chưa chạy. Chạy 'docker compose up -d' để khởi động services, hoặc dùng '--fast' để chỉ chạy tập test không cần DB." >&2
+    exit 1
   fi
 fi
 

@@ -57,9 +57,9 @@ describe("cổng hình học khung vẽ (game-engine-runtime.md §7.1)", () => {
     );
 
     // Đây là con số mà bản lỗi làm sai: nó vẽ 246% bề rộng hộp.
-    expect(probe.fillX).toBeCloseTo(1, 2);
-    expect(probe.originX).toBeCloseTo(0, 0);
-    expect(probe.originY).toBeGreaterThanOrEqual(0);
+    expect(probe.fillX).toBeCloseTo(1, 5);
+    expect(probe.originX).toBeCloseTo(0, 5);
+    expect(probe.originY).toBeGreaterThan(0);
     expect(probe.farY).toBeLessThanOrEqual(844 * 2 + 1e-6);
   });
 
