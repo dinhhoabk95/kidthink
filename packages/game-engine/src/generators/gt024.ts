@@ -181,6 +181,7 @@ export const GT024Generator: LevelGenerator = {
         waypoints,
       },
       difficulty_params: {
+        item_count: waypoints.length,
         tolerance_px: 35 + rng.nextInt(15),
         show_numbered_dots: true,
         show_guide_lines: true,

@@ -44,6 +44,7 @@ export const GT023_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 2,
       snap_radius_px: 60,
       show_anchor_outline: true,
       hint_after_ms: 8000,
@@ -103,6 +104,7 @@ export const GT023_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 3,
       snap_radius_px: 60,
       show_anchor_outline: true,
       hint_after_ms: 8000,
@@ -162,6 +164,7 @@ export const GT023_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 3,
       snap_radius_px: 70,
       show_anchor_outline: true,
       hint_after_ms: 10_000,

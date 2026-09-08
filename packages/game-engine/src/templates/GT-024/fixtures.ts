@@ -18,6 +18,7 @@ export const GT024_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 4,
       tolerance_px: 50,
       show_numbered_dots: true,
       show_guide_lines: true,
@@ -40,6 +41,7 @@ export const GT024_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 5,
       tolerance_px: 50,
       show_numbered_dots: true,
       show_guide_lines: true,
@@ -69,6 +71,7 @@ export const GT024_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 11,
       tolerance_px: 45,
       show_numbered_dots: true,
       show_guide_lines: true,

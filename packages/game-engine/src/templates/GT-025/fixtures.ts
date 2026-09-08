@@ -58,6 +58,7 @@ export const GT025_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 3,
       hint_after_ms: 8000,
       allow_retry: true,
       show_counter: true,
@@ -125,6 +126,7 @@ export const GT025_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 4,
       hint_after_ms: 8000,
       allow_retry: true,
       show_counter: true,
@@ -193,6 +195,7 @@ export const GT025_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 4,
       hint_after_ms: 9000,
       allow_retry: true,
       show_counter: true,

@@ -41,6 +41,11 @@ export const GT025ContentSchema = z.object({
 });
 
 export const GT025DifficultySchema = z.object({
+  item_count: z.number().int().min(2).max(4),
+  target_count: z.number().int().min(1).max(2).optional(),
+  distractor_count: z.number().int().min(0).max(2).optional(),
+  difference_count: z.number().int().min(1).max(5).optional(),
+  show_difference_counter: z.boolean().optional(),
   hint_after_ms: z.number().int().min(5000).max(30_000).default(8000),
   allow_retry: z.boolean().default(true),
   show_counter: z.boolean().default(true),

@@ -34,6 +34,8 @@ export const GT027ContentSchema = z.object({
 });
 
 export const GT027DifficultySchema = z.object({
+  item_count: z.number().int().min(4).max(12),
+  target_count: z.number().int().min(2).max(6).optional(),
   signal_duration_ms: z.number().int().min(1000).max(4000).default(2000),
   hint_after_ms: z.number().int().min(5000).max(30_000).default(8000),
   allow_retry: z.boolean().default(true),

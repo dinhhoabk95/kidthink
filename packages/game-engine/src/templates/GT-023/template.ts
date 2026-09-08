@@ -19,7 +19,7 @@ export const GT023ContentSchema = z.object({
       })
     )
     .min(2)
-    .max(6),
+    .max(8),
   parts: z
     .array(
       z.object({
@@ -34,7 +34,8 @@ export const GT023ContentSchema = z.object({
 });
 
 export const GT023DifficultySchema = z.object({
-  snap_radius_px: z.number().int().min(30).max(100).default(60),
+  item_count: z.number().int().min(2).max(8),
+  snap_radius_px: z.number().int().min(20).max(100).default(60),
   show_anchor_outline: z.boolean().default(true),
   hint_after_ms: z.number().int().min(5000).max(30_000).default(8000),
   allow_retry: z.boolean().default(true),

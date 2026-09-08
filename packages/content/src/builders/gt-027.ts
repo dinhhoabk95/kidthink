@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -11,6 +12,27 @@ import {
   shuffleDeterministic,
 } from "./utils.js";
 
+function buildRuleSwitchItems(
+  itemCount: number,
+  item1: SkillDataset["items"][number],
+  item2: SkillDataset["items"][number]
+) {
+  const colors = ["red", "blue"];
+  const shapes = [item1, item2];
+
+  return Array.from({ length: itemCount }, (_, i) => {
+    const color = colors[i % 2] ?? "red";
+    const shapeItem = shapes[Math.floor(i / 2) % 2] ?? item1;
+    return {
+      id: `${shapeItem.id}_${color}_${i + 1}`,
+      asset: resolveItemAsset(shapeItem, true),
+      color,
+      shape: shapeItem.label,
+      size: "medium",
+    };
+  });
+}
+
 export const projectGT027: Projection<"GT-027"> = {
   template: "GT-027",
   requires: { min_items: 4, max_items: 12 },
@@ -22,6 +44,7 @@ export const projectGT027: Projection<"GT-027"> = {
     }
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
+    const params = getEngineDifficultyParams("GT-027", opts.difficulty);
     const shuffled = shuffleDeterministic(dataset.items, rng);
     const item1 = safeGetItem(shuffled, 0);
     const item2 = safeGetItem(shuffled, 1);
@@ -45,46 +68,20 @@ export const projectGT027: Projection<"GT-027"> = {
       },
     ];
 
-    const items = [
-      {
-        id: `${item1.id}_red`,
-        asset: resolveItemAsset(item1, true),
-        color: "red",
-        shape: item1.label,
-        size: "medium",
-      },
-      {
-        id: `${item1.id}_blue`,
-        asset: resolveItemAsset(item1, true),
-        color: "blue",
-        shape: item1.label,
-        size: "medium",
-      },
-      {
-        id: `${item2.id}_red`,
-        asset: resolveItemAsset(item2, true),
-        color: "red",
-        shape: item2.label,
-        size: "medium",
-      },
-      {
-        id: `${item2.id}_blue`,
-        asset: resolveItemAsset(item2, true),
-        color: "blue",
-        shape: item2.label,
-        size: "medium",
-      },
-    ];
+    const rawItems = buildRuleSwitchItems(params.item_count, item1, item2);
+    const items = shuffleDeterministic(rawItems, rng);
 
     return {
       content_pack: {
         prompt: "Bé phân loại theo tín hiệu quy luật nhé!",
         rules,
-        items: shuffleDeterministic(items, rng),
+        items,
         switch_after_trials: 2,
       },
       difficulty_params: {
-        signal_duration_ms: 2000,
+        item_count: params.item_count,
+        target_count: params.target_count,
+        signal_duration_ms: params.signal_duration_ms,
         hint_after_ms: 8000,
         allow_retry: true,
       },

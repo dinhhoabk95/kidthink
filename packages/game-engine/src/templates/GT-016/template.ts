@@ -59,7 +59,10 @@ export const GT016ContentSchema = GT016BaseSchema.refine(
 );
 
 export const GT016DifficultySchema = z.object({
-  minute_step: z.union([z.literal(30), z.literal(60)]).default(30),
+  item_count: z.number().int().min(2).max(4),
+  minute_step: z
+    .union([z.literal(15), z.literal(30), z.literal(60)])
+    .default(30),
   distractor_count: z.number().int().min(1).max(3),
   hint_after_ms: z.number().int().min(6000).max(30_000),
   allow_retry: z.boolean(),

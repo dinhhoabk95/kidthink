@@ -61,6 +61,7 @@ export const GT023Generator: LevelGenerator = {
         parts,
       },
       difficulty_params: {
+        item_count: 2,
         snap_radius_px: 60,
         show_anchor_outline: true,
         hint_after_ms: 8000,

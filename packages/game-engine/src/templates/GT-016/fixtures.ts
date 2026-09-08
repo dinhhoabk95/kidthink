@@ -37,6 +37,7 @@ export const SAMPLE_LEVEL_1: GameLevelFixture<GT016Content, GT016Difficulty> = {
     activity_cards: [],
   },
   difficulty_params: {
+    item_count: 3,
     minute_step: 60,
     distractor_count: 2,
     hint_after_ms: 8000,
@@ -61,6 +62,7 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT016Content, GT016Difficulty> = {
     activity_cards: [],
   },
   difficulty_params: {
+    item_count: 3,
     minute_step: 30,
     distractor_count: 1,
     hint_after_ms: 10_000,
@@ -97,6 +99,7 @@ export const SAMPLE_LEVEL_3: GameLevelFixture<GT016Content, GT016Difficulty> = {
     ],
   },
   difficulty_params: {
+    item_count: 3,
     minute_step: 60,
     distractor_count: 1,
     hint_after_ms: 12_000,

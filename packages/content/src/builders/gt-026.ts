@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -12,6 +13,19 @@ import {
   shuffleDeterministic,
 } from "./utils.js";
 
+function buildTrials(count: number, rng: ReturnType<typeof createRng>) {
+  const nogoCount = Math.max(1, Math.round(count * 0.3));
+  const rawTrials: Array<{ id: string; kind: "go" | "nogo" }> = [];
+  for (let i = 0; i < count; i++) {
+    rawTrials.push({
+      id: `t${i + 1}`,
+      kind: i < nogoCount ? "nogo" : "go",
+    });
+  }
+  const shuffled = shuffleDeterministic(rawTrials, rng);
+  return shuffled.map((t, idx) => ({ ...t, id: `t${idx + 1}` }));
+}
+
 export const projectGT026: Projection<"GT-026"> = {
   template: "GT-026",
   requires: { min_items: 2, max_items: 12 },
@@ -23,16 +37,12 @@ export const projectGT026: Projection<"GT-026"> = {
     }
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
+    const params = getEngineDifficultyParams("GT-026", opts.difficulty);
     const shuffled = shuffleDeterministic(dataset.items, rng);
     const goItem = safeGetItem(shuffled, 0);
     const nogoItem = safeGetItem(shuffled, 1);
 
-    const trials = [
-      { id: "t1", kind: "go" as const },
-      { id: "t2", kind: "nogo" as const },
-      { id: "t3", kind: "go" as const },
-      { id: "t4", kind: "go" as const },
-    ];
+    const trials = buildTrials(params.item_count, rng);
 
     return {
       content_pack: {
@@ -48,8 +58,9 @@ export const projectGT026: Projection<"GT-026"> = {
         trials,
       },
       difficulty_params: {
-        stimulus_window_ms: 2000,
-        isi_ms: 500,
+        item_count: params.item_count,
+        stimulus_window_ms: params.stimulus_window_ms,
+        isi_ms: params.isi_ms,
         hint_after_ms: 8000,
         allow_retry: true,
       },

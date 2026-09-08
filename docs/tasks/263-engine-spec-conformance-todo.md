@@ -189,7 +189,7 @@ lúc chơi**, dù mục 5 của phiếu mô tả cả hai nhánh.
 Ví dụ `GT-031` có 101 level trải đủ 5 mức, cả 5 mức đều đúng 4 item.
 
 - [x] **T9.1** — `GT-004` `GT-007` `GT-009` `GT-010` `GT-011` `GT-014` `GT-015` (7 engine đã chuẩn hoá khớp bảng tra, flat debt giảm từ 19 xuống 12)
-- [ ] **T9.2** — `GT-016` `GT-023` `GT-024` `GT-025` `GT-026` `GT-027` · M
+- [x] **T9.2** — `GT-016` `GT-023` `GT-024` `GT-025` `GT-026` `GT-027` (6 engine đã chuẩn hoá khớp bảng tra, flat debt giảm từ 12 xuống 6)
 - [ ] **T9.3** — `GT-030` `GT-031` `GT-032` `GT-033` `GT-034` `GT-035` · M
 
 **Tiêu chí nghiệm thu mỗi lô**

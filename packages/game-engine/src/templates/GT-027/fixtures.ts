@@ -68,6 +68,7 @@ export const GT027_FIXTURES: {
       switch_after_trials: 2,
     },
     difficulty: {
+      item_count: 6,
       signal_duration_ms: 2000,
       hint_after_ms: 8000,
       allow_retry: true,
@@ -131,6 +132,7 @@ export const GT027_FIXTURES: {
       switch_after_trials: 2,
     },
     difficulty: {
+      item_count: 5,
       signal_duration_ms: 1800,
       hint_after_ms: 8000,
       allow_retry: true,
@@ -194,6 +196,7 @@ export const GT027_FIXTURES: {
       switch_after_trials: 2,
     },
     difficulty: {
+      item_count: 5,
       signal_duration_ms: 2000,
       hint_after_ms: 8000,
       allow_retry: true,

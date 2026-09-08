@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -6,6 +7,22 @@ import type {
 } from "@mindkid/shared";
 import { formatPromptLabel } from "@mindkid/shared";
 import { createRng, resolveItemAsset, safeGetItem } from "./utils.js";
+
+function buildPolygonWaypoints(count: number) {
+  const radius = 160;
+  const centerX = 480;
+  const centerY = 270;
+  return Array.from({ length: count }, (_, i) => {
+    const angle = (2 * Math.PI * i) / count - Math.PI / 2;
+    return {
+      id: `wp${i + 1}`,
+      x: Math.round(centerX + radius * Math.cos(angle)),
+      y: Math.round(centerY + radius * Math.sin(angle)),
+      order: i,
+      label: `${i + 1}`,
+    };
+  });
+}
 
 export const projectGT024: Projection<"GT-024"> = {
   template: "GT-024",
@@ -18,17 +35,13 @@ export const projectGT024: Projection<"GT-024"> = {
     }
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
+    const params = getEngineDifficultyParams("GT-024", opts.difficulty);
     const baseItem = safeGetItem(
       dataset.items,
       rng.nextInt(dataset.items.length)
     );
 
-    // Triangle shape waypoints: top, bottom-right, bottom-left
-    const waypoints = [
-      { id: "wp1", x: 480, y: 120, order: 0, label: "1" },
-      { id: "wp2", x: 680, y: 420, order: 1, label: "2" },
-      { id: "wp3", x: 280, y: 420, order: 2, label: "3" },
-    ];
+    const waypoints = buildPolygonWaypoints(params.item_count);
 
     return {
       content_pack: {
@@ -38,8 +51,9 @@ export const projectGT024: Projection<"GT-024"> = {
         waypoints,
       },
       difficulty_params: {
-        tolerance_px: 40,
-        show_numbered_dots: true,
+        item_count: params.item_count,
+        tolerance_px: params.tolerance_px,
+        show_numbered_dots: params.show_numbered_dots,
         show_guide_lines: true,
         hint_after_ms: 8000,
         allow_retry: true,

@@ -24,7 +24,8 @@ export const GT026ContentSchema = z.object({
 });
 
 export const GT026DifficultySchema = z.object({
-  stimulus_window_ms: z.number().int().min(1000).max(3000).default(2000),
+  item_count: z.number().int().min(4).max(12),
+  stimulus_window_ms: z.number().int().min(500).max(3000).default(2000),
   isi_ms: z.number().int().min(200).max(1500).default(500),
   hint_after_ms: z.number().int().min(5000).max(30_000).default(8000),
   allow_retry: z.boolean().default(true),

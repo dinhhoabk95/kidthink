@@ -36,6 +36,7 @@ export const GT026Generator: LevelGenerator = {
         trials,
       },
       difficulty_params: {
+        item_count: 4,
         stimulus_window_ms: 2000,
         isi_ms: 500,
         hint_after_ms: 8000,

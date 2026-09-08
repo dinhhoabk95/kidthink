@@ -66,6 +66,7 @@ export const GT027Generator: LevelGenerator = {
         switch_after_trials: 2,
       },
       difficulty_params: {
+        item_count: 4,
         signal_duration_ms: 2000,
         hint_after_ms: 8000,
         allow_retry: true,

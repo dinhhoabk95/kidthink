@@ -21,7 +21,8 @@ export const GT024ContentSchema = z.object({
 });
 
 export const GT024DifficultySchema = z.object({
-  tolerance_px: z.number().int().min(20).max(80).default(40),
+  item_count: z.number().int().min(3).max(12),
+  tolerance_px: z.number().int().min(16).max(80).default(40),
   show_numbered_dots: z.boolean().default(true),
   show_guide_lines: z.boolean().default(true),
   hint_after_ms: z.number().int().min(5000).max(30_000).default(8000),

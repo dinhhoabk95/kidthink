@@ -26,6 +26,7 @@ export const GT026_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 6,
       stimulus_window_ms: 2000,
       isi_ms: 500,
       hint_after_ms: 8000,
@@ -52,6 +53,7 @@ export const GT026_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 5,
       stimulus_window_ms: 1800,
       isi_ms: 400,
       hint_after_ms: 8000,
@@ -81,6 +83,7 @@ export const GT026_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 7,
       stimulus_window_ms: 1600,
       isi_ms: 500,
       hint_after_ms: 8000,

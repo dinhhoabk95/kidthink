@@ -60,6 +60,7 @@ export const GT025Generator: LevelGenerator = {
         differences,
       },
       difficulty_params: {
+        item_count: 2,
         hint_after_ms: 8000,
         allow_retry: true,
         show_counter: true,
