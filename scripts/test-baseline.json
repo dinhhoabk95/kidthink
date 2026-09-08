@@ -1,5 +1,5 @@
 {
-  "totalFailed": 46,
+  "totalFailed": 45,
   "failedFiles": [
     "apps/web/tests/api/advanced-report.test.ts",
     "apps/web/tests/api/curricula-builder.test.ts",
@@ -30,7 +30,6 @@
     "apps/web/tests/api/users/offline-pack.test.ts",
     "apps/web/tests/e2e/child-switch-race.test.ts",
     "apps/web/tests/e2e/web-scale-gate-drills.test.ts",
-    "apps/web/tests/gates/engine-input-dispatch.test.ts",
     "apps/web/tests/gates/public-competency-labels.test.ts",
     "apps/web/tests/integration/api-error-handler.test.ts",
     "apps/web/tests/integration/app-error-h3-contract.test.ts",

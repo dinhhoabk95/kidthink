@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { REPO_ROOT } from "@mindkid/config/paths";
 
@@ -21,10 +21,24 @@ export const ENGINE_INPUT_READY_CONFIG_PATH = resolve(
 );
 
 /**
- * Baseline ratchet: currently 8 duck-typing typeof session.* branches exist in play/[code].vue.
- * This number must never increase; as templates migrate to input contracts, it will decrease.
+ * Cổng bậc thang duck-typing: nợ đã về 0 từ Task #259.
+ * Số này Cấm — NEVER tăng. Mọi nhánh `typeof session.*` mới trên bề mặt chơi
+ * phải đi qua hợp đồng `TemplateGameSession` thay vì đoán kiểu tại chỗ.
  */
-export const MAX_TYPEOF_SESSION_BRANCHES = 8;
+export const MAX_TYPEOF_SESSION_BRANCHES = 0;
+
+/**
+ * Thư mục composable của bề mặt chơi — Task #260 rút logic từ `[code].vue` sang
+ * đây, nên cổng phải quét cả hai chỗ; quét riêng trang là phép đo cho 0 giả.
+ */
+export const PLAY_COMPOSABLES_DIR = resolve(
+  REPO_ROOT,
+  "apps",
+  "web",
+  "app",
+  "composables",
+  "play"
+);
 
 const TYPEOF_SESSION_REGEX = /typeof\s+session\.\w+/;
 const HANDLE_TAP_OPTION_FN_REGEX =
@@ -38,22 +52,44 @@ export interface EngineInputDispatchScanResult {
   readonly hasOnItemLockedInTapOptions: boolean;
 }
 
+function listScannedFiles(
+  playPagePath: string,
+  composablesDir: string
+): string[] {
+  const files = [playPagePath];
+  if (!existsSync(composablesDir)) {
+    return files;
+  }
+  for (const entry of readdirSync(composablesDir, { withFileTypes: true })) {
+    if (entry.isFile() && entry.name.endsWith(".ts")) {
+      files.push(resolve(composablesDir, entry.name));
+    }
+  }
+  return files;
+}
+
 export function scanEngineInputDispatch(
   playPagePath: string = PLAY_PAGE_PATH,
-  readyConfigPath: string = ENGINE_INPUT_READY_CONFIG_PATH
+  readyConfigPath: string = ENGINE_INPUT_READY_CONFIG_PATH,
+  composablesDir: string = PLAY_COMPOSABLES_DIR
 ): EngineInputDispatchScanResult {
   if (!existsSync(playPagePath)) {
     throw new Error(`File not found: ${playPagePath}`);
   }
 
   const content = readFileSync(playPagePath, "utf8");
-  const lines = content.split("\n");
   const occurrences: { line: number; text: string }[] = [];
 
-  for (let i = 0; i < lines.length; i++) {
-    const lineText = lines[i] ?? "";
-    if (TYPEOF_SESSION_REGEX.test(lineText)) {
-      occurrences.push({ line: i + 1, text: lineText.trim() });
+  for (const filePath of listScannedFiles(playPagePath, composablesDir)) {
+    const lines = readFileSync(filePath, "utf8").split("\n");
+    for (let i = 0; i < lines.length; i++) {
+      const lineText = lines[i] ?? "";
+      if (TYPEOF_SESSION_REGEX.test(lineText)) {
+        occurrences.push({
+          line: i + 1,
+          text: `${filePath.replace(`${REPO_ROOT}/`, "")}:${i + 1} ${lineText.trim()}`,
+        });
+      }
     }
   }
 
