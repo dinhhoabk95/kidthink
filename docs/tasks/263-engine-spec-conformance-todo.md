@@ -126,19 +126,20 @@ engine ra cùng một dãy số là bình thường; cấm — NEVER lấy đó 
 ### T6 — Cổng `check:difficulty-ladder` và cổng cấm số cứng · M · phụ thuộc: T5
 
 **Tiêu chí nghiệm thu**
-- [ ] Cổng đo bốn thứ: ô config nằm trong `limits`; số item theo mức không giảm; corpus khớp bảng tra; mỗi kỹ năng ≥2 mức
-- [ ] Cổng số cứng đếm dòng có số literal trong `templates/*/session.ts` — chốt nợ hiện tại **261** và chỉ cho giảm
-- [ ] Cổng đếm `.default(...)` trên trường điều khiển độ khó — chốt nợ **80**, chỉ cho giảm
-- [ ] Báo cáo in `<engine> mức <d>: config <n>, corpus <m>` và chỉ rõ mức nào lệch
-- [ ] ≥5 ca âm: ô vượt `limits`, mức đi lùi, corpus lệch config, kỹ năng một mức, `difficulty_fixed` khai sai
-- [ ] Nguồn không đọc được thì thoát khác 0. Cấm — NEVER nhánh trả rỗng rồi báo xanh
-- [ ] Cổng vào job `pre-commit` của T1
+- [x] Cổng đo bốn thứ: ô config nằm trong `limits`; số item theo mức không giảm; corpus khớp bảng tra; mỗi kỹ năng ≥2 mức
+- [x] Cổng số cứng đếm dòng có số literal trong `templates/*/session.ts` — chốt nợ hiện tại **398** và chỉ cho giảm
+- [x] Cổng đếm `.default(...)` trên trường điều khiển độ khó — chốt nợ **80**, chỉ cho giảm
+- [x] Báo cáo in `<engine> mức <d>: config <n>, corpus <m>` và chỉ rõ mức nào lệch
+- [x] ≥5 ca âm: ô vượt `limits`, mức đi lùi, corpus lệch config, kỹ năng một mức, `difficulty_fixed` khai sai
+- [x] Nguồn không đọc được thì thoát khác 0. Cấm — NEVER nhánh trả rỗng rồi báo xanh
+- [x] Cổng vào job `pre-commit` của T1
 
 **Kiểm chứng**
-- [ ] Lượt chạy đầu in đúng 6 engine đi lùi, 19 engine phẳng, 261 dòng số cứng, 80 `.default`
-- [ ] Thêm một số cứng mới thì đỏ dù tổng nợ vẫn dưới trần
+- [x] Lượt chạy đầu in đúng 6 engine đi lùi, 19 engine phẳng, 398 dòng số cứng, 80 `.default`
+- [x] Thêm một số cứng mới thì đỏ dù tổng nợ vẫn dưới trần
+- [x] `packages/game-engine/tests/difficulty-ladder-gate.test.ts` pass 12/12 tests
 
-**File**: `packages/content-build/src/gates/difficulty-ladder.ts`, `packages/game-engine/tests/gates/hardcoded-params.ts` + test, `package.json`, `lefthook.yml`
+**File**: `packages/game-engine/scripts/check-difficulty-ladder.ts`, `packages/game-engine/scripts/check-hardcoded-params.ts`, tests trong `packages/game-engine/tests/difficulty-ladder-gate.test.ts`, `package.json`, `lefthook.yml`
 
 ---
 

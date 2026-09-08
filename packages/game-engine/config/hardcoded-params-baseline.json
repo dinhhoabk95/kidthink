@@ -1,0 +1,6 @@
+{
+  "max_allowed_lines": 398,
+  "max_allowed_defaults": 80,
+  "date": "2026-09-09",
+  "note": "Cổng ratchet số cứng trong templates/*/session.ts và .default(...) trong DifficultySchema (Task #263 T6). Nợ chỉ được phép giảm."
+}

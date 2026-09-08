@@ -53,7 +53,7 @@ pre-commit:
     # Cổng đối chiếu engine — Task #263 (T1), chạy song song, chỉ khi chạm engine/corpus.
     # Dựng sẵn chỗ cho #261 (check:engine-behavior) và #262 (check:engine-turn).
     - name: engine-gates
-      glob: "{docs/specs/01-platform/engines/**,packages/game-engine/src/**,packages/content/src/**,packages/content-build/src/**}"
+      glob: "{docs/specs/01-platform/engines/**,docs/specs/05-content/**,packages/game-engine/src/**,packages/game-engine/config/**,packages/content/src/**,packages/content-build/src/**}"
       run: |
         NODE_DIR="${HOME}/.nvm/versions/node/v24.15.0/bin"
         if [ -d "$NODE_DIR" ]; then
@@ -90,11 +90,20 @@ pre-commit:
         $TSX packages/game-engine/scripts/check-engine-behavior.ts || { echo "✗ check:engine-behavior failed" >&2; FAIL=1; } &
         PID_BEHAVIOR=$!
 
+        # Cổng độ khó và tham số cứng — Task #263 T6 (BR-LDC-01..06)
+        $TSX packages/game-engine/scripts/check-difficulty-ladder.ts || { echo "✗ check:difficulty-ladder failed" >&2; FAIL=1; } &
+        PID_LADDER=$!
+
+        $TSX packages/game-engine/scripts/check-hardcoded-params.ts || { echo "✗ check:hardcoded-params failed" >&2; FAIL=1; } &
+        PID_HARDCODED=$!
+
         wait $PID_SPECS || FAIL=1
         wait $PID_RENDER || FAIL=1
         wait $PID_DEPTH || FAIL=1
         wait $PID_TURN || FAIL=1
         wait $PID_BEHAVIOR || FAIL=1
+        wait $PID_LADDER || FAIL=1
+        wait $PID_HARDCODED || FAIL=1
 
         exit $FAIL
 

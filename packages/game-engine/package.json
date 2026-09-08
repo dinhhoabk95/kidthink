@@ -11,6 +11,8 @@
     "check:engine-specs": "tsx scripts/check-engine-specs.ts",
     "check:engine-behavior": "tsx scripts/check-engine-behavior.ts",
     "check:engine-turn": "tsx scripts/check-engine-turn.ts",
+    "check:difficulty-ladder": "tsx scripts/check-difficulty-ladder.ts",
+    "check:hardcoded-params": "tsx scripts/check-hardcoded-params.ts",
     "test": "vitest run",
     "new:template": "tsx scripts/create-template.ts"
   },
