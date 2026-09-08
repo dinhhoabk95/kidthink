@@ -206,5 +206,13 @@ export const C2_GEO_08_SEED: SkillSeed = {
       theme: "farm",
       rounds: 3,
     },
+    {
+      code: "GL-C2-GEO-SWT-0001",
+      template: "GT-027",
+      band: "5-6",
+      difficulty: 3,
+      theme: "nature",
+      rounds: 3,
+    },
   ],
 };

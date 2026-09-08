@@ -220,5 +220,13 @@ export const C2_DIR_07_SEED: SkillSeed = {
       theme: "farm",
       rounds: 3,
     },
+    {
+      code: "GL-C2-DIR-CMD-0001",
+      template: "GT-035",
+      band: "5-6",
+      difficulty: 2,
+      theme: "space",
+      rounds: 3,
+    },
   ],
 };

@@ -243,5 +243,13 @@ export const C3_CLS_06_SEED: SkillSeed = {
       theme: "animal",
       rounds: 3,
     },
+    {
+      code: "GL-C3-CLS-WEAVE-0001",
+      template: "GT-033",
+      band: "5-6",
+      difficulty: 2,
+      theme: "animal",
+      rounds: 3,
+    },
   ],
 };

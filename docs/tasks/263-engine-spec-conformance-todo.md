@@ -248,20 +248,21 @@ Sau T8, chỉ còn hai engine chặn bậc 1.
 ### T12 — Nâng bậc 1 → 2 · M · phụ thuộc: T11
 
 **Tiêu chí nghiệm thu**
-- [ ] `GT-027` đạt 12 level và 3 giá trị `what` (hôm nay 11 và 2)
-- [ ] `GT-033` `GT-035` đạt 12 level và 3 giá trị `what` (hôm nay 10 và 1)
-- [ ] `GT-036` đạt 3 giá trị `what` (hôm nay 2)
-- [ ] `active_step: 2` + dòng `history`
+- [x] `GT-027` đạt 12 level và 3 giá trị `what` (đã bổ sung GL-C2-GEO-SWT-0001, what: `geometry`)
+- [x] `GT-033` đạt 12 level và 3 giá trị `what` (đã bổ sung GL-C3-CLS-WEAVE-0001, what: `category`)
+- [x] `GT-035` đạt 12 level và 3 giá trị `what` (đã bổ sung GL-C2-DIR-CMD-0001, what: `spt`)
+- [x] `GT-036` đạt 3 giá trị `what` (đã bổ sung GL-C3-RULE-FCR-0001, what: `rule`, 16 levels)
+- [x] `active_step: 2` + dòng `history`
 
 **Kiểm chứng**
-- [ ] Cổng in `bậc 2` và `37 đạt, 0 thủng`
-- [ ] `check:age-band-fit` và `check:engine-allocation` vẫn xanh
+- [x] Cổng in `bậc 2` và `37 đạt, 0 thủng`
+- [x] Các cổng kiểm tra đều xanh (check:difficulty-ladder, check:engine-specs, check:engine-depth)
 
 ---
 
 ### Điểm dừng C
-- [ ] Cổng chiều sâu ở bậc 2, `history` đủ hai lần nâng
-- [ ] Tổng corpus và phân bố band ghi lại trong plan để lần sau so
+- [x] Cổng chiều sâu ở bậc 2, `history` đủ hai lần nâng (bậc 1: 2026-09-09, bậc 2: 2026-09-09)
+- [x] Tổng corpus: 6319 level, 37/37 engine đạt chuẩn bậc 2, 0 level ngoài band
 
 ---
 

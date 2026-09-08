@@ -255,5 +255,13 @@ export const C3_RULE_03_SEED: SkillSeed = {
       theme: "space",
       rounds: 3,
     },
+    {
+      code: "GL-C3-RULE-FCR-0001",
+      template: "GT-036",
+      band: "5-6",
+      difficulty: 3,
+      theme: "job",
+      rounds: 3,
+    },
   ],
 };
