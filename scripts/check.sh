@@ -13,6 +13,10 @@ set -uo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
+if [ -d "/Users/macbook/.nvm/versions/node/v24.15.0/bin" ]; then
+  export PATH="/Users/macbook/.nvm/versions/node/v24.15.0/bin:$PATH"
+fi
+
 FAST=false
 for arg in "$@"; do
   case "$arg" in
@@ -73,6 +77,14 @@ PID_HINT_TARGET=$!
 pnpm check:migration-hashes &
 PID_MIGRATION_HASHES=$!
 
+# Cổng đối chiếu spec engine — BR-ESS-01..15.
+pnpm check:engine-specs &
+PID_ENGINE_SPECS=$!
+
+# Cổng miền hành vi engine — Task #261 (BR-EBD-01..13).
+pnpm check:engine-behavior &
+PID_ENGINE_BEHAVIOR=$!
+
 LINT_OK=true
 if ! wait $PID_LINT; then
   echo "✗ biome lint failed" >&2
@@ -114,10 +126,20 @@ if ! wait $PID_MIGRATION_HASHES; then
   LINT_OK=false
 fi
 
+if ! wait $PID_ENGINE_SPECS; then
+  echo "✗ check:engine-specs failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_ENGINE_BEHAVIOR; then
+  echo "✗ check:engine-behavior failed" >&2
+  LINT_OK=false
+fi
+
 if [ "$LINT_OK" = false ]; then
   exit 1
 fi
-echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space + hint-target + migration-hashes"
+echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space + hint-target + migration-hashes + engine-specs + engine-behavior"
 phase_end
 
 # ── Phase 2: Typecheck (cổng bậc thang + incremental) ─────────────────────

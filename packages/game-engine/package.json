@@ -8,6 +8,7 @@
     "gen:engine-index": "tsx scripts/gen-engine-index.ts",
     "check:render": "tsx scripts/check-render.ts",
     "check:engine-specs": "tsx scripts/check-engine-specs.ts",
+    "check:engine-behavior": "tsx scripts/check-engine-behavior.ts",
     "test": "vitest run",
     "new:template": "tsx scripts/create-template.ts"
   },
