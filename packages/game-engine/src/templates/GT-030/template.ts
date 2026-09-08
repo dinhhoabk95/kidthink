@@ -42,6 +42,7 @@ export const GT030ContentSchema = z
   );
 
 export const GT030DifficultySchema = z.object({
+  item_count: z.number().int().min(2).max(5),
   length_in_units: z.number().int().min(2).max(10),
   gap_tolerance_pct: z.number().min(5).max(20).default(10),
   allow_retry: z.boolean().default(true),

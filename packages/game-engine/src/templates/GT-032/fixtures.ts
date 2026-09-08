@@ -33,6 +33,7 @@ export const GT032_FIXTURES: GT032Fixture[] = [
       ],
     },
     difficulty: {
+      item_count: 2,
       cup_count: 2,
       level_steps: 6,
       conservation_trap: false,
@@ -72,6 +73,7 @@ export const GT032_FIXTURES: GT032Fixture[] = [
       ],
     },
     difficulty: {
+      item_count: 3,
       cup_count: 3,
       level_steps: 8,
       conservation_trap: true,
@@ -111,6 +113,7 @@ export const GT032_FIXTURES: GT032Fixture[] = [
       ],
     },
     difficulty: {
+      item_count: 3,
       cup_count: 3,
       level_steps: 10,
       conservation_trap: false,

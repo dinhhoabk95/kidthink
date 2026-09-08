@@ -29,6 +29,7 @@ export const GT030_FIXTURES: GT030Fixture[] = [
       ],
     },
     difficulty: {
+      item_count: 3,
       length_in_units: 4,
       gap_tolerance_pct: 10,
       allow_retry: true,
@@ -56,6 +57,7 @@ export const GT030_FIXTURES: GT030Fixture[] = [
       ],
     },
     difficulty: {
+      item_count: 3,
       length_in_units: 5,
       gap_tolerance_pct: 10,
       allow_retry: true,
@@ -63,18 +65,18 @@ export const GT030_FIXTURES: GT030Fixture[] = [
     },
   },
   {
-    name: "Đo dưa chuột bằng quả cherry (6 đơn vị)",
+    name: "Đo khúc gỗ bằng viên kẹo (6 đơn vị)",
     band: "5-6",
     content: {
-      prompt: "Bé hãy xếp các quả cherry để đo chiều dài dưa chuột nhé!",
+      prompt: "Bé hãy xếp các viên kẹo để đo chiều dài khúc gỗ nhé!",
       object: {
-        object_id: "cucumber_obj",
-        asset: { kind: "emoji", ref: "🥒" },
+        object_id: "log_obj",
+        asset: { kind: "emoji", ref: "🪵" },
         length_in_units: 6,
       },
       unit: {
-        unit_id: "cherry_unit",
-        asset: { kind: "emoji", ref: "🍒" },
+        unit_id: "candy_unit",
+        asset: { kind: "emoji", ref: "🍬" },
       },
       answer_options: [
         { option_id: "opt_5", value: 5, is_correct: false },
@@ -83,8 +85,9 @@ export const GT030_FIXTURES: GT030Fixture[] = [
       ],
     },
     difficulty: {
+      item_count: 3,
       length_in_units: 6,
-      gap_tolerance_pct: 10,
+      gap_tolerance_pct: 8,
       allow_retry: true,
       hint_after_ms: 8000,
     },

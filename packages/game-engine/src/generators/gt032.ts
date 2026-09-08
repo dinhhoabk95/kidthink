@@ -98,6 +98,7 @@ export const GT032Generator: LevelGenerator = {
         conservation_trap: isTrap,
       },
       difficulty_params: {
+        item_count: cups.length,
         cup_count: cups.length,
         level_steps: 8,
         conservation_trap: isTrap,

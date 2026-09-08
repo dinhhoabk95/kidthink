@@ -50,6 +50,7 @@ export const GT031ContentSchema = z
   );
 
 export const GT031DifficultySchema = z.object({
+  item_count: z.number().int().min(2).max(8),
   coin_kind_count: z.number().int().min(1).max(5).default(2),
   target_amount: z.number().int().min(1).max(50),
   exact_change: z.boolean().default(true),

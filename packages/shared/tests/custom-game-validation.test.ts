@@ -154,6 +154,7 @@ describe("Custom Game Validation (BR-CGB-01..10, BR-GLM-01..10)", () => {
       ],
     },
     difficulty_params: {
+      item_count: 4,
       distractor_count: 0,
       hint_after_ms: 10_000,
       allow_retry: true,

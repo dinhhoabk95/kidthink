@@ -32,6 +32,7 @@ export const GT033_FIXTURES: GT033Fixture[] = [
       col_rule: "Đỏ xen kẽ Xanh",
     },
     difficulty: {
+      item_count: 2,
       grid_size: 2,
       color_count: 2,
       blank_count: 1,
@@ -89,6 +90,7 @@ export const GT033_FIXTURES: GT033Fixture[] = [
       col_rule: "Dịch chuyển tuần hoàn 3 màu",
     },
     difficulty: {
+      item_count: 3,
       grid_size: 3,
       color_count: 3,
       blank_count: 2,
@@ -141,6 +143,7 @@ export const GT033_FIXTURES: GT033Fixture[] = [
       col_rule: "Xen kẽ 2 màu",
     },
     difficulty: {
+      item_count: 2,
       grid_size: 3,
       color_count: 2,
       blank_count: 3,

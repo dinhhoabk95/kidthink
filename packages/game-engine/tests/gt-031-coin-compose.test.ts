@@ -266,6 +266,7 @@ describe("GT-031: Gộp tiền xu (coin-compose)", () => {
         ],
       };
       const customDiff = {
+        item_count: 2,
         coin_kind_count: 2,
         target_amount: 13,
         exact_change: true,

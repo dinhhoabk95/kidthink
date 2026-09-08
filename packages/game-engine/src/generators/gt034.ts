@@ -163,6 +163,7 @@ export const GT034Generator: LevelGenerator = {
     };
 
     const difficulty: GT034Difficulty = {
+      item_count: instruments.length,
       pattern_length: targetPattern.length,
       instrument_count: instruments.length,
       tempo_bpm: tempo,

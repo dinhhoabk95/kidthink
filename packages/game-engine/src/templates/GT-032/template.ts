@@ -65,6 +65,7 @@ export const GT032ContentSchema = z
   );
 
 export const GT032DifficultySchema = z.object({
+  item_count: z.number().int().min(2).max(4),
   cup_count: z.number().int().min(2).max(4).default(2),
   level_steps: z.number().int().min(1).max(10).default(5),
   conservation_trap: z.boolean().default(false),

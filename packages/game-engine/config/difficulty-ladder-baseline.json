@@ -1,13 +1,6 @@
 {
   "descending_debt_engines": [],
-  "flat_debt_engines": [
-    "GT-030",
-    "GT-031",
-    "GT-032",
-    "GT-033",
-    "GT-034",
-    "GT-035"
-  ],
+  "flat_debt_engines": [],
   "date": "2026-09-09",
-  "note": "Baseline nợ thang độ khó trong corpus (Task #263). T8 đã giải quyết 6 descending (nợ về 0). T9 giải quyết 19 flat."
+  "note": "Baseline nợ thang độ khó trong corpus (Task #263). T8 đã giải quyết 6 descending. T9 đã giải quyết 19 flat (nợ flat về 0)."
 }

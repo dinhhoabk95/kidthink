@@ -47,6 +47,7 @@ export const GT033ContentSchema = z
   );
 
 export const GT033DifficultySchema = z.object({
+  item_count: z.number().int().min(2).max(4),
   grid_size: z.number().int().min(2).max(5).default(3),
   color_count: z.number().int().min(2).max(4).default(2),
   blank_count: z.number().int().min(1).max(12).default(2),

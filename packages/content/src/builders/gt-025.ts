@@ -89,25 +89,29 @@ export const projectGT025: Projection<"GT-025"> = {
     const params = getEngineDifficultyParams("GT-025", opts.difficulty);
     const shuffled = shuffleDeterministic(dataset.items, rng);
 
+    const targetCount = params.target_count ?? 2;
+    const distractorCount =
+      params.distractor_count ?? Math.max(0, params.item_count - targetCount);
+
     const { left_objects, right_objects, differences } = buildSpotDiffObjects(
       params.item_count,
-      params.target_count,
+      targetCount,
       shuffled
     );
 
     return {
       content_pack: {
         prompt: "Bé hãy tìm điểm khác biệt giữa hai bức hình nhé!",
-        target_count: params.target_count,
+        target_count: targetCount,
         left_objects,
         right_objects,
         differences,
       },
       difficulty_params: {
         item_count: params.item_count,
-        target_count: params.target_count,
-        distractor_count: params.distractor_count,
-        difference_count: params.target_count,
+        target_count: targetCount,
+        distractor_count: distractorCount,
+        difference_count: targetCount,
         show_difference_counter: true,
         hint_after_ms: 8000,
         allow_retry: true,

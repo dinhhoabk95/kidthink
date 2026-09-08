@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -22,40 +23,52 @@ export const projectGT034: Projection<"GT-034"> = {
     }
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
+    const params = getEngineDifficultyParams("GT-034", opts.difficulty);
     const shuffled = shuffleDeterministic(dataset.items, rng);
-    const itemA = safeGetItem(shuffled, 0);
-    const itemB = safeGetItem(shuffled, 1);
 
-    const instruments = [
-      {
-        instrument_id: itemA.id,
-        asset: resolveItemAsset(itemA, true),
-        freq: 440,
-        name_vi: itemA.label,
-      },
-      {
-        instrument_id: itemB.id,
-        asset: resolveItemAsset(itemB, true),
-        freq: 880,
-        name_vi: itemB.label,
-      },
-    ];
+    const instCount = Math.min(params.item_count, Math.max(2, shuffled.length));
+    const instruments = Array.from({ length: instCount }, (_, i) => {
+      const item = safeGetItem(shuffled, i % shuffled.length);
+      return {
+        instrument_id: `inst_${item.id}_${i + 1}`,
+        asset: resolveItemAsset(item, true),
+        freq: 220 * (i + 1),
+        name_vi: item.label,
+      };
+    });
 
-    // Pattern: A, B, A, B (motif AB repeats)
-    const target_pattern = [itemA.id, itemB.id, itemA.id, itemB.id];
+    const patternLength = params.pattern_length ?? 4;
+    const instrumentCount = params.instrument_count ?? params.item_count;
+    const tempoBpm = params.tempo_bpm ?? 80;
+
+    // Tạo motif lặp chu kỳ 2 hoặc 3
+    const motifLen = instCount >= 3 && patternLength >= 6 ? 3 : 2;
+    const motif = instruments
+      .slice(0, motifLen)
+      .map((inst) => inst.instrument_id);
+
+    // Mẫu nhịp lặp lại motif để thoả mãn BR-E034-01 hasRepeatingMotif
+    const target_pattern = Array.from({ length: patternLength }, (_, i) => {
+      return (
+        motif[i % motif.length] ?? instruments[0]?.instrument_id ?? "inst_1"
+      );
+    });
 
     return {
       content_pack: {
         prompt: "Bé hãy hoàn thành chuỗi âm thanh lặp lại nhé!",
         instruments,
         target_pattern,
-        tempo_bpm: 80,
+        tempo_bpm: tempoBpm,
       },
       difficulty_params: {
-        tempo_bpm: 80,
-        pattern_length: 4,
+        item_count: params.item_count,
+        pattern_length: patternLength,
+        instrument_count: instrumentCount,
+        tempo_bpm: tempoBpm,
+        allow_replay: true,
+        replay_limit: 3,
         hint_after_ms: 8000,
-        allow_retry: true,
       },
     };
   },

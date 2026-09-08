@@ -695,6 +695,14 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Hiển thị bộ đếm số lượng",
     help: "Bật/tắt hiển thị số điểm khác biệt đã tìm thấy.",
   },
+  difference_count: {
+    label: "Số điểm khác biệt",
+    help: "Số lượng điểm khác nhau cần tìm giữa hai hình ảnh.",
+  },
+  show_difference_counter: {
+    label: "Hiển thị bộ đếm khác biệt",
+    help: "Bật/tắt hiển thị số điểm khác biệt đã tìm thấy trên màn hình.",
+  },
   // GT-026 go-nogo
   go_stimulus: {
     label: "Đối tượng chạm (Go)",

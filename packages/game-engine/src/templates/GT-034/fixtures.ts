@@ -33,6 +33,7 @@ export const GT034_FIXTURES: GT034Fixture[] = [
       tempo_bpm: 80,
     },
     difficulty: {
+      item_count: 2,
       pattern_length: 4,
       instrument_count: 2,
       tempo_bpm: 80,
@@ -73,6 +74,7 @@ export const GT034_FIXTURES: GT034Fixture[] = [
       tempo_bpm: 75,
     },
     difficulty: {
+      item_count: 3,
       pattern_length: 6,
       instrument_count: 3,
       tempo_bpm: 75,
@@ -106,6 +108,7 @@ export const GT034_FIXTURES: GT034Fixture[] = [
       tempo_bpm: 70,
     },
     difficulty: {
+      item_count: 2,
       pattern_length: 4,
       instrument_count: 2,
       tempo_bpm: 70,

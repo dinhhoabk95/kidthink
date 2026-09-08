@@ -100,6 +100,7 @@ export const GT030Generator: LevelGenerator = {
         answer_options,
       },
       difficulty_params: {
+        item_count: answer_options.length,
         length_in_units: lengthInUnits,
         gap_tolerance_pct: 10,
         allow_retry: true,

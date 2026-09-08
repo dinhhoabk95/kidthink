@@ -76,6 +76,7 @@ export const GT031Generator: LevelGenerator = {
         coins,
       },
       difficulty_params: {
+        item_count: coins.length,
         coin_kind_count: new Set(shuffledCoinValues).size,
         target_amount: targetAmount,
         exact_change: true,

@@ -80,8 +80,8 @@ export const projectGT027: Projection<"GT-027"> = {
       },
       difficulty_params: {
         item_count: params.item_count,
-        target_count: params.target_count,
-        signal_duration_ms: params.signal_duration_ms,
+        target_count: params.target_count ?? 2,
+        signal_duration_ms: params.signal_duration_ms ?? 3000,
         hint_after_ms: 8000,
         allow_retry: true,
       },

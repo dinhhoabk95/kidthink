@@ -37,6 +37,7 @@ export const GT031_FIXTURES: GT031Fixture[] = [
       ],
     },
     difficulty: {
+      item_count: 3,
       coin_kind_count: 2,
       target_amount: 3,
       exact_change: true,
@@ -78,6 +79,7 @@ export const GT031_FIXTURES: GT031Fixture[] = [
       ],
     },
     difficulty: {
+      item_count: 4,
       coin_kind_count: 3,
       target_amount: 5,
       exact_change: true,
@@ -124,6 +126,7 @@ export const GT031_FIXTURES: GT031Fixture[] = [
       ],
     },
     difficulty: {
+      item_count: 5,
       coin_kind_count: 3,
       target_amount: 7,
       exact_change: true,

@@ -52,8 +52,8 @@ export const projectGT024: Projection<"GT-024"> = {
       },
       difficulty_params: {
         item_count: params.item_count,
-        tolerance_px: params.tolerance_px,
-        show_numbered_dots: params.show_numbered_dots,
+        tolerance_px: params.tolerance_px ?? 24,
+        show_numbered_dots: params.show_numbered_dots ?? true,
         show_guide_lines: true,
         hint_after_ms: 8000,
         allow_retry: true,

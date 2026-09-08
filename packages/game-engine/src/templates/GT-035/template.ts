@@ -139,6 +139,7 @@ export const GT035ContentSchema = z
   );
 
 export const GT035DifficultySchema = z.object({
+  item_count: z.number().int().min(1).max(8),
   max_commands: z.number().int().min(1).max(MAX_CODE_COMMANDS).default(8),
   obstacle_count: z.number().int().min(0).max(8).default(0),
   collectible_count: z.number().int().min(0).max(4).default(0),

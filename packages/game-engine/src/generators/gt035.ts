@@ -162,6 +162,7 @@ function tryGenerateCandidate(
   };
 
   const difficulty: GT035Difficulty = {
+    item_count: Math.max(2, obstacles.length + collectibles.length + 1),
     max_commands: Math.min(8, Math.max(solution.length + 1, 4)),
     obstacle_count: obstacles.length,
     collectible_count: collectibles.length,
@@ -216,6 +217,7 @@ export const GT035Generator: LevelGenerator = {
     };
 
     const fallbackDifficulty: GT035Difficulty = {
+      item_count: 2,
       max_commands: 4,
       obstacle_count: 0,
       collectible_count: 0,

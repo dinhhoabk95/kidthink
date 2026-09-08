@@ -34,15 +34,17 @@ export const projectGT016: Projection<"GT-016"> = {
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const params = getEngineDifficultyParams("GT-016", opts.difficulty);
 
+    const minuteStep = params.minute_step ?? 30;
+    const distractorCount = params.distractor_count ?? 3;
+
     const targetHour = 1 + rng.nextInt(12);
     const targetMinute: 0 | 30 =
-      params.minute_step <= 30 && rng.nextInt(2) === 1 ? 30 : 0;
+      minuteStep <= 30 && rng.nextInt(2) === 1 ? 30 : 0;
     const targetTime = { hour: targetHour, minute: targetMinute };
-
     const rawOptions = buildClockOptions(
       targetHour,
       targetMinute,
-      params.distractor_count
+      distractorCount
     );
     const options = shuffleDeterministic(rawOptions, rng);
 
@@ -55,8 +57,8 @@ export const projectGT016: Projection<"GT-016"> = {
       },
       difficulty_params: {
         item_count: params.item_count,
-        minute_step: params.minute_step,
-        distractor_count: params.distractor_count,
+        minute_step: minuteStep,
+        distractor_count: distractorCount,
         hint_after_ms: 10_000,
         allow_retry: true,
       },

@@ -62,7 +62,7 @@ function findHitSlotIndex(
 function stepClockTime(
   current: ClockTime,
   delta: number,
-  step: 30 | 60
+  step: 15 | 30 | 60
 ): ClockTime {
   let totalMinutes = current.hour * 60 + current.minute;
   if (delta > 0) {

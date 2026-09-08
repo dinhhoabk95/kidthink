@@ -64,6 +64,7 @@ export const GT034ContentSchema = z
   });
 
 export const GT034DifficultySchema = z.object({
+  item_count: z.number().int().min(2).max(4),
   pattern_length: z.number().int().min(4).max(12).default(4),
   instrument_count: z.number().int().min(2).max(4).default(2),
   tempo_bpm: z.number().int().min(60).max(120).default(80),

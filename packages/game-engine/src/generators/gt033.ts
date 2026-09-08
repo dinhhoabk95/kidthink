@@ -67,6 +67,7 @@ export const GT033Generator: LevelGenerator = {
     };
 
     const difficulty_params: GT033Difficulty = {
+      item_count: palette.length,
       grid_size: size,
       color_count: chosenColors.length,
       blank_count: blankCount,

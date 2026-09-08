@@ -25,6 +25,7 @@ export const GT035_FIXTURES: GT035Fixture[] = [
       allowed_commands: ["forward", "turn_left", "turn_right"],
     },
     difficulty: {
+      item_count: 2,
       max_commands: 6,
       obstacle_count: 0,
       collectible_count: 0,
@@ -57,6 +58,7 @@ export const GT035_FIXTURES: GT035Fixture[] = [
       allowed_commands: ["forward", "turn_left", "turn_right"],
     },
     difficulty: {
+      item_count: 3,
       max_commands: 8,
       obstacle_count: 1,
       collectible_count: 1,
@@ -82,6 +84,7 @@ export const GT035_FIXTURES: GT035Fixture[] = [
       allowed_commands: ["forward", "turn_left", "turn_right", "loop"],
     },
     difficulty: {
+      item_count: 2,
       max_commands: 6,
       obstacle_count: 1,
       collectible_count: 0,

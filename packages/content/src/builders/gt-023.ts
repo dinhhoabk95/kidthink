@@ -77,8 +77,8 @@ export const projectGT023: Projection<"GT-023"> = {
       },
       difficulty_params: {
         item_count: params.item_count,
-        snap_radius_px: params.snap_radius_px,
-        show_anchor_outline: params.show_anchor_outline,
+        snap_radius_px: params.snap_radius_px ?? 40,
+        show_anchor_outline: params.show_anchor_outline ?? true,
         hint_after_ms: 8000,
         allow_retry: true,
       },

@@ -59,8 +59,8 @@ export const projectGT026: Projection<"GT-026"> = {
       },
       difficulty_params: {
         item_count: params.item_count,
-        stimulus_window_ms: params.stimulus_window_ms,
-        isi_ms: params.isi_ms,
+        stimulus_window_ms: params.stimulus_window_ms ?? 1800,
+        isi_ms: params.isi_ms ?? 600,
         hint_after_ms: 8000,
         allow_retry: true,
       },
