@@ -88,6 +88,7 @@ export const GT013ContentSchema = GT013BaseSchema.refine(everyCellInsideGrid, {
   );
 
 export const GT013DifficultySchema = z.object({
+  item_count: z.number().int().min(1).max(1),
   dead_end_count: z.number().int().min(0).max(6),
   required_cell_count: z.number().int().min(0).max(2),
   hint_after_ms: z.number().int().min(6000).max(30_000),

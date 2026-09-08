@@ -55,6 +55,9 @@ describe("Hợp đồng độ khó engine-difficulty-params.json (Task #263 T5)"
     for (const [code, entry] of Object.entries(config.engines)) {
       const template = ALL_TEMPLATES[code];
       expect(template, `Không tìm thấy template ${code}`).toBeDefined();
+      if (!template) {
+        continue;
+      }
       const [minLimit, maxLimit] = template.limits.item_count;
 
       for (let lvl = 1; lvl <= 5; lvl++) {
@@ -88,7 +91,7 @@ describe("Hợp đồng độ khó engine-difficulty-params.json (Task #263 T5)"
 
   it("ngoại lệ difficulty_fixed được khai báo có chủ ý", () => {
     const config = parsed as EngineDifficultyParamsConfig;
-    expect(config.engines["GT-000"].difficulty_fixed).toBe(true);
-    expect(config.engines["GT-013"].difficulty_fixed).toBe(true);
+    expect(config.engines["GT-000"]?.difficulty_fixed).toBe(true);
+    expect(config.engines["GT-013"]?.difficulty_fixed).toBe(true);
   });
 });

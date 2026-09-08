@@ -324,7 +324,7 @@ describe("RoundRunner (BR-RSP)", () => {
       expect(() => runner.startFirstRound()).toThrow(ERR_MISSING_ITEM_COUNT);
     });
 
-    it("hint_after_ms: phát event hint_offered và tăng hintCountTotal", () => {
+    it("hint_after_ms: phát event hint_requested và tăng hintCountTotal", () => {
       vi.useFakeTimers();
       try {
         const runner = new RoundRunner({
@@ -350,9 +350,9 @@ describe("RoundRunner (BR-RSP)", () => {
         expect(runner.getState().hintCountTotal).toBe(1);
 
         const events = runner.getAllTelemetry();
-        const hintEvt = events.find((e) => e.event_name === "hint_offered");
+        const hintEvt = events.find((e) => e.event_name === "hint_requested");
         expect(hintEvt).toBeDefined();
-        expect(hintEvt?.data?.hint_after_ms).toBe(2000);
+        expect(hintEvt?.data?.source).toBe("timer");
       } finally {
         vi.useRealTimers();
       }

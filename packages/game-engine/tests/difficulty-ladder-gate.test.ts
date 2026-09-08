@@ -40,8 +40,10 @@ describe("Cổng check:difficulty-ladder và check:hardcoded-params (Task #263 T
       const cloned = JSON.parse(
         JSON.stringify(validConfig)
       ) as EngineDifficultyParamsConfig;
-      // GT-001 limits là [2, 6]. Gán mức 5 = 10 -> vi phạm
-      cloned.engines["GT-001"].levels["5"].item_count = 10;
+      const gt1 = cloned.engines["GT-001"];
+      if (gt1?.levels["5"]) {
+        gt1.levels["5"].item_count = 10;
+      }
 
       const issues = checkConfigLimits(cloned);
       expect(issues.length).toBeGreaterThanOrEqual(1);
@@ -56,7 +58,10 @@ describe("Cổng check:difficulty-ladder và check:hardcoded-params (Task #263 T
         JSON.stringify(validConfig)
       ) as EngineDifficultyParamsConfig;
       // GT-001 limits là [2, 6]. Gán mức 1 = 1 -> vi phạm
-      cloned.engines["GT-001"].levels["1"].item_count = 1;
+      const gt1 = cloned.engines["GT-001"];
+      if (gt1?.levels["1"]) {
+        gt1.levels["1"].item_count = 1;
+      }
 
       const issues = checkConfigLimits(cloned);
       expect(issues.length).toBeGreaterThanOrEqual(1);
@@ -77,8 +82,11 @@ describe("Cổng check:difficulty-ladder và check:hardcoded-params (Task #263 T
         JSON.stringify(validConfig)
       ) as EngineDifficultyParamsConfig;
       // Gán mức 3 nhỏ hơn mức 2
-      cloned.engines["GT-001"].levels["3"].item_count = 2;
-      cloned.engines["GT-001"].levels["2"].item_count = 4;
+      const gt1 = cloned.engines["GT-001"];
+      if (gt1?.levels["3"] && gt1?.levels["2"]) {
+        gt1.levels["3"].item_count = 2;
+        gt1.levels["2"].item_count = 4;
+      }
 
       const issues = checkConfigMonotonicity(cloned);
       expect(issues.length).toBeGreaterThanOrEqual(1);

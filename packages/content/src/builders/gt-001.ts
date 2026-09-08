@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -22,20 +23,31 @@ export const projectGT001: Projection<"GT-001"> = {
       );
     }
 
+    const params = getEngineDifficultyParams("GT-001", opts.difficulty);
+    const expectedItemCount = params.item_count;
+    const expectedDistractorCount =
+      params.distractor_count ?? Math.max(1, expectedItemCount - 1);
+
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const targetIdx = rng.nextInt(dataset.items.length);
     const targetItem = safeGetItem(dataset.items, targetIdx);
 
     const distractorPool = dataset.items.filter((_, idx) => idx !== targetIdx);
-    const distractorCount = Math.min(
-      Math.max(1, Math.min(opts.difficulty + 1, 5)),
-      distractorPool.length
-    );
+    const pool = distractorPool.length > 0 ? distractorPool : dataset.items;
+    const shuffledPool = shuffleDeterministic(pool, rng);
 
-    const shuffledDistractors = shuffleDeterministic(distractorPool, rng).slice(
-      0,
-      distractorCount
-    );
+    const chosenDistractors: Array<{
+      id: string;
+      asset: ReturnType<typeof resolveItemAsset>;
+    }> = [];
+    for (let i = 0; i < expectedDistractorCount; i++) {
+      const d = safeGetItem(shuffledPool, i % shuffledPool.length);
+      const uniqueId = i < shuffledPool.length ? d.id : `${d.id}_d${i + 1}`;
+      chosenDistractors.push({
+        id: uniqueId,
+        asset: resolveItemAsset(d, true),
+      });
+    }
 
     const targetAsset = resolveItemAsset(targetItem, true);
 
@@ -45,9 +57,9 @@ export const projectGT001: Projection<"GT-001"> = {
         asset: targetAsset,
         is_correct: true,
       },
-      ...shuffledDistractors.map((d) => ({
+      ...chosenDistractors.map((d) => ({
         item_id: d.id,
-        asset: resolveItemAsset(d, true),
+        asset: d.asset,
         is_correct: false,
       })),
     ];
@@ -75,9 +87,10 @@ export const projectGT001: Projection<"GT-001"> = {
         options: shuffledOptions,
       },
       difficulty_params: {
-        distractor_count: distractorCount,
-        hint_after_ms: 10_000,
-        allow_retry: true,
+        item_count: expectedItemCount,
+        distractor_count: expectedDistractorCount,
+        hint_after_ms: params.hint_after_ms ?? 10_000,
+        allow_retry: params.allow_retry ?? true,
         shuffle_items: true,
       },
     };

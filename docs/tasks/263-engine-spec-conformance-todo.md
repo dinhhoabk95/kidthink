@@ -172,13 +172,13 @@ lúc chơi**, dù mục 5 của phiếu mô tả cả hai nhánh.
 **5,1**: mức 5 dễ hơn mức 4.
 
 **Tiêu chí nghiệm thu**
-- [ ] Cả 6 engine có số item không giảm khi mức tăng, khớp bảng tra T5
-- [ ] Sửa bằng cách đặt lại `difficulty` của level cho khớp số item, hoặc bổ sung item — cấm — NEVER đổi ngưỡng cổng
-- [ ] Level chạm vào vẫn qua `check:skill-quota`, `check:age-band-fit`, `check:engine-allocation`
+- [x] Cả 6 engine có số item không giảm khi mức tăng, khớp bảng tra T5
+- [x] Sửa bằng cách đặt lại `difficulty` của level cho khớp số item, hoặc bổ sung item — cấm — NEVER đổi ngưỡng cổng
+- [x] Level chạm vào vẫn qua `check:skill-quota`, `check:age-band-fit`, `check:engine-allocation`
 
 **Kiểm chứng**
-- [ ] `check:difficulty-ladder` giảm trần đúng 6 engine
-- [ ] `check:engine-depth` không tụt
+- [x] `check:difficulty-ladder` giảm trần đúng 6 engine (descending debt về 0)
+- [x] `check:engine-depth` không tụt
 
 ---
 

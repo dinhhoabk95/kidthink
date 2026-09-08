@@ -1,10 +1,11 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
   ProjectOptions,
   SkillDataset,
 } from "@mindkid/shared";
-import { resolveItemAsset } from "./utils.js";
+import { resolveItemAsset, safeGetItem } from "./utils.js";
 
 export const projectGT006: Projection<"GT-006"> = {
   template: "GT-006",
@@ -16,19 +17,25 @@ export const projectGT006: Projection<"GT-006"> = {
       );
     }
 
-    const itemCount = Math.min(
-      Math.max(3, Math.min(opts.difficulty + 2, 5)),
-      dataset.items.length
-    );
+    const params = getEngineDifficultyParams("GT-006", opts.difficulty);
+    const expectedItemCount = params.item_count;
 
     // If ordering specified, use it
     let orderedIds = dataset.ordering ?? dataset.items.map((i) => i.id);
-    if (orderedIds.length < itemCount) {
+    if (orderedIds.length < expectedItemCount) {
       orderedIds = dataset.items.map((i) => i.id);
     }
 
     const itemMap = new Map(dataset.items.map((i) => [i.id, i]));
-    const selectedIds = orderedIds.slice(0, itemCount);
+    const selectedIds: string[] = [];
+    for (let i = 0; i < expectedItemCount; i++) {
+      if (i < orderedIds.length) {
+        selectedIds.push(safeGetItem(orderedIds, i));
+      } else {
+        const fallback = safeGetItem(dataset.items, i % dataset.items.length);
+        selectedIds.push(fallback.id);
+      }
+    }
 
     const sequence = selectedIds.map((id, index) => {
       const item = itemMap.get(id);
@@ -38,7 +45,7 @@ export const projectGT006: Projection<"GT-006"> = {
         );
       }
       return {
-        step_id: `step-${item.id}`,
+        step_id: `step-${item.id}-${index + 1}`,
         order_index: index,
         asset: resolveItemAsset(item, true),
         label: item.label,
@@ -51,8 +58,10 @@ export const projectGT006: Projection<"GT-006"> = {
         sequence,
       },
       difficulty_params: {
-        hint_after_ms: 15_000,
-        allow_retry: true,
+        item_count: expectedItemCount,
+        target_count: expectedItemCount,
+        hint_after_ms: params.hint_after_ms ?? 15_000,
+        allow_retry: params.allow_retry ?? true,
         shuffle_initial: true,
       },
     };

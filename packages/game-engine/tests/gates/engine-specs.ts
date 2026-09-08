@@ -474,7 +474,10 @@ function checkAgeBands(
       bannedRow.matchAll(S15_BACKTICK_TOKEN_REGEX)
     )
       .map((m) => m[1])
-      .filter((b) => S15_AGE_BAND_TOKEN_REGEX.test(b));
+      .filter(
+        (b): b is string =>
+          typeof b === "string" && S15_AGE_BAND_TOKEN_REGEX.test(b)
+      );
     const sortedActual = [...actualBanned].sort();
     const sortedExpected = [...tmpl.banned_age_bands].sort();
     if (JSON.stringify(sortedActual) !== JSON.stringify(sortedExpected)) {
@@ -600,7 +603,8 @@ export function lintSingleEngineSpec(
       templateCode,
       specPath,
       body,
-      expectedTemplate ?? ALL_TEMPLATES[templateCode]
+      (expectedTemplate ??
+        ALL_TEMPLATES[templateCode]) as ExpectedTemplateOrLimits
     )
   );
 

@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -22,21 +23,34 @@ export const projectGT022: Projection<"GT-022"> = {
       );
     }
 
+    const params = getEngineDifficultyParams("GT-022", opts.difficulty);
+    const expectedItemCount = params.item_count;
+    const targetCount = params.target_count ?? 2;
+    const distractorCount =
+      params.distractor_count ?? Math.max(1, expectedItemCount - targetCount);
+
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const targetIdx = rng.nextInt(dataset.items.length);
     const targetItem = safeGetItem(dataset.items, targetIdx);
 
     const otherItems = dataset.items.filter((_, i) => i !== targetIdx);
-    const targetCount = 2;
-    const distractorCount = Math.min(
-      Math.max(2, Math.min(opts.difficulty + 2, 6)),
-      otherItems.length
-    );
+    const pool = otherItems.length > 0 ? otherItems : dataset.items;
+    const shuffledDistractors = shuffleDeterministic(pool, rng);
 
-    const chosenDistractors = shuffleDeterministic(otherItems, rng).slice(
-      0,
-      distractorCount
-    );
+    const chosenDistractors: Array<{
+      id: string;
+      asset: ReturnType<typeof resolveItemAsset>;
+    }> = [];
+    for (let i = 0; i < distractorCount; i++) {
+      const d = safeGetItem(
+        shuffledDistractors,
+        i % shuffledDistractors.length
+      );
+      chosenDistractors.push({
+        id: `${d.id}_d${i + 1}`,
+        asset: resolveItemAsset(d, true),
+      });
+    }
 
     const scene_objects = [
       ...Array.from({ length: targetCount }, (_, i) => ({
@@ -47,9 +61,9 @@ export const projectGT022: Projection<"GT-022"> = {
         x: 100 + rng.nextInt(760),
         y: 80 + rng.nextInt(380),
       })),
-      ...chosenDistractors.map((d, i) => ({
-        id: `${d.id}_d${i + 1}`,
-        asset: resolveItemAsset(d, true),
+      ...chosenDistractors.map((d) => ({
+        id: d.id,
+        asset: d.asset,
         is_target: false,
         is_hidden: false,
         x: 100 + rng.nextInt(760),
@@ -67,8 +81,11 @@ export const projectGT022: Projection<"GT-022"> = {
         scene_objects: shuffleDeterministic(scene_objects, rng),
       },
       difficulty_params: {
-        hint_after_ms: 8000,
-        allow_retry: true,
+        item_count: expectedItemCount,
+        target_count: targetCount,
+        distractor_count: distractorCount,
+        hint_after_ms: params.hint_after_ms ?? 8000,
+        allow_retry: params.allow_retry ?? true,
         show_target_counter: true,
       },
     };

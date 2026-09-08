@@ -33,6 +33,7 @@ export const GT013_FIXTURES: {
       input_mode: "draw",
     },
     difficulty: {
+      item_count: 1,
       dead_end_count: 0,
       required_cell_count: 0,
       hint_after_ms: 8000,
@@ -62,6 +63,7 @@ export const GT013_FIXTURES: {
       input_mode: "draw",
     },
     difficulty: {
+      item_count: 1,
       dead_end_count: 1,
       required_cell_count: 0,
       hint_after_ms: 9000,
@@ -95,6 +97,7 @@ export const GT013_FIXTURES: {
       input_mode: "arrows",
     },
     difficulty: {
+      item_count: 1,
       dead_end_count: 5,
       required_cell_count: 2,
       hint_after_ms: 12_000,

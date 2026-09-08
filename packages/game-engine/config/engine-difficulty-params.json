@@ -197,19 +197,11 @@
       "difficulty_fixed": true,
       "reason": "Mê cung luôn có đúng 1 điểm xuất phát và 1 đích đến (item_count = 1); độ khó tăng qua số ngã rẽ cụt và độ dài đường đi tối thiểu",
       "levels": {
-        "1": { "item_count": 1, "dead_end_count": 0, "required_cell_count": 6 },
-        "2": { "item_count": 1, "dead_end_count": 1, "required_cell_count": 9 },
-        "3": {
-          "item_count": 1,
-          "dead_end_count": 2,
-          "required_cell_count": 12
-        },
-        "4": {
-          "item_count": 1,
-          "dead_end_count": 4,
-          "required_cell_count": 16
-        },
-        "5": { "item_count": 1, "dead_end_count": 6, "required_cell_count": 20 }
+        "1": { "item_count": 1, "dead_end_count": 0, "required_cell_count": 0 },
+        "2": { "item_count": 1, "dead_end_count": 1, "required_cell_count": 0 },
+        "3": { "item_count": 1, "dead_end_count": 2, "required_cell_count": 1 },
+        "4": { "item_count": 1, "dead_end_count": 4, "required_cell_count": 1 },
+        "5": { "item_count": 1, "dead_end_count": 6, "required_cell_count": 2 }
       }
     },
     "GT-014": {

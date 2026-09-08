@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -10,12 +11,41 @@ export const projectGT017: Projection<"GT-017"> = {
   template: "GT-017",
   requires: { min_items: 0, max_items: 10 },
   project(_dataset: SkillDataset, opts: ProjectOptions): ProjectedPack {
-    const rng = createRng(opts.seed + (opts.round_index ?? 0));
-    const cubeCount = 2 + rng.nextInt(3); // 2..4 cubes (bounds x <= 3)
+    const params = getEngineDifficultyParams("GT-017", opts.difficulty);
+    const expectedItemCount = params.item_count;
+    const hiddenCubeCount =
+      (params as { hidden_cube_count?: number }).hidden_cube_count ?? 0;
+    const distractorCount =
+      params.distractor_count ?? Math.max(1, expectedItemCount - 1);
 
-    const model = [{ x: 0, y: 0, z: 0, colorToken: "primary" }];
-    for (let i = 1; i < cubeCount; i++) {
-      model.push({ x: i, y: 0, z: 0, colorToken: "primary" });
+    const rng = createRng(opts.seed + (opts.round_index ?? 0));
+    const cubeCount = 2 + Math.min(opts.difficulty, 3) + hiddenCubeCount;
+
+    const model: Array<{
+      x: number;
+      y: number;
+      z: number;
+      colorToken: string;
+    }> = [];
+    for (let i = 0; i < cubeCount; i++) {
+      model.push({
+        x: i % 3,
+        y: Math.floor(i / 3),
+        z: 0,
+        colorToken: "primary",
+      });
+    }
+
+    const distractorValues = new Set<number>();
+    let offset = 1;
+    while (distractorValues.size < distractorCount) {
+      if (cubeCount + offset <= 10) {
+        distractorValues.add(cubeCount + offset);
+      }
+      if (distractorValues.size < distractorCount && cubeCount - offset >= 1) {
+        distractorValues.add(cubeCount - offset);
+      }
+      offset++;
     }
 
     const options = shuffleDeterministic(
@@ -25,19 +55,11 @@ export const projectGT017: Projection<"GT-017"> = {
           asset: { kind: "text" as const, text: `${cubeCount}` },
           is_correct: true,
         },
-        {
-          option_id: `opt_${cubeCount + 1}`,
-          asset: { kind: "text" as const, text: `${cubeCount + 1}` },
+        ...Array.from(distractorValues).map((val) => ({
+          option_id: `opt_${val}`,
+          asset: { kind: "text" as const, text: `${val}` },
           is_correct: false,
-        },
-        {
-          option_id: `opt_${Math.max(1, cubeCount - 1)}`,
-          asset: {
-            kind: "text" as const,
-            text: `${Math.max(1, cubeCount - 1)}`,
-          },
-          is_correct: false,
-        },
+        })),
       ],
       rng
     );
@@ -50,11 +72,12 @@ export const projectGT017: Projection<"GT-017"> = {
         options,
       },
       difficulty_params: {
-        hidden_cube_count: 0,
-        distractor_count: 2,
+        item_count: expectedItemCount,
+        hidden_cube_count: hiddenCubeCount,
+        distractor_count: distractorCount,
         allow_rotate: false,
-        hint_after_ms: 8000,
-        allow_retry: true,
+        hint_after_ms: params.hint_after_ms ?? 8000,
+        allow_retry: params.allow_retry ?? true,
       },
     };
   },

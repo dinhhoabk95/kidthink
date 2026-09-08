@@ -316,17 +316,15 @@ export class RoundRunner {
       item_count: itemCount,
     });
 
-    if (
-      typeof rawParams.hint_after_ms === "number" &&
-      rawParams.hint_after_ms > 0
-    ) {
+    const hintAfterMs = rawParams?.hint_after_ms;
+    if (typeof hintAfterMs === "number" && hintAfterMs > 0) {
       this.hintTimer = setTimeout(() => {
-        this.recordEvent("hint_offered", {
+        this.recordEvent("hint_requested", {
           round_index: index,
-          hint_after_ms: rawParams.hint_after_ms,
+          source: "timer",
         });
         this.recordHint();
-      }, rawParams.hint_after_ms);
+      }, hintAfterMs);
     }
 
     this.sessionStartMs = Date.now();

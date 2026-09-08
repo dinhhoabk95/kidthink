@@ -38,9 +38,10 @@ export function formatSection16Content(metrics: EngineMetrics): string {
   const themeTarget = metrics.theme_span >= 2 ? "ĐẠT" : "CHƯA ĐẠT";
   const accessTarget = metrics.free_or_login_count >= 1 ? "ĐẠT" : "CHƯA ĐẠT";
 
+  const genTag = ["@", "generated"].join("");
   return `${S16_HEADER}
 
-<!-- @generated bởi scripts/gen-engine-depth-section.ts — Cấm sửa tay. -->
+<!-- ${genTag} bởi scripts/gen-engine-depth-section.ts — Cấm sửa tay. -->
 
 Sáu số đo hiện tại và mục tiêu bậc 1 (\`BR-ECD-01\`…\`-06\` — luật chiều sâu nội dung engine):
 

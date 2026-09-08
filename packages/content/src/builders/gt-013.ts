@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -10,6 +11,7 @@ export const projectGT013: Projection<"GT-013"> = {
   template: "GT-013",
   requires: { min_items: 0, max_items: 10 },
   project(dataset: SkillDataset, opts: ProjectOptions): ProjectedPack {
+    const params = getEngineDifficultyParams("GT-013", opts.difficulty);
     const _rng = createRng(opts.seed + (opts.round_index ?? 0));
     const size = opts.band === "5-6" ? 5 : 4;
 
@@ -41,6 +43,11 @@ export const projectGT013: Projection<"GT-013"> = {
       ? `Bé hãy tìm đường qua mê cung đến ô ${item.glyph} nhé!`
       : "Bé hãy tìm đường đi qua mê cung đến đích nhé!";
 
+    const deadEndCount =
+      (params as { dead_end_count?: number }).dead_end_count ?? 0;
+    const requiredCellCount =
+      (params as { required_cell_count?: number }).required_cell_count ?? 0;
+
     return {
       content_pack: {
         prompt,
@@ -55,10 +62,11 @@ export const projectGT013: Projection<"GT-013"> = {
         input_mode: "arrows" as const,
       },
       difficulty_params: {
-        dead_end_count: 0,
-        required_cell_count: 0,
-        hint_after_ms: 8000,
-        allow_retry: true,
+        item_count: params.item_count,
+        dead_end_count: deadEndCount,
+        required_cell_count: requiredCellCount,
+        hint_after_ms: params.hint_after_ms ?? 8000,
+        allow_retry: params.allow_retry ?? true,
       },
     };
   },
