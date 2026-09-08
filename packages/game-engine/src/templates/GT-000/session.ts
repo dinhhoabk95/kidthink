@@ -219,8 +219,10 @@ export class GT000Session extends TemplateGameSession<
         value: asset.value,
         glyph: asset.glyph,
       });
+      // Cue thay giọng dùng "selected" — Cấm — NEVER mượn "correct": trẻ sẽ học
+      // rằng ô sáng nghĩa là "đã trả lời đúng".
       const spoke = this.audio.speakPrompt(spokenTerm, undefined, () => {
-        this.renderItemStates.set(asset.asset_id, "correct");
+        this.renderItemStates.set(asset.asset_id, "selected");
       });
       this.lastTtsUsed = spoke;
       if (!spoke) {
@@ -256,7 +258,7 @@ export class GT000Session extends TemplateGameSession<
           glyph: asset.glyph,
         })}`;
       const spoke = this.audio.speakPrompt(promptToSpeak, undefined, () => {
-        this.renderItemStates.set(asset.asset_id, "correct");
+        this.renderItemStates.set(asset.asset_id, "selected");
       });
       this.lastTtsUsed = spoke;
       if (!spoke) {

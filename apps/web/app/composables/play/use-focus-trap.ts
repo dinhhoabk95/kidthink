@@ -1,4 +1,4 @@
-import { nextTick, onMounted, onUnmounted, type Ref, watch } from "vue";
+import { nextTick, onUnmounted, type Ref, watch } from "vue";
 
 export interface FocusTrapOptions {
   readonly onEscape?: () => void;
@@ -106,6 +106,9 @@ export function useFocusTrap(
     }
   }
 
+  // `immediate: true` đã chạy activate() ngay trong setup, và activate() hoãn
+  // việc lấy focus sang `nextTick` nên DOM đã mount lúc đó. Gọi thêm ở
+  // `onMounted` chỉ ghi đè `previouslyFocusedElement` lần thứ hai.
   watch(
     isActive,
     (active) => {
@@ -117,12 +120,6 @@ export function useFocusTrap(
     },
     { immediate: true }
   );
-
-  onMounted(() => {
-    if (isActive.value) {
-      activate();
-    }
-  });
 
   onUnmounted(() => {
     deactivate();

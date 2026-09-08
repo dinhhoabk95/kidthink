@@ -1582,10 +1582,29 @@ const PARTICLE_COLORS = [
   designTokens.colors.brand[400],
 ] as const;
 
+/**
+ * Máy có bật "giảm chuyển động" hay không (BR-FBK-09).
+ * Đọc trực tiếp `matchMedia` vì hạt được sinh trong `validateAction`/`commit`,
+ * nơi không có `RenderSystem` để hỏi.
+ */
+export function prefersReducedMotion(): boolean {
+  if (typeof window === "undefined") {
+    return false;
+  }
+  return (
+    window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false
+  );
+}
+
 export function spawnParticlesAtSlot(slot: Slot, count: number): Particle[] {
   const particles: Particle[] = [];
-  for (let i = 0; i < count; i++) {
-    const angle = (Math.PI * 2 * i) / count;
+  // Giảm mật độ ở CHỖ SINH. Bỏ bớt lúc vẽ (`i += 2`) thì hạt vẫn được mô phỏng
+  // mà không bao giờ hiện — tốn công và vẫn đủ chuyển động.
+  const total = prefersReducedMotion()
+    ? Math.max(1, Math.ceil(count / 2))
+    : count;
+  for (let i = 0; i < total; i++) {
+    const angle = (Math.PI * 2 * i) / total;
     const spread = 1.5 + ((i * 7 + 3) % 5) * 0.4;
     particles.push({
       x: slot.x,
