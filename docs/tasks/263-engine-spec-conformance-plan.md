@@ -2,7 +2,7 @@
 
 Ngày lập: 2026-09-08 · Nguồn: `docs/specs/01-platform/engines/GT-000..GT-036.md`
 Nối tiếp: [`#261`](261-engine-behavior-domain-plan.md) miền hành vi · [`#262`](262-engine-turn-script-plan.md) kịch bản lượt chơi
-Trạng thái: đề xuất, năm quyết định phạm vi đã chốt
+Trạng thái: hoàn thành (18/18 task đạt, Điểm dừng A..F hoàn tất)
 
 ## 1. Câu trả lời ngắn
 
@@ -316,8 +316,8 @@ Kết thúc: `difficulty` là số đo được, mọi ngưỡng đến từ par
 | B | `engine-difficulty-params.json` đủ 37 hàng; `check:difficulty-ladder` và cổng số cứng xanh; 0 engine đi lùi; `round-runner` đọc `difficulty_params.item_count`; `hint_after_ms` và `allow_retry` có mã chơi đọc hoặc rời hợp đồng; `GT-000` dùng ngoại lệ khai tường minh |
 | C | `engine-depth.json` ở bậc 2, 37/37 đạt, `history` đủ hai dòng |
 | D | 49 ô thủng về 0 |
-| E | `GT-026` chơi được hai lối có test |
-| F | 0 phiếu còn luật khuôn; mọi `BR-Exxx` có ≥1 test |
+| E | `GT-026` chơi được hai lối có test (hoàn thành) |
+| F | 0 phiếu còn luật khuôn; mọi `BR-Exxx` có ≥1 test (hoàn thành) |
 
 ## 8. Rủi ro
 

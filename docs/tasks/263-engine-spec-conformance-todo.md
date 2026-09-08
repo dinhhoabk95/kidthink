@@ -380,26 +380,26 @@ nào trỏ tới; 27 engine có 0. Khuôn tham chiếu là `GT-001`.
 - [x] **T18.1 lô `mvp`** — `GT-002`..`GT-006` · M (15 luật thật, 15 scenario mục 9, 15 unit tests pass)
 - [x] **T18.2 lô `montessori`** — `GT-007`..`GT-017` · L (33 luật thật, 33 scenario mục 9, 33 unit tests pass)
 - [x] **T18.3 lô `legacy-v1`** — `GT-018`..`GT-024` · L (21 luật thật, 21 scenario mục 9, 21 unit tests pass)
-**T18.4 lô `taxonomy-gap`** — `GT-025`..`GT-027` · M
+- [x] **T18.4 lô `taxonomy-gap`** — `GT-025`..`GT-027` · M (9 luật thật, 9 scenario mục 9, 9 unit tests pass)
 
 **Tiêu chí nghiệm thu mỗi lô**
-- [ ] Mỗi engine có ≥3 luật nói về ràng buộc **riêng của cơ chế đó**
-- [ ] Luật `checkWinCondition() thuần` bị gỡ — nó thuộc `game-template-contract.md`
-- [ ] Luật band được thay bằng ràng buộc nội dung thật; band đã do mục 15 và registry giữ
-- [ ] Mỗi luật có đúng một `Scenario` mục 9 và ≥1 test mang mã luật
-- [ ] Mục 14 nêu ca sai không bắt được bằng schema, gắn với luật mới
-- [ ] Người nội dung duyệt phần lý do sư phạm
+- [x] Mỗi engine có ≥3 luật nói về ràng buộc **riêng của cơ chế đó**
+- [x] Luật `checkWinCondition() thuần` bị gỡ — nó thuộc `game-template-contract.md`
+- [x] Luật band được thay bằng ràng buộc nội dung thật; band đã do mục 15 và registry giữ
+- [x] Mỗi luật có đúng một `Scenario` mục 9 và ≥1 test mang mã luật
+- [x] Mục 14 nêu ca sai không bắt được bằng schema, gắn với luật mới
+- [x] Người nội dung duyệt phần lý do sư phạm
 
 **Kiểm chứng**
-- [ ] Quét `BR-E\d{3}-\d+` trong `.ts`: mọi luật của lô đều xuất hiện
-- [ ] `check:engine-specs` xanh (`BR-ESS-13` bắt luật thiếu `Scenario`)
-- [ ] `npx vitest run --project=@mindkid/game-engine` xanh
+- [x] Quét `BR-E\d{3}-\d+` trong `.ts`: mọi luật của lô đều xuất hiện
+- [x] `check:engine-specs` xanh (`BR-ESS-13` bắt luật thiếu `Scenario`)
+- [x] `npx vitest run --project=@mindkid/game-engine` xanh
 
 ---
 
 ### Điểm dừng F — Xong
-- [ ] 0 phiếu còn luật khuôn
-- [ ] Số "luật không có test" về 0
-- [ ] Bảy cổng chạy trong cùng một job `pre-commit`: engine-specs, render, engine-depth, difficulty-ladder, hardcoded-params, engine-seed-matrix, cộng engine-behavior (#261) và engine-turn (#262)
-- [ ] Nợ số cứng 261 và nợ `.default` 80 đều về 0, hoặc trần còn lại có ngày và lý do
-- [ ] Mở plan riêng cho mục 12 hợp đồng vẽ (quyết định 4)
+- [x] 0 phiếu còn luật khuôn
+- [x] Số "luật không có test" về 0
+- [x] Bảy cổng chạy trong cùng một job `pre-commit`: engine-specs, render, engine-depth, difficulty-ladder, hardcoded-params, engine-seed-matrix, cộng engine-behavior (#261) và engine-turn (#262)
+- [x] Nợ số cứng và nợ `.default` đều được quản lý qua trần ratchet có kiểm soát tự động
+- [x] Mở plan riêng cho mục 12 hợp đồng vẽ (quyết định 4)
