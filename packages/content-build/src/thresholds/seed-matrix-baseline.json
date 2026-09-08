@@ -1,7 +1,7 @@
 {
-  "max_deficits": 49,
+  "max_deficits": 28,
   "date": "2026-09-09",
-  "note": "Baseline nợ ô ma trận seed mục 13 (Task #263 T13). Chốt nợ 49 ô trên 26 engine, chỉ cho giảm.",
+  "note": "Baseline nợ ô ma trận seed mục 13 (Task #263 T14). Đã xóa sạch ô thủng lô legacy-v1 GT-028..GT-036, chốt trần 28 ô.",
   "baseline_deficits": [
     { "engine": "GT-003", "band": "5-6", "tag": "sort", "target": 2 },
     { "engine": "GT-004", "band": "5-6", "tag": "sort", "target": 3 },
@@ -30,27 +30,6 @@
     { "engine": "GT-025", "band": "5-6", "tag": "recall", "target": 1 },
     { "engine": "GT-026", "band": "4-5", "tag": "recall", "target": 1 },
     { "engine": "GT-026", "band": "5-6", "tag": "recall", "target": 1 },
-    { "engine": "GT-027", "band": "5-6", "tag": "infer", "target": 2 },
-    { "engine": "GT-028", "band": "4-5", "tag": "recall", "target": 1 },
-    { "engine": "GT-028", "band": "4-5", "tag": "verify", "target": 1 },
-    { "engine": "GT-028", "band": "5-6", "tag": "recall", "target": 2 },
-    { "engine": "GT-028", "band": "5-6", "tag": "verify", "target": 1 },
-    { "engine": "GT-029", "band": "4-5", "tag": "verify", "target": 1 },
-    { "engine": "GT-029", "band": "5-6", "tag": "verify", "target": 2 },
-    { "engine": "GT-030", "band": "5-6", "tag": "count", "target": 4 },
-    { "engine": "GT-030", "band": "5-6", "tag": "verify", "target": 3 },
-    { "engine": "GT-031", "band": "5-6", "tag": "solve", "target": 4 },
-    { "engine": "GT-031", "band": "5-6", "tag": "verify", "target": 3 },
-    { "engine": "GT-032", "band": "5-6", "tag": "verify", "target": 3 },
-    { "engine": "GT-033", "band": "5-6", "tag": "sequence", "target": 4 },
-    { "engine": "GT-033", "band": "5-6", "tag": "verify", "target": 3 },
-    { "engine": "GT-034", "band": "5-6", "tag": "sequence", "target": 4 },
-    { "engine": "GT-034", "band": "5-6", "tag": "recall", "target": 3 },
-    { "engine": "GT-034", "band": "5-6", "tag": "listen", "target": 3 },
-    { "engine": "GT-035", "band": "5-6", "tag": "plan", "target": 4 },
-    { "engine": "GT-035", "band": "5-6", "tag": "verify", "target": 3 },
-    { "engine": "GT-036", "band": "5-6", "tag": "create", "target": 5 },
-    { "engine": "GT-036", "band": "5-6", "tag": "sequence", "target": 3 },
-    { "engine": "GT-036", "band": "5-6", "tag": "verify", "target": 2 }
+    { "engine": "GT-027", "band": "5-6", "tag": "infer", "target": 2 }
   ]
 }

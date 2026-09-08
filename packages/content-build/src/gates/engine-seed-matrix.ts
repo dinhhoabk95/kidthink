@@ -12,6 +12,7 @@ import {
   ALL_TEMPLATES,
   type GameTemplate,
 } from "@mindkid/game-engine/registry";
+import type { SkillSeed } from "@mindkid/shared";
 import type { ContentSeed } from "../types.js";
 
 export type AgeBand = "3-4" | "4-5" | "5-6";
@@ -263,9 +264,40 @@ export function loadSeedMatrixBaseline(): SeedMatrixBaselineConfig {
   return JSON.parse(raw) as SeedMatrixBaselineConfig;
 }
 
+export function buildSkillThinkingMap(
+  skills: readonly SkillSeed[]
+): ReadonlyMap<string, ReadonlySet<string>> {
+  const map = new Map<string, ReadonlySet<string>>();
+  for (const s of skills) {
+    if (s.identity?.code && s.identity.thinking_processes) {
+      map.set(s.identity.code, new Set(s.identity.thinking_processes));
+    }
+  }
+  return map;
+}
+
+function levelMatchesTag(
+  level: ContentSeed<unknown, unknown>,
+  tag: string,
+  skillThinkingMap?: ReadonlyMap<string, ReadonlySet<string>>
+): boolean {
+  if ((level.header.thinking_tags || []).includes(tag)) {
+    return true;
+  }
+  if (skillThinkingMap) {
+    for (const sc of level.header.skill_codes) {
+      if (skillThinkingMap.get(sc)?.has(tag)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 function evaluateEngineDeficits(
   spec: EngineSeedMatrixSpec,
-  engineLevels: readonly ContentSeed<unknown, unknown>[]
+  engineLevels: readonly ContentSeed<unknown, unknown>[],
+  skillThinkingMap?: ReadonlyMap<string, ReadonlySet<string>>
 ): { cellCount: number; deficits: SeedMatrixDeficit[] } {
   let cellCount = 0;
   const deficits: SeedMatrixDeficit[] = [];
@@ -279,7 +311,7 @@ function evaluateEngineDeficits(
     for (const cell of b.cells) {
       cellCount++;
       const actual = bandLevels.filter((l) =>
-        (l.header.thinking_tags || []).includes(cell.tag)
+        levelMatchesTag(l, cell.tag, skillThinkingMap)
       ).length;
 
       if (actual < cell.target) {
@@ -303,7 +335,8 @@ function evaluateEngineDeficits(
 export function evaluateEngineSeedMatrix(
   levels: readonly ContentSeed<unknown, unknown>[],
   specsDir: string,
-  baseline?: SeedMatrixBaselineConfig
+  baseline?: SeedMatrixBaselineConfig,
+  skillThinkingMap?: ReadonlyMap<string, ReadonlySet<string>>
 ): SeedMatrixReport {
   if (levels.length === 0) {
     throw new Error(ERR_EMPTY_SOURCE);
@@ -342,7 +375,7 @@ export function evaluateEngineSeedMatrix(
       (l) => l.header.template_code === engineCode
     );
 
-    const result = evaluateEngineDeficits(spec, engineLevels);
+    const result = evaluateEngineDeficits(spec, engineLevels, skillThinkingMap);
     totalTargetCells += result.cellCount;
 
     for (const d of result.deficits) {

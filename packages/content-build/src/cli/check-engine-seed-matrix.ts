@@ -8,7 +8,9 @@
 
 import path from "node:path";
 import { pathToFileURL } from "node:url";
+import { ALL_SKILL_SEEDS } from "@mindkid/content";
 import {
+  buildSkillThinkingMap,
   evaluateEngineSeedMatrix,
   formatSeedMatrixReport,
   loadSeedMatrixBaseline,
@@ -19,7 +21,13 @@ export function runEngineSeedMatrixGate(options?: { quiet?: boolean }): number {
   const repoRoot = path.resolve(import.meta.dirname, "../../../../");
   const specsDir = path.join(repoRoot, "docs/specs/01-platform/engines");
   const baseline = loadSeedMatrixBaseline();
-  const report = evaluateEngineSeedMatrix(ALL_SEED_LEVELS, specsDir, baseline);
+  const skillThinkingMap = buildSkillThinkingMap(ALL_SKILL_SEEDS);
+  const report = evaluateEngineSeedMatrix(
+    ALL_SEED_LEVELS,
+    specsDir,
+    baseline,
+    skillThinkingMap
+  );
 
   if (!options?.quiet) {
     console.log(formatSeedMatrixReport(report));

@@ -294,11 +294,11 @@ Không cổng nào đọc mục 13. Đối chiếu tay: 241 ô có số mục ti
 band `5-6`. Theo quyết định 2 đây là corpus thiếu — soạn bù, cấm hạ mục tiêu.
 
 **Tiêu chí nghiệm thu**
-- [ ] Nợ ô thủng của lô về 0
-- [ ] Level mới qua `check:skill-quota`, `check:age-band-fit`, `check:engine-allocation`, `check:difficulty-ladder`
+- [x] Nợ ô thủng của lô về 0 (lô legacy-v1 GT-028..GT-036 sạch 100% không còn ô thủng)
+- [x] Level mới qua `check:skill-quota`, `check:age-band-fit`, `check:engine-allocation`, `check:difficulty-ladder`
 
 **Kiểm chứng**
-- [ ] `check:engine-seed-matrix` giảm trần đúng số ô đã bù
+- [x] `check:engine-seed-matrix` giảm trần từ 49 xuống đúng 28 ô thủng
 
 ---
 
