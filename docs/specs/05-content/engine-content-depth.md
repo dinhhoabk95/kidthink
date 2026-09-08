@@ -61,7 +61,7 @@ cộng thêm vào ma trận phủ competency, cấm — NEVER thay thế. Ràng 
 2. Nguồn không đọc được, hoặc có level trỏ tới mã engine không tồn tại, thì cổng **dừng với mã
    thoát khác 0**. Cấm — NEVER nhánh trả danh sách rỗng rồi báo xanh.
 3. Cổng nhóm level đã `published` theo `template_code`.
-4. Với mỗi engine, cổng tính sáu số ở mục 7.2.
+4. Với mỗi engine, cổng tính năm số ở mục 7.2.
 5. Cổng đọc bậc đang bật từ tệp cấu hình, so từng số với sàn của bậc đó.
 6. Engine nào thủng thì in tên engine, số hiện có, số còn thiếu, và trục nào thiếu.
 7. Có engine thủng thì mã thoát khác 0.
@@ -85,7 +85,7 @@ cộng thêm vào ma trận phủ competency, cấm — NEVER thay thế. Ràng 
 | `BR-ECD-03` (đa dạng trục tư duy) | Mỗi engine phủ số giá trị trục `thinking` tối thiểu của bậc đang bật | Một engine chỉ sinh một tiến trình tư duy là một engine chỉ dùng được một lần trong lộ trình học |
 | `BR-ECD-04` (đa dạng trục nội dung) | Mỗi engine phủ số giá trị trục `what` tối thiểu của bậc đang bật, và giá trị phải thuộc từ vựng đóng ở mục 7.1 của [`content-tagging.md`](../01-platform/content-tagging.md) | Đo ngày 2026-08-29: **160 trên 239** lượt gắn trục `what` nằm ngoài 14 giá trị đóng, và 17 engine có đúng **một** giá trị. Đo trên từ vựng trôi thì con số không nói gì |
 | `BR-ECD-05` (đa dạng chủ đề) | Mỗi engine phủ số giá trị trục `theme` tối thiểu của bậc đang bật, theo từ vựng ở [`content-theme-registry.md`](content-theme-registry.md) | Trẻ chơi mười màn liên tiếp cùng bối cảnh sẽ chán trước khi kỹ năng hình thành. Đo ngày 2026-08-29: `school` chiếm 84 trên 228 level toàn catalog |
-| `BR-ECD-06` (trải độ khó) | Mỗi engine có level ở **≥3 mức** `difficulty` khác nhau từ bậc 2. Xem [`level-difficulty-contract.md`](level-difficulty-contract.md) — thang tiến bộ chuyển sang trục kỹ năng theo `BR-LDC-04` (Task #263). | Một engine chỉ có một mức khó thì bộ chọn thích ứng ở [`adaptive-engine.md`](../01-platform/adaptive-engine.md) không có gì để chọn giữa |
+| `BR-ECD-06` (trải độ khó — chuyển trục) | Thang tiến bộ độ khó chuyển sang trục **kỹ năng**, quy định tại [`level-difficulty-contract.md`](level-difficulty-contract.md) theo `BR-LDC-04` (Task #263). Mỗi kỹ năng trải trên ≥2 mức; trục engine không áp sàn `difficulty_span`. | Độ khó thuộc kỹ năng, không thuộc engine |
 | `BR-ECD-07` (cửa vào không trả phí) | Mỗi engine có **≥1** level `access_tier` là `free` hoặc `login` | Một engine mà mọi màn đều `premium` thì phụ huynh chưa mua không bao giờ thấy nó tồn tại. Đo hôm nay: chỉ 23 trên 228 level là `free` |
 | `BR-ECD-08` (bậc thang một chiều) | Bậc đã bật **cấm — NEVER hạ**. Bật bậc mới là quyết định của người quyết, ghi vào tệp cấu hình kèm ngày | Sàn hạ được là sàn sẽ bị hạ vào đúng hôm cổng đỏ trước một buổi phát hành |
 | `BR-ECD-09` (không tụt) | Trong một bậc, PR làm giảm số level của một engine đang đạt sàn thì **bị chặn** | Cùng cơ chế với `BR-TCM-08` (publish làm thủng sàn thì bị chặn) |
@@ -137,7 +137,7 @@ Cùng lý do đã ghi ở mục 7.0 của
 dùng chung `DATABASE_URL` với test tích hợp và chứa hàng rác do test sinh. Corpus seed tất
 định, luôn đọc được, và là thứ đi qua PR review.
 
-### 7.2 Sáu số đo của một engine
+### 7.2 Năm số đo của một engine
 
 | Số đo | Định nghĩa | Đo ngày 2026-08-29 |
 |---|---|---|
@@ -147,7 +147,6 @@ dùng chung `DATABASE_URL` với test tích hợp và chứa hàng rác do test 
 | `thinking_span` | Số giá trị trục `thinking` khác nhau | 17 engine =1 |
 | `what_span` | Số giá trị trục `what` khác nhau | 17 engine =1; toàn corpus 160 trên 239 lượt gắn ngoài từ vựng |
 | `theme_span` | Số giá trị trục `theme` khác nhau | 17 engine ≤3; toàn corpus 100 trên 228 level mang giá trị ngoài từ vựng |
-| `difficulty_span` | Số mức `difficulty` khác nhau | 19 engine ≤3 |
 
 ### 7.3 Bậc thang
 
@@ -158,7 +157,6 @@ dùng chung `DATABASE_URL` với test tích hợp và chứa hàng rác do test 
 | `thinking_span` | ≥1 | ≥2 | ≥3 | ≥4 |
 | `what_span` | ≥1 | ≥2 | ≥3 | ≥4 |
 | `theme_span` | ≥1 | ≥2 | ≥3 | ≥5 |
-| `difficulty_span` | ≥1 | ≥2 | ≥3 | ≥4 |
 | Chặn từ phase | đang chặn | P4 | P5 | sau go-live |
 
 Bậc 0 là mức hôm nay, ghi ra để `BR-ECD-09` (không tụt) có mốc so. Nó **bằng đúng** hạn ngạch

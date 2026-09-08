@@ -20,7 +20,6 @@ export interface EngineStepCriteria {
   thinking_span: number;
   what_span: number;
   theme_span: number;
-  difficulty_span: number;
   min_free_or_login: number;
   max_out_of_band?: number;
 }
@@ -41,7 +40,6 @@ export interface EngineMetrics {
   thinking_span: number;
   what_span: number;
   theme_span: number;
-  difficulty_span: number;
   free_or_login_count: number;
   valid_bands: AgeBand[];
 }
@@ -52,7 +50,6 @@ export interface EngineDeficits {
   thinking_span: number;
   what_span: number;
   theme_span: number;
-  difficulty_span: number;
   min_free_or_login: number;
   missing_bands: AgeBand[];
 }
@@ -64,7 +61,6 @@ export interface EngineDepthViolation {
     | "BR-ECD-03"
     | "BR-ECD-04"
     | "BR-ECD-05"
-    | "BR-ECD-06"
     | "BR-ECD-07"
     | "BR-ECD-08"
     | "BR-ECD-09"
@@ -269,7 +265,6 @@ export function computeEngineMetrics(
     thinking_span: spans.thinkingTags.size,
     what_span: spans.whatTags.size,
     theme_span: spans.themeTags.size,
-    difficulty_span: spans.difficulties.size,
     free_or_login_count: spans.freeOrLoginCount,
     valid_bands: validBands,
   };
@@ -288,10 +283,6 @@ function calculateDeficits(
     thinking_span: Math.max(0, criteria.thinking_span - metrics.thinking_span),
     what_span: Math.max(0, criteria.what_span - metrics.what_span),
     theme_span: Math.max(0, criteria.theme_span - metrics.theme_span),
-    difficulty_span: Math.max(
-      0,
-      criteria.difficulty_span - metrics.difficulty_span
-    ),
     min_free_or_login: Math.max(
       0,
       criteria.min_free_or_login - metrics.free_or_login_count
@@ -363,15 +354,6 @@ function collectViolationsForEngine(
       message: `Engine ${engineCode} thiếu ${deficits.theme_span} giá trị theme tag (có ${metrics.theme_span}/${criteria.theme_span}).`,
       actual: metrics.theme_span,
       expected: criteria.theme_span,
-    });
-  }
-  if (deficits.difficulty_span > 0) {
-    violations.push({
-      ruleId: "BR-ECD-06",
-      engine: engineCode,
-      message: `Engine ${engineCode} thiếu ${deficits.difficulty_span} mức độ khó khác nhau (có ${metrics.difficulty_span}/${criteria.difficulty_span}).`,
-      actual: metrics.difficulty_span,
-      expected: criteria.difficulty_span,
     });
   }
   if (deficits.min_free_or_login > 0) {
@@ -485,9 +467,6 @@ function formatSingleEngineDetails(
   if (deficits.theme_span > 0) {
     details.push(`thiếu ${deficits.theme_span} theme tag`);
   }
-  if (deficits.difficulty_span > 0) {
-    details.push(`thiếu ${deficits.difficulty_span} mức độ khó`);
-  }
   if (deficits.min_free_or_login > 0) {
     details.push("chưa có level free/login");
   }
@@ -512,7 +491,7 @@ export function formatEngineDepthReport(report: EngineDepthReport): string {
         .join(" ");
 
       lines.push(
-        `  ${code}  level ${m.level_count}  band ${bandStr}  thinking ${m.thinking_span}  what ${m.what_span}  theme ${m.theme_span}  diff ${m.difficulty_span}`
+        `  ${code}  level ${m.level_count}  band ${bandStr}  thinking ${m.thinking_span}  what ${m.what_span}  theme ${m.theme_span}`
       );
 
       const details = formatSingleEngineDetails(

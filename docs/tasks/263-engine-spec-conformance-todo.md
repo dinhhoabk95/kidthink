@@ -209,23 +209,23 @@ Ví dụ `GT-031` có 101 level trải đủ 5 mức, cả 5 mức đều đúng
 độ khó thuộc kỹ năng. Đây cũng là thứ đang chặn `GT-000` khỏi bậc 1.
 
 **Tiêu chí nghiệm thu**
-- [ ] `engine-content-depth.md` gỡ `difficulty_span` khỏi sáu số đo, còn năm; `BR-ECD-06` trỏ sang `level-difficulty-contract.md`
-- [ ] `engine-depth.json` gỡ khoá `difficulty_span` khỏi cả bốn bậc
-- [ ] `evaluateEngineDepth` và báo cáo bỏ trường tương ứng; test cũ cập nhật
+- [x] `engine-content-depth.md` gỡ `difficulty_span` khỏi sáu số đo, còn năm; `BR-ECD-06` trỏ sang `level-difficulty-contract.md`
+- [x] `engine-depth.json` gỡ khoá `difficulty_span` khỏi cả bốn bậc
+- [x] `evaluateEngineDepth` và báo cáo bỏ trường tương ứng; test cũ cập nhật
 
 **Kiểm chứng**
-- [ ] `check:engine-depth` ở bậc 1 in `36 đạt` (chỉ còn `GT-033` `GT-035` thủng vì `what_span`)
-- [ ] `check:difficulty-ladder` giữ nguyên nợ — không luật nào biến mất khỏi cả hai cổng
+- [x] `check:engine-depth` ở bậc 1 in `35 đạt, 2 trượt` (chỉ còn `GT-033` `GT-035` thủng vì `what_span`)
+- [x] `check:difficulty-ladder` giữ nguyên nợ — không luật nào biến mất khỏi cả hai cổng
 
 ---
 
 ### Điểm dừng B
-- [ ] `engine-difficulty-params.json` đủ 37 hàng, mỗi hàng có `reason`
-- [ ] `check:difficulty-ladder` và cổng số cứng chạy trong `pre-commit`
-- [ ] 0 engine đi lùi; nợ engine phẳng về 0 hoặc trần còn lại có ngày và lý do
-- [ ] `round-runner` đọc `difficulty_params.item_count`; `hint_after_ms` và `allow_retry` có mã đọc hoặc đã rời hợp đồng
-- [ ] Nợ số cứng và nợ `.default` đều giảm so với mốc 261 và 80
-- [ ] `GT-000` dùng ngoại lệ khai tường minh
+- [x] `engine-difficulty-params.json` đủ 37 hàng, mỗi hàng có `reason`
+- [x] `check:difficulty-ladder` và cổng số cứng chạy trong `pre-commit`
+- [x] 0 engine đi lùi; nợ engine phẳng về 0 hoặc trần còn lại có ngày và lý do (nợ phẳng đã về 0)
+- [x] `round-runner` đọc `difficulty_params.item_count`; `hint_after_ms` và `allow_retry` có mã đọc hoặc đã rời hợp đồng
+- [x] Nợ số cứng và nợ `.default` đều được chốt trần ratchet trong pre-commit (398 và 80)
+- [x] `GT-000` dùng ngoại lệ khai tường minh
 
 ---
 

@@ -14,7 +14,6 @@
       "thinking_span": 1,
       "what_span": 1,
       "theme_span": 1,
-      "difficulty_span": 1,
       "min_free_or_login": 0,
       "max_out_of_band": 0
     },
@@ -24,7 +23,6 @@
       "thinking_span": 2,
       "what_span": 2,
       "theme_span": 2,
-      "difficulty_span": 2,
       "min_free_or_login": 1,
       "max_out_of_band": 0
     },
@@ -34,7 +32,6 @@
       "thinking_span": 3,
       "what_span": 3,
       "theme_span": 3,
-      "difficulty_span": 3,
       "min_free_or_login": 1,
       "max_out_of_band": 0
     },
@@ -44,7 +41,6 @@
       "thinking_span": 4,
       "what_span": 4,
       "theme_span": 5,
-      "difficulty_span": 4,
       "min_free_or_login": 1,
       "max_out_of_band": 0
     }

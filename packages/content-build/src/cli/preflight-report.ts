@@ -73,7 +73,7 @@ function main(): void {
   process.stdout.write(
     `Ngưỡng: level>=${criteria.level_count} band>=${criteria.min_band_count} ` +
       `thinking>=${criteria.thinking_span} what>=${criteria.what_span} ` +
-      `theme>=${criteria.theme_span} diff>=${criteria.difficulty_span} ` +
+      `theme>=${criteria.theme_span} ` +
       `free>=${criteria.min_free_or_login} oob<=${criteria.max_out_of_band ?? 0}\n\n`
   );
 
@@ -90,7 +90,7 @@ function main(): void {
     process.stdout.write(
       `${passed ? "✅" : "❌"} ${m.engine_code}  level=${m.level_count}  ` +
         `band=[${bands}] min=${m.min_band_count}  thinking=${m.thinking_span}  ` +
-        `what=${m.what_span}  theme=${m.theme_span}  diff=${m.difficulty_span}  ` +
+        `what=${m.what_span}  theme=${m.theme_span}  ` +
         `free=${m.free_or_login_count}  oob=${m.out_of_band_count}\n`
     );
     if (passed) {
