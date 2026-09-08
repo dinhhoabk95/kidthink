@@ -30,6 +30,7 @@ export const GT009_FIXTURES: {
       answer_candidate_id: "c5",
     },
     difficulty: {
+      item_count: 4,
       clue_count: 1,
       candidate_count: 4,
       hint_after_ms: 8000,
@@ -66,6 +67,7 @@ export const GT009_FIXTURES: {
       answer_candidate_id: "c4",
     },
     difficulty: {
+      item_count: 5,
       clue_count: 3,
       candidate_count: 5,
       hint_after_ms: 9000,
@@ -103,6 +105,7 @@ export const GT009_FIXTURES: {
       answer_candidate_id: "c4",
     },
     difficulty: {
+      item_count: 6,
       clue_count: 3,
       candidate_count: 6,
       hint_after_ms: 9000,

@@ -36,6 +36,7 @@ export const GT007ContentSchema = z.object({
 });
 
 export const GT007DifficultySchema = z.object({
+  item_count: z.number().int().min(2).max(6),
   part_count: z.number().int().min(2).max(3),
   distractor_count: z.number().int().min(0).max(4),
   hint_after_ms: z.number().int().min(6000).max(30_000),

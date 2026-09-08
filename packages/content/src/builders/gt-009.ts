@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -16,34 +17,77 @@ export const projectGT009: Projection<"GT-009"> = {
       );
     }
 
+    const params = getEngineDifficultyParams("GT-009", opts.difficulty);
+    const candidateCount = params.item_count;
+
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const baseItem = safeGetItem(
       dataset.items,
       rng.nextInt(dataset.items.length)
     );
 
-    // 4 candidates with values 1, 2, 3, 4
-    const candidates = [
-      { candidate_id: "c1", value: 1, asset: resolveItemAsset(baseItem, true) },
-      { candidate_id: "c2", value: 2, asset: resolveItemAsset(baseItem, true) },
-      { candidate_id: "c3", value: 3, asset: resolveItemAsset(baseItem, true) },
-      { candidate_id: "c4", value: 4, asset: resolveItemAsset(baseItem, true) },
-    ];
+    const candidates = Array.from({ length: candidateCount }, (_, i) => ({
+      candidate_id: `c${i + 1}`,
+      value: i + 1,
+      asset: resolveItemAsset(baseItem, true),
+    }));
 
-    // Clue: lớn hơn 2 và nhỏ hơn 4 -> 3 (c3)
-    const answerCandidateId = "c3";
-    const clues = [
-      {
-        clue_id: "clue_1",
-        text: "Số này lớn hơn 2",
-        predicate: { kind: "greater_than" as const, value: 2 },
-      },
-      {
-        clue_id: "clue_2",
-        text: "Số này nhỏ hơn 4",
-        predicate: { kind: "less_than" as const, value: 4 },
-      },
-    ];
+    let answerCandidateId = "c3";
+    let clues: {
+      clue_id: string;
+      text: string;
+      predicate:
+        | { kind: "greater_than"; value: number }
+        | { kind: "less_than"; value: number }
+        | { kind: "not_equal"; value: number };
+    }[] = [];
+
+    if (params.clue_count === 1) {
+      answerCandidateId = `c${candidateCount}`;
+      clues = [
+        {
+          clue_id: "clue_1",
+          text: `Số này lớn hơn ${candidateCount - 1}`,
+          predicate: { kind: "greater_than", value: candidateCount - 1 },
+        },
+      ];
+    } else if (params.clue_count === 2) {
+      answerCandidateId = "c3";
+      clues = [
+        {
+          clue_id: "clue_1",
+          text: "Số này lớn hơn 2",
+          predicate: { kind: "greater_than", value: 2 },
+        },
+        {
+          clue_id: "clue_2",
+          text: "Số này nhỏ hơn 4",
+          predicate: { kind: "less_than", value: 4 },
+        },
+      ];
+    } else {
+      answerCandidateId = "c3";
+      clues = [
+        {
+          clue_id: "clue_1",
+          text: "Số này lớn hơn 1",
+          predicate: { kind: "greater_than", value: 1 },
+        },
+        {
+          clue_id: "clue_2",
+          text: "Số này nhỏ hơn 4",
+          predicate: { kind: "less_than", value: 4 },
+        },
+        {
+          clue_id: "clue_3",
+          text: "Số này khác 2",
+          predicate: { kind: "not_equal", value: 2 },
+        },
+      ];
+    }
+
+    const clueCount =
+      typeof params.clue_count === "number" ? params.clue_count : 2;
 
     return {
       content_pack: {
@@ -53,8 +97,9 @@ export const projectGT009: Projection<"GT-009"> = {
         answer_candidate_id: answerCandidateId,
       },
       difficulty_params: {
-        candidate_count: 4,
-        clue_count: 2,
+        item_count: candidateCount,
+        candidate_count: candidateCount,
+        clue_count: clueCount,
         hint_after_ms: 10_000,
         allow_retry: true,
       },

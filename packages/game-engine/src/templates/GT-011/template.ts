@@ -70,6 +70,7 @@ export const GT011ContentSchema = z
 export type { MatrixContentShape } from "./matrix-rule.js";
 
 export const GT011DifficultySchema = z.object({
+  item_count: z.number().int().min(3).max(6),
   grid_size: z.union([z.literal(2), z.literal(3)]),
   distractor_count: z.number().int().min(2).max(5),
   hint_after_ms: z.number().int().min(6000).max(30_000),

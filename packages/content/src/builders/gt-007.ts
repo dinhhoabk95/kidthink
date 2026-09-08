@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -21,12 +22,14 @@ export const projectGT007: Projection<"GT-007"> = {
       );
     }
 
+    const params = getEngineDifficultyParams("GT-007", opts.difficulty);
+    const wholeVal = params.item_count;
+
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const baseItem = safeGetItem(
       dataset.items,
       rng.nextInt(dataset.items.length)
     );
-    const wholeVal = Math.min(Math.max(2, opts.difficulty + 2), 6);
     const part1Val = 1 + rng.nextInt(wholeVal - 1);
     const targetPartVal = wholeVal - part1Val;
 
@@ -48,9 +51,10 @@ export const projectGT007: Projection<"GT-007"> = {
     const distractorCandidates = [1, 2, 3, 4, 5, 6].filter(
       (v) => v !== targetPartVal
     );
+    const distractorOptionCount = Math.max(1, params.distractor_count ?? 0);
     const distractors = shuffleDeterministic(distractorCandidates, rng).slice(
       0,
-      2
+      distractorOptionCount
     );
 
     const options = [
@@ -68,6 +72,9 @@ export const projectGT007: Projection<"GT-007"> = {
       })),
     ];
 
+    const partCount =
+      typeof params.part_count === "number" ? params.part_count : 2;
+
     return {
       content_pack: {
         prompt: `Số ${wholeVal} tách thành ${part1Val} và mấy nhé?`,
@@ -80,8 +87,9 @@ export const projectGT007: Projection<"GT-007"> = {
         options: shuffleDeterministic(options, rng),
       },
       difficulty_params: {
-        part_count: 2,
-        distractor_count: 2,
+        item_count: params.item_count,
+        part_count: partCount,
+        distractor_count: params.distractor_count ?? 0,
         hint_after_ms: 8000,
         allow_retry: true,
       },

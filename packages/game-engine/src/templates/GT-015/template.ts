@@ -91,6 +91,7 @@ export const GT015ContentSchema = GT015BaseSchema.refine(validateGridGeometry, {
 );
 
 export const GT015DifficultySchema = z.object({
+  item_count: z.number().int().min(2).max(4),
   blank_count: z.number().int().min(1).max(6),
   hint_after_ms: z.number().int().min(6000).max(30_000),
   allow_retry: z.boolean(),

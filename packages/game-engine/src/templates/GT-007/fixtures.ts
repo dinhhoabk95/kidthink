@@ -19,6 +19,7 @@ export const GT007_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 5,
       part_count: 2,
       distractor_count: 2,
       hint_after_ms: 6000,
@@ -40,6 +41,7 @@ export const GT007_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 6,
       part_count: 2,
       distractor_count: 2,
       hint_after_ms: 7000,
@@ -61,6 +63,7 @@ export const GT007_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 4,
       part_count: 2,
       distractor_count: 2,
       hint_after_ms: 6000,

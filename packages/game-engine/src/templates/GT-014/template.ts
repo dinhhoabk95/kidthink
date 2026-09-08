@@ -41,6 +41,7 @@ export const GT014ContentSchema = GT014BaseSchema.refine(
 );
 
 export const GT014DifficultySchema = z.object({
+  item_count: z.number().int().min(2).max(6),
   tray_count: z.number().int().min(2).max(6),
   weight_span: z.number().int().min(1).max(10),
   hint_after_ms: z.number().int().min(6000).max(30_000),

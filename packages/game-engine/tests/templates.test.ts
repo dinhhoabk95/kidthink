@@ -156,6 +156,7 @@ describe("Task 6 & Task 7 — All 6 Template Sessions & Kid Surface Rules", () =
       ],
     };
     const difficulty = {
+      item_count: 4,
       distractor_count: 0,
       hint_after_ms: 8000,
       allow_retry: true,

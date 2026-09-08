@@ -43,6 +43,7 @@ export const GT004_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 4,
       distractor_count: 0,
       hint_after_ms: 8000,
       allow_retry: true,
@@ -88,6 +89,7 @@ export const GT004_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 4,
       distractor_count: 0,
       hint_after_ms: 10_000,
       allow_retry: true,
@@ -133,6 +135,7 @@ export const GT004_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 4,
       distractor_count: 0,
       hint_after_ms: 9000,
       allow_retry: true,

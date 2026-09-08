@@ -63,6 +63,7 @@ export const GT010Generator: LevelGenerator = {
         options,
       },
       difficulty_params: {
+        item_count: options.length,
         equation_count: 2,
         step_count: 2,
         distractor_count: 3,

@@ -71,6 +71,7 @@ export const GT009Generator: LevelGenerator = {
     return {
       content_pack: contentPack,
       difficulty_params: {
+        item_count: candidates.length,
         clue_count: clues.length,
         candidate_count: candidates.length,
         hint_after_ms: age_band === "4-5" ? 10_000 : 15_000,

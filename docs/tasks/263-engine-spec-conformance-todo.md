@@ -188,18 +188,18 @@ lúc chơi**, dù mục 5 của phiếu mô tả cả hai nhánh.
 `GT-025` `GT-026` `GT-027` `GT-030` `GT-031` `GT-032` `GT-033` `GT-034` `GT-035`.
 Ví dụ `GT-031` có 101 level trải đủ 5 mức, cả 5 mức đều đúng 4 item.
 
-**T9.1** — `GT-004` `GT-007` `GT-009` `GT-010` `GT-011` `GT-014` `GT-015` · M
-**T9.2** — `GT-016` `GT-023` `GT-024` `GT-025` `GT-026` `GT-027` · M
-**T9.3** — `GT-030` `GT-031` `GT-032` `GT-033` `GT-034` `GT-035` · M
+- [x] **T9.1** — `GT-004` `GT-007` `GT-009` `GT-010` `GT-011` `GT-014` `GT-015` (7 engine đã chuẩn hoá khớp bảng tra, flat debt giảm từ 19 xuống 12)
+- [ ] **T9.2** — `GT-016` `GT-023` `GT-024` `GT-025` `GT-026` `GT-027` · M
+- [ ] **T9.3** — `GT-030` `GT-031` `GT-032` `GT-033` `GT-034` `GT-035` · M
 
 **Tiêu chí nghiệm thu mỗi lô**
-- [ ] Số item của mỗi level khớp ô bảng tra T5 cho mức của nó
-- [ ] `difficulty_params.item_count` khai tường minh cho mọi level chạm vào
-- [ ] Engine đã khai `difficulty_fixed` ở T5 thì bỏ qua, không đếm là nợ
+- [x] (Lô 1) Số item của mỗi level khớp ô bảng tra T5 cho mức của nó
+- [x] (Lô 1) `difficulty_params.item_count` khai tường minh cho mọi level chạm vào
+- [x] (Lô 1) Engine đã khai `difficulty_fixed` ở T5 thì bỏ qua, không đếm là nợ
 
 **Kiểm chứng**
-- [ ] `check:difficulty-ladder` giảm trần đúng số engine của lô
-- [ ] `npx vitest run --project=@mindkid/game-engine` xanh
+- [x] (Lô 1) `check:difficulty-ladder` giảm trần đúng số engine của lô (giảm 7 engine nợ)
+- [x] (Lô 1) `npx vitest run --project=@mindkid/game-engine` xanh (82 files passed, 1389 tests passed)
 
 ---
 

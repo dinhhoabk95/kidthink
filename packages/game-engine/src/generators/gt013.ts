@@ -116,6 +116,7 @@ export const GT013Generator: LevelGenerator = {
         input_mode: inputMode,
       },
       difficulty_params: {
+        item_count: 1,
         dead_end_count: Math.min(6, Math.max(1, Math.floor(walls.length / 3))),
         required_cell_count: 0,
         hint_after_ms: age_band === "4-5" ? 10_000 : 15_000,

@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -20,6 +21,10 @@ export const projectGT010: Projection<"GT-010"> = {
         `[BR-SDS-05] Dataset ${dataset.skill_code} có ${dataset.items.length} vật, nhưng GT-010 đòi hỏi tối thiểu 2 vật`
       );
     }
+
+    const params = getEngineDifficultyParams("GT-010", opts.difficulty);
+    const targetItemCount = params.item_count;
+    const requiredDistractors = targetItemCount - 1;
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const items = shuffleDeterministic(dataset.items, rng);
@@ -52,15 +57,20 @@ export const projectGT010: Projection<"GT-010"> = {
     ];
 
     const distractors: number[] = [];
-    for (const candidate of [valB + 1, valB - 1, valA, valB + 2, valB + 3]) {
-      if (
-        distractors.length < 3 &&
-        candidate > 0 &&
-        candidate !== valB &&
-        !distractors.includes(candidate)
-      ) {
-        distractors.push(candidate);
+    let offset = 1;
+    while (distractors.length < requiredDistractors) {
+      const candidates = [valB + offset, valB - offset];
+      for (const candidate of candidates) {
+        if (
+          distractors.length < requiredDistractors &&
+          candidate > 0 &&
+          candidate !== valB &&
+          !distractors.includes(candidate)
+        ) {
+          distractors.push(candidate);
+        }
       }
+      offset++;
     }
 
     const options = shuffleDeterministic(
@@ -80,9 +90,10 @@ export const projectGT010: Projection<"GT-010"> = {
         options,
       },
       difficulty_params: {
+        item_count: targetItemCount,
         equation_count: 2,
         step_count: 1,
-        distractor_count: distractors.length,
+        distractor_count: requiredDistractors,
         hint_after_ms: 10_000,
         allow_retry: true,
       },

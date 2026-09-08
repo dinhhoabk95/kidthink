@@ -113,6 +113,7 @@ export const GT014Generator: LevelGenerator = {
         goal: "balance",
       },
       difficulty_params: {
+        item_count: tray.length,
         tray_count: tray.length,
         weight_span: Math.max(leftWeight, rightWeight, neededWeight),
         hint_after_ms: 12_000,

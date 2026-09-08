@@ -42,6 +42,7 @@ export const SAMPLE_LEVEL_1: GameLevelFixture<GT015Content, GT015Difficulty> = {
     ],
   },
   difficulty_params: {
+    item_count: 2,
     blank_count: 2,
     hint_after_ms: 8000,
     allow_retry: true,
@@ -79,6 +80,7 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT015Content, GT015Difficulty> = {
     ],
   },
   difficulty_params: {
+    item_count: 3,
     blank_count: 3,
     hint_after_ms: 10_000,
     allow_retry: true,
@@ -129,6 +131,7 @@ export const SAMPLE_LEVEL_3: GameLevelFixture<GT015Content, GT015Difficulty> = {
     ],
   },
   difficulty_params: {
+    item_count: 4,
     blank_count: 4,
     hint_after_ms: 12_000,
     allow_retry: true,

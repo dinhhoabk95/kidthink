@@ -61,6 +61,7 @@ export const GT009ContentSchema = GT009BaseSchema.refine(
 );
 
 export const GT009DifficultySchema = z.object({
+  item_count: z.number().int().min(4).max(10),
   clue_count: z.number().int().min(1).max(3),
   candidate_count: z.number().int().min(4).max(10),
   hint_after_ms: z.number().int().min(6000).max(30_000),

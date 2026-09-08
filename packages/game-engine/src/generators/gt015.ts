@@ -84,6 +84,7 @@ export const GT015Generator: LevelGenerator = {
         regions: "row_col",
       },
       difficulty_params: {
+        item_count: gridSize,
         blank_count: gridSize === 2 ? 2 : 3,
         hint_after_ms: age_band === "4-5" ? 10_000 : 15_000,
         allow_retry: true,

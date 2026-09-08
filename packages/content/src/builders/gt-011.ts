@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -21,6 +22,9 @@ export const projectGT011: Projection<"GT-011"> = {
       );
     }
 
+    const params = getEngineDifficultyParams("GT-011", opts.difficulty);
+    const optionCount = params.item_count;
+
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const shuffled = shuffleDeterministic(dataset.items, rng);
     const itemA = safeGetItem(shuffled, 0);
@@ -37,11 +41,27 @@ export const projectGT011: Projection<"GT-011"> = {
     const otherItems = shuffled.filter(
       (it) => it.id !== itemA.id && it.id !== itemB.id
     );
-    const distractorExtra = otherItems[0] ?? {
-      id: `${itemA.id}_extra`,
-      label: itemA.label,
-      glyph: "⭐",
-    };
+
+    const distractorOptions = [
+      {
+        option_id: "opt_d1",
+        asset: resolveItemAsset(itemB, true),
+        is_correct: false,
+      },
+    ];
+
+    for (let i = 1; i < optionCount - 1; i++) {
+      const extraItem = otherItems[i - 1] ?? {
+        id: `${itemA.id}_extra_${i}`,
+        label: itemA.label,
+        glyph: "⭐",
+      };
+      distractorOptions.push({
+        option_id: `opt_d${i + 1}`,
+        asset: resolveItemAsset(extraItem, true),
+        is_correct: false,
+      });
+    }
 
     const options = [
       {
@@ -49,16 +69,7 @@ export const projectGT011: Projection<"GT-011"> = {
         asset: resolveItemAsset(itemA, true),
         is_correct: true,
       },
-      {
-        option_id: "opt_d1",
-        asset: resolveItemAsset(itemB, true),
-        is_correct: false,
-      },
-      {
-        option_id: "opt_d2",
-        asset: resolveItemAsset(distractorExtra, true),
-        is_correct: false,
-      },
+      ...distractorOptions,
     ];
 
     return {
@@ -72,8 +83,9 @@ export const projectGT011: Projection<"GT-011"> = {
         options: shuffleDeterministic(options, rng),
       },
       difficulty_params: {
+        item_count: optionCount,
         grid_size: 2,
-        distractor_count: 2,
+        distractor_count: optionCount - 1,
         hint_after_ms: 10_000,
         allow_retry: true,
       },

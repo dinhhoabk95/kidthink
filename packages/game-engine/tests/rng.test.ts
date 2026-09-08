@@ -166,6 +166,7 @@ describe("Deterministic Randomness (BR-RNG-01..10)", () => {
       ],
     };
     const difficulty = {
+      item_count: 4,
       distractor_count: 0,
       hint_after_ms: 10_000,
       allow_retry: true,

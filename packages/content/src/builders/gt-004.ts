@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -21,8 +22,10 @@ export const projectGT004: Projection<"GT-004"> = {
       );
     }
 
+    const params = getEngineDifficultyParams("GT-004", opts.difficulty);
+    const targetItemCount = params.item_count;
+
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
-    const groupCount = 2;
     const shuffled = shuffleDeterministic(dataset.items, rng);
     const itemA = safeGetItem(shuffled, 0);
     const itemB = safeGetItem(shuffled, 1);
@@ -40,27 +43,20 @@ export const projectGT004: Projection<"GT-004"> = {
       },
     ];
 
+    const countA = Math.floor(targetItemCount / 2);
+    const countB = targetItemCount - countA;
+
     const items = [
-      {
-        item_id: `${itemA.id}_1`,
+      ...Array.from({ length: countA }, (_, i) => ({
+        item_id: `${itemA.id}_${i + 1}`,
         asset: resolveItemAsset(itemA, true),
         correct_group_id: "g1",
-      },
-      {
-        item_id: `${itemA.id}_2`,
-        asset: resolveItemAsset(itemA, true),
-        correct_group_id: "g1",
-      },
-      {
-        item_id: `${itemB.id}_1`,
+      })),
+      ...Array.from({ length: countB }, (_, j) => ({
+        item_id: `${itemB.id}_${j + 1}`,
         asset: resolveItemAsset(itemB, true),
         correct_group_id: "g2",
-      },
-      {
-        item_id: `${itemB.id}_2`,
-        asset: resolveItemAsset(itemB, true),
-        correct_group_id: "g2",
-      },
+      })),
     ];
 
     return {
@@ -70,8 +66,8 @@ export const projectGT004: Projection<"GT-004"> = {
         items: shuffleDeterministic(items, rng),
       },
       difficulty_params: {
-        group_count: groupCount,
-        distractor_count: 0,
+        item_count: targetItemCount,
+        distractor_count: params.distractor_count ?? 0,
         hint_after_ms: 10_000,
         allow_retry: true,
         shuffle_items: true,

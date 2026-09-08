@@ -48,6 +48,7 @@ export const SAMPLE_LEVEL_1: GameLevelFixture<GT014Content, GT014Difficulty> = {
     ],
   },
   difficulty_params: {
+    item_count: 2,
     tray_count: 2,
     weight_span: 5,
     hint_after_ms: 8000,
@@ -96,6 +97,7 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT014Content, GT014Difficulty> = {
     ],
   },
   difficulty_params: {
+    item_count: 3,
     tray_count: 3,
     weight_span: 8,
     hint_after_ms: 10_000,
@@ -136,6 +138,7 @@ export const SAMPLE_LEVEL_3: GameLevelFixture<GT014Content, GT014Difficulty> = {
     ],
   },
   difficulty_params: {
+    item_count: 3,
     tray_count: 3,
     weight_span: 5,
     hint_after_ms: 12_000,

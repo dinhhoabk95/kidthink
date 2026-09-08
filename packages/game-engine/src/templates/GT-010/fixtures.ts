@@ -46,6 +46,7 @@ export const SAMPLE_LEVEL_1: GameLevelFixture<GT010Content, GT010Difficulty> = {
     ],
   },
   difficulty_params: {
+    item_count: 4,
     equation_count: 2,
     step_count: 2,
     distractor_count: 3,
@@ -98,6 +99,7 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT010Content, GT010Difficulty> = {
     ],
   },
   difficulty_params: {
+    item_count: 4,
     equation_count: 2,
     step_count: 2,
     distractor_count: 3,
@@ -138,6 +140,7 @@ export const SAMPLE_LEVEL_3: GameLevelFixture<GT010Content, GT010Difficulty> = {
     ],
   },
   difficulty_params: {
+    item_count: 4,
     equation_count: 3,
     step_count: 3,
     distractor_count: 3,

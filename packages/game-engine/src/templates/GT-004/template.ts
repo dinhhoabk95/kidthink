@@ -58,6 +58,7 @@ export const GT004ContentSchema = GT004BaseContentSchema.refine(
 });
 
 export const GT004DifficultySchema = z.object({
+  item_count: z.number().int().min(4).max(10),
   distractor_count: z.number().int().min(0).max(3),
   hint_after_ms: z.number().int().min(8000).max(40_000),
   allow_retry: z.boolean(),

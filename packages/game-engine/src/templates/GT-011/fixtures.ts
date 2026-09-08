@@ -43,6 +43,7 @@ export const GT011_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 3,
       grid_size: 3,
       distractor_count: 2,
       hint_after_ms: 10_000,
@@ -69,6 +70,7 @@ export const GT011_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 3,
       grid_size: 2,
       distractor_count: 2,
       hint_after_ms: 9000,
@@ -101,6 +103,7 @@ export const GT011_FIXTURES: {
       ],
     },
     difficulty: {
+      item_count: 4,
       grid_size: 3,
       distractor_count: 3,
       hint_after_ms: 10_000,

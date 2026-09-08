@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -20,6 +21,9 @@ export const projectGT014: Projection<"GT-014"> = {
         `[BR-SDS-05] Dataset ${dataset.skill_code} có ${dataset.items.length} vật, nhưng GT-014 đòi hỏi tối thiểu 2 vật`
       );
     }
+
+    const params = getEngineDifficultyParams("GT-014", opts.difficulty);
+    const targetItemCount = params.item_count;
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const shuffled = shuffleDeterministic(dataset.items, rng);
@@ -54,6 +58,22 @@ export const projectGT014: Projection<"GT-014"> = {
       },
     ];
 
+    for (let i = 2; i < targetItemCount; i++) {
+      const extraItem = shuffled[i] ?? {
+        id: `${itemHeavy.id}_extra_${i}`,
+        label: itemHeavy.label,
+        glyph: "⚖️",
+      };
+      tray.push({
+        item_id: `${extraItem.id}_tray`,
+        asset: resolveItemAsset(extraItem, true),
+        weight: (i % 4) + 1,
+      });
+    }
+
+    const weightSpan =
+      typeof params.weight_span === "number" ? params.weight_span : 3;
+
     return {
       content_pack: {
         prompt: "Bé hãy chạm vào bên đĩa cân nặng hơn nhé!",
@@ -64,9 +84,9 @@ export const projectGT014: Projection<"GT-014"> = {
         target_side: "left" as const,
       },
       difficulty_params: {
-        tray_count: 2,
-        weight_span: 3,
-        tolerance: 0,
+        item_count: targetItemCount,
+        tray_count: targetItemCount,
+        weight_span: weightSpan,
         hint_after_ms: 10_000,
         allow_retry: true,
       },
