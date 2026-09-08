@@ -236,12 +236,12 @@ Ví dụ `GT-031` có 101 level trải đủ 5 mức, cả 5 mức đều đúng
 Sau T8, chỉ còn hai engine chặn bậc 1.
 
 **Tiêu chí nghiệm thu**
-- [ ] `GT-033` có ≥2 giá trị trục `what` (hôm nay chỉ `pattern`)
-- [ ] `GT-035` có ≥2 giá trị trục `what` (hôm nay chỉ `pattern`)
-- [ ] `engine-depth.json` đặt `active_step: 1`, thêm dòng `history` kèm ngày
+- [x] `GT-033` có ≥2 giá trị trục `what` (hôm nay chỉ `pattern`) — đã bổ sung GL-C2-GRD-WEAVE-0001 (what: `spt`)
+- [x] `GT-035` có ≥2 giá trị trục `what` (hôm nay chỉ `pattern`) — đã bổ sung GL-C3-ALG-CMD-0005 (what: `rule`)
+- [x] `engine-depth.json` đặt `active_step: 1`, thêm dòng `history` kèm ngày
 
 **Kiểm chứng**
-- [ ] `npx tsx packages/content-build/src/cli/check-engine-depth.ts` in `bậc 1` và `37 đạt, 0 thủng`
+- [x] `npx tsx packages/content-build/src/cli/check-engine-depth.ts` in `bậc 1` và `37 đạt, 0 thủng`
 
 ---
 

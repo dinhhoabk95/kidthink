@@ -28,9 +28,9 @@ const ERR_EMPTY_SOURCE = /Nguồn corpus seed rỗng hoặc không đọc đư�
 const MAX_LEVEL_COUNT_DEFICIT_AT_STEP_1 = 45;
 
 describe("Sàn chiều sâu mỗi engine — Task #122 (BR-ECD-01..13)", () => {
-  it("Bậc 0: toàn bộ 36 engine active đều đạt sàn baseline", () => {
+  it("Toàn bộ engine active đều đạt sàn cấu hình hiện tại", () => {
     const config = loadEngineDepthConfig();
-    expect(config.active_step).toBe(0);
+    expect(config.active_step).toBeGreaterThanOrEqual(1);
 
     const report = evaluateEngineDepth(ALL_SEED_LEVELS, config);
     expect(report.passed).toBe(true);

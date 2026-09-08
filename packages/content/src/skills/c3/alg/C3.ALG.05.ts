@@ -219,5 +219,13 @@ export const C3_ALG_05_SEED: SkillSeed = {
       theme: "farm",
       rounds: 3,
     },
+    {
+      code: "GL-C3-ALG-CMD-0005",
+      template: "GT-035",
+      band: "5-6",
+      difficulty: 1,
+      theme: "space",
+      rounds: 3,
+    },
   ],
 };

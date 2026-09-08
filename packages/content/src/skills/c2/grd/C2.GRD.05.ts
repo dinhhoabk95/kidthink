@@ -219,5 +219,13 @@ export const C2_GRD_05_SEED: SkillSeed = {
       theme: "vehicle",
       rounds: 3,
     },
+    {
+      code: "GL-C2-GRD-WEAVE-0001",
+      template: "GT-033",
+      band: "5-6",
+      difficulty: 1,
+      theme: "home",
+      rounds: 3,
+    },
   ],
 };
