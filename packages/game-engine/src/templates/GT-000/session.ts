@@ -377,49 +377,98 @@ export class GT000Session extends TemplateGameSession<
     return this.findTappedItem(gesture, step);
   }
 
-  validateAction(action: GameAction): ActionResult {
-    const step = this.getCurrentStep();
-    if (!step) {
-      return ACTION_IGNORED;
-    }
+  private readPayload(
+    action: GameAction
+  ): Record<string, string | boolean | number> {
+    return typeof action.data === "object" && action.data !== null
+      ? (action.data as Record<string, string | boolean | number>)
+      : {};
+  }
 
-    const payload =
-      typeof action.data === "object" && action.data !== null
-        ? (action.data as Record<string, string | boolean | number>)
-        : {};
-
+  /**
+   * Bảng định tuyến dùng chung cho `validateAction` (thuần) và `commit` (đổi state).
+   * Một chỗ quyết định nhánh, hai chỗ dùng — tránh lệch nhau.
+   */
+  private routeAction(
+    payload: Record<string, string | boolean | number>,
+    step: GT000Step
+  ): "prev" | "replay_echo" | "replay_present" | "advance" | "step" {
     if (payload.intent === "prev") {
-      this.prevStep();
-      return ACTION_CORRECT;
+      return "prev";
     }
     if (payload.intent === "replay") {
       if (step.action === "echo") {
-        return this.handleEchoAction(payload, step);
+        return "replay_echo";
       }
       if (step.action === "present") {
-        this.playPresentAudio(step);
-        return ACTION_CORRECT;
+        return "replay_present";
       }
     }
     if (
       payload.intent === "advance" &&
       (step.action === "present" || step.action === "echo")
     ) {
-      this.advanceStep();
-      return ACTION_CORRECT;
+      return "advance";
+    }
+    return "step";
+  }
+
+  /**
+   * Chấm điểm THUẦN — Cấm — NEVER đổi state (hợp đồng `dispatch` bước 3).
+   * Mọi thay đổi state nằm ở `commit`; `dispatch` gọi hàm này trước rồi mới gọi
+   * `commit`, nên đổi state ở đây sẽ áp hai lần cho một gesture.
+   */
+  validateAction(action: GameAction): ActionResult {
+    const step = this.getCurrentStep();
+    if (!step) {
+      return ACTION_IGNORED;
     }
 
+    const payload = this.readPayload(action);
+
+    switch (this.routeAction(payload, step)) {
+      case "prev":
+      case "replay_present":
+      case "advance":
+        return ACTION_CORRECT;
+      case "replay_echo": {
+        const used =
+          this.echoReplayCounts.get(`step_${this.currentStepIndex}`) ?? 0;
+        return used >= (step as GT000Step & { action: "echo" }).repeat_count
+          ? ACTION_IGNORED
+          : ACTION_CORRECT;
+      }
+      default:
+        return this.evaluateStepAnswer(payload, step);
+    }
+  }
+
+  /** Chấm đáp án của bước hiện tại, không đổi state. */
+  private evaluateStepAnswer(
+    payload: Record<string, string | boolean | number>,
+    step: GT000Step
+  ): ActionResult {
     switch (step.action) {
       case "present":
-        return this.handlePresentAction(payload, step);
       case "echo":
-        return this.handleEchoAction(payload, step);
-      case "recognise":
-        return this.handleRecogniseAction(payload, step);
-      case "link":
-        return this.handleLinkAction(payload, step);
       case "recall":
-        return this.handleRecallAction(payload, step);
+        return ACTION_CORRECT;
+      case "recognise": {
+        const selectedId = String(payload.item_id ?? payload.asset_id ?? "");
+        return selectedId === step.target_asset_id
+          ? ACTION_CORRECT
+          : ACTION_RETRY;
+      }
+      case "link": {
+        const sourceId = String(payload.source_id ?? "");
+        const targetId = String(payload.target_id ?? "");
+        const isMatch =
+          (sourceId === step.source_asset_id &&
+            targetId === step.target_asset_id) ||
+          (sourceId === step.target_asset_id &&
+            targetId === step.source_asset_id);
+        return isMatch ? ACTION_CORRECT : ACTION_RETRY;
+      }
       default:
         return ACTION_IGNORED;
     }
@@ -606,8 +655,60 @@ export class GT000Session extends TemplateGameSession<
     return this.isWon || this.currentStepIndex >= this.steps.length;
   }
 
+  /**
+   * Áp state cho một action đã được `validateAction` chấm.
+   * `dispatch` gọi commit đúng một lần cho mỗi gesture, nên đây là chỗ duy nhất
+   * được đẩy step / ghi event / phát audio.
+   */
   override commit(action: GameAction): void {
-    this.validateAction(action);
+    const step = this.getCurrentStep();
+    if (!step) {
+      return;
+    }
+
+    const payload = this.readPayload(action);
+
+    switch (this.routeAction(payload, step)) {
+      case "prev":
+        this.prevStep();
+        return;
+      case "replay_echo":
+        this.handleEchoAction(payload, step as GT000Step & { action: "echo" });
+        return;
+      case "replay_present":
+        this.playPresentAudio(step as GT000Step & { action: "present" });
+        return;
+      case "advance":
+        this.advanceStep();
+        return;
+      default:
+        this.applyStepAnswer(payload, step);
+    }
+  }
+
+  private applyStepAnswer(
+    payload: Record<string, string | boolean | number>,
+    step: GT000Step
+  ): void {
+    switch (step.action) {
+      case "present":
+        this.handlePresentAction(payload, step);
+        break;
+      case "echo":
+        this.handleEchoAction(payload, step);
+        break;
+      case "recognise":
+        this.handleRecogniseAction(payload, step);
+        break;
+      case "link":
+        this.handleLinkAction(payload, step);
+        break;
+      case "recall":
+        this.handleRecallAction(payload, step);
+        break;
+      default:
+        break;
+    }
   }
 
   override getHintTargetIndex(): number | null {
