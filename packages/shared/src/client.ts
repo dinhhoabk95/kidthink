@@ -8,6 +8,9 @@
 // build từng nhét cả native addon argon2 vào chunk client.
 //
 // Cấm — NEVER thêm re-export của module chạm node: builtin hoặc package máy chủ.
+// Cũng Cấm — NEVER thêm module chỉ để một package khác import cho tiện: Vite không
+// tree-shake ở dev nên mỗi dòng ở đây là cả module xuống trình duyệt. Người dùng
+// duy nhất nằm ngoài `apps/*` thì mở subpath riêng trong `exports` map.
 // Module bị loại: access-gating, alerts-config, custom-game, email-job, logger, payment-state-machine, publish-checklist, rate-limit-middleware, round-set-validation, vietqr, web-scale-contract.
 export * from "./access-cta.js";
 export * from "./access-ladder.js";
@@ -23,7 +26,6 @@ export * from "./child-data.js";
 export * from "./competency-catalog.js";
 export * from "./config-dictionary.js";
 export * from "./constants/content-themes.js";
-export * from "./constants/legacy-v1-game-types.js";
 export * from "./curriculum-model.js";
 export * from "./curriculum-player.js";
 export * from "./dashboard-cards.js";
@@ -35,7 +37,6 @@ export * from "./glossary.js";
 export * from "./healthy-play-limits.js";
 export * from "./ids.js";
 export * from "./legal-summary.js";
-export * from "./lesson-flow.js";
 export * from "./lesson-model.js";
 export * from "./lesson-plan.js";
 export * from "./lifecycle.js";
@@ -43,7 +44,6 @@ export * from "./notifications.js";
 export * from "./offline-activities.js";
 export * from "./pedagogical-evidence.js";
 export * from "./personal-curriculum.js";
-export * from "./preschool-terminology.js";
 export * from "./program-showcase.js";
 export * from "./public-seo.js";
 export * from "./pwa-offline-pack-contract.js";
@@ -53,7 +53,6 @@ export * from "./redactor.js";
 export * from "./redirect.js";
 export * from "./round-event-gate.js";
 export * from "./scoring.js";
-export * from "./skill-dataset-types.js";
 export * from "./strands-catalog.js";
 export * from "./taxonomy-types.js";
 export * from "./versioning.js";

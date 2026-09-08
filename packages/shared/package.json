@@ -5,7 +5,9 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./client": "./src/client.ts"
+    "./client": "./src/client.ts",
+    "./preschool-terminology": "./src/preschool-terminology.ts",
+    "./taxonomy-types": "./src/taxonomy-types.ts"
   },
   "scripts": {
     "test": "vitest run"

@@ -92,6 +92,19 @@ module.exports = {
       },
     },
     {
+      name: "no-game-engine-to-shared-barrel",
+      comment:
+        "packages/game-engine chạy trong trình duyệt (canvas) và mọi trang chơi " +
+        "import nó. Vite không tree-shake ở dev, nên import barrel @mindkid/shared " +
+        "hoặc /client là kéo hơn 40 module xuống client chỉ để lấy vài hàm. " +
+        "Dùng subpath hẹp khai trong exports map của packages/shared.",
+      severity: "error",
+      from: { path: "^packages/game-engine/" },
+      to: {
+        path: "(^packages/shared/src/(index|client)\\.ts$|^@mindkid/shared(/client)?$)",
+      },
+    },
+    {
       name: "no-db-package-forbidden-imports",
       comment:
         "BR-MPA-05: packages/db chỉ là tầng kết nối PostgreSQL. Cấm nhập content, " +

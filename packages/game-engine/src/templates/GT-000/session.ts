@@ -2,7 +2,7 @@ import {
   formatDisplayLabel,
   formatPromptLabel,
   formatSpokenLabel,
-} from "@mindkid/shared/client";
+} from "@mindkid/shared/preschool-terminology";
 import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
