@@ -13,11 +13,12 @@
  */
 
 import type { AgeBand } from "./contracts/types";
-import type {
-  ActionResult,
-  GameAction,
-  GameSession,
-  TelemetryEvent,
+import {
+  type ActionResult,
+  type GameAction,
+  type GameSession,
+  type TelemetryEvent,
+  TemplateGameSession,
 } from "./game-session";
 import type { LogicSpace } from "./layout/constants";
 
@@ -137,20 +138,14 @@ export class RoundRunner {
     this.startRound(0);
   }
 
-  /** Update logicSpace for the running session and upcoming rounds */
+  /** Đổi không gian logic cho session đang chạy và mọi vòng sau. */
   setLogicSpace(space: LogicSpace): void {
     this.logicSpace = space;
-    const sessionWithPrepare = this.currentSession as {
-      setLogicSpace?: (space: LogicSpace) => void;
-      resolveSlots?: (band: AgeBand, space?: LogicSpace) => void;
-    } | null;
-    if (sessionWithPrepare) {
-      if (typeof sessionWithPrepare.setLogicSpace === "function") {
-        sessionWithPrepare.setLogicSpace(space);
-      }
-      if (typeof sessionWithPrepare.resolveSlots === "function") {
-        sessionWithPrepare.resolveSlots(this.ageBand, space);
-      }
+    // `setLogicSpace`/`resolveSlots` là API của `TemplateGameSession`; hỏi kiểu
+    // bằng `typeof x === "function"` chỉ che mất việc session sai kiểu.
+    if (this.currentSession instanceof TemplateGameSession) {
+      this.currentSession.setLogicSpace(space);
+      this.currentSession.resolveSlots(this.ageBand, space);
     }
   }
 
@@ -229,6 +224,15 @@ export class RoundRunner {
   }
 
   /** Get all accumulated telemetry events across all rounds. */
+  /**
+   * Nhận một event do GameEngine phát (scaffolding, demo...) vào dòng telemetry
+   * của lượt chơi. `GameEngine.emitEvent` chỉ gọi listener, nên nếu không có
+   * đường này thì mọi event của engine không bao giờ tới `/events`.
+   */
+  recordExternalEvent(event: TelemetryEvent): void {
+    this.allEvents.push(event);
+  }
+
   getAllTelemetry(): TelemetryEvent[] {
     if (this.currentSession) {
       this.collectSessionTelemetry();

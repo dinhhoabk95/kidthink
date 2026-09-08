@@ -66,7 +66,14 @@ export class SpeechSynthesisAdapter {
     }
   }
 
-  /** Whether a vi-VN voice is detected and ready */
+  /**
+   * Có giọng vi-VN hay chưa.
+   *
+   * `initVoices()` chỉ chạy khi CHƯA khởi tạo lần nào, và `checkVoices` luôn
+   * đặt `isInitialized = true` (kể cả khi không có giọng nào), nên hàm này quét
+   * `getVoices()` tối đa một lần thêm dù bị gọi mỗi khung hình. Danh sách giọng
+   * về muộn thì `voiceschanged` cập nhật, handler gắn đúng một lần.
+   */
   hasVietnameseVoice(): boolean {
     if (!this.isInitialized) {
       this.initVoices();

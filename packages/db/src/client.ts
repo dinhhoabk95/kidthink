@@ -14,8 +14,12 @@ import postgres from "postgres";
 /** `max: 1` — mỗi tiến trình Node giữ đúng một connection, khớp t3.small. */
 const POOL_OPTIONS = {
   max: 1,
-  onnotice: () => {
-    // Suppress noisy postgres notice dumps
+  // Notice của postgres không được nuốt: `DO $$ ... EXCEPTION` trong migration
+  // báo lỗi qua đúng đường này. Hạ mức ồn, không bịt miệng.
+  onnotice: (notice: { severity?: string; message?: string }) => {
+    if (notice.severity && notice.severity !== "NOTICE") {
+      console.warn(`[pg:${notice.severity}] ${notice.message ?? ""}`);
+    }
   },
 } as const;
 

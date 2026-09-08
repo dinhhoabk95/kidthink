@@ -284,15 +284,16 @@ export class RenderSystem {
     this.drawScaffoldingHighlight(ctx, x, y, radius, pulsePhase);
   }
 
-  /** Confetti & star particle burst celebration renderer (reduces density when reducedMotion is active - BR-FBK-09) */
-  drawParticles(ctx: CanvasRenderingContext2D, particles: Particle[]): number {
+  /**
+   * Vẽ hạt ăn mừng. Khi `reducedMotion`, hạt mờ hơn và nhỏ hơn; số lượng đã
+   * được giảm từ `spawnParticlesAtSlot` (BR-FBK-09) chứ không giảm ở đây.
+   */
+  drawParticles(ctx: CanvasRenderingContext2D, particles: Particle[]): void {
     ctx.save();
-    let rendered = 0;
     for (const p of particles) {
       if (!p || p.life <= 0) {
         continue;
       }
-      rendered++;
       const alpha = p.life / p.maxLife;
       ctx.globalAlpha = this.reducedMotion ? alpha * 0.7 : alpha;
       ctx.fillStyle = p.color;
@@ -307,7 +308,6 @@ export class RenderSystem {
       ctx.fill();
     }
     ctx.restore();
-    return rendered;
   }
 
   /** Trace (never paints) — caller picks fill or stroke. Matches traceContainerBody. */

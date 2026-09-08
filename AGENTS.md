@@ -62,13 +62,19 @@ Còn 33 khối `catch` trong `apps/*/server` — tất cả đều có logic th�
 
 ## Cổng nào thật, cổng nào nói dối
 
-Đo trước khi tin. Ba cổng dưới đây từng xanh giả:
+Đo trước khi tin. Bốn lệnh dưới đây từng xanh giả:
 
 | Lệnh              | Sự thật                                                                      |
 | ----------------- | ---------------------------------------------------------------------------- |
 | `ultracite check` | **exit 0 dù có lỗi lint.** Dùng `pnpm lint` (`biome check .`)                |
 | `nuxt typecheck`  | **exit 0 im lặng.** Không script nào gọi nó nữa — Cấm — NEVER thêm lại       |
 | `tsc -p tsconfig.json` một mình | Chỉ là 1/10 project. `apps/*` sinh tsconfig ở `.nuxt/`         |
+| `biome check` chạy **không** qua `rtk proxy` | Hook `rtk` **thay output** thành `Lint: No issues found` dù biome báo lỗi và exit 1. Đây là xanh giả **có chữ**, không phải output bị nén |
+
+**Luật đo cổng**: mọi lệnh cổng (`biome`, `vitest`, `depcruise`, `tsc`, script `check:*`)
+chạy qua `rtk proxy <lệnh>`. Không phải để dễ đọc — mà vì hook `rtk` lọc dòng lỗi và
+in ra một câu xanh của riêng nó. Tin exit code hơn tin dòng chữ; và exit code cũng chỉ
+đọc được khi lệnh **không** bị bọc.
 
 `pnpm typecheck` chạy **cổng bậc thang** `scripts/typecheck/typecheck-gate.ts`:
 cả 10 project TypeScript của repo (root · worker · web:app/server/shared/node ·
@@ -102,7 +108,8 @@ project mà cổng typecheck chạy.
   `ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite`.
 - `vitest 4` đã bỏ `--reporter=basic`; dùng `dot` hoặc `json`.
 - Postgres dev ở `127.0.0.1:5433`, Valkey `6380` (container giữ cổng mặc định).
-- Nếu `rtk` bọc lệnh làm output bị nén/mất dòng, chạy lại qua `rtk proxy "<lệnh>"`.
+- `rtk` bọc lệnh KHÔNG chỉ nén output — nó thay hẳn kết quả (`biome check .` có 1 lỗi
+  vẫn in `Lint: No issues found`). Mọi lệnh đo cổng chạy qua `rtk proxy <lệnh>`.
 
 ## Cổng lint tuỳ biến đã bị gỡ (2026-08-29)
 
@@ -111,13 +118,27 @@ project mà cổng typecheck chạy.
 
 Cổng còn lại, **đây là toàn bộ**:
 
-| Lệnh | Đo gì |
-| --- | --- |
-| `pnpm lint` | Biome trên 1.312 file |
-| `pnpm lint:deps` | Ranh giới package (dependency-cruiser) |
-| `pnpm typecheck` | `tsc` + `vue-tsc` trên 10 project, bậc thang nợ |
-| `pnpm test` | Unit/integration + cổng trong `<workspace>/tests/gates/` |
-| `pnpm test:deploy` | Script hạ tầng |
+| Lệnh | Đo gì | Phase của `check.sh` |
+| --- | --- | --- |
+| `pnpm lint` | Biome trên toàn cây | 1 |
+| `pnpm lint:deps` | Ranh giới package (dependency-cruiser) | 1 |
+| `pnpm check:intro-coverage` | Bậc thang độ phủ bài làm quen (`BR-CIG-18`) | 1 |
+| `pnpm check:value-inventory` | Kho giá trị kỹ năng hai chiều (`BR-SVI-01..05`) | 1 |
+| `pnpm check:error-codes` | Bậc thang mã lỗi | 1 |
+| `pnpm check:logic-space` | Mỗi `LayoutInput` trong thân `computeSlots` phải có `logic:` | 1 |
+| `pnpm check:hint-target` | 37 template phải cài `getHintTargetIndex` thật, không stub | 1 |
+| `pnpm check:migration-hashes` | Migration đã apply Cấm — NEVER bị sửa nội dung | 1 |
+| `pnpm typecheck` | `tsc` + `vue-tsc` trên 10 project, bậc thang nợ | 2 |
+| `pnpm check:test-ratchet` | Toàn bộ vitest, không `--bail`; file đỏ mới hoặc số suite tụt → đỏ | 3 |
+| `pnpm test:deploy` | Script hạ tầng | 4 (đang tắt) |
+
+`pnpm check --fast` chỉ chạy `--project=@mindkid/game-engine` và **nói rõ** đó là tập con.
+Chế độ đầy đủ gặp `pnpm services` exit 1 thì **đỏ**, không lặng lẽ hạ xuống tập con.
+
+Ba cổng bậc thang mới nhất (`logic-space`, `hint-target`, `test-ratchet`) đều từ chối
+`--update` khi nợ **tăng**; muốn nới phải `--force` để diff nhìn thấy. `test-baseline.json`
+có thêm sàn `minTotalSuites`: xoá test hay `describe.skip` làm số suite tụt → đỏ, vì
+không có sàn thì nợ giảm được bằng cách bỏ đo.
 
 Thứ ❌ KHÔNG còn ai đo: corpus spec (frontmatter, section, link, mã lỗi), từ vựng
 người dùng, design token/hex literal, ép kiểu `as T`, `any` trong test, tên biến môi

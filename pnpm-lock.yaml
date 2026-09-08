@@ -27,6 +27,9 @@ catalogs:
     '@types/nodemailer':
       specifier: ^6.4.17
       version: 6.4.24
+    '@vitejs/plugin-vue':
+      specifier: ^6.0.8
+      version: 6.0.8
     '@vue/test-utils':
       specifier: ^2.4.6
       version: 2.5.0
@@ -114,6 +117,9 @@ catalogs:
     vitest:
       specifier: ^4.1.10
       version: 4.1.10
+    vue:
+      specifier: ^3.5.41
+      version: 3.5.41
     vue-tsc:
       specifier: ^3.3.9
       version: 3.3.9
@@ -281,6 +287,9 @@ importers:
       '@nuxt/ui':
         specifier: 'catalog:'
         version: 4.11.0(9d949e349f8c56f583528b5eeb0e0456)
+      '@vitejs/plugin-vue':
+        specifier: 'catalog:'
+        version: 6.0.8(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.2)(tsx@4.23.11)(yaml@2.9.0))(vue@3.5.41(typescript@5.9.3))
       '@vue/test-utils':
         specifier: 'catalog:'
         version: 2.5.0(@vue/compiler-dom@3.5.41)(@vue/server-renderer@3.5.41)(vue@3.5.41(typescript@5.9.3))
@@ -305,6 +314,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.10(@opentelemetry/api@1.9.1)(@types/node@24.13.3)(happy-dom@17.6.3)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.2)(tsx@4.23.11)(yaml@2.9.0))
+      vue:
+        specifier: 'catalog:'
+        version: 3.5.41(typescript@5.9.3)
       vue-tsc:
         specifier: 'catalog:'
         version: 3.3.9(typescript@5.9.3)

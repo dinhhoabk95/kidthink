@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { ACTION_CORRECT, ACTION_IGNORED } from "#src/game-session";
 import type { Gesture } from "#src/interaction";
 import { GT000_FIXTURES } from "#src/templates/GT-000/fixtures";
 import { GT000Session } from "#src/templates/GT-000/session";
@@ -453,21 +454,66 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
 
       while (session.currentStepIndex < (echoIndex ?? 0)) {
         const before = session.currentStepIndex;
-        session.validateAction({ type: "tap_item", data: {} });
+        session.commit({ type: "tap_item", data: {} });
         expect(session.currentStepIndex).toBe(before + 1);
       }
 
       const atEcho = session.currentStepIndex;
-      session.validateAction({ type: "tap_item", data: { intent: "replay" } });
+      const replay = { type: "tap_item", data: { intent: "replay" } } as const;
+      expect(session.validateAction(replay)).toEqual(ACTION_CORRECT);
+      session.commit(replay);
       expect(session.currentStepIndex).toBe(atEcho);
 
       // Lần replay thứ hai vượt repeat_count = 1 → bị bỏ qua, vẫn không đi tiếp.
-      session.validateAction({ type: "tap_item", data: { intent: "replay" } });
+      expect(session.validateAction(replay)).toEqual(ACTION_IGNORED);
+      session.commit(replay);
       expect(session.currentStepIndex).toBe(atEcho);
 
       // Chạm bình thường thì đi tiếp.
-      session.validateAction({ type: "tap_item", data: {} });
+      session.commit({ type: "tap_item", data: {} });
       expect(session.currentStepIndex).toBe(atEcho + 1);
+    });
+  });
+
+  describe("Hợp đồng dispatch: validateAction thuần, commit đổi state (Task #260 C1)", () => {
+    it("Ca âm: validateAction gọi nhiều lần Cấm — NEVER đổi currentStepIndex", () => {
+      const session = new GT000Session(fixture.content, fixture.difficulty);
+      session.prepareRound("3-4");
+
+      const before = session.currentStepIndex;
+      for (let i = 0; i < 5; i++) {
+        expect(session.validateAction({ type: "tap_item", data: {} })).toEqual(
+          ACTION_CORRECT
+        );
+      }
+
+      expect(session.currentStepIndex).toBe(before);
+    });
+
+    it("dispatch một gesture chỉ đẩy đúng một bước, không nhân đôi event", () => {
+      const session = new GT000Session(fixture.content, fixture.difficulty);
+      session.prepareRound("3-4");
+
+      const view = session.getView();
+      const entity = view.entities[0];
+      if (!entity) {
+        throw new Error("Entity not found");
+      }
+
+      const before = session.currentStepIndex;
+      session.dispatch({
+        type: "tap",
+        x: entity.x,
+        y: entity.y,
+        timeMs: 0,
+      });
+
+      expect(session.currentStepIndex).toBe(before + 1);
+
+      const answered = session
+        .getTelemetry()
+        .events.filter((e) => e.event_name === "intro_step_answered");
+      expect(answered).toHaveLength(1);
     });
   });
 });

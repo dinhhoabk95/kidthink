@@ -1,0 +1,11 @@
+{
+  "hashes": {
+    "0000_bumpy_secret_warriors": "a899a2d0177335f21dc76071d7f5769c0dbe343217f73ef25a02fdad2fc59033",
+    "0001_add_legacy_v1_ref": "c63fc2ce28c69597738249cde447eb87e57cc88e23f3216d8172b00646e52aeb",
+    "0002_drop_emoji_registry": "ff7e7ce301ebb0b9337d2b3f2c93355b5fe8b299f74a8ea41f55355adae4d437",
+    "0003_skill_tier_and_preprimary_age": "9fd12281c81eff9192313556d178058479b425200fd384608948ad6b09071480",
+    "0004_game_template_kind": "e673f8d596556a39c585db334f4d2be814d8b61aa86775bc11abb3b362e904a3",
+    "0005_skill_datasets_and_objective_map": "ecaa1435dcb2b63669fa19f04fc9fc3c13e3df1c3d7e5b486efbc2f09668b671",
+    "0006_drop_game_templates": "0e6ebee711a59243559f2ac27d13ba1d275c4c5e33bb767a3150a3e734b0c90d"
+  }
+}

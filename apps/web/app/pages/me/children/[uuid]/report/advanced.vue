@@ -171,7 +171,7 @@
       <button
         class="min-h-11 px-5 py-2.5 bg-white border-2 border-danger-300 rounded-xl text-danger-800 font-bold hover:bg-danger-100 transition-colors"
         type="button"
-        @click="refresh"
+        @click="() => refresh()"
       >
         Thử lại
       </button>

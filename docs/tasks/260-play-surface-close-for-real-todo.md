@@ -209,3 +209,40 @@
 - [ ] **Q1** (không chặn): `/complete` fail có để lại dấu vết cho phụ huynh ngoài `console.error` không? A4 tạm chốt là không.
 - [ ] **Q2** (không chặn): trong 32 template ở T8 có cái nào thật sự cần tỉ lệ 16:9 cố định không? Có thì ghi thành ngoại lệ có tên trong baseline.
 - [ ] **Q3** (kế thừa #259, không chặn): 0/444 level có `instruction_audio_path` — thu âm corpus là chương trình nội dung riêng.
+
+---
+
+## Đính chính sau review (2026-09-08)
+
+Review sau khi #260 đã commit tìm ra 2 lỗi chặn và 15 mục cần sửa. Phần dưới ghi
+lại những ô đã tick **không đúng thực tế** tại thời điểm tick, và trạng thái sau
+khi sửa. Nhánh sửa: `fix/task-260-review`.
+
+### Ô tick sai, đã sửa
+
+| Ô | Thực tế lúc tick | Đã đóng bằng |
+| --- | --- | --- |
+| Checkpoint E — "Engine FAIL 0" | `PASS 1313 / FAIL 1`: `gt-000.test.ts:53` đỏ vì `GT-000.commit()` gọi lại `validateAction` trong khi `dispatch` đã gọi → mỗi gesture áp hai lần | Tách `validateAction` thuần / `commit` đổi state; nay `PASS 1316 / FAIL 0` |
+| Checkpoint E — "pnpm check exit 0" | Đỏ: `gt-000.test.ts` là file đỏ mới ngoài baseline | `bash scripts/check.sh` exit 0, 4/4 phase |
+| T12 — "clientOnly + trust của client → Cấm — NEVER short-circuit" | `TRUST_KEY` không có prefix mode, và `isTrusted()` được kiểm trước `clientOnly` | Khoá tin cậy theo mode; đường server luôn gọi challenge thật |
+| T9 — "ratchet đếm template còn trả `null`" | Không có script nào | `scripts/check-hint-target.ts` + baseline 0 + ca âm (stub GT-001 → cổng đỏ) |
+| Checkpoint E — "ratchet hint-target = 0" | Con số đúng (37/37 có cài thật) nhưng không có cổng giữ | Cùng cổng trên, đã gắn vào Phase 1 của `check.sh` |
+| T10 — "Ca âm scaffold_escalated { round_index, level, trigger, elapsed_ms }" | Payload thiếu `elapsed_ms`, thừa `focus_index`/`miss_streak`; `round_index` luôn là 0; và event của engine không bao giờ tới `/events` | Payload khớp catalog; `RoundRunner.recordExternalEvent` + listener wildcard; cổng `engine-event-contract` |
+| T13 — "environment happy-dom cho tests/component/" + test khói sao | Không có thư mục `tests/component/`, không có cấu hình, không có test | 12 test component (victory modal + cổng phụ huynh) |
+| T15 — "Escape đóng và trả focus" cho **hai** modal | Victory modal không truyền `onEscape` | Escape phát `continue`, focus trả về phần tử gọi |
+| T14 — "Bỏ aria-live khỏi container button" | `aria-live` vẫn nằm trên `<section>` bọc button | Vùng `role="status"` riêng |
+| T18 — "Ca âm: asset không bao giờ resolve → có đúng 1 dòng warn" | Timer 3s resolve im lặng, warn chỉ có ở `onerror` | Cả hai đường đều warn; 3 test |
+| T19 — "Giá trị trả về của drawParticles: dùng, hoặc bỏ" | Vẫn trả `number`, không ai dùng; mật độ reduced-motion không còn giảm ở đâu | Bỏ giá trị trả về; giảm mật độ ở `spawnParticlesAtSlot` |
+| T20 — "mỗi module ≤400 dòng" | `use-play-session.ts` 422 dòng | 399 dòng sau khi bỏ aura trùng |
+
+### Vẫn treo, có lý do
+
+- **Gộp commit**: `a78a0eb2` gộp 143 file, trộn #260 với plan/todo của #261–#263,
+  37 phiếu engine, và đổi tên constraint trong migration 0000/0005. Không tách lại
+  được mà không viết lại lịch sử; ghi nhận để lần sau tách.
+- **Barrel `@mindkid/shared/client`**: 6 `export *` mới vẫn còn. `packages/shared`
+  chỉ export `.` và `./client`, nên import theo subpath cần thêm exports map —
+  việc đó thuộc phần ratify §8 đang chờ, Cấm — NEVER gộp vào lát sửa review.
+- **45 file test đỏ nền** (toàn bộ thuộc `apps/web`) vẫn nằm trong
+  `scripts/test-baseline.json`. Baseline giờ có thêm sàn `minTotalSuites = 1391`
+  để nợ Cấm — NEVER giảm giả bằng cách xoá hoặc skip test.

@@ -61,6 +61,18 @@ PID_ERRORS=$!
 pnpm check:logic-space &
 PID_LOGIC_SPACE=$!
 
+# Cổng bậc thang ô cần chỉ — Task #260 (T9). Mặc định của
+# `getHintTargetIndex()` là null, nên template quên cài KHÔNG làm test nào đỏ,
+# nó chỉ âm thầm không bao giờ chỉ chỗ cho trẻ.
+pnpm check:hint-target &
+PID_HINT_TARGET=$!
+
+# Cổng hash migration — Task #260 (I13). drizzle quyết định apply bằng mốc thời
+# gian, hash thì chỉ ghi chứ không đối chiếu, nên sửa file migration đã chạy
+# không làm cổng nào đỏ mà SQL trong repo lệch SQL đã chạy trên database.
+pnpm check:migration-hashes &
+PID_MIGRATION_HASHES=$!
+
 LINT_OK=true
 if ! wait $PID_LINT; then
   echo "✗ biome lint failed" >&2
@@ -92,10 +104,20 @@ if ! wait $PID_LOGIC_SPACE; then
   LINT_OK=false
 fi
 
+if ! wait $PID_HINT_TARGET; then
+  echo "✗ check:hint-target ratchet failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_MIGRATION_HASHES; then
+  echo "✗ check:migration-hashes failed" >&2
+  LINT_OK=false
+fi
+
 if [ "$LINT_OK" = false ]; then
   exit 1
 fi
-echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space"
+echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space + hint-target + migration-hashes"
 phase_end
 
 # ── Phase 2: Typecheck (cổng bậc thang + incremental) ─────────────────────

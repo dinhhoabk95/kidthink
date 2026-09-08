@@ -72,6 +72,9 @@ export function usePlayAudio(options: PlayAudioOptions) {
   };
 }
 
+const ASSET_TIMEOUT_MS = 3000;
+const OVERALL_TIMEOUT_MS = 5000;
+
 export async function preloadPlayAssets(
   assets: ReadonlyArray<{
     ref: string;
@@ -87,7 +90,12 @@ export async function preloadPlayAssets(
       promises.push(
         new Promise<void>((resolve) => {
           const img = new Image();
-          const timer = setTimeout(() => resolve(), 3000);
+          // Cấm — NEVER resolve im lặng: asset treo (không load, không error)
+          // là ca thường gặp nhất và trước đây không để lại dấu nào.
+          const timer = setTimeout(() => {
+            console.warn(`[preload] Hết hạn chờ hình ảnh: ${srcUrl}`);
+            resolve();
+          }, ASSET_TIMEOUT_MS);
           img.onload = () => {
             clearTimeout(timer);
             resolve();
@@ -105,7 +113,10 @@ export async function preloadPlayAssets(
       promises.push(
         new Promise<void>((resolve) => {
           const aud = new Audio();
-          const timer = setTimeout(() => resolve(), 3000);
+          const timer = setTimeout(() => {
+            console.warn(`[preload] Hết hạn chờ âm thanh: ${srcUrl}`);
+            resolve();
+          }, ASSET_TIMEOUT_MS);
           aud.oncanplaythrough = () => {
             clearTimeout(timer);
             resolve();
@@ -123,7 +134,7 @@ export async function preloadPlayAssets(
 
   let overallTimer: ReturnType<typeof setTimeout> | undefined;
   const overallTimeout = new Promise<void>((resolve) => {
-    overallTimer = setTimeout(resolve, 5000);
+    overallTimer = setTimeout(resolve, OVERALL_TIMEOUT_MS);
   });
 
   await Promise.race([Promise.all(promises), overallTimeout]);

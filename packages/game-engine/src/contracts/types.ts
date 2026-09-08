@@ -1,4 +1,4 @@
-import type { GameMechanic } from "@mindkid/shared/client";
+import type { GameMechanic } from "@mindkid/shared/taxonomy-types";
 import type { z } from "zod";
 
 export type LayoutId =

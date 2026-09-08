@@ -253,6 +253,16 @@ export class ScaffoldingSystem {
     return this.internalState.skipSuggested;
   }
 
+  /** Thời gian trôi từ lần đặt lại gần nhất — dùng cho `elapsed_ms` của event. */
+  get elapsedMs(): number {
+    return this.internalState.sinceMs;
+  }
+
+  /** Tốc độ bàn tay ma của mức hiện tại (spec §7.3: 1 hoặc 0.5). */
+  get ghostHandSpeed(): number {
+    return GHOST_HAND_SPEED[this.internalState.level] ?? 1;
+  }
+
   get missStreak(): number {
     return this.internalState.missStreak;
   }

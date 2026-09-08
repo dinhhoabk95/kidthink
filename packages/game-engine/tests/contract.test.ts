@@ -1,4 +1,7 @@
-import { ALL_GAME_MECHANICS, RESERVED_MECHANICS } from "@mindkid/shared/client";
+import {
+  ALL_GAME_MECHANICS,
+  RESERVED_MECHANICS,
+} from "@mindkid/shared/taxonomy-types";
 import { describe, expect, it } from "vitest";
 import {
   ALL_TEMPLATES,
