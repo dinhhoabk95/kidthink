@@ -24,8 +24,8 @@ const repoRoot = path.resolve(__dirname, "../../../../");
 const specsDir = path.join(repoRoot, "docs/specs/01-platform/engines");
 const skillThinkingMap = buildSkillThinkingMap(ALL_SKILL_SEEDS);
 
-describe("Cổng check:engine-seed-matrix — Task #263 T13 & T14", () => {
-  it("Khảo sát chuẩn: quét 37 phiếu, 241 ô có mục tiêu, đúng 28 ô thủng trên 17 engine (đã xóa nợ GT-028..GT-036)", () => {
+describe("Cổng check:engine-seed-matrix — Task #263 T13, T14 & T15", () => {
+  it("Khảo sát chuẩn: quét 37 phiếu, 241 ô có mục tiêu, đúng 22 ô thủng trên 12 engine (đã xóa nợ montessori GT-011..GT-017)", () => {
     const baseline = loadSeedMatrixBaseline();
     const report = evaluateEngineSeedMatrix(
       ALL_SEED_LEVELS,
@@ -36,20 +36,20 @@ describe("Cổng check:engine-seed-matrix — Task #263 T13 & T14", () => {
 
     expect(report.totalEngines).toBe(37);
     expect(report.totalTargetCells).toBe(241);
-    expect(report.totalHoles).toBe(28);
+    expect(report.totalHoles).toBe(22);
     expect(report.passed).toBe(true);
     expect(report.newHoles.length).toBe(0);
 
     const enginesWithHoles = new Set(report.deficits.map((d) => d.engine));
-    expect(enginesWithHoles.size).toBe(17);
+    expect(enginesWithHoles.size).toBe(12);
 
     const formatted = formatSeedMatrixReport(report);
     expect(formatted).toContain("CHECK:ENGINE-SEED-MATRIX");
     expect(formatted).toContain("Tổng số ô có mục tiêu: 241");
-    expect(formatted).toContain("Số ô thủng: 28");
-    expect(formatted).toContain("GT-011 5-6 infer: có 0, cần 4");
-    expect(formatted).toContain("GT-014 5-6 count: có 0, cần 2");
+    expect(formatted).toContain("Số ô thủng: 22");
+    expect(formatted).toContain("GT-019 4-5 match: có 0, cần 2");
     expect(formatted).toContain("GT-020 4-5 match: có 0, cần 2");
+    expect(formatted).toContain("GT-021 4-5 match: có 0, cần 2");
   });
 
   it("Ca âm 1: bảng thiếu cột tag → ném lỗi (ERR_MISSING_TAG_COLUMNS)", () => {
@@ -138,7 +138,7 @@ describe("Cổng check:engine-seed-matrix — Task #263 T13 & T14", () => {
     const baseline = loadSeedMatrixBaseline();
     const lowerCeilingBaseline: SeedMatrixBaselineConfig = {
       ...baseline,
-      max_deficits: 20, // Đặt trần 20 trong khi thực tế có 28
+      max_deficits: 15, // Đặt trần 15 trong khi thực tế có 22
     };
 
     const report = evaluateEngineSeedMatrix(

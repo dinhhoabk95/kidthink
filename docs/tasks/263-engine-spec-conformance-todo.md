@@ -306,6 +306,13 @@ band `5-6`. Theo quyết định 2 đây là corpus thiếu — soạn bù, cấ
 
 `GT-011` `GT-013` `GT-014` `GT-016` `GT-017`. Tiêu chí và kiểm chứng như T14.
 
+**Tiêu chí nghiệm thu**
+- [x] Nợ ô thủng của lô về 0 (lô montessori GT-011, GT-013, GT-014, GT-016, GT-017 sạch 100% không còn ô thủng)
+- [x] Level mới qua `check:skill-quota`, `check:age-band-fit`, `check:engine-allocation`, `check:difficulty-ladder`
+
+**Kiểm chứng**
+- [x] `check:engine-seed-matrix` giảm trần từ 28 xuống đúng 22 ô thủng
+
 ---
 
 ### T16 — Soạn bù lô `mvp` và `taxonomy-gap` · M · phụ thuộc: T13

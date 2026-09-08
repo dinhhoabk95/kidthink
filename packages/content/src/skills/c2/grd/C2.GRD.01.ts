@@ -217,5 +217,14 @@ export const C2_GRD_01_SEED: SkillSeed = {
       theme: "homeland",
       rounds: 3,
     },
+    {
+      code: "GL-C2-GRD-MAZE-0005",
+      template: "GT-013",
+      band: "5-6",
+      difficulty: 1,
+      theme: "school",
+      rounds: 3,
+      legacy_v1_ref: "D2-05",
+    },
   ],
 };

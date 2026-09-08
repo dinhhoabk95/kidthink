@@ -336,5 +336,23 @@ export const C1_MEAS_08_SEED: SkillSeed = {
       rounds: 3,
       legacy_v1_ref: "D1-20",
     },
+    {
+      code: "GL-C1-MEAS-BAL-0001",
+      template: "GT-014",
+      band: "5-6",
+      difficulty: 1,
+      theme: "school",
+      rounds: 3,
+      legacy_v1_ref: "D1-20",
+    },
+    {
+      code: "GL-C1-MEAS-BAL-0002",
+      template: "GT-014",
+      band: "5-6",
+      difficulty: 2,
+      theme: "farm",
+      rounds: 3,
+      legacy_v1_ref: "D1-20",
+    },
   ],
 };

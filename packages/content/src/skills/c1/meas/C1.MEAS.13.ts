@@ -338,8 +338,17 @@ export const C1_MEAS_13_SEED: SkillSeed = {
       template: "GT-005",
       band: "5-6",
       difficulty: 3,
-      theme: "animal",
+      theme: "home",
       rounds: 3,
+    },
+    {
+      code: "GL-C1-MEAS-CLK-0003",
+      template: "GT-016",
+      band: "5-6",
+      difficulty: 3,
+      theme: "home",
+      rounds: 3,
+      legacy_v1_ref: "D1-22",
     },
   ],
 };
