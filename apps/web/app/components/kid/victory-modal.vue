@@ -96,7 +96,11 @@
   }>();
 
   const modalRef = ref<HTMLElement | null>(null);
-  useFocusTrap(modalRef, toRef(props, "show"));
+  // Escape đóng modal bằng hành động chính đang hiện trên nút ("Tiếp Tục Chơi")
+  // và `useFocusTrap` trả focus về phần tử gọi (BR-A11-12).
+  useFocusTrap(modalRef, toRef(props, "show"), {
+    onEscape: () => emit("continue"),
+  });
 
   const celebrationTitle = computed(() => {
     if (props.isIntro) {

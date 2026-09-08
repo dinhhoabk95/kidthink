@@ -42,7 +42,9 @@
     "typescript": "catalog:",
     "vitest": "catalog:",
     "happy-dom": "catalog:",
+    "@vitejs/plugin-vue": "catalog:",
     "@vue/test-utils": "catalog:",
+    "vue": "catalog:",
     "vue-tsc": "catalog:",
     "zod": "catalog:"
   }
