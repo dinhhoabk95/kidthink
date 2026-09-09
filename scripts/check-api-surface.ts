@@ -47,13 +47,14 @@ export interface ApiSurfaceBaseline {
 }
 
 const MUTATING_METHODS = new Set(["POST", "PUT", "PATCH", "DELETE"]);
-const BODY_READ = /\b(?:readBody|readRawBody|readValidatedBody)\s*\(\s*event\b/;
+const BODY_READ =
+  /\b(?:readBody|readRawBody|readRequestBody|readValidatedBody)\s*\(/;
 const BODY_SIZE_GUARD = /\bassertRequestBodySize\s*\(/;
 const SAME_ORIGIN_GUARD = /\bassert(?:Manager)?SameOriginRequest\b/;
 const RAW_ZOD_PARSE =
   /\b(?!JSON\.)[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*\.parse\s*\(/;
 const MANAGER_REMOTE_IP = /\bgetManagerRemoteIp\s*\(/;
-const RAW_READ_BODY = /\breadBody\s*\(\s*event\b/;
+const RAW_READ_BODY = /\breadBody\s*\(/;
 
 function countMatches(source: string, pattern: RegExp): number {
   return source.match(new RegExp(pattern.source, "g"))?.length ?? 0;
@@ -202,7 +203,7 @@ function reportMetric(
   return hasRegression(result);
 }
 
-function collectRegressions(
+export function findApiSurfaceRegressions(
   current: ApiSurfaceBaseline,
   baseline: ApiSurfaceBaseline
 ): string[] {
@@ -224,7 +225,7 @@ function handleUpdate(
   hasBaseline: boolean
 ): void {
   if (hasBaseline) {
-    const worse = collectRegressions(current, baseline);
+    const worse = findApiSurfaceRegressions(current, baseline);
     if (worse.length > 0) {
       process.stderr.write(
         "❌ --update bị từ chối: baseline chỉ được giảm.\n" +

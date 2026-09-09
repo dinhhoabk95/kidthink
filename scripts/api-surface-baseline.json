@@ -1,6 +1,7 @@
 {
   "body_size_missing": {
     "guest/auth/managers/login.post.ts": 1,
+    "guest/auth/managers/mfa-setup.post.ts": 1,
     "guest/auth/managers/mfa.post.ts": 1,
     "guest/auth/users/mfa.post.ts": 1,
     "guest/client-errors.post.ts": 1,
@@ -26,6 +27,7 @@
     "managers/lessons/[code]/[version]/activities.put.ts": 1,
     "managers/lessons/index.post.ts": 1,
     "managers/levels/[code]/[version].patch.ts": 1,
+    "managers/levels/index.post.ts": 1,
     "managers/notification-templates/[code]/[version].patch.ts": 1,
     "managers/notification-templates/[code]/preview.post.ts": 1,
     "managers/orders/[uuid]/approve.post.ts": 1,
