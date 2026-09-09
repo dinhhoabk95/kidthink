@@ -53,7 +53,7 @@ function walkSource(dir: string, out: string[] = []): string[] {
  * ❌ NEVER đo trực tiếp trên nguồn thô: tên hàm được nhắc trong comment sẽ tính
  * là bằng chứng validate và làm cổng xanh giả.
  */
-function stripCommentsAndStrings(source: string): string {
+export function stripCommentsAndStrings(source: string): string {
   return source
     .replace(/\/\*[\s\S]*?\*\//g, " ")
     .replace(/(^|[^:\\])\/\/[^\n]*/g, "$1 ")

@@ -27,6 +27,8 @@
     "check:value-inventory:update": "tsx scripts/check-value-inventory.ts --update",
     "check:error-codes": "tsx scripts/check-error-codes.ts",
     "check:error-codes:update": "tsx scripts/check-error-codes.ts --update",
+    "check:api-surface": "tsx scripts/check-api-surface.ts",
+    "check:api-surface:update": "tsx scripts/check-api-surface.ts --update",
     "check:test-ratchet": "tsx scripts/check-test-ratchet.ts",
     "check:test-ratchet:update": "tsx scripts/check-test-ratchet.ts --update",
     "check:logic-space": "tsx scripts/check-logic-space.ts",

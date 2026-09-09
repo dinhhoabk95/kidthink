@@ -85,6 +85,11 @@ PID_INVENTORY=$!
 pnpm check:error-codes &
 PID_ERRORS=$!
 
+# Cổng bậc thang API surface — Task #264 (L0).
+# Đo body guard, same-origin, Zod parse, IP manager và readBody thô.
+pnpm check:api-surface &
+PID_API_SURFACE=$!
+
 # Cổng bậc thang không gian logic — Task #260 (T7).
 pnpm check:logic-space &
 PID_LOGIC_SPACE=$!
@@ -140,6 +145,11 @@ fi
 
 if ! wait $PID_ERRORS; then
   echo "✗ check:error-codes ratchet failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_API_SURFACE; then
+  echo "✗ check:api-surface ratchet failed" >&2
   LINT_OK=false
 fi
 
