@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-023
  * Seed: 20260829
  * Theme: school
@@ -75,6 +75,7 @@ export const GEN_GT023_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "snap_radius_px": 60,
       "show_anchor_outline": true,
       "hint_after_ms": 8000,
@@ -147,6 +148,7 @@ export const GEN_GT023_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "snap_radius_px": 60,
       "show_anchor_outline": true,
       "hint_after_ms": 8000,
@@ -219,6 +221,7 @@ export const GEN_GT023_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "snap_radius_px": 60,
       "show_anchor_outline": true,
       "hint_after_ms": 8000,
@@ -291,6 +294,7 @@ export const GEN_GT023_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "snap_radius_px": 60,
       "show_anchor_outline": true,
       "hint_after_ms": 8000,
@@ -363,6 +367,7 @@ export const GEN_GT023_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "snap_radius_px": 60,
       "show_anchor_outline": true,
       "hint_after_ms": 8000,

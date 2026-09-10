@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-026
  * Seed: 20260829
  * Theme: school
@@ -64,6 +64,7 @@ export const GEN_GT026_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 4,
       "stimulus_window_ms": 2000,
       "isi_ms": 500,
       "hint_after_ms": 8000,
@@ -125,6 +126,7 @@ export const GEN_GT026_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 4,
       "stimulus_window_ms": 2000,
       "isi_ms": 500,
       "hint_after_ms": 8000,
@@ -186,6 +188,7 @@ export const GEN_GT026_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 4,
       "stimulus_window_ms": 2000,
       "isi_ms": 500,
       "hint_after_ms": 8000,
@@ -247,6 +250,7 @@ export const GEN_GT026_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 4,
       "stimulus_window_ms": 2000,
       "isi_ms": 500,
       "hint_after_ms": 8000,
@@ -308,6 +312,7 @@ export const GEN_GT026_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 4,
       "stimulus_window_ms": 2000,
       "isi_ms": 500,
       "hint_after_ms": 8000,

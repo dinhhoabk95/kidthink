@@ -1,6 +1,8 @@
 {
-  "descending_debt_engines": [],
-  "flat_debt_engines": [],
+  "max_item_count_mismatches": 401,
+  "max_levels_missing_item_count": 47,
   "date": "2026-09-09",
-  "note": "Baseline nợ thang độ khó trong corpus (Task #263). T8 đã giải quyết 6 descending. T9 đã giải quyết 19 flat (nợ flat về 0)."
+  "note": "Trần nợ thang độ khó (Task #263 T6, BR-LDC-02). Nợ chỉ được phép GIẢM. 401 level khai item_count lệch bảng tra: 315 thuộc GT-012/GT-028 (trước đây bị ghi cứng trong check-difficulty-ladder.ts nên cổng không nhìn thấy), 86 còn lại là level bị kẹp bởi kích thước dataset — dataset không đủ vật riêng biệt để đạt số item của bảng tra. 47 level thiếu item_count đều là GT-000 (concept-intro, difficulty_fixed).",
+  "descending_debt_engines": [],
+  "flat_debt_engines": []
 }

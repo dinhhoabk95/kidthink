@@ -310,7 +310,7 @@ export const C1_OTO_02_SEED: SkillSeed = {
       template: "GT-021",
       band: "4-5",
       difficulty: 2,
-      theme: "market",
+      theme: "food",
       rounds: 3,
     },
   ],

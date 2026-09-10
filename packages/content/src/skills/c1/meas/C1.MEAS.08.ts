@@ -307,7 +307,7 @@ export const C1_MEAS_08_SEED: SkillSeed = {
       difficulty: 1,
       theme: "school",
       rounds: 3,
-      legacy_v1_ref: "D1-20",
+      legacy_v1_ref: "D1-04",
     },
     {
       code: "GL-C1-MEAS-UNIT-0002",
@@ -316,16 +316,16 @@ export const C1_MEAS_08_SEED: SkillSeed = {
       difficulty: 2,
       theme: "farm",
       rounds: 3,
-      legacy_v1_ref: "D1-20",
+      legacy_v1_ref: "D1-04",
     },
     {
       code: "GL-C1-MEAS-UNIT-0003",
       template: "GT-030",
       band: "5-6",
       difficulty: 3,
-      theme: "market",
+      theme: "food",
       rounds: 3,
-      legacy_v1_ref: "D1-20",
+      legacy_v1_ref: "D1-04",
     },
     {
       code: "GL-C1-MEAS-UNIT-0004",
@@ -334,7 +334,7 @@ export const C1_MEAS_08_SEED: SkillSeed = {
       difficulty: 4,
       theme: "ocean",
       rounds: 3,
-      legacy_v1_ref: "D1-20",
+      legacy_v1_ref: "D1-04",
     },
     {
       code: "GL-C1-MEAS-BAL-0001",
@@ -343,7 +343,7 @@ export const C1_MEAS_08_SEED: SkillSeed = {
       difficulty: 1,
       theme: "school",
       rounds: 3,
-      legacy_v1_ref: "D1-20",
+      legacy_v1_ref: "D1-03",
     },
     {
       code: "GL-C1-MEAS-BAL-0002",
@@ -352,7 +352,7 @@ export const C1_MEAS_08_SEED: SkillSeed = {
       difficulty: 2,
       theme: "farm",
       rounds: 3,
-      legacy_v1_ref: "D1-20",
+      legacy_v1_ref: "D1-03",
     },
   ],
 };

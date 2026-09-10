@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-034
  * Seed: 20260829
  * Theme: school
@@ -63,6 +63,7 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
       "tempo_bpm": 93
     },
     "difficulty_params": {
+      "item_count": 2,
       "pattern_length": 6,
       "instrument_count": 2,
       "tempo_bpm": 93,
@@ -135,6 +136,7 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
       "tempo_bpm": 90
     },
     "difficulty_params": {
+      "item_count": 3,
       "pattern_length": 6,
       "instrument_count": 3,
       "tempo_bpm": 90,
@@ -207,6 +209,7 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
       "tempo_bpm": 93
     },
     "difficulty_params": {
+      "item_count": 3,
       "pattern_length": 6,
       "instrument_count": 3,
       "tempo_bpm": 93,
@@ -269,6 +272,7 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
       "tempo_bpm": 83
     },
     "difficulty_params": {
+      "item_count": 2,
       "pattern_length": 6,
       "instrument_count": 2,
       "tempo_bpm": 83,
@@ -341,6 +345,7 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
       "tempo_bpm": 77
     },
     "difficulty_params": {
+      "item_count": 3,
       "pattern_length": 6,
       "instrument_count": 3,
       "tempo_bpm": 77,

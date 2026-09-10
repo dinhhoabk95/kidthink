@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -27,11 +28,9 @@ export const projectGT029: Projection<"GT-029"> = {
       rng.nextInt(dataset.items.length)
     );
 
-    const initialCount = Math.min(Math.max(3, opts.difficulty + 2), 7);
-    const removeCount = Math.min(
-      Math.max(1, opts.difficulty),
-      initialCount - 1
-    );
+    const params = getEngineDifficultyParams("GT-029", opts.difficulty);
+    const initialCount = params.initial_count ?? 3;
+    const removeCount = Math.min(params.remove_count ?? 1, initialCount - 1);
     const expectedRemain = initialCount - removeCount;
 
     const initial_items = Array.from({ length: initialCount }, (_, i) => ({
@@ -68,6 +67,7 @@ export const projectGT029: Projection<"GT-029"> = {
         answer_options: shuffleDeterministic(answer_options, rng),
       },
       difficulty_params: {
+        item_count: initial_items.length,
         initial_count: initialCount,
         remove_count: removeCount,
         show_crossed_items: true,

@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -17,10 +18,8 @@ export const projectGT019: Projection<"GT-019"> = {
     }
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
-    const count = Math.min(
-      Math.max(1, Math.min(opts.difficulty, 2)),
-      dataset.items.length
-    );
+    const params = getEngineDifficultyParams("GT-019", opts.difficulty);
+    const count = Math.min(params.item_count, dataset.items.length);
     const chosen = shuffleDeterministic(dataset.items, rng).slice(0, count);
 
     const target_slots = chosen.map((item, idx) => ({
@@ -45,7 +44,8 @@ export const projectGT019: Projection<"GT-019"> = {
         pieces,
       },
       difficulty_params: {
-        allow_flip: false,
+        item_count: pieces.length,
+        allow_flip: params.allow_flip ?? false,
         rotation_step: 90 as const,
         hint_after_ms: 8000,
         allow_retry: true,

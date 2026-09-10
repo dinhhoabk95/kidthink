@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-014
  * Seed: 20260829
  * Theme: school
@@ -79,6 +79,7 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
       "goal": "balance"
     },
     "difficulty_params": {
+      "item_count": 3,
       "tray_count": 3,
       "weight_span": 6,
       "hint_after_ms": 12000,
@@ -155,6 +156,7 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
       "goal": "balance"
     },
     "difficulty_params": {
+      "item_count": 3,
       "tray_count": 3,
       "weight_span": 6,
       "hint_after_ms": 12000,
@@ -231,6 +233,7 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
       "goal": "balance"
     },
     "difficulty_params": {
+      "item_count": 3,
       "tray_count": 3,
       "weight_span": 4,
       "hint_after_ms": 12000,
@@ -307,6 +310,7 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
       "goal": "balance"
     },
     "difficulty_params": {
+      "item_count": 3,
       "tray_count": 3,
       "weight_span": 5,
       "hint_after_ms": 12000,
@@ -383,6 +387,7 @@ export const GEN_GT014_20260829: ContentSeed<unknown, unknown>[] = [
       "goal": "balance"
     },
     "difficulty_params": {
+      "item_count": 3,
       "tray_count": 3,
       "weight_span": 7,
       "hint_after_ms": 12000,

@@ -460,7 +460,6 @@ export const C1_CNT_05_SEED: SkillSeed = {
       difficulty: 2,
       theme: "school",
       rounds: 3,
-      legacy_v1_ref: "D1-23",
     },
     {
       code: "GL-C1-CNT-STACK-0002",
@@ -469,7 +468,6 @@ export const C1_CNT_05_SEED: SkillSeed = {
       difficulty: 3,
       theme: "home",
       rounds: 3,
-      legacy_v1_ref: "D1-23",
     },
   ],
 };

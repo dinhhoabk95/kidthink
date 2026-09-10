@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -26,8 +27,12 @@ export const projectGT018: Projection<"GT-018"> = {
     const targetItem = safeGetItem(dataset.items, targetIdx);
 
     const distractorPool = dataset.items.filter((_, idx) => idx !== targetIdx);
+    const params = getEngineDifficultyParams("GT-018", opts.difficulty);
+    // Cơ chế nghe-chọn chỉ có MỘT đáp án đúng, nên `target_count` của bảng tra
+    // không diễn đạt được ở đây. Giữ đúng thứ bảng tra định nghĩa độ khó — tổng
+    // số item hiển thị — bằng cách bù phần còn lại vào vật gây nhiễu.
     const distractorCount = Math.min(
-      Math.max(1, Math.min(opts.difficulty + 1, 3)),
+      Math.max(params.item_count - 1, params.distractor_count ?? 1),
       distractorPool.length
     );
 
@@ -61,6 +66,10 @@ export const projectGT018: Projection<"GT-018"> = {
         options: shuffleDeterministic(options, rng),
       },
       difficulty_params: {
+        // Cấu trúc nghe-chọn chỉ có đúng một đáp án đúng.
+        item_count: options.length,
+        distractor_count: shuffledDistractors.length,
+        target_count: 1,
         hint_after_ms: 8000,
         allow_retry: true,
         auto_play_audio: true,

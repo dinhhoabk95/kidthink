@@ -43,28 +43,40 @@ export interface DifficultyLadderReport {
   passed: boolean;
   totalEngines: number;
   totalSkills: number;
+  /** Số level THỰC SỰ được đối chiếu với bảng tra (có khai `item_count`). */
   totalLevelsChecked: number;
-  debtEnginesCount: number;
+  /** Số level bỏ qua vì không khai `item_count` — nợ riêng, có trần riêng. */
+  levelsMissingItemCount: number;
+  itemCountMismatches: number;
+  maxItemCountMismatches: number;
+  maxLevelsMissingItemCount: number;
   issues: DifficultyLadderIssue[];
 }
 
 export interface BaselineDebtConfig {
-  descending_debt_engines: string[];
-  flat_debt_engines: string[];
+  max_item_count_mismatches: number;
+  max_levels_missing_item_count: number;
   date: string;
   note?: string;
 }
 
+/**
+ * Nguồn không đọc được thì ném — Cấm — NEVER trả trần rỗng rồi báo xanh
+ * (`BR-LDC-02`): trần mặc định 0 sẽ biến một file baseline mất tích thành cổng
+ * đỏ giả, còn trần vô hạn thì thành cổng xanh giả.
+ */
 export function loadBaselineDebt(): BaselineDebtConfig {
-  if (!fs.existsSync(BASELINE_PATH)) {
-    return {
-      descending_debt_engines: [],
-      flat_debt_engines: [],
-      date: new Date().toISOString().split("T")[0] || "",
-    };
-  }
   const raw = fs.readFileSync(BASELINE_PATH, "utf-8");
-  return JSON.parse(raw) as BaselineDebtConfig;
+  const parsed = JSON.parse(raw) as Partial<BaselineDebtConfig>;
+  if (
+    typeof parsed.max_item_count_mismatches !== "number" ||
+    typeof parsed.max_levels_missing_item_count !== "number"
+  ) {
+    throw new Error(
+      `Baseline ${BASELINE_PATH} thiếu max_item_count_mismatches hoặc max_levels_missing_item_count.`
+    );
+  }
+  return parsed as BaselineDebtConfig;
 }
 
 /**
@@ -74,6 +86,19 @@ export function checkConfigLimits(
   config: EngineDifficultyParamsConfig
 ): DifficultyLadderIssue[] {
   const issues: DifficultyLadderIssue[] = [];
+
+  // Thiếu HÀNG là lỗi im lặng nguy hiểm nhất: vòng lặp dưới chỉ duyệt engine có
+  // trong config, nên một engine vắng mặt sẽ không bị kiểm gì cả (`BR-LDC-01`).
+  for (const engineCode of Object.keys(ALL_TEMPLATES)) {
+    if (!config.engines[engineCode]) {
+      issues.push({
+        condition: 1,
+        code: "MISSING_ENGINE_ROW",
+        engineCode,
+        message: `${engineCode} có trong registry nhưng thiếu hàng trong engine-difficulty-params.json.`,
+      });
+    }
+  }
 
   for (const [engineCode, entry] of Object.entries(config.engines)) {
     const template = ALL_TEMPLATES[engineCode];
@@ -152,7 +177,10 @@ export function checkConfigMonotonicity(
 /**
  * Điều kiện 3: Kiểm tra mỗi kỹ năng trong corpus có ≥2 mức khó khác nhau (BR-LDC-04).
  */
-export function checkSkillDifficulties(): DifficultyLadderIssue[] {
+export function checkSkillDifficulties(): {
+  issues: DifficultyLadderIssue[];
+  totalSkills: number;
+} {
   const issues: DifficultyLadderIssue[] = [];
   const skillsMap = new Map<string, Set<number>>();
 
@@ -180,63 +208,73 @@ export function checkSkillDifficulties(): DifficultyLadderIssue[] {
     }
   }
 
-  return issues;
+  return { issues, totalSkills: skillsMap.size };
 }
 
 /**
- * Điều kiện 4: Đối chiếu corpus level với bảng tra (hỗ trợ baseline nợ 25 engine).
+ * Điều kiện 4: Đối chiếu corpus level với bảng tra.
+ *
+ * Level không khai `item_count` KHÔNG được bỏ qua im lặng: nó được đếm riêng và
+ * có trần riêng, vì `BR-LDC-02` bắt buộc khai trường này.
  */
-export function checkCorpusLevels(
-  config: EngineDifficultyParamsConfig,
-  debtEngines: Set<string>,
-  strict = false
-): { issues: DifficultyLadderIssue[]; totalLevelsChecked: number } {
+export function checkCorpusLevels(config: EngineDifficultyParamsConfig): {
+  issues: DifficultyLadderIssue[];
+  totalLevelsChecked: number;
+  levelsMissingItemCount: number;
+} {
   const issues: DifficultyLadderIssue[] = [];
   let totalLevelsChecked = 0;
+  let levelsMissingItemCount = 0;
 
   for (const level of ALL_SEED_LEVELS) {
     const engineCode = level.header.template_code;
     const diff = String(level.header.difficulty) as "1" | "2" | "3" | "4" | "5";
 
     const engineConfig = config.engines[engineCode];
-    if (!engineConfig) {
+    const expectedParams = engineConfig?.levels[diff];
+    if (!expectedParams) {
       continue;
     }
 
-    const expectedParams = engineConfig.levels[diff];
-    if (!expectedParams) {
+    const rawParams = level.difficulty_params as
+      | Record<string, unknown>
+      | undefined;
+
+    if (typeof rawParams?.item_count !== "number") {
+      levelsMissingItemCount++;
+      issues.push({
+        condition: 4,
+        code: "LEVEL_MISSING_ITEM_COUNT",
+        engineCode,
+        levelCode: level.header.code,
+        message: `Level ${level.header.code} (${engineCode}) không khai difficulty_params.item_count (BR-LDC-02).`,
+      });
       continue;
     }
 
     totalLevelsChecked++;
 
-    const rawParams = level.difficulty_params as
-      | Record<string, unknown>
-      | undefined;
-    if (!rawParams || typeof rawParams.item_count !== "number") {
-      continue;
-    }
-
-    const actualItemCount = rawParams.item_count;
-    if (actualItemCount !== expectedParams.item_count) {
-      const isDebt = debtEngines.has(engineCode);
-      if (!isDebt || strict) {
-        issues.push({
-          condition: 4,
-          code: "LEVEL_ITEM_COUNT_MISMATCH",
-          engineCode,
-          levelCode: level.header.code,
-          message: `Level ${level.header.code} (${engineCode} mức ${diff}): item_count=${actualItemCount} khác bảng tra (${expectedParams.item_count}).`,
-        });
-      }
+    if (rawParams.item_count !== expectedParams.item_count) {
+      issues.push({
+        condition: 4,
+        code: "LEVEL_ITEM_COUNT_MISMATCH",
+        engineCode,
+        levelCode: level.header.code,
+        message: `Level ${level.header.code} (${engineCode} mức ${diff}): item_count=${rawParams.item_count} khác bảng tra (${expectedParams.item_count}).`,
+      });
     }
   }
 
-  return { issues, totalLevelsChecked };
+  return { issues, totalLevelsChecked, levelsMissingItemCount };
 }
 
 /**
  * Tổng hợp kiểm tra thang độ khó.
+ *
+ * Điều kiện 1..3 là luật cứng — một vi phạm là đỏ ngay.
+ * Điều kiện 4 chạy theo trần ratchet: nợ hiện có ghi trong baseline và chỉ được
+ * phép GIẢM. Cấm — NEVER ghi cứng mã engine nợ vào file này: nợ ghi trong mã
+ * nguồn thì không ai kiểm được, và cổng sẽ nói dối về trạng thái của chính nó.
  */
 export function checkDifficultyLadder(options?: {
   strict?: boolean;
@@ -247,63 +285,79 @@ export function checkDifficultyLadder(options?: {
   ) as EngineDifficultyParamsConfig;
 
   const baseline = loadBaselineDebt();
-  const debtEngines = new Set([
-    ...baseline.descending_debt_engines,
-    ...baseline.flat_debt_engines,
-    // GT-012 và GT-028 hiện đang có item_count trong corpus lệch bảng tra,
-    // sẽ chuẩn hóa ở T8/T9
-    "GT-012",
-    "GT-028",
-  ]);
+  const strict = options?.strict ?? false;
+  const maxItemCountMismatches = strict
+    ? 0
+    : baseline.max_item_count_mismatches;
+  const maxLevelsMissingItemCount = strict
+    ? 0
+    : baseline.max_levels_missing_item_count;
 
-  const issues: DifficultyLadderIssue[] = [];
+  const hardIssues: DifficultyLadderIssue[] = [];
+  hardIssues.push(...checkConfigLimits(validatedConfig));
+  hardIssues.push(...checkConfigMonotonicity(validatedConfig));
 
-  // 1. Config limits
-  issues.push(...checkConfigLimits(validatedConfig));
+  const { issues: skillIssues, totalSkills } = checkSkillDifficulties();
+  hardIssues.push(...skillIssues);
 
-  // 2. Monotonicity
-  issues.push(...checkConfigMonotonicity(validatedConfig));
+  const {
+    issues: levelIssues,
+    totalLevelsChecked,
+    levelsMissingItemCount,
+  } = checkCorpusLevels(validatedConfig);
 
-  // 3. Skill difficulties span
-  issues.push(...checkSkillDifficulties());
+  const itemCountMismatches = levelIssues.filter(
+    (i) => i.code === "LEVEL_ITEM_COUNT_MISMATCH"
+  ).length;
 
-  // 4. Corpus levels matching
-  const { issues: levelIssues, totalLevelsChecked } = checkCorpusLevels(
-    validatedConfig,
-    debtEngines,
-    options?.strict
-  );
-  issues.push(...levelIssues);
-
-  const passed = issues.length === 0;
+  const overMismatchCeiling = itemCountMismatches > maxItemCountMismatches;
+  const overMissingCeiling = levelsMissingItemCount > maxLevelsMissingItemCount;
+  const passed =
+    hardIssues.length === 0 && !(overMismatchCeiling || overMissingCeiling);
 
   console.log("=== CỔNG CHECK:DIFFICULTY-LADDER (Task #263 T6) ===");
   console.log(
     `Đã kiểm tra ${Object.keys(validatedConfig.engines).length} engine templates.`
   );
-  console.log("Đã kiểm tra 443 kỹ năng trong corpus.");
-  console.log(`Đã đối chiếu ${totalLevelsChecked} levels trong corpus.`);
-  console.log(`Số engine trong danh sách nợ chuyển tiếp: ${debtEngines.size}`);
+  console.log(`Đã kiểm tra ${totalSkills} kỹ năng trong corpus.`);
+  console.log(
+    `Đã đối chiếu ${totalLevelsChecked} level có khai item_count với bảng tra.`
+  );
+  console.log(
+    `Level lệch bảng tra: ${itemCountMismatches} (trần: ${maxItemCountMismatches})`
+  );
+  console.log(
+    `Level thiếu item_count: ${levelsMissingItemCount} (trần: ${maxLevelsMissingItemCount})`
+  );
 
   if (passed) {
     console.log("✓ Tất cả 4 điều kiện thang độ khó đạt chuẩn.");
   } else {
-    console.error(`✗ Phát hiện ${issues.length} vi phạm:`);
-    for (const iss of issues.slice(0, 10)) {
+    for (const iss of hardIssues.slice(0, 10)) {
       console.error(`  - [C${iss.condition}] ${iss.code}: ${iss.message}`);
     }
-    if (issues.length > 10) {
-      console.error(`  ... và ${issues.length - 10} vi phạm khác.`);
+    if (overMismatchCeiling) {
+      console.error(
+        `✗ Số level lệch bảng tra (${itemCountMismatches}) vượt trần (${maxItemCountMismatches}).`
+      );
+    }
+    if (overMissingCeiling) {
+      console.error(
+        `✗ Số level thiếu item_count (${levelsMissingItemCount}) vượt trần (${maxLevelsMissingItemCount}).`
+      );
     }
   }
 
   return {
     passed,
     totalEngines: Object.keys(validatedConfig.engines).length,
-    totalSkills: 443,
+    totalSkills,
     totalLevelsChecked,
-    debtEnginesCount: debtEngines.size,
-    issues,
+    levelsMissingItemCount,
+    itemCountMismatches,
+    maxItemCountMismatches,
+    maxLevelsMissingItemCount,
+    issues: [...hardIssues, ...levelIssues],
   };
 }
 

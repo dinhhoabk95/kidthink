@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-032
  * Seed: 20260829
  * Theme: school
@@ -57,6 +57,7 @@ export const GEN_GT032_20260829: ContentSeed<unknown, unknown>[] = [
       "conservation_trap": false
     },
     "difficulty_params": {
+      "item_count": 3,
       "cup_count": 3,
       "level_steps": 8,
       "conservation_trap": false,
@@ -112,6 +113,7 @@ export const GEN_GT032_20260829: ContentSeed<unknown, unknown>[] = [
       "conservation_trap": true
     },
     "difficulty_params": {
+      "item_count": 3,
       "cup_count": 3,
       "level_steps": 8,
       "conservation_trap": true,
@@ -160,6 +162,7 @@ export const GEN_GT032_20260829: ContentSeed<unknown, unknown>[] = [
       "conservation_trap": false
     },
     "difficulty_params": {
+      "item_count": 2,
       "cup_count": 2,
       "level_steps": 8,
       "conservation_trap": false,
@@ -208,6 +211,7 @@ export const GEN_GT032_20260829: ContentSeed<unknown, unknown>[] = [
       "conservation_trap": false
     },
     "difficulty_params": {
+      "item_count": 2,
       "cup_count": 2,
       "level_steps": 8,
       "conservation_trap": false,
@@ -256,6 +260,7 @@ export const GEN_GT032_20260829: ContentSeed<unknown, unknown>[] = [
       "conservation_trap": false
     },
     "difficulty_params": {
+      "item_count": 2,
       "cup_count": 2,
       "level_steps": 8,
       "conservation_trap": false,

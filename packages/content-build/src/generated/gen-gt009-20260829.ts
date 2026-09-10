@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-009
  * Seed: 20260829
  * Theme: school
@@ -85,6 +85,7 @@ export const GEN_GT009_20260829: ContentSeed<unknown, unknown>[] = [
       "answer_candidate_id": "cand_3"
     },
     "difficulty_params": {
+      "item_count": 4,
       "clue_count": 2,
       "candidate_count": 4,
       "hint_after_ms": 10000,
@@ -167,6 +168,7 @@ export const GEN_GT009_20260829: ContentSeed<unknown, unknown>[] = [
       "answer_candidate_id": "cand_2"
     },
     "difficulty_params": {
+      "item_count": 4,
       "clue_count": 2,
       "candidate_count": 4,
       "hint_after_ms": 10000,
@@ -249,6 +251,7 @@ export const GEN_GT009_20260829: ContentSeed<unknown, unknown>[] = [
       "answer_candidate_id": "cand_2"
     },
     "difficulty_params": {
+      "item_count": 4,
       "clue_count": 2,
       "candidate_count": 4,
       "hint_after_ms": 10000,
@@ -331,6 +334,7 @@ export const GEN_GT009_20260829: ContentSeed<unknown, unknown>[] = [
       "answer_candidate_id": "cand_2"
     },
     "difficulty_params": {
+      "item_count": 4,
       "clue_count": 2,
       "candidate_count": 4,
       "hint_after_ms": 10000,
@@ -413,6 +417,7 @@ export const GEN_GT009_20260829: ContentSeed<unknown, unknown>[] = [
       "answer_candidate_id": "cand_3"
     },
     "difficulty_params": {
+      "item_count": 4,
       "clue_count": 2,
       "candidate_count": 4,
       "hint_after_ms": 10000,

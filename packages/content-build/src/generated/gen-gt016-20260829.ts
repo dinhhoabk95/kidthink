@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-016
  * Seed: 20260829
  * Theme: school
@@ -55,6 +55,7 @@ export const GEN_GT016_20260829: ContentSeed<unknown, unknown>[] = [
       "activity_cards": []
     },
     "difficulty_params": {
+      "item_count": 3,
       "minute_step": 30,
       "distractor_count": 2,
       "hint_after_ms": 10000,
@@ -107,6 +108,7 @@ export const GEN_GT016_20260829: ContentSeed<unknown, unknown>[] = [
       "activity_cards": []
     },
     "difficulty_params": {
+      "item_count": 3,
       "minute_step": 30,
       "distractor_count": 2,
       "hint_after_ms": 10000,
@@ -159,6 +161,7 @@ export const GEN_GT016_20260829: ContentSeed<unknown, unknown>[] = [
       "activity_cards": []
     },
     "difficulty_params": {
+      "item_count": 3,
       "minute_step": 30,
       "distractor_count": 2,
       "hint_after_ms": 10000,
@@ -211,6 +214,7 @@ export const GEN_GT016_20260829: ContentSeed<unknown, unknown>[] = [
       "activity_cards": []
     },
     "difficulty_params": {
+      "item_count": 3,
       "minute_step": 30,
       "distractor_count": 2,
       "hint_after_ms": 10000,
@@ -263,6 +267,7 @@ export const GEN_GT016_20260829: ContentSeed<unknown, unknown>[] = [
       "activity_cards": []
     },
     "difficulty_params": {
+      "item_count": 3,
       "minute_step": 30,
       "distractor_count": 2,
       "hint_after_ms": 10000,

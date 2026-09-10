@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-033
  * Seed: 20260829
  * Theme: school
@@ -68,6 +68,7 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
       "col_rule": "Quy luật màu tuần hoàn"
     },
     "difficulty_params": {
+      "item_count": 2,
       "grid_size": 2,
       "color_count": 2,
       "blank_count": 2,
@@ -152,6 +153,7 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
       "col_rule": "Quy luật màu tuần hoàn"
     },
     "difficulty_params": {
+      "item_count": 3,
       "grid_size": 3,
       "color_count": 3,
       "blank_count": 2,
@@ -236,6 +238,7 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
       "col_rule": "Quy luật màu tuần hoàn"
     },
     "difficulty_params": {
+      "item_count": 3,
       "grid_size": 3,
       "color_count": 3,
       "blank_count": 1,
@@ -302,6 +305,7 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
       "col_rule": "Quy luật màu tuần hoàn"
     },
     "difficulty_params": {
+      "item_count": 2,
       "grid_size": 2,
       "color_count": 2,
       "blank_count": 2,
@@ -368,6 +372,7 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
       "col_rule": "Quy luật màu tuần hoàn"
     },
     "difficulty_params": {
+      "item_count": 2,
       "grid_size": 2,
       "color_count": 2,
       "blank_count": 1,

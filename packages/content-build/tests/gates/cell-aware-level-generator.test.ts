@@ -45,10 +45,10 @@ describe("Cell-aware Level Generator (Task #161 / BR-LGK-12)", () => {
   });
 
   it("Ca 6: Khi sinh cho cell hợp lệ, 6 trường bắt buộc để trống", () => {
-    // GT-020/5-6 là ô còn trống (< 3 comps: C2, C6), cho phép C1
+    // GT-016/5-6 là ô còn trống (< 3 comps), cho phép C2
     const res = generateLevelsCore({
-      engine: "GT-020",
-      cell: "GT-020/5-6/C1",
+      engine: "GT-016",
+      cell: "GT-016/5-6/C2",
       count: 1,
       seed: 20_260_829,
       theme: "school",

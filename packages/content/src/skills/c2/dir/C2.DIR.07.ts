@@ -233,7 +233,7 @@ export const C2_DIR_07_SEED: SkillSeed = {
       template: "GT-035",
       band: "5-6",
       difficulty: 3,
-      theme: "traffic",
+      theme: "vehicle",
       rounds: 3,
       legacy_v1_ref: "D2-07",
     },

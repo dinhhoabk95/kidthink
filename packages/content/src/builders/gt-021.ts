@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -17,10 +18,8 @@ export const projectGT021: Projection<"GT-021"> = {
     }
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
-    const patternCount = Math.min(
-      Math.max(2, Math.min(opts.difficulty + 1, 4)),
-      dataset.items.length
-    );
+    const params = getEngineDifficultyParams("GT-021", opts.difficulty);
+    const patternCount = Math.min(params.item_count, dataset.items.length);
 
     const chosenItems = shuffleDeterministic(dataset.items, rng).slice(
       0,
@@ -52,7 +51,8 @@ export const projectGT021: Projection<"GT-021"> = {
         options: shuffleDeterministic(options, rng),
       },
       difficulty_params: {
-        show_axis_guide: true,
+        item_count: options.length,
+        show_axis_guide: params.show_axis_guide ?? true,
         hint_after_ms: 8000,
         allow_retry: true,
       },

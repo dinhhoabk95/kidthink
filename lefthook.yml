@@ -72,43 +72,59 @@ pre-commit:
         fi
 
         TSX="./node_modules/.bin/tsx"
-        FAIL=0
 
-        $TSX packages/game-engine/scripts/check-engine-specs.ts || { echo "✗ check:engine-specs failed" >&2; FAIL=1; } &
+        # Cấm — NEVER bọc lệnh nền trong `cmd || { ...; FAIL=1; }`: nhánh `||`
+        # chạy THÀNH CÔNG nên subshell nền thoát 0, `wait` đọc được 0, và gán
+        # FAIL=1 nằm trong subshell không về được tiến trình cha. Cổng đỏ khi ấy
+        # lọt qua im lặng. Chạy trần, để `wait` đọc đúng mã thoát.
+        run_gate() {
+          $TSX "$1" &
+        }
+
+        run_gate packages/game-engine/scripts/check-engine-specs.ts
         PID_SPECS=$!
 
-        $TSX packages/game-engine/scripts/check-render.ts || { echo "✗ check:render failed" >&2; FAIL=1; } &
+        run_gate packages/game-engine/scripts/check-render.ts
         PID_RENDER=$!
 
-        $TSX packages/content-build/src/cli/check-engine-depth.ts || { echo "✗ check:engine-depth failed" >&2; FAIL=1; } &
+        run_gate packages/content-build/src/cli/check-engine-depth.ts
         PID_DEPTH=$!
 
         # Chỗ dựng sẵn cho #261 (check:engine-behavior) và #262 (check:engine-turn)
-        $TSX packages/game-engine/scripts/check-engine-turn.ts || { echo "✗ check:engine-turn failed" >&2; FAIL=1; } &
+        run_gate packages/game-engine/scripts/check-engine-turn.ts
         PID_TURN=$!
 
-        $TSX packages/game-engine/scripts/check-engine-behavior.ts || { echo "✗ check:engine-behavior failed" >&2; FAIL=1; } &
+        run_gate packages/game-engine/scripts/check-engine-behavior.ts
         PID_BEHAVIOR=$!
 
         # Cổng độ khó và tham số cứng — Task #263 T6 (BR-LDC-01..06)
-        $TSX packages/game-engine/scripts/check-difficulty-ladder.ts || { echo "✗ check:difficulty-ladder failed" >&2; FAIL=1; } &
+        run_gate packages/game-engine/scripts/check-difficulty-ladder.ts
         PID_LADDER=$!
 
-        $TSX packages/game-engine/scripts/check-hardcoded-params.ts || { echo "✗ check:hardcoded-params failed" >&2; FAIL=1; } &
+        run_gate packages/game-engine/scripts/check-hardcoded-params.ts
         PID_HARDCODED=$!
 
         # Cổng ma trận seed mục 13 — Task #263 T13 (BR-CSM-03)
-        $TSX packages/content-build/src/cli/check-engine-seed-matrix.ts || { echo "✗ check:engine-seed-matrix failed" >&2; FAIL=1; } &
+        run_gate packages/content-build/src/cli/check-engine-seed-matrix.ts
         PID_SEED_MATRIX=$!
 
-        wait $PID_SPECS || FAIL=1
-        wait $PID_RENDER || FAIL=1
-        wait $PID_DEPTH || FAIL=1
-        wait $PID_TURN || FAIL=1
-        wait $PID_BEHAVIOR || FAIL=1
-        wait $PID_LADDER || FAIL=1
-        wait $PID_HARDCODED || FAIL=1
-        wait $PID_SEED_MATRIX || FAIL=1
+        FAIL=0
+        for entry in \
+          "$PID_SPECS:check:engine-specs" \
+          "$PID_RENDER:check:render" \
+          "$PID_DEPTH:check:engine-depth" \
+          "$PID_TURN:check:engine-turn" \
+          "$PID_BEHAVIOR:check:engine-behavior" \
+          "$PID_LADDER:check:difficulty-ladder" \
+          "$PID_HARDCODED:check:hardcoded-params" \
+          "$PID_SEED_MATRIX:check:engine-seed-matrix"; do
+          pid="${entry%%:*}"
+          name="${entry#*:}"
+          if ! wait "$pid"; then
+            echo "✗ ${name} failed" >&2
+            FAIL=1
+          fi
+        done
 
         exit $FAIL
 

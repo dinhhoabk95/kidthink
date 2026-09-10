@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -29,11 +30,11 @@ export const projectGT003: Projection<"GT-003"> = {
     );
     const targetAttr = targetItem.category?.type ?? targetItem.label;
 
-    const targetCount = 2;
+    const params = getEngineDifficultyParams("GT-003", opts.difficulty);
+    const targetCount = params.target_count ?? 2;
     const distractorCount = Math.min(
-      Math.max(1, opts.difficulty),
-      dataset.items.length - 1,
-      4
+      params.distractor_count ?? 0,
+      dataset.items.length - 1
     );
 
     const otherItems = dataset.items.filter((i) => i.id !== targetItem.id);
@@ -68,7 +69,8 @@ export const projectGT003: Projection<"GT-003"> = {
         items: shuffleDeterministic(items, rng),
       },
       difficulty_params: {
-        distractor_count: distractorCount,
+        item_count: items.length,
+        distractor_count: chosenDistractors.length,
         target_count: targetCount,
         hint_after_ms: 8000,
         allow_retry: true,

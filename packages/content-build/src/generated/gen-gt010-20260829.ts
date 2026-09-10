@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-010
  * Seed: 20260829
  * Theme: school
@@ -88,6 +88,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 4,
       "equation_count": 2,
       "step_count": 2,
       "distractor_count": 3,
@@ -174,6 +175,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 4,
       "equation_count": 2,
       "step_count": 2,
       "distractor_count": 3,
@@ -260,6 +262,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 4,
       "equation_count": 2,
       "step_count": 2,
       "distractor_count": 3,
@@ -346,6 +349,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 4,
       "equation_count": 2,
       "step_count": 2,
       "distractor_count": 3,
@@ -432,6 +436,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 4,
       "equation_count": 2,
       "step_count": 2,
       "distractor_count": 3,

@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-024
  * Seed: 12345
  * Theme: school
@@ -81,6 +81,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 6,
       "tolerance_px": 37,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -153,6 +154,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 5,
       "tolerance_px": 40,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -239,6 +241,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 7,
       "tolerance_px": 40,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -318,6 +321,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 6,
       "tolerance_px": 40,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -397,6 +401,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 6,
       "tolerance_px": 39,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -469,6 +474,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 5,
       "tolerance_px": 41,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -534,6 +540,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 4,
       "tolerance_px": 36,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -606,6 +613,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 5,
       "tolerance_px": 37,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -685,6 +693,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 6,
       "tolerance_px": 36,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -778,6 +787,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 8,
       "tolerance_px": 39,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -864,6 +874,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 7,
       "tolerance_px": 44,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -957,6 +968,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 8,
       "tolerance_px": 47,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -1029,6 +1041,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 5,
       "tolerance_px": 39,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -1087,6 +1100,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 3,
       "tolerance_px": 36,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -1173,6 +1187,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 7,
       "tolerance_px": 45,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -1252,6 +1267,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 6,
       "tolerance_px": 49,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -1324,6 +1340,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 5,
       "tolerance_px": 39,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -1382,6 +1399,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 3,
       "tolerance_px": 48,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -1468,6 +1486,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 7,
       "tolerance_px": 39,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -1540,6 +1559,7 @@ export const GEN_GT024_12345: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 5,
       "tolerance_px": 48,
       "show_numbered_dots": true,
       "show_guide_lines": true,

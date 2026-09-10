@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-027
  * Seed: 20260829
  * Theme: school
@@ -89,6 +89,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "switch_after_trials": 2
     },
     "difficulty_params": {
+      "item_count": 4,
       "signal_duration_ms": 2000,
       "hint_after_ms": 8000,
       "allow_retry": true
@@ -174,6 +175,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "switch_after_trials": 2
     },
     "difficulty_params": {
+      "item_count": 4,
       "signal_duration_ms": 2000,
       "hint_after_ms": 8000,
       "allow_retry": true
@@ -259,6 +261,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "switch_after_trials": 2
     },
     "difficulty_params": {
+      "item_count": 4,
       "signal_duration_ms": 2000,
       "hint_after_ms": 8000,
       "allow_retry": true
@@ -344,6 +347,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "switch_after_trials": 2
     },
     "difficulty_params": {
+      "item_count": 4,
       "signal_duration_ms": 2000,
       "hint_after_ms": 8000,
       "allow_retry": true
@@ -429,6 +433,7 @@ export const GEN_GT027_20260829: ContentSeed<unknown, unknown>[] = [
       "switch_after_trials": 2
     },
     "difficulty_params": {
+      "item_count": 4,
       "signal_duration_ms": 2000,
       "hint_after_ms": 8000,
       "allow_retry": true

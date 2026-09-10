@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-031
  * Seed: 20260829
  * Theme: school
@@ -82,6 +82,7 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
       }
     },
     "difficulty_params": {
+      "item_count": 5,
       "coin_kind_count": 2,
       "target_amount": 20,
       "exact_change": true,
@@ -146,6 +147,7 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
       }
     },
     "difficulty_params": {
+      "item_count": 3,
       "coin_kind_count": 3,
       "target_amount": 7,
       "exact_change": true,
@@ -226,6 +228,7 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
       }
     },
     "difficulty_params": {
+      "item_count": 5,
       "coin_kind_count": 2,
       "target_amount": 3,
       "exact_change": true,
@@ -314,6 +317,7 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
       }
     },
     "difficulty_params": {
+      "item_count": 6,
       "coin_kind_count": 3,
       "target_amount": 22,
       "exact_change": true,
@@ -386,6 +390,7 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
       }
     },
     "difficulty_params": {
+      "item_count": 4,
       "coin_kind_count": 2,
       "target_amount": 15,
       "exact_change": true,

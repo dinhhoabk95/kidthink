@@ -267,6 +267,50 @@ describe("Tám cổng thẩm định nội dung seed (BR-CSA-02, Task #117)", ()
         true
       );
     });
+
+    it("passes when items use instance suffixes like _t1, _d1 or _1", async () => {
+      const { checkGateItemOrigin } = await import(
+        "#src/gates/gate-08-item-origin"
+      );
+      const dataset: SkillDataset = {
+        skill_code: "C1.ADD.01",
+        concept_label: "Cộng bằng đồ vật",
+        surface: "game",
+        items: [
+          { id: "n0", label: "Số không" },
+          { id: "n1", label: "Số một" },
+          { id: "n2", label: "Số hai" },
+        ],
+        ladder: [],
+        phrasing: { prompt_template: "Bé hãy chọn đúng {label} nhé!" },
+      };
+      const seedWithSuffixedItems: ContentSeed = {
+        ...VALID_GAME_LEVEL_SEED,
+        content_pack: {
+          prompt: "Bé hãy chọn đúng nhé!",
+          items: [
+            {
+              item_id: "n2_t1",
+              asset: { kind: "emoji", ref: "2️⃣" },
+              is_correct: true,
+            },
+            {
+              item_id: "n2_t2",
+              asset: { kind: "emoji", ref: "2️⃣" },
+              is_correct: true,
+            },
+            {
+              item_id: "n0_d1",
+              asset: { kind: "emoji", ref: "0️⃣" },
+              is_correct: false,
+            },
+          ],
+        },
+      };
+      const result = checkGateItemOrigin(seedWithSuffixedItems, dataset);
+      expect(result.passed).toBe(true);
+      expect(result.issues).toHaveLength(0);
+    });
   });
 
   describe("Gate 9: Khái niệm hiện ra (BR-SDS-03, Task #207)", () => {

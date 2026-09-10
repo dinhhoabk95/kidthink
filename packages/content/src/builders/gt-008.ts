@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -17,14 +18,17 @@ export const projectGT008: Projection<"GT-008"> = {
     }
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
-    const slotCount = Math.min(
-      Math.max(2, Math.min(opts.difficulty + 1, 5)),
-      dataset.items.length
-    );
+    const params = getEngineDifficultyParams("GT-008", opts.difficulty);
+    const slotCount = Math.min(params.slot_count ?? 2, dataset.items.length);
 
-    const chosenItems = shuffleDeterministic(dataset.items, rng).slice(
-      0,
-      slotCount
+    const shuffledPool = shuffleDeterministic(dataset.items, rng);
+    const chosenItems = shuffledPool.slice(0, slotCount);
+
+    // Vật gây nhiễu không thuộc ô nào — `checkWinCondition` chỉ đòi mọi ô được
+    // lấp, nên vật thừa làm tăng độ khó phân loại mà không chặn điều kiện thắng.
+    const distractorItems = shuffledPool.slice(
+      slotCount,
+      slotCount + (params.distractor_count ?? 0)
     );
 
     const slots = chosenItems.map((item, idx) => ({
@@ -33,7 +37,7 @@ export const projectGT008: Projection<"GT-008"> = {
       label: item.label.length > 30 ? item.label.slice(0, 30) : item.label,
     }));
 
-    const items = chosenItems.map((item) => ({
+    const items = [...chosenItems, ...distractorItems].map((item) => ({
       item_id: item.id,
       label: item.label.length > 30 ? item.label.slice(0, 30) : item.label,
       asset: resolveItemAsset(item, true),
@@ -51,8 +55,9 @@ export const projectGT008: Projection<"GT-008"> = {
         items: shuffleDeterministic(items, rng),
       },
       difficulty_params: {
-        slot_count: slotCount,
-        distractor_count: 0,
+        item_count: items.length,
+        slot_count: slots.length,
+        distractor_count: distractorItems.length,
         hint_after_ms: 10_000,
         allow_retry: true,
       },

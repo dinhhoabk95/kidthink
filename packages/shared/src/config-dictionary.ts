@@ -728,6 +728,10 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Thời gian nghỉ giữa 2 lượt (ms)",
     help: "Khoảng thời gian trống giữa hai lượt kích thích liên tiếp.",
   },
+  untimed: {
+    label: "Chế độ không đếm giờ",
+    help: "Bật để kích thích đứng yên tới khi trẻ quyết định (dành cho band 4-5 theo BR-EBD-11).",
+  },
   // GT-027 rule-switch
   rules: {
     label: "Danh sách quy luật",

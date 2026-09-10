@@ -403,3 +403,92 @@ nào trỏ tới; 27 engine có 0. Khuôn tham chiếu là `GT-001`.
 - [x] Bảy cổng chạy trong cùng một job `pre-commit`: engine-specs, render, engine-depth, difficulty-ladder, hardcoded-params, engine-seed-matrix, cộng engine-behavior (#261) và engine-turn (#262)
 - [x] Nợ số cứng và nợ `.default` đều được quản lý qua trần ratchet có kiểm soát tự động
 - [x] Mở plan riêng cho mục 12 hợp đồng vẽ (quyết định 4)
+
+---
+
+## Lượt review lại — 2026-09-09
+
+Đo lại toàn bộ sau khi #263 khai hoàn thành. Sáu lỗi thật, đã sửa hết trong lượt này.
+
+### R1 — Tám cổng engine trong `pre-commit` chưa bao giờ chặn được commit
+
+`lefthook.yml` bọc mỗi cổng nền theo dạng `cmd || { echo ...; FAIL=1; } &`. Nhánh `||`
+chạy **thành công**, nên subshell nền thoát `0`, `wait` đọc được `0`, và `FAIL=1` nằm
+trong subshell không về được tiến trình cha. Đo trực tiếp: một cổng đỏ vẫn cho `exit=0`.
+
+Toàn bộ Điểm dừng A..F dựa trên "cổng chạy trong pre-commit" đều đã tick trên một cổng
+không cưỡng chế gì. Đã sửa: chạy cổng trần, `wait` từng PID đọc đúng mã thoát, in tên
+cổng đỏ. Có ca âm xác nhận `exit=1`.
+
+### R2 — 2.033 level publish ném lỗi ngay khi vào vòng chơi
+
+T7 thêm `throw` ở `round-runner.ts` khi thiếu `difficulty_params.item_count`, nhưng
+**chín bộ sinh chưa bao giờ khai trường đó**: `GT-003` `GT-005` `GT-008` `GT-018`
+`GT-019` `GT-020` `GT-021` `GT-029` `GT-036`. Đường chơi thật
+`play/[code].vue` → `use-play-session.ts` → `RoundRunner.startRound()` nên 2.033 trên
+6.390 level (32%) hỏng khi trẻ mở bài. Test của T7 chỉ phủ `GT-001` `GT-012` `GT-028`
+— cả ba đều đã có `item_count`, nên lớp lỗi này lọt.
+
+Đã sửa: chín bộ sinh lấy số từ bảng tra qua `getEngineDifficultyParams()` (đúng khuôn
+`GT-004`/`GT-030` đã có) và khai `item_count` bằng **số item thật sự dựng ra**. Đo lại:
+0 level ném lỗi.
+
+### R3 — Cổng thang độ khó giấu nợ trong mã nguồn
+
+`check-difficulty-ladder.ts` ghi cứng `"GT-012"` và `"GT-028"` vào tập nợ, kèm chú
+"sẽ chuẩn hóa ở T8/T9" — trong khi T8 và T9 đã tick xong. File baseline thì khai nợ
+rỗng. Chạy `--strict` ra **315 vi phạm** mà cổng thường không thấy.
+
+Đã sửa: gỡ mã cứng, nợ chuyển hết sang `difficulty-ladder-baseline.json` dạng trần đếm
+(`max_item_count_mismatches`) chỉ được phép giảm. Cấm — NEVER ghi mã engine nợ vào
+mã nguồn cổng.
+
+### R4 — Cổng bỏ qua im lặng 2.080 level rồi báo đã đối chiếu 6.390
+
+Điều kiện 4 `continue` khi level thiếu `item_count`, nhưng `totalLevelsChecked` đã tăng
+trước đó. Đúng những level mà `BR-LDC-02` muốn bắt thì lại là những level cổng không
+nhìn. Đây là lý do T8/T9 tick "nợ về 0" mà chín engine trên chưa ai đụng tới.
+
+Đã sửa: thiếu `item_count` thành vi phạm có mã riêng `LEVEL_MISSING_ITEM_COUNT` và trần
+riêng; `totalLevelsChecked` chỉ đếm level thật sự đối chiếu (6.343).
+
+### R5 — Hai số đo trong báo cáo là hằng chép tay
+
+`totalSkills: 443` và dòng in "Đã kiểm tra 443 kỹ năng" là literal, không phải số đo.
+`checkConfigLimits` chỉ duyệt engine **có trong config**, nên một engine thiếu hàng sẽ
+không bị kiểm gì. Đã sửa: đếm thật từ corpus; thêm phép kiểm mọi mã trong registry đều
+có hàng config, kèm ca âm.
+
+### R6 — Mục 16 của 37 phiếu ghi sai bậc đang bật
+
+`gen-engine-depth-section.ts` viết cứng "mục tiêu bậc 1" và ngưỡng `≥6/≥1/≥2/≥2/≥2/≥1`
+trong khi `engine-depth.json` đã ở `active_step: 2` (`12/3/3/3/3/1`). Khối `@generated`
+tự nhận là nguồn sự thật nhưng ghi sai hợp đồng. Đã sửa: đọc ngưỡng từ bậc đang bật;
+sinh lại đủ 37 phiếu.
+
+### Nợ còn lại, đã ghi trần và có thể kiểm
+
+| Khoản | Số | Nơi ghi |
+|---|---:|---|
+| Level khai `item_count` lệch bảng tra | 401 | `difficulty-ladder-baseline.json` |
+| — trong đó `GT-012` + `GT-028` (nợ cũ bị giấu) | 315 | như trên |
+| — dataset không đủ vật riêng biệt để đạt số bảng tra | 86 | như trên |
+| Level thiếu `item_count` (đều là `GT-000` concept-intro) | 47 | như trên |
+
+86 ô kẹp dataset là **thiếu vật trong dataset**, không phải lỗi mã: đo được 86 ca `under`
+và 0 ca `over`. Muốn về 0 thì bổ sung vật cho dataset, Cấm — NEVER hạ số bảng tra.
+
+`GT-018` còn một mâu thuẫn hợp đồng cần người nội dung quyết: bảng tra khai
+`target_count` tới 4, nhưng cơ chế nghe-chọn chỉ có đúng một đáp án đúng. Lượt này giữ
+đúng **tổng số item hiển thị** theo bảng tra (thứ quyết định 3 dùng để định nghĩa độ khó)
+và bù phần còn lại vào vật gây nhiễu.
+
+### Đã đo lại sau khi sửa
+
+- 8/8 cổng engine xanh; ca âm xác nhận job `pre-commit` nay thoát `1` khi có cổng đỏ
+- `@mindkid/game-engine`: 86 file, 1.470 test xanh
+- `@mindkid/content` + `@mindkid/content-build`: 5 file đỏ — **trùng khít** baseline đo tại
+  `HEAD` trước khi sửa (đều thuộc `theme-registry`, `thinking-coverage`, `skill-quota`,
+  `cell-aware-level-generator`, `game-level-model`), không phải hồi quy của lượt này
+- `biome check` exit 0 · cổng typecheck 10/10 project 0 lỗi
+- 0/6.390 level ném lỗi ở `startRound()`

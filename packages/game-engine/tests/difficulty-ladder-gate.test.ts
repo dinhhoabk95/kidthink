@@ -98,37 +98,55 @@ describe("Cổng check:difficulty-ladder và check:hardcoded-params (Task #263 T
   });
 
   describe("checkSkillDifficulties", () => {
-    it("tất cả 443 kỹ năng trong corpus đều có ≥2 mức khó", () => {
-      const issues = checkSkillDifficulties();
+    it("mọi kỹ năng trong corpus đều có ≥2 mức khó", () => {
+      const { issues, totalSkills } = checkSkillDifficulties();
       expect(issues).toHaveLength(0);
+      // Số kỹ năng phải ĐO được, Cấm — NEVER in ra một hằng chép tay.
+      expect(totalSkills).toBeGreaterThan(0);
     });
   });
 
   describe("checkCorpusLevels & debt management", () => {
-    it("chế độ baseline nợ cho phép pass toàn bộ cổng", () => {
+    it("nợ hiện tại nằm trong trần ratchet nên cổng xanh", () => {
       const report = checkDifficultyLadder({ strict: false });
       expect(report.passed).toBe(true);
-      expect(report.issues).toHaveLength(0);
+      expect(report.itemCountMismatches).toBeLessThanOrEqual(
+        report.maxItemCountMismatches
+      );
+      expect(report.levelsMissingItemCount).toBeLessThanOrEqual(
+        report.maxLevelsMissingItemCount
+      );
     });
 
-    it("chế độ strict phát hiện sai lệch ở các engine nợ kỹ thuật", () => {
+    it("ca âm: trần 0 (strict) làm cổng đỏ khi còn nợ", () => {
       const report = checkDifficultyLadder({ strict: true });
       expect(report.passed).toBe(false);
-      expect(report.issues.length).toBeGreaterThan(0);
-      expect(
-        report.issues.some((i) => i.code === "LEVEL_ITEM_COUNT_MISMATCH")
-      ).toBe(true);
+      expect(report.itemCountMismatches).toBeGreaterThan(0);
     });
 
-    it("phát hiện sai lệch ở engine không thuộc danh sách nợ", () => {
-      // GT-012 có level chứa item_count trong corpus. Nếu không đưa GT-012 vào debtEngines, cổng sẽ báo lỗi.
-      const { issues } = checkCorpusLevels(
-        validConfig,
-        new Set(["GT-001"]),
-        false
-      );
-      expect(issues.length).toBeGreaterThanOrEqual(1);
-      expect(issues.some((i) => i.engineCode === "GT-012")).toBe(true);
+    it("chỉ đếm là 'đã đối chiếu' những level thực sự khai item_count", () => {
+      const { totalLevelsChecked, levelsMissingItemCount, issues } =
+        checkCorpusLevels(validConfig);
+      // Level thiếu item_count Cấm — NEVER bị bỏ qua im lặng: nó phải thành issue.
+      expect(
+        issues.filter((i) => i.code === "LEVEL_MISSING_ITEM_COUNT")
+      ).toHaveLength(levelsMissingItemCount);
+      expect(totalLevelsChecked).toBeGreaterThan(0);
+    });
+
+    it("ca âm: engine có trong registry mà thiếu hàng config thì đỏ", () => {
+      const withoutRow = {
+        ...validConfig,
+        engines: Object.fromEntries(
+          Object.entries(validConfig.engines).filter(([k]) => k !== "GT-012")
+        ),
+      } as typeof validConfig;
+      const issues = checkConfigLimits(withoutRow);
+      expect(
+        issues.some(
+          (i) => i.code === "MISSING_ENGINE_ROW" && i.engineCode === "GT-012"
+        )
+      ).toBe(true);
     });
   });
 

@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-015
  * Seed: 20260829
  * Theme: school
@@ -72,6 +72,7 @@ export const GEN_GT015_20260829: ContentSeed<unknown, unknown>[] = [
       "regions": "row_col"
     },
     "difficulty_params": {
+      "item_count": 2,
       "blank_count": 2,
       "hint_after_ms": 10000,
       "allow_retry": true
@@ -140,6 +141,7 @@ export const GEN_GT015_20260829: ContentSeed<unknown, unknown>[] = [
       "regions": "row_col"
     },
     "difficulty_params": {
+      "item_count": 2,
       "blank_count": 2,
       "hint_after_ms": 10000,
       "allow_retry": true
@@ -208,6 +210,7 @@ export const GEN_GT015_20260829: ContentSeed<unknown, unknown>[] = [
       "regions": "row_col"
     },
     "difficulty_params": {
+      "item_count": 2,
       "blank_count": 2,
       "hint_after_ms": 10000,
       "allow_retry": true
@@ -276,6 +279,7 @@ export const GEN_GT015_20260829: ContentSeed<unknown, unknown>[] = [
       "regions": "row_col"
     },
     "difficulty_params": {
+      "item_count": 2,
       "blank_count": 2,
       "hint_after_ms": 10000,
       "allow_retry": true
@@ -344,6 +348,7 @@ export const GEN_GT015_20260829: ContentSeed<unknown, unknown>[] = [
       "regions": "row_col"
     },
     "difficulty_params": {
+      "item_count": 2,
       "blank_count": 2,
       "hint_after_ms": 10000,
       "allow_retry": true

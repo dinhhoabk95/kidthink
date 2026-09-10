@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -17,7 +18,11 @@ export const projectGT036: Projection<"GT-036"> = {
     }
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
-    const paletteCount = Math.min(Math.max(2, opts.difficulty + 1), 3);
+    const params = getEngineDifficultyParams("GT-036", opts.difficulty);
+    const paletteCount = Math.min(
+      params.palette_size ?? 2,
+      dataset.items.length
+    );
     const chosenItems = shuffleDeterministic(dataset.items, rng).slice(
       0,
       paletteCount
@@ -32,12 +37,14 @@ export const projectGT036: Projection<"GT-036"> = {
       content_pack: {
         prompt: "Bé hãy xếp lặp lại theo đúng quy luật nhé!",
         palette,
-        track_length: 8,
-        min_repetitions: 2,
+        track_length: params.track_length ?? 8,
+        min_repetitions: params.min_repetitions ?? 2,
       },
       difficulty_params: {
-        pattern_length: 2,
-        track_length: 8,
+        item_count: palette.length,
+        palette_size: palette.length,
+        pattern_length: params.pattern_length ?? 2,
+        track_length: params.track_length ?? 8,
         hint_after_ms: 8000,
         allow_retry: true,
       },

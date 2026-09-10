@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-013
  * Seed: 12345
  * Theme: school
@@ -88,6 +88,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -183,6 +184,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -273,6 +275,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -358,6 +361,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -453,6 +457,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -548,6 +553,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -633,6 +639,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -723,6 +730,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -813,6 +821,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -898,6 +907,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -983,6 +993,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -1068,6 +1079,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -1153,6 +1165,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -1238,6 +1251,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -1328,6 +1342,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -1418,6 +1433,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -1503,6 +1519,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -1588,6 +1605,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -1673,6 +1691,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -1758,6 +1777,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -1853,6 +1873,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -1943,6 +1964,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -2033,6 +2055,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -2118,6 +2141,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -2203,6 +2227,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -2293,6 +2318,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -2388,6 +2414,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -2478,6 +2505,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -2568,6 +2596,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -2658,6 +2687,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -2748,6 +2778,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -2833,6 +2864,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -2918,6 +2950,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -3013,6 +3046,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -3103,6 +3137,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -3188,6 +3223,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -3283,6 +3319,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -3378,6 +3415,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -3468,6 +3506,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -3563,6 +3602,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -3648,6 +3688,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -3743,6 +3784,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -3828,6 +3870,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -3913,6 +3956,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -3998,6 +4042,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -4093,6 +4138,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -4178,6 +4224,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -4263,6 +4310,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -4348,6 +4396,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -4443,6 +4492,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -4533,6 +4583,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -4623,6 +4674,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -4718,6 +4770,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -4803,6 +4856,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -4888,6 +4942,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -4978,6 +5033,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -5063,6 +5119,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -5153,6 +5210,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -5238,6 +5296,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -5323,6 +5382,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -5418,6 +5478,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -5503,6 +5564,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -5593,6 +5655,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -5683,6 +5746,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -5778,6 +5842,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -5863,6 +5928,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -5948,6 +6014,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -6033,6 +6100,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -6128,6 +6196,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -6213,6 +6282,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -6303,6 +6373,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -6393,6 +6464,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -6483,6 +6555,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -6578,6 +6651,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -6668,6 +6742,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -6758,6 +6833,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -6843,6 +6919,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -6938,6 +7015,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -7028,6 +7106,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -7113,6 +7192,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -7198,6 +7278,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -7288,6 +7369,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -7383,6 +7465,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -7468,6 +7551,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -7558,6 +7642,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -7643,6 +7728,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -7738,6 +7824,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -7823,6 +7910,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -7908,6 +7996,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -7998,6 +8087,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -8088,6 +8178,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -8173,6 +8264,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -8268,6 +8360,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -8363,6 +8456,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -8448,6 +8542,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -8533,6 +8628,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -8618,6 +8714,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -8713,6 +8810,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -8808,6 +8906,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -8898,6 +8997,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -8993,6 +9093,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -9078,6 +9179,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -9168,6 +9270,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -9253,6 +9356,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -9343,6 +9447,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -9438,6 +9543,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -9523,6 +9629,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -9618,6 +9725,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -9703,6 +9811,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -9793,6 +9902,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -9883,6 +9993,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -9978,6 +10089,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -10073,6 +10185,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -10163,6 +10276,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -10258,6 +10372,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -10348,6 +10463,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -10433,6 +10549,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -10523,6 +10640,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -10608,6 +10726,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -10698,6 +10817,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -10793,6 +10913,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -10883,6 +11004,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -10978,6 +11100,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -11063,6 +11186,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -11153,6 +11277,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -11243,6 +11368,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -11333,6 +11459,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -11428,6 +11555,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -11518,6 +11646,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -11608,6 +11737,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -11698,6 +11828,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -11793,6 +11924,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -11888,6 +12020,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -11973,6 +12106,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -12063,6 +12197,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -12153,6 +12288,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -12238,6 +12374,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -12333,6 +12470,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -12428,6 +12566,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -12523,6 +12662,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -12613,6 +12753,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -12708,6 +12849,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -12793,6 +12935,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -12878,6 +13021,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -12968,6 +13112,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -13053,6 +13198,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -13138,6 +13284,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -13233,6 +13380,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -13328,6 +13476,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -13423,6 +13572,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -13513,6 +13663,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -13608,6 +13759,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -13703,6 +13855,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -13793,6 +13946,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -13888,6 +14042,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -13978,6 +14133,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -14063,6 +14219,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -14148,6 +14305,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -14243,6 +14401,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -14328,6 +14487,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -14418,6 +14578,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -14508,6 +14669,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -14593,6 +14755,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -14678,6 +14841,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -14773,6 +14937,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -14863,6 +15028,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -14948,6 +15114,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -15043,6 +15210,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -15133,6 +15301,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -15228,6 +15397,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -15318,6 +15488,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -15403,6 +15574,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -15498,6 +15670,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -15593,6 +15766,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -15678,6 +15852,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -15763,6 +15938,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -15848,6 +16024,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -15933,6 +16110,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 2,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -16023,6 +16201,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -16118,6 +16297,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -16213,6 +16393,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -16308,6 +16489,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,
@@ -16398,6 +16580,7 @@ export const GEN_GT013_12345: ContentSeed<unknown, unknown>[] = [
       "input_mode": "draw"
     },
     "difficulty_params": {
+      "item_count": 1,
       "dead_end_count": 3,
       "required_cell_count": 0,
       "hint_after_ms": 10000,

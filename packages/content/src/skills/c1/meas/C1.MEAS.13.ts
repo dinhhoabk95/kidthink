@@ -348,7 +348,7 @@ export const C1_MEAS_13_SEED: SkillSeed = {
       difficulty: 3,
       theme: "home",
       rounds: 3,
-      legacy_v1_ref: "D1-22",
+      legacy_v1_ref: "D1-08",
     },
   ],
 };

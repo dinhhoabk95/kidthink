@@ -14,6 +14,7 @@ import { fileURLToPath } from "node:url";
 import {
   ALL_SEED_LEVELS,
   type EngineMetrics,
+  type EngineStepCriteria,
   evaluateEngineDepth,
   loadEngineDepthConfig,
 } from "@mindkid/content-build";
@@ -29,28 +30,36 @@ const CAN_DO_KEYWORD = "cần đo";
 
 const MD_EXT_REGEX = /\.md$/;
 
-export function formatSection16Content(metrics: EngineMetrics): string {
+function verdict(actual: number, target: number): string {
+  return actual >= target ? "ĐẠT" : "CHƯA ĐẠT";
+}
+
+/**
+ * Sinh khối Mục 16 theo **bậc đang bật** của `engine-depth.json`.
+ *
+ * Ngưỡng Cấm — NEVER viết cứng ở đây: bậc thang `BR-ECD-08` nâng dần, và một khối
+ * "mục tiêu bậc 1" đóng băng sẽ ghi sai hợp đồng ngay lần nâng bậc kế tiếp.
+ */
+export function formatSection16Content(
+  metrics: EngineMetrics,
+  criteria: EngineStepCriteria,
+  activeStep: number
+): string {
   const bandsList = metrics.valid_bands.map((b) => `\`${b}\``).join(", ");
-  const levelTarget = metrics.level_count >= 6 ? "ĐẠT" : "CHƯA ĐẠT";
-  const bandTarget = metrics.min_band_count >= 1 ? "ĐẠT" : "CHƯA ĐẠT";
-  const thinkTarget = metrics.thinking_span >= 2 ? "ĐẠT" : "CHƯA ĐẠT";
-  const whatTarget = metrics.what_span >= 2 ? "ĐẠT" : "CHƯA ĐẠT";
-  const themeTarget = metrics.theme_span >= 2 ? "ĐẠT" : "CHƯA ĐẠT";
-  const accessTarget = metrics.free_or_login_count >= 1 ? "ĐẠT" : "CHƯA ĐẠT";
 
   const genTag = ["@", "generated"].join("");
   return `${S16_HEADER}
 
 <!-- ${genTag} bởi scripts/gen-engine-depth-section.ts — Cấm sửa tay. -->
 
-Sáu số đo hiện tại và mục tiêu bậc 1 (\`BR-ECD-01\`…\`-06\` — luật chiều sâu nội dung engine):
+Sáu số đo hiện tại và mục tiêu bậc ${activeStep} (\`BR-ECD-01\`…\`-06\` — luật chiều sâu nội dung engine):
 
-- \`level_count\`: hiện có ${metrics.level_count}, mục tiêu ≥6 (${levelTarget})
-- \`min_band_count\`: hiện có ${metrics.min_band_count} (band hợp lệ: ${bandsList}), mục tiêu ≥1 (${bandTarget})
-- \`thinking_span\`: hiện có ${metrics.thinking_span}, mục tiêu ≥2 (${thinkTarget})
-- \`what_span\`: hiện có ${metrics.what_span}, mục tiêu ≥2 (${whatTarget})
-- \`theme_span\`: hiện có ${metrics.theme_span}, mục tiêu ≥2 (${themeTarget})
-- \`access_tier\`: hiện có ${metrics.free_or_login_count} level \`free\` hoặc \`login\`, mục tiêu ≥1 (${accessTarget})`;
+- \`level_count\`: hiện có ${metrics.level_count}, mục tiêu ≥${criteria.level_count} (${verdict(metrics.level_count, criteria.level_count)})
+- \`min_band_count\`: hiện có ${metrics.min_band_count} (band hợp lệ: ${bandsList}), mục tiêu ≥${criteria.min_band_count} (${verdict(metrics.min_band_count, criteria.min_band_count)})
+- \`thinking_span\`: hiện có ${metrics.thinking_span}, mục tiêu ≥${criteria.thinking_span} (${verdict(metrics.thinking_span, criteria.thinking_span)})
+- \`what_span\`: hiện có ${metrics.what_span}, mục tiêu ≥${criteria.what_span} (${verdict(metrics.what_span, criteria.what_span)})
+- \`theme_span\`: hiện có ${metrics.theme_span}, mục tiêu ≥${criteria.theme_span} (${verdict(metrics.theme_span, criteria.theme_span)})
+- \`access_tier\`: hiện có ${metrics.free_or_login_count} level \`free\` hoặc \`login\`, mục tiêu ≥${criteria.min_free_or_login} (${verdict(metrics.free_or_login_count, criteria.min_free_or_login)})`;
 }
 
 export function extractSection16FromSpec(fileContent: string): string | null {
@@ -114,6 +123,7 @@ function verifySpecSection16(
 function processSingleSpecFile(
   filename: string,
   report: ReturnType<typeof evaluateEngineDepth>,
+  criteria: EngineStepCriteria,
   isCheck: boolean
 ): { success: boolean; updated: boolean } {
   const code = filename.replace(MD_EXT_REGEX, "");
@@ -126,7 +136,11 @@ function processSingleSpecFile(
     return { success: false, updated: false };
   }
 
-  const generated = formatSection16Content(engineEntry.metrics);
+  const generated = formatSection16Content(
+    engineEntry.metrics,
+    criteria,
+    report.activeStep
+  );
 
   if (isCheck) {
     const ok = verifySpecSection16(filename, content, generated);
@@ -147,6 +161,13 @@ export function runEngineDepthSection(options?: { check?: boolean }): boolean {
   const config = loadEngineDepthConfig();
   const report = evaluateEngineDepth(ALL_SEED_LEVELS, config);
 
+  const criteria = config.steps[String(config.active_step)];
+  if (!criteria) {
+    throw new Error(
+      `Không tìm thấy tiêu chí sàn cho bậc active_step = ${config.active_step} trong engine-depth.json`
+    );
+  }
+
   const files = fs
     .readdirSync(ENGINES_DIR)
     .filter((f) => SPEC_FILE_REGEX.test(f))
@@ -156,7 +177,7 @@ export function runEngineDepthSection(options?: { check?: boolean }): boolean {
   let updatedCount = 0;
 
   for (const filename of files) {
-    const res = processSingleSpecFile(filename, report, isCheck);
+    const res = processSingleSpecFile(filename, report, criteria, isCheck);
     if (!res.success) {
       hasError = true;
     }

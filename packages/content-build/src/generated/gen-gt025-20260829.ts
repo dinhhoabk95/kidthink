@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-025
  * Seed: 20260829
  * Theme: school
@@ -81,6 +81,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "hint_after_ms": 8000,
       "allow_retry": true,
       "show_counter": true
@@ -158,6 +159,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "hint_after_ms": 8000,
       "allow_retry": true,
       "show_counter": true
@@ -235,6 +237,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "hint_after_ms": 8000,
       "allow_retry": true,
       "show_counter": true
@@ -312,6 +315,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "hint_after_ms": 8000,
       "allow_retry": true,
       "show_counter": true
@@ -389,6 +393,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "hint_after_ms": 8000,
       "allow_retry": true,
       "show_counter": true

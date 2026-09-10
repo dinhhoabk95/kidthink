@@ -10,7 +10,7 @@ import type { ContentSeed, GateIssue, GateResult } from "../types.js";
 
 const REGEX_STEP = /^step-/;
 const REGEX_PAIR = /^pair-/;
-const REGEX_SUFFIX_NUM = /[-_]\d+$/;
+const REGEX_SUFFIX_NUM = /[-_](?:[td]\d+|\d+)$/;
 
 function getItemId(obj: unknown): string | null {
   if (obj && typeof obj === "object") {

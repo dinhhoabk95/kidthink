@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-030
  * Seed: 20260829
  * Theme: school
@@ -69,6 +69,7 @@ export const GEN_GT030_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 4,
       "length_in_units": 5,
       "gap_tolerance_pct": 10,
       "allow_retry": true,
@@ -130,6 +131,7 @@ export const GEN_GT030_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 3,
       "length_in_units": 6,
       "gap_tolerance_pct": 10,
       "allow_retry": true,
@@ -191,6 +193,7 @@ export const GEN_GT030_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 3,
       "length_in_units": 3,
       "gap_tolerance_pct": 10,
       "allow_retry": true,
@@ -252,6 +255,7 @@ export const GEN_GT030_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 3,
       "length_in_units": 3,
       "gap_tolerance_pct": 10,
       "allow_retry": true,
@@ -318,6 +322,7 @@ export const GEN_GT030_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 4,
       "length_in_units": 5,
       "gap_tolerance_pct": 10,
       "allow_retry": true,

@@ -371,7 +371,7 @@ export const C1_ADD_06_SEED: SkillSeed = {
       rounds: 3,
     },
     {
-      code: "GL-C1-ADD-TAP-0001",
+      code: "GL-C1-ADD-TAP-0020",
       template: "GT-028",
       band: "5-6",
       difficulty: 1,
@@ -380,7 +380,7 @@ export const C1_ADD_06_SEED: SkillSeed = {
       legacy_v1_ref: "D6-01",
     },
     {
-      code: "GL-C1-ADD-TAP-0002",
+      code: "GL-C1-ADD-TAP-0021",
       template: "GT-028",
       band: "5-6",
       difficulty: 2,

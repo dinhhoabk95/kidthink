@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-035
  * Seed: 20260829
  * Theme: school
@@ -56,6 +56,7 @@ export const GEN_GT035_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "max_commands": 4,
       "obstacle_count": 0,
       "collectible_count": 0,
@@ -111,6 +112,7 @@ export const GEN_GT035_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "max_commands": 4,
       "obstacle_count": 0,
       "collectible_count": 0,
@@ -172,6 +174,7 @@ export const GEN_GT035_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "max_commands": 8,
       "obstacle_count": 1,
       "collectible_count": 0,
@@ -238,6 +241,7 @@ export const GEN_GT035_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "max_commands": 8,
       "obstacle_count": 0,
       "collectible_count": 1,
@@ -293,6 +297,7 @@ export const GEN_GT035_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 2,
       "max_commands": 5,
       "obstacle_count": 0,
       "collectible_count": 0,

@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -17,10 +18,8 @@ export const projectGT005: Projection<"GT-005"> = {
     }
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
-    const pairCount = Math.min(
-      Math.max(2, Math.min(opts.difficulty + 1, 6)),
-      dataset.items.length
-    );
+    const params = getEngineDifficultyParams("GT-005", opts.difficulty);
+    const pairCount = Math.min(params.target_count ?? 2, dataset.items.length);
 
     const chosenItems = shuffleDeterministic(dataset.items, rng).slice(
       0,
@@ -64,6 +63,9 @@ export const projectGT005: Projection<"GT-005"> = {
         pairs,
       },
       difficulty_params: {
+        // Mỗi cặp hiện hai thẻ (trái + phải) nên item_count = số cặp × 2.
+        item_count: pairs.length * 2,
+        target_count: pairs.length,
         hint_after_ms: 10_000,
         allow_retry: true,
         shuffle_sides: true,

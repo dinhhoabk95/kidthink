@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@3b15670c83ba
+ * @generated from LEVEL-GENERATOR-KIT@dcd73a3e0734
  * Engine: GT-024
  * Seed: 20260829
  * Theme: school
@@ -88,6 +88,7 @@ export const GEN_GT024_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 7,
       "tolerance_px": 43,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -167,6 +168,7 @@ export const GEN_GT024_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 6,
       "tolerance_px": 38,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -260,6 +262,7 @@ export const GEN_GT024_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 8,
       "tolerance_px": 36,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -332,6 +335,7 @@ export const GEN_GT024_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 5,
       "tolerance_px": 35,
       "show_numbered_dots": true,
       "show_guide_lines": true,
@@ -404,6 +408,7 @@ export const GEN_GT024_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 5,
       "tolerance_px": 38,
       "show_numbered_dots": true,
       "show_guide_lines": true,

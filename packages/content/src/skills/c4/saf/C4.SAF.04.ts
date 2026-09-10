@@ -222,7 +222,7 @@ export const C4_SAF_04_SEED: SkillSeed = {
       template: "GT-024",
       band: "5-6",
       difficulty: 2,
-      theme: "traffic",
+      theme: "vehicle",
       rounds: 3,
     },
     {
