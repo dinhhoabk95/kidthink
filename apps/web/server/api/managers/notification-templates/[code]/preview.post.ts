@@ -5,9 +5,10 @@ import {
   renderEmailTemplate,
   TEMPLATE_REGISTRY,
 } from "@mindkid/notification";
-import { defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { throwValidationError } from "#server/utils/api-error";
 
 const previewTemplateSchema = z
   .object({
@@ -33,8 +34,11 @@ export default defineEventHandler(async (event) => {
 
   const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
-  const parsed = previewTemplateSchema.parse(raw);
-  const body = (parsed || {}) as Record<string, unknown>;
+  const parsed = previewTemplateSchema.safeParse(raw);
+  if (!parsed.success) {
+    throwValidationError(parsed.error);
+  }
+  const body = (parsed.data || {}) as Record<string, unknown>;
 
   const sampleData =
     (body?.sample_data as Record<string, unknown>) || body || {};

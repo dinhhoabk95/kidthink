@@ -9,17 +9,13 @@ import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
-import {
-  assertRequestBodySize,
-  requireWebUserSession,
-} from "#server/utils/auth-runtime";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const completeItemSchema = z.object({
   curriculum_item_id: z.coerce.number().int().positive(),
 });
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 16 * 1024);
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {

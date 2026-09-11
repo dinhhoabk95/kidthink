@@ -4,11 +4,7 @@ import { EventPayloadSchema, ingestPlayEvents } from "@mindkid/play";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 
-import {
-  assertRequestBodySize,
-  assertSameOriginRequest,
-  getOrSetGuestDeviceId,
-} from "#server/utils/auth-runtime";
+import { getOrSetGuestDeviceId } from "#server/utils/auth-runtime";
 
 const EventsSchema = z
   .object({
@@ -34,8 +30,6 @@ export default defineEventHandler(async (event) => {
   if (!uuid) {
     throw new SessionNotFoundError();
   }
-  assertSameOriginRequest(event);
-  assertRequestBodySize(event, 64 * 1024);
 
   const guestDeviceId = getOrSetGuestDeviceId(event);
   const parsed = EventsSchema.safeParse((await readBody(event)) || {});

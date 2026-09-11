@@ -11,10 +11,8 @@ import {
   readBody,
 } from "h3";
 import { z } from "zod";
-import {
-  assertRequestBodySize,
-  requireWebUserSession,
-} from "#server/utils/auth-runtime";
+import { throwValidationError } from "#server/utils/api-error";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const deleteChildSchema = z.object({
   password: z.string().optional().default(""),
@@ -22,7 +20,6 @@ const deleteChildSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 16 * 1024);
   const userSession = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
@@ -44,10 +41,13 @@ export default defineEventHandler(async (event) => {
 
   const eventBody = (event.context as { body?: unknown })?.body;
   const raw = eventBody || (await readBody(event).catch(() => ({})));
-  const parsed = deleteChildSchema.parse(raw);
+  const parsed = deleteChildSchema.safeParse(raw);
+  if (!parsed.success) {
+    throwValidationError(parsed.error);
+  }
 
-  const password = parsed.password;
-  const confirmName = parsed.confirm_name.trim();
+  const password = parsed.data.password;
+  const confirmName = parsed.data.confirm_name.trim();
 
   // BR-CPR-08: Deletion requires password verification
   const [userRecord] = await db

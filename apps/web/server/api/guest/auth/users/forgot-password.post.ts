@@ -13,8 +13,6 @@ import { defineEventHandler, type H3Event, readBody } from "h3";
 import { z } from "zod";
 import {
   assertRateLimitAllowed,
-  assertRequestBodySize,
-  assertSameOriginRequest,
   getVerifiedRemoteIp,
 } from "#server/utils/auth-runtime";
 
@@ -23,8 +21,6 @@ const EmailSchema = z
   .strict();
 
 export async function handleForgotPassword(event: H3Event, testBody?: unknown) {
-  assertSameOriginRequest(event);
-  assertRequestBodySize(event, 16 * 1024);
   const ipRateLimit = await enforceTwoAxisRateLimit({
     routeClass: "auth:forgot-password",
     remoteIp: getVerifiedRemoteIp(event),

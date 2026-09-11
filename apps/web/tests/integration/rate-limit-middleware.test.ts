@@ -1,4 +1,4 @@
-import { AppError } from "@mindkid/auth";
+import { AppError } from "@mindkid/errors/base";
 import { RATE_LIMIT_CONFIGS, type RouteClassName } from "@mindkid/shared";
 import { createEvent, type H3Event } from "h3";
 import { afterEach, describe, expect, it } from "vitest";
@@ -232,5 +232,25 @@ describe("getVerifiedRemoteIp — BR-RTL-04/11", () => {
     process.env.TRUSTED_PROXY_IPS = "127.0.0.1";
     const event = makeEvent({ path: "/api/guest/home", ip: "127.0.0.1" });
     expect(getVerifiedRemoteIp(event)).toBe("127.0.0.1");
+  });
+
+  it("reads X-Real-IP when the peer matches a CIDR range", () => {
+    process.env.TRUSTED_PROXY_IPS = "172.16.0.0/12,127.0.0.1";
+    const event = makeEvent({
+      path: "/api/guest/home",
+      ip: "172.18.0.2",
+      headers: { "x-real-ip": "203.0.113.9" },
+    });
+    expect(getVerifiedRemoteIp(event)).toBe("203.0.113.9");
+  });
+
+  it("negative — ignores X-Real-IP from peer outside CIDR range", () => {
+    process.env.TRUSTED_PROXY_IPS = "172.16.0.0/12";
+    const event = makeEvent({
+      path: "/api/guest/home",
+      ip: "192.168.1.100",
+      headers: { "x-real-ip": "203.0.113.9" },
+    });
+    expect(getVerifiedRemoteIp(event)).toBe("192.168.1.100");
   });
 });

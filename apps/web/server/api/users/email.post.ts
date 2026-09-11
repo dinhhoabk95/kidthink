@@ -7,10 +7,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
-import {
-  assertRequestBodySize,
-  requireWebUserSession,
-} from "#server/utils/auth-runtime";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
 
 const ChangeEmailSchema = z
@@ -20,7 +17,6 @@ const ChangeEmailSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 8 * 1024);
   const userSession = await requireWebUserSession(event);
   await requireReauth(event);
 

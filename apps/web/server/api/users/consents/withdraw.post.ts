@@ -5,11 +5,11 @@ import { defineEventHandler, deleteCookie, getHeader, readBody } from "h3";
 import { z } from "zod";
 
 import {
-  assertRequestBodySize,
   getVerifiedRemoteIp,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
 import { executeArchiveChildProfile } from "#server/utils/child-archive-runtime";
+import { invalidateUserConsentCache } from "#server/utils/consent-guard";
 import { requireReauth } from "#server/utils/reauth-runtime";
 
 const WithdrawConsentSchema = z
@@ -20,7 +20,6 @@ const WithdrawConsentSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 8 * 1024);
   const userSession = await requireWebUserSession(event);
   const userId = Number(userSession.user_id);
 
@@ -54,6 +53,8 @@ export default defineEventHandler(async (event) => {
     userAgent,
     createdAt: now,
   });
+
+  await invalidateUserConsentCache(userId);
 
   if (consentType === "child_data") {
     const purgeAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);

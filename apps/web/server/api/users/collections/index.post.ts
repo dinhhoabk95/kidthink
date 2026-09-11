@@ -1,31 +1,30 @@
 import { getOwnerDb } from "@mindkid/db";
-import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
-import { createCollection } from "#server/services/index.js";
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { createCollection } from "#server/services/library.js";
+import { defineApiRoute } from "#server/utils/define-api-route";
 
 const CreateCollectionSchema = z.object({
   name: z.string().min(1, "Tên bộ sưu tập không được để trống").max(100),
 });
 
-export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
-  const userId = Number(user.user_id);
-  const db = getOwnerDb();
+export default defineApiRoute({
+  auth: "user",
+  body: CreateCollectionSchema,
+  status: 201,
+  async handler({ auth, body }) {
+    const userId = Number(auth.user_id);
+    const db = getOwnerDb();
 
-  const body = await readBody(event);
-  const parsed = CreateCollectionSchema.parse(body);
+    const created = await createCollection(db, userId, body.name);
 
-  const created = await createCollection(db, userId, parsed.name);
-
-  setResponseStatus(event, 201);
-  return {
-    success: true,
-    collection: {
-      id: created.id,
-      name: created.name,
-      position: created.position,
-      created_at: created.created_at,
-    },
-  };
+    return {
+      success: true,
+      collection: {
+        id: created.id,
+        name: created.name,
+        position: created.position,
+        created_at: created.created_at,
+      },
+    };
+  },
 });

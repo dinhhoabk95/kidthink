@@ -13,10 +13,7 @@ import { deriveAgeBand, isValidAvatarPreset } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 
-import {
-  assertRequestBodySize,
-  requireWebUserSession,
-} from "#server/utils/auth-runtime";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 function validatePatchDisplayName(name: string): string {
   const trimmed = name.trim();
@@ -99,7 +96,6 @@ function buildChildUpdates(rawBody: unknown, currentYear: number) {
 }
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 16 * 1024);
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {

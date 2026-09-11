@@ -17,7 +17,7 @@ import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import {
-  getManagerRemoteIp,
+  getVerifiedRemoteIp,
   requireSuperAdminSession,
 } from "#server/utils/admin-auth-runtime";
 import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
@@ -133,7 +133,7 @@ export default defineEventHandler(async (event) => {
         revoked_entitlements_count: revokedKeys.length,
       },
       reason: admin_note,
-      ipAddress: getManagerRemoteIp(event),
+      ipAddress: getVerifiedRemoteIp(event),
       userAgent: getHeader(event, "user-agent") || null,
     });
 

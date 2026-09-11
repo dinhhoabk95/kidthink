@@ -28,8 +28,6 @@ import {
 import { z } from "zod";
 import {
   assertRateLimitAllowed,
-  assertRequestBodySize,
-  assertSameOriginRequest,
   ensureUserCsrfCookie,
   getVerifiedRemoteIp,
   setUserRememberCookie,
@@ -63,8 +61,6 @@ function parseLoginCredentials(rawBody: unknown): {
 }
 
 export async function handleLogin(event: H3Event, testBody?: unknown) {
-  assertSameOriginRequest(event);
-  assertRequestBodySize(event, 16 * 1024);
   const ipRateLimit = await enforceTwoAxisRateLimit({
     routeClass: "auth:login",
     remoteIp: getVerifiedRemoteIp(event),

@@ -1,86 +1,31 @@
-import {
-  CSRF_HEADER_NAME,
-  generateCsrfToken,
-  getAuthNamespaceConfig,
-  requireManagerAuth,
-  requireRole,
-  validateCsrfToken,
-} from "@mindkid/auth";
+import { requireManagerAuth, requireRole } from "@mindkid/auth";
 import { requireEnv } from "@mindkid/config";
-import { CsrfInvalidError, SessionRevokedError } from "@mindkid/errors/auth";
-import { isAppError } from "@mindkid/errors/base";
+import type { H3Event } from "h3";
+import { getVerifiedRemoteIp as runtimeGetVerifiedRemoteIp } from "./auth-runtime.js";
 import {
-  PayloadTooLargeError,
-  RateLimitedError,
-  ServiceUnavailableError,
-} from "@mindkid/errors/common";
+  assertRateLimitAllowed,
+  assertRequestBodySize,
+  assertSameOriginRequest,
+  createAuthRuntime,
+} from "./auth-runtime-factory.js";
 
-import {
-  deleteCookie,
-  getCookie,
-  getHeader,
-  type H3Event,
-  setCookie,
-} from "h3";
+export const assertManagerRateLimitAllowed = assertRateLimitAllowed;
+export const assertManagerRequestBodySize = assertRequestBodySize;
+export const assertManagerSameOriginRequest = assertSameOriginRequest;
+export const getVerifiedRemoteIp = (event: H3Event): string =>
+  runtimeGetVerifiedRemoteIp(event);
+export const MANAGER_REMEMBER_COOKIE = "tm_m_remember";
 
-import { isAllowedApiOrigin, MANAGER_REMEMBER_COOKIE } from "./auth-runtime.js";
+const managerRuntime = createAuthRuntime("manager");
 
-const managerConfig = getAuthNamespaceConfig("manager");
-const CSRF_TOKEN = /^[0-9a-f]{64}$/;
-const INTEGER_TEXT = /^\d+$/;
-
-export function getManagerRemoteIp(event: H3Event): string {
-  const request = event.node?.req as
-    | { socket?: { remoteAddress?: string } }
-    | undefined;
-  return request?.socket?.remoteAddress?.trim() || "unknown";
-}
-
-export function assertManagerRequestBodySize(
-  event: H3Event,
-  maxBytes = 128 * 1024
-): void {
-  const rawLength = getHeader(event, "content-length");
-  if (
-    rawLength &&
-    INTEGER_TEXT.test(rawLength) &&
-    Number(rawLength) > maxBytes
-  ) {
-    throw new PayloadTooLargeError();
-  }
-}
-
-export function assertManagerRateLimitAllowed(statusCode: number): void {
-  if (statusCode === 200) {
-    return;
-  }
-  throw statusCode === 429
-    ? new RateLimitedError({ retry_after_s: 60 })
-    : new ServiceUnavailableError();
-}
-
-export function assertManagerSameOriginRequest(event: H3Event): void {
-  const fetchSite = getHeader(event, "sec-fetch-site")?.toLowerCase();
-  if (fetchSite === "cross-site") {
-    throw new CsrfInvalidError();
-  }
-
-  const origin = getHeader(event, "origin");
-  const host = getHeader(event, "host");
-  if (!(origin && host)) {
-    return;
-  }
-  try {
-    if (!isAllowedApiOrigin(origin, host)) {
-      throw new CsrfInvalidError();
-    }
-  } catch (error) {
-    if (isAppError(error)) {
-      throw error;
-    }
-    throw new CsrfInvalidError();
-  }
-}
+export const {
+  ensureCsrfCookie: ensureManagerCsrfCookie,
+  validateCsrf: validateManagerCsrf,
+  setRememberCookie: setManagerRememberCookie,
+  clearRememberCookie: clearManagerRememberCookie,
+  getRememberCookie: getManagerRememberCookie,
+  respondToAuthError: respondToManagerAuthError,
+} = managerRuntime;
 
 export function getMfaEncryptionKey(): string {
   const secret = requireEnv("MFA_ENCRYPTION_KEY");
@@ -92,66 +37,6 @@ export function getMfaEncryptionKey(): string {
   return secret;
 }
 
-export function ensureManagerCsrfCookie(event: H3Event): string {
-  const current = getCookie(event, managerConfig.csrfCookieName);
-  if (current && CSRF_TOKEN.test(current)) {
-    return current;
-  }
-  const token = generateCsrfToken();
-  const response = event.node?.res as
-    | { getHeader?: unknown; setHeader?: unknown }
-    | undefined;
-  if (
-    typeof response?.getHeader !== "function" ||
-    typeof response?.setHeader !== "function"
-  ) {
-    return token;
-  }
-  setCookie(event, managerConfig.csrfCookieName, token, {
-    httpOnly: false,
-    maxAge: 365 * 24 * 60 * 60,
-    path: "/",
-    sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
-  });
-  return token;
-}
-
-export function validateManagerCsrf(event: H3Event): void {
-  validateCsrfToken({
-    method: event.method,
-    cookieToken: getCookie(event, managerConfig.csrfCookieName),
-    headerToken: getHeader(event, CSRF_HEADER_NAME),
-  });
-}
-
-export function setManagerRememberCookie(
-  event: H3Event,
-  rememberToken: string
-): void {
-  setCookie(event, MANAGER_REMEMBER_COOKIE, rememberToken, {
-    httpOnly: true,
-    maxAge: 365 * 24 * 3600,
-    path: "/",
-    sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
-  });
-}
-
-export function clearManagerRememberCookie(event: H3Event): void {
-  deleteCookie(event, MANAGER_REMEMBER_COOKIE, {
-    path: "/",
-  });
-}
-
-export function getManagerRememberCookie(event: H3Event): string {
-  const token = getCookie(event, MANAGER_REMEMBER_COOKIE);
-  if (!token) {
-    throw new SessionRevokedError();
-  }
-  return token;
-}
-
 export function requireManagerSession(event: H3Event) {
   validateManagerCsrf(event);
   return requireManagerAuth(event);
@@ -161,14 +46,4 @@ export function requireSuperAdminSession(event: H3Event) {
   validateManagerCsrf(event);
   requireRole(event, "super_admin");
   return requireManagerAuth(event);
-}
-
-export function respondToManagerAuthError(
-  _event: H3Event,
-  error: unknown
-): never {
-  if (isAppError(error)) {
-    throw error;
-  }
-  throw error as Error;
 }

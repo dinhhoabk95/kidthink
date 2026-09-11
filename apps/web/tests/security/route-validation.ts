@@ -21,10 +21,9 @@ const READS_BODY = /\breadBody\s*\(|\breadRequestBody\s*\(|\breadRawBody\s*\(/;
 
 /**
  * Bằng chứng đã validate. `readValidatedBody` tự parse nên tính luôn.
- * `.parse(` bắt cả `schema.parse(raw)` và `z.object({...}).parse(raw)`.
  */
 const VALIDATES =
-  /\.safeParse\s*\(|\.parse\s*\(|\breadValidatedBody\s*\(|\bparseChildProfileInput\s*\(|\bthrowValidationError\s*\(/;
+  /\.safeParse\s*\(|\bbody:\s*[a-zA-Z0-9_]+|\breadValidatedBody\s*\(|\bparseChildProfileInput\s*\(|\bthrowValidationError\s*\(/;
 
 /** Route webhook nhận payload đã ký, parse ở service — có ghi lý do trong file. */
 const EXEMPT_MARKER = /route-validation:\s*exempt\s+—/;

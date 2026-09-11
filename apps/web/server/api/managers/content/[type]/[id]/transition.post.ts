@@ -14,6 +14,7 @@ import type { H3Event } from "h3";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { transitionContentStatus } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { throwValidationError } from "#server/utils/api-error";
 import { verifyPreviewToken } from "#server/utils/preview-token";
 
 const VALID_TYPES = [
@@ -156,13 +157,16 @@ const transitionBodySchema = z.object({
 
 async function parseTransitionBody(event: H3Event) {
   const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
-  const parsed = transitionBodySchema.parse(raw);
+  const parsed = transitionBodySchema.safeParse(raw);
+  if (!parsed.success) {
+    throwValidationError(parsed.error);
+  }
   return {
-    toStatus: parsed.to_status as ContentLifecycleStatus,
-    reason: parsed.reason,
-    expectedVersion: parsed.expected_version,
-    checklist: parsed.checklist,
-    previewToken: parsed.preview_token,
+    toStatus: parsed.data.to_status as ContentLifecycleStatus,
+    reason: parsed.data.reason,
+    expectedVersion: parsed.data.expected_version,
+    checklist: parsed.data.checklist,
+    previewToken: parsed.data.preview_token,
   };
 }
 

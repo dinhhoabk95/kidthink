@@ -25,3 +25,8 @@ export async function setCached<T>(
   const stringValue = typeof value === "string" ? value : JSON.stringify(value);
   await c.set(key, stringValue, "EX", ttlSeconds);
 }
+
+export async function deleteCached(key: string): Promise<void> {
+  const c = getClient();
+  await c.del(key);
+}

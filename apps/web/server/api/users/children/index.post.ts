@@ -26,10 +26,7 @@ import {
   readBody,
   setResponseStatus,
 } from "h3";
-import {
-  assertRequestBodySize,
-  requireWebUserSession,
-} from "#server/utils/auth-runtime";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 function parseAndValidateInput(rawBody: unknown, currentYear: number) {
   try {
@@ -112,7 +109,6 @@ async function verifyChildConsentAndQuota(_event: H3Event, userId: number) {
 }
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 16 * 1024);
   const user = await requireWebUserSession(event);
   const db = getOwnerDb();
   const [account] = await db

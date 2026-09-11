@@ -4,10 +4,7 @@ import { EventPayloadSchema, ingestPlayEvents } from "@mindkid/play";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 
-import {
-  assertRequestBodySize,
-  requireWebUserSession,
-} from "#server/utils/auth-runtime";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const EventsSchema = z
   .object({
@@ -30,7 +27,6 @@ const EventsSchema = z
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
-  assertRequestBodySize(event, 64 * 1024);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
     throw new NotFoundError("NOT_FOUND");

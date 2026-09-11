@@ -17,10 +17,8 @@ import { defineEventHandler } from "h3";
 import { z } from "zod";
 import {
   assertManagerRateLimitAllowed,
-  assertManagerRequestBodySize,
-  assertManagerSameOriginRequest,
-  getManagerRemoteIp,
   getMfaEncryptionKey,
+  getVerifiedRemoteIp,
 } from "#server/utils/admin-auth-runtime";
 import { readRequestBody } from "#server/utils/request-body";
 
@@ -31,8 +29,6 @@ const MfaSetupSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  assertManagerSameOriginRequest(event);
-  assertManagerRequestBodySize(event, 16 * 1024);
   const body = await readRequestBody(event);
   const parsed = MfaSetupSchema.safeParse(body);
   if (!parsed.success) {
@@ -65,7 +61,7 @@ export default defineEventHandler(async (event) => {
   // Check rate limit (BR-MME-07)
   const rateLimit = await enforceTwoAxisRateLimit({
     routeClass: "auth:mfa",
-    remoteIp: getManagerRemoteIp(event),
+    remoteIp: getVerifiedRemoteIp(event),
     accountIdentifier: String(manager.id),
   });
   assertManagerRateLimitAllowed(rateLimit.statusCode);
@@ -122,7 +118,7 @@ export default defineEventHandler(async (event) => {
     displayName: manager.displayName,
     role: manager.role,
     rememberMe: challengePayload.rememberMe,
-    ipAddress: getManagerRemoteIp(event),
+    ipAddress: getVerifiedRemoteIp(event),
   });
 
   const otpauthUri = generateTotpUri(

@@ -77,6 +77,8 @@ const patchLevelSchema = z.object({
   expected_version: z.number().int().positive().optional(),
 });
 
+import { throwValidationError } from "#server/utils/api-error";
+
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
   const code = getRouterParam(event, "code");
@@ -89,7 +91,11 @@ export default defineEventHandler(async (event) => {
   const version = Number(versionParam);
   const rawBody = (await readBody(event).catch(() => ({}))) || {};
 
-  const body = patchLevelSchema.parse(rawBody);
+  const parsed = patchLevelSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    throwValidationError(parsed.error);
+  }
+  const body = parsed.data;
 
   const db = getOwnerDb();
 

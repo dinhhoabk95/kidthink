@@ -1,13 +1,28 @@
 import { getQuery, type H3Event, readBody } from "h3";
+import { assertRequestBodySize } from "./auth-runtime-factory.js";
 
 /**
- * Đọc body request rồi trả về `unknown` — **chưa tin được**, người gọi BẮT BUỘC
+ * Đọc body request có kiểm tra trần kích thước tối đa.
+ * Khuyến khích dùng `defineApiRoute` thay vì gọi thủ công `readBodyWithLimit` hoặc `readRequestBody`.
+ */
+export async function readBodyWithLimit(
+  event: H3Event,
+  maxBytes?: number
+): Promise<Record<string, string | number | boolean | null | object>> {
+  if (maxBytes !== undefined) {
+    assertRequestBodySize(event, maxBytes);
+  }
+  const body = await readRequestBody(event);
+  if (typeof body === "object" && body !== null) {
+    return body as Record<string, string | number | boolean | null | object>;
+  }
+  return {};
+}
+
+/**
+ * Đọc body request rồi trả về dữ liệu thô — **chưa tin được**, người gọi BẮT BUỘC
  * đưa qua Zod (`BR-SEC-04`).
- *
- * Trả `unknown` là cố ý: đây là ranh giới hệ thống, và TYPE-SAFETY `BR-TYP-03`
- * cho phép `unknown` đúng ở chỗ này. ❌ NEVER ép nó thành
- * `Record<string, unknown>` rồi đọc field trực tiếp — làm vậy là bỏ qua
- * validate mà vẫn trông như có kiểu.
+ * Khuyến nghị: dùng `defineApiRoute` cho route mới.
  *
  * Thứ tự nguồn:
  * 1. `readBody(event)` — request thật.

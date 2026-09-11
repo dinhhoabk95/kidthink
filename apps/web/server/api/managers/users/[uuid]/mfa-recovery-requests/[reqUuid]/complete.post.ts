@@ -12,7 +12,7 @@ import { InvalidStatusTransitionError } from "@mindkid/errors/content";
 import { and, eq, sql } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam } from "h3";
 import {
-  getManagerRemoteIp,
+  getVerifiedRemoteIp,
   requireSuperAdminSession,
 } from "#server/utils/admin-auth-runtime";
 
@@ -118,7 +118,7 @@ export default defineEventHandler(async (event) => {
       entityType: "user",
       entityId: targetUser.uuid,
       reason: recoveryReq.reason,
-      ipAddress: getManagerRemoteIp(event),
+      ipAddress: getVerifiedRemoteIp(event),
       userAgent: getHeader(event, "user-agent") ?? "unknown",
     });
   });

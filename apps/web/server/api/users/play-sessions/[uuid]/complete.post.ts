@@ -4,17 +4,13 @@ import { completePlaySession } from "@mindkid/play";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 
-import {
-  assertRequestBodySize,
-  requireWebUserSession,
-} from "#server/utils/auth-runtime";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const CompleteSchema = z
   .object({ last_seq: z.number().int().positive().optional() })
   .strict();
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 16 * 1024);
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {

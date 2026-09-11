@@ -1,14 +1,14 @@
 import { getOwnerDb } from "@mindkid/db";
-import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
 import {
+  SearchParamsSchema,
   searchActivities,
   searchGameLevels,
   searchLessons,
-} from "#server/services/index.js";
-import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+} from "#server/services/content-search.js";
+import { defineApiRoute } from "#server/utils/define-api-route";
 
-const contentSearchQuerySchema = z.object({
+const contentSearchQuerySchema = SearchParamsSchema.extend({
   type: z
     .enum([
       "lessons",
@@ -20,11 +20,7 @@ const contentSearchQuerySchema = z.object({
     ])
     .optional()
     .default("lessons"),
-  limit: z.coerce.number().min(1).max(100).optional().default(100),
-  q: z.string().optional(),
-  status: z.string().optional(),
-  competency: z.enum(["C1", "C2", "C3", "C4", "C5", "C6"]).optional(),
-  cursor: z.string().optional(),
+  limit: z.coerce.number().min(1).max(100).optional().default(20),
 });
 
 export interface ContentSearchResponseItem {
@@ -44,18 +40,15 @@ export interface ContentSearchResponse {
   next_cursor: string | null;
 }
 
-export default defineEventHandler(
-  async (event): Promise<ContentSearchResponse> => {
-    await requireManagerSession(event);
-
+export default defineApiRoute({
+  auth: "manager",
+  query: contentSearchQuerySchema,
+  async handler({ query }): Promise<ContentSearchResponse> {
     const db = getOwnerDb();
-    const rawQuery = getQuery(event);
-    const parsed = contentSearchQuerySchema.parse(rawQuery);
-
     const viewer = { role: "manager" as const };
 
-    if (parsed.type === "lessons" || parsed.type === "lesson") {
-      const result = await searchLessons(db, rawQuery, viewer);
+    if (query.type === "lessons" || query.type === "lesson") {
+      const result = await searchLessons(db, query, viewer);
       return {
         items: result.items.map((item) => ({
           id: item.id,
@@ -70,8 +63,8 @@ export default defineEventHandler(
       };
     }
 
-    if (parsed.type === "game_levels" || parsed.type === "game_level") {
-      const result = await searchGameLevels(db, rawQuery, viewer);
+    if (query.type === "game_levels" || query.type === "game_level") {
+      const result = await searchGameLevels(db, query, viewer);
       return {
         items: result.items.map((item) => ({
           id: item.id,
@@ -86,8 +79,8 @@ export default defineEventHandler(
       };
     }
 
-    if (parsed.type === "activities" || parsed.type === "activity") {
-      const result = await searchActivities(db, rawQuery, viewer);
+    if (query.type === "activities" || query.type === "activity") {
+      const result = await searchActivities(db, query, viewer);
       return {
         items: result.items.map((item) => ({
           id: item.id,
@@ -107,5 +100,5 @@ export default defineEventHandler(
       items: [],
       next_cursor: null,
     };
-  }
-);
+  },
+});

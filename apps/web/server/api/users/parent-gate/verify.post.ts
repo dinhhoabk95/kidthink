@@ -4,7 +4,6 @@ import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
 import {
-  assertRequestBodySize,
   getParentGateSecret,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
@@ -17,7 +16,6 @@ const ParentGateVerifySchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 16 * 1024);
   const user = await requireWebUserSession(event);
   const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
   const body =

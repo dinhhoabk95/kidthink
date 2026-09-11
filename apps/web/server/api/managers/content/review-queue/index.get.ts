@@ -7,7 +7,7 @@ import {
   getOwnerDb,
   lessons,
 } from "@mindkid/db";
-import { and, desc, eq, type SQL, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, or, type SQL, sql } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -71,26 +71,51 @@ async function getIncompleteCurriculumItems(
 
   const incompleteWeekTuples = weekCounts.filter((w) => w.count < 3);
 
-  for (const iw of incompleteWeekTuples) {
-    const itemsInWeek = await db
-      .select({
-        entityType: curriculumItems.entityType,
-        entityId: curriculumItems.entityId,
-      })
-      .from(curriculumItems)
-      .where(
-        and(
-          eq(curriculumItems.curriculumId, iw.curriculumId),
-          eq(curriculumItems.weekNo, iw.weekNo)
-        )
-      );
+  if (incompleteWeekTuples.length === 0) {
+    return itemKeys;
+  }
 
-    for (const it of itemsInWeek) {
-      itemKeys.add(`${it.entityType}_${it.entityId}`);
-    }
+  const weekConditions = incompleteWeekTuples.map((iw) =>
+    and(
+      eq(curriculumItems.curriculumId, iw.curriculumId),
+      eq(curriculumItems.weekNo, iw.weekNo)
+    )
+  );
+
+  const itemsInWeeks = await db
+    .select({
+      entityType: curriculumItems.entityType,
+      entityId: curriculumItems.entityId,
+    })
+    .from(curriculumItems)
+    .where(or(...weekConditions));
+
+  for (const it of itemsInWeeks) {
+    itemKeys.add(`${it.entityType}_${it.entityId}`);
   }
 
   return itemKeys;
+}
+
+function computeLevelPriority(
+  version: number,
+  attached: number[],
+  isPartOfIncompleteWeek: boolean,
+  publishedSkillIds: Set<number>
+): { priorityTier: 1 | 2 | 3 | 4; priorityScore: number } {
+  if (isPartOfIncompleteWeek) {
+    return { priorityTier: 1, priorityScore: 50 };
+  }
+  if (
+    attached.length > 0 &&
+    attached.some((skillId) => !publishedSkillIds.has(skillId))
+  ) {
+    return { priorityTier: 2, priorityScore: 40 };
+  }
+  if (version > 1) {
+    return { priorityTier: 3, priorityScore: 30 };
+  }
+  return { priorityTier: 4, priorityScore: 10 };
 }
 
 async function fetchGameLevelReviewQueue(
@@ -136,47 +161,43 @@ async function fetchGameLevelReviewQueue(
     .orderBy(desc(gameLevels.createdAt))
     .limit(options.limit);
 
+  const levelIds = rows.map((r) => r.id);
+  const attachedRows =
+    levelIds.length > 0
+      ? await db
+          .select({
+            entityId: contentSkillMap.entityId,
+            skillId: contentSkillMap.skillId,
+          })
+          .from(contentSkillMap)
+          .where(
+            and(
+              inArray(contentSkillMap.entityId, levelIds),
+              eq(contentSkillMap.entityType, "game_level")
+            )
+          )
+      : [];
+
+  const skillsByLevelId = new Map<number, number[]>();
+  for (const a of attachedRows) {
+    const list = skillsByLevelId.get(a.entityId) ?? [];
+    list.push(a.skillId);
+    skillsByLevelId.set(a.entityId, list);
+  }
+
   const items: ReviewQueueItem[] = [];
 
   for (const r of rows) {
     const isPartOfIncompleteWeek = incompleteCurriculumItemKeys.has(
       `game_level_${r.id}`
     );
-
-    const attached = await db
-      .select({ skillId: contentSkillMap.skillId })
-      .from(contentSkillMap)
-      .where(
-        and(
-          eq(contentSkillMap.entityId, r.id),
-          eq(contentSkillMap.entityType, "game_level")
-        )
-      );
-
-    const hasUncoveredSkill = attached.some(
-      (a) => !publishedSkillIds.has(a.skillId)
+    const attached = skillsByLevelId.get(r.id) ?? [];
+    const { priorityTier, priorityScore } = computeLevelPriority(
+      r.contentVersion,
+      attached,
+      isPartOfIncompleteWeek,
+      publishedSkillIds
     );
-
-    let priorityTier: 1 | 2 | 3 | 4 = 4;
-    let priorityScore = 10;
-
-    if (isPartOfIncompleteWeek) {
-      // Tier 1: Curriculum week missing activities (D-KK)
-      priorityTier = 1;
-      priorityScore = 50;
-    } else if (hasUncoveredSkill && attached.length > 0) {
-      // Tier 2: Skill has 0 published levels
-      priorityTier = 2;
-      priorityScore = 40;
-    } else if (r.contentVersion > 1) {
-      // Tier 3: New version of currently published content
-      priorityTier = 3;
-      priorityScore = 30;
-    } else {
-      // Tier 4: Standalone content, oldest first
-      priorityTier = 4;
-      priorityScore = 10;
-    }
 
     items.push({
       id: r.id,

@@ -4,19 +4,13 @@ import { completePlaySession } from "@mindkid/play";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 
-import {
-  assertRequestBodySize,
-  assertSameOriginRequest,
-  getOrSetGuestDeviceId,
-} from "#server/utils/auth-runtime";
+import { getOrSetGuestDeviceId } from "#server/utils/auth-runtime";
 
 const CompleteSchema = z
   .object({ last_seq: z.number().int().positive().optional() })
   .strict();
 
 export default defineEventHandler(async (event) => {
-  assertSameOriginRequest(event);
-  assertRequestBodySize(event, 16 * 1024);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
     throw new SessionNotFoundError();

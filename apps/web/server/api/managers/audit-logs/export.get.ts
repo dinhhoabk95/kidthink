@@ -4,7 +4,7 @@ import { ValidationError } from "@mindkid/errors/common";
 import { and, desc, eq, gte, ilike, inArray, lte, type SQL } from "drizzle-orm";
 import { defineEventHandler, getQuery, setResponseHeader } from "h3";
 import {
-  getManagerRemoteIp,
+  getVerifiedRemoteIp,
   requireSuperAdminSession,
 } from "#server/utils/admin-auth-runtime";
 
@@ -146,7 +146,7 @@ export default defineEventHandler(async (event) => {
         filter_action: query.action || null,
         filter_entity_type: query.entity_type || null,
       },
-      ip_address: getManagerRemoteIp(event),
+      ip_address: getVerifiedRemoteIp(event),
     });
   });
 

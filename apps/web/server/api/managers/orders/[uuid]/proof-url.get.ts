@@ -6,7 +6,7 @@ import { getPrivateSignedUrl } from "@mindkid/storage";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam } from "h3";
 import {
-  getManagerRemoteIp,
+  getVerifiedRemoteIp,
   requireSuperAdminSession,
 } from "#server/utils/admin-auth-runtime";
 
@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
       signed_url_expires_at: signed.expiresAt.toISOString(),
     },
     reason: "Manager viewed payment proof image",
-    ipAddress: getManagerRemoteIp(event),
+    ipAddress: getVerifiedRemoteIp(event),
     userAgent: getHeader(event, "user-agent") || null,
   });
 

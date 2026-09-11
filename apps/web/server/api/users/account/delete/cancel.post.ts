@@ -11,8 +11,6 @@ import type { H3Event } from "h3";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
-import { assertRequestBodySize } from "#server/utils/auth-runtime";
-
 const CancelDeletionSchema = z
   .object({
     email: z.string().trim().email().optional(),
@@ -66,7 +64,6 @@ async function resolveTargetUserId(
 }
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 8 * 1024);
   const db = getOwnerDb();
   const targetUserId = await resolveTargetUserId(event, db);
 

@@ -3,11 +3,10 @@ import { ValidationError } from "@mindkid/errors/common";
 import { defineEventHandler, getHeader, readBody } from "h3";
 import { z } from "zod";
 import {
-  assertManagerRequestBodySize,
-  getManagerRemoteIp,
+  getVerifiedRemoteIp,
   requireSuperAdminSession,
 } from "#server/utils/admin-auth-runtime";
-
+import { bumpGlobalConsentEpoch } from "#server/utils/consent-guard";
 import { requireReauth } from "#server/utils/reauth-runtime";
 
 const ForceReconsentSchema = z
@@ -22,7 +21,6 @@ const ForceReconsentSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  assertManagerRequestBodySize(event, 8 * 1024);
   const superAdminSession = requireSuperAdminSession(event);
   const managerId = Number(superAdminSession.manager_id);
 
@@ -40,7 +38,7 @@ export default defineEventHandler(async (event) => {
 
   const { consent_type: consentType, notice, reason } = parsed.data;
 
-  const ipAddress = getManagerRemoteIp(event);
+  const ipAddress = getVerifiedRemoteIp(event);
   const userAgent = getHeader(event, "user-agent") || "unknown";
   const now = new Date();
 
@@ -81,6 +79,8 @@ export default defineEventHandler(async (event) => {
       createdAt: now,
     });
   });
+
+  await bumpGlobalConsentEpoch();
 
   return {
     consent_type: consentType,

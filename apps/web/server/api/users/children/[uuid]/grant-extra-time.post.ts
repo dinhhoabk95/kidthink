@@ -8,7 +8,6 @@ import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 
 import {
-  assertRequestBodySize,
   getParentGateSecret,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
@@ -21,7 +20,6 @@ const GrantExtraTimeSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 16 * 1024);
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {

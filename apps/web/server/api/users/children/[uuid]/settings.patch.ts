@@ -8,17 +8,13 @@ import { validateCustomPlayCap } from "@mindkid/shared";
 import { and, eq, gt, isNull, or } from "drizzle-orm";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
-import {
-  assertRequestBodySize,
-  requireWebUserSession,
-} from "#server/utils/auth-runtime";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const patchSettingsSchema = z.object({
   daily_play_cap_minutes: z.number().int(),
 });
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 16 * 1024);
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {

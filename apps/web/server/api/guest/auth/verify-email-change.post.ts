@@ -7,10 +7,6 @@ import { and, eq, gt, isNull } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import { throwValidationError } from "#server/utils/api-error";
-import {
-  assertRequestBodySize,
-  assertSameOriginRequest,
-} from "#server/utils/auth-runtime";
 
 const VerifyEmailChangeSchema = z
   .object({
@@ -20,9 +16,6 @@ const VerifyEmailChangeSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  assertSameOriginRequest(event);
-  assertRequestBodySize(event, 8 * 1024);
-
   const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
   const rawBody =
     eventBody || ((await readBody(event)) as Record<string, unknown>) || {};

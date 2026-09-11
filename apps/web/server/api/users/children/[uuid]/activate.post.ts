@@ -12,8 +12,8 @@ import {
   setCookie,
 } from "h3";
 import { z } from "zod";
+import { throwValidationError } from "#server/utils/api-error";
 import {
-  assertRequestBodySize,
   getParentGateSecret,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
@@ -25,7 +25,6 @@ const activateChildSchema = z
   .optional();
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 16 * 1024);
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {
@@ -56,8 +55,11 @@ export default defineEventHandler(async (event) => {
   const currentActiveUuid = getCookie(event, "active_child_id");
   const eventBody = (event.context as { body?: unknown })?.body;
   const raw = eventBody || (await readBody(event).catch(() => ({})));
-  const parsed = activateChildSchema.parse(raw);
-  const body = parsed || {};
+  const parsed = activateChildSchema.safeParse(raw);
+  if (!parsed.success) {
+    throwValidationError(parsed.error);
+  }
+  const body = parsed.data || {};
 
   // BR-CPS-01 & BR-PEN-01: Switching between children requires Parent Gate
   if (currentActiveUuid && currentActiveUuid !== uuid) {

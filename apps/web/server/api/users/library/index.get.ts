@@ -1,9 +1,8 @@
 import { getOwnerDb } from "@mindkid/db";
 import { allowedTiers } from "@mindkid/shared";
-import { defineEventHandler, getQuery } from "h3";
 import { z } from "zod";
-import { getUserLibrary } from "#server/services/index.js";
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { getUserLibrary } from "#server/services/library.js";
+import { defineApiRoute } from "#server/utils/define-api-route";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 
 const LibraryQuerySchema = z.object({
@@ -31,30 +30,28 @@ function resolveActiveTier(
   return "free";
 }
 
-export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
-  const userId = Number(user.user_id);
-  const db = getOwnerDb();
+export default defineApiRoute({
+  auth: "user",
+  query: LibraryQuerySchema,
+  async handler({ auth, query }) {
+    const userId = Number(auth.user_id);
+    const db = getOwnerDb();
 
-  const rawQuery = getQuery(event);
-  const parsed = LibraryQuerySchema.parse(rawQuery);
+    const activeKeys = await resolveUserActiveEntitlements(userId);
+    const userAllowedTiers = await allowedTiers(
+      { kind: "user", user_id: String(userId) },
+      activeKeys
+    );
+    const activeTier = resolveActiveTier(userAllowedTiers);
 
-  const activeKeys = await resolveUserActiveEntitlements(userId);
-  const userAllowedTiers = await allowedTiers(
-    { kind: "user", user_id: String(userId) },
-    activeKeys
-  );
-  const activeTier = resolveActiveTier(userAllowedTiers);
-
-  const libraryData = await getUserLibrary(db, {
-    userId,
-    entityType: parsed.entity_type,
-    collectionId: parsed.collection_id,
-    tag: parsed.tag,
-    q: parsed.q,
-    limit: parsed.limit,
-    activeTier,
-  });
-
-  return libraryData;
+    return await getUserLibrary(db, {
+      userId,
+      entityType: query.entity_type,
+      collectionId: query.collection_id,
+      tag: query.tag,
+      q: query.q,
+      limit: query.limit,
+      activeTier,
+    });
+  },
 });

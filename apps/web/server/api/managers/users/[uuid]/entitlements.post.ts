@@ -12,7 +12,7 @@ import {
 } from "h3";
 import { z } from "zod";
 import {
-  getManagerRemoteIp,
+  getVerifiedRemoteIp,
   requireSuperAdminSession,
 } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
@@ -88,7 +88,7 @@ export default defineEventHandler(async (event) => {
     actor: {
       type: "manager",
       id: session.manager_id,
-      ip: getManagerRemoteIp(event),
+      ip: getVerifiedRemoteIp(event),
       userAgent: getHeader(event, "user-agent") || null,
     },
   });

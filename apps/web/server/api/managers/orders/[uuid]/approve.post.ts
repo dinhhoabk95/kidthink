@@ -21,7 +21,7 @@ import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { grantCredits } from "#server/services/index.js";
 import {
-  getManagerRemoteIp,
+  getVerifiedRemoteIp,
   requireSuperAdminSession,
 } from "#server/utils/admin-auth-runtime";
 import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
@@ -324,7 +324,7 @@ export default defineEventHandler(async (event) => {
     admin_note,
     checklist,
     bonus_days,
-    getManagerRemoteIp(event),
+    getVerifiedRemoteIp(event),
     getHeader(event, "user-agent") || null
   );
 });

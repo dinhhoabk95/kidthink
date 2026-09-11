@@ -21,9 +21,7 @@ import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
 import {
   assertManagerRateLimitAllowed,
-  assertManagerRequestBodySize,
-  assertManagerSameOriginRequest,
-  getManagerRemoteIp,
+  getVerifiedRemoteIp,
   setManagerRememberCookie,
 } from "#server/utils/admin-auth-runtime";
 import { getManagerSessionConfig } from "#server/utils/session-runtime";
@@ -40,8 +38,6 @@ const ManagerLoginSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  assertManagerSameOriginRequest(event);
-  assertManagerRequestBodySize(event, 16 * 1024);
   const body = (await readBody(event).catch(() => null)) ?? {};
   const parsed = ManagerLoginSchema.safeParse(body);
   if (!parsed.success) {
@@ -51,7 +47,7 @@ export default defineEventHandler(async (event) => {
 
   const rateLimit = await enforceTwoAxisRateLimit({
     routeClass: "auth:login",
-    remoteIp: getManagerRemoteIp(event),
+    remoteIp: getVerifiedRemoteIp(event),
     accountIdentifier: email,
   });
   assertManagerRateLimitAllowed(rateLimit.statusCode);
@@ -103,7 +99,7 @@ export default defineEventHandler(async (event) => {
       displayName: manager.displayName,
       role: manager.role,
       rememberMe,
-      ipAddress: getManagerRemoteIp(event),
+      ipAddress: getVerifiedRemoteIp(event),
     });
 
     await setUserSession(
@@ -128,7 +124,7 @@ export default defineEventHandler(async (event) => {
         device_id: createdSession.deviceId,
         remembered: !!rememberMe,
         device_label: "manager-login",
-        ip_address: getManagerRemoteIp(event),
+        ip_address: getVerifiedRemoteIp(event),
         auth_method: "password",
         expires_at: createdSession.expiresAt,
       })
@@ -163,7 +159,7 @@ export default defineEventHandler(async (event) => {
     displayName: manager.displayName,
     role: manager.role,
     rememberMe,
-    ipAddress: getManagerRemoteIp(event),
+    ipAddress: getVerifiedRemoteIp(event),
   });
 
   setResponseStatus(event, 428);

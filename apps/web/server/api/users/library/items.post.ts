@@ -3,6 +3,7 @@ import { InternalError } from "@mindkid/errors/common";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
 import { saveLibraryItem } from "#server/services/index.js";
+import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const SaveLibraryItemSchema = z.object({
@@ -18,14 +19,17 @@ export default defineEventHandler(async (event) => {
   const db = getOwnerDb();
 
   const body = await readBody(event);
-  const parsed = SaveLibraryItemSchema.parse(body);
+  const parsed = SaveLibraryItemSchema.safeParse(body);
+  if (!parsed.success) {
+    throwValidationError(parsed.error);
+  }
 
   const saved = await saveLibraryItem(db, {
     userId,
-    entityType: parsed.entity_type,
-    entityId: parsed.entity_id,
-    collectionId: parsed.collection_id,
-    note: parsed.note,
+    entityType: parsed.data.entity_type,
+    entityId: parsed.data.entity_id,
+    collectionId: parsed.data.collection_id,
+    note: parsed.data.note,
   });
 
   if (!saved) {

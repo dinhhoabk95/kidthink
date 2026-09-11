@@ -20,7 +20,7 @@ import { and, eq, inArray } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import {
-  getManagerRemoteIp,
+  getVerifiedRemoteIp,
   requireSuperAdminSession,
 } from "#server/utils/admin-auth-runtime";
 
@@ -127,7 +127,7 @@ export default defineEventHandler(async (event) => {
     entityType: "user",
     entityId: targetUser.uuid,
     reason,
-    ipAddress: getManagerRemoteIp(event),
+    ipAddress: getVerifiedRemoteIp(event),
     userAgent: getHeader(event, "user-agent") ?? "unknown",
   });
 

@@ -35,8 +35,6 @@ import {
 import { z } from "zod";
 import {
   assertRateLimitAllowed,
-  assertRequestBodySize,
-  assertSameOriginRequest,
   ensureUserCsrfCookie,
   getVerifiedRemoteIp,
 } from "#server/utils/auth-runtime";
@@ -83,8 +81,6 @@ function parseAndValidateRegisterBody(body: unknown): RegisterPayload {
 }
 
 export async function handleRegister(event: H3Event, testBody?: unknown) {
-  assertSameOriginRequest(event);
-  assertRequestBodySize(event, 32 * 1024);
   const rawIp = getVerifiedRemoteIp(event);
   const rateLimitRes = await enforceTwoAxisRateLimit({
     routeClass: "auth:register",

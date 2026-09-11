@@ -1,3 +1,4 @@
+import { deleteCached, getCached, setCached } from "@mindkid/cache";
 import { consentLogs, consentRequirements, getOwnerDb } from "@mindkid/db";
 import { ConsentRequiredError } from "@mindkid/errors/account";
 import type { ConsentType } from "@mindkid/shared";
@@ -25,6 +26,53 @@ const CONSENT_NAMES: Record<ConsentType, string> = {
   privacy: "chính sách quyền riêng tư",
   child_data: "chính sách bảo vệ dữ liệu trẻ em",
 };
+
+export interface CachedConsentRecord {
+  terms: boolean;
+  privacy: boolean;
+  epoch: number;
+}
+
+export const CONSENT_CACHE_TTL_SECONDS = 300;
+export const GLOBAL_CONSENT_EPOCH_CACHE_KEY = "consent:global:epoch";
+
+export async function getGlobalConsentEpoch(): Promise<number> {
+  try {
+    const epoch = await getCached<number>(GLOBAL_CONSENT_EPOCH_CACHE_KEY);
+    return typeof epoch === "number" ? epoch : 0;
+  } catch {
+    return 0;
+  }
+}
+
+export async function bumpGlobalConsentEpoch(): Promise<number> {
+  const newEpoch = Date.now();
+  try {
+    await setCached<number>(
+      GLOBAL_CONSENT_EPOCH_CACHE_KEY,
+      newEpoch,
+      30 * 86_400
+    );
+  } catch {
+    // Non-blocking
+  }
+  return newEpoch;
+}
+
+export function getConsentCacheKey(userId: number): string {
+  return `user:consent:${userId}`;
+}
+
+export async function invalidateUserConsentCache(
+  userId: number
+): Promise<void> {
+  const cacheKey = getConsentCacheKey(userId);
+  try {
+    await deleteCached(cacheKey);
+  } catch {
+    // Non-blocking cache delete failure
+  }
+}
 
 export function isAllowedConsentExemptPath(pathname: string): boolean {
   return EXEMPT_PATH_PREFIXES.some(
@@ -91,10 +139,34 @@ export async function requireCurrentConsent(
 
 /**
  * Verifies both terms and privacy consents are active.
+ * Uses Valkey cache with 300s TTL and falls back to parallel DB queries.
  */
 export async function assertUserTermsAndPrivacyConsent(
   userId: number
 ): Promise<void> {
-  await requireConsentActive(userId, "terms");
-  await requireConsentActive(userId, "privacy");
+  const cacheKey = getConsentCacheKey(userId);
+  const currentEpoch = await getGlobalConsentEpoch();
+  try {
+    const cached = await getCached<CachedConsentRecord>(cacheKey);
+    if (cached?.terms && cached.privacy && cached.epoch === currentEpoch) {
+      return;
+    }
+  } catch {
+    // Non-blocking cache read failure
+  }
+
+  await Promise.all([
+    requireConsentActive(userId, "terms"),
+    requireConsentActive(userId, "privacy"),
+  ]);
+
+  try {
+    await setCached<CachedConsentRecord>(
+      cacheKey,
+      { terms: true, privacy: true, epoch: currentEpoch },
+      CONSENT_CACHE_TTL_SECONDS
+    );
+  } catch {
+    // Non-blocking cache write failure
+  }
 }

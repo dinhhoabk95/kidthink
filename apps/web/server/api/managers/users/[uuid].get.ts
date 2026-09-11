@@ -14,7 +14,7 @@ import { projectChildForAdmin } from "@mindkid/shared";
 import { and, count, desc, eq, gt, isNull, sql } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, setHeader } from "h3";
 import {
-  getManagerRemoteIp,
+  getVerifiedRemoteIp,
   requireSuperAdminSession,
 } from "#server/utils/admin-auth-runtime";
 
@@ -132,7 +132,7 @@ export default defineEventHandler(async (event) => {
       entityType: "user",
       entityId: targetUser.uuid,
       reason: "Manager viewed user details containing child profiles",
-      ipAddress: getManagerRemoteIp(event),
+      ipAddress: getVerifiedRemoteIp(event),
       userAgent: getHeader(event, "user-agent") ?? "unknown",
     });
   }

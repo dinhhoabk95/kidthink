@@ -4,10 +4,7 @@ import { InvalidCredentialsError } from "@mindkid/errors/auth";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
-import {
-  assertManagerRequestBodySize,
-  requireManagerSession,
-} from "#server/utils/admin-auth-runtime";
+import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 import { markCurrentSessionReauthenticated } from "#server/utils/reauth-runtime";
 
@@ -18,7 +15,6 @@ const ReauthSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  assertManagerRequestBodySize(event, 8 * 1024);
   const managerSession = requireManagerSession(event);
   const managerId = Number(managerSession.manager_id);
 

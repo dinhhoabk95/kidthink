@@ -16,10 +16,6 @@ import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, type H3Event, readBody } from "h3";
 import { z } from "zod";
-import {
-  assertRequestBodySize,
-  assertSameOriginRequest,
-} from "#server/utils/auth-runtime";
 
 const ResetPasswordSchema = z
   .object({
@@ -29,8 +25,6 @@ const ResetPasswordSchema = z
   .strict();
 
 export async function handleResetPassword(event: H3Event, testBody?: unknown) {
-  assertSameOriginRequest(event);
-  assertRequestBodySize(event, 16 * 1024);
   const rawBody =
     testBody ??
     event.context?.body ??

@@ -29,7 +29,6 @@ import {
 } from "h3";
 
 import {
-  assertRequestBodySize,
   getVerifiedRemoteIp,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
@@ -196,7 +195,6 @@ const createEnrollmentSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 16 * 1024);
   const user = await requireWebUserSession(event);
   const uuid = getRouterParam(event, "uuid");
   if (!uuid) {

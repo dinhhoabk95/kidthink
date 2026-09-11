@@ -11,10 +11,10 @@ import { defineEventHandler, getHeader, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
 
 import {
-  assertRequestBodySize,
   getVerifiedRemoteIp,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
+import { invalidateUserConsentCache } from "#server/utils/consent-guard";
 
 const SubmitConsentSchema = z
   .object({
@@ -25,7 +25,6 @@ const SubmitConsentSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 8 * 1024);
   const userSession = await requireWebUserSession(event);
   const userId = Number(userSession.user_id);
 
@@ -101,6 +100,8 @@ export default defineEventHandler(async (event) => {
       status: "active" as const,
     };
   });
+
+  await invalidateUserConsentCache(userId);
 
   setResponseStatus(event, 201);
   return result;

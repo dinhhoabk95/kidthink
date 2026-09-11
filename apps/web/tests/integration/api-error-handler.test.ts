@@ -1,5 +1,10 @@
-import { appError, ChildNotFoundError } from "@mindkid/auth";
-import { RateLimitedError } from "@mindkid/errors/common";
+import {
+  ChildNotFoundError,
+  CsrfInvalidError,
+  RateLimitedError,
+  TierLockedError,
+  UnauthenticatedError,
+} from "@mindkid/errors";
 import { createError } from "h3";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import errorHandler from "#server/error";
@@ -65,7 +70,7 @@ describe("handler lỗi chung /api/*", () => {
   });
 
   it("AppError ra đúng body §7.1: code, message, details", async () => {
-    await callHandler(appError("TIER_LOCKED", { access_tier: "premium" }));
+    await callHandler(new TierLockedError({ access_tier: "premium" }));
 
     expect(sent.status).toBe(403);
     expect(sent.statusText).toBe("TIER_LOCKED");
@@ -77,7 +82,7 @@ describe("handler lỗi chung /api/*", () => {
   });
 
   it("body KHÔNG còn phong bì statusCode/url/stack của Nitro", async () => {
-    await callHandler(appError("UNAUTHENTICATED"));
+    await callHandler(new UnauthenticatedError());
 
     expect(Object.keys(bodyOf()).sort()).toEqual(["code", "message"]);
   });
@@ -101,15 +106,18 @@ describe("handler lỗi chung /api/*", () => {
   it("lỗi h3 đã mang data.code thì giữ nguyên data", async () => {
     await callHandler(
       createError({
-        statusCode: 400,
-        statusMessage: "AVATAR_NOT_IN_PRESET",
-        data: { code: "AVATAR_NOT_IN_PRESET", message: "Sai preset." },
+        statusCode: 422,
+        data: {
+          code: "VALIDATION_FAILED",
+          message: "Dữ liệu không hợp lệ.",
+        },
       })
     );
 
+    expect(sent.status).toBe(422);
     expect(bodyOf()).toEqual({
-      code: "AVATAR_NOT_IN_PRESET",
-      message: "Sai preset.",
+      code: "VALIDATION_FAILED",
+      message: "Dữ liệu không hợp lệ.",
     });
   });
 
@@ -117,23 +125,28 @@ describe("handler lỗi chung /api/*", () => {
     await callHandler(new Error('relation "users" does not exist'));
 
     expect(sent.status).toBe(500);
-    const body = bodyOf();
-    expect(body.code).toBe("INTERNAL_ERROR");
-    expect(JSON.stringify(body)).not.toContain("users");
-    expect(body).not.toHaveProperty("stack");
+    expect(sent.statusText).toBe("INTERNAL_ERROR");
+    expect(bodyOf()).toEqual({
+      code: "INTERNAL_ERROR",
+      message: "Hệ thống gặp sự cố. Vui lòng thử lại sau ít phút.",
+    });
+    expect(sent.body).not.toContain("users");
+    expect(sent.body).not.toContain("stack");
   });
 
   it("ca âm BR-ERR-03: ModelNotFoundError không đưa tên bảng vào body", async () => {
     await callHandler(new ChildNotFoundError(4242));
 
     expect(sent.status).toBe(404);
-    const raw = JSON.stringify(bodyOf());
-    expect(raw).not.toContain("child_profiles");
-    expect(raw).not.toContain("4242");
+    expect(sent.statusText).toBe("NOT_FOUND");
+    const body = bodyOf();
+    expect(body.code).toBe("NOT_FOUND");
+    expect(JSON.stringify(body)).not.toContain("child_profiles");
+    expect(JSON.stringify(body)).not.toContain("childProfiles");
   });
 
   it("ca âm: đường không phải /api/ thì nhường handler mặc định của Nitro", async () => {
-    await callHandler(appError("UNAUTHENTICATED"), "/me/settings");
+    await callHandler(new UnauthenticatedError(), "/me/settings");
 
     expect(sent.status).toBeUndefined();
     expect(sent.body).toBeUndefined();
@@ -169,11 +182,52 @@ describe("handler lỗi chung /api/*", () => {
   });
 
   it("đặt đủ header bảo vệ trang lỗi", async () => {
-    await callHandler(appError("CSRF_INVALID"));
+    await callHandler(new CsrfInvalidError());
 
     expect(headers["content-type"]).toBe("application/json");
     expect(headers["x-content-type-options"]).toBe("nosniff");
     expect(headers["x-frame-options"]).toBe("DENY");
     expect(headers["cache-control"]).toBe("no-cache");
+  });
+
+  it("ZodError trần ở tầng service trả về 500 INTERNAL_ERROR (I8, BR-ERR-03)", async () => {
+    const { z } = await import("zod");
+    const schema = z.object({ title: z.string().min(3) });
+    const parseResult = schema.safeParse({ title: "ab" });
+    if (parseResult.success) {
+      throw new Error("unreachable");
+    }
+
+    await callHandler(parseResult.error);
+
+    expect(sent.status).toBe(500);
+    expect(bodyOf()).toEqual({
+      code: "INTERNAL_ERROR",
+      message: "Hệ thống gặp sự cố. Vui lòng thử lại sau ít phút.",
+    });
+  });
+
+  it("ValidationError tại input boundary ra 422 VALIDATION_FAILED kèm details.fields[]", async () => {
+    const { ValidationError } = await import("@mindkid/errors/common");
+    const err = new ValidationError([
+      { path: "email", message: "Invalid email" },
+    ]);
+
+    await callHandler(err);
+
+    expect(sent.status).toBe(422);
+    expect(sent.statusText).toBe("VALIDATION_FAILED");
+    expect(bodyOf()).toEqual({
+      code: "VALIDATION_FAILED",
+      message: "Dữ liệu yêu cầu không hợp lệ.",
+      details: {
+        fields: [
+          {
+            path: "email",
+            message: "Invalid email",
+          },
+        ],
+      },
+    });
   });
 });

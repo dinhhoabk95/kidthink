@@ -34,8 +34,6 @@ import { OAUTH_TICKET_COOKIE_NAME } from "#server/api/guest/auth/oauth/[provider
 import { throwValidationError } from "#server/utils/api-error";
 import {
   assertRateLimitAllowed,
-  assertRequestBodySize,
-  assertSameOriginRequest,
   ensureUserCsrfCookie,
   getVerifiedRemoteIp,
 } from "#server/utils/auth-runtime";
@@ -262,9 +260,6 @@ async function establishRegistrationSession(
 }
 
 export async function handleSocialLogin(event: H3Event, testBody?: unknown) {
-  assertSameOriginRequest(event);
-  assertRequestBodySize(event, 16 * 1024);
-
   const ipRateLimit = await enforceTwoAxisRateLimit({
     routeClass: "auth:social-login",
     remoteIp: getVerifiedRemoteIp(event),

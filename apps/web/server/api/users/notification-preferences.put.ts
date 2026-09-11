@@ -4,10 +4,7 @@ import { ValidationError } from "@mindkid/errors/common";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
-import {
-  assertRequestBodySize,
-  requireWebUserSession,
-} from "#server/utils/auth-runtime";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const ALLOWED_PREFERENCE_KEYS = new Set(["weekly_progress", "content_new"]);
 
@@ -19,7 +16,6 @@ const NotificationPreferencesSchema = z
   .strict();
 
 export default defineEventHandler(async (event) => {
-  assertRequestBodySize(event, 8 * 1024);
   await requireWebUserSession(event);
 
   const eventBody = (event.context as { body?: Record<string, unknown> })?.body;

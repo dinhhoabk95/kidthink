@@ -1,8 +1,9 @@
 import { checkRateLimit } from "@mindkid/cache";
 import { errorLogs, getOwnerDb } from "@mindkid/db";
 import { RateLimitedError } from "@mindkid/errors/common";
-import { defineEventHandler, readBody } from "h3";
+import { z } from "zod";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
+import { defineApiRoute } from "#server/utils/define-api-route";
 
 // Rate limiting: 10 req / min / IP (BR-ELV-05)
 const CLIENT_ERROR_LIMIT = 10;
@@ -52,65 +53,62 @@ const ALLOWED_CONTEXT_KEYS = [
   "viewport",
 ];
 
-function sanitizeContext(ctx: unknown): Record<string, unknown> {
+function sanitizeContext(
+  ctx: Record<string, unknown> | undefined
+): Record<string, unknown> {
   if (!ctx || typeof ctx !== "object") {
     return {};
   }
   const cleaned: Record<string, unknown> = {};
   for (const key of ALLOWED_CONTEXT_KEYS) {
-    if (key in (ctx as Record<string, unknown>)) {
-      cleaned[key] = (ctx as Record<string, unknown>)[key];
+    if (key in ctx) {
+      cleaned[key] = ctx[key];
     }
   }
   return cleaned;
 }
 
-import { z } from "zod";
+const clientErrorSchema = z.object({
+  code: z.string().max(80).optional(),
+  message: z.string().max(500).optional(),
+  fingerprint: z.string().max(120).optional(),
+  context: z.record(z.unknown()).optional(),
+});
 
-const clientErrorSchema = z
-  .object({
-    code: z.string().max(80).optional(),
-    message: z.string().max(500).optional(),
-    fingerprint: z.string().max(120).optional(),
-    context: z.record(z.unknown()).optional(),
-  })
-  .optional();
+export default defineApiRoute({
+  auth: "guest",
+  body: clientErrorSchema,
+  async handler({ event, body }) {
+    // BR-RTL-04 — bản trước lấy `X-Forwarded-For` thô, tức kẻ gọi tự chọn khoá
+    // giới hạn và đổi header mỗi request là đi vòng qua hạn mức.
+    await checkClientErrorRateLimit(getVerifiedRemoteIp(event));
 
-export default defineEventHandler(async (event) => {
-  // BR-RTL-04 — bản trước lấy `X-Forwarded-For` thô, tức kẻ gọi tự chọn khoá
-  // giới hạn và đổi header mỗi request là đi vòng qua hạn mức.
-  await checkClientErrorRateLimit(getVerifiedRemoteIp(event));
+    const code = body.code ? body.code.slice(0, 80) : "CLIENT_ERROR";
+    const message = body.message
+      ? body.message.slice(0, 500)
+      : "Unknown client error";
+    const fingerprint = body.fingerprint
+      ? body.fingerprint.slice(0, 120)
+      : `${code}_${message.slice(0, 40)}`;
 
-  const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
+    // Sampling check (BR-ELV-04)
+    if (!shouldSampleError(code)) {
+      return { status: "sampled_out" };
+    }
 
-  const parsed = clientErrorSchema.parse(raw);
-  const body = parsed || {};
+    // Strip PII (BR-ELV-03)
+    const sanitizedCtx = sanitizeContext(body.context);
 
-  const code = body.code ? body.code.slice(0, 80) : "CLIENT_ERROR";
-  const message = body.message
-    ? body.message.slice(0, 500)
-    : "Unknown client error";
-  const fingerprint = body.fingerprint
-    ? body.fingerprint.slice(0, 120)
-    : `${code}_${message.slice(0, 40)}`;
+    const db = getOwnerDb();
+    await db.insert(errorLogs).values({
+      source: "client",
+      level: "error",
+      code,
+      message,
+      fingerprint,
+      context: sanitizedCtx,
+    });
 
-  // Sampling check (BR-ELV-04)
-  if (!shouldSampleError(code)) {
-    return { status: "sampled_out" };
-  }
-
-  // Strip PII (BR-ELV-03)
-  const sanitizedCtx = sanitizeContext(body?.context);
-
-  const db = getOwnerDb();
-  await db.insert(errorLogs).values({
-    source: "client",
-    level: "error",
-    code,
-    message,
-    fingerprint,
-    context: sanitizedCtx,
-  });
-
-  return { status: "accepted", fingerprint };
+    return { status: "accepted", fingerprint };
+  },
 });

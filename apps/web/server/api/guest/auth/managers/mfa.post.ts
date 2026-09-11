@@ -27,10 +27,8 @@ import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import {
   assertManagerRateLimitAllowed,
-  assertManagerRequestBodySize,
-  assertManagerSameOriginRequest,
-  getManagerRemoteIp,
   getMfaEncryptionKey,
+  getVerifiedRemoteIp,
   setManagerRememberCookie,
 } from "#server/utils/admin-auth-runtime";
 import { getManagerSessionConfig } from "#server/utils/session-runtime";
@@ -90,8 +88,6 @@ async function verifyManagerMfa(
 }
 
 export default defineEventHandler(async (event) => {
-  assertManagerSameOriginRequest(event);
-  assertManagerRequestBodySize(event, 16 * 1024);
   const body = (await readBody(event).catch(() => null)) ?? {};
   const parsed = MfaSchema.safeParse(body);
   if (!parsed.success) {
@@ -123,7 +119,7 @@ export default defineEventHandler(async (event) => {
 
   const rateLimit = await enforceTwoAxisRateLimit({
     routeClass: "auth:mfa",
-    remoteIp: getManagerRemoteIp(event),
+    remoteIp: getVerifiedRemoteIp(event),
     accountIdentifier: String(manager.id),
   });
   assertManagerRateLimitAllowed(rateLimit.statusCode);
@@ -242,7 +238,7 @@ export default defineEventHandler(async (event) => {
     displayName: manager.displayName,
     role: manager.role,
     rememberMe: challengePayload.rememberMe,
-    ipAddress: getManagerRemoteIp(event),
+    ipAddress: getVerifiedRemoteIp(event),
   });
 
   await setUserSession(
@@ -268,7 +264,7 @@ export default defineEventHandler(async (event) => {
       device_id: createdSession.deviceId,
       remembered: !!challengePayload.rememberMe,
       device_label: "manager-mfa",
-      ip_address: getManagerRemoteIp(event),
+      ip_address: getVerifiedRemoteIp(event),
       auth_method: "password",
       expires_at: createdSession.expiresAt,
     })

@@ -9,7 +9,7 @@ import {
 } from "h3";
 import { manualGrantCredits } from "#server/services/index.js";
 import {
-  getManagerRemoteIp,
+  getVerifiedRemoteIp,
   requireSuperAdminSession,
 } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
@@ -21,9 +21,9 @@ export default defineEventHandler(async (event) => {
     throw new UserNotFoundError();
   }
 
-  const customEvent = event as unknown as {
-    _body?: unknown;
-    context?: { body?: unknown };
+  const customEvent = event as {
+    _body?: Record<string, unknown>;
+    context?: { body?: Record<string, unknown> };
   };
   const rawBody =
     (await readBody(event).catch(() => undefined)) ??
@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
     managerId: session.manager_id,
     userUuid,
     input: parsed.data,
-    ip: getManagerRemoteIp(event),
+    ip: getVerifiedRemoteIp(event),
     userAgent: getHeader(event, "user-agent") || null,
   });
 

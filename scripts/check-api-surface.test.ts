@@ -28,33 +28,43 @@ function source(
 }
 
 describe("check:api-surface", () => {
-  it("makes the gate red for a mutating route without a body-size guard", () => {
+  it("makes the gate red for a route whose handler requires more body size than guards limit", () => {
     const counts = collectApiSurfaceCounts([
-      source(
-        "export default defineEventHandler(async (event) => readBody(event));"
-      ),
+      {
+        route: {
+          file: "users/custom-upload.post.ts",
+          path: "/api/users/custom-upload",
+          method: "POST",
+        },
+        source:
+          "if (file.length > PROOF_MAX_IMAGE_SIZE_BYTES) throw new PayloadTooLargeError();",
+      },
     ]);
 
-    expect(findApiSurfaceRegressions(counts, emptyBaseline())).toEqual([
-      "body_size_missing · guest/fixture.post.ts: 0 → 1",
-      "raw_read_body · guest/fixture.post.ts: 0 → 1",
-    ]);
+    expect(counts.body_size_missing["users/custom-upload.post.ts"]).toBe(1);
   });
 
-  it("detects readRequestBody as an unbounded body read", () => {
+  it("passes when route has appropriate pattern limit matching handler requirement", () => {
     const counts = collectApiSurfaceCounts([
-      source("const body = await readRequestBody(event);"),
+      {
+        route: {
+          file: "users/orders/[uuid]/proof.post.ts",
+          path: "/api/users/orders/[uuid]/proof",
+          method: "POST",
+        },
+        source:
+          "if (proofFile.data.length > PROOF_MAX_IMAGE_SIZE_BYTES) throw new PayloadTooLargeError();",
+      },
     ]);
 
-    expect(counts.body_size_missing["guest/fixture.post.ts"]).toBe(1);
+    expect(counts.body_size_missing).toEqual({});
   });
 
-  it("detects body reads when the H3 event parameter is aliased", () => {
+  it("detects body reads for raw_read_body metric", () => {
     const counts = collectApiSurfaceCounts([
       source("const body = await readBody(requestEvent);"),
     ]);
 
-    expect(counts.body_size_missing["guest/fixture.post.ts"]).toBe(1);
     expect(counts.raw_read_body["guest/fixture.post.ts"]).toBe(1);
   });
 
@@ -160,10 +170,23 @@ describe("check:api-surface", () => {
     expect(hasApiSurfaceWiring(checkScript)).toBe(true);
     expect(hasApiSurfaceWiring(withoutInvocation)).toBe(false);
   });
+
+  it("makes the gate red for a route not on defineApiRoute factory", () => {
+    const counts = collectApiSurfaceCounts([
+      source("export default defineEventHandler(async () => {});"),
+    ]);
+
+    const zeroBaseline = collectApiSurfaceCounts([]);
+    expect(findApiSurfaceRegressions(counts, zeroBaseline)).toEqual([
+      "not_on_factory · guest/fixture.post.ts: 0 → 1",
+    ]);
+  });
 });
 
 function emptyBaseline(): ReturnType<typeof collectApiSurfaceCounts> {
-  return collectApiSurfaceCounts([]);
+  const base = collectApiSurfaceCounts([]);
+  base.not_on_factory["guest/fixture.post.ts"] = 1;
+  return base;
 }
 
 function hasApiSurfaceWiring(checkScript: string): boolean {

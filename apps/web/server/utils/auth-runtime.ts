@@ -1,36 +1,20 @@
-import {
-  CSRF_HEADER_NAME,
-  generateCsrfToken,
-  getAuthNamespaceConfig,
-  requireUserAuth,
-  validateCsrfToken,
-} from "@mindkid/auth";
+import { requireUserAuth } from "@mindkid/auth";
 import { requireEnv } from "@mindkid/config";
-import {
-  CsrfInvalidError,
-  RestrictedModeError,
-  SessionRevokedError,
-} from "@mindkid/errors/auth";
-import { isAppError } from "@mindkid/errors/base";
+import { RestrictedModeError } from "@mindkid/errors/auth";
 import { NoActiveChildError } from "@mindkid/errors/child";
+import { getCookie, getHeader, type H3Event, setCookie } from "h3";
 import {
-  PayloadTooLargeError,
-  RateLimitedError,
-  ServiceUnavailableError,
-} from "@mindkid/errors/common";
-import {
-  deleteCookie,
-  getCookie,
-  getHeader,
-  type H3Event,
-  setCookie,
-} from "h3";
+  createAuthRuntime,
+  assertRateLimitAllowed as factoryAssertRateLimitAllowed,
+  assertRequestBodySize as factoryAssertRequestBodySize,
+  assertSameOriginRequest as factoryAssertSameOriginRequest,
+  isAllowedApiOrigin as factoryIsAllowedApiOrigin,
+} from "./auth-runtime-factory.js";
 
-const userConfig = getAuthNamespaceConfig("user");
-const CSRF_TOKEN = /^[0-9a-f]{64}$/;
-const INTEGER_TEXT = /^\d+$/;
-const GUEST_DEVICE_ID_REGEX = /^[0-9a-fA-F-]{16,64}$/;
-const ORIGIN_TRAILING_SLASH = /\/$/;
+export const assertRateLimitAllowed = factoryAssertRateLimitAllowed;
+export const assertRequestBodySize = factoryAssertRequestBodySize;
+export const assertSameOriginRequest = factoryAssertSameOriginRequest;
+export const isAllowedApiOrigin = factoryIsAllowedApiOrigin;
 
 export const USER_REMEMBER_COOKIE = "tm_u_remember";
 export const MANAGER_REMEMBER_COOKIE = "tm_m_remember";
@@ -38,7 +22,14 @@ export const MANAGER_REMEMBER_COOKIE = "tm_m_remember";
 const DEFAULT_TRUSTED_PROXY_IPS = "127.0.0.1,::1";
 const IPV4_MAPPED_PREFIX = "::ffff:";
 
-let trustedProxyCache: { raw: string; ips: ReadonlySet<string> } | null = null;
+interface TrustedProxyConfig {
+  readonly raw: string;
+  readonly exact: ReadonlySet<string>;
+  readonly cidrs: readonly string[];
+}
+
+let trustedProxyCache: TrustedProxyConfig | null = null;
+let hasLoggedFirstPeerIp = false;
 
 /** Node báo IPv4 qua socket IPv6 dưới dạng `::ffff:127.0.0.1`. */
 function normalizeIp(value: string | undefined): string {
@@ -48,20 +39,94 @@ function normalizeIp(value: string | undefined): string {
     : trimmed;
 }
 
-function getTrustedProxyIps(): ReadonlySet<string> {
+function parseIpv4ToNumber(ip: string): number | null {
+  const parts = ip.split(".");
+  if (parts.length !== 4) {
+    return null;
+  }
+  let num = 0;
+  for (const part of parts) {
+    const n = Number(part);
+    if (!Number.isInteger(n) || n < 0 || n > 255) {
+      return null;
+    }
+    // biome-ignore lint/suspicious/noBitwiseOperators: IPv4 calculation
+    num = (num << 8) + n;
+  }
+  // biome-ignore lint/suspicious/noBitwiseOperators: IPv4 calculation
+  return num >>> 0;
+}
+
+function matchesCidr(ip: string, cidr: string): boolean {
+  const [range, prefixStr] = cidr.split("/");
+  if (!(range && prefixStr)) {
+    return false;
+  }
+  const prefix = Number(prefixStr);
+  if (!Number.isInteger(prefix) || prefix < 0 || prefix > 32) {
+    return false;
+  }
+  const ipNum = parseIpv4ToNumber(ip);
+  const rangeNum = parseIpv4ToNumber(range);
+  if (ipNum === null || rangeNum === null) {
+    return false;
+  }
+  if (prefix === 0) {
+    return true;
+  }
+  // biome-ignore lint/suspicious/noBitwiseOperators: CIDR mask calculation
+  const mask = (0xff_ff_ff_ff << (32 - prefix)) >>> 0;
+  // biome-ignore lint/suspicious/noBitwiseOperators: CIDR mask calculation
+  return (ipNum & mask) === (rangeNum & mask);
+}
+
+function getTrustedProxyIps(): TrustedProxyConfig {
   const raw =
     process.env.TRUSTED_PROXY_IPS?.trim() || DEFAULT_TRUSTED_PROXY_IPS;
   if (trustedProxyCache?.raw === raw) {
-    return trustedProxyCache.ips;
+    return trustedProxyCache;
   }
-  const ips = new Set(
-    raw
-      .split(",")
-      .map((item) => normalizeIp(item))
-      .filter((item) => item.length > 0)
+  const items = raw
+    .split(",")
+    .map((item) => normalizeIp(item))
+    .filter((item) => item.length > 0);
+
+  const exact = new Set<string>();
+  const cidrs: string[] = [];
+
+  for (const item of items) {
+    if (item.includes("/")) {
+      cidrs.push(item);
+    } else {
+      exact.add(item);
+    }
+  }
+
+  trustedProxyCache = { raw, exact, cidrs };
+  return trustedProxyCache;
+}
+
+function isTrustedProxy(socketIp: string): boolean {
+  const config = getTrustedProxyIps();
+  if (config.exact.has(socketIp)) {
+    return true;
+  }
+  for (const cidr of config.cidrs) {
+    if (matchesCidr(socketIp, cidr)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function logFirstPeerIpOnce(socketIp: string, isTrusted: boolean): void {
+  if (hasLoggedFirstPeerIp) {
+    return;
+  }
+  hasLoggedFirstPeerIp = true;
+  console.info(
+    `[proxy-ip:startup] First peer IP observed: "${socketIp}", in TRUSTED_PROXY_IPS: ${isTrusted}`
   );
-  trustedProxyCache = { raw, ips };
-  return ips;
 }
 
 /**
@@ -83,135 +148,24 @@ export function getVerifiedRemoteIp(event: H3Event): string {
   if (!socketIp) {
     return "unknown";
   }
-  if (!getTrustedProxyIps().has(socketIp)) {
+  const trusted = isTrustedProxy(socketIp);
+  logFirstPeerIpOnce(socketIp, trusted);
+  if (!trusted) {
     return socketIp;
   }
   return normalizeIp(getHeader(event, "x-real-ip")) || socketIp;
 }
 
-export function assertRateLimitAllowed(statusCode: number): void {
-  if (statusCode === 200) {
-    return;
-  }
-  throw statusCode === 429
-    ? new RateLimitedError({ retry_after_s: 60 })
-    : new ServiceUnavailableError();
-}
+const userRuntime = createAuthRuntime("user");
 
-export function assertSameOriginRequest(event: H3Event): void {
-  const fetchSite = getHeader(event, "sec-fetch-site")?.toLowerCase();
-  if (fetchSite === "cross-site") {
-    throw new CsrfInvalidError();
-  }
-
-  const origin = getHeader(event, "origin");
-  const host = getHeader(event, "host");
-  if (!(origin && host)) {
-    return;
-  }
-  try {
-    if (!isAllowedApiOrigin(origin, host)) {
-      throw new CsrfInvalidError();
-    }
-  } catch (error) {
-    if (isAppError(error)) {
-      throw error;
-    }
-    throw new CsrfInvalidError();
-  }
-}
-
-export function isAllowedApiOrigin(
-  origin: string,
-  requestHost: string
-): boolean {
-  const parsedOrigin = new URL(origin);
-  if (parsedOrigin.host === requestHost) {
-    return true;
-  }
-
-  const configuredOrigins = requireEnv("NUXT_ALLOWED_ORIGINS")
-    .split(",")
-    .map((value) => value.trim().replace(ORIGIN_TRAILING_SLASH, ""))
-    .filter(Boolean);
-
-  return configuredOrigins.includes(parsedOrigin.origin);
-}
-
-export function assertRequestBodySize(
-  event: H3Event,
-  maxBytes = 128 * 1024
-): void {
-  const rawLength = getHeader(event, "content-length");
-  if (
-    rawLength &&
-    INTEGER_TEXT.test(rawLength) &&
-    Number(rawLength) > maxBytes
-  ) {
-    throw new PayloadTooLargeError();
-  }
-}
-
-export function ensureUserCsrfCookie(event: H3Event): string {
-  const current = getCookie(event, userConfig.csrfCookieName);
-  if (current && CSRF_TOKEN.test(current)) {
-    return current;
-  }
-
-  const token = generateCsrfToken();
-  const response = event.node?.res as
-    | { getHeader?: unknown; setHeader?: unknown }
-    | undefined;
-  if (
-    typeof response?.getHeader !== "function" ||
-    typeof response?.setHeader !== "function"
-  ) {
-    return token;
-  }
-  setCookie(event, userConfig.csrfCookieName, token, {
-    httpOnly: false,
-    maxAge: 365 * 24 * 60 * 60,
-    path: "/",
-    sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
-  });
-  return token;
-}
-
-export function validateUserCsrf(event: H3Event): void {
-  validateCsrfToken({
-    method: event.method,
-    cookieToken: getCookie(event, userConfig.csrfCookieName),
-    headerToken: getHeader(event, CSRF_HEADER_NAME),
-  });
-}
-
-export function setUserRememberCookie(
-  event: H3Event,
-  rememberToken: string
-): void {
-  setCookie(event, USER_REMEMBER_COOKIE, rememberToken, {
-    httpOnly: true,
-    maxAge: 365 * 24 * 3600,
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
-}
-
-export function clearUserRememberCookie(event: H3Event): void {
-  deleteCookie(event, USER_REMEMBER_COOKIE, {
-    path: "/",
-  });
-}
-
-export function getUserRememberCookie(event: H3Event): string {
-  const token = getCookie(event, USER_REMEMBER_COOKIE);
-  if (!token) {
-    throw new SessionRevokedError();
-  }
-  return token;
-}
+export const {
+  ensureCsrfCookie: ensureUserCsrfCookie,
+  validateCsrf: validateUserCsrf,
+  setRememberCookie: setUserRememberCookie,
+  clearRememberCookie: clearUserRememberCookie,
+  getRememberCookie: getUserRememberCookie,
+  respondToAuthError: respondToUserAuthError,
+} = userRuntime;
 
 export function requireWebUserSession(event: H3Event) {
   validateUserCsrf(event);
@@ -247,6 +201,8 @@ export function getActiveChildUuid(event: H3Event): string {
   return val;
 }
 
+const GUEST_DEVICE_ID_REGEX = /^[0-9a-fA-F-]{16,64}$/;
+
 export function getOrSetGuestDeviceId(event: H3Event): string {
   const current = getCookie(event, "guest_device_id");
   if (current && GUEST_DEVICE_ID_REGEX.test(current)) {
@@ -266,11 +222,4 @@ export function getOrSetGuestDeviceId(event: H3Event): string {
 
 export function getParentGateSecret(_event?: H3Event): string {
   return requireEnv("PARENT_GATE_SECRET");
-}
-
-export function respondToUserAuthError(_event: H3Event, error: unknown): never {
-  if (isAppError(error)) {
-    throw error;
-  }
-  throw error as Error;
 }

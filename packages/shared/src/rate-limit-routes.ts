@@ -201,3 +201,62 @@ export function resolveRateLimitRouteClass(
   }
   return { mode: "middleware", className: "read:public" };
 }
+
+export const DEFAULT_REQUEST_BODY_SIZE_BYTES = 128 * 1024; // 128 KiB (Task #264)
+export const MULTIPART_TRANSPORT_OVERHEAD_BYTES = 64 * 1024; // 64 KiB buffer cho multipart headers
+export const MANAGER_IMAGE_BODY_LIMIT_BYTES =
+  2 * 1024 * 1024 + MULTIPART_TRANSPORT_OVERHEAD_BYTES; // 2 MiB + 64 KiB (BR-IMG-04, I2)
+export const ORDER_PROOF_BODY_LIMIT_BYTES =
+  5 * 1024 * 1024 + MULTIPART_TRANSPORT_OVERHEAD_BYTES; // 5 MiB + 64 KiB (PROOF_MAX_IMAGE_SIZE_BYTES, C1)
+
+export const ROUTE_BODY_SIZE_LIMITS: Readonly<Record<string, number>> = {
+  "/api/managers/images": MANAGER_IMAGE_BODY_LIMIT_BYTES,
+  "/api/guest/auth/users/register": 32 * 1024,
+};
+
+const BODY_SIZE_PATTERNS: ReadonlyArray<{ pattern: RegExp; limit: number }> = [
+  { pattern: ORDER_PROOF_PATH, limit: ORDER_PROOF_BODY_LIMIT_BYTES },
+  { pattern: PLAY_EVENTS_PATH, limit: 64 * 1024 },
+  { pattern: /^\/api\/users\/consents(?:\/withdraw)?$/, limit: 8 * 1024 },
+  { pattern: /^\/api\/managers\/legal-consent-forces$/, limit: 8 * 1024 },
+  { pattern: /^\/api\/users\/(?:password|email)$/, limit: 8 * 1024 },
+  { pattern: /^\/api\/(?:users|managers)\/auth\/reauth$/, limit: 8 * 1024 },
+  { pattern: /^\/api\/users\/account\/delete\/cancel$/, limit: 8 * 1024 },
+  { pattern: /^\/api\/users\/parent-gate\/verify$/, limit: 8 * 1024 },
+  { pattern: /^\/api\/guest\/auth\/verify-email-change$/, limit: 8 * 1024 },
+  { pattern: /^\/api\/users\/notification-preferences$/, limit: 8 * 1024 },
+  {
+    pattern:
+      /^\/api\/users\/children\/[^/]+\/(?:curriculum\/complete-item|enrollments|grant-extra-time)$/,
+    limit: 8 * 1024,
+  },
+  { pattern: /^\/api\/users\/children\/[^/]+$/, limit: 16 * 1024 },
+  {
+    pattern: /^\/api\/users\/children\/[^/]+\/(?:activate|settings)$/,
+    limit: 16 * 1024,
+  },
+  { pattern: /^\/api\/users\/children$/, limit: 16 * 1024 },
+  { pattern: /^\/api\/users\/profile$/, limit: 16 * 1024 },
+  {
+    pattern: /^\/api\/(?:guest|users)\/play-sessions\/[^/]+\/complete$/,
+    limit: 16 * 1024,
+  },
+  { pattern: /^\/api\/guest\/auth\//, limit: 16 * 1024 },
+];
+
+export function resolveRequestBodySizeLimit(path: string): number | null {
+  const normalized = normalizeRateLimitPath(path);
+  if (normalized.startsWith("/api/guest/webhooks/")) {
+    return null; // Exempt provider webhooks
+  }
+  const explicit = ROUTE_BODY_SIZE_LIMITS[normalized];
+  if (explicit !== undefined) {
+    return explicit;
+  }
+  for (const entry of BODY_SIZE_PATTERNS) {
+    if (entry.pattern.test(normalized)) {
+      return entry.limit;
+    }
+  }
+  return DEFAULT_REQUEST_BODY_SIZE_BYTES;
+}
