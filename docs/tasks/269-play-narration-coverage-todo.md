@@ -1,0 +1,87 @@
+# Task #269 Todo: Phủ giọng đọc
+
+Plan: [`269-play-narration-coverage-plan.md`](269-play-narration-coverage-plan.md).
+Spec: [`play-narration.md`](../specs/04-play/play-narration.md).
+
+Sáu phép đo mở đầu (đo 2026-09-11): 4/443 dataset có `audio_path` · 1/37 engine phát narration ·
+742 file mp3 trong repo · `items_with_audio_path` chưa đo · `narration_template` 0 consumer ·
+không có bảng ánh xạ `d1`–`d6` sang `C1`–`C6`.
+
+Bắt buộc tuần tự: **L1 → L2 → L3**. Song song với L1: **L4 · L5**.
+
+---
+
+## L1 — Bảng ánh xạ nhánh di sản (chặn mọi việc sau)
+
+- [ ] T1.1 Liệt kê trọn cây `apps/web/public/audio/voice/**`, ghi số file mỗi nhánh con
+- [ ] T1.2 Nghe mẫu từng nhánh con để xác định nội dung thật, không suy từ tên thư mục
+- [ ] T1.3 `packages/content/src/inventories/audio-legacy-map.ts` — ánh xạ **nhiều-nhiều**, không giả định một-một
+- [ ] T1.4 Xác nhận `d5/money_template` và `d5/clock_template` thuộc `C1.MEAS` chứ không phải `C5`
+- [ ] T1.5 Gắn từng file mp3 với đúng một kỹ năng hoặc một loại câu (`instruction` / `feedback` / tên vật)
+- [ ] T1.6 Sinh bảng gắn một lần rồi commit; Cấm — NEVER đoán ánh xạ lúc chạy
+- [ ] T1.7 Ghi bảng ánh xạ vào mục 7 của [`audio-storage.md`](../specs/01-platform/audio-storage.md)
+- [ ] T1.8 Đo M3: số file không gắn được với kỹ năng nào
+
+## L2 — Gắn `audio_path` vào dataset
+
+- [ ] T2.1 Lô 1 — `C1` (110 dataset), nguồn `voice/d1/` 424 file và `common/numbers/` 31 file
+- [ ] T2.2 Item số lấy `audio_path` từ mục `c1-numeral` tương ứng, Cấm — NEVER gõ lại đường dẫn (`BR-PNR-05`)
+- [ ] T2.3 Lô 2 — `C5` (119 dataset), nguồn `voice/d5/`
+- [ ] T2.4 Lô 3 — `C4` (86 dataset), nguồn `voice/d4/`
+- [ ] T2.5 Lô 4 — `C2` `C3` `C6` (128 dataset), nguồn `voice/d2/` `d3/` `d6/`
+- [ ] T2.6 Kỹ năng không có file phù hợp: ghi vào danh sách chờ thu âm, không bịa đường dẫn
+- [ ] T2.7 Mỗi lô: lượt **nghe** của người trên 20 cặp chọn ngẫu nhiên; ghi kết quả vào đây
+- [ ] T2.8 Mỗi lô một commit riêng, hạ ratchet sau mỗi lô
+
+## L3 — 36 engine nói được
+
+- [ ] T3.1 Thêm lệnh gọi `AudioController` ở nhịp mở vòng trong **kịch bản lượt chung**, không sửa từng engine
+- [ ] T3.2 Xác nhận `RoundRunner` đã mang `instruction_audio_path` xuống mọi engine
+- [ ] T3.3 Thêm phép kiểm vào `packages/game-engine/tests/gates/engine-turn.ts`: nhịp mở vòng có **đúng một** lệnh phát câu dẫn
+- [ ] T3.4 Chạy cổng kịch bản lượt trên cả 37 engine
+- [ ] T3.5 **Ca âm `BR-PNR-04`** — bỏ lệnh gọi ở nhịp mở vòng → cổng đỏ, nêu đúng engine
+- [ ] T3.6 **Ca âm `BR-PNR-03`** — thêm một trường giọng thứ hai ở cấp vòng → cổng `one-narration-source` đỏ
+- [ ] T3.7 Nối `phrasing.narration_template` làm nguồn câu dẫn khi không có file mp3 (`BR-STS-07`)
+
+## L4 — Cổng `check:narration-coverage`
+
+- [ ] T4.1 `scripts/check-narration-coverage.ts`
+- [ ] T4.2 Ratchet `scripts/narration-coverage-baseline.json` theo mục 7.4 của spec
+- [ ] T4.3 `datasets_with_audio_path` · `engines_with_round_narration` · `items_with_audio_path` — **chỉ tăng**
+- [ ] T4.4 `orphan_audio_files` là **số đo, không ratchet**; ghi rõ trong mã và trong báo cáo
+- [ ] T4.5 Cổng kiểm mọi `audio_path` trỏ tới file **tồn tại thật** trên đĩa
+- [ ] T4.6 Nối vào `package.json` và `scripts/check.sh`
+- [ ] T4.7 **Ca âm `BR-PNR-01`** — level không có đường phát tiếng nào → đỏ
+- [ ] T4.8 **Ca âm `BR-PNR-02`** — item không có `audio_path` lẫn `spokenLabel` → đỏ, nêu đúng id
+- [ ] T4.9 **Ca âm** — `audio_path` trỏ file không tồn tại → đỏ
+- [ ] T4.10 **Ca âm `BR-PNR-05`** — sinh file đọc số trùng với `common/numbers` → đỏ
+- [ ] T4.11 **Ca âm `BR-PNR-10`** — độ phủ giảm từ 200 xuống 199 → đỏ
+
+## L5 — Dự phòng và hành vi chơi
+
+- [ ] T5.1 **Test `BR-PNR-06`** — không có giọng Việt **và** mp3 hỏng → trợ giúp lên bậc bàn tay dẫn, khung yêu cầu nhấp nháy 1200 ms
+- [ ] T5.2 **Test** — không bậc nào kết thúc bằng im lặng
+- [ ] T5.3 **Test `BR-PNR-08`** — bấm Nghe lại ba lần → số lượt sai vẫn 0, bậc trợ giúp không đổi
+- [ ] T5.4 **Test `BR-PNR-09`** — mp3 phản hồi sau 6 giây → vòng vẫn bắt đầu trong 5 giây, nhận được chạm
+- [ ] T5.5 **Test** — autoplay bị chặn → câu dẫn hoãn tới lần chạm đầu, và lần chạm đó không tính là lượt trả lời
+- [ ] T5.6 Nút "Nghe lại" giữ sàn chạm 64 px ở cả ba viewport
+- [ ] T5.7 Chốt hành vi phát tên vật: mặc định an toàn là chỉ phát lần chạm đầu trong vòng (câu hỏi mở 3 của spec)
+
+## L6 — Chốt số
+
+- [ ] T6.1 Đo lại M1: dataset có `audio_path`, mục tiêu 443/443 trừ danh sách chờ thu âm ở T2.6
+- [ ] T6.2 Đo lại M2: 37/37 engine phát narration ở nhịp mở vòng
+- [ ] T6.3 Đo lại M3: số file mp3 mồ côi, ghi làm số đo
+- [ ] T6.4 Đo lại M4: 100% item có `audio_path` hoặc `spokenLabel`
+- [ ] T6.5 Đo lại M5: `narration_template` có 1 consumer
+- [ ] T6.6 Đo lại M6: bảng ánh xạ tồn tại và được cổng đọc
+- [ ] T6.7 `pnpm check` xanh; `pnpm db:seed` chạy hết
+- [ ] T6.8 Chơi thử một màn `C1` trên máy dọc thật, tai nghe, không đọc chữ — xác nhận chơi được
+
+---
+
+## Chưa làm trong task này
+
+- Thu thêm giọng người cho danh sách chờ ở T2.6 — chi phí ngoài repo, xem câu hỏi mở 4 của spec.
+- Soạn nội dung câu dẫn phân biệt cho từng kỹ năng — task `#267` cho `C1`.
+- Câu phản hồi khi đúng và sai — thuộc [`feedback-and-celebration.md`](../specs/04-play/feedback-and-celebration.md).

@@ -74,6 +74,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-ACT` | [`actors.md`](actors.md) |
 | `BR-CDC` | [`child-data-compliance.md`](child-data-compliance.md) |
 | `BR-LAD` | [`access-ladder.md`](access-ladder.md) |
+| `BR-CFO` | [`config-ownership.md`](config-ownership.md) |
 | `BR-ENT` | [`entitlement-model.md`](entitlement-model.md) |
 | `BR-PKG` | [`package-catalog.md`](package-catalog.md) |
 | `BR-PAY` | [`payment-flow.md`](payment-flow.md) |
@@ -157,7 +158,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-CUR` | [`curriculum-player.md`](../04-play/curriculum-player.md) | | `BR-PRG` | [`progress-and-mastery.md`](../04-play/progress-and-mastery.md) |
 | `BR-REC` | [`next-game-recommendation.md`](../04-play/next-game-recommendation.md) | | `BR-LSR` | [`lesson-session-runner.md`](../04-play/lesson-session-runner.md) |
 | `BR-RSP` | [`round-sequence-play.md`](../04-play/round-sequence-play.md) | | `BR-CIR` | [`concept-intro-runner.md`](../04-play/concept-intro-runner.md) |
-| `BR-CIG` | [`concept-intro-gate.md`](../04-play/concept-intro-gate.md) | | | |
+| `BR-CIG` | [`concept-intro-gate.md`](../04-play/concept-intro-gate.md) | | `BR-PNR` | [`play-narration.md`](../04-play/play-narration.md) |
 
 **Content**
 
@@ -177,6 +178,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-ECA` | [`engine-competency-allocation.md`](../05-content/engine-competency-allocation.md) | | `BR-PAR` | [`preschool-age-bands.md`](../05-content/preschool-age-bands.md) |
 | `BR-SAP` | [`skill-age-progression.md`](../05-content/skill-age-progression.md) | | `BR-CTM` | [`concept-topic-model.md`](../05-content/concept-topic-model.md) |
 | `BR-SVI` | [`skill-value-inventory.md`](../05-content/skill-value-inventory.md) | | `BR-LDC` | [`level-difficulty-contract.md`](../05-content/level-difficulty-contract.md) |
+| `BR-STS` | [`skill-thinking-structure.md`](../05-content/skill-thinking-structure.md) | | `BR-NRL` | [`numeracy-representation-ladder.md`](../05-content/numeracy-representation-ladder.md) |
 
 **Admin**
 
@@ -222,9 +224,9 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 
 | | Số |
 |---|---:|
-| Spec module | 163 |
-| Prefix BR | 163 |
-| Business rule | ~1478 |
+| Spec module | 167 |
+| Prefix BR | 167 |
+| Business rule | ~1523 |
 
 **Cảnh báo:** con số "spec module" trước 2026-08-05 ghi **123**, trong khi
 [`../index.md`](../index.md) đếm **124**. Lệch có từ trước, chưa truy nguyên. Đã đặt lại theo

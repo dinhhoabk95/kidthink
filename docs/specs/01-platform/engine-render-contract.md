@@ -98,6 +98,11 @@ Nó cấm — NEVER định nghĩa lại vòng lặp hay ngân sách khung hình
 | `BR-ERC-09` (tuột mượt, không tắt) | Khi `degradation` báo tụt, engine bỏ theo thứ tự ở mục 7.4 — trang trí trước, tương tác sau cùng | Bỏ nhầm thứ tự làm màn chơi không chơi được thay vì chỉ kém đẹp |
 | `BR-ERC-10` (mỗi engine có mục 11) | Mỗi phiếu engine phải có mục 11 mô tả: slot nào vẽ gì, tập trạng thái thị giác, thứ tự tuột | Một hợp đồng vẽ chung không đủ để cài `GT-013` mê cung; mỗi engine vẽ thứ khác nhau |
 | `BR-ERC-11` (test ảnh chụp) | Mỗi engine có test vẽ trên canvas ngoài màn hình, khẳng định số lệnh vẽ và vùng chạm, không so pixel | So pixel giòn và đỏ vì lý do sai. Đếm lệnh vẽ và kiểm hình học thì ổn định |
+| `BR-ERC-12` (cỡ chữ suy từ không gian logic) | Mọi cỡ chữ vẽ trên canvas BẮT BUỘC suy từ chiều cao của `LogicSpace`, theo thang tỷ lệ ở mục 3 của [`05-motion-and-surface.md`](../../design-system/05-motion-and-surface.md). Cấm — NEVER đặt cỡ chữ bằng hằng số px | Tầng render hiện dùng hằng cố định: `LABEL_MIN_FONT_PX` là 11 và `drawCounterBadge` là 14. Trên máy dọc 390 px, tỷ lệ CSS khoảng 0,72 nên hai giá trị đó ra khoảng 8 px và 10 px CSS — dưới sàn 16 px của `BR-A11-08` |
+| `BR-ERC-13` (primitive biểu diễn lượng) | Tầng render BẮT BUỘC có hàm vẽ cho mọi `kind` của kho `c1-quantity-rep`, và mỗi hàm BẮT BUỘC có ít nhất một call site. Danh sách ở mục 7.7 | `drawTenFrameBoard` đã tồn tại với 0 call site vì `GT-007/session.ts:127` hardcode layout khác; một hàm không ai gọi không phải một năng lực |
+| `BR-ERC-14` (một vật, một nhãn) | Một phần tử BẮT BUỘC không được vẽ cùng một chuỗi hai lần trong cùng khung nhìn | `GT-007` truyền cả `text` lẫn `label` vào `drawSlotItem` nên mỗi nút number-bond hiện chữ số to trong vòng tròn và lặp lại chữ số bé 11 px ngay dưới; thấy rõ ở `docs/qa/engine-captures/2026-09-01/GT-007-mobile-390x844.png` |
+| `BR-ERC-15` (khung yêu cầu không đè nội dung) | Khung chữ yêu cầu BẮT BUỘC đo và vẽ bằng **cùng một** cỡ chữ, và BẮT BUỘC xuống dòng khi vượt bề rộng khả dụng của `LogicSpace` | `drawPromptText` đo bằng 24 px rồi vẽ bằng 22 px, kẹp bề rộng trong khoảng 360–860 px và không xuống dòng; trên không gian logic rộng 540 khung tràn và bị phần tử khác đè lên |
+| `BR-ERC-16` (không có màu thô trong tầng render) | Mọi màu trong tầng render BẮT BUỘC lấy từ `designTokens.ts`. Cấm — NEVER viết hằng hex trực tiếp | Đo ngày 2026-09-11 có 59 hằng hex thô trong hai file render (42 và 17), trái `BR-DSC-02`; cổng từng đo việc này đã bị gỡ cùng `packages/gates` |
 
 ## 7. Data
 
@@ -177,7 +182,7 @@ Mỗi task engine (trong 27 task `#130`–`#156`) phải vượt qua đủ 7 ph�
 | # | Phép kiểm | Ràng buộc kiểm tra | Rule |
 |---|---|---|---|
 | 1 | Thứ tự bốn lớp | Đếm thứ tự gọi các hàm vẽ trên `CanvasRenderingContext2D` giả | `BR-ERC-06` |
-| 2 | Sàn vùng chạm | Vùng chạm `hitW × hitH` ≥ sàn chạm của band tuổi (3-4: 96px, 4-5: 72px, 5-6: 64px) | `BR-ERC-04` |
+| 2 | Sàn vùng chạm | Vùng chạm `hitW × hitH` ≥ sàn chạm của band tuổi. Giá trị lấy từ hằng sở hữu theo `BR-CFO-07` của [`config-ownership.md`](../00-foundation/config-ownership.md), không copy vào spec này | `BR-ERC-04` |
 | 3 | Năm trạng thái thị giác | Mỗi trạng thái (nghỉ, chạm, chọn, đúng, sai) có ≥ 2 kênh thị giác | mục 7.3 |
 | 4 | Hàm thuần | 100 lần gọi `render()` cùng `timeMs` giữ nguyên trạng thái phiên, 0 telemetry | `BR-ERC-02` |
 | 5 | Toạ độ từ `Slot[]` | Cổng tĩnh `check:render` xanh, không hằng số toạ độ trong session | `BR-ERC-03` |
@@ -186,6 +191,27 @@ Mỗi task engine (trong 27 task `#130`–`#156`) phải vượt qua đủ 7 ph�
 
 **Cấm — NEVER so sánh pixel (`BR-ERC-11`)**: Mọi test vẽ chạy trên canvas ngoài màn hình (`vitest-canvas-mock` hoặc mock context) kiểm tra cấu trúc lệnh gọi và kích thước hình học, không so sánh ảnh chụp pixel bitmap.
 
+
+### 7.7 Primitive biểu diễn lượng — nghĩa vụ theo `BR-ERC-13`
+
+Thang và luật dùng thuộc
+[`numeracy-representation-ladder.md`](../05-content/numeracy-representation-ladder.md); mục này
+chỉ khai nghĩa vụ **vẽ**.
+
+| `kind` | Hàm vẽ | Trạng thái 2026-09-11 | Nghĩa vụ hình học |
+|---|---|---|---|
+| `discrete-object` | `drawSlotItem` | Chạy | Đã có |
+| `numeral` | `drawTextInSlot` · `drawFlashcard` | Chạy | `drawFlashcard` hiện cố định 350×320 px logic; phải suy từ `LogicSpace` theo `BR-ERC-12` |
+| `ten-frame` | `drawTenFrameBoard` | Tồn tại, **0 call site** | Lưới 2×5, vạch phân nhóm đậm sau cột 5; ô trống và ô đầy phân biệt bằng hai kênh |
+| `dot-pattern` | chưa có | Thiếu | Bố cục chấm chuẩn mặt xúc xắc cho 1–6; cấm bố cục ngẫu nhiên vì nhận-tức-thì dựa vào hình dạng cố định |
+| `number-line` | chưa có | Thiếu | Trục ngang có mốc chia đều, nhãn số ở mốc, con trỏ vị trí hiện tại; khoảng cách hai mốc không nhỏ hơn sàn chạm khi mốc là phần tử chạm được |
+| `tally` | chưa có | Thiếu | Nhóm năm gạch với gạch thứ năm bắc ngang; nhóm cách nhau ít nhất một bề rộng gạch |
+| `rekenrek` | chưa có | Thiếu | Hai hàng mười hạt, mỗi hàng chia 5 đỏ và 5 trắng; hạt đã đẩy và chưa đẩy phân biệt bằng vị trí, không chỉ bằng màu |
+| `number-rod` | chưa có | Thiếu | Thanh liên tục chia đốt bằng nhau, đốt xen kẽ hai màu theo giáo cụ Montessori |
+| `finger` | chưa có | Thiếu | Bàn tay có số ngón giơ đọc được ở cả ba viewport; xem câu hỏi mở 2 của `numeracy-representation-ladder.md` |
+
+Mỗi primitive mới thêm một hàng vào bảng bảy phép kiểm ở mục 7.6, và kèm ảnh chụp ở ba viewport
+`390x844`, `820x1180`, `1440x900` đặt cạnh bộ `docs/qa/engine-captures/2026-09-01/`.
 
 ## 8. API contract
 

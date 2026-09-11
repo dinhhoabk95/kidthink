@@ -22,16 +22,16 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 
 | Khu vực | Spec | MVP |
 |---|---:|---:|
-| `00-foundation` | 18 | 18 |
+| `00-foundation` | 19 | 18 |
 | `01-platform` | 49 | 35 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
-| `04-play` | 17 | 13 |
-| `05-content` | 25 | 7 |
+| `04-play` | 18 | 13 |
+| `05-content` | 27 | 7 |
 | `06-admin` | 31 | 30 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 11 | 9 |
-| **Tổng** | **189** | **140** |
+| **Tổng** | **193** | **140** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
 1 spec cộng thêm 2026-09-08 cho hợp đồng độ khó game level: [`level-difficulty-contract.md`](05-content/level-difficulty-contract.md) (Task #263) — ánh xạ mức khó 1..5 về số item hiển thị và tham số điều khiển qua bảng tra 37 engine × 5 mức.
@@ -53,6 +53,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 |---|:--:|---|
 | **[repo-bootstrap](00-foundation/repo-bootstrap.md)** | P0 | **Chạy đầu tiên** — dựng repo, dependency baseline, port có chọn lọc từ v1 |
 | **[monorepo-package-architecture](00-foundation/monorepo-package-architecture.md)** | P0 | Quy tắc package/driver, khi nào adopt thư viện thay vì tự xây |
+| **[config-ownership](00-foundation/config-ownership.md)** | P1 | Cây quyết định nơi một hằng số cấu hình được phép sống; bốn hạng; cấm bản sao vật lý giữa package |
 | [app-runtime-boundary](00-foundation/app-runtime-boundary.md) | P0 | Static admin SPA, web SSR/API, cookie namespace và deploy boundary |
 | [glossary](00-foundation/glossary.md) | P0 | Từ vựng chuẩn, từ bị cấm |
 | [id-conventions](00-foundation/id-conventions.md) | P0 | Định dạng mã, mã bất biến |
@@ -185,6 +186,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [lesson-session-runner](04-play/lesson-session-runner.md) | P4 | Người dạy chạy tiết học, một bước một lúc |
 | [concept-intro-runner](04-play/concept-intro-runner.md) | P4 | Ba nhịp giới thiệu → nhận biết → gọi tên, trẻ chạy một mình |
 | [concept-intro-gate](04-play/concept-intro-gate.md) | P4 | Bước 8: chưa làm quen khái niệm thì chưa vào màn chơi |
+| **[play-narration](04-play/play-narration.md)** | P1 | Mọi yêu cầu trên bề mặt trẻ phải nghe được trước khi đọc được; bốn bậc dự phòng, cấm im lặng |
 
 ## 05-content — ràng buộc biên tập
 
@@ -213,6 +215,8 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [engine-competency-allocation](05-content/engine-competency-allocation.md) | P4 | Bản đồ tương hợp engine -> competency, sàn K lĩnh vực mỗi ô, trần ngoại lệ |
 | [preschool-age-bands](05-content/preschool-age-bands.md) | P4 | Ràng buộc biên soạn theo band tuổi mầm non (difficulty, thời lượng, số bước) |
 | [skill-age-progression](05-content/skill-age-progression.md) | P4 | Thứ tự giới thiệu kỹ năng theo tháng tuổi (36-48m, 48-60m, 60-72m) |
+| **[skill-thinking-structure](05-content/skill-thinking-structure.md)** | P1 | Dataset phải mang `relations` và `axes` chứng minh được kỹ năng tư duy nó khai; bảng nghĩa vụ 18 `ThinkingProcess` |
+| **[numeracy-representation-ladder](05-content/numeracy-representation-ladder.md)** | P1 | Thang cụ thể, bán cụ thể, trừu tượng cho mọi lượng; chữ số không đứng một mình dưới 5 tuổi |
 | **[skill-value-inventory](05-content/skill-value-inventory.md)** | P1 | Kho giá trị kỹ năng: nguồn sự thật cho các dãy giá trị học thuật, đối chiếu hai chiều |
 | **[level-difficulty-contract](05-content/level-difficulty-contract.md)** | P1 | Hợp đồng độ khó 1..5: ánh xạ item_count qua bảng tra 37 engine, thang tiến bộ theo kỹ năng |
 

@@ -52,6 +52,39 @@ file này — nhưng file chưa từng được tạo. Đây là file đó.
 | `packages/game-engine/tests/gates/glyph-code-leak.test.ts` | `BR-EMJ-04` | có |
 | `packages/game-engine/tests/gates/client-entry-weight.test.ts` | `BR-TAK-08`, `BR-PRF-01` (nhịp 1) | có |
 
+## 2b. Cổng mồ côi — có script, không ai gọi
+
+Đo ngày 2026-09-11. Mười một script `check:*` khai trong `package.json` hoặc trong
+`packages/content-build/package.json` mà **không có call site nào** trong
+[`scripts/check.sh`](../../../scripts/check.sh) lẫn [`lefthook.yml`](../../../lefthook.yml).
+Repo cũng không có thư mục `.github/`, nên không có đường chạy thứ ba.
+
+| Lệnh | Đo gì | Hệ quả đo được của việc không chạy |
+|---|---|---|
+| `check:taxonomy-docs` | Đối chiếu `docs/taxonomy/c*.md` với `SKILL_IDENTITIES` | Dòng tóm tắt đầu **5/6** file sai: c1 ghi 10 strand 99 skill trong khi thật là 12 và 110; c4 ghi 4 và 16 trong khi thật là 16 và 86. Script chỉ đối chiếu hàng skill, không đọc dòng tóm tắt — nên kể cả khi được gọi nó vẫn bỏ sót chỗ này |
+| `check:skill-quota` | `BR-SKQ-01..06/08` — hạn ngạch level theo kỹ năng và khuôn | Chạy được qua unit test trên fixture, không chạy trên corpus thật |
+| `check:engine-seed-matrix` | `BR-CSM-03` — ma trận engine × band × tag tư duy | Chỉ chạy trong job `engine-gates` có glob; commit không đụng bốn thư mục thì bỏ qua |
+| `check:engine-depth` | `BR-ECD-01..13` — chiều sâu nội dung mỗi engine | như trên |
+| `check:go-live` | Sẵn sàng phát hành | mồ côi |
+| `check:lesson-supply` | Cung giáo án theo tiết | mồ côi |
+| `check:round-sets` | Chuỗi vòng trong màn chơi | mồ côi |
+| `check:legacy-v1` | Độ phủ cơ chế v1 | mồ côi |
+| `check:engine-allocation` | Phân bổ lĩnh vực tư duy theo engine | mồ côi |
+| `check:age-band-fit` | Độ vừa band tuổi | mồ côi |
+| `check:skill-progression` | Thứ tự kỹ năng theo tháng tuổi | mồ côi |
+
+Hai điểm mù cấu trúc đi kèm:
+
+1. **Job có glob tự bỏ qua.** `lefthook.yml:105-112` gắn job `engine-gates` vào bốn glob
+   (`packages/content/src/**`, `packages/content-build/src/**`, `packages/game-engine/**`,
+   `docs/specs/**`). Một commit chỉ đổi `scripts/` hoặc `apps/` bỏ qua trọn bộ cổng engine mà
+   không in ra dòng nào.
+2. **`pre-push` bị comment toàn bộ.** `lefthook.yml:132-147` từng chạy `pnpm services` và
+   `pnpm check`; cả khối nay nằm trong comment. Một khối bị comment trông giống một cổng đang có.
+
+Chủ và hạn: xem `BR-CFO-09`, `BR-CFO-10`, `BR-CFO-11` của
+[`config-ownership.md`](../00-foundation/config-ownership.md), và task `#270`.
+
 ## 3. Luật đã MẤT cưỡng chế
 
 `packages/gates` bị xoá 2026-08-29 (97 file, 253 test, 114 rule). Danh sách §4
@@ -85,3 +118,6 @@ bỏ sót ít nhất tám khoản; bảng dưới là bản đủ.
 | `Q-RG-1` | Bốn khoản "MẤT — thiếu trong §4" có dựng lại không, hay hạ luật xuống "chưa dựng"? | người quyết | mở |
 | `Q-RG-2` | `BR-PRF-01` khai "vượt ngân sách chặn merge" nhưng `size-limit`/`k6` không có trong repo. Wire vào hay hạ luật? | người quyết | **Đóng ở #209**: Tách hai nhịp — quét import tĩnh tại `pnpm test` (`client-entry-weight`), đo gzip thật tại `pnpm check:bundle`. |
 | `Q-RG-3` | Nợ `emoji_ref`: 7 glyph (🐭 ⬆️ ⬇️ ⬅️ ➡️ 💎 🐮) chưa có trong registry emoji. Bổ sung registry hay đổi nội dung? | Nội dung | mở |
+| `Q-RG-4` | Mười một cổng mồ côi ở mục 2b nối hết vào `check.sh` hay chỉ nối những cổng chạy dưới một ngưỡng thời gian? `check:skill-quota` phải dựng trọn 6.388 level nên có thể không hợp vòng lặp cục bộ | người quyết | mở |
+| `Q-RG-5` | `pre-push` mở lại với nội dung gì? Bản cũ gọi `pnpm services` vốn cần Postgres và Valkey đang chạy, nên hỏng trên máy chưa dựng dịch vụ | Infra | mở |
+| `Q-RG-6` | `check:taxonomy-docs` có mở rộng để đối chiếu cả dòng tóm tắt đầu file không? Hiện nó chỉ đọc hàng skill nên 5/6 dòng tóm tắt sai mà cổng vẫn xanh | Nội dung | mở |
