@@ -45,54 +45,64 @@ export const C5_TON_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "let_t",
-      label: "chữ t",
-      glyph: "t",
+      id: "tmk_ngang",
+      label: "thanh ngang",
+      glyph: "—",
       image: {
         kind: "emoji",
-        ref: "🆃",
+        ref: "📝",
       },
       contrast_group: "primary",
     },
     {
-      id: "let_u",
-      label: "chữ u",
-      glyph: "u",
+      id: "tmk_huyen",
+      label: "dấu huyền",
+      glyph: "ˋ",
       image: {
         kind: "emoji",
-        ref: "🆄",
+        ref: "📝",
       },
       contrast_group: "contrast",
     },
     {
-      id: "let_ư",
-      label: "chữ ư",
-      glyph: "ư",
+      id: "tmk_sac",
+      label: "dấu sắc",
+      glyph: "ˊ",
       image: {
         kind: "emoji",
-        ref: "🆄",
+        ref: "📝",
       },
       contrast_group: "primary",
     },
     {
-      id: "let_v",
-      label: "chữ v",
-      glyph: "v",
+      id: "tmk_nang",
+      label: "dấu nặng",
+      glyph: "﹒",
       image: {
         kind: "emoji",
-        ref: "🆅",
+        ref: "📝",
       },
       contrast_group: "contrast",
     },
     {
-      id: "let_x",
-      label: "chữ x",
-      glyph: "x",
+      id: "tmk_hoi",
+      label: "dấu hỏi",
+      glyph: "̉",
       image: {
         kind: "emoji",
-        ref: "🆇",
+        ref: "📝",
       },
       contrast_group: "primary",
+    },
+    {
+      id: "tmk_nga",
+      label: "dấu ngã",
+      glyph: "˜",
+      image: {
+        kind: "emoji",
+        ref: "📝",
+      },
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -129,7 +139,14 @@ export const C5_TON_02_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["let_t", "let_u", "let_ư", "let_v", "let_x"],
+  ordering: [
+    "tmk_ngang",
+    "tmk_huyen",
+    "tmk_sac",
+    "tmk_nang",
+    "tmk_hoi",
+    "tmk_nga",
+  ],
 };
 
 export const C5_TON_02_SEED: SkillSeed = {

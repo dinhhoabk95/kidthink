@@ -42,19 +42,8 @@ export const C1_CMP_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "apple",
-      label: "quả táo",
+      id: "many_apples",
+      label: "nhiều quả táo",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -64,36 +53,36 @@ export const C1_CMP_04_DATASET: SkillDataset = {
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "few_apples",
+      label: "ít quả táo",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🍎",
       },
       category: {
         type: "hoa quả",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "many_candies",
+      label: "nhiều cái kẹo",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🍬",
       },
       category: {
-        type: "hoa quả",
+        type: "đồ ngọt",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "few_candies",
+      label: "ít cái kẹo",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🍬",
       },
       category: {
-        type: "rau củ",
+        type: "đồ ngọt",
       },
     },
   ],
@@ -130,7 +119,7 @@ export const C1_CMP_04_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["chair", "apple", "banana", "watermelon", "carrot"],
+  ordering: ["many_apples", "few_apples", "many_candies", "few_candies"],
 };
 
 /**

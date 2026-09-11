@@ -43,54 +43,64 @@ export const C5_TON_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "let_a",
-      label: "chữ a",
-      glyph: "a",
+      id: "tmk_sac",
+      label: "dấu sắc",
+      glyph: "ˊ",
       image: {
         kind: "emoji",
-        ref: "🅰️",
+        ref: "📝",
       },
       contrast_group: "primary",
     },
     {
-      id: "let_ă",
-      label: "chữ ă",
-      glyph: "ă",
+      id: "tmk_nang",
+      label: "dấu nặng",
+      glyph: "﹒",
       image: {
         kind: "emoji",
-        ref: "🅰️",
+        ref: "📝",
       },
       contrast_group: "contrast",
     },
     {
-      id: "let_â",
-      label: "chữ â",
-      glyph: "â",
+      id: "tmk_ngang",
+      label: "thanh ngang",
+      glyph: "—",
       image: {
         kind: "emoji",
-        ref: "🅰️",
+        ref: "📝",
       },
       contrast_group: "primary",
     },
     {
-      id: "let_b",
-      label: "chữ b",
-      glyph: "b",
+      id: "tmk_huyen",
+      label: "dấu huyền",
+      glyph: "ˋ",
       image: {
         kind: "emoji",
-        ref: "🅱️",
+        ref: "📝",
       },
       contrast_group: "contrast",
     },
     {
-      id: "let_c",
-      label: "chữ c",
-      glyph: "c",
+      id: "tmk_hoi",
+      label: "dấu hỏi",
+      glyph: "̉",
       image: {
         kind: "emoji",
-        ref: "🅲",
+        ref: "📝",
       },
       contrast_group: "primary",
+    },
+    {
+      id: "tmk_nga",
+      label: "dấu ngã",
+      glyph: "˜",
+      image: {
+        kind: "emoji",
+        ref: "📝",
+      },
+      contrast_group: "contrast",
     },
   ],
   ladder: [
@@ -127,7 +137,14 @@ export const C5_TON_03_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["let_a", "let_ă", "let_â", "let_b", "let_c"],
+  ordering: [
+    "tmk_sac",
+    "tmk_nang",
+    "tmk_ngang",
+    "tmk_huyen",
+    "tmk_hoi",
+    "tmk_nga",
+  ],
 };
 
 export const C5_TON_03_SEED: SkillSeed = {

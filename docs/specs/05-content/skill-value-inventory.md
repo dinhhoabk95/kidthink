@@ -113,7 +113,7 @@ Cùng hình dạng với kho C5: một `interface` khai `id` `label` `group`, v�
 | File | Số mục | Trường riêng ngoài `{id,label,group}` | Strand tiêu thụ |
 |---|---:|---|---|
 | `c1-numeral.ts` | 21 | `glyph` `value` `audio_path` `required` | `C1.NREC` `C1.CNT` `C1.NCOMP` `C1.ADD` `C1.SUB` |
-| `c1-ordinal.ts` | 10 | `glyph` `position` `audio_path` | `C1.ORD` |
+| `c1-ordinal.ts` | 10 | `glyph` `position` | `C1.ORD` |
 | `c1-number-bond.ts` | 65 | `whole` `part_a` `part_b` | `C1.NCOMP` `C1.ADD` `C1.SUB` |
 | `c1-quantity-rep.ts` | 8 | `kind` `min_value` `max_value` `concreteness` | toàn `C1`, và là từ vựng cho [`numeracy-representation-ladder.md`](numeracy-representation-ladder.md) |
 | `c1-measure-dimension.ts` | 6 cặp | `pole_more` `pole_less` `unit_kind` | `C1.MEAS` `C1.CMP` |
@@ -124,7 +124,7 @@ Cùng hình dạng với kho C5: một `interface` khai `id` `label` `group`, v�
 viết nguyên văn: `"số không"` … `"số hai mươi"`. `required: true` cho 0–10 theo `BR-SVI-07`.
 
 **`c1-ordinal.ts`** — `thứ nhất` … `thứ mười`. `glyph` dùng dạng viết tắt trẻ đọc được trên thẻ
-(`1.` … `10.`), `position` là số nguyên 1–10.
+(`1.` … `10.`), `position` là số nguyên 1–10. Bỏ `audio_path` do repo chưa có file thu âm cho số thứ tự.
 
 **`c1-number-bond.ts`** — mọi phân tách **có thứ tự** của 1–10. Với mỗi `whole` từ 1 đến 10, liệt
 kê `(part_a, part_b)` với `part_a` chạy từ 0 tới `whole`, tức `whole + 1` mục. Tổng
@@ -161,7 +161,11 @@ chữ cái, `period` là độ dài chu kỳ.
 
 [`scripts/check-value-inventory.ts`](../../../scripts/check-value-inventory.ts) đã có
 `InventoryCheckTarget` và `groupItemsByField`. Thêm sáu target `buildC1*Target()` theo đúng khuôn
-`buildC5LetTarget()`; không cần đổi lõi so khớp.
+`buildC5LetTarget()`.
+
+Lưu ý quan trọng về bề mặt đo (Task #265 / L3.9):
+- Độ bao phủ (Chiều 2) của 4 target `C1.NCOMP`, `C1.REP`, `C1.MEAS`, `C1.PAT` **không đo bằng id item của dataset** vì phân tách số (`bond_*`), lối biểu diễn (`rep_*`), chiều đo (`dim_*`) và đơn vị lặp (`pat_*`) là thuộc tính của level/template chứ không phải item của dataset (ví dụ: dataset `C1.PAT.01` chứa các vật thể hoa quả/động vật tạo mẫu, chứ không chứa item id `pat_ab`).
+- Do đó, 4 target này được đặt `expectedIds: []` ở tầng dataset; việc kiểm tra độ bao phủ của 4 khái niệm này sẽ do tầng kiểm tra level/template đảm nhiệm (Task kế tiếp). Kho của 4 target này vẫn được giữ nguyên đầy đủ để phục vụ Chiều 1 và làm nguồn sự thật.
 
 ## 8. Acceptance criteria
 

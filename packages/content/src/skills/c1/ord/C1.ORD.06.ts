@@ -43,58 +43,103 @@ export const C1_ORD_06_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bowl",
-      label: "cái bát",
+      id: "ord_1",
+      label: "thứ nhất",
+      glyph: "1.",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🥣",
-      },
-      category: {
-        type: "đồ dùng",
+        ref: "1️⃣",
       },
     },
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "ord_2",
+      label: "thứ hai",
+      glyph: "2.",
+      value: 2,
       image: {
         kind: "emoji",
-        ref: "🥄",
-      },
-      category: {
-        type: "đồ dùng",
+        ref: "2️⃣",
       },
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "ord_3",
+      label: "thứ ba",
+      glyph: "3.",
+      value: 3,
       image: {
         kind: "emoji",
-        ref: "🥤",
-      },
-      category: {
-        type: "đồ dùng",
+        ref: "3️⃣",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "ord_4",
+      label: "thứ tư",
+      glyph: "4.",
+      value: 4,
       image: {
         kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
+        ref: "4️⃣",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "ord_5",
+      label: "thứ năm",
+      glyph: "5.",
+      value: 5,
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "5️⃣",
       },
-      category: {
-        type: "đồ dùng",
+    },
+    {
+      id: "ord_6",
+      label: "thứ sáu",
+      glyph: "6.",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "6️⃣",
+      },
+    },
+    {
+      id: "ord_7",
+      label: "thứ bảy",
+      glyph: "7.",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "7️⃣",
+      },
+    },
+    {
+      id: "ord_8",
+      label: "thứ tám",
+      glyph: "8.",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "8️⃣",
+      },
+    },
+    {
+      id: "ord_9",
+      label: "thứ chín",
+      glyph: "9.",
+      value: 9,
+      image: {
+        kind: "emoji",
+        ref: "9️⃣",
+      },
+    },
+    {
+      id: "ord_10",
+      label: "thứ mười",
+      glyph: "10.",
+      value: 10,
+      image: {
+        kind: "emoji",
+        ref: "🔟",
       },
     },
   ],
@@ -132,7 +177,18 @@ export const C1_ORD_06_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["bowl", "spoon", "cup", "bed", "chair"],
+  ordering: [
+    "ord_10",
+    "ord_9",
+    "ord_8",
+    "ord_7",
+    "ord_6",
+    "ord_5",
+    "ord_4",
+    "ord_3",
+    "ord_2",
+    "ord_1",
+  ],
 };
 
 export const C1_ORD_06_SEED: SkillSeed = {

@@ -45,58 +45,33 @@ export const C1_ORD_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "ord_1",
+      label: "thứ nhất",
+      glyph: "1.",
+      value: 1,
       image: {
         kind: "emoji",
-        ref: "🍌",
-      },
-      category: {
-        type: "hoa quả",
+        ref: "🥇",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "ord_2",
+      label: "thứ hai",
+      glyph: "2.",
+      value: 2,
       image: {
         kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
+        ref: "🥈",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "ord_3",
+      label: "thứ ba",
+      glyph: "3.",
+      value: 3,
       image: {
         kind: "emoji",
-        ref: "🥕",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
+        ref: "🥉",
       },
     },
   ],
@@ -134,7 +109,7 @@ export const C1_ORD_01_DATASET: SkillDataset = {
     success_message: "Hoan hô, bé đã chọn đúng rồi!",
     hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
-  ordering: ["banana", "watermelon", "carrot", "corn", "dog"],
+  ordering: ["ord_1", "ord_2", "ord_3"],
 };
 
 export const C1_ORD_01_SEED: SkillSeed = {

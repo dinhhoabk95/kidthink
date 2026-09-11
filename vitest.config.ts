@@ -22,6 +22,7 @@ export default defineConfig({
       // thuộc project vitest nào — nên cổng bậc thang typecheck, thứ mọi cổng
       // khác dựa vào, là mã duy nhất trong repo không có phép thử nào chạy.
       {
+        resolve: { alias: workspaceAliases() },
         test: {
           name: "scripts",
           root: path.resolve(import.meta.dirname, "scripts"),
