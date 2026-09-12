@@ -1,3 +1,7 @@
+import { getPatternUnit } from "#src/inventories/index";
+
+export const C1_PAT_02_UNIT = getPatternUnit("pat_abb");
+
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
 
 export const C1_PAT_02_IDENTITY: SkillIdentity = {
