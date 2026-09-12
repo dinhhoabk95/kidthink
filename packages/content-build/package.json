@@ -36,6 +36,7 @@
     "check:go-live": "tsx src/cli/check-go-live.ts",
     "check:legacy-v1": "tsx src/gates/legacy-v1-coverage.ts",
     "check:skill-progression": "tsx src/gates/skill-progression.ts",
+    "check:seed-gates": "tsx src/cli/check-seed-gates.ts",
     "seed:all": "tsx src/cli/seed-all.ts",
     "seed:check": "tsx src/cli/seed-check.ts",
     "seed:content": "tsx src/cli/seed-content.ts",

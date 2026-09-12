@@ -181,6 +181,10 @@ PID_SKILL_PROGRESSION=$!
 pnpm check:config-ownership &
 PID_CONFIG_OWNERSHIP=$!
 
+# Cổng thẩm định hạt nhân seed gates — Task #271 (LA)
+pnpm check:seed-gates &
+PID_SEED_GATES=$!
+
 LINT_OK=true
 if ! wait $PID_LINT; then
   echo "✗ biome lint failed" >&2
@@ -314,6 +318,11 @@ fi
 
 if ! wait $PID_CONFIG_OWNERSHIP; then
   echo "✗ check:config-ownership failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_SEED_GATES; then
+  echo "✗ check:seed-gates failed" >&2
   LINT_OK=false
 fi
 

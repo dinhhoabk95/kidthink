@@ -15,13 +15,13 @@ Mỗi lô một commit riêng. Cấm — NEVER gộp `LB` với `LD`: cả hai �
 
 ## LA — Cổng 9 vào `pnpm check` (S, chặn LB)
 
-- [ ] TA.1 Xác nhận `runEightGates` (`packages/content-build/src/gates/runner.ts:598`) không cần database
-- [ ] TA.2 `packages/content-build/src/cli/check-seed-gates.ts` — chạy tám cổng trên `ALL_SEED_LEVELS`, in nợ theo cổng
-- [ ] TA.3 Thêm script `check:seed-gates` vào `packages/content-build/package.json`
-- [ ] TA.4 Nối vào `scripts/check.sh` phase 1, kèm khối `wait $PID` riêng — Cấm — NEVER để job nền nuốt mã thoát
-- [ ] TA.5 **Ca âm** — dựng một level cố ý không hiện glyph nào → cổng đỏ, nêu đúng mã level và mã kỹ năng
-- [ ] TA.6 Nếu cổng đỏ ngay: ghi baseline `scripts/seed-gates-baseline.json`, nợ chỉ được GIẢM
-- [ ] TA.7 Đo lại N4: `pnpm check` chạy Cổng 9; xác nhận bằng cách tạm làm đỏ một level rồi hoàn nguyên
+- [x] TA.1 Xác nhận `runEightGates` (`packages/content-build/src/gates/runner.ts:598`) không cần database
+- [x] TA.2 `packages/content-build/src/cli/check-seed-gates.ts` — chạy tám cổng trên `ALL_SEED_LEVELS`, in nợ theo cổng
+- [x] TA.3 Thêm script `check:seed-gates` vào `packages/content-build/package.json`
+- [x] TA.4 Nối vào `scripts/check.sh` phase 1, kèm khối `wait $PID` riêng — Cấm — NEVER để job nền nuốt mã thoát
+- [x] TA.5 **Ca âm** — dựng một level cố ý không hiện glyph nào → cổng đỏ, nêu đúng mã level và mã kỹ năng
+- [x] TA.6 Nếu cổng đỏ ngay: ghi baseline `scripts/seed-gates-baseline.json`, nợ chỉ được GIẢM
+- [x] TA.7 Đo lại N4: `pnpm check` chạy Cổng 9; xác nhận bằng cách tạm làm đỏ một level rồi hoàn nguyên
 
 ## LB — Tách vai `glyph` và `image` (L, chặn bởi LA)
 

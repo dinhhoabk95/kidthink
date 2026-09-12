@@ -57,6 +57,7 @@
     "check:go-live": "pnpm --filter @mindkid/content-build check:go-live",
     "check:legacy-v1": "pnpm --filter @mindkid/content-build check:legacy-v1",
     "check:skill-progression": "pnpm --filter @mindkid/content-build check:skill-progression",
+    "check:seed-gates": "pnpm --filter @mindkid/content-build check:seed-gates",
     "gen:taxonomy-docs": "tsx scripts/taxonomy/sync-taxonomy-docs.ts --write",
     "verify": "tsx scripts/verify.ts",
     "test": "NODE_OPTIONS=--max-old-space-size=4096 vitest run --bail 1",
