@@ -1,4 +1,5 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+import { getMeasureDimension } from "#src/inventories/index";
 
 export const C1_MEAS_01_IDENTITY: SkillIdentity = {
   code: "C1.MEAS.01",
@@ -100,7 +101,7 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
       source_id: "dim_length_snake_more",
       target_id: "dim_length_worm_less",
       metadata: {
-        dimension: "length",
+        dimension: getMeasureDimension("dim_length").unit_kind,
       },
     },
     {
@@ -108,7 +109,7 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
       source_id: "dim_length_more",
       target_id: "dim_length_less",
       metadata: {
-        dimension: "length",
+        dimension: getMeasureDimension("dim_length").unit_kind,
       },
     },
   ],

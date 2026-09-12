@@ -1,4 +1,5 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+import { getMeasureDimension } from "#src/inventories/index";
 
 export const C1_MEAS_07_IDENTITY: SkillIdentity = {
   code: "C1.MEAS.07",
@@ -100,7 +101,7 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
       source_id: "bal_right_heavy",
       target_id: "bal_left_light",
       metadata: {
-        dimension: "balance",
+        dimension: getMeasureDimension("dim_weight").unit_kind,
       },
     },
     {
