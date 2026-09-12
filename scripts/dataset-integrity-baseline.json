@@ -1,24 +1,6 @@
 {
-  "max_total_violations": 18,
-  "violations_by_competency": {
-    "C1": 0,
-    "C2": 11,
-    "C4": 7
-  },
-  "known_violation_keys": [
-    "C2.GEO.01|BR-SDI-05",
-    "C2.ORI.01|BR-SDI-05",
-    "C2.ORI.02|BR-SDI-05",
-    "C2.ORI.03|BR-SDI-05",
-    "C2.ORI.04|BR-SDI-05",
-    "C2.ORI.05|BR-SDI-05",
-    "C2.ORI.06|BR-SDI-05",
-    "C2.ORI.07|BR-SDI-05",
-    "C2.ORI.08|BR-SDI-05",
-    "C2.ORI.09|BR-SDI-05",
-    "C2.ORI.10|BR-SDI-05",
-    "C4.DET.01|BR-SDI-02",
-    "C4.DET.01|BR-SDI-05"
-  ],
+  "max_total_violations": 0,
+  "violations_by_competency": {},
+  "known_violation_keys": [],
   "note": "Nợ toàn vẹn dataset có TRƯỚC review task #267. Nợ chỉ được GIẢM. C1 chốt ở 0: mọi vi phạm C1 mới đều chặn ngay."
 }

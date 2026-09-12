@@ -504,6 +504,7 @@ export const C1_MEAS_13_SEED: SkillSeed = {
       theme: "home",
       rounds: 3,
       montessori_ref: "WB18-D1",
+      legacy_v1_ref: "D5-08",
     },
     {
       code: "GL-C1-MEAS-CARD-0124",
@@ -513,6 +514,7 @@ export const C1_MEAS_13_SEED: SkillSeed = {
       theme: "home",
       rounds: 3,
       montessori_ref: "WB18-D1",
+      legacy_v1_ref: "D5-08",
     },
     {
       code: "GL-C1-MEAS-CLK-0001",

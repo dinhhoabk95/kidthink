@@ -38,7 +38,7 @@ export const C2_ORI_04_IDENTITY: SkillIdentity = {
 
 export const C2_ORI_04_DATASET: SkillDataset = {
   skill_code: "C2.ORI.04",
-  concept_label: "Phía dưới",
+  concept_label: "Dưới",
   surface: "game",
   items: [
     {

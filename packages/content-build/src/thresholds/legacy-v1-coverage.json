@@ -22,8 +22,8 @@
     {
       "step": 3,
       "min_levels_per_type": 10,
-      "min_types_covered": 60,
-      "description": "Bậc 3: Hoàn thành 100% 60 game types (600 level)"
+      "min_types_covered": 59,
+      "description": "Bậc 3: Hoàn thành 59/60 game types có ≥10 levels (D5-08 đạt 5 levels kịch trần BR-SKQ-04 của C1.MEAS.13)"
     }
   ],
   "history": [
@@ -38,6 +38,12 @@
       "step": 3,
       "task": "Task #179 & #180",
       "note": "Hoàn thành phủ toàn bộ 60/60 game types v1 với ≥10 levels hợp lệ mỗi type"
+    },
+    {
+      "date": "2026-09-12",
+      "step": 3,
+      "task": "Task #271",
+      "note": "Trả D5-08 về đúng trần 5 level của BR-SKQ-04 (C1.MEAS.13), 59/60 game types đạt ≥10 levels"
     }
   ]
 }

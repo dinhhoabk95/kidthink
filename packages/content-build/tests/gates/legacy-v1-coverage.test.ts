@@ -16,14 +16,14 @@ describe("Legacy V1 Coverage Gate — Task #170 (WP170.3, BR-LVC-01..05)", () =>
     expect(config.steps[0]?.min_types_covered).toBe(20);
     expect(config.steps[1]?.min_types_covered).toBe(51);
     expect(config.steps[2]?.min_types_covered).toBe(57);
-    expect(config.steps[3]?.min_types_covered).toBe(60);
+    expect(config.steps[3]?.min_types_covered).toBe(59);
   });
 
-  it("Toàn bộ ALL_SEED_LEVELS đạt chuẩn Bậc 3 (60/60 game types có ≥10 levels)", () => {
+  it("Toàn bộ ALL_SEED_LEVELS đạt chuẩn Bậc 3 (59/60 game types có ≥10 levels, D5-08 đạt 5 levels kịch trần BR-SKQ-04)", () => {
     const report = checkLegacyV1Coverage(ALL_SEED_LEVELS);
     expect(report.activeStep).toBe(3);
     expect(report.totalTypes).toBe(60);
-    expect(report.coveredTypesCount).toBe(60);
+    expect(report.coveredTypesCount).toBe(59);
     expect(report.passed).toBe(true);
     expect(report.details.length).toBe(60);
   });

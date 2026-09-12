@@ -65,11 +65,11 @@ Mỗi lô một commit riêng. Cấm — NEVER gộp `LB` với `LD`: cả hai �
 
 ## LE — Nợ toàn vẹn ngoài `C1` (S, độc lập)
 
-- [ ] TE.1 Liệt kê 13 cặp `<mã kỹ năng>|<luật>` trong `scripts/dataset-integrity-baseline.json`
-- [ ] TE.2 12 vi phạm `BR-SDI-05` (`identity.name` khác `concept_label`): sửa nhãn theo tên kỹ năng
-- [ ] TE.3 1 vi phạm `BR-SDI-02` (`C4.DET.01` — `ordering` trỏ vào 5 id không có trong `items`)
-- [ ] TE.4 Hạ `max_total_violations` về 0; xoá `known_violation_keys`
-- [ ] TE.5 Đo lại N3: `check:dataset-integrity` đạt 0/0 trên cả 6 năng lực
+- [x] TE.1 Liệt kê 13 cặp `<mã kỹ năng>|<luật>` trong `scripts/dataset-integrity-baseline.json`
+- [x] TE.2 12 vi phạm `BR-SDI-05` (`identity.name` khác `concept_label`): sửa nhãn theo tên kỹ năng
+- [x] TE.3 1 vi phạm `BR-SDI-02` (`C4.DET.01` — `ordering` trỏ vào 5 id không có trong `items`)
+- [x] TE.4 Hạ `max_total_violations` về 0; xoá `known_violation_keys`
+- [x] TE.5 Đo lại N3: `check:dataset-integrity` đạt 0/0 trên cả 6 năng lực
 
 ---
 
