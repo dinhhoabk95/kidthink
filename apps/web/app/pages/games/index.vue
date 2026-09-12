@@ -344,6 +344,8 @@
 <script lang="ts" setup>
   import {
     type AccessTier,
+    AGE_BANDS,
+    type AgeBand,
     COMPETENCY_CATALOG,
     type CtaViewer,
     type EntitlementKey,
@@ -410,15 +412,19 @@
     emoji: entry.emoji,
   }));
 
-  const AGE_BAND_OPTIONS = [
-    { value: "3-4", label: "3–4 tuổi (Lớp Mầm)", shortLabel: "3–4 tuổi (Mầm)" },
-    {
-      value: "4-5",
-      label: "4–5 tuổi (Lớp Chồi)",
-      shortLabel: "4–5 tuổi (Chồi)",
-    },
-    { value: "5-6", label: "5–6 tuổi (Lớp Lá)", shortLabel: "5–6 tuổi (Lá)" },
-  ] as const;
+  const AGE_BAND_LABELS: Record<
+    AgeBand,
+    { label: string; shortLabel: string }
+  > = {
+    "3-4": { label: "3–4 tuổi (Lớp Mầm)", shortLabel: "3–4 tuổi (Mầm)" },
+    "4-5": { label: "4–5 tuổi (Lớp Chồi)", shortLabel: "4–5 tuổi (Chồi)" },
+    "5-6": { label: "5–6 tuổi (Lớp Lá)", shortLabel: "5–6 tuổi (Lá)" },
+  };
+
+  const AGE_BAND_OPTIONS = AGE_BANDS.map((band) => ({
+    value: band,
+    ...AGE_BAND_LABELS[band],
+  }));
 
   const TIER_OPTIONS = [
     { value: "free", label: "Miễn phí chơi thử" },

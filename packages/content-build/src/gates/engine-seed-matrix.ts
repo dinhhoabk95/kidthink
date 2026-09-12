@@ -12,10 +12,8 @@ import {
   ALL_TEMPLATES,
   type GameTemplate,
 } from "@mindkid/game-engine/registry";
-import type { SkillSeed } from "@mindkid/shared";
+import type { AgeBand, SkillSeed } from "@mindkid/shared";
 import type { ContentSeed } from "../types.js";
-
-export type AgeBand = "3-4" | "4-5" | "5-6";
 
 export interface SeedMatrixCellTarget {
   readonly tag: string;

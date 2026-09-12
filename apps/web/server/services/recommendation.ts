@@ -23,6 +23,7 @@ import {
 } from "@mindkid/db";
 import {
   type AccessTier,
+  type AgeBand,
   deriveAgeBand,
   resolveNextStep,
 } from "@mindkid/shared";
@@ -38,7 +39,7 @@ export interface GetChildRecommendationsOptions {
 }
 
 export interface GetGuestRecommendationsOptions {
-  ageBand?: "3-4" | "4-5" | "5-6";
+  ageBand?: AgeBand;
   limit?: number;
   seed?: number;
 }

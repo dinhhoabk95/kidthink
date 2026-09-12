@@ -1,10 +1,11 @@
+import { AGE_BANDS } from "#src/contracts/types";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
 export const GT003Generator: LevelGenerator = {
   engine: "GT-003",
   axes: {
-    age_band: ["3-4", "4-5", "5-6"],
+    age_band: [...AGE_BANDS],
     what: ["classification", "drag-to-container"],
     theme: [...VALID_GENERATOR_THEMES],
   },

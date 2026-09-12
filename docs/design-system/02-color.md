@@ -16,7 +16,7 @@ Mỗi họ màu bắt buộc có đủ 11 bậc (từ 50 đến 950) nhằm đá
 | **warning** | `#b45309` (Vàng nâu) | 5,0:1 | Cảnh báo hạn mức, lưu ý phụ huynh |
 | **danger** | `#b91c1c` (Đỏ) | 5,6:1 | Lỗi hệ thống, thao tác hủy (chỉ dùng cho người lớn) |
 
-Chi tiết mã màu từng bậc được đồng bộ giữa tệp định kiểu `packages/ui/assets/css/tailwind.css` và hằng số TypeScript tại `packages/game-engine/src/systems/designTokens.ts`.
+Chi tiết mã màu từng bậc được đồng bộ tuyệt đối giữa tệp định kiểu `packages/ui/assets/css/tailwind.css` và hằng số TypeScript tại `packages/game-engine/src/systems/designTokens.ts` theo quy tắc `BR-DSC-24`. Họ màu `surface` thống nhất chuẩn Warm Stone trên toàn bộ các bề mặt; phông chữ chỉ sử dụng các họ phông thực sự được nạp (`Be Vietnam Pro` cho sans và `Baloo 2` cho heading theo `BR-DSC-25`).
 
 ## 2. Ánh xạ bí danh trong Nuxt UI v4
 

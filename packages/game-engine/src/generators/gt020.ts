@@ -1,3 +1,4 @@
+import { AGE_BANDS } from "#src/contracts/types";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
@@ -14,7 +15,7 @@ function getPairCount(ageBand: string): number {
 export const GT020Generator: LevelGenerator = {
   engine: "GT-020",
   axes: {
-    age_band: ["3-4", "4-5", "5-6"],
+    age_band: [...AGE_BANDS],
     what: ["memory", "card-flip", "matching"],
     theme: [...VALID_GENERATOR_THEMES],
   },

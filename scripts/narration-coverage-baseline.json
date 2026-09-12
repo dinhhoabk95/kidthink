@@ -4,7 +4,8 @@
   "engines_with_round_narration": 37,
   "engines_total": 37,
   "items_with_audio_path": 486,
+  "items_without_spoken_name": 2000,
   "orphan_audio_files": 701,
   "date": "2026-09-12",
-  "note": "Ratchet gate cho độ phủ lời dẫn và âm thanh phát thành tiếng (Task #269 / BR-PNR-01..10). datasets_with_audio_path, engines_with_round_narration, items_with_audio_path CHỈ ĐƯỢC TĂNG. orphan_audio_files là số đo, không ratchet."
+  "note": "Ratchet gate cho độ phủ lời dẫn và âm thanh phát thành tiếng (Task #269 / BR-PNR-01..10). datasets_with_audio_path, engines_with_round_narration, items_with_audio_path CHỈ ĐƯỢC TĂNG. items_without_spoken_name là nợ BR-PNR-02, CHỈ ĐƯỢC GIẢM. orphan_audio_files là số đo, không ratchet."
 }

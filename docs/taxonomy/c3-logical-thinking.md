@@ -4,7 +4,7 @@
 > loại trừ), Visible Thinking (làm rõ quá trình suy luận).
 > Legend + quy ước mã: [`index.md`](index.md).
 
-**Strand:** 8 · **Skill đã đặt tên:** 30 · **Mục tiêu:** ~70 · **Còn thiếu:** 40
+**Strand:** 10 · **Skill đã đặt tên:** 42 · **Mục tiêu:** ~70 · **Còn thiếu:** 28
 **Game type hiện có:** 20 (D3-01…D3-08, D4-01…D4-08, D6-02, D6-03, D6-07, D6-08)
 
 ---

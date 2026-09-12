@@ -1,3 +1,4 @@
+import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
@@ -436,7 +437,7 @@ export class ClockHandsSession extends TemplateGameSession<
     this.matchedCardIds.clear();
   }
 
-  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
+  protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
     // `options` và `activity_cards` khai `.default([])` trong contract, nhưng
     // session nhận `content_pack` **thô** nên default không bao giờ tới nơi:

@@ -52,6 +52,9 @@ pre-commit:
 
     # Cổng đối chiếu engine — Task #263 (T1), chạy song song, chỉ khi chạm engine/corpus.
     # Dựng sẵn chỗ cho #261 (check:engine-behavior) và #262 (check:engine-turn).
+    # ⚠️ Điểm mù (BR-CFO-10): Job này gắn glob, CHỈ chạy khi commit đụng 4 cây thư mục khai báo ở glob.
+    # Các commit chỉ đổi scripts/, packages/db/config/, packages/config/, hoặc docs/ khác sẽ BỎ QUA
+    # toàn bộ engine-gates ở pre-commit. Cổng toàn diện bắt buộc là scripts/check.sh.
     - name: engine-gates
       glob: "{docs/specs/01-platform/engines/**,docs/specs/05-content/**,packages/game-engine/src/**,packages/game-engine/config/**,packages/content/src/**,packages/content-build/src/**}"
       run: |
@@ -128,15 +131,10 @@ pre-commit:
 
         exit $FAIL
 
-# pre-push:
-#   parallel: false
-#   jobs:
-#     # repo-bootstrap §4 bước 5 — PG 17 + Valkey 9 phải sống và ĐÚNG major version.
-#     # Chạy TRƯỚC test vì test tích hợp dùng DB thật (BR-TST-02). Bỏ job này đi
-#     # thì test tích hợp gặp DB chết sẽ đỏ với lỗi kết nối thay vì lỗi thật.
-#     - name: services
-#       run: pnpm services
-#       fail_text: "docker compose up -d trước khi push (PG 17 + Valkey 9 phải sống)"
-
-#     - name: check
-#       run: pnpm check
+pre-push:
+  parallel: false
+  jobs:
+    - name: check
+      run: |
+        [ -d "${HOME}/.nvm/versions/node/v24.15.0/bin" ] && export PATH="${HOME}/.nvm/versions/node/v24.15.0/bin:$PATH"
+        pnpm check:fast

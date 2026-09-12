@@ -112,6 +112,8 @@ export interface SkillDataset {
   readonly extends?: string;
 }
 
+import type { AgeBand } from "./age-bands.js";
+
 export type ItemFacet =
   | "glyph"
   | "value"
@@ -119,7 +121,7 @@ export type ItemFacet =
   | "audio"
   | "contrast_group";
 
-export type AgeBandString = "3-4" | "4-5" | "5-6" | "3-5" | "4-6";
+export type AgeBandString = AgeBand | "3-5" | "4-6";
 
 export interface ProjectOptions {
   readonly band: AgeBandString;

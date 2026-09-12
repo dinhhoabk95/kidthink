@@ -1,4 +1,5 @@
 import { type AgeBand, ALL_TEMPLATES } from "@mindkid/game-engine/registry";
+import { AGE_BANDS } from "@mindkid/shared";
 import { ALL_SEED_LEVELS } from "../src/index.js";
 
 export interface CellReport {
@@ -9,7 +10,7 @@ export interface CellReport {
   readonly isDeficit: boolean;
 }
 
-const ALL_BANDS: readonly AgeBand[] = ["3-4", "4-5", "5-6"];
+const ALL_BANDS = AGE_BANDS;
 const ALL_COMPS: readonly string[] = ["C1", "C2", "C3", "C4", "C5", "C6"];
 
 function getMatchedBands(min: number, max: number): AgeBand[] {

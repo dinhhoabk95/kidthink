@@ -4,7 +4,7 @@
 > chép trực quan), Kogumakai (tìm điểm khác, vật ẩn).
 > Legend + quy ước mã: [`index.md`](index.md).
 
-**Strand:** 4 · **Skill đã đặt tên:** 16 · **Mục tiêu:** ~60 · **Còn thiếu:** 44
+**Strand:** 16 · **Skill đã đặt tên:** 86 · **Mục tiêu:** ~90 · **Còn thiếu:** 4
 **Game type hiện có:** 3 (D2-08, D6-04, D6-06)
 
 > Lưu ý: **Khoảng trống lớn nhất của sản phẩm.** 16/60 skill, 3/60 game type.

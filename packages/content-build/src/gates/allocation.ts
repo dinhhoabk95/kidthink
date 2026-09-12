@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
 import { type AgeBand, ALL_TEMPLATES } from "@mindkid/game-engine/registry";
+import { AGE_BANDS } from "@mindkid/shared";
 import { z } from "zod";
 import { ALL_SEED_LEVELS } from "../catalog.js";
 import type { ContentSeed } from "../types.js";
@@ -20,7 +21,7 @@ export const EngineAffinityEntrySchema = z.object({
 
 export const CellExceptionSchema = z.object({
   engine: z.string(),
-  band: z.enum(["3-4", "4-5", "5-6"]),
+  band: z.enum(AGE_BANDS),
   reason: z.string().min(1),
   decided_by: z.string().min(1),
   date: z.string().min(1),
@@ -40,7 +41,7 @@ export type EngineAllocationConfig = z.infer<
   typeof EngineAllocationConfigSchema
 >;
 
-const ALL_BANDS: readonly AgeBand[] = ["3-4", "4-5", "5-6"];
+const ALL_BANDS = AGE_BANDS;
 
 function getMatchedBands(min: number, max: number): AgeBand[] {
   const matchedBands: AgeBand[] = [];

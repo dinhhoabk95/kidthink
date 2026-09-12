@@ -13,6 +13,7 @@ describe("Cổng check:narration-coverage (Task #269 / BR-PNR-01..10)", () => {
     expect(stats.datasets_with_audio_path).toBeGreaterThanOrEqual(57);
     expect(stats.engines_with_round_narration).toBe(37);
     expect(stats.items_with_audio_path).toBeGreaterThanOrEqual(486);
+    expect(stats.items_without_spoken_name).toBeLessThanOrEqual(2000);
   });
 
   // T4.5: Ca âm BR-PNR-01 — level không có instruction_audio_path VÀ dataset không có narration_template → cổng đỏ
@@ -33,8 +34,11 @@ describe("Cổng check:narration-coverage (Task #269 / BR-PNR-01..10)", () => {
     expect(pnr01?.message).toContain("không có đường phát câu dẫn thành tiếng");
   });
 
-  // T4.6: Ca âm BR-PNR-02 — item không có audio_path và không có spokenLabel / label → cổng đỏ
-  it("T4.6 (Ca âm BR-PNR-02): item thiếu cả audio_path lẫn spokenLabel lẫn label làm cổng đỏ", () => {
+  // T4.6: Ca âm BR-PNR-02 — item CÓ label nhưng không có audio_path lẫn
+  // spokenLabel vẫn phải bị tính là chưa đọc được tên. `label` là chữ, và
+  // người dùng ba tuổi chưa đọc được chữ, nên nhận `label` là để luật này
+  // không bao giờ đỏ được.
+  it("T4.6 (BR-PNR-02): item có label nhưng không có audio_path lẫn spokenLabel vẫn bị tính là chưa đọc được tên", () => {
     const testDataset: SkillDataset = {
       skill_code: "C1.TEST.01",
       concept_label: "Test item thiếu tên",
@@ -44,21 +48,76 @@ describe("Cổng check:narration-coverage (Task #269 / BR-PNR-01..10)", () => {
       items: [
         {
           id: "item_blind",
-          label: "", // rỗng label
-          glyph: "❓",
+          label: "quả táo", // có chữ, nhưng trẻ chưa đọc được chữ
+          glyph: "🍎",
           value: 1,
           audio_path: undefined,
         },
       ],
     };
 
-    const { violations } = scanNarrationCoverage({
+    const { stats } = scanNarrationCoverage({
       datasets: { "C1.TEST.01": testDataset },
     });
 
-    const pnr02 = violations.find((v) => v.rule === "BR-PNR-02");
-    expect(pnr02).toBeDefined();
-    expect(pnr02?.target).toContain("C1.TEST.01:item_blind");
+    expect(stats.items_total).toBe(1);
+    expect(stats.items_without_spoken_name).toBe(1);
+  });
+
+  // T4.6b: Ca âm ratchet BR-PNR-02 — nợ item không đọc được tên dày thêm → cổng đỏ
+  it("T4.6b (Ca âm BR-PNR-02): nợ item chưa đọc được tên tăng lên làm cổng đỏ", () => {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "narration-spoken-"));
+    const fakeBaselinePath = path.join(tmpDir, "baseline.json");
+
+    fs.writeFileSync(
+      fakeBaselinePath,
+      JSON.stringify({
+        datasets_with_audio_path: 0,
+        datasets_total: 443,
+        engines_with_round_narration: 0,
+        engines_total: 37,
+        items_with_audio_path: 0,
+        items_without_spoken_name: 0,
+        orphan_audio_files: 700,
+      }),
+      "utf-8"
+    );
+
+    const testDataset: SkillDataset = {
+      skill_code: "C1.TEST.04",
+      concept_label: "Test nợ đọc tên",
+      surface: "game",
+      ladder: [{ rung: 1, dimension: "test", description: "test rung" }],
+      phrasing: { prompt_template: "Tìm {label}" },
+      items: [
+        { id: "muted_1", label: "quả táo", glyph: "🍎", value: 1 },
+        { id: "muted_2", label: "quả cam", glyph: "🍊", value: 2 },
+      ],
+    };
+
+    try {
+      const { violations } = scanNarrationCoverage({
+        baselinePath: fakeBaselinePath,
+        datasets: { "C1.TEST.04": testDataset },
+      });
+
+      const pnr02 = violations.find(
+        (v) =>
+          v.rule === "BR-PNR-02" && v.target === "items_without_spoken_name"
+      );
+      expect(pnr02).toBeDefined();
+      expect(pnr02?.message).toContain("2");
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+
+  // T4.6c: engines_with_round_narration phải đến từ việc CHẠY nhịp mở vòng,
+  // không từ việc đếm dòng trong một tệp danh sách mã engine.
+  it("T4.6c (BR-PNR-04): số engine nói được đo bằng cách chạy nhịp mở vòng thật", () => {
+    const { stats } = scanNarrationCoverage();
+    expect(stats.engines_with_round_narration).toBe(stats.engines_total);
+    expect(stats.engines_total).toBeGreaterThanOrEqual(37);
   });
 
   // T4.7: Ca âm BR-PNR-05 — sinh file đọc số trùng / item số gõ sai đường dẫn → cổng đỏ

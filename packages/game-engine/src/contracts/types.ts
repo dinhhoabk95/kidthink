@@ -27,16 +27,10 @@ export type LayoutId =
   | "weave-grid"
   | "single-focus";
 
-/**
- * Bộ giá trị band ở dạng **runtime**, không chỉ dạng kiểu.
- *
- * Không có nó thì mọi chỗ nhận band từ ngoài (CLI, query, JSON) chỉ còn cách
- * ép kiểu `as AgeBand` — và `gen-levels.ts` đã làm đúng thế: `--band=banana`
- * qua được rồi im lặng rơi về band đầu tiên.
- */
-export const AGE_BANDS = ["3-4", "4-5", "5-6"] as const;
+import type { AgeBand } from "@mindkid/shared/age-bands";
 
-export type AgeBand = (typeof AGE_BANDS)[number];
+// biome-ignore lint/performance/noBarrelFile: Canonical types re-exported for game engine
+export { AGE_BANDS, type AgeBand } from "@mindkid/shared/age-bands";
 export type ContentStatus =
   | "draft"
   | "in_review"

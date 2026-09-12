@@ -1,3 +1,4 @@
+import { AGE_BANDS } from "#src/contracts/types";
 import {
   getNouns,
   pickOne,
@@ -31,7 +32,7 @@ function getOptionCount(ageBand: string, escalationStep = 0): number {
 export const GT001Generator: LevelGenerator = {
   engine: "GT-001",
   axes: {
-    age_band: ["3-4", "4-5", "5-6"],
+    age_band: [...AGE_BANDS],
     what: ["classification", "observation", "number"],
     theme: [...VALID_GENERATOR_THEMES],
   },

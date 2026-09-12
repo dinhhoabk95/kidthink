@@ -1,14 +1,5 @@
+import { TOUCH_FLOORS } from "@mindkid/shared/touch-floors";
 import type { AgeBand } from "./contracts/types";
-
-/**
- * Touch floors owned by accessibility.md BR-A11-04, surfaced through the one
- * function BR-ENG-05 requires. Never re-declare these numbers elsewhere.
- */
-const MIN_TOUCH_PX = {
-  band_3_4: 96,
-  primary: 76,
-  floor: 64,
-} as const;
 
 const DEFAULT_LONG_PRESS_EXIT_MS = 800;
 
@@ -152,9 +143,9 @@ export function getMinTouchTargetSize(
   isPrimary = false
 ): number {
   if (ageBand === "3-4") {
-    return MIN_TOUCH_PX.band_3_4;
+    return TOUCH_FLOORS.kidBand3_4;
   }
-  return isPrimary ? MIN_TOUCH_PX.primary : MIN_TOUCH_PX.floor;
+  return isPrimary ? TOUCH_FLOORS.kidPrimary : TOUCH_FLOORS.kidMin;
 }
 
 export class InteractionManager {

@@ -1,3 +1,4 @@
+import type { AgeBand } from "./age-bands.js";
 import { deriveAgeBand } from "./child-data.js";
 
 export interface AdminChildProjectionInput {
@@ -12,7 +13,7 @@ export interface AdminChildProjectionInput {
 export interface AdminChildProjection {
   uuid: string;
   display_name: string;
-  age_band: "3-4" | "4-5" | "5-6";
+  age_band: AgeBand;
   status: string;
   created_at: string;
   purge_at?: string | null;

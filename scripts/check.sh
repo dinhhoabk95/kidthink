@@ -145,6 +145,42 @@ PID_DATASET_INTEGRITY=$!
 pnpm --filter @mindkid/game-engine check:difficulty-ladder &
 PID_DIFFICULTY_LADDER=$!
 
+# Cổng đối chiếu tài liệu taxonomy với TypeScript — BR-CFO-09
+pnpm check:taxonomy-docs &
+PID_TAXONOMY_DOCS=$!
+
+# Cổng hạn ngạch kỹ năng — BR-SKQ-01..06
+pnpm check:skill-quota &
+PID_SKILL_QUOTA=$!
+
+# Cổng chiều sâu engine — BR-ECD-01..13
+pnpm check:engine-depth &
+PID_ENGINE_DEPTH=$!
+
+# Cổng ma trận seed engine — BR-CSM-03
+pnpm check:engine-seed-matrix &
+PID_ENGINE_SEED_MATRIX=$!
+
+# Cổng cung ứng bài học — BR-CFO-09
+pnpm check:lesson-supply &
+PID_LESSON_SUPPLY=$!
+
+# Cổng sẵn sàng phát hành — BR-CFO-09
+pnpm check:go-live &
+PID_GO_LIVE=$!
+
+# Cổng độ phủ v1 legacy — BR-CFO-09
+pnpm check:legacy-v1 &
+PID_LEGACY_V1=$!
+
+# Cổng tiến trình kỹ năng theo độ tuổi — BR-SAP-01..07
+pnpm check:skill-progression &
+PID_SKILL_PROGRESSION=$!
+
+# Cổng sở hữu cấu hình — BR-CFO-01..12
+pnpm check:config-ownership &
+PID_CONFIG_OWNERSHIP=$!
+
 LINT_OK=true
 if ! wait $PID_LINT; then
   echo "✗ biome lint failed" >&2
@@ -236,10 +272,55 @@ if ! wait $PID_DIFFICULTY_LADDER; then
   LINT_OK=false
 fi
 
+if ! wait $PID_TAXONOMY_DOCS; then
+  echo "✗ check:taxonomy-docs failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_SKILL_QUOTA; then
+  echo "✗ check:skill-quota failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_ENGINE_DEPTH; then
+  echo "✗ check:engine-depth failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_ENGINE_SEED_MATRIX; then
+  echo "✗ check:engine-seed-matrix failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_LESSON_SUPPLY; then
+  echo "✗ check:lesson-supply failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_GO_LIVE; then
+  echo "✗ check:go-live failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_LEGACY_V1; then
+  echo "✗ check:legacy-v1 failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_SKILL_PROGRESSION; then
+  echo "✗ check:skill-progression failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_CONFIG_OWNERSHIP; then
+  echo "✗ check:config-ownership failed" >&2
+  LINT_OK=false
+fi
+
 if [ "$LINT_OK" = false ]; then
   exit 1
 fi
-echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space + hint-target + migration-hashes + engine-specs + engine-turn + engine-behavior + engine-behavior-corpus + api-surface + thinking-structure + narration-coverage"
+echo "✓ lint + ratchets + engine-gates + taxonomy-gates + supply-gates + config-ownership"
 phase_end
 
 # ── Phase 2: Typecheck (cổng bậc thang + incremental) ─────────────────────
@@ -280,6 +361,11 @@ if [ $TEST_STATUS -ne 0 ]; then
 fi
 echo "✓ test"
 phase_end
+
+# Cổng ngân sách bundle chunk — đo khi đã có build output (BR-ENG-17)
+if [ -d "apps/web/.output" ]; then
+  pnpm check:bundle
+fi
 
 # ── Phase 4: Deploy test (Tạm thời vô hiệu hóa) ───────────────────────────
 # if [ "$FAST" = false ]; then

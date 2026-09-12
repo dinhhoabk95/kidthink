@@ -19,8 +19,10 @@ import { ModerationBlockedError } from "@mindkid/errors/content";
 import { moderateText } from "@mindkid/moderation";
 import {
   type AccessTier,
+  type AgeBand,
   AI_SUGGESTION_LABEL,
   allowedTiers,
+  deriveAgeBand,
 } from "@mindkid/shared";
 import { and, desc, eq, gte, sql } from "drizzle-orm";
 import { debitCredits, refundCredits } from "./ai-credit.ts";
@@ -83,13 +85,7 @@ export class AiAssistantService {
   ) {
     const db = getDb();
     const currentYear = new Date().getFullYear();
-    const age = Math.max(3, Math.min(6, currentYear - birthYear));
-    let ageBand: "3-4" | "4-5" | "5-6" = "3-4";
-    if (age === 5) {
-      ageBand = "4-5";
-    } else if (age >= 6) {
-      ageBand = "5-6";
-    }
+    const ageBand: AgeBand = deriveAgeBand(birthYear, currentYear);
     const sinceDate = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000);
 
     // Fetch aggregate sessions

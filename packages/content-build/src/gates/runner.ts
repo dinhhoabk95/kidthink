@@ -3,7 +3,7 @@
  * Rule sở hữu: BR-CSA-02, BR-TAG-01, BR-TAG-02
  */
 
-import type { SkillDataset } from "@mindkid/shared";
+import type { AgeBand, SkillDataset } from "@mindkid/shared";
 import {
   isValidLegacyV1Ref,
   validateActivityModel,
@@ -428,7 +428,7 @@ function validateTagList(
   }
 }
 
-function resolveLevelAgeBand(min: number, max: number): "3-4" | "4-5" | "5-6" {
+function resolveLevelAgeBand(min: number, max: number): AgeBand {
   if (max <= 4) {
     return "3-4";
   }

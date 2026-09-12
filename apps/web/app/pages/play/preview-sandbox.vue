@@ -13,6 +13,7 @@
     GameEngine,
     preloadGameSession,
   } from "@mindkid/game-engine/runtime";
+  import type { AgeBand } from "@mindkid/shared/client";
   import { onMounted, onUnmounted, ref } from "vue";
   import { useRoute } from "vue-router";
   import { definePageMeta } from "#imports";
@@ -28,7 +29,7 @@
   interface StudioUpdatePayload {
     templateCode?: string;
     levelData?: JsonObject;
-    ageBand?: "3-4" | "4-5" | "5-6";
+    ageBand?: AgeBand;
     reducedMotion?: boolean;
     muted?: boolean;
   }

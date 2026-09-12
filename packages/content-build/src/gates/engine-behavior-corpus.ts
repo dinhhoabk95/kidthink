@@ -13,10 +13,11 @@
 import fs from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
+import { AGE_BANDS } from "@mindkid/shared";
 import { z } from "zod";
 import { ALL_SEED_LEVELS } from "../catalog.js";
 
-const BANDS = ["3-4", "4-5", "5-6"] as const;
+const BANDS = AGE_BANDS;
 type Band = (typeof BANDS)[number];
 
 const BAND_PROBE_AGE: Record<Band, number> = { "3-4": 3, "4-5": 4, "5-6": 5 };

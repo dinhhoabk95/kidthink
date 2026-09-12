@@ -1,3 +1,4 @@
+import type { AgeBand } from "#src/contracts/types";
 import {
   type ActionResult,
   type GameAction,
@@ -93,7 +94,7 @@ export class GT004Session extends TemplateGameSession<
     return this.mechanic.isPlacementComplete(items);
   }
 
-  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
+  protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("multi-bucket-bottom");
     return layoutFn({
       slotCount: this.displayItems.length,

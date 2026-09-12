@@ -1,3 +1,4 @@
+import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
@@ -318,7 +319,7 @@ export class GT013Session extends TemplateGameSession<
     return [...ahead];
   }
 
-  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
+  protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
     return layoutFn({
       slotCount: this.content.grid.rows * this.content.grid.cols,

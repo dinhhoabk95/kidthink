@@ -1,5 +1,6 @@
 import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { ValidationError } from "@mindkid/errors/common";
+import { AGE_BANDS } from "@mindkid/shared";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import { LessonExemplarService } from "#server/services/index.js";
@@ -8,7 +9,7 @@ import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 const approveBodySchema = z.object({
   lesson_id: z.number().int().positive(),
   competency: z.enum(["C1", "C2", "C3", "C4", "C5", "C6"]),
-  age_band: z.enum(["3-4", "4-5", "5-6"]),
+  age_band: z.enum(AGE_BANDS),
   notes: z.string().max(1000).optional(),
 });
 

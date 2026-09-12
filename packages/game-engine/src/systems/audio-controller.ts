@@ -122,9 +122,22 @@ export class AudioController {
     this.sfxEngine.play(type);
   }
 
-  /** Play recorded MP3 prompt audio if available, with tap SFX fallback */
-  playPromptAudio(ref?: string, onEnd?: () => void): void {
+  /**
+   * Play recorded MP3 prompt audio if available.
+   *
+   * `onError` is the escape hatch for BR-PNR-06: the caller cannot otherwise tell
+   * a finished clip from a clip that never played, so a missing file, a decode
+   * error or a blocked autoplay would end in silence. Every failing branch calls
+   * `onError` first so the caller can descend to the next fallback tier, then
+   * `onEnd` so existing callers keep their completion signal.
+   */
+  playPromptAudio(
+    ref?: string,
+    onEnd?: () => void,
+    onError?: () => void
+  ): void {
     if (!(this.enabled && ref)) {
+      onError?.();
       onEnd?.();
       return;
     }
@@ -137,6 +150,14 @@ export class AudioController {
         audio.volume = this.masterVolume;
         this.currentAudio = audio;
 
+        const failAndRelease = () => {
+          if (this.currentAudio === audio) {
+            this.currentAudio = null;
+          }
+          onError?.();
+          onEnd?.();
+        };
+
         audio.onended = () => {
           if (this.currentAudio === audio) {
             this.currentAudio = null;
@@ -144,19 +165,9 @@ export class AudioController {
           onEnd?.();
         };
 
-        audio.onerror = () => {
-          if (this.currentAudio === audio) {
-            this.currentAudio = null;
-          }
-          onEnd?.();
-        };
+        audio.onerror = failAndRelease;
 
-        audio.play().catch(() => {
-          if (this.currentAudio === audio) {
-            this.currentAudio = null;
-          }
-          onEnd?.();
-        });
+        audio.play().catch(failAndRelease);
         return;
       } catch {
         this.currentAudio = null;
@@ -164,6 +175,7 @@ export class AudioController {
     }
 
     this.play("tap");
+    onError?.();
     onEnd?.();
   }
 

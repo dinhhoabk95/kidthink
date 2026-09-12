@@ -7,10 +7,11 @@ import {
   skills,
 } from "@mindkid/db";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
+import type { AgeBand } from "@mindkid/shared";
 import { count } from "drizzle-orm";
 import { ALL_SEED_LEVELS } from "../index.js";
 
-function resolveLevelBand(min: number, max: number): "3-4" | "4-5" | "5-6" {
+function resolveLevelBand(min: number, max: number): AgeBand {
   if (max <= 4) {
     return "3-4";
   }

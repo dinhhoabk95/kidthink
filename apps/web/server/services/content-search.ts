@@ -7,7 +7,7 @@ import {
   strands,
 } from "@mindkid/db";
 import type { AccessTier } from "@mindkid/shared";
-import { allowedTiers } from "@mindkid/shared";
+import { AGE_BANDS, allowedTiers } from "@mindkid/shared";
 import { and, eq, gte, lte, sql } from "drizzle-orm";
 import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { z } from "zod";
@@ -34,7 +34,7 @@ export const SearchParamsSchema = z.object({
    * là band 4-5 đúng hai đầu. Trước task 165 schema không khai `age_band`
    * và `z.object` loại nó trong im lặng — bộ lọc rơi, danh mục trả cả kho.
    */
-  age_band: z.enum(["3-4", "4-5", "5-6"]).optional(),
+  age_band: z.enum(AGE_BANDS).optional(),
   competency: z.enum(["C1", "C2", "C3", "C4", "C5", "C6"]).optional(),
   strand: z.string().optional(),
   skill: z.string().optional(),

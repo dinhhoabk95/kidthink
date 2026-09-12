@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
 import type { AgeBand } from "@mindkid/game-engine/contracts";
+import { AGE_BANDS } from "@mindkid/shared";
 import { z } from "zod";
 import { ALL_SEED_LESSONS, ALL_SEED_LEVELS } from "../catalog.js";
 
@@ -16,7 +17,7 @@ export const PreschoolAgeBandsConfigSchema = z.object({
   date: z.string(),
   version: z.string(),
   description: z.string(),
-  bands: z.record(z.enum(["3-4", "4-5", "5-6"]), AgeBandLimitsSchema),
+  bands: z.record(z.enum(AGE_BANDS), AgeBandLimitsSchema),
 });
 
 export type PreschoolAgeBandsConfig = z.infer<

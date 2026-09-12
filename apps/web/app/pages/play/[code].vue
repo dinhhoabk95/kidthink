@@ -327,11 +327,10 @@
     handleAccessibleEntityTap,
   } = gesture;
 
-  const { stopNarrationAudio, playInstructionNarration, speakErrorPrompt } =
-    usePlayAudio({
-      getEngine,
-      onFallbackCue: triggerVisualFallbackCue,
-    });
+  const { stopNarrationAudio, speakErrorPrompt } = usePlayAudio({
+    getEngine,
+    onFallbackCue: triggerVisualFallbackCue,
+  });
 
   const isIntroLevel = computed(() => {
     const cached = getCachedPayload();
@@ -436,12 +435,11 @@
   function replayInstructionAudio(): void {
     const engine = getEngine();
     engine?.audio.playTapSound();
-    const currentRoundCfg = getRoundRunner()?.getCurrentRoundConfig();
-    const prompt =
-      (currentRoundCfg?.content_pack as { prompt?: string })?.prompt ||
-      currentRoundCfg?.instruction ||
-      getCachedPayload()?.title;
-    playInstructionNarration(prompt);
+    // Đi qua RoundRunner để "Nghe lại" dùng đúng nguồn giọng đã phát lúc mở
+    // vòng (BR-PNR-03, BR-PNR-07). Gọi thẳng đường phát của trang thì bản ghi
+    // mp3 của vòng chưa bao giờ được nạp vào đó, nên trẻ chỉ nghe được giọng
+    // máy đọc lại chữ.
+    getRoundRunner()?.replayCurrentRoundNarration();
   }
 
   function handleEchoReplay(): void {

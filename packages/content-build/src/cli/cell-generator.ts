@@ -3,6 +3,7 @@ import { repoPath } from "@mindkid/config/paths";
 import type { AgeBand } from "@mindkid/game-engine/contracts";
 import { getLevelGenerator } from "@mindkid/game-engine/generators";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
+import { AGE_BANDS } from "@mindkid/shared";
 import {
   type CellReport,
   generateMatrixReport,
@@ -14,7 +15,7 @@ export interface CellSpec {
   competency: string;
 }
 
-const VALID_BANDS: readonly AgeBand[] = ["3-4", "4-5", "5-6"];
+const VALID_BANDS = AGE_BANDS;
 const VALID_COMPS: readonly string[] = ["C1", "C2", "C3", "C4", "C5", "C6"];
 const MANUAL_ONLY_ENGINES = new Set(["GT-013", "GT-015"]);
 

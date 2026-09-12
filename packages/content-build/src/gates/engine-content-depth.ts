@@ -12,6 +12,7 @@ import {
   ALL_TEMPLATES,
   type GameTemplate,
 } from "@mindkid/game-engine/registry";
+import { AGE_BANDS } from "@mindkid/shared";
 import type { ContentSeed } from "../types.js";
 
 export interface EngineStepCriteria {
@@ -89,7 +90,7 @@ export interface EngineDepthReport {
   violations: EngineDepthViolation[];
 }
 
-const ALL_AGE_BANDS: AgeBand[] = ["3-4", "4-5", "5-6"];
+const ALL_AGE_BANDS = AGE_BANDS;
 
 export function toAgeBand(ageMin: number, ageMax?: number): AgeBand {
   if (ageMax !== undefined && ageMax <= 4) {

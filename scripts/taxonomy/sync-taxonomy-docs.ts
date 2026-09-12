@@ -92,8 +92,47 @@ function assertSkillMatches(ts: SkillIdentity, md: ParsedSkill): void {
   }
 }
 
+const COMP_FILENAME_REGEX = /^c([1-6])-/;
+const SUMMARY_HEADER_REGEX =
+  /\*\*Strand:\*\*\s+(\d+)\s+·\s+\*\*Skill đã đặt tên:\*\*\s+(\d+)/;
+const SUMMARY_LINE_REGEX =
+  /^(\*\*Strand:\*\*\s+)\d+(\s+·\s+\*\*Skill đã đặt tên:\*\*\s+)\d+(.*)$/;
+
+export function assertSummaryHeaderMatches(
+  filename: string,
+  docsDir = "docs/taxonomy"
+): void {
+  const compMatch = filename.match(COMP_FILENAME_REGEX);
+  if (!compMatch) {
+    return;
+  }
+  const compCode = `C${compMatch[1]}`;
+  const filePath = path.isAbsolute(filename)
+    ? filename
+    : path.join(docsDir, filename);
+  const content = fs.readFileSync(filePath, "utf8");
+  const match = content.match(SUMMARY_HEADER_REGEX);
+  if (!match) {
+    throw new Error(`Summary header not found in ${filename}`);
+  }
+  const strandsInDoc = Number(match[1]);
+  const skillsInDoc = Number(match[2]);
+
+  const compSkills = Object.values(SKILL_IDENTITIES).filter(
+    (s) => s.competency_code === compCode
+  );
+  const compStrands = new Set(compSkills.map((s) => s.strand_code));
+
+  if (strandsInDoc !== compStrands.size || skillsInDoc !== compSkills.length) {
+    throw new Error(
+      `Summary header mismatch in ${filename}: Document states ${strandsInDoc} strands, ${skillsInDoc} skills; TypeScript has ${compStrands.size} strands, ${compSkills.length} skills.`
+    );
+  }
+}
+
 /**
- * Validates that all 408 TypeScript skill identities match markdown tables field-by-field.
+ * Validates that all TypeScript skill identities match markdown tables field-by-field,
+ * and summary headers match strand and skill counts (BR-CFO-09).
  */
 export function verifyIdentitiesVsMarkdown(docsDir = "docs/taxonomy"): {
   total: number;
@@ -121,6 +160,10 @@ export function verifyIdentitiesVsMarkdown(docsDir = "docs/taxonomy"): {
       );
     }
     assertSkillMatches(ts, md);
+  }
+
+  for (const filename of COMPETENCY_DOC_FILES) {
+    assertSummaryHeaderMatches(filename, docsDir);
   }
 
   return { total: expectedTotal, matches: expectedTotal };
@@ -161,7 +204,7 @@ function processTableBlock(
 }
 
 /**
- * Regenerates the markdown tables in docs/taxonomy/*.md from TypeScript skill identities.
+ * Regenerates the markdown tables and summary header in docs/taxonomy/*.md from TypeScript skill identities.
  * Keeps all prose, headers, and explanations outside the skill tables intact.
  */
 export function generateTaxonomyDoc(
@@ -175,10 +218,26 @@ export function generateTaxonomyDoc(
   const skillsByStrand = buildSkillsByStrand();
   const newLines: string[] = [];
 
+  const compMatch = path.basename(filename).match(COMP_FILENAME_REGEX);
+  const compCode = compMatch ? `C${compMatch[1]}` : null;
+
   let currentStrand: string | null = null;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i] ?? "";
+
+    const summaryMatch = line.match(SUMMARY_LINE_REGEX);
+    if (summaryMatch && compCode) {
+      const compSkills = Object.values(SKILL_IDENTITIES).filter(
+        (s) => s.competency_code === compCode
+      );
+      const compStrands = new Set(compSkills.map((s) => s.strand_code));
+      newLines.push(
+        `${summaryMatch[1]}${compStrands.size}${summaryMatch[2]}${compSkills.length}${summaryMatch[3]}`
+      );
+      continue;
+    }
+
     const strandMatch = line.match(STRAND_HEADER_REGEX);
     if (strandMatch) {
       currentStrand = strandMatch[1] ?? null;

@@ -38,10 +38,31 @@ export type SessionFactory = (
   layoutSeed: number
 ) => GameSession;
 
+/** Vì sao câu dẫn được phát: mở vòng, hay trẻ bấm "Nghe lại". */
+export type NarrationTrigger = "round_open" | "replay";
+
 export interface RoundRunnerOptions {
   rounds: RoundConfig[];
   sessionFactory: SessionFactory;
   audioController?: AudioController;
+  /**
+   * Chủ sở hữu duy nhất của việc phát câu dẫn (BR-PNR-03).
+   *
+   * Bề mặt chơi thật truyền hàm này để nó phát câu dẫn bằng đường phát của
+   * chính nó — đường duy nhất có đủ ba bậc dự phòng. Khi có hàm này,
+   * `RoundRunner` Cấm — NEVER tự phát thêm một lần nữa: hai nguồn phát song
+   * song cho ra hai giọng chồng nhau trên cùng một vòng.
+   */
+  onPlayNarration?: (
+    roundConfig: RoundConfig,
+    trigger: NarrationTrigger
+  ) => void;
+  /**
+   * Bậc 3 của thứ tự dự phòng (BR-PNR-06): tín hiệu thị giác khi không phát
+   * được tiếng. Chỉ dùng cho đường phát nội bộ, tức khi không có
+   * `onPlayNarration`.
+   */
+  onNarrationFallbackCue?: () => void;
   /** Band tuổi — truyền tới prepareRound. Mặc định '4-5'. */
   ageBand?: AgeBand;
   layoutSeed?: number;
@@ -78,6 +99,11 @@ export class RoundRunner {
   private readonly ageBand: AgeBand;
   private readonly layoutSeed: number;
   private readonly audioController: AudioController;
+  private readonly onPlayNarration?: (
+    roundConfig: RoundConfig,
+    trigger: NarrationTrigger
+  ) => void;
+  private readonly onNarrationFallbackCue?: () => void;
   private readonly onRoundStarted?: (
     roundIndex: number,
     roundConfig: RoundConfig
@@ -109,6 +135,8 @@ export class RoundRunner {
     );
     this.sessionFactory = options.sessionFactory;
     this.audioController = options.audioController ?? new AudioController();
+    this.onPlayNarration = options.onPlayNarration;
+    this.onNarrationFallbackCue = options.onNarrationFallbackCue;
     this.ageBand = options.ageBand ?? "4-5";
     this.layoutSeed = options.layoutSeed ?? 0;
     this.logicSpace = options.logicSpace;
@@ -283,25 +311,50 @@ export class RoundRunner {
   replayCurrentRoundNarration(): void {
     const config = this.getCurrentRoundConfig();
     if (config) {
-      this.playRoundNarration(config);
+      this.playRoundNarration(config, "replay");
     }
   }
 
   /**
-   * Phát câu dẫn mở vòng (BR-PNR-04, BR-PNR-06).
-   * Ưu tiên 1: file mp3 (instruction_audio_path).
-   * Ưu tiên 2: TTS tiếng Việt từ instruction hoặc narration_template (BR-STS-07).
-   * Ưu tiên 3: Tín hiệu thị giác fallback (tự động xử lý trong speakPrompt).
+   * Phát câu dẫn của vòng (BR-PNR-04, BR-PNR-06).
+   *
+   * Khi bề mặt chơi đã nhận việc phát qua `onPlayNarration`, đây là lời gọi
+   * duy nhất và `RoundRunner` không tự phát — một vòng chỉ có một nguồn giọng
+   * (BR-PNR-03).
+   *
+   * Đường phát nội bộ đi hết ba bậc của mục 7.2 và Cấm — NEVER dừng ở im lặng:
+   *   bậc 1 `instruction_audio_path` → bậc 2 TTS tiếng Việt từ `instruction`
+   *   hoặc `narration_template` → bậc 3 tín hiệu thị giác.
    */
-  private playRoundNarration(config: RoundConfig): void {
+  private playRoundNarration(
+    config: RoundConfig,
+    trigger: NarrationTrigger
+  ): void {
+    if (this.onPlayNarration) {
+      this.onPlayNarration(config, trigger);
+      return;
+    }
+
     const audioPath = config.instruction_audio_path;
     const text = config.instruction || config.narration_template;
 
+    const speakOrCue = () => {
+      if (text) {
+        this.audioController.speakPrompt(
+          text,
+          undefined,
+          this.onNarrationFallbackCue
+        );
+        return;
+      }
+      this.onNarrationFallbackCue?.();
+    };
+
     if (audioPath) {
-      this.audioController.playPromptAudio(audioPath);
-    } else if (text) {
-      this.audioController.speakPrompt(text);
+      this.audioController.playPromptAudio(audioPath, undefined, speakOrCue);
+      return;
     }
+    speakOrCue();
   }
 
   private clearHintTimer(): void {
@@ -380,7 +433,7 @@ export class RoundRunner {
     }
 
     // Nhịp N2: phát câu dẫn mở vòng (BR-PNR-04, BR-PNR-06)
-    this.playRoundNarration(config);
+    this.playRoundNarration(config, "round_open");
 
     this.onRoundStarted?.(index, config);
   }

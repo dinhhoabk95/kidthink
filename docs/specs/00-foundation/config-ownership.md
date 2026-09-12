@@ -146,19 +146,19 @@ Giá trị này thay đổi theo môi trường triển khai
 Hạng B nhận hai thứ hiện nằm sai chỗ: **band tuổi** (`BR-CFO-06`) và **sàn chạm**
 (`BR-CFO-07`). Cả hai là hợp đồng nghiệp vụ cắt ngang, không phải tham số engine.
 
-### 7.3 Hiện trạng chín nơi — đo ngày 2026-09-11
+### 7.3 Hiện trạng chín nơi — cập nhật sau Task #270 (2026-09-12)
 
-| # | Nơi | Số file | Hạng đúng | Việc phải làm |
+| # | Nơi | Số file | Hạng đúng | Trạng thái sau Task #270 |
 |---|---|---:|---|---|
-| 1 | `packages/config/src` | 8 TS | A | Đưa `backup.ts` và `repo-paths.ts` vào barrel |
+| 1 | `packages/config/src` | 8 TS | A | Đã đưa `backup.ts` và `repo-paths.ts` vào barrel `index.ts` (`BR-CFO-05`) |
 | 2 | `packages/config/vitest` + `tsconfig.base.json` | 3 | A | Giữ nguyên |
-| 3 | `packages/shared/src` | 66 TS | B | Nhận thêm band tuổi và sàn chạm |
+| 3 | `packages/shared/src` | 68 TS | B | Đã nhận band tuổi (`age-bands.ts`) và sàn chạm (`touch-floors.ts`) làm nguồn duy nhất |
 | 4 | `packages/game-engine/config/` | 8 JSON | C | Giữ nguyên |
-| 5 | `packages/game-engine/src/layout` · `contracts` | 4 TS | B cho band tuổi và sàn chạm, C cho phần còn lại | Chuyển hai thứ lên hạng B |
-| 6 | `packages/content-build/src/thresholds/` | 12 JSON | C | Thành nguồn duy nhất cho nhóm 7 |
-| 7 | `packages/db/config/` | 9 entry | không phải một nơi | Đổi trọn 6 file trùng byte thành symlink, hoàn tất việc đã bỏ dở |
-| 8 | `scripts/*-baseline.json` | 10 JSON | D | Giữ nguyên |
-| 9 | root · `apps/*` · `infra/` | — | ngoài phạm vi hạng | `apps/worker/src/monitor.ts` đọc từ `infra/monitoring/alerts.yml`, không khai lại |
+| 5 | `packages/game-engine/src/layout` · `contracts` | 4 TS | B cho band tuổi và sàn chạm, C cho phần còn lại | Đã chuyển import band tuổi và sàn chạm từ `@mindkid/shared` |
+| 6 | `packages/content-build/src/thresholds/` | 12 JSON | C | Là nguồn duy nhất cho cấu hình nội dung và engine |
+| 7 | `packages/db/config/` | 9 entry | symlink | Đã symlink toàn bộ 9/9 file trỏ về `packages/content-build/src/thresholds/` |
+| 8 | `scripts/*-baseline.json` | 11 JSON | D | Đã bổ sung `scripts/config-ownership-baseline.json` (7 trục) |
+| 9 | root · `apps/*` · `infra/` | — | ngoài phạm vi hạng | Khai báo `runtimeConfig.public` rõ ràng trong Nuxt config (`BR-CFO-12`) |
 
 ### 7.4 Hình dạng ratchet
 

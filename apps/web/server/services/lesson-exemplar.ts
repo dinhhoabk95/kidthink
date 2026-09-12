@@ -24,10 +24,10 @@ import {
   lessons,
   managers,
 } from "@mindkid/db";
+import { AGE_BANDS, type AgeBand } from "@mindkid/shared";
 import { and, count, eq, ne } from "drizzle-orm";
 
 export type CompetencyCode = "C1" | "C2" | "C3" | "C4" | "C5" | "C6";
-export type AgeBand = "3-4" | "4-5" | "5-6";
 
 export const ALL_COMPETENCIES: readonly CompetencyCode[] = [
   "C1",
@@ -38,7 +38,7 @@ export const ALL_COMPETENCIES: readonly CompetencyCode[] = [
   "C6",
 ];
 
-export const ALL_AGE_BANDS: readonly AgeBand[] = ["3-4", "4-5", "5-6"];
+export const ALL_AGE_BANDS: readonly AgeBand[] = AGE_BANDS;
 
 export interface ExemplarEligibilityResult {
   eligible: boolean;

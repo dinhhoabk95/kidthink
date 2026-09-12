@@ -97,5 +97,9 @@ export default defineNuxtConfig({
         httpOnly: true,
       },
     },
+    // Ranh giới public/private rõ ràng (BR-CFO-12)
+    public: {
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL ?? "",
+    },
   },
 });

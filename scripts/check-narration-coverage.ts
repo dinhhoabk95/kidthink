@@ -8,13 +8,22 @@
  *   - datasets_with_audio_path: CHỈ ĐƯỢC TĂNG
  *   - engines_with_round_narration: CHỈ ĐƯỢC TĂNG
  *   - items_with_audio_path: CHỈ ĐƯỢC TĂNG
+ *   - items_without_spoken_name: NỢ, CHỈ ĐƯỢC GIẢM (BR-PNR-02)
  *   - orphan_audio_files: SỐ ĐO, KHÔNG RATCHET (được phép tăng khi thu âm mới, giảm khi dọn file)
  */
 
 import fs from "node:fs";
 import path from "node:path";
 import { repoPath } from "@mindkid/config/paths";
-import { SKILL_DATASETS } from "@mindkid/content";
+import { AUDIO_LEGACY_BY_PATH, SKILL_DATASETS } from "@mindkid/content";
+import {
+  type ActionResult,
+  ALL_TEMPLATE_CODES,
+  AudioController,
+  BaseGameSession,
+  type GameAction,
+  RoundRunner,
+} from "@mindkid/game-engine";
 import type { DatasetItem, SkillDataset } from "@mindkid/shared";
 
 export interface NarrationCoverageBaseline {
@@ -23,6 +32,8 @@ export interface NarrationCoverageBaseline {
   engines_with_round_narration: number;
   engines_total: number;
   items_with_audio_path: number;
+  /** Nợ BR-PNR-02: item chưa có cách nào đọc tên thành tiếng. Chỉ được giảm. */
+  items_without_spoken_name?: number;
   orphan_audio_files: number;
   date?: string;
   note?: string;
@@ -40,6 +51,13 @@ export interface NarrationCoverageStats {
   engines_with_round_narration: number;
   engines_total: number;
   items_with_audio_path: number;
+  items_total: number;
+  /**
+   * Item không có `audio_path` lẫn `spokenLabel` — tức không có cách nào đọc
+   * tên vật thành tiếng (BR-PNR-02). `label` Cấm — NEVER được tính vào đây:
+   * nó là chữ, và người dùng ba tuổi chưa đọc được chữ.
+   */
+  items_without_spoken_name: number;
   orphan_audio_files: number;
   total_mp3s: number;
 }
@@ -48,7 +66,6 @@ export interface ScanNarrationOptions {
   baselinePath?: string;
   publicDir?: string;
   datasets?: Record<string, SkillDataset>;
-  readyCodesPath?: string;
   extraLevels?: readonly {
     code: string;
     instruction_audio_path?: string | null;
@@ -60,9 +77,6 @@ const DEFAULT_BASELINE_PATH = repoPath(
   "scripts/narration-coverage-baseline.json"
 );
 const DEFAULT_PUBLIC_DIR = repoPath("apps/web/public");
-const DEFAULT_READY_CODES_PATH = repoPath(
-  "packages/game-engine/config/engine-spec-ready.json"
-);
 
 function getAllMp3Files(dir: string, baseDir = dir): string[] {
   if (!fs.existsSync(dir)) {
@@ -87,6 +101,8 @@ function getAllMp3Files(dir: string, baseDir = dir): string[] {
 interface DatasetItemScanResult {
   datasetsWithAudio: number;
   itemsWithAudio: number;
+  itemsTotal: number;
+  itemsWithoutSpokenName: number;
   usedAudioPaths: Set<string>;
   violations: NarrationViolation[];
 }
@@ -118,6 +134,7 @@ function validateSingleItem(
   publicDir: string
 ): {
   hasAudio: boolean;
+  hasSpokenName: boolean;
   audioPath?: string;
   violations: NarrationViolation[];
 } {
@@ -128,16 +145,12 @@ function validateSingleItem(
   const hasSpoken =
     typeof itemWithSpoken.spokenLabel === "string" &&
     itemWithSpoken.spokenLabel.length > 0;
-  const hasLabel = typeof item.label === "string" && item.label.length > 0;
 
-  if (!(hasAudio || hasSpoken || hasLabel)) {
-    violations.push({
-      rule: "BR-PNR-02",
-      target: `${skillCode}:${item.id}`,
-      message:
-        "Item thiếu cả audio_path, spokenLabel lẫn label — trẻ chạm vào không có cách nào đọc tên vật",
-    });
-  }
+  // BR-PNR-02 đòi `audio_path` hoặc `spokenLabel`. `label` Cấm — NEVER được
+  // tính là đạt: nó là chữ trên màn hình, mà trẻ ba tuổi chưa đọc được chữ.
+  // Mọi item của kho hiện đều có `label`, nên nhận `label` là để luật này
+  // không bao giờ đỏ được.
+  const hasSpokenName = hasAudio || hasSpoken;
 
   if (hasAudio && item.audio_path) {
     const expectedDiskPath = path.join(publicDir, item.audio_path);
@@ -149,14 +162,27 @@ function validateSingleItem(
       });
     }
 
+    // Luật riêng của item số chạy trước, để báo cáo nêu đúng bản đọc dùng
+    // chung thay vì chỉ nói "tệp lạ".
     const numeralViolation = checkNumeralAudioPath(item, skillCode);
     if (numeralViolation) {
       violations.push(numeralViolation);
+    }
+
+    // Bảng ánh xạ di sản là nơi duy nhất gắn tệp mp3 với kỹ năng; một
+    // audio_path ngoài bảng là một tệp chưa ai xác nhận nội dung.
+    if (!AUDIO_LEGACY_BY_PATH.has(item.audio_path)) {
+      violations.push({
+        rule: "BR-PNR-05",
+        target: `${skillCode}:${item.id}`,
+        message: `audio_path "${item.audio_path}" không có trong bảng ánh xạ AUDIO_LEGACY_INVENTORY — tệp chưa được gắn với kỹ năng nào`,
+      });
     }
   }
 
   return {
     hasAudio,
+    hasSpokenName,
     audioPath: hasAudio ? item.audio_path : undefined,
     violations,
   };
@@ -169,18 +195,24 @@ function scanDatasetItems(
   const violations: NarrationViolation[] = [];
   let datasetsWithAudio = 0;
   let itemsWithAudio = 0;
+  let itemsTotal = 0;
+  let itemsWithoutSpokenName = 0;
   const usedAudioPaths = new Set<string>();
 
   for (const dataset of Object.values(datasets)) {
     let hasDatasetAudio = false;
 
     for (const item of dataset.items) {
+      itemsTotal++;
       const itemResult = validateSingleItem(
         item,
         dataset.skill_code,
         publicDir
       );
       violations.push(...itemResult.violations);
+      if (!itemResult.hasSpokenName) {
+        itemsWithoutSpokenName++;
+      }
       if (itemResult.hasAudio && itemResult.audioPath) {
         hasDatasetAudio = true;
         itemsWithAudio++;
@@ -193,7 +225,14 @@ function scanDatasetItems(
     }
   }
 
-  return { datasetsWithAudio, itemsWithAudio, usedAudioPaths, violations };
+  return {
+    datasetsWithAudio,
+    itemsWithAudio,
+    itemsTotal,
+    itemsWithoutSpokenName,
+    usedAudioPaths,
+    violations,
+  };
 }
 
 function checkDisallowedNumberDirs(
@@ -216,6 +255,88 @@ function checkDisallowedNumberDirs(
     }
   }
   return violations;
+}
+
+/**
+ * Phiên giả, chỉ để `RoundRunner` mở được một vòng trong lúc đo.
+ */
+class NarrationProbeSession extends BaseGameSession {
+  setupEntities(): void {
+    // Không cần thực thể nào: phép đo chỉ quan tâm tới nhịp mở vòng.
+  }
+  validateAction(_action: GameAction): ActionResult {
+    return { valid: true, feedback: "none" };
+  }
+  checkWinCondition(): boolean {
+    return false;
+  }
+}
+
+/** Bộ phát giả, đếm số lệnh phát câu dẫn mà nhịp mở vòng gửi xuống. */
+class NarrationProbeAudioController extends AudioController {
+  readonly commands: string[] = [];
+
+  override playPromptAudio(ref?: string): void {
+    this.commands.push(`mp3:${ref ?? ""}`);
+  }
+
+  override speakPrompt(text: string): boolean {
+    this.commands.push(`tts:${text}`);
+    return true;
+  }
+}
+
+/**
+ * Đo `engines_with_round_narration` bằng cách CHẠY nhịp mở vòng, không bằng
+ * cách đếm dòng trong một tệp cấu hình.
+ *
+ * Lời gọi câu dẫn nằm ở kịch bản lượt chung của `RoundRunner`, nên hoặc mọi
+ * engine đăng ký đều nói, hoặc không engine nào nói. Đếm một danh sách mã
+ * engine có sẵn thì con số vẫn đẹp kể cả sau khi ai đó gỡ mất lời gọi.
+ */
+function probeRoundOpenNarration(): {
+  enginesWithNarration: number;
+  violations: NarrationViolation[];
+} {
+  const enginesTotal = ALL_TEMPLATE_CODES.length;
+  const probe = new NarrationProbeAudioController();
+  const runner = new RoundRunner({
+    rounds: [
+      {
+        round_index: 0,
+        instruction: "Phép đo nhịp mở vòng",
+        instruction_audio_path: "/audio/voice/common/numbers/1.mp3",
+        content_pack: {},
+        difficulty_params: { item_count: 1 },
+      },
+    ],
+    sessionFactory: () => new NarrationProbeSession(),
+    audioController: probe,
+  });
+
+  runner.startFirstRound();
+  const commandCount = probe.commands.length;
+  runner.destroy();
+
+  if (commandCount === 1) {
+    return { enginesWithNarration: enginesTotal, violations: [] };
+  }
+
+  const message =
+    commandCount === 0
+      ? "Nhịp mở vòng của kịch bản lượt chung không phát câu dẫn nào — toàn bộ engine trở lại câm"
+      : `Nhịp mở vòng phát ${commandCount} lệnh câu dẫn, phải đúng một (BR-PNR-03)`;
+
+  return {
+    enginesWithNarration: 0,
+    violations: [
+      {
+        rule: commandCount === 0 ? "BR-PNR-04" : "BR-PNR-03",
+        target: "RoundRunner.startRound",
+        message,
+      },
+    ],
+  };
 }
 
 function checkBaselineRatchet(
@@ -256,6 +377,19 @@ function checkBaselineRatchet(
         message: `Số item có audio_path bị thụt lùi: hiện có ${stats.items_with_audio_path} < baseline ${baseline.items_with_audio_path}`,
       });
     }
+
+    // Nợ BR-PNR-02 chỉ được đi xuống. Nó là số item trẻ chạm vào mà không
+    // nghe được tên, nên mọi lát cắt mới Cấm — NEVER làm nó dày thêm.
+    if (
+      typeof baseline.items_without_spoken_name === "number" &&
+      stats.items_without_spoken_name > baseline.items_without_spoken_name
+    ) {
+      violations.push({
+        rule: "BR-PNR-02",
+        target: "items_without_spoken_name",
+        message: `Nợ item không đọc được tên tăng lên: hiện có ${stats.items_without_spoken_name} > baseline ${baseline.items_without_spoken_name}`,
+      });
+    }
   } catch (e) {
     violations.push({
       rule: "BR-PNR-10",
@@ -274,7 +408,6 @@ export function scanNarrationCoverage(options: ScanNarrationOptions = {}): {
   const baselinePath = options.baselinePath ?? DEFAULT_BASELINE_PATH;
   const publicDir = options.publicDir ?? DEFAULT_PUBLIC_DIR;
   const datasets = options.datasets ?? SKILL_DATASETS;
-  const readyCodesPath = options.readyCodesPath ?? DEFAULT_READY_CODES_PATH;
 
   const violations: NarrationViolation[] = [];
 
@@ -298,17 +431,8 @@ export function scanNarrationCoverage(options: ScanNarrationOptions = {}): {
     }
   }
 
-  let enginesReady = 37;
-  if (fs.existsSync(readyCodesPath)) {
-    try {
-      const codes = JSON.parse(
-        fs.readFileSync(readyCodesPath, "utf-8")
-      ) as string[];
-      enginesReady = codes.length;
-    } catch {
-      // fallback
-    }
-  }
+  const narrationProbe = probeRoundOpenNarration();
+  violations.push(...narrationProbe.violations);
 
   const orphanCount = allVoiceMp3s.filter(
     (p) => !datasetScan.usedAudioPaths.has(p)
@@ -317,9 +441,11 @@ export function scanNarrationCoverage(options: ScanNarrationOptions = {}): {
   const stats: NarrationCoverageStats = {
     datasets_with_audio_path: datasetScan.datasetsWithAudio,
     datasets_total: Object.keys(datasets).length,
-    engines_with_round_narration: enginesReady,
-    engines_total: 37,
+    engines_with_round_narration: narrationProbe.enginesWithNarration,
+    engines_total: ALL_TEMPLATE_CODES.length,
     items_with_audio_path: datasetScan.itemsWithAudio,
+    items_total: datasetScan.itemsTotal,
+    items_without_spoken_name: datasetScan.itemsWithoutSpokenName,
     orphan_audio_files: orphanCount,
     total_mp3s: allVoiceMp3s.length,
   };
@@ -353,7 +479,12 @@ export function formatNarrationReport(
   lines.push(
     `• Engine có round narration: ${stats.engines_with_round_narration}/${stats.engines_total} (ratchet)`
   );
-  lines.push(`• Items có audio_path: ${stats.items_with_audio_path} (ratchet)`);
+  lines.push(
+    `• Items có audio_path: ${stats.items_with_audio_path}/${stats.items_total} (ratchet)`
+  );
+  lines.push(
+    `• Items chưa đọc được tên: ${stats.items_without_spoken_name}/${stats.items_total} (nợ BR-PNR-02 — chỉ được giảm)`
+  );
   lines.push(
     `• Orphan audio files: ${stats.orphan_audio_files}/${stats.total_mp3s} (số đo — KHÔNG ratchet)`
   );
@@ -393,9 +524,10 @@ function runCli(): void {
       engines_with_round_narration: stats.engines_with_round_narration,
       engines_total: stats.engines_total,
       items_with_audio_path: stats.items_with_audio_path,
+      items_without_spoken_name: stats.items_without_spoken_name,
       orphan_audio_files: stats.orphan_audio_files,
       date: new Date().toISOString().slice(0, 10),
-      note: "Ratchet gate cho độ phủ lời dẫn và âm thanh phát thành tiếng (Task #269 / BR-PNR-01..10). datasets_with_audio_path, engines_with_round_narration, items_with_audio_path CHỈ ĐƯỢC TĂNG. orphan_audio_files là số đo, không ratchet.",
+      note: "Ratchet gate cho độ phủ lời dẫn và âm thanh phát thành tiếng (Task #269 / BR-PNR-01..10). datasets_with_audio_path, engines_with_round_narration, items_with_audio_path CHỈ ĐƯỢC TĂNG. items_without_spoken_name là nợ BR-PNR-02, CHỈ ĐƯỢC GIẢM. orphan_audio_files là số đo, không ratchet.",
     };
     fs.writeFileSync(
       DEFAULT_BASELINE_PATH,

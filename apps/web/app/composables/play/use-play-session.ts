@@ -7,6 +7,7 @@ import {
   type RoundConfig,
   RoundRunner,
 } from "@mindkid/game-engine";
+import type { AgeBand } from "@mindkid/shared/client";
 import { nextTick, type Ref, ref } from "vue";
 import {
   preloadPlayAssets,
@@ -26,6 +27,7 @@ export interface RoundPayload {
   round_index: number;
   instruction?: string | null;
   instruction_audio_path?: string | null;
+  narration_template?: string | null;
   content_pack: JsonObject;
   difficulty_params: JsonObject;
 }
@@ -40,7 +42,7 @@ export interface ConfigPayload {
   content_pack?: JsonObject;
   difficulty_params?: JsonObject;
   theme_id: string;
-  age_band?: "3-4" | "4-5" | "5-6";
+  age_band?: AgeBand;
   scoring?: { mode: "rounds" | "attempts" };
   rounds?: RoundPayload[];
   session?: { uuid: string; started_at?: string };
@@ -63,6 +65,11 @@ export interface UsePlaySessionOptions {
   readonly syncView: () => void;
   readonly onFallbackCue?: () => void;
 }
+
+/**
+ * Câu dẫn chờ tiếng chuông mở vòng dứt rồi mới vang, để hai âm không đè nhau.
+ */
+const ROUND_OPEN_NARRATION_DELAY_MS = 350;
 
 export function usePlaySession(options: UsePlaySessionOptions) {
   const { canvasRef, loggedIn, syncView, onFallbackCue } = options;
@@ -87,14 +94,15 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   const earnedStars = ref<number | null>(null);
 
   const { uploadTelemetry, finishSession } = usePlayTelemetry();
-  const { setInstructionAudio, playInstructionNarration } = usePlayAudio({
-    getEngine: () => engine,
-    onFallbackCue:
-      onFallbackCue ??
-      (() => {
-        /* noop */
-      }),
-  });
+  const { setInstructionAudio, playInstructionNarration, stopNarrationAudio } =
+    usePlayAudio({
+      getEngine: () => engine,
+      onFallbackCue:
+        onFallbackCue ??
+        (() => {
+          /* noop */
+        }),
+    });
 
   function getEngine(): GameEngine | null {
     return engine;
@@ -214,6 +222,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       round_index: r.round_index,
       instruction: r.instruction,
       instruction_audio_path: r.instruction_audio_path,
+      narration_template: r.narration_template,
       content_pack: r.content_pack,
       difficulty_params: r.difficulty_params,
     }));
@@ -230,29 +239,38 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         };
         return createGameSessionSync(payload.template_code, roundCfg);
       },
+      onPlayNarration: (roundConfig, trigger) => {
+        // Bề mặt chơi là nguồn giọng duy nhất của vòng (BR-PNR-03): RoundRunner
+        // gọi vào đây thay vì tự phát, nên câu dẫn không bao giờ vang hai lần.
+        setInstructionAudio(roundConfig.instruction_audio_path);
+        // GT-000 tự kể lời dẫn theo từng bước làm quen, không dùng câu dẫn vòng.
+        if (cachedPayload?.template_code === "GT-000") {
+          return;
+        }
+        const prompt =
+          (roundConfig.content_pack as { prompt?: string })?.prompt ||
+          roundConfig.instruction ||
+          cachedPayload?.title;
+        if (trigger === "replay") {
+          playInstructionNarration(prompt);
+          return;
+        }
+        setTimeout(() => {
+          playInstructionNarration(prompt);
+        }, ROUND_OPEN_NARRATION_DELAY_MS);
+      },
       onRoundStarted: (roundIndex) => {
         currentRound.value = roundIndex;
         canSkipRound.value = false;
         if (engine) {
           engine.roundIndex = roundIndex;
         }
-        setInstructionAudio(rounds[roundIndex]?.instruction_audio_path);
         const session = roundRunner?.getCurrentSession();
         if (session && engine) {
           engine.activeSession = session;
           engine.audio.playStartSound();
         }
         syncView();
-        const currentRoundCfg = rounds[roundIndex];
-        const prompt =
-          (currentRoundCfg?.content_pack as { prompt?: string })?.prompt ||
-          currentRoundCfg?.instruction ||
-          cachedPayload?.title;
-        if (cachedPayload?.template_code !== "GT-000") {
-          setTimeout(() => {
-            playInstructionNarration(prompt);
-          }, 350);
-        }
       },
       onRoundCompleted: () => {
         engine?.scaffolding?.resetOnSuccess();
@@ -362,6 +380,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   }
 
   function cleanupSession(): void {
+    stopNarrationAudio();
     if (roundRunner) {
       roundRunner.destroy();
       roundRunner = null;

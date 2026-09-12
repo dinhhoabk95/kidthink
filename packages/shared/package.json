@@ -6,6 +6,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./client": "./src/client.ts",
+    "./age-bands": "./src/age-bands.ts",
+    "./touch-floors": "./src/touch-floors.ts",
     "./preschool-terminology": "./src/preschool-terminology.ts",
     "./skill-dataset-types": "./src/skill-dataset-types.ts",
     "./taxonomy-types": "./src/taxonomy-types.ts"

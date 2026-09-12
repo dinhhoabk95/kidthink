@@ -1,6 +1,7 @@
 import { isInCatalog } from "@mindkid/emoji";
 import { moderateCustomGameMetadata } from "@mindkid/moderation";
 import { z } from "zod";
+import type { AgeBand } from "./age-bands.js";
 
 export type CustomGameSafeParseResult =
   | { success: true; data: unknown }
@@ -150,10 +151,7 @@ export function extractEmojiRefsFromContentPack(obj: unknown): string[] {
 /**
  * Determines the age band for the given age range
  */
-export function mapAgeBand(
-  ageMin: number,
-  ageMax: number
-): "3-4" | "4-5" | "5-6" {
+export function mapAgeBand(ageMin: number, ageMax: number): AgeBand {
   if (ageMax <= 4) {
     return "3-4";
   }
@@ -211,7 +209,7 @@ function validateMetadataAndVocabulary(
 function validateTemplateSchemaAndBands(
   input: CustomGameValidationInput,
   template: CustomGameTemplateLike,
-  ageBand: "3-4" | "4-5" | "5-6",
+  ageBand: AgeBand,
   issues: string[],
   missing: string[]
 ) {
@@ -282,7 +280,7 @@ function countItemsAndDistractors(contentPack: Record<string, unknown>): {
 
 function validateItemCountsAndDistractors(
   contentPack: Record<string, unknown>,
-  ageBand: "3-4" | "4-5" | "5-6",
+  ageBand: AgeBand,
   issues: string[],
   missing: string[]
 ) {

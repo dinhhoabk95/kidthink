@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 import { repoPath } from "@mindkid/config/paths";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import type {
+  AgeBand,
   DatasetItem,
   DifficultyRung,
   SkillDataset,
@@ -247,7 +248,7 @@ function generatePhrasingForSkill(skill: ParsedSkill): SkillPhrasing {
   };
 }
 
-function getAgeBand(ageMin: number): "3-4" | "4-5" | "5-6" {
+function getAgeBand(ageMin: number): AgeBand {
   if (ageMin <= 3) {
     return "3-4";
   }

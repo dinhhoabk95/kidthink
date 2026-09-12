@@ -2,7 +2,6 @@ import { z } from "zod";
 
 export const DEFAULT_COMPLETION_MODEL = "claude-3-5-sonnet-20241022";
 export const DEFAULT_EMBEDDING_MODEL = "text-embedding-3-small";
-export const DEFAULT_EMBEDDING_DIMENSION = 1536;
 
 export const PROMPT_VERSIONS = {
   report_summary: "v1.0",
@@ -30,12 +29,14 @@ export const aiEgressReportTotalsSchema = z.object({
   completion_rate: z.number().min(0).max(1),
 });
 
+import { AGE_BANDS } from "./age-bands.js";
+
 /**
  * Closed allow-list schema for AI report egress payload (BR-AIA-01, BR-AIA-02, BR-CDC-06).
  * NEVER includes child_uuid, display_name, birth_year, user_id, or raw telemetry.
  */
 export const aiEgressReportPayloadSchema = z.object({
-  age_band: z.enum(["3-4", "4-5", "5-6"]),
+  age_band: z.enum(AGE_BANDS),
   skills: z.array(aiEgressReportSkillSchema).min(1),
   period_days: z.number().int().min(1).max(365),
   totals: aiEgressReportTotalsSchema,

@@ -1,3 +1,4 @@
+import type { AgeBand } from "#src/contracts/types";
 import {
   ACTION_CORRECT,
   ACTION_IGNORED,
@@ -236,7 +237,7 @@ export class GT020Session extends TemplateGameSession<
     return firstFaceDown >= 0 ? firstFaceDown : null;
   }
 
-  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
+  protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("card-flip-grid");
     return layoutFn({
       slotCount: this.displayCards.length,

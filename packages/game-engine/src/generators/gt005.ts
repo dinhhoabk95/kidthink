@@ -1,3 +1,4 @@
+import { AGE_BANDS } from "#src/contracts/types";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
@@ -10,7 +11,7 @@ interface PairItem {
 export const GT005Generator: LevelGenerator = {
   engine: "GT-005",
   axes: {
-    age_band: ["3-4", "4-5", "5-6"],
+    age_band: [...AGE_BANDS],
     what: ["pairing", "matching"],
     theme: [...VALID_GENERATOR_THEMES],
   },

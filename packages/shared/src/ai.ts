@@ -28,6 +28,8 @@ export const aiEgressReportSkillSchema = z.object({
   attempts: z.number().int().min(0),
 });
 
+import { AGE_BANDS } from "./age-bands.js";
+
 export const aiEgressReportTotalsSchema = z.object({
   sessions: z.number().int().min(0),
   minutes: z.number().int().min(0),
@@ -39,7 +41,7 @@ export const aiEgressReportTotalsSchema = z.object({
  * NEVER includes child_uuid, display_name, birth_year, user_id, or raw telemetry.
  */
 export const aiEgressReportPayloadSchema = z.object({
-  age_band: z.enum(["3-4", "4-5", "5-6"]),
+  age_band: z.enum(AGE_BANDS),
   skills: z.array(aiEgressReportSkillSchema).min(1),
   period_days: z.number().int().min(1).max(365),
   totals: aiEgressReportTotalsSchema,

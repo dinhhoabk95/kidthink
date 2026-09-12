@@ -159,6 +159,7 @@
 </template>
 
 <script lang="ts" setup>
+  import type { AgeBand } from "@mindkid/shared/client";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 
   export interface PreviewValidationError {
@@ -172,7 +173,7 @@
     validationError?: PreviewValidationError | null;
   }>();
 
-  const selectedAgeBand = ref<"3-4" | "4-5" | "5-6">("3-4");
+  const selectedAgeBand = ref<AgeBand>("3-4");
   const reducedMotion = ref(false);
   const isMuted = ref(false);
   const scaleMode = ref<"fit" | "100%">("fit");
@@ -220,7 +221,7 @@
     { deep: true }
   );
 
-  function setAgeBand(band: "3-4" | "4-5" | "5-6") {
+  function setAgeBand(band: AgeBand) {
     selectedAgeBand.value = band;
     postUpdateToIframe();
   }

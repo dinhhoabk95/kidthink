@@ -55,24 +55,120 @@ describe("L5 — Dự phòng và hành vi chơi (BR-PNR-06..09 / Task #269)", ()
     expect(scaffoldAction.focusIndex).toBe(1);
   });
 
-  // T5.2: Không bậc nào kết thúc bằng im lặng — mọi kịch bản đều có âm thanh hoặc hình ảnh
-  it("T5.2 (BR-PNR-06): không bậc nào kết thúc bằng im lặng hoàn toàn", () => {
+  // T5.2: Không bậc nào kết thúc bằng im lặng — đo trên chính đường phát của
+  // RoundRunner, không đo trên một lời gọi AudioController rời.
+  it("T5.2 (BR-PNR-06): mp3 hỏng và không có giọng Việt thì nhịp mở vòng vẫn chạm tới tín hiệu thị giác", () => {
     const audio = new AudioController(true);
 
-    // Ca 1: mp3 không tải được trong playPromptAudio → fallback sang âm tap SFX
-    const playSfxSpy = vi.spyOn(audio, "play");
-    audio.playPromptAudio("/audio/voice/not_found.mp3");
-    expect(playSfxSpy).toHaveBeenCalledWith("tap");
-
-    // Ca 2: TTS không có tiếng Việt → fallbackVisualCue được kích hoạt
+    // Bậc 1 hỏng: mọi lần phát mp3 đều báo lỗi ngay.
+    vi.spyOn(audio, "playPromptAudio").mockImplementation(
+      (_ref, onEnd, onError) => {
+        onError?.();
+        onEnd?.();
+      }
+    );
+    // Bậc 2 hỏng: máy không có giọng Việt.
     vi.spyOn(audio.getSpeechAdapter(), "hasVietnameseVoice").mockReturnValue(
       false
     );
-    let visualTriggered = false;
-    audio.speakPrompt("Đếm đồ vật", undefined, () => {
-      visualTriggered = true;
+    const speakSpy = vi.spyOn(audio, "speakPrompt");
+
+    const fallbackCue = vi.fn();
+    const runner = new RoundRunner({
+      rounds: [
+        {
+          round_index: 0,
+          instruction: "Bé tìm quả táo",
+          instruction_audio_path: "/audio/voice/khong_co_that.mp3",
+          content_pack: {},
+          difficulty_params: { item_count: 3 },
+        },
+      ],
+      sessionFactory: () => new StubSession(),
+      audioController: audio,
+      onNarrationFallbackCue: fallbackCue,
     });
-    expect(visualTriggered).toBe(true);
+
+    runner.startFirstRound();
+
+    // Bậc 2 được thử, rồi bậc 3 chạy — không bậc nào dừng ở im lặng.
+    expect(speakSpy).toHaveBeenCalledTimes(1);
+    expect(fallbackCue).toHaveBeenCalledTimes(1);
+    runner.destroy();
+  });
+
+  // T3.1/BR-PNR-04: nhịp mở vòng phát ĐÚNG MỘT lệnh câu dẫn, và phát qua
+  // kịch bản lượt chung nên mọi engine đều được, không phải sửa từng engine.
+  it("BR-PNR-04: nhịp mở vòng phát đúng một lệnh câu dẫn qua kịch bản lượt chung", () => {
+    const audio = new AudioController(true);
+    const playSpy = vi
+      .spyOn(audio, "playPromptAudio")
+      .mockImplementation(() => {
+        // Bậc 1 coi như phát thành công.
+      });
+    const speakSpy = vi.spyOn(audio, "speakPrompt");
+
+    const runner = new RoundRunner({
+      rounds: [
+        {
+          round_index: 0,
+          instruction: "Bé chọn hình tròn",
+          instruction_audio_path: "/audio/voice/common/numbers/1.mp3",
+          content_pack: {},
+          difficulty_params: { item_count: 3 },
+        },
+      ],
+      sessionFactory: () => new StubSession(),
+      audioController: audio,
+    });
+
+    runner.startFirstRound();
+
+    expect(playSpy).toHaveBeenCalledTimes(1);
+    expect(playSpy.mock.calls[0]?.[0]).toBe(
+      "/audio/voice/common/numbers/1.mp3"
+    );
+    expect(speakSpy).not.toHaveBeenCalled();
+    runner.destroy();
+  });
+
+  // BR-PNR-03: khi bề mặt chơi nhận việc phát, RoundRunner Cấm — NEVER phát
+  // thêm một lần nữa. Hai nguồn song song cho ra hai giọng chồng nhau.
+  it("BR-PNR-03: bề mặt chơi nhận việc phát thì RoundRunner không phát song song", () => {
+    const audio = new AudioController(true);
+    const playSpy = vi
+      .spyOn(audio, "playPromptAudio")
+      .mockImplementation(() => {
+        // không làm gì
+      });
+    const speakSpy = vi.spyOn(audio, "speakPrompt");
+    const hostNarration = vi.fn();
+
+    const runner = new RoundRunner({
+      rounds: [
+        {
+          round_index: 0,
+          instruction: "Bé chọn hình tròn",
+          instruction_audio_path: "/audio/voice/common/numbers/1.mp3",
+          content_pack: {},
+          difficulty_params: { item_count: 3 },
+        },
+      ],
+      sessionFactory: () => new StubSession(),
+      audioController: audio,
+      onPlayNarration: hostNarration,
+    });
+
+    runner.startFirstRound();
+    expect(hostNarration).toHaveBeenCalledTimes(1);
+    expect(hostNarration.mock.calls[0]?.[1]).toBe("round_open");
+    expect(playSpy).not.toHaveBeenCalled();
+    expect(speakSpy).not.toHaveBeenCalled();
+
+    runner.replayCurrentRoundNarration();
+    expect(hostNarration).toHaveBeenCalledTimes(2);
+    expect(hostNarration.mock.calls[1]?.[1]).toBe("replay");
+    runner.destroy();
   });
 
   // T5.3: BR-PNR-08 — bấm Nghe lại ba lần → số lượt sai vẫn 0, bậc trợ giúp không đổi
@@ -111,20 +207,35 @@ describe("L5 — Dự phòng và hành vi chơi (BR-PNR-06..09 / Task #269)", ()
     expect(finalState.isFinished).toBe(false);
   });
 
-  // T5.4: BR-PNR-09 — nạp audio quá hạn thì vòng vẫn bắt đầu trong 5 giây, không bị treo
-  it("T5.4 (BR-PNR-09): nạp audio quá hạn thì kết thúc nạp và không làm treo màn chơi", async () => {
-    const OVERALL_TIMEOUT_MS = 200;
-
-    const slowAssetPromise = new Promise<string>((resolve) => {
-      setTimeout(() => resolve("late_audio_ready"), 600);
+  // T5.4: BR-PNR-09 — câu dẫn treo vô hạn thì vòng vẫn phải bắt đầu và chơi được.
+  it("T5.4 (BR-PNR-09): câu dẫn không bao giờ trả lời cũng không chặn vòng chơi", () => {
+    const audio = new AudioController(true);
+    // Nạp treo: không gọi onEnd, không gọi onError, không bao giờ xong.
+    vi.spyOn(audio, "playPromptAudio").mockImplementation(() => {
+      // cố ý im lặng, mô phỏng tệp nằm trên mạng yếu
     });
 
-    const timeoutPromise = new Promise<string>((resolve) => {
-      setTimeout(() => resolve("timeout_resolved_safe"), OVERALL_TIMEOUT_MS);
+    const runner = new RoundRunner({
+      rounds: [
+        {
+          round_index: 0,
+          instruction: "Bé đếm số táo",
+          instruction_audio_path: "/audio/voice/rat_cham.mp3",
+          content_pack: {},
+          difficulty_params: { item_count: 3 },
+        },
+      ],
+      sessionFactory: () => new StubSession(),
+      audioController: audio,
     });
 
-    const result = await Promise.race([slowAssetPromise, timeoutPromise]);
-    expect(result).toBe("timeout_resolved_safe");
+    runner.startFirstRound();
+
+    // Vòng đã mở, phiên chơi đã dựng: narration không nằm trên đường tới hạn.
+    expect(runner.getCurrentSession()).not.toBeNull();
+    expect(runner.getState().currentRoundIndex).toBe(0);
+    expect(runner.getState().isFinished).toBe(false);
+    runner.destroy();
   });
 
   // T5.5: Autoplay fallback — nếu autoplay bị chặn, hoãn câu dẫn tới lần chạm đầu
@@ -161,28 +272,8 @@ describe("L5 — Dự phòng và hành vi chơi (BR-PNR-06..09 / Task #269)", ()
     expect(cssContent).toMatch(REPLAY_MIN_WIDTH_REGEX);
   });
 
-  // T5.7: Chốt hành vi phát tên vật: chỉ phát lần chạm đầu trong vòng cho engine chạm nhanh
-  it("T5.7: cơ chế phát âm tên vật có cờ khóa tránh chồng âm khi chạm dồn dập", () => {
-    let playedCount = 0;
-    const itemTouchSpeechState = {
-      hasPlayedInitialItemVoice: false,
-    };
-
-    function onItemTouch(audioPath?: string): boolean {
-      if (itemTouchSpeechState.hasPlayedInitialItemVoice) {
-        return false; // Đã phát một lần trong vòng, bỏ qua tránh đè tiếng
-      }
-      if (audioPath) {
-        playedCount++;
-        itemTouchSpeechState.hasPlayedInitialItemVoice = true;
-        return true;
-      }
-      return false;
-    }
-
-    expect(onItemTouch("/audio/voice/common/numbers/1.mp3")).toBe(true);
-    expect(onItemTouch("/audio/voice/common/numbers/2.mp3")).toBe(false);
-    expect(onItemTouch("/audio/voice/common/numbers/3.mp3")).toBe(false);
-    expect(playedCount).toBe(1);
-  });
+  // T5.7 đã gỡ: bản cũ khai báo hàm onItemTouch ngay trong thân test rồi tự
+  // kiểm hàm đó, nên nó không chạm vào mã sản phẩm nào. Việc phát tên vật lúc
+  // trẻ chạm CHƯA được thi công (xem mục "Chưa làm trong task này"), nên ở
+  // đây chưa có gì để đo.
 });

@@ -4,7 +4,7 @@
 > Kogumakai (lập kế hoạch trước khi làm), Visible Thinking (tự kiểm tra).
 > Legend + quy ước mã: [`index.md`](index.md).
 
-**Strand:** 6 · **Skill đã đặt tên:** 20 · **Mục tiêu:** ~50 · **Còn thiếu:** 30
+**Strand:** 8 · **Skill đã đặt tên:** 30 · **Mục tiêu:** ~50 · **Còn thiếu:** 20
 **Game type hiện có:** 3 (D1-13 flash memory, D6-05 code đường đi, D6-11 memory grid)
 
 > EF là competency **dự báo thành tích học tập mạnh nhất** ở tuổi mầm non — mạnh

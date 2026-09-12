@@ -1,3 +1,4 @@
+import type { AgeBand } from "#src/contracts/types";
 import {
   type ActionResult,
   type GameAction,
@@ -42,7 +43,7 @@ export class GT003Session extends TemplateGameSession<
     this.hoveredContainer = false;
   }
 
-  protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
+  protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("top-source-bottom-target");
     // `slotCount` của bố cục lưỡng phân là số slot **nguồn**, còn `targetCount`
     // là số slot đích — layout tự cộng hai vế.

@@ -4,7 +4,7 @@
 > (number bond, CPA), Montessori (giáo cụ cảm quan số lượng).
 > Legend + quy ước mã: [`index.md`](index.md).
 
-**Strand:** 10 · **Skill đã đặt tên:** 99 · **Mục tiêu:** ~120 · **Còn thiếu:** 21
+**Strand:** 12 · **Skill đã đặt tên:** 110 · **Mục tiêu:** ~120 · **Còn thiếu:** 10
 **Game type hiện có:** 22 (từ D1-01…D1-12, D5-01…D5-10 — xem [migration](game-type-migration.md))
 
 ---

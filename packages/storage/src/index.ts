@@ -1,7 +1,9 @@
 import crypto from "node:crypto";
-import { requireEnv, requireFirstEnv } from "@mindkid/config";
-
-export const PROOF_SIGNED_URL_TTL_MINUTES = 15;
+import {
+  PROOF_SIGNED_URL_TTL_MINUTES,
+  requireEnv,
+  requireFirstEnv,
+} from "@mindkid/config";
 
 const EXTENSION_REGEX = /\.[a-zA-Z0-9]+$/;
 const TRAILING_SLASHES_REGEX = /\/+$/;

@@ -1,5 +1,6 @@
 import { AppError } from "@mindkid/errors/base";
 import { z } from "zod";
+import type { AgeBand } from "./age-bands.js";
 
 /**
  * Child profile canonical closed columns definition.
@@ -47,7 +48,7 @@ export function isValidAvatarPreset(avatarId: string): boolean {
 export function deriveAgeBand(
   birthYear: number,
   currentYear: number = new Date().getFullYear()
-): "3-4" | "4-5" | "5-6" {
+): AgeBand {
   const age = currentYear - birthYear;
   if (age <= 3) {
     return "3-4";

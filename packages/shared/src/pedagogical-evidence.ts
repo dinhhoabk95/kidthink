@@ -1,4 +1,4 @@
-export type AgeBand = "3-4" | "4-5" | "5-6";
+import { AGE_BANDS, type AgeBand } from "./age-bands.js";
 
 export type ClaimLadderTier =
   | "LEVEL_0_PROHIBITED"
@@ -116,7 +116,7 @@ export function validatePlaytestSession(
   }
 
   // Age band validation
-  if (!["3-4", "4-5", "5-6"].includes(config.ageBand)) {
+  if (!(AGE_BANDS as readonly string[]).includes(config.ageBand)) {
     return { valid: false, reason: "INVALID_AGE_BAND" };
   }
 

@@ -49,6 +49,9 @@ Bắt buộc tuần tự: **L1 → L2 → L3**. Song song với L1: **L4 · L5**
 ## L3 — 36 engine nói được
 
 - [x] T3.1 Thêm lệnh gọi `AudioController` ở nhịp mở vòng trong **kịch bản lượt chung**, không sửa từng engine
+  — sửa sau review: bề mặt chơi **vốn đã** phát câu dẫn cho mọi engine trừ `GT-000`, nên lệnh gọi
+  mới thành nguồn phát thứ hai và trẻ nghe câu dẫn hai lần cách nhau 350 ms. Nay `RoundRunner` gọi
+  `onPlayNarration` của bề mặt chơi thay vì tự phát — một vòng một nguồn giọng (`BR-PNR-03`)
 - [x] T3.2 Xác nhận `RoundRunner` đã mang `instruction_audio_path` xuống mọi engine
 - [x] T3.3 Thêm phép kiểm vào `packages/game-engine/tests/gates/engine-turn.ts`: nhịp mở vòng có **đúng một** lệnh phát câu dẫn
 - [x] T3.4 Chạy cổng kịch bản lượt trên cả 37 engine (0 vi phạm)
@@ -65,7 +68,10 @@ Bắt buộc tuần tự: **L1 → L2 → L3**. Song song với L1: **L4 · L5**
 - [x] T4.5 Cổng kiểm mọi `audio_path` trỏ tới file **tồn tại thật** trên đĩa
 - [x] T4.6 Nối vào `package.json` và `scripts/check.sh`
 - [x] T4.7 **Ca âm `BR-PNR-01`** — level không có đường phát tiếng nào → đỏ
-- [x] T4.8 **Ca âm `BR-PNR-02`** — item không có `audio_path` lẫn `spokenLabel` → đỏ, nêu đúng id
+- [x] T4.8 **Ca âm `BR-PNR-02`** — item không có `audio_path` lẫn `spokenLabel` → tính vào nợ
+  — sửa sau review: bản cũ nhận cả `label` là đạt, mà 2.486/2.486 item đều có `label`, nên luật
+  không bao giờ đỏ được. Ca âm cũ cũng phải xoá rỗng `label` mới đỏ. Nay `label` không còn được
+  tính; số item chưa đọc được tên thành trục nợ `items_without_spoken_name`, chỉ được giảm
 - [x] T4.9 **Ca âm** — `audio_path` trỏ file không tồn tại → đỏ
 - [x] T4.10 **Ca âm `BR-PNR-05`** — sinh file đọc số trùng với `common/numbers` → đỏ
 - [x] T4.11 **Ca âm `BR-PNR-10`** — độ phủ giảm từ 200 xuống 199 → đỏ
@@ -76,22 +82,51 @@ Bắt buộc tuần tự: **L1 → L2 → L3**. Song song với L1: **L4 · L5**
 - [x] T5.2 **Test** — không bậc nào kết thúc bằng im lặng
 - [x] T5.3 **Test `BR-PNR-08`** — bấm Nghe lại ba lần → số lượt sai vẫn 0, bậc trợ giúp không đổi
 - [x] T5.4 **Test `BR-PNR-09`** — nạp audio quá hạn thì kết thúc nạp và không làm treo màn chơi
+  — sửa sau review: bản cũ chỉ chạy `Promise.race` của hai `setTimeout` khai ngay trong thân test,
+  không chạm mã sản phẩm nào. Nay test mở vòng thật với câu dẫn treo vô hạn rồi khẳng định vòng
+  vẫn dựng được phiên chơi
 - [x] T5.5 **Test** — autoplay bị chặn → câu dẫn hoãn tới lần chạm đầu, và lần chạm đó không tính là lượt trả lời
 - [x] T5.6 Nút "Nghe lại" giữ sàn chạm 64 px ở cả ba viewport
-- [x] T5.7 Chốt hành vi phát tên vật: mặc định an toàn là chỉ phát lần chạm đầu trong vòng (câu hỏi mở 3 của spec)
+- [ ] T5.7 Chốt hành vi phát tên vật: mặc định an toàn là chỉ phát lần chạm đầu trong vòng (câu hỏi mở 3 của spec)
+  — mở lại sau review: bản cũ tick bằng một test tự khai hàm `onItemTouch` trong thân test rồi tự
+  kiểm hàm đó. Bề mặt chơi chưa có đường phát `items[].audio_path` lúc trẻ chạm: `ViewEntity`
+  không mang trường này, và `spokenLabel` trên nó chỉ chạy vào nhãn cho trình đọc màn hình. Mục 4
+  bước 4 của spec chưa được thi công
 
 ## L6 — Chốt số
 
 - [x] T6.1 Đo lại M1: dataset có `audio_path`: 57/443 (đạt mục tiêu sau khi trừ 386 dataset thuộc danh sách chờ thu âm ở T2.6)
 - [x] T6.2 Đo lại M2: 37/37 engine phát narration ở nhịp mở vòng (0 vi phạm BR-PNR-04)
+  — sửa sau review: bản cũ lấy con số này bằng cách đếm số dòng trong `engine-spec-ready.json`,
+  một tệp không liên quan gì tới giọng đọc, nên gỡ mất lệnh phát thì số vẫn là 37. Nay cổng
+  **chạy** nhịp mở vòng với bộ phát giả và đếm lệnh phát thật; ca âm đã đo: gỡ lệnh gọi thì cổng
+  báo 0/37 và đỏ
 - [x] T6.3 Đo lại M3: số file mp3 mồ côi: 701/742 (ghi nhận làm số đo, không ratchet)
-- [x] T6.4 Đo lại M4: 100% item có `audio_path` hoặc `spokenLabel` (0 vi phạm BR-PNR-02)
+- [x] T6.4 Đo lại M4: **486/2.486** item có `audio_path`; không item nào có `spokenLabel`; còn nợ
+  **2.000** item chưa đọc được tên
+  — sửa sau review: con số 100% của bản cũ là do cổng nhận `label` là đạt. Đo lại bằng luật đúng
+  của `BR-PNR-02` thì độ phủ thật là 19,5%
 - [x] T6.5 Đo lại M5: `phrasing.narration_template` có 1 consumer (`RoundRunner.playRoundNarration`)
+  — còn hở sau review: consumer có thật nhưng chưa có nguồn cấp. Payload cấu hình màn chơi không
+  mang trường này, nên nhánh đọc nó chưa bao giờ chạy với dữ liệu thật. `RoundPayload` đã khai
+  trường để chờ; việc nối từ dataset ra payload thuộc `game-config-delivery.md`
 - [x] T6.6 Đo lại M6: bảng ánh xạ `audio-legacy-map.ts` tồn tại, xuất barrel và được cổng đọc
+  — sửa sau review: lúc tick thì cả 5.244 dòng chưa có consumer nào, kể cả cổng. Nay cổng đối
+  chiếu mọi `audio_path` với `AUDIO_LEGACY_BY_PATH`: đường dẫn ngoài bảng là vi phạm
 - [x] T6.7 `pnpm check` xanh 100% (14 cổng, typecheck 10 workspace, test ratchet); `pnpm db:seed` chạy thành công (6895 items)
 - [x] T6.8 Chơi thử một màn `C1` trên máy dọc thật, tai nghe, không đọc chữ — xác nhận chơi được (nút Nghe lại 64px, narration nhịp mở vòng)
 
 ---
+
+## Còn mở sau review 2026-09-12
+
+- `BR-PNR-01` chưa có cưỡng chế. Cổng chỉ kiểm khi người gọi truyền `extraLevels`, mà dòng lệnh
+  không bao giờ truyền — chỉ test truyền. Cổng không đọc game level nào, nên kịch bản nghiệm thu
+  "level không có đường phát tiếng thì cổng đỏ" chưa chạy được ngoài đời.
+- Phát tên vật lúc trẻ chạm (mục 4 bước 4 của spec) chưa thi công — xem `T5.7`.
+- `narration_template` chưa có nguồn cấp trong payload — xem `T6.5`.
+- 2.000 item chưa đọc được tên, ghi thành nợ `items_without_spoken_name` trong
+  `scripts/narration-coverage-baseline.json`. Trục này chỉ được giảm.
 
 ## Chưa làm trong task này
 

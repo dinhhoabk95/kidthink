@@ -4,7 +4,7 @@
 > Kogumakai (mê cung, phối cảnh), Dienes (biến đổi hình).
 > Legend + quy ước mã: [`index.md`](index.md).
 
-**Strand:** 8 · **Skill đã đặt tên:** 44 · **Mục tiêu:** ~80 · **Còn thiếu:** 36
+**Strand:** 10 · **Skill đã đặt tên:** 56 · **Mục tiêu:** ~80 · **Còn thiếu:** 24
 **Game type hiện có:** 11 (D2-01…D2-07, D2-09, D2-10, D6-01, D6-10)
 
 ---

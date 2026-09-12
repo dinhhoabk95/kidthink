@@ -6,7 +6,7 @@
 import fs from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
 import { type AgeBand, ALL_TEMPLATES } from "@mindkid/game-engine/registry";
-import { CONTENT_THEMES } from "@mindkid/shared";
+import { AGE_BANDS, CONTENT_THEMES } from "@mindkid/shared";
 import {
   type ParsedSkill,
   parseTaxonomyDocs,
@@ -64,7 +64,7 @@ function selectBestBandForTemplate(
   if (valid.length > 0 && valid[0] !== undefined) {
     return valid[0];
   }
-  const allBands: AgeBand[] = ["3-4", "4-5", "5-6"];
+  const allBands = AGE_BANDS;
   const templateValid = allBands.filter((b) => !banned.includes(b));
   return templateValid[0] ?? "4-5";
 }

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@mindkid/game-engine": "workspace:*",
+    "@mindkid/shared": "workspace:*",
     "@iconify-json/lucide": "catalog:",
     "@nuxt/fonts": "catalog:",
     "@nuxt/ui": "catalog:",

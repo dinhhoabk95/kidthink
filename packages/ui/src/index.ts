@@ -7,17 +7,9 @@ export const DESIGN_TOKENS = {
   motion: designTokens.motion,
 } as const;
 
-/**
- * BR-A11-04: Single source of truth for touch floors across all 4 surfaces (D-FF)
- */
-export const TOUCH_FLOORS = {
-  kidBand3_4: 96,
-  kidPrimary: 76,
-  kidMin: 64,
-  adult: 44,
-  studio: 40,
-  absoluteMin: 24,
-} as const;
+import { TOUCH_FLOORS } from "@mindkid/shared";
+
+export { TOUCH_FLOORS } from "@mindkid/shared";
 
 export const SURFACE_RULES = {
   surface400Usage: "border-placeholder-only" as const,
