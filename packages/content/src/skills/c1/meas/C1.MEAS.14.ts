@@ -51,6 +51,9 @@ export const C1_MEAS_14_DATASET: SkillDataset = {
         ref: "🪙",
       },
       contrast_group: "money",
+      category: {
+        coin_value: "1k",
+      },
     },
     {
       id: "coin_2",
@@ -62,6 +65,9 @@ export const C1_MEAS_14_DATASET: SkillDataset = {
         ref: "🪙",
       },
       contrast_group: "money",
+      category: {
+        coin_value: "2k",
+      },
     },
     {
       id: "coin_5",
@@ -73,6 +79,9 @@ export const C1_MEAS_14_DATASET: SkillDataset = {
         ref: "🪙",
       },
       contrast_group: "money",
+      category: {
+        coin_value: "5k",
+      },
     },
     {
       id: "coin_10",
@@ -84,6 +93,9 @@ export const C1_MEAS_14_DATASET: SkillDataset = {
         ref: "🪙",
       },
       contrast_group: "money",
+      category: {
+        coin_value: "10k",
+      },
     },
   ],
   relations: [
@@ -121,36 +133,36 @@ export const C1_MEAS_14_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với tiền xu đơn giản",
       representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng tiền xu đơn giản",
       representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt tiền xu đơn giản với phương án nhiễu",
       representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi tiền xu đơn giản",
       representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục tiền xu đơn giản và tự làm một mình",
       representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Vật nào có kích thước {label} hơn?",
+    prompt_template: "Đồng xu này đáng bao nhiêu tiền hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Tiền xu đơn giản nhé",
   },
 };

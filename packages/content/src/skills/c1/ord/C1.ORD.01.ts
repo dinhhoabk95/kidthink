@@ -53,6 +53,9 @@ export const C1_ORD_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🥇",
       },
+      category: {
+        ordinal: "thứ nhất",
+      },
     },
     {
       id: "ord_2",
@@ -63,6 +66,9 @@ export const C1_ORD_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🥈",
       },
+      category: {
+        ordinal: "thứ hai",
+      },
     },
     {
       id: "ord_3",
@@ -72,6 +78,9 @@ export const C1_ORD_01_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "🥉",
+      },
+      category: {
+        ordinal: "thứ ba",
       },
     },
   ],
@@ -97,36 +106,36 @@ export const C1_ORD_01_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với thứ nhất · thứ hai · thứ ba",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng thứ nhất · thứ hai · thứ ba",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt thứ nhất · thứ hai · thứ ba với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi thứ nhất · thứ hai · thứ ba",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục thứ nhất · thứ hai · thứ ba và tự làm một mình",
       representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bạn nào đứng thứ {position}?",
+    prompt_template: "Bạn nào đứng ở đúng vị trí hả bé?",
     narration_template:
       "Chúng mình cùng tìm hiểu về Thứ nhất · thứ hai · thứ ba nhé",
   },

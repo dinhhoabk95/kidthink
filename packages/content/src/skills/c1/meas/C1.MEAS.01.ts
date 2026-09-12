@@ -51,6 +51,9 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
         ref: "🐍",
       },
       contrast_group: "length",
+      category: {
+        length: "rất dài",
+      },
     },
     {
       id: "dim_length_more",
@@ -62,6 +65,9 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
         ref: "🥢",
       },
       contrast_group: "length",
+      category: {
+        length: "dài",
+      },
     },
     {
       id: "dim_length_less",
@@ -73,6 +79,9 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
         ref: "🥢",
       },
       contrast_group: "length",
+      category: {
+        length: "ngắn",
+      },
     },
     {
       id: "dim_length_worm_less",
@@ -84,6 +93,9 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
         ref: "🐛",
       },
       contrast_group: "length",
+      category: {
+        length: "rất ngắn",
+      },
     },
   ],
   relations: [
@@ -114,36 +126,36 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với dài ngắn",
       representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng dài ngắn",
       representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt dài ngắn với phương án nhiễu",
       representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi dài ngắn",
       representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục dài ngắn và tự làm một mình",
       representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Vật nào có kích thước {label} hơn?",
+    prompt_template: "Vật nào dài hơn hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Dài ngắn nhé",
   },
 };

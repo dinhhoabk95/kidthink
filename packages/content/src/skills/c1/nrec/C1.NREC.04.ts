@@ -51,6 +51,9 @@ export const C1_NREC_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "1️⃣1️⃣",
       },
+      category: {
+        parity: "lẻ",
+      },
     },
     {
       id: "n12",
@@ -61,6 +64,9 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "1️⃣2️⃣",
+      },
+      category: {
+        parity: "chẵn",
       },
     },
     {
@@ -73,6 +79,9 @@ export const C1_NREC_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "1️⃣3️⃣",
       },
+      category: {
+        parity: "lẻ",
+      },
     },
     {
       id: "n14",
@@ -83,6 +92,9 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "1️⃣4️⃣",
+      },
+      category: {
+        parity: "chẵn",
       },
     },
     {
@@ -95,6 +107,9 @@ export const C1_NREC_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "1️⃣5️⃣",
       },
+      category: {
+        parity: "lẻ",
+      },
     },
     {
       id: "n16",
@@ -105,6 +120,9 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "1️⃣6️⃣",
+      },
+      category: {
+        parity: "chẵn",
       },
     },
     {
@@ -117,6 +135,9 @@ export const C1_NREC_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "1️⃣7️⃣",
       },
+      category: {
+        parity: "lẻ",
+      },
     },
     {
       id: "n18",
@@ -127,6 +148,9 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "1️⃣8️⃣",
+      },
+      category: {
+        parity: "chẵn",
       },
     },
     {
@@ -139,6 +163,9 @@ export const C1_NREC_04_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "1️⃣9️⃣",
       },
+      category: {
+        parity: "lẻ",
+      },
     },
     {
       id: "n20",
@@ -149,6 +176,9 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "2️⃣0️⃣",
+      },
+      category: {
+        parity: "chẵn",
       },
     },
   ],
@@ -161,31 +191,31 @@ export const C1_NREC_04_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với nhận biết số 11–20",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng nhận biết số 11–20",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt nhận biết số 11–20 với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi nhận biết số 11–20",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục nhận biết số 11–20 và tự làm một mình",
       representation: "numeral",
     },
   ],

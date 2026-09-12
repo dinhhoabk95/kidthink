@@ -51,6 +51,9 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
         ref: "🏺",
       },
       contrast_group: "capacity",
+      category: {
+        capacity: "cạn",
+      },
     },
     {
       id: "dim_capacity_less",
@@ -62,6 +65,9 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
         ref: "🏺",
       },
       contrast_group: "capacity",
+      category: {
+        capacity: "vơi",
+      },
     },
     {
       id: "dim_capacity_half",
@@ -73,6 +79,9 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
         ref: "🏺",
       },
       contrast_group: "capacity",
+      category: {
+        capacity: "vừa",
+      },
     },
     {
       id: "dim_capacity_more",
@@ -84,6 +93,9 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
         ref: "🏺",
       },
       contrast_group: "capacity",
+      category: {
+        capacity: "đầy",
+      },
     },
     {
       id: "fill_unit_1",
@@ -193,36 +205,36 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với dung tích",
       representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng dung tích",
       representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt dung tích với phương án nhiễu",
       representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi dung tích",
       representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục dung tích và tự làm một mình",
       representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Vật nào có kích thước {label} hơn?",
+    prompt_template: "Cốc nào đựng được nhiều nước hơn hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Dung tích nhé",
   },
   ordering: [

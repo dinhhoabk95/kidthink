@@ -51,6 +51,9 @@ export const C1_CNT_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "0️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n1",
@@ -61,6 +64,9 @@ export const C1_CNT_03_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "1️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
     {
@@ -73,6 +79,9 @@ export const C1_CNT_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "2️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n3",
@@ -83,6 +92,9 @@ export const C1_CNT_03_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "3️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
     {
@@ -95,6 +107,9 @@ export const C1_CNT_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "4️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n5",
@@ -105,6 +120,9 @@ export const C1_CNT_03_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "5️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
     {
@@ -117,6 +135,9 @@ export const C1_CNT_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "6️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n7",
@@ -127,6 +148,9 @@ export const C1_CNT_03_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "7️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
     {
@@ -139,6 +163,9 @@ export const C1_CNT_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "8️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n9",
@@ -150,6 +177,9 @@ export const C1_CNT_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "9️⃣",
       },
+      category: {
+        parity: "lẻ",
+      },
     },
     {
       id: "n10",
@@ -160,6 +190,9 @@ export const C1_CNT_03_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "🔟",
+      },
+      category: {
+        parity: "chẵn",
       },
     },
   ],
@@ -190,31 +223,31 @@ export const C1_CNT_03_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với đếm không bỏ sót",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng đếm không bỏ sót",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt đếm không bỏ sót với phương án nhiễu",
       representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi đếm không bỏ sót",
       representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục đếm không bỏ sót và tự làm một mình",
       representation: "discrete-object",
     },
   ],

@@ -51,6 +51,9 @@ export const C1_DAT_03_DATASET: SkillDataset = {
         ref: "🟨",
       },
       contrast_group: "column",
+      category: {
+        height: "thấp nhất",
+      },
     },
     {
       id: "col_2",
@@ -62,6 +65,9 @@ export const C1_DAT_03_DATASET: SkillDataset = {
         ref: "🟥",
       },
       contrast_group: "column",
+      category: {
+        height: "thấp",
+      },
     },
     {
       id: "col_3",
@@ -73,6 +79,9 @@ export const C1_DAT_03_DATASET: SkillDataset = {
         ref: "🟦",
       },
       contrast_group: "column",
+      category: {
+        height: "cao",
+      },
     },
     {
       id: "col_4",
@@ -84,6 +93,9 @@ export const C1_DAT_03_DATASET: SkillDataset = {
         ref: "🟩",
       },
       contrast_group: "column",
+      category: {
+        height: "cao nhất",
+      },
     },
   ],
   relations: [
@@ -121,31 +133,31 @@ export const C1_DAT_03_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với so cột cao – thấp",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng so cột cao – thấp",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt so cột cao – thấp với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi so cột cao – thấp",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục so cột cao – thấp và tự làm một mình",
       representation: "numeral",
     },
   ],

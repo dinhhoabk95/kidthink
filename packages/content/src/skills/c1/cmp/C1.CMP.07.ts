@@ -51,6 +51,9 @@ export const C1_CMP_07_DATASET: SkillDataset = {
         ref: "📏",
       },
       contrast_group: "length",
+      category: {
+        length: "ngắn",
+      },
     },
     {
       id: "length_more",
@@ -62,6 +65,9 @@ export const C1_CMP_07_DATASET: SkillDataset = {
         ref: "📏",
       },
       contrast_group: "length",
+      category: {
+        length: "dài",
+      },
     },
   ],
   relations: [
@@ -84,36 +90,36 @@ export const C1_CMP_07_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với ngắn hơn",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng ngắn hơn",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt ngắn hơn với phương án nhiễu",
       representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi ngắn hơn",
       representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục ngắn hơn và tự làm một mình",
       representation: "discrete-object",
     },
   ],
   phrasing: {
-    prompt_template: "Bên nào có nhiều {label} hơn?",
+    prompt_template: "Vật nào ngắn hơn hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Ngắn hơn nhé",
   },
 };

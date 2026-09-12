@@ -51,6 +51,9 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
         ref: "⚖️",
       },
       contrast_group: "balance",
+      category: {
+        balance: "nhẹ",
+      },
     },
     {
       id: "bal_left",
@@ -62,6 +65,9 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
         ref: "⚖️",
       },
       contrast_group: "balance",
+      category: {
+        balance: "cân bằng",
+      },
     },
     {
       id: "bal_right",
@@ -73,6 +79,9 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
         ref: "⚖️",
       },
       contrast_group: "balance",
+      category: {
+        balance: "cân bằng",
+      },
     },
     {
       id: "bal_right_heavy",
@@ -84,6 +93,9 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
         ref: "⚖️",
       },
       contrast_group: "balance",
+      category: {
+        balance: "nặng",
+      },
     },
   ],
   relations: [
@@ -106,7 +118,7 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
   ],
   axes: {
     balance: {
-      values: ["nhẹ", "cân bằng trái", "cân bằng phải", "nặng"],
+      values: ["nhẹ", "cân bằng", "nặng"],
       ordered: true,
     },
   },
@@ -114,36 +126,36 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với cân bằng",
       representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng cân bằng",
       representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt cân bằng với phương án nhiễu",
       representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi cân bằng",
       representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục cân bằng và tự làm một mình",
       representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Vật nào có kích thước {label} hơn?",
+    prompt_template: "Cân đang nghiêng về bên nào hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Cân bằng nhé",
   },
 };

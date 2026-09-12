@@ -54,6 +54,9 @@ export const C1_MEAS_11_DATASET: SkillDataset = {
         ref: "📅",
       },
       contrast_group: "calendar",
+      category: {
+        day_order: "hôm qua",
+      },
     },
     {
       id: "day_today",
@@ -65,6 +68,9 @@ export const C1_MEAS_11_DATASET: SkillDataset = {
         ref: "📆",
       },
       contrast_group: "calendar",
+      category: {
+        day_order: "hôm nay",
+      },
     },
     {
       id: "day_tomorrow",
@@ -76,6 +82,9 @@ export const C1_MEAS_11_DATASET: SkillDataset = {
         ref: "🗓️",
       },
       contrast_group: "calendar",
+      category: {
+        day_order: "ngày mai",
+      },
     },
   ],
   relations: [
@@ -100,36 +109,36 @@ export const C1_MEAS_11_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với hôm qua · hôm nay · ngày mai",
       representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng hôm qua · hôm nay · ngày mai",
       representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt hôm qua · hôm nay · ngày mai với phương án nhiễu",
       representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi hôm qua · hôm nay · ngày mai",
       representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục hôm qua · hôm nay · ngày mai và tự làm một mình",
       representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Vật nào có kích thước {label} hơn?",
+    prompt_template: "Hôm nay là ngày nào hả bé?",
     narration_template:
       "Chúng mình cùng tìm hiểu về Hôm qua · hôm nay · ngày mai nhé",
   },

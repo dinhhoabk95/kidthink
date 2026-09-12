@@ -51,6 +51,9 @@ export const C1_DAT_04_DATASET: SkillDataset = {
         ref: "🍎",
       },
       contrast_group: "table",
+      category: {
+        count: "3",
+      },
     },
     {
       id: "table_col_banana",
@@ -62,6 +65,9 @@ export const C1_DAT_04_DATASET: SkillDataset = {
         ref: "🍌",
       },
       contrast_group: "table",
+      category: {
+        count: "4",
+      },
     },
     {
       id: "table_col_a",
@@ -73,6 +79,9 @@ export const C1_DAT_04_DATASET: SkillDataset = {
         ref: "👦",
       },
       contrast_group: "table",
+      category: {
+        count: "5",
+      },
     },
     {
       id: "table_col_b",
@@ -84,6 +93,9 @@ export const C1_DAT_04_DATASET: SkillDataset = {
         ref: "👧",
       },
       contrast_group: "table",
+      category: {
+        count: "6",
+      },
     },
   ],
   relations: [
@@ -116,31 +128,31 @@ export const C1_DAT_04_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với đọc bảng hai cột",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng đọc bảng hai cột",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt đọc bảng hai cột với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi đọc bảng hai cột",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục đọc bảng hai cột và tự làm một mình",
       representation: "numeral",
     },
   ],

@@ -51,6 +51,9 @@ export const C1_CMP_10_DATASET: SkillDataset = {
         ref: "🍉",
       },
       contrast_group: "weight",
+      category: {
+        weight: "nặng",
+      },
     },
     {
       id: "weight_less",
@@ -62,6 +65,9 @@ export const C1_CMP_10_DATASET: SkillDataset = {
         ref: "🍓",
       },
       contrast_group: "weight",
+      category: {
+        weight: "nhẹ",
+      },
     },
     {
       id: "weight_elephant_more",
@@ -73,6 +79,9 @@ export const C1_CMP_10_DATASET: SkillDataset = {
         ref: "🐘",
       },
       contrast_group: "weight",
+      category: {
+        weight: "rất nặng",
+      },
     },
     {
       id: "weight_feather_less",
@@ -84,6 +93,9 @@ export const C1_CMP_10_DATASET: SkillDataset = {
         ref: "🪶",
       },
       contrast_group: "weight",
+      category: {
+        weight: "rất nhẹ",
+      },
     },
     {
       id: "heavy_truck",
@@ -95,6 +107,9 @@ export const C1_CMP_10_DATASET: SkillDataset = {
         ref: "🚛",
       },
       contrast_group: "weight",
+      category: {
+        weight: "rất nặng",
+      },
     },
     {
       id: "light_leaf",
@@ -106,6 +121,9 @@ export const C1_CMP_10_DATASET: SkillDataset = {
         ref: "🍃",
       },
       contrast_group: "weight",
+      category: {
+        weight: "rất nhẹ",
+      },
     },
   ],
   relations: [
@@ -136,36 +154,36 @@ export const C1_CMP_10_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với nặng hơn",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng nặng hơn",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt nặng hơn với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi nặng hơn",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục nặng hơn và tự làm một mình",
       representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bên nào có nhiều {label} hơn?",
+    prompt_template: "Vật nào nặng hơn hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Nặng hơn nhé",
   },
 };

@@ -304,36 +304,36 @@ export const C1_CNT_04_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với đếm ngược",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng đếm ngược",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt đếm ngược với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi đếm ngược",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục đếm ngược và tự làm một mình",
       representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé đếm xem có mấy {label}?",
+    prompt_template: "Bé đếm ngược xem còn mấy nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Đếm ngược nhé",
   },
   ordering: [

@@ -54,6 +54,9 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
         ref: "🌅",
       },
       contrast_group: "daypart",
+      category: {
+        daypart: "sáng",
+      },
     },
     {
       id: "time_noon",
@@ -65,6 +68,9 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
         ref: "☀️",
       },
       contrast_group: "daypart",
+      category: {
+        daypart: "trưa",
+      },
     },
     {
       id: "time_afternoon",
@@ -76,6 +82,9 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
         ref: "🌇",
       },
       contrast_group: "daypart",
+      category: {
+        daypart: "chiều",
+      },
     },
     {
       id: "time_night",
@@ -87,6 +96,9 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
         ref: "🌙",
       },
       contrast_group: "daypart",
+      category: {
+        daypart: "tối",
+      },
     },
   ],
   relations: [
@@ -116,36 +128,40 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description:
+        "Làm quen cơ bản với buổi trong ngày: sáng · trưa · chiều · tối",
       representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description:
+        "Nhận biết và chọn đúng buổi trong ngày: sáng · trưa · chiều · tối",
       representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description:
+        "Phân biệt buổi trong ngày: sáng · trưa · chiều · tối với phương án nhiễu",
       representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi buổi trong ngày: sáng · trưa · chiều · tối",
       representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description:
+        "Thuần thục buổi trong ngày: sáng · trưa · chiều · tối và tự làm một mình",
       representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Vật nào có kích thước {label} hơn?",
+    prompt_template: "Đây là buổi nào trong ngày hả bé?",
     narration_template:
       "Chúng mình cùng tìm hiểu về Buổi trong ngày: sáng · trưa · chiều · tối nhé",
   },

@@ -51,6 +51,9 @@ export const C1_CMP_04_DATASET: SkillDataset = {
         ref: "🍎",
       },
       contrast_group: "quantity",
+      category: {
+        quantity: "nhiều",
+      },
     },
     {
       id: "qty_less",
@@ -62,6 +65,9 @@ export const C1_CMP_04_DATASET: SkillDataset = {
         ref: "🍎",
       },
       contrast_group: "quantity",
+      category: {
+        quantity: "ít",
+      },
     },
   ],
   relations: [
@@ -84,36 +90,36 @@ export const C1_CMP_04_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với nhiều hơn",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng nhiều hơn",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt nhiều hơn với phương án nhiễu",
       representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi nhiều hơn",
       representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục nhiều hơn và tự làm một mình",
       representation: "discrete-object",
     },
   ],
   phrasing: {
-    prompt_template: "Bên nào có nhiều {label} hơn?",
+    prompt_template: "Bên nào có nhiều hơn hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Nhiều hơn nhé",
   },
 };

@@ -51,6 +51,10 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🥇",
       },
+      category: {
+        ordinal: "thứ nhất",
+        parity: "lẻ",
+      },
     },
     {
       id: "ord_2",
@@ -60,6 +64,10 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "🥈",
+      },
+      category: {
+        ordinal: "thứ hai",
+        parity: "chẵn",
       },
     },
     {
@@ -71,6 +79,10 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🥉",
       },
+      category: {
+        ordinal: "thứ ba",
+        parity: "lẻ",
+      },
     },
     {
       id: "ord_4",
@@ -80,6 +92,10 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "4️⃣",
+      },
+      category: {
+        ordinal: "thứ tư",
+        parity: "chẵn",
       },
     },
     {
@@ -91,6 +107,10 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "5️⃣",
       },
+      category: {
+        ordinal: "thứ năm",
+        parity: "lẻ",
+      },
     },
     {
       id: "ord_6",
@@ -100,6 +120,10 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "6️⃣",
+      },
+      category: {
+        ordinal: "thứ sáu",
+        parity: "chẵn",
       },
     },
     {
@@ -111,6 +135,10 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "7️⃣",
       },
+      category: {
+        ordinal: "thứ bảy",
+        parity: "lẻ",
+      },
     },
     {
       id: "ord_8",
@@ -120,6 +148,10 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "8️⃣",
+      },
+      category: {
+        ordinal: "thứ tám",
+        parity: "chẵn",
       },
     },
     {
@@ -131,6 +163,10 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "9️⃣",
       },
+      category: {
+        ordinal: "thứ chín",
+        parity: "lẻ",
+      },
     },
     {
       id: "ord_10",
@@ -140,6 +176,10 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "🔟",
+      },
+      category: {
+        ordinal: "thứ mười",
+        parity: "chẵn",
       },
     },
   ],
@@ -161,49 +201,59 @@ export const C1_ORD_06_DATASET: SkillDataset = {
     },
   ],
   axes: {
-    direction: {
-      values: ["forward", "backward"],
+    ordinal: {
+      values: [
+        "thứ nhất",
+        "thứ hai",
+        "thứ ba",
+        "thứ tư",
+        "thứ năm",
+        "thứ sáu",
+        "thứ bảy",
+        "thứ tám",
+        "thứ chín",
+        "thứ mười",
+      ],
       ordered: true,
     },
-    reference_point: {
-      values: ["start", "end"],
-      ordered: true,
+    parity: {
+      values: ["chẵn", "lẻ"],
     },
   },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với thứ tự ngược từ cuối lên",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng thứ tự ngược từ cuối lên",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt thứ tự ngược từ cuối lên với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi thứ tự ngược từ cuối lên",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục thứ tự ngược từ cuối lên và tự làm một mình",
       representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bạn nào đứng thứ {position}?",
+    prompt_template: "Bé đếm ngược từ cuối hàng lên nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Thứ tự ngược từ cuối lên nhé",
   },

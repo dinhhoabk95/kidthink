@@ -52,6 +52,9 @@ export const C1_DAT_01_DATASET: SkillDataset = {
         ref: "🍎",
       },
       contrast_group: "fruit",
+      category: {
+        tally_type: "táo",
+      },
     },
     {
       id: "dat_apple_2",
@@ -63,6 +66,9 @@ export const C1_DAT_01_DATASET: SkillDataset = {
         ref: "🍎",
       },
       contrast_group: "fruit",
+      category: {
+        tally_type: "táo",
+      },
     },
     {
       id: "dat_apple_3",
@@ -74,6 +80,9 @@ export const C1_DAT_01_DATASET: SkillDataset = {
         ref: "🍎",
       },
       contrast_group: "fruit",
+      category: {
+        tally_type: "táo",
+      },
     },
     {
       id: "dat_orange_1",
@@ -85,6 +94,9 @@ export const C1_DAT_01_DATASET: SkillDataset = {
         ref: "🍊",
       },
       contrast_group: "fruit",
+      category: {
+        tally_type: "cam",
+      },
     },
     {
       id: "dat_orange_2",
@@ -96,6 +108,9 @@ export const C1_DAT_01_DATASET: SkillDataset = {
         ref: "🍊",
       },
       contrast_group: "fruit",
+      category: {
+        tally_type: "cam",
+      },
     },
     {
       id: "dat_orange_3",
@@ -107,43 +122,45 @@ export const C1_DAT_01_DATASET: SkillDataset = {
         ref: "🍊",
       },
       contrast_group: "fruit",
+      category: {
+        tally_type: "cam",
+      },
     },
   ],
   axes: {
     tally_type: {
       values: ["táo", "cam"],
-      ordered: true,
     },
   },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với đếm rồi ghi lại bằng dấu",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng đếm rồi ghi lại bằng dấu",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt đếm rồi ghi lại bằng dấu với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi đếm rồi ghi lại bằng dấu",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục đếm rồi ghi lại bằng dấu và tự làm một mình",
       representation: "ten-frame",
     },
   ],

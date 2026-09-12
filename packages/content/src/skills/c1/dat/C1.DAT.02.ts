@@ -52,6 +52,9 @@ export const C1_DAT_02_DATASET: SkillDataset = {
         ref: "🧱",
       },
       contrast_group: "bar",
+      category: {
+        bar_height: "2",
+      },
     },
     {
       id: "bar_block_3",
@@ -63,6 +66,9 @@ export const C1_DAT_02_DATASET: SkillDataset = {
         ref: "🧱",
       },
       contrast_group: "bar",
+      category: {
+        bar_height: "3",
+      },
     },
     {
       id: "bar_block_4",
@@ -74,6 +80,9 @@ export const C1_DAT_02_DATASET: SkillDataset = {
         ref: "🧱",
       },
       contrast_group: "bar",
+      category: {
+        bar_height: "4",
+      },
     },
     {
       id: "bar_block_5",
@@ -85,6 +94,9 @@ export const C1_DAT_02_DATASET: SkillDataset = {
         ref: "🧱",
       },
       contrast_group: "bar",
+      category: {
+        bar_height: "5",
+      },
     },
   ],
   relations: [
@@ -122,31 +134,31 @@ export const C1_DAT_02_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với biểu đồ cột bằng đồ vật",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng biểu đồ cột bằng đồ vật",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt biểu đồ cột bằng đồ vật với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi biểu đồ cột bằng đồ vật",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục biểu đồ cột bằng đồ vật và tự làm một mình",
       representation: "numeral",
     },
   ],

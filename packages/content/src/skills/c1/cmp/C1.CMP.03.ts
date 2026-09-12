@@ -43,7 +43,7 @@ export const C1_CMP_03_DATASET: SkillDataset = {
   items: [
     {
       id: "pair_a",
-      label: "hai quả táo to",
+      label: "hai quả táo",
       glyph: "🍎",
       value: 2,
       image: {
@@ -51,10 +51,13 @@ export const C1_CMP_03_DATASET: SkillDataset = {
         ref: "🍎",
       },
       contrast_group: "same",
+      category: {
+        quantity: "hai",
+      },
     },
     {
       id: "pair_b",
-      label: "hai quả cam to",
+      label: "hai quả cam",
       glyph: "🍊",
       value: 2,
       image: {
@@ -62,21 +65,46 @@ export const C1_CMP_03_DATASET: SkillDataset = {
         ref: "🍊",
       },
       contrast_group: "same",
+      category: {
+        quantity: "hai",
+      },
+    },
+    {
+      id: "pair_c",
+      label: "ba quả chuối",
+      glyph: "🍌",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🍌",
+      },
+      contrast_group: "different",
+      category: {
+        quantity: "ba",
+      },
     },
   ],
   relations: [
     {
-      type: "contrast",
+      type: "pair",
       source_id: "pair_a",
       target_id: "pair_b",
       metadata: {
         relation: "equal_quantity",
       },
     },
+    {
+      type: "contrast",
+      source_id: "pair_a",
+      target_id: "pair_c",
+      metadata: {
+        relation: "different_quantity",
+      },
+    },
   ],
   axes: {
-    magnitude: {
-      values: ["nhỏ", "to"],
+    quantity: {
+      values: ["hai", "ba"],
       ordered: true,
     },
   },
@@ -84,36 +112,36 @@ export const C1_CMP_03_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với bằng nhau",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng bằng nhau",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt bằng nhau với phương án nhiễu",
       representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi bằng nhau",
       representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục bằng nhau và tự làm một mình",
       representation: "discrete-object",
     },
   ],
   phrasing: {
-    prompt_template: "Bên nào có nhiều {label} hơn?",
+    prompt_template: "Hai bên nào có số lượng bằng nhau hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Bằng nhau nhé",
   },
 };

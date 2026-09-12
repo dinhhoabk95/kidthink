@@ -51,6 +51,9 @@ export const C1_CNT_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "0️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n1",
@@ -61,6 +64,9 @@ export const C1_CNT_02_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "1️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
     {
@@ -73,6 +79,9 @@ export const C1_CNT_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "2️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n3",
@@ -83,6 +92,9 @@ export const C1_CNT_02_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "3️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
     {
@@ -95,6 +107,9 @@ export const C1_CNT_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "4️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n5",
@@ -105,6 +120,9 @@ export const C1_CNT_02_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "5️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
   ],
@@ -117,31 +135,31 @@ export const C1_CNT_02_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với đếm khi di chuyển",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng đếm khi di chuyển",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt đếm khi di chuyển với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi đếm khi di chuyển",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục đếm khi di chuyển và tự làm một mình",
       representation: "ten-frame",
     },
   ],

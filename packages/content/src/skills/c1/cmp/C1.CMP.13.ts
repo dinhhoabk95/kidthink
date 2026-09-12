@@ -51,6 +51,9 @@ export const C1_CMP_13_DATASET: SkillDataset = {
         ref: "🌸",
       },
       contrast_group: "distance",
+      category: {
+        distance: "rất gần",
+      },
     },
     {
       id: "dist_house_less",
@@ -62,6 +65,9 @@ export const C1_CMP_13_DATASET: SkillDataset = {
         ref: "🏡",
       },
       contrast_group: "distance",
+      category: {
+        distance: "gần",
+      },
     },
     {
       id: "dist_mountain_more",
@@ -73,6 +79,9 @@ export const C1_CMP_13_DATASET: SkillDataset = {
         ref: "⛰️",
       },
       contrast_group: "distance",
+      category: {
+        distance: "xa",
+      },
     },
     {
       id: "dist_sun_more",
@@ -84,6 +93,9 @@ export const C1_CMP_13_DATASET: SkillDataset = {
         ref: "☀️",
       },
       contrast_group: "distance",
+      category: {
+        distance: "rất xa",
+      },
     },
   ],
   relations: [
@@ -114,36 +126,36 @@ export const C1_CMP_13_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với gần hơn",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng gần hơn",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt gần hơn với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi gần hơn",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục gần hơn và tự làm một mình",
       representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bên nào có nhiều {label} hơn?",
+    prompt_template: "Vật nào ở gần hơn hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Gần hơn nhé",
   },
 };

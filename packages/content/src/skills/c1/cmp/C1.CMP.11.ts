@@ -51,6 +51,9 @@ export const C1_CMP_11_DATASET: SkillDataset = {
         ref: "🪶",
       },
       contrast_group: "weight",
+      category: {
+        weight: "rất nhẹ",
+      },
     },
     {
       id: "weight_strawberry_less",
@@ -62,6 +65,9 @@ export const C1_CMP_11_DATASET: SkillDataset = {
         ref: "🍓",
       },
       contrast_group: "weight",
+      category: {
+        weight: "nhẹ",
+      },
     },
     {
       id: "weight_watermelon_more",
@@ -73,6 +79,9 @@ export const C1_CMP_11_DATASET: SkillDataset = {
         ref: "🍉",
       },
       contrast_group: "weight",
+      category: {
+        weight: "nặng",
+      },
     },
     {
       id: "weight_stone_more",
@@ -84,6 +93,9 @@ export const C1_CMP_11_DATASET: SkillDataset = {
         ref: "🪨",
       },
       contrast_group: "weight",
+      category: {
+        weight: "rất nặng",
+      },
     },
   ],
   relations: [
@@ -114,36 +126,36 @@ export const C1_CMP_11_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với nhẹ hơn",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng nhẹ hơn",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt nhẹ hơn với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi nhẹ hơn",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục nhẹ hơn và tự làm một mình",
       representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bên nào có nhiều {label} hơn?",
+    prompt_template: "Vật nào nhẹ hơn hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Nhẹ hơn nhé",
   },
 };

@@ -51,6 +51,9 @@ export const C1_PAT_03_DATASET: SkillDataset = {
         ref: "❤️",
       },
       contrast_group: "a",
+      category: {
+        cycle: "A2",
+      },
     },
     {
       id: "pat_diamond",
@@ -62,6 +65,9 @@ export const C1_PAT_03_DATASET: SkillDataset = {
         ref: "💎",
       },
       contrast_group: "b",
+      category: {
+        cycle: "B",
+      },
     },
     {
       id: "pat_heart_repeat",
@@ -73,6 +79,9 @@ export const C1_PAT_03_DATASET: SkillDataset = {
         ref: "❤️",
       },
       contrast_group: "a",
+      category: {
+        cycle: "A3",
+      },
     },
     {
       id: "pat_heart_1",
@@ -84,6 +93,9 @@ export const C1_PAT_03_DATASET: SkillDataset = {
         ref: "❤️",
       },
       contrast_group: "a",
+      category: {
+        cycle: "A1",
+      },
     },
   ],
   relations: [
@@ -125,31 +137,31 @@ export const C1_PAT_03_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với quy luật AAB",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng quy luật AAB",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt quy luật AAB với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi quy luật AAB",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục quy luật AAB và tự làm một mình",
       representation: "ten-frame",
     },
   ],

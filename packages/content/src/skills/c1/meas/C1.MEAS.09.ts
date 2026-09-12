@@ -51,6 +51,9 @@ export const C1_MEAS_09_DATASET: SkillDataset = {
         ref: "📏",
       },
       contrast_group: "ruler",
+      category: {
+        length_cm: "3cm",
+      },
     },
     {
       id: "cm_4",
@@ -62,6 +65,9 @@ export const C1_MEAS_09_DATASET: SkillDataset = {
         ref: "📏",
       },
       contrast_group: "ruler",
+      category: {
+        length_cm: "4cm",
+      },
     },
     {
       id: "cm_5",
@@ -73,6 +79,9 @@ export const C1_MEAS_09_DATASET: SkillDataset = {
         ref: "📏",
       },
       contrast_group: "ruler",
+      category: {
+        length_cm: "5cm",
+      },
     },
     {
       id: "cm_6",
@@ -84,6 +93,9 @@ export const C1_MEAS_09_DATASET: SkillDataset = {
         ref: "📏",
       },
       contrast_group: "ruler",
+      category: {
+        length_cm: "6cm",
+      },
     },
   ],
   relations: [
@@ -121,36 +133,36 @@ export const C1_MEAS_09_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với đo bằng thước",
       representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng đo bằng thước",
       representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt đo bằng thước với phương án nhiễu",
       representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi đo bằng thước",
       representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục đo bằng thước và tự làm một mình",
       representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Vật nào có kích thước {label} hơn?",
+    prompt_template: "Bé đọc xem thước chỉ mấy xăng-ti-mét nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Đo bằng thước nhé",
   },
 };

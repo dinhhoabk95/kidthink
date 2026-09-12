@@ -52,6 +52,9 @@ export const C1_MEAS_10_DATASET: SkillDataset = {
         ref: "🧼",
       },
       contrast_group: "time",
+      category: {
+        time_order: "trước",
+      },
     },
     {
       id: "time_after",
@@ -63,6 +66,9 @@ export const C1_MEAS_10_DATASET: SkillDataset = {
         ref: "🍚",
       },
       contrast_group: "time",
+      category: {
+        time_order: "sau",
+      },
     },
   ],
   relations: [
@@ -82,36 +88,36 @@ export const C1_MEAS_10_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với thời gian: trước/sau",
       representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng thời gian: trước/sau",
       representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt thời gian: trước/sau với phương án nhiễu",
       representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi thời gian: trước/sau",
       representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục thời gian: trước/sau và tự làm một mình",
       representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Vật nào có kích thước {label} hơn?",
+    prompt_template: "Việc nào xảy ra trước hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Thời gian: trước/sau nhé",
   },
   ordering: ["time_before", "time_after"],

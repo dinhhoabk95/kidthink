@@ -51,6 +51,9 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
         ref: "🌲",
       },
       contrast_group: "height",
+      category: {
+        height: "rất cao",
+      },
     },
     {
       id: "dim_height_more",
@@ -62,6 +65,9 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
         ref: "🦒",
       },
       contrast_group: "height",
+      category: {
+        height: "cao",
+      },
     },
     {
       id: "dim_height_less",
@@ -73,6 +79,9 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
         ref: "🐑",
       },
       contrast_group: "height",
+      category: {
+        height: "thấp",
+      },
     },
     {
       id: "dim_height_flower_less",
@@ -84,6 +93,9 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
         ref: "🌼",
       },
       contrast_group: "height",
+      category: {
+        height: "rất thấp",
+      },
     },
   ],
   relations: [
@@ -114,36 +126,36 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với cao thấp",
       representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng cao thấp",
       representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt cao thấp với phương án nhiễu",
       representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi cao thấp",
       representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục cao thấp và tự làm một mình",
       representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Vật nào có kích thước {label} hơn?",
+    prompt_template: "Vật nào cao hơn hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Cao thấp nhé",
   },
 };

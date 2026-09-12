@@ -51,6 +51,9 @@ export const C1_NREC_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "0️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n1",
@@ -61,6 +64,9 @@ export const C1_NREC_02_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "1️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
     {
@@ -73,6 +79,9 @@ export const C1_NREC_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "2️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n3",
@@ -83,6 +92,9 @@ export const C1_NREC_02_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "3️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
     {
@@ -95,6 +107,9 @@ export const C1_NREC_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "4️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n5",
@@ -105,6 +120,9 @@ export const C1_NREC_02_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "5️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
   ],
@@ -117,31 +135,31 @@ export const C1_NREC_02_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với nhận biết số 0–5",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng nhận biết số 0–5",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt nhận biết số 0–5 với phương án nhiễu",
       representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi nhận biết số 0–5",
       representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục nhận biết số 0–5 và tự làm một mình",
       representation: "discrete-object",
     },
   ],

@@ -54,6 +54,9 @@ export const C1_DAT_05_DATASET: SkillDataset = {
         ref: "🎯",
       },
       contrast_group: "chart",
+      category: {
+        magnitude: "ít nhất",
+      },
     },
     {
       id: "chart_item_2",
@@ -65,6 +68,9 @@ export const C1_DAT_05_DATASET: SkillDataset = {
         ref: "🥈",
       },
       contrast_group: "chart",
+      category: {
+        magnitude: "ít",
+      },
     },
     {
       id: "chart_item_3",
@@ -76,6 +82,9 @@ export const C1_DAT_05_DATASET: SkillDataset = {
         ref: "🥇",
       },
       contrast_group: "chart",
+      category: {
+        magnitude: "nhiều",
+      },
     },
     {
       id: "chart_max",
@@ -87,6 +96,9 @@ export const C1_DAT_05_DATASET: SkillDataset = {
         ref: "🏆",
       },
       contrast_group: "chart",
+      category: {
+        magnitude: "nhiều nhất",
+      },
     },
   ],
   relations: [
@@ -132,31 +144,31 @@ export const C1_DAT_05_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với trả lời câu hỏi từ biểu đồ",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng trả lời câu hỏi từ biểu đồ",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt trả lời câu hỏi từ biểu đồ với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi trả lời câu hỏi từ biểu đồ",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục trả lời câu hỏi từ biểu đồ và tự làm một mình",
       representation: "numeral",
     },
   ],

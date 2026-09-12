@@ -51,6 +51,9 @@ export const C1_ORD_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🥇",
       },
+      category: {
+        ordinal: "thứ nhất",
+      },
     },
     {
       id: "ord_2",
@@ -60,6 +63,9 @@ export const C1_ORD_02_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "🥈",
+      },
+      category: {
+        ordinal: "thứ hai",
       },
     },
     {
@@ -71,6 +77,9 @@ export const C1_ORD_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🥉",
       },
+      category: {
+        ordinal: "thứ ba",
+      },
     },
     {
       id: "ord_4",
@@ -81,6 +90,9 @@ export const C1_ORD_02_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "4️⃣",
       },
+      category: {
+        ordinal: "thứ tư",
+      },
     },
     {
       id: "ord_5",
@@ -90,6 +102,9 @@ export const C1_ORD_02_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "5️⃣",
+      },
+      category: {
+        ordinal: "thứ năm",
       },
     },
   ],
@@ -121,36 +136,36 @@ export const C1_ORD_02_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với đầu · giữa · cuối hàng",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng đầu · giữa · cuối hàng",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt đầu · giữa · cuối hàng với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi đầu · giữa · cuối hàng",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục đầu · giữa · cuối hàng và tự làm một mình",
       representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bạn nào đứng thứ {position}?",
+    prompt_template: "Bạn nào đứng ở đầu, ở giữa, ở cuối hàng hả bé?",
     narration_template:
       "Chúng mình cùng tìm hiểu về Đầu · giữa · cuối hàng nhé",
   },

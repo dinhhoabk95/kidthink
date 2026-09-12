@@ -43,31 +43,27 @@ export const C1_PROB_06_DATASET: SkillDataset = {
   items: [
     {
       id: "clue_small",
-      label: "số nhỏ hơn năm",
-      glyph: "3️⃣",
-      value: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
+      label: "gợi ý: số nhỏ hơn năm",
+      glyph: "🔍",
       image: {
         kind: "emoji",
-        ref: "3️⃣",
+        ref: "🔍",
       },
       contrast_group: "clue",
     },
     {
       id: "clue_odd",
-      label: "số lẻ",
-      glyph: "3️⃣",
-      value: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
+      label: "gợi ý: số lẻ",
+      glyph: "🔎",
       image: {
         kind: "emoji",
-        ref: "3️⃣",
+        ref: "🔎",
       },
       contrast_group: "clue",
     },
     {
       id: "answer_three",
-      label: "kết quả số ba",
+      label: "số ba",
       glyph: "3️⃣",
       value: 3,
       audio_path: "/audio/voice/common/numbers/3.mp3",
@@ -76,6 +72,10 @@ export const C1_PROB_06_DATASET: SkillDataset = {
         ref: "3️⃣",
       },
       contrast_group: "answer",
+      category: {
+        range: "nhỏ hơn năm",
+        parity: "lẻ",
+      },
     },
     {
       id: "distractor_four",
@@ -88,6 +88,26 @@ export const C1_PROB_06_DATASET: SkillDataset = {
         ref: "4️⃣",
       },
       contrast_group: "distractor",
+      category: {
+        range: "nhỏ hơn năm",
+        parity: "chẵn",
+      },
+    },
+    {
+      id: "distractor_seven",
+      label: "số bảy",
+      glyph: "7️⃣",
+      value: 7,
+      audio_path: "/audio/voice/common/numbers/7.mp3",
+      image: {
+        kind: "emoji",
+        ref: "7️⃣",
+      },
+      contrast_group: "distractor",
+      category: {
+        range: "từ năm trở lên",
+        parity: "lẻ",
+      },
     },
   ],
   relations: [
@@ -115,46 +135,53 @@ export const C1_PROB_06_DATASET: SkillDataset = {
         dimension: "parity",
       },
     },
+    {
+      type: "contrast",
+      source_id: "answer_three",
+      target_id: "distractor_seven",
+      metadata: {
+        dimension: "range",
+      },
+    },
   ],
   axes: {
     range: {
-      values: ["small", "large"],
+      values: ["nhỏ hơn năm", "từ năm trở lên"],
       ordered: true,
     },
     parity: {
-      values: ["odd", "even"],
-      ordered: true,
+      values: ["lẻ", "chẵn"],
     },
   },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với suy luận số",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng suy luận số",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt suy luận số với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi suy luận số",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục suy luận số và tự làm một mình",
       representation: "numeral",
     },
   ],

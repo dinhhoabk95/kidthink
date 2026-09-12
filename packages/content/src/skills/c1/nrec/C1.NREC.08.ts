@@ -51,6 +51,9 @@ export const C1_NREC_08_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "0️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n1",
@@ -61,6 +64,9 @@ export const C1_NREC_08_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "1️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
     {
@@ -73,6 +79,9 @@ export const C1_NREC_08_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "2️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n3",
@@ -83,6 +92,9 @@ export const C1_NREC_08_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "3️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
     {
@@ -95,6 +107,9 @@ export const C1_NREC_08_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "4️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n5",
@@ -105,6 +120,9 @@ export const C1_NREC_08_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "5️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
     {
@@ -117,6 +135,9 @@ export const C1_NREC_08_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "6️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n7",
@@ -127,6 +148,9 @@ export const C1_NREC_08_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "7️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
     {
@@ -139,6 +163,9 @@ export const C1_NREC_08_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "8️⃣",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
     {
       id: "n9",
@@ -149,6 +176,9 @@ export const C1_NREC_08_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "9️⃣",
+      },
+      category: {
+        parity: "lẻ",
       },
     },
     {
@@ -161,6 +191,9 @@ export const C1_NREC_08_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🔟",
       },
+      category: {
+        parity: "chẵn",
+      },
     },
   ],
   axes: {
@@ -172,36 +205,36 @@ export const C1_NREC_08_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với viết số theo nét",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng viết số theo nét",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt viết số theo nét với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi viết số theo nét",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục viết số theo nét và tự làm một mình",
       representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng chữ số {label} nhé!",
+    prompt_template: "Bé tô theo nét để viết chữ số nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Viết số theo nét nhé",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"],

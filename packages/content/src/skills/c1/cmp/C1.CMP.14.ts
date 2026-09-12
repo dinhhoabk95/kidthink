@@ -51,6 +51,9 @@ export const C1_CMP_14_DATASET: SkillDataset = {
         ref: "🚀",
       },
       contrast_group: "speed",
+      category: {
+        speed: "rất nhanh",
+      },
     },
     {
       id: "speed_plane_more",
@@ -62,6 +65,9 @@ export const C1_CMP_14_DATASET: SkillDataset = {
         ref: "✈️",
       },
       contrast_group: "speed",
+      category: {
+        speed: "nhanh",
+      },
     },
     {
       id: "speed_bicycle_less",
@@ -73,6 +79,9 @@ export const C1_CMP_14_DATASET: SkillDataset = {
         ref: "🚲",
       },
       contrast_group: "speed",
+      category: {
+        speed: "chậm",
+      },
     },
     {
       id: "speed_turtle_less",
@@ -84,6 +93,9 @@ export const C1_CMP_14_DATASET: SkillDataset = {
         ref: "🐢",
       },
       contrast_group: "speed",
+      category: {
+        speed: "rất chậm",
+      },
     },
   ],
   relations: [
@@ -114,36 +126,36 @@ export const C1_CMP_14_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với nhanh hơn",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng nhanh hơn",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt nhanh hơn với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi nhanh hơn",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục nhanh hơn và tự làm một mình",
       representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bên nào có nhiều {label} hơn?",
+    prompt_template: "Con nào đi nhanh hơn hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Nhanh hơn nhé",
   },
 };

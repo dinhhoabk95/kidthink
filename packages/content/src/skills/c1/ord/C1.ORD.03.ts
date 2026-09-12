@@ -50,6 +50,9 @@ export const C1_ORD_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🥇",
       },
+      category: {
+        ordinal: "thứ nhất",
+      },
     },
     {
       id: "ord_2",
@@ -59,6 +62,9 @@ export const C1_ORD_03_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "🥈",
+      },
+      category: {
+        ordinal: "thứ hai",
       },
     },
     {
@@ -70,6 +76,9 @@ export const C1_ORD_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "🥉",
       },
+      category: {
+        ordinal: "thứ ba",
+      },
     },
     {
       id: "ord_4",
@@ -80,6 +89,9 @@ export const C1_ORD_03_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "4️⃣",
       },
+      category: {
+        ordinal: "thứ tư",
+      },
     },
     {
       id: "ord_5",
@@ -89,6 +101,9 @@ export const C1_ORD_03_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "5️⃣",
+      },
+      category: {
+        ordinal: "thứ năm",
       },
     },
   ],
@@ -124,36 +139,36 @@ export const C1_ORD_03_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản",
+      description: "Làm quen cơ bản với thứ tự đến thứ năm",
       representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng",
+      description: "Nhận biết và chọn đúng thứ tự đến thứ năm",
       representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
-      description: "Phân biệt với phương án nhiễu",
+      description: "Phân biệt thứ tự đến thứ năm với phương án nhiễu",
       representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
-      description: "Mở rộng phạm vi và số lượng",
+      description: "Mở rộng phạm vi thứ tự đến thứ năm",
       representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
-      description: "Thuần thục và độc lập thực hiện",
+      description: "Thuần thục thứ tự đến thứ năm và tự làm một mình",
       representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bạn nào đứng thứ {position}?",
+    prompt_template: "Bé tìm bạn đứng đúng thứ tự nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Thứ tự đến thứ năm nhé",
   },
   ordering: ["ord_1", "ord_2", "ord_3", "ord_4", "ord_5"],
