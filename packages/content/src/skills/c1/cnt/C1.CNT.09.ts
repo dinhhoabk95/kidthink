@@ -38,20 +38,9 @@ export const C1_CNT_09_IDENTITY: SkillIdentity = {
 
 export const C1_CNT_09_DATASET: SkillDataset = {
   skill_code: "C1.CNT.09",
-  concept_label: "Đếm vật chuyển động",
+  concept_label: "Ước lượng số lượng",
   surface: "game",
   items: [
-    {
-      id: "n0",
-      label: "số không",
-      glyph: "0",
-      value: 0,
-      audio_path: "/audio/voice/common/numbers/0.mp3",
-      image: {
-        kind: "emoji",
-        ref: "0️⃣",
-      },
-    },
     {
       id: "n1",
       label: "số một",
@@ -105,6 +94,17 @@ export const C1_CNT_09_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "5️⃣",
+      },
+    },
+    {
+      id: "n0",
+      label: "số không",
+      glyph: "0",
+      value: 0,
+      audio_path: "/audio/voice/common/numbers/0.mp3",
+      image: {
+        kind: "emoji",
+        ref: "0️⃣",
       },
     },
   ],
@@ -169,9 +169,9 @@ export const C1_CNT_09_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé đếm xem có mấy {label}?",
-    narration_template: "Chúng mình cùng tìm hiểu về Đếm vật chuyển động nhé",
+    narration_template: "Chúng mình cùng tìm hiểu về Ước lượng số lượng nhé",
   },
-  ordering: ["n5", "n4", "n3", "n2", "n1", "n0"],
+  ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
 };
 
 export const C1_CNT_09_SEED: SkillSeed = {

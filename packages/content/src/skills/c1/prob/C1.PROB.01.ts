@@ -46,7 +46,6 @@ export const C1_PROB_01_DATASET: SkillDataset = {
       label: "bước một: đọc đề bài",
       glyph: "📖",
       value: 1,
-      audio_path: "/audio/voice/c1/prob/step_1.mp3",
       image: {
         kind: "emoji",
         ref: "📖",
@@ -58,7 +57,6 @@ export const C1_PROB_01_DATASET: SkillDataset = {
       label: "bước hai: chọn phép tính",
       glyph: "🤔",
       value: 2,
-      audio_path: "/audio/voice/c1/prob/step_2.mp3",
       image: {
         kind: "emoji",
         ref: "🤔",
@@ -70,7 +68,6 @@ export const C1_PROB_01_DATASET: SkillDataset = {
       label: "bước ba: tính kết quả",
       glyph: "✍️",
       value: 3,
-      audio_path: "/audio/voice/c1/prob/step_3.mp3",
       image: {
         kind: "emoji",
         ref: "✍️",
@@ -82,7 +79,6 @@ export const C1_PROB_01_DATASET: SkillDataset = {
       label: "bước bốn: kiểm tra lại",
       glyph: "✅",
       value: 4,
-      audio_path: "/audio/voice/c1/prob/step_4.mp3",
       image: {
         kind: "emoji",
         ref: "✅",
@@ -152,7 +148,7 @@ export const C1_PROB_01_DATASET: SkillDataset = {
     prompt_template: "Bé hãy giải bài toán tìm {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Chọn cách giải nhé",
   },
-  ordering: ["plan_step_4", "plan_step_3", "plan_step_2", "plan_step_1"],
+  ordering: ["plan_step_1", "plan_step_2", "plan_step_3", "plan_step_4"],
 };
 
 export const C1_PROB_01_SEED: SkillSeed = {

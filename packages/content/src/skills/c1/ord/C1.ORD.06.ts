@@ -47,7 +47,6 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ nhất",
       glyph: "1.",
       value: 1,
-      audio_path: "/audio/voice/common/ordinals/1.mp3",
       image: {
         kind: "emoji",
         ref: "🥇",
@@ -58,7 +57,6 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ hai",
       glyph: "2.",
       value: 2,
-      audio_path: "/audio/voice/common/ordinals/2.mp3",
       image: {
         kind: "emoji",
         ref: "🥈",
@@ -69,7 +67,6 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ ba",
       glyph: "3.",
       value: 3,
-      audio_path: "/audio/voice/common/ordinals/3.mp3",
       image: {
         kind: "emoji",
         ref: "🥉",
@@ -80,7 +77,6 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ tư",
       glyph: "4.",
       value: 4,
-      audio_path: "/audio/voice/common/ordinals/4.mp3",
       image: {
         kind: "emoji",
         ref: "4️⃣",
@@ -91,7 +87,6 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ năm",
       glyph: "5.",
       value: 5,
-      audio_path: "/audio/voice/common/ordinals/5.mp3",
       image: {
         kind: "emoji",
         ref: "5️⃣",
@@ -102,7 +97,6 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ sáu",
       glyph: "6.",
       value: 6,
-      audio_path: "/audio/voice/common/ordinals/6.mp3",
       image: {
         kind: "emoji",
         ref: "6️⃣",
@@ -113,7 +107,6 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ bảy",
       glyph: "7.",
       value: 7,
-      audio_path: "/audio/voice/common/ordinals/7.mp3",
       image: {
         kind: "emoji",
         ref: "7️⃣",
@@ -124,7 +117,6 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ tám",
       glyph: "8.",
       value: 8,
-      audio_path: "/audio/voice/common/ordinals/8.mp3",
       image: {
         kind: "emoji",
         ref: "8️⃣",
@@ -135,7 +127,6 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ chín",
       glyph: "9.",
       value: 9,
-      audio_path: "/audio/voice/common/ordinals/9.mp3",
       image: {
         kind: "emoji",
         ref: "9️⃣",
@@ -146,10 +137,9 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ mười",
       glyph: "10.",
       value: 10,
-      audio_path: "/audio/voice/common/ordinals/10.mp3",
       image: {
         kind: "emoji",
-        ref: "10️⃣",
+        ref: "🔟",
       },
     },
   ],

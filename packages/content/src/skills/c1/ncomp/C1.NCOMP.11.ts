@@ -232,17 +232,6 @@ export const C1_NCOMP_11_DATASET: SkillDataset = {
     },
     {
       type: "subset",
-      source_id: "n6",
-      target_id: "n6",
-      metadata: {
-        bond_id: "bond_6_6_0",
-        part_a: 6,
-        part_b: 0,
-        whole: 6,
-      },
-    },
-    {
-      type: "subset",
       source_id: "n0",
       target_id: "n8",
       metadata: {
@@ -326,17 +315,6 @@ export const C1_NCOMP_11_DATASET: SkillDataset = {
         bond_id: "bond_8_7_1",
         part_a: 7,
         part_b: 1,
-        whole: 8,
-      },
-    },
-    {
-      type: "subset",
-      source_id: "n8",
-      target_id: "n8",
-      metadata: {
-        bond_id: "bond_8_8_0",
-        part_a: 8,
-        part_b: 0,
         whole: 8,
       },
     },

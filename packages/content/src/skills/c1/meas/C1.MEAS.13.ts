@@ -43,51 +43,171 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
   items: [
     {
       id: "clock_1",
-      label: "đồng hồ một giờ",
+      label: "đồng hồ chỉ một giờ",
       glyph: "🕐",
       value: 1,
-      audio_path: "/audio/voice/c1/meas/clock_1.mp3",
       image: {
         kind: "emoji",
         ref: "🕐",
       },
       contrast_group: "clock",
-    },
-    {
-      id: "num_clock_1",
-      label: "số một",
-      glyph: "1",
-      value: 1,
-      audio_path: "/audio/voice/common/numbers/1.mp3",
-      image: {
-        kind: "emoji",
-        ref: "1️⃣",
+      category: {
+        hour: "1 giờ",
       },
-      contrast_group: "number",
     },
     {
       id: "clock_2",
-      label: "đồng hồ hai giờ",
+      label: "đồng hồ chỉ hai giờ",
       glyph: "🕑",
       value: 2,
-      audio_path: "/audio/voice/c1/meas/clock_2.mp3",
       image: {
         kind: "emoji",
         ref: "🕑",
       },
       contrast_group: "clock",
+      category: {
+        hour: "2 giờ",
+      },
     },
     {
-      id: "num_clock_2",
-      label: "số hai",
-      glyph: "2",
-      value: 2,
-      audio_path: "/audio/voice/common/numbers/2.mp3",
+      id: "clock_3",
+      label: "đồng hồ chỉ ba giờ",
+      glyph: "🕒",
+      value: 3,
       image: {
         kind: "emoji",
-        ref: "2️⃣",
+        ref: "🕒",
       },
-      contrast_group: "number",
+      contrast_group: "clock",
+      category: {
+        hour: "3 giờ",
+      },
+    },
+    {
+      id: "clock_4",
+      label: "đồng hồ chỉ bốn giờ",
+      glyph: "🕓",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🕓",
+      },
+      contrast_group: "clock",
+      category: {
+        hour: "4 giờ",
+      },
+    },
+    {
+      id: "clock_5",
+      label: "đồng hồ chỉ năm giờ",
+      glyph: "🕔",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🕔",
+      },
+      contrast_group: "clock",
+      category: {
+        hour: "5 giờ",
+      },
+    },
+    {
+      id: "clock_6",
+      label: "đồng hồ chỉ sáu giờ",
+      glyph: "🕕",
+      value: 6,
+      image: {
+        kind: "emoji",
+        ref: "🕕",
+      },
+      contrast_group: "clock",
+      category: {
+        hour: "6 giờ",
+      },
+    },
+    {
+      id: "clock_7",
+      label: "đồng hồ chỉ bảy giờ",
+      glyph: "🕖",
+      value: 7,
+      image: {
+        kind: "emoji",
+        ref: "🕖",
+      },
+      contrast_group: "clock",
+      category: {
+        hour: "7 giờ",
+      },
+    },
+    {
+      id: "clock_8",
+      label: "đồng hồ chỉ tám giờ",
+      glyph: "🕗",
+      value: 8,
+      image: {
+        kind: "emoji",
+        ref: "🕗",
+      },
+      contrast_group: "clock",
+      category: {
+        hour: "8 giờ",
+      },
+    },
+    {
+      id: "clock_9",
+      label: "đồng hồ chỉ chín giờ",
+      glyph: "🕘",
+      value: 9,
+      image: {
+        kind: "emoji",
+        ref: "🕘",
+      },
+      contrast_group: "clock",
+      category: {
+        hour: "9 giờ",
+      },
+    },
+    {
+      id: "clock_10",
+      label: "đồng hồ chỉ mười giờ",
+      glyph: "🕙",
+      value: 10,
+      image: {
+        kind: "emoji",
+        ref: "🕙",
+      },
+      contrast_group: "clock",
+      category: {
+        hour: "10 giờ",
+      },
+    },
+    {
+      id: "clock_11",
+      label: "đồng hồ chỉ mười một giờ",
+      glyph: "🕚",
+      value: 11,
+      image: {
+        kind: "emoji",
+        ref: "🕚",
+      },
+      contrast_group: "clock",
+      category: {
+        hour: "11 giờ",
+      },
+    },
+    {
+      id: "clock_12",
+      label: "đồng hồ chỉ mười hai giờ",
+      glyph: "🕛",
+      value: 12,
+      image: {
+        kind: "emoji",
+        ref: "🕛",
+      },
+      contrast_group: "clock",
+      category: {
+        hour: "12 giờ",
+      },
     },
     {
       id: "clk_hour_1",
@@ -95,11 +215,10 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
       glyph: "1",
       value: 1,
       audio_path: "/audio/voice/common/numbers/1.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
       contrast_group: "time",
+      category: {
+        hour: "1 giờ",
+      },
     },
     {
       id: "clk_hour_2",
@@ -107,11 +226,10 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
       glyph: "2",
       value: 2,
       audio_path: "/audio/voice/common/numbers/2.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
       contrast_group: "time",
+      category: {
+        hour: "2 giờ",
+      },
     },
     {
       id: "clk_hour_3",
@@ -119,11 +237,10 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
       glyph: "3",
       value: 3,
       audio_path: "/audio/voice/common/numbers/3.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
       contrast_group: "time",
+      category: {
+        hour: "3 giờ",
+      },
     },
     {
       id: "clk_hour_4",
@@ -131,11 +248,10 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
       glyph: "4",
       value: 4,
       audio_path: "/audio/voice/common/numbers/4.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
       contrast_group: "time",
+      category: {
+        hour: "4 giờ",
+      },
     },
     {
       id: "clk_hour_5",
@@ -143,11 +259,10 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
       glyph: "5",
       value: 5,
       audio_path: "/audio/voice/common/numbers/5.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
       contrast_group: "time",
+      category: {
+        hour: "5 giờ",
+      },
     },
     {
       id: "clk_hour_6",
@@ -155,11 +270,10 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
       glyph: "6",
       value: 6,
       audio_path: "/audio/voice/common/numbers/6.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
       contrast_group: "time",
+      category: {
+        hour: "6 giờ",
+      },
     },
     {
       id: "clk_hour_7",
@@ -167,11 +281,10 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
       glyph: "7",
       value: 7,
       audio_path: "/audio/voice/common/numbers/7.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
       contrast_group: "time",
+      category: {
+        hour: "7 giờ",
+      },
     },
     {
       id: "clk_hour_8",
@@ -179,11 +292,10 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
       glyph: "8",
       value: 8,
       audio_path: "/audio/voice/common/numbers/8.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
       contrast_group: "time",
+      category: {
+        hour: "8 giờ",
+      },
     },
     {
       id: "clk_hour_9",
@@ -191,11 +303,10 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
       glyph: "9",
       value: 9,
       audio_path: "/audio/voice/common/numbers/9.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
       contrast_group: "time",
+      category: {
+        hour: "9 giờ",
+      },
     },
     {
       id: "clk_hour_10",
@@ -203,11 +314,10 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
       glyph: "10",
       value: 10,
       audio_path: "/audio/voice/common/numbers/10.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
       contrast_group: "time",
+      category: {
+        hour: "10 giờ",
+      },
     },
     {
       id: "clk_hour_11",
@@ -215,11 +325,10 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
       glyph: "11",
       value: 11,
       audio_path: "/audio/voice/common/numbers/11.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
       contrast_group: "time",
+      category: {
+        hour: "11 giờ",
+      },
     },
     {
       id: "clk_hour_12",
@@ -227,28 +336,126 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
       glyph: "12",
       value: 12,
       audio_path: "/audio/voice/common/numbers/12.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
       contrast_group: "time",
+      category: {
+        hour: "12 giờ",
+      },
     },
   ],
   relations: [
     {
       type: "pair",
       source_id: "clock_1",
-      target_id: "num_clock_1",
+      target_id: "clk_hour_1",
+      metadata: {
+        relation: "clock_face_to_hour",
+      },
     },
     {
       type: "pair",
       source_id: "clock_2",
-      target_id: "num_clock_2",
+      target_id: "clk_hour_2",
+      metadata: {
+        relation: "clock_face_to_hour",
+      },
+    },
+    {
+      type: "pair",
+      source_id: "clock_3",
+      target_id: "clk_hour_3",
+      metadata: {
+        relation: "clock_face_to_hour",
+      },
+    },
+    {
+      type: "pair",
+      source_id: "clock_4",
+      target_id: "clk_hour_4",
+      metadata: {
+        relation: "clock_face_to_hour",
+      },
+    },
+    {
+      type: "pair",
+      source_id: "clock_5",
+      target_id: "clk_hour_5",
+      metadata: {
+        relation: "clock_face_to_hour",
+      },
+    },
+    {
+      type: "pair",
+      source_id: "clock_6",
+      target_id: "clk_hour_6",
+      metadata: {
+        relation: "clock_face_to_hour",
+      },
+    },
+    {
+      type: "pair",
+      source_id: "clock_7",
+      target_id: "clk_hour_7",
+      metadata: {
+        relation: "clock_face_to_hour",
+      },
+    },
+    {
+      type: "pair",
+      source_id: "clock_8",
+      target_id: "clk_hour_8",
+      metadata: {
+        relation: "clock_face_to_hour",
+      },
+    },
+    {
+      type: "pair",
+      source_id: "clock_9",
+      target_id: "clk_hour_9",
+      metadata: {
+        relation: "clock_face_to_hour",
+      },
+    },
+    {
+      type: "pair",
+      source_id: "clock_10",
+      target_id: "clk_hour_10",
+      metadata: {
+        relation: "clock_face_to_hour",
+      },
+    },
+    {
+      type: "pair",
+      source_id: "clock_11",
+      target_id: "clk_hour_11",
+      metadata: {
+        relation: "clock_face_to_hour",
+      },
+    },
+    {
+      type: "pair",
+      source_id: "clock_12",
+      target_id: "clk_hour_12",
+      metadata: {
+        relation: "clock_face_to_hour",
+      },
     },
   ],
   axes: {
     hour: {
-      values: ["1 giờ", "2 giờ"],
+      values: [
+        "1 giờ",
+        "2 giờ",
+        "3 giờ",
+        "4 giờ",
+        "5 giờ",
+        "6 giờ",
+        "7 giờ",
+        "8 giờ",
+        "9 giờ",
+        "10 giờ",
+        "11 giờ",
+        "12 giờ",
+      ],
       ordered: true,
     },
   },

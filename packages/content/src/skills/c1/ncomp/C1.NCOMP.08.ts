@@ -252,17 +252,6 @@ export const C1_NCOMP_08_DATASET: SkillDataset = {
         whole: 9,
       },
     },
-    {
-      type: "subset",
-      source_id: "n9",
-      target_id: "n9",
-      metadata: {
-        bond_id: "bond_9_9_0",
-        part_a: 9,
-        part_b: 0,
-        whole: 9,
-      },
-    },
   ],
   ladder: [
     {

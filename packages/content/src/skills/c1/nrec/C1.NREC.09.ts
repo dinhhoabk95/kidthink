@@ -38,7 +38,7 @@ export const C1_NREC_09_IDENTITY: SkillIdentity = {
 
 export const C1_NREC_09_DATASET: SkillDataset = {
   skill_code: "C1.NREC.09",
-  concept_label: "Sắp xếp dãy số",
+  concept_label: "Thứ tự số",
   surface: "game",
   items: [
     {
@@ -169,9 +169,9 @@ export const C1_NREC_09_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng chữ số {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Sắp xếp dãy số nhé",
+    narration_template: "Chúng mình cùng tìm hiểu về Thứ tự số nhé",
   },
-  ordering: ["n5", "n4", "n3", "n2", "n1", "n0"],
+  ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
 };
 
 export const C1_NREC_09_SEED: SkillSeed = {

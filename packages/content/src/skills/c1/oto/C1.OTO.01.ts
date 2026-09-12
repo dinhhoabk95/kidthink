@@ -46,7 +46,6 @@ export const C1_OTO_01_DATASET: SkillDataset = {
       label: "chú thỏ",
       glyph: "🐇",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/rabbit.mp3",
       image: {
         kind: "emoji",
         ref: "🐇",
@@ -58,7 +57,6 @@ export const C1_OTO_01_DATASET: SkillDataset = {
       label: "củ cà rốt",
       glyph: "🥕",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/carrot.mp3",
       image: {
         kind: "emoji",
         ref: "🥕",
@@ -70,7 +68,6 @@ export const C1_OTO_01_DATASET: SkillDataset = {
       label: "chú mèo",
       glyph: "🐱",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/cat.mp3",
       image: {
         kind: "emoji",
         ref: "🐱",
@@ -82,7 +79,6 @@ export const C1_OTO_01_DATASET: SkillDataset = {
       label: "con cá",
       glyph: "🐟",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/fish.mp3",
       image: {
         kind: "emoji",
         ref: "🐟",
@@ -94,7 +90,6 @@ export const C1_OTO_01_DATASET: SkillDataset = {
       label: "chú chó",
       glyph: "🐕",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/dog.mp3",
       image: {
         kind: "emoji",
         ref: "🐕",
@@ -106,7 +101,6 @@ export const C1_OTO_01_DATASET: SkillDataset = {
       label: "khúc xương",
       glyph: "🦴",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/bone.mp3",
       image: {
         kind: "emoji",
         ref: "🦴",

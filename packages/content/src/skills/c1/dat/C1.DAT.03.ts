@@ -46,7 +46,6 @@ export const C1_DAT_03_DATASET: SkillDataset = {
       label: "cột vàng thấp nhất",
       glyph: "🟨",
       value: 1,
-      audio_path: "/audio/voice/c1/dat/col_yellow.mp3",
       image: {
         kind: "emoji",
         ref: "🟨",
@@ -58,7 +57,6 @@ export const C1_DAT_03_DATASET: SkillDataset = {
       label: "cột đỏ thấp",
       glyph: "🟥",
       value: 2,
-      audio_path: "/audio/voice/c1/dat/col_short.mp3",
       image: {
         kind: "emoji",
         ref: "🟥",
@@ -70,7 +68,6 @@ export const C1_DAT_03_DATASET: SkillDataset = {
       label: "cột xanh cao",
       glyph: "🟦",
       value: 4,
-      audio_path: "/audio/voice/c1/dat/col_blue.mp3",
       image: {
         kind: "emoji",
         ref: "🟦",
@@ -82,7 +79,6 @@ export const C1_DAT_03_DATASET: SkillDataset = {
       label: "cột xanh cao nhất",
       glyph: "🟩",
       value: 6,
-      audio_path: "/audio/voice/c1/dat/col_tall.mp3",
       image: {
         kind: "emoji",
         ref: "🟩",

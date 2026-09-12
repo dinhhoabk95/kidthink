@@ -46,7 +46,6 @@ export const C1_PROB_05_DATASET: SkillDataset = {
       label: "mèo vàng một",
       glyph: "🐱",
       value: 1,
-      audio_path: "/audio/voice/c1/prob/cat_1.mp3",
       image: {
         kind: "emoji",
         ref: "🐱",
@@ -62,7 +61,6 @@ export const C1_PROB_05_DATASET: SkillDataset = {
       label: "mèo vàng hai",
       glyph: "🐱",
       value: 2,
-      audio_path: "/audio/voice/c1/prob/cat_2.mp3",
       image: {
         kind: "emoji",
         ref: "🐱",
@@ -78,7 +76,6 @@ export const C1_PROB_05_DATASET: SkillDataset = {
       label: "chó đen một",
       glyph: "🐕",
       value: 1,
-      audio_path: "/audio/voice/c1/prob/dog_1.mp3",
       image: {
         kind: "emoji",
         ref: "🐕",
@@ -94,7 +91,6 @@ export const C1_PROB_05_DATASET: SkillDataset = {
       label: "chó đen hai",
       glyph: "🐕",
       value: 2,
-      audio_path: "/audio/voice/c1/prob/dog_2.mp3",
       image: {
         kind: "emoji",
         ref: "🐕",

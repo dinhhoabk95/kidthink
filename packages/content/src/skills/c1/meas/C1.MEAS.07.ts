@@ -46,7 +46,6 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
       label: "đĩa cân nhẹ bổng",
       glyph: "⚖️",
       value: 1,
-      audio_path: "/audio/voice/c1/meas/scale_light.mp3",
       image: {
         kind: "emoji",
         ref: "⚖️",
@@ -58,7 +57,6 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
       label: "bên trái cân",
       glyph: "⚖️",
       value: 2,
-      audio_path: "/audio/voice/c1/meas/balance_left.mp3",
       image: {
         kind: "emoji",
         ref: "⚖️",
@@ -70,7 +68,6 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
       label: "bên phải cân",
       glyph: "⚖️",
       value: 2,
-      audio_path: "/audio/voice/c1/meas/balance_right.mp3",
       image: {
         kind: "emoji",
         ref: "⚖️",
@@ -82,7 +79,6 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
       label: "đĩa cân trĩu nặng",
       glyph: "⚖️",
       value: 4,
-      audio_path: "/audio/voice/c1/meas/scale_heavy.mp3",
       image: {
         kind: "emoji",
         ref: "⚖️",

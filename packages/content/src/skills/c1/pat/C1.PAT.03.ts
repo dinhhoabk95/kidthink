@@ -42,23 +42,10 @@ export const C1_PAT_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "pat_heart_1",
-      label: "trái tim đỏ một",
-      glyph: "❤️",
-      value: 1,
-      audio_path: "/audio/voice/c1/pat/heart_red.mp3",
-      image: {
-        kind: "emoji",
-        ref: "❤️",
-      },
-      contrast_group: "a",
-    },
-    {
       id: "pat_heart_2",
       label: "trái tim đỏ hai",
       glyph: "❤️",
       value: 2,
-      audio_path: "/audio/voice/c1/pat/heart_red.mp3",
       image: {
         kind: "emoji",
         ref: "❤️",
@@ -70,7 +57,6 @@ export const C1_PAT_03_DATASET: SkillDataset = {
       label: "kim cương xanh",
       glyph: "💎",
       value: 3,
-      audio_path: "/audio/voice/c1/pat/diamond.mp3",
       image: {
         kind: "emoji",
         ref: "💎",
@@ -82,7 +68,17 @@ export const C1_PAT_03_DATASET: SkillDataset = {
       label: "trái tim đỏ lặp lại",
       glyph: "❤️",
       value: 4,
-      audio_path: "/audio/voice/c1/pat/heart_red.mp3",
+      image: {
+        kind: "emoji",
+        ref: "❤️",
+      },
+      contrast_group: "a",
+    },
+    {
+      id: "pat_heart_1",
+      label: "trái tim đỏ một",
+      glyph: "❤️",
+      value: 1,
       image: {
         kind: "emoji",
         ref: "❤️",
@@ -161,7 +157,7 @@ export const C1_PAT_03_DATASET: SkillDataset = {
     prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Quy luật AAB nhé",
   },
-  ordering: ["pat_heart_repeat", "pat_diamond", "pat_heart_2", "pat_heart_1"],
+  ordering: ["pat_heart_1", "pat_heart_2", "pat_diamond", "pat_heart_repeat"],
 };
 
 export const C1_PAT_03_SEED: SkillSeed = {

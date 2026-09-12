@@ -46,7 +46,6 @@ export const C1_OTO_04_DATASET: SkillDataset = {
       label: "một ngôi sao",
       glyph: "⭐",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/star.mp3",
       image: {
         kind: "emoji",
         ref: "⭐",
@@ -70,7 +69,6 @@ export const C1_OTO_04_DATASET: SkillDataset = {
       label: "hai trái tim",
       glyph: "💖",
       value: 2,
-      audio_path: "/audio/voice/c1/oto/hearts.mp3",
       image: {
         kind: "emoji",
         ref: "💖",
@@ -94,7 +92,6 @@ export const C1_OTO_04_DATASET: SkillDataset = {
       label: "ba bông hoa",
       glyph: "🌸",
       value: 3,
-      audio_path: "/audio/voice/c1/oto/flowers.mp3",
       image: {
         kind: "emoji",
         ref: "🌸",

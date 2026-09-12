@@ -148,7 +148,7 @@ export const C1_NREC_04_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/20.mp3",
       image: {
         kind: "emoji",
-        ref: "1️⃣0️⃣",
+        ref: "2️⃣0️⃣",
       },
     },
   ],
@@ -227,7 +227,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/11.mp3",
       image: {
         kind: "emoji",
-        ref: "1️⃣",
+        ref: "1️⃣1️⃣",
       },
     },
     {
@@ -238,7 +238,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/12.mp3",
       image: {
         kind: "emoji",
-        ref: "2️⃣",
+        ref: "1️⃣2️⃣",
       },
     },
     {
@@ -249,7 +249,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/13.mp3",
       image: {
         kind: "emoji",
-        ref: "3️⃣",
+        ref: "1️⃣3️⃣",
       },
     },
     {
@@ -260,7 +260,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/14.mp3",
       image: {
         kind: "emoji",
-        ref: "4️⃣",
+        ref: "1️⃣4️⃣",
       },
     },
     {
@@ -271,7 +271,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/15.mp3",
       image: {
         kind: "emoji",
-        ref: "5️⃣",
+        ref: "1️⃣5️⃣",
       },
     },
     {
@@ -282,7 +282,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/16.mp3",
       image: {
         kind: "emoji",
-        ref: "6️⃣",
+        ref: "1️⃣6️⃣",
       },
     },
     {
@@ -293,7 +293,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/17.mp3",
       image: {
         kind: "emoji",
-        ref: "7️⃣",
+        ref: "1️⃣7️⃣",
       },
     },
     {
@@ -304,7 +304,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/18.mp3",
       image: {
         kind: "emoji",
-        ref: "8️⃣",
+        ref: "1️⃣8️⃣",
       },
     },
     {
@@ -315,7 +315,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/19.mp3",
       image: {
         kind: "emoji",
-        ref: "9️⃣",
+        ref: "1️⃣9️⃣",
       },
     },
     {
@@ -326,7 +326,7 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/20.mp3",
       image: {
         kind: "emoji",
-        ref: "2️⃣",
+        ref: "2️⃣0️⃣",
       },
     },
   ],

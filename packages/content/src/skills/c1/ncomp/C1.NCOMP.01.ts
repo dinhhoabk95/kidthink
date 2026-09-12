@@ -51,6 +51,10 @@ export const C1_NCOMP_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "0️⃣",
       },
+      category: {
+        role: "phần",
+        parity: "chẵn",
+      },
     },
     {
       id: "n1",
@@ -61,6 +65,10 @@ export const C1_NCOMP_01_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "1️⃣",
+      },
+      category: {
+        role: "phần",
+        parity: "lẻ",
       },
     },
     {
@@ -73,6 +81,10 @@ export const C1_NCOMP_01_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "2️⃣",
       },
+      category: {
+        role: "tổng",
+        parity: "chẵn",
+      },
     },
     {
       id: "n3",
@@ -83,6 +95,10 @@ export const C1_NCOMP_01_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "3️⃣",
+      },
+      category: {
+        role: "phần",
+        parity: "lẻ",
       },
     },
   ],
@@ -109,18 +125,15 @@ export const C1_NCOMP_01_DATASET: SkillDataset = {
         whole: 2,
       },
     },
-    {
-      type: "subset",
-      source_id: "n2",
-      target_id: "n2",
-      metadata: {
-        bond_id: "bond_2_2_0",
-        part_a: 2,
-        part_b: 0,
-        whole: 2,
-      },
-    },
   ],
+  axes: {
+    role: {
+      values: ["phần", "tổng"],
+    },
+    parity: {
+      values: ["chẵn", "lẻ"],
+    },
+  },
   ladder: [
     {
       rung: 1,

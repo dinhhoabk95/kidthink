@@ -46,7 +46,6 @@ export const C1_MEAS_09_DATASET: SkillDataset = {
       label: "dài ba xăng-ti-mét",
       glyph: "📏",
       value: 3,
-      audio_path: "/audio/voice/c1/meas/ruler_3.mp3",
       image: {
         kind: "emoji",
         ref: "📏",
@@ -58,7 +57,6 @@ export const C1_MEAS_09_DATASET: SkillDataset = {
       label: "dài bốn xăng-ti-mét",
       glyph: "📏",
       value: 4,
-      audio_path: "/audio/voice/c1/meas/ruler_4.mp3",
       image: {
         kind: "emoji",
         ref: "📏",
@@ -70,7 +68,6 @@ export const C1_MEAS_09_DATASET: SkillDataset = {
       label: "dài năm xăng-ti-mét",
       glyph: "📏",
       value: 5,
-      audio_path: "/audio/voice/c1/meas/cm_5.mp3",
       image: {
         kind: "emoji",
         ref: "📏",
@@ -82,7 +79,6 @@ export const C1_MEAS_09_DATASET: SkillDataset = {
       label: "dài sáu xăng-ti-mét",
       glyph: "📏",
       value: 6,
-      audio_path: "/audio/voice/c1/meas/cm_6.mp3",
       image: {
         kind: "emoji",
         ref: "📏",

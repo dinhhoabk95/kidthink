@@ -42,23 +42,10 @@ export const C1_PAT_10_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "pat_red",
-      label: "màu đỏ",
-      glyph: "🔴",
-      value: 1,
-      audio_path: "/audio/voice/c1/pat/red.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🔴",
-      },
-      contrast_group: "color",
-    },
-    {
       id: "pat_blue",
       label: "màu xanh dương",
       glyph: "🔵",
       value: 2,
-      audio_path: "/audio/voice/c1/pat/blue.mp3",
       image: {
         kind: "emoji",
         ref: "🔵",
@@ -70,10 +57,20 @@ export const C1_PAT_10_DATASET: SkillDataset = {
       label: "màu vàng",
       glyph: "🟡",
       value: 3,
-      audio_path: "/audio/voice/c1/pat/yellow.mp3",
       image: {
         kind: "emoji",
         ref: "🟡",
+      },
+      contrast_group: "color",
+    },
+    {
+      id: "pat_red",
+      label: "màu đỏ",
+      glyph: "🔴",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🔴",
       },
       contrast_group: "color",
     },
@@ -131,7 +128,7 @@ export const C1_PAT_10_DATASET: SkillDataset = {
     prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Pattern màu nhé",
   },
-  ordering: ["pat_yellow", "pat_blue", "pat_red"],
+  ordering: ["pat_red", "pat_blue", "pat_yellow"],
 };
 
 export const C1_PAT_10_SEED: SkillSeed = {

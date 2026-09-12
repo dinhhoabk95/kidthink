@@ -39,7 +39,7 @@ export const C1_NREC_06_IDENTITY: SkillIdentity = {
 
 export const C1_NREC_06_DATASET: SkillDataset = {
   skill_code: "C1.NREC.06",
-  concept_label: "Ghép số với hình ảnh",
+  concept_label: "Chọn đúng ký hiệu số",
   surface: "game",
   items: [
     {
@@ -169,7 +169,7 @@ export const C1_NREC_06_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng chữ số {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Ghép số với hình ảnh nhé",
+    narration_template: "Chúng mình cùng tìm hiểu về Chọn đúng ký hiệu số nhé",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
 };

@@ -38,7 +38,7 @@ export const C1_NREC_03_IDENTITY: SkillIdentity = {
 
 export const C1_NREC_03_DATASET: SkillDataset = {
   skill_code: "C1.NREC.03",
-  concept_label: "Nhận biết số 6–10",
+  concept_label: "Nhận biết số 0–10",
   surface: "game",
   items: [
     {
@@ -202,7 +202,7 @@ export const C1_NREC_03_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng chữ số {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Nhận biết số 6–10 nhé",
+    narration_template: "Chúng mình cùng tìm hiểu về Nhận biết số 0–10 nhé",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"],
 };

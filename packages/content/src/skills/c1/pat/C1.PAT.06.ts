@@ -46,7 +46,6 @@ export const C1_PAT_06_DATASET: SkillDataset = {
       label: "một chấm tròn",
       glyph: "🟢",
       value: 1,
-      audio_path: "/audio/voice/c1/pat/dot_1.mp3",
       image: {
         kind: "emoji",
         ref: "🟢",
@@ -58,7 +57,6 @@ export const C1_PAT_06_DATASET: SkillDataset = {
       label: "hai chấm tròn",
       glyph: "🟢",
       value: 2,
-      audio_path: "/audio/voice/c1/pat/dot_2.mp3",
       image: {
         kind: "emoji",
         ref: "🟢",
@@ -70,7 +68,6 @@ export const C1_PAT_06_DATASET: SkillDataset = {
       label: "ba chấm tròn",
       glyph: "🟢",
       value: 3,
-      audio_path: "/audio/voice/c1/pat/dot_3.mp3",
       image: {
         kind: "emoji",
         ref: "🟢",
@@ -82,7 +79,6 @@ export const C1_PAT_06_DATASET: SkillDataset = {
       label: "bốn chấm tròn",
       glyph: "🟢",
       value: 4,
-      audio_path: "/audio/voice/c1/pat/dot_4.mp3",
       image: {
         kind: "emoji",
         ref: "🟢",

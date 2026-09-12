@@ -49,7 +49,6 @@ export const C1_MEAS_11_DATASET: SkillDataset = {
       label: "hôm qua",
       glyph: "📅",
       value: 1,
-      audio_path: "/audio/voice/c1/meas/yesterday.mp3",
       image: {
         kind: "emoji",
         ref: "📅",
@@ -61,7 +60,6 @@ export const C1_MEAS_11_DATASET: SkillDataset = {
       label: "hôm nay",
       glyph: "📆",
       value: 2,
-      audio_path: "/audio/voice/c1/meas/today.mp3",
       image: {
         kind: "emoji",
         ref: "📆",
@@ -73,7 +71,6 @@ export const C1_MEAS_11_DATASET: SkillDataset = {
       label: "ngày mai",
       glyph: "🗓️",
       value: 3,
-      audio_path: "/audio/voice/c1/meas/tomorrow.mp3",
       image: {
         kind: "emoji",
         ref: "🗓️",
@@ -136,7 +133,7 @@ export const C1_MEAS_11_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Hôm qua · hôm nay · ngày mai nhé",
   },
-  ordering: ["day_tomorrow", "day_today", "day_yesterday"],
+  ordering: ["day_yesterday", "day_today", "day_tomorrow"],
 };
 
 export const C1_MEAS_11_SEED: SkillSeed = {

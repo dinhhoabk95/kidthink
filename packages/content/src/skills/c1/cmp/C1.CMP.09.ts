@@ -46,7 +46,6 @@ export const C1_CMP_09_DATASET: SkillDataset = {
       label: "ngôi nhà thấp",
       glyph: "🏠",
       value: 1,
-      audio_path: "/audio/voice/c1/cmp/house_short.mp3",
       image: {
         kind: "emoji",
         ref: "🏠",
@@ -58,7 +57,6 @@ export const C1_CMP_09_DATASET: SkillDataset = {
       label: "ngôi nhà cao",
       glyph: "🏢",
       value: 2,
-      audio_path: "/audio/voice/c1/cmp/building_tall.mp3",
       image: {
         kind: "emoji",
         ref: "🏢",

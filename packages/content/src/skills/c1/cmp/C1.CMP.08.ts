@@ -46,7 +46,6 @@ export const C1_CMP_08_DATASET: SkillDataset = {
       label: "cây dừa cao",
       glyph: "🌴",
       value: 2,
-      audio_path: "/audio/voice/c1/cmp/tree_tall.mp3",
       image: {
         kind: "emoji",
         ref: "🌴",
@@ -58,7 +57,6 @@ export const C1_CMP_08_DATASET: SkillDataset = {
       label: "cây dừa thấp",
       glyph: "🌴",
       value: 1,
-      audio_path: "/audio/voice/c1/cmp/tree_short.mp3",
       image: {
         kind: "emoji",
         ref: "🌴",

@@ -46,7 +46,6 @@ export const C1_DAT_04_DATASET: SkillDataset = {
       label: "cột táo đỏ",
       glyph: "🍎",
       value: 3,
-      audio_path: "/audio/voice/c1/dat/apple.mp3",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -58,7 +57,6 @@ export const C1_DAT_04_DATASET: SkillDataset = {
       label: "cột chuối vàng",
       glyph: "🍌",
       value: 4,
-      audio_path: "/audio/voice/c1/dat/banana.mp3",
       image: {
         kind: "emoji",
         ref: "🍌",
@@ -70,7 +68,6 @@ export const C1_DAT_04_DATASET: SkillDataset = {
       label: "cột số lượng nam",
       glyph: "👦",
       value: 5,
-      audio_path: "/audio/voice/c1/dat/table_boys.mp3",
       image: {
         kind: "emoji",
         ref: "👦",
@@ -82,7 +79,6 @@ export const C1_DAT_04_DATASET: SkillDataset = {
       label: "cột số lượng nữ",
       glyph: "👧",
       value: 6,
-      audio_path: "/audio/voice/c1/dat/table_girls.mp3",
       image: {
         kind: "emoji",
         ref: "👧",

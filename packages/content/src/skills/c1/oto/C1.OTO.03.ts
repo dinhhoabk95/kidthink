@@ -47,7 +47,6 @@ export const C1_OTO_03_DATASET: SkillDataset = {
       label: "quả táo",
       glyph: "🍎",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/apple.mp3",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -59,7 +58,6 @@ export const C1_OTO_03_DATASET: SkillDataset = {
       label: "bóng quả táo",
       glyph: "⬛",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/apple_shadow.mp3",
       image: {
         kind: "emoji",
         ref: "⬛",
@@ -71,7 +69,6 @@ export const C1_OTO_03_DATASET: SkillDataset = {
       label: "quả chuối",
       glyph: "🍌",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/banana.mp3",
       image: {
         kind: "emoji",
         ref: "🍌",
@@ -83,7 +80,6 @@ export const C1_OTO_03_DATASET: SkillDataset = {
       label: "bóng quả chuối",
       glyph: "⬛",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/banana_shadow.mp3",
       image: {
         kind: "emoji",
         ref: "⬛",
@@ -95,7 +91,6 @@ export const C1_OTO_03_DATASET: SkillDataset = {
       label: "ô tô",
       glyph: "🚗",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/car.mp3",
       image: {
         kind: "emoji",
         ref: "🚗",
@@ -107,7 +102,6 @@ export const C1_OTO_03_DATASET: SkillDataset = {
       label: "bóng ô tô",
       glyph: "⬛",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/car_shadow.mp3",
       image: {
         kind: "emoji",
         ref: "⬛",

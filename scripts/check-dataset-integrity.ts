@@ -61,6 +61,15 @@ function audioResolver(publicRoot: string): (audioPath: string) => boolean {
     existsSync(`${publicRoot}${audioPath}`);
 }
 
+export interface CollectedDataset {
+  readonly dataset: SkillDataset;
+  /**
+   * Dataset chủ đề gắn thẳng vào level dạy: nó cố ý phủ NHIỀU kỹ năng nên nhãn
+   * khái niệm của nó khác tên của bất kỳ kỹ năng lẻ nào. `BR-SDI-05` bỏ qua nó.
+   */
+  readonly isTopic: boolean;
+}
+
 /**
  * Mọi dataset tới được tay trẻ, kể cả dataset chủ đề gắn thẳng vào level
  * (`SkillLevelPlan.dataset`) — chúng không nằm trong `SKILL_DATASETS` nhưng vẫn
@@ -71,12 +80,15 @@ export function collectAllDatasets(
   seeds: readonly {
     readonly levels: readonly { readonly dataset?: SkillDataset }[];
   }[]
-): readonly SkillDataset[] {
-  const all: SkillDataset[] = Object.values(datasets);
+): readonly CollectedDataset[] {
+  const all: CollectedDataset[] = Object.values(datasets).map((dataset) => ({
+    dataset,
+    isTopic: false,
+  }));
   for (const seed of seeds) {
     for (const level of seed.levels) {
       if (level.dataset) {
-        all.push(level.dataset);
+        all.push({ dataset: level.dataset, isTopic: true });
       }
     }
   }
@@ -84,29 +96,37 @@ export function collectAllDatasets(
 }
 
 export function runDatasetIntegrityCheck(options: {
-  readonly datasets: readonly SkillDataset[];
+  readonly datasets: readonly CollectedDataset[];
   readonly identities: Record<string, SkillIdentity>;
   readonly resolvesAudio: (audioPath: string) => boolean;
   readonly substitutedPlaceholders: readonly string[];
 }): DatasetIntegrityReport {
   const violations: IntegrityViolation[] = [];
 
-  for (const dataset of options.datasets) {
+  for (const { dataset, isTopic } of options.datasets) {
     violations.push(
       ...checkRelationIntegrity(dataset),
       ...checkOrderingCoverage(dataset),
       ...checkOrderingNotReversed(dataset),
       ...checkAxesBindToItems(dataset),
-      ...checkConceptLabelMatchesName(
-        dataset,
-        options.identities[dataset.skill_code]
-      ),
       ...checkAudioPathsResolve(dataset, options.resolvesAudio),
       ...checkPromptPlaceholders(dataset, options.substitutedPlaceholders)
     );
+    if (!isTopic) {
+      violations.push(
+        ...checkConceptLabelMatchesName(
+          dataset,
+          options.identities[dataset.skill_code]
+        )
+      );
+    }
   }
 
-  violations.push(...checkCrossDatasetItemConsistency(options.datasets));
+  violations.push(
+    ...checkCrossDatasetItemConsistency(
+      options.datasets.map((entry) => entry.dataset)
+    )
+  );
 
   return { inspectedDatasets: options.datasets.length, violations };
 }

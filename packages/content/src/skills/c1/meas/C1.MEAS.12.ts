@@ -49,7 +49,6 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
       label: "buổi sáng",
       glyph: "🌅",
       value: 1,
-      audio_path: "/audio/voice/c1/meas/morning.mp3",
       image: {
         kind: "emoji",
         ref: "🌅",
@@ -61,7 +60,6 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
       label: "buổi trưa",
       glyph: "☀️",
       value: 2,
-      audio_path: "/audio/voice/c1/meas/noon.mp3",
       image: {
         kind: "emoji",
         ref: "☀️",
@@ -73,7 +71,6 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
       label: "buổi chiều",
       glyph: "🌇",
       value: 3,
-      audio_path: "/audio/voice/c1/meas/afternoon.mp3",
       image: {
         kind: "emoji",
         ref: "🌇",
@@ -85,7 +82,6 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
       label: "buổi tối",
       glyph: "🌙",
       value: 4,
-      audio_path: "/audio/voice/c1/meas/night.mp3",
       image: {
         kind: "emoji",
         ref: "🌙",
@@ -153,7 +149,7 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Buổi trong ngày: sáng · trưa · chiều · tối nhé",
   },
-  ordering: ["time_night", "time_afternoon", "time_noon", "time_morning"],
+  ordering: ["time_morning", "time_noon", "time_afternoon", "time_night"],
 };
 
 export const C1_MEAS_12_SEED: SkillSeed = {

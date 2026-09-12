@@ -49,7 +49,6 @@ export const C1_ORD_01_DATASET: SkillDataset = {
       label: "thứ nhất",
       glyph: "1.",
       value: 1,
-      audio_path: "/audio/voice/common/ordinals/1.mp3",
       image: {
         kind: "emoji",
         ref: "🥇",
@@ -60,7 +59,6 @@ export const C1_ORD_01_DATASET: SkillDataset = {
       label: "thứ hai",
       glyph: "2.",
       value: 2,
-      audio_path: "/audio/voice/common/ordinals/2.mp3",
       image: {
         kind: "emoji",
         ref: "🥈",
@@ -71,7 +69,6 @@ export const C1_ORD_01_DATASET: SkillDataset = {
       label: "thứ ba",
       glyph: "3.",
       value: 3,
-      audio_path: "/audio/voice/common/ordinals/3.mp3",
       image: {
         kind: "emoji",
         ref: "🥉",
@@ -133,7 +130,7 @@ export const C1_ORD_01_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Thứ nhất · thứ hai · thứ ba nhé",
   },
-  ordering: ["ord_3", "ord_2", "ord_1"],
+  ordering: ["ord_1", "ord_2", "ord_3"],
 };
 
 export const C1_ORD_01_SEED: SkillSeed = {

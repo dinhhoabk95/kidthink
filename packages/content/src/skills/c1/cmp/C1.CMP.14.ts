@@ -46,7 +46,6 @@ export const C1_CMP_14_DATASET: SkillDataset = {
       label: "tên lửa rất nhanh",
       glyph: "🚀",
       value: 4,
-      audio_path: "/audio/voice/c1/cmp/rocket_fast.mp3",
       image: {
         kind: "emoji",
         ref: "🚀",
@@ -58,7 +57,6 @@ export const C1_CMP_14_DATASET: SkillDataset = {
       label: "máy bay bay nhanh",
       glyph: "✈️",
       value: 3,
-      audio_path: "/audio/voice/c1/cmp/plane_fast.mp3",
       image: {
         kind: "emoji",
         ref: "✈️",
@@ -70,7 +68,6 @@ export const C1_CMP_14_DATASET: SkillDataset = {
       label: "xe đạp đi chậm",
       glyph: "🚲",
       value: 2,
-      audio_path: "/audio/voice/c1/cmp/bicycle_slow.mp3",
       image: {
         kind: "emoji",
         ref: "🚲",
@@ -82,7 +79,6 @@ export const C1_CMP_14_DATASET: SkillDataset = {
       label: "con rùa rất chậm",
       glyph: "🐢",
       value: 1,
-      audio_path: "/audio/voice/c1/cmp/turtle_slow.mp3",
       image: {
         kind: "emoji",
         ref: "🐢",

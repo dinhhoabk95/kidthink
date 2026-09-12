@@ -42,23 +42,10 @@ export const C1_PAT_09_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "pat_circle",
-      label: "hình tròn",
-      glyph: "⚪",
-      value: 1,
-      audio_path: "/audio/voice/c1/pat/circle.mp3",
-      image: {
-        kind: "emoji",
-        ref: "⚪",
-      },
-      contrast_group: "shape",
-    },
-    {
       id: "pat_square",
       label: "hình vuông",
       glyph: "⬜",
       value: 2,
-      audio_path: "/audio/voice/c1/pat/square.mp3",
       image: {
         kind: "emoji",
         ref: "⬜",
@@ -70,10 +57,20 @@ export const C1_PAT_09_DATASET: SkillDataset = {
       label: "hình tam giác",
       glyph: "🔺",
       value: 3,
-      audio_path: "/audio/voice/c1/pat/triangle.mp3",
       image: {
         kind: "emoji",
         ref: "🔺",
+      },
+      contrast_group: "shape",
+    },
+    {
+      id: "pat_circle",
+      label: "hình tròn",
+      glyph: "⚪",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "⚪",
       },
       contrast_group: "shape",
     },
@@ -131,7 +128,7 @@ export const C1_PAT_09_DATASET: SkillDataset = {
     prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Pattern hình nhé",
   },
-  ordering: ["pat_triangle", "pat_square", "pat_circle"],
+  ordering: ["pat_circle", "pat_square", "pat_triangle"],
 };
 
 export const C1_PAT_09_SEED: SkillSeed = {

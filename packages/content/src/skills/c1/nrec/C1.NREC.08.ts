@@ -38,7 +38,7 @@ export const C1_NREC_08_IDENTITY: SkillIdentity = {
 
 export const C1_NREC_08_DATASET: SkillDataset = {
   skill_code: "C1.NREC.08",
-  concept_label: "Tìm số còn thiếu",
+  concept_label: "Viết số theo nét",
   surface: "game",
   items: [
     {
@@ -202,7 +202,7 @@ export const C1_NREC_08_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng chữ số {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Tìm số còn thiếu nhé",
+    narration_template: "Chúng mình cùng tìm hiểu về Viết số theo nét nhé",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"],
 };

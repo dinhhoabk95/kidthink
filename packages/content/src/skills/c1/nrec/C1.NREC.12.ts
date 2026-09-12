@@ -38,7 +38,7 @@ export const C1_NREC_12_IDENTITY: SkillIdentity = {
 
 export const C1_NREC_12_DATASET: SkillDataset = {
   skill_code: "C1.NREC.12",
-  concept_label: "Nhận biết số trên đồ vật thực tế",
+  concept_label: "Số ở giữa",
   surface: "game",
   items: [
     {
@@ -215,8 +215,7 @@ export const C1_NREC_12_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng chữ số {label} nhé!",
-    narration_template:
-      "Chúng mình cùng tìm hiểu về Nhận biết số trên đồ vật thực tế nhé",
+    narration_template: "Chúng mình cùng tìm hiểu về Số ở giữa nhé",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"],
 };

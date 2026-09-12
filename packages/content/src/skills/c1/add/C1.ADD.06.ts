@@ -285,17 +285,6 @@ export const C1_ADD_06_DATASET: SkillDataset = {
         whole: 10,
       },
     },
-    {
-      type: "subset",
-      source_id: "n10",
-      target_id: "n10",
-      metadata: {
-        bond_id: "bond_10_10_0",
-        part_a: 10,
-        part_b: 0,
-        whole: 10,
-      },
-    },
   ],
   ladder: [
     {

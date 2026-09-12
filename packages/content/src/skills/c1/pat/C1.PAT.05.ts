@@ -42,23 +42,10 @@ export const C1_PAT_05_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "pat_car_1",
-      label: "xe đỏ một",
-      glyph: "🚗",
-      value: 1,
-      audio_path: "/audio/voice/c1/pat/car_red.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🚗",
-      },
-      contrast_group: "a",
-    },
-    {
       id: "pat_car_2",
       label: "xe đỏ hai",
       glyph: "🚗",
       value: 2,
-      audio_path: "/audio/voice/c1/pat/car_red.mp3",
       image: {
         kind: "emoji",
         ref: "🚗",
@@ -70,7 +57,6 @@ export const C1_PAT_05_DATASET: SkillDataset = {
       label: "xe buýt vàng một",
       glyph: "🚌",
       value: 3,
-      audio_path: "/audio/voice/c1/pat/bus_yellow.mp3",
       image: {
         kind: "emoji",
         ref: "🚌",
@@ -82,12 +68,22 @@ export const C1_PAT_05_DATASET: SkillDataset = {
       label: "xe buýt vàng hai",
       glyph: "🚌",
       value: 4,
-      audio_path: "/audio/voice/c1/pat/bus_yellow.mp3",
       image: {
         kind: "emoji",
         ref: "b",
       },
       contrast_group: "b",
+    },
+    {
+      id: "pat_car_1",
+      label: "xe đỏ một",
+      glyph: "🚗",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🚗",
+      },
+      contrast_group: "a",
     },
   ],
   relations: [
@@ -164,7 +160,7 @@ export const C1_PAT_05_DATASET: SkillDataset = {
     prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Quy luật AABB nhé",
   },
-  ordering: ["pat_bus_2", "pat_bus_1", "pat_car_2", "pat_car_1"],
+  ordering: ["pat_car_1", "pat_car_2", "pat_bus_1", "pat_bus_2"],
 };
 
 export const C1_PAT_05_SEED: SkillSeed = {

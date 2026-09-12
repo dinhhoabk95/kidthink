@@ -46,7 +46,6 @@ export const C1_CMP_13_DATASET: SkillDataset = {
       label: "bông hoa rất gần",
       glyph: "🌸",
       value: 1,
-      audio_path: "/audio/voice/c1/cmp/flower_near.mp3",
       image: {
         kind: "emoji",
         ref: "🌸",
@@ -58,7 +57,6 @@ export const C1_CMP_13_DATASET: SkillDataset = {
       label: "ngôi nhà ở gần",
       glyph: "🏡",
       value: 2,
-      audio_path: "/audio/voice/c1/cmp/house_near.mp3",
       image: {
         kind: "emoji",
         ref: "🏡",
@@ -70,7 +68,6 @@ export const C1_CMP_13_DATASET: SkillDataset = {
       label: "ngọn núi ở xa",
       glyph: "⛰️",
       value: 3,
-      audio_path: "/audio/voice/c1/cmp/mountain_far.mp3",
       image: {
         kind: "emoji",
         ref: "⛰️",
@@ -82,7 +79,6 @@ export const C1_CMP_13_DATASET: SkillDataset = {
       label: "mặt trời rất xa",
       glyph: "☀️",
       value: 4,
-      audio_path: "/audio/voice/c1/cmp/sun_far.mp3",
       image: {
         kind: "emoji",
         ref: "☀️",

@@ -42,23 +42,10 @@ export const C1_PAT_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "pat_star",
-      label: "ngôi sao vàng",
-      glyph: "⭐",
-      value: 1,
-      audio_path: "/audio/voice/c1/pat/star.mp3",
-      image: {
-        kind: "emoji",
-        ref: "⭐",
-      },
-      contrast_group: "a",
-    },
-    {
       id: "pat_circle_1",
       label: "hình tròn xanh một",
       glyph: "🔵",
       value: 2,
-      audio_path: "/audio/voice/c1/pat/circle_blue.mp3",
       image: {
         kind: "emoji",
         ref: "🔵",
@@ -70,7 +57,6 @@ export const C1_PAT_02_DATASET: SkillDataset = {
       label: "hình tròn xanh hai",
       glyph: "🔵",
       value: 3,
-      audio_path: "/audio/voice/c1/pat/circle_blue.mp3",
       image: {
         kind: "emoji",
         ref: "🔵",
@@ -82,7 +68,17 @@ export const C1_PAT_02_DATASET: SkillDataset = {
       label: "ngôi sao vàng lặp lại",
       glyph: "⭐",
       value: 4,
-      audio_path: "/audio/voice/c1/pat/star.mp3",
+      image: {
+        kind: "emoji",
+        ref: "⭐",
+      },
+      contrast_group: "a",
+    },
+    {
+      id: "pat_star",
+      label: "ngôi sao vàng",
+      glyph: "⭐",
+      value: 1,
       image: {
         kind: "emoji",
         ref: "⭐",
@@ -161,7 +157,7 @@ export const C1_PAT_02_DATASET: SkillDataset = {
     prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Quy luật ABB nhé",
   },
-  ordering: ["pat_star_repeat", "pat_circle_2", "pat_circle_1", "pat_star"],
+  ordering: ["pat_star", "pat_circle_1", "pat_circle_2", "pat_star_repeat"],
 };
 
 export const C1_PAT_02_SEED: SkillSeed = {

@@ -46,7 +46,6 @@ export const C1_CMP_04_DATASET: SkillDataset = {
       label: "nhiều quả táo",
       glyph: "🍎",
       value: 5,
-      audio_path: "/audio/voice/c1/cmp/many_apples.mp3",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -58,7 +57,6 @@ export const C1_CMP_04_DATASET: SkillDataset = {
       label: "ít quả táo",
       glyph: "🍎",
       value: 2,
-      audio_path: "/audio/voice/c1/cmp/few_apples.mp3",
       image: {
         kind: "emoji",
         ref: "🍎",

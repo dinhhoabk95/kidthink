@@ -46,7 +46,6 @@ export const C1_CMP_15_DATASET: SkillDataset = {
       label: "chú ốc sên rất chậm",
       glyph: "🐌",
       value: 1,
-      audio_path: "/audio/voice/c1/cmp/snail_slow.mp3",
       image: {
         kind: "emoji",
         ref: "🐌",
@@ -54,11 +53,10 @@ export const C1_CMP_15_DATASET: SkillDataset = {
       contrast_group: "speed",
     },
     {
-      id: "speed_turtle_less",
+      id: "speed_turtle_mid",
       label: "chú rùa bò chậm",
       glyph: "🐢",
       value: 2,
-      audio_path: "/audio/voice/c1/cmp/turtle_slow.mp3",
       image: {
         kind: "emoji",
         ref: "🐢",
@@ -70,7 +68,6 @@ export const C1_CMP_15_DATASET: SkillDataset = {
       label: "chú thỏ chạy nhanh",
       glyph: "🐇",
       value: 3,
-      audio_path: "/audio/voice/c1/cmp/rabbit_fast.mp3",
       image: {
         kind: "emoji",
         ref: "🐇",
@@ -82,7 +79,6 @@ export const C1_CMP_15_DATASET: SkillDataset = {
       label: "con báo rất nhanh",
       glyph: "🐆",
       value: 4,
-      audio_path: "/audio/voice/c1/cmp/cheetah_fast.mp3",
       image: {
         kind: "emoji",
         ref: "🐆",
@@ -101,7 +97,7 @@ export const C1_CMP_15_DATASET: SkillDataset = {
     },
     {
       type: "contrast",
-      source_id: "speed_turtle_less",
+      source_id: "speed_turtle_mid",
       target_id: "speed_rabbit_more",
       metadata: {
         dimension: "speed",

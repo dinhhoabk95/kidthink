@@ -46,7 +46,6 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
       label: "cây cổ thụ cao",
       glyph: "🌲",
       value: 4,
-      audio_path: "/audio/voice/c1/meas/tree_tall.mp3",
       image: {
         kind: "emoji",
         ref: "🌲",
@@ -58,7 +57,6 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
       label: "hươu cao cổ cao",
       glyph: "🦒",
       value: 3,
-      audio_path: "/audio/voice/c1/meas/giraffe_tall.mp3",
       image: {
         kind: "emoji",
         ref: "🦒",
@@ -70,7 +68,6 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
       label: "chú cừu thấp",
       glyph: "🐑",
       value: 2,
-      audio_path: "/audio/voice/c1/meas/sheep_short.mp3",
       image: {
         kind: "emoji",
         ref: "🐑",
@@ -82,7 +79,6 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
       label: "bụi hoa thấp",
       glyph: "🌼",
       value: 1,
-      audio_path: "/audio/voice/c1/meas/flower_short.mp3",
       image: {
         kind: "emoji",
         ref: "🌼",

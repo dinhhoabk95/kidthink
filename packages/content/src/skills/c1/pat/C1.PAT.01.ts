@@ -42,35 +42,67 @@ export const C1_PAT_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "pat_apple",
-      label: "quả táo đỏ",
-      glyph: "🍎",
-      value: 1,
-      audio_path: "/audio/voice/c1/pat/apple.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🍎",
-      },
-      contrast_group: "a",
-    },
-    {
-      id: "pat_banana",
-      label: "quả chuối vàng",
+      id: "pat_banana_1",
+      label: "quả chuối vàng thứ nhất",
       glyph: "🍌",
       value: 2,
-      audio_path: "/audio/voice/c1/pat/banana.mp3",
       image: {
         kind: "emoji",
         ref: "🍌",
       },
       contrast_group: "b",
+      category: {
+        cycle: "B",
+      },
+    },
+    {
+      id: "pat_apple_2",
+      label: "quả táo đỏ thứ hai",
+      glyph: "🍎",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🍎",
+      },
+      contrast_group: "a",
+      category: {
+        cycle: "A",
+      },
+    },
+    {
+      id: "pat_banana_2",
+      label: "quả chuối vàng thứ hai",
+      glyph: "🍌",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🍌",
+      },
+      contrast_group: "b",
+      category: {
+        cycle: "B",
+      },
+    },
+    {
+      id: "pat_apple_1",
+      label: "quả táo đỏ thứ nhất",
+      glyph: "🍎",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🍎",
+      },
+      contrast_group: "a",
+      category: {
+        cycle: "A",
+      },
     },
   ],
   relations: [
     {
       type: "sequence",
-      source_id: "pat_apple",
-      target_id: "pat_banana",
+      source_id: "pat_apple_1",
+      target_id: "pat_banana_1",
       metadata: {
         rule: "AB",
         period: 2,
@@ -78,14 +110,28 @@ export const C1_PAT_01_DATASET: SkillDataset = {
     },
     {
       type: "sequence",
-      source_id: "pat_banana",
-      target_id: "pat_apple",
+      source_id: "pat_banana_1",
+      target_id: "pat_apple_2",
+      metadata: {
+        rule: "AB",
+        period: 2,
+      },
+    },
+    {
+      type: "sequence",
+      source_id: "pat_apple_2",
+      target_id: "pat_banana_2",
       metadata: {
         rule: "AB",
         period: 2,
       },
     },
   ],
+  axes: {
+    cycle: {
+      values: ["A", "B"],
+    },
+  },
   ladder: [
     {
       rung: 1,
@@ -122,7 +168,7 @@ export const C1_PAT_01_DATASET: SkillDataset = {
     prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Quy luật AB nhé",
   },
-  ordering: ["pat_banana", "pat_apple"],
+  ordering: ["pat_apple_1", "pat_banana_1", "pat_apple_2", "pat_banana_2"],
 };
 
 export const C1_PAT_01_SEED: SkillSeed = {

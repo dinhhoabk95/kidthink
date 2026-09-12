@@ -226,7 +226,7 @@ export const C1_CNT_08_DATASET: SkillDataset = {
     prompt_template: "Bé đếm xem có mấy {label}?",
     narration_template: "Chúng mình cùng tìm hiểu về Đếm trên đường số nhé",
   },
-  ordering: ["n10", "n9", "n8", "n7", "n6", "n5", "n4", "n3", "n2", "n1", "n0"],
+  ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"],
 };
 
 export const C1_CNT_08_SEED: SkillSeed = {

@@ -46,7 +46,6 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
       label: "chú rắn dài",
       glyph: "🐍",
       value: 4,
-      audio_path: "/audio/voice/c1/meas/snake_long.mp3",
       image: {
         kind: "emoji",
         ref: "🐍",
@@ -58,7 +57,6 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
       label: "chiếc đũa dài",
       glyph: "🥢",
       value: 3,
-      audio_path: "/audio/voice/c1/meas/chopstick_long.mp3",
       image: {
         kind: "emoji",
         ref: "🥢",
@@ -70,7 +68,6 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
       label: "chiếc đũa ngắn",
       glyph: "🥢",
       value: 2,
-      audio_path: "/audio/voice/c1/meas/chopstick_short.mp3",
       image: {
         kind: "emoji",
         ref: "🥢",
@@ -82,7 +79,6 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
       label: "chú sâu ngắn",
       glyph: "🐛",
       value: 1,
-      audio_path: "/audio/voice/c1/meas/worm_short.mp3",
       image: {
         kind: "emoji",
         ref: "🐛",

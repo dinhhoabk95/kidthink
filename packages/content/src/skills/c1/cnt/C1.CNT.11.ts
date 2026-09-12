@@ -41,7 +41,7 @@ export const C1_CNT_11_IDENTITY: SkillIdentity = {
 
 export const C1_CNT_11_DATASET: SkillDataset = {
   skill_code: "C1.CNT.11",
-  concept_label: "Nhận biết lượng tức thì (subitizing)",
+  concept_label: "Subitizing — nhận lượng tức thì (1–5)",
   surface: "game",
   items: [
     {
@@ -146,7 +146,7 @@ export const C1_CNT_11_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé đếm xem có mấy {label}?",
     narration_template:
-      "Chúng mình cùng tìm hiểu về Nhận biết lượng tức thì (subitizing) nhé",
+      "Chúng mình cùng tìm hiểu về Subitizing — nhận lượng tức thì (1–5) nhé",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
 };

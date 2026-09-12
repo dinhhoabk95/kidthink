@@ -49,7 +49,6 @@ export const C1_ORD_05_DATASET: SkillDataset = {
       label: "thứ nhất",
       glyph: "1.",
       value: 1,
-      audio_path: "/audio/voice/common/ordinals/1.mp3",
       image: {
         kind: "emoji",
         ref: "🥇",
@@ -60,7 +59,6 @@ export const C1_ORD_05_DATASET: SkillDataset = {
       label: "thứ hai",
       glyph: "2.",
       value: 2,
-      audio_path: "/audio/voice/common/ordinals/2.mp3",
       image: {
         kind: "emoji",
         ref: "🥈",
@@ -71,7 +69,6 @@ export const C1_ORD_05_DATASET: SkillDataset = {
       label: "thứ ba",
       glyph: "3.",
       value: 3,
-      audio_path: "/audio/voice/common/ordinals/3.mp3",
       image: {
         kind: "emoji",
         ref: "🥉",
@@ -82,7 +79,6 @@ export const C1_ORD_05_DATASET: SkillDataset = {
       label: "thứ tư",
       glyph: "4.",
       value: 4,
-      audio_path: "/audio/voice/common/ordinals/4.mp3",
       image: {
         kind: "emoji",
         ref: "4️⃣",
@@ -93,7 +89,6 @@ export const C1_ORD_05_DATASET: SkillDataset = {
       label: "thứ năm",
       glyph: "5.",
       value: 5,
-      audio_path: "/audio/voice/common/ordinals/5.mp3",
       image: {
         kind: "emoji",
         ref: "5️⃣",
@@ -158,7 +153,7 @@ export const C1_ORD_05_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Đếm tiếp từ vị trí bất kỳ nhé",
   },
-  ordering: ["ord_5", "ord_4", "ord_3", "ord_2", "ord_1"],
+  ordering: ["ord_1", "ord_2", "ord_3", "ord_4", "ord_5"],
 };
 
 export const C1_ORD_05_SEED: SkillSeed = {

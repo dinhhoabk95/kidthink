@@ -47,7 +47,6 @@ export const C1_DAT_01_DATASET: SkillDataset = {
       label: "quả táo một",
       glyph: "🍎",
       value: 1,
-      audio_path: "/audio/voice/c1/dat/apple_1.mp3",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -59,7 +58,6 @@ export const C1_DAT_01_DATASET: SkillDataset = {
       label: "quả táo hai",
       glyph: "🍎",
       value: 2,
-      audio_path: "/audio/voice/c1/dat/apple_2.mp3",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -71,7 +69,6 @@ export const C1_DAT_01_DATASET: SkillDataset = {
       label: "quả táo ba",
       glyph: "🍎",
       value: 3,
-      audio_path: "/audio/voice/c1/dat/apple_3.mp3",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -83,7 +80,6 @@ export const C1_DAT_01_DATASET: SkillDataset = {
       label: "quả cam một",
       glyph: "🍊",
       value: 1,
-      audio_path: "/audio/voice/c1/dat/orange_1.mp3",
       image: {
         kind: "emoji",
         ref: "🍊",
@@ -95,7 +91,6 @@ export const C1_DAT_01_DATASET: SkillDataset = {
       label: "quả cam hai",
       glyph: "🍊",
       value: 2,
-      audio_path: "/audio/voice/c1/dat/orange_2.mp3",
       image: {
         kind: "emoji",
         ref: "🍊",
@@ -107,7 +102,6 @@ export const C1_DAT_01_DATASET: SkillDataset = {
       label: "quả cam ba",
       glyph: "🍊",
       value: 3,
-      audio_path: "/audio/voice/c1/dat/orange_3.mp3",
       image: {
         kind: "emoji",
         ref: "🍊",

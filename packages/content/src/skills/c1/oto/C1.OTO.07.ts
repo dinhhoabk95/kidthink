@@ -46,7 +46,6 @@ export const C1_OTO_07_DATASET: SkillDataset = {
       label: "hình tròn đỏ",
       glyph: "🔴",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/red_circle.mp3",
       image: {
         kind: "emoji",
         ref: "🔴",
@@ -58,7 +57,6 @@ export const C1_OTO_07_DATASET: SkillDataset = {
       label: "hình tròn xanh",
       glyph: "🔵",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/blue_circle.mp3",
       image: {
         kind: "emoji",
         ref: "🔵",
@@ -70,7 +68,6 @@ export const C1_OTO_07_DATASET: SkillDataset = {
       label: "hình vuông đỏ",
       glyph: "🟥",
       value: 2,
-      audio_path: "/audio/voice/c1/oto/red_square.mp3",
       image: {
         kind: "emoji",
         ref: "🟥",
@@ -82,7 +79,6 @@ export const C1_OTO_07_DATASET: SkillDataset = {
       label: "hình vuông xanh",
       glyph: "🟦",
       value: 2,
-      audio_path: "/audio/voice/c1/oto/blue_square.mp3",
       image: {
         kind: "emoji",
         ref: "🟦",
@@ -94,7 +90,6 @@ export const C1_OTO_07_DATASET: SkillDataset = {
       label: "hình tam giác đỏ",
       glyph: "🔺",
       value: 3,
-      audio_path: "/audio/voice/c1/oto/red_triangle.mp3",
       image: {
         kind: "emoji",
         ref: "🔺",
@@ -106,7 +101,6 @@ export const C1_OTO_07_DATASET: SkillDataset = {
       label: "hình tam giác xanh",
       glyph: "🔷",
       value: 3,
-      audio_path: "/audio/voice/c1/oto/blue_triangle.mp3",
       image: {
         kind: "emoji",
         ref: "🔷",

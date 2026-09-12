@@ -47,7 +47,6 @@ export const C1_MEAS_10_DATASET: SkillDataset = {
       label: "trước khi rửa tay",
       glyph: "🧼",
       value: 1,
-      audio_path: "/audio/voice/c1/meas/wash_before.mp3",
       image: {
         kind: "emoji",
         ref: "🧼",
@@ -59,7 +58,6 @@ export const C1_MEAS_10_DATASET: SkillDataset = {
       label: "sau khi ăn cơm",
       glyph: "🍚",
       value: 2,
-      audio_path: "/audio/voice/c1/meas/eat_after.mp3",
       image: {
         kind: "emoji",
         ref: "🍚",
@@ -116,7 +114,7 @@ export const C1_MEAS_10_DATASET: SkillDataset = {
     prompt_template: "Vật nào có kích thước {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Thời gian: trước/sau nhé",
   },
-  ordering: ["time_after", "time_before"],
+  ordering: ["time_before", "time_after"],
 };
 
 export const C1_MEAS_10_SEED: SkillSeed = {

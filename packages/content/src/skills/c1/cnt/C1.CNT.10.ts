@@ -39,7 +39,7 @@ export const C1_CNT_10_IDENTITY: SkillIdentity = {
 
 export const C1_CNT_10_DATASET: SkillDataset = {
   skill_code: "C1.CNT.10",
-  concept_label: "Đếm vật xếp vòng tròn",
+  concept_label: "Kiểm tra kết quả đếm",
   surface: "game",
   items: [
     {
@@ -216,7 +216,7 @@ export const C1_CNT_10_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé đếm xem có mấy {label}?",
-    narration_template: "Chúng mình cùng tìm hiểu về Đếm vật xếp vòng tròn nhé",
+    narration_template: "Chúng mình cùng tìm hiểu về Kiểm tra kết quả đếm nhé",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"],
 };

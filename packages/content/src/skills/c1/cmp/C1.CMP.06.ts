@@ -46,7 +46,6 @@ export const C1_CMP_06_DATASET: SkillDataset = {
       label: "bút chì dài",
       glyph: "✏️",
       value: 2,
-      audio_path: "/audio/voice/c1/cmp/pencil_long.mp3",
       image: {
         kind: "emoji",
         ref: "✏️",
@@ -58,7 +57,6 @@ export const C1_CMP_06_DATASET: SkillDataset = {
       label: "bút chì ngắn",
       glyph: "✏️",
       value: 1,
-      audio_path: "/audio/voice/c1/cmp/pencil_short.mp3",
       image: {
         kind: "emoji",
         ref: "✏️",
@@ -70,7 +68,6 @@ export const C1_CMP_06_DATASET: SkillDataset = {
       label: "tàu hỏa dài",
       glyph: "🚆",
       value: 2,
-      audio_path: "/audio/voice/c1/cmp/pencil_long.mp3",
       image: {
         kind: "emoji",
         ref: "🚆",
@@ -82,7 +79,6 @@ export const C1_CMP_06_DATASET: SkillDataset = {
       label: "ô tô ngắn",
       glyph: "🚗",
       value: 1,
-      audio_path: "/audio/voice/c1/cmp/pencil_short.mp3",
       image: {
         kind: "emoji",
         ref: "🚗",

@@ -38,7 +38,7 @@ export const C1_NREC_11_IDENTITY: SkillIdentity = {
 
 export const C1_NREC_11_DATASET: SkillDataset = {
   skill_code: "C1.NREC.11",
-  concept_label: "Phân biệt số với ký hiệu",
+  concept_label: "Số sau",
   surface: "game",
   items: [
     {
@@ -160,8 +160,7 @@ export const C1_NREC_11_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy chọn đúng chữ số {label} nhé!",
-    narration_template:
-      "Chúng mình cùng tìm hiểu về Phân biệt số với ký hiệu nhé",
+    narration_template: "Chúng mình cùng tìm hiểu về Số sau nhé",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
 };

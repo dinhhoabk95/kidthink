@@ -118,11 +118,10 @@ describe("BR-SDI-02 phủ của ordering", () => {
     expect(violations.some((v) => v.detail.includes('"ma"'))).toBe(true);
   });
 
-  it("báo vi phạm khi ordering bỏ sót vật", () => {
-    const violations = checkOrderingCoverage(dataset({ ordering: ["a", "b"] }));
-
-    expect(violations).toHaveLength(1);
-    expect(violations[0]?.detail).toContain("bỏ sót");
+  it("im lặng khi ordering bỏ vật nhiễu ra ngoài dãy", () => {
+    expect(
+      checkOrderingCoverage(dataset({ ordering: ["a", "b"] }))
+    ).toHaveLength(0);
   });
 
   it("báo vi phạm khi ordering lặp id", () => {
@@ -282,7 +281,22 @@ describe("BR-SDI-08 id vật dùng lại phải cùng nghĩa", () => {
     expect(violations[0]?.detail).toContain("C1.CMP.14");
   });
 
-  it("im lặng khi cùng id mang cùng nghĩa", () => {
+  it("im lặng khi cùng id chung vai nhưng khác vật cụ thể", () => {
+    expect(
+      checkCrossDatasetItemConsistency([
+        dataset({
+          skill_code: "C1.CMP.01",
+          items: [{ id: "size_more", label: "quả bóng to", value: 2 }],
+        }),
+        dataset({
+          skill_code: "C1.CMP.02",
+          items: [{ id: "size_more", label: "chiếc hộp to", value: 2 }],
+        }),
+      ])
+    ).toHaveLength(0);
+  });
+
+  it("im lặng khi cùng id mang cùng lượng", () => {
     expect(
       checkCrossDatasetItemConsistency([
         dataset({
@@ -306,6 +320,23 @@ describe("gom dataset", () => {
     ]);
 
     expect(all).toHaveLength(2);
+    expect(all.map((entry) => entry.isTopic)).toEqual([false, true]);
+  });
+
+  it("miễn BR-SDI-05 cho dataset chủ đề vì nó phủ nhiều kỹ năng", () => {
+    const report = runDatasetIntegrityCheck({
+      datasets: [
+        {
+          dataset: dataset({ concept_label: "Lớn hơn, nhỏ hơn, bằng nhau" }),
+          isTopic: true,
+        },
+      ],
+      identities: { "C1.TEST.01": identity({ name: "Lớn hơn" }) },
+      resolvesAudio: () => true,
+      substitutedPlaceholders: ["label"],
+    });
+
+    expect(report.violations).toHaveLength(0);
   });
 });
 
@@ -313,10 +344,13 @@ describe("cổng tổng", () => {
   it("gom vi phạm từ nhiều luật trong một lượt chạy", () => {
     const report = runDatasetIntegrityCheck({
       datasets: [
-        dataset({
-          ordering: ["c", "b", "a"],
-          relations: [{ type: "pair", source_id: "a", target_id: "ma" }],
-        }),
+        {
+          dataset: dataset({
+            ordering: ["c", "b", "a"],
+            relations: [{ type: "pair", source_id: "a", target_id: "ma" }],
+          }),
+          isTopic: false,
+        },
       ],
       identities: {},
       resolvesAudio: () => true,
@@ -332,7 +366,9 @@ describe("cổng tổng", () => {
 
   it("im lặng trên dataset sạch", () => {
     const report = runDatasetIntegrityCheck({
-      datasets: [dataset({ ordering: ["b", "a", "c"] })],
+      datasets: [
+        { dataset: dataset({ ordering: ["b", "a", "c"] }), isTopic: false },
+      ],
       identities: { "C1.TEST.01": identity() },
       resolvesAudio: () => true,
       substitutedPlaceholders: ["label"],

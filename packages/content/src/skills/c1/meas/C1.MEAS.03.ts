@@ -46,7 +46,6 @@ export const C1_MEAS_03_DATASET: SkillDataset = {
       label: "tảng đá nặng",
       glyph: "🪨",
       value: 4,
-      audio_path: "/audio/voice/c1/meas/rock_heavy.mp3",
       image: {
         kind: "emoji",
         ref: "🪨",
@@ -58,7 +57,6 @@ export const C1_MEAS_03_DATASET: SkillDataset = {
       label: "con voi nặng",
       glyph: "🐘",
       value: 3,
-      audio_path: "/audio/voice/c1/meas/elephant_heavy.mp3",
       image: {
         kind: "emoji",
         ref: "🐘",
@@ -70,7 +68,6 @@ export const C1_MEAS_03_DATASET: SkillDataset = {
       label: "chú kiến nhẹ",
       glyph: "🐜",
       value: 2,
-      audio_path: "/audio/voice/c1/meas/ant_light.mp3",
       image: {
         kind: "emoji",
         ref: "🐜",
@@ -82,7 +79,6 @@ export const C1_MEAS_03_DATASET: SkillDataset = {
       label: "chiếc lá nhẹ",
       glyph: "🍃",
       value: 1,
-      audio_path: "/audio/voice/c1/meas/leaf_light.mp3",
       image: {
         kind: "emoji",
         ref: "🍃",

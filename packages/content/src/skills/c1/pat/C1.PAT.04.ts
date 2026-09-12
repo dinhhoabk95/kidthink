@@ -46,43 +46,47 @@ export const C1_PAT_04_DATASET: SkillDataset = {
       label: "bông hoa hồng",
       glyph: "🌸",
       value: 1,
-      audio_path: "/audio/voice/c1/pat/flower.mp3",
       image: {
         kind: "emoji",
         ref: "🌸",
       },
       contrast_group: "a",
+      category: {
+        cycle: "A",
+      },
     },
     {
       id: "pat_leaf",
       label: "chiếc lá xanh",
       glyph: "🍃",
       value: 2,
-      audio_path: "/audio/voice/c1/pat/leaf.mp3",
       image: {
         kind: "emoji",
         ref: "🍃",
       },
       contrast_group: "b",
+      category: {
+        cycle: "B",
+      },
     },
     {
       id: "pat_sun",
       label: "mặt trời vàng",
       glyph: "☀️",
       value: 3,
-      audio_path: "/audio/voice/c1/pat/sun.mp3",
       image: {
         kind: "emoji",
         ref: "☀️",
       },
       contrast_group: "c",
+      category: {
+        cycle: "C",
+      },
     },
     {
       id: "pat_star",
       label: "ngôi sao vàng",
       glyph: "⭐",
-      value: 4,
-      audio_path: "/audio/voice/c1/pat/star.mp3",
       image: {
         kind: "emoji",
         ref: "⭐",
@@ -112,7 +116,7 @@ export const C1_PAT_04_DATASET: SkillDataset = {
     {
       type: "sequence",
       source_id: "pat_sun",
-      target_id: "pat_flower_repeat",
+      target_id: "pat_flower",
       metadata: {
         rule: "ABC",
         period: 3,
@@ -121,7 +125,7 @@ export const C1_PAT_04_DATASET: SkillDataset = {
   ],
   axes: {
     cycle: {
-      values: ["A", "B", "C", "A2"],
+      values: ["A", "B", "C"],
       ordered: true,
     },
   },
@@ -161,7 +165,7 @@ export const C1_PAT_04_DATASET: SkillDataset = {
     prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Quy luật ABC nhé",
   },
-  ordering: ["pat_flower_repeat", "pat_sun", "pat_leaf", "pat_flower"],
+  ordering: ["pat_flower", "pat_leaf", "pat_sun"],
 };
 
 export const C1_PAT_04_SEED: SkillSeed = {

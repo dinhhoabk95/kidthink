@@ -46,7 +46,6 @@ export const C1_PROB_03_DATASET: SkillDataset = {
       label: "sáu chiếc bánh",
       glyph: "🧁",
       value: 6,
-      audio_path: "/audio/voice/c1/prob/cakes_6.mp3",
       image: {
         kind: "emoji",
         ref: "🧁",
@@ -58,7 +57,6 @@ export const C1_PROB_03_DATASET: SkillDataset = {
       label: "phần ba chiếc một",
       glyph: "🧁",
       value: 3,
-      audio_path: "/audio/voice/c1/prob/cakes_3.mp3",
       image: {
         kind: "emoji",
         ref: "🧁",
@@ -70,7 +68,6 @@ export const C1_PROB_03_DATASET: SkillDataset = {
       label: "phần ba chiếc hai",
       glyph: "🧁",
       value: 3,
-      audio_path: "/audio/voice/c1/prob/cakes_3.mp3",
       image: {
         kind: "emoji",
         ref: "🧁",

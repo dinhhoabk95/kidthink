@@ -49,192 +49,56 @@ export const C1_MEAS_15_DATASET: SkillDataset = {
       label: "quả bóng nhỏ nhất",
       glyph: "⚽",
       value: 1,
-      audio_path: "/audio/voice/c1/meas/ball_1.mp3",
       image: {
         kind: "emoji",
         ref: "⚽",
       },
       contrast_group: "ordered_size",
+      category: {
+        size_order: "nhỏ nhất",
+      },
     },
     {
       id: "order_size_2",
       label: "quả bóng nhỏ",
       glyph: "⚽",
       value: 2,
-      audio_path: "/audio/voice/c1/meas/ball_2.mp3",
       image: {
         kind: "emoji",
         ref: "⚽",
       },
       contrast_group: "ordered_size",
+      category: {
+        size_order: "nhỏ",
+      },
     },
     {
       id: "order_size_3",
       label: "quả bóng to",
       glyph: "⚽",
       value: 3,
-      audio_path: "/audio/voice/c1/meas/ball_3.mp3",
       image: {
         kind: "emoji",
         ref: "⚽",
       },
       contrast_group: "ordered_size",
+      category: {
+        size_order: "to",
+      },
     },
     {
       id: "order_size_4",
       label: "quả bóng to nhất",
       glyph: "⚽",
       value: 4,
-      audio_path: "/audio/voice/c1/meas/ball_4.mp3",
       image: {
         kind: "emoji",
         ref: "⚽",
       },
       contrast_group: "ordered_size",
-    },
-    {
-      id: "clk_hour_1",
-      label: "1 giờ",
-      glyph: "1",
-      value: 1,
-      audio_path: "/audio/voice/common/numbers/1.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
+      category: {
+        size_order: "to nhất",
       },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_2",
-      label: "2 giờ",
-      glyph: "2",
-      value: 2,
-      audio_path: "/audio/voice/common/numbers/2.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_3",
-      label: "3 giờ",
-      glyph: "3",
-      value: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_4",
-      label: "4 giờ",
-      glyph: "4",
-      value: 4,
-      audio_path: "/audio/voice/common/numbers/4.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_5",
-      label: "5 giờ",
-      glyph: "5",
-      value: 5,
-      audio_path: "/audio/voice/common/numbers/5.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_6",
-      label: "6 giờ",
-      glyph: "6",
-      value: 6,
-      audio_path: "/audio/voice/common/numbers/6.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_7",
-      label: "7 giờ",
-      glyph: "7",
-      value: 7,
-      audio_path: "/audio/voice/common/numbers/7.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_8",
-      label: "8 giờ",
-      glyph: "8",
-      value: 8,
-      audio_path: "/audio/voice/common/numbers/8.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_9",
-      label: "9 giờ",
-      glyph: "9",
-      value: 9,
-      audio_path: "/audio/voice/common/numbers/9.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_10",
-      label: "10 giờ",
-      glyph: "10",
-      value: 10,
-      audio_path: "/audio/voice/common/numbers/10.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_11",
-      label: "11 giờ",
-      glyph: "11",
-      value: 11,
-      audio_path: "/audio/voice/common/numbers/11.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_12",
-      label: "12 giờ",
-      glyph: "12",
-      value: 12,
-      audio_path: "/audio/voice/common/numbers/12.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
     },
   ],
   relations: [
@@ -305,7 +169,7 @@ export const C1_MEAS_15_DATASET: SkillDataset = {
     narration_template:
       "Chúng mình cùng tìm hiểu về Sắp xếp trật tự kích thước nhé",
   },
-  ordering: ["order_size_4", "order_size_3", "order_size_2", "order_size_1"],
+  ordering: ["order_size_1", "order_size_2", "order_size_3", "order_size_4"],
 };
 
 export const C1_MEAS_15_SEED: SkillSeed = {

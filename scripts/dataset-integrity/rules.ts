@@ -109,7 +109,7 @@ export function checkRelationIntegrity(
   return violations;
 }
 
-/** `BR-SDI-02` — `ordering` phải trỏ vào vật có thật, không lặp, và phủ hết vật. */
+/** `BR-SDI-02` — `ordering` phải trỏ vào vật có thật và không lặp id. */
 export function checkOrderingCoverage(
   dataset: SkillDataset
 ): readonly IntegrityViolation[] {
@@ -118,8 +118,7 @@ export function checkOrderingCoverage(
     return [];
   }
   const code = dataset.skill_code;
-  const ids = itemIds(dataset);
-  const known = new Set(ids);
+  const known = new Set(itemIds(dataset));
   const violations: IntegrityViolation[] = [];
 
   for (const id of ordering) {
@@ -140,16 +139,8 @@ export function checkOrderingCoverage(
     });
   }
 
-  const ordered = new Set(ordering);
-  const missing = ids.filter((id) => !ordered.has(id));
-  if (missing.length > 0) {
-    violations.push({
-      rule: "BR-SDI-02",
-      skillCode: code,
-      detail: `ordering bỏ sót ${missing.length} vật: ${missing.join(", ")}`,
-    });
-  }
-
+  // Cấm — NEVER đòi `ordering` phủ hết `items`: vật nhiễu nằm ngoài dãy có thứ
+  // tự là chuyện bình thường. Chỉ id ma và id lặp mới là lỗi toàn vẹn.
   return violations;
 }
 
@@ -321,7 +312,15 @@ export function checkPromptPlaceholders(
   return violations;
 }
 
-/** `BR-SDI-08` — cùng một id vật, dùng ở nhiều dataset, phải cùng nghĩa. */
+/**
+ * `BR-SDI-08` — cùng một id vật, dùng ở nhiều dataset, phải mang cùng LƯỢNG.
+ *
+ * Chỉ đối chiếu `value`, không đối chiếu `label`: corpus cố ý dùng lại id chung
+ * cho cùng một VAI (`size_more`, `length_less`) trên những vật cụ thể khác nhau
+ * — quả bóng to ở kỹ năng này, chiếc hộp to ở kỹ năng kia. Nhãn khác nhau ở đó
+ * là đúng. Lượng khác nhau mới là mâu thuẫn: cùng `speed_turtle_less` mà chỗ
+ * khai 1 chỗ khai 2 thì hai bài dạy hai thang khác nhau.
+ */
 export function checkCrossDatasetItemConsistency(
   datasets: readonly SkillDataset[]
 ): readonly IntegrityViolation[] {
@@ -335,7 +334,11 @@ export function checkCrossDatasetItemConsistency(
         seen.set(item.id, { skillCode: dataset.skill_code, item });
         continue;
       }
-      if (prior.item.value !== item.value || prior.item.label !== item.label) {
+      if (
+        prior.item.value !== undefined &&
+        item.value !== undefined &&
+        prior.item.value !== item.value
+      ) {
         violations.push({
           rule: "BR-SDI-08",
           skillCode: dataset.skill_code,

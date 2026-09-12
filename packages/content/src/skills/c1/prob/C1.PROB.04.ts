@@ -46,7 +46,6 @@ export const C1_PROB_04_DATASET: SkillDataset = {
       label: "bóng đỏ một",
       glyph: "🔴",
       value: 1,
-      audio_path: "/audio/voice/c1/prob/ball_red_1.mp3",
       image: {
         kind: "emoji",
         ref: "🔴",
@@ -62,7 +61,6 @@ export const C1_PROB_04_DATASET: SkillDataset = {
       label: "bóng đỏ hai",
       glyph: "🔴",
       value: 2,
-      audio_path: "/audio/voice/c1/prob/ball_red_2.mp3",
       image: {
         kind: "emoji",
         ref: "🔴",
@@ -78,7 +76,6 @@ export const C1_PROB_04_DATASET: SkillDataset = {
       label: "bóng xanh một",
       glyph: "🔵",
       value: 1,
-      audio_path: "/audio/voice/c1/prob/ball_blue_1.mp3",
       image: {
         kind: "emoji",
         ref: "🔵",
@@ -94,7 +91,6 @@ export const C1_PROB_04_DATASET: SkillDataset = {
       label: "bóng xanh hai",
       glyph: "🔵",
       value: 2,
-      audio_path: "/audio/voice/c1/prob/ball_blue_2.mp3",
       image: {
         kind: "emoji",
         ref: "🔵",

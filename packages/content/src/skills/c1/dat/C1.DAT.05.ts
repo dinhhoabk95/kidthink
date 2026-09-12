@@ -49,7 +49,6 @@ export const C1_DAT_05_DATASET: SkillDataset = {
       label: "mục có ít nhất",
       glyph: "🎯",
       value: 2,
-      audio_path: "/audio/voice/c1/dat/chart_min.mp3",
       image: {
         kind: "emoji",
         ref: "🎯",
@@ -61,7 +60,6 @@ export const C1_DAT_05_DATASET: SkillDataset = {
       label: "mục trung bình nhỏ",
       glyph: "🥈",
       value: 5,
-      audio_path: "/audio/voice/c1/dat/silver.mp3",
       image: {
         kind: "emoji",
         ref: "🥈",
@@ -73,7 +71,6 @@ export const C1_DAT_05_DATASET: SkillDataset = {
       label: "mục trung bình lớn",
       glyph: "🥇",
       value: 8,
-      audio_path: "/audio/voice/c1/dat/gold.mp3",
       image: {
         kind: "emoji",
         ref: "🥇",
@@ -85,7 +82,6 @@ export const C1_DAT_05_DATASET: SkillDataset = {
       label: "mục có nhiều nhất",
       glyph: "🏆",
       value: 10,
-      audio_path: "/audio/voice/c1/dat/chart_max.mp3",
       image: {
         kind: "emoji",
         ref: "🏆",

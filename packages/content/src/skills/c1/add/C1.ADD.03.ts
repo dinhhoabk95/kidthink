@@ -231,7 +231,7 @@ export const C1_ADD_03_DATASET: SkillDataset = {
     prompt_template: "Gộp lại có tất cả bao nhiêu {label}?",
     narration_template: "Chúng mình cùng tìm hiểu về Cộng trên trục số nhé",
   },
-  ordering: ["n10", "n9", "n8", "n7", "n6", "n5", "n4", "n3", "n2", "n1", "n0"],
+  ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"],
 };
 
 export const C1_ADD_03_SEED: SkillSeed = {

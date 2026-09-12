@@ -38,7 +38,7 @@ export const C1_CNT_01_IDENTITY: SkillIdentity = {
 
 export const C1_CNT_01_DATASET: SkillDataset = {
   skill_code: "C1.CNT.01",
-  concept_label: "Đếm đến 3",
+  concept_label: "Đếm đồ vật",
   surface: "game",
   items: [
     {
@@ -125,7 +125,7 @@ export const C1_CNT_01_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé đếm xem có mấy {label}?",
-    narration_template: "Chúng mình cùng tìm hiểu về Đếm đến 3 nhé",
+    narration_template: "Chúng mình cùng tìm hiểu về Đếm đồ vật nhé",
   },
   ordering: ["n0", "n1", "n2", "n3"],
 };

@@ -46,7 +46,6 @@ export const C1_OTO_05_DATASET: SkillDataset = {
       label: "ở trên hàng một",
       glyph: "⬆️",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/top_1.mp3",
       image: {
         kind: "emoji",
         ref: "⬆️",
@@ -58,7 +57,6 @@ export const C1_OTO_05_DATASET: SkillDataset = {
       label: "ở dưới hàng một",
       glyph: "⬇️",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/bottom_1.mp3",
       image: {
         kind: "emoji",
         ref: "⬇️",
@@ -70,7 +68,6 @@ export const C1_OTO_05_DATASET: SkillDataset = {
       label: "ở trên hàng hai",
       glyph: "⬆️",
       value: 2,
-      audio_path: "/audio/voice/c1/oto/top_2.mp3",
       image: {
         kind: "emoji",
         ref: "⬆️",
@@ -82,7 +79,6 @@ export const C1_OTO_05_DATASET: SkillDataset = {
       label: "ở dưới hàng hai",
       glyph: "⬇️",
       value: 2,
-      audio_path: "/audio/voice/c1/oto/bottom_2.mp3",
       image: {
         kind: "emoji",
         ref: "⬇️",
@@ -94,7 +90,6 @@ export const C1_OTO_05_DATASET: SkillDataset = {
       label: "ở trên hàng ba",
       glyph: "⬆️",
       value: 3,
-      audio_path: "/audio/voice/c1/oto/top_3.mp3",
       image: {
         kind: "emoji",
         ref: "⬆️",
@@ -106,7 +101,6 @@ export const C1_OTO_05_DATASET: SkillDataset = {
       label: "ở dưới hàng ba",
       glyph: "⬇️",
       value: 3,
-      audio_path: "/audio/voice/c1/oto/bottom_3.mp3",
       image: {
         kind: "emoji",
         ref: "⬇️",

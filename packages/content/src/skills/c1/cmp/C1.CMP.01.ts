@@ -46,7 +46,6 @@ export const C1_CMP_01_DATASET: SkillDataset = {
       label: "quả bóng to",
       glyph: "⚽",
       value: 2,
-      audio_path: "/audio/voice/c1/cmp/ball_big.mp3",
       image: {
         kind: "emoji",
         ref: "⚽",
@@ -58,7 +57,6 @@ export const C1_CMP_01_DATASET: SkillDataset = {
       label: "quả bóng nhỏ",
       glyph: "⚽",
       value: 1,
-      audio_path: "/audio/voice/c1/cmp/ball_small.mp3",
       image: {
         kind: "emoji",
         ref: "⚽",

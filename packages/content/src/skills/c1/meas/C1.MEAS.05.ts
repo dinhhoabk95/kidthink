@@ -46,7 +46,6 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
       label: "bình nước cạn",
       glyph: "🏺",
       value: 0,
-      audio_path: "/audio/voice/c1/meas/pot_empty.mp3",
       image: {
         kind: "emoji",
         ref: "🏺",
@@ -58,7 +57,6 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
       label: "bình nước vơi",
       glyph: "🏺",
       value: 1,
-      audio_path: "/audio/voice/c1/meas/pitcher_empty.mp3",
       image: {
         kind: "emoji",
         ref: "🏺",
@@ -70,7 +68,6 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
       label: "bình nước vừa",
       glyph: "🏺",
       value: 2,
-      audio_path: "/audio/voice/c1/meas/pitcher_half.mp3",
       image: {
         kind: "emoji",
         ref: "🏺",
@@ -82,7 +79,6 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
       label: "bình nước đầy",
       glyph: "🏺",
       value: 3,
-      audio_path: "/audio/voice/c1/meas/pitcher_full.mp3",
       image: {
         kind: "emoji",
         ref: "🏺",

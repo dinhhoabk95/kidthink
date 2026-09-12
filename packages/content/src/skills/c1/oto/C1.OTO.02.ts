@@ -46,72 +46,90 @@ export const C1_OTO_02_DATASET: SkillDataset = {
       label: "gà mẹ",
       glyph: "🐔",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/hen.mp3",
       image: {
         kind: "emoji",
         ref: "🐔",
       },
       contrast_group: "mother",
+      category: {
+        species: "gà",
+        role: "mẹ",
+      },
     },
     {
       id: "chick_1",
       label: "gà con một",
       glyph: "🐥",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/chick_1.mp3",
       image: {
         kind: "emoji",
         ref: "🐥",
       },
       contrast_group: "baby",
+      category: {
+        species: "gà",
+        role: "con",
+      },
     },
     {
       id: "chick_2",
       label: "gà con hai",
       glyph: "🐥",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/chick_2.mp3",
       image: {
         kind: "emoji",
         ref: "🐥",
       },
       contrast_group: "baby",
+      category: {
+        species: "gà",
+        role: "con",
+      },
     },
     {
       id: "chick_3",
       label: "gà con ba",
       glyph: "🐥",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/chick_3.mp3",
       image: {
         kind: "emoji",
         ref: "🐥",
       },
       contrast_group: "baby",
+      category: {
+        species: "gà",
+        role: "con",
+      },
     },
     {
       id: "duck_mother",
       label: "vịt mẹ",
       glyph: "🦆",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/duck_mother.mp3",
       image: {
         kind: "emoji",
         ref: "🦆",
       },
       contrast_group: "mother",
+      category: {
+        species: "vịt",
+        role: "mẹ",
+      },
     },
     {
       id: "duckling",
       label: "vịt con",
       glyph: "🐤",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/duckling.mp3",
       image: {
         kind: "emoji",
         ref: "🐤",
       },
       contrast_group: "baby",
+      category: {
+        species: "vịt",
+        role: "con",
+      },
     },
   ],
   relations: [
@@ -135,15 +153,15 @@ export const C1_OTO_02_DATASET: SkillDataset = {
       source_id: "duckling",
       target_id: "duck_mother",
     },
-    {
-      type: "subset",
-      source_id: "chick_1",
-      target_id: "hen",
-      metadata: {
-        relation: "many_to_one",
-      },
-    },
   ],
+  axes: {
+    species: {
+      values: ["gà", "vịt"],
+    },
+    role: {
+      values: ["mẹ", "con"],
+    },
+  },
   ladder: [
     {
       rung: 1,

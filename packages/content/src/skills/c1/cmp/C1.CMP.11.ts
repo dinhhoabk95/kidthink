@@ -46,7 +46,6 @@ export const C1_CMP_11_DATASET: SkillDataset = {
       label: "chiếc lông vũ rất nhẹ",
       glyph: "🪶",
       value: 1,
-      audio_path: "/audio/voice/c1/cmp/feather_light.mp3",
       image: {
         kind: "emoji",
         ref: "🪶",
@@ -58,7 +57,6 @@ export const C1_CMP_11_DATASET: SkillDataset = {
       label: "quả dâu tây nhẹ",
       glyph: "🍓",
       value: 2,
-      audio_path: "/audio/voice/c1/cmp/strawberry_light.mp3",
       image: {
         kind: "emoji",
         ref: "🍓",
@@ -70,7 +68,6 @@ export const C1_CMP_11_DATASET: SkillDataset = {
       label: "quả dưa hấu nặng",
       glyph: "🍉",
       value: 3,
-      audio_path: "/audio/voice/c1/cmp/watermelon_heavy.mp3",
       image: {
         kind: "emoji",
         ref: "🍉",
@@ -82,7 +79,6 @@ export const C1_CMP_11_DATASET: SkillDataset = {
       label: "hòn đá rất nặng",
       glyph: "🪨",
       value: 4,
-      audio_path: "/audio/voice/c1/cmp/rock_heavy.mp3",
       image: {
         kind: "emoji",
         ref: "🪨",

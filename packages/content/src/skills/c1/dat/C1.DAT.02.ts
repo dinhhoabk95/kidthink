@@ -47,7 +47,6 @@ export const C1_DAT_02_DATASET: SkillDataset = {
       label: "cột hai khối",
       glyph: "🧱",
       value: 2,
-      audio_path: "/audio/voice/c1/dat/bar_2.mp3",
       image: {
         kind: "emoji",
         ref: "🧱",
@@ -59,7 +58,6 @@ export const C1_DAT_02_DATASET: SkillDataset = {
       label: "cột ba khối",
       glyph: "🧱",
       value: 3,
-      audio_path: "/audio/voice/c1/dat/bar_3.mp3",
       image: {
         kind: "emoji",
         ref: "🧱",
@@ -71,7 +69,6 @@ export const C1_DAT_02_DATASET: SkillDataset = {
       label: "cột bốn khối",
       glyph: "🧱",
       value: 4,
-      audio_path: "/audio/voice/c1/dat/bar_4.mp3",
       image: {
         kind: "emoji",
         ref: "🧱",
@@ -83,7 +80,6 @@ export const C1_DAT_02_DATASET: SkillDataset = {
       label: "cột năm khối",
       glyph: "🧱",
       value: 5,
-      audio_path: "/audio/voice/c1/dat/bar_5.mp3",
       image: {
         kind: "emoji",
         ref: "🧱",

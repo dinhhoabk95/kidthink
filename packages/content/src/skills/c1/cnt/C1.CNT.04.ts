@@ -38,7 +38,7 @@ export const C1_CNT_04_IDENTITY: SkillIdentity = {
 
 export const C1_CNT_04_DATASET: SkillDataset = {
   skill_code: "C1.CNT.04",
-  concept_label: "Đếm đến 20",
+  concept_label: "Đếm ngược",
   surface: "game",
   items: [
     {
@@ -269,7 +269,7 @@ export const C1_CNT_04_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/20.mp3",
       image: {
         kind: "emoji",
-        ref: "1️⃣0️⃣",
+        ref: "2️⃣0️⃣",
       },
     },
   ],
@@ -334,7 +334,7 @@ export const C1_CNT_04_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé đếm xem có mấy {label}?",
-    narration_template: "Chúng mình cùng tìm hiểu về Đếm đến 20 nhé",
+    narration_template: "Chúng mình cùng tìm hiểu về Đếm ngược nhé",
   },
   ordering: [
     "n20",

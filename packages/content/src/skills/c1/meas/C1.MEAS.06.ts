@@ -46,7 +46,6 @@ export const C1_MEAS_06_DATASET: SkillDataset = {
       label: "thùng gỗ nhỏ",
       glyph: "📦",
       value: 1,
-      audio_path: "/audio/voice/c1/meas/box_small.mp3",
       image: {
         kind: "emoji",
         ref: "📦",
@@ -58,7 +57,6 @@ export const C1_MEAS_06_DATASET: SkillDataset = {
       label: "thùng gỗ vừa",
       glyph: "📦",
       value: 2,
-      audio_path: "/audio/voice/c1/meas/box_mid.mp3",
       image: {
         kind: "emoji",
         ref: "📦",
@@ -70,7 +68,6 @@ export const C1_MEAS_06_DATASET: SkillDataset = {
       label: "thùng gỗ to",
       glyph: "📦",
       value: 3,
-      audio_path: "/audio/voice/c1/meas/box_big.mp3",
       image: {
         kind: "emoji",
         ref: "📦",
@@ -82,7 +79,6 @@ export const C1_MEAS_06_DATASET: SkillDataset = {
       label: "thùng gỗ rất to",
       glyph: "📦",
       value: 4,
-      audio_path: "/audio/voice/c1/meas/box_huge.mp3",
       image: {
         kind: "emoji",
         ref: "📦",

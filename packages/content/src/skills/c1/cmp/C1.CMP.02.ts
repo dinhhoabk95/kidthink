@@ -46,7 +46,6 @@ export const C1_CMP_02_DATASET: SkillDataset = {
       label: "chiếc hộp nhỏ",
       glyph: "📦",
       value: 1,
-      audio_path: "/audio/voice/c1/cmp/box_small.mp3",
       image: {
         kind: "emoji",
         ref: "📦",
@@ -58,7 +57,6 @@ export const C1_CMP_02_DATASET: SkillDataset = {
       label: "chiếc hộp to",
       glyph: "📦",
       value: 2,
-      audio_path: "/audio/voice/c1/cmp/box_big.mp3",
       image: {
         kind: "emoji",
         ref: "📦",

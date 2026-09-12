@@ -46,7 +46,6 @@ export const C1_OTO_06_DATASET: SkillDataset = {
       label: "hạt mầm",
       glyph: "🌱",
       value: 1,
-      audio_path: "/audio/voice/c1/oto/seed.mp3",
       image: {
         kind: "emoji",
         ref: "🌱",
@@ -58,7 +57,6 @@ export const C1_OTO_06_DATASET: SkillDataset = {
       label: "cây non",
       glyph: "🌿",
       value: 2,
-      audio_path: "/audio/voice/c1/oto/sprout.mp3",
       image: {
         kind: "emoji",
         ref: "🌿",
@@ -70,7 +68,6 @@ export const C1_OTO_06_DATASET: SkillDataset = {
       label: "cây lớn",
       glyph: "🌳",
       value: 3,
-      audio_path: "/audio/voice/c1/oto/tree.mp3",
       image: {
         kind: "emoji",
         ref: "🌳",
