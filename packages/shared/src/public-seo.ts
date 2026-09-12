@@ -1,3 +1,4 @@
+import { AGE_BANDS } from "./age-bands.js";
 import { PACKAGE_CATALOG } from "./entitlement-catalog.js";
 
 /**
@@ -13,7 +14,7 @@ export const INDEXABLE_COMPETENCIES = [
 ] as const;
 export type IndexableCompetency = (typeof INDEXABLE_COMPETENCIES)[number];
 
-export const INDEXABLE_AGE_BANDS = ["3-4", "4-5", "5-6"] as const;
+export const INDEXABLE_AGE_BANDS = AGE_BANDS;
 export type IndexableAgeBand = (typeof INDEXABLE_AGE_BANDS)[number];
 
 /**
@@ -45,7 +46,11 @@ export function isIndexableFilter(query: {
   // Solo age query
   if ((query.age || query.age_band) && !query.competency) {
     const ageVal = String(query.age || query.age_band);
-    return ["3", "4", "5", "6", "3-4", "4-5", "5-6"].includes(ageVal);
+    const SOLO_AGE_VALUES: readonly string[] = ["3", "4", "5", "6"];
+    return (
+      SOLO_AGE_VALUES.includes(ageVal) ||
+      (AGE_BANDS as readonly string[]).includes(ageVal)
+    );
   }
   return false;
 }

@@ -2,7 +2,7 @@
 #
 # Phân tầng có chủ đích:
 #   pre-commit  = nhanh (format staged + lint + ranh giới package) → không làm commit chậm tới mức người ta bỏ qua
-#   pre-push    = (Tạm thời vô hiệu hóa — dự án chuyển sang manual test)
+#   pre-push    = `pnpm check:fast` (lint + ratchet + typecheck + test game-engine)
 #
 # Gộp `check` vào pre-commit là đổi chỗ, không phải bỏ bớt: `check` tự chạy lại
 # `lint` và `lint:deps`, nên mỗi commit đo hai lần.
@@ -10,8 +10,9 @@
 # Cổng lint tuỳ biến (`packages/gates`) đã bị gỡ. Lint chỉ còn Biome (`pnpm lint`),
 # ranh giới package (`pnpm lint:deps`) và vue-tsc/tsc (`pnpm typecheck`).
 #
-# ⚠️ Lưu ý: Các bước chạy automated test (unit/integration/e2e) tạm thời tắt,
-# chuyển sang kiểm thử thủ công (manual testing).
+# ⚠️ Điểm mù: `check:fast` chạy Phase 3 CHỈ trên project @mindkid/game-engine
+# (`scripts/check.sh`). Test tích hợp cần database và `check:test-ratchet` KHÔNG
+# chạy lúc push — chúng chỉ chạy ở `pnpm check` đầy đủ, khi Postgres/Valkey đã bật.
 #
 # ⛔ `git commit --no-verify` / `git push --no-verify` BỎ QUA hook này.
 # lefthook là gate local, ❌ KHÔNG phải cưỡng chế server-side. Xem repo-bootstrap §11 Q12.

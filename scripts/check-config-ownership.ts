@@ -33,22 +33,60 @@ export interface ScanConfigOwnershipOptions {
   baselinePath?: string;
 }
 
-const PROOF_TTL_REGEX =
-  /(?:const|let|var)\s+PROOF_SIGNED_URL_TTL_MINUTES\s*=\s*\d+/;
-const EMBEDDING_DIM_REGEX =
-  /(?:const|let|var)\s+DEFAULT_EMBEDDING_DIMENSION\s*=\s*\d+/;
 const RAW_UNION_REGEX = /["']3-4["']\s*\|\s*["']4-5["']\s*\|\s*["']5-6["']/;
 const RAW_ARRAY_REGEX =
   /\[\s*["']3-4["']\s*,\s*["']4-5["']\s*,\s*["']5-6["']\s*\]/;
-const MIN_TOUCH_REGEX = /\bMIN_TOUCH_PX\b/;
-const SURFACE_500_DRIFT_REGEX = /surface\s*:\s*\{[^}]*500:\s*["']#827660["']/m;
-const FONTS_DRIFT_QUICKSAND_REGEX = /["']Quicksand["']/;
-const FONTS_DRIFT_FREDOKA_REGEX = /["']Fredoka["']/;
+// `[{ id: "3-4" }, { id: "4-5" }, { id: "5-6" }]` — cùng bộ band, bọc trong object.
+// Chỉ tính khi trọn bộ band nằm trong MỘT mảng: `[{ id: "3-4" }, … "5-6" }]`.
+// `case "3-4":` hay `return "3-4"` là tiêu thụ union, không phải khai báo bộ.
+const RAW_OBJECT_LIST_REGEX =
+  /\[[\s\S]{0,200}?["']3-4["'][\s\S]{0,200}?["']4-5["'][\s\S]{0,200}?["']5-6["'][\s\S]{0,200}?\]/;
+/** Import thật từ nguồn chuẩn — khác hẳn việc chỉ có chuỗi "AGE_BANDS" đâu đó. */
+const AGE_BANDS_IMPORT_REGEX =
+  /import[\s\S]{0,300}?from\s+["'][^"']*(?:age-bands(?:\.js)?|@mindkid\/shared(?:\/[a-z-]+)?)["']/;
+
+/**
+ * Hằng số có đúng MỘT chủ sở hữu. Mọi khai báo khác trong `packages/` hoặc
+ * `apps/` là vi phạm `BR-CFO-01`.
+ *
+ * Bản cũ chỉ đọc hai đường dẫn đóng cứng (`packages/storage/src/index.ts` và
+ * `packages/shared/src/ai-assistant.ts`), nên khai lại hằng ở package thứ BA
+ * đi qua cổng im lặng — đúng thứ luật này tồn tại để chặn.
+ */
+const OWNED_CONSTANTS: ReadonlyArray<{ name: string; owner: string }> = [
+  {
+    name: "PROOF_SIGNED_URL_TTL_MINUTES",
+    owner: "packages/config/src/constants.ts",
+  },
+  { name: "DEFAULT_EMBEDDING_DIMENSION", owner: "packages/shared/src/ai.ts" },
+];
+
+/**
+ * Sàn chạm `BR-A11-04`. Chủ sở hữu duy nhất là `packages/shared/src/touch-floors.ts`;
+ * `packages/ui` re-export lại, `game-engine` import.
+ *
+ * Bản cũ chỉ tìm ĐỊNH DANH `MIN_TOUCH_PX` trong đúng một file, nên một file mới
+ * khai `{ kidPrimary: 96, kidSecondary: 76, adult: 64 }` không bị thấy.
+ */
+const TOUCH_FLOOR_OWNER = "packages/shared/src/touch-floors.ts";
+const TOUCH_FLOOR_VALUES = [96, 76, 64] as const;
+
+const CSS_TOKENS_PATH = "packages/ui/assets/css/tailwind.css";
+const TS_TOKENS_PATH = "packages/game-engine/src/systems/designTokens.ts";
+const NUXT_CONFIG_PATH = "packages/ui/nuxt.config.ts";
 const LOW_MASTERY_LITERAL_REGEX = /p_learn\s*<\s*0\.4\b/;
 const HIGH_MASTERY_LITERAL_REGEX = /p_learn\s*>=\s*0\.8\b/;
 const ENGINE_GATES_NAME_REGEX = /name:\s*engine-gates[\s\S]*?glob:/m;
 const BLIND_SPOT_REGEX = /Điểm mù|điểm mù/;
 const PUBLIC_CONFIG_REGEX = /runtimeConfig\s*:\s*\{[\s\S]*?public\s*:\s*\{/;
+const LINE_COMMENT_REGEX = /\/\/.*$/;
+const COLORS_BLOCK_OPENER_REGEX = /colors\s*[:=]\s*\{/;
+const FONTS_BLOCK_OPENER_REGEX = /fonts\s*[:=]\s*\{/;
+const COMMENT_PREFIX_REGEX = /^#+\s?/;
+const TOUCH_DECL_REGEX =
+  /(?:export\s+)?(?:const|let|var)\s+([A-Za-z0-9_]*(?:touch|floor)[A-Za-z0-9_]*)\s*[:=]([^;]{0,400})/gi;
+const ASSIGNMENT_TOUCH_REGEX =
+  /\b[A-Za-z0-9_]*(?:min|floor|touch|target)[A-Za-z0-9_]*\s*=\s*(\d{2,3})\b/gi;
 
 function getMd5(filePath: string): string {
   const content = fs.readFileSync(filePath);
@@ -100,39 +138,66 @@ function checkDuplicateConfigFiles(
   return count;
 }
 
+const SOURCE_SKIP_DIRS = new Set([
+  "node_modules",
+  ".nuxt",
+  ".output",
+  ".git",
+  "dist",
+  "coverage",
+  "tests",
+]);
+
+/** Duyệt mọi `.ts` / `.vue` thật của repo (bỏ test, build output, node_modules). */
+function* walkSourceFiles(dirPath: string): Generator<string> {
+  if (!fs.existsSync(dirPath)) {
+    return;
+  }
+  for (const entry of fs.readdirSync(dirPath, { withFileTypes: true })) {
+    const fullPath = path.join(dirPath, entry.name);
+    if (entry.isDirectory()) {
+      if (!SOURCE_SKIP_DIRS.has(entry.name)) {
+        yield* walkSourceFiles(fullPath);
+      }
+    } else if (
+      (entry.name.endsWith(".ts") || entry.name.endsWith(".vue")) &&
+      !(entry.name.includes(".test.") || entry.name.includes(".spec."))
+    ) {
+      yield fullPath;
+    }
+  }
+}
+
+function* walkRepoSources(root: string): Generator<string> {
+  yield* walkSourceFiles(path.join(root, "packages"));
+  yield* walkSourceFiles(path.join(root, "apps"));
+}
+
+function buildDeclarationRegex(name: string): RegExp {
+  return new RegExp(`(?:export\\s+)?(?:const|let|var)\\s+${name}\\s*[:=]`);
+}
+
 function checkDuplicateConstantValues(
   root: string,
   violations: ConfigViolation[]
 ): number {
   let count = 0;
-  const storageIndexPath = path.join(root, "packages/storage/src/index.ts");
-  if (fs.existsSync(storageIndexPath)) {
-    const content = fs.readFileSync(storageIndexPath, "utf-8");
-    if (PROOF_TTL_REGEX.test(content)) {
-      count++;
-      violations.push({
-        rule: "BR-CFO-01",
-        target: "packages/storage/src/index.ts",
-        message:
-          "Khai báo lại PROOF_SIGNED_URL_TTL_MINUTES thay vì import từ @mindkid/config",
-      });
-    }
-  }
 
-  const aiAssistantPath = path.join(
-    root,
-    "packages/shared/src/ai-assistant.ts"
-  );
-  if (fs.existsSync(aiAssistantPath)) {
-    const content = fs.readFileSync(aiAssistantPath, "utf-8");
-    if (EMBEDDING_DIM_REGEX.test(content)) {
-      count++;
-      violations.push({
-        rule: "BR-CFO-01",
-        target: "packages/shared/src/ai-assistant.ts",
-        message:
-          "Khai báo lại DEFAULT_EMBEDDING_DIMENSION thay vì import từ ./ai.js",
-      });
+  for (const { name, owner } of OWNED_CONSTANTS) {
+    const declRegex = buildDeclarationRegex(name);
+    for (const fullPath of walkRepoSources(root)) {
+      const relPath = path.relative(root, fullPath);
+      if (relPath === owner) {
+        continue;
+      }
+      if (declRegex.test(fs.readFileSync(fullPath, "utf-8"))) {
+        count++;
+        violations.push({
+          rule: "BR-CFO-01",
+          target: relPath,
+          message: `Khai báo lại ${name} thay vì import từ ${owner}`,
+        });
+      }
     }
   }
 
@@ -147,6 +212,16 @@ function isExcludedPath(fullPath: string): boolean {
   );
 }
 
+/** Bỏ chú thích `//`, `/* *\/` và `<!-- -->` trước khi đo khai báo. */
+function stripComments(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .split("\n")
+    .map((line) => line.replace(LINE_COMMENT_REGEX, ""))
+    .join("\n");
+}
+
 function checkAgeBandFile(
   fullPath: string,
   root: string,
@@ -155,12 +230,21 @@ function checkAgeBandFile(
   if (isExcludedPath(fullPath)) {
     return false;
   }
-  const content = fs.readFileSync(fullPath, "utf-8");
+  const rawContent = fs.readFileSync(fullPath, "utf-8");
+  // Cấm — NEVER miễn trừ theo `content.includes("AGE_BANDS")`: một file đặt tên
+  // hằng là `INDEXABLE_AGE_BANDS` rồi chép nguyên bộ band vẫn là khai báo thứ hai.
+  // Một file DẪN XUẤT từ nguồn (có import thật) được phép nhắc tên band; một
+  // file chép nguyên bộ mà không import là khai báo thứ hai.
+  if (AGE_BANDS_IMPORT_REGEX.test(rawContent)) {
+    return false;
+  }
+  // Bộ band nêu trong chú thích là tài liệu, không phải khai báo.
+  const content = stripComments(rawContent);
   const hasRawUnion = RAW_UNION_REGEX.test(content);
-  const hasRawArray =
-    RAW_ARRAY_REGEX.test(content) && !content.includes("AGE_BANDS");
+  const hasRawArray = RAW_ARRAY_REGEX.test(content);
+  const hasObjectWrapped = RAW_OBJECT_LIST_REGEX.test(content);
 
-  if (hasRawUnion || hasRawArray) {
+  if (hasRawUnion || hasRawArray || hasObjectWrapped) {
     const relPath = path.relative(root, fullPath);
     violations.push({
       rule: "BR-CFO-06",
@@ -222,63 +306,251 @@ function checkAgeBandDeclarations(
   return declarations;
 }
 
+function extractTouchFloorLiterals(content: string): Set<number> {
+  const literalsFound = new Set<number>();
+  for (const m of content.matchAll(TOUCH_DECL_REGEX)) {
+    for (const value of TOUCH_FLOOR_VALUES) {
+      if (new RegExp(`\\b${value}\\b`).test(m[2] ?? "")) {
+        literalsFound.add(value);
+      }
+    }
+  }
+  for (const m of content.matchAll(ASSIGNMENT_TOUCH_REGEX)) {
+    const value = Number(m[1]);
+    if ((TOUCH_FLOOR_VALUES as readonly number[]).includes(value)) {
+      literalsFound.add(value);
+    }
+  }
+  return literalsFound;
+}
+
 function checkTouchFloorDeclarations(
   root: string,
   violations: ConfigViolation[]
 ): number {
-  let count = 1; // 1 canonical declaration
-  const interactionPath = path.join(
-    root,
-    "packages/game-engine/src/interaction.ts"
-  );
-  if (fs.existsSync(interactionPath)) {
-    const content = fs.readFileSync(interactionPath, "utf-8");
-    if (MIN_TOUCH_REGEX.test(content)) {
+  let count = 0;
+
+  for (const fullPath of walkRepoSources(root)) {
+    const relPath = path.relative(root, fullPath);
+    if (relPath === TOUCH_FLOOR_OWNER) {
+      count++;
+      continue;
+    }
+
+    const literalsFound = extractTouchFloorLiterals(
+      fs.readFileSync(fullPath, "utf-8")
+    );
+    if (literalsFound.size >= 2) {
       count++;
       violations.push({
         rule: "BR-CFO-07",
-        target: "packages/game-engine/src/interaction.ts",
-        message:
-          "Khai báo MIN_TOUCH_PX độc lập thay vì dùng TOUCH_FLOORS từ @mindkid/shared",
+        target: relPath,
+        message: `Khai báo lại sàn chạm (${[...literalsFound].sort((a, b) => b - a).join(", ")}) thay vì dùng TOUCH_FLOORS từ @mindkid/shared`,
       });
     }
   }
+
   return count;
 }
 
+/**
+ * Sàn chạm viết dưới dạng lớp Tailwind (`min-h-19` = 19 × 4px = 76px) là cùng
+ * một con số, chỉ khác đơn vị — phép đếm theo số nguyên không thấy nó.
+ */
+function checkTailwindTouchFloorClasses(
+  root: string,
+  violations: ConfigViolation[]
+): void {
+  const appConfigPath = path.join(root, "packages/ui/app.config.ts");
+  if (!fs.existsSync(appConfigPath)) {
+    return;
+  }
+  const content = fs.readFileSync(appConfigPath, "utf-8");
+  if (content.includes("TOUCH_FLOORS")) {
+    return;
+  }
+  for (const m of content.matchAll(/min-h-(\d{1,2})\b/g)) {
+    const px = Number(m[1]) * 4;
+    if ((TOUCH_FLOOR_VALUES as readonly number[]).includes(px)) {
+      violations.push({
+        rule: "BR-CFO-07",
+        target: "packages/ui/app.config.ts",
+        message: `Lớp min-h-${m[1]} là sàn chạm ${px}px viết tay; phải sinh từ TOUCH_FLOORS`,
+      });
+    }
+  }
+}
+
+/** `--color-surface-500: #78716c;` → `surface-500 => #78716c` */
+function parseCssTokens(css: string): {
+  colors: Map<string, string>;
+  fonts: Map<string, string>;
+} {
+  const colors = new Map<string, string>();
+  const fonts = new Map<string, string>();
+  for (const m of css.matchAll(/--color-([a-z0-9-]+)\s*:\s*([^;]+);/g)) {
+    colors.set(m[1] as string, (m[2] as string).trim().toLowerCase());
+  }
+  for (const m of css.matchAll(/--font-([a-z0-9-]+)\s*:\s*([^;]+);/g)) {
+    fonts.set(m[1] as string, normalizeFontStack(m[2] as string));
+  }
+  return { colors, fonts };
+}
+
+/** `surface: { 500: "#78716c" }` → `surface-500 => #78716c` */
+function parseTsTokens(ts: string): {
+  colors: Map<string, string>;
+  fonts: Map<string, string>;
+} {
+  const colors = new Map<string, string>();
+  const fonts = new Map<string, string>();
+
+  const colorsBlock = extractBalancedBlock(ts, COLORS_BLOCK_OPENER_REGEX);
+  if (colorsBlock) {
+    for (const familyMatch of colorsBlock.matchAll(
+      /([A-Za-z][A-Za-z0-9_]*)\s*:\s*\{([^}]*)\}/g
+    )) {
+      const family = familyMatch[1] as string;
+      for (const stepMatch of (familyMatch[2] as string).matchAll(
+        /["']?([A-Za-z0-9_]+)["']?\s*:\s*["'](#[0-9a-fA-F]{3,8})["']/g
+      )) {
+        colors.set(
+          `${family}-${stepMatch[1]}`,
+          (stepMatch[2] as string).toLowerCase()
+        );
+      }
+    }
+  }
+
+  const fontsBlock = extractBalancedBlock(ts, FONTS_BLOCK_OPENER_REGEX);
+  if (fontsBlock) {
+    for (const m of fontsBlock.matchAll(
+      /([A-Za-z][A-Za-z0-9_]*)\s*:\s*(['"`])([\s\S]*?)\2\s*,/g
+    )) {
+      fonts.set(m[1] as string, normalizeFontStack(m[3] as string));
+    }
+  }
+
+  return { colors, fonts };
+}
+
+function extractBalancedBlock(source: string, opener: RegExp): string | null {
+  const match = source.match(opener);
+  if (match?.index === undefined) {
+    return null;
+  }
+  const start = source.indexOf("{", match.index);
+  let depth = 0;
+  for (let i = start; i < source.length; i++) {
+    if (source[i] === "{") {
+      depth++;
+    } else if (source[i] === "}") {
+      depth--;
+      if (depth === 0) {
+        return source.slice(start + 1, i);
+      }
+    }
+  }
+  return null;
+}
+
+function normalizeFontStack(raw: string): string {
+  return raw.replace(/["']/g, "").replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+/**
+ * `BR-CFO-08` / `BR-DSC-24` — đối chiếu HAI CHIỀU giữa hai nguồn token.
+ *
+ * Bản cũ chỉ tìm ba chuỗi lịch sử (`#827660`, `Quicksand`, `Fredoka`) trong
+ * `designTokens.ts` và Cấm — NEVER mở `tailwind.css`, nên mọi lệch MỚI đi qua
+ * im lặng. Ở đây so từng bậc trùng tên của hai file và nêu cả hai giá trị.
+ */
 function checkTokenSources(
   root: string,
   violations: ConfigViolation[]
 ): number {
-  let count = 1;
-  const designTokensPath = path.join(
-    root,
-    "packages/game-engine/src/systems/designTokens.ts"
-  );
-  if (fs.existsSync(designTokensPath)) {
-    const content = fs.readFileSync(designTokensPath, "utf-8");
-    if (SURFACE_500_DRIFT_REGEX.test(content)) {
-      count = 2;
+  const cssPath = path.join(root, CSS_TOKENS_PATH);
+  const tsPath = path.join(root, TS_TOKENS_PATH);
+  if (!(fs.existsSync(cssPath) && fs.existsSync(tsPath))) {
+    return 1;
+  }
+
+  const css = parseCssTokens(fs.readFileSync(cssPath, "utf-8"));
+  const ts = parseTsTokens(fs.readFileSync(tsPath, "utf-8"));
+  let drift = 0;
+
+  for (const [key, tsValue] of ts.colors) {
+    const cssValue = css.colors.get(key);
+    if (cssValue !== undefined && cssValue !== tsValue) {
+      drift++;
       violations.push({
         rule: "BR-CFO-08",
-        target: "packages/game-engine/src/systems/designTokens.ts",
-        message:
-          "Màu surface-500 lệch so với tailwind.css (#827660 thay vì #78716c)",
-      });
-    }
-    if (
-      FONTS_DRIFT_QUICKSAND_REGEX.test(content) ||
-      FONTS_DRIFT_FREDOKA_REGEX.test(content)
-    ) {
-      count = 2;
-      violations.push({
-        rule: "BR-CFO-08",
-        target: "packages/game-engine/src/systems/designTokens.ts",
-        message: "Phông khai mà không được nạp trong app (Quicksand / Fredoka)",
+        target: `${TS_TOKENS_PATH} :: ${key}`,
+        message: `Token ${key} lệch giữa hai nguồn: tailwind.css=${cssValue} vs designTokens.ts=${tsValue}`,
       });
     }
   }
-  return count;
+
+  for (const [key, tsStack] of ts.fonts) {
+    const cssStack = css.fonts.get(key);
+    if (cssStack !== undefined && cssStack !== tsStack) {
+      drift++;
+      violations.push({
+        rule: "BR-CFO-08",
+        target: `${TS_TOKENS_PATH} :: font-${key}`,
+        message: `Họ phông ${key} lệch: tailwind.css="${cssStack}" vs designTokens.ts="${tsStack}"`,
+      });
+    }
+  }
+
+  drift += checkFontsAreLoaded(root, ts.fonts, violations);
+
+  return drift > 0 ? 2 : 1;
+}
+
+/** Phông khai mà app không nạp → canvas rơi fallback im lặng, chữ vẫn hiện. */
+function checkFontsAreLoaded(
+  root: string,
+  tsFonts: Map<string, string>,
+  violations: ConfigViolation[]
+): number {
+  const nuxtConfigPath = path.join(root, NUXT_CONFIG_PATH);
+  if (!fs.existsSync(nuxtConfigPath)) {
+    return 0;
+  }
+  const nuxtConfig = fs.readFileSync(nuxtConfigPath, "utf-8").toLowerCase();
+
+  const GENERIC_FAMILIES = new Set([
+    "sans-serif",
+    "serif",
+    "cursive",
+    "monospace",
+    "system-ui",
+    "-apple-system",
+    "blinkmacsystemfont",
+    "segoe ui",
+    "roboto",
+    "helvetica neue",
+    "arial",
+  ]);
+
+  let missing = 0;
+  for (const stack of tsFonts.values()) {
+    for (const family of stack.split(",").map((f) => f.trim())) {
+      if (family.length === 0 || GENERIC_FAMILIES.has(family)) {
+        continue;
+      }
+      if (!nuxtConfig.includes(family)) {
+        missing++;
+        violations.push({
+          rule: "BR-CFO-08",
+          target: TS_TOKENS_PATH,
+          message: `Phông "${family}" khai trong designTokens.ts nhưng không được nạp ở ${NUXT_CONFIG_PATH}`,
+        });
+      }
+    }
+  }
+  return missing;
 }
 
 function isSpecialCheckScript(name: string): boolean {
@@ -288,6 +560,28 @@ function isSpecialCheckScript(name: string): boolean {
     name === "check:ratchets" ||
     name === "check:engine-gates"
   );
+}
+
+/**
+ * `check:engine-behavior` là TIỀN TỐ của `check:engine-behavior-corpus`.
+ * `String.includes` nên coi cổng thứ nhất là đã nối khi chỉ cổng thứ hai được
+ * gọi — cổng mồ côi thật lọt qua. Chặn bằng ranh giới bên phải.
+ */
+function hasCallSite(haystack: string, scriptName: string): boolean {
+  const escaped = scriptName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // Phải là lời GỌI thật. `echo "✗ check:foo failed"` nhắc đúng tên cổng nhưng
+  // không chạy nó — bản cũ tính dòng đó là call site, nên gỡ lời gọi mà vẫn xanh.
+  return new RegExp(
+    `(?:pnpm|npm|yarn)\\s+(?:run\\s+)?(?:--filter\\s+\\S+\\s+)?${escaped}(?![A-Za-z0-9:_-])`
+  ).test(haystack);
+}
+
+/** Tên cổng nằm trong một dòng comment KHÔNG phải call site. */
+function stripCommentLines(content: string, marker: string): string {
+  return content
+    .split("\n")
+    .filter((line) => !line.trim().startsWith(marker))
+    .join("\n");
 }
 
 function checkOrphanCheckScripts(
@@ -316,6 +610,9 @@ function checkOrphanCheckScripts(
   const lefthookContent = fs.readFileSync(lefthookPath, "utf-8");
 
   const scripts = pkg.scripts ?? {};
+  const checkShLive = stripCommentLines(checkShContent, "#");
+  const lefthookLive = stripCommentLines(lefthookContent, "#");
+
   for (const scriptName of Object.keys(scripts)) {
     if (!scriptName.startsWith("check:") || isSpecialCheckScript(scriptName)) {
       continue;
@@ -323,11 +620,11 @@ function checkOrphanCheckScripts(
 
     const scriptCmd = scripts[scriptName] ?? "";
     const inCheckSh =
-      checkShContent.includes(scriptName) ||
-      (scriptCmd.length > 0 && checkShContent.includes(scriptCmd));
+      hasCallSite(checkShLive, scriptName) ||
+      (scriptCmd.length > 0 && checkShLive.includes(scriptCmd));
     const inLefthook =
-      lefthookContent.includes(scriptName) ||
-      (scriptCmd.length > 0 && lefthookContent.includes(scriptCmd));
+      hasCallSite(lefthookLive, scriptName) ||
+      (scriptCmd.length > 0 && lefthookLive.includes(scriptCmd));
 
     if (!(inCheckSh || inLefthook)) {
       count++;
@@ -342,36 +639,156 @@ function checkOrphanCheckScripts(
   return count;
 }
 
+const GATE_FILES_FOR_COMMENT_SCAN = [
+  { path: "lefthook.yml", kind: "yaml" as const },
+  { path: "scripts/check.sh", kind: "shell" as const },
+];
+
+const SHELL_COMMAND_REGEX = /^(?:pnpm|npm|npx|bash|sh|node|tsx|yarn)\s/;
+const SHELL_CONTROL_REGEX = /^(?:if\s|fi\b|else\b|elif\s|exit\s|then\b|done\b)/;
+const YAML_GATE_REGEX =
+  /^(?:-\s+name:|jobs:|run:|(?:pre-commit|pre-push|post-merge|post-checkout):)/;
+const MIN_COMMENTED_SHELL_LINES = 5;
+const MIN_COMMENTED_YAML_LINES = 3;
+
+/**
+ * `BR-CFO-11` — một khối cổng bị comment là cổng đã tắt mà vẫn trông như còn.
+ *
+ * Bản cũ chỉ khớp đúng chuỗi `# pre-push:` trong `lefthook.yml`, nên khối
+ * `Phase 4` bị comment trong `scripts/check.sh` Cấm — NEVER bị thấy. Ở đây quét
+ * cả hai file cổng và nhận diện theo HÌNH DẠNG.
+ *
+ * Ngưỡng khác nhau theo loại file có lý do: trong YAML, một dải comment chứa
+ * `jobs:` hay `- name:` là cổng bị tắt, không thể là văn xuôi. Trong shell thì
+ * `# bash scripts/check.sh --fast` là dòng HƯỚNG DẪN hợp lệ ở đầu file, nên
+ * phải đòi thêm cấu trúc điều khiển (`if` / `fi` / `exit`) mới tính.
+ */
+function isCommentedGateCommand(body: string, kind: "yaml" | "shell"): boolean {
+  return kind === "yaml"
+    ? YAML_GATE_REGEX.test(body)
+    : SHELL_COMMAND_REGEX.test(body);
+}
+
+interface CommentBlockState {
+  blockStart: number;
+  hasCommand: boolean;
+  hasControl: boolean;
+}
+
+function updateCommentBlock(
+  state: CommentBlockState,
+  body: string,
+  lineIndex: number,
+  kind: "yaml" | "shell"
+): void {
+  if (state.blockStart < 0) {
+    state.blockStart = lineIndex;
+  }
+  if (isCommentedGateCommand(body, kind)) {
+    state.hasCommand = true;
+  }
+  if (SHELL_CONTROL_REGEX.test(body)) {
+    state.hasControl = true;
+  }
+}
+
+function isGateBlock(
+  state: CommentBlockState,
+  kind: "yaml" | "shell"
+): boolean {
+  return kind === "yaml"
+    ? state.hasCommand
+    : state.hasCommand && state.hasControl;
+}
+
+function flushCommentedBlock(
+  relPath: string,
+  blockStart: number,
+  endIndex: number,
+  minLines: number,
+  looksLikeGate: boolean,
+  violations: ConfigViolation[]
+): number {
+  if (blockStart >= 0 && looksLikeGate && endIndex - blockStart >= minLines) {
+    violations.push({
+      rule: "BR-CFO-11",
+      target: `${relPath}:${blockStart + 1}-${endIndex}`,
+      message: `Khối cổng bị comment (${endIndex - blockStart} dòng) — bật lại hoặc xoá hẳn, Cấm — NEVER để treo`,
+    });
+    return 1;
+  }
+  return 0;
+}
+
+function scanCommentedBlocksInFile(
+  fullPath: string,
+  relPath: string,
+  kind: "yaml" | "shell",
+  violations: ConfigViolation[]
+): number {
+  if (!fs.existsSync(fullPath)) {
+    return 0;
+  }
+  const lines = fs.readFileSync(fullPath, "utf-8").split("\n");
+  const minLines =
+    kind === "yaml" ? MIN_COMMENTED_YAML_LINES : MIN_COMMENTED_SHELL_LINES;
+
+  let count = 0;
+  const state: CommentBlockState = {
+    blockStart: -1,
+    hasCommand: false,
+    hasControl: false,
+  };
+
+  const resetState = (): void => {
+    state.blockStart = -1;
+    state.hasCommand = false;
+    state.hasControl = false;
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const raw = (lines[i] ?? "").trim();
+    if (raw.startsWith("#")) {
+      const body = raw.replace(COMMENT_PREFIX_REGEX, "").trim();
+      updateCommentBlock(state, body, i, kind);
+    } else if (raw.length > 0) {
+      count += flushCommentedBlock(
+        relPath,
+        state.blockStart,
+        i,
+        minLines,
+        isGateBlock(state, kind),
+        violations
+      );
+      resetState();
+    }
+  }
+
+  count += flushCommentedBlock(
+    relPath,
+    state.blockStart,
+    lines.length,
+    minLines,
+    isGateBlock(state, kind),
+    violations
+  );
+
+  return count;
+}
+
 function checkCommentedLefthookBlocks(
   root: string,
   violations: ConfigViolation[]
 ): number {
   let count = 0;
-  const lefthookPath = path.join(root, "lefthook.yml");
-  if (!fs.existsSync(lefthookPath)) {
-    return 0;
+  for (const { path: relPath, kind } of GATE_FILES_FOR_COMMENT_SCAN) {
+    count += scanCommentedBlocksInFile(
+      path.join(root, relPath),
+      relPath,
+      kind,
+      violations
+    );
   }
-
-  const content = fs.readFileSync(lefthookPath, "utf-8");
-  const lines = content.split("\n");
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i]?.trim() ?? "";
-    if (line.startsWith("# pre-push:")) {
-      const nextLines = lines.slice(i, i + 10).map((l) => l.trim());
-      const hasCommentedJobs = nextLines.some(
-        (l) => l.startsWith("#   jobs:") || l.startsWith("#     - name:")
-      );
-      if (hasCommentedJobs) {
-        count++;
-        violations.push({
-          rule: "BR-CFO-11",
-          target: `lefthook.yml:${i + 1}`,
-          message: "Khối pre-push bị comment hoàn toàn",
-        });
-      }
-    }
-  }
-
   return count;
 }
 
@@ -397,6 +814,8 @@ function checkAdditionalRules(
       });
     }
   }
+
+  checkTailwindTouchFloorClasses(root, violations);
 
   const configIndexPath = path.join(root, "packages/config/src/index.ts");
   if (fs.existsSync(configIndexPath)) {

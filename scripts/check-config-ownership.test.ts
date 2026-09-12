@@ -71,6 +71,9 @@ describe("Cổng check:config-ownership", () => {
         { recursive: true }
       );
       fs.mkdirSync(path.join(tempDir, "apps/web"), { recursive: true });
+      fs.mkdirSync(path.join(tempDir, "packages/ui/assets/css"), {
+        recursive: true,
+      });
       fs.mkdirSync(path.join(tempDir, "scripts"), { recursive: true });
 
       // Valid defaults
@@ -104,7 +107,15 @@ describe("Cổng check:config-ownership", () => {
       );
       fs.writeFileSync(
         path.join(tempDir, "packages/game-engine/src/systems/designTokens.ts"),
-        "export const surface = { 500: '#78716c' };\nexport const fonts = { sans: 'Be Vietnam Pro', heading: 'Baloo 2' };\n"
+        'export const designTokens = {\n  colors: { surface: { 400: "#a8a29e", 500: "#78716c" } },\n  fonts: {\n    sans: \'"Be Vietnam Pro", sans-serif\',\n  },\n};\n'
+      );
+      fs.writeFileSync(
+        path.join(tempDir, "packages/ui/assets/css/tailwind.css"),
+        '@theme static {\n  --color-surface-400: #a8a29e;\n  --color-surface-500: #78716c;\n  --font-sans: "Be Vietnam Pro", sans-serif;\n}\n'
+      );
+      fs.writeFileSync(
+        path.join(tempDir, "packages/ui/nuxt.config.ts"),
+        'export default defineNuxtConfig({ fonts: { families: [{ name: "Be Vietnam Pro" }] } });\n'
       );
       fs.writeFileSync(
         path.join(tempDir, "packages/adaptive/src/level-params.ts"),
@@ -209,11 +220,13 @@ describe("Cổng check:config-ownership", () => {
       ).toBe(true);
     });
 
-    it("BR-CFO-07: phát hiện khai báo sàn chạm độc lập MIN_TOUCH_PX", () => {
+    it("BR-CFO-07: phát hiện sàn chạm khai lại ở package thứ hai dưới TÊN KHÁC", () => {
       setupMinimalRepo();
+      // Cố ý KHÔNG dùng `MIN_TOUCH_PX`: cổng phải bắt theo GIÁ TRỊ sàn chạm chứ
+      // không theo một định danh lịch sử, nếu không thì đổi tên là qua được cổng.
       fs.writeFileSync(
         path.join(tempDir, "packages/game-engine/src/interaction.ts"),
-        "export const MIN_TOUCH_PX = 64;\n"
+        "export const tapTargetFloors = { band3_4: 96, primary: 76, min: 64 };\n"
       );
 
       const res = scanConfigOwnership({ repoRoot: tempDir });
@@ -225,15 +238,32 @@ describe("Cổng check:config-ownership", () => {
 
     it("BR-CFO-08: phát hiện token màu surface lệch hoặc phông chưa nạp", () => {
       setupMinimalRepo();
+      // Giá trị lệch MỚI (#123456) và một phông chưa từng có trong repo. Bản cổng
+      // cũ đóng cứng `#827660` / `Quicksand` nên đúng ca này là ca nó bỏ lọt.
       fs.writeFileSync(
         path.join(tempDir, "packages/game-engine/src/systems/designTokens.ts"),
-        "export const surface = { 500: '#827660' };\nexport const fonts = { sans: 'Quicksand' };\n"
+        'export const designTokens = {\n  colors: { surface: { 400: "#a8a29e", 500: "#123456" } },\n  fonts: {\n    sans: \'"Nunito Sans", sans-serif\',\n  },\n};\n'
       );
 
       const res = scanConfigOwnership({ repoRoot: tempDir });
       expect(res.stats.token_source_count).toBe(2);
+      const tokenViolations = res.violations.filter(
+        (v: ConfigViolation) => v.rule === "BR-CFO-08"
+      );
+      // Cổng phải nêu ĐÚNG bậc và CẢ HAI giá trị, không chỉ báo "có lệch".
       expect(
-        res.violations.some((v: ConfigViolation) => v.rule === "BR-CFO-08")
+        tokenViolations.some(
+          (v: ConfigViolation) =>
+            v.message.includes("surface-500") &&
+            v.message.includes("#78716c") &&
+            v.message.includes("#123456")
+        )
+      ).toBe(true);
+      // Và phải nêu đúng tên phông không được nạp.
+      expect(
+        tokenViolations.some((v: ConfigViolation) =>
+          v.message.includes("nunito sans")
+        )
       ).toBe(true);
     });
 

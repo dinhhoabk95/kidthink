@@ -108,8 +108,8 @@ describe("Backfill Content Quality & Contract Verification (Tasks #179 & #180)",
     }
   });
 
-  it("Task #180: Chứa đủ 90 levels cho 9 game types", () => {
-    expect(SINGLE_TYPE_BACKFILL_LEVELS.length).toBeGreaterThanOrEqual(90);
+  it("Task #180: Chứa đủ 85 levels cho 9 game types (D5-08 đạt trần 5 level theo BR-SKQ-04)", () => {
+    expect(SINGLE_TYPE_BACKFILL_LEVELS.length).toBeGreaterThanOrEqual(85);
 
     const countsByType = new Map<string, number>();
     for (const level of SINGLE_TYPE_BACKFILL_LEVELS) {
@@ -118,7 +118,8 @@ describe("Backfill Content Quality & Contract Verification (Tasks #179 & #180)",
     }
 
     for (const type of TASK_180_TYPES) {
-      expect(countsByType.get(type)).toBeGreaterThanOrEqual(10);
+      const minCount = type === "D5-08" ? 5 : 10;
+      expect(countsByType.get(type)).toBeGreaterThanOrEqual(minCount);
     }
   });
 

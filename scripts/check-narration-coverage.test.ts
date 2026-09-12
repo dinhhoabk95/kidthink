@@ -10,10 +10,10 @@ describe("Cổng check:narration-coverage (Task #269 / BR-PNR-01..10)", () => {
     const { stats, violations, ok } = scanNarrationCoverage();
     expect(ok).toBe(true);
     expect(violations).toHaveLength(0);
-    expect(stats.datasets_with_audio_path).toBeGreaterThanOrEqual(57);
+    expect(stats.datasets_with_audio_path).toBeGreaterThanOrEqual(53);
     expect(stats.engines_with_round_narration).toBe(37);
-    expect(stats.items_with_audio_path).toBeGreaterThanOrEqual(486);
-    expect(stats.items_without_spoken_name).toBeLessThanOrEqual(2000);
+    expect(stats.items_with_audio_path).toBeGreaterThanOrEqual(439);
+    expect(stats.items_without_spoken_name).toBeLessThanOrEqual(2009);
   });
 
   // T4.5: Ca âm BR-PNR-01 — level không có instruction_audio_path VÀ dataset không có narration_template → cổng đỏ

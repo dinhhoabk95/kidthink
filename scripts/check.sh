@@ -376,23 +376,11 @@ if [ -d "apps/web/.output" ]; then
   pnpm check:bundle
 fi
 
-# ── Phase 4: Deploy test (Tạm thời vô hiệu hóa) ───────────────────────────
-# if [ "$FAST" = false ]; then
-#   echo "▸ Phase 4: deploy test"
-#   phase_start
-# 
-#   bash "${REPO_ROOT}/infra/scripts/tests/run.sh"
-#   DEPLOY_STATUS=$?
-# 
-#   if [ $DEPLOY_STATUS -ne 0 ]; then
-#     echo "✗ test:deploy failed" >&2
-#     exit 1
-#   fi
-#   echo "✓ deploy test"
-#   phase_end
-# else
-#   echo "▸ Phase 4: deploy test (skipped — --fast)"
-# fi
+# Phase 4 (deploy test) KHÔNG chạy trong `check`. Nó nằm ở `pnpm test:deploy`
+# (`infra/scripts/tests/run.sh`) và chạy tay khi phát hành.
+#
+# Cấm — NEVER dựng lại nó ở đây dưới dạng khối comment: `BR-CFO-11` cấm khối cổng
+# bị comment, vì một cổng đã tắt mà vẫn trông như còn là cổng xanh giả.
 
 # ── Summary ────────────────────────────────────────────────────────────────
 TOTAL_ELAPSED=$(( $(date +%s) - TOTAL_START ))

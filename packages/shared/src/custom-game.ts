@@ -287,7 +287,7 @@ function validateItemCountsAndDistractors(
   const { totalItems, distractorCount } = countItemsAndDistractors(contentPack);
 
   const bandLimits: Record<
-    string,
+    AgeBand,
     { min: number; max: number; maxDistractors: number }
   > = {
     "3-4": { min: 2, max: 4, maxDistractors: 1 },

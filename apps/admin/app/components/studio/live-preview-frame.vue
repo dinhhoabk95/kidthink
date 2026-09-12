@@ -159,7 +159,7 @@
 </template>
 
 <script lang="ts" setup>
-  import type { AgeBand } from "@mindkid/shared/client";
+  import { AGE_BANDS, type AgeBand } from "@mindkid/shared/client";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 
   export interface PreviewValidationError {
@@ -180,11 +180,13 @@
   const isIframeLoading = ref(true);
   const previewIframeRef = ref<HTMLIFrameElement | null>(null);
 
-  const ageBands = [
-    { id: "3-4", label: "Mầm (3-4)" },
-    { id: "4-5", label: "Chồi (4-5)" },
-    { id: "5-6", label: "Lá (5-6)" },
-  ] as const;
+  // Nhãn theo band; danh sách band thì dẫn xuất từ AGE_BANDS (BR-CFO-06).
+  const AGE_BAND_LABELS: Record<AgeBand, string> = {
+    "3-4": "Mầm (3-4)",
+    "4-5": "Chồi (4-5)",
+    "5-6": "Lá (5-6)",
+  };
+  const ageBands = AGE_BANDS.map((id) => ({ id, label: AGE_BAND_LABELS[id] }));
 
   const previewUrl = computed(() => {
     return `/play/preview-sandbox?template=${props.templateCode}`;

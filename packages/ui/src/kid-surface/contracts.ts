@@ -1,5 +1,7 @@
 // @mindkid/ui — Kid Surface 8 Technical Constraints (accessibility.md §7.2, design-system-contract.md §7.1)
 
+import { TOUCH_FLOORS } from "@mindkid/shared/touch-floors";
+
 export interface KidInstruction {
   audioUrl?: string;
   text: string;
@@ -103,12 +105,12 @@ export function validateTouchTargetSize(
   isBand3_4 = false,
   isPrimaryAction = false
 ): boolean {
-  // BR-A11-04: Touch target floor by age band
-  let requiredMin = 64;
+  // BR-A11-04 & BR-CFO-07: sàn chạm lấy từ nguồn duy nhất, Cấm — NEVER viết số.
+  let requiredMin: number = TOUCH_FLOORS.kidMin;
   if (isBand3_4) {
-    requiredMin = 96;
+    requiredMin = TOUCH_FLOORS.kidBand3_4;
   } else if (isPrimaryAction) {
-    requiredMin = 76;
+    requiredMin = TOUCH_FLOORS.kidPrimary;
   }
 
   if (sizePx < requiredMin) {
