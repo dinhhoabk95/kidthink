@@ -40,10 +40,17 @@ export const projectGT012: Projection<"GT-012"> = {
     const distractorCandidates = [1, 2, 3, 4, 5, 6].filter(
       (v) => v !== targetCount
     );
+    // Số phương án nhiễu phải bằng đúng con số khai trong `difficulty_params`,
+    // nếu không thì tham số nói dối về chính nội dung nó đi kèm. Bảng tra cho
+    // GT-012 là 1..5 theo độ khó; cắt cứng ở 2 làm sai 4 trên 5 bậc.
+    const distractorCount = Math.min(
+      params.distractor_count ?? 2,
+      distractorCandidates.length
+    );
     const shuffledDistractors = shuffleDeterministic(
       distractorCandidates,
       rng
-    ).slice(0, 2);
+    ).slice(0, distractorCount);
 
     const options = [
       { value: targetCount, is_correct: true },
@@ -62,7 +69,7 @@ export const projectGT012: Projection<"GT-012"> = {
       difficulty_params: {
         flash_ms: params.flash_ms ?? 1500,
         item_count: targetCount,
-        distractor_count: params.distractor_count ?? 2,
+        distractor_count: distractorCount,
         allow_replay: true,
         hint_after_ms: 10_000,
         allow_retry: true,
