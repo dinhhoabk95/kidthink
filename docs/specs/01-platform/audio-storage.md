@@ -111,6 +111,32 @@ Chọn file audio trong Studio
 | Mức âm lượng chuẩn hoá | Trần −16 LUFS, true peak ≤ −1 dBTP |
 | Onset & Decay | Ramp-in ≥ 20ms, ramp-out ≥ 40ms |
 
+### 7.3 Bảng ánh xạ di sản `d1`–`d6` sang `C1`–`C6` (Task #269)
+
+Ánh xạ nhiều-nhiều giữa các thư mục di sản v1 (`apps/web/public/audio/voice/`) và các nhánh kỹ năng v2:
+
+| Nhánh di sản | Thư mục con / tệp | Số tệp | Nhánh v2 tương ứng | Loại câu |
+|---|---|---:|---|---|
+| `common` | `common/numbers/0..30.mp3` | 31 | `C1.NREC`, `C1.CNT` | `item_name` |
+| `d1` | `d1/instruction/**`, `d1/nr_*`, `d1/question_*` | 63 | `C1.CNT`, `C1.NREC`, `C1.ORD`, `C1.SUB`, `C1.CMP`, `C1.OTO`, `C1.PROB` | `instruction` |
+| `d1` | `d1/feedback/**` | 361 | `C1` (Số học & phép tính) | `feedback` |
+| `d2` | `d2/shape/**`, `d2/shape3d/**` | 25 | `C2.GEO` (Hình phẳng & Khối 3D) | `item_name` |
+| `d2` | `d2/instruction/**`, `d2/spatial/**` | 32 | `C2.CON`, `C2.GEO`, `C2.MIR`, `C2.SPA` | `instruction` |
+| `d2` | `d2/feedback/**` | 19 | `C2` (Không gian & hình dạng) | `feedback` |
+| `d3` | `d3/d3-01..08_instruction.mp3` | 8 | `C3.PAT`, `C3.CLA`, `C3.SER`, `C3.ANA`, `C3.MTX` | `instruction` |
+| `d4` | `d4/d4-01..08_instruction.mp3`, `d4_*.mp3` | 13 | `C4.OBS`, `C4.DET` | `instruction` |
+| `d5` | `d5/clock_template/1_00..12_30.mp3` | 24 | `C1.MEAS.13` (Đồng hồ) | `item_name` |
+| `d5` | `d5/clock_template/activity_*.mp3` | 24 | `C1.MEAS.13` (Hoạt động theo giờ) | `instruction` |
+| `d5` | `d5/money_template/1..30.mp3` | 30 | `C1.MEAS.14` (Tiền xu đơn giản) | `item_name` |
+| `d5` | `d5/unit_result_template/**` | 70 | `C1.MEAS.08` (Phi chuẩn), `C1.MEAS.09` (Thước cm) | `item_name` |
+| `d5` | `d5/balance_*`, `d5/size_*`, `d5/liquid_*`, `d5/unit_*` | 19 | `C1.MEAS.01..07`, `C1.MEAS.15` | `instruction` / `feedback` |
+| `d6` | `d6/memory_intro_n/**`, `d6/cause_*`, `d6/codepath_*`, `d6/audio_*` | 21 | `C4.CAU`, `C4.MEM`, `C6.WM`, `C6.PLN` | `instruction` |
+| `d6` | `d6/picture_grape.mp3`, `d6/picture_ladybug.mp3` | 2 | `C4.MEM`, `C6.WM` | `item_name` |
+| **Tổng** | | **742** | | |
+
+Khai báo runtime tại `packages/content/src/inventories/audio-legacy-map.ts` (`LEGACY_VOICE_BRANCH_MAP` và `AUDIO_LEGACY_INVENTORY`).
+
+
 ## 8. API contract
 
 ### `POST /api/managers/audio`

@@ -20,14 +20,14 @@ Bắt buộc tuần tự: **L1 → L2 → L3**. Song song với L1: **L4 · L5**
 
 ## L1 — Bảng ánh xạ nhánh di sản (chặn mọi việc sau)
 
-- [ ] T1.1 Liệt kê trọn cây `apps/web/public/audio/voice/**`, ghi số file mỗi nhánh con
-- [ ] T1.2 Nghe mẫu từng nhánh con để xác định nội dung thật, không suy từ tên thư mục
-- [ ] T1.3 `packages/content/src/inventories/audio-legacy-map.ts` — ánh xạ **nhiều-nhiều**, không giả định một-một
-- [ ] T1.4 Xác nhận `d5/money_template` và `d5/clock_template` thuộc `C1.MEAS` chứ không phải `C5`
-- [ ] T1.5 Gắn từng file mp3 với đúng một kỹ năng hoặc một loại câu (`instruction` / `feedback` / tên vật)
-- [ ] T1.6 Sinh bảng gắn một lần rồi commit; Cấm — NEVER đoán ánh xạ lúc chạy
-- [ ] T1.7 Ghi bảng ánh xạ vào mục 7 của [`audio-storage.md`](../specs/01-platform/audio-storage.md)
-- [ ] T1.8 Đo M3: số file không gắn được với kỹ năng nào
+- [x] T1.1 Liệt kê trọn cây `apps/web/public/audio/voice/**`, ghi số file mỗi nhánh con
+- [x] T1.2 Nghe mẫu từng nhánh con để xác định nội dung thật, không suy từ tên thư mục
+- [x] T1.3 `packages/content/src/inventories/audio-legacy-map.ts` — ánh xạ **nhiều-nhiều**, không giả định một-một
+- [x] T1.4 Xác nhận `d5/money_template` và `d5/clock_template` thuộc `C1.MEAS` chứ không phải `C5`
+- [x] T1.5 Gắn từng file mp3 với đúng một kỹ năng hoặc một loại câu (`instruction` / `feedback` / tên vật)
+- [x] T1.6 Sinh bảng gắn một lần rồi commit; Cấm — NEVER đoán ánh xạ lúc chạy
+- [x] T1.7 Ghi bảng ánh xạ vào mục 7 của [`audio-storage.md`](../specs/01-platform/audio-storage.md)
+- [x] T1.8 Đo M3: số file không gắn được với kỹ năng nào (0 file không phân loại được; 382 feedback, 182 item_name, 178 instruction)
 
 ## L2 — Gắn `audio_path` vào dataset
 
