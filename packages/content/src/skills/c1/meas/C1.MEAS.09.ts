@@ -1,4 +1,7 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+import { getMeasureDimension } from "#src/inventories/index";
+
+export const C1_MEAS_09_DIMENSION = getMeasureDimension("dim_length");
 
 export const C1_MEAS_09_IDENTITY: SkillIdentity = {
   code: "C1.MEAS.09",
