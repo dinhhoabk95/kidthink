@@ -39,14 +39,16 @@ Mỗi lô một commit riêng. Cấm — NEVER gộp `LB` với `LD`: cả hai �
 
 ## LC — 13 level đồng hồ gắn nhầm kỹ năng (M, chặn bởi LB)
 
-- [ ] TC.1 Xác nhận lại: 13 level `GL-C1-CLK-*` ở `C1.MEAS.04` / `.14` / `.15` có TRƯỚC `#267` (`git show 59b7d3fc`)
-- [ ] TC.2 Chốt cách xử lý — thêm kỹ năng đồng hồ mới, hay bỏ bớt level xuống trần `BR-SKQ-04`
-- [ ] TC.3 Ghi quyết định và lý do vào đây trước khi sửa tệp
-- [ ] TC.4 Thi hành; `C1.MEAS.13` không vượt 5 level cho cặp (kỹ năng, `GT-016`)
-- [ ] TC.5 Gỡ ba khối `clk_hour_1..12` độn ở `C1.MEAS.04` / `.14` / `.15` cùng ghi chú nợ của chúng
-- [ ] TC.6 `pnpm --filter @mindkid/content-build check:skill-quota` xanh
-- [ ] TC.7 `pnpm --filter @mindkid/game-engine gen:engine-depth-section` rồi `check:engine-specs` xanh
-- [ ] TC.8 `pnpm db:seed` xanh
+- [x] TC.1 Xác nhận lại: 13 level `GL-C1-CLK-*` ở `C1.MEAS.04` / `.14` / `.15` có TRƯỚC `#267` (`git show 59b7d3fc`)
+- [x] TC.2 Chốt cách xử lý — thêm kỹ năng đồng hồ mới, hay bỏ bớt level xuống trần `BR-SKQ-04`
+- [x] TC.3 Ghi quyết định và lý do vào đây trước khi sửa tệp:
+  - **Quyết định**: Bỏ bớt 10 level thừa `GL-C1-CLK-TIM-0001..0010`, gỡ hoàn toàn 13 level đồng hồ và 3 khối độn `clk_hour_1..12` khỏi `C1.MEAS.04`, `C1.MEAS.14`, `C1.MEAS.15`. Chuyển 3 level kinh điển `GL-C1-CLK-HND-0037..0039` (legacy D5-08, được `ACT-0356` tham chiếu) về đúng kỹ năng đồng hồ duy nhất `C1.MEAS.13` (thay thế level trùng lặp `GL-C1-MEAS-CLK-0003`), đạt đúng trần cứng 5 level cho cặp (`C1.MEAS.13`, `GT-016`) theo `BR-SKQ-04`.
+  - **Lý do**: Không được sinh thêm skill mới (vi phạm quy tắc bất biến taxonomy 230 skill); `C1.MEAS.04`, `.14`, `.15` sau khi gỡ vẫn có 25–27 level và 6 templates (vượt xa sàn hạn ngạch 20 level / 4 templates); 10 level `GL-C1-CLK-TIM-*` là level thừa sinh tự động không có call site nào.
+- [x] TC.4 Thi hành; `C1.MEAS.13` không vượt 5 level cho cặp (kỹ năng, `GT-016`)
+- [x] TC.5 Gỡ ba khối `clk_hour_1..12` độn ở `C1.MEAS.04` / `.14` / `.15` cùng ghi chú nợ của chúng
+- [x] TC.6 `pnpm --filter @mindkid/content-build check:skill-quota` xanh
+- [x] TC.7 `pnpm --filter @mindkid/game-engine gen:engine-depth-section` rồi `check:engine-specs` xanh
+- [x] TC.8 `pnpm db:seed` xanh
 
 ## LD — Dataset `C1` import kho giá trị (L, song song với LB được nếu khác strand)
 

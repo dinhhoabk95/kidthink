@@ -67,157 +67,83 @@ export const C1_MEAS_04_DATASET: SkillDataset = {
         quantity: "ít",
       },
     },
-    // NỢ CÓ TRƯỚC #267 — 13 level đồng hồ `GL-C1-CLK-*` gắn nhầm vào ba kỹ năng
-    // không dạy đồng hồ (`C1.MEAS.04` Nhiều ít, `C1.MEAS.14` Tiền xu,
-    // `C1.MEAS.15` Sắp xếp kích thước); chúng đã ở đây từ trước task #267.
-    // Nhóm `clk_hour_*` dưới đây tồn tại CHỈ để Cổng 9 tìm thấy một glyph, vì
-    // engine GT-016 không vẽ vật nào của dataset này. Chỗ đúng của 13 level đó
-    // là `C1.MEAS.13`, nhưng `BR-SKQ-04` chặn ở 5 level mỗi cặp (kỹ năng,
-    // engine), nên dời hết sang đấy sẽ vỡ hạn ngạch. Cần một quyết định về nội
-    // dung: hoặc thêm kỹ năng đồng hồ, hoặc bỏ bớt level. Xem `#267` mục nợ.
     {
-      id: "clk_hour_1",
-      label: "1 giờ",
-      glyph: "1",
-      value: 1,
-      audio_path: "/audio/voice/common/numbers/1.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_2",
-      label: "2 giờ",
-      glyph: "2",
-      value: 2,
-      audio_path: "/audio/voice/common/numbers/2.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_3",
-      label: "3 giờ",
-      glyph: "3",
-      value: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_4",
-      label: "4 giờ",
-      glyph: "4",
-      value: 4,
-      audio_path: "/audio/voice/common/numbers/4.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_5",
-      label: "5 giờ",
-      glyph: "5",
+      id: "dim_quantity_apple_more",
+      label: "nhiều quả táo",
       value: 5,
-      audio_path: "/audio/voice/common/numbers/5.mp3",
       image: {
         kind: "emoji",
-        ref: "🕐",
+        ref: "🍎",
       },
-      contrast_group: "time",
+      contrast_group: "quantity",
+      category: {
+        quantity: "nhiều",
+      },
     },
     {
-      id: "clk_hour_6",
-      label: "6 giờ",
-      glyph: "6",
+      id: "dim_quantity_apple_less",
+      label: "ít quả táo",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🍎",
+      },
+      contrast_group: "quantity",
+      category: {
+        quantity: "ít",
+      },
+    },
+    {
+      id: "dim_quantity_candy_more",
+      label: "nhiều viên kẹo",
       value: 6,
-      audio_path: "/audio/voice/common/numbers/6.mp3",
       image: {
         kind: "emoji",
-        ref: "🕐",
+        ref: "🍬",
       },
-      contrast_group: "time",
+      contrast_group: "quantity",
+      category: {
+        quantity: "nhiều",
+      },
     },
     {
-      id: "clk_hour_7",
-      label: "7 giờ",
-      glyph: "7",
-      value: 7,
-      audio_path: "/audio/voice/common/numbers/7.mp3",
+      id: "dim_quantity_candy_less",
+      label: "ít viên kẹo",
+      value: 2,
       image: {
         kind: "emoji",
-        ref: "🕐",
+        ref: "🍬",
       },
-      contrast_group: "time",
+      contrast_group: "quantity",
+      category: {
+        quantity: "ít",
+      },
     },
     {
-      id: "clk_hour_8",
-      label: "8 giờ",
-      glyph: "8",
-      value: 8,
-      audio_path: "/audio/voice/common/numbers/8.mp3",
+      id: "dim_quantity_star_more",
+      label: "nhiều ngôi sao",
+      value: 5,
       image: {
         kind: "emoji",
-        ref: "🕐",
+        ref: "⭐",
       },
-      contrast_group: "time",
+      contrast_group: "quantity",
+      category: {
+        quantity: "nhiều",
+      },
     },
     {
-      id: "clk_hour_9",
-      label: "9 giờ",
-      glyph: "9",
-      value: 9,
-      audio_path: "/audio/voice/common/numbers/9.mp3",
+      id: "dim_quantity_star_less",
+      label: "ít ngôi sao",
+      value: 2,
       image: {
         kind: "emoji",
-        ref: "🕐",
+        ref: "⭐",
       },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_10",
-      label: "10 giờ",
-      glyph: "10",
-      value: 10,
-      audio_path: "/audio/voice/common/numbers/10.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
+      contrast_group: "quantity",
+      category: {
+        quantity: "ít",
       },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_11",
-      label: "11 giờ",
-      glyph: "11",
-      value: 11,
-      audio_path: "/audio/voice/common/numbers/11.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
-    },
-    {
-      id: "clk_hour_12",
-      label: "12 giờ",
-      glyph: "12",
-      value: 12,
-      audio_path: "/audio/voice/common/numbers/12.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🕐",
-      },
-      contrast_group: "time",
     },
   ],
   relations: [
@@ -225,6 +151,30 @@ export const C1_MEAS_04_DATASET: SkillDataset = {
       type: "contrast",
       source_id: "dim_quantity_more",
       target_id: "dim_quantity_less",
+      metadata: {
+        dimension: "quantity",
+      },
+    },
+    {
+      type: "contrast",
+      source_id: "dim_quantity_apple_more",
+      target_id: "dim_quantity_apple_less",
+      metadata: {
+        dimension: "quantity",
+      },
+    },
+    {
+      type: "contrast",
+      source_id: "dim_quantity_candy_more",
+      target_id: "dim_quantity_candy_less",
+      metadata: {
+        dimension: "quantity",
+      },
+    },
+    {
+      type: "contrast",
+      source_id: "dim_quantity_star_more",
+      target_id: "dim_quantity_star_less",
       metadata: {
         dimension: "quantity",
       },
@@ -273,33 +223,6 @@ export const C1_MEAS_04_SEED: SkillSeed = {
   identity: C1_MEAS_04_IDENTITY,
   dataset: C1_MEAS_04_DATASET,
   levels: [
-    {
-      code: "GL-C1-CLK-HND-0037",
-      template: "GT-016",
-      band: "5-6",
-      difficulty: 2,
-      theme: "home",
-      rounds: 3,
-      legacy_v1_ref: "D5-08",
-    },
-    {
-      code: "GL-C1-CLK-HND-0038",
-      template: "GT-016",
-      band: "5-6",
-      difficulty: 3,
-      theme: "school",
-      rounds: 3,
-      legacy_v1_ref: "D5-08",
-    },
-    {
-      code: "GL-C1-CLK-HND-0039",
-      template: "GT-016",
-      band: "5-6",
-      difficulty: 4,
-      theme: "home",
-      rounds: 3,
-      legacy_v1_ref: "D5-08",
-    },
     {
       code: "GL-C1-RUL-SLOT-0009",
       template: "GT-008",

@@ -156,6 +156,11 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
     prompt_template: "Cốc nào đựng được nhiều nước hơn hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Dung tích nhé",
   },
+  ordering: [
+    "dim_capacity_empty_less",
+    "dim_capacity_half",
+    "dim_capacity_more",
+  ],
 };
 
 export const C1_MEAS_05_SEED: SkillSeed = {
