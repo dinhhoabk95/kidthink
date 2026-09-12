@@ -324,31 +324,26 @@ export const C1_NCOMP_11_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với thành phần số",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng thành phần số",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt thành phần số với phương án nhiễu",
-      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi thành phần số",
-      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục thành phần số và tự làm một mình",
-      representation: "numeral",
     },
   ],
   phrasing: {

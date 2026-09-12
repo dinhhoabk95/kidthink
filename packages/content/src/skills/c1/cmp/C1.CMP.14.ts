@@ -127,31 +127,26 @@ export const C1_CMP_14_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với nhanh hơn",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng nhanh hơn",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt nhanh hơn với phương án nhiễu",
-      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi nhanh hơn",
-      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục nhanh hơn và tự làm một mình",
-      representation: "numeral",
     },
   ],
   phrasing: {

@@ -127,31 +127,26 @@ export const C1_CMP_12_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với xa hơn",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng xa hơn",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt xa hơn với phương án nhiễu",
-      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi xa hơn",
-      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục xa hơn và tự làm một mình",
-      representation: "ten-frame",
     },
   ],
   phrasing: {

@@ -51,6 +51,10 @@ export const C1_NREC_10_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "0️⃣",
       },
+      category: {
+        parity: "chẵn",
+        half: "nửa đầu",
+      },
     },
     {
       id: "n1",
@@ -61,6 +65,10 @@ export const C1_NREC_10_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "1️⃣",
+      },
+      category: {
+        parity: "lẻ",
+        half: "nửa đầu",
       },
     },
     {
@@ -73,6 +81,10 @@ export const C1_NREC_10_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "2️⃣",
       },
+      category: {
+        parity: "chẵn",
+        half: "nửa đầu",
+      },
     },
     {
       id: "n3",
@@ -83,6 +95,10 @@ export const C1_NREC_10_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "3️⃣",
+      },
+      category: {
+        parity: "lẻ",
+        half: "nửa sau",
       },
     },
     {
@@ -95,6 +111,10 @@ export const C1_NREC_10_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "4️⃣",
       },
+      category: {
+        parity: "chẵn",
+        half: "nửa sau",
+      },
     },
     {
       id: "n5",
@@ -106,56 +126,87 @@ export const C1_NREC_10_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "5️⃣",
       },
+      category: {
+        parity: "lẻ",
+        half: "nửa sau",
+      },
     },
   ],
   relations: [
     {
-      type: "subset",
-      source_id: "n1",
-      target_id: "n3",
+      type: "sequence",
+      source_id: "n0",
+      target_id: "n1",
       metadata: {
-        relation: "odd_numbers",
+        relation: "predecessor",
       },
     },
     {
-      type: "subset",
+      type: "sequence",
+      source_id: "n1",
+      target_id: "n2",
+      metadata: {
+        relation: "predecessor",
+      },
+    },
+    {
+      type: "sequence",
       source_id: "n2",
+      target_id: "n3",
+      metadata: {
+        relation: "predecessor",
+      },
+    },
+    {
+      type: "sequence",
+      source_id: "n3",
       target_id: "n4",
       metadata: {
-        relation: "even_numbers",
+        relation: "predecessor",
+      },
+    },
+    {
+      type: "sequence",
+      source_id: "n4",
+      target_id: "n5",
+      metadata: {
+        relation: "predecessor",
       },
     },
   ],
+  axes: {
+    parity: {
+      values: ["chẵn", "lẻ"],
+    },
+    half: {
+      values: ["nửa đầu", "nửa sau"],
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với số trước",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng số trước",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt số trước với phương án nhiễu",
-      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi số trước",
-      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục số trước và tự làm một mình",
-      representation: "ten-frame",
     },
   ],
   phrasing: {

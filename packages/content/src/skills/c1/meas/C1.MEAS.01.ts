@@ -127,31 +127,26 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với dài ngắn",
-      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng dài ngắn",
-      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt dài ngắn với phương án nhiễu",
-      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi dài ngắn",
-      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục dài ngắn và tự làm một mình",
-      representation: "number-rod",
     },
   ],
   phrasing: {

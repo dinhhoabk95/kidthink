@@ -187,31 +187,26 @@ export const C1_CNT_10_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với kiểm tra kết quả đếm",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng kiểm tra kết quả đếm",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt kiểm tra kết quả đếm với phương án nhiễu",
-      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi kiểm tra kết quả đếm",
-      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục kiểm tra kết quả đếm và tự làm một mình",
-      representation: "numeral",
     },
   ],
   phrasing: {

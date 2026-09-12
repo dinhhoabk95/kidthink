@@ -119,31 +119,26 @@ export const C1_CMP_06_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với dài hơn",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng dài hơn",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt dài hơn với phương án nhiễu",
-      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi dài hơn",
-      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục dài hơn và tự làm một mình",
-      representation: "discrete-object",
     },
   ],
   phrasing: {

@@ -108,31 +108,26 @@ export const C1_NREC_01_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với nhận biết số 0–3",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng nhận biết số 0–3",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt nhận biết số 0–3 với phương án nhiễu",
-      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi nhận biết số 0–3",
-      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục nhận biết số 0–3 và tự làm một mình",
-      representation: "discrete-object",
     },
   ],
   phrasing: {

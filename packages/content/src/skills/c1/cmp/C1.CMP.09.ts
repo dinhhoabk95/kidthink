@@ -91,31 +91,26 @@ export const C1_CMP_09_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với thấp hơn",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng thấp hơn",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt thấp hơn với phương án nhiễu",
-      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi thấp hơn",
-      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục thấp hơn và tự làm một mình",
-      representation: "discrete-object",
     },
   ],
   phrasing: {

@@ -107,31 +107,26 @@ export const C1_ORD_01_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với thứ nhất · thứ hai · thứ ba",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng thứ nhất · thứ hai · thứ ba",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt thứ nhất · thứ hai · thứ ba với phương án nhiễu",
-      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi thứ nhất · thứ hai · thứ ba",
-      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục thứ nhất · thứ hai · thứ ba và tự làm một mình",
-      representation: "ten-frame",
     },
   ],
   phrasing: {

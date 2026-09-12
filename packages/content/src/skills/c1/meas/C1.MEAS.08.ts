@@ -135,31 +135,26 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với đo bằng đơn vị phi chuẩn",
-      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng đo bằng đơn vị phi chuẩn",
-      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt đo bằng đơn vị phi chuẩn với phương án nhiễu",
-      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi đo bằng đơn vị phi chuẩn",
-      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục đo bằng đơn vị phi chuẩn và tự làm một mình",
-      representation: "number-rod",
     },
   ],
   phrasing: {

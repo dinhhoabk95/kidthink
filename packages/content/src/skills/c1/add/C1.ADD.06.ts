@@ -291,31 +291,26 @@ export const C1_ADD_06_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với cộng nhẩm đơn giản",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng cộng nhẩm đơn giản",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt cộng nhẩm đơn giản với phương án nhiễu",
-      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi cộng nhẩm đơn giản",
-      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục cộng nhẩm đơn giản và tự làm một mình",
-      representation: "numeral",
     },
   ],
   phrasing: {

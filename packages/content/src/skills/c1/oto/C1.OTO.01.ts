@@ -139,31 +139,26 @@ export const C1_OTO_01_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với ghép 1-1",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng ghép 1-1",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt ghép 1-1 với phương án nhiễu",
-      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi ghép 1-1",
-      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục ghép 1-1 và tự làm một mình",
-      representation: "discrete-object",
     },
   ],
   phrasing: {

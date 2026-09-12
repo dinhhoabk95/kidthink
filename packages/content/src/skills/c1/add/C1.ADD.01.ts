@@ -170,31 +170,26 @@ export const C1_ADD_01_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với cộng bằng đồ vật",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng cộng bằng đồ vật",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt cộng bằng đồ vật với phương án nhiễu",
-      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi cộng bằng đồ vật",
-      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục cộng bằng đồ vật và tự làm một mình",
-      representation: "ten-frame",
     },
   ],
   phrasing: {

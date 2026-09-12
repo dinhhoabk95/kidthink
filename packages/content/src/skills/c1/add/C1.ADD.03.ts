@@ -200,31 +200,26 @@ export const C1_ADD_03_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với cộng trên trục số",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng cộng trên trục số",
-      representation: "ten-frame",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt cộng trên trục số với phương án nhiễu",
-      representation: "number-line",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi cộng trên trục số",
-      representation: "number-line",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục cộng trên trục số và tự làm một mình",
-      representation: "number-line",
     },
   ],
   phrasing: {

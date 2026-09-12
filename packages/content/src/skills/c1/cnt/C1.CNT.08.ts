@@ -195,31 +195,26 @@ export const C1_CNT_08_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với đếm trên đường số",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng đếm trên đường số",
-      representation: "ten-frame",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt đếm trên đường số với phương án nhiễu",
-      representation: "number-line",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi đếm trên đường số",
-      representation: "number-line",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục đếm trên đường số và tự làm một mình",
-      representation: "number-line",
     },
   ],
   phrasing: {

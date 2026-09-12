@@ -216,31 +216,26 @@ export const C1_ORD_04_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với thứ tự đến thứ mười",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng thứ tự đến thứ mười",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt thứ tự đến thứ mười với phương án nhiễu",
-      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi thứ tự đến thứ mười",
-      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục thứ tự đến thứ mười và tự làm một mình",
-      representation: "numeral",
     },
   ],
   phrasing: {

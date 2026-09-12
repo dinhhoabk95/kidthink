@@ -42,61 +42,6 @@ export const C1_NREC_11_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "n0",
-      label: "số không",
-      glyph: "0",
-      value: 0,
-      audio_path: "/audio/voice/common/numbers/0.mp3",
-      image: {
-        kind: "emoji",
-        ref: "0️⃣",
-      },
-    },
-    {
-      id: "n1",
-      label: "số một",
-      glyph: "1",
-      value: 1,
-      audio_path: "/audio/voice/common/numbers/1.mp3",
-      image: {
-        kind: "emoji",
-        ref: "1️⃣",
-      },
-    },
-    {
-      id: "n2",
-      label: "số hai",
-      glyph: "2",
-      value: 2,
-      audio_path: "/audio/voice/common/numbers/2.mp3",
-      image: {
-        kind: "emoji",
-        ref: "2️⃣",
-      },
-    },
-    {
-      id: "n3",
-      label: "số ba",
-      glyph: "3",
-      value: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
-      image: {
-        kind: "emoji",
-        ref: "3️⃣",
-      },
-    },
-    {
-      id: "n4",
-      label: "số bốn",
-      glyph: "4",
-      value: 4,
-      audio_path: "/audio/voice/common/numbers/4.mp3",
-      image: {
-        kind: "emoji",
-        ref: "4️⃣",
-      },
-    },
-    {
       id: "n5",
       label: "số năm",
       glyph: "5",
@@ -106,63 +51,169 @@ export const C1_NREC_11_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "5️⃣",
       },
+      category: {
+        parity: "lẻ",
+        half: "nửa đầu",
+      },
+    },
+    {
+      id: "n6",
+      label: "số sáu",
+      glyph: "6",
+      value: 6,
+      audio_path: "/audio/voice/common/numbers/6.mp3",
+      image: {
+        kind: "emoji",
+        ref: "6",
+      },
+      category: {
+        parity: "chẵn",
+        half: "nửa đầu",
+      },
+    },
+    {
+      id: "n7",
+      label: "số bảy",
+      glyph: "7",
+      value: 7,
+      audio_path: "/audio/voice/common/numbers/7.mp3",
+      image: {
+        kind: "emoji",
+        ref: "7",
+      },
+      category: {
+        parity: "lẻ",
+        half: "nửa đầu",
+      },
+    },
+    {
+      id: "n8",
+      label: "số tám",
+      glyph: "8",
+      value: 8,
+      audio_path: "/audio/voice/common/numbers/8.mp3",
+      image: {
+        kind: "emoji",
+        ref: "8",
+      },
+      category: {
+        parity: "chẵn",
+        half: "nửa sau",
+      },
+    },
+    {
+      id: "n9",
+      label: "số chín",
+      glyph: "9",
+      value: 9,
+      audio_path: "/audio/voice/common/numbers/9.mp3",
+      image: {
+        kind: "emoji",
+        ref: "9",
+      },
+      category: {
+        parity: "lẻ",
+        half: "nửa sau",
+      },
+    },
+    {
+      id: "n10",
+      label: "số mười",
+      glyph: "10",
+      value: 10,
+      audio_path: "/audio/voice/common/numbers/10.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🔟",
+      },
+      category: {
+        parity: "chẵn",
+        half: "nửa sau",
+      },
     },
   ],
   relations: [
     {
-      type: "subset",
-      source_id: "n1",
-      target_id: "n3",
+      type: "sequence",
+      source_id: "n5",
+      target_id: "n6",
       metadata: {
-        relation: "odd_numbers",
+        relation: "successor",
       },
     },
     {
-      type: "subset",
-      source_id: "n2",
-      target_id: "n4",
+      type: "sequence",
+      source_id: "n6",
+      target_id: "n7",
       metadata: {
-        relation: "even_numbers",
+        relation: "successor",
+      },
+    },
+    {
+      type: "sequence",
+      source_id: "n7",
+      target_id: "n8",
+      metadata: {
+        relation: "successor",
+      },
+    },
+    {
+      type: "sequence",
+      source_id: "n8",
+      target_id: "n9",
+      metadata: {
+        relation: "successor",
+      },
+    },
+    {
+      type: "sequence",
+      source_id: "n9",
+      target_id: "n10",
+      metadata: {
+        relation: "successor",
       },
     },
   ],
+  axes: {
+    parity: {
+      values: ["chẵn", "lẻ"],
+    },
+    half: {
+      values: ["nửa đầu", "nửa sau"],
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với số sau",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng số sau",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt số sau với phương án nhiễu",
-      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi số sau",
-      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục số sau và tự làm một mình",
-      representation: "ten-frame",
     },
   ],
   phrasing: {
     prompt_template: "Số nào đứng ngay sau số này hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Số sau nhé",
   },
-  ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
+  ordering: ["n5", "n6", "n7", "n8", "n9", "n10"],
 };
 
 export const C1_NREC_11_SEED: SkillSeed = {

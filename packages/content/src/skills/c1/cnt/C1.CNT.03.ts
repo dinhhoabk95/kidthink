@@ -224,31 +224,26 @@ export const C1_CNT_03_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với đếm không bỏ sót",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng đếm không bỏ sót",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt đếm không bỏ sót với phương án nhiễu",
-      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi đếm không bỏ sót",
-      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục đếm không bỏ sót và tự làm một mình",
-      representation: "discrete-object",
     },
   ],
   phrasing: {

@@ -51,6 +51,10 @@ export const C1_NREC_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "0️⃣",
       },
+      contrast_group: "numeral",
+      category: {
+        role: "chữ số",
+      },
     },
     {
       id: "n1",
@@ -61,6 +65,10 @@ export const C1_NREC_05_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "1️⃣",
+      },
+      contrast_group: "numeral",
+      category: {
+        role: "chữ số",
       },
     },
     {
@@ -73,6 +81,10 @@ export const C1_NREC_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "2️⃣",
       },
+      contrast_group: "numeral",
+      category: {
+        role: "chữ số",
+      },
     },
     {
       id: "n3",
@@ -83,6 +95,10 @@ export const C1_NREC_05_DATASET: SkillDataset = {
       image: {
         kind: "emoji",
         ref: "3️⃣",
+      },
+      contrast_group: "numeral",
+      category: {
+        role: "chữ số",
       },
     },
     {
@@ -95,6 +111,10 @@ export const C1_NREC_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "4️⃣",
       },
+      contrast_group: "numeral",
+      category: {
+        role: "chữ số",
+      },
     },
     {
       id: "n5",
@@ -106,64 +126,176 @@ export const C1_NREC_05_DATASET: SkillDataset = {
         kind: "emoji",
         ref: "5️⃣",
       },
+      contrast_group: "numeral",
+      category: {
+        role: "chữ số",
+      },
+    },
+    {
+      id: "qty_0",
+      label: "không có quả táo nào",
+      glyph: "∅",
+      value: 0,
+      image: {
+        kind: "emoji",
+        ref: "⬜",
+      },
+      contrast_group: "quantity",
+      category: {
+        role: "lượng",
+      },
+    },
+    {
+      id: "qty_1",
+      label: "một quả táo",
+      glyph: "🍎",
+      value: 1,
+      image: {
+        kind: "emoji",
+        ref: "🍎",
+      },
+      contrast_group: "quantity",
+      category: {
+        role: "lượng",
+      },
+    },
+    {
+      id: "qty_2",
+      label: "hai quả táo",
+      glyph: "🍎🍎",
+      value: 2,
+      image: {
+        kind: "emoji",
+        ref: "🍎🍎",
+      },
+      contrast_group: "quantity",
+      category: {
+        role: "lượng",
+      },
+    },
+    {
+      id: "qty_3",
+      label: "ba quả táo",
+      glyph: "🍎🍎🍎",
+      value: 3,
+      image: {
+        kind: "emoji",
+        ref: "🍎🍎🍎",
+      },
+      contrast_group: "quantity",
+      category: {
+        role: "lượng",
+      },
+    },
+    {
+      id: "qty_4",
+      label: "bốn quả táo",
+      glyph: "🍎🍎🍎🍎",
+      value: 4,
+      image: {
+        kind: "emoji",
+        ref: "🍎🍎🍎🍎",
+      },
+      contrast_group: "quantity",
+      category: {
+        role: "lượng",
+      },
+    },
+    {
+      id: "qty_5",
+      label: "năm quả táo",
+      glyph: "🍎🍎🍎🍎🍎",
+      value: 5,
+      image: {
+        kind: "emoji",
+        ref: "🍎🍎🍎🍎🍎",
+      },
+      contrast_group: "quantity",
+      category: {
+        role: "lượng",
+      },
     },
   ],
   relations: [
     {
       type: "pair",
       source_id: "n0",
-      target_id: "n1",
+      target_id: "qty_0",
       metadata: {
-        relation: "numeral_match",
+        relation: "numeral_to_quantity",
+      },
+    },
+    {
+      type: "pair",
+      source_id: "n1",
+      target_id: "qty_1",
+      metadata: {
+        relation: "numeral_to_quantity",
       },
     },
     {
       type: "pair",
       source_id: "n2",
-      target_id: "n3",
+      target_id: "qty_2",
       metadata: {
-        relation: "numeral_match",
+        relation: "numeral_to_quantity",
+      },
+    },
+    {
+      type: "pair",
+      source_id: "n3",
+      target_id: "qty_3",
+      metadata: {
+        relation: "numeral_to_quantity",
       },
     },
     {
       type: "pair",
       source_id: "n4",
-      target_id: "n5",
+      target_id: "qty_4",
       metadata: {
-        relation: "numeral_match",
+        relation: "numeral_to_quantity",
+      },
+    },
+    {
+      type: "pair",
+      source_id: "n5",
+      target_id: "qty_5",
+      metadata: {
+        relation: "numeral_to_quantity",
       },
     },
   ],
+  axes: {
+    role: {
+      values: ["chữ số", "lượng"],
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với ghép số với lượng",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng ghép số với lượng",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt ghép số với lượng với phương án nhiễu",
-      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi ghép số với lượng",
-      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục ghép số với lượng và tự làm một mình",
-      representation: "discrete-object",
     },
   ],
   phrasing: {

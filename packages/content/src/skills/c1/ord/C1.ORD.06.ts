@@ -225,31 +225,26 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với thứ tự ngược từ cuối lên",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng thứ tự ngược từ cuối lên",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt thứ tự ngược từ cuối lên với phương án nhiễu",
-      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi thứ tự ngược từ cuối lên",
-      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục thứ tự ngược từ cuối lên và tự làm một mình",
-      representation: "numeral",
     },
   ],
   phrasing: {

@@ -116,34 +116,29 @@ export const C1_CNT_11_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với subitizing — nhận lượng tức thì (1–5)",
-      representation: "dot-pattern",
     },
     {
       rung: 2,
       dimension: "range",
       description:
         "Nhận biết và chọn đúng subitizing — nhận lượng tức thì (1–5)",
-      representation: "dot-pattern",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description:
         "Phân biệt subitizing — nhận lượng tức thì (1–5) với phương án nhiễu",
-      representation: "dot-pattern",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi subitizing — nhận lượng tức thì (1–5)",
-      representation: "dot-pattern",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description:
         "Thuần thục subitizing — nhận lượng tức thì (1–5) và tự làm một mình",
-      representation: "dot-pattern",
     },
   ],
   phrasing: {

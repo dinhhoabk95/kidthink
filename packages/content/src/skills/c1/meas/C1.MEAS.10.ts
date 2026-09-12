@@ -89,31 +89,26 @@ export const C1_MEAS_10_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với thời gian: trước/sau",
-      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng thời gian: trước/sau",
-      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt thời gian: trước/sau với phương án nhiễu",
-      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi thời gian: trước/sau",
-      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục thời gian: trước/sau và tự làm một mình",
-      representation: "number-rod",
     },
   ],
   phrasing: {

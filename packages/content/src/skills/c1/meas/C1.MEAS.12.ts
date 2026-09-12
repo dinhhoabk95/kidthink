@@ -130,34 +130,29 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
       dimension: "range",
       description:
         "Làm quen cơ bản với buổi trong ngày: sáng · trưa · chiều · tối",
-      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
       description:
         "Nhận biết và chọn đúng buổi trong ngày: sáng · trưa · chiều · tối",
-      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description:
         "Phân biệt buổi trong ngày: sáng · trưa · chiều · tối với phương án nhiễu",
-      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi buổi trong ngày: sáng · trưa · chiều · tối",
-      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description:
         "Thuần thục buổi trong ngày: sáng · trưa · chiều · tối và tự làm một mình",
-      representation: "number-rod",
     },
   ],
   phrasing: {

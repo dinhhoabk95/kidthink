@@ -281,31 +281,26 @@ export const C1_SUB_04_DATASET: SkillDataset = {
       rung: 1,
       dimension: "range",
       description: "Làm quen cơ bản với trừ trong phạm vi 10",
-      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
       description: "Nhận biết và chọn đúng trừ trong phạm vi 10",
-      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt trừ trong phạm vi 10 với phương án nhiễu",
-      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi trừ trong phạm vi 10",
-      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục trừ trong phạm vi 10 và tự làm một mình",
-      representation: "numeral",
     },
   ],
   phrasing: {
