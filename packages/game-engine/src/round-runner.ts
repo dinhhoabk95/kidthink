@@ -97,6 +97,7 @@ export class RoundRunner {
   private readonly allEvents: TelemetryEvent[] = [];
   private sessionStartMs = 0;
   private hintTimer: ReturnType<typeof setTimeout> | null = null;
+  private logicSpace?: LogicSpace;
 
   constructor(options: RoundRunnerOptions) {
     if (options.rounds.length === 0) {
@@ -372,11 +373,8 @@ export class RoundRunner {
       this.layoutSeed + index
     );
     // prepareRound does setupEntities + computeSlots + computeRoundDerived
-    const sessionWithPrepare = this.currentSession as unknown as {
-      prepareRound?: (band: AgeBand, space?: LogicSpace) => void;
-    };
-    if (typeof sessionWithPrepare.prepareRound === "function") {
-      sessionWithPrepare.prepareRound(this.ageBand, this.logicSpace);
+    if (this.currentSession instanceof TemplateGameSession) {
+      this.currentSession.prepareRound(this.ageBand, this.logicSpace);
     } else {
       this.currentSession.setupEntities();
     }

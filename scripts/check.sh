@@ -130,6 +130,10 @@ PID_ENGINE_BEHAVIOR_CORPUS=$!
 pnpm check:thinking-structure &
 PID_THINKING_STRUCTURE=$!
 
+# Cổng bậc thang độ phủ lời dẫn và âm thanh — Task #269 (BR-PNR-01..10).
+pnpm check:narration-coverage &
+PID_NARRATION_COVERAGE=$!
+
 # Cổng toàn vẹn dataset — review Task #267 (BR-SDI-01..08).
 # Cổng tư duy đo hình dạng; cổng này đo nghĩa (quan hệ trỏ vào vật có thật,
 # ordering đúng chiều, trục khớp vật, audio_path có tệp).
@@ -217,6 +221,11 @@ if ! wait $PID_THINKING_STRUCTURE; then
   LINT_OK=false
 fi
 
+if ! wait $PID_NARRATION_COVERAGE; then
+  echo "✗ check:narration-coverage ratchet failed" >&2
+  LINT_OK=false
+fi
+
 if ! wait $PID_DATASET_INTEGRITY; then
   echo "✗ check:dataset-integrity failed" >&2
   LINT_OK=false
@@ -230,7 +239,7 @@ fi
 if [ "$LINT_OK" = false ]; then
   exit 1
 fi
-echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space + hint-target + migration-hashes + engine-specs + engine-turn + engine-behavior + engine-behavior-corpus + api-surface + thinking-structure"
+echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space + hint-target + migration-hashes + engine-specs + engine-turn + engine-behavior + engine-behavior-corpus + api-surface + thinking-structure + narration-coverage"
 phase_end
 
 # ── Phase 2: Typecheck (cổng bậc thang + incremental) ─────────────────────

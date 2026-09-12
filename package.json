@@ -40,6 +40,8 @@
     "check:migration-hashes": "tsx scripts/check-migration-hashes.ts",
     "check:migration-hashes:update": "tsx scripts/check-migration-hashes.ts --update",
     "check:dataset-integrity": "tsx scripts/check-dataset-integrity.ts",
+    "check:narration-coverage": "tsx scripts/check-narration-coverage.ts",
+    "check:narration-coverage:update": "tsx scripts/check-narration-coverage.ts --update",
     "check:thinking-structure": "tsx scripts/check-thinking-structure.ts",
     "check:thinking-structure:update": "tsx scripts/check-thinking-structure.ts --update",
     "check:engine-specs": "pnpm --filter @mindkid/game-engine check:engine-specs",

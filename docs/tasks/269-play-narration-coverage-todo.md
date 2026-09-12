@@ -58,17 +58,17 @@ Bắt buộc tuần tự: **L1 → L2 → L3**. Song song với L1: **L4 · L5**
 
 ## L4 — Cổng `check:narration-coverage`
 
-- [ ] T4.1 `scripts/check-narration-coverage.ts`
-- [ ] T4.2 Ratchet `scripts/narration-coverage-baseline.json` theo mục 7.4 của spec
-- [ ] T4.3 `datasets_with_audio_path` · `engines_with_round_narration` · `items_with_audio_path` — **chỉ tăng**
-- [ ] T4.4 `orphan_audio_files` là **số đo, không ratchet**; ghi rõ trong mã và trong báo cáo
-- [ ] T4.5 Cổng kiểm mọi `audio_path` trỏ tới file **tồn tại thật** trên đĩa
-- [ ] T4.6 Nối vào `package.json` và `scripts/check.sh`
-- [ ] T4.7 **Ca âm `BR-PNR-01`** — level không có đường phát tiếng nào → đỏ
-- [ ] T4.8 **Ca âm `BR-PNR-02`** — item không có `audio_path` lẫn `spokenLabel` → đỏ, nêu đúng id
-- [ ] T4.9 **Ca âm** — `audio_path` trỏ file không tồn tại → đỏ
-- [ ] T4.10 **Ca âm `BR-PNR-05`** — sinh file đọc số trùng với `common/numbers` → đỏ
-- [ ] T4.11 **Ca âm `BR-PNR-10`** — độ phủ giảm từ 200 xuống 199 → đỏ
+- [x] T4.1 `scripts/check-narration-coverage.ts`
+- [x] T4.2 Ratchet `scripts/narration-coverage-baseline.json` theo mục 7.4 của spec
+- [x] T4.3 `datasets_with_audio_path` · `engines_with_round_narration` · `items_with_audio_path` — **chỉ tăng**
+- [x] T4.4 `orphan_audio_files` là **số đo, không ratchet**; ghi rõ trong mã và trong báo cáo
+- [x] T4.5 Cổng kiểm mọi `audio_path` trỏ tới file **tồn tại thật** trên đĩa
+- [x] T4.6 Nối vào `package.json` và `scripts/check.sh`
+- [x] T4.7 **Ca âm `BR-PNR-01`** — level không có đường phát tiếng nào → đỏ
+- [x] T4.8 **Ca âm `BR-PNR-02`** — item không có `audio_path` lẫn `spokenLabel` → đỏ, nêu đúng id
+- [x] T4.9 **Ca âm** — `audio_path` trỏ file không tồn tại → đỏ
+- [x] T4.10 **Ca âm `BR-PNR-05`** — sinh file đọc số trùng với `common/numbers` → đỏ
+- [x] T4.11 **Ca âm `BR-PNR-10`** — độ phủ giảm từ 200 xuống 199 → đỏ
 
 ## L5 — Dự phòng và hành vi chơi
 
