@@ -133,7 +133,7 @@ export const C1_NREC_05_DATASET: SkillDataset = {
     },
     {
       id: "qty_0",
-      label: "không có quả táo nào",
+      label: "khay rỗng",
       glyph: "∅",
       value: 0,
       image: {

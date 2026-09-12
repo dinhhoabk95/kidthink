@@ -28,7 +28,16 @@ export const projectGT011: Projection<"GT-011"> = {
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const shuffled = shuffleDeterministic(dataset.items, rng);
     const itemA = safeGetItem(shuffled, 0);
-    const itemB = safeGetItem(shuffled, 1);
+    // Hai vật khác `id` vẫn có thể hiện ra y hệt nhau: dataset quy luật lặp
+    // (`C1.PAT.01` kiểu AB) cố ý có hai quả táo và hai quả chuối. Lọc theo `id`
+    // thì ô nhiễu vẽ ra đúng hình của đáp án, và hợp đồng GT-011 — "đúng MỘT
+    // option khớp quy luật" — đổ. Phải lọc theo cái TRẺ NHÌN THẤY.
+    const signature = (item: SkillDataset["items"][number]): string =>
+      JSON.stringify(resolveItemAsset(item, true));
+    const signatureA = signature(itemA);
+    const itemB =
+      shuffled.find((it) => signature(it) !== signatureA) ??
+      safeGetItem(shuffled, 1);
 
     // 2x2 matrix: [A, B], [B, ?=A] (row/col symmetry)
     const cells = [
@@ -38,9 +47,16 @@ export const projectGT011: Projection<"GT-011"> = {
       { row: 1, col: 1, asset: null },
     ];
 
-    const otherItems = shuffled.filter(
-      (it) => it.id !== itemA.id && it.id !== itemB.id
-    );
+    const signatureB = signature(itemB);
+    const seenSignatures = new Set([signatureA, signatureB]);
+    const otherItems = shuffled.filter((it) => {
+      const sig = signature(it);
+      if (seenSignatures.has(sig)) {
+        return false;
+      }
+      seenSignatures.add(sig);
+      return true;
+    });
 
     const distractorOptions = [
       {

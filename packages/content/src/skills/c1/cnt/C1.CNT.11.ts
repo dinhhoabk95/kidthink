@@ -142,7 +142,7 @@ export const C1_CNT_11_DATASET: SkillDataset = {
     },
   ],
   phrasing: {
-    prompt_template: "Bé nhìn thật nhanh xem có mấy vật nhé, đừng đếm!",
+    prompt_template: "Bé nhìn một cái là biết ngay có mấy vật nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Subitizing — nhận lượng tức thì (1–5) nhé",
   },

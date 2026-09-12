@@ -71,7 +71,7 @@ export const C1_PAT_02_DATASET: SkillDataset = {
     },
     {
       id: "pat_star_repeat",
-      label: "ngôi sao vàng lặp lại",
+      label: "ngôi sao lặp lại",
       glyph: "⭐",
       value: 4,
       image: {
