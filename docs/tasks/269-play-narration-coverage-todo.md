@@ -48,13 +48,13 @@ Bắt buộc tuần tự: **L1 → L2 → L3**. Song song với L1: **L4 · L5**
 
 ## L3 — 36 engine nói được
 
-- [ ] T3.1 Thêm lệnh gọi `AudioController` ở nhịp mở vòng trong **kịch bản lượt chung**, không sửa từng engine
-- [ ] T3.2 Xác nhận `RoundRunner` đã mang `instruction_audio_path` xuống mọi engine
-- [ ] T3.3 Thêm phép kiểm vào `packages/game-engine/tests/gates/engine-turn.ts`: nhịp mở vòng có **đúng một** lệnh phát câu dẫn
-- [ ] T3.4 Chạy cổng kịch bản lượt trên cả 37 engine
-- [ ] T3.5 **Ca âm `BR-PNR-04`** — bỏ lệnh gọi ở nhịp mở vòng → cổng đỏ, nêu đúng engine
-- [ ] T3.6 **Ca âm `BR-PNR-03`** — thêm một trường giọng thứ hai ở cấp vòng → cổng `one-narration-source` đỏ
-- [ ] T3.7 Nối `phrasing.narration_template` làm nguồn câu dẫn khi không có file mp3 (`BR-STS-07`)
+- [x] T3.1 Thêm lệnh gọi `AudioController` ở nhịp mở vòng trong **kịch bản lượt chung**, không sửa từng engine
+- [x] T3.2 Xác nhận `RoundRunner` đã mang `instruction_audio_path` xuống mọi engine
+- [x] T3.3 Thêm phép kiểm vào `packages/game-engine/tests/gates/engine-turn.ts`: nhịp mở vòng có **đúng một** lệnh phát câu dẫn
+- [x] T3.4 Chạy cổng kịch bản lượt trên cả 37 engine (0 vi phạm)
+- [x] T3.5 **Ca âm `BR-PNR-04`** — bỏ lệnh gọi ở nhịp mở vòng → cổng đỏ, nêu đúng engine
+- [x] T3.6 **Ca âm `BR-PNR-03`** — thêm một trường giọng thứ hai ở cấp vòng → cổng `one-narration-source` đỏ
+- [x] T3.7 Nối `phrasing.narration_template` làm nguồn câu dẫn khi không có file mp3 (`BR-STS-07`)
 
 ## L4 — Cổng `check:narration-coverage`
 

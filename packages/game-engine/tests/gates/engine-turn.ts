@@ -228,6 +228,35 @@ function checkBeatPresenceAndOrder(
   return violations;
 }
 
+function validateBeat2(
+  beatText: string,
+  filename: string,
+  templateCode?: string
+): EngineTurnViolation[] {
+  const violations: EngineTurnViolation[] = [];
+  const hasLiveNarrationField = LIVE_NARRATION_FIELD_REGEX.test(beatText);
+  const hasVisual =
+    VISUAL_CHANNEL_REGEX.test(beatText) ||
+    (HINH_WORD_REGEX.test(beatText) && !MAN_HINH_REGEX.test(beatText));
+  if (!hasLiveNarrationField) {
+    violations.push({
+      templateCode,
+      file: filename,
+      rule: "BR-PNR-04",
+      message: `Nhịp N2 phải phát câu dẫn ở nhịp mở vòng qua trường lời đọc \`${LIVE_NARRATION_FIELD}\``,
+    });
+  }
+  if (!hasVisual) {
+    violations.push({
+      templateCode,
+      file: filename,
+      rule: "BR-ETS-04",
+      message: "Nhịp N2 phải nêu kênh hình song song cho lời đọc",
+    });
+  }
+  return violations;
+}
+
 function validateBeatContent(
   beatNum: number,
   beatText: string,
@@ -246,18 +275,7 @@ function validateBeatContent(
   }
 
   if (beatNum === 2) {
-    const hasLiveNarrationField = LIVE_NARRATION_FIELD_REGEX.test(beatText);
-    const hasVisual =
-      VISUAL_CHANNEL_REGEX.test(beatText) ||
-      (HINH_WORD_REGEX.test(beatText) && !MAN_HINH_REGEX.test(beatText));
-    if (!(hasLiveNarrationField && hasVisual)) {
-      violations.push({
-        templateCode,
-        file: filename,
-        rule: "BR-ETS-04",
-        message: `Nhịp N2 phải gọi đúng tên trường lời đọc còn sống \`${LIVE_NARRATION_FIELD}\` và nêu kênh hình song song`,
-      });
-    }
+    violations.push(...validateBeat2(beatText, filename, templateCode));
   }
 
   if (beatNum === 5) {
@@ -399,8 +417,8 @@ export function lintSingleTurnSpec(
       violations.push({
         templateCode,
         file: filename,
-        rule: "BR-ETS-04",
-        message: `Phiếu còn trỏ vào trường lời đọc đã khai tử \`${dead.name}\`; lời đọc chỉ đến từ \`${LIVE_NARRATION_FIELD}\``,
+        rule: "BR-PNR-03",
+        message: `Phiếu còn trỏ vào trường lời đọc song song hoặc đã khai tử \`${dead.name}\`; câu dẫn của vòng chỉ lấy từ đúng một trường \`${LIVE_NARRATION_FIELD}\` (BR-PNR-03)`,
       });
     }
   }

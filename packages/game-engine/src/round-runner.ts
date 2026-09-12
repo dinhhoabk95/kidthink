@@ -21,11 +21,13 @@ import {
   TemplateGameSession,
 } from "./game-session";
 import type { LogicSpace } from "./layout/constants";
+import { AudioController } from "./systems/audio-controller";
 
 export interface RoundConfig {
   round_index: number;
   instruction?: string | null;
   instruction_audio_path?: string | null;
+  narration_template?: string | null;
   content_pack: unknown;
   difficulty_params: unknown;
 }
@@ -39,6 +41,7 @@ export type SessionFactory = (
 export interface RoundRunnerOptions {
   rounds: RoundConfig[];
   sessionFactory: SessionFactory;
+  audioController?: AudioController;
   /** Band tuổi — truyền tới prepareRound. Mặc định '4-5'. */
   ageBand?: AgeBand;
   layoutSeed?: number;
@@ -74,7 +77,7 @@ export class RoundRunner {
   private readonly sessionFactory: SessionFactory;
   private readonly ageBand: AgeBand;
   private readonly layoutSeed: number;
-  private logicSpace?: LogicSpace;
+  private readonly audioController: AudioController;
   private readonly onRoundStarted?: (
     roundIndex: number,
     roundConfig: RoundConfig
@@ -104,6 +107,7 @@ export class RoundRunner {
       (a, b) => a.round_index - b.round_index
     );
     this.sessionFactory = options.sessionFactory;
+    this.audioController = options.audioController ?? new AudioController();
     this.ageBand = options.ageBand ?? "4-5";
     this.layoutSeed = options.layoutSeed ?? 0;
     this.logicSpace = options.logicSpace;
@@ -258,11 +262,45 @@ export class RoundRunner {
   /** Clean up. Must be called when the level is done or abandoned. */
   destroy(): void {
     this.clearHintTimer();
+    this.audioController.stopAll();
     if (this.currentSession) {
       this.currentSession.destroy();
       this.currentSession = null;
     }
     this.isFinished = true;
+  }
+
+  /** Lấy AudioController dùng trong lượt chơi. */
+  getAudioController(): AudioController {
+    return this.audioController;
+  }
+
+  /**
+   * Phát lại câu dẫn vòng hiện tại khi trẻ bấm nút "Nghe lại" (BR-PNR-07).
+   * Bấm nghe lại BẮT BUỘC không phạt, không tính là sai, không trừ điểm (BR-PNR-08).
+   */
+  replayCurrentRoundNarration(): void {
+    const config = this.getCurrentRoundConfig();
+    if (config) {
+      this.playRoundNarration(config);
+    }
+  }
+
+  /**
+   * Phát câu dẫn mở vòng (BR-PNR-04, BR-PNR-06).
+   * Ưu tiên 1: file mp3 (instruction_audio_path).
+   * Ưu tiên 2: TTS tiếng Việt từ instruction hoặc narration_template (BR-STS-07).
+   * Ưu tiên 3: Tín hiệu thị giác fallback (tự động xử lý trong speakPrompt).
+   */
+  private playRoundNarration(config: RoundConfig): void {
+    const audioPath = config.instruction_audio_path;
+    const text = config.instruction || config.narration_template;
+
+    if (audioPath) {
+      this.audioController.playPromptAudio(audioPath);
+    } else if (text) {
+      this.audioController.speakPrompt(text);
+    }
   }
 
   private clearHintTimer(): void {
@@ -342,6 +380,9 @@ export class RoundRunner {
     } else {
       this.currentSession.setupEntities();
     }
+
+    // Nhịp N2: phát câu dẫn mở vòng (BR-PNR-04, BR-PNR-06)
+    this.playRoundNarration(config);
 
     this.onRoundStarted?.(index, config);
   }

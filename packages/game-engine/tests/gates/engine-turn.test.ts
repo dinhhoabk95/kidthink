@@ -180,8 +180,8 @@ describe("Gate check:engine-turn (BR-ETS-01..12, BR-ESS-18..19)", () => {
     ).toBe(true);
   });
 
-  // Ca âm 11: Phiếu trỏ lại trường lời đọc đã khai tử (BR-ETS-04)
-  it("Ca âm 11: phiếu trỏ lại trường lời đọc đã khai tử làm cổng đỏ (BR-ETS-04)", () => {
+  // Ca âm 11: Phiếu trỏ lại trường lời đọc đã khai tử / song song (BR-PNR-03)
+  it("Ca âm 11: phiếu trỏ lại trường lời đọc đã khai tử làm cổng đỏ (BR-PNR-03)", () => {
     const badContent = sampleSpecContent.replaceAll(
       LIVE_NARRATION_FIELD,
       DEAD_NARRATION_FIELD
@@ -190,13 +190,13 @@ describe("Gate check:engine-turn (BR-ETS-01..12, BR-ESS-18..19)", () => {
     expect(
       violations.some(
         (v) =>
-          v.rule === "BR-ETS-04" && v.message.includes(DEAD_NARRATION_FIELD)
+          v.rule === "BR-PNR-03" && v.message.includes(DEAD_NARRATION_FIELD)
       )
     ).toBe(true);
   });
 
-  // Ca âm 12: N2 không gọi tên trường lời đọc còn sống (BR-ETS-04)
-  it("Ca âm 12: N2 chỉ nói 'prompt' mà không gọi tên trường còn sống làm cổng đỏ (BR-ETS-04)", () => {
+  // Ca âm 12: N2 không gọi tên trường lời đọc còn sống (BR-PNR-04)
+  it("Ca âm 12: N2 chỉ nói 'prompt' mà không gọi tên trường còn sống làm cổng đỏ (BR-PNR-04)", () => {
     const n2Block = sampleSpecContent.match(N2_BLOCK_REGEX);
     expect(n2Block).not.toBeNull();
 
@@ -216,9 +216,31 @@ describe("Gate check:engine-turn (BR-ETS-01..12, BR-ESS-18..19)", () => {
     expect(
       violations.some(
         (v) =>
-          v.rule === "BR-ETS-04" && v.message.includes(LIVE_NARRATION_FIELD)
+          v.rule === "BR-PNR-04" && v.message.includes(LIVE_NARRATION_FIELD)
       )
     ).toBe(true);
+  });
+
+  // T3.5: Ca âm BR-PNR-04 — bỏ lệnh gọi ở nhịp mở vòng N2 -> cổng đỏ, nêu đúng engine
+  it("T3.5 (BR-PNR-04): bỏ lệnh gọi câu dẫn ở nhịp mở vòng N2 làm cổng đỏ và nêu đúng engine", () => {
+    const badContent = sampleSpecContent.replace(
+      LIVE_NARRATION_FIELD,
+      "khong_phat_am_thanh"
+    );
+    const violations = lintSingleTurnSpec(badContent, "GT-001.md");
+    const pnr04 = violations.find((v) => v.rule === "BR-PNR-04");
+    expect(pnr04).toBeDefined();
+    expect(pnr04?.templateCode).toBe("GT-001");
+    expect(pnr04?.file).toBe("GT-001.md");
+  });
+
+  // T3.6: Ca âm BR-PNR-03 — thêm một trường giọng thứ hai ở cấp vòng -> cổng đỏ
+  it("T3.6 (BR-PNR-03): thêm một trường giọng thứ hai song song làm cổng đỏ", () => {
+    const withExtraVoiceField = `${sampleSpecContent}\n\n* \`audio_url\`: đường dẫn giọng đọc phụ\n`;
+    const violations = lintSingleTurnSpec(withExtraVoiceField, "GT-001.md");
+    const pnr03 = violations.find((v) => v.rule === "BR-PNR-03");
+    expect(pnr03).toBeDefined();
+    expect(pnr03?.message).toContain("audio_url");
   });
 
   // Ca âm 13: thư mục phiếu rỗng (đổi tên, dời chỗ) Cấm — NEVER xanh
