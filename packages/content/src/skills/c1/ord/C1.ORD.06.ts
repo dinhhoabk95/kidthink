@@ -1,4 +1,5 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+import { ordinalItem } from "#src/inventories/index";
 
 export const C1_ORD_06_IDENTITY: SkillIdentity = {
   code: "C1.ORD.06",
@@ -42,11 +43,7 @@ export const C1_ORD_06_DATASET: SkillDataset = {
   concept_label: "Thứ tự ngược từ cuối lên",
   surface: "game",
   items: [
-    {
-      id: "ord_1",
-      label: "thứ nhất",
-      glyph: "1.",
-      value: 1,
+    ordinalItem("ord_1", {
       image: {
         kind: "emoji",
         ref: "🥇",
@@ -55,12 +52,8 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         ordinal: "thứ nhất",
         parity: "lẻ",
       },
-    },
-    {
-      id: "ord_2",
-      label: "thứ hai",
-      glyph: "2.",
-      value: 2,
+    }),
+    ordinalItem("ord_2", {
       image: {
         kind: "emoji",
         ref: "🥈",
@@ -69,12 +62,8 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         ordinal: "thứ hai",
         parity: "chẵn",
       },
-    },
-    {
-      id: "ord_3",
-      label: "thứ ba",
-      glyph: "3.",
-      value: 3,
+    }),
+    ordinalItem("ord_3", {
       image: {
         kind: "emoji",
         ref: "🥉",
@@ -83,12 +72,8 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         ordinal: "thứ ba",
         parity: "lẻ",
       },
-    },
-    {
-      id: "ord_4",
-      label: "thứ tư",
-      glyph: "4.",
-      value: 4,
+    }),
+    ordinalItem("ord_4", {
       image: {
         kind: "emoji",
         ref: "4️⃣",
@@ -97,12 +82,8 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         ordinal: "thứ tư",
         parity: "chẵn",
       },
-    },
-    {
-      id: "ord_5",
-      label: "thứ năm",
-      glyph: "5.",
-      value: 5,
+    }),
+    ordinalItem("ord_5", {
       image: {
         kind: "emoji",
         ref: "5️⃣",
@@ -111,12 +92,8 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         ordinal: "thứ năm",
         parity: "lẻ",
       },
-    },
-    {
-      id: "ord_6",
-      label: "thứ sáu",
-      glyph: "6.",
-      value: 6,
+    }),
+    ordinalItem("ord_6", {
       image: {
         kind: "emoji",
         ref: "6️⃣",
@@ -125,12 +102,8 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         ordinal: "thứ sáu",
         parity: "chẵn",
       },
-    },
-    {
-      id: "ord_7",
-      label: "thứ bảy",
-      glyph: "7.",
-      value: 7,
+    }),
+    ordinalItem("ord_7", {
       image: {
         kind: "emoji",
         ref: "7️⃣",
@@ -139,12 +112,8 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         ordinal: "thứ bảy",
         parity: "lẻ",
       },
-    },
-    {
-      id: "ord_8",
-      label: "thứ tám",
-      glyph: "8.",
-      value: 8,
+    }),
+    ordinalItem("ord_8", {
       image: {
         kind: "emoji",
         ref: "8️⃣",
@@ -153,12 +122,8 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         ordinal: "thứ tám",
         parity: "chẵn",
       },
-    },
-    {
-      id: "ord_9",
-      label: "thứ chín",
-      glyph: "9.",
-      value: 9,
+    }),
+    ordinalItem("ord_9", {
       image: {
         kind: "emoji",
         ref: "9️⃣",
@@ -167,12 +132,8 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         ordinal: "thứ chín",
         parity: "lẻ",
       },
-    },
-    {
-      id: "ord_10",
-      label: "thứ mười",
-      glyph: "10.",
-      value: 10,
+    }),
+    ordinalItem("ord_10", {
       image: {
         kind: "emoji",
         ref: "🔟",
@@ -181,7 +142,7 @@ export const C1_ORD_06_DATASET: SkillDataset = {
         ordinal: "thứ mười",
         parity: "chẵn",
       },
-    },
+    }),
   ],
   relations: [
     {

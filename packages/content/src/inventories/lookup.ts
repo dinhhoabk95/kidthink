@@ -253,6 +253,7 @@ export function ordinalItem(
   id: string,
   overrides?: {
     readonly label?: string;
+    readonly value?: number;
     readonly image?: DatasetAsset;
     readonly category?: Readonly<Record<string, string>>;
     readonly contrast_group?: string;
@@ -264,6 +265,7 @@ export function ordinalItem(
     id: item.id,
     label: overrides?.label ?? item.label,
     glyph: item.glyph,
+    value: overrides?.value ?? item.position,
     audio_path: item.audio_path,
     image: overrides?.image,
     category: overrides?.category,

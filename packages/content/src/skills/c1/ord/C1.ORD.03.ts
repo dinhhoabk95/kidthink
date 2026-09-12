@@ -1,4 +1,5 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+import { ordinalItem } from "#src/inventories/index";
 
 export const C1_ORD_03_IDENTITY: SkillIdentity = {
   code: "C1.ORD.03",
@@ -41,11 +42,7 @@ export const C1_ORD_03_DATASET: SkillDataset = {
   concept_label: "Thứ tự đến thứ năm",
   surface: "game",
   items: [
-    {
-      id: "ord_1",
-      label: "thứ nhất",
-      glyph: "1.",
-      value: 1,
+    ordinalItem("ord_1", {
       image: {
         kind: "emoji",
         ref: "🥇",
@@ -53,12 +50,8 @@ export const C1_ORD_03_DATASET: SkillDataset = {
       category: {
         ordinal: "thứ nhất",
       },
-    },
-    {
-      id: "ord_2",
-      label: "thứ hai",
-      glyph: "2.",
-      value: 2,
+    }),
+    ordinalItem("ord_2", {
       image: {
         kind: "emoji",
         ref: "🥈",
@@ -66,12 +59,8 @@ export const C1_ORD_03_DATASET: SkillDataset = {
       category: {
         ordinal: "thứ hai",
       },
-    },
-    {
-      id: "ord_3",
-      label: "thứ ba",
-      glyph: "3.",
-      value: 3,
+    }),
+    ordinalItem("ord_3", {
       image: {
         kind: "emoji",
         ref: "🥉",
@@ -79,12 +68,8 @@ export const C1_ORD_03_DATASET: SkillDataset = {
       category: {
         ordinal: "thứ ba",
       },
-    },
-    {
-      id: "ord_4",
-      label: "thứ tư",
-      glyph: "4.",
-      value: 4,
+    }),
+    ordinalItem("ord_4", {
       image: {
         kind: "emoji",
         ref: "4️⃣",
@@ -92,12 +77,8 @@ export const C1_ORD_03_DATASET: SkillDataset = {
       category: {
         ordinal: "thứ tư",
       },
-    },
-    {
-      id: "ord_5",
-      label: "thứ năm",
-      glyph: "5.",
-      value: 5,
+    }),
+    ordinalItem("ord_5", {
       image: {
         kind: "emoji",
         ref: "5️⃣",
@@ -105,7 +86,7 @@ export const C1_ORD_03_DATASET: SkillDataset = {
       category: {
         ordinal: "thứ năm",
       },
-    },
+    }),
   ],
   relations: [
     {
