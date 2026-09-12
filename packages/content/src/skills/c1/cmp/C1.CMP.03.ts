@@ -42,93 +42,82 @@ export const C1_CMP_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "apple",
-      label: "quả táo",
+      id: "pair_a",
+      label: "hai quả táo to",
+      glyph: "🍎",
+      value: 2,
+      audio_path: "/audio/voice/c1/cmp/two_apples.mp3",
       image: {
         kind: "emoji",
         ref: "🍎",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "same",
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "pair_b",
+      label: "hai quả cam to",
+      glyph: "🍊",
+      value: 2,
+      audio_path: "/audio/voice/c1/cmp/two_oranges.mp3",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🍊",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "same",
     },
+  ],
+  relations: [
     {
-      id: "watermelon",
-      label: "dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
+      type: "contrast",
+      source_id: "pair_a",
+      target_id: "pair_b",
+      metadata: {
+        relation: "equal_quantity",
       },
     },
   ],
+  axes: {
+    magnitude: {
+      values: ["nhỏ", "to"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Bằng nhau",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Bằng nhau",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "discrete-object",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bên nào có nhiều {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Bằng nhau nhé",
   },
-  ordering: ["bed", "chair", "apple", "banana", "watermelon"],
 };
 
 export const C1_CMP_03_SEED: SkillSeed = {

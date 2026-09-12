@@ -42,58 +42,89 @@ export const C1_PAT_05_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "dog",
-      label: "con chó",
+      id: "pat_car_1",
+      label: "xe đỏ một",
+      glyph: "🚗",
+      value: 1,
+      audio_path: "/audio/voice/c1/pat/car_red.mp3",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🚗",
       },
-      category: {
-        type: "động vật",
+      contrast_group: "a",
+    },
+    {
+      id: "pat_car_2",
+      label: "xe đỏ hai",
+      glyph: "🚗",
+      value: 2,
+      audio_path: "/audio/voice/c1/pat/car_red.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🚗",
+      },
+      contrast_group: "a",
+    },
+    {
+      id: "pat_bus_1",
+      label: "xe buýt vàng một",
+      glyph: "🚌",
+      value: 3,
+      audio_path: "/audio/voice/c1/pat/bus_yellow.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🚌",
+      },
+      contrast_group: "b",
+    },
+    {
+      id: "pat_bus_2",
+      label: "xe buýt vàng hai",
+      glyph: "🚌",
+      value: 4,
+      audio_path: "/audio/voice/c1/pat/bus_yellow.mp3",
+      image: {
+        kind: "emoji",
+        ref: "b",
+      },
+      contrast_group: "b",
+    },
+  ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "pat_car_1",
+      target_id: "pat_car_2",
+      metadata: {
+        rule: "AABB",
+        period: 4,
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
+      type: "sequence",
+      source_id: "pat_car_2",
+      target_id: "pat_bus_1",
+      metadata: {
+        rule: "AABB",
+        period: 4,
       },
     },
     {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
+      type: "sequence",
+      source_id: "pat_bus_1",
+      target_id: "pat_bus_2",
+      metadata: {
+        rule: "AABB",
+        period: 4,
       },
     },
     {
-      id: "duck",
-      label: "con vịt",
-      image: {
-        kind: "emoji",
-        ref: "🦆",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "fish",
-      label: "con cá",
-      image: {
-        kind: "emoji",
-        ref: "🐟",
-      },
-      category: {
-        type: "động vật",
+      type: "sequence",
+      source_id: "pat_bus_2",
+      target_id: "pat_car_1",
+      metadata: {
+        rule: "AABB",
+        period: 4,
       },
     },
   ],
@@ -101,34 +132,39 @@ export const C1_PAT_05_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Quy luật AABB",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Quy luật AABB",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Quy luật AABB nhé",
   },
-  ordering: ["dog", "cat", "chicken", "duck", "fish"],
+  ordering: ["pat_bus_2", "pat_bus_1", "pat_car_2", "pat_car_1"],
 };
 
 export const C1_PAT_05_SEED: SkillSeed = {

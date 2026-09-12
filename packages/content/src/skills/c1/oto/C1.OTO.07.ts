@@ -42,58 +42,100 @@ export const C1_OTO_07_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bed",
-      label: "cái giường",
+      id: "shape_red_circle",
+      label: "hình tròn đỏ",
+      glyph: "🔴",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/red_circle.mp3",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🔴",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "circle",
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "shape_blue_circle",
+      label: "hình tròn xanh",
+      glyph: "🔵",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/blue_circle.mp3",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🔵",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "circle",
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "shape_red_square",
+      label: "hình vuông đỏ",
+      glyph: "🟥",
+      value: 2,
+      audio_path: "/audio/voice/c1/oto/red_square.mp3",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🟥",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "square",
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "shape_blue_square",
+      label: "hình vuông xanh",
+      glyph: "🟦",
+      value: 2,
+      audio_path: "/audio/voice/c1/oto/blue_square.mp3",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🟦",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "square",
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "shape_red_triangle",
+      label: "hình tam giác đỏ",
+      glyph: "🔺",
+      value: 3,
+      audio_path: "/audio/voice/c1/oto/red_triangle.mp3",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🔺",
       },
-      category: {
-        type: "hoa quả",
+      contrast_group: "triangle",
+    },
+    {
+      id: "shape_blue_triangle",
+      label: "hình tam giác xanh",
+      glyph: "🔷",
+      value: 3,
+      audio_path: "/audio/voice/c1/oto/blue_triangle.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🔷",
+      },
+      contrast_group: "triangle",
+    },
+  ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "shape_red_circle",
+      target_id: "shape_blue_circle",
+    },
+    {
+      type: "pair",
+      source_id: "shape_red_square",
+      target_id: "shape_blue_square",
+    },
+    {
+      type: "pair",
+      source_id: "shape_red_triangle",
+      target_id: "shape_blue_triangle",
+    },
+    {
+      type: "subset",
+      source_id: "shape_red_circle",
+      target_id: "shape_red_square",
+      metadata: {
+        rule: "shape_transformation",
       },
     },
   ],
@@ -101,34 +143,38 @@ export const C1_OTO_07_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Ghép theo quy luật",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Ghép theo quy luật",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy ghép đôi từng {label} tương ứng nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Ghép theo quy luật nhé",
   },
-  ordering: ["bed", "chair", "apple", "banana", "watermelon"],
 };
 
 export const C1_OTO_07_SEED: SkillSeed = {

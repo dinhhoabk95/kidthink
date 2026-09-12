@@ -4,7 +4,6 @@
  * Sắp xếp theo thang bậc cụ thể → trừu tượng (CPA / Montessori).
  * Chữ số (numeral) không thuộc kho này vì thuộc tầng abstract riêng (c1-numeral.ts).
  */
-
 export type QuantityRepKind =
   | "discrete-object"
   | "finger"

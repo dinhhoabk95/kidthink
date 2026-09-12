@@ -42,58 +42,77 @@ export const C1_PAT_07_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "dec_4",
+      label: "bốn khối vuông",
+      glyph: "🟪",
+      value: 4,
+      audio_path: "/audio/voice/c1/pat/block_4.mp3",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "🟪",
       },
-      category: {
-        type: "đồ dùng",
+      contrast_group: "step_1",
+    },
+    {
+      id: "dec_3",
+      label: "ba khối vuông",
+      glyph: "🟪",
+      value: 3,
+      audio_path: "/audio/voice/c1/pat/block_3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🟪",
+      },
+      contrast_group: "step_2",
+    },
+    {
+      id: "dec_2",
+      label: "hai khối vuông",
+      glyph: "🟪",
+      value: 2,
+      audio_path: "/audio/voice/c1/pat/block_2.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🟪",
+      },
+      contrast_group: "step_3",
+    },
+    {
+      id: "dec_1",
+      label: "một khối vuông",
+      glyph: "🟪",
+      value: 1,
+      audio_path: "/audio/voice/c1/pat/block_1.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🟪",
+      },
+      contrast_group: "step_4",
+    },
+  ],
+  relations: [
+    {
+      type: "subset",
+      source_id: "dec_3",
+      target_id: "dec_4",
+      metadata: {
+        rule: "minus_one",
       },
     },
     {
-      id: "cup",
-      label: "cái cốc",
-      image: {
-        kind: "emoji",
-        ref: "🥤",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "subset",
+      source_id: "dec_2",
+      target_id: "dec_3",
+      metadata: {
+        rule: "minus_one",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "apple",
-      label: "quả táo",
-      image: {
-        kind: "emoji",
-        ref: "🍎",
-      },
-      category: {
-        type: "hoa quả",
+      type: "subset",
+      source_id: "dec_1",
+      target_id: "dec_2",
+      metadata: {
+        rule: "minus_one",
       },
     },
   ],
@@ -101,34 +120,38 @@ export const C1_PAT_07_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Pattern giảm dần",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Pattern giảm dần",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Pattern giảm dần nhé",
   },
-  ordering: ["spoon", "cup", "bed", "chair", "apple"],
 };
 
 export const C1_PAT_07_SEED: SkillSeed = {

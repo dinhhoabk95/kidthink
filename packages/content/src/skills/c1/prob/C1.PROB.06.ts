@@ -42,93 +42,126 @@ export const C1_PROB_06_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "clue_small",
+      label: "số nhỏ hơn năm",
+      glyph: "3️⃣",
+      value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "3️⃣",
       },
-      category: {
-        type: "đồ dùng",
+      contrast_group: "clue",
+    },
+    {
+      id: "clue_odd",
+      label: "số lẻ",
+      glyph: "3️⃣",
+      value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "3️⃣",
+      },
+      contrast_group: "clue",
+    },
+    {
+      id: "answer_three",
+      label: "kết quả số ba",
+      glyph: "3️⃣",
+      value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "3️⃣",
+      },
+      contrast_group: "answer",
+    },
+    {
+      id: "distractor_four",
+      label: "số bốn",
+      glyph: "4️⃣",
+      value: 4,
+      audio_path: "/audio/voice/common/numbers/4.mp3",
+      image: {
+        kind: "emoji",
+        ref: "4️⃣",
+      },
+      contrast_group: "distractor",
+    },
+  ],
+  relations: [
+    {
+      type: "subset",
+      source_id: "answer_three",
+      target_id: "clue_small",
+      metadata: {
+        property: "less_than_five",
       },
     },
     {
-      id: "cup",
-      label: "cái cốc",
-      image: {
-        kind: "emoji",
-        ref: "🥤",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "subset",
+      source_id: "answer_three",
+      target_id: "clue_odd",
+      metadata: {
+        property: "is_odd",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "apple",
-      label: "quả táo",
-      image: {
-        kind: "emoji",
-        ref: "🍎",
-      },
-      category: {
-        type: "hoa quả",
+      type: "contrast",
+      source_id: "answer_three",
+      target_id: "distractor_four",
+      metadata: {
+        dimension: "parity",
       },
     },
   ],
+  axes: {
+    range: {
+      values: ["small", "large"],
+      ordered: true,
+    },
+    parity: {
+      values: ["odd", "even"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Suy luận số",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Suy luận số",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy giải bài toán tìm {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Suy luận số nhé",
   },
-  ordering: ["spoon", "cup", "bed", "chair", "apple"],
 };
 
 export const C1_PROB_06_SEED: SkillSeed = {

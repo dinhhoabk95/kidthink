@@ -45,94 +45,130 @@ export const C1_DAT_05_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "chart_min",
+      label: "mục có ít nhất",
+      glyph: "🎯",
+      value: 2,
+      audio_path: "/audio/voice/c1/dat/chart_min.mp3",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🎯",
       },
-      category: {
-        type: "rau củ",
+      contrast_group: "chart",
+    },
+    {
+      id: "chart_item_2",
+      label: "mục trung bình nhỏ",
+      glyph: "🥈",
+      value: 5,
+      audio_path: "/audio/voice/c1/dat/silver.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🥈",
+      },
+      contrast_group: "chart",
+    },
+    {
+      id: "chart_item_3",
+      label: "mục trung bình lớn",
+      glyph: "🥇",
+      value: 8,
+      audio_path: "/audio/voice/c1/dat/gold.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🥇",
+      },
+      contrast_group: "chart",
+    },
+    {
+      id: "chart_max",
+      label: "mục có nhiều nhất",
+      glyph: "🏆",
+      value: 10,
+      audio_path: "/audio/voice/c1/dat/chart_max.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏆",
+      },
+      contrast_group: "chart",
+    },
+  ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "chart_min",
+      target_id: "chart_item_2",
+    },
+    {
+      type: "sequence",
+      source_id: "chart_item_2",
+      target_id: "chart_item_3",
+    },
+    {
+      type: "sequence",
+      source_id: "chart_item_3",
+      target_id: "chart_max",
+    },
+    {
+      type: "contrast",
+      source_id: "chart_max",
+      target_id: "chart_min",
+      metadata: {
+        dimension: "rank",
       },
     },
     {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "duck",
-      label: "con vịt",
-      image: {
-        kind: "emoji",
-        ref: "🦆",
-      },
-      category: {
-        type: "động vật",
+      type: "subset",
+      source_id: "chart_min",
+      target_id: "chart_max",
+      metadata: {
+        relation: "part_of_total",
       },
     },
   ],
+  axes: {
+    magnitude: {
+      values: ["ít nhất", "ít", "nhiều", "nhiều nhất"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Trả lời câu hỏi từ biểu đồ",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Trả lời câu hỏi từ biểu đồ",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé đếm rồi biểu diễn số lượng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Trả lời câu hỏi từ biểu đồ nhé",
   },
-  ordering: ["corn", "dog", "cat", "chicken", "duck"],
 };
 
 export const C1_DAT_05_SEED: SkillSeed = {

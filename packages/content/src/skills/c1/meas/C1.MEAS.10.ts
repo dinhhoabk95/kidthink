@@ -43,93 +43,80 @@ export const C1_MEAS_10_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "apple",
-      label: "quả táo",
+      id: "time_before",
+      label: "trước khi rửa tay",
+      glyph: "🧼",
+      value: 1,
+      audio_path: "/audio/voice/c1/meas/wash_before.mp3",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🧼",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "time",
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "time_after",
+      label: "sau khi ăn cơm",
+      glyph: "🍚",
+      value: 2,
+      audio_path: "/audio/voice/c1/meas/eat_after.mp3",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🍚",
       },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "watermelon",
-      label: "dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "carrot",
-      label: "củ cà rốt",
-      image: {
-        kind: "emoji",
-        ref: "🥕",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "time",
     },
   ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "time_before",
+      target_id: "time_after",
+    },
+  ],
+  axes: {
+    time_order: {
+      values: ["trước", "sau"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Thời gian: trước/sau",
+      description: "Làm quen cơ bản",
+      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Thời gian: trước/sau",
+      description: "Nhận biết và chọn đúng",
+      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Vật nào có kích thước {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Thời gian: trước/sau nhé",
   },
-  ordering: ["apple", "banana", "watermelon", "carrot", "corn"],
+  ordering: ["time_after", "time_before"],
 };
 
 export const C1_MEAS_10_SEED: SkillSeed = {

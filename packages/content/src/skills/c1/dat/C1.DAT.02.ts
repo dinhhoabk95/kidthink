@@ -43,94 +43,122 @@ export const C1_DAT_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "bar_block_2",
+      label: "cột hai khối",
+      glyph: "🧱",
+      value: 2,
+      audio_path: "/audio/voice/c1/dat/bar_2.mp3",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🧱",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "bar",
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "bar_block_3",
+      label: "cột ba khối",
+      glyph: "🧱",
+      value: 3,
+      audio_path: "/audio/voice/c1/dat/bar_3.mp3",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🧱",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "bar",
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "bar_block_4",
+      label: "cột bốn khối",
+      glyph: "🧱",
+      value: 4,
+      audio_path: "/audio/voice/c1/dat/bar_4.mp3",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🧱",
       },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "bar",
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "bar_block_5",
+      label: "cột năm khối",
+      glyph: "🧱",
+      value: 5,
+      audio_path: "/audio/voice/c1/dat/bar_5.mp3",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🧱",
       },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "bar",
+    },
+  ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "bar_block_2",
+      target_id: "bar_block_3",
     },
     {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
+      type: "sequence",
+      source_id: "bar_block_3",
+      target_id: "bar_block_4",
+    },
+    {
+      type: "sequence",
+      source_id: "bar_block_4",
+      target_id: "bar_block_5",
+    },
+    {
+      type: "contrast",
+      source_id: "bar_block_5",
+      target_id: "bar_block_2",
+      metadata: {
+        dimension: "height",
       },
     },
   ],
+  axes: {
+    bar_height: {
+      values: ["2", "3", "4", "5"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Biểu đồ cột bằng đồ vật",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Biểu đồ cột bằng đồ vật",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé đếm rồi biểu diễn số lượng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Biểu đồ cột bằng đồ vật nhé",
   },
-  ordering: ["banana", "watermelon", "carrot", "corn", "dog"],
 };
 
 export const C1_DAT_02_SEED: SkillSeed = {

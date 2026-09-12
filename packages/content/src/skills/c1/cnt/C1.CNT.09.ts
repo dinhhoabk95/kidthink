@@ -38,14 +38,15 @@ export const C1_CNT_09_IDENTITY: SkillIdentity = {
 
 export const C1_CNT_09_DATASET: SkillDataset = {
   skill_code: "C1.CNT.09",
-  concept_label: "Ước lượng số lượng",
+  concept_label: "Đếm vật chuyển động",
   surface: "game",
   items: [
     {
       id: "n0",
-      label: "Số không",
+      label: "số không",
       glyph: "0",
       value: 0,
+      audio_path: "/audio/voice/common/numbers/0.mp3",
       image: {
         kind: "emoji",
         ref: "0️⃣",
@@ -53,9 +54,10 @@ export const C1_CNT_09_DATASET: SkillDataset = {
     },
     {
       id: "n1",
-      label: "Số một",
+      label: "số một",
       glyph: "1",
       value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
         ref: "1️⃣",
@@ -63,9 +65,10 @@ export const C1_CNT_09_DATASET: SkillDataset = {
     },
     {
       id: "n2",
-      label: "Số hai",
+      label: "số hai",
       glyph: "2",
       value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
         kind: "emoji",
         ref: "2️⃣",
@@ -73,9 +76,10 @@ export const C1_CNT_09_DATASET: SkillDataset = {
     },
     {
       id: "n3",
-      label: "Số ba",
+      label: "số ba",
       glyph: "3",
       value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
         kind: "emoji",
         ref: "3️⃣",
@@ -83,9 +87,10 @@ export const C1_CNT_09_DATASET: SkillDataset = {
     },
     {
       id: "n4",
-      label: "Số bốn",
+      label: "số bốn",
       glyph: "4",
       value: 4,
+      audio_path: "/audio/voice/common/numbers/4.mp3",
       image: {
         kind: "emoji",
         ref: "4️⃣",
@@ -93,47 +98,80 @@ export const C1_CNT_09_DATASET: SkillDataset = {
     },
     {
       id: "n5",
-      label: "Số năm",
+      label: "số năm",
       glyph: "5",
       value: 5,
+      audio_path: "/audio/voice/common/numbers/5.mp3",
       image: {
         kind: "emoji",
         ref: "5️⃣",
       },
     },
   ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "n0",
+      target_id: "n1",
+    },
+    {
+      type: "sequence",
+      source_id: "n1",
+      target_id: "n2",
+    },
+    {
+      type: "sequence",
+      source_id: "n2",
+      target_id: "n3",
+    },
+    {
+      type: "sequence",
+      source_id: "n3",
+      target_id: "n4",
+    },
+    {
+      type: "sequence",
+      source_id: "n4",
+      target_id: "n5",
+    },
+  ],
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Ước lượng số lượng",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Ước lượng số lượng",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Ước lượng số lượng nhé",
+    prompt_template: "Bé đếm xem có mấy {label}?",
+    narration_template: "Chúng mình cùng tìm hiểu về Đếm vật chuyển động nhé",
   },
-  ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
+  ordering: ["n5", "n4", "n3", "n2", "n1", "n0"],
 };
 
 export const C1_CNT_09_SEED: SkillSeed = {

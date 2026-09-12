@@ -43,9 +43,10 @@ export const C1_NREC_01_DATASET: SkillDataset = {
   items: [
     {
       id: "n0",
-      label: "Số không",
+      label: "số không",
       glyph: "0",
       value: 0,
+      audio_path: "/audio/voice/common/numbers/0.mp3",
       image: {
         kind: "emoji",
         ref: "0️⃣",
@@ -53,9 +54,10 @@ export const C1_NREC_01_DATASET: SkillDataset = {
     },
     {
       id: "n1",
-      label: "Số một",
+      label: "số một",
       glyph: "1",
       value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
         ref: "1️⃣",
@@ -63,9 +65,10 @@ export const C1_NREC_01_DATASET: SkillDataset = {
     },
     {
       id: "n2",
-      label: "Số hai",
+      label: "số hai",
       glyph: "2",
       value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
         kind: "emoji",
         ref: "2️⃣",
@@ -73,44 +76,55 @@ export const C1_NREC_01_DATASET: SkillDataset = {
     },
     {
       id: "n3",
-      label: "Số ba",
+      label: "số ba",
       glyph: "3",
       value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
         kind: "emoji",
         ref: "3️⃣",
       },
     },
   ],
+  axes: {
+    parity: {
+      values: ["chẵn", "lẻ"],
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Nhận biết số 0–3",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Nhận biết số 0–3",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "discrete-object",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy chọn đúng chữ số {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Nhận biết số 0–3 nhé",
   },
   ordering: ["n0", "n1", "n2", "n3"],

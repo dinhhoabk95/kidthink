@@ -42,93 +42,114 @@ export const C1_CMP_15_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "speed_snail_less",
+      label: "chú ốc sên rất chậm",
+      glyph: "🐌",
+      value: 1,
+      audio_path: "/audio/voice/c1/cmp/snail_slow.mp3",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🐌",
       },
-      category: {
-        type: "hoa quả",
+      contrast_group: "speed",
+    },
+    {
+      id: "speed_turtle_less",
+      label: "chú rùa bò chậm",
+      glyph: "🐢",
+      value: 2,
+      audio_path: "/audio/voice/c1/cmp/turtle_slow.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🐢",
+      },
+      contrast_group: "speed",
+    },
+    {
+      id: "speed_rabbit_more",
+      label: "chú thỏ chạy nhanh",
+      glyph: "🐇",
+      value: 3,
+      audio_path: "/audio/voice/c1/cmp/rabbit_fast.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🐇",
+      },
+      contrast_group: "speed",
+    },
+    {
+      id: "speed_cheetah_more",
+      label: "con báo rất nhanh",
+      glyph: "🐆",
+      value: 4,
+      audio_path: "/audio/voice/c1/cmp/cheetah_fast.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🐆",
+      },
+      contrast_group: "speed",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "speed_snail_less",
+      target_id: "speed_cheetah_more",
+      metadata: {
+        dimension: "speed",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "carrot",
-      label: "củ cà rốt",
-      image: {
-        kind: "emoji",
-        ref: "🥕",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
+      type: "contrast",
+      source_id: "speed_turtle_less",
+      target_id: "speed_rabbit_more",
+      metadata: {
+        dimension: "speed",
       },
     },
   ],
+  axes: {
+    speed: {
+      values: ["rất chậm", "chậm", "nhanh", "rất nhanh"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Chậm hơn",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Chậm hơn",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bên nào có nhiều {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Chậm hơn nhé",
   },
-  ordering: ["banana", "watermelon", "carrot", "corn", "dog"],
 };
 
 export const C1_CMP_15_SEED: SkillSeed = {

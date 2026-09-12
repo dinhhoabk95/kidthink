@@ -45,96 +45,115 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "time_morning",
+      label: "buổi sáng",
+      glyph: "🌅",
+      value: 1,
+      audio_path: "/audio/voice/c1/meas/morning.mp3",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🌅",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "daypart",
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "time_noon",
+      label: "buổi trưa",
+      glyph: "☀️",
+      value: 2,
+      audio_path: "/audio/voice/c1/meas/noon.mp3",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "☀️",
       },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "daypart",
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "time_afternoon",
+      label: "buổi chiều",
+      glyph: "🌇",
+      value: 3,
+      audio_path: "/audio/voice/c1/meas/afternoon.mp3",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🌇",
       },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "daypart",
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "time_night",
+      label: "buổi tối",
+      glyph: "🌙",
+      value: 4,
+      audio_path: "/audio/voice/c1/meas/night.mp3",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🌙",
       },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "daypart",
     },
   ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "time_morning",
+      target_id: "time_noon",
+    },
+    {
+      type: "sequence",
+      source_id: "time_noon",
+      target_id: "time_afternoon",
+    },
+    {
+      type: "sequence",
+      source_id: "time_afternoon",
+      target_id: "time_night",
+    },
+  ],
+  axes: {
+    daypart: {
+      values: ["sáng", "trưa", "chiều", "tối"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description:
-        "Làm quen cơ bản với Buổi trong ngày: sáng · trưa · chiều · tối",
+      description: "Làm quen cơ bản",
+      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description:
-        "Nhận biết và chọn đúng Buổi trong ngày: sáng · trưa · chiều · tối",
+      description: "Nhận biết và chọn đúng",
+      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Vật nào có kích thước {label} hơn?",
     narration_template:
       "Chúng mình cùng tìm hiểu về Buổi trong ngày: sáng · trưa · chiều · tối nhé",
   },
-  ordering: ["watermelon", "carrot", "corn", "dog", "cat"],
+  ordering: ["time_night", "time_afternoon", "time_noon", "time_morning"],
 };
 
 export const C1_MEAS_12_SEED: SkillSeed = {

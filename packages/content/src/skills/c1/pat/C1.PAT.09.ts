@@ -42,93 +42,96 @@ export const C1_PAT_09_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bed",
-      label: "cái giường",
+      id: "pat_circle",
+      label: "hình tròn",
+      glyph: "⚪",
+      value: 1,
+      audio_path: "/audio/voice/c1/pat/circle.mp3",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "⚪",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "shape",
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "pat_square",
+      label: "hình vuông",
+      glyph: "⬜",
+      value: 2,
+      audio_path: "/audio/voice/c1/pat/square.mp3",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "⬜",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "shape",
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "pat_triangle",
+      label: "hình tam giác",
+      glyph: "🔺",
+      value: 3,
+      audio_path: "/audio/voice/c1/pat/triangle.mp3",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🔺",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "shape",
+    },
+  ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "pat_circle",
+      target_id: "pat_square",
     },
     {
-      id: "banana",
-      label: "quả chuối",
-      image: {
-        kind: "emoji",
-        ref: "🍌",
-      },
-      category: {
-        type: "hoa quả",
-      },
+      type: "sequence",
+      source_id: "pat_square",
+      target_id: "pat_triangle",
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
-      },
+      type: "sequence",
+      source_id: "pat_triangle",
+      target_id: "pat_circle",
     },
   ],
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Pattern hình",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Pattern hình",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "discrete-object",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Pattern hình nhé",
   },
-  ordering: ["bed", "chair", "apple", "banana", "watermelon"],
+  ordering: ["pat_triangle", "pat_square", "pat_circle"],
 };
 
 export const C1_PAT_09_SEED: SkillSeed = {

@@ -126,6 +126,17 @@ PID_ENGINE_BEHAVIOR_CORPUS=$!
 pnpm check:thinking-structure &
 PID_THINKING_STRUCTURE=$!
 
+# Cổng toàn vẹn dataset — review Task #267 (BR-SDI-01..08).
+# Cổng tư duy đo hình dạng; cổng này đo nghĩa (quan hệ trỏ vào vật có thật,
+# ordering đúng chiều, trục khớp vật, audio_path có tệp).
+pnpm check:dataset-integrity &
+PID_DATASET_INTEGRITY=$!
+
+# Cổng bậc thang độ khó engine — trước đây CHỈ chạy trong lefthook pre-commit,
+# nên `--no-verify` là bỏ qua được, và baseline của nó thì task nào cũng sửa.
+pnpm --filter @mindkid/game-engine check:difficulty-ladder &
+PID_DIFFICULTY_LADDER=$!
+
 LINT_OK=true
 if ! wait $PID_LINT; then
   echo "✗ biome lint failed" >&2
@@ -194,6 +205,16 @@ fi
 
 if ! wait $PID_THINKING_STRUCTURE; then
   echo "✗ check:thinking-structure ratchet failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_DATASET_INTEGRITY; then
+  echo "✗ check:dataset-integrity failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_DIFFICULTY_LADDER; then
+  echo "✗ check:difficulty-ladder failed" >&2
   LINT_OK=false
 fi
 

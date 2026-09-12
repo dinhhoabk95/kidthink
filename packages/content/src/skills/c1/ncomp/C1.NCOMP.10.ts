@@ -39,13 +39,14 @@ export const C1_NCOMP_10_IDENTITY: SkillIdentity = {
 export const C1_NCOMP_10_DATASET: SkillDataset = {
   skill_code: "C1.NCOMP.10",
   concept_label: "Gộp số",
-  surface: "worksheet",
+  surface: "game",
   items: [
     {
       id: "n0",
-      label: "Số không",
+      label: "số không",
       glyph: "0",
       value: 0,
+      audio_path: "/audio/voice/common/numbers/0.mp3",
       image: {
         kind: "emoji",
         ref: "0️⃣",
@@ -53,9 +54,10 @@ export const C1_NCOMP_10_DATASET: SkillDataset = {
     },
     {
       id: "n1",
-      label: "Số một",
+      label: "số một",
       glyph: "1",
       value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
         ref: "1️⃣",
@@ -63,9 +65,10 @@ export const C1_NCOMP_10_DATASET: SkillDataset = {
     },
     {
       id: "n2",
-      label: "Số hai",
+      label: "số hai",
       glyph: "2",
       value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
         kind: "emoji",
         ref: "2️⃣",
@@ -73,9 +76,10 @@ export const C1_NCOMP_10_DATASET: SkillDataset = {
     },
     {
       id: "n3",
-      label: "Số ba",
+      label: "số ba",
       glyph: "3",
       value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
         kind: "emoji",
         ref: "3️⃣",
@@ -83,9 +87,10 @@ export const C1_NCOMP_10_DATASET: SkillDataset = {
     },
     {
       id: "n4",
-      label: "Số bốn",
+      label: "số bốn",
       glyph: "4",
       value: 4,
+      audio_path: "/audio/voice/common/numbers/4.mp3",
       image: {
         kind: "emoji",
         ref: "4️⃣",
@@ -93,12 +98,114 @@ export const C1_NCOMP_10_DATASET: SkillDataset = {
     },
     {
       id: "n5",
-      label: "Số năm",
+      label: "số năm",
       glyph: "5",
       value: 5,
+      audio_path: "/audio/voice/common/numbers/5.mp3",
       image: {
         kind: "emoji",
         ref: "5️⃣",
+      },
+    },
+  ],
+  relations: [
+    {
+      type: "subset",
+      source_id: "n0",
+      target_id: "n3",
+      metadata: {
+        bond_id: "bond_3_0_3",
+        part_a: 0,
+        part_b: 3,
+        whole: 3,
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n1",
+      target_id: "n3",
+      metadata: {
+        bond_id: "bond_3_1_2",
+        part_a: 1,
+        part_b: 2,
+        whole: 3,
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n2",
+      target_id: "n3",
+      metadata: {
+        bond_id: "bond_3_2_1",
+        part_a: 2,
+        part_b: 1,
+        whole: 3,
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n3",
+      target_id: "n3",
+      metadata: {
+        bond_id: "bond_3_3_0",
+        part_a: 3,
+        part_b: 0,
+        whole: 3,
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n0",
+      target_id: "n4",
+      metadata: {
+        bond_id: "bond_4_0_4",
+        part_a: 0,
+        part_b: 4,
+        whole: 4,
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n1",
+      target_id: "n4",
+      metadata: {
+        bond_id: "bond_4_1_3",
+        part_a: 1,
+        part_b: 3,
+        whole: 4,
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n2",
+      target_id: "n4",
+      metadata: {
+        bond_id: "bond_4_2_2",
+        part_a: 2,
+        part_b: 2,
+        whole: 4,
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n3",
+      target_id: "n4",
+      metadata: {
+        bond_id: "bond_4_3_1",
+        part_a: 3,
+        part_b: 1,
+        whole: 4,
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n4",
+      target_id: "n4",
+      metadata: {
+        bond_id: "bond_4_4_0",
+        part_a: 4,
+        part_b: 0,
+        whole: 4,
       },
     },
   ],
@@ -106,31 +213,36 @@ export const C1_NCOMP_10_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Gộp số",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Gộp số",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Thêm mấy nữa thì đủ {whole}?",
     narration_template: "Chúng mình cùng tìm hiểu về Gộp số nhé",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],

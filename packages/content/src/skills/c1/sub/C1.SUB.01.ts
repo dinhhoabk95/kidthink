@@ -43,9 +43,10 @@ export const C1_SUB_01_DATASET: SkillDataset = {
   items: [
     {
       id: "n0",
-      label: "Số không",
+      label: "số không",
       glyph: "0",
       value: 0,
+      audio_path: "/audio/voice/common/numbers/0.mp3",
       image: {
         kind: "emoji",
         ref: "0️⃣",
@@ -53,9 +54,10 @@ export const C1_SUB_01_DATASET: SkillDataset = {
     },
     {
       id: "n1",
-      label: "Số một",
+      label: "số một",
       glyph: "1",
       value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
         ref: "1️⃣",
@@ -63,9 +65,10 @@ export const C1_SUB_01_DATASET: SkillDataset = {
     },
     {
       id: "n2",
-      label: "Số hai",
+      label: "số hai",
       glyph: "2",
       value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
         kind: "emoji",
         ref: "2️⃣",
@@ -73,12 +76,103 @@ export const C1_SUB_01_DATASET: SkillDataset = {
     },
     {
       id: "n3",
-      label: "Số ba",
+      label: "số ba",
       glyph: "3",
       value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
         kind: "emoji",
         ref: "3️⃣",
+      },
+    },
+    {
+      id: "n4",
+      label: "số bốn",
+      glyph: "4",
+      value: 4,
+      audio_path: "/audio/voice/common/numbers/4.mp3",
+      image: {
+        kind: "emoji",
+        ref: "4️⃣",
+      },
+    },
+    {
+      id: "n5",
+      label: "số năm",
+      glyph: "5",
+      value: 5,
+      audio_path: "/audio/voice/common/numbers/5.mp3",
+      image: {
+        kind: "emoji",
+        ref: "5️⃣",
+      },
+    },
+  ],
+  relations: [
+    {
+      type: "subset",
+      source_id: "n0",
+      target_id: "n5",
+      metadata: {
+        bond_id: "bond_5_0_5",
+        part_a: 0,
+        part_b: 5,
+        whole: 5,
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n1",
+      target_id: "n5",
+      metadata: {
+        bond_id: "bond_5_1_4",
+        part_a: 1,
+        part_b: 4,
+        whole: 5,
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n2",
+      target_id: "n5",
+      metadata: {
+        bond_id: "bond_5_2_3",
+        part_a: 2,
+        part_b: 3,
+        whole: 5,
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n3",
+      target_id: "n5",
+      metadata: {
+        bond_id: "bond_5_3_2",
+        part_a: 3,
+        part_b: 2,
+        whole: 5,
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n4",
+      target_id: "n5",
+      metadata: {
+        bond_id: "bond_5_4_1",
+        part_a: 4,
+        part_b: 1,
+        whole: 5,
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n5",
+      target_id: "n5",
+      metadata: {
+        bond_id: "bond_5_5_0",
+        part_a: 5,
+        part_b: 0,
+        whole: 5,
       },
     },
   ],
@@ -86,34 +180,39 @@ export const C1_SUB_01_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Bớt đồ vật",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Bớt đồ vật",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bớt đi thì còn lại bao nhiêu {label}?",
     narration_template: "Chúng mình cùng tìm hiểu về Bớt đồ vật nhé",
   },
-  ordering: ["n0", "n1", "n2", "n3"],
+  ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
 };
 
 export const C1_SUB_01_SEED: SkillSeed = {

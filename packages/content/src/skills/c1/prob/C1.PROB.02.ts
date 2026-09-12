@@ -42,58 +42,137 @@ export const C1_PROB_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "trial_target",
+      label: "đáp án đúng bốn",
+      glyph: "4",
+      value: 4,
+      audio_path: "/audio/voice/common/numbers/4.mp3",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "4️⃣",
       },
-      category: {
-        type: "rau củ",
+      contrast_group: "trial",
+    },
+    {
+      id: "trial_miss",
+      label: "đáp án thử năm",
+      glyph: "5",
+      value: 5,
+      audio_path: "/audio/voice/common/numbers/5.mp3",
+      image: {
+        kind: "emoji",
+        ref: "5️⃣",
+      },
+      contrast_group: "trial",
+    },
+    {
+      id: "trial_other",
+      label: "đáp án thử ba",
+      glyph: "3",
+      value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "3️⃣",
+      },
+      contrast_group: "trial",
+    },
+    {
+      id: "fill_unit_1",
+      label: "mức 1",
+      glyph: "1",
+      value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_2",
+      label: "mức 2",
+      glyph: "2",
+      value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_3",
+      label: "mức 3",
+      glyph: "3",
+      value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_4",
+      label: "mức 4",
+      glyph: "4",
+      value: 4,
+      audio_path: "/audio/voice/common/numbers/4.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_5",
+      label: "mức 5",
+      glyph: "5",
+      value: 5,
+      audio_path: "/audio/voice/common/numbers/5.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_6",
+      label: "mức 6",
+      glyph: "6",
+      value: 6,
+      audio_path: "/audio/voice/common/numbers/6.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "trial_target",
+      target_id: "trial_miss",
+      metadata: {
+        near_miss: true,
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
+      type: "contrast",
+      source_id: "trial_target",
+      target_id: "trial_other",
+      metadata: {
+        near_miss: true,
       },
     },
     {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
+      type: "subset",
+      source_id: "trial_other",
+      target_id: "trial_target",
+      metadata: {
+        relation: "candidate_solution",
       },
     },
   ],
@@ -101,34 +180,38 @@ export const C1_PROB_02_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Thử sai có hệ thống",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Thử sai có hệ thống",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy giải bài toán tìm {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Thử sai có hệ thống nhé",
   },
-  ordering: ["carrot", "corn", "dog", "cat", "chicken"],
 };
 
 export const C1_PROB_02_SEED: SkillSeed = {

@@ -42,93 +42,199 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "dim_capacity_empty_less",
+      label: "bình nước cạn",
+      glyph: "🏺",
+      value: 0,
+      audio_path: "/audio/voice/c1/meas/pot_empty.mp3",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🏺",
       },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "capacity",
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "dim_capacity_less",
+      label: "bình nước vơi",
+      glyph: "🏺",
+      value: 1,
+      audio_path: "/audio/voice/c1/meas/pitcher_empty.mp3",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🏺",
       },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "capacity",
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "dim_capacity_half",
+      label: "bình nước vừa",
+      glyph: "🏺",
+      value: 2,
+      audio_path: "/audio/voice/c1/meas/pitcher_half.mp3",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "🏺",
       },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "capacity",
     },
     {
-      id: "chicken",
-      label: "con gà",
+      id: "dim_capacity_more",
+      label: "bình nước đầy",
+      glyph: "🏺",
+      value: 3,
+      audio_path: "/audio/voice/c1/meas/pitcher_full.mp3",
       image: {
         kind: "emoji",
-        ref: "🐓",
+        ref: "🏺",
       },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "capacity",
     },
     {
-      id: "duck",
-      label: "con vịt",
+      id: "fill_unit_1",
+      label: "mức 1",
+      glyph: "1",
+      value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
-        ref: "🦆",
+        ref: "🏺",
       },
-      category: {
-        type: "động vật",
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_2",
+      label: "mức 2",
+      glyph: "2",
+      value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
       },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_3",
+      label: "mức 3",
+      glyph: "3",
+      value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_4",
+      label: "mức 4",
+      glyph: "4",
+      value: 4,
+      audio_path: "/audio/voice/common/numbers/4.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_5",
+      label: "mức 5",
+      glyph: "5",
+      value: 5,
+      audio_path: "/audio/voice/common/numbers/5.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_6",
+      label: "mức 6",
+      glyph: "6",
+      value: 6,
+      audio_path: "/audio/voice/common/numbers/6.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
     },
   ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "dim_capacity_more",
+      target_id: "dim_capacity_less",
+      metadata: {
+        dimension: "capacity",
+      },
+    },
+    {
+      type: "sequence",
+      source_id: "dim_capacity_empty_less",
+      target_id: "dim_capacity_less",
+    },
+    {
+      type: "sequence",
+      source_id: "dim_capacity_less",
+      target_id: "dim_capacity_half",
+    },
+    {
+      type: "sequence",
+      source_id: "dim_capacity_half",
+      target_id: "dim_capacity_more",
+    },
+  ],
+  axes: {
+    capacity: {
+      values: ["cạn", "vơi", "vừa", "đầy"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Dung tích",
+      description: "Làm quen cơ bản",
+      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Dung tích",
+      description: "Nhận biết và chọn đúng",
+      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Vật nào có kích thước {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Dung tích nhé",
   },
-  ordering: ["corn", "dog", "cat", "chicken", "duck"],
+  ordering: [
+    "dim_capacity_more",
+    "dim_capacity_half",
+    "dim_capacity_less",
+    "dim_capacity_empty_less",
+  ],
 };
 
 export const C1_MEAS_05_SEED: SkillSeed = {

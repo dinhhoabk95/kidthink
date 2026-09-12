@@ -42,93 +42,121 @@ export const C1_MEAS_09_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "cm_3",
+      label: "dài ba xăng-ti-mét",
+      glyph: "📏",
+      value: 3,
+      audio_path: "/audio/voice/c1/meas/ruler_3.mp3",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "📏",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "ruler",
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "cm_4",
+      label: "dài bốn xăng-ti-mét",
+      glyph: "📏",
+      value: 4,
+      audio_path: "/audio/voice/c1/meas/ruler_4.mp3",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "📏",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "ruler",
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "cm_5",
+      label: "dài năm xăng-ti-mét",
+      glyph: "📏",
+      value: 5,
+      audio_path: "/audio/voice/c1/meas/cm_5.mp3",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "📏",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "ruler",
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "cm_6",
+      label: "dài sáu xăng-ti-mét",
+      glyph: "📏",
+      value: 6,
+      audio_path: "/audio/voice/c1/meas/cm_6.mp3",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "📏",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "ruler",
+    },
+  ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "cm_3",
+      target_id: "cm_4",
     },
     {
-      id: "banana",
-      label: "quả chuối",
-      image: {
-        kind: "emoji",
-        ref: "🍌",
-      },
-      category: {
-        type: "hoa quả",
+      type: "sequence",
+      source_id: "cm_4",
+      target_id: "cm_5",
+    },
+    {
+      type: "sequence",
+      source_id: "cm_5",
+      target_id: "cm_6",
+    },
+    {
+      type: "contrast",
+      source_id: "cm_6",
+      target_id: "cm_3",
+      metadata: {
+        near_miss: true,
       },
     },
   ],
+  axes: {
+    length_cm: {
+      values: ["3cm", "4cm", "5cm", "6cm"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Đo bằng thước",
+      description: "Làm quen cơ bản",
+      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Đo bằng thước",
+      description: "Nhận biết và chọn đúng",
+      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Vật nào có kích thước {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Đo bằng thước nhé",
   },
-  ordering: ["cup", "bed", "chair", "apple", "banana"],
 };
 
 export const C1_MEAS_09_SEED: SkillSeed = {

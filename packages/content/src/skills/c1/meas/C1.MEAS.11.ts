@@ -45,94 +45,98 @@ export const C1_MEAS_11_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "day_yesterday",
+      label: "hôm qua",
+      glyph: "📅",
+      value: 1,
+      audio_path: "/audio/voice/c1/meas/yesterday.mp3",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "📅",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "calendar",
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "day_today",
+      label: "hôm nay",
+      glyph: "📆",
+      value: 2,
+      audio_path: "/audio/voice/c1/meas/today.mp3",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "📆",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "calendar",
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "day_tomorrow",
+      label: "ngày mai",
+      glyph: "🗓️",
+      value: 3,
+      audio_path: "/audio/voice/c1/meas/tomorrow.mp3",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🗓️",
       },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "calendar",
     },
   ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "day_yesterday",
+      target_id: "day_today",
+    },
+    {
+      type: "sequence",
+      source_id: "day_today",
+      target_id: "day_tomorrow",
+    },
+  ],
+  axes: {
+    day_order: {
+      values: ["hôm qua", "hôm nay", "ngày mai"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Hôm qua · hôm nay · ngày mai",
+      description: "Làm quen cơ bản",
+      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Hôm qua · hôm nay · ngày mai",
+      description: "Nhận biết và chọn đúng",
+      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Vật nào có kích thước {label} hơn?",
     narration_template:
       "Chúng mình cùng tìm hiểu về Hôm qua · hôm nay · ngày mai nhé",
   },
-  ordering: ["banana", "watermelon", "carrot", "corn", "dog"],
+  ordering: ["day_tomorrow", "day_today", "day_yesterday"],
 };
 
 export const C1_MEAS_11_SEED: SkillSeed = {

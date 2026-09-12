@@ -42,93 +42,96 @@ export const C1_PAT_10_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "pat_red",
+      label: "màu đỏ",
+      glyph: "🔴",
+      value: 1,
+      audio_path: "/audio/voice/c1/pat/red.mp3",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🔴",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "color",
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "pat_blue",
+      label: "màu xanh dương",
+      glyph: "🔵",
+      value: 2,
+      audio_path: "/audio/voice/c1/pat/blue.mp3",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🔵",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "color",
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "pat_yellow",
+      label: "màu vàng",
+      glyph: "🟡",
+      value: 3,
+      audio_path: "/audio/voice/c1/pat/yellow.mp3",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🟡",
       },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "color",
+    },
+  ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "pat_red",
+      target_id: "pat_blue",
     },
     {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
-      },
+      type: "sequence",
+      source_id: "pat_blue",
+      target_id: "pat_yellow",
     },
     {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
-      },
+      type: "sequence",
+      source_id: "pat_yellow",
+      target_id: "pat_red",
     },
   ],
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Pattern màu",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Pattern màu",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "discrete-object",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Pattern màu nhé",
   },
-  ordering: ["banana", "watermelon", "carrot", "corn", "dog"],
+  ordering: ["pat_yellow", "pat_blue", "pat_red"],
 };
 
 export const C1_PAT_10_SEED: SkillSeed = {

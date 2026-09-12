@@ -12,6 +12,32 @@ import { ALL_BUILDERS } from "./registry.js";
 
 const REGEX_MONTESSORI_CODE = /-01\d{2}$/;
 
+/**
+ * Chỗ trống trong `phrasing.prompt_template` mà bộ dựng level thay được.
+ *
+ * Đây là hợp đồng dùng chung: `substitutePromptPlaceholders` thay đúng bộ này,
+ * và `scripts/check-dataset-integrity.ts` đọc chính hằng này để bắt dataset khai
+ * chỗ trống không ai thay. Cấm — NEVER khai lại danh sách ở phía cổng: hai bản
+ * sao thì một bản sẽ lệch, và trẻ là người đọc ra chuỗi `{...}` còn nguyên.
+ */
+export const SUBSTITUTED_PLACEHOLDERS: readonly string[] = ["label"];
+
+export interface PromptSubstitutionContext {
+  readonly conceptLabel: string;
+}
+
+/** Thay mọi chỗ trống mà bộ dựng hỗ trợ. Chỗ trống lạ được giữ nguyên để cổng bắt. */
+export function substitutePromptPlaceholders(
+  template: string,
+  ctx: PromptSubstitutionContext
+): string {
+  let out = template;
+  if (out.includes("{label}")) {
+    out = out.replace(/\{label\}/g, ctx.conceptLabel);
+  }
+  return out;
+}
+
 function computeSeedNumber(code: string, difficulty: number): number {
   let sum = 0;
   for (let i = 0; i < code.length; i++) {
@@ -85,9 +111,9 @@ function buildLevelRounds(
       instruction = dataset.phrasing?.prompt_template || dataset.concept_label;
     }
 
-    if (instruction.includes("{label}")) {
-      instruction = instruction.replace(/\{label\}/g, dataset.concept_label);
-    }
+    instruction = substitutePromptPlaceholders(instruction, {
+      conceptLabel: dataset.concept_label,
+    });
 
     // Sanitize instruction: replace standalone "không" with "số 0" for child friendliness
     instruction = instruction.replace(/\bkhông\b/gi, "số 0");

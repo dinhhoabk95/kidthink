@@ -42,58 +42,105 @@ export const C1_OTO_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "hen",
+      label: "gà mẹ",
+      glyph: "🐔",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/hen.mp3",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🐔",
       },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "mother",
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "chick_1",
+      label: "gà con một",
+      glyph: "🐥",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/chick_1.mp3",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🐥",
       },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "baby",
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "chick_2",
+      label: "gà con hai",
+      glyph: "🐥",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/chick_2.mp3",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "🐥",
       },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "baby",
     },
     {
-      id: "chicken",
-      label: "con gà",
+      id: "chick_3",
+      label: "gà con ba",
+      glyph: "🐥",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/chick_3.mp3",
       image: {
         kind: "emoji",
-        ref: "🐓",
+        ref: "🐥",
       },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "baby",
     },
     {
-      id: "duck",
-      label: "con vịt",
+      id: "duck_mother",
+      label: "vịt mẹ",
+      glyph: "🦆",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/duck_mother.mp3",
       image: {
         kind: "emoji",
         ref: "🦆",
       },
-      category: {
-        type: "động vật",
+      contrast_group: "mother",
+    },
+    {
+      id: "duckling",
+      label: "vịt con",
+      glyph: "🐤",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/duckling.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🐤",
+      },
+      contrast_group: "baby",
+    },
+  ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "chick_1",
+      target_id: "hen",
+    },
+    {
+      type: "pair",
+      source_id: "chick_2",
+      target_id: "hen",
+    },
+    {
+      type: "pair",
+      source_id: "chick_3",
+      target_id: "hen",
+    },
+    {
+      type: "pair",
+      source_id: "duckling",
+      target_id: "duck_mother",
+    },
+    {
+      type: "subset",
+      source_id: "chick_1",
+      target_id: "hen",
+      metadata: {
+        relation: "many_to_one",
       },
     },
   ],
@@ -101,34 +148,38 @@ export const C1_OTO_02_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Ghép nhiều với một",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Ghép nhiều với một",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy ghép đôi từng {label} tương ứng nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Ghép nhiều với một nhé",
   },
-  ordering: ["corn", "dog", "cat", "chicken", "duck"],
 };
 
 export const C1_OTO_02_SEED: SkillSeed = {

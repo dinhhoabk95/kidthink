@@ -47,9 +47,10 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ nhất",
       glyph: "1.",
       value: 1,
+      audio_path: "/audio/voice/common/ordinals/1.mp3",
       image: {
         kind: "emoji",
-        ref: "1️⃣",
+        ref: "🥇",
       },
     },
     {
@@ -57,9 +58,10 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ hai",
       glyph: "2.",
       value: 2,
+      audio_path: "/audio/voice/common/ordinals/2.mp3",
       image: {
         kind: "emoji",
-        ref: "2️⃣",
+        ref: "🥈",
       },
     },
     {
@@ -67,9 +69,10 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ ba",
       glyph: "3.",
       value: 3,
+      audio_path: "/audio/voice/common/ordinals/3.mp3",
       image: {
         kind: "emoji",
-        ref: "3️⃣",
+        ref: "🥉",
       },
     },
     {
@@ -77,6 +80,7 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ tư",
       glyph: "4.",
       value: 4,
+      audio_path: "/audio/voice/common/ordinals/4.mp3",
       image: {
         kind: "emoji",
         ref: "4️⃣",
@@ -87,6 +91,7 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ năm",
       glyph: "5.",
       value: 5,
+      audio_path: "/audio/voice/common/ordinals/5.mp3",
       image: {
         kind: "emoji",
         ref: "5️⃣",
@@ -97,6 +102,7 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ sáu",
       glyph: "6.",
       value: 6,
+      audio_path: "/audio/voice/common/ordinals/6.mp3",
       image: {
         kind: "emoji",
         ref: "6️⃣",
@@ -107,6 +113,7 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ bảy",
       glyph: "7.",
       value: 7,
+      audio_path: "/audio/voice/common/ordinals/7.mp3",
       image: {
         kind: "emoji",
         ref: "7️⃣",
@@ -117,6 +124,7 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ tám",
       glyph: "8.",
       value: 8,
+      audio_path: "/audio/voice/common/ordinals/8.mp3",
       image: {
         kind: "emoji",
         ref: "8️⃣",
@@ -127,6 +135,7 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ chín",
       glyph: "9.",
       value: 9,
+      audio_path: "/audio/voice/common/ordinals/9.mp3",
       image: {
         kind: "emoji",
         ref: "9️⃣",
@@ -137,41 +146,74 @@ export const C1_ORD_06_DATASET: SkillDataset = {
       label: "thứ mười",
       glyph: "10.",
       value: 10,
+      audio_path: "/audio/voice/common/ordinals/10.mp3",
       image: {
         kind: "emoji",
-        ref: "🔟",
+        ref: "10️⃣",
       },
     },
   ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "ord_10",
+      target_id: "ord_9",
+    },
+    {
+      type: "sequence",
+      source_id: "ord_9",
+      target_id: "ord_8",
+    },
+    {
+      type: "sequence",
+      source_id: "ord_8",
+      target_id: "ord_7",
+    },
+  ],
+  axes: {
+    direction: {
+      values: ["forward", "backward"],
+      ordered: true,
+    },
+    reference_point: {
+      values: ["start", "end"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Thứ tự ngược từ cuối lên",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Thứ tự ngược từ cuối lên",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bạn nào đứng thứ {position}?",
     narration_template:
       "Chúng mình cùng tìm hiểu về Thứ tự ngược từ cuối lên nhé",
   },
@@ -323,7 +365,7 @@ export const C1_ORD_06_SEED: SkillSeed = {
     },
     {
       code: "GL-C1-ORD-BAL-0001",
-      template: "GT-016",
+      template: "GT-014",
       band: "5-6",
       difficulty: 3,
       theme: "school",
@@ -331,7 +373,7 @@ export const C1_ORD_06_SEED: SkillSeed = {
     },
     {
       code: "GL-C1-ORD-BAL-0002",
-      template: "GT-016",
+      template: "GT-014",
       band: "5-6",
       difficulty: 4,
       theme: "farm",
@@ -339,7 +381,7 @@ export const C1_ORD_06_SEED: SkillSeed = {
     },
     {
       code: "GL-C1-ORD-BAL-0003",
-      template: "GT-016",
+      template: "GT-014",
       band: "5-6",
       difficulty: 5,
       theme: "home",
@@ -347,7 +389,7 @@ export const C1_ORD_06_SEED: SkillSeed = {
     },
     {
       code: "GL-C1-ORD-BAL-0004",
-      template: "GT-016",
+      template: "GT-014",
       band: "5-6",
       difficulty: 3,
       theme: "animal",

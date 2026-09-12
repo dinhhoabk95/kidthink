@@ -42,58 +42,101 @@ export const C1_OTO_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
+      id: "rabbit",
+      label: "chú thỏ",
+      glyph: "🐇",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/rabbit.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🐇",
+      },
+      contrast_group: "animal",
+    },
+    {
       id: "carrot",
       label: "củ cà rốt",
+      glyph: "🥕",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/carrot.mp3",
       image: {
         kind: "emoji",
         ref: "🥕",
       },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "food",
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "cat",
+      label: "chú mèo",
+      glyph: "🐱",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/cat.mp3",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🐱",
       },
-      category: {
-        type: "rau củ",
+      contrast_group: "animal",
+    },
+    {
+      id: "fish",
+      label: "con cá",
+      glyph: "🐟",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/fish.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🐟",
       },
+      contrast_group: "food",
     },
     {
       id: "dog",
-      label: "con chó",
+      label: "chú chó",
+      glyph: "🐕",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/dog.mp3",
       image: {
         kind: "emoji",
         ref: "🐕",
       },
-      category: {
-        type: "động vật",
+      contrast_group: "animal",
+    },
+    {
+      id: "bone",
+      label: "khúc xương",
+      glyph: "🦴",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/bone.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🦴",
+      },
+      contrast_group: "food",
+    },
+  ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "rabbit",
+      target_id: "carrot",
+      metadata: {
+        relation: "one_to_one",
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
+      type: "pair",
+      source_id: "cat",
+      target_id: "fish",
+      metadata: {
+        relation: "one_to_one",
       },
     },
     {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
+      type: "pair",
+      source_id: "dog",
+      target_id: "bone",
+      metadata: {
+        relation: "one_to_one",
       },
     },
   ],
@@ -101,34 +144,38 @@ export const C1_OTO_01_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Ghép 1-1",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Ghép 1-1",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "discrete-object",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy ghép đôi từng {label} tương ứng nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Ghép 1-1 nhé",
   },
-  ordering: ["carrot", "corn", "dog", "cat", "chicken"],
 };
 
 export const C1_OTO_01_SEED: SkillSeed = {

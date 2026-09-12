@@ -42,93 +42,131 @@ export const C1_PROB_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "dog",
-      label: "con chó",
+      id: "red_ball_1",
+      label: "bóng đỏ một",
+      glyph: "🔴",
+      value: 1,
+      audio_path: "/audio/voice/c1/prob/ball_red_1.mp3",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🔴",
       },
+      contrast_group: "red",
       category: {
-        type: "động vật",
+        color: "red",
+        size: "small",
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "red_ball_2",
+      label: "bóng đỏ hai",
+      glyph: "🔴",
+      value: 2,
+      audio_path: "/audio/voice/c1/prob/ball_red_2.mp3",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "🔴",
       },
+      contrast_group: "red",
       category: {
-        type: "động vật",
+        color: "red",
+        size: "small",
       },
     },
     {
-      id: "chicken",
-      label: "con gà",
+      id: "blue_ball_1",
+      label: "bóng xanh một",
+      glyph: "🔵",
+      value: 1,
+      audio_path: "/audio/voice/c1/prob/ball_blue_1.mp3",
       image: {
         kind: "emoji",
-        ref: "🐓",
+        ref: "🔵",
       },
+      contrast_group: "blue",
       category: {
-        type: "động vật",
+        color: "blue",
+        size: "large",
       },
     },
     {
-      id: "duck",
-      label: "con vịt",
+      id: "blue_ball_2",
+      label: "bóng xanh hai",
+      glyph: "🔵",
+      value: 2,
+      audio_path: "/audio/voice/c1/prob/ball_blue_2.mp3",
       image: {
         kind: "emoji",
-        ref: "🦆",
+        ref: "🔵",
       },
+      contrast_group: "blue",
       category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "fish",
-      label: "con cá",
-      image: {
-        kind: "emoji",
-        ref: "🐟",
-      },
-      category: {
-        type: "động vật",
+        color: "blue",
+        size: "large",
       },
     },
   ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "red_ball_1",
+      target_id: "red_ball_2",
+    },
+    {
+      type: "pair",
+      source_id: "blue_ball_1",
+      target_id: "blue_ball_2",
+    },
+    {
+      type: "contrast",
+      source_id: "red_ball_1",
+      target_id: "blue_ball_1",
+    },
+  ],
+  axes: {
+    color: {
+      values: ["red", "blue"],
+    },
+    size: {
+      values: ["small", "large"],
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Chia nhóm",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Chia nhóm",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy giải bài toán tìm {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Chia nhóm nhé",
   },
-  ordering: ["dog", "cat", "chicken", "duck", "fish"],
 };
 
 export const C1_PROB_04_SEED: SkillSeed = {

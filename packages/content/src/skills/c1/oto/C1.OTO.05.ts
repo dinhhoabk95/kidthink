@@ -42,93 +42,131 @@ export const C1_OTO_05_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "pos_top_1",
+      label: "ở trên hàng một",
+      glyph: "⬆️",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/top_1.mp3",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "⬆️",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "top",
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "pos_bottom_1",
+      label: "ở dưới hàng một",
+      glyph: "⬇️",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/bottom_1.mp3",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "⬇️",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "bottom",
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "pos_top_2",
+      label: "ở trên hàng hai",
+      glyph: "⬆️",
+      value: 2,
+      audio_path: "/audio/voice/c1/oto/top_2.mp3",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "⬆️",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "top",
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "pos_bottom_2",
+      label: "ở dưới hàng hai",
+      glyph: "⬇️",
+      value: 2,
+      audio_path: "/audio/voice/c1/oto/bottom_2.mp3",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "⬇️",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "bottom",
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "pos_top_3",
+      label: "ở trên hàng ba",
+      glyph: "⬆️",
+      value: 3,
+      audio_path: "/audio/voice/c1/oto/top_3.mp3",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "⬆️",
       },
-      category: {
-        type: "hoa quả",
+      contrast_group: "top",
+    },
+    {
+      id: "pos_bottom_3",
+      label: "ở dưới hàng ba",
+      glyph: "⬇️",
+      value: 3,
+      audio_path: "/audio/voice/c1/oto/bottom_3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "⬇️",
       },
+      contrast_group: "bottom",
+    },
+  ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "pos_top_1",
+      target_id: "pos_bottom_1",
+    },
+    {
+      type: "pair",
+      source_id: "pos_top_2",
+      target_id: "pos_bottom_2",
+    },
+    {
+      type: "pair",
+      source_id: "pos_top_3",
+      target_id: "pos_bottom_3",
     },
   ],
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Ghép theo vị trí",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Ghép theo vị trí",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy ghép đôi từng {label} tương ứng nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Ghép theo vị trí nhé",
   },
-  ordering: ["spoon", "cup", "bed", "chair", "apple"],
 };
 
 export const C1_OTO_05_SEED: SkillSeed = {

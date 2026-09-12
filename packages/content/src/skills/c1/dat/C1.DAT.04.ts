@@ -42,93 +42,116 @@ export const C1_DAT_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "table_col_apple",
+      label: "cột táo đỏ",
+      glyph: "🍎",
+      value: 3,
+      audio_path: "/audio/voice/c1/dat/apple.mp3",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🍎",
       },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "table",
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "table_col_banana",
+      label: "cột chuối vàng",
+      glyph: "🍌",
+      value: 4,
+      audio_path: "/audio/voice/c1/dat/banana.mp3",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🍌",
       },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "table",
     },
     {
-      id: "dog",
-      label: "con chó",
+      id: "table_col_a",
+      label: "cột số lượng nam",
+      glyph: "👦",
+      value: 5,
+      audio_path: "/audio/voice/c1/dat/table_boys.mp3",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "👦",
       },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "table",
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "table_col_b",
+      label: "cột số lượng nữ",
+      glyph: "👧",
+      value: 6,
+      audio_path: "/audio/voice/c1/dat/table_girls.mp3",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "👧",
       },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "table",
+    },
+  ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "table_col_apple",
+      target_id: "table_col_banana",
     },
     {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
+      type: "sequence",
+      source_id: "table_col_a",
+      target_id: "table_col_b",
+    },
+    {
+      type: "contrast",
+      source_id: "table_col_b",
+      target_id: "table_col_a",
+      metadata: {
+        dimension: "gender_count",
       },
     },
   ],
+  axes: {
+    count: {
+      values: ["3", "4", "5", "6"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Đọc bảng hai cột",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Đọc bảng hai cột",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé đếm rồi biểu diễn số lượng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Đọc bảng hai cột nhé",
   },
-  ordering: ["carrot", "corn", "dog", "cat", "chicken"],
 };
 
 export const C1_DAT_04_SEED: SkillSeed = {

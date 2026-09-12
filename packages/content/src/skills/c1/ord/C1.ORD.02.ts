@@ -47,9 +47,10 @@ export const C1_ORD_02_DATASET: SkillDataset = {
       label: "thứ nhất",
       glyph: "1.",
       value: 1,
+      audio_path: "/audio/voice/common/ordinals/1.mp3",
       image: {
         kind: "emoji",
-        ref: "1️⃣",
+        ref: "🥇",
       },
     },
     {
@@ -57,9 +58,10 @@ export const C1_ORD_02_DATASET: SkillDataset = {
       label: "thứ hai",
       glyph: "2.",
       value: 2,
+      audio_path: "/audio/voice/common/ordinals/2.mp3",
       image: {
         kind: "emoji",
-        ref: "2️⃣",
+        ref: "🥈",
       },
     },
     {
@@ -67,9 +69,10 @@ export const C1_ORD_02_DATASET: SkillDataset = {
       label: "thứ ba",
       glyph: "3.",
       value: 3,
+      audio_path: "/audio/voice/common/ordinals/3.mp3",
       image: {
         kind: "emoji",
-        ref: "3️⃣",
+        ref: "🥉",
       },
     },
     {
@@ -77,6 +80,7 @@ export const C1_ORD_02_DATASET: SkillDataset = {
       label: "thứ tư",
       glyph: "4.",
       value: 4,
+      audio_path: "/audio/voice/common/ordinals/4.mp3",
       image: {
         kind: "emoji",
         ref: "4️⃣",
@@ -87,45 +91,75 @@ export const C1_ORD_02_DATASET: SkillDataset = {
       label: "thứ năm",
       glyph: "5.",
       value: 5,
+      audio_path: "/audio/voice/common/ordinals/5.mp3",
       image: {
         kind: "emoji",
         ref: "5️⃣",
       },
     },
   ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "ord_1",
+      target_id: "ord_3",
+      metadata: {
+        relation: "start_to_middle",
+      },
+    },
+    {
+      type: "sequence",
+      source_id: "ord_3",
+      target_id: "ord_5",
+      metadata: {
+        relation: "middle_to_end",
+      },
+    },
+  ],
+  axes: {
+    ordinal: {
+      values: ["thứ nhất", "thứ hai", "thứ ba", "thứ tư", "thứ năm"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Đầu · giữa · cuối hàng",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Đầu · giữa · cuối hàng",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bạn nào đứng thứ {position}?",
     narration_template:
       "Chúng mình cùng tìm hiểu về Đầu · giữa · cuối hàng nhé",
   },
-  ordering: ["ord_1", "ord_2", "ord_3", "ord_4", "ord_5"],
+  ordering: ["ord_5", "ord_4", "ord_3", "ord_2", "ord_1"],
 };
 
 export const C1_ORD_02_SEED: SkillSeed = {

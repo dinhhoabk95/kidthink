@@ -42,93 +42,114 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "dim_height_tree_more",
+      label: "cây cổ thụ cao",
+      glyph: "🌲",
+      value: 4,
+      audio_path: "/audio/voice/c1/meas/tree_tall.mp3",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🌲",
       },
-      category: {
-        type: "hoa quả",
+      contrast_group: "height",
+    },
+    {
+      id: "dim_height_more",
+      label: "hươu cao cổ cao",
+      glyph: "🦒",
+      value: 3,
+      audio_path: "/audio/voice/c1/meas/giraffe_tall.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🦒",
+      },
+      contrast_group: "height",
+    },
+    {
+      id: "dim_height_less",
+      label: "chú cừu thấp",
+      glyph: "🐑",
+      value: 2,
+      audio_path: "/audio/voice/c1/meas/sheep_short.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🐑",
+      },
+      contrast_group: "height",
+    },
+    {
+      id: "dim_height_flower_less",
+      label: "bụi hoa thấp",
+      glyph: "🌼",
+      value: 1,
+      audio_path: "/audio/voice/c1/meas/flower_short.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🌼",
+      },
+      contrast_group: "height",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "dim_height_tree_more",
+      target_id: "dim_height_flower_less",
+      metadata: {
+        dimension: "height",
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "carrot",
-      label: "củ cà rốt",
-      image: {
-        kind: "emoji",
-        ref: "🥕",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
+      type: "contrast",
+      source_id: "dim_height_more",
+      target_id: "dim_height_less",
+      metadata: {
+        dimension: "height",
       },
     },
   ],
+  axes: {
+    height: {
+      values: ["rất thấp", "thấp", "cao", "rất cao"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Cao thấp",
+      description: "Làm quen cơ bản",
+      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Cao thấp",
+      description: "Nhận biết và chọn đúng",
+      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Vật nào có kích thước {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Cao thấp nhé",
   },
-  ordering: ["banana", "watermelon", "carrot", "corn", "dog"],
 };
 
 export const C1_MEAS_02_SEED: SkillSeed = {

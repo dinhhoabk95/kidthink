@@ -42,93 +42,201 @@ export const C1_MEAS_06_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "dog",
-      label: "con chó",
+      id: "vol_small",
+      label: "thùng gỗ nhỏ",
+      glyph: "📦",
+      value: 1,
+      audio_path: "/audio/voice/c1/meas/box_small.mp3",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "📦",
       },
-      category: {
-        type: "động vật",
+      contrast_group: "volume",
+    },
+    {
+      id: "vol_mid",
+      label: "thùng gỗ vừa",
+      glyph: "📦",
+      value: 2,
+      audio_path: "/audio/voice/c1/meas/box_mid.mp3",
+      image: {
+        kind: "emoji",
+        ref: "📦",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "vol_big",
+      label: "thùng gỗ to",
+      glyph: "📦",
+      value: 3,
+      audio_path: "/audio/voice/c1/meas/box_big.mp3",
+      image: {
+        kind: "emoji",
+        ref: "📦",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "vol_huge",
+      label: "thùng gỗ rất to",
+      glyph: "📦",
+      value: 4,
+      audio_path: "/audio/voice/c1/meas/box_huge.mp3",
+      image: {
+        kind: "emoji",
+        ref: "📦",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_1",
+      label: "mức 1",
+      glyph: "1",
+      value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_2",
+      label: "mức 2",
+      glyph: "2",
+      value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_3",
+      label: "mức 3",
+      glyph: "3",
+      value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_4",
+      label: "mức 4",
+      glyph: "4",
+      value: 4,
+      audio_path: "/audio/voice/common/numbers/4.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_5",
+      label: "mức 5",
+      glyph: "5",
+      value: 5,
+      audio_path: "/audio/voice/common/numbers/5.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+    {
+      id: "fill_unit_6",
+      label: "mức 6",
+      glyph: "6",
+      value: 6,
+      audio_path: "/audio/voice/common/numbers/6.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🏺",
+      },
+      contrast_group: "volume",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "vol_big",
+      target_id: "vol_small",
+      metadata: {
+        dimension: "volume",
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
-      },
+      type: "sequence",
+      source_id: "vol_small",
+      target_id: "vol_mid",
     },
     {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
-      },
+      type: "sequence",
+      source_id: "vol_mid",
+      target_id: "vol_big",
     },
     {
-      id: "duck",
-      label: "con vịt",
-      image: {
-        kind: "emoji",
-        ref: "🦆",
-      },
-      category: {
-        type: "động vật",
-      },
+      type: "sequence",
+      source_id: "vol_big",
+      target_id: "vol_huge",
     },
     {
-      id: "fish",
-      label: "con cá",
-      image: {
-        kind: "emoji",
-        ref: "🐟",
-      },
-      category: {
-        type: "động vật",
+      type: "subset",
+      source_id: "vol_small",
+      target_id: "vol_huge",
+      metadata: {
+        relation: "fits_inside",
       },
     },
   ],
+  axes: {
+    volume: {
+      values: ["nhỏ", "vừa", "to", "rất to"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Thể tích trực quan",
+      description: "Làm quen cơ bản",
+      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Thể tích trực quan",
+      description: "Nhận biết và chọn đúng",
+      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Vật nào có kích thước {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Thể tích trực quan nhé",
   },
-  ordering: ["dog", "cat", "chicken", "duck", "fish"],
 };
 
 export const C1_MEAS_06_SEED: SkillSeed = {

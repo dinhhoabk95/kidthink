@@ -42,93 +42,126 @@ export const C1_PAT_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "pat_heart_1",
+      label: "trái tim đỏ một",
+      glyph: "❤️",
+      value: 1,
+      audio_path: "/audio/voice/c1/pat/heart_red.mp3",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "❤️",
       },
-      category: {
-        type: "rau củ",
+      contrast_group: "a",
+    },
+    {
+      id: "pat_heart_2",
+      label: "trái tim đỏ hai",
+      glyph: "❤️",
+      value: 2,
+      audio_path: "/audio/voice/c1/pat/heart_red.mp3",
+      image: {
+        kind: "emoji",
+        ref: "❤️",
+      },
+      contrast_group: "a",
+    },
+    {
+      id: "pat_diamond",
+      label: "kim cương xanh",
+      glyph: "💎",
+      value: 3,
+      audio_path: "/audio/voice/c1/pat/diamond.mp3",
+      image: {
+        kind: "emoji",
+        ref: "💎",
+      },
+      contrast_group: "b",
+    },
+    {
+      id: "pat_heart_repeat",
+      label: "trái tim đỏ lặp lại",
+      glyph: "❤️",
+      value: 4,
+      audio_path: "/audio/voice/c1/pat/heart_red.mp3",
+      image: {
+        kind: "emoji",
+        ref: "❤️",
+      },
+      contrast_group: "a",
+    },
+  ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "pat_heart_1",
+      target_id: "pat_heart_2",
+      metadata: {
+        rule: "AAB",
+        period: 3,
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
+      type: "sequence",
+      source_id: "pat_heart_2",
+      target_id: "pat_diamond",
+      metadata: {
+        rule: "AAB",
+        period: 3,
       },
     },
     {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
+      type: "sequence",
+      source_id: "pat_diamond",
+      target_id: "pat_heart_repeat",
+      metadata: {
+        rule: "AAB",
+        period: 3,
       },
     },
   ],
+  axes: {
+    cycle: {
+      values: ["A1", "A2", "B", "A3"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Quy luật AAB",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Quy luật AAB",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Quy luật AAB nhé",
   },
-  ordering: ["carrot", "corn", "dog", "cat", "chicken"],
+  ordering: ["pat_heart_repeat", "pat_diamond", "pat_heart_2", "pat_heart_1"],
 };
 
 export const C1_PAT_03_SEED: SkillSeed = {

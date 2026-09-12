@@ -42,93 +42,126 @@ export const C1_PAT_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "pat_flower",
+      label: "bông hoa hồng",
+      glyph: "🌸",
+      value: 1,
+      audio_path: "/audio/voice/c1/pat/flower.mp3",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🌸",
       },
-      category: {
-        type: "rau củ",
+      contrast_group: "a",
+    },
+    {
+      id: "pat_leaf",
+      label: "chiếc lá xanh",
+      glyph: "🍃",
+      value: 2,
+      audio_path: "/audio/voice/c1/pat/leaf.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🍃",
+      },
+      contrast_group: "b",
+    },
+    {
+      id: "pat_sun",
+      label: "mặt trời vàng",
+      glyph: "☀️",
+      value: 3,
+      audio_path: "/audio/voice/c1/pat/sun.mp3",
+      image: {
+        kind: "emoji",
+        ref: "☀️",
+      },
+      contrast_group: "c",
+    },
+    {
+      id: "pat_star",
+      label: "ngôi sao vàng",
+      glyph: "⭐",
+      value: 4,
+      audio_path: "/audio/voice/c1/pat/star.mp3",
+      image: {
+        kind: "emoji",
+        ref: "⭐",
+      },
+      contrast_group: "d",
+    },
+  ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "pat_flower",
+      target_id: "pat_leaf",
+      metadata: {
+        rule: "ABC",
+        period: 3,
       },
     },
     {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
+      type: "sequence",
+      source_id: "pat_leaf",
+      target_id: "pat_sun",
+      metadata: {
+        rule: "ABC",
+        period: 3,
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "duck",
-      label: "con vịt",
-      image: {
-        kind: "emoji",
-        ref: "🦆",
-      },
-      category: {
-        type: "động vật",
+      type: "sequence",
+      source_id: "pat_sun",
+      target_id: "pat_flower_repeat",
+      metadata: {
+        rule: "ABC",
+        period: 3,
       },
     },
   ],
+  axes: {
+    cycle: {
+      values: ["A", "B", "C", "A2"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Quy luật ABC",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Quy luật ABC",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Quy luật ABC nhé",
   },
-  ordering: ["corn", "dog", "cat", "chicken", "duck"],
+  ordering: ["pat_flower_repeat", "pat_sun", "pat_leaf", "pat_flower"],
 };
 
 export const C1_PAT_04_SEED: SkillSeed = {

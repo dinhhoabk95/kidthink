@@ -42,58 +42,67 @@ export const C1_PROB_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "share_all",
+      label: "sáu chiếc bánh",
+      glyph: "🧁",
+      value: 6,
+      audio_path: "/audio/voice/c1/prob/cakes_6.mp3",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🧁",
       },
-      category: {
-        type: "rau củ",
+      contrast_group: "total",
+    },
+    {
+      id: "share_p1",
+      label: "phần ba chiếc một",
+      glyph: "🧁",
+      value: 3,
+      audio_path: "/audio/voice/c1/prob/cakes_3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🧁",
+      },
+      contrast_group: "share",
+    },
+    {
+      id: "share_p2",
+      label: "phần ba chiếc hai",
+      glyph: "🧁",
+      value: 3,
+      audio_path: "/audio/voice/c1/prob/cakes_3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🧁",
+      },
+      contrast_group: "share",
+    },
+  ],
+  relations: [
+    {
+      type: "subset",
+      source_id: "share_p1",
+      target_id: "share_all",
+      metadata: {
+        share: 1,
+        amount: 3,
       },
     },
     {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
+      type: "subset",
+      source_id: "share_p2",
+      target_id: "share_all",
+      metadata: {
+        share: 2,
+        amount: 3,
       },
     },
     {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "chicken",
-      label: "con gà",
-      image: {
-        kind: "emoji",
-        ref: "🐓",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "duck",
-      label: "con vịt",
-      image: {
-        kind: "emoji",
-        ref: "🦆",
-      },
-      category: {
-        type: "động vật",
+      type: "pair",
+      source_id: "share_p1",
+      target_id: "share_p2",
+      metadata: {
+        relation: "equal_shares",
       },
     },
   ],
@@ -101,34 +110,38 @@ export const C1_PROB_03_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Chia đều",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Chia đều",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy giải bài toán tìm {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Chia đều nhé",
   },
-  ordering: ["corn", "dog", "cat", "chicken", "duck"],
 };
 
 export const C1_PROB_03_SEED: SkillSeed = {

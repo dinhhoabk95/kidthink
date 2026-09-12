@@ -59,10 +59,22 @@ export interface DatasetRelation {
   readonly metadata?: Readonly<Record<string, string | number | boolean>>;
 }
 
+export type QuantityRepKind =
+  | "discrete-object"
+  | "finger"
+  | "number-rod"
+  | "rekenrek"
+  | "ten-frame"
+  | "dot-pattern"
+  | "tally"
+  | "number-line";
+
 export interface DifficultyRung {
   readonly rung: number;
   readonly dimension: string;
   readonly description: string;
+  /** Lối biểu diễn lượng của bậc này — `BR-NRL-01`. */
+  readonly representation?: QuantityRepKind | "numeral";
 }
 
 export interface SkillPhrasing {

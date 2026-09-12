@@ -38,14 +38,15 @@ export const C1_CNT_05_IDENTITY: SkillIdentity = {
 
 export const C1_CNT_05_DATASET: SkillDataset = {
   skill_code: "C1.CNT.05",
-  concept_label: "Đếm cách 2",
+  concept_label: "Đếm lùi từ 5",
   surface: "game",
   items: [
     {
       id: "n0",
-      label: "Số không",
+      label: "số không",
       glyph: "0",
       value: 0,
+      audio_path: "/audio/voice/common/numbers/0.mp3",
       image: {
         kind: "emoji",
         ref: "0️⃣",
@@ -53,9 +54,10 @@ export const C1_CNT_05_DATASET: SkillDataset = {
     },
     {
       id: "n1",
-      label: "Số một",
+      label: "số một",
       glyph: "1",
       value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
         ref: "1️⃣",
@@ -63,9 +65,10 @@ export const C1_CNT_05_DATASET: SkillDataset = {
     },
     {
       id: "n2",
-      label: "Số hai",
+      label: "số hai",
       glyph: "2",
       value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
         kind: "emoji",
         ref: "2️⃣",
@@ -73,9 +76,10 @@ export const C1_CNT_05_DATASET: SkillDataset = {
     },
     {
       id: "n3",
-      label: "Số ba",
+      label: "số ba",
       glyph: "3",
       value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
         kind: "emoji",
         ref: "3️⃣",
@@ -83,9 +87,10 @@ export const C1_CNT_05_DATASET: SkillDataset = {
     },
     {
       id: "n4",
-      label: "Số bốn",
+      label: "số bốn",
       glyph: "4",
       value: 4,
+      audio_path: "/audio/voice/common/numbers/4.mp3",
       image: {
         kind: "emoji",
         ref: "4️⃣",
@@ -93,9 +98,10 @@ export const C1_CNT_05_DATASET: SkillDataset = {
     },
     {
       id: "n5",
-      label: "Số năm",
+      label: "số năm",
       glyph: "5",
       value: 5,
+      audio_path: "/audio/voice/common/numbers/5.mp3",
       image: {
         kind: "emoji",
         ref: "5️⃣",
@@ -103,9 +109,10 @@ export const C1_CNT_05_DATASET: SkillDataset = {
     },
     {
       id: "n6",
-      label: "Số sáu",
+      label: "số sáu",
       glyph: "6",
       value: 6,
+      audio_path: "/audio/voice/common/numbers/6.mp3",
       image: {
         kind: "emoji",
         ref: "6️⃣",
@@ -113,9 +120,10 @@ export const C1_CNT_05_DATASET: SkillDataset = {
     },
     {
       id: "n7",
-      label: "Số bảy",
+      label: "số bảy",
       glyph: "7",
       value: 7,
+      audio_path: "/audio/voice/common/numbers/7.mp3",
       image: {
         kind: "emoji",
         ref: "7️⃣",
@@ -123,9 +131,10 @@ export const C1_CNT_05_DATASET: SkillDataset = {
     },
     {
       id: "n8",
-      label: "Số tám",
+      label: "số tám",
       glyph: "8",
       value: 8,
+      audio_path: "/audio/voice/common/numbers/8.mp3",
       image: {
         kind: "emoji",
         ref: "8️⃣",
@@ -133,9 +142,10 @@ export const C1_CNT_05_DATASET: SkillDataset = {
     },
     {
       id: "n9",
-      label: "Số chín",
+      label: "số chín",
       glyph: "9",
       value: 9,
+      audio_path: "/audio/voice/common/numbers/9.mp3",
       image: {
         kind: "emoji",
         ref: "9️⃣",
@@ -143,12 +153,31 @@ export const C1_CNT_05_DATASET: SkillDataset = {
     },
     {
       id: "n10",
-      label: "Số mười",
+      label: "số mười",
       glyph: "10",
       value: 10,
+      audio_path: "/audio/voice/common/numbers/10.mp3",
       image: {
         kind: "emoji",
         ref: "🔟",
+      },
+    },
+  ],
+  relations: [
+    {
+      type: "subset",
+      source_id: "n2",
+      target_id: "n5",
+      metadata: {
+        relation: "smaller_quantity",
+      },
+    },
+    {
+      type: "subset",
+      source_id: "n5",
+      target_id: "n10",
+      metadata: {
+        relation: "half_to_whole",
       },
     },
   ],
@@ -156,32 +185,37 @@ export const C1_CNT_05_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Đếm cách 2",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Đếm cách 2",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Đếm cách 2 nhé",
+    prompt_template: "Bé đếm xem có mấy {label}?",
+    narration_template: "Chúng mình cùng tìm hiểu về Đếm lùi từ 5 nhé",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9", "n10"],
 };

@@ -42,93 +42,114 @@ export const C1_CMP_12_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bed",
-      label: "cái giường",
+      id: "dist_star_more",
+      label: "ngôi sao rất xa",
+      glyph: "⭐",
+      value: 4,
+      audio_path: "/audio/voice/c1/cmp/star_far.mp3",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "⭐",
       },
-      category: {
-        type: "đồ dùng",
+      contrast_group: "distance",
+    },
+    {
+      id: "dist_cloud_more",
+      label: "đám mây ở xa",
+      glyph: "☁️",
+      value: 3,
+      audio_path: "/audio/voice/c1/cmp/cloud_far.mp3",
+      image: {
+        kind: "emoji",
+        ref: "☁️",
+      },
+      contrast_group: "distance",
+    },
+    {
+      id: "dist_tree_less",
+      label: "cây xanh ở gần",
+      glyph: "🌳",
+      value: 2,
+      audio_path: "/audio/voice/c1/cmp/tree_near.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🌳",
+      },
+      contrast_group: "distance",
+    },
+    {
+      id: "dist_flower_less",
+      label: "bông hoa rất gần",
+      glyph: "🌸",
+      value: 1,
+      audio_path: "/audio/voice/c1/cmp/flower_near.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🌸",
+      },
+      contrast_group: "distance",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "dist_star_more",
+      target_id: "dist_flower_less",
+      metadata: {
+        dimension: "distance",
       },
     },
     {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "apple",
-      label: "quả táo",
-      image: {
-        kind: "emoji",
-        ref: "🍎",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "banana",
-      label: "quả chuối",
-      image: {
-        kind: "emoji",
-        ref: "🍌",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "watermelon",
-      label: "dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
+      type: "contrast",
+      source_id: "dist_cloud_more",
+      target_id: "dist_tree_less",
+      metadata: {
+        dimension: "distance",
       },
     },
   ],
+  axes: {
+    distance: {
+      values: ["rất gần", "gần", "xa", "rất xa"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Xa hơn",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Xa hơn",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bên nào có nhiều {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Xa hơn nhé",
   },
-  ordering: ["bed", "chair", "apple", "banana", "watermelon"],
 };
 
 export const C1_CMP_12_SEED: SkillSeed = {

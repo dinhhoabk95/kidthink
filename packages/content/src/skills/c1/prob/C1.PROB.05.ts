@@ -42,93 +42,131 @@ export const C1_PROB_05_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bowl",
-      label: "cái bát",
+      id: "cat_1",
+      label: "mèo vàng một",
+      glyph: "🐱",
+      value: 1,
+      audio_path: "/audio/voice/c1/prob/cat_1.mp3",
       image: {
         kind: "emoji",
-        ref: "🥣",
+        ref: "🐱",
       },
+      contrast_group: "yellow",
       category: {
-        type: "đồ dùng",
+        species: "cat",
+        color: "yellow",
       },
     },
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "cat_2",
+      label: "mèo vàng hai",
+      glyph: "🐱",
+      value: 2,
+      audio_path: "/audio/voice/c1/prob/cat_2.mp3",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "🐱",
       },
+      contrast_group: "yellow",
       category: {
-        type: "đồ dùng",
+        species: "cat",
+        color: "yellow",
       },
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "dog_1",
+      label: "chó đen một",
+      glyph: "🐕",
+      value: 1,
+      audio_path: "/audio/voice/c1/prob/dog_1.mp3",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🐕",
       },
+      contrast_group: "black",
       category: {
-        type: "đồ dùng",
+        species: "dog",
+        color: "black",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "dog_2",
+      label: "chó đen hai",
+      glyph: "🐕",
+      value: 2,
+      audio_path: "/audio/voice/c1/prob/dog_2.mp3",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🐕",
       },
+      contrast_group: "black",
       category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
+        species: "dog",
+        color: "black",
       },
     },
   ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "cat_1",
+      target_id: "cat_2",
+    },
+    {
+      type: "pair",
+      source_id: "dog_1",
+      target_id: "dog_2",
+    },
+    {
+      type: "contrast",
+      source_id: "cat_1",
+      target_id: "dog_1",
+    },
+  ],
+  axes: {
+    species: {
+      values: ["cat", "dog"],
+    },
+    color: {
+      values: ["yellow", "black"],
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Ghép nhóm",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Ghép nhóm",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy giải bài toán tìm {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Ghép nhóm nhé",
   },
-  ordering: ["bowl", "spoon", "cup", "bed", "chair"],
 };
 
 export const C1_PROB_05_SEED: SkillSeed = {

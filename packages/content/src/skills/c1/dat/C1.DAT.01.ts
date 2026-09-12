@@ -43,94 +43,121 @@ export const C1_DAT_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "apple",
-      label: "quả táo",
+      id: "dat_apple_1",
+      label: "quả táo một",
+      glyph: "🍎",
+      value: 1,
+      audio_path: "/audio/voice/c1/dat/apple_1.mp3",
       image: {
         kind: "emoji",
         ref: "🍎",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "fruit",
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "dat_apple_2",
+      label: "quả táo hai",
+      glyph: "🍎",
+      value: 2,
+      audio_path: "/audio/voice/c1/dat/apple_2.mp3",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "🍎",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "fruit",
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "dat_apple_3",
+      label: "quả táo ba",
+      glyph: "🍎",
+      value: 3,
+      audio_path: "/audio/voice/c1/dat/apple_3.mp3",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🍎",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "fruit",
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "dat_orange_1",
+      label: "quả cam một",
+      glyph: "🍊",
+      value: 1,
+      audio_path: "/audio/voice/c1/dat/orange_1.mp3",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🍊",
       },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "fruit",
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "dat_orange_2",
+      label: "quả cam hai",
+      glyph: "🍊",
+      value: 2,
+      audio_path: "/audio/voice/c1/dat/orange_2.mp3",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🍊",
       },
-      category: {
-        type: "rau củ",
+      contrast_group: "fruit",
+    },
+    {
+      id: "dat_orange_3",
+      label: "quả cam ba",
+      glyph: "🍊",
+      value: 3,
+      audio_path: "/audio/voice/c1/dat/orange_3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🍊",
       },
+      contrast_group: "fruit",
     },
   ],
+  axes: {
+    tally_type: {
+      values: ["táo", "cam"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Đếm rồi ghi lại bằng dấu",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Đếm rồi ghi lại bằng dấu",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé đếm rồi biểu diễn số lượng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Đếm rồi ghi lại bằng dấu nhé",
   },
-  ordering: ["apple", "banana", "watermelon", "carrot", "corn"],
 };
 
 export const C1_DAT_01_SEED: SkillSeed = {

@@ -42,93 +42,106 @@ export const C1_CMP_06_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "length_more",
+      label: "bút chì dài",
+      glyph: "✏️",
+      value: 2,
+      audio_path: "/audio/voice/c1/cmp/pencil_long.mp3",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "✏️",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "length",
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "length_less",
+      label: "bút chì ngắn",
+      glyph: "✏️",
+      value: 1,
+      audio_path: "/audio/voice/c1/cmp/pencil_short.mp3",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "✏️",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "length",
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
+      id: "long_train",
+      label: "tàu hỏa dài",
+      glyph: "🚆",
+      value: 2,
+      audio_path: "/audio/voice/c1/cmp/pencil_long.mp3",
       image: {
         kind: "emoji",
-        ref: "🥕",
+        ref: "🚆",
       },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "length",
     },
     {
-      id: "corn",
-      label: "bắp ngô",
+      id: "short_car",
+      label: "ô tô ngắn",
+      glyph: "🚗",
+      value: 1,
+      audio_path: "/audio/voice/c1/cmp/pencil_short.mp3",
       image: {
         kind: "emoji",
-        ref: "🌽",
+        ref: "🚗",
       },
-      category: {
-        type: "rau củ",
-      },
+      contrast_group: "length",
     },
+  ],
+  relations: [
     {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
+      type: "contrast",
+      source_id: "length_more",
+      target_id: "length_less",
+      metadata: {
+        dimension: "length",
       },
     },
   ],
+  axes: {
+    length: {
+      values: ["ngắn", "dài"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Dài hơn",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Dài hơn",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "discrete-object",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bên nào có nhiều {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Dài hơn nhé",
   },
-  ordering: ["banana", "watermelon", "carrot", "corn", "dog"],
 };
 
 /**

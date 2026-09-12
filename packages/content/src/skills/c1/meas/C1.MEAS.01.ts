@@ -42,93 +42,114 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "apple",
-      label: "quả táo",
+      id: "dim_length_snake_more",
+      label: "chú rắn dài",
+      glyph: "🐍",
+      value: 4,
+      audio_path: "/audio/voice/c1/meas/snake_long.mp3",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "🐍",
       },
-      category: {
-        type: "hoa quả",
+      contrast_group: "length",
+    },
+    {
+      id: "dim_length_more",
+      label: "chiếc đũa dài",
+      glyph: "🥢",
+      value: 3,
+      audio_path: "/audio/voice/c1/meas/chopstick_long.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🥢",
+      },
+      contrast_group: "length",
+    },
+    {
+      id: "dim_length_less",
+      label: "chiếc đũa ngắn",
+      glyph: "🥢",
+      value: 2,
+      audio_path: "/audio/voice/c1/meas/chopstick_short.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🥢",
+      },
+      contrast_group: "length",
+    },
+    {
+      id: "dim_length_worm_less",
+      label: "chú sâu ngắn",
+      glyph: "🐛",
+      value: 1,
+      audio_path: "/audio/voice/c1/meas/worm_short.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🐛",
+      },
+      contrast_group: "length",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "dim_length_snake_more",
+      target_id: "dim_length_worm_less",
+      metadata: {
+        dimension: "length",
       },
     },
     {
-      id: "banana",
-      label: "quả chuối",
-      image: {
-        kind: "emoji",
-        ref: "🍌",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "watermelon",
-      label: "dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "carrot",
-      label: "củ cà rốt",
-      image: {
-        kind: "emoji",
-        ref: "🥕",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
+      type: "contrast",
+      source_id: "dim_length_more",
+      target_id: "dim_length_less",
+      metadata: {
+        dimension: "length",
       },
     },
   ],
+  axes: {
+    length: {
+      values: ["rất ngắn", "ngắn", "dài", "rất dài"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Dài ngắn",
+      description: "Làm quen cơ bản",
+      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Dài ngắn",
+      description: "Nhận biết và chọn đúng",
+      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Vật nào có kích thước {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Dài ngắn nhé",
   },
-  ordering: ["apple", "banana", "watermelon", "carrot", "corn"],
 };
 
 export const C1_MEAS_01_SEED: SkillSeed = {

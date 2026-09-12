@@ -42,93 +42,114 @@ export const C1_CMP_11_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "weight_feather_less",
+      label: "chiếc lông vũ rất nhẹ",
+      glyph: "🪶",
+      value: 1,
+      audio_path: "/audio/voice/c1/cmp/feather_light.mp3",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🪶",
       },
-      category: {
-        type: "đồ dùng",
+      contrast_group: "weight",
+    },
+    {
+      id: "weight_strawberry_less",
+      label: "quả dâu tây nhẹ",
+      glyph: "🍓",
+      value: 2,
+      audio_path: "/audio/voice/c1/cmp/strawberry_light.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🍓",
+      },
+      contrast_group: "weight",
+    },
+    {
+      id: "weight_watermelon_more",
+      label: "quả dưa hấu nặng",
+      glyph: "🍉",
+      value: 3,
+      audio_path: "/audio/voice/c1/cmp/watermelon_heavy.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🍉",
+      },
+      contrast_group: "weight",
+    },
+    {
+      id: "weight_stone_more",
+      label: "hòn đá rất nặng",
+      glyph: "🪨",
+      value: 4,
+      audio_path: "/audio/voice/c1/cmp/rock_heavy.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🪨",
+      },
+      contrast_group: "weight",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "weight_feather_less",
+      target_id: "weight_stone_more",
+      metadata: {
+        dimension: "weight",
       },
     },
     {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "apple",
-      label: "quả táo",
-      image: {
-        kind: "emoji",
-        ref: "🍎",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "banana",
-      label: "quả chuối",
-      image: {
-        kind: "emoji",
-        ref: "🍌",
-      },
-      category: {
-        type: "hoa quả",
+      type: "contrast",
+      source_id: "weight_strawberry_less",
+      target_id: "weight_watermelon_more",
+      metadata: {
+        dimension: "weight",
       },
     },
   ],
+  axes: {
+    weight: {
+      values: ["rất nhẹ", "nhẹ", "nặng", "rất nặng"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Nhẹ hơn",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Nhẹ hơn",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bên nào có nhiều {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Nhẹ hơn nhé",
   },
-  ordering: ["cup", "bed", "chair", "apple", "banana"],
 };
 
 export const C1_CMP_11_SEED: SkillSeed = {

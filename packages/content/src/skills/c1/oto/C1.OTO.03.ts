@@ -43,93 +43,131 @@ export const C1_OTO_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "dog",
-      label: "con chó",
+      id: "apple_real",
+      label: "quả táo",
+      glyph: "🍎",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/apple.mp3",
       image: {
         kind: "emoji",
-        ref: "🐕",
+        ref: "🍎",
       },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "real",
     },
     {
-      id: "cat",
-      label: "con mèo",
+      id: "apple_shadow",
+      label: "bóng quả táo",
+      glyph: "⬛",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/apple_shadow.mp3",
       image: {
         kind: "emoji",
-        ref: "🐈",
+        ref: "⬛",
       },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "shadow",
     },
     {
-      id: "chicken",
-      label: "con gà",
+      id: "banana_real",
+      label: "quả chuối",
+      glyph: "🍌",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/banana.mp3",
       image: {
         kind: "emoji",
-        ref: "🐓",
+        ref: "🍌",
       },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "real",
     },
     {
-      id: "duck",
-      label: "con vịt",
+      id: "banana_shadow",
+      label: "bóng quả chuối",
+      glyph: "⬛",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/banana_shadow.mp3",
       image: {
         kind: "emoji",
-        ref: "🦆",
+        ref: "⬛",
       },
-      category: {
-        type: "động vật",
-      },
+      contrast_group: "shadow",
     },
     {
-      id: "fish",
-      label: "con cá",
+      id: "car_real",
+      label: "ô tô",
+      glyph: "🚗",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/car.mp3",
       image: {
         kind: "emoji",
-        ref: "🐟",
+        ref: "🚗",
       },
-      category: {
-        type: "động vật",
+      contrast_group: "real",
+    },
+    {
+      id: "car_shadow",
+      label: "bóng ô tô",
+      glyph: "⬛",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/car_shadow.mp3",
+      image: {
+        kind: "emoji",
+        ref: "⬛",
       },
+      contrast_group: "shadow",
+    },
+  ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "apple_real",
+      target_id: "apple_shadow",
+    },
+    {
+      type: "pair",
+      source_id: "banana_real",
+      target_id: "banana_shadow",
+    },
+    {
+      type: "pair",
+      source_id: "car_real",
+      target_id: "car_shadow",
     },
   ],
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Ghép đồ vật với bóng",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Ghép đồ vật với bóng",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "discrete-object",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy ghép đôi từng {label} tương ứng nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Ghép đồ vật với bóng nhé",
   },
-  ordering: ["dog", "cat", "chicken", "duck", "fish"],
 };
 
 export const C1_OTO_03_SEED: SkillSeed = {

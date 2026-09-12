@@ -42,93 +42,114 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bowl",
-      label: "cái bát",
+      id: "bal_left_light",
+      label: "đĩa cân nhẹ bổng",
+      glyph: "⚖️",
+      value: 1,
+      audio_path: "/audio/voice/c1/meas/scale_light.mp3",
       image: {
         kind: "emoji",
-        ref: "🥣",
+        ref: "⚖️",
       },
-      category: {
-        type: "đồ dùng",
+      contrast_group: "balance",
+    },
+    {
+      id: "bal_left",
+      label: "bên trái cân",
+      glyph: "⚖️",
+      value: 2,
+      audio_path: "/audio/voice/c1/meas/balance_left.mp3",
+      image: {
+        kind: "emoji",
+        ref: "⚖️",
+      },
+      contrast_group: "balance",
+    },
+    {
+      id: "bal_right",
+      label: "bên phải cân",
+      glyph: "⚖️",
+      value: 2,
+      audio_path: "/audio/voice/c1/meas/balance_right.mp3",
+      image: {
+        kind: "emoji",
+        ref: "⚖️",
+      },
+      contrast_group: "balance",
+    },
+    {
+      id: "bal_right_heavy",
+      label: "đĩa cân trĩu nặng",
+      glyph: "⚖️",
+      value: 4,
+      audio_path: "/audio/voice/c1/meas/scale_heavy.mp3",
+      image: {
+        kind: "emoji",
+        ref: "⚖️",
+      },
+      contrast_group: "balance",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "bal_right_heavy",
+      target_id: "bal_left_light",
+      metadata: {
+        dimension: "balance",
       },
     },
     {
-      id: "spoon",
-      label: "cái thìa",
-      image: {
-        kind: "emoji",
-        ref: "🥄",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "cup",
-      label: "cái cốc",
-      image: {
-        kind: "emoji",
-        ref: "🥤",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "bed",
-      label: "cái giường",
-      image: {
-        kind: "emoji",
-        ref: "🛏️",
-      },
-      category: {
-        type: "đồ dùng",
-      },
-    },
-    {
-      id: "chair",
-      label: "cái ghế",
-      image: {
-        kind: "emoji",
-        ref: "🪑",
-      },
-      category: {
-        type: "đồ dùng",
+      type: "pair",
+      source_id: "bal_left",
+      target_id: "bal_right",
+      metadata: {
+        symmetric: true,
       },
     },
   ],
+  axes: {
+    balance: {
+      values: ["nhẹ", "cân bằng trái", "cân bằng phải", "nặng"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Cân bằng",
+      description: "Làm quen cơ bản",
+      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Cân bằng",
+      description: "Nhận biết và chọn đúng",
+      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Vật nào có kích thước {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Cân bằng nhé",
   },
-  ordering: ["bowl", "spoon", "cup", "bed", "chair"],
 };
 
 export const C1_MEAS_07_SEED: SkillSeed = {

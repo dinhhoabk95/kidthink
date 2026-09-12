@@ -43,94 +43,122 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "unit_2",
+      label: "dài hai gang tay",
+      glyph: "🖐️",
+      value: 2,
+      audio_path: "/audio/voice/c1/meas/span_2.mp3",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "🖐️",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "span",
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "unit_3",
+      label: "dài ba gang tay",
+      glyph: "🖐️",
+      value: 3,
+      audio_path: "/audio/voice/c1/meas/span_3.mp3",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🖐️",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "span",
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "unit_4",
+      label: "dài bốn gang tay",
+      glyph: "🖐️",
+      value: 4,
+      audio_path: "/audio/voice/c1/meas/span_4.mp3",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🖐️",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "span",
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "unit_5",
+      label: "dài năm gang tay",
+      glyph: "🖐️",
+      value: 5,
+      audio_path: "/audio/voice/c1/meas/span_5.mp3",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🖐️",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "span",
+    },
+  ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "unit_2",
+      target_id: "unit_3",
     },
     {
-      id: "apple",
-      label: "quả táo",
-      image: {
-        kind: "emoji",
-        ref: "🍎",
-      },
-      category: {
-        type: "hoa quả",
+      type: "sequence",
+      source_id: "unit_3",
+      target_id: "unit_4",
+    },
+    {
+      type: "sequence",
+      source_id: "unit_4",
+      target_id: "unit_5",
+    },
+    {
+      type: "contrast",
+      source_id: "unit_5",
+      target_id: "unit_2",
+      metadata: {
+        dimension: "length_spans",
       },
     },
   ],
+  axes: {
+    measure: {
+      values: ["2", "3", "4", "5"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Đo bằng đơn vị phi chuẩn",
+      description: "Làm quen cơ bản",
+      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Đo bằng đơn vị phi chuẩn",
+      description: "Nhận biết và chọn đúng",
+      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Vật nào có kích thước {label} hơn?",
     narration_template:
       "Chúng mình cùng tìm hiểu về Đo bằng đơn vị phi chuẩn nhé",
   },
-  ordering: ["spoon", "cup", "bed", "chair", "apple"],
 };
 
 export const C1_MEAS_08_SEED: SkillSeed = {

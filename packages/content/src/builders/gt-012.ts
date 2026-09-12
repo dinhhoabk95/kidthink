@@ -1,3 +1,4 @@
+import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
   ProjectedPack,
   Projection,
@@ -22,11 +23,8 @@ export const projectGT012: Projection<"GT-012"> = {
     }
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
-    // Number of flash items between 1 and 6 based on difficulty
-    const targetCount = Math.min(
-      Math.max(1, Math.min(opts.difficulty + 1, 6)),
-      dataset.items.length
-    );
+    const params = getEngineDifficultyParams("GT-012", opts.difficulty);
+    const targetCount = params.item_count;
 
     // Pick 1 base item to repeat or pick targetCount distinct items
     const baseItem = safeGetItem(
@@ -62,9 +60,9 @@ export const projectGT012: Projection<"GT-012"> = {
         options: shuffledOptions,
       },
       difficulty_params: {
-        flash_ms: 1500,
+        flash_ms: params.flash_ms ?? 1500,
         item_count: targetCount,
-        distractor_count: 2,
+        distractor_count: params.distractor_count ?? 2,
         allow_replay: true,
         hint_after_ms: 10_000,
         allow_retry: true,

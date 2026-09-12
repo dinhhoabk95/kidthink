@@ -42,93 +42,142 @@ export const C1_OTO_06_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "seed",
+      label: "hạt mầm",
+      glyph: "🌱",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/seed.mp3",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "🌱",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "stage",
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "sprout",
+      label: "cây non",
+      glyph: "🌿",
+      value: 2,
+      audio_path: "/audio/voice/c1/oto/sprout.mp3",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "🌿",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "stage",
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "tree",
+      label: "cây lớn",
+      glyph: "🌳",
+      value: 3,
+      audio_path: "/audio/voice/c1/oto/tree.mp3",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🌳",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "stage",
     },
     {
-      id: "apple",
-      label: "quả táo",
+      id: "card_1",
+      label: "thẻ bước một",
+      glyph: "1️⃣",
+      value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
-        ref: "🍎",
+        ref: "1️⃣",
       },
-      category: {
-        type: "hoa quả",
-      },
+      contrast_group: "step",
     },
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "card_2",
+      label: "thẻ bước hai",
+      glyph: "2️⃣",
+      value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
         kind: "emoji",
-        ref: "🍌",
+        ref: "2️⃣",
       },
-      category: {
-        type: "hoa quả",
+      contrast_group: "step",
+    },
+    {
+      id: "card_3",
+      label: "thẻ bước ba",
+      glyph: "3️⃣",
+      value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "3️⃣",
       },
+      contrast_group: "step",
+    },
+  ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "seed",
+      target_id: "card_1",
+    },
+    {
+      type: "pair",
+      source_id: "sprout",
+      target_id: "card_2",
+    },
+    {
+      type: "pair",
+      source_id: "tree",
+      target_id: "card_3",
+    },
+    {
+      type: "sequence",
+      source_id: "seed",
+      target_id: "sprout",
+    },
+    {
+      type: "sequence",
+      source_id: "sprout",
+      target_id: "tree",
     },
   ],
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Ghép theo thứ tự",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Ghép theo thứ tự",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy ghép đôi từng {label} tương ứng nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Ghép theo thứ tự nhé",
   },
-  ordering: ["cup", "bed", "chair", "apple", "banana"],
+  ordering: ["tree", "sprout", "seed", "card_3", "card_2", "card_1"],
 };
 
 export const C1_OTO_06_SEED: SkillSeed = {

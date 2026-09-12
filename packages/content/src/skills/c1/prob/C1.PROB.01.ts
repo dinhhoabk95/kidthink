@@ -42,58 +42,77 @@ export const C1_PROB_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "plan_step_1",
+      label: "bước một: đọc đề bài",
+      glyph: "📖",
+      value: 1,
+      audio_path: "/audio/voice/c1/prob/step_1.mp3",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "📖",
       },
-      category: {
-        type: "hoa quả",
+      contrast_group: "step",
+    },
+    {
+      id: "plan_step_2",
+      label: "bước hai: chọn phép tính",
+      glyph: "🤔",
+      value: 2,
+      audio_path: "/audio/voice/c1/prob/step_2.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🤔",
+      },
+      contrast_group: "step",
+    },
+    {
+      id: "plan_step_3",
+      label: "bước ba: tính kết quả",
+      glyph: "✍️",
+      value: 3,
+      audio_path: "/audio/voice/c1/prob/step_3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "✍️",
+      },
+      contrast_group: "step",
+    },
+    {
+      id: "plan_step_4",
+      label: "bước bốn: kiểm tra lại",
+      glyph: "✅",
+      value: 4,
+      audio_path: "/audio/voice/c1/prob/step_4.mp3",
+      image: {
+        kind: "emoji",
+        ref: "✅",
+      },
+      contrast_group: "step",
+    },
+  ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "plan_step_1",
+      target_id: "plan_step_2",
+      metadata: {
+        step: 1,
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
-      image: {
-        kind: "emoji",
-        ref: "🥕",
-      },
-      category: {
-        type: "rau củ",
+      type: "sequence",
+      source_id: "plan_step_2",
+      target_id: "plan_step_3",
+      metadata: {
+        step: 2,
       },
     },
     {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
+      type: "sequence",
+      source_id: "plan_step_3",
+      target_id: "plan_step_4",
+      metadata: {
+        step: 3,
       },
     },
   ],
@@ -101,34 +120,39 @@ export const C1_PROB_01_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Chọn cách giải",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Chọn cách giải",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "numeral",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy giải bài toán tìm {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Chọn cách giải nhé",
   },
-  ordering: ["watermelon", "carrot", "corn", "dog", "cat"],
+  ordering: ["plan_step_4", "plan_step_3", "plan_step_2", "plan_step_1"],
 };
 
 export const C1_PROB_01_SEED: SkillSeed = {

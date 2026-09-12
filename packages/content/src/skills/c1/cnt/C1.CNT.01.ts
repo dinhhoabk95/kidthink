@@ -38,84 +38,94 @@ export const C1_CNT_01_IDENTITY: SkillIdentity = {
 
 export const C1_CNT_01_DATASET: SkillDataset = {
   skill_code: "C1.CNT.01",
-  concept_label: "Đếm đồ vật",
+  concept_label: "Đếm đến 3",
   surface: "game",
   items: [
     {
       id: "n0",
-      label: "Số không",
+      label: "số không",
       glyph: "0",
       value: 0,
       audio_path: "/audio/voice/common/numbers/0.mp3",
       image: {
         kind: "emoji",
-        ref: "⚽",
+        ref: "0️⃣",
       },
     },
     {
       id: "n1",
-      label: "Số một",
+      label: "số một",
       glyph: "1",
       value: 1,
       audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
-        ref: "⚽",
+        ref: "1️⃣",
       },
     },
     {
       id: "n2",
-      label: "Số hai",
+      label: "số hai",
       glyph: "2",
       value: 2,
       audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
         kind: "emoji",
-        ref: "⚽",
+        ref: "2️⃣",
       },
     },
     {
       id: "n3",
-      label: "Số ba",
+      label: "số ba",
       glyph: "3",
       value: 3,
       audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
         kind: "emoji",
-        ref: "⚽",
+        ref: "3️⃣",
       },
     },
   ],
+  axes: {
+    parity: {
+      values: ["chẵn", "lẻ"],
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Đếm đồ vật",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Đếm đồ vật",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "discrete-object",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
-    narration_template: "Chúng mình cùng tìm hiểu về Đếm đồ vật nhé",
+    prompt_template: "Bé đếm xem có mấy {label}?",
+    narration_template: "Chúng mình cùng tìm hiểu về Đếm đến 3 nhé",
   },
   ordering: ["n0", "n1", "n2", "n3"],
 };

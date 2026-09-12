@@ -42,58 +42,47 @@ export const C1_PAT_01_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "banana",
-      label: "quả chuối",
+      id: "pat_apple",
+      label: "quả táo đỏ",
+      glyph: "🍎",
+      value: 1,
+      audio_path: "/audio/voice/c1/pat/apple.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🍎",
+      },
+      contrast_group: "a",
+    },
+    {
+      id: "pat_banana",
+      label: "quả chuối vàng",
+      glyph: "🍌",
+      value: 2,
+      audio_path: "/audio/voice/c1/pat/banana.mp3",
       image: {
         kind: "emoji",
         ref: "🍌",
       },
-      category: {
-        type: "hoa quả",
+      contrast_group: "b",
+    },
+  ],
+  relations: [
+    {
+      type: "sequence",
+      source_id: "pat_apple",
+      target_id: "pat_banana",
+      metadata: {
+        rule: "AB",
+        period: 2,
       },
     },
     {
-      id: "watermelon",
-      label: "dưa hấu",
-      image: {
-        kind: "emoji",
-        ref: "🍉",
-      },
-      category: {
-        type: "hoa quả",
-      },
-    },
-    {
-      id: "carrot",
-      label: "củ cà rốt",
-      image: {
-        kind: "emoji",
-        ref: "🥕",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
+      type: "sequence",
+      source_id: "pat_banana",
+      target_id: "pat_apple",
+      metadata: {
+        rule: "AB",
+        period: 2,
       },
     },
   ],
@@ -101,34 +90,39 @@ export const C1_PAT_01_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Quy luật AB",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Quy luật AB",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "discrete-object",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "discrete-object",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "discrete-object",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Hình tiếp theo theo đúng quy luật là gì hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Quy luật AB nhé",
   },
-  ordering: ["banana", "watermelon", "carrot", "corn", "dog"],
+  ordering: ["pat_banana", "pat_apple"],
 };
 
 export const C1_PAT_01_SEED: SkillSeed = {

@@ -41,14 +41,15 @@ export const C1_CNT_11_IDENTITY: SkillIdentity = {
 
 export const C1_CNT_11_DATASET: SkillDataset = {
   skill_code: "C1.CNT.11",
-  concept_label: "Subitizing — nhận lượng tức thì (1–5)",
+  concept_label: "Nhận biết lượng tức thì (subitizing)",
   surface: "game",
   items: [
     {
       id: "n0",
-      label: "Số không",
+      label: "số không",
       glyph: "0",
       value: 0,
+      audio_path: "/audio/voice/common/numbers/0.mp3",
       image: {
         kind: "emoji",
         ref: "0️⃣",
@@ -56,9 +57,10 @@ export const C1_CNT_11_DATASET: SkillDataset = {
     },
     {
       id: "n1",
-      label: "Số một",
+      label: "số một",
       glyph: "1",
       value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
         ref: "1️⃣",
@@ -66,9 +68,10 @@ export const C1_CNT_11_DATASET: SkillDataset = {
     },
     {
       id: "n2",
-      label: "Số hai",
+      label: "số hai",
       glyph: "2",
       value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
         kind: "emoji",
         ref: "2️⃣",
@@ -76,9 +79,10 @@ export const C1_CNT_11_DATASET: SkillDataset = {
     },
     {
       id: "n3",
-      label: "Số ba",
+      label: "số ba",
       glyph: "3",
       value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
         kind: "emoji",
         ref: "3️⃣",
@@ -86,9 +90,10 @@ export const C1_CNT_11_DATASET: SkillDataset = {
     },
     {
       id: "n4",
-      label: "Số bốn",
+      label: "số bốn",
       glyph: "4",
       value: 4,
+      audio_path: "/audio/voice/common/numbers/4.mp3",
       image: {
         kind: "emoji",
         ref: "4️⃣",
@@ -96,9 +101,10 @@ export const C1_CNT_11_DATASET: SkillDataset = {
     },
     {
       id: "n5",
-      label: "Số năm",
+      label: "số năm",
       glyph: "5",
       value: 5,
+      audio_path: "/audio/voice/common/numbers/5.mp3",
       image: {
         kind: "emoji",
         ref: "5️⃣",
@@ -109,34 +115,38 @@ export const C1_CNT_11_DATASET: SkillDataset = {
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Subitizing — nhận lượng tức thì (1–5)",
+      description: "Làm quen cơ bản",
+      representation: "dot-pattern",
     },
     {
       rung: 2,
       dimension: "range",
-      description:
-        "Nhận biết và chọn đúng Subitizing — nhận lượng tức thì (1–5)",
+      description: "Nhận biết và chọn đúng",
+      representation: "dot-pattern",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "dot-pattern",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "dot-pattern",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "dot-pattern",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé đếm xem có mấy {label}?",
     narration_template:
-      "Chúng mình cùng tìm hiểu về Subitizing — nhận lượng tức thì (1–5) nhé",
+      "Chúng mình cùng tìm hiểu về Nhận biết lượng tức thì (subitizing) nhé",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
 };

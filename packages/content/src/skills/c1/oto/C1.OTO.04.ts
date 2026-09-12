@@ -42,93 +42,131 @@ export const C1_OTO_04_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "bowl",
-      label: "cái bát",
+      id: "one_star",
+      label: "một ngôi sao",
+      glyph: "⭐",
+      value: 1,
+      audio_path: "/audio/voice/c1/oto/star.mp3",
       image: {
         kind: "emoji",
-        ref: "🥣",
+        ref: "⭐",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "object",
     },
     {
-      id: "spoon",
-      label: "cái thìa",
+      id: "num_1",
+      label: "số một",
+      glyph: "1",
+      value: 1,
+      audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
-        ref: "🥄",
+        ref: "1️⃣",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "numeral",
     },
     {
-      id: "cup",
-      label: "cái cốc",
+      id: "two_hearts",
+      label: "hai trái tim",
+      glyph: "💖",
+      value: 2,
+      audio_path: "/audio/voice/c1/oto/hearts.mp3",
       image: {
         kind: "emoji",
-        ref: "🥤",
+        ref: "💖",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "object",
     },
     {
-      id: "bed",
-      label: "cái giường",
+      id: "num_2",
+      label: "số hai",
+      glyph: "2",
+      value: 2,
+      audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
         kind: "emoji",
-        ref: "🛏️",
+        ref: "2️⃣",
       },
-      category: {
-        type: "đồ dùng",
-      },
+      contrast_group: "numeral",
     },
     {
-      id: "chair",
-      label: "cái ghế",
+      id: "three_flowers",
+      label: "ba bông hoa",
+      glyph: "🌸",
+      value: 3,
+      audio_path: "/audio/voice/c1/oto/flowers.mp3",
       image: {
         kind: "emoji",
-        ref: "🪑",
+        ref: "🌸",
       },
-      category: {
-        type: "đồ dùng",
+      contrast_group: "object",
+    },
+    {
+      id: "num_3",
+      label: "số ba",
+      glyph: "3",
+      value: 3,
+      audio_path: "/audio/voice/common/numbers/3.mp3",
+      image: {
+        kind: "emoji",
+        ref: "3️⃣",
       },
+      contrast_group: "numeral",
+    },
+  ],
+  relations: [
+    {
+      type: "pair",
+      source_id: "one_star",
+      target_id: "num_1",
+    },
+    {
+      type: "pair",
+      source_id: "two_hearts",
+      target_id: "num_2",
+    },
+    {
+      type: "pair",
+      source_id: "three_flowers",
+      target_id: "num_3",
     },
   ],
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Ghép đồ vật với số",
+      description: "Làm quen cơ bản",
+      representation: "discrete-object",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Ghép đồ vật với số",
+      description: "Nhận biết và chọn đúng",
+      representation: "discrete-object",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "ten-frame",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "ten-frame",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "ten-frame",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Bé hãy ghép đôi từng {label} tương ứng nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Ghép đồ vật với số nhé",
   },
-  ordering: ["bowl", "spoon", "cup", "bed", "chair"],
 };
 
 export const C1_OTO_04_SEED: SkillSeed = {

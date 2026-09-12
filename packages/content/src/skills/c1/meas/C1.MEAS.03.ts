@@ -42,93 +42,114 @@ export const C1_MEAS_03_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "watermelon",
-      label: "dưa hấu",
+      id: "dim_weight_rock_more",
+      label: "tảng đá nặng",
+      glyph: "🪨",
+      value: 4,
+      audio_path: "/audio/voice/c1/meas/rock_heavy.mp3",
       image: {
         kind: "emoji",
-        ref: "🍉",
+        ref: "🪨",
       },
-      category: {
-        type: "hoa quả",
+      contrast_group: "weight",
+    },
+    {
+      id: "dim_weight_more",
+      label: "con voi nặng",
+      glyph: "🐘",
+      value: 3,
+      audio_path: "/audio/voice/c1/meas/elephant_heavy.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🐘",
+      },
+      contrast_group: "weight",
+    },
+    {
+      id: "dim_weight_less",
+      label: "chú kiến nhẹ",
+      glyph: "🐜",
+      value: 2,
+      audio_path: "/audio/voice/c1/meas/ant_light.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🐜",
+      },
+      contrast_group: "weight",
+    },
+    {
+      id: "dim_weight_leaf_less",
+      label: "chiếc lá nhẹ",
+      glyph: "🍃",
+      value: 1,
+      audio_path: "/audio/voice/c1/meas/leaf_light.mp3",
+      image: {
+        kind: "emoji",
+        ref: "🍃",
+      },
+      contrast_group: "weight",
+    },
+  ],
+  relations: [
+    {
+      type: "contrast",
+      source_id: "dim_weight_rock_more",
+      target_id: "dim_weight_leaf_less",
+      metadata: {
+        dimension: "weight",
       },
     },
     {
-      id: "carrot",
-      label: "củ cà rốt",
-      image: {
-        kind: "emoji",
-        ref: "🥕",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "corn",
-      label: "bắp ngô",
-      image: {
-        kind: "emoji",
-        ref: "🌽",
-      },
-      category: {
-        type: "rau củ",
-      },
-    },
-    {
-      id: "dog",
-      label: "con chó",
-      image: {
-        kind: "emoji",
-        ref: "🐕",
-      },
-      category: {
-        type: "động vật",
-      },
-    },
-    {
-      id: "cat",
-      label: "con mèo",
-      image: {
-        kind: "emoji",
-        ref: "🐈",
-      },
-      category: {
-        type: "động vật",
+      type: "contrast",
+      source_id: "dim_weight_more",
+      target_id: "dim_weight_less",
+      metadata: {
+        dimension: "weight",
       },
     },
   ],
+  axes: {
+    weight: {
+      values: ["rất nhẹ", "nhẹ", "nặng", "rất nặng"],
+      ordered: true,
+    },
+  },
   ladder: [
     {
       rung: 1,
       dimension: "range",
-      description: "Làm quen cơ bản với Nặng nhẹ",
+      description: "Làm quen cơ bản",
+      representation: "number-rod",
     },
     {
       rung: 2,
       dimension: "range",
-      description: "Nhận biết và chọn đúng Nặng nhẹ",
+      description: "Nhận biết và chọn đúng",
+      representation: "number-rod",
     },
     {
       rung: 3,
       dimension: "distractor_count",
       description: "Phân biệt với phương án nhiễu",
+      representation: "number-rod",
     },
     {
       rung: 4,
       dimension: "item_count",
       description: "Mở rộng phạm vi và số lượng",
+      representation: "number-rod",
     },
     {
       rung: 5,
       dimension: "speed_scaffolding",
       description: "Thuần thục và độc lập thực hiện",
+      representation: "number-rod",
     },
   ],
   phrasing: {
-    prompt_template: "Bé hãy chọn đúng {label} nhé!",
+    prompt_template: "Vật nào có kích thước {label} hơn?",
     narration_template: "Chúng mình cùng tìm hiểu về Nặng nhẹ nhé",
   },
-  ordering: ["watermelon", "carrot", "corn", "dog", "cat"],
 };
 
 export const C1_MEAS_03_SEED: SkillSeed = {
