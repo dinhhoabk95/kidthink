@@ -1,4 +1,5 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+import { numeralItem } from "#src/inventories/index";
 
 export const C1_CNT_02_IDENTITY: SkillIdentity = {
   code: "C1.CNT.02",
@@ -41,12 +42,7 @@ export const C1_CNT_02_DATASET: SkillDataset = {
   concept_label: "Đếm khi di chuyển",
   surface: "game",
   items: [
-    {
-      id: "n0",
-      label: "số không",
-      glyph: "0",
-      value: 0,
-      audio_path: "/audio/voice/common/numbers/0.mp3",
+    numeralItem("n0", {
       image: {
         kind: "emoji",
         ref: "0️⃣",
@@ -54,13 +50,8 @@ export const C1_CNT_02_DATASET: SkillDataset = {
       category: {
         parity: "chẵn",
       },
-    },
-    {
-      id: "n1",
-      label: "số một",
-      glyph: "1",
-      value: 1,
-      audio_path: "/audio/voice/common/numbers/1.mp3",
+    }),
+    numeralItem("n1", {
       image: {
         kind: "emoji",
         ref: "1️⃣",
@@ -68,13 +59,8 @@ export const C1_CNT_02_DATASET: SkillDataset = {
       category: {
         parity: "lẻ",
       },
-    },
-    {
-      id: "n2",
-      label: "số hai",
-      glyph: "2",
-      value: 2,
-      audio_path: "/audio/voice/common/numbers/2.mp3",
+    }),
+    numeralItem("n2", {
       image: {
         kind: "emoji",
         ref: "2️⃣",
@@ -82,13 +68,8 @@ export const C1_CNT_02_DATASET: SkillDataset = {
       category: {
         parity: "chẵn",
       },
-    },
-    {
-      id: "n3",
-      label: "số ba",
-      glyph: "3",
-      value: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
+    }),
+    numeralItem("n3", {
       image: {
         kind: "emoji",
         ref: "3️⃣",
@@ -96,13 +77,8 @@ export const C1_CNT_02_DATASET: SkillDataset = {
       category: {
         parity: "lẻ",
       },
-    },
-    {
-      id: "n4",
-      label: "số bốn",
-      glyph: "4",
-      value: 4,
-      audio_path: "/audio/voice/common/numbers/4.mp3",
+    }),
+    numeralItem("n4", {
       image: {
         kind: "emoji",
         ref: "4️⃣",
@@ -110,13 +86,8 @@ export const C1_CNT_02_DATASET: SkillDataset = {
       category: {
         parity: "chẵn",
       },
-    },
-    {
-      id: "n5",
-      label: "số năm",
-      glyph: "5",
-      value: 5,
-      audio_path: "/audio/voice/common/numbers/5.mp3",
+    }),
+    numeralItem("n5", {
       image: {
         kind: "emoji",
         ref: "5️⃣",
@@ -124,7 +95,7 @@ export const C1_CNT_02_DATASET: SkillDataset = {
       category: {
         parity: "lẻ",
       },
-    },
+    }),
   ],
   axes: {
     parity: {
