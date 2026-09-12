@@ -14,6 +14,11 @@
  * Invariant: Strict TypeScript — NO `any`, NO `unknown`.
  */
 
+import {
+  ALLOWED_MEASURE_UNIT_KINDS,
+  findNumeral,
+  findOrdinal,
+} from "@mindkid/content";
 import type {
   DatasetAxis,
   DatasetAxisObject,
@@ -380,5 +385,115 @@ export function checkGlyphNotEqualImageRef(
       });
     }
   }
+  return violations;
+}
+
+function checkItemNumeral(
+  item: DatasetItem,
+  skillCode: string
+): readonly IntegrityViolation[] {
+  const numeral = findNumeral(item.id);
+  if (!numeral) {
+    return [];
+  }
+  const violations: IntegrityViolation[] = [];
+  if (item.value !== undefined && item.value !== numeral.value) {
+    violations.push({
+      rule: "BR-SDI-10",
+      skillCode,
+      detail:
+        `vật "${item.id}" khai value=${String(item.value)} ` +
+        `không khớp kho (${String(numeral.value)})`,
+    });
+  }
+  if (item.glyph !== undefined && item.glyph !== numeral.glyph) {
+    violations.push({
+      rule: "BR-SDI-10",
+      skillCode,
+      detail:
+        `vật "${item.id}" khai glyph="${item.glyph}" ` +
+        `không khớp kho ("${numeral.glyph}")`,
+    });
+  }
+  if (item.audio_path !== undefined && item.audio_path !== numeral.audio_path) {
+    violations.push({
+      rule: "BR-SDI-10",
+      skillCode,
+      detail:
+        `vật "${item.id}" khai audio_path="${item.audio_path}" ` +
+        `không khớp kho ("${numeral.audio_path}")`,
+    });
+  }
+  return violations;
+}
+
+function checkItemOrdinal(
+  item: DatasetItem,
+  skillCode: string
+): readonly IntegrityViolation[] {
+  const ordinal = findOrdinal(item.id);
+  if (!ordinal) {
+    return [];
+  }
+  const violations: IntegrityViolation[] = [];
+
+  if (item.glyph !== undefined && item.glyph !== ordinal.glyph) {
+    violations.push({
+      rule: "BR-SDI-10",
+      skillCode,
+      detail:
+        `vật "${item.id}" khai glyph="${item.glyph}" ` +
+        `không khớp kho ("${ordinal.glyph}")`,
+    });
+  }
+  const itemPos = item.metadata?.position;
+  if (typeof itemPos === "number" && itemPos !== ordinal.position) {
+    violations.push({
+      rule: "BR-SDI-10",
+      skillCode,
+      detail:
+        `vật "${item.id}" khai position=${String(itemPos)} ` +
+        `không khớp kho (${String(ordinal.position)})`,
+    });
+  }
+  return violations;
+}
+
+function checkItemMeasureUnit(
+  item: DatasetItem,
+  skillCode: string,
+  allowedUnitKinds: ReadonlySet<string>
+): readonly IntegrityViolation[] {
+  const unitKind = item.category?.unit_kind;
+  if (unitKind !== undefined && !allowedUnitKinds.has(unitKind)) {
+    return [
+      {
+        rule: "BR-SDI-10",
+        skillCode,
+        detail: `vật "${item.id}" khai unit_kind="${unitKind}" ngoài danh mục 6 chiều đo đóng`,
+      },
+    ];
+  }
+  return [];
+}
+
+/**
+ * `BR-SDI-10` — giá trị `glyph`, `value`, `audio_path`, `position` của vật phải khớp mục kho tương ứng.
+ * Chiều đo phi chuẩn cấm bịa `unit_kind` ngoài 6 chiều kho định nghĩa.
+ */
+export function checkInventoryMatch(
+  dataset: SkillDataset
+): readonly IntegrityViolation[] {
+  const violations: IntegrityViolation[] = [];
+  const allowedUnitKinds = new Set(ALLOWED_MEASURE_UNIT_KINDS);
+
+  for (const item of dataset.items) {
+    violations.push(...checkItemNumeral(item, dataset.skill_code));
+    violations.push(...checkItemOrdinal(item, dataset.skill_code));
+    violations.push(
+      ...checkItemMeasureUnit(item, dataset.skill_code, allowedUnitKinds)
+    );
+  }
+
   return violations;
 }

@@ -35,6 +35,7 @@ import {
   checkConceptLabelMatchesName,
   checkCrossDatasetItemConsistency,
   checkGlyphNotEqualImageRef,
+  checkInventoryMatch,
   checkOrderingCoverage,
   checkOrderingNotReversed,
   checkPromptPlaceholders,
@@ -112,7 +113,8 @@ export function runDatasetIntegrityCheck(options: {
       ...checkAxesBindToItems(dataset),
       ...checkAudioPathsResolve(dataset, options.resolvesAudio),
       ...checkPromptPlaceholders(dataset, options.substitutedPlaceholders),
-      ...checkGlyphNotEqualImageRef(dataset)
+      ...checkGlyphNotEqualImageRef(dataset),
+      ...checkInventoryMatch(dataset)
     );
     if (!isTopic) {
       violations.push(

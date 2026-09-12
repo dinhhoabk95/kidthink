@@ -52,14 +52,14 @@ Mỗi lô một commit riêng. Cấm — NEVER gộp `LB` với `LD`: cả hai �
 
 ## LD — Dataset `C1` import kho giá trị (L, song song với LB được nếu khác strand)
 
-- [ ] TD.1 `packages/content/src/inventories/index.ts` xuất đủ hàm tra cứu cho 6 kho `c1-*`
+- [x] TD.1 `packages/content/src/inventories/index.ts` xuất đủ hàm tra cứu cho 6 kho `c1-*`
 - [ ] TD.2 Lô `NREC` + `CNT` + `NCOMP` + `ADD` + `SUB`: `glyph`, `value`, `audio_path` lấy từ `c1-numeral` và `c1-number-bond`
 - [ ] TD.3 Lô `ORD`: lấy từ `c1-ordinal`; thêm trường `position` cho từng vật (đóng `TC.1` của `#267`)
 - [ ] TD.4 Lô `CMP` + `MEAS`: lấy từ `c1-measure-dimension`; Cấm — NEVER bịa `unit_kind` ngoài 6 cái kho định nghĩa
 - [ ] TD.5 Lô `PAT`: lấy từ `c1-pattern-unit`
 - [ ] TD.6 `C1.ADD.03` bỏ phân tách sinh tại chỗ, lấy `bond_id` từ kho (đóng `TB.1` của `#267`)
-- [ ] TD.7 Thêm luật `BR-SDI-10`: giá trị `glyph`/`value` của vật phải khớp mục kho tương ứng
-- [ ] TD.8 **Ca âm** cho `BR-SDI-10`
+- [x] TD.7 Thêm luật `BR-SDI-10`: giá trị `glyph`/`value` của vật phải khớp mục kho tương ứng
+- [x] TD.8 **Ca âm** cho `BR-SDI-10`
 - [ ] TD.9 Mỗi strand một commit; `pnpm check` và `pnpm db:seed` sau mỗi strand
 - [ ] TD.10 Đo lại N2: ≥ 110 tệp dataset import `inventories/`
 

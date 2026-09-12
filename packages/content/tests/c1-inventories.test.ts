@@ -102,4 +102,42 @@ describe("C1 Value Inventories (Task #265 / L2)", () => {
       expect(item.signature.length).toBe(item.period);
     }
   });
+
+  it("TD.1: lookup helpers work correctly for all 6 C1 inventories", async () => {
+    const {
+      getNumeral,
+      findNumeral,
+      getNumberBond,
+      getOrdinal,
+      getOrdinalByPosition,
+      getMeasureDimension,
+      getPatternUnit,
+      getQuantityRep,
+      ALLOWED_MEASURE_UNIT_KINDS,
+    } = await import("../src/inventories/index.js");
+
+    // Numeral
+    expect(getNumeral("n0").value).toBe(0);
+    expect(getNumeral("n10").glyph).toBe("10");
+    expect(findNumeral("unknown")).toBeUndefined();
+    expect(() => getNumeral("unknown")).toThrow();
+
+    // Number bond
+    expect(getNumberBond("bond_1_0_1").whole).toBe(1);
+    expect(getNumberBond("bond_10_5_5").part_a).toBe(5);
+
+    // Ordinal
+    expect(getOrdinal("ord_1").position).toBe(1);
+    expect(getOrdinalByPosition(10).glyph).toBe("10.");
+
+    // Measure dimension
+    expect(getMeasureDimension("dim_length").unit_kind).toBe("length");
+    expect(ALLOWED_MEASURE_UNIT_KINDS).toContain("length");
+
+    // Pattern unit
+    expect(getPatternUnit("pat_ab").signature).toBe("AB");
+
+    // Quantity rep
+    expect(getQuantityRep("rep_ten_frame").kind).toBe("ten-frame");
+  });
 });

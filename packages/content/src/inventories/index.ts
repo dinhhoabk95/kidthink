@@ -15,3 +15,4 @@ export * from "./c5-onset.js";
 export * from "./c5-rime.js";
 export * from "./c5-tone-mark.js";
 export * from "./c5-vocabulary.js";
+export * from "./lookup.js";

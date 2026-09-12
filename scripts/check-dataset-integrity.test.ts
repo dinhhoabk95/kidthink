@@ -20,6 +20,7 @@ import {
   checkConceptLabelMatchesName,
   checkCrossDatasetItemConsistency,
   checkGlyphNotEqualImageRef,
+  checkInventoryMatch,
   checkOrderingCoverage,
   checkOrderingNotReversed,
   checkPromptPlaceholders,
@@ -408,6 +409,84 @@ describe("BR-SDI-09 — glyph không được bằng image.ref", () => {
       ],
     });
     const violations = checkGlyphNotEqualImageRef(ds);
+    expect(violations).toHaveLength(0);
+  });
+});
+
+describe("BR-SDI-10 — giá trị phải khớp kho tương ứng", () => {
+  it("ca âm 1: báo vi phạm khi n0 có value sai lệch so với kho", () => {
+    const ds = dataset({
+      items: [item("n0", { value: 99, glyph: "0" })],
+    });
+    const violations = checkInventoryMatch(ds);
+    expect(violations).toHaveLength(1);
+    expect(violations[0]?.rule).toBe("BR-SDI-10");
+    expect(violations[0]?.detail).toContain(
+      'vật "n0" khai value=99 không khớp kho (0)'
+    );
+  });
+
+  it("ca âm 2: báo vi phạm khi n1 có glyph sai lệch so với kho", () => {
+    const ds = dataset({
+      items: [item("n1", { value: 1, glyph: "X" })],
+    });
+    const violations = checkInventoryMatch(ds);
+    expect(violations).toHaveLength(1);
+    expect(violations[0]?.rule).toBe("BR-SDI-10");
+    expect(violations[0]?.detail).toContain(
+      'vật "n1" khai glyph="X" không khớp kho ("1")'
+    );
+  });
+
+  it("ca âm 3: báo vi phạm khi ord_1 có glyph hoặc position sai lệch", () => {
+    const ds = dataset({
+      items: [
+        item("ord_1", {
+          glyph: "2.",
+          metadata: { position: 5 },
+        }),
+      ],
+    });
+    const violations = checkInventoryMatch(ds);
+    expect(violations.length).toBeGreaterThanOrEqual(1);
+    expect(violations.some((v) => v.rule === "BR-SDI-10")).toBe(true);
+  });
+
+  it("ca âm 4: báo vi phạm khi unit_kind bịa ngoài 6 chiều đo đóng", () => {
+    const ds = dataset({
+      items: [
+        item("box", {
+          category: { unit_kind: "invented_dimension" },
+        }),
+      ],
+    });
+    const violations = checkInventoryMatch(ds);
+    expect(violations).toHaveLength(1);
+    expect(violations[0]?.rule).toBe("BR-SDI-10");
+    expect(violations[0]?.detail).toContain("ngoài danh mục 6 chiều đo đóng");
+  });
+
+  it("ca dương: im lặng khi giá trị khớp kho hoặc không thuộc kho", () => {
+    const ds = dataset({
+      items: [
+        item("n0", {
+          glyph: "0",
+          value: 0,
+          audio_path: "/audio/voice/common/numbers/0.mp3",
+        }),
+        item("ord_1", {
+          glyph: "1.",
+          metadata: { position: 1 },
+        }),
+        item("ruler", {
+          category: { unit_kind: "length" },
+        }),
+        item("apple", {
+          label: "quả táo",
+        }),
+      ],
+    });
+    const violations = checkInventoryMatch(ds);
     expect(violations).toHaveLength(0);
   });
 });
