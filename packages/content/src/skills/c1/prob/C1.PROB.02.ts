@@ -42,68 +42,97 @@ export const C1_PROB_02_DATASET: SkillDataset = {
   surface: "game",
   items: [
     {
-      id: "trial_target",
-      label: "đáp án đúng bốn",
-      glyph: "4",
-      value: 4,
-      audio_path: "/audio/voice/common/numbers/4.mp3",
+      id: "carrot",
+      label: "củ cà rốt",
       image: {
         kind: "emoji",
-        ref: "4️⃣",
+        ref: "🥕",
       },
-      contrast_group: "trial",
+      contrast_group: "rau củ",
+      category: {
+        type: "rau củ",
+      },
     },
     {
-      id: "trial_miss",
-      label: "đáp án thử năm",
-      glyph: "5",
-      value: 5,
-      audio_path: "/audio/voice/common/numbers/5.mp3",
+      id: "corn",
+      label: "bắp ngô",
       image: {
         kind: "emoji",
-        ref: "5️⃣",
+        ref: "🌽",
       },
-      contrast_group: "trial",
+      contrast_group: "rau củ",
+      category: {
+        type: "rau củ",
+      },
     },
     {
-      id: "trial_other",
-      label: "đáp án thử ba",
-      glyph: "3",
-      value: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
+      id: "dog",
+      label: "con chó",
       image: {
         kind: "emoji",
-        ref: "3️⃣",
+        ref: "🐕",
       },
-      contrast_group: "trial",
+      contrast_group: "con vật",
+      category: {
+        type: "con vật",
+      },
+    },
+    {
+      id: "cat",
+      label: "con mèo",
+      image: {
+        kind: "emoji",
+        ref: "🐈",
+      },
+      contrast_group: "con vật",
+      category: {
+        type: "con vật",
+      },
+    },
+    {
+      id: "chicken",
+      label: "con gà",
+      image: {
+        kind: "emoji",
+        ref: "🐔",
+      },
+      contrast_group: "con vật",
+      category: {
+        type: "con vật",
+      },
     },
   ],
   relations: [
     {
       type: "contrast",
-      source_id: "trial_target",
-      target_id: "trial_miss",
+      source_id: "dog",
+      target_id: "cat",
       metadata: {
         near_miss: true,
       },
     },
     {
       type: "contrast",
-      source_id: "trial_target",
-      target_id: "trial_other",
+      source_id: "cat",
+      target_id: "chicken",
       metadata: {
         near_miss: true,
       },
     },
     {
-      type: "subset",
-      source_id: "trial_other",
-      target_id: "trial_target",
+      type: "contrast",
+      source_id: "carrot",
+      target_id: "corn",
       metadata: {
-        relation: "candidate_solution",
+        near_miss: true,
       },
     },
   ],
+  axes: {
+    type: {
+      values: ["rau củ", "con vật"],
+    },
+  },
   ladder: [
     {
       rung: 1,

@@ -137,6 +137,35 @@ Bảy con số phần `LF` đều ĐÚNG. Cổng `check:thinking-structure` và
 Cổng bịt lỗ: `pnpm check:dataset-integrity` (`BR-SDI-01..08`), nay nằm trong
 `scripts/check.sh`. `C1` chốt ở 0 vi phạm.
 
+## Nợ lộ ra khi chạy `pnpm db:seed` (review 2026-09-12)
+
+`pnpm check` KHÔNG chạy Cổng 9 (`BR-SDS-03` — "khái niệm phải hiện ra trong
+level"); chỉ `pnpm db:seed` chạy. Ba việc dưới đây chỉ lộ ra ở đó.
+
+**1. `glyph` bị dùng làm bản sao của hình.** 233 vật trong 58 kỹ năng `C1` có
+`glyph` đúng bằng `image.ref` (🌸, 🪙, ⚽…). Trước `#267` những vật đó KHÔNG có
+`glyph` nào. Mốc M1 ("0/110 kỹ năng thiếu `glyph`") được đạt bằng cách chép
+emoji của hình sang ô ký hiệu. Hệ quả dây chuyền: Cổng 9 bỏ qua dataset không
+có `glyph` nào, nên gán `glyph` cho mọi vật đã BẬT Cổng 9 lên cho cả những
+engine không vẽ vật nào của dataset (`GT-032` dựng cốc nước hoàn toàn tự sinh).
+Việc sửa đúng là trả `glyph` về nghĩa ký hiệu (chữ số, chữ cái) và để hình ở
+`image` — nhưng nó đụng 58 kỹ năng và cách Cổng 9 chọn dataset để kiểm, nên
+tách thành việc riêng.
+
+**2. 13 level đồng hồ gắn nhầm kỹ năng — nợ có TRƯỚC `#267`.**
+`GL-C1-CLK-HND-*` và `GL-C1-CLK-TIM-*` nằm ở `C1.MEAS.04` (Nhiều ít),
+`C1.MEAS.14` (Tiền xu) và `C1.MEAS.15` (Sắp xếp kích thước) từ trước `#267`.
+`#267` độn `clk_hour_1..12` vào ba dataset đó để Cổng 9 tìm được một `glyph`.
+Chỗ đúng là `C1.MEAS.13`, nhưng `BR-SKQ-04` chặn 5 level mỗi cặp (kỹ năng,
+engine) nên không dời cả 13 sang được. Cần quyết định nội dung: thêm kỹ năng
+đồng hồ, hay bỏ bớt level. Nhóm `clk_hour_*` được giữ lại kèm ghi chú ngay
+trong ba tệp.
+
+**3. `C1.PROB.02` mất hết vật cụ thể.** Trước `#267` nó có cà rốt, ngô, chó,
+mèo, gà kèm `category.type`; `#267` thay bằng ba chữ số rồi độn `fill_unit_1..6`
+mang glyph "1".."6". Ba engine `GT-028`/`029`/`031` vẽ thẳng vật của dataset,
+nên chữ số làm bài học mất hết ngữ cảnh. Đã trả lại năm vật cụ thể.
+
 ## Chưa làm trong task này
 
 - `C2`–`C6`: 333 kỹ năng còn lại, lát cắt sau cùng công thức năm lô.
