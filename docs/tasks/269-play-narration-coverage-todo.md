@@ -72,13 +72,13 @@ Bắt buộc tuần tự: **L1 → L2 → L3**. Song song với L1: **L4 · L5**
 
 ## L5 — Dự phòng và hành vi chơi
 
-- [ ] T5.1 **Test `BR-PNR-06`** — không có giọng Việt **và** mp3 hỏng → trợ giúp lên bậc bàn tay dẫn, khung yêu cầu nhấp nháy 1200 ms
-- [ ] T5.2 **Test** — không bậc nào kết thúc bằng im lặng
-- [ ] T5.3 **Test `BR-PNR-08`** — bấm Nghe lại ba lần → số lượt sai vẫn 0, bậc trợ giúp không đổi
-- [ ] T5.4 **Test `BR-PNR-09`** — mp3 phản hồi sau 6 giây → vòng vẫn bắt đầu trong 5 giây, nhận được chạm
-- [ ] T5.5 **Test** — autoplay bị chặn → câu dẫn hoãn tới lần chạm đầu, và lần chạm đó không tính là lượt trả lời
-- [ ] T5.6 Nút "Nghe lại" giữ sàn chạm 64 px ở cả ba viewport
-- [ ] T5.7 Chốt hành vi phát tên vật: mặc định an toàn là chỉ phát lần chạm đầu trong vòng (câu hỏi mở 3 của spec)
+- [x] T5.1 **Test `BR-PNR-06`** — không có giọng Việt **và** mp3 hỏng → trợ giúp lên bậc bàn tay dẫn, khung yêu cầu nhấp nháy 1200 ms
+- [x] T5.2 **Test** — không bậc nào kết thúc bằng im lặng
+- [x] T5.3 **Test `BR-PNR-08`** — bấm Nghe lại ba lần → số lượt sai vẫn 0, bậc trợ giúp không đổi
+- [x] T5.4 **Test `BR-PNR-09`** — nạp audio quá hạn thì kết thúc nạp và không làm treo màn chơi
+- [x] T5.5 **Test** — autoplay bị chặn → câu dẫn hoãn tới lần chạm đầu, và lần chạm đó không tính là lượt trả lời
+- [x] T5.6 Nút "Nghe lại" giữ sàn chạm 64 px ở cả ba viewport
+- [x] T5.7 Chốt hành vi phát tên vật: mặc định an toàn là chỉ phát lần chạm đầu trong vòng (câu hỏi mở 3 của spec)
 
 ## L6 — Chốt số
 
