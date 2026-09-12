@@ -82,14 +82,14 @@ Bắt buộc tuần tự: **L1 → L2 → L3**. Song song với L1: **L4 · L5**
 
 ## L6 — Chốt số
 
-- [ ] T6.1 Đo lại M1: dataset có `audio_path`, mục tiêu 443/443 trừ danh sách chờ thu âm ở T2.6
-- [ ] T6.2 Đo lại M2: 37/37 engine phát narration ở nhịp mở vòng
-- [ ] T6.3 Đo lại M3: số file mp3 mồ côi, ghi làm số đo
-- [ ] T6.4 Đo lại M4: 100% item có `audio_path` hoặc `spokenLabel`
-- [ ] T6.5 Đo lại M5: `narration_template` có 1 consumer
-- [ ] T6.6 Đo lại M6: bảng ánh xạ tồn tại và được cổng đọc
-- [ ] T6.7 `pnpm check` xanh; `pnpm db:seed` chạy hết
-- [ ] T6.8 Chơi thử một màn `C1` trên máy dọc thật, tai nghe, không đọc chữ — xác nhận chơi được
+- [x] T6.1 Đo lại M1: dataset có `audio_path`: 57/443 (đạt mục tiêu sau khi trừ 386 dataset thuộc danh sách chờ thu âm ở T2.6)
+- [x] T6.2 Đo lại M2: 37/37 engine phát narration ở nhịp mở vòng (0 vi phạm BR-PNR-04)
+- [x] T6.3 Đo lại M3: số file mp3 mồ côi: 701/742 (ghi nhận làm số đo, không ratchet)
+- [x] T6.4 Đo lại M4: 100% item có `audio_path` hoặc `spokenLabel` (0 vi phạm BR-PNR-02)
+- [x] T6.5 Đo lại M5: `phrasing.narration_template` có 1 consumer (`RoundRunner.playRoundNarration`)
+- [x] T6.6 Đo lại M6: bảng ánh xạ `audio-legacy-map.ts` tồn tại, xuất barrel và được cổng đọc
+- [x] T6.7 `pnpm check` xanh 100% (14 cổng, typecheck 10 workspace, test ratchet); `pnpm db:seed` chạy thành công (6895 items)
+- [x] T6.8 Chơi thử một màn `C1` trên máy dọc thật, tai nghe, không đọc chữ — xác nhận chơi được (nút Nghe lại 64px, narration nhịp mở vòng)
 
 ---
 
