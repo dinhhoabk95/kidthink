@@ -1,3 +1,4 @@
+import { CONTENT_TOP_PX, DEFAULT_LOGIC_SPACE } from "#src/layout/constants";
 import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
@@ -11,7 +12,7 @@ import {
   drawPlaceholderBox,
   drawQuantityRepresentation,
 } from "./numeracy-primitives.js";
-import { canvasFontPx, type LogicSpace } from "./type-scale.js";
+import { canvasFontPx, type LogicSpace, minLegiblePx } from "./type-scale.js";
 import type {
   ItemVisualState,
   RenderAsset,
@@ -32,8 +33,21 @@ import type {
 
 const PROMPT_TOP_RATIO = 0.045;
 const LABEL_FONT_RATIO = 0.16;
-const LABEL_MIN_FONT_PX = 16;
 const GLYPH_FILL_RATIO = 0.52;
+
+/**
+ * Không gian logic + tỉ lệ CSS của một `RenderSystem`.
+ *
+ * Sàn chữ của `BR-A11-08` đo bằng **px CSS**, nên mọi lời gọi `canvasFontPx`
+ * cần tỉ lệ thật của khung nhìn. `viewport` chỉ có sau `setupCanvas`; chưa dựng
+ * khung thì `canvasFontPx` tự lấy sàn máy dọc thận trọng.
+ */
+function spaceOf(rs: RenderSystem): { space: LogicSpace; scale?: number } {
+  return {
+    space: { w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT },
+    scale: rs.viewport?.scale,
+  };
+}
 
 export function getColorsForState(state: ItemVisualState): {
   fill: string;
@@ -1017,7 +1031,7 @@ export function drawPromptText(
     w: width,
     h: height,
   };
-  const fontPx = canvasFontPx(space, "prompt");
+  const fontPx = canvasFontPx(space, "prompt", rs?.viewport?.scale);
   const fontStr = `bold ${fontPx}px ${designTokens.fonts.sans}`;
 
   ctx.save();
@@ -1050,7 +1064,16 @@ export function drawPromptText(
   const lineCount = Math.max(1, lines.length);
   const cardH = Math.max(54, 20 + lineCount * lineHeight);
   const cardX = (width - cardW) / 2;
-  const cardY = height * PROMPT_TOP_RATIO;
+  /**
+   * `BR-ERC-15`: khung yêu cầu không được đè nội dung. `CONTENT_TOP_PX` là mốc
+   * mà hình học đặt slot bên dưới, còn `height * PROMPT_TOP_RATIO` lớn dần theo
+   * cạnh dài — trên máy dọc (cạnh dài 1168) lề đó một mình đã vượt mốc. Kẹp để
+   * đáy khung nằm trong dải trên; prompt phải xuống dòng thì lùi sát mép.
+   */
+  const cardY = Math.max(
+    8,
+    Math.min(height * PROMPT_TOP_RATIO, CONTENT_TOP_PX - cardH - 4)
+  );
   const radius = Math.min(27, cardH / 2);
 
   // Ambient card shadow
@@ -1248,11 +1271,8 @@ export function drawSubPromptText(
   if (!text) {
     return;
   }
-  const space: LogicSpace = {
-    w: rs.LOGIC_WIDTH,
-    h: rs.LOGIC_HEIGHT,
-  };
-  const fontPx = canvasFontPx(space, "subPrompt");
+  const { space, scale } = spaceOf(rs);
+  const fontPx = canvasFontPx(space, "subPrompt", scale);
   ctx.save();
   ctx.font = `${fontPx}px ${designTokens.fonts.sans}`;
   const metrics = ctx.measureText(text);
@@ -1360,13 +1380,24 @@ export function drawTextInSlot(
   ctx.restore();
 }
 
+/**
+ * Nhãn chữ dưới một slot.
+ *
+ * Sàn cỡ chữ là **16 px CSS** (`BR-A11-08`), không phải 16 px logic: trên máy
+ * dọc 390 px tỉ lệ là ~0,72 nên sàn logic phải là 23. Truyền `rs` để lấy tỉ lệ
+ * thật của khung nhìn; thiếu nó thì `minLegiblePx` lấy sàn máy dọc thận trọng.
+ */
 export function drawSlotLabel(
   ctx: CanvasRenderingContext2D,
   text: string,
-  slot: Slot
+  slot: Slot,
+  rs?: RenderSystem
 ): void {
+  const space: LogicSpace = rs
+    ? { w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT }
+    : DEFAULT_LOGIC_SPACE;
   const size = Math.max(
-    LABEL_MIN_FONT_PX,
+    minLegiblePx(space, rs?.viewport?.scale),
     Math.floor(Math.min(slot.w, slot.h) * LABEL_FONT_RATIO)
   );
   ctx.save();
@@ -1398,16 +1429,20 @@ export function drawSlotItem(
 
   rs.drawClayBody(ctx, slot.x, slot.y, radius, fill, border, shape);
 
-  if (item.representation) {
-    drawQuantityRepresentation(ctx, rs, slot, item.representation);
-  } else if (item.text !== undefined) {
-    drawTextInSlot(ctx, item.text, slot);
-  } else if (!drawAssetInSlot(ctx, item.asset, slot)) {
-    drawPlaceholderBox(ctx, slot);
+  const drawnAsRepresentation = item.representation
+    ? drawQuantityRepresentation(ctx, rs, slot, item.representation)
+    : false;
+
+  if (!drawnAsRepresentation) {
+    if (item.text !== undefined) {
+      drawTextInSlot(ctx, item.text, slot);
+    } else if (!drawAssetInSlot(ctx, item.asset, slot)) {
+      drawPlaceholderBox(ctx, slot);
+    }
   }
 
   if (item.label) {
-    drawSlotLabel(ctx, item.label, slot);
+    drawSlotLabel(ctx, item.label, slot, rs);
   }
   if (state === "correct") {
     drawCheckMark(ctx, slot);
@@ -1541,9 +1576,10 @@ export function drawCounterBadge(
   y: number,
   current: number,
   total: number,
-  space?: LogicSpace
+  space?: LogicSpace,
+  scale?: number
 ): void {
-  const fontPx = space ? canvasFontPx(space, "badge") : 16;
+  const fontPx = canvasFontPx(space ?? DEFAULT_LOGIC_SPACE, "badge", scale);
   const badgeRadius = Math.max(18, Math.round(fontPx * 1.15));
   ctx.save();
   ctx.fillStyle = designTokens.colors.brand[600];
@@ -1565,11 +1601,8 @@ export function drawProgressBadge(
   current: number,
   total: number
 ): void {
-  const space: LogicSpace = {
-    w: rs.LOGIC_WIDTH,
-    h: rs.LOGIC_HEIGHT,
-  };
-  drawCounterBadge(ctx, rs.LOGIC_WIDTH - 44, 40, current, total, space);
+  const { space, scale } = spaceOf(rs);
+  drawCounterBadge(ctx, rs.LOGIC_WIDTH - 44, 40, current, total, space, scale);
 }
 
 export function drawDividerLine(
@@ -1966,7 +1999,8 @@ function drawFlashcardNonNumberContent(
   },
   x: number,
   y: number,
-  labelToDraw: string
+  labelToDraw: string,
+  minFontPx: number
 ): void {
   if (asset.image_ref?.kind === "emoji" && asset.image_ref.ref) {
     ctx.save();
@@ -1986,7 +2020,7 @@ function drawFlashcardNonNumberContent(
   }
 
   ctx.save();
-  ctx.font = `bold 24px ${designTokens.fonts.sans}`;
+  ctx.font = `bold ${Math.max(24, minFontPx)}px ${designTokens.fonts.sans}`;
   ctx.fillStyle = designTokens.colors.surface[800];
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -2035,7 +2069,8 @@ function drawFlashcardNumberContent(
   cardW: number,
   x: number,
   y: number,
-  labelToDraw: string
+  labelToDraw: string,
+  minFontPx: number
 ): void {
   // Large orange numeral
   ctx.save();
@@ -2048,7 +2083,7 @@ function drawFlashcardNumberContent(
 
   if (val === 0) {
     ctx.save();
-    ctx.font = `18px ${designTokens.fonts.sans}`;
+    ctx.font = `${Math.max(18, minFontPx)}px ${designTokens.fonts.sans}`;
     ctx.fillStyle = designTokens.colors.surface[500];
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -2066,7 +2101,7 @@ function drawFlashcardNumberContent(
 
   // Label at bottom
   ctx.save();
-  ctx.font = `bold 22px ${designTokens.fonts.sans}`;
+  ctx.font = `bold ${Math.max(22, minFontPx)}px ${designTokens.fonts.sans}`;
   ctx.fillStyle = designTokens.colors.surface[700];
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -2114,10 +2149,21 @@ export function drawFlashcard(
     (hasDigit ? Number.parseInt(asset.glyph as string, 10) : undefined);
 
   const labelToDraw = displayLabel ?? asset.label;
+  const { space, scale } = spaceOf(rs);
+  const minFontPx = minLegiblePx(space, scale);
 
   if (val === undefined) {
-    drawFlashcardNonNumberContent(ctx, asset, x, y, labelToDraw);
+    drawFlashcardNonNumberContent(ctx, asset, x, y, labelToDraw, minFontPx);
   } else {
-    drawFlashcardNumberContent(ctx, asset, val, cardW, x, y, labelToDraw);
+    drawFlashcardNumberContent(
+      ctx,
+      asset,
+      val,
+      cardW,
+      x,
+      y,
+      labelToDraw,
+      minFontPx
+    );
   }
 }

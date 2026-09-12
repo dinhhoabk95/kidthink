@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { deriveLogicSpace } from "#src/layout/constants";
 import {
+  CANVAS_TYPE_RATIOS,
   type CanvasTypeRole,
   canvasFontPx,
   MIN_LEGIBLE_CSS_PX,
   minLegiblePx,
+  typeReferencePx,
 } from "#src/render/type-scale";
 
 describe("Task #268: Thang cỡ chữ theo LogicSpace (BR-ERC-12 / BR-A11-08)", () => {
@@ -40,27 +42,38 @@ describe("Task #268: Thang cỡ chữ theo LogicSpace (BR-ERC-12 / BR-A11-08)", 
     }
   });
 
-  it("T1.9 (Ca âm): Một tỷ lệ tính toán thô dưới sàn thì canvasFontPx BẮT BUỘC kẹp lên sàn ≥ 16 px CSS", () => {
-    // Nếu chỉ dùng raw = space.h * 0.01 mà không kẹp minLegiblePx:
-    const vp = VIEWPORTS[0]; // 390x844
-    const space = deriveLogicSpace(vp.w, vp.h);
-    const scale = Math.min(vp.w / space.w, vp.h / space.h);
+  it("T1.9 (Ca âm): canvasFontPx TỰ kẹp sàn — bỏ kẹp thì test này đỏ", () => {
+    // Khung nhìn thu nhỏ mạnh: tỉ lệ 0,3 px CSS trên một đơn vị logic.
+    const space = deriveLogicSpace(390, 844);
+    const tinyScale = 0.3;
 
-    const tinyRatio = 0.005;
-    const rawPx = Math.round(space.h * tinyRatio); // 1168 * 0.005 = 6 logic px
-    const rawCssPx = rawPx * scale; // 6 * 0.722 = 4.33 px CSS < 16 px CSS
+    const rawCaptionPx = Math.round(
+      Math.min(space.w, space.h) * CANVAS_TYPE_RATIOS.caption
+    );
+    expect(rawCaptionPx * tinyScale).toBeLessThan(MIN_LEGIBLE_CSS_PX);
 
-    // Khẳng định tỉ lệ thô này thực sự vi phạm sàn nếu không kẹp
-    expect(rawCssPx).toBeLessThan(MIN_LEGIBLE_CSS_PX);
+    // Giá trị TRẢ VỀ của hàm, không phải phép tính lặp lại trong test.
+    const clamped = canvasFontPx(space, "caption", tinyScale);
+    expect(clamped).toBeGreaterThan(rawCaptionPx);
+    expect(clamped * tinyScale).toBeGreaterThanOrEqual(MIN_LEGIBLE_CSS_PX);
+  });
 
-    // canvasFontPx BẮT BUỘC kẹp lên sàn logic tương ứng với 16 px CSS
-    const clampedLogicPx = Math.max(rawPx, minLegiblePx(space, scale));
-    const clampedCssPx = clampedLogicPx * scale;
+  it("Thang tỷ lệ khớp bảng mục 3 của 05-motion-and-surface.md", () => {
+    expect(CANVAS_TYPE_RATIOS.number).toBe(0.089);
+    expect(CANVAS_TYPE_RATIOS.display).toBe(0.081);
+    expect(CANVAS_TYPE_RATIOS.label).toBe(0.052);
+    expect(CANVAS_TYPE_RATIOS.hud).toBe(0.044);
+    expect(CANVAS_TYPE_RATIOS.caption).toBe(0.036);
+  });
 
-    expect(
-      clampedCssPx,
-      `Kẹp sàn trên viewport ${vp.name} phải đạt ít nhất 16 px CSS`
-    ).toBeGreaterThanOrEqual(MIN_LEGIBLE_CSS_PX);
+  it("Chiều cao tham chiếu là CẠNH NGẮN, nên máy dọc và desktop cùng cỡ chữ logic", () => {
+    const portrait = deriveLogicSpace(390, 844);
+    const landscape = deriveLogicSpace(1440, 900);
+    expect(portrait.h).toBeGreaterThan(portrait.w);
+    expect(typeReferencePx(portrait)).toBe(typeReferencePx(landscape));
+    expect(canvasFontPx(portrait, "number", 2)).toBe(
+      canvasFontPx(landscape, "number", 2)
+    );
   });
 
   it("T1.10: Kiểm tra sàn BẮT BUỘC quy đổi ra px CSS thật, không dùng px logic", () => {

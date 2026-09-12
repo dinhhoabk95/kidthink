@@ -122,41 +122,32 @@ export function drawTenFrameBoard(
   return slots;
 }
 
-// ── Chấm xúc xắc chuẩn 1–6 (BR-NRL-08 / T4.1) ──────────────────────
-export function drawDotPattern(
-  ctx: CanvasRenderingContext2D,
+export interface DotPosition {
+  readonly x: number;
+  readonly y: number;
+}
+
+/**
+ * Toạ độ chuẩn mặt xúc xắc cho 1–6 (`BR-NRL-08` / T4.1).
+ *
+ * Tách riêng để engine nào cần **xếp vật thật** theo bố cục xúc xắc cũng dùng
+ * đúng một bảng toạ độ. Cấm — NEVER bố cục ngẫu nhiên: nhận-tức-thì dựa vào
+ * hình dạng cố định, đổi chỗ chấm là mất trọn giá trị sư phạm.
+ */
+export function computeDicePositions(
   box: SceneBox,
-  value: number,
-  options?: {
-    dotColor?: string;
-    dotRadius?: number;
-  }
-): void {
+  value: number
+): readonly DotPosition[] {
   const val = Math.max(1, Math.min(6, Math.round(value)));
-  const cardR = 16;
   const cx = box.x + box.w / 2;
   const cy = box.y + box.h / 2;
   const pad = Math.min(box.w, box.h) * 0.22;
-  const r = options?.dotRadius ?? Math.min(box.w, box.h) * 0.09;
-  const dotColor = options?.dotColor ?? designTokens.colors.surface[900];
-
-  ctx.save();
-  // Khung thẻ xúc xắc clay
-  ctx.fillStyle = designTokens.colors.surface[0];
-  ctx.strokeStyle = designTokens.colors.surface[300];
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.roundRect(box.x, box.y, box.w, box.h, cardR);
-  ctx.fill();
-  ctx.stroke();
-
-  // Toạ độ chấm chuẩn mặt xúc xắc 1–6 (Cấm — NEVER ngẫu nhiên)
   const left = box.x + pad;
   const right = box.x + box.w - pad;
   const top = box.y + pad;
   const bottom = box.y + box.h - pad;
 
-  const dots: { x: number; y: number }[] = [];
+  const dots: DotPosition[] = [];
   switch (val) {
     case 1:
       dots.push({ x: cx, y: cy });
@@ -197,6 +188,49 @@ export function drawDotPattern(
     default:
       break;
   }
+  return dots;
+}
+
+// ── Chấm xúc xắc chuẩn 1–6 (BR-NRL-08 / T4.1) ──────────────────────
+export function drawDotPattern(
+  ctx: CanvasRenderingContext2D,
+  box: SceneBox,
+  value: number,
+  options?: {
+    dotColor?: string;
+    dotRadius?: number;
+    /** Vẽ khung thẻ xúc xắc. Tắt khi primitive nằm trong một khay đã có khung. */
+    frame?: boolean;
+    /** Vẽ emoji của vật thật thay chấm trơn, giữ nguyên bố cục xúc xắc. */
+    glyph?: string;
+  }
+): void {
+  const r = options?.dotRadius ?? Math.min(box.w, box.h) * 0.09;
+  const dotColor = options?.dotColor ?? designTokens.colors.surface[900];
+  const dots = computeDicePositions(box, value);
+
+  ctx.save();
+  if (options?.frame !== false) {
+    // Khung thẻ xúc xắc clay
+    ctx.fillStyle = designTokens.colors.surface[0];
+    ctx.strokeStyle = designTokens.colors.surface[300];
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.roundRect(box.x, box.y, box.w, box.h, 16);
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  if (options?.glyph) {
+    ctx.font = `${Math.round(r * 2.2)}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", ${designTokens.fonts.sans}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    for (const dot of dots) {
+      ctx.fillText(options.glyph, dot.x, dot.y);
+    }
+    ctx.restore();
+    return;
+  }
 
   // Vẽ các chấm xúc xắc
   ctx.fillStyle = dotColor;
@@ -207,6 +241,72 @@ export function drawDotPattern(
   }
 
   ctx.restore();
+}
+
+/** Bước tối thiểu giữa hai mốc khi mốc KHÔNG chạm được — đủ chỗ cho một nhãn số. */
+export const NUMBER_LINE_MIN_STEP_PX = 28;
+
+/**
+ * Bước giữa hai mốc trên trục số (`BR-NRL-05` / T4.3).
+ *
+ * Mốc chạm được thì bước BẮT BUỘC ≥ sàn chạm của band: trục nở ra theo bước
+ * thật chứ không nén cho vừa hộp. Nén thì hai mốc cách nhau 20 px và ngón tay
+ * trẻ bấm trúng mốc bên cạnh — vùng chạm không đo được bằng mắt nên không cổng
+ * nào bắt.
+ */
+export function numberLineStepPx(
+  availableW: number,
+  count: number,
+  interactive: boolean
+): number {
+  const safeCount = Math.max(1, count);
+  const minStepW = interactive ? getTouchFloor("5-6") : NUMBER_LINE_MIN_STEP_PX;
+  return Math.max(availableW / safeCount, minStepW);
+}
+
+interface NumberLineTickOptions {
+  readonly current?: number;
+  readonly isMajorTick: boolean;
+  readonly labelEveryTick: boolean;
+  readonly lineY: number;
+  readonly target?: number;
+  readonly tickX: number;
+  readonly val: number;
+}
+
+/** Một mốc trên trục số: vạch, nhãn (nếu còn chỗ) và vòng đích. */
+function drawNumberLineTick(
+  ctx: CanvasRenderingContext2D,
+  options: NumberLineTickOptions
+): void {
+  const { current, isMajorTick, labelEveryTick, lineY, target, tickX, val } =
+    options;
+  const tickH = isMajorTick ? 14 : 8;
+
+  ctx.lineWidth = isMajorTick ? 3 : 2;
+  ctx.strokeStyle = isMajorTick
+    ? designTokens.colors.surface[900]
+    : designTokens.colors.surface[500];
+  ctx.beginPath();
+  ctx.moveTo(tickX, lineY - tickH / 2);
+  ctx.lineTo(tickX, lineY + tickH / 2);
+  ctx.stroke();
+
+  if (labelEveryTick || isMajorTick || val === current) {
+    ctx.fillStyle =
+      val === current
+        ? designTokens.colors.cta[600]
+        : designTokens.colors.surface[700];
+    ctx.fillText(String(val), tickX, lineY + 12);
+  }
+
+  if (target !== undefined && val === target) {
+    ctx.strokeStyle = designTokens.colors.semantic.success[500];
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(tickX, lineY, 12, 0, Math.PI * 2);
+    ctx.stroke();
+  }
 }
 
 // ── Trục số ngang (BR-NRL-05 / T4.2 / T4.3) ──────────────────────────
@@ -220,6 +320,8 @@ export function drawNumberLine(
     target?: number;
     interactive?: boolean;
     space?: LogicSpace;
+    /** `viewport.scale` của `RenderSystem` — sàn chữ đo bằng px CSS. */
+    scale?: number;
   }
 ): void {
   const {
@@ -229,18 +331,16 @@ export function drawNumberLine(
     target,
     interactive = false,
     space = DEFAULT_LOGIC_SPACE,
+    scale,
   } = options;
   const count = Math.max(1, max - min);
   const padX = 36;
   const lineY = box.y + box.h / 2;
   const lineStart = box.x + padX;
-  const lineEnd = box.x + box.w - padX;
-  const availableW = lineEnd - lineStart;
-  const rawStepW = availableW / count;
 
-  // T4.3: Khoảng cách hai mốc ≥ sàn chạm khi mốc là phần tử chạm được (interactive: true)
-  const minStepW = interactive ? getTouchFloor("5-6") : 28;
-  const _stepW = Math.max(rawStepW, minStepW);
+  const stepW = numberLineStepPx(box.w - padX * 2, count, interactive);
+  const availableW = stepW * count;
+  const lineEnd = lineStart + availableW;
 
   ctx.save();
   // Trục ngang
@@ -260,48 +360,31 @@ export function drawNumberLine(
   ctx.lineTo(lineEnd - arrowSize, lineY + arrowSize);
   ctx.stroke();
 
-  // Cỡ chữ số mốc
-  const labelFontPx = canvasFontPx(space, "hud");
+  /**
+   * Cỡ chữ số mốc giữ sàn `BR-A11-08`; khi bước mốc hẹp hơn bề rộng một nhãn
+   * thì **thưa nhãn** (chỉ mốc chia 5) thay vì thu nhỏ chữ xuống dưới sàn.
+   */
+  const labelFontPx = canvasFontPx(space, "hud", scale);
+  const labelEveryTick = stepW >= labelFontPx * 1.3;
   ctx.font = `bold ${labelFontPx}px ${designTokens.fonts.sans}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
 
   for (let i = 0; i <= count; i++) {
-    const val = min + i;
-    const tickX = lineStart + i * (availableW / count);
-    const tickH = i % 5 === 0 ? 14 : 8;
-
-    // Vạch mốc chia đều
-    ctx.lineWidth = i % 5 === 0 ? 3 : 2;
-    ctx.strokeStyle =
-      i % 5 === 0
-        ? designTokens.colors.surface[900]
-        : designTokens.colors.surface[500];
-    ctx.beginPath();
-    ctx.moveTo(tickX, lineY - tickH / 2);
-    ctx.lineTo(tickX, lineY + tickH / 2);
-    ctx.stroke();
-
-    // Nhãn số ở mốc
-    ctx.fillStyle =
-      val === current
-        ? designTokens.colors.cta[600]
-        : designTokens.colors.surface[700];
-    ctx.fillText(String(val), tickX, lineY + 12);
-
-    // Mốc đích nếu có
-    if (target !== undefined && val === target) {
-      ctx.strokeStyle = designTokens.colors.semantic.success[500];
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(tickX, lineY, 12, 0, Math.PI * 2);
-      ctx.stroke();
-    }
+    drawNumberLineTick(ctx, {
+      current,
+      isMajorTick: i % 5 === 0,
+      labelEveryTick,
+      lineY,
+      target,
+      tickX: lineStart + i * stepW,
+      val: min + i,
+    });
   }
 
   // Con trỏ vị trí hiện tại (con bọ / hạt ngọc Amber)
   if (current !== undefined && current >= min && current <= max) {
-    const cursorX = lineStart + (current - min) * (availableW / count);
+    const cursorX = lineStart + (current - min) * stepW;
     const cursorR = Math.max(14, Math.round(labelFontPx * 0.7));
 
     ctx.fillStyle = designTokens.colors.montessori.amber;
@@ -350,7 +433,9 @@ export function drawTally(
   const groupGap = Math.max(strokeW * 4, 20);
 
   const totalContentW = totalGroups * groupW + (totalGroups - 1) * groupGap;
-  const startX = box.x + (box.w - totalContentW) / 2;
+  // Số nhóm lớn thì cụm gạch rộng hơn hộp; neo vào mép trái thay vì vẽ ra ngoài.
+  const startX =
+    totalContentW <= box.w ? box.x + (box.w - totalContentW) / 2 : box.x;
   const startY = box.y + (box.h - tallyH) / 2;
 
   ctx.save();
@@ -411,7 +496,16 @@ export function drawRekenrek(
 
   const framePad = 16;
   const wireSpacing = (box.h - framePad * 2) / (numRows + 1);
-  const beadR = Math.min(wireSpacing * 0.42, 18);
+  /**
+   * Hạt phải vừa **cả hai** chiều: cao theo khoảng cách dây, rộng theo bề ngang
+   * hộp. Chỉ suy theo chiều cao thì trong slot hẹp mười hạt chồng lên nhau và
+   * "5 và thêm mấy" không còn đọc được.
+   */
+  const wireW = box.w - framePad * 2;
+  const beadR = Math.max(
+    4,
+    Math.min(wireSpacing * 0.42, 18, wireW / (maxPerWire * 1.8) / 2)
+  );
   const beadW = beadR * 1.8;
 
   ctx.save();
@@ -424,13 +518,17 @@ export function drawRekenrek(
   ctx.fill();
   ctx.stroke();
 
-  // Vạch phân nhóm mốc 5 ở khung (BR-NRL-07)
-  const midX = box.x + box.w / 2;
+  /**
+   * `BR-NRL-07`: vạch phân nhóm phải nằm đúng **mốc 5 hạt** kể từ mép trái —
+   * nơi năm hạt đỏ hết và năm hạt trắng bắt đầu. Vạch giữa hộp chỉ đúng khi hạt
+   * lấp đầy dây, còn lại thì nó cắt ngang giữa một nhóm và mất nghĩa.
+   */
+  const groupMarkX = box.x + framePad + 5 * beadW;
   ctx.strokeStyle = designTokens.colors.montessori.woodBevel;
   ctx.lineWidth = 3;
   ctx.beginPath();
-  ctx.moveTo(midX, box.y + 8);
-  ctx.lineTo(midX, box.y + box.h - 8);
+  ctx.moveTo(groupMarkX, box.y + 8);
+  ctx.lineTo(groupMarkX, box.y + box.h - 8);
   ctx.stroke();
 
   let remainingCount = totalCount;
@@ -540,14 +638,17 @@ export function drawNumberRod(
     ctx.fill();
     ctx.stroke();
 
-    // Vạch khía phân đốt nhẹ
+    // Vạch khía phân đốt nhẹ (token + alpha; cấm màu thô theo BR-DSC-02)
     if (i < count - 1) {
-      ctx.strokeStyle = "rgba(0, 0, 0, 0.25)";
+      ctx.save();
+      ctx.globalAlpha = 0.25;
+      ctx.strokeStyle = designTokens.colors.surface[900];
       ctx.lineWidth = 1.5;
       ctx.beginPath();
       ctx.moveTo(segX + unitW, rodY);
       ctx.lineTo(segX + unitW, rodY + rodH);
       ctx.stroke();
+      ctx.restore();
     }
   }
 
@@ -566,13 +667,16 @@ export function drawNumberRod(
  * - `number-rod`: vẽ thanh số Montessori (`drawNumberRod`).
  * - `discrete-object`: vẽ qua `drawSlotItem` / `drawAssetInSlot`.
  * - `finger`: ném lỗi theo BR-NRL-10 (chưa hỗ trợ cử chỉ qua camera trong Phase 1).
+ *
+ * Trả `true` khi đã vẽ xong bằng một primitive; trả `false` khi `kind` là
+ * `discrete-object`, nghĩa là nơi gọi phải đi tiếp đường asset thường.
  */
 export function drawQuantityRepresentation(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   slot: Slot,
   config: QuantityRepConfig
-): void {
+): boolean {
   if (config.kind === "finger") {
     throw new Error(
       "BR-NRL-10: finger representation must be mapped to tactile/ten-frame in Phase 1 (no camera input allowed)"
@@ -621,6 +725,7 @@ export function drawQuantityRepresentation(
           w: rs.LOGIC_WIDTH,
           h: rs.LOGIC_HEIGHT,
         },
+        scale: rs.viewport?.scale,
       });
       break;
     }
@@ -659,11 +764,24 @@ export function drawQuantityRepresentation(
       break;
     }
     case "discrete-object":
-      drawPlaceholderBox(ctx, slot);
-      break;
+      /**
+       * `discrete-object` KHÔNG có primitive riêng: theo mục 7.7 nó vẽ bằng
+       * `drawSlotItem` / `drawAssetInSlot` với asset thật của level. Vẽ ô giữ
+       * chỗ ở đây là thay vật thật bằng một ô xám — đúng cái fallback im lặng
+       * mà `BR-NRL-10` cấm. Trả `false` để nơi gọi đi tiếp đường asset.
+       */
+      return false;
     default:
-      break;
+      /**
+       * `BR-NRL-10`: gặp `kind` chưa hiện thực thì NÉM LỖI. `content_pack` tới
+       * từ jsonb nên union đóng của TypeScript không chặn được giá trị lạ lúc
+       * chạy; im lặng không vẽ gì thì báo cáo vẫn ghi là đã dạy lối biểu diễn.
+       */
+      throw new Error(
+        `BR-NRL-10: engine chưa hiện thực quantity representation "${String(config.kind)}" — cấm vẽ vật rời thay`
+      );
   }
+  return true;
 }
 
 export function drawTrackNumberLine(
@@ -684,6 +802,7 @@ export function drawTrackNumberLine(
     max,
     current,
     space: { w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT },
+    scale: rs.viewport?.scale,
   });
 }
 
@@ -727,4 +846,28 @@ export function drawNumberRodAcrossSlots(
     h: firstSlot.h,
   };
   drawNumberRod(ctx, rodBox, count, { maxUnits });
+}
+
+export function computeDiceSlots(
+  parentSlot: Slot,
+  count: number,
+  itemSize = 64
+): Slot[] {
+  const box: SceneBox = {
+    x: parentSlot.x - parentSlot.w / 2,
+    y: parentSlot.y - parentSlot.h / 2,
+    w: parentSlot.w,
+    h: parentSlot.h,
+  };
+  const positions = computeDicePositions(box, count);
+  return positions.map((pos, index) => ({
+    ...parentSlot,
+    index,
+    x: pos.x,
+    y: pos.y,
+    w: itemSize,
+    h: itemSize,
+    hitW: itemSize,
+    hitH: itemSize,
+  }));
 }

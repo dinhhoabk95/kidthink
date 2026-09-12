@@ -10,9 +10,9 @@ import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import {
+  computeDiceSlots,
   drawClocheScene,
   drawPromptText,
-  drawQuantityRepresentation,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -298,20 +298,24 @@ export class FlashRecallSession extends TemplateGameSession<
     if (this.timer.isVisible()) {
       drawSubPromptText(ctx, rs, "Nhìn nhanh!");
       drawClocheScene(ctx, plateSlot, true);
-      if (this.content.arrangement === "dice") {
-        drawQuantityRepresentation(ctx, rs, plateSlot, {
-          kind: "dot-pattern",
-          count: this.content.flash_items.length,
-        });
-      } else {
-        this.content.flash_items.forEach((item, i) => {
-          const slot = this.slots[i];
-          if (!slot) {
-            return;
-          }
-          drawSlotItem(ctx, rs, slot, { id: item.item_id, asset: item.asset });
-        });
-      }
+      /**
+       * `arrangement` nói vật được **xếp** thế nào, không nói vẽ gì. Bố cục xúc
+       * xắc dùng đúng bảng toạ độ của `computeDicePositions` nhưng vẫn vẽ vật
+       * thật của level: thay vật bằng chấm trơn thì câu lệnh "có bao nhiêu đồ
+       * vật" mất chính đồ vật, và chủ đề của level biến mất.
+       */
+      const diceSlots =
+        this.content.arrangement === "dice"
+          ? computeDiceSlots(plateSlot, this.content.flash_items.length)
+          : undefined;
+
+      this.content.flash_items.forEach((item, i) => {
+        const slot = diceSlots?.[i] ?? this.slots[i];
+        if (!slot) {
+          return;
+        }
+        drawSlotItem(ctx, rs, slot, { id: item.item_id, asset: item.asset });
+      });
       this.drawRenderFeedback(rs, ctx);
       return;
     }

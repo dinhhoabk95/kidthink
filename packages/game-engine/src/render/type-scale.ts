@@ -23,32 +23,56 @@ export type CanvasTypeRole =
   | "targetGlyph";
 
 export const MIN_LEGIBLE_CSS_PX = 16;
+
+/**
+ * Tỉ lệ thu nhỏ xấu nhất mà bề mặt trẻ còn phải phục vụ: máy dọc 390 px CSS
+ * trên cạnh ngắn logic 540. Dùng làm sàn **thận trọng** khi nơi gọi chưa dựng
+ * khung nhìn (test, kết xuất ngoài màn hình). Vẽ to hơn cần thiết không vi phạm
+ * `BR-A11-08`; vẽ nhỏ hơn thì có.
+ */
 export const REFERENCE_MOBILE_SCALE = 390 / 540;
 
+/**
+ * Thang tỷ lệ lấy nguyên từ mục 3 của `05-motion-and-surface.md`.
+ * Cấm — NEVER sửa một con số ở đây mà không sửa bảng trong tài liệu thiết kế.
+ */
 export const CANVAS_TYPE_RATIOS: Readonly<Record<CanvasTypeRole, number>> = {
   number: 0.089,
   display: 0.081,
-  label: 0.033, // 18px / 540
+  label: 0.052,
   hud: 0.044,
   caption: 0.036,
-  prompt: 0.044, // 24px / 540
-  badge: 0.03, // 16px / 540
-  subPrompt: 0.033, // 18px / 540
-  choiceText: 0.04, // 22px / 540
-  targetGlyph: 0.12, // 65px / 540
+  prompt: 0.044,
+  badge: 0.03,
+  subPrompt: 0.033,
+  choiceText: 0.04,
+  targetGlyph: 0.12,
 };
 
 /**
- * Quy đổi sàn 16 px CSS sang px logic theo tỷ lệ khung nhìn hiện tại.
- * Không bao giờ kiểm sàn bằng px logic trần — sàn 16 px CSS trên màn dọc 390px (scale ~0.72)
- * cần ít nhất 23 px logic để đảm bảo không dưới 16 px CSS (BR-ERC-12, BR-A11-08).
+ * Chiều cao tham chiếu của thang chữ: **cạnh ngắn** của không gian logic.
+ *
+ * `deriveLogicSpace` ghim cạnh ngắn ở 540 và kéo dài cạnh dài theo tỉ lệ khung
+ * nhìn, nên trên máy dọc `space.h` là 1168 chứ không phải 540. Nhân tỷ lệ với
+ * `space.h` trần thì chữ trên máy dọc to gấp hơn hai lần desktop và khung yêu
+ * cầu tràn xuống vùng nội dung. Tài liệu thiết kế nói "chiều cao logic chuẩn
+ * 540 px" — 540 chính là cạnh ngắn.
  */
-export function minLegiblePx(space: LogicSpace, scale?: number): number {
+export function typeReferencePx(space: LogicSpace): number {
+  return Math.min(space.w, space.h);
+}
+
+/**
+ * Quy đổi sàn 16 px CSS sang px logic theo tỷ lệ khung nhìn hiện tại.
+ *
+ * Cấm — NEVER kiểm sàn bằng px logic trần: trên máy dọc 390 px tỉ lệ là ~0,72
+ * nên 16 px logic chỉ ra ~11,5 px CSS. `scale` là `viewport.scale` của
+ * `RenderSystem` (pixel CSS trên một đơn vị logic); thiếu nó thì lấy tỉ lệ máy
+ * dọc tham chiếu làm sàn thận trọng.
+ */
+export function minLegiblePx(_space: LogicSpace, scale?: number): number {
   const currentScale =
-    scale ?? (space.h > space.w ? REFERENCE_MOBILE_SCALE : 1);
-  if (currentScale <= 0) {
-    return MIN_LEGIBLE_CSS_PX;
-  }
+    scale !== undefined && scale > 0 ? scale : REFERENCE_MOBILE_SCALE;
   return Math.ceil(MIN_LEGIBLE_CSS_PX / currentScale);
 }
 
@@ -62,6 +86,6 @@ export function canvasFontPx(
   scale?: number
 ): number {
   const ratio = CANVAS_TYPE_RATIOS[role];
-  const raw = Math.round(space.h * ratio);
+  const raw = Math.round(typeReferencePx(space) * ratio);
   return Math.max(raw, minLegiblePx(space, scale));
 }

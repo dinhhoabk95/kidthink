@@ -581,7 +581,7 @@ export class GT019Session extends TemplateGameSession<
       const piece = pieceId ? this.pieceById.get(pieceId) : undefined;
       if (!piece) {
         drawEmptyTargetSlot(ctx, slot);
-        drawSlotLabel(ctx, `${target.target_rotation}°`, slot);
+        drawSlotLabel(ctx, `${target.target_rotation}°`, slot, rs);
         return;
       }
       drawSlotItem(ctx, rs, slot, {

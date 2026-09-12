@@ -434,7 +434,7 @@ export class GT023Session extends TemplateGameSession<
       if (!part) {
         drawEmptyTargetSlot(ctx, slot);
         if (anchor.label) {
-          drawSlotLabel(ctx, anchor.label, slot);
+          drawSlotLabel(ctx, anchor.label, slot, rs);
         }
         continue;
       }
