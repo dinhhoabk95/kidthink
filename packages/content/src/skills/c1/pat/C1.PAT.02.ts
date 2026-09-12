@@ -44,7 +44,6 @@ export const C1_PAT_02_DATASET: SkillDataset = {
     {
       id: "pat_circle_1",
       label: "hình tròn xanh một",
-      glyph: "🔵",
       value: 2,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_PAT_02_DATASET: SkillDataset = {
     {
       id: "pat_circle_2",
       label: "hình tròn xanh hai",
-      glyph: "🔵",
       value: 3,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_PAT_02_DATASET: SkillDataset = {
     {
       id: "pat_star_repeat",
       label: "ngôi sao lặp lại",
-      glyph: "⭐",
       value: 4,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_PAT_02_DATASET: SkillDataset = {
     {
       id: "pat_star",
       label: "ngôi sao vàng",
-      glyph: "⭐",
       value: 1,
       image: {
         kind: "emoji",

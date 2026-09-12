@@ -44,7 +44,6 @@ export const C1_PAT_10_DATASET: SkillDataset = {
     {
       id: "pat_blue",
       label: "màu xanh dương",
-      glyph: "🔵",
       value: 2,
       image: {
         kind: "emoji",
@@ -55,7 +54,6 @@ export const C1_PAT_10_DATASET: SkillDataset = {
     {
       id: "pat_yellow",
       label: "màu vàng",
-      glyph: "🟡",
       value: 3,
       image: {
         kind: "emoji",
@@ -66,7 +64,6 @@ export const C1_PAT_10_DATASET: SkillDataset = {
     {
       id: "pat_red",
       label: "màu đỏ",
-      glyph: "🔴",
       value: 1,
       image: {
         kind: "emoji",

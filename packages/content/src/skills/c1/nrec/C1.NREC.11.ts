@@ -64,7 +64,7 @@ export const C1_NREC_11_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/6.mp3",
       image: {
         kind: "emoji",
-        ref: "6",
+        ref: "6️⃣",
       },
       category: {
         parity: "chẵn",
@@ -79,7 +79,7 @@ export const C1_NREC_11_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/7.mp3",
       image: {
         kind: "emoji",
-        ref: "7",
+        ref: "7️⃣",
       },
       category: {
         parity: "lẻ",
@@ -94,7 +94,7 @@ export const C1_NREC_11_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/8.mp3",
       image: {
         kind: "emoji",
-        ref: "8",
+        ref: "8️⃣",
       },
       category: {
         parity: "chẵn",
@@ -109,7 +109,7 @@ export const C1_NREC_11_DATASET: SkillDataset = {
       audio_path: "/audio/voice/common/numbers/9.mp3",
       image: {
         kind: "emoji",
-        ref: "9",
+        ref: "9️⃣",
       },
       category: {
         parity: "lẻ",

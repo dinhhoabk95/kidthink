@@ -47,7 +47,6 @@ export const C1_MEAS_11_DATASET: SkillDataset = {
     {
       id: "day_yesterday",
       label: "hôm qua",
-      glyph: "📅",
       value: 1,
       image: {
         kind: "emoji",
@@ -61,7 +60,6 @@ export const C1_MEAS_11_DATASET: SkillDataset = {
     {
       id: "day_today",
       label: "hôm nay",
-      glyph: "📆",
       value: 2,
       image: {
         kind: "emoji",
@@ -75,7 +73,6 @@ export const C1_MEAS_11_DATASET: SkillDataset = {
     {
       id: "day_tomorrow",
       label: "ngày mai",
-      glyph: "🗓️",
       value: 3,
       image: {
         kind: "emoji",

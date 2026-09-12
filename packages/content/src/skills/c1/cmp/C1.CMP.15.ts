@@ -44,7 +44,6 @@ export const C1_CMP_15_DATASET: SkillDataset = {
     {
       id: "speed_snail_less",
       label: "chú ốc sên rất chậm",
-      glyph: "🐌",
       value: 1,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_CMP_15_DATASET: SkillDataset = {
     {
       id: "speed_turtle_mid",
       label: "chú rùa bò chậm",
-      glyph: "🐢",
       value: 2,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_CMP_15_DATASET: SkillDataset = {
     {
       id: "speed_rabbit_more",
       label: "chú thỏ chạy nhanh",
-      glyph: "🐇",
       value: 3,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_CMP_15_DATASET: SkillDataset = {
     {
       id: "speed_cheetah_more",
       label: "con báo rất nhanh",
-      glyph: "🐆",
       value: 4,
       image: {
         kind: "emoji",

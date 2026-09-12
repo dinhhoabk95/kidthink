@@ -44,7 +44,6 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
     {
       id: "dim_capacity_empty_less",
       label: "bình nước cạn",
-      glyph: "🏺",
       value: 0,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
     {
       id: "dim_capacity_less",
       label: "bình nước vơi",
-      glyph: "🏺",
       value: 1,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
     {
       id: "dim_capacity_half",
       label: "bình nước vừa",
-      glyph: "🏺",
       value: 2,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
     {
       id: "dim_capacity_more",
       label: "bình nước đầy",
-      glyph: "🏺",
       value: 3,
       image: {
         kind: "emoji",
@@ -96,78 +92,6 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
       category: {
         capacity: "đầy",
       },
-    },
-    {
-      id: "fill_unit_1",
-      label: "mức 1",
-      glyph: "1",
-      value: 1,
-      audio_path: "/audio/voice/common/numbers/1.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🏺",
-      },
-      contrast_group: "volume",
-    },
-    {
-      id: "fill_unit_2",
-      label: "mức 2",
-      glyph: "2",
-      value: 2,
-      audio_path: "/audio/voice/common/numbers/2.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🏺",
-      },
-      contrast_group: "volume",
-    },
-    {
-      id: "fill_unit_3",
-      label: "mức 3",
-      glyph: "3",
-      value: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🏺",
-      },
-      contrast_group: "volume",
-    },
-    {
-      id: "fill_unit_4",
-      label: "mức 4",
-      glyph: "4",
-      value: 4,
-      audio_path: "/audio/voice/common/numbers/4.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🏺",
-      },
-      contrast_group: "volume",
-    },
-    {
-      id: "fill_unit_5",
-      label: "mức 5",
-      glyph: "5",
-      value: 5,
-      audio_path: "/audio/voice/common/numbers/5.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🏺",
-      },
-      contrast_group: "volume",
-    },
-    {
-      id: "fill_unit_6",
-      label: "mức 6",
-      glyph: "6",
-      value: 6,
-      audio_path: "/audio/voice/common/numbers/6.mp3",
-      image: {
-        kind: "emoji",
-        ref: "🏺",
-      },
-      contrast_group: "volume",
     },
   ],
   relations: [
@@ -232,12 +156,6 @@ export const C1_MEAS_05_DATASET: SkillDataset = {
     prompt_template: "Cốc nào đựng được nhiều nước hơn hả bé?",
     narration_template: "Chúng mình cùng tìm hiểu về Dung tích nhé",
   },
-  ordering: [
-    "dim_capacity_more",
-    "dim_capacity_half",
-    "dim_capacity_less",
-    "dim_capacity_empty_less",
-  ],
 };
 
 export const C1_MEAS_05_SEED: SkillSeed = {

@@ -22,6 +22,7 @@ import { ValidationError } from "@mindkid/errors/common";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { eq, inArray } from "drizzle-orm";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+import { readSeedGatesBaseline } from "./cli/check-seed-gates.js";
 import { runEightGates } from "./gates/runner.js";
 import type {
   ActivitySeed,
@@ -64,12 +65,34 @@ function validatePublishAxes(matchedTags: Array<{ axis: string }>) {
   }
 }
 
-function validateSeedsWithGates(
+function recordGateFailures(
+  seedCode: string,
+  gates: GateResult[],
+  collector: { gate9Failures: number; blockingIssues: string[] }
+): void {
+  for (const g of gates) {
+    if (g.passed) {
+      continue;
+    }
+    if (g.gate === 9) {
+      collector.gate9Failures += g.issues.length;
+    } else {
+      collector.blockingIssues.push(
+        `Nội dung ${seedCode} trượt Cổng ${g.gate}: ${g.issues[0]?.message ?? ""}`
+      );
+    }
+  }
+}
+
+export function validateSeedsWithGates(
   seeds: AnyContentSeed[],
   batchCode?: string
 ): GateResult[] {
   const existingCodes = new Set<string>();
   const allGateResults: GateResult[] = [];
+  const baseline = readSeedGatesBaseline();
+  const collector = { gate9Failures: 0, blockingIssues: [] as string[] };
+
   for (const seed of seeds) {
     const primarySkillCode = seed.header.skill_codes?.[0];
     const dataset = primarySkillCode
@@ -85,13 +108,21 @@ function validateSeedsWithGates(
     allGateResults.push(...gates);
     existingCodes.add(seed.header.code);
 
-    const firstFailed = gates.find((g) => !g.passed);
-    if (firstFailed) {
-      throw new ValidationError(
-        `Nội dung ${seed.header.code} trượt Cổng ${firstFailed.gate}: ${firstFailed.issues[0]?.message ?? ""}`
-      );
-    }
+    recordGateFailures(seed.header.code, gates, collector);
   }
+
+  if (collector.blockingIssues.length > 0) {
+    throw new ValidationError(
+      collector.blockingIssues[0] ?? "Lỗi thẩm định cổng"
+    );
+  }
+
+  if (collector.gate9Failures > baseline.maxGate9Violations) {
+    throw new ValidationError(
+      `Phát hiện ${collector.gate9Failures} vi phạm Cổng 9, vượt quá hạn mức baseline (${baseline.maxGate9Violations})`
+    );
+  }
+
   return allGateResults;
 }
 

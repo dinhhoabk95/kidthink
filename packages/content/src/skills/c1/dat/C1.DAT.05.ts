@@ -47,7 +47,6 @@ export const C1_DAT_05_DATASET: SkillDataset = {
     {
       id: "chart_min",
       label: "mục có ít nhất",
-      glyph: "🎯",
       value: 2,
       image: {
         kind: "emoji",
@@ -61,7 +60,6 @@ export const C1_DAT_05_DATASET: SkillDataset = {
     {
       id: "chart_item_2",
       label: "mục trung bình nhỏ",
-      glyph: "🥈",
       value: 5,
       image: {
         kind: "emoji",
@@ -75,7 +73,6 @@ export const C1_DAT_05_DATASET: SkillDataset = {
     {
       id: "chart_item_3",
       label: "mục trung bình lớn",
-      glyph: "🥇",
       value: 8,
       image: {
         kind: "emoji",
@@ -89,7 +86,6 @@ export const C1_DAT_05_DATASET: SkillDataset = {
     {
       id: "chart_max",
       label: "mục có nhiều nhất",
-      glyph: "🏆",
       value: 10,
       image: {
         kind: "emoji",

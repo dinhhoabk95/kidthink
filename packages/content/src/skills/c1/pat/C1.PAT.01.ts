@@ -44,7 +44,6 @@ export const C1_PAT_01_DATASET: SkillDataset = {
     {
       id: "pat_banana_1",
       label: "quả chuối vàng thứ nhất",
-      glyph: "🍌",
       value: 2,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_PAT_01_DATASET: SkillDataset = {
     {
       id: "pat_apple_2",
       label: "quả táo đỏ thứ hai",
-      glyph: "🍎",
       value: 3,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_PAT_01_DATASET: SkillDataset = {
     {
       id: "pat_banana_2",
       label: "quả chuối vàng thứ hai",
-      glyph: "🍌",
       value: 4,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_PAT_01_DATASET: SkillDataset = {
     {
       id: "pat_apple_1",
       label: "quả táo đỏ thứ nhất",
-      glyph: "🍎",
       value: 1,
       image: {
         kind: "emoji",

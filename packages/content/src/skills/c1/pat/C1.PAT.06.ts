@@ -44,7 +44,6 @@ export const C1_PAT_06_DATASET: SkillDataset = {
     {
       id: "inc_1",
       label: "một chấm tròn",
-      glyph: "🟢",
       value: 1,
       image: {
         kind: "emoji",
@@ -55,7 +54,6 @@ export const C1_PAT_06_DATASET: SkillDataset = {
     {
       id: "inc_2",
       label: "hai chấm tròn",
-      glyph: "🟢",
       value: 2,
       image: {
         kind: "emoji",
@@ -66,7 +64,6 @@ export const C1_PAT_06_DATASET: SkillDataset = {
     {
       id: "inc_3",
       label: "ba chấm tròn",
-      glyph: "🟢",
       value: 3,
       image: {
         kind: "emoji",
@@ -77,7 +74,6 @@ export const C1_PAT_06_DATASET: SkillDataset = {
     {
       id: "inc_4",
       label: "bốn chấm tròn",
-      glyph: "🟢",
       value: 4,
       image: {
         kind: "emoji",

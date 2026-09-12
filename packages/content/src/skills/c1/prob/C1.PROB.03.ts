@@ -44,7 +44,6 @@ export const C1_PROB_03_DATASET: SkillDataset = {
     {
       id: "share_all",
       label: "sáu chiếc bánh",
-      glyph: "🧁",
       value: 6,
       image: {
         kind: "emoji",
@@ -55,7 +54,6 @@ export const C1_PROB_03_DATASET: SkillDataset = {
     {
       id: "share_p1",
       label: "phần ba chiếc một",
-      glyph: "🧁",
       value: 3,
       image: {
         kind: "emoji",
@@ -66,7 +64,6 @@ export const C1_PROB_03_DATASET: SkillDataset = {
     {
       id: "share_p2",
       label: "phần ba chiếc hai",
-      glyph: "🧁",
       value: 3,
       image: {
         kind: "emoji",

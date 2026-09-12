@@ -44,7 +44,6 @@ export const C1_OTO_04_DATASET: SkillDataset = {
     {
       id: "one_star",
       label: "một ngôi sao",
-      glyph: "⭐",
       value: 1,
       image: {
         kind: "emoji",
@@ -67,7 +66,6 @@ export const C1_OTO_04_DATASET: SkillDataset = {
     {
       id: "two_hearts",
       label: "hai trái tim",
-      glyph: "💖",
       value: 2,
       image: {
         kind: "emoji",
@@ -90,7 +88,6 @@ export const C1_OTO_04_DATASET: SkillDataset = {
     {
       id: "three_flowers",
       label: "ba bông hoa",
-      glyph: "🌸",
       value: 3,
       image: {
         kind: "emoji",

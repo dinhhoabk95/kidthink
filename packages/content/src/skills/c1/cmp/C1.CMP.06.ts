@@ -44,7 +44,6 @@ export const C1_CMP_06_DATASET: SkillDataset = {
     {
       id: "length_more",
       label: "bút chì dài",
-      glyph: "✏️",
       value: 2,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_CMP_06_DATASET: SkillDataset = {
     {
       id: "length_less",
       label: "bút chì ngắn",
-      glyph: "✏️",
       value: 1,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_CMP_06_DATASET: SkillDataset = {
     {
       id: "long_train",
       label: "tàu hỏa dài",
-      glyph: "🚆",
       value: 2,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_CMP_06_DATASET: SkillDataset = {
     {
       id: "short_car",
       label: "ô tô ngắn",
-      glyph: "🚗",
       value: 1,
       image: {
         kind: "emoji",
@@ -160,7 +156,6 @@ const TOPIC_CMP_LENGTH_HEIGHT_DATASET: SkillDataset = {
     {
       id: "long_train",
       label: "tàu hỏa dài",
-      glyph: "🚆",
       image: {
         kind: "emoji",
         ref: "🚆",
@@ -172,7 +167,6 @@ const TOPIC_CMP_LENGTH_HEIGHT_DATASET: SkillDataset = {
     {
       id: "short_car",
       label: "ô tô ngắn",
-      glyph: "🚗",
       image: {
         kind: "emoji",
         ref: "🚗",
@@ -184,7 +178,6 @@ const TOPIC_CMP_LENGTH_HEIGHT_DATASET: SkillDataset = {
     {
       id: "long_snake",
       label: "chú rắn dài",
-      glyph: "🐍",
       image: {
         kind: "emoji",
         ref: "🐍",
@@ -196,7 +189,6 @@ const TOPIC_CMP_LENGTH_HEIGHT_DATASET: SkillDataset = {
     {
       id: "short_worm",
       label: "chú sâu ngắn",
-      glyph: "🐛",
       image: {
         kind: "emoji",
         ref: "🐛",
@@ -208,7 +200,6 @@ const TOPIC_CMP_LENGTH_HEIGHT_DATASET: SkillDataset = {
     {
       id: "tall_giraffe",
       label: "hươu cao cổ cao",
-      glyph: "🦒",
       image: {
         kind: "emoji",
         ref: "🦒",
@@ -220,7 +211,6 @@ const TOPIC_CMP_LENGTH_HEIGHT_DATASET: SkillDataset = {
     {
       id: "short_rabbit",
       label: "chú thỏ thấp",
-      glyph: "🐇",
       image: {
         kind: "emoji",
         ref: "🐇",

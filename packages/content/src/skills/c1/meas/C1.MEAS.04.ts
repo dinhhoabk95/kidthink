@@ -44,7 +44,6 @@ export const C1_MEAS_04_DATASET: SkillDataset = {
     {
       id: "dim_quantity_more",
       label: "nhiều bông hoa",
-      glyph: "🌸",
       value: 5,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_MEAS_04_DATASET: SkillDataset = {
     {
       id: "dim_quantity_less",
       label: "ít bông hoa",
-      glyph: "🌸",
       value: 2,
       image: {
         kind: "emoji",

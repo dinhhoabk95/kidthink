@@ -44,7 +44,6 @@ export const C1_CMP_12_DATASET: SkillDataset = {
     {
       id: "dist_star_more",
       label: "ngôi sao rất xa",
-      glyph: "⭐",
       value: 4,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_CMP_12_DATASET: SkillDataset = {
     {
       id: "dist_cloud_more",
       label: "đám mây ở xa",
-      glyph: "☁️",
       value: 3,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_CMP_12_DATASET: SkillDataset = {
     {
       id: "dist_tree_less",
       label: "cây xanh ở gần",
-      glyph: "🌳",
       value: 2,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_CMP_12_DATASET: SkillDataset = {
     {
       id: "dist_flower_less",
       label: "bông hoa rất gần",
-      glyph: "🌸",
       value: 1,
       image: {
         kind: "emoji",

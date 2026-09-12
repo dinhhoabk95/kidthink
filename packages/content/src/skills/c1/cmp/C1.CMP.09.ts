@@ -44,7 +44,6 @@ export const C1_CMP_09_DATASET: SkillDataset = {
     {
       id: "height_less",
       label: "ngôi nhà thấp",
-      glyph: "🏠",
       value: 1,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_CMP_09_DATASET: SkillDataset = {
     {
       id: "height_more",
       label: "ngôi nhà cao",
-      glyph: "🏢",
       value: 2,
       image: {
         kind: "emoji",

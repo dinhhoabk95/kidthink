@@ -44,7 +44,6 @@ export const C1_OTO_06_DATASET: SkillDataset = {
     {
       id: "seed",
       label: "hạt mầm",
-      glyph: "🌱",
       value: 1,
       image: {
         kind: "emoji",
@@ -55,7 +54,6 @@ export const C1_OTO_06_DATASET: SkillDataset = {
     {
       id: "sprout",
       label: "cây non",
-      glyph: "🌿",
       value: 2,
       image: {
         kind: "emoji",
@@ -66,7 +64,6 @@ export const C1_OTO_06_DATASET: SkillDataset = {
     {
       id: "tree",
       label: "cây lớn",
-      glyph: "🌳",
       value: 3,
       image: {
         kind: "emoji",
@@ -77,7 +74,7 @@ export const C1_OTO_06_DATASET: SkillDataset = {
     {
       id: "card_1",
       label: "thẻ bước một",
-      glyph: "1️⃣",
+      glyph: "1",
       value: 1,
       audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
@@ -89,7 +86,7 @@ export const C1_OTO_06_DATASET: SkillDataset = {
     {
       id: "card_2",
       label: "thẻ bước hai",
-      glyph: "2️⃣",
+      glyph: "2",
       value: 2,
       audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
@@ -101,7 +98,7 @@ export const C1_OTO_06_DATASET: SkillDataset = {
     {
       id: "card_3",
       label: "thẻ bước ba",
-      glyph: "3️⃣",
+      glyph: "3",
       value: 3,
       audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {

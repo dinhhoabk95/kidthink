@@ -44,7 +44,6 @@ export const C1_OTO_05_DATASET: SkillDataset = {
     {
       id: "pos_top_1",
       label: "ở trên hàng một",
-      glyph: "⬆️",
       value: 1,
       image: {
         kind: "emoji",
@@ -55,7 +54,6 @@ export const C1_OTO_05_DATASET: SkillDataset = {
     {
       id: "pos_bottom_1",
       label: "ở dưới hàng một",
-      glyph: "⬇️",
       value: 1,
       image: {
         kind: "emoji",
@@ -66,7 +64,6 @@ export const C1_OTO_05_DATASET: SkillDataset = {
     {
       id: "pos_top_2",
       label: "ở trên hàng hai",
-      glyph: "⬆️",
       value: 2,
       image: {
         kind: "emoji",
@@ -77,7 +74,6 @@ export const C1_OTO_05_DATASET: SkillDataset = {
     {
       id: "pos_bottom_2",
       label: "ở dưới hàng hai",
-      glyph: "⬇️",
       value: 2,
       image: {
         kind: "emoji",
@@ -88,7 +84,6 @@ export const C1_OTO_05_DATASET: SkillDataset = {
     {
       id: "pos_top_3",
       label: "ở trên hàng ba",
-      glyph: "⬆️",
       value: 3,
       image: {
         kind: "emoji",
@@ -99,7 +94,6 @@ export const C1_OTO_05_DATASET: SkillDataset = {
     {
       id: "pos_bottom_3",
       label: "ở dưới hàng ba",
-      glyph: "⬇️",
       value: 3,
       image: {
         kind: "emoji",

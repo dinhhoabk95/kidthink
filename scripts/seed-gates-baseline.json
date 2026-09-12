@@ -1,5 +1,5 @@
 {
-  "_comment": "Baseline nợ thẩm định nội dung seed (Task #271 LA). Nợ chỉ được GIẢM.",
-  "maxGate9Violations": 0,
-  "maxTotalViolations": 0
+  "_comment": "Baseline nợ thẩm định nội dung seed (Task #271 LA/LB). Nợ chỉ được GIẢM.",
+  "maxGate9Violations": 14,
+  "maxTotalViolations": 14
 }

@@ -45,7 +45,6 @@ export const C1_DAT_01_DATASET: SkillDataset = {
     {
       id: "dat_apple_1",
       label: "quả táo một",
-      glyph: "🍎",
       value: 1,
       image: {
         kind: "emoji",
@@ -59,7 +58,6 @@ export const C1_DAT_01_DATASET: SkillDataset = {
     {
       id: "dat_apple_2",
       label: "quả táo hai",
-      glyph: "🍎",
       value: 2,
       image: {
         kind: "emoji",
@@ -73,7 +71,6 @@ export const C1_DAT_01_DATASET: SkillDataset = {
     {
       id: "dat_apple_3",
       label: "quả táo ba",
-      glyph: "🍎",
       value: 3,
       image: {
         kind: "emoji",
@@ -87,7 +84,6 @@ export const C1_DAT_01_DATASET: SkillDataset = {
     {
       id: "dat_orange_1",
       label: "quả cam một",
-      glyph: "🍊",
       value: 1,
       image: {
         kind: "emoji",
@@ -101,7 +97,6 @@ export const C1_DAT_01_DATASET: SkillDataset = {
     {
       id: "dat_orange_2",
       label: "quả cam hai",
-      glyph: "🍊",
       value: 2,
       image: {
         kind: "emoji",
@@ -115,7 +110,6 @@ export const C1_DAT_01_DATASET: SkillDataset = {
     {
       id: "dat_orange_3",
       label: "quả cam ba",
-      glyph: "🍊",
       value: 3,
       image: {
         kind: "emoji",

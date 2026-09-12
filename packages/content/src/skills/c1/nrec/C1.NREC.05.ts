@@ -134,7 +134,6 @@ export const C1_NREC_05_DATASET: SkillDataset = {
     {
       id: "qty_0",
       label: "khay rỗng",
-      glyph: "∅",
       value: 0,
       image: {
         kind: "emoji",
@@ -148,7 +147,6 @@ export const C1_NREC_05_DATASET: SkillDataset = {
     {
       id: "qty_1",
       label: "một quả táo",
-      glyph: "🍎",
       value: 1,
       image: {
         kind: "emoji",
@@ -162,7 +160,6 @@ export const C1_NREC_05_DATASET: SkillDataset = {
     {
       id: "qty_2",
       label: "hai quả táo",
-      glyph: "🍎🍎",
       value: 2,
       image: {
         kind: "emoji",
@@ -176,7 +173,6 @@ export const C1_NREC_05_DATASET: SkillDataset = {
     {
       id: "qty_3",
       label: "ba quả táo",
-      glyph: "🍎🍎🍎",
       value: 3,
       image: {
         kind: "emoji",
@@ -190,7 +186,6 @@ export const C1_NREC_05_DATASET: SkillDataset = {
     {
       id: "qty_4",
       label: "bốn quả táo",
-      glyph: "🍎🍎🍎🍎",
       value: 4,
       image: {
         kind: "emoji",
@@ -204,7 +199,6 @@ export const C1_NREC_05_DATASET: SkillDataset = {
     {
       id: "qty_5",
       label: "năm quả táo",
-      glyph: "🍎🍎🍎🍎🍎",
       value: 5,
       image: {
         kind: "emoji",

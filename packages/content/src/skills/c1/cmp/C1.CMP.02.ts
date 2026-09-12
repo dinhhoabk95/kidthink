@@ -44,7 +44,6 @@ export const C1_CMP_02_DATASET: SkillDataset = {
     {
       id: "size_less",
       label: "chiếc hộp nhỏ",
-      glyph: "📦",
       value: 1,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_CMP_02_DATASET: SkillDataset = {
     {
       id: "size_more",
       label: "chiếc hộp to",
-      glyph: "📦",
       value: 2,
       image: {
         kind: "emoji",

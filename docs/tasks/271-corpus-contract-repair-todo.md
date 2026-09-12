@@ -25,17 +25,17 @@ Mỗi lô một commit riêng. Cấm — NEVER gộp `LB` với `LD`: cả hai �
 
 ## LB — Tách vai `glyph` và `image` (L, chặn bởi LA)
 
-- [ ] TB.1 Liệt kê trọn 58 kỹ năng có `glyph` trùng `image.ref`, kèm engine nào đang chiếu chúng
-- [ ] TB.2 Phân loại **trọn** 58 kỹ năng thành hai nhóm: dataset **ký hiệu** (dạy chữ số/chữ cái) và dataset **tranh**
-- [ ] TB.3 Duyệt bảng phân loại trước khi sửa dòng nào — Cấm — NEVER gỡ từng vật lẻ (review 2026-09-12 làm thế và để lại 7 dataset lẫn lộn)
-- [ ] TB.4 Ghi luật vào mục `glyph` của [`skill-dataset-model.md`](../specs/05-content/skill-dataset-model.md): vật mang `glyph` khi và chỉ khi nó dạy ký hiệu viết được
-- [ ] TB.5 Dataset tranh: gỡ `glyph`, giữ `image`
-- [ ] TB.6 Dataset ký hiệu: giữ `glyph` là ký hiệu thật, Cấm — NEVER để `glyph === image.ref`
-- [ ] TB.7 Thêm luật `BR-SDI-09` vào `scripts/dataset-integrity/rules.ts`: `glyph` không được bằng `image.ref`
-- [ ] TB.8 **Ca âm** cho `BR-SDI-09` trong `scripts/check-dataset-integrity.test.ts`
-- [ ] TB.9 Gỡ vật độn `fill_unit_1..6` khỏi `C1.MEAS.05` và `C1.MEAS.06` nếu Cổng 9 đã bỏ qua hai dataset đó
-- [ ] TB.10 `pnpm db:seed` xanh sau lô; so số item với mốc 6895
-- [ ] TB.11 Đo lại N1: 0 vật có `glyph` trùng `image.ref`
+- [x] TB.1 Liệt kê trọn 58 kỹ năng có `glyph` trùng `image.ref`, kèm engine nào đang chiếu chúng
+- [x] TB.2 Phân loại **trọn** 58 kỹ năng thành hai nhóm: dataset **ký hiệu** (dạy chữ số/chữ cái) và dataset **tranh**
+- [x] TB.3 Duyệt bảng phân loại trước khi sửa dòng nào — Cấm — NEVER gỡ từng vật lẻ (review 2026-09-12 làm thế và để lại 7 dataset lẫn lộn)
+- [x] TB.4 Ghi luật vào mục `glyph` của [`skill-dataset-model.md`](../specs/05-content/skill-dataset-model.md): vật mang `glyph` khi và chỉ khi nó dạy ký hiệu viết được
+- [x] TB.5 Dataset tranh: gỡ `glyph`, giữ `image`
+- [x] TB.6 Dataset ký hiệu: giữ `glyph` là ký hiệu thật, Cấm — NEVER để `glyph === image.ref`
+- [x] TB.7 Thêm luật `BR-SDI-09` vào `scripts/dataset-integrity/rules.ts`: `glyph` không được bằng `image.ref`
+- [x] TB.8 **Ca âm** cho `BR-SDI-09` trong `scripts/check-dataset-integrity.test.ts`
+- [x] TB.9 Gỡ vật độn `fill_unit_1..6` khỏi `C1.MEAS.05` và `C1.MEAS.06` nếu Cổng 9 đã bỏ qua hai dataset đó
+- [x] TB.10 `pnpm db:seed` xanh sau lô; so số item với mốc 6895
+- [x] TB.11 Đo lại N1: 0 vật có `glyph` trùng `image.ref`
 
 ## LC — 13 level đồng hồ gắn nhầm kỹ năng (M, chặn bởi LB)
 

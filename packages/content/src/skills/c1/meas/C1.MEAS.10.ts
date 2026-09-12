@@ -45,7 +45,6 @@ export const C1_MEAS_10_DATASET: SkillDataset = {
     {
       id: "time_before",
       label: "trước khi rửa tay",
-      glyph: "🧼",
       value: 1,
       image: {
         kind: "emoji",
@@ -59,7 +58,6 @@ export const C1_MEAS_10_DATASET: SkillDataset = {
     {
       id: "time_after",
       label: "sau khi ăn cơm",
-      glyph: "🍚",
       value: 2,
       image: {
         kind: "emoji",

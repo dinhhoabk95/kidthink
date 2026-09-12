@@ -44,7 +44,6 @@ export const C1_OTO_07_DATASET: SkillDataset = {
     {
       id: "shape_red_circle",
       label: "hình tròn đỏ",
-      glyph: "🔴",
       value: 1,
       image: {
         kind: "emoji",
@@ -55,7 +54,6 @@ export const C1_OTO_07_DATASET: SkillDataset = {
     {
       id: "shape_blue_circle",
       label: "hình tròn xanh",
-      glyph: "🔵",
       value: 1,
       image: {
         kind: "emoji",
@@ -66,7 +64,6 @@ export const C1_OTO_07_DATASET: SkillDataset = {
     {
       id: "shape_red_square",
       label: "hình vuông đỏ",
-      glyph: "🟥",
       value: 2,
       image: {
         kind: "emoji",
@@ -77,7 +74,6 @@ export const C1_OTO_07_DATASET: SkillDataset = {
     {
       id: "shape_blue_square",
       label: "hình vuông xanh",
-      glyph: "🟦",
       value: 2,
       image: {
         kind: "emoji",
@@ -88,7 +84,6 @@ export const C1_OTO_07_DATASET: SkillDataset = {
     {
       id: "shape_red_triangle",
       label: "hình tam giác đỏ",
-      glyph: "🔺",
       value: 3,
       image: {
         kind: "emoji",
@@ -99,7 +94,6 @@ export const C1_OTO_07_DATASET: SkillDataset = {
     {
       id: "shape_blue_triangle",
       label: "hình tam giác xanh",
-      glyph: "🔷",
       value: 3,
       image: {
         kind: "emoji",

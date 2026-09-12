@@ -159,14 +159,16 @@ interface SkillDataset {
 interface DatasetItem {
   readonly id: string; // "n5"
   readonly label: string; // "năm"        — bắt buộc, nhóm F cần
-  readonly glyph?: string; // "5"          — BR-SDS-03
-  readonly image?: Asset; // emoji | image — lớp áo theo theme
+  readonly glyph?: string; // "5"          — BR-SDS-03: chỉ mang khi dạy ký hiệu viết được (chữ số, chữ cái, dấu)
+  readonly image?: Asset; // emoji | image — lớp áo theo theme; vật tranh chỉ mang image, cấm lặp image.ref vào glyph
   readonly value?: number; // 5            — nhóm C
   readonly category?: Readonly<Record<string, string>>; // nhóm B
   readonly audio_path?: string; // nhóm H
   readonly contrast_group?: string; // nhóm H
 }
 ```
+
+> **Quy tắc `glyph` vs `image`**: Một vật mang `glyph` khi và chỉ khi nó dạy một **ký hiệu viết được** (chữ số `0..9`, chữ cái `a..z`, dấu `+`, `-`...). Vật là tranh minh hoạ (quả táo, con thỏ, đồ vật, hình khối, mặt đồng hồ...) chỉ mang `image` và **Cấm — NEVER** gán `glyph === image.ref`. Cổng 9 (`BR-SDS-03`) đo "khái niệm hiện ra" bằng `glyph` sẽ tự động bỏ qua các dataset tranh thuần tuý.
 
 Ví dụ `C1.NREC.02`: `items` là sáu vật `n0..n5`, mỗi vật `glyph: "0".."5"`, `value: 0..5`,
 `label: "không".."năm"`. Cùng sáu vật đó cấp cho `GT-001` (chọn ký hiệu), `GT-005` (ghép số

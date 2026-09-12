@@ -44,7 +44,6 @@ export const C1_CMP_07_DATASET: SkillDataset = {
     {
       id: "length_less",
       label: "thước kẻ ngắn",
-      glyph: "📏",
       value: 1,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_CMP_07_DATASET: SkillDataset = {
     {
       id: "length_more",
       label: "thước kẻ dài",
-      glyph: "📏",
       value: 2,
       image: {
         kind: "emoji",

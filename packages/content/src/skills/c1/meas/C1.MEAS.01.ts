@@ -44,7 +44,6 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
     {
       id: "dim_length_snake_more",
       label: "chú rắn dài",
-      glyph: "🐍",
       value: 4,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
     {
       id: "dim_length_more",
       label: "chiếc đũa dài",
-      glyph: "🥢",
       value: 3,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
     {
       id: "dim_length_less",
       label: "chiếc đũa ngắn",
-      glyph: "🥢",
       value: 2,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_MEAS_01_DATASET: SkillDataset = {
     {
       id: "dim_length_worm_less",
       label: "chú sâu ngắn",
-      glyph: "🐛",
       value: 1,
       image: {
         kind: "emoji",

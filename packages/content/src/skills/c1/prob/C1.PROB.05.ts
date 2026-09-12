@@ -44,7 +44,6 @@ export const C1_PROB_05_DATASET: SkillDataset = {
     {
       id: "cat_1",
       label: "mèo vàng một",
-      glyph: "🐱",
       value: 1,
       image: {
         kind: "emoji",
@@ -59,7 +58,6 @@ export const C1_PROB_05_DATASET: SkillDataset = {
     {
       id: "cat_2",
       label: "mèo vàng hai",
-      glyph: "🐱",
       value: 2,
       image: {
         kind: "emoji",
@@ -74,7 +72,6 @@ export const C1_PROB_05_DATASET: SkillDataset = {
     {
       id: "dog_1",
       label: "chó đen một",
-      glyph: "🐕",
       value: 1,
       image: {
         kind: "emoji",
@@ -89,7 +86,6 @@ export const C1_PROB_05_DATASET: SkillDataset = {
     {
       id: "dog_2",
       label: "chó đen hai",
-      glyph: "🐕",
       value: 2,
       image: {
         kind: "emoji",

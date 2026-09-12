@@ -44,7 +44,6 @@ export const C1_CMP_14_DATASET: SkillDataset = {
     {
       id: "speed_rocket_more",
       label: "tên lửa rất nhanh",
-      glyph: "🚀",
       value: 4,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_CMP_14_DATASET: SkillDataset = {
     {
       id: "speed_plane_more",
       label: "máy bay bay nhanh",
-      glyph: "✈️",
       value: 3,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_CMP_14_DATASET: SkillDataset = {
     {
       id: "speed_bicycle_less",
       label: "xe đạp đi chậm",
-      glyph: "🚲",
       value: 2,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_CMP_14_DATASET: SkillDataset = {
     {
       id: "speed_turtle_less",
       label: "con rùa rất chậm",
-      glyph: "🐢",
       value: 1,
       image: {
         kind: "emoji",

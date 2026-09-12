@@ -44,7 +44,6 @@ export const C1_CMP_03_DATASET: SkillDataset = {
     {
       id: "pair_a",
       label: "hai quả táo",
-      glyph: "🍎",
       value: 2,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_CMP_03_DATASET: SkillDataset = {
     {
       id: "pair_b",
       label: "hai quả cam",
-      glyph: "🍊",
       value: 2,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_CMP_03_DATASET: SkillDataset = {
     {
       id: "pair_c",
       label: "ba quả chuối",
-      glyph: "🍌",
       value: 3,
       image: {
         kind: "emoji",

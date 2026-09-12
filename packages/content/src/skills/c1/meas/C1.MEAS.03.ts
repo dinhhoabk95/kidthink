@@ -44,7 +44,6 @@ export const C1_MEAS_03_DATASET: SkillDataset = {
     {
       id: "dim_weight_rock_more",
       label: "tảng đá nặng",
-      glyph: "🪨",
       value: 4,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_MEAS_03_DATASET: SkillDataset = {
     {
       id: "dim_weight_more",
       label: "con voi nặng",
-      glyph: "🐘",
       value: 3,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_MEAS_03_DATASET: SkillDataset = {
     {
       id: "dim_weight_less",
       label: "chú kiến nhẹ",
-      glyph: "🐜",
       value: 2,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_MEAS_03_DATASET: SkillDataset = {
     {
       id: "dim_weight_leaf_less",
       label: "chiếc lá nhẹ",
-      glyph: "🍃",
       value: 1,
       image: {
         kind: "emoji",

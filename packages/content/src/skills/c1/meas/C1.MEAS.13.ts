@@ -44,7 +44,6 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     {
       id: "clock_1",
       label: "đồng hồ chỉ một giờ",
-      glyph: "🕐",
       value: 1,
       audio_path: "/audio/voice/d5/clock_template/1_00.mp3",
       image: {
@@ -59,7 +58,6 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     {
       id: "clock_2",
       label: "đồng hồ chỉ hai giờ",
-      glyph: "🕑",
       value: 2,
       audio_path: "/audio/voice/d5/clock_template/2_00.mp3",
       image: {
@@ -74,7 +72,6 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     {
       id: "clock_3",
       label: "đồng hồ chỉ ba giờ",
-      glyph: "🕒",
       value: 3,
       audio_path: "/audio/voice/d5/clock_template/3_00.mp3",
       image: {
@@ -89,7 +86,6 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     {
       id: "clock_4",
       label: "đồng hồ chỉ bốn giờ",
-      glyph: "🕓",
       value: 4,
       audio_path: "/audio/voice/d5/clock_template/4_00.mp3",
       image: {
@@ -104,7 +100,6 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     {
       id: "clock_5",
       label: "đồng hồ chỉ năm giờ",
-      glyph: "🕔",
       value: 5,
       audio_path: "/audio/voice/d5/clock_template/5_00.mp3",
       image: {
@@ -119,7 +114,6 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     {
       id: "clock_6",
       label: "đồng hồ chỉ sáu giờ",
-      glyph: "🕕",
       value: 6,
       audio_path: "/audio/voice/d5/clock_template/6_00.mp3",
       image: {
@@ -134,7 +128,6 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     {
       id: "clock_7",
       label: "đồng hồ chỉ bảy giờ",
-      glyph: "🕖",
       value: 7,
       audio_path: "/audio/voice/d5/clock_template/7_00.mp3",
       image: {
@@ -149,7 +142,6 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     {
       id: "clock_8",
       label: "đồng hồ chỉ tám giờ",
-      glyph: "🕗",
       value: 8,
       audio_path: "/audio/voice/d5/clock_template/8_00.mp3",
       image: {
@@ -164,7 +156,6 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     {
       id: "clock_9",
       label: "đồng hồ chỉ chín giờ",
-      glyph: "🕘",
       value: 9,
       audio_path: "/audio/voice/d5/clock_template/9_00.mp3",
       image: {
@@ -179,7 +170,6 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     {
       id: "clock_10",
       label: "đồng hồ chỉ mười giờ",
-      glyph: "🕙",
       value: 10,
       audio_path: "/audio/voice/d5/clock_template/10_00.mp3",
       image: {
@@ -194,7 +184,6 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     {
       id: "clock_11",
       label: "đồng hồ chỉ mười một giờ",
-      glyph: "🕚",
       value: 11,
       audio_path: "/audio/voice/d5/clock_template/11_00.mp3",
       image: {
@@ -209,7 +198,6 @@ export const C1_MEAS_13_DATASET: SkillDataset = {
     {
       id: "clock_12",
       label: "đồng hồ chỉ mười hai giờ",
-      glyph: "🕛",
       value: 12,
       audio_path: "/audio/voice/d5/clock_template/12_00.mp3",
       image: {

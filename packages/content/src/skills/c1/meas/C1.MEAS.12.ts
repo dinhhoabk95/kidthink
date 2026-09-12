@@ -47,7 +47,6 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
     {
       id: "time_morning",
       label: "buổi sáng",
-      glyph: "🌅",
       value: 1,
       image: {
         kind: "emoji",
@@ -61,7 +60,6 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
     {
       id: "time_noon",
       label: "buổi trưa",
-      glyph: "☀️",
       value: 2,
       image: {
         kind: "emoji",
@@ -75,7 +73,6 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
     {
       id: "time_afternoon",
       label: "buổi chiều",
-      glyph: "🌇",
       value: 3,
       image: {
         kind: "emoji",
@@ -89,7 +86,6 @@ export const C1_MEAS_12_DATASET: SkillDataset = {
     {
       id: "time_night",
       label: "buổi tối",
-      glyph: "🌙",
       value: 4,
       image: {
         kind: "emoji",

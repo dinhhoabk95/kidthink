@@ -353,3 +353,32 @@ export function checkCrossDatasetItemConsistency(
 
   return violations;
 }
+
+/**
+ * `BR-SDI-09` — `glyph` không được bằng `image.ref`.
+ *
+ * Vật mang `glyph` khi và chỉ khi nó dạy một ký hiệu viết được (chữ số, chữ cái, dấu).
+ * Vật là tranh minh hoạ chỉ mang `image` (hoặc `glyph` khác `image.ref` nếu là thẻ mang chữ số).
+ * Gán `glyph === image.ref` là vi phạm nguyên tắc phân định vai trò giữa tranh và ký hiệu.
+ */
+export function checkGlyphNotEqualImageRef(
+  dataset: SkillDataset
+): readonly IntegrityViolation[] {
+  const violations: IntegrityViolation[] = [];
+  for (const item of dataset.items) {
+    if (
+      item.glyph &&
+      item.image?.kind === "emoji" &&
+      item.glyph === item.image.ref
+    ) {
+      violations.push({
+        rule: "BR-SDI-09",
+        skillCode: dataset.skill_code,
+        detail:
+          `vật "${item.id}" có glyph "${item.glyph}" trùng image.ref — ` +
+          "vật tranh chỉ mang image, không được gán glyph trùng hình",
+      });
+    }
+  }
+  return violations;
+}

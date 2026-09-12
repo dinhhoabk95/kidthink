@@ -44,7 +44,6 @@ export const C1_OTO_01_DATASET: SkillDataset = {
     {
       id: "rabbit",
       label: "chú thỏ",
-      glyph: "🐇",
       value: 1,
       image: {
         kind: "emoji",
@@ -55,7 +54,6 @@ export const C1_OTO_01_DATASET: SkillDataset = {
     {
       id: "carrot",
       label: "củ cà rốt",
-      glyph: "🥕",
       value: 1,
       image: {
         kind: "emoji",
@@ -66,7 +64,6 @@ export const C1_OTO_01_DATASET: SkillDataset = {
     {
       id: "cat",
       label: "chú mèo",
-      glyph: "🐱",
       value: 1,
       image: {
         kind: "emoji",
@@ -77,7 +74,6 @@ export const C1_OTO_01_DATASET: SkillDataset = {
     {
       id: "fish",
       label: "con cá",
-      glyph: "🐟",
       value: 1,
       image: {
         kind: "emoji",
@@ -88,7 +84,6 @@ export const C1_OTO_01_DATASET: SkillDataset = {
     {
       id: "dog",
       label: "chú chó",
-      glyph: "🐕",
       value: 1,
       image: {
         kind: "emoji",
@@ -99,7 +94,6 @@ export const C1_OTO_01_DATASET: SkillDataset = {
     {
       id: "bone",
       label: "khúc xương",
-      glyph: "🦴",
       value: 1,
       image: {
         kind: "emoji",

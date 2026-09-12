@@ -44,7 +44,6 @@ export const C1_CMP_04_DATASET: SkillDataset = {
     {
       id: "qty_more",
       label: "nhiều quả táo",
-      glyph: "🍎",
       value: 5,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_CMP_04_DATASET: SkillDataset = {
     {
       id: "qty_less",
       label: "ít quả táo",
-      glyph: "🍎",
       value: 2,
       image: {
         kind: "emoji",
@@ -132,7 +130,6 @@ const TOPIC_CMP_QUANTITY_DATASET: SkillDataset = {
     {
       id: "many_apples",
       label: "nhiều quả táo",
-      glyph: "🍎",
       image: {
         kind: "emoji",
         ref: "🍎",
@@ -144,7 +141,6 @@ const TOPIC_CMP_QUANTITY_DATASET: SkillDataset = {
     {
       id: "few_apples",
       label: "ít quả táo",
-      glyph: "🍏",
       image: {
         kind: "emoji",
         ref: "🍏",
@@ -156,7 +152,6 @@ const TOPIC_CMP_QUANTITY_DATASET: SkillDataset = {
     {
       id: "many_stars",
       label: "nhiều ngôi sao",
-      glyph: "⭐",
       image: {
         kind: "emoji",
         ref: "⭐",
@@ -168,7 +163,6 @@ const TOPIC_CMP_QUANTITY_DATASET: SkillDataset = {
     {
       id: "few_stars",
       label: "ít ngôi sao",
-      glyph: "🌟",
       image: {
         kind: "emoji",
         ref: "🌟",
@@ -180,7 +174,6 @@ const TOPIC_CMP_QUANTITY_DATASET: SkillDataset = {
     {
       id: "many_candies",
       label: "nhiều viên kẹo",
-      glyph: "🍬",
       image: {
         kind: "emoji",
         ref: "🍬",
@@ -192,7 +185,6 @@ const TOPIC_CMP_QUANTITY_DATASET: SkillDataset = {
     {
       id: "few_candies",
       label: "ít viên kẹo",
-      glyph: "🍭",
       image: {
         kind: "emoji",
         ref: "🍭",

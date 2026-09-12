@@ -44,7 +44,6 @@ export const C1_PROB_04_DATASET: SkillDataset = {
     {
       id: "red_ball_1",
       label: "bóng đỏ một",
-      glyph: "🔴",
       value: 1,
       image: {
         kind: "emoji",
@@ -59,7 +58,6 @@ export const C1_PROB_04_DATASET: SkillDataset = {
     {
       id: "red_ball_2",
       label: "bóng đỏ hai",
-      glyph: "🔴",
       value: 2,
       image: {
         kind: "emoji",
@@ -74,7 +72,6 @@ export const C1_PROB_04_DATASET: SkillDataset = {
     {
       id: "blue_ball_1",
       label: "bóng xanh một",
-      glyph: "🔵",
       value: 1,
       image: {
         kind: "emoji",
@@ -89,7 +86,6 @@ export const C1_PROB_04_DATASET: SkillDataset = {
     {
       id: "blue_ball_2",
       label: "bóng xanh hai",
-      glyph: "🔵",
       value: 2,
       image: {
         kind: "emoji",

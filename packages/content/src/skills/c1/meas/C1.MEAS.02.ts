@@ -44,7 +44,6 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
     {
       id: "dim_height_tree_more",
       label: "cây cổ thụ cao",
-      glyph: "🌲",
       value: 4,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
     {
       id: "dim_height_more",
       label: "hươu cao cổ cao",
-      glyph: "🦒",
       value: 3,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
     {
       id: "dim_height_less",
       label: "chú cừu thấp",
-      glyph: "🐑",
       value: 2,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_MEAS_02_DATASET: SkillDataset = {
     {
       id: "dim_height_flower_less",
       label: "bụi hoa thấp",
-      glyph: "🌼",
       value: 1,
       image: {
         kind: "emoji",

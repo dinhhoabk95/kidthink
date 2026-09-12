@@ -44,7 +44,6 @@ export const C1_CMP_01_DATASET: SkillDataset = {
     {
       id: "size_more",
       label: "quả bóng to",
-      glyph: "⚽",
       value: 2,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_CMP_01_DATASET: SkillDataset = {
     {
       id: "size_less",
       label: "quả bóng nhỏ",
-      glyph: "⚽",
       value: 1,
       image: {
         kind: "emoji",
@@ -132,7 +130,6 @@ const TOPIC_CMP_SIZE_DATASET: SkillDataset = {
     {
       id: "big_elephant",
       label: "con voi to",
-      glyph: "🐘",
       image: {
         kind: "emoji",
         ref: "🐘",
@@ -144,7 +141,6 @@ const TOPIC_CMP_SIZE_DATASET: SkillDataset = {
     {
       id: "small_mouse",
       label: "con chuột nhỏ",
-      glyph: "🐁",
       image: {
         kind: "emoji",
         ref: "🐁",
@@ -156,7 +152,6 @@ const TOPIC_CMP_SIZE_DATASET: SkillDataset = {
     {
       id: "equal_bears",
       label: "hai chú gấu bằng nhau",
-      glyph: "🐻",
       image: {
         kind: "emoji",
         ref: "🐻",
@@ -168,7 +163,6 @@ const TOPIC_CMP_SIZE_DATASET: SkillDataset = {
     {
       id: "big_car",
       label: "ô tô to",
-      glyph: "🚗",
       image: {
         kind: "emoji",
         ref: "🚗",
@@ -180,7 +174,6 @@ const TOPIC_CMP_SIZE_DATASET: SkillDataset = {
     {
       id: "small_bike",
       label: "xe đạp nhỏ",
-      glyph: "🚲",
       image: {
         kind: "emoji",
         ref: "🚲",
@@ -192,7 +185,6 @@ const TOPIC_CMP_SIZE_DATASET: SkillDataset = {
     {
       id: "equal_balls",
       label: "hai quả bóng bằng nhau",
-      glyph: "⚽",
       image: {
         kind: "emoji",
         ref: "⚽",

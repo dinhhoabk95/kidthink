@@ -44,7 +44,6 @@ export const C1_DAT_03_DATASET: SkillDataset = {
     {
       id: "col_1",
       label: "cột vàng thấp nhất",
-      glyph: "🟨",
       value: 1,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_DAT_03_DATASET: SkillDataset = {
     {
       id: "col_2",
       label: "cột đỏ thấp",
-      glyph: "🟥",
       value: 2,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_DAT_03_DATASET: SkillDataset = {
     {
       id: "col_3",
       label: "cột xanh cao",
-      glyph: "🟦",
       value: 4,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_DAT_03_DATASET: SkillDataset = {
     {
       id: "col_4",
       label: "cột xanh cao nhất",
-      glyph: "🟩",
       value: 6,
       image: {
         kind: "emoji",

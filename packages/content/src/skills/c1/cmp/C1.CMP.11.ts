@@ -44,7 +44,6 @@ export const C1_CMP_11_DATASET: SkillDataset = {
     {
       id: "weight_feather_less",
       label: "chiếc lông vũ rất nhẹ",
-      glyph: "🪶",
       value: 1,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_CMP_11_DATASET: SkillDataset = {
     {
       id: "weight_strawberry_less",
       label: "quả dâu tây nhẹ",
-      glyph: "🍓",
       value: 2,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_CMP_11_DATASET: SkillDataset = {
     {
       id: "weight_watermelon_more",
       label: "quả dưa hấu nặng",
-      glyph: "🍉",
       value: 3,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_CMP_11_DATASET: SkillDataset = {
     {
       id: "weight_stone_more",
       label: "hòn đá rất nặng",
-      glyph: "🪨",
       value: 4,
       image: {
         kind: "emoji",

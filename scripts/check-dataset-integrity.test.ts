@@ -19,6 +19,7 @@ import {
   checkAxesBindToItems,
   checkConceptLabelMatchesName,
   checkCrossDatasetItemConsistency,
+  checkGlyphNotEqualImageRef,
   checkOrderingCoverage,
   checkOrderingNotReversed,
   checkPromptPlaceholders,
@@ -375,5 +376,38 @@ describe("cổng tổng", () => {
     });
 
     expect(report.violations).toHaveLength(0);
+  });
+});
+
+describe("BR-SDI-09 — glyph không được bằng image.ref", () => {
+  it("ca âm: báo vi phạm khi glyph trùng image.ref", () => {
+    const ds = dataset({
+      items: [
+        item("apple", {
+          glyph: "🍎",
+          image: { kind: "emoji", ref: "🍎" },
+        }),
+      ],
+    });
+    const violations = checkGlyphNotEqualImageRef(ds);
+    expect(violations).toHaveLength(1);
+    expect(violations[0]?.rule).toBe("BR-SDI-09");
+    expect(violations[0]?.detail).toContain('glyph "🍎" trùng image.ref');
+  });
+
+  it("ca dương: im lặng khi vật chỉ mang image hoặc glyph khác image.ref", () => {
+    const ds = dataset({
+      items: [
+        item("apple", {
+          image: { kind: "emoji", ref: "🍎" },
+        }),
+        item("num1", {
+          glyph: "1",
+          image: { kind: "emoji", ref: "1️⃣" },
+        }),
+      ],
+    });
+    const violations = checkGlyphNotEqualImageRef(ds);
+    expect(violations).toHaveLength(0);
   });
 });

@@ -44,7 +44,6 @@ export const C1_PAT_07_DATASET: SkillDataset = {
     {
       id: "dec_4",
       label: "bốn khối vuông",
-      glyph: "🟪",
       value: 4,
       image: {
         kind: "emoji",
@@ -55,7 +54,6 @@ export const C1_PAT_07_DATASET: SkillDataset = {
     {
       id: "dec_3",
       label: "ba khối vuông",
-      glyph: "🟪",
       value: 3,
       image: {
         kind: "emoji",
@@ -66,7 +64,6 @@ export const C1_PAT_07_DATASET: SkillDataset = {
     {
       id: "dec_2",
       label: "hai khối vuông",
-      glyph: "🟪",
       value: 2,
       image: {
         kind: "emoji",
@@ -77,7 +74,6 @@ export const C1_PAT_07_DATASET: SkillDataset = {
     {
       id: "dec_1",
       label: "một khối vuông",
-      glyph: "🟪",
       value: 1,
       image: {
         kind: "emoji",

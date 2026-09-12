@@ -44,7 +44,6 @@ export const C1_PAT_04_DATASET: SkillDataset = {
     {
       id: "pat_flower",
       label: "bông hoa hồng",
-      glyph: "🌸",
       value: 1,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_PAT_04_DATASET: SkillDataset = {
     {
       id: "pat_leaf",
       label: "chiếc lá xanh",
-      glyph: "🍃",
       value: 2,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_PAT_04_DATASET: SkillDataset = {
     {
       id: "pat_sun",
       label: "mặt trời vàng",
-      glyph: "☀️",
       value: 3,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_PAT_04_DATASET: SkillDataset = {
     {
       id: "pat_star",
       label: "ngôi sao vàng",
-      glyph: "⭐",
       image: {
         kind: "emoji",
         ref: "⭐",

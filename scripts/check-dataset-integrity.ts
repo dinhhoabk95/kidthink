@@ -34,6 +34,7 @@ import {
   checkAxesBindToItems,
   checkConceptLabelMatchesName,
   checkCrossDatasetItemConsistency,
+  checkGlyphNotEqualImageRef,
   checkOrderingCoverage,
   checkOrderingNotReversed,
   checkPromptPlaceholders,
@@ -110,7 +111,8 @@ export function runDatasetIntegrityCheck(options: {
       ...checkOrderingNotReversed(dataset),
       ...checkAxesBindToItems(dataset),
       ...checkAudioPathsResolve(dataset, options.resolvesAudio),
-      ...checkPromptPlaceholders(dataset, options.substitutedPlaceholders)
+      ...checkPromptPlaceholders(dataset, options.substitutedPlaceholders),
+      ...checkGlyphNotEqualImageRef(dataset)
     );
     if (!isTopic) {
       violations.push(

@@ -45,7 +45,6 @@ export const C1_DAT_02_DATASET: SkillDataset = {
     {
       id: "bar_block_2",
       label: "cột hai khối",
-      glyph: "🧱",
       value: 2,
       image: {
         kind: "emoji",
@@ -59,7 +58,6 @@ export const C1_DAT_02_DATASET: SkillDataset = {
     {
       id: "bar_block_3",
       label: "cột ba khối",
-      glyph: "🧱",
       value: 3,
       image: {
         kind: "emoji",
@@ -73,7 +71,6 @@ export const C1_DAT_02_DATASET: SkillDataset = {
     {
       id: "bar_block_4",
       label: "cột bốn khối",
-      glyph: "🧱",
       value: 4,
       image: {
         kind: "emoji",
@@ -87,7 +84,6 @@ export const C1_DAT_02_DATASET: SkillDataset = {
     {
       id: "bar_block_5",
       label: "cột năm khối",
-      glyph: "🧱",
       value: 5,
       image: {
         kind: "emoji",

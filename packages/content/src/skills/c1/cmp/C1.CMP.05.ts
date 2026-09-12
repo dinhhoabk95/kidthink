@@ -44,7 +44,6 @@ export const C1_CMP_05_DATASET: SkillDataset = {
     {
       id: "qty_less",
       label: "ít viên kẹo",
-      glyph: "🍬",
       value: 2,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_CMP_05_DATASET: SkillDataset = {
     {
       id: "qty_more",
       label: "nhiều viên kẹo",
-      glyph: "🍬",
       value: 5,
       image: {
         kind: "emoji",

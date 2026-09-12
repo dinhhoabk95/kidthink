@@ -44,7 +44,6 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
     {
       id: "bal_left_light",
       label: "đĩa cân nhẹ bổng",
-      glyph: "⚖️",
       value: 1,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
     {
       id: "bal_left",
       label: "bên trái cân",
-      glyph: "⚖️",
       value: 2,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
     {
       id: "bal_right",
       label: "bên phải cân",
-      glyph: "⚖️",
       value: 2,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_MEAS_07_DATASET: SkillDataset = {
     {
       id: "bal_right_heavy",
       label: "đĩa cân trĩu nặng",
-      glyph: "⚖️",
       value: 4,
       image: {
         kind: "emoji",

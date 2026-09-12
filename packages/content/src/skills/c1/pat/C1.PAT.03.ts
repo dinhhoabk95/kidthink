@@ -44,7 +44,6 @@ export const C1_PAT_03_DATASET: SkillDataset = {
     {
       id: "pat_heart_2",
       label: "trái tim đỏ hai",
-      glyph: "❤️",
       value: 2,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_PAT_03_DATASET: SkillDataset = {
     {
       id: "pat_diamond",
       label: "kim cương xanh",
-      glyph: "💎",
       value: 3,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_PAT_03_DATASET: SkillDataset = {
     {
       id: "pat_heart_repeat",
       label: "trái tim đỏ lặp lại",
-      glyph: "❤️",
       value: 4,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_PAT_03_DATASET: SkillDataset = {
     {
       id: "pat_heart_1",
       label: "trái tim đỏ một",
-      glyph: "❤️",
       value: 1,
       image: {
         kind: "emoji",

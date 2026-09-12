@@ -44,7 +44,6 @@ export const C1_OTO_02_DATASET: SkillDataset = {
     {
       id: "hen",
       label: "gà mẹ",
-      glyph: "🐔",
       value: 1,
       image: {
         kind: "emoji",
@@ -59,7 +58,6 @@ export const C1_OTO_02_DATASET: SkillDataset = {
     {
       id: "chick_1",
       label: "gà con một",
-      glyph: "🐥",
       value: 1,
       image: {
         kind: "emoji",
@@ -74,7 +72,6 @@ export const C1_OTO_02_DATASET: SkillDataset = {
     {
       id: "chick_2",
       label: "gà con hai",
-      glyph: "🐥",
       value: 1,
       image: {
         kind: "emoji",
@@ -89,7 +86,6 @@ export const C1_OTO_02_DATASET: SkillDataset = {
     {
       id: "chick_3",
       label: "gà con ba",
-      glyph: "🐥",
       value: 1,
       image: {
         kind: "emoji",
@@ -104,7 +100,6 @@ export const C1_OTO_02_DATASET: SkillDataset = {
     {
       id: "duck_mother",
       label: "vịt mẹ",
-      glyph: "🦆",
       value: 1,
       image: {
         kind: "emoji",
@@ -119,7 +114,6 @@ export const C1_OTO_02_DATASET: SkillDataset = {
     {
       id: "duckling",
       label: "vịt con",
-      glyph: "🐤",
       value: 1,
       image: {
         kind: "emoji",

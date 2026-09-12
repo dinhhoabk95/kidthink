@@ -45,7 +45,6 @@ export const C1_OTO_03_DATASET: SkillDataset = {
     {
       id: "apple_real",
       label: "quả táo",
-      glyph: "🍎",
       value: 1,
       image: {
         kind: "emoji",
@@ -56,7 +55,6 @@ export const C1_OTO_03_DATASET: SkillDataset = {
     {
       id: "apple_shadow",
       label: "bóng quả táo",
-      glyph: "⚫",
       value: 1,
       image: {
         kind: "emoji",
@@ -67,7 +65,6 @@ export const C1_OTO_03_DATASET: SkillDataset = {
     {
       id: "banana_real",
       label: "quả chuối",
-      glyph: "🍌",
       value: 1,
       image: {
         kind: "emoji",
@@ -78,7 +75,6 @@ export const C1_OTO_03_DATASET: SkillDataset = {
     {
       id: "banana_shadow",
       label: "bóng quả chuối",
-      glyph: "🌙",
       value: 1,
       image: {
         kind: "emoji",
@@ -89,7 +85,6 @@ export const C1_OTO_03_DATASET: SkillDataset = {
     {
       id: "car_real",
       label: "ô tô",
-      glyph: "🚗",
       value: 1,
       image: {
         kind: "emoji",
@@ -100,7 +95,6 @@ export const C1_OTO_03_DATASET: SkillDataset = {
     {
       id: "car_shadow",
       label: "bóng ô tô",
-      glyph: "▬",
       value: 1,
       image: {
         kind: "emoji",

@@ -44,7 +44,6 @@ export const C1_DAT_04_DATASET: SkillDataset = {
     {
       id: "table_col_apple",
       label: "cột táo đỏ",
-      glyph: "🍎",
       value: 3,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_DAT_04_DATASET: SkillDataset = {
     {
       id: "table_col_banana",
       label: "cột chuối vàng",
-      glyph: "🍌",
       value: 4,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_DAT_04_DATASET: SkillDataset = {
     {
       id: "table_col_a",
       label: "cột số lượng nam",
-      glyph: "👦",
       value: 5,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_DAT_04_DATASET: SkillDataset = {
     {
       id: "table_col_b",
       label: "cột số lượng nữ",
-      glyph: "👧",
       value: 6,
       image: {
         kind: "emoji",

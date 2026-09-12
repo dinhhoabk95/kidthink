@@ -47,7 +47,6 @@ export const C1_MEAS_15_DATASET: SkillDataset = {
     {
       id: "order_size_1",
       label: "quả bóng nhỏ nhất",
-      glyph: "⚽",
       value: 1,
       image: {
         kind: "emoji",
@@ -61,7 +60,6 @@ export const C1_MEAS_15_DATASET: SkillDataset = {
     {
       id: "order_size_2",
       label: "quả bóng nhỏ",
-      glyph: "⚽",
       value: 2,
       image: {
         kind: "emoji",
@@ -75,7 +73,6 @@ export const C1_MEAS_15_DATASET: SkillDataset = {
     {
       id: "order_size_3",
       label: "quả bóng to",
-      glyph: "⚽",
       value: 3,
       image: {
         kind: "emoji",
@@ -89,7 +86,6 @@ export const C1_MEAS_15_DATASET: SkillDataset = {
     {
       id: "order_size_4",
       label: "quả bóng to nhất",
-      glyph: "⚽",
       value: 4,
       image: {
         kind: "emoji",

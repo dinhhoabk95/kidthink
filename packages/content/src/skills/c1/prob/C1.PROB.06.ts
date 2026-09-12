@@ -44,7 +44,6 @@ export const C1_PROB_06_DATASET: SkillDataset = {
     {
       id: "clue_small",
       label: "gợi ý: số nhỏ hơn năm",
-      glyph: "🔍",
       image: {
         kind: "emoji",
         ref: "🔍",
@@ -54,7 +53,6 @@ export const C1_PROB_06_DATASET: SkillDataset = {
     {
       id: "clue_odd",
       label: "gợi ý: số lẻ",
-      glyph: "🔎",
       image: {
         kind: "emoji",
         ref: "🔎",
@@ -64,7 +62,7 @@ export const C1_PROB_06_DATASET: SkillDataset = {
     {
       id: "answer_three",
       label: "số ba",
-      glyph: "3️⃣",
+      glyph: "3",
       value: 3,
       audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
@@ -80,7 +78,7 @@ export const C1_PROB_06_DATASET: SkillDataset = {
     {
       id: "distractor_four",
       label: "số bốn",
-      glyph: "4️⃣",
+      glyph: "4",
       value: 4,
       audio_path: "/audio/voice/common/numbers/4.mp3",
       image: {
@@ -96,7 +94,7 @@ export const C1_PROB_06_DATASET: SkillDataset = {
     {
       id: "distractor_seven",
       label: "số bảy",
-      glyph: "7️⃣",
+      glyph: "7",
       value: 7,
       audio_path: "/audio/voice/common/numbers/7.mp3",
       image: {

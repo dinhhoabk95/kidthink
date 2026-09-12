@@ -44,7 +44,6 @@ export const C1_PROB_01_DATASET: SkillDataset = {
     {
       id: "plan_step_1",
       label: "bước một: đọc đề bài",
-      glyph: "📖",
       value: 1,
       image: {
         kind: "emoji",
@@ -55,7 +54,6 @@ export const C1_PROB_01_DATASET: SkillDataset = {
     {
       id: "plan_step_2",
       label: "bước hai: chọn phép tính",
-      glyph: "🤔",
       value: 2,
       image: {
         kind: "emoji",
@@ -66,7 +64,6 @@ export const C1_PROB_01_DATASET: SkillDataset = {
     {
       id: "plan_step_3",
       label: "bước ba: tính kết quả",
-      glyph: "✍️",
       value: 3,
       image: {
         kind: "emoji",
@@ -77,7 +74,6 @@ export const C1_PROB_01_DATASET: SkillDataset = {
     {
       id: "plan_step_4",
       label: "bước bốn: kiểm tra lại",
-      glyph: "✅",
       value: 4,
       image: {
         kind: "emoji",

@@ -44,7 +44,6 @@ export const C1_CMP_10_DATASET: SkillDataset = {
     {
       id: "weight_more",
       label: "quả dưa hấu nặng",
-      glyph: "🍉",
       value: 3,
       image: {
         kind: "emoji",
@@ -58,7 +57,6 @@ export const C1_CMP_10_DATASET: SkillDataset = {
     {
       id: "weight_less",
       label: "quả dâu tây nhẹ",
-      glyph: "🍓",
       value: 2,
       image: {
         kind: "emoji",
@@ -72,7 +70,6 @@ export const C1_CMP_10_DATASET: SkillDataset = {
     {
       id: "weight_elephant_more",
       label: "con voi rất nặng",
-      glyph: "🐘",
       value: 4,
       image: {
         kind: "emoji",
@@ -86,7 +83,6 @@ export const C1_CMP_10_DATASET: SkillDataset = {
     {
       id: "weight_feather_less",
       label: "chiếc lông vũ rất nhẹ",
-      glyph: "🪶",
       value: 1,
       image: {
         kind: "emoji",
@@ -100,7 +96,6 @@ export const C1_CMP_10_DATASET: SkillDataset = {
     {
       id: "heavy_truck",
       label: "xe tải nặng",
-      glyph: "🚛",
       value: 5,
       image: {
         kind: "emoji",
@@ -114,7 +109,6 @@ export const C1_CMP_10_DATASET: SkillDataset = {
     {
       id: "light_leaf",
       label: "chiếc lá nhẹ",
-      glyph: "🍃",
       value: 1,
       image: {
         kind: "emoji",
@@ -196,7 +190,6 @@ const TOPIC_CMP_MEASURE_SPEED_DATASET: SkillDataset = {
     {
       id: "heavy_truck",
       label: "xe tải nặng",
-      glyph: "🚛",
       image: {
         kind: "emoji",
         ref: "🚛",
@@ -208,7 +201,6 @@ const TOPIC_CMP_MEASURE_SPEED_DATASET: SkillDataset = {
     {
       id: "light_leaf",
       label: "chiếc lá nhẹ",
-      glyph: "🍃",
       image: {
         kind: "emoji",
         ref: "🍃",
@@ -220,7 +212,6 @@ const TOPIC_CMP_MEASURE_SPEED_DATASET: SkillDataset = {
     {
       id: "far_plane",
       label: "máy bay ở xa",
-      glyph: "✈️",
       image: {
         kind: "emoji",
         ref: "✈️",
@@ -232,7 +223,6 @@ const TOPIC_CMP_MEASURE_SPEED_DATASET: SkillDataset = {
     {
       id: "near_flower",
       label: "bông hoa ở gần",
-      glyph: "🌺",
       image: {
         kind: "emoji",
         ref: "🌺",
@@ -244,7 +234,6 @@ const TOPIC_CMP_MEASURE_SPEED_DATASET: SkillDataset = {
     {
       id: "fast_cheetah",
       label: "chú báo chạy nhanh",
-      glyph: "🐆",
       image: {
         kind: "emoji",
         ref: "🐆",
@@ -256,7 +245,6 @@ const TOPIC_CMP_MEASURE_SPEED_DATASET: SkillDataset = {
     {
       id: "slow_turtle",
       label: "chú rùa bò chậm",
-      glyph: "🐢",
       image: {
         kind: "emoji",
         ref: "🐢",

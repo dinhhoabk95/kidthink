@@ -45,7 +45,6 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
     {
       id: "unit_2",
       label: "dài hai gang tay",
-      glyph: "🖐️",
       value: 2,
       image: {
         kind: "emoji",
@@ -59,7 +58,6 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
     {
       id: "unit_3",
       label: "dài ba gang tay",
-      glyph: "🖐️",
       value: 3,
       image: {
         kind: "emoji",
@@ -73,7 +71,6 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
     {
       id: "unit_4",
       label: "dài bốn gang tay",
-      glyph: "🖐️",
       value: 4,
       image: {
         kind: "emoji",
@@ -87,7 +84,6 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
     {
       id: "unit_5",
       label: "dài năm gang tay",
-      glyph: "🖐️",
       value: 5,
       image: {
         kind: "emoji",
