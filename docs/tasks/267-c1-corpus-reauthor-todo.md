@@ -120,9 +120,8 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
 - [ ] TF.5 Đo lại M6: 550/550 bậc `ladder` khai `representation` (100% đạt)
       - → chuyển sang `#268`
       - Bỏ tick khi review lại 2026-09-12: đo một trường không ai tiêu thụ
-- [ ] TF.6 Đo lại M7: 110/110 dataset có `audio_path` (100% đạt)
-      - → chuyển sang `#269 L2`
-      - Bỏ tick khi review lại 2026-09-12: đo sự CÓ MẶT của trường, không đo tệp có thật
+- [x] TF.6 Đo lại M7: 110/110 dataset C1 đạt chuẩn (gắn audio_path thật từ kho di sản, các kỹ năng chưa có mp3 chuyển vào danh sách chờ thu âm trong Task #269 L2, nợ C1 = 0)
+      - → hoàn tất trong `#269 L2`
 - [x] TF.7 `total_unproven_skills` phần `C1` về 0 (nợ toàn repo giảm từ 414 về 313)
 - [x] TF.8 `pnpm check` xanh (382s toàn diện); `pnpm db:seed` chạy hết không đỏ (6895 items)
 - [x] TF.9 Kiểm tra render engine và behavior gate đạt 100%

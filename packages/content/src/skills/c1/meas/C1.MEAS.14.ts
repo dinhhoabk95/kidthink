@@ -46,6 +46,7 @@ export const C1_MEAS_14_DATASET: SkillDataset = {
       label: "đồng xu một nghìn",
       glyph: "🪙",
       value: 1,
+      audio_path: "/audio/voice/d5/money_template/1.mp3",
       image: {
         kind: "emoji",
         ref: "🪙",
@@ -60,6 +61,7 @@ export const C1_MEAS_14_DATASET: SkillDataset = {
       label: "đồng xu hai nghìn",
       glyph: "🪙",
       value: 2,
+      audio_path: "/audio/voice/d5/money_template/2.mp3",
       image: {
         kind: "emoji",
         ref: "🪙",
@@ -74,6 +76,7 @@ export const C1_MEAS_14_DATASET: SkillDataset = {
       label: "đồng xu năm nghìn",
       glyph: "🪙",
       value: 5,
+      audio_path: "/audio/voice/d5/money_template/5.mp3",
       image: {
         kind: "emoji",
         ref: "🪙",
@@ -88,6 +91,7 @@ export const C1_MEAS_14_DATASET: SkillDataset = {
       label: "đồng xu mười nghìn",
       glyph: "🪙",
       value: 10,
+      audio_path: "/audio/voice/d5/money_template/10.mp3",
       image: {
         kind: "emoji",
         ref: "🪙",

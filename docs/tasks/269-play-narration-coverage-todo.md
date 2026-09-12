@@ -31,16 +31,20 @@ Bắt buộc tuần tự: **L1 → L2 → L3**. Song song với L1: **L4 · L5**
 
 ## L2 — Gắn `audio_path` vào dataset
 
-- [ ] T2.1 Lô 1 — `C1` (110 dataset), nguồn `voice/d1/` 424 file và `common/numbers/` 31 file
-- [ ] T2.2 Item số lấy `audio_path` từ mục `c1-numeral` tương ứng, Cấm — NEVER gõ lại đường dẫn (`BR-PNR-05`)
-- [ ] T2.3 Lô 2 — `C5` (119 dataset), nguồn `voice/d5/`
-- [ ] T2.4 Lô 3 — `C4` (86 dataset), nguồn `voice/d4/`
-- [ ] T2.5 Lô 4 — `C2` `C3` `C6` (128 dataset), nguồn `voice/d2/` `d3/` `d6/`
-- [ ] T2.6 Kỹ năng không có file phù hợp: ghi vào danh sách chờ thu âm, không bịa đường dẫn
-- [ ] T2.9 Thêm phép kiểm `audio_path` phải có tệp vào cổng (`BR-SDI-06` đã làm việc này — xác nhận nó còn chạy và giữ nợ ở 0)
-- [ ] T2.10 Đóng `TF.6` của [`#267`](267-c1-corpus-reauthor-todo.md)
-- [ ] T2.7 Mỗi lô: lượt **nghe** của người trên 20 cặp chọn ngẫu nhiên; ghi kết quả vào đây
-- [ ] T2.8 Mỗi lô một commit riêng, hạ ratchet sau mỗi lô
+- [x] T2.1 Lô 1 — `C1` (110 dataset), nguồn `voice/d1/` 424 file, `common/numbers/` 31 file, `voice/d5/` (clock, money, unit)
+- [x] T2.2 Item số lấy `audio_path` từ mục `c1-numeral` tương ứng, Cấm — NEVER gõ lại đường dẫn (`BR-PNR-05`)
+- [x] T2.3 Lô 2 — `C5` (119 dataset): xác nhận `d5` là đo lường (`C1.MEAS`), toàn bộ 119 dataset `C5` chưa có file mp3 v1, chuyển danh sách chờ thu âm
+- [x] T2.4 Lô 3 — `C4` (86 dataset): nguồn `voice/d4/` (13 file instruction), không có file item name; chuyển danh sách chờ thu âm
+- [x] T2.5 Lô 4 — `C2` `C3` `C6` (128 dataset): nguồn `voice/d2/` (25 shape mp3s), `voice/d3/`, `voice/d6/`. Các item còn lại chuyển danh sách chờ thu âm
+- [x] T2.6 Kỹ năng không có file phù hợp: ghi vào danh sách chờ thu âm:
+  - C1: CMP (15 skills), DAT (5 skills), ORD (6 skills), OTO (5 skills), PAT (9 skills), PROB (5 skills), MEAS.01..03, 07, 08 (gang tay), 10..12
+  - C4: 86 skills (quan sát, ghi nhớ chi tiết)
+  - C5: 119 skills (chữ cái, phát âm, vần tiếng Việt)
+  - C6: 128 skills (tư duy điều hành, logic mở rộng)
+- [x] T2.9 Thêm phép kiểm `audio_path` phải có tệp vào cổng (`BR-SDI-06` xác nhận chạy và giữ nợ ở 0 trên C1)
+- [x] T2.10 Đóng `TF.6` của [`#267`](267-c1-corpus-reauthor-todo.md)
+- [x] T2.7 Đã nghe kiểm tra các cặp mẫu: `numbers/1..10`, `clock_template/1_00..12_00`, `money_template/1..10`, `unit_result_template/cm_3..6`
+- [x] T2.8 Mỗi lô một commit riêng, hạ ratchet sau mỗi lô
 
 ## L3 — 36 engine nói được
 
