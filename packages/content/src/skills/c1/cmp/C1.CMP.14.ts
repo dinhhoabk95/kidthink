@@ -1,4 +1,5 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+import { findMeasureDimension } from "#src/inventories/index";
 
 export const C1_CMP_14_IDENTITY: SkillIdentity = {
   code: "C1.CMP.14",
@@ -100,7 +101,7 @@ export const C1_CMP_14_DATASET: SkillDataset = {
       source_id: "speed_rocket_more",
       target_id: "speed_turtle_less",
       metadata: {
-        dimension: "speed",
+        dimension: findMeasureDimension("dim_speed")?.unit_kind ?? "speed",
       },
     },
     {
@@ -108,7 +109,7 @@ export const C1_CMP_14_DATASET: SkillDataset = {
       source_id: "speed_plane_more",
       target_id: "speed_bicycle_less",
       metadata: {
-        dimension: "speed",
+        dimension: findMeasureDimension("dim_speed")?.unit_kind ?? "speed",
       },
     },
   ],

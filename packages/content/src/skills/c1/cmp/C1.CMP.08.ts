@@ -1,4 +1,5 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+import { getMeasureDimension } from "#src/inventories/index";
 
 export const C1_CMP_08_IDENTITY: SkillIdentity = {
   code: "C1.CMP.08",
@@ -74,7 +75,7 @@ export const C1_CMP_08_DATASET: SkillDataset = {
       source_id: "height_more",
       target_id: "height_less",
       metadata: {
-        dimension: "height",
+        dimension: getMeasureDimension("dim_height").unit_kind,
       },
     },
   ],
