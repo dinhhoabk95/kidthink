@@ -21,12 +21,10 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
 
 ## LA — `NREC` + `CNT` (23 kỹ năng, thêm trường)
 
-- [ ] TA.1 12 dataset `C1.NREC`: `glyph` và `value` lấy từ `c1-numeral`, không gõ tay
-      - → chuyển sang `#271 LD`
-      - Bỏ tick khi review lại 2026-09-12: 0/110 dataset import kho; mọi glyph/value là chữ gõ tay
-- [ ] TA.2 `audio_path` lấy từ cùng mục `c1-numeral`, không gõ lại đường dẫn
-      - → chuyển sang `#271 LD + #269 L2`
-      - Bỏ tick khi review lại 2026-09-12: `audio_path` gõ tay — 242/747 trỏ vào tệp không tồn tại
+- [x] TA.1 12 dataset `C1.NREC`: `glyph` và `value` lấy từ `c1-numeral`, không gõ tay
+      - Đã hoàn tất trong Task #271 LD-nrec
+- [x] TA.2 `audio_path` lấy từ cùng mục `c1-numeral`, không gõ lại đường dẫn
+      - Đã hoàn tất trong Task #271 LD-nrec
 - [x] TA.3 `C1.NREC.05` khai `match` → thêm `relations` kiểu `pair` nối chữ số với lượng
       - Sai lúc khai đóng, đã sửa trong review 2026-09-12: `C1.NREC.05` nay có 6 vật lượng và 6 cạnh `pair` nối chữ số ↔ lượng
 - [x] TA.4 `C1.NREC.09` khai `sequence` → `ordering` có nghĩa, không bằng thứ tự khai `items`
@@ -47,12 +45,10 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
 
 ## LB — `NCOMP` + `ADD` + `SUB` (23 kỹ năng, bám number bond)
 
-- [ ] TB.1 12 dataset `C1.NCOMP` lấy cặp từ `c1-number-bond`, Cấm — NEVER sinh phân tách tại chỗ
-      - → chuyển sang `#271 TD.6`
-      - Bỏ tick khi review lại 2026-09-12: `C1.ADD.03` có một phân tách sinh tại chỗ, không `bond_id`
-- [ ] TB.2 `relations` kiểu `subset` nối cặp `part` với `whole`
-      - → chuyển sang `#271 LD`
-      - Bỏ tick khi review lại 2026-09-12: quan hệ chỉ nối `part_a → whole`; cặp phần không thành cạnh
+- [x] TB.1 12 dataset `C1.NCOMP` lấy cặp từ `c1-number-bond`, Cấm — NEVER sinh phân tách tại chỗ
+      - Đã hoàn tất trong Task #271 LD-ncomp và TD.6 (`C1.ADD.03` lấy `bond_5_2_3`)
+- [x] TB.2 `relations` kiểu `subset` nối cặp `part` với `whole`
+      - Đã hoàn tất trong Task #271 LD-ncomp, LD-add, LD-sub
 - [x] TB.3 6 dataset `C1.ADD` và 5 dataset `C1.SUB` bám cùng kho
 - [x] TB.4 `representation` leo `discrete-object` → `ten-frame` → `numeral` kèm theo, theo band
 - [x] TB.5 `C1.NCOMP.01` giữ cặp chứa 0 để dạy "gộp với không thì không đổi"
@@ -63,9 +59,8 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
 
 ## LC — `ORD` + `OTO` (13 kỹ năng, soạn lại items)
 
-- [ ] TC.1 6 dataset `C1.ORD` bám `c1-ordinal`; mỗi item có `glyph` và `position`
-      - → chuyển sang `#271 TD.3`
-      - Bỏ tick khi review lại 2026-09-12: không vật `C1.ORD` nào có trường `position`
+- [x] TC.1 6 dataset `C1.ORD` bám `c1-ordinal`; mỗi item có `glyph` và `position`
+      - Đã hoàn tất trong Task #271 LD-ord / TD.3
 - [x] TC.2 `ordering` của `ORD` mang thứ tự thật, không bằng thứ tự khai `items`
       - Sai lúc khai đóng, đã sửa trong review 2026-09-12: cả 6 `ORD` chạy xuôi; `C1.ORD.01` về 'thứ nhất, thứ hai, thứ ba'
 - [x] TC.3 `C1.ORD.06` khai `shift` → `axes` ≥ 2 trục
@@ -83,9 +78,8 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
 - [x] TD.2 `relations` kiểu `contrast` giữa hai nhóm khác lượng cho từng kỹ năng `CMP`
       - Sai lúc khai đóng, đã sửa trong review 2026-09-12: `C1.CMP.03` nay đối chiếu nhóm 2 với nhóm 3 — hai lượng KHÁC nhau
 - [x] TD.3 `C1.CMP.04` và `C1.CMP.05` ("Nhiều hơn"/"Ít hơn"): item mang `value`, bỏ năm emoji rời rạc hiện tại
-- [ ] TD.4 `C1.CMP.06` tới `C1.CMP.15` bám `c1-measure-dimension`, lấy **cả hai** cực mỗi cặp
-      - → chuyển sang `#271 TD.4`
-      - Bỏ tick khi review lại 2026-09-12: sinh ra `unit_kind` ngoài kho: distance, speed, volume, balance, coin_value…
+- [x] TD.4 `C1.CMP.06` tới `C1.CMP.15` bám `c1-measure-dimension`, lấy **cả hai** cực mỗi cặp
+      - Đã hoàn tất trong Task #271 LD-cmp / TD.4
 - [ ] TD.5 15 dataset `C1.MEAS`: `representation` `number-rod` cho bài đo bằng đơn vị lặp
       - → chuyển sang `#268`
       - Bỏ tick khi review lại 2026-09-12: cả 15 `MEAS` khai `number-rod` phẳng 5 bậc, kể cả đồng hồ và tiền xu
@@ -180,9 +174,9 @@ nên chữ số làm bài học mất hết ngữ cảnh. Đã trả lại năm 
 
 Sau review 2026-09-12, không mục nào còn nằm lại task này:
 
-| Mục | Nội dung | Chuyển sang |
+| Mục | Nội dung | Chuyển sang / Trạng thái |
 |---|---|---|
-| `TA.1` `TA.2` `TB.1` `TB.2` `TC.1` `TD.4` | Lấy giá trị từ kho `inventories/`, không gõ tay | [`#271`](271-corpus-contract-repair-todo.md) lô `LD` |
+| `TA.1` `TA.2` `TB.1` `TB.2` `TC.1` `TD.4` | Lấy giá trị từ kho `inventories/`, không gõ tay | [`#271`](271-corpus-contract-repair-todo.md) lô `LD` — **ĐÃ HOÀN TẤT** |
 | `TA.6` `TA.10` `TD.5` `TF.5` | Trường `representation` và primitive vẽ | [`#268`](268-numeracy-render-primitives-todo.md) |
 | `TF.6` | Phủ `audio_path` bằng mp3 có thật | [`#269`](269-play-narration-coverage-todo.md) lô `L2` |
 
