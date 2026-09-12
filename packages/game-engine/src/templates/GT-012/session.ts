@@ -12,6 +12,7 @@ import type { Slot } from "#src/layout/types";
 import {
   drawClocheScene,
   drawPromptText,
+  drawQuantityRepresentation,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -297,13 +298,20 @@ export class FlashRecallSession extends TemplateGameSession<
     if (this.timer.isVisible()) {
       drawSubPromptText(ctx, rs, "Nhìn nhanh!");
       drawClocheScene(ctx, plateSlot, true);
-      this.content.flash_items.forEach((item, i) => {
-        const slot = this.slots[i];
-        if (!slot) {
-          return;
-        }
-        drawSlotItem(ctx, rs, slot, { id: item.item_id, asset: item.asset });
-      });
+      if (this.content.arrangement === "dice") {
+        drawQuantityRepresentation(ctx, rs, plateSlot, {
+          kind: "dot-pattern",
+          count: this.content.flash_items.length,
+        });
+      } else {
+        this.content.flash_items.forEach((item, i) => {
+          const slot = this.slots[i];
+          if (!slot) {
+            return;
+          }
+          drawSlotItem(ctx, rs, slot, { id: item.item_id, asset: item.asset });
+        });
+      }
       this.drawRenderFeedback(rs, ctx);
       return;
     }

@@ -94,6 +94,10 @@ PID_API_SURFACE=$!
 pnpm check:logic-space &
 PID_LOGIC_SPACE=$!
 
+# Cổng bậc thang hex thô tầng render — Task #268 (L5).
+pnpm check:render-tokens &
+PID_RENDER_TOKENS=$!
+
 # Cổng bậc thang ô cần chỉ — Task #260 (T9). Mặc định của
 # `getHintTargetIndex()` là null, nên template quên cài KHÔNG làm test nào đỏ,
 # nó chỉ âm thầm không bao giờ chỉ chỗ cho trẻ.
@@ -170,6 +174,11 @@ fi
 
 if ! wait $PID_LOGIC_SPACE; then
   echo "✗ check:logic-space ratchet failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_RENDER_TOKENS; then
+  echo "✗ check:render-tokens ratchet failed" >&2
   LINT_OK=false
 fi
 

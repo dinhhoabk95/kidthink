@@ -57,6 +57,7 @@ const PRIMITIVE_MODULES: readonly string[] = [
   "systems/render-system.ts",
   "render/shared-render.ts",
   "render/shared-render-shapes.ts",
+  "render/numeracy-primitives.ts",
 ];
 
 function checkSessionDrawLines(

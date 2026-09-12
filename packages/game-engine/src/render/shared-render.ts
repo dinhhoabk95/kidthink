@@ -7,6 +7,17 @@ import {
   setCachedGradient,
   setContextGeneration,
 } from "./cache.js";
+import {
+  drawPlaceholderBox,
+  drawQuantityRepresentation,
+} from "./numeracy-primitives.js";
+import { canvasFontPx, type LogicSpace } from "./type-scale.js";
+import type {
+  ItemVisualState,
+  RenderAsset,
+  RenderItem,
+  SceneBox,
+} from "./types.js";
 
 /**
  * Nguyên thuỷ vẽ dùng chung cho `render()` của mọi engine.
@@ -19,42 +30,9 @@ import {
  * Hàm ở đây chỉ nhận `Slot`, ❌ NEVER tự chế toạ độ cho item.
  */
 
-export type ItemVisualState =
-  | "idle"
-  | "touching"
-  | "selected"
-  | "correct"
-  | "wrong"
-  | "locked";
-
-/** Asset như contract khai — `emoji` mang ký tự UTF-8 thật, `image` mang đường dẫn, `text` mang chữ hiển thị. */
-export type RenderAsset =
-  | { readonly kind: "emoji"; readonly ref: string }
-  | { readonly kind: "image"; readonly path: string }
-  | { readonly kind: "text"; readonly text: string };
-
-/** Một vật thể vẽ được, đã tách khỏi hình dạng `content_pack` của từng engine. */
-export interface RenderItem {
-  readonly id: string;
-  readonly asset?: RenderAsset | null;
-  /** Nhãn chữ vẽ dưới vật thể — số đếm, tên nhóm, giá trị phương án. */
-  readonly label?: string;
-  /** Chữ vẽ THAY cho asset khi engine không có asset (ví dụ ô số của GT-010). */
-  readonly text?: string;
-  readonly state?: ItemVisualState;
-}
-
-export interface SceneBox {
-  readonly x: number;
-  readonly y: number;
-  readonly w: number;
-  readonly h: number;
-}
-
-const PROMPT_FONT_PX = 24;
 const PROMPT_TOP_RATIO = 0.045;
 const LABEL_FONT_RATIO = 0.16;
-const LABEL_MIN_FONT_PX = 11;
+const LABEL_MIN_FONT_PX = 16;
 const GLYPH_FILL_RATIO = 0.52;
 
 export function getColorsForState(state: ItemVisualState): {
@@ -988,6 +966,38 @@ export function drawTargetHoverAura(
   ctx.restore();
 }
 
+/**
+ * Ngắt dòng prompt văn bản tự động vừa với bề rộng tối đa của card (BR-ERC-15).
+ */
+export function wrapPromptText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxLineWidth: number
+): readonly string[] {
+  if (!text) {
+    return [];
+  }
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let currentLine = "";
+
+  for (const word of words) {
+    const testLine = currentLine ? `${currentLine} ${word}` : word;
+    const width = ctx.measureText(testLine).width;
+    if (width <= maxLineWidth || !currentLine) {
+      currentLine = testLine;
+    } else {
+      lines.push(currentLine);
+      currentLine = word;
+    }
+  }
+  if (currentLine) {
+    lines.push(currentLine);
+  }
+  return lines;
+}
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: adaptive multi-line prompt renderer
 export function drawPromptText(
   ctx: CanvasRenderingContext2D,
   rsOrPrompt: RenderSystem | string,
@@ -1003,14 +1013,45 @@ export function drawPromptText(
     return;
   }
 
+  const space: LogicSpace = {
+    w: width,
+    h: height,
+  };
+  const fontPx = canvasFontPx(space, "prompt");
+  const fontStr = `bold ${fontPx}px ${designTokens.fonts.sans}`;
+
   ctx.save();
-  ctx.font = `bold ${PROMPT_FONT_PX}px ${designTokens.fonts.sans}`;
-  const textMetrics = ctx.measureText(prompt);
-  const cardW = Math.max(360, Math.min(860, textMetrics.width + 100));
-  const cardH = 54;
+  ctx.font = fontStr;
+
+  const maxCardW = Math.min(860, width - 40);
+  const maxContentW = maxCardW - 90;
+
+  const singleLineWidth = ctx.measureText(prompt).width;
+  let lines: readonly string[];
+  let contentW: number;
+
+  if (singleLineWidth <= maxContentW) {
+    lines = [prompt];
+    contentW = singleLineWidth;
+  } else {
+    lines = wrapPromptText(ctx, prompt, maxContentW);
+    let maxW = 0;
+    for (const line of lines) {
+      const w = ctx.measureText(line).width;
+      if (w > maxW) {
+        maxW = w;
+      }
+    }
+    contentW = maxW;
+  }
+
+  const cardW = Math.max(360, Math.min(maxCardW, contentW + 90));
+  const lineHeight = Math.round(fontPx * 1.35);
+  const lineCount = Math.max(1, lines.length);
+  const cardH = Math.max(54, 20 + lineCount * lineHeight);
   const cardX = (width - cardW) / 2;
   const cardY = height * PROMPT_TOP_RATIO;
-  const radius = 27;
+  const radius = Math.min(27, cardH / 2);
 
   // Ambient card shadow
   ctx.save();
@@ -1035,7 +1076,7 @@ export function drawPromptText(
   // Honey Amber Speaker Icon Badge at left
   const badgeRadius = 18;
   const badgeX = cardX + 28;
-  const badgeY = cardY + cardH / 2;
+  const badgeY = lineCount > 1 ? cardY + 27 : cardY + cardH / 2;
   ctx.fillStyle = designTokens.colors.montessori.amber;
   ctx.beginPath();
   ctx.arc(badgeX, badgeY, badgeRadius, 0, Math.PI * 2);
@@ -1048,12 +1089,21 @@ export function drawPromptText(
   ctx.textBaseline = "middle";
   ctx.fillText("🔊", badgeX, badgeY);
 
-  // Prompt text
+  // Prompt text (cùng cỡ font với khi đo, BR-ERC-15)
   ctx.fillStyle = designTokens.colors.surface[900];
-  ctx.font = `bold 22px ${designTokens.fonts.sans}`;
+  ctx.font = fontStr;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(prompt, cardX + cardW / 2 + 14, cardY + cardH / 2);
+
+  const textCenterX = cardX + 54 + (cardW - 54) / 2;
+  const startY = cardY + (cardH - (lineCount - 1) * lineHeight) / 2;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line) {
+      ctx.fillText(line, textCenterX, startY + i * lineHeight);
+    }
+  }
 
   ctx.restore();
 }
@@ -1198,11 +1248,16 @@ export function drawSubPromptText(
   if (!text) {
     return;
   }
+  const space: LogicSpace = {
+    w: rs.LOGIC_WIDTH,
+    h: rs.LOGIC_HEIGHT,
+  };
+  const fontPx = canvasFontPx(space, "subPrompt");
   ctx.save();
-  ctx.font = `16px ${designTokens.fonts.sans}`;
+  ctx.font = `${fontPx}px ${designTokens.fonts.sans}`;
   const metrics = ctx.measureText(text);
   const pillW = Math.max(160, metrics.width + 36);
-  const pillH = 32;
+  const pillH = Math.max(32, fontPx + 14);
   const pillX = (rs.LOGIC_WIDTH - pillW) / 2;
   const pillY = rs.LOGIC_HEIGHT * PROMPT_TOP_RATIO + 56;
 
@@ -1219,21 +1274,6 @@ export function drawSubPromptText(
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(text, rs.LOGIC_WIDTH / 2, pillY + pillH / 2);
-  ctx.restore();
-}
-
-export function drawPlaceholderBox(
-  ctx: CanvasRenderingContext2D,
-  slot: Slot
-): void {
-  ctx.save();
-  ctx.fillStyle = designTokens.colors.surface[200];
-  ctx.strokeStyle = designTokens.colors.surface[400];
-  ctx.lineWidth = 2;
-  const w = slot.w / 2;
-  const h = slot.h / 2;
-  ctx.fillRect(slot.x - w / 2, slot.y - h / 2, w, h);
-  ctx.strokeRect(slot.x - w / 2, slot.y - h / 2, w, h);
   ctx.restore();
 }
 
@@ -1358,7 +1398,9 @@ export function drawSlotItem(
 
   rs.drawClayBody(ctx, slot.x, slot.y, radius, fill, border, shape);
 
-  if (item.text !== undefined) {
+  if (item.representation) {
+    drawQuantityRepresentation(ctx, rs, slot, item.representation);
+  } else if (item.text !== undefined) {
     drawTextInSlot(ctx, item.text, slot);
   } else if (!drawAssetInSlot(ctx, item.asset, slot)) {
     drawPlaceholderBox(ctx, slot);
@@ -1498,15 +1540,18 @@ export function drawCounterBadge(
   x: number,
   y: number,
   current: number,
-  total: number
+  total: number,
+  space?: LogicSpace
 ): void {
+  const fontPx = space ? canvasFontPx(space, "badge") : 16;
+  const badgeRadius = Math.max(18, Math.round(fontPx * 1.15));
   ctx.save();
   ctx.fillStyle = designTokens.colors.brand[600];
   ctx.beginPath();
-  ctx.arc(x, y, 18, 0, Math.PI * 2);
+  ctx.arc(x, y, badgeRadius, 0, Math.PI * 2);
   ctx.fill();
   ctx.fillStyle = designTokens.colors.surface[0];
-  ctx.font = `14px ${designTokens.fonts.sans}`;
+  ctx.font = `bold ${fontPx}px ${designTokens.fonts.sans}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(`${current}/${total}`, x, y);
@@ -1520,7 +1565,11 @@ export function drawProgressBadge(
   current: number,
   total: number
 ): void {
-  drawCounterBadge(ctx, rs.LOGIC_WIDTH - 44, 40, current, total);
+  const space: LogicSpace = {
+    w: rs.LOGIC_WIDTH,
+    h: rs.LOGIC_HEIGHT,
+  };
+  drawCounterBadge(ctx, rs.LOGIC_WIDTH - 44, 40, current, total, space);
 }
 
 export function drawDividerLine(
@@ -2027,7 +2076,7 @@ function drawFlashcardNumberContent(
 
 export function drawFlashcard(
   ctx: CanvasRenderingContext2D,
-  _rs: RenderSystem,
+  rs: RenderSystem,
   slot: Slot,
   asset: {
     asset_id: string;
@@ -2044,8 +2093,14 @@ export function drawFlashcard(
   },
   displayLabel?: string
 ): void {
-  const cardW = 350;
-  const cardH = 320;
+  const cardW = Math.max(
+    280,
+    Math.min(slot.w > 0 ? slot.w : 350, rs.LOGIC_WIDTH * 0.42)
+  );
+  const cardH = Math.max(
+    260,
+    Math.min(slot.h > 0 ? slot.h : 320, rs.LOGIC_HEIGHT * 0.62)
+  );
   const x = slot.x;
   const y = slot.y;
   const left = x - cardW / 2;

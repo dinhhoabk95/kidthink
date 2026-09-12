@@ -378,7 +378,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  min-height: 48px;
+  min-height: 64px;
   padding: 0.75rem 1.5rem;
   border-radius: 1rem;
   font-family: var(--font-heading, sans-serif);

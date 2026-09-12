@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  TOUCH_FLOORS,
   validateKidColorToken,
   validateKidFeedback,
   validateKidGesture,
@@ -109,5 +110,14 @@ describe("Task 5: 8 Kid Surface Technical Constraints (accessibility.md §7.2, D
     expect(() => validateKidColorToken("danger")).toThrow(ERR_DSC_07);
     expect(() => validateKidColorToken("danger-500")).toThrow(ERR_DSC_07);
     expect(() => validateKidColorToken("#ef4444")).toThrow(ERR_DSC_07);
+  });
+
+  it("9. BR-DSC-28: button touch target on kid surface must meet 64px floor (T6.2)", () => {
+    const kidButtonHeight = 64;
+    expect(validateTouchTargetSize(kidButtonHeight)).toBe(true);
+    expect(kidButtonHeight).toBeGreaterThanOrEqual(TOUCH_FLOORS.kidMin);
+
+    // Negative test: button < 64px throws error
+    expect(() => validateTouchTargetSize(48)).toThrow(ERR_A11_04);
   });
 });

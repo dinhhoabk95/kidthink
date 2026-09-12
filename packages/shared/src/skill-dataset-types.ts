@@ -5,6 +5,10 @@
  * Invariant: Strict TypeScript — NO `any`, NO `unknown`.
  */
 
+import type { QuantityRepKind } from "../../content/src/inventories/c1-quantity-rep.js";
+
+export type { QuantityRepKind } from "../../content/src/inventories/c1-quantity-rep.js";
+
 import type {
   SkillProgressionTier,
   ThinkingProcess,
@@ -63,6 +67,7 @@ export interface DifficultyRung {
   readonly rung: number;
   readonly dimension: string;
   readonly description: string;
+  readonly representation?: QuantityRepKind | "numeral";
 }
 
 export interface SkillPhrasing {

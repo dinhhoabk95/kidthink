@@ -15,6 +15,7 @@ import type {
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import {
+  drawHeaderRepresentation,
   drawProgressBadge,
   drawPromptText,
   drawSceneBackground,
@@ -302,6 +303,20 @@ export class GT028Session extends TemplateGameSession<
 
     const subText = `Bước nhảy: +${this.content.step}  |  Đã đếm: ${this.getCurrentCount()} / Mục tiêu: ${this.content.target_total}`;
     drawSubPromptText(ctx, rs, subText);
+
+    const currentCount = this.getCurrentCount();
+    if (
+      this.content.representation === "tally" ||
+      this.content.representation === "rekenrek"
+    ) {
+      drawHeaderRepresentation(
+        ctx,
+        rs,
+        this.content.representation,
+        currentCount
+      );
+    }
+
     drawWoodenTokenDock(ctx, rs);
 
     this.content.items.forEach((item, i) => {

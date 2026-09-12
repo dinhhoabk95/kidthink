@@ -12,6 +12,7 @@ import {
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
+  drawTrackNumberLine,
   drawTrainRailway,
   type ItemVisualState,
   sceneBox,
@@ -291,16 +292,26 @@ export class GT006Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
-    drawTrainRailway(ctx, sceneBox(rs));
-    const firstSlot = this.slots[0];
-    if (firstSlot) {
-      drawLocomotive(
+    if (this.content.representation === "number-line") {
+      drawTrackNumberLine(
         ctx,
-        Math.max(80, firstSlot.x - firstSlot.w * 1.5),
-        firstSlot.y,
-        90,
-        70
+        rs,
+        1,
+        this.content.sequence.length,
+        this.stagedIndex === null ? undefined : this.stagedIndex + 1
       );
+    } else {
+      drawTrainRailway(ctx, sceneBox(rs));
+      const firstSlot = this.slots[0];
+      if (firstSlot) {
+        drawLocomotive(
+          ctx,
+          Math.max(80, firstSlot.x - firstSlot.w * 1.5),
+          firstSlot.y,
+          90,
+          70
+        );
+      }
     }
     const order = this.mechanic.getCurrentSequence();
     const byId = new Map(this.content.sequence.map((s) => [s.step_id, s]));

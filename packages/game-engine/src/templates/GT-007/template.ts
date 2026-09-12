@@ -33,6 +33,10 @@ export const GT007ContentSchema = z.object({
     )
     .min(2)
     .max(6),
+  layout: z.enum(["number-bond-tree", "ten-frame-split"]).optional(),
+  representation: z
+    .enum(["ten-frame", "numeral", "discrete-object"])
+    .optional(),
 });
 
 export const GT007DifficultySchema = z.object({

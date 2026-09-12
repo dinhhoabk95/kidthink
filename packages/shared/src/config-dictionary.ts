@@ -38,6 +38,14 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Số thứ tự tiến trình",
     help: "Thứ tự của bài làm quen trong chuỗi phân đoạn học tập.",
   },
+  representation: {
+    label: "Dạng biểu diễn lượng",
+    help: "Lối biểu diễn lượng chuẩn (ten-frame, dot-pattern, number-line, tally, rekenrek, number-rod, numeral...).",
+  },
+  layout: {
+    label: "Bố cục hiển thị",
+    help: "Bố cục sắp đặt các phần tử trong màn chơi.",
+  },
 
   // Item / Asset / Options / Common IDs
   id: {

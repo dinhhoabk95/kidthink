@@ -16,6 +16,7 @@ import type {
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import {
+  drawNumberRodAcrossSlots,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
@@ -461,11 +462,46 @@ export class GT030Session extends TemplateGameSession<
     );
   }
 
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: measurement strip unit & number-rod renderer
   private renderStripUnits(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem
   ): void {
     const targetLength = this.content.object.length_in_units;
+
+    const isRod = this.content.representation === "number-rod";
+    if (isRod) {
+      if (this.placedUnitsCount > 0) {
+        const firstSlot = this.slots[1];
+        const lastPlacedSlot = this.slots[this.placedUnitsCount];
+        if (firstSlot && lastPlacedSlot) {
+          drawNumberRodAcrossSlots(
+            ctx,
+            firstSlot,
+            lastPlacedSlot,
+            this.placedUnitsCount,
+            targetLength
+          );
+        }
+      }
+      for (let i = this.placedUnitsCount; i < targetLength; i++) {
+        const slot = this.slots[1 + i];
+        if (slot) {
+          drawSlotItem(
+            ctx,
+            rs,
+            slot,
+            {
+              id: `empty_slot_${i + 1}`,
+              text: "?",
+              state: "idle",
+            },
+            "square"
+          );
+        }
+      }
+      return;
+    }
 
     for (let i = 0; i < targetLength; i++) {
       const slot = this.slots[1 + i];

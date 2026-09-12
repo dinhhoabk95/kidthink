@@ -21,13 +21,8 @@ import {
   PRIMITIVE_GRADIENTS,
   setCachedGradient,
 } from "./cache.js";
-import {
-  drawSlotItem,
-  type ItemVisualState,
-  type RenderAsset,
-  resolveEmojiGlyph,
-  type SceneBox,
-} from "./shared-render.js";
+import { drawSlotItem, resolveEmojiGlyph } from "./shared-render.js";
+import type { ItemVisualState, RenderAsset, SceneBox } from "./types.js";
 
 /**
  * Bàn chơi riêng của từng engine — mê cung, cân, đồng hồ, khối lập phương,
@@ -870,78 +865,6 @@ export function drawClocheScene(
     ctx.stroke();
     ctx.restore();
   }
-}
-
-// ── Khung 10 Montessori Ten-Frame (GT-007) ───────────────────────────
-export function drawTenFrameBoard(
-  ctx: CanvasRenderingContext2D,
-  box: SceneBox
-): readonly Slot[] {
-  const slots: Slot[] = [];
-  const rows = 2;
-  const cols = 5;
-  const padX = box.w * 0.06;
-  const padY = box.h * 0.12;
-  const cellW = (box.w - padX * 2) / cols;
-  const cellH = (box.h - padY * 2) / rows;
-  const slotR = Math.min(cellW, cellH) * 0.38;
-
-  ctx.save();
-  // Khay gỗ sồi bao quanh
-  ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.16)";
-  ctx.shadowBlur = 12;
-  ctx.shadowOffsetY = 6;
-  ctx.fillStyle = designTokens.colors.surface[100];
-  ctx.beginPath();
-  ctx.roundRect(box.x, box.y, box.w, box.h, 24);
-  ctx.fill();
-  ctx.restore();
-
-  ctx.strokeStyle = designTokens.colors.montessori.woodBevel;
-  ctx.lineWidth = 4;
-  ctx.stroke();
-
-  // 10 ô lõm tròn
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const cx = box.x + padX + c * cellW + cellW / 2;
-      const cy = box.y + padY + r * cellH + cellH / 2;
-      const index = r * cols + c;
-
-      // Hốc tròn lõm
-      ctx.fillStyle = "#ebd9be";
-      ctx.strokeStyle = "rgba(130, 118, 96, 0.4)";
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.arc(cx, cy, slotR, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-
-      slots.push({
-        index,
-        x: cx,
-        y: cy,
-        w: slotR * 2,
-        h: slotR * 2,
-        hitW: slotR * 2,
-        hitH: slotR * 2,
-        page: 0,
-        role: "target",
-      });
-    }
-  }
-
-  // Đường phân cách giữa cột 5
-  ctx.strokeStyle = designTokens.colors.montessori.woodBorder;
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(box.x + padX, box.y + box.h / 2);
-  ctx.lineTo(box.x + box.w - padX, box.y + box.h / 2);
-  ctx.stroke();
-
-  ctx.restore();
-  return slots;
 }
 
 // ── Khay thả hình học Montessori (GT-008) ────────────────────────────

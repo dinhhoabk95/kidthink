@@ -13,6 +13,7 @@ import {
   drawEmptyTargetSlot,
   drawMatchLine,
   drawPromptText,
+  drawQuantityRepresentation,
   drawSceneBackground,
   drawSlotItem,
   type ItemVisualState,
@@ -124,7 +125,12 @@ export class GT007Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: "3-4" | "4-5" | "5-6"): readonly Slot[] {
-    const layoutFn = resolveLayout("number-bond-tree");
+    const layoutKey =
+      this.content.layout === "ten-frame-split" ||
+      this.content.representation === "ten-frame"
+        ? "ten-frame-split"
+        : "number-bond-tree";
+    const layoutFn = resolveLayout(layoutKey);
     return layoutFn({
       slotCount: this.content.options.length,
       targetCount: this.content.parts.length,
@@ -407,27 +413,37 @@ export class GT007Session extends TemplateGameSession<
     const targets = this.targetSlots;
     const sources = this.sourceSlots;
 
-    // Slot 0 của number-bond-tree là ô tổng, các ô sau là nhánh.
+    const isTenFrame =
+      this.content.layout === "ten-frame-split" ||
+      this.content.representation === "ten-frame";
+
+    // Slot 0 của number-bond-tree / ten-frame-split là ô tổng, các ô sau là nhánh.
     const wholeSlot = targets[0];
     if (wholeSlot) {
-      this.content.parts.forEach((_, i) => {
-        const slot = targets[i + 1];
-        if (slot) {
-          drawMatchLine(
-            ctx,
-            wholeSlot.x,
-            wholeSlot.y,
-            slot.x,
-            slot.y,
-            designTokens.colors.montessori.woodBevel
-          );
-        }
-      });
-      drawSlotItem(ctx, rs, wholeSlot, {
-        id: this.content.whole.id,
-        text: String(this.content.whole.value),
-        label: this.content.whole.label,
-      });
+      if (isTenFrame) {
+        drawQuantityRepresentation(ctx, rs, wholeSlot, {
+          kind: "ten-frame",
+          count: this.content.whole.value,
+        });
+      } else {
+        this.content.parts.forEach((_, i) => {
+          const slot = targets[i + 1];
+          if (slot) {
+            drawMatchLine(
+              ctx,
+              wholeSlot.x,
+              wholeSlot.y,
+              slot.x,
+              slot.y,
+              designTokens.colors.montessori.woodBevel
+            );
+          }
+        });
+        drawSlotItem(ctx, rs, wholeSlot, {
+          id: this.content.whole.id,
+          text: String(this.content.whole.value),
+        });
+      }
     }
 
     this.content.parts.forEach((part, i) => {
@@ -440,12 +456,19 @@ export class GT007Session extends TemplateGameSession<
         drawEmptyTargetSlot(ctx, slot);
         return;
       }
-      drawSlotItem(ctx, rs, slot, {
-        id: part.id,
-        text: String(filled ?? part.value),
-        label: part.label,
-        state: filled === undefined ? "idle" : "correct",
-      });
+      const partVal = filled ?? part.value;
+      if (isTenFrame) {
+        drawQuantityRepresentation(ctx, rs, slot, {
+          kind: "ten-frame",
+          count: partVal,
+        });
+      } else {
+        drawSlotItem(ctx, rs, slot, {
+          id: part.id,
+          text: String(partVal),
+          state: filled === undefined ? "idle" : "correct",
+        });
+      }
     });
 
     this.content.options.forEach((opt, i) => {

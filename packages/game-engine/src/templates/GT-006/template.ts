@@ -15,6 +15,7 @@ export const GT006ContentSchema = z.object({
     )
     .min(3)
     .max(5),
+  representation: z.enum(["number-line", "sequence"]).optional(),
 });
 
 export const GT006DifficultySchema = z.object({

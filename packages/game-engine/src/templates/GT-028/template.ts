@@ -16,6 +16,7 @@ export const GT028ContentSchema = z
       .min(4)
       .max(20),
     target_total: z.number().int().min(2),
+    representation: z.enum(["tally", "rekenrek", "discrete-object"]).optional(),
   })
   .refine((d) => d.target_total % d.step === 0, {
     message: "target_total phải chia hết cho step (BR-E028-01)",
