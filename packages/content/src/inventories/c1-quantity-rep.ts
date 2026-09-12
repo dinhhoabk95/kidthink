@@ -4,15 +4,9 @@
  * Sắp xếp theo thang bậc cụ thể → trừu tượng (CPA / Montessori).
  * Chữ số (numeral) không thuộc kho này vì thuộc tầng abstract riêng (c1-numeral.ts).
  */
-export type QuantityRepKind =
-  | "discrete-object"
-  | "finger"
-  | "number-rod"
-  | "rekenrek"
-  | "ten-frame"
-  | "dot-pattern"
-  | "tally"
-  | "number-line";
+import type { QuantityRepKind } from "@mindkid/shared/skill-dataset-types";
+
+export type { QuantityRepKind } from "@mindkid/shared/skill-dataset-types";
 
 export type ConcretenessLevel = "concrete" | "semi-concrete" | "semi-abstract";
 

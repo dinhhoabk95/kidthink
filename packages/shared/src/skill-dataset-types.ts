@@ -5,9 +5,26 @@
  * Invariant: Strict TypeScript — NO `any`, NO `unknown`.
  */
 
-import type { QuantityRepKind } from "../../content/src/inventories/c1-quantity-rep.js";
-
-export type { QuantityRepKind } from "../../content/src/inventories/c1-quantity-rep.js";
+/**
+ * Tám lối biểu diễn lượng của kho `c1-quantity-rep` (Task #265 / BR-SVI-06..07),
+ * xếp theo thang cụ thể → trừu tượng (CPA / Montessori).
+ *
+ * Union sống ở đây vì cả `@mindkid/content` (kho giá trị) lẫn
+ * `@mindkid/game-engine` (primitive vẽ) đều đọc nó, và cả hai đã phụ thuộc
+ * `@mindkid/shared`. Cấm — NEVER khai lại union này ở package khác: một bản sao
+ * thứ hai sẽ trôi khỏi bản gốc mà không cổng nào bắt.
+ *
+ * `numeral` KHÔNG thuộc kho này — nó ở tầng abstract riêng (`c1-numeral.ts`).
+ */
+export type QuantityRepKind =
+  | "discrete-object"
+  | "finger"
+  | "number-rod"
+  | "rekenrek"
+  | "ten-frame"
+  | "dot-pattern"
+  | "tally"
+  | "number-line";
 
 import type {
   SkillProgressionTier,
