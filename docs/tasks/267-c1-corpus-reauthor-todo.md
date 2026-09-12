@@ -51,6 +51,7 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
       - → chuyển sang `#271 TD.6`
       - Bỏ tick khi review lại 2026-09-12: `C1.ADD.03` có một phân tách sinh tại chỗ, không `bond_id`
 - [ ] TB.2 `relations` kiểu `subset` nối cặp `part` với `whole`
+      - → chuyển sang `#271 LD`
       - Bỏ tick khi review lại 2026-09-12: quan hệ chỉ nối `part_a → whole`; cặp phần không thành cạnh
 - [x] TB.3 6 dataset `C1.ADD` và 5 dataset `C1.SUB` bám cùng kho
 - [x] TB.4 `representation` leo `discrete-object` → `ten-frame` → `numeral` kèm theo, theo band
@@ -182,7 +183,7 @@ Sau review 2026-09-12, không mục nào còn nằm lại task này:
 
 | Mục | Nội dung | Chuyển sang |
 |---|---|---|
-| `TA.1` `TA.2` `TB.1` `TC.1` `TD.4` | Lấy giá trị từ kho `inventories/`, không gõ tay | [`#271`](271-corpus-contract-repair-todo.md) lô `LD` |
+| `TA.1` `TA.2` `TB.1` `TB.2` `TC.1` `TD.4` | Lấy giá trị từ kho `inventories/`, không gõ tay | [`#271`](271-corpus-contract-repair-todo.md) lô `LD` |
 | `TA.6` `TA.10` `TD.5` `TF.5` | Trường `representation` và primitive vẽ | [`#268`](268-numeracy-render-primitives-todo.md) |
 | `TF.6` | Phủ `audio_path` bằng mp3 có thật | [`#269`](269-play-narration-coverage-todo.md) lô `L2` |
 
