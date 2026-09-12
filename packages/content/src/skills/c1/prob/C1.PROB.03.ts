@@ -1,3 +1,7 @@
+import { getQuantityRep } from "#src/inventories/index";
+
+export const C1_PROB_03_REP = getQuantityRep("rep_discrete_object");
+
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
 
 export const C1_PROB_03_IDENTITY: SkillIdentity = {
