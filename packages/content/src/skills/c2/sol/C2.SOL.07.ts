@@ -120,8 +120,6 @@ export const C2_SOL_07_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Mặt · cạnh · đỉnh của khối nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["circle", "square", "triangle", "rectangle"],
 };

@@ -9,7 +9,11 @@ import {
   skills,
   strands,
 } from "@mindkid/db";
-import type { SkillProgressionTier, ThinkingProcess } from "@mindkid/shared";
+import type {
+  SkillDataset,
+  SkillProgressionTier,
+  ThinkingProcess,
+} from "@mindkid/shared";
 import {
   assertDag,
   buildSkillTree,
@@ -604,26 +608,30 @@ async function seedLearningObjectivesStep(
   return values.length;
 }
 
-async function seedSkillDatasetsStep(
+export async function seedSkillDatasetsStep(
   db: NodePgDatabase<Record<string, unknown>>,
-  skillIdMap: Map<string, number>
+  skillIdMap: Map<string, number>,
+  datasetsOverride?: Record<string, SkillDataset>
 ): Promise<number> {
   const { SKILL_DATASETS } = await import("@mindkid/content");
-  const { checkSkillRegistry } = await import(
-    "../../gates/check-skill-registry.js"
-  );
-  const registryGate = checkSkillRegistry(SKILL_DATASETS);
-  if (!registryGate.passed) {
-    const details = registryGate.issues
-      .map((i) => `  - ${i.message}`)
-      .join("\n");
-    throw new Error(
-      `[db:seed] BR-SDS-07: Phát hiện file kỹ năng chưa được đăng ký trong SKILL_DATASETS:\n${details}`
+  const datasets = datasetsOverride ?? SKILL_DATASETS;
+  if (!datasetsOverride) {
+    const { checkSkillRegistry } = await import(
+      "../../gates/check-skill-registry.js"
     );
+    const registryGate = checkSkillRegistry(SKILL_DATASETS);
+    if (!registryGate.passed) {
+      const details = registryGate.issues
+        .map((i) => `  - ${i.message}`)
+        .join("\n");
+      throw new Error(
+        `[db:seed] BR-SDS-07: Phát hiện file kỹ năng chưa được đăng ký trong SKILL_DATASETS:\n${details}`
+      );
+    }
   }
   const values: (typeof skillDatasets.$inferInsert)[] = [];
 
-  for (const [code, dataset] of Object.entries(SKILL_DATASETS)) {
+  for (const [code, dataset] of Object.entries(datasets)) {
     const skillId = skillIdMap.get(code);
     if (!skillId) {
       continue;
@@ -638,6 +646,8 @@ async function seedSkillDatasetsStep(
       phrasing: dataset.phrasing,
       relations: dataset.relations ?? null,
       ordering: dataset.ordering ?? null,
+      axes: dataset.axes ?? null,
+      extendsSkillCode: dataset.extends ?? null,
       status: "active",
       origin: "human",
       authoredIn: "repo_seed",
@@ -661,6 +671,8 @@ async function seedSkillDatasetsStep(
             phrasing: sql`excluded.phrasing`,
             relations: sql`excluded.relations`,
             ordering: sql`excluded.ordering`,
+            axes: sql`excluded.axes`,
+            extendsSkillCode: sql`excluded.extends_skill_code`,
             status: sql`excluded.status`,
             updatedAt: sql`now()`,
           },

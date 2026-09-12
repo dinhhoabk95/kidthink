@@ -128,8 +128,6 @@ export const C5_STO_03_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Chọn kết thúc hợp lý nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: [
     "sto_ket_vui_ve",

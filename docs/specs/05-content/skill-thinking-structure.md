@@ -126,7 +126,7 @@ Cột "Nghĩa vụ" là điều kiện cổng kiểm; sai điều kiện thì k�
 | `predict` | `D.relations` có ít nhất một quan hệ `sequence` và `D.ordering` có nghĩa | Dự đoán là đọc tiếp một dãy; không có dãy thì không dự đoán được gì |
 | `deduce` | `D.relations` có ít nhất một quan hệ `subset`, **và** `D.axes` có từ 2 trục trở lên | Loại trừ cần nhiều ràng buộc cắt nhau; một trục thì chỉ chọn được, không loại được |
 | `solve` | `D.axes` có từ 2 trục trở lên, **hoặc** `D.relations` có từ 3 quan hệ trở lên | Bài toán cần đủ ràng buộc để có một đường đi không tầm thường |
-| `verify` | `D.relations` có ít nhất một quan hệ `contrast` giữa một đáp án đúng và một đáp án sai gần giống | Kiểm tra lại là phân biệt đúng với gần đúng; không có "gần đúng" thì không có gì để kiểm |
+| `verify` | `D.relations` có ít nhất một quan hệ `contrast` giữa một đáp án đúng và một đáp án sai gần giống (metadata.near_miss hoặc cùng contrast_group) | Kiểm tra lại là phân biệt đúng với gần đúng; không có "gần đúng" thì không có gì để kiểm |
 | `create` | `D.axes` có ít nhất một trục, và `D.items` có từ 6 item trở lên | Tạo ra cần không gian lựa chọn; dưới 6 vật thì mọi sản phẩm gần như trùng nhau |
 | `plan` | `D.relations` có ít nhất một quan hệ `sequence` với `metadata.step` | Lập kế hoạch là xếp thứ tự các bước; bước phải được đánh số trong dữ liệu |
 | `recall` | `D.items` có ít nhất 2 giá trị `contrast_group` phân biệt | Nhớ lại cần nhiễu cùng nhóm; không nhóm nhiễu thì bài thành nhận diện |
@@ -137,8 +137,8 @@ Cột "Nghĩa vụ" là điều kiện cổng kiểm; sai điều kiện thì k�
 
 ### 7.2 Ánh xạ thu hẹp — khai theo `BR-STS-06`
 
-`normalizeThinkingTags` thu 18 giá trị `ThinkingProcess` xuống 12 tag nội dung. Sáu ánh xạ có
-chủ ý, và một ánh xạ là lỗi.
+`normalizeThinkingTags` thu 18 giá trị `ThinkingProcess` xuống 12 tag nội dung. Cả sáu ánh xạ
+đều có chủ ý theo thiết kế trục tag nội dung.
 
 | Từ | Về | Trạng thái | Ghi chú |
 |---|---|---|---|
@@ -147,9 +147,9 @@ chủ ý, và một ánh xạ là lỗi.
 | `create` | `plan` | có chủ ý | Cùng nhóm sản sinh |
 | `listen` | `observe` | có chủ ý | Trục tag không có kênh giác quan |
 | `describe` | `observe` | có chủ ý | Như trên |
-| `deduce` | `observe` | **lỗi** | Không có trong `CANONICAL_THINKING_TAGS` lẫn bảng ánh xạ, nên rơi nhánh mặc định. 30 kỹ năng chịu ảnh hưởng. Phải sửa theo `BR-STS-05` — hoặc thêm `deduce` vào tag chuẩn, hoặc ánh xạ tường minh về `infer` |
+| `deduce` | `infer` | có chủ ý | Suy luận diễn dịch ánh xạ về suy luận chung; giữ nhãn gốc trên `skills.thinking_processes` (`BR-STS-06`) |
 
-Tổng mất mát hiện tại: **182/725** giá trị đã khai bị viết lại hoặc mất.
+Tổng số giá trị ánh xạ thu hẹp: **182/725** giá trị được chuẩn hoá có chủ ý theo `BR-STS-06`.
 
 ### 7.3 Phán quyết cho bốn trường không consumer — `BR-STS-07`
 

@@ -126,8 +126,6 @@ export const C5_PRN_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Chữ ở quanh ta: biển hiệu · nhãn nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["let_s", "let_t", "let_u", "let_ư", "let_v"],
 };

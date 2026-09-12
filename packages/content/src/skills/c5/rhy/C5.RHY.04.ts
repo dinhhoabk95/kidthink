@@ -126,8 +126,6 @@ export const C5_RHY_04_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Vần một âm: a · o · e · i · u nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["let_b", "let_c", "let_d", "let_đ", "let_e"],
 };

@@ -129,8 +129,6 @@ export const C5_WRD_03_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Đánh vần tiếng đơn giản nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["wrd_nha", "wrd_xe", "wrd_bong", "wrd_mu", "wrd_no"],
 };

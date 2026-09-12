@@ -128,8 +128,6 @@ export const C5_WRD_06_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Đọc câu ngắn ba tiếng nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["spoon", "cup", "bed", "chair", "apple"],
 };

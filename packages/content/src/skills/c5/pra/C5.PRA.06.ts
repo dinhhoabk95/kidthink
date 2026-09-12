@@ -128,8 +128,6 @@ export const C5_PRA_06_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Nói ý kiến kèm lý do nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: [
     "pra_thich_ve_tranh",

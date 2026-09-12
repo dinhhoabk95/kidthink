@@ -129,8 +129,6 @@ export const C6_FLX_03_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Chuyển giữa hai nhiệm vụ nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["watermelon", "carrot", "corn", "dog", "cat"],
 };

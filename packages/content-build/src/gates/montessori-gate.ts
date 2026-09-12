@@ -51,7 +51,6 @@ export function checkMontessoriItemRules(
     Boolean(batchCode?.startsWith("SEED-MONT-")) ||
     Boolean("montessori_ref" in header && header.montessori_ref) ||
     Boolean(header.what_tags?.includes("montessori")) ||
-    Boolean(header.thinking_tags?.includes("montessori")) ||
     REGEX_MONTESSORI_CODE.test(header.code);
 
   if (!isMontessoriBatch) {

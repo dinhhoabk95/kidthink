@@ -124,8 +124,6 @@ export const C5_RHY_08_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Tự nghĩ tiếng cùng vần nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["let_e", "let_ê", "let_g", "let_h", "let_i"],
 };

@@ -8,6 +8,30 @@
 import type { SkillDataset } from "@mindkid/shared";
 import type { ContentSeed, GateIssue, GateResult } from "../types.js";
 
+const NUMERIC_GLYPH_KEYS = [
+  "value",
+  "hour",
+  "fill_units",
+  "count",
+  "quantity",
+] as const;
+
+function hasMatchingProperty(
+  obj: Record<string, unknown>,
+  glyphs: Set<string>
+): boolean {
+  for (const key of NUMERIC_GLYPH_KEYS) {
+    const v = obj[key];
+    if (typeof v === "number" || typeof v === "string") {
+      const sv = String(v);
+      if (glyphs.has(sv)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 function nodeContainsGlyph(
   obj: Record<string, unknown>,
   glyphs: Set<string>
@@ -22,16 +46,7 @@ function nodeContainsGlyph(
       }
     }
   }
-  for (const key of ["value", "hour", "fill_units", "count", "quantity"]) {
-    const v = obj[key];
-    if (
-      (typeof v === "number" || typeof v === "string") &&
-      glyphs.has(String(v))
-    ) {
-      return true;
-    }
-  }
-  return false;
+  return hasMatchingProperty(obj, glyphs);
 }
 
 const IGNORED_KEYS = new Set([

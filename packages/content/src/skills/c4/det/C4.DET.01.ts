@@ -160,8 +160,6 @@ export const C4_DET_01_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Quan sát màu nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["spoon", "cup", "bed", "chair", "apple"],
 };
@@ -287,8 +285,6 @@ const TOPIC_BASIC_COLOURS_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy làm quen với các màu sắc nhé!",
     narration_template: "Chúng mình cùng làm quen với các màu sắc cơ bản nhé",
-    success_message: "Hoan hô, bé đã nhận biết đúng màu rồi!",
-    hint_message: "Bé hãy lắng nghe và nhìn kỹ màu sắc nhé!",
   },
   ordering: [
     "red",

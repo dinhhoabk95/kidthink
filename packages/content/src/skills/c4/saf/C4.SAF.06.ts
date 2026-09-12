@@ -131,8 +131,6 @@ export const C4_SAF_06_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Ai được phép chạm vào con nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["bed", "chair", "apple", "banana", "watermelon"],
 };

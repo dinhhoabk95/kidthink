@@ -92,8 +92,6 @@ export const C5_DGR_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Chữ ghép có ng: ng · ngh nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   },
   ordering: ["dgr_ng", "dgr_ngh"],
 };

@@ -128,8 +128,6 @@ export const C6_ATT_03_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Bỏ qua vật gây nhiễu nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["banana", "watermelon", "carrot", "corn", "dog"],
 };
@@ -216,6 +214,22 @@ export const C6_ATT_03_SEED: SkillSeed = {
       band: "3-4",
       difficulty: 3,
       theme: "festival",
+      rounds: 3,
+    },
+    {
+      code: "GL-C6-ATT-SWT-0001",
+      template: "GT-027",
+      band: "5-6",
+      difficulty: 3,
+      theme: "nature",
+      rounds: 3,
+    },
+    {
+      code: "GL-C6-ATT-SWT-0002",
+      template: "GT-027",
+      band: "5-6",
+      difficulty: 4,
+      theme: "ocean",
       rounds: 3,
     },
   ],

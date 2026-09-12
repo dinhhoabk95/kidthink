@@ -132,8 +132,6 @@ export const C5_ONS_03_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Âm đầu nhóm 2: l · m · n · ng/ngh · nh · p nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   },
   ordering: ["ons_l", "ons_m", "ons_n", "ons_ng_ngh", "ons_nh", "ons_p"],
 };

@@ -37,6 +37,8 @@
     "check:hint-target:update": "tsx scripts/check-hint-target.ts --update",
     "check:migration-hashes": "tsx scripts/check-migration-hashes.ts",
     "check:migration-hashes:update": "tsx scripts/check-migration-hashes.ts --update",
+    "check:thinking-structure": "tsx scripts/check-thinking-structure.ts",
+    "check:thinking-structure:update": "tsx scripts/check-thinking-structure.ts --update",
     "check:engine-specs": "pnpm --filter @mindkid/game-engine check:engine-specs",
     "check:engine-turn": "pnpm --filter @mindkid/game-engine check:engine-turn",
     "check:engine-behavior": "pnpm --filter @mindkid/game-engine check:engine-behavior",

@@ -139,8 +139,6 @@ export const C5_VOC_20_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Từ vựng vị trí không gian bằng lời nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   },
   ordering: [
     "voc_o_tren",

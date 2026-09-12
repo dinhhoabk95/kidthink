@@ -127,8 +127,6 @@ export const C1_CMP_01_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Lớn hơn nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["spoon", "cup", "bed", "chair", "apple"],
 };
@@ -230,8 +228,6 @@ const TOPIC_CMP_SIZE_DATASET: SkillDataset = {
   ],
   phrasing: {
     prompt_template: "Bé hãy làm quen với {label}",
-    success_message: "Hoan hô, bé đã nhận biết rất tốt!",
-    hint_message: "Bé hãy lắng nghe và nhìn kỹ nhé!",
   },
   ordering: [
     "big_elephant",

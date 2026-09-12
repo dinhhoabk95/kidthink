@@ -132,8 +132,6 @@ export const C4_VIS_03_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Tìm vật ẩn trong tranh (Hidden Object) nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["cup", "bed", "chair", "apple", "banana"],
 };

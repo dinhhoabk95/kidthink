@@ -127,8 +127,6 @@ export const C2_ORI_07_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Trong nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   },
   ordering: ["watermelon", "carrot", "corn", "dog", "cat"],
 };
@@ -236,6 +234,15 @@ export const C2_ORI_07_SEED: SkillSeed = {
       band: "5-6",
       difficulty: 4,
       theme: "school",
+      rounds: 3,
+      legacy_v1_ref: "D6-10",
+    },
+    {
+      code: "GL-C2-BLK-STK-0036",
+      template: "GT-017",
+      band: "5-6",
+      difficulty: 3,
+      theme: "home",
       rounds: 3,
       legacy_v1_ref: "D6-10",
     },

@@ -1,6 +1,9 @@
 import type { SkillDataset, SkillSeed } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
-import { buildLevelsForSkill } from "../../src/builders/build-levels.js";
+import {
+  buildLevelsForSkill,
+  normalizeThinkingTags,
+} from "../../src/builders/build-levels.js";
 import { getSkillSeed } from "../../src/skills/index.js";
 
 const CONTRACT_MIN_ITEMS_REGEX = /đòi tối thiểu 4 vật/;
@@ -50,7 +53,6 @@ describe("buildLevelsForSkill (Task #208 / G4)", () => {
       phrasing: {
         prompt_template: "Bé hãy chọn {label}",
         narration_template: "Cùng làm quen với {label}",
-        success_message: "Đúng rồi!",
       },
       ordering: ["item_01", "item_02"],
     };
@@ -126,5 +128,24 @@ describe("buildLevelsForSkill (Task #208 / G4)", () => {
 
     expect(json1).toBe(json2);
     expect(json1.length).toBeGreaterThan(100);
+  });
+});
+
+describe("normalizeThinkingTags (Task #266 / BR-STS-05 & T1.5, T1.6)", () => {
+  it("T1.5: ca âm — gọi normalizeThinkingTags(['khong_ton_tai']) ném lỗi, không trả observe", () => {
+    expect(() => {
+      normalizeThinkingTags(["khong_ton_tai"]);
+    }).toThrow("[BR-STS-05]");
+  });
+
+  it("T1.6: ca âm — gọi với 'deduce' không trả observe (ánh xạ về infer)", () => {
+    const result = normalizeThinkingTags(["deduce"]);
+    expect(result).not.toContain("observe");
+    expect(result).toContain("infer");
+  });
+
+  it("giữ nguyên tag chuẩn trong CANONICAL_THINKING_TAGS", () => {
+    const result = normalizeThinkingTags(["compare", "count"]);
+    expect(result).toEqual(["compare", "count"]);
   });
 });

@@ -137,8 +137,6 @@ export const C1_CNT_11_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Subitizing — nhận lượng tức thì (1–5) nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   },
   ordering: ["n0", "n1", "n2", "n3", "n4", "n5"],
 };

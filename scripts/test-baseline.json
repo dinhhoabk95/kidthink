@@ -1,5 +1,5 @@
 {
-  "totalFailed": 44,
+  "totalFailed": 42,
   "failedFiles": [
     "apps/web/tests/api/advanced-report.test.ts",
     "apps/web/tests/api/curricula-builder.test.ts",
@@ -30,10 +30,8 @@
     "apps/web/tests/e2e/child-switch-race.test.ts",
     "apps/web/tests/e2e/web-scale-gate-drills.test.ts",
     "apps/web/tests/gates/public-competency-labels.test.ts",
-    "apps/web/tests/integration/api-error-handler.test.ts",
     "apps/web/tests/integration/app-error-h3-contract.test.ts",
     "apps/web/tests/integration/auth-middleware.test.ts",
-    "apps/web/tests/integration/rate-limit-middleware.test.ts",
     "apps/web/tests/security/security-checklist.test.ts",
     "apps/web/tests/unit/server/activity-lesson-lifecycle.test.ts",
     "apps/web/tests/unit/server/admin-subscription-cancel.test.ts",
@@ -46,5 +44,5 @@
     "apps/web/tests/unit/server/personal-curriculum-service.test.ts",
     "apps/web/tests/unit/server/tagging-seed.test.ts"
   ],
-  "minTotalSuites": 1412
+  "minTotalSuites": 1482
 }

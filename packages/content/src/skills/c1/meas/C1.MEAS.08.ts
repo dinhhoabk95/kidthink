@@ -129,8 +129,6 @@ export const C1_MEAS_08_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Đo bằng đơn vị phi chuẩn nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["spoon", "cup", "bed", "chair", "apple"],
 };

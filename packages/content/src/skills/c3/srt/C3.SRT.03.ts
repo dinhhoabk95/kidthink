@@ -131,8 +131,6 @@ export const C3_SRT_03_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Sắp xếp theo màu (đậm→nhạt) nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["carrot", "corn", "dog", "cat", "chicken"],
 };

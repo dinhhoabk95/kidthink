@@ -47,6 +47,7 @@ export interface DatasetItem {
   readonly category?: Readonly<Record<string, string>>;
   readonly audio_path?: string;
   readonly contrast_group?: string;
+  readonly metadata?: Readonly<Record<string, string | number | boolean>>;
 }
 
 export type DatasetRelationType = "pair" | "contrast" | "sequence" | "subset";
@@ -67,9 +68,14 @@ export interface DifficultyRung {
 export interface SkillPhrasing {
   readonly prompt_template: string;
   readonly narration_template?: string;
-  readonly success_message?: string;
-  readonly hint_message?: string;
 }
+
+export interface DatasetAxisObject {
+  readonly values: readonly string[];
+  readonly ordered?: boolean;
+}
+
+export type DatasetAxis = readonly string[] | DatasetAxisObject;
 
 export interface SkillDataset {
   readonly skill_code: string;
@@ -78,7 +84,7 @@ export interface SkillDataset {
   readonly items: readonly DatasetItem[];
   readonly relations?: readonly DatasetRelation[];
   readonly ordering?: readonly string[];
-  readonly axes?: Readonly<Record<string, readonly string[]>>;
+  readonly axes?: Readonly<Record<string, DatasetAxis>>;
   readonly ladder: readonly DifficultyRung[];
   readonly phrasing: SkillPhrasing;
   readonly extends?: string;

@@ -177,8 +177,6 @@ export const C5_RIM_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Vần đóng bằng n: an ăn ân en ên in on ôn ơn un ưn nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   },
   ordering: [
     "rim_an",

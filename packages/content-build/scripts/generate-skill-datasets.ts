@@ -244,8 +244,6 @@ function generatePhrasingForSkill(skill: ParsedSkill): SkillPhrasing {
   return {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: `Chúng mình cùng tìm hiểu về ${skill.name} nhé`,
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   };
 }
 

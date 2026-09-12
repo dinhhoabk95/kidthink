@@ -182,8 +182,6 @@ export const C1_NREC_04_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Nhận biết số 11–20 nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   },
   ordering: [
     "n0",
@@ -353,8 +351,6 @@ const TOPIC_NUMBER_11_20_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy làm quen với chữ số nhé!",
     narration_template: "Chúng mình cùng làm quen với các số từ 11 đến 20 nhé",
-    success_message: "Hoan hô, bé đã nhận biết rất tốt!",
-    hint_message: "Bé hãy lắng nghe và nhìn kỹ chữ số nhé!",
   },
   ordering: [
     "n11",

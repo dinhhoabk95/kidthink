@@ -4,6 +4,7 @@ import type {
   SkillIdentity,
   SkillLevelPlan,
   SkillSeed,
+  ThinkingProcess,
 } from "@mindkid/shared";
 import type { ContentSeed, ContentSeedRound } from "../types.js";
 import { buildConceptIntroPrompt } from "./gt-000.js";
@@ -279,17 +280,20 @@ const THINKING_TAG_NORMALIZE_MAP: Record<string, string> = {
   inhibitory: "inhibit",
   working_memory: "recall",
   focus: "observe",
+  deduce: "infer",
 };
 
-function normalizeThinkingTags(tags: readonly string[]): string[] {
+export function normalizeThinkingTags(tags: readonly string[]): string[] {
   const result = new Set<string>();
   for (const tag of tags) {
     if (CANONICAL_THINKING_TAGS.has(tag)) {
-      result.add(tag);
+      result.add(tag as ThinkingProcess);
     } else if (THINKING_TAG_NORMALIZE_MAP[tag]) {
-      result.add(THINKING_TAG_NORMALIZE_MAP[tag]);
+      result.add(THINKING_TAG_NORMALIZE_MAP[tag] as ThinkingProcess);
     } else {
-      result.add("observe");
+      throw new Error(
+        `[BR-STS-05] Không thể ánh xạ giá trị tư duy: "${tag}". Giá trị phải thuộc CANONICAL_THINKING_TAGS hoặc THINKING_TAG_NORMALIZE_MAP.`
+      );
     }
   }
   return result.size > 0 ? [...result] : ["observe"];

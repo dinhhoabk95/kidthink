@@ -126,8 +126,6 @@ export const C5_ALP_08_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Chữ ghép ba: ngh · gh · gi · qu nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["let_g", "let_h", "let_i", "let_k", "let_l"],
 };

@@ -127,8 +127,6 @@ export const C5_VOC_01_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Từ vựng động vật nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["voc_cho", "voc_meo", "voc_ga", "voc_vit", "voc_lon"],
 };

@@ -128,8 +128,6 @@ export const C5_ALP_03_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Nhận nhóm nguyên âm: a ă â e ê i o ô ơ u ư y nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["let_c", "let_d", "let_đ", "let_e", "let_ê"],
 };

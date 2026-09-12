@@ -131,8 +131,6 @@ export const C5_PRA_01_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Chào hỏi · cảm ơn · xin lỗi nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["carrot", "corn", "dog", "cat", "chicken"],
 };

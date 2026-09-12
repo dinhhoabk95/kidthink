@@ -116,8 +116,6 @@ export const C2_GEO_01_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Hình tròn nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["circle", "square", "triangle", "rectangle"],
 };
@@ -233,8 +231,6 @@ const TOPIC_PLANAR_SHAPES_DATASET: SkillDataset = {
     prompt_template: "Bé hãy làm quen với các hình phẳng nhé!",
     narration_template:
       "Chúng mình cùng làm quen với các hình phẳng cơ bản nhé",
-    success_message: "Hoan hô, bé đã nhận biết đúng hình rồi!",
-    hint_message: "Bé hãy lắng nghe và nhìn kỹ hình dạng nhé!",
   },
   ordering: [
     "circle",

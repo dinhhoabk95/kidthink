@@ -172,8 +172,6 @@ describe("check-value-inventory negative tests (BR-SVI-02..12)", () => {
       ladder: [],
       phrasing: {
         prompt_template: "",
-        success_message: "",
-        hint_message: "",
       },
       ordering: ["duck"],
     };
@@ -206,8 +204,6 @@ describe("check-value-inventory negative tests (BR-SVI-02..12)", () => {
       ladder: [],
       phrasing: {
         prompt_template: "",
-        success_message: "",
-        hint_message: "",
       },
       ordering: ["apple_many"],
     };
@@ -252,8 +248,6 @@ describe("check-value-inventory negative tests (BR-SVI-02..12)", () => {
       ladder: [],
       phrasing: {
         prompt_template: "",
-        success_message: "",
-        hint_message: "",
       },
       ordering: ["duck"],
     };
@@ -291,8 +285,6 @@ describe("check-value-inventory negative tests (BR-SVI-02..12)", () => {
       ladder: [],
       phrasing: {
         prompt_template: "",
-        success_message: "",
-        hint_message: "",
       },
       ordering: ["apple_red"],
     };
@@ -381,8 +373,6 @@ describe("check-value-inventory negative tests (BR-SVI-02..12)", () => {
       ladder: [],
       phrasing: {
         prompt_template: "",
-        success_message: "",
-        hint_message: "",
       },
       ordering: ["tmk_hoi"],
     };

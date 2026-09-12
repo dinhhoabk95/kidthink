@@ -406,7 +406,7 @@ function validateTaxonomyFkCodes(
 
 function validateTagList(
   axis: "what" | "thinking",
-  tags: string[] | undefined,
+  tags: readonly string[] | undefined,
   emptyCode: string,
   emptyMessage: string,
   issues: GateIssue[]

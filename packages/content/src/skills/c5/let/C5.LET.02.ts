@@ -129,8 +129,6 @@ export const C5_LET_02_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Nhận biết ă · â · ê · ô · ơ · ư nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   },
   ordering: ["let_ă", "let_â", "let_ê", "let_ô", "let_ơ", "let_ư"],
 };

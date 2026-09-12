@@ -154,6 +154,8 @@ interface SkillDataset {
   readonly extends?: string; // kế thừa dataset kỹ năng tiên quyết
 }
 
+> **Phán quyết vòng đời các trường**: Xem bảng phán quyết tại [`skill-thinking-structure.md` §7.3](skill-thinking-structure.md#73-phán-quyết-cho-bốn-trường-không-consumer--br-sts-07) (`BR-STS-07`). Hai trường `phrasing.success_message` và `phrasing.hint_message` bị xoá; các trường `ladder`, `narration_template`, `extends`, `skill_dataset_id` được giữ và nối theo kế hoạch.
+
 interface DatasetItem {
   readonly id: string; // "n5"
   readonly label: string; // "năm"        — bắt buộc, nhóm F cần

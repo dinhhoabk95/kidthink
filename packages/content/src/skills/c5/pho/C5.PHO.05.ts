@@ -123,8 +123,6 @@ export const C5_PHO_05_DATASET: SkillDataset = {
   phrasing: {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template: "Chúng mình cùng tìm hiểu về Tìm tiếng cùng âm đầu nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["let_o", "let_ô", "let_ơ", "let_p", "let_q"],
 };

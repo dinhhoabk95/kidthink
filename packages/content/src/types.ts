@@ -2,6 +2,7 @@ import type {
   ActivityInstruction,
   ActivityKind,
   LessonGuide,
+  ThinkingProcess,
 } from "@mindkid/shared";
 
 export type SeedOrigin = "human" | "ai_assisted";
@@ -56,7 +57,7 @@ export interface ActivitySeedHeader {
   skill_codes: string[];
   learning_objective_codes: string[];
   what_tags: string[];
-  thinking_tags: string[];
+  thinking_tags: readonly ThinkingProcess[];
   theme_tag?: string;
   origin: SeedOrigin;
   authored_in: SeedAuthoredIn;

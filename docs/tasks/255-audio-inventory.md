@@ -19,15 +19,13 @@ Theo nguyên tắc tách bạch: **Rổ giá trị** (phát âm chuẩn âm vị
 | Từ vựng GDMN | `C5.VOC` | **150** | 15 nhóm chủ đề năm học GDMN (mỗi nhóm 8–12 từ vựng chuẩn tiếng Việt) | `c5-vocabulary.ts` |
 | **Tổng cộng** | | **231** | **Mục phát âm mẫu cốt lõi** | |
 
-### 1.2 Rổ câu thoại (Phrasing Inventory) — 140 câu
+### 1.2 Rổ câu thoại (Phrasing Inventory) — 70 câu
 
-Mỗi kỹ năng trong số 35 kỹ năng nhận biết C5 mới có 4 mẫu câu thoại:
+Mỗi kỹ năng trong số 35 kỹ năng nhận biết C5 mới có 2 mẫu câu thoại (theo Task #266 / BR-STS-07):
 1. `prompt_template`: Lời nhắc bé thực hiện thử thách ("Bé hãy chọn đúng {label} nhé!")
 2. `narration_template`: Lời dẫn mở đầu bài học ("Chúng mình cùng tìm hiểu về {label} nhé")
-3. `success_message`: Lời khen ngợi khi hoàn thành ("Hoan hô, bé đã chọn đúng rồi!")
-4. `hint_message`: Gợi ý khi bé lúng túng ("Bé hãy nhìn kỹ {label} nhé!")
 
-Tổng số câu thoại: 35 kỹ năng × 4 câu = **140 câu thoại**.
+Tổng số câu thoại: 35 kỹ năng × 2 câu = **70 câu thoại**.
 
 ---
 

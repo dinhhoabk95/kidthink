@@ -129,8 +129,6 @@ export const C3_ALG_05_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Tìm bước sai trong chuỗi nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["banana", "watermelon", "carrot", "corn", "dog"],
 };

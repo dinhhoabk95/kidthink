@@ -120,8 +120,6 @@ export const C5_LET_05_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Nhận biết r · s · t · v · x nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ {label} nhé!",
   },
   ordering: ["let_r", "let_s", "let_t", "let_v", "let_x"],
 };

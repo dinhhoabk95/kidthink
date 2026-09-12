@@ -122,6 +122,10 @@ PID_ENGINE_BEHAVIOR=$!
 pnpm check:engine-behavior-corpus &
 PID_ENGINE_BEHAVIOR_CORPUS=$!
 
+# Cổng bậc thang cấu trúc tư duy — Task #266 (BR-STS-01..11).
+pnpm check:thinking-structure &
+PID_THINKING_STRUCTURE=$!
+
 LINT_OK=true
 if ! wait $PID_LINT; then
   echo "✗ biome lint failed" >&2
@@ -188,10 +192,15 @@ if ! wait $PID_ENGINE_BEHAVIOR_CORPUS; then
   LINT_OK=false
 fi
 
+if ! wait $PID_THINKING_STRUCTURE; then
+  echo "✗ check:thinking-structure ratchet failed" >&2
+  LINT_OK=false
+fi
+
 if [ "$LINT_OK" = false ]; then
   exit 1
 fi
-echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space + hint-target + migration-hashes + engine-specs + engine-turn + engine-behavior + engine-behavior-corpus"
+echo "✓ lint + intro-coverage + value-inventory + error-codes + logic-space + hint-target + migration-hashes + engine-specs + engine-turn + engine-behavior + engine-behavior-corpus + api-surface + thinking-structure"
 phase_end
 
 # ── Phase 2: Typecheck (cổng bậc thang + incremental) ─────────────────────

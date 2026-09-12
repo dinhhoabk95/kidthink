@@ -129,8 +129,6 @@ export const C4_OBS_05_DATASET: SkillDataset = {
     prompt_template: "Bé hãy chọn đúng {label} nhé!",
     narration_template:
       "Chúng mình cùng tìm hiểu về Dùng kính lúp quan sát nhé",
-    success_message: "Hoan hô, bé đã chọn đúng rồi!",
-    hint_message: "Bé hãy nhìn kỹ hình {label} nhé!",
   },
   ordering: ["spoon", "cup", "bed", "chair", "apple"],
 };
