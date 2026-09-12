@@ -1,4 +1,5 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+import { numeralItem } from "#src/inventories/index";
 
 export const C1_NREC_03_IDENTITY: SkillIdentity = {
   code: "C1.NREC.03",
@@ -247,127 +248,83 @@ const TOPIC_NUMBER_0_10_DATASET: SkillDataset = {
   concept_label: "Làm quen số 0–10",
   surface: "game",
   items: [
-    {
-      id: "n0",
+    numeralItem("n0", {
       label: "Số không",
-      glyph: "0",
-      value: 0,
-      audio_path: "/audio/voice/common/numbers/0.mp3",
       image: {
         kind: "emoji",
         ref: "0️⃣",
       },
-    },
-    {
-      id: "n1",
+    }),
+    numeralItem("n1", {
       label: "Số một",
-      glyph: "1",
-      value: 1,
-      audio_path: "/audio/voice/common/numbers/1.mp3",
       image: {
         kind: "emoji",
         ref: "1️⃣",
       },
-    },
-    {
-      id: "n2",
+    }),
+    numeralItem("n2", {
       label: "Số hai",
-      glyph: "2",
-      value: 2,
-      audio_path: "/audio/voice/common/numbers/2.mp3",
       image: {
         kind: "emoji",
         ref: "2️⃣",
       },
-    },
-    {
-      id: "n3",
+    }),
+    numeralItem("n3", {
       label: "Số ba",
-      glyph: "3",
-      value: 3,
-      audio_path: "/audio/voice/common/numbers/3.mp3",
       image: {
         kind: "emoji",
         ref: "3️⃣",
       },
-    },
-    {
-      id: "n4",
+    }),
+    numeralItem("n4", {
       label: "Số bốn",
-      glyph: "4",
-      value: 4,
-      audio_path: "/audio/voice/common/numbers/4.mp3",
       image: {
         kind: "emoji",
         ref: "4️⃣",
       },
-    },
-    {
-      id: "n5",
+    }),
+    numeralItem("n5", {
       label: "Số năm",
-      glyph: "5",
-      value: 5,
-      audio_path: "/audio/voice/common/numbers/5.mp3",
       image: {
         kind: "emoji",
         ref: "5️⃣",
       },
-    },
-    {
-      id: "n6",
+    }),
+    numeralItem("n6", {
       label: "Số sáu",
-      glyph: "6",
-      value: 6,
-      audio_path: "/audio/voice/common/numbers/6.mp3",
       image: {
         kind: "emoji",
         ref: "6️⃣",
       },
-    },
-    {
-      id: "n7",
+    }),
+    numeralItem("n7", {
       label: "Số bảy",
-      glyph: "7",
-      value: 7,
-      audio_path: "/audio/voice/common/numbers/7.mp3",
       image: {
         kind: "emoji",
         ref: "7️⃣",
       },
-    },
-    {
-      id: "n8",
+    }),
+    numeralItem("n8", {
       label: "Số tám",
-      glyph: "8",
-      value: 8,
-      audio_path: "/audio/voice/common/numbers/8.mp3",
       image: {
         kind: "emoji",
         ref: "8️⃣",
       },
-    },
-    {
-      id: "n9",
+    }),
+    numeralItem("n9", {
       label: "Số chín",
-      glyph: "9",
-      value: 9,
-      audio_path: "/audio/voice/common/numbers/9.mp3",
       image: {
         kind: "emoji",
         ref: "9️⃣",
       },
-    },
-    {
-      id: "n10",
+    }),
+    numeralItem("n10", {
       label: "Số mười",
-      glyph: "10",
-      value: 10,
-      audio_path: "/audio/voice/common/numbers/10.mp3",
       image: {
         kind: "emoji",
         ref: "🔟",
       },
-    },
+    }),
   ],
   ladder: [
     {

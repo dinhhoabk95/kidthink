@@ -1,4 +1,5 @@
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
+import { numeralItem } from "#src/inventories/index";
 
 export const C1_NREC_11_IDENTITY: SkillIdentity = {
   code: "C1.NREC.11",
@@ -41,12 +42,7 @@ export const C1_NREC_11_DATASET: SkillDataset = {
   concept_label: "Số sau",
   surface: "game",
   items: [
-    {
-      id: "n5",
-      label: "số năm",
-      glyph: "5",
-      value: 5,
-      audio_path: "/audio/voice/common/numbers/5.mp3",
+    numeralItem("n5", {
       image: {
         kind: "emoji",
         ref: "5️⃣",
@@ -55,13 +51,8 @@ export const C1_NREC_11_DATASET: SkillDataset = {
         parity: "lẻ",
         half: "nửa đầu",
       },
-    },
-    {
-      id: "n6",
-      label: "số sáu",
-      glyph: "6",
-      value: 6,
-      audio_path: "/audio/voice/common/numbers/6.mp3",
+    }),
+    numeralItem("n6", {
       image: {
         kind: "emoji",
         ref: "6️⃣",
@@ -70,13 +61,8 @@ export const C1_NREC_11_DATASET: SkillDataset = {
         parity: "chẵn",
         half: "nửa đầu",
       },
-    },
-    {
-      id: "n7",
-      label: "số bảy",
-      glyph: "7",
-      value: 7,
-      audio_path: "/audio/voice/common/numbers/7.mp3",
+    }),
+    numeralItem("n7", {
       image: {
         kind: "emoji",
         ref: "7️⃣",
@@ -85,13 +71,8 @@ export const C1_NREC_11_DATASET: SkillDataset = {
         parity: "lẻ",
         half: "nửa đầu",
       },
-    },
-    {
-      id: "n8",
-      label: "số tám",
-      glyph: "8",
-      value: 8,
-      audio_path: "/audio/voice/common/numbers/8.mp3",
+    }),
+    numeralItem("n8", {
       image: {
         kind: "emoji",
         ref: "8️⃣",
@@ -100,13 +81,8 @@ export const C1_NREC_11_DATASET: SkillDataset = {
         parity: "chẵn",
         half: "nửa sau",
       },
-    },
-    {
-      id: "n9",
-      label: "số chín",
-      glyph: "9",
-      value: 9,
-      audio_path: "/audio/voice/common/numbers/9.mp3",
+    }),
+    numeralItem("n9", {
       image: {
         kind: "emoji",
         ref: "9️⃣",
@@ -115,13 +91,8 @@ export const C1_NREC_11_DATASET: SkillDataset = {
         parity: "lẻ",
         half: "nửa sau",
       },
-    },
-    {
-      id: "n10",
-      label: "số mười",
-      glyph: "10",
-      value: 10,
-      audio_path: "/audio/voice/common/numbers/10.mp3",
+    }),
+    numeralItem("n10", {
       image: {
         kind: "emoji",
         ref: "🔟",
@@ -130,7 +101,7 @@ export const C1_NREC_11_DATASET: SkillDataset = {
         parity: "chẵn",
         half: "nửa sau",
       },
-    },
+    }),
   ],
   relations: [
     {
