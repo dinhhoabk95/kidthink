@@ -12,6 +12,21 @@ Song song an toàn: **L1 · L5 · L6**. Bắt buộc tuần tự: **L1 → L2 �
 
 ---
 
+## L0 — Khai lại `representation` (đổi sau review `#267`, 2026-09-12)
+
+Review `#267` đã **gỡ trường `DifficultyRung.representation` khỏi
+`packages/shared/src/skill-dataset-types.ts` và gỡ cả 550 khai báo trong `C1`**. Lý do: không
+builder, engine hay app nào đọc nó — nó chỉ được ghi vào jsonb `skill_datasets.ladder` rồi nằm
+đó. Khai một lối biểu diễn trước khi có hàm vẽ nó là dữ liệu chết, đúng lý do `TE.5` của `#267`
+đã hoãn `tally`. Task này là chỗ khai lại, SAU khi primitive có call site thật.
+
+- [ ] T0.1 Khai lại `readonly representation?: QuantityRepKind | "numeral"` trên `DifficultyRung`
+- [ ] T0.2 Import `QuantityRepKind` từ `packages/content/src/inventories/c1-quantity-rep.ts` — Cấm — NEVER định nghĩa lại union trong `@mindkid/shared` (review đã gỡ một bản sao y hệt)
+- [ ] T0.3 Chỉ khai `representation` cho `kind` đã có hàm vẽ **và** call site; mỗi `kind` một lô
+- [ ] T0.4 Thêm phép kiểm: mọi `representation` khai trong dataset phải có hàm vẽ tương ứng
+- [ ] T0.5 **Ca âm** — khai một `kind` chưa có hàm vẽ → cổng đỏ
+- [ ] T0.6 Đóng `TA.6` `TA.10` `TD.5` `TF.5` của [`#267`](267-c1-corpus-reauthor-todo.md)
+
 ## L1 — Thang cỡ chữ theo `LogicSpace`
 
 - [ ] T1.1 `packages/game-engine/src/render/type-scale.ts` — `CANVAS_TYPE_RATIOS` lấy từ mục 3 của [`05-motion-and-surface.md`](../design-system/05-motion-and-surface.md)

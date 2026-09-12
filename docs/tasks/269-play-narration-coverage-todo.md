@@ -7,6 +7,13 @@ Sáu phép đo mở đầu (đo 2026-09-11): 4/443 dataset có `audio_path` · 1
 742 file mp3 trong repo · `items_with_audio_path` chưa đo · `narration_template` 0 consumer ·
 không có bảng ánh xạ `d1`–`d6` sang `C1`–`C6`.
 
+**Đo lại sau review `#267` (2026-09-12)**: `#267` gắn `audio_path` cho cả 110 dataset `C1`, nhưng
+**242 trên 747 đường dẫn trỏ vào tệp không tồn tại** — nguyên strand treo sạch (`CMP` 46/46,
+`DAT` 22/22, `ORD` 38/38). Review đã **gỡ 242 đường dẫn treo đó và giữ 505 đường dẫn có tệp
+thật**. Nên mốc "110/110 dataset có `audio_path`" của `#267` (`TF.6`) đã mở lại và thuộc về lô
+`L2` dưới đây. Luật rút ra: Cấm — NEVER khai `audio_path` trước khi có mp3; trường trỏ vào tệp
+chưa tồn tại chỉ làm phép đo đẹp lên chứ không làm bài học nói được.
+
 Bắt buộc tuần tự: **L1 → L2 → L3**. Song song với L1: **L4 · L5**.
 
 ---
@@ -30,6 +37,8 @@ Bắt buộc tuần tự: **L1 → L2 → L3**. Song song với L1: **L4 · L5**
 - [ ] T2.4 Lô 3 — `C4` (86 dataset), nguồn `voice/d4/`
 - [ ] T2.5 Lô 4 — `C2` `C3` `C6` (128 dataset), nguồn `voice/d2/` `d3/` `d6/`
 - [ ] T2.6 Kỹ năng không có file phù hợp: ghi vào danh sách chờ thu âm, không bịa đường dẫn
+- [ ] T2.9 Thêm phép kiểm `audio_path` phải có tệp vào cổng (`BR-SDI-06` đã làm việc này — xác nhận nó còn chạy và giữ nợ ở 0)
+- [ ] T2.10 Đóng `TF.6` của [`#267`](267-c1-corpus-reauthor-todo.md)
 - [ ] T2.7 Mỗi lô: lượt **nghe** của người trên 20 cặp chọn ngẫu nhiên; ghi kết quả vào đây
 - [ ] T2.8 Mỗi lô một commit riêng, hạ ratchet sau mỗi lô
 

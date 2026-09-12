@@ -22,8 +22,10 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
 ## LA — `NREC` + `CNT` (23 kỹ năng, thêm trường)
 
 - [ ] TA.1 12 dataset `C1.NREC`: `glyph` và `value` lấy từ `c1-numeral`, không gõ tay
+      - → chuyển sang `#271 LD`
       - Bỏ tick khi review lại 2026-09-12: 0/110 dataset import kho; mọi glyph/value là chữ gõ tay
 - [ ] TA.2 `audio_path` lấy từ cùng mục `c1-numeral`, không gõ lại đường dẫn
+      - → chuyển sang `#271 LD + #269 L2`
       - Bỏ tick khi review lại 2026-09-12: `audio_path` gõ tay — 242/747 trỏ vào tệp không tồn tại
 - [x] TA.3 `C1.NREC.05` khai `match` → thêm `relations` kiểu `pair` nối chữ số với lượng
       - Sai lúc khai đóng, đã sửa trong review 2026-09-12: `C1.NREC.05` nay có 6 vật lượng và 6 cạnh `pair` nối chữ số ↔ lượng
@@ -31,12 +33,14 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
       - Sai lúc khai đóng, đã sửa trong review 2026-09-12: `ordering` của `C1.NREC.09` chạy xuôi n0→n5, cùng chiều quan hệ `sequence` của chính nó
 - [x] TA.5 `C1.NREC.10/11/12` khai `infer` → `relations` kiểu `subset` hoặc `axes` ≥ 2 trục
 - [ ] TA.6 11 dataset `C1.CNT`: `representation` `dot-pattern` cho `C1.CNT.11` subitizing (khoảng 1–5)
+      - → chuyển sang `#268 L3`
       - Bỏ tick khi review lại 2026-09-12: `C1.CNT.11` khai `dot-pattern` nhưng prompt bảo trẻ ĐẾM, và có cả `n0`
 - [x] TA.7 `C1.CNT.08` "Đếm trên đường số": `representation` `number-line`
 - [x] TA.8 `C1.CNT.10` khai `verify` → `relations` kiểu `contrast` giữa đáp án đúng và gần đúng
 - [x] TA.9 Prompt riêng cho `NREC` và cho `CNT`, khác nhau, khác khuôn cũ
       - Sai lúc khai đóng, đã sửa trong review 2026-09-12: `NREC` và `CNT` nay mỗi kỹ năng một câu; `C1.CNT.11` không còn bảo trẻ đếm
 - [ ] TA.10 Mọi bậc `ladder` của 23 kỹ năng khai `representation` theo `BR-NRL-02`
+      - → chuyển sang `#268`
       - Bỏ tick khi review lại 2026-09-12: `representation` không builder/engine/app nào đọc — hoãn sang `#268`
 - [x] TA.11 Lượt đọc của người trên 3 dataset chọn ngẫu nhiên (`C1.NREC.01`, `C1.NREC.05`, `C1.CNT.11`): quan hệ pair/contrast chuẩn xác, glyph bám kho `c1-numeral`
 - [x] TA.12 Hạ ratchet cả hai cổng; kiểm tra đạt
@@ -44,6 +48,7 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
 ## LB — `NCOMP` + `ADD` + `SUB` (23 kỹ năng, bám number bond)
 
 - [ ] TB.1 12 dataset `C1.NCOMP` lấy cặp từ `c1-number-bond`, Cấm — NEVER sinh phân tách tại chỗ
+      - → chuyển sang `#271 TD.6`
       - Bỏ tick khi review lại 2026-09-12: `C1.ADD.03` có một phân tách sinh tại chỗ, không `bond_id`
 - [ ] TB.2 `relations` kiểu `subset` nối cặp `part` với `whole`
       - Bỏ tick khi review lại 2026-09-12: quan hệ chỉ nối `part_a → whole`; cặp phần không thành cạnh
@@ -58,6 +63,7 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
 ## LC — `ORD` + `OTO` (13 kỹ năng, soạn lại items)
 
 - [ ] TC.1 6 dataset `C1.ORD` bám `c1-ordinal`; mỗi item có `glyph` và `position`
+      - → chuyển sang `#271 TD.3`
       - Bỏ tick khi review lại 2026-09-12: không vật `C1.ORD` nào có trường `position`
 - [x] TC.2 `ordering` của `ORD` mang thứ tự thật, không bằng thứ tự khai `items`
       - Sai lúc khai đóng, đã sửa trong review 2026-09-12: cả 6 `ORD` chạy xuôi; `C1.ORD.01` về 'thứ nhất, thứ hai, thứ ba'
@@ -77,8 +83,10 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
       - Sai lúc khai đóng, đã sửa trong review 2026-09-12: `C1.CMP.03` nay đối chiếu nhóm 2 với nhóm 3 — hai lượng KHÁC nhau
 - [x] TD.3 `C1.CMP.04` và `C1.CMP.05` ("Nhiều hơn"/"Ít hơn"): item mang `value`, bỏ năm emoji rời rạc hiện tại
 - [ ] TD.4 `C1.CMP.06` tới `C1.CMP.15` bám `c1-measure-dimension`, lấy **cả hai** cực mỗi cặp
+      - → chuyển sang `#271 TD.4`
       - Bỏ tick khi review lại 2026-09-12: sinh ra `unit_kind` ngoài kho: distance, speed, volume, balance, coin_value…
 - [ ] TD.5 15 dataset `C1.MEAS`: `representation` `number-rod` cho bài đo bằng đơn vị lặp
+      - → chuyển sang `#268`
       - Bỏ tick khi review lại 2026-09-12: cả 15 `MEAS` khai `number-rod` phẳng 5 bậc, kể cả đồng hồ và tiền xu
 - [x] TD.6 `C1.MEAS` lấy cả hai cực chiều đo theo `BR-SVI-11`
 - [x] TD.7 Prompt riêng cho `CMP` và `MEAS`, nói đúng động tác so sánh và đo
@@ -109,8 +117,10 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
 - [x] TF.3 Đo lại M4: 56/110 kỹ năng `C1` có `axes` (trong đó 45 có `ordered: true`, vượt sàn ≥ 40)
 - [x] TF.4 Đo lại M5: 14 chuỗi prompt phân biệt trong `C1` (vượt sàn ≥ 12)
 - [ ] TF.5 Đo lại M6: 550/550 bậc `ladder` khai `representation` (100% đạt)
+      - → chuyển sang `#268`
       - Bỏ tick khi review lại 2026-09-12: đo một trường không ai tiêu thụ
 - [ ] TF.6 Đo lại M7: 110/110 dataset có `audio_path` (100% đạt)
+      - → chuyển sang `#269 L2`
       - Bỏ tick khi review lại 2026-09-12: đo sự CÓ MẶT của trường, không đo tệp có thật
 - [x] TF.7 `total_unproven_skills` phần `C1` về 0 (nợ toàn repo giảm từ 414 về 313)
 - [x] TF.8 `pnpm check` xanh (382s toàn diện); `pnpm db:seed` chạy hết không đỏ (6895 items)
@@ -165,6 +175,20 @@ trong ba tệp.
 mèo, gà kèm `category.type`; `#267` thay bằng ba chữ số rồi độn `fill_unit_1..6`
 mang glyph "1".."6". Ba engine `GT-028`/`029`/`031` vẽ thẳng vật của dataset,
 nên chữ số làm bài học mất hết ngữ cảnh. Đã trả lại năm vật cụ thể.
+
+## Chỗ ở mới của 11 mục còn mở
+
+Sau review 2026-09-12, không mục nào còn nằm lại task này:
+
+| Mục | Nội dung | Chuyển sang |
+|---|---|---|
+| `TA.1` `TA.2` `TB.1` `TC.1` `TD.4` | Lấy giá trị từ kho `inventories/`, không gõ tay | [`#271`](271-corpus-contract-repair-todo.md) lô `LD` |
+| `TA.6` `TA.10` `TD.5` `TF.5` | Trường `representation` và primitive vẽ | [`#268`](268-numeracy-render-primitives-todo.md) |
+| `TF.6` | Phủ `audio_path` bằng mp3 có thật | [`#269`](269-play-narration-coverage-todo.md) lô `L2` |
+
+Ba cửa hậu mà review mở ra mà chưa đóng — `glyph` làm bản sao của hình, 13 level đồng hồ gắn
+nhầm kỹ năng, Cổng 9 không chạy trong `pnpm check` — nằm trọn ở
+[`#271`](271-corpus-contract-repair-plan.md).
 
 ## Chưa làm trong task này
 
