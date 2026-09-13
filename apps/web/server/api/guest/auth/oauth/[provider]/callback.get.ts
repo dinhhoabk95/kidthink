@@ -300,7 +300,7 @@ async function handleOAuthLoginFlow(
       const masked = maskEmail(profile.email_at_provider);
       return sendRedirect(
         event,
-        `/dang-nhap?error=social_email_conflict&provider=${rawProvider}&masked_email=${encodeURIComponent(masked)}`,
+        `/login?error=social_email_conflict&provider=${rawProvider}&masked_email=${encodeURIComponent(masked)}`,
         302
       );
     }
@@ -321,7 +321,7 @@ async function handleOAuthLoginFlow(
     secure: process.env.NODE_ENV === "production",
   });
 
-  return sendRedirect(event, `/dang-ky/dong-y?provider=${rawProvider}`, 302);
+  return sendRedirect(event, `/register/consent?provider=${rawProvider}`, 302);
 }
 
 export default defineEventHandler(async (event) => {
@@ -331,7 +331,7 @@ export default defineEventHandler(async (event) => {
 
   if (query.error === "access_denied") {
     deleteCookie(event, OAUTH_COOKIE_NAME, { path: "/" });
-    return sendRedirect(event, "/dang-nhap?cancelled=true", 302);
+    return sendRedirect(event, "/login?cancelled=true", 302);
   }
 
   const statePayload = parseAndValidateState(event, provider, query.state);

@@ -31,22 +31,16 @@
       </div>
 
       <!-- Social Login Buttons (BR-REG-11, BR-LGN-10) -->
-      <div
-        class="mb-6 flex flex-col gap-3"
-        v-if="!isMfaStep && oauthProviders.length > 0"
-      >
+      <div class="mb-6 flex flex-col gap-3" v-if="!isMfaStep">
         <button
           class="flex min-h-11 w-full items-center justify-center gap-2.5 rounded-2xl border-2 border-surface-200 bg-surface-50 px-4 py-2.5 text-base font-semibold text-surface-800 transition-all hover:border-surface-300 hover:bg-surface-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 dark:border-surface-700 dark:bg-surface-800/80 dark:text-surface-100 dark:hover:bg-surface-700"
           type="button"
-          v-for="provider in oauthProviders"
+          v-for="provider in OAUTH_PROVIDERS"
           :key="provider.id"
           :disabled="isLoading"
           @click="startOAuth(provider.id)"
         >
-          <UIcon
-            class="h-5 w-5 shrink-0"
-            :name="provider.id === 'google' ? 'i-lucide-globe' : 'i-lucide-share-2'"
-          />
+          <UIcon class="h-5 w-5 shrink-0" :name="provider.icon" />
           <span>Tiếp tục với {{ provider.name }}</span>
         </button>
 
@@ -234,13 +228,23 @@
   });
 
   interface OAuthProviderItem {
-    id: string;
+    id: "google" | "facebook";
     name: string;
+    icon: string;
   }
 
-  interface ProvidersResponse {
-    providers: OAuthProviderItem[];
-  }
+  const OAUTH_PROVIDERS: readonly OAuthProviderItem[] = [
+    {
+      id: "google",
+      name: "Google",
+      icon: "i-lucide-chrome",
+    },
+    {
+      id: "facebook",
+      name: "Facebook",
+      icon: "i-lucide-facebook",
+    },
+  ] as const;
 
   interface LoginApiResponse {
     user?: {
@@ -265,7 +269,6 @@
 
   const isLoading = ref(false);
   const errorMessage = ref("");
-  const oauthProviders = ref<OAuthProviderItem[]>([]);
 
   // Login form state
   const loginEmail = ref("");
@@ -294,18 +297,6 @@
     // If query tab=register, redirect to register page
     if (route.query.tab === "register") {
       await router.replace(registerLink.value);
-      return;
-    }
-
-    try {
-      const response = await $fetch<ProvidersResponse>(
-        "/api/guest/auth/oauth/providers"
-      );
-      if (response?.providers) {
-        oauthProviders.value = response.providers;
-      }
-    } catch {
-      // Ignore if providers unavailable
     }
   });
 

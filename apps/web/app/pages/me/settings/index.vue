@@ -148,7 +148,7 @@
               <div class="flex items-center gap-3">
                 <UIcon
                   class="w-5 h-5 text-brand-600"
-                  :name="prov.provider === 'google' ? 'i-lucide-globe' : 'i-lucide-share-2'"
+                  :name="prov.provider === 'google' ? 'i-lucide-chrome' : 'i-lucide-facebook'"
                 />
                 <div>
                   <span class="font-medium text-surface-900 text-sm block">
