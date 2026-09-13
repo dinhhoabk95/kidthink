@@ -99,9 +99,14 @@
 
 <script lang="ts" setup>
   import { ref } from "vue";
+  import { definePageMeta, useHead } from "#imports";
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Trích xuất dữ liệu",
   });
 
   const exportKinds = [

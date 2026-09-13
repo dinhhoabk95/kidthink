@@ -413,9 +413,14 @@
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
   import { useRoute } from "vue-router";
+  import { definePageMeta, useHead } from "#imports";
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Nhật ký kiểm toán",
   });
 
   const COMMON_ACTIONS = [

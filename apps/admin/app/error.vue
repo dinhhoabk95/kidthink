@@ -31,6 +31,9 @@
 </template>
 
 <script lang="ts" setup>
+  import { computed } from "vue";
+  import { clearError, useHead } from "#imports";
+
   interface Props {
     readonly error: {
       readonly statusCode?: number;
@@ -42,6 +45,12 @@
   const props = defineProps<Props>();
 
   const is404 = computed(() => props.error?.statusCode === 404);
+
+  useHead(() => ({
+    title: is404.value
+      ? "Không tìm thấy trang quản trị"
+      : "Lỗi hệ thống quản trị",
+  }));
 
   function handleClearError(): void {
     clearError({ redirect: "/" });

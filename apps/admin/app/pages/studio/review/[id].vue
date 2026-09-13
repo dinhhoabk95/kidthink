@@ -316,6 +316,7 @@
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
+  import { definePageMeta, useHead } from "#imports";
   import LivePreviewFrame from "~/components/studio/live-preview-frame.vue";
 
   const GL_CODE_PREFIX_REGEX = /^GL-(C[1-6])-/;
@@ -331,8 +332,16 @@
   const entityType = String(route.query.type || "game_level");
 
   const levelData = ref<Record<string, unknown>>({});
+
+  useHead(() => ({
+    title: levelData.value.title
+      ? `Kiểm duyệt: ${String(levelData.value.title)}`
+      : "Chi tiết kiểm duyệt nội dung",
+  }));
+
   const previewToken = ref<string | null>(null);
   const hasPreviewed = ref(false);
+
   const isProcessing = ref(false);
   const isRejectModalOpen = ref(false);
   const rejectReason = ref("");

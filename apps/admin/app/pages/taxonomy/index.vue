@@ -248,10 +248,14 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
-  import { definePageMeta } from "#imports";
+  import { definePageMeta, useHead } from "#imports";
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Cây phân loại kỹ năng",
   });
 
   interface SkillItem {

@@ -262,6 +262,7 @@
 
 <script lang="ts" setup>
   import { onMounted, onUnmounted, ref } from "vue";
+  import { definePageMeta, useHead } from "#imports";
   import LessonActivitiesPanel from "~/components/studio/lesson-activities-panel.vue";
   import LessonEditorForm from "~/components/studio/lesson-editor-form.vue";
   import TeachingViewModal, {
@@ -270,6 +271,10 @@
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Studio bài học",
   });
 
   interface LessonItem {

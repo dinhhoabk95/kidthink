@@ -292,13 +292,17 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
-  import { definePageMeta } from "#imports";
+  import { definePageMeta, useHead } from "#imports";
   import ForbiddenState from "~/components/forbidden-state.vue";
   import LoadingState from "~/components/loading-state.vue";
   import type { ManagerRole } from "~/composables/nav-config";
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Gói & Catalog SKU",
   });
 
   const { user } = useAdminAuth();

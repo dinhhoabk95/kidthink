@@ -284,9 +284,14 @@
 
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
+  import { definePageMeta, useHead } from "#imports";
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Quản lý thông báo",
   });
 
   interface DeliveryItem {

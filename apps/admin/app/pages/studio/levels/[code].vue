@@ -132,6 +132,7 @@
   import type { UiHintResult } from "@mindkid/shared/client";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
   import { useRoute, useRouter } from "vue-router";
+  import { definePageMeta, useHead } from "#imports";
   import EmojiPickerModal from "~/components/emoji/emoji-picker-modal.vue";
   import ImageCropModal from "~/components/studio/image-crop-modal.vue";
   import LivePreviewFrame, {
@@ -202,6 +203,10 @@
     }
     return "Màn chơi";
   });
+
+  useHead(() => ({
+    title: `Soạn màn chơi: ${levelTitle.value}`,
+  }));
 
   const currentVersion = computed(() => {
     return (

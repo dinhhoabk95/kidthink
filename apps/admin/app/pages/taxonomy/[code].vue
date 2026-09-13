@@ -328,11 +328,21 @@
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
   import { useRoute } from "vue-router";
-  import { definePageMeta } from "#imports";
+  import { definePageMeta, useHead } from "#imports";
 
   definePageMeta({
     layout: "manager",
   });
+
+  const route = useRoute();
+  const skill = ref<SkillDetailData | null>(null);
+  const loading = ref(true);
+
+  useHead(() => ({
+    title: skill.value
+      ? `${skill.value.identifiers.code} - ${skill.value.identifiers.name}`
+      : `Kỹ năng ${String(route.params.code || "")}`,
+  }));
 
   interface SkillDetailData {
     identifiers: {
@@ -391,10 +401,6 @@
       pr_notice: string;
     };
   }
-
-  const route = useRoute();
-  const skill = ref<SkillDetailData | null>(null);
-  const loading = ref(true);
 
   async function loadSkillDetail() {
     const code = route.params.code as string;

@@ -736,9 +736,13 @@
 
 <script lang="ts" setup>
   import { computed } from "vue";
-  import { definePageMeta } from "#imports";
+  import { definePageMeta, useHead } from "#imports";
   import ErrorState from "~/components/error-state.vue";
   import LoadingState from "~/components/loading-state.vue";
+
+  useHead({
+    title: "Bảng điều khiển vận hành",
+  });
 
   interface ManagerSessionUser {
     role?: string;

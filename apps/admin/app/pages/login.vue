@@ -306,11 +306,16 @@
   import { isApiError } from "@mindkid/errors/client";
   import { ref } from "vue";
   import { useRouter } from "vue-router";
+  import { definePageMeta, useHead } from "#imports";
   import { useAdminAuth } from "~/composables/use-admin-auth";
   import { useApiClient } from "~/composables/use-api-client";
 
   definePageMeta({
     layout: "auth",
+  });
+
+  useHead({
+    title: "Đăng nhập quản trị",
   });
 
   const router = useRouter();

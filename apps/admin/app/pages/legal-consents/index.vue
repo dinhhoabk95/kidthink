@@ -259,10 +259,14 @@
 <script lang="ts" setup>
   import { isApiError } from "@mindkid/errors/client";
   import { computed, onMounted, reactive, ref } from "vue";
-  import { definePageMeta } from "#imports";
+  import { definePageMeta, useHead } from "#imports";
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Đồng ý pháp lý",
   });
 
   interface RequirementItem {

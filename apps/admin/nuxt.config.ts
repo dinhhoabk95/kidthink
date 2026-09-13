@@ -9,6 +9,12 @@ export default defineNuxtConfig({
   // (mất @nuxt/ui, mất Tailwind, mất app.config).
   extends: [fileURLToPath(new URL("../../packages/ui", import.meta.url))],
   ssr: false,
+  app: {
+    head: {
+      titleTemplate: "%s · MindKid Admin",
+      title: "MindKid Admin",
+    },
+  },
   runtimeConfig: {
     public: {
       apiBaseUrl: requireEnv("NUXT_PUBLIC_API_BASE_URL"),

@@ -259,9 +259,14 @@
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
   import { useRoute } from "vue-router";
+  import { definePageMeta, useHead } from "#imports";
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Nhật ký lỗi hệ thống",
   });
 
   interface ErrorGroup {

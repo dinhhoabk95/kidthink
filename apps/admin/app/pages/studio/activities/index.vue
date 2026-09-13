@@ -383,9 +383,14 @@
 <script lang="ts" setup>
   import { isApiError } from "@mindkid/errors/client";
   import { computed, onMounted, onUnmounted, ref } from "vue";
+  import { definePageMeta, useHead } from "#imports";
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Studio hoạt động",
   });
 
   interface ActivityItem {

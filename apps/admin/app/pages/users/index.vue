@@ -377,13 +377,17 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, reactive, ref } from "vue";
-  import { definePageMeta } from "#imports";
+  import { definePageMeta, useHead } from "#imports";
   import ForbiddenState from "~/components/forbidden-state.vue";
   import LoadingState from "~/components/loading-state.vue";
   import type { ManagerRole } from "~/composables/nav-config";
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Quản lý người dùng",
   });
 
   const { user } = useAdminAuth();

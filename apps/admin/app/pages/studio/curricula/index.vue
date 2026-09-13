@@ -158,6 +158,7 @@
 <script lang="ts" setup>
   import { calculateCurriculumBalance } from "@mindkid/shared/client";
   import { computed, onMounted, ref } from "vue";
+  import { definePageMeta, useHead } from "#imports";
   import CurriculumActivityDrawer, {
     type LibraryItem,
   } from "~/components/studio/curriculum-activity-drawer.vue";
@@ -169,6 +170,10 @@
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Studio khung chương trình",
   });
 
   interface CurriculumItemRow {

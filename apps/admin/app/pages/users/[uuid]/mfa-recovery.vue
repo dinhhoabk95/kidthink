@@ -289,12 +289,16 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
-  import { definePageMeta, useRoute } from "#imports";
+  import { definePageMeta, useHead, useRoute } from "#imports";
   import ForbiddenState from "~/components/forbidden-state.vue";
   import LoadingState from "~/components/loading-state.vue";
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Khôi phục MFA người dùng",
   });
 
   interface RecoveryRequest {

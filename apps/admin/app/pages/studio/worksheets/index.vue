@@ -413,12 +413,17 @@
 
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
+  import { definePageMeta, useHead } from "#imports";
   // Import tường minh: `apiUrl` được dùng trong template, nên nó phải là một
   // binding của setup scope chứ không chỉ là auto-import của script.
   import { apiUrl } from "~/composables/use-api-client";
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Studio phiếu bài tập",
   });
 
   interface WorksheetItem {

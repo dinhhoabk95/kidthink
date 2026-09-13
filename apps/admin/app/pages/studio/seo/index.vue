@@ -243,9 +243,14 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
+  import { definePageMeta, useHead } from "#imports";
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Quản lý nội dung SEO",
   });
 
   interface SeoPageItem {

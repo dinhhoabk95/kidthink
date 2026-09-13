@@ -134,7 +134,7 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, reactive, ref } from "vue";
-  import { definePageMeta, useRoute } from "#imports";
+  import { definePageMeta, useHead, useRoute } from "#imports";
   import ForbiddenState from "~/components/forbidden-state.vue";
   import LoadingState from "~/components/loading-state.vue";
   import ChildArchiveModal from "~/components/users/child-archive-modal.vue";
@@ -194,6 +194,13 @@
   }
 
   const detail = ref<UserDetailResponse | null>(null);
+
+  useHead(() => ({
+    title: detail.value
+      ? `Người dùng: ${detail.value.account.display_name || detail.value.account.email}`
+      : "Chi tiết người dùng",
+  }));
+
   const loading = ref(true);
   const submitting = ref(false);
   const errorMessage = ref<string | null>(null);

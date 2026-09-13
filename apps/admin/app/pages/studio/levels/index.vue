@@ -264,9 +264,14 @@
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
   import { useRouter } from "vue-router";
+  import { definePageMeta, useHead } from "#imports";
 
   definePageMeta({
     layout: "manager",
+  });
+
+  useHead({
+    title: "Studio màn chơi",
   });
 
   export interface GameLevelListItem {

@@ -1,13 +1,17 @@
+<template>
+  <div />
+</template>
+
 <script lang="ts" setup>
-  import { navigateTo } from "#imports";
+  import { definePageMeta, navigateTo, useHead } from "#imports";
 
   definePageMeta({
     layout: "manager",
   });
 
+  useHead({
+    title: "Game Levels",
+  });
+
   await navigateTo("/studio/levels", { replace: true });
 </script>
-
-<template>
-  <div />
-</template>
