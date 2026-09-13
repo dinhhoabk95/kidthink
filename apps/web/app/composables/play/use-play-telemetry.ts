@@ -62,7 +62,11 @@ export function usePlayTelemetry() {
     loggedIn: boolean
   ): Promise<FinishSessionResult> {
     const state = roundRunner.getState();
+    const telemetryEvents = roundRunner.getAllTelemetry();
+    const lastSeq =
+      telemetryEvents.length > 0 ? telemetryEvents.length : undefined;
     const payload = {
+      last_seq: lastSeq,
       rounds_completed: state.roundsCompleted,
       rounds_total: state.roundsTotal,
       rounds_skipped: state.roundsSkipped,

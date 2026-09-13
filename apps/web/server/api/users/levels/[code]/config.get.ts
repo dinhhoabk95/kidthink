@@ -2,6 +2,7 @@ import { NotFoundError } from "@mindkid/errors/common";
 import { defineEventHandler, getRouterParam } from "h3";
 import {
   getOptionalActiveChildUuid,
+  getOrSetGuestDeviceId,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
@@ -25,6 +26,7 @@ export default defineEventHandler(async (event) => {
       user_id: String(user.user_id),
       active_child_id: activeChildUuid,
     },
+    guestDeviceId: getOrSetGuestDeviceId(event),
     activeKeys,
   });
 });

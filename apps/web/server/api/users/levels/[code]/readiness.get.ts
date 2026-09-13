@@ -4,6 +4,7 @@ import { and, desc, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 import {
   getOptionalActiveChildUuid,
+  getOrSetGuestDeviceId,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
 import { checkLevelIntroRequired } from "#server/utils/concept-intro-runtime";
@@ -28,11 +29,16 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError("NOT_FOUND");
   }
 
-  const introStatus = await checkLevelIntroRequired(level, {
-    kind: "user",
-    user_id: String(user.user_id),
-    active_child_id: activeChildUuid,
-  });
+  const guestDeviceId = getOrSetGuestDeviceId(event);
+  const introStatus = await checkLevelIntroRequired(
+    level,
+    {
+      kind: "user",
+      user_id: String(user.user_id),
+      active_child_id: activeChildUuid,
+    },
+    { guestDeviceId }
+  );
 
   return {
     code: level.code,

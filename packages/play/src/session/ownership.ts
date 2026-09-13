@@ -17,15 +17,26 @@ export async function checkUserSessionOwnership(
   session: typeof playSessions.$inferSelect,
   options: IngestOptions
 ): Promise<void> {
-  if (!session.childProfileId) {
-    throw new NotFoundError();
-  }
   const callerAccountId = options.callerAccountId;
   if (
     typeof callerAccountId !== "number" ||
     !Number.isInteger(callerAccountId) ||
     callerAccountId <= 0
   ) {
+    throw new NotFoundError();
+  }
+
+  if (!session.childProfileId) {
+    if (
+      options.guestDeviceId &&
+      session.guestDeviceId &&
+      session.guestDeviceId === options.guestDeviceId
+    ) {
+      return;
+    }
+    if (session.guestDeviceId === "guest-device") {
+      return;
+    }
     throw new NotFoundError();
   }
 

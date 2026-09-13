@@ -7,7 +7,13 @@ import { z } from "zod";
 import { getOrSetGuestDeviceId } from "#server/utils/auth-runtime";
 
 const CompleteSchema = z
-  .object({ last_seq: z.number().int().positive().optional() })
+  .object({
+    last_seq: z.number().int().positive().optional(),
+    rounds_completed: z.number().int().nonnegative().optional(),
+    rounds_total: z.number().int().nonnegative().optional(),
+    rounds_skipped: z.number().int().nonnegative().optional(),
+    hint_count: z.number().int().nonnegative().optional(),
+  })
   .strict();
 
 export default defineEventHandler(async (event) => {
