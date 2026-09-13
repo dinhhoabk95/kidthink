@@ -85,6 +85,9 @@ function buildLevelRounds(
   const roundCount =
     levelPlan.template === "GT-000" ? 1 : (levelPlan.rounds ?? 3);
   const rounds: ContentSeedRound[] = [];
+  const rung = dataset.ladder.find(
+    (item) => item.rung === levelPlan.difficulty
+  );
 
   for (let r = 0; r < roundCount; r++) {
     const projected = builder.project(dataset, {
@@ -95,6 +98,7 @@ function buildLevelRounds(
       round_index: r,
       teaches: levelPlan.skill_codes,
       sequence_no: levelPlan.sequence_no,
+      representation: rung?.representation,
     });
 
     let instruction: string;

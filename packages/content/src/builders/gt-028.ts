@@ -31,12 +31,20 @@ export const projectGT028: Projection<"GT-028"> = {
       asset: resolveItemAsset(baseItem, true),
     }));
 
+    let rep: "tally" | "rekenrek" | "discrete-object" | undefined;
+    if (opts.representation === "tally" || opts.representation === "rekenrek") {
+      rep = opts.representation;
+    } else if (opts.representation === "discrete-object") {
+      rep = "discrete-object";
+    }
+
     return {
       content_pack: {
         prompt: `Bé hãy chạm đếm cách 2 cho đến ${target_total} nhé!`,
         step: 2 as const,
         items,
         target_total,
+        ...(rep ? { representation: rep } : {}),
       },
       difficulty_params: {
         step: 2 as const,

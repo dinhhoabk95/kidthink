@@ -25,7 +25,9 @@ export const GT030ContentSchema = z
     object: GT030ObjectSchema,
     unit: GT030UnitSchema,
     answer_options: z.array(GT030AnswerOptionSchema).min(2).max(5),
-    representation: z.enum(["number-rod", "discrete-unit"]).optional(),
+    representation: z
+      .enum(["number-rod", "discrete-object", "discrete-unit"])
+      .optional(),
   })
   .refine(
     (c) => {

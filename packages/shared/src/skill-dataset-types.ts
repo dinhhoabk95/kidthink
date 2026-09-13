@@ -133,6 +133,8 @@ export interface ProjectOptions {
   readonly teaches?: readonly string[];
   /** Thứ tự tiết trong một chủ đề nhiều tiết — `BR-CIM-20`. */
   readonly sequence_no?: number;
+  /** Biểu diễn lượng của bậc thang hiện tại — Task #268 / BR-NRL-01. */
+  readonly representation?: QuantityRepKind | "numeral";
 }
 
 export interface ProjectionRequires {

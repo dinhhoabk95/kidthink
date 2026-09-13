@@ -198,17 +198,17 @@ Thang và luật dùng thuộc
 [`numeracy-representation-ladder.md`](../05-content/numeracy-representation-ladder.md); mục này
 chỉ khai nghĩa vụ **vẽ**.
 
-| `kind` | Hàm vẽ | Trạng thái 2026-09-11 | Nghĩa vụ hình học |
+| `kind` | Hàm vẽ | Trạng thái sau Task #268 | Nghĩa vụ hình học |
 |---|---|---|---|
 | `discrete-object` | `drawSlotItem` | Chạy | Đã có |
-| `numeral` | `drawTextInSlot` · `drawFlashcard` | Chạy | `drawFlashcard` hiện cố định 350×320 px logic; phải suy từ `LogicSpace` theo `BR-ERC-12` |
-| `ten-frame` | `drawTenFrameBoard` | Tồn tại, **0 call site** | Lưới 2×5, vạch phân nhóm đậm sau cột 5; ô trống và ô đầy phân biệt bằng hai kênh |
-| `dot-pattern` | chưa có | Thiếu | Bố cục chấm chuẩn mặt xúc xắc cho 1–6; cấm bố cục ngẫu nhiên vì nhận-tức-thì dựa vào hình dạng cố định |
-| `number-line` | chưa có | Thiếu | Trục ngang có mốc chia đều, nhãn số ở mốc, con trỏ vị trí hiện tại; khoảng cách hai mốc không nhỏ hơn sàn chạm khi mốc là phần tử chạm được |
-| `tally` | chưa có | Thiếu | Nhóm năm gạch với gạch thứ năm bắc ngang; nhóm cách nhau ít nhất một bề rộng gạch |
-| `rekenrek` | chưa có | Thiếu | Hai hàng mười hạt, mỗi hàng chia 5 đỏ và 5 trắng; hạt đã đẩy và chưa đẩy phân biệt bằng vị trí, không chỉ bằng màu |
-| `number-rod` | chưa có | Thiếu | Thanh liên tục chia đốt bằng nhau, đốt xen kẽ hai màu theo giáo cụ Montessori |
-| `finger` | chưa có | Thiếu | Bàn tay có số ngón giơ đọc được ở cả ba viewport; xem câu hỏi mở 2 của `numeracy-representation-ladder.md` |
+| `numeral` | `drawTextInSlot` · `drawFlashcard` | Chạy | `drawFlashcard` suy từ `LogicSpace` theo `BR-ERC-12` |
+| `ten-frame` | `drawTenFrameBoard` | Chạy (`GT-007`, `GT-012`) | Lưới 2×5, vạch phân nhóm đậm sau cột 5; ô trống và ô đầy phân biệt bằng hai kênh |
+| `dot-pattern` | `drawDotPattern` | Chạy (`GT-012`, `drawQuantityRepresentation`) | Bố cục chấm chuẩn mặt xúc xắc cho 1–6; cấm bố cục ngẫu nhiên vì nhận-tức-thì dựa vào hình dạng cố định |
+| `number-line` | `drawNumberLine` | Chạy (`GT-006` qua `drawTrackNumberLine`) | Trục ngang có mốc chia đều, nhãn số ở mốc, con trỏ vị trí hiện tại; khoảng cách hai mốc không nhỏ hơn sàn chạm khi mốc là phần tử chạm được |
+| `tally` | `drawTally` | Chạy (`GT-028` qua `drawHeaderRepresentation`) | Nhóm năm gạch với gạch thứ năm bắc ngang; nhóm cách nhau ít nhất một bề rộng gạch |
+| `rekenrek` | `drawRekenrek` | Chạy (`GT-028` qua `drawHeaderRepresentation`) | Hai hàng mười hạt, mỗi hàng chia 5 đỏ và 5 trắng; hạt đã đẩy và chưa đẩy phân biệt bằng vị trí, không chỉ bằng màu |
+| `number-rod` | `drawNumberRod` | Chạy (`GT-030` qua `drawNumberRodAcrossSlots`) | Thanh liên tục chia đốt bằng nhau, đốt xen kẽ hai màu theo giáo cụ Montessori |
+| `finger` | chưa có | Thiếu (hoãn) | Bàn tay có số ngón giơ đọc được ở cả ba viewport; xem câu hỏi mở 2 của `numeracy-representation-ladder.md` |
 
 Mỗi primitive mới thêm một hàng vào bảng bảy phép kiểm ở mục 7.6, và kèm ảnh chụp ở ba viewport
 `390x844`, `820x1180`, `1440x900` đặt cạnh bộ `docs/qa/engine-captures/2026-09-01/`.

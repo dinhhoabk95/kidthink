@@ -82,6 +82,13 @@ export const projectGT030: Projection<"GT-030"> = {
       rng
     );
 
+    let rep: "number-rod" | "discrete-object" | undefined;
+    if (opts.representation === "number-rod") {
+      rep = "number-rod";
+    } else if (opts.representation === "discrete-object") {
+      rep = "discrete-object";
+    }
+
     return {
       content_pack: {
         prompt: buildGT030Prompt(unitItem.label),
@@ -95,6 +102,7 @@ export const projectGT030: Projection<"GT-030"> = {
           asset: resolveItemAsset(unitItem, true),
         },
         answer_options,
+        ...(rep ? { representation: rep } : {}),
       },
       difficulty_params: {
         item_count: params.item_count,

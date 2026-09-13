@@ -74,10 +74,10 @@ builder, engine hay app nào đọc nó — nó chỉ được ghi vào jsonb `s
 
 - [x] T0.1 Khai lại `readonly representation?: QuantityRepKind | "numeral"` trên `DifficultyRung`
 - [x] T0.2 Import `QuantityRepKind` từ `packages/content/src/inventories/c1-quantity-rep.ts` — Cấm — NEVER định nghĩa lại union trong `@mindkid/shared` (review đã gỡ một bản sao y hệt)
-- [ ] T0.3 Chỉ khai `representation` cho `kind` đã có hàm vẽ **và** call site; mỗi `kind` một lô
-- [ ] T0.4 Thêm phép kiểm: mọi `representation` khai trong dataset phải có hàm vẽ tương ứng
-- [ ] T0.5 **Ca âm** — khai một `kind` chưa có hàm vẽ → cổng đỏ
-- [ ] T0.6 Đóng `TA.6` `TA.10` `TD.5` `TF.5` của [`#267`](267-c1-corpus-reauthor-todo.md)
+- [x] T0.3 Chỉ khai `representation` cho `kind` đã có hàm vẽ **và** call site; mỗi `kind` một lô
+- [x] T0.4 Thêm phép kiểm: mọi `representation` khai trong dataset phải có hàm vẽ tương ứng
+- [x] T0.5 **Ca âm** — khai một `kind` chưa có hàm vẽ → cổng đỏ
+- [x] T0.6 Đóng `TA.6` `TA.10` `TD.5` `TF.5` của [`#267`](267-c1-corpus-reauthor-todo.md)
 
 ## L1 — Thang cỡ chữ theo `LogicSpace`
 
@@ -121,10 +121,10 @@ builder, engine hay app nào đọc nó — nó chỉ được ghi vào jsonb `s
 - [x] T4.5 `drawRekenrek` — hai hàng mười hạt, mỗi hàng 5 đỏ 5 trắng, vạch phân nhóm ở mốc 5
 - [x] T4.6 `drawRekenrek` — hạt đã đẩy và chưa đẩy khác nhau về **toạ độ x**, không chỉ màu
 - [x] T4.7 `drawNumberRod` — thanh liên tục chia đốt bằng nhau, đốt xen kẽ hai màu
-- [ ] T4.8 Mỗi primitive gọi ít nhất một engine thật; Cấm — NEVER để hàm không call site
-- [ ] T4.9 Mỗi primitive thêm một hàng vào bảng bảy phép kiểm (mục 7.6 của `engine-render-contract.md`)
+- [x] T4.8 Mỗi primitive gọi ít nhất một engine thật; Cấm — NEVER để hàm không call site
+- [x] T4.9 Mỗi primitive thêm một hàng vào bảng bảy phép kiểm (mục 7.6 của `engine-render-contract.md`)
 - [ ] T4.10 Mỗi primitive: ảnh chụp ba viewport đặt cạnh bộ `2026-09-01/`
-- [ ] T4.11 **Ca âm `BR-ERC-13`** — khai một `kind` chưa có call site → cổng đỏ
+- [x] T4.11 **Ca âm `BR-ERC-13`** — khai một `kind` chưa có call site → cổng đỏ
 - [x] T4.12 **Ca âm `BR-NRL-10`** — `content_pack` mang `kind` engine chưa hiện thực → engine **ném lỗi**, không vẽ `discrete-object` thay
 - [x] T4.13 `finger` **không** làm trong task này — chờ câu hỏi mở 2 của spec thang
 
@@ -134,7 +134,7 @@ builder, engine hay app nào đọc nó — nó chỉ được ghi vào jsonb `s
 - [x] T5.2 Ratchet mở đầu 59 (42 ở `shared-render.ts`, 17 ở `shared-render-shapes.ts`), chỉ giảm
 - [x] T5.3 Nối vào `package.json` và `scripts/check.sh`
 - [x] T5.4 **Ca âm `BR-DSC-26`** — thêm một hằng hex vào tầng render → cổng đỏ, nêu đúng file và dòng
-- [ ] T5.5 Đổi hằng hex của sáu primitive mới sang token; không tăng nợ
+- [x] T5.5 Đổi hằng hex của sáu primitive mới sang token; không tăng nợ
 
 ## L6 — Sàn chạm và nút lỗi
 
@@ -147,7 +147,7 @@ builder, engine hay app nào đọc nó — nó chỉ được ghi vào jsonb `s
 
 ## L7 — Chốt số
 
-- [ ] T7.1 Đo lại M1: 7/8 `kind` có hàm vẽ và call site (`finger` để lại)
+- [x] T7.1 Đo lại M1: 7/8 `kind` có hàm vẽ và call site (`finger` để lại)
 - [x] T7.2 Đo lại M2: `drawTenFrameBoard` có ≥ 1 call site
 - [x] T7.3 Đo lại M4: sàn cỡ chữ trên 390×844 ≥ 16 px CSS
 - [x] T7.4 Đo lại M5: hằng hex thô giảm, ratchet chốt số mới

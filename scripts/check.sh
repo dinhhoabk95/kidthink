@@ -98,6 +98,10 @@ PID_LOGIC_SPACE=$!
 pnpm check:render-tokens &
 PID_RENDER_TOKENS=$!
 
+# Cổng bậc thang biểu diễn lượng — Task #268 (BR-NRL-01..10).
+pnpm check:numeracy-ladder &
+PID_NUMERACY_LADDER=$!
+
 # Cổng bậc thang ô cần chỉ — Task #260 (T9). Mặc định của
 # `getHintTargetIndex()` là null, nên template quên cài KHÔNG làm test nào đỏ,
 # nó chỉ âm thầm không bao giờ chỉ chỗ cho trẻ.
@@ -223,6 +227,11 @@ fi
 
 if ! wait $PID_RENDER_TOKENS; then
   echo "✗ check:render-tokens ratchet failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_NUMERACY_LADDER; then
+  echo "✗ check:numeracy-ladder failed" >&2
   LINT_OK=false
 fi
 

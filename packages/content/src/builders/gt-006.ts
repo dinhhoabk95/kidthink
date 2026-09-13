@@ -52,10 +52,14 @@ export const projectGT006: Projection<"GT-006"> = {
       };
     });
 
+    const rep =
+      opts.representation === "number-line" ? "number-line" : undefined;
+
     return {
       content_pack: {
         prompt: "Bé hãy sắp xếp theo đúng thứ tự nhé!",
         sequence,
+        ...(rep ? { representation: rep } : {}),
       },
       difficulty_params: {
         item_count: expectedItemCount,

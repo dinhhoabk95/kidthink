@@ -75,6 +75,16 @@ export const projectGT007: Projection<"GT-007"> = {
     const partCount =
       typeof params.part_count === "number" ? params.part_count : 2;
 
+    const isTenFrame = opts.representation === "ten-frame";
+    let repValue: "ten-frame" | "numeral" | "discrete-object" | undefined;
+    if (isTenFrame) {
+      repValue = "ten-frame";
+    } else if (opts.representation === "numeral") {
+      repValue = "numeral";
+    } else if (opts.representation === "discrete-object") {
+      repValue = "discrete-object";
+    }
+
     return {
       content_pack: {
         prompt: `Số ${wholeVal} tách thành ${part1Val} và mấy nhé?`,
@@ -85,6 +95,10 @@ export const projectGT007: Projection<"GT-007"> = {
         },
         parts,
         options: shuffleDeterministic(options, rng),
+        layout: isTenFrame
+          ? ("ten-frame-split" as const)
+          : ("number-bond-tree" as const),
+        ...(repValue ? { representation: repValue } : {}),
       },
       difficulty_params: {
         item_count: params.item_count,
