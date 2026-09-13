@@ -7,10 +7,8 @@ import { InternalError, NotFoundError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
-import {
-  getVerifiedRemoteIp,
-  requireSuperAdminSession,
-} from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 
 const reactivateBodySchema = z.object({
   reason: z.string().min(10),

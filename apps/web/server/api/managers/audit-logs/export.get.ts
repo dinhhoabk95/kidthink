@@ -3,10 +3,8 @@ import { auditLogs, getOwnerDb } from "@mindkid/db";
 import { ValidationError } from "@mindkid/errors/common";
 import { and, desc, eq, gte, ilike, inArray, lte, type SQL } from "drizzle-orm";
 import { defineEventHandler, getQuery, setResponseHeader } from "h3";
-import {
-  getVerifiedRemoteIp,
-  requireSuperAdminSession,
-} from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 
 function escapeLikeWildcards(text: string): string {
   return text.replace(/([%_\\])/g, "\\$1");

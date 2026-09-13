@@ -2,10 +2,8 @@ import { auditLogs, consentRequirements, getOwnerDb } from "@mindkid/db";
 import { ValidationError } from "@mindkid/errors/common";
 import { defineEventHandler, getHeader, readBody } from "h3";
 import { z } from "zod";
-import {
-  getVerifiedRemoteIp,
-  requireSuperAdminSession,
-} from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 import { bumpGlobalConsentEpoch } from "#server/utils/consent-guard";
 import { requireReauth } from "#server/utils/reauth-runtime";
 

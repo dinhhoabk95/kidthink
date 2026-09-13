@@ -21,9 +21,9 @@ import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
 import {
   assertManagerRateLimitAllowed,
-  getVerifiedRemoteIp,
   setManagerRememberCookie,
 } from "#server/utils/admin-auth-runtime";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 import { getManagerSessionConfig } from "#server/utils/session-runtime";
 
 const DUMMY_HASH =

@@ -1,5 +1,5 @@
 import { getQuery, type H3Event, readBody } from "h3";
-import { assertRequestBodySize } from "./auth-runtime-factory.js";
+import { assertRequestBodySize } from "./auth-runtime.js";
 
 /**
  * Đọc body request có kiểm tra trần kích thước tối đa.

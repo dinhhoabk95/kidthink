@@ -18,8 +18,8 @@ import { z } from "zod";
 import {
   assertManagerRateLimitAllowed,
   getMfaEncryptionKey,
-  getVerifiedRemoteIp,
 } from "#server/utils/admin-auth-runtime";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 import { readRequestBody } from "#server/utils/request-body";
 
 const MfaSetupSchema = z

@@ -3,7 +3,7 @@ import { defineEventHandler, getRequestURL } from "h3";
 import {
   assertRequestBodySize,
   assertSameOriginRequest,
-} from "#server/utils/auth-runtime-factory";
+} from "#server/utils/auth-runtime";
 
 /**
  * Middleware phổ quát bảo vệ request cho mọi `/api/*` — Task #264, BR-CSRF-02, BR-SEC-03.

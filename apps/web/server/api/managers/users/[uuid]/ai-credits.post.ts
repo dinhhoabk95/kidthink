@@ -8,11 +8,9 @@ import {
   setResponseStatus,
 } from "h3";
 import { manualGrantCredits } from "#server/services/index.js";
-import {
-  getVerifiedRemoteIp,
-  requireSuperAdminSession,
-} from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const session = requireSuperAdminSession(event);

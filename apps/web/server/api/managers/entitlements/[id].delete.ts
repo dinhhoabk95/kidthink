@@ -2,11 +2,9 @@ import { ValidationError } from "@mindkid/errors/common";
 
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
-import {
-  getVerifiedRemoteIp,
-  requireSuperAdminSession,
-} from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 import { revokeUserEntitlementById } from "#server/utils/entitlements-runtime";
 
 const revokeEntitlementSchema = z.object({

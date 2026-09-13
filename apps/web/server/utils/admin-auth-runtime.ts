@@ -1,20 +1,16 @@
 import { requireManagerAuth, requireRole } from "@mindkid/auth";
 import { requireEnv } from "@mindkid/config";
 import type { H3Event } from "h3";
-import { getVerifiedRemoteIp as runtimeGetVerifiedRemoteIp } from "./auth-runtime.js";
 import {
-  assertRateLimitAllowed,
-  assertRequestBodySize,
-  assertSameOriginRequest,
   createAuthRuntime,
+  factoryAssertRateLimitAllowed,
+  factoryAssertRequestBodySize,
+  factoryAssertSameOriginRequest,
 } from "./auth-runtime-factory.js";
 
-export const assertManagerRateLimitAllowed = assertRateLimitAllowed;
-export const assertManagerRequestBodySize = assertRequestBodySize;
-export const assertManagerSameOriginRequest = assertSameOriginRequest;
-export const getVerifiedRemoteIp = (event: H3Event): string =>
-  runtimeGetVerifiedRemoteIp(event);
-export const MANAGER_REMEMBER_COOKIE = "tm_m_remember";
+export const assertManagerRateLimitAllowed = factoryAssertRateLimitAllowed;
+export const assertManagerRequestBodySize = factoryAssertRequestBodySize;
+export const assertManagerSameOriginRequest = factoryAssertSameOriginRequest;
 
 const managerRuntime = createAuthRuntime("manager");
 

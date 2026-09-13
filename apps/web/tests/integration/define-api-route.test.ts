@@ -7,9 +7,14 @@ const mockRequireWebUserSession = vi.fn();
 const mockRequireManagerSession = vi.fn();
 const mockRequireSuperAdminSession = vi.fn();
 
-vi.mock("../../server/utils/auth-runtime.js", () => ({
-  requireWebUserSession: (event: H3Event) => mockRequireWebUserSession(event),
-}));
+vi.mock("../../server/utils/auth-runtime.js", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("../../server/utils/auth-runtime.js")>();
+  return {
+    ...actual,
+    requireWebUserSession: (event: H3Event) => mockRequireWebUserSession(event),
+  };
+});
 
 vi.mock("../../server/utils/admin-auth-runtime.js", () => ({
   requireManagerSession: (event: H3Event) => mockRequireManagerSession(event),

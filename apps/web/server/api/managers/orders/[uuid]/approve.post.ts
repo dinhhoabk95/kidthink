@@ -20,10 +20,8 @@ import type { PgTransaction } from "drizzle-orm/pg-core";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { grantCredits } from "#server/services/index.js";
-import {
-  getVerifiedRemoteIp,
-  requireSuperAdminSession,
-} from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 const approveOrderSchema = z.object({

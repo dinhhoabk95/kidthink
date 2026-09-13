@@ -28,9 +28,9 @@ import { z } from "zod";
 import {
   assertManagerRateLimitAllowed,
   getMfaEncryptionKey,
-  getVerifiedRemoteIp,
   setManagerRememberCookie,
 } from "#server/utils/admin-auth-runtime";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 import { getManagerSessionConfig } from "#server/utils/session-runtime";
 
 const MfaSchema = z

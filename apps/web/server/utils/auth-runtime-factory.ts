@@ -25,7 +25,7 @@ const CSRF_TOKEN = /^[0-9a-f]{64}$/;
 const INTEGER_TEXT = /^\d+$/;
 const ORIGIN_TRAILING_SLASH = /\/$/;
 
-export function isAllowedApiOrigin(
+export function factoryIsAllowedApiOrigin(
   origin: string,
   requestHost: string
 ): boolean {
@@ -42,7 +42,7 @@ export function isAllowedApiOrigin(
   return configuredOrigins.includes(parsedOrigin.origin);
 }
 
-export function assertRequestBodySize(
+export function factoryAssertRequestBodySize(
   event: H3Event,
   maxBytes = 128 * 1024
 ): void {
@@ -56,7 +56,7 @@ export function assertRequestBodySize(
   }
 }
 
-export function assertRateLimitAllowed(statusCode: number): void {
+export function factoryAssertRateLimitAllowed(statusCode: number): void {
   if (statusCode === 200) {
     return;
   }
@@ -65,7 +65,7 @@ export function assertRateLimitAllowed(statusCode: number): void {
     : new ServiceUnavailableError();
 }
 
-export function assertSameOriginRequest(event: H3Event): void {
+export function factoryAssertSameOriginRequest(event: H3Event): void {
   const fetchSite = getHeader(event, "sec-fetch-site")?.toLowerCase();
   if (fetchSite === "cross-site") {
     throw new CsrfInvalidError();
@@ -77,7 +77,7 @@ export function assertSameOriginRequest(event: H3Event): void {
     return;
   }
   try {
-    if (!isAllowedApiOrigin(origin, host)) {
+    if (!factoryIsAllowedApiOrigin(origin, host)) {
       throw new CsrfInvalidError();
     }
   } catch (error) {

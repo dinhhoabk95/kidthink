@@ -13,8 +13,10 @@ import {
   requireSuperAdminSession,
 } from "./admin-auth-runtime.js";
 import { throwValidationError } from "./api-error.js";
-import { requireWebUserSession } from "./auth-runtime.js";
-import { assertRequestBodySize } from "./auth-runtime-factory.js";
+import {
+  assertRequestBodySize,
+  requireWebUserSession,
+} from "./auth-runtime.js";
 import { readRequestBody, readRequestQuery } from "./request-body.js";
 
 export type ApiAuthMode = "user" | "manager" | "super_admin" | "guest";

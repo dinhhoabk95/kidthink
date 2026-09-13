@@ -11,10 +11,8 @@ import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { InvalidStatusTransitionError } from "@mindkid/errors/content";
 import { and, eq, sql } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam } from "h3";
-import {
-  getVerifiedRemoteIp,
-  requireSuperAdminSession,
-} from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);

@@ -11,10 +11,10 @@ import {
   assertSameOriginRequest as userAssertSameOriginRequest,
 } from "../../server/utils/auth-runtime.js";
 import {
-  assertRateLimitAllowed,
-  assertRequestBodySize,
-  assertSameOriginRequest,
   createAuthRuntime,
+  factoryAssertRateLimitAllowed,
+  factoryAssertRequestBodySize,
+  factoryAssertSameOriginRequest,
 } from "../../server/utils/auth-runtime-factory.js";
 
 function createMockEvent(
@@ -36,32 +36,36 @@ function createMockEvent(
 
 describe("auth-runtime-factory", () => {
   it("user and manager runtime share identical guard functions", () => {
-    expect(userAssertRequestBodySize).toBe(assertRequestBodySize);
-    expect(assertManagerRequestBodySize).toBe(assertRequestBodySize);
+    expect(userAssertRequestBodySize).toBe(factoryAssertRequestBodySize);
+    expect(assertManagerRequestBodySize).toBe(factoryAssertRequestBodySize);
 
-    expect(userAssertRateLimitAllowed).toBe(assertRateLimitAllowed);
-    expect(assertManagerRateLimitAllowed).toBe(assertRateLimitAllowed);
+    expect(userAssertRateLimitAllowed).toBe(factoryAssertRateLimitAllowed);
+    expect(assertManagerRateLimitAllowed).toBe(factoryAssertRateLimitAllowed);
 
-    expect(userAssertSameOriginRequest).toBe(assertSameOriginRequest);
-    expect(assertManagerSameOriginRequest).toBe(assertSameOriginRequest);
+    expect(userAssertSameOriginRequest).toBe(factoryAssertSameOriginRequest);
+    expect(assertManagerSameOriginRequest).toBe(factoryAssertSameOriginRequest);
   });
 
   describe("assertRequestBodySize", () => {
     it("throws PayloadTooLargeError when content-length exceeds limit", () => {
       const event = createMockEvent({ "content-length": "200000" });
-      expect(() => assertRequestBodySize(event, 128 * 1024)).toThrowError();
+      expect(() =>
+        factoryAssertRequestBodySize(event, 128 * 1024)
+      ).toThrowError();
     });
 
     it("passes when content-length is within limit", () => {
       const event = createMockEvent({ "content-length": "50000" });
-      expect(() => assertRequestBodySize(event, 128 * 1024)).not.toThrow();
+      expect(() =>
+        factoryAssertRequestBodySize(event, 128 * 1024)
+      ).not.toThrow();
     });
   });
 
   describe("assertSameOriginRequest", () => {
     it("throws CsrfInvalidError on cross-site fetch site", () => {
       const event = createMockEvent({ "sec-fetch-site": "cross-site" });
-      expect(() => assertSameOriginRequest(event)).toThrowError();
+      expect(() => factoryAssertSameOriginRequest(event)).toThrowError();
     });
 
     it("passes when origin matches host", () => {
@@ -69,7 +73,7 @@ describe("auth-runtime-factory", () => {
         origin: "https://mindkid.local",
         host: "mindkid.local",
       });
-      expect(() => assertSameOriginRequest(event)).not.toThrow();
+      expect(() => factoryAssertSameOriginRequest(event)).not.toThrow();
     });
   });
 

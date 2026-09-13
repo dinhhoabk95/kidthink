@@ -5,10 +5,8 @@ import { NotFoundError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
-import {
-  getVerifiedRemoteIp,
-  requireSuperAdminSession,
-} from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 import { executeArchiveChildProfile } from "#server/utils/child-archive-runtime";
 
 const archiveBodySchema = z.object({

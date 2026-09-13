@@ -5,10 +5,10 @@ import { NoActiveChildError } from "@mindkid/errors/child";
 import { getCookie, getHeader, type H3Event, setCookie } from "h3";
 import {
   createAuthRuntime,
-  assertRateLimitAllowed as factoryAssertRateLimitAllowed,
-  assertRequestBodySize as factoryAssertRequestBodySize,
-  assertSameOriginRequest as factoryAssertSameOriginRequest,
-  isAllowedApiOrigin as factoryIsAllowedApiOrigin,
+  factoryAssertRateLimitAllowed,
+  factoryAssertRequestBodySize,
+  factoryAssertSameOriginRequest,
+  factoryIsAllowedApiOrigin,
 } from "./auth-runtime-factory.js";
 
 export const assertRateLimitAllowed = factoryAssertRateLimitAllowed;
