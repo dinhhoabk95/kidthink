@@ -43,6 +43,7 @@ export interface ConfigPayload {
   difficulty_params?: JsonObject;
   theme_id: string;
   age_band?: AgeBand;
+  layout_seed?: number;
   scoring?: { mode: "rounds" | "attempts" };
   rounds?: RoundPayload[];
   session?: { uuid: string; started_at?: string };
@@ -67,9 +68,30 @@ export interface UsePlaySessionOptions {
 }
 
 /**
+ * Seed dựng bàn cho lượt chơi (`BR-RNG-06`).
+ *
+ * `payload.layout_seed` do server phát cho **mỗi phiên chơi** (bậc random
+ * thật ở `createLayoutSeed`), nên đây phải là nguồn duy nhất. Thiếu nó —
+ * payload hỏng, cache cũ, hay đường phát nội bộ chưa gắn — Cấm — NEVER rơi về
+ * `Math.random()`: đó là nguồn ngẫu nhiên thứ hai ngoài generator của phiên,
+ * đúng thứ `BR-RNG-01`/`BR-RNG-06` cấm. Rơi về seed `0` cố định (có cảnh báo)
+ * an toàn hơn — tối đa là bàn không đổi vị trí, không phải bàn không tái dựng
+ * được.
+ */
+export function resolveLayoutSeed(payload: ConfigPayload): number {
+  if (payload.layout_seed !== undefined) {
+    return payload.layout_seed;
+  }
+  console.warn(
+    `[play-session] payload thiếu layout_seed cho level ${payload.level_code} — dùng seed 0 (BR-RNG-06).`
+  );
+  return 0;
+}
+
+/**
  * Câu dẫn chờ tiếng chuông mở vòng dứt rồi mới vang, để hai âm không đè nhau.
  */
-const ROUND_OPEN_NARRATION_DELAY_MS = 350;
+const ROUND_OPEN_NARRATION_DELAY_MS = 600;
 
 export function usePlaySession(options: UsePlaySessionOptions) {
   const { canvasRef, loggedIn, syncView, onFallbackCue } = options;
@@ -121,11 +143,16 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       const s = engine.activeSession as {
         steps?: readonly { action: string }[];
         currentStepIndex?: number;
+        difficulty?: { speak_along?: "off" | "tap" };
       };
       const stepIdx = s.currentStepIndex ?? 0;
       const step = s.steps?.[stepIdx];
       introStepIndex.value = stepIdx;
-      isEchoStep.value = step?.action === "echo";
+      // "off" (Task #273): bước echo vẫn tồn tại và vẫn đọc lại từ khoá,
+      // nhưng bề mặt chơi thôi mời "nói theo" — hiện nút "Tiếp tục" thường,
+      // không icon micro (xem [code].vue).
+      isEchoStep.value =
+        step?.action === "echo" && s.difficulty?.speak_along !== "off";
       isIntroCardStep.value =
         step?.action === "present" || step?.action === "echo";
     } else if (isIntroCardStep.value) {
@@ -161,7 +188,12 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       return { celebration: "nice_try", stars: null };
     }
     try {
-      await uploadTelemetry(sessionUuid, roundRunner, loggedIn.value);
+      await uploadTelemetry(
+        sessionUuid,
+        roundRunner,
+        loggedIn.value,
+        cachedPayload?.session?.started_at
+      );
     } catch (err) {
       console.error(
         `[play-session] uploadTelemetry thất bại trước complete — session: ${sessionUuid}, error: ${err instanceof Error ? err.message : String(err)}`
@@ -201,12 +233,24 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     }
     const sessionUuid = cachedPayload?.session?.uuid;
     if (sessionUuid) {
-      uploadTelemetry(sessionUuid, roundRunner, loggedIn.value).catch((err) => {
+      uploadTelemetry(
+        sessionUuid,
+        roundRunner,
+        loggedIn.value,
+        cachedPayload?.session?.started_at
+      ).catch((err) => {
         console.error(
           `[play-session] uploadTelemetry thất bại ở round won — session: ${sessionUuid}, error: ${err instanceof Error ? err.message : String(err)}`
         );
       });
     }
+
+    // Tự động hoàn thành vòng hiện tại và chuyển sang vòng tiếp theo sau 900ms ăn mừng
+    setTimeout(() => {
+      if (roundRunner && !roundRunner.getState().isFinished) {
+        roundRunner.completeCurrentRound();
+      }
+    }, 900);
   }
 
   function startRounds(
@@ -227,15 +271,22 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       difficulty_params: r.difficulty_params,
     }));
 
+    const seed = resolveLayoutSeed(payload);
+
     roundRunner = new RoundRunner({
       rounds: roundConfigs,
       ageBand: engineConfig.age_band,
-      sessionFactory: (contentPack, difficultyParams, seed) => {
+      layoutSeed: seed,
+      // Đồng hồ vòng và hẹn giờ trợ giúp chỉ tính từ lúc câu dẫn đọc xong,
+      // không phải từ lúc mở vòng (BR-PNR-11). `notePromptSettled()` được
+      // gọi từ `onSettled` của `playInstructionNarration` dưới đây.
+      gateOnPromptSettle: true,
+      sessionFactory: (contentPack, difficultyParams, roundSeed) => {
         const roundCfg: EngineConfig = {
           ...engineConfig,
           content_pack: contentPack,
           difficulty_params: difficultyParams,
-          layout_seed: seed,
+          layout_seed: roundSeed,
         };
         return createGameSessionSync(payload.template_code, roundCfg);
       },
@@ -243,8 +294,11 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         // Bề mặt chơi là nguồn giọng duy nhất của vòng (BR-PNR-03): RoundRunner
         // gọi vào đây thay vì tự phát, nên câu dẫn không bao giờ vang hai lần.
         setInstructionAudio(roundConfig.instruction_audio_path);
-        // GT-000 tự kể lời dẫn theo từng bước làm quen, không dùng câu dẫn vòng.
+        // GT-000 tự kể lời dẫn theo từng bước làm quen, không dùng câu dẫn
+        // vòng, và tự gate cử chỉ bằng `audioPromptCalled` của riêng nó —
+        // Cấm — NEVER hạ `engine.acceptingInput` ở đây, không ai nâng lại.
         if (cachedPayload?.template_code === "GT-000") {
+          roundRunner?.notePromptSettled();
           return;
         }
         const prompt =
@@ -252,11 +306,18 @@ export function usePlaySession(options: UsePlaySessionOptions) {
           roundConfig.instruction ||
           cachedPayload?.title;
         if (trigger === "replay") {
+          // Nghe lại Cấm — NEVER khoá cử chỉ (BR-PNR-08): không truyền onSettled.
           playInstructionNarration(prompt);
           return;
         }
+        const onNarrationSettled = () => {
+          if (engine) {
+            engine.acceptingInput = true;
+          }
+          roundRunner?.notePromptSettled();
+        };
         setTimeout(() => {
-          playInstructionNarration(prompt);
+          playInstructionNarration(prompt, onNarrationSettled);
         }, ROUND_OPEN_NARRATION_DELAY_MS);
       },
       onRoundStarted: (roundIndex) => {
@@ -264,6 +325,9 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         canSkipRound.value = false;
         if (engine) {
           engine.roundIndex = roundIndex;
+          // Chặn cử chỉ tới khi câu dẫn đọc xong (BR-PNR-11) — mở lại ở
+          // `onNarrationSettled` bên trên. GT-000 tự quản lý gate riêng.
+          engine.acceptingInput = cachedPayload?.template_code === "GT-000";
         }
         const session = roundRunner?.getCurrentSession();
         if (session && engine) {
