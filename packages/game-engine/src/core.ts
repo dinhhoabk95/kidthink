@@ -119,6 +119,17 @@ export class GameEngine {
   focusIndex: number | null = null;
   skipSuggested = false;
   /**
+   * Cổng chờ câu dẫn đọc xong (`BR-PNR-11`, Task #273).
+   *
+   * Mặc định `true` — mọi nơi gọi engine chưa gắn cổng câu dẫn (preview, test,
+   * harness) không đổi hành vi. Bề mặt chơi thật hạ xuống `false` khi mở
+   * vòng, trước khi phát câu dẫn, rồi nâng lại khi câu dẫn phát xong (hoặc
+   * quá hạn dự phòng — Cấm — NEVER treo vô hạn, `BR-PNR-09`). `false` chặn
+   * hai thứ: `dispatchGesture` (bề mặt chơi tự kiểm cờ này trước khi gọi
+   * `session.dispatch`) và đồng hồ trợ giúp — xem `advanceFrame`.
+   */
+  acceptingInput = true;
+  /**
    * Vòng đang chơi — bề mặt chơi gán khi RoundRunner mở vòng mới.
    * Event telemetry của engine cần `round_index` thật; đọc từ session bằng cách
    * đoán kiểu luôn cho 0 vì session Cấm — NEVER mang chỉ số vòng.
@@ -294,6 +305,23 @@ export class GameEngine {
     return this.roundIndex;
   }
 
+  /**
+   * Tiến một khung logic: đồng hồ trợ giúp (nếu `acceptingInput`) rồi
+   * `session.update`. Không vẽ — `loop()` gọi hàm này mỗi khung rAF thật rồi
+   * tự vẽ tiếp; test gọi trực tiếp để mô phỏng nhiều khung mà không cần
+   * `requestAnimationFrame` (không có trong môi trường test headless).
+   *
+   * Khi `acceptingInput === false` (đang chờ câu dẫn đọc xong), đồng hồ trợ
+   * giúp đứng yên — không tích thêm `deltaMs` — nhưng cảnh vẫn `update` để
+   * hoạt ảnh nền/particle không đứng hình (`BR-PNR-11`).
+   */
+  advanceFrame(deltaMs: number): void {
+    if (this.acceptingInput) {
+      this.tickScaffolding(deltaMs);
+    }
+    this.activeSession?.update?.(deltaMs);
+  }
+
   private readonly loop = (): void => {
     if (!this.isRunning || this.isPaused) {
       return;
@@ -303,9 +331,7 @@ export class GameEngine {
     const deltaMs = now - this.lastFrameTimeMs;
     this.lastFrameTimeMs = now;
 
-    this.tickScaffolding(deltaMs);
-
-    this.activeSession?.update?.(deltaMs);
+    this.advanceFrame(deltaMs);
 
     if (this.ctx) {
       this.renderSystem.clear(this.ctx);

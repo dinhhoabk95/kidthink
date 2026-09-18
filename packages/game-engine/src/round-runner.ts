@@ -70,6 +70,17 @@ export interface RoundRunnerOptions {
   onRoundStarted?: (roundIndex: number, roundConfig: RoundConfig) => void;
   onRoundCompleted?: (roundIndex: number, wasSkipped: boolean) => void;
   onAllRoundsCompleted?: () => void;
+  /**
+   * Trì hoãn đồng hồ vòng (`duration_ms` của `round_completed`/`round_skipped`)
+   * và hẹn giờ trợ giúp (`hint_after_ms`) tới khi gọi `notePromptSettled()`,
+   * thay vì tính từ lúc mở vòng (`BR-PNR-11`, Task #273).
+   *
+   * Mặc định `false` — giữ đúng hành vi cũ cho mọi lời gọi hiện có (test,
+   * harness không gắn cổng câu dẫn). Bề mặt chơi thật khai `true` và gọi
+   * `notePromptSettled()` khi câu dẫn của chính nó (đường `onPlayNarration`)
+   * phát xong hoặc quá hạn dự phòng.
+   */
+  gateOnPromptSettle?: boolean;
 }
 
 export interface RoundRunnerState {
@@ -114,6 +125,8 @@ export class RoundRunner {
   ) => void;
   private readonly onAllRoundsCompleted?: () => void;
 
+  private readonly gateOnPromptSettle: boolean;
+
   private currentRoundIndex = 0;
   private roundsCompleted = 0;
   private roundsSkipped = 0;
@@ -124,6 +137,8 @@ export class RoundRunner {
   private sessionStartMs = 0;
   private hintTimer: ReturnType<typeof setTimeout> | null = null;
   private logicSpace?: LogicSpace;
+  /** `true` khi chưa cần chờ (gate tắt) hoặc câu dẫn vòng hiện tại đã đọc xong. */
+  private promptSettled = true;
 
   constructor(options: RoundRunnerOptions) {
     if (options.rounds.length === 0) {
@@ -143,6 +158,7 @@ export class RoundRunner {
     this.onRoundStarted = options.onRoundStarted;
     this.onRoundCompleted = options.onRoundCompleted;
     this.onAllRoundsCompleted = options.onAllRoundsCompleted;
+    this.gateOnPromptSettle = options.gateOnPromptSettle ?? false;
   }
 
   getState(): RoundRunnerState {
@@ -335,23 +351,48 @@ export class RoundRunner {
       return;
     }
 
+    // "Nghe lại" không settle gì — gate chỉ áp cho nhịp mở vòng (BR-PNR-08:
+    // nghe lại Cấm — NEVER ảnh hưởng điểm/bậc trợ giúp).
+    const settleIfRoundOpen = () => {
+      if (trigger === "round_open") {
+        this.notePromptSettled();
+      }
+    };
+
     const audioPath = config.instruction_audio_path;
     const text = config.instruction || config.narration_template;
 
     const speakOrCue = () => {
       if (text) {
-        this.audioController.speakPrompt(
-          text,
-          undefined,
-          this.onNarrationFallbackCue
-        );
+        this.audioController.speakPrompt(text, settleIfRoundOpen, () => {
+          this.onNarrationFallbackCue?.();
+          settleIfRoundOpen();
+        });
         return;
       }
       this.onNarrationFallbackCue?.();
+      settleIfRoundOpen();
     };
 
     if (audioPath) {
-      this.audioController.playPromptAudio(audioPath, undefined, speakOrCue);
+      // `playPromptAudio` gọi CẢ `onError` và tham số `onEnd` trên mọi nhánh
+      // lỗi (hợp đồng của nó — xem docstring ở `audio-controller.ts`), nên
+      // không thể coi `onEnd` là "đã xong thật". Cờ `mp3Failed` phân biệt
+      // "phát xong thật" với "lỗi, đang rơi xuống TTS" — thiếu cờ này thì
+      // vòng settle ngay khi mp3 lỗi, trước khi TTS kịp nói xong.
+      let mp3Failed = false;
+      this.audioController.playPromptAudio(
+        audioPath,
+        () => {
+          if (!mp3Failed) {
+            settleIfRoundOpen();
+          }
+        },
+        () => {
+          mp3Failed = true;
+          speakOrCue();
+        }
+      );
       return;
     }
     speakOrCue();
@@ -362,6 +403,55 @@ export class RoundRunner {
       clearTimeout(this.hintTimer);
       this.hintTimer = null;
     }
+  }
+
+  /**
+   * Bắt đầu đồng hồ vòng (`sessionStartMs`, dùng cho `duration_ms`) và hẹn
+   * giờ trợ giúp — ngay khi mở vòng nếu gate tắt, hoặc từ `notePromptSettled`
+   * nếu gate bật (`BR-PNR-11`).
+   */
+  private beginRoundTiming(
+    index: number,
+    rawParams: Record<string, unknown> | undefined
+  ): void {
+    const hintAfterMs = rawParams?.hint_after_ms;
+    if (typeof hintAfterMs === "number" && hintAfterMs > 0) {
+      this.hintTimer = setTimeout(() => {
+        this.recordEvent("hint_requested", {
+          round_index: index,
+          source: "timer",
+        });
+        this.recordHint();
+      }, hintAfterMs);
+    }
+    this.sessionStartMs = Date.now();
+  }
+
+  /**
+   * Báo câu dẫn của vòng hiện tại đã đọc xong — thành công, rơi hết ba bậc dự
+   * phòng của `play-narration.md` §7.2, hay quá hạn dự phòng bên gọi tự đặt
+   * (`BR-PNR-09`). Từ đây mới tính `duration_ms` và mới hẹn giờ trợ giúp
+   * (`BR-PNR-11`).
+   *
+   * Vô hiệu khi gate tắt (`gateOnPromptSettle: false`, mặc định) hoặc đã
+   * settle rồi — idempotent, vì cả `onEnd` và `onError` của một bậc phát có
+   * thể cùng dẫn tới lời gọi này.
+   */
+  notePromptSettled(): void {
+    if (!this.gateOnPromptSettle || this.promptSettled) {
+      return;
+    }
+    this.promptSettled = true;
+    const config = this.rounds[this.currentRoundIndex];
+    const rawParams = config?.difficulty_params as
+      | Record<string, unknown>
+      | undefined;
+    this.beginRoundTiming(this.currentRoundIndex, rawParams);
+  }
+
+  /** Câu dẫn vòng hiện tại đã đọc xong hay chưa — bề mặt chơi gate cử chỉ theo đây (`BR-PNR-11`). */
+  isPromptSettled(): boolean {
+    return this.promptSettled;
   }
 
   private startRound(index: number): void {
@@ -408,18 +498,6 @@ export class RoundRunner {
       item_count: itemCount,
     });
 
-    const hintAfterMs = rawParams?.hint_after_ms;
-    if (typeof hintAfterMs === "number" && hintAfterMs > 0) {
-      this.hintTimer = setTimeout(() => {
-        this.recordEvent("hint_requested", {
-          round_index: index,
-          source: "timer",
-        });
-        this.recordHint();
-      }, hintAfterMs);
-    }
-
-    this.sessionStartMs = Date.now();
     this.currentSession = this.sessionFactory(
       config.content_pack,
       config.difficulty_params,
@@ -430,6 +508,12 @@ export class RoundRunner {
       this.currentSession.prepareRound(this.ageBand, this.logicSpace);
     } else {
       this.currentSession.setupEntities();
+    }
+
+    if (this.gateOnPromptSettle) {
+      this.promptSettled = false;
+    } else {
+      this.beginRoundTiming(index, rawParams);
     }
 
     // Nhịp N2: phát câu dẫn mở vòng (BR-PNR-04, BR-PNR-06)
