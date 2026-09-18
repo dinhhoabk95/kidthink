@@ -1153,18 +1153,20 @@ export function drawEmojiContent(
   return drawAssetInSlot(ctx, { kind: "emoji", ref: emojiRef }, slot);
 }
 
-/** Thẻ gỗ trung tâm hiển thị vật thể / câu đố lớn cho trẻ (GT-001, GT-009, GT-026...) */
-export function drawCentralTargetCard(
-  ctx: CanvasRenderingContext2D,
-  rs: RenderSystem,
-  asset?: RenderAsset | null,
-  text?: string
-): void {
+/**
+ * Vùng chữ nhật của thẻ gỗ trung tâm hiển thị vật thể / câu đố lớn cho trẻ
+ * (GT-001, GT-009, GT-026...), vẽ bởi `drawCentralTargetCard` — một nguồn
+ * hình học duy nhất cho cả vẽ và chạm lại nghe từ khoá (Task #273). Tách ra
+ * để session dựng `ViewEntity` khớp đúng ô đang vẽ, không đoán lại toạ độ.
+ * Nhận `LogicSpace` trực tiếp (không phải `RenderSystem`) để gọi được từ
+ * `getView()`, nơi không có `RenderSystem` trong tay.
+ */
+export function getCentralTargetCardSlot(logicSpace: LogicSpace): Slot {
   const cardW = 180;
   const cardH = 180;
-  const cardX = (rs.LOGIC_WIDTH - cardW) / 2;
-  const cardY = rs.LOGIC_HEIGHT * 0.22;
-  const slot: Slot = {
+  const cardX = (logicSpace.w - cardW) / 2;
+  const cardY = logicSpace.h * 0.22;
+  return {
     index: 0,
     x: cardX + cardW / 2,
     y: cardY + cardH / 2,
@@ -1175,6 +1177,19 @@ export function drawCentralTargetCard(
     page: 0,
     role: "target",
   };
+}
+
+export function drawCentralTargetCard(
+  ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
+  asset?: RenderAsset | null,
+  text?: string
+): void {
+  const slot = getCentralTargetCardSlot(rs.logicSpace);
+  const cardW = slot.w;
+  const cardH = slot.h;
+  const cardX = slot.x - cardW / 2;
+  const cardY = slot.y - cardH / 2;
 
   ctx.save();
   // 1. Ambient drop shadow

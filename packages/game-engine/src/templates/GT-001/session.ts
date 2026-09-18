@@ -1,3 +1,4 @@
+import { getByGlyph } from "@mindkid/emoji";
 import type { AgeBand } from "#src/contracts/types";
 import {
   type ActionResult,
@@ -6,6 +7,7 @@ import {
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { getTouchFloor } from "#src/layout/constants";
+import { findHitSlotIndex } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
@@ -15,6 +17,7 @@ import {
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
+  getCentralTargetCardSlot,
   type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
@@ -26,6 +29,31 @@ import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT001Content, GT001Difficulty } from "./template.js";
 
 type OptionItem = GT001Content["options"][number];
+type ItemAsset = OptionItem["asset"];
+
+/**
+ * Chữ hiện trên thẻ và từ khoá đọc được của nó (`spokenLabel`) — dùng chung
+ * cho thẻ lựa chọn và thẻ đề giữa màn, cả hai đều đọc lại khi trẻ chạm
+ * (Task #273, `BR-PNR-02`).
+ */
+function resolveAssetLabels(asset: ItemAsset): {
+  glyph?: string;
+  label?: string;
+  spokenLabel?: string;
+} {
+  if (asset.kind === "emoji") {
+    const entry = getByGlyph(asset.ref);
+    return {
+      glyph: asset.ref,
+      label: asset.ref,
+      spokenLabel: entry?.name || asset.ref,
+    };
+  }
+  if (asset.kind === "text") {
+    return { label: asset.text, spokenLabel: asset.text };
+  }
+  return {};
+}
 
 export class GT001Session extends TemplateGameSession<
   GT001Content,
@@ -172,6 +200,29 @@ export class GT001Session extends TemplateGameSession<
       selected: "selected",
     };
 
+    // Thẻ đề giữa màn — role `neutral`, KHÔNG nằm trong `this.slots` nên
+    // Cấm — NEVER được `toAction()` chấm là một lượt chọn. Chạm lại để nghe
+    // từ khoá vẫn đi qua `spokenLabel` như mọi entity khác (Task #273).
+    if (this.content.target_item) {
+      const targetSlot = getCentralTargetCardSlot(this.logicSpace);
+      const { glyph, label, spokenLabel } = resolveAssetLabels(
+        this.content.target_item.asset
+      );
+      entities.push({
+        id: this.content.target_item.item_id,
+        slotIndex: -1,
+        role: "neutral",
+        state: "idle",
+        x: targetSlot.x,
+        y: targetSlot.y,
+        w: targetSlot.w,
+        h: targetSlot.h,
+        glyph,
+        label,
+        spokenLabel,
+      });
+    }
+
     for (let i = 0; i < this.displayOptions.length; i++) {
       const opt = this.displayOptions[i];
       const slot = this.slots[i];
@@ -180,6 +231,8 @@ export class GT001Session extends TemplateGameSession<
       }
       const rawState = this.getItemState(opt.item_id);
       const state = stateMap[rawState] ?? "idle";
+      const { glyph, label, spokenLabel } = resolveAssetLabels(opt.asset);
+
       entities.push({
         id: opt.item_id,
         slotIndex: i,
@@ -189,6 +242,9 @@ export class GT001Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        glyph,
+        label,
+        spokenLabel,
       });
     }
     return {
@@ -202,21 +258,20 @@ export class GT001Session extends TemplateGameSession<
       return null;
     }
 
-    const hitTolerance = 24;
-    for (let i = 0; i < this.slots.length; i++) {
-      const slot = this.slots[i];
-      const opt = this.displayOptions[i];
-      if (!(slot && opt)) {
-        continue;
-      }
-
-      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-
-      if (
-        Math.abs(gesture.x - slot.x) <= halfW &&
-        Math.abs(gesture.y - slot.y) <= halfH
-      ) {
+    // Dung sai theo `template.ts` khai `input.tolerance_px: 24` — hợp đồng
+    // chung của mọi engine tap (Task #273: hằng số 8 tự chọn ở đây từng làm
+    // vùng chạm co lại một nửa diện tích, khiến chạm hơi lệch bị nuốt và bị
+    // tính oan thành trợ giúp bật sớm).
+    const hitIndex = findHitSlotIndex(
+      this.slots,
+      gesture.x,
+      gesture.y,
+      "circle",
+      24
+    );
+    if (hitIndex >= 0 && hitIndex < this.displayOptions.length) {
+      const opt = this.displayOptions[hitIndex];
+      if (opt) {
         return {
           type: "select_item",
           data: { item_id: opt.item_id },
