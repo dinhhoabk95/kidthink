@@ -1,4 +1,4 @@
-import type { RoundRunner } from "@mindkid/game-engine";
+import type { RoundRunner, TelemetryEvent } from "@mindkid/game-engine";
 import { useApi } from "~/composables/use-api";
 
 const MAX_EVENTS_PER_REQUEST = 50;
@@ -16,6 +16,48 @@ export type FinishSessionResult =
   | { readonly ok: true; readonly data: SessionCompleteResponse }
   | { readonly ok: false; readonly error: string };
 
+interface StatusHolder {
+  status: string | number;
+}
+
+function extractErrorDetails(err: object | null): {
+  status: string;
+  message: string;
+} {
+  const status =
+    err !== null && "status" in err
+      ? String((err as StatusHolder).status)
+      : "unknown_status";
+  const message = err instanceof Error ? err.message : String(err);
+  return { status, message };
+}
+
+function formatTelemetryPayload(
+  rawEvents: readonly TelemetryEvent[],
+  sessionStartedAt?: string | null
+): {
+  seq: number;
+  event_name: string;
+  occurred_at_ms: number;
+  client_timestamp: string;
+  payload: TelemetryEvent["data"];
+}[] {
+  const baseTimeMs = sessionStartedAt
+    ? new Date(sessionStartedAt).getTime()
+    : (rawEvents[0]?.timestamp_ms ?? Date.now());
+
+  return rawEvents.map((e, index) => ({
+    seq: index + 1,
+    event_name: e.event_name,
+    occurred_at_ms: Math.max(
+      0,
+      Math.min(2_147_483_647, Math.round(e.timestamp_ms - baseTimeMs))
+    ),
+    client_timestamp: new Date(e.timestamp_ms).toISOString(),
+    payload: e.data,
+  }));
+}
+
 export function usePlayTelemetry() {
   const api = useApi();
 
@@ -26,14 +68,11 @@ export function usePlayTelemetry() {
   async function uploadTelemetry(
     sessionUuid: string,
     roundRunner: RoundRunner,
-    loggedIn: boolean
+    loggedIn: boolean,
+    sessionStartedAt?: string | null
   ): Promise<void> {
-    const events = roundRunner.getAllTelemetry().map((e, index) => ({
-      seq: index + 1,
-      event_name: e.event_name,
-      occurred_at_ms: e.timestamp_ms,
-      payload: e.data,
-    }));
+    const rawEvents = roundRunner.getAllTelemetry();
+    const events = formatTelemetryPayload(rawEvents, sessionStartedAt);
 
     for (let from = 0; from < events.length; from += MAX_EVENTS_PER_REQUEST) {
       const chunk = events.slice(from, from + MAX_EVENTS_PER_REQUEST);
@@ -44,11 +83,9 @@ export function usePlayTelemetry() {
           body: { events: chunk },
         });
       } catch (err) {
-        const status =
-          typeof err === "object" && err !== null && "status" in err
-            ? String(err.status)
-            : "unknown_status";
-        const message = err instanceof Error ? err.message : String(err);
+        const { status, message } = extractErrorDetails(
+          err instanceof Object ? err : null
+        );
         console.error(
           `[play-telemetry] uploadTelemetry thất bại — session: ${sessionUuid}, endpoint: ${endpoint}, status: ${status}, error: ${message}`
         );
@@ -81,11 +118,9 @@ export function usePlayTelemetry() {
       });
       return { ok: true, data: resp };
     } catch (err) {
-      const status =
-        typeof err === "object" && err !== null && "status" in err
-          ? String(err.status)
-          : "unknown_status";
-      const message = err instanceof Error ? err.message : String(err);
+      const { status, message } = extractErrorDetails(
+        err instanceof Object ? err : null
+      );
       console.error(
         `[play-telemetry] finishSession thất bại — session: ${sessionUuid}, endpoint: ${endpoint}, status: ${status}, error: ${message}`
       );

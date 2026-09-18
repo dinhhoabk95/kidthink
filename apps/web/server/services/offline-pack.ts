@@ -294,6 +294,23 @@ async function isSessionAuthorized(
   return Boolean(child);
 }
 
+function normalizeSyncOccurredAtMs(
+  rawMs: number | undefined,
+  startedAt: Date | null | undefined
+): number | null {
+  if (typeof rawMs !== "number") {
+    return null;
+  }
+  let ms = rawMs;
+  if (ms > 1_000_000_000_000 && startedAt) {
+    ms = Math.max(0, Math.round(ms - new Date(startedAt).getTime()));
+  }
+  if (ms > 2_147_483_647) {
+    return 2_147_483_647;
+  }
+  return ms < 0 ? 0 : ms;
+}
+
 async function syncSingleSessionEvents(
   db: ReturnType<typeof getOwnerDb>,
   session: typeof playSessions.$inferSelect,
@@ -304,6 +321,11 @@ async function syncSingleSessionEvents(
 
   for (const ev of events) {
     try {
+      const occurredAtMs = normalizeSyncOccurredAtMs(
+        ev.occurred_at_ms,
+        session.startedAt
+      );
+
       const [inserted] = await db
         .insert(telemetryEvents)
         .values({
@@ -314,7 +336,7 @@ async function syncSingleSessionEvents(
           contentVersion: session.contentVersion,
           templateCode: session.templateCode,
           eventName: ev.event_name,
-          occurredAtMs: ev.occurred_at_ms ?? null,
+          occurredAtMs,
           payload: ev.payload || {},
           clientTimestamp: ev.client_timestamp
             ? new Date(ev.client_timestamp)

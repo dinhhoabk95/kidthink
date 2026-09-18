@@ -18,6 +18,39 @@ import {
 } from "./session/ownership.js";
 import type { DbOrTx } from "./types.js";
 
+function normalizeOccurredAtMs(
+  rawMs: number | undefined,
+  startedAt: Date | null | undefined
+): number | null {
+  if (typeof rawMs !== "number") {
+    return null;
+  }
+  let ms = rawMs;
+  if (ms > 1_000_000_000_000 && startedAt) {
+    ms = Math.max(0, Math.round(ms - new Date(startedAt).getTime()));
+  }
+  if (ms > 2_147_483_647) {
+    return 2_147_483_647;
+  }
+  return ms < 0 ? 0 : ms;
+}
+
+function resolveClientTimestamp(
+  clientTs: string | undefined,
+  rawOccurredAtMs: number | undefined
+): Date | null {
+  if (clientTs) {
+    return new Date(clientTs);
+  }
+  if (
+    typeof rawOccurredAtMs === "number" &&
+    rawOccurredAtMs > 1_000_000_000_000
+  ) {
+    return new Date(rawOccurredAtMs);
+  }
+  return null;
+}
+
 export async function insertIngestedEventsBatch(
   db: DbOrTx,
   sessionUuid: string,
@@ -38,6 +71,16 @@ export async function insertIngestedEventsBatch(
       continue;
     }
     seenBatchSeqs.add(ev.seq);
+
+    const occurredAtMs = normalizeOccurredAtMs(
+      ev.occurred_at_ms,
+      session.startedAt
+    );
+    const clientTimestamp = resolveClientTimestamp(
+      ev.client_timestamp,
+      ev.occurred_at_ms
+    );
+
     toInsert.push({
       sessionUuid,
       seq: ev.seq,
@@ -46,11 +89,9 @@ export async function insertIngestedEventsBatch(
       contentVersion: session.contentVersion,
       templateCode: session.templateCode,
       eventName: ev.event_name,
-      occurredAtMs: ev.occurred_at_ms ?? null,
+      occurredAtMs,
       payload: cleanEventPayload(ev.event_name, ev.payload),
-      clientTimestamp: ev.client_timestamp
-        ? new Date(ev.client_timestamp)
-        : null,
+      clientTimestamp,
     });
   }
 

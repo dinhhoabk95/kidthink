@@ -454,4 +454,62 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
       computeSpy.mockRestore();
     }
   });
+
+  it("Scenario: occurred_at_ms supports relative ms and normalizes epoch ms without integer overflow", async () => {
+    const db = getOwnerDb();
+    const { glId, templateCode } = await createTestLevel(db);
+
+    const [session] = await db
+      .insert(playSessions)
+      .values({
+        guestDeviceId: "device-test-occurred-at",
+        gameLevelId: glId,
+        templateCode,
+        contentVersion: 1,
+        startedAt: new Date(Date.now() - 5000),
+      })
+      .returning();
+
+    const uuid = session.sessionUuid;
+    const events = [
+      {
+        seq: 1,
+        event_name: "game_started",
+        occurred_at_ms: 150,
+        payload: { device: "tablet" },
+      },
+      {
+        seq: 2,
+        event_name: "round_started",
+        occurred_at_ms: Date.now(), // epoch ms > 1_000_000_000_000
+        payload: { round_index: 0 },
+      },
+      {
+        seq: 3,
+        event_name: "round_completed",
+        occurred_at_ms: 2_500_000_000, // exceeds 32-bit int
+        payload: { round_index: 0 },
+      },
+    ];
+
+    const res = await ingestPlayEvents(uuid, events, {
+      isUserCall: false,
+      guestDeviceId: "device-test-occurred-at",
+    });
+
+    expect(res.accepted).toBe(3);
+    expect(res.skipped).toBe(0);
+
+    const rows = await db
+      .select()
+      .from(telemetryEvents)
+      .where(eq(telemetryEvents.sessionUuid, uuid))
+      .orderBy(telemetryEvents.seq);
+
+    expect(rows).toHaveLength(3);
+    expect(rows[0]?.occurredAtMs).toBe(150);
+    expect(rows[1]?.occurredAtMs).toBeGreaterThanOrEqual(0);
+    expect(rows[1]?.occurredAtMs).toBeLessThanOrEqual(2_147_483_647);
+    expect(rows[2]?.occurredAtMs).toBe(2_147_483_647);
+  });
 });
