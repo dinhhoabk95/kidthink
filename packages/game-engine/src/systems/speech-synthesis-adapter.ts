@@ -108,8 +108,11 @@ export class SpeechSynthesisAdapter {
         utterance.voice = this.selectedVoice;
       }
 
-      // Slower rate (~0.85-0.9) is optimal for preschoolers (3-6yo)
-      utterance.rate = options.rate ?? 0.9;
+      // Tốc độ mặc định của bậc dự phòng TTS (Task #273): người đặt việc
+      // yêu cầu 2026-09-17 "TTS API tốc độ nhanh hơn" khi mp3 không có —
+      // 1.0 là tốc độ đọc tự nhiên của giọng tổng hợp, nhanh hơn 0.9 cũ mà
+      // vẫn rõ chữ cho trẻ 3-6 tuổi.
+      utterance.rate = options.rate ?? 1.0;
       utterance.pitch = options.pitch ?? 1.0;
       utterance.volume = Math.min(Math.max(options.volume ?? 0.85, 0), 1);
 

@@ -216,6 +216,78 @@ describe("Task #87 — Audio Runtime Delivery & Fallback (BR-ENG-10, BR-ENG-16, 
 
       vi.useRealTimers();
     });
+
+    // Task #273: bậc dự phòng TTS phải đọc nhanh hơn tốc độ cũ 0,9 — người
+    // đặt việc yêu cầu "TTS API tốc độ nhanh hơn" khi mp3 không có.
+    it("mặc định rate 1.0 khi không truyền — nhanh hơn 0.9 cũ (Task #273)", () => {
+      const mockVoices: Partial<SpeechSynthesisVoice>[] = [
+        { name: "Linh", lang: "vi-VN" },
+      ];
+
+      let utteranceInstance: any = null;
+      (globalThis as any).SpeechSynthesisUtterance = class {
+        lang = "";
+        text = "";
+        rate = 1;
+        pitch = 1;
+        volume = 1;
+        voice = null;
+        onstart: (() => void) | null = null;
+        onend: (() => void) | null = null;
+        onerror: ((err: any) => void) | null = null;
+        constructor(text: string) {
+          this.text = text;
+          utteranceInstance = this;
+        }
+      };
+      (globalThis as any).window = {
+        speechSynthesis: {
+          getVoices: vi.fn().mockReturnValue(mockVoices),
+          speak: vi.fn(),
+          cancel: vi.fn(),
+        },
+      };
+
+      const adapter = new SpeechSynthesisAdapter();
+      adapter.speak("Bé tìm quả táo");
+
+      expect(utteranceInstance?.rate).toBe(1.0);
+    });
+
+    it("truyền rate riêng thì dùng đúng giá trị đó, không ép về mặc định", () => {
+      const mockVoices: Partial<SpeechSynthesisVoice>[] = [
+        { name: "Linh", lang: "vi-VN" },
+      ];
+
+      let utteranceInstance: any = null;
+      (globalThis as any).SpeechSynthesisUtterance = class {
+        lang = "";
+        text = "";
+        rate = 1;
+        pitch = 1;
+        volume = 1;
+        voice = null;
+        onstart: (() => void) | null = null;
+        onend: (() => void) | null = null;
+        onerror: ((err: any) => void) | null = null;
+        constructor(text: string) {
+          this.text = text;
+          utteranceInstance = this;
+        }
+      };
+      (globalThis as any).window = {
+        speechSynthesis: {
+          getVoices: vi.fn().mockReturnValue(mockVoices),
+          speak: vi.fn(),
+          cancel: vi.fn(),
+        },
+      };
+
+      const adapter = new SpeechSynthesisAdapter();
+      adapter.speak("Bé tìm quả táo", { rate: 1.15 });
+
+      expect(utteranceInstance?.rate).toBe(1.15);
+    });
   });
 
   describe("WP87.3 & WP87.4: Visual Fallback Integration & Scaffolding (BR-ENG-10, BR-A11-11)", () => {
