@@ -82,7 +82,7 @@ export function getColorsForState(state: ItemVisualState): {
     default:
       return {
         fill: designTokens.colors.surface[0],
-        border: designTokens.colors.surface[300],
+        border: designTokens.colors.cta[200],
       };
   }
 }
@@ -829,7 +829,7 @@ export function drawSceneBackground(
       [880, 390, "rgba(244, 63, 94, 0.3)"],
     ]);
   } else {
-    // Default / general / classroom: Warm oatmeal paper base
+    // Default / general / classroom: Cheerful sunny sky & paper base
     ctx.fillStyle = designTokens.colors.surface[50];
     ctx.fillRect(0, 0, w, h);
 
@@ -853,6 +853,20 @@ export function drawSceneBackground(
     }
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, w, h);
+
+    // Playful sunny clouds
+    drawScenicCloud(ctx, 160, 68, 0.9);
+    drawScenicCloud(ctx, 800, 80, 0.75);
+
+    // Cheerful pastel flower dots along bottom
+    drawScenicFlowerDots(ctx, [
+      [80, 505, "rgba(251, 191, 36, 0.45)"],
+      [140, 515, "rgba(244, 114, 182, 0.4)"],
+      [220, 510, "rgba(96, 165, 250, 0.4)"],
+      [740, 510, "rgba(52, 211, 153, 0.45)"],
+      [820, 515, "rgba(251, 191, 36, 0.4)"],
+      [890, 505, "rgba(244, 114, 182, 0.45)"],
+    ]);
   }
 
   // Soft subtle corner accents (Kinder-Tactile Montessori vignette)

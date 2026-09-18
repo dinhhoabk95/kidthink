@@ -65,11 +65,13 @@
 .game-play-container.theme-default {
   background: linear-gradient(
     145deg,
-    rgba(247, 245, 240, 0.95),
-    rgba(237, 232, 222, 0.95)
+    #fffef7 0%,
+    #fef9c3 30%,
+    #e0f2fe 70%,
+    #dcfce7 100%
   );
-  --ambient-1: rgba(224, 216, 204, 0.5);
-  --ambient-2: rgba(234, 228, 216, 0.5);
+  --ambient-1: rgba(254, 240, 138, 0.6);
+  --ambient-2: rgba(186, 230, 253, 0.6);
 }
 
 /* AMBIENT SHAPES */
@@ -295,13 +297,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px;
-  background: rgba(233, 223, 203, 0.9);
-  border-radius: 2rem;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 2.25rem;
   box-shadow:
-    inset 0 4px 10px rgba(80, 60, 30, 0.18),
-    0 10px 24px rgba(80, 69, 50, 0.1);
-  border: 4px solid rgba(246, 238, 223, 0.95);
+    inset 0 2px 6px rgba(255, 255, 255, 0.9),
+    0 12px 36px rgba(180, 130, 60, 0.12),
+    0 4px 12px rgba(245, 158, 11, 0.08);
+  border: 4px solid #fed7aa;
 }
 
 .game-canvas {
@@ -312,7 +315,7 @@
   object-fit: contain;
   touch-action: none;
   border-radius: 1.75rem;
-  box-shadow: 0 6px 18px rgba(70, 55, 35, 0.12);
+  box-shadow: 0 8px 24px rgba(180, 130, 70, 0.12);
 }
 
 /* Loading & Error States */
