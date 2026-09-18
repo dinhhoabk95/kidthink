@@ -42,12 +42,106 @@ class FakeSession extends TemplateGameSession<
   }
 }
 
+/**
+ * Mô phỏng GT-001 (chạm-chọn đơn): `toAction` trả null khi chạm ngoài mọi thẻ
+ * hoặc khi đã thắng — giống hệt `TemplateGameSession.dispatch` sẽ trả
+ * `ACTION_IGNORED` (feedback "none") cho cả hai trường hợp đó.
+ */
+class FakeTapSelectSession extends TemplateGameSession<
+  Record<string, number>,
+  Record<string, number>
+> {
+  readonly dispatched: GameAction[] = [];
+
+  override setupEntities(): void {
+    /* noop */
+  }
+
+  override toAction(gesture: {
+    type: string;
+    x?: number;
+    y?: number;
+  }): GameAction | null {
+    if (gesture.type !== "tap") {
+      return null;
+    }
+    const gx = gesture.x ?? -1000;
+    const gy = gesture.y ?? -1000;
+    if (Math.hypot(gx - 100, gy - 100) <= 40) {
+      return { type: "select_item", data: { correct: true } };
+    }
+    if (Math.hypot(gx - 300, gy - 100) <= 40) {
+      return { type: "select_item", data: { correct: false } };
+    }
+    return null;
+  }
+
+  override validateAction(action: GameAction): ActionResult {
+    this.dispatched.push(action);
+    const data = action.data as { correct: boolean };
+    return data.correct ? ACTION_CORRECT : ACTION_RETRY;
+  }
+
+  private won = false;
+
+  /** Đặt trạng thái đã thắng thẳng, không qua dispatch — mô phỏng vòng đã đóng. */
+  markWon(): void {
+    this.won = true;
+  }
+
+  override checkWinCondition(): boolean {
+    return this.won;
+  }
+
+  protected override computeSlots(_band: AgeBand): readonly Slot[] {
+    return [];
+  }
+}
+
+function makeTapSelectHarness(entities: { id: string; role: string }[]) {
+  const session = new FakeTapSelectSession({}, {});
+  const onMiss = vi.fn();
+  const onSuccess = vi.fn();
+  const speakPrompt = vi.fn();
+  const engine = {
+    activeSession: session,
+    acceptingInput: true,
+    audio: {
+      playSnapSound: vi.fn(),
+      playPopCelebrateSound: vi.fn(),
+      playSoftFeedbackSound: vi.fn(),
+      speakPrompt,
+    },
+    scaffolding: { onMiss, onSuccess },
+    renderSystem: { LOGIC_WIDTH: 960, LOGIC_HEIGHT: 540 },
+  };
+
+  const gesture = usePlayGesture({
+    getEngine: () => engine as never,
+    canvasRef: ref(null),
+    onRoundWon: vi.fn(),
+  });
+
+  gesture.viewEntities.value = entities.map((e, index) => ({
+    id: e.id,
+    role: e.role,
+    x: 100 + index * 200,
+    y: 100,
+    w: 80,
+    h: 80,
+    spokenLabel: `nhãn-${e.id}`,
+  })) as never;
+
+  return { gesture, session, onMiss, onSuccess, speakPrompt, engine };
+}
+
 function makeHarness(entities: { id: string; role: string }[]) {
   const session = new FakeSession({}, {});
   const onMiss = vi.fn();
   const onSuccess = vi.fn();
   const engine = {
     activeSession: session,
+    acceptingInput: true,
     audio: {
       playSnapSound: vi.fn(),
       playPopCelebrateSound: vi.fn(),
@@ -142,5 +236,83 @@ describe("usePlayGesture — đường bàn phím (Task #260 I11)", () => {
     gesture.handleAccessibleEntityTap(option);
 
     expect(session.dispatched.map((a) => a.type)).toEqual(["tap_item"]);
+  });
+});
+
+describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Task #273)", () => {
+  it("chạm ra ngoài mọi thẻ (feedback none) Cấm — NEVER tính là chạm sai", () => {
+    const { gesture, session, onMiss, engine } = makeTapSelectHarness([
+      { id: "opt-1", role: "source" },
+      { id: "opt-2", role: "source" },
+    ]);
+
+    gesture.dispatchGesture({ type: "tap", x: 900, y: 900, timeMs: 0 });
+
+    expect(session.dispatched).toHaveLength(0);
+    expect(onMiss).not.toHaveBeenCalled();
+    expect(engine.audio.playSoftFeedbackSound).not.toHaveBeenCalled();
+    expect(engine.audio.speakPrompt).not.toHaveBeenCalled();
+  });
+
+  it("chạm lại vào thẻ đã thắng vẫn đọc lại từ khoá, không tính miss mới", () => {
+    const { gesture, session, onMiss, onSuccess, speakPrompt } =
+      makeTapSelectHarness([
+        { id: "opt-1", role: "source" },
+        { id: "opt-2", role: "source" },
+      ]);
+    session.markWon();
+
+    gesture.dispatchGesture({ type: "tap", x: 100, y: 100, timeMs: 0 });
+
+    expect(session.dispatched).toHaveLength(0); // toAction chưa từng chạy
+    expect(speakPrompt).toHaveBeenCalledWith("nhãn-opt-1");
+    expect(onMiss).not.toHaveBeenCalled();
+    expect(onSuccess).not.toHaveBeenCalled();
+  });
+
+  it("chạm trúng thẻ sai vẫn đọc tên thẻ, phát âm mềm và tính miss (hành vi cũ giữ nguyên)", () => {
+    const { gesture, session, onMiss, speakPrompt, engine } =
+      makeTapSelectHarness([
+        { id: "opt-1", role: "source" },
+        { id: "opt-2", role: "source" },
+      ]);
+
+    gesture.dispatchGesture({ type: "tap", x: 300, y: 100, timeMs: 0 });
+
+    expect(session.dispatched).toHaveLength(1);
+    expect(speakPrompt).toHaveBeenCalledWith("nhãn-opt-2");
+    expect(engine.audio.playSoftFeedbackSound).toHaveBeenCalledTimes(1);
+    expect(onMiss).toHaveBeenCalledTimes(1);
+  });
+
+  it("chạm trúng thẻ đúng vẫn đọc tên và báo thành công", () => {
+    const { gesture, session, onSuccess, speakPrompt, engine } =
+      makeTapSelectHarness([
+        { id: "opt-1", role: "source" },
+        { id: "opt-2", role: "source" },
+      ]);
+
+    gesture.dispatchGesture({ type: "tap", x: 100, y: 100, timeMs: 0 });
+
+    expect(session.dispatched).toHaveLength(1);
+    expect(speakPrompt).toHaveBeenCalledWith("nhãn-opt-1");
+    expect(engine.audio.playSnapSound).toHaveBeenCalledTimes(1);
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+  });
+
+  it("engine.acceptingInput = false (đang chờ câu dẫn đọc xong): chạm bị nuốt hoàn toàn, Cấm — NEVER tính điểm/sai (BR-PNR-11)", () => {
+    const { gesture, session, onMiss, onSuccess, speakPrompt, engine } =
+      makeTapSelectHarness([
+        { id: "opt-1", role: "source" },
+        { id: "opt-2", role: "source" },
+      ]);
+    engine.acceptingInput = false;
+
+    gesture.dispatchGesture({ type: "tap", x: 100, y: 100, timeMs: 0 });
+
+    expect(session.dispatched).toHaveLength(0);
+    expect(speakPrompt).not.toHaveBeenCalled();
+    expect(onMiss).not.toHaveBeenCalled();
+    expect(onSuccess).not.toHaveBeenCalled();
   });
 });

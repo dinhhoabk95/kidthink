@@ -1,5 +1,7 @@
 import {
+  type ActionResult,
   type GameEngine,
+  type GameSession,
   type Gesture,
   TemplateGameSession,
   toLogicPoint,
@@ -46,6 +48,15 @@ export function usePlayGesture(options: GestureOptions) {
       return { x: e.clientX, y: e.clientY };
     }
     const engine = getEngine();
+    if (
+      engine?.renderSystem?.viewport &&
+      engine.renderSystem.viewport.scale > 0
+    ) {
+      return engine.renderSystem.toLogicPoint(
+        e.clientX - rect.left,
+        e.clientY - rect.top
+      );
+    }
     const lw = engine?.renderSystem?.LOGIC_WIDTH ?? 960;
     const lh = engine?.renderSystem?.LOGIC_HEIGHT ?? 540;
     return toLogicPoint(
@@ -61,38 +72,79 @@ export function usePlayGesture(options: GestureOptions) {
     );
   }
 
-  function dispatchGesture(gesture: Gesture): void {
-    const engine = getEngine();
-    const session = engine?.activeSession;
+  function findTappedEntity(x: number, y: number): ViewEntity | null {
+    let bestEntity: ViewEntity | null = null;
+    let minDistanceSq = Number.POSITIVE_INFINITY;
 
-    if (!session) {
-      console.warn(
-        "[play-gesture] dispatchGesture called without active session"
-      );
+    for (const ent of viewEntities.value) {
+      const radius = Math.min(ent.w, ent.h) / 2 + 10;
+      const dx = x - ent.x;
+      const dy = y - ent.y;
+      const distSq = dx * dx + dy * dy;
+      if (distSq <= radius * radius && distSq < minDistanceSq) {
+        minDistanceSq = distSq;
+        bestEntity = ent;
+      }
+    }
+    return bestEntity;
+  }
+
+  function handleVerdict(
+    verdict: ActionResult,
+    engine: GameEngine,
+    session: GameSession,
+    spokenLabel?: string
+  ): void {
+    if (spokenLabel) {
+      engine.audio.speakPrompt(spokenLabel);
+    }
+
+    if (verdict.feedback === "none") {
+      // Cử chỉ bị nuốt: ngoài mọi slot, trước khi cảnh dựng xong, hoặc vòng
+      // đã thắng (`BR-ETS-02`). Cấm — NEVER tính là lần sai — không phát âm
+      // mềm, không leo bậc trợ giúp. Tên vừa đọc ở trên (nếu có) là đường
+      // "chạm lại minh hoạ để nghe lại từ khoá", không phải một lượt trả lời.
       return;
     }
-    if (!(session instanceof TemplateGameSession)) {
-      console.warn(
-        "[play-gesture] session is not an instance of TemplateGameSession"
-      );
-      return;
-    }
 
-    const verdict = session.dispatch(gesture);
-
-    if (verdict?.valid) {
-      engine?.audio.playSnapSound();
-      engine?.audio.playPopCelebrateSound();
-      engine?.scaffolding?.onSuccess();
+    if (verdict.valid) {
+      engine.audio.playSnapSound();
+      engine.audio.playPopCelebrateSound();
+      engine.scaffolding?.onSuccess();
       syncView();
 
       if (session.checkWinCondition()) {
         onRoundWon();
       }
-    } else if (verdict && !verdict.valid) {
-      engine?.audio.playSoftFeedbackSound();
-      engine?.scaffolding?.onMiss();
-      syncView();
+      return;
+    }
+
+    engine.audio.playSoftFeedbackSound();
+    engine.scaffolding?.onMiss();
+    syncView();
+  }
+
+  function dispatchGesture(gesture: Gesture): void {
+    const engine = getEngine();
+    if (!engine) {
+      return;
+    }
+    if (!engine.acceptingInput) {
+      // Câu dẫn chưa đọc xong (`BR-PNR-11`) — nuốt cử chỉ hoàn toàn: không
+      // gọi tới session, không tính điểm, không tính miss, không đọc nhãn.
+      return;
+    }
+    const session = engine.activeSession;
+    if (!(session instanceof TemplateGameSession)) {
+      return;
+    }
+
+    const tapped =
+      gesture.type === "tap" ? findTappedEntity(gesture.x, gesture.y) : null;
+
+    const verdict = session.dispatch(gesture);
+    if (verdict) {
+      handleVerdict(verdict, engine, session, tapped?.spokenLabel);
     }
   }
 
