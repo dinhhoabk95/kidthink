@@ -81,6 +81,8 @@ asset; spec này sở hữu hợp đồng **phát** trên bề mặt trẻ.
 | Trẻ tắt tiếng thiết bị | Trình duyệt chặn phát | Bậc 3 chạy như trường hợp không có giọng; không hiện hộp thoại đòi bật tiếng |
 | Trình duyệt chặn autoplay | Chưa có tương tác người dùng | Câu dẫn hoãn tới lần chạm đầu tiên, và lần chạm đó không tính là lượt trả lời |
 | Nạp trước quá hạn | Quá 5 giây tổng | Vòng vẫn bắt đầu; narration phát khi sẵn sàng, không chặn màn chơi |
+| Trẻ chạm trong lúc câu dẫn đang đọc | Câu dẫn mở vòng chưa đọc xong | Cử chỉ bị nuốt hoàn toàn — không tới session, không tính miss, không tính lượt (`BR-PNR-11`) |
+| Câu dẫn không bao giờ báo xong | mp3 và TTS đều treo (lỗi mạng, trình duyệt không phát `onended`) | Sau `NARRATION_SETTLE_TIMEOUT_MS` (12s) vẫn coi là đã đọc xong — mở cử chỉ, bắt đầu đồng hồ (`BR-PNR-09`, `BR-PNR-11`) |
 
 ## 6. Business rules
 
@@ -96,6 +98,7 @@ asset; spec này sở hữu hợp đồng **phát** trên bề mặt trẻ.
 | `BR-PNR-08` (nghe lại không phạt) | Bấm "Nghe lại" BẮT BUỘC không tính là lượt sai, không làm leo bậc trợ giúp, không trừ điểm | Phạt việc hỏi lại dạy trẻ đoán bừa thay vì hỏi |
 | `BR-PNR-09` (không chặn màn chơi) | Narration BẮT BUỘC bất đồng bộ với vòng đời vòng chơi; quá hạn nạp thì vòng vẫn bắt đầu | Một vòng treo chờ file mp3 trên mạng yếu là một vòng hỏng |
 | `BR-PNR-10` (độ phủ có ratchet) | `scripts/narration-coverage-baseline.json` ghi số dataset có `audio_path` và số engine phát narration; cả hai chỉ được tăng | Số hiện tại là 4/443 dataset và 1/37 engine; không có ratchet thì con số này đã đứng yên nhiều lát cắt |
+| `BR-PNR-11` (đồng hồ chờ câu dẫn đọc xong) | Cử chỉ của trẻ, `hint_after_ms`, và `duration_ms` của vòng BẮT BUỘC chỉ tính từ lúc câu dẫn **đọc xong** (thành công, rơi hết bậc dự phòng, hay quá hạn — không bao giờ quá `NARRATION_SETTLE_TIMEOUT_MS = 12s`), không phải từ lúc mở vòng. Cử chỉ chạm trong lúc đang đọc bị nuốt hoàn toàn — Cấm — NEVER tính là lượt trả lời, Cấm — NEVER tính miss | Người đặt việc yêu cầu 2026-09-17: "tính thời gian, tính điểm chỉ bắt đầu khi máy đọc xong câu hỏi". Trước đó đồng hồ trợ giúp và bộ đếm giờ chạy song song với câu dẫn, nên câu dẫn dài ăn mất phần "thời gian trẻ thật sự có để nghĩ" trong ngưỡng leo thang |
 
 ## 7. Data
 
@@ -132,6 +135,10 @@ hiển nhiên. Bảng ánh xạ hai chiều là việc đầu tiên của lát c
 
 Bậc 2 chỉ đọc **tiếng Việt**. Đọc chuỗi tiếng Việt bằng giọng ngôn ngữ khác cho ra âm sai tới mức
 gây nhầm, nên thà rơi xuống bậc 3 còn hơn.
+
+Tốc độ đọc mặc định của bậc 2 là `1.0` (`SpeechSynthesisAdapter.speak`, Task #273 — người đặt
+việc yêu cầu 2026-09-17 tốc độ nhanh hơn mốc `0.9` cũ). Đây là hằng số triển khai, không phải
+hợp đồng đóng — đổi tiếp cần đo lại độ rõ chữ với trẻ thật (mục 11 câu hỏi mở).
 
 ### 7.3 Độ phủ bắt buộc theo band tuổi
 
@@ -224,6 +231,23 @@ Scenario: BR-PNR-10 — độ phủ giọng đi lùi thì cổng đỏ
   When chạy pnpm check:narration-coverage
   Then cổng thoát khác 0
   And báo cáo nêu độ phủ giảm từ 200 xuống 199
+
+Scenario: BR-PNR-11 — chạm trong lúc câu dẫn đang đọc bị nuốt, không tính miss
+  Given vòng vừa mở, câu dẫn đang phát và chưa đọc xong
+  When trẻ chạm vào một thẻ lựa chọn
+  Then session Cấm — NEVER nhận được hành động nào
+  And bậc trợ giúp và số lượt sai không đổi
+
+Scenario: BR-PNR-11 — đồng hồ vòng tính từ lúc câu dẫn đọc xong
+  Given câu dẫn mất 4 giây để đọc xong
+  When vòng đóng 1 giây sau khi câu dẫn đọc xong
+  Then duration_ms của round_completed là khoảng 1000, không phải khoảng 5000
+
+Scenario: BR-PNR-11 — quá hạn dự phòng vẫn mở cử chỉ
+  Given cả mp3 và TTS của câu dẫn đều không bao giờ báo đã đọc xong
+  When 12 giây trôi qua từ lúc mở vòng
+  Then cử chỉ được mở, đồng hồ vòng bắt đầu tính
+  And không có lỗi hay treo màn chơi
 ```
 
 ## 10. Boundaries

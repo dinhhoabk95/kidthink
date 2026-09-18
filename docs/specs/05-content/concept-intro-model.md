@@ -151,7 +151,7 @@ liệu đi qua cùng một hình dạng asset, và mọi step trỏ chất liệ
 | `action` | Trẻ làm gì | Field riêng | Sai được không |
 |---|---|---|---|
 | `present` | Nghe và nhìn một chất liệu, chạm để đi tiếp | — | Không có đáp án để sai |
-| `echo` | Nghe mẫu rồi **nói theo thành tiếng**, chạm để đi tiếp | `repeat_count` — 1–3, mặc định 1 | Không có đáp án để sai. Máy Cấm — **NEVER** nghe — `BR-CIM-10` |
+| `echo` | Nghe mẫu rồi **nói theo thành tiếng**, chạm để đi tiếp | `repeat_count` — 1–3, mặc định 1 | Không có đáp án để sai. Máy Cấm — **NEVER** nghe — `BR-CIM-10`. Lời mời "nói theo" là tuỳ theo bài (`difficulty_params.speak_along`, `BR-E000-11` ở `engines/GT-000.md`) — step vẫn luôn tồn tại trong content bất kể cờ này |
 | `recognise` | Chạm đúng chất liệu trong 2–4 lựa chọn | `distractor_asset_ids[]` — cùng `contrast_group` (`BR-CIM-05`) | Sai thì nhắc lại `present` của chính target rồi hỏi lại |
 | `link` | Ghép hai chất liệu khác loại: ký tự ↔ hình, từ ↔ hình | `source_asset_id` | Như `recognise` |
 | `recall` | Nghe tên, chạm tên đúng | `option_asset_ids[]` — 2–4 mã chất liệu | Sai vẫn đi tiếp; kết quả là tín hiệu, không phải cửa |

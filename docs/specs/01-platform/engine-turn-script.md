@@ -101,7 +101,11 @@ N1 mở màn    → N2 ra đề → N3 thao tác ⇄ N4 phản hồi → N6 kế
    theo thứ tự nền → phần tử tĩnh → phần tử tương tác; chỉ khi cảnh dựng xong, bề mặt mới
    nhận cử chỉ. Phát `question_shown`.
 2. **`N2` Ra đề** — lời đọc phát **tự động một lần**, theo thang ba bậc của mục 7.3. Nút nghe
-   lại có mặt từ nhịp này tới hết lượt. Nhịp hệ thống tương ứng: `reveal`.
+   lại có mặt từ nhịp này tới hết lượt. Nhịp hệ thống tương ứng: `reveal`. Cử chỉ ở `N3` chỉ
+   được tính từ khi lời đọc đã tới bậc cuối (đọc xong, hay quá hạn dự phòng) — chạm trong lúc
+   đang đọc bị nuốt như chạm trước khi cảnh dựng xong (`BR-ETS-02`, `BR-PNR-11` ở
+   [`play-narration.md`](../04-play/play-narration.md)); đồng hồ vòng và `hint_after_ms`
+   cũng neo vào mốc đó, không phải mốc mở màn.
 3. **`N3` Thao tác** — trẻ dùng cử chỉ chủ đạo của engine (`tap` · `drop` · `stroke` ·
    `adjust`), đóng lượt bằng `commit` nếu engine có bước nộp.
 4. **`N4` Phản hồi tức thì** — mỗi cử chỉ hợp lệ đổi ít nhất một trạng thái thị giác trong
