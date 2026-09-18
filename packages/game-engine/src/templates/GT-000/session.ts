@@ -194,7 +194,37 @@ export class GT000Session extends TemplateGameSession<
     } else if (step.action === "echo") {
       this.playEchoModel(step);
     } else {
-      this.audioPromptCalled = true;
+      this.playStepPrompt(step);
+    }
+  }
+
+  /**
+   * Đọc `prompt_line` của bước `recognise` · `link` · `recall` — trẻ chưa
+   * đọc được chữ nên câu hỏi chỉ hiện trong khung câu hỏi (`getStepPromptText`)
+   * không tới được trẻ nếu không có giọng đi kèm (Task #273, `BR-PNR-01`).
+   * Chỉ có TTS ở đây: ba hành động này chưa có trường `audio_path` riêng
+   * trong contract, khác `present`/`echo` đọc theo `asset.audio_path`.
+   */
+  private playStepPrompt(
+    step: GT000Step & { action: "recognise" | "link" | "recall" }
+  ): void {
+    this.audioPromptCalled = true;
+    const promptText = step.prompt_line;
+    if (!promptText) {
+      return;
+    }
+    // Bậc 3 (không có giọng): Cấm — NEVER im lặng hoàn toàn (BR-PNR-06), nhưng
+    // KHÔNG sáng mục tiêu như `playPresentAudio`/`playEchoModel` làm — mục
+    // tiêu ở đây LÀ đáp án của một câu hỏi (`recognise`/`recall`), sáng nó
+    // lên là lộ đáp án trước khi trẻ chạm. Câu hỏi vẫn hiện trong khung chữ
+    // (`getStepPromptText`) nên không thứ gì bị mất, chỉ mất kênh âm.
+    const spoke = this.audio.speakPrompt(promptText);
+    this.lastTtsUsed = spoke;
+    if (!spoke) {
+      this.recordEvent("tts_unavailable", {
+        lang: "vi-VN",
+        asset_id: step.target_asset_id,
+      });
     }
   }
 

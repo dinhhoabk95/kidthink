@@ -157,6 +157,17 @@ export const GT000DifficultySchema = z
     hint_after_ms: z.number().int().min(5000).max(30_000).default(12_000),
     allow_retry: z.boolean().default(true),
     auto_play_audio: z.boolean().default(true),
+    /**
+     * Bậc "tập nói theo" của bài làm quen (Task #273).
+     *
+     * `tap` (mặc định) — hành vi hiện tại: máy đọc mẫu, trẻ nói theo thành
+     * tiếng (máy không nghe), rồi chạm nút "Bé nói theo" để đi tiếp. `off` —
+     * bước `echo` vẫn tồn tại trong content (đọc lại từ đó vẫn chạy) nhưng
+     * bề mặt chơi hiện nút "Tiếp tục" thường, không mời "nói theo" và không
+     * hiện icon micro — dành cho bài chưa cần tập phát âm. Cấm — NEVER có
+     * bậc thứ ba mở micro thật; xem `BR-CIM-10`.
+     */
+    speak_along: z.enum(["off", "tap"]).default("tap"),
   })
   .strict();
 

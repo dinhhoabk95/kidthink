@@ -514,6 +514,10 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Tự động phát âm thanh",
     help: "Tự động phát câu hỏi/chỉ dẫn khi bắt đầu lượt chơi.",
   },
+  speak_along: {
+    label: "Mời bé nói theo",
+    help: '"Có" mời bé nói theo (hiện icon micro, không thu âm). "Không" chỉ hiện nút Tiếp tục.',
+  },
   target_slots: {
     label: "Danh sách ô đích",
     help: "Các ô đích cần hoàn thiện hoặc ghép vào.",

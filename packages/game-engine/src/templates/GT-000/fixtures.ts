@@ -81,6 +81,7 @@ export const GT000_FIXTURES: {
       hint_after_ms: 12_000,
       allow_retry: true,
       auto_play_audio: true,
+      speak_along: "tap",
     },
   },
 
@@ -161,6 +162,7 @@ export const GT000_FIXTURES: {
       hint_after_ms: 12_000,
       allow_retry: true,
       auto_play_audio: true,
+      speak_along: "tap",
     },
   },
 
@@ -226,6 +228,7 @@ export const GT000_FIXTURES: {
       hint_after_ms: 12_000,
       allow_retry: true,
       auto_play_audio: true,
+      speak_along: "tap",
     },
   },
 ];

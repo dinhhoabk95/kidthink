@@ -327,6 +327,50 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
       expect(GT000DifficultySchema.safeParse(validDiff).success).toBe(true);
     });
 
+    it("speak_along: thiếu trường thì mặc định 'tap' — giữ đúng hành vi cũ cho content chưa khai (Task #273)", async () => {
+      const { GT000DifficultySchema } = await import(
+        "#src/templates/GT-000/template"
+      );
+      const res = GT000DifficultySchema.safeParse({
+        hint_after_ms: 12_000,
+        allow_retry: true,
+        auto_play_audio: true,
+      });
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.data.speak_along).toBe("tap");
+      }
+    });
+
+    it("speak_along: 'off' parse được — bài làm quen chọn tắt tập nói theo (Task #273)", async () => {
+      const { GT000DifficultySchema } = await import(
+        "#src/templates/GT-000/template"
+      );
+      const res = GT000DifficultySchema.safeParse({
+        hint_after_ms: 12_000,
+        allow_retry: true,
+        auto_play_audio: true,
+        speak_along: "off",
+      });
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.data.speak_along).toBe("off");
+      }
+    });
+
+    it("speak_along: giá trị lạ ngoài off/tap bị từ chối", async () => {
+      const { GT000DifficultySchema } = await import(
+        "#src/templates/GT-000/template"
+      );
+      const res = GT000DifficultySchema.safeParse({
+        hint_after_ms: 12_000,
+        allow_retry: true,
+        auto_play_audio: true,
+        speak_along: "listen",
+      });
+      expect(res.success).toBe(false);
+    });
+
     it("Ca âm BR-E000-10: phân đoạn dạy không có bước echo bị từ chối", async () => {
       const { GT000SegmentSchema } = await import(
         "#src/templates/GT-000/template"
@@ -514,6 +558,43 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
         .getTelemetry()
         .events.filter((e) => e.event_name === "intro_step_answered");
       expect(answered).toHaveLength(1);
+    });
+  });
+
+  describe("Bước recognise/recall cũng phải đọc prompt_line (Task #273)", () => {
+    it("bước recognise gọi speakPrompt với đúng prompt_line — trẻ nghe được câu hỏi, không chỉ nhìn chữ", () => {
+      const session = new GT000Session(fixture.content, fixture.difficulty);
+      session.prepareRound("3-4");
+      const speakSpy = vi.spyOn(session.audio, "speakPrompt");
+
+      // fixture 1: present, present, present, echo, recognise, recall.
+      // Ba lần commit đầu qua hết present; lần thứ tư qua echo, dừng ở recognise (index 4).
+      while (session.currentStepIndex < 4) {
+        session.commit({ type: "tap_item", data: {} });
+      }
+
+      const step = fixture.content.steps?.[session.currentStepIndex];
+      expect(step?.action).toBe("recognise");
+      expect(speakSpy).toHaveBeenCalledWith("Bé hãy chỉ cho cô số một nhé!");
+    });
+
+    it("bước recall gọi speakPrompt với đúng prompt_line", () => {
+      const session = new GT000Session(fixture.content, fixture.difficulty);
+      session.prepareRound("3-4");
+      const speakSpy = vi.spyOn(session.audio, "speakPrompt");
+
+      // Đi tới recognise (index 4) rồi trả lời đúng để qua recall (index 5).
+      while (session.currentStepIndex < 4) {
+        session.commit({ type: "tap_item", data: {} });
+      }
+      session.commit({
+        type: "tap_item",
+        data: { item_id: "num_1", asset_id: "num_1" },
+      });
+
+      const step = fixture.content.steps?.[session.currentStepIndex];
+      expect(step?.action).toBe("recall");
+      expect(speakSpy).toHaveBeenCalledWith("Đây là số mấy nào?");
     });
   });
 });
