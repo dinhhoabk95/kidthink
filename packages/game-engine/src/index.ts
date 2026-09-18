@@ -17,6 +17,9 @@ export {
   GameEngine,
 } from "./core";
 export {
+  ACTION_CORRECT,
+  ACTION_IGNORED,
+  ACTION_RETRY,
   type ActionResult,
   BaseGameSession,
   type FeedbackKind,
@@ -93,6 +96,7 @@ export {
   computeTenFrameSplitLayout,
   computeTrackLayout,
 } from "./layout/geometry.js";
+export { findHitSlotIndex, isPointInSlot } from "./layout/hit-test.js";
 export {
   isLayoutId,
   LAYOUT_IDS,
