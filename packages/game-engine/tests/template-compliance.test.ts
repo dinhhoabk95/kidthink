@@ -6,6 +6,7 @@ import {
   getGameTemplate,
   loadGameSession,
   preloadGameSession,
+  TemplateGameSession,
 } from "#src/index";
 import { FIXTURES_BY_CODE } from "./fixtures-map.js";
 
@@ -190,6 +191,36 @@ describe("Universal Template Compliance Test Suite (§7.4, BR-TAK-01..14)", () =
         });
         expect(res).toBeDefined();
         expect(typeof res.valid).toBe("boolean");
+      });
+
+      // `ViewEntity.id` là khoá của lớp nút trợ năng (`v-for :key` ở
+      // `play/[code].vue`) và của mọi phép tra entity theo id. Hai entity trùng
+      // id — như thẻ đề GT-001 từng mượn id của đáp án đúng (Task #274, E1) —
+      // cho hai nút cùng khoá và cùng tên.
+      it("getView() không có hai entity trùng id, ở mọi fixture (Task #274)", () => {
+        for (const [index, fixture] of (FIXTURES_MAP[code] ?? []).entries()) {
+          const session = createGameSessionSync(code, {
+            level_code: `${code}-LV${index + 1}`,
+            content_version: 1,
+            template_code: code,
+            content_pack: fixture.content,
+            difficulty_params: fixture.difficulty,
+            theme_id: "default",
+            age_band: "4-5",
+            reduced_motion: false,
+            audio_enabled: true,
+          });
+          if (session instanceof TemplateGameSession) {
+            session.prepareRound("4-5");
+          } else {
+            session.setupEntities();
+          }
+          const ids = session.getView?.().entities.map((e) => e.id) ?? [];
+          expect(
+            new Set(ids).size,
+            `${code} fixture #${index} có id trùng: ${ids.join(", ")}`
+          ).toBe(ids.length);
+        }
       });
     });
   }

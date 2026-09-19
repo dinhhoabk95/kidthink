@@ -111,11 +111,9 @@ describe("GT-001 — chạm lại thẻ đề để nghe lại từ khoá (Task 
     const session = buildSession();
     const view = session.getView();
 
-    const targetEntity = view.entities.find(
-      (e) => e.id === content.target_item.item_id
-    );
+    const targetEntity = view.entities.find((e) => e.role === "neutral");
     expect(targetEntity).toBeDefined();
-    expect(targetEntity?.role).toBe("neutral");
+    expect(targetEntity?.id).toBe(`prompt:${content.target_item.item_id}`);
 
     const expected =
       content.target_item.asset.kind === "emoji"
@@ -124,12 +122,33 @@ describe("GT-001 — chạm lại thẻ đề để nghe lại từ khoá (Task 
     expect(targetEntity?.spokenLabel).toBe(expected);
   });
 
+  it("id thẻ đề Cấm — NEVER trùng id lựa chọn, kể cả khi content dùng chung item_id (Task #274, E1)", () => {
+    // Dạng của 2.976/2.976 vòng GT-001 trong DB (đo 2026-09-19): bộ sinh
+    // level đặt `target_item.item_id` bằng đúng id của lựa chọn đúng.
+    const correct = content.options.find((o) => o.is_correct);
+    if (!correct) {
+      throw new Error("Fixture thiếu lựa chọn đúng");
+    }
+    const session = new GT001Session(
+      {
+        ...content,
+        target_item: { ...content.target_item, item_id: correct.item_id },
+      },
+      difficulty,
+      1
+    );
+    session.prepareRound("4-5");
+
+    const ids = session.getView().entities.map((e) => e.id);
+
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(ids).toContain(correct.item_id);
+  });
+
   it("chạm vào thẻ đề Cấm — NEVER tính là lượt trả lời (nằm ngoài this.slots)", () => {
     const session = buildSession();
     const view = session.getView();
-    const targetEntity = view.entities.find(
-      (e) => e.id === content.target_item.item_id
-    );
+    const targetEntity = view.entities.find((e) => e.role === "neutral");
     if (!targetEntity) {
       throw new Error("Thiếu entity thẻ đề");
     }

@@ -31,6 +31,9 @@ import type { GT001Content, GT001Difficulty } from "./template.js";
 type OptionItem = GT001Content["options"][number];
 type ItemAsset = OptionItem["asset"];
 
+/** Tiền tố id của entity thẻ đề — tách khỏi không gian id của lựa chọn. */
+const PROMPT_CARD_ID_PREFIX = "prompt:";
+
 /**
  * Chữ hiện trên thẻ và từ khoá đọc được của nó (`spokenLabel`) — dùng chung
  * cho thẻ lựa chọn và thẻ đề giữa màn, cả hai đều đọc lại khi trẻ chạm
@@ -203,13 +206,16 @@ export class GT001Session extends TemplateGameSession<
     // Thẻ đề giữa màn — role `neutral`, KHÔNG nằm trong `this.slots` nên
     // Cấm — NEVER được `toAction()` chấm là một lượt chọn. Chạm lại để nghe
     // từ khoá vẫn đi qua `spokenLabel` như mọi entity khác (Task #273).
+    // Id mang tiền tố `prompt:` vì bộ sinh level đặt `target_item.item_id`
+    // bằng đúng id của lựa chọn đúng (2.976/2.976 vòng, Task #274 E1) — mượn
+    // nguyên id là hai entity cùng khoá.
     if (this.content.target_item) {
       const targetSlot = getCentralTargetCardSlot(this.logicSpace);
       const { glyph, label, spokenLabel } = resolveAssetLabels(
         this.content.target_item.asset
       );
       entities.push({
-        id: this.content.target_item.item_id,
+        id: `${PROMPT_CARD_ID_PREFIX}${this.content.target_item.item_id}`,
         slotIndex: -1,
         role: "neutral",
         state: "idle",

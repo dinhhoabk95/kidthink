@@ -7,7 +7,7 @@ Luật tick: một ô chỉ được tick khi lệnh kiểm ở cuối lát ch�
 
 ## S1 — Lỗi hồi quy của #273
 
-- [ ] S1a — id thẻ đề GT-001 là `prompt:${item_id}`; test chung "id trong `getView()` là duy nhất"
+- [x] S1a — id thẻ đề GT-001 là `prompt:${item_id}`; test chung "id trong `getView()` là duy nhất"
       chạy trên mọi template có fixture
 - [ ] S1b — hẹn giờ tự sang vòng neo `roundIndex`, huỷ ở `cleanupSession()`
 - [ ] S1b — test nhiều vòng: thắng vòng 1 → vòng 2 mở → câu dẫn vòng 2 phát → settle → cử chỉ mở
