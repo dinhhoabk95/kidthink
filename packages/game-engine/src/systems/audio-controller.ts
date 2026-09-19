@@ -59,24 +59,39 @@ export class AudioController {
     onEnd?: () => void,
     fallbackVisualCue?: () => void
   ): boolean {
+    // Adapter báo lỗi bằng `onError` RỒI `onEnd`, và `speak()` ném thì báo
+    // `onError` rồi trả `false` — mỗi đường đều có thể chạm cả hai nhánh dưới
+    // đây. Tín hiệu thị giác và `onEnd` mỗi cái đúng một lần (Task #274 S8).
+    let cued = false;
+    const cueOnce = () => {
+      if (!cued) {
+        cued = true;
+        fallbackVisualCue?.();
+      }
+    };
+    let ended = false;
+    const endOnce = () => {
+      if (!ended) {
+        ended = true;
+        onEnd?.();
+      }
+    };
+
     if (!(this.enabled && this.speechAdapter.hasVietnameseVoice())) {
-      fallbackVisualCue?.();
-      onEnd?.();
+      cueOnce();
+      endOnce();
       return false;
     }
 
     const started = this.speechAdapter.speak(text, {
       volume: this.masterVolume,
-      onEnd,
-      onError: () => {
-        fallbackVisualCue?.();
-        onEnd?.();
-      },
+      onEnd: endOnce,
+      onError: cueOnce,
     });
 
     if (!started) {
-      fallbackVisualCue?.();
-      onEnd?.();
+      cueOnce();
+      endOnce();
       return false;
     }
 

@@ -15,12 +15,23 @@ export interface SpeechOptions {
   onError?: (error: unknown) => void;
 }
 
+/**
+ * Utterance đang đọc. Giữ tham chiếu trên instance vì Chrome có thể thu gom
+ * một utterance chỉ còn biến cục bộ trỏ tới trước khi `onend` bắn — khi đó cổng
+ * chờ đọc (`BR-PNR-11`) khoá cử chỉ tới hết hẹn giờ an toàn (Task #274 S8).
+ */
+interface ActiveUtterance {
+  readonly utterance: SpeechSynthesisUtterance;
+  /** Kết thúc do bị cắt ngang: báo `onEnd`, không báo `onError`. */
+  readonly interrupt: () => void;
+}
+
 export class SpeechSynthesisAdapter {
   private isVoiceAvailable = false;
   private selectedVoice: SpeechSynthesisVoice | null = null;
   private isInitialized = false;
   private hasListeningVoicesChanged = false;
-  private currentTimeoutId: ReturnType<typeof setTimeout> | null = null;
+  private active: ActiveUtterance | null = null;
 
   constructor() {
     this.initVoices();
@@ -57,11 +68,18 @@ export class SpeechSynthesisAdapter {
 
     checkVoices();
 
-    if (
-      !this.hasListeningVoicesChanged &&
-      window.speechSynthesis.onvoiceschanged !== undefined
-    ) {
-      window.speechSynthesis.onvoiceschanged = checkVoices;
+    if (this.hasListeningVoicesChanged) {
+      return;
+    }
+    const synth = window.speechSynthesis;
+    // `addEventListener`, không gán `onvoiceschanged`: mỗi `AudioController`
+    // mới (GT-000 tạo một cái mỗi vòng) gán đè listener của adapter tạo
+    // trước, nên `engine.audio` không bao giờ biết giọng đã về (Task #274 S8).
+    if (typeof synth.addEventListener === "function") {
+      synth.addEventListener("voiceschanged", checkVoices);
+      this.hasListeningVoicesChanged = true;
+    } else if (synth.onvoiceschanged !== undefined) {
+      synth.onvoiceschanged = checkVoices;
       this.hasListeningVoicesChanged = true;
     }
   }
@@ -116,46 +134,52 @@ export class SpeechSynthesisAdapter {
       utterance.pitch = options.pitch ?? 1.0;
       utterance.volume = Math.min(Math.max(options.volume ?? 0.85, 0), 1);
 
+      // Mọi trạng thái của utterance này nằm trong closure của nó — kể cả
+      // hẹn giờ an toàn. Sự kiện trễ của một utterance cũ (Chrome bắn
+      // `error: interrupted` sau `cancel()`) chỉ chạm được `finished` của
+      // chính nó, Cấm — NEVER chạm hẹn giờ của utterance mới (Task #274 S8).
       let finished = false;
-      const cleanup = () => {
-        if (this.currentTimeoutId) {
-          clearTimeout(this.currentTimeoutId);
-          this.currentTimeoutId = null;
+      let timeoutId: ReturnType<typeof setTimeout> | null = null;
+      const finish = (error?: SpeechSynthesisErrorEvent) => {
+        if (finished) {
+          return;
         }
         finished = true;
+        if (timeoutId !== null) {
+          clearTimeout(timeoutId);
+          timeoutId = null;
+        }
+        if (this.active?.utterance === utterance) {
+          this.active = null;
+        }
+        if (error) {
+          options.onError?.(error);
+        }
+        // onEnd luôn đến, kể cả sau lỗi, để vòng chơi không treo.
+        options.onEnd?.();
       };
 
       utterance.onstart = () => {
         options.onStart?.();
       };
+      utterance.onend = () => finish();
+      utterance.onerror = (e) => finish(e);
 
-      utterance.onend = () => {
-        if (!finished) {
-          cleanup();
-          options.onEnd?.();
-        }
-      };
-
-      utterance.onerror = (e) => {
-        if (!finished) {
-          cleanup();
-          options.onError?.(e);
-          // Still notify onEnd so game loop does not hang indefinitely
-          options.onEnd?.();
-        }
-      };
-
-      // Safety timeout in case browser drops speech onend event
-      const timeoutMs = options.timeoutMs ?? 10_000;
-      this.currentTimeoutId = setTimeout(() => {
-        if (!finished) {
-          cleanup();
-          this.cancel();
-          options.onEnd?.();
-        }
-      }, timeoutMs);
-
+      // `speak()` ném thì chưa có gì để dọn: không active, không hẹn giờ —
+      // nhánh `catch` chỉ báo lỗi, người gọi tự rơi xuống bậc sau.
       window.speechSynthesis.speak(utterance);
+      if (!finished) {
+        this.active = { utterance, interrupt: () => finish() };
+        // Safety timeout in case browser drops speech onend event
+        const timeoutMs = options.timeoutMs ?? 10_000;
+        timeoutId = setTimeout(() => {
+          if (finished) {
+            return;
+          }
+          finish();
+          this.cancelSynthesis();
+        }, timeoutMs);
+      }
       return true;
     } catch (err) {
       options.onError?.(err);
@@ -163,12 +187,19 @@ export class SpeechSynthesisAdapter {
     }
   }
 
-  /** Cancel any ongoing speech synthesis */
+  /**
+   * Dừng mọi lời đang đọc. Utterance bị cắt ngang kết thúc bằng `onEnd` —
+   * nó không lỗi, nó bị thay — và sự kiện trễ của trình duyệt cho nó bị bỏ
+   * qua.
+   */
   cancel(): void {
-    if (this.currentTimeoutId) {
-      clearTimeout(this.currentTimeoutId);
-      this.currentTimeoutId = null;
-    }
+    const active = this.active;
+    this.active = null;
+    active?.interrupt();
+    this.cancelSynthesis();
+  }
+
+  private cancelSynthesis(): void {
     if (this.isSupported()) {
       try {
         window.speechSynthesis.cancel();

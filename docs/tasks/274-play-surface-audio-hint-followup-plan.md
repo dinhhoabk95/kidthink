@@ -142,7 +142,8 @@ thô khi thiếu tên: bỏ `spokenLabel`, để bậc thị giác lo.
 `speech-synthesis-adapter.ts`:
 - Giữ tham chiếu utterance trên instance — Chrome có thể thu gom utterance cục bộ trước khi
   `onend` bắn, khi đó cổng chờ đọc khoá cử chỉ tới hết 10s dự phòng.
-- Utterance bị `cancel()` cắt ngang không được gọi `onError`/`onEnd` của chính nó — hiện nó gọi, và
+- Utterance bị `cancel()` cắt ngang kết thúc bằng `onEnd` đúng một lần, không bằng `onError` — nó bị
+  thay, không lỗi. Hiện nó nhận `onerror` trễ từ Chrome, gọi `onError` (tín hiệu thị giác) và
   `cleanup()` của nó xoá luôn hẹn giờ an toàn của utterance mới.
 - `addEventListener("voiceschanged")` thay cho gán `onvoiceschanged`: mỗi `AudioController` mới
   (GT-000 tạo một cái mỗi vòng) đang ghi đè listener của `engine.audio`.

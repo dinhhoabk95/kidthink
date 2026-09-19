@@ -24,10 +24,11 @@ Kiểm: `rtk proxy npx vitest run` trong `packages/game-engine` và `apps/web`,
 
 ## S8 — Web Speech
 
-- [ ] Giữ tham chiếu utterance đang phát trên instance adapter
-- [ ] Utterance bị `cancel()` cắt ngang Cấm — NEVER gọi `onError`/`onEnd` của nó, Cấm — NEVER xoá
-      hẹn giờ an toàn của utterance mới
-- [ ] `addEventListener("voiceschanged")` thay cho gán `onvoiceschanged`
+- [x] Giữ tham chiếu utterance đang phát trên instance adapter (GC không đo được trong node — cấu trúc, không có test)
+- [x] Utterance bị `cancel()` cắt ngang kết thúc bằng `onEnd` đúng một lần, Cấm — NEVER `onError`;
+      sự kiện trễ của nó Cấm — NEVER xoá hẹn giờ an toàn của utterance mới
+- [x] `addEventListener("voiceschanged")` thay cho gán `onvoiceschanged`
+- [x] `AudioController.speakPrompt`: tín hiệu thị giác và `onEnd` mỗi cái đúng một lần
 - [ ] Đo trước/sau trên Chrome Android, Safari iOS, Chrome Windows không giọng `vi-VN`: vòng 2+
       có tiếng, cổng chờ đọc mở trong ≤ 1s sau khi đọc xong
 
