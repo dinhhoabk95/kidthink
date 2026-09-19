@@ -351,8 +351,14 @@ export class RoundRunner {
       return;
     }
 
-    // "Nghe lại" không settle gì — gate chỉ áp cho nhịp mở vòng (BR-PNR-08:
-    // nghe lại Cấm — NEVER ảnh hưởng điểm/bậc trợ giúp).
+    // "Nghe lại" không chờ gì — gate chỉ áp cho nhịp mở vòng (BR-PNR-08:
+    // nghe lại Cấm — NEVER ảnh hưởng điểm/bậc trợ giúp, Cấm — NEVER khoá cử
+    // chỉ). Nó cắt câu dẫn mở vòng đang phát, mà clip bị cắt không còn báo
+    // xong (`playPromptAudio`, Task #274 S1c) — nên settle lượt mở vòng ngay
+    // tại đây, như `stopNarrationAudio()` của bề mặt web.
+    if (trigger === "replay") {
+      this.notePromptSettled();
+    }
     const settleIfRoundOpen = () => {
       if (trigger === "round_open") {
         this.notePromptSettled();

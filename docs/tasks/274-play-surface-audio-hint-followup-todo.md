@@ -12,7 +12,7 @@ Luật tick: một ô chỉ được tick khi lệnh kiểm ở cuối lát ch�
 - [x] S1b — hẹn giờ tự sang vòng neo `roundIndex`, huỷ ở `cleanupSession()`
 - [x] S1b — test nhiều vòng: thắng vòng 1 → vòng 2 mở → câu dẫn vòng 2 phát → settle → cử chỉ mở
 - [x] S1b — ca âm: "Bỏ qua" trong 900ms sau khi thắng Cấm — NEVER đóng vòng kế tiếp
-- [ ] S1c — mỗi bậc phát rơi xuống bậc sau đúng một lần; ca âm `onerror` + `play()` reject cùng bắn
+- [x] S1c — mỗi bậc phát rơi xuống bậc sau đúng một lần; ca âm `onerror` + `play()` reject cùng bắn
 - [ ] S1d — GT-001 vùng chạm khớp hình thẻ đang vẽ; không nhỏ hơn bản trước #273 ở góc thẻ
 - [ ] S1d — bề mặt web tìm entity bị chạm bằng primitive của `hit-test.ts`, cùng dung sai với `toAction()`
 - [ ] S1e — `onSettled` mang token vòng; token lệch thì bỏ qua; hẹn giờ 600ms huỷ khi rời trang và

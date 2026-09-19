@@ -117,6 +117,71 @@ describe("usePlayAudio — playInstructionNarration onSettled (BR-PNR-09, BR-PNR
     expect(onSettled).toHaveBeenCalledTimes(1);
   });
 
+  it("mp3 lỗi bắn CẢ onerror LẪN reject play(): rơi xuống TTS đúng một lần, settle khi TTS đọc xong (Task #274, E3)", async () => {
+    const instances: MockAudioInstance[] = [];
+    const FailingAudio = class extends makeMockAudioClass(instances) {
+      override readonly play = vi
+        .fn()
+        .mockRejectedValue(new Error("NotSupportedError"));
+    };
+    vi.stubGlobal("Audio", FailingAudio);
+    let ttsOnEnd: (() => void) | undefined;
+    const speakPrompt = vi.fn((_text: string, onEnd?: () => void) => {
+      ttsOnEnd = onEnd;
+      return true;
+    });
+    const mockEngine = { audio: { speakPrompt } };
+    const onSettled = vi.fn();
+
+    const { setInstructionAudio, playInstructionNarration } = usePlayAudio({
+      getEngine: () => mockEngine as never,
+      onFallbackCue: vi.fn(),
+    });
+    setInstructionAudio("/audio/404.mp3");
+
+    playInstructionNarration("Bé tìm quả táo", onSettled);
+    // Trình duyệt thật: file 404 phát sự kiện `error` VÀ promise `play()` reject.
+    instances[0]?.onerror?.();
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(speakPrompt).toHaveBeenCalledTimes(1);
+    expect(onSettled).not.toHaveBeenCalled();
+
+    ttsOnEnd?.();
+    expect(onSettled).toHaveBeenCalledTimes(1);
+  });
+
+  it("Nghe lại cắt ngang khi play() còn chờ: AbortError của mp3 cũ Cấm — NEVER đọc TTS đè lượt mới (Task #274, E3)", async () => {
+    const instances: MockAudioInstance[] = [];
+    let rejectFirstPlay: ((err: Error) => void) | undefined;
+    const PendingAudio = class extends makeMockAudioClass(instances) {
+      override readonly play = vi.fn(
+        () =>
+          new Promise<void>((_resolve, reject) => {
+            rejectFirstPlay ??= reject;
+          })
+      );
+    };
+    vi.stubGlobal("Audio", PendingAudio);
+    const speakPrompt = vi.fn(() => true);
+    const mockEngine = { audio: { speakPrompt } };
+
+    const { setInstructionAudio, playInstructionNarration } = usePlayAudio({
+      getEngine: () => mockEngine as never,
+      onFallbackCue: vi.fn(),
+    });
+    setInstructionAudio("/audio/test.mp3");
+
+    playInstructionNarration("Bé tìm quả táo", vi.fn());
+    playInstructionNarration("Bé tìm quả táo");
+    rejectFirstPlay?.(new Error("AbortError"));
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(speakPrompt).not.toHaveBeenCalled();
+  });
+
   it("Nghe lại cắt ngang mp3 mở vòng chưa phát xong vẫn settle lượt trước — Cấm — NEVER kẹt acceptingInput mãi (BR-PNR-11)", () => {
     const instances: MockAudioInstance[] = [];
     vi.stubGlobal("Audio", makeMockAudioClass(instances));

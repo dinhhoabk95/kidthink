@@ -197,4 +197,27 @@ describe("RoundRunner — gateOnPromptSettle (BR-PNR-11)", () => {
       vi.useRealTimers();
     }
   });
+
+  it("gateOnPromptSettle: true + đường phát nội bộ: Nghe lại cắt ngang câu dẫn mở vòng thì vòng vẫn settle (Task #274 S1c)", () => {
+    // `playPromptAudio` không còn báo onEnd cho clip bị `stopAll()` cắt
+    // ngang (reject AbortError của clip cũ bị bỏ qua) — nên "Nghe lại" phải tự
+    // settle lượt mở vòng, như bề mặt web làm trong `stopNarrationAudio()`.
+    const audio = new AudioController(true);
+    vi.spyOn(audio, "playPromptAudio").mockImplementation(() => {
+      /* mp3 đang phát, chưa bao giờ báo xong */
+    });
+
+    const runner = new RoundRunner({
+      rounds: [makeRound({ instruction_audio_path: "/audio/voice/x.mp3" })],
+      sessionFactory: () => new StubSession(),
+      audioController: audio,
+      gateOnPromptSettle: true,
+    });
+    runner.startFirstRound();
+    expect(runner.isPromptSettled()).toBe(false);
+
+    runner.replayCurrentRoundNarration();
+
+    expect(runner.isPromptSettled()).toBe(true);
+  });
 });

@@ -90,7 +90,16 @@ export function usePlayAudio(options: PlayAudioOptions) {
       pendingSettleTimer = setTimeout(settleOnce, NARRATION_SETTLE_TIMEOUT_MS);
     }
 
+    // Bậc mp3 rơi xuống bậc TTS đúng một lần: file hỏng phát CẢ sự kiện
+    // `error` LẪN reject `play()`. Gọi TTS hai lần thì lần hai `cancel()` lần
+    // một, lần một báo xong/lỗi và settle sớm — cổng mở khi máy còn đang đọc
+    // (Task #274, E3).
+    let fellBack = false;
     const speakOrSettle = () => {
+      if (fellBack) {
+        return;
+      }
+      fellBack = true;
       if (promptText && engine) {
         engine.audio.speakPrompt(promptText, settleOnce, () => {
           onFallbackCue();
@@ -105,21 +114,24 @@ export function usePlayAudio(options: PlayAudioOptions) {
       try {
         const aud = new Audio(currentInstructionAudio);
         activeNarrationAudio = aud;
+        // Lỗi của một mp3 đã bị `stopNarrationAudio()` thay (trẻ bấm "Nghe
+        // lại" khi `play()` còn chờ → trình duyệt reject `AbortError`) không
+        // được rơi xuống TTS: lượt đó đã settle, TTS của nó sẽ đè lượt mới.
+        const failAudio = () => {
+          if (activeNarrationAudio !== aud) {
+            return;
+          }
+          activeNarrationAudio = null;
+          speakOrSettle();
+        };
         aud.onended = () => {
           if (activeNarrationAudio === aud) {
             activeNarrationAudio = null;
           }
           settleOnce();
         };
-        aud.onerror = () => {
-          if (activeNarrationAudio === aud) {
-            activeNarrationAudio = null;
-          }
-          speakOrSettle();
-        };
-        aud.play().catch(() => {
-          speakOrSettle();
-        });
+        aud.onerror = failAudio;
+        aud.play().catch(failAudio);
       } catch {
         speakOrSettle();
       }

@@ -150,10 +150,14 @@ export class AudioController {
         audio.volume = this.masterVolume;
         this.currentAudio = audio;
 
+        // File hỏng phát CẢ `error` LẪN reject `play()`; một mp3 đã bị
+        // `stopAll()` thay thì reject `AbortError`. Chỉ báo lỗi một lần, và
+        // chỉ cho clip còn đang là clip hiện hành (Task #274, E3).
         const failAndRelease = () => {
-          if (this.currentAudio === audio) {
-            this.currentAudio = null;
+          if (this.currentAudio !== audio) {
+            return;
           }
+          this.currentAudio = null;
           onError?.();
           onEnd?.();
         };
