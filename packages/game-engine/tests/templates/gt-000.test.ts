@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { ACTION_CORRECT, ACTION_IGNORED } from "#src/game-session";
+import { createGameSessionSync, preloadGameSession } from "#src/index";
 import type { Gesture } from "#src/interaction";
 import { GT000_FIXTURES } from "#src/templates/GT-000/fixtures";
 import { GT000Session } from "#src/templates/GT-000/session";
@@ -7,6 +8,8 @@ import type { GT000Content } from "#src/templates/GT-000/template";
 
 const FORBIDDEN_AUDIO_REGEX =
   /audio_blob|recording|record_url|mic|voice_sample/i;
+const SPEAK_ALONG_INVITE = /nói theo/i;
+const PRESENT_SENTENCE = /^Đây là /;
 
 describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
   const fixture = GT000_FIXTURES[0];
@@ -327,7 +330,7 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
       expect(GT000DifficultySchema.safeParse(validDiff).success).toBe(true);
     });
 
-    it("speak_along: thiếu trường thì mặc định 'tap' — giữ đúng hành vi cũ cho content chưa khai (Task #273)", async () => {
+    it("speak_along: thiếu trường thì mặc định 'off' — nói theo là opt-in theo từng bài (Task #274 D-274-2)", async () => {
       const { GT000DifficultySchema } = await import(
         "#src/templates/GT-000/template"
       );
@@ -338,7 +341,7 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
       });
       expect(res.success).toBe(true);
       if (res.success) {
-        expect(res.data.speak_along).toBe("tap");
+        expect(res.data.speak_along).toBe("off");
       }
     });
 
@@ -481,6 +484,65 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
           FORBIDDEN_AUDIO_REGEX.test(JSON.stringify(event.data ?? {}))
         ).toBe(false);
       }
+    });
+
+    /**
+     * `difficulty_params` tới session ở dạng THÔ (`createGameSessionSync` không
+     * parse schema), nên `.default("off")` của Zod không có tác dụng lúc chạy.
+     * Test đi qua đúng đường đó; session phải tự hiểu trường thiếu là `off`
+     * (Task #274 S4).
+     */
+    function sessionAtFirstEcho(
+      speakAlong: "off" | "tap" | undefined
+    ): GT000Session {
+      const source = GT000_FIXTURES[0];
+      if (!source) {
+        throw new Error("Fixture GT-000 not found");
+      }
+      const { speak_along: _drop, ...rawDifficulty } = source.difficulty;
+      const session = createGameSessionSync("GT-000", {
+        level_code: "GT-000-S4",
+        content_version: 1,
+        template_code: "GT-000",
+        content_pack: source.content,
+        difficulty_params:
+          speakAlong === undefined
+            ? rawDifficulty
+            : { ...rawDifficulty, speak_along: speakAlong },
+        theme_id: "default",
+        age_band: "3-4",
+        reduced_motion: false,
+        audio_enabled: true,
+      });
+      if (!(session instanceof GT000Session)) {
+        throw new Error("createGameSessionSync không trả GT000Session");
+      }
+      session.prepareRound("3-4");
+      const echoIndex =
+        source.content.steps?.findIndex((s) => s.action === "echo") ?? -1;
+      while (session.currentStepIndex < echoIndex) {
+        session.commit({ type: "tap_item", data: {} });
+      }
+      return session;
+    }
+
+    it("BR-E000-11: thiếu speak_along thì session hiểu là off, dù difficulty chưa qua schema", async () => {
+      await preloadGameSession("GT-000");
+      expect(sessionAtFirstEcho(undefined).speakAlong).toBe("off");
+      expect(sessionAtFirstEcho("tap").speakAlong).toBe("tap");
+    });
+
+    it("BR-E000-11: off — khung câu hỏi của bước echo là câu trình bày, Cấm — NEVER mời 'nói theo'", async () => {
+      await preloadGameSession("GT-000");
+      const prompt = sessionAtFirstEcho("off").getView().activePrompt ?? "";
+      expect(prompt).not.toMatch(SPEAK_ALONG_INVITE);
+      expect(prompt).toMatch(PRESENT_SENTENCE);
+    });
+
+    it("BR-E000-11: tap — khung câu hỏi giữ prompt_line mời nói theo", async () => {
+      await preloadGameSession("GT-000");
+      const prompt = sessionAtFirstEcho("tap").getView().activePrompt ?? "";
+      expect(prompt).toMatch(SPEAK_ALONG_INVITE);
     });
 
     it("BR-CIR-22: nghe lại quá repeat_count thì bị bỏ qua, step không tự đi tiếp", () => {

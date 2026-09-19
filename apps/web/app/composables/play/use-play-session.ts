@@ -94,6 +94,36 @@ export function resolveLayoutSeed(payload: ConfigPayload): number {
   return 0;
 }
 
+/** Phần của session GT-000 mà bề mặt chơi đọc để dựng nút đi tiếp. */
+export interface IntroSessionView {
+  readonly steps?: readonly { readonly action: string }[];
+  readonly currentStepIndex?: number;
+  /** Getter `GT000Session.speakAlong` — trường thiếu đã được hiểu là `off`. */
+  readonly speakAlong?: "off" | "tap";
+}
+
+export interface IntroStepFlags {
+  readonly stepIndex: number;
+  /** Mời "nói theo": nút "Bé nói theo" có icon micro (`BR-E000-11`). */
+  readonly isEchoStep: boolean;
+  readonly isIntroCardStep: boolean;
+}
+
+/**
+ * Cờ nút đi tiếp của bài làm quen. Chỉ mời "nói theo" khi bài khai `tap`
+ * tường minh — thiếu thì là `off` (Task #274 `D-274-2`); bước `echo` vẫn là
+ * một thẻ chạm để đi tiếp.
+ */
+export function readIntroStepFlags(view: IntroSessionView): IntroStepFlags {
+  const stepIndex = view.currentStepIndex ?? 0;
+  const action = view.steps?.[stepIndex]?.action;
+  return {
+    stepIndex,
+    isEchoStep: action === "echo" && view.speakAlong === "tap",
+    isIntroCardStep: action === "present" || action === "echo",
+  };
+}
+
 /**
  * Câu dẫn chờ tiếng chuông mở vòng dứt rồi mới vang, để hai âm không đè nhau.
  */
@@ -150,21 +180,12 @@ export function usePlaySession(options: UsePlaySessionOptions) {
 
   function syncIntroStepState(): void {
     if (cachedPayload?.template_code === "GT-000" && engine?.activeSession) {
-      const s = engine.activeSession as {
-        steps?: readonly { action: string }[];
-        currentStepIndex?: number;
-        difficulty?: { speak_along?: "off" | "tap" };
-      };
-      const stepIdx = s.currentStepIndex ?? 0;
-      const step = s.steps?.[stepIdx];
-      introStepIndex.value = stepIdx;
-      // "off" (Task #273): bước echo vẫn tồn tại và vẫn đọc lại từ khoá,
-      // nhưng bề mặt chơi thôi mời "nói theo" — hiện nút "Tiếp tục" thường,
-      // không icon micro (xem [code].vue).
-      isEchoStep.value =
-        step?.action === "echo" && s.difficulty?.speak_along !== "off";
-      isIntroCardStep.value =
-        step?.action === "present" || step?.action === "echo";
+      const flags = readIntroStepFlags(
+        engine.activeSession as IntroSessionView
+      );
+      introStepIndex.value = flags.stepIndex;
+      isEchoStep.value = flags.isEchoStep;
+      isIntroCardStep.value = flags.isIntroCardStep;
     } else if (isIntroCardStep.value) {
       isIntroCardStep.value = false;
       isEchoStep.value = false;

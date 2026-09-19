@@ -28,11 +28,13 @@ import {
 } from "#src/render/index.js";
 import { AudioController } from "#src/systems/audio-controller";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
-import type {
-  GT000Asset,
-  GT000Content,
-  GT000Difficulty,
-  GT000Step,
+import {
+  type GT000Asset,
+  type GT000Content,
+  type GT000Difficulty,
+  type GT000Step,
+  resolveSpeakAlong,
+  type SpeakAlongMode,
 } from "./template.js";
 
 function resolveRenderAsset(asset: GT000Asset): RenderAsset | null {
@@ -97,6 +99,15 @@ export class GT000Session extends TemplateGameSession<
   private renderParticles: Particle[] = [];
   private readonly renderItemStates = new Map<string, ItemVisualState>();
   private currentAgeBand: AgeBand = "3-4";
+
+  /**
+   * Bậc "tập nói theo" đang áp dụng — trường thiếu là `off` (`BR-E000-11`).
+   * Bề mặt chơi đọc getter này, Cấm — NEVER tự đọc `difficulty.speak_along`
+   * rồi đoán mặc định riêng.
+   */
+  get speakAlong(): SpeakAlongMode {
+    return resolveSpeakAlong(this.difficulty);
+  }
 
   get steps(): readonly GT000Step[] {
     if (this.allSteps.length === 0) {
@@ -770,6 +781,11 @@ export class GT000Session extends TemplateGameSession<
       return step.narration_line ?? `Đây là ${label}`;
     }
     if (step.action === "echo") {
+      // `off`: `prompt_line` của bước echo là lời mời "nói theo" (325/325
+      // bước trong corpus) — thay bằng câu trình bày (`BR-E000-11`).
+      if (this.speakAlong === "off") {
+        return `Đây là ${label}`;
+      }
       return step.prompt_line ?? `Bé nói theo cô nhé: ${spokenLabel}`;
     }
     if (step.action === "recognise") {

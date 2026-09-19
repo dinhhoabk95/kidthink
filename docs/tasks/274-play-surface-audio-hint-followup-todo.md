@@ -47,11 +47,11 @@ Kiểm: `rtk proxy npx vitest run` trong `packages/game-engine` và `apps/web`,
 
 ## S4 — `speak_along` trọn vẹn (`D-274-2`)
 
-- [ ] Sửa `GT-000.md` `BR-E000-11` (mặc định) trước
-- [ ] `.default("off")`; fixture khai tường minh
-- [ ] `off`: chữ và lời đọc bước `echo` là câu trình bày, không còn "Bé nói theo cô nhé"
-- [ ] Help của `speak_along` trong `config-dictionary.ts` khớp giá trị `tap`/`off`
-- [ ] Trường hiện trong form admin sửa level
+- [x] Sửa `GT-000.md` `BR-E000-11` (mặc định) trước
+- [x] `.default(SPEAK_ALONG_DEFAULT)` = `off`; runtime đọc cùng hằng qua `resolveSpeakAlong` (session nhận `difficulty_params` thô, `.default()` của Zod không chạy lúc chơi); fixture giữ `tap` tường minh
+- [x] `off`: chữ bước `echo` là câu trình bày; lời đọc vốn chỉ đọc từ khoá (không mời) — không đổi
+- [x] Help của `speak_along` trong `config-dictionary.ts` khớp giá trị `tap`/`off`
+- [x] Trường hiện trong form admin sửa level — có sẵn: `zod-introspect` biến `ZodDefault`+`ZodEnum` thành ô chọn, không cần sửa
 
 ## S2 — GT-000 chờ đọc ở mức bước (`D-274-4`)
 

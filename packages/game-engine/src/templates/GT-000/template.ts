@@ -152,22 +152,40 @@ export const GT000ContentSchema = z
     }
   );
 
+/** Các bậc "tập nói theo" của bài làm quen (`BR-E000-11`). */
+export type SpeakAlongMode = "off" | "tap";
+
+/**
+ * Mặc định của `speak_along` — một nguồn cho cả schema và runtime.
+ *
+ * `difficulty_params` tới session ở dạng THÔ (`createGameSessionSync` không
+ * parse schema), nên `.default()` của Zod không có tác dụng lúc chơi: session
+ * phải tự đọc trường thiếu bằng hằng này (`resolveSpeakAlong`).
+ */
+export const SPEAK_ALONG_DEFAULT: SpeakAlongMode = "off";
+
+export function resolveSpeakAlong(difficulty: {
+  readonly speak_along?: SpeakAlongMode;
+}): SpeakAlongMode {
+  return difficulty.speak_along ?? SPEAK_ALONG_DEFAULT;
+}
+
 export const GT000DifficultySchema = z
   .object({
     hint_after_ms: z.number().int().min(5000).max(30_000).default(12_000),
     allow_retry: z.boolean().default(true),
     auto_play_audio: z.boolean().default(true),
     /**
-     * Bậc "tập nói theo" của bài làm quen (Task #273).
+     * Bậc "tập nói theo" của bài làm quen (Task #273, `BR-E000-11`).
      *
-     * `tap` (mặc định) — hành vi hiện tại: máy đọc mẫu, trẻ nói theo thành
-     * tiếng (máy không nghe), rồi chạm nút "Bé nói theo" để đi tiếp. `off` —
-     * bước `echo` vẫn tồn tại trong content (đọc lại từ đó vẫn chạy) nhưng
-     * bề mặt chơi hiện nút "Tiếp tục" thường, không mời "nói theo" và không
-     * hiện icon micro — dành cho bài chưa cần tập phát âm. Cấm — NEVER có
-     * bậc thứ ba mở micro thật; xem `BR-CIM-10`.
+     * `off` (mặc định, Task #274 `D-274-2`) — bước `echo` vẫn tồn tại trong
+     * content và vẫn đọc từ khoá, nhưng mọi lời mời "nói theo" tắt: khung câu
+     * hỏi hiện câu trình bày, nút là "Tiếp tục" thường, không icon micro.
+     * `tap` — máy đọc mẫu, trẻ nói theo thành tiếng (máy không nghe), rồi
+     * chạm nút "Bé nói theo" để đi tiếp; bài cần tập phát âm khai tường minh.
+     * Cấm — NEVER có bậc thứ ba mở micro thật; xem `BR-CIM-10`.
      */
-    speak_along: z.enum(["off", "tap"]).default("tap"),
+    speak_along: z.enum(["off", "tap"]).default(SPEAK_ALONG_DEFAULT),
   })
   .strict();
 

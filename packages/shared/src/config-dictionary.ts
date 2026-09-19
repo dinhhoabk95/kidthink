@@ -516,7 +516,7 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
   },
   speak_along: {
     label: "Mời bé nói theo",
-    help: '"Có" mời bé nói theo (hiện icon micro, không thu âm). "Không" chỉ hiện nút Tiếp tục.',
+    help: '"tap": mời bé nói theo — nút "Bé nói theo" có icon micro, máy không thu âm. "off" (mặc định): bước tập nói chỉ đọc từ khoá, hiện nút Tiếp tục thường.',
   },
   target_slots: {
     label: "Danh sách ô đích",
