@@ -10,6 +10,11 @@ import {
 import type { AgeBand } from "@mindkid/shared/client";
 import { nextTick, type Ref, ref } from "vue";
 import {
+  createTimerBag,
+  scheduleWonRoundCompletion,
+  skipCurrentRoundIfUnwon,
+} from "~/composables/play/play-round-token";
+import {
   preloadPlayAssets,
   usePlayAudio,
 } from "~/composables/play/use-play-audio";
@@ -93,11 +98,15 @@ export function resolveLayoutSeed(payload: ConfigPayload): number {
  */
 const ROUND_OPEN_NARRATION_DELAY_MS = 600;
 
+/** Nhịp ăn mừng giữa lúc thắng một vòng và lúc mở vòng kế. */
+const ROUND_WON_ADVANCE_DELAY_MS = 900;
+
 export function usePlaySession(options: UsePlaySessionOptions) {
   const { canvasRef, loggedIn, syncView, onFallbackCue } = options;
 
   let engine: GameEngine | null = null;
   let roundRunner: RoundRunner | null = null;
+  const roundTimers = createTimerBag();
   let cachedPayload: ConfigPayload | null = null;
 
   const isLoading = ref(true);
@@ -245,12 +254,13 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       });
     }
 
-    // Tự động hoàn thành vòng hiện tại và chuyển sang vòng tiếp theo sau 900ms ăn mừng
-    setTimeout(() => {
-      if (roundRunner && !roundRunner.getState().isFinished) {
-        roundRunner.completeCurrentRound();
-      }
-    }, 900);
+    // Đóng vòng vừa thắng sau nhịp ăn mừng — neo vào đúng vòng đó (Task #274
+    // E2): bỏ qua, chơi lại hay rời trang trong lúc chờ thì hẹn giờ tự huỷ.
+    scheduleWonRoundCompletion(
+      roundTimers,
+      getRoundRunner,
+      ROUND_WON_ADVANCE_DELAY_MS
+    );
   }
 
   function startRounds(
@@ -258,6 +268,8 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     rounds: RoundPayload[],
     engineConfig: EngineConfig
   ): void {
+    // Chơi lại dựng runner mới — hẹn giờ của lượt trước Cấm — NEVER chạy tiếp.
+    roundTimers.clearAll();
     totalRounds.value = rounds.length;
     currentRound.value = 0;
     earnedStars.value = null;
@@ -427,9 +439,15 @@ export function usePlaySession(options: UsePlaySessionOptions) {
 
   function handleSkipRound(): void {
     canSkipRound.value = false;
-    engine?.audio.playTapSound();
-    engine?.scaffolding?.resetOnSuccess();
-    roundRunner?.skipCurrentRound("scaffold_exhausted");
+    if (!roundRunner) {
+      return;
+    }
+    // Vòng đã thắng đang chờ nhịp ăn mừng thì không bỏ qua — hẹn giờ ở
+    // `handleRoundWonInternal` sẽ đóng nó như một vòng hoàn thành.
+    if (skipCurrentRoundIfUnwon(roundRunner, "scaffold_exhausted")) {
+      engine?.audio.playTapSound();
+      engine?.scaffolding?.resetOnSuccess();
+    }
   }
 
   function setPaused(isPaused: boolean, reason?: string): void {
@@ -444,6 +462,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   }
 
   function cleanupSession(): void {
+    roundTimers.clearAll();
     stopNarrationAudio();
     if (roundRunner) {
       roundRunner.destroy();
