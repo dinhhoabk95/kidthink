@@ -163,7 +163,27 @@ S1 → S8 → S5 → S3 → S4 → S2 → S7 → S6. S1 và S8 là lỗi đang c
   kỹ thuật.
 - Hợp nhất hit-test cục bộ của GT-014..GT-021 — nợ riêng, mỗi template một task.
 
-## 6. Câu hỏi mở
+## 6. Trạng thái sau thi công (2026-09-19)
+
+Xong: S1a–S1e, S8 (trừ đo trên máy thật), S5, S3, S4, S2, S7a–S7c, S6a. Chi tiết từng ô ở
+[`274-play-surface-audio-hint-followup-todo.md`](274-play-surface-audio-hint-followup-todo.md).
+
+Còn chặn:
+
+- **S6 phần sinh mp3** — chờ câu hỏi mở 1 (nhà cung cấp TTS, API key, chi phí, giấy phép). Cổng
+  `check:narration-coverage` đã đo được: 0/19.046 vòng có mp3 câu dẫn.
+- **S8 đo trên máy thật** — Chrome Android, Safari iOS, Chrome Windows không có giọng `vi-VN`.
+- **DB dev chưa `db:seed` lại** — S6a đổi nội dung GT-001 (591 vòng có mp3 từ khoá).
+
+Phát hiện mới khi thi công, chưa sửa vì là quyết định hợp đồng:
+
+- **E7 — thẻ đề GT-001 vẽ đúng đáp án.** 2.976/2.976 vòng: `target_item.asset` trùng asset của
+  lựa chọn đúng. Spec GT-001 §4 N2 chủ ý vẽ "hình của thứ đang hỏi" trong khung câu hỏi — hợp với
+  câu "tìm cái giống", nhưng với câu như "Gộp lại có tất cả bao nhiêu số năm?" thẻ đề hiện luôn
+  chữ `5`, tức đáp án nằm sẵn trên màn. Cần người đặt việc chốt: thẻ đề vẽ câu hỏi (vd hai nhóm
+  cần gộp) hay bỏ thẻ đề với dạng câu hỏi tính toán.
+
+## 7. Câu hỏi mở
 
 1. Nhà cung cấp TTS để sinh mp3 (S6): giọng, giấy phép dùng cho sản phẩm trẻ em. Khối lượng GT-001
    nhỏ: 2.976 vòng chỉ có **413 câu dẫn khác nhau** và **303 từ khoá khác nhau** (đo 2026-09-19);
