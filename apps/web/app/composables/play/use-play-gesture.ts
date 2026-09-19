@@ -1,5 +1,6 @@
 import {
   type ActionResult,
+  findHitEntity,
   type GameEngine,
   type GameSession,
   type Gesture,
@@ -72,23 +73,6 @@ export function usePlayGesture(options: GestureOptions) {
     );
   }
 
-  function findTappedEntity(x: number, y: number): ViewEntity | null {
-    let bestEntity: ViewEntity | null = null;
-    let minDistanceSq = Number.POSITIVE_INFINITY;
-
-    for (const ent of viewEntities.value) {
-      const radius = Math.min(ent.w, ent.h) / 2 + 10;
-      const dx = x - ent.x;
-      const dy = y - ent.y;
-      const distSq = dx * dx + dy * dy;
-      if (distSq <= radius * radius && distSq < minDistanceSq) {
-        minDistanceSq = distSq;
-        bestEntity = ent;
-      }
-    }
-    return bestEntity;
-  }
-
   function handleVerdict(
     verdict: ActionResult,
     engine: GameEngine,
@@ -139,8 +123,11 @@ export function usePlayGesture(options: GestureOptions) {
       return;
     }
 
+    // Cùng hình học chạm với `toAction()` của engine (Task #274 S1d).
     const tapped =
-      gesture.type === "tap" ? findTappedEntity(gesture.x, gesture.y) : null;
+      gesture.type === "tap"
+        ? findHitEntity(viewEntities.value, gesture.x, gesture.y)
+        : null;
 
     const verdict = session.dispatch(gesture);
     if (verdict) {

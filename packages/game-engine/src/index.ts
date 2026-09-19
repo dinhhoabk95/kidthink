@@ -96,7 +96,12 @@ export {
   computeTenFrameSplitLayout,
   computeTrackLayout,
 } from "./layout/geometry.js";
-export { findHitSlotIndex, isPointInSlot } from "./layout/hit-test.js";
+export {
+  findHitEntity,
+  findHitSlotIndex,
+  isPointInSlot,
+  TAP_TOLERANCE_PX,
+} from "./layout/hit-test.js";
 export {
   isLayoutId,
   LAYOUT_IDS,

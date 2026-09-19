@@ -300,6 +300,19 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     expect(onSuccess).toHaveBeenCalledTimes(1);
   });
 
+  it("chạm lệch trong dung sai 24px của engine vẫn đọc lại từ khoá — cùng hình học chạm với toAction() (Task #274 S1d)", () => {
+    const { gesture, speakPrompt } = makeTapSelectHarness([
+      { id: "opt-1", role: "source" },
+      { id: "opt-2", role: "source" },
+    ]);
+
+    // Entity 80×80 tại (100,100): bán kính 40 + 20px lệch — trong 24px của
+    // engine, ngoài 10px web từng tự chọn.
+    gesture.dispatchGesture({ type: "tap", x: 160, y: 100, timeMs: 0 });
+
+    expect(speakPrompt).toHaveBeenCalledWith("nhãn-opt-1");
+  });
+
   it("engine.acceptingInput = false (đang chờ câu dẫn đọc xong): chạm bị nuốt hoàn toàn, Cấm — NEVER tính điểm/sai (BR-PNR-11)", () => {
     const { gesture, session, onMiss, onSuccess, speakPrompt, engine } =
       makeTapSelectHarness([

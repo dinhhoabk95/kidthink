@@ -7,7 +7,7 @@ import {
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { getTouchFloor } from "#src/layout/constants";
-import { findHitSlotIndex } from "#src/layout/hit-test.js";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
@@ -264,16 +264,17 @@ export class GT001Session extends TemplateGameSession<
       return null;
     }
 
-    // Dung sai theo `template.ts` khai `input.tolerance_px: 24` — hợp đồng
-    // chung của mọi engine tap (Task #273: hằng số 8 tự chọn ở đây từng làm
-    // vùng chạm co lại một nửa diện tích, khiến chạm hơi lệch bị nuốt và bị
-    // tính oan thành trợ giúp bật sớm).
+    // Hình tròn vì `drawInteractive` vẽ token tròn (`drawSlotItem(...,
+    // "circle")`); dung sai `TAP_TOLERANCE_PX` = `input.tolerance_px` của
+    // `template.ts`. Bề mặt web tìm entity để đọc lại từ khoá bằng đúng phép
+    // đo này (`findHitEntity`, Task #274 S1d). Trước #273 đây là hình vuông
+    // nửa cạnh `max(hitW, w)/2 + 24` — nhận cả bốn góc nằm ngoài token.
     const hitIndex = findHitSlotIndex(
       this.slots,
       gesture.x,
       gesture.y,
       "circle",
-      24
+      TAP_TOLERANCE_PX
     );
     if (hitIndex >= 0 && hitIndex < this.displayOptions.length) {
       const opt = this.displayOptions[hitIndex];

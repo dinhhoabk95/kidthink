@@ -60,7 +60,7 @@ where l.template_code = 'GT-001' and l.status = 'published';"
 | E1 | Thẻ đề giữa màn dùng `id = target_item.item_id`, trùng id đáp án đúng ở mọi vòng | `GT-001/session.ts:212` | Hai `ViewEntity` cùng id → `v-for :key="entity.id"` trùng khoá ở `[code].vue:169`; screen reader nghe hai nút cùng tên |
 | E2 | Tự sang vòng sau 900ms không neo vào vòng đã thắng | `use-play-session.ts:248-253` | Bấm "Bỏ qua" trong 900ms đó → vòng N bị ghi `skipped` dù đã thắng, và vòng N+1 bị `completeCurrentRound()` đóng ngay khi vừa mở. Không test nào phủ đường này |
 | E3 | mp3 lỗi chạy TTS hai lần | `use-play-audio.ts:114-122` | `<audio>` lỗi phát CẢ `error` lẫn reject `play()` → `speakOrSettle()` gọi hai lần; lần hai `cancel()` lần một, và trên Chrome lần một nhận `onerror` (`interrupted`) → settle sớm, mở cử chỉ khi TTS còn đang đọc. Đang ngủ vì M1 = 0, sẽ nổ khi S6 thêm mp3 |
-| E4 | Vùng chạm GT-001 co lại | `GT-001/session.ts:265-271` | Bản trước: hình vuông nửa cạnh `max(hitW,w)/2 + 24`. Bản mới: hình tròn bán kính `min(hitW,hitH)/2 + 24` → mất bốn góc, khoảng −21% diện tích. Chạm góc thẻ giờ bị nuốt không một tiếng động. Comment "hằng số 8 tự chọn ở đây" không khớp lịch sử git |
+| E4 | ~~Vùng chạm GT-001 co lại~~ — **rút lại khi thi công S1d** | `GT-001/session.ts:265-271` | Bản trước: hình vuông nửa cạnh `max(hitW,w)/2 + 24`. Bản mới: hình tròn bán kính `min(hitW,hitH)/2 + 24`. Review tính diện tích mất khoảng −21%, nhưng GT-001 vẽ **token tròn** (`drawSlotItem(..., "circle")`), nên bốn góc bị bỏ nằm ngoài token khoảng 55px — hình tròn mới là hình khớp. Còn lại một lỗi nhỏ: comment "hằng số 8 tự chọn ở đây" không khớp lịch sử git |
 | E5 | Hai hình học chạm lệch nhau | `use-play-gesture.ts:80` | Chọn dùng `hitW/2 + 24`, đọc từ khoá dùng `w/2 + 10` → vành 14px chọn được mà không đọc tên |
 | E6 | Settle không mang danh tính vòng | `use-play-session.ts:313-321`, `use-play-audio.ts:43-48` | Hẹn giờ 600ms không bị huỷ khi rời trang hay chơi lại; closure đọc `engine`/`roundRunner` hiện hành nên câu dẫn cũ có thể mở cổng của vòng mới |
 
@@ -92,9 +92,9 @@ Không đổi spec: đây là sửa code cho khớp luật đã có.
   vòng 2 mở → câu dẫn vòng 2 được phát → settle → cử chỉ mở.
 - **S1c (E3)** — mỗi bậc phát chỉ rơi xuống bậc sau một lần (cờ `fellBack`). Test ca âm: `onerror`
   và `play()` reject cùng bắn.
-- **S1d (E4, E5)** — GT-001 dùng `shape: "square"` (khớp thẻ đang vẽ) hoặc khai hình theo layout;
-  bề mặt web tìm entity bị chạm bằng **cùng** primitive `hit-test.ts` với cùng dung sai, không tự
-  tính bán kính.
+- **S1d (E4, E5)** — GT-001 giữ hình tròn (khớp token đang vẽ), dung sai lấy từ hằng
+  `TAP_TOLERANCE_PX`; bề mặt web tìm entity bị chạm bằng **cùng** primitive `hit-test.ts`
+  (`findHitEntity`) với cùng dung sai, không tự tính bán kính.
 - **S1e (E6)** — `onSettled` mang token vòng (`runner` + `roundIndex`); token lệch thì bỏ qua. Hẹn
   giờ 600ms huỷ ở `cleanupSession()` và khi chơi lại.
 
