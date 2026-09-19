@@ -122,6 +122,12 @@ export function usePlayGesture(options: GestureOptions) {
     if (!(session instanceof TemplateGameSession)) {
       return;
     }
+    if (!session.isAcceptingInput()) {
+      // Session đang đọc câu hỏi của chính nó (GT-000 ở mức bước,
+      // `BR-E000-12`) — nuốt trọn như cổng câu dẫn vòng, không đọc nhãn: đọc
+      // nhãn là cắt ngang câu hỏi đang đọc.
+      return;
+    }
 
     // Cùng hình học chạm với `toAction()` của engine (Task #274 S1d).
     const tapped =

@@ -55,9 +55,9 @@ Kiểm: `rtk proxy npx vitest run` trong `packages/game-engine` và `apps/web`,
 
 ## S2 — GT-000 chờ đọc ở mức bước (`D-274-4`)
 
-- [ ] Sửa `GT-000.md` §5 trước
-- [ ] `toAction()` trả `null` khi `prompt_line` của bước chưa đọc xong; trần 12s
-- [ ] Test: chạm trong lúc đọc → không tính; sau khi đọc → tính
+- [x] Sửa `GT-000.md` §5 trước (nhánh 9, `BR-E000-12`, hai scenario)
+- [x] `toAction()` trả `null` khi `prompt_line` của bước chưa đọc xong; trần 12s qua `update()`; `isAcceptingInput()` cho web (nuốt trọn, không đọc nhãn) và engine (`isInputOpen()` dừng đồng hồ trợ giúp)
+- [x] Test: chạm trong lúc đọc → không tính; sau khi đọc → tính; trần 12s; máy không có giọng thì không chặn
 
 ## S7 — Đọc lại từ khoá ưu tiên mp3
 

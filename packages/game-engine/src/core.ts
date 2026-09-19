@@ -316,10 +316,21 @@ export class GameEngine {
    * hoạt ảnh nền/particle không đứng hình (`BR-PNR-11`).
    */
   advanceFrame(deltaMs: number): void {
-    if (this.acceptingInput) {
+    if (this.isInputOpen()) {
       this.tickScaffolding(deltaMs);
     }
     this.activeSession?.update?.(deltaMs);
+  }
+
+  /**
+   * Cử chỉ của trẻ có được tính lúc này không: cổng câu dẫn vòng của bề mặt
+   * chơi (`acceptingInput`, `BR-PNR-11`) VÀ cổng của chính session — GT-000
+   * tự đọc câu hỏi ở mức bước (`BR-E000-12`, Task #274 S2).
+   */
+  isInputOpen(): boolean {
+    return (
+      this.acceptingInput && (this.activeSession?.isAcceptingInput?.() ?? true)
+    );
   }
 
   private readonly loop = (): void => {

@@ -69,6 +69,12 @@ export interface GameSession {
   destroy(): void;
   getView?(): EngineView;
   dispatch?(gesture: Gesture): ActionResult | undefined;
+  /**
+   * Cổng cử chỉ của riêng session — `false` khi session đang đọc một câu hỏi
+   * của chính nó (GT-000 ở mức bước, `BR-E000-12`). Bề mặt chơi nuốt cử chỉ và
+   * engine dừng đồng hồ trợ giúp như với `GameEngine.acceptingInput`.
+   */
+  isAcceptingInput?(): boolean;
 }
 
 export abstract class BaseGameSession implements GameSession {
@@ -108,6 +114,11 @@ export abstract class BaseGameSession implements GameSession {
 
   destroy(): void {
     this.events = [];
+  }
+
+  /** Mặc định luôn nhận cử chỉ; session tự đọc câu hỏi thì ghi đè. */
+  isAcceptingInput(): boolean {
+    return true;
   }
 }
 

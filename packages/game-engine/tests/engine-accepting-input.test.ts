@@ -70,6 +70,30 @@ describe("GameEngine.acceptingInput / advanceFrame (BR-PNR-11)", () => {
     engine.destroy();
   });
 
+  it("session tự khoá (isAcceptingInput() = false, vd GT-000 đang đọc câu hỏi của bước): đồng hồ trợ giúp cũng đứng (Task #274 S2)", () => {
+    const engine = buildEngine();
+    const session = engine.activeSession;
+    if (!(session instanceof GT001Session)) {
+      throw new Error("Thiếu session");
+    }
+    let open = false;
+    session.isAcceptingInput = () => open;
+
+    for (let i = 0; i < 20; i++) {
+      engine.advanceFrame(1000);
+    }
+    expect(engine.isInputOpen()).toBe(false);
+    expect(engine.scaffolding?.getCurrentLevel()).toBe(0);
+
+    open = true;
+    for (let i = 0; i < 11; i++) {
+      engine.advanceFrame(1000);
+    }
+    expect(engine.isInputOpen()).toBe(true);
+    expect(engine.scaffolding?.getCurrentLevel()).toBeGreaterThanOrEqual(1);
+    engine.destroy();
+  });
+
   it("advanceFrame vẫn gọi session.update() khi acceptingInput = false — cảnh vẫn sống", () => {
     const engine = buildEngine();
     let updateCalls = 0;

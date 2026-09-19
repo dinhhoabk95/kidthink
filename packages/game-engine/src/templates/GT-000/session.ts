@@ -37,6 +37,12 @@ import {
   type SpeakAlongMode,
 } from "./template.js";
 
+/**
+ * Trần chờ câu hỏi của bước đọc xong — cùng mốc `NARRATION_SETTLE_TIMEOUT_MS`
+ * của câu dẫn vòng ở bề mặt chơi (`BR-E000-12`, `BR-PNR-09`).
+ */
+const STEP_PROMPT_SETTLE_TIMEOUT_MS = 12_000;
+
 function resolveRenderAsset(asset: GT000Asset): RenderAsset | null {
   if (!asset.image_ref) {
     return null;
@@ -90,6 +96,14 @@ export class GT000Session extends TemplateGameSession<
   readonly recallAnswers: { asset_id: string; correct: boolean }[] = [];
   /** Số lần trẻ bấm nghe lại ở từng bước tập nói — BR-CIR-22. */
   private readonly echoReplayCounts = new Map<string, number>();
+  /**
+   * Câu hỏi của bước (`prompt_line`) đang đọc — chạm chưa được chấm
+   * (`BR-E000-12`). Token chặn `onEnd` của câu hỏi cũ mở cổng câu mới: đọc câu
+   * mới `cancel()` câu cũ, và câu cũ báo `onEnd` ngay lúc đó.
+   */
+  private stepPromptPending = false;
+  private stepPromptToken = 0;
+  private stepPromptWaitedMs = 0;
 
   readonly audio = new AudioController();
   audioPromptCalled = false;
@@ -130,6 +144,7 @@ export class GT000Session extends TemplateGameSession<
     this.echoReplayCounts.clear();
     this.renderItemStates.clear();
     this.audioPromptCalled = false;
+    this.releaseStepPrompt();
     this.lastTtsUsed = false;
     this.allSteps = [
       ...(this.content.steps ??
@@ -189,6 +204,7 @@ export class GT000Session extends TemplateGameSession<
     }
 
     this.resolveSlots(this.currentAgeBand);
+    this.releaseStepPrompt();
 
     const targetId = this.getStepTargetAssetId(step);
     const assetKind = this.getAsset(targetId)?.kind ?? "glyph";
@@ -209,12 +225,42 @@ export class GT000Session extends TemplateGameSession<
     }
   }
 
+  /** Mở cổng câu hỏi của bước và vô hiệu mọi `onEnd` còn treo của câu cũ. */
+  private releaseStepPrompt(): void {
+    this.stepPromptToken++;
+    this.stepPromptPending = false;
+    this.stepPromptWaitedMs = 0;
+  }
+
+  /**
+   * `false` khi câu hỏi của bước đang đọc — bề mặt chơi nuốt cử chỉ, engine
+   * dừng đồng hồ trợ giúp (`BR-E000-12`, cùng hợp đồng `BR-PNR-11`).
+   */
+  override isAcceptingInput(): boolean {
+    return !this.stepPromptPending;
+  }
+
+  /**
+   * Trần chờ câu hỏi của bước: giọng treo không báo xong thì sau
+   * `STEP_PROMPT_SETTLE_TIMEOUT_MS` vẫn mở cổng (`BR-PNR-09`).
+   */
+  update(deltaMs: number): void {
+    if (!this.stepPromptPending) {
+      return;
+    }
+    this.stepPromptWaitedMs += deltaMs;
+    if (this.stepPromptWaitedMs >= STEP_PROMPT_SETTLE_TIMEOUT_MS) {
+      this.stepPromptPending = false;
+    }
+  }
+
   /**
    * Đọc `prompt_line` của bước `recognise` · `link` · `recall` — trẻ chưa
    * đọc được chữ nên câu hỏi chỉ hiện trong khung câu hỏi (`getStepPromptText`)
    * không tới được trẻ nếu không có giọng đi kèm (Task #273, `BR-PNR-01`).
    * Chỉ có TTS ở đây: ba hành động này chưa có trường `audio_path` riêng
    * trong contract, khác `present`/`echo` đọc theo `asset.audio_path`.
+   * Đóng cổng chấm chạm tới khi câu hỏi đọc xong (`BR-E000-12`).
    */
   private playStepPrompt(
     step: GT000Step & { action: "recognise" | "link" | "recall" }
@@ -229,7 +275,15 @@ export class GT000Session extends TemplateGameSession<
     // tiêu ở đây LÀ đáp án của một câu hỏi (`recognise`/`recall`), sáng nó
     // lên là lộ đáp án trước khi trẻ chạm. Câu hỏi vẫn hiện trong khung chữ
     // (`getStepPromptText`) nên không thứ gì bị mất, chỉ mất kênh âm.
-    const spoke = this.audio.speakPrompt(promptText);
+    this.stepPromptPending = true;
+    this.stepPromptWaitedMs = 0;
+    const token = this.stepPromptToken;
+    // Không có giọng thì `speakPrompt` gọi `onEnd` ngay — cổng không đóng.
+    const spoke = this.audio.speakPrompt(promptText, () => {
+      if (token === this.stepPromptToken) {
+        this.stepPromptPending = false;
+      }
+    });
     this.lastTtsUsed = spoke;
     if (!spoke) {
       this.recordEvent("tts_unavailable", {
@@ -408,7 +462,11 @@ export class GT000Session extends TemplateGameSession<
       };
     }
 
-    if (gesture.type !== "tap" || !this.audioPromptCalled) {
+    if (
+      gesture.type !== "tap" ||
+      !this.audioPromptCalled ||
+      this.stepPromptPending
+    ) {
       return null;
     }
 

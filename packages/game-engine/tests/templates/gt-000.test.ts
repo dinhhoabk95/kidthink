@@ -637,7 +637,10 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
 
       const step = fixture.content.steps?.[session.currentStepIndex];
       expect(step?.action).toBe("recognise");
-      expect(speakSpy).toHaveBeenCalledWith("Bé hãy chỉ cho cô số một nhé!");
+      expect(speakSpy).toHaveBeenCalledWith(
+        "Bé hãy chỉ cho cô số một nhé!",
+        expect.any(Function)
+      );
     });
 
     it("bước recall gọi speakPrompt với đúng prompt_line", () => {
@@ -656,7 +659,107 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
 
       const step = fixture.content.steps?.[session.currentStepIndex];
       expect(step?.action).toBe("recall");
-      expect(speakSpy).toHaveBeenCalledWith("Đây là số mấy nào?");
+      expect(speakSpy).toHaveBeenCalledWith(
+        "Đây là số mấy nào?",
+        expect.any(Function)
+      );
     });
+  });
+});
+
+/**
+ * GT-000 tự đọc câu hỏi ở mức bước (`recognise`/`recall`/`link`), không qua
+ * câu dẫn vòng — nên cổng `BR-PNR-11` của vòng không chạm tới nó. Chạm chỉ
+ * được chấm khi `prompt_line` đọc xong (`BR-E000-12`, Task #274 S2).
+ */
+describe("GT-000 — chạm chỉ được chấm khi câu hỏi của bước đọc xong (BR-E000-12)", () => {
+  const source = GT000_FIXTURES[0];
+  if (!source) {
+    throw new Error("Fixture GT-000 not found");
+  }
+  const questionIndex =
+    source.content.steps?.findIndex((s) => s.action === "recognise") ?? -1;
+
+  function sessionAtFirstQuestion(speakResult: boolean) {
+    const fixtureSource = GT000_FIXTURES[0];
+    if (!fixtureSource) {
+      throw new Error("Fixture GT-000 not found");
+    }
+    const session = new GT000Session(
+      fixtureSource.content,
+      fixtureSource.difficulty
+    );
+    const pendingEnds: (() => void)[] = [];
+    vi.spyOn(session.audio, "speakPrompt").mockImplementation(
+      (_text, onEnd) => {
+        if (!speakResult) {
+          onEnd?.();
+          return false;
+        }
+        if (onEnd) {
+          pendingEnds.push(onEnd);
+        }
+        return true;
+      }
+    );
+    vi.spyOn(session.audio, "playPromptAudio").mockImplementation(() => {
+      /* mp3 của present/echo — không liên quan cổng câu hỏi */
+    });
+    session.prepareRound("3-4");
+    while (session.currentStepIndex < questionIndex) {
+      session.commit({ type: "tap_item", data: {} });
+    }
+    const step = session.steps[questionIndex];
+    const target = session
+      .getView()
+      .entities.find((e) => e.id === step?.target_asset_id);
+    if (!target) {
+      throw new Error("Thiếu entity mục tiêu của bước recognise");
+    }
+    const tapTarget = (): Gesture => ({
+      type: "tap",
+      x: target.x,
+      y: target.y,
+      timeMs: 0,
+    });
+    const finishSpeaking = () => {
+      for (const end of pendingEnds.splice(0)) {
+        end();
+      }
+    };
+    return { session, tapTarget, finishSpeaking };
+  }
+
+  it("chạm đúng mục tiêu lúc câu hỏi đang đọc bị nuốt; đọc xong thì được chấm", () => {
+    expect(questionIndex).toBeGreaterThan(-1);
+    const { session, tapTarget, finishSpeaking } = sessionAtFirstQuestion(true);
+
+    expect(session.isAcceptingInput()).toBe(false);
+    expect(session.dispatch(tapTarget())).toEqual(ACTION_IGNORED);
+    expect(session.currentStepIndex).toBe(questionIndex);
+
+    finishSpeaking();
+    expect(session.isAcceptingInput()).toBe(true);
+    session.dispatch(tapTarget());
+    expect(session.currentStepIndex).toBe(questionIndex + 1);
+  });
+
+  it("câu hỏi không bao giờ báo xong: quá trần 12s thì chạm được chấm (BR-PNR-09)", () => {
+    const { session, tapTarget } = sessionAtFirstQuestion(true);
+
+    session.update(11_999);
+    expect(session.dispatch(tapTarget())).toEqual(ACTION_IGNORED);
+
+    session.update(1);
+    session.dispatch(tapTarget());
+    expect(session.currentStepIndex).toBe(questionIndex + 1);
+  });
+
+  it("máy không có giọng vi-VN: không chặn gì, chạm được chấm ngay", () => {
+    const { session, tapTarget } = sessionAtFirstQuestion(false);
+
+    expect(session.isAcceptingInput()).toBe(true);
+    session.dispatch(tapTarget());
+    expect(session.currentStepIndex).toBe(questionIndex + 1);
   });
 });

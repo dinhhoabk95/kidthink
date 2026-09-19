@@ -300,6 +300,20 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     expect(onSuccess).toHaveBeenCalledTimes(1);
   });
 
+  it("session tự khoá (GT-000 đang đọc câu hỏi của bước): chạm bị nuốt trọn, Cấm — NEVER đọc nhãn cắt ngang câu hỏi (BR-E000-12)", () => {
+    const { gesture, session, onMiss, speakPrompt } = makeTapSelectHarness([
+      { id: "opt-1", role: "source" },
+      { id: "opt-2", role: "source" },
+    ]);
+    session.isAcceptingInput = () => false;
+
+    gesture.dispatchGesture({ type: "tap", x: 100, y: 100, timeMs: 0 });
+
+    expect(session.dispatched).toHaveLength(0);
+    expect(speakPrompt).not.toHaveBeenCalled();
+    expect(onMiss).not.toHaveBeenCalled();
+  });
+
   it("chạm lệch trong dung sai 24px của engine vẫn đọc lại từ khoá — cùng hình học chạm với toAction() (Task #274 S1d)", () => {
     const { gesture, speakPrompt } = makeTapSelectHarness([
       { id: "opt-1", role: "source" },
