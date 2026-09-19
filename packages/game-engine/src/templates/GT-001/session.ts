@@ -45,13 +45,23 @@ function resolveAssetLabels(asset: ItemAsset): {
   glyph?: string;
   label?: string;
   spokenLabel?: string;
+  spokenAudioPath?: string;
 } {
   const spokenLabel = spokenKeywordForAsset(asset);
   if (asset.kind === "emoji") {
-    return { glyph: asset.ref, label: asset.ref, spokenLabel };
+    return {
+      glyph: asset.ref,
+      label: asset.ref,
+      spokenLabel,
+      spokenAudioPath: asset.audio_path,
+    };
   }
   if (asset.kind === "text") {
-    return { label: asset.text, spokenLabel };
+    return {
+      label: asset.text,
+      spokenLabel,
+      spokenAudioPath: asset.audio_path,
+    };
   }
   return {};
 }
@@ -209,7 +219,7 @@ export class GT001Session extends TemplateGameSession<
     // nguyên id là hai entity cùng khoá.
     if (this.content.target_item) {
       const targetSlot = getCentralTargetCardSlot(this.logicSpace);
-      const { glyph, label, spokenLabel } = resolveAssetLabels(
+      const { glyph, label, spokenLabel, spokenAudioPath } = resolveAssetLabels(
         this.content.target_item.asset
       );
       entities.push({
@@ -224,6 +234,7 @@ export class GT001Session extends TemplateGameSession<
         glyph,
         label,
         spokenLabel,
+        spokenAudioPath,
       });
     }
 
@@ -235,7 +246,9 @@ export class GT001Session extends TemplateGameSession<
       }
       const rawState = this.getItemState(opt.item_id);
       const state = stateMap[rawState] ?? "idle";
-      const { glyph, label, spokenLabel } = resolveAssetLabels(opt.asset);
+      const { glyph, label, spokenLabel, spokenAudioPath } = resolveAssetLabels(
+        opt.asset
+      );
 
       entities.push({
         id: opt.item_id,
@@ -249,6 +262,7 @@ export class GT001Session extends TemplateGameSession<
         glyph,
         label,
         spokenLabel,
+        spokenAudioPath,
       });
     }
     return {

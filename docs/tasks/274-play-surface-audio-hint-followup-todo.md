@@ -61,7 +61,7 @@ Kiểm: `rtk proxy npx vitest run` trong `packages/game-engine` và `apps/web`,
 
 ## S7 — Đọc lại từ khoá ưu tiên mp3
 
-- [ ] `handleVerdict` phát `audio_path` của entity trước TTS
+- [x] `handleVerdict` phát `audio_path` của entity (`ViewEntity.spokenAudioPath`) trước TTS; mp3 lỗi mới rơi xuống TTS
 - [~] Tên tiếng Việt cho glyph thiếu: `spokenKeywordForAsset` đọc được glyph lặp ("ba quả táo đỏ"), keycap nhiều số, chữ trong ô, chữ trần, nghề có giới tính (tra bản trung tính) — nợ corpus 68 → 28. **Còn 28** glyph cần tên trong catalog `@mindkid/emoji` (việc nội dung, xem plan §6)
 - [x] `spokenKeywordForAsset` (engine, dựng trên `formatSpokenLabel`) là helper dùng chung cho GT-001 và cổng narration
 - [x] Thiếu tên thì không có `spokenLabel` — Cấm — NEVER đọc glyph thô
@@ -70,6 +70,6 @@ Kiểm: `rtk proxy npx vitest run` trong `packages/game-engine` và `apps/web`,
 
 - [ ] Nối 700 mp3 mồ côi có sẵn trước
 - [ ] Chốt nhà cung cấp TTS (câu hỏi mở 1 của plan)
-- [ ] Sửa `audio-storage.md` và `contracts/shared-fields.ts` (`audio_path` tuỳ chọn cho asset) trước
+- [x] Hợp đồng `audio_path` tuỳ chọn cho asset `emoji`/`text` (`contracts/shared-fields.ts`) — làm ở S7b; spec sở hữu là `play-narration.md` §7, không phải `audio-storage.md` (spec đó lo upload/lưu trữ)
 - [ ] Script build sinh mp3 theo hash nội dung; seeder ghi `instruction_audio_path`
 - [ ] M1 và M2 đạt đích, cổng S5 ratchet lên

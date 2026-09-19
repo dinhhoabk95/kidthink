@@ -73,15 +73,33 @@ export function usePlayGesture(options: GestureOptions) {
     );
   }
 
+  /**
+   * Đọc lại tên vật vừa chạm theo thang bậc của `play-narration.md` §7:
+   * mp3 của asset → TTS từ `spokenLabel` → không có tên thì im (Task #274 S7b).
+   */
+  function speakKeyword(engine: GameEngine, entity: ViewEntity | null): void {
+    const label = entity?.spokenLabel;
+    const audioPath = entity?.spokenAudioPath;
+    if (audioPath) {
+      engine.audio.playPromptAudio(audioPath, undefined, () => {
+        if (label) {
+          engine.audio.speakPrompt(label);
+        }
+      });
+      return;
+    }
+    if (label) {
+      engine.audio.speakPrompt(label);
+    }
+  }
+
   function handleVerdict(
     verdict: ActionResult,
     engine: GameEngine,
     session: GameSession,
-    spokenLabel?: string
+    tapped: ViewEntity | null
   ): void {
-    if (spokenLabel) {
-      engine.audio.speakPrompt(spokenLabel);
-    }
+    speakKeyword(engine, tapped);
 
     if (verdict.feedback === "none") {
       // Cử chỉ bị nuốt: ngoài mọi slot, trước khi cảnh dựng xong, hoặc vòng
@@ -137,7 +155,7 @@ export function usePlayGesture(options: GestureOptions) {
 
     const verdict = session.dispatch(gesture);
     if (verdict) {
-      handleVerdict(verdict, engine, session, tapped?.spokenLabel);
+      handleVerdict(verdict, engine, session, tapped);
     }
   }
 

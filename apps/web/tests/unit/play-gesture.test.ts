@@ -314,6 +314,35 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     expect(onMiss).not.toHaveBeenCalled();
   });
 
+  it("từ khoá có mp3: phát mp3 trước, TTS chỉ khi mp3 lỗi (Task #274 S7b)", () => {
+    const { gesture, speakPrompt, engine } = makeTapSelectHarness([
+      { id: "opt-1", role: "source" },
+      { id: "opt-2", role: "source" },
+    ]);
+    let failMp3: (() => void) | undefined;
+    const playPromptAudio = vi.fn(
+      (_ref: string, _onEnd?: () => void, onError?: () => void) => {
+        failMp3 = onError;
+      }
+    );
+    Object.assign(engine.audio, { playPromptAudio });
+    gesture.viewEntities.value = gesture.viewEntities.value.map((e) =>
+      e.id === "opt-1" ? { ...e, spokenAudioPath: "/audio/opt-1.mp3" } : e
+    );
+
+    gesture.dispatchGesture({ type: "tap", x: 100, y: 100, timeMs: 0 });
+
+    expect(playPromptAudio).toHaveBeenCalledWith(
+      "/audio/opt-1.mp3",
+      undefined,
+      expect.any(Function)
+    );
+    expect(speakPrompt).not.toHaveBeenCalled();
+
+    failMp3?.();
+    expect(speakPrompt).toHaveBeenCalledWith("nhãn-opt-1");
+  });
+
   it("chạm lệch trong dung sai 24px của engine vẫn đọc lại từ khoá — cùng hình học chạm với toAction() (Task #274 S1d)", () => {
     const { gesture, speakPrompt } = makeTapSelectHarness([
       { id: "opt-1", role: "source" },

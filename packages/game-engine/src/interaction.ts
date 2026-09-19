@@ -67,6 +67,8 @@ export interface ViewEntity {
   readonly h: number;
   readonly label?: string;
   readonly spokenLabel?: string;
+  /** mp3 đọc `spokenLabel` — bề mặt chơi phát nó trước TTS (Task #274 S7b). */
+  readonly spokenAudioPath?: string;
   readonly glyph?: string;
 }
 

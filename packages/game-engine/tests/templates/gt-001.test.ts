@@ -2,6 +2,7 @@ import { getByGlyph } from "@mindkid/emoji";
 import { describe, expect, it } from "vitest";
 import { GT001_FIXTURES } from "#src/templates/GT-001/fixtures";
 import { GT001Session } from "#src/templates/GT-001/session";
+import { GT001ContentSchema } from "#src/templates/GT-001/template";
 
 /**
  * `GT-001/template.ts` khai `input.tolerance_px: 24` — dung sai chạm hợp
@@ -161,5 +162,61 @@ describe("GT-001 — chạm lại thẻ đề để nghe lại từ khoá (Task 
     });
 
     expect(action).toBeNull();
+  });
+});
+
+/**
+ * Từ khoá có mp3 riêng thì đọc bằng mp3 trước TTS (`play-narration.md` §7,
+ * Task #274 S7b): `audio_path` tuỳ chọn trên asset `emoji`/`text`.
+ */
+describe("GT-001 — mp3 của từ khoá (Task #274 S7b)", () => {
+  const fixture = GT001_FIXTURES[0];
+  if (!fixture) {
+    throw new Error("Fixture GT-001 not found");
+  }
+  const KEYWORD_MP3 = "/audio/voice/fixture/qua-tao.mp3";
+
+  it("hợp đồng nhận audio_path tuỳ chọn trên asset, từ chối chuỗi rỗng", () => {
+    const withAudio = {
+      ...fixture.content,
+      target_item: {
+        ...fixture.content.target_item,
+        asset: { kind: "emoji", ref: "🍎", audio_path: KEYWORD_MP3 },
+      },
+    };
+    expect(GT001ContentSchema.safeParse(withAudio).success).toBe(true);
+
+    const emptyAudio = {
+      ...withAudio,
+      target_item: {
+        ...withAudio.target_item,
+        asset: { kind: "emoji", ref: "🍎", audio_path: "" },
+      },
+    };
+    expect(GT001ContentSchema.safeParse(emptyAudio).success).toBe(false);
+  });
+
+  it("getView() mang spokenAudioPath của thẻ đề và của lựa chọn", () => {
+    const session = new GT001Session(
+      {
+        ...fixture.content,
+        target_item: {
+          ...fixture.content.target_item,
+          asset: { kind: "emoji", ref: "🍎", audio_path: KEYWORD_MP3 },
+        },
+      },
+      fixture.difficulty,
+      1
+    );
+    session.prepareRound("4-5");
+
+    const promptCard = session
+      .getView()
+      .entities.find((e) => e.role === "neutral");
+    expect(promptCard?.spokenAudioPath).toBe(KEYWORD_MP3);
+    const options = session
+      .getView()
+      .entities.filter((e) => e.role !== "neutral");
+    expect(options.every((e) => e.spokenAudioPath === undefined)).toBe(true);
   });
 });

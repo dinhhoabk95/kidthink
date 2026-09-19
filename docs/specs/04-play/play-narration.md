@@ -102,9 +102,15 @@ asset; spec này sở hữu hợp đồng **phát** trên bề mặt trẻ.
 
 ## 7. Data
 
-**Đọc:** `content_pack.items[].audio_path`; `instruction_audio_path` của vòng;
-`phrasing.narration_template` của dataset; file dưới `apps/web/public/audio/voice/`.
+**Đọc:** `content_pack.items[].audio_path`; `audio_path` tuỳ chọn trên asset `emoji`/`text` của
+engine chạm-chọn (`assetSchema` chung, Task #274 — tên vật đọc lại khi trẻ chạm lại hình minh
+hoạ); `instruction_audio_path` của vòng; `phrasing.narration_template` của dataset; file dưới
+`apps/web/public/audio/voice/`.
 **Ghi:** `scripts/narration-coverage-baseline.json`.
+
+Chạm lại một hình minh hoạ đọc tên vật theo cùng thang bậc của mục 7.2: `audio_path` của asset →
+TTS tiếng Việt từ `spokenLabel` → không có tên đọc được thì im (Cấm — NEVER đưa glyph thô cho
+TTS).
 
 ### 7.1 Tài sản hiện có — đo ngày 2026-09-11
 
