@@ -11,6 +11,7 @@ import type { AgeBand } from "@mindkid/shared/client";
 import { nextTick, type Ref, ref } from "vue";
 import {
   createTimerBag,
+  scheduleRoundOpenNarration,
   scheduleWonRoundCompletion,
   skipCurrentRoundIfUnwon,
 } from "~/composables/play/play-round-token";
@@ -322,15 +323,20 @@ export function usePlaySession(options: UsePlaySessionOptions) {
           playInstructionNarration(prompt);
           return;
         }
-        const onNarrationSettled = () => {
-          if (engine) {
-            engine.acceptingInput = true;
-          }
-          roundRunner?.notePromptSettled();
-        };
-        setTimeout(() => {
-          playInstructionNarration(prompt, onNarrationSettled);
-        }, ROUND_OPEN_NARRATION_DELAY_MS);
+        // Hẹn giờ và settle mang token vòng (Task #274 E6): câu dẫn của vòng
+        // cũ hay của lượt chơi trước Cấm — NEVER mở cổng vòng đang chơi.
+        scheduleRoundOpenNarration({
+          timers: roundTimers,
+          getRunner: getRoundRunner,
+          delayMs: ROUND_OPEN_NARRATION_DELAY_MS,
+          play: (settle) => playInstructionNarration(prompt, settle),
+          onSettled: () => {
+            if (engine) {
+              engine.acceptingInput = true;
+            }
+            roundRunner?.notePromptSettled();
+          },
+        });
       },
       onRoundStarted: (roundIndex) => {
         currentRound.value = roundIndex;

@@ -90,6 +90,38 @@ export function scheduleWonRoundCompletion(
   );
 }
 
+export interface RoundOpenNarrationOptions {
+  readonly timers: TimerBag;
+  readonly getRunner: () => RoundRunner | null;
+  /** Chờ tiếng chuông mở vòng dứt rồi mới đọc. */
+  readonly delayMs: number;
+  /** Phát câu dẫn; gọi tham số `settle` khi đọc xong (hoặc quá hạn). */
+  readonly play: (settle: () => void) => void;
+  /** Mở cổng cử chỉ và bắt đầu đồng hồ vòng (`BR-PNR-11`). */
+  readonly onSettled: () => void;
+}
+
+/**
+ * Câu dẫn mở vòng: phát sau nhịp chuông, và chỉ mở cổng của **chính** vòng
+ * đã hẹn nó. Vòng đổi trước nhịp chuông thì không phát; vòng đổi trước khi
+ * đọc xong thì settle bị bỏ qua (Task #274, E6).
+ */
+export function scheduleRoundOpenNarration(
+  options: RoundOpenNarrationOptions
+): void {
+  const { timers, getRunner, delayMs, play, onSettled } = options;
+  const runner = getRunner();
+  if (!runner) {
+    return;
+  }
+  const token = captureRoundToken(runner);
+  const settle = bindToRound(token, getRunner, onSettled);
+  timers.set(
+    bindToRound(token, getRunner, () => play(settle)),
+    delayMs
+  );
+}
+
 /**
  * Bỏ qua vòng hiện tại — trừ khi trẻ đã thắng nó và vòng chỉ đang chờ nhịp ăn
  * mừng. Trả `false` khi không bỏ qua.

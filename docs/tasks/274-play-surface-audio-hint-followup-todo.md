@@ -15,7 +15,7 @@ Luật tick: một ô chỉ được tick khi lệnh kiểm ở cuối lát ch�
 - [x] S1c — mỗi bậc phát rơi xuống bậc sau đúng một lần; ca âm `onerror` + `play()` reject cùng bắn
 - [x] S1d — GT-001 vùng chạm khớp hình token tròn đang vẽ (E4 rút lại: không phải lỗi co vùng chạm)
 - [x] S1d — bề mặt web tìm entity bị chạm bằng primitive của `hit-test.ts`, cùng dung sai với `toAction()`
-- [ ] S1e — `onSettled` mang token vòng; token lệch thì bỏ qua; hẹn giờ 600ms huỷ khi rời trang và
+- [x] S1e — `onSettled` mang token vòng; token lệch thì bỏ qua; hẹn giờ 600ms huỷ khi rời trang và
       khi chơi lại
 - [x] S1e — sửa comment "hằng số 8" ở `GT-001/session.ts` cho khớp lịch sử git
 

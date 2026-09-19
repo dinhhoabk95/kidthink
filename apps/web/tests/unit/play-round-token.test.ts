@@ -11,6 +11,7 @@ import {
   bindToRound,
   captureRoundToken,
   createTimerBag,
+  scheduleRoundOpenNarration,
   scheduleWonRoundCompletion,
   skipCurrentRoundIfUnwon,
 } from "~/composables/play/play-round-token";
@@ -154,6 +155,61 @@ describe("play-round-token — hành động trễ neo vào vòng (Task #274 S1b
     vi.advanceTimersByTime(ADVANCE_MS * 2);
 
     expect(runner.getState().currentRoundIndex).toBe(0);
+  });
+
+  it("câu dẫn mở vòng: phát sau nhịp chuông, settle mở cổng đúng vòng đó", () => {
+    const runner = makeRunner();
+    const timers = createTimerBag();
+    runner.startFirstRound();
+    const play = vi.fn((settle: () => void) => settle());
+    const onSettled = vi.fn();
+
+    scheduleRoundOpenNarration({
+      timers,
+      getRunner: () => runner,
+      delayMs: 600,
+      play,
+      onSettled,
+    });
+    expect(play).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(600);
+
+    expect(play).toHaveBeenCalledTimes(1);
+    expect(onSettled).toHaveBeenCalledTimes(1);
+  });
+
+  it("câu dẫn của vòng cũ: không phát nếu vòng đổi trước nhịp chuông, không mở cổng vòng mới nếu vòng đổi trước khi đọc xong (Task #274, E6)", () => {
+    const runner = makeRunner();
+    const timers = createTimerBag();
+    runner.startFirstRound();
+
+    const playNever = vi.fn();
+    scheduleRoundOpenNarration({
+      timers,
+      getRunner: () => runner,
+      delayMs: 600,
+      play: playNever,
+      onSettled: vi.fn(),
+    });
+    runner.completeCurrentRound();
+    vi.advanceTimersByTime(600);
+    expect(playNever).not.toHaveBeenCalled();
+
+    let settleLater: (() => void) | undefined;
+    const onSettled = vi.fn();
+    scheduleRoundOpenNarration({
+      timers,
+      getRunner: () => runner,
+      delayMs: 600,
+      play: (settle) => {
+        settleLater = settle;
+      },
+      onSettled,
+    });
+    vi.advanceTimersByTime(600);
+    runner.completeCurrentRound();
+    settleLater?.();
+    expect(onSettled).not.toHaveBeenCalled();
   });
 
   it("bindToRound: callback của vòng cũ bị bỏ qua sau khi vòng đổi hoặc runner bị thay", () => {
