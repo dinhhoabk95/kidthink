@@ -78,11 +78,12 @@ describe("findHitEntity — một hình học chạm cho engine và web (Task #2
 
   it("cùng một điểm, cùng kết quả với findHitSlotIndex khi hitW = w", () => {
     const slot = makeSlot({ x: 100, y: 100, w: 80, h: 80, hitW: 80, hitH: 80 });
+    const entity = { id: "a", x: 100, y: 100, w: 80, h: 80 };
     for (const dx of [0, 30, 50, 63, 64, 65, 80]) {
       const bySlot =
         findHitSlotIndex([slot], 100 + dx, 100, "circle", TAP_TOLERANCE_PX) ===
         0;
-      const byEntity = findHitEntity([entities[0]], 100 + dx, 100) !== null;
+      const byEntity = findHitEntity([entity], 100 + dx, 100) !== null;
       expect(byEntity, `dx=${dx}`).toBe(bySlot);
     }
   });
