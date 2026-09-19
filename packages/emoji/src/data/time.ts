@@ -168,4 +168,12 @@ export const TIME_EMOJIS: EmojiEntry[] = [
     keywords: ["mantelpiece clock", "đồng hồ", "để bàn", "cổ"],
     age_min: 4,
   },
+  {
+    emoji: "📆",
+    name: "Tờ lịch",
+    categories: ["time"],
+    curriculum_themes: ["truong_mam_non"],
+    keywords: ["calendar", "lịch", "tờ lịch", "ngày tháng"],
+    age_min: 3,
+  },
 ];

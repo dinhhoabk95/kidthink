@@ -213,4 +213,20 @@ export const HAND_GESTURE_EMOJIS: EmojiEntry[] = [
     keywords: ["palm down hand", "tay", "úp xuống", "đặt"],
     age_min: 3,
   },
+  {
+    emoji: "🙋",
+    name: "Bạn nhỏ giơ tay",
+    categories: ["hand-gesture"],
+    curriculum_themes: ["ban_than", "truong_mam_non"],
+    keywords: ["raising hand", "giơ tay", "xung phong"],
+    age_min: 3,
+  },
+  {
+    emoji: "🙇",
+    name: "Bạn nhỏ cúi chào",
+    categories: ["hand-gesture"],
+    curriculum_themes: ["ban_than"],
+    keywords: ["bowing", "cúi chào", "lễ phép"],
+    age_min: 3,
+  },
 ];

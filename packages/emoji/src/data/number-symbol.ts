@@ -254,4 +254,20 @@ export const NUMBER_SYMBOL_EMOJIS: EmojiEntry[] = [
     keywords: ["repeat", "lặp lại", "vòng lặp"],
     age_min: 3,
   },
+  {
+    emoji: "↔️",
+    name: "Mũi tên hai chiều",
+    categories: ["number-symbol"],
+    curriculum_themes: ["truong_mam_non"],
+    keywords: ["left right arrow", "mũi tên", "hai chiều"],
+    age_min: 3,
+  },
+  {
+    emoji: "🔀",
+    name: "Mũi tên đan chéo",
+    categories: ["number-symbol"],
+    curriculum_themes: ["truong_mam_non"],
+    keywords: ["shuffle", "mũi tên chéo", "đổi chỗ"],
+    age_min: 3,
+  },
 ];

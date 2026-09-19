@@ -380,4 +380,20 @@ export const ANIMAL_WILD_EMOJIS: EmojiEntry[] = [
     keywords: ["mouse face", "mặt chuột", "con chuột"],
     age_min: 3,
   },
+  {
+    emoji: "🦖",
+    name: "Khủng long",
+    categories: ["animal-wild"],
+    curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
+    keywords: ["t-rex", "dinosaur", "khủng long"],
+    age_min: 3,
+  },
+  {
+    emoji: "🐁",
+    name: "Chú chuột nhắt",
+    categories: ["animal-wild"],
+    curriculum_themes: ["dong_vat", "the_gioi_dong_vat"],
+    keywords: ["mouse", "chuột", "chuột nhắt"],
+    age_min: 3,
+  },
 ];

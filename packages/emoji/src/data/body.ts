@@ -266,4 +266,12 @@ export const BODY_EMOJIS: EmojiEntry[] = [
     keywords: ["white hair", "gray hair", "tóc bạc", "già", "trắng"],
     age_min: 3,
   },
+  {
+    emoji: "🧍",
+    name: "Bạn nhỏ đứng thẳng",
+    categories: ["body"],
+    curriculum_themes: ["ban_than"],
+    keywords: ["standing person", "đứng", "đứng thẳng"],
+    age_min: 3,
+  },
 ];

@@ -201,4 +201,28 @@ export const WEATHER_SEASON_EMOJIS: EmojiEntry[] = [
     keywords: ["sun with face", "smiling sun", "mặt trời", "cười", "nắng đẹp"],
     age_min: 3,
   },
+  {
+    emoji: "☂️",
+    name: "Cái ô",
+    categories: ["weather-season", "clothing"],
+    curriculum_themes: ["thoi_tiet_mua"],
+    keywords: ["umbrella", "ô", "dù", "cái ô", "trời mưa"],
+    age_min: 3,
+  },
+  {
+    emoji: "⚡",
+    name: "Tia chớp",
+    categories: ["weather-season"],
+    curriculum_themes: ["thoi_tiet_mua"],
+    keywords: ["lightning", "sấm sét", "tia chớp"],
+    age_min: 3,
+  },
+  {
+    emoji: "🌀",
+    name: "Cơn lốc xoáy",
+    categories: ["weather-season"],
+    curriculum_themes: ["thoi_tiet_mua", "nuoc_hien_tuong_tu_nhien"],
+    keywords: ["cyclone", "lốc xoáy", "xoáy", "gió xoáy"],
+    age_min: 3,
+  },
 ];

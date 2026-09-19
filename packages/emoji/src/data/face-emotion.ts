@@ -401,4 +401,12 @@ export const FACE_EMOTION_EMOJIS: EmojiEntry[] = [
     keywords: ["sparkling heart", "heart", "trái tim", "tim", "yêu thương"],
     age_min: 3,
   },
+  {
+    emoji: "💭",
+    name: "Bong bóng suy nghĩ",
+    categories: ["face-emotion"],
+    curriculum_themes: ["ban_than"],
+    keywords: ["thought bubble", "suy nghĩ", "nghĩ"],
+    age_min: 3,
+  },
 ];

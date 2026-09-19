@@ -167,4 +167,12 @@ export const SKY_SPACE_EMOJIS: EmojiEntry[] = [
     keywords: ["satellite", "vệ tinh", "vũ trụ", "không gian"],
     age_min: 4,
   },
+  {
+    emoji: "🌜",
+    name: "Trăng khuyết",
+    categories: ["sky-space"],
+    curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
+    keywords: ["moon", "trăng", "trăng khuyết", "ban đêm"],
+    age_min: 3,
+  },
 ];

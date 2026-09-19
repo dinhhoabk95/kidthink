@@ -199,4 +199,12 @@ export const NATURE_LANDSCAPE_EMOJIS: EmojiEntry[] = [
     keywords: ["tent", "lều", "cắm trại"],
     age_min: 3,
   },
+  {
+    emoji: "🌇",
+    name: "Hoàng hôn",
+    categories: ["nature-landscape", "sky-space"],
+    curriculum_themes: ["nuoc_hien_tuong_tu_nhien"],
+    keywords: ["sunset", "hoàng hôn", "buổi chiều", "mặt trời lặn"],
+    age_min: 3,
+  },
 ];

@@ -317,4 +317,28 @@ export const SHAPE_COLOR_EMOJIS: EmojiEntry[] = [
     keywords: ["sparkling heart", "heart", "trái tim", "tim", "yêu thương"],
     age_min: 3,
   },
+  {
+    emoji: "▬",
+    name: "Hình chữ nhật dài",
+    categories: ["shape-color"],
+    curriculum_themes: ["truong_mam_non"],
+    keywords: ["black rectangle", "chữ nhật", "hình chữ nhật"],
+    age_min: 3,
+  },
+  {
+    emoji: "🔲",
+    name: "Ô vuông",
+    categories: ["shape-color"],
+    curriculum_themes: ["truong_mam_non"],
+    keywords: ["square button", "ô vuông", "hình vuông"],
+    age_min: 3,
+  },
+  {
+    emoji: "〰️",
+    name: "Đường lượn sóng",
+    categories: ["shape-color"],
+    curriculum_themes: ["truong_mam_non"],
+    keywords: ["wavy dash", "lượn sóng", "đường cong"],
+    age_min: 3,
+  },
 ];

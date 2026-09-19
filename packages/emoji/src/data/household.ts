@@ -283,4 +283,12 @@ export const HOUSEHOLD_EMOJIS: EmojiEntry[] = [
     keywords: ["lock", "ổ khóa", "khóa", "bảo vệ"],
     age_min: 3,
   },
+  {
+    emoji: "🥣",
+    name: "Cái bát",
+    categories: ["household", "food"],
+    curriculum_themes: ["gia_dinh"],
+    keywords: ["bowl", "bát", "cái bát", "tô"],
+    age_min: 3,
+  },
 ];
