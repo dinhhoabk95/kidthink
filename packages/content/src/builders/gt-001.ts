@@ -1,5 +1,7 @@
 import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
+  DatasetAsset,
+  DatasetItem,
   ProjectedPack,
   Projection,
   ProjectOptions,
@@ -12,6 +14,21 @@ import {
   safeGetItem,
   shuffleDeterministic,
 } from "./utils.js";
+
+type KeywordAsset = DatasetAsset & { readonly audio_path?: string };
+
+/**
+ * Asset của item, mang theo mp3 tên vật có sẵn trong dataset (`audio_path`).
+ * Chạm lại hình minh hoạ phát mp3 này trước TTS (`play-narration.md` §7,
+ * Task #274). Ảnh không có từ khoá đọc được nên không mang mp3.
+ */
+function keywordAsset(item: DatasetItem): KeywordAsset {
+  const asset = resolveItemAsset(item, true);
+  if (asset.kind === "image" || !item.audio_path) {
+    return asset;
+  }
+  return { ...asset, audio_path: item.audio_path };
+}
 
 export const projectGT001: Projection<"GT-001"> = {
   template: "GT-001",
@@ -38,18 +55,18 @@ export const projectGT001: Projection<"GT-001"> = {
 
     const chosenDistractors: Array<{
       id: string;
-      asset: ReturnType<typeof resolveItemAsset>;
+      asset: KeywordAsset;
     }> = [];
     for (let i = 0; i < expectedDistractorCount; i++) {
       const d = safeGetItem(shuffledPool, i % shuffledPool.length);
       const uniqueId = i < shuffledPool.length ? d.id : `${d.id}_d${i + 1}`;
       chosenDistractors.push({
         id: uniqueId,
-        asset: resolveItemAsset(d, true),
+        asset: keywordAsset(d),
       });
     }
 
-    const targetAsset = resolveItemAsset(targetItem, true);
+    const targetAsset = keywordAsset(targetItem);
 
     const options = [
       {

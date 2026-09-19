@@ -68,7 +68,7 @@ Kiểm: `rtk proxy npx vitest run` trong `packages/game-engine` và `apps/web`,
 
 ## S6 — Sinh mp3 (`D-274-3`)
 
-- [ ] Nối 700 mp3 mồ côi có sẵn trước
+- [x] Nối mp3 có sẵn trước: bộ dựng GT-001 mang `audio_path` của item dataset vào asset từ khoá — asset có mp3 37 → 2.637, 591/2.976 vòng GT-001 có từ khoá đọc bằng mp3 (cần `db:seed` lại). 700 file mồ côi **không** ghép được chắc chắn với 413 câu dẫn: kho di sản chỉ có mô tả tóm tắt, không có lời thoại
 - [ ] Chốt nhà cung cấp TTS (câu hỏi mở 1 của plan)
 - [x] Hợp đồng `audio_path` tuỳ chọn cho asset `emoji`/`text` (`contracts/shared-fields.ts`) — làm ở S7b; spec sở hữu là `play-narration.md` §7, không phải `audio-storage.md` (spec đó lo upload/lưu trữ)
 - [ ] Script build sinh mp3 theo hash nội dung; seeder ghi `instruction_audio_path`
