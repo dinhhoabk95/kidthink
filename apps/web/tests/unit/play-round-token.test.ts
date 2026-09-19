@@ -1,12 +1,25 @@
 import {
   type ActionResult,
   BaseGameSession,
+  createGameSessionSync,
+  type EngineConfig,
   type GameAction,
+  type GT002Content,
+  type GT002Difficulty,
   type NarrationTrigger,
+  preloadGameSession,
   type RoundConfig,
   RoundRunner,
 } from "@mindkid/game-engine";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 import {
   bindToRound,
   captureRoundToken,
@@ -239,5 +252,105 @@ describe("play-round-token — hành động trễ neo vào vòng (Task #274 S1b
     current = runner;
     bindToRound(captureRoundToken(runner), () => current, settle)();
     expect(settle).toHaveBeenCalledTimes(1);
+  });
+});
+
+const GT002_CONTENT: GT002Content = {
+  prompt: "Bé hãy chọn tất cả các loại quả màu đỏ nhé!",
+  target_criterion: "Màu đỏ",
+  items: [
+    { item_id: "apple", asset: { kind: "emoji", ref: "🍎" }, is_correct: true },
+    {
+      item_id: "strawberry",
+      asset: { kind: "emoji", ref: "🍓" },
+      is_correct: true,
+    },
+    {
+      item_id: "banana",
+      asset: { kind: "emoji", ref: "🍌" },
+      is_correct: false,
+    },
+    {
+      item_id: "grape",
+      asset: { kind: "emoji", ref: "🍇" },
+      is_correct: false,
+    },
+  ],
+};
+
+const GT002_DIFFICULTY: GT002Difficulty = {
+  distractor_count: 2,
+  target_count: 2,
+  hint_after_ms: 8000,
+  allow_retry: true,
+};
+
+const GT002_ENGINE_CONFIG: EngineConfig = {
+  level_code: "GL-TEST-GT002",
+  content_version: 1,
+  template_code: "GT-002",
+  content_pack: GT002_CONTENT,
+  difficulty_params: GT002_DIFFICULTY,
+  theme_id: "default",
+  age_band: "4-5",
+  reduced_motion: false,
+  audio_enabled: false,
+};
+
+/**
+ * GT-002 chấm tập chọn chỉ khi trẻ bấm xong (`BR-E002-02`). Trước Task #275
+ * S1a, chọn đủ tập đúng làm session báo "đã thắng" dù chưa nộp: bề mặt chơi
+ * không gọi `onRoundWon` (chọn/bỏ chọn trả `feedback: none`) mà "Bỏ qua" cũng
+ * bị `skipCurrentRoundIfUnwon` từ chối — trẻ kẹt ở vòng đó.
+ */
+describe("skipCurrentRoundIfUnwon — GT-002 thật (Task #275 S1a)", () => {
+  beforeAll(async () => {
+    await preloadGameSession("GT-002");
+  });
+
+  it("chọn đủ tập đúng bằng chạm, chưa bấm xong → vẫn bỏ qua được vòng", () => {
+    const runner = new RoundRunner({
+      rounds: [
+        {
+          round_index: 0,
+          content_pack: GT002_CONTENT,
+          // `item_count` là trường cấp vòng mà RoundRunner đòi (BR-LDC-02),
+          // không thuộc hợp đồng độ khó riêng của GT-002.
+          difficulty_params: {
+            ...GT002_DIFFICULTY,
+            item_count: GT002_CONTENT.items.length,
+          },
+        },
+      ],
+      ageBand: "4-5",
+      layoutSeed: 1,
+      sessionFactory: (contentPack, difficultyParams, roundSeed) =>
+        createGameSessionSync("GT-002", {
+          ...GT002_ENGINE_CONFIG,
+          content_pack: contentPack,
+          difficulty_params: difficultyParams,
+          layout_seed: roundSeed,
+        }),
+      onPlayNarration: () => undefined,
+    });
+    runner.startFirstRound();
+    const session = runner.getCurrentSession();
+    const entities = session?.getView?.().entities ?? [];
+    const correctIds = new Set(
+      GT002_CONTENT.items.filter((i) => i.is_correct).map((i) => i.item_id)
+    );
+    const correctEntities = entities.filter((e) => correctIds.has(e.id));
+    expect(correctEntities).toHaveLength(correctIds.size);
+
+    for (const entity of correctEntities) {
+      session?.dispatch?.({
+        type: "tap",
+        x: entity.x,
+        y: entity.y,
+        timeMs: 0,
+      });
+    }
+
+    expect(skipCurrentRoundIfUnwon(runner, "user")).toBe(true);
   });
 });

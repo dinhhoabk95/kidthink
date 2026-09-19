@@ -54,27 +54,31 @@ describe("T18.1: Lô MVP — Luật cơ chế thật (GT-002..GT-006)", () => {
       expect(session.getItemState("strawberry")).toBe("selected");
     });
 
-    it("BR-E002-02: phiên chỉ thắng khi tập chọn khớp chính xác 100% danh sách đúng", () => {
+    it("BR-E002-02: phiên chỉ thắng khi commit với tập chọn khớp chính xác 100% danh sách đúng", () => {
       const session = new GT002Session(fixture.content, fixture.difficulty);
       session.setupEntities();
+      const submit = { type: "submit_selection", data: {} };
 
       // Chưa chọn gì -> chưa thắng
       expect(session.checkWinCondition()).toBe(false);
 
-      // Chọn 1/2 item đúng (apple) -> chưa thắng
+      // Chọn 1/2 item đúng (apple) rồi bấm xong -> chưa thắng
       session.commit({ type: "toggle_item", data: { item_id: "apple" } });
+      session.commit(submit);
       expect(session.checkWinCondition()).toBe(false);
 
-      // Chọn thêm 1 item sai (banana) -> 1 đúng 1 sai -> chưa thắng
+      // Chọn thêm 1 item sai (banana) rồi bấm xong -> 1 đúng 1 sai -> chưa thắng
       session.commit({ type: "toggle_item", data: { item_id: "banana" } });
+      session.commit(submit);
       expect(session.checkWinCondition()).toBe(false);
 
-      // Bỏ chọn banana
+      // Bỏ chọn banana, chọn nốt strawberry -> đủ 2 đúng, 0 sai nhưng chưa bấm xong
       session.commit({ type: "toggle_item", data: { item_id: "banana" } });
-      expect(session.checkWinCondition()).toBe(false);
-
-      // Chọn nốt strawberry -> đủ 2 item đúng, 0 item sai -> thắng
       session.commit({ type: "toggle_item", data: { item_id: "strawberry" } });
+      expect(session.checkWinCondition()).toBe(false);
+
+      // Bấm xong -> thắng
+      session.commit(submit);
       expect(session.checkWinCondition()).toBe(true);
     });
 

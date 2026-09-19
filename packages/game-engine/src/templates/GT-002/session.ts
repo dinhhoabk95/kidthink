@@ -200,14 +200,6 @@ export class GT002Session extends TemplateGameSession<
     }
   }
 
-  override checkWinCondition(): boolean {
-    const items = this.content.items.map((i) => ({
-      id: i.item_id,
-      isCorrect: i.is_correct,
-    }));
-    return this.mechanic.isSelectionComplete(items);
-  }
-
   private getSelectedCount(): number {
     let count = 0;
     for (const [, state] of this.itemStates) {
