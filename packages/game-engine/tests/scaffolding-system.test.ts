@@ -51,11 +51,33 @@ describe("ScaffoldingSystem (BR-SCF-01..08 & SCAFFOLDING-AND-HINTS spec)", () =>
     const system = new ScaffoldingSystem();
     const state = createInitialState();
 
-    system.onMiss(state); // 1 miss for 3-4 -> L1
+    system.onMiss(state);
+    system.onMiss(state); // 2 miss cho band 3-4 -> L1 (Task #274 D-274-1)
     const action = system.tick(1000, state, "3-4", 1) as ScaffoldAction | null;
 
     expect(state.level).toBe(1);
     expect(action?.trigger).toBe("miss_streak");
+  });
+
+  it("BR-SCF-05: band 3-4 — một lần sai chưa bật L1 (highlight đáp án), lần sai thứ hai mới bật (Task #274 D-274-1)", () => {
+    const system = new ScaffoldingSystem();
+    const state = createInitialState();
+
+    system.onMiss(state);
+    system.tick(1000, state, "3-4", 1);
+    expect(state.level).toBe(0);
+
+    system.onMiss(state);
+    system.tick(16, state, "3-4", 1);
+    expect(state.level).toBe(1);
+
+    system.onMiss(state);
+    system.tick(16, state, "3-4", 1);
+    expect(state.level).toBe(2);
+
+    system.onMiss(state);
+    system.tick(16, state, "3-4", 1);
+    expect(state.level).toBe(3);
   });
 
   it("BR-SCF-03: assigns focusIndex on escalation", () => {

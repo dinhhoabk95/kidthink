@@ -51,13 +51,18 @@ export interface ScaffoldAction {
   roundSkippedSuggested?: boolean;
 }
 
+/**
+ * Ngưỡng theo `scaffolding-and-hints.md` §7.1. Band 3–4 cần 2 miss mới lên L1
+ * (Task #274): L1 highlight thẻ đúng, nên bật sau một lần sai ở bài 2–3 lựa
+ * chọn là đưa đáp án. Trẻ 3 tuổi vẫn được giúp sớm nhất qua trục thời gian.
+ */
 export const SCAFFOLDING_BY_BAND: Record<AgeBand, ScaffoldingBandThresholds> = {
   "3-4": {
-    l1_misses: 1,
+    l1_misses: 2,
     l1_time_s: 10,
-    l2_misses: 2,
+    l2_misses: 3,
     l2_time_s: 18,
-    l3_misses: 3,
+    l3_misses: 4,
     l3_time_s: 25,
   },
   "4-5": {

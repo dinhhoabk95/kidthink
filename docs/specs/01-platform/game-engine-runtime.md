@@ -132,7 +132,7 @@ Layout tính một lần lúc nạp là sai.
 
 | Band | L1 nudge | L2 hướng dẫn | L3 trình diễn |
 |---|---|---|---|
-| 3–4 | 1 miss / 10s | 2 / 18s | 3 / 25s |
+| 3–4 | 2 miss / 10s | 3 / 18s | 4 / 25s |
 | 4–5 | 2 / 15s | 3 / 25s | 4 / 35s |
 | 5–6 | 2 / 20s | 3 / 30s | 5 / 40s |
 

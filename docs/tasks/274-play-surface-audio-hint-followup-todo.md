@@ -41,9 +41,9 @@ Kiểm: `rtk proxy npx vitest run` trong `packages/game-engine` và `apps/web`,
 
 ## S3 — Ngưỡng gợi ý (`D-274-1`)
 
-- [ ] Sửa `scaffolding-and-hints.md` §7.1 và scenario `BR-SCF-05` trước
-- [ ] `SCAFFOLDING_BY_BAND["3-4"]`: miss `2/3/4`, thời gian giữ nguyên
-- [ ] Test: band 3–4, 1 lần sai → L0; 2 lần sai → L1
+- [x] Sửa `scaffolding-and-hints.md` §7.1 và scenario `BR-SCF-05` trước (kèm bảng §7.3 của `game-engine-runtime.md`)
+- [x] `SCAFFOLDING_BY_BAND["3-4"]`: miss `2/3/4`, thời gian giữ nguyên
+- [x] Test: band 3–4, 1 lần sai → L0; 2 lần sai → L1
 
 ## S4 — `speak_along` trọn vẹn (`D-274-2`)
 

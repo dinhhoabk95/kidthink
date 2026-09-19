@@ -74,11 +74,17 @@ theo yêu cầu.
 
 | Band | L1 nudge | L2 hướng dẫn | L3 trình diễn |
 |---|---|---|---|
-| **3–4** | 1 miss **hoặc** 10s | 2 **hoặc** 18s | 3 **hoặc** 25s |
+| **3–4** | 2 miss **hoặc** 10s | 3 **hoặc** 18s | 4 **hoặc** 25s |
 | **4–5** | 2 **hoặc** 15s | 3 **hoặc** 25s | 4 **hoặc** 35s |
 | **5–6** | 2 **hoặc** 20s | 3 **hoặc** 30s | 5 **hoặc** 40s |
 
 Điều kiện **hoặc** — cái nào đến trước.
+
+Band 3–4 cần **2 miss** mới lên L1 (Task #274, người đặt việc yêu cầu 2026-09-17). L1 highlight
+đúng thẻ đáp án; với 2–3 lựa chọn, bật nó sau **một** lần sai là đưa đáp án cho trẻ ngay lượt
+thứ hai. Trẻ 3 tuổi vẫn được giúp sớm hơn trẻ 6 tuổi qua trục **thời gian** (10s so với 20s) —
+`BR-SCF-05` giữ nguyên. Cử chỉ bị nuốt (chạm ngoài mọi vật, chạm khi câu dẫn chưa đọc xong) Cấm
+— NEVER là miss (`BR-ETS-02`, `BR-PNR-11`).
 
 ### 7.2 Ba cấp
 
@@ -121,6 +127,13 @@ Scenario: BR-SCF-05 — ngưỡng khác nhau theo band
   When cả hai không thao tác 12 giây
   Then band 3-4 đã ở L1
   And band 5-6 vẫn ở L0
+
+Scenario: BR-SCF-05 — một lần sai chưa bật L1 ở band 3-4
+  Given trẻ band 3-4 đang ở L0 của một vòng GT-001 có 3 lựa chọn
+  When trẻ chạm sai một lần
+  Then scaffolding vẫn ở L0 và thẻ đúng không sáng
+  When trẻ chạm sai lần thứ hai
+  Then L1 highlight thẻ đúng
 
 Scenario: BR-SCF-02 — hint không trừ điểm
   Given một phiên dùng 4 lần trợ giúp

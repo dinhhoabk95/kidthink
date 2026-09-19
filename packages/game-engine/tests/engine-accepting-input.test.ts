@@ -45,7 +45,7 @@ describe("GameEngine.acceptingInput / advanceFrame (BR-PNR-11)", () => {
     const engine = buildEngine();
     engine.acceptingInput = false;
 
-    // Band 3-4: L1 tới sau 10s hoặc 1 miss. Trôi 20s mà vẫn ở L0 mới đúng.
+    // Band 3-4: L1 tới sau 10s hoặc 2 miss. Trôi 20s mà vẫn ở L0 mới đúng.
     for (let i = 0; i < 20; i++) {
       engine.advanceFrame(1000);
     }
