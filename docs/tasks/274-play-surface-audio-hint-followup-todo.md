@@ -34,10 +34,10 @@ Kiểm: `rtk proxy npx vitest run` trong `packages/game-engine` và `apps/web`,
 
 ## S5 — Cổng đo mp3 thật
 
-- [ ] Trục `rounds_with_instruction_audio` theo template (M1)
-- [ ] Trục `assets_with_audio` (M2) và `glyphs_without_vi_name` (M3)
-- [ ] Ca âm trong `scripts/**/fixtures/`: một vòng mất `instruction_audio_path` → cổng đỏ
-- [ ] Baseline ghi số đo 2026-09-19: M1 = 0/2.976, M2 = 37/325, M3 = 25/182
+- [x] Trục `rounds_with_instruction_audio` tổng và theo template (M1) — `scripts/narration-level-scan.ts`, nguồn `buildLevelsForSkill` khớp DB (6.380 level)
+- [x] Trục `level_assets_with_audio` (M2) và `glyphs_without_vi_name` (M3)
+- [x] Ca âm trong `scripts/fixtures/narration-levels.fixture.ts`: một vòng mất `instruction_audio_path` → cổng đỏ (tổng và theo template); asset mất mp3; glyph không tên dày thêm
+- [x] Baseline ghi số đo 2026-09-19 trên **toàn corpus**: 0/19.046 vòng có mp3 câu dẫn (GT-001 0/2.976), 37 asset có mp3, 68/268 glyph không tên (GT-001 25/182)
 
 ## S3 — Ngưỡng gợi ý (`D-274-1`)
 

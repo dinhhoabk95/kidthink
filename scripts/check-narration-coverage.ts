@@ -25,6 +25,13 @@ import {
   RoundRunner,
 } from "@mindkid/game-engine";
 import type { DatasetItem, SkillDataset } from "@mindkid/shared";
+import {
+  buildShippedLevels,
+  type LevelNarrationStats,
+  type LevelPack,
+  type NarrationLevelInput,
+  scanLevelNarration,
+} from "./narration-level-scan.ts";
 
 export interface NarrationCoverageBaseline {
   datasets_with_audio_path: number;
@@ -35,6 +42,14 @@ export interface NarrationCoverageBaseline {
   /** Nợ BR-PNR-02: item chưa có cách nào đọc tên thành tiếng. Chỉ được giảm. */
   items_without_spoken_name?: number;
   orphan_audio_files: number;
+  /** Vòng đã phát có mp3 câu dẫn (Task #274 S5). Chỉ được tăng. */
+  rounds_with_instruction_audio?: number;
+  /** Như trên, theo từng template — không template nào được đi lùi. */
+  rounds_with_instruction_audio_by_template?: Record<string, number>;
+  /** Asset trong content level có mp3 riêng. Chỉ được tăng. */
+  level_assets_with_audio?: number;
+  /** Nợ BR-PNR-02: glyph không có tên tiếng Việt. Chỉ được giảm. */
+  glyphs_without_vi_name?: number;
   date?: string;
   note?: string;
 }
@@ -60,6 +75,12 @@ export interface NarrationCoverageStats {
   items_without_spoken_name: number;
   orphan_audio_files: number;
   total_mp3s: number;
+  readonly rounds_total: LevelNarrationStats["rounds_total"];
+  readonly rounds_with_instruction_audio: LevelNarrationStats["rounds_with_instruction_audio"];
+  readonly rounds_by_template: LevelNarrationStats["rounds_by_template"];
+  readonly level_assets_with_audio: LevelNarrationStats["level_assets_with_audio"];
+  readonly glyphs_without_vi_name: LevelNarrationStats["glyphs_without_vi_name"];
+  readonly glyphs_total: LevelNarrationStats["glyphs_total"];
 }
 
 export interface ScanNarrationOptions {
@@ -71,6 +92,8 @@ export interface ScanNarrationOptions {
     instruction_audio_path?: string | null;
     narration_template?: string | null;
   }[];
+  /** Level đã phát để đo; mặc định dựng từ `buildLevelsForSkill` như seeder. */
+  levels?: readonly NarrationLevelInput<LevelPack>[];
 }
 
 const DEFAULT_BASELINE_PATH = repoPath(
@@ -339,6 +362,66 @@ function probeRoundOpenNarration(): {
   };
 }
 
+/**
+ * Ratchet của các trục đo trên level đã phát (Task #274 S5). Mỗi trục chỉ so
+ * khi baseline có khai nó, để baseline cũ vẫn đọc được.
+ */
+function checkLevelRatchet(
+  stats: NarrationCoverageStats,
+  baseline: NarrationCoverageBaseline
+): NarrationViolation[] {
+  const violations: NarrationViolation[] = [];
+  const mustNotDrop = (
+    target: string,
+    current: number,
+    floor: number | undefined,
+    label: string
+  ) => {
+    if (typeof floor === "number" && current < floor) {
+      violations.push({
+        rule: "BR-PNR-10",
+        target,
+        message: `${label} bị thụt lùi: hiện có ${current} < baseline ${floor}`,
+      });
+    }
+  };
+
+  mustNotDrop(
+    "rounds_with_instruction_audio",
+    stats.rounds_with_instruction_audio,
+    baseline.rounds_with_instruction_audio,
+    "Số vòng đã phát có mp3 câu dẫn"
+  );
+  for (const [template, floor] of Object.entries(
+    baseline.rounds_with_instruction_audio_by_template ?? {}
+  )) {
+    mustNotDrop(
+      `rounds_with_instruction_audio:${template}`,
+      stats.rounds_by_template[template]?.with_audio ?? 0,
+      floor,
+      `Số vòng ${template} có mp3 câu dẫn`
+    );
+  }
+  mustNotDrop(
+    "level_assets_with_audio",
+    stats.level_assets_with_audio,
+    baseline.level_assets_with_audio,
+    "Số asset trong level có mp3 riêng"
+  );
+
+  if (
+    typeof baseline.glyphs_without_vi_name === "number" &&
+    stats.glyphs_without_vi_name > baseline.glyphs_without_vi_name
+  ) {
+    violations.push({
+      rule: "BR-PNR-02",
+      target: "glyphs_without_vi_name",
+      message: `Nợ glyph không có tên tiếng Việt tăng lên: hiện có ${stats.glyphs_without_vi_name} > baseline ${baseline.glyphs_without_vi_name}`,
+    });
+  }
+  return violations;
+}
+
 function checkBaselineRatchet(
   stats: NarrationCoverageStats,
   baselinePath: string
@@ -377,6 +460,8 @@ function checkBaselineRatchet(
         message: `Số item có audio_path bị thụt lùi: hiện có ${stats.items_with_audio_path} < baseline ${baseline.items_with_audio_path}`,
       });
     }
+
+    violations.push(...checkLevelRatchet(stats, baseline));
 
     // Nợ BR-PNR-02 chỉ được đi xuống. Nó là số item trẻ chạm vào mà không
     // nghe được tên, nên mọi lát cắt mới Cấm — NEVER làm nó dày thêm.
@@ -434,6 +519,8 @@ export function scanNarrationCoverage(options: ScanNarrationOptions = {}): {
   const narrationProbe = probeRoundOpenNarration();
   violations.push(...narrationProbe.violations);
 
+  const levelScan = scanLevelNarration(options.levels ?? buildShippedLevels());
+
   const orphanCount = allVoiceMp3s.filter(
     (p) => !datasetScan.usedAudioPaths.has(p)
   ).length;
@@ -448,6 +535,7 @@ export function scanNarrationCoverage(options: ScanNarrationOptions = {}): {
     items_without_spoken_name: datasetScan.itemsWithoutSpokenName,
     orphan_audio_files: orphanCount,
     total_mp3s: allVoiceMp3s.length,
+    ...levelScan,
   };
 
   violations.push(...checkBaselineRatchet(stats, baselinePath));
@@ -489,6 +577,23 @@ export function formatNarrationReport(
     `• Orphan audio files: ${stats.orphan_audio_files}/${stats.total_mp3s} (số đo — KHÔNG ratchet)`
   );
   lines.push(
+    `• Vòng đã phát có mp3 câu dẫn: ${stats.rounds_with_instruction_audio}/${stats.rounds_total} (ratchet, Task #274)`
+  );
+  const templates = Object.entries(stats.rounds_by_template).sort(([a], [b]) =>
+    a.localeCompare(b)
+  );
+  for (const [template, coverage] of templates) {
+    lines.push(
+      `    ${template}: ${coverage.with_audio}/${coverage.rounds} vòng có mp3`
+    );
+  }
+  lines.push(
+    `• Asset trong level có mp3 riêng: ${stats.level_assets_with_audio} (ratchet)`
+  );
+  lines.push(
+    `• Glyph không có tên tiếng Việt: ${stats.glyphs_without_vi_name}/${stats.glyphs_total} (nợ BR-PNR-02 — chỉ được giảm)`
+  );
+  lines.push(
     "─────────────────────────────────────────────────────────────────"
   );
 
@@ -526,8 +631,17 @@ function runCli(): void {
       items_with_audio_path: stats.items_with_audio_path,
       items_without_spoken_name: stats.items_without_spoken_name,
       orphan_audio_files: stats.orphan_audio_files,
+      rounds_with_instruction_audio: stats.rounds_with_instruction_audio,
+      rounds_with_instruction_audio_by_template: Object.fromEntries(
+        Object.entries(stats.rounds_by_template).map(([template, c]) => [
+          template,
+          c.with_audio,
+        ])
+      ),
+      level_assets_with_audio: stats.level_assets_with_audio,
+      glyphs_without_vi_name: stats.glyphs_without_vi_name,
       date: new Date().toISOString().slice(0, 10),
-      note: "Ratchet gate cho độ phủ lời dẫn và âm thanh phát thành tiếng (Task #269 / BR-PNR-01..10). datasets_with_audio_path, engines_with_round_narration, items_with_audio_path CHỈ ĐƯỢC TĂNG. items_without_spoken_name là nợ BR-PNR-02, CHỈ ĐƯỢC GIẢM. orphan_audio_files là số đo, không ratchet.",
+      note: "Ratchet gate cho độ phủ lời dẫn và âm thanh phát thành tiếng (Task #269 / BR-PNR-01..10). datasets_with_audio_path, engines_with_round_narration, items_with_audio_path CHỈ ĐƯỢC TĂNG. items_without_spoken_name là nợ BR-PNR-02, CHỈ ĐƯỢC GIẢM. orphan_audio_files là số đo, không ratchet. Task #274 S5: rounds_with_instruction_audio (tổng và theo template) và level_assets_with_audio đo trên level đã phát, CHỈ ĐƯỢC TĂNG; glyphs_without_vi_name là nợ BR-PNR-02, CHỈ ĐƯỢC GIẢM.",
     };
     fs.writeFileSync(
       DEFAULT_BASELINE_PATH,

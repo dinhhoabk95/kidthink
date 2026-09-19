@@ -4,6 +4,14 @@ import path from "node:path";
 import type { SkillDataset } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import { scanNarrationCoverage } from "./check-narration-coverage.ts";
+import {
+  type FixtureLevel,
+  LEVEL_KEYWORD_WITH_MP3,
+  LEVEL_MP3_LOST,
+  LEVEL_ONE_ROUND_WITH_MP3,
+  LEVEL_UNNAMED_GLYPH,
+  LEVEL_WITHOUT_ROUNDS,
+} from "./fixtures/narration-levels.fixture.ts";
 
 describe("Cổng check:narration-coverage (Task #269 / BR-PNR-01..10)", () => {
   it("baseline: toàn bộ codebase hiện tại đạt chuẩn (0 vi phạm, ratchet xanh)", () => {
@@ -211,5 +219,102 @@ describe("Cổng check:narration-coverage (Task #269 / BR-PNR-01..10)", () => {
     } finally {
       fs.rmSync(tmpDir, { recursive: true, force: true });
     }
+  });
+});
+
+/**
+ * Trục đo trên level ĐÃ PHÁT (Task #274 S5). Trước đó cổng chỉ đếm engine
+ * "có gọi" narration và dataset nguồn — xanh trong khi 0/2.976 vòng GT-001
+ * có mp3 câu dẫn. Nguồn level là `buildLevelsForSkill`, cùng thứ seeder đổ
+ * vào `game_level_rounds`.
+ */
+describe("Cổng check:narration-coverage — độ phủ mp3 trên level đã phát (Task #274 S5)", () => {
+  function withBaseline(
+    fields: Record<string, number | Record<string, number>>,
+    levels: readonly FixtureLevel[]
+  ) {
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "narration-levels-"));
+    const baselinePath = path.join(tmpDir, "baseline.json");
+    fs.writeFileSync(
+      baselinePath,
+      JSON.stringify({
+        datasets_with_audio_path: 0,
+        datasets_total: 0,
+        engines_with_round_narration: 0,
+        engines_total: 37,
+        items_with_audio_path: 0,
+        orphan_audio_files: 0,
+        ...fields,
+      }),
+      "utf-8"
+    );
+    try {
+      return scanNarrationCoverage({ baselinePath, levels });
+    } finally {
+      fs.rmSync(tmpDir, { recursive: true, force: true });
+    }
+  }
+
+  it("corpus thật: cổng đọc được level (đếm > 0) và báo độ phủ mp3 theo template", () => {
+    const { stats } = scanNarrationCoverage();
+    expect(stats.rounds_total).toBeGreaterThan(0);
+    expect(stats.rounds_by_template["GT-001"]?.rounds).toBeGreaterThan(0);
+  });
+
+  it("đếm vòng có instruction_audio_path; level không khai rounds là một vòng không mp3", () => {
+    const { stats } = scanNarrationCoverage({
+      levels: [LEVEL_ONE_ROUND_WITH_MP3, LEVEL_WITHOUT_ROUNDS],
+    });
+    expect(stats.rounds_total).toBe(3);
+    expect(stats.rounds_with_instruction_audio).toBe(1);
+    expect(stats.rounds_by_template["GT-001"]).toEqual({
+      rounds: 2,
+      with_audio: 1,
+    });
+    expect(stats.rounds_by_template["GT-002"]).toEqual({
+      rounds: 1,
+      with_audio: 0,
+    });
+  });
+
+  it("Ca âm BR-PNR-10: một vòng mất mp3 câu dẫn làm cổng đỏ — tổng và theo template", () => {
+    const { violations } = withBaseline(
+      {
+        rounds_with_instruction_audio: 1,
+        rounds_with_instruction_audio_by_template: { "GT-001": 1 },
+      },
+      [LEVEL_MP3_LOST]
+    );
+    const targets = violations
+      .filter((v) => v.rule === "BR-PNR-10")
+      .map((v) => v.target);
+    expect(targets).toContain("rounds_with_instruction_audio");
+    expect(targets).toContain("rounds_with_instruction_audio:GT-001");
+  });
+
+  it("Ca âm BR-PNR-10: asset từ khoá mất mp3 làm cổng đỏ", () => {
+    const withMp3 = scanNarrationCoverage({ levels: [LEVEL_KEYWORD_WITH_MP3] });
+    expect(withMp3.stats.level_assets_with_audio).toBe(1);
+
+    const { violations } = withBaseline({ level_assets_with_audio: 1 }, [
+      LEVEL_ONE_ROUND_WITH_MP3,
+    ]);
+    expect(
+      violations.some(
+        (v) => v.rule === "BR-PNR-10" && v.target === "level_assets_with_audio"
+      )
+    ).toBe(true);
+  });
+
+  it("Ca âm BR-PNR-02: glyph không có tên tiếng Việt dày thêm làm cổng đỏ", () => {
+    const { stats, violations } = withBaseline({ glyphs_without_vi_name: 0 }, [
+      LEVEL_UNNAMED_GLYPH,
+    ]);
+    expect(stats.glyphs_without_vi_name).toBe(1);
+    expect(
+      violations.some(
+        (v) => v.rule === "BR-PNR-02" && v.target === "glyphs_without_vi_name"
+      )
+    ).toBe(true);
   });
 });
