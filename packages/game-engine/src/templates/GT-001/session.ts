@@ -1,4 +1,3 @@
-import { getByGlyph } from "@mindkid/emoji";
 import type { AgeBand } from "#src/contracts/types";
 import {
   type ActionResult,
@@ -6,6 +5,7 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { spokenKeywordForAsset } from "#src/labels/spoken-keyword";
 import { getTouchFloor } from "#src/layout/constants";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
@@ -37,23 +37,21 @@ const PROMPT_CARD_ID_PREFIX = "prompt:";
 /**
  * Chữ hiện trên thẻ và từ khoá đọc được của nó (`spokenLabel`) — dùng chung
  * cho thẻ lựa chọn và thẻ đề giữa màn, cả hai đều đọc lại khi trẻ chạm
- * (Task #273, `BR-PNR-02`).
+ * (Task #273, `BR-PNR-02`). Từ khoá đi qua `spokenKeywordForAsset` — cùng
+ * hàm cổng `check:narration-coverage` dùng để đếm glyph không đọc được tên;
+ * không dựng được tên thì không có `spokenLabel` (Task #274 S7).
  */
 function resolveAssetLabels(asset: ItemAsset): {
   glyph?: string;
   label?: string;
   spokenLabel?: string;
 } {
+  const spokenLabel = spokenKeywordForAsset(asset);
   if (asset.kind === "emoji") {
-    const entry = getByGlyph(asset.ref);
-    return {
-      glyph: asset.ref,
-      label: asset.ref,
-      spokenLabel: entry?.name || asset.ref,
-    };
+    return { glyph: asset.ref, label: asset.ref, spokenLabel };
   }
   if (asset.kind === "text") {
-    return { label: asset.text, spokenLabel: asset.text };
+    return { label: asset.text, spokenLabel };
   }
   return {};
 }

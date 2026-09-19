@@ -62,9 +62,9 @@ Kiểm: `rtk proxy npx vitest run` trong `packages/game-engine` và `apps/web`,
 ## S7 — Đọc lại từ khoá ưu tiên mp3
 
 - [ ] `handleVerdict` phát `audio_path` của entity trước TTS
-- [ ] Tên tiếng Việt cho 25 glyph thiếu; glyph lặp đọc thành cụm đếm
-- [ ] `formatSpokenLabel` thành helper dùng chung; xoá `resolveAssetLabels` riêng của GT-001
-- [ ] Thiếu tên thì không có `spokenLabel` — Cấm — NEVER đọc glyph thô
+- [~] Tên tiếng Việt cho glyph thiếu: `spokenKeywordForAsset` đọc được glyph lặp ("ba quả táo đỏ"), keycap nhiều số, chữ trong ô, chữ trần, nghề có giới tính (tra bản trung tính) — nợ corpus 68 → 28. **Còn 28** glyph cần tên trong catalog `@mindkid/emoji` (việc nội dung, xem plan §6)
+- [x] `spokenKeywordForAsset` (engine, dựng trên `formatSpokenLabel`) là helper dùng chung cho GT-001 và cổng narration
+- [x] Thiếu tên thì không có `spokenLabel` — Cấm — NEVER đọc glyph thô
 
 ## S6 — Sinh mp3 (`D-274-3`)
 

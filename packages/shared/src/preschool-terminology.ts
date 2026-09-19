@@ -101,6 +101,14 @@ export interface TerminologyOptions {
 /**
  * Kiểm tra một chuỗi hoặc asset có phải là số học hay không.
  */
+/**
+ * Chữ số thành từ đọc tiếng Việt, chữ thường: `3` → "ba", `15` → "mười lăm".
+ * Ngoài bảng (0–20) thì trả chữ số nguyên dạng.
+ */
+export function formatNumberWord(value: number): string {
+  return NUMBER_WORDS[String(value)] ?? String(value);
+}
+
 export function isNumberEntity(
   label: string,
   opts?: TerminologyOptions

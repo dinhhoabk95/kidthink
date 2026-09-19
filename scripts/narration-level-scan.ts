@@ -12,7 +12,7 @@ import {
   buildLevelsForSkill,
   type ContentSeed,
 } from "@mindkid/content";
-import { getByGlyph } from "@mindkid/emoji";
+import { spokenKeywordForAsset } from "@mindkid/game-engine";
 
 type JsonNode =
   | string
@@ -46,8 +46,8 @@ export interface LevelNarrationStats {
   /** Asset trong content có mp3 riêng (`audio_path`) — từ khoá đọc được bằng giọng thật. */
   readonly level_assets_with_audio: number;
   /**
-   * Glyph emoji (distinct) không có tên tiếng Việt trong `@mindkid/emoji` —
-   * chạm lại thì TTS đọc glyph thô. Nợ `BR-PNR-02`, chỉ được giảm.
+   * Glyph emoji (distinct) mà `spokenKeywordForAsset` không dựng được tên
+   * tiếng Việt — chạm lại thì không đọc được gì. Nợ `BR-PNR-02`, chỉ giảm.
    */
   readonly glyphs_without_vi_name: number;
   readonly glyphs_total: number;
@@ -130,7 +130,10 @@ export function scanLevelNarration<TPack>(
     }
   }
 
-  const unnamed = [...tally.glyphs].filter((g) => !getByGlyph(g)?.name);
+  // Cùng hàm bề mặt chơi dùng để đọc lại từ khoá — đo đúng thứ trẻ nghe được.
+  const unnamed = [...tally.glyphs].filter(
+    (ref) => spokenKeywordForAsset({ kind: "emoji", ref }) === undefined
+  );
 
   return {
     rounds_total: roundsTotal,

@@ -77,6 +77,10 @@ export {
   type ViewEntity,
 } from "./interaction";
 export {
+  type KeywordAsset,
+  spokenKeywordForAsset,
+} from "./labels/spoken-keyword.js";
+export {
   getTouchFloor,
   LOGIC_HEIGHT,
   LOGIC_WIDTH,

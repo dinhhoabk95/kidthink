@@ -47,7 +47,7 @@
     "GT-026": 0
   },
   "level_assets_with_audio": 37,
-  "glyphs_without_vi_name": 68,
+  "glyphs_without_vi_name": 28,
   "date": "2026-09-19",
   "note": "Ratchet gate cho độ phủ lời dẫn và âm thanh phát thành tiếng (Task #269 / BR-PNR-01..10). datasets_with_audio_path, engines_with_round_narration, items_with_audio_path CHỈ ĐƯỢC TĂNG. items_without_spoken_name là nợ BR-PNR-02, CHỈ ĐƯỢC GIẢM. orphan_audio_files là số đo, không ratchet. Task #274 S5: rounds_with_instruction_audio (tổng và theo template) và level_assets_with_audio đo trên level đã phát, CHỈ ĐƯỢC TĂNG; glyphs_without_vi_name là nợ BR-PNR-02, CHỈ ĐƯỢC GIẢM."
 }
