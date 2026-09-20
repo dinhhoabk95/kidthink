@@ -1,6 +1,10 @@
 import { AGE_BANDS } from "#src/contracts/types";
+import { shuffle } from "#src/rng/shuffle";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
+
+const TARGET_ATTRIBUTE = "target_attr";
+const OTHER_ATTRIBUTE = "other_attr";
 
 export const GT003Generator: LevelGenerator = {
   engine: "GT-003",
@@ -12,14 +16,15 @@ export const GT003Generator: LevelGenerator = {
   generate({ rng, age_band, vocabulary }) {
     const nouns = getNouns(vocabulary, 6);
     const totalCount = age_band === "3-4" ? 3 : 4;
-    const targetCount = age_band === "3-4" ? 2 : 2;
+    const targetCount = 2;
     const sampled = sampleUnique(rng, nouns, totalCount);
 
     const items = sampled.map((item, idx) => {
       const isTarget = idx < targetCount;
       return {
         item_id: `item_${idx + 1}`,
-        attribute: isTarget ? "target_attr" : "other_attr",
+        attribute: isTarget ? TARGET_ATTRIBUTE : OTHER_ATTRIBUTE,
+        label: item.label_vi,
         asset: { kind: "emoji" as const, ref: item.emoji_ref },
         is_correct: isTarget,
       };
@@ -31,11 +36,14 @@ export const GT003Generator: LevelGenerator = {
         container: {
           container_id: "basket_1",
           label: "Giỏ đồ",
-          accepts_attribute: "target_attr",
+          accepts_attribute: TARGET_ATTRIBUTE,
         },
-        items,
+        // Xáo trước khi ghi vào corpus: `is_correct` gắn theo chỉ số lúc sinh,
+        // nên không xáo thì MỌI level sinh ra đều có đáp án ở hai ô đầu.
+        items: shuffle(items, rng),
       },
       difficulty_params: {
+        item_count: items.length,
         distractor_count: totalCount - targetCount,
         target_count: targetCount,
         hint_after_ms: 10_000,

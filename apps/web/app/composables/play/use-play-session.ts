@@ -477,6 +477,20 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     }
   }
 
+  /**
+   * Trả lời sai ở vòng cấm thử lại thì đóng vòng ngay, giữ nguyên thành quả đã
+   * đúng (`GT-003.md` §5, nhánh 2). Vòng đã thắng đang chờ nhịp ăn mừng thì
+   * `skipCurrentRoundIfUnwon` tự bỏ qua.
+   */
+  function handleRetryDisallowed(): void {
+    if (!roundRunner?.isRetryDisallowed()) {
+      return;
+    }
+    if (skipCurrentRoundIfUnwon(roundRunner, "retry_disallowed")) {
+      engine?.scaffolding?.resetOnSuccess();
+    }
+  }
+
   function setPaused(isPaused: boolean, reason?: string): void {
     if (!engine) {
       return;
@@ -520,6 +534,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     getCachedPayload,
     fetchAndStartGame,
     handleSkipRound,
+    handleRetryDisallowed,
     handleRoundWonInternal,
     completeSessionOnFinish,
     setPaused,

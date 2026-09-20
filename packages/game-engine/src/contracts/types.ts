@@ -77,7 +77,8 @@ export interface GameTemplate<
   age_max: 3 | 4 | 5 | 6;
   banned_age_bands?: AgeBand[];
   requires_tap_fallback: boolean;
-  asset_kinds: ("emoji" | "image" | "audio")[];
+  /** `text` có trong union của `assetSchema()` nên phải khai được ở đây. */
+  asset_kinds: ("emoji" | "image" | "audio" | "text")[];
   kind?: "assess" | "teach";
   scoring: ScoringSchema;
   events: string[];

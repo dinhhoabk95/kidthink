@@ -14,10 +14,30 @@ export interface GestureOptions {
   readonly getEngine: () => GameEngine | null;
   readonly canvasRef: Ref<HTMLCanvasElement | null>;
   readonly onRoundWon: () => void;
+  /**
+   * Gọi khi trẻ trả lời sai ở một vòng cấm thử lại (`allow_retry: false`).
+   * Bề mặt đi thẳng vào `session.dispatch()`, không qua `RoundRunner
+   * .handleAction`, nên luật đóng vòng phải được gọi lại từ đây.
+   */
+  readonly onRetryDisallowed?: () => void;
+}
+
+/** Session theo dõi vị trí ngón tay để bật trạng thái "đích đang nhận". */
+interface PointerAwareSession {
+  setPointerOver(x: number, y: number): void;
+}
+
+function acceptsPointerOver(
+  session: GameSession
+): session is GameSession & PointerAwareSession {
+  return (
+    typeof (session as Partial<PointerAwareSession>).setPointerOver ===
+    "function"
+  );
 }
 
 export function usePlayGesture(options: GestureOptions) {
-  const { getEngine, canvasRef, onRoundWon } = options;
+  const { getEngine, canvasRef, onRoundWon, onRetryDisallowed } = options;
 
   const viewEntities = ref<readonly ViewEntity[]>([]);
 
@@ -124,6 +144,7 @@ export function usePlayGesture(options: GestureOptions) {
     engine.audio.playSoftFeedbackSound();
     engine.scaffolding?.onMiss();
     syncView();
+    onRetryDisallowed?.();
   }
 
   function dispatchGesture(gesture: Gesture): void {
@@ -185,6 +206,16 @@ export function usePlayGesture(options: GestureOptions) {
     const dist = Math.hypot(e.clientX - startClientX, e.clientY - startClientY);
     if (dist > 12) {
       isDragging = true;
+    }
+    if (!isDragging) {
+      return;
+    }
+    // Đích sáng lên khi vật đủ gần — trạng thái "đích đang nhận" của hợp đồng
+    // vẽ. Không có đường này thì cờ hover trong session không ai bật.
+    const session = getEngine()?.activeSession;
+    if (session && acceptsPointerOver(session)) {
+      const pt = getLogicPoint(e);
+      session.setPointerOver(pt.x, pt.y);
     }
   }
 

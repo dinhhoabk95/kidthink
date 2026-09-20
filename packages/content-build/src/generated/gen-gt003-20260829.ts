@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@74d488bd90be
+ * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
  * Engine: GT-003
  * Seed: 20260829
  * Theme: school
@@ -39,6 +39,7 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "item_id": "item_1",
           "attribute": "target_attr",
+          "label": "Thước kẻ",
           "asset": {
             "kind": "emoji",
             "ref": "📏"
@@ -48,6 +49,7 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "item_id": "item_2",
           "attribute": "target_attr",
+          "label": "Bút sáp",
           "asset": {
             "kind": "emoji",
             "ref": "🖍️"
@@ -57,6 +59,7 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "item_id": "item_3",
           "attribute": "other_attr",
+          "label": "Cái kéo",
           "asset": {
             "kind": "emoji",
             "ref": "✂️"
@@ -66,6 +69,7 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
       ]
     },
     "difficulty_params": {
+      "item_count": 3,
       "distractor_count": 1,
       "target_count": 2,
       "hint_after_ms": 10000,
@@ -100,35 +104,39 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "items": [
         {
-          "item_id": "item_1",
+          "item_id": "item_2",
           "attribute": "target_attr",
+          "label": "Bút sáp",
           "asset": {
             "kind": "emoji",
-            "ref": "🧮"
+            "ref": "🖍️"
           },
           "is_correct": true
         },
         {
-          "item_id": "item_2",
+          "item_id": "item_1",
           "attribute": "target_attr",
+          "label": "Cái kéo",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "✂️"
           },
           "is_correct": true
         },
         {
           "item_id": "item_3",
           "attribute": "other_attr",
+          "label": "Sách",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "📚"
           },
           "is_correct": false
         }
       ]
     },
     "difficulty_params": {
+      "item_count": 3,
       "distractor_count": 1,
       "target_count": 2,
       "hint_after_ms": 10000,
@@ -163,35 +171,39 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "items": [
         {
-          "item_id": "item_1",
-          "attribute": "target_attr",
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "label": "Sách mở",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "📖"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "label": "Cái kéo",
+          "asset": {
+            "kind": "emoji",
+            "ref": "✂️"
           },
           "is_correct": true
         },
         {
           "item_id": "item_2",
           "attribute": "target_attr",
+          "label": "Bút chì",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "✏️"
           },
           "is_correct": true
-        },
-        {
-          "item_id": "item_3",
-          "attribute": "other_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "✂️"
-          },
-          "is_correct": false
         }
       ]
     },
     "difficulty_params": {
+      "item_count": 3,
       "distractor_count": 1,
       "target_count": 2,
       "hint_after_ms": 10000,
@@ -226,35 +238,39 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "items": [
         {
-          "item_id": "item_1",
-          "attribute": "target_attr",
+          "item_id": "item_3",
+          "attribute": "other_attr",
+          "label": "Thước kẻ",
           "asset": {
             "kind": "emoji",
-            "ref": "✏️"
+            "ref": "📏"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "label": "Cặp sách",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🎒"
           },
           "is_correct": true
         },
         {
           "item_id": "item_2",
           "attribute": "target_attr",
+          "label": "Trường học",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🏫"
           },
           "is_correct": true
-        },
-        {
-          "item_id": "item_3",
-          "attribute": "other_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "📚"
-          },
-          "is_correct": false
         }
       ]
     },
     "difficulty_params": {
+      "item_count": 3,
       "distractor_count": 1,
       "target_count": 2,
       "hint_after_ms": 10000,
@@ -289,35 +305,39 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "items": [
         {
-          "item_id": "item_1",
-          "attribute": "target_attr",
-          "asset": {
-            "kind": "emoji",
-            "ref": "✂️"
-          },
-          "is_correct": true
-        },
-        {
           "item_id": "item_2",
           "attribute": "target_attr",
+          "label": "Bút chì",
           "asset": {
             "kind": "emoji",
-            "ref": "📏"
+            "ref": "✏️"
           },
           "is_correct": true
         },
         {
           "item_id": "item_3",
           "attribute": "other_attr",
+          "label": "Cái chuông",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
+            "ref": "🔔"
           },
           "is_correct": false
+        },
+        {
+          "item_id": "item_1",
+          "attribute": "target_attr",
+          "label": "Cặp sách",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🎒"
+          },
+          "is_correct": true
         }
       ]
     },
     "difficulty_params": {
+      "item_count": 3,
       "distractor_count": 1,
       "target_count": 2,
       "hint_after_ms": 10000,

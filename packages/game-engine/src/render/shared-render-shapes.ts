@@ -1245,108 +1245,111 @@ export function drawBasketSlot(
   ctx.restore();
 }
 
-function drawNestBase(
-  ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  r: number,
-  isHovered: boolean
-): void {
-  ctx.fillStyle = isHovered
-    ? "rgba(255, 191, 0, 0.45)"
-    : "rgba(255, 223, 160, 0.35)";
-  ctx.beginPath();
-  ctx.arc(cx, cy, r * (isHovered ? 1.45 : 1.25), 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.22)";
-  ctx.shadowBlur = 16;
-  ctx.shadowOffsetY = 6;
-  ctx.fillStyle = "#f5ede0";
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.restore();
-
-  ctx.strokeStyle = isHovered
-    ? designTokens.colors.montessori.amber
-    : designTokens.colors.montessori.woodBorder;
-  ctx.lineWidth = isHovered ? 5 : 4;
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.stroke();
-
-  ctx.fillStyle = "#ebd9be";
-  ctx.beginPath();
-  ctx.arc(cx, cy + 4, r * 0.78, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.strokeStyle = "rgba(180, 140, 80, 0.35)";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(cx, cy + 6, r * 0.55, 0.2, Math.PI - 0.2);
-  ctx.stroke();
+/**
+ * Hộp vẽ của đích chứa — KHÔNG phải `slot.w`/`slot.h`.
+ *
+ * Bố cục lưỡng phân cấp cho slot đích cùng cỡ với slot nguồn (120x100), nên vẽ
+ * đúng cỡ slot thì cái chứa nhỏ hơn cái được bỏ vào — đúng ca sai mà
+ * `GT-003.md` §14 gọi tên. Engine tính hộp lớn hơn rồi dùng **cùng** hộp đó cho
+ * cả vẽ lẫn chạm (`getContainerBox`).
+ */
+export interface ContainerBox {
+  readonly x: number;
+  readonly y: number;
+  readonly w: number;
+  readonly h: number;
 }
 
-function drawNestPlacedItems(
+/**
+ * Quầng sáng đích — gradient toả tròn, KHÔNG phải viền chữ nhật cứng.
+ * Dày lên khi vật đủ gần: trạng thái "đích đang nhận" của `GT-003.md` §12.
+ */
+function drawContainerAura(
   ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  r: number,
+  box: ContainerBox,
+  isHovered: boolean
+): void {
+  const radius = Math.max(box.w, box.h) * (isHovered ? 0.85 : 0.7);
+  const gradient = ctx.createRadialGradient(
+    box.x,
+    box.y,
+    radius * 0.35,
+    box.x,
+    box.y,
+    radius
+  );
+  gradient.addColorStop(
+    0,
+    isHovered ? "rgba(255, 191, 0, 0.38)" : "rgba(255, 223, 160, 0.22)"
+  );
+  gradient.addColorStop(1, "rgba(255, 223, 160, 0)");
+
+  ctx.save();
+  ctx.fillStyle = gradient;
+  ctx.beginPath();
+  ctx.arc(box.x, box.y, radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+/** Vật đã bỏ vào — xếp thành hàng trong lòng khay, co giãn theo số lượng. */
+function drawContainerPlacedItems(
+  ctx: CanvasRenderingContext2D,
+  box: ContainerBox,
   placedItems: readonly {
     item_id: string;
     asset: { kind: string; ref?: string; path?: string };
   }[]
 ): void {
   if (placedItems.length === 0) {
-    ctx.font = '36px "Noto Color Emoji", "Apple Color Emoji", sans-serif';
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText("🪹", cx, cy);
     return;
   }
 
   const count = placedItems.length;
-  const spacing = Math.min(36, r * 0.7);
-  const startX = cx - ((count - 1) * spacing) / 2;
+  const innerW = box.w * 0.82;
+  const chipR = Math.min(22, innerW / (count * 2.2));
+  const spacing = Math.min(innerW / count, chipR * 2.4);
+  const startX = box.x - ((count - 1) * spacing) / 2;
+  const chipY = box.y - box.h * 0.04;
 
   for (let i = 0; i < count; i++) {
     const item = placedItems[i];
     if (!item) {
       continue;
     }
-    const chickX = startX + i * spacing;
-    const chickY = cy - 2;
+    const chipX = startX + i * spacing;
 
     ctx.save();
     ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
     ctx.beginPath();
-    ctx.arc(chickX, chickY, 20, 0, Math.PI * 2);
+    ctx.arc(chipX, chipY, chipR, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.font = '32px "Noto Color Emoji", "Apple Color Emoji", sans-serif';
+    ctx.font = `${Math.round(chipR * 1.6)}px "Noto Color Emoji", "Apple Color Emoji", sans-serif`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    const glyph =
-      (item.asset.ref ? resolveEmojiGlyph(item.asset.ref) : "") || "🐥";
-    ctx.fillText(glyph, chickX, chickY);
+    const glyph = item.asset.ref ? resolveEmojiGlyph(item.asset.ref) : "";
+    if (glyph) {
+      ctx.fillText(glyph, chipX, chipY);
+    }
     ctx.restore();
   }
 }
 
-function drawNestBadge(
+/**
+ * Nhãn rổ kèm bộ đếm `đã bỏ/cần bỏ` — kênh đề thứ hai của `GT-003.md` §4 N2,
+ * để trẻ tắt âm vẫn biết cần bao nhiêu vật.
+ */
+function drawContainerBadge(
   ctx: CanvasRenderingContext2D,
-  cx: number,
-  cy: number,
-  r: number,
+  box: ContainerBox,
   label: string,
   placedCount: number,
   targetCount: number
 ): void {
-  const pillW = Math.max(120, r * 1.4);
-  const pillH = 26;
-  const pillY = cy + r - 10;
+  const pillW = Math.min(box.w * 0.96, Math.max(132, label.length * 10 + 56));
+  const pillH = 28;
+  const pillY = box.y + box.h / 2 - pillH / 2;
   const isComplete = placedCount >= targetCount;
 
   ctx.save();
@@ -1358,47 +1361,69 @@ function drawNestBadge(
     : designTokens.colors.montessori.woodBevel;
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.roundRect(cx - pillW / 2, pillY, pillW, pillH, 13);
+  ctx.roundRect(box.x - pillW / 2, pillY, pillW, pillH, 14);
   ctx.fill();
   ctx.stroke();
 
-  ctx.fillStyle = isComplete ? "#ffffff" : designTokens.colors.surface[800];
-  ctx.font = `bold 13px ${designTokens.fonts.heading}`;
+  ctx.fillStyle = isComplete
+    ? designTokens.colors.surface[0]
+    : designTokens.colors.surface[800];
+  ctx.font = `bold 14px ${designTokens.fonts.heading}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(
     `${label} (${placedCount}/${targetCount})`,
-    cx,
+    box.x,
     pillY + pillH / 2
   );
   ctx.restore();
 }
 
-// ── Tổ chim / Chuồng gà (GT-003) ────────────────────────────────────────────────
-export function drawNestTarget(
+// ── Đích chứa kiểu khay gỗ Montessori (GT-003) ──────────────────────────────
+/**
+ * Khay đích của `drag-to-container`. Thân khay vẽ bằng `rs.drawClayContainer`
+ * theo hợp đồng vẽ `GT-003.md` §12 lớp 2 — trước đây là `drawNestTarget`, một
+ * cái tổ chim vẽ cho mọi chủ đề, kể cả "kéo rác vào thùng rác".
+ */
+export function drawContainerTarget(
   ctx: CanvasRenderingContext2D,
-  slot: Slot,
-  options?: {
-    label?: string;
+  rs: RenderSystem,
+  box: ContainerBox,
+  options: {
+    label: string;
     placedItems?: readonly {
       item_id: string;
       asset: { kind: string; ref?: string; path?: string };
     }[];
-    targetCount?: number;
+    targetCount: number;
     isHovered?: boolean;
   }
 ): void {
-  const cx = slot.x;
-  const cy = slot.y;
-  const r = Math.min(slot.w, slot.h) * 0.44;
-  const isHovered = options?.isHovered ?? false;
-  const placedItems = options?.placedItems ?? [];
-  const targetCount = options?.targetCount ?? 2;
-  const label = options?.label ?? "Chuồng gà";
+  const isHovered = options.isHovered ?? false;
+  const placedItems = options.placedItems ?? [];
 
   ctx.save();
-  drawNestBase(ctx, cx, cy, r, isHovered);
-  drawNestPlacedItems(ctx, cx, cy, r, placedItems);
-  drawNestBadge(ctx, cx, cy, r, label, placedItems.length, targetCount);
+  drawContainerAura(ctx, box, isHovered);
+  rs.drawClayContainer(
+    ctx,
+    box.x,
+    box.y,
+    box.w,
+    box.h,
+    isHovered
+      ? designTokens.colors.montessori.woodTrayHigh
+      : designTokens.colors.montessori.woodTray,
+    isHovered
+      ? designTokens.colors.montessori.amber
+      : designTokens.colors.montessori.woodBorder
+  );
+  drawContainerPlacedItems(ctx, box, placedItems);
+  drawContainerBadge(
+    ctx,
+    box,
+    options.label,
+    placedItems.length,
+    options.targetCount
+  );
   ctx.restore();
 }

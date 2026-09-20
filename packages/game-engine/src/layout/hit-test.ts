@@ -24,6 +24,8 @@ interface EntityBox {
   readonly y: number;
   readonly w: number;
   readonly h: number;
+  /** Hình vùng chạm, mặc định `circle` (token tròn). Khay chữ nhật: `square`. */
+  readonly hitShape?: HitShape;
 }
 
 /**
@@ -123,7 +125,24 @@ export function findHitEntity<T extends EntityBox>(
   y: number,
   tolerance = TAP_TOLERANCE_PX
 ): T | null {
-  const boxes = entities.map((e) => ({ x: e.x, y: e.y, hitW: e.w, hitH: e.h }));
-  const index = findNearestHitIndex(boxes, x, y, "circle", tolerance);
-  return entities[index] ?? null;
+  let bestIndex = -1;
+  let minDistanceSq = Number.POSITIVE_INFINITY;
+  for (let i = 0; i < entities.length; i++) {
+    const entity = entities[i];
+    if (!entity) {
+      continue;
+    }
+    const distSq = hitDistanceSq(
+      { x: entity.x, y: entity.y, hitW: entity.w, hitH: entity.h },
+      x,
+      y,
+      entity.hitShape ?? "circle",
+      tolerance
+    );
+    if (distSq !== null && distSq < minDistanceSq) {
+      minDistanceSq = distSq;
+      bestIndex = i;
+    }
+  }
+  return entities[bestIndex] ?? null;
 }

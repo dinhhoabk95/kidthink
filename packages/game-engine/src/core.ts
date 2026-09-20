@@ -13,8 +13,19 @@ import { isLayoutId, resolveLayout } from "./layout/registry.js";
 import type { LayoutId, Slot } from "./layout/types.js";
 import { clearRenderCache } from "./render/index.js";
 import { AudioController } from "./systems/audio-controller.js";
+import {
+  DegradationManager,
+  type DegradationState,
+} from "./systems/degradation.js";
 import { RenderSystem } from "./systems/render-system.js";
 import { ScaffoldingSystem } from "./systems/scaffolding.js";
+
+/** Session có ô nhận trạng thái tuột hiệu ứng (36/37 template khai trường này). */
+function hasDegradationSlot(
+  session: GameSession | undefined
+): session is GameSession & { degradation: DegradationState | null } {
+  return session !== undefined && "degradation" in session;
+}
 
 /** Monotonic clock, falling back to Date.now in non-browser test envs. */
 function nowMs(): number {
@@ -149,6 +160,16 @@ export class GameEngine {
   private isPaused = false;
   private rafId?: number;
   private lastFrameTimeMs = 0;
+
+  /**
+   * Bỏ bớt hiệu ứng khi máy yếu (`BR-PRF-03`). Trước đây `DegradationManager`
+   * chỉ có test của chính nó gọi, nên nhánh `degradation?.particles_enabled`
+   * trong 36 session là mã chết: không ai gán trường đó bao giờ.
+   */
+  private readonly degradationManager = new DegradationManager();
+
+  /** FPS làm mượt theo trung bình trượt — một khung lag không hạ cả cảnh. */
+  private smoothedFps = 60;
   /** Set by `start(canvas)`. Absent in headless runs — the loop then skips drawing. */
   private ctx?: CanvasRenderingContext2D;
 
@@ -319,7 +340,24 @@ export class GameEngine {
     if (this.isInputOpen()) {
       this.tickScaffolding(deltaMs);
     }
+    this.applyDegradation(deltaMs);
     this.activeSession?.update?.(deltaMs);
+  }
+
+  /**
+   * Đẩy trạng thái tuột hiệu ứng vào session đang chạy. Sàn chạm, kênh âm và
+   * cỡ chữ Cấm — NEVER tuột: chúng là sàn tiếp cận, không phải trang trí.
+   */
+  private applyDegradation(deltaMs: number): void {
+    const session = this.activeSession;
+    if (!hasDegradationSlot(session)) {
+      return;
+    }
+    if (deltaMs > 0) {
+      const frameFps = Math.min(120, 1000 / deltaMs);
+      this.smoothedFps = this.smoothedFps * 0.9 + frameFps * 0.1;
+    }
+    session.degradation = this.degradationManager.updateFps(this.smoothedFps);
   }
 
   /**

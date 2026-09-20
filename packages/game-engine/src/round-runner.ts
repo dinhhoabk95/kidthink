@@ -209,16 +209,25 @@ export class RoundRunner {
       return { valid: false, feedback: "none" };
     }
     const result = this.currentSession.validateAction(action);
-    if (!result.valid) {
-      const config = this.rounds[this.currentRoundIndex];
-      const params = config?.difficulty_params as
-        | Record<string, unknown>
-        | undefined;
-      if (params?.allow_retry === false) {
-        this.skipCurrentRound("retry_disallowed");
-      }
+    if (!result.valid && this.isRetryDisallowed()) {
+      this.skipCurrentRound("retry_disallowed");
     }
     return result;
+  }
+
+  /**
+   * Vòng hiện tại có cấm thử lại không (`allow_retry: false`).
+   *
+   * Bề mặt chơi gửi cử chỉ thẳng vào `session.dispatch()` chứ không đi qua
+   * `handleAction`, nên luật này phải đọc được từ ngoài — nếu không thì
+   * `allow_retry` chỉ có hiệu lực trong test (`GT-003.md` §5, nhánh 2).
+   */
+  isRetryDisallowed(): boolean {
+    const config = this.rounds[this.currentRoundIndex];
+    const params = config?.difficulty_params as
+      | Record<string, unknown>
+      | undefined;
+    return params?.allow_retry === false;
   }
 
   /** Check if the current round is won. */

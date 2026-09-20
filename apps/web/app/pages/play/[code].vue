@@ -314,6 +314,7 @@
     getEngine,
     canvasRef,
     onRoundWon: playSession.handleRoundWonInternal,
+    onRetryDisallowed: playSession.handleRetryDisallowed,
   });
 
   const {

@@ -73,9 +73,13 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
       const session = new GT003Session(f3.content, f3.difficulty);
       session.prepareRound("3-4");
 
-      const sourceSlot = session.slots[0];
+      // Vị trí vật đổi theo seed (`GT-003.md` §4 N7), nên ô nguồn phải tra từ
+      // `displayItems` chứ Cấm — NEVER giả định `content.items[0]` ở ô đầu.
+      const draggedIndex = session.displayItems.findIndex((i) => i.is_correct);
+      const draggedItem = session.displayItems[draggedIndex];
+      const sourceSlot = session.sourceSlots[draggedIndex];
       const targetSlot = session.slots.at(-1);
-      if (!(sourceSlot && targetSlot)) {
+      if (!(sourceSlot && targetSlot && draggedItem)) {
         throw new Error("slots must exist");
       }
 
@@ -95,11 +99,7 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
         eventsBefore
       );
 
-      const firstItem = f3.content.items[0];
-      if (!firstItem) {
-        throw new Error("firstItem must exist");
-      }
-      expect(session.getPlacements().get(firstItem.item_id)).toBe(
+      expect(session.getPlacements().get(draggedItem.item_id)).toBe(
         f3.content.container.container_id
       );
     });
@@ -681,15 +681,12 @@ describe("Feature: Hành vi kéo thả (drop) và fallback chạm-chạm — tha
       const session = new GT003Session(f3.content, f3.difficulty);
       session.prepareRound("3-4");
 
-      const sourceSlot = session.slots[0];
+      const stagedIndex = session.displayItems.findIndex((i) => i.is_correct);
+      const firstItem = session.displayItems[stagedIndex];
+      const sourceSlot = session.sourceSlots[stagedIndex];
       const targetSlot = session.slots.at(-1);
-      if (!(sourceSlot && targetSlot)) {
+      if (!(sourceSlot && targetSlot && firstItem)) {
         throw new Error("slots must exist");
-      }
-
-      const firstItem = f3.content.items[0];
-      if (!firstItem) {
-        throw new Error("firstItem must exist");
       }
 
       // Tap 1: chạm nguồn

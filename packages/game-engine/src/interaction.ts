@@ -66,6 +66,13 @@ export interface ViewEntity {
   readonly w: number;
   readonly h: number;
   readonly label?: string;
+  /**
+   * Hình vùng chạm của entity trên bề mặt — phải khớp hình đang vẽ. Mặc định
+   * `circle` (token tròn). Khay/thẻ chữ nhật khai `square`, nếu không sẽ có
+   * vành chạm được engine chấp nhận mà bề mặt không tìm ra entity để đọc tên
+   * (Task #274, E5).
+   */
+  readonly hitShape?: "circle" | "square";
   readonly spokenLabel?: string;
   /** mp3 đọc `spokenLabel` — bề mặt chơi phát nó trước TTS (Task #274 S7b). */
   readonly spokenAudioPath?: string;

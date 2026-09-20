@@ -281,6 +281,7 @@ export type {
   GT003Content,
   GT003Difficulty,
 } from "./templates/GT-003/template.js";
+export { validateGT003Consistency } from "./templates/GT-003/template.js";
 export type {
   GT004Content,
   GT004Difficulty,

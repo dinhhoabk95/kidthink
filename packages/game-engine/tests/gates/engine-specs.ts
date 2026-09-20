@@ -57,6 +57,18 @@ const S15_BANNED_ROW_REGEX = /\|\s*`banned_age_bands`\s*\|\s*([^|]+)\|/;
 const S15_FALLBACK_REGEX =
   /\|\s*`requires_tap_fallback`\s*\|\s*`?(true|false)`?\s*\|/;
 const S15_ASSETS_ROW_REGEX = /\|\s*`asset_kinds`\s*\|\s*([^|]+)\|/;
+
+/**
+ * Bốn giá trị hợp lệ của `GameTemplate.asset_kinds`. Trước đây bộ lọc ở đây chỉ
+ * biết ba — spec khai `text` thì bị bỏ đi lúc đọc, nên cổng báo lệch với mọi
+ * engine dùng asset chữ, dù spec và registry ghi giống hệt nhau.
+ */
+const ASSET_KINDS: ReadonlySet<string> = new Set([
+  "emoji",
+  "image",
+  "audio",
+  "text",
+]);
 const S15_SESSION_REGEX = /\|\s*`engine_session`\s*\|\s*`?([^`|\s]+)`?\s*\|/;
 const S15_BACKTICK_TOKEN_REGEX = /`([^`]+)`/g;
 const S15_AGE_BAND_TOKEN_REGEX = /^\d-\d$/;
@@ -430,7 +442,7 @@ function checkLayoutsAndAssets(
     const assetRow = S15_ASSETS_ROW_REGEX.exec(s15Content)?.[1] || "";
     const actualAssets = Array.from(assetRow.matchAll(S15_QUOTED_WORD_REGEX))
       .map((m) => m[1])
-      .filter((a) => a === "emoji" || a === "image" || a === "audio");
+      .filter((a): a is string => a !== undefined && ASSET_KINDS.has(a));
     const sortedActual = Array.from(new Set(actualAssets)).sort();
     const sortedExpected = [...tmpl.asset_kinds].sort();
     if (JSON.stringify(sortedActual) !== JSON.stringify(sortedExpected)) {
