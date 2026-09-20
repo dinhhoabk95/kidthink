@@ -27,14 +27,16 @@ lát chạm tới), `rtk proxy pnpm typecheck --only root`, `rtk proxy pnpm type
 
 ## S1b — Nút Xong trên canvas (G1) · M · phụ thuộc: S1a
 
-- [ ] Primitive `drawCommitButton` ở `render/`, xuất qua barrel
-- [ ] Hình chữ nhật nút tính từ `logicSpace`, vẽ mờ khi 0 vật chọn (`N1`)
-- [ ] `toAction()`: tap trúng nút + ≥1 vật chọn → `submit_selection`; 0 chọn → `null`, không miss
-- [ ] `getView()` có entity `commit:done` (`neutral`, nhãn "Xong")
-- [ ] Test engine: tập đúng → thắng; tập sai → `ACTION_RETRY`; 0 chọn → `ACTION_IGNORED`
-- [ ] Test web (`play-gesture.test.ts`, session GT-002 thật): chạm nút → `onRoundWon` đúng một lần;
+- [x] Primitive `drawCommitButton` ở `render/`, xuất qua barrel
+- [x] Hình chữ nhật nút tính từ `logicSpace`, vẽ mờ khi 0 vật chọn (`N1`)
+- [x] `toAction()`: tap trúng nút + ≥1 vật chọn → `submit_selection`; 0 chọn → `null`, không miss
+- [x] `getView()` có entity `commit:done` (`neutral`, nhãn "Xong")
+- [x] Test engine: tập đúng → thắng; tập sai → `ACTION_RETRY`; 0 chọn → `ACTION_IGNORED`
+- [x] Test web (`play-gesture.test.ts`, session GT-002 thật): chạm nút → `onRoundWon` đúng một lần;
       Enter trên `commit:done` cho cùng kết quả
-- [ ] Ca âm: bỏ nhánh tap-nút trong `toAction()` → test web đỏ
+- [x] Ca âm: bỏ nhánh tap-nút trong `toAction()` → 2 test web + 2 test engine đỏ, khôi phục thì xanh
+- [x] `render/commit-button.ts` thêm vào `PRIMITIVE_MODULES` của cổng `BR-ERC-05`
+      (`tests/gates/render.ts`) — file vẽ dùng chung, cùng hạng với 4 file đã có
 
 ## S2 — Commit sai giữ tập chọn (G3, G5) · S · phụ thuộc: S1b
 

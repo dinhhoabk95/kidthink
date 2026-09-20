@@ -58,6 +58,10 @@ const PRIMITIVE_MODULES: readonly string[] = [
   "render/shared-render.ts",
   "render/shared-render-shapes.ts",
   "render/numeracy-primitives.ts",
+  // Nút Xong tách file riêng thay vì nhồi tiếp vào `shared-render.ts`
+  // (Task #275 S1b). Cùng hạng với bốn file trên: thư viện vẽ dùng chung,
+  // không engine nào sở hữu.
+  "render/commit-button.ts",
 ];
 
 function checkSessionDrawLines(

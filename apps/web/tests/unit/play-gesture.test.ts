@@ -3,11 +3,18 @@ import {
   ACTION_CORRECT,
   ACTION_RETRY,
   type ActionResult,
+  createGameSessionSync,
+  type EngineConfig,
   type GameAction,
+  type GT002Content,
+  type GT002Difficulty,
+  preloadGameSession,
+  RoundRunner,
   type Slot,
   TemplateGameSession,
+  type ViewEntity,
 } from "@mindkid/game-engine";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import { usePlayGesture } from "~/composables/play/use-play-gesture";
 
@@ -370,5 +377,157 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     expect(speakPrompt).not.toHaveBeenCalled();
     expect(onMiss).not.toHaveBeenCalled();
     expect(onSuccess).not.toHaveBeenCalled();
+  });
+});
+
+const GT002_CONTENT: GT002Content = {
+  prompt: "Bé hãy chọn tất cả các loại quả màu đỏ nhé!",
+  target_criterion: "Màu đỏ",
+  items: [
+    { item_id: "apple", asset: { kind: "emoji", ref: "🍎" }, is_correct: true },
+    {
+      item_id: "strawberry",
+      asset: { kind: "emoji", ref: "🍓" },
+      is_correct: true,
+    },
+    {
+      item_id: "banana",
+      asset: { kind: "emoji", ref: "🍌" },
+      is_correct: false,
+    },
+    {
+      item_id: "grape",
+      asset: { kind: "emoji", ref: "🍇" },
+      is_correct: false,
+    },
+  ],
+};
+
+const GT002_DIFFICULTY: GT002Difficulty = {
+  distractor_count: 2,
+  target_count: 2,
+  hint_after_ms: 8000,
+  allow_retry: true,
+};
+
+const GT002_ENGINE_CONFIG: EngineConfig = {
+  level_code: "GL-TEST-GT002",
+  content_version: 1,
+  template_code: "GT-002",
+  content_pack: GT002_CONTENT,
+  difficulty_params: GT002_DIFFICULTY,
+  theme_id: "default",
+  age_band: "4-5",
+  reduced_motion: false,
+  audio_enabled: false,
+};
+
+const COMMIT_ENTITY_ID = "commit:done";
+
+function makeGt002Harness() {
+  const runner = new RoundRunner({
+    rounds: [
+      {
+        round_index: 0,
+        content_pack: GT002_CONTENT,
+        difficulty_params: {
+          ...GT002_DIFFICULTY,
+          item_count: GT002_CONTENT.items.length,
+        },
+      },
+    ],
+    ageBand: "4-5",
+    layoutSeed: 1,
+    sessionFactory: (contentPack, difficultyParams, roundSeed) =>
+      createGameSessionSync("GT-002", {
+        ...GT002_ENGINE_CONFIG,
+        content_pack: contentPack,
+        difficulty_params: difficultyParams,
+        layout_seed: roundSeed,
+      }),
+    onPlayNarration: () => undefined,
+  });
+  runner.startFirstRound();
+
+  const onRoundWon = vi.fn();
+  const engine = {
+    activeSession: runner.getCurrentSession(),
+    acceptingInput: true,
+    audio: {
+      playSnapSound: vi.fn(),
+      playPopCelebrateSound: vi.fn(),
+      playSoftFeedbackSound: vi.fn(),
+      playPromptAudio: vi.fn(),
+      speakPrompt: vi.fn(),
+    },
+    scaffolding: { onMiss: vi.fn(), onSuccess: vi.fn() },
+    renderSystem: { LOGIC_WIDTH: 960, LOGIC_HEIGHT: 540 },
+  };
+
+  const gesture = usePlayGesture({
+    getEngine: () => engine as never,
+    canvasRef: ref(null),
+    onRoundWon,
+  });
+  gesture.syncView();
+
+  function entityById(id: string): ViewEntity {
+    const entity = gesture.viewEntities.value.find((e) => e.id === id);
+    if (!entity) {
+      throw new Error(`Thiếu entity ${id}`);
+    }
+    return entity;
+  }
+
+  function tapAllCorrectItems(): void {
+    for (const item of GT002_CONTENT.items.filter((i) => i.is_correct)) {
+      const entity = entityById(item.item_id);
+      gesture.dispatchGesture({
+        type: "tap",
+        x: entity.x,
+        y: entity.y,
+        timeMs: 0,
+      });
+    }
+  }
+
+  return { gesture, onRoundWon, engine, entityById, tapAllCorrectItems };
+}
+
+/**
+ * GT-002 nộp bài bằng nút Xong vẽ trên canvas (`D-275-1`): bề mặt web không
+ * phát `commit` cho engine này, nên nếu `toAction()` không nhận chạm vào nút
+ * thì trẻ không có đường nào thắng — chỉ harness engine gửi thẳng `commit`.
+ */
+describe("usePlayGesture — nút Xong của GT-002 thật (Task #275 S1b)", () => {
+  beforeAll(async () => {
+    await preloadGameSession("GT-002");
+  });
+
+  it("chọn đủ tập đúng rồi chạm nút Xong: báo thắng đúng một lần", () => {
+    const { gesture, onRoundWon, entityById, tapAllCorrectItems } =
+      makeGt002Harness();
+    tapAllCorrectItems();
+    expect(onRoundWon).not.toHaveBeenCalled();
+
+    const button = entityById(COMMIT_ENTITY_ID);
+    gesture.dispatchGesture({
+      type: "tap",
+      x: button.x,
+      y: button.y,
+      timeMs: 0,
+    });
+
+    expect(onRoundWon).toHaveBeenCalledTimes(1);
+  });
+
+  it("đường bàn phím: Enter trên nút Xong cho cùng kết quả", () => {
+    const { onRoundWon, entityById, tapAllCorrectItems, gesture } =
+      makeGt002Harness();
+    tapAllCorrectItems();
+
+    gesture.handleAccessibleEntityTap(entityById(COMMIT_ENTITY_ID));
+
+    expect(onRoundWon).toHaveBeenCalledTimes(1);
   });
 });
