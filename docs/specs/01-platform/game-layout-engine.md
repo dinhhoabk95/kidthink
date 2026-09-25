@@ -28,6 +28,10 @@ thành danh sách hình chữ nhật trong không gian logic 960×540. Tách nó
 là điều kiện để thêm template không phải viết lại hình học — hai template khác cơ chế vẫn
 dùng chung `grid`.
 
+Từ [`play-stage-zones.md`](play-stage-zones.md) (Task #277), hình chữ nhật mà layout lấp là
+`zones.stage` do `computeStageZones` cấp, không còn là toàn canvas; sàn chạm được kiểm trên px
+CSS thật theo quy tắc `BR-PSZ-04` — sàn chạm áp sau khi nhân tỉ lệ canvas.
+
 Đây cũng là chỗ duy nhất sàn chạm theo band tuổi được áp vào hình học. Sàn chạm sống trong
 một hàm ([`accessibility.md`](../08-quality/accessibility.md) `BR-A11-04`); layout là nơi gọi hàm đó.
 

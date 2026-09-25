@@ -23,7 +23,7 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | Khu vực | Spec | MVP |
 |---|---:|---:|
 | `00-foundation` | 19 | 18 |
-| `01-platform` | 49 | 35 |
+| `01-platform` | 50 | 36 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
 | `04-play` | 18 | 13 |
@@ -31,9 +31,10 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | `06-admin` | 31 | 30 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 11 | 9 |
-| **Tổng** | **193** | **140** |
+| **Tổng** | **194** | **141** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
+1 spec cộng thêm 2026-09-25 cho bố cục chung của bề mặt chơi: [`play-stage-zones.md`](01-platform/play-stage-zones.md) (Task #277) — 37 engine tự đặt lời dẫn, khay và nút nộp bài ở chỗ riêng, nút nộp nằm ở bốn vị trí khác nhau và GT-028 có thể không nộp được bài từ trang chơi.
 1 spec cộng thêm 2026-09-08 cho hợp đồng độ khó game level: [`level-difficulty-contract.md`](05-content/level-difficulty-contract.md) (Task #263) — ánh xạ mức khó 1..5 về số item hiển thị và tham số điều khiển qua bảng tra 37 engine × 5 mức.
 4 spec cộng thêm 2026-08-29 (Task #113) lấp lỗ hổng chiều sâu nội dung mỗi engine: [`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md), [`engine-content-depth.md`](05-content/engine-content-depth.md), [`level-generator-kit.md`](01-platform/level-generator-kit.md), [`content-theme-registry.md`](05-content/content-theme-registry.md). Kèm 27 phiếu engine ở [`engines/index.md`](01-platform/engines/index.md).
 2 spec cộng thêm cùng ngày cho go-live: [`engine-render-contract.md`](01-platform/engine-render-contract.md) và [`go-live-readiness.md`](08-quality/go-live-readiness.md) — corpus trước đó chỉ sở hữu tới mức MVP, không ai sở hữu câu "trẻ mở được chưa".
@@ -106,6 +107,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [engine-behavior-domain](01-platform/engine-behavior-domain.md) | P4 | Sáu miền hành vi, bằng chứng quan sát, trục biến thể và độ mở |
 | [engine-turn-script](01-platform/engine-turn-script.md) | P4 | Bảy nhịp một lượt chơi, tự đọc đề, tám nhánh bắt buộc |
 | [engine-input-contract](01-platform/engine-input-contract.md) | P1 | Hợp đồng nhập, ba vòng đời con trỏ, toLogicPoint, dispatch thuần |
+| [play-stage-zones](01-platform/play-stage-zones.md) | P4 | Bàn chơi năm vùng: HUD, lời dẫn, sân khấu, khay, nút hành động; sàn chạm trên px thật |
 | [telemetry-pipeline](01-platform/telemetry-pipeline.md) | P1 | Rollup, KPI nội dung |
 | [content-tagging](01-platform/content-tagging.md) | P1 | Ba trục what/thinking/mechanic |
 | [content-search](01-platform/content-search.md) | P1 | Bộ lọc, lọc theo quyền |

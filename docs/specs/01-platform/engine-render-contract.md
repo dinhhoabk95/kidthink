@@ -44,6 +44,10 @@ trên màn hình, tập trạng thái thị giác bắt buộc, và luật một
 Nó cấm — NEVER định nghĩa lại vòng lặp hay ngân sách khung hình; hai thứ đó thuộc
 [`game-engine-runtime.md`](game-engine-runtime.md).
 
+Khung năm vùng bao quanh chỗ engine vẽ — HUD, lời dẫn, khay, nút hành động — thuộc
+[`play-stage-zones.md`](play-stage-zones.md). Engine vẽ trong `zones.stage` và `zones.tray`,
+không vẽ nút nộp, nút nghe lại hay tiến độ vòng (`BR-PSZ-05`, `BR-PSZ-06`).
+
 ## 2. Actors
 
 | Actor | Quyền cần | Làm được gì ở đây |
@@ -284,6 +288,7 @@ Scenario: BR-ERC-11 — mỗi engine có test vẽ
 - Gọi thẳng `ctx.*` ngoài `RenderSystem`.
 - Ném lỗi trong `render()`.
 - Dùng màu làm kênh phân biệt duy nhất.
+- Vẽ ra ngoài `zones.stage` và `zones.tray` của [`play-stage-zones.md`](play-stage-zones.md).
 
 ## 11. Open questions
 
