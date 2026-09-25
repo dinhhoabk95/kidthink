@@ -23,11 +23,15 @@ của S0 — không file nào đổi trạng thái ngoài file của lát.
 
 ## S0 — Phép đo mở đầu · S · phụ thuộc: không
 
-- [ ] Baseline file test đỏ: `rtk proxy pnpm check:test-ratchet` chép danh sách vào plan mục 1.3
+- [x] Baseline file test đỏ: `rtk proxy pnpm check:test-ratchet` → [`277-s0-red-baseline.txt`](277-s0-red-baseline.txt)
+      (134 đỏ, Postgres không chạy; cổng exit 1 vì 92 file DB mới đỏ — do môi trường, không do #277)
 - [ ] Chụp 11 dạng tương tác ở 390×844, 844×390, 1024×768 vào `docs/qa/engine-captures/2026-09-25/`
-- [ ] Đo px thật của ba nút HUD và slot nhỏ nhất mỗi viewport, chép vào plan mục 1.3
-- [ ] Test tái hiện H3: `apps/web/tests/unit/play-commit-reachability.test.ts` — GT-028 thật, chạm
-      đủ số, không có đường nào từ trang gửi `commit` (test này phải **đỏ** trước S4)
+      — **chặn**: cần `pnpm services` và DB đã seed; dời sang Checkpoint 1 (plan mục 1.3, M3)
+- [ ] Đo px thật của ba nút HUD và slot nhỏ nhất mỗi viewport — **mới tính từ CSS** (plan mục 1.3,
+      M2: điện thoại ngang sàn 96 còn 44 px); tick khi đo được trên trình duyệt ở Checkpoint 1
+- [x] Test tái hiện H3: [`play-commit-reachability.test.ts`](../../apps/web/tests/unit/play-commit-reachability.test.ts)
+      — GT-028 thật, chạm đủ số, quét `tap` toàn canvas không thắng được. Dùng `it.fails` thay vì để
+      đỏ (giữ `check:test-ratchet`); bỏ `.fails` tạm thời thì đỏ đúng ở phép kiểm thắng cuối
 
 ## S1 — Hàm vùng thuần · M · phụ thuộc: S0
 
@@ -57,7 +61,7 @@ của S0 — không file nào đổi trạng thái ngoài file của lát.
 - [ ] `needsCommit` trên `TemplateGameSession`, mặc định `false`; GT-028 khai `true`
 - [ ] Shell vẽ `drawCommitButton` ở `zones.action`, chạm đổi thành `commit` (`BR-PSZ-05`)
 - [ ] GT-028 bỏ `drawProgressBadge` (`BR-PSZ-06`)
-- [ ] Test H3 của S0 chuyển xanh
+- [ ] Test H3 của S0: đổi `it.fails` thành `it`, test xanh
 - [ ] Ca âm: gỡ nhánh đổi chạm → test H3 đỏ lại
 
 ## Checkpoint 1 — Trình duyệt thật

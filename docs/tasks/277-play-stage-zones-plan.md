@@ -51,6 +51,34 @@ Lát S0 chạy trước mọi lát khác và chép số vào đây: ảnh chụp
 thước px thật của mọi nút HUD và mọi slot, kết quả tái hiện H3 trên trình duyệt, và danh sách file
 test đỏ trước khi sửa (baseline để diff).
 
+**M1 — H3 tái hiện được (2026-09-25).**
+[`apps/web/tests/unit/play-commit-reachability.test.ts`](../../apps/web/tests/unit/play-commit-reachability.test.ts):
+GT-028 thật qua `RoundRunner`, chạm đủ 4 vật (đếm 8), rồi quét `tap` mỗi 12 px trên toàn 960×540 —
+không toạ độ nào thắng được vòng (`expected false to be true` ở phép kiểm cuối). Cùng bàn đó, gửi
+thẳng `commit` thì thắng: engine đúng, lỗi nằm ở đường tới. Test dùng `it.fails` để cổng
+`check:test-ratchet` giữ xanh; S4 đổi thành `it`.
+
+**M2 — Tỉ lệ canvas và sàn chạm thật, tính từ CSS (chưa đo trên trình duyệt).**
+Hộp canvas = viewport trừ HUD (`5.5rem` = 88 px, dưới 640 px là `min-height: 4.5rem` = 72 px),
+đệm `.main-arena` (16+16 ngang, 8+16 dọc), đệm và viền `.wooden-tray-container` (10+4 mỗi phía),
+chặn `max-height: calc(85vh - 20px)`
+([`play-surface.css:120-314`](../../apps/web/app/assets/css/play-surface.css)). Cạnh ngắn logic luôn
+540 (`deriveLogicSpace`), nên `cssPerLogic` = cạnh ngắn hộp / 540.
+
+| Viewport | Hộp canvas CSS | `cssPerLogic` | Sàn 96 (band 3-4) | Sàn 76 (band 4-5) | Sàn 64 (band 5-6) |
+|---|---|---:|---:|---:|---:|
+| 844×390 điện thoại ngang | 784×250 | 0,463 | **44 px** | **35 px** | **30 px** |
+| 390×844 điện thoại dọc | 330×697 | 0,611 | **59 px** | **46 px** | **39 px** |
+| 1024×768 tablet ngang | 964×628 | 1,163 | 112 px | 88 px | 74 px |
+
+Hai viewport điện thoại đều dưới sàn ở **mọi** band; ở điện thoại ngang, sàn band 3-4 còn chưa tới
+một nửa. Nút HUD là `4rem` = 64 px CSS cố định ở mọi viewport — dưới sàn 76 và 96. Thêm nữa, trang
+chơi nằm trong `layouts/default.vue` nên navbar công khai đẩy khung `100vh` xuống, trẻ phải cuộn
+mới thấy đáy canvas (H10).
+
+**M3 — Ảnh chụp: chưa làm.** Postgres dev (cổng 5433) không chạy nên `/play/{code}` không tải được
+level. Cần `pnpm services` và DB đã seed; làm ở Checkpoint 1 cùng ảnh sau.
+
 ## 2. Quyết định — giả định đã ghi, người đặt việc sửa nếu sai
 
 | Mã | Quyết định | Vì sao |
