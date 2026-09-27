@@ -35,10 +35,15 @@ của S0 — không file nào đổi trạng thái ngoài file của lát.
 
 ## S1 — Hàm vùng thuần · M · phụ thuộc: S0
 
-- [ ] RED: `packages/game-engine/tests/layout/stage-zones.test.ts` — scenario `BR-PSZ-02`, `-03`, `-04`
-- [ ] `layout/stage-zones.ts` và hằng số vùng trong `layout/constants.ts`; sàn qua hàm touch floor
-- [ ] Ca âm: fixture `tests/layout/fixtures/` với `cssPerLogic` 0,72 và vùng tính trên logic px → test `BR-PSZ-04` đỏ
-- [ ] Xuất `computeStageZones` và `StageZones` qua barrel
+- [x] RED: [`stage-zones.test.ts`](../../packages/game-engine/tests/layout/stage-zones.test.ts) — scenario
+      `BR-PSZ-02`, `-03`, `-04`, thứ tự vùng `BR-PSZ-01`; đỏ vì module chưa có (2026-09-27)
+- [x] [`layout/stage-zones.ts`](../../packages/game-engine/src/layout/stage-zones.ts); `PROMPT_ZONE_H_PX`,
+      `TRAY_ZONE_H_PX` cạnh `CONTENT_TOP_PX`; sàn qua `getTouchFloorLogicPx` (bọc `getTouchFloor`)
+- [x] Ca âm: fixture [`stage-zones-logic-px-floor.ts`](../../packages/game-engine/tests/layout/fixtures/stage-zones-logic-px-floor.ts)
+      bị báo vi phạm; thêm: đổi `cssPerLogic` thành 1 trong hàm → hai test `BR-PSZ-04` đỏ
+- [x] Xuất `computeStageZones`, `StageZones`, `StageZonesInput`, `ZoneRect`, `getTouchFloorLogicPx` qua barrel
+- [ ] **Chưa phủ**: nửa slot của scenario `BR-PSZ-04` ("mọi LayoutId ở slotCount lớn nhất") — hàm layout
+      vẫn áp sàn ở logic px. Dời sang S3, khi layout nhận `zones.stage` và `cssPerLogic`
 
 ## S2 — Shell kid và HUD icon · M · phụ thuộc: S1
 

@@ -82,6 +82,7 @@ export {
 } from "./labels/spoken-keyword.js";
 export {
   getTouchFloor,
+  getTouchFloorLogicPx,
   LOGIC_HEIGHT,
   LOGIC_WIDTH,
   SAFE_MARGIN_PX,
@@ -112,6 +113,12 @@ export {
   LAYOUT_REGISTRY,
   resolveLayout,
 } from "./layout/registry.js";
+export {
+  computeStageZones,
+  type StageZones,
+  type StageZonesInput,
+  type ZoneRect,
+} from "./layout/stage-zones.js";
 export type {
   LayoutFn,
   LayoutId,

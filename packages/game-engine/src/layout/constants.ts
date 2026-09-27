@@ -13,6 +13,15 @@ export const SAFE_MARGIN_PX = 32;
 export const CONTENT_TOP_PX = 84;
 
 /**
+ * Chiều cao tối thiểu vùng lời dẫn — mascot, loa, picto mục tiêu
+ * (`play-stage-zones.md` mục 7.2). Loa cần cao hơn thì vùng cao theo loa.
+ */
+export const PROMPT_ZONE_H_PX = 112;
+
+/** Chiều cao tối thiểu khay — bằng chiều cao dock gỗ đang vẽ (`drawWoodenTokenDock`). */
+export const TRAY_ZONE_H_PX = 136;
+
+/**
  * Sàn chạm tối thiểu theo band tuổi (BR-A11-04 & BR-ENG-05)
  * Nguồn sự thật: TOUCH_FLOORS (@mindkid/shared - BR-CFO-07)
  */
@@ -27,6 +36,20 @@ export function getTouchFloor(ageBand: AgeBand): number {
     default:
       return TOUCH_FLOORS.kidPrimary;
   }
+}
+
+/**
+ * Sàn chạm quy ra logic px để đạt sàn trên **px CSS thật** (`BR-PSZ-04`).
+ * Canvas thu nhỏ (`cssPerLogic` < 1) thì cạnh logic phải lớn hơn sàn.
+ * `cssPerLogic` không hợp lệ (0, âm, NaN) coi như 1 — cấm — NEVER sinh `NaN`.
+ */
+export function getTouchFloorLogicPx(
+  ageBand: AgeBand,
+  cssPerLogic: number
+): number {
+  const scale =
+    Number.isFinite(cssPerLogic) && cssPerLogic > 0 ? cssPerLogic : 1;
+  return Math.ceil(getTouchFloor(ageBand) / scale);
 }
 
 /**
