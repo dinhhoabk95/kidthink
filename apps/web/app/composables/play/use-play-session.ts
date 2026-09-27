@@ -143,6 +143,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   const isLoading = ref(true);
   const displayTitle = ref("");
   const currentThemeId = ref("default");
+  const ageBand = ref<AgeBand>("3-4");
   const totalRounds = ref(1);
   const currentRound = ref(0);
   const canSkipRound = ref(false);
@@ -442,6 +443,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     displayTitle.value =
       payload.title || payload.name || `Bài học: ${levelCode}`;
     currentThemeId.value = payload.theme_id || "default";
+    ageBand.value = payload.age_band || "3-4";
 
     if (payload.assets && Array.isArray(payload.assets)) {
       await preloadPlayAssets(payload.assets);
@@ -520,6 +522,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     isLoading,
     displayTitle,
     currentThemeId,
+    ageBand,
     totalRounds,
     currentRound,
     canSkipRound,

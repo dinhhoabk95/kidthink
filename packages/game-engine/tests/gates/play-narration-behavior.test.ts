@@ -11,8 +11,13 @@ import {
   ScaffoldingSystem,
 } from "#src/index";
 
-const REPLAY_MIN_HEIGHT_REGEX = /\.btn-audio-replay[\s\S]*?min-height:\s*4rem;/;
-const REPLAY_MIN_WIDTH_REGEX = /\.btn-audio-replay[\s\S]*?min-width:\s*4rem;/;
+// Task #277 S2 (BR-PSZ-04): sàn 64px cố định co theo band tuổi thật —
+// `.btn-audio-replay` giờ đọc `--hud-touch-floor` (band 3-4 lên 96px), 4rem
+// chỉ còn là giá trị dự phòng của `var()`.
+const REPLAY_MIN_HEIGHT_REGEX =
+  /\.btn-audio-replay[\s\S]*?min-height:\s*var\(--hud-touch-floor,\s*4rem\);/;
+const REPLAY_MIN_WIDTH_REGEX =
+  /\.btn-audio-replay[\s\S]*?min-width:\s*var\(--hud-touch-floor,\s*4rem\);/;
 
 class StubSession extends BaseGameSession {
   setupEntities(): void {
@@ -262,12 +267,13 @@ describe("L5 — Dự phòng và hành vi chơi (BR-PNR-06..09 / Task #269)", ()
     expect(fallbackCalled).toBe(true);
   });
 
-  // T5.6: Nút "Nghe lại" giữ sàn chạm 64px ở stylesheet
-  it("T5.6 (BR-DSC-28): nút Nghe lại đạt sàn chạm 64px (4rem) trong play-surface.css", () => {
+  // T5.6: Nút "Nghe lại" đọc sàn chạm theo band tuổi thật (BR-PSZ-04), không
+  // còn khoá cứng 64px co theo canvas (H6/H7 của #277)
+  it("T5.6 (BR-DSC-28, BR-PSZ-04): nút Nghe lại đọc sàn chạm theo band qua --hud-touch-floor trong play-surface.css", () => {
     const cssPath = repoPath("apps/web/app/assets/css/play-surface.css");
     const cssContent = fs.readFileSync(cssPath, "utf-8");
 
-    // Khẳng định .btn-audio-replay có min-height 4rem và min-width 4rem (64px)
+    // Khẳng định .btn-audio-replay có min-height/min-width var(--hud-touch-floor, 4rem)
     expect(cssContent).toMatch(REPLAY_MIN_HEIGHT_REGEX);
     expect(cssContent).toMatch(REPLAY_MIN_WIDTH_REGEX);
   });

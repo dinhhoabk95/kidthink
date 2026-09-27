@@ -47,11 +47,26 @@ của S0 — không file nào đổi trạng thái ngoài file của lát.
 
 ## S2 — Shell kid và HUD icon · M · phụ thuộc: S1
 
-- [ ] RED: `apps/web/tests/unit/play-shell.test.ts` — trang không có `a[href]` ngoài khoá phụ huynh (`BR-PSZ-11`)
-- [ ] `definePageMeta({ layout: "kid" })`; canvas đo sau khi trừ chiều cao HUD
-- [ ] HUD ba nút icon, `aria-label` tiếng Việt, cạnh không dưới sàn band (`BR-PSZ-07`)
-- [ ] Resize gọi `syncView()` — test `BR-PSZ-12` với hai viewport
-- [ ] Ca âm: bỏ `definePageMeta` → test `BR-PSZ-11` đỏ
+- [x] RED: `apps/web/tests/component/play-stage-hud.test.ts` — 5 test (2026-09-27), đỏ
+      trước khi sửa: thiếu `definePageMeta`, `lesson-info-pill`/`btn-skip-round` còn
+      trong HUD, `syncView()` không được resize gọi lại
+- [x] `definePageMeta({ layout: "kid" })`; `layouts/kid.vue` viết lại — bỏ header/nav
+      cũ (chưa trang nào dùng), chỉ còn `<slot />` full-viewport, giữ `#main-content`
+      cho skip-link của `app.vue`
+- [x] HUD ba nút icon (khoá phụ huynh đầu dòng, hạt tiến độ giữa, loa nghe lại cuối
+      dòng), `aria-label` tiếng Việt, cạnh = `getTouchFloor(ageBand)` qua biến CSS
+      `--hud-touch-floor` (`BR-PSZ-07`, `BR-PSZ-04`); `usePlaySession` trả thêm
+      `ageBand`. Gỡ `lesson-info-pill` (chữ theo dõi Nghe lại/Bỏ qua chỉ còn
+      aria-label). "Bỏ qua" ra khỏi HUD, nút nổi tạm ở góc dưới trái sân khấu
+      (`.btn-skip-floating`, đối diện góc nút hành động tương lai của S4/`D-277-7`)
+- [x] Resize gọi `syncView()` cùng nhịp với tính lại logic space — sửa H11
+      (test `BR-PSZ-12`, trước đó `handleResize` không gọi `syncView()`)
+- [x] Ca âm: xoá `gesture.syncView()` khỏi `handleResize` → test `BR-PSZ-12` đỏ lại
+      (đã kiểm tay bằng cách tạm bỏ dòng đó và chạy lại suite)
+- [ ] **Chưa kiểm ở trình duyệt thật**: BR-PSZ-11 (không `a[href]` ngoài khoá phụ
+      huynh) chỉ verify được ở mức "trang khai đúng `definePageMeta`" — mount
+      component đơn lẻ không dựng `NuxtLayout` nên không thấy navbar/footer thật.
+      Xác nhận đầy đủ dời sang Checkpoint 1 (cần `pnpm services` + DB đã seed)
 
 ## S3 — Vùng lời dẫn và pilot GT-001 · M · phụ thuộc: S2
 

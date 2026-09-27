@@ -49,6 +49,7 @@ vi.mock("~/composables/play/use-play-session", () => ({
     isLoading,
     displayTitle: ref("Bài kiểm thử"),
     currentThemeId: ref("general"),
+    ageBand: ref("3-4"),
     totalRounds: ref(1),
     currentRound: ref(1),
     canSkipRound: ref(false),
@@ -98,6 +99,7 @@ vi.mock("~/composables/play/use-play-audio", () => ({
   }),
 }));
 
+vi.stubGlobal("definePageMeta", vi.fn());
 vi.stubGlobal("useRoute", () => ({
   params: { code: "GL-C1-CNT-TEST-0001" },
   query: {},

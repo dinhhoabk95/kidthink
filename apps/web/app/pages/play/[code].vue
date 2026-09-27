@@ -46,25 +46,53 @@
 
     <!-- Active Game Viewport -->
     <div class="game-viewport" v-show="!(isLoading || errorMessage)">
-      <!-- TOP HUD BAR (Kinder-Tactile Montessori) -->
-      <header class="top-hud-bar">
-        <!-- Left: Lesson Info Pill with Theme Badge -->
-        <div
-          class="lesson-info-pill"
-          :class="{ 'ring-4 ring-brand-400 animate-pulse': isPromptPillPulsing }"
+      <!-- TOP HUD BAR — đúng ba nút: khoá phụ huynh, hạt tiến độ, loa nghe
+           lại (`BR-PSZ-07`). Nhãn chữ chỉ là aria-label. -->
+      <header
+        class="top-hud-bar"
+        :class="{ 'ring-4 ring-brand-400 animate-pulse': isPromptPillPulsing }"
+        :style="{ '--hud-touch-floor': `${hudTouchFloorPx}px` }"
+      >
+        <!-- Parent Lock (800ms Long-Press) -->
+        <button
+          aria-label="Cổng phụ huynh / Thoát (nhấn giữ 1 giây)"
+          class="btn-parent-lock"
+          type="button"
+          @pointercancel="cancelParentLockHold"
+          @pointerdown="startParentLockHold"
+          @pointerleave="cancelParentLockHold"
+          @pointerup="cancelParentLockHold"
         >
-          <div class="avatar-circle">
-            <span aria-hidden="true" class="avatar-emoji">
-              {{ currentThemeInfo.icon }}
-            </span>
+          <div class="relative flex items-center justify-center">
+            <svg
+              aria-hidden="true"
+              class="absolute -inset-1 w-14 h-14 -rotate-90 pointer-events-none"
+              viewBox="0 0 36 36"
+              v-if="parentLockHoldProgress > 0"
+            >
+              <path
+                class="text-surface-300"
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="3.5"
+              />
+              <path
+                class="text-brand-600 transition-all duration-75"
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-width="3.5"
+                :stroke-dasharray="100"
+                :stroke-dashoffset="100 - parentLockHoldProgress"
+              />
+            </svg>
+            <UIcon class="w-6 h-6 text-surface-600" name="i-lucide-lock" />
           </div>
-          <div class="lesson-meta-box">
-            <span class="theme-tag-text">{{ currentThemeInfo.label_vi }}</span>
-            <span class="lesson-title-text">{{ displayTitle }}</span>
-          </div>
-        </div>
+        </button>
 
-        <!-- Center: Round Progress Indicator -->
+        <!-- Round Progress Indicator -->
         <div class="progress-container">
           <KidRoundProgressIndicator
             :current="currentRound"
@@ -72,70 +100,15 @@
           />
         </div>
 
-        <!-- Right: Actions (Audio Replay, Skip Round, Parent Lock) -->
-        <div class="hud-actions">
-          <!-- Skip button when scaffolding exhausted -->
-          <button
-            aria-label="Bỏ qua câu này"
-            class="btn-skip-round clay-button"
-            type="button"
-            v-if="canSkipRound"
-            @click="handleSkipRound"
-          >
-            <UIcon class="w-6 h-6 shrink-0" name="i-lucide-forward" />
-            <span class="btn-label">Bỏ qua</span>
-          </button>
-
-          <!-- Audio Replay -->
-          <button
-            aria-label="Nghe lại hướng dẫn"
-            class="btn-audio-replay clay-button"
-            type="button"
-            @click="replayInstructionAudio"
-          >
-            <UIcon class="w-6 h-6 shrink-0" name="i-lucide-volume-2" />
-            <span class="btn-label">Nghe lại</span>
-          </button>
-
-          <!-- Parent Lock (800ms Long-Press) -->
-          <button
-            aria-label="Cổng phụ huynh / Thoát (nhấn giữ 1 giây)"
-            class="btn-parent-lock"
-            type="button"
-            @pointercancel="cancelParentLockHold"
-            @pointerdown="startParentLockHold"
-            @pointerleave="cancelParentLockHold"
-            @pointerup="cancelParentLockHold"
-          >
-            <div class="relative flex items-center justify-center">
-              <svg
-                aria-hidden="true"
-                class="absolute -inset-1 w-14 h-14 -rotate-90 pointer-events-none"
-                viewBox="0 0 36 36"
-                v-if="parentLockHoldProgress > 0"
-              >
-                <path
-                  class="text-surface-300"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="3.5"
-                />
-                <path
-                  class="text-brand-600 transition-all duration-75"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-width="3.5"
-                  :stroke-dasharray="100"
-                  :stroke-dashoffset="100 - parentLockHoldProgress"
-                />
-              </svg>
-              <UIcon class="w-6 h-6 text-surface-600" name="i-lucide-lock" />
-            </div>
-          </button>
-        </div>
+        <!-- Audio Replay -->
+        <button
+          aria-label="Nghe lại hướng dẫn"
+          class="btn-audio-replay clay-button"
+          type="button"
+          @click="replayInstructionAudio"
+        >
+          <UIcon class="w-6 h-6 shrink-0" name="i-lucide-volume-2" />
+        </button>
       </header>
 
       <!-- MAIN ARENA: Montessori Wooden Tray Canvas -->
@@ -185,6 +158,19 @@
               </span>
             </button>
           </section>
+
+          <!-- Bỏ qua câu này — chỗ tạm ở góc đối diện nút hành động tương lai
+               (`D-277-7`, `zones.action` dựng ở #277 S4). Ra khỏi HUD để giữ
+               đúng ba nút của `BR-PSZ-07`. -->
+          <button
+            aria-label="Bỏ qua câu này"
+            class="btn-skip-floating clay-button"
+            type="button"
+            v-if="canSkipRound"
+            @click="handleSkipRound"
+          >
+            <UIcon class="w-6 h-6 shrink-0" name="i-lucide-forward" />
+          </button>
 
           <!-- Intro Flashcard & Echo Step Controls (GT-000) -->
           <div
@@ -248,14 +234,19 @@
 </template>
 
 <script lang="ts" setup>
-  import type { ViewEntity } from "@mindkid/game-engine";
-  import { TemplateGameSession } from "@mindkid/game-engine";
+  import {
+    getTouchFloor,
+    TemplateGameSession,
+    type ViewEntity,
+  } from "@mindkid/game-engine";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
   import { usePlayAudio } from "~/composables/play/use-play-audio";
   import { usePlayError } from "~/composables/play/use-play-error";
   import { usePlayGesture } from "~/composables/play/use-play-gesture";
   import { usePlaySession } from "~/composables/play/use-play-session";
-  import { usePlayThemes } from "~/composables/play/use-play-themes";
+
+  // Bề mặt chơi của trẻ: không navbar/footer/liên kết rời trang (`BR-PSZ-11`).
+  definePageMeta({ layout: "kid" });
 
   const route = useRoute();
   const router = useRouter();
@@ -288,8 +279,8 @@
 
   const {
     isLoading,
-    displayTitle,
     currentThemeId,
+    ageBand,
     totalRounds,
     currentRound,
     canSkipRound,
@@ -308,7 +299,8 @@
     cleanupSession,
   } = playSession;
 
-  const { currentThemeInfo } = usePlayThemes(currentThemeId);
+  /** Sàn chạm HUD theo band tuổi, trên px CSS thật — HUD là DOM (`D-277-2`, `BR-PSZ-04`). */
+  const hudTouchFloorPx = computed(() => getTouchFloor(ageBand.value));
 
   const gesture = usePlayGesture({
     getEngine,
@@ -501,6 +493,10 @@
         if (vp.logicSpace && roundRunner) {
           roundRunner.setLogicSpace(vp.logicSpace);
         }
+        // Slot vừa tính lại theo logic space mới — danh sách nút ẩn cho bàn
+        // phím/screen reader phải trỏ toạ độ mới trong cùng nhịp (`BR-PSZ-12`),
+        // không phải chờ vòng chơi kế tiếp mới đồng bộ (H11).
+        gesture.syncView();
       }
     }, 150);
   }
