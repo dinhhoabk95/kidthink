@@ -9,8 +9,16 @@ import type {
 import type { ContentSeed, ContentSeedRound } from "../types.js";
 import { buildConceptIntroPrompt } from "./gt-000.js";
 import { ALL_BUILDERS } from "./registry.js";
+import { numberDuplicateTitles, resolveLevelTitle } from "./title-resolver.js";
 
 const REGEX_MONTESSORI_CODE = /-01\d{2}$/;
+
+/**
+ * Version của mọi level sinh từ kỹ năng. v2: tên level theo `BR-SDS-16`.
+ * Đổi nội dung level đã gieo (kể cả `title`) thì tăng số này — seeder archive
+ * bản cũ và publish bản mới trong một transaction; giữ nguyên số thì seeder bỏ qua.
+ */
+export const GENERATED_LEVEL_CONTENT_VERSION = 2;
 
 /**
  * Chỗ trống trong `phrasing.prompt_template` mà bộ dựng level thay được.
@@ -399,7 +407,8 @@ function buildSingleLevel(
   builder: Projection,
   dataset: SkillDataset,
   identity: SkillIdentity,
-  levelPlan: SkillLevelPlan
+  levelPlan: SkillLevelPlan,
+  title: string
 ): ContentSeed {
   // Level dạy mang dataset chủ đề của riêng nó (BR-CTM-01): chủ đề không có
   // hàng `skills` để treo dataset, nên nó nằm trên chính level plan.
@@ -440,9 +449,9 @@ function buildSingleLevel(
     kind: "game_level",
     header: {
       code: levelCode,
-      content_version: 1,
+      content_version: GENERATED_LEVEL_CONTENT_VERSION,
       template_code: levelPlan.template,
-      title: `${identity.name} - ${levelPlan.template} (Cấp ${levelPlan.difficulty})`,
+      title,
       instruction: firstRound.instruction,
       age_min: ageBounds.age_min,
       age_max: ageBounds.age_max,
@@ -485,16 +494,27 @@ export function buildLevelsForSkill(skill: SkillSeed): ContentSeed[] {
 
   const identity = skill.identity;
   const dataset = skill.dataset;
+  const titles = numberDuplicateTitles(
+    skill.levels.map((plan) => resolveLevelTitle(identity.name, plan.theme))
+  );
   const contentSeeds: ContentSeed[] = [];
 
-  for (const levelPlan of skill.levels) {
+  for (const [index, levelPlan] of skill.levels.entries()) {
     const builder = ALL_BUILDERS[levelPlan.template];
     if (!builder) {
       throw new Error(
         `[buildLevelsForSkill] Không tìm thấy bộ dựng cho khuôn ${levelPlan.template} (kỹ năng ${identity.code})`
       );
     }
-    contentSeeds.push(buildSingleLevel(builder, dataset, identity, levelPlan));
+    const title = titles[index];
+    if (title === undefined) {
+      throw new Error(
+        `[buildLevelsForSkill] Thiếu tên cho level thứ ${index} của kỹ năng ${identity.code}`
+      );
+    }
+    contentSeeds.push(
+      buildSingleLevel(builder, dataset, identity, levelPlan, title)
+    );
   }
 
   return contentSeeds;

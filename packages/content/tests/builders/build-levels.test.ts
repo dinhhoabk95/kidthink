@@ -4,8 +4,9 @@ import {
   buildLevelsForSkill,
   normalizeThinkingTags,
 } from "../../src/builders/build-levels.js";
-import { getSkillSeed } from "../../src/skills/index.js";
+import { ALL_SKILL_SEEDS, getSkillSeed } from "../../src/skills/index.js";
 
+const MACHINE_TITLE_REGEX = /GT-\d{3}|Cấp \d/;
 const CONTRACT_MIN_ITEMS_REGEX = /đòi tối thiểu 4 vật/;
 const TEMPLATE_NOT_FOUND_REGEX =
   /Không tìm thấy bộ dựng cho khuôn GT-999_NON_EXISTENT/;
@@ -147,5 +148,18 @@ describe("normalizeThinkingTags (Task #266 / BR-STS-05 & T1.5, T1.6)", () => {
   it("giữ nguyên tag chuẩn trong CANONICAL_THINKING_TAGS", () => {
     const result = normalizeThinkingTags(["compare", "count"]);
     expect(result).toEqual(["compare", "count"]);
+  });
+
+  it("toàn corpus: tên level duy nhất trong kỹ năng, không lộ mã máy, content_version 2 (BR-SDS-16)", () => {
+    for (const skill of ALL_SKILL_SEEDS) {
+      const titles = buildLevelsForSkill(skill).map((l) => l.header.title);
+      expect(new Set(titles).size, skill.identity?.code).toBe(titles.length);
+      for (const title of titles) {
+        expect(title).not.toMatch(MACHINE_TITLE_REGEX);
+      }
+    }
+    const sample = getSkillSeed("C1.NREC.01");
+    const [first] = sample ? buildLevelsForSkill(sample) : [];
+    expect(first?.header.content_version).toBe(2);
   });
 });
