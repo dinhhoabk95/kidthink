@@ -21,7 +21,7 @@ describe("Gate check:engine-specs (BR-ESS-01..15)", () => {
   );
   const repoRoot = repoPath(".");
 
-  it("baseline gate: 36 templates, 36 specs, 0 đặt trước, 0 mồ côi", () => {
+  it("baseline gate: 37 templates, 38 specs, 1 đặt trước (GT-037), 0 mồ côi", () => {
     const result = scanEngineSpecsGate(
       specsDir,
       templatesDir,
@@ -30,15 +30,15 @@ describe("Gate check:engine-specs (BR-ESS-01..15)", () => {
       repoRoot
     );
     expect(result.totalTemplates).toBe(37);
-    expect(result.totalSpecs).toBe(37);
-    expect(result.plannedCount).toBe(0);
+    expect(result.totalSpecs).toBe(38);
+    expect(result.plannedCount).toBe(1);
     expect(result.orphanCount).toBe(0);
     expect(result.readyCount).toBeGreaterThanOrEqual(1);
     expect(result.violations).toHaveLength(0);
 
     const report = formatEngineSpecsReport(result);
-    expect(report).toContain("37 mã trong registry, 37 spec tồn tại, 0 mồ côi");
-    expect(report).toContain("0 spec chờ template");
+    expect(report).toContain("37 mã trong registry, 38 spec tồn tại, 0 mồ côi");
+    expect(report).toContain("1 spec chờ template");
   });
 
   // Ca âm 1: Xoá một spec engine -> Đỏ (BR-ESS-01)

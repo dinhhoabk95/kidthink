@@ -18,10 +18,18 @@ import {
   evaluateEngineDepth,
   loadEngineDepthConfig,
 } from "@mindkid/content-build";
+import {
+  type EngineSpecViolation,
+  loadPlannedMap,
+} from "#tests/gates/engine-specs.js";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(HERE, "../../..");
 const ENGINES_DIR = path.join(REPO_ROOT, "docs/specs/01-platform/engines");
+const PLANNED_CONFIG = path.join(
+  REPO_ROOT,
+  "packages/game-engine/config/engine-spec-planned.json"
+);
 
 const SPEC_FILE_REGEX = /^GT-\d{3}\.md$/;
 const S16_HEADER = "## 16. Chiều sâu nội dung";
@@ -29,6 +37,23 @@ const S17_HEADER_REGEX = /\n## 17\.\s/;
 const CAN_DO_KEYWORD = "cần đo";
 
 const MD_EXT_REGEX = /\.md$/;
+
+/**
+ * Mã đặt trước (`BR-ESS-15`) chưa có khuôn nên chưa có level trong corpus —
+ * Mục 16 của phiếu đó là cam kết viết tay, cấm — NEVER đòi số đo corpus.
+ */
+export function readPlannedCodes(
+  plannedConfigPath: string = PLANNED_CONFIG
+): ReadonlySet<string> {
+  const violations: EngineSpecViolation[] = [];
+  const planned = loadPlannedMap(plannedConfigPath, violations);
+  if (violations.length > 0) {
+    throw new Error(
+      violations.map((v) => `[${v.rule}] ${v.message}`).join("\n")
+    );
+  }
+  return new Set(Object.keys(planned));
+}
 
 function verdict(actual: number, target: number): string {
   return actual >= target ? "ĐẠT" : "CHƯA ĐẠT";
@@ -161,6 +186,7 @@ export function runEngineDepthSection(options?: { check?: boolean }): boolean {
   const config = loadEngineDepthConfig();
   const report = evaluateEngineDepth(ALL_SEED_LEVELS, config);
 
+  const plannedCodes = readPlannedCodes();
   const criteria = config.steps[String(config.active_step)];
   if (!criteria) {
     throw new Error(
@@ -171,6 +197,7 @@ export function runEngineDepthSection(options?: { check?: boolean }): boolean {
   const files = fs
     .readdirSync(ENGINES_DIR)
     .filter((f) => SPEC_FILE_REGEX.test(f))
+    .filter((f) => !plannedCodes.has(f.replace(MD_EXT_REGEX, "")))
     .sort();
 
   let hasError = false;

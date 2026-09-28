@@ -48,6 +48,23 @@ describe("Cổng check:engine-seed-matrix — Task #263 T13..T16", () => {
     expect(formatted).toContain("Số ô thủng: 0");
   });
 
+  // Phiếu đặt trước (BR-ESS-15) chưa có khuôn nên chưa thể có level; mồ côi thật do
+  // check:engine-specs sở hữu. Cổng này bỏ qua nhưng phải khai số bỏ qua trong báo cáo.
+  it("bỏ qua phiếu chưa có khuôn trong registry và khai rõ trong báo cáo", () => {
+    const report = evaluateEngineSeedMatrix(
+      ALL_SEED_LEVELS,
+      specsDir,
+      loadSeedMatrixBaseline(),
+      skillThinkingMap
+    );
+
+    expect(report.skippedNoTemplate).toEqual(["GT-037"]);
+    expect(report.deficits.some((d) => d.engine === "GT-037")).toBe(false);
+    expect(formatSeedMatrixReport(report)).toContain(
+      "Bỏ qua 1 phiếu chưa có khuôn: GT-037"
+    );
+  });
+
   it("Ca âm 1: bảng thiếu cột tag → ném lỗi (ERR_MISSING_TAG_COLUMNS)", () => {
     const invalidSpec = `
 # GT-099 — Test Engine

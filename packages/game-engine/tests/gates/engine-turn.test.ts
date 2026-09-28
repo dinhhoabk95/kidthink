@@ -27,16 +27,16 @@ describe("Gate check:engine-turn (BR-ETS-01..12, BR-ESS-18..19)", () => {
   const sampleSpecPath = repoPath("docs/specs/01-platform/engines/GT-001.md");
   const sampleSpecContent = readFileSync(sampleSpecPath, "utf-8");
 
-  it("baseline: 37 phiếu engine đạt chuẩn kịch bản 7 nhịp và 8 nhánh, 0 vi phạm", () => {
+  it("baseline: 38 phiếu engine (37 khuôn + GT-037 đặt trước) đạt chuẩn kịch bản 7 nhịp và 8 nhánh, 0 vi phạm", () => {
     const result = scanEngineTurnGate({ specsDir });
-    expect(result.totalSpecs).toBe(37);
+    expect(result.totalSpecs).toBe(38);
     expect(result.violations).toHaveLength(0);
 
     const report = formatEngineTurnReport(result);
-    expect(report).toContain("Tổng số spec đã quét: 37");
+    expect(report).toContain("Tổng số spec đã quét: 38");
     expect(report).toContain("Số vi phạm: 0");
     expect(report).toContain(
-      "Tất cả 37 phiếu engine đạt chuẩn kịch bản lượt chơi"
+      "Tất cả 38 phiếu engine đạt chuẩn kịch bản lượt chơi"
     );
   });
 

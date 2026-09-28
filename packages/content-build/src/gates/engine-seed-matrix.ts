@@ -51,6 +51,8 @@ export interface SeedMatrixBaselineConfig {
 
 export interface SeedMatrixReport {
   readonly totalEngines: number;
+  /** Phiếu chưa có khuôn (đặt trước `BR-ESS-15`) nên chưa thể có level — không đo. */
+  readonly skippedNoTemplate: readonly string[];
   readonly totalTargetCells: number;
   readonly totalHoles: number;
   readonly maxDeficits: number;
@@ -358,6 +360,7 @@ export function evaluateEngineSeedMatrix(
   }
 
   let totalTargetCells = 0;
+  const skippedNoTemplate: string[] = [];
   const deficits: SeedMatrixDeficit[] = [];
   const newHoles: SeedMatrixDeficit[] = [];
   const violations: string[] = [];
@@ -365,6 +368,11 @@ export function evaluateEngineSeedMatrix(
   for (const file of specFiles) {
     const engineCode = file.replace(".md", "");
     const template = ALL_TEMPLATES[engineCode];
+    if (!template) {
+      // Mồ côi thật do check:engine-specs (BR-ESS-01) chặn; ở đây chỉ bỏ qua và khai.
+      skippedNoTemplate.push(engineCode);
+      continue;
+    }
     const filePath = join(specsDir, file);
     const content = readFileSync(filePath, "utf-8");
     const spec = parseSeedMatrixFromSpec(content, engineCode, template);
@@ -395,7 +403,8 @@ export function evaluateEngineSeedMatrix(
   }
 
   return {
-    totalEngines: specFiles.length,
+    totalEngines: specFiles.length - skippedNoTemplate.length,
+    skippedNoTemplate,
     totalTargetCells,
     totalHoles: deficits.length,
     maxDeficits: baselineConfig.max_deficits,
@@ -413,6 +422,11 @@ export function formatSeedMatrixReport(report: SeedMatrixReport): string {
   const lines: string[] = [];
   lines.push("=== CỔNG CHECK:ENGINE-SEED-MATRIX (Task #263 T13) ===");
   lines.push(`Tổng số phiếu engine đã quét: ${report.totalEngines}`);
+  if (report.skippedNoTemplate.length > 0) {
+    lines.push(
+      `Bỏ qua ${report.skippedNoTemplate.length} phiếu chưa có khuôn: ${report.skippedNoTemplate.join(", ")}`
+    );
+  }
   lines.push(`Tổng số ô có mục tiêu: ${report.totalTargetCells}`);
   lines.push(
     `Số ô thủng: ${report.totalHoles} (trần ratchet: ${report.maxDeficits})`

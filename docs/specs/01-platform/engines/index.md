@@ -2,7 +2,7 @@
 
 # Danh mục phiếu engine
 
-37 engine trong registry, 37 phiếu, 0 đặt trước, 0 mồ côi.
+37 engine trong registry, 38 phiếu, 1 đặt trước, 0 mồ côi.
 
 Hình dạng phiếu và luật đối chiếu: [`engine-spec-sheet.md`](../engine-spec-sheet.md).
 Sàn nội dung mỗi engine: [`engine-content-depth.md`](../../05-content/engine-content-depth.md).
@@ -56,3 +56,4 @@ ra đời trước khuôn, và cổng đối chiếu trường trích chỉ bậ
 
 | Mã | Tên | Cơ chế đặt trước | Lô | Plan sở hữu |
 |---|---|---|---|---|
+| [`GT-037`](GT-037.md) | Tìm hết ký hiệu | `symbol-hunt` | taxonomy-gap | [`278-engine-gt-037-symbol-hunt-plan.md`](../../../tasks/278-engine-gt-037-symbol-hunt-plan.md) |

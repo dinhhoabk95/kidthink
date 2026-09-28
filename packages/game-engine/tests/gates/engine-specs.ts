@@ -631,7 +631,7 @@ export function lintSingleEngineSpec(
  * plan có thật, và phải rời danh sách ngay khi template xuất hiện. Không có hai ràng
  * buộc đó thì "đặt trước" trở thành lối đi vòng của khoản mồ côi ở `BR-ESS-01`.
  */
-function loadPlannedMap(
+export function loadPlannedMap(
   plannedConfigPath: string | undefined,
   violations: EngineSpecViolation[]
 ): PlannedSpecMap {
