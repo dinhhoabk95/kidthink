@@ -18,6 +18,7 @@ import {
   drawSlotItem,
   drawWoodenTokenDock,
   getCentralTargetCardSlot,
+  getWoodenTokenDockRect,
   type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
@@ -115,20 +116,18 @@ export class GT001Session extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const count = this.displayOptions.length;
-    const { w: LOGIC_WIDTH, h: LOGIC_HEIGHT } = this.logicSpace;
     if (this.content.target_item && count > 0) {
       const touchFloor = getTouchFloor(ageBand);
-      const dockH = 130;
-      const dockY = LOGIC_HEIGHT - dockH - 12;
-      const centerY = dockY + dockH / 2;
+      const dock = getWoodenTokenDockRect(this.logicSpace, this.stageRect);
+      const centerY = dock.y + dock.h / 2;
       const gap = 24;
       const slotW = Math.max(
         touchFloor,
-        Math.min(104, (LOGIC_WIDTH * 0.8 - (count - 1) * gap) / count)
+        Math.min(104, (dock.w - (count - 1) * gap) / count)
       );
       const slotH = slotW;
       const totalW = count * slotW + (count - 1) * gap;
-      const startX = (LOGIC_WIDTH - totalW) / 2;
+      const startX = dock.x + (dock.w - totalW) / 2;
       const slots: Slot[] = [];
       for (let i = 0; i < count; i++) {
         slots.push({
@@ -218,7 +217,10 @@ export class GT001Session extends TemplateGameSession<
     // bằng đúng id của lựa chọn đúng (2.976/2.976 vòng, Task #274 E1) — mượn
     // nguyên id là hai entity cùng khoá.
     if (this.content.target_item) {
-      const targetSlot = getCentralTargetCardSlot(this.logicSpace);
+      const targetSlot = getCentralTargetCardSlot(
+        this.logicSpace,
+        this.stageRect
+      );
       const { glyph, label, spokenLabel, spokenAudioPath } = resolveAssetLabels(
         this.content.target_item.asset
       );
@@ -334,11 +336,19 @@ export class GT001Session extends TemplateGameSession<
     this.lastFrameMs = timeMs;
     const slots = this.slots;
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    if (this.content.target_item) {
-      drawCentralTargetCard(ctx, rs, this.content.target_item.asset);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
     }
-    drawWoodenTokenDock(ctx, rs);
+    if (this.content.target_item) {
+      drawCentralTargetCard(
+        ctx,
+        rs,
+        this.content.target_item.asset,
+        undefined,
+        this.stageRect
+      );
+    }
+    drawWoodenTokenDock(ctx, rs, this.stageRect);
     this.drawInteractive(rs, ctx, slots);
     this.drawFeedback(rs, ctx, slots, timeMs);
   }

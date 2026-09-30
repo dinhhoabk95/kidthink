@@ -1,6 +1,7 @@
-import type { AgeBand } from "./contracts/types";
-import type { EngineView, Gesture } from "./interaction";
-import { DEFAULT_LOGIC_SPACE, type LogicSpace } from "./layout/constants";
+import type { AgeBand } from "./contracts/types.js";
+import type { EngineView, Gesture } from "./interaction.js";
+import { DEFAULT_LOGIC_SPACE, type LogicSpace } from "./layout/constants.js";
+import type { ZoneRect } from "./layout/stage-zones.js";
 import type { Slot } from "./layout/types";
 import type { RenderSystem } from "./systems/render-system";
 
@@ -179,13 +180,25 @@ export abstract class TemplateGameSession<
     return null;
   }
 
+  /** Phiên có cần khay vật thể riêng không (`BR-PSZ-01`). Mặc định false. */
+  readonly needsTray: boolean = false;
+
+  /** Phiên có cần nút nộp bài không (`BR-PSZ-05`). Mặc định false. */
+  readonly needsCommit: boolean = false;
+
+  /** Vùng sân khấu được cấp bởi shell (`BR-PSZ-01`, Task #277 S3). */
+  stageRect?: ZoneRect;
+
   /**
    * Final — orchestrates a round: setup entities → compute slots → derived state.
    * Called by RoundRunner and GameEngine instead of raw setupEntities+resolveSlots.
    */
-  prepareRound(band: AgeBand, space?: LogicSpace): void {
+  prepareRound(band: AgeBand, space?: LogicSpace, stage?: ZoneRect): void {
     if (space) {
       this.logicSpace = space;
+    }
+    if (stage) {
+      this.stageRect = stage;
     }
     this.setupEntities();
     this._slots = this.computeSlots(band);
@@ -199,9 +212,12 @@ export abstract class TemplateGameSession<
    * Backward compatibility for callers/tests calling resolveSlots directly.
    * Delegates to computeSlots and caches the result on this._slots.
    */
-  resolveSlots(band: AgeBand, space?: LogicSpace): void {
+  resolveSlots(band: AgeBand, space?: LogicSpace, stage?: ZoneRect): void {
     if (space) {
       this.logicSpace = space;
+    }
+    if (stage) {
+      this.stageRect = stage;
     }
     this._slots = this.computeSlots(band);
     this.sourceSlots = this._slots.filter((s) => s.role === "source");

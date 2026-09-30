@@ -1,4 +1,5 @@
 import { CONTENT_TOP_PX, DEFAULT_LOGIC_SPACE } from "#src/layout/constants";
+import type { ZoneRect } from "#src/layout/stage-zones.js";
 import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
@@ -1052,7 +1053,7 @@ export function drawPromptText(
   ctx.font = fontStr;
 
   const maxCardW = Math.min(860, width - 40);
-  const maxContentW = maxCardW - 90;
+  const maxContentW = maxCardW - 48;
 
   const singleLineWidth = ctx.measureText(prompt).width;
   let lines: readonly string[];
@@ -1073,7 +1074,7 @@ export function drawPromptText(
     contentW = maxW;
   }
 
-  const cardW = Math.max(360, Math.min(maxCardW, contentW + 90));
+  const cardW = Math.max(280, Math.min(maxCardW, contentW + 48));
   const lineHeight = Math.round(fontPx * 1.35);
   const lineCount = Math.max(1, lines.length);
   const cardH = Math.max(54, 20 + lineCount * lineHeight);
@@ -1110,29 +1111,13 @@ export function drawPromptText(
   ctx.fill();
   ctx.stroke();
 
-  // Honey Amber Speaker Icon Badge at left
-  const badgeRadius = 18;
-  const badgeX = cardX + 28;
-  const badgeY = lineCount > 1 ? cardY + 27 : cardY + cardH / 2;
-  ctx.fillStyle = designTokens.colors.montessori.amber;
-  ctx.beginPath();
-  ctx.arc(badgeX, badgeY, badgeRadius, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Speaker symbol inside badge
-  ctx.font =
-    '18px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif';
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText("🔊", badgeX, badgeY);
-
-  // Prompt text (cùng cỡ font với khi đo, BR-ERC-15)
+  // Prompt text (cùng cỡ font với khi đo, BR-ERC-15) — căn giữa, bỏ badge loa trang trí (H8, Task #277 S3)
   ctx.fillStyle = designTokens.colors.surface[900];
   ctx.font = fontStr;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  const textCenterX = cardX + 54 + (cardW - 54) / 2;
+  const textCenterX = cardX + cardW / 2;
   const startY = cardY + (cardH - (lineCount - 1) * lineHeight) / 2;
 
   for (let i = 0; i < lines.length; i++) {
@@ -1161,7 +1146,29 @@ export function drawEmojiContent(
  * Nhận `LogicSpace` trực tiếp (không phải `RenderSystem`) để gọi được từ
  * `getView()`, nơi không có `RenderSystem` trong tay.
  */
-export function getCentralTargetCardSlot(logicSpace: LogicSpace): Slot {
+export function getCentralTargetCardSlot(
+  logicSpace: LogicSpace,
+  stage?: ZoneRect
+): Slot {
+  if (stage) {
+    const dockH = Math.min(130, Math.floor(stage.h * 0.42));
+    const availH = stage.h - dockH - 20;
+    const cardH = Math.round(Math.min(180, Math.max(100, availH)));
+    const cardW = cardH;
+    const cardX = stage.x + (stage.w - cardW) / 2;
+    const cardY = stage.y + Math.max(6, Math.floor((availH - cardH) / 2) + 6);
+    return {
+      index: 0,
+      x: Math.round(cardX + cardW / 2),
+      y: Math.round(cardY + cardH / 2),
+      w: cardW,
+      h: cardH,
+      hitW: cardW,
+      hitH: cardH,
+      page: 0,
+      role: "target",
+    };
+  }
   const cardW = 180;
   const cardH = 180;
   const cardX = (logicSpace.w - cardW) / 2;
@@ -1183,9 +1190,10 @@ export function drawCentralTargetCard(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   asset?: RenderAsset | null,
-  text?: string
+  text?: string,
+  stage?: ZoneRect
 ): void {
-  const slot = getCentralTargetCardSlot(rs.logicSpace);
+  const slot = getCentralTargetCardSlot(rs.logicSpace, stage);
   const cardW = slot.w;
   const cardH = slot.h;
   const cardX = slot.x - cardW / 2;
@@ -1239,16 +1247,45 @@ export function drawCentralTargetCard(
   ctx.restore();
 }
 
+/** Tính toạ độ và kích thước dock khay gỗ, tương thích khi có hoặc chưa có stage zone. */
+export function getWoodenTokenDockRect(
+  space: LogicSpace,
+  stage?: ZoneRect
+): ZoneRect {
+  if (stage) {
+    const dockH = Math.min(130, Math.floor(stage.h * 0.42));
+    const dockW = stage.w * 0.9;
+    const dockX = stage.x + (stage.w - dockW) / 2;
+    const dockY = stage.y + stage.h - dockH - 6;
+    return {
+      x: Math.round(dockX),
+      y: Math.round(dockY),
+      w: Math.round(dockW),
+      h: Math.round(dockH),
+    };
+  }
+  const dockW = space.w * 0.9;
+  const dockH = 136;
+  const dockX = (space.w - dockW) / 2;
+  const dockY = space.h - dockH - 12;
+  return {
+    x: Math.round(dockX),
+    y: Math.round(dockY),
+    w: Math.round(dockW),
+    h: Math.round(dockH),
+  };
+}
+
 /** Dock khay gỗ phía dưới cho các token lựa chọn */
 export function drawWoodenTokenDock(
   ctx: CanvasRenderingContext2D,
-  rs: RenderSystem
+  rs: RenderSystem,
+  stageOrRect?: ZoneRect
 ): void {
-  const dockW = rs.LOGIC_WIDTH * 0.9;
-  const dockH = 136;
-  const dockX = (rs.LOGIC_WIDTH - dockW) / 2;
-  const dockY = rs.LOGIC_HEIGHT - dockH - 12;
-  const radius = 32;
+  const { space } = spaceOf(rs);
+  const dock = getWoodenTokenDockRect(space, stageOrRect);
+  const { x: dockX, y: dockY, w: dockW, h: dockH } = dock;
+  const radius = Math.min(32, Math.floor(dockH / 2));
 
   ctx.save();
   // 1. Ambient drop shadow

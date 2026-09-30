@@ -235,7 +235,10 @@
 
 <script lang="ts" setup>
   import {
+    computeStageZones,
+    drawPromptZone,
     getTouchFloor,
+    type StageZones,
     TemplateGameSession,
     type ViewEntity,
   } from "@mindkid/game-engine";
@@ -275,6 +278,18 @@
     canvasRef,
     loggedIn,
     syncView: () => gesture.syncView(),
+    onAfterRender: (ctx, rs) => {
+      const zones = stageZones.value ?? updateStageZones();
+      if (zones) {
+        const session = getEngine()?.activeSession;
+        const activePrompt = session?.getView?.().activePrompt;
+        if (activePrompt) {
+          drawPromptZone(ctx, rs, zones, {
+            promptText: activePrompt,
+          });
+        }
+      }
+    },
   });
 
   const {
@@ -302,11 +317,44 @@
   /** Sàn chạm HUD theo band tuổi, trên px CSS thật — HUD là DOM (`D-277-2`, `BR-PSZ-04`). */
   const hudTouchFloorPx = computed(() => getTouchFloor(ageBand.value));
 
+  /** Vùng của bàn chơi (`play-stage-zones.md`, `BR-PSZ-01..04`). */
+  const stageZones = ref<StageZones | null>(null);
+
+  function updateStageZones(): StageZones | null {
+    const engine = getEngine();
+    if (!engine) {
+      return null;
+    }
+    const vp = engine.renderSystem?.viewport;
+    if (!vp?.logicSpace) {
+      return null;
+    }
+    const session = engine.activeSession;
+    const zones = computeStageZones({
+      logicW: vp.logicSpace.w,
+      logicH: vp.logicSpace.h,
+      ageBand: ageBand.value,
+      cssPerLogic: vp.scale,
+      needsTray:
+        session instanceof TemplateGameSession
+          ? Boolean(session.needsTray)
+          : false,
+      needsCommit:
+        session instanceof TemplateGameSession
+          ? Boolean(session.needsCommit)
+          : false,
+    });
+    stageZones.value = zones;
+    return zones;
+  }
+
   const gesture = usePlayGesture({
     getEngine,
     canvasRef,
     onRoundWon: playSession.handleRoundWonInternal,
     onRetryDisallowed: playSession.handleRetryDisallowed,
+    getStageZones: () => stageZones.value ?? updateStageZones(),
+    onPromptSpeakerTap: replayInstructionAudio,
   });
 
   const {
@@ -490,8 +538,13 @@
       const roundRunner = getRoundRunner();
       if (engine && canvasRef.value) {
         const vp = engine.renderSystem.setupCanvas(canvasRef.value);
+        const zones = updateStageZones();
         if (vp.logicSpace && roundRunner) {
-          roundRunner.setLogicSpace(vp.logicSpace);
+          if (zones?.stage) {
+            roundRunner.setLogicSpace(vp.logicSpace, zones.stage);
+          } else {
+            roundRunner.setLogicSpace(vp.logicSpace);
+          }
         }
         // Slot vừa tính lại theo logic space mới — danh sách nút ẩn cho bàn
         // phím/screen reader phải trỏ toạ độ mới trong cùng nhịp (`BR-PSZ-12`),

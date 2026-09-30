@@ -1,8 +1,20 @@
 import { getByGlyph } from "@mindkid/emoji";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { DEFAULT_LOGIC_SPACE } from "#src/layout/constants";
+import { computeStageZones, type ZoneRect } from "#src/layout/stage-zones";
+import { RenderSystem } from "#src/systems/render-system";
 import { GT001_FIXTURES } from "#src/templates/GT-001/fixtures";
 import { GT001Session } from "#src/templates/GT-001/session";
 import { GT001ContentSchema } from "#src/templates/GT-001/template";
+
+vi.mock("#src/render/shared-render", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("#src/render/shared-render")>();
+  return {
+    ...actual,
+    drawSceneBackground: vi.fn(),
+  };
+});
 
 /**
  * `GT-001/template.ts` khai `input.tolerance_px: 24` — dung sai chạm hợp
@@ -218,5 +230,146 @@ describe("GT-001 — mp3 của từ khoá (Task #274 S7b)", () => {
       .getView()
       .entities.filter((e) => e.role !== "neutral");
     expect(options.every((e) => e.spokenAudioPath === undefined)).toBe(true);
+  });
+});
+
+function createBoundsCheckingContext(stage: ZoneRect): {
+  ctx: CanvasRenderingContext2D;
+  getViolations: () => string[];
+} {
+  const violations: string[] = [];
+  let tx = 0;
+  let ty = 0;
+  const transformStack: [number, number][] = [];
+
+  function checkPoint(name: string, x: number, y: number): void {
+    const px = x + tx;
+    const py = y + ty;
+    if (
+      px < stage.x - 1 ||
+      px > stage.x + stage.w + 1 ||
+      py < stage.y - 1 ||
+      py > stage.y + stage.h + 1
+    ) {
+      violations.push(
+        `${name} at (${px}, ${py}) outside stage [${stage.x}, ${stage.y}, ${stage.w}, ${stage.h}]`
+      );
+    }
+  }
+
+  function checkRect(
+    name: string,
+    x: number,
+    y: number,
+    w: number,
+    h: number
+  ): void {
+    checkPoint(`${name}:topLeft`, x, y);
+    checkPoint(`${name}:bottomRight`, x + w, y + h);
+  }
+
+  const ctx = {
+    save: () => {
+      transformStack.push([tx, ty]);
+    },
+    restore: () => {
+      const popped = transformStack.pop();
+      if (popped) {
+        [tx, ty] = popped;
+      }
+    },
+    translate: (dx: number, dy: number) => {
+      tx += dx;
+      ty += dy;
+    },
+    roundRect: (x: number, y: number, w: number, h: number) => {
+      checkRect("roundRect", x, y, w, h);
+    },
+    fillRect: (x: number, y: number, w: number, h: number) => {
+      checkRect("fillRect", x, y, w, h);
+    },
+    strokeRect: (x: number, y: number, w: number, h: number) => {
+      checkRect("strokeRect", x, y, w, h);
+    },
+    arc: (x: number, y: number, r: number) => {
+      checkRect("arc", x - r, y - r, r * 2, r * 2);
+    },
+    fillText: (text: string, x: number, y: number) => {
+      checkPoint(`fillText(${text})`, x, y);
+    },
+    moveTo: (x: number, y: number) => {
+      checkPoint("moveTo", x, y);
+    },
+    lineTo: (x: number, y: number) => {
+      checkPoint("lineTo", x, y);
+    },
+    beginPath: () => undefined,
+    closePath: () => undefined,
+    fill: () => undefined,
+    stroke: () => undefined,
+    clip: () => undefined,
+    setLineDash: () => undefined,
+    getLineDash: () => [],
+    scale: () => undefined,
+    measureText: (text: string) => ({
+      width: text.length * 10,
+      actualBoundingBoxAscent: 10,
+      actualBoundingBoxDescent: 2,
+    }),
+    createLinearGradient: () => ({ addColorStop: () => undefined }),
+    createRadialGradient: () => ({ addColorStop: () => undefined }),
+    fillStyle: "#000",
+    strokeStyle: "#000",
+    lineWidth: 1,
+    font: "16px sans-serif",
+  } as unknown as CanvasRenderingContext2D;
+
+  return { ctx, getViolations: () => violations };
+}
+
+describe("GT-001 — vẽ nằm trọn trong zones.stage (BR-PSZ-01)", () => {
+  const fixture = GT001_FIXTURES[0];
+  if (!fixture) {
+    throw new Error("Fixture GT-001 not found");
+  }
+
+  it("mọi lệnh vẽ của session khi có stageRect đều nằm trong zones.stage", () => {
+    const session = new GT001Session(fixture.content, fixture.difficulty, 1);
+    const zones = computeStageZones({
+      logicW: 960,
+      logicH: 540,
+      ageBand: "4-5",
+      cssPerLogic: 1,
+      needsTray: false,
+      needsCommit: false,
+    });
+    session.prepareRound("4-5", DEFAULT_LOGIC_SPACE, zones.stage);
+
+    const rs = new RenderSystem();
+    const { ctx, getViolations } = createBoundsCheckingContext(zones.stage);
+
+    session.render(ctx, rs, 0);
+    const violations = getViolations();
+    expect(violations).toEqual([]);
+  });
+
+  it("ca âm: không truyền stageRect thì vẽ ra ngoài zones.stage (lời dẫn và thẻ đề cũ)", () => {
+    const session = new GT001Session(fixture.content, fixture.difficulty, 1);
+    const zones = computeStageZones({
+      logicW: 960,
+      logicH: 540,
+      ageBand: "4-5",
+      cssPerLogic: 1,
+      needsTray: false,
+      needsCommit: false,
+    });
+    session.prepareRound("4-5", DEFAULT_LOGIC_SPACE);
+
+    const rs = new RenderSystem();
+    const { ctx, getViolations } = createBoundsCheckingContext(zones.stage);
+
+    session.render(ctx, rs, 0);
+    const violations = getViolations();
+    expect(violations.length).toBeGreaterThan(0);
   });
 });

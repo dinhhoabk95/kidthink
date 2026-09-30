@@ -70,11 +70,11 @@ của S0 — không file nào đổi trạng thái ngoài file của lát.
 
 ## S3 — Vùng lời dẫn và pilot GT-001 · M · phụ thuộc: S2
 
-- [ ] RED: chạm tâm `zones.promptSpeaker` → `replayCurrentRoundNarration` một lần, engine không nhận gesture (`BR-PSZ-08`)
-- [ ] Primitive vùng lời dẫn ở `render/`; gỡ badge loa trang trí khỏi `drawPromptText`
-- [ ] GT-001 nhận `zones.stage` qua `prepareRound`; test ghi lệnh vẽ nằm trong stage (`BR-PSZ-01`)
-- [ ] Test hai vòng liên tiếp GT-001 trên trang
-- [ ] Ca âm: shell bỏ nhánh loa → test `BR-PSZ-08` đỏ
+- [x] RED: chạm tâm `zones.promptSpeaker` → `replayCurrentRoundNarration` một lần, engine không nhận gesture (`BR-PSZ-08`)
+- [x] Primitive vùng lời dẫn ở `render/`; gỡ badge loa trang trí khỏi `drawPromptText`
+- [x] GT-001 nhận `zones.stage` qua `prepareRound`; test ghi lệnh vẽ nằm trong stage (`BR-PSZ-01`)
+- [x] Test hai vòng liên tiếp GT-001 trên trang
+- [x] Ca âm: shell bỏ nhánh loa → test `BR-PSZ-08` đỏ
 
 ## S4 — Vùng hành động và GT-028 · S · phụ thuộc: S3
 

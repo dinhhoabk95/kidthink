@@ -1,11 +1,14 @@
 import {
+  computeStageZones,
   createGameSessionSync,
   ENGINE_EVENT_WILDCARD,
   type EngineConfig,
   GameEngine,
   preloadGameSession,
+  type RenderSystem,
   type RoundConfig,
   RoundRunner,
+  TemplateGameSession,
 } from "@mindkid/game-engine";
 import type { AgeBand } from "@mindkid/shared/client";
 import { nextTick, type Ref, ref } from "vue";
@@ -71,6 +74,11 @@ export interface UsePlaySessionOptions {
   readonly loggedIn: Ref<boolean>;
   readonly syncView: () => void;
   readonly onFallbackCue?: () => void;
+  readonly onAfterRender?: (
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    now: number
+  ) => void;
 }
 
 /**
@@ -419,17 +427,42 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       engine.on(ENGINE_EVENT_WILDCARD, (event) => {
         roundRunner?.recordExternalEvent(event);
       });
-      engine.onAfterRender = () => {
+      engine.onAfterRender = (ctx, rs, now) => {
         syncIntroStepState();
+        options.onAfterRender?.(ctx, rs, now);
       };
       engine.load(engineConfig, factory);
       engine.start(canvasRef.value);
-      const initialSpace = engine.renderSystem.viewport?.logicSpace;
-      if (initialSpace && roundRunner) {
-        roundRunner.setLogicSpace(initialSpace);
-      }
+      syncRunnerStageZones(roundRunner, engine, ageBand.value);
       syncView();
     }
+  }
+
+  function syncRunnerStageZones(
+    runner: RoundRunner | null,
+    targetEngine: GameEngine | null,
+    band: AgeBand
+  ): void {
+    const vp = targetEngine?.renderSystem.viewport;
+    if (!(vp?.logicSpace && runner)) {
+      return;
+    }
+    const session = runner.getCurrentSession();
+    const zones = computeStageZones({
+      logicW: vp.logicSpace.w,
+      logicH: vp.logicSpace.h,
+      ageBand: band,
+      cssPerLogic: vp.scale,
+      needsTray:
+        session instanceof TemplateGameSession
+          ? Boolean(session.needsTray)
+          : false,
+      needsCommit:
+        session instanceof TemplateGameSession
+          ? Boolean(session.needsCommit)
+          : false,
+    });
+    runner.setLogicSpace(vp.logicSpace, zones.stage);
   }
 
   async function fetchAndStartGame(levelCode: string): Promise<void> {

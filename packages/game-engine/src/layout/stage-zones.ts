@@ -145,3 +145,10 @@ function computeTray(
     h: trayH,
   };
 }
+
+/** Kiểm tra một điểm logic có nằm trong rect vùng không. */
+export function isPointInZone(x: number, y: number, zone: ZoneRect): boolean {
+  return (
+    x >= zone.x && x <= zone.x + zone.w && y >= zone.y && y <= zone.y + zone.h
+  );
+}

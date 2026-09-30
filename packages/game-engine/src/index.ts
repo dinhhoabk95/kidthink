@@ -115,6 +115,7 @@ export {
 } from "./layout/registry.js";
 export {
   computeStageZones,
+  isPointInZone,
   type StageZones,
   type StageZonesInput,
   type ZoneRect,
@@ -152,9 +153,12 @@ export {
 } from "./offline-buffer";
 export {
   drawCentralTargetCard,
+  drawPromptZone,
   drawSceneBackground,
   drawTargetHoverAura,
   drawWoodenTokenDock,
+  getWoodenTokenDockRect,
+  type PromptZoneOptions,
 } from "./render/index.js";
 export { createRng, deriveStream } from "./rng/mulberry32.js";
 export { shuffle } from "./rng/shuffle.js";

@@ -62,6 +62,9 @@ const PRIMITIVE_MODULES: readonly string[] = [
   // (Task #275 S1b). Cùng hạng với bốn file trên: thư viện vẽ dùng chung,
   // không engine nào sở hữu.
   "render/commit-button.ts",
+  // Vùng lời dẫn tách file riêng tương tự nút Xong (Task #277 S3).
+  // Thư viện vẽ nguyên thuỷ dùng chung cho mọi engine.
+  "render/prompt-zone.ts",
 ];
 
 function checkSessionDrawLines(

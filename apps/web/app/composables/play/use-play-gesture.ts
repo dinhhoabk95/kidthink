@@ -4,6 +4,8 @@ import {
   type GameEngine,
   type GameSession,
   type Gesture,
+  isPointInZone,
+  type StageZones,
   TemplateGameSession,
   toLogicPoint,
   type ViewEntity,
@@ -20,6 +22,10 @@ export interface GestureOptions {
    * .handleAction`, nên luật đóng vòng phải được gọi lại từ đây.
    */
   readonly onRetryDisallowed?: () => void;
+  /** Vùng của bàn chơi (`play-stage-zones.md`). */
+  readonly getStageZones?: () => StageZones | null;
+  /** Chạm vào loa trong vùng lời dẫn (`zones.promptSpeaker`) phát lại lời dẫn (`BR-PSZ-08`). */
+  readonly onPromptSpeakerTap?: () => void;
 }
 
 /** Session theo dõi vị trí ngón tay để bật trạng thái "đích đang nhận". */
@@ -147,7 +153,22 @@ export function usePlayGesture(options: GestureOptions) {
     onRetryDisallowed?.();
   }
 
+  function isSpeakerTap(gesture: Gesture): boolean {
+    if (gesture.type !== "tap") {
+      return false;
+    }
+    const zones = options.getStageZones?.();
+    return Boolean(
+      zones && isPointInZone(gesture.x, gesture.y, zones.promptSpeaker)
+    );
+  }
+
   function dispatchGesture(gesture: Gesture): void {
+    if (isSpeakerTap(gesture)) {
+      options.onPromptSpeakerTap?.();
+      return;
+    }
+
     const engine = getEngine();
     if (!engine) {
       return;
