@@ -1,10 +1,12 @@
 import {
   type ActionResult,
+  type FeedbackPoint,
   findHitEntity,
   type GameEngine,
   type GameSession,
   type Gesture,
   isPointInZone,
+  type OverlayFeedbackKind,
   type StageZones,
   TemplateGameSession,
   toLogicPoint,
@@ -26,6 +28,14 @@ export interface GestureOptions {
   readonly getStageZones?: () => StageZones | null;
   /** Chạm vào loa trong vùng lời dẫn (`zones.promptSpeaker`) phát lại lời dẫn (`BR-PSZ-08`). */
   readonly onPromptSpeakerTap?: () => void;
+  /**
+   * Verdict đúng/sai tại điểm trẻ chạm hoặc thả — shell đẩy vào lớp phủ phản
+   * hồi chung và đổi dáng mascot (`BR-FBK-05`, `BR-FBK-11`).
+   */
+  readonly onFeedback?: (
+    kind: OverlayFeedbackKind,
+    point: FeedbackPoint
+  ) => void;
 }
 
 /** Session theo dõi vị trí ngón tay để bật trạng thái "đích đang nhận". */
@@ -119,11 +129,30 @@ export function usePlayGesture(options: GestureOptions) {
     }
   }
 
+  /** Điểm gắn phản hồi: chỗ chạm của `tap`/`commit`, chỗ thả của `drop`. */
+  function feedbackPointOf(gesture: Gesture): FeedbackPoint | null {
+    if (gesture.type === "drop") {
+      return { x: gesture.toX, y: gesture.toY };
+    }
+    if (gesture.type === "tap") {
+      return { x: gesture.x, y: gesture.y };
+    }
+    return null;
+  }
+
+  function emitFeedback(kind: OverlayFeedbackKind, gesture: Gesture): void {
+    const point = feedbackPointOf(gesture);
+    if (point) {
+      options.onFeedback?.(kind, point);
+    }
+  }
+
   function handleVerdict(
     verdict: ActionResult,
     engine: GameEngine,
     session: GameSession,
-    tapped: ViewEntity | null
+    tapped: ViewEntity | null,
+    gesture: Gesture
   ): void {
     speakKeyword(engine, tapped);
 
@@ -138,6 +167,7 @@ export function usePlayGesture(options: GestureOptions) {
     if (verdict.valid) {
       engine.audio.playSnapSound();
       engine.audio.playPopCelebrateSound();
+      emitFeedback("success", gesture);
       engine.scaffolding?.onSuccess();
       syncView();
 
@@ -148,6 +178,7 @@ export function usePlayGesture(options: GestureOptions) {
     }
 
     engine.audio.playSoftFeedbackSound();
+    emitFeedback("retry", gesture);
     engine.scaffolding?.onMiss();
     syncView();
     onRetryDisallowed?.();
@@ -206,7 +237,7 @@ export function usePlayGesture(options: GestureOptions) {
       timeMs: gesture.timeMs,
     });
     if (verdict) {
-      handleVerdict(verdict, engine, session, null);
+      handleVerdict(verdict, engine, session, null, gesture);
     }
     return true;
   }
@@ -238,7 +269,7 @@ export function usePlayGesture(options: GestureOptions) {
 
     const verdict = session.dispatch(gesture);
     if (verdict) {
-      handleVerdict(verdict, engine, session, tapped);
+      handleVerdict(verdict, engine, session, tapped, gesture);
     }
   }
 

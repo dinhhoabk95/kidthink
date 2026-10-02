@@ -172,41 +172,38 @@
             <UIcon class="w-6 h-6 shrink-0" name="i-lucide-forward" />
           </button>
 
-          <!-- Intro Flashcard & Echo Step Controls (GT-000) -->
+          <!-- Nút bước làm quen GT-000: chỉ icon, chữ ở aria-label (`BR-FBK-12`, `BR-PSZ-07`) -->
           <div
             class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-6 z-20 pointer-events-auto"
             v-if="isIntroCardStep"
           >
             <button
               aria-label="Quay lại thẻ trước"
-              class="min-h-16 px-6 rounded-2xl border-[3px] border-surface-300 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_var(--color-surface-300)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-surface-300)] flex items-center gap-2 cursor-pointer transition-all"
+              class="min-h-16 min-w-16 px-4 justify-center rounded-2xl border-[3px] border-surface-300 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_var(--color-surface-300)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-surface-300)] flex items-center gap-2 cursor-pointer transition-all"
               type="button"
               v-if="introStepIndex > 0"
               @click="handleIntroPrev"
             >
-              <UIcon class="w-6 h-6" name="i-lucide-arrow-left" />
-              <span>Trước</span>
+              <UIcon class="w-8 h-8" name="i-lucide-arrow-left" />
             </button>
 
             <button
               aria-label="Nghe lại mẫu"
-              class="min-h-16 px-6 rounded-2xl border-[3px] border-surface-300 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_var(--color-surface-300)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-surface-300)] flex items-center gap-2 cursor-pointer transition-all"
+              class="min-h-16 min-w-16 px-4 justify-center rounded-2xl border-[3px] border-surface-300 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_var(--color-surface-300)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-surface-300)] flex items-center gap-2 cursor-pointer transition-all"
               type="button"
               @click="handleEchoReplay"
             >
-              <UIcon class="w-6 h-6 text-cta" name="i-lucide-volume-2" />
-              <span>Nghe lại</span>
+              <UIcon class="w-8 h-8 text-cta" name="i-lucide-volume-2" />
             </button>
 
             <button
-              class="min-h-16 px-8 rounded-2xl border-[3px] border-cta-hover bg-cta text-white font-heading font-bold text-xl shadow-[0_6px_0_var(--color-cta-hover)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-cta-hover)] flex items-center gap-3 cursor-pointer transition-all"
+              class="min-h-16 min-w-20 px-6 justify-center rounded-2xl border-[3px] border-cta-hover bg-cta text-white font-heading font-bold text-xl shadow-[0_6px_0_var(--color-cta-hover)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-cta-hover)] flex items-center gap-3 cursor-pointer transition-all"
               type="button"
               :aria-label="isEchoStep ? 'Bé nói theo' : 'Tiếp tục'"
               @click="handleEchoDone"
             >
-              <UIcon class="w-6 h-6" name="i-lucide-mic" v-if="isEchoStep" />
-              <span>{{ isEchoStep ? "Bé nói theo" : "Tiếp tục" }}</span>
-              <UIcon class="w-6 h-6" name="i-lucide-arrow-right" />
+              <UIcon class="w-8 h-8" name="i-lucide-mic" v-if="isEchoStep" />
+              <UIcon class="w-8 h-8" name="i-lucide-arrow-right" v-else />
             </button>
           </div>
         </div>
@@ -218,6 +215,7 @@
         :is-intro="isIntroLevel"
         :show="showVictoryModal"
         :stars="earnedStars"
+        @announce="speakCelebration"
         @continue="handleContinueNext"
         @replay="handleReplayGame"
       />
@@ -237,8 +235,12 @@
   import {
     computeStageZones,
     drawCommitButton,
+    drawFeedbackPulses,
     drawPromptZone,
+    FeedbackOverlay,
+    type GameEngine,
     getTouchFloor,
+    type MascotPose,
     type StageZones,
     TemplateGameSession,
     type ViewEntity,
@@ -266,6 +268,20 @@
   let pulseTimer: ReturnType<typeof setTimeout> | null = null;
   let resizeTimer: ReturnType<typeof setTimeout> | null = null;
 
+  /** Lớp phủ phản hồi chung cho mọi engine (`BR-FBK-11`). */
+  const feedbackOverlay = new FeedbackOverlay();
+
+  /** Dáng nền khi không có phản hồi đang giữ: nghe lời dẫn, trợ giúp, hay nghỉ (§7.4). */
+  function baseMascotPose(engine: GameEngine | null): MascotPose {
+    if (!engine?.acceptingInput) {
+      return "listen";
+    }
+    if ((engine.scaffolding?.getCurrentLevel() ?? 0) > 0) {
+      return "hint";
+    }
+    return "idle";
+  }
+
   const {
     errorMessage,
     errorTitle,
@@ -279,23 +295,34 @@
     canvasRef,
     loggedIn,
     syncView: () => gesture.syncView(),
-    onAfterRender: (ctx, rs) => {
+    onAfterRender: (ctx, rs, now) => {
       const zones = stageZones.value ?? updateStageZones();
-      if (zones) {
-        const session = getEngine()?.activeSession;
-        const activePrompt = session?.getView?.().activePrompt;
-        if (activePrompt) {
-          drawPromptZone(ctx, rs, zones, {
-            promptText: activePrompt,
-          });
-        }
-        if (session instanceof TemplateGameSession && session.needsCommit) {
-          drawCommitButton(ctx, rs, zones.action, {
-            enabled: session.canCommit?.() ?? true,
-            origin: "top-left",
-          });
-        }
+      if (!zones) {
+        return;
       }
+      const engine = getEngine();
+      const session = engine?.activeSession;
+      const feedback = feedbackOverlay.frame(
+        now,
+        baseMascotPose(engine),
+        rs.reducedMotion
+      );
+      const activePrompt = session?.getView?.().activePrompt;
+      if (activePrompt) {
+        drawPromptZone(ctx, rs, zones, {
+          promptText: activePrompt,
+          mascotPose: feedback.mascotPose,
+          mascotElapsedMs: feedback.mascotElapsedMs,
+        });
+      }
+      if (session instanceof TemplateGameSession && session.needsCommit) {
+        drawCommitButton(ctx, rs, zones.action, {
+          enabled: session.canCommit?.() ?? true,
+          origin: "top-left",
+        });
+      }
+      // Lớp trên cùng: pop/nhịp hổ phách tại điểm chạm (`BR-FBK-05`, `BR-FBK-11`).
+      drawFeedbackPulses(ctx, feedback.pulses);
     },
   });
 
@@ -320,6 +347,11 @@
     setPaused,
     cleanupSession,
   } = playSession;
+
+  /** Màn tổng kết đọc lời khen thành tiếng (`BR-FBK-12`). */
+  function speakCelebration(phrase: string): void {
+    getEngine()?.audio.speakPrompt(phrase);
+  }
 
   /** Sàn chạm HUD theo band tuổi, trên px CSS thật — HUD là DOM (`D-277-2`, `BR-PSZ-04`). */
   const hudTouchFloorPx = computed(() => getTouchFloor(ageBand.value));
@@ -362,6 +394,8 @@
     onRetryDisallowed: playSession.handleRetryDisallowed,
     getStageZones: () => stageZones.value ?? updateStageZones(),
     onPromptSpeakerTap: replayInstructionAudio,
+    onFeedback: (kind, point) =>
+      feedbackOverlay.trigger(kind, point, performance.now()),
   });
 
   const {
@@ -571,6 +605,9 @@
       setPaused(false);
     }
   }
+
+  // Vòng mới không mang pop hay dáng của vòng trước.
+  watch(currentRound, () => feedbackOverlay.reset());
 
   watch([showVictoryModal, showParentGate], ([victoryOpen, gateOpen]) => {
     if (victoryOpen || gateOpen) {

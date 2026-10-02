@@ -154,11 +154,15 @@ export {
 export {
   drawCentralTargetCard,
   drawCommitButton,
+  drawMascot,
   drawPromptZone,
   drawSceneBackground,
   drawTargetHoverAura,
   drawWoodenTokenDock,
   getWoodenTokenDockRect,
+  MASCOT_POSES,
+  type MascotPose,
+  type MascotSprites,
   type PromptZoneOptions,
 } from "./render/index.js";
 export { createRng, deriveStream } from "./rng/mulberry32.js";
@@ -191,6 +195,14 @@ export {
   type DegradationState,
 } from "./systems/degradation";
 export { designTokens } from "./systems/designTokens";
+export {
+  drawFeedbackPulses,
+  type FeedbackFrame,
+  FeedbackOverlay,
+  type FeedbackPoint,
+  MASCOT_FEEDBACK_HOLD_MS,
+  type OverlayFeedbackKind,
+} from "./systems/feedback-overlay";
 export {
   COMPLIMENTS,
   FEEDBACK_TABLE,

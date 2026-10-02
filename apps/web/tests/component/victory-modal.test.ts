@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+import { COMPLIMENTS } from "@mindkid/game-engine";
 import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import VictoryModal from "~/components/kid/victory-modal.vue";
@@ -94,5 +95,41 @@ describe("KidVictoryModal", () => {
 
     wrapper.unmount();
     outside.remove();
+  });
+
+  it("BR-FBK-12: mở modal thì đọc một lời khen của §7.2", async () => {
+    const wrapper = mount(VictoryModal, {
+      props: { show: false, stars: 3 },
+    });
+    expect(wrapper.emitted("announce")).toBeUndefined();
+
+    await wrapper.setProps({ show: true });
+
+    const announced = wrapper.emitted("announce");
+    expect(announced).toHaveLength(1);
+    const phrase = announced?.[0]?.[0];
+    expect(COMPLIMENTS).toContain(phrase);
+  });
+
+  it("BR-FBK-12: nút của trẻ chỉ có icon, chữ nằm ở aria-label", () => {
+    const wrapper = mount(VictoryModal, {
+      props: { show: true, stars: 2 },
+    });
+
+    const buttons = wrapper.findAll("button");
+    expect(buttons.length).toBe(2);
+    for (const button of buttons) {
+      expect(button.text().trim()).toBe("");
+      expect(button.attributes("aria-label")).toBeTruthy();
+    }
+  });
+
+  it("mascot là Thỏ Tini vẽ bằng canvas, không còn emoji gấu (§7.4)", () => {
+    const wrapper = mount(VictoryModal, {
+      props: { show: true, stars: 3 },
+    });
+
+    expect(wrapper.text()).not.toContain("🐻");
+    expect(wrapper.find("canvas.kid-mascot").exists()).toBe(true);
   });
 });

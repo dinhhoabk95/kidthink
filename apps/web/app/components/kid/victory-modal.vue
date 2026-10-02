@@ -12,9 +12,9 @@
 
     <!-- Main Victory Modal Box -->
     <div class="modal-wrapper">
-      <!-- Popping Mascot (Cheerful Bear) -->
-      <div class="mascot-container animate-float">
-        <span aria-hidden="true" class="mascot-emoji">🐻</span>
+      <!-- Thỏ Tini ăn mừng (`feedback-and-celebration.md` §7.4) -->
+      <div class="mascot-container">
+        <KidMascot pose="celebrate" :size="112" />
       </div>
 
       <!-- Modal Card -->
@@ -49,21 +49,23 @@
           <span class="victory-subtitle">{{ celebrationSubtitle }}</span>
         </h1>
 
-        <!-- Action Buttons -->
+        <!-- Nút chỉ có icon, chữ ở aria-label (`BR-FBK-12`) -->
         <div class="action-buttons">
           <button
             class="btn-continue clay-button"
             type="button"
+            :aria-label="isIntro ? 'Vào trò chơi' : 'Chơi tiếp'"
             @click="emit('continue')"
           >
-            <span class="btn-text"
-              >{{ isIntro ? 'Vào Trò Chơi' : 'Tiếp Tục Chơi' }}</span
-            >
-            <span class="btn-icon">➔</span>
+            <UIcon class="btn-icon" name="i-lucide-play" />
           </button>
-          <button class="btn-replay" type="button" @click="emit('replay')">
-            <span class="btn-icon">🔄</span>
-            <span>Chơi lại</span>
+          <button
+            aria-label="Chơi lại"
+            class="btn-replay"
+            type="button"
+            @click="emit('replay')"
+          >
+            <UIcon class="btn-icon" name="i-lucide-rotate-ccw" />
           </button>
         </div>
       </div>
@@ -72,7 +74,9 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, ref, toRef } from "vue";
+  import { FeedbackSystem } from "@mindkid/game-engine";
+  import { computed, ref, toRef, watch } from "vue";
+  import KidMascot from "~/components/kid/mascot.vue";
   import { useFocusTrap } from "~/composables/play/use-focus-trap";
   import type { CelebrationTier } from "~/composables/play/use-play-telemetry";
 
@@ -93,7 +97,21 @@
   const emit = defineEmits<{
     continue: [];
     replay: [];
+    /** Lời khen cần đọc thành tiếng khi modal mở (`BR-FBK-12`). */
+    announce: [phrase: string];
   }>();
+
+  const feedback = new FeedbackSystem();
+
+  watch(
+    () => props.show,
+    (isOpen) => {
+      if (isOpen) {
+        emit("announce", feedback.getCompliment());
+      }
+    },
+    { immediate: true }
+  );
 
   const modalRef = ref<HTMLElement | null>(null);
   // Escape đóng modal bằng hành động chính đang hiện trên nút ("Tiếp Tục Chơi")
@@ -168,11 +186,6 @@
     align-items: center;
     justify-content: center;
     pointer-events: none;
-  }
-
-  .mascot-emoji {
-    font-size: 5.5rem;
-    filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.25));
   }
 
   .clay-card {
@@ -271,8 +284,14 @@
   .action-buttons {
     width: 100%;
     display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .btn-icon {
+    width: 2.25rem;
+    height: 2.25rem;
   }
 
   .clay-button {
@@ -296,8 +315,8 @@
     background-color: var(--color-warning-400);
     color: var(--color-surface-950);
     border-radius: 9999px;
-    height: 4.5rem;
-    width: 100%;
+    height: 6rem;
+    width: 6rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -313,8 +332,10 @@
   }
 
   .btn-replay {
-    height: 3.5rem;
-    width: 100%;
+    height: var(--hud-touch-floor, 4.5rem);
+    width: var(--hud-touch-floor, 4.5rem);
+    min-height: 4.5rem;
+    min-width: 4.5rem;
     border-radius: 9999px;
     border: 3px solid var(--color-surface-300);
     background-color: var(--color-surface-100);
@@ -336,22 +357,6 @@
 
   .btn-replay:active {
     transform: translateY(2px);
-  }
-
-  @keyframes float {
-    0% {
-      transform: translate(-50%, 0px) rotate(0deg);
-    }
-    50% {
-      transform: translate(-50%, -8px) rotate(3deg);
-    }
-    100% {
-      transform: translate(-50%, 0px) rotate(0deg);
-    }
-  }
-
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
   }
 
   @keyframes starPulse {

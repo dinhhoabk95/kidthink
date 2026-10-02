@@ -5,7 +5,7 @@ area: play
 status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-03
 owns:
   - Ngôn ngữ phản hồi đúng/sai
   - Quy tắc ăn mừng
@@ -32,7 +32,10 @@ Khoảng ở giữa hẹp và cần spec: phản hồi rõ, tích cực, không 
 
 ## 3. Entry points
 
-`packages/game-engine/src/systems/feedbackSystem.ts` · màn hình tổng kết cuối phiên.
+`packages/game-engine/src/systems/feedback-system.ts` (bảng phản hồi, lời khen) ·
+`packages/game-engine/src/systems/feedback-overlay.ts` (pop tại điểm chạm, dáng mascot theo thời gian) ·
+`packages/game-engine/src/render/mascot.ts` (vẽ mascot theo dáng) · màn hình tổng kết cuối phiên
+(`apps/web/app/components/kid/victory-modal.vue`).
 
 ## 4. Main flow
 
@@ -43,6 +46,9 @@ Khoảng ở giữa hẹp và cần spec: phản hồi rõ, tích cực, không 
 | Thả **sai** | Nhịp hổ phách trên target + âm nhẹ (ramp ≥20ms) + item **trôi về chỗ cũ** |
 | Round hoàn thành | Chuyển cảnh mượt, không ăn mừng lớn |
 | Level hoàn thành | **Ăn mừng lớn**: hạt, sao, mascot, lời khen tiếng Việt |
+
+Mọi dòng trong bảng trên có tiếng thì mascot ở vùng lời dẫn đổi dáng trong **cùng khung vẽ** —
+xem §7.4.
 
 ## 5. Alternative flows
 
@@ -67,6 +73,8 @@ Khoảng ở giữa hẹp và cần spec: phản hồi rõ, tích cực, không 
 | `BR-FBK-08` | Lời khen Cấm — **NEVER so sánh trẻ với trẻ khác** | Tránh gây áp lực đố kị và duy trì động lực nội tại cho trẻ |
 | `BR-FBK-09` | `reduced-motion` **giảm**, không bỏ ăn mừng | Bỏ ăn mừng là bỏ phần thưởng |
 | `BR-FBK-10` | Âm: ramp vào ≥20ms, ra ≥40ms, master ceiling cưỡng chế | Onset tức thì làm trẻ giật mình |
+| `BR-FBK-11` | Mỗi phản hồi đúng/sai có **dáng mascot** đi kèm ngay khung vẽ kế tiếp (≤100ms), và vòng pop/nhịp hổ phách vẽ bởi **một lớp phủ chung** của bề mặt chơi, không phải từng engine | `BR-PSZ-10` — tắt tiếng thì mascot là kênh còn lại; lớp chung để 37 engine phản hồi giống nhau mà không sửa engine |
+| `BR-FBK-12` | Màn tổng kết level **đọc thành tiếng** một lời khen của §7.2 khi mở, và nút của trẻ chỉ có icon (chữ chỉ ở `aria-label`) | `BR-ENG-10` — trẻ 3–6 chưa đọc; tiêu đề chữ một mình không phải phần thưởng |
 
 ## 7. Data
 
@@ -97,6 +105,22 @@ Cấm — **NEVER**: "Sai rồi", "Không đúng", "Bé chưa giỏi", bất k�
 | Thời lượng | 1,2 s | 400 ms |
 | Hạt | ≤ 40, object pool | 0 |
 | Âm | giai điệu ngắn | giữ nguyên |
+
+### 7.4 Dáng mascot
+
+Mascot là Thỏ Tini (`D-DB`). Asset là sprite SVG/PNG đặt ngoài engine; engine giữ hợp đồng dáng
+và có bản vẽ thay thế bằng primitive canvas khi sprite chưa có.
+
+| Dáng | Khi nào | Giữ |
+|---|---|---|
+| `idle` | Mặc định | — |
+| `listen` | Lời dẫn đang đọc | Tới khi đọc xong |
+| `happy` | Trả lời đúng | 700 ms |
+| `encourage` | Chưa đúng | 700 ms — giống hệt mỗi lần (`BR-FBK-07`) |
+| `hint` | Trợ giúp bậc L1+ đang hiện | Tới khi trợ giúp tắt |
+| `celebrate` | Hoàn thành level | Tới khi rời màn |
+
+`reduced-motion`: dáng vẫn đổi, chuyển động nảy/nghiêng thu về một nhịp scale (`BR-FBK-09`).
 
 ## 8. API contract
 
@@ -144,6 +168,20 @@ Scenario: BR-FBK-06 — màu không phải kênh duy nhất
 Scenario: BR-FBK-08 — lời khen không so sánh
   When liệt kê mọi chuỗi khen
   Then không chuỗi nào chứa so sánh với trẻ khác
+
+Scenario: BR-FBK-11 — mascot đổi dáng cùng phản hồi
+  Given bề mặt chơi đang hiện vùng lời dẫn
+  When trẻ trả lời đúng ở toạ độ (x, y)
+  Then khung vẽ kế tiếp có vòng pop tâm (x, y) màu success
+  And mascot ở dáng happy
+  When trẻ trả lời chưa đúng
+  Then khung vẽ kế tiếp có nhịp hổ phách và mascot ở dáng encourage
+  And không lệnh vẽ nào dùng token danger
+
+Scenario: BR-FBK-12 — màn tổng kết có tiếng và nút icon
+  When màn tổng kết level mở
+  Then một lời khen của §7.2 được đọc
+  And các nút không có chữ hiển thị, chỉ có aria-label
 
 Scenario: BR-FBK-10 — âm không có onset tức thì
   When phân tích mọi file SFX

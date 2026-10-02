@@ -65,6 +65,10 @@ const PRIMITIVE_MODULES: readonly string[] = [
   // Vùng lời dẫn tách file riêng tương tự nút Xong (Task #277 S3).
   // Thư viện vẽ nguyên thuỷ dùng chung cho mọi engine.
   "render/prompt-zone.ts",
+  // Mascot Thỏ Tini và lớp phủ phản hồi chung (Task #279, `BR-FBK-11`):
+  // shell vẽ cho mọi engine, không engine nào sở hữu.
+  "render/mascot.ts",
+  "systems/feedback-overlay.ts",
 ];
 
 function checkSessionDrawLines(

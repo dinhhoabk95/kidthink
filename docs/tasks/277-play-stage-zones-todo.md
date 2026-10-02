@@ -96,12 +96,13 @@ của S0 — không file nào đổi trạng thái ngoài file của lát.
 - [ ] Tap-tap fallback `BR-ENG-06` vẫn xanh
 - [ ] Ca âm: khay vẽ ở toạ độ cũ → test đỏ
 
-## S6 — Mascot phản hồi · S · phụ thuộc: S3
+## S6 — Mascot phản hồi · S · phụ thuộc: S3 — làm trong [#279](279-kid-feedback-pass-todo.md)
 
-- [ ] RED: đúng và sai mỗi loại phát tiếng cùng một đổi dáng mascot trong ≤100ms (`BR-PSZ-10`, `BR-ETS-07`)
-- [ ] Nối `FeedbackSystem` qua `use-play-session.ts`
-- [ ] Sai ba lần liên tiếp không đổi cường độ phản hồi
-- [ ] Ca âm: tắt kênh hình → test đỏ
+- [x] RED: đúng và sai mỗi loại có một đổi dáng mascot ngay khung vẽ kế tiếp (`BR-PSZ-10`, `BR-FBK-11`)
+      — `tests/feedback-overlay.test.ts`, `apps/web/tests/unit/play-gesture.test.ts`
+- [x] Nối phản hồi qua `use-play-gesture` `onFeedback` → `FeedbackOverlay` (không qua `use-play-session`: verdict sinh ở gesture)
+- [x] Sai năm lần liên tiếp cho khung giống hệt lần đầu (`BR-FBK-07`)
+- [x] Ca âm: bỏ `emitFeedback` khỏi `handleVerdict` → ba test `onFeedback` đỏ (đã thấy đỏ trước khi cài)
 
 ## S7 — GT-034, GT-035, GT-036 vào khung · M · phụ thuộc: S4
 

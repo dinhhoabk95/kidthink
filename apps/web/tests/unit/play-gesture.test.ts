@@ -105,7 +105,15 @@ class FakeTapSelectSession extends TemplateGameSession<
   }
 }
 
-function makeTapSelectHarness(entities: { id: string; role: string }[]) {
+type FeedbackSpy = (
+  kind: "success" | "retry",
+  point: { readonly x: number; readonly y: number }
+) => void;
+
+function makeTapSelectHarness(
+  entities: { id: string; role: string }[],
+  onFeedback?: FeedbackSpy
+) {
   const session = new FakeTapSelectSession({}, {});
   const onMiss = vi.fn();
   const onSuccess = vi.fn();
@@ -127,6 +135,7 @@ function makeTapSelectHarness(entities: { id: string; role: string }[]) {
     getEngine: () => engine as never,
     canvasRef: ref(null),
     onRoundWon: vi.fn(),
+    onFeedback,
   });
 
   gesture.viewEntities.value = entities.map((e, index) => ({
@@ -142,7 +151,10 @@ function makeTapSelectHarness(entities: { id: string; role: string }[]) {
   return { gesture, session, onMiss, onSuccess, speakPrompt, engine };
 }
 
-function makeHarness(entities: { id: string; role: string }[]) {
+function makeHarness(
+  entities: { id: string; role: string }[],
+  onFeedback?: FeedbackSpy
+) {
   const session = new FakeSession({}, {});
   const onMiss = vi.fn();
   const onSuccess = vi.fn();
@@ -162,6 +174,7 @@ function makeHarness(entities: { id: string; role: string }[]) {
     getEngine: () => engine as never,
     canvasRef: ref(null),
     onRoundWon: vi.fn(),
+    onFeedback,
   });
 
   gesture.viewEntities.value = entities.map((e, index) => ({
@@ -529,5 +542,59 @@ describe("usePlayGesture — nút Xong của GT-002 thật (Task #275 S1b)", () 
     gesture.handleAccessibleEntityTap(entityById(COMMIT_ENTITY_ID));
 
     expect(onRoundWon).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("usePlayGesture — lớp phủ phản hồi (#279, BR-FBK-05, BR-FBK-11)", () => {
+  it("chạm đúng báo success tại đúng điểm chạm", () => {
+    const onFeedback = vi.fn<FeedbackSpy>();
+    const { gesture } = makeTapSelectHarness([], onFeedback);
+
+    gesture.dispatchGesture({ type: "tap", x: 100, y: 100, timeMs: 0 });
+
+    expect(onFeedback).toHaveBeenCalledExactlyOnceWith("success", {
+      x: 100,
+      y: 100,
+    });
+  });
+
+  it("chạm chưa đúng báo retry tại đúng điểm chạm", () => {
+    const onFeedback = vi.fn<FeedbackSpy>();
+    const { gesture } = makeTapSelectHarness([], onFeedback);
+
+    gesture.dispatchGesture({ type: "tap", x: 300, y: 100, timeMs: 0 });
+
+    expect(onFeedback).toHaveBeenCalledExactlyOnceWith("retry", {
+      x: 300,
+      y: 100,
+    });
+  });
+
+  it("cử chỉ bị nuốt (feedback none) không phát phản hồi", () => {
+    const onFeedback = vi.fn<FeedbackSpy>();
+    const { gesture } = makeTapSelectHarness([], onFeedback);
+
+    gesture.dispatchGesture({ type: "tap", x: 700, y: 400, timeMs: 0 });
+
+    expect(onFeedback).not.toHaveBeenCalled();
+  });
+
+  it("thả đúng báo success tại điểm thả, không phải điểm nhấc", () => {
+    const onFeedback = vi.fn<FeedbackSpy>();
+    const { gesture } = makeHarness([], onFeedback);
+
+    gesture.dispatchGesture({
+      type: "drop",
+      fromX: 10,
+      fromY: 20,
+      toX: 400,
+      toY: 250,
+      timeMs: 0,
+    });
+
+    expect(onFeedback).toHaveBeenCalledExactlyOnceWith("success", {
+      x: 400,
+      y: 250,
+    });
   });
 });

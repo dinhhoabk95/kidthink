@@ -11,6 +11,7 @@ import type { StageZones, ZoneRect } from "#src/layout/stage-zones.js";
 import type { Slot } from "#src/layout/types.js";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
+import { drawMascot, type MascotPose, type MascotSprites } from "./mascot.js";
 import { drawEmojiContent } from "./shared-render.js";
 import { canvasFontPx } from "./type-scale.js";
 import type { RenderAsset } from "./types.js";
@@ -18,7 +19,11 @@ import type { RenderAsset } from "./types.js";
 export interface PromptZoneOptions {
   readonly promptText?: string;
   readonly targetAsset?: RenderAsset | null;
-  readonly mascotEmoji?: string;
+  /** Dáng mascot của khung này (`feedback-and-celebration.md` §7.4). */
+  readonly mascotPose?: MascotPose;
+  /** Thời gian từ lúc dáng bắt đầu, để hoạt ảnh chạy từ đầu mỗi lần đổi dáng. */
+  readonly mascotElapsedMs?: number;
+  readonly mascotSprites?: MascotSprites;
   readonly isSpeakerActive?: boolean;
 }
 
@@ -46,29 +51,33 @@ function drawPromptContainer(
 
 function drawPromptMascot(
   ctx: CanvasRenderingContext2D,
+  rs: RenderSystem,
   prompt: ZoneRect,
-  mascotEmoji: string
+  options?: PromptZoneOptions
 ): void {
-  const mascotCenter = {
-    x: prompt.x + prompt.h / 2,
-    y: prompt.y + prompt.h / 2,
+  const placement = {
+    cx: prompt.x + prompt.h / 2,
+    cy: prompt.y + prompt.h / 2,
+    radius: prompt.h * 0.38,
   };
-  const mascotRadius = prompt.h * 0.38;
 
   ctx.save();
   ctx.fillStyle = designTokens.colors.brand[50];
   ctx.strokeStyle = designTokens.colors.brand[200];
   ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.arc(mascotCenter.x, mascotCenter.y, mascotRadius, 0, Math.PI * 2);
+  ctx.arc(placement.cx, placement.cy, placement.radius, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
-
-  ctx.font = `${Math.round(prompt.h * 0.44)}px "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif`;
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillText(mascotEmoji, mascotCenter.x, mascotCenter.y);
   ctx.restore();
+
+  drawMascot(
+    ctx,
+    { ...placement, radius: placement.radius * 0.8 },
+    options?.mascotPose ?? "idle",
+    options?.mascotElapsedMs ?? 0,
+    { sprites: options?.mascotSprites, reducedMotion: rs.reducedMotion }
+  );
 }
 
 function drawPromptSpeaker(
@@ -188,7 +197,7 @@ export function drawPromptZone(
 
   ctx.save();
   drawPromptContainer(ctx, prompt);
-  drawPromptMascot(ctx, prompt, options?.mascotEmoji ?? "🐻");
+  drawPromptMascot(ctx, rs, prompt, options);
   drawPromptSpeaker(ctx, promptSpeaker, options?.isSpeakerActive);
   drawPromptContent(ctx, rs, zones, options);
   ctx.restore();
