@@ -186,6 +186,11 @@ export abstract class TemplateGameSession<
   /** Phiên có cần nút nộp bài không (`BR-PSZ-05`). Mặc định false. */
   readonly needsCommit: boolean = false;
 
+  /** Trạng thái sáng/mờ của nút nộp bài (`BR-PSZ-05`). Mặc định true khi needsCommit là true. */
+  canCommit(): boolean {
+    return true;
+  }
+
   /** Vùng sân khấu được cấp bởi shell (`BR-PSZ-01`, Task #277 S3). */
   stageRect?: ZoneRect;
 

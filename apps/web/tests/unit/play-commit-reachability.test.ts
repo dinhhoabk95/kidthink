@@ -1,4 +1,5 @@
 import {
+  computeStageZones,
   createGameSessionSync,
   type EngineConfig,
   type GameSession,
@@ -6,20 +7,21 @@ import {
   type GT028Difficulty,
   preloadGameSession,
   RoundRunner,
+  type StageZones,
 } from "@mindkid/game-engine";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
+import { ref } from "vue";
+import { usePlayGesture } from "~/composables/play/use-play-gesture";
 
 /**
  * Task #277 S0, hiện trạng H3 — GT-028 chỉ nộp bài qua gesture `commit`
  * (`GT-028/session.ts` `toAction`), còn trang chơi chỉ gửi `commit` từ ba nút
  * intro của GT-000 (`pages/play/[code].vue` `handleEcho*`, `handleIntroPrev`).
- * Mọi đường còn lại của bề mặt web là `tap` tại một toạ độ canvas. Test quét
- * `tap` trên toàn không gian logic sau khi chạm đủ số: nếu không toạ độ nào
- * thắng được vòng thì trẻ kẹt.
+ * Mọi đường còn lại của bề mặt web là `tap` tại một toạ độ canvas.
  *
- * `it.fails` giữ test này xanh trong `check:test-ratchet` khi lỗi còn đó.
- * S4 (`BR-PSZ-05` — nút hành động do shell đổi thành `commit`) phải đổi
- * `it.fails` thành `it`; ca âm của S4 là gỡ nhánh đổi chạm thì test đỏ lại.
+ * S4 (`BR-PSZ-05` — nút hành động do shell đổi thành `commit`):
+ * Khi chạm vào `zones.action`, shell đổi `tap` thành `commit` và GT-028 nộp bài thành công.
+ * Ca âm: khi shell không có nhánh đổi chạm (hoặc needsCommit=false), quét tap không thể thắng.
  */
 
 const GT028_CONTENT: GT028Content = {
@@ -87,25 +89,12 @@ function makeRunner(): RoundRunner {
   });
 }
 
-/**
- * Chạm một điểm. Nếu chạm đó bật/tắt một vật (đổi số vật đang chọn) thì chạm
- * lại đúng chỗ để trả bàn về trạng thái cũ — quét chỉ đi tìm đường nộp bài,
- * không được làm lệch số đã đếm.
- */
-function probeTap(session: GameSession, x: number, y: number): void {
-  const before = countSelected(session);
-  session.dispatch?.({ type: "tap", x, y, timeMs: 0 });
-  if (countSelected(session) !== before && !session.checkWinCondition()) {
-    session.dispatch?.({ type: "tap", x, y, timeMs: 0 });
-  }
-}
-
-describe("Task #277 S0 — H3: GT-028 nộp bài từ bề mặt web", () => {
+describe("Task #277 S4 — BR-PSZ-05: GT-028 nộp bài từ bề mặt web", () => {
   beforeAll(async () => {
     await preloadGameSession("GT-028");
   });
 
-  it("chạm đủ số đúng rồi dispatch commit thì thắng — engine đúng, lỗi nằm ở đường tới", () => {
+  it("chạm đủ số đúng rồi dispatch commit thì thắng — engine đúng", () => {
     const runner = makeRunner();
     runner.startFirstRound();
     const session = runner.getCurrentSession();
@@ -126,13 +115,186 @@ describe("Task #277 S0 — H3: GT-028 nộp bài từ bề mặt web", () => {
     expect(session.checkWinCondition()).toBe(true);
   });
 
-  it.fails("BR-PSZ-05 — chạm đủ số rồi chỉ dùng tap trên canvas vẫn thắng được vòng", () => {
+  it("BR-PSZ-05 — chạm đủ số rồi chỉ dùng tap trên canvas vẫn thắng được vòng nhờ shell đổi chạm tại action zone", () => {
     const runner = makeRunner();
     runner.startFirstRound();
     const session = runner.getCurrentSession();
     if (!session) {
       throw new Error("Thiếu session GT-028");
     }
+
+    const zones: StageZones = computeStageZones({
+      logicW: LOGIC_W,
+      logicH: LOGIC_H,
+      ageBand: "4-5",
+      cssPerLogic: 1,
+      needsTray: false,
+      needsCommit: true,
+    });
+
+    const engine = {
+      activeSession: session,
+      acceptingInput: true,
+      audio: {
+        playSnapSound: vi.fn(),
+        playPopCelebrateSound: vi.fn(),
+        playSoftFeedbackSound: vi.fn(),
+        playPromptAudio: vi.fn(),
+        speakPrompt: vi.fn(),
+      },
+      renderSystem: {
+        LOGIC_WIDTH: LOGIC_W,
+        LOGIC_HEIGHT: LOGIC_H,
+        toLogicPoint: (clientX: number, clientY: number) => ({
+          x: clientX,
+          y: clientY,
+        }),
+      },
+    };
+
+    const gesture = usePlayGesture({
+      getEngine: () => engine as never,
+      canvasRef: ref(null),
+      onRoundWon: vi.fn(),
+      getStageZones: () => zones,
+    });
+    gesture.syncView();
+
+    function gestureTap(x: number, y: number): void {
+      gesture.handlePointerDown({
+        pointerId: 1,
+        clientX: x,
+        clientY: y,
+        timeStamp: 10,
+      } as PointerEvent);
+      gesture.handlePointerUp({
+        pointerId: 1,
+        clientX: x,
+        clientY: y,
+        timeStamp: 20,
+      } as PointerEvent);
+    }
+
+    function probeTapCanvas(x: number, y: number): void {
+      const before = countSelected(session as GameSession);
+      gestureTap(x, y);
+
+      if (
+        countSelected(session as GameSession) !== before &&
+        !session?.checkWinCondition()
+      ) {
+        gestureTap(x, y);
+      }
+    }
+
+    const needed = GT028_CONTENT.target_total / GT028_CONTENT.step;
+    for (const entity of (session.getView?.().entities ?? []).slice(
+      0,
+      needed
+    )) {
+      gestureTap(entity.x, entity.y);
+    }
+    expect(countSelected(session)).toBe(needed);
+
+    for (
+      let y = 0;
+      y <= LOGIC_H && !session.checkWinCondition();
+      y += SWEEP_STEP_PX
+    ) {
+      for (
+        let x = 0;
+        x <= LOGIC_W && !session.checkWinCondition();
+        x += SWEEP_STEP_PX
+      ) {
+        probeTapCanvas(x, y);
+      }
+    }
+
+    expect(session.checkWinCondition()).toBe(true);
+  });
+
+  it("ca âm: khi needsCommit=false, quét tap trên canvas không bao giờ thắng được", () => {
+    const runner = makeRunner();
+    runner.startFirstRound();
+    const session = runner.getCurrentSession();
+    if (!session) {
+      throw new Error("Thiếu session GT-028");
+    }
+
+    const zonesWithoutCommit: StageZones = computeStageZones({
+      logicW: LOGIC_W,
+      logicH: LOGIC_H,
+      ageBand: "4-5",
+      cssPerLogic: 1,
+      needsTray: false,
+      needsCommit: false,
+    });
+
+    // Giả lập phiên needsCommit = false
+    const engine = {
+      activeSession: Object.assign(Object.create(session), {
+        needsCommit: false,
+      }),
+      acceptingInput: true,
+      audio: {
+        playSnapSound: vi.fn(),
+        playPopCelebrateSound: vi.fn(),
+        playSoftFeedbackSound: vi.fn(),
+        playPromptAudio: vi.fn(),
+        speakPrompt: vi.fn(),
+      },
+      renderSystem: {
+        LOGIC_WIDTH: LOGIC_W,
+        LOGIC_HEIGHT: LOGIC_H,
+        toLogicPoint: (clientX: number, clientY: number) => ({
+          x: clientX,
+          y: clientY,
+        }),
+      },
+    };
+
+    const gesture = usePlayGesture({
+      getEngine: () => engine as never,
+      canvasRef: ref(null),
+      onRoundWon: vi.fn(),
+      getStageZones: () => zonesWithoutCommit,
+    });
+    gesture.syncView();
+
+    function tapCanvas(x: number, y: number): void {
+      const before = countSelected(session as GameSession);
+      gesture.handlePointerDown({
+        pointerId: 1,
+        clientX: x,
+        clientY: y,
+        timeStamp: 10,
+      } as PointerEvent);
+      gesture.handlePointerUp({
+        pointerId: 1,
+        clientX: x,
+        clientY: y,
+        timeStamp: 20,
+      } as PointerEvent);
+
+      if (
+        countSelected(session as GameSession) !== before &&
+        !session?.checkWinCondition()
+      ) {
+        gesture.handlePointerDown({
+          pointerId: 1,
+          clientX: x,
+          clientY: y,
+          timeStamp: 30,
+        } as PointerEvent);
+        gesture.handlePointerUp({
+          pointerId: 1,
+          clientX: x,
+          clientY: y,
+          timeStamp: 40,
+        } as PointerEvent);
+      }
+    }
+
     const needed = GT028_CONTENT.target_total / GT028_CONTENT.step;
     for (const entity of (session.getView?.().entities ?? []).slice(
       0,
@@ -152,10 +314,10 @@ describe("Task #277 S0 — H3: GT-028 nộp bài từ bề mặt web", () => {
         x <= LOGIC_W && !session.checkWinCondition();
         x += SWEEP_STEP_PX
       ) {
-        probeTap(session, x, y);
+        tapCanvas(x, y);
       }
     }
 
-    expect(session.checkWinCondition()).toBe(true);
+    expect(session.checkWinCondition()).toBe(false);
   });
 });

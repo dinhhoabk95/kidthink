@@ -17,7 +17,6 @@ import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import {
   drawHeaderRepresentation,
-  drawProgressBadge,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
@@ -52,6 +51,12 @@ export class GT028Session extends TemplateGameSession<
   GT028Content,
   GT028Difficulty
 > {
+  override readonly needsCommit = true;
+
+  override canCommit(): boolean {
+    return this.selectedItemIds.length > 0;
+  }
+
   degradation: DegradationState | null = null;
   selectedItemIds: string[] = [];
   private renderParticles: Particle[] = [];
@@ -295,12 +300,6 @@ export class GT028Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
     drawPromptText(ctx, rs, this.content.prompt);
-    drawProgressBadge(
-      ctx,
-      rs,
-      this.getCurrentCount(),
-      this.content.target_total
-    );
 
     const subText = `Bước nhảy: +${this.content.step}  |  Đã đếm: ${this.getCurrentCount()} / Mục tiêu: ${this.content.target_total}`;
     drawSubPromptText(ctx, rs, subText);

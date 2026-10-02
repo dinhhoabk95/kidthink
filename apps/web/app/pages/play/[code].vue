@@ -236,6 +236,7 @@
 <script lang="ts" setup>
   import {
     computeStageZones,
+    drawCommitButton,
     drawPromptZone,
     getTouchFloor,
     type StageZones,
@@ -286,6 +287,12 @@
         if (activePrompt) {
           drawPromptZone(ctx, rs, zones, {
             promptText: activePrompt,
+          });
+        }
+        if (session instanceof TemplateGameSession && session.needsCommit) {
+          drawCommitButton(ctx, rs, zones.action, {
+            enabled: session.canCommit?.() ?? true,
+            origin: "top-left",
           });
         }
       }

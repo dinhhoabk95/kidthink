@@ -163,6 +163,54 @@ export function usePlayGesture(options: GestureOptions) {
     );
   }
 
+  function isActionTap(
+    gesture: Gesture,
+    session: TemplateGameSession<unknown, unknown>
+  ): boolean {
+    if (gesture.type !== "tap" || !session.needsCommit) {
+      return false;
+    }
+    const zones = options.getStageZones?.();
+    return Boolean(zones && isPointInZone(gesture.x, gesture.y, zones.action));
+  }
+
+  function getActiveSession(
+    engine: GameEngine
+  ): TemplateGameSession<unknown, unknown> | null {
+    if (!engine.acceptingInput) {
+      return null;
+    }
+    const session = engine.activeSession;
+    if (!(session instanceof TemplateGameSession)) {
+      return null;
+    }
+    if (!session.isAcceptingInput()) {
+      return null;
+    }
+    return session;
+  }
+
+  function handleActionTap(
+    gesture: Gesture,
+    engine: GameEngine,
+    session: TemplateGameSession<unknown, unknown>
+  ): boolean {
+    if (!isActionTap(gesture, session)) {
+      return false;
+    }
+    if (session.canCommit?.() === false) {
+      return true;
+    }
+    const verdict = session.dispatch({
+      type: "commit",
+      timeMs: gesture.timeMs,
+    });
+    if (verdict) {
+      handleVerdict(verdict, engine, session, null);
+    }
+    return true;
+  }
+
   function dispatchGesture(gesture: Gesture): void {
     if (isSpeakerTap(gesture)) {
       options.onPromptSpeakerTap?.();
@@ -173,19 +221,12 @@ export function usePlayGesture(options: GestureOptions) {
     if (!engine) {
       return;
     }
-    if (!engine.acceptingInput) {
-      // Câu dẫn chưa đọc xong (`BR-PNR-11`) — nuốt cử chỉ hoàn toàn: không
-      // gọi tới session, không tính điểm, không tính miss, không đọc nhãn.
+    const session = getActiveSession(engine);
+    if (!session) {
       return;
     }
-    const session = engine.activeSession;
-    if (!(session instanceof TemplateGameSession)) {
-      return;
-    }
-    if (!session.isAcceptingInput()) {
-      // Session đang đọc câu hỏi của chính nó (GT-000 ở mức bước,
-      // `BR-E000-12`) — nuốt trọn như cổng câu dẫn vòng, không đọc nhãn: đọc
-      // nhãn là cắt ngang câu hỏi đang đọc.
+
+    if (handleActionTap(gesture, engine, session)) {
       return;
     }
 

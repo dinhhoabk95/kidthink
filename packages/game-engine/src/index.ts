@@ -153,6 +153,7 @@ export {
 } from "./offline-buffer";
 export {
   drawCentralTargetCard,
+  drawCommitButton,
   drawPromptZone,
   drawSceneBackground,
   drawTargetHoverAura,

@@ -11,6 +11,7 @@ import type { AgeBand } from "#src/contracts/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
 import { getTouchFloor, type LogicSpace } from "../layout/constants.js";
+import type { ZoneRect } from "../layout/stage-zones.js";
 import { canvasFontPx } from "./type-scale.js";
 
 /** Id entity của nút trong `getView()` — đường bàn phím và screen reader. */
@@ -66,18 +67,24 @@ export interface CommitButtonOptions {
   /** `false` khi chưa có vật nào được chọn — vẽ mờ, không nhận chạm. */
   readonly enabled: boolean;
   readonly label?: string;
+  /** Toạ độ rect: "center" (mặc định) hoặc "top-left" (cho StageZones.action). */
+  readonly origin?: "center" | "top-left";
 }
 
 export function drawCommitButton(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
-  rect: CommitButtonRect,
+  rect: CommitButtonRect | ZoneRect,
   options: CommitButtonOptions
 ): void {
   const space: LogicSpace = { w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT };
   const fontPx = canvasFontPx(space, "label", rs.viewport?.scale);
-  const left = rect.x - rect.w / 2;
-  const top = rect.y - rect.h / 2;
+  const isTopLeft = options.origin === "top-left";
+  const left = isTopLeft ? rect.x : rect.x - rect.w / 2;
+  const top = isTopLeft ? rect.y : rect.y - rect.h / 2;
+  const centerX = isTopLeft ? rect.x + rect.w / 2 : rect.x;
+  const centerY = isTopLeft ? rect.y + rect.h / 2 : rect.y;
+  const radius = Math.min(BUTTON_CORNER_RADIUS_PX, Math.floor(rect.h / 2));
 
   ctx.save();
   ctx.globalAlpha = options.enabled ? 1 : DISABLED_ALPHA;
@@ -85,13 +92,13 @@ export function drawCommitButton(
     ? designTokens.colors.cta[500]
     : designTokens.colors.surface[300];
   ctx.beginPath();
-  ctx.roundRect(left, top, rect.w, rect.h, BUTTON_CORNER_RADIUS_PX);
+  ctx.roundRect(left, top, rect.w, rect.h, radius);
   ctx.fill();
 
   ctx.fillStyle = designTokens.colors.surface[0];
   ctx.font = `bold ${fontPx}px ${designTokens.fonts.sans}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(options.label ?? COMMIT_BUTTON_LABEL, rect.x, rect.y);
+  ctx.fillText(options.label ?? COMMIT_BUTTON_LABEL, centerX, centerY);
   ctx.restore();
 }

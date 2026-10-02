@@ -78,11 +78,11 @@ của S0 — không file nào đổi trạng thái ngoài file của lát.
 
 ## S4 — Vùng hành động và GT-028 · S · phụ thuộc: S3
 
-- [ ] `needsCommit` trên `TemplateGameSession`, mặc định `false`; GT-028 khai `true`
-- [ ] Shell vẽ `drawCommitButton` ở `zones.action`, chạm đổi thành `commit` (`BR-PSZ-05`)
-- [ ] GT-028 bỏ `drawProgressBadge` (`BR-PSZ-06`)
-- [ ] Test H3 của S0: đổi `it.fails` thành `it`, test xanh
-- [ ] Ca âm: gỡ nhánh đổi chạm → test H3 đỏ lại
+- [x] `needsCommit` trên `TemplateGameSession`, mặc định `false`; GT-028 khai `true`
+- [x] Shell vẽ `drawCommitButton` ở `zones.action`, chạm đổi thành `commit` (`BR-PSZ-05`)
+- [x] GT-028 bỏ `drawProgressBadge` (`BR-PSZ-06`)
+- [x] Test H3 của S0: đổi `it.fails` thành `it`, test xanh
+- [x] Ca âm: gỡ nhánh đổi chạm → test H3 đỏ lại
 
 ## Checkpoint 1 — Trình duyệt thật
 
