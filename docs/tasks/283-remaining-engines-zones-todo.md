@@ -131,7 +131,7 @@ Ghi chú đo của N (2026-10-03):
 
 ## Checkpoint — Trình duyệt thật
 
-- [ ] Mỗi lô: một level mỗi engine ở ba viewport, xoay máy giữa vòng, reduced-motion bật
+- [ ] Mỗi lô: một level mỗi engine ở ba viewport, xoay máy giữa vòng, reduced-motion bật — **một phần**: 20/37 engine ở ba viewport, màn đầu vòng, khách chưa đăng nhập, 0 lỗi console ([`zones-283/README.md`](../qa/engine-captures/2026-10-03/zones-283/README.md)); còn 17 engine cần tài khoản + GT-000, chưa chơi, chưa xoay máy, chưa reduced-motion
 - [ ] Ảnh vào `docs/qa/engine-captures/<ngày>/`; `check:engine-specs` và `check:engine-turn` exit 0
 
 ## Đóng task
