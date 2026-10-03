@@ -37,6 +37,13 @@ export interface LayoutInput {
    * (`BR-PSZ-04`); bỏ trống thì sàn tính theo logic px như cũ.
    */
   readonly cssPerLogic?: number;
+  /**
+   * `placeInStage` đặt khi có `stage` (`BR-PSZ-01`): hàm hình học được phép thích
+   * nghi với sân khấu — làm tròn xuống cạnh ô để tâm làm tròn không kéo hai vùng
+   * chạm lại gần nhau hơn `SLOT_GAP_PX` (`BR-LAY-05`), thêm cột khi vùng thấp.
+   * Không đặt thì kết quả giữ nguyên từng điểm ảnh (`BR-LAY-10`).
+   */
+  readonly inStage?: boolean;
 }
 
 export type LayoutFn = (input: LayoutInput) => Slot[];

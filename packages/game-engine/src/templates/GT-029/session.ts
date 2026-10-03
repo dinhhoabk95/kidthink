@@ -14,6 +14,11 @@ import type {
   ViewEntity,
 } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
+import {
+  dockRectAroundSlots,
+  insetDrawSize,
+  legacyStageArea,
+} from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
   drawPromptText,
@@ -28,6 +33,7 @@ import {
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT029Content, GT029Difficulty } from "./template.js";
+import { layoutOptionSlots, splitItemsAndOptions } from "./zone-layout.js";
 
 interface GT029ActionPayload {
   item_id?: string;
@@ -40,6 +46,8 @@ export class GT029Session extends TemplateGameSession<
   GT029Content,
   GT029Difficulty
 > {
+  override readonly usesPromptZone = true;
+
   degradation: DegradationState | null = null;
   removedItemIds: Set<string> = new Set();
   selectedOptionId: string | null = null;
@@ -82,22 +90,28 @@ export class GT029Session extends TemplateGameSession<
   protected computeSlots(band: AgeBand): readonly Slot[] {
     const totalItems = this.content.initial_items.length;
     const optionCount = this.content.answer_options.length;
+    const params = {
+      ageBand: band,
+      logic: this.logicSpace,
+      cssPerLogic: this.cssPerLogic,
+    };
+    const areas = splitItemsAndOptions(
+      this.stageRect ?? legacyStageArea(this.logicSpace),
+      optionCount,
+      params
+    );
 
     const gridFn = resolveLayout("grid");
     const itemSlots = gridFn({
       slotCount: totalItems,
-      ageBand: band,
-      logic: this.logicSpace,
+      ...params,
+      stage: areas.items,
     });
+    const optionSlots = layoutOptionSlots(areas, optionCount, params).map(
+      (slot, i) => ({ ...slot, index: totalItems + i })
+    );
 
-    const flexFn = resolveLayout("flex-wrap");
-    const optionSlots = flexFn({
-      slotCount: optionCount,
-      ageBand: band,
-      logic: this.logicSpace,
-    });
-
-    return [...itemSlots, ...optionSlots];
+    return insetDrawSize([...itemSlots, ...optionSlots], this.stageRect);
   }
 
   private handleItemRemoval(itemId: string): ActionResult {
@@ -437,7 +451,14 @@ export class GT029Session extends TemplateGameSession<
       return;
     }
 
-    drawWoodenTokenDock(ctx, rs);
+    drawWoodenTokenDock(
+      ctx,
+      rs,
+      dockRectAroundSlots(
+        this.slots.slice(this.content.initial_items.length),
+        this.stageRect
+      )
+    );
 
     for (let i = 0; i < this.content.answer_options.length; i++) {
       const opt = this.content.answer_options[i];
@@ -472,15 +493,19 @@ export class GT029Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
 
-    const removedCount = this.removedItemIds.size;
-    const targetRemove = this.content.remove_count;
-    const subPrompt =
-      removedCount < targetRemove
-        ? `Đã bớt: ${removedCount}/${targetRemove}`
-        : "Đã bớt đủ! Nhóm ban đầu còn lại bao nhiêu?";
-    drawSubPromptText(ctx, rs, subPrompt);
+    if (!this.stageRect) {
+      const removedCount = this.removedItemIds.size;
+      const targetRemove = this.content.remove_count;
+      const subPrompt =
+        removedCount < targetRemove
+          ? `Đã bớt: ${removedCount}/${targetRemove}`
+          : "Đã bớt đủ! Nhóm ban đầu còn lại bao nhiêu?";
+      drawSubPromptText(ctx, rs, subPrompt);
+    }
 
     this.renderItems(ctx, rs);
     this.renderOptions(ctx, rs);

@@ -24,6 +24,7 @@ export function placeInStage(layoutFn: LayoutFn): LayoutFn {
     }
     const virtual: LayoutInput = {
       ...rest,
+      inStage: true,
       logic: {
         w: Math.max(0, stage.w) + 2 * SAFE_MARGIN_PX,
         h: Math.max(0, stage.h) + CONTENT_TOP_PX + SAFE_MARGIN_PX,

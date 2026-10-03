@@ -7,6 +7,7 @@ import {
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
+import { insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
@@ -34,6 +35,8 @@ export class GT009Session extends TemplateGameSession<
   GT009Content,
   GT009Difficulty
 > {
+  override readonly usesPromptZone = true;
+
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -169,12 +172,17 @@ export class GT009Session extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("clue-board");
-    return layoutFn({
-      slotCount: this.content.candidates.length,
-      targetCount: this.content.clues.length,
-      ageBand,
-      logic: this.logicSpace,
-    });
+    return insetDrawSize(
+      layoutFn({
+        slotCount: this.content.candidates.length,
+        targetCount: this.content.clues.length,
+        ageBand,
+        logic: this.logicSpace,
+        stage: this.stageRect,
+        cssPerLogic: this.cssPerLogic,
+      }),
+      this.stageRect
+    );
   }
 
   private findHitClue(
@@ -340,7 +348,9 @@ export class GT009Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
     // clue-board xếp dải manh mối trước, rồi tới bàn ứng viên.
     const clueSlots = this.slots.slice(0, this.content.clues.length);
     const boardSlots = this.slots.slice(this.content.clues.length);

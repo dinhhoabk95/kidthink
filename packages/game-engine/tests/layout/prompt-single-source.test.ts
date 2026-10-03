@@ -14,7 +14,7 @@ import { RenderSystem } from "#src/systems/render-system";
 import { GT009_FIXTURES } from "#src/templates/GT-009/fixtures";
 import { FIXTURES_BY_CODE, type FixturePayload } from "../fixtures-map.ts";
 import { createFakeCanvas } from "../gates/fake-canvas.ts";
-import { GT009PromptZoneFlagWrongSession } from "./fixtures/gt-009-prompt-zone-flag-wrong.ts";
+import { GT009StillDrawsPromptSession } from "./fixtures/gt-009-still-draws-prompt.ts";
 import { MIGRATED_CODES } from "./migrated-codes.ts";
 
 vi.mock("#src/render/shared-render", async (importOriginal) => {
@@ -122,12 +122,12 @@ describe("lời dẫn chỉ vẽ một nơi cho mỗi khung hình (Task #283 N0)
     }
   );
 
-  it("ca âm: engine chưa dời khai cờ sai thì có hai nguồn lời dẫn", () => {
+  it("ca âm: engine đã dời mà còn tự vẽ lời dẫn thì có hai nguồn", () => {
     const fixture = GT009_FIXTURES[0];
     if (!fixture) {
       throw new Error("GT-009 không có fixture");
     }
-    const session = new GT009PromptZoneFlagWrongSession(
+    const session = new GT009StillDrawsPromptSession(
       fixture.content,
       fixture.difficulty
     );

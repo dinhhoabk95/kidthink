@@ -86,7 +86,7 @@ export default defineTemplate({
   status: "published",
   version: 1,
   engine_session: "GT032Session",
-  layouts: ["horizontal-row", "split-columns"],
+  layouts: ["horizontal-row", "split-columns", "grid"],
   content_contract: GT032ContentSchema,
   difficulty_contract: GT032DifficultySchema,
   limits: {

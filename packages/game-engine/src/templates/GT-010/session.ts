@@ -9,6 +9,7 @@ import {
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
+import { dockRectAroundSlots, insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
   boxFromSlots,
@@ -31,6 +32,8 @@ export class SubstitutionSession extends TemplateGameSession<
   GT010Content,
   GT010Difficulty
 > {
+  override readonly usesPromptZone = true;
+
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -155,12 +158,17 @@ export class SubstitutionSession extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("equation-rows");
-    return layoutFn({
-      slotCount: this.content.options.length,
-      targetCount: this.content.equations.length,
-      ageBand,
-      logic: this.logicSpace,
-    });
+    return insetDrawSize(
+      layoutFn({
+        slotCount: this.content.options.length,
+        targetCount: this.content.equations.length,
+        ageBand,
+        logic: this.logicSpace,
+        stage: this.stageRect,
+        cssPerLogic: this.cssPerLogic,
+      }),
+      this.stageRect
+    );
   }
 
   override toAction(gesture: Gesture): GameAction | null {
@@ -208,7 +216,7 @@ export class SubstitutionSession extends TemplateGameSession<
   }
 
   override getView(): EngineView {
-    const eqSlots = this.targetSlots;
+    const eqSlots = this.slots.slice(0, this.content.equations.length);
     const optionSlots = this.sourceSlots;
     const entities: ViewEntity[] = [];
 
@@ -266,14 +274,20 @@ export class SubstitutionSession extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    const eqSlots = this.targetSlots;
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
+    const eqSlots = this.slots.slice(0, this.content.equations.length);
     const optionSlots = this.sourceSlots;
     const eqBox = boxFromSlots(eqSlots);
     if (eqBox) {
       drawEquationTray(ctx, eqBox);
     }
-    drawWoodenTokenDock(ctx, rs);
+    drawWoodenTokenDock(
+      ctx,
+      rs,
+      dockRectAroundSlots(optionSlots, this.stageRect)
+    );
     const glyphOf = (symbolId: string): string =>
       this.glyphBySymbolId.get(symbolId) ?? "?";
 

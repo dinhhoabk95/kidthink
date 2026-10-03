@@ -14,6 +14,7 @@ import type {
   ViewEntity,
 } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
+import { insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
@@ -58,6 +59,8 @@ export class GT022Session extends TemplateGameSession<
   GT022Content,
   GT022Difficulty
 > {
+  override readonly usesPromptZone = true;
+
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -253,11 +256,16 @@ export class GT022Session extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("free-scene");
-    return layoutFn({
-      slotCount: this.content.scene_objects.length,
-      ageBand,
-      logic: this.logicSpace,
-    });
+    return insetDrawSize(
+      layoutFn({
+        slotCount: this.content.scene_objects.length,
+        ageBand,
+        logic: this.logicSpace,
+        stage: this.stageRect,
+        cssPerLogic: this.cssPerLogic,
+      }),
+      this.stageRect
+    );
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {
@@ -277,7 +285,9 @@ export class GT022Session extends TemplateGameSession<
       this.wrongItemId = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
     // free-scene: toạ độ tới từ content (đã ở không gian logic), ô nào thiếu
     // toạ độ thì rơi về slot của layout.
     const scene = sceneBox(rs);
@@ -294,25 +304,44 @@ export class GT022Session extends TemplateGameSession<
         ctx,
         rs,
         scene,
-        { id: obj.id, asset: assetById.get(obj.id), x: obj.x, y: obj.y },
+        {
+          id: obj.id,
+          asset: assetById.get(obj.id),
+          // Có stage thì slot của layout đã nằm trong stage (`BR-PSZ-01`);
+          // toạ độ content thuộc không gian scene cũ nên bỏ.
+          ...(this.stageRect ? {} : { x: obj.x, y: obj.y }),
+        },
         this.slots[i],
         { found: state?.isFound === true }
       );
 
       if (obj.id === this.wrongItemId) {
-        const elapsed = timeMs - this.wrongTimestamp;
-        if (elapsed < 400) {
-          rs.drawScaffoldingHighlight(
-            ctx,
-            obj.x,
-            obj.y,
-            36,
-            (elapsed % 1000) / 1000
-          );
-        }
+        this.drawWrongHighlight(ctx, rs, obj, i, timeMs);
       }
     });
     this.drawRenderFeedback(rs, ctx);
+  }
+
+  private drawWrongHighlight(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    obj: { x: number; y: number },
+    index: number,
+    timeMs: number
+  ): void {
+    const elapsed = timeMs - this.wrongTimestamp;
+    if (elapsed >= 400) {
+      return;
+    }
+    // Có stage thì neo vào slot của layout, không phải toạ độ content.
+    const anchor = this.stageRect ? this.slots[index] : undefined;
+    rs.drawScaffoldingHighlight(
+      ctx,
+      anchor?.x ?? obj.x,
+      anchor?.y ?? obj.y,
+      36,
+      (elapsed % 1000) / 1000
+    );
   }
 
   private drawRenderFeedback(

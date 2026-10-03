@@ -9,6 +9,7 @@ import {
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
+import { insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
   drawDividerLine,
@@ -57,6 +58,8 @@ export class GT025Session extends TemplateGameSession<
   GT025Content,
   GT025Difficulty
 > {
+  override readonly usesPromptZone = true;
+
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -294,12 +297,17 @@ export class GT025Session extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("split-columns");
-    return layoutFn({
-      slotCount: this.content.left_objects.length,
-      targetCount: this.content.right_objects.length,
-      ageBand,
-      logic: this.logicSpace,
-    });
+    return insetDrawSize(
+      layoutFn({
+        slotCount: this.content.left_objects.length,
+        targetCount: this.content.right_objects.length,
+        ageBand,
+        logic: this.logicSpace,
+        stage: this.stageRect,
+        cssPerLogic: this.cssPerLogic,
+      }),
+      this.stageRect
+    );
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {
@@ -316,11 +324,13 @@ export class GT025Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    const scene = sceneBox(rs);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
+    const scene = this.stageRect ?? sceneBox(rs);
     const half = { x: scene.x, y: scene.y, w: scene.w / 2, h: scene.h };
     const rightHalf = {
-      x: scene.w / 2,
+      x: scene.x + scene.w / 2,
       y: scene.y,
       w: scene.w / 2,
       h: scene.h,
@@ -328,24 +338,38 @@ export class GT025Session extends TemplateGameSession<
     const sources = this.sourceSlots;
     const targets = this.targetSlots;
 
-    drawDividerLine(ctx, scene.w / 2, scene.y, scene.w / 2, scene.y + scene.h);
+    drawDividerLine(
+      ctx,
+      scene.x + scene.w / 2,
+      scene.y,
+      scene.x + scene.w / 2,
+      scene.y + scene.h
+    );
 
     const now = Date.now();
     const isWrongNow = now - this.wrongTimestamp < 400;
 
     this.content.left_objects.forEach((obj, i) => {
-      drawSceneObjectAt(ctx, rs, half, obj, sources[i], {
+      drawSceneObjectAt(ctx, rs, half, this.inLayout(obj), sources[i], {
         found: this.foundLeftIds.has(obj.id),
         wrong: isWrongNow && this.wrongObjectId === obj.id,
       });
     });
     this.content.right_objects.forEach((obj, i) => {
-      drawSceneObjectAt(ctx, rs, rightHalf, obj, targets[i], {
+      drawSceneObjectAt(ctx, rs, rightHalf, this.inLayout(obj), targets[i], {
         found: this.foundRightIds.has(obj.id),
         wrong: isWrongNow && this.wrongObjectId === obj.id,
       });
     });
     this.drawRenderFeedback(rs, ctx);
+  }
+
+  /**
+   * Có stage thì slot của layout đã nằm trong stage (`BR-PSZ-01`); toạ độ
+   * content thuộc không gian scene cũ nên bỏ để `drawSceneObjectAt` dùng slot.
+   */
+  private inLayout<T extends { x?: number; y?: number }>(obj: T): T {
+    return this.stageRect ? { ...obj, x: undefined, y: undefined } : obj;
   }
 
   private drawRenderFeedback(

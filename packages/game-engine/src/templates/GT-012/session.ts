@@ -9,9 +9,13 @@ import {
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
+import {
+  dockRectAroundSlots,
+  insetDrawSize,
+  legacyStageArea,
+} from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
-  computeDiceSlots,
   drawClocheScene,
   drawPromptText,
   drawSceneBackground,
@@ -25,11 +29,19 @@ import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import { FlashTimer } from "#src/systems/timer-system";
 import type { GT012Content, GT012Difficulty } from "./template.js";
+import {
+  computeFlashSlots,
+  plateSlot,
+  type RecallAreas,
+  splitRecallStage,
+} from "./zone-layout.js";
 
 export class FlashRecallSession extends TemplateGameSession<
   GT012Content,
   GT012Difficulty
 > {
+  override readonly usesPromptZone = true;
+
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -37,6 +49,10 @@ export class FlashRecallSession extends TemplateGameSession<
   private readonly timer: FlashTimer;
   private selectedValue: number | null = null;
   private wasVisible = false;
+  /** Vùng đĩa và vùng lựa chọn của vòng này (`BR-PSZ-01`). */
+  private areas: RecallAreas | null = null;
+  /** Vị trí vật loé trên đĩa — không chạm được nên không nằm trong `slots`. */
+  private flashSlots: readonly Slot[] = [];
 
   constructor(
     content: GT012Content,
@@ -192,7 +208,7 @@ export class FlashRecallSession extends TemplateGameSession<
     if (this.timer.isVisible()) {
       const entities: ViewEntity[] = [];
       this.content.flash_items.forEach((item, i) => {
-        const slot = this.slots[i];
+        const slot = this.flashSlots[i];
         if (!slot) {
           return;
         }
@@ -256,15 +272,31 @@ export class FlashRecallSession extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    this.areas = splitRecallStage(
+      this.stageRect ?? legacyStageArea(this.logicSpace)
+    );
     const layoutFn = resolveLayout("grid");
-    return layoutFn({
-      slotCount: Math.max(
-        this.content.flash_items.length,
-        this.content.options.length
-      ),
-      ageBand,
-      logic: this.logicSpace,
-    });
+    return insetDrawSize(
+      layoutFn({
+        slotCount: this.content.options.length,
+        ageBand,
+        logic: this.logicSpace,
+        stage: this.areas.options,
+        cssPerLogic: this.cssPerLogic,
+      }),
+      this.stageRect
+    );
+  }
+
+  protected override computeRoundDerived(): void {
+    if (!this.areas) {
+      return;
+    }
+    this.flashSlots = computeFlashSlots(
+      this.areas.plate,
+      this.content.flash_items.length,
+      this.content.arrangement
+    );
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {
@@ -281,37 +313,23 @@ export class FlashRecallSession extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
 
-    const plateSlot: Slot = {
-      index: 0,
-      x: rs.LOGIC_WIDTH / 2,
-      y: rs.LOGIC_HEIGHT * 0.38,
-      w: 220,
-      h: 220,
-      hitW: 220,
-      hitH: 220,
-      page: 0,
-      role: "target",
-    };
+    const plate = this.areas ? plateSlot(this.areas.plate) : null;
+    if (!plate) {
+      return;
+    }
 
     // Hai pha: đang loé thì mở nắp cloche thấy vật; hết loé thì đậy nắp cloche và hiện thẻ chọn.
     if (this.timer.isVisible()) {
-      drawSubPromptText(ctx, rs, "Nhìn nhanh!");
-      drawClocheScene(ctx, plateSlot, true);
-      /**
-       * `arrangement` nói vật được **xếp** thế nào, không nói vẽ gì. Bố cục xúc
-       * xắc dùng đúng bảng toạ độ của `computeDicePositions` nhưng vẫn vẽ vật
-       * thật của level: thay vật bằng chấm trơn thì câu lệnh "có bao nhiêu đồ
-       * vật" mất chính đồ vật, và chủ đề của level biến mất.
-       */
-      const diceSlots =
-        this.content.arrangement === "dice"
-          ? computeDiceSlots(plateSlot, this.content.flash_items.length)
-          : undefined;
-
+      if (!this.stageRect) {
+        drawSubPromptText(ctx, rs, "Nhìn nhanh!");
+      }
+      drawClocheScene(ctx, plate, true);
       this.content.flash_items.forEach((item, i) => {
-        const slot = diceSlots?.[i] ?? this.slots[i];
+        const slot = this.flashSlots[i];
         if (!slot) {
           return;
         }
@@ -321,9 +339,15 @@ export class FlashRecallSession extends TemplateGameSession<
       return;
     }
 
-    drawSubPromptText(ctx, rs, "Bé nhớ có bao nhiêu đồ vật?");
-    drawClocheScene(ctx, plateSlot, false);
-    drawWoodenTokenDock(ctx, rs);
+    if (!this.stageRect) {
+      drawSubPromptText(ctx, rs, "Bé nhớ có bao nhiêu đồ vật?");
+    }
+    drawClocheScene(ctx, plate, false);
+    drawWoodenTokenDock(
+      ctx,
+      rs,
+      dockRectAroundSlots(this.slots, this.stageRect)
+    );
 
     this.content.options.forEach((opt, i) => {
       const slot = this.slots[i];

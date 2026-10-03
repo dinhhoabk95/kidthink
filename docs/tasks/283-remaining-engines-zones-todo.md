@@ -68,11 +68,12 @@ Ghi chú đo của N (2026-10-03):
 
 ## B1 — Chạm chọn một · M · phụ thuộc: N
 
-- [ ] RED: GT-009, 010, 011, 012, 022, 025, 029, 032 ở ba viewport — hit không chồng, vẽ nằm trong stage
-- [ ] Gỡ `drawPromptText`, bỏ toạ độ cứng, slot từ layout trong `zones.stage`
-- [ ] `ALL_SEED_LEVELS` của tám engine chạy lại, hai vòng liên tiếp
-- [ ] Ca âm: fixture còn `drawPromptText` → đỏ
-- [ ] `check:hardcoded-params` không tăng
+- [x] RED: GT-009, 010, 011, 012, 022, 025, 029, 032 ở ba viewport — hit không chồng, vẽ nằm trong stage (`stage-engines-b1.test.ts`)
+- [x] Gỡ `drawPromptText`, bỏ toạ độ cứng, slot từ layout trong `zones.stage`
+- [x] `ALL_SEED_LEVELS` của tám engine chạy lại, hai vòng liên tiếp
+- [x] Ca âm: fixture còn `drawPromptText` → đỏ
+- [x] `check:hardcoded-params` không tăng
+- Nợ đo: điện thoại ngang 784x250 — GT-009 83 ca, GT-025 17 ca (sân khấu 146 < sàn chạm); GT-029 portrait/ngang 7 ca (10 vật band 4-5, không phân trang). `KNOWN_STAGE_DEBT_CASES`, chỉ giảm; chờ quyết `play-stage-zones.md` §11 câu 4.
 
 ## B2 — Nộp bài, tiến độ, ức chế · M · phụ thuộc: B1, #275 đóng
 

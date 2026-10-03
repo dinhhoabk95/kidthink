@@ -17,11 +17,19 @@ const CLUE_BOARD_MAX_CLUE_H = 96;
 const CLUE_BOARD_MAX_COLS = 5;
 const CLUE_BOARD_MAX_CARD = 120;
 
+/** Hằng của `equation-rows` (GT-010) — xem computeEquationRowsLayout. */
+const EQUATION_ROW_MAX_H = 80;
+const EQUATION_ROW_MIN_H = 40;
+const EQUATION_TRAY_GAP_PX = 16;
+
 /** Cạnh ô của `matrix-slot-grid` trước khi bị sàn chạm đẩy lên. */
 const MATRIX_SLOT_CELL_PX = 80;
 
 /** Cạnh ô của `matrix-3x3`; khay chọn nằm **dưới** ma trận, không nằm bên phải. */
 const MATRIX_3X3_CELL_PX = 96;
+
+/** Tỉ lệ rộng/cao của stage từ đó khay đứng cạnh ma trận (chỉ khi `inStage`). */
+const MATRIX_SIDE_BY_SIDE_ASPECT = 1.3;
 
 /**
  * Tính toán bố cục dạng lưới (grid / grid-2x4 / card-flip-grid / flex-wrap).
@@ -98,13 +106,20 @@ export function computeGridLayout(
     : Math.max(1, Math.min(maxPossibleRows, Math.ceil(slotCount / targetCols)));
 
   const itemsPerPage = targetCols * targetRows;
+  const roundToFit = input.inStage ? Math.floor : (value: number) => value;
   const slotW = Math.max(
     minW,
-    Math.min(120, (availW - (targetCols - 1) * SLOT_GAP_PX) / targetCols)
+    Math.min(
+      120,
+      roundToFit((availW - (targetCols - 1) * SLOT_GAP_PX) / targetCols)
+    )
   );
   const slotH = Math.max(
     minH,
-    Math.min(120, (availH - (targetRows - 1) * SLOT_GAP_PX) / targetRows)
+    Math.min(
+      120,
+      roundToFit((availH - (targetRows - 1) * SLOT_GAP_PX) / targetRows)
+    )
   );
 
   const slots: Slot[] = [];
@@ -784,6 +799,7 @@ export function computeClueBoardLayout(input: LayoutInput): Slot[] {
   ];
   slots.push(
     ...computeCandidateBoard({
+      inStage: input.inStage === true,
       slotCount,
       clueCount,
       touchFloor,
@@ -835,6 +851,7 @@ function computeClueStrip(args: {
 }
 
 function computeCandidateBoard(args: {
+  inStage: boolean;
   slotCount: number;
   clueCount: number;
   touchFloor: number;
@@ -842,13 +859,20 @@ function computeCandidateBoard(args: {
   boardZoneH: number;
   boardStartY: number;
 }): Slot[] {
-  const { slotCount, clueCount, touchFloor, availW, boardZoneH, boardStartY } =
-    args;
+  const {
+    inStage,
+    slotCount,
+    clueCount,
+    touchFloor,
+    availW,
+    boardZoneH,
+    boardStartY,
+  } = args;
   const maxColsByTouch = Math.max(
     1,
     Math.floor((availW + SLOT_GAP_PX) / (touchFloor + SLOT_GAP_PX))
   );
-  const cols = Math.max(
+  let cols = Math.max(
     1,
     Math.min(
       CLUE_BOARD_MAX_COLS,
@@ -856,6 +880,17 @@ function computeCandidateBoard(args: {
       slotCount <= CLUE_BOARD_MAX_COLS ? slotCount : Math.ceil(slotCount / 2)
     )
   );
+  // Vùng bảng thấp (điện thoại ngang): thêm cột trước khi để hàng tràn xuống
+  // dưới đáy — thẻ không co dưới sàn chạm nên số hàng là thứ duy nhất chỉnh được.
+  const fitsHeight = (rowCount: number): boolean =>
+    rowCount * touchFloor + (rowCount - 1) * SLOT_GAP_PX <= boardZoneH;
+  while (
+    inStage &&
+    cols < Math.min(maxColsByTouch, slotCount) &&
+    !fitsHeight(Math.ceil(slotCount / cols))
+  ) {
+    cols += 1;
+  }
   const rows = Math.max(1, Math.ceil(slotCount / cols));
 
   const cardW = Math.max(
@@ -914,26 +949,36 @@ export function computeMatrix3x3Layout(input: LayoutInput): Slot[] {
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
   const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
-  const maxCellH = Math.floor(
-    (availH - gridSize * SLOT_GAP_PX) / (gridSize + 1)
-  );
+  // Trong stage ngang (điện thoại nằm ngang) khay chọn đứng cạnh ma trận thay vì
+  // dưới nó — chồng hai tầng ở sân khấu thấp làm ma trận tràn đỉnh.
+  const sideBySide =
+    input.inStage === true && availW >= availH * MATRIX_SIDE_BY_SIDE_ASPECT;
+  const maxCellH = sideBySide
+    ? Math.floor((availH - (gridSize - 1) * SLOT_GAP_PX) / gridSize)
+    : Math.floor((availH - gridSize * SLOT_GAP_PX) / (gridSize + 1));
   const cell = Math.max(touchFloor, Math.min(MATRIX_3X3_CELL_PX, maxCellH));
   const matrixH = gridSize * cell + (gridSize - 1) * SLOT_GAP_PX;
   const matrixW = matrixH;
 
+  const trayRegionW = sideBySide ? availW - matrixW - SLOT_GAP_PX : availW;
   const trayCols = Math.max(
     1,
     Math.min(
       slotCount,
-      Math.floor((availW + SLOT_GAP_PX) / (cell + SLOT_GAP_PX))
+      Math.floor((trayRegionW + SLOT_GAP_PX) / (cell + SLOT_GAP_PX))
     )
   );
   const trayRows = Math.max(1, Math.ceil(slotCount / trayCols));
   const trayH = trayRows * cell + (trayRows - 1) * SLOT_GAP_PX;
 
-  const blockH = matrixH + SLOT_GAP_PX + trayH;
+  const blockH = sideBySide ? matrixH : matrixH + SLOT_GAP_PX + trayH;
   const blockStartY = CONTENT_TOP_PX + Math.max(0, (availH - blockH) / 2);
-  const matrixStartX = SAFE_MARGIN_PX + (availW - matrixW) / 2;
+  const matrixStartX = sideBySide
+    ? SAFE_MARGIN_PX
+    : SAFE_MARGIN_PX + (availW - matrixW) / 2;
+  const trayRegionX = sideBySide
+    ? SAFE_MARGIN_PX + matrixW + SLOT_GAP_PX
+    : SAFE_MARGIN_PX;
 
   const slots: Slot[] = [];
   for (let r = 0; r < gridSize; r++) {
@@ -952,13 +997,15 @@ export function computeMatrix3x3Layout(input: LayoutInput): Slot[] {
     }
   }
 
-  const trayStartY = blockStartY + matrixH + SLOT_GAP_PX;
+  const trayStartY = sideBySide
+    ? CONTENT_TOP_PX + Math.max(0, (availH - trayH) / 2)
+    : blockStartY + matrixH + SLOT_GAP_PX;
   for (let o = 0; o < slotCount; o++) {
     const row = Math.floor(o / trayCols);
     const col = o % trayCols;
     const inRow = Math.min(trayCols, slotCount - row * trayCols);
     const rowW = inRow * cell + (inRow - 1) * SLOT_GAP_PX;
-    const rowStartX = SAFE_MARGIN_PX + (availW - rowW) / 2;
+    const rowStartX = trayRegionX + (trayRegionW - rowW) / 2;
     slots.push({
       index: gridSize * gridSize + o,
       x: Math.round(rowStartX + col * (cell + SLOT_GAP_PX) + cell / 2),
@@ -989,40 +1036,68 @@ export function computeEquationRowsLayout(input: LayoutInput): Slot[] {
   const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
   const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
+  const inStage = input.inStage === true;
 
-  const rowH = Math.min(80, Math.floor((availH * 0.6) / eqCount));
   const card = Math.max(touchFloor, 64);
+  const eqStartY = CONTENT_TOP_PX + 10;
+  const eqGap = inStage ? SLOT_GAP_PX : 12;
+  const optCols = inStage
+    ? Math.max(
+        1,
+        Math.min(
+          slotCount,
+          Math.floor((availW + SLOT_GAP_PX) / (card + SLOT_GAP_PX))
+        )
+      )
+    : Math.max(1, slotCount);
+  const optRows = Math.ceil(Math.max(1, slotCount) / optCols);
+  const optBlockH = optRows * card + (optRows - 1) * SLOT_GAP_PX;
+  // Trong stage, hàng phương trình co lại (không dưới `EQUATION_ROW_MIN_H`) để
+  // khay chọn không bị đẩy ra khỏi đáy; ngoài stage giữ công thức cũ.
+  const rowH = inStage
+    ? Math.max(
+        EQUATION_ROW_MIN_H,
+        Math.min(
+          EQUATION_ROW_MAX_H,
+          Math.floor(
+            (availH - 10 - EQUATION_TRAY_GAP_PX - optBlockH) / eqCount - eqGap
+          )
+        )
+      )
+    : Math.min(EQUATION_ROW_MAX_H, Math.floor((availH * 0.6) / eqCount));
 
   const slots: Slot[] = [];
-  const eqStartY = CONTENT_TOP_PX + 10;
-  const eqGap = 12;
-
-  // Slots cho phương trình
+  // Slots cho phương trình. Trong stage, hàng phương trình chỉ để đọc nên vùng
+  // chạm bằng đúng ô vẽ: sàn chạm làm vùng chạm cao hơn khoảng cách giữa hai
+  // hàng và các hàng chồng nhau (`BR-LAY-05`).
   for (let i = 0; i < eqCount; i++) {
+    const rowW = Math.round(availW * 0.8);
     slots.push({
       index: i,
       x: Math.round(SAFE_MARGIN_PX + availW / 2),
       y: Math.round(eqStartY + i * (rowH + eqGap) + rowH / 2),
-      w: Math.round(availW * 0.8),
+      w: rowW,
       h: Math.round(rowH),
-      hitW: Math.round(availW * 0.8),
-      hitH: Math.max(touchFloor, rowH),
+      hitW: rowW,
+      hitH: inStage ? Math.round(rowH) : Math.max(touchFloor, rowH),
       page: 0,
-      role: "target",
+      role: inStage ? "neutral" : "target",
     });
   }
 
-  // Slots cho options
-  const trayStartY = eqStartY + eqCount * (rowH + eqGap) + 16;
-  const optCols = Math.max(1, slotCount);
-  const totalOptW = optCols * card + (optCols - 1) * SLOT_GAP_PX;
-  const optStartX = SAFE_MARGIN_PX + Math.max(0, (availW - totalOptW) / 2);
+  // Slots cho options; trong stage thì xuống hàng thay vì tràn ngang.
+  const trayStartY = eqStartY + eqCount * (rowH + eqGap) + EQUATION_TRAY_GAP_PX;
 
   for (let o = 0; o < slotCount; o++) {
+    const row = Math.floor(o / optCols);
+    const col = o % optCols;
+    const inRow = Math.min(optCols, slotCount - row * optCols);
+    const rowTotalW = inRow * card + (inRow - 1) * SLOT_GAP_PX;
+    const optStartX = SAFE_MARGIN_PX + Math.max(0, (availW - rowTotalW) / 2);
     slots.push({
       index: eqCount + o,
-      x: Math.round(optStartX + o * (card + SLOT_GAP_PX) + card / 2),
-      y: Math.round(trayStartY + card / 2),
+      x: Math.round(optStartX + col * (card + SLOT_GAP_PX) + card / 2),
+      y: Math.round(trayStartY + row * (card + SLOT_GAP_PX) + card / 2),
       w: Math.round(card),
       h: Math.round(card),
       hitW: Math.max(touchFloor, Math.round(card)),
@@ -1135,7 +1210,27 @@ export function computeFreeSceneLayout(input: LayoutInput): Slot[] {
   const cell = Math.max(touchFloor, 64);
 
   // Phân bố đều lưới mở rộng làm các điểm neo trong khung cảnh
-  const cols = Math.max(2, Math.min(4, Math.ceil(Math.sqrt(slotCount))));
+  let cols = Math.max(2, Math.min(4, Math.ceil(Math.sqrt(slotCount))));
+  if (input.inStage) {
+    // Trong stage: không nhiều cột hơn số vùng chạm ở sàn xếp vừa bề ngang, rồi
+    // thêm cột chừng nào hàng còn tràn đáy — ô không co dưới sàn chạm nên chỉ
+    // số cột chỉnh được (`BR-LAY-05`, `BR-PSZ-04`).
+    // Mỗi ô neo ở giữa một ngăn rộng `availW / cols`, nên ngăn phải chứa cả vùng
+    // chạm lẫn một khe: cột `cols` cần `cols * (sàn + khe)` ≤ `availW`.
+    const maxColsByTouch = Math.max(
+      1,
+      Math.floor(availW / (touchFloor + SLOT_GAP_PX))
+    );
+    cols = Math.min(cols, maxColsByTouch);
+    const rowsFit = (rowCount: number): boolean =>
+      rowCount * (touchFloor + SLOT_GAP_PX) <= availH;
+    while (
+      cols < Math.min(maxColsByTouch, slotCount) &&
+      !rowsFit(Math.ceil(slotCount / cols))
+    ) {
+      cols += 1;
+    }
+  }
   const rows = Math.ceil(slotCount / cols);
   const colStep = availW / cols;
   const rowStep = availH / rows;

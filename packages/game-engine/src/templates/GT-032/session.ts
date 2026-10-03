@@ -14,6 +14,7 @@ import type {
   ViewEntity,
 } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
+import { dockRectAroundSlots } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
   drawLiquidCup,
@@ -38,6 +39,8 @@ export class GT032Session extends TemplateGameSession<
   GT032Content,
   GT032Difficulty
 > {
+  override readonly usesPromptZone = true;
+
   degradation: DegradationState | null = null;
   selectedCupId: string | null = null;
   isWin = false;
@@ -66,11 +69,13 @@ export class GT032Session extends TemplateGameSession<
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
-    const layoutFn = resolveLayout("horizontal-row");
+    const layoutFn = resolveLayout("grid");
     return layoutFn({
       slotCount: this.content.cups.length,
       ageBand: band,
       logic: this.logicSpace,
+      stage: this.stageRect,
+      cssPerLogic: this.cssPerLogic,
     });
   }
 
@@ -262,14 +267,22 @@ export class GT032Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
 
-    const subPrompt = this.isWin
-      ? "Bé giỏi lắm! Đúng rồi!"
-      : "Chạm vào cốc bé chọn nhé";
-    drawSubPromptText(ctx, rs, subPrompt);
+    if (!this.stageRect) {
+      const subPrompt = this.isWin
+        ? "Bé giỏi lắm! Đúng rồi!"
+        : "Chạm vào cốc bé chọn nhé";
+      drawSubPromptText(ctx, rs, subPrompt);
+    }
 
-    drawWoodenTokenDock(ctx, rs);
+    drawWoodenTokenDock(
+      ctx,
+      rs,
+      dockRectAroundSlots(this.slots, this.stageRect)
+    );
 
     for (let i = 0; i < this.content.cups.length; i++) {
       const cup = this.content.cups[i];

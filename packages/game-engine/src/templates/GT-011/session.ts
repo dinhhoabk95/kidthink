@@ -6,6 +6,14 @@ import {
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
+import {
+  dockRectAroundSlots,
+  insetDrawSize,
+  insetRect,
+  TRAY_DECOR_PAD_X_PX,
+  TRAY_DECOR_PAD_Y_PX,
+  trayBoxWithin,
+} from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
@@ -58,6 +66,8 @@ export class GT011Session extends TemplateGameSession<
   GT011Content,
   GT011Difficulty
 > {
+  override readonly usesPromptZone = true;
+
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -241,12 +251,19 @@ export class GT011Session extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("matrix-3x3");
-    return layoutFn({
-      slotCount: this.content.options.length,
-      targetCount: this.content.matrix.rows * this.content.matrix.cols,
-      ageBand,
-      logic: this.logicSpace,
-    });
+    return insetDrawSize(
+      layoutFn({
+        slotCount: this.content.options.length,
+        targetCount: this.content.matrix.rows * this.content.matrix.cols,
+        ageBand,
+        logic: this.logicSpace,
+        stage: this.stageRect
+          ? insetRect(this.stageRect, TRAY_DECOR_PAD_X_PX, TRAY_DECOR_PAD_Y_PX)
+          : undefined,
+        cssPerLogic: this.cssPerLogic,
+      }),
+      this.stageRect
+    );
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {
@@ -263,15 +280,21 @@ export class GT011Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
     const cellCount = this.content.matrix.rows * this.content.matrix.cols;
     const cellSlots = this.slots.slice(0, cellCount);
     const optionSlots = this.slots.slice(cellCount);
     const matrixBox = boxFromSlots(cellSlots);
     if (matrixBox) {
-      drawShapeTray(ctx, matrixBox);
+      drawShapeTray(ctx, trayBoxWithin(matrixBox, this.stageRect));
     }
-    drawWoodenTokenDock(ctx, rs);
+    drawWoodenTokenDock(
+      ctx,
+      rs,
+      dockRectAroundSlots(optionSlots, this.stageRect)
+    );
     const { cols } = this.content.matrix;
 
     for (const cell of this.content.matrix.cells) {
