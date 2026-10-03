@@ -127,6 +127,20 @@ type LayoutFn = (input: LayoutInput) => Slot[];
 `hitW`/`hitH` tách khỏi `w`/`h` là có chủ ý: một quả táo vẽ 64px vẫn phải có vùng chạm 96px
 ở band 3–4. Gộp hai cặp này lại thì hoặc hình bị phình, hoặc sàn chạm bị vi phạm.
 
+**Bố cục nhóm trong sân khấu** (`computeStageGroupsLayout`, Task #277 S7). Engine nhiều nhóm slot
+(dải bước và nhạc cụ, lưới robot và hàng lệnh) lấy slot trong `zones.stage` của
+[`play-stage-zones.md`](play-stage-zones.md) thay vì toàn canvas. Đầu vào chỉ là hình học —
+rect sân khấu, band, và mỗi nhóm `{ count, role, cols?, hasLabels? }` — nên `BR-LAY-06` giữ nguyên.
+Các nhóm xếp chồng từ trên xuống; không đủ cao thì nhóm đầu (có `cols` cố định) sang cột trái.
+Một cạnh ô chung cho mọi nhóm, không dưới sàn chạm (`BR-LAY-03`), bước ô bằng cạnh cộng
+`SLOT_GAP_PX` (`BR-LAY-05`). Slot nằm trọn trong sân khấu trừ một lề `SLOT_GAP_PX`.
+
+```ts
+interface StageGroupSpec { count: number; role: SlotRole; cols?: number; hasLabels?: boolean }
+interface StageGroupsInput { stage: ZoneRect; ageBand: AgeBand; groups: StageGroupSpec[] }
+type ComputeStageGroupsLayout = (input: StageGroupsInput) => Slot[];
+```
+
 ### 7.2 Hằng số
 
 | Hằng | Ý nghĩa |

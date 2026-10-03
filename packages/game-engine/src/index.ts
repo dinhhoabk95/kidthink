@@ -114,6 +114,12 @@ export {
   resolveLayout,
 } from "./layout/registry.js";
 export {
+  computeStageGroupsLayout,
+  resolveStageRect,
+  type StageGroupSpec,
+  type StageGroupsInput,
+} from "./layout/stage-groups.js";
+export {
   computeStageZones,
   isPointInZone,
   type StageZones,

@@ -350,6 +350,7 @@
         drawCommitButton(ctx, rs, zones.action, {
           enabled: session.canCommit?.() ?? true,
           origin: "top-left",
+          icon: session.commitIcon,
         });
       }
       // Lớp trên cùng: pop/nhịp hổ phách tại điểm chạm (`BR-FBK-05`, `BR-FBK-11`).

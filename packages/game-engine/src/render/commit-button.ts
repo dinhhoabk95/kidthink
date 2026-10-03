@@ -65,11 +65,19 @@ export function commitButtonRect(
   };
 }
 
+/**
+ * Icon của nút hành động (`BR-PSZ-05`): ✓ nộp (mặc định), ▶ chạy chương trình
+ * (GT-035), loa nghe mẫu (GT-034). Không chữ — trẻ chưa đọc (`BR-FBK-12`).
+ */
+export type CommitIcon = "check" | "play" | "listen";
+
 export interface CommitButtonOptions {
   /** `false` khi chưa có vật nào được chọn — vẽ mờ, không nhận chạm. */
   readonly enabled: boolean;
   /** Toạ độ rect: "center" (mặc định) hoặc "top-left" (cho StageZones.action). */
   readonly origin?: "center" | "top-left";
+  /** Bỏ trống là ✓. */
+  readonly icon?: CommitIcon;
 }
 
 /** Dấu ✓ bằng nét tròn đầu, tâm `(cx, cy)`, cạnh `size`. */
@@ -90,6 +98,59 @@ function drawCheckIcon(
   ctx.lineTo(cx + half, cy - half * 0.6);
   ctx.stroke();
 }
+
+/** Tam giác ▶ đặc, tâm `(cx, cy)`, cạnh `size`. */
+function drawPlayIcon(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const half = size / 2;
+  ctx.fillStyle = designTokens.colors.surface[0];
+  ctx.beginPath();
+  ctx.moveTo(cx - half * 0.6, cy - half);
+  ctx.lineTo(cx + half, cy);
+  ctx.lineTo(cx - half * 0.6, cy + half);
+  ctx.closePath();
+  ctx.fill();
+}
+
+/** Loa: thân chữ nhật, phễu, một sóng âm — tâm `(cx, cy)`, cạnh `size`. */
+function drawListenIcon(
+  ctx: CanvasRenderingContext2D,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const half = size / 2;
+  const left = cx - half;
+  ctx.fillStyle = designTokens.colors.surface[0];
+  ctx.strokeStyle = designTokens.colors.surface[0];
+  ctx.beginPath();
+  ctx.moveTo(left, cy - half * 0.3);
+  ctx.lineTo(left + half * 0.4, cy - half * 0.3);
+  ctx.lineTo(left + half, cy - half);
+  ctx.lineTo(left + half, cy + half);
+  ctx.lineTo(left + half * 0.4, cy + half * 0.3);
+  ctx.lineTo(left, cy + half * 0.3);
+  ctx.closePath();
+  ctx.fill();
+  ctx.lineWidth = Math.max(3, size * 0.1);
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.arc(cx, cy, half * 0.8, -Math.PI / 4, Math.PI / 4);
+  ctx.stroke();
+}
+
+const ICON_PAINTERS: Record<
+  CommitIcon,
+  (ctx: CanvasRenderingContext2D, cx: number, cy: number, size: number) => void
+> = {
+  check: drawCheckIcon,
+  play: drawPlayIcon,
+  listen: drawListenIcon,
+};
 
 export function drawCommitButton(
   ctx: CanvasRenderingContext2D,
@@ -113,7 +174,7 @@ export function drawCommitButton(
   ctx.roundRect(left, top, rect.w, rect.h, radius);
   ctx.fill();
 
-  drawCheckIcon(
+  ICON_PAINTERS[options.icon ?? "check"](
     ctx,
     centerX,
     centerY,

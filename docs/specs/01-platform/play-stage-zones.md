@@ -98,6 +98,8 @@ landscape                                   portrait
 | Vòng không có picto mục tiêu | Content không mang hình mục tiêu | Vùng lời dẫn chỉ có mascot và loa; chữ phụ vẫn ẩn khỏi trẻ |
 | Studio preview | `/play/preview-sandbox` | Không HUD; bốn vùng canvas giữ nguyên để Manager thấy đúng bố cục trẻ thấy |
 | Intro GT-000 | Engine làm quen khái niệm | Ba nút Trước, Nghe lại, Tiếp tục nằm trong vùng hành động, không nổi lên trên sân khấu |
+| Hành động chính không phải nộp | GT-034 nghe mẫu nhịp, GT-035 chạy chương trình | Nút ở `zones.action` mang `commitIcon` của session (▶ chạy, loa nghe mẫu — không chữ, `BR-FBK-12`); chạm gửi `commit`, session đổi thành `play_pattern` hoặc `run_program`. Chuỗi của GT-034 vẫn tự chấm khi đủ bước |
+| Engine từng có nút xoá | GT-036 | Không vẽ nút xoá. Chạm ô đã đặt đúng vật đang cầm thì gỡ vật đó; chạm vật khác thì thay |
 
 ## 6. Business rules
 
@@ -107,7 +109,7 @@ landscape                                   portrait
 | `BR-PSZ-02` | `computeStageZones` là **hàm thuần** của `{ logicW, logicH, ageBand, cssPerLogic, needsTray, needsCommit }` | Cùng lý do `BR-LAY-01` (hàm layout thuần) — test hình học chạy không cần trình duyệt và bố cục chụp lại được |
 | `BR-PSZ-03` | Vị trí HUD, lời dẫn và hành động **không phụ thuộc engine** — cùng viewport cho cùng ba rect ở mọi engine. Chỉ sân khấu đổi cao khi không có khay | Khung đổi theo trò thì trẻ không học được khung |
 | `BR-PSZ-04` | Sàn chạm của `BR-A11-04` (sàn chạm theo band tuổi) áp trên **px CSS thật**: mọi vùng chạm trong bốn vùng canvas và mọi slot có `hitW × cssPerLogic` không dưới sàn | Sàn đang áp ở logic px nên co theo canvas: portrait 390px biến 96 thành khoảng 69px thật mà mọi test vẫn xanh |
-| `BR-PSZ-05` | Nút nộp bài **chỉ** sống ở `zones.action`, vẽ bằng primitive dùng chung `drawCommitButton`, và chạm vào đó được shell đổi thành gesture `commit`. Engine cấm tự vẽ nút nộp, nút chạy, nút xoá hay nút nghe lại | Nút tự vẽ là lý do GT-028 có thể không bao giờ nộp được bài: engine chờ `commit` mà trang không có đường gửi |
+| `BR-PSZ-05` | Nút nộp bài **chỉ** sống ở `zones.action`, vẽ bằng primitive dùng chung `drawCommitButton`, và chạm vào đó được shell đổi thành gesture `commit`. Engine cấm tự vẽ nút nộp, nút chạy, nút xoá hay nút nghe lại. Engine có **một** hành động chính khác nộp (chạy chương trình, nghe mẫu) thì hành động đó chiếm nút này: session khai `commitIcon`, `toAction` đổi `commit` thành hành động của mình. Nút xoá không có chỗ — gỡ từng vật ngay trên sân khấu | Nút tự vẽ là lý do GT-028 có thể không bao giờ nộp được bài: engine chờ `commit` mà trang không có đường gửi. Hai nút trong vùng hành động là vùng thứ sáu trá hình |
 | `BR-PSZ-06` | Tiến độ vòng có **một nguồn**: `KidRoundProgressIndicator` ở HUD, dạng hạt, không số. Engine cấm vẽ tiến độ | Hai chỉ báo cùng lúc (HUD và `drawProgressBadge`) có lúc lệch nhau; số trên màn là điểm trá hình — `BR-ENG-11` (không áp lực) |
 | `BR-PSZ-07` | HUD chỉ có ba nút: khoá phụ huynh ở góc trên phía đầu dòng, loa nghe lại ở góc trên phía cuối dòng, hạt tiến độ ở giữa. Nhãn chữ chỉ là `aria-label` | `BR-ENG-10` (chữ không đủ) — "Bỏ qua", "Nghe lại" trẻ không đọc được. Khoá phụ huynh xa nút hành động nhất có thể để chạm nhầm khó xảy ra — `BR-PGT-01` (nút thoát không tap trúng được) |
 | `BR-PSZ-08` | Loa trong vùng lời dẫn **bắt chạm thật** và phát lại đúng đường lời dẫn của vòng (`replayCurrentRoundNarration`). Hình trông bấm được mà không bấm được bị cấm | Badge loa vẽ trên canvas hôm nay không có ai nghe chạm — trẻ bấm và không có gì xảy ra, trái `BR-ENG-07` (không im lặng) |
@@ -149,6 +151,14 @@ interface StageZones {
 }
 
 type ComputeStageZones = (input: StageZonesInput) => StageZones;
+
+// Session khai cho shell (`BR-PSZ-05`)
+interface StageSessionFlags {
+  needsTray: boolean;
+  needsCommit: boolean;
+  canCommit(): boolean;    // false thì nút vẽ mờ và chạm bị nuốt
+  commitIcon?: "check" | "play" | "listen"; // bỏ trống là ✓; ▶ chạy, loa nghe mẫu
+}
 ```
 
 HUD không có rect trong kiểu này vì nó là DOM ở ngoài canvas; chiều cao HUD được trừ khỏi viewport
@@ -201,6 +211,13 @@ Scenario: BR-PSZ-05 — GT-028 nộp được bài từ trang chơi
   Given trang /play với một level GT-028 và đã chạm đủ số lượng đúng
   When chạm vào tâm zones.action
   Then engine nhận gesture commit và vòng kết thúc thắng
+
+Scenario: BR-PSZ-05 — engine có nút phụ vào khung ở portrait hẹp
+  Given viewport 390x844, band "5-6", mọi level đã seed của GT-034, GT-035, GT-036
+  When tính slot trong zones.stage và render một khung hình
+  Then không cặp vùng chạm nào chồng nhau hoặc cách nhau dưới SLOT_GAP_PX
+  And mọi lệnh vẽ của session nằm trong zones.stage
+  And không slot nào là nút chạy, nút xoá hay nút nghe lại
 
 Scenario: BR-PSZ-06 — một nguồn tiến độ
   When render một khung hình của GT-002, GT-026, GT-027, GT-028

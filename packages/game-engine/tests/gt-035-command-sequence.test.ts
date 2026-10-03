@@ -90,7 +90,7 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
     expect(GT035Template.banned_age_bands).toContain("4-5");
   });
 
-  it("Scenario 6: Session initializes slots for grid, queue, palette and run button", () => {
+  it("Scenario 6: Session initializes slots for grid, queue and palette — nút chạy ở zones.action (BR-PSZ-05)", () => {
     const session = new GT035Session(
       sampleFixture.content,
       sampleFixture.difficulty,
@@ -102,10 +102,8 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
     const gridSlotCount = rows * cols;
     const maxCmd = sampleFixture.difficulty.max_commands;
     const allowedCmds = sampleFixture.content.allowed_commands.length;
-    const runBtnCount = 1;
 
-    const expectedTotalSlots =
-      gridSlotCount + maxCmd + allowedCmds + runBtnCount;
+    const expectedTotalSlots = gridSlotCount + maxCmd + allowedCmds;
     expect(session.slots.length).toBe(expectedTotalSlots);
   });
 

@@ -8,14 +8,16 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
-import { getTouchFloor } from "#src/layout/constants";
+import {
+  computeStageGroupsLayout,
+  resolveStageRect,
+} from "#src/layout/stage-groups";
 import type { Slot } from "#src/layout/types";
 import {
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
-  drawWoodenTokenDock,
   spawnParticlesAtSlot,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
@@ -35,6 +37,16 @@ export class GT036Session extends TemplateGameSession<
   GT036Content,
   GT036Difficulty
 > {
+  /** Nút ở `zones.action` là nút xong (`BR-PSZ-05`); không có nút xoá. */
+  override readonly needsCommit = true;
+
+  override canCommit(): boolean {
+    return (
+      !(this.isWin || this.isWon) &&
+      this.placedItems.some((item) => item !== null)
+    );
+  }
+
   degradation: DegradationState | null = null;
 
   placedItems: (string | null)[] = [];
@@ -82,92 +94,30 @@ export class GT036Session extends TemplateGameSession<
     }
     const count = this.content.track_length;
     const palCount = this.content.palette.length;
+    // Dải đã đầy thì bước kế là nút xong ở `zones.action` — không phải slot
+    // của sân khấu (`BR-PSZ-05`), nên không có ô nào để chỉ.
     const emptyTrackIdx = this.placedItems.indexOf(null);
-    if (emptyTrackIdx >= 0) {
-      if (!this.selectedPaletteId && palCount > 0) {
-        return count;
-      }
-      return emptyTrackIdx;
+    if (emptyTrackIdx < 0) {
+      return null;
     }
-    return count + palCount;
+    if (!this.selectedPaletteId && palCount > 0) {
+      return count;
+    }
+    return emptyTrackIdx;
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
-    const floor = getTouchFloor(band);
-    const slots: Slot[] = [];
-    const count = this.content.track_length;
-    const palCount = this.content.palette.length;
-
-    // 1. Track slots (horizontal track)
-    const trackSlotSize = Math.min(
-      68,
-      Math.floor((this.logicSpace.w - 160) / count)
-    );
-    const trackTotalWidth = count * (trackSlotSize + 8) - 8;
-    const trackStartX = (this.logicSpace.w - trackTotalWidth) / 2;
-    const trackY = 170;
-
-    for (let i = 0; i < count; i++) {
-      slots.push({
-        index: i,
-        role: "target",
-        x: trackStartX + i * (trackSlotSize + 8) + trackSlotSize / 2,
-        y: trackY + trackSlotSize / 2,
-        w: trackSlotSize,
-        h: trackSlotSize,
-        hitW: Math.max(trackSlotSize, floor),
-        hitH: Math.max(trackSlotSize, floor),
-        page: 0,
-      });
-    }
-
-    // 2. Palette slots
-    const palSlotSize = 80;
-    const palTotalWidth = palCount * (palSlotSize + 16) - 16;
-    const palStartX = (this.logicSpace.w - palTotalWidth) / 2;
-    const palY = 320;
-
-    for (let i = 0; i < palCount; i++) {
-      slots.push({
-        index: count + i,
-        role: "source",
-        x: palStartX + i * (palSlotSize + 16) + palSlotSize / 2,
-        y: palY + palSlotSize / 2,
-        w: palSlotSize,
-        h: palSlotSize,
-        hitW: Math.max(palSlotSize, floor),
-        hitH: Math.max(palSlotSize, floor),
-        page: 0,
-      });
-    }
-
-    // 3. Submit button slot
-    slots.push({
-      index: count + palCount,
-      role: "target",
-      x: this.logicSpace.w / 2 - 70,
-      y: 465,
-      w: 120,
-      h: 50,
-      hitW: Math.max(120, floor),
-      hitH: Math.max(50, floor),
-      page: 0,
+    // Dải mẫu trên, bảng phần tử dưới — trong sân khấu của khung (`BR-PSZ-01`).
+    // Nút xong không còn là slot: shell vẽ ở `zones.action`; nút xoá bỏ hẳn
+    // (`BR-PSZ-05`) — chạm lại ô đang mang đúng phần tử đang cầm là gỡ nó.
+    return computeStageGroupsLayout({
+      stage: resolveStageRect(this.logicSpace, band, this.stageRect),
+      ageBand: band,
+      groups: [
+        { count: this.content.track_length, role: "target" },
+        { count: this.content.palette.length, role: "source" },
+      ],
     });
-
-    // 4. Clear button slot
-    slots.push({
-      index: count + palCount + 1,
-      role: "target",
-      x: this.logicSpace.w / 2 + 70,
-      y: 465,
-      w: 120,
-      h: 50,
-      hitW: Math.max(120, floor),
-      hitH: Math.max(50, floor),
-      page: 0,
-    });
-
-    return slots;
   }
 
   override validateAction(action: GameAction): ActionResult {
@@ -392,27 +342,6 @@ export class GT036Session extends TemplateGameSession<
     return Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh;
   }
 
-  private findTappedControl(
-    gx: number,
-    gy: number,
-    tol: number
-  ): GameAction | null {
-    const count = this.content.track_length;
-    const palCount = this.content.palette.length;
-
-    const submitSlot = this.slots[count + palCount];
-    if (submitSlot && this.isHitSlot(submitSlot, gx, gy, tol)) {
-      return { type: "submit_creation", data: {} };
-    }
-
-    const clearSlot = this.slots[count + palCount + 1];
-    if (clearSlot && this.isHitSlot(clearSlot, gx, gy, tol)) {
-      return { type: "clear_track", data: {} };
-    }
-
-    return null;
-  }
-
   private findTappedPalette(
     gx: number,
     gy: number,
@@ -440,7 +369,8 @@ export class GT036Session extends TemplateGameSession<
     for (let i = 0; i < count; i++) {
       const slot = this.slots[i];
       if (slot && this.isHitSlot(slot, gx, gy, tol)) {
-        if (this.selectedPaletteId) {
+        const placed = this.placedItems[i];
+        if (this.selectedPaletteId && placed !== this.selectedPaletteId) {
           return {
             type: "place_element",
             data: { slotIndex: i, elementId: this.selectedPaletteId },
@@ -455,13 +385,16 @@ export class GT036Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
+    // Chạm nút ở `zones.action` tới đây thành `commit` (`BR-PSZ-05`): nộp dải.
+    if (gesture.type === "commit") {
+      return { type: "submit_creation", data: {} };
+    }
     if (gesture.type !== "tap") {
       return null;
     }
 
     const hitTolerance = 24;
     return (
-      this.findTappedControl(gesture.x, gesture.y, hitTolerance) ??
       this.findTappedPalette(gesture.x, gesture.y, hitTolerance) ??
       this.findTappedTrack(gesture.x, gesture.y, hitTolerance)
     );
@@ -518,34 +451,6 @@ export class GT036Session extends TemplateGameSession<
     this.appendTrackEntities(entities, count);
     this.appendPaletteEntities(entities, count, palCount);
 
-    const submitSlot = this.slots[count + palCount];
-    if (submitSlot) {
-      entities.push({
-        id: "submit_btn",
-        slotIndex: count + palCount,
-        role: "target",
-        state: "idle",
-        x: submitSlot.x,
-        y: submitSlot.y,
-        w: submitSlot.w,
-        h: submitSlot.h,
-      });
-    }
-
-    const clearSlot = this.slots[count + palCount + 1];
-    if (clearSlot) {
-      entities.push({
-        id: "clear_btn",
-        slotIndex: count + palCount + 1,
-        role: "target",
-        state: "idle",
-        x: clearSlot.x,
-        y: clearSlot.y,
-        w: clearSlot.w,
-        h: clearSlot.h,
-      });
-    }
-
     return {
       activePrompt: this.content.prompt,
       entities,
@@ -559,18 +464,20 @@ export class GT036Session extends TemplateGameSession<
   render(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
     drawSceneBackground(ctx, rs, this.themeId);
 
-    drawPromptText(ctx, rs, this.content.prompt);
-    drawSubPromptText(
-      ctx,
-      rs,
-      `Bé chọn hình và xếp dải lặp lại ít nhất ${this.content.min_repetitions} lần nhé!`
-    );
+    // Có khung thì lời dẫn thuộc shell (`BR-PSZ-01`); dòng chữ phụ chỉ ở bề mặt cũ.
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+      drawSubPromptText(
+        ctx,
+        rs,
+        `Bé chọn hình và xếp dải lặp lại ít nhất ${this.content.min_repetitions} lần nhé!`
+      );
+    }
 
     this.renderTrackSlots(ctx, rs);
     this.renderPaletteDock(ctx, rs);
-    this.renderControlButtons(ctx, rs);
 
-    if (this.submitted && this.detectedRule?.detected) {
+    if (!this.stageRect && this.submitted && this.detectedRule?.detected) {
       this.renderRuleOverlay(ctx, rs);
     }
 
@@ -608,7 +515,7 @@ export class GT036Session extends TemplateGameSession<
       } else {
         drawSlotItem(ctx, rs, slot, {
           id: `empty-track-${i}`,
-          label: `${i + 1}`,
+          text: `${i + 1}`,
           state: "idle",
         });
       }
@@ -623,8 +530,6 @@ export class GT036Session extends TemplateGameSession<
     const palCount = this.content.palette.length;
     const palSlots = this.slots.slice(count, count + palCount);
 
-    drawWoodenTokenDock(ctx, rs);
-
     for (let i = 0; i < palCount; i++) {
       const slot = palSlots[i];
       const pItem = this.content.palette[i];
@@ -637,32 +542,6 @@ export class GT036Session extends TemplateGameSession<
         id: pItem.id,
         asset: pItem.asset,
         state: isSelected ? "selected" : "idle",
-      });
-    }
-  }
-
-  private renderControlButtons(
-    ctx: CanvasRenderingContext2D,
-    rs: RenderSystem
-  ): void {
-    const count = this.content.track_length;
-    const palCount = this.content.palette.length;
-    const submitSlot = this.slots[count + palCount];
-    const clearSlot = this.slots[count + palCount + 1];
-
-    if (submitSlot) {
-      drawSlotItem(ctx, rs, submitSlot, {
-        id: "btn-submit-item",
-        label: "NỘP BÀI",
-        state: this.isWin ? "selected" : "idle",
-      });
-    }
-
-    if (clearSlot) {
-      drawSlotItem(ctx, rs, clearSlot, {
-        id: "btn-clear-item",
-        label: "XOÁ HẾT",
-        state: "idle",
       });
     }
   }

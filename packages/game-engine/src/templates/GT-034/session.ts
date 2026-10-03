@@ -13,14 +13,16 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
-import { getTouchFloor } from "#src/layout/constants";
+import {
+  computeStageGroupsLayout,
+  resolveStageRect,
+} from "#src/layout/stage-groups";
 import type { Slot } from "#src/layout/types";
 import {
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
-  drawWoodenTokenDock,
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
@@ -39,6 +41,14 @@ export class GT034Session extends TemplateGameSession<
   GT034Content,
   GT034Difficulty
 > {
+  /** Nút ở `zones.action` là nút nghe mẫu (`BR-PSZ-05`); chuỗi tự chấm khi đủ bước. */
+  override readonly needsCommit = true;
+  override readonly commitIcon = "listen";
+
+  override canCommit(): boolean {
+    return !(this.isWin || this.isWon || this.isPlayingPattern);
+  }
+
   degradation: DegradationState | null = null;
   userSteps: (string | null)[] = [];
   replaysUsed = 0;
@@ -116,62 +126,24 @@ export class GT034Session extends TemplateGameSession<
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
-    const floor = getTouchFloor(band);
-    const slots: Slot[] = [];
-    const patternLen = this.content.target_pattern.length;
-    const instCount = this.content.instruments.length;
-    const centerX = this.logicSpace.w / 2;
-
-    // 1. Target pattern track slots
-    const startX = centerX - (patternLen * 72) / 2;
-    for (let i = 0; i < patternLen; i++) {
-      slots.push({
-        index: i,
-        role: "target",
-        x: startX + i * 72 + 36,
-        y: 220,
-        w: 64,
-        h: 64,
-        hitW: Math.max(64, floor),
-        hitH: Math.max(64, floor),
-        page: 0,
-      });
-    }
-
-    // 2. Instrument source slots
-    const instStartX = centerX - (instCount * 110) / 2;
-    for (let i = 0; i < instCount; i++) {
-      const inst = this.content.instruments[i];
-      if (!inst) {
-        continue;
-      }
-      slots.push({
-        index: patternLen + i,
-        role: "source",
-        x: instStartX + i * 110 + 55,
-        y: 380,
-        w: 88,
-        h: 88,
-        hitW: Math.max(88, floor),
-        hitH: Math.max(88, floor),
-        page: 0,
-      });
-    }
-
-    // 3. Replay button slot
-    slots.push({
-      index: patternLen + instCount,
-      role: "source",
-      x: centerX,
-      y: 120,
-      w: 64,
-      h: 64,
-      hitW: Math.max(64, floor),
-      hitH: Math.max(64, floor),
-      page: 0,
+    // Dải bước trên, nhạc cụ dưới — trong sân khấu của khung (`BR-PSZ-01`).
+    // Nút nghe mẫu không còn là slot: shell vẽ ở `zones.action` (`BR-PSZ-05`).
+    return computeStageGroupsLayout({
+      stage: resolveStageRect(this.logicSpace, band, this.stageRect),
+      ageBand: band,
+      groups: [
+        {
+          count: this.content.target_pattern.length,
+          role: "target",
+          hasLabels: true,
+        },
+        {
+          count: this.content.instruments.length,
+          role: "source",
+          hasLabels: true,
+        },
+      ],
     });
-
-    return slots;
   }
 
   update(deltaMs: number): void {
@@ -212,9 +184,12 @@ export class GT034Session extends TemplateGameSession<
     return true;
   }
 
+  private get replayLimit(): number {
+    return this.difficulty.replay_limit ?? 3;
+  }
+
   private validatePlayPattern(): ActionResult {
-    const replayLimit = this.difficulty.replay_limit ?? 3;
-    if (this.replaysUsed >= replayLimit) {
+    if (this.replaysUsed >= this.replayLimit) {
       return ACTION_IGNORED;
     }
     return ACTION_CORRECT;
@@ -301,8 +276,7 @@ export class GT034Session extends TemplateGameSession<
   }
 
   private commitPlayPattern(): void {
-    const replayLimit = this.difficulty.replay_limit ?? 3;
-    if (this.replaysUsed >= replayLimit) {
+    if (this.replaysUsed >= this.replayLimit) {
       this.showVisualPattern = true;
       return;
     }
@@ -464,22 +438,6 @@ export class GT034Session extends TemplateGameSession<
     }
   }
 
-  private findTappedReplay(
-    gx: number,
-    gy: number,
-    tol: number,
-    replaySlot?: Slot
-  ): boolean {
-    if (!replaySlot) {
-      return false;
-    }
-    const hw = (replaySlot.hitW ?? replaySlot.w) / 2 + tol;
-    const hh = (replaySlot.hitH ?? replaySlot.h) / 2 + tol;
-    return (
-      Math.abs(gx - replaySlot.x) <= hw && Math.abs(gy - replaySlot.y) <= hh
-    );
-  }
-
   private findTappedInstrumentId(
     gx: number,
     gy: number,
@@ -516,6 +474,10 @@ export class GT034Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
+    // Chạm nút ở `zones.action` tới đây thành `commit` (`BR-PSZ-05`): nghe mẫu.
+    if (gesture.type === "commit") {
+      return { type: "play_pattern", data: {} };
+    }
     if (gesture.type !== "tap") {
       return null;
     }
@@ -523,17 +485,6 @@ export class GT034Session extends TemplateGameSession<
     const hitTolerance = 24;
     const patternLen = this.content.target_pattern.length;
     const instCount = this.content.instruments.length;
-
-    if (
-      this.findTappedReplay(
-        gesture.x,
-        gesture.y,
-        hitTolerance,
-        this.slots[patternLen + instCount]
-      )
-    ) {
-      return { type: "play_pattern", data: {} };
-    }
 
     const instId = this.findTappedInstrumentId(
       gesture.x,
@@ -602,20 +553,6 @@ export class GT034Session extends TemplateGameSession<
       });
     }
 
-    const replaySlot = this.slots[patternLen + instCount];
-    if (replaySlot) {
-      entities.push({
-        id: "replay_btn",
-        slotIndex: patternLen + instCount,
-        role: "source",
-        state: this.isPlayingPattern ? "selected" : "idle",
-        x: replaySlot.x,
-        y: replaySlot.y,
-        w: replaySlot.w,
-        h: replaySlot.h,
-      });
-    }
-
     return {
       activePrompt: this.content.prompt,
       entities,
@@ -628,12 +565,15 @@ export class GT034Session extends TemplateGameSession<
 
   render(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    drawSubPromptText(
-      ctx,
-      rs,
-      `Đã nghe: ${this.replaysUsed}/${this.difficulty.replay_limit ?? 3} | Nhịp: ${this.content.tempo_bpm} BPM`
-    );
+    // Có khung thì lời dẫn thuộc shell (`BR-PSZ-01`); số lượt nghe không hiện (`BR-PSZ-06`).
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+      drawSubPromptText(
+        ctx,
+        rs,
+        `Đã nghe: ${this.replaysUsed}/${this.replayLimit} | Nhịp: ${this.content.tempo_bpm} BPM`
+      );
+    }
 
     this.renderTrackSteps(ctx, rs);
     this.renderInstrumentDock(ctx, rs);
@@ -723,7 +663,6 @@ export class GT034Session extends TemplateGameSession<
       return;
     }
 
-    drawWoodenTokenDock(ctx, rs);
     for (let i = 0; i < sourceSlots.length; i++) {
       const slot = sourceSlots[i];
       const inst = this.content.instruments[i];

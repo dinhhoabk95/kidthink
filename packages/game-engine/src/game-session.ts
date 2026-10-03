@@ -3,6 +3,7 @@ import type { EngineView, Gesture } from "./interaction.js";
 import { DEFAULT_LOGIC_SPACE, type LogicSpace } from "./layout/constants.js";
 import type { ZoneRect } from "./layout/stage-zones.js";
 import type { Slot } from "./layout/types";
+import type { CommitIcon } from "./render/commit-button.js";
 import type { RenderSystem } from "./systems/render-system";
 
 export type FeedbackKind =
@@ -190,6 +191,12 @@ export abstract class TemplateGameSession<
   canCommit(): boolean {
     return true;
   }
+
+  /**
+   * Icon nút ở `zones.action` khi hành động chính không phải nộp (`BR-PSZ-05`):
+   * ▶ chạy (GT-035), loa nghe mẫu (GT-034). Bỏ trống là ✓.
+   */
+  readonly commitIcon: CommitIcon | undefined = undefined;
 
   /** Vùng sân khấu được cấp bởi shell (`BR-PSZ-01`, Task #277 S3). */
   stageRect?: ZoneRect;

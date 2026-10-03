@@ -106,10 +106,22 @@ của S0 — không file nào đổi trạng thái ngoài file của lát.
 
 ## S7 — GT-034, GT-035, GT-036 vào khung · M · phụ thuộc: S4
 
-- [ ] RED: portrait 390, ba engine — không cặp hit nào chồng nhau (`BR-LAY-05`), mọi lệnh vẽ trong stage
-- [ ] Bỏ toạ độ cứng, slot từ hàm layout; nút chạy, xoá, nghe lại vào vùng hành động
-- [ ] Level đã seed của ba engine chạy lại trong test, không chỉ level mẫu
-- [ ] Ca âm: khôi phục toạ độ cũ của GT-035 → test đỏ
+- [x] RED: portrait 390, ba engine — không cặp hit nào chồng nhau (`BR-LAY-05`), mọi lệnh vẽ trong stage
+      — [`stage-engines-s7.test.ts`](../../packages/game-engine/tests/layout/stage-engines-s7.test.ts)
+      (2026-10-03); chạy trên ba `session.ts` cũ thì đỏ 172/177 ca
+- [x] Bỏ toạ độ cứng, slot từ hàm layout; nút chạy, xoá, nghe lại vào vùng hành động — slot từ
+      [`computeStageGroupsLayout`](../../packages/game-engine/src/layout/stage-groups.ts) trong
+      `zones.stage`. Spec sửa trước (`BR-PSZ-05`, mục 5 hai nhánh mới): mỗi engine **một** nút ở
+      `zones.action` qua `commit` — GT-034 nghe mẫu (icon loa), GT-035 chạy (icon ▶), GT-036 xong
+      (✓). Nút xoá bỏ hẳn: GT-036 chạm lại ô đang mang đúng phần tử đang cầm là gỡ
+- [x] Level đã seed của ba engine chạy lại trong test, không chỉ level mẫu — `ALL_SEED_LEVELS`
+      (37 GT-034 · 17 GT-035 · 20 GT-036), mỗi level kiểm hit và kiểm vẽ lúc mở lượt và giữa lượt
+- [x] Ca âm: khôi phục toạ độ cũ của GT-035 → test đỏ — fixture
+      [`gt-035-legacy-coords.ts`](../../packages/game-engine/tests/layout/fixtures/gt-035-legacy-coords.ts)
+      bị báo slot ngoài stage (portrait 390) và hit chồng nhau (960×540)
+- [ ] **Chưa phủ**: sàn chạm trên px CSS thật (`BR-PSZ-04`) — slot vẫn lấy sàn ở logic px như S1
+      ghi; hint của GT-035/GT-036 không còn chỉ được tới nút ở `zones.action` (trả `null` khi bước
+      kế là chạy/nộp); nút hành động chưa có entity cho bàn phím và screen reader
 
 ## Checkpoint 2 — Trình duyệt thật
 

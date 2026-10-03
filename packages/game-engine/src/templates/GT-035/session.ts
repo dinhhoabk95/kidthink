@@ -8,14 +8,16 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
-import { getTouchFloor } from "#src/layout/constants";
+import {
+  computeStageGroupsLayout,
+  resolveStageRect,
+} from "#src/layout/stage-groups";
 import type { Slot } from "#src/layout/types";
 import {
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
-  drawWoodenTokenDock,
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
@@ -81,6 +83,17 @@ export class GT035Session extends TemplateGameSession<
     return GT035Session.DEFAULT_ALLOWED_COMMANDS;
   }
 
+  /** Nút ở `zones.action` là nút chạy chương trình (`BR-PSZ-05`). */
+  override readonly needsCommit = true;
+  override readonly commitIcon = "play";
+
+  override canCommit(): boolean {
+    return (
+      !(this.isWin || this.isWon || this.isExecuting) &&
+      this.queueSystem.commandCount > 0
+    );
+  }
+
   degradation: DegradationState | null = null;
 
   robotState: RobotState;
@@ -127,7 +140,7 @@ export class GT035Session extends TemplateGameSession<
       goal: this.content.goal,
       obstacles: this.content.obstacles,
       collectibles: this.content.collectibles,
-      maxCommands: this.difficulty.max_commands ?? 8,
+      maxCommands: this.maxCommands,
     };
   }
 
@@ -143,7 +156,7 @@ export class GT035Session extends TemplateGameSession<
 
     this.recordEvent("game_started", {
       template_code: "GT-035",
-      difficulty: this.difficulty.max_commands ?? 8,
+      difficulty: this.maxCommands,
       age_band: "5-6",
       device: "tablet",
       reduced_motion: false,
@@ -158,108 +171,42 @@ export class GT035Session extends TemplateGameSession<
     const sol = findShortestSolution(this.queueConfig);
     const { rows, cols } = this.content.grid;
     const gridCount = rows * cols;
-    const queueCount = this.difficulty.max_commands ?? 8;
+    const queueCount = this.maxCommands;
     const allowed = this.allowedCommands;
-    const runBtnSlotIdx = gridCount + queueCount + allowed.length;
 
-    if (sol && sol.length > 0) {
-      const currentCmdCount = this.queueSystem.commandCount;
-      if (currentCmdCount < sol.length) {
-        const nextCmd = sol[currentCmdCount]?.type;
-        if (nextCmd) {
-          const palIdx = allowed.indexOf(nextCmd);
-          if (palIdx >= 0) {
-            return gridCount + queueCount + palIdx;
-          }
-        }
-      } else {
-        return runBtnSlotIdx;
-      }
+    // Đủ lệnh thì bước kế là nút chạy ở `zones.action` — không phải slot của
+    // sân khấu (`BR-PSZ-05`), nên không có ô nào để chỉ.
+    const currentCmdCount = this.queueSystem.commandCount;
+    const nextCmd = sol?.[currentCmdCount]?.type;
+    if (!nextCmd) {
+      return null;
     }
-    return null;
+    const palIdx = allowed.indexOf(nextCmd);
+    return palIdx >= 0 ? gridCount + queueCount + palIdx : null;
+  }
+
+  /** Số ô của hàng lệnh — `max_commands` của độ khó. */
+  private get maxCommands(): number {
+    return this.difficulty.max_commands ?? 8;
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
-    const floor = getTouchFloor(band);
-    const slots: Slot[] = [];
+    // Lưới robot, hàng lệnh, khay lệnh — trong sân khấu của khung (`BR-PSZ-01`).
+    // Nút chạy không còn là slot: shell vẽ ở `zones.action` (`BR-PSZ-05`).
     const { rows, cols } = this.content.grid;
-
-    // 1. Grid slots (Tâm tại (320, 240))
-    const cellSize = Math.min(68, 360 / Math.max(rows, cols));
-    const gridStartX = 300 - (cols * cellSize) / 2;
-    const gridStartY = 240 - (rows * cellSize) / 2;
-
-    let slotIdx = 0;
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        slots.push({
-          index: slotIdx++,
-          role: "target",
-          x: gridStartX + c * cellSize + cellSize / 2,
-          y: gridStartY + r * cellSize + cellSize / 2,
-          w: cellSize - 4,
-          h: cellSize - 4,
-          hitW: Math.max(cellSize, floor),
-          hitH: Math.max(cellSize, floor),
-          page: 0,
-        });
-      }
-    }
-
-    // 2. Command queue slots (8 ô dọc phía bên phải)
-    const maxCmd = this.difficulty.max_commands ?? 8;
-    const queueStartX = 620;
-    const queueStartY = 220;
-    const qSlotSize = 52;
-
-    for (let i = 0; i < maxCmd; i++) {
-      const qCol = i % 4;
-      const qRow = Math.floor(i / 4);
-      slots.push({
-        index: slotIdx++,
-        role: "target",
-        x: queueStartX + qCol * (qSlotSize + 8) + qSlotSize / 2,
-        y: queueStartY + qRow * (qSlotSize + 12) + qSlotSize / 2,
-        w: qSlotSize,
-        h: qSlotSize,
-        hitW: Math.max(qSlotSize, floor),
-        hitH: Math.max(qSlotSize, floor),
-        page: 0,
-      });
-    }
-
-    // 3. Command palette buttons (khay dưới)
-    const allowed = this.allowedCommands;
-    const centerX = this.logicSpace.w / 2;
-    const palStartX = centerX - (allowed.length * 90) / 2;
-    for (let p = 0; p < allowed.length; p++) {
-      slots.push({
-        index: slotIdx++,
-        role: "source",
-        x: palStartX + p * 90 + 45,
-        y: 450,
-        w: 80,
-        h: 60,
-        hitW: Math.max(80, floor),
-        hitH: Math.max(60, floor),
-        page: 0,
-      });
-    }
-
-    // 4. Run program button slot
-    slots.push({
-      index: slotIdx++,
-      role: "source",
-      x: 780,
-      y: 120,
-      w: 96,
-      h: 56,
-      hitW: Math.max(96, floor),
-      hitH: Math.max(56, floor),
-      page: 0,
+    return computeStageGroupsLayout({
+      stage: resolveStageRect(this.logicSpace, band, this.stageRect),
+      ageBand: band,
+      groups: [
+        { count: rows * cols, role: "target", cols, hasLabels: true },
+        { count: this.maxCommands, role: "target", hasLabels: true },
+        {
+          count: this.allowedCommands.length,
+          role: "source",
+          hasLabels: true,
+        },
+      ],
     });
-
-    return slots;
   }
 
   update(_deltaMs: number): void {
@@ -270,7 +217,7 @@ export class GT035Session extends TemplateGameSession<
     if (this.isExecuting || !cmd || !this.allowedCommands.includes(cmd)) {
       return ACTION_IGNORED;
     }
-    const maxCmd = this.difficulty.max_commands ?? 8;
+    const maxCmd = this.maxCommands;
     if (this.queueSystem.commandCount >= maxCmd) {
       return ACTION_IGNORED;
     }
@@ -486,6 +433,10 @@ export class GT035Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
+    // Chạm nút ở `zones.action` tới đây thành `commit` (`BR-PSZ-05`): chạy chương trình.
+    if (gesture.type === "commit") {
+      return { type: "run_program", data: {} };
+    }
     if (gesture.type !== "tap") {
       return null;
     }
@@ -493,22 +444,7 @@ export class GT035Session extends TemplateGameSession<
     const hitTolerance = 24;
     const { rows, cols } = this.content.grid;
     const gridSlotCount = rows * cols;
-    const maxCmd = this.difficulty.max_commands ?? 8;
-    const allowed = this.allowedCommands;
-    const runSlotIdx = gridSlotCount + maxCmd + allowed.length;
-
-    // Check Run button
-    const runSlot = this.slots[runSlotIdx];
-    if (runSlot) {
-      const hw = (runSlot.hitW ?? runSlot.w) / 2 + hitTolerance;
-      const hh = (runSlot.hitH ?? runSlot.h) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.x - runSlot.x) <= hw &&
-        Math.abs(gesture.y - runSlot.y) <= hh
-      ) {
-        return { type: "run_program", data: {} };
-      }
-    }
+    const maxCmd = this.maxCommands;
 
     // Check Palette buttons
     const palCmd = this.findTappedPaletteCommand(
@@ -609,27 +545,11 @@ export class GT035Session extends TemplateGameSession<
     const entities: ViewEntity[] = [];
     const { rows, cols } = this.content.grid;
     const gridSlotCount = rows * cols;
-    const maxCmd = this.difficulty.max_commands ?? 8;
-    const allowed = this.allowedCommands;
+    const maxCmd = this.maxCommands;
 
     this.appendGridEntities(entities, gridSlotCount);
     this.appendQueueEntities(entities, gridSlotCount, maxCmd);
     this.appendPaletteEntities(entities, gridSlotCount + maxCmd);
-
-    // Run slot
-    const runSlot = this.slots[gridSlotCount + maxCmd + allowed.length];
-    if (runSlot) {
-      entities.push({
-        id: "run_btn",
-        slotIndex: gridSlotCount + maxCmd + allowed.length,
-        role: "source",
-        state: this.isExecuting ? "selected" : "idle",
-        x: runSlot.x,
-        y: runSlot.y,
-        w: runSlot.w,
-        h: runSlot.h,
-      });
-    }
 
     return {
       activePrompt: this.content.prompt,
@@ -649,12 +569,15 @@ export class GT035Session extends TemplateGameSession<
 
   render(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    drawSubPromptText(
-      ctx,
-      rs,
-      `Đã xếp: ${this.queueSystem.commandCount}/${this.difficulty.max_commands ?? 8} lệnh`
-    );
+    // Có khung thì lời dẫn thuộc shell (`BR-PSZ-01`); số lệnh đã xếp đọc từ hàng lệnh.
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+      drawSubPromptText(
+        ctx,
+        rs,
+        `Đã xếp: ${this.queueSystem.commandCount}/${this.maxCommands} lệnh`
+      );
+    }
 
     this.renderGrid(ctx, rs);
     this.renderCommandQueue(ctx, rs);
@@ -759,12 +682,8 @@ export class GT035Session extends TemplateGameSession<
   ): void {
     const { rows, cols } = this.content.grid;
     const gridSlotCount = rows * cols;
-    const maxCmd = this.difficulty.max_commands ?? 8;
+    const maxCmd = this.maxCommands;
     const queueSlots = this.slots.slice(gridSlotCount, gridSlotCount + maxCmd);
-
-    if (queueSlots.length > 0) {
-      drawWoodenTokenDock(ctx, rs);
-    }
 
     const commands = this.queueSystem.queue;
     for (let i = 0; i < queueSlots.length; i++) {
@@ -796,7 +715,7 @@ export class GT035Session extends TemplateGameSession<
     rs: RenderSystem
   ): void {
     const { rows, cols } = this.content.grid;
-    const maxCmd = this.difficulty.max_commands ?? 8;
+    const maxCmd = this.maxCommands;
     const paletteStartIdx = rows * cols + maxCmd;
     const allowed = this.allowedCommands;
 

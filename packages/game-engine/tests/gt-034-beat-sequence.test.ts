@@ -133,7 +133,7 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
     expect(session.isPlayingPattern).toBe(false);
   });
 
-  it("Scenario: Session initializes slots for track steps, instruments, and replay button", () => {
+  it("Scenario: Session initializes slots for track steps and instruments — nút nghe mẫu ở zones.action (BR-PSZ-05)", () => {
     const session = new GT034Session(
       sampleFixture.content,
       sampleFixture.difficulty,
@@ -143,8 +143,8 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
 
     const patternLen = sampleFixture.content.target_pattern.length;
     const instCount = sampleFixture.content.instruments.length;
-    // pattern slots + instrument slots + 1 replay button slot
-    expect(session.slots.length).toBe(patternLen + instCount + 1);
+    // Ô bước + nhạc cụ; nút nghe mẫu do shell vẽ ở zones.action (Task #277 S7)
+    expect(session.slots.length).toBe(patternLen + instCount);
     expect(session.userSteps).toEqual([]);
     expect(session.replaysUsed).toBe(0);
     expect(session.isWin).toBe(false);
@@ -359,17 +359,8 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
     });
     expect(miss).toEqual({ valid: false, feedback: "none" });
 
-    // Tap replay button
-    const replaySlot = session.slots[patternLen + instCount];
-    if (!replaySlot) {
-      throw new Error("replaySlot must exist");
-    }
-    const tapReplay = session.dispatch({
-      type: "tap",
-      x: replaySlot.x,
-      y: replaySlot.y,
-      timeMs: 200,
-    });
+    // Nút nghe mẫu ở zones.action — shell gửi gesture commit (BR-PSZ-05)
+    const tapReplay = session.dispatch({ type: "commit", timeMs: 200 });
     expect(tapReplay?.valid).toBe(true);
     expect(session.replaysUsed).toBe(1);
 
@@ -403,6 +394,6 @@ describe("GT-034 Gõ theo nhịp (beat-sequence) Contract & Session Tests", () =
 
     const view = session.getView();
     expect(view.activePrompt).toBe(sampleFixture.content.prompt);
-    expect(view.entities.length).toBe(patternLen + instCount + 1);
+    expect(view.entities.length).toBe(patternLen + instCount);
   });
 });
