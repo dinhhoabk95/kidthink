@@ -18,7 +18,7 @@ Diff danh sách file test đỏ với baseline — không file nào đổi trạ
 - [x] RED: engine chưa dời (GT-009) không có hai lời dẫn trong cùng khung vẽ; engine đã dời (GT-001) có đúng một
 - [x] Cờ trên session; trang vẽ `drawPromptZone` chỉ khi cờ đặt; GT-001/003/028/034/035/036 khai cờ
 - [x] Ca âm: bỏ cờ của GT-001 → test đỏ
-- [ ] Đo lại ở trình duyệt thật: ảnh chụp một engine chưa dời
+- [x] Đo lại ở trình duyệt thật: [`n0-double-prompt/`](../qa/engine-captures/2026-10-03/n0-double-prompt/README.md) — engine chưa dời chỉ có một lời dẫn, loa HUD vẫn phát lại; GT-001/028/003 một vùng lời dẫn, không trùng
 
 ## N — Lát nền · M · phụ thuộc: N0
 
