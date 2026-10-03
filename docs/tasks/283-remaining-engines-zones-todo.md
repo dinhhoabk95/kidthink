@@ -73,7 +73,7 @@ Ghi chú đo của N (2026-10-03):
 - [x] `ALL_SEED_LEVELS` của tám engine chạy lại, hai vòng liên tiếp
 - [x] Ca âm: fixture còn `drawPromptText` → đỏ
 - [x] `check:hardcoded-params` không tăng
-- Nợ đo: điện thoại ngang 784x250 — GT-009 83 ca, GT-025 17 ca (sân khấu 146 < sàn chạm); GT-029 portrait/ngang 7 ca (10 vật band 4-5, không phân trang). `KNOWN_STAGE_DEBT_CASES`, chỉ giảm; chờ quyết `play-stage-zones.md` §11 câu 4.
+- Nợ đo sau quyết định 2026-10-03 (`KNOWN_STAGE_DEBT_CASES`, chỉ giảm): GT-009 phone 83 → **0** (lời dẫn cột bên trái cho sân khấu trọn chiều cao); GT-025 phone 17 → 6; GT-029 portrait 7 → **0**, phone 7 (10 vật band 4-5, lưới của GT-029 còn tách vùng vật và vùng phương án).
 
 ## B2 — Nộp bài, tiến độ, ức chế · M · phụ thuộc: B1, #275 đóng
 
@@ -83,7 +83,7 @@ Ghi chú đo của N (2026-10-03):
 - [x] GT-026, GT-027 bỏ `drawProgressBadge` (`BR-PSZ-06`); khoảng nghỉ GT-026 vẫn trống
 - [x] Ca âm: khôi phục `drawProgressBadge` → đỏ (`fixtures/gt-026-progress-badge.ts`)
 - Phần #275 không đụng: S2 (commit sai giữ tập chọn, `itemStates`), S3, S4, S5 vẫn mở. Mục S2 "nhãn đếm" mất đối tượng vì `drawProgressBadge` đã gỡ (`BR-PSZ-06`) — đếm chọn nếu còn cần phải ở shell.
-- Nợ đo (mẫu 2 level mỗi hình, `KNOWN_STAGE_DEBT_CASES`, chỉ giảm): GT-002 portrait 2 ca (level 9-10 vật, `grid-2x4` chứa 8 ô/trang, không có phân trang); GT-027 điện thoại ngang 4 ca (dải nhãn 44 px lấy chỗ lưới). Cùng gốc với `play-stage-zones.md` §11 câu 4.
+- Nợ đo sau quyết định 2026-10-03: GT-002 portrait 2 → **0**, GT-027 phone 4 → **0** (lưới `inStage` không phân trang, `BR-PSZ-13`).
 - Test sweep lấy mẫu `SEEDS_PER_SHAPE=2` level mỗi hình nội dung: GT-002 có hàng trăm level, quét đủ mất ~160 s một viewport.
 
 ## B3 — Kéo thả có khay · L · phụ thuộc: N
@@ -92,7 +92,7 @@ Ghi chú đo của N (2026-10-03):
 - [x] Tap-tap fallback `BR-ENG-06` xanh cho cả sáu (kéo, chạm-chạm và đổi viewport giữa vòng, mọi mẫu + seed ở ba khung 330x697, 784x250, 964x628)
 - [x] Nợ safe-area của GT-004 (28, 588) và GT-008 (32) không tăng — `tests/layout-safe-area-debt.json` giữ nguyên: hàm layout cũ không đổi, đường khung mới dùng `layout/stage-targets.ts`
 - [x] Ca âm: khay ở toạ độ cũ → đỏ (`tests/layout/fixtures/gt-004-legacy-tray-coords.ts`)
-- [ ] **Nợ B3 còn lại (số đo ở `stage-engines-b3.test.ts`, chỉ được giảm):** khay một hàng 136 logic px chứa 3–4 vật ở sàn chạm portrait; GT-004 (tới 10 vật), GT-008 (9), GT-023 (8) có ca vùng chạm chồng nhau (527/527 ở band 4-5, 468/527 ở band 5-6 portrait). Điện thoại ngang 784x250: sàn chạm 138–207 logic px lớn hơn sân khấu 146. Hướng gỡ ở `play-stage-zones.md` mục 11 câu hỏi số 4 (phân trang khay hoặc khay cao hơn) — chờ quyết
+- [x] **Nợ B3 theo câu hỏi mở số 4 — đã quyết 2026-10-03: khay nhiều hàng, không phân trang, khay cột + lời dẫn cột ở điện thoại ngang** (`play-stage-zones.md` `BR-PSZ-13`; `layout/tray-grid.ts`, `computeStageZones({ trayItems })`, `TemplateGameSession.trayItemCount`). Số ca còn lại sau khi dựng: 1538 ca ở 15 khung/band (B3 đo ban đầu: hàng nghìn ca; `KNOWN_LAYOUT_DEBT_CASES`, chỉ giảm). Còn lại là giới hạn vật lý: sàn chạm 76–96 px CSS ở canvas 250 px cao làm số ô cần xếp (GT-004 band 4-5 tới 10 vật, GT-007/008 band 3-4, lưới sudoku 4×4 band 5-6) lớn hơn diện tích sân khấu; không giảm được nếu không thu vật dưới sàn (`BR-PSZ-04` cấm). `KNOWN_HIT_GAP_DEBT_CASES` của `stage-engines.test.ts` (GT-003, 004, 008, 031) và GT-014 ở B5: **về 0**.
 
 ## B4 — Ghép, lật, dãy, đường · M · phụ thuộc: N
 
@@ -108,20 +108,20 @@ Ghi chú đo của N (2026-10-03):
 - [x] RED: GT-014, 016, 017, 019; GT-016 `needsCommit=true` (ở `mode = set`), GT-019 `needsTray=true` (GT-014 cũng `needsTray=true`) — `stage-engines-b5.test.ts` 12 ca, 4 mã đỏ khi thêm vào `MIGRATED_CODES`, xanh sau khi dời; engine 120 tệp
 - [x] Ca âm: khôi phục `tap → submit_time` → đỏ (`apps/web/tests/unit/play-commit-reachability-gt016.test.ts`: quét tap không thắng khi `needsCommit=false`; chạm `zones.action` thắng; `gt-016-clock-hands.test.ts` thêm ca tap không nộp). Đổi hành vi: `checkWinCondition()` ở `mode = set` chỉ đúng sau khi nộp
 - Dùng chung: `layout/hero-split.ts` (vùng chính + ô lựa chọn, GT-016/017), `GT-014/zone-layout.ts` (hộp cân + vùng chạm hai đĩa từ `balanceScaleGeometry`), `drawIsometricModel(..., fit)` co khối vào trọn hộp
-- Nợ đo mới: GT-014 portrait 8 level có cặp vùng chạm ở khay < `SLOT_GAP_PX` (khay một hàng, cùng nợ B3; `KNOWN_HIT_GAP_DEBT` trong `stage-engines-b5.test.ts`, chỉ giảm). Nợ safe-area của GT-014 (8) và GT-017 (2) không đụng `geometry.ts` nên không đổi
+- Nợ đo: GT-014 portrait 8 → **0** (khay nhiều hàng). Nợ safe-area của GT-014 (8) và GT-017 (2) không đụng `geometry.ts` nên không đổi
 
 ## B6 — Xây, đo, đong lường · M · phụ thuộc: B3, B5
 
 - [x] Quyết `needsCommit=false` cho GT-030 (chạm đáp án là chốt), GT-031 (thắng khi tổng đủ, `exact_change` chưa có đường commit — nợ riêng), GT-033 (ô cuối đúng thì thắng); ghi ở mục 4 N3 của ba phiếu
 - [x] RED: ba engine — nguồn ở `zones.tray`, đích ở `zones.stage`, không nút ở `zones.action`, không nút xoá (`stage-engines-b6.test.ts`, 31 test; ca âm bố cục cũ `fixtures/b6-legacy-layout.ts` đỏ)
 - [x] `ALL_SEED_LEVELS` ba engine chạy lại: kéo, chạm-chạm và đổi viewport giữa vòng chơi hết vòng ở ba khung
-- Nợ đo mới (`KNOWN_LAYOUT_DEBT_CASES` ở `stage-engines-b6.test.ts`, chỉ được giảm): GT-030 portrait 6 · ngang 43 · máy tính 43 (dải đặt + đáp án cao hơn sân khấu; dải đặt 10 ô phải xuống hàng nên mất tỉ lệ vật đo/dải); GT-031 portrait 49 · ngang 14 (khay một hàng chứa 3–4 xu, cùng nợ B3); GT-033 ngang 22 · máy tính 5 (lưới 4×4, 5×5 cao hơn sân khấu). `KNOWN_HIT_GAP_DEBT_CASES` GT-031: 14.
+- Nợ đo sau quyết định 2026-10-03 (`KNOWN_LAYOUT_DEBT_CASES` ở `stage-engines-b6.test.ts`, chỉ được giảm): 102 ca — GT-030 portrait 6 · phone 43 · máy tính 43 (dải đặt cộng hàng đáp án cao hơn sân khấu); GT-033 phone 5 · máy tính 5 (lưới 4×4/5×5). GT-031 **về 0** (khay nhiều hàng). `KNOWN_HIT_GAP_DEBT_CASES` GT-031: 14 → 0.
 - Thêm: GT-030/031/033 nhận gesture `drop` (kéo từ khay) và chọn theo tâm gần nhất khi vùng chạm chồng; GT-033 `getHintTargetIndex` trỏ ô trống đầu khi level không có `solution`.
 
 ## B7 — GT-000 · M · phụ thuộc: B2
 
-- [ ] Người đặt việc quyết: intro trong khung hay ngoài khung
-- [ ] Nếu trong khung: sửa `concept-intro-gate.md` trước, rồi RED + ca âm
+- [x] Quyết 2026-10-03: **intro GT-000 ngoài khung năm vùng** (màn làm quen không chấm điểm, không khay, không nộp bài) — `play-stage-zones.md` mục 5 hàng "Intro GT-000" và câu hỏi mở số 5; `GT-000.md` §5 nhánh 10
+- [x] Không dời engine nên không cần sửa `concept-intro-gate.md`; gate `zone-primitives-only` miễn GT-000 có lý do (ca âm `findUncoveredCodes`)
 
 ## Việc chung
 
@@ -136,7 +136,7 @@ Ghi chú đo của N (2026-10-03):
 
 ## Đóng task
 
-- [ ] Gate `zone-primitives-only` phủ đủ 37 mã, danh sách ngoại lệ rỗng
-- [ ] Xoá nhánh `if (!this.stageRect)` trong GT-001 và đường lui tương tự ở GT-003/028
-- [ ] Spec `play-stage-zones.md` đổi `implemented` khi mọi scenario mục 9 xanh; nếu chưa, giữ `approved`
-- [ ] `index.md` cập nhật; tick "Mở task con" ở `277-play-stage-zones-todo.md`
+- [x] Gate `zone-primitives-only` phủ đủ 37 mã: 36 mã dời + GT-000 là **ngoại lệ duy nhất, có lý do** (danh sách ngoại lệ không rỗng nhưng một mã, ghi ở `EXEMPT_CODES`; test `phủ đủ mọi mã engine` + ca âm)
+- [ ] Xoá nhánh `if (!this.stageRect)` trong GT-001/003/028 và đường lui tương tự — **không an toàn, để lại có chủ đích**: `/play/preview-sandbox` (Studio) chưa tính `computeStageZones` nên engine ở đó chạy chính nhánh dự phòng; xoá thì preview mất lời dẫn. Làm sau khi đưa preview-sandbox vào khung (`play-stage-zones.md` mục 5 hàng "Studio preview")
+- [ ] Spec `play-stage-zones.md` giữ `approved`: scenario "Studio preview cùng khung" (mục 5) chưa đúng, kiểm trình duyệt thật còn mở, và nợ vật lý còn lại ở các mục B1–B6 chưa về 0
+- [x] `index.md` cập nhật; tick "Mở task con" ở `277-play-stage-zones-todo.md`

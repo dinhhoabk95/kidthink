@@ -72,7 +72,7 @@ này biểu hiện thành "bé chạm đúng chỗ mà không ăn".
 |---|---|---|
 | `layout_id` không thuộc `template.layouts` | Manager gửi level sai | 422 `LAYOUT_NOT_SUPPORTED`, không ghi |
 | `slotCount` vượt `limits.item_count[1]` | Nội dung sai | 422 `CONTENT_PACK_INVALID` từ [`game-template-contract.md`](game-template-contract.md) `BR-GTC-02`, không tới layout |
-| Số slot không đủ chỗ ở sàn chạm | Band 3–4, nhiều item | Layout giảm số cột. Hết cột thì phân trang. Cấm thu nhỏ slot |
+| Số slot không đủ chỗ ở sàn chạm | Band 3–4, nhiều item | Layout giảm số cột. Hết cột thì phân trang. Cấm thu nhỏ slot. **Có `stage`** (`inStage`): thêm hàng thay cho phân trang — `play-stage-zones.md` `BR-PSZ-13`; phân trang chỉ còn là dự phòng khi cả cột lẫn hàng đã tới sàn chạm |
 | Viewport hẹp hơn tỉ lệ logic | Màn hình lạ | Engine giữ tỉ lệ 960×540 và thêm viền, layout không đổi |
 
 ## 6. Business rules
@@ -82,7 +82,7 @@ này biểu hiện thành "bé chạm đúng chỗ mà không ăn".
 | `BR-LAY-01` | Hàm layout **thuần** — cùng đầu vào cho cùng `Slot[]`, không đọc `window`, không đọc đồng hồ, không sinh ngẫu nhiên | Test hình học phải chạy không cần trình duyệt, và bố cục phải tái dựng được để chụp lại lỗi |
 | `BR-LAY-02` | `LayoutId` là **từ vựng đóng**, khai ở Lớp 1 trong engine. Thêm giá trị mới là PR code | Chuỗi tự do trong `difficulty_params` sẽ trỏ tới hàm không tồn tại, và lộ ra lúc trẻ mở màn chơi |
 | `BR-LAY-03` | Không slot nào nhỏ hơn sàn chạm của band tuổi. Sàn lấy qua **một hàm duy nhất**, cấm chép số | Sàn chạm là ràng buộc an toàn vận động, không phải tham số thẩm mỹ — `BR-ENG-05` |
-| `BR-LAY-04` | Không đủ chỗ thì **giảm cột rồi phân trang**. Cấm thu nhỏ slot xuống dưới sàn | Thu nhỏ để vừa màn hình là cách phổ biến nhất phá `BR-LAY-03` mà vẫn trông ổn trên máy dev |
+| `BR-LAY-04` | Không đủ chỗ thì **giảm cột rồi phân trang**. Cấm thu nhỏ slot xuống dưới sàn. Khi input có `stage` thì thứ tự là **tăng cột, thêm hàng, mới phân trang** (`BR-PSZ-13`: mọi vật hiện cùng lúc) | Thu nhỏ để vừa màn hình là cách phổ biến nhất phá `BR-LAY-03` mà vẫn trông ổn trên máy dev |
 | `BR-LAY-05` | Vùng chạm của hai slot **không chồng nhau**, và cách nhau tối thiểu `SLOT_GAP_PX` | Ngón tay trẻ 3 tuổi chạm lệch vài chục pixel; hai vùng dính nhau biến lệch thành chọn nhầm |
 | `BR-LAY-06` | Hàm layout **không đọc nội dung học** — không biết đáp án đúng, không biết nhãn | Layout biết đáp án thì vị trí sẽ rò rỉ đáp án, và layout mất tính dùng lại giữa các template |
 | `BR-LAY-07` | Mọi template khai ≥1 `LayoutId`, và mọi `LayoutId` khai phải có hàm cài đặt | Trường khai rồi bỏ đó là trạng thái hiện tại, và là lý do file này tồn tại |
@@ -205,9 +205,15 @@ Scenario: BR-LAY-03 — slot không nhỏ hơn sàn chạm
   Then mọi slot có hitW và hitH lớn hơn hoặc bằng sàn chạm của band 3-4
 
 Scenario: BR-LAY-04 — hết chỗ thì phân trang, không thu nhỏ
-  Given ageBand "3-4" và layout "grid" với slotCount 10
+  Given ageBand "3-4" và layout "grid" với slotCount 10, không có stage
   When sinh slot
   Then tồn tại slot có page lớn hơn 0
+  And không slot nào có hitW nhỏ hơn sàn chạm
+
+Scenario: BR-LAY-04 — có stage thì thêm hàng, không phân trang
+  Given ageBand "4-5", layout "grid" với slotCount 10 và stage của portrait 330x697
+  When sinh slot
+  Then mọi slot có page 0 và nằm trong stage
   And không slot nào có hitW nhỏ hơn sàn chạm
 
 Scenario: BR-LAY-05 — vùng chạm không chồng nhau

@@ -109,7 +109,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [engine-behavior-domain](01-platform/engine-behavior-domain.md) | P4 | Sáu miền hành vi, bằng chứng quan sát, trục biến thể và độ mở |
 | [engine-turn-script](01-platform/engine-turn-script.md) | P4 | Bảy nhịp một lượt chơi, tự đọc đề, tám nhánh bắt buộc |
 | [engine-input-contract](01-platform/engine-input-contract.md) | P1 | Hợp đồng nhập, ba vòng đời con trỏ, toLogicPoint, dispatch thuần |
-| [play-stage-zones](01-platform/play-stage-zones.md) | P4 | Bàn chơi năm vùng: HUD, lời dẫn, sân khấu, khay, nút hành động; sàn chạm trên px thật |
+| [play-stage-zones](01-platform/play-stage-zones.md) | P4 | Bàn chơi năm vùng: HUD, lời dẫn, sân khấu, khay, nút hành động; sàn chạm trên px thật; khay nhiều hàng không phân trang, lời dẫn cột ở điện thoại ngang (`BR-PSZ-13`) |
 | [telemetry-pipeline](01-platform/telemetry-pipeline.md) | P1 | Rollup, KPI nội dung |
 | [content-tagging](01-platform/content-tagging.md) | P1 | Ba trục what/thinking/mechanic |
 | [content-search](01-platform/content-search.md) | P1 | Bộ lọc, lọc theo quyền |

@@ -5,7 +5,7 @@ area: platform
 status: approved
 mvp: true
 phase: P4
-reviewed: 2026-09-25
+reviewed: 2026-10-03
 owns:
   - Năm vùng của bàn chơi, thứ tự và vị trí của chúng theo hướng màn hình
   - Ranh giới shell và engine — vùng nào ai vẽ, ai nhận chạm
@@ -72,6 +72,17 @@ landscape                                   portrait
                                               +--------------+-------+
 ```
 
+Điện thoại ngang thấp (784x250 canvas, xem mục 5) đổi bố cục thành ba cột: lời dẫn bên trái, sân
+khấu ở giữa, khay (nếu có) và nút hành động bên phải.
+
+```
++-------+------------------------+-----+-------+
+| mascot|                        |     |       |
+| [loa] | SÂN KHẤU               | khay|       |
+| picto |                        | cột |  [v]  |
++-------+------------------------+-----+-------+
+```
+
 1. Trang chơi mở trong layout trẻ, chiếm trọn viewport, không navbar và footer công khai.
 2. Shell đo viewport, lấy không gian logic từ
    [`game-engine-runtime.md`](game-engine-runtime.md) mục 7.1 và tỉ lệ `cssPerLogic`.
@@ -95,11 +106,12 @@ landscape                                   portrait
 | Engine chưa dời vào khung | `usesPromptZone` là `false` (mặc định) | Shell **không** vẽ `drawPromptZone`; engine vẫn tự vẽ lời dẫn bằng `drawPromptText` — đúng một nơi vẽ lời dẫn cho mỗi khung hình. Engine đã dời đặt `usesPromptZone = true` và cấm gọi `drawPromptText`. `RoundRunner` cấp `stageRect` cho mọi session nên sự có mặt của `stageRect` không thay được cờ này. Dời một engine thì đổi cờ trong cùng PR |
 | Engine không cần khay | `needsTray` là `false` | Sân khấu lấy luôn chiều cao khay. Portrait: trọn ngang, dừng trên nút hành động. Landscape: kéo xuống đáy canvas và dừng trước cột nút hành động, không dừng trên đỉnh nút — điện thoại ngang band `3-4` sàn 96 thành 208 logic px, dừng trên nút thì sân khấu chỉ còn 60. HUD, lời dẫn, nút hành động giữ nguyên chỗ |
 | Engine không cần nộp bài | `needsCommit` là `false` | Rect `action` vẫn được tính và để trống — không engine nào được vẽ nút khác vào đó |
-| Không đủ chỗ ở sàn chạm | Portrait hẹp, band `3-4` | Thu vùng lời dẫn còn một dòng trước, rồi để hàm layout slot giảm cột và phân trang. Cấm thu nút |
-| Khay chứa nhiều vật hơn một hàng ở sàn chạm | Portrait hẹp, nguồn 5 vật trở lên (GT-004, 008, 023) hoặc 4 vật ở band `4-5` | Khay giữ **một hàng** và vật không nhỏ hơn sàn chạm (`BR-PSZ-04`): hai vùng chạm kề nhau có thể chồng nhau. Chạm hoặc nhả vật chọn **tâm slot gần nhất** trong các vùng chạm trúng điểm, nên hai vật kề nhau không tranh chạm. Số ca chồng nhau đo theo mã và khung ở `tests/layout/stage-engines-b3.test.ts`, chỉ được giảm; phân trang khay là câu hỏi mở số 4 |
+| Không đủ chỗ ở sàn chạm | Portrait hẹp, band `3-4` | Thu vùng lời dẫn còn một dòng trước, rồi để hàm layout slot giảm cột và **thêm hàng** — không phân trang (`BR-PSZ-13`). Cấm thu nút |
+| Khay chứa nhiều vật hơn một hàng | Session khai `trayItemCount` lớn hơn số vật một hàng ở sàn chạm (GT-004 tới 10 vật, GT-008 tới 9, GT-023 tới 8) | Khay **cao theo số vật**: `computeStageZones` nhận `trayItems`, xếp vật thành nhiều hàng cạnh sàn chạm và cộng chiều cao khay, nhưng chừa cho sân khấu ít nhất hai hàng ô (`2 × sàn + SLOT_GAP_PX`). Mọi vật hiện cùng lúc, không nút trang (`BR-PSZ-13`). Vật không nhỏ hơn sàn chạm (`BR-PSZ-04`). Chạm hoặc nhả vật chọn **tâm slot gần nhất** trong các vùng chạm trúng điểm. Số ca còn vi phạm vì sân khấu không còn chỗ đo theo mã và khung ở `tests/layout/stage-engines-b*.test.ts`, chỉ được giảm |
+| Điện thoại ngang thấp | Landscape mà sân khấu của canvas (không khay) dưới ba hàng ô ở sàn chạm — điện thoại 784x250 ở cả ba band | **Lời dẫn thành cột bên trái** (mascot ở đầu cột, loa ngay dưới, picto dưới loa nếu còn chỗ, không có chữ phụ) và **khay thành cột** bên trái nút hành động, cao tới trọn chiều cao canvas; vật xếp vào cột nhiều hàng. Sân khấu lấy phần còn lại ở giữa và cao tới đáy canvas — dải lời dẫn trên cùng ăn 165–208 logic px trong 540 nên không chừa nổi hai hàng ô. Quyết định chỉ phụ thuộc viewport và band, **không** phụ thuộc `needsTray` hay `trayItems`, nên prompt, promptSpeaker và action vẫn bằng nhau ở mọi engine (`BR-PSZ-03`). `zones.promptPlacement` là `"side"`; máy tính bảng và màn rộng giữ `"top"` |
 | Vòng không có picto mục tiêu | Content không mang hình mục tiêu | Vùng lời dẫn chỉ có mascot và loa; chữ phụ vẫn ẩn khỏi trẻ |
-| Studio preview | `/play/preview-sandbox` | Không HUD; bốn vùng canvas giữ nguyên để Manager thấy đúng bố cục trẻ thấy |
-| Intro GT-000 | Engine làm quen khái niệm | Ba nút Trước, Nghe lại, Tiếp tục nằm trong vùng hành động, không nổi lên trên sân khấu |
+| Studio preview | `/play/preview-sandbox` | Không HUD. **Hiện chưa dùng khung**: trang không tính `computeStageZones` nên engine chạy nhánh dự phòng (`if (!this.stageRect)` vẽ lời dẫn, bố cục cũ). Đưa preview vào khung là việc còn mở của #283 — chừng đó mới xoá được nhánh dự phòng ở engine |
+| Intro GT-000 | Engine làm quen khái niệm | **Chạy ngoài khung năm vùng** (quyết 2026-10-03, câu hỏi mở số 5): màn làm quen không chấm điểm, không `needsCommit`, không khay. Ba nút Trước, Nghe lại, Tiếp tục là DOM của trang như hiện nay, `usesPromptZone` giữ `false`, gate `zone-primitives-only` miễn GT-000 và ghi lý do ở đây. Đổi khi có nhu cầu: đưa intro vào khung thì sửa `concept-intro-gate.md` trước |
 | Hành động chính không phải nộp | GT-034 nghe mẫu nhịp, GT-035 chạy chương trình | Nút ở `zones.action` mang `commitIcon` của session (▶ chạy, loa nghe mẫu — không chữ, `BR-FBK-12`); chạm gửi `commit`, session đổi thành `play_pattern` hoặc `run_program`. Chuỗi của GT-034 vẫn tự chấm khi đủ bước |
 | Engine từng có nút xoá | GT-036 | Không vẽ nút xoá. Chạm ô đã đặt đúng vật đang cầm thì gỡ vật đó; chạm vật khác thì thay |
 
@@ -108,7 +120,7 @@ landscape                                   portrait
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-PSZ-01` | Mọi engine active chơi trong **đúng năm vùng**, đúng thứ tự từ trên xuống: HUD, lời dẫn, sân khấu, khay, hành động. Engine chỉ vẽ trong `stage` và `tray` | Trẻ chưa đọc học giao diện bằng vị trí; bốn vị trí nút nộp bài khác nhau là bốn giao diện phải học lại |
-| `BR-PSZ-02` | `computeStageZones` là **hàm thuần** của `{ logicW, logicH, ageBand, cssPerLogic, needsTray, needsCommit }` | Cùng lý do `BR-LAY-01` (hàm layout thuần) — test hình học chạy không cần trình duyệt và bố cục chụp lại được |
+| `BR-PSZ-02` | `computeStageZones` là **hàm thuần** của `{ logicW, logicH, ageBand, cssPerLogic, needsTray, needsCommit, trayItems }` | Cùng lý do `BR-LAY-01` (hàm layout thuần) — test hình học chạy không cần trình duyệt và bố cục chụp lại được |
 | `BR-PSZ-03` | Vị trí HUD, lời dẫn và hành động **không phụ thuộc engine** — cùng viewport cho cùng ba rect ở mọi engine. Chỉ sân khấu đổi cao khi không có khay | Khung đổi theo trò thì trẻ không học được khung |
 | `BR-PSZ-04` | Sàn chạm của `BR-A11-04` (sàn chạm theo band tuổi) áp trên **px CSS thật**: mọi vùng chạm trong bốn vùng canvas và mọi slot có `hitW × cssPerLogic` không dưới sàn | Sàn đang áp ở logic px nên co theo canvas: portrait 390px biến 96 thành khoảng 69px thật mà mọi test vẫn xanh |
 | `BR-PSZ-05` | Nút nộp bài **chỉ** sống ở `zones.action`, vẽ bằng primitive dùng chung `drawCommitButton`, và chạm vào đó được shell đổi thành gesture `commit`. Engine cấm tự vẽ nút nộp, nút chạy, nút xoá hay nút nghe lại. Engine có **một** hành động chính khác nộp (chạy chương trình, nghe mẫu) thì hành động đó chiếm nút này: session khai `commitIcon`, `toAction` đổi `commit` thành hành động của mình. Nút xoá không có chỗ — gỡ từng vật ngay trên sân khấu | Nút tự vẽ là lý do GT-028 có thể không bao giờ nộp được bài: engine chờ `commit` mà trang không có đường gửi. Hai nút trong vùng hành động là vùng thứ sáu trá hình |
@@ -119,11 +131,12 @@ landscape                                   portrait
 | `BR-PSZ-10` | Mascot ở vùng lời dẫn là **kênh hình** của mọi lời khen và lời động viên phát ra bằng tiếng, và không leo thang theo số lần sai | `BR-ETS-05` (mọi lời đọc có kênh hình) và `BR-FBK` — tắt tiếng thì trẻ vẫn thấy mình được khen |
 | `BR-PSZ-11` | Trang chơi của trẻ không có navbar, footer hay liên kết rời trang nào ngoài khoá phụ huynh | Liên kết công khai trên bề mặt trẻ là lối thoát một chạm, vượt qua `BR-PGT-01` |
 | `BR-PSZ-12` | Mỗi lần viewport đổi, shell tính lại vùng, engine tính lại slot, và lớp truy cập `syncView()` trong cùng một nhịp | Tính lại slot mà không đồng bộ view làm nút ẩn cho screen reader trỏ toạ độ cũ |
+| `BR-PSZ-13` | **Không phân trang.** Mọi vật của một vòng hiện cùng lúc ở sân khấu hoặc khay: khay và lưới thêm hàng (hoặc khay thành cột ở điện thoại ngang thấp), không có nút trang, không vật ẩn ngoài màn. Shell tính lại vùng ở **đầu mỗi vòng** vì số vật khay đổi theo vòng. Vật không nhỏ hơn sàn chạm; nếu sàn chạm làm vòng không thể vừa thì ghi vào nợ đo, không thu dưới sàn | Trẻ 3–6 tuổi không biết có vật ẩn sau trang, nút trang nhỏ khó chạm trúng và làm bài dừng ở "đủ vật" trong khi vật còn nằm trang sau. Hướng dẫn thiết kế cho trẻ nhỏ khuyên hạn chế cuộn và phân trang, một màn hình cho một việc ([NN/g — Design for Kids Based on Their Stage of Physical Development](https://www.nngroup.com/articles/children-ux-physical-development/), [Smashing — A Practical Guide To Designing For Children](https://www.smashingmagazine.com/2024/02/practical-guide-design-children/)); NN/g đo vùng chạm tối thiểu khoảng 2 × 2 cm cho trẻ nhỏ — cùng ý với sàn chạm `BR-PSZ-04` |
 
 ## 7. Data
 
 **Đọc:** band tuổi của phiên, không gian logic từ [`game-engine-runtime.md`](game-engine-runtime.md)
-mục 7.1, `needsTray` và `needsCommit` của session.
+mục 7.1, `needsTray`, `trayItemCount` và `needsCommit` của session.
 **Ghi:** không ghi gì. Vùng không có trạng thái.
 
 ### 7.1 Hình dạng
@@ -141,10 +154,12 @@ interface StageZonesInput {
   cssPerLogic: number;     // px CSS trên một logic px, shell đo
   needsTray: boolean;
   needsCommit: boolean;
+  trayItems?: number;      // số vật khay của vòng; bỏ trống là một hàng (`BR-PSZ-13`)
 }
 
 interface StageZones {
   orientation: "landscape" | "portrait";
+  promptPlacement: "top" | "side"; // side: landscape thấp, lời dẫn là cột bên trái (`BR-PSZ-13`)
   prompt: ZoneRect;
   promptSpeaker: ZoneRect; // vùng chạm của loa, nằm trong prompt
   stage: ZoneRect;
@@ -157,6 +172,7 @@ type ComputeStageZones = (input: StageZonesInput) => StageZones;
 // Session khai cho shell (`BR-PSZ-05`)
 interface StageSessionFlags {
   needsTray: boolean;
+  trayItemCount: number;   // số vật nguồn trong khay của vòng này; 0 khi không có khay
   needsCommit: boolean;
   canCommit(): boolean;    // false thì nút vẽ mờ và chạm bị nuốt
   commitIcon?: "check" | "play" | "listen"; // bỏ trống là ✓; ▶ chạy, loa nghe mẫu
@@ -218,6 +234,30 @@ Scenario: BR-PSZ-04 — sàn chạm trên px thật ở portrait hẹp
   And layout nhận `stage` và `cssPerLogic` (`LayoutInput`, `game-layout-engine.md` mục 7.1);
     một hàm layout tính sàn ở logic px (cssPerLogic = 1) bị phép kiểm báo vi phạm
 
+Scenario: BR-PSZ-13 — khay nhiều vật không phân trang
+  Given viewport 390x844, band "4-5" và một session khay 10 vật
+  When tính vùng với trayItems = 10 và đặt slot nguồn trong zones.tray
+  Then mọi slot nguồn có page 0 và nằm trong zones.tray
+  And không cặp vùng chạm nào cách nhau dưới SLOT_GAP_PX
+  And zones.stage còn cao ít nhất 2 × sàn chạm + SLOT_GAP_PX
+
+Scenario: BR-PSZ-13 — điện thoại ngang thấp dùng cột khay
+  Given viewport 784x250, band "4-5" và một session khay 6 vật
+  When tính vùng
+  Then zones.tray là cột bên trái zones.action, không chồng zones.stage
+  And prompt, promptSpeaker và action bằng với cùng viewport khi needsTray là false
+
+Scenario: BR-PSZ-13 — landscape thấp đặt lời dẫn ở cột bên trái
+  Given viewport 784x250 và band "4-5"
+  When tính vùng
+  Then zones.promptPlacement là "side" và zones.prompt không chồng zones.stage
+  And zones.stage cao bằng canvas trừ hai lề, đủ ba hàng ô ở sàn chạm
+
+Scenario: BR-PSZ-13 — số vật khay đổi theo vòng
+  Given một level có vòng 1 khay 4 vật và vòng 2 khay 10 vật
+  When vòng 2 bắt đầu
+  Then shell tính lại zones với trayItems = 10 và slot của vòng 2 nằm trong khay mới
+
 Scenario: BR-PSZ-05 — GT-028 nộp được bài từ trang chơi
   Given trang /play với một level GT-028 và đã chạm đủ số lượng đúng
   When chạm vào tâm zones.action
@@ -270,9 +310,13 @@ Scenario: BR-PSZ-12 — xoay máy đồng bộ view
 
 ## 11. Open questions
 
-| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+Quyết định ngày 2026-10-03 — người đặt việc giao tôi tự chốt các câu mở đối chiếu hướng dẫn thiết kế cho trẻ nhỏ
+công bố (NN/g, Smashing Magazine; chưa kiểm từng app thương mại bằng tay) và theo tiêu chí trẻ 3–6 tuổi: ít thao tác ẩn, chạm to, mọi vật nhìn thấy cùng lúc.
+
+| # | Câu hỏi | Quyết | Lý do | Trạng thái |
 |---|---|---|---|---|
-| ~~1~~ | ~~Mascot dùng asset vẽ thật hay tiếp tục emoji gấu?~~ **Đóng 2026-10-03 (#279)**: sprite SVG/PNG đặt ngoài, engine giữ hợp đồng sáu dáng và bản vẽ thay thế bằng primitive — [`feedback-and-celebration.md`](../04-play/feedback-and-celebration.md) §7.4. Mascot là Gấu Con, bốn sprite có sẵn ở `public/mascot/` | Chất lượng `BR-PSZ-10` | Đã đóng | người quyết |
-| 2 | Có thêm chế độ chơi tự do không đáp án trong cùng khung năm vùng — sân khấu và khay giữ nguyên, vùng hành động thành nút "xong rồi" không chấm? | Trục sáng tạo — miền tự tạo của [`engine-behavior-domain.md`](engine-behavior-domain.md) | P5 | người quyết |
-| 3 | Nút hành động có đổi phía cho trẻ thuận tay trái không? | `BR-PSZ-03` | P5 | hoãn — khi có phản hồi từ phụ huynh về tay thuận |
-| 4 | Khay một hàng cao 136 logic px chỉ chứa 3–4 vật ở sàn chạm portrait, nhưng GT-004 có tới 10 vật, GT-008 tới 9, GT-023 tới 8. Khay có phân trang (nút trang trong khay, vật đã đặt rời khay thì vật kế hiện ra) hay tăng chiều cao khay theo số vật? Vật tái dùng (GT-007, GT-021) không rời khay nên chỉ phân trang được | `BR-LAY-05` ở khay portrait | P5 | Task #283 B3 — chờ quyết |
+| ~~1~~ | ~~Mascot dùng asset vẽ thật hay tiếp tục emoji gấu?~~ | **Đóng 2026-10-03 (#279)**: sprite SVG/PNG đặt ngoài, engine giữ hợp đồng sáu dáng và bản vẽ thay thế bằng primitive — [`feedback-and-celebration.md`](../04-play/feedback-and-celebration.md) §7.4. Mascot là Gấu Con, bốn sprite có sẵn ở `public/mascot/` | — | Đã đóng |
+| 2 | Có thêm chế độ chơi tự do không đáp án trong cùng khung năm vùng — sân khấu và khay giữ nguyên, vùng hành động thành nút "xong rồi" không chấm? | **Hoãn tới P5.** Chưa làm trong #283 | Đây là một **loại trò mới** (miền tự tạo của [`engine-behavior-domain.md`](engine-behavior-domain.md)), không phải một hạn chế của khung. Khung năm vùng không chặn nó; cần quyết riêng về ghi điểm, sticker và sự kiện không có `is_correct` trước khi dựng. Hoãn không làm hỏng khung nào | Hoãn |
+| 3 | Nút hành động có đổi phía cho trẻ thuận tay trái không? | **Hoãn, giữ cuối dòng.** | `BR-PSZ-03` cần cùng một chỗ cho mọi engine để trẻ học một lần; chưa có số đo tay thuận nào. Khi có phản hồi phụ huynh thì thêm cài đặt ở hồ sơ trẻ, không đổi mặc định | Hoãn |
+| 4 | Khay một hàng chỉ chứa 3–4 vật ở sàn chạm portrait, nhưng GT-004 có tới 10 vật, GT-008 tới 9, GT-023 tới 8. Phân trang khay hay tăng chiều cao khay? | **Không phân trang. Khay cao theo số vật (nhiều hàng), mọi vật hiện cùng lúc; điện thoại ngang thấp đặt khay thành cột bên trái nút hành động.** Vật không nhỏ hơn sàn chạm; không đủ chỗ thì ghi nợ đo chứ không thu dưới sàn — `BR-PSZ-13` | Trẻ 3–6 tuổi không hiểu vật ẩn sau trang và chạm trượt nút trang nhỏ; hướng dẫn thiết kế cho trẻ nhỏ khuyên một màn hình, hạn chế cuộn và phân trang (xem `BR-PSZ-13`). Vật tái dùng (GT-007, GT-021) không rời khay nên phân trang vốn không khả thi cho chúng. Điện thoại ngang chỉ có 250 px CSS cao: dải khay phía dưới ăn hết sân khấu, cột bên cạnh dùng chiều ngang đang dư | Đóng, đã dựng ở #283 |
+| 5 | GT-000 (làm quen khái niệm) nằm trong hay ngoài khung năm vùng? | **Ngoài khung.** Ba nút DOM của trang như hiện nay | Màn làm quen không chấm điểm, không khay, không nộp bài; khung sinh ra để chuẩn hoá nút nộp và khay, hai thứ GT-000 không có. Đưa vào khung chỉ để thêm nghi thức mà không giúp trẻ — xem mục 5 hàng "Intro GT-000" | Đóng |
