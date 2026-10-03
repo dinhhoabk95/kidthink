@@ -11,6 +11,7 @@ import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import {
   computeStageGroupsLayout,
   resolveStageRect,
+  STAGE_LABEL_ROW_PX,
 } from "#src/layout/stage-groups";
 import type { Slot } from "#src/layout/types";
 import {
@@ -208,6 +209,21 @@ export class GT035Session extends TemplateGameSession<
         },
       ],
     });
+  }
+
+  /**
+   * Nhãn dưới ô robot và ô đích chỉ vẽ khi khoảng giữa hai hàng lưới còn chỗ cho
+   * dải nhãn; layout bỏ dải đó khi sân khấu quá thấp (ô ở sàn chạm), nhãn vẽ tiếp
+   * sẽ đè lên hàng dưới.
+   */
+  private gridLabel(text: string): string | undefined {
+    const { rows, cols } = this.content.grid;
+    const first = this.slots[0];
+    const below = this.slots[cols];
+    if (rows < 2 || !(first && below)) {
+      return text;
+    }
+    return below.y - first.y - first.h >= STAGE_LABEL_ROW_PX ? text : undefined;
   }
 
   update(_deltaMs: number): void {
@@ -633,7 +649,7 @@ export class GT035Session extends TemplateGameSession<
       drawSlotItem(ctx, rs, slot, {
         id: "robot",
         asset: { kind: "emoji", ref: "🤖" },
-        label: this.robotState.facing.toUpperCase(),
+        label: this.gridLabel(this.robotState.facing.toUpperCase()),
         state: "selected",
       });
       return;
@@ -646,7 +662,7 @@ export class GT035Session extends TemplateGameSession<
           kind: "emoji",
           ref: "⭐",
         },
-        label: "ĐÍCH",
+        label: this.gridLabel("ĐÍCH"),
         state: "idle",
       });
       return;
