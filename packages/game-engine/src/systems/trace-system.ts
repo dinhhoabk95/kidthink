@@ -34,6 +34,12 @@ export class TraceSystem {
     this.tolerancePx = tolerancePx;
   }
 
+  /** Đổi toạ độ và dung sai khi khung đổi, giữ nguyên checkpoint đã đạt. */
+  rescale(waypoints: readonly TraceWaypoint[], tolerancePx: number): void {
+    this.waypoints = [...waypoints].sort((a, b) => a.order - b.order);
+    this.tolerancePx = tolerancePx;
+  }
+
   getWaypoints(): readonly TraceWaypoint[] {
     return this.waypoints;
   }

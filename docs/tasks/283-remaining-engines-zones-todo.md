@@ -91,10 +91,11 @@ Ghi chú đo của N (2026-10-03):
 
 ## B4 — Ghép, lật, dãy, đường · M · phụ thuộc: N
 
-- [ ] RED: GT-005, 006, 013, 020, 024
-- [ ] GT-006 `needsCommit=true`; nợ GT-005 (736) không tăng
-- [ ] GT-013, GT-024: nét vẽ giới hạn trong stage
-- [ ] Ca âm cho từng engine có `needsCommit`
+- [x] RED: GT-005, 006, 013, 020, 024 — 27/300 ca đỏ trên ba tệp (`stage-engines.test.ts`, `prompt-single-source.test.ts`, `stage-engines-b4.test.ts`) khi thêm năm mã vào `MIGRATED_CODES`; xanh sau khi dời (engine 117 tệp/2128 test, web component + play-* 19 tệp/103 test)
+- [x] GT-006 `needsCommit=true` (nút ✓ luôn sáng, `checkWinCondition` chỉ thắng sau nộp theo phiếu N6; `mvp-engine-rules.test.ts` BR-E006-01 đổi: xếp đúng rồi phải `onSubmitSequence`); nợ GT-005 (736) không tăng — không đụng `geometry.ts`, `layout-safe-area.test.ts` xanh, vẫn 736. GT-005 dùng `GT-005/pair-columns.ts` trong stage (tách cột con khi sân khấu thấp)
+- [x] GT-013, GT-024: web chỉ sinh `tap`/`drop`, không sinh `stroke`/`draw`; `toAction` bỏ chạm ngoài stage, GT-024 bỏ nét bắt đầu ngoài stage và điểm ngoài stage; waypoint GT-024 co đều vào stage
+- [x] Ca âm cho GT-006: `apps/web/tests/unit/play-commit-reachability-gt006.test.ts` (quét tap không thắng khi `needsCommit=false`; chạm `zones.action` thắng)
+- Nợ đo mới: GT-024 cặp vùng chạm < `SLOT_GAP_PX` ở hình nhiều đỉnh — portrait 1 level, điện thoại ngang 9, desktop 1 (`KNOWN_HIT_GAP_DEBT` trong `stage-engines-b4.test.ts`, chỉ được giảm). `check:hardcoded-params`: 305 → 304 (trần 398)
 
 ## B5 — Thao tác trực tiếp · M · phụ thuộc: B2
 

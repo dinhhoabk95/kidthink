@@ -6,10 +6,12 @@ import {
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
   drawLocomotive,
+  drawNumberLine,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
@@ -23,12 +25,16 @@ import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
+import { slotsFitStage, splitStageForTrack } from "./stage-strip.js";
 import type { GT006Content, GT006Difficulty } from "./template.js";
 
 export class GT006Session extends TemplateGameSession<
   GT006Content,
   GT006Difficulty
 > {
+  override readonly usesPromptZone = true;
+  /** Nút xong ở `zones.action` (`BR-PSZ-05`); `commit` → `check_sequence`. */
+  override readonly needsCommit = true;
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -91,22 +97,27 @@ export class GT006Session extends TemplateGameSession<
     }
   }
 
+  /**
+   * Thắng chỉ khi trẻ nộp (`commit` → `check_sequence`) và dãy khớp `sequence`
+   * (GT-006 N6): xếp đúng mà chưa bấm nút xong thì chưa kết lượt.
+   */
   override checkWinCondition(): boolean {
-    const targetSequence = this.content.sequence
-      .slice()
-      .sort((a, b) => a.order_index - b.order_index)
-      .map((s) => s.step_id);
-
-    return this.mechanic.isSequenceCorrect(targetSequence);
+    return this.isWon;
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
-    const layoutFn = resolveLayout("horizontal-track");
-    return layoutFn({
+    const base = {
       slotCount: this.content.sequence.length,
       ageBand,
       logic: this.logicSpace,
-    });
+      stage: this.stageRect && splitStageForTrack(this.stageRect).slots,
+      cssPerLogic: this.cssPerLogic,
+    };
+    const track = resolveLayout("horizontal-track")(base);
+    // Một hàng không vừa sân khấu hẹp thì xếp dãy thành nhiều hàng, đọc trái → phải, trên → dưới.
+    return base.stage && !slotsFitStage(track, base.stage)
+      ? resolveLayout("grid")(base)
+      : track;
   }
 
   private toSlotIndex(x: number, y: number, hitTolerance: number): number {
@@ -292,28 +303,10 @@ export class GT006Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    if (this.content.representation === "number-line") {
-      drawTrackNumberLine(
-        ctx,
-        rs,
-        1,
-        this.content.sequence.length,
-        this.stagedIndex === null ? undefined : this.stagedIndex + 1
-      );
-    } else {
-      drawTrainRailway(ctx, sceneBox(rs));
-      const firstSlot = this.slots[0];
-      if (firstSlot) {
-        drawLocomotive(
-          ctx,
-          Math.max(80, firstSlot.x - firstSlot.w * 1.5),
-          firstSlot.y,
-          90,
-          70
-        );
-      }
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
     }
+    this.drawTrackDecor(ctx, rs);
     const order = this.mechanic.getCurrentSequence();
     const byId = new Map(this.content.sequence.map((s) => [s.step_id, s]));
 
@@ -337,6 +330,48 @@ export class GT006Session extends TemplateGameSession<
       );
     });
     this.drawRenderFeedback(rs, ctx);
+  }
+
+  /** Trục số hoặc đường ray + đầu tàu; có stage thì nằm trong dải đáy của stage. */
+  private drawTrackDecor(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem
+  ): void {
+    const strip: ZoneRect | null = this.stageRect
+      ? splitStageForTrack(this.stageRect).strip
+      : null;
+    if (this.content.representation === "number-line") {
+      const current =
+        this.stagedIndex === null ? undefined : this.stagedIndex + 1;
+      if (strip) {
+        drawNumberLine(ctx, strip, {
+          min: 1,
+          max: this.content.sequence.length,
+          current,
+          space: this.logicSpace,
+          scale: rs.viewport?.scale,
+        });
+      } else {
+        drawTrackNumberLine(ctx, rs, 1, this.content.sequence.length, current);
+      }
+      return;
+    }
+    // Ray gỗ nằm ở 3/4 chiều cao hộp: dải đáy của stage đặt ray đúng giữa dải.
+    drawTrainRailway(
+      ctx,
+      strip
+        ? { x: strip.x, y: strip.y - strip.h / 3, w: strip.w, h: strip.h }
+        : sceneBox(rs)
+    );
+    const firstSlot = this.slots[0];
+    if (!firstSlot) {
+      return;
+    }
+    const x = Math.max(80, firstSlot.x - firstSlot.w * 1.5);
+    if (strip && x - 45 < strip.x) {
+      return;
+    }
+    drawLocomotive(ctx, x, firstSlot.y, 90, 70);
   }
 
   private drawRenderFeedback(

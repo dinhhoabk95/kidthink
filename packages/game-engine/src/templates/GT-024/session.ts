@@ -13,7 +13,9 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
@@ -30,7 +32,13 @@ import {
   type TracePathResult,
   type TracePoint,
   TraceSystem,
+  type TraceWaypoint,
 } from "#src/systems/trace-system";
+import {
+  applyStageFit,
+  fitContentToStage,
+  isPointInStage,
+} from "./stage-fit.js";
 import type { GT024Content, GT024Difficulty } from "./template.js";
 
 function findHitStrokePoint(
@@ -50,11 +58,18 @@ export class GT024Session extends TemplateGameSession<
   GT024Content,
   GT024Difficulty
 > {
+  override readonly usesPromptZone = true;
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   readonly traceSystem = new TraceSystem();
+  /** Waypoint ở toạ độ logic của khung nhìn (đã co vào `zones.stage` nếu có). */
+  private screenWaypoints: readonly TraceWaypoint[] = [];
+  /** Dung sai chạm ở toạ độ logic; không nhỏ hơn nửa sàn chạm (`BR-PSZ-04`). */
+  private tolerancePx = 0;
+  /** Chỉ số slot chạm của từng waypoint; mặc định mỗi waypoint một slot. */
+  private slotOfWaypoint: readonly number[] = [];
   private readonly orderingMechanic = new OrderingMechanic();
 
   setupEntities(): void {
@@ -69,7 +84,10 @@ export class GT024Session extends TemplateGameSession<
     }));
 
     this.orderingMechanic.setInitialSequence(waypoints.map((w) => w.id));
-    this.traceSystem.init(waypoints, this.difficulty.tolerance_px);
+    this.screenWaypoints = waypoints;
+    this.slotOfWaypoint = waypoints.map((_, i) => i);
+    this.tolerancePx = this.difficulty.tolerance_px;
+    this.traceSystem.init(waypoints, this.tolerancePx);
 
     this.recordEvent("round_started", {
       round_index: 0,
@@ -97,9 +115,7 @@ export class GT024Session extends TemplateGameSession<
         return ACTION_IGNORED;
       }
       const dist = Math.hypot(target.x - x, target.y - y);
-      return dist <= this.difficulty.tolerance_px
-        ? ACTION_CORRECT
-        : ACTION_RETRY;
+      return dist <= this.tolerancePx ? ACTION_CORRECT : ACTION_RETRY;
     }
 
     return ACTION_IGNORED;
@@ -136,10 +152,18 @@ export class GT024Session extends TemplateGameSession<
     if (!target) {
       return null;
     }
-    const tolerance = this.difficulty.tolerance_px;
+    const tolerance = this.tolerancePx;
 
     if (gesture.type === "stroke") {
-      const hitPt = findHitStrokePoint(gesture.points, target, tolerance);
+      // Nét phải bắt đầu và đi trong stage — không vẽ từ vùng hành động hay HUD.
+      const first = gesture.points[0];
+      if (!(first && isPointInStage(first.x, first.y, this.stageRect))) {
+        return null;
+      }
+      const inStage = gesture.points.filter((pt) =>
+        isPointInStage(pt.x, pt.y, this.stageRect)
+      );
+      const hitPt = findHitStrokePoint(inStage, target, tolerance);
       if (hitPt) {
         return {
           type: "trace_point",
@@ -148,6 +172,7 @@ export class GT024Session extends TemplateGameSession<
       }
     } else if (
       gesture.type === "tap" &&
+      isPointInStage(gesture.x, gesture.y, this.stageRect) &&
       Math.hypot(target.x - gesture.x, target.y - gesture.y) <= tolerance
     ) {
       return {
@@ -178,7 +203,7 @@ export class GT024Session extends TemplateGameSession<
 
   override getView(): EngineView {
     const currentOrder = this.traceSystem.getCurrentOrderIndex();
-    const entities: ViewEntity[] = this.content.waypoints.map((w, idx) => {
+    const entities: ViewEntity[] = this.screenWaypoints.map((w, idx) => {
       let state: EntityVisual = "idle";
       if (w.order < currentOrder) {
         state = "correct";
@@ -187,7 +212,7 @@ export class GT024Session extends TemplateGameSession<
       }
       return {
         id: w.id,
-        slotIndex: idx,
+        slotIndex: this.slotOfWaypoint[idx] ?? idx,
         role: "target",
         state,
         x: w.x,
@@ -210,19 +235,64 @@ export class GT024Session extends TemplateGameSession<
     if (!currentTarget) {
       return null;
     }
-    const idx = this.content.waypoints.findIndex(
+    const idx = this.screenWaypoints.findIndex(
       (w) => w.id === currentTarget.id
     );
-    return idx >= 0 ? idx : null;
+    return idx >= 0 ? (this.slotOfWaypoint[idx] ?? idx) : null;
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    if (this.stageRect) {
+      return this.fitWaypointsToStage(this.stageRect, ageBand);
+    }
     const layoutFn = resolveLayout("grid");
     return layoutFn({
       slotCount: this.content.waypoints.length,
       ageBand,
       logic: this.logicSpace,
     });
+  }
+
+  /**
+   * Co waypoint vào stage và dựng slot chạm đúng tại từng waypoint, nên gợi ý
+   * và vòng nhấn theo `getHintTargetIndex` rơi đúng điểm cần nối.
+   */
+  private fitWaypointsToStage(
+    stage: ZoneRect,
+    ageBand: AgeBand
+  ): readonly Slot[] {
+    const floor = resolveTouchFloor(ageBand, this.cssPerLogic);
+    const fit = fitContentToStage(stage, floor / 2, this.content.waypoints);
+    this.screenWaypoints = this.content.waypoints.map((w) =>
+      applyStageFit(w, fit)
+    );
+    this.tolerancePx = Math.max(
+      this.difficulty.tolerance_px * fit.scale,
+      floor / 2
+    );
+    this.traceSystem.rescale(this.screenWaypoints, this.tolerancePx);
+    const hit = Math.round(floor);
+    // Waypoint trùng toạ độ (nét đóng hình) dùng chung một slot chạm.
+    const slots: Slot[] = [];
+    this.slotOfWaypoint = this.screenWaypoints.map((w) => {
+      const same = slots.find((slot) => slot.x === w.x && slot.y === w.y);
+      if (same) {
+        return same.index;
+      }
+      slots.push({
+        index: slots.length,
+        x: w.x,
+        y: w.y,
+        w: hit,
+        h: hit,
+        hitW: hit,
+        hitH: hit,
+        page: 0,
+        role: "target",
+      });
+      return slots.length - 1;
+    });
+    return slots;
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {
@@ -239,11 +309,13 @@ export class GT024Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    drawSubPromptText(ctx, rs, this.content.shape_name);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+      drawSubPromptText(ctx, rs, this.content.shape_name);
+    }
     drawWaypointPath(
       ctx,
-      this.content.waypoints,
+      this.screenWaypoints,
       this.traceSystem.getCurrentOrderIndex()
     );
     this.drawRenderFeedback(rs, ctx);

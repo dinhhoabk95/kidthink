@@ -56,6 +56,7 @@ export class GT020Session extends TemplateGameSession<
   GT020Content,
   GT020Difficulty
 > {
+  override readonly usesPromptZone = true;
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -243,6 +244,8 @@ export class GT020Session extends TemplateGameSession<
       slotCount: this.displayCards.length,
       ageBand,
       logic: this.logicSpace,
+      stage: this.stageRect,
+      cssPerLogic: this.cssPerLogic,
     });
   }
 
@@ -328,7 +331,9 @@ export class GT020Session extends TemplateGameSession<
       this.mismatchCardId = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
     this.displayCards.forEach((card, i) => {
       const slot = this.slots[i];
       if (slot) {

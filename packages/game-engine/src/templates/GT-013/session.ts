@@ -91,6 +91,7 @@ export class GT013Session extends TemplateGameSession<
   GT013Content,
   GT013Difficulty
 > {
+  override readonly usesPromptZone = true;
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -326,6 +327,8 @@ export class GT013Session extends TemplateGameSession<
       targetCount: this.content.grid.cols,
       ageBand,
       logic: this.logicSpace,
+      stage: this.stageRect,
+      cssPerLogic: this.cssPerLogic,
     });
   }
 
@@ -343,7 +346,9 @@ export class GT013Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
     const box = boxFromSlots(this.slots);
     if (!box) {
       this.drawRenderFeedback(rs, ctx);

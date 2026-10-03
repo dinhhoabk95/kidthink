@@ -348,6 +348,9 @@ describe("T18.1: Lô MVP — Luật cơ chế thật (GT-002..GT-006)", () => {
       const idxS2 = current2.indexOf("s2");
       session.reorderSteps(idxS2, 1);
 
+      // Xếp đúng chưa kết lượt; phải nộp (GT-006 N6, nút xong ở zones.action).
+      expect(session.checkWinCondition()).toBe(false);
+      session.onSubmitSequence();
       expect(session.checkWinCondition()).toBe(true);
     });
 

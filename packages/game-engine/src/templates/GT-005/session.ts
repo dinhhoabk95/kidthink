@@ -20,15 +20,63 @@ import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
+import { computePairColumnsInStage } from "./pair-columns.js";
 import type { GT005Content, GT005Difficulty } from "./template.js";
 
 type LeftItem = GT005Content["pairs"][number]["left"];
 type RightItem = GT005Content["pairs"][number]["right"];
 
+/** Vùng chạm tối thiểu của ô đích khi chạm hoặc thả (giữ hành vi cũ). */
+const TARGET_MIN_HIT_W = 140;
+const TARGET_MIN_HIT_H = 100;
+
+interface HitProbe {
+  readonly x: number;
+  readonly y: number;
+  readonly hitTolerance: number;
+  readonly minW: number;
+  readonly minH: number;
+}
+
+/**
+ * Chỉ số ô chưa ghép có tâm gần điểm chạm nhất trong số ô mà điểm đó rơi vào
+ * (vùng chạm nới thêm dung sai); -1 khi không ô nào trúng.
+ */
+function nearestHitIndex(
+  slots: readonly Slot[],
+  isTaken: readonly boolean[],
+  probe: HitProbe
+): number {
+  let best = -1;
+  let bestDist = Number.POSITIVE_INFINITY;
+  isTaken.forEach((taken, i) => {
+    const slot = slots[i];
+    if (!slot || taken) {
+      return;
+    }
+    const halfW =
+      Math.max(slot.hitW, slot.w, probe.minW) / 2 + probe.hitTolerance;
+    const halfH =
+      Math.max(slot.hitH, slot.h, probe.minH) / 2 + probe.hitTolerance;
+    const dx = Math.abs(probe.x - slot.x);
+    const dy = Math.abs(probe.y - slot.y);
+    if (dx > halfW || dy > halfH) {
+      return;
+    }
+    const dist = Math.hypot(dx, dy);
+    if (dist < bestDist) {
+      bestDist = dist;
+      best = i;
+    }
+  });
+  return best;
+}
+
 export class GT005Session extends TemplateGameSession<
   GT005Content,
   GT005Difficulty
 > {
+  override readonly usesPromptZone = true;
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -95,6 +143,15 @@ export class GT005Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    if (this.stageRect) {
+      return computePairColumnsInStage({
+        stage: this.stageRect,
+        ageBand,
+        cssPerLogic: this.cssPerLogic,
+        leftCount: this.displayLeft.length,
+        rightCount: this.displayRight.length,
+      });
+    }
     const layoutFn = resolveLayout("two-column-matching");
     return layoutFn({
       slotCount: this.displayLeft.length,
@@ -198,56 +255,35 @@ export class GT005Session extends TemplateGameSession<
     };
   }
 
-  private findDraggedLeft(
-    gesture: Extract<Gesture, { type: "drop" }>,
+  /** Ô nguồn chưa ghép gần điểm (x, y) nhất; cột con sát nhau không nhầm ô. */
+  private findLeftAt(
+    x: number,
+    y: number,
     sources: readonly Slot[],
     hitTolerance: number
   ): LeftItem | null {
-    for (let i = 0; i < this.displayLeft.length; i++) {
-      const slot = sources[i];
-      const item = this.displayLeft[i];
-      if (!(slot && item)) {
-        continue;
-      }
-      if (this.mechanic.isLeftMatched(item.item_id)) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.fromX - slot.x) <= halfW &&
-        Math.abs(gesture.fromY - slot.y) <= halfH
-      ) {
-        return item;
-      }
-    }
-    return null;
+    const idx = nearestHitIndex(
+      sources,
+      this.displayLeft.map((item) => this.mechanic.isLeftMatched(item.item_id)),
+      { x, y, hitTolerance, minW: 0, minH: 0 }
+    );
+    return this.displayLeft[idx] ?? null;
   }
 
-  private findTargetRight(
-    gesture: Extract<Gesture, { type: "drop" }>,
+  private findRightAt(
+    x: number,
+    y: number,
     targets: readonly Slot[],
     hitTolerance: number
   ): RightItem | null {
-    for (let i = 0; i < this.displayRight.length; i++) {
-      const slot = targets[i];
-      const item = this.displayRight[i];
-      if (!(slot && item)) {
-        continue;
-      }
-      if (this.mechanic.isRightMatched(item.item_id)) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w, 140) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h, 100) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.toX - slot.x) <= halfW &&
-        Math.abs(gesture.toY - slot.y) <= halfH
-      ) {
-        return item;
-      }
-    }
-    return null;
+    const idx = nearestHitIndex(
+      targets,
+      this.displayRight.map((item) =>
+        this.mechanic.isRightMatched(item.item_id)
+      ),
+      { x, y, hitTolerance, minW: TARGET_MIN_HIT_W, minH: TARGET_MIN_HIT_H }
+    );
+    return this.displayRight[idx] ?? null;
   }
 
   private toDropAction(
@@ -256,12 +292,22 @@ export class GT005Session extends TemplateGameSession<
     targets: readonly Slot[],
     hitTolerance: number
   ): GameAction | null {
-    const draggedLeft = this.findDraggedLeft(gesture, sources, hitTolerance);
+    const draggedLeft = this.findLeftAt(
+      gesture.fromX,
+      gesture.fromY,
+      sources,
+      hitTolerance
+    );
     if (!draggedLeft) {
       return null;
     }
 
-    const targetRight = this.findTargetRight(gesture, targets, hitTolerance);
+    const targetRight = this.findRightAt(
+      gesture.toX,
+      gesture.toY,
+      targets,
+      hitTolerance
+    );
     if (!targetRight) {
       return null;
     }
@@ -284,32 +330,17 @@ export class GT005Session extends TemplateGameSession<
     if (!stagedLeftId) {
       return null;
     }
-
-    for (let i = 0; i < this.displayRight.length; i++) {
-      const slot = targets[i];
-      const item = this.displayRight[i];
-      if (!(slot && item)) {
-        continue;
-      }
-      if (this.mechanic.isRightMatched(item.item_id)) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w, 140) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h, 100) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.x - slot.x) <= halfW &&
-        Math.abs(gesture.y - slot.y) <= halfH
-      ) {
-        return {
-          type: "match_pair",
-          data: {
-            left_item_id: stagedLeftId,
-            right_item_id: item.item_id,
-          },
-        };
-      }
+    const item = this.findRightAt(gesture.x, gesture.y, targets, hitTolerance);
+    if (!item) {
+      return null;
     }
-    return null;
+    return {
+      type: "match_pair",
+      data: {
+        left_item_id: stagedLeftId,
+        right_item_id: item.item_id,
+      },
+    };
   }
 
   private handleTapSource(
@@ -317,29 +348,13 @@ export class GT005Session extends TemplateGameSession<
     sources: readonly Slot[],
     hitTolerance: number
   ): void {
-    for (let i = 0; i < this.displayLeft.length; i++) {
-      const slot = sources[i];
-      const item = this.displayLeft[i];
-      if (!(slot && item)) {
-        continue;
-      }
-      if (this.mechanic.isLeftMatched(item.item_id)) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.x - slot.x) <= halfW &&
-        Math.abs(gesture.y - slot.y) <= halfH
-      ) {
-        if (this.mechanic.getStagedLeftId() === item.item_id) {
-          this.mechanic.stageLeft(null);
-        } else {
-          this.mechanic.stageLeft(item.item_id);
-        }
-        return;
-      }
+    const item = this.findLeftAt(gesture.x, gesture.y, sources, hitTolerance);
+    if (!item) {
+      return;
     }
+    this.mechanic.stageLeft(
+      this.mechanic.getStagedLeftId() === item.item_id ? null : item.item_id
+    );
   }
 
   private toTapAction(
@@ -415,7 +430,9 @@ export class GT005Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
     const sources = this.sourceSlots;
     const targets = this.targetSlots;
     const matched = this.mechanic.getMatchedPairs();

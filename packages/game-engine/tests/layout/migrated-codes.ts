@@ -11,4 +11,9 @@ export const MIGRATED_CODES: readonly string[] = [
   "GT-034",
   "GT-035",
   "GT-036",
+  "GT-005",
+  "GT-006",
+  "GT-013",
+  "GT-020",
+  "GT-024",
 ];
