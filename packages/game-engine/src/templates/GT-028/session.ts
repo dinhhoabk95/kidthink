@@ -14,6 +14,7 @@ import type {
   ViewEntity,
 } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
+import { splitCaption } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
   drawHeaderRepresentation,
@@ -282,7 +283,8 @@ export class GT028Session extends TemplateGameSession<
       slotCount: this.content.items.length,
       ageBand,
       logic: this.logicSpace,
-      stage: this.stageRect,
+      // Dải nhãn đếm ở đỉnh sân khấu; lưới nằm dưới nó (`BR-PSZ-01`).
+      stage: this.stageRect ? splitCaption(this.stageRect).body : undefined,
       cssPerLogic: this.cssPerLogic,
     });
   }
@@ -301,10 +303,14 @@ export class GT028Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    // Lời dẫn do shell vẽ ở vùng lời dẫn; chỉ tự vẽ khi chưa có sân khấu.
-
+    // Lời dẫn do shell vẽ ở vùng lời dẫn (`BR-PSZ-08`).
     const subText = `Bước nhảy: +${this.content.step}  |  Đã đếm: ${this.getCurrentCount()} / Mục tiêu: ${this.content.target_total}`;
-    drawSubPromptText(ctx, rs, subText);
+    drawSubPromptText(
+      ctx,
+      rs,
+      subText,
+      this.stageRect ? splitCaption(this.stageRect).caption : undefined
+    );
 
     const currentCount = this.getCurrentCount();
     if (

@@ -51,6 +51,11 @@ export class GT030Session extends TemplateGameSession<
   override get trayItemCount(): number {
     return 1;
   }
+
+  /** Nhãn dụng cụ vẽ dưới vật trong khay (`BR-PSZ-13`). */
+  override get trayHasLabels(): boolean {
+    return true;
+  }
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;

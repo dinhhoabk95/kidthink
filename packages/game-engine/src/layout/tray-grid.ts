@@ -15,6 +15,13 @@ export const TRAY_PAD_X_PX = 16;
 /** Đệm trên và dưới của khay dải. */
 export const TRAY_PAD_Y_PX = 6;
 
+/**
+ * Dải nhãn dưới mỗi hàng vật khi vật trong khay có nhãn vẽ dưới thân
+ * (`drawSlotLabel`: GT-031 giá xu, GT-033 tên màu). Không chừa thì nhãn rơi ra
+ * ngoài dock hoặc ra ngoài canvas ở hàng cuối.
+ */
+export const TRAY_LABEL_ROW_PX = 36;
+
 export interface TrayGrid {
   /** Số vật tối đa trên một hàng. */
   readonly perRow: number;
@@ -46,9 +53,13 @@ export function layoutTrayGrid(
   return { perRow: Math.ceil(count / rows), rows };
 }
 
-/** Chiều cao khay dải cho `rows` hàng vật cạnh `edge`. */
-export function trayHeightForRows(rows: number, edge: number): number {
-  return rows * edge + (rows - 1) * SLOT_GAP_PX + 2 * TRAY_PAD_Y_PX;
+/** Chiều cao khay dải cho `rows` hàng vật cạnh `edge`, mỗi hàng thêm `labelH` cho nhãn. */
+export function trayHeightForRows(
+  rows: number,
+  edge: number,
+  labelH = 0
+): number {
+  return rows * (edge + labelH) + (rows - 1) * SLOT_GAP_PX + 2 * TRAY_PAD_Y_PX;
 }
 
 /** Bề rộng khay cột chứa đúng `cols` cột vật cạnh `edge`. */

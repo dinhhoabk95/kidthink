@@ -1,0 +1,240 @@
+[
+  {
+    "template": "GT-006",
+    "level": "GL-C5-LIS-SORT-0001",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-006",
+    "level": "GL-C5-LIS-SORT-0001",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-011",
+    "level": "GL-C2-ROT-DOTS-0002",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-011",
+    "level": "GL-C2-ROT-DOTS-0002",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-014",
+    "level": "GL-C6-PER-DIFF-0001",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-014",
+    "level": "GL-C6-PER-DIFF-0001",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-015",
+    "level": "GL-C5-BOK-HIDE-0002",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-015",
+    "level": "GL-C5-BOK-HIDE-0002",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-016",
+    "level": "GL-C5-QUE-BAL-0001",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-016",
+    "level": "GL-C5-QUE-BAL-0001",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-017",
+    "level": "GL-C2-BLK-STK-0034",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-017",
+    "level": "GL-C2-BLK-STK-0034",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-024",
+    "level": "GL-C2-TRC-PTH-0032",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-024",
+    "level": "GL-C2-TRC-PTH-0032",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-026",
+    "level": "GL-C6-FLX-ADD-0001",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-026",
+    "level": "GL-C6-FLX-ADD-0001",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-027",
+    "level": "GL-C2-GEO-SWT-0001",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-027",
+    "level": "GL-C2-GEO-SWT-0001",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-028",
+    "level": "GL-C5-PRA-MEAS-0003",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-028",
+    "level": "GL-C5-PRA-MEAS-0003",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-029",
+    "level": "GL-C5-QUE-TIME-0002",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-029",
+    "level": "GL-C5-QUE-TIME-0002",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-030",
+    "level": "GL-C5-PRA-COIN-0003",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-030",
+    "level": "GL-C5-PRA-COIN-0003",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-031",
+    "level": "GL-C5-PRA-PICT-0003",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-031",
+    "level": "GL-C5-PRA-PICT-0003",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-032",
+    "level": "GL-C1-CNT-VENN-0001",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-032",
+    "level": "GL-C1-CNT-VENN-0001",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-033",
+    "level": "GL-C1-PAT-WEAVE-0005",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-033",
+    "level": "GL-C1-PAT-WEAVE-0005",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-035",
+    "level": "GL-C1-ALG-CMD-0005",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-035",
+    "level": "GL-C1-ALG-CMD-0005",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-036",
+    "level": "GL-C3-RULE-FCR-0001",
+    "status": "ok",
+    "tapChangedFrame": true,
+    "errors": []
+  },
+  {
+    "template": "GT-036",
+    "level": "GL-C3-RULE-FCR-0001",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  }
+]

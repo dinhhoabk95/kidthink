@@ -10,7 +10,12 @@ import { SLOT_GAP_PX } from "#src/layout/constants";
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import type { ContainerBox } from "#src/render/index.js";
-import { layoutTrayGrid, TRAY_PAD_Y_PX, type TrayGrid } from "./tray-grid";
+import {
+  layoutTrayGrid,
+  TRAY_LABEL_ROW_PX,
+  TRAY_PAD_Y_PX,
+  type TrayGrid,
+} from "./tray-grid";
 
 /** Cạnh vật tối đa trong khay — cùng cỡ token khay của GT-001. */
 const TRAY_ITEM_MAX_PX = 104;
@@ -42,12 +47,14 @@ export function pickTrayZones(
  * Cạnh vật vừa khay: không quá `TRAY_ITEM_MAX_PX`, không chồng sang vật bên
  * cạnh, không cao hơn một hàng của khay (`BR-PSZ-13`).
  */
-function trayItemSize(grid: TrayGrid, tray: ZoneRect): number {
+function trayItemSize(grid: TrayGrid, tray: ZoneRect, labelH: number): number {
   const byWidth =
     (tray.w - 2 * ZONE_PADDING_PX - (grid.perRow - 1) * SLOT_GAP_PX) /
     grid.perRow;
   const byHeight =
-    (tray.h - (grid.rows - 1) * SLOT_GAP_PX) / grid.rows - 2 * TRAY_PAD_Y_PX;
+    (tray.h - (grid.rows - 1) * SLOT_GAP_PX) / grid.rows -
+    2 * TRAY_PAD_Y_PX -
+    labelH;
   return Math.max(0, Math.floor(Math.min(TRAY_ITEM_MAX_PX, byWidth, byHeight)));
 }
 
@@ -74,16 +81,19 @@ export function computeTraySourceSlots(
   count: number,
   tray: ZoneRect,
   touchFloor: number,
-  firstIndex = 0
+  firstIndex = 0,
+  hasLabels = false
 ): Slot[] {
   if (count <= 0) {
     return [];
   }
   const grid = layoutTrayGrid(count, tray.w, touchFloor);
-  const size = trayItemSize(grid, tray);
+  const labelH = hasLabels ? TRAY_LABEL_ROW_PX : 0;
+  const size = trayItemSize(grid, tray, labelH);
   const hit = Math.max(touchFloor, size);
   const pitch = trayPitch(grid.perRow, tray, hit);
-  const blockH = grid.rows * hit + (grid.rows - 1) * SLOT_GAP_PX;
+  const rowH = hit + labelH;
+  const blockH = grid.rows * rowH + (grid.rows - 1) * SLOT_GAP_PX;
   // Khối vật cao hơn khay (không đủ chỗ) thì tràn xuống dưới, không tràn lên trên đè vùng khác.
   const top = tray.y + Math.max(0, (tray.h - blockH) / 2);
   const centerX = tray.x + tray.w / 2;
@@ -95,7 +105,7 @@ export function computeTraySourceSlots(
     return {
       index: firstIndex + index,
       x: Math.round(x),
-      y: Math.round(top + hit / 2 + row * (hit + SLOT_GAP_PX)),
+      y: Math.round(top + hit / 2 + row * (rowH + SLOT_GAP_PX)),
       w: size,
       h: size,
       hitW: hit,

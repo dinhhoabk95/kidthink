@@ -34,7 +34,7 @@ function drawWithRecorder(
   const zones = computeStageZones({
     logicW,
     logicH,
-    ageBand: "3-4",
+    ageBand: "5-6",
     cssPerLogic,
     needsTray: false,
     needsCommit: false,

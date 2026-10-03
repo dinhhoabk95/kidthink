@@ -39,6 +39,7 @@ import {
 } from "./constants.js";
 import {
   layoutTrayGrid,
+  TRAY_LABEL_ROW_PX,
   TRAY_PAD_X_PX,
   TRAY_PAD_Y_PX,
   trayHeightForRows,
@@ -66,6 +67,8 @@ export interface StageZonesInput {
    * Khay cao theo số vật; landscape thấp thì khay thành cột.
    */
   readonly trayItems?: number;
+  /** Vật trong khay có nhãn vẽ dưới thân: mỗi hàng khay cao thêm một dải nhãn. */
+  readonly trayLabels?: boolean;
 }
 
 export interface StageZones {
@@ -91,8 +94,8 @@ const ZONE_GAP_PX = SLOT_GAP_PX;
 const MIN_STAGE_ROWS = 2;
 const MIN_STAGE_COLS = 2;
 
-/** Landscape có sân khấu dưới ngần này hàng ô (khi không khay) thì lời dẫn sang cột bên trái. */
-const SIDE_PROMPT_BELOW_ROWS = 3;
+/** Landscape có sân khấu dưới ngần này hàng ô ở sàn chạm (khi không khay) thì lời dẫn sang cột bên trái. */
+const SIDE_PROMPT_BELOW_ROWS = 4;
 
 function sanitizeLogicSize(input: StageZonesInput): {
   w: number;
@@ -199,7 +202,10 @@ export function computeStageZones(input: StageZonesInput): StageZones {
     action,
   };
   const { tray, stage } = input.needsTray
-    ? placeTrayAndStage(area, Math.max(0, Math.floor(input.trayItems ?? 0)))
+    ? placeTrayAndStage(area, {
+        items: Math.max(0, Math.floor(input.trayItems ?? 0)),
+        labelH: input.trayLabels ? TRAY_LABEL_ROW_PX : 0,
+      })
     : { tray: null, stage: computeStageWithoutTray(area) };
 
   return {
@@ -253,21 +259,27 @@ function computeStageWithoutTray(input: PlaceInput): ZoneRect {
  * Khay cao theo số vật (`BR-PSZ-13`): dải dưới sân khấu khi còn chỗ cho sân
  * khấu hai hàng ô, cột bên trái nút hành động khi landscape không còn.
  */
-function placeTrayAndStage(input: PlaceInput, trayItems: number): TrayAndStage {
+interface TrayLoad {
+  readonly items: number;
+  /** Dải nhãn dưới mỗi hàng vật; 0 khi vật không có nhãn. */
+  readonly labelH: number;
+}
+
+function placeTrayAndStage(input: PlaceInput, load: TrayLoad): TrayAndStage {
   if (input.frame.placement === "top") {
-    const strip = placeStrip(input, trayItems);
+    const strip = placeStrip(input, load);
     if (input.orientation === "portrait" || strip.hasRoomForStage) {
       return { tray: strip.tray, stage: strip.stage };
     }
   }
-  return placeColumn(input, trayItems);
+  return placeColumn(input, load);
 }
 
 interface StripPlacement extends TrayAndStage {
   readonly hasRoomForStage: boolean;
 }
 
-function placeStrip(input: PlaceInput, trayItems: number): StripPlacement {
+function placeStrip(input: PlaceInput, load: TrayLoad): StripPlacement {
   const { orientation, canvas, frame, touchEdge, action } = input;
   const isLandscape = orientation === "landscape";
   // Landscape: khay chung hàng đáy với nút hành động, dừng trước nút một
@@ -279,13 +291,17 @@ function placeStrip(input: PlaceInput, trayItems: number): StripPlacement {
     ? canvas.h - ZONE_GAP_PX
     : action.y - ZONE_GAP_PX;
   const baseH = Math.max(TRAY_ZONE_H_PX, touchEdge);
-  const { rows } = layoutTrayGrid(trayItems, trayW, touchEdge);
-  const wantedH = Math.max(baseH, trayHeightForRows(rows, touchEdge));
+  const { rows } = layoutTrayGrid(load.items, trayW, touchEdge);
+  const wantedH = Math.max(
+    baseH,
+    trayHeightForRows(rows, touchEdge, load.labelH)
+  );
   const minStageH = cellsExtent(MIN_STAGE_ROWS, touchEdge);
   const maxTrayH = trayBottom - ZONE_GAP_PX - frame.stageTop - minStageH;
   // Đệm trên dưới của khay nhường trước: sân khấu thiếu vài px còn hơn vật
   // tràn ra ngoài khay.
-  const blockH = trayHeightForRows(rows, touchEdge) - 2 * TRAY_PAD_Y_PX;
+  const blockH =
+    trayHeightForRows(rows, touchEdge, load.labelH) - 2 * TRAY_PAD_Y_PX;
   const trayH = Math.max(baseH, Math.min(wantedH, Math.max(maxTrayH, blockH)));
   const tray: ZoneRect = {
     x: ZONE_GAP_PX,
@@ -311,14 +327,14 @@ function placeStrip(input: PlaceInput, trayItems: number): StripPlacement {
  * trái nút hành động. Số hàng theo chiều cao cột, số cột theo số vật; cột không
  * rộng quá mức để sân khấu còn hai ô bề ngang.
  */
-function placeColumn(input: PlaceInput, trayItems: number): TrayAndStage {
+function placeColumn(input: PlaceInput, load: TrayLoad): TrayAndStage {
   const { canvas, frame, touchEdge, action } = input;
   const colH = canvas.h - ZONE_GAP_PX - frame.stageTop;
   const rows = Math.max(
     1,
-    Math.floor((colH + ZONE_GAP_PX) / (touchEdge + ZONE_GAP_PX))
+    Math.floor((colH + ZONE_GAP_PX) / (touchEdge + load.labelH + ZONE_GAP_PX))
   );
-  const wantedCols = Math.max(1, Math.ceil(trayItems / rows));
+  const wantedCols = Math.max(1, Math.ceil(load.items / rows));
   const rightEdge = action.x - ZONE_GAP_PX;
   const maxW =
     rightEdge -

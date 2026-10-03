@@ -1,0 +1,1149 @@
+[
+  {
+    "template": "GT-000",
+    "level": "GL-C5-RIM-INTRO-0001",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-000-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-000",
+    "level": "GL-C5-RIM-INTRO-0001",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-000-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-000",
+    "level": "GL-C5-RIM-INTRO-0001",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-000-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-000",
+    "level": "GL-C5-RIM-INTRO-0001",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-001",
+    "level": "GL-C5-PRA-TAP-0007",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-001-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-001",
+    "level": "GL-C5-PRA-TAP-0007",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-001-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-001",
+    "level": "GL-C5-PRA-TAP-0007",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-001-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-001",
+    "level": "GL-C5-PRA-TAP-0007",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-002",
+    "level": "GL-C5-PRA-TCNT-0007",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-002-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-002",
+    "level": "GL-C5-PRA-TCNT-0007",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-002-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-002",
+    "level": "GL-C5-PRA-TCNT-0007",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-002-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-002",
+    "level": "GL-C5-PRA-TCNT-0007",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-003",
+    "level": "GL-C1-OTO-TCMP-0027",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-003-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-003",
+    "level": "GL-C1-OTO-TCMP-0027",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-003-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-003",
+    "level": "GL-C1-OTO-TCMP-0027",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-003-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-003",
+    "level": "GL-C1-OTO-TCMP-0027",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-004",
+    "level": "GL-C1-OTO-PAIR-0011",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-004-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-004",
+    "level": "GL-C1-OTO-PAIR-0011",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-004-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-004",
+    "level": "GL-C1-OTO-PAIR-0011",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-004-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-004",
+    "level": "GL-C1-OTO-PAIR-0011",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-005",
+    "level": "GL-C1-OTO-PATT-0027",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-005-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-005",
+    "level": "GL-C1-OTO-PATT-0027",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-005-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-005",
+    "level": "GL-C1-OTO-PATT-0027",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-005-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-005",
+    "level": "GL-C1-OTO-PATT-0027",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-006",
+    "level": "GL-C1-PROB-SORT-0002",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-006-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-006",
+    "level": "GL-C1-PROB-SORT-0002",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-006-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-006",
+    "level": "GL-C1-PROB-SORT-0002",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-006-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-006",
+    "level": "GL-C1-PROB-SORT-0002",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-007",
+    "level": "GL-C1-ORD-SHAD-0011",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-007-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-007",
+    "level": "GL-C1-ORD-SHAD-0011",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-007-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-007",
+    "level": "GL-C1-ORD-SHAD-0011",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-007-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-007",
+    "level": "GL-C1-ORD-SHAD-0011",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-008",
+    "level": "GL-C1-ORD-SLOT-0021",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-008-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-008",
+    "level": "GL-C1-ORD-SLOT-0021",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-008-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-008",
+    "level": "GL-C1-ORD-SLOT-0021",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-008-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-008",
+    "level": "GL-C1-ORD-SLOT-0021",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-009",
+    "level": "GL-C1-NCOMP-SIZE-0007",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-009-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-009",
+    "level": "GL-C1-NCOMP-SIZE-0007",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-009-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-009",
+    "level": "GL-C1-NCOMP-SIZE-0007",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-009-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-009",
+    "level": "GL-C1-NCOMP-SIZE-0007",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-010",
+    "level": "GL-C5-LIS-PUZZ-0002",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-010-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-010",
+    "level": "GL-C5-LIS-PUZZ-0002",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-010-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-010",
+    "level": "GL-C5-LIS-PUZZ-0002",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-010-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-010",
+    "level": "GL-C5-LIS-PUZZ-0002",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-011",
+    "level": "GL-C2-ROT-DOTS-0006",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-011-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-011",
+    "level": "GL-C2-ROT-DOTS-0006",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-011-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-011",
+    "level": "GL-C2-ROT-DOTS-0006",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-011-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-011",
+    "level": "GL-C2-ROT-DOTS-0006",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-012",
+    "level": "GL-C1-MEAS-MEMO-0018",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-012-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-012",
+    "level": "GL-C1-MEAS-MEMO-0018",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-012-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-012",
+    "level": "GL-C1-MEAS-MEMO-0018",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-012-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-012",
+    "level": "GL-C1-MEAS-MEMO-0018",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-013",
+    "level": "GL-C1-PROB-MAZE-0001",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-013-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-013",
+    "level": "GL-C1-PROB-MAZE-0001",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-013-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-013",
+    "level": "GL-C1-PROB-MAZE-0001",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-013-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-013",
+    "level": "GL-C1-PROB-MAZE-0001",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-014",
+    "level": "GL-C2-ROT-DIFF-0006",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-014-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-014",
+    "level": "GL-C2-ROT-DIFF-0006",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-014-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-014",
+    "level": "GL-C2-ROT-DIFF-0006",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-014-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-014",
+    "level": "GL-C2-ROT-DIFF-0006",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-015",
+    "level": "GL-C1-PROB-HIDE-0002",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-015-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-015",
+    "level": "GL-C1-PROB-HIDE-0002",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-015-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-015",
+    "level": "GL-C1-PROB-HIDE-0002",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-015-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-015",
+    "level": "GL-C1-PROB-HIDE-0002",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-016",
+    "level": "GL-C1-ADD-BAL-0003",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-016-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-016",
+    "level": "GL-C1-ADD-BAL-0003",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-016-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-016",
+    "level": "GL-C1-ADD-BAL-0003",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-016-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-016",
+    "level": "GL-C1-ADD-BAL-0003",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-017",
+    "level": "GL-C2-ROT-ISO-0006",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-017-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-017",
+    "level": "GL-C2-ROT-ISO-0006",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-017-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-017",
+    "level": "GL-C2-ROT-ISO-0006",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-017-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-017",
+    "level": "GL-C2-ROT-ISO-0006",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-018",
+    "level": "GL-C1-ADD-BOND-0006",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-018-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-018",
+    "level": "GL-C1-ADD-BOND-0006",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-018-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-018",
+    "level": "GL-C1-ADD-BOND-0006",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-018-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-018",
+    "level": "GL-C1-ADD-BOND-0006",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-019",
+    "level": "GL-C2-ROT-TFRA-0006",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-019-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-019",
+    "level": "GL-C2-ROT-TFRA-0006",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-019-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-019",
+    "level": "GL-C2-ROT-TFRA-0006",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-019-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-019",
+    "level": "GL-C2-ROT-TFRA-0006",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-020",
+    "level": "GL-C5-LIS-GRID-0005",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-020-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-020",
+    "level": "GL-C5-LIS-GRID-0005",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-020-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-020",
+    "level": "GL-C5-LIS-GRID-0005",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-020-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-020",
+    "level": "GL-C5-LIS-GRID-0005",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-021",
+    "level": "GL-C1-CNT-TANG-0003",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-021-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-021",
+    "level": "GL-C1-CNT-TANG-0003",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-021-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-021",
+    "level": "GL-C1-CNT-TANG-0003",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-021-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-021",
+    "level": "GL-C1-CNT-TANG-0003",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-022",
+    "level": "GL-C3-SET-SYMM-0002",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-022-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-022",
+    "level": "GL-C3-SET-SYMM-0002",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-022-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-022",
+    "level": "GL-C3-SET-SYMM-0002",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-022-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-022",
+    "level": "GL-C3-SET-SYMM-0002",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-023",
+    "level": "GL-C1-MEAS-MTRX-0008",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-023-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-023",
+    "level": "GL-C1-MEAS-MTRX-0008",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-023-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-023",
+    "level": "GL-C1-MEAS-MTRX-0008",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-023-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-023",
+    "level": "GL-C1-MEAS-MTRX-0008",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-024",
+    "level": "GL-C2-TRC-PTH-0032",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-024-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-024",
+    "level": "GL-C2-TRC-PTH-0032",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-024-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-024",
+    "level": "GL-C2-TRC-PTH-0032",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-024-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-024",
+    "level": "GL-C2-TRC-PTH-0032",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-025",
+    "level": "GL-C3-SET-STIK-0002",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-025-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-025",
+    "level": "GL-C3-SET-STIK-0002",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-025-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-025",
+    "level": "GL-C3-SET-STIK-0002",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-025-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-025",
+    "level": "GL-C3-SET-STIK-0002",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-026",
+    "level": "GL-C6-FLX-ADD-0003",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-026-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-026",
+    "level": "GL-C6-FLX-ADD-0003",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-026-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-026",
+    "level": "GL-C6-FLX-ADD-0003",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-026-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-026",
+    "level": "GL-C6-FLX-ADD-0003",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-027",
+    "level": "GL-C4-EXP-SUB-0002",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-027-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-027",
+    "level": "GL-C4-EXP-SUB-0002",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-027-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-027",
+    "level": "GL-C4-EXP-SUB-0002",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-027-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-027",
+    "level": "GL-C4-EXP-SUB-0002",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-028",
+    "level": "GL-C5-WRT-MEAS-0002",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-028-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-028",
+    "level": "GL-C5-WRT-MEAS-0002",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-028-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-028",
+    "level": "GL-C5-WRT-MEAS-0002",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-028-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-028",
+    "level": "GL-C5-WRT-MEAS-0002",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-029",
+    "level": "GL-C5-WRT-TIME-0002",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-029-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-029",
+    "level": "GL-C5-WRT-TIME-0002",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-029-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-029",
+    "level": "GL-C5-WRT-TIME-0002",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-029-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-029",
+    "level": "GL-C5-WRT-TIME-0002",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-030",
+    "level": "GL-C5-WRT-COIN-0002",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-030-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-030",
+    "level": "GL-C5-WRT-COIN-0002",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-030-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-030",
+    "level": "GL-C5-WRT-COIN-0002",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-030-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-030",
+    "level": "GL-C5-WRT-COIN-0002",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-031",
+    "level": "GL-C5-WRT-PICT-0002",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-031-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-031",
+    "level": "GL-C5-WRT-PICT-0002",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-031-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-031",
+    "level": "GL-C5-WRT-PICT-0002",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-031-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-031",
+    "level": "GL-C5-WRT-PICT-0002",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-032",
+    "level": "GL-C1-CNT-VENN-0003",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-032-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-032",
+    "level": "GL-C1-CNT-VENN-0003",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-032-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-032",
+    "level": "GL-C1-CNT-VENN-0003",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-032-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-032",
+    "level": "GL-C1-CNT-VENN-0003",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-033",
+    "level": "GL-C1-PAT-WEAVE-0009",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-033-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-033",
+    "level": "GL-C1-PAT-WEAVE-0009",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-033-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-033",
+    "level": "GL-C1-PAT-WEAVE-0009",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-033-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-033",
+    "level": "GL-C1-PAT-WEAVE-0009",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-034",
+    "level": "GL-C5-LIS-BEAT-0004",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-034-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-034",
+    "level": "GL-C5-LIS-BEAT-0004",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-034-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-034",
+    "level": "GL-C5-LIS-BEAT-0004",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-034-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-034",
+    "level": "GL-C5-LIS-BEAT-0004",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-035",
+    "level": "GL-C1-ALG-CMD-0009",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-035-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-035",
+    "level": "GL-C1-ALG-CMD-0009",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-035-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-035",
+    "level": "GL-C1-ALG-CMD-0009",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-035-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-035",
+    "level": "GL-C1-ALG-CMD-0009",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  },
+  {
+    "template": "GT-036",
+    "level": "GL-C5-RHY-FOLD-0001",
+    "vp": "m390x844",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-036-sb-m390x844.jpg"
+  },
+  {
+    "template": "GT-036",
+    "level": "GL-C5-RHY-FOLD-0001",
+    "vp": "l844x390",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-036-sb-l844x390.jpg"
+  },
+  {
+    "template": "GT-036",
+    "level": "GL-C5-RHY-FOLD-0001",
+    "vp": "t1024x768",
+    "status": "ok",
+    "errors": [],
+    "file": "GT-036-sb-t1024x768.jpg"
+  },
+  {
+    "template": "GT-036",
+    "level": "GL-C5-RHY-FOLD-0001",
+    "vp": "reduced-motion l844x390",
+    "status": "ok",
+    "errors": []
+  }
+]

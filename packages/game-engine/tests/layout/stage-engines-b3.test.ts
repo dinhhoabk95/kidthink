@@ -177,6 +177,7 @@ interface Frame {
 interface TrayFlags {
   readonly needsTray: boolean;
   readonly trayItemCount: number;
+  readonly trayHasLabels?: boolean;
 }
 
 function frameFor(viewport: Viewport, band: AgeBand, tray: TrayFlags): Frame {
@@ -193,6 +194,7 @@ function frameFor(viewport: Viewport, band: AgeBand, tray: TrayFlags): Frame {
     cssPerLogic,
     needsTray: tray.needsTray,
     trayItems: tray.trayItemCount,
+    trayLabels: tray.trayHasLabels,
     needsCommit: false,
   });
   return { zones, space, cssPerLogic };

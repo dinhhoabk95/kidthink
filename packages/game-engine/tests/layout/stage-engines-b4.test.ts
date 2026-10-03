@@ -49,7 +49,7 @@ const KNOWN_HIT_GAP_DEBT: Readonly<
   // hơn sàn chạm của canvas thấp, không dịch được. Chỉ được giảm.
   "GT-024": {
     "desktop 964x628": 1,
-    "landscape điện thoại 784x250": 9,
+    "landscape điện thoại 784x250": 1,
     "portrait 330x697": 1,
   },
 };
@@ -102,7 +102,12 @@ function casesFor(code: string): Case[] {
 type StageSession = GameSession &
   Pick<
     TemplateGameSession<never, never>,
-    "needsCommit" | "needsTray" | "trayItemCount" | "prepareRound" | "slots"
+    | "needsCommit"
+    | "needsTray"
+    | "trayItemCount"
+    | "trayHasLabels"
+    | "prepareRound"
+    | "slots"
   >;
 
 function makeSession(config: EngineConfig): StageSession {
@@ -135,6 +140,7 @@ describe.each(B4_CODES)("lô B4 — %s trong khung năm vùng", (code) => {
           cssPerLogic,
           needsTray: session.needsTray,
           trayItems: session.trayItemCount,
+          trayLabels: session.trayHasLabels,
           needsCommit: session.needsCommit,
         });
         for (const round of [1, 2]) {

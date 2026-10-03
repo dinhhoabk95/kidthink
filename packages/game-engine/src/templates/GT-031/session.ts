@@ -58,6 +58,11 @@ export class GT031Session extends TemplateGameSession<
   override get trayItemCount(): number {
     return this.content.coins.length;
   }
+
+  /** Giá xu / tên màu vẽ dưới thân vật: khay chừa dải nhãn (`BR-PSZ-13`). */
+  override get trayHasLabels(): boolean {
+    return true;
+  }
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
@@ -116,7 +121,8 @@ export class GT031Session extends TemplateGameSession<
         this.content.coins.length,
         zones.tray,
         touchFloor,
-        1
+        1,
+        true
       );
       return insetDrawSize([target, ...coins], zones.stage);
     }

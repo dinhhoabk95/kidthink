@@ -320,6 +320,7 @@ type ZoneSession = GameSession &
     | "needsCommit"
     | "needsTray"
     | "trayItemCount"
+    | "trayHasLabels"
     | "prepareRound"
     | "slots"
     | "usesPromptZone"
@@ -416,6 +417,7 @@ describe.each(MIGRATED_CODES)(
           cssPerLogic: PORTRAIT_CANVAS_CSS.w / space.w,
           needsTray: session.needsTray,
           trayItems: session.trayItemCount,
+          trayLabels: session.trayHasLabels,
           needsCommit: session.needsCommit,
         });
         session.prepareRound(BAND, space, zones.stage, zones.tray ?? undefined);
@@ -450,6 +452,7 @@ describe.each(MIGRATED_CODES)(
           cssPerLogic,
           needsTray: session.needsTray,
           trayItems: session.trayItemCount,
+          trayLabels: session.trayHasLabels,
           needsCommit: session.needsCommit,
         });
         session.prepareRound(

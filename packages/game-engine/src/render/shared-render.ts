@@ -1509,7 +1509,13 @@ export function drawSlotLabel(
   ctx.font = `${size}px ${designTokens.fonts.sans}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "top";
-  ctx.fillText(text, slot.x, slot.y + slot.h / 2 + 4);
+  // Nhãn dài hơn vật thì co ngang vừa vùng chạm — không chồng sang nhãn vật kề bên.
+  ctx.fillText(
+    text,
+    slot.x,
+    slot.y + slot.h / 2 + 4,
+    Math.max(slot.hitW, slot.w)
+  );
   ctx.restore();
 }
 

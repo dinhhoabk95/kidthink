@@ -86,6 +86,7 @@ type B2Session = GameSession &
     | "needsCommit"
     | "needsTray"
     | "trayItemCount"
+    | "trayHasLabels"
     | "prepareRound"
     | "slots"
     | "usesPromptZone"
@@ -200,6 +201,7 @@ function violationsOf(session: B2Session, band: AgeBand, frame: Frame) {
     cssPerLogic,
     needsTray: session.needsTray,
     trayItems: session.trayItemCount,
+    trayLabels: session.trayHasLabels,
     needsCommit: session.needsCommit,
   });
   const rs = new RenderSystem();

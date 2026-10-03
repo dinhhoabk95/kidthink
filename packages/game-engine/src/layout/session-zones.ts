@@ -26,7 +26,10 @@ export interface SessionZonesInput {
 /** Cờ khung của session; session không phải `TemplateGameSession` thì không có khay và nút. */
 export function stageFlagsOf(
   session: GameSession | null | undefined
-): Pick<StageZonesInput, "needsTray" | "needsCommit" | "trayItems"> {
+): Pick<
+  StageZonesInput,
+  "needsTray" | "needsCommit" | "trayItems" | "trayLabels"
+> {
   if (!(session instanceof TemplateGameSession)) {
     return { needsTray: false, needsCommit: false };
   }
@@ -34,6 +37,7 @@ export function stageFlagsOf(
     needsTray: Boolean(session.needsTray),
     needsCommit: Boolean(session.needsCommit),
     trayItems: session.trayItemCount,
+    trayLabels: session.trayHasLabels,
   };
 }
 

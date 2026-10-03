@@ -121,7 +121,12 @@ function casesFor(code: string): Case[] {
 type StageSession = GameSession &
   Pick<
     TemplateGameSession<never, never>,
-    "needsCommit" | "needsTray" | "trayItemCount" | "prepareRound" | "slots"
+    | "needsCommit"
+    | "needsTray"
+    | "trayItemCount"
+    | "trayHasLabels"
+    | "prepareRound"
+    | "slots"
   >;
 
 function makeSession(config: EngineConfig): StageSession {
@@ -154,6 +159,7 @@ describe.each(B5_CODES)("lô B5 — %s trong khung năm vùng", (code) => {
           cssPerLogic,
           needsTray: session.needsTray,
           trayItems: session.trayItemCount,
+          trayLabels: session.trayHasLabels,
           needsCommit: session.needsCommit,
         });
         for (const round of [1, 2]) {

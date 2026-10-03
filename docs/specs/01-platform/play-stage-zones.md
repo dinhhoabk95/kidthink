@@ -108,9 +108,9 @@ khấu ở giữa, khay (nếu có) và nút hành động bên phải.
 | Engine không cần nộp bài | `needsCommit` là `false` | Rect `action` vẫn được tính và để trống — không engine nào được vẽ nút khác vào đó |
 | Không đủ chỗ ở sàn chạm | Portrait hẹp, band `3-4` | Thu vùng lời dẫn còn một dòng trước, rồi để hàm layout slot giảm cột và **thêm hàng** — không phân trang (`BR-PSZ-13`). Cấm thu nút |
 | Khay chứa nhiều vật hơn một hàng | Session khai `trayItemCount` lớn hơn số vật một hàng ở sàn chạm (GT-004 tới 10 vật, GT-008 tới 9, GT-023 tới 8) | Khay **cao theo số vật**: `computeStageZones` nhận `trayItems`, xếp vật thành nhiều hàng cạnh sàn chạm và cộng chiều cao khay, nhưng chừa cho sân khấu ít nhất hai hàng ô (`2 × sàn + SLOT_GAP_PX`). Mọi vật hiện cùng lúc, không nút trang (`BR-PSZ-13`). Vật không nhỏ hơn sàn chạm (`BR-PSZ-04`). Chạm hoặc nhả vật chọn **tâm slot gần nhất** trong các vùng chạm trúng điểm. Số ca còn vi phạm vì sân khấu không còn chỗ đo theo mã và khung ở `tests/layout/stage-engines-b*.test.ts`, chỉ được giảm |
-| Điện thoại ngang thấp | Landscape mà sân khấu của canvas (không khay) dưới ba hàng ô ở sàn chạm — điện thoại 784x250 ở cả ba band | **Lời dẫn thành cột bên trái** (mascot ở đầu cột, loa ngay dưới, picto dưới loa nếu còn chỗ, không có chữ phụ) và **khay thành cột** bên trái nút hành động, cao tới trọn chiều cao canvas; vật xếp vào cột nhiều hàng. Sân khấu lấy phần còn lại ở giữa và cao tới đáy canvas — dải lời dẫn trên cùng ăn 165–208 logic px trong 540 nên không chừa nổi hai hàng ô. Quyết định chỉ phụ thuộc viewport và band, **không** phụ thuộc `needsTray` hay `trayItems`, nên prompt, promptSpeaker và action vẫn bằng nhau ở mọi engine (`BR-PSZ-03`). `zones.promptPlacement` là `"side"`; máy tính bảng và màn rộng giữ `"top"` |
+| Điện thoại ngang thấp | Landscape mà sân khấu của canvas (không khay) dưới bốn hàng ô ở sàn chạm — điện thoại 784x250 ở cả ba band, canvas ≈ 844x390 không HUD ở band 5-6 | **Lời dẫn thành cột bên trái** (mascot ở đầu cột, loa ngay dưới, picto dưới loa nếu còn chỗ, không có chữ phụ) và **khay thành cột** bên trái nút hành động, cao tới trọn chiều cao canvas; vật xếp vào cột nhiều hàng. Sân khấu lấy phần còn lại ở giữa và cao tới đáy canvas — dải lời dẫn trên cùng ăn 165–208 logic px trong 540 nên không chừa nổi hai hàng ô. Quyết định chỉ phụ thuộc viewport và band, **không** phụ thuộc `needsTray` hay `trayItems`, nên prompt, promptSpeaker và action vẫn bằng nhau ở mọi engine (`BR-PSZ-03`). `zones.promptPlacement` là `"side"`; máy tính bảng và màn rộng giữ `"top"` |
 | Vòng không có picto mục tiêu | Content không mang hình mục tiêu | Vùng lời dẫn chỉ có mascot và loa; chữ phụ vẫn ẩn khỏi trẻ |
-| Studio preview | `/play/preview-sandbox` | Không HUD. Trang tính `computeZonesForSession`, cấp `stage` và `tray` cho `prepareRound`, vẽ `drawPromptZone` và `drawCommitButton` như trang chơi (#283) — Manager thấy đúng bố cục trẻ thấy. Engine đã dời không còn nhánh dự phòng vẽ lời dẫn; gate `zone-primitives-only` cấm mọi lệnh `drawPromptText` ở engine đã dời |
+| Studio preview | `/play/preview-sandbox` | Không HUD; `?fit=fill` cho canvas lấp đầy khung (xem portrait, điện thoại ngang) thay vì hộp 16:9 của Studio, và xoay máy tính lại vùng. Trang tính `computeZonesForSession`, cấp `stage` và `tray` cho `prepareRound`, vẽ `drawPromptZone` và `drawCommitButton` như trang chơi (#283) — Manager thấy đúng bố cục trẻ thấy. Engine đã dời không còn nhánh dự phòng vẽ lời dẫn; gate `zone-primitives-only` cấm mọi lệnh `drawPromptText` ở engine đã dời |
 | Intro GT-000 | Engine làm quen khái niệm | **Chạy ngoài khung năm vùng** (quyết 2026-10-03, câu hỏi mở số 5): màn làm quen không chấm điểm, không `needsCommit`, không khay. Ba nút Trước, Nghe lại, Tiếp tục là DOM của trang như hiện nay, `usesPromptZone` giữ `false`, gate `zone-primitives-only` miễn GT-000 và ghi lý do ở đây. Đổi khi có nhu cầu: đưa intro vào khung thì sửa `concept-intro-gate.md` trước |
 | Hành động chính không phải nộp | GT-034 nghe mẫu nhịp, GT-035 chạy chương trình | Nút ở `zones.action` mang `commitIcon` của session (▶ chạy, loa nghe mẫu — không chữ, `BR-FBK-12`); chạm gửi `commit`, session đổi thành `play_pattern` hoặc `run_program`. Chuỗi của GT-034 vẫn tự chấm khi đủ bước |
 | Engine từng có nút xoá | GT-036 | Không vẽ nút xoá. Chạm ô đã đặt đúng vật đang cầm thì gỡ vật đó; chạm vật khác thì thay |
@@ -155,6 +155,7 @@ interface StageZonesInput {
   needsTray: boolean;
   needsCommit: boolean;
   trayItems?: number;      // số vật khay của vòng; bỏ trống là một hàng (`BR-PSZ-13`)
+  trayLabels?: boolean;    // vật khay có nhãn vẽ dưới thân: mỗi hàng khay cao thêm một dải nhãn
 }
 
 interface StageZones {
@@ -173,6 +174,7 @@ type ComputeStageZones = (input: StageZonesInput) => StageZones;
 interface StageSessionFlags {
   needsTray: boolean;
   trayItemCount: number;   // số vật nguồn trong khay của vòng này; 0 khi không có khay
+  trayHasLabels: boolean;  // vật khay có nhãn dưới thân (GT-030, 031, 033)
   needsCommit: boolean;
   canCommit(): boolean;    // false thì nút vẽ mờ và chạm bị nuốt
   commitIcon?: "check" | "play" | "listen"; // bỏ trống là ✓; ▶ chạy, loa nghe mẫu

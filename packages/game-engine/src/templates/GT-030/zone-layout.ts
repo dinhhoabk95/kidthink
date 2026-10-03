@@ -126,7 +126,13 @@ export function computeMeasureStageSlots(input: MeasureZonesInput): Slot[] {
     role: "target",
     firstIndex: 1,
   });
-  const source = computeTraySourceSlots(1, tray, touchFloor, 1 + unitCount);
+  const source = computeTraySourceSlots(
+    1,
+    tray,
+    touchFloor,
+    1 + unitCount,
+    true
+  );
   const options = computeStageCellSlots({
     count: optionCount,
     stage: optionsBand,

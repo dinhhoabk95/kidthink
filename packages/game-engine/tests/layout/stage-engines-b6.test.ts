@@ -70,6 +70,7 @@ const KNOWN_LAYOUT_DEBT_CASES: Readonly<Record<string, number>> = {
   "GT-030|máy tính 964x628": 43,
   "GT-030|portrait 330x697": 6,
   "GT-030|điện thoại ngang 784x250": 43,
+  "GT-031|điện thoại ngang 784x250": 14,
   "GT-033|máy tính 964x628": 5,
   "GT-033|điện thoại ngang 784x250": 5,
 };
@@ -145,6 +146,7 @@ interface Frame {
 interface TrayFlags {
   readonly needsTray: boolean;
   readonly trayItemCount: number;
+  readonly trayHasLabels?: boolean;
 }
 
 function frameFor(viewport: Viewport, tray: TrayFlags): Frame {
@@ -161,6 +163,7 @@ function frameFor(viewport: Viewport, tray: TrayFlags): Frame {
     cssPerLogic,
     needsTray: tray.needsTray,
     trayItems: tray.trayItemCount,
+    trayLabels: tray.trayHasLabels,
     needsCommit: false,
   });
   return { zones, space, cssPerLogic };

@@ -151,6 +151,11 @@ export class BalanceScaleSession extends TemplateGameSession<
   override get trayItemCount(): number {
     return this.content.tray.length;
   }
+
+  /** Số đo vẽ dưới mỗi vật khay (`BR-PSZ-13`). */
+  override get trayHasLabels(): boolean {
+    return true;
+  }
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
@@ -516,7 +521,8 @@ export class BalanceScaleSession extends TemplateGameSession<
           this.trayItems.length,
           zones.tray,
           touchFloor,
-          2
+          2,
+          true
         ),
       ];
     }

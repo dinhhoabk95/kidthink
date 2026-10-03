@@ -211,6 +211,11 @@ export abstract class TemplateGameSession<
     return 0;
   }
 
+  /** Vật trong khay có nhãn vẽ dưới thân (GT-031, GT-033): khay chừa dải nhãn mỗi hàng. */
+  get trayHasLabels(): boolean {
+    return false;
+  }
+
   /**
    * Phiên đã dời vào khung năm vùng: shell vẽ lời dẫn ở `zones.prompt` và engine
    * không tự vẽ `drawPromptText` (`BR-PSZ-08..10`). Mặc định false — engine chưa

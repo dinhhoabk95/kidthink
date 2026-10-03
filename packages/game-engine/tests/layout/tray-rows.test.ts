@@ -11,7 +11,7 @@ import {
   type StageZones,
   type ZoneRect,
 } from "#src/layout/stage-zones";
-import { layoutTrayGrid } from "#src/layout/tray-grid";
+import { layoutTrayGrid, TRAY_LABEL_ROW_PX } from "#src/layout/tray-grid";
 import { computeTraySourceSlots } from "#src/layout/tray-layout";
 import { legacyOneRowTraySlots } from "./fixtures/tray-one-row-legacy.ts";
 import {
@@ -39,7 +39,8 @@ function zonesFor(
   viewport: Viewport,
   band: AgeBand,
   trayItems: number,
-  needsTray = true
+  needsTray = true,
+  trayLabels = false
 ): { zones: StageZones; floor: number } {
   const space = deriveLogicSpace(viewport.cssW, viewport.cssH);
   // Cùng phép của `RenderSystem.setupCanvas`: tỉ lệ chặn bởi cạnh chật hơn.
@@ -55,6 +56,7 @@ function zonesFor(
     needsTray,
     needsCommit: false,
     trayItems,
+    trayLabels,
   });
   return { zones, floor: getTouchFloorLogicPx(band, cssPerLogic) };
 }
@@ -200,5 +202,48 @@ describe("BR-PSZ-13 — lưới trong sân khấu không phân trang", () => {
     expect(slots).toHaveLength(MAX_TRAY_ITEMS);
     expect(slots.every((slot) => slot.page === 0)).toBe(true);
     expect(findSlotsOutsideStage(slots, zones.stage)).toEqual([]);
+  });
+});
+
+describe("BR-PSZ-13 — khay có nhãn dưới vật", () => {
+  const LABEL_TEXT_PX = 20;
+
+  it("nhãn của hàng cuối nằm trong khay, không rơi ra ngoài dock", () => {
+    const { zones, floor } = zonesFor(PORTRAIT, "5-6", 8, true, true);
+    const tray = zones.tray;
+    if (!tray) {
+      throw new Error("thiếu khay");
+    }
+
+    const slots = computeTraySourceSlots(8, tray, floor, 0, true);
+    const lowestLabelBottom = Math.max(
+      ...slots.map((slot) => slot.y + slot.w / 2 + 4 + LABEL_TEXT_PX)
+    );
+
+    expect(lowestLabelBottom).toBeLessThanOrEqual(tray.y + tray.h);
+    expect(findHitPairViolations(slots)).toEqual([]);
+  });
+
+  it("khay có nhãn cao hơn khay không nhãn đúng một dải nhãn mỗi hàng", () => {
+    const plain = zonesFor(PORTRAIT, "5-6", 8).zones.tray;
+    const labelled = zonesFor(PORTRAIT, "5-6", 8, true, true).zones.tray;
+
+    expect(labelled?.h).toBeGreaterThan(plain?.h ?? 0);
+    expect(TRAY_LABEL_ROW_PX).toBeGreaterThan(0);
+  });
+
+  it("ca âm: bỏ dải nhãn thì nhãn hàng cuối rơi ra ngoài khay", () => {
+    const { zones, floor } = zonesFor(PORTRAIT, "5-6", 8, true, false);
+    const tray = zones.tray;
+    if (!tray) {
+      throw new Error("thiếu khay");
+    }
+
+    const slots = computeTraySourceSlots(8, tray, floor, 0, false);
+    const lowestLabelBottom = Math.max(
+      ...slots.map((slot) => slot.y + slot.w / 2 + 4 + LABEL_TEXT_PX)
+    );
+
+    expect(lowestLabelBottom).toBeGreaterThan(tray.y + tray.h);
   });
 });

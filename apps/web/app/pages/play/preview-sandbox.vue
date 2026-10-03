@@ -3,7 +3,10 @@
     <div class="error-state" v-if="errorMessage">
       <p>{{ errorMessage }}</p>
     </div>
-    <canvas class="game-canvas" ref="canvasRef"></canvas>
+    <canvas
+      ref="canvasRef"
+      :class="['game-canvas', { 'game-canvas--fill': isFill }]"
+    ></canvas>
   </div>
 </template>
 
@@ -50,6 +53,8 @@
   const route = useRoute();
   const canvasRef = ref<HTMLCanvasElement | null>(null);
   const errorMessage = ref<string | null>(null);
+  /** `?fit=fill`: canvas lấp đầy khung (xem portrait, điện thoại ngang) thay vì hộp 16:9 của Studio. */
+  const isFill = route.query.fit === "fill";
 
   let engine: GameEngine | null = null;
   let currentConfig: EngineConfig | null = null;
@@ -106,7 +111,7 @@
    * cùng `computeZonesForSession`, cùng `prepareRound`, nên Manager thấy đúng bố
    * cục trẻ thấy. Không HUD.
    */
-  function applyStageZones(config: EngineConfig): void {
+  function applyStageZones(config: EngineConfig, isResize = false): void {
     const vp = engine?.renderSystem.viewport;
     const session = engine?.activeSession;
     if (!(vp?.logicSpace && session instanceof TemplateGameSession)) {
@@ -122,7 +127,11 @@
       },
       session
     );
-    session.prepareRound(
+    // Đổi cỡ giữa vòng chỉ tính lại slot, không dựng lại vòng (`BR-PSZ-12`).
+    const place = isResize
+      ? session.resolveSlots.bind(session)
+      : session.prepareRound.bind(session);
+    place(
       config.age_band,
       vp.logicSpace,
       stageZones.stage,
@@ -176,6 +185,21 @@
     };
   }
 
+  const RESIZE_DEBOUNCE_MS = 150;
+  let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+
+  /** Xoay máy hoặc đổi cỡ khung preview: đo lại canvas, tính lại vùng và slot (`BR-PSZ-12`). */
+  function handleResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (!(engine && canvasRef.value && currentConfig)) {
+        return;
+      }
+      engine.renderSystem.setupCanvas(canvasRef.value);
+      applyStageZones(currentConfig, true);
+    }, RESIZE_DEBOUNCE_MS);
+  }
+
   function handleMessage(event: MessageEvent) {
     const data = event.data;
     if (!data || typeof data !== "object") {
@@ -209,6 +233,7 @@
       window as Window & { __mindkidSandboxReady?: boolean }
     ).__mindkidSandboxReady = true;
     window.addEventListener("message", handleMessage);
+    window.addEventListener("resize", handleResize);
 
     // Thông báo cho Studio biết sandbox đã sẵn sàng
     if (window.parent) {
@@ -221,6 +246,8 @@
 
   onUnmounted(() => {
     window.removeEventListener("message", handleMessage);
+    window.removeEventListener("resize", handleResize);
+    clearTimeout(resizeTimer);
     if (engine) {
       engine.destroy();
       engine = null;
@@ -250,6 +277,14 @@
     max-height: 100vh;
     aspect-ratio: 16 / 9;
     touch-action: none;
+  }
+
+  .game-canvas--fill {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    max-height: none;
+    aspect-ratio: auto;
   }
 
   .error-state {

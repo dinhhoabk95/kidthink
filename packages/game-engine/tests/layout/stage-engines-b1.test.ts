@@ -75,7 +75,7 @@ const KNOWN_STAGE_DEBT_CASES: Readonly<Record<string, number>> = {
   // Số đo sau khi khay nhiều hàng, không phân trang và cột lời dẫn bên trái
   // (`play-stage-zones.md` `BR-PSZ-13`). Còn lại là giới hạn vật lý: sàn chạm của
   // band ở canvas thấp làm số ô cần xếp lớn hơn diện tích sân khấu. Chỉ được giảm.
-  "GT-025 ngang 784x250": 6,
+  "GT-025 ngang 784x250": 3,
   "GT-029 ngang 784x250": 7,
 };
 /** Đủ dài để pha loé của GT-012 hết và lựa chọn hiện ra. */
@@ -92,6 +92,7 @@ type B1Session = GameSession &
     | "needsCommit"
     | "needsTray"
     | "trayItemCount"
+    | "trayHasLabels"
     | "prepareRound"
     | "slots"
     | "usesPromptZone"
@@ -175,6 +176,7 @@ function violationsOf(session: B1Session, band: AgeBand, frame: Frame) {
     cssPerLogic,
     needsTray: session.needsTray,
     trayItems: session.trayItemCount,
+    trayLabels: session.trayHasLabels,
     needsCommit: session.needsCommit,
   });
   const rs = new RenderSystem();
