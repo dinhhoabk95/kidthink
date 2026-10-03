@@ -109,15 +109,48 @@ export function computeStageZones(input: StageZonesInput): StageZones {
     : null;
 
   const stageY = prompt.y + prompt.h + ZONE_GAP_PX;
-  const stageBottom = (tray ? tray.y : action.y) - ZONE_GAP_PX;
-  const stage: ZoneRect = {
-    x: ZONE_GAP_PX,
-    y: stageY,
-    w: innerW,
-    h: Math.max(0, stageBottom - stageY),
-  };
+  const stage = computeStage({
+    orientation,
+    canvas: { w, h },
+    stageY,
+    innerW,
+    tray,
+    action,
+  });
 
   return { orientation, prompt, promptSpeaker, stage, tray, action };
+}
+
+interface StageInput {
+  readonly orientation: StageZones["orientation"];
+  readonly canvas: { w: number; h: number };
+  readonly stageY: number;
+  readonly innerW: number;
+  readonly tray: ZoneRect | null;
+  readonly action: ZoneRect;
+}
+
+/**
+ * Sân khấu lấp phần còn lại dưới vùng lời dẫn. Landscape không khay: nút hành
+ * động chiếm cột phải nên sân khấu kéo xuống đáy canvas và dừng trước cột đó —
+ * dừng trên đỉnh nút thì điện thoại ngang (sàn 96 thành 208 logic px) chỉ còn
+ * 60 logic px, thẻ mẫu của GT-001 không vừa (`D-277-7`, QA 2026-10-03).
+ */
+function computeStage(input: StageInput): ZoneRect {
+  const { orientation, canvas, stageY, innerW, tray, action } = input;
+  const isLandscapeWithoutTray = orientation === "landscape" && !tray;
+  const stageBottom = isLandscapeWithoutTray
+    ? canvas.h - ZONE_GAP_PX
+    : (tray ? tray.y : action.y) - ZONE_GAP_PX;
+  const stageW = isLandscapeWithoutTray
+    ? action.x - ZONE_GAP_PX - ZONE_GAP_PX
+    : innerW;
+  return {
+    x: ZONE_GAP_PX,
+    y: stageY,
+    w: Math.max(0, stageW),
+    h: Math.max(0, stageBottom - stageY),
+  };
 }
 
 function computeTray(

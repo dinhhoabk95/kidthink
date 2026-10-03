@@ -88,6 +88,19 @@ của S0 — không file nào đổi trạng thái ngoài file của lát.
 
 - [ ] GT-001 và GT-028 chơi hết một level ở ba viewport; reduced-motion bật; tắt tiếng vẫn thấy mascot
 - [ ] Ảnh chụp sau vào cùng thư mục QA, đặt cạnh ảnh S0
+- [x] Sửa bố cục điện thoại ngang 844x390 (QA 2026-10-03, 2026-10-03): ba nguyên nhân đo trên Chromium —
+      (1) HUD cao cố định 88 px, nút 96 px nên cắt mép trên (`.top-hud-bar` giờ `height: auto`);
+      (2) `.game-canvas` chặn `85vh - 20px` = 312 px > 250 px còn lại và `.main-arena` thiếu
+      `min-height: 0` nên canvas tràn đáy (bỏ chặn vh, thêm `min-height: 0`, bớt đệm khi
+      `max-height: 500px` landscape; hộp canvas thành 800x243, đáy 368 < 390);
+      (3) `computeStageZones` landscape không khay dừng sân khấu trên đỉnh nút hành động nên chỉ còn
+      60 logic px và ô lựa chọn đè thẻ mẫu — nay kéo xuống đáy, dừng trước cột nút (spec §5, `D-277-7`).
+      Nhỏ: lời dẫn ngắt hai dòng thay vì cắt "…" ([`prompt-zone.ts`](../../packages/game-engine/src/render/prompt-zone.ts));
+      gấu không còn che hai sao đầu ở `victory-modal.vue`. Test:
+      [`stage-landscape-phone.test.ts`](../../packages/game-engine/tests/layout/stage-landscape-phone.test.ts) (ca âm: fixture sân khấu 60 px),
+      [`prompt-zone-wrap.test.ts`](../../packages/game-engine/tests/render/prompt-zone-wrap.test.ts),
+      [`play-surface-short-landscape.test.ts`](../../apps/web/tests/unit/play-surface-short-landscape.test.ts) (ca âm: CSS cũ).
+      Ảnh sau: `docs/qa/engine-captures/2026-10-03/after-landscape-fix/`. Còn lại: chưa chơi hết level, chưa chụp màn tổng kết
 
 ## S5 — Khay chung và pilot kéo GT-003 · M · phụ thuộc: S3
 

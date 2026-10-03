@@ -118,19 +118,56 @@ function drawPromptSpeaker(
   ctx.restore();
 }
 
-function truncateTextToFit(
+const PROMPT_MAX_LINES = 2;
+const WHITESPACE_RUN = /\s+/;
+
+/**
+ * Ngắt chữ lời dẫn theo từ thành tối đa `PROMPT_MAX_LINES` dòng. Vùng lời dẫn
+ * cao bằng loa (96 px CSS) nên chứa được hai dòng; cắt "…" ngay dòng đầu làm
+ * mất nửa câu ở điện thoại 390 px (QA 2026-10-03). Quá hai dòng thì dòng cuối
+ * mới bị cắt.
+ */
+function wrapPromptText(
+  ctx: CanvasRenderingContext2D,
+  rawText: string,
+  maxWidth: number
+): string[] {
+  const words = rawText.split(WHITESPACE_RUN).filter((word) => word.length > 0);
+  const lines: string[] = [];
+  let current = "";
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (current && ctx.measureText(candidate).width > maxWidth) {
+      lines.push(current);
+      current = word;
+    } else {
+      current = candidate;
+    }
+  }
+  if (current) {
+    lines.push(current);
+  }
+  if (lines.length <= PROMPT_MAX_LINES) {
+    return lines;
+  }
+  const kept = lines.slice(0, PROMPT_MAX_LINES - 1);
+  const rest = lines.slice(PROMPT_MAX_LINES - 1).join(" ");
+  return [...kept, truncateToWidth(ctx, rest, maxWidth)];
+}
+
+function truncateToWidth(
   ctx: CanvasRenderingContext2D,
   rawText: string,
   maxWidth: number
 ): string {
-  let text = rawText;
-  if (ctx.measureText(text).width > maxWidth) {
-    while (text.length > 3 && ctx.measureText(`${text}…`).width > maxWidth) {
-      text = text.slice(0, -1);
-    }
-    return `${text}…`;
+  if (ctx.measureText(rawText).width <= maxWidth) {
+    return rawText;
   }
-  return text;
+  let text = rawText;
+  while (text.length > 3 && ctx.measureText(`${text}…`).width > maxWidth) {
+    text = text.slice(0, -1);
+  }
+  return `${text}…`;
 }
 
 function drawPromptContent(
@@ -178,8 +215,12 @@ function drawPromptContent(
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
 
-    const text = truncateTextToFit(ctx, options.promptText, contentW);
-    ctx.fillText(text, contentLeft, prompt.y + prompt.h / 2);
+    const lines = wrapPromptText(ctx, options.promptText, contentW);
+    const lineH = fontPx * 1.3;
+    const firstY = prompt.y + prompt.h / 2 - ((lines.length - 1) * lineH) / 2;
+    lines.forEach((line, index) => {
+      ctx.fillText(line, contentLeft, firstY + index * lineH);
+    });
     ctx.restore();
   }
 }

@@ -213,7 +213,8 @@
     background-color: var(--color-surface-50);
     border-radius: 2.5rem;
     border: 4px solid var(--color-surface-300);
-    padding: 3rem 2rem 2rem 2rem;
+    /* Gấu thò xuống 2rem trong thẻ; cung sao bắt đầu dưới đó (QA 2026-10-03). */
+    padding: 3.5rem 2rem 2rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -229,7 +230,7 @@
     justify-content: center;
     align-items: center;
     gap: 1rem;
-    margin-top: -3.5rem;
+    margin-top: 0;
     margin-bottom: 1.5rem;
     position: relative;
     z-index: 30;

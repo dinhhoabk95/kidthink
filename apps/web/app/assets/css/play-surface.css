@@ -119,7 +119,9 @@
 /* TOP HUD BAR */
 .top-hud-bar {
   width: 100%;
-  height: 5.5rem;
+  /* Cao theo nút (sàn chạm có thể 96 px > 5.5rem), không cố định: HUD cố định
+     làm nút bị cắt mép trên ở điện thoại ngang (QA 844x390, 2026-10-03). */
+  height: auto;
   min-height: 5.5rem;
   padding: 0.5rem 1.5rem;
   display: flex;
@@ -232,11 +234,33 @@
   position: relative;
   z-index: 10;
   flex: 1;
+  /* Phần flex được co dưới cao nội dung: thiếu dòng này, canvas làm arena cao
+     hơn chỗ còn lại và tràn đáy viewport. */
+  min-height: 0;
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0.5rem 1rem 1rem 1rem;
+}
+
+/* Điện thoại ngang: chiều cao là của hiếm, bớt đệm quanh canvas. Nút giữ
+   nguyên cỡ (BR-PSZ-04 — không thu nút). */
+@media (max-height: 500px) and (orientation: landscape) {
+  .top-hud-bar {
+    min-height: 0;
+    padding: 0.25rem 1rem;
+  }
+
+  .main-arena {
+    padding: 0.25rem 0.5rem 0.5rem;
+  }
+
+  .wooden-tray-container {
+    padding: 4px;
+    border-width: 3px;
+    border-radius: 1.25rem;
+  }
 }
 
 .wooden-tray-container {
@@ -261,7 +285,7 @@
   width: 100%;
   height: 100%;
   max-width: 100%;
-  max-height: calc(85vh - 20px);
+  max-height: 100%;
   object-fit: contain;
   touch-action: none;
   border-radius: 1.75rem;

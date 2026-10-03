@@ -92,7 +92,7 @@ landscape                                   portrait
 
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
-| Engine không cần khay | `needsTray` là `false` | Sân khấu lấy luôn chiều cao khay. HUD, lời dẫn, nút hành động giữ nguyên chỗ |
+| Engine không cần khay | `needsTray` là `false` | Sân khấu lấy luôn chiều cao khay. Portrait: trọn ngang, dừng trên nút hành động. Landscape: kéo xuống đáy canvas và dừng trước cột nút hành động, không dừng trên đỉnh nút — điện thoại ngang band `3-4` sàn 96 thành 208 logic px, dừng trên nút thì sân khấu chỉ còn 60. HUD, lời dẫn, nút hành động giữ nguyên chỗ |
 | Engine không cần nộp bài | `needsCommit` là `false` | Rect `action` vẫn được tính và để trống — không engine nào được vẽ nút khác vào đó |
 | Không đủ chỗ ở sàn chạm | Portrait hẹp, band `3-4` | Thu vùng lời dẫn còn một dòng trước, rồi để hàm layout slot giảm cột và phân trang. Cấm thu nút |
 | Vòng không có picto mục tiêu | Content không mang hình mục tiêu | Vùng lời dẫn chỉ có mascot và loa; chữ phụ vẫn ẩn khỏi trẻ |

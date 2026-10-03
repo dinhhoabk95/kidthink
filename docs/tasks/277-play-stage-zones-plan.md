@@ -89,7 +89,7 @@ level. Cần `pnpm services` và DB đã seed; làm ở Checkpoint 1 cùng ảnh
 | `D-277-4` | Pilot là GT-001 (chọn), GT-028 (đếm, cần nộp), GT-003 (kéo). GT-002 chuyển sau khi #275 đóng | Ba pilot phủ ba dạng nhập chính; tránh hai plan cùng sửa GT-002 |
 | `D-277-5` | Mascot giữ emoji gấu, phản hồi bằng nảy và đổi biểu cảm emoji; asset thật để câu hỏi mở 1 của spec | Không chặn khung vì chờ hoạ sĩ |
 | `D-277-6` | 29 engine còn lại chuyển vào khung ở task con theo nhóm dạng tương tác, mỗi engine một lát | Memory "1 spec = 1 lát dọc": gộp ngang 37 engine vào một task là cách #263 đóng trên cổng mù |
-| `D-277-7` | Nút hành động luôn là ô vuông cạnh bằng sàn chạm quy ra logic px, ở góc dưới phía cuối dòng. Không có khay thì sân khấu giữ trọn chiều ngang và kéo xuống tới đỉnh nút hành động (landscape: không lấp phần bên trái nút) | Giữ sân khấu là hình chữ nhật trọn ngang và nút đứng yên (`BR-PSZ-03`); ở điện thoại ngang band 3-4 sàn 96 thành 208 logic px nên sân khấu chỉ còn 60 — S3 phải thu vùng lời dẫn theo mục 5 của spec |
+| `D-277-7` | Nút hành động luôn là ô vuông cạnh bằng sàn chạm quy ra logic px, ở góc dưới phía cuối dòng. Không có khay: portrait giữ trọn ngang và dừng trên nút hành động; landscape kéo xuống đáy canvas và dừng trước cột nút (sửa 2026-10-03 sau QA 844x390 — bản đầu dừng trên đỉnh nút, sân khấu còn 60 logic px) | Giữ sân khấu là hình chữ nhật trọn ngang và nút đứng yên (`BR-PSZ-03`); ở điện thoại ngang band 3-4 sàn 96 thành 208 logic px nên sân khấu chỉ còn 60 — S3 phải thu vùng lời dẫn theo mục 5 của spec |
 
 ## 3. Lát cắt
 
