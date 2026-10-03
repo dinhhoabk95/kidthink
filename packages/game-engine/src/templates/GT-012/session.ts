@@ -17,7 +17,6 @@ import {
 import type { Slot } from "#src/layout/types";
 import {
   drawClocheScene,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -313,9 +312,6 @@ export class FlashRecallSession extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
 
     const plate = this.areas ? plateSlot(this.areas.plate) : null;
     if (!plate) {

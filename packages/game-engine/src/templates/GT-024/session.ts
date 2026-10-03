@@ -19,7 +19,6 @@ import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
-  drawPromptText,
   drawSceneBackground,
   drawSubPromptText,
   drawWaypointPath,
@@ -310,7 +309,6 @@ export class GT024Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
     if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
       drawSubPromptText(ctx, rs, this.content.shape_name);
     }
     drawWaypointPath(

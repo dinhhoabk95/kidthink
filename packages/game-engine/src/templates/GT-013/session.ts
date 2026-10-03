@@ -29,7 +29,6 @@ import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
   boxFromSlots,
   drawMazeBoard,
-  drawPromptText,
   drawRequiredCells,
   drawSceneBackground,
   type ItemVisualState,
@@ -346,9 +345,6 @@ export class GT013Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     const box = boxFromSlots(this.slots);
     if (!box) {
       this.drawRenderFeedback(rs, ctx);

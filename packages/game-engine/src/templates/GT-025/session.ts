@@ -13,7 +13,6 @@ import { insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
   drawDividerLine,
-  drawPromptText,
   drawSceneBackground,
   drawSceneObjectAt,
   type ItemVisualState,
@@ -324,9 +323,6 @@ export class GT025Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     const scene = this.stageRect ?? sceneBox(rs);
     const half = { x: scene.x, y: scene.y, w: scene.w / 2, h: scene.h };
     const rightHalf = {

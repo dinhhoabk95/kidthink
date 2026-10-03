@@ -10,7 +10,6 @@ import type { Slot } from "#src/layout/types";
 import { PairingMechanic } from "#src/mechanics/pairing-mechanic";
 import {
   drawMatchLine,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   type ItemVisualState,
@@ -430,9 +429,6 @@ export class GT005Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     const sources = this.sourceSlots;
     const targets = this.targetSlots;
     const matched = this.mechanic.getMatchedPairs();

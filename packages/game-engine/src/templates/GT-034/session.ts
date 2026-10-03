@@ -19,7 +19,6 @@ import {
 } from "#src/layout/stage-groups";
 import type { Slot } from "#src/layout/types";
 import {
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -569,7 +568,6 @@ export class GT034Session extends TemplateGameSession<
     drawSceneBackground(ctx, rs, this.themeId);
     // Có khung thì lời dẫn thuộc shell (`BR-PSZ-01`); số lượt nghe không hiện (`BR-PSZ-06`).
     if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
       drawSubPromptText(
         ctx,
         rs,

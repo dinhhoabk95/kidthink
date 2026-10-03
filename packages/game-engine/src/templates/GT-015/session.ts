@@ -24,7 +24,6 @@ import {
 import type { Slot } from "#src/layout/types";
 import {
   drawEmptyTargetSlot,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
@@ -543,9 +542,6 @@ export class SudokuMiniSession extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (!zones) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     if (zones) {
       // Lời dẫn do shell vẽ; ký hiệu nằm trên khay của khung năm vùng.
       drawWoodenTokenDock(ctx, rs, zones.tray);

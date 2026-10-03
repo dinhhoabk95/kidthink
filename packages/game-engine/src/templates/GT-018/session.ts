@@ -27,7 +27,6 @@ import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
   drawGramophone,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -339,9 +338,6 @@ export class GT018Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     drawSubPromptText(
       ctx,
       rs,

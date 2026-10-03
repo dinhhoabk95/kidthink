@@ -29,7 +29,6 @@ import {
   type ContainerBox,
   drawClippedToZone,
   drawContainerTarget,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
@@ -562,7 +561,6 @@ export class GT003Session extends TemplateGameSession<
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = this.trayZones();
     if (!zones) {
-      drawPromptText(ctx, rs, this.content.prompt);
       this.drawContainer(rs, ctx);
       this.drawInteractive(rs, ctx);
       this.drawFeedback(rs, ctx);

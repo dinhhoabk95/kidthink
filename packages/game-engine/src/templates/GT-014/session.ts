@@ -15,7 +15,6 @@ import type { Slot } from "#src/layout/types";
 import {
   drawBalanceScale,
   drawPanItems,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
@@ -548,9 +547,6 @@ export class BalanceScaleSession extends TemplateGameSession<
     }
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (!zones) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     const sources = this.sourceSlots;
     // `WeightedItem` chỉ mang id + khối lượng; asset nằm ở content.
     const assetById = new Map(

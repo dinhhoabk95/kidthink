@@ -24,7 +24,6 @@ import { computeStageCellSlots } from "#src/layout/stage-targets";
 import type { Slot } from "#src/layout/types";
 import {
   drawIsometricModel,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   type ItemVisualState,
@@ -320,9 +319,6 @@ export class BlockStackSession extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     drawIsometricModel(
       ctx,
       this.modelBox(rs),

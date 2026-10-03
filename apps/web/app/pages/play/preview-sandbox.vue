@@ -9,6 +9,13 @@
 
 <script lang="ts" setup>
   import {
+    computeZonesForSession,
+    drawCommitButton,
+    drawPromptZone,
+    type StageZones,
+    TemplateGameSession,
+  } from "@mindkid/game-engine";
+  import {
     type EngineConfig,
     GameEngine,
     preloadGameSession,
@@ -17,6 +24,7 @@
   import { onMounted, onUnmounted, ref } from "vue";
   import { useRoute } from "vue-router";
   import { definePageMeta } from "#imports";
+  import { resolveZonePromptText } from "~/composables/play/play-prompt-zone";
   import { createSessionFactory } from "~/utils/game-session-factory";
 
   type JsonPrimitive = string | number | boolean | null;
@@ -45,6 +53,7 @@
 
   let engine: GameEngine | null = null;
   let currentConfig: EngineConfig | null = null;
+  let stageZones: StageZones | null = null;
   let currentTemplateCode = (route.query.template as string) || "GT-001";
 
   async function startSession(config: EngineConfig, templateCode: string) {
@@ -64,6 +73,8 @@
       engine = new GameEngine();
       engine.load(config, createSessionFactory(templateCode));
       engine.start(canvasRef.value);
+      applyStageZones(config);
+      engine.onAfterRender = drawShellZones;
 
       if (window.parent) {
         window.parent.postMessage(
@@ -87,6 +98,61 @@
           "*"
         );
       }
+    }
+  }
+
+  /**
+   * Preview dùng cùng khung năm vùng với trang chơi (`play-stage-zones.md` mục 5):
+   * cùng `computeZonesForSession`, cùng `prepareRound`, nên Manager thấy đúng bố
+   * cục trẻ thấy. Không HUD.
+   */
+  function applyStageZones(config: EngineConfig): void {
+    const vp = engine?.renderSystem.viewport;
+    const session = engine?.activeSession;
+    if (!(vp?.logicSpace && session instanceof TemplateGameSession)) {
+      stageZones = null;
+      return;
+    }
+    stageZones = computeZonesForSession(
+      {
+        logicW: vp.logicSpace.w,
+        logicH: vp.logicSpace.h,
+        ageBand: config.age_band,
+        cssPerLogic: vp.scale,
+      },
+      session
+    );
+    session.prepareRound(
+      config.age_band,
+      vp.logicSpace,
+      stageZones.stage,
+      stageZones.tray ?? undefined,
+      vp.scale
+    );
+  }
+
+  function drawShellZones(
+    ctx: CanvasRenderingContext2D,
+    rs: Parameters<typeof drawPromptZone>[1],
+    now: number
+  ): void {
+    const session = engine?.activeSession;
+    if (!stageZones) {
+      return;
+    }
+    const prompt = resolveZonePromptText(session);
+    if (prompt) {
+      drawPromptZone(ctx, rs, stageZones, { promptText: prompt });
+    }
+    if (session instanceof TemplateGameSession && session.needsCommit) {
+      drawCommitButton(ctx, rs, stageZones.action, {
+        enabled: session.canCommit?.() ?? true,
+        origin: "top-left",
+        icon: session.commitIcon,
+        hint: engine?.actionHinted
+          ? { timeMs: now, reducedMotion: rs.reducedMotion }
+          : undefined,
+      });
     }
   }
 

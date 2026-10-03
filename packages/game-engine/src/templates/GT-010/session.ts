@@ -15,7 +15,6 @@ import {
   boxFromSlots,
   drawEquationTray,
   drawLabelText,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
@@ -274,9 +273,6 @@ export class SubstitutionSession extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     const eqSlots = this.slots.slice(0, this.content.equations.length);
     const optionSlots = this.sourceSlots;
     const eqBox = boxFromSlots(eqSlots);

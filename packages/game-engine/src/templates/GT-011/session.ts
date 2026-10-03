@@ -19,7 +19,6 @@ import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
   boxFromSlots,
   drawEmptyTargetSlot,
-  drawPromptText,
   drawSceneBackground,
   drawShapeTray,
   drawSlotItem,
@@ -280,9 +279,6 @@ export class GT011Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     const cellCount = this.content.matrix.rows * this.content.matrix.cols;
     const cellSlots = this.slots.slice(0, cellCount);
     const optionSlots = this.slots.slice(cellCount);

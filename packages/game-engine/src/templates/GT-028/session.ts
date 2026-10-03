@@ -17,7 +17,6 @@ import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import {
   drawHeaderRepresentation,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -303,9 +302,6 @@ export class GT028Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
     // Lời dẫn do shell vẽ ở vùng lời dẫn; chỉ tự vẽ khi chưa có sân khấu.
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
 
     const subText = `Bước nhảy: +${this.content.step}  |  Đã đếm: ${this.getCurrentCount()} / Mục tiêu: ${this.content.target_total}`;
     drawSubPromptText(ctx, rs, subText);

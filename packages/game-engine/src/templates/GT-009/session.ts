@@ -12,7 +12,6 @@ import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
   drawLabelText,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   getColorsForState,
@@ -348,9 +347,6 @@ export class GT009Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     // clue-board xếp dải manh mối trước, rồi tới bàn ứng viên.
     const clueSlots = this.slots.slice(0, this.content.clues.length);
     const boardSlots = this.slots.slice(this.content.clues.length);

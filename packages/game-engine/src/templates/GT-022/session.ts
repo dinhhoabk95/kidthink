@@ -18,7 +18,6 @@ import { insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
-  drawPromptText,
   drawSceneBackground,
   drawSceneObjectAt,
   type ItemVisualState,
@@ -285,9 +284,6 @@ export class GT022Session extends TemplateGameSession<
       this.wrongItemId = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     // free-scene: toạ độ tới từ content (đã ở không gian logic), ô nào thiếu
     // toạ độ thì rơi về slot của layout.
     const scene = sceneBox(rs);

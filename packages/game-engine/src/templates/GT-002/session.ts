@@ -12,7 +12,6 @@ import { insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenPlate,
@@ -238,9 +237,6 @@ export class GT002Session extends TemplateGameSession<
   ): void {
     const slots = this.slots;
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     this.drawInteractive(rs, ctx, slots);
     this.drawFeedback(rs, ctx, timeMs);
   }

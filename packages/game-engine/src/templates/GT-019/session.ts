@@ -21,7 +21,6 @@ import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
   drawEmptyTargetSlot,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSlotLabel,
@@ -604,9 +603,6 @@ export class GT019Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (!zones) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     const targets = this.targetSlots;
     const sources = this.sourceSlots;
     if (zones && sources.length > 0) {

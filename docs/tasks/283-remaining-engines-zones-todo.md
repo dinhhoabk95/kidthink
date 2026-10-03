@@ -137,6 +137,6 @@ Ghi chú đo của N (2026-10-03):
 ## Đóng task
 
 - [x] Gate `zone-primitives-only` phủ đủ 37 mã: 36 mã dời + GT-000 là **ngoại lệ duy nhất, có lý do** (danh sách ngoại lệ không rỗng nhưng một mã, ghi ở `EXEMPT_CODES`; test `phủ đủ mọi mã engine` + ca âm)
-- [ ] Xoá nhánh `if (!this.stageRect)` trong GT-001/003/028 và đường lui tương tự — **không an toàn, để lại có chủ đích**: `/play/preview-sandbox` (Studio) chưa tính `computeStageZones` nên engine ở đó chạy chính nhánh dự phòng; xoá thì preview mất lời dẫn. Làm sau khi đưa preview-sandbox vào khung (`play-stage-zones.md` mục 5 hàng "Studio preview")
+- [x] `/play/preview-sandbox` vào khung (`computeZonesForSession`, `prepareRound`, `drawPromptZone`, `drawCommitButton`; `play-preview-sandbox-zones.test.ts` + ca âm). Xoá mọi `drawPromptText` ở 36 engine đã dời (gate `zone-primitives-only` cấm cả nhánh dự phòng). Đường lui **hình học** khi không có `stage` (`BR-LAY-10`, GT-003 `!zones`) giữ lại có chủ đích: test và golden dùng nó
 - [ ] Spec `play-stage-zones.md` giữ `approved`: scenario "Studio preview cùng khung" (mục 5) chưa đúng, kiểm trình duyệt thật còn mở, và nợ vật lý còn lại ở các mục B1–B6 chưa về 0
 - [x] `index.md` cập nhật; tick "Mở task con" ở `277-play-stage-zones-todo.md`

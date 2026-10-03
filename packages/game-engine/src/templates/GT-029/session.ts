@@ -21,7 +21,6 @@ import {
 } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -495,9 +494,6 @@ export class GT029Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
 
     if (!this.stageRect) {
       const removedCount = this.removedItemIds.size;

@@ -21,7 +21,6 @@ import type { Slot } from "#src/layout/types";
 import {
   drawEmptyTargetSlot,
   drawMatchLine,
-  drawPromptText,
   drawQuantityRepresentation,
   drawSceneBackground,
   drawSlotItem,
@@ -442,9 +441,6 @@ export class GT007Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (!zones) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     if (zones) {
       // Lời dẫn do shell vẽ; lựa chọn nằm trên khay của khung năm vùng.
       drawWoodenTokenDock(ctx, rs, zones.tray);

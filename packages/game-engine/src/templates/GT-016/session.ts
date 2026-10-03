@@ -25,7 +25,6 @@ import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
   drawClockFace,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   type ItemVisualState,
@@ -539,9 +538,6 @@ export class ClockHandsSession extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     const faceBox = this.faceBox(rs);
     drawClockFace(ctx, faceBox, this.currentTime);
 

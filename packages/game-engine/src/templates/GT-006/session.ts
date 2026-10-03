@@ -12,7 +12,6 @@ import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import {
   drawLocomotive,
   drawNumberLine,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawTrackNumberLine,
@@ -303,9 +302,6 @@ export class GT006Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     this.drawTrackDecor(ctx, rs);
     const order = this.mechanic.getCurrentSequence();
     const byId = new Map(this.content.sequence.map((s) => [s.step_id, s]));

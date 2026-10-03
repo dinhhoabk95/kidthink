@@ -25,7 +25,6 @@ import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
   drawEmptyTargetSlot,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSlotLabel,
@@ -494,9 +493,6 @@ export class GT023Session extends TemplateGameSession<
     }
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (!zones) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     if (zones) {
       // Lời dẫn do shell vẽ; mảnh nằm trên khay của khung năm vùng.
       drawWoodenTokenDock(ctx, rs, zones.tray);

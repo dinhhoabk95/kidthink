@@ -20,7 +20,6 @@ import {
   drawBasketSlot,
   drawEmptyTargetSlot,
   drawGlyphInSlot,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
@@ -401,9 +400,6 @@ export class GT004Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (!zones) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     if (zones) {
       // Lời dẫn do shell vẽ ở vùng lời dẫn; engine chỉ vẽ trong sân khấu và khay.
       drawWoodenTokenDock(ctx, rs, zones.tray);

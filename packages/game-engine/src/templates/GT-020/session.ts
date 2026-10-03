@@ -17,7 +17,6 @@ import type { Slot } from "#src/layout/types";
 import { PairingMechanic } from "#src/mechanics/pairing-mechanic";
 import {
   drawLabelText,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   getColorsForState,
@@ -331,9 +330,6 @@ export class GT020Session extends TemplateGameSession<
       this.mismatchCardId = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     this.displayCards.forEach((card, i) => {
       const slot = this.slots[i];
       if (slot) {

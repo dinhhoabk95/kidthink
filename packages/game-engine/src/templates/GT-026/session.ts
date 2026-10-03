@@ -13,7 +13,6 @@ import { insetDrawSize, splitCaption } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
   drawPedestalTarget,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -285,9 +284,6 @@ export class GT026Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     // Tiến độ không vẽ trên canvas (`BR-PSZ-06`).
     const trial = this.inhibitionSystem.getCurrentTrial();
 

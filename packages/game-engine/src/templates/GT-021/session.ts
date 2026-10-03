@@ -27,7 +27,6 @@ import {
   drawButterflyWingsBoard,
   drawEmptyTargetSlot,
   drawMirrorAxis,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
@@ -445,9 +444,6 @@ export class GT021Session extends TemplateGameSession<
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (!zones) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     // Có khung: bàn đối xứng ở sân khấu, mảnh chọn trên khay, lời dẫn do shell vẽ.
     drawButterflyWingsBoard(ctx, zones?.stage ?? sceneBox(rs));
     drawMirrorAxis(ctx, rs, this.content.axis, zones?.stage);

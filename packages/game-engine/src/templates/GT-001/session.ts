@@ -13,7 +13,6 @@ import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
   drawCentralTargetCard,
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
@@ -340,9 +339,6 @@ export class GT001Session extends TemplateGameSession<
     this.lastFrameMs = timeMs;
     const slots = this.slots;
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     if (this.content.target_item) {
       drawCentralTargetCard(
         ctx,

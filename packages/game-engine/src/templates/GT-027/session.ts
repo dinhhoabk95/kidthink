@@ -21,7 +21,6 @@ import {
 } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -342,9 +341,6 @@ export class GT027Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     // Tiến độ không vẽ trên canvas (`BR-PSZ-06`).
     const rule = this.ruleSystem.getActiveRule();
     const signal = this.ruleSystem.getSignalInfo();

@@ -18,7 +18,6 @@ import { dockRectAroundSlots } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
   drawLiquidCup,
-  drawPromptText,
   drawSceneBackground,
   drawSubPromptText,
   drawWoodenTokenDock,
@@ -267,9 +266,6 @@ export class GT032Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    if (!this.stageRect) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
 
     if (!this.stageRect) {
       const subPrompt = this.isWin

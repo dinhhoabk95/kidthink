@@ -21,7 +21,6 @@ import type { Slot } from "#src/layout/types";
 import {
   boxFromSlots,
   drawEmptyTargetSlot,
-  drawPromptText,
   drawSceneBackground,
   drawShapeTray,
   drawSlotItem,
@@ -453,9 +452,6 @@ export class GT008Session extends TemplateGameSession<
     }
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
-    if (!zones) {
-      drawPromptText(ctx, rs, this.content.prompt);
-    }
     const targets = this.targetSlots;
     const sources = this.sourceSlots;
     const targetBox = boxFromSlots(targets);

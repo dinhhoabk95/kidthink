@@ -24,7 +24,6 @@ import {
 } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
-  drawPromptText,
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
@@ -488,7 +487,6 @@ export class GT031Session extends TemplateGameSession<
     drawSceneBackground(ctx, rs, this.themeId);
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     if (!zones) {
-      drawPromptText(ctx, rs, this.content.prompt);
       this.drawLegacySubPrompt(ctx, rs);
     }
 
