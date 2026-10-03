@@ -5,7 +5,15 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
+import { computeStageCellSlots } from "#src/layout/stage-targets";
+import {
+  computeTraySourceSlots,
+  findNearestHitSlot,
+  type MinHitSize,
+  pickTrayZones,
+} from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
@@ -15,6 +23,7 @@ import {
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
+  drawWoodenTokenDock,
   type ItemVisualState,
   updateParticles,
 } from "#src/render/index.js";
@@ -27,6 +36,13 @@ import type { GT004Content, GT004Difficulty } from "./template.js";
 
 type SortItem = GT004Content["items"][number];
 
+/** Rổ trên sân khấu: rộng nhất 180 px, cao nhất 140 px — cùng cỡ `multi-bucket-bottom`. */
+const BUCKET_MAX_W_PX = 180;
+const BUCKET_MAX_H_PX = 140;
+
+/** Vùng chạm tối thiểu của rổ ở bố cục cũ — rộng hơn thân rổ vẽ. */
+const LEGACY_BUCKET_HIT: MinHitSize = { w: 140, h: 100 };
+
 export class GT004Session extends TemplateGameSession<
   GT004Content,
   GT004Difficulty
@@ -37,6 +53,10 @@ export class GT004Session extends TemplateGameSession<
 
   displayItems: readonly SortItem[] = [];
   private readonly mechanic = new PlacementMechanic();
+
+  /** Vật nằm trong khay, rổ đứng trên sân khấu (`BR-PSZ-01`). */
+  override readonly needsTray = true;
+  override readonly usesPromptZone = true;
 
   setupEntities(): void {
     this.mechanic.reset();
@@ -95,6 +115,24 @@ export class GT004Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (zones) {
+      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
+      const sources = computeTraySourceSlots(
+        this.displayItems.length,
+        zones.tray,
+        touchFloor
+      );
+      const buckets = computeStageCellSlots({
+        count: this.content.groups.length,
+        stage: zones.stage,
+        touchFloor,
+        maxCell: { w: BUCKET_MAX_W_PX, h: BUCKET_MAX_H_PX },
+        role: "target",
+        firstIndex: sources.length,
+      });
+      return [...sources, ...buckets];
+    }
     const layoutFn = resolveLayout("multi-bucket-bottom");
     return layoutFn({
       slotCount: this.displayItems.length,
@@ -102,6 +140,40 @@ export class GT004Session extends TemplateGameSession<
       ageBand,
       logic: this.logicSpace,
     });
+  }
+
+  /** Rổ đúng chỗ chạm: khung mới theo thân rổ, bố cục cũ nới rộng hơn thân rổ. */
+  private findHitGroup(
+    x: number,
+    y: number,
+    targets: readonly Slot[],
+    hitTolerance: number
+  ): GT004Content["groups"][number] | null {
+    const isInFrame = pickTrayZones(this.stageRect, this.trayRect) !== null;
+    const index = findNearestHitSlot(
+      targets.slice(0, this.content.groups.length),
+      x,
+      y,
+      hitTolerance,
+      isInFrame ? undefined : LEGACY_BUCKET_HIT
+    );
+    return this.content.groups[index] ?? null;
+  }
+
+  /** Vật đúng chỗ chạm, gần tâm nhất — khay hẹp làm vùng chạm kề nhau chồng lên. */
+  private findHitItem(
+    x: number,
+    y: number,
+    sources: readonly Slot[],
+    hitTolerance: number
+  ): SortItem | null {
+    const index = findNearestHitSlot(
+      sources.slice(0, this.displayItems.length),
+      x,
+      y,
+      hitTolerance
+    );
+    return this.displayItems[index] ?? null;
   }
 
   private toItemEntityState(
@@ -189,51 +261,29 @@ export class GT004Session extends TemplateGameSession<
     targets: readonly Slot[],
     hitTolerance: number
   ): GameAction | null {
-    let draggedItem: SortItem | null = null;
-    for (let i = 0; i < this.displayItems.length; i++) {
-      const slot = sources[i];
-      const item = this.displayItems[i];
-      if (!(slot && item)) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.fromX - slot.x) <= halfW &&
-        Math.abs(gesture.fromY - slot.y) <= halfH
-      ) {
-        draggedItem = item;
-        break;
-      }
-    }
-
+    const draggedItem = this.findHitItem(
+      gesture.fromX,
+      gesture.fromY,
+      sources,
+      hitTolerance
+    );
     if (!draggedItem) {
       return null;
     }
 
-    for (let i = 0; i < this.content.groups.length; i++) {
-      const slot = targets[i];
-      const group = this.content.groups[i];
-      if (!(slot && group)) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w, 140) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h, 100) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.toX - slot.x) <= halfW &&
-        Math.abs(gesture.toY - slot.y) <= halfH
-      ) {
-        return {
-          type: "sort_item",
-          data: {
-            item_id: draggedItem.item_id,
-            group_id: group.group_id,
-          },
-        };
-      }
+    const group = this.findHitGroup(
+      gesture.toX,
+      gesture.toY,
+      targets,
+      hitTolerance
+    );
+    if (!group) {
+      return null;
     }
-
-    return null;
+    return {
+      type: "sort_item",
+      data: { item_id: draggedItem.item_id, group_id: group.group_id },
+    };
   }
 
   private handleTapTarget(
@@ -246,28 +296,19 @@ export class GT004Session extends TemplateGameSession<
       return null;
     }
 
-    for (let i = 0; i < this.content.groups.length; i++) {
-      const slot = targets[i];
-      const group = this.content.groups[i];
-      if (!(slot && group)) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w, 140) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h, 100) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.x - slot.x) <= halfW &&
-        Math.abs(gesture.y - slot.y) <= halfH
-      ) {
-        return {
-          type: "sort_item",
-          data: {
-            item_id: stagedId,
-            group_id: group.group_id,
-          },
-        };
-      }
+    const group = this.findHitGroup(
+      gesture.x,
+      gesture.y,
+      targets,
+      hitTolerance
+    );
+    if (!group) {
+      return null;
     }
-    return null;
+    return {
+      type: "sort_item",
+      data: { item_id: stagedId, group_id: group.group_id },
+    };
   }
 
   private handleTapSource(
@@ -275,26 +316,13 @@ export class GT004Session extends TemplateGameSession<
     sources: readonly Slot[],
     hitTolerance: number
   ): void {
-    for (let i = 0; i < this.displayItems.length; i++) {
-      const slot = sources[i];
-      const item = this.displayItems[i];
-      if (!(slot && item)) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.x - slot.x) <= halfW &&
-        Math.abs(gesture.y - slot.y) <= halfH
-      ) {
-        if (this.mechanic.getStagedItemId() === item.item_id) {
-          this.mechanic.stageItem(null);
-        } else {
-          this.mechanic.stageItem(item.item_id);
-        }
-        return;
-      }
+    const item = this.findHitItem(gesture.x, gesture.y, sources, hitTolerance);
+    if (!item) {
+      return;
     }
+    this.mechanic.stageItem(
+      this.mechanic.getStagedItemId() === item.item_id ? null : item.item_id
+    );
   }
 
   private toTapAction(
@@ -367,7 +395,14 @@ export class GT004Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (!zones) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
+    if (zones) {
+      // Lời dẫn do shell vẽ ở vùng lời dẫn; engine chỉ vẽ trong sân khấu và khay.
+      drawWoodenTokenDock(ctx, rs, zones.tray);
+    }
     const targets = this.targetSlots;
     const sources = this.sourceSlots;
     const placements = this.mechanic.getPlacements();

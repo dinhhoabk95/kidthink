@@ -84,10 +84,11 @@ Ghi chú đo của N (2026-10-03):
 
 ## B3 — Kéo thả có khay · L · phụ thuộc: N
 
-- [ ] RED: GT-004, 007, 008, 015, 021, 023 — nguồn trong `zones.tray`, đích trong stage
-- [ ] Tap-tap fallback `BR-ENG-06` xanh cho cả sáu
-- [ ] Nợ safe-area của GT-004 (28, 588) và GT-008 (32) không tăng
-- [ ] Ca âm: khay ở toạ độ cũ → đỏ
+- [x] RED: GT-004, 007, 008, 015, 021, 023 — nguồn trong `zones.tray`, đích trong stage. RED **73/373** ca đỏ (`stage-engines-b3` 45/71, `stage-engines` 16/213, `prompt-single-source` 6/75, gate `zone-primitives-only` 6/14); sau dời: 2.179/2.179 xanh
+- [x] Tap-tap fallback `BR-ENG-06` xanh cho cả sáu (kéo, chạm-chạm và đổi viewport giữa vòng, mọi mẫu + seed ở ba khung 330x697, 784x250, 964x628)
+- [x] Nợ safe-area của GT-004 (28, 588) và GT-008 (32) không tăng — `tests/layout-safe-area-debt.json` giữ nguyên: hàm layout cũ không đổi, đường khung mới dùng `layout/stage-targets.ts`
+- [x] Ca âm: khay ở toạ độ cũ → đỏ (`tests/layout/fixtures/gt-004-legacy-tray-coords.ts`)
+- [ ] **Nợ B3 còn lại (số đo ở `stage-engines-b3.test.ts`, chỉ được giảm):** khay một hàng 136 logic px chứa 3–4 vật ở sàn chạm portrait; GT-004 (tới 10 vật), GT-008 (9), GT-023 (8) có ca vùng chạm chồng nhau (527/527 ở band 4-5, 468/527 ở band 5-6 portrait). Điện thoại ngang 784x250: sàn chạm 138–207 logic px lớn hơn sân khấu 146. Hướng gỡ ở `play-stage-zones.md` mục 11 câu hỏi số 4 (phân trang khay hoặc khay cao hơn) — chờ quyết
 
 ## B4 — Ghép, lật, dãy, đường · M · phụ thuộc: N
 

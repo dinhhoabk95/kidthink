@@ -8,7 +8,15 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
+import { computeStageCellSlots } from "#src/layout/stage-targets";
+import type { ZoneRect } from "#src/layout/stage-zones";
+import {
+  computeTraySourceSlots,
+  findNearestHitSlot,
+  pickTrayZones,
+} from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
   boxFromSlots,
@@ -26,6 +34,27 @@ import {
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT008Content, GT008Difficulty } from "./template.js";
+
+/** Cạnh ô đích lớn nhất trên sân khấu — cùng cỡ ô của `horizontal-slot-track`. */
+const TARGET_CELL_MAX_PX = 96;
+
+/**
+ * Khay ô đích (`drawShapeTray`) vẽ rộng hơn các ô: lề 22 ngang, 16 dọc, cộng gờ
+ * dưới 4 px. Chừa chừng ấy trong sân khấu để khay vẽ không tràn ra ngoài.
+ */
+const SHAPE_TRAY_INSET_PX = 28;
+
+/** Khoảng chạm thêm quanh vùng chạm của slot (`GT-008.md` §6). */
+const HIT_TOLERANCE_PX = 24;
+
+function insetRect(rect: ZoneRect, inset: number): ZoneRect {
+  return {
+    x: rect.x + inset,
+    y: rect.y + inset,
+    w: Math.max(0, rect.w - 2 * inset),
+    h: Math.max(0, rect.h - 2 * inset),
+  };
+}
 
 function extractSlotData(
   data: unknown
@@ -57,6 +86,10 @@ export class GT008Session extends TemplateGameSession<
   private wrongTimestamp = 0;
 
   placedSlots: Map<string, string> = new Map(); // slot_id -> item_id
+
+  /** Vật nằm trong khay, dãy ô đích đứng trên sân khấu (`BR-PSZ-01`). */
+  override readonly needsTray = true;
+  override readonly usesPromptZone = true;
 
   setupEntities(): void {
     this.placedSlots.clear();
@@ -135,6 +168,25 @@ export class GT008Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (zones) {
+      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
+      const targets = computeStageCellSlots({
+        count: this.content.slots.length,
+        stage: insetRect(zones.stage, SHAPE_TRAY_INSET_PX),
+        touchFloor,
+        maxCell: { w: TARGET_CELL_MAX_PX, h: TARGET_CELL_MAX_PX },
+        role: "target",
+        hasLabels: this.content.slots.some((slot) => Boolean(slot.label)),
+      });
+      const sources = computeTraySourceSlots(
+        this.content.items.length,
+        zones.tray,
+        touchFloor,
+        targets.length
+      );
+      return [...targets, ...sources];
+    }
     const layoutFn = resolveLayout("horizontal-slot-track");
     return layoutFn({
       slotCount: this.content.items.length,
@@ -151,19 +203,17 @@ export class GT008Session extends TemplateGameSession<
     hitTolerance: number
   ): GT008Content["items"][number] | null {
     const placedItemIds = new Set(this.placedSlots.values());
-    for (let i = 0; i < this.content.items.length; i++) {
-      const item = this.content.items[i];
+    const open = this.content.items.flatMap((item, i) => {
       const slot = sources[i];
-      if (!(item && slot) || placedItemIds.has(item.item_id)) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-      if (Math.abs(x - slot.x) <= halfW && Math.abs(y - slot.y) <= halfH) {
-        return item;
-      }
-    }
-    return null;
+      return slot && !placedItemIds.has(item.item_id) ? [{ item, slot }] : [];
+    });
+    const hit = findNearestHitSlot(
+      open.map((entry) => entry.slot),
+      x,
+      y,
+      hitTolerance
+    );
+    return open[hit]?.item ?? null;
   }
 
   private findTargetSlot(
@@ -172,19 +222,19 @@ export class GT008Session extends TemplateGameSession<
     targets: readonly Slot[],
     hitTolerance: number
   ): GT008Content["slots"][number] | null {
-    for (let i = 0; i < this.content.slots.length; i++) {
-      const slotDef = this.content.slots[i];
+    const open = this.content.slots.flatMap((slotDef, i) => {
       const slot = targets[i];
-      if (!(slotDef && slot) || this.placedSlots.has(slotDef.slot_id)) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-      if (Math.abs(x - slot.x) <= halfW && Math.abs(y - slot.y) <= halfH) {
-        return slotDef;
-      }
-    }
-    return null;
+      return slot && !this.placedSlots.has(slotDef.slot_id)
+        ? [{ slotDef, slot }]
+        : [];
+    });
+    const hit = findNearestHitSlot(
+      open.map((entry) => entry.slot),
+      x,
+      y,
+      hitTolerance
+    );
+    return open[hit]?.slotDef ?? null;
   }
 
   private toDropAction(
@@ -267,7 +317,7 @@ export class GT008Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
-    const hitTolerance = 24;
+    const hitTolerance = HIT_TOLERANCE_PX;
     const sources = this.sourceSlots;
     const targets = this.targetSlots;
 
@@ -290,7 +340,8 @@ export class GT008Session extends TemplateGameSession<
     const idx = this.content.items.findIndex(
       (it) => it.item_id === unplaced.expected_item_id
     );
-    return idx >= 0 ? idx : null;
+    const sourceSlot = this.sourceSlots[idx];
+    return sourceSlot ? this.slots.indexOf(sourceSlot) : null;
   }
 
   override commit(action: GameAction): void {
@@ -396,7 +447,10 @@ export class GT008Session extends TemplateGameSession<
       this.wrongItemId = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (!zones) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
     const targets = this.targetSlots;
     const sources = this.sourceSlots;
     const targetBox = boxFromSlots(targets);
@@ -404,7 +458,8 @@ export class GT008Session extends TemplateGameSession<
       drawShapeTray(ctx, targetBox);
     }
     if (sources.length > 0) {
-      drawWoodenTokenDock(ctx, rs);
+      // Lời dẫn do shell vẽ; khay nguồn là vùng khay của khung năm vùng.
+      drawWoodenTokenDock(ctx, rs, zones?.tray);
     }
     const itemById = new Map(this.content.items.map((i) => [i.item_id, i]));
     const placedItemIds = new Set(this.placedSlots.values());

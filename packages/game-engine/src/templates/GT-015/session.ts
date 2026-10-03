@@ -13,13 +13,21 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
+import { computeStageCellSlots } from "#src/layout/stage-targets";
+import {
+  computeTraySourceSlots,
+  findNearestHitSlot,
+  pickTrayZones,
+} from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
   drawEmptyTargetSlot,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
+  drawWoodenTokenDock,
   type ItemVisualState,
   updateParticles,
 } from "#src/render/index.js";
@@ -33,6 +41,12 @@ import {
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT015Content, GT015Difficulty } from "./template.js";
+
+/** Sudoku chạm đúng vùng chạm của ô, không nới thêm. */
+const NO_HIT_TOLERANCE_PX = 0;
+
+/** Cạnh ô lưới lớn nhất trên sân khấu — cùng cỡ ô của `matrix-slot-grid`. */
+const GRID_CELL_MAX_PX = 96;
 
 export interface SudokuCellState {
   readonly row: number;
@@ -65,14 +79,7 @@ function extractFillCellData(
   return null;
 }
 
-function isPointInSlot(slot: Slot, x: number, y: number): boolean {
-  const hw = (slot.hitW ?? slot.w) / 2;
-  const hh = (slot.hitH ?? slot.h) / 2;
-  return (
-    x >= slot.x - hw && x <= slot.x + hw && y >= slot.y - hh && y <= slot.y + hh
-  );
-}
-
+/** Lưới tràn sân khấu thì hàng cuối chồng lên khay; chọn theo tâm gần nhất. */
 function findHitPaletteIndex(
   slots: readonly Slot[],
   cellCount: number,
@@ -80,13 +87,12 @@ function findHitPaletteIndex(
   x: number,
   y: number
 ): number {
-  for (let i = 0; i < symbolCount; i++) {
-    const slot = slots[cellCount + i];
-    if (slot && isPointInSlot(slot, x, y)) {
-      return i;
-    }
-  }
-  return -1;
+  return findNearestHitSlot(
+    slots.slice(cellCount, cellCount + symbolCount),
+    x,
+    y,
+    NO_HIT_TOLERANCE_PX
+  );
 }
 
 function findHitCellCoords(
@@ -95,15 +101,15 @@ function findHitCellCoords(
   x: number,
   y: number
 ): { row: number; col: number } | null {
-  for (let r = 0; r < size; r++) {
-    for (let c = 0; c < size; c++) {
-      const slot = slots[r * size + c];
-      if (slot && isPointInSlot(slot, x, y)) {
-        return { row: r, col: c };
-      }
-    }
-  }
-  return null;
+  const index = findNearestHitSlot(
+    slots.slice(0, size * size),
+    x,
+    y,
+    NO_HIT_TOLERANCE_PX
+  );
+  return index >= 0
+    ? { row: Math.floor(index / size), col: index % size }
+    : null;
 }
 
 function resolveDropSymbolId(
@@ -153,6 +159,10 @@ export class SudokuMiniSession extends TemplateGameSession<
   private readonly cellStates: Map<string, SudokuCellState> = new Map();
   private selectedSymbolId: string | null = null;
   private activeViolations: readonly ConstraintViolation[] = [];
+
+  /** Ký hiệu nằm trong khay, lưới đứng trên sân khấu (`BR-PSZ-01`). */
+  override readonly needsTray = true;
+  override readonly usesPromptZone = true;
 
   setupEntities(): void {
     this.cellStates.clear();
@@ -403,43 +413,31 @@ export class SudokuMiniSession extends TemplateGameSession<
     gesture: Extract<Gesture, { type: "tap" }>,
     cellCount: number
   ): GameAction | null {
-    const paletteIndex = findHitPaletteIndex(
-      this.slots,
-      cellCount,
-      this.content.symbols.length,
+    const symbolCount = this.content.symbols.length;
+    const hit = findNearestHitSlot(
+      this.slots.slice(0, cellCount + symbolCount),
       gesture.x,
-      gesture.y
+      gesture.y,
+      NO_HIT_TOLERANCE_PX
     );
-    if (paletteIndex >= 0) {
-      const sym = this.content.symbols[paletteIndex];
-      this.selectedSymbolId = sym?.symbol_id ?? null;
+    if (hit >= cellCount) {
+      this.selectedSymbolId =
+        this.content.symbols[hit - cellCount]?.symbol_id ?? null;
       return null;
     }
-
-    if (!this.selectedSymbolId) {
+    if (hit < 0 || !this.selectedSymbolId) {
       return null;
     }
-
-    const targetCell = findHitCellCoords(
-      this.slots,
-      this.content.grid_size,
-      gesture.x,
-      gesture.y
-    );
-    if (!targetCell) {
-      return null;
-    }
-    const state = this.cellStates.get(`${targetCell.row},${targetCell.col}`);
+    const size = this.content.grid_size;
+    const row = Math.floor(hit / size);
+    const col = hit % size;
+    const state = this.cellStates.get(`${row},${col}`);
     if (!state || state.isInitial) {
       return null;
     }
     return {
       type: "fill_cell",
-      data: {
-        row: targetCell.row,
-        col: targetCell.col,
-        symbol_id: this.selectedSymbolId,
-      },
+      data: { row, col, symbol_id: this.selectedSymbolId },
     };
   }
 
@@ -496,6 +494,26 @@ export class SudokuMiniSession extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (zones) {
+      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
+      const size = this.content.grid_size;
+      const cells = computeStageCellSlots({
+        count: size * size,
+        cols: size,
+        stage: zones.stage,
+        touchFloor,
+        maxCell: { w: GRID_CELL_MAX_PX, h: GRID_CELL_MAX_PX },
+        role: "target",
+      });
+      const palette = computeTraySourceSlots(
+        this.content.symbols.length,
+        zones.tray,
+        touchFloor,
+        cells.length
+      );
+      return [...cells, ...palette];
+    }
     const layoutFn = resolveLayout("matrix-slot-grid");
     return layoutFn({
       slotCount: this.content.symbols.length,
@@ -519,7 +537,14 @@ export class SudokuMiniSession extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (!zones) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
+    if (zones) {
+      // Lời dẫn do shell vẽ; ký hiệu nằm trên khay của khung năm vùng.
+      drawWoodenTokenDock(ctx, rs, zones.tray);
+    }
     const cellCount = this.content.grid_size * this.content.grid_size;
     const cellSlots = this.slots.slice(0, cellCount);
     const paletteSlots = this.slots.slice(cellCount);

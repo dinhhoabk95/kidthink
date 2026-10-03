@@ -372,6 +372,11 @@ function zoneSessionCases(
  */
 const KNOWN_HIT_GAP_DEBT_CASES: Readonly<Record<string, number>> = {
   "GT-003": 20,
+  // Task #283 B3 — khay một hàng portrait chứa tối đa 4 nguồn ở sàn 64 px CSS:
+  // GT-004 có 4–10 vật, GT-008 có tới 9 vật. Chi tiết theo khung ở
+  // `stage-engines-b3.test.ts`.
+  "GT-004": 320,
+  "GT-008": 4,
 };
 
 /** Vùng sân khấu và khay (nếu có) — slot hợp lệ nằm trọn trong một trong hai. */

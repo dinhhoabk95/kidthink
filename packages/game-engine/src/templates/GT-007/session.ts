@@ -8,7 +8,15 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
+import { computeStageTreeSlots } from "#src/layout/stage-targets";
+import {
+  computeTraySourceSlots,
+  findNearestHitSlot,
+  type MinHitSize,
+  pickTrayZones,
+} from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
   drawEmptyTargetSlot,
@@ -17,6 +25,7 @@ import {
   drawQuantityRepresentation,
   drawSceneBackground,
   drawSlotItem,
+  drawWoodenTokenDock,
   type ItemVisualState,
   updateParticles,
 } from "#src/render/index.js";
@@ -24,6 +33,15 @@ import type { DegradationState } from "#src/systems/degradation";
 import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT007Content, GT007Difficulty } from "./template.js";
+
+/** Cạnh ô tổng và ô phần lớn nhất trên sân khấu — cùng cỡ ô của `number-bond-tree`. */
+const TREE_CELL_MAX_PX = 96;
+
+/** Khoảng chạm thêm quanh vùng chạm của slot (`GT-007.md` §6). */
+const HIT_TOLERANCE_PX = 24;
+
+/** Vùng chạm tối thiểu của ô phần ở bố cục cũ — rộng hơn thân ô vẽ. */
+const LEGACY_PART_HIT: MinHitSize = { w: 100, h: 100 };
 
 function extractOptionId(data: unknown): string | undefined {
   if (typeof data === "object" && data !== null && "option_id" in data) {
@@ -45,6 +63,10 @@ export class GT007Session extends TemplateGameSession<
   private wrongTimestamp = 0;
 
   filledParts: Map<string, number> = new Map();
+
+  /** Lựa chọn nằm trong khay, cây tách gộp đứng trên sân khấu (`BR-PSZ-01`). */
+  override readonly needsTray = true;
+  override readonly usesPromptZone = true;
 
   setupEntities(): void {
     this.filledParts.clear();
@@ -126,6 +148,23 @@ export class GT007Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (zones) {
+      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
+      const tree = computeStageTreeSlots({
+        partCount: this.content.parts.length,
+        stage: zones.stage,
+        touchFloor,
+        maxCell: TREE_CELL_MAX_PX,
+      });
+      const options = computeTraySourceSlots(
+        this.content.options.length,
+        zones.tray,
+        touchFloor,
+        tree.length
+      );
+      return [...tree, ...options];
+    }
     const layoutKey =
       this.content.layout === "ten-frame-split" ||
       this.content.representation === "ten-frame"
@@ -141,26 +180,18 @@ export class GT007Session extends TemplateGameSession<
   }
 
   private findDraggedOption(
-    gesture: Extract<Gesture, { type: "drop" }>,
+    x: number,
+    y: number,
     sources: readonly Slot[],
     hitTolerance: number
   ): GT007Content["options"][number] | null {
-    for (let i = 0; i < this.content.options.length; i++) {
-      const slot = sources[i];
-      const opt = this.content.options[i];
-      if (!(slot && opt)) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.fromX - slot.x) <= halfW &&
-        Math.abs(gesture.fromY - slot.y) <= halfH
-      ) {
-        return opt;
-      }
-    }
-    return null;
+    const index = findNearestHitSlot(
+      sources.slice(0, this.content.options.length),
+      x,
+      y,
+      hitTolerance
+    );
+    return this.content.options[index] ?? null;
   }
 
   private findTargetPart(
@@ -169,22 +200,21 @@ export class GT007Session extends TemplateGameSession<
     targets: readonly Slot[],
     hitTolerance: number
   ): GT007Content["parts"][number] | null {
-    for (let i = 0; i < this.content.parts.length; i++) {
-      const part = this.content.parts[i];
+    const isInFrame = pickTrayZones(this.stageRect, this.trayRect) !== null;
+    const open = this.content.parts.flatMap((part, i) => {
       const slot = targets[i + 1];
-      if (!(part && slot)) {
-        continue;
-      }
-      if (!part.is_target || this.filledParts.has(part.id)) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w, 100) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h, 100) / 2 + hitTolerance;
-      if (Math.abs(x - slot.x) <= halfW && Math.abs(y - slot.y) <= halfH) {
-        return part;
-      }
-    }
-    return null;
+      return slot && part.is_target && !this.filledParts.has(part.id)
+        ? [{ part, slot }]
+        : [];
+    });
+    const hit = findNearestHitSlot(
+      open.map((entry) => entry.slot),
+      x,
+      y,
+      hitTolerance,
+      isInFrame ? undefined : LEGACY_PART_HIT
+    );
+    return open[hit]?.part ?? null;
   }
 
   private toDropAction(
@@ -193,7 +223,12 @@ export class GT007Session extends TemplateGameSession<
     targets: readonly Slot[],
     hitTolerance: number
   ): GameAction | null {
-    const opt = this.findDraggedOption(gesture, sources, hitTolerance);
+    const opt = this.findDraggedOption(
+      gesture.fromX,
+      gesture.fromY,
+      sources,
+      hitTolerance
+    );
     if (!opt) {
       return null;
     }
@@ -246,26 +281,16 @@ export class GT007Session extends TemplateGameSession<
     sources: readonly Slot[],
     hitTolerance: number
   ): void {
-    for (let i = 0; i < this.content.options.length; i++) {
-      const slot = sources[i];
-      const opt = this.content.options[i];
-      if (!(slot && opt)) {
-        continue;
-      }
-      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.x - slot.x) <= halfW &&
-        Math.abs(gesture.y - slot.y) <= halfH
-      ) {
-        if (this.stagedOptionId === opt.id) {
-          this.stagedOptionId = null;
-        } else {
-          this.stagedOptionId = opt.id;
-        }
-        return;
-      }
+    const opt = this.findDraggedOption(
+      gesture.x,
+      gesture.y,
+      sources,
+      hitTolerance
+    );
+    if (!opt) {
+      return;
     }
+    this.stagedOptionId = this.stagedOptionId === opt.id ? null : opt.id;
   }
 
   private toTapAction(
@@ -283,7 +308,7 @@ export class GT007Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
-    const hitTolerance = 24;
+    const hitTolerance = HIT_TOLERANCE_PX;
     const sources = this.sourceSlots;
     const targets = this.targetSlots;
 
@@ -298,7 +323,8 @@ export class GT007Session extends TemplateGameSession<
 
   override getHintTargetIndex(): number | null {
     const idx = this.content.options.findIndex((o) => o.is_correct);
-    return idx >= 0 ? idx : null;
+    const sourceSlot = this.sourceSlots[idx];
+    return sourceSlot ? this.slots.indexOf(sourceSlot) : null;
   }
 
   override commit(action: GameAction): void {
@@ -410,7 +436,14 @@ export class GT007Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (!zones) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
+    if (zones) {
+      // Lời dẫn do shell vẽ; lựa chọn nằm trên khay của khung năm vùng.
+      drawWoodenTokenDock(ctx, rs, zones.tray);
+    }
     const targets = this.targetSlots;
     const sources = this.sourceSlots;
 

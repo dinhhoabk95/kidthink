@@ -517,19 +517,22 @@ function drawCube(
 export function drawMirrorAxis(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
-  axis: "vertical" | "horizontal"
+  axis: "vertical" | "horizontal",
+  box?: SceneBox
 ): void {
+  // Không có hộp thì trục chạy suốt canvas — đường vẽ của engine chưa dời khung.
+  const area = box ?? { x: 0, y: 0, w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT };
   ctx.save();
   ctx.strokeStyle = designTokens.colors.montessori.amber;
   ctx.lineWidth = BOARD_LINE_PX + 1;
   ctx.setLineDash([12, 8]);
   ctx.beginPath();
   if (axis === "vertical") {
-    ctx.moveTo(rs.LOGIC_WIDTH / 2, 0);
-    ctx.lineTo(rs.LOGIC_WIDTH / 2, rs.LOGIC_HEIGHT);
+    ctx.moveTo(area.x + area.w / 2, area.y);
+    ctx.lineTo(area.x + area.w / 2, area.y + area.h);
   } else {
-    ctx.moveTo(0, rs.LOGIC_HEIGHT / 2);
-    ctx.lineTo(rs.LOGIC_WIDTH, rs.LOGIC_HEIGHT / 2);
+    ctx.moveTo(area.x, area.y + area.h / 2);
+    ctx.lineTo(area.x + area.w, area.y + area.h / 2);
   }
   ctx.stroke();
   ctx.restore();

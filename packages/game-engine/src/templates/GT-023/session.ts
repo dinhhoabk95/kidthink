@@ -13,7 +13,14 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
+import { computeStageCellSlots } from "#src/layout/stage-targets";
+import {
+  computeTraySourceSlots,
+  findNearestHitSlot,
+  pickTrayZones,
+} from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
@@ -22,6 +29,7 @@ import {
   drawSceneBackground,
   drawSlotItem,
   drawSlotLabel,
+  drawWoodenTokenDock,
   type ItemVisualState,
   slotAtPoint,
   updateParticles,
@@ -39,49 +47,39 @@ interface HitSourcePart {
   readonly slot: Slot;
 }
 
+/** Khoảng chạm thêm quanh vùng chạm của slot (`GT-023.md` §6). */
+const HIT_TOLERANCE_PX = 24;
+
+/** Bán kính hút tối thiểu quanh mỏ neo, dù `snap_radius_px` nhỏ hơn. */
+const MIN_SNAP_RADIUS_PX = 64;
+
+/** Cạnh ô mỏ neo lớn nhất trên sân khấu. */
+const ANCHOR_CELL_MAX_PX = 96;
+
+/** Cỡ thực thể mỏ neo ở bố cục cũ, nơi mỏ neo đứng ở toạ độ của content. */
+const LEGACY_ANCHOR_VIEW_PX = 80;
+
 function findHitSourcePart(
   slots: readonly Slot[],
   parts: readonly GT023Content["parts"][number][],
   placements: ReadonlyMap<string, string>,
   x: number,
   y: number,
-  tolerance = 24
+  tolerance = HIT_TOLERANCE_PX
 ): HitSourcePart | null {
   const sources = slots.filter((s) => s.role === "source");
   const placedPartIds = new Set(placements.values());
-  for (let i = 0; i < parts.length; i++) {
-    const part = parts[i];
+  const open = parts.flatMap((part, i) => {
     const slot = sources[i];
-    if (!(part && slot) || placedPartIds.has(part.part_id)) {
-      continue;
-    }
-    const hw = Math.max(slot.hitW, slot.w) / 2 + tolerance;
-    const hh = Math.max(slot.hitH, slot.h) / 2 + tolerance;
-    if (Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh) {
-      return { part, slot };
-    }
-  }
-  return null;
-}
-
-function findHitAnchor(
-  anchors: readonly GT023Content["anchors"][number][],
-  x: number,
-  y: number,
-  snapRadius = 60,
-  tolerance = 24
-): GT023Content["anchors"][number] | null {
-  const maxDist = Math.max(snapRadius, 64) + tolerance;
-  for (const anchor of anchors) {
-    if (!anchor) {
-      continue;
-    }
-    const dist = Math.hypot(anchor.x - x, anchor.y - y);
-    if (dist <= maxDist) {
-      return anchor;
-    }
-  }
-  return null;
+    return slot && !placedPartIds.has(part.part_id) ? [{ part, slot }] : [];
+  });
+  const hit = findNearestHitSlot(
+    open.map((entry) => entry.slot),
+    x,
+    y,
+    tolerance
+  );
+  return open[hit] ?? null;
 }
 
 export class GT023Session extends TemplateGameSession<
@@ -97,6 +95,10 @@ export class GT023Session extends TemplateGameSession<
   private partById: Map<string, GT023Content["parts"][number]> = new Map();
   private wrongPartId: string | null = null;
   private wrongTimestamp = 0;
+
+  /** Mảnh nằm trong khay, mỏ neo đứng trên sân khấu (`BR-PSZ-01`). */
+  override readonly needsTray = true;
+  override readonly usesPromptZone = true;
 
   setupEntities(): void {
     this.isWon = false;
@@ -208,6 +210,39 @@ export class GT023Session extends TemplateGameSession<
     return this.assemblySystem.getPlacements();
   }
 
+  /**
+   * Slot của mỏ neo `index`. Trong khung năm vùng mỏ neo là ô đích xếp trên sân
+   * khấu; ở bố cục cũ nó đứng ở toạ độ riêng của content.
+   */
+  private anchorSlot(index: number): Slot | null {
+    if (pickTrayZones(this.stageRect, this.trayRect)) {
+      return this.targetSlots[index] ?? null;
+    }
+    const anchor = this.content.anchors[index];
+    return anchor ? slotAtPoint(anchor.x, anchor.y) : null;
+  }
+
+  /** Mỏ neo gần điểm thả nhất trong bán kính hút. */
+  private findHitAnchor(
+    x: number,
+    y: number
+  ): GT023Content["anchors"][number] | null {
+    const maxDist =
+      Math.max(this.difficulty.snap_radius_px, MIN_SNAP_RADIUS_PX) +
+      HIT_TOLERANCE_PX;
+    let best: GT023Content["anchors"][number] | null = null;
+    let bestDist = Number.POSITIVE_INFINITY;
+    this.content.anchors.forEach((anchor, i) => {
+      const slot = this.anchorSlot(i);
+      const dist = slot ? Math.hypot(slot.x - x, slot.y - y) : maxDist + 1;
+      if (dist <= maxDist && dist < bestDist) {
+        best = anchor;
+        bestDist = dist;
+      }
+    });
+    return best;
+  }
+
   private toDropAction(
     gesture: Extract<Gesture, { type: "drop" }>
   ): GameAction | null {
@@ -221,12 +256,7 @@ export class GT023Session extends TemplateGameSession<
     if (!hitSource) {
       return null;
     }
-    const hitAnchor = findHitAnchor(
-      this.content.anchors,
-      gesture.toX,
-      gesture.toY,
-      this.difficulty.snap_radius_px
-    );
+    const hitAnchor = this.findHitAnchor(gesture.toX, gesture.toY);
     if (!hitAnchor) {
       return null;
     }
@@ -245,12 +275,7 @@ export class GT023Session extends TemplateGameSession<
     const stagedId = this.placementMechanic.getStagedItemId();
 
     if (stagedId) {
-      const hitAnchor = findHitAnchor(
-        this.content.anchors,
-        gesture.x,
-        gesture.y,
-        this.difficulty.snap_radius_px
-      );
+      const hitAnchor = this.findHitAnchor(gesture.x, gesture.y);
       if (hitAnchor) {
         return {
           type: "tap_tap_item",
@@ -312,6 +337,40 @@ export class GT023Session extends TemplateGameSession<
     }
   }
 
+  /** Thực thể mỏ neo: ô đích trên sân khấu, hoặc điểm của content ở bố cục cũ. */
+  private toAnchorEntity(
+    anchor: GT023Content["anchors"][number],
+    index: number,
+    isPlaced: boolean
+  ): ViewEntity {
+    const state: EntityVisual = isPlaced ? "correct" : "idle";
+    const slot = pickTrayZones(this.stageRect, this.trayRect)
+      ? this.targetSlots[index]
+      : undefined;
+    if (!slot) {
+      return {
+        id: anchor.anchor_id,
+        slotIndex: index,
+        role: "target",
+        state,
+        x: anchor.x,
+        y: anchor.y,
+        w: LEGACY_ANCHOR_VIEW_PX,
+        h: LEGACY_ANCHOR_VIEW_PX,
+      };
+    }
+    return {
+      id: anchor.anchor_id,
+      slotIndex: this.slots.indexOf(slot),
+      role: "target",
+      state,
+      x: slot.x,
+      y: slot.y,
+      w: slot.w,
+      h: slot.h,
+    };
+  }
+
   override getView(): EngineView {
     const placements = this.assemblySystem.getPlacements();
     const sources = this.sourceSlots;
@@ -319,23 +378,11 @@ export class GT023Session extends TemplateGameSession<
     const placedPartIds = new Set(placements.values());
     const entities: ViewEntity[] = [];
 
-    for (let i = 0; i < this.content.anchors.length; i++) {
-      const anchor = this.content.anchors[i];
-      if (!anchor) {
-        continue;
-      }
-      const isPlaced = placements.has(anchor.anchor_id);
-      entities.push({
-        id: anchor.anchor_id,
-        slotIndex: i,
-        role: "target",
-        state: isPlaced ? "correct" : "idle",
-        x: anchor.x,
-        y: anchor.y,
-        w: 80,
-        h: 80,
-      });
-    }
+    this.content.anchors.forEach((anchor, i) => {
+      entities.push(
+        this.toAnchorEntity(anchor, i, placements.has(anchor.anchor_id))
+      );
+    });
 
     for (let i = 0; i < this.content.parts.length; i++) {
       const part = this.content.parts[i];
@@ -378,8 +425,9 @@ export class GT023Session extends TemplateGameSession<
       const anchorIdx = this.content.anchors.findIndex(
         (a) => !placements.has(a.anchor_id) && a.accepted_part_id === stagedId
       );
-      if (anchorIdx >= 0) {
-        return anchorIdx;
+      const anchorSlot = this.targetSlots[anchorIdx];
+      if (anchorSlot) {
+        return this.slots.indexOf(anchorSlot);
       }
     }
     const placedPartIds = new Set(placements.values());
@@ -394,6 +442,25 @@ export class GT023Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (zones) {
+      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
+      const parts = computeTraySourceSlots(
+        this.content.parts.length,
+        zones.tray,
+        touchFloor
+      );
+      const anchors = computeStageCellSlots({
+        count: this.content.anchors.length,
+        stage: zones.stage,
+        touchFloor,
+        maxCell: { w: ANCHOR_CELL_MAX_PX, h: ANCHOR_CELL_MAX_PX },
+        role: "target",
+        hasLabels: this.content.anchors.some((anchor) => Boolean(anchor.label)),
+        firstIndex: parts.length,
+      });
+      return [...parts, ...anchors];
+    }
     const layoutFn = resolveLayout("top-source-bottom-target");
     return layoutFn({
       slotCount: this.content.parts.length,
@@ -421,15 +488,25 @@ export class GT023Session extends TemplateGameSession<
       this.wrongPartId = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (!zones) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
+    if (zones) {
+      // Lời dẫn do shell vẽ; mảnh nằm trên khay của khung năm vùng.
+      drawWoodenTokenDock(ctx, rs, zones.tray);
+    }
     const sources = this.sourceSlots;
     const placements = this.assemblySystem.getPlacements();
     const partById = this.partById;
     const placedPartIds = new Set(placements.values());
 
     // Mỏ neo có toạ độ riêng trong content — đó là hình dạng của mô hình đích.
-    for (const anchor of this.content.anchors) {
-      const slot = slotAtPoint(anchor.x, anchor.y);
+    for (const [anchorIndex, anchor] of this.content.anchors.entries()) {
+      const slot = this.anchorSlot(anchorIndex);
+      if (!slot) {
+        continue;
+      }
       const partId = placements.get(anchor.anchor_id);
       const part = partId ? partById.get(partId) : undefined;
       if (!part) {

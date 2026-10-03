@@ -13,7 +13,14 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
+import { computeStageMirror, reindexSlots } from "#src/layout/stage-targets";
+import {
+  computeTraySourceSlots,
+  findNearestHitSlot,
+  pickTrayZones,
+} from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
@@ -33,33 +40,28 @@ import { MirrorSystem } from "#src/systems/mirror-system";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT021Content, GT021Difficulty } from "./template.js";
 
-function isPointInSlot(
-  slot: Slot,
-  x: number,
-  y: number,
-  tolerance = 24
-): boolean {
-  const hw = (slot.hitW ?? slot.w) / 2 + tolerance;
-  const hh = (slot.hitH ?? slot.h) / 2 + tolerance;
-  return Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh;
-}
+/** Khoảng chạm thêm quanh vùng chạm của slot (`GT-021.md` §6). */
+const HIT_TOLERANCE_PX = 24;
+
+/** Cạnh ô mẫu và ô đích lớn nhất trên sân khấu — cùng cỡ ô của `mirror-axis-split`. */
+const MIRROR_CELL_MAX_PX = 96;
 
 function findHitSourceOption(
   slots: readonly Slot[],
   options: readonly { item_id: string }[],
   x: number,
   y: number,
-  tolerance = 24
+  tolerance = HIT_TOLERANCE_PX
 ): { option: { item_id: string }; index: number } | null {
   const sourceSlots = slots.filter((s) => s.role === "source");
-  for (let i = 0; i < options.length; i++) {
-    const slot = sourceSlots[i];
-    const option = options[i];
-    if (slot && option && isPointInSlot(slot, x, y, tolerance)) {
-      return { option, index: i };
-    }
-  }
-  return null;
+  const index = findNearestHitSlot(
+    sourceSlots.slice(0, options.length),
+    x,
+    y,
+    tolerance
+  );
+  const option = options[index];
+  return option ? { option, index } : null;
 }
 
 function findHitTargetSlot(
@@ -67,17 +69,17 @@ function findHitTargetSlot(
   targets: readonly { slot_id: string }[],
   x: number,
   y: number,
-  tolerance = 24
+  tolerance = HIT_TOLERANCE_PX
 ): { target: { slot_id: string }; index: number } | null {
   const targetSlots = slots.filter((s) => s.role === "target");
-  for (let i = 0; i < targets.length; i++) {
-    const slot = targetSlots[i];
-    const target = targets[i];
-    if (slot && target && isPointInSlot(slot, x, y, tolerance)) {
-      return { target, index: i };
-    }
-  }
-  return null;
+  const index = findNearestHitSlot(
+    targetSlots.slice(0, targets.length),
+    x,
+    y,
+    tolerance
+  );
+  const target = targets[index];
+  return target ? { target, index } : null;
 }
 
 export class GT021Session extends TemplateGameSession<
@@ -91,6 +93,10 @@ export class GT021Session extends TemplateGameSession<
   readonly mirrorSystem = new MirrorSystem();
   private readonly placementMechanic = new PlacementMechanic();
   neutralSlots: readonly Slot[] = [];
+
+  /** Mảnh chọn nằm trong khay, hai nửa đối xứng đứng trên sân khấu (`BR-PSZ-01`). */
+  override readonly needsTray = true;
+  override readonly usesPromptZone = true;
   private assetByRef: Map<string, GT021Content["options"][number]["asset"]> =
     new Map();
 
@@ -229,39 +235,32 @@ export class GT021Session extends TemplateGameSession<
   private toTapAction(
     gesture: Extract<Gesture, { type: "tap" }>
   ): GameAction | null {
-    const hitTarget = findHitTargetSlot(
-      this.slots,
-      this.content.target_slots,
+    // Ô đích tràn sân khấu thì chồng lên khay: chọn theo tâm gần nhất trong cả hai.
+    const targets = this.targetSlots.slice(0, this.content.target_slots.length);
+    const sources = this.sourceSlots.slice(0, this.content.options.length);
+    const hit = findNearestHitSlot(
+      [...targets, ...sources],
       gesture.x,
-      gesture.y
+      gesture.y,
+      HIT_TOLERANCE_PX
     );
-    if (hitTarget) {
+    const target = this.content.target_slots[hit];
+    if (hit >= 0 && hit < targets.length && target) {
       const stagedId = this.placementMechanic.getStagedItemId();
-      if (stagedId) {
-        return {
-          type: "tap_tap_item",
-          data: {
-            item_id: stagedId,
-            target_id: hitTarget.target.slot_id,
-          },
-        };
-      }
-      return null;
+      return stagedId
+        ? {
+            type: "tap_tap_item",
+            data: { item_id: stagedId, target_id: target.slot_id },
+          }
+        : null;
     }
 
-    const hitSource = findHitSourceOption(
-      this.slots,
-      this.content.options,
-      gesture.x,
-      gesture.y
-    );
-    if (hitSource) {
+    const option = this.content.options[hit - targets.length];
+    if (hit >= targets.length && option) {
       const stagedId = this.placementMechanic.getStagedItemId();
-      if (stagedId === hitSource.option.item_id) {
-        this.placementMechanic.stageItem(null);
-      } else {
-        this.placementMechanic.stageItem(hitSource.option.item_id);
-      }
+      this.placementMechanic.stageItem(
+        stagedId === option.item_id ? null : option.item_id
+      );
       return null;
     }
 
@@ -393,6 +392,30 @@ export class GT021Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (zones) {
+      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
+      const mirror = computeStageMirror({
+        count: Math.max(
+          this.content.reference_pattern.length,
+          this.content.target_slots.length
+        ),
+        axis: this.content.axis,
+        stage: zones.stage,
+        touchFloor,
+        maxCell: { w: MIRROR_CELL_MAX_PX, h: MIRROR_CELL_MAX_PX },
+      });
+      const options = computeTraySourceSlots(
+        this.content.options.length,
+        zones.tray,
+        touchFloor
+      );
+      return reindexSlots([
+        ...mirror.reference.slice(0, this.content.reference_pattern.length),
+        ...mirror.targets.slice(0, this.content.target_slots.length),
+        ...options,
+      ]);
+    }
     const layoutFn = resolveLayout("mirror-axis-split");
     return layoutFn({
       slotCount: this.content.options.length,
@@ -416,10 +439,14 @@ export class GT021Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    drawButterflyWingsBoard(ctx, sceneBox(rs));
-    drawMirrorAxis(ctx, rs, this.content.axis);
-    drawWoodenTokenDock(ctx, rs);
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (!zones) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
+    // Có khung: bàn đối xứng ở sân khấu, mảnh chọn trên khay, lời dẫn do shell vẽ.
+    drawButterflyWingsBoard(ctx, zones?.stage ?? sceneBox(rs));
+    drawMirrorAxis(ctx, rs, this.content.axis, zones?.stage);
+    drawWoodenTokenDock(ctx, rs, zones?.tray);
 
     const targets = this.targetSlots;
     const sources = this.sourceSlots;
