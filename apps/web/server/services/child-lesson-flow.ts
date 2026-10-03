@@ -24,6 +24,8 @@ import {
   deriveStepStates,
   type StepState,
 } from "./child-lesson-steps.ts";
+import type { StickerDef } from "./child-sticker-pick.ts";
+import { awardLessonSticker } from "./child-stickers.ts";
 
 type Db = ReturnType<typeof getOwnerDb>;
 type LessonRow = typeof lessons.$inferSelect;
@@ -55,6 +57,8 @@ export interface LessonProgressView {
   readonly current_step: number | null;
   readonly status: "in_progress" | "completed";
   readonly just_completed: boolean;
+  /** Sticker vừa trao — khác `null` chỉ khi `just_completed` (`BR-STK-01`, `BR-STK-08`). */
+  readonly sticker: StickerDef | null;
 }
 
 async function findPublishedLesson(
@@ -230,22 +234,38 @@ async function loadLevelMeta(
   return new Map(rows.map((row) => [row.code, row]));
 }
 
-async function markCompleted(
+/**
+ * Đóng lượt và trao sticker trong **một** transaction (`BR-STK-01`): chỉ yêu
+ * cầu chuyển được lượt từ `in_progress` sang `completed` mới trao, nên gọi
+ * song song hay gọi lại đều không trao thêm. Trả `null` khi lượt đã đóng.
+ */
+function completeAndAward(
   db: Db,
   play: PlayRow,
+  lessonCode: string,
   now: Date
-): Promise<boolean> {
-  const updated = await db
-    .update(childLessonPlays)
-    .set({ status: "completed", completedAt: now, updatedAt: now })
-    .where(
-      and(
-        eq(childLessonPlays.id, play.id),
-        eq(childLessonPlays.status, "in_progress")
+): Promise<StickerDef | null> {
+  return db.transaction(async (tx) => {
+    const updated = await tx
+      .update(childLessonPlays)
+      .set({ status: "completed", completedAt: now, updatedAt: now })
+      .where(
+        and(
+          eq(childLessonPlays.id, play.id),
+          eq(childLessonPlays.status, "in_progress")
+        )
       )
-    )
-    .returning({ id: childLessonPlays.id });
-  return updated.length > 0;
+      .returning({ id: childLessonPlays.id });
+    if (updated.length === 0) {
+      return null;
+    }
+    return awardLessonSticker(tx, {
+      childId: play.childProfileId,
+      playId: play.id,
+      lessonCode,
+      steps: play.steps,
+    });
+  });
 }
 
 export async function openLessonProgress(
@@ -278,8 +298,9 @@ export async function openLessonProgress(
     lockedLevelCodes,
   });
 
-  const justCompleted =
-    states.allDone && (await markCompleted(db, play, input.now ?? new Date()));
+  const sticker = states.allDone
+    ? await completeAndAward(db, play, lesson.code, input.now ?? new Date())
+    : null;
 
   return {
     lesson: { code: lesson.code, title: lesson.title },
@@ -295,7 +316,8 @@ export async function openLessonProgress(
     })),
     current_step: states.currentStep,
     status: states.allDone ? "completed" : "in_progress",
-    just_completed: justCompleted,
+    just_completed: sticker !== null,
+    sticker,
   };
 }
 

@@ -123,6 +123,12 @@ hợp đồng sáu dáng (`MASCOT_SPRITE_FILES`) và có bản vẽ thay thế b
 
 `reduced-motion`: dáng vẫn đổi, chuyển động nảy/nghiêng thu về một nhịp scale (`BR-FBK-09`).
 
+### 7.5 Phần thưởng giữ được
+
+Màn tổng kết **level** chỉ có sao, mascot và lời khen. Xong cả một **bài** thì màn thưởng thêm một
+sticker sưu tập — trao, chọn và album thuộc [`sticker-album.md`](sticker-album.md) (`BR-STK-*`).
+Phần thưởng chỉ gồm sao và sticker: cấm xu, chuỗi ngày hay so sánh (`BR-STK-03`, `BR-FBK-08`).
+
 ## 8. API contract
 
 Không có route. Màn hình tổng kết nhận từ

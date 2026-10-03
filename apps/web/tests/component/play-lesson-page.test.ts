@@ -24,12 +24,14 @@ function progressPayload(overrides: {
   current_step: number | null;
   status?: "in_progress" | "completed";
   just_completed?: boolean;
+  sticker?: { theme_code: string; emoji: string; label: string } | null;
 }) {
   return {
     lesson: { code: LESSON_CODE, title: "Đếm đến 3" },
     play_uuid: "00000000-0000-4000-8000-000000000001",
     status: "in_progress" as const,
     just_completed: false,
+    sticker: null,
     ...overrides,
   };
 }
@@ -76,8 +78,9 @@ vi.stubGlobal("useRoute", () => ({ params: { code: LESSON_CODE }, query: {} }));
 vi.stubGlobal("useRouter", () => ({ push: pushMock }));
 
 const VictoryStub = {
-  props: ["show"],
-  template: '<div data-testid="victory" :data-show="String(show)" />',
+  props: ["show", "sticker"],
+  template:
+    '<div data-testid="victory" :data-show="String(show)" :data-sticker="sticker ? sticker.emoji : \'\'" />',
 };
 
 const stubs = {
@@ -188,5 +191,23 @@ describe("Trang bài của trẻ (BR-CLF-01, BR-CLF-05, BR-CLF-06, BR-CLF-08)", 
 
     expect(page.findAll("a[href]")).toHaveLength(0);
     expect(page.find('[data-testid="lesson-parent-lock"]').exists()).toBe(true);
+  });
+
+  it("BR-STK-08: sticker vừa trao được đưa vào màn thưởng", async () => {
+    apiMock.mockResolvedValue(
+      progressPayload({
+        steps: STEPS.map((s) => ({ ...s, done: !s.locked })),
+        current_step: null,
+        status: "completed",
+        just_completed: true,
+        sticker: { theme_code: "farm", emoji: "🐮", label: "Bò sữa" },
+      })
+    );
+
+    const page = await mountLessonPage();
+
+    expect(page.get('[data-testid="victory"]').attributes("data-sticker")).toBe(
+      "🐮"
+    );
   });
 });

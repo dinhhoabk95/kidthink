@@ -5,24 +5,10 @@
   >
     <!-- Chỉ một lối ra: khoá phụ huynh nhấn giữ (`BR-CLF-05`). -->
     <header class="lesson-hud">
-      <button
-        aria-label="Cổng phụ huynh / Thoát (nhấn giữ 1 giây)"
-        class="hud-button"
+      <KidParentLockButton
         data-testid="lesson-parent-lock"
-        type="button"
-        @pointercancel="cancelParentLockHold"
-        @pointerdown="startParentLockHold"
-        @pointerleave="cancelParentLockHold"
-        @pointerup="cancelParentLockHold"
-      >
-        <UIcon class="w-7 h-7 text-surface-600" name="i-lucide-lock" />
-        <span
-          aria-hidden="true"
-          class="hold-ring"
-          v-if="parentLockHoldProgress > 0"
-          :style="{ '--hold': `${parentLockHoldProgress}%` }"
-        />
-      </button>
+        @unlock="showParentGate = true"
+      />
     </header>
 
     <main class="lesson-main">
@@ -94,6 +80,7 @@
       celebration="great"
       :show="showReward"
       :stars="3"
+      :sticker="progress?.sticker ?? null"
       @announce="speak"
       @continue="leaveLesson"
       @replay="replayLesson"
@@ -116,7 +103,7 @@
   } from "@mindkid/game-engine";
   import { computed, onMounted, ref } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
-  import { useParentLockHold } from "~/composables/play/use-parent-lock-hold";
+  import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
   import { useApi } from "~/composables/use-api";
 
   /** Bề mặt trẻ: không navbar/footer (`BR-PSZ-11`, `BR-CLF-05`). */
@@ -139,6 +126,8 @@
     current_step: number | null;
     status: "in_progress" | "completed";
     just_completed: boolean;
+    /** Sticker vừa trao khi đóng lượt (`BR-STK-08`). */
+    sticker: { theme_code: string; emoji: string; label: string } | null;
   }
 
   /** Sàn chạm lớn nhất (band 3-4) — trang bài chưa biết band của level. */
@@ -154,14 +143,6 @@
   const hasError = ref(false);
   const showReward = ref(false);
   const showParentGate = ref(false);
-
-  const {
-    progress: parentLockHoldProgress,
-    start: startParentLockHold,
-    cancel: cancelParentLockHold,
-  } = useParentLockHold(() => {
-    showParentGate.value = true;
-  });
 
   const currentStep = computed<LessonStep | null>(() => {
     const index = progress.value?.current_step;
@@ -265,22 +246,6 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-  }
-
-  .hold-ring {
-    position: absolute;
-    inset: -6px;
-    border-radius: 1.5rem;
-    background: conic-gradient(
-      var(--color-brand-600) var(--hold),
-      transparent var(--hold)
-    );
-    mask: radial-gradient(
-      farthest-side,
-      transparent calc(100% - 5px),
-      #000 calc(100% - 4px)
-    );
-    pointer-events: none;
   }
 
   .lesson-main {

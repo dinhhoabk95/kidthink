@@ -26,14 +26,15 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | `01-platform` | 50 | 36 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
-| `04-play` | 19 | 13 |
+| `04-play` | 20 | 13 |
 | `05-content` | 27 | 7 |
 | `06-admin` | 31 | 30 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 11 | 9 |
-| **Tổng** | **195** | **141** |
+| **Tổng** | **196** | **141** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
+1 spec cộng thêm 2026-10-03 cho phần thưởng giữ được của trẻ: [`sticker-album.md`](04-play/sticker-album.md) (Task #282) — màn thưởng cuối bài biến mất khi trẻ rời trang; trẻ không giữ lại được gì từ bài đã học.
 1 spec cộng thêm 2026-10-03 cho khuôn bài của trẻ: [`child-lesson-flow.md`](04-play/child-lesson-flow.md) (Task #280) — `lessons` chỉ có đường cho người lớn dẫn, trẻ ở nhà chơi từng level rời mà không có nhịp làm quen → trò chơi → thưởng.
 1 spec cộng thêm 2026-09-25 cho bố cục chung của bề mặt chơi: [`play-stage-zones.md`](01-platform/play-stage-zones.md) (Task #277) — 37 engine tự đặt lời dẫn, khay và nút nộp bài ở chỗ riêng, nút nộp nằm ở bốn vị trí khác nhau và GT-028 có thể không nộp được bài từ trang chơi.
 1 spec cộng thêm 2026-09-08 cho hợp đồng độ khó game level: [`level-difficulty-contract.md`](05-content/level-difficulty-contract.md) (Task #263) — ánh xạ mức khó 1..5 về số item hiển thị và tham số điều khiển qua bảng tra 37 engine × 5 mức.
@@ -188,6 +189,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [progress-and-mastery](04-play/progress-and-mastery.md) | P3 | Bản đồ, huy hiệu không mất |
 | [lesson-session-runner](04-play/lesson-session-runner.md) | P4 | Người dạy chạy tiết học, một bước một lúc |
 | [child-lesson-flow](04-play/child-lesson-flow.md) | P4 | Trẻ tự học một bài: làm quen → trò chơi → thưởng; tiến độ suy từ `play_sessions` |
+| [sticker-album](04-play/sticker-album.md) | P4 | Mỗi bài xong một sticker theo chủ đề, album không mất, không số đếm |
 | [concept-intro-runner](04-play/concept-intro-runner.md) | P4 | Ba nhịp giới thiệu → nhận biết → gọi tên, trẻ chạy một mình |
 | [concept-intro-gate](04-play/concept-intro-gate.md) | P4 | Bước 8: chưa làm quen khái niệm thì chưa vào màn chơi |
 | **[play-narration](04-play/play-narration.md)** | P1 | Mọi yêu cầu trên bề mặt trẻ phải nghe được trước khi đọc được; bốn bậc dự phòng, cấm im lặng |

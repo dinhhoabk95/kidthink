@@ -170,7 +170,7 @@ Scenario: BR-CLF-07 — bài ngoài tuổi vẫn mở được
 
 **Ask first**
 - Thêm loại bước không phải level (video, truyện).
-- Thêm phần thưởng tích luỹ (sticker — task #282).
+- Thêm phần thưởng tích luỹ khác ngoài sticker. Sticker cuối bài: [`sticker-album.md`](sticker-album.md) (Task #282).
 
 **Never**
 - Nhận "đã xong bước" từ client.

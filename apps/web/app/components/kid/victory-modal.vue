@@ -43,6 +43,19 @@
           </div>
         </div>
 
+        <!-- Sticker vừa nhận khi xong bài (`BR-STK-08`); tên chỉ ở aria-label (`BR-STK-06`). -->
+        <div
+          class="sticker-reward"
+          data-testid="victory-sticker"
+          role="img"
+          v-if="sticker"
+          :aria-label="`Sticker mới: ${sticker.label}`"
+        >
+          <span aria-hidden="true" class="sticker-emoji"
+            >{{ sticker.emoji }}</span
+          >
+        </div>
+
         <!-- Headline -->
         <h1 class="victory-title">
           <span class="victory-gradient-text">{{ celebrationTitle }}</span>
@@ -80,17 +93,25 @@
   import { useFocusTrap } from "~/composables/play/use-focus-trap";
   import type { CelebrationTier } from "~/composables/play/use-play-telemetry";
 
+  /** Sticker sưu tập trao khi xong cả bài (`sticker-album.md`). */
+  interface VictorySticker {
+    emoji: string;
+    label: string;
+  }
+
   const props = withDefaults(
     defineProps<{
       show: boolean;
       stars?: number | null;
       isIntro?: boolean;
       celebration?: CelebrationTier;
+      sticker?: VictorySticker | null;
     }>(),
     {
       stars: null,
       isIntro: false,
       celebration: "great",
+      sticker: null,
     }
   );
 
@@ -252,6 +273,43 @@
 
   .star-icon--big {
     font-size: 3rem;
+  }
+
+  .sticker-reward {
+    width: 6.5rem;
+    height: 6.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 1.75rem;
+    border: 4px dashed var(--color-brand-300);
+    background-color: var(--color-surface-0, #fff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(-6deg);
+    animation: stickerPop 600ms ease-out;
+  }
+
+  .sticker-emoji {
+    font-size: 4rem;
+    line-height: 1;
+  }
+
+  @keyframes stickerPop {
+    0% {
+      transform: rotate(-6deg) scale(0.4);
+    }
+    70% {
+      transform: rotate(-6deg) scale(1.1);
+    }
+    100% {
+      transform: rotate(-6deg) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sticker-reward {
+      animation: none;
+    }
   }
 
   .victory-title {

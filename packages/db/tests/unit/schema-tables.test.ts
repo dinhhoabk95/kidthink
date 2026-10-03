@@ -3,13 +3,14 @@ import { describe, expect, it } from "vitest";
 import { extractTableNamesFromSchema, TABLES } from "../global-setup.ts";
 
 describe("Dynamic Schema Tables Extraction (G6, Task #208)", () => {
-  it("trích xuất đủ 83 bảng từ schema/ và không thiếu bảng mới", () => {
-    expect(TABLES.length).toBe(83);
+  it("trích xuất đủ 84 bảng từ schema/ và không thiếu bảng mới", () => {
+    expect(TABLES.length).toBe(84);
     expect(TABLES).toContain("skill_datasets");
     expect(TABLES).toContain("content_objective_map");
     expect(TABLES).toContain("users");
     expect(TABLES).toContain("game_levels");
     expect(TABLES).toContain("child_lesson_plays");
+    expect(TABLES).toContain("child_stickers");
   });
 
   it("test chứng minh bắt lỗi: thêm bảng giả vào schema ⟹ xuất hiện trong danh sách trích xuất", () => {

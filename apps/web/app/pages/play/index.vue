@@ -16,6 +16,15 @@
       </NuxtLink>
 
       <div class="flex items-center gap-3">
+        <!-- Vào album sticker: chỉ icon, chữ ở aria-label (`BR-STK-06`). -->
+        <NuxtLink
+          aria-label="Album sticker của bé"
+          class="min-h-16 min-w-16 rounded-2xl bg-white border-[3px] border-brand-300 shadow-[0_4px_0_var(--color-brand-300)] active:shadow-[0_1px_0_var(--color-brand-300)] active:translate-y-0.5 flex items-center justify-center transition-all"
+          data-testid="kid-sticker-album-link"
+          to="/play/stickers"
+        >
+          <UIcon class="w-8 h-8 text-brand-600" name="i-lucide-sticker" />
+        </NuxtLink>
         <img
           alt="Gấu Con MindKid"
           class="w-14 h-14 object-contain animate-bounce"

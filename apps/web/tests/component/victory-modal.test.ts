@@ -132,4 +132,30 @@ describe("KidVictoryModal", () => {
     expect(wrapper.text()).not.toContain("🐻");
     expect(wrapper.find("canvas.kid-mascot").exists()).toBe(true);
   });
+
+  it("BR-STK-08: có sticker thì hiện emoji lớn, tên chỉ ở aria-label", () => {
+    const wrapper = mount(VictoryModal, {
+      props: {
+        show: true,
+        stars: 3,
+        sticker: { emoji: "🐮", label: "Bò sữa" },
+      },
+    });
+
+    const sticker = wrapper.get('[data-testid="victory-sticker"]');
+    expect(sticker.text().trim()).toBe("🐮");
+    expect(sticker.attributes("aria-label")).toContain("Bò sữa");
+    expect(wrapper.text()).not.toContain("Bò sữa");
+    expect(wrapper.findAll("button")).toHaveLength(2);
+  });
+
+  it("Ca âm BR-STK-08: không truyền sticker (màn tổng kết level) thì không có ô sticker", () => {
+    const wrapper = mount(VictoryModal, {
+      props: { show: true, stars: 3 },
+    });
+
+    expect(wrapper.find('[data-testid="victory-sticker"]').exists()).toBe(
+      false
+    );
+  });
 });
