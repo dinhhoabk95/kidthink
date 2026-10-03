@@ -131,5 +131,5 @@ của S0 — không file nào đổi trạng thái ngoài file của lát.
 ## Đóng task
 
 - [ ] Diff danh sách test đỏ với baseline S0 — chỉ file của #277 đổi trạng thái
-- [ ] Mở task con cho GT-002 và cho từng nhóm engine ở plan mục 5
+- [x] Mở task con cho GT-002 và cho từng nhóm engine ở plan mục 5 → [#283](283-remaining-engines-zones-todo.md) (2026-10-03)
 - [ ] Spec đổi `status` sang `implemented` chỉ khi mọi scenario mục 9 có test xanh — nếu chưa, giữ `approved`
