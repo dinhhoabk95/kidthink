@@ -2,7 +2,6 @@ import {
   activities,
   childProfiles,
   gameLevels,
-  gameTemplates,
   getAppDb,
   lessonActivities,
   lessonRuns,
@@ -289,24 +288,7 @@ describe("Task #95 — Lesson Session Runner (BR-LSR-01..16)", () => {
 
   it("Scenario 8 & WP167.4: Resolves digital_game activity refId to gameLevelCode", async () => {
     // 1. Create a game template & game level
-    let [template] = await db
-      .select()
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, "GT-001"));
-    if (!template) {
-      const [t] = await db
-        .insert(gameTemplates)
-        .values({
-          code: "GT-001",
-          name: "Tap Select",
-          engineSession: "GT-001",
-          mechanic: "tap_select",
-          status: "active",
-        })
-        .returning();
-      template = t;
-    }
-
+    // Level trỏ mẫu engine qua `templateCode` (không còn bảng game_templates)
     const testGameLevelCode = "GL-C1-CNT-NUM-0001";
     const [level] = await db
       .insert(gameLevels)
@@ -315,7 +297,7 @@ describe("Task #95 — Lesson Session Runner (BR-LSR-01..16)", () => {
         code: testGameLevelCode,
         title: "Test Digital Game Level",
         contentVersion: 1,
-        templateId: template.id,
+        templateCode: "GT-001",
         status: "published",
         accessTier: "free",
         instruction: "Chơi thử",
@@ -348,7 +330,7 @@ describe("Task #95 — Lesson Session Runner (BR-LSR-01..16)", () => {
     // 3. Link activity to test lesson
     await db.insert(lessonActivities).values({
       lessonId: testLessonId,
-      activityId: act.id,
+      activityId: act.entityId,
       position: 1,
       isRequired: true,
     });
@@ -369,7 +351,7 @@ describe("Task #95 — Lesson Session Runner (BR-LSR-01..16)", () => {
     await db.delete(lessonRuns).where(eq(lessonRuns.uuid, result.runUuid));
     await db
       .delete(lessonActivities)
-      .where(eq(lessonActivities.activityId, act.id));
+      .where(eq(lessonActivities.activityId, act.entityId));
     await db.delete(activities).where(eq(activities.id, act.id));
     await db.delete(gameLevels).where(eq(gameLevels.id, level.id));
   });

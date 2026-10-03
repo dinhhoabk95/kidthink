@@ -176,7 +176,13 @@ async function createStepsForRun(
       activity: activities,
     })
     .from(lessonActivities)
-    .leftJoin(activities, eq(lessonActivities.activityId, activities.id))
+    .leftJoin(
+      activities,
+      and(
+        eq(activities.entityId, lessonActivities.activityId),
+        eq(activities.status, "published")
+      )
+    )
     .where(eq(lessonActivities.lessonId, lessonId));
 
   const sortedActivities = [...lActivities].sort(

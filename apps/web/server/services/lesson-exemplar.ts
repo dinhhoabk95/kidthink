@@ -104,7 +104,13 @@ async function checkActivityBalance(lessonId: number): Promise<boolean> {
       kind: activities.kind,
     })
     .from(lessonActivities)
-    .innerJoin(activities, eq(lessonActivities.activityId, activities.id))
+    .innerJoin(
+      activities,
+      and(
+        eq(activities.entityId, lessonActivities.activityId),
+        eq(activities.status, "published")
+      )
+    )
     .where(eq(lessonActivities.lessonId, lessonId));
 
   let hasDigitalGame = false;

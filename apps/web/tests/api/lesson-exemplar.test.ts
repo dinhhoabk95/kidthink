@@ -24,6 +24,7 @@ describe("Task #96 — Lesson Exemplar Set (BR-LEX-01..11)", () => {
   let sampleLessonId: number;
   let offScreenActId: number;
   let digitalGameActId: number;
+  let digitalGameEntityId: number;
 
   let actCounter = Math.floor(Math.random() * 5000) + 1000;
   let lesCounter = Math.floor(Math.random() * 5000) + 1000;
@@ -190,6 +191,7 @@ describe("Task #96 — Lesson Exemplar Set (BR-LEX-01..11)", () => {
       instruction: "Chạm vào các hình đúng số lượng",
     });
     digitalGameActId = digAct.id;
+    digitalGameEntityId = digAct.entityId;
 
     // 4. Create standard published free human lesson
     const lesson = await insertTestLesson({
@@ -201,13 +203,13 @@ describe("Task #96 — Lesson Exemplar Set (BR-LEX-01..11)", () => {
     await db.insert(lessonActivities).values([
       {
         lessonId: sampleLessonId,
-        activityId: offScreenActId,
+        activityId: offAct.entityId,
         position: 1,
         isRequired: true,
       },
       {
         lessonId: sampleLessonId,
-        activityId: digitalGameActId,
+        activityId: digAct.entityId,
         position: 2,
         isRequired: true,
       },
@@ -321,7 +323,7 @@ describe("Task #96 — Lesson Exemplar Set (BR-LEX-01..11)", () => {
     // Link only digital game
     await db.insert(lessonActivities).values({
       lessonId: unbalancedLesson.id,
-      activityId: digitalGameActId,
+      activityId: digitalGameEntityId,
       position: 1,
       isRequired: true,
     });

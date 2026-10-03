@@ -266,7 +266,13 @@ async function copyFromSourceLesson(
       position: lessonActivities.position,
     })
     .from(lessonActivities)
-    .innerJoin(activities, eq(lessonActivities.activityId, activities.id))
+    .innerJoin(
+      activities,
+      and(
+        eq(activities.entityId, lessonActivities.activityId),
+        eq(activities.status, "published")
+      )
+    )
     .where(
       and(
         eq(lessonActivities.lessonId, sourceLesson.id),

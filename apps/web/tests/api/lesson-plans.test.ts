@@ -2,7 +2,6 @@ import {
   activities,
   entitlementKeys,
   entitlements,
-  gameTemplates,
   getOwnerDb,
   lessonActivities,
   lessonPlanItems,
@@ -68,7 +67,6 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
   const db = getOwnerDb();
   let user1Id: number;
   let user2Id: number;
-  let _templateId: number;
   let publishedLessonCode: string;
   let publishedActCode: string;
   let premiumActCode: string;
@@ -197,23 +195,6 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
     ]);
     await invalidateUserEntitlementsCache(user1Id);
     await invalidateUserEntitlementsCache(user2Id); // Template
-    let [tmpl] = await db
-      .select({ id: gameTemplates.id })
-      .from(gameTemplates)
-      .limit(1);
-    if (!tmpl) {
-      [tmpl] = await db
-        .insert(gameTemplates)
-        .values({
-          code: "GT-001",
-          name: "Đếm số",
-          mechanic: "tap_target",
-          domain: "c1",
-          contentContract: {},
-        })
-        .returning({ id: gameTemplates.id });
-    }
-    _templateId = tmpl.id;
 
     const makeLessonCode = async () => {
       for (let attempt = 0; attempt < 50; attempt++) {
@@ -302,7 +283,7 @@ describe("Task P4.1 — Lesson Plan Creator API (BR-LPC-01..09, D-P4A..D-P4D)", 
     await db.insert(lessonActivities).values({
       lessonId: lesson.id,
       position: 0,
-      activityId: act1.id,
+      activityId: act1.entityId,
       isRequired: true,
     });
   });
