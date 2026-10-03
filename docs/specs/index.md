@@ -204,6 +204,8 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [lesson-model](05-content/lesson-model.md) | P3 | Cung bậc, ≥1 hoạt động ngoài màn hình |
 | [activity-model](05-content/activity-model.md) | P3 | Đứng độc lập, danh sách an toàn |
 | [curriculum-model](05-content/curriculum-model.md) | P3 | Thứ tự prerequisite, cân bằng |
+| **[learning-roadmap-model](05-content/learning-roadmap-model.md)** | P4 | Lộ trình theo lứa tuổi là nguồn cầu; sổ cầu nội dung; cấm gán tiết bằng phép chia lấy dư |
+| **[lesson-topic-composition](05-content/lesson-topic-composition.md)** | P4 | Một bài nhiều chủ đề, mỗi chủ đề ≥2 khuôn lấy từ ma trận tương hợp |
 | [worksheet-model](05-content/worksheet-model.md) | P4 | Ngoài MVP |
 | [engine-content-depth](05-content/engine-content-depth.md) | P4 | Sàn level mỗi engine, bậc thang 4 mức |
 | [content-theme-registry](05-content/content-theme-registry.md) | P4 | Trục theme đóng, trần tập trung chủ đề |
