@@ -2,7 +2,7 @@
 spec: PLAY-STAGE-ZONES
 title: Bàn chơi năm vùng — bố cục chung của mọi game engine trên bề mặt trẻ
 area: platform
-status: draft
+status: approved
 mvp: true
 phase: P4
 reviewed: 2026-09-25

@@ -14,7 +14,7 @@ Lệnh kiểm (chạy qua `rtk proxy`):
 - [x] `04-play/sticker-album.md` mới, `BR-STK-01..08`
 - [x] `index.md` (04-play 20, tổng 196), prefix `BR-STK` ở `business-rules.md`
 - [x] §7.5 ở `feedback-and-celebration.md`, mục Boundaries của `child-lesson-flow.md`
-- [ ] Người đặt việc duyệt, đổi `status: draft` sang `approved`
+- [x] Người đặt việc duyệt, đổi `status: draft` sang `approved` (2026-10-03)
 
 ## S1 — DB
 

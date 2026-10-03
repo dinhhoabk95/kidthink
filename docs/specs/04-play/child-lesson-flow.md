@@ -2,7 +2,7 @@
 spec: CHILD-LESSON-FLOW
 title: Trẻ tự học một bài — làm quen, chuỗi trò chơi, phần thưởng
 area: play
-status: draft
+status: approved
 mvp: false
 phase: P4
 reviewed: 2026-10-03

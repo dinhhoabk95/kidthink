@@ -12,7 +12,7 @@ Lệnh kiểm (chạy qua `rtk proxy`):
 
 - [x] `04-play/child-lesson-flow.md` mới, `BR-CLF-01..08`
 - [x] `index.md`, prefix `BR-CLF` ở `business-rules.md`, liên kết từ `lesson-flow-model.md`
-- [ ] Người đặt việc duyệt, đổi `status: draft` sang `approved`
+- [x] Người đặt việc duyệt, đổi `status: draft` sang `approved` (2026-10-03)
 
 ## S1 — Dữ liệu
 

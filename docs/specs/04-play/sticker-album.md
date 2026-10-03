@@ -2,7 +2,7 @@
 spec: STICKER-ALBUM
 title: Album sticker — phần thưởng sưu tập khi trẻ học xong một bài
 area: play
-status: draft
+status: approved
 mvp: false
 phase: P4
 reviewed: 2026-10-03

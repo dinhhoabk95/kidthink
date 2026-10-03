@@ -19,7 +19,7 @@ của S0 — không file nào đổi trạng thái ngoài file của lát.
 - [x] Liên kết từ [`game-layout-engine.md`](../specs/01-platform/game-layout-engine.md) mục 1 và
       [`engine-render-contract.md`](../specs/01-platform/engine-render-contract.md) mục 1, mục 10
 - [x] [`index.md`](../specs/index.md) số đếm và hàng; [`business-rules.md`](../specs/00-foundation/business-rules.md) mục 7.1 prefix `BR-PSZ`
-- [ ] Người đặt việc duyệt spec, đổi `status: draft` sang `approved`
+- [x] Người đặt việc duyệt spec, đổi `status: draft` sang `approved` (2026-10-03)
 
 ## S0 — Phép đo mở đầu · S · phụ thuộc: không
 
