@@ -13,7 +13,7 @@ const QuerySchema = z.object({
     .int()
     .min(1, "limit phải là số nguyên từ 1 đến 12.")
     .max(MAX_LIMIT, "limit phải là số nguyên từ 1 đến 12.")
-    .default(DEFAULT_LIMIT),
+    .optional(),
 });
 
 /** Bài gợi ý cho sảnh trẻ — `child-lesson-flow.md` §8, `BR-CLF-07`. */
@@ -31,7 +31,7 @@ export default defineApiRoute({
     return await listLessonsForChild(db, {
       childId: child.id,
       birthYear: child.birthYear,
-      limit: query.limit,
+      limit: query.limit ?? DEFAULT_LIMIT,
     });
   },
 });
