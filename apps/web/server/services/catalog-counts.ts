@@ -7,7 +7,7 @@ import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
  *
  * Trang chủ từng in số cứng (24 · 48 · 48 cho ba band, "120+" cho thư viện)
  * trong khi DB có 239 level published chia 60 · 84 · 95. Người lớn bấm vào
- * "Xem 48 trò chơi" rồi thấy một con số khác — mọi số trên bề mặt công khai
+ * một nút "Xem N trò chơi" rồi thấy con số khác — mọi số trên bề mặt công khai
  * phải đi qua hàm này.
  *
  * Chỉ đếm `status = 'published'`: đó là tập mà `GAME-CATALOG-PUBLIC` §BR-GCP-06

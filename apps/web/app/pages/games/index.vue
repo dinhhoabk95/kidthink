@@ -9,7 +9,7 @@
           <div class="header-content">
             <div class="header-badge">
               <UIcon class="w-4 h-4 text-brand-600" name="i-lucide-sparkles" />
-              <span>Thư viện 565+ trò chơi tương tác</span>
+              <span>Thư viện {{ totalCount }} trò chơi tương tác</span>
             </div>
             <h1 class="catalog-title">Thư viện trò chơi tư duy</h1>
             <p class="catalog-subtitle">
@@ -761,8 +761,8 @@
 
   useSeoMeta({
     title: "Thư viện trò chơi tư duy cho bé 3–6 tuổi — MindKid",
-    description:
-      "Duyệt danh mục 565+ trò chơi phát triển tư duy cho trẻ mầm non. Lọc theo 6 nhóm năng lực, mạch kỹ năng, độ tuổi 3–6 và độ khó.",
+    description: () =>
+      `Duyệt danh mục ${totalCount.value} trò chơi phát triển tư duy cho trẻ mầm non. Lọc theo 6 nhóm năng lực, mạch kỹ năng, độ tuổi 3–6 và độ khó.`,
     ogTitle: "Thư viện trò chơi tư duy cho bé 3–6 tuổi — MindKid",
     ogDescription:
       "Danh mục trò chơi tư duy tương tác mầm non phân theo 6 nhóm năng lực và mạch kỹ năng chuẩn sư phạm.",
