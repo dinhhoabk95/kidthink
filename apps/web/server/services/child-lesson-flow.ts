@@ -101,8 +101,16 @@ async function findLessonGameLevels(
   const rows = await db
     .select({ level: gameLevels })
     .from(lessonActivities)
-    .innerJoin(activities, eq(activities.id, lessonActivities.activityId))
-    // `activities.ref_id` trỏ khoá thực thể đa version của level, không trỏ id hàng.
+    // `lesson_activities.activity_id` và `activities.ref_id` đều trỏ khoá thực thể
+    // đa version (`entity_id`), không trỏ id hàng — `schema-content-taxonomy.md`
+    // §7, `D-AE`. Mỗi neo lấy bản `published` mới nhất.
+    .innerJoin(
+      activities,
+      and(
+        eq(activities.entityId, lessonActivities.activityId),
+        eq(activities.status, "published")
+      )
+    )
     .innerJoin(gameLevels, eq(gameLevels.entityId, activities.refId))
     .where(
       and(

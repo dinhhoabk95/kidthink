@@ -167,8 +167,11 @@ async function createLessonFixture(): Promise<LessonFixture> {
     throw new Error("Không tạo được hoạt động");
   }
   await db.insert(lessonActivities).values([
-    { lessonId: lesson.id, activityId: actA.id, position: 2 },
-    { lessonId: lesson.id, activityId: actB.id, position: 1 },
+    // Như seed thật: pivot trỏ `activities.entity_id`, không trỏ `id`
+    // (`schema-content-taxonomy.md` §7) — QA trình duyệt 2026-10-03 bắt lỗi
+    // service join `id` mà fixture cũ dùng `id` nên test vẫn xanh.
+    { lessonId: lesson.id, activityId: actA.entityId, position: 2 },
+    { lessonId: lesson.id, activityId: actB.entityId, position: 1 },
   ]);
 
   return {

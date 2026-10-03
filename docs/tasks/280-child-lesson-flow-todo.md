@@ -50,5 +50,12 @@ Lệnh kiểm (chạy qua `rtk proxy`):
 
 ## Checkpoint — trình duyệt thật
 
+QA trình duyệt 2026-10-03 ([`docs/qa/engine-captures/2026-10-03/`](../qa/engine-captures/2026-10-03/README.md)) cho kết quả:
+- Mọi bài seed đều trả 404, vì service join `lesson_activities.activity_id` với `activities.id`. Spec `schema-content-taxonomy.md` §7 chốt cột này trỏ `entity_id`.
+- Fixture cũ cũng dùng `id`, nên test vẫn xanh.
+- Đã sửa cả service lẫn fixture: fixture giờ trỏ `entity_id` như seed. Sau sửa, cả 126 bài seed đều ra 2 level.
+- `lesson-plan.ts`, `lesson-session-runner.ts`, `lesson-exemplar.ts` vẫn join `activities.id`. Đây là nợ có từ trước, ngoài phạm vi task này.
+
+
 - [ ] Chơi trọn một bài band 3–4: làm quen → các level → màn thưởng có tiếng
 - [ ] Thoát giữa chừng qua khoá phụ huynh, vào lại thì tiếp đúng bước
