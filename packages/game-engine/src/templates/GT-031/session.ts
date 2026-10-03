@@ -13,7 +13,15 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
+import { insetDrawSize } from "#src/layout/slot-fit";
+import {
+  computeStageTargetSlot,
+  computeTraySourceSlots,
+  findNearestHitSlot,
+  pickTrayZones,
+} from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
   drawPromptText,
@@ -29,6 +37,13 @@ import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT031Content, GT031Difficulty } from "./template.js";
 
+/** Cạnh lớn nhất của thẻ giá / lợn đất giữa sân khấu. */
+const PAYMENT_TARGET_MAX_PX = 160;
+/** Đệm hai bên thẻ giá trong sân khấu. */
+const PAYMENT_TARGET_PAD_PX = 32;
+
+const DROP_HIT_TOLERANCE_PX = 24;
+
 interface GT031ActionPayload {
   readonly coin_id?: string;
   readonly id?: string;
@@ -38,6 +53,9 @@ export class GT031Session extends TemplateGameSession<
   GT031Content,
   GT031Difficulty
 > {
+  override readonly needsTray = true;
+  override readonly usesPromptZone = true;
+
   degradation: DegradationState | null = null;
   depositedCoinIds: string[] = [];
   currentTotal = 0;
@@ -76,6 +94,28 @@ export class GT031Session extends TemplateGameSession<
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (zones) {
+      const touchFloor = resolveTouchFloor(band, this.cssPerLogic);
+      const size = Math.max(
+        touchFloor,
+        Math.floor(
+          Math.min(
+            PAYMENT_TARGET_MAX_PX,
+            zones.stage.w - PAYMENT_TARGET_PAD_PX,
+            zones.stage.h - PAYMENT_TARGET_PAD_PX
+          )
+        )
+      );
+      const target = computeStageTargetSlot(zones.stage, size, touchFloor, 0);
+      const coins = computeTraySourceSlots(
+        this.content.coins.length,
+        zones.tray,
+        touchFloor,
+        1
+      );
+      return insetDrawSize([target, ...coins], zones.stage);
+    }
     const layoutFn = resolveLayout("multi-bucket-bottom");
     return layoutFn({
       slotCount: this.content.coins.length,
@@ -240,38 +280,57 @@ export class GT031Session extends TemplateGameSession<
     }
   }
 
+  /** Kéo xu từ khay thả vào thẻ giá (`BR-ENG-06`). */
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>
+  ): GameAction | null {
+    const target = this.slots[0];
+    if (!(target && this.isOnSlot(target, gesture.toX, gesture.toY))) {
+      return null;
+    }
+    const index = this.content.coins.findIndex((coin, i) => {
+      const slot = this.slots[1 + i];
+      return (
+        slot !== undefined &&
+        !this.depositedCoinIds.includes(coin.coin_id) &&
+        this.isOnSlot(slot, gesture.fromX, gesture.fromY)
+      );
+    });
+    const coin = this.content.coins[index];
+    return coin
+      ? { type: "deposit_coin", data: { coin_id: coin.coin_id } }
+      : null;
+  }
+
+  private isOnSlot(slot: Slot, x: number, y: number): boolean {
+    const hw = (slot.hitW ?? slot.w) / 2 + DROP_HIT_TOLERANCE_PX;
+    const hh = (slot.hitH ?? slot.h) / 2 + DROP_HIT_TOLERANCE_PX;
+    return Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh;
+  }
+
   override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "drop") {
+      return this.toDropAction(gesture);
+    }
     if (gesture.type !== "tap") {
       return null;
     }
 
-    const hitTolerance = 24;
-    for (let i = 0; i < this.content.coins.length; i++) {
-      const coin = this.content.coins[i];
-      const slot = this.slots[1 + i];
-      if (!(coin && slot)) {
-        continue;
-      }
-      const hw = (slot.hitW ?? slot.w) / 2 + hitTolerance;
-      const hh = (slot.hitH ?? slot.h) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.x - slot.x) <= hw &&
-        Math.abs(gesture.y - slot.y) <= hh
-      ) {
-        if (this.depositedCoinIds.includes(coin.coin_id)) {
-          return {
-            type: "remove_coin",
-            data: { coin_id: coin.coin_id },
-          };
-        }
-        return {
-          type: "deposit_coin",
-          data: { coin_id: coin.coin_id },
-        };
-      }
+    const coinSlots = this.slots.slice(1, 1 + this.content.coins.length);
+    const index = findNearestHitSlot(
+      coinSlots,
+      gesture.x,
+      gesture.y,
+      DROP_HIT_TOLERANCE_PX
+    );
+    const coin = this.content.coins[index];
+    if (!coin) {
+      return null;
     }
-
-    return null;
+    if (this.depositedCoinIds.includes(coin.coin_id)) {
+      return { type: "remove_coin", data: { coin_id: coin.coin_id } };
+    }
+    return { type: "deposit_coin", data: { coin_id: coin.coin_id } };
   }
 
   override getView(): EngineView {
@@ -371,7 +430,11 @@ export class GT031Session extends TemplateGameSession<
   }
 
   private renderCoins(ctx: CanvasRenderingContext2D, rs: RenderSystem): void {
-    drawWoodenTokenDock(ctx, rs);
+    drawWoodenTokenDock(
+      ctx,
+      rs,
+      pickTrayZones(this.stageRect, this.trayRect)?.tray
+    );
 
     for (let i = 0; i < this.content.coins.length; i++) {
       const coin = this.content.coins[i];
@@ -401,19 +464,28 @@ export class GT031Session extends TemplateGameSession<
     }
   }
 
+  private drawLegacySubPrompt(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem
+  ): void {
+    const subPrompt =
+      this.currentTotal === this.content.target_amount
+        ? `Chính xác! Đã trả đủ ${this.content.target_amount} đồng.`
+        : `Đã trả: ${this.currentTotal}/${this.content.target_amount} đồng`;
+    drawSubPromptText(ctx, rs, subPrompt);
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-
-    const subPrompt =
-      this.currentTotal === this.content.target_amount
-        ? `Chính xác! Đã trả đủ ${this.content.target_amount} đồng.`
-        : `Đã trả: ${this.currentTotal}/${this.content.target_amount} đồng`;
-    drawSubPromptText(ctx, rs, subPrompt);
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (!zones) {
+      drawPromptText(ctx, rs, this.content.prompt);
+      this.drawLegacySubPrompt(ctx, rs);
+    }
 
     this.renderTargetArea(ctx, rs);
     this.renderCoins(ctx, rs);

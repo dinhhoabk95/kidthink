@@ -107,9 +107,11 @@ Ghi chú đo của N (2026-10-03):
 
 ## B6 — Xây, đo, đong lường · M · phụ thuộc: B3, B5
 
-- [ ] Quyết `needsCommit` của GT-030, 031, 033 theo phiếu engine; ghi vào spec
-- [ ] RED: ba engine — vật ở khay, một nút ở `zones.action` nếu có, không nút xoá
-- [ ] `ALL_SEED_LEVELS` ba engine chạy lại
+- [x] Quyết `needsCommit=false` cho GT-030 (chạm đáp án là chốt), GT-031 (thắng khi tổng đủ, `exact_change` chưa có đường commit — nợ riêng), GT-033 (ô cuối đúng thì thắng); ghi ở mục 4 N3 của ba phiếu
+- [x] RED: ba engine — nguồn ở `zones.tray`, đích ở `zones.stage`, không nút ở `zones.action`, không nút xoá (`stage-engines-b6.test.ts`, 31 test; ca âm bố cục cũ `fixtures/b6-legacy-layout.ts` đỏ)
+- [x] `ALL_SEED_LEVELS` ba engine chạy lại: kéo, chạm-chạm và đổi viewport giữa vòng chơi hết vòng ở ba khung
+- Nợ đo mới (`KNOWN_LAYOUT_DEBT_CASES` ở `stage-engines-b6.test.ts`, chỉ được giảm): GT-030 portrait 6 · ngang 43 · máy tính 43 (dải đặt + đáp án cao hơn sân khấu; dải đặt 10 ô phải xuống hàng nên mất tỉ lệ vật đo/dải); GT-031 portrait 49 · ngang 14 (khay một hàng chứa 3–4 xu, cùng nợ B3); GT-033 ngang 22 · máy tính 5 (lưới 4×4, 5×5 cao hơn sân khấu). `KNOWN_HIT_GAP_DEBT_CASES` GT-031: 14.
+- Thêm: GT-030/031/033 nhận gesture `drop` (kéo từ khay) và chọn theo tâm gần nhất khi vùng chạm chồng; GT-033 `getHintTargetIndex` trỏ ô trống đầu khi level không có `solution`.
 
 ## B7 — GT-000 · M · phụ thuộc: B2
 

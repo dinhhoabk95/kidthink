@@ -377,6 +377,9 @@ const KNOWN_HIT_GAP_DEBT_CASES: Readonly<Record<string, number>> = {
   // `stage-engines-b3.test.ts`.
   "GT-004": 320,
   "GT-008": 4,
+  // Task #283 B6 — GT-031 có tới 4+ xu trong khay một hàng portrait; chi tiết
+  // theo khung ở `stage-engines-b6.test.ts`.
+  "GT-031": 14,
 };
 
 /** Vùng sân khấu và khay (nếu có) — slot hợp lệ nằm trọn trong một trong hai. */

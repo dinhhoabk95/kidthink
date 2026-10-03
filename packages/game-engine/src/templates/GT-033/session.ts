@@ -8,7 +8,15 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
+import { insetDrawSize } from "#src/layout/slot-fit";
+import { computeStageCellSlots } from "#src/layout/stage-targets";
+import {
+  computeTraySourceSlots,
+  findNearestHitSlot,
+  pickTrayZones,
+} from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
   drawPromptText,
@@ -28,6 +36,11 @@ import type {
   GT033PaletteItem,
 } from "./template.js";
 
+const HIT_TOLERANCE_PX = 24;
+
+/** Cạnh ô dệt lớn nhất trong sân khấu. */
+const WEAVE_CELL_MAX_PX = 68;
+
 interface GT033ActionPayload {
   readonly color_id?: string;
   readonly id?: string;
@@ -40,6 +53,9 @@ export class GT033Session extends TemplateGameSession<
   GT033Content,
   GT033Difficulty
 > {
+  override readonly needsTray = true;
+  override readonly usesPromptZone = true;
+
   degradation: DegradationState | null = null;
   placedCells: (string | null)[] = [];
   selectedColorId: string | null = null;
@@ -75,7 +91,8 @@ export class GT033Session extends TemplateGameSession<
     const totalCells = this.content.grid.rows * this.content.grid.cols;
     const solution = this.content.solution;
     if (!solution) {
-      return null;
+      const blank = this.placedCells.indexOf(null);
+      return blank >= 0 ? blank : null;
     }
     for (let i = 0; i < totalCells; i++) {
       if (this.placedCells[i] !== solution[i]) {
@@ -96,6 +113,25 @@ export class GT033Session extends TemplateGameSession<
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
     const totalCells = this.content.grid.rows * this.content.grid.cols;
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (zones) {
+      const touchFloor = resolveTouchFloor(band, this.cssPerLogic);
+      const cells = computeStageCellSlots({
+        count: totalCells,
+        cols: this.content.grid.cols,
+        stage: zones.stage,
+        touchFloor,
+        maxCell: { w: WEAVE_CELL_MAX_PX, h: WEAVE_CELL_MAX_PX },
+        role: "target",
+      });
+      const palette = computeTraySourceSlots(
+        this.content.palette.length,
+        zones.tray,
+        touchFloor,
+        totalCells
+      );
+      return insetDrawSize([...cells, ...palette], zones.stage);
+    }
     const layoutFn = resolveLayout("weave-grid");
     return layoutFn({
       slotCount: this.content.palette.length,
@@ -337,96 +373,125 @@ export class GT033Session extends TemplateGameSession<
     }
   }
 
+  /** Chỉ số palette (hoặc ô) có tâm gần điểm chạm nhất (`BR-ENG-06`). */
+  private nearestIndex(
+    slots: readonly Slot[],
+    x: number,
+    y: number
+  ): number | null {
+    const index = findNearestHitSlot(slots, x, y, HIT_TOLERANCE_PX);
+    return index < 0 ? null : index;
+  }
+
   private findTappedPalette(
     gx: number,
     gy: number,
-    tolerance: number,
     totalCells: number
   ): GT033PaletteItem | null {
-    for (let p = 0; p < this.content.palette.length; p++) {
-      const item = this.content.palette[p];
-      const slot = this.slots[totalCells + p];
-      if (!(item && slot)) {
-        continue;
-      }
-      const hw = (slot.hitW ?? slot.w) / 2 + tolerance;
-      const hh = (slot.hitH ?? slot.h) / 2 + tolerance;
-      if (Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh) {
-        return item;
-      }
-    }
-    return null;
+    const slots = this.slots.slice(
+      totalCells,
+      totalCells + this.content.palette.length
+    );
+    const index = this.nearestIndex(slots, gx, gy);
+    return index === null ? null : (this.content.palette[index] ?? null);
   }
 
   private findTappedCellIndex(
     gx: number,
     gy: number,
-    tolerance: number,
     totalCells: number
   ): number | null {
-    for (let i = 0; i < totalCells; i++) {
-      const slot = this.slots[i];
-      if (!slot) {
-        continue;
-      }
-      const hw = (slot.hitW ?? slot.w) / 2 + tolerance;
-      const hh = (slot.hitH ?? slot.h) / 2 + tolerance;
-      if (Math.abs(gx - slot.x) <= hw && Math.abs(gy - slot.y) <= hh) {
-        return i;
-      }
+    const editable = this.slots
+      .slice(0, totalCells)
+      .filter((_, i) => this.content.cells[i] === null);
+    const index = this.nearestIndex(editable, gx, gy);
+    return index === null ? null : (editable[index]?.index ?? null);
+  }
+
+  /** Kéo một màu từ khay thả vào ô trống (`BR-ENG-06`). */
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>
+  ): GameAction | null {
+    const totalCells = this.content.grid.rows * this.content.grid.cols;
+    const color = this.findTappedPalette(
+      gesture.fromX,
+      gesture.fromY,
+      totalCells
+    );
+    const cell = this.findTappedCellIndex(gesture.toX, gesture.toY, totalCells);
+    if (!color || cell === null || this.content.cells[cell] !== null) {
+      return null;
     }
-    return null;
+    return {
+      type: "place_yarn",
+      data: { cell_index: cell, color_id: color.color_id },
+    };
   }
 
   override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "drop") {
+      return this.toDropAction(gesture);
+    }
     if (gesture.type !== "tap") {
       return null;
     }
 
-    const hitTolerance = 24;
     const totalCells = this.content.grid.rows * this.content.grid.cols;
-
     const paletteItem = this.findTappedPalette(
       gesture.x,
       gesture.y,
-      hitTolerance,
       totalCells
     );
+    const cellIdx = this.findTappedCellIndex(gesture.x, gesture.y, totalCells);
+    if (paletteItem && cellIdx !== null) {
+      return this.closerIsPalette(gesture, paletteItem, cellIdx, totalCells)
+        ? this.selectColorAction(paletteItem)
+        : this.cellAction(cellIdx);
+    }
     if (paletteItem) {
-      return {
-        type: "select_color",
-        data: { color_id: paletteItem.color_id },
-      };
+      return this.selectColorAction(paletteItem);
     }
+    return cellIdx === null ? null : this.cellAction(cellIdx);
+  }
 
-    const cellIdx = this.findTappedCellIndex(
-      gesture.x,
-      gesture.y,
-      hitTolerance,
-      totalCells
-    );
-    if (cellIdx !== null) {
-      if (this.content.cells[cellIdx] !== null) {
-        return null;
-      }
-      if (
-        this.placedCells[cellIdx] !== null &&
-        this.placedCells[cellIdx] === this.selectedColorId
-      ) {
-        return {
-          type: "remove_yarn",
-          data: { cell_index: cellIdx },
-        };
-      }
-      if (this.selectedColorId) {
-        return {
-          type: "place_yarn",
-          data: { cell_index: cellIdx, color_id: this.selectedColorId },
-        };
-      }
+  private selectColorAction(item: GT033PaletteItem): GameAction {
+    return { type: "select_color", data: { color_id: item.color_id } };
+  }
+
+  private closerIsPalette(
+    gesture: Extract<Gesture, { type: "tap" }>,
+    item: GT033PaletteItem,
+    cellIdx: number,
+    totalCells: number
+  ): boolean {
+    const paletteSlot =
+      this.slots[totalCells + this.content.palette.indexOf(item)];
+    const cellSlot = this.slots[cellIdx];
+    if (!(paletteSlot && cellSlot)) {
+      return Boolean(paletteSlot);
     }
+    const distance = (slot: Slot): number =>
+      Math.hypot(gesture.x - slot.x, gesture.y - slot.y);
+    return distance(paletteSlot) <= distance(cellSlot);
+  }
 
-    return null;
+  private cellAction(cellIdx: number): GameAction | null {
+    if (this.content.cells[cellIdx] !== null) {
+      return null;
+    }
+    if (
+      this.placedCells[cellIdx] !== null &&
+      this.placedCells[cellIdx] === this.selectedColorId
+    ) {
+      return { type: "remove_yarn", data: { cell_index: cellIdx } };
+    }
+    if (!this.selectedColorId) {
+      return null;
+    }
+    return {
+      type: "place_yarn",
+      data: { cell_index: cellIdx, color_id: this.selectedColorId },
+    };
   }
 
   override getView(): EngineView {
@@ -528,7 +593,11 @@ export class GT033Session extends TemplateGameSession<
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem
   ): void {
-    drawWoodenTokenDock(ctx, rs);
+    drawWoodenTokenDock(
+      ctx,
+      rs,
+      pickTrayZones(this.stageRect, this.trayRect)?.tray
+    );
     const totalCells = this.content.grid.rows * this.content.grid.cols;
 
     for (let p = 0; p < this.content.palette.length; p++) {
@@ -552,18 +621,27 @@ export class GT033Session extends TemplateGameSession<
     }
   }
 
+  private drawLegacySubPrompt(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem
+  ): void {
+    const subPrompt = this.isWin
+      ? "Tuyệt vời! Tấm thảm hoa văn đã hoàn thành!"
+      : "Chọn sợi màu và dệt vào ô trống nhé";
+    drawSubPromptText(ctx, rs, subPrompt);
+  }
+
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-
-    const subPrompt = this.isWin
-      ? "Tuyệt vời! Tấm thảm hoa văn đã hoàn thành!"
-      : "Chọn sợi màu và dệt vào ô trống nhé";
-    drawSubPromptText(ctx, rs, subPrompt);
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (!zones) {
+      drawPromptText(ctx, rs, this.content.prompt);
+      this.drawLegacySubPrompt(ctx, rs);
+    }
 
     this.renderGridCells(ctx, rs);
     this.renderPaletteDock(ctx, rs);

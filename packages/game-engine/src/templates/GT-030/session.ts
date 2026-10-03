@@ -13,7 +13,10 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
+import { insetDrawSize } from "#src/layout/slot-fit";
+import { findNearestHitSlot, pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
   drawNumberRodAcrossSlots,
@@ -29,6 +32,9 @@ import {
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT030Content, GT030Difficulty } from "./template.js";
+import { computeMeasureStageSlots } from "./zone-layout.js";
+
+const DROP_HIT_TOLERANCE_PX = 24;
 
 interface GT030ActionPayload {
   readonly option_id?: string;
@@ -40,6 +46,9 @@ export class GT030Session extends TemplateGameSession<
   GT030Content,
   GT030Difficulty
 > {
+  override readonly needsTray = true;
+  override readonly usesPromptZone = true;
+
   degradation: DegradationState | null = null;
   placedUnitsCount = 0;
   selectedOptionId: string | null = null;
@@ -77,6 +86,19 @@ export class GT030Session extends TemplateGameSession<
   }
 
   protected computeSlots(band: AgeBand): readonly Slot[] {
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (zones) {
+      return insetDrawSize(
+        computeMeasureStageSlots({
+          unitCount: this.content.object.length_in_units,
+          optionCount: this.content.answer_options.length,
+          stage: zones.stage,
+          tray: zones.tray,
+          touchFloor: resolveTouchFloor(band, this.cssPerLogic),
+        }),
+        zones.stage
+      );
+    }
     const layoutFn = resolveLayout("measure-strip");
     return layoutFn({
       slotCount: this.content.answer_options.length,
@@ -237,111 +259,79 @@ export class GT030Session extends TemplateGameSession<
     }
   }
 
-  private findTappedOption(
-    gesture: Extract<Gesture, { type: "tap" }>
-  ): GameAction | null {
+  /**
+   * Mọi đích chạm của lượt này, kèm hành động nó gửi. Chọn theo tâm gần nhất:
+   * ở khung thấp các vùng chạm kề nhau chồng lên nhau (`BR-ENG-06`).
+   */
+  private tapTargets(): { slot: Slot; action: GameAction }[] {
     const targetLength = this.content.object.length_in_units;
-    if (this.placedUnitsCount < targetLength) {
-      return null;
+    const targets: { slot: Slot; action: GameAction }[] = [];
+    const place: GameAction = { type: "place_unit", data: {} };
+    const source = this.slots[1 + targetLength];
+    if (source) {
+      targets.push({ slot: source, action: place });
     }
-    const hitTolerance = 24;
-    for (let i = 0; i < this.content.answer_options.length; i++) {
-      const opt = this.content.answer_options[i];
-      const slotIndex = 2 + targetLength + i;
-      const slot = this.slots[slotIndex];
-      if (!(opt && slot)) {
-        continue;
-      }
-      const hw = (slot.hitW ?? slot.w) / 2 + hitTolerance;
-      const hh = (slot.hitH ?? slot.h) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.x - slot.x) <= hw &&
-        Math.abs(gesture.y - slot.y) <= hh
-      ) {
-        return {
-          type: "select_option",
-          data: { option_id: opt.option_id, value: opt.value },
-        };
-      }
+    const next = this.slots[1 + this.placedUnitsCount];
+    if (this.placedUnitsCount < targetLength && next) {
+      targets.push({ slot: next, action: place });
     }
-    return null;
-  }
-
-  private findTappedPlacedUnit(
-    gesture: Extract<Gesture, { type: "tap" }>
-  ): GameAction | null {
-    const hitTolerance = 24;
     for (let i = 1; i <= this.placedUnitsCount; i++) {
       const slot = this.slots[i];
-      if (!slot) {
-        continue;
-      }
-      const hw = (slot.hitW ?? slot.w) / 2 + hitTolerance;
-      const hh = (slot.hitH ?? slot.h) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.x - slot.x) <= hw &&
-        Math.abs(gesture.y - slot.y) <= hh
-      ) {
-        return {
-          type: "remove_unit",
-          data: {},
-        };
+      if (slot) {
+        targets.push({ slot, action: { type: "remove_unit", data: {} } });
       }
     }
-    return null;
+    if (this.placedUnitsCount >= targetLength) {
+      this.content.answer_options.forEach((opt, i) => {
+        const slot = this.slots[2 + targetLength + i];
+        if (slot) {
+          targets.push({
+            slot,
+            action: {
+              type: "select_option",
+              data: { option_id: opt.option_id, value: opt.value },
+            },
+          });
+        }
+      });
+    }
+    return targets;
   }
 
-  private findTappedSourceOrTarget(
+  private toTapAction(
     gesture: Extract<Gesture, { type: "tap" }>
   ): GameAction | null {
-    const targetLength = this.content.object.length_in_units;
-    const hitTolerance = 24;
+    const targets = this.tapTargets();
+    const index = findNearestHitSlot(
+      targets.map((t) => t.slot),
+      gesture.x,
+      gesture.y,
+      DROP_HIT_TOLERANCE_PX
+    );
+    return targets[index]?.action ?? null;
+  }
 
-    const sourceSlot = this.slots[1 + targetLength];
-    if (sourceSlot) {
-      const hw = (sourceSlot.hitW ?? sourceSlot.w) / 2 + hitTolerance;
-      const hh = (sourceSlot.hitH ?? sourceSlot.h) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.x - sourceSlot.x) <= hw &&
-        Math.abs(gesture.y - sourceSlot.y) <= hh
-      ) {
-        return {
-          type: "place_unit",
-          data: {},
-        };
-      }
+  /** Kéo từ khay đơn vị lên sân khấu (`BR-ENG-06`): một lần thả là một đơn vị. */
+  private toDropAction(
+    gesture: Extract<Gesture, { type: "drop" }>
+  ): GameAction | null {
+    const source = this.slots[1 + this.content.object.length_in_units];
+    if (!source) {
+      return null;
     }
-
-    if (this.placedUnitsCount < targetLength) {
-      const nextSlot = this.slots[1 + this.placedUnitsCount];
-      if (nextSlot) {
-        const hw = (nextSlot.hitW ?? nextSlot.w) / 2 + hitTolerance;
-        const hh = (nextSlot.hitH ?? nextSlot.h) / 2 + hitTolerance;
-        if (
-          Math.abs(gesture.x - nextSlot.x) <= hw &&
-          Math.abs(gesture.y - nextSlot.y) <= hh
-        ) {
-          return {
-            type: "place_unit",
-            data: {},
-          };
-        }
-      }
-    }
-
-    return null;
+    const hw = (source.hitW ?? source.w) / 2 + DROP_HIT_TOLERANCE_PX;
+    const hh = (source.hitH ?? source.h) / 2 + DROP_HIT_TOLERANCE_PX;
+    const isFromSource =
+      Math.abs(gesture.fromX - source.x) <= hw &&
+      Math.abs(gesture.fromY - source.y) <= hh;
+    return isFromSource ? { type: "place_unit", data: {} } : null;
   }
 
   override toAction(gesture: Gesture): GameAction | null {
-    if (gesture.type !== "tap") {
-      return null;
+    if (gesture.type === "drop") {
+      return this.toDropAction(gesture);
     }
-
-    return (
-      this.findTappedOption(gesture) ??
-      this.findTappedPlacedUnit(gesture) ??
-      this.findTappedSourceOrTarget(gesture)
-    );
+    return gesture.type === "tap" ? this.toTapAction(gesture) : null;
   }
 
   private getOptionEntities(): ViewEntity[] {
@@ -544,7 +534,11 @@ export class GT030Session extends TemplateGameSession<
     rs: RenderSystem
   ): void {
     const targetLength = this.content.object.length_in_units;
-    drawWoodenTokenDock(ctx, rs);
+    drawWoodenTokenDock(
+      ctx,
+      rs,
+      pickTrayZones(this.stageRect, this.trayRect)?.tray
+    );
 
     // Source unit in tray
     const sourceSlot = this.slots[1 + targetLength];
@@ -595,20 +589,29 @@ export class GT030Session extends TemplateGameSession<
     }
   }
 
-  render(
+  private drawLegacySubPrompt(
     ctx: CanvasRenderingContext2D,
-    rs: RenderSystem,
-    _timeMs: number
+    rs: RenderSystem
   ): void {
-    drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-
     const targetLength = this.content.object.length_in_units;
     const subPrompt =
       this.placedUnitsCount < targetLength
         ? `Đã đặt: ${this.placedUnitsCount}/${targetLength} đơn vị`
         : "Đã xếp kín dải đo! Vật dài bao nhiêu đơn vị?";
     drawSubPromptText(ctx, rs, subPrompt);
+  }
+
+  render(
+    ctx: CanvasRenderingContext2D,
+    rs: RenderSystem,
+    _timeMs: number
+  ): void {
+    drawSceneBackground(ctx, rs, this.themeId);
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (!zones) {
+      drawPromptText(ctx, rs, this.content.prompt);
+      this.drawLegacySubPrompt(ctx, rs);
+    }
 
     this.renderObject(ctx, rs);
     this.renderStripUnits(ctx, rs);
