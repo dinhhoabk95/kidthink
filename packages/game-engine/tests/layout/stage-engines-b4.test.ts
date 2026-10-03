@@ -33,7 +33,7 @@ const B4_CODES = ["GT-005", "GT-006", "GT-013", "GT-020", "GT-024"] as const;
 const BAND: AgeBand = "5-6";
 const VIEWPORTS = [
   { name: "portrait 330x697", w: 330, h: 697 },
-  { name: "landscape điện thoại 784x250", w: 784, h: 250 },
+  { name: "landscape điện thoại 610x350", w: 610, h: 350 },
   { name: "desktop 964x628", w: 964, h: 628 },
 ] as const;
 /**
@@ -49,7 +49,7 @@ const KNOWN_HIT_GAP_DEBT: Readonly<
   // hơn sàn chạm của canvas thấp, không dịch được. Chỉ được giảm.
   "GT-024": {
     "desktop 964x628": 1,
-    "landscape điện thoại 784x250": 1,
+    "landscape điện thoại 610x350": 1,
     "portrait 330x697": 1,
   },
 };

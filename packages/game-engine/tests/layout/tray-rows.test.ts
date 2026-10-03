@@ -24,7 +24,7 @@ import {
  * có lời dẫn cột bên trái và khay cột bên cạnh nút hành động.
  */
 const PORTRAIT = { name: "portrait 330x697", cssW: 330, cssH: 697 };
-const PHONE = { name: "điện thoại ngang 784x250", cssW: 784, cssH: 250 };
+const PHONE = { name: "điện thoại ngang 610x350", cssW: 610, cssH: 350 };
 const DESKTOP = { name: "máy tính 964x628", cssW: 964, cssH: 628 };
 const MAX_TRAY_ITEMS = 10;
 const PURITY_RUNS = 50;

@@ -29,7 +29,7 @@ vi.mock("#src/render/shared-render", async (importOriginal) => {
 /**
  * Lô B1 của Task #283 — chạm chọn một: GT-009, 010, 011, 012, 022, 025, 029,
  * 032. Ba viewport (canvas CSS sau HUD và đệm): portrait 390x844 → 330x697,
- * điện thoại ngang 844x390 → 784x250, máy tính bảng → 964x628.
+ * điện thoại ngang 844x390 → canvas 610x350 (HUD thành cột lề), máy tính bảng → 964x628.
  */
 const B1_CODES = [
   "GT-009",
@@ -44,7 +44,7 @@ const B1_CODES = [
 
 const VIEWPORTS = [
   { name: "portrait 330x697", cssW: 330, cssH: 697 },
-  { name: "ngang 784x250", cssW: 784, cssH: 250 },
+  { name: "ngang 610x350", cssW: 610, cssH: 350 },
   { name: "tablet 964x628", cssW: 964, cssH: 628 },
 ] as const;
 
@@ -75,8 +75,9 @@ const KNOWN_STAGE_DEBT_CASES: Readonly<Record<string, number>> = {
   // Số đo sau khi khay nhiều hàng, không phân trang và cột lời dẫn bên trái
   // (`play-stage-zones.md` `BR-PSZ-13`). Còn lại là giới hạn vật lý: sàn chạm của
   // band ở canvas thấp làm số ô cần xếp lớn hơn diện tích sân khấu. Chỉ được giảm.
-  "GT-025 ngang 784x250": 3,
-  "GT-029 ngang 784x250": 7,
+  "GT-009 ngang 610x350": 21,
+  "GT-025 ngang 610x350": 3,
+  "GT-029 ngang 610x350": 32,
 };
 /** Đủ dài để pha loé của GT-012 hết và lựa chọn hiện ra. */
 const PHASE_ADVANCE_MS = 5000;

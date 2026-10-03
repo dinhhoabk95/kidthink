@@ -15,7 +15,7 @@ import { createFakeCanvas } from "../gates/fake-canvas.ts";
 const BAND: AgeBand = "5-6";
 const FRAMES = [
   { name: "portrait 330x697", w: 330, h: 697 },
-  { name: "điện thoại ngang 784x250", w: 784, h: 250 },
+  { name: "điện thoại ngang 610x350", w: 610, h: 350 },
   { name: "máy tính 964x628", w: 964, h: 628 },
 ] as const;
 const GRID_LABELS = new Set(["RIGHT", "LEFT", "UP", "DOWN", "ĐÍCH"]);

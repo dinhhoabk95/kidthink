@@ -14,7 +14,7 @@ const SANDBOX = path.resolve(
 
 const REQUIRED_CALLS = [
   "computeZonesForSession(",
-  "prepareRound(",
+  "prepareRound",
   "drawPromptZone(",
   "drawCommitButton(",
 ];

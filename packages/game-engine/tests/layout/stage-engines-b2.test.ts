@@ -36,13 +36,13 @@ vi.mock("#src/render/shared-render", async (importOriginal) => {
 /**
  * Lô B2 của Task #283 — nộp bài, tiến độ, ức chế: GT-002, 018, 026, 027. Ba
  * viewport (canvas CSS sau HUD và đệm): portrait 390x844 → 330x697, điện thoại
- * ngang 844x390 → 784x250, máy tính bảng → 964x628.
+ * ngang 844x390 → canvas 610x350 (HUD thành cột lề), máy tính bảng → 964x628.
  */
 const B2_CODES = ["GT-002", "GT-018", "GT-026", "GT-027"] as const;
 
 const VIEWPORTS = [
   { name: "portrait 330x697", cssW: 330, cssH: 697 },
-  { name: "ngang 784x250", cssW: 784, cssH: 250 },
+  { name: "ngang 610x350", cssW: 610, cssH: 350 },
   { name: "tablet 964x628", cssW: 964, cssH: 628 },
 ] as const;
 

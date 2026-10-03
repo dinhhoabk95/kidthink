@@ -21,7 +21,7 @@ import { GT024Session } from "#src/templates/GT-024/session";
  */
 const BAND: AgeBand = "5-6";
 const PORTRAIT = { w: 330, h: 697 } as const;
-const LANDSCAPE_PHONE = { w: 784, h: 250 } as const;
+const LANDSCAPE_PHONE = { w: 610, h: 350 } as const;
 
 interface Frame {
   readonly zones: StageZones;

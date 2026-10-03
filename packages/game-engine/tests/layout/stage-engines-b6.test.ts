@@ -51,7 +51,7 @@ interface Viewport {
 
 const VIEWPORTS: readonly Viewport[] = [
   { name: "portrait 330x697", cssW: 330, cssH: 697 },
-  { name: "điện thoại ngang 784x250", cssW: 784, cssH: 250 },
+  { name: "điện thoại ngang 610x350", cssW: 610, cssH: 350 },
   { name: "máy tính 964x628", cssW: 964, cssH: 628 },
 ];
 
@@ -69,10 +69,9 @@ const KNOWN_LAYOUT_DEBT_CASES: Readonly<Record<string, number>> = {
   // band ở canvas thấp làm số ô cần xếp lớn hơn diện tích sân khấu. Chỉ được giảm.
   "GT-030|máy tính 964x628": 43,
   "GT-030|portrait 330x697": 6,
-  "GT-030|điện thoại ngang 784x250": 43,
-  "GT-031|điện thoại ngang 784x250": 14,
+  "GT-030|điện thoại ngang 610x350": 6,
   "GT-033|máy tính 964x628": 5,
-  "GT-033|điện thoại ngang 784x250": 5,
+  "GT-033|điện thoại ngang 610x350": 2,
 };
 
 const B6_CODES: readonly string[] = ["GT-030", "GT-031", "GT-033"];

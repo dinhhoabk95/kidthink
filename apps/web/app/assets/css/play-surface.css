@@ -247,13 +247,46 @@
 /* Điện thoại ngang: chiều cao là của hiếm, bớt đệm quanh canvas. Nút giữ
    nguyên cỡ (BR-PSZ-04 — không thu nút). */
 @media (max-height: 500px) and (orientation: landscape) {
+  /* HUD thành hai cột lề thay cho dải trên cùng (`BR-PSZ-07`, `BR-PSZ-13`): dải
+     HUD ăn 85–110 px trong 390 nên canvas chỉ còn ~250 và sàn chạm 96 px CSS
+     đổi thành 213 logic px. Khoá phụ huynh ở góc trên phía đầu dòng, loa ở góc
+     trên phía cuối dòng, hạt tiến độ dưới khoá — mọi nút giữ nguyên cỡ. */
+  .game-viewport {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto 1fr;
+    grid-template-areas:
+      "lock arena speaker"
+      "beads arena speaker-end";
+  }
+
   .top-hud-bar {
-    min-height: 0;
-    padding: 0.25rem 1rem;
+    display: contents;
+  }
+
+  .btn-parent-lock {
+    grid-area: lock;
+    align-self: start;
+    margin: 0.5rem 0 0 0.5rem;
+  }
+
+  .progress-container {
+    grid-area: beads;
+    align-self: end;
+    justify-self: center;
+    margin: 0 0.25rem 0.5rem 0.5rem;
+  }
+
+  .btn-audio-replay {
+    grid-area: speaker;
+    align-self: start;
+    margin: 0.5rem 0.5rem 0 0;
   }
 
   .main-arena {
-    padding: 0.25rem 0.5rem 0.5rem;
+    grid-area: arena;
+    grid-row: 1 / span 2;
+    padding: 0.25rem 0.25rem 0.5rem;
   }
 
   .wooden-tray-container {

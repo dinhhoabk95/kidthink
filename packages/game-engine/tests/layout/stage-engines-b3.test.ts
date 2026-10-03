@@ -47,7 +47,7 @@ interface Viewport {
 
 const VIEWPORTS: readonly Viewport[] = [
   { name: "portrait 330x697", cssW: 330, cssH: 697 },
-  { name: "điện thoại ngang 784x250", cssW: 784, cssH: 250 },
+  { name: "điện thoại ngang 610x350", cssW: 610, cssH: 350 },
   { name: "máy tính 964x628", cssW: 964, cssH: 628 },
 ];
 
@@ -72,21 +72,17 @@ const KNOWN_LAYOUT_DEBT_CASES: Readonly<Record<string, number>> = {
   // Số đo sau khi khay nhiều hàng, không phân trang và cột lời dẫn bên trái
   // (`play-stage-zones.md` `BR-PSZ-13`). Còn lại là giới hạn vật lý: sàn chạm của
   // band ở canvas thấp làm số ô cần xếp lớn hơn diện tích sân khấu. Chỉ được giảm.
-  "GT-004|điện thoại ngang 784x250|4-5": 468,
-  "GT-004|điện thoại ngang 784x250|5-6": 31,
+  "GT-004|điện thoại ngang 610x350|4-5": 320,
   "GT-007|portrait 330x697|3-4": 88,
-  "GT-007|điện thoại ngang 784x250|3-4": 424,
   "GT-008|máy tính 964x628|3-4": 1,
   "GT-008|portrait 330x697|3-4": 227,
-  "GT-008|điện thoại ngang 784x250|3-4": 227,
-  "GT-008|điện thoại ngang 784x250|5-6": 4,
+  "GT-008|điện thoại ngang 610x350|3-4": 227,
+  "GT-008|điện thoại ngang 610x350|5-6": 1,
   "GT-015|máy tính 964x628|5-6": 7,
-  "GT-015|điện thoại ngang 784x250|5-6": 7,
   "GT-021|portrait 330x697|4-5": 13,
   "GT-021|portrait 330x697|5-6": 1,
-  "GT-021|điện thoại ngang 784x250|4-5": 25,
-  "GT-021|điện thoại ngang 784x250|5-6": 13,
-  "GT-023|điện thoại ngang 784x250|4-5": 2,
+  "GT-021|điện thoại ngang 610x350|4-5": 13,
+  "GT-021|điện thoại ngang 610x350|5-6": 1,
 };
 
 /** Sáu engine của lô B3 — cũng nằm trong `MIGRATED_CODES`. */
