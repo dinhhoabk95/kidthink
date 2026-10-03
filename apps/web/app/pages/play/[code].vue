@@ -247,6 +247,7 @@
   } from "@mindkid/game-engine";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
   import { useMascotSprites } from "~/composables/play/use-mascot-sprites";
+  import { useParentLockHold } from "~/composables/play/use-parent-lock-hold";
   import { usePlayAudio } from "~/composables/play/use-play-audio";
   import { usePlayError } from "~/composables/play/use-play-error";
   import { usePlayGesture } from "~/composables/play/use-play-gesture";
@@ -258,14 +259,41 @@
   const route = useRoute();
   const router = useRouter();
   const levelCode = route.params.code as string;
+
+  const LESSON_CODE_PATTERN = /^LES-\d{4}$/;
+
+  /** Mã bài khi trang chơi là một bước của bài (`child-lesson-flow.md`); sai định dạng thì bỏ qua. */
+  function lessonCodeFromQuery(): string | null {
+    const raw = route.query.lesson;
+    return typeof raw === "string" && LESSON_CODE_PATTERN.test(raw)
+      ? raw
+      : null;
+  }
+
+  /** Đích quay về sau một level: level gốc của bài làm quen, rồi trang bài, rồi danh mục. */
+  function nextDestination(): string {
+    const lessonCode = lessonCodeFromQuery();
+    const returnTo = route.query.return_to || route.query.return_level_code;
+    if (typeof returnTo === "string" && returnTo) {
+      return lessonCode
+        ? `/play/${returnTo}?lesson=${lessonCode}`
+        : `/play/${returnTo}`;
+    }
+    return lessonCode ? `/play/lesson/${lessonCode}` : "/games";
+  }
   const { loggedIn, fetch: fetchSession } = useUserSession();
 
   const canvasRef = ref<HTMLCanvasElement | null>(null);
   const showParentGate = ref(false);
   const isPromptPillPulsing = ref(false);
-  const parentLockHoldProgress = ref(0);
+  const {
+    progress: parentLockHoldProgress,
+    start: startParentLockHold,
+    cancel: cancelParentLockHold,
+  } = useParentLockHold(() => {
+    showParentGate.value = true;
+  });
 
-  let holdTimer: ReturnType<typeof setInterval> | null = null;
   let pulseTimer: ReturnType<typeof setTimeout> | null = null;
   let resizeTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -291,7 +319,7 @@
     errorActionLink,
     errorActionText,
     handleApiError,
-  } = usePlayError();
+  } = usePlayError({ lessonCode: lessonCodeFromQuery() });
 
   const playSession = usePlaySession({
     canvasRef,
@@ -474,39 +502,6 @@
     }, 1200);
   }
 
-  function startParentLockHold(): void {
-    parentLockHoldProgress.value = 0;
-    const startTime = Date.now();
-    const duration = 800;
-
-    if (holdTimer !== null) {
-      clearInterval(holdTimer);
-    }
-
-    holdTimer = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(100, Math.round((elapsed / duration) * 100));
-      parentLockHoldProgress.value = progress;
-
-      if (progress >= 100) {
-        if (holdTimer !== null) {
-          clearInterval(holdTimer);
-          holdTimer = null;
-        }
-        parentLockHoldProgress.value = 0;
-        showParentGate.value = true;
-      }
-    }, 40);
-  }
-
-  function cancelParentLockHold(): void {
-    if (holdTimer !== null) {
-      clearInterval(holdTimer);
-      holdTimer = null;
-    }
-    parentLockHoldProgress.value = 0;
-  }
-
   function handleParentVerified(): void {
     showParentGate.value = false;
     const returnTo = route.query.return_to || route.query.return_level_code;
@@ -553,12 +548,7 @@
 
   function handleContinueNext(): void {
     showVictoryModal.value = false;
-    const returnTo = route.query.return_to || route.query.return_level_code;
-    if (typeof returnTo === "string" && returnTo) {
-      router.push(`/play/${returnTo}`);
-      return;
-    }
-    router.push("/games");
+    router.push(nextDestination());
   }
 
   function handleReplayGame(): void {

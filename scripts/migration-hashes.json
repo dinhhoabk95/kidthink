@@ -6,6 +6,7 @@
     "0003_skill_tier_and_preprimary_age": "9fd12281c81eff9192313556d178058479b425200fd384608948ad6b09071480",
     "0004_game_template_kind": "e673f8d596556a39c585db334f4d2be814d8b61aa86775bc11abb3b362e904a3",
     "0005_skill_datasets_and_objective_map": "ecaa1435dcb2b63669fa19f04fc9fc3c13e3df1c3d7e5b486efbc2f09668b671",
-    "0006_drop_game_templates": "0e6ebee711a59243559f2ac27d13ba1d275c4c5e33bb767a3150a3e734b0c90d"
+    "0006_drop_game_templates": "0e6ebee711a59243559f2ac27d13ba1d275c4c5e33bb767a3150a3e734b0c90d",
+    "0007_child_lesson_plays": "9c04995049626730326c336863d400c0b3bf1e2d319f36edfd16df35fc8bcdaa"
   }
 }

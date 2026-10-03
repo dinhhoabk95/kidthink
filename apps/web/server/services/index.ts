@@ -5,6 +5,7 @@ export * from "./ai-egress-guard.js";
 export * from "./ai-provider.js";
 export * from "./automated-payment.js";
 export * from "./catalog-counts.js";
+export * from "./child-lesson-flow.js";
 export * from "./content-lifecycle.js";
 export * from "./content-search.js";
 export * from "./content-versioning.js";

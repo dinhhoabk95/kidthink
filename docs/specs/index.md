@@ -26,14 +26,15 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | `01-platform` | 50 | 36 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
-| `04-play` | 18 | 13 |
+| `04-play` | 19 | 13 |
 | `05-content` | 27 | 7 |
 | `06-admin` | 31 | 30 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 11 | 9 |
-| **Tổng** | **194** | **141** |
+| **Tổng** | **195** | **141** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
+1 spec cộng thêm 2026-10-03 cho khuôn bài của trẻ: [`child-lesson-flow.md`](04-play/child-lesson-flow.md) (Task #280) — `lessons` chỉ có đường cho người lớn dẫn, trẻ ở nhà chơi từng level rời mà không có nhịp làm quen → trò chơi → thưởng.
 1 spec cộng thêm 2026-09-25 cho bố cục chung của bề mặt chơi: [`play-stage-zones.md`](01-platform/play-stage-zones.md) (Task #277) — 37 engine tự đặt lời dẫn, khay và nút nộp bài ở chỗ riêng, nút nộp nằm ở bốn vị trí khác nhau và GT-028 có thể không nộp được bài từ trang chơi.
 1 spec cộng thêm 2026-09-08 cho hợp đồng độ khó game level: [`level-difficulty-contract.md`](05-content/level-difficulty-contract.md) (Task #263) — ánh xạ mức khó 1..5 về số item hiển thị và tham số điều khiển qua bảng tra 37 engine × 5 mức.
 4 spec cộng thêm 2026-08-29 (Task #113) lấp lỗ hổng chiều sâu nội dung mỗi engine: [`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md), [`engine-content-depth.md`](05-content/engine-content-depth.md), [`level-generator-kit.md`](01-platform/level-generator-kit.md), [`content-theme-registry.md`](05-content/content-theme-registry.md). Kèm 27 phiếu engine ở [`engines/index.md`](01-platform/engines/index.md).
@@ -186,6 +187,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [curriculum-player](04-play/curriculum-player.md) | P3 | Ghim version, mở khoá tuần |
 | [progress-and-mastery](04-play/progress-and-mastery.md) | P3 | Bản đồ, huy hiệu không mất |
 | [lesson-session-runner](04-play/lesson-session-runner.md) | P4 | Người dạy chạy tiết học, một bước một lúc |
+| [child-lesson-flow](04-play/child-lesson-flow.md) | P4 | Trẻ tự học một bài: làm quen → trò chơi → thưởng; tiến độ suy từ `play_sessions` |
 | [concept-intro-runner](04-play/concept-intro-runner.md) | P4 | Ba nhịp giới thiệu → nhận biết → gọi tên, trẻ chạy một mình |
 | [concept-intro-gate](04-play/concept-intro-gate.md) | P4 | Bước 8: chưa làm quen khái niệm thì chưa vào màn chơi |
 | **[play-narration](04-play/play-narration.md)** | P1 | Mọi yêu cầu trên bề mặt trẻ phải nghe được trước khi đọc được; bốn bậc dự phòng, cấm im lặng |

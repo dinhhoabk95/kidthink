@@ -5,6 +5,7 @@ export * from "./ai-credit.ts";
 export * from "./assets.ts";
 export * from "./billing.ts";
 export * from "./child.ts";
+export * from "./child-lesson-plays.ts";
 export * from "./columns.ts";
 export * from "./content.ts";
 export * from "./curriculum.ts";

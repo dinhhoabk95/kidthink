@@ -60,6 +60,7 @@ nhất mà một trẻ chạy hết. Xem [`lesson-corpus-depth.md`](lesson-corpu
 | `GET /api/users/children/{uuid}/flows` | Phụ huynh | Danh sách flow ghi danh được, kèm điểm đề xuất |
 | `POST /api/users/children/{uuid}/enrollments` | Phụ huynh | Ghi danh. Route đã có ở [`curriculum-player.md`](../04-play/curriculum-player.md) mục 8; file này bỏ điều kiện tuổi của nó |
 | [`curriculum-builder.md`](../06-admin/curriculum-builder.md) | Manager | Lắp flow từ thư viện |
+| [`child-lesson-flow.md`](../04-play/child-lesson-flow.md) | Trẻ | Trẻ tự học một bài của thư viện: làm quen → trò chơi → thưởng |
 
 ## 4. Main flow
 

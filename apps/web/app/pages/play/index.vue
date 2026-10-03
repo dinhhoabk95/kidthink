@@ -44,6 +44,8 @@
         </p>
       </div>
 
+      <KidLessonRow />
+
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
         <NuxtLink
           v-for="c in competencies"
