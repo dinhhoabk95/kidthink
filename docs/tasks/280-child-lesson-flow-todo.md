@@ -47,6 +47,7 @@ Lệnh kiểm (chạy qua `rtk proxy`):
 - [x] Trang chơi: `?lesson=` → nút tiếp về trang bài; đường làm quen giữ `lesson`
 - [x] `useParentLockHold` thay code nhấn giữ viết tại chỗ ở trang chơi
 - [x] `KidLessonRow` ở sảnh `/play`
+- [x] `KidLessonRow` icon trước chữ: `thumbnail_emoji` từ API, tên bài chỉ là `aria-label` (BR-CLF-06, QA 2026-10-03)
 
 ## Checkpoint — trình duyệt thật
 

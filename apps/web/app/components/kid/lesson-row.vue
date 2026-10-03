@@ -11,24 +11,30 @@
       :key="lesson.code"
       :aria-label="`Học bài ${lesson.title}`"
       :class="{ 'lesson-card--active': lesson.in_progress }"
+      :style="{ minHeight: cardMinHeight }"
       :to="`/play/lesson/${lesson.code}`"
     >
+      <span aria-hidden="true" class="lesson-emoji"
+        >{{ lesson.thumbnail_emoji }}</span
+      >
       <UIcon
+        aria-hidden="true"
         class="w-8 h-8 shrink-0"
-        :name="lesson.in_progress ? 'i-lucide-play' : 'i-lucide-book-open'"
+        name="i-lucide-play"
+        v-if="lesson.in_progress"
       />
-      <span class="lesson-title">{{ lesson.title }}</span>
     </NuxtLink>
   </section>
 </template>
 
 <script lang="ts" setup>
-  import { onMounted, ref } from "vue";
+  import { getTouchFloor } from "@mindkid/game-engine";
+  import { computed, onMounted, ref } from "vue";
 
   /**
    * Hàng bài học ở sảnh trẻ (`child-lesson-flow.md` §3): bài đang dở trước,
-   * rồi bài hợp tuổi (`BR-CLF-07`). Tên bài để người lớn đọc cùng; trẻ nhận
-   * ra bài đang dở qua icon ▶.
+   * rồi bài hợp tuổi (`BR-CLF-07`). Thẻ lấy hình làm chính (`BR-CLF-06`,
+   * `BR-ENG-10`): tên bài chỉ là `aria-label`; trẻ nhận ra bài đang dở qua ▶.
    */
 
   interface LessonSuggestion {
@@ -37,7 +43,14 @@
     estimated_minutes: number | null;
     in_progress: boolean;
     fits_age: boolean;
+    thumbnail_emoji: string;
   }
+
+  const KID_TOUCH_FLOOR_PX = getTouchFloor("3-4");
+  const MIN_CARD_HEIGHT_PX = 96;
+  const cardMinHeight = computed(
+    () => `${Math.max(KID_TOUCH_FLOOR_PX, MIN_CARD_HEIGHT_PX)}px`
+  );
 
   const lessons = ref<LessonSuggestion[]>([]);
 
@@ -64,18 +77,16 @@
   }
 
   .lesson-card {
-    min-height: 4.5rem;
-    min-width: 12rem;
+    min-width: 7rem;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
     border-radius: 1.5rem;
     border: 3px solid var(--color-brand-200);
     background-color: #fff;
     color: var(--color-brand-700);
-    font-family: var(--font-heading, sans-serif);
-    font-weight: 700;
     text-decoration: none;
     box-shadow: 0 6px 0 var(--color-brand-200);
   }
@@ -91,8 +102,8 @@
     box-shadow: 0 2px 0 var(--color-brand-200);
   }
 
-  .lesson-title {
-    font-size: 1rem;
-    line-height: 1.3;
+  .lesson-emoji {
+    font-size: 3rem;
+    line-height: 1;
   }
 </style>

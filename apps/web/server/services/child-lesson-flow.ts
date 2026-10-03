@@ -334,6 +334,50 @@ export interface LessonSuggestion {
   readonly estimated_minutes: number | null;
   readonly in_progress: boolean;
   readonly fits_age: boolean;
+  /** Hình trẻ nhận ra: emoji của level đầu bài, không có thì `FALLBACK_LESSON_EMOJI`. */
+  readonly thumbnail_emoji: string;
+}
+
+const FALLBACK_LESSON_EMOJI = "📘";
+
+/** Emoji của level game `published` đầu tiên (theo `position`) của từng bài. */
+async function findFirstLevelEmojis(
+  db: Db,
+  lessonIds: readonly number[]
+): Promise<Map<number, string>> {
+  const result = new Map<number, string>();
+  if (lessonIds.length === 0) {
+    return result;
+  }
+  const rows = await db
+    .select({
+      lessonId: lessonActivities.lessonId,
+      emoji: gameLevels.thumbnailEmoji,
+    })
+    .from(lessonActivities)
+    .innerJoin(
+      activities,
+      and(
+        eq(activities.entityId, lessonActivities.activityId),
+        eq(activities.status, "published")
+      )
+    )
+    .innerJoin(gameLevels, eq(gameLevels.entityId, activities.refId))
+    .where(
+      and(
+        inArray(lessonActivities.lessonId, [...lessonIds]),
+        eq(activities.kind, "digital_game"),
+        eq(activities.refType, "game_level"),
+        eq(gameLevels.status, "published")
+      )
+    )
+    .orderBy(asc(lessonActivities.lessonId), asc(lessonActivities.position));
+  for (const row of rows) {
+    if (!result.has(row.lessonId)) {
+      result.set(row.lessonId, row.emoji ?? "");
+    }
+  }
+  return result;
 }
 
 /**
@@ -360,6 +404,7 @@ export async function listLessonsForChild(
 
   const published = await db
     .select({
+      id: lessons.id,
       code: lessons.code,
       title: lessons.title,
       estimatedMinutes: lessons.estimatedMinutes,
@@ -373,15 +418,19 @@ export async function listLessonsForChild(
   const fitsAge = (min: number | null, max: number | null): boolean =>
     (min === null || min <= age) && (max === null || age <= max);
 
-  const rank = (suggestion: LessonSuggestion): number => {
+  const rank = (suggestion: {
+    in_progress: boolean;
+    fits_age: boolean;
+  }): number => {
     if (suggestion.in_progress) {
       return 0;
     }
     return suggestion.fits_age ? 1 : 2;
   };
 
-  return published
+  const top = published
     .map((row) => ({
+      id: row.id,
       code: row.code,
       title: row.title,
       estimated_minutes: row.estimatedMinutes,
@@ -390,4 +439,13 @@ export async function listLessonsForChild(
     }))
     .sort((a, b) => rank(a) - rank(b) || a.code.localeCompare(b.code))
     .slice(0, input.limit);
+
+  const emojis = await findFirstLevelEmojis(
+    db,
+    top.map((row) => row.id)
+  );
+  return top.map(({ id, ...rest }) => ({
+    ...rest,
+    thumbnail_emoji: emojis.get(id) || FALLBACK_LESSON_EMOJI,
+  }));
 }

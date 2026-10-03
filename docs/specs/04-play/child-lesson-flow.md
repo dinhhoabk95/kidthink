@@ -121,7 +121,7 @@ Unique một phần: `(child_profile_id, lesson_id) WHERE status = 'in_progress'
 |---|---|
 | Auth | Như trên |
 | Query | `limit` 1–12, mặc định 6 |
-| 2xx | `200 [{ code, title, estimated_minutes, in_progress, fits_age }]`: bài đang dở xếp trước, rồi tới bài hợp tuổi |
+| 2xx | `200 [{ code, title, estimated_minutes, in_progress, fits_age, thumbnail_emoji }]`: bài đang dở xếp trước, rồi tới bài hợp tuổi. `thumbnail_emoji` là emoji của level game `published` đầu tiên (theo `position`) của bài, không có thì `📘`; sảnh dùng nó làm hình thẻ, tên bài chỉ còn là `aria-label` (`BR-CLF-06`, `BR-ENG-10`) |
 | 4xx | `NO_ACTIVE_CHILD` |
 
 ## 9. Acceptance criteria

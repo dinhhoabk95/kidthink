@@ -99,7 +99,7 @@ function fourDigits(): string {
   return String(crypto.randomInt(0, 10_000)).padStart(4, "0");
 }
 
-async function insertLevel(code: string) {
+async function insertLevel(code: string, thumbnailEmoji: string | null = null) {
   const db = getOwnerDb();
   const [level] = await db
     .insert(gameLevels)
@@ -108,6 +108,7 @@ async function insertLevel(code: string) {
       code,
       templateCode: "GT-001",
       title: `Level ${code}`,
+      thumbnailEmoji,
       contentPack: {},
       difficultyParams: {},
       accessTier: "free",
@@ -125,11 +126,13 @@ async function insertLevel(code: string) {
  * phải theo `position`, không theo thứ tự chèn (`BR-CLF-01`). Level không gắn
  * kỹ năng nên cổng làm quen không chèn bước intro.
  */
-async function createLessonFixture(): Promise<LessonFixture> {
+async function createLessonFixture(
+  firstLevelEmoji: string | null = null
+): Promise<LessonFixture> {
   const db = getOwnerDb();
   const suffix = fourDigits();
   const levelA = await insertLevel(`GL-C1-CLF-TSTA-${suffix}`);
-  const levelB = await insertLevel(`GL-C1-CLF-TSTB-${suffix}`);
+  const levelB = await insertLevel(`GL-C1-CLF-TSTB-${suffix}`, firstLevelEmoji);
   const [lesson] = await db
     .insert(lessons)
     .values({
@@ -362,5 +365,27 @@ describe("Child lesson flow API (child-lesson-flow.md, BR-CLF-01..08)", () => {
 
     expect(list[0]).toMatchObject({ code: lessonCode, in_progress: true });
     expect(list.length).toBeLessThanOrEqual(6);
+  });
+
+  it("thumbnail_emoji lấy từ level đầu bài; level không có emoji thì rơi về 📘", async () => {
+    const withEmoji = await createLessonFixture("🍎");
+    const child = await createFixture(2021);
+    try {
+      await openProgress(child, withEmoji.lessonCode);
+      await openProgress(child, lessonCode);
+
+      const list = (await listHandler(
+        mockEvent(child.userId, child.childUuid)
+      )) as Array<{ code: string; thumbnail_emoji: string }>;
+
+      expect(
+        list.find((l) => l.code === withEmoji.lessonCode)?.thumbnail_emoji
+      ).toBe("🍎");
+      expect(list.find((l) => l.code === lessonCode)?.thumbnail_emoji).toBe(
+        "📘"
+      );
+    } finally {
+      await withEmoji.cleanup();
+    }
   });
 });
