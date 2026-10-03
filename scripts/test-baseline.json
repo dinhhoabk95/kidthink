@@ -1,5 +1,5 @@
 {
-  "totalFailed": 42,
+  "totalFailed": 40,
   "failedFiles": [
     "apps/web/tests/api/advanced-report.test.ts",
     "apps/web/tests/api/curricula-builder.test.ts",
@@ -10,8 +10,6 @@
     "apps/web/tests/api/guest/curricula.test.ts",
     "apps/web/tests/api/guest/webhooks-payment.test.ts",
     "apps/web/tests/api/images.test.ts",
-    "apps/web/tests/api/lesson-plans.test.ts",
-    "apps/web/tests/api/lesson-session-runner.test.ts",
     "apps/web/tests/api/managers/subscription-cancel.test.ts",
     "apps/web/tests/api/managers/taxonomy-browser.test.ts",
     "apps/web/tests/api/play-entry.test.ts",
@@ -44,5 +42,5 @@
     "apps/web/tests/unit/server/personal-curriculum-service.test.ts",
     "apps/web/tests/unit/server/tagging-seed.test.ts"
   ],
-  "minTotalSuites": 1482
+  "minTotalSuites": 1636
 }
