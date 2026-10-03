@@ -54,6 +54,11 @@ export class GT031Session extends TemplateGameSession<
   GT031Difficulty
 > {
   override readonly needsTray = true;
+
+  /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
+  override get trayItemCount(): number {
+    return this.content.coins.length;
+  }
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;

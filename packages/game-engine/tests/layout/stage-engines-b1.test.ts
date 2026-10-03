@@ -72,15 +72,11 @@ const ROUNDS_PER_CASE = 2;
  * mỗi mục phải có nguyên nhân gốc ghi ở đây.
  */
 const KNOWN_STAGE_DEBT_CASES: Readonly<Record<string, number>> = {
-  // 10 vật ở band 4-5: `computeGridLayout` chặn 3 hàng (`maxCapRows`) nên lưới
-  // chứa 8-9 ô một trang, ô 9-10 sang trang 1 mà engine không có phân trang.
-  "GT-029 portrait 330x697": 7,
+  // Số đo sau khi khay nhiều hàng, không phân trang và cột lời dẫn bên trái
+  // (`play-stage-zones.md` `BR-PSZ-13`). Còn lại là giới hạn vật lý: sàn chạm của
+  // band ở canvas thấp làm số ô cần xếp lớn hơn diện tích sân khấu. Chỉ được giảm.
+  "GT-025 ngang 784x250": 6,
   "GT-029 ngang 784x250": 7,
-  // Điện thoại ngang: sân khấu cao 146 logic px nhỏ hơn sàn chạm 138-207 nên ô
-  // chạm được tràn ra ngoài. Cùng nợ với B3 — `play-stage-zones.md` mục 11 câu
-  // hỏi số 4 (chờ quyết); số đo, chỉ được giảm.
-  "GT-009 ngang 784x250": 83,
-  "GT-025 ngang 784x250": 17,
 };
 /** Đủ dài để pha loé của GT-012 hết và lựa chọn hiện ra. */
 const PHASE_ADVANCE_MS = 5000;
@@ -95,6 +91,7 @@ type B1Session = GameSession &
     | "getHintTargetIndex"
     | "needsCommit"
     | "needsTray"
+    | "trayItemCount"
     | "prepareRound"
     | "slots"
     | "usesPromptZone"
@@ -177,6 +174,7 @@ function violationsOf(session: B1Session, band: AgeBand, frame: Frame) {
     ageBand: band,
     cssPerLogic,
     needsTray: session.needsTray,
+    trayItems: session.trayItemCount,
     needsCommit: session.needsCommit,
   });
   const rs = new RenderSystem();

@@ -1,5 +1,5 @@
 import {
-  computeStageZones,
+  computeZonesForSession,
   createGameSessionSync,
   ENGINE_EVENT_WILDCARD,
   type EngineConfig,
@@ -8,7 +8,8 @@ import {
   type RenderSystem,
   type RoundConfig,
   RoundRunner,
-  TemplateGameSession,
+  type StageZones,
+  type ZoneRect,
 } from "@mindkid/game-engine";
 import type { AgeBand } from "@mindkid/shared/client";
 import { nextTick, type Ref, ref } from "vue";
@@ -74,6 +75,11 @@ export interface UsePlaySessionOptions {
   readonly loggedIn: Ref<boolean>;
   readonly syncView: () => void;
   readonly onFallbackCue?: () => void;
+  /**
+   * Tính lại vùng bàn chơi cho session đang chạy (`BR-PSZ-13`): số vật khay
+   * đổi theo vòng nên khay đổi cao. Trả `null` khi chưa có viewport.
+   */
+  readonly refreshStageZones?: () => StageZones | null;
   readonly onAfterRender?: (
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -100,6 +106,16 @@ export function resolveLayoutSeed(payload: ConfigPayload): number {
     `[play-session] payload thiếu layout_seed cho level ${payload.level_code} — dùng seed 0 (BR-RNG-06).`
   );
   return 0;
+}
+
+function isSameRect(
+  a: ZoneRect | null | undefined,
+  b: ZoneRect | null | undefined
+): boolean {
+  if (!(a && b)) {
+    return !(a || b);
+  }
+  return a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h;
 }
 
 /** Phần của session GT-000 mà bề mặt chơi đọc để dựng nút đi tiếp. */
@@ -382,6 +398,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
           engine.activeSession = session;
           engine.audio.playStartSound();
         }
+        applyRoundZones();
         syncView();
       },
       onRoundCompleted: () => {
@@ -447,22 +464,40 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     if (!(vp?.logicSpace && runner)) {
       return;
     }
-    const session = runner.getCurrentSession();
-    const zones = computeStageZones({
-      logicW: vp.logicSpace.w,
-      logicH: vp.logicSpace.h,
-      ageBand: band,
-      cssPerLogic: vp.scale,
-      needsTray:
-        session instanceof TemplateGameSession
-          ? Boolean(session.needsTray)
-          : false,
-      needsCommit:
-        session instanceof TemplateGameSession
-          ? Boolean(session.needsCommit)
-          : false,
-    });
+    const zones = computeZonesForSession(
+      {
+        logicW: vp.logicSpace.w,
+        logicH: vp.logicSpace.h,
+        ageBand: band,
+        cssPerLogic: vp.scale,
+      },
+      runner.getCurrentSession()
+    );
     runner.setLogicSpace(
+      vp.logicSpace,
+      zones.stage,
+      zones.tray ?? undefined,
+      vp.scale
+    );
+  }
+
+  /**
+   * Đầu mỗi vòng: session mới có thể có số vật khay khác vòng trước, nên vùng
+   * tính lại và chỉ cấp lại cho runner khi khay hoặc sân khấu đổi
+   * (`BR-PSZ-13`).
+   */
+  function applyRoundZones(): void {
+    const vp = engine?.renderSystem.viewport;
+    const zones = options.refreshStageZones?.();
+    if (!(zones && vp?.logicSpace && roundRunner)) {
+      return;
+    }
+    const stage = roundRunner.getStageRect();
+    const tray = roundRunner.getTrayRect() ?? null;
+    if (isSameRect(stage, zones.stage) && isSameRect(tray, zones.tray)) {
+      return;
+    }
+    roundRunner.setLogicSpace(
       vp.logicSpace,
       zones.stage,
       zones.tray ?? undefined,

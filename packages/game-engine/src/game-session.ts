@@ -202,6 +202,16 @@ export abstract class TemplateGameSession<
   readonly needsTray: boolean = false;
 
   /**
+   * Số vật nguồn trong khay của vòng này, shell dùng để đo chiều cao khay —
+   * khay nhiều hàng, không phân trang (`BR-PSZ-13`). Chỉ có nghĩa khi
+   * `needsTray`; 0 là một hàng. Đọc từ content, không từ trạng thái vòng: shell
+   * hỏi trước `prepareRound`.
+   */
+  get trayItemCount(): number {
+    return 0;
+  }
+
+  /**
    * Phiên đã dời vào khung năm vùng: shell vẽ lời dẫn ở `zones.prompt` và engine
    * không tự vẽ `drawPromptText` (`BR-PSZ-08..10`). Mặc định false — engine chưa
    * dời tự vẽ lời dẫn, shell không vẽ thêm. `stageRect` không thay được cờ này

@@ -1,6 +1,6 @@
 /**
  * Bố cục GT-003 trong khung năm vùng (`play-stage-zones.md`, Task #277 S5):
- * vật nguồn xếp một hàng trong `zones.tray`, rổ đích đứng giữa `zones.stage`.
+ * vật nguồn xếp nhiều hàng trong `zones.tray` (`BR-PSZ-13`), rổ đích đứng giữa `zones.stage`.
  * Trẻ kéo từ khay lên sân khấu — hoặc chạm vật rồi chạm rổ (`BR-ENG-06`).
  *
  * Hàm thuần: cùng rect và cùng band cho cùng slot (`BR-PSZ-02`).
@@ -10,6 +10,7 @@ import { SLOT_GAP_PX } from "#src/layout/constants";
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import type { ContainerBox } from "#src/render/index.js";
+import { layoutTrayGrid, TRAY_PAD_Y_PX, type TrayGrid } from "./tray-grid";
 
 /** Cạnh vật tối đa trong khay — cùng cỡ token khay của GT-001. */
 const TRAY_ITEM_MAX_PX = 104;
@@ -37,38 +38,37 @@ export function pickTrayZones(
   return stage && tray ? { stage, tray } : null;
 }
 
-/** Cạnh vật vừa khay: không quá cao khay, không chồng sang vật bên cạnh. */
-function trayItemSize(count: number, tray: ZoneRect): number {
-  const pitch = (tray.w - 2 * ZONE_PADDING_PX) / count;
-  const byWidth = pitch - SLOT_GAP_PX;
-  const byHeight = tray.h - 2 * ZONE_PADDING_PX;
+/**
+ * Cạnh vật vừa khay: không quá `TRAY_ITEM_MAX_PX`, không chồng sang vật bên
+ * cạnh, không cao hơn một hàng của khay (`BR-PSZ-13`).
+ */
+function trayItemSize(grid: TrayGrid, tray: ZoneRect): number {
+  const byWidth =
+    (tray.w - 2 * ZONE_PADDING_PX - (grid.perRow - 1) * SLOT_GAP_PX) /
+    grid.perRow;
+  const byHeight =
+    (tray.h - (grid.rows - 1) * SLOT_GAP_PX) / grid.rows - 2 * TRAY_PAD_Y_PX;
   return Math.max(0, Math.floor(Math.min(TRAY_ITEM_MAX_PX, byWidth, byHeight)));
 }
 
 /**
- * Tâm vật theo chỉ số: chia đều bề ngang khay. Nếu chia đều làm hai vùng chạm kề
- * nhau cách dưới `SLOT_GAP_PX` mà dàn hai đầu sát mép khay thì đủ khe, thì dàn
- * hai đầu sát mép.
+ * Khoảng cách tâm hai vật kề nhau trên một hàng. Chia đều bề ngang khay; nếu
+ * chia đều làm hai vùng chạm cách dưới `SLOT_GAP_PX` mà dàn hai đầu sát mép
+ * khay thì đủ khe, thì dàn hai đầu sát mép.
  */
-function trayCenters(
-  count: number,
-  tray: ZoneRect,
-  hit: number
-): (index: number) => number {
+function trayPitch(perRow: number, tray: ZoneRect, hit: number): number {
   const avail = tray.w - 2 * ZONE_PADDING_PX;
-  const equalPitch = avail / count;
-  const spreadPitch = count > 1 ? (avail - hit) / (count - 1) : equalPitch;
+  const equalPitch = avail / perRow;
+  const spreadPitch = perRow > 1 ? (avail - hit) / (perRow - 1) : equalPitch;
   const isSpread =
     equalPitch < hit + SLOT_GAP_PX && spreadPitch >= hit + SLOT_GAP_PX;
-  return (index) =>
-    isSpread
-      ? tray.x + ZONE_PADDING_PX + hit / 2 + spreadPitch * index
-      : tray.x + ZONE_PADDING_PX + equalPitch * (index + 0.5);
+  return isSpread ? spreadPitch : equalPitch;
 }
 
 /**
- * Slot nguồn: một hàng chia đều bề ngang khay, tâm theo giữa chiều cao khay.
- * `firstIndex` là chỉ số của slot đầu khi engine xếp đích trước nguồn.
+ * Slot nguồn: lưới nhiều hàng trong khay, mọi vật hiện cùng lúc, không phân
+ * trang (`BR-PSZ-13`). Hàng cuối ít vật hơn thì căn giữa. `firstIndex` là chỉ
+ * số của slot đầu khi engine xếp đích trước nguồn.
  */
 export function computeTraySourceSlots(
   count: number,
@@ -79,20 +79,31 @@ export function computeTraySourceSlots(
   if (count <= 0) {
     return [];
   }
-  const size = trayItemSize(count, tray);
+  const grid = layoutTrayGrid(count, tray.w, touchFloor);
+  const size = trayItemSize(grid, tray);
   const hit = Math.max(touchFloor, size);
-  const centerX = trayCenters(count, tray, hit);
-  return Array.from({ length: count }, (_, index) => ({
-    index: firstIndex + index,
-    x: Math.round(centerX(index)),
-    y: Math.round(tray.y + tray.h / 2),
-    w: size,
-    h: size,
-    hitW: hit,
-    hitH: hit,
-    page: 0,
-    role: "source" as const,
-  }));
+  const pitch = trayPitch(grid.perRow, tray, hit);
+  const blockH = grid.rows * hit + (grid.rows - 1) * SLOT_GAP_PX;
+  // Khối vật cao hơn khay (không đủ chỗ) thì tràn xuống dưới, không tràn lên trên đè vùng khác.
+  const top = tray.y + Math.max(0, (tray.h - blockH) / 2);
+  const centerX = tray.x + tray.w / 2;
+  return Array.from({ length: count }, (_, index) => {
+    const row = Math.floor(index / grid.perRow);
+    const col = index % grid.perRow;
+    const inRow = Math.min(grid.perRow, count - row * grid.perRow);
+    const x = centerX + (col - (inRow - 1) / 2) * pitch;
+    return {
+      index: firstIndex + index,
+      x: Math.round(x),
+      y: Math.round(top + hit / 2 + row * (hit + SLOT_GAP_PX)),
+      w: size,
+      h: size,
+      hitW: hit,
+      hitH: hit,
+      page: 0,
+      role: "source" as const,
+    };
+  });
 }
 
 /** Slot đích: giữa sân khấu, cùng cỡ vật nguồn — hộp rổ nở ra từ tâm này. */

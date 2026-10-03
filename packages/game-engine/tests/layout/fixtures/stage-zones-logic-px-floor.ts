@@ -9,6 +9,7 @@ export const LOGIC_PX_FLOOR_CSS_PER_LOGIC = 0.72;
 
 export const LOGIC_PX_FLOOR_ZONES: StageZones = {
   orientation: "portrait",
+  promptPlacement: "top",
   prompt: { x: 16, y: 16, w: 508, h: 112 },
   promptSpeaker: { x: 144, y: 24, w: 96, h: 96 },
   stage: { x: 16, y: 144, w: 508, h: 400 },

@@ -115,6 +115,11 @@ export {
   resolveLayout,
 } from "./layout/registry.js";
 export {
+  computeZonesForSession,
+  type SessionZonesInput,
+  stageFlagsOf,
+} from "./layout/session-zones.js";
+export {
   computeStageGroupsLayout,
   resolveStageRect,
   type StageGroupSpec,

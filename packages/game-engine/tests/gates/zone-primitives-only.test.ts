@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { MIGRATED_CODES } from "../layout/migrated-codes.ts";
@@ -49,6 +49,29 @@ function findUnguardedPromptCalls(source: string): number[] {
   return offending;
 }
 
+/**
+ * Engine không vào khung năm vùng, kèm lý do (`play-stage-zones.md` mục 5 hàng
+ * "Intro GT-000", câu hỏi mở số 5, quyết 2026-10-03). Danh sách ngắn và có lý do:
+ * thêm mã vào đây là một quyết định của spec, không phải đường tắt.
+ */
+const EXEMPT_CODES: Readonly<Record<string, string>> = {
+  "GT-000":
+    "màn làm quen không chấm điểm, không khay, không nộp bài; ba nút là DOM của trang",
+};
+
+const CODE_FOLDER = /^GT-\d{3}$/;
+
+/** Mã engine có thư mục template mà không thuộc `migrated` lẫn `exempt`. */
+function findUncoveredCodes(
+  allCodes: readonly string[],
+  migrated: readonly string[],
+  exempt: Readonly<Record<string, string>>
+): string[] {
+  return allCodes.filter(
+    (code) => !(migrated.includes(code) || code in exempt)
+  );
+}
+
 function readSession(root: string, code: string): string {
   return readFileSync(path.join(root, code, "session.ts"), "utf8");
 }
@@ -82,5 +105,31 @@ describe("zone-primitives-only — engine đã dời không tự vẽ lời dẫ
 
     expect(findUnguardedPromptCalls(guarded)).toEqual([]);
     expect(findUnguardedPromptCalls(wrongGuard)).toEqual([3]);
+  });
+
+  it("phủ đủ mọi mã engine: dời vào khung hoặc ngoại lệ có lý do", () => {
+    const allCodes = readdirSync(SRC_ROOT).filter((name) =>
+      CODE_FOLDER.test(name)
+    );
+
+    expect(findUncoveredCodes(allCodes, MIGRATED_CODES, EXEMPT_CODES)).toEqual(
+      []
+    );
+    expect(allCodes.length).toBe(
+      MIGRATED_CODES.length + Object.keys(EXEMPT_CODES).length
+    );
+  });
+
+  it("ngoại lệ không trùng mã đã dời và mỗi ngoại lệ có lý do", () => {
+    for (const [code, reason] of Object.entries(EXEMPT_CODES)) {
+      expect(MIGRATED_CODES).not.toContain(code);
+      expect(reason.length).toBeGreaterThan(0);
+    }
+  });
+
+  it("ca âm: mã engine mới chưa dời và chưa miễn bị báo", () => {
+    expect(
+      findUncoveredCodes(["GT-001", "GT-999"], ["GT-001"], EXEMPT_CODES)
+    ).toEqual(["GT-999"]);
   });
 });

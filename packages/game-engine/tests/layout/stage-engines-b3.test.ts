@@ -69,28 +69,24 @@ const LOWEST_BAND: Readonly<Record<string, AgeBand>> = {
  * ở đây phải bằng 0. Số chỉ được giảm.
  */
 const KNOWN_LAYOUT_DEBT_CASES: Readonly<Record<string, number>> = {
-  "GT-004|portrait 330x697|4-5": 527,
-  "GT-004|điện thoại ngang 784x250|4-5": 527,
-  "GT-004|máy tính 964x628|4-5": 31,
-  "GT-004|portrait 330x697|5-6": 468,
-  "GT-004|điện thoại ngang 784x250|5-6": 320,
-  "GT-004|máy tính 964x628|5-6": 31,
+  // Số đo sau khi khay nhiều hàng, không phân trang và cột lời dẫn bên trái
+  // (`play-stage-zones.md` `BR-PSZ-13`). Còn lại là giới hạn vật lý: sàn chạm của
+  // band ở canvas thấp làm số ô cần xếp lớn hơn diện tích sân khấu. Chỉ được giảm.
+  "GT-004|điện thoại ngang 784x250|4-5": 468,
+  "GT-004|điện thoại ngang 784x250|5-6": 31,
   "GT-007|portrait 330x697|3-4": 88,
   "GT-007|điện thoại ngang 784x250|3-4": 424,
+  "GT-008|máy tính 964x628|3-4": 1,
   "GT-008|portrait 330x697|3-4": 227,
-  "GT-008|điện thoại ngang 784x250|3-4": 328,
-  "GT-008|máy tính 964x628|3-4": 4,
-  "GT-008|portrait 330x697|5-6": 90,
-  "GT-008|điện thoại ngang 784x250|5-6": 328,
-  "GT-015|điện thoại ngang 784x250|5-6": 60,
+  "GT-008|điện thoại ngang 784x250|3-4": 227,
+  "GT-008|điện thoại ngang 784x250|5-6": 4,
   "GT-015|máy tính 964x628|5-6": 7,
+  "GT-015|điện thoại ngang 784x250|5-6": 7,
   "GT-021|portrait 330x697|4-5": 13,
-  "GT-021|điện thoại ngang 784x250|4-5": 34,
   "GT-021|portrait 330x697|5-6": 1,
-  "GT-021|điện thoại ngang 784x250|5-6": 14,
-  "GT-023|portrait 330x697|4-5": 23,
-  "GT-023|điện thoại ngang 784x250|4-5": 67,
-  "GT-023|portrait 330x697|5-6": 2,
+  "GT-021|điện thoại ngang 784x250|4-5": 25,
+  "GT-021|điện thoại ngang 784x250|5-6": 13,
+  "GT-023|điện thoại ngang 784x250|4-5": 2,
 };
 
 /** Sáu engine của lô B3 — cũng nằm trong `MIGRATED_CODES`. */
@@ -178,11 +174,12 @@ interface Frame {
   readonly cssPerLogic: number;
 }
 
-function frameFor(
-  viewport: Viewport,
-  band: AgeBand,
-  needsTray: boolean
-): Frame {
+interface TrayFlags {
+  readonly needsTray: boolean;
+  readonly trayItemCount: number;
+}
+
+function frameFor(viewport: Viewport, band: AgeBand, tray: TrayFlags): Frame {
   const space = deriveLogicSpace(viewport.cssW, viewport.cssH);
   // Cùng phép của `RenderSystem.setupCanvas`: tỉ lệ chặn bởi cạnh chật hơn.
   const cssPerLogic = Math.min(
@@ -194,7 +191,8 @@ function frameFor(
     logicH: space.h,
     ageBand: band,
     cssPerLogic,
-    needsTray,
+    needsTray: tray.needsTray,
+    trayItems: tray.trayItemCount,
     needsCommit: false,
   });
   return { zones, space, cssPerLogic };
@@ -448,9 +446,10 @@ describe.each(B3_CODES)("%s lô B3 — khay nguồn, đích trên sân khấu", 
       it(`${viewport.name} band ${band}: slot trong vùng của nó, vùng chạm không chồng, vẽ trong sân khấu và khay — đầu vòng và giữa vòng`, () => {
         const rs = new RenderSystem();
         const failing: string[] = [];
+        const samples: string[] = [];
         for (const { name, create } of casesFor(code, band)) {
           const session = create();
-          const frame = frameFor(viewport, band, session.needsTray);
+          const frame = frameFor(viewport, band, session);
           prepare(session, band, frame);
           const check = (when: string): string[] => [
             ...findSlotsOutsideTheirZone(session, frame.zones).map(
@@ -468,13 +467,14 @@ describe.each(B3_CODES)("%s lô B3 — khay nguồn, đích trên sân khấu", 
           const mid = check("giữa vòng");
           if (opening.length + mid.length > 0) {
             failing.push(name);
+            samples.push(...[...opening, ...mid].slice(0, 2));
           }
         }
         const debt =
           KNOWN_LAYOUT_DEBT_CASES[`${code}|${viewport.name}|${band}`] ?? 0;
         expect(
           failing.length,
-          `${failing.length} ca vi phạm, đầu tiên: ${failing.slice(0, 3).join(", ")}`
+          `${failing.length} ca vi phạm, đầu tiên: ${failing.slice(0, 3).join(", ")} | ${samples.slice(0, 4).join(" | ")}`
         ).toBeLessThanOrEqual(debt);
       });
     }
@@ -485,7 +485,7 @@ describe.each(B3_CODES)("%s lô B3 — khay nguồn, đích trên sân khấu", 
       for (const viewport of VIEWPORTS) {
         for (const { name, create } of casesFor(code, band)) {
           const session = create();
-          const frame = frameFor(viewport, band, session.needsTray);
+          const frame = frameFor(viewport, band, session);
           prepare(session, band, frame);
 
           play(session, drag, MAX_MOVES);
@@ -504,7 +504,7 @@ describe.each(B3_CODES)("%s lô B3 — khay nguồn, đích trên sân khấu", 
       for (const viewport of VIEWPORTS) {
         for (const { name, create } of casesFor(code, band)) {
           const session = create();
-          const frame = frameFor(viewport, band, session.needsTray);
+          const frame = frameFor(viewport, band, session);
           prepare(session, band, frame);
 
           play(session, tapTap, MAX_MOVES);
@@ -525,11 +525,11 @@ describe.each(B3_CODES)("%s lô B3 — khay nguồn, đích trên sân khấu", 
     }
     for (const { name, create } of casesFor(code, lowest)) {
       const session = create();
-      prepare(session, lowest, frameFor(portrait, lowest, session.needsTray));
+      prepare(session, lowest, frameFor(portrait, lowest, session));
       play(session, drag, 1);
-      prepare(session, lowest, frameFor(desktop, lowest, session.needsTray));
+      prepare(session, lowest, frameFor(desktop, lowest, session));
       play(session, tapTap, 1);
-      prepare(session, lowest, frameFor(portrait, lowest, session.needsTray));
+      prepare(session, lowest, frameFor(portrait, lowest, session));
 
       play(session, drag, MAX_MOVES);
 
@@ -544,7 +544,7 @@ describe.each(B3_CODES)("%s lô B3 — khay nguồn, đích trên sân khấu", 
       if (!first) {
         throw new Error("Thiếu viewport");
       }
-      prepare(session, lowest, frameFor(first, lowest, session.needsTray));
+      prepare(session, lowest, frameFor(first, lowest, session));
 
       const hint = session.getHintTargetIndex();
 
@@ -564,7 +564,10 @@ describe("Ca âm: GT-004 với khay vẽ ở toạ độ cũ (Task #283 B3)", ()
       throw new Error("Thiếu fixture hoặc viewport GT-004");
     }
     const session = new GT004LegacyTrayCoordsSession(f.content, f.difficulty);
-    const frame = frameFor(portrait, band, true);
+    const frame = frameFor(portrait, band, {
+      needsTray: true,
+      trayItemCount: 0,
+    });
 
     session.prepareRound(
       band,

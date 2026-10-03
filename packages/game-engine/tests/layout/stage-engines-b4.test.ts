@@ -45,10 +45,12 @@ const VIEWPORTS = [
 const KNOWN_HIT_GAP_DEBT: Readonly<
   Record<string, Readonly<Record<string, number>>>
 > = {
+  // Hình nhiều đỉnh (GT-024): waypoint do nội dung quyết định, tự nó gần nhau
+  // hơn sàn chạm của canvas thấp, không dịch được. Chỉ được giảm.
   "GT-024": {
-    "portrait 330x697": 1,
-    "landscape điện thoại 784x250": 9,
     "desktop 964x628": 1,
+    "landscape điện thoại 784x250": 9,
+    "portrait 330x697": 1,
   },
 };
 
@@ -100,7 +102,7 @@ function casesFor(code: string): Case[] {
 type StageSession = GameSession &
   Pick<
     TemplateGameSession<never, never>,
-    "needsCommit" | "needsTray" | "prepareRound" | "slots"
+    "needsCommit" | "needsTray" | "trayItemCount" | "prepareRound" | "slots"
   >;
 
 function makeSession(config: EngineConfig): StageSession {
@@ -132,6 +134,7 @@ describe.each(B4_CODES)("lô B4 — %s trong khung năm vùng", (code) => {
           ageBand: BAND,
           cssPerLogic,
           needsTray: session.needsTray,
+          trayItems: session.trayItemCount,
           needsCommit: session.needsCommit,
         });
         for (const round of [1, 2]) {

@@ -68,12 +68,7 @@ const ROUNDS_PER_CASE = 2;
  */
 // Số ca đo trên tập đã lấy mẫu theo hình (`SEEDS_PER_SHAPE`).
 const KNOWN_STAGE_DEBT_CASES: Readonly<Record<string, number>> = {
-  // Level 9-10 vật: `grid-2x4` chứa tối đa 8 ô một trang ở stage hẹp, ô còn lại
-  // sang trang 1 mà engine không có phân trang (cùng nợ GT-029 ở B1).
-  "GT-002 portrait 330x697": 2,
-  // Điện thoại ngang: dải nhãn 44 px lấy chỗ của lưới nên level nhiều vật sang
-  // trang 1; chờ phân trang `play-stage-zones.md` mục 11 câu hỏi số 4.
-  "GT-027 ngang 784x250": 4,
+  // Hết nợ: lưới không phân trang (`BR-PSZ-13`).
 };
 /** Đủ dài để pha loé của GT-012 hết và lựa chọn hiện ra. */
 const PHASE_ADVANCE_MS = 5000;
@@ -90,6 +85,7 @@ type B2Session = GameSession &
     | "getHintTargetIndex"
     | "needsCommit"
     | "needsTray"
+    | "trayItemCount"
     | "prepareRound"
     | "slots"
     | "usesPromptZone"
@@ -203,6 +199,7 @@ function violationsOf(session: B2Session, band: AgeBand, frame: Frame) {
     ageBand: band,
     cssPerLogic,
     needsTray: session.needsTray,
+    trayItems: session.trayItemCount,
     needsCommit: session.needsCommit,
   });
   const rs = new RenderSystem();

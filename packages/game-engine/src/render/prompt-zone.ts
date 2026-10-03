@@ -5,6 +5,9 @@
  * 1. Mascot: ô vuông đầu vùng lời dẫn `(prompt.x, prompt.y, prompt.h, prompt.h)`
  * 2. Loa nghe lại: `zones.promptSpeaker` (bắt chạm thật qua shell, `BR-PSZ-08`)
  * 3. Picto mục tiêu / chữ đề: bên phải loa (`BR-PSZ-09`)
+ *
+ * Landscape thấp (`zones.promptPlacement === "side"`) lời dẫn là cột: mascot ở
+ * đầu cột, loa ngay dưới, picto dưới loa nếu còn chỗ. Cột hẹp nên không có chữ phụ.
  */
 
 import type { StageZones, ZoneRect } from "#src/layout/stage-zones.js";
@@ -49,16 +52,23 @@ function drawPromptContainer(
   ctx.stroke();
 }
 
+/** Cạnh ô vuông của mascot: chiều cao dải (`top`) hoặc bề rộng cột (`side`). */
+function mascotSize(zones: StageZones): number {
+  return zones.promptPlacement === "side" ? zones.prompt.w : zones.prompt.h;
+}
+
 function drawPromptMascot(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
-  prompt: ZoneRect,
+  zones: StageZones,
   options?: PromptZoneOptions
 ): void {
+  const { prompt } = zones;
+  const size = mascotSize(zones);
   const placement = {
-    cx: prompt.x + prompt.h / 2,
-    cy: prompt.y + prompt.h / 2,
-    radius: prompt.h * 0.38,
+    cx: prompt.x + size / 2,
+    cy: prompt.y + size / 2,
+    radius: size * 0.38,
   };
 
   ctx.save();
@@ -119,6 +129,8 @@ function drawPromptSpeaker(
 }
 
 const PROMPT_MAX_LINES = 2;
+const SIDE_PICTO_GAP_PX = 12;
+const SIDE_PICTO_MIN_PX = 40;
 const WHITESPACE_RUN = /\s+/;
 
 /**
@@ -170,12 +182,46 @@ function truncateToWidth(
   return `${text}…`;
 }
 
+/** Picto mục tiêu của cột lời dẫn: dưới loa, vừa bề rộng cột, chỉ khi còn chỗ. */
+function drawSidePicto(
+  ctx: CanvasRenderingContext2D,
+  zones: StageZones,
+  options?: PromptZoneOptions
+): void {
+  const { prompt, promptSpeaker } = zones;
+  if (options?.targetAsset?.kind !== "emoji") {
+    return;
+  }
+  const top = promptSpeaker.y + promptSpeaker.h + SIDE_PICTO_GAP_PX;
+  const room = prompt.y + prompt.h - top - SIDE_PICTO_GAP_PX;
+  const size = Math.min(prompt.w * 0.7, room);
+  if (size < SIDE_PICTO_MIN_PX) {
+    return;
+  }
+  const slot: Slot = {
+    index: 0,
+    x: prompt.x + prompt.w / 2,
+    y: top + room / 2,
+    w: size,
+    h: size,
+    hitW: size,
+    hitH: size,
+    page: 0,
+    role: "target",
+  };
+  drawEmojiContent(ctx, options.targetAsset.ref, slot);
+}
+
 function drawPromptContent(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
   zones: StageZones,
   options?: PromptZoneOptions
 ): void {
+  if (zones.promptPlacement === "side") {
+    drawSidePicto(ctx, zones, options);
+    return;
+  }
   const { prompt, promptSpeaker } = zones;
   const contentLeft = promptSpeaker.x + promptSpeaker.w + 12;
   const contentW = prompt.x + prompt.w - contentLeft - 12;
@@ -238,7 +284,7 @@ export function drawPromptZone(
 
   ctx.save();
   drawPromptContainer(ctx, prompt);
-  drawPromptMascot(ctx, rs, prompt, options);
+  drawPromptMascot(ctx, rs, zones, options);
   drawPromptSpeaker(ctx, promptSpeaker, options?.isSpeakerActive);
   drawPromptContent(ctx, rs, zones, options);
   ctx.restore();

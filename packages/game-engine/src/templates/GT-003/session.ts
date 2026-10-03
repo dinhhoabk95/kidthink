@@ -72,6 +72,11 @@ export class GT003Session extends TemplateGameSession<
 
   /** Vật nằm trong khay chung, rổ đứng trên sân khấu (`BR-PSZ-01`). */
   override readonly needsTray = true;
+
+  /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
+  override get trayItemCount(): number {
+    return this.content.items.length;
+  }
   override readonly usesPromptZone = true;
 
   setupEntities(): void {

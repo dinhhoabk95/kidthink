@@ -116,6 +116,11 @@ export class GT019Session extends TemplateGameSession<
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   override readonly needsTray = true;
+
+  /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
+  override get trayItemCount(): number {
+    return this.content.pieces.length;
+  }
   override readonly usesPromptZone = true;
 
   private readonly placementMechanic = new PlacementMechanic();

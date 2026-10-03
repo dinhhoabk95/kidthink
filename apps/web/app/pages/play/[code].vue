@@ -248,7 +248,7 @@
 
 <script lang="ts" setup>
   import {
-    computeStageZones,
+    computeZonesForSession,
     drawCommitButton,
     drawFeedbackPulses,
     drawPromptZone,
@@ -341,6 +341,7 @@
     canvasRef,
     loggedIn,
     syncView: () => gesture.syncView(),
+    refreshStageZones: updateStageZones,
     onAfterRender: (ctx, rs, now) => {
       const zones = stageZones.value ?? updateStageZones();
       if (!zones) {
@@ -419,21 +420,15 @@
     if (!vp?.logicSpace) {
       return null;
     }
-    const session = engine.activeSession;
-    const zones = computeStageZones({
-      logicW: vp.logicSpace.w,
-      logicH: vp.logicSpace.h,
-      ageBand: ageBand.value,
-      cssPerLogic: vp.scale,
-      needsTray:
-        session instanceof TemplateGameSession
-          ? Boolean(session.needsTray)
-          : false,
-      needsCommit:
-        session instanceof TemplateGameSession
-          ? Boolean(session.needsCommit)
-          : false,
-    });
+    const zones = computeZonesForSession(
+      {
+        logicW: vp.logicSpace.w,
+        logicH: vp.logicSpace.h,
+        ageBand: ageBand.value,
+        cssPerLogic: vp.scale,
+      },
+      engine.activeSession
+    );
     stageZones.value = zones;
     return zones;
   }

@@ -60,7 +60,11 @@ function buildConfig(code: string): EngineConfig {
 type PromptShellSession = GameSession &
   Pick<
     TemplateGameSession<never, never>,
-    "needsCommit" | "needsTray" | "prepareRound" | "usesPromptZone"
+    | "needsCommit"
+    | "needsTray"
+    | "trayItemCount"
+    | "prepareRound"
+    | "usesPromptZone"
   >;
 
 function createTemplateSession(code: string): PromptShellSession {
@@ -80,6 +84,7 @@ function countPromptSources(session: PromptShellSession): number {
     ageBand: BAND,
     cssPerLogic: PORTRAIT_CANVAS_CSS.w / space.w,
     needsTray: session.needsTray,
+    trayItems: session.trayItemCount,
     needsCommit: session.needsCommit,
   });
   session.prepareRound(BAND, space, zones.stage, zones.tray ?? undefined);

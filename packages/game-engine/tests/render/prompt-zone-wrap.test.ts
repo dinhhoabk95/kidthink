@@ -16,8 +16,12 @@ interface TextCall {
   readonly y: number;
 }
 
-function drawWithRecorder(logicW: number): TextCall[] {
-  const ctx = createFakeCanvas(logicW, 540).getContext("2d");
+function drawWithRecorder(
+  logicW: number,
+  logicH: number,
+  cssPerLogic: number
+): TextCall[] {
+  const ctx = createFakeCanvas(logicW, logicH).getContext("2d");
   if (!ctx) {
     throw new Error("Cannot get context from fake canvas");
   }
@@ -26,12 +30,12 @@ function drawWithRecorder(logicW: number): TextCall[] {
     calls.push({ text, y });
   });
   const rs = new RenderSystem();
-  rs.logicSpace = { w: logicW, h: 540 };
+  rs.logicSpace = { w: logicW, h: logicH };
   const zones = computeStageZones({
     logicW,
-    logicH: 540,
+    logicH,
     ageBand: "3-4",
-    cssPerLogic: 0.7,
+    cssPerLogic,
     needsTray: false,
     needsCommit: false,
   });
@@ -43,7 +47,7 @@ function drawWithRecorder(logicW: number): TextCall[] {
 
 describe("drawPromptZone — lời dẫn ngắt dòng thay vì cắt", () => {
   it("vùng hẹp: câu hiện đủ trên hai dòng, không có dấu cắt", () => {
-    const lines = drawWithRecorder(540).map((call) => call.text);
+    const lines = drawWithRecorder(540, 1140, 0.7).map((call) => call.text);
 
     expect(lines.length).toBeGreaterThan(1);
     expect(lines.join(" ")).toBe(PROMPT);
@@ -51,6 +55,8 @@ describe("drawPromptZone — lời dẫn ngắt dòng thay vì cắt", () => {
   });
 
   it("vùng rộng: câu nằm trên một dòng", () => {
-    expect(drawWithRecorder(1280).map((call) => call.text)).toEqual([PROMPT]);
+    expect(drawWithRecorder(1280, 540, 1).map((call) => call.text)).toEqual([
+      PROMPT,
+    ]);
   });
 });

@@ -317,7 +317,12 @@ describe("Ca âm: GT-035 với toạ độ cứng cũ (plan H12)", () => {
 type ZoneSession = GameSession &
   Pick<
     TemplateGameSession<never, never>,
-    "needsCommit" | "needsTray" | "prepareRound" | "slots" | "usesPromptZone"
+    | "needsCommit"
+    | "needsTray"
+    | "trayItemCount"
+    | "prepareRound"
+    | "slots"
+    | "usesPromptZone"
   >;
 
 function isFixturePayload(val: unknown): val is Record<string, unknown> {
@@ -371,15 +376,7 @@ function zoneSessionCases(
  * khi `computeTraySourceSlots` cho khay đổi cột hoặc phân trang.
  */
 const KNOWN_HIT_GAP_DEBT_CASES: Readonly<Record<string, number>> = {
-  "GT-003": 20,
-  // Task #283 B3 — khay một hàng portrait chứa tối đa 4 nguồn ở sàn 64 px CSS:
-  // GT-004 có 4–10 vật, GT-008 có tới 9 vật. Chi tiết theo khung ở
-  // `stage-engines-b3.test.ts`.
-  "GT-004": 320,
-  "GT-008": 4,
-  // Task #283 B6 — GT-031 có tới 4+ xu trong khay một hàng portrait; chi tiết
-  // theo khung ở `stage-engines-b6.test.ts`.
-  "GT-031": 14,
+  // Hết nợ: khay nhiều hàng (`BR-PSZ-13`) — GT-003 GT-004 GT-008 GT-031 về 0.
 };
 
 /** Vùng sân khấu và khay (nếu có) — slot hợp lệ nằm trọn trong một trong hai. */
@@ -418,6 +415,7 @@ describe.each(MIGRATED_CODES)(
           ageBand: BAND,
           cssPerLogic: PORTRAIT_CANVAS_CSS.w / space.w,
           needsTray: session.needsTray,
+          trayItems: session.trayItemCount,
           needsCommit: session.needsCommit,
         });
         session.prepareRound(BAND, space, zones.stage, zones.tray ?? undefined);
@@ -451,6 +449,7 @@ describe.each(MIGRATED_CODES)(
           ageBand: BAND,
           cssPerLogic,
           needsTray: session.needsTray,
+          trayItems: session.trayItemCount,
           needsCommit: session.needsCommit,
         });
         session.prepareRound(

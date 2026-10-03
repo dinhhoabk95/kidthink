@@ -96,6 +96,11 @@ export class GT021Session extends TemplateGameSession<
 
   /** Mảnh chọn nằm trong khay, hai nửa đối xứng đứng trên sân khấu (`BR-PSZ-01`). */
   override readonly needsTray = true;
+
+  /** Số vật nguồn trong khay của vòng — shell đo chiều cao khay (`BR-PSZ-13`). */
+  override get trayItemCount(): number {
+    return this.content.options.length;
+  }
   override readonly usesPromptZone = true;
   private assetByRef: Map<string, GT021Content["options"][number]["asset"]> =
     new Map();

@@ -44,9 +44,7 @@ const VIEWPORTS = [
 const KNOWN_HIT_GAP_DEBT: Readonly<
   Record<string, Readonly<Record<string, number>>>
 > = {
-  // Khay một hàng 136 logic px chứa 3–4 vật ở sàn chạm portrait: cùng nợ khay với
-  // B3 (`play-stage-zones.md` mục 11 câu hỏi số 4, chờ quyết). Số đo, chỉ giảm.
-  "GT-014": { "portrait 330x697": 8 },
+  // Hết nợ: khay nhiều hàng (`BR-PSZ-13`).
 };
 
 /** Slot nguồn nằm trong khay, mọi slot khác trong sân khấu. */
@@ -123,7 +121,7 @@ function casesFor(code: string): Case[] {
 type StageSession = GameSession &
   Pick<
     TemplateGameSession<never, never>,
-    "needsCommit" | "needsTray" | "prepareRound" | "slots"
+    "needsCommit" | "needsTray" | "trayItemCount" | "prepareRound" | "slots"
   >;
 
 function makeSession(config: EngineConfig): StageSession {
@@ -155,6 +153,7 @@ describe.each(B5_CODES)("lô B5 — %s trong khung năm vùng", (code) => {
           ageBand: BAND,
           cssPerLogic,
           needsTray: session.needsTray,
+          trayItems: session.trayItemCount,
           needsCommit: session.needsCommit,
         });
         for (const round of [1, 2]) {

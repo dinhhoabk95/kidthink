@@ -31,6 +31,33 @@ const MATRIX_3X3_CELL_PX = 96;
 /** Tỉ lệ rộng/cao của stage từ đó khay đứng cạnh ma trận (chỉ khi `inStage`). */
 const MATRIX_SIDE_BY_SIDE_ASPECT = 1.3;
 
+interface FitInput {
+  readonly slotCount: number;
+  readonly preferredCols: number;
+  readonly fixedCols?: number;
+  /** Số cột tối đa mà bề ngang chứa được ở sàn chạm. */
+  readonly fitCols: number;
+  /** Số hàng tối đa mà chiều cao chứa được ở sàn chạm. */
+  readonly fitRows: number;
+}
+
+/**
+ * Chọn số cột và hàng để mọi ô vào một trang (`BR-PSZ-13`): bắt đầu từ số cột
+ * ưa thích, tăng cột (trừ khi cố định) tới khi số hàng vừa chiều cao. Không
+ * vừa dù đã đủ cột thì giữ số hàng tối đa — phần dư còn phân trang và được đo
+ * như nợ.
+ */
+function fitWithoutPaging(input: FitInput): { cols: number; rows: number } {
+  const { slotCount, fitCols, fitRows } = input;
+  let cols = Math.max(1, Math.min(input.preferredCols, fitCols));
+  let rows = Math.ceil(slotCount / cols);
+  while (rows > fitRows && !input.fixedCols && cols < fitCols) {
+    cols += 1;
+    rows = Math.ceil(slotCount / cols);
+  }
+  return { cols, rows: Math.max(1, Math.min(rows, fitRows)) };
+}
+
 /**
  * Tính toán bố cục dạng lưới (grid / grid-2x4 / card-flip-grid / flex-wrap).
  * Tự động phân trang khi số ô vượt quá sức chứa mà không được thu nhỏ dưới sàn chạm (BR-LAY-04).
@@ -101,9 +128,32 @@ export function computeGridLayout(
   }
   targetCols = Math.max(1, Math.min(targetCols, maxPossibleCols));
 
-  const targetRows = options?.fixedRows
+  let targetRows = options?.fixedRows
     ? Math.min(options.fixedRows, maxPossibleRows)
     : Math.max(1, Math.min(maxPossibleRows, Math.ceil(slotCount / targetCols)));
+  if (input.inStage) {
+    // Trong sân khấu không phân trang (`BR-PSZ-13`): số hàng chỉ bị chặn bởi
+    // chiều cao thật, số cột nới tới khi mọi ô vừa một trang. Chỉ khi cả cột
+    // lẫn hàng đã tới sàn chạm mà vẫn không đủ chỗ thì mới còn trang sau.
+    const fit = fitWithoutPaging({
+      slotCount,
+      preferredCols: Math.max(
+        targetCols,
+        options?.fixedRows ? Math.ceil(slotCount / options.fixedRows) : 1
+      ),
+      fixedCols: options?.fixedCols,
+      fitCols: Math.max(
+        1,
+        Math.floor((availW + SLOT_GAP_PX) / (minW + SLOT_GAP_PX))
+      ),
+      fitRows: Math.max(
+        1,
+        Math.floor((availH + SLOT_GAP_PX) / (minH + SLOT_GAP_PX))
+      ),
+    });
+    targetCols = fit.cols;
+    targetRows = fit.rows;
+  }
 
   const itemsPerPage = targetCols * targetRows;
   const roundToFit = input.inStage ? Math.floor : (value: number) => value;
