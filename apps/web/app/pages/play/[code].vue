@@ -246,6 +246,7 @@
     type ViewEntity,
   } from "@mindkid/game-engine";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+  import { resolveZonePromptText } from "~/composables/play/play-prompt-zone";
   import { useMascotSprites } from "~/composables/play/use-mascot-sprites";
   import { useParentLockHold } from "~/composables/play/use-parent-lock-hold";
   import { usePlayAudio } from "~/composables/play/use-play-audio";
@@ -337,7 +338,7 @@
         baseMascotPose(engine),
         rs.reducedMotion
       );
-      const activePrompt = session?.getView?.().activePrompt;
+      const activePrompt = resolveZonePromptText(session);
       if (activePrompt) {
         drawPromptZone(ctx, rs, zones, {
           promptText: activePrompt,

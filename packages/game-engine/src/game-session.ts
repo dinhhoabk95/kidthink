@@ -184,6 +184,14 @@ export abstract class TemplateGameSession<
   /** Phiên có cần khay vật thể riêng không (`BR-PSZ-01`). Mặc định false. */
   readonly needsTray: boolean = false;
 
+  /**
+   * Phiên đã dời vào khung năm vùng: shell vẽ lời dẫn ở `zones.prompt` và engine
+   * không tự vẽ `drawPromptText` (`BR-PSZ-08..10`). Mặc định false — engine chưa
+   * dời tự vẽ lời dẫn, shell không vẽ thêm. `stageRect` không thay được cờ này
+   * vì `RoundRunner` cấp nó cho mọi session. Task #283 N0.
+   */
+  readonly usesPromptZone: boolean = false;
+
   /** Phiên có cần nút nộp bài không (`BR-PSZ-05`). Mặc định false. */
   readonly needsCommit: boolean = false;
 

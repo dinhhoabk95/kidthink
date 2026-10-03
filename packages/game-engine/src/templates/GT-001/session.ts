@@ -71,6 +71,8 @@ export class GT001Session extends TemplateGameSession<
   GT001Content,
   GT001Difficulty
 > {
+  override readonly usesPromptZone = true;
+
   selectedItemId: string | null = null;
   displayOptions: readonly OptionItem[] = [];
   private readonly mechanic = new SelectionMechanic({ mode: "single" });

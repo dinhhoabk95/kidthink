@@ -76,7 +76,7 @@ landscape                                   portrait
 2. Shell đo viewport, lấy không gian logic từ
    [`game-engine-runtime.md`](game-engine-runtime.md) mục 7.1 và tỉ lệ `cssPerLogic`.
 3. Shell hỏi session `needsTray` và `needsCommit`, gọi `computeStageZones` một lần, nhận
-   `StageZones`.
+   `StageZones`. Shell chỉ vẽ vùng lời dẫn khi session khai `usesPromptZone` (xem mục 5).
 4. Shell dựng HUD bằng DOM phía trên canvas. Bốn vùng còn lại nằm trong canvas.
 5. Engine nhận `zones.stage` (và `zones.tray` nếu có) qua `prepareRound`; hàm layout slot tính
    trong rect đó thay cho toàn canvas.
@@ -92,6 +92,7 @@ landscape                                   portrait
 
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
+| Engine chưa dời vào khung | `usesPromptZone` là `false` (mặc định) | Shell **không** vẽ `drawPromptZone`; engine vẫn tự vẽ lời dẫn bằng `drawPromptText` — đúng một nơi vẽ lời dẫn cho mỗi khung hình. Engine đã dời đặt `usesPromptZone = true` và cấm gọi `drawPromptText`. `RoundRunner` cấp `stageRect` cho mọi session nên sự có mặt của `stageRect` không thay được cờ này. Dời một engine thì đổi cờ trong cùng PR |
 | Engine không cần khay | `needsTray` là `false` | Sân khấu lấy luôn chiều cao khay. Portrait: trọn ngang, dừng trên nút hành động. Landscape: kéo xuống đáy canvas và dừng trước cột nút hành động, không dừng trên đỉnh nút — điện thoại ngang band `3-4` sàn 96 thành 208 logic px, dừng trên nút thì sân khấu chỉ còn 60. HUD, lời dẫn, nút hành động giữ nguyên chỗ |
 | Engine không cần nộp bài | `needsCommit` là `false` | Rect `action` vẫn được tính và để trống — không engine nào được vẽ nút khác vào đó |
 | Không đủ chỗ ở sàn chạm | Portrait hẹp, band `3-4` | Thu vùng lời dẫn còn một dòng trước, rồi để hàm layout slot giảm cột và phân trang. Cấm thu nút |
@@ -158,6 +159,7 @@ interface StageSessionFlags {
   needsCommit: boolean;
   canCommit(): boolean;    // false thì nút vẽ mờ và chạm bị nuốt
   commitIcon?: "check" | "play" | "listen"; // bỏ trống là ✓; ▶ chạy, loa nghe mẫu
+  usesPromptZone: boolean; // mặc định false; true thì shell vẽ lời dẫn, engine không vẽ (`BR-PSZ-08..10`)
 }
 ```
 

@@ -72,6 +72,7 @@ export class GT003Session extends TemplateGameSession<
 
   /** Vật nằm trong khay chung, rổ đứng trên sân khấu (`BR-PSZ-01`). */
   override readonly needsTray = true;
+  override readonly usesPromptZone = true;
 
   setupEntities(): void {
     this.mechanic.reset();

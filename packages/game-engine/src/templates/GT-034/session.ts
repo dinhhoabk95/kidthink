@@ -43,6 +43,7 @@ export class GT034Session extends TemplateGameSession<
 > {
   /** Nút ở `zones.action` là nút nghe mẫu (`BR-PSZ-05`); chuỗi tự chấm khi đủ bước. */
   override readonly needsCommit = true;
+  override readonly usesPromptZone = true;
   override readonly commitIcon = "listen";
 
   override canCommit(): boolean {

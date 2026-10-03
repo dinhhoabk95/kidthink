@@ -52,6 +52,7 @@ export class GT028Session extends TemplateGameSession<
   GT028Difficulty
 > {
   override readonly needsCommit = true;
+  override readonly usesPromptZone = true;
 
   override canCommit(): boolean {
     return this.selectedItemIds.length > 0;
@@ -299,7 +300,10 @@ export class GT028Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    // Lời dẫn do shell vẽ ở vùng lời dẫn; chỉ tự vẽ khi chưa có sân khấu.
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
 
     const subText = `Bước nhảy: +${this.content.step}  |  Đã đếm: ${this.getCurrentCount()} / Mục tiêu: ${this.content.target_total}`;
     drawSubPromptText(ctx, rs, subText);
