@@ -109,11 +109,17 @@ describe("computeZonesForSession", () => {
   });
 });
 
+type TraySession = GameSession &
+  Pick<
+    TemplateGameSession<never, never>,
+    "trayItemCount" | "prepareRound" | "slots"
+  >;
+
 describe("số vật khay đổi theo vòng (BR-PSZ-13)", () => {
   const space = deriveLogicSpace(330, 697);
   const cssPerLogic = Math.min(330 / space.w, 697 / space.h);
 
-  function seededTraySessions(): TemplateGameSession<never, never>[] {
+  function seededTraySessions(): TraySession[] {
     return ALL_SEED_LEVELS.filter(
       (level) => level.header.template_code === TRAY_CODE
     ).map((level) => {
