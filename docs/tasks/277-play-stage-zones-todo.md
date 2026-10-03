@@ -91,10 +91,10 @@ của S0 — không file nào đổi trạng thái ngoài file của lát.
 
 ## S5 — Khay chung và pilot kéo GT-003 · M · phụ thuộc: S3
 
-- [ ] RED: GT-003 vẽ khay trong `zones.tray`, slot nguồn nằm trong khay
-- [ ] `drawWoodenTokenDock` nhận rect, bỏ chiều cao cứng 136
-- [ ] Tap-tap fallback `BR-ENG-06` vẫn xanh
-- [ ] Ca âm: khay vẽ ở toạ độ cũ → test đỏ
+- [x] RED: GT-003 vẽ khay trong `zones.tray`, slot nguồn nằm trong khay
+- [x] `drawWoodenTokenDock` nhận rect, bỏ chiều cao cứng 136
+- [x] Tap-tap fallback `BR-ENG-06` vẫn xanh
+- [x] Ca âm: khay vẽ ở toạ độ cũ → test đỏ
 
 ## S6 — Mascot phản hồi · S · phụ thuộc: S3 — làm trong [#279](279-kid-feedback-pass-todo.md)
 

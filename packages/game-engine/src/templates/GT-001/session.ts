@@ -348,7 +348,11 @@ export class GT001Session extends TemplateGameSession<
         this.stageRect
       );
     }
-    drawWoodenTokenDock(ctx, rs, this.stageRect);
+    drawWoodenTokenDock(
+      ctx,
+      rs,
+      getWoodenTokenDockRect(this.logicSpace, this.stageRect)
+    );
     this.drawInteractive(rs, ctx, slots);
     this.drawFeedback(rs, ctx, slots, timeMs);
   }

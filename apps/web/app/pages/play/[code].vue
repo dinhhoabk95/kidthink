@@ -575,7 +575,11 @@
         const zones = updateStageZones();
         if (vp.logicSpace && roundRunner) {
           if (zones?.stage) {
-            roundRunner.setLogicSpace(vp.logicSpace, zones.stage);
+            roundRunner.setLogicSpace(
+              vp.logicSpace,
+              zones.stage,
+              zones.tray ?? undefined
+            );
           } else {
             roundRunner.setLogicSpace(vp.logicSpace);
           }

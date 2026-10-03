@@ -194,17 +194,37 @@ export abstract class TemplateGameSession<
   /** Vùng sân khấu được cấp bởi shell (`BR-PSZ-01`, Task #277 S3). */
   stageRect?: ZoneRect;
 
-  /**
-   * Final — orchestrates a round: setup entities → compute slots → derived state.
-   * Called by RoundRunner and GameEngine instead of raw setupEntities+resolveSlots.
-   */
-  prepareRound(band: AgeBand, space?: LogicSpace, stage?: ZoneRect): void {
+  /** Vùng khay được cấp bởi shell khi `needsTray` (`BR-PSZ-01`, Task #277 S5). */
+  trayRect?: ZoneRect;
+
+  /** Nhận không gian logic và vùng shell cấp; thứ không truyền thì giữ nguyên. */
+  private applyZones(
+    space?: LogicSpace,
+    stage?: ZoneRect,
+    tray?: ZoneRect
+  ): void {
     if (space) {
       this.logicSpace = space;
     }
     if (stage) {
       this.stageRect = stage;
     }
+    if (tray) {
+      this.trayRect = tray;
+    }
+  }
+
+  /**
+   * Final — orchestrates a round: setup entities → compute slots → derived state.
+   * Called by RoundRunner and GameEngine instead of raw setupEntities+resolveSlots.
+   */
+  prepareRound(
+    band: AgeBand,
+    space?: LogicSpace,
+    stage?: ZoneRect,
+    tray?: ZoneRect
+  ): void {
+    this.applyZones(space, stage, tray);
     this.setupEntities();
     this._slots = this.computeSlots(band);
     this.sourceSlots = this._slots.filter((s) => s.role === "source");
@@ -217,13 +237,13 @@ export abstract class TemplateGameSession<
    * Backward compatibility for callers/tests calling resolveSlots directly.
    * Delegates to computeSlots and caches the result on this._slots.
    */
-  resolveSlots(band: AgeBand, space?: LogicSpace, stage?: ZoneRect): void {
-    if (space) {
-      this.logicSpace = space;
-    }
-    if (stage) {
-      this.stageRect = stage;
-    }
+  resolveSlots(
+    band: AgeBand,
+    space?: LogicSpace,
+    stage?: ZoneRect,
+    tray?: ZoneRect
+  ): void {
+    this.applyZones(space, stage, tray);
     this._slots = this.computeSlots(band);
     this.sourceSlots = this._slots.filter((s) => s.role === "source");
     this.targetSlots = this._slots.filter((s) => s.role === "target");

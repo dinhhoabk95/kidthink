@@ -7,19 +7,23 @@ import {
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import {
   CONTENT_TOP_PX,
+  getTouchFloor,
   SAFE_MARGIN_PX,
   SLOT_GAP_PX,
 } from "#src/layout/constants";
 import { isPointInSlot, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { LayoutId, Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
   type ContainerBox,
+  drawClippedToZone,
   drawContainerTarget,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
+  drawWoodenTokenDock,
   type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
@@ -29,6 +33,15 @@ import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT003Content, GT003Difficulty } from "./template.js";
+import {
+  CONTAINER_HEIGHT_PER_ITEM,
+  CONTAINER_MIN_H,
+  CONTAINER_MIN_W,
+  CONTAINER_WIDTH_PER_ITEM,
+  computeStageContainerBox,
+  computeStageTargetSlot,
+  computeTraySourceSlots,
+} from "./tray-layout.js";
 
 type DraggableItem = GT003Content["items"][number];
 
@@ -38,11 +51,11 @@ type DraggableItem = GT003Content["items"][number];
  */
 const WRONG_FEEDBACK_MS = 260;
 
-/** Đích chứa phải rộng hơn vật rõ ràng (`GT-003.md` §10, §14). */
-const CONTAINER_WIDTH_PER_ITEM = 2.2;
-const CONTAINER_HEIGHT_PER_ITEM = 1.5;
-const CONTAINER_MIN_W = 260;
-const CONTAINER_MIN_H = 150;
+/** Sân khấu và khay shell cấp cho vòng này (Task #277 S5). */
+interface TrayZones {
+  readonly stage: ZoneRect;
+  readonly tray: ZoneRect;
+}
 
 export class GT003Session extends TemplateGameSession<
   GT003Content,
@@ -56,6 +69,9 @@ export class GT003Session extends TemplateGameSession<
   /** item_id -> mili-giây còn lại của nhịp phản hồi "thả trượt". */
   private readonly transientStateMs: Map<string, number> = new Map();
   hoveredContainer = false;
+
+  /** Vật nằm trong khay chung, rổ đứng trên sân khấu (`BR-PSZ-01`). */
+  override readonly needsTray = true;
 
   setupEntities(): void {
     this.mechanic.reset();
@@ -84,7 +100,18 @@ export class GT003Session extends TemplateGameSession<
       : "top-source-bottom-target";
   }
 
+  /** Có đủ sân khấu và khay từ shell thì chơi trong khung năm vùng. */
+  private trayZones(): TrayZones | null {
+    return this.stageRect && this.trayRect
+      ? { stage: this.stageRect, tray: this.trayRect }
+      : null;
+  }
+
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    const zones = this.trayZones();
+    if (zones) {
+      return this.computeZoneSlots(ageBand, zones);
+    }
     const layoutFn = resolveLayout(this.resolveLayoutId());
     // `slotCount` của bố cục lưỡng phân là số slot **nguồn**, còn `targetCount`
     // là số slot đích — layout tự cộng hai vế. GT-003 luôn có đúng một đích.
@@ -94,6 +121,24 @@ export class GT003Session extends TemplateGameSession<
       targetCount: 1,
       logic: this.logicSpace,
     });
+  }
+
+  /** Nguồn xếp trong khay, đích giữa sân khấu (Task #277 S5). */
+  private computeZoneSlots(ageBand: AgeBand, zones: TrayZones): Slot[] {
+    const touchFloor = getTouchFloor(ageBand);
+    const sources = computeTraySourceSlots(
+      this.displayItems.length,
+      zones.tray,
+      touchFloor
+    );
+    const itemSize = sources[0]?.w ?? touchFloor;
+    const target = computeStageTargetSlot(
+      zones.stage,
+      itemSize,
+      touchFloor,
+      sources.length
+    );
+    return [...sources, target];
   }
 
   private getTargetSlot(): Slot | undefined {
@@ -115,6 +160,9 @@ export class GT003Session extends TemplateGameSession<
     const slot = this.getTargetSlot();
     if (!slot) {
       return null;
+    }
+    if (this.stageRect && this.trayRect) {
+      return computeStageContainerBox(slot, this.stageRect);
     }
 
     const sources = this.sourceSlots.length ? this.sourceSlots : [];
@@ -504,8 +552,17 @@ export class GT003Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    this.drawContainer(rs, ctx);
+    const zones = this.trayZones();
+    if (!zones) {
+      drawPromptText(ctx, rs, this.content.prompt);
+      this.drawContainer(rs, ctx);
+      this.drawInteractive(rs, ctx);
+      this.drawFeedback(rs, ctx);
+      return;
+    }
+    // Lời dẫn do shell vẽ ở vùng lời dẫn; engine chỉ vẽ trong sân khấu và khay.
+    drawClippedToZone(ctx, zones.stage, () => this.drawContainer(rs, ctx));
+    drawWoodenTokenDock(ctx, rs, zones.tray);
     this.drawInteractive(rs, ctx);
     this.drawFeedback(rs, ctx);
   }

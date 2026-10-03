@@ -70,6 +70,8 @@ export interface RoundRunnerOptions {
   logicSpace?: LogicSpace;
   /** Vùng sân khấu được cấp bởi shell (`BR-PSZ-01`, Task #277 S3). */
   stageRect?: ZoneRect;
+  /** Vùng khay được cấp bởi shell khi session `needsTray` (Task #277 S5). */
+  trayRect?: ZoneRect;
   onRoundStarted?: (roundIndex: number, roundConfig: RoundConfig) => void;
   onRoundCompleted?: (roundIndex: number, wasSkipped: boolean) => void;
   onAllRoundsCompleted?: () => void;
@@ -141,6 +143,7 @@ export class RoundRunner {
   private hintTimer: ReturnType<typeof setTimeout> | null = null;
   private logicSpace?: LogicSpace;
   private stageRect?: ZoneRect;
+  private trayRect?: ZoneRect;
   /** `true` khi chưa cần chờ (gate tắt) hoặc câu dẫn vòng hiện tại đã đọc xong. */
   private promptSettled = true;
 
@@ -160,6 +163,7 @@ export class RoundRunner {
     this.layoutSeed = options.layoutSeed ?? 0;
     this.logicSpace = options.logicSpace;
     this.stageRect = options.stageRect;
+    this.trayRect = options.trayRect;
     this.onRoundStarted = options.onRoundStarted;
     this.onRoundCompleted = options.onRoundCompleted;
     this.onAllRoundsCompleted = options.onAllRoundsCompleted;
@@ -193,17 +197,25 @@ export class RoundRunner {
     this.startRound(0);
   }
 
-  /** Đổi không gian logic cho session đang chạy và mọi vòng sau. */
-  setLogicSpace(space: LogicSpace, stage?: ZoneRect): void {
+  /** Đổi không gian logic (và vùng shell cấp) cho session đang chạy và mọi vòng sau. */
+  setLogicSpace(space: LogicSpace, stage?: ZoneRect, tray?: ZoneRect): void {
     this.logicSpace = space;
     if (stage) {
       this.stageRect = stage;
+    }
+    if (tray) {
+      this.trayRect = tray;
     }
     // `setLogicSpace`/`resolveSlots` là API của `TemplateGameSession`; hỏi kiểu
     // bằng `typeof x === "function"` chỉ che mất việc session sai kiểu.
     if (this.currentSession instanceof TemplateGameSession) {
       this.currentSession.setLogicSpace(space);
-      this.currentSession.resolveSlots(this.ageBand, space, this.stageRect);
+      this.currentSession.resolveSlots(
+        this.ageBand,
+        space,
+        this.stageRect,
+        this.trayRect
+      );
     }
   }
 
@@ -212,12 +224,21 @@ export class RoundRunner {
     this.stageRect = stage;
     if (this.currentSession instanceof TemplateGameSession) {
       this.currentSession.stageRect = stage;
-      this.currentSession.resolveSlots(this.ageBand, this.logicSpace, stage);
+      this.currentSession.resolveSlots(
+        this.ageBand,
+        this.logicSpace,
+        stage,
+        this.trayRect
+      );
     }
   }
 
   getStageRect(): ZoneRect | undefined {
     return this.stageRect;
+  }
+
+  getTrayRect(): ZoneRect | undefined {
+    return this.trayRect;
   }
 
   getLogicSpace(): LogicSpace | undefined {
@@ -544,7 +565,8 @@ export class RoundRunner {
       this.currentSession.prepareRound(
         this.ageBand,
         this.logicSpace,
-        this.stageRect
+        this.stageRect,
+        this.trayRect
       );
     } else {
       this.currentSession.setupEntities();

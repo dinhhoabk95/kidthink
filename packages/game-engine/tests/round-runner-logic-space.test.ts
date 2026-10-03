@@ -133,4 +133,44 @@ describe("RoundRunner logicSpace propagation (T6, BR-RSP & Task #260)", () => {
     const session2 = runner.getCurrentSession() as FakeResponsiveSession;
     expect(session2.logicSpace).toEqual(resizedSpace);
   });
+
+  it("setLogicSpace truyền zones.tray cho session hiện tại và vòng kế tiếp (Task #277 S5)", () => {
+    const space: LogicSpace = { h: 540, w: 960 };
+    const stage = { x: 16, y: 144, w: 928, h: 228 };
+    const tray = { x: 16, y: 388, w: 836, h: 136 };
+
+    const runner = new RoundRunner({
+      rounds: [
+        {
+          round_index: 0,
+          content_pack: { round: 1 },
+          difficulty_params: { item_count: 1 },
+        },
+        {
+          round_index: 1,
+          content_pack: { round: 2 },
+          difficulty_params: { item_count: 1 },
+        },
+      ],
+      ageBand: "4-5",
+      logicSpace: space,
+      sessionFactory: (contentPack, difficultyParams, seed) =>
+        new FakeResponsiveSession(
+          contentPack as Record<string, number>,
+          difficultyParams as Record<string, number>,
+          seed
+        ),
+    });
+
+    runner.startFirstRound();
+    runner.setLogicSpace(space, stage, tray);
+    const session1 = runner.getCurrentSession() as FakeResponsiveSession;
+    expect(session1.trayRect).toEqual(tray);
+    expect(runner.getTrayRect()).toEqual(tray);
+
+    runner.completeCurrentRound();
+    const session2 = runner.getCurrentSession() as FakeResponsiveSession;
+    expect(session2.stageRect).toEqual(stage);
+    expect(session2.trayRect).toEqual(tray);
+  });
 });

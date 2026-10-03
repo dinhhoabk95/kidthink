@@ -1,4 +1,8 @@
-import { CONTENT_TOP_PX, DEFAULT_LOGIC_SPACE } from "#src/layout/constants";
+import {
+  CONTENT_TOP_PX,
+  DEFAULT_LOGIC_SPACE,
+  TRAY_ZONE_H_PX,
+} from "#src/layout/constants";
 import type { ZoneRect } from "#src/layout/stage-zones.js";
 import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
@@ -1264,8 +1268,9 @@ export function getWoodenTokenDockRect(
       h: Math.round(dockH),
     };
   }
+  // Toạ độ cũ cho session chưa nhận `zones.tray`: cao đúng khay chung, sát đáy.
   const dockW = space.w * 0.9;
-  const dockH = 136;
+  const dockH = TRAY_ZONE_H_PX;
   const dockX = (space.w - dockW) / 2;
   const dockY = space.h - dockH - 12;
   return {
@@ -1276,15 +1281,24 @@ export function getWoodenTokenDockRect(
   };
 }
 
-/** Dock khay gỗ phía dưới cho các token lựa chọn */
+/** Độ dày tấm gỗ đáy hắt xuống dưới mặt dock. */
+const DOCK_SLAB_DEPTH_PX = 4;
+
+/**
+ * Dock khay gỗ cho các token lựa chọn, vẽ trọn trong `rect` (`BR-PSZ-01`,
+ * Task #277 S5): mặt dock cộng tấm gỗ đáy không vượt đáy rect. Session đã nhận
+ * khay chung truyền đúng `zones.tray`; bỏ trống thì rơi về toạ độ cũ
+ * `getWoodenTokenDockRect(space)` cho session chưa chuyển vào khung.
+ */
 export function drawWoodenTokenDock(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
-  stageOrRect?: ZoneRect
+  rect?: ZoneRect
 ): void {
   const { space } = spaceOf(rs);
-  const dock = getWoodenTokenDockRect(space, stageOrRect);
-  const { x: dockX, y: dockY, w: dockW, h: dockH } = dock;
+  const dock = rect ?? getWoodenTokenDockRect(space);
+  const { x: dockX, y: dockY, w: dockW } = dock;
+  const dockH = Math.max(0, dock.h - DOCK_SLAB_DEPTH_PX);
   const radius = Math.min(32, Math.floor(dockH / 2));
 
   ctx.save();
@@ -1301,7 +1315,7 @@ export function drawWoodenTokenDock(
 
   // 2. 3D Bottom Wood Slab
   ctx.save();
-  ctx.translate(0, 4);
+  ctx.translate(0, DOCK_SLAB_DEPTH_PX);
   ctx.fillStyle = designTokens.colors.montessori.woodBorder;
   ctx.beginPath();
   ctx.roundRect(dockX, dockY, dockW, dockH, radius);
@@ -1325,6 +1339,24 @@ export function drawWoodenTokenDock(
   ctx.lineTo(dockX + dockW - radius, dockY + 4);
   ctx.stroke();
 
+  ctx.restore();
+}
+
+/**
+ * Vẽ trong một vùng của bàn chơi, cắt mọi nét tràn ra ngoài (`BR-PSZ-01`,
+ * Task #277 S5) — quầng sáng hay bóng đổ của primitive không được lấn sang
+ * vùng lời dẫn, khay hay nút hành động.
+ */
+export function drawClippedToZone(
+  ctx: CanvasRenderingContext2D,
+  zone: ZoneRect,
+  draw: () => void
+): void {
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(zone.x, zone.y, zone.w, zone.h);
+  ctx.clip();
+  draw();
   ctx.restore();
 }
 
