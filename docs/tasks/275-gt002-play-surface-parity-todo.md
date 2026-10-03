@@ -40,6 +40,8 @@ lát chạm tới), `rtk proxy pnpm typecheck --only root`, `rtk proxy pnpm type
 
 ## S2 — Commit sai giữ tập chọn (G3, G5) · S · phụ thuộc: S1b
 
+> #283 B2 (2026-10-03): nút Xong chuyển sang `zones.action` do shell vẽ, `drawProgressBadge` đã gỡ (`BR-PSZ-06`). Mục "nút Xong nháy hổ phách" nay là nháy nút ở `zones.action` qua `getHintTarget()`/`drawCommitButton`, mục "nhãn đếm" không còn đối tượng.
+
 - [ ] Trạng thái hình suy từ mechanic; xoá `itemStates` và nhánh gán `wrong`
 - [ ] Commit sai: nút Xong nháy hổ phách theo `lastFrameMs`; tính một miss
 - [ ] Nhãn đếm đọc `mechanic.getSelectedIds().length`

@@ -161,8 +161,14 @@ interface StageSessionFlags {
   canCommit(): boolean;    // false thì nút vẽ mờ và chạm bị nuốt
   commitIcon?: "check" | "play" | "listen"; // bỏ trống là ✓; ▶ chạy, loa nghe mẫu
   usesPromptZone: boolean; // mặc định false; true thì shell vẽ lời dẫn, engine không vẽ (`BR-PSZ-08..10`)
+  getHintTarget(): { kind: "slot"; index: number } | { kind: "action" } | null; // gợi ý trỏ vật hoặc nút hành động
 }
 ```
+
+Khi `getHintTarget()` trả `{ kind: "action" }` (bước kế là nộp bài), `GameEngine.actionHinted`
+bật và shell nháy vòng hổ phách quanh nút ở `zones.action`; không vẽ vòng quanh slot nào.
+Nút hành động cũng có bản DOM cho Tab và Enter/Space (`aria-disabled` khi `canCommit()` là
+`false`, không dùng `disabled`); Enter/Space đi cùng đường với chạm vào `zones.action`.
 
 HUD không có rect trong kiểu này vì nó là DOM ở ngoài canvas; chiều cao HUD được trừ khỏi viewport
 trước khi đo canvas.

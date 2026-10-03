@@ -24,6 +24,14 @@ export interface ActionResult {
   feedback: FeedbackKind;
 }
 
+/**
+ * Chỗ gợi ý (scaffolding) trỏ tới: một slot, hoặc nút hành động ở `zones.action`
+ * khi bước đúng kế tiếp là nộp bài (`BR-PSZ-05`, Task #283).
+ */
+export type HintTarget =
+  | { readonly kind: "slot"; readonly index: number }
+  | { readonly kind: "action" };
+
 /** Action the session does not handle — no feedback owed. */
 export const ACTION_IGNORED: ActionResult = Object.freeze({
   valid: false,
@@ -179,6 +187,15 @@ export abstract class TemplateGameSession<
    */
   getHintTargetIndex(): number | null {
     return null;
+  }
+
+  /**
+   * Chỗ gợi ý trỏ tới. Mặc định suy từ `getHintTargetIndex()`; engine có nút nộp
+   * ghi đè để trỏ vào nút khi bước kế là nộp (`BR-PSZ-05`).
+   */
+  getHintTarget(): HintTarget | null {
+    const index = this.getHintTargetIndex();
+    return index === null ? null : { kind: "slot", index };
   }
 
   /** Phiên có cần khay vật thể riêng không (`BR-PSZ-01`). Mặc định false. */

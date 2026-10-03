@@ -78,6 +78,46 @@ export interface CommitButtonOptions {
   readonly origin?: "center" | "top-left";
   /** Bỏ trống là ✓. */
   readonly icon?: CommitIcon;
+  /**
+   * Gợi ý đang trỏ vào nút (`getHintTarget()` → `action`): vòng hổ phách nháy
+   * quanh nút theo `timeMs`, vẽ tĩnh khi `reducedMotion`.
+   */
+  readonly hint?: { readonly timeMs: number; readonly reducedMotion: boolean };
+}
+
+const HINT_RING_WIDTH_PX = 5;
+const HINT_RING_PAD_PX = 4;
+const HINT_PULSE_PERIOD_MS = 1000;
+const HINT_PULSE_MIN_ALPHA = 0.35;
+
+/** Vòng hổ phách quanh nút khi gợi ý trỏ vào nút hành động. */
+function drawHintRing(
+  ctx: CanvasRenderingContext2D,
+  left: number,
+  top: number,
+  rect: { readonly w: number; readonly h: number },
+  radius: number,
+  hint: NonNullable<CommitButtonOptions["hint"]>
+): void {
+  const phase = (hint.timeMs % HINT_PULSE_PERIOD_MS) / HINT_PULSE_PERIOD_MS;
+  const pulse = hint.reducedMotion
+    ? 1
+    : HINT_PULSE_MIN_ALPHA +
+      (1 - HINT_PULSE_MIN_ALPHA) * (0.5 + 0.5 * Math.sin(phase * 2 * Math.PI));
+  ctx.save();
+  ctx.globalAlpha = pulse;
+  ctx.strokeStyle = designTokens.colors.montessori.amber;
+  ctx.lineWidth = HINT_RING_WIDTH_PX;
+  ctx.beginPath();
+  ctx.roundRect(
+    left - HINT_RING_PAD_PX,
+    top - HINT_RING_PAD_PX,
+    rect.w + 2 * HINT_RING_PAD_PX,
+    rect.h + 2 * HINT_RING_PAD_PX,
+    radius + HINT_RING_PAD_PX
+  );
+  ctx.stroke();
+  ctx.restore();
 }
 
 /** Dấu ✓ bằng nét tròn đầu, tâm `(cx, cy)`, cạnh `size`. */
@@ -181,4 +221,7 @@ export function drawCommitButton(
     Math.min(rect.w, rect.h) * CHECK_ICON_RATIO
   );
   ctx.restore();
+  if (options.hint) {
+    drawHintRing(ctx, left, top, rect, radius, options.hint);
+  }
 }

@@ -1364,7 +1364,9 @@ export function drawClippedToZone(
 export function drawSubPromptText(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
-  text: string
+  text: string,
+  /** Có thì nhãn nằm trọn trong vùng này (đỉnh vùng, giữa ngang), không theo tỉ lệ canvas. */
+  rect?: ZoneRect
 ): void {
   if (!text) {
     return;
@@ -1374,10 +1376,14 @@ export function drawSubPromptText(
   ctx.save();
   ctx.font = `${fontPx}px ${designTokens.fonts.sans}`;
   const metrics = ctx.measureText(text);
-  const pillW = Math.max(160, metrics.width + 36);
+  const pillW = Math.min(
+    rect?.w ?? Number.POSITIVE_INFINITY,
+    Math.max(160, metrics.width + 36)
+  );
   const pillH = Math.max(32, fontPx + 14);
-  const pillX = (rs.LOGIC_WIDTH - pillW) / 2;
-  const pillY = rs.LOGIC_HEIGHT * PROMPT_TOP_RATIO + 56;
+  const centerX = rect ? rect.x + rect.w / 2 : rs.LOGIC_WIDTH / 2;
+  const pillX = centerX - pillW / 2;
+  const pillY = rect ? rect.y : rs.LOGIC_HEIGHT * PROMPT_TOP_RATIO + 56;
 
   // Sub-prompt pill background
   ctx.fillStyle = designTokens.colors.montessori.amberLight;
@@ -1391,7 +1397,7 @@ export function drawSubPromptText(
   ctx.fillStyle = designTokens.colors.montessori.amberDark;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(text, rs.LOGIC_WIDTH / 2, pillY + pillH / 2);
+  ctx.fillText(text, centerX, pillY + pillH / 2);
   ctx.restore();
 }
 

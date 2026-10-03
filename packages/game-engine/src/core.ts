@@ -128,6 +128,8 @@ export class GameEngine {
   readonly audio = new AudioController();
   scaffolding?: ScaffoldingSystem;
   focusIndex: number | null = null;
+  /** Gợi ý đang trỏ vào nút hành động ở `zones.action`; shell nháy nút (`BR-PSZ-05`). */
+  actionHinted = false;
   skipSuggested = false;
   /**
    * Cổng chờ câu dẫn đọc xong (`BR-PNR-11`, Task #273).
@@ -219,6 +221,7 @@ export class GameEngine {
     this.audio.setEnabled(config.audio_enabled);
     this.scaffolding = new ScaffoldingSystem(config.age_band);
     this.focusIndex = null;
+    this.actionHinted = false;
     this.skipSuggested = false;
 
     if (this.activeSession) {
@@ -268,10 +271,11 @@ export class GameEngine {
     if (!this.scaffolding) {
       return;
     }
-    const targetIdx =
+    const hint =
       this.activeSession instanceof TemplateGameSession
-        ? this.activeSession.getHintTargetIndex()
+        ? this.activeSession.getHintTarget()
         : null;
+    const targetIdx = hint?.kind === "slot" ? hint.index : null;
 
     this.scaffolding.setFocusIndex(targetIdx);
 
@@ -279,6 +283,7 @@ export class GameEngine {
     const prevSkip = this.scaffolding.isSkipSuggested;
     const level = this.scaffolding.tick(deltaMs);
 
+    this.actionHinted = level > 0 && hint?.kind === "action";
     if (level > 0 && targetIdx !== null) {
       this.focusIndex = targetIdx;
     } else {

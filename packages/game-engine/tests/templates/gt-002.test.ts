@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { ActionResult } from "#src/game-session";
-import type { ViewEntity } from "#src/interaction";
 import type { LogicSpace } from "#src/layout/constants";
-import { COMMIT_ENTITY_ID } from "#src/render/index.js";
 import { GT002_FIXTURES } from "#src/templates/GT-002/fixtures";
 import { GT002Session } from "#src/templates/GT-002/session";
 
@@ -39,26 +36,6 @@ function tapItem(session: GT002Session, itemId: string): void {
     throw new Error(`Thiếu slot của ${itemId}`);
   }
   session.dispatch({ type: "tap", x: slot.x, y: slot.y, timeMs: 0 });
-}
-
-function commitEntity(session: GT002Session): ViewEntity {
-  const entity = session
-    .getView()
-    .entities.find((e) => e.id === COMMIT_ENTITY_ID);
-  if (!entity) {
-    throw new Error(`Thiếu entity ${COMMIT_ENTITY_ID}`);
-  }
-  return entity;
-}
-
-function tapCommitButton(session: GT002Session): ActionResult | undefined {
-  const entity = commitEntity(session);
-  return session.dispatch({
-    type: "tap",
-    x: entity.x,
-    y: entity.y,
-    timeMs: 0,
-  });
 }
 
 describe("GT-002 — thắng chỉ khi commit (BR-E002-02, Task #275 S1a)", () => {
@@ -101,33 +78,33 @@ describe("GT-002 — thắng chỉ khi commit (BR-E002-02, Task #275 S1a)", () =
 });
 
 /**
- * Nút **Xong** là đường `commit` duy nhất của GT-002 trên bề mặt trẻ (`G1`,
- * `D-275-1`). Trước Task #275 S1b, web không phát `commit` cho GT-002 nên
- * không có cách nộp bài: chỉ harness engine gửi thẳng `commit` mới thắng được.
+ * Nút **Xong** nằm ở `zones.action` do shell vẽ (`BR-PSZ-05`, Task #283 B2): engine
+ * khai `needsCommit`, báo sáng/mờ qua `canCommit()` và chỉ nhận `commit`.
+ * Trước đó (#275 S1b) engine tự vẽ nút trong canvas; nút đó đã gỡ.
  */
-describe("GT-002 — nút Xong trên canvas (N1, Task #275 S1b)", () => {
-  it("getView() có entity nút Xong, vai trung tính, nhãn Xong", () => {
+describe("GT-002 — nút Xong ở zones.action (BR-PSZ-05, Task #283 B2)", () => {
+  it("khai needsCommit, mờ khi chưa chọn, sáng khi đã chọn", () => {
     const session = buildSession();
-
-    const entity = commitEntity(session);
-
-    expect(entity.role).toBe("neutral");
-    expect(entity.label).toBe("Xong");
-  });
-
-  it("chạm nút Xong với tập chọn đúng thì thắng", () => {
-    const session = buildSession();
-    for (const id of correctIds) {
-      tapItem(session, id);
+    const [firstCorrect] = correctIds;
+    if (!firstCorrect) {
+      throw new Error("Fixture không có vật đúng");
     }
 
-    const verdict = tapCommitButton(session);
-
-    expect(verdict?.valid).toBe(true);
-    expect(session.checkWinCondition()).toBe(true);
+    expect(session.needsCommit).toBe(true);
+    expect(session.canCommit()).toBe(false);
+    tapItem(session, firstCorrect);
+    expect(session.canCommit()).toBe(true);
   });
 
-  it("chạm nút Xong với tập chọn sai thì nhắc thử lại, chưa thắng", () => {
+  it("getView() không còn entity nút Xong — shell dựng nút hành động", () => {
+    const session = buildSession();
+
+    const ids = session.getView().entities.map((e) => e.id);
+
+    expect(ids.every((id) => id !== "commit:done")).toBe(true);
+  });
+
+  it("commit với tập chọn sai thì nhắc thử lại, chưa thắng", () => {
     const session = buildSession();
     const [firstCorrect] = correctIds;
     const [firstDistractor] = distractorIds;
@@ -137,37 +114,29 @@ describe("GT-002 — nút Xong trên canvas (N1, Task #275 S1b)", () => {
     tapItem(session, firstCorrect);
     tapItem(session, firstDistractor);
 
-    const verdict = tapCommitButton(session);
+    const verdict = session.dispatch({ type: "commit", timeMs: 0 });
 
     expect(verdict).toEqual({ valid: false, feedback: "amber_soft" });
     expect(session.checkWinCondition()).toBe(false);
   });
 
-  it("chạm nút Xong khi chưa chọn vật nào thì bị nuốt, không tính lần sai", () => {
+  it("commit khi chưa chọn vật nào thì bị nuốt, không tính lần sai", () => {
     const session = buildSession();
 
-    const verdict = tapCommitButton(session);
+    const verdict = session.dispatch({ type: "commit", timeMs: 0 });
 
     expect(verdict).toEqual({ valid: false, feedback: "none" });
     expect(session.checkWinCondition()).toBe(false);
   });
 
-  it("nút Xong không đè vật nào, ở cả khung ngang và khung dọc", () => {
-    const spaces: LogicSpace[] = [
-      { w: 960, h: 540 },
-      { w: 540, h: 1168 },
-    ];
+  it("chọn đủ vật đúng thì gợi ý trỏ vào nút hành động, chưa đủ thì trỏ vật", () => {
+    const session = buildSession();
+    expect(session.getHintTarget()?.kind).toBe("slot");
 
-    for (const space of spaces) {
-      const session = buildSession(space);
-      const button = commitEntity(session);
-      const buttonTop = button.y - button.h / 2;
-
-      for (const slot of session.slots) {
-        const slotBottom = slot.y + slot.hitH / 2;
-        expect(slotBottom).toBeLessThan(buttonTop);
-      }
-      expect(button.y + button.h / 2).toBeLessThanOrEqual(space.h);
+    for (const id of correctIds) {
+      tapItem(session, id);
     }
+
+    expect(session.getHintTarget()).toEqual({ kind: "action" });
   });
 });

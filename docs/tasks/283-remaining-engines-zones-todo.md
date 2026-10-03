@@ -77,11 +77,14 @@ Ghi chú đo của N (2026-10-03):
 
 ## B2 — Nộp bài, tiến độ, ức chế · M · phụ thuộc: B1, #275 đóng
 
-- [ ] RED: GT-002 `needsCommit=true`, chạm `zones.action` nộp được, quét `tap` không thắng (mẫu `play-commit-reachability.test.ts`)
-- [ ] GT-002 bỏ nút Xong tự vẽ và `drawProgressBadge`
-- [ ] GT-018: `needsCommit` theo `response_mode === "sequence"`, test hai nhánh
-- [ ] GT-026, GT-027 bỏ `drawProgressBadge` (`BR-PSZ-06`); khoảng nghỉ GT-026 vẫn trống
-- [ ] Ca âm: khôi phục `drawProgressBadge` → đỏ
+- [x] RED: GT-002 `needsCommit=true`, chạm `zones.action` nộp được, quét `tap` không thắng (mẫu `play-commit-reachability.test.ts`) — `apps/web/tests/unit/play-gesture.test.ts` (chạm `zones.action`, `pressActionButton`, ca âm `needsCommit=false`) và `stage-engines-b2.test.ts`
+- [x] GT-002 bỏ nút Xong tự vẽ và `drawProgressBadge`; `getView()` không còn entity `commit:done`; `canCommit()` = đã chọn ≥1 vật
+- [x] GT-018: `needsCommit` theo `response_mode === "sequence"`, test hai nhánh (`stage-engines-b2.test.ts`; gợi ý trỏ nút ở nhánh chuỗi)
+- [x] GT-026, GT-027 bỏ `drawProgressBadge` (`BR-PSZ-06`); khoảng nghỉ GT-026 vẫn trống
+- [x] Ca âm: khôi phục `drawProgressBadge` → đỏ (`fixtures/gt-026-progress-badge.ts`)
+- Phần #275 không đụng: S2 (commit sai giữ tập chọn, `itemStates`), S3, S4, S5 vẫn mở. Mục S2 "nhãn đếm" mất đối tượng vì `drawProgressBadge` đã gỡ (`BR-PSZ-06`) — đếm chọn nếu còn cần phải ở shell.
+- Nợ đo (mẫu 2 level mỗi hình, `KNOWN_STAGE_DEBT_CASES`, chỉ giảm): GT-002 portrait 2 ca (level 9-10 vật, `grid-2x4` chứa 8 ô/trang, không có phân trang); GT-027 điện thoại ngang 4 ca (dải nhãn 44 px lấy chỗ lưới). Cùng gốc với `play-stage-zones.md` §11 câu 4.
+- Test sweep lấy mẫu `SEEDS_PER_SHAPE=2` level mỗi hình nội dung: GT-002 có hàng trăm level, quét đủ mất ~160 s một viewport.
 
 ## B3 — Kéo thả có khay · L · phụ thuộc: N
 
@@ -122,9 +125,9 @@ Ghi chú đo của N (2026-10-03):
 
 ## Việc chung
 
-- [ ] Entity a11y của nút hành động ở shell; Tab + Enter gửi `commit`; áp GT-028, 034, 035, 036 và mọi engine `needsCommit` mới
-- [ ] `getHintTarget()` có nhánh `{ kind: "action" }`; shell nháy nút hành động
-- [ ] Xác định cổng hint-target ngoài `check:hint-target` (nếu có)
+- [x] Nút hành động a11y ở shell (`actionButton`, `pressActionButton` trong `use-play-gesture.ts`, nút DOM trong `[code].vue`): Tab + Enter/Space đi cùng đường chạm `zones.action`; áp mọi engine `needsCommit` (GT-002, 006, 018 chuỗi, 028, 034, 035, 036)
+- [x] `getHintTarget()` có nhánh `{ kind: "action" }` (GT-002 khi chọn đủ, GT-018 chuỗi); `GameEngine.actionHinted` + `drawCommitButton({ hint })` nháy nút (`tests/engine-action-hint.test.ts`)
+- [x] Cổng hint-target: chỉ `scripts/check-hint-target.ts` (`check:hint-target`) đo `getHintTargetIndex`; nhánh `action` do `engine-action-hint.test.ts` giữ. Không có cổng nào khác
 
 ## Checkpoint — Trình duyệt thật
 

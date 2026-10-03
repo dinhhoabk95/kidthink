@@ -14,9 +14,13 @@ import type {
   ViewEntity,
 } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
+import {
+  dockRectAroundSlots,
+  insetDrawSize,
+  splitCaption,
+} from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
-  drawProgressBadge,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
@@ -62,6 +66,8 @@ export class GT027Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
+  override readonly usesPromptZone = true;
 
   private ruleSystem!: RuleSystem<CardItem>;
   private successfulTrialCount = 0;
@@ -310,11 +316,16 @@ export class GT027Session extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
-    return layoutFn({
-      slotCount: this.content.items.length,
-      ageBand,
-      logic: this.logicSpace,
-    });
+    return insetDrawSize(
+      layoutFn({
+        slotCount: this.content.items.length,
+        ageBand,
+        logic: this.logicSpace,
+        stage: this.stageRect ? splitCaption(this.stageRect).body : undefined,
+        cssPerLogic: this.cssPerLogic,
+      }),
+      this.stageRect
+    );
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {
@@ -331,19 +342,25 @@ export class GT027Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    drawProgressBadge(
-      ctx,
-      rs,
-      this.successfulTrialCount,
-      this.targetSuccessTotal
-    );
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
+    // Tiến độ không vẽ trên canvas (`BR-PSZ-06`).
     const rule = this.ruleSystem.getActiveRule();
     const signal = this.ruleSystem.getSignalInfo();
     // Luật đang hiệu lực phải hiện thường trực: trẻ đổi luật giữa chừng, không
     // ai được yêu cầu nhớ luật cũ.
-    drawSubPromptText(ctx, rs, signal?.text ?? rule.description);
-    drawWoodenTokenDock(ctx, rs);
+    drawSubPromptText(
+      ctx,
+      rs,
+      signal?.text ?? rule.description,
+      this.stageRect ? splitCaption(this.stageRect).caption : undefined
+    );
+    drawWoodenTokenDock(
+      ctx,
+      rs,
+      dockRectAroundSlots(this.slots, this.stageRect)
+    );
 
     this.content.items.forEach((item, i) => {
       const slot = this.slots[i];

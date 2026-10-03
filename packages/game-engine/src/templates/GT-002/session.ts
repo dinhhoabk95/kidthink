@@ -3,20 +3,15 @@ import {
   ACTION_IGNORED,
   type ActionResult,
   type GameAction,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
-import { TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
+import { insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
-  COMMIT_BUTTON_LABEL,
-  COMMIT_ENTITY_ID,
-  type CommitButtonRect,
-  commitButtonRect,
-  drawCommitButton,
-  drawProgressBadge,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
@@ -40,7 +35,10 @@ export class GT002Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
   private particles: Particle[] = [];
   private itemStates: Map<string, ItemVisualState> = new Map();
-  private ageBand: AgeBand = "4-5";
+
+  /** Nút Xong ở `zones.action` (`BR-PSZ-05`); chỉ sáng khi đã chọn ít nhất một vật. */
+  override readonly needsCommit = true;
+  override readonly usesPromptZone = true;
 
   setupEntities(): void {
     this.mechanic.reset();
@@ -51,18 +49,21 @@ export class GT002Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
-    this.ageBand = ageBand;
     const layoutFn = resolveLayout("grid-2x4");
-    return layoutFn({
-      slotCount: this.displayItems.length,
-      ageBand,
-      logic: this.logicSpace,
-    });
+    return insetDrawSize(
+      layoutFn({
+        slotCount: this.displayItems.length,
+        ageBand,
+        logic: this.logicSpace,
+        stage: this.stageRect,
+        cssPerLogic: this.cssPerLogic,
+      }),
+      this.stageRect
+    );
   }
 
-  /** Hình nút Xong của vòng hiện tại — suy từ khung logic, không hằng số. */
-  getCommitButtonRect(): CommitButtonRect {
-    return commitButtonRect(this.logicSpace, this.ageBand);
+  override canCommit(): boolean {
+    return this.hasSelection();
   }
 
   private hasSelection(): boolean {
@@ -157,19 +158,6 @@ export class GT002Session extends TemplateGameSession<
         h: slot.h,
       });
     }
-    const button = this.getCommitButtonRect();
-    entities.push({
-      id: COMMIT_ENTITY_ID,
-      slotIndex: this.displayItems.length,
-      role: "neutral",
-      state: "idle",
-      x: button.x,
-      y: button.y,
-      w: button.w,
-      h: button.h,
-      label: COMMIT_BUTTON_LABEL,
-    });
-
     return {
       entities,
       activePrompt: this.content.prompt,
@@ -178,7 +166,11 @@ export class GT002Session extends TemplateGameSession<
 
   override toAction(gesture: Gesture): GameAction | null {
     if (gesture.type === "commit") {
-      return { type: "submit_selection", data: {} };
+      // Chưa chọn vật nào thì nuốt cử chỉ: nút đang mờ (`N1`), Cấm — NEVER
+      // tính một lần sai.
+      return this.hasSelection()
+        ? { type: "submit_selection", data: {} }
+        : null;
     }
     if (gesture.type !== "tap") {
       return null;
@@ -206,25 +198,7 @@ export class GT002Session extends TemplateGameSession<
       }
     }
 
-    // Nút Xong xét SAU lưới vật: vành dung sai của hai vùng giáp nhau ở khung
-    // ngang nhỏ nhất, và ở dải chồng đó vật mới là thứ trẻ nhắm tới.
-    if (this.isCommitButtonHit(gesture.x, gesture.y)) {
-      // Chưa chọn vật nào thì nuốt cử chỉ: nút đang mờ (`N1`), bấm vào nó
-      // Cấm — NEVER tính một lần sai.
-      return this.hasSelection()
-        ? { type: "submit_selection", data: {} }
-        : null;
-    }
-
     return null;
-  }
-
-  private isCommitButtonHit(x: number, y: number): boolean {
-    const button = this.getCommitButtonRect();
-    return (
-      Math.abs(x - button.x) <= button.w / 2 + TAP_TOLERANCE_PX &&
-      Math.abs(y - button.y) <= button.h / 2 + TAP_TOLERANCE_PX
-    );
   }
 
   override getHintTargetIndex(): number | null {
@@ -232,6 +206,15 @@ export class GT002Session extends TemplateGameSession<
       (it) => it.is_correct && this.getItemState(it.item_id) !== "selected"
     );
     return idx >= 0 ? idx : null;
+  }
+
+  /** Chọn đủ vật đúng rồi thì bước kế là bấm Xong (`BR-PSZ-05`). */
+  override getHintTarget(): HintTarget | null {
+    const slotTarget = super.getHintTarget();
+    if (slotTarget) {
+      return slotTarget;
+    }
+    return this.canCommit() ? { kind: "action" } : null;
   }
 
   override commit(action: GameAction): void {
@@ -248,16 +231,6 @@ export class GT002Session extends TemplateGameSession<
     }
   }
 
-  private getSelectedCount(): number {
-    let count = 0;
-    for (const [, state] of this.itemStates) {
-      if (state === "selected" || state === "correct") {
-        count++;
-      }
-    }
-    return count;
-  }
-
   render(
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -265,17 +238,10 @@ export class GT002Session extends TemplateGameSession<
   ): void {
     const slots = this.slots;
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    drawProgressBadge(
-      ctx,
-      rs,
-      this.getSelectedCount(),
-      this.difficulty.target_count
-    );
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
     this.drawInteractive(rs, ctx, slots);
-    drawCommitButton(ctx, rs, this.getCommitButtonRect(), {
-      enabled: this.hasSelection(),
-    });
     this.drawFeedback(rs, ctx, timeMs);
   }
 

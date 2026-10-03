@@ -5,6 +5,7 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type {
@@ -14,6 +15,13 @@ import type {
   ViewEntity,
 } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
+import {
+  dockRectAroundSlots,
+  insetDrawSize,
+  splitCaption,
+  splitFigure,
+} from "#src/layout/slot-fit";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import { OrderingMechanic } from "#src/mechanics/ordering-mechanic";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
@@ -30,6 +38,9 @@ import {
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT018Content, GT018Difficulty } from "./template.js";
+
+/** Cạnh vuông của máy hát (logic px). */
+const GRAMOPHONE_SIZE_PX = 130;
 
 function isPointInSlot(slot: Slot, x: number, y: number): boolean {
   const hw = (slot.hitW ?? slot.w) / 2;
@@ -67,6 +78,24 @@ export class GT018Session extends TemplateGameSession<
   });
   private readonly orderingMechanic = new OrderingMechanic();
   selectedItemId: string | null = null;
+
+  override readonly usesPromptZone = true;
+
+  /**
+   * Nút ở `zones.action` chỉ có khi trẻ xếp thứ tự (`response_mode === "sequence"`):
+   * `commit` → `submit_order`. Chế độ chọn chấm ngay khi chạm (`BR-PSZ-05`).
+   */
+  override readonly needsCommit: boolean;
+
+  constructor(
+    content: GT018Content,
+    difficulty: GT018Difficulty,
+    layoutSeed = 0,
+    themeId?: string
+  ) {
+    super(content, difficulty, layoutSeed, themeId);
+    this.needsCommit = content.response_mode === "sequence";
+  }
 
   setupEntities(): void {
     this.isWon = false;
@@ -204,6 +233,13 @@ export class GT018Session extends TemplateGameSession<
     return 0;
   }
 
+  override getHintTarget(): HintTarget | null {
+    if (this.content.response_mode === "sequence") {
+      return { kind: "action" };
+    }
+    return super.getHintTarget();
+  }
+
   override commit(action: GameAction): void {
     if (action.type === "tap_option" || action.type === "select_item") {
       const data = action.data;
@@ -251,11 +287,42 @@ export class GT018Session extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
-    return layoutFn({
-      slotCount: this.content.options.length,
-      ageBand,
-      logic: this.logicSpace,
-    });
+    return insetDrawSize(
+      layoutFn({
+        slotCount: this.content.options.length,
+        ageBand,
+        logic: this.logicSpace,
+        stage: this.stageRect ? this.optionsArea(this.stageRect) : undefined,
+        cssPerLogic: this.cssPerLogic,
+      }),
+      this.stageRect
+    );
+  }
+
+  /** Stage trừ dải nhãn và máy hát: phần còn lại cho dock phương án. */
+  private optionsArea(stage: ZoneRect): ZoneRect {
+    return splitFigure(splitCaption(stage).body, GRAMOPHONE_SIZE_PX).rest;
+  }
+
+  private gramophoneSlot(rs: RenderSystem): Slot {
+    const figure = this.stageRect
+      ? splitFigure(splitCaption(this.stageRect).body, GRAMOPHONE_SIZE_PX)
+          .figure
+      : null;
+    const size = figure
+      ? Math.min(GRAMOPHONE_SIZE_PX, figure.w, figure.h)
+      : GRAMOPHONE_SIZE_PX;
+    return {
+      index: 0,
+      x: figure ? figure.x + figure.w / 2 : rs.LOGIC_WIDTH / 2,
+      y: figure ? figure.y + figure.h / 2 : rs.LOGIC_HEIGHT * 0.32,
+      w: size,
+      h: size,
+      hitW: size,
+      hitH: size,
+      page: 0,
+      role: "target",
+    };
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {
@@ -272,22 +339,22 @@ export class GT018Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    drawSubPromptText(ctx, rs, this.content.audio_prompt.text);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
+    drawSubPromptText(
+      ctx,
+      rs,
+      this.content.audio_prompt.text,
+      this.stageRect ? splitCaption(this.stageRect).caption : undefined
+    );
 
-    const gramophoneSlot: Slot = {
-      index: 0,
-      x: rs.LOGIC_WIDTH / 2,
-      y: rs.LOGIC_HEIGHT * 0.32,
-      w: 130,
-      h: 130,
-      hitW: 130,
-      hitH: 130,
-      page: 0,
-      role: "target",
-    };
-    drawGramophone(ctx, gramophoneSlot, false);
-    drawWoodenTokenDock(ctx, rs);
+    drawGramophone(ctx, this.gramophoneSlot(rs), false);
+    drawWoodenTokenDock(
+      ctx,
+      rs,
+      dockRectAroundSlots(this.slots, this.stageRect)
+    );
 
     const chosenOrder =
       this.content.response_mode === "sequence"

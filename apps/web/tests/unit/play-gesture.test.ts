@@ -3,6 +3,7 @@ import {
   ACTION_CORRECT,
   ACTION_RETRY,
   type ActionResult,
+  computeStageZones,
   createGameSessionSync,
   type EngineConfig,
   type GameAction,
@@ -435,8 +436,6 @@ const GT002_ENGINE_CONFIG: EngineConfig = {
   audio_enabled: false,
 };
 
-const COMMIT_ENTITY_ID = "commit:done";
-
 function makeGt002Harness() {
   const runner = new RoundRunner({
     rounds: [
@@ -477,10 +476,19 @@ function makeGt002Harness() {
     renderSystem: { LOGIC_WIDTH: 960, LOGIC_HEIGHT: 540 },
   };
 
+  const zones = computeStageZones({
+    logicW: 960,
+    logicH: 540,
+    ageBand: "4-5",
+    cssPerLogic: 1,
+    needsTray: false,
+    needsCommit: true,
+  });
   const gesture = usePlayGesture({
     getEngine: () => engine as never,
     canvasRef: ref(null),
     onRoundWon,
+    getStageZones: () => zones,
   });
   gesture.syncView();
 
@@ -504,44 +512,91 @@ function makeGt002Harness() {
     }
   }
 
-  return { gesture, onRoundWon, engine, entityById, tapAllCorrectItems };
+  return {
+    gesture,
+    onRoundWon,
+    engine,
+    entityById,
+    tapAllCorrectItems,
+    zones,
+  };
 }
 
 /**
- * GT-002 nộp bài bằng nút Xong vẽ trên canvas (`D-275-1`): bề mặt web không
- * phát `commit` cho engine này, nên nếu `toAction()` không nhận chạm vào nút
- * thì trẻ không có đường nào thắng — chỉ harness engine gửi thẳng `commit`.
+ * GT-002 nộp bài bằng nút Xong ở `zones.action` (`BR-PSZ-05`, Task #283 B2): shell
+ * đổi chạm vào vùng nút thành `commit`; bàn phím đi qua nút DOM
+ * `pressActionButton`. Không có đường nào khác để thắng.
  */
-describe("usePlayGesture — nút Xong của GT-002 thật (Task #275 S1b)", () => {
+describe("usePlayGesture — nút Xong ở zones.action của GT-002 thật (Task #283 B2)", () => {
   beforeAll(async () => {
     await preloadGameSession("GT-002");
   });
 
-  it("chọn đủ tập đúng rồi chạm nút Xong: báo thắng đúng một lần", () => {
-    const { gesture, onRoundWon, entityById, tapAllCorrectItems } =
+  it("chọn đủ tập đúng rồi chạm zones.action: báo thắng đúng một lần", () => {
+    const { gesture, onRoundWon, tapAllCorrectItems, zones } =
       makeGt002Harness();
     tapAllCorrectItems();
     expect(onRoundWon).not.toHaveBeenCalled();
 
-    const button = entityById(COMMIT_ENTITY_ID);
     gesture.dispatchGesture({
       type: "tap",
-      x: button.x,
-      y: button.y,
+      x: zones.action.x + zones.action.w / 2,
+      y: zones.action.y + zones.action.h / 2,
       timeMs: 0,
     });
 
     expect(onRoundWon).toHaveBeenCalledTimes(1);
   });
 
-  it("đường bàn phím: Enter trên nút Xong cho cùng kết quả", () => {
-    const { onRoundWon, entityById, tapAllCorrectItems, gesture } =
-      makeGt002Harness();
+  it("đường bàn phím: pressActionButton cho cùng kết quả", () => {
+    const { onRoundWon, tapAllCorrectItems, gesture } = makeGt002Harness();
     tapAllCorrectItems();
 
-    gesture.handleAccessibleEntityTap(entityById(COMMIT_ENTITY_ID));
+    gesture.pressActionButton();
 
     expect(onRoundWon).toHaveBeenCalledTimes(1);
+  });
+
+  it("nút hành động hiện, mờ khi chưa chọn vật và sáng sau khi chọn", () => {
+    const { gesture, tapAllCorrectItems } = makeGt002Harness();
+
+    expect(gesture.actionButton.value).toEqual({
+      visible: true,
+      enabled: false,
+      label: "Xong",
+    });
+    tapAllCorrectItems();
+    gesture.syncView();
+
+    expect(gesture.actionButton.value.enabled).toBe(true);
+  });
+
+  it("chưa chọn vật nào mà bấm nút: không thắng, không tính lần sai", () => {
+    const { gesture, onRoundWon, engine } = makeGt002Harness();
+
+    gesture.pressActionButton();
+
+    expect(onRoundWon).not.toHaveBeenCalled();
+    expect(engine.scaffolding.onMiss).not.toHaveBeenCalled();
+  });
+
+  it("ca âm: engine không khai needsCommit thì chạm zones.action không nộp được", () => {
+    const { gesture, onRoundWon, engine, tapAllCorrectItems, zones } =
+      makeGt002Harness();
+    tapAllCorrectItems();
+    const session = engine.activeSession;
+    engine.activeSession = Object.assign(Object.create(session), {
+      needsCommit: false,
+    });
+
+    gesture.dispatchGesture({
+      type: "tap",
+      x: zones.action.x + zones.action.w / 2,
+      y: zones.action.y + zones.action.h / 2,
+      timeMs: 0,
+    });
+
+    expect(onRoundWon).not.toHaveBeenCalled();
   });
 });
 

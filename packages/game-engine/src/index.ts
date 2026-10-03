@@ -25,6 +25,7 @@ export {
   type FeedbackKind,
   type GameAction,
   type GameSession,
+  type HintTarget,
   type SessionTelemetry,
   type TelemetryEvent,
   TemplateGameSession,
@@ -158,6 +159,7 @@ export {
   type SessionMeta,
 } from "./offline-buffer";
 export {
+  type CommitIcon,
   drawCentralTargetCard,
   drawCommitButton,
   drawMascot,

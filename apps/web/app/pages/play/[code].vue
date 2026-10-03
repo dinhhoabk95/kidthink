@@ -157,6 +157,21 @@
                 (Đang chọn)
               </span>
             </button>
+            <!-- Nút hành động ở `zones.action` (`BR-PSZ-05`): canvas chỉ vẽ nút,
+                 DOM này cho Tab + Enter/Space và trình đọc màn hình. Không dùng
+                 `disabled` để Tab vẫn dừng được và đọc "chưa bấm được". -->
+            <button
+              class="sr-only focus:not-sr-only focus:fixed focus:z-40 focus:px-4 focus:py-2 focus:rounded-2xl focus:bg-white focus:text-surface-900 focus:border-[3px] focus:border-brand-600 focus:shadow-2xl focus:ring-4 focus:ring-brand-500/30 focus:ring-offset-2 focus:outline-none focus:font-heading focus:font-bold focus:text-base pointer-events-auto"
+              type="button"
+              v-if="actionButton.visible"
+              :aria-disabled="!actionButton.enabled"
+              :aria-label="actionButton.label"
+              @click="pressActionButton"
+              @keydown.enter.prevent="pressActionButton"
+              @keydown.space.prevent="pressActionButton"
+            >
+              {{ actionButton.label }}
+            </button>
           </section>
 
           <!-- Bỏ qua câu này — chỗ tạm ở góc đối diện nút hành động tương lai
@@ -352,6 +367,9 @@
           enabled: session.canCommit?.() ?? true,
           origin: "top-left",
           icon: session.commitIcon,
+          hint: engine?.actionHinted
+            ? { timeMs: now, reducedMotion: rs.reducedMotion }
+            : undefined,
         });
       }
       // Lớp trên cùng: pop/nhịp hổ phách tại điểm chạm (`BR-FBK-05`, `BR-FBK-11`).
@@ -440,6 +458,8 @@
     handlePointerUp,
     handlePointerCancel,
     handleAccessibleEntityTap,
+    actionButton,
+    pressActionButton,
   } = gesture;
 
   const { stopNarrationAudio, speakErrorPrompt } = usePlayAudio({

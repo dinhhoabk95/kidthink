@@ -9,10 +9,10 @@ import {
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveLayout } from "#src/layout/registry";
+import { insetDrawSize, splitCaption } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import {
   drawPedestalTarget,
-  drawProgressBadge,
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
@@ -36,6 +36,8 @@ export class GT026Session extends TemplateGameSession<
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
   private wrongTimestamp = 0;
+
+  override readonly usesPromptZone = true;
 
   private inhibitionSystem!: InhibitionSystem;
 
@@ -257,11 +259,16 @@ export class GT026Session extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("grid");
-    return layoutFn({
-      slotCount: 1,
-      ageBand,
-      logic: this.logicSpace,
-    });
+    return insetDrawSize(
+      layoutFn({
+        slotCount: 1,
+        ageBand,
+        logic: this.logicSpace,
+        stage: this.stageRect ? splitCaption(this.stageRect).body : undefined,
+        cssPerLogic: this.cssPerLogic,
+      }),
+      this.stageRect
+    );
   }
 
   setRenderItemState(itemId: string, state: ItemVisualState): void {
@@ -278,14 +285,11 @@ export class GT026Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
+    // Tiến độ không vẽ trên canvas (`BR-PSZ-06`).
     const trial = this.inhibitionSystem.getCurrentTrial();
-    drawProgressBadge(
-      ctx,
-      rs,
-      this.inhibitionSystem.getCurrentTrialIndex(),
-      this.inhibitionSystem.getTotalTrials()
-    );
 
     if (!trial || this.inhibitionSystem.getState() !== "stimulus") {
       // Khoảng nghỉ giữa hai lượt: màn phải trống, đó là phần của bài kiểm ức chế.
@@ -297,7 +301,12 @@ export class GT026Session extends TemplateGameSession<
       trial.kind === "go"
         ? this.content.go_stimulus
         : this.content.nogo_stimulus;
-    drawSubPromptText(ctx, rs, stimulus.label);
+    drawSubPromptText(
+      ctx,
+      rs,
+      stimulus.label,
+      this.stageRect ? splitCaption(this.stageRect).caption : undefined
+    );
     const slot = this.slots[0];
     if (slot) {
       const now = Date.now();

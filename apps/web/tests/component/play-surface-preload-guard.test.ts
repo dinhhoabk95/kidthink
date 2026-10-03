@@ -80,6 +80,8 @@ vi.mock("~/composables/play/use-play-gesture", () => ({
     handlePointerUp: vi.fn(),
     handlePointerCancel: vi.fn(),
     handleAccessibleEntityTap: vi.fn(),
+    actionButton: ref({ visible: false, enabled: false, label: "" }),
+    pressActionButton: vi.fn(),
     syncView: vi.fn(),
   }),
 }));

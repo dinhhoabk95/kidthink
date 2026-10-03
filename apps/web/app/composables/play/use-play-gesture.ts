@@ -1,5 +1,6 @@
 import {
   type ActionResult,
+  type CommitIcon,
   type FeedbackPoint,
   findHitEntity,
   type GameEngine,
@@ -52,10 +53,41 @@ function acceptsPointerOver(
   );
 }
 
+/** Nút hành động ở `zones.action` cho bàn phím và trình đọc màn hình (`BR-PSZ-05`). */
+export interface ActionButtonState {
+  readonly visible: boolean;
+  readonly enabled: boolean;
+  readonly label: string;
+}
+
+const ACTION_LABEL_BY_ICON: Readonly<Record<CommitIcon, string>> = {
+  check: "Xong",
+  play: "Chạy chương trình",
+  listen: "Nghe mẫu",
+};
+
+const HIDDEN_ACTION_BUTTON: ActionButtonState = {
+  visible: false,
+  enabled: false,
+  label: "",
+};
+
+function actionButtonOf(session: TemplateGameSession<unknown, unknown>) {
+  if (!session.needsCommit) {
+    return HIDDEN_ACTION_BUTTON;
+  }
+  return {
+    visible: true,
+    enabled: session.canCommit?.() ?? true,
+    label: ACTION_LABEL_BY_ICON[session.commitIcon ?? "check"],
+  };
+}
+
 export function usePlayGesture(options: GestureOptions) {
   const { getEngine, canvasRef, onRoundWon, onRetryDisallowed } = options;
 
   const viewEntities = ref<readonly ViewEntity[]>([]);
+  const actionButton = ref<ActionButtonState>(HIDDEN_ACTION_BUTTON);
 
   let activePointerId: number | null = null;
   let startClientX = 0;
@@ -70,8 +102,10 @@ export function usePlayGesture(options: GestureOptions) {
     const session = engine?.activeSession;
     if (session instanceof TemplateGameSession) {
       viewEntities.value = session.getView?.().entities ?? [];
+      actionButton.value = actionButtonOf(session);
     } else {
       viewEntities.value = [];
+      actionButton.value = HIDDEN_ACTION_BUTTON;
     }
   }
 
@@ -419,8 +453,30 @@ export function usePlayGesture(options: GestureOptions) {
     dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
   }
 
+  /**
+   * Nút hành động bằng bàn phím (Tab + Enter/Space): cùng đường với chạm vào
+   * `zones.action` — chạm giữa vùng để verdict, âm thanh và phản hồi đi chung một
+   * lối (`BR-PSZ-05`). Chưa có vùng thì gửi thẳng `commit`.
+   */
+  function pressActionButton(): void {
+    const timeMs = Date.now();
+    const zones = options.getStageZones?.();
+    if (zones) {
+      dispatchGesture({
+        type: "tap",
+        x: zones.action.x + zones.action.w / 2,
+        y: zones.action.y + zones.action.h / 2,
+        timeMs,
+      });
+      return;
+    }
+    dispatchGesture({ type: "commit", timeMs });
+  }
+
   return {
     viewEntities,
+    actionButton,
+    pressActionButton,
     stagedEntityId,
     syncView,
     dispatchGesture,

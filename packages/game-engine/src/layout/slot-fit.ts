@@ -17,6 +17,7 @@ import {
   CONTENT_TOP_PX,
   type LogicSpace,
   SAFE_MARGIN_PX,
+  SLOT_GAP_PX,
 } from "./constants.js";
 import type { ZoneRect } from "./stage-zones.js";
 import type { Slot } from "./types.js";
@@ -167,4 +168,68 @@ export function trayBoxWithin(
     TRAY_DECOR_DRAW_PAD_X_PX - padX,
     TRAY_DECOR_DRAW_PAD_Y_PX - padY
   );
+}
+
+/**
+ * Dải nhãn phụ (luật đang hiệu lực của GT-027, nhãn kích thích của GT-026, câu
+ * hát của GT-018) nằm ở đỉnh `zones.stage`; phần còn lại cho slot. Cao hơn
+ * viên thuốc nhãn (`drawSubPromptText`: tối thiểu 32 px) một khe hở.
+ */
+export const CAPTION_BAND_PX = 44;
+
+export interface CaptionSplit {
+  readonly caption: ZoneRect;
+  readonly body: ZoneRect;
+}
+
+/** Tách dải nhãn ở đỉnh stage; không có chỗ thì nhãn nhận dải rỗng. */
+export function splitCaption(stage: ZoneRect): CaptionSplit {
+  const bandH = Math.min(CAPTION_BAND_PX, stage.h);
+  return {
+    caption: { x: stage.x, y: stage.y, w: stage.w, h: bandH },
+    body: {
+      x: stage.x,
+      y: stage.y + bandH,
+      w: stage.w,
+      h: Math.max(0, stage.h - bandH),
+    },
+  };
+}
+
+export interface FigureSplit {
+  readonly figure: ZoneRect;
+  readonly rest: ZoneRect;
+}
+
+/** Phần stage tối đa dành cho hình minh hoạ cố định (chiều tách). */
+const FIGURE_MAX_SHARE = 0.4;
+
+/**
+ * Tách hình minh hoạ cố định (máy hát của GT-018) khỏi vùng còn lại: đỉnh khi
+ * stage cao, bên trái khi stage ngang. Hình không lấn quá `FIGURE_MAX_SHARE`
+ * chiều tách nên lưới phương án còn chỗ.
+ */
+export function splitFigure(area: ZoneRect, size: number): FigureSplit {
+  if (area.w > area.h) {
+    const figureW = Math.min(size, Math.round(area.w * FIGURE_MAX_SHARE));
+    return {
+      figure: { x: area.x, y: area.y, w: figureW, h: area.h },
+      rest: {
+        x: area.x + figureW + SLOT_GAP_PX,
+        y: area.y,
+        w: Math.max(0, area.w - figureW - SLOT_GAP_PX),
+        h: area.h,
+      },
+    };
+  }
+  const figureH = Math.min(size, Math.round(area.h * FIGURE_MAX_SHARE));
+  return {
+    figure: { x: area.x, y: area.y, w: area.w, h: figureH },
+    rest: {
+      x: area.x,
+      y: area.y + figureH + SLOT_GAP_PX,
+      w: area.w,
+      h: Math.max(0, area.h - figureH - SLOT_GAP_PX),
+    },
+  };
 }
