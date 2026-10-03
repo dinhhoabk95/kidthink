@@ -174,3 +174,40 @@ describe("RoundRunner logicSpace propagation (T6, BR-RSP & Task #260)", () => {
     expect(session2.trayRect).toEqual(tray);
   });
 });
+
+describe("RoundRunner truyền cssPerLogic cho session (BR-PSZ-04, Task #283 N)", () => {
+  it("setLogicSpace nhận cssPerLogic, session hiện tại và vòng sau đều nhận", () => {
+    const runner = new RoundRunner({
+      rounds: [
+        {
+          round_index: 0,
+          content_pack: {},
+          difficulty_params: { item_count: 1 },
+        },
+        {
+          round_index: 1,
+          content_pack: {},
+          difficulty_params: { item_count: 1 },
+        },
+      ],
+      ageBand: "3-4",
+      sessionFactory: (contentPack, difficultyParams, seed) =>
+        new FakeResponsiveSession(
+          contentPack as Record<string, number>,
+          difficultyParams as Record<string, number>,
+          seed
+        ),
+    });
+
+    runner.startFirstRound();
+    const before = runner.getCurrentSession() as FakeResponsiveSession;
+    expect(before.cssPerLogic).toBeUndefined();
+
+    runner.setLogicSpace({ h: 1168, w: 540 }, undefined, undefined, 0.61);
+    expect(before.cssPerLogic).toBe(0.61);
+
+    runner.completeCurrentRound();
+    const after = runner.getCurrentSession() as FakeResponsiveSession;
+    expect(after.cssPerLogic).toBe(0.61);
+  });
+});

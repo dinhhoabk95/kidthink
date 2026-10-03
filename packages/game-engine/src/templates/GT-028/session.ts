@@ -283,6 +283,8 @@ export class GT028Session extends TemplateGameSession<
       slotCount: this.content.items.length,
       ageBand,
       logic: this.logicSpace,
+      stage: this.stageRect,
+      cssPerLogic: this.cssPerLogic,
     });
   }
 

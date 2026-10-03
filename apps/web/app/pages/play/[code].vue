@@ -580,7 +580,8 @@
             roundRunner.setLogicSpace(
               vp.logicSpace,
               zones.stage,
-              zones.tray ?? undefined
+              zones.tray ?? undefined,
+              vp.scale
             );
           } else {
             roundRunner.setLogicSpace(vp.logicSpace);

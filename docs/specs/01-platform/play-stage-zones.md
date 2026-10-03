@@ -208,6 +208,8 @@ Scenario: BR-PSZ-04 — sàn chạm trên px thật ở portrait hẹp
   Given viewport 390x844, band "3-4"
   When tính vùng và slot cho mọi LayoutId ở slotCount lớn nhất
   Then mọi vùng chạm có cạnh nhân cssPerLogic không dưới sàn chạm band 3-4
+  And layout nhận `stage` và `cssPerLogic` (`LayoutInput`, `game-layout-engine.md` mục 7.1);
+    một hàm layout tính sàn ở logic px (cssPerLogic = 1) bị phép kiểm báo vi phạm
 
 Scenario: BR-PSZ-05 — GT-028 nộp được bài từ trang chơi
   Given trang /play với một level GT-028 và đã chạm đủ số lượng đúng

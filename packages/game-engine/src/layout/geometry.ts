@@ -3,7 +3,7 @@
 import {
   CONTENT_TOP_PX,
   DEFAULT_LOGIC_SPACE,
-  getTouchFloor,
+  resolveTouchFloor,
   SAFE_MARGIN_PX,
   SLOT_GAP_PX,
 } from "./constants.js";
@@ -45,7 +45,7 @@ export function computeGridLayout(
     return [];
   }
 
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
   const minW = touchFloor;
   const minH = touchFloor;
 
@@ -178,7 +178,7 @@ export function computeBipartiteLayout(
     input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawTargetCount } = input;
   const targetCount = rawTargetCount ?? slotCount;
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
 
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
   const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
@@ -322,7 +322,7 @@ export function computeMultiBucketLayout(input: LayoutInput): Slot[] {
     input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawBucketCount } = input;
   const bucketCount = rawBucketCount ?? 2;
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
 
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
   const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
@@ -406,7 +406,7 @@ export function computeTrackLayout(
     return [];
   }
 
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
   const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
@@ -474,7 +474,7 @@ export function computeNumberBondTreeLayout(input: LayoutInput): Slot[] {
     input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawBranchCount } = input;
   const branchCount = rawBranchCount ?? 2;
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
 
   const slotW = Math.max(touchFloor, 80);
   const slotH = Math.max(touchFloor, 80);
@@ -553,7 +553,7 @@ export function computeTenFrameSplitLayout(input: LayoutInput): Slot[] {
   const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
     input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand } = input;
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
 
   const slotW = Math.max(touchFloor, 70);
   const slotH = Math.max(touchFloor, 70);
@@ -622,7 +622,7 @@ export function computeHorizontalSlotTrackLayout(input: LayoutInput): Slot[] {
     input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawTargetCount } = input;
   const targetCount = rawTargetCount ?? slotCount;
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
 
   const slotW = Math.max(touchFloor, 80);
   const slotH = Math.max(touchFloor, 80);
@@ -683,7 +683,7 @@ export function computeMatrixSlotGridLayout(input: LayoutInput): Slot[] {
     input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawGridSize } = input;
   const gridSize = rawGridSize === 9 ? 3 : 2; // 2x2 hoặc 3x3
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
   const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
   const cell = Math.max(touchFloor, MATRIX_SLOT_CELL_PX);
@@ -769,7 +769,7 @@ export function computeClueBoardLayout(input: LayoutInput): Slot[] {
     1,
     Math.min(CLUE_BOARD_MAX_CLUES, rawClueCount ?? 1)
   );
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
   const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
@@ -910,7 +910,7 @@ export function computeMatrix3x3Layout(input: LayoutInput): Slot[] {
     input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawGridSize } = input;
   const gridSize = (rawGridSize ?? 0) >= 9 ? 3 : 2;
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
   const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
@@ -986,7 +986,7 @@ export function computeEquationRowsLayout(input: LayoutInput): Slot[] {
     input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawEqCount } = input;
   const eqCount = Math.max(1, rawEqCount ?? 2);
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
   const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
@@ -1046,7 +1046,7 @@ export function computeMirrorAxisSplitLayout(input: LayoutInput): Slot[] {
     input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawTargetCount } = input;
   const targetCount = Math.max(1, rawTargetCount ?? 2);
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
   const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
 
@@ -1129,7 +1129,7 @@ export function computeFreeSceneLayout(input: LayoutInput): Slot[] {
   if (slotCount <= 0) {
     return [];
   }
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
   const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
   const cell = Math.max(touchFloor, 64);
@@ -1174,7 +1174,7 @@ export function computeMeasureStripLayout(input: LayoutInput): Slot[] {
   const { slotCount: rawOptionCount, ageBand, targetCount: rawUnits } = input;
   const units = Math.max(2, Math.min(10, rawUnits ?? 4));
   const optionCount = Math.max(1, rawOptionCount ?? 3);
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
 
   const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
   const unitW = Math.max(
@@ -1285,7 +1285,7 @@ export function computeWeaveGridLayout(input: LayoutInput): Slot[] {
   const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
     input.logic ?? DEFAULT_LOGIC_SPACE;
   const { slotCount, ageBand, targetCount: rawCellCount } = input;
-  const touchFloor = getTouchFloor(ageBand);
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
   const totalCells = rawCellCount && rawCellCount >= 4 ? rawCellCount : 4;
   const gridDimension = Math.round(Math.sqrt(totalCells));
   const rows = gridDimension;

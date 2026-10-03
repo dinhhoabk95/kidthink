@@ -462,7 +462,12 @@ export function usePlaySession(options: UsePlaySessionOptions) {
           ? Boolean(session.needsCommit)
           : false,
     });
-    runner.setLogicSpace(vp.logicSpace, zones.stage, zones.tray ?? undefined);
+    runner.setLogicSpace(
+      vp.logicSpace,
+      zones.stage,
+      zones.tray ?? undefined,
+      vp.scale
+    );
   }
 
   async function fetchAndStartGame(levelCode: string): Promise<void> {

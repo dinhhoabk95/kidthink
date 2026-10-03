@@ -15,6 +15,7 @@ import { GT009_FIXTURES } from "#src/templates/GT-009/fixtures";
 import { FIXTURES_BY_CODE, type FixturePayload } from "../fixtures-map.ts";
 import { createFakeCanvas } from "../gates/fake-canvas.ts";
 import { GT009PromptZoneFlagWrongSession } from "./fixtures/gt-009-prompt-zone-flag-wrong.ts";
+import { MIGRATED_CODES } from "./migrated-codes.ts";
 
 vi.mock("#src/render/shared-render", async (importOriginal) => {
   const actual =
@@ -30,16 +31,6 @@ vi.mock("#src/render/shared-render", async (importOriginal) => {
  */
 const PORTRAIT_CANVAS_CSS = { w: 330, h: 697 } as const;
 const BAND: AgeBand = "5-6";
-
-/** Sáu engine đã dời vào khung. Dời thêm engine thì thêm mã vào đây và đổi cờ. */
-const MIGRATED_CODES: readonly string[] = [
-  "GT-001",
-  "GT-003",
-  "GT-028",
-  "GT-034",
-  "GT-035",
-  "GT-036",
-];
 
 function isFixturePayload(val: unknown): val is FixturePayload {
   return typeof val === "object" && val !== null;

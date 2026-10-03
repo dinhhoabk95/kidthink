@@ -212,12 +212,22 @@ export abstract class TemplateGameSession<
   /** Vùng khay được cấp bởi shell khi `needsTray` (`BR-PSZ-01`, Task #277 S5). */
   trayRect?: ZoneRect;
 
+  /**
+   * Px CSS trên một logic px do shell đo. Có thì sàn chạm tính trên px CSS thật
+   * (`BR-PSZ-04`); chưa có thì sàn tính theo logic px như cũ. Task #283 N.
+   */
+  cssPerLogic?: number;
+
   /** Nhận không gian logic và vùng shell cấp; thứ không truyền thì giữ nguyên. */
   private applyZones(
     space?: LogicSpace,
     stage?: ZoneRect,
-    tray?: ZoneRect
+    tray?: ZoneRect,
+    cssPerLogic?: number
   ): void {
+    if (cssPerLogic !== undefined) {
+      this.cssPerLogic = cssPerLogic;
+    }
     if (space) {
       this.logicSpace = space;
     }
@@ -237,9 +247,10 @@ export abstract class TemplateGameSession<
     band: AgeBand,
     space?: LogicSpace,
     stage?: ZoneRect,
-    tray?: ZoneRect
+    tray?: ZoneRect,
+    cssPerLogic?: number
   ): void {
-    this.applyZones(space, stage, tray);
+    this.applyZones(space, stage, tray, cssPerLogic);
     this.setupEntities();
     this._slots = this.computeSlots(band);
     this.sourceSlots = this._slots.filter((s) => s.role === "source");
@@ -256,9 +267,10 @@ export abstract class TemplateGameSession<
     band: AgeBand,
     space?: LogicSpace,
     stage?: ZoneRect,
-    tray?: ZoneRect
+    tray?: ZoneRect,
+    cssPerLogic?: number
   ): void {
-    this.applyZones(space, stage, tray);
+    this.applyZones(space, stage, tray, cssPerLogic);
     this._slots = this.computeSlots(band);
     this.sourceSlots = this._slots.filter((s) => s.role === "source");
     this.targetSlots = this._slots.filter((s) => s.role === "target");

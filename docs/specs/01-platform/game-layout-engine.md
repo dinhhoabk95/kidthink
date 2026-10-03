@@ -119,6 +119,9 @@ interface LayoutInput {
   slotCount: number;
   ageBand: AgeBand;
   targetCount?: number;            // với layout có hai vùng, ví dụ drag-to-container
+  logic?: LogicSpace;              // không gian logic; bỏ trống là 960x540
+  stage?: ZoneRect;                // zones.stage; có thì mọi slot nằm trong rect này (BR-PSZ-01)
+  cssPerLogic?: number;            // px CSS trên một logic px; có thì sàn chạm tính trên px thật (BR-PSZ-04)
 }
 
 type LayoutFn = (input: LayoutInput) => Slot[];
@@ -140,6 +143,24 @@ interface StageGroupSpec { count: number; role: SlotRole; cols?: number; hasLabe
 interface StageGroupsInput { stage: ZoneRect; ageBand: AgeBand; groups: StageGroupSpec[] }
 type ComputeStageGroupsLayout = (input: StageGroupsInput) => Slot[];
 ```
+
+**`stage` và `cssPerLogic` (Task #283 N).** Hai trường tuỳ chọn, cùng ranh giới `BR-LAY-10`:
+
+- Không có `stage` và không có `cssPerLogic` thì kết quả **giống từng byte** trước khi hai trường
+  tồn tại. Golden `tests/layout/layout-golden.test.ts` giữ điều này cho mọi `LayoutId` × band ×
+  không gian logic × `slotCount` × `targetCount`.
+- Có `stage`: `resolveLayout()` dựng khung ảo có vùng nội dung đúng bằng kích thước `stage`
+  (lề `SAFE_MARGIN_PX`, `CONTENT_TOP_PX` giữ nguyên bên trong khung ảo), chạy hàm hình học trên
+  khung đó rồi tịnh tiến slot về góc `stage`. `CONTENT_TOP_PX` vì thế không còn là mốc trên của
+  canvas khi có `stage` — mốc trên là mép trên của `stage`.
+- Có `cssPerLogic`: sàn chạm là `getTouchFloorLogicPx(band, cssPerLogic)` thay cho `getTouchFloor`
+  (`BR-PSZ-04`). Ở portrait 330x697 (`cssPerLogic` ≈ 0,61) sàn band 3-4 là 158 logic px, không
+  còn là 96 co thành khoảng 59 px thật.
+- Sàn lớn hơn làm nhiều layout không còn vừa `stage`; nhánh thay thế giảm cột / phân trang
+  (`BR-PSZ-04`) mới có ở sáu layout lưới (`grid`, `horizontal-row`, `grid-2x4`, `flex-wrap`,
+  `card-flip-grid`, `single-focus`), đo không tràn ở `slotCount` 12. Các layout còn lại giữ sàn
+  đúng px CSS nhưng chưa co cột nên tràn `stage`: nợ có số ở
+  `tests/layout-stage-overflow-debt.json`, chỉ được giảm.
 
 ### 7.2 Hằng số
 

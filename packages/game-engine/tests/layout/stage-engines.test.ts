@@ -1,7 +1,17 @@
 import { ALL_SEED_LEVELS } from "@mindkid/content-build";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import type { AgeBand } from "#src/contracts/types";
-import { DEFAULT_LOGIC_SPACE, deriveLogicSpace } from "#src/layout/constants";
+import { type GameSession, TemplateGameSession } from "#src/game-session";
+import {
+  createGameSessionSync,
+  type EngineConfig,
+  preloadGameSession,
+} from "#src/index";
+import {
+  DEFAULT_LOGIC_SPACE,
+  deriveLogicSpace,
+  getTouchFloor,
+} from "#src/layout/constants";
 import { computeStageZones, type StageZones } from "#src/layout/stage-zones";
 import { RenderSystem } from "#src/systems/render-system";
 import { GT034_FIXTURES } from "#src/templates/GT-034/fixtures";
@@ -22,7 +32,9 @@ import {
   GT036ContentSchema,
   GT036DifficultySchema,
 } from "#src/templates/GT-036/template";
+import { FIXTURES_BY_CODE } from "../fixtures-map.ts";
 import { GT035LegacyCoordsSession } from "./fixtures/gt-035-legacy-coords.ts";
+import { MIGRATED_CODES } from "./migrated-codes.ts";
 import {
   findDrawsOutsideStage,
   findHitPairViolations,
@@ -37,7 +49,9 @@ vi.mock("#src/render/shared-render", async (importOriginal) => {
 });
 
 /**
- * Task #277 S7 — GT-034, GT-035, GT-036 vào khung năm vùng (plan H12).
+ * Engine đã dời vào khung năm vùng (`MIGRATED_CODES`), tham số theo mã:
+ * khối đầu kiểm chung cho cả sáu engine; các khối sau là hành vi riêng của
+ * GT-034/035/036 (Task #277 S7, plan H12).
  *
  * Portrait 390x844: hộp canvas còn 330x697 px CSS sau HUD và đệm
  * (`277-play-stage-zones-plan.md` mục 1.3, M2). Ba engine chỉ cho band 5-6.
@@ -298,3 +312,154 @@ describe("Ca âm: GT-035 với toạ độ cứng cũ (plan H12)", () => {
     expect(findHitPairViolations(session.slots).length).toBeGreaterThan(0);
   });
 });
+
+/** Phần của `TemplateGameSession` mà khối kiểm chung cần. */
+type ZoneSession = GameSession &
+  Pick<
+    TemplateGameSession<never, never>,
+    "needsCommit" | "needsTray" | "prepareRound" | "slots" | "usesPromptZone"
+  >;
+
+function isFixturePayload(val: unknown): val is Record<string, unknown> {
+  return typeof val === "object" && val !== null;
+}
+
+function configFor(
+  code: string,
+  content: unknown,
+  difficulty: unknown
+): EngineConfig {
+  return {
+    level_code: `${code}-LV1`,
+    content_version: 1,
+    template_code: code,
+    content_pack: isFixturePayload(content) ? content : {},
+    difficulty_params: isFixturePayload(difficulty) ? difficulty : {},
+    theme_id: "default",
+    age_band: BAND,
+    reduced_motion: false,
+    audio_enabled: true,
+  };
+}
+
+function zoneSessionCases(
+  code: string
+): Array<{ name: string; create: () => ZoneSession }> {
+  const make = (config: EngineConfig): ZoneSession => {
+    const session = createGameSessionSync(code, config);
+    if (!(session instanceof TemplateGameSession)) {
+      throw new Error(`${code} không phải TemplateGameSession`);
+    }
+    return session;
+  };
+  const fromFixtures = (FIXTURES_BY_CODE[code] ?? []).map((f, i) => ({
+    name: `mẫu ${i}`,
+    create: () => make(configFor(code, f.content, f.difficulty)),
+  }));
+  const fromSeeds = seededLevels(code).map((level) => ({
+    name: `seed ${level.header.code}`,
+    create: () =>
+      make(configFor(code, level.content_pack, level.difficulty_params)),
+  }));
+  return [...fromFixtures, ...fromSeeds];
+}
+
+/**
+ * Nợ đã đo: số ca (mẫu + seed) có cặp vùng chạm cách nhau < `SLOT_GAP_PX`
+ * (`BR-LAY-05`), theo mã. GT-003 với 6 vật trở lên trong khay 508 px (đo: 20 ca seed): sàn 64 cộng khe
+ * 16 = 480 > 476 chỗ trống, nên cặp chỉ cách 15. Số chỉ được giảm; gỡ mục này
+ * khi `computeTraySourceSlots` cho khay đổi cột hoặc phân trang.
+ */
+const KNOWN_HIT_GAP_DEBT_CASES: Readonly<Record<string, number>> = {
+  "GT-003": 20,
+};
+
+/** Vùng sân khấu và khay (nếu có) — slot hợp lệ nằm trọn trong một trong hai. */
+function findSlotsOutsideZones(session: ZoneSession, zones: StageZones) {
+  return session.slots.filter(
+    (slot) =>
+      findSlotsOutsideStage([slot], zones.stage).length > 0 &&
+      (zones.tray === null ||
+        findSlotsOutsideStage([slot], zones.tray).length > 0)
+  );
+}
+
+describe.each(MIGRATED_CODES)(
+  "%s vào khung năm vùng — kiểm chung theo mã (Task #283 N)",
+  (code) => {
+    beforeAll(async () => {
+      await preloadGameSession(code);
+    });
+
+    it("khai usesPromptZone — shell vẽ lời dẫn (BR-PSZ-08)", () => {
+      const first = zoneSessionCases(code)[0];
+      expect(first?.create().usesPromptZone).toBe(true);
+    });
+
+    it("mọi slot nằm trong zones.stage hoặc zones.tray và vùng chạm không chồng (BR-PSZ-01, BR-LAY-05)", () => {
+      const gapViolatingCases: string[] = [];
+      for (const { name, create } of zoneSessionCases(code)) {
+        const session = create();
+        const space = deriveLogicSpace(
+          PORTRAIT_CANVAS_CSS.w,
+          PORTRAIT_CANVAS_CSS.h
+        );
+        const zones = computeStageZones({
+          logicW: space.w,
+          logicH: space.h,
+          ageBand: BAND,
+          cssPerLogic: PORTRAIT_CANVAS_CSS.w / space.w,
+          needsTray: session.needsTray,
+          needsCommit: session.needsCommit,
+        });
+        session.prepareRound(BAND, space, zones.stage, zones.tray ?? undefined);
+
+        expect(
+          findSlotsOutsideZones(session, zones),
+          `${code} ${name}`
+        ).toEqual([]);
+        if (findHitPairViolations(session.slots).length > 0) {
+          gapViolatingCases.push(name);
+        }
+      }
+      expect(
+        gapViolatingCases.length,
+        gapViolatingCases.join(", ")
+      ).toBeLessThanOrEqual(KNOWN_HIT_GAP_DEBT_CASES[code] ?? 0);
+    });
+
+    it("vùng chạm × cssPerLogic ≥ sàn band khi shell truyền cssPerLogic (BR-PSZ-04)", () => {
+      const floor = getTouchFloor(BAND);
+      for (const { name, create } of zoneSessionCases(code)) {
+        const session = create();
+        const space = deriveLogicSpace(
+          PORTRAIT_CANVAS_CSS.w,
+          PORTRAIT_CANVAS_CSS.h
+        );
+        const cssPerLogic = PORTRAIT_CANVAS_CSS.w / space.w;
+        const zones = computeStageZones({
+          logicW: space.w,
+          logicH: space.h,
+          ageBand: BAND,
+          cssPerLogic,
+          needsTray: session.needsTray,
+          needsCommit: session.needsCommit,
+        });
+        session.prepareRound(
+          BAND,
+          space,
+          zones.stage,
+          zones.tray ?? undefined,
+          cssPerLogic
+        );
+
+        const below = session.slots.filter(
+          (slot) =>
+            slot.role !== "neutral" &&
+            Math.min(slot.hitW, slot.hitH) * cssPerLogic < floor - 0.01
+        );
+        expect(below.length, `${code} ${name}`).toBe(0);
+      }
+    });
+  }
+);

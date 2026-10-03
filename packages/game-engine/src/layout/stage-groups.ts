@@ -22,7 +22,11 @@
  */
 
 import type { AgeBand } from "#src/contracts/types";
-import { getTouchFloor, type LogicSpace, SLOT_GAP_PX } from "./constants.js";
+import {
+  type LogicSpace,
+  resolveTouchFloor,
+  SLOT_GAP_PX,
+} from "./constants.js";
 import { computeStageZones, type ZoneRect } from "./stage-zones.js";
 import type { Slot, SlotRole } from "./types.js";
 
@@ -48,6 +52,8 @@ export interface StageGroupsInput {
   readonly stage: ZoneRect;
   readonly ageBand: AgeBand;
   readonly groups: readonly StageGroupSpec[];
+  /** Px CSS trên một logic px; có thì sàn chạm tính trên px CSS thật (`BR-PSZ-04`). */
+  readonly cssPerLogic?: number;
 }
 
 interface GroupBlock {
@@ -262,7 +268,11 @@ export function computeStageGroupsLayout(input: StageGroupsInput): Slot[] {
     w: Math.max(0, stage.w - 2 * SLOT_GAP_PX),
     h: Math.max(0, stage.h - 2 * SLOT_GAP_PX),
   };
-  const plan = findPlan(area, groups, getTouchFloor(input.ageBand));
+  const plan = findPlan(
+    area,
+    groups,
+    resolveTouchFloor(input.ageBand, input.cssPerLogic)
+  );
   const starts = firstIndexes(groups);
 
   const slots: Slot[] = [];

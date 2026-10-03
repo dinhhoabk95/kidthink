@@ -6,7 +6,7 @@ import {
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { spokenKeywordForAsset } from "#src/labels/spoken-keyword";
-import { getTouchFloor } from "#src/layout/constants";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
@@ -119,7 +119,7 @@ export class GT001Session extends TemplateGameSession<
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const count = this.displayOptions.length;
     if (this.content.target_item && count > 0) {
-      const touchFloor = getTouchFloor(ageBand);
+      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
       const dock = getWoodenTokenDockRect(this.logicSpace, this.stageRect);
       const centerY = dock.y + dock.h / 2;
       const gap = 24;
@@ -152,6 +152,8 @@ export class GT001Session extends TemplateGameSession<
       slotCount: this.displayOptions.length,
       ageBand,
       logic: this.logicSpace,
+      stage: this.stageRect,
+      cssPerLogic: this.cssPerLogic,
     });
   }
 

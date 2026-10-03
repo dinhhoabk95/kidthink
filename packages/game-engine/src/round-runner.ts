@@ -72,6 +72,8 @@ export interface RoundRunnerOptions {
   stageRect?: ZoneRect;
   /** Vùng khay được cấp bởi shell khi session `needsTray` (Task #277 S5). */
   trayRect?: ZoneRect;
+  /** Px CSS trên một logic px do shell đo (`BR-PSZ-04`, Task #283 N). */
+  cssPerLogic?: number;
   onRoundStarted?: (roundIndex: number, roundConfig: RoundConfig) => void;
   onRoundCompleted?: (roundIndex: number, wasSkipped: boolean) => void;
   onAllRoundsCompleted?: () => void;
@@ -144,6 +146,7 @@ export class RoundRunner {
   private logicSpace?: LogicSpace;
   private stageRect?: ZoneRect;
   private trayRect?: ZoneRect;
+  private cssPerLogic?: number;
   /** `true` khi chưa cần chờ (gate tắt) hoặc câu dẫn vòng hiện tại đã đọc xong. */
   private promptSettled = true;
 
@@ -164,6 +167,7 @@ export class RoundRunner {
     this.logicSpace = options.logicSpace;
     this.stageRect = options.stageRect;
     this.trayRect = options.trayRect;
+    this.cssPerLogic = options.cssPerLogic;
     this.onRoundStarted = options.onRoundStarted;
     this.onRoundCompleted = options.onRoundCompleted;
     this.onAllRoundsCompleted = options.onAllRoundsCompleted;
@@ -198,8 +202,16 @@ export class RoundRunner {
   }
 
   /** Đổi không gian logic (và vùng shell cấp) cho session đang chạy và mọi vòng sau. */
-  setLogicSpace(space: LogicSpace, stage?: ZoneRect, tray?: ZoneRect): void {
+  setLogicSpace(
+    space: LogicSpace,
+    stage?: ZoneRect,
+    tray?: ZoneRect,
+    cssPerLogic?: number
+  ): void {
     this.logicSpace = space;
+    if (cssPerLogic !== undefined) {
+      this.cssPerLogic = cssPerLogic;
+    }
     if (stage) {
       this.stageRect = stage;
     }
@@ -214,7 +226,8 @@ export class RoundRunner {
         this.ageBand,
         space,
         this.stageRect,
-        this.trayRect
+        this.trayRect,
+        this.cssPerLogic
       );
     }
   }
@@ -228,7 +241,8 @@ export class RoundRunner {
         this.ageBand,
         this.logicSpace,
         stage,
-        this.trayRect
+        this.trayRect,
+        this.cssPerLogic
       );
     }
   }
@@ -566,7 +580,8 @@ export class RoundRunner {
         this.ageBand,
         this.logicSpace,
         this.stageRect,
-        this.trayRect
+        this.trayRect,
+        this.cssPerLogic
       );
     } else {
       this.currentSession.setupEntities();

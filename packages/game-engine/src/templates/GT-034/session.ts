@@ -132,6 +132,7 @@ export class GT034Session extends TemplateGameSession<
     return computeStageGroupsLayout({
       stage: resolveStageRect(this.logicSpace, band, this.stageRect),
       ageBand: band,
+      cssPerLogic: this.cssPerLogic,
       groups: [
         {
           count: this.content.target_pattern.length,

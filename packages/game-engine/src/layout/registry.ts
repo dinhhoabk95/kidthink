@@ -16,6 +16,7 @@ import {
   computeTrackLayout,
   computeWeaveGridLayout,
 } from "./geometry.js";
+import { placeInStage } from "./stage-placement.js";
 import type { LayoutFn, LayoutId } from "./types.js";
 
 export const LAYOUT_IDS: readonly LayoutId[] = [
@@ -45,7 +46,7 @@ export const LAYOUT_IDS: readonly LayoutId[] = [
   "single-focus",
 ] as const;
 
-export const LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
+const RAW_LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
   grid: (input) => computeGridLayout(input),
   "horizontal-row": (input) => computeHorizontalRowLayout(input),
   "grid-2x4": (input) =>
@@ -83,6 +84,20 @@ export const LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
   "single-focus": (input) =>
     computeGridLayout(input, { fixedCols: 1, fixedRows: 1 }),
 };
+
+function withStagePlacement(
+  raw: Record<LayoutId, LayoutFn>
+): Record<LayoutId, LayoutFn> {
+  const placed: Partial<Record<LayoutId, LayoutFn>> = {};
+  for (const id of LAYOUT_IDS) {
+    placed[id] = placeInStage(raw[id]);
+  }
+  return { ...raw, ...placed };
+}
+
+/** Mọi layout nhận `stage` qua `placeInStage` (`BR-PSZ-01`). */
+export const LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> =
+  withStagePlacement(RAW_LAYOUT_REGISTRY);
 
 export function isLayoutId(val: unknown): val is LayoutId {
   return typeof val === "string" && LAYOUT_IDS.some((id) => id === val);

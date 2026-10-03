@@ -22,13 +22,49 @@ Diff danh sách file test đỏ với baseline — không file nào đổi trạ
 
 ## N — Lát nền · M · phụ thuộc: N0
 
-- [ ] RED: `LayoutInput.stage` và `cssPerLogic`; layout nhận stage cho slot trong stage (`BR-PSZ-01`)
-- [ ] `geometry.ts` bỏ `CONTENT_TOP_PX` khi có `stage`; không có `stage` thì kết quả giữ nguyên (`BR-LAY-10`)
-- [ ] 15 chỗ `getTouchFloor(` đổi `getTouchFloorLogicPx` (`BR-PSZ-04`); `RoundRunner` truyền `vp.scale`
-- [ ] Ca âm `BR-PSZ-04`: mọi `LayoutId` ở slotCount lớn nhất, hit × `cssPerLogic` ≥ sàn ở 330×697; `cssPerLogic` = 1 → đỏ
-- [ ] Nâng `GT-003/tray-layout.ts` lên `layout/tray-layout.ts`; GT-003 vẫn xanh
-- [ ] Gom `stage-engines-s7.test.ts` thành `stage-engines.test.ts` tham số theo mã; gate `zone-primitives-only` + ca âm
-- [ ] `layout.test.ts` và `layout-safe-area-debt.json` không đổi
+- [x] RED: `LayoutInput.stage` và `cssPerLogic`; layout nhận stage cho slot trong stage (`BR-PSZ-01`)
+- [x] `geometry.ts` bỏ `CONTENT_TOP_PX` khi có `stage`; không có `stage` thì kết quả giữ nguyên (`BR-LAY-10`)
+- [x] 15 chỗ `getTouchFloor(` đổi `getTouchFloorLogicPx` (`BR-PSZ-04`); `RoundRunner` truyền `vp.scale`
+- [x] Ca âm `BR-PSZ-04`: mọi `LayoutId` ở slotCount lớn nhất, hit × `cssPerLogic` ≥ sàn ở 330×697; `cssPerLogic` = 1 → đỏ
+- [x] Nâng `GT-003/tray-layout.ts` lên `layout/tray-layout.ts`; GT-003 vẫn xanh
+- [x] Gom `stage-engines-s7.test.ts` thành `stage-engines.test.ts` tham số theo mã; gate `zone-primitives-only` + ca âm
+- [x] `layout.test.ts` và `layout-safe-area-debt.json` không đổi
+
+Ghi chú đo của N (2026-10-03):
+
+- **Cách làm `stage`**: không sửa 32 chỗ `CONTENT_TOP_PX` từng hàm. `placeInStage`
+  (`layout/stage-placement.ts`) bọc mọi `LayoutId` trong `LAYOUT_REGISTRY`: chạy hàm gốc trên khung ảo
+  `(stage.w + 2·SAFE_MARGIN, stage.h + CONTENT_TOP + SAFE_MARGIN)` rồi tịnh tiến về góc `stage`. Không
+  `stage` thì đi thẳng vào hàm gốc. Golden `tests/layout/fixtures/layout-golden.json` (sha1 12 ký tự của
+  slot, 24 LayoutId × 3 band × 4 không gian logic × 11 slotCount × 2 targetCount = 6.336 tổ hợp, chụp
+  từ mã trước N) giữ nguyên.
+- **Sàn px thật**: 15 chỗ `getTouchFloor(ageBand)` trong `geometry.ts` đổi `resolveTouchFloor(ageBand,
+  input.cssPerLogic)` (`constants.ts`); không `cssPerLogic` thì là `getTouchFloor` như cũ. `stage-groups.ts`
+  (GT-034..036), GT-001 và GT-003 cũng đi qua nó. `cssPerLogic` đi qua `RoundRunner.setLogicSpace(…, cssPerLogic)`
+  / `prepareRound` / `resolveSlots` tới `session.cssPerLogic`; web truyền `vp.scale` ở `syncRunnerStageZones` và
+  `handleResize`. Engine chưa dời (B1..B7) chưa đọc `session.cssPerLogic` — gọi layout như cũ.
+- **Đo sàn ở portrait 330×697 (`cssPerLogic` 0,611), `slotCount` 12, `targetCount` 6, ba band**: mọi 24
+  `LayoutId` đạt hit × cssPerLogic ≥ sàn (96,6 / 76,4 / 64,4 px thật ở các band). Ca âm
+  (`fixtures/layout-ignores-css-floor.ts`, ép `cssPerLogic` = 1): 17/24 `LayoutId` đỏ; 7 layout còn lại có ô
+  vẽ lớn hơn sàn nên tình cờ qua. `mirror-axis-split` ở điện thoại ngang 784×250, band 3-4 có ô tham chiếu
+  `neutral` 85,2 px — vùng này không bấm được nên không tính vào sàn.
+- **Nợ còn lại (không giấu)**: sàn lớn hơn làm layout không co cột nên **tràn `zones.stage`**. Ở portrait
+  330×697, `slotCount` 12: 18 LayoutId × band 3-4, 16 × band 4-5, 14 × band 5-6 còn slot ra ngoài stage
+  (nhiều nhất `measure-strip` 16/20, `top-source-bottom-target`, `multi-bucket-bottom`, `number-bond-tree`,
+  `ten-frame-split`, `horizontal-slot-track` 14/18 ở band 3-4). Sáu layout lưới (`grid`, `horizontal-row`,
+  `grid-2x4`, `flex-wrap`, `card-flip-grid`, `single-focus`) không tràn. Sổ nợ có số từng cặp
+  `layout/band`: `packages/game-engine/tests/layout-stage-overflow-debt.json`, test
+  `layout-css-floor.test.ts` đỏ khi tăng. Gỡ nợ này là việc co cột / phân trang theo từng nhóm layout,
+  làm kèm batch engine dùng layout đó (B1..B7); phần lớn tràn đã có từ trước (cột "trước" của đo: 4–14
+  slot tràn ở `slotCount` 12 ngay cả khi chưa tính `cssPerLogic`, vì các hàm bipartite/track chưa từng co
+  theo `stage`).
+- **Nợ khác lộ ra**: GT-003, khay 508 px, 6 vật trở lên: sàn 64 + khe 16 = 480 > 476, cặp vùng chạm
+  cách 15 < `SLOT_GAP_PX` (`BR-LAY-05`); 20 ca seed. Ghi ở `KNOWN_HIT_GAP_DEBT_CASES` trong
+  `stage-engines.test.ts` (số chỉ giảm). Chưa sửa vì cần khay đổi hàng hoặc phân trang.
+- **Gate `zone-primitives-only`** (`tests/gates/zone-primitives-only.test.ts`): trong session sáu engine đã
+  dời, mọi `drawPromptText(` phải nằm ngay trong khối `if (!this.stageRect) {` (hoặc `if (!zones) {` ở
+  GT-003). Ca âm: `tests/gates/fixtures/unguarded-prompt-text/GT-001/session.ts`. Danh sách mã dời nằm ở
+  `tests/layout/migrated-codes.ts`, dùng chung với `prompt-single-source.test.ts`.
 
 ## B1 — Chạm chọn một · M · phụ thuộc: N
 

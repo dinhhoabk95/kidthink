@@ -7,13 +7,22 @@ import {
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import {
   CONTENT_TOP_PX,
-  getTouchFloor,
+  resolveTouchFloor,
   SAFE_MARGIN_PX,
   SLOT_GAP_PX,
 } from "#src/layout/constants";
 import { isPointInSlot, TAP_TOLERANCE_PX } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import type { ZoneRect } from "#src/layout/stage-zones";
+import {
+  CONTAINER_HEIGHT_PER_ITEM,
+  CONTAINER_MIN_H,
+  CONTAINER_MIN_W,
+  CONTAINER_WIDTH_PER_ITEM,
+  computeStageContainerBox,
+  computeStageTargetSlot,
+  computeTraySourceSlots,
+} from "#src/layout/tray-layout";
 import type { LayoutId, Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
@@ -33,15 +42,6 @@ import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT003Content, GT003Difficulty } from "./template.js";
-import {
-  CONTAINER_HEIGHT_PER_ITEM,
-  CONTAINER_MIN_H,
-  CONTAINER_MIN_W,
-  CONTAINER_WIDTH_PER_ITEM,
-  computeStageContainerBox,
-  computeStageTargetSlot,
-  computeTraySourceSlots,
-} from "./tray-layout.js";
 
 type DraggableItem = GT003Content["items"][number];
 
@@ -121,12 +121,14 @@ export class GT003Session extends TemplateGameSession<
       ageBand,
       targetCount: 1,
       logic: this.logicSpace,
+      stage: this.stageRect,
+      cssPerLogic: this.cssPerLogic,
     });
   }
 
   /** Nguồn xếp trong khay, đích giữa sân khấu (Task #277 S5). */
   private computeZoneSlots(ageBand: AgeBand, zones: TrayZones): Slot[] {
-    const touchFloor = getTouchFloor(ageBand);
+    const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
     const sources = computeTraySourceSlots(
       this.displayItems.length,
       zones.tray,

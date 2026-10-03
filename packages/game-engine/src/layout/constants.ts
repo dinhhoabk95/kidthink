@@ -101,3 +101,16 @@ export function deriveLogicSpace(
     ? { h: LOGIC_SHORT_SIDE, w: derivedLong }
     : { h: derivedLong, w: LOGIC_SHORT_SIDE };
 }
+
+/**
+ * Sàn chạm một layout dùng: có `cssPerLogic` thì tính trên px CSS thật
+ * (`BR-PSZ-04`), không có thì giữ sàn logic cũ (`BR-LAY-10`).
+ */
+export function resolveTouchFloor(
+  ageBand: AgeBand,
+  cssPerLogic?: number
+): number {
+  return cssPerLogic === undefined
+    ? getTouchFloor(ageBand)
+    : getTouchFloorLogicPx(ageBand, cssPerLogic);
+}
