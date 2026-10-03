@@ -104,7 +104,9 @@ export class GT029Session extends TemplateGameSession<
     const gridFn = resolveLayout("grid");
     const itemSlots = gridFn({
       slotCount: totalItems,
-      ...params,
+      ageBand: band,
+      logic: this.logicSpace,
+      cssPerLogic: this.cssPerLogic,
       stage: areas.items,
     });
     const optionSlots = layoutOptionSlots(areas, optionCount, params).map(
