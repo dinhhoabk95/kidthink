@@ -10,7 +10,7 @@ Khảo sát 2026-10-02 (tham chiếu KidsUP Pro, mô hình VAK) cho thấy:
 
 - Phản hồi đúng/sai gần như chỉ có tiếng (`use-play-gesture.ts` `handleVerdict`).
 - `FeedbackSystem` là code chết.
-- Mascot là emoji 🐻 tĩnh, trái quyết định `D-DB` (mascot là Thỏ Tini).
+- Mascot là emoji 🐻 tĩnh, trong khi đã có sẵn bốn SVG Gấu Con không ai dùng.
 - Màn tổng kết nặng chữ, im lặng.
 - Nút của trẻ còn chữ: "Xong", "Trước", "Tiếp tục", "Bé nói theo".
 
@@ -24,11 +24,11 @@ Hệ quả: khi tắt tiếng, trẻ gần như không biết mình đúng hay s
   - `use-play-gesture` phát `onFeedback(kind, point)`; điểm là chỗ chạm, hoặc chỗ thả với `drop`.
   - `[code].vue` vẽ pulse ở lớp trên cùng và truyền dáng vào `drawPromptZone`.
   - Dáng nền: `listen` khi lời dẫn đang khoá input, `hint` khi trợ giúp ≥ L1.
-- **Màn tổng kết**: Thỏ Tini dáng `celebrate`. Phát sự kiện `announce` với một lời khen của §7.2, trang đọc lời đó qua `speakPrompt`. Hai nút chỉ có icon.
+- **Màn tổng kết**: Gấu Con dáng `celebrate`. Phát sự kiện `announce` với một lời khen của §7.2, trang đọc lời đó qua `speakPrompt`. Hai nút chỉ có icon.
 - **Nút canvas Xong**: vẽ dấu ✓ bằng nét. Nhãn "Xong" chỉ còn ở lớp DOM trợ năng.
 
 ## 3. Ngoài phạm vi
 
-- Sprite thật của Thỏ Tini: cần hoạ sĩ, vì hiện mới có placeholder.
+- Sprite cho dáng `listen`/`hint` riêng: hiện dùng lại tư thế chờ/suy nghĩ của bốn SVG Gấu Con.
 - Gỡ token `coral`: token này đang dùng làm **màu nội dung** (hạt rekenrek, thanh số Montessori), không phải phản hồi sai, nên đổi sẽ đổi biểu diễn học liệu. Cần review riêng.
 - Dời 29 template vào khung năm vùng: task con theo #277 phần đóng task.

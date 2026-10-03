@@ -246,6 +246,7 @@
     type ViewEntity,
   } from "@mindkid/game-engine";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+  import { useMascotSprites } from "~/composables/play/use-mascot-sprites";
   import { usePlayAudio } from "~/composables/play/use-play-audio";
   import { usePlayError } from "~/composables/play/use-play-error";
   import { usePlayGesture } from "~/composables/play/use-play-gesture";
@@ -270,6 +271,7 @@
 
   /** Lớp phủ phản hồi chung cho mọi engine (`BR-FBK-11`). */
   const feedbackOverlay = new FeedbackOverlay();
+  const mascotSprites = useMascotSprites();
 
   /** Dáng nền khi không có phản hồi đang giữ: nghe lời dẫn, trợ giúp, hay nghỉ (§7.4). */
   function baseMascotPose(engine: GameEngine | null): MascotPose {
@@ -313,6 +315,7 @@
           promptText: activePrompt,
           mascotPose: feedback.mascotPose,
           mascotElapsedMs: feedback.mascotElapsedMs,
+          mascotSprites: mascotSprites.value,
         });
       }
       if (session instanceof TemplateGameSession && session.needsCommit) {

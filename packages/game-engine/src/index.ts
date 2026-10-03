@@ -161,6 +161,7 @@ export {
   drawWoodenTokenDock,
   getWoodenTokenDockRect,
   MASCOT_POSES,
+  MASCOT_SPRITE_FILES,
   type MascotPose,
   type MascotSprites,
   type PromptZoneOptions,

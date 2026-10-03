@@ -12,9 +12,10 @@
 <script lang="ts" setup>
   import { drawMascot, type MascotPose } from "@mindkid/game-engine";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+  import { useMascotSprites } from "~/composables/play/use-mascot-sprites";
 
   /**
-   * Thỏ Tini trên bề mặt DOM của trẻ (màn tổng kết, trang bài học) — cùng
+   * Gấu Con trên bề mặt DOM của trẻ (màn tổng kết, trang bài học) — cùng
    * `drawMascot` với vùng lời dẫn trên canvas (`feedback-and-celebration.md` §7.4).
    */
   const props = withDefaults(
@@ -29,6 +30,7 @@
   const MAX_DEVICE_PIXEL_RATIO = 2;
 
   const canvasRef = ref<HTMLCanvasElement | null>(null);
+  const sprites = useMascotSprites();
   const pixelRatio =
     typeof window === "undefined"
       ? 1
@@ -56,7 +58,7 @@
       { cx: side / 2, cy: side * 0.58, radius: side * 0.3 },
       props.pose,
       nowMs - startMs,
-      { reducedMotion: prefersReducedMotion() }
+      { sprites: sprites.value, reducedMotion: prefersReducedMotion() }
     );
     rafId = requestAnimationFrame(renderFrame);
   }

@@ -244,6 +244,6 @@ Scenario: BR-PSZ-12 — xoay máy đồng bộ view
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Mascot dùng asset vẽ thật hay tiếp tục emoji gấu?~~ **Đóng 2026-10-03 (#279)**: sprite SVG/PNG đặt ngoài, engine giữ hợp đồng sáu dáng và bản vẽ thay thế bằng primitive — [`feedback-and-celebration.md`](../04-play/feedback-and-celebration.md) §7.4. Mascot là Thỏ Tini (`D-DB`), không phải gấu | Chất lượng `BR-PSZ-10` | Đã đóng | người quyết |
+| ~~1~~ | ~~Mascot dùng asset vẽ thật hay tiếp tục emoji gấu?~~ **Đóng 2026-10-03 (#279)**: sprite SVG/PNG đặt ngoài, engine giữ hợp đồng sáu dáng và bản vẽ thay thế bằng primitive — [`feedback-and-celebration.md`](../04-play/feedback-and-celebration.md) §7.4. Mascot là Gấu Con, bốn sprite có sẵn ở `public/mascot/` | Chất lượng `BR-PSZ-10` | Đã đóng | người quyết |
 | 2 | Có thêm chế độ chơi tự do không đáp án trong cùng khung năm vùng — sân khấu và khay giữ nguyên, vùng hành động thành nút "xong rồi" không chấm? | Trục sáng tạo — miền tự tạo của [`engine-behavior-domain.md`](engine-behavior-domain.md) | P5 | người quyết |
 | 3 | Nút hành động có đổi phía cho trẻ thuận tay trái không? | `BR-PSZ-03` | P5 | hoãn — khi có phản hồi từ phụ huynh về tay thuận |

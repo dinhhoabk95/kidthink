@@ -17,7 +17,7 @@
 
       <div class="flex items-center gap-3">
         <img
-          alt="Gấu MindKid"
+          alt="Gấu Con MindKid"
           class="w-14 h-14 object-contain animate-bounce"
           src="/mascot/mascot-bear-waiting.svg"
         >

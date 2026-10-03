@@ -124,7 +124,7 @@ describe("KidVictoryModal", () => {
     }
   });
 
-  it("mascot là Thỏ Tini vẽ bằng canvas, không còn emoji gấu (§7.4)", () => {
+  it("mascot vẽ bằng canvas theo dáng, không còn emoji (§7.4)", () => {
     const wrapper = mount(VictoryModal, {
       props: { show: true, stars: 3 },
     });

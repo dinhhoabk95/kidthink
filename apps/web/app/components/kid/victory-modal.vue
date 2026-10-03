@@ -12,7 +12,7 @@
 
     <!-- Main Victory Modal Box -->
     <div class="modal-wrapper">
-      <!-- Thỏ Tini ăn mừng (`feedback-and-celebration.md` §7.4) -->
+      <!-- Gấu Con ăn mừng (`feedback-and-celebration.md` §7.4) -->
       <div class="mascot-container">
         <KidMascot pose="celebrate" :size="112" />
       </div>

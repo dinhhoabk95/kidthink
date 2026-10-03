@@ -521,6 +521,6 @@ pnpm dev:admin
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Mascot nào? `D-DB` chốt **Thỏ Tini**, nhưng v1 để lại ba phương án chồng nhau: spec viết "Cú xanh", tài sản đã vẽ là Gấu Con bốn tư thế, component đặt tên "Cowy" nhưng render 🦉 và 😿, runtime hiện 🐻. Tên "Tini" có phải tàn dư thương hiệu cũ cần bỏ? | Vẽ mascot, 12 avatar preset, khối ăn mừng | P1 | người quyết |
+| ~~1~~ | ~~Mascot nào? `D-DB` chốt **Thỏ Tini**, nhưng v1 để lại ba phương án chồng nhau.~~ **Đóng 2026-10-03 (#279)**: **Gấu Con**, dùng bốn SVG đã vẽ; "Tini" là tàn dư TiniMath. Hợp đồng dáng ở [`feedback-and-celebration.md`](../specs/04-play/feedback-and-celebration.md) §7.4 | Vẽ mascot, 12 avatar preset, khối ăn mừng | Đã đóng | người quyết |
 | 2 | Bề mặt người lớn có giữ dark mode không? Contract cho phép, nhưng hiện 1.462 lần `dark:` không có cơ chế nào, và giữ nó là nhân đôi số cặp màu phải kiểm tương phản | `BR-DSC-18`, bảng màu, ngân sách kiểm | P1 | người quyết |
 | 3 | 745 file giọng đọc tiếng Việt của v1 có tái dùng được về bản quyền và chất lượng không, hay thu lại? | Kênh chỉ dẫn bằng âm của `BR-ENG-10` | P1 | người quyết |

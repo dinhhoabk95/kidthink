@@ -1,10 +1,10 @@
 /**
- * Mascot Thỏ Tini của vùng lời dẫn (`feedback-and-celebration.md` §7.4,
+ * Mascot Gấu Con của vùng lời dẫn (`feedback-and-celebration.md` §7.4,
  * `BR-PSZ-10`, `BR-FBK-11`).
  *
- * Asset thật là sprite SVG/PNG đặt ngoài engine, mỗi dáng một ảnh. Dáng nào
- * chưa có sprite thì vẽ thay thế bằng primitive — vẫn đổi dáng được, nên tắt
- * tiếng trẻ vẫn thấy mình được khen.
+ * Asset thật là sprite SVG đặt ngoài engine (`MASCOT_SPRITE_FILES`). Dáng nào
+ * chưa nạp được sprite thì vẽ thay thế bằng primitive — vẫn đổi dáng được, nên
+ * tắt tiếng trẻ vẫn thấy mình được khen.
  */
 
 import { designTokens } from "#src/systems/designTokens";
@@ -21,6 +21,19 @@ export const MASCOT_POSES = [
 export type MascotPose = (typeof MASCOT_POSES)[number];
 
 export type MascotSprites = Partial<Record<MascotPose, CanvasImageSource>>;
+
+/**
+ * Sáu dáng ánh xạ vào bốn tư thế đã vẽ của Gấu Con (§7.4). Đường dẫn tương
+ * đối với gốc public của web; engine không tự nạp ảnh.
+ */
+export const MASCOT_SPRITE_FILES: Readonly<Record<MascotPose, string>> = {
+  idle: "/mascot/mascot-bear-waiting.svg",
+  listen: "/mascot/mascot-bear-waiting.svg",
+  happy: "/mascot/mascot-bear-jumping.svg",
+  encourage: "/mascot/mascot-bear-thinking.svg",
+  hint: "/mascot/mascot-bear-thinking.svg",
+  celebrate: "/mascot/mascot-bear-celebrating.svg",
+};
 
 export interface MascotPlacement {
   readonly cx: number;
@@ -89,50 +102,48 @@ export function mascotMotion(
   }
 }
 
-function drawEars(
-  ctx: CanvasRenderingContext2D,
-  r: number,
-  pose: MascotPose
-): void {
-  const earsUp = pose === "happy" || pose === "celebrate";
-  const spread = pose === "celebrate" ? 0.42 : 0.22;
-  const bentRight = pose === "listen" || pose === "encourage";
-  const sides = [-1, 1] as const;
-  for (const side of sides) {
-    const bent = bentRight && side === 1;
-    const angle = side * spread + (bent ? 0.9 : 0);
-    const length = earsUp ? 0.95 : 0.8;
-    ctx.save();
-    ctx.translate(side * r * 0.38, -r * 0.62);
-    ctx.rotate(angle);
-    ctx.fillStyle = designTokens.colors.surface[0];
-    ctx.strokeStyle = designTokens.colors.surface[300];
-    ctx.lineWidth = Math.max(1.5, r * 0.05);
+/** Cùng bảng màu với bốn SVG Gấu Con ở `apps/web/public/mascot/`. */
+const BEAR_FUR = designTokens.colors.retry[600];
+const BEAR_OUTLINE = designTokens.colors.retry[800];
+const BEAR_LIGHT = designTokens.colors.retry[200];
+const BEAR_INK = designTokens.colors.surface[800];
+
+function drawEars(ctx: CanvasRenderingContext2D, r: number): void {
+  for (const side of [-1, 1] as const) {
+    const cx = side * r * 0.6;
+    const cy = -r * 0.62;
+    ctx.fillStyle = BEAR_FUR;
+    ctx.strokeStyle = BEAR_OUTLINE;
+    ctx.lineWidth = Math.max(1.5, r * 0.08);
     ctx.beginPath();
-    ctx.ellipse(
-      0,
-      -r * length * 0.5,
-      r * 0.22,
-      r * length * 0.5,
-      0,
-      0,
-      Math.PI * 2
-    );
+    ctx.arc(cx, cy, r * 0.32, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
-    ctx.fillStyle = designTokens.colors.cta[100];
+    ctx.fillStyle = BEAR_LIGHT;
     ctx.beginPath();
-    ctx.ellipse(
-      0,
-      -r * length * 0.5,
-      r * 0.11,
-      r * length * 0.36,
-      0,
-      0,
-      Math.PI * 2
-    );
+    ctx.arc(cx, cy, r * 0.16, 0, Math.PI * 2);
     ctx.fill();
-    ctx.restore();
+  }
+}
+
+function drawEyes(
+  ctx: CanvasRenderingContext2D,
+  r: number,
+  joyful: boolean
+): void {
+  ctx.strokeStyle = BEAR_INK;
+  ctx.fillStyle = BEAR_INK;
+  ctx.lineWidth = Math.max(1.5, r * 0.07);
+  for (const side of [-1, 1] as const) {
+    ctx.beginPath();
+    if (joyful) {
+      // Mắt cười: cung úp.
+      ctx.arc(side * r * 0.3, -r * 0.12, r * 0.1, Math.PI, 0);
+      ctx.stroke();
+    } else {
+      ctx.arc(side * r * 0.3, -r * 0.12, r * 0.08, 0, Math.PI * 2);
+      ctx.fill();
+    }
   }
 }
 
@@ -141,55 +152,40 @@ function drawFace(
   r: number,
   pose: MascotPose
 ): void {
-  ctx.fillStyle = designTokens.colors.surface[0];
-  ctx.strokeStyle = designTokens.colors.surface[300];
-  ctx.lineWidth = Math.max(1.5, r * 0.05);
+  ctx.fillStyle = BEAR_FUR;
+  ctx.strokeStyle = BEAR_OUTLINE;
+  ctx.lineWidth = Math.max(1.5, r * 0.08);
   ctx.beginPath();
-  ctx.ellipse(0, 0, r * 0.7, r * 0.62, 0, 0, Math.PI * 2);
+  ctx.arc(0, 0, r * 0.82, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
 
   const joyful = pose === "happy" || pose === "celebrate";
-  ctx.strokeStyle = designTokens.colors.surface[800];
-  ctx.fillStyle = designTokens.colors.surface[800];
-  ctx.lineWidth = Math.max(1.5, r * 0.06);
-  for (const side of [-1, 1] as const) {
-    ctx.beginPath();
-    if (joyful) {
-      // Mắt cười: cung úp.
-      ctx.arc(side * r * 0.24, -r * 0.06, r * 0.09, Math.PI, 0);
-      ctx.stroke();
-    } else {
-      ctx.ellipse(
-        side * r * 0.24,
-        -r * 0.06,
-        r * 0.06,
-        r * 0.08,
-        0,
-        0,
-        Math.PI * 2
-      );
-      ctx.fill();
-    }
-  }
+  drawEyes(ctx, r, joyful);
 
-  ctx.fillStyle = designTokens.colors.cta[200];
+  // Mõm sáng, mũi và miệng.
+  ctx.fillStyle = BEAR_LIGHT;
   ctx.beginPath();
-  ctx.ellipse(0, r * 0.1, r * 0.07, r * 0.05, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, r * 0.26, r * 0.34, r * 0.24, 0, 0, Math.PI * 2);
   ctx.fill();
-
+  ctx.fillStyle = BEAR_INK;
   ctx.beginPath();
-  const smile = joyful ? 0.2 : 0.12;
-  ctx.arc(0, r * 0.16, r * smile, 0.15 * Math.PI, 0.85 * Math.PI);
+  ctx.ellipse(0, r * 0.16, r * 0.1, r * 0.07, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = BEAR_INK;
+  ctx.lineWidth = Math.max(1.5, r * 0.06);
+  ctx.beginPath();
+  const smile = joyful ? 0.18 : 0.1;
+  ctx.arc(0, r * 0.24, r * smile, 0.15 * Math.PI, 0.85 * Math.PI);
   ctx.stroke();
 }
 
-function drawPlaceholderRabbit(
+function drawPlaceholderBear(
   ctx: CanvasRenderingContext2D,
   r: number,
   pose: MascotPose
 ): void {
-  drawEars(ctx, r, pose);
+  drawEars(ctx, r);
   drawFace(ctx, r, pose);
 }
 
@@ -211,7 +207,7 @@ export function drawMascot(
   if (sprite) {
     ctx.drawImage(sprite, -r, -r, r * 2, r * 2);
   } else {
-    drawPlaceholderRabbit(ctx, r, pose);
+    drawPlaceholderBear(ctx, r, pose);
   }
   ctx.restore();
 }

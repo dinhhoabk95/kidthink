@@ -12,7 +12,7 @@ Lệnh kiểm (chạy qua `rtk proxy`):
 ## Spec — 2026-10-03
 
 - [x] `feedback-and-celebration.md`: thêm `BR-FBK-11`, `BR-FBK-12`, §7.4 dáng mascot, sửa entry point
-- [x] `play-stage-zones.md`: đóng câu hỏi mở 1 (sprite ngoài, Thỏ Tini)
+- [x] `play-stage-zones.md`: đóng câu hỏi mở 1 (sprite ngoài, Gấu Con)
 
 ## S1 — Mascot và lớp phủ ở engine
 
@@ -47,5 +47,5 @@ Cần `pnpm services` và `pnpm db:seed`.
 
 ## Còn mở
 
-- [ ] Sprite thật cho sáu dáng (`apps/web/public/mascot/<pose>.svg`) và đường nạp vào `mascotSprites`
+- [x] Mascot chốt Gấu Con (2026-10-03); bốn SVG có sẵn nạp qua `useMascotSprites`, sáu dáng ánh xạ ở `MASCOT_SPRITE_FILES`
 - [ ] Review token `coral` (màu nội dung, không phải phản hồi)

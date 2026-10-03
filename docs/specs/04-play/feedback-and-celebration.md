@@ -108,17 +108,18 @@ Cấm — **NEVER**: "Sai rồi", "Không đúng", "Bé chưa giỏi", bất k�
 
 ### 7.4 Dáng mascot
 
-Mascot là Thỏ Tini (`D-DB`). Asset là sprite SVG/PNG đặt ngoài engine; engine giữ hợp đồng dáng
-và có bản vẽ thay thế bằng primitive canvas khi sprite chưa có.
+Mascot là **Gấu Con** — người quyết chốt 2026-10-03 (#279), thay `D-DB` "Thỏ Tini" vốn là tàn dư
+tên TiniMath (`D8`). Asset là bốn sprite SVG đặt ngoài engine (`apps/web/public/mascot/`); engine giữ
+hợp đồng sáu dáng (`MASCOT_SPRITE_FILES`) và có bản vẽ thay thế bằng primitive khi sprite chưa nạp.
 
-| Dáng | Khi nào | Giữ |
-|---|---|---|
-| `idle` | Mặc định | — |
-| `listen` | Lời dẫn đang đọc | Tới khi đọc xong |
-| `happy` | Trả lời đúng | 700 ms |
-| `encourage` | Chưa đúng | 700 ms — giống hệt mỗi lần (`BR-FBK-07`) |
-| `hint` | Trợ giúp bậc L1+ đang hiện | Tới khi trợ giúp tắt |
-| `celebrate` | Hoàn thành level | Tới khi rời màn |
+| Dáng | Khi nào | Giữ | Sprite |
+|---|---|---|---|
+| `idle` | Mặc định | — | `mascot-bear-waiting.svg` |
+| `listen` | Lời dẫn đang đọc | Tới khi đọc xong | `mascot-bear-waiting.svg` |
+| `happy` | Trả lời đúng | 700 ms | `mascot-bear-jumping.svg` |
+| `encourage` | Chưa đúng | 700 ms — giống hệt mỗi lần (`BR-FBK-07`) | `mascot-bear-thinking.svg` |
+| `hint` | Trợ giúp bậc L1+ đang hiện | Tới khi trợ giúp tắt | `mascot-bear-thinking.svg` |
+| `celebrate` | Hoàn thành level | Tới khi rời màn | `mascot-bear-celebrating.svg` |
 
 `reduced-motion`: dáng vẫn đổi, chuyển động nảy/nghiêng thu về một nhịp scale (`BR-FBK-09`).
 
@@ -214,5 +215,5 @@ Scenario: BR-FBK-10 — âm không có onset tức thì
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | ~~1~~ | ~~Lời khen thu âm người thật hay TTS?~~ **Đóng 2026-08-09 (T13, `D-AV`)**: P1 dùng audio clip tĩnh + Web Speech API (TTS), hoãn thu studio sang P2 | Âm thanh phản hồi | Đã đóng | D-AV |
-| ~~2~~ | ~~Mascot có nhất quán qua mọi theme không, hay đổi theo theme?~~ **Đóng 2026-08-09 (T13, `D-DB`)**: Mascot Thỏ Tini giữ vai trò chính ở mọi theme, background đổi theo theme | Mascot thiết kế | Đã đóng | D-DB |
+| ~~2~~ | ~~Mascot có nhất quán qua mọi theme không, hay đổi theo theme?~~ **Đóng 2026-08-09 (T13, `D-DB`)**: một mascot giữ vai trò chính ở mọi theme, background đổi theo theme. Con vật đổi từ Thỏ Tini sang Gấu Con ngày 2026-10-03 — §7.4 | Mascot thiết kế | Đã đóng | D-DB |
 
