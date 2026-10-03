@@ -46,7 +46,7 @@ function renderLabels(session: GT035Session, frame: (typeof FRAMES)[number]) {
   });
   const rs = new RenderSystem();
   rs.logicSpace = space;
-  session.render(ctx as CanvasRenderingContext2D, rs, 0);
+  session.render(ctx as CanvasRenderingContext2D, rs);
   return calls;
 }
 

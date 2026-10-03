@@ -9,7 +9,7 @@ import {
 } from "vitest";
 import type { AgeBand } from "#src/contracts/types";
 import type { EngineConfig } from "#src/core";
-import { TemplateGameSession } from "#src/game-session";
+import { type GameSession, TemplateGameSession } from "#src/game-session";
 import { createGameSessionSync, preloadGameSession } from "#src/index";
 import { deriveLogicSpace } from "#src/layout/constants";
 import { computeZonesForSession } from "#src/layout/session-zones";
@@ -57,8 +57,19 @@ function round(value: unknown): unknown {
   return typeof value === "number" ? value.toFixed(COORD_DIGITS) : value;
 }
 
+/** Phần của session mà phép so khung hình cần. */
+type FrameSession = GameSession &
+  Pick<
+    TemplateGameSession<never, never>,
+    | "prepareRound"
+    | "trayItemCount"
+    | "trayHasLabels"
+    | "needsTray"
+    | "needsCommit"
+  >;
+
 function recordFrame(
-  session: TemplateGameSession<never, never>,
+  session: FrameSession,
   rs: RenderSystem,
   timeMs: number
 ): string[] {
@@ -72,11 +83,12 @@ function recordFrame(
     if (typeof target[method] !== "function") {
       continue;
     }
-    vi.spyOn(ctx as never, method as never).mockImplementation(((
-      ...args: unknown[]
-    ) => {
+    vi.spyOn(
+      target as Record<string, (...args: unknown[]) => void>,
+      method
+    ).mockImplementation((...args: unknown[]) => {
       calls.push(`${method}(${args.map(round).join(",")})`);
-    }) as never);
+    });
   }
   vi.setSystemTime(START_TIME_MS + timeMs);
   session.render?.(ctx as CanvasRenderingContext2D, rs, timeMs);
@@ -90,7 +102,7 @@ function firstFrameDiff(a: readonly string[], b: readonly string[]): string {
     : `lệnh ${index}: ${a[index]} ≠ ${b[index]}`;
 }
 
-function makeSession(code: string): TemplateGameSession<never, never> {
+function makeSession(code: string): FrameSession {
   const fixture = FIXTURES_BY_CODE[code]?.[0];
   if (!fixture) {
     throw new Error(`thiếu fixture ${code}`);
