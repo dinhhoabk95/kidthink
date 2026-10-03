@@ -13,7 +13,14 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
+import {
+  HERO_OPTION_CELL_MAX_PX,
+  heroSlot,
+  splitHeroStage,
+} from "#src/layout/hero-split";
 import { resolveLayout } from "#src/layout/registry";
+import { computeStageCellSlots } from "#src/layout/stage-targets";
 import type { Slot } from "#src/layout/types";
 import {
   drawIsometricModel,
@@ -22,6 +29,7 @@ import {
   drawSlotItem,
   type ItemVisualState,
   insetBox,
+  type SceneBox,
   sceneBox,
   updateParticles,
 } from "#src/render/index.js";
@@ -63,6 +71,8 @@ export class BlockStackSession extends TemplateGameSession<
   GT017Content,
   GT017Difficulty
 > {
+  override readonly usesPromptZone = true;
+
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -270,6 +280,23 @@ export class BlockStackSession extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    if (this.stageRect) {
+      const { hero, rest } = splitHeroStage(
+        this.stageRect,
+        this.content.options.length > 0
+      );
+      return [
+        heroSlot(hero, 0),
+        ...computeStageCellSlots({
+          count: this.content.options.length,
+          stage: rest,
+          touchFloor: resolveTouchFloor(ageBand, this.cssPerLogic),
+          maxCell: { w: HERO_OPTION_CELL_MAX_PX, h: HERO_OPTION_CELL_MAX_PX },
+          role: "source",
+          firstIndex: 1,
+        }),
+      ];
+    }
     const layoutFn = resolveLayout("split-columns");
     return layoutFn({
       slotCount: this.content.options.length,
@@ -293,13 +320,15 @@ export class BlockStackSession extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    const scene = insetBox(sceneBox(rs), 0.08);
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
     drawIsometricModel(
       ctx,
-      { x: scene.x, y: scene.y, w: scene.w, h: scene.h * 0.6 },
+      this.modelBox(rs),
       this.content.model,
-      this.currentRotation
+      this.currentRotation,
+      this.stageRect !== undefined
     );
 
     const optionSlots = this.sourceSlots;
@@ -320,6 +349,23 @@ export class BlockStackSession extends TemplateGameSession<
       });
     });
     this.drawRenderFeedback(rs, ctx);
+  }
+
+  /** Hộp vẽ khối: vùng chính của stage, hoặc 60% trên của cảnh khi chưa có khung. */
+  private modelBox(rs: RenderSystem): SceneBox {
+    const hero = this.stageRect
+      ? this.slots.find((s) => s.role === "target")
+      : undefined;
+    if (hero) {
+      return {
+        x: hero.x - hero.w / 2,
+        y: hero.y - hero.h / 2,
+        w: hero.w,
+        h: hero.h,
+      };
+    }
+    const scene = insetBox(sceneBox(rs), 0.08);
+    return { x: scene.x, y: scene.y, w: scene.w, h: scene.h * 0.6 };
   }
 
   private drawRenderFeedback(

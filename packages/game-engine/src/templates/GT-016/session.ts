@@ -13,7 +13,15 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
+import {
+  HERO_OPTION_CELL_MAX_PX,
+  heroSlot,
+  splitHeroStage,
+} from "#src/layout/hero-split";
 import { resolveLayout } from "#src/layout/registry";
+import { computeStageCellSlots } from "#src/layout/stage-targets";
+import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot } from "#src/layout/types";
 import {
   drawClockFace,
@@ -22,6 +30,7 @@ import {
   drawSlotItem,
   type ItemVisualState,
   insetBox,
+  type SceneBox,
   sceneBox,
   squareBox,
   updateParticles,
@@ -36,6 +45,9 @@ import {
   timeToAngles,
 } from "#src/systems/rotation-system";
 import type { GT016Content, GT016Difficulty } from "./template.js";
+
+/** Phần lề (tỉ lệ) giữa mặt đồng hồ và mép vùng chính của stage. */
+const FACE_INSET = 0.04;
 
 function isPointInSlot(slot: Slot, x: number, y: number): boolean {
   const hw = (slot.hitW ?? slot.w) / 2;
@@ -139,7 +151,8 @@ function toSetAction(gesture: Gesture): GameAction | null {
   if (gesture.type === "adjust") {
     return { type: "adjust_time", data: { delta: gesture.delta } };
   }
-  if (gesture.type === "commit" || gesture.type === "tap") {
+  // Chỉ `commit` nộp giờ: `tap` lên mặt đồng hồ không nộp (`BR-PSZ-05`).
+  if (gesture.type === "commit") {
     return { type: "submit_time", data: null };
   }
   return null;
@@ -149,11 +162,16 @@ export class ClockHandsSession extends TemplateGameSession<
   GT016Content,
   GT016Difficulty
 > {
+  override readonly usesPromptZone = true;
+  override readonly needsCommit: boolean;
+
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private currentTime: ClockTime;
+  /** `mode = set`: giờ chỉ được chấm sau khi trẻ nộp bằng `commit` (`BR-PSZ-05`). */
+  private hasSubmittedTime = false;
   private selectedOptionIndex: number | null = null;
   private readonly matchedCardIds: Set<string> = new Set();
 
@@ -163,6 +181,8 @@ export class ClockHandsSession extends TemplateGameSession<
     layoutSeed = 0
   ) {
     super(content, difficulty, layoutSeed);
+    // Chỉ `mode = set` có bước nộp; `read` và `match` trả lời ngay khi chạm.
+    this.needsCommit = content.mode === "set";
     this.currentTime = content.initial_time ?? {
       hour: content.target_time.hour,
       minute: content.target_time.minute,
@@ -175,6 +195,7 @@ export class ClockHandsSession extends TemplateGameSession<
       minute: this.content.target_time.minute,
     };
     this.selectedOptionIndex = null;
+    this.hasSubmittedTime = false;
     this.matchedCardIds.clear();
     this.isWon = false;
 
@@ -242,6 +263,7 @@ export class ClockHandsSession extends TemplateGameSession<
   }
 
   submitCurrentTime(): boolean {
+    this.hasSubmittedTime = true;
     const isCorrect = isSameTime(this.currentTime, this.content.target_time);
     this.recordEvent("time_submitted", {
       time: formatClockTime(this.currentTime),
@@ -371,15 +393,16 @@ export class ClockHandsSession extends TemplateGameSession<
         }
       });
     } else {
+      const face = this.stageRect ? this.slots[0] : undefined;
       entities.push({
         id: "clock-face",
         slotIndex: 0,
         role: "neutral",
         state: "idle",
-        x: 480,
-        y: 180,
-        w: 240,
-        h: 240,
+        x: face?.x ?? 480,
+        y: face?.y ?? 180,
+        w: face?.w ?? 240,
+        h: face?.h ?? 240,
       });
     }
 
@@ -420,7 +443,10 @@ export class ClockHandsSession extends TemplateGameSession<
       return opt?.is_correct === true;
     }
     if (this.content.mode === "set") {
-      return isSameTime(this.currentTime, this.content.target_time);
+      return (
+        this.hasSubmittedTime &&
+        isSameTime(this.currentTime, this.content.target_time)
+      );
     }
     if (this.content.mode === "match") {
       return (
@@ -437,7 +463,51 @@ export class ClockHandsSession extends TemplateGameSession<
     this.matchedCardIds.clear();
   }
 
+  /** Số ô lựa chọn (phương án hoặc thẻ hoạt động) của vòng — 0 ở `mode = set`. */
+  private choiceCount(): number {
+    if (this.content.mode === "set") {
+      return 0;
+    }
+    return this.content.mode === "read"
+      ? (this.content.options?.length ?? 0)
+      : (this.content.activity_cards?.length ?? 0);
+  }
+
+  private computeStageSlots(stage: ZoneRect, ageBand: AgeBand): Slot[] {
+    const count = this.choiceCount();
+    const { hero, rest } = splitHeroStage(stage, count > 0);
+    if (count === 0) {
+      return [heroSlot(hero, 0)];
+    }
+    return computeStageCellSlots({
+      count,
+      stage: rest,
+      touchFloor: resolveTouchFloor(ageBand, this.cssPerLogic),
+      maxCell: { w: HERO_OPTION_CELL_MAX_PX, h: HERO_OPTION_CELL_MAX_PX },
+      role: this.content.mode === "read" ? "source" : "target",
+      hasLabels: false,
+    });
+  }
+
+  /** Hộp mặt đồng hồ: vùng chính của stage, hoặc 58% trên của cảnh khi chưa có khung. */
+  private faceBox(rs: RenderSystem): SceneBox {
+    if (this.stageRect) {
+      const { hero } = splitHeroStage(this.stageRect, this.choiceCount() > 0);
+      return squareBox(insetBox(hero, FACE_INSET));
+    }
+    const scene = insetBox(sceneBox(rs), 0.08);
+    return squareBox({
+      x: scene.x,
+      y: scene.y,
+      w: scene.w,
+      h: scene.h * 0.58,
+    });
+  }
+
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    if (this.stageRect) {
+      return this.computeStageSlots(this.stageRect, ageBand);
+    }
     const layoutFn = resolveLayout("grid");
     // `options` và `activity_cards` khai `.default([])` trong contract, nhưng
     // session nhận `content_pack` **thô** nên default không bao giờ tới nơi:
@@ -469,14 +539,10 @@ export class ClockHandsSession extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
-    const scene = insetBox(sceneBox(rs), 0.08);
-    const faceBox = squareBox({
-      x: scene.x,
-      y: scene.y,
-      w: scene.w,
-      h: scene.h * 0.58,
-    });
+    if (!this.stageRect) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
+    const faceBox = this.faceBox(rs);
     drawClockFace(ctx, faceBox, this.currentTime);
 
     if (this.content.mode === "match") {

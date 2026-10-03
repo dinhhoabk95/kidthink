@@ -8,7 +8,9 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
+import { computeTraySourceSlots, pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import {
   drawBalanceScale,
@@ -16,6 +18,7 @@ import {
   drawPromptText,
   drawSceneBackground,
   drawSlotItem,
+  drawWoodenTokenDock,
   type ItemVisualState,
   insetBox,
   sceneBox,
@@ -31,6 +34,7 @@ import {
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT014Content, GT014Difficulty } from "./template.js";
+import { panTargetSlots, scaleBoxInStage } from "./zone-layout.js";
 
 function validateSelectSide(
   data: unknown,
@@ -142,6 +146,9 @@ export class BalanceScaleSession extends TemplateGameSession<
   GT014Content,
   GT014Difficulty
 > {
+  override readonly needsTray = true;
+  override readonly usesPromptZone = true;
+
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
@@ -496,6 +503,19 @@ export class BalanceScaleSession extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (zones) {
+      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
+      return [
+        ...panTargetSlots(scaleBoxInStage(zones.stage), touchFloor),
+        ...computeTraySourceSlots(
+          this.trayItems.length,
+          zones.tray,
+          touchFloor,
+          2
+        ),
+      ];
+    }
     const layoutFn = resolveLayout("split-columns");
     return layoutFn({
       slotCount: this.trayItems.length,
@@ -522,7 +542,10 @@ export class BalanceScaleSession extends TemplateGameSession<
       this.wrongSide = null;
     }
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (!zones) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
     const sources = this.sourceSlots;
     // `WeightedItem` chỉ mang id + khối lượng; asset nằm ở content.
     const assetById = new Map(
@@ -535,7 +558,12 @@ export class BalanceScaleSession extends TemplateGameSession<
     const positioned = (items: readonly { item_id: string }[]) =>
       items.map((i) => ({ id: i.item_id, asset: assetById.get(i.item_id) }));
 
-    const scaleBox = insetBox(sceneBox(rs), 0.12);
+    const scaleBox = zones
+      ? scaleBoxInStage(zones.stage)
+      : insetBox(sceneBox(rs), 0.12);
+    if (zones && sources.length > 0) {
+      drawWoodenTokenDock(ctx, rs, zones.tray);
+    }
     const { leftPan, rightPan } = drawBalanceScale(
       ctx,
       scaleBox,

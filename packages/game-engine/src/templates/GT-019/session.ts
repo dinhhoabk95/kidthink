@@ -13,7 +13,10 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
+import { computeStageCellSlots } from "#src/layout/stage-targets";
+import { computeTraySourceSlots, pickTrayZones } from "#src/layout/tray-layout";
 import type { Slot } from "#src/layout/types";
 import { PlacementMechanic } from "#src/mechanics/placement-mechanic";
 import {
@@ -22,6 +25,7 @@ import {
   drawSceneBackground,
   drawSlotItem,
   drawSlotLabel,
+  drawWoodenTokenDock,
   type ItemVisualState,
   updateParticles,
 } from "#src/render/index.js";
@@ -38,6 +42,9 @@ import {
 import type { GT019Content, GT019Difficulty } from "./template.js";
 
 type GT019Piece = GT019Content["pieces"][number];
+
+/** Cạnh ô đích lớn nhất trên sân khấu. */
+const TARGET_CELL_MAX_PX = 96;
 
 function toRotationAngle(val: number | undefined): RotationAngle90 {
   if (val === 90 || val === 180 || val === 270) {
@@ -107,6 +114,9 @@ export class GT019Session extends TemplateGameSession<
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
+  override readonly needsTray = true;
+  override readonly usesPromptZone = true;
 
   private readonly placementMechanic = new PlacementMechanic();
   private readonly pieceTransforms: Map<string, PieceTransform> = new Map();
@@ -546,6 +556,25 @@ export class GT019Session extends TemplateGameSession<
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (zones) {
+      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
+      const targets = computeStageCellSlots({
+        count: this.content.target_slots.length,
+        stage: zones.stage,
+        touchFloor,
+        maxCell: { w: TARGET_CELL_MAX_PX, h: TARGET_CELL_MAX_PX },
+        role: "target",
+        hasLabels: true,
+      });
+      const sources = computeTraySourceSlots(
+        this.content.pieces.length,
+        zones.tray,
+        touchFloor,
+        targets.length
+      );
+      return [...targets, ...sources];
+    }
     const layoutFn = resolveLayout("top-source-bottom-target");
     return layoutFn({
       slotCount: this.content.pieces.length,
@@ -569,9 +598,15 @@ export class GT019Session extends TemplateGameSession<
     _timeMs: number
   ): void {
     drawSceneBackground(ctx, rs, this.themeId);
-    drawPromptText(ctx, rs, this.content.prompt);
+    const zones = pickTrayZones(this.stageRect, this.trayRect);
+    if (!zones) {
+      drawPromptText(ctx, rs, this.content.prompt);
+    }
     const targets = this.targetSlots;
     const sources = this.sourceSlots;
+    if (zones && sources.length > 0) {
+      drawWoodenTokenDock(ctx, rs, zones.tray);
+    }
 
     this.content.target_slots.forEach((target, i) => {
       const slot = targets[i];

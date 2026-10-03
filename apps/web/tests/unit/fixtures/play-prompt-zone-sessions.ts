@@ -8,7 +8,7 @@ import {
   TemplateGameSession,
 } from "@mindkid/game-engine";
 
-/** Session thật của một engine chưa dời (GT-009). */
+/** Nội dung GT-009 để dựng session giả lập engine chưa dời khỏi lời dẫn tự vẽ. */
 const GT009_CONTENT: GT009Content = {
   prompt: "Số bí ẩn lớn hơn 4. Bé tìm xem là số nào?",
   candidates: [
@@ -55,7 +55,8 @@ export async function createLegacySession(): Promise<GameSession> {
   if (session instanceof TemplateGameSession) {
     session.prepareRound("4-5");
   }
-  return session;
+  // GT-009 đã dời (#283 B1), nên giả lập engine chưa dời bằng cách tắt cờ.
+  return Object.assign(Object.create(session), { usesPromptZone: false });
 }
 
 /**

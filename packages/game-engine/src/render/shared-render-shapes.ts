@@ -234,6 +234,23 @@ export function drawRequiredCells(
 
 const MAX_TILT_DEG = 14;
 
+/** Hình học cân ở tư thế cân bằng — hàm thuần để engine đặt vùng chạm hai đĩa. */
+export function balanceScaleGeometry(box: SceneBox): {
+  readonly pivotX: number;
+  readonly pivotY: number;
+  readonly beamHalf: number;
+  readonly panW: number;
+  readonly panH: number;
+} {
+  return {
+    pivotX: box.x + box.w / 2,
+    pivotY: box.y + box.h * 0.55,
+    beamHalf: box.w * 0.32,
+    panW: box.w * 0.26,
+    panH: box.h * 0.16,
+  };
+}
+
 export function drawBalanceScale(
   ctx: CanvasRenderingContext2D,
   box: SceneBox,
@@ -249,11 +266,7 @@ export function drawBalanceScale(
   }
   const rad = (tiltDeg * Math.PI) / 180;
 
-  const pivotX = box.x + box.w / 2;
-  const pivotY = box.y + box.h * 0.55;
-  const beamHalf = box.w * 0.32;
-  const panW = box.w * 0.26;
-  const panH = box.h * 0.16;
+  const { pivotX, pivotY, beamHalf, panW, panH } = balanceScaleGeometry(box);
 
   ctx.save();
   // Oak Post & Fulcrum base
@@ -443,19 +456,61 @@ function drawHand(
 
 // ── Khối lập phương đẳng cự (GT-017) ────────────────────────────────
 
+/** Nét viền khối (2.5 px) tràn ra ngoài mép hình một nửa bề dày. */
+const CUBE_STROKE_PAD_PX = 2;
+
+interface IsometricFit {
+  readonly size: number;
+  readonly cx: number;
+  readonly cy: number;
+}
+
+/**
+ * Cỡ khối và tâm vẽ sao cho cả mô hình nằm trọn `box`: mỗi khối rộng 2 cạnh,
+ * cao từ nửa cạnh trên tâm tới 1,5 cạnh dưới tâm (mặt trái kéo xuống một cạnh).
+ */
+function fitIsometric(
+  box: SceneBox,
+  ordered: readonly CubeCoord[],
+  baseSize: number
+): IsometricFit {
+  const unit = ordered.map((cube) => projectIsometric(cube, 0, 0, 1));
+  const minX = Math.min(...unit.map((p) => p.screenX)) - 1;
+  const maxX = Math.max(...unit.map((p) => p.screenX)) + 1;
+  const minY = Math.min(...unit.map((p) => p.screenY)) - 0.5;
+  const maxY = Math.max(...unit.map((p) => p.screenY)) + 1.5;
+  const size = Math.max(
+    1,
+    Math.min(
+      baseSize,
+      (box.w - 2 * CUBE_STROKE_PAD_PX) / (maxX - minX),
+      (box.h - 2 * CUBE_STROKE_PAD_PX) / (maxY - minY)
+    )
+  );
+  return {
+    size,
+    cx: box.x + box.w / 2 - ((minX + maxX) / 2) * size,
+    cy: box.y + box.h / 2 - ((minY + maxY) / 2) * size,
+  };
+}
+
 export function drawIsometricModel(
   ctx: CanvasRenderingContext2D,
   box: SceneBox,
   model: readonly CubeCoord[],
-  rotation: RotationAngle
+  rotation: RotationAngle,
+  /** Có thì co và căn mô hình vào trọn `box` (`BR-PSZ-01`); không thì giữ bố cục cũ. */
+  fit = false
 ): void {
   if (model.length === 0) {
     return;
   }
   const ordered = sortCubesForRender(model, rotation);
-  const size = Math.min(box.w, box.h) / 6;
-  const cx = box.x + box.w / 2;
-  const cy = box.y + box.h * 0.62;
+  const baseSize = Math.min(box.w, box.h) / 6;
+  const fitted = fit ? fitIsometric(box, ordered, baseSize) : undefined;
+  const size = fitted?.size ?? baseSize;
+  const cx = fitted?.cx ?? box.x + box.w / 2;
+  const cy = fitted?.cy ?? box.y + box.h * 0.62;
 
   ctx.save();
   for (const cube of ordered) {

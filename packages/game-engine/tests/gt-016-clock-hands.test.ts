@@ -109,7 +109,25 @@ describe("GT-016: Xoay kim đồng hồ (clock-hands)", () => {
       session.setHour(4);
       session.setMinute(30);
       expect(session.getCurrentTime()).toEqual({ hour: 4, minute: 30 });
+      // Kim đúng giờ chưa đủ: chỉ `commit` mới nộp giờ (`GT-016.md` N3, `BR-PSZ-05`).
+      expect(session.checkWinCondition()).toBe(false);
+      session.dispatch({ type: "commit", timeMs: 0 });
       expect(session.checkWinCondition()).toBe(true);
+    });
+
+    it("tap lên mặt đồng hồ không nộp giờ ở mode set", () => {
+      const session = new ClockHandsSession(
+        SAMPLE_LEVEL_2.content_pack,
+        SAMPLE_LEVEL_2.difficulty_params
+      );
+      session.setupEntities();
+      session.setHour(4);
+      session.setMinute(30);
+
+      expect(session.toAction({ type: "tap", x: 480, y: 180, timeMs: 0 })).toBe(
+        null
+      );
+      expect(session.needsCommit).toBe(true);
     });
   });
 });

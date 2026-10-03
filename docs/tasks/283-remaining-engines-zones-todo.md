@@ -101,9 +101,11 @@ Ghi chú đo của N (2026-10-03):
 
 ## B5 — Thao tác trực tiếp · M · phụ thuộc: B2
 
-- [ ] Sửa spec GT-016 trước: chỉ `commit` nộp, `tap` không nộp
-- [ ] RED: GT-014, 016, 017, 019; GT-016 `needsCommit=true`, GT-019 `needsTray=true`
-- [ ] Ca âm: khôi phục `tap → submit_time` → đỏ
+- [x] Sửa spec GT-016 trước: chỉ `commit` nộp, `tap` không nộp (`GT-016.md` N3: `needsCommit` chỉ ở `mode = set`)
+- [x] RED: GT-014, 016, 017, 019; GT-016 `needsCommit=true` (ở `mode = set`), GT-019 `needsTray=true` (GT-014 cũng `needsTray=true`) — `stage-engines-b5.test.ts` 12 ca, 4 mã đỏ khi thêm vào `MIGRATED_CODES`, xanh sau khi dời; engine 120 tệp
+- [x] Ca âm: khôi phục `tap → submit_time` → đỏ (`apps/web/tests/unit/play-commit-reachability-gt016.test.ts`: quét tap không thắng khi `needsCommit=false`; chạm `zones.action` thắng; `gt-016-clock-hands.test.ts` thêm ca tap không nộp). Đổi hành vi: `checkWinCondition()` ở `mode = set` chỉ đúng sau khi nộp
+- Dùng chung: `layout/hero-split.ts` (vùng chính + ô lựa chọn, GT-016/017), `GT-014/zone-layout.ts` (hộp cân + vùng chạm hai đĩa từ `balanceScaleGeometry`), `drawIsometricModel(..., fit)` co khối vào trọn hộp
+- Nợ đo mới: GT-014 portrait 8 level có cặp vùng chạm ở khay < `SLOT_GAP_PX` (khay một hàng, cùng nợ B3; `KNOWN_HIT_GAP_DEBT` trong `stage-engines-b5.test.ts`, chỉ giảm). Nợ safe-area của GT-014 (8) và GT-017 (2) không đụng `geometry.ts` nên không đổi
 
 ## B6 — Xây, đo, đong lường · M · phụ thuộc: B3, B5
 
