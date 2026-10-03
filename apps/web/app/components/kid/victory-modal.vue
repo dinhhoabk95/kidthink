@@ -436,4 +436,118 @@
   .star-anim {
     animation: starPulse 2.5s ease-in-out infinite;
   }
+
+  /*
+   * Điện thoại ngang (844x390, QA 2026-10-03): bố cục dọc cao hơn khung nên
+   * sao/Gấu bị cắt trên, hàng nút bị cắt dưới. Chuyển sang hai cột: Gấu bên
+   * trái, thẻ chia cột trái (sao, sticker, lời khen) và cột phải (hai nút).
+   * Nút giữ sàn chạm 96px; còn thiếu chỗ thì overlay cuộn được.
+   */
+  @media (max-height: 500px) and (orientation: landscape) {
+    .victory-overlay {
+      height: 100dvh;
+      align-items: safe center;
+      overflow-y: auto;
+      padding: 0.5rem 1rem;
+    }
+
+    .modal-wrapper {
+      margin-top: 0;
+      max-width: 46rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .mascot-container {
+      position: static;
+      transform: none;
+      flex-shrink: 0;
+      width: 6.5rem;
+      height: 6.5rem;
+    }
+
+    .mascot-container :deep(canvas) {
+      width: 6.5rem !important;
+      height: 6.5rem !important;
+    }
+
+    .clay-card {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      grid-template-rows: auto auto 1fr;
+      column-gap: 1.5rem;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      border-radius: 2rem;
+    }
+
+    .stars-arc {
+      grid-column: 1;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .star-pill {
+      width: 2.75rem;
+      height: 2.75rem;
+    }
+
+    .star-pill--center {
+      width: 3.5rem;
+      height: 3.5rem;
+      transform: translateY(-0.25rem);
+    }
+
+    .star-icon {
+      font-size: 1.5rem;
+    }
+
+    .star-icon--big {
+      font-size: 2rem;
+    }
+
+    .sticker-reward {
+      grid-column: 1;
+      justify-self: center;
+      width: 4.5rem;
+      height: 4.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .sticker-emoji {
+      font-size: 2.75rem;
+    }
+
+    .victory-title {
+      grid-column: 1;
+      margin: 0.25rem 0 0;
+      gap: 0;
+    }
+
+    .victory-gradient-text {
+      font-size: 1.4rem;
+    }
+
+    .victory-subtitle {
+      font-size: 1rem;
+    }
+
+    .action-buttons {
+      grid-column: 2;
+      grid-row: 1 / -1;
+      width: auto;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn-continue,
+    .btn-replay {
+      min-height: 96px;
+      min-width: 96px;
+      height: 96px;
+      width: 96px;
+    }
+  }
 </style>

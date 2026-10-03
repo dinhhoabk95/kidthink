@@ -28,6 +28,7 @@ const ALBUM = {
 
 /** Album không hiện số đếm (`BR-STK-03`). */
 const DIGIT = /\d/;
+const WHITESPACE = /\s+/g;
 
 const apiMock = vi.fn();
 const pushMock = vi.fn();
@@ -124,6 +125,33 @@ describe("Trang album sticker (BR-STK-03, BR-STK-06, BR-STK-07)", () => {
     await page.get('[data-testid="gate-verify"]').trigger("click");
 
     expect(pushMock).toHaveBeenCalledWith("/play");
+  });
+
+  it("QA 2026-10-03: tiêu đề chủ đề không phải ô sticker — chữ của nhóm chỉ gồm emoji sticker", async () => {
+    apiMock.mockResolvedValue(ALBUM);
+
+    const page = await mountAlbumPage();
+    const groups = page.findAll('[data-testid="album-theme"]');
+    const stickerEmojis = ALBUM.themes.map((theme) =>
+      theme.stickers.map((sticker) => sticker.emoji).join("")
+    );
+
+    expect(groups.map((group) => group.text().replace(WHITESPACE, ""))).toEqual(
+      stickerEmojis
+    );
+    for (const theme of ALBUM.themes) {
+      expect(page.text()).not.toContain(theme.icon_emoji);
+    }
+    expect(page.findAll('[data-testid="album-theme-band"]')).toHaveLength(2);
+  });
+
+  it("Ca âm: tiêu đề kiểu cũ (emoji chủ đề cạnh sticker) bị phát hiện", () => {
+    const legacy = mount({
+      template:
+        '<li data-testid="album-theme"><span class="album-theme-icon">🚜</span><ul><li>🐮</li></ul></li>',
+    });
+
+    expect(legacy.text().replace(WHITESPACE, "")).not.toBe("🐮");
   });
 
   it("album trống thì chỉ có Gấu Con, không sticker nào", async () => {

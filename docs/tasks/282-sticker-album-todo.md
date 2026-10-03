@@ -65,3 +65,5 @@ Lệnh kiểm (chạy qua `rtk proxy`):
 
 - [ ] Xong một bài → màn thưởng có sticker → icon sảnh → album hiện sticker
 - [ ] Đọc màn hình đọc đúng tên sticker
+
+- [x] QA 2026-10-03: tiêu đề chủ đề album là dải màu, không emoji — số ô trên màn = số sticker (2 sticker → 2 ô; ảnh `after-modal-album-fix/album-*.png`, `BR-STK-06`)

@@ -60,3 +60,5 @@ QA trình duyệt 2026-10-03 ([`docs/qa/engine-captures/2026-10-03/`](../qa/engi
 
 - [ ] Chơi trọn một bài band 3–4: làm quen → các level → màn thưởng có tiếng
 - [ ] Thoát giữa chừng qua khoá phụ huynh, vào lại thì tiếp đúng bước
+
+- [x] QA 2026-10-03: màn thưởng vừa 844x390 (bố cục hai cột, nút 96px, cuộn dự phòng; ảnh `after-modal-album-fix/modal-*.png`). Chưa làm: sảnh `/play` còn navbar phụ huynh (dùng layout default)

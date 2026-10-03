@@ -41,13 +41,18 @@
           <li
             class="album-theme"
             data-testid="album-theme"
-            v-for="theme in themes"
+            v-for="(theme, index) in themes"
             :key="theme.theme_code"
             :aria-label="themeLabel(theme.theme_code)"
           >
-            <span aria-hidden="true" class="album-theme-icon"
-              >{{ theme.icon_emoji }}</span
-            >
+            <!-- Dải màu trang trí, không phải ô: emoji chủ đề cạnh sticker làm
+                 trẻ thấy thừa một ô (QA 2026-10-03, `BR-STK-06`). -->
+            <span
+              aria-hidden="true"
+              class="album-theme-band"
+              data-testid="album-theme-band"
+              :class="`album-theme-band--${index % BAND_COUNT}`"
+            />
             <ul class="album-stickers">
               <li
                 class="album-sticker"
@@ -101,6 +106,9 @@
   interface StickerAlbum {
     themes: AlbumTheme[];
   }
+
+  /** Số màu dải chủ đề trong CSS (`album-theme-band--0..3`). */
+  const BAND_COUNT = 4;
 
   const router = useRouter();
   const api = useApi();
@@ -202,10 +210,25 @@
     background-color: var(--color-surface-50);
   }
 
-  .album-theme-icon {
-    font-size: 2.5rem;
-    line-height: 1;
+  .album-theme-band {
+    align-self: stretch;
+    width: 0.75rem;
+    min-height: 4.5rem;
+    border-radius: 9999px;
     flex-shrink: 0;
+    background-color: var(--color-brand-300);
+  }
+
+  .album-theme-band--1 {
+    background-color: var(--color-warning-400);
+  }
+
+  .album-theme-band--2 {
+    background-color: var(--color-success-400, var(--color-brand-400));
+  }
+
+  .album-theme-band--3 {
+    background-color: var(--color-surface-400);
   }
 
   .album-stickers {

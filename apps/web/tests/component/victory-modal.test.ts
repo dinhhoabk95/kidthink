@@ -149,6 +149,24 @@ describe("KidVictoryModal", () => {
     expect(wrapper.findAll("button")).toHaveLength(2);
   });
 
+  it("QA 2026-10-03: sao, sticker và hai nút là con trực tiếp của thẻ để lưới ngang chia cột", () => {
+    const wrapper = mount(VictoryModal, {
+      props: {
+        show: true,
+        stars: 3,
+        sticker: { emoji: "🐮", label: "Bò sữa" },
+      },
+    });
+
+    const children = wrapper.get(".clay-card").element.children;
+    const classes = Array.from(children).map((child) => child.className);
+
+    expect(classes.some((name) => name.includes("stars-arc"))).toBe(true);
+    expect(classes.some((name) => name.includes("sticker-reward"))).toBe(true);
+    expect(classes.some((name) => name.includes("victory-title"))).toBe(true);
+    expect(classes.some((name) => name.includes("action-buttons"))).toBe(true);
+  });
+
   it("Ca âm BR-STK-08: không truyền sticker (màn tổng kết level) thì không có ô sticker", () => {
     const wrapper = mount(VictoryModal, {
       props: { show: true, stars: 3 },
