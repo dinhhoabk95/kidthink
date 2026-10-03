@@ -1,0 +1,362 @@
+[
+  {
+    "template": "GT-006",
+    "level": "GL-C5-LIS-SORT-0001",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 3,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 3,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 5,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-011",
+    "level": "GL-C2-ROT-DOTS-0002",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 1,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 1,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 1,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-014",
+    "level": "GL-C6-PER-DIFF-0001",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 1,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 1,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 1,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-015",
+    "level": "GL-C5-BOK-HIDE-0002",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 2,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 2,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 2,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-016",
+    "level": "GL-C5-QUE-BAL-0001",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 1,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 1,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 1,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-017",
+    "level": "GL-C2-BLK-STK-0034",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 1,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 1,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 1,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-024",
+    "level": "GL-C2-TRC-PTH-0032",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 6,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 6,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 6,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-028",
+    "level": "GL-C5-PRA-MEAS-0003",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 5,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 5,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 5,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-029",
+    "level": "GL-C5-QUE-TIME-0002",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 3,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 3,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 3,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-030",
+    "level": "GL-C5-PRA-COIN-0003",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 7,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 7,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 7,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-031",
+    "level": "GL-C5-PRA-PICT-0003",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 2,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 2,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 2,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-032",
+    "level": "GL-C1-CNT-VENN-0001",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 1,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 1,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 1,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-033",
+    "level": "GL-C1-PAT-WEAVE-0005",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 3,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 3,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 3,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-035",
+    "level": "GL-C1-ALG-CMD-0005",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 4,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 4,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 4,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-036",
+    "level": "GL-C3-RULE-FCR-0001",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 3,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 3,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 3,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  }
+]

@@ -32,15 +32,33 @@ Kết quả thô: `report.json` ở từng thư mục.
 
 ## Còn lại (không sửa trong #283)
 
-1. **Nợ vật lý ở canvas 784x250** (sàn chạm 76–96 px CSS): vd. `sandbox/GT-033-sb-l844x390.jpg` lưới 4×4 band 3-4 bị khay đè; GT-008 band 3-4 hàng ô đích thứ hai cắt ở đáy. Số đo ở `KNOWN_*_DEBT` các test `stage-engines-b*.test.ts`.
+1. **Nợ vật lý ở canvas hẹp ngang** (số đo ban đầu 784x250, nay 610x350 sau khi HUD thành cột lề — xem phần dưới) (sàn chạm 76–96 px CSS): vd. `sandbox/GT-033-sb-l844x390.jpg` lưới 4×4 band 3-4 bị khay đè; GT-008 band 3-4 hàng ô đích thứ hai cắt ở đáy. Số đo ở `KNOWN_*_DEBT` các test `stage-engines-b*.test.ts`.
 2. **GT-035** (`play/GT-035-play-m390x844-tapped.jpg`): nhãn "RIGHT" dưới ô robot hàng đầu bị hàng ô dưới che một phần.
 3. Cột lời dẫn ở điện thoại ngang không có chữ phụ (`BR-PSZ-09`); picto chỉ hiện khi còn chỗ.
 
+## Chơi hết vòng bằng cảm ứng thật (2026-10-04)
+
+Tự động bằng Playwright + CDP `Input.dispatchTouchEvent` (`touchStart`/`touchMove`/`touchEnd`, kéo thả 6 bước di chuyển), đăng nhập `parent.standard@mindkid.test`, hồ sơ Bé Đậu. Một "gương" của engine chạy ở Node với đúng bản cấu hình và `layout_seed` mà trang nhận (mỗi lần mở level server phát seed mới) để tìm chuỗi cử chỉ thắng; chuỗi được phát lại bằng chạm/kéo trên trang, chờ trang sang vòng kế (`role=progressbar` tăng), qua cả ba vòng của level (số vật khay đổi giữa vòng: GT-031 2 xu, GT-014 vv.). Kết quả thô: `autoplay/report-*.json`.
+
+| Khung | Kết quả |
+|---|---|
+| 390x844 (canvas 330x709) | **15/15** engine tự chơi được: GT-006, 011, 014, 015, 016, 017, 024, 028, 029, 030, 031, 032, 033, 035, 036 — đủ 3 vòng, trang sang vòng đúng, 0 lỗi console |
+| 844x390 (canvas 610x350) | **16/17** — mọi engine trên (trừ GT-035) đủ 3 vòng. **GT-035 không thắng được vòng 1**: hàng lệnh dưới cùng bị cắt ở đáy canvas (ảnh `autoplay/GT-035-l-round1.jpg`), band 3-4 với lưới 4×3 + 5 ô chương trình + 4 lệnh là 12+5+4 ô ở sàn 148 logic px — không vừa dù HUD đã thành cột lề |
+| GT-026, GT-027 | **Không tự chơi** (đi/không đi theo thời gian thực — gương và trang lệch đồng hồ); chỉ kiểm bố cục và chạm thử |
+
+Lỗi thật lộ ra khi tự chơi và đã sửa:
+1. **Backing store canvas lệch hộp CSS** (658x350 so với 610x350 ở 844x390): lần đo đầu xảy ra trước khi lưới HUD xếp xong, `resize` của window không bắn. Engine tính slot trên logic space cũ nên vị trí vẽ và vị trí chạm lệch ~60 logic px. Sửa: `ResizeObserver` trên canvas gọi lại đường `handleResize`.
+2. **GT-035 mất hàng lệnh ở điện thoại ngang** khi dải HUD ăn 110 px: HUD thành cột lề (xem spec `BR-PSZ-07`), canvas 350 px thay vì 250.
+3. **Nhãn "RIGHT"/"ĐÍCH" của GT-035 bị hàng ô dưới che**: chỉ vẽ khi khoảng giữa hai hàng còn chỗ cho dải nhãn (test `gt-035-grid-labels.test.ts`).
+
+## Reduced-motion
+
+`tests/layout/reduced-motion.test.ts`: với `reducedMotion` bật, khung hình thứ hai (cách 1,5 giây, cả `timeMs` lẫn `Date.now`) của **36 engine đã dời giống hệt khung đầu từng lệnh vẽ**; mascot đứng yên ở mọi dáng; vòng gợi ý nút hành động không nháy. Ca âm: không bật thì mascot và vòng gợi ý có chuyển động. Quan sát bằng mắt chuyển động trên máy thật chưa làm.
+
 ## Chưa kiểm
 
-- **Chưa chơi hết một vòng** ở 17 engine `play/`: chỉ chạm thử bằng nút DOM, xác nhận khung hình đổi, không xác nhận thắng vòng hay màn thưởng.
-- Chạm bằng touchscreen thật, kéo thả bằng ngón tay.
-- Vòng đổi số vật khay giữa các vòng liên tiếp trên trình duyệt thật (có test đơn vị `session-zones.test.ts`).
-- reduced-motion chỉ kiểm tải được và không lỗi; chưa quan sát chuyển động.
+- GT-026, GT-027 chưa tự chơi hết vòng (thời gian thực).
+- Máy thật có màn cảm ứng đa điểm (mới có mô phỏng CDP một ngón).
+- Hai trang `/play/lesson/...` và màn thưởng ở khung ngang mới (HUD cột lề) chưa chụp lại.
 
 Máy chủ dev đã dừng. Các script chụp là tạm, đã xoá.

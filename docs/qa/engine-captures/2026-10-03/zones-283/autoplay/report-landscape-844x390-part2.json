@@ -1,0 +1,137 @@
+[
+  {
+    "template": "GT-030",
+    "level": "GL-C5-PRA-COIN-0003",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 7,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 7,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 7,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-031",
+    "level": "GL-C5-PRA-PICT-0003",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 2,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 2,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 2,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-032",
+    "level": "GL-C1-CNT-VENN-0001",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 1,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 1,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 1,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-033",
+    "level": "GL-C1-PAT-WEAVE-0005",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 3,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 3,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 3,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-035",
+    "level": "GL-C1-ALG-CMD-0005",
+    "rounds": 3,
+    "status": "trang không sang vòng 2",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 4,
+        "pageAdvanced": false,
+        "plan": "[{\"type\":\"tap\",\"x\":304.5,\"y\":541.5,\"timeMs\":1791049583210},{\"type\":\"tap\",\"x\":304.5,\"y\":541.5,\"timeMs\":1791049583224},{\"type\":\"tap\",\"x\":304.5,\"y\":541.5,\"timeMs\":1791049583231},{\"type\":\"commit\",\"timeMs\":1791049583237}]"
+      }
+    ],
+    "errors": []
+  },
+  {
+    "template": "GT-036",
+    "level": "GL-C3-RULE-FCR-0001",
+    "rounds": 3,
+    "status": "ok",
+    "roundResults": [
+      {
+        "round": 0,
+        "gestures": 3,
+        "pageAdvanced": true
+      },
+      {
+        "round": 1,
+        "gestures": 3,
+        "pageAdvanced": true
+      },
+      {
+        "round": 2,
+        "gestures": 3,
+        "pageAdvanced": true
+      }
+    ],
+    "errors": []
+  }
+]

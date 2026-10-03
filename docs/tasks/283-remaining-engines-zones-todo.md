@@ -73,7 +73,7 @@ Ghi chú đo của N (2026-10-03):
 - [x] `ALL_SEED_LEVELS` của tám engine chạy lại, hai vòng liên tiếp
 - [x] Ca âm: fixture còn `drawPromptText` → đỏ
 - [x] `check:hardcoded-params` không tăng
-- Nợ đo sau quyết định 2026-10-03 (`KNOWN_STAGE_DEBT_CASES`, chỉ giảm): GT-009 phone 83 → **0** (lời dẫn cột bên trái cho sân khấu trọn chiều cao); GT-025 phone 17 → 3; GT-029 portrait 7 → **0**, phone 7 (10 vật band 4-5, lưới của GT-029 còn tách vùng vật và vùng phương án).
+- Nợ đo sau quyết định 2026-10-03 (`KNOWN_STAGE_DEBT_CASES`, chỉ giảm): GT-009 phone 83 → **0** (lời dẫn cột bên trái cho sân khấu trọn chiều cao); GT-025 phone 3; GT-029 portrait 7 → **0**, phone 7 (10 vật band 4-5, lưới của GT-029 còn tách vùng vật và vùng phương án).
 
 ## B2 — Nộp bài, tiến độ, ức chế · M · phụ thuộc: B1, #275 đóng
 
@@ -92,7 +92,7 @@ Ghi chú đo của N (2026-10-03):
 - [x] Tap-tap fallback `BR-ENG-06` xanh cho cả sáu (kéo, chạm-chạm và đổi viewport giữa vòng, mọi mẫu + seed ở ba khung 330x697, 784x250, 964x628)
 - [x] Nợ safe-area của GT-004 (28, 588) và GT-008 (32) không tăng — `tests/layout-safe-area-debt.json` giữ nguyên: hàm layout cũ không đổi, đường khung mới dùng `layout/stage-targets.ts`
 - [x] Ca âm: khay ở toạ độ cũ → đỏ (`tests/layout/fixtures/gt-004-legacy-tray-coords.ts`)
-- [x] **Nợ B3 theo câu hỏi mở số 4 — đã quyết 2026-10-03: khay nhiều hàng, không phân trang, khay cột + lời dẫn cột ở điện thoại ngang** (`play-stage-zones.md` `BR-PSZ-13`; `layout/tray-grid.ts`, `computeStageZones({ trayItems })`, `TemplateGameSession.trayItemCount`). Số ca còn lại sau khi dựng: 1538 ca ở 15 khung/band (B3 đo ban đầu: hàng nghìn ca; `KNOWN_LAYOUT_DEBT_CASES`, chỉ giảm). Còn lại là giới hạn vật lý: sàn chạm 76–96 px CSS ở canvas 250 px cao làm số ô cần xếp (GT-004 band 4-5 tới 10 vật, GT-007/008 band 3-4, lưới sudoku 4×4 band 5-6) lớn hơn diện tích sân khấu; không giảm được nếu không thu vật dưới sàn (`BR-PSZ-04` cấm). `KNOWN_HIT_GAP_DEBT_CASES` của `stage-engines.test.ts` (GT-003, 004, 008, 031) và GT-014 ở B5: **về 0**.
+- [x] **Nợ B3 theo câu hỏi mở số 4 — đã quyết 2026-10-03: khay nhiều hàng, không phân trang, khay cột + lời dẫn cột ở điện thoại ngang** (`play-stage-zones.md` `BR-PSZ-13`; `layout/tray-grid.ts`, `computeStageZones({ trayItems })`, `TemplateGameSession.trayItemCount`). Số ca còn lại sau khi dựng và sau khi HUD thành cột lề ở điện thoại ngang (2026-10-04): **899 ca** ở 11 khung/band (từ hàng nghìn; `KNOWN_LAYOUT_DEBT_CASES`, chỉ giảm): GT-004 phone band 4-5 320, GT-007 portrait 88, GT-008 portrait 227 · phone 3-4 227, GT-021 portrait 13+1 · phone 13+1 (và vài ca lẻ). Còn lại là giới hạn vật lý: sàn chạm của band ở canvas thấp làm số ô cần xếp lớn hơn diện tích sân khấu; không giảm được nếu không thu vật dưới sàn (`BR-PSZ-04` cấm) hoặc giảm số vật trong nội dung (đổi dataset/spec nội dung — ngoài #283). `KNOWN_HIT_GAP_DEBT_CASES` của `stage-engines.test.ts` và GT-014 ở B5: **về 0**.
 
 ## B4 — Ghép, lật, dãy, đường · M · phụ thuộc: N
 
@@ -115,7 +115,7 @@ Ghi chú đo của N (2026-10-03):
 - [x] Quyết `needsCommit=false` cho GT-030 (chạm đáp án là chốt), GT-031 (thắng khi tổng đủ, `exact_change` chưa có đường commit — nợ riêng), GT-033 (ô cuối đúng thì thắng); ghi ở mục 4 N3 của ba phiếu
 - [x] RED: ba engine — nguồn ở `zones.tray`, đích ở `zones.stage`, không nút ở `zones.action`, không nút xoá (`stage-engines-b6.test.ts`, 31 test; ca âm bố cục cũ `fixtures/b6-legacy-layout.ts` đỏ)
 - [x] `ALL_SEED_LEVELS` ba engine chạy lại: kéo, chạm-chạm và đổi viewport giữa vòng chơi hết vòng ở ba khung
-- Nợ đo sau quyết định 2026-10-03 (`KNOWN_LAYOUT_DEBT_CASES` ở `stage-engines-b6.test.ts`, chỉ được giảm): 116 ca — GT-030 portrait 6 · phone 43 · máy tính 43 (dải đặt cộng hàng đáp án cao hơn sân khấu); GT-031 phone 14 (khay cột + nhãn); GT-033 phone 5 · máy tính 5 (lưới 4×4/5×5). GT-031 portrait **về 0** (khay nhiều hàng). `KNOWN_HIT_GAP_DEBT_CASES` GT-031: 14 → 0.
+- Nợ đo (2026-10-04, `KNOWN_LAYOUT_DEBT_CASES` ở `stage-engines-b6.test.ts`, chỉ được giảm): **62 ca** — GT-030 portrait 6 · phone 6 · máy tính 43 (dải đặt cộng hàng đáp án cao hơn sân khấu); GT-033 phone 2 · máy tính 5. GT-031 **về 0**.
 - Thêm: GT-030/031/033 nhận gesture `drop` (kéo từ khay) và chọn theo tâm gần nhất khi vùng chạm chồng; GT-033 `getHintTargetIndex` trỏ ô trống đầu khi level không có `solution`.
 
 ## B7 — GT-000 · M · phụ thuộc: B2
@@ -131,12 +131,15 @@ Ghi chú đo của N (2026-10-03):
 
 ## Checkpoint — Trình duyệt thật
 
-- [x] Mỗi lô: một level mỗi engine ở ba viewport, xoay máy giữa vòng, reduced-motion — **37/37 engine**: 20 khách + 17 đăng nhập (`play/`) + preview-sandbox cả 37; 0 lỗi console; chạm thử đổi khung hình 17/17 ([`zones-283/README.md`](../qa/engine-captures/2026-10-03/zones-283/README.md)). Còn chưa: chơi hết vòng ở 17 engine đăng nhập, touchscreen thật, quan sát chuyển động reduced-motion
+- [x] Mỗi lô: một level mỗi engine ở ba viewport, xoay máy giữa vòng, reduced-motion — **37/37 engine** chụp (20 khách + 17 đăng nhập + preview-sandbox) và **chơi hết 3 vòng bằng cảm ứng CDP: 15/15 ở 390x844, 16/17 ở 844x390** (GT-026/027 thời gian thực không tự chơi; GT-035 band 3-4 phone ngang mất hàng lệnh — nợ vật lý). reduced-motion: `reduced-motion.test.ts` 36 engine + primitive. [`zones-283/README.md`](../qa/engine-captures/2026-10-03/zones-283/README.md)
 - [ ] Ảnh vào `docs/qa/engine-captures/<ngày>/`; `check:engine-specs` và `check:engine-turn` exit 0
 
 ## Đóng task
 
 - [x] Gate `zone-primitives-only` phủ đủ 37 mã: 36 mã dời + GT-000 là **ngoại lệ duy nhất, có lý do** (danh sách ngoại lệ không rỗng nhưng một mã, ghi ở `EXEMPT_CODES`; test `phủ đủ mọi mã engine` + ca âm)
 - [x] `/play/preview-sandbox` vào khung (`computeZonesForSession`, `prepareRound`, `drawPromptZone`, `drawCommitButton`; `play-preview-sandbox-zones.test.ts` + ca âm). Xoá mọi `drawPromptText` ở 36 engine đã dời (gate `zone-primitives-only` cấm cả nhánh dự phòng). Đường lui **hình học** khi không có `stage` (`BR-LAY-10`, GT-003 `!zones`) giữ lại có chủ đích: test và golden dùng nó
-- [ ] Spec `play-stage-zones.md` giữ `approved`: scenario mục 9 đều có test nhưng BR-PSZ-01/04 chỉ xanh cùng nợ vật lý đã đo (B3 1.538 ca, B6 116, GT-025 3, GT-029 7, GT-024 3 — giới hạn canvas 250 px, ghi ở `KNOWN_*_DEBT`), và checkpoint trình duyệt chưa chơi hết vòng / chưa touchscreen. Đổi `implemented` khi hai việc đó xong
+- [ ] Spec `play-stage-zones.md` **giữ `approved`**. Đổi `implemented` khi đủ ba điều kiện, hiện thiếu:
+  1. `BR-PSZ-01`/`BR-PSZ-04` xanh **không cần bảng nợ**: hiện còn nợ vật lý B3 899 ca, B6 62, B1 56 (GT-009 21, GT-025 3, GT-029 32), GT-017 1, GT-024 3 — giải bằng giảm số vật trong dataset hoặc đổi cách chơi ở canvas thấp (spec nội dung, ngoài #283);
+  2. GT-035 band 3-4 điện thoại ngang chơi được hết vòng (hiện mất hàng lệnh);
+  3. GT-026/027 chơi hết vòng trên trình duyệt (thời gian thực) và một lượt chạm đa điểm thật.
 - [x] `index.md` cập nhật; tick "Mở task con" ở `277-play-stage-zones-todo.md`

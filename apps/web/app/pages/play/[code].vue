@@ -312,6 +312,7 @@
 
   let pulseTimer: ReturnType<typeof setTimeout> | null = null;
   let resizeTimer: ReturnType<typeof setTimeout> | null = null;
+  let canvasObserver: ResizeObserver | null = null;
 
   /** Lớp phủ phản hồi chung cho mọi engine (`BR-FBK-11`). */
   const feedbackOverlay = new FeedbackOverlay();
@@ -635,6 +636,21 @@
     }
   });
 
+  /**
+   * Canvas đổi cỡ mà cửa sổ không đổi (lưới HUD xếp xong sau lần đo đầu, ảnh
+   * đầu vòng nạp xong, thanh địa chỉ co lại): `resize` của window không bắn nên
+   * backing store lệch hộp CSS và engine tính slot trên logic space cũ
+   * (`BR-PSZ-12`). Quan sát chính phần tử canvas.
+   */
+  function observeCanvasSize(): void {
+    if (typeof ResizeObserver === "undefined" || !canvasRef.value) {
+      return;
+    }
+    canvasObserver?.disconnect();
+    canvasObserver = new ResizeObserver(() => handleResize());
+    canvasObserver.observe(canvasRef.value);
+  }
+
   onMounted(async () => {
     window.addEventListener("resize", handleResize);
     if (typeof document !== "undefined") {
@@ -649,6 +665,7 @@
       isLoading.value = true;
       errorMessage.value = null;
       await fetchAndStartGame(levelCode);
+      observeCanvasSize();
     } catch (err) {
       isLoading.value = false;
       const appErr = handleApiError(
@@ -662,6 +679,8 @@
 
   onUnmounted(() => {
     window.removeEventListener("resize", handleResize);
+    canvasObserver?.disconnect();
+    canvasObserver = null;
     if (typeof document !== "undefined") {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     }
