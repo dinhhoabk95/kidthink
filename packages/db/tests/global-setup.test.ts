@@ -2,6 +2,7 @@ import { requireEnv } from "@mindkid/config";
 import postgres from "postgres";
 import { afterAll, describe, expect, it } from "vitest";
 import {
+  acquireRunLock,
   assertDisposableDatabaseUrl,
   claimDatabasePreparation,
   TABLES,
@@ -109,5 +110,41 @@ describe("global-setup: truncateAllTestTables", () => {
     const [row] =
       await sql`insert into ${sql(probeTable)} (code) values ('DUP-CODE') returning id`;
     expect(Number(row?.id)).toBe(1);
+  });
+});
+
+describe("global-setup: loại trừ lẫn nhau giữa hai lượt vitest run", () => {
+  const PROBE_LOCK_KEY = 8_314_999;
+  const WAIT_POLLS = 200;
+
+  it("lượt thứ hai đợi đến khi lượt thứ nhất nhả khoá; ca âm: không nhả thì không qua", async () => {
+    const dbUrl = requireEnv("DATABASE_URL");
+    const releaseFirst = await acquireRunLock(dbUrl, PROBE_LOCK_KEY);
+    let secondAcquired = false;
+    const second = acquireRunLock(dbUrl, PROBE_LOCK_KEY).then((release) => {
+      secondAcquired = true;
+      return release;
+    });
+
+    // Đợi đến khi server thấy phiên thứ hai đang xếp hàng chờ khoá (không dùng timer).
+    const probe = postgres(dbUrl, { max: 1 });
+    try {
+      for (let i = 0; i < WAIT_POLLS; i++) {
+        const [row] =
+          await probe`select count(*)::int c from pg_locks where locktype = 'advisory' and not granted and objid = ${PROBE_LOCK_KEY}`;
+        if ((row?.c ?? 0) > 0) {
+          break;
+        }
+        await probe`select 1`;
+      }
+    } finally {
+      await probe.end({ timeout: 5 });
+    }
+    expect(secondAcquired).toBe(false);
+
+    await releaseFirst();
+    const releaseSecond = await second;
+    expect(secondAcquired).toBe(true);
+    await releaseSecond();
   });
 });

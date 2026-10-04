@@ -244,6 +244,21 @@ async function ensureTestDatabase(url: string): Promise<void> {
  */
 const PREPARED_FLAG = "MINDKID_TEST_DB_PREPARED";
 
+/** Khoá advisory của cả lượt chạy test trên `mindkid_test` (số cố định, chỉ để loại trừ lẫn nhau). */
+const RUN_LOCK_KEY = 8_314_002;
+
+/** Chiếm khoá của lượt chạy (đợi nếu lượt khác đang giữ); trả hàm nhả khoá. */
+export async function acquireRunLock(
+  databaseUrl: string,
+  key: number = RUN_LOCK_KEY
+): Promise<() => Promise<void>> {
+  const lockConn = postgres(databaseUrl, { max: 1 });
+  await lockConn`select pg_advisory_lock(${key})`;
+  return async () => {
+    await lockConn.end({ timeout: 5 });
+  };
+}
+
 /** Đúng một lần chuẩn bị cho mỗi `vitest run`, kể cả khi có nhiều project. */
 export function claimDatabasePreparation(
   env: NodeJS.ProcessEnv = process.env
@@ -263,7 +278,9 @@ export function claimDatabasePreparation(
  * (`packages/config/vitest/test-database.ts`) nên dọn là mặc định, và cờ cũ
  * không còn ý nghĩa.
  */
-export default async function setup(): Promise<void> {
+export default async function setup(): Promise<
+  (() => Promise<void>) | undefined
+> {
   if (!claimDatabasePreparation()) {
     return;
   }
@@ -275,11 +292,18 @@ export default async function setup(): Promise<void> {
   try {
     assertDisposableDatabaseUrl(url);
     await ensureTestDatabase(url);
+    // Hai `vitest run` đồng thời (agent song song, ratchet + chạy tay) cùng dọn
+    // và ghi vào `mindkid_test` thì TRUNCATE của lượt sau xoá hàng của lượt
+    // trước — đo được: `child-stickers` và `taxonomy-master` đỏ lúc có,
+    // xanh lúc không có lượt chạy khác. Khoá advisory theo phiên giữ suốt
+    // lượt chạy; lượt sau đợi lượt trước xong.
+    const release = await acquireRunLock(url);
     await truncateAllTestTables(url);
     // Đếm được từ log: dòng này phải xuất hiện ĐÚNG một lần cho mỗi `pnpm test`.
     console.log(
       `[test-db] đã dọn ${databaseNameOf(url)} — một lần cho cả lượt chạy`
     );
+    return release;
   } catch (err: unknown) {
     const errorObj = err as {
       code?: string;
