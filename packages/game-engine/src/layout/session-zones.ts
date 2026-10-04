@@ -28,7 +28,7 @@ export function stageFlagsOf(
   session: GameSession | null | undefined
 ): Pick<
   StageZonesInput,
-  "needsTray" | "needsCommit" | "trayItems" | "trayLabels"
+  "needsTray" | "needsCommit" | "trayItems" | "trayLabels" | "stageRows"
 > {
   if (!(session instanceof TemplateGameSession)) {
     return { needsTray: false, needsCommit: false };
@@ -38,6 +38,7 @@ export function stageFlagsOf(
     needsCommit: Boolean(session.needsCommit),
     trayItems: session.trayItemCount,
     trayLabels: session.trayHasLabels,
+    stageRows: session.stageRowCount,
   };
 }
 

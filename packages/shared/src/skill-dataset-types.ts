@@ -187,6 +187,12 @@ export interface SkillLevelPlan {
   readonly legacy_v1_ref?: string;
   readonly skill_codes?: readonly string[];
   /**
+   * Giữ nguyên nấc truy cập khi `difficulty` bị hạ vì canvas thấp không chứa nổi
+   * số vật của mức cũ (sàn chạm, `BR-PSZ-04`). Nấc mặc định suy từ `difficulty`;
+   * hạ độ khó vì kích thước màn không làm bài rẻ đi.
+   */
+  readonly access_tier?: "free" | "login" | "standard" | "premium";
+  /**
    * Dataset riêng của level này, thay cho dataset của kỹ năng sở hữu.
    *
    * Dùng cho level dạy (`kind = 'teach'`): một bài làm quen dạy trọn một **chủ đề**

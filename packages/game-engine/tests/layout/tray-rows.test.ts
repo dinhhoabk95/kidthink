@@ -40,7 +40,9 @@ function zonesFor(
   band: AgeBand,
   trayItems: number,
   needsTray = true,
-  trayLabels = false
+  trayLabels = false,
+  needsCommit = false,
+  stageRows = 0
 ): { zones: StageZones; floor: number } {
   const space = deriveLogicSpace(viewport.cssW, viewport.cssH);
   // Cùng phép của `RenderSystem.setupCanvas`: tỉ lệ chặn bởi cạnh chật hơn.
@@ -54,9 +56,10 @@ function zonesFor(
     ageBand: band,
     cssPerLogic,
     needsTray,
-    needsCommit: false,
+    needsCommit,
     trayItems,
     trayLabels,
+    stageRows,
   });
   return { zones, floor: getTouchFloorLogicPx(band, cssPerLogic) };
 }
@@ -150,11 +153,37 @@ describe("BR-PSZ-13 — số vật khay không đổi vị trí lời dẫn và 
   });
 });
 
+describe("BR-PSZ-13 — ô hành động trống nhường chỗ cho khay", () => {
+  it("portrait không nộp bài: khay chạm lề đáy; có nộp bài: khay dừng trên ô hành động", () => {
+    const space = deriveLogicSpace(PORTRAIT.cssW, PORTRAIT.cssH);
+    const free = zonesFor(PORTRAIT, "4-5", 6).zones;
+    const withCommit = zonesFor(PORTRAIT, "4-5", 6, true, false, true).zones;
+
+    expect((free.tray?.y ?? 0) + (free.tray?.h ?? 0)).toBe(
+      space.h - SLOT_GAP_PX
+    );
+    expect(
+      (withCommit.tray?.y ?? 0) + (withCommit.tray?.h ?? 0)
+    ).toBeLessThanOrEqual(withCommit.action.y - SLOT_GAP_PX);
+    expect(free.action).toEqual(withCommit.action);
+  });
+
+  it("lưới đòi nhiều hàng hơn sân khấu dải chứa được: khay thành cột ở máy tính", () => {
+    const strip = zonesFor(DESKTOP, "5-6", 4).zones;
+    const grid = zonesFor(DESKTOP, "5-6", 4, true, false, false, 4).zones;
+    const floor = getTouchFloorLogicPx("5-6", 964 / 828);
+
+    expect(strip.tray?.w).toBeGreaterThan(strip.tray?.h ?? 0);
+    expect(grid.tray?.h).toBeGreaterThan(grid.tray?.w ?? 0);
+    expect(grid.stage.h).toBeGreaterThanOrEqual(4 * floor + 3 * SLOT_GAP_PX);
+  });
+});
+
 describe("BR-PSZ-13 — điện thoại ngang thấp", () => {
   it.each(["3-4", "4-5", "5-6"] as const)(
     "band %s: lời dẫn là cột bên trái, khay là cột cạnh nút hành động, ba vùng không chồng",
     (band) => {
-      const { zones } = zonesFor(PHONE, band, 6);
+      const { zones } = zonesFor(PHONE, band, 6, true, false, true);
       const tray = zones.tray;
       expect(zones.promptPlacement).toBe("side");
       expect(tray).not.toBeNull();
@@ -169,6 +198,15 @@ describe("BR-PSZ-13 — điện thoại ngang thấp", () => {
       expect(isInside(zones.promptSpeaker, zones.prompt)).toBe(true);
     }
   );
+
+  it("engine không nộp bài: khay dùng luôn cột của ô hành động trống", () => {
+    const space = deriveLogicSpace(PHONE.cssW, PHONE.cssH);
+    const { zones } = zonesFor(PHONE, "4-5", 6);
+
+    expect((zones.tray?.x ?? 0) + (zones.tray?.w ?? 0)).toBe(
+      space.w - SLOT_GAP_PX
+    );
+  });
 
   it("sân khấu lấy trọn chiều cao canvas, cao hơn dải lời dẫn trên cùng", () => {
     const space = deriveLogicSpace(PHONE.cssW, PHONE.cssH);

@@ -330,7 +330,7 @@ export const C1_PROB_05_SEED: SkillSeed = {
       code: "GL-C1-PROB-HIDE-0011",
       template: "GT-015",
       band: "5-6",
-      difficulty: 5,
+      difficulty: 4,
       theme: "food",
       rounds: 3,
     },

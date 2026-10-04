@@ -39,19 +39,21 @@ const TARGET_CELL_MAX_PX = 96;
 
 /**
  * Khay ô đích (`drawShapeTray`) vẽ rộng hơn các ô: lề 22 ngang, 16 dọc, cộng gờ
- * dưới 4 px. Chừa chừng ấy trong sân khấu để khay vẽ không tràn ra ngoài.
+ * dưới 4 px. `computeStageCellSlots` đã chừa sẵn 16 px quanh khối ô, nên chỉ
+ * bù phần còn thiếu — chừa thừa làm điện thoại ngang mất cả cột ô.
  */
-const SHAPE_TRAY_INSET_PX = 28;
+const SHAPE_TRAY_INSET_X_PX = 6;
+const SHAPE_TRAY_INSET_Y_PX = 4;
 
 /** Khoảng chạm thêm quanh vùng chạm của slot (`GT-008.md` §6). */
 const HIT_TOLERANCE_PX = 24;
 
-function insetRect(rect: ZoneRect, inset: number): ZoneRect {
+function insetRect(rect: ZoneRect, insetX: number, insetY: number): ZoneRect {
   return {
-    x: rect.x + inset,
-    y: rect.y + inset,
-    w: Math.max(0, rect.w - 2 * inset),
-    h: Math.max(0, rect.h - 2 * inset),
+    x: rect.x + insetX,
+    y: rect.y + insetY,
+    w: Math.max(0, rect.w - 2 * insetX),
+    h: Math.max(0, rect.h - 2 * insetY),
   };
 }
 
@@ -177,7 +179,11 @@ export class GT008Session extends TemplateGameSession<
       const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
       const targets = computeStageCellSlots({
         count: this.content.slots.length,
-        stage: insetRect(zones.stage, SHAPE_TRAY_INSET_PX),
+        stage: insetRect(
+          zones.stage,
+          SHAPE_TRAY_INSET_X_PX,
+          SHAPE_TRAY_INSET_Y_PX
+        ),
         touchFloor,
         maxCell: { w: TARGET_CELL_MAX_PX, h: TARGET_CELL_MAX_PX },
         role: "target",

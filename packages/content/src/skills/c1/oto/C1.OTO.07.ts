@@ -252,7 +252,7 @@ export const C1_OTO_07_SEED: SkillSeed = {
       code: "GL-C1-OTO-PAIR-0011",
       template: "GT-004",
       band: "4-5",
-      difficulty: 5,
+      difficulty: 4,
       theme: "job",
       rounds: 3,
     },

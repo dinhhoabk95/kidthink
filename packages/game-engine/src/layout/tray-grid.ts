@@ -28,10 +28,25 @@ export interface TrayGrid {
   readonly rows: number;
 }
 
+function itemsFitting(width: number, edge: number): number {
+  return Math.max(1, Math.floor((width + SLOT_GAP_PX) / (edge + SLOT_GAP_PX)));
+}
+
+/**
+ * Đệm hai bên thực dùng của một hàng vật. Vùng chạm (`edge`) lớn hơn vật vẽ,
+ * nên khi đệm `TRAY_PAD_X_PX` làm mất một cột mà bỏ đệm thì thêm được cột đó
+ * (portrait 330 px: ba vật sàn 96 px chỉ vừa khi vùng chạm sát mép khay), vùng
+ * chạm được phép sát mép khay — dock vẫn ôm vật vẽ vì vật vẽ nhỏ hơn vùng chạm.
+ */
+export function trayRowPadX(trayW: number, edge: number): number {
+  const padded = itemsFitting(trayW - 2 * TRAY_PAD_X_PX, edge);
+  const flush = itemsFitting(trayW, edge);
+  return flush > padded ? 0 : TRAY_PAD_X_PX;
+}
+
 /** Số vật một hàng chứa được khi mỗi vật chiếm `edge` và cách nhau `SLOT_GAP_PX`. */
 export function trayItemsPerRow(trayW: number, edge: number): number {
-  const avail = trayW - 2 * TRAY_PAD_X_PX;
-  return Math.max(1, Math.floor((avail + SLOT_GAP_PX) / (edge + SLOT_GAP_PX)));
+  return itemsFitting(trayW - 2 * trayRowPadX(trayW, edge), edge);
 }
 
 /**

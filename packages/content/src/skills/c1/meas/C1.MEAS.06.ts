@@ -301,7 +301,7 @@ export const C1_MEAS_06_SEED: SkillSeed = {
       code: "GL-C1-MEAS-PAIR-0011",
       template: "GT-004",
       band: "4-5",
-      difficulty: 5,
+      difficulty: 4,
       theme: "job",
       rounds: 3,
     },

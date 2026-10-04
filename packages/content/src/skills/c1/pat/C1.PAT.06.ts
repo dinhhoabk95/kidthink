@@ -259,7 +259,7 @@ export const C1_PAT_06_SEED: SkillSeed = {
       code: "GL-C1-PAT-PAIR-0019",
       template: "GT-004",
       band: "4-5",
-      difficulty: 5,
+      difficulty: 4,
       theme: "home",
       rounds: 3,
     },

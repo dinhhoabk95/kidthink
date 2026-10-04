@@ -456,11 +456,9 @@ function buildSingleLevel(
       age_min: ageBounds.age_min,
       age_max: ageBounds.age_max,
       difficulty: levelPlan.difficulty,
-      access_tier: resolveAccessTier(
-        levelPlan.difficulty,
-        isMontessori,
-        identity.tier
-      ),
+      access_tier:
+        levelPlan.access_tier ??
+        resolveAccessTier(levelPlan.difficulty, isMontessori, identity.tier),
       skill_codes: levelPlan.skill_codes
         ? [...levelPlan.skill_codes]
         : [identity.code],

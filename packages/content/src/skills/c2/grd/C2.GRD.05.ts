@@ -213,7 +213,7 @@ export const C2_GRD_05_SEED: SkillSeed = {
       code: "GL-C2-GRD-HIDE-0002",
       template: "GT-015",
       band: "5-6",
-      difficulty: 5,
+      difficulty: 4,
       theme: "vehicle",
       rounds: 3,
     },

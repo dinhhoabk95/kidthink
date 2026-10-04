@@ -166,6 +166,11 @@ export class SudokuMiniSession extends TemplateGameSession<
   override get trayItemCount(): number {
     return this.content.symbols.length;
   }
+
+  /** Lưới `grid_size` hàng đứng trên sân khấu, không thu dưới sàn chạm. */
+  override get stageRowCount(): number {
+    return this.content.grid_size;
+  }
   override readonly usesPromptZone = true;
 
   setupEntities(): void {

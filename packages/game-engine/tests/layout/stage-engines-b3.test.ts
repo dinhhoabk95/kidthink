@@ -51,6 +51,8 @@ const VIEWPORTS: readonly Viewport[] = [
   { name: "máy tính 964x628", cssW: 964, cssH: 628 },
 ];
 
+const ALL_BANDS: readonly AgeBand[] = ["3-4", "4-5", "5-6"];
+
 /** Band thấp nhất mỗi engine được chơi — sàn chạm cao nhất nên chật nhất. */
 const LOWEST_BAND: Readonly<Record<string, AgeBand>> = {
   "GT-004": "4-5",
@@ -59,30 +61,6 @@ const LOWEST_BAND: Readonly<Record<string, AgeBand>> = {
   "GT-015": "5-6",
   "GT-021": "4-5",
   "GT-023": "4-5",
-};
-
-/**
- * Nợ đã đo (Task #283 B3): số ca (mẫu + seed) có slot ra ngoài vùng của nó, hai
- * vùng chạm cách nhau dưới `SLOT_GAP_PX`, hoặc lệnh vẽ ngoài sân khấu và khay,
- * theo `mã|khung`. Khay cao một hàng nên portrait chứa tối đa bốn nguồn ở sàn
- * 64 px CSS; điện thoại ngang chỉ có sân khấu 228 logic px cao. Cặp không có tên
- * ở đây phải bằng 0. Số chỉ được giảm.
- */
-const KNOWN_LAYOUT_DEBT_CASES: Readonly<Record<string, number>> = {
-  // Số đo sau khi khay nhiều hàng, không phân trang và cột lời dẫn bên trái
-  // (`play-stage-zones.md` `BR-PSZ-13`). Còn lại là giới hạn vật lý: sàn chạm của
-  // band ở canvas thấp làm số ô cần xếp lớn hơn diện tích sân khấu. Chỉ được giảm.
-  "GT-004|điện thoại ngang 610x350|4-5": 320,
-  "GT-007|portrait 330x697|3-4": 88,
-  "GT-008|máy tính 964x628|3-4": 1,
-  "GT-008|portrait 330x697|3-4": 227,
-  "GT-008|điện thoại ngang 610x350|3-4": 227,
-  "GT-008|điện thoại ngang 610x350|5-6": 1,
-  "GT-015|máy tính 964x628|5-6": 7,
-  "GT-021|portrait 330x697|4-5": 13,
-  "GT-021|portrait 330x697|5-6": 1,
-  "GT-021|điện thoại ngang 610x350|4-5": 13,
-  "GT-021|điện thoại ngang 610x350|5-6": 1,
 };
 
 /** Sáu engine của lô B3 — cũng nằm trong `MIGRATED_CODES`. */
@@ -154,8 +132,12 @@ function casesFor(code: string, band: AgeBand): B3Case[] {
     name: `mẫu ${i}`,
     create: () => make(configFor(code, band, f.content, f.difficulty)),
   }));
+  // Runtime chơi level ở band của chính level (`age_band` = `ageMin-ageMax`,
+  // `game-config-runtime.ts`), nên level 4-5 không bao giờ chạy ở sàn của 3-4.
   const fromSeeds = ALL_SEED_LEVELS.filter(
-    (level) => level.header.template_code === code
+    (level) =>
+      level.header.template_code === code &&
+      `${level.header.age_min}-${level.header.age_max}` === band
   ).map((level) => ({
     name: `seed ${level.header.code}`,
     create: () =>
@@ -174,6 +156,7 @@ interface TrayFlags {
   readonly needsTray: boolean;
   readonly trayItemCount: number;
   readonly trayHasLabels?: boolean;
+  readonly stageRowCount?: number;
 }
 
 function frameFor(viewport: Viewport, band: AgeBand, tray: TrayFlags): Frame {
@@ -191,6 +174,7 @@ function frameFor(viewport: Viewport, band: AgeBand, tray: TrayFlags): Frame {
     needsTray: tray.needsTray,
     trayItems: tray.trayItemCount,
     trayLabels: tray.trayHasLabels,
+    stageRows: tray.stageRowCount,
     needsCommit: false,
   });
   return { zones, space, cssPerLogic };
@@ -423,8 +407,7 @@ describe.each(B3_CODES)("%s lô B3 — khay nguồn, đích trên sân khấu", 
   });
 
   const lowest = LOWEST_BAND[code] ?? "5-6";
-  const bands: readonly AgeBand[] =
-    lowest === "5-6" ? ["5-6"] : [lowest, "5-6"];
+  const bands: readonly AgeBand[] = ALL_BANDS.slice(ALL_BANDS.indexOf(lowest));
 
   it("khai needsTray và usesPromptZone (BR-PSZ-01, BR-PSZ-08)", () => {
     const first = casesFor(code, lowest)[0];
@@ -468,12 +451,10 @@ describe.each(B3_CODES)("%s lô B3 — khay nguồn, đích trên sân khấu", 
             samples.push(...[...opening, ...mid].slice(0, 2));
           }
         }
-        const debt =
-          KNOWN_LAYOUT_DEBT_CASES[`${code}|${viewport.name}|${band}`] ?? 0;
         expect(
           failing.length,
           `${failing.length} ca vi phạm, đầu tiên: ${failing.slice(0, 3).join(", ")} | ${samples.slice(0, 4).join(" | ")}`
-        ).toBeLessThanOrEqual(debt);
+        ).toBe(0);
       });
     }
   }
@@ -521,33 +502,37 @@ describe.each(B3_CODES)("%s lô B3 — khay nguồn, đích trên sân khấu", 
     if (!(portrait && phone && desktop)) {
       throw new Error("Thiếu viewport");
     }
-    for (const { name, create } of casesFor(code, lowest)) {
-      const session = create();
-      prepare(session, lowest, frameFor(portrait, lowest, session));
-      play(session, drag, 1);
-      prepare(session, lowest, frameFor(desktop, lowest, session));
-      play(session, tapTap, 1);
-      prepare(session, lowest, frameFor(portrait, lowest, session));
+    for (const band of bands) {
+      for (const { name, create } of casesFor(code, band)) {
+        const session = create();
+        prepare(session, band, frameFor(portrait, band, session));
+        play(session, drag, 1);
+        prepare(session, band, frameFor(desktop, band, session));
+        play(session, tapTap, 1);
+        prepare(session, band, frameFor(portrait, band, session));
 
-      play(session, drag, MAX_MOVES);
+        play(session, drag, MAX_MOVES);
 
-      expect(session.checkWinCondition(), name).toBe(true);
+        expect(session.checkWinCondition(), name).toBe(true);
+      }
     }
   });
 
   it("getHintTargetIndex trỏ vào một slot có thật khi vòng chưa xong", () => {
-    for (const { name, create } of casesFor(code, lowest)) {
-      const session = create();
-      const first = VIEWPORTS[0];
-      if (!first) {
-        throw new Error("Thiếu viewport");
+    for (const band of bands) {
+      for (const { name, create } of casesFor(code, band)) {
+        const session = create();
+        const first = VIEWPORTS[0];
+        if (!first) {
+          throw new Error("Thiếu viewport");
+        }
+        prepare(session, band, frameFor(first, band, session));
+
+        const hint = session.getHintTargetIndex();
+
+        expect(hint, name).not.toBeNull();
+        expect(session.slots[hint ?? -1], name).toBeDefined();
       }
-      prepare(session, lowest, frameFor(first, lowest, session));
-
-      const hint = session.getHintTargetIndex();
-
-      expect(hint, name).not.toBeNull();
-      expect(session.slots[hint ?? -1], name).toBeDefined();
     }
   });
 });

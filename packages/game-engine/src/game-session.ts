@@ -211,6 +211,14 @@ export abstract class TemplateGameSession<
     return 0;
   }
 
+  /**
+   * Số hàng ô sân khấu cần ở sàn chạm (lưới GT-015). 0 là không đòi hơn mức
+   * tối thiểu của khung. Đọc từ content như `trayItemCount`.
+   */
+  get stageRowCount(): number {
+    return 0;
+  }
+
   /** Vật trong khay có nhãn vẽ dưới thân (GT-031, GT-033): khay chừa dải nhãn mỗi hàng. */
   get trayHasLabels(): boolean {
     return false;

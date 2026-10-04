@@ -15,6 +15,7 @@ import {
   TRAY_LABEL_ROW_PX,
   TRAY_PAD_Y_PX,
   type TrayGrid,
+  trayRowPadX,
 } from "./tray-grid";
 
 /** Cạnh vật tối đa trong khay — cùng cỡ token khay của GT-001. */
@@ -63,8 +64,13 @@ function trayItemSize(grid: TrayGrid, tray: ZoneRect, labelH: number): number {
  * chia đều làm hai vùng chạm cách dưới `SLOT_GAP_PX` mà dàn hai đầu sát mép
  * khay thì đủ khe, thì dàn hai đầu sát mép.
  */
-function trayPitch(perRow: number, tray: ZoneRect, hit: number): number {
-  const avail = tray.w - 2 * ZONE_PADDING_PX;
+function trayPitch(
+  perRow: number,
+  tray: ZoneRect,
+  hit: number,
+  padX: number
+): number {
+  const avail = tray.w - 2 * padX;
   const equalPitch = avail / perRow;
   const spreadPitch = perRow > 1 ? (avail - hit) / (perRow - 1) : equalPitch;
   const isSpread =
@@ -91,7 +97,8 @@ export function computeTraySourceSlots(
   const labelH = hasLabels ? TRAY_LABEL_ROW_PX : 0;
   const size = trayItemSize(grid, tray, labelH);
   const hit = Math.max(touchFloor, size);
-  const pitch = trayPitch(grid.perRow, tray, hit);
+  const padX = Math.min(ZONE_PADDING_PX, trayRowPadX(tray.w, touchFloor));
+  const pitch = trayPitch(grid.perRow, tray, hit, padX);
   const rowH = hit + labelH;
   const blockH = grid.rows * rowH + (grid.rows - 1) * SLOT_GAP_PX;
   // Khối vật cao hơn khay (không đủ chỗ) thì tràn xuống dưới, không tràn lên trên đè vùng khác.

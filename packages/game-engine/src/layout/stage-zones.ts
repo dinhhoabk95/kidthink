@@ -69,6 +69,12 @@ export interface StageZonesInput {
   readonly trayItems?: number;
   /** Vật trong khay có nhãn vẽ dưới thân: mỗi hàng khay cao thêm một dải nhãn. */
   readonly trayLabels?: boolean;
+  /**
+   * Số hàng ô sân khấu cần ở sàn chạm (lưới GT-015 4x4 cần 4). Landscape chỉ
+   * để khay thành dải khi sân khấu còn chứa đủ ngần ấy hàng, không thì khay
+   * thành cột và sân khấu lấy trọn chiều cao. Bỏ trống: `MIN_STAGE_ROWS`.
+   */
+  readonly stageRows?: number;
 }
 
 export interface StageZones {
@@ -200,11 +206,15 @@ export function computeStageZones(input: StageZonesInput): StageZones {
     frame,
     touchEdge,
     action,
+    // Engine không nộp bài thì ô hành động trống: khay và sân khấu dùng luôn
+    // chỗ đó, nếu không portrait mất một hàng ô và điện thoại ngang mất một cột.
+    reserved: input.needsCommit ? action : { x: w, y: h, w: 0, h: 0 },
   };
   const { tray, stage } = input.needsTray
     ? placeTrayAndStage(area, {
         items: Math.max(0, Math.floor(input.trayItems ?? 0)),
         labelH: input.trayLabels ? TRAY_LABEL_ROW_PX : 0,
+        stageRows: Math.max(0, Math.floor(input.stageRows ?? 0)),
       })
     : { tray: null, stage: computeStageWithoutTray(area) };
 
@@ -225,6 +235,8 @@ interface PlaceInput {
   readonly frame: PromptFrame;
   readonly touchEdge: number;
   readonly action: ZoneRect;
+  /** Phần góc dưới phải khay và sân khấu phải tránh: ô hành động, hoặc điểm đáy khi trống. */
+  readonly reserved: ZoneRect;
 }
 
 interface TrayAndStage {
@@ -263,6 +275,8 @@ interface TrayLoad {
   readonly items: number;
   /** Dải nhãn dưới mỗi hàng vật; 0 khi vật không có nhãn. */
   readonly labelH: number;
+  /** Số hàng ô sân khấu cần ở sàn chạm; 0 là không đòi hơn `MIN_STAGE_ROWS`. */
+  readonly stageRows: number;
 }
 
 function placeTrayAndStage(input: PlaceInput, load: TrayLoad): TrayAndStage {
@@ -280,16 +294,16 @@ interface StripPlacement extends TrayAndStage {
 }
 
 function placeStrip(input: PlaceInput, load: TrayLoad): StripPlacement {
-  const { orientation, canvas, frame, touchEdge, action } = input;
+  const { orientation, canvas, frame, touchEdge, reserved } = input;
   const isLandscape = orientation === "landscape";
   // Landscape: khay chung hàng đáy với nút hành động, dừng trước nút một
   // khoảng. Portrait: khay trọn chiều ngang, ngay trên hàng nút hành động.
   const trayW = isLandscape
-    ? action.x - ZONE_GAP_PX - ZONE_GAP_PX
+    ? reserved.x - ZONE_GAP_PX - ZONE_GAP_PX
     : canvas.w - 2 * ZONE_GAP_PX;
   const trayBottom = isLandscape
     ? canvas.h - ZONE_GAP_PX
-    : action.y - ZONE_GAP_PX;
+    : reserved.y - ZONE_GAP_PX;
   const baseH = Math.max(TRAY_ZONE_H_PX, touchEdge);
   const { rows } = layoutTrayGrid(load.items, trayW, touchEdge);
   const wantedH = Math.max(
@@ -315,10 +329,15 @@ function placeStrip(input: PlaceInput, load: TrayLoad): StripPlacement {
     w: canvas.w - 2 * ZONE_GAP_PX,
     h: Math.max(0, tray.y - ZONE_GAP_PX - frame.stageTop),
   };
+  // Lưới cần `stageRows` hàng và đệm hai đầu quanh khối ô (`computeStageCellSlots`).
+  const neededStageH =
+    load.stageRows > MIN_STAGE_ROWS
+      ? cellsExtent(load.stageRows, touchEdge) + 2 * ZONE_GAP_PX
+      : minStageH;
   return {
     tray,
     stage,
-    hasRoomForStage: stage.h >= minStageH && trayH >= wantedH,
+    hasRoomForStage: stage.h >= neededStageH && trayH >= wantedH,
   };
 }
 
@@ -328,14 +347,14 @@ function placeStrip(input: PlaceInput, load: TrayLoad): StripPlacement {
  * rộng quá mức để sân khấu còn hai ô bề ngang.
  */
 function placeColumn(input: PlaceInput, load: TrayLoad): TrayAndStage {
-  const { canvas, frame, touchEdge, action } = input;
+  const { canvas, frame, touchEdge, reserved } = input;
   const colH = canvas.h - ZONE_GAP_PX - frame.stageTop;
   const rows = Math.max(
     1,
     Math.floor((colH + ZONE_GAP_PX) / (touchEdge + load.labelH + ZONE_GAP_PX))
   );
   const wantedCols = Math.max(1, Math.ceil(load.items / rows));
-  const rightEdge = action.x - ZONE_GAP_PX;
+  const rightEdge = reserved.x - ZONE_GAP_PX;
   const maxW =
     rightEdge -
     ZONE_GAP_PX -
