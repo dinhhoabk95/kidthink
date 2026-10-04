@@ -298,3 +298,28 @@ export function computeStageGroupsLayout(input: StageGroupsInput): Slot[] {
   }
   return slots.sort((a, b) => a.index - b.index);
 }
+
+/** Dung sai biên khi so vùng chạm với sân khấu: làm tròn px của hàm layout. */
+const STAGE_EDGE_TOLERANCE_PX = 1;
+
+/**
+ * Còn slot nào có vùng chạm ra ngoài sân khấu không (`BR-PSZ-01`). Layout giữ sàn
+ * chạm và chấp nhận tràn khi không cỡ nào vừa (`BR-LAY-04`); hàm này cho engine
+ * biết khung đó đã tràn để xin xoay máy thay vì vẽ bàn bị cắt (`BR-PSZ-14`).
+ */
+export function hasSlotsOutsideStage(
+  slots: readonly Slot[],
+  stage: ZoneRect
+): boolean {
+  const tol = STAGE_EDGE_TOLERANCE_PX;
+  return slots.some((slot) => {
+    const halfW = (slot.hitW ?? slot.w) / 2;
+    const halfH = (slot.hitH ?? slot.h) / 2;
+    return (
+      slot.x - halfW < stage.x - tol ||
+      slot.x + halfW > stage.x + stage.w + tol ||
+      slot.y - halfH < stage.y - tol ||
+      slot.y + halfH > stage.y + stage.h + tol
+    );
+  });
+}

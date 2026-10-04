@@ -436,3 +436,41 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Lớp xoay máy dọc (`BR-PSZ-14`): phủ canvas, chặn chạm, icon điện thoại xoay. */
+.portrait-gate {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: rgb(255 255 255 / 92%);
+  pointer-events: auto;
+}
+
+.portrait-gate__icon {
+  width: 4.5rem;
+  height: 4.5rem;
+  color: var(--color-brand-600);
+}
+
+.portrait-gate__arrow {
+  width: 3rem;
+  height: 3rem;
+  color: var(--color-warning-500);
+  animation: portrait-gate-spin 2.4s ease-in-out infinite;
+}
+
+@keyframes portrait-gate-spin {
+  to {
+    transform: rotate(90deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portrait-gate__arrow {
+    animation: none;
+  }
+}

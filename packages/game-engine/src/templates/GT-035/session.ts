@@ -10,6 +10,7 @@ import {
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import {
   computeStageGroupsLayout,
+  hasSlotsOutsideStage,
   resolveStageRect,
   STAGE_LABEL_ROW_PX,
 } from "#src/layout/stage-groups";
@@ -86,6 +87,21 @@ export class GT035Session extends TemplateGameSession<
   /** Nút ở `zones.action` là nút chạy chương trình (`BR-PSZ-05`). */
   override readonly needsCommit = true;
   override readonly usesPromptZone = true;
+
+  /**
+   * Lưới, hàng lệnh và thẻ lệnh cùng ở sàn chạm không vừa sân khấu landscape
+   * thấp (`BR-E035-06`). Chỉ xin khi canvas đang ngang: xoay dọc không cứu được
+   * bàn đã tràn ở portrait, và lớp xoay máy không được nhốt trẻ ở portrait.
+   */
+  override requiresPortrait(): boolean {
+    const stage = this.stageRect;
+    const isLandscape = this.logicSpace.w >= this.logicSpace.h;
+    return (
+      isLandscape &&
+      stage !== undefined &&
+      hasSlotsOutsideStage(this.slots, stage)
+    );
+  }
   override readonly commitIcon = "play";
 
   override canCommit(): boolean {

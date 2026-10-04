@@ -133,6 +133,7 @@ khấu ở giữa, khay (nếu có) và nút hành động bên phải.
 | `BR-PSZ-11` | Trang chơi của trẻ không có navbar, footer hay liên kết rời trang nào ngoài khoá phụ huynh | Liên kết công khai trên bề mặt trẻ là lối thoát một chạm, vượt qua `BR-PGT-01` |
 | `BR-PSZ-12` | Mỗi lần viewport đổi, shell tính lại vùng, engine tính lại slot, và lớp truy cập `syncView()` trong cùng một nhịp | Tính lại slot mà không đồng bộ view làm nút ẩn cho screen reader trỏ toạ độ cũ |
 | `BR-PSZ-13` | **Không phân trang.** Mọi vật của một vòng hiện cùng lúc ở sân khấu hoặc khay: khay và lưới thêm hàng (hoặc khay thành cột ở điện thoại ngang thấp), không có nút trang, không vật ẩn ngoài màn. Shell tính lại vùng ở **đầu mỗi vòng** vì số vật khay đổi theo vòng. Vật không nhỏ hơn sàn chạm; nếu sàn chạm làm vòng không thể vừa thì ghi vào nợ đo, không thu dưới sàn | Trẻ 3–6 tuổi không biết có vật ẩn sau trang, nút trang nhỏ khó chạm trúng và làm bài dừng ở "đủ vật" trong khi vật còn nằm trang sau. Hướng dẫn thiết kế cho trẻ nhỏ khuyên hạn chế cuộn và phân trang, một màn hình cho một việc ([NN/g — Design for Kids Based on Their Stage of Physical Development](https://www.nngroup.com/articles/children-ux-physical-development/), [Smashing — A Practical Guide To Designing For Children](https://www.smashingmagazine.com/2024/02/practical-guide-design-children/)); NN/g đo vùng chạm tối thiểu khoảng 2 × 2 cm cho trẻ nhỏ — cùng ý với sàn chạm `BR-PSZ-04` |
+| `BR-PSZ-14` | **Bàn không vừa ở sàn chạm thì xin xoay máy, không thu dưới sàn.** Session có thể khai `requiresPortrait()`: đúng khi sau `prepareRound` còn slot nằm ngoài `zones.stage` ở khung hiện tại. Shell phủ lên canvas một lớp **xoay máy dọc** — icon điện thoại xoay trước, không chữ trên màn (`BR-FBK-12`), nhãn a11y `Xoay máy dọc để chơi` — chặn chạm xuống canvas và tạm dừng engine; xoay về dọc thì lớp biến mất và vòng chơi tiếp. Chỉ GT-035 khai ở #283 (`BR-E035-06`) | Trẻ không đọc được; thu ô dưới sàn chạm (`BR-PSZ-04`) làm trẻ chạm trượt, còn vật nằm ngoài sân khấu thì trẻ không thấy. Portrait luôn đủ chỗ (kiểm bằng test), nên xoay máy là cách duy nhất không mất vật và không phá sàn chạm |
 
 ## 7. Data
 
@@ -286,6 +287,14 @@ Scenario: BR-PSZ-08 — loa bắt chạm thật
 Scenario: BR-PSZ-11 — không lối thoát một chạm
   When mở /play/{code}
   Then trang không có phần tử a[href] nào ngoài khoá phụ huynh
+
+Scenario: BR-PSZ-14 — bàn GT-035 không vừa ở điện thoại ngang thì xin xoay máy
+  Given trang /play với một level GT-035 ở 844x390
+  When bàn không vừa trong zones.stage ở sàn chạm
+  Then trang hiện lớp xoay máy dọc với nhãn "Xoay máy dọc để chơi"
+  And chạm vào canvas không gửi gesture nào cho engine
+  When viewport đổi sang 390x844
+  Then lớp xoay máy biến mất và engine chạy tiếp
 
 Scenario: BR-PSZ-12 — xoay máy đồng bộ view
   Given trang chơi ở 844x390

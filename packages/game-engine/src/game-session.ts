@@ -224,6 +224,16 @@ export abstract class TemplateGameSession<
    */
   readonly usesPromptZone: boolean = false;
 
+  /**
+   * Bàn không vừa ở sàn chạm của khung hiện tại thì shell phủ lớp xoay máy dọc
+   * (`BR-PSZ-14`). Đọc sau `prepareRound`; chưa có sân khấu thì sai. Mặc định
+   * sai — chỉ engine mà portrait vừa còn landscape thấp không vừa mới khai
+   * (GT-035, `BR-E035-06`).
+   */
+  requiresPortrait(): boolean {
+    return false;
+  }
+
   /** Phiên có cần nút nộp bài không (`BR-PSZ-05`). Mặc định false. */
   readonly needsCommit: boolean = false;
 

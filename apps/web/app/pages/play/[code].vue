@@ -123,6 +123,27 @@
             @pointerup="handlePointerUp"
           />
 
+          <!-- Bàn không vừa ở khung ngang thấp (`BR-PSZ-14`): lớp xoay máy dọc phủ
+               canvas, chặn chạm, chỉ icon — chữ ở aria-label (`BR-FBK-12`). -->
+          <div
+            class="portrait-gate"
+            role="alert"
+            v-if="needsPortrait"
+            :aria-label="PORTRAIT_GATE_LABEL"
+          >
+            <UIcon
+              aria-hidden="true"
+              class="portrait-gate__icon"
+              name="i-lucide-smartphone"
+            />
+            <UIcon
+              aria-hidden="true"
+              class="portrait-gate__arrow"
+              name="i-lucide-rotate-cw"
+            />
+            <span class="sr-only">{{ PORTRAIT_GATE_LABEL }}</span>
+          </div>
+
           <!-- Accessible DOM buttons for assistive tech & keyboard navigation -->
           <!-- Vùng thông báo riêng: `aria-live` Cấm — NEVER đặt trên container
                chứa button, vì mỗi lần đổi vòng screen reader sẽ đọc lại cả
@@ -261,6 +282,10 @@
     type ViewEntity,
   } from "@mindkid/game-engine";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+  import {
+    PORTRAIT_GATE_LABEL,
+    resolveRequiresPortrait,
+  } from "~/composables/play/play-portrait-gate";
   import { resolveZonePromptText } from "~/composables/play/play-prompt-zone";
   import { useMascotSprites } from "~/composables/play/use-mascot-sprites";
   import { useParentLockHold } from "~/composables/play/use-parent-lock-hold";
@@ -344,6 +369,7 @@
     syncView: () => gesture.syncView(),
     refreshStageZones: updateStageZones,
     onAfterRender: (ctx, rs, now) => {
+      syncPortraitGate();
       const zones = stageZones.value ?? updateStageZones();
       if (!zones) {
         return;
@@ -411,6 +437,22 @@
 
   /** Vùng của bàn chơi (`play-stage-zones.md`, `BR-PSZ-01..04`). */
   const stageZones = ref<StageZones | null>(null);
+
+  /** Lớp xoay máy dọc đang phủ canvas (`BR-PSZ-14`). */
+  const needsPortrait = ref(false);
+
+  function syncPortraitGate(): void {
+    const next = resolveRequiresPortrait(getEngine()?.activeSession);
+    if (next === needsPortrait.value) {
+      return;
+    }
+    needsPortrait.value = next;
+    if (next) {
+      setPaused(true, "rotate_device");
+    } else if (!(showVictoryModal.value || showParentGate.value)) {
+      setPaused(false);
+    }
+  }
 
   function updateStageZones(): StageZones | null {
     const engine = getEngine();
@@ -607,6 +649,7 @@
         // phím/screen reader phải trỏ toạ độ mới trong cùng nhịp (`BR-PSZ-12`),
         // không phải chờ vòng chơi kế tiếp mới đồng bộ (H11).
         gesture.syncView();
+        syncPortraitGate();
       }
     }, 150);
   }
@@ -617,7 +660,9 @@
       document.visibilityState === "hidden"
     ) {
       setPaused(true, "tab_hidden");
-    } else if (!(showVictoryModal.value || showParentGate.value)) {
+    } else if (
+      !(showVictoryModal.value || showParentGate.value || needsPortrait.value)
+    ) {
       setPaused(false);
     }
   }
@@ -630,7 +675,8 @@
       setPaused(true, victoryOpen ? "victory_modal" : "parent_gate");
     } else if (
       typeof document !== "undefined" &&
-      document.visibilityState === "visible"
+      document.visibilityState === "visible" &&
+      !needsPortrait.value
     ) {
       setPaused(false);
     }
