@@ -38,6 +38,9 @@ export class GT026Session extends TemplateGameSession<
 
   override readonly usesPromptZone = true;
 
+  /** Cửa sổ kích thích không chạy lúc câu dẫn còn đọc (`BR-E026-04`). */
+  readonly holdsClockWhileInputClosed = true;
+
   private inhibitionSystem!: InhibitionSystem;
 
   setupEntities(): void {

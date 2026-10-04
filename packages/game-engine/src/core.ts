@@ -27,6 +27,19 @@ function hasDegradationSlot(
   return session !== undefined && "degradation" in session;
 }
 
+/**
+ * Session thời gian thực khai cờ này để đồng hồ riêng của nó đứng yên khi cổng
+ * cử chỉ đóng (câu dẫn mở vòng còn đọc, `BR-PNR-11`) — vd. cửa sổ kích thích
+ * của GT-026 (`BR-E026-04`). Cảnh vẫn `update` với `deltaMs = 0`.
+ */
+function holdsClockWhileInputClosed(session: GameSession | undefined): boolean {
+  return (
+    session !== undefined &&
+    "holdsClockWhileInputClosed" in session &&
+    session.holdsClockWhileInputClosed === true
+  );
+}
+
 /** Monotonic clock, falling back to Date.now in non-browser test envs. */
 function nowMs(): number {
   return typeof performance === "undefined" ? Date.now() : performance.now();
@@ -151,6 +164,13 @@ export class GameEngine {
 
   /** Gọi khi scaffolding đã cạn và nút "bỏ qua" nên hiện. Không phải telemetry. */
   onSkipAvailable?: () => void;
+
+  /**
+   * Gọi đúng một lần khi vòng thắng ở nhịp `update()` thay vì ở cử chỉ — session
+   * thời gian thực như GT-026 chỉ chốt lượt cuối khi khoảng nghỉ hết. Thắng do
+   * cử chỉ vẫn đi đường `onRoundWon` của bề mặt chơi, không qua hook này.
+   */
+  onSessionWon?: () => void;
 
   onAfterRender?: (
     ctx: CanvasRenderingContext2D,
@@ -346,7 +366,14 @@ export class GameEngine {
       this.tickScaffolding(deltaMs);
     }
     this.applyDegradation(deltaMs);
-    this.activeSession?.update?.(deltaMs);
+    const session = this.activeSession;
+    const wasWon = session?.checkWinCondition() ?? false;
+    const isClockHeld =
+      !this.isInputOpen() && holdsClockWhileInputClosed(session);
+    session?.update?.(isClockHeld ? 0 : deltaMs);
+    if (session && !wasWon && session.checkWinCondition()) {
+      this.onSessionWon?.();
+    }
   }
 
   /**

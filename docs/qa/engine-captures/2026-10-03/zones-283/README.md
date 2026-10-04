@@ -62,3 +62,31 @@ Lỗi thật lộ ra khi tự chơi và đã sửa:
 - Hai trang `/play/lesson/...` và màn thưởng ở khung ngang mới (HUD cột lề) chưa chụp lại.
 
 Máy chủ dev đã dừng. Các script chụp là tạm, đã xoá.
+
+## GT-026/027 chơi hết vòng và cảm ứng đa điểm (2026-10-04, trình duyệt thật)
+
+Playwright + CDP `Input.dispatchTouchEvent`, đăng nhập `parent.standard@mindkid.test`, hồ sơ Bé Đậu, HMR bị chặn để cây làm việc đang sửa không đặt lại trang. Bộ điều khiển đọc `activeSession` thật của trang (dev: `setupState.getEngine()`) để biết lượt đang hiện và chạm đúng toạ độ canvas; chạm bằng `touchStart` → 70 ms → `touchEnd`.
+
+| Kiểm | Khung | Kết quả |
+|---|---|---|
+| GT-026 `GL-C6-FLX-ADD-0001` (không đếm giờ, 3 vòng × 8 lượt, chạm vật ở lượt go, chạm ngoài ở lượt nogo) | 390x844 · 844x390 | **ĐẠT**: 24/24 lượt, sang vòng 2, 3, hiện màn thưởng |
+| GT-026 `GL-C4-HOM-GNG-0001` (có đếm giờ 1,2 s, lượt nogo đứng yên) | 390x844 · 844x390 | **ĐẠT**: 24/24 lượt, hiện màn thưởng |
+| GT-027 `GL-C2-GEO-SWT-0001` (đổi luật có tín hiệu, 3 vòng × 4 lần đúng) | 390x844 · 844x390 | **ĐẠT**: 12 chạm, hai lần đổi luật mỗi vòng, chạm trong lúc tín hiệu bị bỏ qua, hiện màn thưởng |
+| Đa điểm trên GT-027: (đúng, sai) cùng lúc; (sai, đúng); nhả ngón đầu trước/sau; `touchCancel`; ba ngón | 390x844 · 844x390 | **ĐẠT 7/7** mỗi khung: chỉ ngón chạm đầu được tính, ngón thứ hai/ba bị bỏ, sau cancel chạm đơn vẫn nhận |
+| Đa điểm trên GT-026: (vật, ngoài); (ngoài, vật); `touchCancel`; nhả ngón đầu trước | 390x844 | **ĐẠT 5/5**: một phán quyết mỗi lần, không cứu bằng ngón sau |
+| Đa điểm kéo thả GT-031 (một đích, bốn xu) và GT-015 (lưới 3×3): hai ngón kéo hai vật cùng lúc; kéo đơn sau đó; `touchCancel` giữa kéo | 390x844 · 844x390 | **ĐẠT**: một lần thả được xử lý, kéo đơn sau đó vẫn nhận, `touchCancel` không tính thả, không lỗi console |
+
+Máy thật có màn cảm ứng vật lý vẫn chưa thử; CDP phát đúng chuỗi `pointerdown/move/up/cancel` nhiều `pointerId` như Chrome Android nhưng không phải phần cứng.
+
+### Hai lỗi thật lộ ra và đã sửa
+
+1. **GT-026 treo ở màn trống sau lượt cuối.** Lượt cuối chỉ chốt thắng khi khoảng nghỉ ISI hết — ở nhịp `update()`, không có cử chỉ nào để `usePlayGesture` thấy, nên `onRoundWon` không bao giờ gọi: vòng không sang, không có màn thưởng (lặp lại ở mọi level GT-026). Sửa: `GameEngine.onSessionWon` báo đúng một lần khi vòng thắng ở nhịp update; `use-play-session.ts` nối vào `handleRoundWonInternal`. Test: `tests/engine-update-win.test.ts`.
+2. **GT-026 có đếm giờ: hai lượt đầu mỗi vòng hết giờ khi câu dẫn còn đọc** (ghi `miss` trước khi trẻ được chạm, `BR-PNR-11` đóng cổng cử chỉ nhưng `update()` vẫn chạy). Sửa: spec `BR-E026-04`; session khai `holdsClockWhileInputClosed`, engine đưa `deltaMs = 0` khi cổng đóng. Test cùng tệp.
+
+### Quan sát chưa sửa (ngoài phạm vi)
+
+- Vòng GT-026 kết thúc **không thắng** (đúng dưới 60 %) cũng không có đường báo lên trang: `update()` chỉ `completeSession()`; vòng sẽ treo như lỗi 1.
+- Nút DOM của entity (`viewEntities`) chỉ đồng bộ khi có cử chỉ hoặc đổi vòng, nên với engine thời gian thực (GT-026) trình đọc màn hình không thấy kích thích hiện/ẩn.
+- `play_sessions`: mọi phiên hoàn thành ở GT-026/027 ghi `score = 0`, `stars_earned = 1` dù đúng 100 %; chưa tra nguồn.
+- Intro `GL-C1-CMP-PAIR-0001` (GT-004): bước `recall` hỏi `asset_fast_cheetah` nhưng ô chọn không có vật đó — bài làm quen không qua được bằng cảm ứng.
+- Telemetry GT-031 phát `game_started` và `game_completed` hai lần mỗi phiên.

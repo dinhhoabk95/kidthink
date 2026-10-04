@@ -444,6 +444,9 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       engine.on(ENGINE_EVENT_WILDCARD, (event) => {
         roundRunner?.recordExternalEvent(event);
       });
+      // Vòng thắng ở nhịp `update()` (GT-026 chốt lượt cuối khi ISI hết): không
+      // có cử chỉ nào để `usePlayGesture` thấy, nên engine báo thẳng.
+      engine.onSessionWon = handleRoundWonInternal;
       engine.onAfterRender = (ctx, rs, now) => {
         syncIntroStepState();
         options.onAfterRender?.(ctx, rs, now);
