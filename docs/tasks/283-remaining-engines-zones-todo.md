@@ -161,3 +161,9 @@ Ghi chú đo của N (2026-10-03):
 - Chưa kiểm/ghi nhận: GT-022 còn dùng `x`/`y` nội dung; cảnh báo `[VUE_ROUTER_R0004]` ở `/me/children/<uuid>/report`; điểm GT-026 thô (75% đúng vẫn 0 điểm — theo `scoring-and-result.md` §7.1, cần chủ sản phẩm quyết).
 - Vẫn chờ người: duyệt dataset, xác nhận lớp xoay máy GT-035, thiết bị cảm ứng vật lý, `seed:content` ở staging/prod. Spec `play-stage-zones.md` giữ `approved`.
 
+## Cập nhật 2026-10-04 (đợt bốn) — chỉ còn việc của người
+
+- Đã sửa: GT-022 và GT-025 vùng chạm theo slot đã vẽ, test quét 36 engine `hit-matches-drawn` (`daadd9f5`); điểm một phần cho vòng nhiều lượt GT-026/027 (`BR-SCO-09`, cần chủ sản phẩm xem lại); `report_url` trỏ trang có thật; GT-009 độ khó 5 có manh mối thứ tư (`63fc86eb`); `content_version` 4 + khoá (`ee5233df`); dev DB ở v4.
+- Tài liệu cho người quyết: `docs/qa/283-dataset-review.md` (phiếu duyệt dataset), `docs/qa/283-seed-content-runbook.md` (gieo staging/prod, **phải triển khai mã khớp theo mã level trước**), `docs/qa/touch-device-checklist.md`.
+- Chờ người: (1) duyệt dataset, gồm A3/A4 (bù độ khó GT-015 band 5-6, GT-021 band 4-5 còn thang gần phẳng); (2) xác nhận lớp xoay máy GT-035 và `BR-SCO-09`; (3) thử thiết bị cảm ứng vật lý (thêm GT-022); (4) `seed:content` ở staging/prod. Spec `play-stage-zones.md` giữ `approved` tới khi xong.
+
