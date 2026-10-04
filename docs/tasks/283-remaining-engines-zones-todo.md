@@ -138,8 +138,9 @@ Ghi chú đo của N (2026-10-03):
 
 - [x] Gate `zone-primitives-only` phủ đủ 37 mã: 36 mã dời + GT-000 là **ngoại lệ duy nhất, có lý do** (danh sách ngoại lệ không rỗng nhưng một mã, ghi ở `EXEMPT_CODES`; test `phủ đủ mọi mã engine` + ca âm)
 - [x] `/play/preview-sandbox` vào khung (`computeZonesForSession`, `prepareRound`, `drawPromptZone`, `drawCommitButton`; `play-preview-sandbox-zones.test.ts` + ca âm). Xoá mọi `drawPromptText` ở 36 engine đã dời (gate `zone-primitives-only` cấm cả nhánh dự phòng). Đường lui **hình học** khi không có `stage` (`BR-LAY-10`, GT-003 `!zones`) giữ lại có chủ đích: test và golden dùng nó
-- [ ] Spec `play-stage-zones.md` **giữ `approved`**. Đổi `implemented` khi đủ ba điều kiện, hiện thiếu:
-  1. `BR-PSZ-01`/`BR-PSZ-04` xanh **không cần bảng nợ**: hiện còn nợ vật lý B3 899 ca, B6 62, B1 56 (GT-009 21, GT-025 3, GT-029 32), GT-017 1, GT-024 3 — giải bằng giảm số vật trong dataset hoặc đổi cách chơi ở canvas thấp (spec nội dung, ngoài #283);
-  2. GT-035 band 3-4 điện thoại ngang chơi được hết vòng (hiện mất hàng lệnh);
-  3. GT-026/027 chơi hết vòng trên trình duyệt (thời gian thực) và một lượt chạm đa điểm thật.
+- [ ] Spec `play-stage-zones.md` **giữ `approved`** (2026-10-04). Đổi `implemented` khi đủ ba điều kiện:
+  1. [x] `BR-PSZ-01`/`BR-PSZ-04` xanh **không cần bảng nợ**: mọi bảng nợ vật lý đã xoá, đo 0 — B3 899 → 0 (`d553f493`), B1 56 → 0, B6 62 → 0, GT-017, GT-024 → 0 (`e3aece5b`), GT-035 portrait 3 seed → 0 (`1ca6645e`). Giá: đo B3 theo band của level (runtime đặt `age_band` theo level); 28+ level B3 giảm độ khó; GT-009/029 độ khó 5 còn 8 vật, GT-030 độ khó 5 còn 4 đáp án, GT-035 độ khó 5 `collectible_count` 2; ngôi sao GT-024 mẫu 2 thành 5 đỉnh. **Cần chủ nội dung duyệt các thay đổi dataset này.**
+  2. [x] GT-035 điện thoại ngang: bàn không vừa ở sàn chạm (đo 610x350: chín ô tương tác đã đầy sân khấu), nên giải bằng lớp **xoay máy dọc** (`BR-PSZ-14`, `BR-E035-06`, `928f7455`) — không còn "chơi ngang", cần chủ sản phẩm xác nhận.
+  3. [ ] GT-026/027 chơi hết vòng trên trình duyệt: **xong** (Playwright + CDP, 390x844 và 844x390; tìm và sửa hai lỗi GT-026 — đứng màn trống sau lượt cuối, mất hai lượt đầu vì đồng hồ chạy khi âm lời dẫn — `d4564b3a`). Cảm ứng đa điểm: **mô phỏng CDP xanh**; còn thiếu **thiết bị cảm ứng vật lý** và lớp xoay máy `BR-PSZ-14` chưa chụp trên trình duyệt thật.
+  Còn quan sát chưa sửa (README QA 2026-10-03): GT-026 kết thúc dưới 60% đúng cũng treo như lỗi 1; nút DOM của entity GT-026 không cập nhật thời gian thực; `play_sessions` của GT-026/027 luôn `score=0`; intro GT-004 `GL-C1-CMP-PAIR-0001` không có đáp án; GT-031 phát `game_started`/`game_completed` hai lần.
 - [x] `index.md` cập nhật; tick "Mở task con" ở `277-play-stage-zones-todo.md`
