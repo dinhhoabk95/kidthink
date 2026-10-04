@@ -77,3 +77,17 @@ Playwright, 390x844, Bé Đậu, DB dev v3. Phải chọn bé ở màn "Chọn b
 `game_started`: spec (`play-event-ingestion` §7.3, `event-catalog`) là một lần cả phiên và luôn `seq = 1`; `game_completed` một lần sau vòng cuối. `RoundRunner` trước đó dedupe theo vòng (GT-035 3 lần, GT-026 1 lần) và `game_started` có thể không đứng đầu. Nay một lần, đứng đầu.
 
 Chưa quét: GT-022 vẫn lấy `obj.x`/`obj.y` của nội dung cho cảnh tự do (có `anchor` ghi đè ở `GT-022/session.ts:336`); chưa đo bằng trình duyệt.
+
+## Khoá hướng dọc và dòng nhắc phụ huynh (BR-PSZ-14, 2026-10-04)
+
+Playwright, 844x390 cảm ứng, `GL-C1-ALG-CMD-0001`, Bé Đậu. `screen.orientation` được thay bằng bản ghi lệnh gọi; môi trường toàn màn hình giả bằng `document.fullscreenElement`.
+
+| Kiểm | Kết quả |
+| --- | --- |
+| Không toàn màn hình, không standalone | **ĐẠT**: không gọi `lock`, lớp xoay máy vẫn hiện |
+| Toàn màn hình | **ĐẠT**: `lock("portrait")` ngay khi lớp hiện, thêm một lần khi chạm lớp |
+| Dòng nhắc sau ~5 s | **ĐẠT**: "Nhờ ba mẹ tắt khoá xoay màn hình của máy", `aria-live="polite"`, tại t0 chưa có |
+| Xoay sang 390x844 | **ĐẠT**: lớp và dòng nhắc biến mất |
+| Ảnh | `gate-hint-{plain,fullscreen}-t{0,6}.jpg` (ô "71 ms" ở đáy là thanh devtools của Nuxt dev, không có ở bản chạy thật) |
+
+Chưa kiểm: `lock` thật trên Android Chrome ở chế độ PWA, và iOS Safari (không hỗ trợ `lock`, chỉ có lớp xoay máy). `unlock()` khi rời trò chỉ kiểm bằng code, chưa kiểm trên trình duyệt. Máy chủ dev do luồng này dựng đã dừng, script tạm đã xoá.
