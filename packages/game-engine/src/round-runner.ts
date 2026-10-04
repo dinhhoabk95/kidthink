@@ -111,7 +111,7 @@ export interface RoundRunnerState {
   hintCountTotal: number;
 }
 
-/** Event vòng đời có hai nguồn (engine và session) nên mỗi vòng chỉ giữ một lần. */
+/** Event vòng đời có hai nguồn (engine và session) nên chỉ giữ một lần cả phiên. */
 const LIFECYCLE_EVENTS: ReadonlySet<string> = new Set([
   "game_started",
   "game_completed",
@@ -417,25 +417,33 @@ export class RoundRunner {
     ) {
       return;
     }
+    this.pushLifecycleAware(event);
+  }
+
+  /** `game_started` luôn đứng đầu dòng telemetry để `seq = 1` (`play-event-ingestion` §7.3). */
+  private pushLifecycleAware(event: TelemetryEvent): void {
+    if (event.event_name === "game_started") {
+      this.allEvents.unshift(event);
+      return;
+    }
     this.allEvents.push(event);
   }
 
   /**
-   * `game_started` / `game_completed` có hai nguồn (engine và session). Mỗi vòng
-   * chỉ giữ một lần mỗi tên: tìm từ `round_started` gần nhất trở về sau.
+   * `game_started` / `game_completed` có hai nguồn (engine và session) và mỗi
+   * vòng session ghi lại một lần. Spec: `game_started` đúng một lần cả phiên
+   * (`seq = 1`), `game_completed` đúng một lần sau vòng cuối
+   * (`round-sequence-play.md` §7).
    */
   private isDuplicateLifecycleEvent(eventName: string): boolean {
     if (!LIFECYCLE_EVENTS.has(eventName)) {
       return false;
     }
-    let start = 0;
-    for (let i = this.allEvents.length - 1; i >= 0; i--) {
-      if (this.allEvents[i]?.event_name === "round_started") {
-        start = i;
-        break;
-      }
+    if (this.allEvents.some((e) => e.event_name === eventName)) {
+      return true;
     }
-    return this.allEvents.slice(start).some((e) => e.event_name === eventName);
+    const isFinalRound = this.currentRoundIndex >= this.rounds.length - 1;
+    return eventName === "game_completed" && !isFinalRound;
   }
 
   getAllTelemetry(): TelemetryEvent[] {
@@ -703,7 +711,7 @@ export class RoundRunner {
       // Cùng tham chiếu event thì đã thu rồi; so tên + thời điểm làm rơi event
       // hai vòng liên tiếp ghi cùng một mili giây.
       if (!this.allEvents.includes(event)) {
-        this.allEvents.push(event);
+        this.pushLifecycleAware(event);
       }
     }
   }

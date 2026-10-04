@@ -125,7 +125,8 @@ chúng đã có tên trong mục 7.2 của
 | `round_completed` | Có | Khi vòng thắng |
 | `round_skipped` | Không | Chỉ khi bỏ vòng, `reason` bắt buộc |
 | `round_retried` | Không | Chỉ khi trẻ chơi lại vòng đó |
-| `game_completed` | Có | Mang `rounds_total`, `rounds_correct` |
+| `game_started` | Có | Đúng một lần cả phiên, luôn là `seq = 1` (`play-event-ingestion` §7.3); engine và session cùng phát thì `RoundRunner` chỉ giữ bản đầu |
+| `game_completed` | Có | Đúng một lần cả phiên, sau vòng cuối; bản session phát ở các vòng trước bị bỏ. Mang `rounds_total`, `rounds_correct` |
 | `game_abandoned` | Không | Mang `last_round_index` |
 
 `round_index` trên event tương tác riêng của template vẫn là tuỳ chọn — xem câu hỏi còn mở

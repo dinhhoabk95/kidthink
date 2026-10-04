@@ -67,7 +67,7 @@ describe("RoundRunner — event vòng đời không phát đôi", () => {
     expect(countByName(runner, "game_completed")).toBe(1);
   });
 
-  it("engine phát game_started cộng session ghi game_started vẫn chỉ một lần mỗi vòng", () => {
+  it("engine phát game_started cộng session ghi game_started vẫn chỉ một lần", () => {
     const runner = new RoundRunner({
       rounds: [makeRound(0)],
       sessionFactory: () => new LifecycleSession(),
@@ -81,7 +81,7 @@ describe("RoundRunner — event vòng đời không phát đôi", () => {
     expect(countByName(runner, "game_started")).toBe(1);
   });
 
-  it("nhiều vòng: mỗi vòng một game_started và một game_completed", () => {
+  it("nhiều vòng: game_started đúng một lần cả phiên, game_completed một lần ở vòng cuối (round-sequence-play §7)", () => {
     const runner = new RoundRunner({
       rounds: Array.from({ length: ROUND_COUNT }, (_, i) => makeRound(i)),
       sessionFactory: () => new LifecycleSession(),
@@ -92,8 +92,17 @@ describe("RoundRunner — event vòng đời không phát đôi", () => {
       runner.completeCurrentRound();
     }
 
-    expect(countByName(runner, "game_started")).toBe(ROUND_COUNT);
-    expect(countByName(runner, "game_completed")).toBe(ROUND_COUNT);
+    expect(countByName(runner, "game_started")).toBe(1);
+    expect(countByName(runner, "game_completed")).toBe(1);
+    const events = runner.getAllTelemetry();
+    expect(events[0]?.event_name).toBe("game_started");
+    const completedAt = events.findIndex(
+      (e) => e.event_name === "game_completed"
+    );
+    const lastRoundStartAt = events
+      .map((e) => e.event_name)
+      .lastIndexOf("round_started");
+    expect(completedAt).toBeGreaterThan(lastRoundStartAt);
   });
 
   it("round_started/round_completed do RoundRunner sở hữu: session tự ghi thêm vẫn mỗi vòng một lần", () => {
