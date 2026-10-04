@@ -130,6 +130,7 @@
             role="alert"
             v-if="needsPortrait"
             :aria-label="PORTRAIT_GATE_LABEL"
+            @pointerdown="attemptPortraitLock"
           >
             <UIcon
               aria-hidden="true"
@@ -142,6 +143,15 @@
               name="i-lucide-rotate-cw"
             />
             <span class="sr-only">{{ PORTRAIT_GATE_LABEL }}</span>
+            <!-- Sau vài giây vẫn ngang: nhắc phụ huynh tắt khoá xoay. Icon vẫn là
+                 tín hiệu chính cho trẻ; dòng này không chuyển động. -->
+            <p
+              aria-live="polite"
+              class="portrait-gate__hint"
+              v-if="showPortraitParentHint"
+            >
+              {{ PORTRAIT_GATE_PARENT_HINT }}
+            </p>
           </div>
 
           <!-- Accessible DOM buttons for assistive tech & keyboard navigation -->
@@ -284,7 +294,12 @@
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
   import {
     PORTRAIT_GATE_LABEL,
+    PORTRAIT_GATE_PARENT_HINT,
+    PORTRAIT_GATE_PARENT_HINT_DELAY_MS,
+    readOrientationEnv,
+    releaseOrientationLock,
     resolveRequiresPortrait,
+    tryLockPortrait,
   } from "~/composables/play/play-portrait-gate";
   import { resolveZonePromptText } from "~/composables/play/play-prompt-zone";
   import { useMascotSprites } from "~/composables/play/use-mascot-sprites";
@@ -441,13 +456,38 @@
   /** Lớp xoay máy dọc đang phủ canvas (`BR-PSZ-14`). */
   const needsPortrait = ref(false);
 
+  /** Dòng nhắc phụ huynh tắt khoá xoay, hiện sau `PORTRAIT_GATE_PARENT_HINT_DELAY_MS`. */
+  const showPortraitParentHint = ref(false);
+  let portraitHintTimer: ReturnType<typeof setTimeout> | null = null;
+
+  function clearPortraitHintTimer(): void {
+    if (portraitHintTimer !== null) {
+      clearTimeout(portraitHintTimer);
+      portraitHintTimer = null;
+    }
+  }
+
+  /** Thử khoá hướng dọc; lỗi nuốt im, lớp xoay máy vẫn là nền (`BR-PSZ-14`). */
+  function attemptPortraitLock(): void {
+    const env = readOrientationEnv();
+    if (env) {
+      tryLockPortrait(env);
+    }
+  }
+
   function syncPortraitGate(): void {
     const next = resolveRequiresPortrait(getEngine()?.activeSession);
     if (next === needsPortrait.value) {
       return;
     }
     needsPortrait.value = next;
+    clearPortraitHintTimer();
+    showPortraitParentHint.value = false;
     if (next) {
+      attemptPortraitLock();
+      portraitHintTimer = setTimeout(() => {
+        showPortraitParentHint.value = needsPortrait.value;
+      }, PORTRAIT_GATE_PARENT_HINT_DELAY_MS);
       setPaused(true, "rotate_device");
     } else if (!(showVictoryModal.value || showParentGate.value)) {
       setPaused(false);
@@ -737,6 +777,11 @@
     }
     if (resizeTimer !== null) {
       clearTimeout(resizeTimer);
+    }
+    clearPortraitHintTimer();
+    const orientationEnv = readOrientationEnv();
+    if (orientationEnv) {
+      releaseOrientationLock(orientationEnv);
     }
     stopNarrationAudio();
     cleanupSession();

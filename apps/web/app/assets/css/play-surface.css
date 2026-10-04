@@ -456,6 +456,17 @@
   color: var(--color-brand-600);
 }
 
+.portrait-gate__hint {
+  position: absolute;
+  inset-inline: 1rem;
+  bottom: 0.75rem;
+  margin: 0;
+  text-align: center;
+  font-size: 0.875rem;
+  line-height: 1.25;
+  color: var(--color-surface-700);
+}
+
 .portrait-gate__arrow {
   width: 3rem;
   height: 3rem;
