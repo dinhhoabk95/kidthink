@@ -107,3 +107,60 @@ describe("Task #253 M3: projectGT000 Builder Tests", () => {
     ).toThrow(MIN_ITEMS_ERROR_REGEX);
   });
 });
+
+describe("GT-000 — đáp án của mọi bước hỏi nằm trong lựa chọn", () => {
+  const MIN_ITEMS = 2;
+  const MAX_ITEMS = 21;
+
+  interface ProbeStep {
+    readonly action: string;
+    readonly target_asset_id?: string;
+    readonly option_asset_ids?: readonly string[];
+    readonly distractor_asset_ids?: readonly string[];
+  }
+
+  function makeDataset(size: number): SkillDataset {
+    return {
+      skill_code: "C1.NREC.03",
+      concept_label: "Làm quen",
+      surface: "game",
+      ladder: [{ rung: 1, dimension: "size", description: `${size} vật` }],
+      phrasing: { prompt_template: "Số {value}" },
+      ordering: Array.from({ length: size }, (_, i) => `n_${i}`),
+      items: Array.from({ length: size }, (_, i) => ({
+        id: `n_${i}`,
+        label: `Số ${i}`,
+        glyph: `${i}`,
+        audio_path: `/audio/voice/common/numbers/${i}.mp3`,
+        contrast_group: "numbers",
+      })),
+    };
+  }
+
+  for (let size = MIN_ITEMS; size <= MAX_ITEMS; size++) {
+    it(`${size} vật: recall có đáp án trong option, recognise không tự đứng trong distractor`, () => {
+      const projected = projectGT000.project(makeDataset(size), {
+        band: "3-4",
+        difficulty: 1,
+        theme: "default",
+        seed: 1,
+      });
+      const content = projected.content_pack as {
+        readonly segments: readonly { readonly steps: readonly ProbeStep[] }[];
+      };
+
+      for (const segment of content.segments) {
+        for (const step of segment.steps) {
+          if (step.action === "recall") {
+            expect(step.option_asset_ids).toContain(step.target_asset_id);
+          }
+          if (step.action === "recognise") {
+            expect(step.distractor_asset_ids).not.toContain(
+              step.target_asset_id
+            );
+          }
+        }
+      }
+    });
+  }
+});

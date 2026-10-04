@@ -57,6 +57,19 @@ export function buildConceptIntroPrompt(label: string): string {
   return "Bé cùng làm quen bài học mới nhé!";
 }
 
+const MAX_RECALL_OPTIONS = 4;
+
+/**
+ * Lựa chọn của bước recall: tối đa bốn vật, BẮT BUỘC có đáp án. Cắt bốn vật đầu
+ * làm vật thứ năm trở đi (phân đoạn ôn 5–6 vật) không bao giờ có đáp án để chạm.
+ */
+function recallOptions(pool: readonly string[], targetId: string): string[] {
+  const others = pool.filter((id) => id !== targetId);
+  return [targetId, ...others.slice(0, MAX_RECALL_OPTIONS - 1)].sort(
+    (a, b) => pool.indexOf(a) - pool.indexOf(b)
+  );
+}
+
 export const projectGT000: Projection<"GT-000"> = {
   template: "GT-000",
   requires: { min_items: 2, max_items: 21 },
@@ -134,7 +147,7 @@ export const projectGT000: Projection<"GT-000"> = {
         return {
           action: "recall" as const,
           target_asset_id: `asset_${item.id}`,
-          option_asset_ids: segAssetIds.slice(0, 4),
+          option_asset_ids: recallOptions(segAssetIds, `asset_${item.id}`),
           prompt_line: `Đâu là ${pLabel}?`,
         };
       });
@@ -195,7 +208,7 @@ export const projectGT000: Projection<"GT-000"> = {
         return {
           action: "recall" as const,
           target_asset_id: `asset_${item.id}`,
-          option_asset_ids: reviewAssetIds.slice(0, 4),
+          option_asset_ids: recallOptions(reviewAssetIds, `asset_${item.id}`),
           prompt_line: `Đâu là ${pLabel}?`,
         };
       }),

@@ -124,9 +124,8 @@ export class GT026Session extends TemplateGameSession<
     });
 
     if (this.inhibitionSystem.isFinished()) {
-      this.isWon =
-        this.inhibitionSystem.getCorrectCount() >=
-        Math.ceil(this.content.trials.length * 0.6);
+      // BR-E026-05: hết trials luôn đóng vòng; số lượt đúng chỉ vào telemetry.
+      this.isWon = true;
       this.recordEvent("round_completed", { round_index: 0 });
       this.winSession();
     }
@@ -151,9 +150,8 @@ export class GT026Session extends TemplateGameSession<
     const verdict = this.inhibitionSystem.tick(deltaMs);
 
     if (this.inhibitionSystem.isFinished() && !this.isWon) {
-      this.isWon =
-        this.inhibitionSystem.getCorrectCount() >=
-        Math.ceil(this.content.trials.length * 0.6);
+      // BR-E026-05: hết trials luôn đóng vòng; số lượt đúng chỉ vào telemetry.
+      this.isWon = true;
       this.recordEvent("round_completed", { round_index: 0 });
       this.completeSession();
     }

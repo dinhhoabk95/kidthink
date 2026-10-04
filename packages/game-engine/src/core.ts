@@ -172,6 +172,15 @@ export class GameEngine {
    */
   onSessionWon?: () => void;
 
+  /**
+   * Gọi khi tập thực thể của `getView()` đổi ở nhịp `advanceFrame` (kích thích
+   * GT-026 hiện/ẩn giữa hai cử chỉ). Bề mặt chơi dựng lại danh sách nút ẩn cho
+   * trình đọc màn hình từ hook này; không gọi mỗi khung khi không đổi.
+   */
+  onViewChanged?: () => void;
+
+  private lastViewKey = "";
+
   onAfterRender?: (
     ctx: CanvasRenderingContext2D,
     rs: RenderSystem,
@@ -374,6 +383,22 @@ export class GameEngine {
     if (session && !wasWon && session.checkWinCondition()) {
       this.onSessionWon?.();
     }
+    this.notifyViewChange(session);
+  }
+
+  private notifyViewChange(session: GameSession | undefined): void {
+    if (!(this.onViewChanged && session?.getView)) {
+      return;
+    }
+    const key = session
+      .getView()
+      .entities.map((e) => `${e.id}:${e.state}:${e.x}:${e.y}`)
+      .join("|");
+    if (key === this.lastViewKey) {
+      return;
+    }
+    this.lastViewKey = key;
+    this.onViewChanged();
   }
 
   /**

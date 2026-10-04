@@ -119,7 +119,10 @@ export abstract class BaseGameSession implements GameSession {
     }
     this.isCompleted = true;
     this.endTimeMs = Date.now();
-    this.recordEvent("game_completed");
+    // Nhiều engine tự ghi `game_completed` kèm điểm trước khi `winSession` — không ghi đôi.
+    if (!this.events.some((e) => e.event_name === "game_completed")) {
+      this.recordEvent("game_completed");
+    }
   }
 
   destroy(): void {

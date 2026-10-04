@@ -447,6 +447,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       // Vòng thắng ở nhịp `update()` (GT-026 chốt lượt cuối khi ISI hết): không
       // có cử chỉ nào để `usePlayGesture` thấy, nên engine báo thẳng.
       engine.onSessionWon = handleRoundWonInternal;
+      engine.onViewChanged = syncView;
       engine.onAfterRender = (ctx, rs, now) => {
         syncIntroStepState();
         options.onAfterRender?.(ctx, rs, now);

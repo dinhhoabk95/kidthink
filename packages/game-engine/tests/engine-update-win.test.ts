@@ -62,6 +62,24 @@ describe("GameEngine.onSessionWon — vòng thắng ở nhịp update", () => {
     engine.destroy();
   });
 
+  it("hết lượt với dưới 60% đúng vẫn đóng vòng: gọi onSessionWon đúng một lần (N6, nhánh 2)", () => {
+    const { engine, session } = buildEngine();
+    let wonCalls = 0;
+    engine.onSessionWon = () => {
+      wonCalls++;
+    };
+
+    for (let i = 0; i < content.trials.length * 4; i++) {
+      engine.advanceFrame(difficulty.stimulus_window_ms + 50);
+      engine.advanceFrame(difficulty.isi_ms + 50);
+    }
+    engine.advanceFrame(1000);
+
+    expect(session.checkWinCondition()).toBe(true);
+    expect(wonCalls).toBe(1);
+    engine.destroy();
+  });
+
   it("không gọi onSessionWon khi vòng chưa thắng", () => {
     const { engine, session } = buildEngine();
     let wonCalls = 0;

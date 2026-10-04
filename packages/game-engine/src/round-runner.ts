@@ -111,6 +111,12 @@ export interface RoundRunnerState {
   hintCountTotal: number;
 }
 
+/** Event vòng đời có hai nguồn (engine và session) nên mỗi vòng chỉ giữ một lần. */
+const LIFECYCLE_EVENTS: ReadonlySet<string> = new Set([
+  "game_started",
+  "game_completed",
+]);
+
 export class RoundRunner {
   private readonly rounds: RoundConfig[];
   private readonly sessionFactory: SessionFactory;
@@ -359,7 +365,28 @@ export class RoundRunner {
    * đường này thì mọi event của engine không bao giờ tới `/events`.
    */
   recordExternalEvent(event: TelemetryEvent): void {
+    if (this.isDuplicateLifecycleEvent(event.event_name)) {
+      return;
+    }
     this.allEvents.push(event);
+  }
+
+  /**
+   * `game_started` / `game_completed` có hai nguồn (engine và session). Mỗi vòng
+   * chỉ giữ một lần mỗi tên: tìm từ `round_started` gần nhất trở về sau.
+   */
+  private isDuplicateLifecycleEvent(eventName: string): boolean {
+    if (!LIFECYCLE_EVENTS.has(eventName)) {
+      return false;
+    }
+    let start = 0;
+    for (let i = this.allEvents.length - 1; i >= 0; i--) {
+      if (this.allEvents[i]?.event_name === "round_started") {
+        start = i;
+        break;
+      }
+    }
+    return this.allEvents.slice(start).some((e) => e.event_name === eventName);
   }
 
   getAllTelemetry(): TelemetryEvent[] {
@@ -616,13 +643,12 @@ export class RoundRunner {
     }
     const telemetry = this.currentSession.getTelemetry();
     for (const event of telemetry.events) {
-      if (
-        !this.allEvents.some(
-          (e) =>
-            e.event_name === event.event_name &&
-            e.timestamp_ms === event.timestamp_ms
-        )
-      ) {
+      if (this.isDuplicateLifecycleEvent(event.event_name)) {
+        continue;
+      }
+      // Cùng tham chiếu event thì đã thu rồi; so tên + thời điểm làm rơi event
+      // hai vòng liên tiếp ghi cùng một mili giây.
+      if (!this.allEvents.includes(event)) {
         this.allEvents.push(event);
       }
     }
