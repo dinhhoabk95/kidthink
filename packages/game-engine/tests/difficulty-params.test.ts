@@ -89,6 +89,21 @@ describe("Hợp đồng độ khó engine-difficulty-params.json (Task #263 T5)"
     }
   });
 
+  it("bậc cuối của GT-009, GT-029, GT-030, GT-035 khác bậc ngay trước ở ít nhất một tham số (thang không phẳng, BR-E009-04)", () => {
+    const config = parsed as EngineDifficultyParamsConfig;
+    for (const code of ["GT-009", "GT-029", "GT-030", "GT-035"]) {
+      const levels = config.engines[code]?.levels;
+      expect(levels, `${code} thiếu bảng độ khó`).toBeDefined();
+      if (!levels) {
+        continue;
+      }
+      expect(
+        JSON.stringify(levels["5"]),
+        `${code} mức 5 trùng hệt mức 4`
+      ).not.toBe(JSON.stringify(levels["4"]));
+    }
+  });
+
   it("ngoại lệ difficulty_fixed được khai báo có chủ ý", () => {
     const config = parsed as EngineDifficultyParamsConfig;
     expect(config.engines["GT-000"]?.difficulty_fixed).toBe(true);

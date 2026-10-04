@@ -101,7 +101,7 @@
     },
     "GT-009": {
       "difficulty_fixed": false,
-      "reason": "Số lượng ứng viên tăng từ 4 lên 8 (không quá 8 để manh mối và mọi ứng viên cùng hiện trên điện thoại ngang, BR-PSZ-13) cùng số lượng manh mối suy luận tăng dần đòi hỏi loại trừ nhiều bước",
+      "reason": "Số lượng ứng viên tăng từ 4 lên 8 (không quá 8 để manh mối và mọi ứng viên cùng hiện trên điện thoại ngang, BR-PSZ-13) cùng số lượng manh mối suy luận tăng dần tới 4 ở bậc 5 (band 5-6) đòi hỏi loại trừ nhiều bước",
       "levels": {
         "1": {
           "item_count": 4,
@@ -129,7 +129,7 @@
         },
         "5": {
           "item_count": 8,
-          "clue_count": 3,
+          "clue_count": 4,
           "candidate_count": 8,
           "distractor_count": 7
         }

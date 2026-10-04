@@ -20,7 +20,7 @@ const REGEX_MONTESSORI_CODE = /-01\d{2}$/;
  * Đổi nội dung level đã gieo (kể cả `title`) thì tăng số này — seeder archive
  * bản cũ và publish bản mới trong một transaction; giữ nguyên số thì seeder bỏ qua.
  */
-export const GENERATED_LEVEL_CONTENT_VERSION = 3;
+export const GENERATED_LEVEL_CONTENT_VERSION = 4;
 
 /**
  * Chỗ trống trong `phrasing.prompt_template` mà bộ dựng level thay được.
