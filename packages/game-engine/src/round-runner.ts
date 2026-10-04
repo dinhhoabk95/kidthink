@@ -148,6 +148,10 @@ export class RoundRunner {
   private currentSession: GameSession | null = null;
   private readonly allEvents: TelemetryEvent[] = [];
   private sessionStartMs = 0;
+  /** Số lần thử đã ghi ở vòng hiện tại (`attempt_index` của `answer_*`). */
+  private attemptIndex = 0;
+  /** Số `answer_*` session tự phát mà runner đã thấy ở vòng hiện tại. */
+  private sessionAnswerEventsSeen = 0;
   private hintTimer: ReturnType<typeof setTimeout> | null = null;
   private logicSpace?: LogicSpace;
   private stageRect?: ZoneRect;
@@ -351,6 +355,37 @@ export class RoundRunner {
     this.onRoundCompleted?.(this.currentRoundIndex, true);
 
     return this.advanceToNextRound();
+  }
+
+  /**
+   * Ghi một lần thử của trẻ vào dòng telemetry (`answer_correct` /
+   * `answer_incorrect` mang `attempt_index`) để server dựng `rounds_correct`
+   * và `first_try_ratio` (`BR-SCO-01`, `BR-RSP-12`). Bề mặt chơi gọi cho mọi
+   * verdict khác `none`; session đã tự phát `answer_*` (GT-000) thì không ghi
+   * trùng.
+   */
+  recordAnswerVerdict(isCorrect: boolean): void {
+    if (!this.currentSession || this.isFinished) {
+      return;
+    }
+    const ownAnswers = this.currentSession
+      .getTelemetry()
+      .events.filter(
+        (e) =>
+          e.event_name === "answer_correct" ||
+          e.event_name === "answer_incorrect"
+      ).length;
+    if (ownAnswers > this.sessionAnswerEventsSeen) {
+      this.sessionAnswerEventsSeen = ownAnswers;
+      this.attemptIndex++;
+      return;
+    }
+    this.attemptIndex++;
+    this.recordEvent(isCorrect ? "answer_correct" : "answer_incorrect", {
+      round_index: this.currentRoundIndex,
+      attempt_index: this.attemptIndex,
+      elapsed_ms: Date.now() - this.sessionStartMs,
+    });
   }
 
   /** Increment hint counter (accumulates across rounds, not reset per round). */
@@ -561,6 +596,8 @@ export class RoundRunner {
 
     this.clearHintTimer();
     this.currentRoundIndex = index;
+    this.attemptIndex = 0;
+    this.sessionAnswerEventsSeen = 0;
     const config = this.rounds[index];
     if (!config) {
       return;

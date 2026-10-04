@@ -238,7 +238,10 @@ export function reconstructRounds(
   return {
     rounds_total: state.rounds_total,
     rounds_correct,
-    attempt_count: state.attempt_count,
+    attempt_count: Math.max(
+      state.attempt_count,
+      state.correct_count + state.incorrect_count
+    ),
     correct_count: state.correct_count,
     incorrect_count: state.incorrect_count,
     hint_count: state.hint_count,

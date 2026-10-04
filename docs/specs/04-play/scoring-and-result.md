@@ -77,7 +77,7 @@ báo cáo của người lớn.
 |---|---|
 | `rounds_total` | Số `round_started` |
 | `rounds_correct` | Round có `answer_correct` ở lần thử đầu |
-| `attempt_count` | Tổng `answer_selected` |
+| `attempt_count` | Lớn hơn trong hai: tổng `answer_selected` và `correct_count + incorrect_count` — mỗi `answer_correct`/`answer_incorrect` là một lần thử dù engine có phát `answer_selected` hay không |
 | `correct_count` `incorrect_count` | Đếm event tương ứng |
 | `hint_count` | `hint_requested` + `scaffold_escalated` |
 | `retry_count` | `round_retried` |

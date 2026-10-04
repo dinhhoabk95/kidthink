@@ -570,6 +570,10 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     }
   }
 
+  function handleAnswerVerdict(isCorrect: boolean): void {
+    roundRunner?.recordAnswerVerdict(isCorrect);
+  }
+
   function setPaused(isPaused: boolean, reason?: string): void {
     if (!engine) {
       return;
@@ -615,6 +619,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     fetchAndStartGame,
     handleSkipRound,
     handleRetryDisallowed,
+    handleAnswerVerdict,
     handleRoundWonInternal,
     completeSessionOnFinish,
     setPaused,

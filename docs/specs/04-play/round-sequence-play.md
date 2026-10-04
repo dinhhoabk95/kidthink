@@ -121,7 +121,7 @@ chúng đã có tên trong mục 7.2 của
 |---|---|---|
 | `round_started` | Có | Mọi vòng, kể cả set một vòng (`BR-RSP-02`) |
 | `question_shown` | Có | Ngay sau `round_started` |
-| `answer_correct` · `answer_incorrect` | Có | Mang `attempt_index` để dựng `first_try_ratio` |
+| `answer_correct` · `answer_incorrect` | Có | Mang `attempt_index` để dựng `first_try_ratio`; `RoundRunner.recordAnswerVerdict` phát cho mọi verdict (đúng hoặc sai, không phải `none`) của cử chỉ mà session không tự phát `answer_*`. Thiếu đường này thì mọi engine chấm `score=0`, 1 sao |
 | `round_completed` | Có | Khi vòng thắng |
 | `round_skipped` | Không | Chỉ khi bỏ vòng, `reason` bắt buộc |
 | `round_retried` | Không | Chỉ khi trẻ chơi lại vòng đó |

@@ -25,6 +25,11 @@ export interface GestureOptions {
    * .handleAction`, nên luật đóng vòng phải được gọi lại từ đây.
    */
   readonly onRetryDisallowed?: () => void;
+  /**
+   * Mọi verdict khác `none` — shell ghi một lần thử (`answer_correct` /
+   * `answer_incorrect`) trước khi vòng đóng, để server chấm điểm từ event.
+   */
+  readonly onVerdict?: (isCorrect: boolean) => void;
   /** Vùng của bàn chơi (`play-stage-zones.md`). */
   readonly getStageZones?: () => StageZones | null;
   /** Chạm vào loa trong vùng lời dẫn (`zones.promptSpeaker`) phát lại lời dẫn (`BR-PSZ-08`). */
@@ -84,7 +89,8 @@ function actionButtonOf(session: TemplateGameSession<unknown, unknown>) {
 }
 
 export function usePlayGesture(options: GestureOptions) {
-  const { getEngine, canvasRef, onRoundWon, onRetryDisallowed } = options;
+  const { getEngine, canvasRef, onRoundWon, onRetryDisallowed, onVerdict } =
+    options;
 
   const viewEntities = ref<readonly ViewEntity[]>([]);
   const actionButton = ref<ActionButtonState>(HIDDEN_ACTION_BUTTON);
@@ -197,6 +203,8 @@ export function usePlayGesture(options: GestureOptions) {
       // "chạm lại minh hoạ để nghe lại từ khoá", không phải một lượt trả lời.
       return;
     }
+
+    onVerdict?.(verdict.valid);
 
     if (verdict.valid) {
       engine.audio.playSnapSound();

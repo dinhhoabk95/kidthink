@@ -592,3 +592,27 @@ describe("Task P1.7 — Scoring and Result Engine", () => {
     });
   });
 });
+
+describe("attempt_count khi engine chỉ phát answer_correct/answer_incorrect", () => {
+  it("đếm mỗi answer_* là một lần thử, accuracy không vượt 1", () => {
+    const ev = (seq: number, eventName: string): TelemetryEventInput => ({
+      sessionUuid: "s",
+      seq,
+      eventName,
+      occurredAtMs: seq * 100,
+    });
+    const result = computeSessionResult([
+      ev(1, "round_started"),
+      ev(2, "answer_incorrect"),
+      ev(3, "answer_correct"),
+      ev(4, "round_completed"),
+      ev(5, "round_started"),
+      ev(6, "answer_correct"),
+      ev(7, "round_completed"),
+    ]);
+    expect(result.metrics.attempt_count).toBe(3);
+    expect(result.accuracy).toBeCloseTo(2 / 3);
+    expect(result.raw_score).toBe(1);
+    expect(result.normalized_score).toBeGreaterThan(0);
+  });
+});

@@ -481,6 +481,7 @@
     canvasRef,
     onRoundWon: playSession.handleRoundWonInternal,
     onRetryDisallowed: playSession.handleRetryDisallowed,
+    onVerdict: playSession.handleAnswerVerdict,
     getStageZones: () => stageZones.value ?? updateStageZones(),
     onPromptSpeakerTap: replayInstructionAudio,
     onFeedback: (kind, point) =>
