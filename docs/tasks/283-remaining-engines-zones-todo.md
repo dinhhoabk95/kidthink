@@ -153,3 +153,11 @@ Ghi chú đo của N (2026-10-03):
 - Còn mở: **thiết bị cảm ứng vật lý**; chủ nội dung duyệt giảm độ khó (B3 28+ level, GT-009/029/030/035 độ khó 5, GT-009 độ khó 5 = độ khó 4); chủ sản phẩm xác nhận lớp xoay máy cho GT-035; `recommendation.ts` khớp theo `game_levels.id`; GT-026 hết giờ không phát `answer_incorrect`; `first_try_ratio` theo thao tác đầu vòng ở engine nhiều bước; cảnh báo hydration ở `/me`.
 - Spec `play-stage-zones.md` **vẫn `approved`** tới khi ba mục đầu của "Còn mở" xong.
 
+## Cập nhật 2026-10-04 (đợt ba)
+
+- Đã sửa: recommendation/advanced-report/dashboard khớp theo mã level (`e1789af0`); GT-026 hết giờ phát `answer_*` (`BR-E026-06`) và `first_try_ratio` theo cả vòng (`ae6fc500`); hydration `/me` — SSR từng vẽ nhánh "Chào mừng" sai (`dc128dbc`); ba test API đỏ do `gameTemplates` đã bỏ (`53e56b09`, baseline 39 → 36); kích thích GT-026 chỉ hiện khi cổng cử chỉ mở (`545fc162`); GT-025 vùng chạm theo slot đã vẽ (`BR-E025-04`, `abc29806`); `game_started` một lần/phiên, `game_completed` một lần cuối (`46c7cc51`).
+- Nghi vấn `skillsByLevelId` là báo động giả: `content_skill_map.entity_id` là id dòng `game_levels`, v1 archived giữ ánh xạ.
+- `pnpm lint` sạch, `pnpm typecheck` 0 lỗi mọi project, cây làm việc sạch.
+- Chưa kiểm/ghi nhận: GT-022 còn dùng `x`/`y` nội dung; cảnh báo `[VUE_ROUTER_R0004]` ở `/me/children/<uuid>/report`; điểm GT-026 thô (75% đúng vẫn 0 điểm — theo `scoring-and-result.md` §7.1, cần chủ sản phẩm quyết).
+- Vẫn chờ người: duyệt dataset, xác nhận lớp xoay máy GT-035, thiết bị cảm ứng vật lý, `seed:content` ở staging/prod. Spec `play-stage-zones.md` giữ `approved`.
+
