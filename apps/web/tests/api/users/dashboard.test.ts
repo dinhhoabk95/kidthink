@@ -7,7 +7,6 @@ import {
   curriculumItems,
   curriculumWeeks,
   gameLevels,
-  gameTemplates,
   getOwnerDb,
   users,
 } from "@mindkid/db";
@@ -110,20 +109,6 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
 
     // 3. Seed template & level
     const templateCode = "GT-001";
-    await db
-      .insert(gameTemplates)
-      .values({
-        code: templateCode,
-        name: "Game template test P3",
-        mechanic: "drag_drop",
-        contentContract: {},
-      })
-      .onConflictDoNothing();
-    const [gt] = await db
-      .select({ id: gameTemplates.id })
-      .from(gameTemplates)
-      .where(eq(gameTemplates.code, templateCode));
-    const templateId = gt?.id ?? 1;
 
     let glCode = `GL-C1-NUM-CNT-${String(Math.floor(1000 + Math.random() * 8999))}`;
     for (let attempt = 0; attempt < 50; attempt++) {
@@ -144,7 +129,7 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
       .values({
         code: glCode,
         entityId: Math.floor(100_000 + Math.random() * 800_000),
-        templateId,
+        templateCode,
         difficulty: 1,
         title: "Đếm số vui vẻ",
         accessTier: "standard",

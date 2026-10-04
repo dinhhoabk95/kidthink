@@ -1,11 +1,5 @@
 import crypto from "node:crypto";
-import {
-  childProfiles,
-  gameLevels,
-  gameTemplates,
-  getOwnerDb,
-  users,
-} from "@mindkid/db";
+import { childProfiles, gameLevels, getOwnerDb, users } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import getRecommendationsHandler from "#server/api/users/play/recommendations.get";
@@ -94,20 +88,6 @@ describe("User Play Recommendations API (BR-REC-01..08, D-MQ..D-MV)", () => {
       })
       .returning();
 
-    let [tmpl] = await db.select().from(gameTemplates).limit(1);
-
-    if (!tmpl) {
-      [tmpl] = await db
-        .insert(gameTemplates)
-        .values({
-          code: "GT-001",
-          name: "Nối cặp",
-          mechanic: "match",
-          status: "active",
-        })
-        .returning();
-    }
-
     let randEntityId = crypto.randomInt(100_000, 999_999);
     let randCode = `GL-C1-REC-API-${String(crypto.randomInt(1000, 9999))}`;
     let codeExists = true;
@@ -129,7 +109,7 @@ describe("User Play Recommendations API (BR-REC-01..08, D-MQ..D-MV)", () => {
       entityId: randEntityId,
       code: randCode,
       contentVersion: 1,
-      templateId: tmpl.id,
+      templateCode: "GT-001",
       title: "Đếm hoa quả API",
       contentPack: {},
       difficultyParams: {},

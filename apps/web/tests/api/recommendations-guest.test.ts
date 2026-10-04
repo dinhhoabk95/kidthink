@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { gameLevels, gameTemplates, getOwnerDb } from "@mindkid/db";
+import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 import getGuestRecommendationsHandler from "#server/api/guest/play/recommendations.get";
 
@@ -32,20 +32,6 @@ describe("Guest Play Recommendations API (BR-REC-04, BR-REC-06, D-MW)", () => {
   it("GET /api/guest/play/recommendations returns 200 with allow-list free content only", async () => {
     const db = getOwnerDb();
 
-    let [tmpl] = await db.select().from(gameTemplates).limit(1);
-
-    if (!tmpl) {
-      [tmpl] = await db
-        .insert(gameTemplates)
-        .values({
-          code: "GT-001",
-          name: "Nối cặp",
-          mechanic: "match",
-          status: "active",
-        })
-        .returning();
-    }
-
     const randNum = crypto.randomInt(100_000, 999_999);
 
     // Insert free level
@@ -53,7 +39,7 @@ describe("Guest Play Recommendations API (BR-REC-04, BR-REC-06, D-MW)", () => {
       entityId: randNum,
       code: `GL-C1-GUEST-FREE-${String(crypto.randomInt(1000, 9999))}`,
       contentVersion: 1,
-      templateId: tmpl.id,
+      templateCode: "GT-001",
       title: "Trò chơi khách",
       contentPack: {},
       difficultyParams: {},
@@ -70,7 +56,7 @@ describe("Guest Play Recommendations API (BR-REC-04, BR-REC-06, D-MW)", () => {
       entityId: randNum + 1,
       code: `GL-C1-GUEST-STD-${String(crypto.randomInt(1000, 9999))}`,
       contentVersion: 1,
-      templateId: tmpl.id,
+      templateCode: "GT-001",
       title: "Trò chơi khoá",
       contentPack: {},
       difficultyParams: {},
