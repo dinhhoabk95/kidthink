@@ -41,3 +41,8 @@ Hiện tại (`scoring-and-result.md` §7): `normalized = 0,6·first_try_ratio +
 - Quyết định 5: sửa `engine-difficulty-params.json` hoặc builder GT-026 cho band 3-4 và test không có cửa sổ <1500 ms.
 
 Hạn chế: mọi con số tuổi lấy từ một nghiên cứu mẫu Mỹ (go 75%), không phải dữ liệu trẻ Việt Nam; nên đối chiếu lại bằng `play_sessions` thật khi có.
+
+## 5. Đính chính khi triển khai (2026-10-04)
+
+Quyết định 3 và 5 giả định GT-026 có band `3-4`. Thực tế engine **cấm band `3-4`** (`banned_age_bands`, `BR-EBD-11`), band `4-5` không đếm giờ, chỉ `5-6` có lượt hết giờ — nhóm tuổi mà nghiên cứu cho đúng ≥96% ở lượt đi. Nên: lượt `go` bỏ sót vẫn tính sai (`BR-E026-06` giữ nguyên), không dựng `answer_timeout` và không đổi cửa sổ kích thích. Quy tắc dành cho trường hợp mở band `3-4` về sau ghi ở `BR-E026-08`. `BR-SCO-09` và ngưỡng sao 0,85 / 0,55 giữ nguyên. Quyết định 7 (khen theo quá trình) bỏ qua: §7.2 của `feedback-and-celebration.md` đã có "Bé thật chăm chỉ!" và "Bé làm được rồi!", đổi bộ lời khen cần clip âm thanh và nằm trong mục "Ask first" của spec đó.
+
