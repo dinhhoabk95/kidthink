@@ -152,7 +152,7 @@
             :key="child.id"
             :class="[
               'p-5 rounded-3xl border-3 transition-all relative flex flex-col justify-between',
-              selectedChildId === child.id
+              viewedChildId === child.id
                 ? 'border-brand-600 bg-brand-50/20 shadow-md ring-2 ring-brand-400/30'
                 : 'border-surface-200 bg-white hover:border-surface-300'
             ]"
@@ -170,7 +170,7 @@
                   </h3>
                   <span
                     class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-brand-100 text-brand-700"
-                    v-if="selectedChildId === child.id"
+                    v-if="viewedChildId === child.id"
                   >
                     Đang chọn
                   </span>
@@ -197,7 +197,7 @@
                 class="flex-1 min-h-11 py-2 px-3 rounded-2xl font-bold text-xs transition-colors flex items-center justify-center gap-1.5"
                 type="button"
                 :class="
-                  selectedChildId === child.id
+                  viewedChildId === child.id
                     ? 'bg-surface-200 text-surface-800'
                     : 'bg-surface-100 hover:bg-surface-200 text-surface-700'
                 "
@@ -205,7 +205,7 @@
               >
                 <UIcon class="w-4 h-4" name="i-lucide-check-circle-2" />
                 <span
-                  >{{ selectedChildId === child.id ? 'Đang xem' : 'Chọn xem' }}</span
+                  >{{ viewedChildId === child.id ? 'Đang xem' : 'Chọn xem' }}</span
                 >
               </button>
 
@@ -572,22 +572,21 @@
     })),
   });
 
-  watch(
-    () => dashboardData.value?.active_child_id,
-    (newId) => {
-      if (newId && !selectedChildId.value) {
-        selectedChildId.value = newId;
-      }
-    },
-    { immediate: true }
+  // `selectedChildId` chỉ giữ lựa chọn tường minh (query/nhấn "Chọn xem") và là
+  // thứ duy nhất vào `query` của useFetch. Trẻ đang hoạt động do server trả về
+  // KHÔNG được ghi ngược vào đó: làm vậy đổi query ngay sau khi dữ liệu về, useFetch
+  // xoá `data` khi SSR, server vẽ nhánh "chưa có bé" còn client vẽ bảng điều khiển
+  // → "Hydration completed but contains mismatches".
+  const viewedChildId = computed(
+    () => selectedChildId.value ?? dashboardData.value?.active_child_id ?? null
   );
 
   const activeChildName = computed(() => {
-    if (!(dashboardData.value?.children && selectedChildId.value)) {
+    if (!(dashboardData.value?.children && viewedChildId.value)) {
       return null;
     }
     const found = dashboardData.value.children.find(
-      (c) => c.id === selectedChildId.value
+      (c) => c.id === viewedChildId.value
     );
     return found?.display_name || null;
   });
@@ -637,7 +636,7 @@
 
   async function playNextCurriculumItem() {
     const child = dashboardData.value?.children?.find(
-      (candidate) => candidate.id === selectedChildId.value
+      (candidate) => candidate.id === viewedChildId.value
     );
     if (child) {
       await activateChildThenPlay(child.uuid);
