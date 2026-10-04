@@ -53,6 +53,10 @@ export class GT026Session extends TemplateGameSession<
     return this.isInputOpen && this.inhibitionSystem?.getState() === "stimulus";
   }
 
+  override isTrialBased(): boolean {
+    return true;
+  }
+
   setupEntities(): void {
     this.isWon = false;
 

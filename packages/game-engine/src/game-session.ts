@@ -63,6 +63,8 @@ export interface SessionTelemetry {
 }
 
 export interface GameSession {
+  /** Vòng nhiều lượt độc lập — `BR-SCO-09`. Thiếu thì coi là sai. */
+  isTrialBased?(): boolean;
   setupEntities(): void;
   validateAction(a: GameAction): ActionResult;
   checkWinCondition(): boolean;
@@ -98,6 +100,14 @@ export abstract class BaseGameSession implements GameSession {
   protected startTimeMs: number = Date.now();
   protected endTimeMs?: number;
   protected isCompleted = false;
+
+  /**
+   * Vòng gồm nhiều lượt độc lập (GT-026, GT-027): điểm vòng theo tỉ lệ lượt
+   * đúng, không theo "cả vòng không sai lượt nào" (`BR-SCO-09`).
+   */
+  isTrialBased(): boolean {
+    return false;
+  }
 
   abstract setupEntities(): void;
   abstract validateAction(a: GameAction): ActionResult;

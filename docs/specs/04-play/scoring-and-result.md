@@ -68,6 +68,7 @@ báo cáo của người lớn.
 | `BR-SCO-06` | `stars` không phải hàm của tốc độ | Thưởng tốc độ ở tuổi này tạo thói quen đoán bừa |
 | `BR-SCO-07` | Phiên `abandoned` không hiện `stars` | Ăn mừng phiên bỏ dở làm ăn mừng mất nghĩa |
 | `BR-SCO-08` | Kết quả hiển thị **luôn tích cực**, kể cả điểm thấp | [`feedback-and-celebration.md`](feedback-and-celebration.md) |
+| `BR-SCO-09` | Engine **nhiều lượt trong một vòng** (`trial_based`: GT-026, GT-027) tính `first_try_ratio` theo tỉ lệ lượt đúng của từng vòng, không theo "cả vòng không sai lượt nào". `raw_score` / `rounds_correct` vẫn đếm vòng đúng trọn. Engine một đáp án và engine nhiều bước giữ quy tắc làm đúng ngay | Vòng 8 lượt mà sai hai lượt `nogo` không nên bằng không chơi: trẻ 3–6 tuổi sai lượt kìm là chuyện bình thường, điểm 0 trừng phạt (`BR-SCO-05`, `BR-SCO-08`) |
 
 ## 7. Data
 
@@ -77,6 +78,7 @@ báo cáo của người lớn.
 |---|---|
 | `rounds_total` | Số `round_started` |
 | `rounds_correct` | Round **làm đúng ngay** (`first_try`): có ít nhất một `answer_*` và **không có `answer_incorrect` nào** trước khi vòng đóng. Engine nhiều bước (mỗi bước một `answer_*`) và vòng nhiều lượt như GT-026 (8 lượt một vòng) chỉ tính đúng khi mọi lần thử trong vòng đều đúng — không chỉ nhìn lần thử đầu tiên của vòng |
+| `round_credit` | Tổng điểm vòng, mỗi vòng ∈ [0,1]. Vòng thường: 1 nếu `first_try`, ngược lại 0. **Vòng nhiều lượt** (engine khai `trial_based`, hiện GT-026 và GT-027; event `answer_*` mang `trial_based: true`): `correct / (correct + incorrect)` của vòng — mỗi lượt là một phép thử độc lập nên làm đúng 6/8 lượt được 0,75, không phải 0 |
 | `attempt_count` | Lớn hơn trong hai: tổng `answer_selected` và `correct_count + incorrect_count` — mỗi `answer_correct`/`answer_incorrect` là một lần thử dù engine có phát `answer_selected` hay không |
 | `correct_count` `incorrect_count` | Đếm event tương ứng |
 | `hint_count` | `hint_requested` + `scaffold_escalated` |
@@ -86,7 +88,7 @@ báo cáo của người lớn.
 ### 7.2 Điểm
 
 ```
-first_try_ratio = rounds_correct / rounds_total
+first_try_ratio = round_credit / rounds_total   (BR-SCO-09)
 accuracy        = correct_count / max(attempt_count, 1)
 
 raw_score        = rounds_correct

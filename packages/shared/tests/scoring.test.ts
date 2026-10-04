@@ -648,3 +648,62 @@ describe("rounds_correct — vòng nhiều lần thử (BR-SCO-01, §7.1)", () =
     expect(reconstructRounds(events).rounds_correct).toBe(1);
   });
 });
+
+describe("BR-SCO-09 — vòng nhiều lượt chấm theo tỉ lệ lượt đúng", () => {
+  function trialRound(
+    startSeq: number,
+    outcomes: boolean[],
+    trialBased: boolean
+  ): TelemetryEventInput[] {
+    const events: TelemetryEventInput[] = [
+      { sessionUuid: "s", seq: startSeq, eventName: "round_started" },
+    ];
+    outcomes.forEach((isCorrect, i) => {
+      events.push({
+        sessionUuid: "s",
+        seq: startSeq + 1 + i,
+        eventName: isCorrect ? "answer_correct" : "answer_incorrect",
+        payload: trialBased ? { trial_based: true } : {},
+      });
+    });
+    events.push({
+      sessionUuid: "s",
+      seq: startSeq + 1 + outcomes.length,
+      eventName: "round_completed",
+    });
+    return events;
+  }
+
+  const SIX_OF_EIGHT = [true, true, true, true, true, true, false, false];
+
+  it("vòng trial_based đúng 6/8 được 0,75 điểm vòng, không phải 0", () => {
+    const result = computeSessionResult(trialRound(1, SIX_OF_EIGHT, true));
+
+    expect(result.first_try_ratio).toBeCloseTo(0.75, 5);
+    expect(result.metrics.rounds_correct).toBe(0);
+  });
+
+  it("cùng chuỗi nhưng không trial_based vẫn là sai ở vòng (giữ quy tắc cũ)", () => {
+    const result = computeSessionResult(trialRound(1, SIX_OF_EIGHT, false));
+
+    expect(result.first_try_ratio).toBe(0);
+  });
+
+  it("vòng trial_based đúng hết giữ 1 và đếm vào rounds_correct", () => {
+    const result = computeSessionResult(
+      trialRound(1, [true, true, true], true)
+    );
+
+    expect(result.first_try_ratio).toBe(1);
+    expect(result.metrics.rounds_correct).toBe(1);
+  });
+
+  it("trộn hai vòng: 0,75 và 1 cho first_try_ratio 0,875", () => {
+    const events = [
+      ...trialRound(1, SIX_OF_EIGHT, true),
+      ...trialRound(20, [true, true], true),
+    ];
+
+    expect(computeSessionResult(events).first_try_ratio).toBeCloseTo(0.875, 5);
+  });
+});

@@ -72,6 +72,10 @@ export class GT027Session extends TemplateGameSession<
   private successfulTrialCount = 0;
   private targetSuccessTotal = 0;
 
+  override isTrialBased(): boolean {
+    return true;
+  }
+
   setupEntities(): void {
     this.isWon = false;
     this.successfulTrialCount = 0;

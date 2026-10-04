@@ -34,11 +34,14 @@ import {
 } from "#src/systems/scene-system";
 import type { GT022Content, GT022Difficulty } from "./template.js";
 
+/** Dung sai quanh vật khi chưa có slot (cảnh cũ); có slot thì hộp chạm đã theo sàn chạm. */
+const LEGACY_HIT_TOLERANCE_PX = 24;
+
 function findHitSceneObject(
   objects: readonly SceneObject[],
   x: number,
   y: number,
-  tolerance = 24
+  tolerance = LEGACY_HIT_TOLERANCE_PX
 ): SceneObject | null {
   for (let i = objects.length - 1; i >= 0; i--) {
     const obj = objects[i];
@@ -178,12 +181,29 @@ export class GT022Session extends TemplateGameSession<
     return this.sceneSystem.isAllFound();
   }
 
+  /**
+   * `BR-E022-04`: có stage thì vật vẽ ở slot của layout, nên vùng chạm lấy tâm
+   * và hộp chạm của slot đó; `x`/`y` của content chỉ còn cho cảnh không slot.
+   */
+  protected override computeRoundDerived(): void {
+    if (!this.stageRect) {
+      return;
+    }
+    this.resolvedObjects = this.resolvedObjects.map((obj, i) => {
+      const slot = this.slots[i];
+      return slot
+        ? { ...obj, x: slot.x, y: slot.y, width: slot.hitW, height: slot.hitH }
+        : obj;
+    });
+  }
+
   override toAction(gesture: Gesture): GameAction | null {
     if (gesture.type === "tap") {
       const hitObj = findHitSceneObject(
         this.resolvedObjects,
         gesture.x,
-        gesture.y
+        gesture.y,
+        this.stageRect ? 0 : LEGACY_HIT_TOLERANCE_PX
       );
       if (hitObj) {
         const state = this.sceneSystem.getObjectState(hitObj.id);

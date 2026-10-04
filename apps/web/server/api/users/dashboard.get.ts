@@ -94,7 +94,9 @@ async function fetchChildStats(
       days_played_7d: daysPlayed7d,
       total_play_time_minutes_7d: totalPlayTimeMinutes7d,
       levels_completed_7d: totalLevelsCompleted7d,
-      report_url: `/me/children/${child.uuid}/report`,
+      // Trang báo cáo cơ bản (basic-report.md) chưa dựng; trang có thật là báo cáo nâng cao,
+      // tự hiện bản xem thử khi thiếu quyền (BR-ARP, D-NB).
+      report_url: `/me/children/${child.uuid}/report/advanced`,
     },
   };
 }

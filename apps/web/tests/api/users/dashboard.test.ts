@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 import {
   childDailyStats,
   childProfiles,
@@ -45,6 +47,8 @@ function mockUserEvent(userId?: number, query: Record<string, string> = {}) {
     },
   } as any;
 }
+
+const UUID_LENGTH = 36;
 
 describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)", () => {
   let user1Id: number;
@@ -231,6 +235,22 @@ describe("Task #82 — GET /api/users/dashboard (BR-MDB-01..07, BR-CUR-01..10)",
 
     expect(resultB.active_child_id).toBe(childBId);
     expect(resultB.curriculum?.enrolled).toBe(false); // Child B has no curriculum
+  });
+
+  it("Scenario: progress_summary.report_url trỏ tới trang có thật", async () => {
+    const result = await dashboardHandler(mockUserEvent(user1Id));
+    const url = String(result.recent_progress[0]?.report_url ?? "");
+    const segments = url.split("/").filter(Boolean);
+    const pageFile = resolve(
+      import.meta.dirname,
+      "../../../app/pages",
+      ...segments.map((seg) => (seg.length === UUID_LENGTH ? "[uuid]" : seg))
+    );
+
+    expect(segments.slice(0, 2)).toEqual(["me", "children"]);
+    expect(
+      existsSync(`${pageFile}.vue`) || existsSync(`${pageFile}/index.vue`)
+    ).toBe(true);
   });
 
   it("Scenario: accessing another user's child profile returns 404 (BR-ERR-05 / BR-ACT-03)", async () => {

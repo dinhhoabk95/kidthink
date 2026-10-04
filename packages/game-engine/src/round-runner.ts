@@ -396,6 +396,7 @@ export class RoundRunner {
       round_index: this.currentRoundIndex,
       attempt_index: this.attemptIndex,
       elapsed_ms: Date.now() - this.sessionStartMs,
+      ...(this.currentSession.isTrialBased?.() ? { trial_based: true } : {}),
     });
   }
 

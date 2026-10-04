@@ -20,6 +20,8 @@ export interface TelemetryEventInput {
 export interface ReconstructedSessionMetrics {
   rounds_total: number;
   rounds_correct: number;
+  /** Điểm vòng cộng dồn ∈ [0, rounds_total] — BR-SCO-09. */
+  round_credit: number;
   attempt_count: number;
   correct_count: number;
   incorrect_count: number;
@@ -47,7 +49,11 @@ export interface KidSurfaceResponse {
 interface RoundState {
   roundIndex: number;
   hasEnded: boolean;
-  attempts: Array<{ type: "correct" | "incorrect"; seq: number }>;
+  attempts: Array<{
+    type: "correct" | "incorrect";
+    seq: number;
+    trialBased: boolean;
+  }>;
 }
 
 export function clamp01(value: number): number {
@@ -167,20 +173,32 @@ function processRoundEvent(
   } else if (name === "answer_correct") {
     state.correct_count++;
     if (state.currentRound) {
-      state.currentRound.attempts.push({ type: "correct", seq: ev.seq });
+      state.currentRound.attempts.push({
+        type: "correct",
+        seq: ev.seq,
+        trialBased: ev.payload?.trial_based === true,
+      });
     }
   } else if (name === "answer_incorrect") {
     state.incorrect_count++;
     if (state.currentRound) {
-      state.currentRound.attempts.push({ type: "incorrect", seq: ev.seq });
+      state.currentRound.attempts.push({
+        type: "incorrect",
+        seq: ev.seq,
+        trialBased: ev.payload?.trial_based === true,
+      });
     }
   } else if (name === "round_completed" && state.currentRound) {
     state.currentRound.hasEnded = true;
   }
 }
 
-function evaluateRoundsCorrect(rounds: RoundState[]): number {
-  let correctCount = 0;
+function evaluateRounds(rounds: RoundState[]): {
+  rounds_correct: number;
+  round_credit: number;
+} {
+  let roundsCorrect = 0;
+  let roundCredit = 0;
   for (const round of rounds) {
     if (!round.hasEnded && round.attempts.length > 0) {
       console.warn(
@@ -188,16 +206,26 @@ function evaluateRoundsCorrect(rounds: RoundState[]): number {
       );
       round.hasEnded = true;
     }
+    if (round.attempts.length === 0) {
+      continue;
+    }
 
-    if (round.attempts.length > 0) {
-      round.attempts.sort((a, b) => a.seq - b.seq);
-      // §7.1: làm đúng ngay = không có lần thử sai nào trong vòng.
-      if (round.attempts.every((attempt) => attempt.type === "correct")) {
-        correctCount++;
-      }
+    round.attempts.sort((a, b) => a.seq - b.seq);
+    // §7.1: làm đúng ngay = không có lần thử sai nào trong vòng.
+    const isFirstTry = round.attempts.every((a) => a.type === "correct");
+    if (isFirstTry) {
+      roundsCorrect++;
+    }
+    // BR-SCO-09: vòng nhiều lượt chấm theo tỉ lệ lượt đúng.
+    const isTrialRound = round.attempts.some((a) => a.trialBased);
+    if (isTrialRound) {
+      const correct = round.attempts.filter((a) => a.type === "correct").length;
+      roundCredit += correct / round.attempts.length;
+    } else if (isFirstTry) {
+      roundCredit++;
     }
   }
-  return correctCount;
+  return { rounds_correct: roundsCorrect, round_credit: roundCredit };
 }
 
 export function reconstructRounds(
@@ -207,6 +235,7 @@ export function reconstructRounds(
     return {
       rounds_total: 0,
       rounds_correct: 0,
+      round_credit: 0,
       attempt_count: 0,
       correct_count: 0,
       incorrect_count: 0,
@@ -234,11 +263,12 @@ export function reconstructRounds(
     processRoundEvent(ev, state);
   }
 
-  const rounds_correct = evaluateRoundsCorrect(state.rounds);
+  const { rounds_correct, round_credit } = evaluateRounds(state.rounds);
 
   return {
     rounds_total: state.rounds_total,
     rounds_correct,
+    round_credit,
     attempt_count: Math.max(
       state.attempt_count,
       state.correct_count + state.incorrect_count
@@ -258,7 +288,7 @@ export function computeSessionResult(
 
   let first_try_ratio: number;
   if (metrics.rounds_total > 0) {
-    first_try_ratio = metrics.rounds_correct / metrics.rounds_total;
+    first_try_ratio = metrics.round_credit / metrics.rounds_total;
   } else if (metrics.attempt_count > 0) {
     first_try_ratio = metrics.correct_count / metrics.attempt_count;
   } else {

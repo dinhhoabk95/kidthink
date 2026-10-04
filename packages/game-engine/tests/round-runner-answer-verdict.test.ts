@@ -30,6 +30,13 @@ class SelfReportingSession extends SilentSession {
   }
 }
 
+/** Engine nhiều lượt trong một vòng như GT-026/027 (BR-SCO-09). */
+class TrialSession extends SilentSession {
+  override isTrialBased(): boolean {
+    return true;
+  }
+}
+
 function roundOf(index: number): RoundConfig {
   return {
     round_index: index,
@@ -102,5 +109,36 @@ describe("RoundRunner.recordAnswerVerdict (BR-SCO-01, BR-RSP-12)", () => {
     });
     runner.recordAnswerVerdict(true);
     expect(names(runner)).toEqual([]);
+  });
+
+  it("đánh dấu trial_based trên answer_* của engine nhiều lượt (BR-SCO-09)", () => {
+    const runner = new RoundRunner({
+      rounds: [roundOf(0)],
+      sessionFactory: () => new TrialSession(),
+    });
+    runner.startFirstRound();
+
+    runner.recordAnswerVerdict(true);
+    runner.recordAnswerVerdict(false);
+
+    const answers = runner
+      .getAllTelemetry()
+      .filter((e) => e.event_name.startsWith("answer_"));
+    expect(answers.map((e) => e.data?.trial_based)).toEqual([true, true]);
+  });
+
+  it("engine một đáp án không mang trial_based", () => {
+    const runner = new RoundRunner({
+      rounds: [roundOf(0)],
+      sessionFactory: () => new SilentSession(),
+    });
+    runner.startFirstRound();
+
+    runner.recordAnswerVerdict(true);
+
+    const answer = runner
+      .getAllTelemetry()
+      .find((e) => e.event_name === "answer_correct");
+    expect(answer?.data?.trial_based).toBeUndefined();
   });
 });
