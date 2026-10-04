@@ -51,3 +51,15 @@ Playwright + CDP chạm thật, 390x844, DB dev content v3, `GL-C4-HOM-GNG-0001`
 5. `Đã chơi: 0 ngày` ở `/me` dù Bé Đậu vừa chơi nhiều phiên: số lấy từ `child_daily_stats` (worker tổng hợp), worker không chạy ở dev — không phải lỗi mã.
 6. Khoá `rl:*` Valkey dev đã xoá nhiều lần để đăng nhập; máy chủ dev đã dừng, script tạm đã xoá.
 
+
+## GT-026 kích thích chỉ hiện khi cổng mở (2026-10-04, trình duyệt thật)
+
+Playwright + CDP chạm thật, 390x844, `parent.standard` Bé Đậu, `GL-C4-HOM-GNG-0001` (có đếm giờ). Cổng cử chỉ ép đóng bằng `engine.acceptingInput = false` (mô phỏng câu dẫn đang đọc, `BR-PNR-11`).
+
+| Kiểm | Kết quả |
+|---|---|
+| Cổng đóng: `getView().entities` | **0 vật** (trước sửa: 1 vật hiện mà chạm bị nuốt) |
+| Cổng đóng 3 s (gấp 2,5 lần cửa sổ 1,2 s) | **0 sự kiện `item_selected`** — đồng hồ đứng yên, không `timeout_no_tap` (`BR-E026-04`) |
+| Mở cổng rồi chạm ngay khi vật hiện (lượt go) | **ĐẠT**: `item_selected` `outcome: hit`, `action_type: tap`, đúng |
+
+GT-027 cùng lớp lỗi? **Không**: lưới vật của GT-027 là cảnh tĩnh, không có đồng hồ lượt chạy trong lúc cổng đóng; chạm trong lúc câu dẫn đọc bị nuốt đúng `BR-PNR-11` và không ghi `miss`. Dev server đang chạy của luồng khác được dùng chung, không dừng; script tạm đã xoá.
