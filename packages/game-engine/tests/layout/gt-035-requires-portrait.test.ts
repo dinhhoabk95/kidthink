@@ -95,6 +95,16 @@ describe("GT-035 requiresPortrait (BR-E035-06)", () => {
     }
   );
 
+  it.each(cases)(
+    "$name: portrait 330x697 band 5-6 mọi slot nằm trong sân khấu (BR-PSZ-01)",
+    ({ create }) => {
+      const session = create();
+      prepare(session, PORTRAIT, "5-6");
+
+      expect(session.overflowsStage()).toBe(false);
+    }
+  );
+
   it("xoay từ ngang sang dọc thì hết xin (prepareRound lại)", () => {
     const first = cases[0];
     if (!first) {

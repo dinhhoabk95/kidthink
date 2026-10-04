@@ -94,13 +94,14 @@ export class GT035Session extends TemplateGameSession<
    * bàn đã tràn ở portrait, và lớp xoay máy không được nhốt trẻ ở portrait.
    */
   override requiresPortrait(): boolean {
-    const stage = this.stageRect;
     const isLandscape = this.logicSpace.w >= this.logicSpace.h;
-    return (
-      isLandscape &&
-      stage !== undefined &&
-      hasSlotsOutsideStage(this.slots, stage)
-    );
+    return isLandscape && this.overflowsStage();
+  }
+
+  /** Có slot nào có vùng chạm ra ngoài sân khấu không (`BR-PSZ-01`). */
+  overflowsStage(): boolean {
+    const stage = this.stageRect;
+    return stage !== undefined && hasSlotsOutsideStage(this.slots, stage);
   }
   override readonly commitIcon = "play";
 
