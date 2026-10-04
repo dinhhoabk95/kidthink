@@ -2,6 +2,7 @@ import {
   childDailyStats,
   childProfiles,
   childSessionSummaries,
+  gameLevels,
   getOwnerDb,
   paymentOrders,
   recurringSubscriptions,
@@ -66,10 +67,11 @@ async function fetchChildStats(
 
   const [latestSession] = await db
     .select({
-      gameLevelId: childSessionSummaries.gameLevelId,
+      levelCode: gameLevels.code,
       completedAt: childSessionSummaries.completedAt,
     })
     .from(childSessionSummaries)
+    .innerJoin(gameLevels, eq(gameLevels.id, childSessionSummaries.gameLevelId))
     .where(eq(childSessionSummaries.childProfileId, child.id))
     .orderBy(desc(childSessionSummaries.completedAt))
     .limit(1);
@@ -83,9 +85,7 @@ async function fetchChildStats(
       avatar_id: child.avatarId,
       relationship: child.relationship,
       days_played_7d: daysPlayed7d,
-      latest_level: latestSession
-        ? `Level #${latestSession.gameLevelId}`
-        : null,
+      latest_level: latestSession ? latestSession.levelCode : null,
     },
     progressSummary: {
       child_id: child.id,

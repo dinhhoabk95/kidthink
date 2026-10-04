@@ -413,6 +413,34 @@ async function resolvePopularCandidates(
   }));
 }
 
+export interface PlayedLevelCodes {
+  totalPlaysCount: number;
+  recentLevelCodes: string[];
+  allPlayedLevelCodeSet: Set<string>;
+}
+
+/**
+ * Level đã chơi, theo MÃ level (không theo `game_levels.id`): id đổi khi bản cũ
+ * bị archive sau khi nâng content_version, mà level đã chơi ở bản cũ vẫn là đã chơi.
+ */
+export async function loadPlayedLevelCodes(
+  db: PostgresJsDatabase<Record<string, unknown>>,
+  childId: number
+): Promise<PlayedLevelCodes> {
+  const sessions = await db
+    .select({ levelCode: gameLevels.code })
+    .from(playSessions)
+    .innerJoin(gameLevels, eq(gameLevels.id, playSessions.gameLevelId))
+    .where(eq(playSessions.childProfileId, childId))
+    .orderBy(desc(playSessions.startedAt));
+
+  return {
+    totalPlaysCount: sessions.length,
+    recentLevelCodes: sessions.slice(0, 3).map((s) => s.levelCode),
+    allPlayedLevelCodeSet: new Set(sessions.map((s) => s.levelCode)),
+  };
+}
+
 /**
  * P3.6 — Recommend Next Content for Enrolled Child (BR-REC-01..08, D-MQ..D-MX).
  */
@@ -438,27 +466,8 @@ export async function getRecommendationsForChild(
   const dateIct = now.toISOString().slice(0, 10);
   const seed = options.seed ?? generateDailySeed(childId, dateIct);
 
-  const recentSessions = await db
-    .select({
-      gameLevelId: playSessions.gameLevelId,
-      startedAt: playSessions.startedAt,
-    })
-    .from(playSessions)
-    .where(eq(playSessions.childProfileId, childId))
-    .orderBy(desc(playSessions.startedAt));
-
-  const totalPlaysCount = recentSessions.length;
-  const recentLevelIds = recentSessions.slice(0, 3).map((s) => s.gameLevelId);
-  const allPlayedLevelIdSet = new Set(recentSessions.map((s) => s.gameLevelId));
-
-  let recentLevelCodes: string[] = [];
-  if (recentLevelIds.length > 0) {
-    const recentLevels = await db
-      .select({ code: gameLevels.code })
-      .from(gameLevels)
-      .where(inArray(gameLevels.id, recentLevelIds));
-    recentLevelCodes = recentLevels.map((l) => l.code);
-  }
+  const { totalPlaysCount, recentLevelCodes, allPlayedLevelCodeSet } =
+    await loadPlayedLevelCodes(db, childId);
 
   const allPublishedLevels = await db
     .select()
@@ -503,7 +512,7 @@ export async function getRecommendationsForChild(
   // Tier 5: explore
   const unplayedMatching = allPublishedLevels.filter(
     (gl) =>
-      !allPlayedLevelIdSet.has(gl.id) &&
+      !allPlayedLevelCodeSet.has(gl.code) &&
       isLevelAgeMatch(gl.ageMin, gl.ageMax, targetAgeMin, targetAgeMax)
   );
 
@@ -531,7 +540,7 @@ export async function getRecommendationsForChild(
   // Tier 7: revision
   const playedMatching = allPublishedLevels.filter(
     (gl) =>
-      allPlayedLevelIdSet.has(gl.id) &&
+      allPlayedLevelCodeSet.has(gl.code) &&
       isLevelAgeMatch(gl.ageMin, gl.ageMax, targetAgeMin, targetAgeMax)
   );
 

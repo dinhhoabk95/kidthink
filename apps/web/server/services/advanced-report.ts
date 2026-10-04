@@ -578,26 +578,32 @@ function buildReadyForNextSection(
   return items;
 }
 
-function buildVersionMarkers(
-  recentSessions: (typeof playSessions.$inferSelect)[],
-  levelById: Map<number, typeof gameLevels.$inferSelect>
+/**
+ * Gộp theo MÃ level, không theo `game_levels.id`: nâng content_version archive
+ * dòng cũ và tạo dòng mới (id khác), nên gộp theo id làm mất dấu đổi phiên bản.
+ */
+export function buildVersionMarkers(
+  recentSessions: Pick<
+    typeof playSessions.$inferSelect,
+    "gameLevelId" | "contentVersion"
+  >[],
+  levelById: Map<number, Pick<typeof gameLevels.$inferSelect, "code">>
 ): VersionChangeMarker[] {
-  const versionsByLevelId = new Map<number, Set<number>>();
+  const versionsByCode = new Map<string, Set<number>>();
   for (const s of recentSessions) {
     const lId = Number(s.gameLevelId);
     const v = s.contentVersion;
     if (lId && v !== null && v !== undefined) {
-      const set = versionsByLevelId.get(lId) ?? new Set<number>();
+      const code = levelById.get(lId)?.code ?? `Level #${lId}`;
+      const set = versionsByCode.get(code) ?? new Set<number>();
       set.add(v);
-      versionsByLevelId.set(lId, set);
+      versionsByCode.set(code, set);
     }
   }
 
   const markers: VersionChangeMarker[] = [];
-  for (const [lId, vSet] of versionsByLevelId.entries()) {
+  for (const [code, vSet] of versionsByCode.entries()) {
     if (vSet.size > 1) {
-      const lvl = levelById.get(lId);
-      const code = lvl?.code ?? `Level #${lId}`;
       const sortedVersions = Array.from(vSet).sort((a, b) => a - b);
       markers.push({
         level_code: code,

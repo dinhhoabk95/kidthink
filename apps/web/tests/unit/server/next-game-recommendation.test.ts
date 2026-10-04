@@ -23,6 +23,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   getGuestRecommendations,
   getRecommendationsForChild,
+  loadPlayedLevelCodes,
 } from "#server/services/recommendation.js";
 
 describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)", () => {
@@ -536,6 +537,65 @@ describe("P3.6 Next Game Recommendation Invariants (BR-REC-01..08, D-MQ..D-MW)",
 
     expect(recs.primary).toBeDefined();
     expect(recs.primary.level_code).toBeTruthy();
+  });
+
+  it("Scenario: level đã chơi ở bản cũ (đã archive) vẫn tính là đã chơi — khớp theo mã, không theo id", async () => {
+    const db = getOwnerDb();
+    const { child, levelFree1, levelFree2 } = await createTestFixtures();
+
+    await db
+      .update(gameLevels)
+      .set({ status: "archived" })
+      .where(eq(gameLevels.id, levelFree1.id));
+    const [v2] = await db
+      .insert(gameLevels)
+      .values({
+        entityId: levelFree1.entityId,
+        code: levelFree1.code,
+        contentVersion: 2,
+        templateCode: levelFree1.templateCode,
+        title: levelFree1.title,
+        contentPack: {},
+        difficultyParams: {},
+        accessTier: "free",
+        ageMin: 3,
+        ageMax: 5,
+        difficulty: 1,
+        status: "published",
+        thumbnailEmoji: "🍎",
+      })
+      .returning();
+    expect(v2?.id).not.toBe(levelFree1.id);
+
+    const base = Date.now();
+    await db.insert(playSessions).values([
+      {
+        childProfileId: child.id,
+        gameLevelId: levelFree1.id,
+        contentVersion: 1,
+        templateCode: levelFree1.templateCode,
+        startedAt: new Date(base - 10_000),
+        completionStatus: "completed",
+      },
+      ...[3000, 2000, 1000].map((ago) => ({
+        childProfileId: child.id,
+        gameLevelId: levelFree2.id,
+        contentVersion: 1,
+        templateCode: levelFree2.templateCode,
+        startedAt: new Date(base - ago),
+        completionStatus: "completed" as const,
+      })),
+    ]);
+
+    const played = await loadPlayedLevelCodes(db, child.id);
+
+    expect(played.totalPlaysCount).toBe(4);
+    expect(played.allPlayedLevelCodeSet.has(levelFree1.code)).toBe(true);
+    expect(played.recentLevelCodes).toEqual([
+      levelFree2.code,
+      levelFree2.code,
+      levelFree2.code,
+    ]);
   });
 
   it("Scenario: D-MV — deterministic seed produces identical ordering", () => {
