@@ -179,6 +179,13 @@ export class GameEngine {
    */
   onViewChanged?: () => void;
 
+  /**
+   * Gọi khi `session.update()` trả verdict (khác `none`) mà không có cử chỉ nào
+   * của trẻ — lượt hết giờ không chạm của GT-026 (`BR-E026-06`). Bề mặt chơi
+   * nối vào `RoundRunner.recordAnswerVerdict` để telemetry có `answer_*`.
+   */
+  onUpdateVerdict?: (isCorrect: boolean) => void;
+
   private lastViewKey = "";
 
   onAfterRender?: (
@@ -379,7 +386,10 @@ export class GameEngine {
     const wasWon = session?.checkWinCondition() ?? false;
     const isClockHeld =
       !this.isInputOpen() && holdsClockWhileInputClosed(session);
-    session?.update?.(isClockHeld ? 0 : deltaMs);
+    const updateResult = session?.update?.(isClockHeld ? 0 : deltaMs);
+    if (updateResult && updateResult.feedback !== "none") {
+      this.onUpdateVerdict?.(updateResult.valid);
+    }
     if (session && !wasWon && session.checkWinCondition()) {
       this.onSessionWon?.();
     }

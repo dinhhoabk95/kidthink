@@ -191,7 +191,8 @@ function evaluateRoundsCorrect(rounds: RoundState[]): number {
 
     if (round.attempts.length > 0) {
       round.attempts.sort((a, b) => a.seq - b.seq);
-      if (round.attempts[0]?.type === "correct") {
+      // §7.1: làm đúng ngay = không có lần thử sai nào trong vòng.
+      if (round.attempts.every((attempt) => attempt.type === "correct")) {
         correctCount++;
       }
     }

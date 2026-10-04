@@ -448,6 +448,8 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       // có cử chỉ nào để `usePlayGesture` thấy, nên engine báo thẳng.
       engine.onSessionWon = handleRoundWonInternal;
       engine.onViewChanged = syncView;
+      // Lượt hết giờ không chạm (GT-026, BR-E026-06) cũng là một lần thử.
+      engine.onUpdateVerdict = handleAnswerVerdict;
       engine.onAfterRender = (ctx, rs, now) => {
         syncIntroStepState();
         options.onAfterRender?.(ctx, rs, now);

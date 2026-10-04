@@ -76,7 +76,7 @@ báo cáo của người lớn.
 | Chỉ số | Nguồn |
 |---|---|
 | `rounds_total` | Số `round_started` |
-| `rounds_correct` | Round có `answer_correct` ở lần thử đầu |
+| `rounds_correct` | Round **làm đúng ngay** (`first_try`): có ít nhất một `answer_*` và **không có `answer_incorrect` nào** trước khi vòng đóng. Engine nhiều bước (mỗi bước một `answer_*`) và vòng nhiều lượt như GT-026 (8 lượt một vòng) chỉ tính đúng khi mọi lần thử trong vòng đều đúng — không chỉ nhìn lần thử đầu tiên của vòng |
 | `attempt_count` | Lớn hơn trong hai: tổng `answer_selected` và `correct_count + incorrect_count` — mỗi `answer_correct`/`answer_incorrect` là một lần thử dù engine có phát `answer_selected` hay không |
 | `correct_count` `incorrect_count` | Đếm event tương ứng |
 | `hint_count` | `hint_requested` + `scaffold_escalated` |

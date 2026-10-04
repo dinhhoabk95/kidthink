@@ -616,3 +616,35 @@ describe("attempt_count khi engine chỉ phát answer_correct/answer_incorrect",
     expect(result.normalized_score).toBeGreaterThan(0);
   });
 });
+
+describe("rounds_correct — vòng nhiều lần thử (BR-SCO-01, §7.1)", () => {
+  function ev(seq: number, eventName: string) {
+    return { sessionUuid: "s1", seq, eventName, occurredAtMs: seq * 100 };
+  }
+
+  it("vòng nhiều bước đúng đúng rồi sai không tính là làm đúng ngay", () => {
+    const events = [
+      ev(1, "game_started"),
+      ev(2, "round_started"),
+      ev(3, "answer_correct"),
+      ev(4, "answer_correct"),
+      ev(5, "answer_incorrect"),
+      ev(6, "answer_correct"),
+      ev(7, "round_completed"),
+      ev(8, "game_completed"),
+    ];
+    expect(reconstructRounds(events).rounds_correct).toBe(0);
+  });
+
+  it("vòng mọi lần thử đúng tính là làm đúng ngay", () => {
+    const events = [
+      ev(1, "game_started"),
+      ev(2, "round_started"),
+      ev(3, "answer_correct"),
+      ev(4, "answer_correct"),
+      ev(5, "round_completed"),
+      ev(6, "game_completed"),
+    ];
+    expect(reconstructRounds(events).rounds_correct).toBe(1);
+  });
+});
