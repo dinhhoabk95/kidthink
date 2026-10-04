@@ -5,7 +5,7 @@ Playwright + CDP chạm thật, 390x844, DB dev đã gieo `content_version = 3` 
 
 | Kiểm | Kết quả |
 |---|---|
-| GT-035 `GL-C1-ALG-CMD-0009`, `-0010`, `GL-C2-DIR-CMD-0004` ở 390x844 | **ĐẠT**: `overflowsStage()` false, 24 ô (trước 27, 6 ô ngoài canvas), lưới 4×3, hàng lệnh và nút chạy hiện đủ (`gt035-GL-C1-ALG-CMD-0009-m390x844-v3.jpg` không lưu — chụp thử, xem số liệu). Chưa chơi hết vòng ba seed này |
+| GT-035 `GL-C1-ALG-CMD-0009`, `-0010`, `GL-C2-DIR-CMD-0004` ở 390x844 | **ĐẠT**: `overflowsStage()` false, 24 ô (trước 27, 6 ô ngoài canvas), lưới 4×3, hàng lệnh và nút chạy hiện đủ. Chưa chơi hết vòng ba seed này |
 | Intro `GL-C1-CMP-INTRO-0004` (cho `GL-C1-CMP-PAIR-0001`) | **ĐẠT**: 36/36 bước, mọi bước `recall` có đáp án trong ô chọn, hiện "Đã học xong", session GT-000 `completed`, score 1, 3 sao |
 | GT-026 vòng đúng dưới 60 % (`GL-C4-HOM-GNG-0001`, bỏ lỡ lượt go, chạm lượt nogo) | **ĐẠT** (`BR-E026-05`): đủ 3 vòng, hiện màn thưởng, `completed`, score 0, **1 sao** (sàn) |
 | GT-026 nút DOM của entity theo thời gian thực | **ĐẠT**: có 1 nút `sr-only` khi kích thích hiện, 0 nút giữa hai lượt |
