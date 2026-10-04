@@ -446,7 +446,9 @@ export class GT021Session extends TemplateGameSession<
     const zones = pickTrayZones(this.stageRect, this.trayRect);
     // Có khung: bàn đối xứng ở sân khấu, mảnh chọn trên khay, lời dẫn do shell vẽ.
     drawButterflyWingsBoard(ctx, zones?.stage ?? sceneBox(rs));
-    drawMirrorAxis(ctx, rs, this.content.axis, zones?.stage);
+    if (this.difficulty.show_axis_guide) {
+      drawMirrorAxis(ctx, rs, this.content.axis, zones?.stage);
+    }
     drawWoodenTokenDock(ctx, rs, zones?.tray);
 
     const targets = this.targetSlots;

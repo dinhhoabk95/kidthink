@@ -376,7 +376,7 @@ export const C2_GEO_01_SEED: SkillSeed = {
       code: "GL-C2-MIR-COMP-0025",
       template: "GT-021",
       band: "4-5",
-      difficulty: 2,
+      difficulty: 3,
       access_tier: "standard",
       theme: "school",
       rounds: 3,

@@ -242,13 +242,13 @@
     },
     "GT-015": {
       "difficulty_fixed": false,
-      "reason": "Số lượng ô trống cần điền tăng từ 1 ô (item_count = 2) lên 3 ô (item_count = 4) trên lưới 2x2 và 3x3",
+      "reason": "Số ô trống cần điền tăng từ 1 ô lên 3 ô trên lưới 2x2 và 3x3; khay luôn bằng grid_size, không có lưới 4x4 (BR-E015-04)",
       "levels": {
         "1": { "item_count": 2, "blank_count": 1, "distractor_count": 0 },
         "2": { "item_count": 2, "blank_count": 1, "distractor_count": 1 },
         "3": { "item_count": 3, "blank_count": 2, "distractor_count": 1 },
         "4": { "item_count": 3, "blank_count": 2, "distractor_count": 2 },
-        "5": { "item_count": 4, "blank_count": 3, "distractor_count": 2 }
+        "5": { "item_count": 3, "blank_count": 3, "distractor_count": 1 }
       }
     },
     "GT-016": {

@@ -23,57 +23,49 @@ function buildCells2x2(sym0: string, sym1: string) {
   ];
 }
 
-function buildCells3x3(sym0: string, sym1: string, sym2: string) {
+/** Ô trống của lưới 3×3: mỗi hàng và mỗi cột tối đa một ô để lời giải duy nhất (BR-E015-04). */
+const BLANKS_3X3: readonly (readonly [number, number])[] = [
+  [0, 0],
+  [1, 2],
+  [2, 1],
+];
+
+function buildCells3x3(
+  sym0: string,
+  sym1: string,
+  sym2: string,
+  blankCount: number
+) {
   const latin = [
     [sym0, sym1, sym2],
     [sym1, sym2, sym0],
     [sym2, sym0, sym1],
   ];
+  const blanks = BLANKS_3X3.slice(0, blankCount);
   return latin.flatMap((row, r) =>
     row.map((val, c) => ({
       row: r,
       col: c,
-      symbol_id: (r === 0 && c === 0) || (r === 1 && c === 2) ? null : val,
-    }))
-  );
-}
-
-function buildCells4x4(sym0: string, sym1: string, sym2: string, sym3: string) {
-  const latin = [
-    [sym0, sym1, sym2, sym3],
-    [sym1, sym0, sym3, sym2],
-    [sym2, sym3, sym0, sym1],
-    [sym3, sym2, sym1, sym0],
-  ];
-  return latin.flatMap((row, r) =>
-    row.map((val, c) => ({
-      row: r,
-      col: c,
-      symbol_id:
-        (r === 0 && c === 0) || (r === 1 && c === 1) || (r === 2 && c === 2)
-          ? null
-          : val,
+      symbol_id: blanks.some(([br, bc]) => br === r && bc === c) ? null : val,
     }))
   );
 }
 
 function resolveGridCells(
-  gridSize: 2 | 3 | 4,
-  symbols: { symbol_id: string }[]
+  gridSize: 2 | 3,
+  symbols: { symbol_id: string }[],
+  blankCount: number
 ) {
   const sym0 = safeGetItem(symbols, 0).symbol_id;
   const sym1 = safeGetItem(symbols, 1).symbol_id;
   if (gridSize === 2) {
     return buildCells2x2(sym0, sym1);
   }
-  if (gridSize === 3) {
-    return buildCells3x3(sym0, sym1, safeGetItem(symbols, 2).symbol_id);
-  }
-  return buildCells4x4(
+  return buildCells3x3(
     sym0,
     sym1,
     safeGetItem(symbols, 2).symbol_id,
-    safeGetItem(symbols, 3).symbol_id
+    blankCount
   );
 }
 
@@ -88,7 +80,7 @@ export const projectGT015: Projection<"GT-015"> = {
     }
 
     const params = getEngineDifficultyParams("GT-015", opts.difficulty);
-    const gridSize = params.item_count as 2 | 3 | 4;
+    const gridSize = params.item_count as 2 | 3;
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const shuffled = shuffleDeterministic(dataset.items, rng);
@@ -105,10 +97,9 @@ export const projectGT015: Projection<"GT-015"> = {
       };
     });
 
-    const cells = resolveGridCells(gridSize, symbols);
-
     const blankCount =
       typeof params.blank_count === "number" ? params.blank_count : 1;
+    const cells = resolveGridCells(gridSize, symbols, blankCount);
 
     return {
       content_pack: {

@@ -202,7 +202,7 @@ export const C2_MIR_01_SEED: SkillSeed = {
       code: "GL-C2-SYM-MIR-0003",
       template: "GT-021",
       band: "4-5",
-      difficulty: 2,
+      difficulty: 3,
       access_tier: "standard",
       theme: "animal",
       rounds: 3,

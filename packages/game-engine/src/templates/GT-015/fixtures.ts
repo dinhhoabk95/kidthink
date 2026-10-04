@@ -90,49 +90,35 @@ export const SAMPLE_LEVEL_2: GameLevelFixture<GT015Content, GT015Difficulty> = {
 export const SAMPLE_LEVEL_3: GameLevelFixture<GT015Content, GT015Difficulty> = {
   id: "SAMPLE-GT015-03",
   template_code: "GT-015",
-  title_vi: "Sudoku mini 4x4 Hình học có khối 2x2",
+  title_vi: "Sudoku mini 3x3 Hình học, hai ô trống",
   age_band: "5-6",
-  difficulty: 3,
+  difficulty: 4,
   access_tier: "standard",
   layout: "grid",
   content_pack: {
-    prompt: "Bé xếp các hình sao cho hàng, cột và ô 2x2 không bị trùng nhé!",
-    grid_size: 4,
-    regions: "row_col_box",
+    prompt: "Bé xếp các hình sao cho mỗi hàng và cột không bị trùng nhé!",
+    grid_size: 3,
+    regions: "row_col",
     symbols: [
       { symbol_id: "circle", asset: { kind: "emoji", ref: "🔴" } },
       { symbol_id: "square", asset: { kind: "emoji", ref: "🟦" } },
-      {
-        symbol_id: "triangle",
-        asset: { kind: "emoji", ref: "🔺" },
-      },
-      { symbol_id: "star", asset: { kind: "emoji", ref: "⭐" } },
+      { symbol_id: "triangle", asset: { kind: "emoji", ref: "🔺" } },
     ],
     cells: [
-      { row: 0, col: 0, symbol_id: "circle" },
+      { row: 0, col: 0, symbol_id: null }, // circle
       { row: 0, col: 1, symbol_id: "square" },
       { row: 0, col: 2, symbol_id: "triangle" },
-      { row: 0, col: 3, symbol_id: null }, // star
-
-      { row: 1, col: 0, symbol_id: "triangle" },
-      { row: 1, col: 1, symbol_id: null }, // star
-      { row: 1, col: 2, symbol_id: "circle" },
-      { row: 1, col: 3, symbol_id: "square" },
-
-      { row: 2, col: 0, symbol_id: "square" },
+      { row: 1, col: 0, symbol_id: "square" },
+      { row: 1, col: 1, symbol_id: "triangle" },
+      { row: 1, col: 2, symbol_id: null }, // circle
+      { row: 2, col: 0, symbol_id: "triangle" },
       { row: 2, col: 1, symbol_id: "circle" },
-      { row: 2, col: 2, symbol_id: "star" },
-      { row: 2, col: 3, symbol_id: null }, // triangle
-
-      { row: 3, col: 0, symbol_id: null }, // star
-      { row: 3, col: 1, symbol_id: "triangle" },
-      { row: 3, col: 2, symbol_id: "square" },
-      { row: 3, col: 3, symbol_id: "circle" },
+      { row: 2, col: 2, symbol_id: "square" },
     ],
   },
   difficulty_params: {
-    item_count: 4,
-    blank_count: 4,
+    item_count: 3,
+    blank_count: 2,
     hint_after_ms: 12_000,
     allow_retry: true,
   },

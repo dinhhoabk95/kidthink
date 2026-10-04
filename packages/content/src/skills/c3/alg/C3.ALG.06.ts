@@ -215,7 +215,7 @@ export const C3_ALG_06_SEED: SkillSeed = {
       code: "GL-C3-ALG-HIDE-0004",
       template: "GT-015",
       band: "5-6",
-      difficulty: 4,
+      difficulty: 5,
       theme: "body",
       rounds: 3,
     },

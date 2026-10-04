@@ -7,6 +7,9 @@ import type {
 } from "@mindkid/shared";
 import { createRng, resolveItemAsset, shuffleDeterministic } from "./utils.js";
 
+/** Số mảnh tối đa của band: sàn chạm làm band 4-5 không chứa quá 3 mảnh (BR-PSZ-13). */
+const MAX_PIECES_BY_BAND: Record<string, number> = { "4-5": 3 };
+
 export const projectGT021: Projection<"GT-021"> = {
   template: "GT-021",
   requires: { min_items: 2, max_items: 8 },
@@ -19,7 +22,11 @@ export const projectGT021: Projection<"GT-021"> = {
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const params = getEngineDifficultyParams("GT-021", opts.difficulty);
-    const patternCount = Math.min(params.item_count, dataset.items.length);
+    const patternCount = Math.min(
+      params.item_count,
+      MAX_PIECES_BY_BAND[opts.band] ?? params.item_count,
+      dataset.items.length
+    );
 
     const chosenItems = shuffleDeterministic(dataset.items, rng).slice(
       0,

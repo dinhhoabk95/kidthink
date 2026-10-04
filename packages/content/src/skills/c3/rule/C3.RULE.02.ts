@@ -231,7 +231,7 @@ export const C3_RULE_02_SEED: SkillSeed = {
       code: "GL-C3-RULE-TANG-0002",
       template: "GT-021",
       band: "4-5",
-      difficulty: 2,
+      difficulty: 3,
       access_tier: "standard",
       theme: "festival",
       rounds: 3,

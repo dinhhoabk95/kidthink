@@ -179,7 +179,7 @@ export const C4_EXP_02_SEED: SkillSeed = {
       code: "GL-C4-EXP-TANG-0004",
       template: "GT-021",
       band: "4-5",
-      difficulty: 2,
+      difficulty: 3,
       access_tier: "standard",
       theme: "body",
       rounds: 3,
