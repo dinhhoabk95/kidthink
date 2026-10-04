@@ -150,6 +150,7 @@ deploy một lô nội dung đã merge.
 | `BR-CSA-14` (provenance) | Mọi hàng seed mang `seed_batch_id` + `origin` + `authored_in = 'repo_seed'` | Khi phát hiện một lô sai, phải truy được lô nào cùng PR |
 | `BR-CSA-15` (mỗi cổng có ca âm) | Mỗi cổng ở §7.3 phải có **ít nhất một** test dựng nội dung vi phạm đúng cổng đó và khẳng định cổng đỏ | Không có ca âm thì một cổng chỉ kiểm `typeof` vẫn in "đạt" mãi mãi. Đo 2026-08-29: cổng 1 báo 552 đạt trong khi phép kiểm thật cho 162 trượt — xem §7.3a |
 | `BR-CSA-16` (cổng 1 nạp contract thật) | Cổng 1 **phải** nạp `content_contract` và `difficulty_contract` từ registry engine và gọi `parse`, kể cả `refine`. Cấm — NEVER thay bằng kiểm kiểu nông | `BR-GTC-02` parse lại ở server; nếu cổng seed không parse thì lỗi chỉ lộ ra lúc trẻ mở màn chơi, là chỗ đắt nhất để phát hiện |
+| `BR-CSA-17` (khoá phiên bản level sinh) | Level sinh từ kỹ năng mang một `GENERATED_LEVEL_CONTENT_VERSION` chung. Băm nội dung mọi level dựng ra (bỏ `content_version`) nằm trong `packages/content/content-version.lock.json` cùng số phiên bản. Băm đổi mà phiên bản không tăng → test **đỏ**; chỉ cập nhật khoá khi phiên bản đã tăng | `BR-CSA-01` cấm UPDATE nên đổi tham số, builder hay dataset mà quên tăng phiên bản thì seeder bỏ qua lặng lẽ và môi trường đã gieo giữ level cũ (#283: GT-035 độ khó 5 vẫn tràn ở DB dev) |
 
 ## 7. Data
 
@@ -309,6 +310,13 @@ Scenario: BR-CSA-01 — version mới thì INSERT và archive bản cũ
   Then version 2 có status published
   And version 1 có status archived
   And cả hai đổi trong một transaction
+
+Scenario: BR-CSA-17 — đổi nội dung level sinh bắt buộc tăng phiên bản
+  Given khoá content-version.lock.json ghi băm H và phiên bản N
+  When một tham số độ khó hoặc builder đổi nên băm nội dung level ra H' khác H
+  And GENERATED_LEVEL_CONTENT_VERSION vẫn là N
+  Then test khoá phiên bản đỏ
+  And chỉ khi tăng lên N+1 thì cập nhật khoá mới được ghi
 
 Scenario: BR-CSA-02 — seed ghi thẳng published
   Given một batch 30 game level qua đủ 10 cổng và đã merge

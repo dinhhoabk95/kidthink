@@ -15,10 +15,12 @@ const REGEX_MONTESSORI_CODE = /-01\d{2}$/;
 
 /**
  * Version của mọi level sinh từ kỹ năng. v2: tên level theo `BR-SDS-16`.
+ * v3: #283 — đổi số vật theo band ở sàn chạm (GT-004/008/009/015/021/029/030/035),
+ * khung năm vùng, recall GT-000 (`BR-CSA-17` khoá băm nội dung ở `content-version.lock.json`).
  * Đổi nội dung level đã gieo (kể cả `title`) thì tăng số này — seeder archive
  * bản cũ và publish bản mới trong một transaction; giữ nguyên số thì seeder bỏ qua.
  */
-export const GENERATED_LEVEL_CONTENT_VERSION = 2;
+export const GENERATED_LEVEL_CONTENT_VERSION = 3;
 
 /**
  * Chỗ trống trong `phrasing.prompt_template` mà bộ dựng level thay được.

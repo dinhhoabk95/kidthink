@@ -2,6 +2,7 @@ import type { SkillDataset, SkillSeed } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import {
   buildLevelsForSkill,
+  GENERATED_LEVEL_CONTENT_VERSION,
   normalizeThinkingTags,
 } from "../../src/builders/build-levels.js";
 import { ALL_SKILL_SEEDS, getSkillSeed } from "../../src/skills/index.js";
@@ -150,7 +151,7 @@ describe("normalizeThinkingTags (Task #266 / BR-STS-05 & T1.5, T1.6)", () => {
     expect(result).toEqual(["compare", "count"]);
   });
 
-  it("toàn corpus: tên level duy nhất trong kỹ năng, không lộ mã máy, content_version 2 (BR-SDS-16)", () => {
+  it("toàn corpus: tên level duy nhất trong kỹ năng, không lộ mã máy, content_version khớp hằng (BR-SDS-16)", () => {
     for (const skill of ALL_SKILL_SEEDS) {
       const titles = buildLevelsForSkill(skill).map((l) => l.header.title);
       expect(new Set(titles).size, skill.identity?.code).toBe(titles.length);
@@ -160,6 +161,6 @@ describe("normalizeThinkingTags (Task #266 / BR-STS-05 & T1.5, T1.6)", () => {
     }
     const sample = getSkillSeed("C1.NREC.01");
     const [first] = sample ? buildLevelsForSkill(sample) : [];
-    expect(first?.header.content_version).toBe(2);
+    expect(first?.header.content_version).toBe(GENERATED_LEVEL_CONTENT_VERSION);
   });
 });
