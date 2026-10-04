@@ -90,3 +90,24 @@ Máy thật có màn cảm ứng vật lý vẫn chưa thử; CDP phát đúng c
 - `play_sessions`: mọi phiên hoàn thành ở GT-026/027 ghi `score = 0`, `stars_earned = 1` dù đúng 100 %; chưa tra nguồn.
 - Intro `GL-C1-CMP-PAIR-0001` (GT-004): bước `recall` hỏi `asset_fast_cheetah` nhưng ô chọn không có vật đó — bài làm quen không qua được bằng cảm ứng.
 - Telemetry GT-031 phát `game_started` và `game_completed` hai lần mỗi phiên.
+
+## GT-035 lớp xoay máy dọc, trình duyệt thật (2026-10-04)
+
+Playwright + CDP `Input.dispatchTouchEvent`, `parent.standard@mindkid.test` hồ sơ Bé Đậu, level `GL-C1-ALG-CMD-0001`. Ảnh ở [`../../2026-10-04-rotate-gate/`](../../2026-10-04-rotate-gate/).
+
+| Kiểm | Kết quả |
+|---|---|
+| 844x390: lớp phủ hiện, `role="alert"`, `aria-label="Xoay máy dọc để chơi"`, không chữ trên màn (icon điện thoại + mũi tên), engine tạm dừng (`requiresPortrait()` true) | **ĐẠT** — `gt035-…-l844x390-gate.jpg` |
+| Chạm hai vị trí ô trên canvas khi lớp phủ hiện | **ĐẠT**: số lệnh vẫn 0, lớp phủ còn nguyên (`pointer-events: auto` chặn chạm) |
+| Xoay sang 390x844 | **ĐẠT**: lớp phủ biến mất, engine chạy lại, canvas 330x709, 19 slot, hàng lệnh và nút chạy hiện đủ — `…-after-rotate.jpg`, `…-programmed.jpg` |
+| Chơi hết 3 vòng bằng cảm ứng (gợi ý của engine chỉ ô, chạm theo toạ độ `renderSystem.viewport`; vòng 1 chạm nút chạy bằng cảm ứng, vòng 0 và 2 bằng Tab + Enter) | **ĐẠT**: tiến độ 1 → 2 → 3, vòng cuối thắng và hiện hộp thoại thưởng, 0 `pageerror`/`console.error` |
+| Xoay giữa vòng 3 (390x844 → 844x390 → 390x844, đã xếp đủ 3 lệnh) | **ĐẠT**: lớp phủ hiện, `paused=true`, quay lại thì lớp phủ tắt, `paused=false`, 3 lệnh còn nguyên, chạy tiếp thắng — `…-gate-midround.jpg`, `…-midround-back.jpg` |
+| Bàn phím: Tab tới nút hành động, Enter chạy chương trình, nhãn "Chạy chương trình" hiện khi focus | **ĐẠT** — `…-round0-end.jpg` |
+
+Chưa kiểm: máy thật có màn cảm ứng vật lý, `prefers-reduced-motion` của mũi tên xoay bằng mắt.
+
+### Lỗi dữ liệu lộ ra — CHƯA SỬA
+
+Ba seed GT-035 (`GL-C1-ALG-CMD-0009`, `GL-C1-ALG-CMD-0010`, `GL-C2-DIR-CMD-0004`) mà `1ca6645e` sửa **vẫn tràn ở 390x844 trong DB dev**: `overflowsStage()` true, 27 slot, 6 slot ra ngoài canvas (`gt035-GL-C1-ALG-CMD-0009-m390x844-stale-db.jpg`). Nguyên nhân: DB giữ `game_levels` `content_version = 1` với `collectible_count = 3`; seed mới (`collectible_count = 2`) vẫn là `content_version: 1` nên `seed:content` bỏ qua theo `(code, content_version)` (`content-seed-authoring.md` §5, `BR-CSA-01`). Cùng lỗi áp cho mọi level mà #283 hạ độ khó/đổi tham số qua `engine-difficulty-params.json` và `SkillLevelPlan` (khoảng 28 level B3, GT-009/029/030/035 độ khó 5): môi trường đã gieo không nhận nội dung mới. Cần bump `content_version` (v2 publish, v1 archive) cho các level đổi, hoặc quyết định khác; chưa làm vì liên quan nhiều workstream.
+
+Máy chủ dev đã dừng; script chụp tạm đã xoá; khoá `rl:*` của Valkey dev xoá ba lần để đăng nhập.
