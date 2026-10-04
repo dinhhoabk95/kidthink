@@ -167,3 +167,13 @@ Ghi chú đo của N (2026-10-03):
 - Tài liệu cho người quyết: `docs/qa/283-dataset-review.md` (phiếu duyệt dataset), `docs/qa/283-seed-content-runbook.md` (gieo staging/prod, **phải triển khai mã khớp theo mã level trước**), `docs/qa/touch-device-checklist.md`.
 - Chờ người: (1) duyệt dataset, gồm A3/A4 (bù độ khó GT-015 band 5-6, GT-021 band 4-5 còn thang gần phẳng); (2) xác nhận lớp xoay máy GT-035 và `BR-SCO-09`; (3) thử thiết bị cảm ứng vật lý (thêm GT-022); (4) `seed:content` ở staging/prod. Spec `play-stage-zones.md` giữ `approved` tới khi xong.
 
+## Cập nhật 2026-10-04 (đợt năm) — quyết định đã chốt theo nghiên cứu
+
+Nghiên cứu: `docs/qa/283-research-orientation.md`, `283-research-dataset.md`, `283-research-scoring.md` (bằng chứng chủ yếu học thuật; không xác minh được số liệu app thương mại qua tìm kiếm web).
+
+- **Lớp xoay máy GT-035: chốt giữ** (`BR-PSZ-14`), thêm khoá dọc best-effort khi toàn màn hình/PWA và dòng nhắc phụ huynh sau 5 s (`3183e15c`). Loại phương án thu mục tiêu dưới sàn chạm.
+- **`BR-SCO-09` và ngưỡng sao 0,85/0,55, sàn 1 sao: chốt giữ.** Quyết định "lượt hết giờ trung tính ở band 3-4" không áp dụng vì GT-026 cấm band 3-4; `BR-E026-08` ghi rõ điều kiện nếu mở band đó (`cc4d31f8`).
+- **Dataset: chốt nhận** GT-004/008/009/029/030/035/024; A3/A4 triển khai: GT-015 band 5-6 độ khó 5 = lưới 3×3, 3 ô trống, khay 3 ký hiệu, lời giải duy nhất (`BR-E015-04`); GT-021 band 4-5 độ khó 3 tắt trục dẫn, engine nay đọc `show_axis_guide` (`BR-E021-04`) (`d1593991`). `content_version` 5, dev DB đã gieo. `check:difficulty-ladder` đúng trần 186/186 — muốn nới phải có bảng tham số theo band.
+- **Cổng cuối:** `lint`, `lint:deps`, mọi `check:*` phase 1, `typecheck` 0 lỗi, `check:test-ratchet` 36/36 xanh.
+- **Còn lại, không tự làm được:** (a) thiết bị cảm ứng vật lý (`docs/qa/touch-device-checklist.md`, thêm GT-015 độ khó 5, GT-021 độ khó 3, GT-022, lớp xoay máy trên Android/iOS thật); (b) `seed:content` v5 ở staging/prod theo `docs/qa/283-seed-content-runbook.md` (triển khai mã khớp theo mã level trước). Spec `play-stage-zones.md` giữ `approved` tới khi (a) xong; (b) không chặn spec nhưng chặn việc dataset mới tới trẻ.
+
