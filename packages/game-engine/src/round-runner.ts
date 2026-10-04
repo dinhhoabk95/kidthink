@@ -117,6 +117,17 @@ const LIFECYCLE_EVENTS: ReadonlySet<string> = new Set([
   "game_completed",
 ]);
 
+/**
+ * `round_started`/`round_completed` do runner phát đúng một lần mỗi vòng
+ * (`BR-RSP-12`); `reconstructRounds` đếm `round_started` làm `rounds_total`, nên
+ * bản session tự ghi (GT-026 …) bị bỏ — nếu không, `first_try_ratio` bị chia
+ * cho số vòng gấp đôi và 24/24 đúng vẫn chỉ được 2 sao.
+ */
+const RUNNER_OWNED_EVENTS: ReadonlySet<string> = new Set([
+  "round_started",
+  "round_completed",
+]);
+
 export class RoundRunner {
   private readonly rounds: RoundConfig[];
   private readonly sessionFactory: SessionFactory;
@@ -400,7 +411,10 @@ export class RoundRunner {
    * đường này thì mọi event của engine không bao giờ tới `/events`.
    */
   recordExternalEvent(event: TelemetryEvent): void {
-    if (this.isDuplicateLifecycleEvent(event.event_name)) {
+    if (
+      RUNNER_OWNED_EVENTS.has(event.event_name) ||
+      this.isDuplicateLifecycleEvent(event.event_name)
+    ) {
       return;
     }
     this.allEvents.push(event);
@@ -680,7 +694,10 @@ export class RoundRunner {
     }
     const telemetry = this.currentSession.getTelemetry();
     for (const event of telemetry.events) {
-      if (this.isDuplicateLifecycleEvent(event.event_name)) {
+      if (
+        RUNNER_OWNED_EVENTS.has(event.event_name) ||
+        this.isDuplicateLifecycleEvent(event.event_name)
+      ) {
         continue;
       }
       // Cùng tham chiếu event thì đã thu rồi; so tên + thời điểm làm rơi event
