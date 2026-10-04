@@ -61,6 +61,9 @@ function findHitDifferenceObject(
   return null;
 }
 
+/** Cột phải của bố cục cũ nằm cách cột trái 480 logic px (chỉ dùng khi không có slot). */
+const RIGHT_COLUMN_OFFSET = 480;
+
 export class GT025Session extends TemplateGameSession<
   GT025Content,
   GT025Difficulty
@@ -102,8 +105,8 @@ export class GT025Session extends TemplateGameSession<
 
     this.content.left_objects.forEach((obj, i) => {
       const slot = sources[i];
-      const x = obj.x ?? slot?.x ?? 200;
-      const y = obj.y ?? slot?.y ?? 250;
+      const x = slot?.x ?? obj.x ?? 200;
+      const y = slot?.y ?? obj.y ?? 250;
       resolved.push({
         id: obj.id,
         x,
@@ -117,8 +120,9 @@ export class GT025Session extends TemplateGameSession<
 
     this.content.right_objects.forEach((obj, i) => {
       const slot = targets[i];
-      const x = obj.x === undefined ? (slot?.x ?? 680) : obj.x + 480;
-      const y = obj.y ?? slot?.y ?? 250;
+      const x =
+        slot?.x ?? (obj.x === undefined ? 680 : obj.x + RIGHT_COLUMN_OFFSET);
+      const y = slot?.y ?? obj.y ?? 250;
       resolved.push({
         id: obj.id,
         x,

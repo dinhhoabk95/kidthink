@@ -63,3 +63,17 @@ Playwright + CDP chạm thật, 390x844, `parent.standard` Bé Đậu, `GL-C4-HO
 | Mở cổng rồi chạm ngay khi vật hiện (lượt go) | **ĐẠT**: `item_selected` `outcome: hit`, `action_type: tap`, đúng |
 
 GT-027 cùng lớp lỗi? **Không**: lưới vật của GT-027 là cảnh tĩnh, không có đồng hồ lượt chạy trong lúc cổng đóng; chạm trong lúc câu dẫn đọc bị nuốt đúng `BR-PNR-11` và không ghi `miss`. Dev server đang chạy của luồng khác được dùng chung, không dừng; script tạm đã xoá.
+
+## GT-025 / GT-031 chạm không ăn + `game_started` (workstream T, 2026-10-04)
+
+Playwright, 390x844, Bé Đậu, DB dev v3. Phải chọn bé ở màn "Chọn bé sẽ chơi" rồi mở lại level thì mới có canvas (không chọn thì `NO_ACTIVE_CHILD`, không có phiên).
+
+| Kiểm | Kết quả |
+|---|---|
+| GT-031 `GL-C1-ADD-PICT-0002`, chạm hai đồng 5đ + 2đ bằng `touchscreen` | **Không lỗi**: sang "Vòng 2 trên 3", `/events` gửi lên. Lần R không chạy được là do bộ chạy (chưa chọn bé hoặc đăng nhập chưa kịp hydrate) |
+| GT-025 `GL-C2-GEO-SPOT-0001`, chạm bốn vật ở chỗ vẽ | **Lỗi thật**, không phản hồi, không sự kiện. Vùng chạm lấy `x`/`y` cũ của `content_pack` (100/200, cột phải +480) trong khi vật vẽ ở slot của `zones.stage` |
+| Sau sửa (`BR-E025-04`): chạm nhầm rồi chạm đúng vật khác biệt | **Đạt**: sang vòng 2, `game_started` là `seq = 1` |
+
+`game_started`: spec (`play-event-ingestion` §7.3, `event-catalog`) là một lần cả phiên và luôn `seq = 1`; `game_completed` một lần sau vòng cuối. `RoundRunner` trước đó dedupe theo vòng (GT-035 3 lần, GT-026 1 lần) và `game_started` có thể không đứng đầu. Nay một lần, đứng đầu.
+
+Chưa quét: GT-022 vẫn lấy `obj.x`/`obj.y` của nội dung cho cảnh tự do (có `anchor` ghi đè ở `GT-022/session.ts:336`); chưa đo bằng trình duyệt.
