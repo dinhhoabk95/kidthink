@@ -144,3 +144,12 @@ Ghi chú đo của N (2026-10-03):
   3. [ ] GT-026/027 chơi hết vòng trên trình duyệt: **xong** (Playwright + CDP, 390x844 và 844x390; tìm và sửa hai lỗi GT-026 — đứng màn trống sau lượt cuối, mất hai lượt đầu vì đồng hồ chạy khi âm lời dẫn — `d4564b3a`). Cảm ứng đa điểm: **mô phỏng CDP xanh**; còn thiếu **thiết bị cảm ứng vật lý** và lớp xoay máy `BR-PSZ-14` chưa chụp trên trình duyệt thật.
   Còn quan sát chưa sửa (README QA 2026-10-03): GT-026 kết thúc dưới 60% đúng cũng treo như lỗi 1; nút DOM của entity GT-026 không cập nhật thời gian thực; `play_sessions` của GT-026/027 luôn `score=0`; intro GT-004 `GL-C1-CMP-PAIR-0001` không có đáp án; GT-031 phát `game_started`/`game_completed` hai lần.
 - [x] `index.md` cập nhật; tick "Mở task con" ở `277-play-stage-zones-todo.md`
+
+## Cập nhật 2026-10-04 (đợt hai) — còn lại trước khi đổi `implemented`
+
+- Lớp xoay máy `BR-PSZ-14` kiểm trên trình duyệt thật (844x390 ↔ 390x844, bàn phím, xoay giữa vòng): đạt (`bd55c5de`, ảnh ở `docs/qa/engine-captures/2026-10-04-rotate-gate/`).
+- Dataset #283 chưa tới DB đã gieo vì `content_version` không đổi → nâng lên 3 + khoá `content-version.lock.json` (`BR-CSA-17`, `253829cf`). Dev đã gieo v3; **staging/prod cần người chạy `seed:content`** (`BR-CSA-07`).
+- Lỗi phát hiện khi QA và đã sửa: GT-026 treo khi <60% và nút DOM không cập nhật (`BR-E026-05`); điểm `play_sessions` luôn 0 ở 26 template (`ad821d92`); `RoundRunner` là nguồn duy nhất của `round_started/round_completed` (`BR-RSP-12`, `f62142c7`); intro mất sau khi archive v1 (`64d19aaf`, `BR-CIG-08`); recall GT-000 thiếu đáp án (`BR-E000-13`); sự kiện vòng đời phát đôi (`5919730e`); flake test ratchet do chạy vitest đồng thời (khoá advisory, `1181c225`; baseline 40 → 39).
+- Còn mở: **thiết bị cảm ứng vật lý**; chủ nội dung duyệt giảm độ khó (B3 28+ level, GT-009/029/030/035 độ khó 5, GT-009 độ khó 5 = độ khó 4); chủ sản phẩm xác nhận lớp xoay máy cho GT-035; `recommendation.ts` khớp theo `game_levels.id`; GT-026 hết giờ không phát `answer_incorrect`; `first_try_ratio` theo thao tác đầu vòng ở engine nhiều bước; cảnh báo hydration ở `/me`.
+- Spec `play-stage-zones.md` **vẫn `approved`** tới khi ba mục đầu của "Còn mở" xong.
+
