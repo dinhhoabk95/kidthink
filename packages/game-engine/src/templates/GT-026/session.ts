@@ -42,6 +42,16 @@ export class GT026Session extends TemplateGameSession<
   readonly holdsClockWhileInputClosed = true;
 
   private inhibitionSystem!: InhibitionSystem;
+  private isInputOpen = true;
+
+  setInputOpen(isOpen: boolean): void {
+    this.isInputOpen = isOpen;
+  }
+
+  /** Kích thích chỉ hiện khi chạm được (`BR-E026-04`). */
+  private isStimulusVisible(): boolean {
+    return this.isInputOpen && this.inhibitionSystem?.getState() === "stimulus";
+  }
 
   setupEntities(): void {
     this.isWon = false;
@@ -216,7 +226,7 @@ export class GT026Session extends TemplateGameSession<
   override getView(): EngineView {
     const slot = this.slots[0];
     const trial = this.inhibitionSystem?.getCurrentTrial();
-    const isStimulus = this.inhibitionSystem?.getState() === "stimulus";
+    const isStimulus = this.isStimulusVisible();
     const entities: ViewEntity[] = [];
 
     const now = Date.now();
@@ -250,8 +260,7 @@ export class GT026Session extends TemplateGameSession<
       return null;
     }
     const trial = this.inhibitionSystem?.getCurrentTrial();
-    const isStimulus = this.inhibitionSystem?.getState() === "stimulus";
-    if (isStimulus && trial?.kind === "go") {
+    if (this.isStimulusVisible() && trial?.kind === "go") {
       return 0;
     }
     return null;
@@ -288,7 +297,11 @@ export class GT026Session extends TemplateGameSession<
     // Tiến độ không vẽ trên canvas (`BR-PSZ-06`).
     const trial = this.inhibitionSystem.getCurrentTrial();
 
-    if (!trial || this.inhibitionSystem.getState() !== "stimulus") {
+    if (
+      !trial ||
+      this.isInputOpen === false ||
+      this.inhibitionSystem.getState() !== "stimulus"
+    ) {
       // Khoảng nghỉ giữa hai lượt: màn phải trống, đó là phần của bài kiểm ức chế.
       this.drawRenderFeedback(rs, ctx);
       return;

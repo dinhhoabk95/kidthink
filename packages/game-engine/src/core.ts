@@ -384,8 +384,9 @@ export class GameEngine {
     this.applyDegradation(deltaMs);
     const session = this.activeSession;
     const wasWon = session?.checkWinCondition() ?? false;
-    const isClockHeld =
-      !this.isInputOpen() && holdsClockWhileInputClosed(session);
+    const isInputOpen = this.isInputOpen();
+    session?.setInputOpen?.(isInputOpen);
+    const isClockHeld = !isInputOpen && holdsClockWhileInputClosed(session);
     const updateResult = session?.update?.(isClockHeld ? 0 : deltaMs);
     if (updateResult && updateResult.feedback !== "none") {
       this.onUpdateVerdict?.(updateResult.valid);

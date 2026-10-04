@@ -85,6 +85,12 @@ export interface GameSession {
    * engine dừng đồng hồ trợ giúp như với `GameEngine.acceptingInput`.
    */
   isAcceptingInput?(): boolean;
+  /**
+   * Engine báo trạng thái cổng cử chỉ mỗi khung (trước `update`) để session
+   * không hiện thứ chạm sẽ bị nuốt — GT-026 ẩn kích thích khi cổng đóng
+   * (`BR-E026-04`).
+   */
+  setInputOpen?(isOpen: boolean): void;
 }
 
 export abstract class BaseGameSession implements GameSession {
