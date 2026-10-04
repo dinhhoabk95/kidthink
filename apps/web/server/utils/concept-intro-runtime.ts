@@ -128,18 +128,31 @@ async function resolveCallerChildId(
   return child?.id ?? null;
 }
 
-export async function findCompletedLevelIds(
+export interface IntroLevelRef {
+  readonly levelCode: string;
+  readonly levelId: number;
+}
+
+/**
+ * Id các level làm quen (bản đang published) mà trẻ/khách đã hoàn thành.
+ * Đối chiếu theo **mã level**: khi cả danh mục lên bản content mới (`BR-CSA-17`)
+ * bản cũ bị archive và `game_levels.id` đổi, nhưng bài đã làm vẫn phải tính.
+ */
+export async function findCompletedIntroLevelIds(
   db: ReturnType<typeof getOwnerDb>,
-  levelIds: number[],
+  levels: readonly IntroLevelRef[],
   childProfileId: number | null,
   guestDeviceId?: string
 ): Promise<Set<number>> {
-  if (levelIds.length === 0) {
+  if (levels.length === 0) {
     return new Set();
   }
 
   const conditions = [
-    inArray(playSessions.gameLevelId, levelIds),
+    inArray(
+      gameLevels.code,
+      levels.map((l) => l.levelCode)
+    ),
     eq(playSessions.completionStatus, "completed"),
     eq(playSessions.isPreview, false),
   ];
@@ -153,11 +166,15 @@ export async function findCompletedLevelIds(
   }
 
   const completedSessions = await db
-    .select({ gameLevelId: playSessions.gameLevelId })
+    .selectDistinct({ code: gameLevels.code })
     .from(playSessions)
+    .innerJoin(gameLevels, eq(gameLevels.id, playSessions.gameLevelId))
     .where(and(...conditions));
 
-  return new Set(completedSessions.map((s) => s.gameLevelId));
+  const completedCodes = new Set(completedSessions.map((s) => s.code));
+  return new Set(
+    levels.filter((l) => completedCodes.has(l.levelCode)).map((l) => l.levelId)
+  );
 }
 
 export async function findCompletedLevelCodes(
@@ -330,9 +347,9 @@ export async function checkLevelIntroRequired(
   }
 
   const childProfileId = await resolveCallerChildId(db, caller);
-  const completedLevelIds = await findCompletedLevelIds(
+  const completedLevelIds = await findCompletedIntroLevelIds(
     db,
-    introLevels.map((l) => l.levelId),
+    introLevels,
     childProfileId,
     options.guestDeviceId
   );
