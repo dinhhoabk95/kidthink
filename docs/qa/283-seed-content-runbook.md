@@ -25,19 +25,19 @@ chạy lên môi trường khác local (`BR-CSA-07`). Mỗi môi trường làm 
 
 ## 2. Gieo
 `pnpm db:seed:content -- --batch=SEED-283-v3` (một giao dịch, `BR-CSA-05`).
-Kỳ vọng: toàn bộ danh mục chuyển v3: `Rows inserted` = số hàng v3; bản cũ chuyển `archived`. Chạy lần hai phải báo
+Kỳ vọng: toàn bộ danh mục chuyển v4: `Rows inserted` = số hàng v4; bản cũ chuyển `archived`. Chạy lần hai phải báo
 inserted = 0 (idempotent, `BR-CSA-06`).
 
 ## 3. Hậu kiểm
 ```sql
 SELECT content_version, status, count(*) FROM game_levels GROUP BY 1,2 ORDER BY 1,2;
--- Kỳ vọng: v3 published 6380; mọi bản cũ archived (v1 6380 và/hoặc v2 6380)
-SELECT code, content_pack->'params'->>'collectible_count' FROM game_levels
+-- Kỳ vọng: v4 published 6380; mọi bản cũ archived (dev: v1 6380 + v3 6380)
+SELECT code, difficulty_params->>'collectible_count' FROM game_levels
  WHERE code IN ('GL-C1-ALG-CMD-0009','GL-C1-ALG-CMD-0010','GL-C2-DIR-CMD-0004') AND status='published';  -- = 2
 SELECT count(*) FROM content_skill_map m JOIN game_levels l ON l.id=m.entity_id
  WHERE m.entity_type='game_level' AND l.status='published';   -- = 6399
 ```
-(Nếu khoá JSON `collectible_count` không ở đường dẫn trên, đọc `content_pack` của một level rồi chỉnh truy vấn.)
+(`collectible_count` nằm ở cột `difficulty_params`, đã kiểm trên dev 2026-10-04.)
 Kiểm trên ứng dụng bằng một tài khoản bé **đã có phiên ở bản cũ**:
 - [ ] `/play`, `/me`, `/home`, dashboard, stickers, map tải được; `/me` hiện khối "Đang xem", không cảnh báo hydration.
 - [ ] Mở level đã qua intro ở bản cũ (ví dụ GT-026/027): **không** `INTRO_REQUIRED` (cổng khớp theo mã, `BR-CIG-08`).

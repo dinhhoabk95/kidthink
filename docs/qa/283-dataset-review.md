@@ -5,7 +5,7 @@
 `packages/content/src/builders/gt-000.ts`. Chỉ đếm; không chạy lại builder ở bản cũ.
 
 Lý do chung: ở sàn chạm của band (`BR-PSZ-04`) và canvas thấp, số vật cũ không vừa sân khấu; không thu vật dưới sàn
-(`BR-PSZ-13`). Nên giảm số vật/độ khó thay vì nới cổng. Phiên bản nội dung đã nâng lên 3 (`BR-CSA-17`).
+(`BR-PSZ-13`). Nên giảm số vật/độ khó thay vì nới cổng. Phiên bản nội dung đã nâng lên 4 (`BR-CSA-17`; v3 đã gieo ở dev, v4 thêm manh mối GT-009 độ khó 5).
 
 **Người duyệt:** chủ nội dung. Mỗi mục: ✅ nhận · ✏️ đổi hướng.
 
@@ -35,7 +35,7 @@ bậc 2 mà `premium` (`GL-C1-CNT-TANG-0003`) là cố ý để không đổi qu
 
 | # | Engine | Tham số | Cũ → mới | Level phục vụ ở bậc 5 | Phẳng thang? | Đề xuất |
 |---|---|---|---|---|---|---|
-| B1 | GT-009 | `item_count`/`candidate_count`/`distractor_count` | 10/10/9 → 8/8/7 | 21 (4-5: 6 · 5-6: 15) | **Có**: bậc 5 ≡ bậc 4 (8/3 manh mối/8/7) — mất khác biệt độ khó | ✏️ Nên đổi: nâng bậc 5 bằng `clue_count` 3→4 (`GT-009.md:216` cho tối đa 4 manh mối ở 5-6) thay vì thêm ứng viên |
+| B1 | GT-009 | `item_count`/`candidate_count`/`distractor_count` | 10/10/9 → 8/8/7 | 21 (4-5: 6 · 5-6: 15) | **Có**: bậc 5 ≡ bậc 4 (8/3 manh mối/8/7) — mất khác biệt độ khó | ✅ **Đã áp (v4, `63fc86eb`)**: bậc 5 band 5-6 có 4 manh mối (`BR-E009-04`), band 4-5 tối đa 3 |
 | B2 | GT-029 | `item_count`/`initial_count` | 10 → 8 (`remove_count` 4 giữ) | 7 (4-5: 2 · 5-6: 5) | Không: bậc 4 `remove_count` 3, bậc 5 là 4 | ✅ Nhận |
 | B3 | GT-030 | `item_count` | 5 → 4 | 6 (5-6) | Gần phẳng: chỉ khác `length_in_units` 8→10 và `gap_tolerance_pct` 8→6 | ✅ Nhận; ghi nhận khác biệt chỉ còn ở độ dài/dung sai |
 | B4 | GT-035 | `collectible_count` | 3 → 2 (`item_count` 8, `max_commands` 8, `obstacle_count` 4 giữ) | 3 (5-6) | Không: bậc 5 vẫn khác bậc 4 ở 3 tham số | ✅ Nhận (`BR-E035-07`) |
@@ -56,4 +56,12 @@ Hạng truy cập · mã level (`BR-CSA-10`) · số level (6380 mỗi phiên b�
 ## E. Điểm cần chốt
 1. A3, A4, B1: có bù khác biệt độ khó bằng tham số khác không (đề xuất ✏️), hay nhận thang phẳng hơn.
 2. Hạ trần spec GT-009/GT-029 về 8, hay giữ trần cũ và coi 8 là giới hạn runtime theo sàn chạm.
-3. Nhận mốc phiên bản 3 cho **toàn bộ** danh mục (không chỉ ~35 level), vì khoá `BR-CSA-17` băm toàn cục.
+3. Nhận mốc phiên bản 4 cho **toàn bộ** danh mục (không chỉ ~35 level), vì khoá `BR-CSA-17` băm toàn cục.
+
+
+## F. Đã xử lý trong v4 (2026-10-04)
+- **B1 GT-009:** áp (xem trên). Lệch spec trần 8 của `GT-009.md`/`GT-029.md` đã sửa.
+- **B3 GT-030:** thang không phẳng — bậc 5 khác bậc 4 ở `length_in_units` 8→10 và `gap_tolerance_pct` 8→6; không cần đổi thêm.
+- **A1 GT-004 · 4-5, A3 GT-015 · 5-6:** thang các bậc còn lại vẫn tăng đều (GT-004: 4→10 vật không thể vừa; bảng tham số theo bậc dùng chung mọi band nên không thêm tham số riêng cho một band). **Quyết: nhận band ngắn hơn một bậc**, không bịa bậc 5 mới. Hộp bảo vệ: `difficulty-params.test.ts` kiểm mỗi bậc của GT-004/009/015/021/029/030/035 khác bậc trước.
+- **A4 GT-021 · 4-5:** vẫn 4 level bậc 1 và 18 level bậc 2 — **phân bố dốc phẳng, chưa xử lý**: tách cần chuyển level giữa các bậc hoặc bảng tham số theo band, đều là thay đổi nội dung ngoài #283. Chủ nội dung quyết (E.1).
+- Dev DB đã gieo v4: 6380 published, v1/v3 archived (6380 mỗi bản), 6399 ánh xạ kỹ năng published. Ba seed GT-035 `collectible_count = 2` (cột `difficulty_params`).
