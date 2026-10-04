@@ -13,6 +13,7 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
 import {
   dockRectAroundSlots,
@@ -32,7 +33,11 @@ import {
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT029Content, GT029Difficulty } from "./template.js";
-import { layoutOptionSlots, splitItemsAndOptions } from "./zone-layout.js";
+import {
+  computePackedItemsAndOptions,
+  layoutOptionSlots,
+  splitItemsAndOptions,
+} from "./zone-layout.js";
 
 interface GT029ActionPayload {
   item_id?: string;
@@ -112,6 +117,17 @@ export class GT029Session extends TemplateGameSession<
       (slot, i) => ({ ...slot, index: totalItems + i })
     );
 
+    if (this.stageRect && itemSlots.some((slot) => slot.page !== 0)) {
+      return insetDrawSize(
+        computePackedItemsAndOptions(
+          this.stageRect,
+          totalItems,
+          optionCount,
+          resolveTouchFloor(band, this.cssPerLogic)
+        ),
+        this.stageRect
+      );
+    }
     return insetDrawSize([...itemSlots, ...optionSlots], this.stageRect);
   }
 

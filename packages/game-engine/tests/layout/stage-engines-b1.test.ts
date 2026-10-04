@@ -67,18 +67,6 @@ const ACTIVE_BANDS: Readonly<
 };
 const ROUNDS_PER_CASE = 2;
 
-/**
- * Nợ đã đo (`code viewport` → số ca band × level còn vi phạm). Số chỉ được giảm;
- * mỗi mục phải có nguyên nhân gốc ghi ở đây.
- */
-const KNOWN_STAGE_DEBT_CASES: Readonly<Record<string, number>> = {
-  // Số đo sau khi khay nhiều hàng, không phân trang và cột lời dẫn bên trái
-  // (`play-stage-zones.md` `BR-PSZ-13`). Còn lại là giới hạn vật lý: sàn chạm của
-  // band ở canvas thấp làm số ô cần xếp lớn hơn diện tích sân khấu. Chỉ được giảm.
-  "GT-009 ngang 610x350": 21,
-  "GT-025 ngang 610x350": 3,
-  "GT-029 ngang 610x350": 32,
-};
 /** Đủ dài để pha loé của GT-012 hết và lựa chọn hiện ra. */
 const PHASE_ADVANCE_MS = 5000;
 const MAX_REPORTED_VIOLATIONS = 6;
@@ -262,11 +250,9 @@ describe.each(B1_CODES)("%s vào khung năm vùng — lô B1 (Task #283)", (code
           }
         }
       }
-      const debt = KNOWN_STAGE_DEBT_CASES[`${code} ${frame.name}`] ?? 0;
-      const reported = violatingCases.size <= debt ? [] : found;
       expect(
-        reported.slice(0, MAX_REPORTED_VIOLATIONS),
-        `${violatingCases.size} ca vi phạm (nợ đã ghi ${debt}): ${summarize(found)}`
+        found.slice(0, MAX_REPORTED_VIOLATIONS),
+        `${violatingCases.size} ca vi phạm: ${summarize(found)}`
       ).toEqual([]);
     }
   );

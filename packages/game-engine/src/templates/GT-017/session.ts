@@ -280,16 +280,18 @@ export class BlockStackSession extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     if (this.stageRect) {
+      const touchFloor = resolveTouchFloor(ageBand, this.cssPerLogic);
       const { hero, rest } = splitHeroStage(
         this.stageRect,
-        this.content.options.length > 0
+        this.content.options.length > 0,
+        { count: this.content.options.length, touchFloor }
       );
       return [
         heroSlot(hero, 0),
         ...computeStageCellSlots({
           count: this.content.options.length,
           stage: rest,
-          touchFloor: resolveTouchFloor(ageBand, this.cssPerLogic),
+          touchFloor,
           maxCell: { w: HERO_OPTION_CELL_MAX_PX, h: HERO_OPTION_CELL_MAX_PX },
           role: "source",
           firstIndex: 1,

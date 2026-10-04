@@ -36,24 +36,6 @@ const VIEWPORTS = [
   { name: "landscape điện thoại 610x350", w: 610, h: 350 },
   { name: "desktop 964x628", w: 964, h: 628 },
 ] as const;
-/**
- * Nợ đã đo (`BR-LAY-05`): số level (mẫu + seed) có cặp vùng chạm cách nhau
- * < `SLOT_GAP_PX`, theo mã và cỡ canvas. Chỉ GT-024: waypoint của hình nhiều
- * đỉnh (ngôi sao) tự nó đã gần nhau hơn sàn chạm 105 logic px của điện thoại,
- * không dịch được vì toạ độ do nội dung quyết định. Số chỉ được giảm.
- */
-const KNOWN_HIT_GAP_DEBT: Readonly<
-  Record<string, Readonly<Record<string, number>>>
-> = {
-  // Hình nhiều đỉnh (GT-024): waypoint do nội dung quyết định, tự nó gần nhau
-  // hơn sàn chạm của canvas thấp, không dịch được. Chỉ được giảm.
-  "GT-024": {
-    "desktop 964x628": 1,
-    "landscape điện thoại 610x350": 1,
-    "portrait 330x697": 1,
-  },
-};
-
 /** Số lần chạm thử để đẩy trạng thái vòng đi tới giữa chừng. */
 const MID_ROUND_TAPS = 3;
 
@@ -185,9 +167,7 @@ describe.each(B4_CODES)("lô B4 — %s trong khung năm vùng", (code) => {
       }
 
       expect(problems.length, problems.slice(0, 4).join("; ")).toBe(0);
-      expect(hitGapCases.size, [...hitGapCases].join("; ")).toBeLessThanOrEqual(
-        KNOWN_HIT_GAP_DEBT[code]?.[viewport.name] ?? 0
-      );
+      expect(hitGapCases.size, [...hitGapCases].join("; ")).toBe(0);
     });
   });
 });

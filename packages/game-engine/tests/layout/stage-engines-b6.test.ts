@@ -58,22 +58,6 @@ const VIEWPORTS: readonly Viewport[] = [
 /** Cả ba engine chỉ chơi ở band 5-6 (`banned_age_bands`). */
 const BAND: AgeBand = "5-6";
 
-/**
- * Nợ đã đo (Task #283 B6): số ca (mẫu + seed) có slot ra ngoài vùng của nó,
- * hai vùng chạm cách nhau dưới `SLOT_GAP_PX`, hoặc lệnh vẽ ngoài sân khấu và
- * khay, theo `mã|khung`. Cặp không có tên ở đây phải bằng 0. Số chỉ được giảm.
- */
-const KNOWN_LAYOUT_DEBT_CASES: Readonly<Record<string, number>> = {
-  // Số đo sau khi khay nhiều hàng, không phân trang và cột lời dẫn bên trái
-  // (`play-stage-zones.md` `BR-PSZ-13`). Còn lại là giới hạn vật lý: sàn chạm của
-  // band ở canvas thấp làm số ô cần xếp lớn hơn diện tích sân khấu. Chỉ được giảm.
-  "GT-030|máy tính 964x628": 43,
-  "GT-030|portrait 330x697": 6,
-  "GT-030|điện thoại ngang 610x350": 6,
-  "GT-033|máy tính 964x628": 5,
-  "GT-033|điện thoại ngang 610x350": 2,
-};
-
 const B6_CODES: readonly string[] = ["GT-030", "GT-031", "GT-033"];
 
 const PLAY_TIME_MS = 0;
@@ -146,6 +130,7 @@ interface TrayFlags {
   readonly needsTray: boolean;
   readonly trayItemCount: number;
   readonly trayHasLabels?: boolean;
+  readonly stageRowCount?: number;
 }
 
 function frameFor(viewport: Viewport, tray: TrayFlags): Frame {
@@ -163,6 +148,7 @@ function frameFor(viewport: Viewport, tray: TrayFlags): Frame {
     needsTray: tray.needsTray,
     trayItems: tray.trayItemCount,
     trayLabels: tray.trayHasLabels,
+    stageRows: tray.stageRowCount,
     needsCommit: false,
   });
   return { zones, space, cssPerLogic };
@@ -407,11 +393,10 @@ describe.each(B6_CODES)("%s lô B6 — khay nguồn, đích trên sân khấu", 
           );
         }
       }
-      const debt = KNOWN_LAYOUT_DEBT_CASES[`${code}|${viewport.name}`] ?? 0;
       expect(
         failing.length,
         `${failing.length} ca vi phạm, đầu tiên: ${failing.slice(0, 3).join(", ")}`
-      ).toBeLessThanOrEqual(debt);
+      ).toBe(0);
     });
   }
 

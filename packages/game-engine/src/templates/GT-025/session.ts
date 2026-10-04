@@ -8,8 +8,13 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveTouchFloor } from "#src/layout/constants";
 import { resolveLayout } from "#src/layout/registry";
 import { insetDrawSize } from "#src/layout/slot-fit";
+import {
+  computeSplitGridSlots,
+  slotsFitStage,
+} from "#src/layout/stage-split-grids";
 import type { Slot } from "#src/layout/types";
 import {
   drawDividerLine,
@@ -22,6 +27,9 @@ import {
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT025Content, GT025Difficulty } from "./template.js";
+
+/** Cạnh ô lớn nhất khi mỗi bên là khối nhiều cột (canvas thấp). */
+const SPLIT_CELL_MAX_PX = 120;
 
 interface ResolvedDifferenceObject {
   readonly id: string;
@@ -296,7 +304,7 @@ export class GT025Session extends TemplateGameSession<
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
     const layoutFn = resolveLayout("split-columns");
-    return insetDrawSize(
+    const slots = insetDrawSize(
       layoutFn({
         slotCount: this.content.left_objects.length,
         targetCount: this.content.right_objects.length,
@@ -306,6 +314,23 @@ export class GT025Session extends TemplateGameSession<
         cssPerLogic: this.cssPerLogic,
       }),
       this.stageRect
+    );
+    const stage = this.stageRect;
+    if (!stage || slotsFitStage(slots, stage)) {
+      return slots;
+    }
+    // Canvas thấp: hai cột đơn không đủ hàng — mỗi bên thành khối nhiều cột.
+    return insetDrawSize(
+      computeSplitGridSlots({
+        leftCount: this.content.left_objects.length,
+        rightCount: this.content.right_objects.length,
+        stage,
+        touchFloor: resolveTouchFloor(ageBand, this.cssPerLogic),
+        maxCell: { w: SPLIT_CELL_MAX_PX, h: SPLIT_CELL_MAX_PX },
+        leftRole: "source",
+        rightRole: "target",
+      }),
+      stage
     );
   }
 

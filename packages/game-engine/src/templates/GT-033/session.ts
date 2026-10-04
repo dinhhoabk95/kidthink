@@ -59,6 +59,11 @@ export class GT033Session extends TemplateGameSession<
     return this.content.palette.length;
   }
 
+  /** Lưới dệt `grid.rows` hàng đứng trên sân khấu, không thu dưới sàn chạm. */
+  override get stageRowCount(): number {
+    return this.content.grid.rows;
+  }
+
   /** Giá xu / tên màu vẽ dưới thân vật: khay chừa dải nhãn (`BR-PSZ-13`). */
   override get trayHasLabels(): boolean {
     return true;

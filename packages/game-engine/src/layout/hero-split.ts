@@ -24,25 +24,29 @@ export interface HeroSplit {
   readonly rest: ZoneRect;
 }
 
-export function splitHeroStage(stage: ZoneRect, hasRest: boolean): HeroSplit {
-  if (!hasRest) {
-    return {
-      hero: stage,
-      rest: { x: stage.x, y: stage.y + stage.h, w: stage.w, h: 0 },
-    };
-  }
-  if (stage.w >= WIDE_ASPECT * stage.h) {
-    const heroW = Math.floor(stage.w * HERO_SHARE_WIDE);
-    return {
-      hero: { x: stage.x, y: stage.y, w: heroW, h: stage.h },
-      rest: {
-        x: stage.x + heroW + SLOT_GAP_PX,
-        y: stage.y,
-        w: stage.w - heroW - SLOT_GAP_PX,
-        h: stage.h,
-      },
-    };
-  }
+/** Đệm trong của lưới ô lựa chọn (`computeStageCellSlots`). */
+const REST_PADDING_PX = SLOT_GAP_PX;
+
+/** Số ô lựa chọn và sàn chạm — để chọn kiểu chia mà các ô vừa không phân trang. */
+export interface HeroRestFit {
+  readonly count: number;
+  readonly touchFloor: number;
+}
+
+function splitSideBySide(stage: ZoneRect): HeroSplit {
+  const heroW = Math.floor(stage.w * HERO_SHARE_WIDE);
+  return {
+    hero: { x: stage.x, y: stage.y, w: heroW, h: stage.h },
+    rest: {
+      x: stage.x + heroW + SLOT_GAP_PX,
+      y: stage.y,
+      w: stage.w - heroW - SLOT_GAP_PX,
+      h: stage.h,
+    },
+  };
+}
+
+function splitStacked(stage: ZoneRect): HeroSplit {
   const heroH = Math.floor(stage.h * HERO_SHARE_PORTRAIT);
   return {
     hero: { x: stage.x, y: stage.y, w: stage.w, h: heroH },
@@ -53,6 +57,45 @@ export function splitHeroStage(stage: ZoneRect, hasRest: boolean): HeroSplit {
       h: stage.h - heroH - SLOT_GAP_PX,
     },
   };
+}
+
+/** Các ô sàn chạm xếp được trong `rest` mà không tràn chiều cao. */
+function restHoldsCells(rest: ZoneRect, fit: HeroRestFit): boolean {
+  const innerW = rest.w - 2 * REST_PADDING_PX;
+  const cols = Math.floor(
+    (innerW + SLOT_GAP_PX) / (fit.touchFloor + SLOT_GAP_PX)
+  );
+  if (cols < 1) {
+    return false;
+  }
+  const rows = Math.ceil(fit.count / Math.min(cols, fit.count));
+  const needH = rows * fit.touchFloor + (rows - 1) * SLOT_GAP_PX;
+  return needH <= rest.h - 2 * REST_PADDING_PX;
+}
+
+/**
+ * `fit` có thì sân khấu ngang không đủ cao cho lựa chọn ở dưới sẽ chuyển sang
+ * xếp chính trái – lựa chọn phải (điện thoại ngang, `BR-PSZ-13`).
+ */
+export function splitHeroStage(
+  stage: ZoneRect,
+  hasRest: boolean,
+  fit?: HeroRestFit
+): HeroSplit {
+  if (!hasRest) {
+    return {
+      hero: stage,
+      rest: { x: stage.x, y: stage.y + stage.h, w: stage.w, h: 0 },
+    };
+  }
+  if (stage.w >= WIDE_ASPECT * stage.h) {
+    return splitSideBySide(stage);
+  }
+  const stacked = splitStacked(stage);
+  if (fit && stage.w > stage.h && !restHoldsCells(stacked.rest, fit)) {
+    return splitSideBySide(stage);
+  }
+  return stacked;
 }
 
 /** Slot phủ trọn vùng chính — thực thể "mặt đồng hồ" / "mô hình" của view. */

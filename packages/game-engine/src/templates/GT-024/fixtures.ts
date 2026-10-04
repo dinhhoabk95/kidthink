@@ -56,22 +56,20 @@ export const GT024_FIXTURES: {
         "Bé hãy nối các điểm theo thứ tự từ 1 đến 5 để vẽ ngôi sao sáng nhé!",
       shape_name: "Ngôi sao",
       guide_asset: { kind: "emoji", ref: "⭐" },
+      // Ngôi sao một nét (pentagram): năm đỉnh ngoài, nét đi cách một đỉnh. Hai
+      // đỉnh bất kỳ cách nhau ≥ 180 theo cạnh lớn hơn, đủ chỗ cho vùng chạm sàn
+      // ở sân khấu thấp (`BR-LAY-05`) — ngôi sao mười đỉnh thì không.
       waypoints: [
         { id: "wp-1", x: 480, y: 120, order: 0, label: "1" },
-        { id: "wp-2", x: 530, y: 270, order: 1, label: "2" },
-        { id: "wp-3", x: 680, y: 270, order: 2, label: "3" },
-        { id: "wp-4", x: 560, y: 360, order: 3, label: "4" },
-        { id: "wp-5", x: 600, y: 490, order: 4, label: "5" },
-        { id: "wp-6", x: 480, y: 410, order: 5, label: "6" },
-        { id: "wp-7", x: 360, y: 490, order: 6, label: "7" },
-        { id: "wp-8", x: 400, y: 360, order: 7, label: "8" },
-        { id: "wp-9", x: 280, y: 270, order: 8, label: "9" },
-        { id: "wp-10", x: 430, y: 270, order: 9, label: "10" },
-        { id: "wp-11", x: 480, y: 120, order: 10, label: "1" },
+        { id: "wp-2", x: 592, y: 464, order: 1, label: "2" },
+        { id: "wp-3", x: 299, y: 251, order: 2, label: "3" },
+        { id: "wp-4", x: 661, y: 251, order: 3, label: "4" },
+        { id: "wp-5", x: 368, y: 464, order: 4, label: "5" },
+        { id: "wp-6", x: 480, y: 120, order: 5, label: "1" },
       ],
     },
     difficulty: {
-      item_count: 11,
+      item_count: 6,
       tolerance_px: 45,
       show_numbered_dots: true,
       show_guide_lines: true,
