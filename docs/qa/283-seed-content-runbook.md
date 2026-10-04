@@ -1,4 +1,4 @@
-# Runbook — gieo nội dung v3 (#283) lên staging và prod
+# Runbook — gieo nội dung v5 (#283) lên staging và prod
 
 Áp dụng: `GENERATED_LEVEL_CONTENT_VERSION = 3` (`BR-CSA-17`, commit `253829cf`). **Người phát hành chạy**, AI không
 chạy lên môi trường khác local (`BR-CSA-07`). Mỗi môi trường làm tuần tự: staging trước, prod sau khi staging đạt hậu kiểm.
@@ -11,7 +11,7 @@ chạy lên môi trường khác local (`BR-CSA-07`). Mỗi môi trường làm 
 - [ ] Node 24, `DATABASE_URL` trỏ đúng môi trường, `GIT_SHA` và `PR_URL` đặt để ghi `content_review_log` (`BR-CSA-03`).
 
 ## 1. Tiền kiểm
-1. **Sao lưu**: `pg_dump -Fc "$DATABASE_URL" > mindkid-pre-v3-$(date +%F).dump`; kiểm `pg_restore -l` đọc được. Lưu ngoài máy chạy.
+1. **Sao lưu**: `pg_dump -Fc "$DATABASE_URL" > mindkid-pre-v5-$(date +%F).dump`; kiểm `pg_restore -l` đọc được. Lưu ngoài máy chạy.
 2. **Đếm trước** (lưu kết quả):
    ```sql
    SELECT content_version, status, count(*) FROM game_levels GROUP BY 1,2 ORDER BY 1,2;
@@ -24,14 +24,14 @@ chạy lên môi trường khác local (`BR-CSA-07`). Mỗi môi trường làm 
 4. `pnpm check:migration-hashes` xanh; không có migration chờ.
 
 ## 2. Gieo
-`pnpm db:seed:content -- --batch=SEED-283-v3` (một giao dịch, `BR-CSA-05`).
-Kỳ vọng: toàn bộ danh mục chuyển v4: `Rows inserted` = số hàng v4; bản cũ chuyển `archived`. Chạy lần hai phải báo
+`pnpm db:seed:content -- --batch=SEED-283-v5` (một giao dịch, `BR-CSA-05`).
+Kỳ vọng: toàn bộ danh mục chuyển v5: `Rows inserted` = số hàng v5; bản cũ chuyển `archived`. Chạy lần hai phải báo
 inserted = 0 (idempotent, `BR-CSA-06`).
 
 ## 3. Hậu kiểm
 ```sql
 SELECT content_version, status, count(*) FROM game_levels GROUP BY 1,2 ORDER BY 1,2;
--- Kỳ vọng: v4 published 6380; mọi bản cũ archived (dev: v1 6380 + v3 6380)
+-- Kỳ vọng: v5 published 6380; mọi bản cũ archived (dev: v1, v3, v4 6380 mỗi bản)
 SELECT code, difficulty_params->>'collectible_count' FROM game_levels
  WHERE code IN ('GL-C1-ALG-CMD-0009','GL-C1-ALG-CMD-0010','GL-C2-DIR-CMD-0004') AND status='published';  -- = 2
 SELECT count(*) FROM content_skill_map m JOIN game_levels l ON l.id=m.entity_id
@@ -53,7 +53,7 @@ Seed chỉ INSERT và archive (`BR-CSA-01`); không có lệnh "bỏ gieo". Nế
 3. Không UPDATE tay `status` hay `content_version` — vi phạm `BR-CLC-01` và làm `seed:check` lệch.
 
 ## 5. Rủi ro đã biết
-- Cả danh mục chuyển v3, không chỉ ~35 level #283 đụng tới.
+- Cả danh mục chuyển v5, không chỉ ~35 level #283 đụng tới.
 - `level_params.game_level_id` trỏ dòng cụ thể: điều chỉnh thích ứng của từng trẻ nằm lại ở dòng đã archive. Dev: bảng rỗng và
   không có mã server đọc. Kiểm lại số dòng `level_params` ở staging/prod trước khi gieo.
-- Dev đã ở v3 (không hoàn lại được ngoài gieo lại).
+- Dev đã ở v5 (không hoàn lại được ngoài gieo lại).
