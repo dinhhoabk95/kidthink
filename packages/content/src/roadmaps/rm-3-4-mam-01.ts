@@ -44,6 +44,9 @@ export const RM_3_4_MAM_01: RoadmapSeed = {
   version: 1,
   band: "3-4",
   title: "Bé 3–4 tuổi — mười hai tuần làm quen sáu năng lực tư duy",
+  description:
+    "Lộ trình mười hai tuần cho bé 3–4 tuổi: mỗi tuần bé học một kỹ năng mới qua bài học và trò chơi ngắn, rồi ôn lại bằng hoạt động ngoài màn hình cùng cha mẹ. Chương trình chạm đủ sáu năng lực tư duy cốt lõi.",
+  access_tier: "standard",
   sessions_per_week: 3,
   duration_weeks: 12,
   weeks: [

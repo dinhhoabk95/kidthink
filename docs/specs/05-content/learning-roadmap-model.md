@@ -71,8 +71,11 @@ kho nội dung phải có gì*.
 4. Bộ suy cầu đọc lộ trình đã xanh và in `content-demand.json`: mỗi dòng là một ô
    `(band, tuần, tiết, vai trò, kỹ năng, chủ đề, khuôn)` cần được lấp, kèm số lượng.
 5. Bộ sinh level đọc sổ cầu, đối chiếu corpus hiện có, và chỉ sinh **phần còn thiếu**.
-6. `db:seed` gieo theo thứ tự: taxonomy → lộ trình → bài học → level → `curriculum_items` lấy
-   thẳng từ lộ trình, **không tính toán lại**.
+6. `db:seed` gieo theo thứ tự: taxonomy → bản ghi chương trình và tuần từ lộ trình → bài học
+   → level → `curriculum_items`. Bản ghi chương trình mang mã `CUR-` + mã lộ trình (cột
+   `curricula.code` đòi tiền tố `CUR-`). `curriculum_items` lấy thẳng từ sổ cầu: tra id theo
+   mã nội dung sau khi nội dung đã gieo, **không chọn, không tính toán lại**; mã chưa gieo
+   thì ném lỗi.
 
 ## 5. Alternative flows
 
@@ -90,7 +93,7 @@ kho nội dung phải có gì*.
 |---|---|---|
 | `BR-LRM-01` (lộ trình là hiện vật) | Lộ trình BẮT BUỘC là file được soạn trong `packages/content/src/roadmaps/`, có mã, có version. Cấm — NEVER suy lộ trình ra từ nội dung đang có | Lộ trình suy từ kho thì nó kể lại kho, không dạy gì. Đó chính là trạng thái hôm nay: 4 chương trình giống hệt nhau vì cả bốn cùng đọc 100 hàng đầu của `lessons` |
 | `BR-LRM-02` (cấm gán bằng chỉ số vòng) | Cấm — NEVER chọn nội dung cho một tiết bằng phép chia lấy dư, `LIMIT`, hay thứ tự `id`. Mỗi ô lộ trình BẮT BUỘC nêu tên kỹ năng và chủ đề nó dạy | `slotIdx % lessonsList.length` không biết tuổi, không biết kỹ năng, không biết mục tiêu tuần. Nó luôn chạy xanh và luôn sai |
-| `BR-LRM-03` (lộ trình trước level) | Trong `seed-all`, bước gieo lộ trình BẮT BUỘC chạy **trước** bước gieo game level. Cấm — NEVER để bước lộ trình đọc bảng `game_levels` để tự chọn | Thứ tự hôm nay ngược: level gieo ở bước 4, lộ trình ở bước 5 và nhặt lại thứ đã có. Lật thứ tự là cách duy nhất làm cầu quyết định cung |
+| `BR-LRM-03` (lộ trình trước level) | Trong `seed-all`, bước gieo lộ trình (chương trình + tuần) BẮT BUỘC chạy **trước** bước gieo game level, và bước đó không đọc `lessons`/`game_levels`. `curriculum_items` gieo **sau** nội dung vì chỉ tra id theo mã trong sổ cầu. Cấm — NEVER để bước lộ trình đọc bảng `game_levels` để tự chọn | Thứ tự cũ ngược: level gieo trước, lộ trình nhặt lại thứ đã có. Lật thứ tự là cách duy nhất làm cầu quyết định cung |
 | `BR-LRM-04` (mỗi ô nêu tên band) | Mỗi ô của sổ cầu BẮT BUỘC mang đúng một band trong `3-4` · `4-5` · `5-6`, và nội dung lấp ô đó BẮT BUỘC khai band trùng | Không có cột band thì bốn chương trình tuổi khác nhau lấp được bằng cùng một hàng — đo được hôm nay ở `CUR-BE3`: 12 trên 16 tiết là bài của band khác |
 | `BR-LRM-05` (một tiết, một vai trò) | Mỗi tiết khai đúng một vai trò `introduce` · `practice` · `review` · `offscreen` | `BR-CRM-03` (ôn lại) và `BR-CRM-05` (ngoài màn hình) không đo được nếu tiết không tự khai nó đang làm gì |
 | `BR-LRM-06` (cổng lộ trình chạy trước nội dung) | `BR-CRM-01..11` BẮT BUỘC chạy trên bản khai lộ trình trước bước sinh level, và mã thoát ≠ 0 chặn cả pipeline | Chạy luật sư phạm sau khi đã sinh 6.384 level là chạy quá muộn để sửa được gì |
@@ -109,6 +112,8 @@ RoadmapSeed
   version           số nguyên ≥1                     (BR-LRM-10)
   band              "3-4" | "4-5" | "5-6"
   title             một dòng tiếng Việt
+  description       một đoạn tiếng Việt cho người lớn
+  access_tier       "free" | "login" | "standard" | "premium"
   sessions_per_week mặc định 3                       (curriculum-model.md 7.1)
   duration_weeks    số tuần
   weeks[]

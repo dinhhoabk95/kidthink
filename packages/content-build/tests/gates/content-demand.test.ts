@@ -3,10 +3,7 @@ import { repoPath } from "@mindkid/config/paths";
 import { RM_3_4_MAM_01, type RoadmapSeed } from "@mindkid/content";
 import { describe, expect, it } from "vitest";
 import { ALL_SEED_LESSONS, SHIPPABLE_SEED_LEVELS } from "#src/catalog";
-import {
-  CONTENT_DEMAND_PATH,
-  computeContentDemand,
-} from "#src/cli/derive-demand";
+import { computeContentDemand } from "#src/cli/derive-demand";
 import {
   type DemandInput,
   type DemandLesson,
@@ -15,6 +12,7 @@ import {
   PRACTICE_LEVEL_QUOTA,
   serializeContentDemand,
 } from "#src/gates/content-demand";
+import { CONTENT_DEMAND_PATH } from "#src/gates/content-demand-file";
 import { buildSkillTemplateAffinityMatrix } from "#src/gates/skill-template-affinity";
 
 const DIFFICULTY_MAX = { "3-4": 2, "4-5": 3, "5-6": 5 } as const;

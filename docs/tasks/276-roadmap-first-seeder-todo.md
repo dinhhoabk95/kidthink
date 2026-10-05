@@ -61,14 +61,22 @@ không có ca âm thì lát chưa xong, bất kể code đã viết.
 
 ## S4 — Bỏ phép chia lấy dư, lật thứ tự pipeline
 
-- [ ] Xoá `insertCurriculumItemForSession` và `seedCurriculumItemsData` khỏi
+- [x] Xoá `insertCurriculumItemForSession` và `seedCurriculumItemsData` khỏi
       `seed-master/curricula.ts`
-- [ ] `curriculum_items` sinh thẳng từ lộ trình, không tính toán lại (`BR-LRM-02`)
-- [ ] Đổi `seed-all.ts`: bước lộ trình chạy **trước** bước gieo level (`BR-LRM-03`)
-- [ ] Bỏ `LIMIT 100` — không còn chỗ nào đọc kho để chọn nội dung
-- [ ] Cổng quét `seed-master/` không còn phép chia lấy dư trên `lessons`/`game_levels`
-- [ ] **Ca âm**: đưa lại hàm cũ vào cây → cổng đỏ và nêu tên hàm
-- [ ] **Ca âm**: level không có ô sổ cầu → không lọt vào `curriculum_items` (`BR-LRM-08`)
+- [x] `curriculum_items` sinh thẳng từ lộ trình, không tính toán lại (`BR-LRM-02`)
+- [x] Đổi `seed-all.ts`: bước lộ trình chạy **trước** bước gieo level (`BR-LRM-03`)
+- [x] Bỏ `LIMIT 100` — không còn chỗ nào đọc kho để chọn nội dung
+- [x] Cổng quét `seed-master/` không còn phép chia lấy dư trên `lessons`/`game_levels`
+- [x] **Ca âm**: đưa lại hàm cũ vào cây → cổng đỏ và nêu tên hàm
+- [x] **Ca âm**: level không có ô sổ cầu → không lọt vào `curriculum_items` (`BR-LRM-08`)
+
+      Đo sau S4: `pnpm check:seed-master` xanh · `check:roadmap-balance` xanh (1 lộ trình) ·
+      `check:content-demand` xanh (20/36 ô, nợ 16) · `check:go-live` READY.
+      `seed-all` gieo chương trình `CUR-RM-3-4-mam-01` + 12 tuần trước nội dung, item sau nội dung.
+      Chương trình cũ `CUR-BE3..J42` và cổng mô phỏng `roadmap-balance` bị gỡ; seeder không còn
+      chạm tới các hàng đó nếu DB cục bộ còn sót.
+      Còn treo: `packages/shared/src/curriculum-player.ts` vẫn trả `"CUR-J42"` làm
+      `next_curriculum_suggestion` — quyết định hợp đồng API, chưa đổi.
 
 ## S5 — `topics[]` và cổng bố cục bài
 

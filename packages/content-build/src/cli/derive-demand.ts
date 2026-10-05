@@ -16,14 +16,12 @@ import {
   listPracticeCellsWithoutTemplate,
   serializeContentDemand,
 } from "../gates/content-demand.js";
+import { CONTENT_DEMAND_PATH } from "../gates/content-demand-file.js";
 import {
   evaluateAuthoredRoadmaps,
   loadDifficultyMaxByBand,
 } from "../gates/roadmap-seed-runner.js";
 import { buildSkillTemplateAffinityMatrix } from "../gates/skill-template-affinity.js";
-
-export const CONTENT_DEMAND_PATH =
-  "packages/content/src/roadmaps/content-demand.json";
 
 function collectLessons(): DemandLesson[] {
   const offlineActivities = new Set(

@@ -20,11 +20,15 @@ export interface RoadmapWeek {
   readonly sessions: readonly RoadmapSession[];
 }
 
+export type RoadmapAccessTier = "free" | "login" | "standard" | "premium";
+
 export interface RoadmapSeed {
   readonly code: string;
   readonly version: number;
   readonly band: RoadmapBand;
   readonly title: string;
+  readonly description: string;
+  readonly access_tier: RoadmapAccessTier;
   readonly sessions_per_week: number;
   readonly duration_weeks: number;
   readonly weeks: readonly RoadmapWeek[];

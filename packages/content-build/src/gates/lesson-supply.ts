@@ -3,7 +3,7 @@
  * Rules: BR-LCD-01..11, BR-LFM-01, BR-LFM-05
  */
 
-import type { MvpCurriculumConfig } from "../seed-master/curricula.js";
+import type { MvpCurriculumConfig } from "../seed-master/roadmap-curricula.js";
 import type { ContentSeed, LessonSeed } from "../types.js";
 
 export interface LessonSupplyMetrics {

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { loadGoLiveConfig } from "#src/gates/go-live-readiness";
 import { evaluateLessonSupply } from "#src/gates/lesson-supply";
 import { ALL_SEED_LESSONS, ALL_SEED_LEVELS } from "#src/index";
-import { MVP_CURRICULA_CONFIGS } from "#src/seed-master/curricula";
+import { ROADMAP_CURRICULA_CONFIGS } from "#src/seed-master/roadmap-curricula";
 
 /**
  * Cổng phải quét **corpus thật**, không phải mock.
@@ -14,7 +14,7 @@ import { MVP_CURRICULA_CONFIGS } from "#src/seed-master/curricula";
  */
 describe("Cổng cung giáo án chạy trên corpus thật (BR-LCD-01, BR-LCD-10)", () => {
   const result = evaluateLessonSupply({
-    curriculaConfigs: MVP_CURRICULA_CONFIGS,
+    curriculaConfigs: ROADMAP_CURRICULA_CONFIGS,
     lessons: [...ALL_SEED_LESSONS],
     gameLevels: ALL_SEED_LEVELS,
   });

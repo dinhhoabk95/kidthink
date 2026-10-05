@@ -3,7 +3,7 @@ import {
   evaluateLessonSupply,
   formatLessonSupplyReport,
 } from "#src/gates/lesson-supply";
-import type { MvpCurriculumConfig } from "#src/seed-master/curricula";
+import type { MvpCurriculumConfig } from "#src/seed-master/roadmap-curricula";
 import type { ContentSeed, LessonSeed } from "#src/types";
 
 const REGEX_PERCENT = /\b\d+%/;

@@ -48,9 +48,9 @@ export interface RoadmapBalanceReport {
 export const COMPETENCY_COUNT = 6;
 
 const RULE_PREFIX_REGEX = /^(BR-CRM-\d{2})/;
-export const LEGACY_BLOCKING_WARNING_RULES: ReadonlySet<RoadmapRuleId> =
-  new Set(["BR-CRM-02", "BR-CRM-03", "BR-CRM-08"]);
-
+// `validateCurriculumModel` hạ BR-CRM-02/03/05/08 xuống cảnh báo. Với lộ trình
+// soạn, bốn luật này là điều kiện chặn: chương trình theo tuổi chỉ dạy C1 là
+// lỗi sư phạm, không phải khuyến nghị.
 export const ROADMAP_BLOCKING_WARNING_RULES: ReadonlySet<RoadmapRuleId> =
   new Set(["BR-CRM-02", "BR-CRM-03", "BR-CRM-05", "BR-CRM-08"]);
 

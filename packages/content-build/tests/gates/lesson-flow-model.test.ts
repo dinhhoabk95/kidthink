@@ -4,8 +4,8 @@ import {
   findPrerequisiteViolation,
 } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
+import { loadContentDemandLedger } from "#src/gates/content-demand-file";
 import { ALL_SEED_LESSONS } from "#src/index";
-import { MVP_CURRICULA_CONFIGS } from "#src/seed-master/curricula";
 
 /**
  * Bản trước của file này khai `validateNoDuplicateLessonsInFlow` và
@@ -43,10 +43,23 @@ describe("BR-LFM-05: một flow cấm chứa cùng một lesson hai lần", () =
     ).toEqual(["LES-001"]);
   });
 
-  it("mọi flow trong MVP_CURRICULA_CONFIGS đều sạch", () => {
-    for (const flow of MVP_CURRICULA_CONFIGS) {
-      const codes = (flow as { lesson_codes?: string[] }).lesson_codes ?? [];
-      expect(findDuplicateLessonsInFlow(codes), flow.code).toEqual([]);
+  it("mọi lộ trình soạn dùng mỗi bài học đúng một lần", () => {
+    // Bản cũ đọc `lesson_codes` — trường không tồn tại trên cấu hình — nên
+    // luôn kiểm một mảng rỗng. Nay đọc các bài thật mà sổ cầu gán cho tiết.
+    const ledger = loadContentDemandLedger();
+    const lessonsByRoadmap = new Map<string, string[]>();
+    for (const cell of ledger.cells) {
+      if (cell.role === "practice") {
+        continue;
+      }
+      const list = lessonsByRoadmap.get(cell.roadmap_code) ?? [];
+      list.push(...cell.filled_by);
+      lessonsByRoadmap.set(cell.roadmap_code, list);
+    }
+    expect(lessonsByRoadmap.size).toBeGreaterThan(0);
+    for (const [code, lessonCodes] of lessonsByRoadmap) {
+      expect(lessonCodes.length, code).toBeGreaterThan(0);
+      expect(findDuplicateLessonsInFlow(lessonCodes), code).toEqual([]);
     }
   });
 });

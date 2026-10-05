@@ -12,16 +12,19 @@ import {
   formatLessonSupplyReport,
 } from "../gates/lesson-supply";
 import { ALL_SEED_LESSONS, ALL_SEED_LEVELS } from "../index.js";
-import { MVP_CURRICULA_CONFIGS } from "../seed-master/curricula.js";
+import { ROADMAP_CURRICULA_CONFIGS } from "../seed-master/roadmap-curricula.js";
 
 export function runLessonSupplyGate(options?: { quiet?: boolean }): number {
   const evaluation = evaluateLessonSupply({
-    curriculaConfigs: MVP_CURRICULA_CONFIGS,
+    curriculaConfigs: ROADMAP_CURRICULA_CONFIGS,
     lessons: [...ALL_SEED_LESSONS],
     gameLevels: ALL_SEED_LEVELS,
   });
 
-  const report = formatLessonSupplyReport(evaluation, MVP_CURRICULA_CONFIGS);
+  const report = formatLessonSupplyReport(
+    evaluation,
+    ROADMAP_CURRICULA_CONFIGS
+  );
 
   if (!options?.quiet) {
     console.log(report);

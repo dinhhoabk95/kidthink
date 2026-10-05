@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 import { pathToFileURL } from "node:url";
-import { ALL_SEED_LESSONS, SHIPPABLE_SEED_LEVELS } from "../catalog.js";
-import { evaluateSeededRoadmapBalance } from "../gates/roadmap-balance.js";
 import {
   formatRoadmapBalanceReport,
   formatRoadmapViolationSummary,
@@ -14,14 +12,7 @@ export function runRoadmapBalanceGate(options?: {
   quiet?: boolean;
   verbose?: boolean;
 }): number {
-  const legacy = evaluateSeededRoadmapBalance(
-    ALL_SEED_LESSONS,
-    SHIPPABLE_SEED_LEVELS
-  );
-  const report = summarizeRows([
-    ...evaluateAuthoredRoadmaps(),
-    ...legacy.programs,
-  ]);
+  const report = summarizeRows(evaluateAuthoredRoadmaps());
 
   if (!options?.quiet) {
     console.log("=== CỔNG CÂN BẰNG LỘ TRÌNH (check:roadmap-balance) ===");
@@ -33,7 +24,7 @@ export function runRoadmapBalanceGate(options?: {
   if (report.passed) {
     if (!options?.quiet) {
       console.log(
-        `\n✅ CỔNG XANH: ${report.programs.length} chương trình published thoả BR-CRM-*.`
+        `\n✅ CỔNG XANH: ${report.programs.length} lộ trình soạn thoả BR-CRM-*.`
       );
     }
     return 0;
@@ -41,7 +32,7 @@ export function runRoadmapBalanceGate(options?: {
 
   if (!options?.quiet) {
     console.log(
-      `\n❌ CỔNG ĐỎ: ${report.violating_programs}/${report.programs.length} chương trình vi phạm BR-CRM-*.`
+      `\n❌ CỔNG ĐỎ: ${report.violating_programs}/${report.programs.length} lộ trình vi phạm BR-CRM-*.`
     );
     const lines = options?.verbose
       ? listRoadmapViolations(report).map(

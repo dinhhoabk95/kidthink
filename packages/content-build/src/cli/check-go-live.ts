@@ -20,7 +20,7 @@ import {
   loadGoLiveConfig,
 } from "../gates/go-live-readiness";
 import { ALL_SEED_LESSONS, ALL_SEED_LEVELS } from "../index.js";
-import { MVP_CURRICULA_CONFIGS } from "../seed-master/curricula.js";
+import { ROADMAP_CURRICULA_CONFIGS } from "../seed-master/roadmap-curricula.js";
 
 /**
  * Engine nào đang active — hỏi **registry template**, không hỏi file cấu hình.
@@ -81,7 +81,7 @@ export function runGoLiveGate(options?: { quiet?: boolean }): number {
     activeEngineIds: resolveActiveEngineIds(),
     implementedRenderEngineIds: resolveImplementedRenderEngineIds(scope),
     depthPassingEngineIds: resolveDepthPassingEngineIds(scope),
-    curriculaConfigs: MVP_CURRICULA_CONFIGS,
+    curriculaConfigs: ROADMAP_CURRICULA_CONFIGS,
     lessons: [...ALL_SEED_LESSONS],
     gameLevels: ALL_SEED_LEVELS,
   });

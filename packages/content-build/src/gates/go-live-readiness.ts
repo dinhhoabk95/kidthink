@@ -6,7 +6,7 @@
 import { readFileSync } from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
 import { z } from "zod";
-import type { MvpCurriculumConfig } from "../seed-master/curricula.js";
+import type { MvpCurriculumConfig } from "../seed-master/roadmap-curricula.js";
 import type { ContentSeed, LessonSeed } from "../types.js";
 
 export interface GoLiveConfig {

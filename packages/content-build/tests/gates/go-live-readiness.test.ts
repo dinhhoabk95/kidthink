@@ -4,7 +4,7 @@ import {
   formatGoLiveReport,
   type GoLiveConfig,
 } from "#src/gates/go-live-readiness";
-import type { MvpCurriculumConfig } from "#src/seed-master/curricula";
+import type { MvpCurriculumConfig } from "#src/seed-master/roadmap-curricula";
 import type { ContentSeed, LessonSeed } from "#src/types";
 
 describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 (BR-GLR-01..09)", () => {

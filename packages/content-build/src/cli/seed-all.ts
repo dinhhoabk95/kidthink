@@ -1,15 +1,25 @@
 import { getOwnerDb } from "@mindkid/db";
+import { loadContentDemandLedger } from "../gates/content-demand-file.js";
 import { seedSkillActionSuggestions } from "../seed-master/action-suggestions.js";
 import { seedContentTags } from "../seed-master/content-tags.js";
-import { seedCurriculaMasterData } from "../seed-master/curricula.js";
+import {
+  seedCurriculumItems,
+  seedRoadmapCurricula,
+} from "../seed-master/curricula.js";
 import { seedTaxonomyMasterData } from "../seed-master/taxonomy/index.js";
 import { runRoadmapBalanceGate } from "./check-roadmap-balance.js";
+import { runDeriveDemand } from "./derive-demand.js";
 import { runSeedContent } from "./seed-content.js";
 
 export async function seedAllContent(options?: { masterOnly?: boolean }) {
   if (runRoadmapBalanceGate() !== 0) {
     throw new Error(
       "check:roadmap-balance đỏ: lộ trình vi phạm BR-CRM-*, dừng trước khi gieo. Xem chi tiết ở bảng phía trên."
+    );
+  }
+  if (runDeriveDemand({ check: true }) !== 0) {
+    throw new Error(
+      "check:content-demand đỏ: content-demand.json không khớp lộ trình, dừng trước khi gieo. Chạy `pnpm derive:demand`."
     );
   }
 
@@ -34,7 +44,13 @@ export async function seedAllContent(options?: { masterOnly?: boolean }) {
     `[content-build:seed] Skill action suggestions seeded: ${actionStats.seededCount} items.`
   );
 
-  // 4. Seed content batch (levels, activities, lessons)
+  // 4. Seed roadmap curricula and weeks — BEFORE any level is seeded
+  const roadmapStats = await seedRoadmapCurricula(db);
+  console.log(
+    `[content-build:seed] Roadmaps seeded: ${roadmapStats.curriculaCount} new curricula, ${roadmapStats.weeksCount} weeks.`
+  );
+
+  // 5. Seed content batch (levels, activities, lessons)
   const masterOnly =
     options?.masterOnly ?? process.env.MINDKID_SEED_MASTER_ONLY === "1";
   if (masterOnly) {
@@ -43,15 +59,13 @@ export async function seedAllContent(options?: { masterOnly?: boolean }) {
     );
   } else {
     await runSeedContent(false, `SEED-${Date.now()}`, false);
-  }
 
-  // 5. Seed Curricula master data
-  const currStats = await seedCurriculaMasterData(db, {
-    requireContent: !masterOnly,
-  });
-  console.log(
-    `[content-build:seed] Curricula seeded: ${currStats.curriculaCount} curricula, ${currStats.weeksCount} weeks, ${currStats.itemsCount} items.`
-  );
+    // 6. Seed curriculum items straight from the committed demand ledger
+    const itemStats = await seedCurriculumItems(db, loadContentDemandLedger());
+    console.log(
+      `[content-build:seed] Curriculum items seeded from ledger: ${itemStats.itemsCount} items.`
+    );
+  }
 
   console.log("✅ [content-build:seed] All content data seeded successfully.");
 }

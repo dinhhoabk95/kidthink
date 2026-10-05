@@ -63,6 +63,7 @@
     "check:roadmap-balance": "pnpm --filter @mindkid/content-build check:roadmap-balance",
     "derive:demand": "pnpm --filter @mindkid/content-build derive:demand",
     "check:content-demand": "pnpm --filter @mindkid/content-build check:content-demand",
+    "check:seed-master": "pnpm --filter @mindkid/content-build check:seed-master",
     "gen:taxonomy-docs": "tsx scripts/taxonomy/sync-taxonomy-docs.ts --write",
     "verify": "tsx scripts/verify.ts",
     "test": "NODE_OPTIONS=--max-old-space-size=4096 vitest run --bail 1",
