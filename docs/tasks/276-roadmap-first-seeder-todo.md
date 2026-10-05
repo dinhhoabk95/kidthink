@@ -25,17 +25,24 @@ không có ca âm thì lát chưa xong, bất kể code đã viết.
       ở 3 tuần cuối) xanh; ca đỏ riêng cho `BR-CRM-02` · `03` · `07` · `08` · `11`
 - [x] Test `packages/content-build/tests/gates/roadmap-balance.test.ts` (12 ca) phủ ca dương, ca âm, và `seed-all`
       dừng trước `getOwnerDb()`
-- [ ] Chưa chặn (hoãn sang S2): `BR-CRM-05` — tiết chưa khai vai trò `offscreen`; `BR-CRM-01` — tiết chưa khai kỹ năng mục tiêu
+- [x] `BR-CRM-05` chặn trên lộ trình soạn (tiết `offscreen` có `is_offline`); `BR-CRM-01` đo qua `skill_codes` mỗi tiết —
+      chương trình legacy vẫn không đo được hai luật này, sẽ bị S4 xoá
 
 ## S2 — Lộ trình đầu tiên được soạn
 
-- [ ] Tạo `packages/content/src/roadmaps/` và kiểu `RoadmapSeed` theo spec mục 7.1
-- [ ] Soạn `RM-3-4-mam-01` — band `3-4`, đủ tuần, mỗi tuần có `goal` và `target_skills`
-- [ ] Mỗi tiết khai `role` trong `introduce` · `practice` · `review` · `offscreen`
+- [x] Tạo `packages/content/src/roadmaps/` và kiểu `RoadmapSeed` theo spec mục 7.1 (spec đã sửa §7.1: thêm `version`,
+      `sessions_per_week`, `skill_code` mỗi tiết, bảng vai trò → loại nội dung → `is_offline`)
+- [x] Soạn `RM-3-4-mam-01` — band `3-4`, 12 tuần × 3 tiết, mỗi tuần có `goal` và `target_skills`. 12 tuần vì CRM-11 cấm kỹ năng
+      mới ở 3 tuần cuối mà 9 kỹ năng mới cần 9 tuần giới thiệu
+- [x] Mỗi tiết khai `role` trong `introduce` · `practice` · `review` · `offscreen`
       (`BR-LRM-05`)
-- [ ] `check:roadmap-balance` xanh trên lộ trình mới
-- [ ] **Ca âm**: lộ trình khai chỉ 1 competency → đỏ ở `BR-CRM-08`
-- [ ] **Ca âm**: lộ trình khai kỹ năng không có trong `skills` → đỏ, in mã sai
+- [x] `check:roadmap-balance` xanh trên lộ trình mới — đo: 0/12 tuần lệch, share lớn nhất 30,6% (C1), 6/6 competency,
+      0/9 kỹ năng không ôn lại, 0 kỹ năng mới ở 3 tuần cuối
+- [x] **Ca âm**: lộ trình khai chỉ 1 competency → đỏ ở `BR-CRM-08`
+- [x] **Ca âm**: lộ trình khai kỹ năng không có trong `skills` → đỏ, in mã sai
+- [x] Test `tests/gates/roadmap-seed-gate.test.ts` (8 ca): thêm ca âm target_skills lệch, practice trước introduce,
+      mã lộ trình sai dạng, trần độ khó band
+- ⚠️ Nợ nội dung đã biết (vào sổ cầu ở S3): `C1.CMP.01`, `C5.LIS.01`, `C6.ATT.01` chưa có bài học band `3-4`
 
 ## S3 — Sổ cầu nội dung
 

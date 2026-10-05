@@ -105,19 +105,36 @@ kho nội dung phải có gì*.
 
 ```
 RoadmapSeed
-  code            RM-3-4-mam-01
-  band            "3-4" | "4-5" | "5-6"
-  title           một dòng tiếng Việt
-  duration_weeks  số tuần
+  code              RM-3-4-mam-01                    (BR-LRM-10)
+  version           số nguyên ≥1                     (BR-LRM-10)
+  band              "3-4" | "4-5" | "5-6"
+  title             một dòng tiếng Việt
+  sessions_per_week mặc định 3                       (curriculum-model.md 7.1)
+  duration_weeks    số tuần
   weeks[]
-    week_no       1..duration_weeks
-    goal          một câu cho người lớn      (BR-CRM-10)
-    target_skills string[]  mã kỹ năng thật  (BR-LRM-02)
+    week_no         1..duration_weeks
+    goal            một câu cho người lớn            (BR-CRM-10)
+    target_skills   string[]  mã kỹ năng thật, là hợp skill_code của các tiết trong tuần
     sessions[]
-      session_no  1..sessions_per_week
-      role        introduce | practice | review | offscreen   (BR-LRM-05)
-      topics[]    mã chủ đề, mỗi chủ đề một strand            (BR-CTM-02)
+      session_no    1..sessions_per_week
+      role          introduce | practice | review | offscreen   (BR-LRM-05)
+      skill_code    kỹ năng tiết này dạy             (BR-LRM-02)
+      topics[]      mã chủ đề, mỗi chủ đề một strand (BR-CTM-02) — tuỳ chọn tới khi
+                    lesson-topic-composition được cài
 ```
+
+Vai trò quyết định loại nội dung lấp tiết và cờ ngoài màn hình:
+
+| Vai trò | Lấp bằng | `is_offline` | Ghi chú |
+|---|---|---|---|
+| `introduce` | bài học | không | Kỹ năng mới lần đầu có tiết `introduce` |
+| `practice` | game level | không | Theo bậc độ khó của band |
+| `review` | bài học | không | Kỹ năng đã gặp ở tuần trước |
+| `offscreen` | bài học có hoạt động ngoài màn hình | có | Cho phép nêu một kỹ năng chưa `introduce` ở tuần đầu như làm quen thực tế; kỹ năng đó phải `introduce` ngay tuần sau |
+
+Hệ quả suy được: `BR-CRM-05` đo bằng vai trò `offscreen`, không cần cờ riêng. Kỹ năng của tiết
+phải có `age_min`/`age_max` giao band của lộ trình và `difficulty` ≤ trần band
+(`preschool-age-bands.json`), cộng toàn bộ prerequisite của nó cũng có mặt trong lộ trình.
 
 ### 7.2 Hình dạng một ô sổ cầu
 

@@ -3,11 +3,13 @@ import { ALL_SEED_LESSONS, SHIPPABLE_SEED_LEVELS } from "#src/catalog";
 import {
   evaluateRoadmapBalance,
   evaluateSeededRoadmapBalance,
-  formatRoadmapBalanceReport,
-  listRoadmapViolations,
   type RoadmapRuleId,
   simulateCurriculumItems,
 } from "#src/gates/roadmap-balance";
+import {
+  formatRoadmapBalanceReport,
+  listRoadmapViolations,
+} from "#src/gates/roadmap-measure";
 import {
   CURRICULUM_POOL_LIMIT,
   MVP_CURRICULA_CONFIGS,

@@ -1,21 +1,27 @@
 #!/usr/bin/env node
 import { pathToFileURL } from "node:url";
 import { ALL_SEED_LESSONS, SHIPPABLE_SEED_LEVELS } from "../catalog.js";
+import { evaluateSeededRoadmapBalance } from "../gates/roadmap-balance.js";
 import {
-  evaluateSeededRoadmapBalance,
   formatRoadmapBalanceReport,
   formatRoadmapViolationSummary,
   listRoadmapViolations,
-} from "../gates/roadmap-balance.js";
+  summarizeRows,
+} from "../gates/roadmap-measure.js";
+import { evaluateAuthoredRoadmaps } from "../gates/roadmap-seed-runner.js";
 
 export function runRoadmapBalanceGate(options?: {
   quiet?: boolean;
   verbose?: boolean;
 }): number {
-  const report = evaluateSeededRoadmapBalance(
+  const legacy = evaluateSeededRoadmapBalance(
     ALL_SEED_LESSONS,
     SHIPPABLE_SEED_LEVELS
   );
+  const report = summarizeRows([
+    ...evaluateAuthoredRoadmaps(),
+    ...legacy.programs,
+  ]);
 
   if (!options?.quiet) {
     console.log("=== CỔNG CÂN BẰNG LỘ TRÌNH (check:roadmap-balance) ===");
