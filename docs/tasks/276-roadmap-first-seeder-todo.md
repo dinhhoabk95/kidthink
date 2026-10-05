@@ -11,14 +11,21 @@ không có ca âm thì lát chưa xong, bất kể code đã viết.
 
 ## S1 — Cổng cân bằng lộ trình chạy thật
 
-- [ ] Viết `scripts/check-roadmap-balance.ts` gọi `validateCurriculumBalance` của
-      `packages/shared/src/curriculum-model.ts` trên mọi chương trình `published`
-- [ ] Thêm `check:roadmap-balance` vào `package.json`
-- [ ] Nối vào `seed-all.ts` — chạy **trước** bước gieo nội dung, mã thoát ≠ 0 chặn pipeline
-- [ ] Đo lại: cổng in đúng 5 dòng vi phạm của plan §2.3
-- [ ] **Ca âm**: sửa một chương trình cho thoả `BR-CRM-02` · `BR-CRM-07` · `BR-CRM-08` →
-      cổng chuyển xanh cho chương trình đó
-- [ ] Test `packages/content-build/tests/gates/roadmap-balance.test.ts` phủ ca dương và ca âm
+- [x] Cổng ở `packages/content-build/src/gates/roadmap-balance.ts` + CLI `src/cli/check-roadmap-balance.ts`,
+      gọi `validateCurriculumModel` (tên thật; plan viết `validateCurriculumBalance`) trên mọi chương trình `published`.
+      Gán nội dung qua `selectCurriculumSlot` — hàm thuần tách từ seeder, cổng và seeder dùng chung
+- [x] Thêm `check:roadmap-balance` vào `package.json` (gốc và `@mindkid/content-build`)
+- [x] Nối vào `seed-all.ts` — chạy **trước** mọi bước ghi (kể cả mở kết nối), mã thoát ≠ 0 chặn pipeline.
+      ⚠️ Hệ quả: `pnpm db:seed` **đỏ** cho tới khi S2 + S4 thay 5 chương trình cũ (đúng ý plan §5)
+- [x] Đo lại: cổng in bảng 5 hàng. Khớp plan ở `BR-CRM-02` (8/8, 22/42), `BR-CRM-07` (100%, 68,3%),
+      `BR-CRM-08` (1/6, 4/6). **Lệch** plan ở `BR-CRM-03` (BE: 5/10 thay 10/14; J42: 19/40 thay 22/38) và
+      `BR-CRM-11` (BE: 6 thay 5; J42: 3 khớp) — cổng đọc `skill_codes` của header seed và bỏ level cách ly,
+      đúng thứ tự gieo hiện tại; số của plan đo ngày 2026-09-20 trước khi corpus đổi
+- [x] **Ca âm**: cùng `CUR-BE3` — kho nguồn thật đỏ, kho cân bằng (6 competency, mỗi tuần 3, ôn lại, không kỹ năng mới
+      ở 3 tuần cuối) xanh; ca đỏ riêng cho `BR-CRM-02` · `03` · `07` · `08` · `11`
+- [x] Test `packages/content-build/tests/gates/roadmap-balance.test.ts` (12 ca) phủ ca dương, ca âm, và `seed-all`
+      dừng trước `getOwnerDb()`
+- [ ] Chưa chặn (hoãn sang S2): `BR-CRM-05` — tiết chưa khai vai trò `offscreen`; `BR-CRM-01` — tiết chưa khai kỹ năng mục tiêu
 
 ## S2 — Lộ trình đầu tiên được soạn
 

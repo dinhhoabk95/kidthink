@@ -8,6 +8,8 @@ import {
 } from "@mindkid/db";
 import { and, asc, eq } from "drizzle-orm";
 
+export const CURRICULUM_POOL_LIMIT = 100;
+
 export interface MvpCurriculumConfig {
   code: string;
   title: string;
@@ -191,6 +193,16 @@ async function upsertCurriculumRecord(
   return { curriculumId: inserted.id, isNew: true };
 }
 
+export function resolveCurriculumWeekGoal(
+  cfg: Pick<MvpCurriculumConfig, "weekGoals">,
+  weekNo: number
+): string {
+  return (
+    cfg.weekGoals[weekNo - 1] ||
+    `Mục tiêu sư phạm tuần ${weekNo} cho trẻ mầm non`
+  );
+}
+
 async function seedCurriculumWeeksData(
   db: ReturnType<typeof getOwnerDb>,
   curriculumId: number,
@@ -198,8 +210,7 @@ async function seedCurriculumWeeksData(
 ): Promise<number> {
   let count = 0;
   for (let w = 1; w <= cfg.durationWeeks; w++) {
-    const goal =
-      cfg.weekGoals[w - 1] || `Mục tiêu sư phạm tuần ${w} cho trẻ mầm non`;
+    const goal = resolveCurriculumWeekGoal(cfg, w);
     await db
       .insert(curriculumWeeks)
       .values({
@@ -216,6 +227,41 @@ async function seedCurriculumWeeksData(
   return count;
 }
 
+export interface CurriculumPoolEntry {
+  readonly id: number;
+  readonly code: string;
+}
+
+export interface CurriculumSlotSelection {
+  readonly entityType: "lesson" | "game_level";
+  readonly entity: CurriculumPoolEntry;
+}
+
+export function selectCurriculumSlot(params: {
+  weekNo: number;
+  sessionNo: number;
+  sessionsPerWeek: number;
+  lessonsList: readonly CurriculumPoolEntry[];
+  levelsList: readonly CurriculumPoolEntry[];
+}): CurriculumSlotSelection | null {
+  const { weekNo, sessionNo, sessionsPerWeek, lessonsList, levelsList } =
+    params;
+  const slotIdx = weekNo * sessionsPerWeek + sessionNo;
+
+  if (lessonsList.length > 0 && sessionNo % 2 === 1) {
+    const lesson = lessonsList[slotIdx % lessonsList.length];
+    if (lesson) {
+      return { entityType: "lesson", entity: lesson };
+    }
+  } else if (levelsList.length > 0) {
+    const level = levelsList[slotIdx % levelsList.length];
+    if (level) {
+      return { entityType: "game_level", entity: level };
+    }
+  }
+  return null;
+}
+
 async function insertCurriculumItemForSession(
   db: ReturnType<typeof getOwnerDb>,
   params: {
@@ -227,52 +273,24 @@ async function insertCurriculumItemForSession(
     sessionsPerWeek: number;
   }
 ): Promise<boolean> {
-  const {
-    curriculumId,
-    weekNo,
-    sessionNo,
-    lessonsList,
-    levelsList,
-    sessionsPerWeek,
-  } = params;
-  const slotIdx = weekNo * sessionsPerWeek + sessionNo;
-
-  if (lessonsList.length > 0 && sessionNo % 2 === 1) {
-    const lesson = lessonsList[slotIdx % lessonsList.length];
-    if (lesson) {
-      await db
-        .insert(curriculumItems)
-        .values({
-          curriculumId,
-          weekNo,
-          sessionNo,
-          position: 1,
-          entityType: "lesson",
-          entityId: lesson.id,
-          isRequired: true,
-        })
-        .onConflictDoNothing();
-      return true;
-    }
-  } else if (levelsList.length > 0) {
-    const level = levelsList[slotIdx % levelsList.length];
-    if (level) {
-      await db
-        .insert(curriculumItems)
-        .values({
-          curriculumId,
-          weekNo,
-          sessionNo,
-          position: 1,
-          entityType: "game_level",
-          entityId: level.id,
-          isRequired: true,
-        })
-        .onConflictDoNothing();
-      return true;
-    }
+  const { curriculumId, weekNo, sessionNo } = params;
+  const selection = selectCurriculumSlot(params);
+  if (!selection) {
+    return false;
   }
-  return false;
+  await db
+    .insert(curriculumItems)
+    .values({
+      curriculumId,
+      weekNo,
+      sessionNo,
+      position: 1,
+      entityType: selection.entityType,
+      entityId: selection.entity.id,
+      isRequired: true,
+    })
+    .onConflictDoNothing();
+  return true;
 }
 
 async function seedCurriculumItemsData(
@@ -340,12 +358,12 @@ export async function seedCurriculaMasterData(
       .select({ id: lessons.id, code: lessons.code })
       .from(lessons)
       .orderBy(asc(lessons.id))
-      .limit(100),
+      .limit(CURRICULUM_POOL_LIMIT),
     db
       .select({ id: gameLevels.id, code: gameLevels.code })
       .from(gameLevels)
       .orderBy(asc(gameLevels.id))
-      .limit(100),
+      .limit(CURRICULUM_POOL_LIMIT),
   ]);
 
   if (

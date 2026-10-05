@@ -3,9 +3,16 @@ import { seedSkillActionSuggestions } from "../seed-master/action-suggestions.js
 import { seedContentTags } from "../seed-master/content-tags.js";
 import { seedCurriculaMasterData } from "../seed-master/curricula.js";
 import { seedTaxonomyMasterData } from "../seed-master/taxonomy/index.js";
+import { runRoadmapBalanceGate } from "./check-roadmap-balance.js";
 import { runSeedContent } from "./seed-content.js";
 
 export async function seedAllContent(options?: { masterOnly?: boolean }) {
+  if (runRoadmapBalanceGate() !== 0) {
+    throw new Error(
+      "check:roadmap-balance đỏ: lộ trình vi phạm BR-CRM-*, dừng trước khi gieo. Xem chi tiết ở bảng phía trên."
+    );
+  }
+
   const db = getOwnerDb();
   console.log(
     "🌱 [content-build:seed] Seeding all content and taxonomy data..."
