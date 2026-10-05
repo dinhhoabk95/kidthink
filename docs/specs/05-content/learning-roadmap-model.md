@@ -145,14 +145,28 @@ phải có `age_min`/`age_max` giao band của lộ trình và `difficulty` ≤ 
 | `week_no` · `session_no` | Vị trí trong lộ trình | Có |
 | `role` | Vai trò tiết | Có |
 | `skill_code` | Kỹ năng ô này dạy | Có |
-| `topic_code` | Chủ đề trong kỹ năng đó | Có |
-| `template_codes` | Khuôn hợp lệ, lấy từ ma trận tương hợp | ≥1 |
-| `level_quota` | Số level cần cho ô | ≥1 |
-| `filled_by` | Mã nội dung đang lấp ô, rỗng khi còn nợ | Không |
+| `topic_code` | Chủ đề trong kỹ năng đó | Có khi lộ trình khai `topics[]`; `null` tới khi sổ đăng ký chủ đề tồn tại |
+| `template_codes` | Khuôn hợp lệ, lấy từ ma trận tương hợp | ≥1 cho ô `practice` |
+| `level_quota` | Số nội dung cần cho ô: 3 level cho `practice`, 1 bài học cho vai trò còn lại | ≥1 |
+| `filled_by` | Mảng mã nội dung đang lấp ô; ô lấp khi đủ `level_quota`, thiếu thì còn nợ | Không |
 
 `template_codes` **không** do người soạn gõ tay — nó lấy từ
 `packages/content-build/src/gates/skill-template-affinity.ts`, thứ đã suy được khuôn hợp lệ
 cho một kỹ năng bằng giao `thinking_processes` và khoảng tuổi.
+
+Sổ cầu nằm ở `packages/content/src/roadmaps/content-demand.json`, sinh bằng `pnpm derive:demand`
+và kiểm bằng `pnpm check:content-demand` (so theo giá trị vì Biome định dạng lại file).
+
+Cách lấp ô là phép tra xác định, không có phép chia lấy dư:
+
+- Ứng viên phải liệt kê đúng `skill_code` của ô và phủ trọn band của ô (`age_min ≤ tuổi thấp
+  của band` và `age_max ≥ tuổi cao của band`). Level còn phải có `difficulty` ≤ trần band.
+- `practice` lấy level; `introduce`, `review`, `offscreen` lấy bài học. `offscreen` chỉ nhận bài
+  có ít nhất một hoạt động không phải `digital_game`.
+- Một nội dung chỉ lấp một ô trong một lộ trình (`BR-CRM-09`). Cấp theo thứ tự vai trò
+  `introduce` → `practice` → `review` → `offscreen`, trong vai trò theo vị trí tiết; ứng viên xếp
+  theo mã (level: độ khó rồi mã).
+- Thiếu ứng viên thì ô còn nợ. Cấm — NEVER mượn nội dung của kỹ năng khác để che nợ.
 
 ### 7.3 Đo được ngày 2026-09-20 — trạng thái trước khi có spec này
 

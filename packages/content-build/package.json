@@ -38,6 +38,8 @@
     "check:skill-progression": "tsx src/gates/skill-progression.ts",
     "check:seed-gates": "tsx src/cli/check-seed-gates.ts",
     "check:roadmap-balance": "tsx src/cli/check-roadmap-balance.ts",
+    "derive:demand": "tsx src/cli/derive-demand.ts",
+    "check:content-demand": "tsx src/cli/derive-demand.ts --check",
     "seed:all": "tsx src/cli/seed-all.ts",
     "seed:check": "tsx src/cli/seed-check.ts",
     "seed:content": "tsx src/cli/seed-content.ts",

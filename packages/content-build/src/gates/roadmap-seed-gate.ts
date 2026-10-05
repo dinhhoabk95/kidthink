@@ -43,7 +43,9 @@ const ROLES: ReadonlySet<RoadmapSessionRole> = new Set([
   "offscreen",
 ]);
 const CODE_REGEX = /^RM-(3-4|4-5|5-6)-[a-z0-9]+(?:-[a-z0-9]+)*$/;
-const BAND_AGES: Readonly<Record<RoadmapBand, readonly [number, number]>> = {
+export const BAND_AGES: Readonly<
+  Record<RoadmapBand, readonly [number, number]>
+> = {
   "3-4": [3, 4],
   "4-5": [4, 5],
   "5-6": [5, 6],

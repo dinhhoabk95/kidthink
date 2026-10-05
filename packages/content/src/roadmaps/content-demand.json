@@ -1,0 +1,610 @@
+{
+  "ledger_version": 1,
+  "summary": [
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "roadmap_version": 1,
+      "band": "3-4",
+      "cells": 36,
+      "filled_cells": 20,
+      "debt_cells": 16
+    }
+  ],
+  "cells": [
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 1,
+      "session_no": 1,
+      "role": "introduce",
+      "skill_code": "C1.CNT.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-003", "GT-007", "GT-012"],
+      "level_quota": 1,
+      "filled_by": ["LES-0001"]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 1,
+      "session_no": 2,
+      "role": "practice",
+      "skill_code": "C1.CNT.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-003", "GT-007", "GT-012"],
+      "level_quota": 3,
+      "filled_by": [
+        "GL-C1-CNT-CARD-0001",
+        "GL-C1-CNT-CARD-0002",
+        "GL-C1-CNT-CARD-0003"
+      ]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 1,
+      "session_no": 3,
+      "role": "offscreen",
+      "skill_code": "C2.GEO.02",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 2,
+      "session_no": 1,
+      "role": "introduce",
+      "skill_code": "C2.GEO.02",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 1,
+      "filled_by": ["LES-0013"]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 2,
+      "session_no": 2,
+      "role": "practice",
+      "skill_code": "C2.GEO.02",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 3,
+      "filled_by": [
+        "GL-C2-GEO-INTRO-0001",
+        "GL-C2-GEO-MEMO-0001",
+        "GL-C2-GEO-SLOT-0001"
+      ]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 2,
+      "session_no": 3,
+      "role": "offscreen",
+      "skill_code": "C1.CNT.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-003", "GT-007", "GT-012"],
+      "level_quota": 1,
+      "filled_by": ["LES-0007"]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 3,
+      "session_no": 1,
+      "role": "introduce",
+      "skill_code": "C1.CMP.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-005", "GT-007", "GT-012"],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 3,
+      "session_no": 2,
+      "role": "practice",
+      "skill_code": "C1.CMP.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-005", "GT-007", "GT-012"],
+      "level_quota": 3,
+      "filled_by": [
+        "GL-C1-CMP-INTRO-0001",
+        "GL-C1-CMP-MEMO-0001",
+        "GL-C1-CMP-MEMO-0003"
+      ]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 3,
+      "session_no": 3,
+      "role": "offscreen",
+      "skill_code": "C2.GEO.02",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 4,
+      "session_no": 1,
+      "role": "introduce",
+      "skill_code": "C4.VIS.02",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 1,
+      "filled_by": ["LES-0103"]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 4,
+      "session_no": 2,
+      "role": "practice",
+      "skill_code": "C4.VIS.02",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 3,
+      "filled_by": [
+        "GL-C4-VIS-CARD-0101",
+        "GL-C4-VIS-MATCH-0104",
+        "GL-C4-VIS-MEMO-0001"
+      ]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 4,
+      "session_no": 3,
+      "role": "offscreen",
+      "skill_code": "C1.CMP.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-005", "GT-007", "GT-012"],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 5,
+      "session_no": 1,
+      "role": "introduce",
+      "skill_code": "C3.SRT.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-005", "GT-007", "GT-008", "GT-012"],
+      "level_quota": 1,
+      "filled_by": ["LES-0025"]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 5,
+      "session_no": 2,
+      "role": "practice",
+      "skill_code": "C3.SRT.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-005", "GT-007", "GT-008", "GT-012"],
+      "level_quota": 3,
+      "filled_by": [
+        "GL-C3-SRT-MEMO-0001",
+        "GL-C3-SRT-PAIR-0001",
+        "GL-C3-SRT-PAIR-0002"
+      ]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 5,
+      "session_no": 3,
+      "role": "offscreen",
+      "skill_code": "C4.VIS.02",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 6,
+      "session_no": 1,
+      "role": "introduce",
+      "skill_code": "C5.LIS.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-003", "GT-005", "GT-008", "GT-020"],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 6,
+      "session_no": 2,
+      "role": "practice",
+      "skill_code": "C5.LIS.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-003", "GT-005", "GT-008", "GT-020"],
+      "level_quota": 3,
+      "filled_by": [
+        "GL-C5-LIS-GRID-0001",
+        "GL-C5-LIS-PATT-0001",
+        "GL-C5-LIS-SLOT-0001"
+      ]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 6,
+      "session_no": 3,
+      "role": "offscreen",
+      "skill_code": "C3.SRT.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-005", "GT-007", "GT-008", "GT-012"],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 7,
+      "session_no": 1,
+      "role": "introduce",
+      "skill_code": "C6.ATT.01",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 7,
+      "session_no": 2,
+      "role": "practice",
+      "skill_code": "C6.ATT.01",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 3,
+      "filled_by": [
+        "GL-C6-ATT-MEMO-0001",
+        "GL-C6-ATT-PATT-0001",
+        "GL-C6-ATT-SLOT-0001"
+      ]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 7,
+      "session_no": 3,
+      "role": "offscreen",
+      "skill_code": "C5.LIS.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-003", "GT-005", "GT-008", "GT-020"],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 8,
+      "session_no": 1,
+      "role": "introduce",
+      "skill_code": "C1.CMP.04",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-003", "GT-005", "GT-007", "GT-012"],
+      "level_quota": 1,
+      "filled_by": ["LES-0106"]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 8,
+      "session_no": 2,
+      "role": "practice",
+      "skill_code": "C1.CMP.04",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-003", "GT-005", "GT-007", "GT-012"],
+      "level_quota": 3,
+      "filled_by": [
+        "GL-C1-CMP-CARD-0115",
+        "GL-C1-CMP-CONT-0117",
+        "GL-C1-CMP-INTRO-0002"
+      ]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 8,
+      "session_no": 3,
+      "role": "offscreen",
+      "skill_code": "C6.ATT.01",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 9,
+      "session_no": 1,
+      "role": "introduce",
+      "skill_code": "C4.DET.03",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-007",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 1,
+      "filled_by": ["LES-0031"]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 9,
+      "session_no": 2,
+      "role": "practice",
+      "skill_code": "C4.DET.03",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-007",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 3,
+      "filled_by": [
+        "GL-C4-DET-PATT-0005",
+        "GL-C4-DET-SHAD-0001",
+        "GL-C4-DET-SLOT-0005"
+      ]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 9,
+      "session_no": 3,
+      "role": "offscreen",
+      "skill_code": "C1.CMP.04",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-003", "GT-005", "GT-007", "GT-012"],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 10,
+      "session_no": 1,
+      "role": "review",
+      "skill_code": "C2.GEO.02",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 10,
+      "session_no": 2,
+      "role": "practice",
+      "skill_code": "C3.SRT.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-005", "GT-007", "GT-008", "GT-012"],
+      "level_quota": 3,
+      "filled_by": [
+        "GL-C3-SRT-PATT-0001",
+        "GL-C3-SRT-SHAD-0001",
+        "GL-C3-SRT-SLOT-0001"
+      ]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 10,
+      "session_no": 3,
+      "role": "offscreen",
+      "skill_code": "C6.ATT.01",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 11,
+      "session_no": 1,
+      "role": "review",
+      "skill_code": "C5.LIS.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-003", "GT-005", "GT-008", "GT-020"],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 11,
+      "session_no": 2,
+      "role": "practice",
+      "skill_code": "C4.DET.03",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-007",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 3,
+      "filled_by": [
+        "GL-C4-DET-TAP-0005",
+        "GL-C4-DET-TCMP-0005",
+        "GL-C4-DET-PATT-0006"
+      ]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 11,
+      "session_no": 3,
+      "role": "offscreen",
+      "skill_code": "C1.CMP.04",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-003", "GT-005", "GT-007", "GT-012"],
+      "level_quota": 1,
+      "filled_by": []
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 12,
+      "session_no": 1,
+      "role": "review",
+      "skill_code": "C1.CNT.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-003", "GT-007", "GT-012"],
+      "level_quota": 1,
+      "filled_by": ["LES-0002"]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 12,
+      "session_no": 2,
+      "role": "practice",
+      "skill_code": "C4.VIS.02",
+      "topic_code": null,
+      "template_codes": [
+        "GT-001",
+        "GT-003",
+        "GT-005",
+        "GT-008",
+        "GT-012",
+        "GT-020"
+      ],
+      "level_quota": 3,
+      "filled_by": [
+        "GL-C4-VIS-SLOT-0001",
+        "GL-C4-VIS-TCMP-0003",
+        "GL-C4-VIS-CARD-0102"
+      ]
+    },
+    {
+      "roadmap_code": "RM-3-4-mam-01",
+      "band": "3-4",
+      "week_no": 12,
+      "session_no": 3,
+      "role": "offscreen",
+      "skill_code": "C3.SRT.01",
+      "topic_code": null,
+      "template_codes": ["GT-001", "GT-005", "GT-007", "GT-008", "GT-012"],
+      "level_quota": 1,
+      "filled_by": []
+    }
+  ]
+}

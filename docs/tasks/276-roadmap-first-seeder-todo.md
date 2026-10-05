@@ -46,13 +46,18 @@ không có ca âm thì lát chưa xong, bất kể code đã viết.
 
 ## S3 — Sổ cầu nội dung
 
-- [ ] Viết `packages/content-build/src/cli/derive-demand.ts`
-- [ ] Ô sổ cầu đủ cột theo spec mục 7.2; `template_codes` lấy từ
-      `gates/skill-template-affinity.ts`, Cấm — NEVER gõ tay
-- [ ] In ra `content-demand.json`, commit vào repo (`BR-LRM-07`)
-- [ ] Số ô khớp số tiết của lộ trình
-- [ ] **Ca âm**: chạy lại `derive-demand` không đổi gì → file trùng từng byte
-- [ ] **Ca âm**: sửa một tuần trong lộ trình → sổ cầu đổi tương ứng
+- [x] Viết `packages/content-build/src/cli/derive-demand.ts` (lõi thuần ở `gates/content-demand.ts`; `pnpm derive:demand`
+      ghi file, `pnpm check:content-demand` kiểm). Từ chối chạy khi lộ trình đỏ (`BR-LRM-06`)
+- [x] Ô sổ cầu đủ cột theo spec mục 7.2; `template_codes` lấy từ
+      `gates/skill-template-affinity.ts`, Cấm — NEVER gõ tay. Spec §7.2 đã sửa: `topic_code` null tới khi có sổ chủ đề,
+      `filled_by` là mảng, `level_quota` 3 (practice) / 1 (bài học), luật lấp ô xác định ghi rõ
+- [x] In ra `packages/content/src/roadmaps/content-demand.json`, commit vào repo (`BR-LRM-07`)
+- [x] Số ô khớp số tiết của lộ trình — 36 ô
+- [x] **Ca âm**: chạy lại `derive-demand` không đổi gì → file trùng từng byte (kể cả đảo thứ tự kho đầu vào)
+- [x] **Ca âm**: sửa một tuần trong lộ trình → sổ cầu đổi tương ứng
+- [x] **Ca âm** bổ sung: nội dung kỹ năng khác / band khác / vượt trần độ khó không lấp ô; `topics[]` dừng chứ không nuốt im lặng
+- [x] Test `tests/gates/content-demand.test.ts` (16 ca). Đo thật: `RM-3-4-mam-01` lấp **20/36 ô**, nợ 16 —
+      11 ô `offscreen` + 3 ô `introduce` (CMP.01, LIS.01, ATT.01 chưa có bài band `3-4`) + 2 ô `review` (GEO.02, LIS.01); 12/12 ô `practice` đã lấp
 
 ## S4 — Bỏ phép chia lấy dư, lật thứ tự pipeline
 

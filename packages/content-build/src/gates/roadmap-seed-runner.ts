@@ -50,7 +50,7 @@ export function buildRoadmapSkillMap(): Map<string, RoadmapSkillInfo> {
   return new Map(entries);
 }
 
-export function evaluateAuthoredRoadmaps(): RoadmapProgramRow[] {
+export function loadDifficultyMaxByBand(): Record<RoadmapBand, number> {
   const config = loadAgeBandsConfig();
   const difficultyMaxByBand: Record<RoadmapBand, number> = {
     "3-4": config.bands["3-4"]?.difficulty_max ?? 0,
@@ -62,9 +62,13 @@ export function evaluateAuthoredRoadmaps(): RoadmapProgramRow[] {
       throw new Error(`Thiếu trần độ khó cho band ${band}`);
     }
   }
+  return difficultyMaxByBand;
+}
+
+export function evaluateAuthoredRoadmaps(): RoadmapProgramRow[] {
   return evaluateRoadmapSeeds({
     roadmaps: ALL_ROADMAPS,
     skills: buildRoadmapSkillMap(),
-    difficultyMaxByBand,
+    difficultyMaxByBand: loadDifficultyMaxByBand(),
   });
 }
