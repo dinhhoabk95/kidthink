@@ -121,9 +121,15 @@ progress    = denominator > 0 ? (numerator / denominator) : 0
   },
   "week_progress": { "done": 3, "total": 5 },
   "curriculum_progress": 0.28,
-  "week_blocked_by_tier": false
+  "week_blocked_by_tier": false,
+  "is_completed": false
 }
 ```
+
+Khi `is_completed` là `true`, phản hồi thêm `next_curriculum_suggestion`: mã chương trình gợi
+ý đi tiếp, hiện là `CUR-RM-3-4-mam-01` (chương trình sinh từ lộ trình `RM-3-4-mam-01`, mã có
+tiền tố `CUR-` theo `learning-roadmap-model.md` mục 4). Mã cũ `CUR-J42` đã bị gỡ cùng 4 chương
+trình `CUR-BE3..BE6`; không còn hàng nào mang các mã đó được gieo.
 
 ## 8. API contract
 

@@ -1,4 +1,5 @@
 import { RM_3_4_MAM_01 } from "@mindkid/content";
+import { NEXT_CURRICULUM_SUGGESTION_CODE } from "@mindkid/shared";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runRoadmapBalanceGate } from "#src/cli/check-roadmap-balance";
 import { runSeedMasterScan } from "#src/cli/check-seed-master";
@@ -111,6 +112,11 @@ describe("chương trình sinh từ lộ trình", () => {
     ]) {
       expect(codes).not.toContain(legacy);
     }
+  });
+
+  it("mã gợi ý chương trình kế tiếp của API là một chương trình có thật", () => {
+    const codes = ROADMAP_CURRICULA_CONFIGS.map((c) => c.code);
+    expect(codes).toContain(NEXT_CURRICULUM_SUGGESTION_CODE);
   });
 });
 

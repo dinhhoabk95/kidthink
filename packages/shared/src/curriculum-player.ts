@@ -1,5 +1,7 @@
 import type { AccessTier } from "./taxonomy-types.js";
 
+export const NEXT_CURRICULUM_SUGGESTION_CODE = "CUR-RM-3-4-mam-01";
+
 export interface CurriculumPlayerItemRef {
   id: number;
   curriculum_id: number;
@@ -279,7 +281,9 @@ export function resolveNextStep(params: {
     curriculum_progress: progress,
     week_blocked_by_tier: weekBlockedByTier,
     is_completed: isCompleted,
-    next_curriculum_suggestion: isCompleted ? "CUR-J42" : undefined,
+    next_curriculum_suggestion: isCompleted
+      ? NEXT_CURRICULUM_SUGGESTION_CODE
+      : undefined,
   };
 }
 
