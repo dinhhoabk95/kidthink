@@ -73,6 +73,14 @@ export interface ActivitySeed {
   header: ActivitySeedHeader;
 }
 
+export interface LessonTopic {
+  topic_code: string;
+  skill_code: string;
+  sequence_no: number;
+  templates: string[];
+  activity_codes: string[];
+}
+
 export interface LessonSeedHeader {
   code: string;
   content_version: number;
@@ -92,6 +100,7 @@ export interface LessonSeedHeader {
   activity_codes: string[];
   what_tags: string[];
   thinking_tags: string[];
+  topics?: LessonTopic[];
   theme_tag?: string;
   origin: SeedOrigin;
   authored_in: SeedAuthoredIn;

@@ -80,13 +80,22 @@ không có ca âm thì lát chưa xong, bất kể code đã viết.
 
 ## S5 — `topics[]` và cổng bố cục bài
 
-- [ ] Thêm `topics[]` vào `LessonSeed.header` theo spec `lesson-topic-composition` mục 7.1
-- [ ] Viết `scripts/check-lesson-topics.ts` phủ `BR-LTC-01` · `03` · `04` · `05` · `06` ·
-      `07` · `09`
-- [ ] Cổng đỏ trên 126 bài hiện tại, in đúng số bài có 1 chủ đề
-- [ ] **Ca âm**: bài 2 chủ đề × 2 khuôn hợp lệ → xanh
-- [ ] **Ca âm**: chủ đề khai khuôn ngoài ma trận tương hợp → đỏ, in cặp kỹ năng-khuôn
-- [ ] **Ca âm**: hoạt động có `skill_codes` không giao với bài → đỏ (`BR-LTC-06`)
+- [x] Thêm `topics[]` vào `LessonSeed.header` theo spec `lesson-topic-composition` mục 7.1
+- [x] Viết `check-lesson-topics.ts` (trong `packages/content-build/src/cli/`, không phải
+      `scripts/`) phủ `BR-LTC-01` · `03` · `04` · `05` · `06` · `07` · `09`
+- [x] Cổng đỏ trên 126 bài hiện tại, in đúng số bài có 1 chủ đề
+- [x] **Ca âm**: bài 2 chủ đề × 2 khuôn hợp lệ → xanh
+- [x] **Ca âm**: chủ đề khai khuôn ngoài ma trận tương hợp → đỏ, in cặp kỹ năng-khuôn
+- [x] **Ca âm**: hoạt động có `skill_codes` không giao với bài → đỏ (`BR-LTC-06`)
+
+      Đo `pnpm check:lesson-topics` trên 126 bài: chưa khai `topics[]` 126 · khai đúng 1 chủ đề 0 ·
+      `BR-LTC-01` 126 · `BR-LTC-05` 1 (mọi bài đúng 3 hoạt động) · `BR-LTC-06` 14 cặp bài-hoạt động
+      (spec §7.2 đếm 11 hoạt động; cổng đếm theo cặp bài-hoạt động và tính cả hoạt động ngoài
+      trò chơi số, nên hai con số không so thẳng được; chưa đối chiếu từng mã) ·
+      `BR-LTC-09` 125 (khuôn riêng biệt mỗi bài 2..2; 1 bài `offscreen` được miễn) ·
+      `BR-LTC-03/04/07` 0 vì chưa có chủ đề nào để đo. Gate cố ý **đỏ** tới khi S6 xong, chưa
+      nối vào `pnpm check` hay hook. Trần 4 chủ đề chưa chốt nên cổng chưa ép trần.
+      `BR-LTC-01` chưa miễn bài `introduce` vì "chủ đề dài" chưa có định nghĩa đo được.
 
 ## S6 — Chuyển 126 bài sang `topics[]`
 
