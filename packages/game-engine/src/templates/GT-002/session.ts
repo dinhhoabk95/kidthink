@@ -12,6 +12,7 @@ import { insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
 import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
+  drawCheckMark,
   drawSceneBackground,
   drawSlotItem,
   drawWoodenPlate,
@@ -33,7 +34,6 @@ export class GT002Session extends TemplateGameSession<
   private readonly mechanic = new SelectionMechanic({ mode: "multi" });
   degradation: DegradationState | null = null;
   private particles: Particle[] = [];
-  private itemStates: Map<string, ItemVisualState> = new Map();
 
   /** Nút Xong ở `zones.action` (`BR-PSZ-05`); chỉ sáng khi đã chọn ít nhất một vật. */
   override readonly needsCommit = true;
@@ -43,7 +43,6 @@ export class GT002Session extends TemplateGameSession<
     this.mechanic.reset();
     this.isWon = false;
     this.particles = [];
-    this.itemStates = new Map();
     this.displayItems = [...this.content.items];
   }
 
@@ -70,17 +69,20 @@ export class GT002Session extends TemplateGameSession<
   }
 
   getItemState(itemId: string): ItemVisualState {
-    return this.itemStates.get(itemId) ?? "idle";
-  }
-
-  setItemState(itemId: string, state: ItemVisualState): void {
-    this.itemStates.set(itemId, state);
+    if (this.isWon) {
+      const item = this.content.items.find((it) => it.item_id === itemId);
+      if (item?.is_correct) {
+        return "correct";
+      }
+    }
+    if (this.mechanic.isSelected(itemId)) {
+      return "selected";
+    }
+    return "idle";
   }
 
   toggleItemSelection(itemId: string): void {
     this.mechanic.toggle(itemId);
-    const current = this.getItemState(itemId);
-    this.setItemState(itemId, current === "selected" ? "idle" : "selected");
   }
 
   validateAction(action: GameAction): ActionResult {
@@ -98,7 +100,6 @@ export class GT002Session extends TemplateGameSession<
     return this.mechanic.validate(action, items);
   }
 
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: game submit logic requires branching
   onSubmitSelection(): void {
     const { valid } = this.validateAction({
       type: "submit_selection",
@@ -108,7 +109,6 @@ export class GT002Session extends TemplateGameSession<
     if (valid) {
       for (const item of this.displayItems) {
         if (item.is_correct) {
-          this.setItemState(item.item_id, "correct");
           const idx = this.displayItems.indexOf(item);
           const slot = this.slots[idx];
           if (slot) {
@@ -117,26 +117,21 @@ export class GT002Session extends TemplateGameSession<
         }
       }
       this.winSession();
-    } else {
-      for (const item of this.displayItems) {
-        const state = this.getItemState(item.item_id);
-        if (state === "selected" && !item.is_correct) {
-          this.setItemState(item.item_id, "wrong");
-        }
-      }
     }
+  }
+
+  private toEntityState(rawState: ItemVisualState): ViewEntity["state"] {
+    if (rawState === "correct") {
+      return "correct";
+    }
+    if (rawState === "selected") {
+      return "selected";
+    }
+    return "idle";
   }
 
   override getView(): EngineView {
     const entities: ViewEntity[] = [];
-    const stateMap: Record<
-      string,
-      "idle" | "selected" | "correct" | "incorrect"
-    > = {
-      wrong: "incorrect",
-      correct: "correct",
-      selected: "selected",
-    };
 
     for (let i = 0; i < this.displayItems.length; i++) {
       const item = this.displayItems[i];
@@ -145,7 +140,7 @@ export class GT002Session extends TemplateGameSession<
         continue;
       }
       const rawState = this.getItemState(item.item_id);
-      const state = stateMap[rawState] ?? "idle";
+      const state = this.toEntityState(rawState);
       entities.push({
         id: item.item_id,
         slotIndex: i,
@@ -266,6 +261,9 @@ export class GT002Session extends TemplateGameSession<
         },
         "circle"
       );
+      if (state === "selected") {
+        drawCheckMark(ctx, slot);
+      }
     }
   }
 

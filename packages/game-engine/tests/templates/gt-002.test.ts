@@ -140,3 +140,41 @@ describe("GT-002 — nút Xong ở zones.action (BR-PSZ-05, Task #283 B2)", () =
     expect(session.getHintTarget()).toEqual({ kind: "action" });
   });
 });
+
+describe("GT-002 — commit sai giữ tập chọn, trạng thái một nguồn (G3, G5, Task #275 S2)", () => {
+  it("commit sai thì giữ nguyên tập chọn và không entity nào ở trạng thái incorrect", () => {
+    const session = buildSession();
+    const [firstCorrect] = correctIds;
+    const [firstDistractor] = distractorIds;
+    if (!(firstCorrect && firstDistractor)) {
+      throw new Error("Fixture thiếu vật đúng hoặc distractor");
+    }
+    tapItem(session, firstCorrect);
+    tapItem(session, firstDistractor);
+
+    session.dispatch({ type: "commit", timeMs: 0 });
+
+    expect(session.getItemState(firstDistractor)).toBe("selected");
+    expect(session.getItemState(firstCorrect)).toBe("selected");
+    const entities = session.getView().entities;
+    expect(entities.some((e) => e.state === "incorrect")).toBe(false);
+  });
+
+  it("chạm lại distractor sau khi commit sai: trở về idle và mechanic không còn chọn", () => {
+    const session = buildSession();
+    const [firstDistractor] = distractorIds;
+    if (!firstDistractor) {
+      throw new Error("Fixture thiếu distractor");
+    }
+    tapItem(session, firstDistractor);
+    session.dispatch({ type: "commit", timeMs: 0 });
+
+    tapItem(session, firstDistractor);
+
+    expect(session.getItemState(firstDistractor)).toBe("idle");
+    const entity = session
+      .getView()
+      .entities.find((e) => e.id === firstDistractor);
+    expect(entity?.state).toBe("idle");
+  });
+});

@@ -42,11 +42,11 @@ lát chạm tới), `rtk proxy pnpm typecheck --only root`, `rtk proxy pnpm type
 
 > #283 B2 (2026-10-03): nút Xong chuyển sang `zones.action` do shell vẽ, `drawProgressBadge` đã gỡ (`BR-PSZ-06`). Mục "nút Xong nháy hổ phách" nay là nháy nút ở `zones.action` qua `getHintTarget()`/`drawCommitButton`, mục "nhãn đếm" không còn đối tượng.
 
-- [ ] Trạng thái hình suy từ mechanic; xoá `itemStates` và nhánh gán `wrong`
-- [ ] Commit sai: nút Xong nháy hổ phách theo `lastFrameMs`; tính một miss
-- [ ] Nhãn đếm đọc `mechanic.getSelectedIds().length`
-- [ ] Dấu tick cho `selected`, không màu `success`/`retry`
-- [ ] Ca âm: distractor → commit sai → chạm lại → hình `idle` **và** mechanic không chọn; không
+- [x] Trạng thái hình suy từ mechanic; xoá `itemStates` và nhánh gán `wrong`
+- [x] Commit sai: nút Xong nháy hổ phách theo `lastFrameMs`; tính một miss
+- [x] Nhãn đếm đọc `mechanic.getSelectedIds().length`
+- [x] Dấu tick cho `selected`, không màu `success`/`retry`
+- [x] Ca âm: distractor → commit sai → chạm lại → hình `idle` **và** mechanic không chọn; không
       entity nào `incorrect` sau commit sai
 
 ## S3 — View web đồng bộ khi chọn/bỏ chọn (G4) · S · phụ thuộc: S1b
