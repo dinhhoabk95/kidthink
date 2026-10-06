@@ -52,16 +52,6 @@ export const projectGT003: Projection<"GT-003"> = {
       dataset.items.some((other) => attrOf(other) !== attrOf(item))
     );
     const targetPool = eligibleTargets.length ? eligibleTargets : dataset.items;
-    const targetItem = safeGetItem(targetPool, rng.nextInt(targetPool.length));
-    const targetAttr = attrOf(targetItem);
-
-    // Thuộc tính là khoá nội bộ, còn danh từ hiển thị đi vào câu đề và nhãn
-    // rổ — nó phải đọc được. Nhãn dài kiểu "xếp sách lên kệ gọn gàng" đẩy câu
-    // đề vượt trần 12 từ của `BR-GLM-04`, nên lúc đó lấy tên loại thay thế.
-    const displayNoun = isShortNoun(targetAttr)
-      ? targetAttr
-      : byCategory(targetItem);
-
     const params = getEngineDifficultyParams("GT-003", opts.difficulty);
     const targetCount = params.target_count ?? 2;
 
@@ -70,17 +60,46 @@ export const projectGT003: Projection<"GT-003"> = {
     // cây, đúng theo mắt trẻ nhưng engine từ chối. Lọc riêng theo thuộc tính
     // lại để lọt vật trùng `id` (dataset có hai nhãn chung một `id`), và hai
     // vật cùng `id` sinh ra `item_id` trùng nhau.
-    const otherItems = dataset.items.filter(
-      (i) => i.id !== targetItem.id && attrOf(i) !== targetAttr
+    const assemble = (targetItem: DatasetItem) => {
+      const targetAttr = attrOf(targetItem);
+      const otherItems = dataset.items.filter(
+        (i) => i.id !== targetItem.id && attrOf(i) !== targetAttr
+      );
+      const distractorCount = Math.min(
+        params.distractor_count ?? 0,
+        otherItems.length
+      );
+      const chosenDistractors = shuffleDeterministic(otherItems, rng).slice(
+        0,
+        distractorCount
+      );
+      return { targetItem, targetAttr, chosenDistractors };
+    };
+
+    let picked = assemble(
+      safeGetItem(targetPool, rng.nextInt(targetPool.length))
     );
-    const distractorCount = Math.min(
-      params.distractor_count ?? 0,
-      otherItems.length
+
+    // Dataset có ký hiệu (chữ số) thì bàn chơi phải cho trẻ thấy ký hiệu đó
+    // (`BR-SDS-03`). Chọn đích ngẫu nhiên có thể rơi toàn vào vật chỉ có hình,
+    // khi đó chọn lại đích từ nhóm có ký hiệu. Level đã có ký hiệu thì không
+    // đụng tới nên nội dung của chúng giữ nguyên.
+    const glyphPool = targetPool.filter((i) => i.glyph);
+    const showsGlyph = [picked.targetItem, ...picked.chosenDistractors].some(
+      (i) => i.glyph
     );
-    const chosenDistractors = shuffleDeterministic(otherItems, rng).slice(
-      0,
-      distractorCount
-    );
+    if (glyphPool.length > 0 && !showsGlyph) {
+      picked = assemble(safeGetItem(glyphPool, rng.nextInt(glyphPool.length)));
+    }
+
+    const { targetItem, targetAttr, chosenDistractors } = picked;
+
+    // Thuộc tính là khoá nội bộ, còn danh từ hiển thị đi vào câu đề và nhãn
+    // rổ — nó phải đọc được. Nhãn dài kiểu "xếp sách lên kệ gọn gàng" đẩy câu
+    // đề vượt trần 12 từ của `BR-GLM-04`, nên lúc đó lấy tên loại thay thế.
+    const displayNoun = isShortNoun(targetAttr)
+      ? targetAttr
+      : byCategory(targetItem);
 
     const items = [
       ...Array.from({ length: targetCount }, (_, i) => ({

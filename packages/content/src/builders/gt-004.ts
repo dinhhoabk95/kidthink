@@ -27,8 +27,17 @@ export const projectGT004: Projection<"GT-004"> = {
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const shuffled = shuffleDeterministic(dataset.items, rng);
-    const itemA = safeGetItem(shuffled, 0);
+    let itemA = safeGetItem(shuffled, 0);
     const itemB = safeGetItem(shuffled, 1);
+
+    // Dataset có ký hiệu thì bàn chơi phải cho trẻ thấy ký hiệu đó (`BR-SDS-03`).
+    // Chỉ đổi khi cả hai nhóm đều không có, nên level đã đạt giữ nguyên.
+    const glyphCandidates = shuffled.filter(
+      (i) => i.glyph && i.id !== itemB.id
+    );
+    if (!(itemA.glyph || itemB.glyph) && glyphCandidates.length > 0) {
+      itemA = safeGetItem(glyphCandidates, rng.nextInt(glyphCandidates.length));
+    }
 
     const groups = [
       {

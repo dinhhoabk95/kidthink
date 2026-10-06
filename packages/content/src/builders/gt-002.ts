@@ -31,41 +31,67 @@ export const projectGT002: Projection<"GT-002"> = {
 
     const rng = createRng(opts.seed + (opts.round_index ?? 0));
     const shuffled = shuffleDeterministic(dataset.items, rng);
-    const targetItem = safeGetItem(shuffled, 0);
 
-    const distractorPool = shuffled.filter((i) => i.id !== targetItem.id);
-    const pool = distractorPool.length > 0 ? distractorPool : shuffled;
-    const shuffledDistractors = shuffleDeterministic(pool, rng);
+    type DatasetItem = (typeof dataset.items)[number];
+    const assemble = (targetItem: DatasetItem) => {
+      const distractorPool = shuffled.filter((i) => i.id !== targetItem.id);
+      const pool = distractorPool.length > 0 ? distractorPool : shuffled;
+      const shuffledDistractors = shuffleDeterministic(pool, rng);
 
-    const chosenTargets: Array<{
-      item_id: string;
-      asset: ReturnType<typeof resolveItemAsset>;
-      is_correct: true;
-    }> = [];
-    for (let i = 0; i < targetCount; i++) {
-      chosenTargets.push({
-        item_id: `${targetItem.id}_t${i + 1}`,
-        asset: resolveItemAsset(targetItem, true),
-        is_correct: true,
-      });
-    }
+      const chosenTargets: Array<{
+        item_id: string;
+        asset: ReturnType<typeof resolveItemAsset>;
+        is_correct: true;
+      }> = [];
+      for (let i = 0; i < targetCount; i++) {
+        chosenTargets.push({
+          item_id: `${targetItem.id}_t${i + 1}`,
+          asset: resolveItemAsset(targetItem, true),
+          is_correct: true,
+        });
+      }
 
-    const chosenDistractors: Array<{
-      item_id: string;
-      asset: ReturnType<typeof resolveItemAsset>;
-      is_correct: false;
-    }> = [];
-    for (let i = 0; i < distractorCount; i++) {
-      const d = safeGetItem(
-        shuffledDistractors,
-        i % shuffledDistractors.length
+      const distractorSources: DatasetItem[] = [];
+      const chosenDistractors: Array<{
+        item_id: string;
+        asset: ReturnType<typeof resolveItemAsset>;
+        is_correct: false;
+      }> = [];
+      for (let i = 0; i < distractorCount; i++) {
+        const d = safeGetItem(
+          shuffledDistractors,
+          i % shuffledDistractors.length
+        );
+        distractorSources.push(d);
+        chosenDistractors.push({
+          item_id: `${d.id}_d${i + 1}`,
+          asset: resolveItemAsset(d, true),
+          is_correct: false,
+        });
+      }
+      return {
+        targetItem,
+        chosenTargets,
+        chosenDistractors,
+        distractorSources,
+      };
+    };
+
+    let picked = assemble(safeGetItem(shuffled, 0));
+
+    // Dataset có ký hiệu thì bàn chơi phải cho trẻ thấy ký hiệu đó (`BR-SDS-03`).
+    // Chỉ chọn lại khi level này chưa hiện ký hiệu nào.
+    const glyphItems = shuffled.filter((i) => i.glyph);
+    const showsGlyph = [picked.targetItem, ...picked.distractorSources].some(
+      (i) => i.glyph
+    );
+    if (glyphItems.length > 0 && !showsGlyph) {
+      picked = assemble(
+        safeGetItem(glyphItems, rng.nextInt(glyphItems.length))
       );
-      chosenDistractors.push({
-        item_id: `${d.id}_d${i + 1}`,
-        asset: resolveItemAsset(d, true),
-        is_correct: false,
-      });
     }
+
+    const { targetItem, chosenTargets, chosenDistractors } = picked;
 
     const targetLabel = formatPromptLabel(targetItem.label, {
       value: targetItem.value,

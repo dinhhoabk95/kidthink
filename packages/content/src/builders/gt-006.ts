@@ -27,14 +27,26 @@ export const projectGT006: Projection<"GT-006"> = {
     }
 
     const itemMap = new Map(dataset.items.map((i) => [i.id, i]));
-    const selectedIds: string[] = [];
-    for (let i = 0; i < expectedItemCount; i++) {
-      if (i < orderedIds.length) {
-        selectedIds.push(safeGetItem(orderedIds, i));
-      } else {
-        const fallback = safeGetItem(dataset.items, i % dataset.items.length);
-        selectedIds.push(fallback.id);
+    const pickIds = (source: readonly string[]): string[] => {
+      const ids: string[] = [];
+      for (let i = 0; i < expectedItemCount; i++) {
+        if (i < source.length) {
+          ids.push(safeGetItem(source, i));
+        } else {
+          const fallback = safeGetItem(dataset.items, i % dataset.items.length);
+          ids.push(fallback.id);
+        }
       }
+      return ids;
+    };
+    let selectedIds = pickIds(orderedIds);
+
+    // Dataset có ký hiệu thì bàn chơi phải cho trẻ thấy ký hiệu đó (`BR-SDS-03`).
+    // Chuỗi đủ cả hai loại vật thì chỉ đổi khi không có vật nào mang ký hiệu.
+    const glyphIds = dataset.items.filter((i) => i.glyph).map((i) => i.id);
+    const showsGlyph = selectedIds.some((id) => itemMap.get(id)?.glyph);
+    if (glyphIds.length >= expectedItemCount && !showsGlyph) {
+      selectedIds = pickIds(glyphIds);
     }
 
     const sequence = selectedIds.map((id, index) => {
