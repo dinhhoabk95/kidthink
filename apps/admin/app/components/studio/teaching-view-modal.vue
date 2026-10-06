@@ -10,8 +10,14 @@
         class="flex justify-between items-center border-b pb-3 dark:border-surface-700"
       >
         <div>
-          <h2 class="text-base font-bold text-surface-900 dark:text-white">
-            📖 Bản xem trước cho người dạy (Teaching View)
+          <h2
+            class="text-base font-bold text-surface-900 dark:text-white flex items-center gap-2"
+          >
+            <UIcon
+              class="w-5 h-5 text-brand-600 shrink-0"
+              name="i-lucide-book-open"
+            />
+            <span>Bản xem trước cho người dạy (Teaching View)</span>
           </h2>
           <div class="text-xs text-surface-500">{{ data?.lesson?.title }}</div>
         </div>
@@ -75,26 +81,42 @@
               <span class="font-bold"
                 >#{{ act.position }} {{ act.activity?.title }}</span
               >
-              <div class="text-surface-500 font-mono">
-                ⏱️ {{ act.activity?.estimated_minutes }} phút ·
-                {{ act.activity?.kind }}
+              <div class="text-surface-500 font-mono flex items-center gap-1">
+                <UIcon
+                  class="w-3.5 h-3.5 text-surface-400 shrink-0"
+                  name="i-lucide-clock"
+                />
+                <span
+                  >{{ act.activity?.estimated_minutes }}
+                  phút · {{ act.activity?.kind }}</span
+                >
               </div>
             </div>
             <span
-              class="px-2 py-0.5 rounded-full text-[10px] font-bold"
+              class="px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1"
               :class="act.is_offscreen ? 'bg-success-100 text-success-800' : 'bg-brand-100 text-brand-800'"
             >
-              {{ act.is_offscreen ? '🌿 Ngoài màn hình' : '🎮 Kỹ thuật số' }}
+              <UIcon
+                class="w-3 h-3"
+                :name="act.is_offscreen ? 'i-lucide-leaf' : 'i-lucide-gamepad-2'"
+              />
+              <span
+                >{{ act.is_offscreen ? 'Ngoài màn hình' : 'Kỹ thuật số' }}</span
+              >
             </span>
           </div>
         </div>
 
         <!-- Duration & Warning -->
         <div
-          class="p-3 rounded-2xl bg-warning-50 text-warning-900 font-semibold"
+          class="p-3 rounded-2xl bg-warning-50 text-warning-900 font-semibold flex items-center gap-2"
           v-if="data?.duration_warning"
         >
-          ⚠️ {{ data.duration_warning }}
+          <UIcon
+            class="w-4 h-4 text-warning-600 shrink-0"
+            name="i-lucide-alert-triangle"
+          />
+          <span>{{ data.duration_warning }}</span>
         </div>
       </div>
 

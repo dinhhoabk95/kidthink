@@ -14,7 +14,11 @@
 
         <div class="guide-cards-grid">
           <div class="guide-card">
-            <span aria-hidden="true" class="guide-emoji">⏱️</span>
+            <UIcon
+              aria-hidden="true"
+              class="w-8 h-8 text-brand-600 block mb-2"
+              name="i-lucide-clock"
+            />
             <h2 class="guide-card-title">1. Giữ thời lượng chơi hợp lý</h2>
             <p class="guide-card-text">
               Mỗi ngày nên cho bé chơi từ 15–20 phút (khoảng 2–3 bài tập). Không
@@ -24,7 +28,11 @@
           </div>
 
           <div class="guide-card">
-            <span aria-hidden="true" class="guide-emoji">🤝</span>
+            <UIcon
+              aria-hidden="true"
+              class="w-8 h-8 text-brand-600 block mb-2"
+              name="i-lucide-heart-handshake"
+            />
             <h2 class="guide-card-title">2. Khuyến khích, không làm thay</h2>
             <p class="guide-card-text">
               Khi bé gặp câu hỏi khó, hãy để hệ thống gợi ý từ từ (scaffolding).
@@ -34,7 +42,11 @@
           </div>
 
           <div class="guide-card">
-            <span aria-hidden="true" class="guide-emoji">🌟</span>
+            <UIcon
+              aria-hidden="true"
+              class="w-8 h-8 text-brand-600 block mb-2"
+              name="i-lucide-sparkles"
+            />
             <h2 class="guide-card-title">3. Tôn trọng nhịp độ riêng</h2>
             <p class="guide-card-text">
               Mỗi bé có thế mạnh ở các nhóm năng lực khác nhau. Báo cáo học tập

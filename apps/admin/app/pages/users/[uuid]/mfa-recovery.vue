@@ -41,7 +41,10 @@
         class="p-4 rounded-2xl bg-danger-50 border-2 border-danger-200 text-sm text-danger-900 flex items-start gap-3"
         v-if="errorMessage"
       >
-        <span aria-hidden="true" class="text-lg">⚠️</span>
+        <UIcon
+          class="w-5 h-5 text-danger-500 shrink-0 mt-0.5"
+          name="i-lucide-alert-triangle"
+        />
         <div class="flex-1 font-medium">{{ errorMessage }}</div>
         <button
           class="text-danger-600 hover:text-danger-800 font-bold"
@@ -56,7 +59,10 @@
         class="p-4 rounded-2xl bg-success-50 border-2 border-success-200 text-sm text-success-900 flex items-start gap-3"
         v-if="successMessage"
       >
-        <span aria-hidden="true" class="text-lg">✅</span>
+        <UIcon
+          class="w-5 h-5 text-success-500 shrink-0 mt-0.5"
+          name="i-lucide-check-circle-2"
+        />
         <div class="flex-1 font-medium">{{ successMessage }}</div>
         <button
           class="text-success-600 hover:text-success-800 font-bold"
@@ -72,8 +78,11 @@
         class="bg-brand-50 border-2 border-brand-200 rounded-3xl p-5 text-xs text-brand-900 space-y-2"
       >
         <h3 class="font-bold font-heading text-sm flex items-center gap-1.5">
-          <span>🛡️</span>
-          Quy trình khôi phục MFA (BR-MFA-11 & State Machine)
+          <UIcon
+            class="w-4 h-4 text-brand-600 shrink-0"
+            name="i-lucide-shield-check"
+          />
+          <span>Quy trình khôi phục MFA (BR-MFA-11 & State Machine)</span>
         </h3>
         <ul class="list-disc pl-5 space-y-1 text-brand-800">
           <li>
@@ -181,8 +190,12 @@
                 >
                   ✓ Đã xác thực ({{ formatDate(req.email_verified_at) }})
                 </span>
-                <span class="font-bold text-warning-700" v-else>
-                  ⏳ Đang chờ người dùng bấm link
+                <span
+                  class="font-bold text-warning-700 flex items-center gap-1"
+                  v-else
+                >
+                  <UIcon class="w-3.5 h-3.5" name="i-lucide-clock" />
+                  <span>Đang chờ người dùng bấm link</span>
                 </span>
               </div>
 
@@ -202,8 +215,12 @@
                 <span class="font-bold text-brand-700" v-if="isEligible(req)">
                   ✓ Đã đủ 48 giờ
                 </span>
-                <span class="font-bold text-surface-600" v-else>
-                  ⏳ Còn {{ getRemainingHours(req.eligible_at) }} giờ
+                <span
+                  class="font-bold text-surface-600 flex items-center gap-1"
+                  v-else
+                >
+                  <UIcon class="w-3.5 h-3.5" name="i-lucide-clock" />
+                  <span>Còn {{ getRemainingHours(req.eligible_at) }} giờ</span>
                 </span>
               </div>
 

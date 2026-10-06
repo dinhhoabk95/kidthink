@@ -128,7 +128,10 @@
         class="my-12 p-8 text-center bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 rounded-3xl"
         v-else-if="games.length === 0"
       >
-        <div class="text-4xl mb-3">🎨</div>
+        <UIcon
+          class="w-12 h-12 text-surface-400 block mx-auto mb-3"
+          name="i-lucide-palette"
+        />
         <h2
           class="text-xl font-heading font-extrabold text-surface-900 dark:text-white mb-2"
         >

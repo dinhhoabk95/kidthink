@@ -45,10 +45,11 @@
 
         <!-- Neutral lock badge for locked tier item (BR-CUR-06) -->
         <div
-          class="inline-flex items-center px-3 py-2 text-xs font-semibold text-surface-600 bg-surface-200 rounded-xl"
+          class="inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-surface-600 bg-surface-200 rounded-xl"
           v-else-if="nextStep.item?.locked"
         >
-          <span>🔒 Bài học nâng cao</span>
+          <UIcon class="w-3.5 h-3.5" name="i-lucide-lock" />
+          <span>Bài học nâng cao</span>
         </div>
       </div>
     </div>
@@ -58,7 +59,7 @@
       class="flex items-center gap-2 mb-4"
       v-else-if="curriculumData.is_completed"
     >
-      <span class="text-2xl">🌟</span>
+      <UIcon class="w-6 h-6 text-amber-500 shrink-0" name="i-lucide-star" />
       <p class="text-sm font-semibold text-success-600">
         Bé đã hoàn thành xuất sắc toàn bộ lộ trình!
       </p>

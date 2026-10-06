@@ -19,9 +19,13 @@
               <span class="badge-date"
                 >Cập nhật ngày: {{ formatDate(doc.effectiveDate) }}</span
               >
-              <span class="badge-child-safety" v-if="doc.isChildSpecific"
-                >🛡️ Bảo vệ trẻ em</span
+              <span
+                class="badge-child-safety inline-flex items-center gap-1"
+                v-if="doc.isChildSpecific"
               >
+                <UIcon class="w-3.5 h-3.5" name="i-lucide-shield-check" />
+                <span>Bảo vệ trẻ em</span>
+              </span>
             </div>
             <h1 class="legal-title">{{ doc.title }}</h1>
             <p class="legal-summary-box">

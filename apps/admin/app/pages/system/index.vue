@@ -35,7 +35,10 @@
       v-if="systemData?.backups?.warning"
     >
       <div class="flex items-center gap-3">
-        <span class="text-2xl">🚨</span>
+        <UIcon
+          class="w-8 h-8 text-danger-600 shrink-0"
+          name="i-lucide-alert-octagon"
+        />
         <div>
           <h2 class="text-sm font-bold text-danger-800 dark:text-danger-300">
             {{ systemData.backups.warning }}
@@ -67,7 +70,10 @@
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="text-xl">🗄️</span>
+            <UIcon
+              class="w-5 h-5 text-brand-600 shrink-0"
+              name="i-lucide-database"
+            />
             <h2 class="text-base font-bold text-surface-900 dark:text-white">
               1. Dịch Vụ Nền Tảng (Services)
             </h2>
@@ -140,7 +146,10 @@
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="text-xl">⚙️</span>
+            <UIcon
+              class="w-5 h-5 text-brand-600 shrink-0"
+              name="i-lucide-settings"
+            />
             <h2 class="text-base font-bold text-surface-900 dark:text-white">
               2. Tiến Trình & Hàng Đợi (Jobs)
             </h2>
@@ -195,7 +204,10 @@
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="text-xl">💾</span>
+            <UIcon
+              class="w-5 h-5 text-brand-600 shrink-0"
+              name="i-lucide-hard-drive"
+            />
             <h2 class="text-base font-bold text-surface-900 dark:text-white">
               3. Sao Lưu & Phục Hồi (Backups)
             </h2>
@@ -236,7 +248,10 @@
       >
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="text-xl">⚠️</span>
+            <UIcon
+              class="w-5 h-5 text-warning-500 shrink-0"
+              name="i-lucide-alert-triangle"
+            />
             <h2 class="text-base font-bold text-surface-900 dark:text-white">
               4. Sự Cố & Lỗi 24h (Errors)
             </h2>

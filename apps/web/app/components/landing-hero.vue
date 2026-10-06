@@ -3,7 +3,13 @@
   <section aria-labelledby="hero-title" class="hero-section">
     <div class="section-container hero-container">
       <div class="hero-content">
-        <span class="badge-hero">🌱 Dành riêng cho trẻ mầm non 3–6 tuổi</span>
+        <span class="badge-hero inline-flex items-center gap-1.5">
+          <UIcon
+            class="w-4 h-4 text-success-600 shrink-0"
+            name="i-lucide-sprout"
+          />
+          <span>Dành riêng cho trẻ mầm non 3–6 tuổi</span>
+        </span>
         <h1 class="hero-heading" id="hero-title">
           Thư viện tư duy qua trò chơi tương tác cho bé
         </h1>

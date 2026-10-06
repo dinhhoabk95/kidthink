@@ -99,7 +99,10 @@
       >
         <div class="font-bold flex items-center justify-between mb-1">
           <div class="flex items-center gap-2">
-            <span class="text-danger-400 text-base">⚠️</span>
+            <UIcon
+              class="w-4 h-4 text-danger-400 shrink-0"
+              name="i-lucide-alert-triangle"
+            />
             <span
               >Dữ liệu màn chơi chưa hợp lệ với mẫu {{ templateCode }}:</span
             >

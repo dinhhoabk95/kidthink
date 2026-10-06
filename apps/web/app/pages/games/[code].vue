@@ -6,7 +6,11 @@
       <div class="section-container">
         <!-- 410 Archived State (BR-GDP-03 & D-IA) -->
         <div class="archived-notice-card" role="alert" v-if="isArchived">
-          <span aria-hidden="true" class="archived-emoji">📦</span>
+          <UIcon
+            aria-hidden="true"
+            class="w-12 h-12 text-surface-400 block mx-auto mb-2"
+            name="i-lucide-package"
+          />
           <h1 class="archived-title">
             Trò chơi này đã ngừng phát hành (HTTP 410)
           </h1>
@@ -32,7 +36,11 @@
 
         <!-- 404 Not Found State -->
         <div class="archived-notice-card" role="alert" v-else-if="hasError">
-          <span aria-hidden="true" class="archived-emoji">🔍</span>
+          <UIcon
+            aria-hidden="true"
+            class="w-12 h-12 text-surface-400 block mx-auto mb-2"
+            name="i-lucide-search"
+          />
           <h1 class="archived-title">Không tìm thấy trò chơi</h1>
           <p class="archived-desc">
             Trò chơi này không tồn tại hoặc chưa được phát hành công khai.

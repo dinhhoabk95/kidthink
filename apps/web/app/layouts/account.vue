@@ -12,7 +12,10 @@
           class="flex items-center gap-2 font-heading text-xl font-bold text-brand-600 dark:text-brand-400"
           to="/me"
         >
-          <span class="text-2xl">🐻</span>
+          <UIcon
+            class="w-6 h-6 text-brand-600 dark:text-brand-400 shrink-0"
+            name="i-lucide-brain"
+          />
           <span>MindKid</span>
         </NuxtLink>
         <div class="flex items-center gap-4">

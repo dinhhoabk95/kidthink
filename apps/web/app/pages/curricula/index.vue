@@ -93,7 +93,10 @@
           class="text-center py-16 bg-white dark:bg-surface-800 border-4 border-surface-200 dark:border-surface-700 rounded-3xl p-8"
           v-else-if="!curriculaList || curriculaList.length === 0"
         >
-          <div class="text-5xl mb-4">🎯</div>
+          <UIcon
+            class="w-12 h-12 text-surface-400 block mx-auto mb-4"
+            name="i-lucide-target"
+          />
           <h2
             class="text-xl font-heading font-extrabold text-surface-800 dark:text-surface-100"
           >
@@ -154,21 +157,30 @@
                 class="mt-4 space-y-1.5 text-xs text-surface-600 dark:text-surface-300"
               >
                 <div class="flex items-center gap-2">
-                  <span>📅</span>
+                  <UIcon
+                    class="w-4 h-4 text-surface-400 shrink-0"
+                    name="i-lucide-calendar"
+                  />
                   <span
                     >{{ item.duration_weeks }}
                     tuần · {{ item.sessions_per_week }} buổi/tuần</span
                   >
                 </div>
                 <div class="flex items-center gap-2">
-                  <span>🧩</span>
+                  <UIcon
+                    class="w-4 h-4 text-surface-400 shrink-0"
+                    name="i-lucide-puzzle"
+                  />
                   <span>{{ item.item_count }} bài học / trò chơi đã gán</span>
                 </div>
                 <div
                   class="flex items-center gap-2"
                   v-if="item.age_min || item.age_max"
                 >
-                  <span>👶</span>
+                  <UIcon
+                    class="w-4 h-4 text-surface-400 shrink-0"
+                    name="i-lucide-baby"
+                  />
                   <span
                     >Độ tuổi: {{ item.age_min || 3 }} -
                     {{ item.age_max || 6 }}

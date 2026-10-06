@@ -10,7 +10,7 @@
         class="text-lg font-bold font-heading text-surface-900 flex items-center gap-2"
         id="group-entitlements-heading"
       >
-        <span aria-hidden="true">🔑</span>
+        <UIcon class="w-5 h-5 text-surface-500" name="i-lucide-key" />
         Gói & Quyền sử dụng (Entitlements)
       </h2>
 
@@ -262,11 +262,17 @@
               v-model.number="grantForm.duration_days"
             >
             <span
-              class="text-[11px] text-warning-600 font-medium block"
+              class="text-[11px] text-warning-600 font-medium flex items-center gap-1"
               v-if="grantForm.duration_days > 300"
             >
-              ⚠️ Cảnh báo: Thời hạn cấp gần trần 365 ngày. Vui lòng xác nhận kỹ
-              lý do.
+              <UIcon
+                class="w-3.5 h-3.5 text-warning-600 shrink-0"
+                name="i-lucide-alert-triangle"
+              />
+              <span
+                >Cảnh báo: Thời hạn cấp gần trần 365 ngày. Vui lòng xác nhận kỹ
+                lý do.</span
+              >
             </span>
           </div>
 

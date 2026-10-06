@@ -81,7 +81,10 @@
         class="p-12 text-center text-surface-500"
         v-else-if="queueItems.length === 0"
       >
-        <span class="text-3xl block mb-2">🎉</span>
+        <UIcon
+          class="w-10 h-10 text-success-500 block mb-2 mx-auto"
+          name="i-lucide-check-circle-2"
+        />
         <p class="font-bold text-surface-700 dark:text-surface-300">
           Hàng đợi trống
         </p>
@@ -108,26 +111,35 @@
 
               <!-- Priority badge -->
               <span
-                class="text-xs px-2 py-0.5 rounded-full bg-warning-100 text-warning-800 font-semibold"
+                class="text-xs px-2 py-0.5 rounded-full bg-warning-100 text-warning-800 font-semibold inline-flex items-center gap-1"
                 v-if="item.priority_score >= 20"
               >
-                ⭐ Ưu tiên cao
+                <UIcon
+                  class="w-3.5 h-3.5 text-amber-500"
+                  name="i-lucide-star"
+                />
+                <span>Ưu tiên cao</span>
               </span>
 
               <!-- AI assisted label (BR-CRQ-04) -->
               <span
-                class="text-xs px-2 py-0.5 rounded-full bg-brand-100 text-brand-800 font-semibold"
+                class="text-xs px-2 py-0.5 rounded-full bg-brand-100 text-brand-800 font-semibold inline-flex items-center gap-1"
                 v-if="item.origin === 'ai_assisted'"
               >
-                🤖 AI Assisted
+                <UIcon class="w-3.5 h-3.5 text-brand-600" name="i-lucide-bot" />
+                <span>AI Assisted</span>
               </span>
 
               <!-- Seeder drift warning label (BR-CRQ-05) -->
               <span
-                class="text-xs px-2 py-0.5 rounded-full bg-danger-100 text-danger-800 font-semibold"
+                class="text-xs px-2 py-0.5 rounded-full bg-danger-100 text-danger-800 font-semibold inline-flex items-center gap-1"
                 v-if="item.version > 1"
               >
-                ⚠️ Tách khỏi Seeder
+                <UIcon
+                  class="w-3.5 h-3.5 text-danger-500"
+                  name="i-lucide-alert-triangle"
+                />
+                <span>Tách khỏi Seeder</span>
               </span>
             </div>
 

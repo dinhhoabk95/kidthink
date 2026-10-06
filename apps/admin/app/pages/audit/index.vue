@@ -21,7 +21,7 @@
           :disabled="isExporting"
           @click="exportCsv"
         >
-          <span>📥</span>
+          <UIcon class="w-4 h-4 shrink-0" name="i-lucide-download" />
           <span>{{ isExporting ? "Đang xuất..." : "Xuất CSV" }}</span>
         </button>
 
@@ -159,7 +159,10 @@
         class="p-12 text-center text-surface-500"
         v-else-if="logs.length === 0"
       >
-        <span class="text-3xl block mb-2">🛡️</span>
+        <UIcon
+          class="w-10 h-10 text-surface-400 block mb-2 mx-auto"
+          name="i-lucide-shield-check"
+        />
         <p class="font-bold text-surface-700 dark:text-surface-300">
           Không tìm thấy bản ghi kiểm toán nào
         </p>

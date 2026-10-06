@@ -10,7 +10,7 @@
         class="text-lg font-bold font-heading text-surface-900 flex items-center gap-2"
         id="group-children-heading"
       >
-        <span aria-hidden="true">👶</span>
+        <UIcon class="w-5 h-5 text-surface-500" name="i-lucide-baby" />
         Hồ sơ trẻ ({{ children.length }})
       </h2>
       <span class="text-xs text-surface-500 font-medium">

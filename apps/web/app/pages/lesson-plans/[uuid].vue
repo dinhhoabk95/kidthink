@@ -24,7 +24,8 @@
             :disabled="exporting"
             @click="handleExportPdf"
           >
-            <span>{{ exporting ? 'Đang xuất...' : '📄 Xuất PDF' }}</span>
+            <UIcon class="w-4 h-4 shrink-0" name="i-lucide-file-text" />
+            <span>{{ exporting ? 'Đang xuất...' : 'Xuất PDF' }}</span>
           </button>
 
           <button
@@ -33,7 +34,8 @@
             :disabled="saving"
             @click="saveAll"
           >
-            <span>{{ saving ? 'Đang lưu...' : '💾 Lưu giáo án' }}</span>
+            <UIcon class="w-4 h-4 shrink-0" name="i-lucide-save" />
+            <span>{{ saving ? 'Đang lưu...' : 'Lưu giáo án' }}</span>
           </button>
         </div>
       </div>
@@ -273,7 +275,11 @@
                       class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-warning-100 text-warning-800 dark:bg-warning-950/50 dark:text-warning-300 border border-warning-300 dark:border-warning-700 flex items-center gap-1"
                       v-if="item.has_update"
                     >
-                      ⚠️ Có bản mới (v{{ item.latest_version }})
+                      <UIcon
+                        class="w-3.5 h-3.5 shrink-0"
+                        name="i-lucide-alert-triangle"
+                      />
+                      <span>Có bản mới (v{{ item.latest_version }})</span>
                     </span>
                   </div>
 

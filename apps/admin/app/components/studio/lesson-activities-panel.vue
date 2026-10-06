@@ -28,7 +28,10 @@
       class="p-3 rounded-2xl bg-warning-50 dark:bg-warning-900/30 border border-warning-300 dark:border-warning-700 text-warning-900 dark:text-warning-200 text-xs flex items-center gap-2"
       v-if="durationWarning"
     >
-      <span>⚠️</span>
+      <UIcon
+        class="w-4 h-4 text-warning-500 shrink-0"
+        name="i-lucide-alert-triangle"
+      />
       <span>{{ durationWarning }}</span>
     </div>
 
@@ -45,9 +48,15 @@
             <div class="font-bold text-surface-900 dark:text-white truncate">
               {{ item.activity?.title || `Activity ID ${item.activity_id}` }}
             </div>
-            <div class="text-surface-500 font-mono">
-              ⏱️ {{ item.activity?.estimated_minutes || 5 }}p ·
-              {{ item.activity?.kind || 'activity' }}
+            <div class="text-surface-500 font-mono flex items-center gap-1">
+              <UIcon
+                class="w-3.5 h-3.5 text-surface-400 shrink-0"
+                name="i-lucide-clock"
+              />
+              <span
+                >{{ item.activity?.estimated_minutes || 5 }}p ·
+                {{ item.activity?.kind || 'activity' }}</span
+              >
             </div>
           </div>
         </div>

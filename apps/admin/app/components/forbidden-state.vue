@@ -5,9 +5,9 @@
   >
     <div
       aria-hidden="true"
-      class="w-12 h-12 rounded-2xl bg-warning-100 flex items-center justify-center text-warning-700 text-xl font-bold font-heading"
+      class="w-12 h-12 rounded-2xl bg-warning-100 flex items-center justify-center text-warning-700 font-bold font-heading"
     >
-      🔒
+      <UIcon class="w-6 h-6 text-warning-700" name="i-lucide-lock" />
     </div>
     <div class="space-y-1">
       <h3 class="text-lg font-bold font-heading text-warning-900">

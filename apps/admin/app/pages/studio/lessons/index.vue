@@ -128,7 +128,14 @@
                   class="py-3 px-4 text-surface-600 dark:text-surface-300 text-xs"
                 >
                   {{ les.target_age_min }}–{{ les.target_age_max }}
-                  tuổi · ⏱️ {{ les.estimated_minutes }} phút
+                  tuổi ·
+                  <span class="inline-flex items-center gap-1">
+                    <UIcon
+                      class="w-3.5 h-3.5 text-surface-400 shrink-0"
+                      name="i-lucide-clock"
+                    />
+                    <span>{{ les.estimated_minutes }} phút</span>
+                  </span>
                 </td>
                 <td class="py-3 px-4">
                   <span
@@ -226,9 +233,15 @@
                 {{ act.code }}
                 — {{ act.title }}
               </div>
-              <div class="text-xs text-surface-500 font-mono">
-                {{ act.kind }}
-                · ⏱️ {{ act.estimated_minutes }} phút
+              <div
+                class="text-xs text-surface-500 font-mono flex items-center gap-1"
+              >
+                <span>{{ act.kind }} ·</span>
+                <UIcon
+                  class="w-3.5 h-3.5 text-surface-400 shrink-0"
+                  name="i-lucide-clock"
+                />
+                <span>{{ act.estimated_minutes }} phút</span>
               </div>
             </div>
             <span

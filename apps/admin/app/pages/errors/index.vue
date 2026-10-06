@@ -93,7 +93,10 @@
         class="p-12 text-center text-surface-500"
         v-else-if="groups.length === 0"
       >
-        <span class="text-3xl block mb-2">🎉</span>
+        <UIcon
+          class="w-10 h-10 text-success-500 block mb-2 mx-auto"
+          name="i-lucide-check-circle-2"
+        />
         <p class="font-bold text-surface-700 dark:text-surface-300">
           Không có lỗi nào phù hợp
         </p>

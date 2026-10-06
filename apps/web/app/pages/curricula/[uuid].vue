@@ -135,7 +135,10 @@
             <h3
               class="font-heading font-extrabold text-base text-surface-900 dark:text-white flex items-center gap-2"
             >
-              <span>⚖️</span>
+              <UIcon
+                class="w-5 h-5 text-brand-600 shrink-0"
+                name="i-lucide-scale"
+              />
               <span>Chỉ số cân bằng sư phạm</span>
             </h3>
             <span class="text-xs text-surface-500"
@@ -153,7 +156,15 @@
               v-for="(w, idx) in curriculum.warnings"
               :key="idx"
             >
-              <span class="text-warning-600 font-bold shrink-0">⚠️ Lưu ý:</span>
+              <span
+                class="text-warning-600 font-bold shrink-0 flex items-center gap-1"
+              >
+                <UIcon
+                  class="w-4 h-4 text-warning-600 shrink-0"
+                  name="i-lucide-alert-triangle"
+                />
+                <span>Lưu ý:</span>
+              </span>
               <span>{{ w }}</span>
             </div>
           </div>
@@ -162,7 +173,10 @@
             class="p-3 rounded-2xl bg-success-50 dark:bg-success-950/30 border border-success-200 dark:border-success-800 text-success-800 dark:text-success-200 text-xs flex items-center gap-2 font-bold"
             v-else
           >
-            <span>✅</span>
+            <UIcon
+              class="w-4 h-4 text-success-600 shrink-0"
+              name="i-lucide-check-circle-2"
+            />
             <span
               >Lộ trình được phân bổ đồng đều và cân đối các nhóm năng lực toán
               tư duy.</span
@@ -220,9 +234,10 @@
                       :key="itIdx"
                     >
                       <div class="flex items-center gap-2 min-w-0">
-                        <span class="text-sm shrink-0">
-                          {{ it.entity_type === 'lesson' ? '📖' : '🎮' }}
-                        </span>
+                        <UIcon
+                          class="w-4 h-4 text-brand-600 shrink-0"
+                          :name="it.entity_type === 'lesson' ? 'i-lucide-book-open' : 'i-lucide-gamepad-2'"
+                        />
                         <div class="truncate">
                           <div
                             class="text-xs font-bold text-surface-800 dark:text-surface-100 truncate"

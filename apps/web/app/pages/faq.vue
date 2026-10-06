@@ -78,20 +78,35 @@
             trợ bạn:
           </p>
           <div class="support-channels">
-            <a class="channel-card" href="mailto:support@mindkid.vn">
-              <span aria-hidden="true" class="channel-icon">✉️</span>
-              <span class="channel-name">support@mindkid.vn</span>
-              <span class="channel-note">Phản hồi trong 24h</span>
+            <a
+              class="channel-card flex items-center gap-3"
+              href="mailto:support@mindkid.vn"
+            >
+              <UIcon
+                aria-hidden="true"
+                class="w-6 h-6 text-brand-600 shrink-0"
+                name="i-lucide-mail"
+              />
+              <div class="flex flex-col">
+                <span class="channel-name">support@mindkid.vn</span>
+                <span class="channel-note">Phản hồi trong 24h</span>
+              </div>
             </a>
             <a
-              class="channel-card"
+              class="channel-card flex items-center gap-3"
               href="https://zalo.me/mindkid"
               rel="noopener noreferrer"
               target="_blank"
             >
-              <span aria-hidden="true" class="channel-icon">💬</span>
-              <span class="channel-name">Zalo Official Account</span>
-              <span class="channel-note">Hỗ trợ 8:00 – 20:00 hằng ngày</span>
+              <UIcon
+                aria-hidden="true"
+                class="w-6 h-6 text-brand-600 shrink-0"
+                name="i-lucide-message-circle"
+              />
+              <div class="flex flex-col">
+                <span class="channel-name">Zalo Official Account</span>
+                <span class="channel-note">Hỗ trợ 8:00 – 20:00 hằng ngày</span>
+              </div>
             </a>
           </div>
         </div>

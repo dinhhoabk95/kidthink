@@ -10,7 +10,7 @@
         class="text-lg font-bold font-heading text-surface-900 flex items-center gap-2"
         id="group-payments-heading"
       >
-        <span aria-hidden="true">💳</span>
+        <UIcon class="w-5 h-5 text-surface-500" name="i-lucide-credit-card" />
         Lịch sử đơn thanh toán ({{ payments.length }})
       </h2>
 

@@ -22,7 +22,10 @@
         class="p-12 text-center text-surface-500"
         v-else-if="approvedItems.length === 0"
       >
-        <span class="text-3xl block mb-2">📦</span>
+        <UIcon
+          class="w-10 h-10 text-surface-400 block mb-2 mx-auto"
+          name="i-lucide-package"
+        />
         <p class="font-bold text-surface-700 dark:text-surface-300">
           Không có bản chờ phát hành
         </p>

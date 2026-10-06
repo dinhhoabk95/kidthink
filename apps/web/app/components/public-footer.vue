@@ -4,8 +4,12 @@
       <div class="footer-grid">
         <!-- Col 1: Brand Info -->
         <div class="footer-col brand-col">
-          <div class="footer-brand">
-            <span aria-hidden="true" class="brand-emoji">🧠</span>
+          <div class="footer-brand flex items-center gap-2">
+            <UIcon
+              aria-hidden="true"
+              class="w-6 h-6 text-brand-600 shrink-0"
+              name="i-lucide-brain"
+            />
             <span class="brand-name">MindKid</span>
           </div>
           <p class="brand-tagline">

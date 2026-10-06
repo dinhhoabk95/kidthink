@@ -61,16 +61,16 @@
           @change="fetchActivities"
         >
           <option value="">Tất cả loại (10 loại)</option>
-          <option value="digital_game">🎮 Digital Game (Màn chơi số)</option>
-          <option value="discussion">💬 Thảo luận & Trò chuyện</option>
-          <option value="storytelling">📖 Kể chuyện tương tác</option>
-          <option value="movement">🏃 Vận động thể chất</option>
-          <option value="manipulative">🧩 Thao tác giáo cụ (Hands-on)</option>
-          <option value="worksheet">📝 Phiếu bài tập (Worksheet)</option>
-          <option value="observation">🔍 Quan sát thực tế</option>
-          <option value="mini_project">🎨 Dự án nhỏ (Mini project)</option>
-          <option value="assessment">⭐ Đánh giá quan sát</option>
-          <option value="home_activity">🏡 Hoạt động tại nhà</option>
+          <option value="digital_game">Digital Game (Màn chơi số)</option>
+          <option value="discussion">Thảo luận & Trò chuyện</option>
+          <option value="storytelling">Kể chuyện tương tác</option>
+          <option value="movement">Vận động thể chất</option>
+          <option value="manipulative">Thao tác giáo cụ (Hands-on)</option>
+          <option value="worksheet">Phiếu bài tập (Worksheet)</option>
+          <option value="observation">Quan sát thực tế</option>
+          <option value="mini_project">Dự án nhỏ (Mini project)</option>
+          <option value="assessment">Đánh giá quan sát</option>
+          <option value="home_activity">Hoạt động tại nhà</option>
         </select>
 
         <label class="sr-only" for="filter-status">Trạng thái</label>
@@ -134,7 +134,10 @@
                 <div
                   class="font-bold text-surface-900 dark:text-white flex items-center gap-1.5"
                 >
-                  <span>{{ getKindEmoji(act.kind) }}</span>
+                  <UIcon
+                    class="w-4 h-4 text-brand-600 shrink-0"
+                    :name="getKindIcon(act.kind)"
+                  />
                   <span>{{ act.code }} (v{{ act.content_version }})</span>
                 </div>
                 <div class="text-xs text-surface-500 font-mono">
@@ -153,7 +156,13 @@
                 </div>
               </td>
               <td class="py-3 px-4 text-surface-600 dark:text-surface-300">
-                ⏱️ {{ act.estimated_minutes }} phút
+                <span class="inline-flex items-center gap-1">
+                  <UIcon
+                    class="w-3.5 h-3.5 text-surface-400 shrink-0"
+                    name="i-lucide-clock"
+                  />
+                  <span>{{ act.estimated_minutes }} phút</span>
+                </span>
               </td>
               <td class="py-3 px-4">
                 <span
@@ -238,22 +247,18 @@
                 v-model="activeForm.kind"
                 :disabled="isEditing && activeForm.status === 'published'"
               >
-                <option value="digital_game">
-                  🎮 Digital Game (Màn chơi số)
-                </option>
-                <option value="discussion">💬 Thảo luận & Trò chuyện</option>
-                <option value="storytelling">📖 Kể chuyện tương tác</option>
-                <option value="movement">🏃 Vận động thể chất</option>
+                <option value="digital_game">Digital Game (Màn chơi số)</option>
+                <option value="discussion">Thảo luận & Trò chuyện</option>
+                <option value="storytelling">Kể chuyện tương tác</option>
+                <option value="movement">Vận động thể chất</option>
                 <option value="manipulative">
-                  🧩 Thao tác giáo cụ (Hands-on)
+                  Thao tác giáo cụ (Hands-on)
                 </option>
-                <option value="worksheet">📝 Phiếu bài tập (Worksheet)</option>
-                <option value="observation">🔍 Quan sát thực tế</option>
-                <option value="mini_project">
-                  🎨 Dự án nhỏ (Mini project)
-                </option>
-                <option value="assessment">⭐ Đánh giá quan sát</option>
-                <option value="home_activity">🏡 Hoạt động tại nhà</option>
+                <option value="worksheet">Phiếu bài tập (Worksheet)</option>
+                <option value="observation">Quan sát thực tế</option>
+                <option value="mini_project">Dự án nhỏ (Mini project)</option>
+                <option value="assessment">Đánh giá quan sát</option>
+                <option value="home_activity">Hoạt động tại nhà</option>
               </select>
             </div>
 
@@ -456,20 +461,20 @@
     return activeForm.value.kind !== "digital_game";
   });
 
-  function getKindEmoji(kind: string): string {
+  function getKindIcon(kind: string): string {
     const map: Record<string, string> = {
-      digital_game: "🎮",
-      discussion: "💬",
-      storytelling: "📖",
-      movement: "🏃",
-      manipulative: "🧩",
-      worksheet: "📝",
-      observation: "🔍",
-      mini_project: "🎨",
-      assessment: "⭐",
-      home_activity: "🏡",
+      digital_game: "i-lucide-gamepad-2",
+      discussion: "i-lucide-message-square",
+      storytelling: "i-lucide-book-open",
+      movement: "i-lucide-activity",
+      manipulative: "i-lucide-puzzle",
+      worksheet: "i-lucide-file-text",
+      observation: "i-lucide-eye",
+      mini_project: "i-lucide-palette",
+      assessment: "i-lucide-star",
+      home_activity: "i-lucide-home",
     };
-    return map[kind] || "📌";
+    return map[kind] || "i-lucide-pin";
   }
 
   function getTierBadgeClass(tier: string): string {

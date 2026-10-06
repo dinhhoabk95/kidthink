@@ -91,7 +91,10 @@
           class="p-12 text-center text-surface-500"
           v-else-if="deliveries.length === 0"
         >
-          <span class="text-3xl block mb-2">📬</span>
+          <UIcon
+            class="w-10 h-10 text-surface-400 block mb-2 mx-auto"
+            name="i-lucide-inbox"
+          />
           <p class="font-bold text-surface-700 dark:text-surface-300">
             Chưa có thông báo nào
           </p>

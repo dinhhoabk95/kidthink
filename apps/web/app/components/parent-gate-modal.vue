@@ -11,9 +11,9 @@
     >
       <div class="space-y-1.5 text-center sm:text-left">
         <div
-          class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-100 text-xl dark:bg-brand-950/80"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-100 text-brand-600 dark:bg-brand-950/80 dark:text-brand-400"
         >
-          🔒
+          <UIcon class="w-5 h-5" name="i-lucide-lock" />
         </div>
         <h2
           class="font-heading text-xl font-bold text-surface-900 dark:text-surface-50"

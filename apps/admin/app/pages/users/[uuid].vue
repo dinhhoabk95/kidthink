@@ -61,7 +61,10 @@
         class="p-4 rounded-2xl bg-danger-50 border-2 border-danger-200 text-sm text-danger-900 flex items-start gap-3"
         v-if="errorMessage"
       >
-        <span aria-hidden="true" class="text-lg">⚠️</span>
+        <UIcon
+          class="w-5 h-5 text-danger-500 shrink-0 mt-0.5"
+          name="i-lucide-alert-triangle"
+        />
         <div class="flex-1 font-medium">{{ errorMessage }}</div>
         <button
           class="text-danger-600 hover:text-danger-800 font-bold"
@@ -76,7 +79,10 @@
         class="p-4 rounded-2xl bg-success-50 border-2 border-success-200 text-sm text-success-900 flex items-start gap-3"
         v-if="successMessage"
       >
-        <span aria-hidden="true" class="text-lg">✅</span>
+        <UIcon
+          class="w-5 h-5 text-success-500 shrink-0 mt-0.5"
+          name="i-lucide-check-circle-2"
+        />
         <div class="flex-1 font-medium">{{ successMessage }}</div>
         <button
           class="text-success-600 hover:text-success-800 font-bold"

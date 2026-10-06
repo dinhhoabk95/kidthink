@@ -26,7 +26,10 @@
           @click="onSelectCompetency('')"
         >
           <div class="nav-item-left">
-            <span class="nav-item-emoji">🌟</span>
+            <UIcon
+              class="w-5 h-5 text-amber-500 shrink-0"
+              name="i-lucide-sparkles"
+            />
             <div class="nav-item-text">
               <span class="nav-item-title">Tất cả 6 nhóm năng lực</span>
               <span class="nav-item-sub">Toàn bộ kho trò chơi</span>

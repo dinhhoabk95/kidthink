@@ -25,10 +25,11 @@
               v{{ levelData.contentVersion }}
             </span>
             <span
-              class="text-xs px-2.5 py-0.5 rounded-full bg-brand-100 text-brand-800 font-semibold"
+              class="text-xs px-2.5 py-0.5 rounded-full bg-brand-100 text-brand-800 font-semibold inline-flex items-center gap-1"
               v-if="levelData.origin === 'ai_assisted'"
             >
-              🤖 AI Assisted
+              <UIcon class="w-3.5 h-3.5" name="i-lucide-bot" />
+              <span>AI Assisted</span>
             </span>
           </div>
         </div>
@@ -67,7 +68,10 @@
           class="p-4 rounded-2xl bg-warning-50 dark:bg-warning-950/40 border border-warning-200 dark:border-warning-800 text-warning-800 dark:text-warning-300 text-xs flex items-center gap-2"
           v-if="!hasPreviewed"
         >
-          <span class="text-base">ℹ️</span>
+          <UIcon
+            class="w-5 h-5 text-warning-600 shrink-0"
+            name="i-lucide-info"
+          />
           <span>
             <strong>Quy tắc bắt buộc:</strong>
             Bạn cần tương tác hoặc kích hoạt xem trước (Live Preview) và hoàn
@@ -81,7 +85,10 @@
           v-if="seederWarning"
         >
           <div class="font-bold flex items-center gap-1.5">
-            <span>⚠️</span>
+            <UIcon
+              class="w-4 h-4 text-danger-500 shrink-0"
+              name="i-lucide-alert-triangle"
+            />
             <span>Cảnh báo tách khỏi Seeder (BR-CRQ-05, D-KJ):</span>
           </div>
           <p>{{ seederWarning }}</p>
@@ -93,7 +100,10 @@
           v-if="levelData.origin === 'ai_assisted'"
         >
           <div class="font-bold flex items-center gap-1.5">
-            <span>🤖</span>
+            <UIcon
+              class="w-4 h-4 text-brand-600 shrink-0"
+              name="i-lucide-bot"
+            />
             <span>Nội dung có AI hỗ trợ (BR-CRQ-04):</span>
           </div>
           <p>

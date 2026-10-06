@@ -46,7 +46,10 @@
           class="min-h-16 min-w-16 px-4 inline-flex items-center justify-center text-xs font-semibold text-surface-600 bg-surface-200 rounded-2xl select-none"
           v-else
         >
-          <span>🔒 Đang khoá</span>
+          <span class="inline-flex items-center gap-1">
+            <UIcon class="w-3.5 h-3.5" name="i-lucide-lock" />
+            <span>Đang khoá</span>
+          </span>
         </div>
       </div>
     </div>
@@ -85,7 +88,7 @@
           class="min-h-11 min-w-11 px-2 inline-flex items-center justify-center text-xs text-surface-500 bg-surface-100 rounded-xl select-none"
           v-else
         >
-          <span>🔒</span>
+          <UIcon class="w-4 h-4 text-surface-500" name="i-lucide-lock" />
         </div>
       </div>
     </div>

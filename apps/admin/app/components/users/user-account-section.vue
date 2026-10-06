@@ -10,7 +10,7 @@
         class="text-lg font-bold font-heading text-surface-900 flex items-center gap-2"
         id="group-account-heading"
       >
-        <span aria-hidden="true">👤</span>
+        <UIcon class="w-5 h-5 text-surface-500" name="i-lucide-user" />
         Thông tin tài khoản
       </h2>
       <span
@@ -40,13 +40,21 @@
         <span class="text-xs text-surface-400 block">Xác thực Email:</span>
         <div class="flex items-center gap-2">
           <span
-            class="font-medium text-success-700"
+            class="font-medium text-success-700 flex items-center gap-1"
             v-if="account.email_verified"
           >
-            ✓ Đã xác thực
+            <UIcon class="w-4 h-4 text-success-600" name="i-lucide-check" />
+            Đã xác thực
           </span>
-          <span class="font-medium text-warning-700" v-else>
-            ⚠ Chưa xác thực
+          <span
+            class="font-medium text-warning-700 flex items-center gap-1"
+            v-else
+          >
+            <UIcon
+              class="w-4 h-4 text-warning-600"
+              name="i-lucide-alert-triangle"
+            />
+            Chưa xác thực
           </span>
         </div>
       </div>

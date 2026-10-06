@@ -7,7 +7,7 @@
       <div
         class="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center shrink-0"
       >
-        <span class="text-xl">📲</span>
+        <UIcon class="w-5 h-5" name="i-lucide-smartphone" />
       </div>
       <div>
         <h3

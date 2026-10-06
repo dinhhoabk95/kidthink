@@ -12,7 +12,10 @@
           <h1
             class="text-2xl font-bold font-heading text-surface-900 flex items-center gap-2"
           >
-            <span>📦</span>
+            <UIcon
+              class="w-6 h-6 text-brand-600 shrink-0"
+              name="i-lucide-package"
+            />
             <span>Catalog Gói & Quyền lợi</span>
           </h1>
           <p class="text-xs text-surface-600 mt-1">
@@ -23,9 +26,13 @@
 
         <div class="flex items-center gap-2">
           <span
-            class="px-3 py-1.5 rounded-xl border border-surface-200 bg-surface-50 text-surface-600 text-xs font-medium"
+            class="px-3 py-1.5 rounded-xl border border-surface-200 bg-surface-50 text-surface-600 text-xs font-medium inline-flex items-center gap-1"
           >
-            🔒 Read-only (Lớp 1)
+            <UIcon
+              class="w-3.5 h-3.5 text-surface-500 shrink-0"
+              name="i-lucide-lock"
+            />
+            <span>Read-only (Lớp 1)</span>
           </span>
         </div>
       </div>
@@ -34,7 +41,10 @@
       <div
         class="p-4 rounded-2xl border-2 border-warning-200 bg-warning-50/70 flex items-start gap-3"
       >
-        <span class="text-lg">ℹ️</span>
+        <UIcon
+          class="w-5 h-5 text-warning-600 shrink-0 mt-0.5"
+          name="i-lucide-info"
+        />
         <div class="text-xs text-warning-900 leading-relaxed">
           <strong>Lưu ý:</strong>
           Giá và quyền lợi gói là hợp đồng thương mại Lớp 1. Mọi thay đổi về giá

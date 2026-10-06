@@ -50,7 +50,13 @@
             :class="['mobile-comp-chip', { active: selectedCompetency === '' }]"
             @click="selectCompetency('')"
           >
-            <span>✨ Tất cả</span>
+            <span class="inline-flex items-center gap-1">
+              <UIcon
+                class="w-3.5 h-3.5 text-amber-500 shrink-0"
+                name="i-lucide-sparkles"
+              />
+              <span>Tất cả</span>
+            </span>
             <span class="chip-count">({{ totalCount }})</span>
           </button>
           <button
@@ -289,7 +295,10 @@
 
             <!-- Empty state khi không tìm thấy kết quả -->
             <div class="catalog-empty" v-else-if="!pending">
-              <span class="empty-emoji">🔍</span>
+              <UIcon
+                class="w-12 h-12 text-surface-400 block mx-auto mb-2"
+                name="i-lucide-search"
+              />
               <h3 class="empty-title">Không tìm thấy trò chơi phù hợp</h3>
               <p class="empty-text">
                 Rất tiếc không có trò chơi nào khớp với bộ lọc bạn vừa chọn. Hãy

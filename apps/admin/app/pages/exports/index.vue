@@ -19,7 +19,10 @@
         :key="card.kind"
       >
         <div class="space-y-2">
-          <span class="text-3xl block">{{ card.icon }}</span>
+          <UIcon
+            class="w-8 h-8 text-brand-600 dark:text-brand-400 block"
+            :name="card.icon"
+          />
           <h2 class="text-base font-bold text-surface-900 dark:text-white">
             {{ card.title }}
           </h2>
@@ -34,7 +37,7 @@
           @click="openExportModal(card.kind, card.title)"
         >
           <span>Xuất file CSV</span>
-          <span>↓</span>
+          <UIcon class="w-4 h-4 shrink-0" name="i-lucide-arrow-down" />
         </button>
       </div>
     </div>
@@ -112,42 +115,42 @@
   const exportKinds = [
     {
       kind: "revenue",
-      icon: "💰",
+      icon: "i-lucide-dollar-sign",
       title: "Doanh Thu & Đơn Hàng",
       description:
         "Báo cáo chi tiết các đơn hàng, gói cước và doanh thu phục vụ đối soát kế toán.",
     },
     {
       kind: "subscriptions",
-      icon: "👥",
+      icon: "i-lucide-users",
       title: "Gói Người Dùng (Subscriptions)",
       description:
         "Thống kê số lượng gói cước đang hiệu lực và ngày hết hạn (email đã được rút gọn).",
     },
     {
       kind: "content_kpi",
-      icon: "🎮",
+      icon: "i-lucide-gamepad-2",
       title: "Hiệu Suất Nội Dung (Content KPI)",
       description:
         "Số liệu phiên chơi, tỉ lệ hoàn thành và chất lượng sư phạm của các màn chơi.",
     },
     {
       kind: "skill_coverage",
-      icon: "🧠",
+      icon: "i-lucide-brain",
       title: "Độ Phủ Kỹ Năng (Skill Coverage)",
       description:
         "Độ phủ màn chơi và mục tiêu học tập (LO) trên 230 kỹ năng toán học mầm non.",
     },
     {
       kind: "curriculum_health",
-      icon: "📚",
+      icon: "i-lucide-book-open",
       title: "Sức Khoẻ Lộ Trình (Curriculum Health)",
       description:
         "Số lượng hoạt động và tiến độ của trẻ qua 42 tuần lộ trình học tập.",
     },
     {
       kind: "audit",
-      icon: "🛡️",
+      icon: "i-lucide-shield-check",
       title: "Nhật Ký Kiểm Toán (Audit Logs)",
       description:
         "Trích xuất toàn bộ lịch sử thao tác của các Manager để lưu trữ và kiểm toán.",

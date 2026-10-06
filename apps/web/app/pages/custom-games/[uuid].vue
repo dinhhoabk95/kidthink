@@ -97,7 +97,10 @@
             v-if="game.status === 'ready'"
             @click="showPlayModal = true"
           >
-            <span>▶ Chơi thử</span>
+            <span class="inline-flex items-center gap-1.5">
+              <UIcon class="w-4 h-4" name="i-lucide-play" />
+              <span>Chơi thử</span>
+            </span>
           </button>
         </div>
       </div>

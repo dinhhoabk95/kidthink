@@ -45,18 +45,26 @@
 
                 <!-- Expired badge (BR-FFA-02) -->
                 <span
-                  class="text-xs px-2 py-0.5 rounded-full bg-danger-100 text-danger-800 font-semibold"
+                  class="text-xs px-2 py-0.5 rounded-full bg-danger-100 text-danger-800 font-semibold inline-flex items-center gap-1"
                   v-if="flag.is_expired"
                 >
-                  ⚠️ Quá hạn {{ flag.days_expired }} ngày
+                  <UIcon
+                    class="w-3.5 h-3.5 shrink-0"
+                    name="i-lucide-alert-triangle"
+                  />
+                  <span>Quá hạn {{ flag.days_expired }} ngày</span>
                 </span>
 
                 <!-- Orphan flag badge (BR-FFA-04) -->
                 <span
-                  class="text-xs px-2 py-0.5 rounded-full bg-warning-100 text-warning-800 font-semibold"
+                  class="text-xs px-2 py-0.5 rounded-full bg-warning-100 text-warning-800 font-semibold inline-flex items-center gap-1"
                   v-if="flag.is_orphan"
                 >
-                  ⚠️ Cờ mồ côi (không có trong code)
+                  <UIcon
+                    class="w-3.5 h-3.5 shrink-0"
+                    name="i-lucide-alert-triangle"
+                  />
+                  <span>Cờ mồ côi (không có trong code)</span>
                 </span>
               </div>
 

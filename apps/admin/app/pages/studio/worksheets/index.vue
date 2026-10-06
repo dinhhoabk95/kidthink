@@ -8,7 +8,10 @@
         <h1
           class="text-2xl font-bold text-surface-900 dark:text-white flex items-center gap-2"
         >
-          <span>📄</span>
+          <UIcon
+            class="w-6 h-6 text-brand-600 shrink-0"
+            name="i-lucide-file-text"
+          />
           <span>Xưởng Phiếu Bài Tập (Worksheet Studio)</span>
         </h1>
         <p class="text-sm text-surface-500 dark:text-surface-400">
@@ -65,20 +68,20 @@
         >
           <option value="">Tất cả mẫu (6 layout)</option>
           <option value="pattern_coloring">
-            🎨 Tô màu theo quy luật (Pattern Coloring)
+            Tô màu theo quy luật (Pattern Coloring)
           </option>
-          <option value="pair_matching">🔗 Nối cặp đôi (Pair Matching)</option>
+          <option value="pair_matching">Nối cặp đôi (Pair Matching)</option>
           <option value="group_circling">
-            ⭕ Khoanh nhóm theo điều kiện (Group Circling)
+            Khoanh nhóm theo điều kiện (Group Circling)
           </option>
           <option value="shape_completion">
-            ✏️ Hoàn thành hình nét đứt (Shape Completion)
+            Hoàn thành hình nét đứt (Shape Completion)
           </option>
           <option value="count_and_color">
-            🔢 Đếm và tô màu ô số (Count & Color)
+            Đếm và tô màu ô số (Count & Color)
           </option>
           <option value="spot_differences">
-            🔍 Tìm điểm khác biệt (Spot Differences)
+            Tìm điểm khác biệt (Spot Differences)
           </option>
         </select>
 
@@ -143,7 +146,10 @@
                 <div
                   class="font-bold text-surface-900 dark:text-white flex items-center gap-1.5"
                 >
-                  <span>{{ getTemplateEmoji(ws.layout_template) }}</span>
+                  <UIcon
+                    class="w-4 h-4 text-brand-600 shrink-0"
+                    :name="getTemplateIcon(ws.layout_template)"
+                  />
                   <span>{{ ws.code }} (v{{ ws.content_version }})</span>
                 </div>
                 <div class="text-xs text-surface-500 font-mono">
@@ -281,22 +287,22 @@
                 @change="onTemplateChanged"
               >
                 <option value="pattern_coloring">
-                  🎨 Tô màu theo quy luật (Pattern Coloring)
+                  Tô màu theo quy luật (Pattern Coloring)
                 </option>
                 <option value="pair_matching">
-                  🔗 Nối cặp đôi (Pair Matching)
+                  Nối cặp đôi (Pair Matching)
                 </option>
                 <option value="group_circling">
-                  ⭕ Khoanh nhóm theo điều kiện (Group Circling)
+                  Khoanh nhóm theo điều kiện (Group Circling)
                 </option>
                 <option value="shape_completion">
-                  ✏️ Hoàn thành hình nét đứt (Shape Completion)
+                  Hoàn thành hình nét đứt (Shape Completion)
                 </option>
                 <option value="count_and_color">
-                  🔢 Đếm và tô màu ô số (Count & Color)
+                  Đếm và tô màu ô số (Count & Color)
                 </option>
                 <option value="spot_differences">
-                  🔍 Tìm điểm khác biệt (Spot Differences)
+                  Tìm điểm khác biệt (Spot Differences)
                 </option>
               </select>
             </div>
@@ -600,16 +606,16 @@
     fetchWorksheets();
   });
 
-  function getTemplateEmoji(tmpl: string): string {
+  function getTemplateIcon(tmpl: string): string {
     const map: Record<string, string> = {
-      pattern_coloring: "🎨",
-      pair_matching: "🔗",
-      group_circling: "⭕",
-      shape_completion: "✏️",
-      count_and_color: "🔢",
-      spot_differences: "🔍",
+      pattern_coloring: "i-lucide-palette",
+      pair_matching: "i-lucide-link",
+      group_circling: "i-lucide-circle",
+      shape_completion: "i-lucide-pencil",
+      count_and_color: "i-lucide-hash",
+      spot_differences: "i-lucide-search",
     };
-    return map[tmpl] || "📄";
+    return map[tmpl] || "i-lucide-file-text";
   }
 
   function getTierBadgeClass(tier: string): string {

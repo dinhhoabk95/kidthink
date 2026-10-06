@@ -35,7 +35,10 @@
         class="p-12 text-center text-surface-500"
         v-else-if="pages.length === 0"
       >
-        <span class="text-3xl block mb-2">📄</span>
+        <UIcon
+          class="w-10 h-10 text-surface-400 block mb-2 mx-auto"
+          name="i-lucide-file-text"
+        />
         <p class="font-bold text-surface-700 dark:text-surface-300">
           Chưa có trang SEO nào
         </p>
@@ -153,10 +156,18 @@
               Tiêu đề thẻ Title *
             </label>
             <span
-              :class="['text-xs font-semibold', formData.title.length > 60 ? 'text-warning-500' : 'text-surface-400']"
+              class="inline-flex items-center gap-1 text-xs font-semibold"
+              :class="formData.title.length > 60 ? 'text-warning-500' : 'text-surface-400'"
             >
-              {{ formData.title.length }}/60 ký tự
-              {{ formData.title.length > 60 ? '⚠️ (Khuyên dùng ≤60)' : '' }}
+              <UIcon
+                class="w-3.5 h-3.5 shrink-0"
+                name="i-lucide-alert-triangle"
+                v-if="formData.title.length > 60"
+              />
+              <span
+                >{{ formData.title.length }}/60 ký tự
+                {{ formData.title.length > 60 ? '(Khuyên dùng ≤60)' : '' }}</span
+              >
             </span>
           </div>
           <input
@@ -178,10 +189,18 @@
               Mô tả Meta Description *
             </label>
             <span
-              :class="['text-xs font-semibold', formData.meta_description.length > 160 ? 'text-warning-500' : 'text-surface-400']"
+              class="inline-flex items-center gap-1 text-xs font-semibold"
+              :class="formData.meta_description.length > 160 ? 'text-warning-500' : 'text-surface-400'"
             >
-              {{ formData.meta_description.length }}/160 ký tự
-              {{ formData.meta_description.length > 160 ? '⚠️ (Khuyên dùng ≤160)' : '' }}
+              <UIcon
+                class="w-3.5 h-3.5 shrink-0"
+                name="i-lucide-alert-triangle"
+                v-if="formData.meta_description.length > 160"
+              />
+              <span
+                >{{ formData.meta_description.length }}/160 ký tự
+                {{ formData.meta_description.length > 160 ? '(Khuyên dùng ≤160)' : '' }}</span
+              >
             </span>
           </div>
           <textarea

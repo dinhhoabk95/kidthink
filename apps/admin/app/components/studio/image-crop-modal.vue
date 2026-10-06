@@ -38,7 +38,10 @@
       <div
         class="my-3 p-3 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800 flex items-center gap-2.5 text-xs text-danger-800 dark:text-danger-300 font-medium shrink-0"
       >
-        <span class="text-base">⚠️</span>
+        <UIcon
+          class="w-5 h-5 text-danger-500 shrink-0"
+          name="i-lucide-alert-triangle"
+        />
         <span>
           <strong>Lưu ý bảo vệ trẻ em:</strong>
           Tuyệt đối <strong>KHÔNG</strong> tải lên hình ảnh chụp gương mặt hoặc
@@ -66,9 +69,12 @@
             @change="onFileSelected"
           >
           <div
-            class="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-300 flex items-center justify-center text-2xl mb-3"
+            class="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-300 flex items-center justify-center mb-3"
           >
-            📷
+            <UIcon
+              class="w-6 h-6 text-brand-600 dark:text-brand-300"
+              name="i-lucide-camera"
+            />
           </div>
           <span
             class="text-sm font-bold text-surface-800 dark:text-surface-200 mb-1"
