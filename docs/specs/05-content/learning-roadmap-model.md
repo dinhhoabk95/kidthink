@@ -101,6 +101,7 @@ kho nội dung phải có gì*.
 | `BR-LRM-08` (cấm level mồ côi vào lộ trình) | `curriculum_items` chỉ nhận thực thể có ô tương ứng trong sổ cầu | Không có luật này thì 6.342 level mồ côi hôm nay vẫn lọt vào lộ trình bằng đường vòng |
 | `BR-LRM-09` (cổng đếm ô, không đếm hàng) | Cổng độ phủ BẮT BUỘC đo **ô sổ cầu đã lấp / tổng ô**, Cấm — NEVER đo tổng số level trong kho | Đếm hàng cho 6.384 — một con số lớn và vô nghĩa. Đếm ô cho 42/222, là con số thật |
 | `BR-LRM-10` (mã lộ trình bất biến) | Mã lộ trình theo dạng `RM-<band>-<slug>`, bất biến sau khi publish; đổi nội dung thì tăng version | Ghi danh, tiến độ và báo cáo neo vào mã. Mã đổi là mất lịch sử học của trẻ |
+| `BR-LRM-12` (mỗi band có lộ trình cả năm) | Mỗi band BẮT BUỘC có ít nhất một lộ trình **cả năm** `duration_weeks = 36`, mã dạng `RM-<band>-year-NN`, theo bảng 10 chủ đề năm học ở 7.1a. Lộ trình 12 tuần `RM-<band>-01` được giữ làm lộ trình khởi động; hai loại cùng tồn tại, không thay nhau | Trường mầm non chạy năm học khoảng 35 tuần theo 10 chủ đề. Lộ trình 12 tuần chỉ là một lát cắt, cha mẹ và giáo viên không có chương trình đi hết năm. Mã `RM-<band>-01` đã publish nên bất biến (`BR-LRM-10`): thêm lộ trình mới, không nới lộ trình cũ |
 | `BR-LRM-11` (prerequisite dưới band được miễn) | Khi kiểm `BR-CRM-01` trên lộ trình của một band, prerequisite có `age_max` thấp hơn tuổi thấp nhất của band được coi là trẻ đã học ở band trước và KHÔNG bắt buộc xuất hiện trong lộ trình. Prerequisite nằm trong band vẫn BẮT BUỘC xuất hiện ở tuần không muộn hơn kỹ năng phụ thuộc | Taxonomy khai tuổi từng kỹ năng bằng một tuổi đơn, nên gần như mọi kỹ năng 4–5 và 5–6 đều có tiền đề ở band dưới. Bắt chúng lặp lại trong lộ trình band trên thì lộ trình 12 tuần không còn chỗ cho kỹ năng mới |
 
 ## 7. Data
@@ -141,6 +142,38 @@ Vai trò quyết định loại nội dung lấp tiết và cờ ngoài màn hì
 Hệ quả suy được: `BR-CRM-05` đo bằng vai trò `offscreen`, không cần cờ riêng. Kỹ năng của tiết
 phải có `age_min`/`age_max` giao band của lộ trình và `difficulty` ≤ trần band
 (`preschool-age-bands.json`), cộng toàn bộ prerequisite của nó cũng có mặt trong lộ trình.
+
+### 7.1a Lộ trình cả năm 36 tuần (`BR-LRM-12`)
+
+Ba lộ trình `RM-3-4-mam-year-01` · `RM-4-5-chi-year-01` · `RM-5-6-la-year-01`, mỗi tuần 3 tiết,
+đi qua 10 chủ đề năm học theo Chương trình GDMN:
+
+| # | Chủ đề | Tuần | Số tuần |
+|---|---|---|---:|
+| 1 | Trường mầm non | 1–3 | 3 |
+| 2 | Bản thân | 4–7 | 4 |
+| 3 | Gia đình | 8–10 | 3 |
+| 4 | Nghề nghiệp | 11–14 | 4 |
+| 5 | Thực vật | 15–18 | 4 |
+| 6 | Động vật | 19–22 | 4 |
+| 7 | Phương tiện giao thông | 23–25 | 3 |
+| 8 | Hiện tượng tự nhiên | 26–29 | 4 |
+| 9 | Quê hương – Đất nước – Bác Hồ | 30–33 | 4 |
+| 10 | Mùa hè và ôn tập cuối năm (band 3–4, 4–5) · Bé sắp vào lớp Một (band 5–6) | 34–36 | 3 |
+
+Chủ đề nằm trong câu `goal` của tuần (`Chủ đề «<tên>»: …`), không thêm cột mới vào
+`RoadmapSeed`. Cấu trúc một tuần:
+
+- **Tuần học mới:** tiết 1 `introduce` kỹ năng mới · tiết 2 `practice` đúng kỹ năng đó · tiết 3
+  `offscreen` một kỹ năng vừa học khác năng lực, để chạm 2 năng lực mỗi tuần (`BR-CRM-02`).
+- **Tuần ôn cuối chủ đề:** `review` · `practice` · `offscreen` trên các kỹ năng vừa học của chủ
+  đề, không kỹ năng mới. Chín chủ đề đầu kết bằng tuần ôn; chủ đề 10 là ba tuần ôn cả năm
+  (`BR-CRM-11`).
+- Mọi tuần chạy cùng cổng `BR-CRM-01..11` như lộ trình 12 tuần. Kỹ năng nhiều hơn 12 tuần nên
+  chương trình cả năm phải kéo theo toàn bộ prerequisite trong band (`BR-LRM-11`).
+
+Nợ nội dung của ba lộ trình cả năm ghi trong sổ cầu như mọi ô khác. Cấm — NEVER thu nhỏ lộ trình
+xuống dưới 36 tuần để giảm nợ.
 
 ### 7.2 Hình dạng một ô sổ cầu
 
@@ -294,6 +327,6 @@ Scenario: BR-LRM-11 — prerequisite dưới band được miễn, trong band th
 | # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
 |---|---|---|---|---|
 | 1 | 6.342 level mồ côi xử lý thế nào — giữ làm kho tự chọn, hay soạn lại theo ô? | P4 | Giữ trong kho, gắn `orphan`, không gieo vào lộ trình; soạn lại theo ô ở đợt sau | người quyết |
-| 2 | Một band cần bao nhiêu tuần để phủ đủ 6 competency theo `BR-CRM-08` mà không phá `BR-CRM-02`? | P4 | Đo trên bản khai thử của band `3-4` trước khi chốt số tuần cho ba band còn lại | Nội dung |
+| 2 | Một band cần bao nhiêu tuần để phủ đủ 6 competency theo `BR-CRM-08` mà không phá `BR-CRM-02`? | P4 | **Đã chốt:** lộ trình 12 tuần đủ phủ 6 competency; chương trình trọn năm là 36 tuần (`BR-LRM-12`) | Nội dung |
 | 3 | `CUR-J42` 42 tuần trải cả 3–6 tuổi — nó là một lộ trình hay ba lộ trình nối? | P4 | Ba lộ trình band nối nhau, giữ một mã `RM-J42` làm vỏ | người quyết |
 | 4 | Bài học dùng lại được ở hai band không, hay mỗi band một bản? | P4 | Dùng lại được khi khoảng tuổi bài học phủ cả hai band; `BR-PAR-01` vẫn ép trần band nhỏ hơn | Nội dung |
