@@ -10,6 +10,7 @@ import {
   ALL_SKILL_SEEDS,
   type RoadmapBand,
 } from "@mindkid/content";
+import { AGE_BANDS } from "@mindkid/shared/age-bands";
 import {
   type PreschoolAgeBandsConfig,
   PreschoolAgeBandsConfigSchema,
@@ -22,7 +23,7 @@ import {
 
 const BANDS_CONFIG_PATH =
   "packages/content-build/src/thresholds/preschool-age-bands.json";
-const ROADMAP_BANDS: readonly RoadmapBand[] = ["3-4", "4-5", "5-6"];
+const ROADMAP_BANDS: readonly RoadmapBand[] = AGE_BANDS;
 
 export function loadAgeBandsConfig(): PreschoolAgeBandsConfig {
   const raw = fs.readFileSync(repoPath(BANDS_CONFIG_PATH), "utf8");

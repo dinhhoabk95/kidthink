@@ -1,4 +1,6 @@
-export type RoadmapBand = "3-4" | "4-5" | "5-6";
+import type { AgeBand } from "@mindkid/shared/age-bands";
+
+export type RoadmapBand = AgeBand;
 
 export type RoadmapSessionRole =
   | "introduce"

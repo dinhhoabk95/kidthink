@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
+import { AGE_BANDS } from "@mindkid/shared/age-bands";
 import { z } from "zod";
 import type { ContentDemandLedger } from "./content-demand.js";
 
@@ -8,7 +9,7 @@ export const CONTENT_DEMAND_PATH =
 
 const DemandCellSchema = z.object({
   roadmap_code: z.string().min(1),
-  band: z.enum(["3-4", "4-5", "5-6"]),
+  band: z.enum(AGE_BANDS),
   week_no: z.number().int().min(1),
   session_no: z.number().int().min(1),
   role: z.enum(["introduce", "practice", "review", "offscreen"]),
@@ -22,7 +23,7 @@ const DemandCellSchema = z.object({
 const DemandSummarySchema = z.object({
   roadmap_code: z.string().min(1),
   roadmap_version: z.number().int().min(1),
-  band: z.enum(["3-4", "4-5", "5-6"]),
+  band: z.enum(AGE_BANDS),
   cells: z.number().int().min(0),
   filled_cells: z.number().int().min(0),
   debt_cells: z.number().int().min(0),

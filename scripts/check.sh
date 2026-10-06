@@ -189,6 +189,19 @@ PID_CONFIG_OWNERSHIP=$!
 pnpm check:seed-gates &
 PID_SEED_GATES=$!
 
+# Cổng lộ trình học-trước — Task #276 (BR-CRM-*, BR-LTC-*, sổ cầu content-demand)
+pnpm check:roadmap-balance &
+PID_ROADMAP_BALANCE=$!
+
+pnpm check:content-demand &
+PID_CONTENT_DEMAND=$!
+
+pnpm check:seed-master &
+PID_SEED_MASTER=$!
+
+pnpm check:lesson-topics &
+PID_LESSON_TOPICS=$!
+
 LINT_OK=true
 if ! wait $PID_LINT; then
   echo "✗ biome lint failed" >&2
@@ -332,6 +345,26 @@ fi
 
 if ! wait $PID_SEED_GATES; then
   echo "✗ check:seed-gates failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_ROADMAP_BALANCE; then
+  echo "✗ check:roadmap-balance failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_CONTENT_DEMAND; then
+  echo "✗ check:content-demand failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_SEED_MASTER; then
+  echo "✗ check:seed-master failed" >&2
+  LINT_OK=false
+fi
+
+if ! wait $PID_LESSON_TOPICS; then
+  echo "✗ check:lesson-topics failed" >&2
   LINT_OK=false
 fi
 
