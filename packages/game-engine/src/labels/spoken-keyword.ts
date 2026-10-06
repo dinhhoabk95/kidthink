@@ -6,9 +6,52 @@ import {
 
 /** Hình dạng asset tối thiểu mà phép tìm từ khoá cần (`assetSchema`). */
 export type KeywordAsset =
-  | { readonly kind: "emoji"; readonly ref: string }
-  | { readonly kind: "text"; readonly text: string }
-  | { readonly kind: "image"; readonly path: string };
+  | {
+      readonly kind: "emoji";
+      readonly ref: string;
+      readonly audio_path?: string;
+    }
+  | {
+      readonly kind: "text";
+      readonly text: string;
+      readonly audio_path?: string;
+    }
+  | {
+      readonly kind: "image";
+      readonly path: string;
+      readonly audio_path?: string;
+    };
+
+export interface AssetLabels {
+  glyph?: string;
+  label?: string;
+  spokenLabel?: string;
+  spokenAudioPath?: string;
+}
+
+/**
+ * Chữ hiện trên thẻ và từ khoá đọc được của nó (`spokenLabel`) — dùng chung
+ * cho các engine có vật minh hoạ đọc tên khi chạm (Task #273, #275 S5, `BR-PNR-02`).
+ */
+export function resolveAssetLabels(asset: KeywordAsset): AssetLabels {
+  const spokenLabel = spokenKeywordForAsset(asset);
+  if (asset.kind === "emoji") {
+    return {
+      glyph: asset.ref,
+      label: asset.ref,
+      spokenLabel,
+      spokenAudioPath: asset.audio_path,
+    };
+  }
+  if (asset.kind === "text") {
+    return {
+      label: asset.text,
+      spokenLabel,
+      spokenAudioPath: asset.audio_path,
+    };
+  }
+  return {};
+}
 
 const GRAPHEMES = new Intl.Segmenter("vi", { granularity: "grapheme" });
 

@@ -5,7 +5,7 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
-import { spokenKeywordForAsset } from "#src/labels/spoken-keyword";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
 import { resolveTouchFloor } from "#src/layout/constants";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
@@ -29,42 +29,9 @@ import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT001Content, GT001Difficulty } from "./template.js";
 
 type OptionItem = GT001Content["options"][number];
-type ItemAsset = OptionItem["asset"];
 
 /** Tiền tố id của entity thẻ đề — tách khỏi không gian id của lựa chọn. */
 const PROMPT_CARD_ID_PREFIX = "prompt:";
-
-/**
- * Chữ hiện trên thẻ và từ khoá đọc được của nó (`spokenLabel`) — dùng chung
- * cho thẻ lựa chọn và thẻ đề giữa màn, cả hai đều đọc lại khi trẻ chạm
- * (Task #273, `BR-PNR-02`). Từ khoá đi qua `spokenKeywordForAsset` — cùng
- * hàm cổng `check:narration-coverage` dùng để đếm glyph không đọc được tên;
- * không dựng được tên thì không có `spokenLabel` (Task #274 S7).
- */
-function resolveAssetLabels(asset: ItemAsset): {
-  glyph?: string;
-  label?: string;
-  spokenLabel?: string;
-  spokenAudioPath?: string;
-} {
-  const spokenLabel = spokenKeywordForAsset(asset);
-  if (asset.kind === "emoji") {
-    return {
-      glyph: asset.ref,
-      label: asset.ref,
-      spokenLabel,
-      spokenAudioPath: asset.audio_path,
-    };
-  }
-  if (asset.kind === "text") {
-    return {
-      label: asset.text,
-      spokenLabel,
-      spokenAudioPath: asset.audio_path,
-    };
-  }
-  return {};
-}
 
 export class GT001Session extends TemplateGameSession<
   GT001Content,

@@ -66,13 +66,13 @@ lát chạm tới), `rtk proxy pnpm typecheck --only root`, `rtk proxy pnpm type
 
 ## S5 — Chạm vật đọc tên, một hình học chạm (R6, E4/E5) · M · phụ thuộc: không (tuần tự vì cùng file)
 
-- [ ] Chụp danh sách `trạng-thái | tên-test` của `gt-001.test.ts` trước khi sửa
-- [ ] `resolveAssetLabels` thành helper dùng chung ở `labels/`; GT-001 import lại; danh sách test
+- [x] Chụp danh sách `trạng-thái | tên-test` của `gt-001.test.ts` trước khi sửa
+- [x] `resolveAssetLabels` thành helper dùng chung ở `labels/`; GT-001 import lại; danh sách test
       GT-001 trùng khít
-- [ ] GT-002 `getView()` mang `glyph`/`label`/`spokenLabel`/`spokenAudioPath`, `role: "neutral"`
-- [ ] `toAction()` dùng `findHitSlotIndex(..., "circle", TAP_TOLERANCE_PX)`
-- [ ] Test quét lưới điểm: engine và `findHitEntity` chọn cùng một vật ở mọi điểm
-- [ ] Ca âm: điểm ở góc hình vuông cũ, ngoài vòng tròn → `null`
+- [x] GT-002 `getView()` mang `glyph`/`label`/`spokenLabel`/`spokenAudioPath`, `role: "neutral"`
+- [x] `toAction()` dùng `findHitSlotIndex(..., "circle", TAP_TOLERANCE_PX)`
+- [x] Test quét lưới điểm: engine và `findHitEntity` chọn cùng một vật ở mọi điểm
+- [x] Ca âm: điểm ở góc hình vuông cũ, ngoài vòng tròn → `null`
 
 ## Checkpoint 2 — Trình duyệt thật (sau S1a–S5)
 

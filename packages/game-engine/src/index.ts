@@ -78,7 +78,9 @@ export {
   type ViewEntity,
 } from "./interaction";
 export {
+  type AssetLabels,
   type KeywordAsset,
+  resolveAssetLabels,
   spokenKeywordForAsset,
 } from "./labels/spoken-keyword.js";
 export {

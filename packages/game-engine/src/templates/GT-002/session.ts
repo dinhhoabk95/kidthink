@@ -7,6 +7,8 @@ import {
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
+import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
+import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
 import { resolveLayout } from "#src/layout/registry";
 import { insetDrawSize } from "#src/layout/slot-fit";
 import type { Slot } from "#src/layout/types";
@@ -144,11 +146,13 @@ export class GT002Session extends TemplateGameSession<
       }
       const rawState = this.getItemState(item.item_id);
       const state = this.toEntityState(rawState);
+      const labels = resolveAssetLabels(item.asset);
       entities.push({
         id: item.item_id,
         slotIndex: i,
-        role: "target",
+        role: "neutral",
         state,
+        ...labels,
         x: slot.x,
         y: slot.y,
         w: slot.w,
@@ -173,21 +177,16 @@ export class GT002Session extends TemplateGameSession<
       return null;
     }
 
-    const hitTolerance = 24;
-    for (let i = 0; i < this.slots.length; i++) {
-      const slot = this.slots[i];
-      const item = this.displayItems[i];
-      if (!(slot && item)) {
-        continue;
-      }
-
-      const halfW = Math.max(slot.hitW, slot.w) / 2 + hitTolerance;
-      const halfH = Math.max(slot.hitH, slot.h) / 2 + hitTolerance;
-
-      if (
-        Math.abs(gesture.x - slot.x) <= halfW &&
-        Math.abs(gesture.y - slot.y) <= halfH
-      ) {
+    const hitIndex = findHitSlotIndex(
+      this.slots,
+      gesture.x,
+      gesture.y,
+      "circle",
+      TAP_TOLERANCE_PX
+    );
+    if (hitIndex >= 0 && hitIndex < this.displayItems.length) {
+      const item = this.displayItems[hitIndex];
+      if (item) {
         return {
           type: "toggle_item",
           data: { item_id: item.item_id },

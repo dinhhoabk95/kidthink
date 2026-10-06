@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { LogicSpace } from "#src/layout/constants";
+import { findHitEntity } from "#src/layout/hit-test.js";
 import { GT002_FIXTURES } from "#src/templates/GT-002/fixtures";
 import { GT002Session } from "#src/templates/GT-002/session";
 
@@ -222,5 +223,64 @@ describe("GT-002 — vị trí vật xáo theo seed (R3, Task #275 S4)", () => {
 
     const actualRatio = correctAtZero / totalTrials;
     expect(Math.abs(actualRatio - expectedRatio)).toBeLessThanOrEqual(0.01);
+  });
+});
+
+describe("GT-002 — chạm vật đọc tên, một hình học chạm (R6, E4/E5, Task #275 S5)", () => {
+  it("getView() mang glyph, label, spokenLabel và role neutral", () => {
+    const session = buildSession();
+    const entities = session.getView().entities;
+
+    expect(entities.length).toBe(content.items.length);
+    for (const entity of entities) {
+      expect(entity.role).toBe("neutral");
+      expect(entity.label).toBeDefined();
+      expect(entity.spokenLabel).toBeDefined();
+    }
+  });
+
+  it("điểm ở góc hình vuông cũ nhưng ngoài vòng tròn (bán kính + 24px) thì toAction trả null", () => {
+    const session = buildSession();
+    const slot = session.slots[0];
+    if (!slot) {
+      throw new Error("Thiếu slot");
+    }
+    const r = Math.min(slot.hitW, slot.w) / 2;
+    // Điểm ở góc: dx = r + 16, dy = r + 16.
+    // Chebyshev (hình vuông): max(dx, dy) = r + 16 <= r + 24.
+    // Euclid (vòng tròn): hypot(dx, dy) = 1.414 * (r + 16) > r + 24.
+    const cornerX = slot.x + r + 16;
+    const cornerY = slot.y + r + 16;
+
+    const action = session.toAction({
+      type: "tap",
+      x: cornerX,
+      y: cornerY,
+      timeMs: 0,
+    });
+
+    expect(action).toBeNull();
+  });
+
+  it("quét lưới điểm: toAction và findHitEntity chọn cùng một entity", () => {
+    const session = buildSession();
+    const entities = session.getView().entities;
+
+    for (let x = 0; x <= 960; x += 30) {
+      for (let y = 0; y <= 540; y += 30) {
+        const action = session.toAction({ type: "tap", x, y, timeMs: 0 });
+        const hitEntity = findHitEntity(entities, x, y);
+
+        const actionItemId =
+          action &&
+          typeof action.data === "object" &&
+          action.data !== null &&
+          "item_id" in action.data
+            ? String((action.data as { item_id: unknown }).item_id)
+            : null;
+
+        expect(actionItemId).toBe(hitEntity ? hitEntity.id : null);
+      }
+    }
   });
 });
