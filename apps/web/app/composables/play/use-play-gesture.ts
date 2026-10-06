@@ -195,6 +195,7 @@ export function usePlayGesture(options: GestureOptions) {
     gesture: Gesture
   ): void {
     speakKeyword(engine, tapped);
+    syncView();
 
     if (verdict.feedback === "none") {
       // Cử chỉ bị nuốt: ngoài mọi slot, trước khi cảnh dựng xong, hoặc vòng

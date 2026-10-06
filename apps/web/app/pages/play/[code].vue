@@ -172,6 +172,7 @@
               v-for="entity in viewEntities"
               :key="entity.id"
               :aria-label="getAccessibleLabel(entity)"
+              :aria-pressed="entity.state === 'selected' ? true : undefined"
               :class="{
                 'ring-4 ring-warning-500 ring-offset-2 !bg-warning-50':
                   stagedEntityId === entity.id,

@@ -653,3 +653,33 @@ describe("usePlayGesture — lớp phủ phản hồi (#279, BR-FBK-05, BR-FBK-1
     });
   });
 });
+
+describe("usePlayGesture — đồng bộ view khi chọn/bỏ chọn (G4, Task #275 S3)", () => {
+  it("chạm vật GT-002: viewEntities cập nhật selected; chạm lại: cập nhật idle; onMiss không được gọi", () => {
+    const { gesture, entityById, engine } = makeGt002Harness();
+    const target = entityById("apple");
+
+    gesture.dispatchGesture({
+      type: "tap",
+      x: target.x,
+      y: target.y,
+      timeMs: 0,
+    });
+
+    const selectedEntity = gesture.viewEntities.value.find(
+      (e) => e.id === "apple"
+    );
+    expect(selectedEntity?.state).toBe("selected");
+
+    gesture.dispatchGesture({
+      type: "tap",
+      x: target.x,
+      y: target.y,
+      timeMs: 0,
+    });
+
+    const idleEntity = gesture.viewEntities.value.find((e) => e.id === "apple");
+    expect(idleEntity?.state).toBe("idle");
+    expect(engine.scaffolding.onMiss).not.toHaveBeenCalled();
+  });
+});

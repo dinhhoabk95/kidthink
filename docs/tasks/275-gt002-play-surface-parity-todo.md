@@ -51,10 +51,10 @@ lát chạm tới), `rtk proxy pnpm typecheck --only root`, `rtk proxy pnpm type
 
 ## S3 — View web đồng bộ khi chọn/bỏ chọn (G4) · S · phụ thuộc: S1b
 
-- [ ] `syncView()` chạy trước nhánh thoát `feedback === "none"`
-- [ ] `:aria-pressed` cho entity `selected` trong `[code].vue`
-- [ ] Test web: chạm → `selected`; chạm lại → `idle`; `onMiss` không được gọi
-- [ ] Ca âm: dời `syncView()` về sau nhánh thoát → test đỏ
+- [x] `syncView()` chạy trước nhánh thoát `feedback === "none"`
+- [x] `:aria-pressed` cho entity `selected` trong `[code].vue`
+- [x] Test web: chạm → `selected`; chạm lại → `idle`; `onMiss` không được gọi
+- [x] Ca âm: dời `syncView()` về sau nhánh thoát → test đỏ
 
 ## S4 — Vị trí vật xáo theo seed (R3) · S · phụ thuộc: không (tuần tự vì cùng file)
 
