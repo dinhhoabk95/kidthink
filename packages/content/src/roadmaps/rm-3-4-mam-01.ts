@@ -1,33 +1,5 @@
-import type {
-  RoadmapSeed,
-  RoadmapSession,
-  RoadmapSessionRole,
-} from "./types.js";
-
-function session(
-  sessionNo: number,
-  role: RoadmapSessionRole,
-  skillCode: string
-): RoadmapSession {
-  return { session_no: sessionNo, role, skill_code: skillCode };
-}
-
-function targetSkills(sessions: readonly RoadmapSession[]): string[] {
-  return [...new Set(sessions.map((s) => s.skill_code))];
-}
-
-function week(
-  weekNo: number,
-  goal: string,
-  sessions: readonly RoadmapSession[]
-) {
-  return {
-    week_no: weekNo,
-    goal,
-    target_skills: targetSkills(sessions),
-    sessions,
-  };
-}
+import { session, week } from "./builders.js";
+import type { RoadmapSeed } from "./types.js";
 
 const CNT_01 = "C1.CNT.01";
 const CMP_01 = "C1.CMP.01";

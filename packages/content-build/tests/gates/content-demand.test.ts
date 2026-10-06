@@ -9,6 +9,7 @@ import {
   type DemandLesson,
   type DemandLevel,
   deriveContentDemand,
+  findBandMismatches,
   PRACTICE_LEVEL_QUOTA,
   serializeContentDemand,
 } from "#src/gates/content-demand";
@@ -266,5 +267,71 @@ describe("sổ cầu — trên corpus thật", () => {
   it("content-demand.json đã commit khớp lộ trình và kho hiện tại", () => {
     const committed = fs.readFileSync(repoPath(CONTENT_DEMAND_PATH), "utf8");
     expect(JSON.stringify(JSON.parse(committed))).toBe(JSON.stringify(ledger));
+  });
+});
+
+describe("sổ cầu — band của nội dung lấp ô (BR-LRM-04)", () => {
+  const ledger = computeContentDemand();
+  const lessons: DemandLesson[] = ALL_SEED_LESSONS.map((entry) => ({
+    code: entry.header.code,
+    skill_codes: entry.header.skill_codes,
+    age_min: entry.header.target_age_min,
+    age_max: entry.header.target_age_max,
+    has_offline_activity: true,
+  }));
+  const levels: DemandLevel[] = SHIPPABLE_SEED_LEVELS.map((entry) => ({
+    code: entry.header.code,
+    skill_codes: entry.header.skill_codes,
+    age_min: entry.header.age_min,
+    age_max: entry.header.age_max,
+    difficulty: entry.header.difficulty,
+  }));
+
+  it("sổ cầu thật không có nội dung lệch band", () => {
+    expect(findBandMismatches(ledger, lessons, levels)).toEqual([]);
+  });
+
+  it("mỗi lộ trình band có dãy nội dung khác nhau", () => {
+    const byRoadmap = new Map<string, string>();
+    for (const cell of ledger.cells) {
+      const prior = byRoadmap.get(cell.roadmap_code) ?? "";
+      byRoadmap.set(cell.roadmap_code, `${prior}|${cell.filled_by.join(",")}`);
+    }
+    expect(byRoadmap.size).toBe(3);
+    expect(new Set(byRoadmap.values()).size).toBe(3);
+  });
+
+  it("ca âm: bài band 5-6 đặt vào lộ trình 3-4 thì đỏ và in mã bài", () => {
+    const lateLesson = lessons.find(
+      (entry) => entry.age_min >= 5 && entry.age_max >= 6
+    );
+    expect(lateLesson).toBeDefined();
+    const [first, ...rest] = ledger.cells;
+    if (!(first && lateLesson)) {
+      throw new Error("Sổ cầu rỗng hoặc thiếu bài band 5-6");
+    }
+    expect(first.band).toBe("3-4");
+    const broken = {
+      ...ledger,
+      cells: [{ ...first, filled_by: [lateLesson.code] }, ...rest],
+    };
+    const mismatches = findBandMismatches(broken, lessons, levels);
+    expect(mismatches).toHaveLength(1);
+    expect(mismatches[0]?.content_code).toBe(lateLesson.code);
+    expect(mismatches[0]?.reason).toBe("band_not_covered");
+  });
+
+  it("ca âm: mã không có trong kho thì đỏ", () => {
+    const [first, ...rest] = ledger.cells;
+    if (!first) {
+      throw new Error("Sổ cầu rỗng");
+    }
+    const broken = {
+      ...ledger,
+      cells: [{ ...first, filled_by: ["LES-NOT-IN-STORE"] }, ...rest],
+    };
+    expect(findBandMismatches(broken, lessons, levels)[0]?.reason).toBe(
+      "unknown_content"
+    );
   });
 });

@@ -13,10 +13,15 @@ import {
   type DemandLesson,
   type DemandLevel,
   deriveContentDemand,
+  findBandMismatches,
   listPracticeCellsWithoutTemplate,
   serializeContentDemand,
 } from "../gates/content-demand.js";
-import { CONTENT_DEMAND_PATH } from "../gates/content-demand-file.js";
+import {
+  CONTENT_DEMAND_PATH,
+  parseContentDemand,
+} from "../gates/content-demand-file.js";
+
 import {
   evaluateAuthoredRoadmaps,
   loadDifficultyMaxByBand,
@@ -72,6 +77,23 @@ function printSummary(ledger: ContentDemandLedger): void {
   }
 }
 
+function reportBandMismatches(
+  ledger: ContentDemandLedger,
+  label: string
+): number {
+  const mismatches = findBandMismatches(
+    ledger,
+    collectLessons(),
+    collectLevels()
+  );
+  for (const m of mismatches) {
+    console.error(
+      `❌ ${label}: ${m.content_code} đứng ở ${m.roadmap_code} tuần ${m.week_no} tiết ${m.session_no} nhưng ${m.reason === "unknown_content" ? "không có trong kho" : `không phủ band ${m.band}`} (BR-LRM-04)`
+    );
+  }
+  return mismatches.length;
+}
+
 export function runDeriveDemand(options: { check: boolean }): number {
   const failing = evaluateAuthoredRoadmaps().filter((row) => !row.passed);
   if (failing.length > 0) {
@@ -94,10 +116,23 @@ export function runDeriveDemand(options: { check: boolean }): number {
 
   const target = repoPath(CONTENT_DEMAND_PATH);
   printSummary(ledger);
+  if (reportBandMismatches(ledger, "sổ cầu suy ra") > 0) {
+    return 1;
+  }
   if (options.check) {
-    const committed = fs.existsSync(target)
-      ? canonical(fs.readFileSync(target, "utf8"))
+    const committedText = fs.existsSync(target)
+      ? fs.readFileSync(target, "utf8")
       : "";
+    if (
+      committedText !== "" &&
+      reportBandMismatches(
+        parseContentDemand(committedText),
+        "sổ cầu đã commit"
+      ) > 0
+    ) {
+      return 1;
+    }
+    const committed = committedText === "" ? "" : canonical(committedText);
     if (committed !== JSON.stringify(ledger)) {
       console.error(
         "❌ content-demand.json lệch lộ trình hoặc kho — chạy `pnpm derive:demand` rồi commit"

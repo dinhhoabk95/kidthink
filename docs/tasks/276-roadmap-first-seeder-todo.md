@@ -117,13 +117,25 @@ không có ca âm thì lát chưa xong, bất kể code đã viết.
 
 ## S8 — Ba lộ trình band đầy đủ
 
-- [ ] Soạn `RM-4-5-*` và `RM-5-6-*` theo cùng khuôn S2
-- [ ] Ba lộ trình đều xanh `check:roadmap-balance`, đều phủ 6/6 competency
-      (`BR-CRM-08`)
-- [ ] Sinh sổ cầu cho cả ba, lấp tới ngưỡng bậc thang đợt 1
-- [ ] Mỗi lộ trình band có dãy item **khác nhau** — đo bằng so chuỗi, không được bằng nhau
-- [ ] Bài học phục vụ một lộ trình band đều khai band đó (`BR-LRM-04`)
-- [ ] **Ca âm**: đưa một bài band `5-6` vào lộ trình band `3-4` → cổng đỏ, in mã bài
+- [x] Soạn `RM-4-5-chi-01` và `RM-5-6-la-01` theo cùng khuôn S2 (12 tuần × 3 tiết, 9 kỹ năng mới mỗi
+      lộ trình). Bản nháp chờ review PR; taxonomy khai tuổi bằng một tuổi đơn nên prerequisite dưới
+      band được miễn — `BR-LRM-11` trong spec, cổng `prerequisiteMap` áp dụng
+- [x] Ba lộ trình đều xanh `check:roadmap-balance`, đều phủ 6/6 competency
+      (`BR-CRM-08`). Đo: share lớn nhất 30,6% (3-4) · 22,2% (4-5) · 22,2% (5-6); 0/12 tuần lệch;
+      0 kỹ năng không ôn lại; 0 kỹ năng mới ở 3 tuần cuối
+- [ ] Sinh sổ cầu cho cả ba, lấp tới ngưỡng bậc thang đợt 1 — **chưa đạt, ghi nợ thật**: sổ cầu đã
+      sinh cho cả ba nhưng lấp 20/36 (3-4) · 18/36 (4-5) · 22/36 (5-6); nợ 16 · 18 · 14 ô. Theo
+      vai trò — 3-4: introduce 3 · offscreen 11 · review 2 · practice 0; 4-5: introduce 4 ·
+      offscreen 12 · review 1 · practice 1; 5-6: introduce 3 · offscreen 8 · review 2 · practice 1.
+      Nợ chủ yếu là ô bài học và ô `offscreen` (cần bài có hoạt động ngoài màn hình) vì kho bài học
+      band 4-5 và 5-6 còn mỏng. Không đoán ngưỡng bậc thang; nợ này là tín hiệu cầu cho đợt soạn kế tiếp
+- [x] Mỗi lộ trình band có dãy item **khác nhau** — đo bằng so chuỗi (`content-demand.test.ts` và
+      `roadmap-seeding.test.ts`), không được bằng nhau
+- [x] Bài học phục vụ một lộ trình band đều khai band đó (`BR-LRM-04`) — `findBandMismatches` chạy
+      trong `derive:demand` và `check:content-demand`, mã thoát ≠ 0 và in mã nội dung lệch band
+- [x] **Ca âm**: đưa một bài band `5-6` vào lộ trình band `3-4` → cổng đỏ, in mã bài
+- [x] **Ca âm** bổ sung: prerequisite nằm trong band mà lộ trình thiếu → đỏ `BR-CRM-01`, in mã
+      kỹ năng thiếu (`roadmap-seed-gate.test.ts`)
 
 ## Đóng task
 

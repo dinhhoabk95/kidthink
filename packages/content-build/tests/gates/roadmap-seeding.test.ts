@@ -1,9 +1,10 @@
-import { RM_3_4_MAM_01 } from "@mindkid/content";
+import { ALL_ROADMAPS, RM_3_4_MAM_01 } from "@mindkid/content";
 import { NEXT_CURRICULUM_SUGGESTION_CODE } from "@mindkid/shared";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { runRoadmapBalanceGate } from "#src/cli/check-roadmap-balance";
 import { runSeedMasterScan } from "#src/cli/check-seed-master";
 import { loadContentDemandLedger } from "#src/gates/content-demand-file";
+import { BAND_AGES } from "#src/gates/roadmap-seed-gate";
 import {
   formatSeedMasterViolation,
   scanSeedMaster,
@@ -90,15 +91,32 @@ function plan(overrides: Partial<CurriculumItemPlan> = {}): CurriculumItemPlan {
 
 describe("chương trình sinh từ lộ trình", () => {
   it("mỗi lộ trình thành một chương trình khớp khuôn CUR-* của cột code", () => {
-    expect(ROADMAP_CURRICULA_CONFIGS).toHaveLength(1);
-    const config = ROADMAP_CURRICULA_CONFIGS[0];
-    expect(config?.code).toBe(curriculumCodeForRoadmap(RM_3_4_MAM_01.code));
-    expect(config?.code).toMatch(CURRICULUM_CODE_REGEX);
-    expect(config?.durationWeeks).toBe(RM_3_4_MAM_01.duration_weeks);
-    expect(config?.sessionsPerWeek).toBe(RM_3_4_MAM_01.sessions_per_week);
-    expect(config?.targetAgeMin).toBe(3);
-    expect(config?.targetAgeMax).toBe(4);
-    expect(config?.weekGoals).toEqual(RM_3_4_MAM_01.weeks.map((w) => w.goal));
+    expect(ROADMAP_CURRICULA_CONFIGS).toHaveLength(ALL_ROADMAPS.length);
+    expect(ALL_ROADMAPS).toHaveLength(3);
+    for (const roadmap of ALL_ROADMAPS) {
+      const config = ROADMAP_CURRICULA_CONFIGS.find(
+        (c) => c.code === curriculumCodeForRoadmap(roadmap.code)
+      );
+      const [ageMin, ageMax] = BAND_AGES[roadmap.band];
+      expect(config?.code).toMatch(CURRICULUM_CODE_REGEX);
+      expect(config?.durationWeeks).toBe(roadmap.duration_weeks);
+      expect(config?.sessionsPerWeek).toBe(roadmap.sessions_per_week);
+      expect(config?.targetAgeMin).toBe(ageMin);
+      expect(config?.targetAgeMax).toBe(ageMax);
+      expect(config?.weekGoals).toEqual(roadmap.weeks.map((w) => w.goal));
+    }
+    expect(curriculumCodeForRoadmap(RM_3_4_MAM_01.code)).toBe(
+      "CUR-RM-3-4-mam-01"
+    );
+  });
+
+  it("ba band có ba chuỗi kỹ năng khác nhau, không dùng chung một kịch bản", () => {
+    const sequences = ALL_ROADMAPS.map((roadmap) =>
+      roadmap.weeks
+        .flatMap((w) => w.sessions.map((s) => s.skill_code))
+        .join(",")
+    );
+    expect(new Set(sequences).size).toBe(ALL_ROADMAPS.length);
   });
 
   it("không còn chương trình cũ CUR-BE3..J42", () => {
@@ -125,10 +143,26 @@ describe("curriculum_items sinh thẳng từ sổ cầu", () => {
   const items = planCurriculumItems(ledger);
 
   it("mỗi item truy ngược được về một ô của sổ cầu", () => {
+    const filledCount = ledger.cells.reduce(
+      (sum, cell) => sum + cell.filled_by.length,
+      0
+    );
+    expect(items).toHaveLength(filledCount);
     const filled = new Set(ledger.cells.flatMap((cell) => cell.filled_by));
-    expect(items.length).toBe(filled.size);
     for (const item of items) {
       expect(filled.has(item.contentCode)).toBe(true);
+    }
+  });
+
+  it("mỗi chương trình chỉ nhận item từ ô của lộ trình mình", () => {
+    for (const roadmap of ALL_ROADMAPS) {
+      const code = curriculumCodeForRoadmap(roadmap.code);
+      const expected = ledger.cells
+        .filter((cell) => cell.roadmap_code === roadmap.code)
+        .reduce((sum, cell) => sum + cell.filled_by.length, 0);
+      expect(items.filter((item) => item.curriculumCode === code)).toHaveLength(
+        expected
+      );
     }
   });
 
@@ -136,7 +170,9 @@ describe("curriculum_items sinh thẳng từ sổ cầu", () => {
     for (const cell of ledger.cells) {
       const own = items.filter(
         (item) =>
-          item.weekNo === cell.week_no && item.sessionNo === cell.session_no
+          item.curriculumCode === curriculumCodeForRoadmap(cell.roadmap_code) &&
+          item.weekNo === cell.week_no &&
+          item.sessionNo === cell.session_no
       );
       expect(own.map((item) => item.position)).toEqual(
         cell.filled_by.map((_, index) => index + 1)
@@ -156,7 +192,10 @@ describe("curriculum_items sinh thẳng từ sổ cầu", () => {
       expect(
         items.some(
           (item) =>
-            item.weekNo === cell.week_no && item.sessionNo === cell.session_no
+            item.curriculumCode ===
+              curriculumCodeForRoadmap(cell.roadmap_code) &&
+            item.weekNo === cell.week_no &&
+            item.sessionNo === cell.session_no
         )
       ).toBe(false);
     }

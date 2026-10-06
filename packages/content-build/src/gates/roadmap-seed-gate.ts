@@ -304,15 +304,25 @@ function buildItems(
   });
 }
 
+function isBelowBand(
+  skill: RoadmapSkillInfo | undefined,
+  low: number
+): boolean {
+  return skill !== undefined && skill.age_max < low;
+}
+
 function prerequisiteMap(
   roadmap: RoadmapSeed,
   skills: ReadonlyMap<string, RoadmapSkillInfo>
 ): Record<string, string[]> {
+  const [low] = BAND_AGES[roadmap.band];
   const map: Record<string, string[]> = {};
   for (const { session } of flatSessions(roadmap)) {
     const skill = skills.get(session.skill_code);
     if (skill) {
-      map[skill.code] = [...skill.prerequisites];
+      map[skill.code] = skill.prerequisites.filter(
+        (code) => !isBelowBand(skills.get(code), low)
+      );
     }
   }
   return map;

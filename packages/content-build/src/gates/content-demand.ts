@@ -261,3 +261,46 @@ export function listPracticeCellsWithoutTemplate(
     (cell) => cell.role === "practice" && cell.template_codes.length === 0
   );
 }
+
+export interface BandMismatch {
+  readonly roadmap_code: string;
+  readonly band: RoadmapBand;
+  readonly week_no: number;
+  readonly session_no: number;
+  readonly content_code: string;
+  readonly reason: "unknown_content" | "band_not_covered";
+}
+
+export function findBandMismatches(
+  ledger: ContentDemandLedger,
+  lessons: readonly DemandLesson[],
+  levels: readonly DemandLevel[]
+): BandMismatch[] {
+  const ages = new Map<string, { min: number; max: number }>();
+  for (const entry of [...lessons, ...levels]) {
+    ages.set(entry.code, { min: entry.age_min, max: entry.age_max });
+  }
+  const mismatches: BandMismatch[] = [];
+  for (const cell of ledger.cells) {
+    for (const contentCode of cell.filled_by) {
+      const range = ages.get(contentCode);
+      let reason: BandMismatch["reason"] | null = null;
+      if (range === undefined) {
+        reason = "unknown_content";
+      } else if (!coversBand(cell.band, range.min, range.max)) {
+        reason = "band_not_covered";
+      }
+      if (reason !== null) {
+        mismatches.push({
+          roadmap_code: cell.roadmap_code,
+          band: cell.band,
+          week_no: cell.week_no,
+          session_no: cell.session_no,
+          content_code: contentCode,
+          reason,
+        });
+      }
+    }
+  }
+  return mismatches;
+}

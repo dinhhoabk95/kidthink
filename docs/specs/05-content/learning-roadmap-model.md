@@ -101,6 +101,7 @@ kho nội dung phải có gì*.
 | `BR-LRM-08` (cấm level mồ côi vào lộ trình) | `curriculum_items` chỉ nhận thực thể có ô tương ứng trong sổ cầu | Không có luật này thì 6.342 level mồ côi hôm nay vẫn lọt vào lộ trình bằng đường vòng |
 | `BR-LRM-09` (cổng đếm ô, không đếm hàng) | Cổng độ phủ BẮT BUỘC đo **ô sổ cầu đã lấp / tổng ô**, Cấm — NEVER đo tổng số level trong kho | Đếm hàng cho 6.384 — một con số lớn và vô nghĩa. Đếm ô cho 42/222, là con số thật |
 | `BR-LRM-10` (mã lộ trình bất biến) | Mã lộ trình theo dạng `RM-<band>-<slug>`, bất biến sau khi publish; đổi nội dung thì tăng version | Ghi danh, tiến độ và báo cáo neo vào mã. Mã đổi là mất lịch sử học của trẻ |
+| `BR-LRM-11` (prerequisite dưới band được miễn) | Khi kiểm `BR-CRM-01` trên lộ trình của một band, prerequisite có `age_max` thấp hơn tuổi thấp nhất của band được coi là trẻ đã học ở band trước và KHÔNG bắt buộc xuất hiện trong lộ trình. Prerequisite nằm trong band vẫn BẮT BUỘC xuất hiện ở tuần không muộn hơn kỹ năng phụ thuộc | Taxonomy khai tuổi từng kỹ năng bằng một tuổi đơn, nên gần như mọi kỹ năng 4–5 và 5–6 đều có tiền đề ở band dưới. Bắt chúng lặp lại trong lộ trình band trên thì lộ trình 12 tuần không còn chỗ cho kỹ năng mới |
 
 ## 7. Data
 
@@ -259,6 +260,13 @@ Scenario: BR-LRM-09 — cổng đếm ô
   When cổng độ phủ in báo cáo
   Then báo cáo in số ô đã lấp trên tổng ô
   And báo cáo không dùng tổng số hàng game_levels làm tử số hay mẫu số
+
+Scenario: BR-LRM-11 — prerequisite dưới band được miễn, trong band thì không
+  Given một kỹ năng band 4-5 chỉ có prerequisite ở band 3-4
+  When cổng lộ trình chạy trên lộ trình 4-5 không chứa prerequisite đó
+  Then cổng xanh
+  But khi kỹ năng có prerequisite nằm trong band 4-5 mà lộ trình không chứa
+  Then cổng đỏ BR-CRM-01 và in mã kỹ năng thiếu
 ```
 
 ## 10. Boundaries
