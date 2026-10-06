@@ -58,11 +58,11 @@ lát chạm tới), `rtk proxy pnpm typecheck --only root`, `rtk proxy pnpm type
 
 ## S4 — Vị trí vật xáo theo seed (R3) · S · phụ thuộc: không (tuần tự vì cùng file)
 
-- [ ] `setupEntities()` xáo bằng `deriveStream(this.layoutSeed, "items")`
-- [ ] Test: cùng seed → cùng thứ tự; 20.000 seed → tỉ lệ vật đúng ở ô 0 lệch ≤1 điểm % so với
+- [x] `setupEntities()` xáo bằng `deriveStream(this.layoutSeed, "items")`
+- [x] Test: cùng seed → cùng thứ tự; 20.000 seed → tỉ lệ vật đúng ở ô 0 lệch ≤1 điểm % so với
       `target_count / item_count`
-- [ ] `getHintTargetIndex()` trỏ đúng vật đúng sau khi xáo
-- [ ] Ca âm: bỏ xáo → test phân bố đỏ
+- [x] `getHintTargetIndex()` trỏ đúng vật đúng sau khi xáo
+- [x] Ca âm: bỏ xáo → test phân bố đỏ
 
 ## S5 — Chạm vật đọc tên, một hình học chạm (R6, E4/E5) · M · phụ thuộc: không (tuần tự vì cùng file)
 

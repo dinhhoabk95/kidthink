@@ -178,3 +178,49 @@ describe("GT-002 — commit sai giữ tập chọn, trạng thái một nguồn 
     expect(entity?.state).toBe("idle");
   });
 });
+
+describe("GT-002 — vị trí vật xáo theo seed (R3, Task #275 S4)", () => {
+  it("cùng seed thì cùng thứ tự, khác seed thì vị trí vật đổi", () => {
+    const s1 = new GT002Session(content, difficulty, 42);
+    s1.prepareRound("4-5");
+    const s2 = new GT002Session(content, difficulty, 42);
+    s2.prepareRound("4-5");
+    const s3 = new GT002Session(content, difficulty, 9999);
+    s3.prepareRound("4-5");
+
+    const order1 = s1.displayItems.map((i) => i.item_id);
+    const order2 = s2.displayItems.map((i) => i.item_id);
+    const order3 = s3.displayItems.map((i) => i.item_id);
+
+    expect(order1).toEqual(order2);
+    expect(order1).not.toEqual(order3);
+  });
+
+  it("getHintTargetIndex() trỏ đúng vật đúng sau khi xáo", () => {
+    const s = new GT002Session(content, difficulty, 12_345);
+    s.prepareRound("4-5");
+    const hintIdx = s.getHintTargetIndex();
+    expect(hintIdx).not.toBeNull();
+    const item = hintIdx === null ? undefined : s.displayItems[hintIdx];
+    expect(item?.is_correct).toBe(true);
+  });
+
+  it("20.000 seed: tỉ lệ vật đúng ở ô 0 lệch <= 1 điểm % so với target_count / item_count", () => {
+    const targetCount = content.items.filter((i) => i.is_correct).length;
+    const totalCount = content.items.length;
+    const expectedRatio = targetCount / totalCount;
+
+    let correctAtZero = 0;
+    const totalTrials = 20_000;
+    for (let seed = 1; seed <= totalTrials; seed++) {
+      const s = new GT002Session(content, difficulty, seed);
+      s.prepareRound("4-5");
+      if (s.displayItems[0]?.is_correct) {
+        correctAtZero++;
+      }
+    }
+
+    const actualRatio = correctAtZero / totalTrials;
+    expect(Math.abs(actualRatio - expectedRatio)).toBeLessThanOrEqual(0.01);
+  });
+});

@@ -20,6 +20,8 @@ import {
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
+import { deriveStream } from "#src/rng/mulberry32.js";
+import { shuffle } from "#src/rng/shuffle.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT002Content, GT002Difficulty } from "./template.js";
@@ -43,7 +45,8 @@ export class GT002Session extends TemplateGameSession<
     this.mechanic.reset();
     this.isWon = false;
     this.particles = [];
-    this.displayItems = [...this.content.items];
+    const rng = deriveStream(this.layoutSeed, "items");
+    this.displayItems = shuffle(this.content.items, rng);
   }
 
   protected computeSlots(ageBand: AgeBand): readonly Slot[] {
