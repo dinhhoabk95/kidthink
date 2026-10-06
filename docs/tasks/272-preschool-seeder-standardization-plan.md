@@ -35,10 +35,10 @@
    - Chạy `pnpm check:seed-gates` đạt 0 lỗi Cổng 9, đưa baseline về 0.
 
 2. **WP272.2 — Xây dựng khung Lộ trình 36 tuần học GDMN chuẩn cho 3 độ tuổi:**
-   - Cập nhật `packages/content-build/src/seed-master/curricula.ts` cho `CUR-BE3`, `CUR-BE4`, `CUR-BE5` bám sát 10 chủ đề năm học.
+   - Thêm `RM-3-4-mam-year-01`, `RM-4-5-chi-year-01`, `RM-5-6-la-year-01` (36 tuần × 3 buổi) trong `packages/content/src/roadmaps/`, bám 10 chủ đề năm học; giữ lộ trình 12 tuần `RM-*-01`. Contract: `BR-LRM-12`.
 
 3. **WP272.3 — Thiết lập cơ chế phân tách Seeder Profile (`core` vs `synthetic`):**
-   - Hỗ trợ biến môi trường `MINDKID_SEED_PROFILE=core` (mặc định) và `MINDKID_SEED_PROFILE=synthetic`.
+   - Biến môi trường `MINDKID_SEED_PROFILE=full` (mặc định) và `core` (`BR-LRM-13`); `core` chỉ gieo level có tên trong sổ cầu.
    - Giúp việc chạy `pnpm db:seed` nhanh gọn, tập trung và đúng chuẩn mầm non.
 
 4. **WP272.4 — Rà soát, liên kết bài học & làm sạch dữ liệu mầm non:**
