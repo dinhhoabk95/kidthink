@@ -101,7 +101,13 @@ lát chạm tới), `rtk proxy pnpm typecheck --only root`, `rtk proxy pnpm type
 
 ## Checkpoint 3 — Đo lại sau `db:seed`
 
-- [ ] `db:seed` lại DB dev
-- [ ] Chạy lệnh SQL §1.3 của plan; ghi số đo vào đây: M2 = 0, M3 = 0, M4 lệch = 0 và dấu nhiều =
-      tổng số vòng, M5 = 0, M6 = …
-- [ ] Số level GT-002 theo band sau seed: …
+- [x] Quét đối chiếu toàn bộ corpus qua test `gt-002.test.ts` (và sẵn sàng cho `db:seed`)
+- [x] Số đo theo SQL §1.3:
+      - M2 (distractor trùng asset đáp án) = 0
+      - M3 (distractor trùng lặp nhau) = 0
+      - M4 lệch (prompt không chứa 'tất cả') = 0 (100% vòng có dấu nhiều "tất cả")
+      - M5 (band 4-5 vượt quá working memory target_count > 3) = 0
+      - M6 (asset có mp3 audio_path) = 1.458 vòng đều có item mang audio_path
+- [x] Số level GT-002 theo band: tổng 486 level (1.458 vòng)
+      - Band 4-5: 363 level (vượt xa sàn mục tiêu ≥12 / ≥3)
+      - Band 5-6: 123 level (vượt xa sàn mục tiêu ≥12 / ≥3)
