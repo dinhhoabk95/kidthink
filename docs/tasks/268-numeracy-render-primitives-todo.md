@@ -140,9 +140,9 @@ builder, engine hay app nào đọc nó — nó chỉ được ghi vào jsonb `s
 
 - [x] T6.1 Nâng `.btn-audio-speak`, `.btn-primary`, `.btn-secondary` ở `play-surface.css:381` từ 48 px lên sàn 64 px (`BR-DSC-28`)
 - [x] T6.2 **Ca âm** — đặt một nút bề mặt trẻ dưới 64 px → test `packages/ui/tests/kid-surface.test.ts` đỏ
-- [ ] T6.3 Gộp bốn khai báo sàn chạm về một, giữ `TOUCH_FLOORS` ở `packages/ui/src/index.ts`
-- [ ] T6.4 `getTouchFloor()` và `MIN_TOUCH_PX` import từ `TOUCH_FLOORS`, không khai lại
-- [ ] T6.5 `min-h-19` ở `packages/ui/app.config.ts:24` sinh từ `TOUCH_FLOORS.kidPrimary`, không viết số
+- [x] T6.3 Gộp bốn khai báo sàn chạm về một, giữ `TOUCH_FLOORS` ở `packages/ui/src/index.ts`
+- [x] T6.4 `getTouchFloor()` và `MIN_TOUCH_PX` import từ `TOUCH_FLOORS`, không khai lại
+- [x] T6.5 `min-h-19` ở `packages/ui/app.config.ts:24` sinh từ `TOUCH_FLOORS.kidPrimary`, không viết số
 - [x] T6.6 Nếu task `#270` đã làm T6.3–T6.5 thì bỏ qua; **chỉ một** task làm
 
 ## L7 — Chốt số
@@ -153,6 +153,6 @@ builder, engine hay app nào đọc nó — nó chỉ được ghi vào jsonb `s
 - [x] T7.4 Đo lại M5: hằng hex thô giảm, ratchet chốt số mới
 - [x] T7.5 Đo lại M6: 0 nút bề mặt trẻ dưới sàn
 - [x] T7.6 Đo lại M7: `GT-007` vẽ chữ số đúng một lần
-- [ ] T7.7 Đo lại M8: 1 khai báo sàn chạm
+- [x] T7.7 Đo lại M8: 1 khai báo sàn chạm
 - [ ] T7.8 `pnpm qa:capture` chạy lại; so bộ ảnh mới với `2026-09-01/` và ghi nhận khác biệt
 - [x] T7.9 `pnpm check` xanh; `pnpm typecheck` không thêm nợ

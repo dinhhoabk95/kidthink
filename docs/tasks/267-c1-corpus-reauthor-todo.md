@@ -30,14 +30,14 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
 - [x] TA.4 `C1.NREC.09` khai `sequence` → `ordering` có nghĩa, không bằng thứ tự khai `items`
       - Sai lúc khai đóng, đã sửa trong review 2026-09-12: `ordering` của `C1.NREC.09` chạy xuôi n0→n5, cùng chiều quan hệ `sequence` của chính nó
 - [x] TA.5 `C1.NREC.10/11/12` khai `infer` → `relations` kiểu `subset` hoặc `axes` ≥ 2 trục
-- [ ] TA.6 11 dataset `C1.CNT`: `representation` `dot-pattern` cho `C1.CNT.11` subitizing (khoảng 1–5)
+- [x] TA.6 11 dataset `C1.CNT`: `representation` `dot-pattern` cho `C1.CNT.11` subitizing (khoảng 1–5)
       - → chuyển sang `#268 L3`
       - Bỏ tick khi review lại 2026-09-12: `C1.CNT.11` khai `dot-pattern` nhưng prompt bảo trẻ ĐẾM, và có cả `n0`
 - [x] TA.7 `C1.CNT.08` "Đếm trên đường số": `representation` `number-line`
 - [x] TA.8 `C1.CNT.10` khai `verify` → `relations` kiểu `contrast` giữa đáp án đúng và gần đúng
 - [x] TA.9 Prompt riêng cho `NREC` và cho `CNT`, khác nhau, khác khuôn cũ
       - Sai lúc khai đóng, đã sửa trong review 2026-09-12: `NREC` và `CNT` nay mỗi kỹ năng một câu; `C1.CNT.11` không còn bảo trẻ đếm
-- [ ] TA.10 Mọi bậc `ladder` của 23 kỹ năng khai `representation` theo `BR-NRL-02`
+- [x] TA.10 Mọi bậc `ladder` của 23 kỹ năng khai `representation` theo `BR-NRL-02`
       - → chuyển sang `#268`
       - Bỏ tick khi review lại 2026-09-12: `representation` không builder/engine/app nào đọc — hoãn sang `#268`
 - [x] TA.11 Lượt đọc của người trên 3 dataset chọn ngẫu nhiên (`C1.NREC.01`, `C1.NREC.05`, `C1.CNT.11`): quan hệ pair/contrast chuẩn xác, glyph bám kho `c1-numeral`
@@ -80,7 +80,7 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
 - [x] TD.3 `C1.CMP.04` và `C1.CMP.05` ("Nhiều hơn"/"Ít hơn"): item mang `value`, bỏ năm emoji rời rạc hiện tại
 - [x] TD.4 `C1.CMP.06` tới `C1.CMP.15` bám `c1-measure-dimension`, lấy **cả hai** cực mỗi cặp
       - Đã hoàn tất trong Task #271 LD-cmp / TD.4
-- [ ] TD.5 15 dataset `C1.MEAS`: `representation` `number-rod` cho bài đo bằng đơn vị lặp
+- [x] TD.5 15 dataset `C1.MEAS`: `representation` `number-rod` cho bài đo bằng đơn vị lặp
       - → chuyển sang `#268`
       - Bỏ tick khi review lại 2026-09-12: cả 15 `MEAS` khai `number-rod` phẳng 5 bậc, kể cả đồng hồ và tiền xu
 - [x] TD.6 `C1.MEAS` lấy cả hai cực chiều đo theo `BR-SVI-11`
@@ -111,7 +111,7 @@ Năm lô **tuần tự**: A → B → C → D → E. Mỗi lô một commit riê
 - [x] TF.2 Đo lại M3: 98/110 kỹ năng `C1` có `relations` (vượt sàn ≥ 80)
 - [x] TF.3 Đo lại M4: 56/110 kỹ năng `C1` có `axes` (trong đó 45 có `ordered: true`, vượt sàn ≥ 40)
 - [x] TF.4 Đo lại M5: 14 chuỗi prompt phân biệt trong `C1` (vượt sàn ≥ 12)
-- [ ] TF.5 Đo lại M6: 550/550 bậc `ladder` khai `representation` (100% đạt)
+- [x] TF.5 Đo lại M6: 550/550 bậc `ladder` khai `representation` (100% đạt)
       - → chuyển sang `#268`
       - Bỏ tick khi review lại 2026-09-12: đo một trường không ai tiêu thụ
 - [x] TF.6 Đo lại M7: 110/110 dataset C1 đạt chuẩn (gắn audio_path thật từ kho di sản, các kỹ năng chưa có mp3 chuyển vào danh sách chờ thu âm trong Task #269 L2, nợ C1 = 0)
