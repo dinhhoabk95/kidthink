@@ -162,6 +162,24 @@ Thêm: **11 hoạt động trò chơi** có `skill_codes` không giao với `ski
 
 Không phải dựng mới bốn thứ đầu. Việc là **nối** chúng vào đường chạy.
 
+### 2.7 Số đo sau, ngày 2026-10-06
+
+Cùng cách đo ở §6. Mọi nội dung soạn mới là bản nháp chờ review PR.
+
+| Đại lượng | Trước (§2) | Sau |
+|---|---|---|
+| Lộ trình soạn đã qua cổng `BR-CRM-*` | 0 | 3 (`RM-3-4-mam-01`, `RM-4-5-chi-01`, `RM-5-6-la-01`), 6/6 competency, 0/12 tuần lệch |
+| Seeder chọn nội dung bằng phép chia lấy dư | có | không — cổng `check:seed-master` xanh |
+| Ô sổ cầu đã lấp / tổng | không có sổ | 20/36 · 18/36 · 22/36 (nợ 16 · 18 · 14) |
+| Bài khai `topics[]` | 0/126 | 126/126, mỗi bài 2 chủ đề |
+| Số hoạt động mỗi bài | 3..3 | 3..7 |
+| Khuôn riêng biệt mỗi bài | 1..2 | 2..6 |
+| Cặp bài-hoạt động lệch kỹ năng (`BR-LTC-06`) | 14 | 0 |
+| Bài thiếu khuôn, ghi nợ có ratchet | không có sổ | 25 (`level_stock_short` 18 · `matrix_empty` 7) |
+| Hoạt động `digital_game` thêm mới | — | 176 |
+
+Chưa đạt: ngưỡng bậc thang đợt 1 (nợ ô còn 16 · 18 · 14), trần 4 chủ đề, miễn `introduce`, `BR-LTC-08`.
+
 ## 3. Giả định đã chốt để làm tiếp
 
 Người đặt việc không cần trả lời trước khi bắt đầu. Bốn giả định dưới đây được ghi thành giả

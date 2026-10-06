@@ -157,8 +157,10 @@ không có ca âm thì lát chưa xong, bất kể code đã viết.
 
 ## Đóng task
 
-- [ ] `curriculum-model.md` giữ `status: implemented` **chỉ khi** `check:roadmap-balance`
-      xanh trên mọi chương trình `published`
-- [ ] Hai spec mới chuyển `draft` → `implemented` khi acceptance criteria của chúng xanh
-- [ ] Cập nhật `docs/specs/index.md` nếu `phase` hay `status` đổi
-- [ ] Ghi lại số đo sau vào plan §2 để so với số trước
+- [x] `curriculum-model.md` giữ `status: implemented` — `check:roadmap-balance` xanh trên cả 3 lộ trình
+      soạn (0/12 tuần lệch, 6/6 competency)
+- [ ] Hai spec mới (`learning-roadmap-model.md`, `lesson-topic-composition.md`) **giữ `draft`** — chưa
+      đạt acceptance: nợ ô sổ cầu 16 · 18 · 14, 25 bài thiếu khuôn (sổ nợ có ratchet), trần 4 chủ đề /
+      miễn `introduce` / `BR-LTC-08` chưa chốt. Không chuyển `implemented` khi còn nợ
+- [x] `docs/specs/index.md`: `phase` và `status` không đổi nên không cập nhật
+- [x] Số đo sau ghi ở plan §2.7
