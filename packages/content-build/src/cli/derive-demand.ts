@@ -3,6 +3,7 @@ import fs from "node:fs";
 import { pathToFileURL } from "node:url";
 import { repoPath } from "@mindkid/config/paths";
 import { ALL_ROADMAPS } from "@mindkid/content";
+import { findDebtIncreases } from "#src/gates/level-demand";
 import {
   ALL_SEED_ACTIVITIES,
   ALL_SEED_LESSONS,
@@ -94,6 +95,49 @@ function reportBandMismatches(
   return mismatches.length;
 }
 
+function reportDebtIncreases(
+  committedText: string,
+  derived: ContentDemandLedger
+): boolean {
+  const increases = findDebtIncreases(
+    parseContentDemand(committedText),
+    derived
+  );
+  for (const item of increases) {
+    console.error(
+      `❌ ${item.roadmap_code}: nợ tăng ${item.before} → ${item.after} ô so với sổ cầu đã commit (BR-LRM-09)`
+    );
+  }
+  return increases.length > 0;
+}
+
+function checkCommittedLedger(
+  target: string,
+  ledger: ContentDemandLedger
+): number {
+  const committedText = fs.existsSync(target)
+    ? fs.readFileSync(target, "utf8")
+    : "";
+  if (committedText !== "") {
+    const committedLedger = parseContentDemand(committedText);
+    if (reportBandMismatches(committedLedger, "sổ cầu đã commit") > 0) {
+      return 1;
+    }
+    if (reportDebtIncreases(committedText, ledger)) {
+      return 1;
+    }
+  }
+  const committed = committedText === "" ? "" : canonical(committedText);
+  if (committed !== JSON.stringify(ledger)) {
+    console.error(
+      "❌ content-demand.json lệch lộ trình hoặc kho — chạy `pnpm derive:demand` rồi commit"
+    );
+    return 1;
+  }
+  console.log("✅ content-demand.json khớp lộ trình");
+  return 0;
+}
+
 export function runDeriveDemand(options: { check: boolean }): number {
   const failing = evaluateAuthoredRoadmaps().filter((row) => !row.passed);
   if (failing.length > 0) {
@@ -120,27 +164,7 @@ export function runDeriveDemand(options: { check: boolean }): number {
     return 1;
   }
   if (options.check) {
-    const committedText = fs.existsSync(target)
-      ? fs.readFileSync(target, "utf8")
-      : "";
-    if (
-      committedText !== "" &&
-      reportBandMismatches(
-        parseContentDemand(committedText),
-        "sổ cầu đã commit"
-      ) > 0
-    ) {
-      return 1;
-    }
-    const committed = committedText === "" ? "" : canonical(committedText);
-    if (committed !== JSON.stringify(ledger)) {
-      console.error(
-        "❌ content-demand.json lệch lộ trình hoặc kho — chạy `pnpm derive:demand` rồi commit"
-      );
-      return 1;
-    }
-    console.log("✅ content-demand.json khớp lộ trình");
-    return 0;
+    return checkCommittedLedger(target, ledger);
   }
   fs.writeFileSync(target, serializeContentDemand(ledger));
   console.log(`Đã ghi ${CONTENT_DEMAND_PATH}`);

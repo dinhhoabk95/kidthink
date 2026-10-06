@@ -65,6 +65,7 @@
     "check:content-demand": "pnpm --filter @mindkid/content-build check:content-demand",
     "check:seed-master": "pnpm --filter @mindkid/content-build check:seed-master",
     "check:lesson-topics": "pnpm --filter @mindkid/content-build check:lesson-topics",
+    "report:level-demand": "pnpm --filter @mindkid/content-build report:level-demand",
     "gen:taxonomy-docs": "tsx scripts/taxonomy/sync-taxonomy-docs.ts --write",
     "verify": "tsx scripts/verify.ts",
     "test": "NODE_OPTIONS=--max-old-space-size=4096 vitest run --bail 1",

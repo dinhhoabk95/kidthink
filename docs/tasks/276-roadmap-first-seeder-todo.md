@@ -120,12 +120,18 @@ không có ca âm thì lát chưa xong, bất kể code đã viết.
 
 ## S7 — `gen-levels` đọc sổ cầu
 
-- [ ] `gen-levels.ts` nhận `content-demand.json` làm nguồn, chỉ sinh ô còn thiếu
-- [ ] Level ngoài sổ cầu gắn `orphan`, giữ trong kho, không gieo vào lộ trình (G3)
-- [ ] Báo cáo độ phủ in **ô đã lấp / tổng ô**, Cấm — NEVER in tổng hàng `game_levels`
-      (`BR-LRM-09`)
-- [ ] **Ca âm**: yêu cầu sinh một level cho kỹ năng không có ô → cổng đỏ
-- [ ] **Ca âm**: hạ một ô khỏi trạng thái đã lấp → nợ tăng, cổng không xanh
+- [x] `gen-levels.ts` nhận `--demand-skill=<skill>`: đọc `content-demand.json`, chỉ cho sinh khi còn ô
+      thực hành thiếu cho đúng kỹ năng + band và khuôn nằm trong ma trận tương hợp của ô đó
+      (`checkGenerationTarget`); level sinh ra mang `skill_codes: [skill]`. Cờ `--cell` vẫn là
+      engine×band, khác nghĩa. **Chưa sinh hàng loạt level** — công cụ và cổng, nợ vẫn 16 · 18 · 14
+- [x] Level ngoài sổ cầu là **mồ côi**: suy ra từ sổ cầu (`findOrphanLevels`), không thêm cột vào
+      schema; không bao giờ được gieo vì phép lấp ô tra theo kỹ năng. `report:level-demand` in số mồ côi
+- [x] `pnpm report:level-demand` in **ô đã lấp / tổng ô** mỗi lộ trình (20/36 · 18/36 · 22/36), không
+      in tổng hàng `game_levels` (`BR-LRM-09`)
+- [x] **Ca âm**: kỹ năng không có ô / sai band / mọi ô đã lấp / khuôn ngoài ma trận → `gen-levels` ném lỗi
+      (`level-demand.test.ts`, chạy trên sổ cầu thật)
+- [x] **Ca âm**: hạ một ô khỏi trạng thái đã lấp → `findDebtIncreases` báo nợ tăng; `check:content-demand`
+      đỏ với thông điệp trước → sau
 
 ## S8 — Ba lộ trình band đầy đủ
 

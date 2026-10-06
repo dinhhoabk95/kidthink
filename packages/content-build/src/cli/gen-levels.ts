@@ -11,6 +11,8 @@ import {
 } from "@mindkid/game-engine/generators";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { CANONICAL_THEME_CODES } from "@mindkid/shared";
+import { loadContentDemandLedger } from "#src/gates/content-demand-file";
+import { checkGenerationTarget } from "#src/gates/level-demand";
 import { getThemeVocabulary } from "../vocab/themes.js";
 import { printCellMatrixReport, validateCellSpec } from "./cell-generator.js";
 
@@ -65,6 +67,7 @@ export interface GenOptions {
   rounds?: number;
   report?: boolean;
   cell?: string;
+  demand_skill?: string;
 }
 
 export interface GenResult {
@@ -242,6 +245,7 @@ function generateLevelItem(params: {
     duplicatesCount: number;
   };
   isCellMode?: boolean;
+  skillCodes: string[];
 }): unknown | undefined {
   const {
     engine,
@@ -258,6 +262,7 @@ function generateLevelItem(params: {
     seenHashes,
     stats,
     isCellMode,
+    skillCodes,
   } = params;
 
   const levelRounds: RoundCandidate[] = [];
@@ -296,7 +301,7 @@ function generateLevelItem(params: {
       age_max: ageRange.max,
       difficulty: 1,
       access_tier: "free",
-      skill_codes: [],
+      skill_codes: skillCodes,
       learning_objective_codes: [],
       what_tags: [],
       thinking_tags: [],
@@ -308,6 +313,25 @@ function generateLevelItem(params: {
     difficulty_params: firstRound.difficulty_params,
     ...(numRounds > 1 ? { rounds: levelRounds } : {}),
   };
+}
+
+function assertDemandTarget(
+  skillCode: string | undefined,
+  engine: string,
+  band: AgeBand
+): string[] {
+  if (skillCode === undefined) {
+    return [];
+  }
+  const verdict = checkGenerationTarget(loadContentDemandLedger(), {
+    skill_code: skillCode,
+    band,
+    engine,
+  });
+  if (!verdict.ok) {
+    throw new Error(verdict.message);
+  }
+  return [skillCode];
 }
 
 export function generateLevelsCore(options: GenOptions): GenResult {
@@ -352,6 +376,11 @@ export function generateLevelsCore(options: GenOptions): GenResult {
   const targetBand = resolveTargetBand(engine, band, allowedBands);
   const vocab = getThemeVocabulary(theme);
   const ageRange = getAgeRange(targetBand);
+  const skillCodes = assertDemandTarget(
+    options.demand_skill,
+    engine,
+    targetBand
+  );
 
   const itemRng = deriveStream(seed, "items");
   const candidates: unknown[] = [];
@@ -379,6 +408,7 @@ export function generateLevelsCore(options: GenOptions): GenResult {
       seenHashes,
       stats,
       isCellMode,
+      skillCodes,
     });
 
     if (!levelSeed) {
@@ -450,6 +480,11 @@ function applyFlag(arg: string, options: GenOptions): void {
   const cell = readFlag(arg, "cell");
   if (cell !== undefined) {
     options.cell = cell;
+  }
+
+  const demandSkill = readFlag(arg, "demand-skill");
+  if (demandSkill !== undefined) {
+    options.demand_skill = demandSkill;
   }
 
   const engine = readFlag(arg, "engine");

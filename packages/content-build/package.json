@@ -42,6 +42,7 @@
     "check:content-demand": "tsx src/cli/derive-demand.ts --check",
     "check:seed-master": "tsx src/cli/check-seed-master.ts",
     "check:lesson-topics": "tsx src/cli/check-lesson-topics.ts",
+    "report:level-demand": "tsx src/cli/report-level-demand.ts",
     "seed:all": "tsx src/cli/seed-all.ts",
     "seed:check": "tsx src/cli/seed-check.ts",
     "seed:content": "tsx src/cli/seed-content.ts",
