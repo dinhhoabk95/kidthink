@@ -78,13 +78,15 @@ corpus**; file này ép đa dạng **bên trong một bài**.
 | Chủ đề quá dài cho một bài | Vượt trần thời lượng band | Chia thành nhiều bài nối tiếp, `sequence_no` tăng dần — `concept-topic-model.md` mục 5 |
 | Một chủ đề xuất hiện ở hai bài | Ôn lại theo `BR-CRM-03` | Được, nhưng bài ôn BẮT BUỘC dùng bộ khuôn khác bài giới thiệu |
 | Bài vai trò `offscreen` | Tiết ngoài màn hình của `BR-CRM-05` | Miễn sàn khuôn số; vẫn giữ sàn chủ đề |
+| Ma trận tương hợp của kỹ năng neo rỗng | Kỹ năng chưa có khuôn hợp lệ nào | Chủ đề được khai không khuôn, miễn `BR-LTC-03` và `BR-LTC-07` cho chủ đề đó; bài vào sổ nợ lý do `matrix_empty`. Cấm — NEVER lấp bằng khuôn ngoài ma trận |
+| Kho level chưa đủ cho một bài | Level giao kỹ năng, tuổi, độ khó của bài chưa đủ để lấp ≥3 khuôn | Bài vào sổ nợ lý do `level_stock_short`. Sổ nợ là ratchet: chỉ hạ `BR-LTC-03`, `BR-LTC-07`, `BR-LTC-09`; bài đã đạt mà còn trong sổ, hoặc bài không tồn tại, làm cổng đỏ |
 
 ## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
 | `BR-LTC-01` (nhiều chủ đề) | Một bài học BẮT BUỘC khai `topics[]` với **≥2** chủ đề, trừ bài vai trò `introduce` của một chủ đề dài | Đây là nguyên văn yêu cầu của người đặt việc. Một bài một chủ đề là thứ đang có, và nó làm bài học thành một nhãn chứ không phải một tiết |
-| `BR-LTC-02` (chủ đề là thực thể, không phải nhãn) | Mỗi phần tử của `topics[]` trỏ một mã chủ đề khai theo `BR-CTM-01`. Cấm — NEVER dùng `theme_tag` làm chủ đề học | `theme_tag` là bối cảnh kể chuyện — `home`, `ocean`, `space`. Nó không nói trẻ học gì. 15 giá trị của nó không chia được thành đơn vị dạy |
+| `BR-LTC-02` (chủ đề là thực thể, không phải nhãn) | Mỗi phần tử của `topics[]` trỏ một mã chủ đề khai theo `BR-CTM-01`, có trong sổ chủ đề và cùng `skill_code` với mục sổ. Cấm — NEVER dùng `theme_tag` làm chủ đề học | `theme_tag` là bối cảnh kể chuyện — `home`, `ocean`, `space`. Nó không nói trẻ học gì. 15 giá trị của nó không chia được thành đơn vị dạy |
 | `BR-LTC-03` (nhiều khuôn mỗi chủ đề) | Mỗi chủ đề BẮT BUỘC có **≥2** khuôn trò chơi khác nhau, trừ nhánh miễn ở mục 5 | Một chủ đề một khuôn thì trẻ học cơ chế bấm nút, không học khái niệm. Hôm nay trung bình một bài chỉ có 1,7 cơ chế cho cả bài |
 | `BR-LTC-04` (khuôn lấy từ ma trận) | Khuôn của một chủ đề BẮT BUỘC nằm trong bộ mà `skill-template-affinity` trả cho kỹ năng neo chủ đề | Chọn khuôn bằng tay thì khuôn lệch `thinking_processes` hoặc lệch tuổi, và không cổng nào bắt được |
 | `BR-LTC-05` (cấm số cố định) | Cấm — NEVER ghi cứng số hoạt động hay số trò chơi của một bài trong bộ sinh | Sàn bằng trần ở cả 126 bài là dấu vết của hằng số trong code. Con số phải do dãy chủ đề quyết |

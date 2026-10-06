@@ -1,5 +1,9 @@
 #!/usr/bin/env node
+import fs from "node:fs";
 import { pathToFileURL } from "node:url";
+import { repoPath } from "@mindkid/config/paths";
+import { LESSON_TOPIC_REGISTRY } from "@mindkid/content";
+import { z } from "zod";
 import {
   ALL_SEED_ACTIVITIES,
   ALL_SEED_LESSONS,
@@ -16,6 +20,22 @@ import {
 import { buildSkillTemplateAffinityMatrix } from "#src/gates/skill-template-affinity";
 
 const PRINT_LIMIT_PER_RULE = 5;
+export const LESSON_TOPICS_DEBT_PATH =
+  "packages/content-build/src/thresholds/lesson-topics-debt.json";
+
+const LessonTopicsDebtSchema = z.object({
+  lessons: z.record(
+    z.string().min(1),
+    z.enum(["matrix_empty", "level_stock_short"])
+  ),
+});
+
+export function loadLessonTopicsDebt(): Map<string, string> {
+  const raw = fs.readFileSync(repoPath(LESSON_TOPICS_DEBT_PATH), "utf8");
+  return new Map(
+    Object.entries(LessonTopicsDebtSchema.parse(JSON.parse(raw)).lessons)
+  );
+}
 
 function levelTemplateByCode(): Map<string, string> {
   return new Map(
@@ -56,7 +76,9 @@ function offscreenLessonCodes(): Set<string> {
   );
 }
 
-export function buildLessonTopicsInput(): LessonTopicsInput {
+export function buildLessonTopicsInput(
+  debt: ReadonlyMap<string, string> = loadLessonTopicsDebt()
+): LessonTopicsInput {
   const offscreen = offscreenLessonCodes();
   return {
     lessons: ALL_SEED_LESSONS.map(({ header }) => ({
@@ -68,6 +90,8 @@ export function buildLessonTopicsInput(): LessonTopicsInput {
     })),
     activities: collectActivities(),
     affinities: buildSkillTemplateAffinityMatrix().affinities,
+    registry: LESSON_TOPIC_REGISTRY,
+    debt,
   };
 }
 
@@ -90,6 +114,16 @@ function printReport(report: LessonTopicsReport): void {
     `Hoạt động mỗi bài: ${summary.activity_count_min}..${summary.activity_count_max} · khuôn riêng biệt mỗi bài: ${summary.lesson_template_count_min}..${summary.lesson_template_count_max}`
   );
   const counts = countByRule(report);
+  if (report.debt.length > 0) {
+    const byReason = new Map<string, number>();
+    for (const entry of report.debt) {
+      byReason.set(entry.reason, (byReason.get(entry.reason) ?? 0) + 1);
+    }
+    const parts = [...byReason].map(([reason, n]) => `${reason} ${n}`);
+    console.log(
+      `Nợ cung khuôn (sổ nợ có trần): ${report.debt.length} bài — ${parts.join(" · ")}`
+    );
+  }
   for (const rule of [...counts.keys()].sort()) {
     console.error(`❌ ${rule}: ${counts.get(rule)} vi phạm`);
     const shown = report.violations

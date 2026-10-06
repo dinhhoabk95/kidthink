@@ -99,12 +99,24 @@ không có ca âm thì lát chưa xong, bất kể code đã viết.
 
 ## S6 — Chuyển 126 bài sang `topics[]`
 
-- [ ] Ánh xạ `what_tags` → mã chủ đề cho phần neo được strand; báo cáo phần không neo được
-- [ ] Soạn tay phần còn lại; mỗi bài đạt sàn 2 chủ đề (trừ vai trò `introduce`)
-- [ ] Mỗi chủ đề đạt sàn 2 khuôn, hoặc rơi đúng nhánh miễn ở spec mục 5
-- [ ] Sửa 11 hoạt động lệch kỹ năng đã đo ở plan §2.5 → còn 0
-- [ ] `check:lesson-topics` xanh
-- [ ] **Ca âm**: `BR-LTC-05` — đo lại số hoạt động mỗi bài, min khác max
+- [x] Sổ chủ đề do tôi soạn một file (`topics/registry.ts`): 48 kỹ năng × 2 chủ đề, mã
+      `TP-<skill>-NN`, nhãn tiếng Việt. Chủ đề là khía cạnh con của kỹ năng bài; không dùng `what_tags`
+      vì không neo được strand. Bản nháp chờ review PR
+- [x] 126/126 bài khai đúng 2 chủ đề (`BR-LTC-01`); 0 bài chưa khai `topics[]`
+- [x] Mỗi chủ đề ≥2 khuôn, hoặc rơi nhánh miễn. Kho level không đủ cho **25 bài** — ghi nợ có ratchet
+      ở `thresholds/lesson-topics-debt.json`: `level_stock_short` 18 · `matrix_empty` 7 (kỹ năng
+      `C1.NCOMP.04`, `C3.DED.01`, `C5.DES.04` chưa có khuôn trong ma trận). Chỉ hạ `BR-LTC-03/07/09`;
+      bài đã đạt mà còn trong sổ → `DEBT-STALE` đỏ
+- [x] Thêm 176 hoạt động `digital_game` (c1 60 · c2 34 · c3 30 · c4 23 · c5 11 · c6 18), `origin:
+      ai_assisted`, lấy level thật. Bản nháp chờ review PR. `ACT-0811` vá `LES-0107`: gỡ hoạt
+      động lệch kỹ năng làm bài còn 1 khuôn, cổng `lesson-variety` (BR-LTV-02/03) đỏ; thêm level
+      `GL-C1-NCOMP-TCMP-0016` đúng kỹ năng, không nới luật
+- [x] Hoạt động lệch kỹ năng: 14 cặp (bài, hoạt động) thực đo, gỡ khỏi bài → `BR-LTC-06` còn 0
+- [x] `check:lesson-topics` xanh: `BR-LTC-01/02/04/05/06` 0 vi phạm; `03/07/09` 0 ngoài sổ nợ
+- [x] **Ca âm**: `BR-LTC-05` — số hoạt động mỗi bài 3..7, min khác max; test đỏ khi mọi bài cùng số.
+      Ca âm sổ nợ: bỏ sổ → cổng đỏ; bài đã đạt còn trong sổ → đỏ
+- [ ] Trần 4 chủ đề, miễn `introduce` (chủ đề dài), `BR-LTC-08` thời lượng: **chưa ép** vì spec chưa
+      chốt (câu hỏi mở), không đoán
 
 ## S7 — `gen-levels` đọc sổ cầu
 

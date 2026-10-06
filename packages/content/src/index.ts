@@ -10,4 +10,5 @@ export * from "./inventories/index.js";
 export * from "./lessons/index.js";
 export * from "./roadmaps/index.js";
 export * from "./skills/index.js";
+export * from "./topics/index.js";
 export * from "./types.js";

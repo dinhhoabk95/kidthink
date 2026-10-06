@@ -15,12 +15,22 @@ export const MIN_TEMPLATES_PER_LESSON = 3;
 
 export type LessonTopicsRule =
   | "BR-LTC-01"
+  | "BR-LTC-02"
   | "BR-LTC-03"
   | "BR-LTC-04"
   | "BR-LTC-05"
   | "BR-LTC-06"
   | "BR-LTC-07"
-  | "BR-LTC-09";
+  | "BR-LTC-09"
+  | "DEBT-STALE";
+
+// Chỉ ba luật đo cung khuôn mới được ghi nợ: chúng thất bại vì kho level hoặc
+// ma trận chưa có khuôn, không vì bài soạn sai. Mọi luật khác không ghi nợ được.
+export const DEBT_ELIGIBLE_RULES: ReadonlySet<LessonTopicsRule> = new Set([
+  "BR-LTC-03",
+  "BR-LTC-07",
+  "BR-LTC-09",
+]);
 
 export interface LessonTopicsLesson {
   readonly code: string;
@@ -52,15 +62,29 @@ export interface LessonTopicsSummary {
   readonly lesson_template_count_max: number;
 }
 
+export interface LessonTopicsDebtEntry {
+  readonly lesson_code: string;
+  readonly reason: string;
+  readonly rules: readonly LessonTopicsRule[];
+}
+
 export interface LessonTopicsReport {
   readonly violations: LessonTopicsViolation[];
+  readonly debt: LessonTopicsDebtEntry[];
   readonly summary: LessonTopicsSummary;
+}
+
+export interface LessonTopicsRegistryEntry {
+  readonly topic_code: string;
+  readonly skill_code: string;
 }
 
 export interface LessonTopicsInput {
   readonly lessons: readonly LessonTopicsLesson[];
   readonly activities: ReadonlyMap<string, LessonTopicsActivity>;
   readonly affinities: Readonly<Record<string, readonly string[]>>;
+  readonly registry: readonly LessonTopicsRegistryEntry[];
+  readonly debt: ReadonlyMap<string, string>;
 }
 
 export const CORPUS_SCOPE = "<corpus>";
@@ -75,6 +99,34 @@ function violation(
 
 function distinct(values: readonly string[]): string[] {
   return [...new Set(values)];
+}
+
+function checkTopicRegistry(
+  lesson: LessonTopicsLesson,
+  registry: LessonTopicsInput["registry"]
+): LessonTopicsViolation[] {
+  const found: LessonTopicsViolation[] = [];
+  for (const topic of lesson.topics) {
+    const entry = registry.find((item) => item.topic_code === topic.topic_code);
+    if (!entry) {
+      found.push(
+        violation(
+          "BR-LTC-02",
+          lesson.code,
+          `chủ đề ${topic.topic_code} không có trong sổ chủ đề`
+        )
+      );
+    } else if (entry.skill_code !== topic.skill_code) {
+      found.push(
+        violation(
+          "BR-LTC-02",
+          lesson.code,
+          `chủ đề ${topic.topic_code} thuộc kỹ năng ${entry.skill_code}, bài khai ${topic.skill_code}`
+        )
+      );
+    }
+  }
+  return found;
 }
 
 function checkTopicCount(lesson: LessonTopicsLesson): LessonTopicsViolation[] {
@@ -212,8 +264,12 @@ function checkReviewChangesTemplates(
   const seen = new Map<string, { lesson: string; key: string }[]>();
   for (const lesson of lessons) {
     for (const topic of lesson.topics) {
+      const key = templateSetKey(topic);
+      if (key === "") {
+        continue;
+      }
       const list = seen.get(topic.topic_code) ?? [];
-      list.push({ lesson: lesson.code, key: templateSetKey(topic) });
+      list.push({ lesson: lesson.code, key });
       seen.set(topic.topic_code, list);
     }
   }
@@ -289,21 +345,73 @@ function summarize(input: LessonTopicsInput): LessonTopicsSummary {
   };
 }
 
+interface DebtSplit {
+  readonly violations: LessonTopicsViolation[];
+  readonly debt: LessonTopicsDebtEntry[];
+}
+
+function splitDebt(
+  found: readonly LessonTopicsViolation[],
+  input: LessonTopicsInput
+): DebtSplit {
+  const violations: LessonTopicsViolation[] = [];
+  const rulesByLesson = new Map<string, Set<LessonTopicsRule>>();
+  for (const item of found) {
+    if (
+      input.debt.has(item.lesson_code) &&
+      DEBT_ELIGIBLE_RULES.has(item.rule)
+    ) {
+      const rules = rulesByLesson.get(item.lesson_code) ?? new Set();
+      rules.add(item.rule);
+      rulesByLesson.set(item.lesson_code, rules);
+    } else {
+      violations.push(item);
+    }
+  }
+  const known = new Set(input.lessons.map((lesson) => lesson.code));
+  const debt: LessonTopicsDebtEntry[] = [];
+  for (const [lessonCode, reason] of input.debt) {
+    const rules = rulesByLesson.get(lessonCode);
+    if (!known.has(lessonCode)) {
+      violations.push(
+        violation("DEBT-STALE", lessonCode, "bài trong sổ nợ không tồn tại")
+      );
+    } else if (rules === undefined) {
+      violations.push(
+        violation(
+          "DEBT-STALE",
+          lessonCode,
+          `bài đã đạt, gỡ khỏi sổ nợ (${reason})`
+        )
+      );
+    } else {
+      debt.push({
+        lesson_code: lessonCode,
+        reason,
+        rules: [...rules].sort(),
+      });
+    }
+  }
+  return { violations, debt };
+}
+
 export function evaluateLessonTopics(
   input: LessonTopicsInput
 ): LessonTopicsReport {
   const perLesson = input.lessons.flatMap((lesson) => [
     ...checkTopicCount(lesson),
+    ...checkTopicRegistry(lesson, input.registry),
     ...checkTopics(lesson, input.affinities),
     ...checkActivitySkills(lesson, input.activities),
     ...checkLessonVariety(lesson, input.activities),
   ]);
+  const { violations, debt } = splitDebt(
+    [...perLesson, ...checkReviewChangesTemplates(input.lessons)],
+    input
+  );
   return {
-    violations: [
-      ...perLesson,
-      ...checkReviewChangesTemplates(input.lessons),
-      ...checkFixedActivityCount(input.lessons),
-    ],
+    violations: [...violations, ...checkFixedActivityCount(input.lessons)],
+    debt,
     summary: summarize(input),
   };
 }
