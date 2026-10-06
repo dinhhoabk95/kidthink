@@ -5,11 +5,11 @@ Phiếu: [`GT-037.md`](../specs/01-platform/engines/GT-037.md)
 
 ## S0 — Contract trước
 
-- [ ] Người đặt việc trả lời 4 câu mở ở phiếu mục 11 (lô, `letter`, `declare`, band `3-4`)
+- [x] Người đặt việc trả lời 4 câu mở ở phiếu mục 11 (lô, `letter`, `declare`, band `3-4`)
   - Verify: bảng mục 11 của phiếu gạch câu đã đóng kèm mã quyết định
-- [ ] `game-layout-engine.md`: thêm `scatter-board`, rule cấm phân trang cho layout tìm kiếm, hàm sức chứa
+- [x] `game-layout-engine.md`: thêm `scatter-board`, rule cấm phân trang cho layout tìm kiếm, hàm sức chứa
   - Verify: `pnpm lint:specs` xanh
-- [ ] `engine-behavior-domain.md` thêm hàng `GT-037`; `event-catalog.md` thêm trường; `error-codes.md` đăng ký `LAYOUT_CAPACITY_EXCEEDED`; `index.md` + `business-rules.md` §7.1 thêm prefix `BR-E037`
+- [x] `engine-behavior-domain.md` thêm hàng `GT-037`; `event-catalog.md` thêm trường; `error-codes.md` đăng ký `LAYOUT_CAPACITY_EXCEEDED`; `index.md` + `business-rules.md` §7.1 thêm prefix `BR-E037`
   - Verify: `pnpm lint:specs` và `check:engine-behavior` xanh
 
 ## S1 — Layout `scatter-board`

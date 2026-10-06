@@ -152,8 +152,12 @@ export const projectGT002: Projection<"GT-002"> = {
     const items = [...chosenTargets, ...chosenDistractors];
 
     // S6b / D-275-6: Câu dẫn GT-002 luôn dựng từ tiêu chí: Bé hãy chọn tất cả {số nhiều} nhé!
-    const prompt = `Bé hãy chọn tất cả ${pluralTarget} nhé!`;
-    const targetCriterion = `Chọn tất cả ${pluralTarget}`;
+    let pluralNoun = pluralTarget;
+    if (pluralNoun.startsWith("tất cả ")) {
+      pluralNoun = pluralNoun.slice(7);
+    }
+    const prompt = `Bé hãy chọn tất cả ${pluralNoun} nhé!`;
+    const targetCriterion = `Chọn tất cả ${pluralNoun}`;
 
     return {
       content_pack: {

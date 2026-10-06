@@ -136,7 +136,7 @@ describe("Feature: Hành vi chạm (tap) của họ engine tap — cham.feature"
         timeMs: 100,
       });
 
-      const firstItem = f2.content.items[0];
+      const firstItem = session.displayItems[0];
       if (!firstItem) {
         throw new Error("firstItem must exist");
       }

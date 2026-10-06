@@ -198,6 +198,7 @@ thì ép đúng thứ trẻ ba tuổi chưa có: điều khiển tốc độ ph�
 | `GT-034` | `beat-sequence` | `sap-dat` | — | thời-gian-thật |
 | `GT-035` | `command-sequence` | `sap-dat` | — | tự do |
 | `GT-036` | `free-create` | `kien-tao` | `sap-dat` | tự do |
+| `GT-037` | `symbol-hunt` | `chi-dinh` | — | tự do |
 
 ### 7.3 Phủ miền theo band — số đo 2026-09-07
 

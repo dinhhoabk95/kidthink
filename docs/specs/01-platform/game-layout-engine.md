@@ -89,6 +89,7 @@ này biểu hiện thành "bé chạm đúng chỗ mà không ăn".
 | `BR-LAY-08` | Vị trí slot **ổn định theo chỉ số**: slot thứ `i` luôn ở cùng chỗ với cùng đầu vào | Xáo trộn là việc của [`deterministic-randomness.md`](deterministic-randomness.md), không phải của layout. Trộn hai thứ thì không tái dựng được |
 | `BR-LAY-09` | Layout làm việc trong không gian logic **960×540**. Quy đổi ra pixel thật là việc của `RenderSystem` | Một hệ toạ độ cho mọi thiết bị; layout không cần biết DPR |
 | `BR-LAY-10` | Đổi hình học của một `LayoutId` **đã publish** là breaking change, cần kiểm lại mọi level dùng nó | Cùng lý do `BR-GTC-08`: level đã seed giả định hình học cũ |
+| `BR-LAY-11` | Layout dạng tìm kiếm/gạch xoá (`scatter-board`) **cấm phân trang** — toàn bộ ký hiệu phải xuất hiện cùng lúc trên một màn chơi để bảo toàn giá trị đo quét thị giác. Nếu `slotCount` vượt quá sức chứa hình học ở sàn chạm của band, layout từ chối và ném mã lỗi `LAYOUT_CAPACITY_EXCEEDED` | Phân trang trong bài cancellation task phá vỡ quá trình quét thị giác liên tục và làm sai lệch số đo omission/commission |
 
 ## 7. Data
 
@@ -104,7 +105,8 @@ type LayoutId =
   | "top-source-bottom-target" | "left-source-right-target"    // GT-003
   | "multi-bucket-bottom" | "split-columns"                    // GT-004
   | "two-column-matching" | "card-flip-grid"                   // GT-005
-  | "horizontal-track" | "step-ladder";                        // GT-006
+  | "horizontal-track" | "step-ladder"                         // GT-006
+  | "scatter-board";                                           // GT-037
 
 interface Slot {
   index: number;
@@ -142,6 +144,9 @@ Một cạnh ô chung cho mọi nhóm, không dưới sàn chạm (`BR-LAY-03`),
 interface StageGroupSpec { count: number; role: SlotRole; cols?: number; hasLabels?: boolean }
 interface StageGroupsInput { stage: ZoneRect; ageBand: AgeBand; groups: StageGroupSpec[] }
 type ComputeStageGroupsLayout = (input: StageGroupsInput) => Slot[];
+
+// Bố cục lưới ô ứng viên rải ký hiệu (Task #278 — GT-037)
+type ScatterBoardCapacityFn = (ageBand: AgeBand, logic?: LogicSpace, jitterMaxPx?: number) => number;
 ```
 
 **`stage` và `cssPerLogic` (Task #283 N).** Hai trường tuỳ chọn, cùng ranh giới `BR-LAY-10`:
@@ -182,6 +187,7 @@ type ComputeStageGroupsLayout = (input: StageGroupsInput) => Slot[];
 | `two-column-matching` | có | có | Hai cột đối xứng |
 | `card-flip-grid` | không | không | Lật tại chỗ |
 | `horizontal-track` `step-ladder` | có | có | Đích là vị trí trong dãy |
+| `scatter-board` | không | không | Mọi slot `neutral` — ô ứng viên rải ký hiệu tìm kiếm |
 
 ## 8. API contract
 

@@ -178,6 +178,7 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `EVENT_DUPLICATE` | 200 | Trùng `(session, seq)` — **idempotent, trả 200** |
 | `TEMPLATE_NOT_SUPPORTED` | 422 | Client yêu cầu template không có |
 | `LAYOUT_NOT_SUPPORTED` | 422 | `layout_id` không thuộc `layouts` của template ([`game-layout-engine.md`](../01-platform/game-layout-engine.md)) |
+| `LAYOUT_CAPACITY_EXCEEDED` | 422 | Số lượng slot vượt quá sức chứa hình học của layout ở sàn chạm ([`game-layout-engine.md`](../01-platform/game-layout-engine.md), [`GT-037.md`](../01-platform/engines/GT-037.md)) |
 | `INTRO_REQUIRED` | 428 | Trẻ chưa đi qua bài làm quen của một hoặc nhiều strand mà level chạm tới; `details.{intro_queue, intro_remaining, return_level_code}` ([`concept-intro-gate.md`](../04-play/concept-intro-gate.md)) |
 | `UNKNOWN_EVENT_NAME` | 422 | Tên sự kiện ngoài từ vựng đóng của `packages/play` |
 | `INVALID_SEQUENCE` | 400 | `seq` không phải số nguyên hợp lệ — khác `EVENT_OUT_OF_ORDER` (đúng kiểu nhưng lùi) |

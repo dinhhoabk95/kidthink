@@ -71,6 +71,7 @@ glyph sau NFC (`BR-E037-07`); `item_count − target_copies ≥ số confusable`
 | `hint_after_ms` | 8000 | 5000–30000 |
 | `allow_retry` | `true` | |
 | `show_target_counter` | `true` | tắt ở `4-5` là "ask first" |
+| `finish_mode` | `"auto"` | `"auto"` (tự xong khi hết đích) · `"declare"` (trẻ bấm nút "Con xong rồi" để chốt, đo omission) |
 
 ### 3.3 Dựng bảng — "random không chồng" đúng theo cấu tạo
 
@@ -132,5 +133,4 @@ Không gian dọc (540 × ≤1280) cho diện tích tương đương; S1 đo c�
 ## 7. Ngoài phạm vi
 
 - Sửa lỗi chồng vật của `GT-022` — mở task riêng.
-- `finish_mode: declare` — chờ phiếu mục 11 câu 3.
 - Phát hành nội dung hay chạy `seed:content` ngoài local.

@@ -103,7 +103,7 @@ client, tương đối so với `session.started_at`) · `content_version`.
 | `answer_selected` | `{ round_index, attempt_index, target_slot: int\|null, elapsed_ms }` |
 | `answer_correct` | `{ round_index, attempt_index, elapsed_ms }` |
 | `answer_incorrect` | `{ round_index, attempt_index, elapsed_ms, error_kind: "wrong_target"\|"wrong_item"\|"incomplete"\|"timeout" }` |
-| `round_completed` | `{ round_index, attempts, hints_used, duration_ms }` |
+| `round_completed` | `{ round_index, attempts, hints_used, duration_ms, omissions?, commissions?, order? }` |
 | `round_retried` | `{ round_index, retry_index }` |
 | `round_skipped` | `{ round_index, reason: "scaffold_exhausted"\|"user" }` |
 
@@ -111,10 +111,12 @@ Event tương tác trong khuôn. Chúng mang **mã nội dung**, không mang to�
 `round_index` là tuỳ chọn trong payload event tương tác: khuôn một vòng có thể bỏ trường
 này. Nhưng event `round_started` và `round_completed` **luôn phải phát** cho mọi vòng kể cả
 set một vòng — xem `BR-RSP-02` ở [`round-sequence-play.md`](../04-play/round-sequence-play.md).
+Ở cancellation task như `GT-037`, `round_completed` mang thêm `omissions` (số bản sao đích bị bỏ sót),
+`commissions` (số lần chạm sai) và `order` (dãy chỉ số ô theo thứ tự tìm).
 
 | Event | Payload | Khuôn phát |
 |---|---|---|
-| `item_selected` | `{ item_id, is_correct, round_index? }` | `GT-001` · `GT-002` |
+| `item_selected` | `{ item_id, is_correct, round_index?, commission? }` | `GT-001` · `GT-002` · `GT-037` |
 | `selection_submitted` | `{ is_correct, round_index? }` | `GT-002` |
 | `item_dragged` | `{ item_id, round_index? }` | `GT-003` · `GT-004` · `GT-008` |
 | `item_dropped` | `{ item_id, container_id, is_correct, round_index? }` | `GT-003` |
