@@ -86,6 +86,7 @@ kho nội dung phải có gì*.
 | Corpus có level không nằm trong sổ cầu | Nội dung thừa từ đời trước | Level giữ nguyên trong kho, gắn `orphan`, Cấm — NEVER gieo vào `curriculum_items` |
 | Một kỹ năng xuất hiện ở hai band | Kỹ năng trải khoảng tuổi rộng | Mỗi band có ô riêng; trần độ khó theo `BR-PAR-01` của band đó |
 | Chạy `MINDKID_SEED_MASTER_ONLY=1` | Cố tình chỉ gieo master | Lộ trình vẫn gieo; `curriculum_items` rỗng là đúng |
+| Chạy `MINDKID_SEED_PROFILE=core` | Gieo cho dev/staging | Level mồ côi bị bỏ; `curriculum_items` vẫn đủ vì chỉ tra level có trong `filled_by` (`BR-LRM-13`) |
 
 ## 6. Business rules
 
@@ -103,6 +104,7 @@ kho nội dung phải có gì*.
 | `BR-LRM-10` (mã lộ trình bất biến) | Mã lộ trình theo dạng `RM-<band>-<slug>`, bất biến sau khi publish; đổi nội dung thì tăng version | Ghi danh, tiến độ và báo cáo neo vào mã. Mã đổi là mất lịch sử học của trẻ |
 | `BR-LRM-12` (mỗi band có lộ trình cả năm) | Mỗi band BẮT BUỘC có ít nhất một lộ trình **cả năm** `duration_weeks = 36`, mã dạng `RM-<band>-year-NN`, theo bảng 10 chủ đề năm học ở 7.1a. Lộ trình 12 tuần `RM-<band>-01` được giữ làm lộ trình khởi động; hai loại cùng tồn tại, không thay nhau | Trường mầm non chạy năm học khoảng 35 tuần theo 10 chủ đề. Lộ trình 12 tuần chỉ là một lát cắt, cha mẹ và giáo viên không có chương trình đi hết năm. Mã `RM-<band>-01` đã publish nên bất biến (`BR-LRM-10`): thêm lộ trình mới, không nới lộ trình cũ |
 | `BR-LRM-11` (prerequisite dưới band được miễn) | Khi kiểm `BR-CRM-01` trên lộ trình của một band, prerequisite có `age_max` thấp hơn tuổi thấp nhất của band được coi là trẻ đã học ở band trước và KHÔNG bắt buộc xuất hiện trong lộ trình. Prerequisite nằm trong band vẫn BẮT BUỘC xuất hiện ở tuần không muộn hơn kỹ năng phụ thuộc | Taxonomy khai tuổi từng kỹ năng bằng một tuổi đơn, nên gần như mọi kỹ năng 4–5 và 5–6 đều có tiền đề ở band dưới. Bắt chúng lặp lại trong lộ trình band trên thì lộ trình 12 tuần không còn chỗ cho kỹ năng mới |
+| `BR-LRM-13` (hồ sơ gieo) | `MINDKID_SEED_PROFILE` nhận `full` (mặc định) hoặc `core`; giá trị lạ BẮT BUỘC làm `db:seed` dừng. `full` gieo toàn bộ kho. `core` gieo mọi bài học và hoạt động, nhưng chỉ gieo game level **có tên trong `filled_by` của sổ cầu**. Cả hai hồ sơ gieo y hệt taxonomy, lộ trình và `curriculum_items`; chỉ phần level dư (mồ côi) khác nhau | Kho 6.380 level phần lớn là biến thể sinh cơ học; môi trường dev/staging chỉ cần phần lộ trình gọi tên để thấy đúng chương trình, và gieo nhanh hơn nhiều. Mặc định giữ `full` vì thư viện trò chơi tự do và cổng `BR-ECD-07` (mỗi engine ≥1 level free) đang dựa vào level mồ côi; đổi mặc định là quyết định sản phẩm, không phải quyết định kỹ thuật |
 
 ## 7. Data
 

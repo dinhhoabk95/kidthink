@@ -1,6 +1,8 @@
 import { optionalEnv } from "@mindkid/config";
 import { getOwnerDb } from "@mindkid/db";
+import { loadContentDemandLedger } from "../gates/content-demand-file.js";
 import { ALL_SEED_CONTENT } from "../index.js";
+import { parseSeedProfile, selectSeedContent } from "../seed-profile.js";
 import { executeSeedBatch } from "../service.js";
 
 export async function runSeedContent(
@@ -8,8 +10,14 @@ export async function runSeedContent(
   batchCode = `SEED-${Date.now()}`,
   skipGates = false
 ) {
+  const profile = parseSeedProfile(process.env.MINDKID_SEED_PROFILE);
+  const seeds = selectSeedContent(
+    profile,
+    ALL_SEED_CONTENT,
+    loadContentDemandLedger()
+  );
   console.log(
-    `🌱 [seed:content] Executing seed batch ${batchCode} with ${ALL_SEED_CONTENT.length} items (dryRun: ${dryRun})...`
+    `🌱 [seed:content] Executing seed batch ${batchCode} with ${seeds.length}/${ALL_SEED_CONTENT.length} items, profile ${profile} (dryRun: ${dryRun})...`
   );
 
   const db = getOwnerDb();
@@ -19,7 +27,7 @@ export async function runSeedContent(
       batchCode,
       gitSha: optionalEnv("GIT_SHA"),
       prUrl: optionalEnv("PR_URL"),
-      seeds: ALL_SEED_CONTENT,
+      seeds,
       skipGates,
     },
     dryRun
