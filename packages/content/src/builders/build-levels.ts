@@ -20,7 +20,7 @@ const REGEX_MONTESSORI_CODE = /-01\d{2}$/;
  * Đổi nội dung level đã gieo (kể cả `title`) thì tăng số này — seeder archive
  * bản cũ và publish bản mới trong một transaction; giữ nguyên số thì seeder bỏ qua.
  */
-export const GENERATED_LEVEL_CONTENT_VERSION = 5;
+export const GENERATED_LEVEL_CONTENT_VERSION = 7;
 
 /**
  * Chỗ trống trong `phrasing.prompt_template` mà bộ dựng level thay được.
@@ -512,9 +512,17 @@ export function buildLevelsForSkill(skill: SkillSeed): ContentSeed[] {
         `[buildLevelsForSkill] Thiếu tên cho level thứ ${index} của kỹ năng ${identity.code}`
       );
     }
-    contentSeeds.push(
-      buildSingleLevel(builder, dataset, identity, levelPlan, title)
-    );
+    try {
+      contentSeeds.push(
+        buildSingleLevel(builder, dataset, identity, levelPlan, title)
+      );
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message.includes("[BR-E002-04]")) {
+        // D-275-5: Dataset không đủ vật phân biệt được → level không sinh
+        continue;
+      }
+      throw err;
+    }
   }
 
   return contentSeeds;

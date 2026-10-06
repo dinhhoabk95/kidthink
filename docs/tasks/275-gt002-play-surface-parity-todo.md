@@ -87,17 +87,17 @@ lát chạm tới), `rtk proxy pnpm typecheck --only root`, `rtk proxy pnpm type
 
 ## S6 — Nội dung GT-002 (M2–M6) · phụ thuộc: không (song song được với S2–S5)
 
-- [ ] `GT-002.md` sửa trước: `BR-E002-04` ở §6, ca sai thứ ba ở §14; `check:engine-specs`,
+- [x] `GT-002.md` sửa trước: `BR-E002-04` ở §6, ca sai thứ ba ở §14; `check:engine-specs`,
       `check:engine-turn` exit 0
-- [ ] S6a — RED: quét toàn corpus qua `buildLevelsForSkill` đếm vòng có distractor trùng asset
-- [ ] S6a — builder lọc và bỏ trùng distractor theo asset; thiếu → ném `[BR-E002-04]`
-- [ ] S6a — đo số level GT-002 còn lại theo band **trước khi commit**; so `check:engine-depth`,
-      `check:engine-seed-matrix`; tụt sàn thì dừng và hỏi
-- [ ] S6a — ca âm: dataset fixture toàn 📝 → builder ném lỗi
-- [ ] S6b — câu dẫn dựng từ tiêu chí; mọi `prompt` GT-002 trong corpus chứa `tất cả`
-- [ ] S6b — kẹp `target_count` theo `opts.band`; 0 vòng band 4-5 có `target_count > 3`
-- [ ] S6c — `keywordAsset` chuyển sang `builders/utils.ts`; GT-001 và GT-002 dùng chung
-- [ ] S6c — test builder GT-001 trùng khít trước/sau
+- [x] S6a — RED: quét toàn corpus qua `buildLevelsForSkill` đếm vòng có distractor trùng asset
+- [x] S6a — builder lọc và bỏ trùng distractor theo asset; thiếu → ném `[BR-E002-04]`
+- [x] S6a — đo số level GT-002 còn lại theo band **trước khi commit**; so `check:engine-depth`,
+      `check:engine-seed-matrix`; tụt sàn thì dừng và hỏi (486 level: band 4-5 = 363, band 5-6 = 123, vượt xa sàn ≥12 / ≥3)
+- [x] S6a — ca âm: dataset fixture toàn 📝 → builder ném lỗi
+- [x] S6b — câu dẫn dựng từ tiêu chí; mọi `prompt` GT-002 trong corpus chứa `tất cả`
+- [x] S6b — kẹp `target_count` theo `opts.band`; 0 vòng band 4-5 có `target_count > 3`
+- [x] S6c — `keywordAsset` chuyển sang `builders/utils.ts`; GT-001 và GT-002 dùng chung
+- [x] S6c — test builder GT-001 trùng khít trước/sau
 
 ## Checkpoint 3 — Đo lại sau `db:seed`
 

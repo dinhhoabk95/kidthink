@@ -1,7 +1,5 @@
 import { getEngineDifficultyParams } from "@mindkid/game-engine/contracts";
 import type {
-  DatasetAsset,
-  DatasetItem,
   ProjectedPack,
   Projection,
   ProjectOptions,
@@ -10,25 +8,11 @@ import type {
 import { formatPromptLabel } from "@mindkid/shared";
 import {
   createRng,
-  resolveItemAsset,
+  type KeywordAsset,
+  keywordAsset,
   safeGetItem,
   shuffleDeterministic,
 } from "./utils.js";
-
-type KeywordAsset = DatasetAsset & { readonly audio_path?: string };
-
-/**
- * Asset của item, mang theo mp3 tên vật có sẵn trong dataset (`audio_path`).
- * Chạm lại hình minh hoạ phát mp3 này trước TTS (`play-narration.md` §7,
- * Task #274). Ảnh không có từ khoá đọc được nên không mang mp3.
- */
-function keywordAsset(item: DatasetItem): KeywordAsset {
-  const asset = resolveItemAsset(item, true);
-  if (asset.kind === "image" || !item.audio_path) {
-    return asset;
-  }
-  return { ...asset, audio_path: item.audio_path };
-}
 
 export const projectGT001: Projection<"GT-001"> = {
   template: "GT-001",

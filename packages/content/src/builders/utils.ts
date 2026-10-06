@@ -52,3 +52,34 @@ export function resolveItemAsset(
   }
   return { kind: "text", text: item.label };
 }
+
+export type KeywordAsset = DatasetAsset & { readonly audio_path?: string };
+
+/**
+ * Asset của item, mang theo mp3 tên vật có sẵn trong dataset (`audio_path`).
+ * Chạm lại hình minh hoạ phát mp3 này trước TTS (`play-narration.md` §7,
+ * Task #274). Ảnh không có từ khoá đọc được nên không mang mp3.
+ */
+export function keywordAsset(item: DatasetItem): KeywordAsset {
+  const asset = resolveItemAsset(item, true);
+  if (asset.kind === "image" || !item.audio_path) {
+    return asset;
+  }
+  return { ...asset, audio_path: item.audio_path };
+}
+
+/**
+ * Khóa định danh của asset để kiểm tra tính phân biệt được và trùng lặp.
+ */
+export function assetKey(asset: DatasetAsset): string {
+  if (asset.kind === "text") {
+    return `text:${asset.text}`;
+  }
+  if (asset.kind === "emoji") {
+    return `emoji:${asset.ref}`;
+  }
+  if (asset.kind === "image") {
+    return `image:${asset.path}`;
+  }
+  return JSON.stringify(asset);
+}
