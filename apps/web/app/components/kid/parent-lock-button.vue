@@ -2,9 +2,9 @@
   <!-- Lối ra duy nhất của bề mặt trẻ: nhấn giữ rồi qua cổng phụ huynh (`BR-PGT-01`). -->
   <button
     aria-label="Cổng phụ huynh / Thoát (nhấn giữ 1 giây)"
-    class="parent-lock"
+    class="relative inline-flex cursor-pointer items-center justify-center rounded-2xl border-[3px] border-surface-300 bg-white shadow-[0_4px_0_var(--color-surface-300)] transition-all active:translate-y-0.5 active:shadow-[0_1px_0_var(--color-surface-300)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600"
     type="button"
-    :style="{ '--hud-touch-floor': `${KID_TOUCH_FLOOR_PX}px` }"
+    :style="{ width: `${KID_TOUCH_FLOOR_PX}px`, height: `${KID_TOUCH_FLOOR_PX}px` }"
     @pointercancel="cancel"
     @pointerdown="start"
     @pointerleave="cancel"
@@ -38,19 +38,6 @@
 </script>
 
 <style scoped>
-  .parent-lock {
-    position: relative;
-    width: var(--hud-touch-floor);
-    height: var(--hud-touch-floor);
-    border-radius: 1.25rem;
-    border: 3px solid var(--color-surface-300);
-    background-color: var(--color-surface-0, #fff);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-
   .hold-ring {
     position: absolute;
     inset: -6px;
@@ -62,7 +49,7 @@
     mask: radial-gradient(
       farthest-side,
       transparent calc(100% - 5px),
-      #000 calc(100% - 4px)
+      black calc(100% - 4px)
     );
     pointer-events: none;
   }
