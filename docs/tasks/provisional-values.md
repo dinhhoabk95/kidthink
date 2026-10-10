@@ -23,6 +23,8 @@ Gỡ hàng khi task chủ đã trả về phép đo, **trong cùng PR** mang ph�
 | H6 | ~~27 cặp `limits` của `GT-028`…`GT-036`~~ | 9 phiếu engine, mục 15 | **Đã đóng 2026-09-01** — 9 khuôn `GT-028`..`GT-036` đã ra đời theo luật khuôn thắng, `check:engine-specs` xanh 36/36 | `#205` | ✔ đóng |
 | H7 | ~~ma trận seed mục 13 của 9 phiếu~~ | 9 phiếu engine, mục 13 | **Đã đóng 2026-09-01** — đã chuẩn hoá theo khuôn và level fixture của 9 engine | `#205` | ✔ đóng |
 | H8 | ~~`batch: legacy-v1` cho `GT-028`…`GT-036`~~ | 9 phiếu engine, frontmatter | **Đã đóng 2026-09-01** — 9 engine đã vào registry và `engine-spec-planned.json` đã rỗng | `#205` | ✔ đóng |
+| H9 | ~~sức chứa bảng `scatter-board` theo band~~ | `#278` §3.4 · `GT-037.md` §15 | **Đã đóng 2026-10-10** — S1 đo bằng hàm thật `scatterBoardCapacity` trên 960×540: band 3-4 (21 ô, max 17), band 4-5 (24 ô, max 20), band 5-6 (36 ô, max 30) khớp ước tính | `#278` | ✔ đóng |
+
 
 ## Ba con số **đã có** phép đo — cấm ghi nhầm vào đây
 

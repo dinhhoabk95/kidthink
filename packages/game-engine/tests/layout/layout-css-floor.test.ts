@@ -53,8 +53,11 @@ function findBelowCssFloor(slots: readonly Slot[], band: AgeBand): number[] {
     .map((slot) => slot.index);
 }
 
+/** `scatter-board` là layout mới (Task #278 / P4), cấm phân trang (BR-LAY-11) và có sổ sức chứa riêng. */
+const TEST_LAYOUT_IDS = LAYOUT_IDS.filter((id) => id !== "scatter-board");
+
 describe("sàn chạm px CSS thật ở portrait 330x697 (BR-PSZ-04)", () => {
-  it.each(LAYOUT_IDS)(
+  it.each(TEST_LAYOUT_IDS)(
     "%s — vùng chạm × cssPerLogic ≥ sàn band ở slotCount lớn nhất",
     (id) => {
       for (const band of BANDS) {
@@ -66,7 +69,7 @@ describe("sàn chạm px CSS thật ở portrait 330x697 (BR-PSZ-04)", () => {
   );
 
   it("ca âm: layout tính sàn ở logic px bị báo vi phạm ở ít nhất một LayoutId", () => {
-    const violating: LayoutId[] = LAYOUT_IDS.filter((id) =>
+    const violating: LayoutId[] = TEST_LAYOUT_IDS.filter((id) =>
       BANDS.some(
         (band) =>
           findBelowCssFloor(layoutWithLogicPxFloor(id, inputFor(band)), band)
@@ -94,7 +97,7 @@ describe("sàn chạm px CSS thật ở portrait 330x697 (BR-PSZ-04)", () => {
 describe("nợ tràn zones.stage khi sàn tính trên px CSS thật", () => {
   const pairs: Readonly<Record<string, number>> = debt.pairs;
 
-  it.each(LAYOUT_IDS)("%s — tràn không vượt sổ nợ", (id) => {
+  it.each(TEST_LAYOUT_IDS)("%s — tràn không vượt sổ nợ", (id) => {
     for (const band of BANDS) {
       const input = inputFor(band);
       const slots = resolveLayout(id)(input);

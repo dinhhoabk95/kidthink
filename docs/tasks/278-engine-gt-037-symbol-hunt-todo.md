@@ -14,10 +14,10 @@ Phiếu: [`GT-037.md`](../specs/01-platform/engines/GT-037.md)
 
 ## S1 — Layout `scatter-board`
 
-- [ ] `computeScatterBoardLayout` + `scatterBoardCapacity(ageBand, logic)` trong `layout/geometry.ts`, đăng ký `registry.ts`
+- [x] `computeScatterBoardLayout` + `scatterBoardCapacity(ageBand, logic)` trong `layout/geometry.ts`, đăng ký `registry.ts`
   - Acceptance: thuần; mọi ô ≥ sàn chạm; bước ô = `hit + SLOT_GAP_PX + 2·JITTER_MAX_PX`
   - Verify: test đơn vị hai hướng màn; ca âm — bước ô thiếu `2·JITTER_MAX_PX` phải làm test gap đỏ
-- [ ] Ghi sức chứa đo được vào `provisional-values.md`, sửa bảng plan mục 3.4 nếu lệch
+- [x] Ghi sức chứa đo được vào `provisional-values.md`, sửa bảng plan mục 3.4 nếu lệch
 
 ## S2 — Khuôn
 

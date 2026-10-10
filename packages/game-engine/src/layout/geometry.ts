@@ -1,10 +1,14 @@
 /* biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: geometry calculations */
 
+import type { AgeBand } from "#src/contracts/types";
 import {
   CONTENT_TOP_PX,
   DEFAULT_LOGIC_SPACE,
+  JITTER_MAX_PX,
+  type LogicSpace,
   resolveTouchFloor,
   SAFE_MARGIN_PX,
+  SCATTER_BOARD_OCCUPANCY_MAX,
   SLOT_GAP_PX,
 } from "./constants.js";
 import type { LayoutInput, Slot } from "./types.js";
@@ -1518,6 +1522,108 @@ export function computeWeaveGridLayout(input: LayoutInput): Slot[] {
       page: 0,
       role: "source",
     });
+  }
+
+  return slots;
+}
+
+/**
+ * Tính số lượng ô ứng viên tối đa của bố cục scatter-board (GT-037).
+ */
+export function scatterBoardCandidateCellCount(
+  ageBand: AgeBand,
+  logic?: LogicSpace,
+  jitterMaxPx: number = JITTER_MAX_PX
+): number {
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } = logic ?? DEFAULT_LOGIC_SPACE;
+  const touchFloor = resolveTouchFloor(ageBand);
+  const cellStep = touchFloor + SLOT_GAP_PX + 2 * jitterMaxPx;
+  const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
+  const cols = Math.floor(availW / cellStep);
+  const rows = Math.floor(availH / cellStep);
+  return Math.max(0, cols * rows);
+}
+
+/**
+ * Tính sức chứa tối đa của bố cục scatter-board (GT-037).
+ * Sức chứa = 85% số ô ứng viên (ô dư >= 15% để bảng không đọc ra hàng-cột theo BR-E037).
+ */
+export function scatterBoardCapacity(
+  ageBand: AgeBand,
+  logic?: LogicSpace,
+  jitterMaxPx: number = JITTER_MAX_PX
+): number {
+  const candidateCount = scatterBoardCandidateCellCount(
+    ageBand,
+    logic,
+    jitterMaxPx
+  );
+  return Math.floor(candidateCount * SCATTER_BOARD_OCCUPANCY_MAX);
+}
+
+/**
+ * Bố cục bảng rải ký hiệu (scatter-board) — `GT-037` (BR-LAY-11, BR-E037-03).
+ *
+ * Hàm layout thuần trả về toàn bộ các ô ứng viên vừa trong vùng chơi logic.
+ * Mỗi ô có bước = hit + SLOT_GAP_PX + 2 * JITTER_MAX_PX.
+ * Cấm phân trang: ném LAYOUT_CAPACITY_EXCEEDED nếu slotCount vượt quá sức chứa.
+ */
+export function computeScatterBoardLayout(
+  input: LayoutInput,
+  options?: {
+    jitterMaxPx?: number;
+  }
+): Slot[] {
+  const { h: LOGIC_HEIGHT, w: LOGIC_WIDTH } =
+    input.logic ?? DEFAULT_LOGIC_SPACE;
+  const { slotCount, ageBand } = input;
+  if (slotCount <= 0) {
+    return [];
+  }
+
+  const jitterMax = options?.jitterMaxPx ?? JITTER_MAX_PX;
+  const touchFloor = resolveTouchFloor(ageBand, input.cssPerLogic);
+  const cellStep = touchFloor + SLOT_GAP_PX + 2 * jitterMax;
+
+  const availW = LOGIC_WIDTH - 2 * SAFE_MARGIN_PX;
+  const availH = LOGIC_HEIGHT - CONTENT_TOP_PX - SAFE_MARGIN_PX;
+
+  const cols = Math.floor(availW / cellStep);
+  const rows = Math.floor(availH / cellStep);
+  const totalCandidateCells = Math.max(0, cols * rows);
+
+  const maxCapacity = Math.floor(
+    totalCandidateCells * SCATTER_BOARD_OCCUPANCY_MAX
+  );
+
+  if (slotCount > maxCapacity) {
+    throw new Error(
+      `LAYOUT_CAPACITY_EXCEEDED: slotCount ${slotCount} vượt quá sức chứa ${maxCapacity} của scatter-board cho band ${ageBand} (BR-LAY-11).`
+    );
+  }
+
+  const totalGridW = cols * cellStep;
+  const totalGridH = rows * cellStep;
+  const startX = SAFE_MARGIN_PX + (availW - totalGridW) / 2;
+  const startY = CONTENT_TOP_PX + (availH - totalGridH) / 2;
+
+  const slots: Slot[] = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const idx = r * cols + c;
+      slots.push({
+        index: idx,
+        x: Math.round(startX + c * cellStep + cellStep / 2),
+        y: Math.round(startY + r * cellStep + cellStep / 2),
+        w: Math.round(touchFloor),
+        h: Math.round(touchFloor),
+        hitW: Math.round(touchFloor),
+        hitH: Math.round(touchFloor),
+        page: 0,
+        role: "neutral",
+      });
+    }
   }
 
   return slots;

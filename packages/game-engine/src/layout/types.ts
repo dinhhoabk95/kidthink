@@ -47,3 +47,12 @@ export interface LayoutInput {
 }
 
 export type LayoutFn = (input: LayoutInput) => Slot[];
+
+/**
+ * Chữ ký hàm tính sức chứa của bố cục scatter-board (Task #278 / GT-037).
+ */
+export type ScatterBoardCapacityFn = (
+  ageBand: AgeBand,
+  logic?: LogicSpace,
+  jitterMaxPx?: number
+) => number;

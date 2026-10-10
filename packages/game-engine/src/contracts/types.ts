@@ -25,7 +25,8 @@ export type LayoutId =
   | "free-scene"
   | "measure-strip"
   | "weave-grid"
-  | "single-focus";
+  | "single-focus"
+  | "scatter-board";
 
 import type { AgeBand } from "@mindkid/shared/age-bands";
 

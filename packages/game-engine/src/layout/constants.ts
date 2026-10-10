@@ -114,3 +114,13 @@ export function resolveTouchFloor(
     ? getTouchFloor(ageBand)
     : getTouchFloorLogicPx(ageBand, cssPerLogic);
 }
+
+/**
+ * Biên độ lệch tối đa hai trục của scatter-board (Task #278 / GT-037).
+ */
+export const JITTER_MAX_PX = 8;
+
+/**
+ * Tỉ lệ chiếm dụng tối đa của scatter-board để giữ ô dư >= 15% (BR-E037).
+ */
+export const SCATTER_BOARD_OCCUPANCY_MAX = 0.85;

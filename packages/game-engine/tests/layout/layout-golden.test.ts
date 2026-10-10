@@ -28,8 +28,11 @@ function hashSlots(slots: readonly object[]): string {
     .slice(0, 12);
 }
 
+/** `scatter-board` là layout mới (Task #278 / P4), chưa có trong baseline Task #283 (BR-LAY-10). */
+const PUBLISHED_LAYOUT_IDS = LAYOUT_IDS.filter((id) => id !== "scatter-board");
+
 describe("golden layout không stage (BR-LAY-10)", () => {
-  it.each(LAYOUT_IDS)("%s giữ nguyên mọi tổ hợp đã chụp", (id) => {
+  it.each(PUBLISHED_LAYOUT_IDS)("%s giữ nguyên mọi tổ hợp đã chụp", (id) => {
     const mismatches: string[] = [];
     let checked = 0;
     for (const band of BANDS) {

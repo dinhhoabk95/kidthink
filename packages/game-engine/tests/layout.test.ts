@@ -33,8 +33,8 @@ describe("Game Layout Engine (BR-LAY-01..10)", () => {
     }
   });
 
-  it("BR-LAY-02 — LayoutId là từ vựng đóng gồm đúng 24 giá trị; id lạ bị từ chối", () => {
-    expect(LAYOUT_IDS).toHaveLength(24);
+  it("BR-LAY-02 — LayoutId là từ vựng đóng gồm đúng 25 giá trị; id lạ bị từ chối", () => {
+    expect(LAYOUT_IDS).toHaveLength(25);
     expect(isLayoutId("grid")).toBe(true);
     expect(isLayoutId("measure-strip")).toBe(true);
     expect(isLayoutId("weave-grid")).toBe(true);
@@ -48,6 +48,7 @@ describe("Game Layout Engine (BR-LAY-01..10)", () => {
     expect(isLayoutId("equation-rows")).toBe(true);
     expect(isLayoutId("mirror-axis-split")).toBe(true);
     expect(isLayoutId("free-scene")).toBe(true);
+    expect(isLayoutId("scatter-board")).toBe(true);
     expect(isLayoutId("random-unknown-layout")).toBe(false);
 
     expect(() => resolveLayout("invalid-layout" as LayoutId)).toThrowError(

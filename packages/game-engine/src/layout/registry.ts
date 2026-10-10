@@ -12,6 +12,7 @@ import {
   computeMirrorAxisSplitLayout,
   computeMultiBucketLayout,
   computeNumberBondTreeLayout,
+  computeScatterBoardLayout,
   computeTenFrameSplitLayout,
   computeTrackLayout,
   computeWeaveGridLayout,
@@ -44,6 +45,7 @@ export const LAYOUT_IDS: readonly LayoutId[] = [
   "measure-strip",
   "weave-grid",
   "single-focus",
+  "scatter-board",
 ] as const;
 
 const RAW_LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
@@ -83,6 +85,7 @@ const RAW_LAYOUT_REGISTRY: Record<LayoutId, LayoutFn> = {
   "weave-grid": (input) => computeWeaveGridLayout(input),
   "single-focus": (input) =>
     computeGridLayout(input, { fixedCols: 1, fixedRows: 1 }),
+  "scatter-board": (input) => computeScatterBoardLayout(input),
 };
 
 function withStagePlacement(
