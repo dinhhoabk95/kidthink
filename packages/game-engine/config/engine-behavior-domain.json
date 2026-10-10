@@ -193,6 +193,11 @@
       "mien": "kien-tao",
       "mien_phu": "sap-dat",
       "nhip": "tu-do"
+    },
+    "GT-037": {
+      "mien": "chi-dinh",
+      "mien_phu": null,
+      "nhip": "tu-do"
     }
   }
 }

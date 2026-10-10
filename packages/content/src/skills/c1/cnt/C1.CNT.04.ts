@@ -551,5 +551,14 @@ export const C1_CNT_04_SEED: SkillSeed = {
       theme: "homeland",
       rounds: 3,
     },
+    {
+      code: "GL-C1-CNT-HUNT-0001",
+      template: "GT-037",
+      band: "4-5",
+      difficulty: 1,
+      access_tier: "free",
+      theme: "school",
+      rounds: 3,
+    },
   ],
 };

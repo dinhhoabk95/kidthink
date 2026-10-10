@@ -686,6 +686,37 @@
           "min_repetitions": 3
         }
       }
+    },
+    "GT-037": {
+      "difficulty_fixed": false,
+      "reason": "Số lượng ký hiệu trên bảng tăng từ 12 lên 30, số bản sao đích tăng từ 2 lên 8 và số ký hiệu gây nhiễu tăng dần đòi hỏi quét thị giác rộng và duy trì chú ý chọn lọc",
+      "levels": {
+        "1": {
+          "item_count": 12,
+          "target_count": 2,
+          "distractor_count": 10
+        },
+        "2": {
+          "item_count": 16,
+          "target_count": 3,
+          "distractor_count": 13
+        },
+        "3": {
+          "item_count": 20,
+          "target_count": 4,
+          "distractor_count": 16
+        },
+        "4": {
+          "item_count": 25,
+          "target_count": 6,
+          "distractor_count": 19
+        },
+        "5": {
+          "item_count": 30,
+          "target_count": 8,
+          "distractor_count": 22
+        }
+      }
     }
   }
 }

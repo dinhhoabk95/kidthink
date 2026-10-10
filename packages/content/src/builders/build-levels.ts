@@ -381,6 +381,7 @@ const TEMPLATE_CODE_SEGMENT_MAP: Record<string, string> = {
   "GT-034": "BEAT",
   "GT-035": "CMD",
   "GT-036": "FCR",
+  "GT-037": "HUNT",
 };
 
 const assignedFallbackCodes = new Set<string>();

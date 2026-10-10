@@ -38,6 +38,7 @@ import GT033Template from "#src/templates/GT-033/template";
 import GT034Template from "#src/templates/GT-034/template";
 import GT035Template from "#src/templates/GT-035/template";
 import GT036Template from "#src/templates/GT-036/template";
+import GT037Template from "#src/templates/GT-037/template";
 
 export const TEMPLATE_INPUT_REGISTRY: Record<string, EngineInputConfig | undefined> = {
   "GT-000": GT000Template.input,
@@ -77,6 +78,7 @@ export const TEMPLATE_INPUT_REGISTRY: Record<string, EngineInputConfig | undefin
   "GT-034": GT034Template.input,
   "GT-035": GT035Template.input,
   "GT-036": GT036Template.input,
+  "GT-037": GT037Template.input,
 };
 
 export function getTemplateInput(code: string): EngineInputConfig | undefined {

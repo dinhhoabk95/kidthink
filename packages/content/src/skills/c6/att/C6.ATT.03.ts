@@ -232,5 +232,21 @@ export const C6_ATT_03_SEED: SkillSeed = {
       theme: "ocean",
       rounds: 3,
     },
+    {
+      code: "GL-C6-ATT-HUNT-0004",
+      template: "GT-037",
+      band: "4-5",
+      difficulty: 2,
+      theme: "nature",
+      rounds: 3,
+    },
+    {
+      code: "GL-C6-ATT-HUNT-0005",
+      template: "GT-037",
+      band: "4-5",
+      difficulty: 3,
+      theme: "ocean",
+      rounds: 3,
+    },
   ],
 };

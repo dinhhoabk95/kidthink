@@ -204,5 +204,13 @@ export const C2_GEO_07_SEED: SkillSeed = {
       theme: "vehicle",
       rounds: 3,
     },
+    {
+      code: "GL-C2-GEO-HUNT-0009",
+      template: "GT-037",
+      band: "5-6",
+      difficulty: 3,
+      theme: "space",
+      rounds: 3,
+    },
   ],
 };

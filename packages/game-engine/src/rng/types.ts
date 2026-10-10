@@ -12,4 +12,8 @@ export type RngStreamName =
   | "sides"
   | "initial"
   | "feedback"
-  | "theme";
+  | "theme"
+  | "cells"
+  | "jitter"
+  | "distractors"
+  | "assign";

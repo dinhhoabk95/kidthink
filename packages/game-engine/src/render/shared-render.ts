@@ -1663,6 +1663,24 @@ export function drawSlotOutline(
   ctx.restore();
 }
 
+/** Vòng viền tròn ôm ngoài slot (dùng cho khoanh chọn, highlight đích). */
+export function drawCircleOutline(
+  ctx: CanvasRenderingContext2D,
+  slot: Slot,
+  color: string,
+  lineWidth = 4,
+  padding = 4
+): void {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = lineWidth;
+  const r = Math.min(slot.w, slot.h) / 2 + padding;
+  ctx.beginPath();
+  ctx.arc(slot.x, slot.y, r, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
+}
+
 export function drawLabelText(
   ctx: CanvasRenderingContext2D,
   text: string,

@@ -215,5 +215,13 @@ export const C6_PER_05_SEED: SkillSeed = {
       theme: "space",
       rounds: 3,
     },
+    {
+      code: "GL-C6-PER-HUNT-0012",
+      template: "GT-037",
+      band: "5-6",
+      difficulty: 5,
+      theme: "ocean",
+      rounds: 3,
+    },
   ],
 };

@@ -142,6 +142,7 @@ export const ALL_GAME_MECHANICS = [
   "command-sequence",
   "free-create",
   "concept-intro",
+  "symbol-hunt",
 ] as const;
 
 export type GameMechanic = (typeof ALL_GAME_MECHANICS)[number];

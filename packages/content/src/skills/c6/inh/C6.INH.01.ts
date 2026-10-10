@@ -256,5 +256,13 @@ export const C6_INH_01_SEED: SkillSeed = {
       theme: "festival",
       rounds: 3,
     },
+    {
+      code: "GL-C6-INH-HUNT-0006",
+      template: "GT-037",
+      band: "4-5",
+      difficulty: 2,
+      theme: "space",
+      rounds: 3,
+    },
   ],
 };

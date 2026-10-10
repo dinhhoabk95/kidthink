@@ -166,6 +166,10 @@ export async function loadGameSession(templateCode: string): Promise<GameSession
       const mod = await import("#src/templates/GT-036/session.js");
       return mod.GT036Session;
     }
+    case "GT-037": {
+      const mod = await import("#src/templates/GT-037/session.js");
+      return mod.GT037Session;
+    }
     default:
       throw new Error(`TEMPLATE_NOT_SUPPORTED: ${templateCode}`);
   }

@@ -227,5 +227,13 @@ export const C5_LET_01_SEED: SkillSeed = {
       theme: "weather",
       rounds: 3,
     },
+    {
+      code: "GL-C5-LET-HUNT-0003",
+      template: "GT-037",
+      band: "4-5",
+      difficulty: 1,
+      theme: "home",
+      rounds: 3,
+    },
   ],
 };

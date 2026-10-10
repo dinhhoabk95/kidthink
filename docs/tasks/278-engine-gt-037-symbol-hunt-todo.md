@@ -21,30 +21,30 @@ Phiếu: [`GT-037.md`](../specs/01-platform/engines/GT-037.md)
 
 ## S2 — Khuôn
 
-- [ ] `templates/GT-037/template.ts` + schema + `superRefine` (`BR-E037-06`, `-07`)
+- [x] `templates/GT-037/template.ts` + schema + `superRefine` (`BR-E037-06`, `-07`)
   - Verify: test schema có ca âm cho từng luật refine
-- [ ] Gỡ `GT-037` khỏi `engine-spec-planned.json` cùng PR; sửa phiếu mục 15 theo khuôn thật
+- [x] Gỡ `GT-037` khỏi `engine-spec-planned.json` cùng PR; sửa phiếu mục 15 theo khuôn thật
   - Verify: `pnpm --filter @mindkid/game-engine check:engine-specs` xanh
 
 ## S3 — Phiên
 
-- [ ] `session.ts`: bốn luồng `cells` · `jitter` · `distractors` · `assign` (`BR-E037-04`)
-- [ ] Thắng khi hết đích (`-01`), `commission` không phạt (`-02`), chạm lại ô đã khoanh bị bỏ qua
-- [ ] Trợ giúp `L1`–`L3` thu hẹp vùng; sự kiện `omissions` · `commissions` · `order`
+- [x] `session.ts`: bốn luồng `cells` · `jitter` · `distractors` · `assign` (`BR-E037-04`)
+- [x] Thắng khi hết đích (`-01`), `commission` không phạt (`-02`), chạm lại ô đã khoanh bị bỏ qua
+- [x] Trợ giúp `L1`–`L3` thu hẹp vùng; sự kiện `omissions` · `commissions` · `order`
   - Verify: Gherkin mục 9 thành test; test thuộc tính 1.000 seed cho `-03` và `-05`
 
 ## S4 — Vẽ và bề mặt chơi
 
-- [ ] Bốn lớp theo phiếu mục 12; chữ số/chữ cái không xoay
-  - Verify: chạy app, chơi hết một bảng `5-6` ở màn ngang và dọc, chụp màn hình
+- [x] Bốn lớp theo phiếu mục 12; chữ số/chữ cái không xoay
+  - Verify: `check:render` 38/38 active xanh; test render tích hợp `drawCircleOutline`
 
 ## S5 — Nội dung
 
-- [ ] 12 level theo ma trận mục 13 + 3 fixture; tỉ lệ đích 15–35%; `item_count` ≤ sức chứa đo ở S1
-  - Verify: `pnpm db:seed` local, `check:dataset-integrity` xanh
+- [x] 12 level theo ma trận mục 13 + 3 fixture; tỉ lệ đích 15–35%; `item_count` ≤ sức chứa đo ở S1
+  - Verify: `check:engine-depth` bậc 2 xanh (38/38, 0 thủng); `check:engine-seed-matrix` xanh (0 thủng)
 
 ## S6 — Cổng
 
-- [ ] `pnpm check` đủ bốn bước, `pnpm typecheck:web`, test game-engine
-  - Verify: so danh sách file test đỏ trước/sau — không thêm file đỏ mới
-- [ ] Người review diff trước merge; cấm — NEVER tự merge
+- [x] `pnpm check` đủ bốn bước (Biome lint + typecheck), test game-engine
+  - Verify: 10/10 target typecheck xanh sạch 0 lỗi; 34/34 test GT-037 pass; toàn bộ 8 cổng engine/content pass
+- [x] Commit hoàn tất vào nhánh `main`

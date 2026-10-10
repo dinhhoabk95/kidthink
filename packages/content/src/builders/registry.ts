@@ -41,6 +41,7 @@ import { projectGT033 } from "./gt-033.js";
 import { projectGT034 } from "./gt-034.js";
 import { projectGT035 } from "./gt-035.js";
 import { projectGT036 } from "./gt-036.js";
+import { projectGT037 } from "./gt-037.js";
 
 export const ALL_BUILDERS: Record<string, Projection> = {
   "GT-000": projectGT000,
@@ -80,6 +81,7 @@ export const ALL_BUILDERS: Record<string, Projection> = {
   "GT-034": projectGT034,
   "GT-035": projectGT035,
   "GT-036": projectGT036,
+  "GT-037": projectGT037,
 };
 
 export const BUILDER_TEMPLATE_CODES: readonly string[] =
