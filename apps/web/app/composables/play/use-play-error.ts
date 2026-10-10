@@ -1,4 +1,4 @@
-import { isApiError } from "@mindkid/errors/client";
+import { isApiError, normalizeApiError } from "@mindkid/errors/client";
 import { ref } from "vue";
 
 export interface IntroQueueItemDetails {
@@ -30,6 +30,7 @@ export function usePlayError(options: PlayErrorOptions = {}) {
   const errorEmoji = ref<string>("😿");
   const errorActionLink = ref<string | null>(null);
   const errorActionText = ref<string>("Thử lại");
+  const isPlayLimitReached = ref<boolean>(false);
 
   function handleConceptOrChildError(
     levelCode: string,
@@ -101,11 +102,20 @@ export function usePlayError(options: PlayErrorOptions = {}) {
   function handleArchivedError(): Error {
     errorTitle.value = "Trò chơi đã ngừng phát hành";
     errorEmoji.value = "📦";
-    errorActionLink.value = "/games";
-    errorActionText.value = "Xem danh sách trò chơi";
+    errorActionLink.value = "/play";
+    errorActionText.value = "Về sảnh chơi";
     return new Error(
       "Nội dung bài học này đã hoàn thành chu kỳ sử dụng hoặc được thay thế."
     );
+  }
+
+  function handlePlayLimitReached(): Error {
+    isPlayLimitReached.value = true;
+    errorTitle.value = "Hôm nay bé chơi đủ rồi";
+    errorEmoji.value = "🌟";
+    errorActionLink.value = "/play";
+    errorActionText.value = "Về sảnh chơi";
+    return new Error("Hôm nay bé chơi giỏi lắm rồi! Mai mình chơi tiếp nhé.");
   }
 
   function handleAuthError(levelCode: string): Error {
@@ -119,8 +129,8 @@ export function usePlayError(options: PlayErrorOptions = {}) {
   function handleNotFoundError(): Error {
     errorTitle.value = "Không tìm thấy trò chơi";
     errorEmoji.value = "🔍";
-    errorActionLink.value = "/games";
-    errorActionText.value = "Xem danh sách trò chơi";
+    errorActionLink.value = "/play";
+    errorActionText.value = "Về sảnh chơi";
     return new Error("Màn chơi này không tồn tại hoặc đã được cập nhật.");
   }
 
@@ -143,7 +153,8 @@ export function usePlayError(options: PlayErrorOptions = {}) {
     if (isApiError(err)) {
       return { code: err.code, status: err.statusCode };
     }
-    return {};
+    const normalized = normalizeApiError(err);
+    return { code: normalized.code, status: normalized.statusCode };
   }
 
   function handleAccessOrChildError(
@@ -153,6 +164,9 @@ export function usePlayError(options: PlayErrorOptions = {}) {
     loggedIn: boolean,
     err: Error | Record<string, string | number>
   ): Error | null {
+    if (code === "DAILY_PLAY_CAP_REACHED" || status === 402) {
+      return handlePlayLimitReached();
+    }
     if (code === "TIER_LOCKED" || status === 403) {
       return handleTierLockedError(levelCode, loggedIn);
     }
@@ -227,6 +241,7 @@ export function usePlayError(options: PlayErrorOptions = {}) {
     errorEmoji,
     errorActionLink,
     errorActionText,
+    isPlayLimitReached,
     handleApiError,
   };
 }

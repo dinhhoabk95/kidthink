@@ -37,8 +37,8 @@
           >
             {{ errorActionText }}
           </NuxtLink>
-          <NuxtLink class="btn-secondary" to="/games">
-            Về danh sách trò chơi
+          <NuxtLink class="btn-secondary" to="/play">
+            Về sảnh trò chơi
           </NuxtLink>
         </div>
       </div>
@@ -274,6 +274,14 @@
         @cancel="showParentGate = false"
         @verified="handleParentVerified"
       />
+
+      <!-- Healthy Play Limits Modal (`BR-HPL-01..08`) -->
+      <KidPlayLimitModal
+        v-if="isPlayLimitReached"
+        :child-uuid="activeChildUuid"
+        @granted="handleExtraTimeGranted"
+        @leave="router.push('/play')"
+      />
     </div>
   </div>
 </template>
@@ -336,7 +344,7 @@
         ? `/play/${returnTo}?lesson=${lessonCode}`
         : `/play/${returnTo}`;
     }
-    return lessonCode ? `/play/lesson/${lessonCode}` : "/games";
+    return lessonCode ? `/play/lesson/${lessonCode}` : "/play";
   }
   const { loggedIn, fetch: fetchSession } = useUserSession();
 
@@ -376,8 +384,30 @@
     errorEmoji,
     errorActionLink,
     errorActionText,
+    isPlayLimitReached,
     handleApiError,
   } = usePlayError({ lessonCode: lessonCodeFromQuery() });
+
+  const activeChildCookie = useCookie<string | null>("active_child_id");
+  const activeChildUuid = computed(() => activeChildCookie.value ?? "");
+
+  async function handleExtraTimeGranted(): Promise<void> {
+    isPlayLimitReached.value = false;
+    errorMessage.value = null;
+    isLoading.value = true;
+    try {
+      await fetchAndStartGame(levelCode);
+      observeCanvasSize();
+    } catch (err) {
+      isLoading.value = false;
+      const appErr = handleApiError(
+        err as Error | Record<string, string | number>,
+        levelCode,
+        loggedIn.value
+      );
+      errorMessage.value = appErr.message;
+    }
+  }
 
   const playSession = usePlaySession({
     canvasRef,
@@ -611,7 +641,7 @@
       router.push(`/play/${returnTo}`);
       return;
     }
-    router.push("/games");
+    router.push("/play");
   }
 
   function replayInstructionAudio(): void {
@@ -712,17 +742,26 @@
   // Vòng mới không mang pop hay dáng của vòng trước.
   watch(currentRound, () => feedbackOverlay.reset());
 
-  watch([showVictoryModal, showParentGate], ([victoryOpen, gateOpen]) => {
-    if (victoryOpen || gateOpen) {
-      setPaused(true, victoryOpen ? "victory_modal" : "parent_gate");
-    } else if (
-      typeof document !== "undefined" &&
-      document.visibilityState === "visible" &&
-      !needsPortrait.value
-    ) {
-      setPaused(false);
+  watch(
+    [showVictoryModal, showParentGate, isPlayLimitReached],
+    ([victoryOpen, gateOpen, limitReached]) => {
+      if (victoryOpen || gateOpen || limitReached) {
+        let pauseReason = "parent_gate";
+        if (limitReached) {
+          pauseReason = "play_limit";
+        } else if (victoryOpen) {
+          pauseReason = "victory_modal";
+        }
+        setPaused(true, pauseReason);
+      } else if (
+        typeof document !== "undefined" &&
+        document.visibilityState === "visible" &&
+        !needsPortrait.value
+      ) {
+        setPaused(false);
+      }
     }
-  });
+  );
 
   /**
    * Canvas đổi cỡ mà cửa sổ không đổi (lưới HUD xếp xong sau lần đo đầu, ảnh
