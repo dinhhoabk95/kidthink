@@ -66,6 +66,12 @@ const stubs = {
     template:
       '<div data-testid="kid-profile-switcher-modal-stub">ProfileSwitcherModal</div>',
   },
+  KidBadgeCelebrationModal: {
+    props: ["badge", "childName"],
+    emits: ["confirm"],
+    template:
+      '<div data-testid="kid-badge-modal-stub"><button data-testid="badge-confirm" type="button" @click="$emit(\'confirm\')">{{ badge?.title }}</button></div>',
+  },
 };
 
 let wrapper: VueWrapper | null = null;
@@ -151,6 +157,33 @@ describe("Sảnh chơi của trẻ /play (BR-PSZ-11, BR-CLF-05)", () => {
     const page = await mountLobbyPage();
     expect(page.find('[data-testid="kid-profile-badge-stub"]').exists()).toBe(
       true
+    );
+  });
+
+  it("hiển thị modal chúc mừng huy hiệu KidBadgeCelebrationModal khi có huy hiệu mới (BR-PRG-04, §7.2)", async () => {
+    localStorage.clear();
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      if (url === "/api/users/play/map") {
+        return Promise.resolve({
+          badges: [{ badge_code: "STRAND_FIRST_COMPLETE" }],
+        });
+      }
+      return Promise.resolve({});
+    });
+    vi.stubGlobal("$fetch", fetchMock);
+
+    const page = await mountLobbyPage();
+    await flushPromises();
+
+    const badgeModal = page.find('[data-testid="kid-badge-modal-stub"]');
+    expect(badgeModal.exists()).toBe(true);
+
+    const confirmBtn = page.find('[data-testid="badge-confirm"]');
+    await confirmBtn.trigger("click");
+    await flushPromises();
+
+    expect(page.find('[data-testid="kid-badge-modal-stub"]').exists()).toBe(
+      false
     );
   });
 });

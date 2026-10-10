@@ -137,6 +137,14 @@
       @close="handleCloseSwitcher"
       @select="handleSelectChild"
     />
+
+    <!-- Modal Chúc mừng Huy hiệu Kỷ niệm (`BR-PRG-04`, `BR-PRG-07`, spec §4 item 5, §7.2) -->
+    <KidBadgeCelebrationModal
+      v-if="activeCelebrationBadge"
+      :badge="activeCelebrationBadge"
+      :child-name="activeChild?.display_name"
+      @confirm="handleConfirmBadge"
+    />
   </div>
 </template>
 
@@ -144,15 +152,18 @@
   /**
    * Sảnh chơi cho trẻ — nhãn dẫn xuất từ `COMPETENCY_CATALOG` (task 165).
    * Tích hợp nhận diện và đổi hồ sơ bé an toàn (Task #285, BR-CPS-01..07, BR-PEN-01).
+   * Tích hợp chúc mừng huy hiệu kỷ niệm (Task #287, BR-PRG-04, BR-PRG-07).
    */
   import { COMPETENCY_CATALOG } from "@mindkid/shared/client";
-  import { ref } from "vue";
+  import { onMounted, ref, watch } from "vue";
+  import KidBadgeCelebrationModal from "~/components/kid/badge-celebration-modal.vue";
   import KidLessonRow from "~/components/kid/lesson-row.vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
   import KidProfileBadge from "~/components/kid/profile-badge.vue";
   import KidProfileSwitcherModal from "~/components/kid/profile-switcher-modal.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
+  import { useBadgeCelebration } from "~/composables/play/use-badge-celebration";
   import { useKidProfile } from "~/composables/play/use-kid-profile";
 
   /** Bề mặt trẻ: layout kid không navbar/footer người lớn (`BR-PSZ-11`, `BR-CLF-05`). */
@@ -209,6 +220,40 @@
   function handleCloseSwitcher(): void {
     showProfileSwitcherModal.value = false;
     parentGateToken.value = null;
+  }
+
+  // Quản lý chúc mừng huy hiệu kỷ niệm (`BR-PRG-04`, `BR-PRG-07`, spec §4 item 5, §7.2)
+  const { activeCelebrationBadge, checkAndCelebrate, dismissCelebration } =
+    useBadgeCelebration();
+
+  async function checkBadgesForActiveChild(): Promise<void> {
+    if (!activeChildUuid.value) {
+      return;
+    }
+    try {
+      const mapRes = await $fetch<{
+        badges?: Array<{ badge_code: string; awarded_at?: string }>;
+      }>("/api/users/play/map");
+      if (mapRes?.badges && activeChildUuid.value) {
+        checkAndCelebrate(activeChildUuid.value, mapRes.badges);
+      }
+    } catch {
+      // Bỏ qua lỗi kết nối để sảnh chơi vẫn tiếp tục hoạt động mượt mà
+    }
+  }
+
+  onMounted(() => {
+    checkBadgesForActiveChild();
+  });
+
+  watch(activeChildUuid, () => {
+    checkBadgesForActiveChild();
+  });
+
+  function handleConfirmBadge(): void {
+    if (activeChildUuid.value) {
+      dismissCelebration(activeChildUuid.value);
+    }
   }
 
   const COMPETENCY_STYLES: Record<string, CompetencyStyle> = {
