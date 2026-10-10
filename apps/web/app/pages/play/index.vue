@@ -69,7 +69,7 @@
             c.borderClass,
             c.hoverBgClass
           ]"
-          :to="`/games?competency=${c.code}`"
+          :to="`/play/competency/${c.code}`"
         >
           <div
             :class="[

@@ -104,11 +104,11 @@ describe("Sảnh chơi của trẻ /play (BR-PSZ-11, BR-CLF-05)", () => {
     );
   });
 
-  it("hiển thị đủ 6 nhóm năng lực C1–C6", async () => {
+  it("hiển thị đủ 6 nhóm năng lực C1–C6 dẫn vào trang khám phá trẻ (BR-CCE-06)", async () => {
     const page = await mountLobbyPage();
     const competencyLinks = page
       .findAll("a")
-      .filter((a) => a.attributes("href")?.includes("/games?competency="));
+      .filter((a) => a.attributes("href")?.includes("/play/competency/"));
     expect(competencyLinks).toHaveLength(6);
   });
 });
