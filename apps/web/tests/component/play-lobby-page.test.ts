@@ -1,11 +1,12 @@
 // @vitest-environment happy-dom
 import { flushPromises, mount, type VueWrapper } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ref } from "vue";
 
 /**
- * Sảnh chơi của trẻ (`play-stage-zones.md`, `child-lesson-flow.md` §3, Task #280):
+ * Sảnh chơi của trẻ (`play-stage-zones.md`, `child-lesson-flow.md` §3, Task #280, Task #285):
  * dùng layout kid (không navbar/footer phụ huynh), thoát chỉ qua khoá phụ huynh,
- * chứa hàng bài học và danh mục 6 năng lực.
+ * chứa hàng bài học, danh mục 6 năng lực, và huy hiệu hồ sơ bé.
  */
 
 const pushMock = vi.fn();
@@ -13,6 +14,31 @@ const pageMetaMock = vi.fn();
 
 vi.stubGlobal("definePageMeta", pageMetaMock);
 vi.stubGlobal("useRouter", () => ({ push: pushMock }));
+
+const mockActiveChildUuid = ref("child-uuid-1");
+const mockChildrenData = ref({
+  children: [
+    {
+      uuid: "child-uuid-1",
+      display_name: "Bé An",
+      avatar_id: "avatar-preset-01",
+      age_band: "3-4",
+      status: "active",
+    },
+  ],
+});
+
+vi.mock("#imports", () => ({
+  useCookie: () => mockActiveChildUuid,
+  useFetch: () => ({
+    data: mockChildrenData,
+    pending: ref(false),
+    error: ref(null),
+    refresh: vi.fn(),
+  }),
+  definePageMeta: pageMetaMock,
+  useRouter: () => ({ push: pushMock }),
+}));
 
 const ParentGateStub = {
   emits: ["verified", "cancel"],
@@ -31,6 +57,15 @@ const stubs = {
     template: '<a :href="to"><slot /></a>',
   },
   ParentGateModal: ParentGateStub,
+  KidProfileBadge: {
+    props: ["activeChild", "hasMultipleChildren"],
+    template: '<div data-testid="kid-profile-badge-stub">ProfileBadge</div>',
+  },
+  KidProfileSwitcherModal: {
+    props: ["children", "activeUuid"],
+    template:
+      '<div data-testid="kid-profile-switcher-modal-stub">ProfileSwitcherModal</div>',
+  },
 };
 
 let wrapper: VueWrapper | null = null;
@@ -110,5 +145,12 @@ describe("Sảnh chơi của trẻ /play (BR-PSZ-11, BR-CLF-05)", () => {
       .findAll("a")
       .filter((a) => a.attributes("href")?.includes("/play/competency/"));
     expect(competencyLinks).toHaveLength(6);
+  });
+
+  it("hiển thị huy hiệu hồ sơ bé KidProfileBadge trên thanh Top Bar (BR-CPS-06)", async () => {
+    const page = await mountLobbyPage();
+    expect(page.find('[data-testid="kid-profile-badge-stub"]').exists()).toBe(
+      true
+    );
   });
 });

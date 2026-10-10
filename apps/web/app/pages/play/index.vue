@@ -6,11 +6,20 @@
     <header
       class="flex items-center justify-between max-w-5xl mx-auto w-full mb-6"
     >
-      <!-- Lối ra duy nhất của bề mặt trẻ: khoá phụ huynh nhấn giữ (`BR-PSZ-11`, `BR-CLF-05`, `BR-PGT-01`). -->
-      <KidParentLockButton
-        data-testid="play-parent-lock"
-        @unlock="showParentGate = true"
-      />
+      <div class="flex items-center gap-3">
+        <!-- Lối ra duy nhất của bề mặt trẻ: khoá phụ huynh nhấn giữ (`BR-PSZ-11`, `BR-CLF-05`, `BR-PGT-01`). -->
+        <KidParentLockButton
+          data-testid="play-parent-lock"
+          @unlock="showParentGate = true"
+        />
+
+        <!-- Nhận diện hồ sơ bé & đổi bé an toàn (`BR-CPS-06`, `BR-PEN-01`). -->
+        <KidProfileBadge
+          :active-child="activeChild"
+          :has-multiple-children="hasMultipleChildren"
+          @request-switch="handleRequestSwitch"
+        />
+      </div>
 
       <div class="flex items-center gap-3">
         <!-- Vào bản đồ chủ đề tuần: chỉ icon, chữ ở aria-label (`BR-WTM-05`). -->
@@ -34,7 +43,7 @@
         </NuxtLink>
         <KidMascot pose="idle" :size="56" />
         <div
-          class="bg-white border-[3px] border-surface-300 px-5 py-2 rounded-2xl shadow-sm"
+          class="bg-white border-[3px] border-surface-300 px-5 py-2 rounded-2xl shadow-sm hidden md:block"
         >
           <span class="font-heading font-bold text-brand-700 text-xl"
             >Sảnh Chơi Bé Yêu</span
@@ -56,7 +65,7 @@
         </p>
       </div>
 
-      <KidLessonRow />
+      <KidLessonRow :key="activeChildUuid || 'default'" />
 
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
         <NuxtLink
@@ -102,11 +111,31 @@
       MindKid Thinking Play — Chơi mà Học
     </footer>
 
+    <!-- Parent Gate Modal: Thoát khỏi sảnh chơi về trang chủ -->
     <ParentGateModal
       v-if="showParentGate"
       :client-only="true"
       @cancel="showParentGate = false"
       @verified="leavePlay"
+    />
+
+    <!-- Parent Gate Modal (Server verify): Xác thực người lớn khi đổi hồ sơ bé (`BR-CPS-01`, `BR-PEN-01`) -->
+    <ParentGateModal
+      v-if="showProfileParentGate"
+      :client-only="false"
+      @cancel="showProfileParentGate = false"
+      @verified="onProfileGateVerified"
+    />
+
+    <!-- Modal chọn bé yêu cho phụ huynh sau khi vượt qua Parent Gate -->
+    <KidProfileSwitcherModal
+      v-if="showProfileSwitcherModal"
+      :active-uuid="activeChildUuid"
+      :children="children"
+      :is-switching="isSwitching"
+      :switch-error="switchError"
+      @close="handleCloseSwitcher"
+      @select="handleSelectChild"
     />
   </div>
 </template>
@@ -114,17 +143,17 @@
 <script lang="ts" setup>
   /**
    * Sảnh chơi cho trẻ — nhãn dẫn xuất từ `COMPETENCY_CATALOG` (task 165).
-   *
-   * Bảng viết tay ở đây là bản sao **thứ năm** của sáu năng lực và mang
-   * taxonomy toán v1 đã bỏ. Chỉ phần trình bày theo mã (màu viền, nền biểu
-   * tượng) còn ở lại — đó là quyết định thiết kế, không phải dữ liệu taxonomy.
+   * Tích hợp nhận diện và đổi hồ sơ bé an toàn (Task #285, BR-CPS-01..07, BR-PEN-01).
    */
   import { COMPETENCY_CATALOG } from "@mindkid/shared/client";
   import { ref } from "vue";
   import KidLessonRow from "~/components/kid/lesson-row.vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
+  import KidProfileBadge from "~/components/kid/profile-badge.vue";
+  import KidProfileSwitcherModal from "~/components/kid/profile-switcher-modal.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
+  import { useKidProfile } from "~/composables/play/use-kid-profile";
 
   /** Bề mặt trẻ: layout kid không navbar/footer người lớn (`BR-PSZ-11`, `BR-CLF-05`). */
   definePageMeta({ layout: "kid" });
@@ -141,6 +170,45 @@
   function leavePlay(): void {
     showParentGate.value = false;
     router.push("/");
+  }
+
+  // Quản lý hồ sơ trẻ và luồng đổi bé an toàn (`BR-CPS-01..07`, `BR-PEN-01`)
+  const {
+    children,
+    activeChildUuid,
+    activeChild,
+    hasMultipleChildren,
+    isSwitching,
+    switchError,
+    switchChild,
+  } = useKidProfile();
+
+  const showProfileParentGate = ref(false);
+  const showProfileSwitcherModal = ref(false);
+  const parentGateToken = ref<string | null>(null);
+
+  function handleRequestSwitch(): void {
+    showProfileParentGate.value = true;
+  }
+
+  function onProfileGateVerified(gateToken: string): void {
+    parentGateToken.value = gateToken;
+    showProfileParentGate.value = false;
+    showProfileSwitcherModal.value = true;
+  }
+
+  async function handleSelectChild(targetUuid: string): Promise<void> {
+    const token = parentGateToken.value ?? undefined;
+    const result = await switchChild(targetUuid, token);
+    if (result.success) {
+      showProfileSwitcherModal.value = false;
+      parentGateToken.value = null;
+    }
+  }
+
+  function handleCloseSwitcher(): void {
+    showProfileSwitcherModal.value = false;
+    parentGateToken.value = null;
   }
 
   const COMPETENCY_STYLES: Record<string, CompetencyStyle> = {
