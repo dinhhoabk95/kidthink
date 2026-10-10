@@ -90,6 +90,13 @@ describe("Sảnh chơi của trẻ /play (BR-PSZ-11, BR-CLF-05)", () => {
     expect(stickerLink.attributes("href")).toBe("/play/stickers");
   });
 
+  it("có link vào bản đồ bài học của bé (BR-WTM-05)", async () => {
+    const page = await mountLobbyPage();
+    const mapLink = page.find('[data-testid="kid-theme-map-link"]');
+    expect(mapLink.exists()).toBe(true);
+    expect(mapLink.attributes("href")).toBe("/play/map");
+  });
+
   it("hiển thị hàng bài học KidLessonRow", async () => {
     const page = await mountLobbyPage();
     expect(page.find('[data-testid="kid-lesson-row-stub"]').exists()).toBe(

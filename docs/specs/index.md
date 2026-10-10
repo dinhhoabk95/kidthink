@@ -26,14 +26,15 @@ Bắt đầu từ [`../SPEC.md`](../SPEC.md) — contract toàn dự án. Rồi 
 | `01-platform` | 50 | 36 |
 | `02-public` | 9 | 9 |
 | `03-account` | 22 | 19 |
-| `04-play` | 20 | 13 |
+| `04-play` | 21 | 13 |
 | `05-content` | 27 | 7 |
 | `06-admin` | 31 | 30 |
 | `07-addon` | 7 | 0 |
 | `08-quality` | 11 | 9 |
-| **Tổng** | **196** | **141** |
+| **Tổng** | **197** | **141** |
 
 v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v1.md`](AUDIT-v1.md) §1.2.
+1 spec cộng thêm 2026-10-10 cho bản đồ chủ đề tuần của trẻ: [`child-theme-map.md`](04-play/child-theme-map.md) (Task #281) — bản đồ phiêu lưu theo tuần và 10 chủ đề GDMN kết nối sảnh chơi với bài học.
 1 spec cộng thêm 2026-10-03 cho phần thưởng giữ được của trẻ: [`sticker-album.md`](04-play/sticker-album.md) (Task #282) — màn thưởng cuối bài biến mất khi trẻ rời trang; trẻ không giữ lại được gì từ bài đã học.
 1 spec cộng thêm 2026-10-03 cho khuôn bài của trẻ: [`child-lesson-flow.md`](04-play/child-lesson-flow.md) (Task #280) — `lessons` chỉ có đường cho người lớn dẫn, trẻ ở nhà chơi từng level rời mà không có nhịp làm quen → trò chơi → thưởng.
 1 spec cộng thêm 2026-09-25 cho bố cục chung của bề mặt chơi: [`play-stage-zones.md`](01-platform/play-stage-zones.md) (Task #277) — 37 engine tự đặt lời dẫn, khay và nút nộp bài ở chỗ riêng, nút nộp nằm ở bốn vị trí khác nhau và GT-028 có thể không nộp được bài từ trang chơi.
@@ -192,6 +193,7 @@ v1 có **31** spec cho cùng phạm vi. Xé nhỏ là chủ ý — xem [`AUDIT-v
 | [sticker-album](04-play/sticker-album.md) | P4 | Mỗi bài xong một sticker theo chủ đề, album không mất, không số đếm |
 | [concept-intro-runner](04-play/concept-intro-runner.md) | P4 | Ba nhịp giới thiệu → nhận biết → gọi tên, trẻ chạy một mình |
 | [concept-intro-gate](04-play/concept-intro-gate.md) | P4 | Bước 8: chưa làm quen khái niệm thì chưa vào màn chơi |
+| [child-theme-map](04-play/child-theme-map.md) | P4 | Bản đồ chủ đề tuần theo 10 chủ đề GDMN, trạm bài học, mascot định vị |
 | **[play-narration](04-play/play-narration.md)** | P1 | Mọi yêu cầu trên bề mặt trẻ phải nghe được trước khi đọc được; bốn bậc dự phòng, cấm im lặng |
 
 ## 05-content — ràng buộc biên tập

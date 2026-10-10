@@ -160,6 +160,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-RSP` | [`round-sequence-play.md`](../04-play/round-sequence-play.md) | | `BR-CIR` | [`concept-intro-runner.md`](../04-play/concept-intro-runner.md) |
 | `BR-CIG` | [`concept-intro-gate.md`](../04-play/concept-intro-gate.md) | | `BR-PNR` | [`play-narration.md`](../04-play/play-narration.md) |
 | `BR-CLF` | [`child-lesson-flow.md`](../04-play/child-lesson-flow.md) | | `BR-STK` | [`sticker-album.md`](../04-play/sticker-album.md) |
+| `BR-WTM` | [`child-theme-map.md`](../04-play/child-theme-map.md) | | | |
 
 **Content**
 

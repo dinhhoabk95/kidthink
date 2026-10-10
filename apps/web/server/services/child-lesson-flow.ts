@@ -338,10 +338,10 @@ export interface LessonSuggestion {
   readonly thumbnail_emoji: string;
 }
 
-const FALLBACK_LESSON_EMOJI = "📘";
+export const FALLBACK_LESSON_EMOJI = "📘";
 
 /** Emoji của level game `published` đầu tiên (theo `position`) của từng bài. */
-async function findFirstLevelEmojis(
+export async function findFirstLevelEmojis(
   db: Db,
   lessonIds: readonly number[]
 ): Promise<Map<number, string>> {

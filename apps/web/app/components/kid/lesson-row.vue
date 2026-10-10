@@ -85,7 +85,7 @@
     padding: 0.75rem 1.25rem;
     border-radius: 1.5rem;
     border: 3px solid var(--color-brand-200);
-    background-color: #fff;
+    background-color: white;
     color: var(--color-brand-700);
     text-decoration: none;
     box-shadow: 0 6px 0 var(--color-brand-200);
