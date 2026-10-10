@@ -1,19 +1,16 @@
 <template>
   <div
-    class="min-h-screen bg-surface-100 flex flex-col justify-between p-4 sm:p-8 select-none"
+    class="min-h-screen min-h-dvh bg-surface-100 flex flex-col justify-between p-4 sm:p-8 select-none"
   >
     <!-- Kid Top Bar / HUD -->
     <header
       class="flex items-center justify-between max-w-5xl mx-auto w-full mb-6"
     >
-      <NuxtLink
-        aria-label="Quay lại trang chủ"
-        class="min-h-16 min-w-16 px-5 py-3 rounded-2xl bg-white border-[3px] border-surface-300 shadow-[0_4px_0_var(--color-surface-300)] active:shadow-[0_1px_0_var(--color-surface-300)] active:translate-y-0.5 flex items-center justify-center gap-2 font-heading font-bold text-surface-700 text-lg transition-all"
-        to="/"
-      >
-        <UIcon class="w-7 h-7 text-surface-600" name="i-lucide-arrow-left" />
-        <span class="hidden sm:inline">Trang chủ</span>
-      </NuxtLink>
+      <!-- Lối ra duy nhất của bề mặt trẻ: khoá phụ huynh nhấn giữ (`BR-PSZ-11`, `BR-CLF-05`, `BR-PGT-01`). -->
+      <KidParentLockButton
+        data-testid="play-parent-lock"
+        @unlock="showParentGate = true"
+      />
 
       <div class="flex items-center gap-3">
         <!-- Vào album sticker: chỉ icon, chữ ở aria-label (`BR-STK-06`). -->
@@ -25,11 +22,7 @@
         >
           <UIcon class="w-8 h-8 text-brand-600" name="i-lucide-sticker" />
         </NuxtLink>
-        <img
-          alt="Gấu Con MindKid"
-          class="w-14 h-14 object-contain animate-bounce"
-          src="/mascot/mascot-bear-waiting.svg"
-        >
+        <KidMascot pose="idle" :size="56" />
         <div
           class="bg-white border-[3px] border-surface-300 px-5 py-2 rounded-2xl shadow-sm"
         >
@@ -98,6 +91,13 @@
     >
       MindKid Thinking Play — Chơi mà Học
     </footer>
+
+    <ParentGateModal
+      v-if="showParentGate"
+      :client-only="true"
+      @cancel="showParentGate = false"
+      @verified="leavePlay"
+    />
   </div>
 </template>
 
@@ -110,11 +110,27 @@
    * tượng) còn ở lại — đó là quyết định thiết kế, không phải dữ liệu taxonomy.
    */
   import { COMPETENCY_CATALOG } from "@mindkid/shared/client";
+  import { ref } from "vue";
+  import KidLessonRow from "~/components/kid/lesson-row.vue";
+  import KidMascot from "~/components/kid/mascot.vue";
+  import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
+  import ParentGateModal from "~/components/parent-gate-modal.vue";
+
+  /** Bề mặt trẻ: layout kid không navbar/footer người lớn (`BR-PSZ-11`, `BR-CLF-05`). */
+  definePageMeta({ layout: "kid" });
 
   interface CompetencyStyle {
     borderClass: string;
     iconBgClass: string;
     hoverBgClass: string;
+  }
+
+  const router = useRouter();
+  const showParentGate = ref(false);
+
+  function leavePlay(): void {
+    showParentGate.value = false;
+    router.push("/");
   }
 
   const COMPETENCY_STYLES: Record<string, CompetencyStyle> = {
