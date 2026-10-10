@@ -19,6 +19,7 @@ import {
   drawSlotItem,
   drawSubPromptText,
   spawnParticlesAtSlot,
+  updateParticles,
 } from "#src/render/index.js";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
@@ -448,6 +449,9 @@ export class GT037Session extends TemplateGameSession<
   }
 
   update(_deltaMs: number): void {
+    if (this.particles.length > 0) {
+      this.particles = updateParticles(this.particles);
+    }
     if (
       this.wrongSlotIndex !== null &&
       Date.now() - this.wrongTimestamp > 800
