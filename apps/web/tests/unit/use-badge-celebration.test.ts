@@ -75,4 +75,25 @@ describe("useBadgeCelebration composable (Task #287)", () => {
     const seenSet = getSeenBadges(childUuid);
     expect(seenSet.has("WEEK_CURRICULUM_COMPLETE")).toBe(true);
   });
+
+  it("dismissCelebration tự động chuyển sang huy hiệu tiếp theo nếu còn huy hiệu chưa xem trong danh sách", () => {
+    const { activeCelebrationBadge, checkAndCelebrate, dismissCelebration } =
+      useBadgeCelebration();
+
+    const badges = [
+      { badge_code: "STRAND_FIRST_COMPLETE" },
+      { badge_code: "PLAY_DAYS_5" },
+    ];
+
+    checkAndCelebrate(childUuid, badges);
+    expect(activeCelebrationBadge.value?.code).toBe("STRAND_FIRST_COMPLETE");
+
+    // Khi dismiss badge 1 kèm danh sách badges, tự động load badge 2
+    dismissCelebration(childUuid, badges);
+    expect(activeCelebrationBadge.value?.code).toBe("PLAY_DAYS_5");
+
+    // Khi dismiss badge 2, không còn badge nào nữa -> null
+    dismissCelebration(childUuid, badges);
+    expect(activeCelebrationBadge.value).toBeNull();
+  });
 });

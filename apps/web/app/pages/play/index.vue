@@ -226,6 +226,10 @@
   const { activeCelebrationBadge, checkAndCelebrate, dismissCelebration } =
     useBadgeCelebration();
 
+  const childBadgesList = ref<
+    Array<{ badge_code: string; awarded_at?: string }>
+  >([]);
+
   async function checkBadgesForActiveChild(): Promise<void> {
     if (!activeChildUuid.value) {
       return;
@@ -234,8 +238,9 @@
       const mapRes = await $fetch<{
         badges?: Array<{ badge_code: string; awarded_at?: string }>;
       }>("/api/users/play/map");
-      if (mapRes?.badges && activeChildUuid.value) {
-        checkAndCelebrate(activeChildUuid.value, mapRes.badges);
+      childBadgesList.value = mapRes?.badges ?? [];
+      if (childBadgesList.value.length > 0 && activeChildUuid.value) {
+        checkAndCelebrate(activeChildUuid.value, childBadgesList.value);
       }
     } catch {
       // Bỏ qua lỗi kết nối để sảnh chơi vẫn tiếp tục hoạt động mượt mà
@@ -252,7 +257,7 @@
 
   function handleConfirmBadge(): void {
     if (activeChildUuid.value) {
-      dismissCelebration(activeChildUuid.value);
+      dismissCelebration(activeChildUuid.value, childBadgesList.value);
     }
   }
 

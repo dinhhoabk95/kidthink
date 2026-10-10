@@ -121,4 +121,34 @@ describe("KidPlayLimitModal component (Task #286)", () => {
 
     expect(wrapper.emitted("granted")).toEqual([[15]]);
   });
+
+  it("hiển thị thông báo lỗi thân thiện khi API grant-extra-time trả lỗi từ server", async () => {
+    mockFetch.mockRejectedValueOnce({
+      statusCode: 422,
+      data: {
+        code: "VALIDATION_ERROR",
+        message: "Đã cấp 30 phút hôm nay; tối đa 30 phút/ngày.",
+      },
+    });
+
+    const wrapper = mount(KidPlayLimitModal, {
+      props: {
+        childUuid: "uuid-child-1",
+      },
+      global: { stubs: globalStubs },
+    });
+
+    await wrapper
+      .find('[data-testid="play-limit-ask-parent-btn"]')
+      .trigger("click");
+    await wrapper.find('[data-testid="gate-verify"]').trigger("click");
+    await flushPromises();
+
+    await wrapper.find('[data-testid="grant-15-mins-btn"]').trigger("click");
+    await flushPromises();
+
+    expect(wrapper.text()).toContain(
+      "Đã cấp 30 phút hôm nay; tối đa 30 phút/ngày."
+    );
+  });
 });

@@ -105,11 +105,19 @@ export function useBadgeCelebration() {
     activeCelebrationBadge.value = unseen;
   }
 
-  function dismissCelebration(childUuid: string): void {
+  function dismissCelebration(
+    childUuid: string,
+    badges?: Array<{ badge_code: string; awarded_at?: string }>
+  ): void {
     if (activeCelebrationBadge.value && childUuid) {
       markBadgeAsSeen(childUuid, activeCelebrationBadge.value.code);
     }
-    activeCelebrationBadge.value = null;
+    if (badges && badges.length > 0 && childUuid) {
+      const nextUnseen = findUnseenBadge(childUuid, badges);
+      activeCelebrationBadge.value = nextUnseen;
+    } else {
+      activeCelebrationBadge.value = null;
+    }
   }
 
   return {

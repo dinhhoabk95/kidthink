@@ -86,6 +86,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { onUnmounted } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import type { BadgeMeta } from "~/composables/play/use-badge-celebration";
 
@@ -118,4 +119,10 @@
     }
     emit("confirm");
   }
+
+  onUnmounted(() => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+  });
 </script>

@@ -65,15 +65,15 @@
 
       <!-- Phụ huynh đã qua Parent Gate: Bảng chọn cấp thêm giờ -->
       <div
-        class="p-4 rounded-2xl border-2 border-amber-300 bg-amber-50 space-y-3"
+        class="p-4 rounded-2xl border-2 border-warning-300 bg-warning-50 space-y-3"
         v-if="showParentExtendOptions"
       >
-        <p class="font-heading font-bold text-amber-900 text-sm">
+        <p class="font-heading font-bold text-warning-900 text-sm">
           Phụ huynh muốn cho bé chơi thêm bao nhiêu phút?
         </p>
         <div class="flex items-center justify-center gap-3">
           <button
-            class="min-h-12 px-5 rounded-xl bg-amber-500 text-white font-heading font-bold text-sm border-2 border-amber-600 shadow-[0_2px_0_var(--color-amber-700)] active:translate-y-0.5 transition-all disabled:opacity-50"
+            class="min-h-12 px-5 rounded-xl bg-warning-400 text-surface-900 font-heading font-bold text-sm border-2 border-warning-500 shadow-[0_2px_0_var(--color-warning-600)] active:translate-y-0.5 transition-all disabled:opacity-50"
             data-testid="grant-15-mins-btn"
             type="button"
             :disabled="isSubmitting"
@@ -82,7 +82,7 @@
             +15 phút
           </button>
           <button
-            class="min-h-12 px-5 rounded-xl bg-amber-600 text-white font-heading font-bold text-sm border-2 border-amber-700 shadow-[0_2px_0_var(--color-amber-800)] active:translate-y-0.5 transition-all disabled:opacity-50"
+            class="min-h-12 px-5 rounded-xl bg-cta-600 text-white font-heading font-bold text-sm border-2 border-cta-700 shadow-[0_2px_0_var(--color-cta-800)] active:translate-y-0.5 transition-all disabled:opacity-50"
             data-testid="grant-30-mins-btn"
             type="button"
             :disabled="isSubmitting"
@@ -92,7 +92,7 @@
           </button>
         </div>
         <p
-          class="text-xs text-amber-800 font-semibold"
+          class="text-xs text-warning-800 font-semibold"
           v-if="grantErrorMessage"
         >
           {{ grantErrorMessage }}
@@ -126,10 +126,10 @@
       </div>
     </div>
 
-    <!-- Parent Gate Modal (Bảo vệ luồng xin thêm giờ của người lớn) -->
+    <!-- Parent Gate Modal (Bảo vệ luồng xin thêm giờ của người lớn, xác thực token HMAC qua server) -->
     <ParentGateModal
       v-if="showParentGate"
-      :client-only="true"
+      :client-only="false"
       @cancel="showParentGate = false"
       @verified="onParentGateVerified"
     />
@@ -137,6 +137,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { normalizeApiError } from "@mindkid/errors/client";
   import { ref } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
@@ -213,8 +214,10 @@
       });
 
       emit("granted", minutes);
-    } catch {
+    } catch (err) {
+      const normalized = normalizeApiError(err);
       grantErrorMessage.value =
+        normalized.message ||
         "Chưa thể cấp thêm giờ lúc này. Vui lòng thử lại!";
     } finally {
       isSubmitting.value = false;
