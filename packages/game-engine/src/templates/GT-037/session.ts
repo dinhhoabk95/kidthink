@@ -10,8 +10,8 @@ import {
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
 import { resolveAssetLabels } from "#src/labels/spoken-keyword.js";
 import { JITTER_MAX_PX } from "#src/layout/constants";
-import { computeScatterBoardLayout } from "#src/layout/geometry";
 import { findHitSlotIndex, TAP_TOLERANCE_PX } from "#src/layout/hit-test.js";
+import { resolveLayout } from "#src/layout/registry.js";
 import type { Slot } from "#src/layout/types";
 import {
   drawCircleOutline,
@@ -220,7 +220,8 @@ export class GT037Session extends TemplateGameSession<
       this.setupEntities();
     }
 
-    const candidateSlots = computeScatterBoardLayout({
+    const layoutFn = resolveLayout("scatter-board");
+    const candidateSlots = layoutFn({
       slotCount: this.itemCount,
       ageBand: band,
       logic: this.logicSpace,
@@ -446,6 +447,15 @@ export class GT037Session extends TemplateGameSession<
     super.completeSession();
   }
 
+  update(_deltaMs: number): void {
+    if (
+      this.wrongSlotIndex !== null &&
+      Date.now() - this.wrongTimestamp > 800
+    ) {
+      this.wrongSlotIndex = null;
+    }
+  }
+
   override getView(): EngineView {
     const entities: ViewEntity[] = [];
     for (let i = 0; i < this.slots.length; i++) {
@@ -528,7 +538,7 @@ export class GT037Session extends TemplateGameSession<
     } else {
       ctx.save();
       ctx.translate(drawSlot.x, drawSlot.y);
-      ctx.rotate((rot * Math.PI) / 180);
+      ctx.rotate(rot);
       const localSlot: Slot = {
         ...drawSlot,
         x: 0,

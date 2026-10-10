@@ -48,10 +48,10 @@ describe("GT-037 Template & Schema (Task #278 S2)", () => {
   });
 
   describe("GT037ContentSchema — Ca âm cơ bản và quan hệ tập hợp", () => {
-    it("từ chối khi symbols có ít hơn 6 phần tử", () => {
+    it("từ chối khi symbols có ít hơn 2 phần tử", () => {
       const res = GT037ContentSchema.safeParse({
         ...validContent,
-        symbols: validSymbols.slice(0, 5),
+        symbols: validSymbols.slice(0, 1),
       });
       expect(res.success).toBe(false);
     });

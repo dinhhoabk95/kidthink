@@ -75,6 +75,7 @@ describe("Universal Template Compliance Test Suite (§7.4, BR-TAK-01..14)", () =
       "GT-034",
       "GT-035",
       "GT-036",
+      "GT-037",
     ]);
   });
 

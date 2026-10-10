@@ -70,9 +70,9 @@ function contentPackFields(code: string): Set<string> {
 }
 
 describe("BR-ETS-04 — một nguồn lời đọc duy nhất", () => {
-  it("không contract nội dung nào của 37 engine khai thêm một trường lời đọc thứ hai", () => {
+  it("không contract nội dung nào của 38 engine khai thêm một trường lời đọc thứ hai", () => {
     const codes = Object.keys(ALL_TEMPLATES);
-    expect(codes.length).toBe(37);
+    expect(codes.length).toBe(38);
 
     const offenders: string[] = [];
     for (const code of codes) {

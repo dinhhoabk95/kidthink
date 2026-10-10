@@ -1,6 +1,7 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import {
   ALL_TEMPLATE_CODES,
+  ALL_TEMPLATES,
   createGameSessionSync,
   type EngineConfig,
   preloadGameSession,
@@ -124,6 +125,10 @@ describe("All 27 Game Engine Templates Interactive & Visual Harness", () => {
 
           // 2. Resolve slots for each age band without throwing
           for (const ageBand of ["3-4", "4-5", "5-6"] as const) {
+            const tmpl = ALL_TEMPLATES[code];
+            if (tmpl?.banned_age_bands?.includes(ageBand)) {
+              continue;
+            }
             const typedSession = session as unknown as {
               resolveSlots?: (band: "3-4" | "4-5" | "5-6") => void;
               slots?: readonly { x: number; y: number; w: number; h: number }[];

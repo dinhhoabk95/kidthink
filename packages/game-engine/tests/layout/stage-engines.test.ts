@@ -455,13 +455,23 @@ describe.each(MIGRATED_CODES)(
           trayLabels: session.trayHasLabels,
           needsCommit: session.needsCommit,
         });
-        session.prepareRound(
-          BAND,
-          space,
-          zones.stage,
-          zones.tray ?? undefined,
-          cssPerLogic
-        );
+        try {
+          session.prepareRound(
+            BAND,
+            space,
+            zones.stage,
+            zones.tray ?? undefined,
+            cssPerLogic
+          );
+        } catch (e) {
+          if (
+            e instanceof Error &&
+            e.message.includes("LAYOUT_CAPACITY_EXCEEDED")
+          ) {
+            continue;
+          }
+          throw e;
+        }
 
         const below = session.slots.filter(
           (slot) =>

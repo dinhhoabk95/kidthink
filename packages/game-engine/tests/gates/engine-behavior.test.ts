@@ -26,14 +26,14 @@ describe("Gate check:engine-behavior (BR-EBD-01..13, BR-ESS-16..17)", () => {
   );
   const baselinePath = repoPath("scripts/engine-behavior-baseline.json");
 
-  it("baseline: 37 engine, 37 spec, sàn 2 · 5 · 6 đạt, 0 vi phạm", () => {
+  it("baseline: 38 engine, 38 spec, sàn 2 · 5 · 6 đạt, 0 vi phạm", () => {
     const result = scanEngineBehaviorGate({
       specsDir,
       configPath,
       baselinePath,
     });
 
-    expect(result.totalEngines).toBe(37);
+    expect(result.totalEngines).toBe(38);
     expect(result.violations).toHaveLength(0);
 
     const b34 = result.bandSummaries.find((s) => s.band === "3-4");
@@ -49,7 +49,7 @@ describe("Gate check:engine-behavior (BR-EBD-01..13, BR-ESS-16..17)", () => {
     expect(b56?.domainCount).toBe(6);
     expect(b56?.passed).toBe(true);
 
-    expect(result.registryEngineCount).toBe(37);
+    expect(result.registryEngineCount).toBe(38);
 
     const report = formatEngineBehaviorReport(result);
     expect(report).toContain("Band 3-4: 2/6 miền");
@@ -231,7 +231,7 @@ describe("Gate check:engine-behavior (BR-EBD-01..13, BR-ESS-16..17)", () => {
 
     // Báo cáo in số đo thật của lượt chạy, cấm hằng số 37.
     expect(formatEngineBehaviorReport(result)).toContain(
-      "Tổng engine trong cấu hình: 36 · trong registry: 37"
+      "Tổng engine trong cấu hình: 37 · trong registry: 38"
     );
   });
 

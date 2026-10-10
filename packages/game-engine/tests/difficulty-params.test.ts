@@ -23,13 +23,13 @@ describe("Hợp đồng độ khó engine-difficulty-params.json (Task #263 T5)"
     expect(validated).toBeDefined();
   });
 
-  it("có đủ 37 engine GT-000..GT-036 trong cấu hình", () => {
+  it("có đủ 38 engine GT-000..GT-037 trong cấu hình", () => {
     const config = parsed as EngineDifficultyParamsConfig;
     const configKeys = Object.keys(config.engines).sort();
     const templateKeys = Object.keys(ALL_TEMPLATES).sort();
 
     expect(configKeys).toEqual(templateKeys);
-    expect(configKeys).toHaveLength(37);
+    expect(configKeys).toHaveLength(38);
   });
 
   it("mỗi engine có reason hợp lệ và có đủ 5 mức khó", () => {

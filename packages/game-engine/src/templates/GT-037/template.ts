@@ -190,7 +190,7 @@ function validateGlyphDuplicates(
 export const GT037ContentSchema = z
   .object({
     ...promptFields(),
-    symbols: z.array(GT037SymbolSchema).min(6).max(40),
+    symbols: z.array(GT037SymbolSchema).min(2).max(40),
     target_ids: z.array(z.string().min(1).max(32)).min(1).max(2),
     target_copies: z.number().int().min(2).max(8),
     item_count: z.number().int().min(12).max(30),

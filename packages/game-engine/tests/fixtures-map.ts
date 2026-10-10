@@ -36,6 +36,7 @@ import { GT033_FIXTURES } from "#src/templates/GT-033/fixtures.js";
 import { GT034_FIXTURES } from "#src/templates/GT-034/fixtures.js";
 import { GT035_FIXTURES } from "#src/templates/GT-035/fixtures.js";
 import { GT036_FIXTURES } from "#src/templates/GT-036/fixtures.js";
+import { GT037_FIXTURES } from "#src/templates/GT-037/fixtures.js";
 
 import ENGINE_DIFFICULTY_PARAMS from "../config/engine-difficulty-params.json";
 
@@ -87,6 +88,7 @@ const RAW_FIXTURES_BY_CODE: Record<string, readonly FixtureRecord[]> = {
   "GT-034": GT034_FIXTURES,
   "GT-035": GT035_FIXTURES,
   "GT-036": GT036_FIXTURES,
+  "GT-037": GT037_FIXTURES,
 };
 
 export const FIXTURES_BY_CODE: Record<string, readonly FixtureRecord[]> =

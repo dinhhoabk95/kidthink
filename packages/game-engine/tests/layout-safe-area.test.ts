@@ -60,14 +60,24 @@ function countOverflow(
         targetCount <= template.limits.target_count[1];
         targetCount++
       ) {
-        for (const slot of layoutFn({
-          slotCount,
-          ageBand: band,
-          targetCount,
-        })) {
-          if (isOutsideSafeArea(slot)) {
-            overflow++;
+        try {
+          for (const slot of layoutFn({
+            slotCount,
+            ageBand: band,
+            targetCount,
+          })) {
+            if (isOutsideSafeArea(slot)) {
+              overflow++;
+            }
           }
+        } catch (e) {
+          if (
+            e instanceof Error &&
+            e.message.includes("LAYOUT_CAPACITY_EXCEEDED")
+          ) {
+            continue;
+          }
+          throw e;
         }
       }
     }

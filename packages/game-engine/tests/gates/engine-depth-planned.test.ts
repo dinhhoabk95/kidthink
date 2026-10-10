@@ -10,7 +10,7 @@ describe("Mục 16 bỏ qua mã đặt trước (BR-ESS-15)", () => {
     const planned = readPlannedCodes(
       repoPath("packages/game-engine/config/engine-spec-planned.json")
     );
-    expect(planned.has("GT-037")).toBe(true);
+    expect(planned.size).toBe(0);
   });
 
   // Ca âm: cấu hình sai hình dạng phải làm đỏ, không lặng lẽ thành "không có mã nào"
