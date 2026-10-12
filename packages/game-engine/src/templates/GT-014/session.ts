@@ -25,6 +25,7 @@ import {
 } from "#src/render/index.js";
 import {
   type BalanceState,
+  canAchieveBalance,
   computeTiltAngle,
   getBalanceState,
   sumWeights,
@@ -398,8 +399,35 @@ export class BalanceScaleSession extends TemplateGameSession<
     return null;
   }
 
+  /**
+   * Gợi ý trỏ vào slot thật trong `this.slots`, không phải chỉ số trong khay:
+   * ở stage, slot xếp `[đĩa trái, đĩa phải, ...khay]`.
+   */
   override getHintTargetIndex(): number | null {
-    return this.trayItems.length > 0 ? 0 : null;
+    if (this.content.goal === "balance") {
+      const idx = this.findBalancingTrayIndex();
+      const slot = idx >= 0 ? this.sourceSlots[idx] : undefined;
+      return slot ? this.slots.indexOf(slot) : null;
+    }
+    const leftW = this.getLeftWeight();
+    const rightW = this.getRightWeight();
+    const heavier = leftW > rightW ? "left" : "right";
+    const lighter = heavier === "left" ? "right" : "left";
+    const side = this.content.goal === "pick_heavier" ? heavier : lighter;
+    const pans = this.targetSlots.slice().sort((a, b) => a.x - b.x);
+    const slot = side === "left" ? pans[0] : pans[1];
+    return slot ? this.slots.indexOf(slot) : null;
+  }
+
+  /** Vật khay mà đặt xuống (bên nào cũng được) vẫn còn đường tới cân bằng. */
+  private findBalancingTrayIndex(): number {
+    return this.trayItems.findIndex((item, i) => {
+      const rest = this.trayItems.filter((_, j) => j !== i);
+      return (
+        canAchieveBalance([...this.leftItems, item], this.rightItems, rest) ||
+        canAchieveBalance(this.leftItems, [...this.rightItems, item], rest)
+      );
+    });
   }
 
   override commit(action: GameAction): void {

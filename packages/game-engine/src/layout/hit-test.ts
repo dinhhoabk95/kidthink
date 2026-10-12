@@ -94,7 +94,7 @@ export function isPointInSlot(
   x: number,
   y: number,
   shape: HitShape = "circle",
-  tolerance = 6
+  tolerance = TAP_TOLERANCE_PX
 ): boolean {
   return hitDistanceSq(slot, x, y, shape, tolerance) !== null;
 }
@@ -108,7 +108,7 @@ export function findHitSlotIndex(
   x: number,
   y: number,
   shape: HitShape = "circle",
-  tolerance = 6
+  tolerance = TAP_TOLERANCE_PX
 ): number {
   return findNearestHitIndex(slots, x, y, shape, tolerance);
 }

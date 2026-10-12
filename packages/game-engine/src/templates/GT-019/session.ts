@@ -387,11 +387,13 @@ export class GT019Session extends TemplateGameSession<
     return null;
   }
 
+  /** Chỉ số trong `this.slots` — ở stage, slot xếp đích trước rồi mới tới mảnh ghép. */
   override getHintTargetIndex(): number | null {
     const unplaced = this.content.pieces.findIndex(
       (p) => !this.placedPieceIds.has(p.piece_id)
     );
-    return unplaced >= 0 ? unplaced : null;
+    const slot = unplaced >= 0 ? this.sourceSlots[unplaced] : undefined;
+    return slot ? this.slots.indexOf(slot) : null;
   }
 
   override commit(action: GameAction): void {

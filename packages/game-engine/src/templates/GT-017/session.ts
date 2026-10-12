@@ -19,6 +19,7 @@ import {
   heroSlot,
   splitHeroStage,
 } from "#src/layout/hero-split";
+import { findHitSlotIndex as findHitIndex } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { computeStageCellSlots } from "#src/layout/stage-targets";
 import type { Slot } from "#src/layout/types";
@@ -43,27 +44,14 @@ import {
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT017Content, GT017Difficulty } from "./template.js";
 
-function isPointInSlot(slot: Slot, x: number, y: number): boolean {
-  const hw = (slot.hitW ?? slot.w) / 2;
-  const hh = (slot.hitH ?? slot.h) / 2;
-  return (
-    x >= slot.x - hw && x <= slot.x + hw && y >= slot.y - hh && y <= slot.y + hh
-  );
-}
-
 function findHitOptionId(
   slots: readonly Slot[],
   options: readonly { option_id: string }[],
   x: number,
   y: number
 ): string | null {
-  for (let i = 0; i < options.length; i++) {
-    const slot = slots[i];
-    if (slot && isPointInSlot(slot, x, y)) {
-      return options[i]?.option_id ?? null;
-    }
-  }
-  return null;
+  const index = findHitIndex(slots.slice(0, options.length), x, y);
+  return index >= 0 ? (options[index]?.option_id ?? null) : null;
 }
 
 export class BlockStackSession extends TemplateGameSession<

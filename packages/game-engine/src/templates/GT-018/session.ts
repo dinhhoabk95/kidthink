@@ -14,6 +14,7 @@ import type {
   Gesture,
   ViewEntity,
 } from "#src/interaction";
+import { findHitSlotIndex as findHitIndex } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import {
   dockRectAroundSlots,
@@ -41,27 +42,14 @@ import type { GT018Content, GT018Difficulty } from "./template.js";
 /** Cạnh vuông của máy hát (logic px). */
 const GRAMOPHONE_SIZE_PX = 130;
 
-function isPointInSlot(slot: Slot, x: number, y: number): boolean {
-  const hw = (slot.hitW ?? slot.w) / 2;
-  const hh = (slot.hitH ?? slot.h) / 2;
-  return (
-    x >= slot.x - hw && x <= slot.x + hw && y >= slot.y - hh && y <= slot.y + hh
-  );
-}
-
 function findHitOptionId(
   slots: readonly Slot[],
   options: readonly { item_id: string }[],
   x: number,
   y: number
 ): string | null {
-  for (let i = 0; i < options.length; i++) {
-    const slot = slots[i];
-    if (slot && isPointInSlot(slot, x, y)) {
-      return options[i]?.item_id ?? null;
-    }
-  }
-  return null;
+  const index = findHitIndex(slots.slice(0, options.length), x, y);
+  return index >= 0 ? (options[index]?.item_id ?? null) : null;
 }
 
 export class GT018Session extends TemplateGameSession<

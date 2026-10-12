@@ -3,7 +3,6 @@ import {
   ACTION_IGNORED,
   type ActionResult,
   type GameAction,
-  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
@@ -202,15 +201,6 @@ export class GT002Session extends TemplateGameSession<
       (it) => it.is_correct && this.getItemState(it.item_id) !== "selected"
     );
     return idx >= 0 ? idx : null;
-  }
-
-  /** Chọn đủ vật đúng rồi thì bước kế là bấm Xong (`BR-PSZ-05`). */
-  override getHintTarget(): HintTarget | null {
-    const slotTarget = super.getHintTarget();
-    if (slotTarget) {
-      return slotTarget;
-    }
-    return this.canCommit() ? { kind: "action" } : null;
   }
 
   override commit(action: GameAction): void {

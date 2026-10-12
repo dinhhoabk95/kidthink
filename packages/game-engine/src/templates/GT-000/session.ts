@@ -26,6 +26,8 @@ import {
   type RenderItem,
   updateParticles,
 } from "#src/render/index.js";
+import { deriveStream } from "#src/rng/mulberry32";
+import { shuffle } from "#src/rng/shuffle";
 import { AudioController } from "#src/systems/audio-controller";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import {
@@ -817,7 +819,14 @@ export class GT000Session extends TemplateGameSession<
     if (!step) {
       return null;
     }
-    return 0;
+    if (step.action === "present" || step.action === "echo") {
+      return 0;
+    }
+    const ids = this.getStepAssetIds(step);
+    const wanted =
+      step.action === "link" ? step.source_asset_id : step.target_asset_id;
+    const idx = ids.indexOf(wanted);
+    return idx >= 0 ? idx : null;
   }
 
   private getStepPromptText(step: GT000Step): string {
@@ -860,7 +869,11 @@ export class GT000Session extends TemplateGameSession<
 
   private getStepAssetIds(step: GT000Step): string[] {
     if (step.action === "recognise") {
-      return [step.target_asset_id, ...step.distractor_asset_ids];
+      // Xáo theo seed + bước: đặt mục tiêu luôn ở ô đầu thì trẻ học vị trí.
+      return shuffle(
+        [step.target_asset_id, ...step.distractor_asset_ids],
+        deriveStream(this.layoutSeed * 31 + this.currentStepIndex, "items")
+      );
     }
     if (step.action === "recall") {
       return step.option_asset_ids;

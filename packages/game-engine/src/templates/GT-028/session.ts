@@ -5,6 +5,7 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type {
@@ -261,6 +262,17 @@ export class GT028Session extends TemplateGameSession<
   override destroy(): void {
     this.renderItemStates.clear();
     this.selectedItemIds = [];
+  }
+
+  /** Đếm vượt đích thì nộp là sai — chỉ gợi ý nút Xong khi đếm vừa đủ. */
+  override getHintTarget(): HintTarget | null {
+    const target = super.getHintTarget();
+    if (target?.kind === "action") {
+      return this.getCurrentCount() === this.content.target_total
+        ? target
+        : null;
+    }
+    return target;
   }
 
   override getHintTargetIndex(): number | null {

@@ -214,7 +214,13 @@ export abstract class TemplateGameSession<
    */
   getHintTarget(): HintTarget | null {
     const index = this.getHintTargetIndex();
-    return index === null ? null : { kind: "slot", index };
+    if (index !== null) {
+      return { kind: "slot", index };
+    }
+    // Không còn vật nào để chỉ mà nút nộp đang sáng: bước kế là bấm nút.
+    return this.needsCommit && !this.isWon && this.canCommit()
+      ? { kind: "action" }
+      : null;
   }
 
   /** Phiên có cần khay vật thể riêng không (`BR-PSZ-01`). Mặc định false. */

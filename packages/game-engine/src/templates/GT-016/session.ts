@@ -20,6 +20,7 @@ import {
   heroSlot,
   splitHeroStage,
 } from "#src/layout/hero-split";
+import { findHitSlotIndex as findHitIndex } from "#src/layout/hit-test";
 import { resolveLayout } from "#src/layout/registry";
 import { computeStageCellSlots } from "#src/layout/stage-targets";
 import type { ZoneRect } from "#src/layout/stage-zones";
@@ -49,27 +50,13 @@ import type { GT016Content, GT016Difficulty } from "./template.js";
 /** Phần lề (tỉ lệ) giữa mặt đồng hồ và mép vùng chính của stage. */
 const FACE_INSET = 0.04;
 
-function isPointInSlot(slot: Slot, x: number, y: number): boolean {
-  const hw = (slot.hitW ?? slot.w) / 2;
-  const hh = (slot.hitH ?? slot.h) / 2;
-  return (
-    x >= slot.x - hw && x <= slot.x + hw && y >= slot.y - hh && y <= slot.y + hh
-  );
-}
-
 function findHitSlotIndex(
   slots: readonly Slot[],
   count: number,
   x: number,
   y: number
 ): number {
-  for (let i = 0; i < count; i++) {
-    const slot = slots[i];
-    if (slot && isPointInSlot(slot, x, y)) {
-      return i;
-    }
-  }
-  return -1;
+  return findHitIndex(slots.slice(0, count), x, y);
 }
 
 function stepClockTime(
