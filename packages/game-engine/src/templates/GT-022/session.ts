@@ -20,7 +20,6 @@ import { SelectionMechanic } from "#src/mechanics/selection-mechanic";
 import {
   drawSceneBackground,
   drawSceneObjectAt,
-  type ItemVisualState,
   sceneBox,
 } from "#src/render/index.js";
 import { deriveStream } from "#src/rng/mulberry32";
@@ -63,7 +62,6 @@ export class GT022Session extends TemplateGameSession<
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   readonly sceneSystem = new SceneSystem();
   private readonly selectionMechanic = new SelectionMechanic();
@@ -283,14 +281,6 @@ export class GT022Session extends TemplateGameSession<
       }),
       this.stageRect
     );
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

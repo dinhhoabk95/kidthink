@@ -21,7 +21,6 @@ import {
   drawSlotItem,
   drawSubPromptText,
   drawWoodenTokenDock,
-  type ItemVisualState,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
@@ -41,7 +40,6 @@ export class FlashRecallSession extends TemplateGameSession<
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private readonly timer: FlashTimer;
   private selectedValue: number | null = null;
@@ -294,14 +292,6 @@ export class FlashRecallSession extends TemplateGameSession<
       this.content.flash_items.length,
       this.content.arrangement
     );
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

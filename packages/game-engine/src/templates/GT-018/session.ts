@@ -32,7 +32,6 @@ import {
   drawSlotItem,
   drawSubPromptText,
   drawWoodenTokenDock,
-  type ItemVisualState,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
@@ -56,7 +55,6 @@ export class GT018Session extends TemplateGameSession<
   GT018Difficulty
 > {
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private readonly selectionMechanic = new SelectionMechanic({
     mode: "single",
@@ -308,14 +306,6 @@ export class GT018Session extends TemplateGameSession<
       page: 0,
       role: "target",
     };
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

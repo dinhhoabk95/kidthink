@@ -25,7 +25,6 @@ import {
   drawSlotItem,
   drawSlotLabel,
   drawWoodenTokenDock,
-  type ItemVisualState,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
@@ -110,7 +109,6 @@ export class GT019Session extends TemplateGameSession<
   GT019Difficulty
 > {
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   override readonly needsTray = true;
 
@@ -586,14 +584,6 @@ export class GT019Session extends TemplateGameSession<
       ageBand,
       logic: this.logicSpace,
     });
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

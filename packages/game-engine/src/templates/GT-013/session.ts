@@ -31,7 +31,6 @@ import {
   drawMazeBoard,
   drawRequiredCells,
   drawSceneBackground,
-  type ItemVisualState,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import {
@@ -91,7 +90,6 @@ export class GT013Session extends TemplateGameSession<
 > {
   override readonly usesPromptZone = true;
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private readonly ordering = new OrderingMechanic();
   private tracker: MazePathTracker = new MazePathTracker(this.content.grid);
@@ -327,14 +325,6 @@ export class GT013Session extends TemplateGameSession<
       stage: this.stageRect,
       cssPerLogic: this.cssPerLogic,
     });
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

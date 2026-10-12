@@ -16,7 +16,6 @@ import {
   drawSceneBackground,
   drawSlotItem,
   drawSubPromptText,
-  type ItemVisualState,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import {
@@ -31,7 +30,6 @@ export class GT026Session extends TemplateGameSession<
   GT026Difficulty
 > {
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
   private wrongTimestamp = 0;
 
   override readonly usesPromptZone = true;
@@ -280,14 +278,6 @@ export class GT026Session extends TemplateGameSession<
       }),
       this.stageRect
     );
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

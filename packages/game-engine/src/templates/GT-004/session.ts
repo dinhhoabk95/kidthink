@@ -46,7 +46,6 @@ export class GT004Session extends TemplateGameSession<
   GT004Difficulty
 > {
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   displayItems: readonly SortItem[] = [];
   private readonly mechanic = new PlacementMechanic();
@@ -375,20 +374,12 @@ export class GT004Session extends TemplateGameSession<
     }
   }
 
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
   getPlacements(): ReadonlyMap<string, string> {
     return this.mechanic.getPlacements();
   }
 
   getStagedItemId(): string | null {
     return this.mechanic.getStagedItemId();
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

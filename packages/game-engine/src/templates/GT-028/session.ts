@@ -23,7 +23,6 @@ import {
   drawSlotItem,
   drawSubPromptText,
   drawWoodenTokenDock,
-  type ItemVisualState,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
@@ -60,7 +59,6 @@ export class GT028Session extends TemplateGameSession<
 
   degradation: DegradationState | null = null;
   selectedItemIds: string[] = [];
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   setupEntities(): void {
     this.isWon = false;
@@ -297,14 +295,6 @@ export class GT028Session extends TemplateGameSession<
       stage: this.stageRect ? splitCaption(this.stageRect).body : undefined,
       cssPerLogic: this.cssPerLogic,
     });
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

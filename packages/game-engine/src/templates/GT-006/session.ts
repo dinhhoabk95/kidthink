@@ -34,7 +34,6 @@ export class GT006Session extends TemplateGameSession<
   /** Nút xong ở `zones.action` (`BR-PSZ-05`); `commit` → `check_sequence`. */
   override readonly needsCommit = true;
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
   private stagedIndex: number | null = null;
 
   private readonly mechanic = new OrderingMechanic();
@@ -284,14 +283,6 @@ export class GT006Session extends TemplateGameSession<
       entities,
       activePrompt: this.content.prompt,
     };
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

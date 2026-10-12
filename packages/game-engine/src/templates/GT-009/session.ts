@@ -15,7 +15,6 @@ import {
   drawSceneBackground,
   drawSlotItem,
   getColorsForState,
-  type ItemVisualState,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
@@ -36,7 +35,6 @@ export class GT009Session extends TemplateGameSession<
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private readonly mechanic = new SelectionMechanic({ mode: "single" });
   private readonly revealedClueIds: string[] = [];
@@ -329,14 +327,6 @@ export class GT009Session extends TemplateGameSession<
       activePrompt: this.content.prompt,
       entities,
     };
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

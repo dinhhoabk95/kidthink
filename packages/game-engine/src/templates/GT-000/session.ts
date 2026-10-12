@@ -111,7 +111,6 @@ export class GT000Session extends TemplateGameSession<
   lastTtsUsed = false;
 
   private allSteps: GT000Step[] = [];
-  private readonly renderItemStates = new Map<string, ItemVisualState>();
   private currentAgeBand: AgeBand = "3-4";
 
   /**

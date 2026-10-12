@@ -4,6 +4,7 @@ import { DEFAULT_LOGIC_SPACE, type LogicSpace } from "./layout/constants.js";
 import type { ZoneRect } from "./layout/stage-zones.js";
 import type { Slot } from "./layout/types";
 import type { CommitIcon } from "./render/commit-button.js";
+import type { ItemVisualState } from "./render/types.js";
 import type { RenderSystem } from "./systems/render-system";
 
 export type FeedbackKind =
@@ -191,6 +192,17 @@ export abstract class TemplateGameSession<
 
   sourceSlots: readonly Slot[] = [];
   targetSlots: readonly Slot[] = [];
+
+  /** Trạng thái vẽ của từng vật (idle/selected/correct/wrong...), theo id. */
+  protected readonly renderItemStates: Map<string, ItemVisualState> = new Map();
+
+  setRenderItemState(itemId: string, state: ItemVisualState): void {
+    this.renderItemStates.set(itemId, state);
+  }
+
+  getRenderItemState(itemId: string): ItemVisualState {
+    return this.renderItemStates.get(itemId) ?? "idle";
+  }
 
   /** Active logic space for responsive slot calculations (Task #203 / #259). */
   logicSpace: LogicSpace = DEFAULT_LOGIC_SPACE;

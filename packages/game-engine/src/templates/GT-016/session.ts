@@ -29,7 +29,6 @@ import {
   drawClockFace,
   drawSceneBackground,
   drawSlotItem,
-  type ItemVisualState,
   insetBox,
   type SceneBox,
   sceneBox,
@@ -153,7 +152,6 @@ export class ClockHandsSession extends TemplateGameSession<
   override readonly needsCommit: boolean;
 
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private currentTime: ClockTime;
   /** `mode = set`: giờ chỉ được chấm sau khi trẻ nộp bằng `commit` (`BR-PSZ-05`). */
@@ -535,14 +533,6 @@ export class ClockHandsSession extends TemplateGameSession<
       ageBand,
       logic: this.logicSpace,
     });
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

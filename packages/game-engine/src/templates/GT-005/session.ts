@@ -76,7 +76,6 @@ export class GT005Session extends TemplateGameSession<
 > {
   override readonly usesPromptZone = true;
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   displayLeft: readonly LeftItem[] = [];
   displayRight: readonly RightItem[] = [];
@@ -411,14 +410,6 @@ export class GT005Session extends TemplateGameSession<
         this.mechanic.stageLeft(null);
       }
     }
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

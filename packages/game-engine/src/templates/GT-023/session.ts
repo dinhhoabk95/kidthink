@@ -29,7 +29,6 @@ import {
   drawSlotItem,
   drawSlotLabel,
   drawWoodenTokenDock,
-  type ItemVisualState,
   slotAtPoint,
 } from "#src/render/index.js";
 import {
@@ -85,7 +84,6 @@ export class GT023Session extends TemplateGameSession<
   GT023Difficulty
 > {
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   readonly assemblySystem = new AssemblySystem();
   private readonly placementMechanic = new PlacementMechanic();
@@ -470,14 +468,6 @@ export class GT023Session extends TemplateGameSession<
       ageBand,
       logic: this.logicSpace,
     });
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

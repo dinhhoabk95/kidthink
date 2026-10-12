@@ -18,7 +18,6 @@ import {
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
-  type ItemVisualState,
   insetBox,
   sceneBox,
 } from "#src/render/index.js";
@@ -159,7 +158,6 @@ export class BalanceScaleSession extends TemplateGameSession<
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private leftItems: WeightedItem[] = [];
   private rightItems: WeightedItem[] = [];
@@ -559,14 +557,6 @@ export class BalanceScaleSession extends TemplateGameSession<
       ageBand,
       logic: this.logicSpace,
     });
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

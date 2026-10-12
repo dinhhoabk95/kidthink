@@ -56,7 +56,6 @@ export class GT020Session extends TemplateGameSession<
 > {
   override readonly usesPromptZone = true;
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   readonly cardSystem = new CardSystem();
   private readonly pairingMechanic = new PairingMechanic();
@@ -244,14 +243,6 @@ export class GT020Session extends TemplateGameSession<
       stage: this.stageRect,
       cssPerLogic: this.cssPerLogic,
     });
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   private getCardItemState(

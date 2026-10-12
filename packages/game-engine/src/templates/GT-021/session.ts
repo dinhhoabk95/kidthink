@@ -30,7 +30,6 @@ import {
   drawSceneBackground,
   drawSlotItem,
   drawWoodenTokenDock,
-  type ItemVisualState,
   sceneBox,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
@@ -85,7 +84,6 @@ export class GT021Session extends TemplateGameSession<
   GT021Difficulty
 > {
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   readonly mirrorSystem = new MirrorSystem();
   private readonly placementMechanic = new PlacementMechanic();
@@ -425,14 +423,6 @@ export class GT021Session extends TemplateGameSession<
       ageBand,
       logic: this.logicSpace,
     });
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

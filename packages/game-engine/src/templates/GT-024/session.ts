@@ -22,7 +22,6 @@ import {
   drawSceneBackground,
   drawSubPromptText,
   drawWaypointPath,
-  type ItemVisualState,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
@@ -58,7 +57,6 @@ export class GT024Session extends TemplateGameSession<
 > {
   override readonly usesPromptZone = true;
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   readonly traceSystem = new TraceSystem();
   /** Waypoint ở toạ độ logic của khung nhìn (đã co vào `zones.stage` nếu có). */
@@ -290,14 +288,6 @@ export class GT024Session extends TemplateGameSession<
       return slots.length - 1;
     });
     return slots;
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

@@ -26,7 +26,6 @@ import {
   drawSlotItem,
   drawSlotLabel,
   drawWoodenTokenDock,
-  type ItemVisualState,
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
@@ -81,7 +80,6 @@ export class GT008Session extends TemplateGameSession<
 > {
   degradation: DegradationState | null = null;
   private renderParticles: Particle[] = [];
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
   private stagedItemId: string | null = null;
   private wrongItemId: string | null = null;
   private wrongTimestamp = 0;
@@ -437,14 +435,6 @@ export class GT008Session extends TemplateGameSession<
       return "selected";
     }
     return "idle";
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

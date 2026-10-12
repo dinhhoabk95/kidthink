@@ -20,7 +20,6 @@ import {
   drawDividerLine,
   drawSceneBackground,
   drawSceneObjectAt,
-  type ItemVisualState,
   sceneBox,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
@@ -70,7 +69,6 @@ export class GT025Session extends TemplateGameSession<
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private readonly foundDifferenceIds = new Set<string>();
   private readonly foundLeftIds = new Set<string>();
@@ -334,14 +332,6 @@ export class GT025Session extends TemplateGameSession<
       }),
       stage
     );
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

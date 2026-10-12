@@ -54,7 +54,6 @@ export class GT007Session extends TemplateGameSession<
   GT007Difficulty
 > {
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
   private stagedOptionId: string | null = null;
   private wrongOptionId: string | null = null;
   private wrongTimestamp = 0;
@@ -422,14 +421,6 @@ export class GT007Session extends TemplateGameSession<
       entities,
       activePrompt: this.content.prompt,
     };
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(

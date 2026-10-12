@@ -27,7 +27,6 @@ import {
   drawIsometricModel,
   drawSceneBackground,
   drawSlotItem,
-  type ItemVisualState,
   insetBox,
   type SceneBox,
   sceneBox,
@@ -60,7 +59,6 @@ export class BlockStackSession extends TemplateGameSession<
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
-  private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private currentRotation: RotationAngle = 0;
   private selectedOptionId: string | null = null;
@@ -291,14 +289,6 @@ export class BlockStackSession extends TemplateGameSession<
       ageBand,
       logic: this.logicSpace,
     });
-  }
-
-  setRenderItemState(itemId: string, state: ItemVisualState): void {
-    this.renderItemStates.set(itemId, state);
-  }
-
-  getRenderItemState(itemId: string): ItemVisualState {
-    return this.renderItemStates.get(itemId) ?? "idle";
   }
 
   render(
