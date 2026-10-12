@@ -128,12 +128,35 @@ const RUNNER_OWNED_EVENTS: ReadonlySet<string> = new Set([
   "round_completed",
 ]);
 
+/**
+ * `item_count` của một vòng. GT-000 (concept-intro) dùng `difficulty_fixed`,
+ * schema strict không có trường này — tính là 1.
+ */
+function resolveItemCount(config: RoundConfig): number | undefined {
+  const params = config.difficulty_params;
+  if (
+    typeof params === "object" &&
+    params !== null &&
+    "item_count" in params &&
+    typeof params.item_count === "number"
+  ) {
+    return params.item_count;
+  }
+  const isConceptIntro =
+    typeof config.content_pack === "object" &&
+    config.content_pack !== null &&
+    "concept" in config.content_pack;
+  return isConceptIntro ? 1 : undefined;
+}
+
 export class RoundRunner {
   private readonly rounds: RoundConfig[];
   private readonly sessionFactory: SessionFactory;
   private readonly ageBand: AgeBand;
   private readonly layoutSeed: number;
   private readonly audioController: AudioController;
+  /** Tăng mỗi lần mở vòng — callback câu dẫn của vòng cũ tự bỏ qua. */
+  private narrationToken = 0;
   private readonly onPlayNarration?: (
     roundConfig: RoundConfig,
     trigger: NarrationTrigger
@@ -179,6 +202,15 @@ export class RoundRunner {
     this.rounds = [...options.rounds].sort(
       (a, b) => a.round_index - b.round_index
     );
+    // Kiểm hết từ đầu: ném giữa `advanceToNextRound` để lại runner ở trạng
+    // thái không phục hồi được (`currentSession = null`, `isFinished = false`).
+    for (const [index, config] of this.rounds.entries()) {
+      if (resolveItemCount(config) === undefined) {
+        throw new Error(
+          `Round ${index} thiếu difficulty_params.item_count bắt buộc (BR-LDC-02).`
+        );
+      }
+    }
     this.sessionFactory = options.sessionFactory;
     this.audioController = options.audioController ?? new AudioController();
     this.onPlayNarration = options.onPlayNarration;
@@ -509,8 +541,15 @@ export class RoundRunner {
     if (trigger === "replay") {
       this.notePromptSettled();
     }
+    // `speak()` gọi `cancel()` trước, và `cancel()` bắn đồng bộ `onEnd` của
+    // câu dẫn vòng TRƯỚC — lúc đó vòng mới đã mở. Không có token thì callback
+    // cũ settle vòng mới: mở input và chạy hẹn giờ trợ giúp trước khi đọc đề.
+    if (trigger === "round_open") {
+      this.narrationToken++;
+    }
+    const token = this.narrationToken;
     const settleIfRoundOpen = () => {
-      if (trigger === "round_open") {
+      if (trigger === "round_open" && token === this.narrationToken) {
         this.notePromptSettled();
       }
     };
@@ -629,27 +668,8 @@ export class RoundRunner {
     const rawParams = config.difficulty_params as
       | Record<string, unknown>
       | undefined;
-    let itemCount =
-      typeof rawParams?.item_count === "number"
-        ? rawParams.item_count
-        : undefined;
-
-    // Ngoại lệ cho GT-000 (concept-intro) vì difficulty_fixed và schema strict không có item_count
-    if (itemCount === undefined) {
-      const isConceptIntro =
-        typeof config.content_pack === "object" &&
-        config.content_pack !== null &&
-        "concept" in config.content_pack;
-      if (isConceptIntro) {
-        itemCount = 1;
-      }
-    }
-
-    if (itemCount === undefined) {
-      throw new Error(
-        `Round ${index} thiếu difficulty_params.item_count bắt buộc (BR-LDC-02).`
-      );
-    }
+    // Constructor đã chặn round thiếu item_count.
+    const itemCount = resolveItemCount(config) ?? 1;
 
     this.recordEvent("round_started", {
       round_index: index,

@@ -132,6 +132,9 @@ export type EventCallback = (event: TelemetryEvent) => void;
 /** Khoá listener nhận MỌI event của engine — dùng để nối telemetry ra ngoài. */
 export const ENGINE_EVENT_WILDCARD = "*";
 
+/** Trần một bước khung hình (ms) — xem `renderFrame`. */
+const MAX_FRAME_DELTA_MS = 100;
+
 export class GameEngine {
   config?: EngineConfig;
   activeSession?: GameSession;
@@ -266,11 +269,8 @@ export class GameEngine {
 
     this.activeSession = sessionFactory(config);
     // prepareRound does setupEntities + computeSlots(ageBand) + computeRoundDerived
-    const sessionWithPrepare = this.activeSession as unknown as {
-      prepareRound?: (band: AgeBand) => void;
-    };
-    if (typeof sessionWithPrepare.prepareRound === "function") {
-      sessionWithPrepare.prepareRound(config.age_band);
+    if (this.activeSession instanceof TemplateGameSession) {
+      this.activeSession.prepareRound(config.age_band);
     } else {
       this.activeSession.setupEntities();
     }
@@ -283,6 +283,11 @@ export class GameEngine {
   start(canvas?: HTMLCanvasElement): void {
     if (!this.activeSession) {
       throw new Error("No active session loaded in engine");
+    }
+    // Gọi lần hai sẽ mở vòng rAF thứ hai: game chạy gấp đôi mà `cancelFrame`
+    // chỉ huỷ được một vòng.
+    if (this.isRunning) {
+      return;
     }
     if (canvas) {
       const vp = this.renderSystem.setupCanvas(canvas);
@@ -444,8 +449,25 @@ export class GameEngine {
       return;
     }
 
+    try {
+      this.renderFrame();
+    } finally {
+      // Một listener hay một lần vẽ ném lỗi không được làm chết vòng lặp.
+      if (
+        this.isRunning &&
+        !this.isPaused &&
+        typeof requestAnimationFrame !== "undefined"
+      ) {
+        this.rafId = requestAnimationFrame(this.loop);
+      }
+    }
+  };
+
+  private renderFrame(): void {
     const now = nowMs();
-    const deltaMs = now - this.lastFrameTimeMs;
+    // Tab quay lại từ nền hoặc GC dài cho một delta cả giây: trần lại để thang
+    // trợ giúp và hẹn giờ lật thẻ không nhảy cóc.
+    const deltaMs = Math.min(now - this.lastFrameTimeMs, MAX_FRAME_DELTA_MS);
     this.lastFrameTimeMs = now;
 
     this.advanceFrame(deltaMs);
@@ -471,11 +493,7 @@ export class GameEngine {
       }
       this.onAfterRender?.(this.ctx, this.renderSystem, now);
     }
-
-    if (typeof requestAnimationFrame !== "undefined") {
-      this.rafId = requestAnimationFrame(this.loop);
-    }
-  };
+  }
 
   pause(reason = "user_paused"): void {
     if (this.isPaused) {
@@ -556,6 +574,12 @@ export class GameEngine {
     this.isPaused = false;
     this.ctx = undefined;
     this.cancelFrame();
+    this.audio.dispose();
+    this.onSkipAvailable = undefined;
+    this.onSessionWon = undefined;
+    this.onViewChanged = undefined;
+    this.onUpdateVerdict = undefined;
+    this.onAfterRender = undefined;
     if (this.activeSession) {
       this.activeSession.destroy();
       this.activeSession = undefined;

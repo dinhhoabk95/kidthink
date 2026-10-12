@@ -160,6 +160,16 @@ export class SFXEngine {
     this.isMuted = !this.isMuted;
   }
 
+  /**
+   * Đóng `AudioContext`. iOS Safari giới hạn số context mở cùng lúc; mỗi
+   * session tạo engine riêng mà không đóng thì tới vòng thứ vài chục mất tiếng.
+   */
+  dispose(): void {
+    const ctx = this.ctx;
+    this.ctx = null;
+    ctx?.close().catch(() => undefined);
+  }
+
   get muted(): boolean {
     return this.isMuted;
   }

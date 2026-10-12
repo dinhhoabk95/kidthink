@@ -95,7 +95,13 @@ export class OrderingMechanic {
         : ACTION_IGNORED;
     }
 
-    if (action.type === "check_sequence" || action.type === "submit_order") {
+    // `sequence_submitted` là tên GT-018 dùng: thiếu ở đây thì verdict là
+    // IGNORED trong khi session vẫn nộp, hai bên lệch nhau.
+    if (
+      action.type === "check_sequence" ||
+      action.type === "submit_order" ||
+      action.type === "sequence_submitted"
+    ) {
       const isMatch =
         this.currentSequence.length === targetSequence.length &&
         this.currentSequence.every((id, idx) => id === targetSequence[idx]);

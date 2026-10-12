@@ -310,18 +310,21 @@ describe("RoundRunner (BR-RSP)", () => {
 
   describe("Hợp đồng độ khó & tham số hóa (Task #263 T7 / BR-LDC-02, BR-LDC-06)", () => {
     it("ném lỗi khi thiếu difficulty_params.item_count bắt buộc (BR-LDC-02)", () => {
-      const runner = new RoundRunner({
-        rounds: [
-          {
-            round_index: 0,
-            content_pack: { options: [{ id: "1" }] },
-            difficulty_params: {}, // thiếu item_count
-          },
-        ],
-        sessionFactory: mockFactory,
-      });
-
-      expect(() => runner.startFirstRound()).toThrow(ERR_MISSING_ITEM_COUNT);
+      // Chặn ngay lúc dựng runner: ném giữa lúc chuyển vòng để lại runner
+      // không phục hồi được (`currentSession = null`, `isFinished = false`).
+      expect(
+        () =>
+          new RoundRunner({
+            rounds: [
+              {
+                round_index: 0,
+                content_pack: { options: [{ id: "1" }] },
+                difficulty_params: {}, // thiếu item_count
+              },
+            ],
+            sessionFactory: mockFactory,
+          })
+      ).toThrow(ERR_MISSING_ITEM_COUNT);
     });
 
     it("hint_after_ms: phát event hint_requested và tăng hintCountTotal", () => {

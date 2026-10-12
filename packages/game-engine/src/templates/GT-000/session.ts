@@ -750,7 +750,7 @@ export class GT000Session extends TemplateGameSession<
   }
 
   override destroy(): void {
-    this.audio.stopAll();
+    this.audio.dispose();
     super.destroy();
   }
 

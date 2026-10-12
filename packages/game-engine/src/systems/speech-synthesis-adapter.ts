@@ -37,6 +37,27 @@ export class SpeechSynthesisAdapter {
     this.initVoices();
   }
 
+  private readonly checkVoices = (): void => {
+    try {
+      const voices = window.speechSynthesis.getVoices() || [];
+      const viVoice = voices.find((v) => {
+        const lang = (v.lang || "").toLowerCase().replace("_", "-");
+        return lang === "vi-vn" || lang.startsWith("vi");
+      });
+
+      if (viVoice) {
+        this.selectedVoice = viVoice;
+        this.isVoiceAvailable = true;
+      } else {
+        this.selectedVoice = null;
+        this.isVoiceAvailable = false;
+      }
+    } catch {
+      this.isVoiceAvailable = false;
+    }
+    this.isInitialized = true;
+  };
+
   /** Initialize voice list and detect vi-VN availability */
   initVoices(): void {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
@@ -45,28 +66,7 @@ export class SpeechSynthesisAdapter {
       return;
     }
 
-    const checkVoices = () => {
-      try {
-        const voices = window.speechSynthesis.getVoices() || [];
-        const viVoice = voices.find((v) => {
-          const lang = (v.lang || "").toLowerCase().replace("_", "-");
-          return lang === "vi-vn" || lang.startsWith("vi");
-        });
-
-        if (viVoice) {
-          this.selectedVoice = viVoice;
-          this.isVoiceAvailable = true;
-        } else {
-          this.selectedVoice = null;
-          this.isVoiceAvailable = false;
-        }
-      } catch {
-        this.isVoiceAvailable = false;
-      }
-      this.isInitialized = true;
-    };
-
-    checkVoices();
+    this.checkVoices();
 
     if (this.hasListeningVoicesChanged) {
       return;
@@ -76,10 +76,10 @@ export class SpeechSynthesisAdapter {
     // mới (GT-000 tạo một cái mỗi vòng) gán đè listener của adapter tạo
     // trước, nên `engine.audio` không bao giờ biết giọng đã về (Task #274 S8).
     if (typeof synth.addEventListener === "function") {
-      synth.addEventListener("voiceschanged", checkVoices);
+      synth.addEventListener("voiceschanged", this.checkVoices);
       this.hasListeningVoicesChanged = true;
     } else if (synth.onvoiceschanged !== undefined) {
-      synth.onvoiceschanged = checkVoices;
+      synth.onvoiceschanged = this.checkVoices;
       this.hasListeningVoicesChanged = true;
     }
   }
@@ -207,5 +207,26 @@ export class SpeechSynthesisAdapter {
         // Safe no-op
       }
     }
+  }
+
+  /** Dừng đọc và gỡ listener `voiceschanged` — gọi khi session/engine huỷ. */
+  dispose(): void {
+    this.cancel();
+    if (
+      !this.hasListeningVoicesChanged ||
+      typeof window === "undefined" ||
+      !("speechSynthesis" in window)
+    ) {
+      return;
+    }
+    const synth = window.speechSynthesis;
+    if (typeof synth.removeEventListener === "function") {
+      synth.removeEventListener("voiceschanged", this.checkVoices);
+    } else if (synth.onvoiceschanged === this.checkVoices) {
+      synth.onvoiceschanged = null;
+    }
+    this.hasListeningVoicesChanged = false;
+    // Dùng lại sau dispose thì lần hỏi giọng kế tiếp gắn lại listener.
+    this.isInitialized = false;
   }
 }

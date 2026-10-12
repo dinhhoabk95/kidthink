@@ -88,6 +88,11 @@ export class GT036Session extends TemplateGameSession<
     });
   }
 
+  override destroy(): void {
+    this.sfxEngine.dispose();
+    super.destroy();
+  }
+
   override getHintTargetIndex(): number | null {
     if (this.isWin || this.isWon || this.submitted) {
       return null;

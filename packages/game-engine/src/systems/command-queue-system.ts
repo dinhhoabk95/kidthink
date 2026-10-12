@@ -412,7 +412,10 @@ export function findShortestSolution(
     "loop",
   ]
 ): readonly CommandItem[] | null {
-  const maxCommands = config.maxCommands ?? MAX_CODE_COMMANDS;
+  const maxCommands = Math.min(
+    config.maxCommands ?? MAX_CODE_COMMANDS,
+    MAX_CODE_COMMANDS
+  );
   const queue: CommandItem[][] = [[]];
 
   const canLoop = allowedCommands.includes("loop");
@@ -420,12 +423,9 @@ export function findShortestSolution(
     (c) => c !== "loop"
   );
 
-  while (queue.length > 0) {
-    const current = queue.shift();
-    if (!current) {
-      break;
-    }
-
+  // `for…of` thay cho `shift()`: shift trên mảng hàng chục nghìn phần tử là
+  // O(n) mỗi lần. Iterator của mảng vẫn đọc tới phần tử push thêm trong vòng.
+  for (const current of queue) {
     if (current.length > 0) {
       const res = executeProgram(config, current);
       if (res.success) {
@@ -496,6 +496,12 @@ export class CommandQueueSystem {
       return null;
     }
     const [removed] = this.commands.splice(index, 1);
+    // Xoá lệnh đứng trước một `loop` để lại `loop` ở đầu hàng hoặc hai `loop`
+    // liền nhau — trạng thái `addCommand` không bao giờ cho tạo. Bỏ luôn chúng.
+    this.commands = this.commands.filter(
+      (cmd, i, all) =>
+        cmd.type !== "loop" || (i > 0 && all[i - 1]?.type !== "loop")
+    );
     return removed ?? null;
   }
 

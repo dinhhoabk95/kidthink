@@ -98,6 +98,14 @@ export class AudioController {
     return true;
   }
 
+  /** Dừng mọi âm thanh và giải phóng `AudioContext` + listener giọng đọc. */
+  dispose(): void {
+    this.stopAll();
+    this.sfxEngine.dispose();
+    this.speechAdapter.dispose();
+    this.bufferCache.clear();
+  }
+
   /** Cancel any ongoing speech or sounds */
   stopAll(): void {
     this.speechAdapter.cancel();
