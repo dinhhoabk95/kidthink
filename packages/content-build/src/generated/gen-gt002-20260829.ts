@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-002
  * Seed: 20260829
  * Theme: school
@@ -29,8 +29,8 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy chọn tất cả các hình theo yêu cầu nhé!",
-      "target_criterion": "Cùng nhóm chủ đề",
+      "prompt": "Bé hãy chọn tất cả các hình thuộc chủ đề Trường học nhé!",
+      "target_criterion": "Thuộc chủ đề Trường học",
       "items": [
         {
           "item_id": "item_1",
@@ -44,23 +44,23 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "🐔"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🖍️"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🧮"
+            "ref": "🐴"
           },
           "is_correct": false
         }
@@ -93,22 +93,22 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy chọn tất cả các hình theo yêu cầu nhé!",
-      "target_criterion": "Cùng nhóm chủ đề",
+      "prompt": "Bé hãy chọn tất cả các hình thuộc chủ đề Trường học nhé!",
+      "target_criterion": "Thuộc chủ đề Trường học",
       "items": [
         {
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "🐓"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "📏"
           },
           "is_correct": true
         },
@@ -116,7 +116,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "🐐"
           },
           "is_correct": false
         },
@@ -124,9 +124,9 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "✏️"
+            "ref": "🖍️"
           },
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },
@@ -157,19 +157,27 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy chọn tất cả các hình theo yêu cầu nhé!",
-      "target_criterion": "Cùng nhóm chủ đề",
+      "prompt": "Bé hãy chọn tất cả các hình thuộc chủ đề Trường học nhé!",
+      "target_criterion": "Thuộc chủ đề Trường học",
       "items": [
         {
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "🐷"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "item_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🚜"
+          },
+          "is_correct": false
+        },
+        {
+          "item_id": "item_3",
           "asset": {
             "kind": "emoji",
             "ref": "🎒"
@@ -177,20 +185,12 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "is_correct": true
         },
         {
-          "item_id": "item_3",
-          "asset": {
-            "kind": "emoji",
-            "ref": "✂️"
-          },
-          "is_correct": false
-        },
-        {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "✏️"
           },
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },
@@ -221,40 +221,40 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy chọn tất cả các hình theo yêu cầu nhé!",
-      "target_criterion": "Cùng nhóm chủ đề",
+      "prompt": "Bé hãy chọn tất cả các hình thuộc chủ đề Trường học nhé!",
+      "target_criterion": "Thuộc chủ đề Trường học",
       "items": [
         {
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🐷"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "📏"
+            "ref": "🐮"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
+            "ref": "🔔"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "✏️"
+            "ref": "🎒"
           },
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },
@@ -285,14 +285,14 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy chọn tất cả các hình theo yêu cầu nhé!",
-      "target_criterion": "Cùng nhóm chủ đề",
+      "prompt": "Bé hãy chọn tất cả các hình thuộc chủ đề Trường học nhé!",
+      "target_criterion": "Thuộc chủ đề Trường học",
       "items": [
         {
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
+            "ref": "📖"
           },
           "is_correct": true
         },
@@ -300,7 +300,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "🖍️"
           },
           "is_correct": true
         },
@@ -308,7 +308,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "🐷"
           },
           "is_correct": false
         },
@@ -316,7 +316,7 @@ export const GEN_GT002_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
+            "ref": "🐐"
           },
           "is_correct": false
         }

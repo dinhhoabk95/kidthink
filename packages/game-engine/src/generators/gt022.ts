@@ -1,4 +1,5 @@
 import { AGE_BANDS } from "#src/contracts/types";
+import { shuffle } from "#src/rng/shuffle";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
@@ -18,10 +19,14 @@ export const GT022Generator: LevelGenerator = {
       label_vi: "Táo",
     };
 
-    const scene_objects = sampled.map((item, idx) => ({
+    const placed = shuffle(
+      sampled.map((item, idx) => ({ item, isTarget: idx === 0 })),
+      rng
+    );
+    const scene_objects = placed.map(({ item, isTarget }, idx) => ({
       id: `obj_${idx + 1}`,
-      asset: { kind: "emoji" as const, ref: item?.emoji_ref || "🍎" },
-      is_target: idx === 0,
+      asset: { kind: "emoji" as const, ref: item.emoji_ref },
+      is_target: isTarget,
       is_hidden: false,
       x: 100 + (idx % 3) * 200,
       y: 100 + Math.floor(idx / 3) * 150,

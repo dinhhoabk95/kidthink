@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@a389f215f41f
  * Engine: GT-017
  * Seed: 12345
  * Theme: school
@@ -29,7 +29,7 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 4 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
@@ -59,26 +59,26 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🔔"
+            "ref": "2️⃣"
           },
           "is_correct": false
         },
         {
-          "option_id": "opt_2",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
+            "ref": "4️⃣"
           },
           "is_correct": true
         },
         {
-          "option_id": "opt_3",
+          "option_id": "opt_7",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "7️⃣"
           },
           "is_correct": false
         }
@@ -112,50 +112,56 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 3 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "sky"
+          "colorToken": "peach"
         },
         {
-          "x": 0,
-          "y": 1,
+          "x": 1,
+          "y": 0,
           "z": 0,
-          "colorToken": "sky"
+          "colorToken": "peach"
         },
         {
           "x": 0,
           "y": 0,
           "z": 1,
-          "colorToken": "sky"
+          "colorToken": "peach"
+        },
+        {
+          "x": 1,
+          "y": 1,
+          "z": 0,
+          "colorToken": "peach"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
-          },
-          "is_correct": true
-        },
-        {
-          "option_id": "opt_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "✂️"
+            "ref": "3️⃣"
           },
           "is_correct": false
         },
         {
-          "option_id": "opt_3",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "✏️"
+            "ref": "4️⃣"
+          },
+          "is_correct": true
+        },
+        {
+          "option_id": "opt_7",
+          "asset": {
+            "kind": "emoji",
+            "ref": "7️⃣"
           },
           "is_correct": false
         }
@@ -189,7 +195,7 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 4 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
@@ -198,8 +204,8 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "colorToken": "violet"
         },
         {
-          "x": 0,
-          "y": 1,
+          "x": 1,
+          "y": 0,
           "z": 0,
           "colorToken": "violet"
         },
@@ -219,26 +225,26 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🧮"
-          },
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🎒"
+            "ref": "4️⃣"
           },
           "is_correct": true
         },
         {
-          "option_id": "opt_3",
+          "option_id": "opt_5",
           "asset": {
             "kind": "emoji",
-            "ref": "🔔"
+            "ref": "5️⃣"
+          },
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_7",
+          "asset": {
+            "kind": "emoji",
+            "ref": "7️⃣"
           },
           "is_correct": false
         }
@@ -272,52 +278,58 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 3 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "violet"
+          "colorToken": "berry"
         },
         {
           "x": 0,
-          "y": 1,
-          "z": 0,
-          "colorToken": "violet"
+          "y": 0,
+          "z": 1,
+          "colorToken": "berry"
         },
         {
           "x": 1,
           "y": 0,
           "z": 0,
-          "colorToken": "violet"
+          "colorToken": "berry"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 1,
+          "colorToken": "berry"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_7",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "7️⃣"
           },
           "is_correct": false
         },
         {
-          "option_id": "opt_2",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "📏"
+            "ref": "4️⃣"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "3️⃣"
           },
-          "is_correct": true
+          "is_correct": false
         }
       ]
     },
@@ -349,40 +361,34 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 4 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "violet"
+          "colorToken": "sky"
         },
         {
           "x": 0,
           "y": 1,
           "z": 0,
-          "colorToken": "violet"
+          "colorToken": "sky"
         },
         {
-          "x": 0,
+          "x": 1,
           "y": 1,
-          "z": 1,
-          "colorToken": "violet"
-        },
-        {
-          "x": 0,
-          "y": 1,
-          "z": 2,
-          "colorToken": "violet"
+          "z": 0,
+          "colorToken": "sky"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🔔"
+            "ref": "3️⃣"
           },
           "is_correct": true
         },
@@ -390,15 +396,15 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
+            "ref": "2️⃣"
           },
           "is_correct": false
         },
         {
-          "option_id": "opt_3",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "✏️"
+            "ref": "4️⃣"
           },
           "is_correct": false
         }
@@ -432,7 +438,7 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 3 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
@@ -447,8 +453,14 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "colorToken": "sky"
         },
         {
-          "x": 1,
-          "y": 0,
+          "x": 0,
+          "y": 1,
+          "z": 1,
+          "colorToken": "sky"
+        },
+        {
+          "x": 0,
+          "y": 2,
           "z": 0,
           "colorToken": "sky"
         }
@@ -456,18 +468,10 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "📏"
-          },
-          "is_correct": false
-        },
-        {
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🧮"
+            "ref": "2️⃣"
           },
           "is_correct": false
         },
@@ -475,7 +479,15 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
+            "ref": "3️⃣"
+          },
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "4️⃣"
           },
           "is_correct": true
         }
@@ -509,56 +521,50 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 4 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "peach"
+          "colorToken": "violet"
         },
         {
-          "x": 1,
-          "y": 0,
-          "z": 0,
-          "colorToken": "peach"
-        },
-        {
-          "x": 2,
-          "y": 0,
-          "z": 0,
-          "colorToken": "peach"
-        },
-        {
-          "x": 1,
+          "x": 0,
           "y": 1,
           "z": 0,
-          "colorToken": "peach"
+          "colorToken": "violet"
+        },
+        {
+          "x": 0,
+          "y": 2,
+          "z": 0,
+          "colorToken": "violet"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
-          },
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🎒"
+            "ref": "3️⃣"
           },
           "is_correct": true
         },
         {
-          "option_id": "opt_3",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "📏"
+            "ref": "4️⃣"
+          },
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "1️⃣"
           },
           "is_correct": false
         }
@@ -592,52 +598,52 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 3 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "mint"
-        },
-        {
-          "x": 1,
-          "y": 0,
-          "z": 0,
-          "colorToken": "mint"
+          "colorToken": "violet"
         },
         {
           "x": 0,
-          "y": 0,
-          "z": 1,
-          "colorToken": "mint"
+          "y": 1,
+          "z": 0,
+          "colorToken": "violet"
+        },
+        {
+          "x": 0,
+          "y": 2,
+          "z": 0,
+          "colorToken": "violet"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_6",
           "asset": {
             "kind": "emoji",
-            "ref": "🧮"
+            "ref": "6️⃣"
           },
           "is_correct": false
         },
         {
-          "option_id": "opt_2",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
+            "ref": "4️⃣"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "3️⃣"
           },
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },
@@ -669,56 +675,50 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 4 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "amber"
+          "colorToken": "sky"
         },
         {
-          "x": 0,
+          "x": 1,
           "y": 0,
-          "z": 1,
-          "colorToken": "amber"
+          "z": 0,
+          "colorToken": "sky"
         },
         {
-          "x": 0,
+          "x": 2,
           "y": 0,
-          "z": 2,
-          "colorToken": "amber"
-        },
-        {
-          "x": 0,
-          "y": 0,
-          "z": 3,
-          "colorToken": "amber"
+          "z": 0,
+          "colorToken": "sky"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
+            "ref": "3️⃣"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🔔"
+            "ref": "2️⃣"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
-          "option_id": "opt_3",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "📏"
+            "ref": "4️⃣"
           },
           "is_correct": false
         }
@@ -752,48 +752,42 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 4 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "berry"
+          "colorToken": "amber"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 0,
+          "colorToken": "amber"
         },
         {
           "x": 1,
           "y": 0,
           "z": 0,
-          "colorToken": "berry"
-        },
-        {
-          "x": 2,
-          "y": 0,
-          "z": 0,
-          "colorToken": "berry"
-        },
-        {
-          "x": 0,
-          "y": 0,
-          "z": 1,
-          "colorToken": "berry"
+          "colorToken": "amber"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_6",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
+            "ref": "6️⃣"
           },
           "is_correct": false
         },
         {
-          "option_id": "opt_2",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
+            "ref": "4️⃣"
           },
           "is_correct": false
         },
@@ -801,7 +795,7 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "3️⃣"
           },
           "is_correct": true
         }
@@ -835,48 +829,34 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 4 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "peach"
-        },
-        {
-          "x": 1,
-          "y": 0,
-          "z": 0,
-          "colorToken": "peach"
+          "colorToken": "violet"
         },
         {
           "x": 0,
           "y": 1,
           "z": 0,
-          "colorToken": "peach"
+          "colorToken": "violet"
         },
         {
-          "x": 2,
+          "x": 0,
           "y": 0,
-          "z": 0,
-          "colorToken": "peach"
+          "z": 1,
+          "colorToken": "violet"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_6",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
-          },
-          "is_correct": true
-        },
-        {
-          "option_id": "opt_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "📖"
+            "ref": "6️⃣"
           },
           "is_correct": false
         },
@@ -884,7 +864,15 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🔔"
+            "ref": "3️⃣"
+          },
+          "is_correct": true
+        },
+        {
+          "option_id": "opt_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "2️⃣"
           },
           "is_correct": false
         }
@@ -918,58 +906,58 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 4 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "amber"
-        },
-        {
-          "x": 0,
-          "y": 1,
-          "z": 0,
-          "colorToken": "amber"
-        },
-        {
-          "x": 0,
-          "y": 1,
-          "z": 1,
-          "colorToken": "amber"
+          "colorToken": "berry"
         },
         {
           "x": 1,
           "y": 0,
           "z": 0,
-          "colorToken": "amber"
+          "colorToken": "berry"
+        },
+        {
+          "x": 2,
+          "y": 0,
+          "z": 0,
+          "colorToken": "berry"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 1,
+          "colorToken": "berry"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "✏️"
-          },
-          "is_correct": false
-        },
-        {
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "2️⃣"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
+            "ref": "3️⃣"
           },
           "is_correct": false
+        },
+        {
+          "option_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "4️⃣"
+          },
+          "is_correct": true
         }
       ]
     },
@@ -1001,52 +989,52 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 3 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "mint"
+          "colorToken": "peach"
         },
         {
           "x": 0,
           "y": 0,
           "z": 1,
-          "colorToken": "mint"
+          "colorToken": "peach"
         },
         {
           "x": 0,
           "y": 0,
           "z": 2,
-          "colorToken": "mint"
+          "colorToken": "peach"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_6",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "6️⃣"
           },
           "is_correct": false
         },
         {
-          "option_id": "opt_2",
+          "option_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🔔"
+            "ref": "1️⃣"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "📏"
+            "ref": "3️⃣"
           },
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },
@@ -1078,42 +1066,42 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 3 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "violet"
+          "colorToken": "berry"
         },
         {
           "x": 1,
           "y": 0,
           "z": 0,
-          "colorToken": "violet"
+          "colorToken": "berry"
         },
         {
-          "x": 0,
-          "y": 1,
-          "z": 0,
-          "colorToken": "violet"
+          "x": 1,
+          "y": 0,
+          "z": 1,
+          "colorToken": "berry"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "4️⃣"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
+            "ref": "2️⃣"
           },
           "is_correct": false
         },
@@ -1121,9 +1109,9 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "3️⃣"
           },
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },
@@ -1155,48 +1143,40 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 4 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "violet"
+          "colorToken": "amber"
         },
         {
           "x": 0,
           "y": 1,
           "z": 0,
-          "colorToken": "violet"
+          "colorToken": "amber"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 1,
+          "colorToken": "amber"
         },
         {
           "x": 1,
           "y": 0,
           "z": 0,
-          "colorToken": "violet"
-        },
-        {
-          "x": 1,
-          "y": 0,
-          "z": 1,
-          "colorToken": "violet"
+          "colorToken": "amber"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_6",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
-          },
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🧮"
+            "ref": "6️⃣"
           },
           "is_correct": false
         },
@@ -1204,7 +1184,15 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🔔"
+            "ref": "3️⃣"
+          },
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_4",
+          "asset": {
+            "kind": "emoji",
+            "ref": "4️⃣"
           },
           "is_correct": true
         }
@@ -1238,50 +1226,56 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 3 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "peach"
+          "colorToken": "sky"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 0,
+          "colorToken": "sky"
         },
         {
           "x": 0,
-          "y": 0,
+          "y": 1,
+          "z": 0,
+          "colorToken": "sky"
+        },
+        {
+          "x": 0,
+          "y": 1,
           "z": 1,
-          "colorToken": "peach"
-        },
-        {
-          "x": 0,
-          "y": 0,
-          "z": 2,
-          "colorToken": "peach"
+          "colorToken": "sky"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
-          },
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "📚"
+            "ref": "4️⃣"
           },
           "is_correct": true
         },
         {
-          "option_id": "opt_3",
+          "option_id": "opt_7",
           "asset": {
             "kind": "emoji",
-            "ref": "✏️"
+            "ref": "7️⃣"
+          },
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "5️⃣"
           },
           "is_correct": false
         }
@@ -1315,56 +1309,56 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 4 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "peach"
+          "colorToken": "mint"
         },
         {
-          "x": 0,
+          "x": 1,
+          "y": 0,
+          "z": 0,
+          "colorToken": "mint"
+        },
+        {
+          "x": 1,
           "y": 0,
           "z": 1,
-          "colorToken": "peach"
+          "colorToken": "mint"
         },
         {
-          "x": 0,
+          "x": 2,
           "y": 0,
-          "z": 2,
-          "colorToken": "peach"
-        },
-        {
-          "x": 0,
-          "y": 0,
-          "z": 3,
-          "colorToken": "peach"
+          "z": 0,
+          "colorToken": "mint"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
-          },
-          "is_correct": true
-        },
-        {
-          "option_id": "opt_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🧮"
+            "ref": "3️⃣"
           },
           "is_correct": false
         },
         {
-          "option_id": "opt_3",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "4️⃣"
+          },
+          "is_correct": true
+        },
+        {
+          "option_id": "opt_7",
+          "asset": {
+            "kind": "emoji",
+            "ref": "7️⃣"
           },
           "is_correct": false
         }
@@ -1398,56 +1392,56 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 4 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "berry"
-        },
-        {
-          "x": 0,
-          "y": 0,
-          "z": 1,
-          "colorToken": "berry"
+          "colorToken": "peach"
         },
         {
           "x": 1,
           "y": 0,
           "z": 0,
-          "colorToken": "berry"
+          "colorToken": "peach"
         },
         {
           "x": 0,
           "y": 0,
-          "z": 2,
-          "colorToken": "berry"
+          "z": 1,
+          "colorToken": "peach"
+        },
+        {
+          "x": 2,
+          "y": 0,
+          "z": 0,
+          "colorToken": "peach"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_6",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "6️⃣"
           },
           "is_correct": false
         },
         {
-          "option_id": "opt_2",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
+            "ref": "4️⃣"
           },
           "is_correct": true
         },
         {
-          "option_id": "opt_3",
+          "option_id": "opt_7",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
+            "ref": "7️⃣"
           },
           "is_correct": false
         }
@@ -1481,7 +1475,7 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 4 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
@@ -1497,24 +1491,18 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
         },
         {
           "x": 0,
-          "y": 1,
-          "z": 0,
-          "colorToken": "amber"
-        },
-        {
-          "x": 0,
-          "y": 1,
-          "z": 1,
+          "y": 0,
+          "z": 2,
           "colorToken": "amber"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🔔"
+            "ref": "3️⃣"
           },
           "is_correct": true
         },
@@ -1522,15 +1510,15 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🧮"
+            "ref": "2️⃣"
           },
           "is_correct": false
         },
         {
-          "option_id": "opt_3",
+          "option_id": "opt_5",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
+            "ref": "5️⃣"
           },
           "is_correct": false
         }
@@ -1564,34 +1552,40 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 3 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "sky"
+          "colorToken": "violet"
         },
         {
           "x": 0,
           "y": 0,
           "z": 1,
-          "colorToken": "sky"
+          "colorToken": "violet"
         },
         {
           "x": 0,
           "y": 1,
           "z": 0,
-          "colorToken": "sky"
+          "colorToken": "violet"
+        },
+        {
+          "x": 0,
+          "y": 2,
+          "z": 0,
+          "colorToken": "violet"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "4️⃣"
           },
           "is_correct": true
         },
@@ -1599,7 +1593,7 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "📏"
+            "ref": "2️⃣"
           },
           "is_correct": false
         },
@@ -1607,7 +1601,7 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🧮"
+            "ref": "3️⃣"
           },
           "is_correct": false
         }
@@ -1641,34 +1635,34 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 3 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "violet"
+          "colorToken": "peach"
+        },
+        {
+          "x": 1,
+          "y": 0,
+          "z": 0,
+          "colorToken": "peach"
         },
         {
           "x": 0,
           "y": 0,
           "z": 1,
-          "colorToken": "violet"
-        },
-        {
-          "x": 0,
-          "y": 0,
-          "z": 2,
-          "colorToken": "violet"
+          "colorToken": "peach"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_6",
           "asset": {
             "kind": "emoji",
-            "ref": "🧮"
+            "ref": "6️⃣"
           },
           "is_correct": false
         },
@@ -1676,17 +1670,17 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "📏"
+            "ref": "2️⃣"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "3️⃣"
           },
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },
@@ -1718,56 +1712,56 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 4 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "peach"
-        },
-        {
-          "x": 1,
-          "y": 0,
-          "z": 0,
-          "colorToken": "peach"
+          "colorToken": "sky"
         },
         {
           "x": 0,
           "y": 0,
           "z": 1,
-          "colorToken": "peach"
+          "colorToken": "sky"
         },
         {
-          "x": 2,
-          "y": 0,
+          "x": 0,
+          "y": 1,
           "z": 0,
-          "colorToken": "peach"
+          "colorToken": "sky"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 1,
+          "colorToken": "sky"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_7",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
+            "ref": "7️⃣"
           },
           "is_correct": false
         },
         {
-          "option_id": "opt_2",
+          "option_id": "opt_6",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
+            "ref": "6️⃣"
           },
           "is_correct": false
         },
         {
-          "option_id": "opt_3",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🧮"
+            "ref": "4️⃣"
           },
           "is_correct": true
         }
@@ -1801,7 +1795,7 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 3 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
@@ -1810,41 +1804,41 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "colorToken": "amber"
         },
         {
-          "x": 1,
-          "y": 0,
+          "x": 0,
+          "y": 1,
           "z": 0,
           "colorToken": "amber"
         },
         {
-          "x": 1,
-          "y": 1,
-          "z": 0,
+          "x": 0,
+          "y": 0,
+          "z": 1,
           "colorToken": "amber"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
+            "ref": "3️⃣"
           },
-          "is_correct": false
+          "is_correct": true
         },
         {
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "📏"
+            "ref": "2️⃣"
           },
-          "is_correct": true
+          "is_correct": false
         },
         {
-          "option_id": "opt_3",
+          "option_id": "opt_6",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "6️⃣"
           },
           "is_correct": false
         }
@@ -1878,34 +1872,40 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có 3 khối)",
+      "prompt": "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
       "model": [
         {
           "x": 0,
           "y": 0,
           "z": 0,
-          "colorToken": "amber"
+          "colorToken": "peach"
         },
         {
-          "x": 1,
-          "y": 0,
-          "z": 0,
-          "colorToken": "amber"
-        },
-        {
-          "x": 1,
+          "x": 0,
           "y": 0,
           "z": 1,
-          "colorToken": "amber"
+          "colorToken": "peach"
+        },
+        {
+          "x": 0,
+          "y": 0,
+          "z": 2,
+          "colorToken": "peach"
+        },
+        {
+          "x": 0,
+          "y": 1,
+          "z": 0,
+          "colorToken": "peach"
         }
       ],
       "question": "count_cubes",
       "options": [
         {
-          "option_id": "opt_1",
+          "option_id": "opt_4",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "4️⃣"
           },
           "is_correct": true
         },
@@ -1913,15 +1913,15 @@ export const GEN_GT017_12345: ContentSeed<unknown, unknown>[] = [
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🔔"
+            "ref": "2️⃣"
           },
           "is_correct": false
         },
         {
-          "option_id": "opt_3",
+          "option_id": "opt_6",
           "asset": {
             "kind": "emoji",
-            "ref": "📏"
+            "ref": "6️⃣"
           },
           "is_correct": false
         }

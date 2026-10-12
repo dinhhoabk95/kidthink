@@ -1,59 +1,10 @@
-import type { Rng } from "#src/rng/types";
 import {
+  generateNumericOptions,
   getNouns,
   pickOne,
-  sampleUnique,
   VALID_GENERATOR_THEMES,
 } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
-
-function generateOptions(
-  correctValue: number,
-  optionCount: number,
-  rng: Rng,
-  maxValue: number
-): { option_id: string; value: number; is_correct: boolean }[] {
-  const distractors = new Set<number>();
-  const candidates: number[] = [];
-
-  for (
-    let v = Math.max(1, correctValue - 3);
-    v <= Math.min(maxValue, correctValue + 3);
-    v++
-  ) {
-    if (v !== correctValue) {
-      candidates.push(v);
-    }
-  }
-
-  let fallback = 1;
-  while (candidates.length < optionCount - 1) {
-    if (fallback !== correctValue && !candidates.includes(fallback)) {
-      candidates.push(fallback);
-    }
-    fallback++;
-  }
-
-  const chosenDistractors = sampleUnique(rng, candidates, optionCount - 1);
-  for (const d of chosenDistractors) {
-    distractors.add(d);
-  }
-
-  const list = [
-    {
-      option_id: `opt_${correctValue}`,
-      value: correctValue,
-      is_correct: true,
-    },
-    ...Array.from(distractors).map((val) => ({
-      option_id: `opt_${val}`,
-      value: val,
-      is_correct: false,
-    })),
-  ];
-
-  return sampleUnique(rng, list, list.length);
-}
 
 export const GT029Generator: LevelGenerator = {
   engine: "GT-029",
@@ -90,7 +41,7 @@ export const GT029Generator: LevelGenerator = {
       },
     }));
 
-    const answer_options = generateOptions(
+    const answer_options = generateNumericOptions(
       correctRemaining,
       optionCount,
       rng,

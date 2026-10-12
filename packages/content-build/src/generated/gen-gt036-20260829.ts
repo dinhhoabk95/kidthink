@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-036
  * Seed: 20260829
  * Theme: school
@@ -32,26 +32,26 @@ export const GEN_GT036_20260829: ContentSeed<unknown, unknown>[] = [
       "prompt": "Bé tự tạo quy luật lặp lại bằng các hình đồ dùng học tập nhé!",
       "palette": [
         {
-          "id": "book",
+          "id": "backpack",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "🎒"
           }
         },
         {
-          "id": "bell",
+          "id": "scissors",
           "asset": {
             "kind": "emoji",
-            "ref": "🔔"
+            "ref": "✂️"
           }
         }
       ],
-      "track_length": 10,
+      "track_length": 9,
       "min_repetitions": 3
     },
     "difficulty_params": {
       "palette_size": 2,
-      "track_length": 10,
+      "track_length": 9,
       "min_repetitions": 3,
       "strictness": "relaxed",
       "allow_retry": true,
@@ -81,13 +81,6 @@ export const GEN_GT036_20260829: ContentSeed<unknown, unknown>[] = [
       "prompt": "Bé tự tạo quy luật lặp lại bằng các hình đồ dùng học tập nhé!",
       "palette": [
         {
-          "id": "book",
-          "asset": {
-            "kind": "emoji",
-            "ref": "📖"
-          }
-        },
-        {
           "id": "bell",
           "asset": {
             "kind": "emoji",
@@ -95,19 +88,26 @@ export const GEN_GT036_20260829: ContentSeed<unknown, unknown>[] = [
           }
         },
         {
-          "id": "backpack",
+          "id": "scissors",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
+            "ref": "✂️"
+          }
+        },
+        {
+          "id": "book",
+          "asset": {
+            "kind": "emoji",
+            "ref": "📖"
           }
         }
       ],
-      "track_length": 10,
+      "track_length": 8,
       "min_repetitions": 3
     },
     "difficulty_params": {
       "palette_size": 3,
-      "track_length": 10,
+      "track_length": 8,
       "min_repetitions": 3,
       "strictness": "relaxed",
       "allow_retry": true,
@@ -149,23 +149,16 @@ export const GEN_GT036_20260829: ContentSeed<unknown, unknown>[] = [
             "kind": "emoji",
             "ref": "🔔"
           }
-        },
-        {
-          "id": "backpack",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🎒"
-          }
         }
       ],
-      "track_length": 10,
+      "track_length": 8,
       "min_repetitions": 2
     },
     "difficulty_params": {
-      "palette_size": 3,
-      "track_length": 10,
+      "palette_size": 2,
+      "track_length": 8,
       "min_repetitions": 2,
-      "strictness": "strict",
+      "strictness": "relaxed",
       "allow_retry": true,
       "hint_after_ms": 10000
     }
@@ -205,22 +198,15 @@ export const GEN_GT036_20260829: ContentSeed<unknown, unknown>[] = [
             "kind": "emoji",
             "ref": "🔔"
           }
-        },
-        {
-          "id": "backpack",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🎒"
-          }
         }
       ],
       "track_length": 6,
-      "min_repetitions": 2
+      "min_repetitions": 3
     },
     "difficulty_params": {
-      "palette_size": 3,
+      "palette_size": 2,
       "track_length": 6,
-      "min_repetitions": 2,
+      "min_repetitions": 3,
       "strictness": "strict",
       "allow_retry": true,
       "hint_after_ms": 10000
@@ -249,28 +235,28 @@ export const GEN_GT036_20260829: ContentSeed<unknown, unknown>[] = [
       "prompt": "Bé tự tạo quy luật lặp lại bằng các hình đồ dùng học tập nhé!",
       "palette": [
         {
-          "id": "book",
-          "asset": {
-            "kind": "emoji",
-            "ref": "📖"
-          }
-        },
-        {
           "id": "bell",
           "asset": {
             "kind": "emoji",
             "ref": "🔔"
           }
+        },
+        {
+          "id": "backpack",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🎒"
+          }
         }
       ],
-      "track_length": 9,
-      "min_repetitions": 2
+      "track_length": 10,
+      "min_repetitions": 3
     },
     "difficulty_params": {
       "palette_size": 2,
-      "track_length": 9,
-      "min_repetitions": 2,
-      "strictness": "strict",
+      "track_length": 10,
+      "min_repetitions": 3,
+      "strictness": "relaxed",
       "allow_retry": true,
       "hint_after_ms": 10000
     }

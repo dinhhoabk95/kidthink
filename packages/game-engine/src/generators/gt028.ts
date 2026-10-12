@@ -12,9 +12,9 @@ export const GT028Generator: LevelGenerator = {
     const nouns = getNouns(vocabulary, 6);
     const chosenNoun = pickOne(rng, nouns);
 
-    const stepOptions =
-      age_band === "4-5" ? ([2, 5] as const) : ([2, 5, 10] as const);
-    const step = pickOne(rng, stepOptions as unknown as (2 | 5 | 10)[]);
+    const stepOptions: (2 | 5 | 10)[] =
+      age_band === "4-5" ? [2, 5] : [2, 5, 10];
+    const step = pickOne(rng, stepOptions);
 
     const targetSteps =
       age_band === "4-5" ? 2 + rng.nextInt(3) : 3 + rng.nextInt(4); // 2-4 for 4-5; 3-6 for 5-6

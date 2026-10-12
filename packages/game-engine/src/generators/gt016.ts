@@ -1,3 +1,4 @@
+import { shuffle } from "#src/rng/shuffle";
 import { timeToAngles } from "../systems/rotation-system.js";
 import { VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
@@ -60,7 +61,7 @@ export const GT016Generator: LevelGenerator = {
         prompt: "Bé hãy xem đồng hồ chỉ mấy giờ nhé!",
         mode: "read",
         target_time: targetTime,
-        options,
+        options: shuffle(options, rng),
       },
       difficulty_params: {
         item_count: 3,

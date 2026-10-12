@@ -1,3 +1,4 @@
+import { shuffle } from "#src/rng/shuffle";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
@@ -60,7 +61,7 @@ export const GT010Generator: LevelGenerator = {
         symbols: [symA, symB],
         equations,
         question: { kind: "value" as const, symbol_id: "sym_2" },
-        options,
+        options: shuffle(options, rng),
       },
       difficulty_params: {
         item_count: options.length,

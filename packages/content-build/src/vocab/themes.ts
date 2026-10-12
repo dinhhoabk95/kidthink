@@ -1,4 +1,8 @@
-import type { ThemeVocabulary } from "@mindkid/game-engine/generators";
+import {
+  type LabelledVocabulary,
+  pickContrast,
+  type ThemeVocabulary,
+} from "@mindkid/game-engine/generators";
 import { CONTENT_THEMES } from "@mindkid/shared";
 
 /**
@@ -9,6 +13,20 @@ import { CONTENT_THEMES } from "@mindkid/shared";
  * ra cả lô level mang `theme_tag` không thuộc từ vựng và emoji không resolve
  * được, mà không có tín hiệu nào lúc sinh.
  */
+function toVocabulary(
+  theme: (typeof CONTENT_THEMES)[number]
+): LabelledVocabulary {
+  return {
+    theme: theme.code,
+    label_vi: theme.label_vi,
+    icon_emoji_ref: theme.icon_emoji_ref,
+    nouns: theme.nouns.map((n) => ({
+      emoji_ref: n.emoji_ref,
+      label_vi: n.text_vi,
+    })),
+  };
+}
+
 export function getThemeVocabulary(themeCode: string): ThemeVocabulary {
   const theme = CONTENT_THEMES.find((t) => t.code === themeCode);
   if (!theme) {
@@ -17,12 +35,12 @@ export function getThemeVocabulary(themeCode: string): ThemeVocabulary {
     );
   }
 
+  const vocabulary = toVocabulary(theme);
+  // Vật nhiễu cho engine phân loại đến từ chủ đề khác nhóm emoji
+  // (`level-generator-kit.md` §7.2).
   return {
-    theme: theme.code,
-    nouns: theme.nouns.map((n) => ({
-      emoji_ref: n.emoji_ref,
-      label_vi: n.text_vi,
-    })),
+    ...vocabulary,
+    contrast: pickContrast(vocabulary, CONTENT_THEMES.map(toVocabulary)),
   };
 }
 

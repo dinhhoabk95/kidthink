@@ -17,18 +17,7 @@ export const GT021Generator: LevelGenerator = {
     const sampled = sampleUnique(rng, nouns, patternLength + 2);
     const patternNouns = sampled.slice(0, patternLength);
 
-    // Kiểm tra chiều nghịch: Nửa cho sẵn KHÔNG tự đối xứng (không đơn điệu hoặc palindrome)
-    const isSelfSymmetric =
-      patternNouns.length > 1 &&
-      patternNouns.every(
-        (n, idx) => n.emoji_ref === patternNouns.at(-1 - idx)?.emoji_ref
-      );
-
-    if (isSelfSymmetric) {
-      throw new Error(
-        "GT-021 geometry check failed: reference pattern must not be self-symmetric"
-      );
-    }
+    // `sampleUnique` trả vật đôi một khác nhau nên nửa cho sẵn không thể tự đối xứng.
 
     const referencePattern = patternNouns.map((n, idx) => ({
       slot_id: `ref_slot_${idx + 1}`,

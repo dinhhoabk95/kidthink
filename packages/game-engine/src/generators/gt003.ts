@@ -1,6 +1,11 @@
 import { AGE_BANDS } from "#src/contracts/types";
 import { shuffle } from "#src/rng/shuffle";
-import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
+import {
+  getContrast,
+  getNouns,
+  sampleUnique,
+  VALID_GENERATOR_THEMES,
+} from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
 const TARGET_ATTRIBUTE = "target_attr";
@@ -15,27 +20,30 @@ export const GT003Generator: LevelGenerator = {
   },
   generate({ rng, age_band, vocabulary }) {
     const nouns = getNouns(vocabulary, 6);
+    const contrast = getContrast(vocabulary, 2);
     const totalCount = age_band === "3-4" ? 3 : 4;
     const targetCount = 2;
-    const sampled = sampleUnique(rng, nouns, totalCount);
+    const targets = sampleUnique(rng, nouns, targetCount);
+    const foils = sampleUnique(rng, contrast.nouns, totalCount - targetCount);
+    const themeLabel = vocabulary.label_vi ?? vocabulary.theme;
 
-    const items = sampled.map((item, idx) => {
-      const isTarget = idx < targetCount;
-      return {
-        item_id: `item_${idx + 1}`,
-        attribute: isTarget ? TARGET_ATTRIBUTE : OTHER_ATTRIBUTE,
-        label: item.label_vi,
-        asset: { kind: "emoji" as const, ref: item.emoji_ref },
-        is_correct: isTarget,
-      };
-    });
+    const items = [
+      ...targets.map((item) => ({ item, isTarget: true })),
+      ...foils.map((item) => ({ item, isTarget: false })),
+    ].map(({ item, isTarget }, idx) => ({
+      item_id: `item_${idx + 1}`,
+      attribute: isTarget ? TARGET_ATTRIBUTE : OTHER_ATTRIBUTE,
+      label: item.label_vi,
+      asset: { kind: "emoji" as const, ref: item.emoji_ref },
+      is_correct: isTarget,
+    }));
 
     return {
       content_pack: {
-        prompt: "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+        prompt: `Bé hãy kéo các hình thuộc chủ đề ${themeLabel} vào giỏ nhé!`,
         container: {
           container_id: "basket_1",
-          label: "Giỏ đồ",
+          label: themeLabel,
           accepts_attribute: TARGET_ATTRIBUTE,
         },
         // Xáo trước khi ghi vào corpus: `is_correct` gắn theo chỉ số lúc sinh,

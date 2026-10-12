@@ -6,10 +6,21 @@ export interface VocabularyEntry {
   label_vi: string;
 }
 
+/** Chủ đề khác nhóm emoji, cấp vật nhiễu cho engine phân loại (`level-generator-kit.md` §7.2). */
+export interface ContrastVocabulary {
+  theme: string;
+  label_vi: string;
+  icon_emoji_ref: string;
+  nouns: VocabularyEntry[];
+}
+
 export interface ThemeVocabulary {
   theme: string;
+  label_vi?: string;
+  icon_emoji_ref?: string;
   nouns: VocabularyEntry[];
   containers?: VocabularyEntry[];
+  contrast?: ContrastVocabulary;
 }
 
 export interface GeneratorInput {

@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-004
  * Seed: 20260829
  * Theme: school
@@ -33,13 +33,13 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
       "groups": [
         {
           "group_id": "g1",
-          "label": "Nhóm 1",
-          "label_emoji": "📏"
+          "label": "Trường học",
+          "label_emoji": "🏫"
         },
         {
           "group_id": "g2",
-          "label": "Nhóm 2",
-          "label_emoji": "🖍️"
+          "label": "Nông trại",
+          "label_emoji": "🚜"
         }
       ],
       "items": [
@@ -47,7 +47,7 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "📏"
           },
           "correct_group_id": "g1"
         },
@@ -55,23 +55,23 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🧮"
+            "ref": "🐔"
           },
-          "correct_group_id": "g1"
+          "correct_group_id": "g2"
         },
         {
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "🖍️"
           },
-          "correct_group_id": "g2"
+          "correct_group_id": "g1"
         },
         {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "🐴"
           },
           "correct_group_id": "g2"
         }
@@ -108,13 +108,13 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
       "groups": [
         {
           "group_id": "g1",
-          "label": "Nhóm 1",
-          "label_emoji": "🖍️"
+          "label": "Trường học",
+          "label_emoji": "🏫"
         },
         {
           "group_id": "g2",
-          "label": "Nhóm 2",
-          "label_emoji": "📚"
+          "label": "Nông trại",
+          "label_emoji": "🚜"
         }
       ],
       "items": [
@@ -122,15 +122,15 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🐓"
           },
-          "correct_group_id": "g1"
+          "correct_group_id": "g2"
         },
         {
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
+            "ref": "📏"
           },
           "correct_group_id": "g1"
         },
@@ -138,7 +138,7 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "🐐"
           },
           "correct_group_id": "g2"
         },
@@ -146,9 +146,9 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "✏️"
+            "ref": "🖍️"
           },
-          "correct_group_id": "g2"
+          "correct_group_id": "g1"
         }
       ]
     },
@@ -183,13 +183,13 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
       "groups": [
         {
           "group_id": "g1",
-          "label": "Nhóm 1",
-          "label_emoji": "✂️"
+          "label": "Trường học",
+          "label_emoji": "🏫"
         },
         {
           "group_id": "g2",
-          "label": "Nhóm 2",
-          "label_emoji": "📏"
+          "label": "Nông trại",
+          "label_emoji": "🚜"
         }
       ],
       "items": [
@@ -197,17 +197,17 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
+            "ref": "🐷"
           },
-          "correct_group_id": "g1"
+          "correct_group_id": "g2"
         },
         {
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "✏️"
+            "ref": "🚜"
           },
-          "correct_group_id": "g1"
+          "correct_group_id": "g2"
         },
         {
           "item_id": "item_3",
@@ -215,15 +215,15 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
             "kind": "emoji",
             "ref": "🎒"
           },
-          "correct_group_id": "g2"
+          "correct_group_id": "g1"
         },
         {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "✏️"
           },
-          "correct_group_id": "g2"
+          "correct_group_id": "g1"
         }
       ]
     },
@@ -258,13 +258,13 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
       "groups": [
         {
           "group_id": "g1",
-          "label": "Nhóm 1",
-          "label_emoji": "📏"
+          "label": "Trường học",
+          "label_emoji": "🏫"
         },
         {
           "group_id": "g2",
-          "label": "Nhóm 2",
-          "label_emoji": "🏫"
+          "label": "Nông trại",
+          "label_emoji": "🚜"
         }
       ],
       "items": [
@@ -272,17 +272,17 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_1",
           "asset": {
             "kind": "emoji",
-            "ref": "✏️"
+            "ref": "🐷"
           },
-          "correct_group_id": "g1"
+          "correct_group_id": "g2"
         },
         {
           "item_id": "item_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
+            "ref": "🐮"
           },
-          "correct_group_id": "g1"
+          "correct_group_id": "g2"
         },
         {
           "item_id": "item_3",
@@ -290,15 +290,15 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
             "kind": "emoji",
             "ref": "🔔"
           },
-          "correct_group_id": "g2"
+          "correct_group_id": "g1"
         },
         {
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "🎒"
           },
-          "correct_group_id": "g2"
+          "correct_group_id": "g1"
         }
       ]
     },
@@ -333,13 +333,13 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
       "groups": [
         {
           "group_id": "g1",
-          "label": "Nhóm 1",
-          "label_emoji": "✏️"
+          "label": "Trường học",
+          "label_emoji": "🏫"
         },
         {
           "group_id": "g2",
-          "label": "Nhóm 2",
-          "label_emoji": "📚"
+          "label": "Nông trại",
+          "label_emoji": "🚜"
         }
       ],
       "items": [
@@ -363,7 +363,7 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_3",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🐷"
           },
           "correct_group_id": "g2"
         },
@@ -371,7 +371,7 @@ export const GEN_GT004_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "item_4",
           "asset": {
             "kind": "emoji",
-            "ref": "🔔"
+            "ref": "🐐"
           },
           "correct_group_id": "g2"
         }

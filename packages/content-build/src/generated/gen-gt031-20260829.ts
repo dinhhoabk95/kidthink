@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-031
  * Seed: 20260829
  * Theme: school
@@ -29,7 +29,7 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy chọn các đồng xu để trả đúng 20 đồng nhé!",
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 25 đồng nhé!",
       "coins": [
         {
           "coin_id": "coin_1_val10",
@@ -40,12 +40,12 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
           "value": 10
         },
         {
-          "coin_id": "coin_2_val5",
+          "coin_id": "coin_2_val2",
           "asset": {
             "kind": "emoji",
             "ref": "🪙"
           },
-          "value": 5
+          "value": 2
         },
         {
           "coin_id": "coin_3_val5",
@@ -70,21 +70,29 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
             "ref": "🪙"
           },
           "value": 5
+        },
+        {
+          "coin_id": "coin_6_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🪙"
+          },
+          "value": 5
         }
       ],
-      "target_amount": 20,
+      "target_amount": 25,
       "item_to_buy": {
-        "label": "Trường học",
+        "label": "Thước kẻ",
         "asset": {
           "kind": "emoji",
-          "ref": "🏫"
+          "ref": "📏"
         }
       }
     },
     "difficulty_params": {
-      "item_count": 5,
-      "coin_kind_count": 2,
-      "target_amount": 20,
+      "item_count": 6,
+      "coin_kind_count": 3,
+      "target_amount": 25,
       "exact_change": true,
       "allow_retry": true,
       "hint_after_ms": 8000
@@ -110,15 +118,15 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy chọn các đồng xu để trả đúng 7 đồng nhé!",
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 3 đồng nhé!",
       "coins": [
         {
-          "coin_id": "coin_1_val5",
+          "coin_id": "coin_1_val1",
           "asset": {
             "kind": "emoji",
             "ref": "🪙"
           },
-          "value": 5
+          "value": 1
         },
         {
           "coin_id": "coin_2_val2",
@@ -137,19 +145,19 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
           "value": 1
         }
       ],
-      "target_amount": 7,
+      "target_amount": 3,
       "item_to_buy": {
-        "label": "Trường học",
+        "label": "Cặp sách",
         "asset": {
           "kind": "emoji",
-          "ref": "🏫"
+          "ref": "🎒"
         }
       }
     },
     "difficulty_params": {
       "item_count": 3,
-      "coin_kind_count": 3,
-      "target_amount": 7,
+      "coin_kind_count": 2,
+      "target_amount": 3,
       "exact_change": true,
       "allow_retry": true,
       "hint_after_ms": 8000
@@ -186,50 +194,34 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
           "value": 1
         },
         {
-          "coin_id": "coin_2_val1",
+          "coin_id": "coin_2_val5",
           "asset": {
             "kind": "emoji",
             "ref": "🪙"
           },
-          "value": 1
+          "value": 5
         },
         {
-          "coin_id": "coin_3_val1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🪙"
-          },
-          "value": 1
-        },
-        {
-          "coin_id": "coin_4_val2",
+          "coin_id": "coin_3_val2",
           "asset": {
             "kind": "emoji",
             "ref": "🪙"
           },
           "value": 2
-        },
-        {
-          "coin_id": "coin_5_val1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🪙"
-          },
-          "value": 1
         }
       ],
       "target_amount": 3,
       "item_to_buy": {
-        "label": "Trường học",
+        "label": "Bút sáp",
         "asset": {
           "kind": "emoji",
-          "ref": "🏫"
+          "ref": "🖍️"
         }
       }
     },
     "difficulty_params": {
-      "item_count": 5,
-      "coin_kind_count": 2,
+      "item_count": 3,
+      "coin_kind_count": 3,
       "target_amount": 3,
       "exact_change": true,
       "allow_retry": true,
@@ -256,10 +248,18 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy chọn các đồng xu để trả đúng 22 đồng nhé!",
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 25 đồng nhé!",
       "coins": [
         {
-          "coin_id": "coin_1_val5",
+          "coin_id": "coin_1_val2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🪙"
+          },
+          "value": 2
+        },
+        {
+          "coin_id": "coin_2_val5",
           "asset": {
             "kind": "emoji",
             "ref": "🪙"
@@ -267,7 +267,7 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
           "value": 5
         },
         {
-          "coin_id": "coin_2_val10",
+          "coin_id": "coin_3_val10",
           "asset": {
             "kind": "emoji",
             "ref": "🪙"
@@ -275,20 +275,12 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
           "value": 10
         },
         {
-          "coin_id": "coin_3_val5",
+          "coin_id": "coin_4_val10",
           "asset": {
             "kind": "emoji",
             "ref": "🪙"
           },
-          "value": 5
-        },
-        {
-          "coin_id": "coin_4_val5",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🪙"
-          },
-          "value": 5
+          "value": 10
         },
         {
           "coin_id": "coin_5_val10",
@@ -297,29 +289,21 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
             "ref": "🪙"
           },
           "value": 10
-        },
-        {
-          "coin_id": "coin_6_val2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🪙"
-          },
-          "value": 2
         }
       ],
-      "target_amount": 22,
+      "target_amount": 25,
       "item_to_buy": {
-        "label": "Trường học",
+        "label": "Cái kéo",
         "asset": {
           "kind": "emoji",
-          "ref": "🏫"
+          "ref": "✂️"
         }
       }
     },
     "difficulty_params": {
-      "item_count": 6,
+      "item_count": 5,
       "coin_kind_count": 3,
-      "target_amount": 22,
+      "target_amount": 25,
       "exact_change": true,
       "allow_retry": true,
       "hint_after_ms": 8000
@@ -345,23 +329,23 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy chọn các đồng xu để trả đúng 15 đồng nhé!",
+      "prompt": "Bé hãy chọn các đồng xu để trả đúng 25 đồng nhé!",
       "coins": [
         {
-          "coin_id": "coin_1_val10",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🪙"
-          },
-          "value": 10
-        },
-        {
-          "coin_id": "coin_2_val5",
+          "coin_id": "coin_1_val5",
           "asset": {
             "kind": "emoji",
             "ref": "🪙"
           },
           "value": 5
+        },
+        {
+          "coin_id": "coin_2_val1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🪙"
+          },
+          "value": 1
         },
         {
           "coin_id": "coin_3_val5",
@@ -372,7 +356,15 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
           "value": 5
         },
         {
-          "coin_id": "coin_4_val10",
+          "coin_id": "coin_4_val5",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🪙"
+          },
+          "value": 5
+        },
+        {
+          "coin_id": "coin_5_val10",
           "asset": {
             "kind": "emoji",
             "ref": "🪙"
@@ -380,7 +372,7 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
           "value": 10
         }
       ],
-      "target_amount": 15,
+      "target_amount": 25,
       "item_to_buy": {
         "label": "Trường học",
         "asset": {
@@ -390,9 +382,9 @@ export const GEN_GT031_20260829: ContentSeed<unknown, unknown>[] = [
       }
     },
     "difficulty_params": {
-      "item_count": 4,
-      "coin_kind_count": 2,
-      "target_amount": 15,
+      "item_count": 5,
+      "coin_kind_count": 3,
+      "target_amount": 25,
       "exact_change": true,
       "allow_retry": true,
       "hint_after_ms": 8000

@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-025
  * Seed: 20260829
  * Theme: school
@@ -36,7 +36,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "left_1",
           "asset": {
             "kind": "emoji",
-            "ref": "📏"
+            "ref": "🖍️"
           },
           "x": 100,
           "y": 150
@@ -45,7 +45,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "left_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "📏"
           },
           "x": 250,
           "y": 200
@@ -56,7 +56,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "right_1",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🖍️"
           },
           "x": 100,
           "y": 150
@@ -65,7 +65,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "right_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "✂️"
           },
           "x": 250,
           "y": 200
@@ -74,8 +74,8 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
       "differences": [
         {
           "id": "diff_1",
-          "left_id": "left_1",
-          "right_id": "right_1",
+          "left_id": "left_2",
+          "right_id": "right_2",
           "description": "Hình khác nhau"
         }
       ]
@@ -114,7 +114,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "left_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🧮"
+            "ref": "📖"
           },
           "x": 100,
           "y": 150
@@ -123,7 +123,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "left_2",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "✂️"
           },
           "x": 250,
           "y": 200
@@ -134,7 +134,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "right_1",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🖍️"
           },
           "x": 100,
           "y": 150
@@ -143,7 +143,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "right_2",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "✂️"
           },
           "x": 250,
           "y": 200
@@ -201,7 +201,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "left_2",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "🎒"
           },
           "x": 250,
           "y": 200
@@ -221,7 +221,7 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
           "id": "right_2",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "🎒"
           },
           "x": 250,
           "y": 200
@@ -246,84 +246,6 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
   {
     "header": {
       "code": "GL-GEN-GT-025-20260829-04",
-      "content_version": 1,
-      "template_code": "GT-025",
-      "title": "",
-      "instruction": "",
-      "age_min": 4,
-      "age_max": 5,
-      "difficulty": 1,
-      "access_tier": "free",
-      "skill_codes": [],
-      "learning_objective_codes": [],
-      "what_tags": [],
-      "thinking_tags": [],
-      "theme_tag": "school",
-      "origin": "ai_assisted",
-      "authored_in": "repo_seed"
-    },
-    "content_pack": {
-      "prompt": "Bé hãy tìm điểm khác biệt giữa 2 bức tranh nhé!",
-      "target_count": 1,
-      "left_objects": [
-        {
-          "id": "left_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "✏️"
-          },
-          "x": 100,
-          "y": 150
-        },
-        {
-          "id": "left_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "✂️"
-          },
-          "x": 250,
-          "y": 200
-        }
-      ],
-      "right_objects": [
-        {
-          "id": "right_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "📚"
-          },
-          "x": 100,
-          "y": 150
-        },
-        {
-          "id": "right_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "✂️"
-          },
-          "x": 250,
-          "y": 200
-        }
-      ],
-      "differences": [
-        {
-          "id": "diff_1",
-          "left_id": "left_1",
-          "right_id": "right_1",
-          "description": "Hình khác nhau"
-        }
-      ]
-    },
-    "difficulty_params": {
-      "item_count": 2,
-      "hint_after_ms": 8000,
-      "allow_retry": true,
-      "show_counter": true
-    }
-  },
-  {
-    "header": {
-      "code": "GL-GEN-GT-025-20260829-05",
       "content_version": 1,
       "template_code": "GT-025",
       "title": "",
@@ -378,6 +300,84 @@ export const GEN_GT025_20260829: ContentSeed<unknown, unknown>[] = [
           "asset": {
             "kind": "emoji",
             "ref": "📏"
+          },
+          "x": 250,
+          "y": 200
+        }
+      ],
+      "differences": [
+        {
+          "id": "diff_1",
+          "left_id": "left_1",
+          "right_id": "right_1",
+          "description": "Hình khác nhau"
+        }
+      ]
+    },
+    "difficulty_params": {
+      "item_count": 2,
+      "hint_after_ms": 8000,
+      "allow_retry": true,
+      "show_counter": true
+    }
+  },
+  {
+    "header": {
+      "code": "GL-GEN-GT-025-20260829-05",
+      "content_version": 1,
+      "template_code": "GT-025",
+      "title": "",
+      "instruction": "",
+      "age_min": 4,
+      "age_max": 5,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": [],
+      "learning_objective_codes": [],
+      "what_tags": [],
+      "thinking_tags": [],
+      "theme_tag": "school",
+      "origin": "ai_assisted",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy tìm điểm khác biệt giữa 2 bức tranh nhé!",
+      "target_count": 1,
+      "left_objects": [
+        {
+          "id": "left_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🏫"
+          },
+          "x": 100,
+          "y": 150
+        },
+        {
+          "id": "left_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "📚"
+          },
+          "x": 250,
+          "y": 200
+        }
+      ],
+      "right_objects": [
+        {
+          "id": "right_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "📖"
+          },
+          "x": 100,
+          "y": 150
+        },
+        {
+          "id": "right_2",
+          "asset": {
+            "kind": "emoji",
+            "ref": "📚"
           },
           "x": 250,
           "y": 200

@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-007
  * Seed: 20260829
  * Theme: school
@@ -101,11 +101,11 @@ export const GEN_GT007_20260829: ContentSeed<unknown, unknown>[] = [
       "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
       "whole": {
         "id": "whole_1",
-        "value": 5,
-        "label": "5",
+        "value": 6,
+        "label": "6",
         "asset": {
           "kind": "emoji",
-          "ref": "🧮"
+          "ref": "✂️"
         }
       },
       "parts": [
@@ -117,25 +117,25 @@ export const GEN_GT007_20260829: ContentSeed<unknown, unknown>[] = [
         },
         {
           "id": "part_2",
-          "value": 2,
+          "value": 3,
           "is_target": true,
           "label": "?"
         }
       ],
       "options": [
         {
-          "id": "opt_1",
-          "value": 2,
-          "is_correct": true
-        },
-        {
           "id": "opt_2",
-          "value": 1,
+          "value": 2,
           "is_correct": false
         },
         {
-          "id": "opt_3",
+          "id": "opt_1",
           "value": 3,
+          "is_correct": true
+        },
+        {
+          "id": "opt_3",
+          "value": 4,
           "is_correct": false
         }
       ]
@@ -170,19 +170,19 @@ export const GEN_GT007_20260829: ContentSeed<unknown, unknown>[] = [
       "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
       "whole": {
         "id": "whole_1",
-        "value": 5,
-        "label": "5",
+        "value": 4,
+        "label": "4",
         "asset": {
           "kind": "emoji",
-          "ref": "🖍️"
+          "ref": "✂️"
         }
       },
       "parts": [
         {
           "id": "part_1",
-          "value": 3,
+          "value": 2,
           "is_target": false,
-          "label": "3"
+          "label": "2"
         },
         {
           "id": "part_2",
@@ -193,6 +193,11 @@ export const GEN_GT007_20260829: ContentSeed<unknown, unknown>[] = [
       ],
       "options": [
         {
+          "id": "opt_3",
+          "value": 3,
+          "is_correct": false
+        },
+        {
           "id": "opt_1",
           "value": 2,
           "is_correct": true
@@ -200,11 +205,6 @@ export const GEN_GT007_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "id": "opt_2",
           "value": 1,
-          "is_correct": false
-        },
-        {
-          "id": "opt_3",
-          "value": 3,
           "is_correct": false
         }
       ]
@@ -239,19 +239,19 @@ export const GEN_GT007_20260829: ContentSeed<unknown, unknown>[] = [
       "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
       "whole": {
         "id": "whole_1",
-        "value": 5,
-        "label": "5",
+        "value": 4,
+        "label": "4",
         "asset": {
           "kind": "emoji",
-          "ref": "✏️"
+          "ref": "🎒"
         }
       },
       "parts": [
         {
           "id": "part_1",
-          "value": 2,
+          "value": 1,
           "is_target": false,
-          "label": "2"
+          "label": "1"
         },
         {
           "id": "part_2",
@@ -262,6 +262,11 @@ export const GEN_GT007_20260829: ContentSeed<unknown, unknown>[] = [
       ],
       "options": [
         {
+          "id": "opt_3",
+          "value": 4,
+          "is_correct": false
+        },
+        {
           "id": "opt_1",
           "value": 3,
           "is_correct": true
@@ -269,11 +274,6 @@ export const GEN_GT007_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "id": "opt_2",
           "value": 2,
-          "is_correct": false
-        },
-        {
-          "id": "opt_3",
-          "value": 4,
           "is_correct": false
         }
       ]
@@ -308,33 +308,28 @@ export const GEN_GT007_20260829: ContentSeed<unknown, unknown>[] = [
       "prompt": "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
       "whole": {
         "id": "whole_1",
-        "value": 5,
-        "label": "5",
+        "value": 4,
+        "label": "4",
         "asset": {
           "kind": "emoji",
-          "ref": "✂️"
+          "ref": "🎒"
         }
       },
       "parts": [
         {
           "id": "part_1",
-          "value": 1,
+          "value": 3,
           "is_target": false,
-          "label": "1"
+          "label": "3"
         },
         {
           "id": "part_2",
-          "value": 4,
+          "value": 1,
           "is_target": true,
           "label": "?"
         }
       ],
       "options": [
-        {
-          "id": "opt_1",
-          "value": 4,
-          "is_correct": true
-        },
         {
           "id": "opt_2",
           "value": 3,
@@ -342,8 +337,13 @@ export const GEN_GT007_20260829: ContentSeed<unknown, unknown>[] = [
         },
         {
           "id": "opt_3",
-          "value": 5,
+          "value": 2,
           "is_correct": false
+        },
+        {
+          "id": "opt_1",
+          "value": 1,
+          "is_correct": true
         }
       ]
     },

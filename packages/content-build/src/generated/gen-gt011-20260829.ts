@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-011
  * Seed: 20260829
  * Theme: school
@@ -169,7 +169,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 0,
             "asset": {
               "kind": "emoji",
-              "ref": "🧮"
+              "ref": "✂️"
             }
           },
           {
@@ -177,7 +177,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 1,
             "asset": {
               "kind": "emoji",
-              "ref": "📖"
+              "ref": "🖍️"
             }
           },
           {
@@ -185,7 +185,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 2,
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "📚"
             }
           },
           {
@@ -193,7 +193,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 0,
             "asset": {
               "kind": "emoji",
-              "ref": "📖"
+              "ref": "🖍️"
             }
           },
           {
@@ -201,7 +201,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 1,
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "📚"
             }
           },
           {
@@ -209,7 +209,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 2,
             "asset": {
               "kind": "emoji",
-              "ref": "🧮"
+              "ref": "✂️"
             }
           },
           {
@@ -217,7 +217,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 0,
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "📚"
             }
           },
           {
@@ -225,7 +225,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 1,
             "asset": {
               "kind": "emoji",
-              "ref": "🧮"
+              "ref": "✂️"
             }
           },
           {
@@ -237,26 +237,26 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "options": [
         {
-          "option_id": "opt_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "📖"
-          },
-          "is_correct": true
-        },
-        {
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🧮"
+            "ref": "✂️"
           },
           "is_correct": false
+        },
+        {
+          "option_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🖍️"
+          },
+          "is_correct": true
         },
         {
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "📚"
           },
           "is_correct": false
         }
@@ -299,7 +299,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 0,
             "asset": {
               "kind": "emoji",
-              "ref": "🖍️"
+              "ref": "✂️"
             }
           },
           {
@@ -307,7 +307,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 1,
             "asset": {
               "kind": "emoji",
-              "ref": "📚"
+              "ref": "✏️"
             }
           },
           {
@@ -315,7 +315,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 2,
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "📖"
             }
           },
           {
@@ -323,7 +323,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 0,
             "asset": {
               "kind": "emoji",
-              "ref": "📚"
+              "ref": "✏️"
             }
           },
           {
@@ -331,7 +331,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 1,
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "📖"
             }
           },
           {
@@ -339,7 +339,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 2,
             "asset": {
               "kind": "emoji",
-              "ref": "🖍️"
+              "ref": "✂️"
             }
           },
           {
@@ -347,7 +347,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 0,
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "📖"
             }
           },
           {
@@ -355,7 +355,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 1,
             "asset": {
               "kind": "emoji",
-              "ref": "🖍️"
+              "ref": "✂️"
             }
           },
           {
@@ -367,23 +367,23 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "options": [
         {
+          "option_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "📖"
+          },
+          "is_correct": false
+        },
+        {
           "option_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "✏️"
           },
           "is_correct": true
         },
         {
           "option_id": "opt_2",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🖍️"
-          },
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
             "ref": "✂️"
@@ -429,7 +429,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 0,
             "asset": {
               "kind": "emoji",
-              "ref": "✏️"
+              "ref": "🎒"
             }
           },
           {
@@ -437,7 +437,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 1,
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "🏫"
             }
           },
           {
@@ -445,7 +445,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 2,
             "asset": {
               "kind": "emoji",
-              "ref": "📚"
+              "ref": "📏"
             }
           },
           {
@@ -453,7 +453,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 0,
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "🏫"
             }
           },
           {
@@ -461,7 +461,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 1,
             "asset": {
               "kind": "emoji",
-              "ref": "📚"
+              "ref": "📏"
             }
           },
           {
@@ -469,7 +469,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 2,
             "asset": {
               "kind": "emoji",
-              "ref": "✏️"
+              "ref": "🎒"
             }
           },
           {
@@ -477,7 +477,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 0,
             "asset": {
               "kind": "emoji",
-              "ref": "📚"
+              "ref": "📏"
             }
           },
           {
@@ -485,7 +485,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 1,
             "asset": {
               "kind": "emoji",
-              "ref": "✏️"
+              "ref": "🎒"
             }
           },
           {
@@ -497,10 +497,18 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "options": [
         {
+          "option_id": "opt_3",
+          "asset": {
+            "kind": "emoji",
+            "ref": "📏"
+          },
+          "is_correct": false
+        },
+        {
           "option_id": "opt_1",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🏫"
           },
           "is_correct": true
         },
@@ -508,15 +516,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "✏️"
-          },
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_3",
-          "asset": {
-            "kind": "emoji",
-            "ref": "📚"
+            "ref": "🎒"
           },
           "is_correct": false
         }
@@ -559,7 +559,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 0,
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "🎒"
             }
           },
           {
@@ -567,7 +567,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 1,
             "asset": {
               "kind": "emoji",
-              "ref": "📏"
+              "ref": "✏️"
             }
           },
           {
@@ -575,7 +575,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 2,
             "asset": {
               "kind": "emoji",
-              "ref": "🏫"
+              "ref": "🔔"
             }
           },
           {
@@ -583,7 +583,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 0,
             "asset": {
               "kind": "emoji",
-              "ref": "📏"
+              "ref": "✏️"
             }
           },
           {
@@ -591,7 +591,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 1,
             "asset": {
               "kind": "emoji",
-              "ref": "🏫"
+              "ref": "🔔"
             }
           },
           {
@@ -599,7 +599,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 2,
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "🎒"
             }
           },
           {
@@ -607,7 +607,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 0,
             "asset": {
               "kind": "emoji",
-              "ref": "🏫"
+              "ref": "🔔"
             }
           },
           {
@@ -615,7 +615,7 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
             "col": 1,
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "🎒"
             }
           },
           {
@@ -627,18 +627,10 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "options": [
         {
-          "option_id": "opt_1",
-          "asset": {
-            "kind": "emoji",
-            "ref": "📏"
-          },
-          "is_correct": true
-        },
-        {
           "option_id": "opt_2",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🎒"
           },
           "is_correct": false
         },
@@ -646,9 +638,17 @@ export const GEN_GT011_20260829: ContentSeed<unknown, unknown>[] = [
           "option_id": "opt_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
+            "ref": "🔔"
           },
           "is_correct": false
+        },
+        {
+          "option_id": "opt_1",
+          "asset": {
+            "kind": "emoji",
+            "ref": "✏️"
+          },
+          "is_correct": true
         }
       ]
     },

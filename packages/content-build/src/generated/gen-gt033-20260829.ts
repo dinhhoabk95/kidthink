@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-033
  * Seed: 20260829
  * Theme: school
@@ -36,12 +36,12 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "palette": [
         {
-          "color_id": "red",
+          "color_id": "yellow",
           "asset": {
             "kind": "emoji",
             "ref": "🧶"
           },
-          "name_vi": "Đỏ"
+          "name_vi": "Vàng"
         },
         {
           "color_id": "blue",
@@ -53,16 +53,16 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
         }
       ],
       "cells": [
-        "red",
-        "blue",
+        "yellow",
         null,
-        null
+        null,
+        "yellow"
       ],
       "solution": [
-        "red",
+        "yellow",
         "blue",
         "blue",
-        "red"
+        "yellow"
       ],
       "row_rule": "Quy luật màu tuần hoàn",
       "col_rule": "Quy luật màu tuần hoàn"
@@ -103,20 +103,20 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "palette": [
         {
-          "color_id": "red",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🧶"
-          },
-          "name_vi": "Đỏ"
-        },
-        {
           "color_id": "blue",
           "asset": {
             "kind": "emoji",
             "ref": "🧶"
           },
           "name_vi": "Xanh dương"
+        },
+        {
+          "color_id": "red",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🧶"
+          },
+          "name_vi": "Đỏ"
         },
         {
           "color_id": "yellow",
@@ -128,26 +128,26 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
         }
       ],
       "cells": [
+        null,
         "red",
+        "yellow",
+        "red",
+        null,
         "blue",
         "yellow",
-        null,
-        "yellow",
-        "red",
-        null,
-        "red",
-        "blue"
+        "blue",
+        "red"
       ],
       "solution": [
+        "blue",
         "red",
+        "yellow",
+        "red",
+        "yellow",
         "blue",
         "yellow",
         "blue",
-        "yellow",
-        "red",
-        "yellow",
-        "red",
-        "blue"
+        "red"
       ],
       "row_rule": "Quy luật màu tuần hoàn",
       "col_rule": "Quy luật màu tuần hoàn"
@@ -183,8 +183,8 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
     "content_pack": {
       "prompt": "Bé hãy chọn sợi len màu đúng để dệt tiếp vào ô trống nhé!",
       "grid": {
-        "rows": 3,
-        "cols": 3
+        "rows": 2,
+        "cols": 2
       },
       "palette": [
         {
@@ -202,45 +202,27 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
             "ref": "🧶"
           },
           "name_vi": "Xanh dương"
-        },
-        {
-          "color_id": "yellow",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🧶"
-          },
-          "name_vi": "Vàng"
         }
       ],
       "cells": [
-        "red",
-        "blue",
-        "yellow",
-        "blue",
-        "yellow",
         null,
-        "yellow",
-        "red",
-        "blue"
+        "blue",
+        "blue",
+        "red"
       ],
       "solution": [
         "red",
         "blue",
-        "yellow",
         "blue",
-        "yellow",
-        "red",
-        "yellow",
-        "red",
-        "blue"
+        "red"
       ],
       "row_rule": "Quy luật màu tuần hoàn",
       "col_rule": "Quy luật màu tuần hoàn"
     },
     "difficulty_params": {
-      "item_count": 3,
-      "grid_size": 3,
-      "color_count": 3,
+      "item_count": 2,
+      "grid_size": 2,
+      "color_count": 2,
       "blank_count": 1,
       "allow_retry": true,
       "hint_after_ms": 8000
@@ -273,12 +255,12 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "palette": [
         {
-          "color_id": "red",
+          "color_id": "green",
           "asset": {
             "kind": "emoji",
             "ref": "🧶"
           },
-          "name_vi": "Đỏ"
+          "name_vi": "Xanh lá"
         },
         {
           "color_id": "blue",
@@ -290,16 +272,16 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
         }
       ],
       "cells": [
-        null,
+        "green",
         null,
         "blue",
-        "red"
+        "green"
       ],
       "solution": [
-        "red",
+        "green",
         "blue",
         "blue",
-        "red"
+        "green"
       ],
       "row_rule": "Quy luật màu tuần hoàn",
       "col_rule": "Quy luật màu tuần hoàn"
@@ -308,7 +290,7 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
       "item_count": 2,
       "grid_size": 2,
       "color_count": 2,
-      "blank_count": 2,
+      "blank_count": 1,
       "allow_retry": true,
       "hint_after_ms": 8000
     }
@@ -335,17 +317,17 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
     "content_pack": {
       "prompt": "Bé hãy chọn sợi len màu đúng để dệt tiếp vào ô trống nhé!",
       "grid": {
-        "rows": 2,
-        "cols": 2
+        "rows": 3,
+        "cols": 3
       },
       "palette": [
         {
-          "color_id": "red",
+          "color_id": "yellow",
           "asset": {
             "kind": "emoji",
             "ref": "🧶"
           },
-          "name_vi": "Đỏ"
+          "name_vi": "Vàng"
         },
         {
           "color_id": "blue",
@@ -354,28 +336,46 @@ export const GEN_GT033_20260829: ContentSeed<unknown, unknown>[] = [
             "ref": "🧶"
           },
           "name_vi": "Xanh dương"
+        },
+        {
+          "color_id": "green",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🧶"
+          },
+          "name_vi": "Xanh lá"
         }
       ],
       "cells": [
-        "red",
-        null,
+        "yellow",
         "blue",
-        "red"
+        "green",
+        "blue",
+        "green",
+        null,
+        "green",
+        "yellow",
+        null
       ],
       "solution": [
-        "red",
+        "yellow",
         "blue",
+        "green",
         "blue",
-        "red"
+        "green",
+        "yellow",
+        "green",
+        "yellow",
+        "blue"
       ],
       "row_rule": "Quy luật màu tuần hoàn",
       "col_rule": "Quy luật màu tuần hoàn"
     },
     "difficulty_params": {
-      "item_count": 2,
-      "grid_size": 2,
-      "color_count": 2,
-      "blank_count": 1,
+      "item_count": 3,
+      "grid_size": 3,
+      "color_count": 3,
+      "blank_count": 2,
       "allow_retry": true,
       "hint_after_ms": 8000
     }

@@ -1,3 +1,4 @@
+import { shuffle } from "#src/rng/shuffle";
 import { getNouns, pickOne, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
@@ -68,7 +69,7 @@ export const GT007Generator: LevelGenerator = {
         prompt: "Bé hãy tìm số còn thiếu để ghép thành số đúng nhé!",
         whole,
         parts,
-        options,
+        options: shuffle(options, rng),
       },
       difficulty_params: {
         part_count: 2,

@@ -1,10 +1,11 @@
+import { shuffle } from "#src/rng/shuffle";
 import {
   countHiddenCubes,
   hasNoFloatingCubes,
   isModelConnected,
 } from "../systems/isometric-system.js";
 import {
-  getNouns,
+  numberKeycap,
   pickOne,
   sampleUnique,
   VALID_GENERATOR_THEMES,
@@ -79,7 +80,7 @@ export const GT017Generator: LevelGenerator = {
     what: ["spatial", "3d", "geometry", "counting"],
     theme: [...VALID_GENERATOR_THEMES],
   },
-  generate({ rng, age_band, vocabulary }) {
+  generate({ rng, age_band }) {
     const minCubes = age_band === "4-5" ? 3 : 4;
     const maxExtra = age_band === "4-5" ? 2 : 4;
     const targetCubeCount = minCubes + rng.nextInt(maxExtra);
@@ -97,36 +98,25 @@ export const GT017Generator: LevelGenerator = {
     }
 
     const correctCount = model.length;
-    const nouns = getNouns(vocabulary, 4);
-    const sampledNouns = sampleUnique(rng, nouns, 3);
-
     const optionCount = age_band === "4-5" ? 3 : 4;
     const distractorDeltas = [-2, -1, 1, 2, 3].filter(
       (d) => correctCount + d > 0 && correctCount + d <= 10
     );
     const sampledDeltas = sampleUnique(rng, distractorDeltas, optionCount - 1);
+    const counts = shuffle(
+      [correctCount, ...sampledDeltas.map((d) => correctCount + d)],
+      rng
+    );
 
-    const distractorCounts = sampledDeltas.map((d) => correctCount + d);
-    const allCounts = [correctCount, ...distractorCounts];
-    const shuffledCounts = sampleUnique(rng, allCounts, allCounts.length);
-
-    const defaultNoun = nouns[0] ?? {
-      emoji_ref: "⭐",
-      label_vi: "ngôi sao",
-    };
-    const options = shuffledCounts.map((count, idx) => {
-      const noun =
-        sampledNouns[idx % (sampledNouns.length || 1)] ?? defaultNoun;
-      return {
-        option_id: `opt_${idx + 1}`,
-        asset: { kind: "emoji" as const, ref: noun.emoji_ref },
-        is_correct: count === correctCount,
-      };
-    });
+    const options = counts.map((count) => ({
+      option_id: `opt_${count}`,
+      asset: { kind: "emoji" as const, ref: numberKeycap(count) },
+      is_correct: count === correctCount,
+    }));
 
     return {
       content_pack: {
-        prompt: `Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé! (Có ${correctCount} khối)`,
+        prompt: "Bé hãy đếm xem có tất cả bao nhiêu khối lập phương nhé!",
         model,
         question: "count_cubes" as const,
         options,

@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-010
  * Seed: 20260829
  * Theme: school
@@ -74,15 +74,15 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "is_correct": true
         },
         {
+          "value": 6,
+          "is_correct": false
+        },
+        {
           "value": 5,
           "is_correct": false
         },
         {
           "value": 3,
-          "is_correct": false
-        },
-        {
-          "value": 6,
           "is_correct": false
         }
       ]
@@ -122,14 +122,14 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "symbol_id": "sym_1",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "📏"
           }
         },
         {
           "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🖍️"
           }
         }
       ],
@@ -140,7 +140,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
             "sym_1",
             "sym_1"
           ],
-          "right_value": 8
+          "right_value": 4
         },
         {
           "equation_id": "eq_2",
@@ -148,7 +148,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
             "sym_1",
             "sym_2"
           ],
-          "right_value": 6
+          "right_value": 5
         }
       ],
       "question": {
@@ -158,14 +158,14 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       "options": [
         {
           "value": 2,
-          "is_correct": true
-        },
-        {
-          "value": 3,
           "is_correct": false
         },
         {
-          "value": 1,
+          "value": 3,
+          "is_correct": true
+        },
+        {
+          "value": 5,
           "is_correct": false
         },
         {
@@ -209,14 +209,14 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "symbol_id": "sym_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "🎒"
           }
         },
         {
           "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🎒"
+            "ref": "✏️"
           }
         }
       ],
@@ -227,7 +227,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
             "sym_1",
             "sym_1"
           ],
-          "right_value": 8
+          "right_value": 4
         },
         {
           "equation_id": "eq_2",
@@ -235,7 +235,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
             "sym_1",
             "sym_2"
           ],
-          "right_value": 6
+          "right_value": 4
         }
       ],
       "question": {
@@ -244,11 +244,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "options": [
         {
-          "value": 2,
-          "is_correct": true
-        },
-        {
-          "value": 3,
+          "value": 4,
           "is_correct": false
         },
         {
@@ -256,7 +252,11 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "is_correct": false
         },
         {
-          "value": 4,
+          "value": 2,
+          "is_correct": true
+        },
+        {
+          "value": 3,
           "is_correct": false
         }
       ]
@@ -296,14 +296,14 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "symbol_id": "sym_1",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🎒"
           }
         },
         {
           "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
-            "ref": "📏"
+            "ref": "🔔"
           }
         }
       ],
@@ -322,7 +322,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
             "sym_1",
             "sym_2"
           ],
-          "right_value": 3
+          "right_value": 4
         }
       ],
       "question": {
@@ -331,11 +331,11 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "options": [
         {
-          "value": 1,
-          "is_correct": true
+          "value": 4,
+          "is_correct": false
         },
         {
-          "value": 2,
+          "value": 1,
           "is_correct": false
         },
         {
@@ -343,8 +343,8 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "is_correct": false
         },
         {
-          "value": 4,
-          "is_correct": false
+          "value": 2,
+          "is_correct": true
         }
       ]
     },
@@ -383,14 +383,14 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
           "symbol_id": "sym_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🏫"
+            "ref": "📖"
           }
         },
         {
           "symbol_id": "sym_2",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "🖍️"
           }
         }
       ],
@@ -401,7 +401,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
             "sym_1",
             "sym_1"
           ],
-          "right_value": 6
+          "right_value": 8
         },
         {
           "equation_id": "eq_2",
@@ -409,7 +409,7 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
             "sym_1",
             "sym_2"
           ],
-          "right_value": 4
+          "right_value": 6
         }
       ],
       "question": {
@@ -418,12 +418,8 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
       },
       "options": [
         {
-          "value": 1,
-          "is_correct": true
-        },
-        {
           "value": 2,
-          "is_correct": false
+          "is_correct": true
         },
         {
           "value": 3,
@@ -431,6 +427,10 @@ export const GEN_GT010_20260829: ContentSeed<unknown, unknown>[] = [
         },
         {
           "value": 4,
+          "is_correct": false
+        },
+        {
+          "value": 1,
           "is_correct": false
         }
       ]

@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-016
  * Seed: 20260829
  * Theme: school
@@ -42,13 +42,13 @@ export const GEN_GT016_20260829: ContentSeed<unknown, unknown>[] = [
           "is_correct": true
         },
         {
-          "hour": 10,
-          "minute": 30,
+          "hour": 12,
+          "minute": 0,
           "is_correct": false
         },
         {
-          "hour": 12,
-          "minute": 0,
+          "hour": 10,
+          "minute": 30,
           "is_correct": false
         }
       ],
@@ -85,23 +85,23 @@ export const GEN_GT016_20260829: ContentSeed<unknown, unknown>[] = [
       "prompt": "Bé hãy xem đồng hồ chỉ mấy giờ nhé!",
       "mode": "read",
       "target_time": {
-        "hour": 7,
-        "minute": 30
+        "hour": 9,
+        "minute": 0
       },
       "options": [
         {
-          "hour": 7,
-          "minute": 30,
-          "is_correct": true
-        },
-        {
-          "hour": 8,
-          "minute": 30,
+          "hour": 10,
+          "minute": 0,
           "is_correct": false
         },
         {
-          "hour": 10,
+          "hour": 9,
           "minute": 0,
+          "is_correct": true
+        },
+        {
+          "hour": 12,
+          "minute": 30,
           "is_correct": false
         }
       ],
@@ -138,23 +138,23 @@ export const GEN_GT016_20260829: ContentSeed<unknown, unknown>[] = [
       "prompt": "Bé hãy xem đồng hồ chỉ mấy giờ nhé!",
       "mode": "read",
       "target_time": {
-        "hour": 9,
+        "hour": 8,
         "minute": 0
       },
       "options": [
         {
-          "hour": 9,
+          "hour": 11,
+          "minute": 30,
+          "is_correct": false
+        },
+        {
+          "hour": 8,
           "minute": 0,
           "is_correct": true
         },
         {
-          "hour": 10,
+          "hour": 9,
           "minute": 0,
-          "is_correct": false
-        },
-        {
-          "hour": 12,
-          "minute": 30,
           "is_correct": false
         }
       ],
@@ -191,24 +191,24 @@ export const GEN_GT016_20260829: ContentSeed<unknown, unknown>[] = [
       "prompt": "Bé hãy xem đồng hồ chỉ mấy giờ nhé!",
       "mode": "read",
       "target_time": {
-        "hour": 8,
+        "hour": 2,
         "minute": 0
       },
       "options": [
         {
-          "hour": 8,
-          "minute": 0,
-          "is_correct": true
-        },
-        {
-          "hour": 9,
+          "hour": 3,
           "minute": 0,
           "is_correct": false
         },
         {
-          "hour": 11,
+          "hour": 5,
           "minute": 30,
           "is_correct": false
+        },
+        {
+          "hour": 2,
+          "minute": 0,
+          "is_correct": true
         }
       ],
       "activity_cards": []
@@ -244,24 +244,24 @@ export const GEN_GT016_20260829: ContentSeed<unknown, unknown>[] = [
       "prompt": "Bé hãy xem đồng hồ chỉ mấy giờ nhé!",
       "mode": "read",
       "target_time": {
-        "hour": 2,
+        "hour": 5,
         "minute": 0
       },
       "options": [
         {
-          "hour": 2,
+          "hour": 6,
           "minute": 0,
-          "is_correct": true
+          "is_correct": false
         },
         {
-          "hour": 3,
-          "minute": 0,
+          "hour": 8,
+          "minute": 30,
           "is_correct": false
         },
         {
           "hour": 5,
-          "minute": 30,
-          "is_correct": false
+          "minute": 0,
+          "is_correct": true
         }
       ],
       "activity_cards": []

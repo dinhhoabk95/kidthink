@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-030
  * Seed: 20260829
  * Theme: school
@@ -29,48 +29,48 @@ export const GEN_GT030_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy xếp các Cặp sách để đo xem Trường học dài mấy Cặp sách nhé!",
+      "prompt": "Bé hãy xếp các Bút sáp để đo xem Thước kẻ dài mấy Bút sáp nhé!",
       "object": {
         "object_id": "obj_main",
         "asset": {
           "kind": "emoji",
-          "ref": "🏫"
+          "ref": "📏"
         },
-        "length_in_units": 5
+        "length_in_units": 6
       },
       "unit": {
         "unit_id": "unit_measure",
         "asset": {
           "kind": "emoji",
-          "ref": "🎒"
+          "ref": "🖍️"
         }
       },
       "answer_options": [
         {
-          "option_id": "opt_8",
-          "value": 8,
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_4",
-          "value": 4,
+          "option_id": "opt_7",
+          "value": 7,
           "is_correct": false
         },
         {
           "option_id": "opt_5",
           "value": 5,
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_6",
+          "value": 6,
           "is_correct": true
         },
         {
-          "option_id": "opt_7",
-          "value": 7,
+          "option_id": "opt_8",
+          "value": 8,
           "is_correct": false
         }
       ]
     },
     "difficulty_params": {
       "item_count": 4,
-      "length_in_units": 5,
+      "length_in_units": 6,
       "gap_tolerance_pct": 10,
       "allow_retry": true,
       "hint_after_ms": 8000
@@ -96,12 +96,12 @@ export const GEN_GT030_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy xếp các Cặp sách để đo xem Trường học dài mấy Cặp sách nhé!",
+      "prompt": "Bé hãy xếp các Bút chì để đo xem Cái kéo dài mấy Bút chì nhé!",
       "object": {
         "object_id": "obj_main",
         "asset": {
           "kind": "emoji",
-          "ref": "🏫"
+          "ref": "✂️"
         },
         "length_in_units": 6
       },
@@ -109,19 +109,19 @@ export const GEN_GT030_20260829: ContentSeed<unknown, unknown>[] = [
         "unit_id": "unit_measure",
         "asset": {
           "kind": "emoji",
-          "ref": "🎒"
+          "ref": "✏️"
         }
       },
       "answer_options": [
         {
-          "option_id": "opt_7",
-          "value": 7,
-          "is_correct": false
-        },
-        {
           "option_id": "opt_6",
           "value": 6,
           "is_correct": true
+        },
+        {
+          "option_id": "opt_3",
+          "value": 3,
+          "is_correct": false
         },
         {
           "option_id": "opt_4",
@@ -158,12 +158,12 @@ export const GEN_GT030_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy xếp các Cặp sách để đo xem Trường học dài mấy Cặp sách nhé!",
+      "prompt": "Bé hãy xếp các Trường học để đo xem Thước kẻ dài mấy Trường học nhé!",
       "object": {
         "object_id": "obj_main",
         "asset": {
           "kind": "emoji",
-          "ref": "🏫"
+          "ref": "📏"
         },
         "length_in_units": 3
       },
@@ -171,23 +171,23 @@ export const GEN_GT030_20260829: ContentSeed<unknown, unknown>[] = [
         "unit_id": "unit_measure",
         "asset": {
           "kind": "emoji",
-          "ref": "🎒"
+          "ref": "🏫"
         }
       },
       "answer_options": [
-        {
-          "option_id": "opt_1",
-          "value": 1,
-          "is_correct": false
-        },
         {
           "option_id": "opt_3",
           "value": 3,
           "is_correct": true
         },
         {
-          "option_id": "opt_4",
-          "value": 4,
+          "option_id": "opt_5",
+          "value": 5,
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_1",
+          "value": 1,
           "is_correct": false
         }
       ]
@@ -220,43 +220,48 @@ export const GEN_GT030_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy xếp các Cặp sách để đo xem Trường học dài mấy Cặp sách nhé!",
+      "prompt": "Bé hãy xếp các Cái kéo để đo xem Thước kẻ dài mấy Cái kéo nhé!",
       "object": {
         "object_id": "obj_main",
         "asset": {
           "kind": "emoji",
-          "ref": "🏫"
+          "ref": "📏"
         },
-        "length_in_units": 3
+        "length_in_units": 5
       },
       "unit": {
         "unit_id": "unit_measure",
         "asset": {
           "kind": "emoji",
-          "ref": "🎒"
+          "ref": "✂️"
         }
       },
       "answer_options": [
         {
-          "option_id": "opt_3",
-          "value": 3,
-          "is_correct": true
+          "option_id": "opt_6",
+          "value": 6,
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_4",
+          "value": 4,
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_7",
+          "value": 7,
+          "is_correct": false
         },
         {
           "option_id": "opt_5",
           "value": 5,
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_1",
-          "value": 1,
-          "is_correct": false
+          "is_correct": true
         }
       ]
     },
     "difficulty_params": {
-      "item_count": 3,
-      "length_in_units": 3,
+      "item_count": 4,
+      "length_in_units": 5,
       "gap_tolerance_pct": 10,
       "allow_retry": true,
       "hint_after_ms": 8000
@@ -282,48 +287,43 @@ export const GEN_GT030_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy xếp các Cặp sách để đo xem Trường học dài mấy Cặp sách nhé!",
+      "prompt": "Bé hãy xếp các Sách để đo xem Cái chuông dài mấy Sách nhé!",
       "object": {
         "object_id": "obj_main",
         "asset": {
           "kind": "emoji",
-          "ref": "🏫"
+          "ref": "🔔"
         },
-        "length_in_units": 5
+        "length_in_units": 7
       },
       "unit": {
         "unit_id": "unit_measure",
         "asset": {
           "kind": "emoji",
-          "ref": "🎒"
+          "ref": "📚"
         }
       },
       "answer_options": [
         {
-          "option_id": "opt_6",
-          "value": 6,
-          "is_correct": false
-        },
-        {
           "option_id": "opt_7",
           "value": 7,
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_4",
-          "value": 4,
-          "is_correct": false
-        },
-        {
-          "option_id": "opt_5",
-          "value": 5,
           "is_correct": true
+        },
+        {
+          "option_id": "opt_9",
+          "value": 9,
+          "is_correct": false
+        },
+        {
+          "option_id": "opt_10",
+          "value": 10,
+          "is_correct": false
         }
       ]
     },
     "difficulty_params": {
-      "item_count": 4,
-      "length_in_units": 5,
+      "item_count": 3,
+      "length_in_units": 7,
       "gap_tolerance_pct": 10,
       "allow_retry": true,
       "hint_after_ms": 8000

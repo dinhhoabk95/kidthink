@@ -8,6 +8,7 @@
     "./client": "./src/client.ts",
     "./age-bands": "./src/age-bands.ts",
     "./touch-floors": "./src/touch-floors.ts",
+    "./content-themes": "./src/constants/content-themes.ts",
     "./preschool-terminology": "./src/preschool-terminology.ts",
     "./skill-dataset-types": "./src/skill-dataset-types.ts",
     "./taxonomy-types": "./src/taxonomy-types.ts"

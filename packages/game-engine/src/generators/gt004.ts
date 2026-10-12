@@ -1,4 +1,10 @@
-import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
+import { shuffle } from "#src/rng/shuffle";
+import {
+  getContrast,
+  getNouns,
+  sampleUnique,
+  VALID_GENERATOR_THEMES,
+} from "./helpers.js";
 import type { GeneratorInput, LevelGenerator } from "./types.js";
 
 export const GT004Generator: LevelGenerator = {
@@ -9,47 +15,36 @@ export const GT004Generator: LevelGenerator = {
     theme: [...VALID_GENERATOR_THEMES],
   },
   generate({ rng, vocabulary }: GeneratorInput) {
-    const nouns = getNouns(vocabulary, 10);
-    const sampled = sampleUnique(rng, nouns, 6);
-
-    const group1Emoji = sampled[0]?.emoji_ref || "🍎";
-    const group2Emoji = sampled[1]?.emoji_ref || "🍌";
+    const nouns = getNouns(vocabulary, 6);
+    const contrast = getContrast(vocabulary, 2);
+    // Hai nhóm cắt theo cùng một tiêu chí — chủ đề (`GT-004.md` §14).
+    const group1Items = sampleUnique(rng, nouns, 2);
+    const group2Items = sampleUnique(rng, contrast.nouns, 2);
 
     const groups = [
       {
         group_id: "g1",
-        label: "Nhóm 1",
-        label_emoji: group1Emoji,
+        label: vocabulary.label_vi ?? vocabulary.theme,
+        label_emoji: vocabulary.icon_emoji_ref ?? group1Items[0]?.emoji_ref,
       },
       {
         group_id: "g2",
-        label: "Nhóm 2",
-        label_emoji: group2Emoji,
+        label: contrast.label_vi,
+        label_emoji: contrast.icon_emoji_ref,
       },
     ];
 
-    const items = [
-      {
-        item_id: "item_1",
-        asset: { kind: "emoji" as const, ref: sampled[2]?.emoji_ref || "🥕" },
-        correct_group_id: "g1",
-      },
-      {
-        item_id: "item_2",
-        asset: { kind: "emoji" as const, ref: sampled[3]?.emoji_ref || "🍓" },
-        correct_group_id: "g1",
-      },
-      {
-        item_id: "item_3",
-        asset: { kind: "emoji" as const, ref: sampled[4]?.emoji_ref || "🍇" },
-        correct_group_id: "g2",
-      },
-      {
-        item_id: "item_4",
-        asset: { kind: "emoji" as const, ref: sampled[5]?.emoji_ref || "🍉" },
-        correct_group_id: "g2",
-      },
-    ];
+    const items = shuffle(
+      [
+        ...group1Items.map((item) => ({ item, group: "g1" })),
+        ...group2Items.map((item) => ({ item, group: "g2" })),
+      ],
+      rng
+    ).map(({ item, group }, idx) => ({
+      item_id: `item_${idx + 1}`,
+      asset: { kind: "emoji" as const, ref: item.emoji_ref },
+      correct_group_id: group,
+    }));
 
     return {
       content_pack: {

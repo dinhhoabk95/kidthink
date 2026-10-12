@@ -3,7 +3,7 @@ import type {
   GT033Difficulty,
   GT033PaletteItem,
 } from "#src/templates/GT-033/template";
-import { VALID_GENERATOR_THEMES } from "./helpers.js";
+import { sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
 const COLOR_NAMES: Record<string, string> = {
@@ -24,8 +24,12 @@ export const GT033Generator: LevelGenerator = {
   },
   generate({ rng, age_band: _age_band }) {
     const size = 2 + rng.nextInt(2); // 2 or 3 (2x2 or 3x3)
-    const colorPool = ["red", "blue", "yellow", "green"];
-    const chosenColors = colorPool.slice(0, size);
+    // Không đặt đỏ cạnh xanh lá: trẻ mù màu đỏ-lục không phân biệt được.
+    const colorPool =
+      rng.nextInt(2) === 0
+        ? ["red", "blue", "yellow"]
+        : ["green", "blue", "yellow"];
+    const chosenColors = sampleUnique(rng, colorPool, size);
 
     const palette: GT033PaletteItem[] = chosenColors.map((c) => ({
       color_id: c,

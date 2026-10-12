@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-005
  * Seed: 20260829
  * Theme: school
@@ -29,7 +29,7 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "prompt": "Bé hãy nối các hình giống nhau nhé!",
       "pairs": [
         {
           "pair_id": "pair_1",
@@ -44,7 +44,7 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "🖍️"
+              "ref": "📏"
             }
           }
         },
@@ -54,14 +54,14 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "🖍️"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "🧮"
+              "ref": "🖍️"
             }
           }
         }
@@ -93,7 +93,7 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "prompt": "Bé hãy nối các hình giống nhau nhé!",
       "pairs": [
         {
           "pair_id": "pair_1",
@@ -101,14 +101,14 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "📖"
+              "ref": "🖍️"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "🖍️"
             }
           }
         },
@@ -118,14 +118,14 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "🖍️"
+              "ref": "🧮"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "✏️"
+              "ref": "🧮"
             }
           }
         }
@@ -157,7 +157,7 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "prompt": "Bé hãy nối các hình giống nhau nhé!",
       "pairs": [
         {
           "pair_id": "pair_1",
@@ -165,14 +165,14 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "🖍️"
+              "ref": "📖"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "🎒"
+              "ref": "📖"
             }
           }
         },
@@ -189,7 +189,7 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "📚"
+              "ref": "✂️"
             }
           }
         }
@@ -221,7 +221,7 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "prompt": "Bé hãy nối các hình giống nhau nhé!",
       "pairs": [
         {
           "pair_id": "pair_1",
@@ -229,14 +229,14 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "✂️"
+              "ref": "🖍️"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "📏"
+              "ref": "🖍️"
             }
           }
         },
@@ -246,14 +246,14 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "🏫"
+              "ref": "📚"
             }
           },
           "right": {
             "item_id": "right_2",
             "asset": {
               "kind": "emoji",
-              "ref": "✏️"
+              "ref": "📚"
             }
           }
         }
@@ -285,7 +285,7 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy nối các cặp hình tương ứng nhé!",
+      "prompt": "Bé hãy nối các hình giống nhau nhé!",
       "pairs": [
         {
           "pair_id": "pair_1",
@@ -293,14 +293,14 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
             "item_id": "left_1",
             "asset": {
               "kind": "emoji",
-              "ref": "🏫"
+              "ref": "🖍️"
             }
           },
           "right": {
             "item_id": "right_1",
             "asset": {
               "kind": "emoji",
-              "ref": "📚"
+              "ref": "🖍️"
             }
           }
         },
@@ -310,7 +310,7 @@ export const GEN_GT005_20260829: ContentSeed<unknown, unknown>[] = [
             "item_id": "left_2",
             "asset": {
               "kind": "emoji",
-              "ref": "📖"
+              "ref": "🎒"
             }
           },
           "right": {

@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-012
  * Seed: 20260829
  * Theme: school
@@ -104,33 +104,33 @@ export const GEN_GT012_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "flash_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "📖"
           }
         },
         {
           "item_id": "flash_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "📖"
           }
         },
         {
           "item_id": "flash_3",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "📖"
           }
         }
       ],
       "arrangement": "dice",
       "options": [
         {
-          "value": 3,
-          "is_correct": true
-        },
-        {
           "value": 2,
           "is_correct": false
+        },
+        {
+          "value": 3,
+          "is_correct": true
         },
         {
           "value": 4,
@@ -173,21 +173,14 @@ export const GEN_GT012_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "flash_1",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "🖍️"
           }
         },
         {
           "item_id": "flash_2",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
-          }
-        },
-        {
-          "item_id": "flash_3",
-          "asset": {
-            "kind": "emoji",
-            "ref": "📖"
+            "ref": "🖍️"
           }
         }
       ],
@@ -195,21 +188,21 @@ export const GEN_GT012_20260829: ContentSeed<unknown, unknown>[] = [
       "options": [
         {
           "value": 3,
-          "is_correct": true
-        },
-        {
-          "value": 2,
           "is_correct": false
         },
         {
-          "value": 4,
+          "value": 2,
+          "is_correct": true
+        },
+        {
+          "value": 1,
           "is_correct": false
         }
       ]
     },
     "difficulty_params": {
       "flash_ms": 1500,
-      "item_count": 3,
+      "item_count": 2,
       "distractor_count": 2,
       "allow_replay": true,
       "hint_after_ms": 10000,
@@ -242,23 +235,19 @@ export const GEN_GT012_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "flash_1",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "✂️"
           }
         },
         {
           "item_id": "flash_2",
           "asset": {
             "kind": "emoji",
-            "ref": "🖍️"
+            "ref": "✂️"
           }
         }
       ],
       "arrangement": "dice",
       "options": [
-        {
-          "value": 2,
-          "is_correct": true
-        },
         {
           "value": 1,
           "is_correct": false
@@ -266,6 +255,10 @@ export const GEN_GT012_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "value": 3,
           "is_correct": false
+        },
+        {
+          "value": 2,
+          "is_correct": true
         }
       ]
     },
@@ -304,29 +297,29 @@ export const GEN_GT012_20260829: ContentSeed<unknown, unknown>[] = [
           "item_id": "flash_1",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🏫"
           }
         },
         {
           "item_id": "flash_2",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🏫"
           }
         }
       ],
       "arrangement": "dice",
       "options": [
         {
+          "value": 3,
+          "is_correct": false
+        },
+        {
           "value": 2,
           "is_correct": true
         },
         {
           "value": 1,
-          "is_correct": false
-        },
-        {
-          "value": 3,
           "is_correct": false
         }
       ]

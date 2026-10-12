@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-003
  * Seed: 20260829
  * Theme: school
@@ -29,10 +29,10 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "prompt": "Bé hãy kéo các hình thuộc chủ đề Trường học vào giỏ nhé!",
       "container": {
         "container_id": "basket_1",
-        "label": "Giỏ đồ",
+        "label": "Trường học",
         "accepts_attribute": "target_attr"
       },
       "items": [
@@ -59,10 +59,10 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "item_id": "item_3",
           "attribute": "other_attr",
-          "label": "Cái kéo",
+          "label": "Ngựa",
           "asset": {
             "kind": "emoji",
-            "ref": "✂️"
+            "ref": "🐴"
           },
           "is_correct": false
         }
@@ -96,10 +96,10 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "prompt": "Bé hãy kéo các hình thuộc chủ đề Trường học vào giỏ nhé!",
       "container": {
         "container_id": "basket_1",
-        "label": "Giỏ đồ",
+        "label": "Trường học",
         "accepts_attribute": "target_attr"
       },
       "items": [
@@ -126,10 +126,10 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "item_id": "item_3",
           "attribute": "other_attr",
-          "label": "Sách",
+          "label": "Lúa",
           "asset": {
             "kind": "emoji",
-            "ref": "📚"
+            "ref": "🌾"
           },
           "is_correct": false
         }
@@ -163,20 +163,20 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "prompt": "Bé hãy kéo các hình thuộc chủ đề Trường học vào giỏ nhé!",
       "container": {
         "container_id": "basket_1",
-        "label": "Giỏ đồ",
+        "label": "Trường học",
         "accepts_attribute": "target_attr"
       },
       "items": [
         {
           "item_id": "item_3",
           "attribute": "other_attr",
-          "label": "Sách mở",
+          "label": "Dê",
           "asset": {
             "kind": "emoji",
-            "ref": "📖"
+            "ref": "🐐"
           },
           "is_correct": false
         },
@@ -230,20 +230,20 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "prompt": "Bé hãy kéo các hình thuộc chủ đề Trường học vào giỏ nhé!",
       "container": {
         "container_id": "basket_1",
-        "label": "Giỏ đồ",
+        "label": "Trường học",
         "accepts_attribute": "target_attr"
       },
       "items": [
         {
           "item_id": "item_3",
           "attribute": "other_attr",
-          "label": "Thước kẻ",
+          "label": "Heo",
           "asset": {
             "kind": "emoji",
-            "ref": "📏"
+            "ref": "🐷"
           },
           "is_correct": false
         },
@@ -297,10 +297,10 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy kéo các đồ vật thích hợp vào giỏ nhé!",
+      "prompt": "Bé hãy kéo các hình thuộc chủ đề Trường học vào giỏ nhé!",
       "container": {
         "container_id": "basket_1",
-        "label": "Giỏ đồ",
+        "label": "Trường học",
         "accepts_attribute": "target_attr"
       },
       "items": [
@@ -317,10 +317,10 @@ export const GEN_GT003_20260829: ContentSeed<unknown, unknown>[] = [
         {
           "item_id": "item_3",
           "attribute": "other_attr",
-          "label": "Cái chuông",
+          "label": "Ngựa",
           "asset": {
             "kind": "emoji",
-            "ref": "🔔"
+            "ref": "🐴"
           },
           "is_correct": false
         },

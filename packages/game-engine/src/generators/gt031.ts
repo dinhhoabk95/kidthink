@@ -1,5 +1,10 @@
 import { canFormTargetAmount } from "#src/templates/GT-031/template";
-import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
+import {
+  getNouns,
+  pickOne,
+  sampleUnique,
+  VALID_GENERATOR_THEMES,
+} from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
 const DENOMINATIONS = [1, 2, 5, 10];
@@ -13,10 +18,7 @@ export const GT031Generator: LevelGenerator = {
   },
   generate({ rng, age_band: _age_band, vocabulary }) {
     const nouns = getNouns(vocabulary, 2);
-    const itemNoun = nouns[0] ?? {
-      emoji_ref: "🍎",
-      label_vi: "Quả táo",
-    };
+    const itemNoun = pickOne(rng, nouns);
 
     // Pick 2-4 solution coins
     const solutionCoinCount = 2 + rng.nextInt(3); // 2, 3, or 4 coins

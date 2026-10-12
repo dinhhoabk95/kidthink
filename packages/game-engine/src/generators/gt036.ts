@@ -3,7 +3,7 @@ import type {
   GT036Difficulty,
   GT036PaletteItem,
 } from "#src/templates/GT-036/template";
-import { VALID_GENERATOR_THEMES } from "./helpers.js";
+import { sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
 const THEME_PALETTES: Record<string, { id: string; ref: string }[]> = {
@@ -87,7 +87,7 @@ export const GT036Generator: LevelGenerator = {
 
     // Chọn số phần tử trong bảng màu (2 hoặc 3)
     const palSize = 2 + rng.nextInt(2);
-    const chosenItems = availableItems.slice(0, palSize);
+    const chosenItems = sampleUnique(rng, availableItems, palSize);
 
     const palette: GT036PaletteItem[] = chosenItems.map((item) => ({
       id: item.id,

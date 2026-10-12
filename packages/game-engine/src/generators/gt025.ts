@@ -12,41 +12,34 @@ export const GT025Generator: LevelGenerator = {
     const nouns = getNouns(vocabulary, 6);
     const sampled = sampleUnique(rng, nouns, 3);
 
-    const left_objects = [
-      {
-        id: "left_1",
-        asset: { kind: "emoji" as const, ref: sampled[0]?.emoji_ref },
-        x: 100,
-        y: 150,
-      },
-      {
-        id: "left_2",
-        asset: { kind: "emoji" as const, ref: sampled[1]?.emoji_ref },
-        x: 250,
-        y: 200,
-      },
+    const positions = [
+      { x: 100, y: 150 },
+      { x: 250, y: 200 },
     ];
-
-    const right_objects = [
-      {
-        id: "right_1",
-        asset: { kind: "emoji" as const, ref: sampled[2]?.emoji_ref }, // khác biệt!
-        x: 100,
-        y: 150,
+    const diffIdx = rng.nextInt(positions.length);
+    const shared = sampled[1];
+    const left_objects = positions.map((pos, i) => ({
+      id: `left_${i + 1}`,
+      asset: {
+        kind: "emoji" as const,
+        ref: (i === diffIdx ? sampled[0] : shared)?.emoji_ref,
       },
-      {
-        id: "right_2",
-        asset: { kind: "emoji" as const, ref: sampled[1]?.emoji_ref },
-        x: 250,
-        y: 200,
+      ...pos,
+    }));
+    const right_objects = positions.map((pos, i) => ({
+      id: `right_${i + 1}`,
+      asset: {
+        kind: "emoji" as const,
+        ref: (i === diffIdx ? sampled[2] : shared)?.emoji_ref,
       },
-    ];
+      ...pos,
+    }));
 
     const differences = [
       {
         id: "diff_1",
-        left_id: "left_1",
-        right_id: "right_1",
+        left_id: `left_${diffIdx + 1}`,
+        right_id: `right_${diffIdx + 1}`,
         description: "Hình khác nhau",
       },
     ];

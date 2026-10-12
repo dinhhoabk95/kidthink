@@ -153,6 +153,8 @@ Bảng dưới đây cấp **hình minh hoạ** cho vật mà `dataset.items[]` 
 | `theme` | `ThemeTag` | Thuộc từ vựng đóng ở [`content-theme-registry.md`](../05-content/content-theme-registry.md) |
 | `nouns` | `{ emoji_ref, label_vi }[]` | `emoji_ref` là **ký tự UTF-8**; nên lấy từ `@mindkid/emoji` để có tên tiếng Việt tra ngược |
 | `containers` | `{ emoji_ref, label_vi }[]` | Dùng cho engine có đích chứa: `GT-003`, `GT-004`, `GT-008` |
+| `label_vi` · `icon_emoji_ref` | `string` | Tên và biểu tượng chủ đề, lấy nguyên từ registry chủ đề; làm nhãn nhóm/đích chứa |
+| `contrast` | `{ theme, label_vi, icon_emoji_ref, nouns }` | Một chủ đề **khác nhóm emoji** với chủ đề chính. Bắt buộc cho engine phân loại (`GT-002`, `GT-003`, `GT-004`): vật đúng lấy từ `nouns`, vật nhiễu lấy từ `contrast.nouns`. Lấy cả hai phía từ cùng một chủ đề thì tiêu chí không nhị phân (`GT-002.md` §14) — mười danh từ của một chủ đề gần như luôn cùng một danh mục emoji |
 | `settings` | `string[]` | Bối cảnh cho câu lệnh, người soạn viết lại ở bước 6 |
 | `age_floor` | `3 \| 4 \| 5 \| 6` | Chủ đề không hợp lứa thì không đưa vào ứng viên cho band đó |
 

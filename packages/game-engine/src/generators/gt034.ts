@@ -3,7 +3,7 @@ import type {
   GT034Difficulty,
   GT034Instrument,
 } from "#src/templates/GT-034/template";
-import { VALID_GENERATOR_THEMES } from "./helpers.js";
+import { sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
 const INSTRUMENT_POOLS: Record<
@@ -120,7 +120,7 @@ export const GT034Generator: LevelGenerator = {
 
     // Pick 2 or 3 instruments
     const instCount = 2 + rng.nextInt(2); // 2 or 3
-    const chosenPool = pool.slice(0, instCount);
+    const chosenPool = sampleUnique(rng, pool, instCount);
 
     const instruments: GT034Instrument[] = chosenPool.map((p) => ({
       instrument_id: p.id,

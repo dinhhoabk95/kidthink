@@ -1,3 +1,4 @@
+import { shuffle } from "#src/rng/shuffle";
 import type {
   GT032Cup,
   GT032CupShape,
@@ -90,16 +91,21 @@ export const GT032Generator: LevelGenerator = {
       prompt = "Bé hãy chạm vào chiếc cốc có lượng nước bằng nhau nhé!";
     }
 
+    const orderedCups: GT032Cup[] = shuffle(cups, rng).map((cup, i) => ({
+      ...cup,
+      cup_id: `cup_${i + 1}`,
+    }));
+
     return {
       content_pack: {
         prompt,
-        cups,
+        cups: orderedCups,
         question_type: qType,
         conservation_trap: isTrap,
       },
       difficulty_params: {
-        item_count: cups.length,
-        cup_count: cups.length,
+        item_count: orderedCups.length,
+        cup_count: orderedCups.length,
         level_steps: 8,
         conservation_trap: isTrap,
         allow_retry: true,

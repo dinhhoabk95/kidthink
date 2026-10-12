@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-034
  * Seed: 20260829
  * Theme: school
@@ -32,14 +32,14 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
       "prompt": "Bé lắng nghe nhịp điệu và gõ lại đúng thứ tự các nhạc cụ nhé!",
       "instruments": [
         {
-          "instrument_id": "bell",
+          "instrument_id": "flute",
           "asset": {
             "kind": "emoji",
-            "ref": "🔔"
+            "ref": "🪈"
           },
-          "freq": 520,
+          "freq": 980,
           "type": "triangle",
-          "name_vi": "Chuông học"
+          "name_vi": "Sáo trúc"
         },
         {
           "instrument_id": "drum",
@@ -53,20 +53,20 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
         }
       ],
       "target_pattern": [
-        "bell",
+        "flute",
         "drum",
-        "bell",
+        "flute",
         "drum",
-        "bell",
+        "flute",
         "drum"
       ],
-      "tempo_bpm": 93
+      "tempo_bpm": 89
     },
     "difficulty_params": {
       "item_count": 2,
       "pattern_length": 6,
       "instrument_count": 2,
-      "tempo_bpm": 93,
+      "tempo_bpm": 89,
       "allow_replay": true,
       "replay_limit": 3,
       "hint_after_ms": 8000
@@ -95,6 +95,16 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
       "prompt": "Bé lắng nghe nhịp điệu và gõ lại đúng thứ tự các nhạc cụ nhé!",
       "instruments": [
         {
+          "instrument_id": "flute",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🪈"
+          },
+          "freq": 980,
+          "type": "triangle",
+          "name_vi": "Sáo trúc"
+        },
+        {
           "instrument_id": "bell",
           "asset": {
             "kind": "emoji",
@@ -113,33 +123,23 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
           "freq": 260,
           "type": "triangle",
           "name_vi": "Trống trường"
-        },
-        {
-          "instrument_id": "flute",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🪈"
-          },
-          "freq": 980,
-          "type": "triangle",
-          "name_vi": "Sáo trúc"
         }
       ],
       "target_pattern": [
+        "flute",
         "bell",
         "drum",
         "flute",
         "bell",
-        "drum",
-        "flute"
+        "drum"
       ],
-      "tempo_bpm": 90
+      "tempo_bpm": 80
     },
     "difficulty_params": {
       "item_count": 3,
       "pattern_length": 6,
       "instrument_count": 3,
-      "tempo_bpm": 90,
+      "tempo_bpm": 80,
       "allow_replay": true,
       "replay_limit": 3,
       "hint_after_ms": 8000
@@ -178,16 +178,6 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
           "name_vi": "Chuông học"
         },
         {
-          "instrument_id": "drum",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🥁"
-          },
-          "freq": 260,
-          "type": "triangle",
-          "name_vi": "Trống trường"
-        },
-        {
           "instrument_id": "flute",
           "asset": {
             "kind": "emoji",
@@ -196,23 +186,33 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
           "freq": 980,
           "type": "triangle",
           "name_vi": "Sáo trúc"
+        },
+        {
+          "instrument_id": "drum",
+          "asset": {
+            "kind": "emoji",
+            "ref": "🥁"
+          },
+          "freq": 260,
+          "type": "triangle",
+          "name_vi": "Trống trường"
         }
       ],
       "target_pattern": [
         "bell",
-        "drum",
         "flute",
-        "bell",
         "drum",
-        "flute"
+        "bell",
+        "flute",
+        "drum"
       ],
-      "tempo_bpm": 93
+      "tempo_bpm": 77
     },
     "difficulty_params": {
       "item_count": 3,
       "pattern_length": 6,
       "instrument_count": 3,
-      "tempo_bpm": 93,
+      "tempo_bpm": 77,
       "allow_replay": true,
       "replay_limit": 3,
       "hint_after_ms": 8000
@@ -265,17 +265,15 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
         "bell",
         "drum",
         "bell",
-        "drum",
-        "bell",
         "drum"
       ],
-      "tempo_bpm": 83
+      "tempo_bpm": 75
     },
     "difficulty_params": {
       "item_count": 2,
-      "pattern_length": 6,
+      "pattern_length": 4,
       "instrument_count": 2,
-      "tempo_bpm": 83,
+      "tempo_bpm": 75,
       "allow_replay": true,
       "replay_limit": 3,
       "hint_after_ms": 8000
@@ -314,16 +312,6 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
           "name_vi": "Chuông học"
         },
         {
-          "instrument_id": "drum",
-          "asset": {
-            "kind": "emoji",
-            "ref": "🥁"
-          },
-          "freq": 260,
-          "type": "triangle",
-          "name_vi": "Trống trường"
-        },
-        {
           "instrument_id": "flute",
           "asset": {
             "kind": "emoji",
@@ -336,19 +324,17 @@ export const GEN_GT034_20260829: ContentSeed<unknown, unknown>[] = [
       ],
       "target_pattern": [
         "bell",
-        "drum",
         "flute",
         "bell",
-        "drum",
         "flute"
       ],
-      "tempo_bpm": 77
+      "tempo_bpm": 81
     },
     "difficulty_params": {
-      "item_count": 3,
-      "pattern_length": 6,
-      "instrument_count": 3,
-      "tempo_bpm": 77,
+      "item_count": 2,
+      "pattern_length": 4,
+      "instrument_count": 2,
+      "tempo_bpm": 81,
       "allow_replay": true,
       "replay_limit": 3,
       "hint_after_ms": 8000

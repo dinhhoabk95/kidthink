@@ -1,3 +1,4 @@
+import { shuffle } from "#src/rng/shuffle";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
@@ -29,7 +30,7 @@ export const GT018Generator: LevelGenerator = {
           text: target.label_vi,
         },
         response_mode: "select" as const,
-        options,
+        options: shuffle(options, rng),
       },
       difficulty_params: {
         hint_after_ms: 8000,

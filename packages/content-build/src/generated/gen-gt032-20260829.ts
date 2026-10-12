@@ -1,5 +1,5 @@
 /**
- * @generated from LEVEL-GENERATOR-KIT@88c846d2bc96
+ * @generated from LEVEL-GENERATOR-KIT@d3cb9e5c77ac
  * Engine: GT-032
  * Seed: 20260829
  * Theme: school
@@ -40,16 +40,16 @@ export const GEN_GT032_20260829: ContentSeed<unknown, unknown>[] = [
         },
         {
           "cup_id": "cup_2",
-          "shape": "narrow_tall",
+          "shape": "wide_short",
           "capacity_units": 8,
-          "fill_units": 4,
+          "fill_units": 6,
           "color": "amber"
         },
         {
           "cup_id": "cup_3",
-          "shape": "wide_short",
+          "shape": "narrow_tall",
           "capacity_units": 8,
-          "fill_units": 6,
+          "fill_units": 4,
           "color": "amber"
         }
       ],
@@ -89,23 +89,16 @@ export const GEN_GT032_20260829: ContentSeed<unknown, unknown>[] = [
       "cups": [
         {
           "cup_id": "cup_1",
-          "shape": "narrow_tall",
-          "capacity_units": 8,
-          "fill_units": 4,
+          "shape": "wide_short",
+          "capacity_units": 6,
+          "fill_units": 3,
           "color": "berry"
         },
         {
           "cup_id": "cup_2",
-          "shape": "wide_short",
-          "capacity_units": 8,
-          "fill_units": 4,
-          "color": "berry"
-        },
-        {
-          "cup_id": "cup_3",
-          "shape": "standard",
-          "capacity_units": 8,
-          "fill_units": 2,
+          "shape": "narrow_tall",
+          "capacity_units": 6,
+          "fill_units": 3,
           "color": "berry"
         }
       ],
@@ -113,8 +106,8 @@ export const GEN_GT032_20260829: ContentSeed<unknown, unknown>[] = [
       "conservation_trap": true
     },
     "difficulty_params": {
-      "item_count": 3,
-      "cup_count": 3,
+      "item_count": 2,
+      "cup_count": 2,
       "level_steps": 8,
       "conservation_trap": true,
       "allow_retry": true,
@@ -141,31 +134,31 @@ export const GEN_GT032_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy chạm vào chiếc cốc có ít nước nhất nhé!",
+      "prompt": "Bé hãy chạm vào chiếc cốc có lượng nước bằng nhau nhé!",
       "cups": [
         {
           "cup_id": "cup_1",
-          "shape": "standard",
-          "capacity_units": 8,
-          "fill_units": 2,
-          "color": "berry"
+          "shape": "wide_short",
+          "capacity_units": 5,
+          "fill_units": 3,
+          "color": "sky"
         },
         {
           "cup_id": "cup_2",
           "shape": "narrow_tall",
-          "capacity_units": 8,
-          "fill_units": 4,
-          "color": "berry"
+          "capacity_units": 5,
+          "fill_units": 3,
+          "color": "sky"
         }
       ],
-      "question_type": "less",
-      "conservation_trap": false
+      "question_type": "same",
+      "conservation_trap": true
     },
     "difficulty_params": {
       "item_count": 2,
       "cup_count": 2,
       "level_steps": 8,
-      "conservation_trap": false,
+      "conservation_trap": true,
       "allow_retry": true,
       "hint_after_ms": 8000
     }
@@ -239,7 +232,7 @@ export const GEN_GT032_20260829: ContentSeed<unknown, unknown>[] = [
       "authored_in": "repo_seed"
     },
     "content_pack": {
-      "prompt": "Bé hãy chạm vào chiếc cốc có ít nước nhất nhé!",
+      "prompt": "Bé hãy chạm vào chiếc cốc có nhiều nước nhất nhé!",
       "cups": [
         {
           "cup_id": "cup_1",
@@ -256,7 +249,7 @@ export const GEN_GT032_20260829: ContentSeed<unknown, unknown>[] = [
           "color": "mint"
         }
       ],
-      "question_type": "less",
+      "question_type": "more",
       "conservation_trap": false
     },
     "difficulty_params": {

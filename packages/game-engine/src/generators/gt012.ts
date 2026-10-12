@@ -1,4 +1,5 @@
 import { AGE_BANDS } from "#src/contracts/types";
+import { shuffle } from "#src/rng/shuffle";
 import { getNouns, pickOne, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 
@@ -34,7 +35,7 @@ export const GT012Generator: LevelGenerator = {
         prompt: "Bé hãy nhìn nhanh và nhớ xem có bao nhiêu hình nhé!",
         flash_items,
         arrangement: "dice" as const,
-        options,
+        options: shuffle(options, rng),
       },
       difficulty_params: {
         flash_ms: 1500,
