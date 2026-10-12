@@ -80,6 +80,8 @@ const PRIMITIVE_MODULES: readonly string[] = [
   "render/craft-shapes.ts",
   "render/particles.ts",
   "render/slot-decor.ts",
+  "render/board-shapes.ts",
+  "render/container-shapes.ts",
 ];
 
 function checkSessionDrawLines(

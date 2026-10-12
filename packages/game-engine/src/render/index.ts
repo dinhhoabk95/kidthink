@@ -1,6 +1,8 @@
 // biome-ignore lint/performance/noBarrelFile: primitive render library barrel
+export * from "./board-shapes.js";
 export * from "./cache.js";
 export * from "./commit-button.js";
+export * from "./container-shapes.js";
 export * from "./mascot.js";
 export * from "./numeracy-primitives.js";
 export * from "./prompt-zone.js";
