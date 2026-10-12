@@ -190,7 +190,11 @@ export class GT023Session extends TemplateGameSession<
     x: number,
     y: number
   ): AssemblyPlacementResult | null {
-    const snapRadius = this.difficulty.snap_radius_px;
+    // Cùng bán kính hút với `findHitAnchor`: hai đường thả không được lệch nhau.
+    const snapRadius = Math.max(
+      this.difficulty.snap_radius_px,
+      MIN_SNAP_RADIUS_PX
+    );
     const nearest = this.assemblySystem.findNearestAnchor(x, y, snapRadius);
     if (!nearest) {
       return null;

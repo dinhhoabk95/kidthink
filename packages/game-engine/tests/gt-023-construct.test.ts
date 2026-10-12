@@ -14,6 +14,19 @@ describe("GT-023: Lắp ghép hình thể (construct)", () => {
     expect(template.requires_tap_fallback).toBe(true);
   });
 
+  it("snap radius nhỏ vẫn hút trong sàn 64px, cùng đường thả với findHitAnchor", () => {
+    if (!f1) {
+      throw new Error("Missing fixture");
+    }
+    const session = new GT023Session(f1.content, {
+      ...f1.difficulty,
+      snap_radius_px: 24,
+    });
+    session.setupEntities();
+    // Cách mỏ neo mái (480,180) 50px: ngoài 24 nhưng trong sàn 64.
+    expect(session.onSnapPart("part-roof", 480, 230)?.isAnchorMatch).toBe(true);
+  });
+
   it("assembles parts via tap-tap or snap and completes round (BR-LVB-09)", () => {
     if (!f1) {
       throw new Error("Missing fixture");
