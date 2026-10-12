@@ -93,17 +93,21 @@ export {
 } from "./layout/constants.js";
 export {
   computeBipartiteLayout,
-  computeFreeSceneLayout,
   computeGridLayout,
   computeHorizontalRowLayout,
-  computeHorizontalSlotTrackLayout,
-  computeMatrixSlotGridLayout,
-  computeMirrorAxisSplitLayout,
   computeMultiBucketLayout,
-  computeNumberBondTreeLayout,
-  computeTenFrameSplitLayout,
   computeTrackLayout,
 } from "./layout/geometry.js";
+export {
+  computeFreeSceneLayout,
+  computeMirrorAxisSplitLayout,
+} from "./layout/geometry-boards.js";
+export {
+  computeHorizontalSlotTrackLayout,
+  computeMatrixSlotGridLayout,
+  computeNumberBondTreeLayout,
+  computeTenFrameSplitLayout,
+} from "./layout/geometry-numeracy.js";
 export {
   findHitEntity,
   findHitSlotIndex,

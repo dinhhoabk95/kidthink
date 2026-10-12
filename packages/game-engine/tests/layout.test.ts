@@ -13,12 +13,14 @@ import {
 } from "#src/layout/constants";
 import {
   computeBipartiteLayout,
-  computeClueBoardLayout,
   computeGridLayout,
-  computeMatrix3x3Layout,
-  computeMatrixSlotGridLayout,
   computeTrackLayout,
 } from "#src/layout/geometry";
+import { computeClueBoardLayout } from "#src/layout/geometry-boards";
+import {
+  computeMatrix3x3Layout,
+  computeMatrixSlotGridLayout,
+} from "#src/layout/geometry-numeracy";
 import { isLayoutId, LAYOUT_IDS, resolveLayout } from "#src/layout/registry";
 import type { LayoutId } from "#src/layout/types";
 

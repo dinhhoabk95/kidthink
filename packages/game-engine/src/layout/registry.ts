@@ -1,22 +1,26 @@
 import {
   computeBipartiteLayout,
-  computeClueBoardLayout,
-  computeEquationRowsLayout,
-  computeFreeSceneLayout,
   computeGridLayout,
   computeHorizontalRowLayout,
+  computeMultiBucketLayout,
+  computeTrackLayout,
+} from "./geometry.js";
+import {
+  computeClueBoardLayout,
+  computeFreeSceneLayout,
+  computeMeasureStripLayout,
+  computeMirrorAxisSplitLayout,
+  computeScatterBoardLayout,
+  computeWeaveGridLayout,
+} from "./geometry-boards.js";
+import {
+  computeEquationRowsLayout,
   computeHorizontalSlotTrackLayout,
   computeMatrix3x3Layout,
   computeMatrixSlotGridLayout,
-  computeMeasureStripLayout,
-  computeMirrorAxisSplitLayout,
-  computeMultiBucketLayout,
   computeNumberBondTreeLayout,
-  computeScatterBoardLayout,
   computeTenFrameSplitLayout,
-  computeTrackLayout,
-  computeWeaveGridLayout,
-} from "./geometry.js";
+} from "./geometry-numeracy.js";
 import { placeInStage } from "./stage-placement.js";
 import type { LayoutFn, LayoutId } from "./types.js";
 

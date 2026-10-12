@@ -12,7 +12,7 @@ import {
   computeScatterBoardLayout,
   scatterBoardCandidateCellCount,
   scatterBoardCapacity,
-} from "#src/layout/geometry";
+} from "#src/layout/geometry-boards";
 import { resolveLayout } from "#src/layout/registry";
 import type { Slot } from "#src/layout/types";
 import { findHitPairViolations } from "./stage-checks.ts";
