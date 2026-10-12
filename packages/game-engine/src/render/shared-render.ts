@@ -13,6 +13,7 @@ import {
   setCachedGradient,
   setContextGeneration,
 } from "./cache.js";
+import { alpha } from "./color-utils.js";
 import {
   drawPlaceholderBox,
   drawQuantityRepresentation,
@@ -142,9 +143,9 @@ export function drawSceneBackground(
     );
     if (!grad) {
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "#e0f2fe");
-      grad.addColorStop(0.55, "#f0fdf4");
-      grad.addColorStop(1, "#bbf7d0");
+      grad.addColorStop(0, designTokens.colors.scene.sky[100]);
+      grad.addColorStop(0.55, designTokens.colors.semantic.success[50]);
+      grad.addColorStop(1, designTokens.colors.semantic.success[200]);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -161,7 +162,7 @@ export function drawSceneBackground(
     drawScenicCloud(ctx, 810, 85, 0.85);
 
     // Far rolling hill
-    ctx.fillStyle = "rgba(134, 239, 172, 0.35)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.success[300], 0.35);
     ctx.beginPath();
     ctx.moveTo(0, 480);
     ctx.bezierCurveTo(240, 420, 600, 490, w, 450);
@@ -171,7 +172,7 @@ export function drawSceneBackground(
     ctx.fill();
 
     // Near green hill
-    ctx.fillStyle = "rgba(74, 222, 128, 0.25)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.success[400], 0.25);
     ctx.beginPath();
     ctx.moveTo(0, 500);
     ctx.bezierCurveTo(400, 520, 700, 460, w, 490);
@@ -182,11 +183,11 @@ export function drawSceneBackground(
 
     // Wildflower dots
     drawScenicFlowerDots(ctx, [
-      [80, 495, "rgba(253, 224, 71, 0.5)"],
-      [220, 480, "rgba(255, 255, 255, 0.6)"],
-      [450, 505, "rgba(251, 146, 60, 0.5)"],
-      [720, 475, "rgba(253, 224, 71, 0.5)"],
-      [880, 490, "rgba(255, 255, 255, 0.6)"],
+      [80, 495, alpha(designTokens.colors.semantic.warning[300], 0.5)],
+      [220, 480, alpha(designTokens.colors.surface[0], 0.6)],
+      [450, 505, alpha(designTokens.colors.cta[400], 0.5)],
+      [720, 475, alpha(designTokens.colors.semantic.warning[300], 0.5)],
+      [880, 490, alpha(designTokens.colors.surface[0], 0.6)],
     ]);
   } else if (activeTheme === "farm") {
     let grad = getCachedGradient(
@@ -197,9 +198,9 @@ export function drawSceneBackground(
     );
     if (!grad) {
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "#fef3c7");
-      grad.addColorStop(0.5, "#fef9c3");
-      grad.addColorStop(1, "#dcfce7");
+      grad.addColorStop(0, designTokens.colors.retry[100]);
+      grad.addColorStop(0.5, designTokens.colors.semantic.warning[100]);
+      grad.addColorStop(1, designTokens.colors.semantic.success[100]);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -212,17 +213,17 @@ export function drawSceneBackground(
     ctx.fillRect(0, 0, w, h);
 
     // Morning Sun
-    ctx.fillStyle = "rgba(254, 240, 138, 0.25)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.warning[200], 0.25);
     ctx.beginPath();
     ctx.arc(860, 65, 54, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "rgba(253, 224, 71, 0.4)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.warning[300], 0.4);
     ctx.beginPath();
     ctx.arc(860, 65, 36, 0, Math.PI * 2);
     ctx.fill();
 
     // Rolling pasture
-    ctx.fillStyle = "rgba(187, 247, 208, 0.42)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.success[200], 0.42);
     ctx.beginPath();
     ctx.moveTo(0, 470);
     ctx.bezierCurveTo(300, 430, 650, 490, w, 460);
@@ -232,14 +233,14 @@ export function drawSceneBackground(
     ctx.fill();
 
     // Rustic wooden fence rails & pickets along bottom
-    ctx.strokeStyle = "rgba(180, 130, 80, 0.25)";
+    ctx.strokeStyle = alpha(designTokens.colors.scene.wood.light, 0.25);
     ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.moveTo(0, 495);
     ctx.lineTo(w, 495);
     ctx.stroke();
 
-    ctx.fillStyle = "rgba(180, 130, 80, 0.22)";
+    ctx.fillStyle = alpha(designTokens.colors.scene.wood.light, 0.22);
     for (let x = 60; x < w; x += 130) {
       ctx.fillRect(x, 480, 8, 32);
     }
@@ -252,9 +253,9 @@ export function drawSceneBackground(
     );
     if (!seaGrad) {
       seaGrad = ctx.createLinearGradient(0, 0, 0, h);
-      seaGrad.addColorStop(0, "#bae6fd");
-      seaGrad.addColorStop(0.5, "#7dd3fc");
-      seaGrad.addColorStop(1, "#38bdf8");
+      seaGrad.addColorStop(0, designTokens.colors.scene.sky[200]);
+      seaGrad.addColorStop(0.5, designTokens.colors.scene.sky[300]);
+      seaGrad.addColorStop(1, designTokens.colors.scene.sky[400]);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -267,7 +268,7 @@ export function drawSceneBackground(
     ctx.fillRect(0, 0, w, h);
 
     // Underwater light rays
-    ctx.fillStyle = "rgba(255, 255, 255, 0.08)";
+    ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.08);
     ctx.beginPath();
     ctx.moveTo(180, 0);
     ctx.lineTo(260, 0);
@@ -285,7 +286,7 @@ export function drawSceneBackground(
     ctx.fill();
 
     // Sandy seabed at bottom
-    ctx.fillStyle = "rgba(254, 240, 138, 0.32)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.warning[200], 0.32);
     ctx.beginPath();
     ctx.moveTo(0, 485);
     ctx.bezierCurveTo(320, 470, 680, 500, w, 480);
@@ -295,13 +296,13 @@ export function drawSceneBackground(
     ctx.fill();
 
     // Coral silhouettes at corners
-    ctx.fillStyle = "rgba(251, 113, 133, 0.28)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.danger[400], 0.28);
     ctx.beginPath();
     ctx.arc(60, 490, 24, 0, Math.PI * 2);
     ctx.arc(80, 480, 18, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = "rgba(20, 184, 166, 0.28)";
+    ctx.fillStyle = alpha(designTokens.colors.scene.teal, 0.28);
     ctx.beginPath();
     ctx.arc(900, 490, 24, 0, Math.PI * 2);
     ctx.arc(880, 480, 18, 0, Math.PI * 2);
@@ -322,9 +323,9 @@ export function drawSceneBackground(
     );
     if (!spaceGrad) {
       spaceGrad = ctx.createLinearGradient(0, 0, 0, h);
-      spaceGrad.addColorStop(0, "#0f172a");
-      spaceGrad.addColorStop(0.5, "#1e1b4b");
-      spaceGrad.addColorStop(1, "#312e81");
+      spaceGrad.addColorStop(0, designTokens.colors.scene.night[950]);
+      spaceGrad.addColorStop(0.5, designTokens.colors.scene.night[900]);
+      spaceGrad.addColorStop(1, designTokens.colors.scene.night[800]);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -337,7 +338,7 @@ export function drawSceneBackground(
     ctx.fillRect(0, 0, w, h);
 
     // Crescent moon (upper left)
-    ctx.fillStyle = "rgba(254, 240, 138, 0.7)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.warning[200], 0.7);
     ctx.beginPath();
     ctx.arc(120, 75, 22, 0, Math.PI * 2);
     ctx.fill();
@@ -347,11 +348,11 @@ export function drawSceneBackground(
     ctx.fill();
 
     // Ringed planet (upper right)
-    ctx.fillStyle = "rgba(251, 191, 36, 0.65)";
+    ctx.fillStyle = alpha(designTokens.colors.retry[400], 0.65);
     ctx.beginPath();
     ctx.arc(820, 80, 22, 0, Math.PI * 2);
     ctx.fill();
-    ctx.strokeStyle = "rgba(253, 230, 138, 0.45)";
+    ctx.strokeStyle = alpha(designTokens.colors.semantic.warning[200], 0.45);
     ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.ellipse(820, 80, 38, 10, -0.3, 0, Math.PI * 2);
@@ -373,7 +374,7 @@ export function drawSceneBackground(
     ]);
 
     // Cosmic horizon crest
-    ctx.fillStyle = "rgba(49, 46, 129, 0.45)";
+    ctx.fillStyle = alpha(designTokens.colors.scene.night[800], 0.45);
     ctx.beginPath();
     ctx.moveTo(0, 490);
     ctx.bezierCurveTo(320, 460, 640, 510, w, 480);
@@ -390,9 +391,9 @@ export function drawSceneBackground(
     );
     if (!grad) {
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "#fefce8");
-      grad.addColorStop(0.55, "#fef9c3");
-      grad.addColorStop(1, "#fed7aa");
+      grad.addColorStop(0, designTokens.colors.semantic.warning[50]);
+      grad.addColorStop(0.55, designTokens.colors.semantic.warning[100]);
+      grad.addColorStop(1, designTokens.colors.cta[200]);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -405,23 +406,23 @@ export function drawSceneBackground(
     ctx.fillRect(0, 0, w, h);
 
     // Blackboard banner at top
-    ctx.fillStyle = "rgba(30, 41, 59, 0.85)";
+    ctx.fillStyle = alpha(designTokens.colors.scene.slate, 0.85);
     ctx.fillRect(0, 0, w, 24);
-    ctx.fillStyle = "rgba(180, 130, 80, 0.5)";
+    ctx.fillStyle = alpha(designTokens.colors.scene.wood.light, 0.5);
     ctx.fillRect(0, 24, w, 4);
 
     // Chalk dots
     drawScenicFlowerDots(ctx, [
-      [60, 12, "rgba(255, 255, 255, 0.6)"],
-      [140, 12, "rgba(254, 240, 138, 0.6)"],
-      [820, 12, "rgba(110, 231, 183, 0.6)"],
-      [900, 12, "rgba(244, 114, 182, 0.6)"],
+      [60, 12, alpha(designTokens.colors.surface[0], 0.6)],
+      [140, 12, alpha(designTokens.colors.semantic.warning[200], 0.6)],
+      [820, 12, alpha(designTokens.colors.semantic.success[300], 0.6)],
+      [900, 12, alpha(designTokens.colors.scene.pink, 0.6)],
     ]);
 
     // Wooden classroom floor
-    ctx.fillStyle = "rgba(217, 119, 6, 0.15)";
+    ctx.fillStyle = alpha(designTokens.colors.retry[600], 0.15);
     ctx.fillRect(0, 480, w, 60);
-    ctx.strokeStyle = "rgba(180, 130, 80, 0.15)";
+    ctx.strokeStyle = alpha(designTokens.colors.scene.wood.light, 0.15);
     ctx.lineWidth = 2;
     for (let x = 160; x < w; x += 160) {
       ctx.beginPath();
@@ -438,9 +439,9 @@ export function drawSceneBackground(
     );
     if (!grad) {
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "#fff7ed");
-      grad.addColorStop(0.5, "#ffedd5");
-      grad.addColorStop(1, "#fed7aa");
+      grad.addColorStop(0, designTokens.colors.cta[50]);
+      grad.addColorStop(0.5, designTokens.colors.cta[100]);
+      grad.addColorStop(1, designTokens.colors.cta[200]);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -453,7 +454,7 @@ export function drawSceneBackground(
     ctx.fillRect(0, 0, w, h);
 
     // Sunbeam through window
-    ctx.fillStyle = "rgba(254, 240, 138, 0.14)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.warning[200], 0.14);
     ctx.beginPath();
     ctx.moveTo(60, 0);
     ctx.lineTo(190, 0);
@@ -463,9 +464,9 @@ export function drawSceneBackground(
     ctx.fill();
 
     // Wooden toy shelf baseboard
-    ctx.fillStyle = "rgba(180, 110, 60, 0.18)";
+    ctx.fillStyle = alpha(designTokens.colors.scene.wood.deep, 0.18);
     ctx.fillRect(0, 480, w, 60);
-    ctx.strokeStyle = "rgba(180, 110, 60, 0.3)";
+    ctx.strokeStyle = alpha(designTokens.colors.scene.wood.deep, 0.3);
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.moveTo(0, 480);
@@ -480,9 +481,9 @@ export function drawSceneBackground(
     );
     if (!grad) {
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "#ffedd5");
-      grad.addColorStop(0.45, "#fef08a");
-      grad.addColorStop(1, "#dcfce7");
+      grad.addColorStop(0, designTokens.colors.cta[100]);
+      grad.addColorStop(0.45, designTokens.colors.semantic.warning[200]);
+      grad.addColorStop(1, designTokens.colors.semantic.success[100]);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -495,13 +496,13 @@ export function drawSceneBackground(
     ctx.fillRect(0, 0, w, h);
 
     // Golden savanna sun on horizon
-    ctx.fillStyle = "rgba(251, 191, 36, 0.2)";
+    ctx.fillStyle = alpha(designTokens.colors.retry[400], 0.2);
     ctx.beginPath();
     ctx.arc(480, 380, 80, 0, Math.PI * 2);
     ctx.fill();
 
     // Savanna hill
-    ctx.fillStyle = "rgba(217, 119, 6, 0.16)";
+    ctx.fillStyle = alpha(designTokens.colors.retry[600], 0.16);
     ctx.beginPath();
     ctx.moveTo(0, 470);
     ctx.bezierCurveTo(280, 420, 680, 480, w, 450);
@@ -511,7 +512,7 @@ export function drawSceneBackground(
     ctx.fill();
 
     // Tropical leaves in corners
-    ctx.fillStyle = "rgba(34, 197, 94, 0.18)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.success[500], 0.18);
     ctx.beginPath();
     ctx.arc(0, 0, 90, 0, Math.PI / 2);
     ctx.fill();
@@ -527,9 +528,9 @@ export function drawSceneBackground(
     );
     if (!grad) {
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "#fff1f2");
-      grad.addColorStop(0.5, "#fef3c7");
-      grad.addColorStop(1, "#ecfdf5");
+      grad.addColorStop(0, designTokens.colors.semantic.danger[50]);
+      grad.addColorStop(0.5, designTokens.colors.retry[100]);
+      grad.addColorStop(1, designTokens.colors.semantic.success[50]);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -542,19 +543,19 @@ export function drawSceneBackground(
     ctx.fillRect(0, 0, w, h);
 
     // Picnic cloth strip along bottom
-    ctx.fillStyle = "rgba(244, 63, 94, 0.14)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.danger[500], 0.14);
     ctx.fillRect(0, 485, w, 55);
-    ctx.fillStyle = "rgba(255, 255, 255, 0.25)";
+    ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.25);
     for (let x = 0; x < w; x += 40) {
       ctx.fillRect(x, 485, 20, 55);
     }
 
     // Gentle berry dots in background
     drawScenicFlowerDots(ctx, [
-      [90, 200, "rgba(251, 113, 133, 0.2)"],
-      [860, 220, "rgba(251, 113, 133, 0.2)"],
-      [140, 360, "rgba(251, 191, 36, 0.2)"],
-      [820, 350, "rgba(251, 191, 36, 0.2)"],
+      [90, 200, alpha(designTokens.colors.semantic.danger[400], 0.2)],
+      [860, 220, alpha(designTokens.colors.semantic.danger[400], 0.2)],
+      [140, 360, alpha(designTokens.colors.retry[400], 0.2)],
+      [820, 350, alpha(designTokens.colors.retry[400], 0.2)],
     ]);
   } else if (activeTheme === "vehicle") {
     let grad = getCachedGradient(
@@ -565,9 +566,9 @@ export function drawSceneBackground(
     );
     if (!grad) {
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "#e0f2fe");
-      grad.addColorStop(0.5, "#bae6fd");
-      grad.addColorStop(1, "#f1f5f9");
+      grad.addColorStop(0, designTokens.colors.scene.sky[100]);
+      grad.addColorStop(0.5, designTokens.colors.scene.sky[200]);
+      grad.addColorStop(1, designTokens.colors.scene.mist);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -584,7 +585,7 @@ export function drawSceneBackground(
     drawScenicCloud(ctx, 750, 90, 0.85);
 
     // Winding paved travel road
-    ctx.fillStyle = "rgba(71, 85, 105, 0.18)";
+    ctx.fillStyle = alpha(designTokens.colors.surface[600], 0.18);
     ctx.beginPath();
     ctx.moveTo(0, 480);
     ctx.bezierCurveTo(340, 460, 620, 510, w, 475);
@@ -594,7 +595,7 @@ export function drawSceneBackground(
     ctx.fill();
 
     // Road dash line
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.45)";
+    ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.45);
     ctx.lineWidth = 3;
     ctx.setLineDash([16, 12]);
     ctx.beginPath();
@@ -611,9 +612,9 @@ export function drawSceneBackground(
     );
     if (!grad) {
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "#fdf4ff");
-      grad.addColorStop(0.4, "#fae8ff");
-      grad.addColorStop(1, "#e0e7ff");
+      grad.addColorStop(0, designTokens.colors.surface[50]);
+      grad.addColorStop(0.4, designTokens.colors.surface[50]);
+      grad.addColorStop(1, designTokens.colors.montessori.indigoLight);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -626,22 +627,22 @@ export function drawSceneBackground(
     ctx.fillRect(0, 0, w, h);
 
     // Watercolor splash arcs
-    ctx.fillStyle = "rgba(192, 132, 252, 0.16)";
+    ctx.fillStyle = alpha(designTokens.colors.scene.violet[400], 0.16);
     ctx.beginPath();
     ctx.arc(80, 80, 65, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = "rgba(56, 189, 248, 0.16)";
+    ctx.fillStyle = alpha(designTokens.colors.scene.sky[400], 0.16);
     ctx.beginPath();
     ctx.arc(880, 90, 75, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = "rgba(250, 204, 21, 0.16)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.warning[400], 0.16);
     ctx.beginPath();
     ctx.arc(840, 470, 70, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.fillStyle = "rgba(244, 114, 182, 0.16)";
+    ctx.fillStyle = alpha(designTokens.colors.scene.pink, 0.16);
     ctx.beginPath();
     ctx.arc(100, 480, 65, 0, Math.PI * 2);
     ctx.fill();
@@ -654,9 +655,9 @@ export function drawSceneBackground(
     );
     if (!grad) {
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "#fff7ed");
-      grad.addColorStop(0.5, "#ffe4e6");
-      grad.addColorStop(1, "#fed7aa");
+      grad.addColorStop(0, designTokens.colors.cta[50]);
+      grad.addColorStop(0.5, designTokens.colors.semantic.danger[100]);
+      grad.addColorStop(1, designTokens.colors.cta[200]);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -669,15 +670,15 @@ export function drawSceneBackground(
     ctx.fillRect(0, 0, w, h);
 
     // Warm sunset orb
-    ctx.fillStyle = "rgba(251, 146, 60, 0.14)";
+    ctx.fillStyle = alpha(designTokens.colors.cta[400], 0.14);
     ctx.beginPath();
     ctx.arc(480, 180, 110, 0, Math.PI * 2);
     ctx.fill();
 
     // Garden terrace strip at bottom
-    ctx.fillStyle = "rgba(180, 120, 80, 0.16)";
+    ctx.fillStyle = alpha(designTokens.colors.scene.wood.warm, 0.16);
     ctx.fillRect(0, 485, w, 55);
-    ctx.strokeStyle = "rgba(180, 120, 80, 0.22)";
+    ctx.strokeStyle = alpha(designTokens.colors.scene.wood.warm, 0.22);
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.moveTo(0, 485);
@@ -692,9 +693,9 @@ export function drawSceneBackground(
     );
     if (!grad) {
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "#f0fdfa");
-      grad.addColorStop(0.5, "#ccfbf1");
-      grad.addColorStop(1, "#dcfce7");
+      grad.addColorStop(0, designTokens.colors.semantic.success[50]);
+      grad.addColorStop(0.5, designTokens.colors.semantic.success[100]);
+      grad.addColorStop(1, designTokens.colors.semantic.success[100]);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -707,14 +708,14 @@ export function drawSceneBackground(
     ctx.fillRect(0, 0, w, h);
 
     // Energizing sunrise aura
-    ctx.strokeStyle = "rgba(253, 224, 71, 0.22)";
+    ctx.strokeStyle = alpha(designTokens.colors.semantic.warning[300], 0.22);
     ctx.lineWidth = 26;
     ctx.beginPath();
     ctx.arc(480, 0, 220, 0, Math.PI);
     ctx.stroke();
 
     // Active park lawn
-    ctx.fillStyle = "rgba(52, 211, 153, 0.22)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.success[400], 0.22);
     ctx.beginPath();
     ctx.moveTo(0, 480);
     ctx.bezierCurveTo(340, 460, 620, 505, w, 475);
@@ -731,9 +732,9 @@ export function drawSceneBackground(
     );
     if (!grad) {
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "#e0f2fe");
-      grad.addColorStop(0.5, "#bae6fd");
-      grad.addColorStop(1, "#fef9c3");
+      grad.addColorStop(0, designTokens.colors.scene.sky[100]);
+      grad.addColorStop(0.5, designTokens.colors.scene.sky[200]);
+      grad.addColorStop(1, designTokens.colors.semantic.warning[100]);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -747,23 +748,23 @@ export function drawSceneBackground(
 
     // Rainbow arc
     ctx.lineWidth = 14;
-    ctx.strokeStyle = "rgba(248, 113, 113, 0.12)";
+    ctx.strokeStyle = alpha(designTokens.colors.semantic.danger[400], 0.12);
     ctx.beginPath();
     ctx.arc(480, 540, 420, Math.PI, 0);
     ctx.stroke();
 
-    ctx.strokeStyle = "rgba(250, 204, 21, 0.12)";
+    ctx.strokeStyle = alpha(designTokens.colors.semantic.warning[400], 0.12);
     ctx.beginPath();
     ctx.arc(480, 540, 440, Math.PI, 0);
     ctx.stroke();
 
-    ctx.strokeStyle = "rgba(96, 165, 250, 0.12)";
+    ctx.strokeStyle = alpha(designTokens.colors.scene.blue[400], 0.12);
     ctx.beginPath();
     ctx.arc(480, 540, 460, Math.PI, 0);
     ctx.stroke();
 
     // Cheerful sun in upper left
-    ctx.fillStyle = "rgba(251, 191, 36, 0.35)";
+    ctx.fillStyle = alpha(designTokens.colors.retry[400], 0.35);
     ctx.beginPath();
     ctx.arc(120, 70, 34, 0, Math.PI * 2);
     ctx.fill();
@@ -780,9 +781,9 @@ export function drawSceneBackground(
     );
     if (!grad) {
       grad = ctx.createLinearGradient(0, 0, 0, h);
-      grad.addColorStop(0, "#fff1f2");
-      grad.addColorStop(0.5, "#fefce8");
-      grad.addColorStop(1, "#e0f2fe");
+      grad.addColorStop(0, designTokens.colors.semantic.danger[50]);
+      grad.addColorStop(0.5, designTokens.colors.semantic.warning[50]);
+      grad.addColorStop(1, designTokens.colors.scene.sky[100]);
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -795,7 +796,7 @@ export function drawSceneBackground(
     ctx.fillRect(0, 0, w, h);
 
     // Party bunting string across top
-    ctx.strokeStyle = "rgba(148, 163, 184, 0.45)";
+    ctx.strokeStyle = alpha(designTokens.colors.surface[400], 0.45);
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(0, 12);
@@ -804,17 +805,18 @@ export function drawSceneBackground(
 
     // Pennant flags along bunting
     const flagColors = [
-      "rgba(244, 63, 94, 0.45)",
-      "rgba(251, 191, 36, 0.45)",
-      "rgba(52, 211, 153, 0.45)",
-      "rgba(59, 130, 246, 0.45)",
-      "rgba(168, 85, 247, 0.45)",
+      alpha(designTokens.colors.semantic.danger[500], 0.45),
+      alpha(designTokens.colors.retry[400], 0.45),
+      alpha(designTokens.colors.semantic.success[400], 0.45),
+      alpha(designTokens.colors.scene.blue[500], 0.45),
+      alpha(designTokens.colors.scene.violet[500], 0.45),
     ];
     for (let i = 0; i < 9; i++) {
       const fx = 60 + i * 100;
       const fy = 14 + Math.sin((i / 8) * Math.PI) * 10;
       const color =
-        flagColors[i % flagColors.length] ?? "rgba(244, 63, 94, 0.45)";
+        flagColors[i % flagColors.length] ??
+        alpha(designTokens.colors.semantic.danger[500], 0.45);
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.moveTo(fx - 14, fy);
@@ -826,12 +828,12 @@ export function drawSceneBackground(
 
     // Confetti dots
     drawScenicFlowerDots(ctx, [
-      [120, 180, "rgba(244, 63, 94, 0.3)"],
-      [220, 280, "rgba(59, 130, 246, 0.3)"],
-      [780, 240, "rgba(234, 179, 8, 0.3)"],
-      [860, 160, "rgba(168, 85, 247, 0.3)"],
-      [100, 390, "rgba(52, 211, 153, 0.3)"],
-      [880, 390, "rgba(244, 63, 94, 0.3)"],
+      [120, 180, alpha(designTokens.colors.semantic.danger[500], 0.3)],
+      [220, 280, alpha(designTokens.colors.scene.blue[500], 0.3)],
+      [780, 240, alpha(designTokens.colors.semantic.warning[500], 0.3)],
+      [860, 160, alpha(designTokens.colors.scene.violet[500], 0.3)],
+      [100, 390, alpha(designTokens.colors.semantic.success[400], 0.3)],
+      [880, 390, alpha(designTokens.colors.semantic.danger[500], 0.3)],
     ]);
   } else {
     // Default / general / classroom: Cheerful sunny sky & paper base
@@ -846,8 +848,8 @@ export function drawSceneBackground(
     );
     if (!grad) {
       grad = ctx.createLinearGradient(0, 0, 0, h * 0.45);
-      grad.addColorStop(0, "rgba(255, 250, 240, 0.65)");
-      grad.addColorStop(1, "rgba(251, 249, 245, 0)");
+      grad.addColorStop(0, alpha(designTokens.colors.surface[50], 0.65));
+      grad.addColorStop(1, alpha(designTokens.colors.montessori.paper, 0));
       setCachedGradient(
         ctx,
         rs.paintGeneration,
@@ -865,12 +867,12 @@ export function drawSceneBackground(
 
     // Cheerful pastel flower dots along bottom
     drawScenicFlowerDots(ctx, [
-      [80, 505, "rgba(251, 191, 36, 0.45)"],
-      [140, 515, "rgba(244, 114, 182, 0.4)"],
-      [220, 510, "rgba(96, 165, 250, 0.4)"],
-      [740, 510, "rgba(52, 211, 153, 0.45)"],
-      [820, 515, "rgba(251, 191, 36, 0.4)"],
-      [890, 505, "rgba(244, 114, 182, 0.45)"],
+      [80, 505, alpha(designTokens.colors.retry[400], 0.45)],
+      [140, 515, alpha(designTokens.colors.scene.pink, 0.4)],
+      [220, 510, alpha(designTokens.colors.scene.blue[400], 0.4)],
+      [740, 510, alpha(designTokens.colors.semantic.success[400], 0.45)],
+      [820, 515, alpha(designTokens.colors.retry[400], 0.4)],
+      [890, 505, alpha(designTokens.colors.scene.pink, 0.45)],
     ]);
   }
 
@@ -890,8 +892,11 @@ export function drawSceneBackground(
       h / 2,
       w * 0.65
     );
-    vignette.addColorStop(0, "rgba(255, 255, 255, 0)");
-    vignette.addColorStop(1, "rgba(212, 197, 171, 0.12)");
+    vignette.addColorStop(0, alpha(designTokens.colors.surface[0], 0));
+    vignette.addColorStop(
+      1,
+      alpha(designTokens.colors.montessori.woodBevel, 0.12)
+    );
     setCachedGradient(
       ctx,
       rs.paintGeneration,
@@ -912,7 +917,7 @@ function drawScenicCloud(
   cy: number,
   scale: number
 ): void {
-  ctx.fillStyle = "rgba(255, 255, 255, 0.68)";
+  ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.68);
   ctx.beginPath();
   ctx.arc(cx, cy, 20 * scale, 0, Math.PI * 2);
   ctx.arc(cx + 18 * scale, cy - 8 * scale, 17 * scale, 0, Math.PI * 2);
@@ -927,13 +932,13 @@ function drawScenicBubble(
   cy: number,
   radius: number
 ): void {
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
+  ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.5);
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(cx, cy, radius, 0, Math.PI * 2);
   ctx.stroke();
 
-  ctx.fillStyle = "rgba(255, 255, 255, 0.55)";
+  ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.55);
   ctx.beginPath();
   ctx.arc(
     cx - radius * 0.35,
@@ -954,7 +959,7 @@ function drawScenicStars(
       continue;
     }
     const [sx, sy, sr] = s;
-    ctx.fillStyle = "rgba(254, 240, 138, 0.65)";
+    ctx.fillStyle = alpha(designTokens.colors.semantic.warning[200], 0.65);
     ctx.beginPath();
     ctx.arc(sx, sy, sr, 0, Math.PI * 2);
     ctx.fill();
@@ -989,9 +994,12 @@ export function drawTargetHoverAura(
   const pulse = 1 + Math.sin(phase * Math.PI * 2) * 0.08;
   const r = radius * pulse;
   const auraGrad = ctx.createRadialGradient(x, y, r * 0.3, x, y, r * 1.3);
-  auraGrad.addColorStop(0, "rgba(255, 191, 0, 0.45)");
-  auraGrad.addColorStop(0.7, "rgba(255, 223, 160, 0.2)");
-  auraGrad.addColorStop(1, "rgba(255, 255, 255, 0)");
+  auraGrad.addColorStop(0, alpha(designTokens.colors.montessori.amber, 0.45));
+  auraGrad.addColorStop(
+    0.7,
+    alpha(designTokens.colors.montessori.amberLight, 0.2)
+  );
+  auraGrad.addColorStop(1, alpha(designTokens.colors.surface[0], 0));
   ctx.fillStyle = auraGrad;
   ctx.beginPath();
   ctx.arc(x, y, r * 1.3, 0, Math.PI * 2);
@@ -1097,7 +1105,7 @@ export function drawPromptText(
 
   // Ambient card shadow
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.16)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.16);
   ctx.shadowBlur = 12;
   ctx.shadowOffsetY = 4;
   ctx.fillStyle = designTokens.colors.surface[0];
@@ -1206,7 +1214,7 @@ export function drawCentralTargetCard(
   ctx.save();
   // 1. Ambient drop shadow
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.2)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.2);
   ctx.shadowBlur = 16;
   ctx.shadowOffsetY = 8;
   ctx.fillStyle = designTokens.colors.surface[0];
@@ -1234,7 +1242,7 @@ export function drawCentralTargetCard(
   ctx.stroke();
 
   // 4. Specular White Highlight
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+  ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.9);
   ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.moveTo(cardX + 28, cardY + 6);
@@ -1304,7 +1312,7 @@ export function drawWoodenTokenDock(
   ctx.save();
   // 1. Ambient drop shadow
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.16)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.16);
   ctx.shadowBlur = 14;
   ctx.shadowOffsetY = 6;
   ctx.fillStyle = designTokens.colors.surface[100];
@@ -1332,7 +1340,7 @@ export function drawWoodenTokenDock(
   ctx.stroke();
 
   // 4. Specular highlight
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+  ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.85);
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(dockX + radius, dockY + 4);
@@ -1624,7 +1632,7 @@ export function drawEmptyTargetSlot(
   ctx.fill();
 
   // Inset rim shadow
-  ctx.strokeStyle = "rgba(130, 118, 96, 0.25)";
+  ctx.strokeStyle = alpha(designTokens.colors.montessori.woodBorder, 0.25);
   ctx.lineWidth = 2;
   ctx.stroke();
   ctx.restore();
@@ -1901,7 +1909,7 @@ export function drawLiquidCup(
   ctx.save();
 
   // Glass Background
-  ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+  ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.5);
   ctx.strokeStyle = designTokens.colors.surface[400];
   ctx.lineWidth = 4;
 
@@ -1939,14 +1947,14 @@ export function drawLiquidCup(
     ctx.fillRect(x, liquidY, cupW, liquidH);
 
     // Meniscus / surface highlight
-    ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+    ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.4);
     ctx.fillRect(x, liquidY, cupW, Math.min(6, liquidH));
     ctx.restore();
   }
 
   // Hint Marks (tick marks)
   if (params.showHintMarks) {
-    ctx.strokeStyle = "rgba(100, 116, 139, 0.6)";
+    ctx.strokeStyle = alpha(designTokens.colors.surface[500], 0.6);
     ctx.lineWidth = 2;
     for (let step = 1; step < params.capacityUnits; step++) {
       const stepY = y + cupH - (cupH * step) / params.capacityUnits;
@@ -2015,7 +2023,7 @@ export function drawWeaveCell(
 
   // Weave texture lines if color is present
   if (params.colorId) {
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+    ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.35);
     ctx.lineWidth = 2;
     ctx.beginPath();
     // Horizontal yarn line
@@ -2073,7 +2081,7 @@ export function drawFlashcardFrame(
 ): void {
   // 1. Warm ambient drop shadow
   ctx.save();
-  ctx.shadowColor = "rgba(30, 27, 75, 0.12)";
+  ctx.shadowColor = alpha(designTokens.colors.scene.night[900], 0.12);
   ctx.shadowBlur = 18;
   ctx.shadowOffsetY = 8;
   ctx.fillStyle = designTokens.colors.surface[200];
@@ -2101,7 +2109,7 @@ export function drawFlashcardFrame(
   ctx.stroke();
 
   // 4. White top specular highlight
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+  ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.85);
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(left + 28, top + 4);

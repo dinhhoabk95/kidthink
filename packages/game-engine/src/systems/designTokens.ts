@@ -75,6 +75,46 @@ export const designTokens = {
       woodTray: "#f5f3ef",
       woodTrayHigh: "#eae8e4",
       paper: "#fbf9f5",
+      amberGlow: "#fff5cc",
+      amberDeep: "#b38600",
+      plateLight: "#fff8ee",
+      plateMid: "#f5edd8",
+      plateEdge: "#e6d7b8",
+      plateInner: "#efe5cc",
+      plateInnerEdge: "#dfd3b4",
+      basket: "#faebd7",
+    },
+    // Màu cảnh nền theo chủ đề (biển, trời, vũ trụ, gỗ). Không mượn `semantic`
+    // vì xanh lá của `success` là tín hiệu đúng/sai, không phải màu nước.
+    scene: {
+      sky: {
+        100: "#e0f2fe",
+        200: "#bae6fd",
+        300: "#7dd3fc",
+        400: "#38bdf8",
+      },
+      blue: {
+        400: "#60a5fa",
+        500: "#3b82f6",
+      },
+      violet: {
+        400: "#c084fc",
+        500: "#a855f7",
+      },
+      night: {
+        800: "#312e81",
+        900: "#1e1b4b",
+        950: "#0f172a",
+      },
+      slate: "#1e293b",
+      mist: "#f1f5f9",
+      teal: "#14b8a6",
+      pink: "#f472b6",
+      wood: {
+        light: "#b48250",
+        warm: "#b47850",
+        deep: "#b46e3c",
+      },
     },
     semantic: {
       success: {

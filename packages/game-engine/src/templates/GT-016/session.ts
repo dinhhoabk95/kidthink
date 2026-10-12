@@ -5,6 +5,7 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type {
@@ -82,11 +83,12 @@ function stepClockTime(
   } else if (delta < 0) {
     totalMinutes -= step;
   }
-  let hour = Math.floor(totalMinutes / 60) % 12;
-  if (hour <= 0) {
+  totalMinutes = ((totalMinutes % 720) + 720) % 720;
+  let hour = Math.floor(totalMinutes / 60);
+  if (hour === 0) {
     hour = 12;
   }
-  const minute = (totalMinutes % 60 >= 30 && step === 30 ? 30 : 0) as 0 | 30;
+  const minute = totalMinutes % 60;
   return { hour, minute };
 }
 
@@ -228,6 +230,7 @@ export class ClockHandsSession extends TemplateGameSession<
   setHour(hour: number): void {
     const clampedHour = Math.max(1, Math.min(12, Math.round(hour)));
     this.currentTime = { ...this.currentTime, hour: clampedHour };
+    this.hasSubmittedTime = false;
     this.recordEvent("hand_rotated", {
       hand: "hour",
       time: formatClockTime(this.currentTime),
@@ -236,6 +239,7 @@ export class ClockHandsSession extends TemplateGameSession<
 
   setMinute(minute: 0 | 30): void {
     this.currentTime = { ...this.currentTime, minute };
+    this.hasSubmittedTime = false;
     this.recordEvent("hand_rotated", {
       hand: "minute",
       time: formatClockTime(this.currentTime),
@@ -302,6 +306,7 @@ export class ClockHandsSession extends TemplateGameSession<
       delta,
       this.difficulty.minute_step
     );
+    this.hasSubmittedTime = false;
     this.recordEvent("hand_rotated", {
       hand: "minute",
       time: formatClockTime(this.currentTime),
@@ -309,8 +314,28 @@ export class ClockHandsSession extends TemplateGameSession<
   }
 
   override getHintTargetIndex(): number | null {
-    const idx = this.content.options.findIndex((o) => o.is_correct);
-    return idx >= 0 ? idx : null;
+    if (this.content.mode === "read") {
+      const idx = this.content.options.findIndex((o) => o.is_correct);
+      return idx >= 0 ? idx : null;
+    }
+    if (this.content.mode === "match") {
+      const idx = this.content.activity_cards.findIndex((c) =>
+        isSameTime(this.currentTime, { hour: c.hour, minute: c.minute })
+      );
+      return idx >= 0 ? idx : null;
+    }
+    return 0;
+  }
+
+  /** Mode set: kim đã đúng giờ thì bước kế là bấm Xong, không phải chỉnh kim (`BR-PSZ-05`). */
+  override getHintTarget(): HintTarget | null {
+    if (
+      this.content.mode === "set" &&
+      isSameTime(this.currentTime, this.content.target_time)
+    ) {
+      return { kind: "action" };
+    }
+    return super.getHintTarget();
   }
 
   override commit(action: GameAction): void {
@@ -448,9 +473,12 @@ export class ClockHandsSession extends TemplateGameSession<
       );
     }
     if (this.content.mode === "match") {
+      const correctCards = this.content.activity_cards.filter((c) =>
+        isSameTime(this.currentTime, { hour: c.hour, minute: c.minute })
+      );
       return (
-        this.content.activity_cards.length > 0 &&
-        this.matchedCardIds.size === this.content.activity_cards.length
+        correctCards.length > 0 &&
+        correctCards.every((c) => this.matchedCardIds.has(c.card_id))
       );
     }
     return false;

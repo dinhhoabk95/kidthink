@@ -115,6 +115,112 @@ describe("GT-016: Xoay kim đồng hồ (clock-hands)", () => {
       expect(session.checkWinCondition()).toBe(true);
     });
 
+    it("runs complete gameplay loop on Sample Level 3 (Match Mode)", () => {
+      const session = new ClockHandsSession(
+        SAMPLE_LEVEL_3.content_pack,
+        SAMPLE_LEVEL_3.difficulty_params
+      );
+      session.setupEntities();
+
+      expect(session.getMode()).toBe("match");
+      expect(session.checkWinCondition()).toBe(false);
+      expect(session.getHintTargetIndex()).toBe(0); // breakfast
+
+      // Thử match card sai (sleep: 9:00, đồng hồ 7:00)
+      const wrongMatch = session.matchCard("sleep");
+      expect(wrongMatch).toBe(false);
+      expect(session.checkWinCondition()).toBe(false);
+
+      // Match card đúng (breakfast: 7:00)
+      const correctMatch = session.matchCard("breakfast");
+      expect(correctMatch).toBe(true);
+      expect(session.checkWinCondition()).toBe(true);
+    });
+
+    it("handles retry flow: submit incorrect time, adjust and submit correct time", () => {
+      const session = new ClockHandsSession(
+        SAMPLE_LEVEL_2.content_pack,
+        SAMPLE_LEVEL_2.difficulty_params
+      );
+      session.setupEntities();
+      // Đặt 4:00 (sai vì target là 4:30)
+      session.setHour(4);
+      session.setMinute(0);
+      expect(session.checkWinCondition()).toBe(false);
+
+      // Commit lần 1: nộp sai
+      const verdict1 = session.dispatch({ type: "commit", timeMs: 0 });
+      expect(verdict1?.valid).toBe(false);
+      expect(verdict1?.feedback).toBe("amber_soft");
+      expect(session.checkWinCondition()).toBe(false);
+
+      // Chỉnh thêm 30 phút
+      session.applyTimeDelta(30);
+      expect(session.getCurrentTime()).toEqual({ hour: 4, minute: 30 });
+      // Vừa chỉnh xong chưa bấm commit -> checkWinCondition vẫn false
+      expect(session.checkWinCondition()).toBe(false);
+
+      // Commit lần 2: nộp đúng -> thắng
+      const verdict2 = session.dispatch({ type: "commit", timeMs: 0 });
+      expect(verdict2?.valid).toBe(true);
+      expect(verdict2?.feedback).toBe("pop_celebrate");
+      expect(session.checkWinCondition()).toBe(true);
+    });
+
+    it("bước giờ quay vòng qua 12 giờ theo cả hai chiều", () => {
+      const session = new ClockHandsSession(
+        SAMPLE_LEVEL_2.content_pack,
+        GT016DifficultySchema.parse({
+          ...SAMPLE_LEVEL_2.difficulty_params,
+          minute_step: 30,
+        })
+      );
+      session.setupEntities();
+      session.setHour(12);
+      session.setMinute(30);
+      session.applyTimeDelta(1);
+      expect(session.getCurrentTime()).toEqual({ hour: 1, minute: 0 });
+
+      session.setHour(12);
+      session.setMinute(0);
+      session.applyTimeDelta(-1);
+      expect(session.getCurrentTime()).toEqual({ hour: 11, minute: 30 });
+    });
+
+    it("bước 15 phút đi qua :15 và :45", () => {
+      const session = new ClockHandsSession(
+        SAMPLE_LEVEL_2.content_pack,
+        GT016DifficultySchema.parse({
+          ...SAMPLE_LEVEL_2.difficulty_params,
+          minute_step: 15,
+        })
+      );
+      session.setupEntities();
+      session.setHour(3);
+      session.setMinute(0);
+      const seen: number[] = [];
+      for (let i = 0; i < 4; i++) {
+        session.applyTimeDelta(1);
+        seen.push(session.getCurrentTime().minute);
+      }
+      expect(seen).toEqual([15, 30, 45, 0]);
+      expect(session.getCurrentTime().hour).toBe(4);
+    });
+
+    it("gợi ý mode set trỏ nút Xong khi kim đã đúng giờ", () => {
+      const session = new ClockHandsSession(
+        SAMPLE_LEVEL_2.content_pack,
+        SAMPLE_LEVEL_2.difficulty_params
+      );
+      session.setupEntities();
+      session.setHour(4);
+      session.setMinute(0);
+      expect(session.getHintTarget()).toEqual({ kind: "slot", index: 0 });
+
+      session.setMinute(30);
+      expect(session.getHintTarget()).toEqual({ kind: "action" });
+    });
+
     it("tap lên mặt đồng hồ không nộp giờ ở mode set", () => {
       const session = new ClockHandsSession(
         SAMPLE_LEVEL_2.content_pack,

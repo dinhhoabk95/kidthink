@@ -14,6 +14,7 @@ import type { StageZones, ZoneRect } from "#src/layout/stage-zones.js";
 import type { Slot } from "#src/layout/types.js";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
+import { alpha } from "./color-utils.js";
 import { drawMascot, type MascotPose, type MascotSprites } from "./mascot.js";
 import { drawEmojiContent } from "./shared-render.js";
 import { canvasFontPx } from "./type-scale.js";
@@ -36,7 +37,7 @@ function drawPromptContainer(
 ): void {
   const radius = Math.min(24, prompt.h / 2);
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.12)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.12);
   ctx.shadowBlur = 10;
   ctx.shadowOffsetY = 3;
   ctx.fillStyle = designTokens.colors.surface[0];
@@ -102,7 +103,7 @@ function drawPromptSpeaker(
   };
 
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.18)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.18);
   ctx.shadowBlur = 8;
   ctx.shadowOffsetY = 3;
   ctx.fillStyle = isActive
@@ -114,7 +115,7 @@ function drawPromptSpeaker(
   ctx.restore();
 
   ctx.save();
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
+  ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.4);
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(speakerCenter.x, speakerCenter.y, speakerRadius, 0, Math.PI * 2);

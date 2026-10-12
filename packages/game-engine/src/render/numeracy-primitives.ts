@@ -6,6 +6,7 @@ import {
 import type { Slot } from "#src/layout/types";
 import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
+import { alpha } from "./color-utils.js";
 import { canvasFontPx } from "./type-scale.js";
 import type { QuantityRepConfig, SceneBox } from "./types.js";
 
@@ -42,7 +43,7 @@ export function drawTenFrameBoard(
   ctx.save();
   // Khay gỗ sồi bao quanh
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.16)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.16);
   ctx.shadowBlur = 12;
   ctx.shadowOffsetY = 6;
   ctx.fillStyle = designTokens.colors.surface[100];

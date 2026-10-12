@@ -15,3 +15,7 @@ coverage/
 .codegraph/
 .ua/
 .claude/worktrees/
+
+# Skill agent cài cục bộ và nháp task — không phải mã sản phẩm, không để Biome quét.
+.agents/
+docs/tasks/scratch/

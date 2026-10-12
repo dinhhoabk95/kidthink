@@ -21,6 +21,7 @@ import {
   PRIMITIVE_GRADIENTS,
   setCachedGradient,
 } from "./cache.js";
+import { alpha } from "./color-utils.js";
 import { drawSlotItem, resolveEmojiGlyph } from "./shared-render.js";
 import type { ItemVisualState, RenderAsset, SceneBox } from "./types.js";
 
@@ -108,7 +109,7 @@ export function drawMazeBoard(
   ctx.save();
   // Warm wooden board base with rounded corners
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.16)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.16);
   ctx.shadowBlur = 12;
   ctx.shadowOffsetY = 6;
   ctx.fillStyle = designTokens.colors.surface[100];
@@ -321,7 +322,7 @@ export function drawBalanceScale(
 function drawPan(ctx: CanvasRenderingContext2D, pan: SceneBox): void {
   ctx.save();
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.14)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.14);
   ctx.shadowBlur = 8;
   ctx.shadowOffsetY = 4;
   ctx.fillStyle = designTokens.colors.surface[100];
@@ -366,7 +367,7 @@ export function drawClockFace(
   ctx.save();
   // Warm wooden frame with ambient shadow
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.18)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.18);
   ctx.shadowBlur = 14;
   ctx.shadowOffsetY = 6;
   ctx.fillStyle = designTokens.colors.surface[0];
@@ -763,8 +764,8 @@ export function drawWoodenPlate(
   // 1. Ambient drop shadow
   ctx.save();
   ctx.shadowColor = isSelected
-    ? "rgba(255, 191, 0, 0.45)"
-    : "rgba(130, 118, 96, 0.22)";
+    ? alpha(designTokens.colors.montessori.amber, 0.45)
+    : alpha(designTokens.colors.montessori.woodBorder, 0.22);
   ctx.shadowBlur = isSelected ? 18 : 10;
   ctx.shadowOffsetY = isSelected ? 8 : 4;
   ctx.fillStyle = isSelected
@@ -801,9 +802,9 @@ export function drawWoodenPlate(
       cy,
       r
     );
-    plateGrad.addColorStop(0, "#fff8ee");
-    plateGrad.addColorStop(0.7, "#f5edd8");
-    plateGrad.addColorStop(1, "#e6d7b8");
+    plateGrad.addColorStop(0, designTokens.colors.montessori.plateLight);
+    plateGrad.addColorStop(0.7, designTokens.colors.montessori.plateMid);
+    plateGrad.addColorStop(1, designTokens.colors.montessori.plateEdge);
     setCachedGradient(
       ctx,
       gen,
@@ -832,8 +833,8 @@ export function drawWoodenPlate(
   );
   if (!innerGrad) {
     innerGrad = ctx.createRadialGradient(cx, cy, innerR * 0.2, cx, cy, innerR);
-    innerGrad.addColorStop(0, "#efe5cc");
-    innerGrad.addColorStop(1, "#dfd3b4");
+    innerGrad.addColorStop(0, designTokens.colors.montessori.plateInner);
+    innerGrad.addColorStop(1, designTokens.colors.montessori.plateInnerEdge);
     setCachedGradient(
       ctx,
       gen,
@@ -843,7 +844,7 @@ export function drawWoodenPlate(
     );
   }
   ctx.fillStyle = innerGrad;
-  ctx.strokeStyle = "rgba(130, 118, 96, 0.35)";
+  ctx.strokeStyle = alpha(designTokens.colors.montessori.woodBorder, 0.35);
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
@@ -851,7 +852,7 @@ export function drawWoodenPlate(
   ctx.stroke();
 
   // 5. Specular highlight curve
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+  ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.85);
   ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.arc(cx, cy, r * 0.88, Math.PI * 1.15, Math.PI * 1.85);
@@ -893,9 +894,9 @@ export function drawClocheScene(
         cy,
         clocheR
       );
-      clocheGrad.addColorStop(0, "#ffffff");
-      clocheGrad.addColorStop(0.5, "#dcdfe4");
-      clocheGrad.addColorStop(1, "#9aa0a6");
+      clocheGrad.addColorStop(0, designTokens.colors.surface[0]);
+      clocheGrad.addColorStop(0.5, designTokens.colors.surface[200]);
+      clocheGrad.addColorStop(1, designTokens.colors.surface[400]);
       setCachedGradient(
         ctx,
         gen,
@@ -905,7 +906,7 @@ export function drawClocheScene(
       );
     }
     ctx.fillStyle = clocheGrad;
-    ctx.strokeStyle = "#80868b";
+    ctx.strokeStyle = designTokens.colors.surface[500];
     ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.arc(cx, cy, clocheR, Math.PI, 0, false);
@@ -941,7 +942,7 @@ export function drawShapeTray(
   ctx.save();
   // 1. Ambient drop shadow
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.16)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.16);
   ctx.shadowBlur = 14;
   ctx.shadowOffsetY = 6;
   ctx.fillStyle = designTokens.colors.surface[100];
@@ -969,7 +970,7 @@ export function drawShapeTray(
   ctx.stroke();
 
   // 4. Subtle Top Highlight
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+  ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.85);
   ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(trayX + radius, trayY + 4);
@@ -1032,7 +1033,7 @@ export function drawLocomotive(
   ctx.fillRect(x + w * 0.2, y - h * 0.85, w * 0.2, h * 0.4);
 
   // Khói trắng
-  ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+  ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.85);
   ctx.beginPath();
   ctx.arc(x + w * 0.3, y - h * 0.95, 8, 0, Math.PI * 2);
   ctx.arc(x + w * 0.38, y - h * 1.15, 12, 0, Math.PI * 2);
@@ -1054,7 +1055,7 @@ export function drawEquationTray(
 ): void {
   ctx.save();
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.16)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.16);
   ctx.shadowBlur = 12;
   ctx.shadowOffsetY = 6;
   ctx.fillStyle = designTokens.colors.surface[100];
@@ -1082,7 +1083,7 @@ export function drawButterflyWingsBoard(
   ctx.save();
   // Cánh bướm gỗ cắt hình đối xứng
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.18)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.18);
   ctx.shadowBlur = 14;
   ctx.shadowOffsetY = 6;
   ctx.fillStyle = designTokens.colors.surface[100];
@@ -1187,9 +1188,9 @@ export function drawGramophone(
       cy,
       r * 0.7
     );
-    hornGrad.addColorStop(0, "#fff5cc");
-    hornGrad.addColorStop(0.5, "#ffbf00");
-    hornGrad.addColorStop(1, "#b38600");
+    hornGrad.addColorStop(0, designTokens.colors.montessori.amberGlow);
+    hornGrad.addColorStop(0.5, designTokens.colors.montessori.amber);
+    hornGrad.addColorStop(1, designTokens.colors.montessori.amberDeep);
     setCachedGradient(
       ctx,
       gen,
@@ -1243,7 +1244,7 @@ export function drawPedestalTarget(
   ctx.save();
   // Bục gỗ tròn
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.2)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.2);
   ctx.shadowBlur = 10;
   ctx.shadowOffsetY = 6;
   ctx.fillStyle = designTokens.colors.surface[100];
@@ -1273,10 +1274,10 @@ export function drawBasketSlot(
   ctx.save();
   // Thân rổ gỗ
   ctx.save();
-  ctx.shadowColor = "rgba(130, 118, 96, 0.18)";
+  ctx.shadowColor = alpha(designTokens.colors.montessori.woodBorder, 0.18);
   ctx.shadowBlur = 10;
   ctx.shadowOffsetY = 5;
-  ctx.fillStyle = "#faebd7";
+  ctx.fillStyle = designTokens.colors.montessori.basket;
   ctx.beginPath();
   ctx.roundRect(cx - w / 2, cy - h / 2, w, h, 16);
   ctx.fill();
@@ -1338,9 +1339,11 @@ function drawContainerAura(
   );
   gradient.addColorStop(
     0,
-    isHovered ? "rgba(255, 191, 0, 0.38)" : "rgba(255, 223, 160, 0.22)"
+    isHovered
+      ? alpha(designTokens.colors.montessori.amber, 0.38)
+      : alpha(designTokens.colors.montessori.amberLight, 0.22)
   );
-  gradient.addColorStop(1, "rgba(255, 223, 160, 0)");
+  gradient.addColorStop(1, alpha(designTokens.colors.montessori.amberLight, 0));
 
   ctx.save();
   ctx.fillStyle = gradient;
@@ -1378,7 +1381,7 @@ function drawContainerPlacedItems(
     const chipX = startX + i * spacing;
 
     ctx.save();
-    ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+    ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.85);
     ctx.beginPath();
     ctx.arc(chipX, chipY, chipR, 0, Math.PI * 2);
     ctx.fill();
