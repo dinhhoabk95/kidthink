@@ -321,7 +321,7 @@ export class GT001Session extends TemplateGameSession<
       getWoodenTokenDockRect(this.logicSpace, this.stageRect)
     );
     this.drawInteractive(rs, ctx, slots);
-    this.drawFeedback(rs, ctx, slots, timeMs);
+    this.drawFeedback(rs, ctx);
   }
 
   private drawInteractive(
@@ -339,7 +339,7 @@ export class GT001Session extends TemplateGameSession<
       drawSlotItem(
         ctx,
         rs,
-        slot,
+        this.shakenSlot(slot, opt.item_id, rs),
         {
           id: opt.item_id,
           asset: opt.asset,
@@ -350,38 +350,29 @@ export class GT001Session extends TemplateGameSession<
     }
   }
 
-  private drawFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D,
-    slots: readonly Slot[],
-    timeMs: number
-  ): void {
+  private drawFeedback(rs: RenderSystem, ctx: CanvasRenderingContext2D): void {
     if (this.degradation?.particles_enabled === false) {
       return;
     }
 
     this.particles = updateParticles(this.particles);
     rs.drawParticles(ctx, this.particles);
+  }
 
-    if (this.wrongItemId) {
-      const elapsed = timeMs - this.wrongTimestamp;
-      if (elapsed < 400) {
-        const idx = this.displayOptions.findIndex(
-          (o) => o.item_id === this.wrongItemId
-        );
-        const slot = slots[idx];
-        if (slot) {
-          const shakeX = Math.sin(elapsed * 0.05) * 4;
-          rs.drawScaffoldingHighlight(
-            ctx,
-            slot.x + shakeX,
-            slot.y,
-            Math.min(slot.hitW, slot.hitH) / 2 + 4,
-            (elapsed % 1000) / 1000
-          );
-        }
-      }
+  /**
+   * Vật vừa chọn sai rung nhẹ 400ms tại chỗ, đã mang trạng thái `wrong` (nền
+   * hổ phách). Cấm vẽ vòng gợi ý quanh nó: vòng nét đứt nhấp nháy là tín hiệu
+   * "chạm vào đây" của thang trợ giúp, trẻ chưa biết chữ sẽ chạm lại đúng vật sai.
+   */
+  private shakenSlot(slot: Slot, itemId: string, rs: RenderSystem): Slot {
+    if (itemId !== this.wrongItemId || rs.reducedMotion) {
+      return slot;
     }
+    const elapsed = this.lastFrameMs - this.wrongTimestamp;
+    if (elapsed >= 400) {
+      return slot;
+    }
+    return { ...slot, x: slot.x + Math.sin(elapsed * 0.05) * 4 };
   }
 }
 

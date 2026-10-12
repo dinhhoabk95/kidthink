@@ -24,6 +24,7 @@ import {
   drawSubPromptText,
   drawWeaveCell,
   drawWoodenTokenDock,
+  drawYarnSwatch,
   spawnParticlesAtSlot,
   updateParticles,
 } from "#src/render/index.js";
@@ -631,6 +632,15 @@ export class GT033Session extends TemplateGameSession<
             state: isSelected ? "selected" : "idle",
           },
           "circle"
+        );
+        // Mọi item bảng màu cùng asset 🧶 — chấm màu kèm hình mới phân biệt được.
+        const swatchR = Math.min(slot.w, slot.h) * 0.2;
+        drawYarnSwatch(
+          ctx,
+          item.color_id,
+          slot.x + slot.w / 2 - swatchR,
+          slot.y - slot.h / 2 + swatchR,
+          swatchR
         );
       }
     }

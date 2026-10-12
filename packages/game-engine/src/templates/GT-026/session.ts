@@ -325,9 +325,10 @@ export class GT026Session extends TemplateGameSession<
     if (slot) {
       const now = Date.now();
       const isWrong = now - this.wrongTimestamp < 400;
-      const shakeX = isWrong
-        ? Math.sin((now - this.wrongTimestamp) / 30) * 4
-        : 0;
+      const shakeX =
+        isWrong && !rs.reducedMotion
+          ? Math.sin((now - this.wrongTimestamp) / 30) * 4
+          : 0;
       const renderSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
       drawPedestalTarget(ctx, renderSlot);
       drawSlotItem(ctx, rs, renderSlot, {

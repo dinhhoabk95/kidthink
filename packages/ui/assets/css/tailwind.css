@@ -114,7 +114,7 @@
   --font-sans:
     "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     sans-serif;
-  --font-heading: "Baloo 2", cursive, sans-serif;
+  --font-heading: "Baloo 2", "Be Vietnam Pro", sans-serif;
 
   /* Radius scale (BR-DSC-14 / contract §7.3) */
   --radius-chip: 12px;

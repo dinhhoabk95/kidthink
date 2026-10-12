@@ -514,9 +514,10 @@ export class GT007Session extends TemplateGameSession<
       const now = Date.now();
       const isWrong =
         this.wrongOptionId === opt.id && now - this.wrongTimestamp < 400;
-      const shakeX = isWrong
-        ? Math.sin((now - this.wrongTimestamp) / 30) * 4
-        : 0;
+      const shakeX =
+        isWrong && !rs.reducedMotion
+          ? Math.sin((now - this.wrongTimestamp) / 30) * 4
+          : 0;
       const renderSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
       drawSlotItem(ctx, rs, renderSlot, {
         id: opt.id,

@@ -21,8 +21,9 @@ import {
   PRIMITIVE_GRADIENTS,
   setCachedGradient,
 } from "./cache.js";
-import { alpha } from "./color-utils.js";
+import { alpha, readableTextOn } from "./color-utils.js";
 import { drawSlotItem, resolveEmojiGlyph } from "./shared-render.js";
+import { legibleFontPx } from "./type-scale.js";
 import type { ItemVisualState, RenderAsset, SceneBox } from "./types.js";
 
 /**
@@ -612,6 +613,8 @@ export function drawWaypointPath(
     return;
   }
   const ordered = waypoints;
+  const waypointFontPx = legibleFontPx(14);
+  const waypointR = Math.max(16, Math.ceil(waypointFontPx * 0.75));
 
   ctx.save();
   // Đường dẫn nét đứt mềm mại
@@ -657,13 +660,13 @@ export function drawWaypointPath(
       : designTokens.colors.montessori.woodBorder;
     ctx.lineWidth = BOARD_LINE_PX;
     ctx.beginPath();
-    ctx.arc(w.x, w.y, 16, 0, Math.PI * 2);
+    ctx.arc(w.x, w.y, waypointR, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
     ctx.fillStyle = done
       ? designTokens.colors.surface[0]
       : designTokens.colors.surface[900];
-    ctx.font = `bold 14px ${designTokens.fonts.heading}`;
+    ctx.font = `bold ${waypointFontPx}px ${designTokens.fonts.heading}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(String(i + 1), w.x, w.y);
@@ -1290,17 +1293,23 @@ export function drawBasketSlot(
   ctx.roundRect(cx - w / 2, cy - h / 2, w, h, 16);
   ctx.stroke();
 
-  // Dải ruy băng nhãn
+  // Dải ruy băng nhãn — cao theo cỡ chữ, chữ đổi màu theo nền nơ.
+  const fontPx = legibleFontPx(15);
+  const ribbonH = fontPx + 13;
   ctx.fillStyle = rimColor;
   ctx.beginPath();
-  ctx.roundRect(cx - w * 0.35, cy - h * 0.55, w * 0.7, 28, 14);
+  ctx.roundRect(cx - w * 0.35, cy - h * 0.55, w * 0.7, ribbonH, ribbonH / 2);
   ctx.fill();
 
-  ctx.fillStyle = designTokens.colors.surface[0];
-  ctx.font = `bold 15px ${designTokens.fonts.heading}`;
+  ctx.fillStyle = readableTextOn(
+    rimColor,
+    designTokens.colors.surface[0],
+    designTokens.colors.surface[900]
+  );
+  ctx.font = `bold ${fontPx}px ${designTokens.fonts.heading}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(label, cx, cy - h * 0.55 + 14);
+  ctx.fillText(label, cx, cy - h * 0.55 + ribbonH / 2, w * 0.66);
   ctx.restore();
 }
 
@@ -1408,8 +1417,9 @@ function drawContainerBadge(
   placedCount: number,
   targetCount: number
 ): void {
+  const fontPx = legibleFontPx(14);
   const pillW = Math.min(box.w * 0.96, Math.max(132, label.length * 10 + 56));
-  const pillH = 28;
+  const pillH = fontPx + 14;
   const pillY = box.y + box.h / 2 - pillH / 2;
   const isComplete = placedCount >= targetCount;
 
@@ -1429,13 +1439,14 @@ function drawContainerBadge(
   ctx.fillStyle = isComplete
     ? designTokens.colors.surface[0]
     : designTokens.colors.surface[800];
-  ctx.font = `bold 14px ${designTokens.fonts.heading}`;
+  ctx.font = `bold ${fontPx}px ${designTokens.fonts.heading}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText(
     `${label} (${placedCount}/${targetCount})`,
     box.x,
-    pillY + pillH / 2
+    pillY + pillH / 2,
+    pillW - 16
   );
   ctx.restore();
 }

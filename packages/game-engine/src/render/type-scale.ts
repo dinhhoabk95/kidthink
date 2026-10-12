@@ -89,3 +89,14 @@ export function canvasFontPx(
   const raw = Math.round(typeReferencePx(space) * ratio);
   return Math.max(raw, minLegiblePx(space, scale));
 }
+
+/**
+ * Cỡ chữ cho nhãn phụ vẽ ở primitive không cầm `RenderSystem`: lấy `basePx`
+ * thiết kế nhưng không dưới sàn 16 px CSS, quy đổi theo tỉ lệ máy dọc tham
+ * chiếu khi không biết khung nhìn thật.
+ */
+export function legibleFontPx(basePx: number, scale?: number): number {
+  const currentScale =
+    scale !== undefined && scale > 0 ? scale : REFERENCE_MOBILE_SCALE;
+  return Math.max(basePx, Math.ceil(MIN_LEGIBLE_CSS_PX / currentScale));
+}

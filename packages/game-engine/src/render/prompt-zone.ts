@@ -252,10 +252,9 @@ function drawPromptContent(
 
   if (options?.promptText) {
     const space = { w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT };
-    const fontPx = Math.min(
-      18,
-      canvasFontPx(space, "subPrompt", rs.viewport?.scale)
-    );
+    // Không đặt trần: trần 18 px logic chỉ chạm trên máy dọc, đúng chỗ sàn
+    // 16 px CSS cần chữ to hơn (`BR-A11-08`).
+    const fontPx = canvasFontPx(space, "subPrompt", rs.viewport?.scale);
     ctx.save();
     ctx.fillStyle = designTokens.colors.surface[700];
     ctx.font = `600 ${fontPx}px ${designTokens.fonts.sans}`;

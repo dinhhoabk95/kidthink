@@ -526,7 +526,7 @@ export class GT037Session extends TemplateGameSession<
     const rot = this.rotations[index] ?? 0;
 
     let drawSlot = slot;
-    if (isWrong) {
+    if (isWrong && !rs.reducedMotion) {
       drawSlot = { ...slot, x: slot.x + Math.sin(timeMs * 0.05) * 4 };
     }
 

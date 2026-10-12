@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { alpha } from "#src/render/color-utils";
+import { alpha, readableTextOn } from "#src/render/color-utils";
 
 describe("alpha()", () => {
   it("chuyển #rrggbb sang rgba", () => {
@@ -19,5 +19,18 @@ describe("alpha()", () => {
     expect(() => alpha("rgb(1, 2, 3)", 0.5)).toThrow();
     expect(() => alpha("#11223344", 0.5)).toThrow();
     expect(() => alpha("#zzz", 0.5)).toThrow();
+  });
+});
+
+describe("readableTextOn()", () => {
+  const white = "#ffffff";
+  const dark = "#1c1917";
+
+  it("hổ phách → chữ tối (chữ trắng chỉ ~1,6:1)", () => {
+    expect(readableTextOn("#ffbf00", white, dark)).toBe(dark);
+  });
+
+  it("san hô đậm → chữ trắng", () => {
+    expect(readableTextOn("#c00500", white, dark)).toBe(white);
   });
 });

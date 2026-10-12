@@ -295,7 +295,9 @@ export class GT020Session extends TemplateGameSession<
     const isMismatch = card.cardId === this.mismatchCardId;
     const elapsed = isMismatch ? timeMs - this.mismatchTimestamp : 0;
     const shakeX =
-      isMismatch && elapsed < 400 ? Math.sin(elapsed * 0.05) * 4 : 0;
+      isMismatch && elapsed < 400 && !rs.reducedMotion
+        ? Math.sin(elapsed * 0.05) * 4
+        : 0;
     const drawSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
 
     drawSlotItem(
@@ -311,12 +313,12 @@ export class GT020Session extends TemplateGameSession<
     );
 
     if (isMismatch && elapsed < 400) {
-      rs.drawScaffoldingHighlight(
+      rs.drawRetryRing(
         ctx,
         slot.x + shakeX,
         slot.y,
         Math.min(slot.hitW, slot.hitH) / 2 + 4,
-        (elapsed % 1000) / 1000
+        elapsed / 400
       );
     }
   }

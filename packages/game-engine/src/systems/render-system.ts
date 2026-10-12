@@ -270,6 +270,32 @@ export class RenderSystem {
     ctx.restore();
   }
 
+  /**
+   * Vòng "chưa đúng" (`BR-FBK-02`, `BR-FBK-03`): nét liền, màu hổ phách
+   * `retry`, mờ dần theo `progress` 0→1, không nhấp nháy. Khác hẳn vòng gợi ý
+   * nét đứt — cùng một hình cho "sai" và "chạm vào đây" thì trẻ chạm lại vật sai.
+   */
+  drawRetryRing(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    radius: number,
+    progress: number
+  ): void {
+    const fade = 1 - Math.min(1, Math.max(0, progress));
+    if (fade <= 0) {
+      return;
+    }
+    ctx.save();
+    ctx.globalAlpha *= fade;
+    ctx.strokeStyle = designTokens.colors.retry[500];
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
   /** Renders golden amber scaffolding aura around the target (or nothing if target is invalid). */
   renderScaffoldingAura(
     ctx: CanvasRenderingContext2D,

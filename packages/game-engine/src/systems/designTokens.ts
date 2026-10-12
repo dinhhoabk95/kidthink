@@ -168,7 +168,7 @@ export const designTokens = {
   },
   fonts: {
     sans: '"Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    heading: '"Baloo 2", cursive, sans-serif',
+    heading: '"Baloo 2", "Be Vietnam Pro", sans-serif',
   },
   radius: {
     chip: "12px",

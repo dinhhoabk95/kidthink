@@ -683,3 +683,22 @@ describe("usePlayGesture — đồng bộ view khi chọn/bỏ chọn (G4, Task 
     expect(engine.scaffolding.onMiss).not.toHaveBeenCalled();
   });
 });
+
+describe("usePlayGesture — nhấn chậm vẫn là chạm (BR-FBK-02)", () => {
+  it("nhấn giữ 900ms không di chuyển → dispatch một tap, không im lặng", () => {
+    const { gesture, session } = makeHarness([{ id: "a", role: "option" }]);
+    gesture.handlePointerDown({
+      pointerId: 1,
+      clientX: 0,
+      clientY: 100,
+      timeStamp: 0,
+    } as PointerEvent);
+    gesture.handlePointerUp({
+      pointerId: 1,
+      clientX: 2,
+      clientY: 101,
+      timeStamp: 900,
+    } as PointerEvent);
+    expect(session.dispatched.map((a) => a.type)).toEqual(["tap_item"]);
+  });
+});

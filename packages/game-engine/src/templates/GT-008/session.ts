@@ -501,7 +501,9 @@ export class GT008Session extends TemplateGameSession<
       const isWrong = item.item_id === this.wrongItemId;
       const elapsed = isWrong ? timeMs - this.wrongTimestamp : 0;
       const shakeX =
-        isWrong && elapsed < 400 ? Math.sin(elapsed * 0.05) * 4 : 0;
+        isWrong && elapsed < 400 && !rs.reducedMotion
+          ? Math.sin(elapsed * 0.05) * 4
+          : 0;
       const drawSlot = shakeX === 0 ? slot : { ...slot, x: slot.x + shakeX };
 
       drawSlotItem(ctx, rs, drawSlot, {
@@ -512,12 +514,12 @@ export class GT008Session extends TemplateGameSession<
       });
 
       if (isWrong && elapsed < 400) {
-        rs.drawScaffoldingHighlight(
+        rs.drawRetryRing(
           ctx,
           slot.x + shakeX,
           slot.y,
           Math.min(slot.hitW, slot.hitH) / 2 + 4,
-          (elapsed % 1000) / 1000
+          elapsed / 400
         );
       }
     });

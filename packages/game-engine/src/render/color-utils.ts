@@ -31,3 +31,32 @@ export function alpha(hex: string, opacity: number): string {
   cache.set(key, value);
   return value;
 }
+
+function relativeLuminance(hex: string): number {
+  const full = expandHex(hex);
+  const channel = (i: number): number => {
+    const v = Number.parseInt(full.slice(i, i + 2), 16) / 255;
+    return v <= 0.039_28 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(1) + 0.7152 * channel(3) + 0.0722 * channel(5);
+}
+
+/**
+ * Màu chữ đọc được trên nền `bgHex`: chọn giữa `light` và `dark` theo tỉ lệ
+ * tương phản WCAG cao hơn (`BR-A11-02`). Chữ trắng trên hổ phách chỉ ~1,6:1.
+ */
+export function readableTextOn(
+  bgHex: string,
+  light: string,
+  dark: string
+): string {
+  if (!(HEX_RE.test(bgHex) && HEX_RE.test(light) && HEX_RE.test(dark))) {
+    throw new Error("readableTextOn(): cần mã hex #rgb hoặc #rrggbb");
+  }
+  const bg = relativeLuminance(bgHex);
+  const contrast = (fg: string): number => {
+    const l = relativeLuminance(fg);
+    return (Math.max(l, bg) + 0.05) / (Math.min(l, bg) + 0.05);
+  };
+  return contrast(light) >= contrast(dark) ? light : dark;
+}

@@ -2021,6 +2021,11 @@ export function drawWeaveCell(
   ctx.fill();
   ctx.stroke();
 
+  // Ký hiệu hình theo màu: trẻ mù màu đỏ-lục vẫn phân biệt được (`BR-A11-03`).
+  if (params.colorId) {
+    drawYarnMark(ctx, params.colorId, slot.x, slot.y, Math.min(w, h) * 0.28);
+  }
+
   // Weave texture lines if color is present
   if (params.colorId) {
     ctx.strokeStyle = alpha(designTokens.colors.surface[0], 0.35);
@@ -2044,6 +2049,125 @@ export function drawWeaveCell(
   }
 
   ctx.restore();
+}
+
+type YarnMarkShape = "circle" | "square" | "diamond" | "triangle" | "cross";
+
+/** Mỗi họ màu một hình — màu không bao giờ là tín hiệu duy nhất. */
+function yarnMarkShape(colorId: string): YarnMarkShape {
+  switch (colorId.toLowerCase()) {
+    case "blue":
+    case "sky":
+      return "square";
+    case "yellow":
+    case "amber":
+      return "diamond";
+    case "green":
+    case "mint":
+      return "triangle";
+    case "orange":
+    case "purple":
+    case "indigo":
+      return "cross";
+    default:
+      return "circle";
+  }
+}
+
+function tracePolygon(
+  ctx: CanvasRenderingContext2D,
+  points: readonly (readonly [number, number])[]
+): void {
+  points.forEach(([px, py], i) => {
+    if (i === 0) {
+      ctx.moveTo(px, py);
+    } else {
+      ctx.lineTo(px, py);
+    }
+  });
+  ctx.closePath();
+}
+
+/** Vẽ ký hiệu hình của một màu len: lòng trắng, viền tối, tâm (cx, cy). */
+export function drawYarnMark(
+  ctx: CanvasRenderingContext2D,
+  colorId: string,
+  cx: number,
+  cy: number,
+  size: number
+): void {
+  const r = size / 2;
+  ctx.save();
+  ctx.fillStyle = alpha(designTokens.colors.surface[0], 0.92);
+  ctx.strokeStyle = designTokens.colors.surface[800];
+  ctx.lineWidth = Math.max(2, size * 0.08);
+  ctx.beginPath();
+  switch (yarnMarkShape(colorId)) {
+    case "square":
+      tracePolygon(ctx, [
+        [cx - r * 0.85, cy - r * 0.85],
+        [cx + r * 0.85, cy - r * 0.85],
+        [cx + r * 0.85, cy + r * 0.85],
+        [cx - r * 0.85, cy + r * 0.85],
+      ]);
+      break;
+    case "diamond":
+      ctx.moveTo(cx, cy - r);
+      ctx.lineTo(cx + r, cy);
+      ctx.lineTo(cx, cy + r);
+      ctx.lineTo(cx - r, cy);
+      ctx.closePath();
+      break;
+    case "triangle":
+      ctx.moveTo(cx, cy - r);
+      ctx.lineTo(cx + r, cy + r * 0.8);
+      ctx.lineTo(cx - r, cy + r * 0.8);
+      ctx.closePath();
+      break;
+    case "cross": {
+      const t = r * 0.38;
+      tracePolygon(ctx, [
+        [cx - t, cy - r],
+        [cx + t, cy - r],
+        [cx + t, cy - t],
+        [cx + r, cy - t],
+        [cx + r, cy + t],
+        [cx + t, cy + t],
+        [cx + t, cy + r],
+        [cx - t, cy + r],
+        [cx - t, cy + t],
+        [cx - r, cy + t],
+        [cx - r, cy - t],
+        [cx - t, cy - t],
+      ]);
+      break;
+    }
+    default:
+      ctx.arc(cx, cy, r * 0.85, 0, Math.PI * 2);
+  }
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+}
+
+/** Chấm màu len kèm ký hiệu hình — dùng cho bảng màu, nơi asset len giống hệt nhau. */
+export function drawYarnSwatch(
+  ctx: CanvasRenderingContext2D,
+  colorId: string,
+  cx: number,
+  cy: number,
+  radius: number
+): void {
+  ctx.save();
+  ctx.fillStyle = getColorForYarn(colorId);
+  ctx.strokeStyle = designTokens.colors.surface[0];
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.restore();
+  drawYarnMark(ctx, colorId, cx, cy, radius * 1.1);
 }
 
 function getColorForYarn(colorId: string): string {

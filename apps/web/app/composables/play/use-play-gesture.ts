@@ -100,7 +100,6 @@ export function usePlayGesture(options: GestureOptions) {
   let startClientY = 0;
   let startLogicX = 0;
   let startLogicY = 0;
-  let pointerDownTime = 0;
   let isDragging = false;
 
   function syncView(): void {
@@ -323,7 +322,6 @@ export function usePlayGesture(options: GestureOptions) {
     activePointerId = e.pointerId;
     startClientX = e.clientX;
     startClientY = e.clientY;
-    pointerDownTime = e.timeStamp;
     isDragging = false;
 
     const pt = getLogicPoint(e);
@@ -362,10 +360,11 @@ export function usePlayGesture(options: GestureOptions) {
 
     const endPt = getLogicPoint(e);
     const timeMs = Date.now();
-    const elapsed = e.timeStamp - pointerDownTime;
     const dist = Math.hypot(e.clientX - startClientX, e.clientY - startClientY);
 
-    if (!isDragging && dist <= 14 && elapsed < 500) {
+    // Không đặt trần thời gian: trẻ 3 tuổi hay nhấn chậm, và một lần nhấn giữ
+    // không di chuyển mà không thành tap lẫn drop là im lặng (`BR-FBK-02`).
+    if (!isDragging && dist <= 14) {
       // Tap gesture
       dispatchGesture({
         type: "tap",

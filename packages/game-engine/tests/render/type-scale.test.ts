@@ -4,6 +4,7 @@ import {
   CANVAS_TYPE_RATIOS,
   type CanvasTypeRole,
   canvasFontPx,
+  legibleFontPx,
   MIN_LEGIBLE_CSS_PX,
   minLegiblePx,
   typeReferencePx,
@@ -88,5 +89,17 @@ describe("Task #268: Thang cỡ chữ theo LogicSpace (BR-ERC-12 / BR-A11-08)", 
     const requiredLogicPx = minLegiblePx(space, scale);
     expect(requiredLogicPx).toBeGreaterThanOrEqual(22);
     expect(requiredLogicPx * scale).toBeGreaterThanOrEqual(16);
+  });
+});
+
+describe("legibleFontPx — nhãn phụ không dưới sàn 16 px CSS", () => {
+  it("máy dọc tham chiếu: 14 px thiết kế nâng lên đủ 16 px CSS", () => {
+    const px = legibleFontPx(14);
+    expect(px * (390 / 540)).toBeGreaterThanOrEqual(MIN_LEGIBLE_CSS_PX);
+  });
+
+  it("khung nhìn rộng (scale 1): giữ cỡ thiết kế khi đã đủ sàn", () => {
+    expect(legibleFontPx(20, 1)).toBe(20);
+    expect(legibleFontPx(14, 1)).toBe(MIN_LEGIBLE_CSS_PX);
   });
 });

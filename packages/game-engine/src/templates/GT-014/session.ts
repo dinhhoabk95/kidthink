@@ -612,12 +612,12 @@ export class BalanceScaleSession extends TemplateGameSession<
       const elapsed = timeMs - this.wrongTimestamp;
       if (elapsed < 400) {
         const pan = this.wrongSide === "left" ? leftPan : rightPan;
-        rs.drawScaffoldingHighlight(
+        rs.drawRetryRing(
           ctx,
           pan.x + pan.w / 2,
           pan.y + pan.h / 2,
           Math.max(pan.w, pan.h) / 2 + 6,
-          (elapsed % 1000) / 1000
+          elapsed / 400
         );
       }
     }

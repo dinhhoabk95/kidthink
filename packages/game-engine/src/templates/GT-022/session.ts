@@ -351,12 +351,12 @@ export class GT022Session extends TemplateGameSession<
     }
     // Có stage thì neo vào slot của layout, không phải toạ độ content.
     const anchor = this.stageRect ? this.slots[index] : undefined;
-    rs.drawScaffoldingHighlight(
+    rs.drawRetryRing(
       ctx,
       anchor?.x ?? obj.x,
       anchor?.y ?? obj.y,
       36,
-      (elapsed % 1000) / 1000
+      elapsed / 400
     );
   }
 
