@@ -18,12 +18,11 @@ import {
   drawTrainRailway,
   type ItemVisualState,
   sceneBox,
-  updateParticles,
 } from "#src/render/index.js";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import { slotsFitStage, splitStageForTrack } from "./stage-strip.js";
 import type { GT006Content, GT006Difficulty } from "./template.js";
 
@@ -35,7 +34,6 @@ export class GT006Session extends TemplateGameSession<
   /** Nút xong ở `zones.action` (`BR-PSZ-05`); `commit` → `check_sequence`. */
   override readonly needsCommit = true;
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
   private stagedIndex: number | null = null;
 
@@ -325,7 +323,6 @@ export class GT006Session extends TemplateGameSession<
         "square"
       );
     });
-    this.drawRenderFeedback(rs, ctx);
   }
 
   /** Trục số hoặc đường ray + đầu tàu; có stage thì nằm trong dải đáy của stage. */
@@ -368,17 +365,6 @@ export class GT006Session extends TemplateGameSession<
       return;
     }
     drawLocomotive(ctx, x, firstSlot.y, 90, 70);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

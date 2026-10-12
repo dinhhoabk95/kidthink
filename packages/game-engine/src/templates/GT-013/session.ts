@@ -32,7 +32,6 @@ import {
   drawRequiredCells,
   drawSceneBackground,
   type ItemVisualState,
-  updateParticles,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import {
@@ -47,7 +46,7 @@ import {
   type MazeSide,
   type MazeStepResult,
 } from "#src/systems/maze-system";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import type { GT013Content, GT013Difficulty } from "./template.js";
 
 export interface MazeScaffoldHint {
@@ -92,7 +91,6 @@ export class GT013Session extends TemplateGameSession<
 > {
   override readonly usesPromptZone = true;
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private readonly ordering = new OrderingMechanic();
@@ -347,23 +345,10 @@ export class GT013Session extends TemplateGameSession<
     drawSceneBackground(ctx, rs, this.themeId);
     const box = boxFromSlots(this.slots);
     if (!box) {
-      this.drawRenderFeedback(rs, ctx);
       return;
     }
     drawMazeBoard(ctx, this.content.grid, box, this.tracker.getPath());
     drawRequiredCells(ctx, this.content.grid, box, this.content.required_cells);
-    this.drawRenderFeedback(rs, ctx);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

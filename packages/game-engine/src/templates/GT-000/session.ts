@@ -24,12 +24,11 @@ import {
   type ItemVisualState,
   type RenderAsset,
   type RenderItem,
-  updateParticles,
 } from "#src/render/index.js";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import { AudioController } from "#src/systems/audio-controller";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import {
   type GT000Asset,
   type GT000Content,
@@ -112,7 +111,6 @@ export class GT000Session extends TemplateGameSession<
   lastTtsUsed = false;
 
   private allSteps: GT000Step[] = [];
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates = new Map<string, ItemVisualState>();
   private currentAgeBand: AgeBand = "3-4";
 
@@ -942,7 +940,5 @@ export class GT000Session extends TemplateGameSession<
         }
       }
     }
-
-    this.renderParticles = updateParticles(this.renderParticles);
   }
 }

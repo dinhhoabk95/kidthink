@@ -22,10 +22,9 @@ import {
   drawSubPromptText,
   drawWoodenTokenDock,
   type ItemVisualState,
-  updateParticles,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import { FlashTimer } from "#src/systems/timer-system";
 import type { GT012Content, GT012Difficulty } from "./template.js";
 import {
@@ -42,7 +41,6 @@ export class FlashRecallSession extends TemplateGameSession<
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private readonly timer: FlashTimer;
@@ -331,7 +329,6 @@ export class FlashRecallSession extends TemplateGameSession<
         }
         drawSlotItem(ctx, rs, slot, { id: item.item_id, asset: item.asset });
       });
-      this.drawRenderFeedback(rs, ctx);
       return;
     }
 
@@ -360,18 +357,6 @@ export class FlashRecallSession extends TemplateGameSession<
         state,
       });
     });
-    this.drawRenderFeedback(rs, ctx);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

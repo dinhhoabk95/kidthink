@@ -26,11 +26,10 @@ import {
   drawSlotItem,
   drawWoodenTokenDock,
   type ItemVisualState,
-  updateParticles,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import { designTokens } from "#src/systems/designTokens";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import type { GT007Content, GT007Difficulty } from "./template.js";
 
 /** Cạnh ô tổng và ô phần lớn nhất trên sân khấu — cùng cỡ ô của `number-bond-tree`. */
@@ -55,7 +54,6 @@ export class GT007Session extends TemplateGameSession<
   GT007Difficulty
 > {
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
   private stagedOptionId: string | null = null;
   private wrongOptionId: string | null = null;
@@ -525,18 +523,6 @@ export class GT007Session extends TemplateGameSession<
         state: isWrong ? "wrong" : this.getRenderItemState(opt.id),
       });
     });
-    this.drawRenderFeedback(rs, ctx);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

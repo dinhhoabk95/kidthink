@@ -17,14 +17,13 @@ import {
   drawSlotItem,
   drawSubPromptText,
   type ItemVisualState,
-  updateParticles,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import {
   InhibitionSystem,
   type TrialItem,
 } from "#src/systems/inhibition-system";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import type { GT026Content, GT026Difficulty } from "./template.js";
 
 export class GT026Session extends TemplateGameSession<
@@ -32,7 +31,6 @@ export class GT026Session extends TemplateGameSession<
   GT026Difficulty
 > {
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
   private wrongTimestamp = 0;
 
@@ -307,7 +305,6 @@ export class GT026Session extends TemplateGameSession<
       this.inhibitionSystem.getState() !== "stimulus"
     ) {
       // Khoảng nghỉ giữa hai lượt: màn phải trống, đó là phần của bài kiểm ức chế.
-      this.drawRenderFeedback(rs, ctx);
       return;
     }
 
@@ -337,17 +334,5 @@ export class GT026Session extends TemplateGameSession<
         state: isWrong ? "wrong" : "idle",
       });
     }
-    this.drawRenderFeedback(rs, ctx);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }

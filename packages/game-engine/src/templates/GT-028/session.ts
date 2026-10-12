@@ -24,10 +24,9 @@ import {
   drawSubPromptText,
   drawWoodenTokenDock,
   type ItemVisualState,
-  updateParticles,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import type { GT028Content, GT028Difficulty } from "./template.js";
 
 interface ItemActionPayload {
@@ -61,7 +60,6 @@ export class GT028Session extends TemplateGameSession<
 
   degradation: DegradationState | null = null;
   selectedItemIds: string[] = [];
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   setupEntities(): void {
@@ -360,18 +358,5 @@ export class GT028Session extends TemplateGameSession<
         state,
       });
     });
-
-    this.drawRenderFeedback(rs, ctx);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }

@@ -21,7 +21,6 @@ import {
   drawSlotItem,
   getColorsForState,
   type ItemVisualState,
-  updateParticles,
 } from "#src/render/index.js";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
@@ -31,7 +30,7 @@ import {
   type FlipResult,
 } from "#src/systems/card-system";
 import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import type { GT020Content, GT020Difficulty } from "./template.js";
 
 export interface FlatCard {
@@ -57,7 +56,6 @@ export class GT020Session extends TemplateGameSession<
 > {
   override readonly usesPromptZone = true;
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   readonly cardSystem = new CardSystem();
@@ -338,18 +336,6 @@ export class GT020Session extends TemplateGameSession<
         this.renderCardSlot(ctx, rs, card, slot, timeMs);
       }
     });
-    this.drawRenderFeedback(rs, ctx);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

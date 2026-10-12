@@ -22,10 +22,9 @@ import {
   drawSceneObjectAt,
   type ItemVisualState,
   sceneBox,
-  updateParticles,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import type { GT025Content, GT025Difficulty } from "./template.js";
 
 /** Cạnh ô lớn nhất khi mỗi bên là khối nhiều cột (canvas thấp). */
@@ -71,7 +70,6 @@ export class GT025Session extends TemplateGameSession<
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private readonly foundDifferenceIds = new Set<string>();
@@ -386,7 +384,6 @@ export class GT025Session extends TemplateGameSession<
         wrong: isWrongNow && this.wrongObjectId === obj.id,
       });
     });
-    this.drawRenderFeedback(rs, ctx);
   }
 
   /**
@@ -395,16 +392,5 @@ export class GT025Session extends TemplateGameSession<
    */
   private inLayout<T extends { x?: number; y?: number }>(obj: T): T {
     return this.stageRect ? { ...obj, x: undefined, y: undefined } : obj;
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }

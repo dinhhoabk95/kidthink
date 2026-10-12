@@ -22,11 +22,10 @@ import {
   drawSceneObjectAt,
   type ItemVisualState,
   sceneBox,
-  updateParticles,
 } from "#src/render/index.js";
 import { deriveStream } from "#src/rng/mulberry32";
 import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import {
   type FindResult,
   type SceneObject,
@@ -64,7 +63,6 @@ export class GT022Session extends TemplateGameSession<
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   readonly sceneSystem = new SceneSystem();
@@ -335,7 +333,6 @@ export class GT022Session extends TemplateGameSession<
         this.drawWrongHighlight(ctx, rs, obj, i, timeMs);
       }
     });
-    this.drawRenderFeedback(rs, ctx);
   }
 
   private drawWrongHighlight(
@@ -358,17 +355,6 @@ export class GT022Session extends TemplateGameSession<
       36,
       elapsed / 400
     );
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

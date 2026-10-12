@@ -13,12 +13,11 @@ import {
   drawSceneBackground,
   drawSlotItem,
   type ItemVisualState,
-  updateParticles,
 } from "#src/render/index.js";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import { computePairColumnsInStage } from "./pair-columns.js";
 import type { GT005Content, GT005Difficulty } from "./template.js";
 
@@ -77,7 +76,6 @@ export class GT005Session extends TemplateGameSession<
 > {
   override readonly usesPromptZone = true;
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   displayLeft: readonly LeftItem[] = [];
@@ -478,18 +476,6 @@ export class GT005Session extends TemplateGameSession<
         drawMatchLine(ctx, ls.x, ls.y, rslot.x, rslot.y);
       }
     }
-    this.drawRenderFeedback(rs, ctx);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

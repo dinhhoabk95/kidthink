@@ -26,10 +26,9 @@ import {
   drawSubPromptText,
   drawWoodenTokenDock,
   type ItemVisualState,
-  updateParticles,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import { type RuleDefinition, RuleSystem } from "#src/systems/rule-system";
 import type { GT027Content, GT027Difficulty } from "./template.js";
 
@@ -63,7 +62,6 @@ export class GT027Session extends TemplateGameSession<
   GT027Difficulty
 > {
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   override readonly usesPromptZone = true;
@@ -373,17 +371,5 @@ export class GT027Session extends TemplateGameSession<
         state: this.getRenderItemState(item.id),
       });
     });
-    this.drawRenderFeedback(rs, ctx);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }

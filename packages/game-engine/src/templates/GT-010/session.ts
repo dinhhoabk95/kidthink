@@ -20,10 +20,9 @@ import {
   drawWoodenTokenDock,
   type ItemVisualState,
   resolveEmojiGlyph,
-  updateParticles,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import { evaluateQuestionAnswer, solveEquationSystem } from "./solver.js";
 import type { GT010Content, GT010Difficulty } from "./template.js";
 
@@ -34,7 +33,6 @@ export class SubstitutionSession extends TemplateGameSession<
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private readonly pinnedSymbols: Map<string, number> = new Map();
@@ -322,18 +320,6 @@ export class SubstitutionSession extends TemplateGameSession<
         state,
       });
     });
-    this.drawRenderFeedback(rs, ctx);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

@@ -24,13 +24,12 @@ import {
   drawSlotItem,
   drawWoodenTokenDock,
   type ItemVisualState,
-  updateParticles,
 } from "#src/render/index.js";
 import { deriveStream } from "#src/rng/mulberry32";
 import { shuffle } from "#src/rng/shuffle";
 import type { DegradationState } from "#src/systems/degradation";
 import { designTokens } from "#src/systems/designTokens";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import type { GT004Content, GT004Difficulty } from "./template.js";
 
 type SortItem = GT004Content["items"][number];
@@ -47,7 +46,6 @@ export class GT004Session extends TemplateGameSession<
   GT004Difficulty
 > {
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   displayItems: readonly SortItem[] = [];
@@ -437,18 +435,6 @@ export class GT004Session extends TemplateGameSession<
         state: this.getRenderItemState(item.item_id),
       });
     });
-    this.drawRenderFeedback(rs, ctx);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

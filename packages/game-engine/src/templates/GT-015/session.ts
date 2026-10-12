@@ -28,7 +28,6 @@ import {
   drawSlotItem,
   drawWoodenTokenDock,
   type ItemVisualState,
-  updateParticles,
 } from "#src/render/index.js";
 import {
   type ConstraintViolation,
@@ -38,7 +37,7 @@ import {
   type SudokuGrid,
 } from "#src/systems/constraint-system";
 import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import type { GT015Content, GT015Difficulty } from "./template.js";
 
 /** Sudoku chạm đúng vùng chạm của ô, không nới thêm. */
@@ -152,7 +151,6 @@ export class SudokuMiniSession extends TemplateGameSession<
   GT015Difficulty
 > {
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private readonly cellStates: Map<string, SudokuCellState> = new Map();
@@ -603,18 +601,6 @@ export class SudokuMiniSession extends TemplateGameSession<
         state: this.selectedSymbolId === sym.symbol_id ? "selected" : "idle",
       });
     });
-    this.drawRenderFeedback(rs, ctx);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

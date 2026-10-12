@@ -31,7 +31,6 @@ import {
   insetBox,
   type SceneBox,
   sceneBox,
-  updateParticles,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import {
@@ -41,7 +40,7 @@ import {
   type RotationAngle,
   sortCubesForRender,
 } from "#src/systems/isometric-system";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import type { GT017Content, GT017Difficulty } from "./template.js";
 
 function findHitOptionId(
@@ -61,7 +60,6 @@ export class BlockStackSession extends TemplateGameSession<
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private currentRotation: RotationAngle = 0;
@@ -334,7 +332,6 @@ export class BlockStackSession extends TemplateGameSession<
         state,
       });
     });
-    this.drawRenderFeedback(rs, ctx);
   }
 
   /** Hộp vẽ khối: vùng chính của stage, hoặc 60% trên của cảnh khi chưa có khung. */
@@ -352,17 +349,6 @@ export class BlockStackSession extends TemplateGameSession<
     }
     const scene = insetBox(sceneBox(rs), 0.08);
     return { x: scene.x, y: scene.y, w: scene.w, h: scene.h * 0.6 };
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

@@ -21,7 +21,6 @@ import {
   type ItemVisualState,
   insetBox,
   sceneBox,
-  updateParticles,
 } from "#src/render/index.js";
 import {
   type BalanceState,
@@ -32,7 +31,7 @@ import {
   type WeightedItem,
 } from "#src/systems/balance-system";
 import type { DegradationState } from "#src/systems/degradation";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import type { GT014Content, GT014Difficulty } from "./template.js";
 import { panTargetSlots, scaleBoxInStage } from "./zone-layout.js";
 
@@ -160,7 +159,6 @@ export class BalanceScaleSession extends TemplateGameSession<
   override readonly usesPromptZone = true;
 
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   private leftItems: WeightedItem[] = [];
@@ -634,18 +632,6 @@ export class BalanceScaleSession extends TemplateGameSession<
         state: this.getRenderItemState(item.item_id),
       });
     });
-    this.drawRenderFeedback(rs, ctx);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 

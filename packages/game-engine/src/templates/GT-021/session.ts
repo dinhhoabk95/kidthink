@@ -32,11 +32,10 @@ import {
   drawWoodenTokenDock,
   type ItemVisualState,
   sceneBox,
-  updateParticles,
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import { MirrorSystem } from "#src/systems/mirror-system";
-import type { Particle, RenderSystem } from "#src/systems/render-system";
+import type { RenderSystem } from "#src/systems/render-system";
 import type { GT021Content, GT021Difficulty } from "./template.js";
 
 /** Khoảng chạm thêm quanh vùng chạm của slot (`GT-021.md` §6). */
@@ -86,7 +85,6 @@ export class GT021Session extends TemplateGameSession<
   GT021Difficulty
 > {
   degradation: DegradationState | null = null;
-  private renderParticles: Particle[] = [];
   private readonly renderItemStates: Map<string, ItemVisualState> = new Map();
 
   readonly mirrorSystem = new MirrorSystem();
@@ -505,18 +503,6 @@ export class GT021Session extends TemplateGameSession<
         state: this.getRenderItemState(opt.item_id),
       });
     });
-    this.drawRenderFeedback(rs, ctx);
-  }
-
-  private drawRenderFeedback(
-    rs: RenderSystem,
-    ctx: CanvasRenderingContext2D
-  ): void {
-    if (this.degradation?.particles_enabled === false) {
-      return;
-    }
-    this.renderParticles = updateParticles(this.renderParticles);
-    rs.drawParticles(ctx, this.renderParticles);
   }
 }
 
