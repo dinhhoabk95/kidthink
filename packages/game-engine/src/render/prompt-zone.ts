@@ -16,7 +16,7 @@ import { designTokens } from "#src/systems/designTokens";
 import type { RenderSystem } from "#src/systems/render-system";
 import { alpha } from "./color-utils.js";
 import { drawMascot, type MascotPose, type MascotSprites } from "./mascot.js";
-import { drawEmojiContent } from "./shared-render.js";
+import { drawEmojiContent, graphemes } from "./shared-render.js";
 import { canvasFontPx } from "./type-scale.js";
 import type { RenderAsset } from "./types.js";
 
@@ -176,11 +176,16 @@ function truncateToWidth(
   if (ctx.measureText(rawText).width <= maxWidth) {
     return rawText;
   }
-  let text = rawText;
-  while (text.length > 3 && ctx.measureText(`${text}…`).width > maxWidth) {
-    text = text.slice(0, -1);
+  // Cắt theo cụm ký tự (grapheme), không theo đơn vị UTF-16: `slice(0, -1)`
+  // tách đôi emoji và dấu tiếng Việt dạng tổ hợp (NFD).
+  const chars = graphemes(rawText);
+  while (
+    chars.length > 3 &&
+    ctx.measureText(`${chars.join("")}…`).width > maxWidth
+  ) {
+    chars.pop();
   }
-  return `${text}…`;
+  return `${chars.join("")}…`;
 }
 
 /** Picto mục tiêu của cột lời dẫn: dưới loa, vừa bề rộng cột, chỉ khi còn chỗ. */

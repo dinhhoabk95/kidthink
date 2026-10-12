@@ -163,6 +163,41 @@ export function wrapPromptText(
   return lines;
 }
 
+const SEGMENTER =
+  typeof Intl !== "undefined" && "Segmenter" in Intl
+    ? new Intl.Segmenter("vi", { granularity: "grapheme" })
+    : null;
+
+/** Tách chuỗi theo cụm ký tự người đọc thấy — giữ nguyên emoji và dấu tổ hợp (NFD). */
+export function graphemes(text: string): string[] {
+  return SEGMENTER
+    ? Array.from(SEGMENTER.segment(text), (part) => part.segment)
+    : Array.from(text);
+}
+
+/** Tối đa dòng của khung yêu cầu — khung cao hơn sẽ đè vùng nội dung (`BR-ERC-15`). */
+const PROMPT_MAX_LINES = 2;
+
+/** Giữ `PROMPT_MAX_LINES` dòng; dòng cuối cắt theo ký tự (không theo UTF-16) kèm "…". */
+function capPromptLines(
+  ctx: CanvasRenderingContext2D,
+  lines: readonly string[],
+  maxWidth: number
+): readonly string[] {
+  if (lines.length <= PROMPT_MAX_LINES) {
+    return lines;
+  }
+  const kept = lines.slice(0, PROMPT_MAX_LINES - 1);
+  const chars = graphemes(lines.slice(PROMPT_MAX_LINES - 1).join(" "));
+  while (
+    chars.length > 1 &&
+    ctx.measureText(`${chars.join("")}…`).width > maxWidth
+  ) {
+    chars.pop();
+  }
+  return [...kept, `${chars.join("")}…`];
+}
+
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: adaptive multi-line prompt renderer
 export function drawPromptText(
   ctx: CanvasRenderingContext2D,
@@ -200,7 +235,11 @@ export function drawPromptText(
     lines = [prompt];
     contentW = singleLineWidth;
   } else {
-    lines = wrapPromptText(ctx, prompt, maxContentW);
+    lines = capPromptLines(
+      ctx,
+      wrapPromptText(ctx, prompt, maxContentW),
+      maxContentW
+    );
     let maxW = 0;
     for (const line of lines) {
       const w = ctx.measureText(line).width;
@@ -530,7 +569,8 @@ export function drawSubPromptText(
   ctx.fillStyle = designTokens.colors.montessori.amberDark;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(text, centerX, pillY + pillH / 2);
+  // Pill đã kẹp theo bề ngang vùng: chữ dài co lại thay vì tràn ra ngoài pill.
+  ctx.fillText(text, centerX, pillY + pillH / 2, pillW - 24);
   ctx.restore();
 }
 
@@ -613,7 +653,8 @@ export function drawTextInSlot(
   ctx.font = `bold ${size}px ${designTokens.fonts.heading}`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(text, slot.x, slot.y);
+  // "04:30" ở cỡ 0,42 cạnh ô rộng hơn ô tròn — co lại trong 85% bề ngang.
+  ctx.fillText(text, slot.x, slot.y, slot.w * 0.85);
   ctx.restore();
 }
 

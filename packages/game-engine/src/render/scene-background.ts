@@ -10,6 +10,10 @@ import { alpha } from "./color-utils.js";
 import { SCENE_PAINTERS } from "./scene-themes.js";
 import { drawDefaultScene } from "./scene-themes-indoor.js";
 
+/** Khung thiết kế của họa sĩ nền theo chủ đề (`scene-themes*.ts`). */
+const SCENE_DESIGN_W = 960;
+const SCENE_DESIGN_H = 540;
+
 export function drawSceneBackground(
   ctx: CanvasRenderingContext2D,
   rs: RenderSystem,
@@ -23,7 +27,20 @@ export function drawSceneBackground(
   const activeTheme = themeId ?? rs.themeId;
 
   const paint = SCENE_PAINTERS.get(activeTheme ?? "") ?? drawDefaultScene;
-  paint(ctx, rs, w, h);
+  if (h > w) {
+    // Họa sĩ nền vẽ theo toạ độ thiết kế 960×540 (mặt trời x=860, sàn y≈480).
+    // Máy dọc (540×~1168) mà vẽ thẳng thì mặt trời ra ngoài màn, sàn nằm giữa
+    // màn. Phủ kín theo chiều cao với tỉ lệ đều, cắt hai bên — như
+    // `background-size: cover` — để sàn luôn ở đáy và hình tròn không méo.
+    const scale = h / SCENE_DESIGN_H;
+    ctx.save();
+    ctx.translate((w - SCENE_DESIGN_W * scale) / 2, 0);
+    ctx.scale(scale, scale);
+    paint(ctx, rs, SCENE_DESIGN_W, SCENE_DESIGN_H);
+    ctx.restore();
+  } else {
+    paint(ctx, rs, w, h);
+  }
 
   // Soft subtle corner accents (Kinder-Tactile Montessori vignette)
   let vignette = getCachedGradient(
