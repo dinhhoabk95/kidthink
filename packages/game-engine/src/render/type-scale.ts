@@ -1,3 +1,4 @@
+import type { RenderSystem } from "../systems/render-system.js";
 /**
  * Thang cỡ chữ Canvas 2D suy từ LogicSpace (Task #268 / BR-ERC-12 / BR-A11-08).
  * Spec: `docs/design-system/05-motion-and-surface.md` §3 & `engine-render-contract.md` §7.7.
@@ -99,4 +100,21 @@ export function legibleFontPx(basePx: number, scale?: number): number {
   const currentScale =
     scale !== undefined && scale > 0 ? scale : REFERENCE_MOBILE_SCALE;
   return Math.max(basePx, Math.ceil(MIN_LEGIBLE_CSS_PX / currentScale));
+}
+
+/**
+ * Không gian logic + tỉ lệ CSS của một `RenderSystem`.
+ *
+ * Sàn chữ của `BR-A11-08` đo bằng **px CSS**, nên mọi lời gọi `canvasFontPx`
+ * cần tỉ lệ thật của khung nhìn. `viewport` chỉ có sau `setupCanvas`; chưa dựng
+ * khung thì `canvasFontPx` tự lấy sàn máy dọc thận trọng.
+ */
+export function spaceOf(rs: RenderSystem): {
+  space: LogicSpace;
+  scale?: number;
+} {
+  return {
+    space: { w: rs.LOGIC_WIDTH, h: rs.LOGIC_HEIGHT },
+    scale: rs.viewport?.scale,
+  };
 }

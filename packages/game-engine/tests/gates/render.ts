@@ -69,6 +69,15 @@ const PRIMITIVE_MODULES: readonly string[] = [
   // shell vẽ cho mọi engine, không engine nào sở hữu.
   "render/mascot.ts",
   "systems/feedback-overlay.ts",
+  // Tách nguyên văn khỏi `shared-render.ts` vì file vượt 800 dòng (review
+  // game-engine, Phase 6) — cùng thư viện vẽ dùng chung, không engine nào sở hữu.
+  "render/scene-background.ts",
+  "render/scene-themes.ts",
+  "render/scene-themes-indoor.ts",
+  "render/scene-themes-outdoor.ts",
+  "render/scene-decor.ts",
+  "render/flashcard.ts",
+  "render/craft-shapes.ts",
 ];
 
 function checkSessionDrawLines(
