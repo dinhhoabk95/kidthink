@@ -17,5 +17,53 @@ coverage/
 .claude/worktrees/
 
 # Skill agent cài cục bộ và nháp task — không phải mã sản phẩm, không để Biome quét.
-.agents/
+.agents/*
 docs/tasks/scratch/
+
+# Ngoại lệ: bộ addyosmani/agent-skills là quy trình chủ đạo (AGENTS.md), track cho cả team.
+# Chỉ gồm markdown + 1 script shell, Biome không quét.
+!.agents/references/
+!.agents/skills/
+.agents/skills/*
+!.agents/skills/api-and-interface-design/
+!.agents/skills/browser-testing-with-devtools/
+!.agents/skills/ci-cd-and-automation/
+!.agents/skills/code-review-and-quality/
+!.agents/skills/code-simplification/
+!.agents/skills/constraint-driven-development/
+!.agents/skills/context-engineering/
+!.agents/skills/debugging-and-error-recovery/
+!.agents/skills/deprecation-and-migration/
+!.agents/skills/documentation-and-adrs/
+!.agents/skills/doubt-driven-development/
+!.agents/skills/frontend-ui-engineering/
+!.agents/skills/git-workflow-and-versioning/
+!.agents/skills/idea-refine/
+!.agents/skills/incremental-implementation/
+!.agents/skills/interview-me/
+!.agents/skills/observability-and-instrumentation/
+!.agents/skills/performance-optimization/
+!.agents/skills/planning-and-task-breakdown/
+!.agents/skills/security-and-hardening/
+!.agents/skills/shipping-and-launch/
+!.agents/skills/source-driven-development/
+!.agents/skills/spec-driven-development/
+!.agents/skills/test-driven-development/
+!.agents/skills/using-agent-skills/
+!.agents/agents/
+.agents/agents/*
+!.agents/agents/code-reviewer.md
+!.agents/agents/security-auditor.md
+!.agents/agents/test-engineer.md
+!.agents/agents/web-performance-auditor.md
+!.agents/workflows/
+.agents/workflows/*
+!.agents/workflows/build.md
+!.agents/workflows/code-simplify.md
+!.agents/workflows/constraints.md
+!.agents/workflows/planning.md
+!.agents/workflows/review.md
+!.agents/workflows/ship.md
+!.agents/workflows/spec.md
+!.agents/workflows/test.md
+!.agents/workflows/webperf.md

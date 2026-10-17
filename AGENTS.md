@@ -6,6 +6,45 @@ BullMQ · Zod 4 (dòng `zod@3.25`, API cổ điển) · Biome 2 qua `ultracite`.
 `apps/web` (bề mặt người dùng + toàn bộ `/api/*`) · `apps/admin` (static SPA) · `apps/worker` ·
 `packages/*` (driver dùng chung).
 
+## Quy trình chủ đạo — agent-skills
+
+Bộ [`addyosmani/agent-skills`](https://github.com/addyosmani/agent-skills) là quy trình làm việc
+**chủ đạo** cho mọi agent (Claude Code, Antigravity). Nguồn thật nằm trong `.agents/`:
+`skills/` (25 skill) · `agents/` (4 persona) · `workflows/` (9 lệnh) · `references/` (checklist).
+`.claude/{skills,agents,commands,references}` chỉ là symlink tới đó. Cập nhật skill:
+`npx skills update` (khoá ở `skills-lock.json`); danh sách được track nằm ở `.gitignore`.
+
+Chọn skill theo `using-agent-skills`. Vòng đời:
+
+| Pha          | Lệnh                        | Skill                                                                                 |
+| ------------ | --------------------------- | ------------------------------------------------------------------------------------- |
+| Định nghĩa   | `/spec`                     | `spec-driven-development` (ý còn mơ hồ: `idea-refine`, `interview-me`)                |
+| Lập kế hoạch | `/planning`                 | `planning-and-task-breakdown`                                                         |
+| Xây          | `/build`                    | `incremental-implementation` + `test-driven-development`                              |
+| Kiểm         | `/test`                     | `test-driven-development`, `debugging-and-error-recovery`, `browser-testing-with-devtools` |
+| Review       | `/review`, `/code-simplify` | `code-review-and-quality`, `code-simplification`                                      |
+| Phát hành    | `/ship`                     | `shipping-and-launch` + persona `code-reviewer` · `security-auditor` · `test-engineer` |
+
+Thứ tự ưu tiên khi trùng việc:
+
+1. Luật cứng của repo — file này, `docs/specs/`, cổng `scripts/check.sh`. Đây là **ràng buộc**
+   skill phải tuân, không phải một quy trình song song.
+2. agent-skills — quy trình mặc định cho mọi việc.
+3. OpenSpec (`opsx-*`, `openspec-*`), agent `tinimath-*` và `.agents/commands/` cục bộ — chỉ chạy
+   khi người dùng gọi đích danh.
+
+Chỗ skill có mặc định khác repo — **repo thắng**:
+
+| Skill nói                        | Ở repo này                                                                                                                                                                         |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Viết `SPEC.md`                   | Contract gốc là `docs/SPEC.md` (root `SPEC.md` là symlink). Hành vi mới → một file outcome trong `docs/specs/<nhóm>/` theo `CONVENTIONS.md` + `TEMPLATE.md`, thêm dòng vào `index.md`, rule mới mang mã `BR-*`. |
+| `tasks/plan.md`, `tasks/todo.md` | `docs/tasks/NN-<slug>-plan.md` và `NN-<slug>-todo.md`. `NN` chưa dùng: quét cả tên file lẫn tham chiếu `Task #NN`.                                                                |
+| ADR ở `docs/adr/`                | Quyết định định hình ghi vào bảng `D*` ở `docs/SPEC.md` §0, kèm lý do.                                                                                                              |
+| `CONSTRAINTS.md`                 | Thanh chất lượng đã chốt là cổng trong `scripts/check.sh` và các mục bên dưới. Không đặt ngưỡng thấp hơn.                                                                            |
+| Chạy test / lint / build         | Qua `rtk proxy` (xem "Luật đo cổng"); `pnpm check` trước khi xong.                                                                                                                 |
+| Branch + PR                      | Commit thẳng vào `main` (xem "Git workflow").                                                                                                                                     |
+| Viết spec, tài liệu              | Tiếng Việt.                                                                                                                                                                        |
+
 ## Runtime boundary — Task #104
 
 - `{domain}` chạy `apps/web` SSR và toàn bộ API. `admin.{domain}` chỉ nhận static files từ
