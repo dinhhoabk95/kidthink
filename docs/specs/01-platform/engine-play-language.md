@@ -2,12 +2,10 @@
 spec: ENGINE-PLAY-LANGUAGE
 title: Ngôn ngữ tương tác lượt chơi của engine — 6 cử chỉ, 3 nhịp, 5 trạng thái
 area: platform
-status: draft
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
-open_tasks:
-  - "#305"
 owns:
   - Ngôn ngữ chung cho hành vi chơi của trẻ mầm non trên 37 engine
   - Định nghĩa sáu cử chỉ (tap, drop, stroke, adjust, commit, revert)
@@ -20,8 +18,6 @@ depends_on:
 ---
 
 # Ngôn ngữ tương tác lượt chơi của engine — 6 cử chỉ, 3 nhịp, 5 trạng thái
-
-> **Chưa hoàn thành** — từ vựng 6 cử chỉ, 3 nhịp, 5 trạng thái đã có ở `packages/game-engine/src/interaction.ts`, nhưng chưa test nào gắn mã `BR-EPL-01`..`BR-EPL-06` (nhất là `BR-EPL-04` nuốt cử chỉ sau thắng và `BR-EPL-05` cấm đỏ/buzzer). Việc còn lại: [Task #305](../../tasks/305-platform-api-gaps-plan.md).
 
 ## 1. Objective
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Release directory naming and retention (release-deploy.md §7.1, BR-RBK-04).
+# Release directory naming and retention (release-deploy.md §7.1, BR-DEP-12, BR-RBK-04).
 
-# `<UTC timestamp>-<7 char sha>`: the timestamp is what makes deploying the same
-# commit twice produce two directories, so a repeat release can never delete the
-# tree it is currently serving.
+# BR-DEP-12: `<UTC timestamp>-<7 char sha>` — the timestamp is what makes
+# deploying the same commit twice produce two directories, so a repeat release
+# can never delete or overwrite the tree it is currently serving.
 #
 # The timestamp only resolves to the second, so two releases of the same commit
 # inside one second would collide and the second would extract on top of the

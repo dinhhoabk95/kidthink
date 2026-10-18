@@ -1,7 +1,7 @@
 import type { z } from "zod";
-import type { EventPayload } from "../types.js";
-import { EVENT_PAYLOAD_FIELDS, PII_FIELDS } from "./catalog.js";
-import { EVENT_PAYLOAD_SCHEMAS } from "./schemas.js";
+import { EVENT_PAYLOAD_FIELDS, PII_FIELDS } from "#src/events/catalog";
+import { EVENT_PAYLOAD_SCHEMAS } from "#src/events/schemas";
+import type { EventPayload } from "#src/types";
 
 export const EVENT_PAYLOAD_PARTIAL_SCHEMAS: Readonly<
   Record<string, z.ZodTypeAny>

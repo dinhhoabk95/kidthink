@@ -438,6 +438,7 @@
 <script lang="ts" setup>
   import { onMounted, ref, watch } from "vue";
   import { useRoute } from "vue-router";
+  import { useApi } from "~/composables/use-api";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
   // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
@@ -445,6 +446,7 @@
   // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
   definePageMeta({ layout: false });
 
+  const api = useApi();
   const route = useRoute();
   const uuid = String(route.params.uuid || "");
 
@@ -506,7 +508,7 @@
     loading.value = true;
     loadError.value = "";
     try {
-      const res = await $fetch<{
+      const res = await api<{
         uuid: string;
         templateId: string;
         title: string;
@@ -587,7 +589,7 @@
 
   async function triggerValidation() {
     try {
-      const report = await $fetch<{
+      const report = await api<{
         ok: boolean;
         issues: string[];
         missing: string[];
@@ -606,7 +608,7 @@
     feedbackMessage.value = "";
 
     try {
-      const updated = await $fetch<{
+      const updated = await api<{
         version: number;
         status: "draft" | "ready";
       }>(`/api/users/custom-games/${uuid}`, {

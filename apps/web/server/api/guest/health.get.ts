@@ -1,16 +1,38 @@
+import {
+  buildAuthSentinelKey,
+  generateTokenHex,
+  getAuthRedisClient,
+} from "@mindkid/auth";
 import { ping } from "@mindkid/cache";
 import { getOwnerDb } from "@mindkid/db";
 import { alert, getWaitingCount } from "@mindkid/queue";
 import { sql } from "drizzle-orm";
 import { defineEventHandler, setHeader, setResponseStatus } from "h3";
 
+const SERVICE_TIMEOUT_MS = 2000;
+const TOTAL_BUDGET_MS = 3000;
+const AUTH_SENTINEL_TTL_SECONDS = 5;
+
+async function probeAuthKeyspace(): Promise<void> {
+  const redis = getAuthRedisClient();
+  const sentinelValue = generateTokenHex(8);
+  const sentinelKey = buildAuthSentinelKey("user", sentinelValue);
+  await redis.set(sentinelKey, sentinelValue, "EX", AUTH_SENTINEL_TTL_SECONDS);
+  try {
+    const readBack = await redis.get(sentinelKey);
+    if (readBack !== sentinelValue) {
+      throw new Error("Auth Redis sentinel read-back mismatch (BR-HLT-02)");
+    }
+  } finally {
+    await redis.del(sentinelKey);
+  }
+}
+
 export default defineEventHandler(async (event) => {
-  // Set no-store cache header
   setHeader(event, "Cache-Control", "no-store");
 
   const start = Date.now();
 
-  // Timeout wrapper
   const withTimeout = <T>(
     promise: Promise<T>,
     ms: number,
@@ -28,24 +50,30 @@ export default defineEventHandler(async (event) => {
   };
 
   try {
-    // 1. Kiểm tra PostgreSQL qua Drizzle (SELECT 1)
     const dbPromise = withTimeout(
       getOwnerDb().execute(sql`SELECT 1`),
-      2000,
+      SERVICE_TIMEOUT_MS,
       "Database"
     );
 
-    // 2. PING Valkey
-    const cachePromise = withTimeout(ping(), 2000, "Cache");
+    const cachePromise = withTimeout(ping(), SERVICE_TIMEOUT_MS, "Cache");
 
-    // 3. Queue waiting count
-    const queuePromise = withTimeout(getWaitingCount(), 2000, "Queue");
+    const authPromise = withTimeout(
+      probeAuthKeyspace(),
+      SERVICE_TIMEOUT_MS,
+      "Auth"
+    );
 
-    // Check parallel
-    await Promise.all([dbPromise, cachePromise, queuePromise]);
+    const queuePromise = withTimeout(
+      getWaitingCount(),
+      SERVICE_TIMEOUT_MS,
+      "Queue"
+    );
+
+    await Promise.all([dbPromise, cachePromise, authPromise, queuePromise]);
 
     const totalTime = Date.now() - start;
-    if (totalTime > 3000) {
+    if (totalTime > TOTAL_BUDGET_MS) {
       throw new Error(`Health check took too long: ${totalTime}ms`);
     }
 
@@ -53,7 +81,7 @@ export default defineEventHandler(async (event) => {
     return {
       status: "ok",
     };
-  } catch (error: unknown) {
+  } catch (error) {
     alert("error", "Health check failed", {
       error: error instanceof Error ? error.message : String(error),
     });

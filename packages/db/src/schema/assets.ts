@@ -6,6 +6,7 @@ import {
   pgTable,
   text,
   unique,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 import { timestamps } from "./columns.ts";
@@ -69,6 +70,29 @@ export const contentImages = pgTable(
   ]
 );
 
+export const contentAudio = pgTable(
+  "content_audio",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    ownerType: varchar("owner_type", { length: 50 }).notNull(),
+    ownerId: varchar("owner_id", { length: 64 }).notNull(),
+    path: varchar("path", { length: 255 }).notNull(),
+    durationMs: integer("duration_ms").notNull(),
+    mimeType: varchar("mime_type", { length: 50 }).notNull(),
+    fileSizeBytes: integer("file_size_bytes").notNull(),
+    status: varchar("status", { length: 20 }).default("active").notNull(),
+    uploadedByManagerId: bigint("uploaded_by_manager_id", {
+      mode: "number",
+    })
+      .references(() => managers.id)
+      .notNull(),
+    ...timestamps(),
+  },
+  (table) => [
+    index("idx_content_audio_owner").on(table.ownerType, table.ownerId),
+  ]
+);
+
 export const contentAssetRefs = pgTable(
   "content_asset_refs",
   {
@@ -95,5 +119,7 @@ export const contentAssetRefs = pgTable(
 
 export type ContentImage = typeof contentImages.$inferSelect;
 export type NewContentImage = typeof contentImages.$inferInsert;
+export type ContentAudio = typeof contentAudio.$inferSelect;
+export type NewContentAudio = typeof contentAudio.$inferInsert;
 export type ContentAssetRef = typeof contentAssetRefs.$inferSelect;
 export type NewContentAssetRef = typeof contentAssetRefs.$inferInsert;

@@ -1,3 +1,4 @@
+import { writeAudit } from "@mindkid/audit";
 import { verifyPassword } from "@mindkid/auth";
 import { childProfiles, getOwnerDb, users } from "@mindkid/db";
 import { InvalidCredentialsError } from "@mindkid/errors/auth";
@@ -80,15 +81,31 @@ export default defineEventHandler(async (event) => {
   const now = new Date();
   const purgeAt = new Date(now.getTime() + 30 * 86_400 * 1000);
 
-  // BR-CPR-03: Mark status as pending_deletion (30-day grace period)
-  await db
-    .update(childProfiles)
-    .set({
-      status: "pending_deletion",
-      purgeAt,
-      updatedAt: now,
-    })
-    .where(eq(childProfiles.id, child.id));
+  // BR-CPR-03 & BR-AUD-02: Mark status as pending_deletion (30-day grace period) and audit in same transaction
+  await db.transaction(async (tx) => {
+    await tx
+      .update(childProfiles)
+      .set({
+        status: "pending_deletion",
+        purgeAt,
+        updatedAt: now,
+      })
+      .where(eq(childProfiles.id, child.id));
+
+    await writeAudit(tx, {
+      actor_type: "user",
+      actor_id: userId,
+      action: "child_data_purged",
+      entity_type: "child_profile",
+      entity_id: child.uuid,
+      before_data: { child_uuid: child.uuid, status: child.status },
+      after_data: {
+        child_uuid: child.uuid,
+        status: "pending_deletion",
+        purge_at: purgeAt.toISOString(),
+      },
+    });
+  });
 
   return {
     uuid: child.uuid,

@@ -2,25 +2,26 @@ import { z } from "zod";
 import { promptFields } from "#src/contracts/shared-fields";
 import { defineTemplate, STANDARD_SCORING } from "#src/contracts/types";
 
-export const GT032CupShapeSchema = z.enum([
+const GT032CupShapeSchema = z.enum([
   "standard",
   "narrow_tall",
   "wide_short",
   "fluted",
 ]);
 
-export const GT032QuestionTypeSchema = z.enum([
+const GT032QuestionTypeSchema = z.enum([
   "more",
   "less",
   "same",
   "pour_to_mark",
 ]);
 
-export const GT032CupSchema = z.object({
+const GT032CupSchema = z.object({
   cup_id: z.string().min(1),
   shape: GT032CupShapeSchema,
   capacity_units: z.number().int().min(1).max(20),
   fill_units: z.number().int().min(0).max(20),
+  target_units: z.number().int().min(0).max(20).optional(),
   color: z.string().default("sky"),
 });
 
@@ -29,6 +30,7 @@ export const GT032ContentSchema = z
     ...promptFields(),
     cups: z.array(GT032CupSchema).min(2).max(4),
     question_type: GT032QuestionTypeSchema,
+    target_units: z.number().int().min(0).max(20).optional(),
     conservation_trap: z.boolean().default(false),
   })
   .refine((c) => c.cups.every((cup) => cup.fill_units <= cup.capacity_units), {
@@ -36,6 +38,19 @@ export const GT032ContentSchema = z
       "Mức nước fill_units phải nhỏ hơn hoặc bằng dung tích capacity_units của cốc (BR-E032-01)",
     path: ["cups"],
   })
+  .refine(
+    (c) =>
+      c.cups.every(
+        (cup) =>
+          cup.target_units === undefined ||
+          cup.target_units <= cup.capacity_units
+      ),
+    {
+      message:
+        "Vạch đích target_units phải nhỏ hơn hoặc bằng dung tích capacity_units của cốc (BR-E032-01)",
+      path: ["cups"],
+    }
+  )
   .refine(
     (c) => {
       if (!c.conservation_trap) {
@@ -102,7 +117,7 @@ export default defineTemplate({
   scoring: STANDARD_SCORING,
   input: {
     family: "tap",
-    verbs: ["tap"],
+    verbs: ["tap", "adjust"],
     tolerance_px: 24,
   },
   events: ["game_started", "cup_selected", "liquid_poured", "game_completed"],

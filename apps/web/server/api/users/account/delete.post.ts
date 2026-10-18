@@ -1,11 +1,15 @@
+import { writeAudit } from "@mindkid/audit";
 import { getOwnerDb, requestUserDeletion, users } from "@mindkid/db";
 import { UserAlreadyDeletedError } from "@mindkid/errors/account";
 import { NotFoundError } from "@mindkid/errors/common";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { eq } from "drizzle-orm";
-import { defineEventHandler, deleteCookie } from "h3";
+import { defineEventHandler, deleteCookie, getHeader } from "h3";
 
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import {
+  getVerifiedRemoteIp,
+  requireWebUserSession,
+} from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
 
 export default defineEventHandler(async (event) => {
@@ -32,6 +36,27 @@ export default defineEventHandler(async (event) => {
 
   const now = new Date();
   const { scheduledPurgeAt } = await requestUserDeletion(db, userId, now);
+
+  const ipAddress = getVerifiedRemoteIp(event);
+  const userAgent = getHeader(event, "user-agent") ?? null;
+
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "user",
+      actor_id: userId,
+      action: "user_deleted",
+      entity_type: "user",
+      entity_id: String(userId),
+      before_data: { status: currentUser.status },
+      after_data: {
+        status: "deleted",
+        purge_at: scheduledPurgeAt.toISOString(),
+      },
+      reason: "Người dùng yêu cầu xoá tài khoản",
+      ip_address: ipAddress,
+      user_agent: userAgent,
+    });
+  });
 
   // Clear active_child_id cookie
   deleteCookie(event, "active_child_id", { path: "/" });

@@ -244,6 +244,18 @@ describe("Worksheet Contract & Validation (BR-WSM-01..08)", () => {
     expect(res.errors.some((e) => e.includes("BR-WSM-05"))).toBe(true);
   });
 
+  it("BR-WSM-08: từ chối nếu chứa trường dữ liệu cá nhân (PII) của trẻ trên trang PDF", () => {
+    const res = validateWorksheetContent({
+      title: "Phiếu bài tập - Họ và tên bé: ..................",
+      layout_template: "pattern_coloring",
+      content_blocks: samplePatternColoring,
+      instructions: "Hướng dẫn người lớn hỗ trợ trẻ tô màu",
+      learning_objective_ids: [101],
+    });
+    expect(res.ok).toBe(false);
+    expect(res.errors.some((e) => e.includes("BR-WSM-08"))).toBe(true);
+  });
+
   it("worksheetFormSchema parse hợp lệ cho Manager Studio", () => {
     const validForm = {
       code: "WS-0001",
@@ -299,7 +311,7 @@ describe("Publish Checklist cho Worksheet (BR-WSM-03, BR-WSM-06, D-P4J)", () => 
     expect(result.missing).toEqual([]);
   });
 
-  it("chặn publish khi chưa có pdf_path", () => {
+  it("BR-WSM-06: chặn publish khi chưa có pdf_path đã render trên S3", () => {
     const payload = { ...baseWorksheetPayload, pdf_path: null };
     const result = validatePublishChecklist("worksheet", payload);
     expect(result.ok).toBe(false);

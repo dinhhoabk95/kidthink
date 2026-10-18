@@ -70,9 +70,16 @@
               </div>
               <p class="text-xs text-surface-500 mt-0.5">
                 Đường dẫn toàn văn:
-                <span class="font-mono text-brand-600"
-                  >{{ req.document_url }}</span
+                <a
+                  class="font-mono text-brand-600 underline"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  :href="req.document_url"
+                  >{{ req.document_url }}</a
                 >
+                <span class="ml-2 text-surface-400" v-if="req.last_updated_on">
+                  · Ngày cập nhật văn bản: {{ req.last_updated_on }}
+                </span>
               </p>
             </div>
 
@@ -93,7 +100,9 @@
                 >Marker yêu cầu gần nhất:</span
               >
               <span class="font-medium text-surface-800">
-                {{ req.reconsent_required_at ? formatDate(req.reconsent_required_at) : 'Chưa từng force' }}
+                {{ (req.requirement_at ?? req.reconsent_required_at)
+                    ? formatDate(req.requirement_at ?? req.reconsent_required_at)
+                    : "Chưa từng force" }}
               </span>
             </div>
             <div>
@@ -101,7 +110,7 @@
                 >Số tài khoản cần đồng ý lại:</span
               >
               <span class="font-bold text-surface-900">
-                {{ req.affected_users_count ?? 0 }}
+                {{ req.affected_user_count ?? req.affected_users_count ?? 0 }}
               </span>
             </div>
             <div>
@@ -260,6 +269,7 @@
   import { isApiError } from "@mindkid/errors/client";
   import { computed, onMounted, reactive, ref } from "vue";
   import { definePageMeta, useHead } from "#imports";
+  import { apiFetch } from "~/composables/use-api-client";
 
   definePageMeta({
     layout: "manager",
@@ -273,10 +283,19 @@
     consent_type: "terms" | "privacy" | "child_data";
     title: string;
     document_url: string;
+    last_updated_on?: string;
+    requirement_at?: string | null;
     reconsent_required_at: string | null;
     notice: string | null;
     updated_at: string | null;
+    affected_user_count?: number;
     affected_users_count?: number;
+  }
+
+  interface ForceReconsentResponse {
+    consent_type: "terms" | "privacy" | "child_data";
+    requirement_at: string;
+    affected_user_count: number;
   }
 
   const requirements = ref<RequirementItem[]>([]);
@@ -323,13 +342,15 @@
     loading.value = true;
     errorMessage.value = null;
     try {
-      const data = await apiFetch<{ requirements: RequirementItem[] }>(
-        "/api/managers/legal-consents"
-      );
-      if (data?.requirements) {
-        requirements.value = data.requirements;
+      const data = await apiFetch<{
+        items?: RequirementItem[];
+        requirements?: RequirementItem[];
+      }>("/api/managers/legal-consents");
+      const list = data?.items ?? data?.requirements;
+      if (list) {
+        requirements.value = list;
       }
-    } catch (err: unknown) {
+    } catch (err) {
       errorMessage.value =
         err instanceof Error
           ? err.message
@@ -353,7 +374,7 @@
     successMessage.value = null;
   }
 
-  async function handleForceConsentError(err: unknown) {
+  async function handleForceConsentError(err: Error | object | null) {
     if (
       isApiError(err, "REAUTH_REQUIRED") ||
       (isApiError(err) && err.statusCode === 428)
@@ -396,24 +417,35 @@
     successMessage.value = null;
 
     try {
-      await apiFetch("/api/managers/legal-consent-forces", {
-        method: "POST",
-        body: {
-          consent_type: selectedRequirement.value.consent_type,
-          expected_requirement_at:
-            selectedRequirement.value.reconsent_required_at,
-          notice: forceForm.notice.trim(),
-          reason: forceForm.reason.trim(),
-          confirm_deployed: true,
-          confirm_all_users: true,
-        },
-      });
+      const expectedMarker =
+        selectedRequirement.value.requirement_at ??
+        selectedRequirement.value.reconsent_required_at ??
+        null;
 
-      successMessage.value = `Đã kích hoạt force re-consent cho ${selectedRequirement.value.title} thành công.`;
+      const res = await apiFetch<ForceReconsentResponse>(
+        "/api/managers/legal-consent-forces",
+        {
+          method: "POST",
+          body: {
+            consent_type: selectedRequirement.value.consent_type,
+            expected_requirement_at: expectedMarker,
+            notice: forceForm.notice.trim(),
+            reason: forceForm.reason.trim(),
+            confirm_deployed: true,
+            confirm_all_users: true,
+          },
+        }
+      );
+
+      successMessage.value = `Đã kích hoạt force re-consent cho ${selectedRequirement.value.title} thành công (${res.affected_user_count ?? 0} tài khoản bị ảnh hưởng).`;
       selectedRequirement.value = null;
       await loadRequirements();
-    } catch (err: unknown) {
-      await handleForceConsentError(err);
+    } catch (err) {
+      await handleForceConsentError(
+        err instanceof Error || (typeof err === "object" && err !== null)
+          ? err
+          : null
+      );
     } finally {
       submitting.value = false;
     }

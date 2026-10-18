@@ -18,43 +18,43 @@
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CMP.04",
+      "skill_code": "C1.CMP.06",
       "age_slice": "36-48m",
       "rank_in_slice": 3,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CMP.05",
+      "skill_code": "C1.CMP.07",
       "age_slice": "36-48m",
       "rank_in_slice": 4,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CMP.06",
+      "skill_code": "C1.CMP.08",
       "age_slice": "36-48m",
       "rank_in_slice": 5,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CMP.07",
+      "skill_code": "C1.CMP.09",
       "age_slice": "36-48m",
       "rank_in_slice": 6,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CMP.08",
+      "skill_code": "C1.CNT.01",
       "age_slice": "36-48m",
       "rank_in_slice": 7,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CMP.09",
+      "skill_code": "C1.CMP.04",
       "age_slice": "36-48m",
       "rank_in_slice": 8,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CNT.01",
+      "skill_code": "C1.CMP.05",
       "age_slice": "36-48m",
       "rank_in_slice": 9,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
@@ -108,43 +108,43 @@
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.DIR.01",
+      "skill_code": "C2.GEO.01",
       "age_slice": "36-48m",
       "rank_in_slice": 18,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.DIR.02",
+      "skill_code": "C2.GEO.02",
       "age_slice": "36-48m",
       "rank_in_slice": 19,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.GEO.01",
+      "skill_code": "C2.GEO.03",
       "age_slice": "36-48m",
       "rank_in_slice": 20,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.GEO.02",
+      "skill_code": "C2.ORI.03",
       "age_slice": "36-48m",
       "rank_in_slice": 21,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.GEO.03",
+      "skill_code": "C2.DIR.01",
       "age_slice": "36-48m",
       "rank_in_slice": 22,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.ORI.03",
+      "skill_code": "C2.ORI.04",
       "age_slice": "36-48m",
       "rank_in_slice": 23,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.ORI.04",
+      "skill_code": "C2.DIR.02",
       "age_slice": "36-48m",
       "rank_in_slice": 24,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
@@ -156,397 +156,409 @@
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.ORI.08",
+      "skill_code": "C2.DIR.05",
       "age_slice": "36-48m",
       "rank_in_slice": 26,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.CLS.01",
+      "skill_code": "C2.ORI.08",
       "age_slice": "36-48m",
       "rank_in_slice": 27,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.CLS.02",
+      "skill_code": "C3.CLS.01",
       "age_slice": "36-48m",
       "rank_in_slice": 28,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.AUD.01",
+      "skill_code": "C3.CLS.02",
       "age_slice": "36-48m",
       "rank_in_slice": 29,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.AUD.02",
+      "skill_code": "C4.AUD.01",
       "age_slice": "36-48m",
       "rank_in_slice": 30,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.DET.01",
+      "skill_code": "C4.AUD.02",
       "age_slice": "36-48m",
       "rank_in_slice": 31,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.DET.02",
+      "skill_code": "C4.DET.01",
       "age_slice": "36-48m",
       "rank_in_slice": 32,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.SOC.01",
+      "skill_code": "C4.DET.02",
       "age_slice": "36-48m",
       "rank_in_slice": 33,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.BOK.01",
+      "skill_code": "C4.SOC.01",
       "age_slice": "36-48m",
       "rank_in_slice": 34,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.BOK.02",
+      "skill_code": "C5.BOK.01",
       "age_slice": "36-48m",
       "rank_in_slice": 35,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.PRA.01",
+      "skill_code": "C5.BOK.02",
       "age_slice": "36-48m",
       "rank_in_slice": 36,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.VOC.01",
+      "skill_code": "C5.PRA.01",
       "age_slice": "36-48m",
       "rank_in_slice": 37,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.VOC.02",
+      "skill_code": "C5.VOC.01",
       "age_slice": "36-48m",
       "rank_in_slice": 38,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CMP.03",
+      "skill_code": "C5.VOC.02",
       "age_slice": "36-48m",
       "rank_in_slice": 39,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CNT.03",
+      "skill_code": "C1.CMP.03",
       "age_slice": "36-48m",
       "rank_in_slice": 40,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.NREC.05",
+      "skill_code": "C1.CNT.03",
       "age_slice": "36-48m",
       "rank_in_slice": 41,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.OTO.03",
+      "skill_code": "C1.NREC.05",
       "age_slice": "36-48m",
       "rank_in_slice": 42,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.PAT.09",
+      "skill_code": "C1.OTO.03",
       "age_slice": "36-48m",
       "rank_in_slice": 43,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.CON.01",
+      "skill_code": "C1.PAT.09",
       "age_slice": "36-48m",
       "rank_in_slice": 44,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.MAZ.01",
+      "skill_code": "C2.CON.01",
       "age_slice": "36-48m",
       "rank_in_slice": 45,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.ORI.01",
+      "skill_code": "C2.MAZ.01",
       "age_slice": "36-48m",
       "rank_in_slice": 46,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.ORI.02",
+      "skill_code": "C2.ORI.01",
       "age_slice": "36-48m",
       "rank_in_slice": 47,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.ORI.05",
+      "skill_code": "C2.ORI.02",
       "age_slice": "36-48m",
       "rank_in_slice": 48,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.ORI.06",
+      "skill_code": "C2.ORI.05",
       "age_slice": "36-48m",
       "rank_in_slice": 49,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.ANA.01",
+      "skill_code": "C2.ORI.06",
       "age_slice": "36-48m",
       "rank_in_slice": 50,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.CLS.03",
+      "skill_code": "C3.ANA.01",
       "age_slice": "36-48m",
       "rank_in_slice": 51,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.SEQ.01",
+      "skill_code": "C3.CLS.03",
       "age_slice": "36-48m",
       "rank_in_slice": 52,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.SET.01",
+      "skill_code": "C3.SEQ.01",
       "age_slice": "36-48m",
       "rank_in_slice": 53,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.SRT.01",
+      "skill_code": "C3.SET.01",
       "age_slice": "36-48m",
       "rank_in_slice": 54,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.SRT.04",
+      "skill_code": "C3.SRT.01",
       "age_slice": "36-48m",
       "rank_in_slice": 55,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.DET.03",
+      "skill_code": "C3.SRT.04",
       "age_slice": "36-48m",
       "rank_in_slice": 56,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.LIV.01",
+      "skill_code": "C4.DET.03",
       "age_slice": "36-48m",
       "rank_in_slice": 57,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.LIV.02",
+      "skill_code": "C4.LIV.01",
       "age_slice": "36-48m",
       "rank_in_slice": 58,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.MAT.01",
+      "skill_code": "C4.LIV.02",
       "age_slice": "36-48m",
       "rank_in_slice": 59,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.MEM.01",
+      "skill_code": "C4.MAT.01",
       "age_slice": "36-48m",
       "rank_in_slice": 60,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.OBS.01",
+      "skill_code": "C4.MEM.01",
       "age_slice": "36-48m",
       "rank_in_slice": 61,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.SOC.02",
+      "skill_code": "C4.OBS.01",
       "age_slice": "36-48m",
       "rank_in_slice": 62,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.TAC.01",
+      "skill_code": "C4.SOC.02",
       "age_slice": "36-48m",
       "rank_in_slice": 63,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.TAC.02",
+      "skill_code": "C4.TAC.01",
       "age_slice": "36-48m",
       "rank_in_slice": 64,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.VIS.02",
+      "skill_code": "C4.TAC.02",
       "age_slice": "36-48m",
       "rank_in_slice": 65,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.DES.01",
+      "skill_code": "C4.VIS.02",
       "age_slice": "36-48m",
       "rank_in_slice": 66,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.LIS.01",
+      "skill_code": "C5.DES.01",
       "age_slice": "36-48m",
       "rank_in_slice": 67,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.LIS.02",
+      "skill_code": "C5.LIS.01",
       "age_slice": "36-48m",
       "rank_in_slice": 68,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.QUE.01",
+      "skill_code": "C5.LIS.02",
       "age_slice": "36-48m",
       "rank_in_slice": 69,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.QUE.02",
+      "skill_code": "C5.QUE.01",
       "age_slice": "36-48m",
       "rank_in_slice": 70,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.VOC.04",
+      "skill_code": "C5.QUE.02",
       "age_slice": "36-48m",
       "rank_in_slice": 71,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.VOC.05",
+      "skill_code": "C5.VOC.04",
       "age_slice": "36-48m",
       "rank_in_slice": 72,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.ATT.01",
+      "skill_code": "C5.VOC.05",
       "age_slice": "36-48m",
       "rank_in_slice": 73,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.ATT.02",
+      "skill_code": "C6.ATT.01",
       "age_slice": "36-48m",
       "rank_in_slice": 74,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.INH.02",
+      "skill_code": "C6.ATT.02",
       "age_slice": "36-48m",
       "rank_in_slice": 75,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.INI.01",
+      "skill_code": "C6.INH.02",
       "age_slice": "36-48m",
       "rank_in_slice": 76,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.PER.01",
+      "skill_code": "C6.INI.01",
       "age_slice": "36-48m",
       "rank_in_slice": 77,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.WM.01",
+      "skill_code": "C6.PER.01",
       "age_slice": "36-48m",
       "rank_in_slice": 78,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.ADD.01",
-      "age_slice": "48-60m",
-      "rank_in_slice": 1,
+      "skill_code": "C6.WM.01",
+      "age_slice": "36-48m",
+      "rank_in_slice": 79,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.09",
+      "age_slice": "36-48m",
+      "rank_in_slice": 80,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
       "skill_code": "C1.CMP.10",
       "age_slice": "48-60m",
-      "rank_in_slice": 2,
+      "rank_in_slice": 1,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
       "skill_code": "C1.CMP.11",
       "age_slice": "48-60m",
-      "rank_in_slice": 3,
+      "rank_in_slice": 2,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
       "skill_code": "C1.CMP.12",
       "age_slice": "48-60m",
-      "rank_in_slice": 4,
+      "rank_in_slice": 3,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
       "skill_code": "C1.CMP.13",
       "age_slice": "48-60m",
-      "rank_in_slice": 5,
+      "rank_in_slice": 4,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
       "skill_code": "C1.DAT.01",
       "age_slice": "48-60m",
-      "rank_in_slice": 6,
+      "rank_in_slice": 5,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
       "skill_code": "C1.MEAS.03",
       "age_slice": "48-60m",
-      "rank_in_slice": 7,
+      "rank_in_slice": 6,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
       "skill_code": "C1.MEAS.10",
       "age_slice": "48-60m",
-      "rank_in_slice": 8,
+      "rank_in_slice": 7,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
       "skill_code": "C1.MEAS.12",
       "age_slice": "48-60m",
-      "rank_in_slice": 9,
+      "rank_in_slice": 8,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
       "skill_code": "C1.NCOMP.01",
       "age_slice": "48-60m",
-      "rank_in_slice": 10,
+      "rank_in_slice": 9,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
       "skill_code": "C1.NCOMP.02",
       "age_slice": "48-60m",
-      "rank_in_slice": 11,
+      "rank_in_slice": 10,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
       "skill_code": "C1.NCOMP.03",
       "age_slice": "48-60m",
-      "rank_in_slice": 12,
+      "rank_in_slice": 11,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
       "skill_code": "C1.NCOMP.10",
+      "age_slice": "48-60m",
+      "rank_in_slice": 12,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C1.ADD.01",
       "age_slice": "48-60m",
       "rank_in_slice": 13,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
@@ -618,597 +630,735 @@
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.DIR.05",
+      "skill_code": "C2.GEO.04",
       "age_slice": "48-60m",
       "rank_in_slice": 25,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.GEO.04",
+      "skill_code": "C2.GEO.05",
       "age_slice": "48-60m",
       "rank_in_slice": 26,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.GEO.05",
+      "skill_code": "C2.ORI.09",
       "age_slice": "48-60m",
       "rank_in_slice": 27,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.ORI.09",
+      "skill_code": "C2.PER.01",
       "age_slice": "48-60m",
       "rank_in_slice": 28,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.PER.01",
+      "skill_code": "C2.SOL.01",
       "age_slice": "48-60m",
       "rank_in_slice": 29,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.SOL.01",
+      "skill_code": "C2.SOL.02",
       "age_slice": "48-60m",
       "rank_in_slice": 30,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.SOL.02",
+      "skill_code": "C3.ALG.01",
       "age_slice": "48-60m",
       "rank_in_slice": 31,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.ALG.01",
+      "skill_code": "C3.SET.02",
       "age_slice": "48-60m",
       "rank_in_slice": 32,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.SET.02",
+      "skill_code": "C3.SRT.02",
       "age_slice": "48-60m",
       "rank_in_slice": 33,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.SRT.02",
+      "skill_code": "C4.AUD.03",
       "age_slice": "48-60m",
       "rank_in_slice": 34,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.AUD.03",
+      "skill_code": "C4.AUD.04",
       "age_slice": "48-60m",
       "rank_in_slice": 35,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.AUD.04",
+      "skill_code": "C4.ECO.01",
       "age_slice": "48-60m",
       "rank_in_slice": 36,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.ECO.01",
+      "skill_code": "C4.ECO.02",
       "age_slice": "48-60m",
       "rank_in_slice": 37,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.ECO.02",
+      "skill_code": "C4.EXP.01",
       "age_slice": "48-60m",
       "rank_in_slice": 38,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.EXP.01",
+      "skill_code": "C4.HOM.01",
       "age_slice": "48-60m",
       "rank_in_slice": 39,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.HOM.01",
+      "skill_code": "C4.HOM.02",
       "age_slice": "48-60m",
       "rank_in_slice": 40,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.HOM.02",
+      "skill_code": "C4.HOM.03",
       "age_slice": "48-60m",
       "rank_in_slice": 41,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.HOM.03",
+      "skill_code": "C4.LIV.04",
       "age_slice": "48-60m",
       "rank_in_slice": 42,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.LIV.04",
+      "skill_code": "C4.MAT.03",
       "age_slice": "48-60m",
       "rank_in_slice": 43,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.MAT.02",
+      "skill_code": "C4.SAF.02",
       "age_slice": "48-60m",
       "rank_in_slice": 44,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.MAT.03",
+      "skill_code": "C4.SOC.03",
       "age_slice": "48-60m",
       "rank_in_slice": 45,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.SAF.02",
+      "skill_code": "C4.TAC.03",
       "age_slice": "48-60m",
       "rank_in_slice": 46,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.SOC.03",
+      "skill_code": "C4.MAT.02",
       "age_slice": "48-60m",
       "rank_in_slice": 47,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.TAC.03",
+      "skill_code": "C4.TOO.01",
       "age_slice": "48-60m",
       "rank_in_slice": 48,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.TOO.01",
+      "skill_code": "C5.PRN.03",
       "age_slice": "48-60m",
       "rank_in_slice": 49,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.ALP.01",
+      "skill_code": "C5.WRT.01",
       "age_slice": "48-60m",
       "rank_in_slice": 50,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.ALP.02",
+      "skill_code": "C5.WRT.02",
       "age_slice": "48-60m",
       "rank_in_slice": 51,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.PRN.01",
+      "skill_code": "C1.CNT.02",
       "age_slice": "48-60m",
       "rank_in_slice": 52,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.PRN.02",
+      "skill_code": "C1.CNT.04",
       "age_slice": "48-60m",
       "rank_in_slice": 53,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.PRN.03",
+      "skill_code": "C1.CNT.09",
       "age_slice": "48-60m",
       "rank_in_slice": 54,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.WRT.01",
+      "skill_code": "C1.CNT.11",
       "age_slice": "48-60m",
       "rank_in_slice": 55,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.WRT.02",
+      "skill_code": "C1.MEAS.11",
       "age_slice": "48-60m",
       "rank_in_slice": 56,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CNT.02",
+      "skill_code": "C1.MEAS.15",
       "age_slice": "48-60m",
       "rank_in_slice": 57,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CNT.04",
+      "skill_code": "C1.NCOMP.04",
       "age_slice": "48-60m",
       "rank_in_slice": 58,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CNT.09",
+      "skill_code": "C1.NREC.10",
       "age_slice": "48-60m",
       "rank_in_slice": 59,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CNT.11",
+      "skill_code": "C1.NREC.11",
       "age_slice": "48-60m",
       "rank_in_slice": 60,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.MEAS.11",
+      "skill_code": "C1.OTO.02",
       "age_slice": "48-60m",
       "rank_in_slice": 61,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.MEAS.15",
+      "skill_code": "C1.OTO.05",
       "age_slice": "48-60m",
       "rank_in_slice": 62,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.NCOMP.04",
+      "skill_code": "C1.OTO.06",
       "age_slice": "48-60m",
       "rank_in_slice": 63,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.NREC.10",
+      "skill_code": "C1.PAT.04",
       "age_slice": "48-60m",
       "rank_in_slice": 64,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.NREC.11",
+      "skill_code": "C2.CON.03",
       "age_slice": "48-60m",
       "rank_in_slice": 65,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.OTO.02",
+      "skill_code": "C2.DIR.03",
       "age_slice": "48-60m",
       "rank_in_slice": 66,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.OTO.05",
+      "skill_code": "C2.DIR.04",
       "age_slice": "48-60m",
       "rank_in_slice": 67,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.OTO.06",
+      "skill_code": "C2.MIR.01",
       "age_slice": "48-60m",
       "rank_in_slice": 68,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.PAT.04",
+      "skill_code": "C2.ORI.10",
       "age_slice": "48-60m",
       "rank_in_slice": 69,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.CON.03",
+      "skill_code": "C3.CLS.04",
       "age_slice": "48-60m",
       "rank_in_slice": 70,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.DIR.03",
+      "skill_code": "C3.CLS.05",
       "age_slice": "48-60m",
       "rank_in_slice": 71,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.DIR.04",
+      "skill_code": "C3.INF.01",
       "age_slice": "48-60m",
       "rank_in_slice": 72,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.MIR.01",
+      "skill_code": "C3.RULE.01",
       "age_slice": "48-60m",
       "rank_in_slice": 73,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.ORI.10",
+      "skill_code": "C3.RULE.02",
       "age_slice": "48-60m",
       "rank_in_slice": 74,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.CLS.04",
+      "skill_code": "C3.SEQ.02",
       "age_slice": "48-60m",
       "rank_in_slice": 75,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.CLS.05",
+      "skill_code": "C3.SEQ.03",
       "age_slice": "48-60m",
       "rank_in_slice": 76,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.INF.01",
+      "skill_code": "C3.SRT.03",
       "age_slice": "48-60m",
       "rank_in_slice": 77,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.RULE.01",
+      "skill_code": "C4.AUD.05",
       "age_slice": "48-60m",
       "rank_in_slice": 78,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.RULE.02",
+      "skill_code": "C4.CAU.01",
       "age_slice": "48-60m",
       "rank_in_slice": 79,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.SEQ.02",
+      "skill_code": "C4.CAU.02",
       "age_slice": "48-60m",
       "rank_in_slice": 80,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.SEQ.03",
+      "skill_code": "C4.DET.04",
       "age_slice": "48-60m",
       "rank_in_slice": 81,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.SRT.03",
+      "skill_code": "C4.EXP.02",
       "age_slice": "48-60m",
       "rank_in_slice": 82,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.AUD.05",
+      "skill_code": "C4.LIV.03",
       "age_slice": "48-60m",
       "rank_in_slice": 83,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.CAU.01",
+      "skill_code": "C4.LIV.05",
       "age_slice": "48-60m",
       "rank_in_slice": 84,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.CAU.02",
+      "skill_code": "C4.MAT.04",
       "age_slice": "48-60m",
       "rank_in_slice": 85,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.DET.04",
+      "skill_code": "C4.MEM.02",
       "age_slice": "48-60m",
       "rank_in_slice": 86,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.EXP.02",
+      "skill_code": "C4.MEM.03",
       "age_slice": "48-60m",
       "rank_in_slice": 87,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.LIV.03",
+      "skill_code": "C4.SAF.01",
       "age_slice": "48-60m",
       "rank_in_slice": 88,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.LIV.05",
+      "skill_code": "C4.SAF.03",
       "age_slice": "48-60m",
       "rank_in_slice": 89,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.MAT.04",
+      "skill_code": "C4.SEN.01",
       "age_slice": "48-60m",
       "rank_in_slice": 90,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.MEM.02",
+      "skill_code": "C4.SEN.02",
       "age_slice": "48-60m",
       "rank_in_slice": 91,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.MEM.03",
+      "skill_code": "C4.OBS.02",
       "age_slice": "48-60m",
       "rank_in_slice": 92,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.OBS.02",
+      "skill_code": "C4.SEN.03",
       "age_slice": "48-60m",
       "rank_in_slice": 93,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.SAF.01",
+      "skill_code": "C4.SOC.04",
       "age_slice": "48-60m",
       "rank_in_slice": 94,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.SAF.03",
+      "skill_code": "C4.TAC.04",
       "age_slice": "48-60m",
       "rank_in_slice": 95,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.SEN.01",
+      "skill_code": "C4.TOO.02",
       "age_slice": "48-60m",
       "rank_in_slice": 96,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.SEN.02",
+      "skill_code": "C4.VIS.01",
       "age_slice": "48-60m",
       "rank_in_slice": 97,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.SEN.03",
+      "skill_code": "C4.VIS.03",
       "age_slice": "48-60m",
       "rank_in_slice": 98,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.SOC.04",
+      "skill_code": "C5.BOK.03",
       "age_slice": "48-60m",
       "rank_in_slice": 99,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.TAC.04",
+      "skill_code": "C5.DES.02",
       "age_slice": "48-60m",
       "rank_in_slice": 100,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.TOO.02",
+      "skill_code": "C5.DES.03",
       "age_slice": "48-60m",
       "rank_in_slice": 101,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.VIS.01",
+      "skill_code": "C5.GRM.01",
       "age_slice": "48-60m",
       "rank_in_slice": 102,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C4.VIS.03",
+      "skill_code": "C5.PHO.01",
       "age_slice": "48-60m",
       "rank_in_slice": 103,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.BOK.03",
+      "skill_code": "C5.PHO.02",
       "age_slice": "48-60m",
       "rank_in_slice": 104,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.DES.02",
+      "skill_code": "C5.PHO.03",
       "age_slice": "48-60m",
       "rank_in_slice": 105,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.DES.03",
+      "skill_code": "C5.PRA.02",
       "age_slice": "48-60m",
       "rank_in_slice": 106,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.GRM.01",
+      "skill_code": "C5.QUE.03",
       "age_slice": "48-60m",
       "rank_in_slice": 107,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.PHO.01",
+      "skill_code": "C5.RHY.01",
       "age_slice": "48-60m",
       "rank_in_slice": 108,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.PHO.02",
+      "skill_code": "C5.RHY.03",
       "age_slice": "48-60m",
       "rank_in_slice": 109,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.PHO.03",
+      "skill_code": "C5.STO.01",
       "age_slice": "48-60m",
       "rank_in_slice": 110,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.PRA.02",
+      "skill_code": "C5.TON.01",
       "age_slice": "48-60m",
       "rank_in_slice": 111,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.QUE.03",
+      "skill_code": "C5.VOC.03",
       "age_slice": "48-60m",
       "rank_in_slice": 112,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.RHY.01",
+      "skill_code": "C6.ATT.03",
       "age_slice": "48-60m",
       "rank_in_slice": 113,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.RHY.03",
+      "skill_code": "C6.INH.01",
       "age_slice": "48-60m",
       "rank_in_slice": 114,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.STO.01",
+      "skill_code": "C6.INH.03",
       "age_slice": "48-60m",
       "rank_in_slice": 115,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.TON.01",
+      "skill_code": "C6.PER.02",
       "age_slice": "48-60m",
       "rank_in_slice": 116,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.VOC.03",
+      "skill_code": "C6.WM.03",
       "age_slice": "48-60m",
       "rank_in_slice": 117,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.ATT.03",
+      "skill_code": "C6.WM.04",
       "age_slice": "48-60m",
       "rank_in_slice": 118,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.INH.01",
+      "skill_code": "C5.LET.01",
       "age_slice": "48-60m",
       "rank_in_slice": 119,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.INH.03",
+      "skill_code": "C5.ALP.01",
       "age_slice": "48-60m",
       "rank_in_slice": 120,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.PER.02",
+      "skill_code": "C5.ALP.02",
       "age_slice": "48-60m",
       "rank_in_slice": 121,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.WM.03",
+      "skill_code": "C5.PRN.01",
       "age_slice": "48-60m",
       "rank_in_slice": 122,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.WM.04",
+      "skill_code": "C5.PRN.02",
       "age_slice": "48-60m",
       "rank_in_slice": 123,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.LET.02",
+      "age_slice": "48-60m",
+      "rank_in_slice": 124,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.LET.03",
+      "age_slice": "48-60m",
+      "rank_in_slice": 125,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.LET.04",
+      "age_slice": "48-60m",
+      "rank_in_slice": 126,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.LET.05",
+      "age_slice": "48-60m",
+      "rank_in_slice": 127,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.ONS.01",
+      "age_slice": "48-60m",
+      "rank_in_slice": 128,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.ONS.02",
+      "age_slice": "48-60m",
+      "rank_in_slice": 129,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.RIM.01",
+      "age_slice": "48-60m",
+      "rank_in_slice": 130,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.TMK.01",
+      "age_slice": "48-60m",
+      "rank_in_slice": 131,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.TMK.02",
+      "age_slice": "48-60m",
+      "rank_in_slice": 132,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.06",
+      "age_slice": "48-60m",
+      "rank_in_slice": 133,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.07",
+      "age_slice": "48-60m",
+      "rank_in_slice": 134,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.08",
+      "age_slice": "48-60m",
+      "rank_in_slice": 135,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.10",
+      "age_slice": "48-60m",
+      "rank_in_slice": 136,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.11",
+      "age_slice": "48-60m",
+      "rank_in_slice": 137,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.12",
+      "age_slice": "48-60m",
+      "rank_in_slice": 138,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.13",
+      "age_slice": "48-60m",
+      "rank_in_slice": 139,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.14",
+      "age_slice": "48-60m",
+      "rank_in_slice": 140,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.15",
+      "age_slice": "48-60m",
+      "rank_in_slice": 141,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.16",
+      "age_slice": "48-60m",
+      "rank_in_slice": 142,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.17",
+      "age_slice": "48-60m",
+      "rank_in_slice": 143,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.18",
+      "age_slice": "48-60m",
+      "rank_in_slice": 144,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.19",
+      "age_slice": "48-60m",
+      "rank_in_slice": 145,
+      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
+    },
+    {
+      "skill_code": "C5.VOC.20",
+      "age_slice": "48-60m",
+      "rank_in_slice": 146,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
@@ -1218,37 +1368,37 @@
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.ADD.03",
+      "skill_code": "C1.ADD.04",
       "age_slice": "60-72m",
       "rank_in_slice": 2,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.ADD.04",
+      "skill_code": "C1.CMP.14",
       "age_slice": "60-72m",
       "rank_in_slice": 3,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CMP.14",
+      "skill_code": "C1.CMP.15",
       "age_slice": "60-72m",
       "rank_in_slice": 4,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CMP.15",
+      "skill_code": "C1.CNT.07",
       "age_slice": "60-72m",
       "rank_in_slice": 5,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CNT.07",
+      "skill_code": "C1.CNT.08",
       "age_slice": "60-72m",
       "rank_in_slice": 6,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C1.CNT.08",
+      "skill_code": "C1.ADD.03",
       "age_slice": "60-72m",
       "rank_in_slice": 7,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
@@ -1716,97 +1866,97 @@
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.CON.02",
+      "skill_code": "C2.CON.04",
       "age_slice": "60-72m",
       "rank_in_slice": 85,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.CON.04",
+      "skill_code": "C2.CON.05",
       "age_slice": "60-72m",
       "rank_in_slice": 86,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.CON.05",
+      "skill_code": "C2.DIR.06",
       "age_slice": "60-72m",
       "rank_in_slice": 87,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.DIR.06",
+      "skill_code": "C2.DIR.07",
       "age_slice": "60-72m",
       "rank_in_slice": 88,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.DIR.07",
+      "skill_code": "C2.GEO.08",
       "age_slice": "60-72m",
       "rank_in_slice": 89,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.GEO.08",
+      "skill_code": "C2.GRD.03",
       "age_slice": "60-72m",
       "rank_in_slice": 90,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.GRD.03",
+      "skill_code": "C2.GRD.04",
       "age_slice": "60-72m",
       "rank_in_slice": 91,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.GRD.04",
+      "skill_code": "C2.MAZ.02",
       "age_slice": "60-72m",
       "rank_in_slice": 92,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.MAZ.02",
+      "skill_code": "C2.MIR.02",
       "age_slice": "60-72m",
       "rank_in_slice": 93,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.MIR.02",
+      "skill_code": "C2.MIR.03",
       "age_slice": "60-72m",
       "rank_in_slice": 94,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.MIR.03",
+      "skill_code": "C2.PER.02",
       "age_slice": "60-72m",
       "rank_in_slice": 95,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.PER.02",
+      "skill_code": "C2.PER.03",
       "age_slice": "60-72m",
       "rank_in_slice": 96,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.PER.03",
+      "skill_code": "C2.PER.04",
       "age_slice": "60-72m",
       "rank_in_slice": 97,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.PER.04",
+      "skill_code": "C2.ROT.02",
       "age_slice": "60-72m",
       "rank_in_slice": 98,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.ROT.02",
+      "skill_code": "C2.ROT.04",
       "age_slice": "60-72m",
       "rank_in_slice": 99,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C2.ROT.04",
+      "skill_code": "C2.CON.02",
       "age_slice": "60-72m",
       "rank_in_slice": 100,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
@@ -1830,31 +1980,31 @@
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.ALG.04",
+      "skill_code": "C3.ANA.02",
       "age_slice": "60-72m",
       "rank_in_slice": 104,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.ANA.02",
+      "skill_code": "C3.CLS.06",
       "age_slice": "60-72m",
       "rank_in_slice": 105,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.CLS.06",
+      "skill_code": "C3.DED.01",
       "age_slice": "60-72m",
       "rank_in_slice": 106,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.DED.01",
+      "skill_code": "C3.DED.02",
       "age_slice": "60-72m",
       "rank_in_slice": 107,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C3.DED.02",
+      "skill_code": "C3.ALG.04",
       "age_slice": "60-72m",
       "rank_in_slice": 108,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
@@ -2004,49 +2154,49 @@
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.ALP.06",
+      "skill_code": "C5.BOK.05",
       "age_slice": "60-72m",
       "rank_in_slice": 133,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.BOK.05",
+      "skill_code": "C5.GRM.02",
       "age_slice": "60-72m",
       "rank_in_slice": 134,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.GRM.02",
+      "skill_code": "C5.GRM.03",
       "age_slice": "60-72m",
       "rank_in_slice": 135,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.GRM.03",
+      "skill_code": "C5.GRM.04",
       "age_slice": "60-72m",
       "rank_in_slice": 136,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.GRM.04",
+      "skill_code": "C5.GRM.05",
       "age_slice": "60-72m",
       "rank_in_slice": 137,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.GRM.05",
+      "skill_code": "C5.LIS.03",
       "age_slice": "60-72m",
       "rank_in_slice": 138,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.LIS.03",
+      "skill_code": "C5.PHO.04",
       "age_slice": "60-72m",
       "rank_in_slice": 139,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.PHO.04",
+      "skill_code": "C5.ALP.06",
       "age_slice": "60-72m",
       "rank_in_slice": 140,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
@@ -2172,7 +2322,7 @@
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.INI.02",
+      "skill_code": "C6.MON.01",
       "age_slice": "60-72m",
       "rank_in_slice": 161,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
@@ -2184,43 +2334,43 @@
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.INI.04",
+      "skill_code": "C6.MON.02",
       "age_slice": "60-72m",
       "rank_in_slice": 163,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.INI.05",
+      "skill_code": "C6.PER.04",
       "age_slice": "60-72m",
       "rank_in_slice": 164,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.MON.01",
+      "skill_code": "C6.PER.05",
       "age_slice": "60-72m",
       "rank_in_slice": 165,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.MON.02",
+      "skill_code": "C6.PLN.01",
       "age_slice": "60-72m",
       "rank_in_slice": 166,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.PER.04",
+      "skill_code": "C6.INI.02",
       "age_slice": "60-72m",
       "rank_in_slice": 167,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.PER.05",
+      "skill_code": "C6.INI.04",
       "age_slice": "60-72m",
       "rank_in_slice": 168,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.PLN.01",
+      "skill_code": "C6.INI.05",
       "age_slice": "60-72m",
       "rank_in_slice": 169,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
@@ -2328,337 +2478,187 @@
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.ALP.07",
+      "skill_code": "C5.DES.04",
       "age_slice": "60-72m",
       "rank_in_slice": 187,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.ALP.08",
+      "skill_code": "C5.PRA.06",
       "age_slice": "60-72m",
       "rank_in_slice": 188,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.DES.04",
+      "skill_code": "C5.RHY.08",
       "age_slice": "60-72m",
       "rank_in_slice": 189,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.PHO.06",
+      "skill_code": "C5.TON.04",
       "age_slice": "60-72m",
       "rank_in_slice": 190,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.PHO.07",
+      "skill_code": "C5.TON.06",
       "age_slice": "60-72m",
       "rank_in_slice": 191,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.PRA.06",
+      "skill_code": "C5.WRT.07",
       "age_slice": "60-72m",
       "rank_in_slice": 192,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.RHY.05",
+      "skill_code": "C6.FLX.03",
       "age_slice": "60-72m",
       "rank_in_slice": 193,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.RHY.06",
+      "skill_code": "C6.MON.03",
       "age_slice": "60-72m",
       "rank_in_slice": 194,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.RHY.07",
+      "skill_code": "C6.PLN.03",
       "age_slice": "60-72m",
       "rank_in_slice": 195,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.RHY.08",
+      "skill_code": "C5.DGR.01",
       "age_slice": "60-72m",
       "rank_in_slice": 196,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.TON.04",
+      "skill_code": "C5.ALP.07",
       "age_slice": "60-72m",
       "rank_in_slice": 197,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.TON.05",
+      "skill_code": "C5.DGR.02",
       "age_slice": "60-72m",
       "rank_in_slice": 198,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.TON.06",
+      "skill_code": "C5.ALP.08",
       "age_slice": "60-72m",
       "rank_in_slice": 199,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.WRD.03",
+      "skill_code": "C5.ONS.03",
       "age_slice": "60-72m",
       "rank_in_slice": 200,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.WRD.04",
+      "skill_code": "C5.PHO.06",
       "age_slice": "60-72m",
       "rank_in_slice": 201,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.WRD.05",
+      "skill_code": "C5.ONS.04",
       "age_slice": "60-72m",
       "rank_in_slice": 202,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.WRD.06",
+      "skill_code": "C5.PHO.07",
       "age_slice": "60-72m",
       "rank_in_slice": 203,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.WRT.07",
+      "skill_code": "C5.WRD.03",
       "age_slice": "60-72m",
       "rank_in_slice": 204,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.FLX.03",
+      "skill_code": "C5.RIM.02",
       "age_slice": "60-72m",
       "rank_in_slice": 205,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.MON.03",
+      "skill_code": "C5.RIM.03",
       "age_slice": "60-72m",
       "rank_in_slice": 206,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C6.PLN.03",
+      "skill_code": "C5.RHY.05",
       "age_slice": "60-72m",
       "rank_in_slice": 207,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.VOC.09",
-      "age_slice": "36-48m",
-      "rank_in_slice": 79,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.LET.01",
-      "age_slice": "48-60m",
-      "rank_in_slice": 124,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.LET.02",
-      "age_slice": "48-60m",
-      "rank_in_slice": 125,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.LET.03",
-      "age_slice": "48-60m",
-      "rank_in_slice": 126,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.LET.04",
-      "age_slice": "48-60m",
-      "rank_in_slice": 127,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.LET.05",
-      "age_slice": "48-60m",
-      "rank_in_slice": 128,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.ONS.01",
-      "age_slice": "48-60m",
-      "rank_in_slice": 129,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.ONS.02",
-      "age_slice": "48-60m",
-      "rank_in_slice": 130,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.RIM.01",
-      "age_slice": "48-60m",
-      "rank_in_slice": 131,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.TMK.01",
-      "age_slice": "48-60m",
-      "rank_in_slice": 132,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.TMK.02",
-      "age_slice": "48-60m",
-      "rank_in_slice": 133,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.06",
-      "age_slice": "48-60m",
-      "rank_in_slice": 134,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.07",
-      "age_slice": "48-60m",
-      "rank_in_slice": 135,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.08",
-      "age_slice": "48-60m",
-      "rank_in_slice": 136,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.10",
-      "age_slice": "48-60m",
-      "rank_in_slice": 137,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.11",
-      "age_slice": "48-60m",
-      "rank_in_slice": 138,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.12",
-      "age_slice": "48-60m",
-      "rank_in_slice": 139,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.13",
-      "age_slice": "48-60m",
-      "rank_in_slice": 140,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.14",
-      "age_slice": "48-60m",
-      "rank_in_slice": 141,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.15",
-      "age_slice": "48-60m",
-      "rank_in_slice": 142,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.16",
-      "age_slice": "48-60m",
-      "rank_in_slice": 143,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.17",
-      "age_slice": "48-60m",
-      "rank_in_slice": 144,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.18",
-      "age_slice": "48-60m",
-      "rank_in_slice": 145,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.19",
-      "age_slice": "48-60m",
-      "rank_in_slice": 146,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.VOC.20",
-      "age_slice": "48-60m",
-      "rank_in_slice": 147,
-      "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
-    },
-    {
-      "skill_code": "C5.DGR.01",
+      "skill_code": "C5.RIM.04",
       "age_slice": "60-72m",
       "rank_in_slice": 208,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.DGR.02",
+      "skill_code": "C5.RIM.05",
       "age_slice": "60-72m",
       "rank_in_slice": 209,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.ONS.03",
+      "skill_code": "C5.RHY.06",
       "age_slice": "60-72m",
       "rank_in_slice": 210,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.ONS.04",
+      "skill_code": "C5.RIM.06",
       "age_slice": "60-72m",
       "rank_in_slice": 211,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.RIM.02",
+      "skill_code": "C5.RHY.07",
       "age_slice": "60-72m",
       "rank_in_slice": 212,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.RIM.03",
+      "skill_code": "C5.TMK.03",
       "age_slice": "60-72m",
       "rank_in_slice": 213,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.RIM.04",
+      "skill_code": "C5.TON.05",
       "age_slice": "60-72m",
       "rank_in_slice": 214,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.RIM.05",
+      "skill_code": "C5.WRD.04",
       "age_slice": "60-72m",
       "rank_in_slice": 215,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.RIM.06",
+      "skill_code": "C5.WRD.05",
       "age_slice": "60-72m",
       "rank_in_slice": 216,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"
     },
     {
-      "skill_code": "C5.TMK.03",
+      "skill_code": "C5.WRD.06",
       "age_slice": "60-72m",
       "rank_in_slice": 217,
       "source": "TT 51/2020/TT-BGDDT & Montessori Framework"

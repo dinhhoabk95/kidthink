@@ -49,20 +49,17 @@ describe("Legacy V1 Game Types Registry — Task #170 (WP170.1)", () => {
     }
   });
 
-  it("Mọi template_code khớp ^GT-\\d{3}$, và các template đã hoàn thành (GT-001..GT-027) phải có trong ALL_TEMPLATES", () => {
+  it("Mọi template_code khớp ^GT-\\d{3}$, và toàn bộ 60/60 dạng game nguồn đều phải có template_code trong ALL_TEMPLATES (BR-LVB-15)", () => {
     for (const item of LEGACY_V1_GAME_TYPES) {
       expect(
         GT_CODE_REGEX.test(item.template_code),
         `template_code ${item.template_code} phải khớp định dạng`
       ).toBe(true);
 
-      const num = Number.parseInt(item.template_code.slice(3), 10);
-      if (num <= 27) {
-        expect(
-          ALL_TEMPLATES[item.template_code as keyof typeof ALL_TEMPLATES],
-          `Template ${item.template_code} phải tồn tại trong ALL_TEMPLATES`
-        ).toBeDefined();
-      }
+      expect(
+        ALL_TEMPLATES[item.template_code as keyof typeof ALL_TEMPLATES],
+        `Template ${item.template_code} của ${item.legacy_id} phải tồn tại trong ALL_TEMPLATES`
+      ).toBeDefined();
     }
   });
 
@@ -90,7 +87,7 @@ describe("Legacy V1 Game Types Registry — Task #170 (WP170.1)", () => {
     expect(getLegacyV1GameType("D9-99")).toBeUndefined();
   });
 
-  describe("Ca âm cho WP170.1", () => {
+  describe("Ca âm cho WP170.1 & BR-LVB-15", () => {
     it("Ca âm: thiếu bất kỳ mã nào trong 60 mã v1 sẽ báo lỗi nêu đích danh mã thiếu", () => {
       const mockSubset = LEGACY_V1_GAME_TYPES.filter(
         (t) => t.legacy_id !== "D1-01"
@@ -101,6 +98,13 @@ describe("Legacy V1 Game Types Registry — Task #170 (WP170.1)", () => {
 
       expect(missingIds).toContain("D1-01");
       expect(mockSubset.length).toBe(59);
+    });
+
+    it("Ca âm BR-LVB-15: dạng game nguồn trỏ tới template_code không có trong ALL_TEMPLATES bị phát hiện", () => {
+      const orphanCode = "GT-999";
+      expect(
+        ALL_TEMPLATES[orphanCode as keyof typeof ALL_TEMPLATES]
+      ).toBeUndefined();
     });
   });
 });

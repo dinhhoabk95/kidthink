@@ -68,7 +68,8 @@ describe("P0.0 Quality & Governance Rules (BR-TST, BR-AIG, BR-MVP)", () => {
         TS_FILE_REGEX.test(file) &&
         !file.includes("node_modules") &&
         !file.includes("dist") &&
-        !file.endsWith("quality-rules.test.ts")
+        !file.endsWith("quality-rules.test.ts") &&
+        !file.endsWith("ai-codegen-pipeline.test.ts")
     );
 
     const invalidGeneratedHeaderFiles: string[] = [];
@@ -84,11 +85,14 @@ describe("P0.0 Quality & Governance Rules (BR-TST, BR-AIG, BR-MVP)", () => {
       }
     }
 
+    const localAgentsMd = path.join(ROOT_DIR, ".agents/AGENTS.md");
     const contractFiles = [
       path.join(ROOT_DIR, "docs/SPEC.md"),
       path.join(ROOT_DIR, "docs/specs/01-platform/ai-codegen-pipeline.md"),
       path.join(ROOT_DIR, "docs/tasks/14-implementation-sequence-plan.md"),
-      path.resolve(ROOT_DIR, "../.agents/AGENTS.md"),
+      fs.existsSync(localAgentsMd)
+        ? localAgentsMd
+        : path.resolve(ROOT_DIR, "../.agents/AGENTS.md"),
     ];
 
     for (const file of contractFiles) {
@@ -117,7 +121,14 @@ describe("P0.0 Quality & Governance Rules (BR-TST, BR-AIG, BR-MVP)", () => {
         !file.endsWith("glossary.ts")
     );
 
-    const bannedKeywords = ["tenant_id", "school_admin", "classroom_lockdown"];
+    const bannedKeywords = [
+      "tenant_id",
+      "school_admin",
+      "classroom_lockdown",
+      "native_mobile",
+      "licensing",
+      "marketplace",
+    ];
 
     const violations: { file: string; keyword: string }[] = [];
 

@@ -2,6 +2,7 @@ import { isOAuthProvider } from "@mindkid/auth";
 import { auditLogs, getOwnerDb, socialIdentities, users } from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
 import { LastLoginMethodError } from "@mindkid/errors/social";
+import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam } from "h3";
 import {
@@ -32,6 +33,7 @@ export default defineEventHandler(async (event) => {
     const [user] = await tx
       .select({
         id: users.id,
+        email: users.email,
         passwordHash: users.passwordHash,
       })
       .from(users)
@@ -83,7 +85,17 @@ export default defineEventHandler(async (event) => {
       userAgent,
     });
 
-    return { loginMethodsLeft };
+    return { loginMethodsLeft, email: user.email };
+  });
+
+  await dispatchTransactionalEmail({
+    recipientType: "user",
+    recipientId: userId,
+    code: "social_identity_unlinked",
+    to: result.email,
+    payload: {
+      provider: rawProvider,
+    },
   });
 
   return {

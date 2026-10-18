@@ -5,7 +5,7 @@ area: content
 status: implemented
 mvp: true
 phase: P3
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Ràng buộc sư phạm khi dựng chương trình
 depends_on:
@@ -34,7 +34,7 @@ Người soạn chương trình · người duyệt.
 
 ## 3. Entry points
 
-`06-admin/curriculum-builder.md` · chỉ báo cân bằng §7.2 ở đó.
+`06-admin/curriculum-builder.md` · chỉ báo cân bằng §7.2 ở đó · `packages/shared/src/curriculum-model.ts` (`validateCurriculumModel`) · `packages/shared/tests/curriculum-balance.test.ts`.
 
 ## 4. Main flow
 

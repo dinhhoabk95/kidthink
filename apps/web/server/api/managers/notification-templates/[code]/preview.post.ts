@@ -1,20 +1,30 @@
 import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { InternalError, NotFoundError } from "@mindkid/errors/common";
 import {
-  type NotificationCode,
+  type EmailTemplateCode,
   renderEmailTemplate,
   TEMPLATE_REGISTRY,
+  type TemplateVars,
 } from "@mindkid/notification";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
 
+const templateScalarSchema = z.union([
+  z.string(),
+  z.number(),
+  z.boolean(),
+  z.null(),
+]);
+
+const sampleDataSchema = z.record(z.string(), templateScalarSchema);
+
 const previewTemplateSchema = z
   .object({
-    sample_data: z.record(z.unknown()).optional(),
+    sample_data: sampleDataSchema.optional(),
+    use_draft: z.boolean().optional(),
   })
-  .passthrough()
   .optional();
 
 export default defineEventHandler(async (event) => {
@@ -27,10 +37,11 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  const code = getRouterParam(event, "code") as NotificationCode;
-  if (!(code && code in TEMPLATE_REGISTRY)) {
-    throw new NotFoundError(`Không tìm thấy mẫu thông báo mã '${code}'`);
+  const rawCode = getRouterParam(event, "code") ?? "";
+  if (!(rawCode && rawCode in TEMPLATE_REGISTRY)) {
+    throw new NotFoundError(`Không tìm thấy mẫu thông báo mã '${rawCode}'`);
   }
+  const code = rawCode as EmailTemplateCode;
 
   const raw = event.context?.body ?? (await readBody(event).catch(() => ({})));
 
@@ -38,17 +49,17 @@ export default defineEventHandler(async (event) => {
   if (!parsed.success) {
     throwValidationError(parsed.error);
   }
-  const body = (parsed.data || {}) as Record<string, unknown>;
 
-  const sampleData =
-    (body?.sample_data as Record<string, unknown>) || body || {};
+  const sampleData: TemplateVars = parsed.data?.sample_data
+    ? { ...parsed.data.sample_data }
+    : {};
+  const useDraft = parsed.data?.use_draft ?? true;
 
-  // Provide sensible defaults for preview if missing
   const templateDef = TEMPLATE_REGISTRY[code];
   if (!templateDef) {
     throw new NotFoundError(`Không tìm thấy mẫu thông báo mã '${code}'`);
   }
-  const previewPayload: Record<string, unknown> = { ...sampleData };
+  const previewPayload: TemplateVars = { ...sampleData };
   for (const reqVar of templateDef.requiredVars) {
     if (previewPayload[reqVar] === undefined) {
       previewPayload[reqVar] = `[${reqVar}]`;
@@ -56,14 +67,16 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    const rendered = await renderEmailTemplate(code, previewPayload);
+    const rendered = await renderEmailTemplate(code, previewPayload, {
+      useDraft,
+    });
     return {
       code,
       subject: rendered.subject,
       html: rendered.html,
       text: rendered.text,
     };
-  } catch (err: unknown) {
+  } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     throw new InternalError(`Lỗi khi biên dịch mẫu thông báo: ${msg}`);
   }

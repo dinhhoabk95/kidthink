@@ -2,12 +2,10 @@
 spec: TYPE-SAFETY
 title: An toàn kiểu và ranh giới dữ liệu
 area: quality
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-10-18
-open_tasks:
-  - "#310"
 owns:
   - Ngưỡng dùng any, unknown và ép kiểu, cùng cổng ép ngưỡng
   - Quy tắc dữ liệu vào phải qua schema trước khi đọc
@@ -18,8 +16,6 @@ depends_on:
 ---
 
 # An toàn kiểu và ranh giới dữ liệu
-
-> **Chưa hoàn thành** — `BR-TYP-08` cấm `any` trong file test nhưng `ultracite/core` tắt `noExplicitAny` cho `**/*.{test,spec}.*`, nên chưa cổng nào chặn (đo thô ngày 2026-10-18: khoảng 530 chỗ trong 85 file test). `BR-TYP-03` cấm khai báo `unknown` mới nhưng chưa có cổng đo. Việc còn lại: [Task #310](../../tasks/310-quality-gates-gaps-plan.md).
 
 ## 1. Objective
 
@@ -39,7 +35,7 @@ Dev · reviewer · cổng tự động `pnpm check`.
 
 ## 3. Entry points
 
-`pnpm lint` (Biome) · `pnpm typecheck` (tsc + vue-tsc) · rà soát trong code review.
+`pnpm lint` (Biome) · `pnpm typecheck` (tsc + vue-tsc) · `scripts/check-type-safety.ts` (`scripts/check-type-safety.test.ts`) · rà soát trong code review.
 
 ## 4. Main flow
 
@@ -65,14 +61,14 @@ Dev · reviewer · cổng tự động `pnpm check`.
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-TYP-01` | Cấm — **NEVER `any` tường minh** trong production code của `apps/*`, `packages/*` và `scripts/`. Ép bằng Biome `noExplicitAny` mức error. File test thuộc `BR-TYP-08` | `any` tắt mọi kiểm tra kiểu ở mọi chỗ giá trị đó đi qua, không chỉ dòng khai báo |
-| `BR-TYP-02` | Ép kiểu (`as T`, `<T>x`) là **nợ chỉ được giảm** — nhưng KHÔNG còn cổng nào đếm (gỡ 2026-08-29). Còn là luật cho reviewer, không phải cổng máy | 840 chỗ hiện có không sửa được trong một PR; cấm tuyệt đối ngay là cổng ai cũng tắt |
-| `BR-TYP-03` | Cấm — **NEVER khai báo `unknown` mới** (biến, tham số, kiểu trả về, field, type alias). Bắt buộc khai interface/type cụ thể, kiểu suy ra từ schema Zod, hoặc generic có ràng buộc. Chỗ `unknown` đã có là nợ chỉ được giảm. Không tính `catch (err)` — kiểu đó do TypeScript gán, không phải do người viết khai | `unknown` không mô tả hình dạng nào; mỗi chỗ khai `unknown` là một chỗ người đọc sau phải tự đoán dữ liệu. Khai kiểu cụ thể buộc người viết trả lời câu hỏi đó ngay, ở chỗ họ biết rõ nhất |
-| `BR-TYP-04` | Mọi route `/api/*` đọc **body** phải Zod parse trong cùng file. Ép bằng `apps/web/tests/security/security-checklist.test.ts`. Query và param KHÔNG được cổng nào đo | `BR-SEC-04` đã yêu cầu điều này từ P0 nhưng không có cổng nào đo |
+| `BR-TYP-01` | Cấm — **NEVER `any` tường minh** trong production code của `apps/*`, `packages/*` và `scripts/`. Ép bằng Biome `noExplicitAny` mức error và `scripts/check-type-safety.ts`. File test thuộc `BR-TYP-08` | `any` tắt mọi kiểm tra kiểu ở mọi chỗ giá trị đó đi qua, không chỉ dòng khai báo |
+| `BR-TYP-02` | Ép kiểu (`as T`, `<T>x`, `as unknown as T`) là **nợ chỉ được giảm** — phần `as unknown as` được kiểm soát ratchet theo file bởi `scripts/check-type-safety.ts` | Không thêm chỗ ép kiểu mù mới; nợ hiện có chỉ được giảm |
+| `BR-TYP-03` | Cấm — **NEVER khai báo `unknown` mới** (biến, tham số, kiểu trả về, field, type alias). Bắt buộc khai interface/type cụ thể, kiểu suy ra từ schema Zod, hoặc generic có ràng buộc. Chỗ `unknown` đã có là nợ chỉ được giảm qua `scripts/type-safety-baseline.json`. Không tính `catch (err)` — kiểu đó do TypeScript gán, không phải do người viết khai | `unknown` không mô tả hình dạng nào; mỗi chỗ khai `unknown` là một chỗ người đọc sau phải tự đoán dữ liệu. Khai kiểu cụ thể buộc người viết trả lời câu hỏi đó ngay, ở chỗ họ biết rõ nhất |
+| `BR-TYP-04` | Mọi route `/api/*` đọc **body** phải Zod parse trong cùng file. Ép bằng `apps/web/tests/security/security-checklist.test.ts` | `BR-SEC-04` đã yêu cầu điều này từ P0 |
 | `BR-TYP-05` | Cấm — **NEVER `as const` bị tính là nợ** | `as const` làm kiểu **hẹp lại**, không nói dối; ngược hoàn toàn với `as T` |
 | `BR-TYP-06` | Cấm — **NEVER mass assignment**: map từng field từ dữ liệu đã parse sang bản ghi | `BR-SEC-05` |
 | `BR-TYP-07` | Cổng mới BẮT BUỘC có **ca âm** trong test: một mẫu vi phạm phải làm cổng fail | Cổng không có ca âm là cổng chưa biết mình có chạy hay không (`ultracite check` từng exit 0 với lỗi lint thật) |
-| `BR-TYP-08` | Cấm — **NEVER `any` tường minh trong file test**, giống production code. Chưa có cổng: `ultracite/core` tắt `noExplicitAny` cho `**/*.{test,spec}.*` | Test dùng `any` thì mock lệch kiểu thật mà vẫn xanh — test khẳng định một hình dạng không còn tồn tại |
+| `BR-TYP-08` | Cấm — **NEVER `any` tường minh trong file test**, giống production code. Cưỡng chế bằng cổng ratchet theo file tại `scripts/check-type-safety.ts` + `scripts/check-type-safety.test.ts` | Test dùng `any` thì mock lệch kiểu thật mà vẫn xanh — test khẳng định một hình dạng không còn tồn tại |
 
 ## 7. Data
 
@@ -84,13 +80,9 @@ Dev · reviewer · cổng tự động `pnpm check`.
 | `apps/*/app` | Cấm | Nợ, chỉ giảm | Cấm |
 | `packages/*/src` | Cấm | Nợ, chỉ giảm | Cấm |
 | `scripts/` | Cấm | Nợ, chỉ giảm | Cấm |
-| Đường dẫn test | Cấm (`BR-TYP-08`) — **chưa có cổng** | Được một lần trong helper, có chú thích; không `as unknown as T` | Cấm |
+| Đường dẫn test | Cấm (`BR-TYP-08`) — ratchet theo file | Được một lần trong helper, có chú thích; không `as unknown as T` | Cấm |
 
-Luật cho đường dẫn test là "Cấm", nhưng máy chưa ép: `ultracite/core` có override tắt
-`noExplicitAny` cho `**/*.{test,spec}.{ts,tsx,js,jsx}` và `**/__tests__/**`. Muốn ép phải bật
-lại rule đó trong `biome.jsonc` của repo và dọn số `any` đang có trong test.
-
-### 7.2 Baseline nợ ép kiểu (2026-08-17)
+### 7.2 Baseline nợ ép kiểu (2026-10-18)
 
 | Vùng | Số chỗ |
 |---|---:|
@@ -101,10 +93,9 @@ lại rule đó trong `biome.jsonc` của repo và dọn số `any` đang có tr
 | `apps/worker` | 21 |
 | `scripts/` | 5 |
 | **Tổng (không kể test), 235 file** | **851** |
-| `any` trong 94 file test (`BR-TYP-08`) | **560** (đo thô lại 2026-10-18: khoảng 530 chỗ trong 85 file) |
-
-Số trên là ảnh chụp 2026-08-17. Baseline (`type-safety-baseline.json`) và cổng đọc nó đã bị
-gỡ 2026-08-29, nên các số này KHÔNG còn được cập nhật hay đối chiếu với thực tế.
+| `any` tường minh (`BR-TYP-01` / `BR-TYP-08`) | **112** (theo `scripts/type-safety-baseline.json`) |
+| Khai báo `unknown` (`BR-TYP-03`) | **590** (theo `scripts/type-safety-baseline.json`) |
+| `as unknown as` (`BR-TYP-02`) | **50** (theo `scripts/type-safety-baseline.json`) |
 
 ### 7.2a Sổ nợ route chưa validate body (2026-08-17)
 
@@ -140,12 +131,9 @@ Không có route. Ràng buộc lên cổng tự động:
 ```
 biome noExplicitAny                              → BR-TYP-01, mức error, đã bật (trừ file test)
 scripts/typecheck/typecheck-gate.ts              → tsc + vue-tsc, nợ chỉ được giảm
+scripts/check-type-safety.ts                     → BR-TYP-01, BR-TYP-02 (as unknown as), BR-TYP-03 (unknown), BR-TYP-08 (test any)
 apps/web/tests/security/security-checklist.test  → BR-TYP-04 (body), qua BR-SEC-04
 ```
-
-`BR-TYP-02`, `BR-TYP-03` và `BR-TYP-08` KHÔNG có cổng nào đo. Cổng của `BR-TYP-02` bị gỡ cùng
-`packages/gates`; `BR-TYP-03` và `BR-TYP-08` chờ [Task #310](../../tasks/310-quality-gates-gaps-plan.md). Cấm — NEVER thêm script `lint:*` riêng cho một rule
-(TESTING-STRATEGY §7.6).
 
 ## 9. Acceptance criteria
 
@@ -156,15 +144,14 @@ Scenario: BR-TYP-01 — any tường minh chặn merge
   Then Biome báo lint/suspicious/noExplicitAny
   And cổng exit khác 0
 
-Scenario: BR-TYP-08 — any tường minh trong file test chặn merge (chưa có cổng, Task #310)
+Scenario: BR-TYP-08 — any tường minh trong file test chặn merge
   Given một file `*.test.ts` thêm `function f(x: any)`
-  When chạy pnpm lint
-  Then Biome báo lint/suspicious/noExplicitAny
-  And cổng exit khác 0
+  When chạy cổng check-type-safety
+  Then cổng fail và chỉ ra file, rule BR-TYP-08
 
-Scenario: BR-TYP-03 — khai unknown mới chặn merge (chưa có cổng, Task #310)
+Scenario: BR-TYP-03 — khai unknown mới chặn merge
   Given một file trong apps/ thêm `function f(x: unknown): void`
-  When chạy cổng đo khai báo unknown
+  When chạy cổng đo khai báo unknown (scripts/check-type-safety.ts)
   Then cổng fail và chỉ ra file, dòng đó
 
 > **CHƯA CÓ CỔNG.** `lint:type-safety` bị gỡ cùng `packages/gates` ngày 2026-08-29,

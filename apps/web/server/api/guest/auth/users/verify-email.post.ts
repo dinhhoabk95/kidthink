@@ -10,7 +10,10 @@ const VerifyEmailSchema = z
   .object({ token: z.string().trim().min(1).max(512) })
   .strict();
 
-export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
+export async function handleVerifyEmail(
+  event: H3Event,
+  testBody?: Record<string, string | number | boolean | null | undefined> | null
+) {
   const rawBody =
     testBody ??
     event.context?.body ??
@@ -64,7 +67,7 @@ export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
   // BR-EVF-04: If token already used BUT user is active, return active smoothly
   if (vToken.usedAt !== null) {
     if (user.status === "active") {
-      return { status: "active" };
+      return { status: "active", already_verified: true };
     }
     throw new TokenExpiredError();
   }
@@ -74,6 +77,7 @@ export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
     throw new TokenExpiredError();
   }
 
+  let alreadyVerifiedInTx = false;
   await db.transaction(async (tx) => {
     const [claimed] = await tx
       .update(verificationTokens)
@@ -89,6 +93,7 @@ export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
       .returning({ id: verificationTokens.id });
     if (!claimed) {
       if (user.status === "active") {
+        alreadyVerifiedInTx = true;
         return;
       }
       throw new TokenExpiredError();
@@ -104,7 +109,11 @@ export async function handleVerifyEmail(event: H3Event, testBody?: unknown) {
       .where(eq(users.id, user.id));
   });
 
-  return { status: "active" };
+  if (alreadyVerifiedInTx) {
+    return { status: "active", already_verified: true };
+  }
+
+  return { status: "active", already_verified: false };
 }
 
 export default defineEventHandler((event) => handleVerifyEmail(event));

@@ -6,7 +6,7 @@
  * `docs/specs/00-foundation/error-codes.md` (`BR-ERR-01`).
  */
 
-import { defineError } from "../base.ts";
+import { defineError, type JsonValue } from "../base.ts";
 import { defineModelNotFound } from "../model.ts";
 
 export const ContentArchivedError = defineError({
@@ -107,6 +107,7 @@ export const ContentImmutableError = defineError({
 
 export const ContentInUseError = defineError<{
   readonly used_by?: readonly string[];
+  readonly usages?: readonly JsonValue[];
 }>({
   code: "CONTENT_IN_USE",
   message: "Nội dung đang được sử dụng và không thể xoá.",

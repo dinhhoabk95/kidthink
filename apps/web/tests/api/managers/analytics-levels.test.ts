@@ -1,5 +1,8 @@
+import { IncomingMessage, ServerResponse } from "node:http";
+import { Socket } from "node:net";
 import { getOwnerDb, levelDailyStats, managers } from "@mindkid/db";
 import { eq } from "drizzle-orm";
+import { createEvent, type H3Event } from "h3";
 import { describe, expect, it } from "vitest";
 import levelsAnalyticsHandler from "#server/api/managers/analytics/levels.get";
 
@@ -11,34 +14,29 @@ function mockEvent(
     version: number;
   },
   url = "/api/managers/analytics/levels"
-) {
-  const responseHeaders: Record<string, string> = {};
-  return {
-    method: "GET",
-    path: url,
-    node: { req: { headers: {}, url }, res: {} },
-    context: {
-      ...(managerContext
-        ? {
-            manager: {
-              manager_id: managerContext.id,
-              display_name: managerContext.displayName,
-              session_id: "m_session_analytics",
-              role: managerContext.role,
-            },
-          }
-        : {}),
-    },
-    responseHeaders,
-  } as any;
+): H3Event {
+  const req = new IncomingMessage(new Socket());
+  req.method = "GET";
+  req.url = url;
+  const res = new ServerResponse(req);
+  const event = createEvent(req, res);
+  if (managerContext) {
+    event.context.manager = {
+      manager_id: managerContext.id,
+      display_name: managerContext.displayName,
+      session_id: "m_session_analytics",
+      role: managerContext.role,
+    };
+  }
+  return event;
 }
 
 describe("Task 7 — GET /api/managers/analytics/levels (BR-TLM-01, BR-PRF-06)", () => {
   it("rejects unauthenticated request with 401", async () => {
     const event = mockEvent();
-    await expect(levelsAnalyticsHandler(event)).rejects.toSatisfy(
-      (err: any) => err.statusCode === 401
-    );
+    await expect(levelsAnalyticsHandler(event)).rejects.toMatchObject({
+      statusCode: 401,
+    });
   });
 
   it("returns level stats with KPI flags for authenticated manager and enforces limit <= 100 (BR-PRF-06)", async () => {
@@ -54,6 +52,10 @@ describe("Task 7 — GET /api/managers/analytics/levels (BR-TLM-01, BR-PRF-06)",
         role: "super_admin",
       })
       .returning();
+
+    if (!mgr) {
+      throw new Error("Failed to insert manager");
+    }
 
     // Insert sample rollup row
     const num4 = Math.floor(Math.random() * 8999) + 1000;
@@ -86,10 +88,10 @@ describe("Task 7 — GET /api/managers/analytics/levels (BR-TLM-01, BR-PRF-06)",
       expect(res.items).toBeDefined();
       expect(res.limit).toBe(100);
 
-      const matchItem = res.items.find((i: any) => i.level_code === glCode);
+      const matchItem = res.items.find((i) => i.level_code === glCode);
       expect(matchItem).toBeDefined();
-      expect(matchItem.kpi_alerts.high_abandonment).toBe(true);
-      expect(matchItem.kpi_alerts.low_accuracy).toBe(true);
+      expect(matchItem?.kpi_alerts.high_abandonment).toBe(true);
+      expect(matchItem?.kpi_alerts.low_accuracy).toBe(true);
     } finally {
       await db
         .delete(levelDailyStats)

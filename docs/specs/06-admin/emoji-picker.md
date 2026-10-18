@@ -2,12 +2,10 @@
 spec: EMOJI-PICKER
 title: Bộ chọn emoji
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-10-18
-open_tasks:
-  - "#300"
 owns:
   - Giao diện chọn emoji trong studio
 depends_on:
@@ -15,8 +13,6 @@ depends_on:
 ---
 
 # Bộ chọn emoji
-
-> **Chưa hoàn thành** — field emoji chỉ có nút "Chọn emoji"/"Xoá", chưa có đường dán glyph trực tiếp (BR-EPK-03). Việc còn lại: [Task #300](../../tasks/300-admin-small-gaps-plan.md).
 
 ## 1. Objective
 

@@ -110,13 +110,23 @@ function processDataPayload(
   return data;
 }
 
+export interface AuditTx {
+  insert: (table: typeof auditLogs) => {
+    values: (vals: Record<string, string | number | null | object>) => {
+      returning: () => Promise<
+        Array<Partial<typeof auditLogs.$inferSelect> & { id: number }>
+      >;
+    };
+  };
+}
+
 /**
  * BR-AUD-02, D-EU, D-EV, D-EW: Primary entry point to write audit logs.
  * Requiring transaction `tx` as first parameter.
  */
 export async function writeAudit<A extends AuditAction>(
   // biome-ignore lint/suspicious/noExplicitAny: PgTransaction requires generic arguments
-  tx: PgTransaction<any, any, any>,
+  tx: PgTransaction<any, any, any> | AuditTx,
   input: AuditInput<A>
 ): Promise<typeof auditLogs.$inferSelect> {
   // Runtime reason check for actions requiring reason
@@ -168,7 +178,7 @@ export async function writeAudit<A extends AuditAction>(
     throw new Error("Failed to insert audit log");
   }
 
-  return row;
+  return row as typeof auditLogs.$inferSelect;
 }
 
 /**
@@ -176,7 +186,7 @@ export async function writeAudit<A extends AuditAction>(
  */
 export async function writeAuditBatch<A extends AuditAction>(
   // biome-ignore lint/suspicious/noExplicitAny: PgTransaction requires generic arguments
-  tx: PgTransaction<any, any, any>,
+  tx: PgTransaction<any, any, any> | AuditTx,
   items: AuditInput<A>[]
 ): Promise<(typeof auditLogs.$inferSelect)[]> {
   const results: (typeof auditLogs.$inferSelect)[] = [];

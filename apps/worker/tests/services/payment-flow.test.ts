@@ -25,7 +25,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import {
   runExpirePaymentOrders,
   runExpireSoftUnlockEntitlements,
-} from "../../src/services/payment-jobs.js";
+} from "#src/services/payment-jobs";
 
 const TRANSFER_NOTE_REGEX = /^TM[0-9A-F]{8}$/;
 
@@ -313,7 +313,7 @@ describe("Payment Flow Integration & Concurrency (P2.3)", () => {
 
       for (const key of pkg.entitlements) {
         const stackedExpiresAt = computeStackedExpiryDate(
-          null,
+          undefined,
           365,
           bonusDays,
           now

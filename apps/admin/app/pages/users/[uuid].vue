@@ -27,6 +27,13 @@
 
         <!-- Global Action Buttons on Header -->
         <div class="flex items-center gap-2" v-if="detail?.account">
+          <NuxtLink
+            class="min-h-11 px-4 py-2 rounded-2xl border-2 border-surface-200 bg-white hover:bg-surface-50 text-surface-700 text-xs font-bold font-heading transition-colors inline-flex items-center"
+            :to="`/audit?entity_type=user&entity_id=${detail.account.uuid}`"
+          >
+            Xem lịch sử
+          </NuxtLink>
+
           <button
             class="min-h-11 px-4 py-2 rounded-2xl border-2 border-surface-200 bg-white hover:bg-surface-50 text-surface-700 text-xs font-bold font-heading transition-colors"
             type="button"
@@ -96,7 +103,7 @@
       <!-- Loading State -->
       <LoadingState v-if="loading" />
 
-      <!-- Four Groups of Information (§7.1) -->
+      <!-- Four Groups of Information (§7.1) + Subscriptions -->
       <div class="space-y-6" v-else-if="detail">
         <!-- GROUP 1: Thông tin tài khoản -->
         <UserAccountSection :account="detail.account" />
@@ -111,6 +118,13 @@
         <!-- GROUP 3: Gói & Quyền sử dụng (Entitlements) -->
         <UserEntitlementsSection
           :entitlements="detail.entitlements"
+          :user-uuid="detail.account.uuid"
+          @refresh="loadDetail"
+        />
+
+        <!-- GROUP 3B: Gói đăng ký định kỳ (Recurring Subscriptions) -->
+        <UserSubscriptionsSection
+          :is-user-deleted="detail.account.status === 'deleted'"
           :user-uuid="detail.account.uuid"
           @refresh="loadDetail"
         />
@@ -155,6 +169,7 @@
   import UserPaymentsSection, {
     type PaymentOrderItem,
   } from "~/components/users/user-payments-section.vue";
+  import UserSubscriptionsSection from "~/components/users/user-subscriptions-section.vue";
   import type { ManagerRole } from "~/composables/nav-config";
 
   definePageMeta({
@@ -258,7 +273,7 @@
         `/api/managers/users/${uuid}`
       );
       detail.value = data;
-    } catch (err: unknown) {
+    } catch (err) {
       const apiErr = err as ApiErrorResponse;
       errorMessage.value =
         apiErr?.data?.message || "Không thể tải thông tin chi tiết người dùng.";
@@ -299,7 +314,7 @@
       successMessage.value = `Đã ${actionLabel} tài khoản thành công.`;
       userActionModal.type = null;
       await loadDetail();
-    } catch (err: unknown) {
+    } catch (err) {
       const apiErr = err as ApiErrorResponse;
       errorMessage.value =
         apiErr?.data?.message || `Xảy ra lỗi khi ${actionLabel} tài khoản.`;
@@ -326,7 +341,7 @@
       );
       successMessage.value =
         "Đã gửi link đặt lại mật khẩu đến email của người dùng.";
-    } catch (err: unknown) {
+    } catch (err) {
       const apiErr = err as ApiErrorResponse;
       errorMessage.value =
         apiErr?.data?.message || "Không thể gửi link đặt lại mật khẩu.";
@@ -364,7 +379,7 @@
       successMessage.value = `Đã lưu trữ hồ sơ bé ${childArchiveModal.child.display_name} thành công.`;
       childArchiveModal.child = null;
       await loadDetail();
-    } catch (err: unknown) {
+    } catch (err) {
       const apiErr = err as ApiErrorResponse;
       errorMessage.value =
         apiErr?.data?.message || "Xảy ra lỗi khi lưu trữ hồ sơ trẻ.";

@@ -57,7 +57,10 @@ export function generateVietQrPayload(options: {
 /**
  * Calculates new expiration date by stacking with existing active expiration date (BR-POC-05, BR-PAP-05)
  * Formula: max(now, existing_expires_at) + duration_days + bonus_days
- * Returns null if durationDays is null (lifetime)
+ * Returns null if durationDays is null (lifetime).
+ * `currentExpiresAt === null` nghĩa là quyền đang vĩnh viễn: giữ `null`, không
+ * hạ xuống có hạn (UC-039 BR-007, UC-038 BR-014). `undefined` nghĩa là chưa có
+ * quyền hiệu lực (người gọi truyền `undefined` cho bản ghi đã huỷ/hết hạn).
  */
 export function computeStackedExpiryDate(
   currentExpiresAt: Date | string | null | undefined,
@@ -67,6 +70,9 @@ export function computeStackedExpiryDate(
 ): Date | null {
   if (durationDays === null || durationDays === undefined) {
     return null; // Lifetime access
+  }
+  if (currentExpiresAt === null) {
+    return null; // Đang vĩnh viễn: giữ nguyên
   }
 
   let baseDate = new Date(now);
@@ -84,4 +90,14 @@ export function computeStackedExpiryDate(
   const result = new Date(baseDate);
   result.setDate(result.getDate() + totalDays);
   return result;
+}
+
+/**
+ * Hạn dùng để cộng dồn từ một bản ghi quyền: chỉ bản ghi `active` mới tính
+ * (`null` = vĩnh viễn). Bản ghi huỷ/hết hạn hoặc không có thì `undefined`.
+ */
+export function activeStackBase(
+  existing: { status: string; expiresAt: Date | null } | undefined
+): Date | null | undefined {
+  return existing?.status === "active" ? existing.expiresAt : undefined;
 }

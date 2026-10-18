@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
-  import { useRoute } from "vue-router";
+  import { useRoute } from "#imports";
 
   const route = useRoute();
   const dismissed = ref(true);

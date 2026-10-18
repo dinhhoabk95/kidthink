@@ -8,11 +8,14 @@
 import { readFileSync } from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
 import {
-  CANONICAL_THEME_CODES,
   CONTENT_THEMES,
   getTheme,
+  CANONICAL_THEME_CODES as SHARED_CANONICAL_THEME_CODES,
 } from "@mindkid/shared";
-import type { ContentSeed } from "../types.js";
+import type { ContentSeed } from "#src/types";
+
+export const CANONICAL_THEME_CODES: ReadonlySet<string> =
+  SHARED_CANONICAL_THEME_CODES;
 
 export interface ThemeCapsConfig {
   date: string;
@@ -138,6 +141,40 @@ function compareLiveCapsToHistory(
     }
   }
   return errors;
+}
+
+export function validateSeedTheme(
+  themeCode: string,
+  ageBand: string
+): { valid: boolean; reasons: string[] } {
+  const trimmed = themeCode.trim();
+  if (!CANONICAL_THEME_CODES.has(trimmed)) {
+    return {
+      valid: false,
+      reasons: [
+        `Chủ đề '${trimmed}' không thuộc 14 chủ đề hợp lệ của từ vựng đóng.`,
+      ],
+    };
+  }
+  const themeDef = getTheme(trimmed);
+  if (!themeDef) {
+    return { valid: true, reasons: [] };
+  }
+  let bandMax = 6;
+  if (ageBand === "3-4") {
+    bandMax = 4;
+  } else if (ageBand === "4-5") {
+    bandMax = 5;
+  }
+  if (bandMax < themeDef.age_floor) {
+    return {
+      valid: false,
+      reasons: [
+        `Chủ đề '${trimmed}' yêu cầu age_floor >= ${themeDef.age_floor}, không hợp lệ cho band '${ageBand}'.`,
+      ],
+    };
+  }
+  return { valid: true, reasons: [] };
 }
 
 function validateAgeFloor(

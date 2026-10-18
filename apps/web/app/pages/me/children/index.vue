@@ -86,9 +86,13 @@
       </div>
 
       <ul class="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-        <li v-for="child in activeChildren" :key="child.uuid">
+        <li
+          class="space-y-2 rounded-3xl border-3 border-surface-200 bg-white p-4 shadow-[0_4px_12px_rgba(30,27,75,0.05)] transition-all hover:border-brand-500 dark:border-surface-700 dark:bg-surface-800"
+          v-for="child in activeChildren"
+          :key="child.uuid"
+        >
           <button
-            class="group flex min-h-16 w-full items-center gap-3.5 rounded-3xl border-3 border-surface-200 bg-white p-4 text-left shadow-[0_4px_12px_rgba(30,27,75,0.05)] transition-all hover:border-brand-500 hover:shadow-[0_6px_16px_rgba(79,70,229,0.12)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 dark:border-surface-700 dark:bg-surface-800 dark:hover:border-brand-400"
+            class="group flex min-h-14 w-full items-center gap-3.5 text-left transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
             type="button"
             :disabled="isActivating"
             @click="selectChild(child.uuid)"
@@ -118,6 +122,22 @@
               <UIcon class="h-5 w-5" name="i-lucide-chevron-right" />
             </div>
           </button>
+          <div
+            class="flex items-center justify-end gap-3 border-t border-surface-100 pt-2 text-xs font-semibold dark:border-surface-700"
+          >
+            <NuxtLink
+              class="text-surface-600 hover:text-brand-600 dark:text-surface-400 dark:hover:text-brand-400"
+              :to="`/me/children/${child.uuid}/edit`"
+            >
+              Sửa hồ sơ
+            </NuxtLink>
+            <NuxtLink
+              class="text-brand-600 hover:text-brand-700 dark:text-brand-400"
+              :to="`/me/children/${child.uuid}`"
+            >
+              Quản lý hồ sơ
+            </NuxtLink>
+          </div>
         </li>
       </ul>
 
@@ -129,6 +149,88 @@
           <UIcon class="h-4 w-4" name="i-lucide-plus" />
           <span>Thêm bé khác (tối đa 5 bé)</span>
         </NuxtLink>
+      </div>
+
+      <!-- Archived Children Section (child-profile-archive.md §7.1) -->
+      <div
+        class="space-y-3 border-t border-surface-200 pt-5 dark:border-surface-700"
+        v-if="archivedChildren.length > 0"
+      >
+        <h2
+          class="font-heading text-base font-bold text-surface-700 dark:text-surface-300"
+        >
+          Đã lưu trữ
+        </h2>
+        <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <li
+            class="flex items-center justify-between gap-3 rounded-2xl border-2 border-surface-200 bg-surface-50 p-3.5 dark:border-surface-700 dark:bg-surface-800/60"
+            v-for="child in archivedChildren"
+            :key="child.uuid"
+          >
+            <div class="flex items-center gap-3 min-w-0">
+              <span aria-hidden="true" class="text-xl">
+                {{ resolveAvatarEmoji(child.avatar_id) }}
+              </span>
+              <div class="min-w-0">
+                <p
+                  class="truncate font-bold text-sm text-surface-800 dark:text-surface-200"
+                >
+                  {{ child.display_name }}
+                </p>
+                <p class="text-xs text-surface-500">
+                  Đã lưu trữ · {{ child.age_band }} tuổi
+                </p>
+              </div>
+            </div>
+            <NuxtLink
+              class="shrink-0 rounded-xl border border-surface-300 bg-white px-3 py-1.5 text-xs font-bold text-surface-800 hover:bg-surface-100 dark:border-surface-600 dark:bg-surface-700 dark:text-surface-100"
+              :to="`/me/children/${child.uuid}`"
+            >
+              Chi tiết
+            </NuxtLink>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Pending Deletion Children Section (child-profile-archive.md §7.1) -->
+      <div
+        class="space-y-3 border-t border-surface-200 pt-5 dark:border-surface-700"
+        v-if="pendingDeletionChildren.length > 0"
+      >
+        <h2
+          class="font-heading text-base font-bold text-amber-800 dark:text-amber-300"
+        >
+          Sắp xoá (trong 30 ngày)
+        </h2>
+        <ul class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <li
+            class="flex items-center justify-between gap-3 rounded-2xl border-2 border-amber-200 bg-amber-50/60 p-3.5 dark:border-amber-800 dark:bg-amber-950/30"
+            v-for="child in pendingDeletionChildren"
+            :key="child.uuid"
+          >
+            <div class="flex items-center gap-3 min-w-0">
+              <span aria-hidden="true" class="text-xl">
+                {{ resolveAvatarEmoji(child.avatar_id) }}
+              </span>
+              <div class="min-w-0">
+                <p
+                  class="truncate font-bold text-sm text-amber-950 dark:text-amber-100"
+                >
+                  {{ child.display_name }}
+                </p>
+                <p class="text-xs text-amber-800 dark:text-amber-300">
+                  Chờ xoá vĩnh viễn
+                </p>
+              </div>
+            </div>
+            <NuxtLink
+              class="shrink-0 rounded-xl bg-amber-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-amber-700"
+              :to="`/me/children/${child.uuid}`"
+            >
+              Hoàn tác
+            </NuxtLink>
+          </li>
+        </ul>
       </div>
     </div>
 
@@ -149,6 +251,7 @@
 
   import { definePageMeta, useFetch } from "#imports";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
+  import { useApi } from "~/composables/use-api";
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
   import { resolveAvatarEmoji } from "~/utils/child-avatar";
 
@@ -172,12 +275,14 @@
     avatar_id: string;
     relationship: string | null;
     status: string;
+    purge_at?: string | null;
   }
 
   interface ChildListResponse {
     children: ChildListItem[];
   }
 
+  const api = useApi();
   const route = useRoute();
   const router = useRouter();
   const { headers: csrfHeaders } = useCsrfHeaders();
@@ -193,6 +298,18 @@
   const activeChildren = computed(
     () =>
       data.value?.children.filter((child) => child.status === "active") ?? []
+  );
+
+  const archivedChildren = computed(
+    () =>
+      data.value?.children.filter((child) => child.status === "archived") ?? []
+  );
+
+  const pendingDeletionChildren = computed(
+    () =>
+      data.value?.children.filter(
+        (child) => child.status === "pending_deletion"
+      ) ?? []
   );
 
   const destination = computed(() =>
@@ -212,7 +329,7 @@
     isActivating.value = true;
     errorMessage.value = null;
     try {
-      await $fetch(`/api/users/children/${childUuid}/activate`, {
+      await api(`/api/users/children/${childUuid}/activate`, {
         method: "POST",
         headers: csrfHeaders(),
         credentials: "include",

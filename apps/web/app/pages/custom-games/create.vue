@@ -188,12 +188,15 @@
 
 <script lang="ts" setup>
   import { ref } from "vue";
+  import { useApi } from "~/composables/use-api";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
   // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
   // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
   // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
   definePageMeta({ layout: false });
+
+  const api = useApi();
 
   const templates = [
     {
@@ -469,13 +472,10 @@
         status: "draft",
       };
 
-      const created = await $fetch<{ uuid: string }>(
-        "/api/users/custom-games",
-        {
-          method: "POST",
-          body: payload,
-        }
-      );
+      const created = await api<{ uuid: string }>("/api/users/custom-games", {
+        method: "POST",
+        body: payload,
+      });
 
       navigateTo(`/custom-games/${created.uuid}`);
     } catch (err: unknown) {

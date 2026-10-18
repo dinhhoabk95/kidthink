@@ -1,4 +1,4 @@
-import { hardPurgeUser } from "@mindkid/db";
+import { hardPurgeChildProfile, hardPurgeUser } from "@mindkid/db";
 import { alert } from "@mindkid/queue";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { accountPurge } from "./account-purge.js";
@@ -10,15 +10,25 @@ const dueRows = [
   { id: 3, purgeAt: new Date("2026-08-03") },
 ];
 
+const dueChildren: Array<{ id: number; uuid: string }> = [
+  { id: 10, uuid: "child-10" },
+  { id: 11, uuid: "child-11" },
+];
+
 vi.mock("@mindkid/db", () => ({
   getOwnerDb: () => ({
-    select: () => ({
+    select: (fields: Record<string, string>) => ({
       from: () => ({
-        where: () => ({ limit: () => Promise.resolve(dueRows) }),
+        where: () => ({
+          limit: () =>
+            Promise.resolve("uuid" in fields ? dueChildren : dueRows),
+        }),
       }),
     }),
   }),
   hardPurgeUser: vi.fn(() => Promise.resolve({ purged: true })),
+  hardPurgeChildProfile: vi.fn(() => Promise.resolve()),
+  childProfiles: { id: "id", uuid: "uuid", status: "status", purgeAt: "pa" },
   users: { id: "id", status: "status", purgeAt: "purge_at" },
 }));
 
@@ -37,7 +47,9 @@ function abortedSignal(): AbortSignal {
 
 describe("accountPurge — tôn trọng ctx.signal (job-queue.md §5)", () => {
   beforeEach(() => {
-    vi.mocked(hardPurgeUser).mockClear();
+    vi.mocked(hardPurgeUser).mockReset();
+    vi.mocked(hardPurgeUser).mockResolvedValue({ purged: true });
+    vi.mocked(hardPurgeChildProfile).mockClear();
     vi.mocked(alert).mockClear();
   });
 
@@ -45,7 +57,11 @@ describe("accountPurge — tôn trọng ctx.signal (job-queue.md §5)", () => {
     const result = await accountPurge({}, ctx(new AbortController().signal));
 
     expect(hardPurgeUser).toHaveBeenCalledTimes(3);
-    expect(result).toEqual({ purgedCount: 3, remaining: false });
+    expect(result).toEqual({
+      purgedCount: 3,
+      purgedChildren: 2,
+      remaining: false,
+    });
   });
 
   it("ca âm: signal đã abort thì Cấm — NEVER xoá cứng thêm một tài khoản nào", async () => {
@@ -56,7 +72,11 @@ describe("accountPurge — tôn trọng ctx.signal (job-queue.md §5)", () => {
     const result = await accountPurge({}, ctx(abortedSignal()));
 
     expect(hardPurgeUser).not.toHaveBeenCalled();
-    expect(result).toEqual({ purgedCount: 0, remaining: false });
+    expect(result).toEqual({
+      purgedCount: 0,
+      purgedChildren: 0,
+      remaining: false,
+    });
   });
 
   it("abort giữa chừng thì dừng ngay và báo đúng số đã xoá", async () => {
@@ -69,6 +89,40 @@ describe("accountPurge — tôn trọng ctx.signal (job-queue.md §5)", () => {
     const result = await accountPurge({}, ctx(controller.signal));
 
     expect(hardPurgeUser).toHaveBeenCalledTimes(1);
-    expect(result).toEqual({ purgedCount: 1, remaining: false });
+    expect(result).toEqual({
+      purgedCount: 1,
+      purgedChildren: 0,
+      remaining: false,
+    });
+  });
+
+  it("UC-019: xoá thật từng hồ sơ trẻ đến hạn (id + uuid)", async () => {
+    await accountPurge({}, ctx(new AbortController().signal));
+
+    expect(hardPurgeChildProfile).toHaveBeenCalledTimes(2);
+    expect(hardPurgeChildProfile).toHaveBeenCalledWith(
+      expect.anything(),
+      10,
+      "child-10"
+    );
+  });
+
+  it("ca âm: signal đã abort thì không xoá hồ sơ trẻ nào", async () => {
+    await accountPurge({}, ctx(abortedSignal()));
+
+    expect(hardPurgeChildProfile).not.toHaveBeenCalled();
+  });
+
+  it("BR-008: xoá hồ sơ trẻ lỗi thì alert và ném lại, không im lặng", async () => {
+    vi.mocked(hardPurgeChildProfile).mockRejectedValueOnce(new Error("boom"));
+
+    await expect(
+      accountPurge({}, ctx(new AbortController().signal))
+    ).rejects.toThrow("boom");
+    expect(alert).toHaveBeenCalledWith(
+      "error",
+      "Child profile purge job failed",
+      expect.objectContaining({ childId: 10 })
+    );
   });
 });

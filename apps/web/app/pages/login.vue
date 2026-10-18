@@ -139,12 +139,21 @@
         </div>
 
         <div class="flex flex-col gap-1.5">
-          <label
-            class="text-sm font-bold text-surface-700 dark:text-surface-300"
-            for="login-password"
-          >
-            Mật khẩu
-          </label>
+          <div class="flex items-center justify-between">
+            <label
+              class="text-sm font-bold text-surface-700 dark:text-surface-300"
+              for="login-password"
+            >
+              Mật khẩu
+            </label>
+            <NuxtLink
+              class="text-xs font-bold text-brand-600 underline hover:text-brand-500 dark:text-brand-400 dark:hover:text-brand-300"
+              data-testid="forgot-password-link"
+              to="/quen-mat-khau"
+            >
+              Quên mật khẩu?
+            </NuxtLink>
+          </div>
           <input
             autocomplete="current-password"
             class="min-h-11 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-base text-surface-900 transition-all placeholder:text-surface-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100 dark:placeholder:text-surface-500 dark:focus:border-brand-500 dark:focus:bg-surface-900"
@@ -220,8 +229,14 @@
     sanitizeRedirectTarget,
   } from "@mindkid/shared/client";
   import { computed, onMounted, ref } from "vue";
-  import { useRoute, useRouter } from "vue-router";
-  import { definePageMeta, useSeoMeta, useUserSession } from "#imports";
+  import {
+    definePageMeta,
+    useRoute,
+    useRouter,
+    useSeoMeta,
+    useUserSession,
+  } from "#imports";
+  import { useApi } from "~/composables/use-api";
 
   definePageMeta({
     layout: false,
@@ -263,6 +278,7 @@
     allowed_tiers: string[];
   }
 
+  const api = useApi();
   const route = useRoute();
   const router = useRouter();
   const { fetch: fetchSession } = useUserSession();
@@ -331,7 +347,7 @@
     // chuyển hướng qua màn hình chọn hồ sơ bé kèm destination.
     if (destination.startsWith("/play")) {
       try {
-        const accessCtx = await $fetch<AccessContextResponse>(
+        const accessCtx = await api<AccessContextResponse>(
           "/api/users/access-context",
           { credentials: "include" }
         );
@@ -375,18 +391,15 @@
     isLoading.value = true;
 
     try {
-      const res = await $fetch<LoginApiResponse>(
-        "/api/guest/auth/users/login",
-        {
-          method: "POST",
-          body: {
-            email: loginEmail.value,
-            password: loginPassword.value,
-            rememberMe: rememberMe.value,
-          },
-          credentials: "include",
-        }
-      );
+      const res = await api<LoginApiResponse>("/api/guest/auth/users/login", {
+        method: "POST",
+        body: {
+          email: loginEmail.value,
+          password: loginPassword.value,
+          rememberMe: rememberMe.value,
+        },
+        credentials: "include",
+      });
 
       if (res.status === "MFA_REQUIRED" && res.challenge) {
         isMfaStep.value = true;
@@ -423,7 +436,7 @@
     isLoading.value = true;
 
     try {
-      await $fetch("/api/guest/auth/users/mfa", {
+      await api("/api/guest/auth/users/mfa", {
         method: "POST",
         body: {
           challenge: mfaChallengeToken.value,

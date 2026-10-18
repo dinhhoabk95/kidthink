@@ -76,8 +76,8 @@ export default defineTemplate({
   banned_age_bands: ["3-4"],
   requires_tap_fallback: true,
   input: {
-    family: "tap",
-    verbs: ["tap"],
+    family: "drag",
+    verbs: ["drop", "tap"],
     tolerance_px: 24,
   },
   asset_kinds: ["emoji", "image"],

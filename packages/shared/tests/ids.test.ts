@@ -1,4 +1,6 @@
-import { describe, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { describe, expect, it } from "vitest";
 import {
   ActivityCodeSchema,
   CompetencyCodeSchema,
@@ -16,13 +18,15 @@ import {
   WorksheetCodeSchema,
 } from "#src/index";
 
+const ROOT = resolve(import.meta.dirname, "../../..");
+
 // Helper: assert parse succeeds — returns void, throws on failure
-function ok(schema: { parse: (v: string) => unknown }, value: string) {
+function ok(schema: { parse: (v: string) => string }, value: string) {
   schema.parse(value); // throws ZodError if invalid
 }
 
 // Helper: assert parse fails — returns void, throws if parse succeeds
-function fail(schema: { parse: (v: string) => unknown }, value: string) {
+function fail(schema: { parse: (v: string) => string }, value: string) {
   let threw = false;
   try {
     schema.parse(value);
@@ -239,5 +243,41 @@ describe("EmojiRefSchema", () => {
 
   it.each([""])("rejects %s", (v) => {
     fail(EmojiRefSchema, v);
+  });
+});
+
+// ─── BR-ID-05: DB CHECK constraints parity ───────────────────────────
+describe("BR-ID-05: Drizzle schema enforces CHECK constraints matching ID regexes", () => {
+  it("declares check_*_code_format across taxonomy, content, game, and curriculum schemas", () => {
+    const taxonomySchema = readFileSync(
+      resolve(ROOT, "packages/db/src/schema/taxonomy.ts"),
+      "utf8"
+    );
+    const contentSchema = readFileSync(
+      resolve(ROOT, "packages/db/src/schema/content.ts"),
+      "utf8"
+    );
+    const gameSchema = readFileSync(
+      resolve(ROOT, "packages/db/src/schema/game.ts"),
+      "utf8"
+    );
+    const curriculumSchema = readFileSync(
+      resolve(ROOT, "packages/db/src/schema/curriculum.ts"),
+      "utf8"
+    );
+
+    expect(taxonomySchema).toContain("check_competencies_code_format");
+    expect(taxonomySchema).toContain("check_strands_code_format");
+    expect(taxonomySchema).toContain("check_skills_code_format");
+    expect(taxonomySchema).toContain("check_learning_objectives_code_format");
+    expect(taxonomySchema).toContain("check_skill_datasets_code_format");
+
+    expect(contentSchema).toContain("check_lessons_code_format");
+    expect(contentSchema).toContain("check_activities_code_format");
+    expect(contentSchema).toContain("check_worksheets_code_format");
+
+    expect(gameSchema).toContain("check_game_levels_code_format");
+
+    expect(curriculumSchema).toContain("check_curricula_code_format");
   });
 });

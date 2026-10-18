@@ -13,7 +13,7 @@ import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { CANONICAL_THEME_CODES } from "@mindkid/shared";
 import { loadContentDemandLedger } from "#src/gates/content-demand-file";
 import { checkGenerationTarget } from "#src/gates/level-demand";
-import { getThemeVocabulary } from "../vocab/themes.js";
+import { getThemeVocabulary } from "#src/vocab/themes";
 import { printCellMatrixReport, validateCellSpec } from "./cell-generator.js";
 
 /**
@@ -70,6 +70,37 @@ export interface GenOptions {
   demand_skill?: string;
 }
 
+export interface RoundCandidate {
+  content_pack: object;
+  difficulty_params: object;
+  instruction: string;
+  difficulty: number;
+}
+
+export interface GeneratedLevelSeedItem {
+  header: {
+    code: string;
+    content_version: number;
+    template_code: string;
+    title: string;
+    instruction: string;
+    age_min: number;
+    age_max: number;
+    difficulty: number;
+    access_tier: "free" | "login" | "standard" | "premium";
+    skill_codes: string[];
+    learning_objective_codes: string[];
+    what_tags: string[];
+    thinking_tags: string[];
+    theme_tag: string;
+    origin: "ai_assisted" | "human";
+    authored_in: "repo_seed" | "studio";
+  };
+  content_pack: object;
+  difficulty_params: object;
+  rounds?: RoundCandidate[];
+}
+
 export interface GenResult {
   engine: string;
   countRequested: number;
@@ -78,7 +109,7 @@ export interface GenResult {
   duplicatesCount: number;
   writtenCount: number;
   outputPath?: string;
-  items: unknown[];
+  items: GeneratedLevelSeedItem[];
 }
 
 /**
@@ -123,7 +154,7 @@ function writeGeneratedFile(
   seed: number,
   theme: string,
   targetBand: AgeBand,
-  candidates: unknown[],
+  candidates: GeneratedLevelSeedItem[],
   out?: string
 ): string {
   const defaultOutDir = path.resolve(import.meta.dirname, "../generated");
@@ -141,9 +172,9 @@ function writeGeneratedFile(
  * Band: ${targetBand}
  * Total generated: ${candidates.length}
  */
-import type { ContentSeed } from "../types.js";
+import type { ContentSeed } from "#src/types";
 
-export const GEN_${sanitizedEngine.toUpperCase()}_${seed}: ContentSeed<unknown, unknown>[] = ${JSON.stringify(
+export const GEN_${sanitizedEngine.toUpperCase()}_${seed}: ContentSeed<object, object>[] = ${JSON.stringify(
     candidates,
     null,
     2
@@ -151,13 +182,6 @@ export const GEN_${sanitizedEngine.toUpperCase()}_${seed}: ContentSeed<unknown, 
 `;
   fs.writeFileSync(filePath, fileContent, "utf-8");
   return filePath;
-}
-
-interface RoundCandidate {
-  content_pack: unknown;
-  difficulty_params: unknown;
-  instruction: string;
-  difficulty: number;
 }
 
 function generateSingleRoundCandidate(params: {
@@ -208,7 +232,8 @@ function generateSingleRoundCandidate(params: {
       continue;
     }
 
-    const contentHash = JSON.stringify(parseResult.data);
+    const parsedData = parseResult.data as object;
+    const contentHash = JSON.stringify(parsedData);
     if (seenHashes.has(contentHash)) {
       stats.duplicatesCount++;
       continue;
@@ -217,7 +242,7 @@ function generateSingleRoundCandidate(params: {
 
     return {
       instruction: "",
-      content_pack: parseResult.data,
+      content_pack: parsedData,
       difficulty_params: generated.difficulty_params,
       difficulty: 1,
     };
@@ -246,7 +271,7 @@ function generateLevelItem(params: {
   };
   isCellMode?: boolean;
   skillCodes: string[];
-}): unknown | undefined {
+}): GeneratedLevelSeedItem | undefined {
   const {
     engine,
     seed,
@@ -383,7 +408,7 @@ export function generateLevelsCore(options: GenOptions): GenResult {
   );
 
   const itemRng = deriveStream(seed, "items");
-  const candidates: unknown[] = [];
+  const candidates: GeneratedLevelSeedItem[] = [];
   const stats = {
     candidatesGenerated: 0,
     contractRejectedCount: 0,

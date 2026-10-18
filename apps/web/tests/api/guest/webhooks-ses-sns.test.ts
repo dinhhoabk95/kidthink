@@ -7,6 +7,7 @@ import {
 } from "@mindkid/db";
 import { buildSnsStringToSign, type SnsMessage } from "@mindkid/notification";
 import { eq } from "drizzle-orm";
+import type { H3Event } from "h3";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import sesSnsHandler from "#server/api/guest/webhooks/ses-sns.post";
 
@@ -15,13 +16,13 @@ const { privateKey, publicKey } = generateKeyPairSync("rsa", {
 });
 const CERT_PEM = String(publicKey.export({ type: "spki", format: "pem" }));
 
-function mockSnsEvent(body: unknown) {
+function mockSnsEvent(body: object): H3Event {
   return {
     method: "POST",
     node: { req: { headers: {} }, res: {} },
     context: { body },
     _body: body,
-  } as unknown as Parameters<typeof sesSnsHandler>[0];
+  } as H3Event;
 }
 
 /** Mỗi ca dùng một URL riêng: `fetchSnsSigningCert` nhớ đệm theo URL. */
@@ -39,14 +40,18 @@ function stubCertFetch(certUrl: string, pem = CERT_PEM): void {
 
 function snsNotification(params: {
   certUrl: string;
-  sesMessage: unknown;
+  sesMessage: object;
+  topicArn?: string;
+  timestamp?: string;
 }): SnsMessage {
   return {
     Type: "Notification",
     MessageId: `sns-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`,
-    TopicArn: "arn:aws:sns:ap-southeast-1:123456789012:mindkid-ses-events",
+    TopicArn:
+      params.topicArn ??
+      "arn:aws:sns:ap-southeast-1:123456789012:mindkid-ses-events",
     Message: JSON.stringify(params.sesMessage),
-    Timestamp: new Date().toISOString(),
+    Timestamp: params.timestamp ?? new Date().toISOString(),
     SignatureVersion: "1",
     Signature: "",
     SigningCertURL: params.certUrl,
@@ -100,12 +105,12 @@ async function readStatus(deliveryId: number): Promise<string> {
   return row.status;
 }
 
-describe("POST /api/guest/webhooks/ses-sns", () => {
+describe("POST /api/guest/webhooks/ses-sns (BR-NOT-11, BR-NOT-12)", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
   });
 
-  it("rejects a forged signature and leaves the delivery untouched", async () => {
+  it("rejects a forged signature and leaves the delivery untouched (BR-NOT-11)", async () => {
     const providerMessageId = `ses-forged-${Date.now()}`;
     const { delivery } = await seedQueuedDelivery(providerMessageId);
     const certUrl = `https://sns.ap-southeast-1.amazonaws.com/forged-${Date.now()}.pem`;
@@ -125,7 +130,7 @@ describe("POST /api/guest/webhooks/ses-sns", () => {
     expect(await readStatus(delivery.id)).toBe("queued");
   });
 
-  it("rejects an unsigned payload that carries no SNS envelope", async () => {
+  it("rejects an unsigned payload that carries no SNS envelope (BR-NOT-11)", async () => {
     const providerMessageId = `ses-bare-${Date.now()}`;
     const { delivery } = await seedQueuedDelivery(providerMessageId);
 
@@ -146,7 +151,7 @@ describe("POST /api/guest/webhooks/ses-sns", () => {
     expect(await readStatus(delivery.id)).toBe("queued");
   });
 
-  it("rejects a cert URL outside the AWS SNS domain", async () => {
+  it("rejects a cert URL outside the AWS SNS domain (BR-NOT-11)", async () => {
     const providerMessageId = `ses-ssrf-${Date.now()}`;
     const { delivery } = await seedQueuedDelivery(providerMessageId);
     const certUrl = "https://attacker.example.com/cert.pem";
@@ -170,7 +175,57 @@ describe("POST /api/guest/webhooks/ses-sns", () => {
     expect(await readStatus(delivery.id)).toBe("queued");
   });
 
-  it("marks the delivery dispatched when the signature verifies", async () => {
+  it("rejects a TopicArn outside the allow-list (BR-NOT-11)", async () => {
+    const providerMessageId = `ses-topic-${Date.now()}`;
+    const { delivery } = await seedQueuedDelivery(providerMessageId);
+    const certUrl = `https://sns.ap-southeast-1.amazonaws.com/topic-${Date.now()}.pem`;
+    stubCertFetch(certUrl);
+
+    const msg = sign(
+      snsNotification({
+        certUrl,
+        topicArn: "arn:aws:sns:ap-southeast-1:999999999999:rogue-topic",
+        sesMessage: {
+          notificationType: "Bounce",
+          mail: {
+            messageId: providerMessageId,
+            destination: ["a@example.com"],
+          },
+          bounce: { bounceType: "Permanent" },
+        },
+      })
+    );
+
+    await expect(sesSnsHandler(mockSnsEvent(msg))).rejects.toThrow();
+    expect(await readStatus(delivery.id)).toBe("queued");
+  });
+
+  it("rejects an expired Timestamp beyond anti-replay window (BR-NOT-11)", async () => {
+    const providerMessageId = `ses-replay-${Date.now()}`;
+    const { delivery } = await seedQueuedDelivery(providerMessageId);
+    const certUrl = `https://sns.ap-southeast-1.amazonaws.com/replay-${Date.now()}.pem`;
+    stubCertFetch(certUrl);
+
+    const msg = sign(
+      snsNotification({
+        certUrl,
+        timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+        sesMessage: {
+          notificationType: "Bounce",
+          mail: {
+            messageId: providerMessageId,
+            destination: ["a@example.com"],
+          },
+          bounce: { bounceType: "Permanent" },
+        },
+      })
+    );
+
+    await expect(sesSnsHandler(mockSnsEvent(msg))).rejects.toThrow();
+    expect(await readStatus(delivery.id)).toBe("queued");
+  });
+
+  it("marks the delivery dispatched when the signature verifies (BR-NOT-11, BR-NOT-12)", async () => {
     const providerMessageId = `ses-ok-${Date.now()}`;
     const { delivery } = await seedQueuedDelivery(providerMessageId);
     const certUrl = `https://sns.ap-southeast-1.amazonaws.com/ok-${Date.now()}.pem`;
@@ -195,7 +250,7 @@ describe("POST /api/guest/webhooks/ses-sns", () => {
     expect(await readStatus(delivery.id)).toBe("dispatched");
   });
 
-  it("records a bounce as failed when the signature verifies", async () => {
+  it("records a bounce as failed when the signature verifies (BR-NOT-11, BR-NOT-12)", async () => {
     const providerMessageId = `ses-bounce-${Date.now()}`;
     const { delivery } = await seedQueuedDelivery(providerMessageId);
     const certUrl = `https://sns.ap-southeast-1.amazonaws.com/bounce-${Date.now()}.pem`;

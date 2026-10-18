@@ -85,7 +85,9 @@
 
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
+  import { useApi } from "~/composables/use-api";
 
+  const api = useApi();
   const permissionState = ref<"default" | "granted" | "denied" | "unsupported">(
     "default"
   );
@@ -158,7 +160,7 @@
         // Simulated client token (or FCM Web SDK token)
         const mockFcmToken = `fcm_token_client_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 
-        const res = await globalThis.$fetch<{ uuid: string }>(
+        const res = await api<{ uuid: string }>(
           "/api/users/notification-endpoints",
           {
             method: "POST",
@@ -186,7 +188,7 @@
     loading.value = true;
 
     try {
-      await globalThis.$fetch(
+      await api(
         `/api/users/notification-endpoints/${registeredEndpointUuid.value}`,
         {
           method: "DELETE",

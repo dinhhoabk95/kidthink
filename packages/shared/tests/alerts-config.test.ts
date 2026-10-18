@@ -1,4 +1,4 @@
-import { resolve } from "node:path";
+import { repoPath } from "@mindkid/config/paths";
 import { describe, expect, it } from "vitest";
 import {
   loadAndValidateAlertsFile,
@@ -7,10 +7,7 @@ import {
 } from "#src/alerts-config";
 
 describe("Task 2 — alerts.yml & Go-Live Quality Gate (BR-MON-01, BR-MON-02, BR-MON-03, BR-MON-07, D-IR)", () => {
-  const alertsYmlPath = resolve(
-    import.meta.dirname,
-    "../../../infra/monitoring/alerts.yml"
-  );
+  const alertsYmlPath = repoPath("infra/monitoring/alerts.yml");
 
   it("reads and parses infra/monitoring/alerts.yml with P0, P1, P2 groups (D-IR)", () => {
     const result = loadAndValidateAlertsFile(alertsYmlPath);

@@ -1,9 +1,137 @@
-import { eq } from "drizzle-orm";
+import { hashPassword } from "@mindkid/auth";
+import { eq, getTableColumns } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { getAppDb, getOwnerDb } from "#src/index";
-import { consentLogs, socialIdentities, users } from "#src/schema/identity";
+import {
+  activeSessions,
+  consentLogs,
+  consentRequirements,
+  managers,
+  mfaRecoveryCodes,
+  mfaSettings,
+  socialIdentities,
+  users,
+  verificationTokens,
+} from "#src/schema/identity";
 
 describe("Identity Schema Integration Tests", () => {
+  it("BR-SIB-01: users table has NO role, persona, tier, package, or tenant_id columns", () => {
+    const cols = Object.values(getTableColumns(users)).map((c) => c.name);
+    expect(cols).not.toContain("role");
+    expect(cols).not.toContain("persona");
+    expect(cols).not.toContain("tier");
+    expect(cols).not.toContain("package");
+    expect(cols).not.toContain("package_code");
+    expect(cols).not.toContain("tenant_id");
+  });
+
+  it("BR-SIB-04: polymorphic auth tables (active_sessions, mfa_settings, mfa_recovery_codes, verification_tokens) store (account_type, account_id) for both user and manager", async () => {
+    const db = getOwnerDb();
+    const suffix = `${Date.now()}-${Math.floor(Math.random() * 100_000)}`;
+    const [u] = await db
+      .insert(users)
+      .values({
+        email: `sib04-u-${suffix}@example.com`,
+        displayName: "SIB04 User",
+      })
+      .returning();
+    const [m] = await db
+      .insert(managers)
+      .values({
+        email: `sib04-m-${suffix}@example.com`,
+        passwordHash: await hashPassword("xK9#mQ2$vL8!wP5@"),
+        displayName: "SIB04 Manager",
+        role: "content_reviewer",
+      })
+      .returning();
+    if (!(u && m)) {
+      throw new Error("Failed to insert user/manager for BR-SIB-04");
+    }
+
+    const expiresAt = new Date(Date.now() + 3_600_000);
+    const [sess] = await db
+      .insert(activeSessions)
+      .values({
+        accountType: "user",
+        accountId: u.id,
+        deviceId: `dev-${suffix}`,
+        authMethod: "password",
+        expiresAt,
+      })
+      .returning();
+    expect(sess?.accountType).toBe("user");
+    expect(sess?.accountId).toBe(u.id);
+
+    const [mfa] = await db
+      .insert(mfaSettings)
+      .values({
+        accountType: "manager",
+        accountId: m.id,
+        secretEncrypted: "enc-secret",
+      })
+      .returning();
+    expect(mfa?.accountType).toBe("manager");
+    expect(mfa?.accountId).toBe(m.id);
+
+    const [rec] = await db
+      .insert(mfaRecoveryCodes)
+      .values({
+        accountType: "manager",
+        accountId: m.id,
+        codeHash: `hash-${suffix}`,
+      })
+      .returning();
+    expect(rec?.accountType).toBe("manager");
+
+    const [tok] = await db
+      .insert(verificationTokens)
+      .values({
+        accountType: "user",
+        accountId: u.id,
+        purpose: "email_verify",
+        tokenHash: `tok-${suffix}`,
+        expiresAt,
+      })
+      .returning();
+    expect(tok?.accountType).toBe("user");
+  });
+
+  it("BR-SIB-05: users and managers store Argon2id password_hash ($argon2id$)", async () => {
+    const hash = await hashPassword("xK9#mQ2$vL8!wP5@");
+    expect(hash.startsWith("$argon2id$")).toBe(true);
+  });
+
+  it("BR-SIB-12: consent_requirements stores 3 consent types (terms, privacy, child_data) with forward-only reconsent_required_at marker", async () => {
+    const db = getOwnerDb();
+    const marker1 = new Date("2026-06-01T00:00:00.000Z");
+    const marker2 = new Date("2026-09-01T00:00:00.000Z");
+
+    await db
+      .insert(consentRequirements)
+      .values({
+        consentType: "terms",
+        reconsentRequiredAt: marker1,
+        notice: "Cập nhật điều khoản sử dụng",
+      })
+      .onConflictDoUpdate({
+        target: consentRequirements.consentType,
+        set: {
+          reconsentRequiredAt: marker2,
+          notice: "Cập nhật điều khoản sử dụng lần 2",
+        },
+      });
+
+    const [row] = await db
+      .select()
+      .from(consentRequirements)
+      .where(eq(consentRequirements.consentType, "terms"));
+    expect(row).toBeDefined();
+    expect(row?.consentType).toBe("terms");
+    expect(
+      (row?.reconsentRequiredAt?.getTime() ?? 0) >= marker1.getTime()
+    ).toBe(true);
+  });
+
   it("BR-SIB-07: enforces case-insensitive email UNIQUE on users", async () => {
     const db = getOwnerDb();
     const email = `test-${Date.now()}@example.com`;

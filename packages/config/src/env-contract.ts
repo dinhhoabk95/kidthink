@@ -182,6 +182,47 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     note: "Khoá webhook riêng của MoMo; thiếu thì dùng PAYMENT_WEBHOOK_SECRET",
   },
   {
+    name: "PAYMENT_MODE",
+    apps: ["web"],
+    required: "production",
+    kind: "enum",
+    secret: false,
+    enumValues: ["sandbox", "live"],
+    note: "Chế độ vận hành cổng thanh toán; webhook mang chế độ khác bị từ chối (UC-079 BR-001)",
+  },
+  {
+    name: "PAYMENT_MERCHANT_ID",
+    apps: ["web"],
+    required: "production",
+    kind: "text",
+    secret: false,
+    note: "Mã đơn vị nhận tiền mà webhook phải khớp, dùng chung khi không có mã riêng nhà cung cấp",
+  },
+  {
+    name: "PAYMENT_PAYOS_MERCHANT_ID",
+    apps: ["web"],
+    required: "optional",
+    kind: "text",
+    secret: false,
+    note: "Mã đơn vị nhận tiền riêng của PayOS; thiếu thì dùng PAYMENT_MERCHANT_ID",
+  },
+  {
+    name: "PAYMENT_VNPAY_MERCHANT_ID",
+    apps: ["web"],
+    required: "optional",
+    kind: "text",
+    secret: false,
+    note: "Mã đơn vị nhận tiền riêng của VNPay; thiếu thì dùng PAYMENT_MERCHANT_ID",
+  },
+  {
+    name: "PAYMENT_MOMO_MERCHANT_ID",
+    apps: ["web"],
+    required: "optional",
+    kind: "text",
+    secret: false,
+    note: "Mã đơn vị nhận tiền riêng của MoMo; thiếu thì dùng PAYMENT_MERCHANT_ID",
+  },
+  {
     name: "VIETQR_BANK_ID",
     apps: ["web"],
     required: "production",
@@ -315,6 +356,25 @@ export const ENV_REGISTRY: readonly EnvVarDef[] = [
     kind: "secret",
     secret: true,
     note: "Khoá mã hoá dữ liệu FCM; thiếu thì tầng thông báo đẩy tắt",
+  },
+
+  // ---- Trợ lý AI và tìm kiếm ngữ nghĩa (Add-on P4) ------------------------
+  {
+    name: "AI_PROVIDER_API_KEY",
+    apps: ["web", "worker"],
+    required: "optional",
+    kind: "secret",
+    secret: true,
+    note: "Khoá API gọi nhà cung cấp LLM và embedding cho add-on AI; thiếu ở môi trường test/dev thì dùng bản mô phỏng tất định (BR-TST-03)",
+  },
+  {
+    name: "AI_PROVIDER_BASE_URL",
+    apps: ["web", "worker"],
+    required: "optional",
+    kind: "url",
+    urlProtocols: ["http:", "https:"],
+    secret: false,
+    note: "Điểm cuối HTTP của nhà cung cấp LLM và embedding tương thích OpenAI/Anthropic/Gemini; thiếu thì dùng điểm cuối mặc định",
   },
 
   // ---- Vận hành và cảnh báo ----------------------------------------------
@@ -603,6 +663,23 @@ function checkKindValidation(
   }
 }
 
+export const BANNED_ENV_SYNONYMS: Readonly<Record<string, string>> = {
+  SESSION_SECRET: "NUXT_SESSION_PASSWORD",
+  REDIS_URL: "VALKEY_URL",
+  VALKEY_HOST: "VALKEY_URL",
+  AUTH_REDIS_URL: "VALKEY_URL",
+  NUXT_SITE_URL: "SITE_URL",
+  NUXT_PUBLIC_SITE_URL: "SITE_URL",
+  NUXT_PARENT_GATE_SECRET: "PARENT_GATE_SECRET",
+} as const;
+
+const RUNTIME_BUILTINS: ReadonlySet<string> = new Set([
+  "NODE_ENV",
+  "CI",
+  "VITEST",
+  "TZ",
+]);
+
 /**
  * Validates an already-parsed env file against the registry.
  *
@@ -642,7 +719,16 @@ export function validateEnvFile(
 
   // A variable a process does not read is not an error, but it is a smell:
   // usually a rename that only landed in half the places (BR-ENV-10).
+  // Banned synonyms (BR-ENV-02) are rejected outright with canonical pointer.
   for (const [key] of parsed) {
+    const canonical = BANNED_ENV_SYNONYMS[key];
+    if (canonical) {
+      errors.push({
+        varName: key,
+        issue: `Banned synonym; use canonical variable ${canonical} (BR-ENV-02)`,
+      });
+      continue;
+    }
     if (!registeredNames.has(key)) {
       warnings.push({
         varName: key,
@@ -652,4 +738,46 @@ export function validateEnvFile(
   }
 
   return { valid: errors.length === 0, errors, warnings };
+}
+
+/**
+ * Cổng kiểm mã nguồn đọc biến môi trường (`BR-ENV-01`, `BR-ENV-02`).
+ * Bắt cả `process.env.FOO`, `process.env["FOO"]`, `requireEnv("FOO")`, `optionalEnv("FOO")`.
+ */
+export function scanSourceEnvUsage(sourceText: string): ValidationError[] {
+  const errors: ValidationError[] = [];
+  const registeredNames = new Set(ENV_REGISTRY.map((v) => v.name));
+  const seen = new Set<string>();
+
+  const patterns: readonly RegExp[] = [
+    /\bprocess\.env\.([A-Z][A-Z0-9_]*)\b/g,
+    /\bprocess\.env\[["']([A-Z][A-Z0-9_]*)["']\]/g,
+    /\b(?:requireEnv|optionalEnv)\(\s*["']([A-Z][A-Z0-9_]*)["']/g,
+  ];
+
+  for (const pattern of patterns) {
+    for (const match of sourceText.matchAll(pattern)) {
+      const varName = match[1];
+      if (!varName || seen.has(varName) || RUNTIME_BUILTINS.has(varName)) {
+        continue;
+      }
+      seen.add(varName);
+      const canonical = BANNED_ENV_SYNONYMS[varName];
+      if (canonical) {
+        errors.push({
+          varName,
+          issue: `Banned synonym '${varName}'; use canonical variable '${canonical}' (BR-ENV-02)`,
+        });
+        continue;
+      }
+      if (!registeredNames.has(varName)) {
+        errors.push({
+          varName,
+          issue: `Variable '${varName}' is not declared in ENV_REGISTRY (BR-ENV-01)`,
+        });
+      }
+    }
+  }
+
+  return errors;
 }

@@ -2,6 +2,8 @@ import type { AgeBand } from "#src/contracts/types";
 import {
   type ActionResult,
   type GameAction,
+  type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
@@ -139,6 +141,37 @@ export class GT011Session extends TemplateGameSession<
   override getHintTargetIndex(): number | null {
     const idx = this.content.options.findIndex((o) => o.is_correct);
     return idx >= 0 ? idx : null;
+  }
+
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    if (this.checkWinCondition()) {
+      return null;
+    }
+    const blank = this.getBlankCell();
+    const rowCellIds = this.content.matrix.cells
+      .filter((c) => c.row === blank.row)
+      .map((c) => (c.asset === null ? "matrix_blank" : `c${c.row}-${c.col}`));
+    if (level === 1) {
+      return {
+        kind: "region",
+        ids: [`matrix-row-${blank.row}`, ...rowCellIds],
+      };
+    }
+    if (level === 2) {
+      const colCellIds = this.content.matrix.cells
+        .filter((c) => c.col === blank.col && c.row !== blank.row)
+        .map((c) => (c.asset === null ? "matrix_blank" : `c${c.row}-${c.col}`));
+      return {
+        kind: "region",
+        ids: [
+          `matrix-row-${blank.row}`,
+          `matrix-col-${blank.col}`,
+          ...rowCellIds,
+          ...colCellIds,
+        ],
+      };
+    }
+    return this.getHintTarget();
   }
 
   override commit(action: GameAction): void {

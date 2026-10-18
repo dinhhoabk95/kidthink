@@ -2,7 +2,7 @@
 spec: CONTENT-VERSIONING
 title: Phiên bản nội dung và neo lịch sử
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-10-18
@@ -13,13 +13,9 @@ owns:
 depends_on:
   - CONTENT-LIFECYCLE
   - ID-CONVENTIONS
-open_tasks:
-  - "#308"
 ---
 
 # Phiên bản nội dung và neo lịch sử
-
-> **Chưa hoàn thành** — `BR-VER-03` (cùng `BR-EVT-06`): `telemetry_events.content_version` vẫn nullable (`packages/db/src/schema/play.ts`). Việc còn lại: [Task #308](../../tasks/308-foundation-gaps-plan.md).
 
 ## 1. Objective
 

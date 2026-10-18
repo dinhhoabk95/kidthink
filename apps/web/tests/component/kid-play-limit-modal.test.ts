@@ -26,7 +26,7 @@ const globalStubs = {
   },
 };
 
-describe("KidPlayLimitModal component (Task #286)", () => {
+describe("KidPlayLimitModal component (Task #286 & #293 S4)", () => {
   it("hiển thị lời nhắn ấm áp và 2 gợi ý hoạt động ngoài màn hình (BR-HPL-04, §7.3)", () => {
     const wrapper = mount(KidPlayLimitModal, {
       props: {
@@ -41,7 +41,7 @@ describe("KidPlayLimitModal component (Task #286)", () => {
     expect(wrapper.find('[data-testid="mascot-stub"]').exists()).toBe(true);
   });
 
-  it("bấm nút về sảnh phát ra emit 'leave'", async () => {
+  it("chỉ hiển thị duy nhất 1 nút dẫn qua ParentGateModal, không có nút tự đóng hay đồng hồ đếm ngược (§7.3, BR-HPL-04)", () => {
     const wrapper = mount(KidPlayLimitModal, {
       props: {
         childUuid: "uuid-child-1",
@@ -49,11 +49,16 @@ describe("KidPlayLimitModal component (Task #286)", () => {
       global: { stubs: globalStubs },
     });
 
-    const leaveBtn = wrapper.find('[data-testid="play-limit-leave-btn"]');
-    expect(leaveBtn.exists()).toBe(true);
-
-    await leaveBtn.trigger("click");
-    expect(wrapper.emitted("leave")).toHaveLength(1);
+    expect(wrapper.find('[data-testid="play-limit-leave-btn"]').exists()).toBe(
+      false
+    );
+    const buttons = wrapper.findAll("button");
+    expect(buttons).toHaveLength(1);
+    const askParentBtn = wrapper.find(
+      '[data-testid="play-limit-ask-parent-btn"]'
+    );
+    expect(askParentBtn.exists()).toBe(true);
+    expect(askParentBtn.classes()).toContain("min-h-16");
   });
 
   it("bấm nút 'Xin ba mẹ thêm giờ' mở Parent Gate và sau khi giải đúng hiển thị tùy chọn cấp thêm giờ", async () => {
@@ -78,11 +83,13 @@ describe("KidPlayLimitModal component (Task #286)", () => {
     await wrapper.find('[data-testid="gate-verify"]').trigger("click");
     await flushPromises();
 
-    // Hiện bảng chọn 15 phút hoặc 30 phút
+    // Hiện bảng chọn 15 phút hoặc 30 phút (sàn touch >= 64px)
     const grant15Btn = wrapper.find('[data-testid="grant-15-mins-btn"]');
     const grant30Btn = wrapper.find('[data-testid="grant-30-mins-btn"]');
     expect(grant15Btn.exists()).toBe(true);
     expect(grant30Btn.exists()).toBe(true);
+    expect(grant15Btn.classes()).toContain("min-h-16");
+    expect(grant30Btn.classes()).toContain("min-h-16");
   });
 
   it("phụ huynh bấm cấp thêm 15 phút gọi API grant-extra-time và emit 'granted'", async () => {

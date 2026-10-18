@@ -2,10 +2,12 @@ import type { SkillDataset, SkillSeed } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import {
   buildLevelsForSkill,
+  CANONICAL_THINKING_TAGS,
   GENERATED_LEVEL_CONTENT_VERSION,
   normalizeThinkingTags,
-} from "../../src/builders/build-levels.js";
-import { ALL_SKILL_SEEDS, getSkillSeed } from "../../src/skills/index.js";
+  THINKING_TAG_NORMALIZE_MAP,
+} from "#src/builders/build-levels";
+import { ALL_SKILL_SEEDS, getSkillSeed } from "#src/skills/index";
 
 const MACHINE_TITLE_REGEX = /GT-\d{3}|Cấp \d/;
 const CONTRACT_MIN_ITEMS_REGEX = /đòi tối thiểu 4 vật/;
@@ -133,7 +135,7 @@ describe("buildLevelsForSkill (Task #208 / G4)", () => {
   });
 });
 
-describe("normalizeThinkingTags (Task #266 / BR-STS-05 & T1.5, T1.6)", () => {
+describe("normalizeThinkingTags (Task #266 / BR-STS-05, BR-STS-06 & T1.5, T1.6)", () => {
   it("T1.5: ca âm — gọi normalizeThinkingTags(['khong_ton_tai']) ném lỗi, không trả observe", () => {
     expect(() => {
       normalizeThinkingTags(["khong_ton_tai"]);
@@ -144,6 +146,29 @@ describe("normalizeThinkingTags (Task #266 / BR-STS-05 & T1.5, T1.6)", () => {
     const result = normalizeThinkingTags(["deduce"]);
     expect(result).not.toContain("observe");
     expect(result).toContain("infer");
+  });
+
+  it("BR-STS-06: THINKING_TAG_NORMALIZE_MAP chỉ chứa đúng 6 ánh xạ thu hẹp đã khai báo ở mục 7.2", () => {
+    expect(THINKING_TAG_NORMALIZE_MAP).toEqual({
+      solve: "infer",
+      verify: "compare",
+      create: "plan",
+      listen: "observe",
+      describe: "observe",
+      deduce: "infer",
+    });
+    for (const target of Object.values(THINKING_TAG_NORMALIZE_MAP)) {
+      expect(CANONICAL_THINKING_TAGS.has(target)).toBe(true);
+    }
+  });
+
+  it("BR-STS-06: ca âm — từ chối các nhãn thu hẹp ngầm không được khai ở mục 7.2 (visual, analytical)", () => {
+    expect(() => {
+      normalizeThinkingTags(["visual"]);
+    }).toThrow("[BR-STS-05]");
+    expect(() => {
+      normalizeThinkingTags(["analytical"]);
+    }).toThrow("[BR-STS-05]");
   });
 
   it("giữ nguyên tag chuẩn trong CANONICAL_THINKING_TAGS", () => {

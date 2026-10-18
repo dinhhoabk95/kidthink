@@ -1,11 +1,16 @@
 import { InternalError, ValidationError } from "@mindkid/errors/common";
 import { WorksheetNotFoundError } from "@mindkid/errors/content";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
+import { z } from "zod";
 import {
   getWorksheetByCode,
   renderWorksheetArtifact,
 } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+
+const WorksheetRenderQuerySchema = z.object({
+  version: z.coerce.number().optional(),
+});
 
 export default defineEventHandler(async (event) => {
   const session = await requireManagerSession(event);
@@ -14,8 +19,11 @@ export default defineEventHandler(async (event) => {
     throw new ValidationError("Worksheet code is required");
   }
 
-  const query = getQuery(event);
-  const version = query.version ? Number(query.version) : undefined;
+  const parsedQuery = WorksheetRenderQuerySchema.safeParse(getQuery(event));
+  const version =
+    parsedQuery.success && parsedQuery.data.version
+      ? Number(parsedQuery.data.version)
+      : undefined;
 
   const ws = await getWorksheetByCode(code, version);
   if (!ws) {

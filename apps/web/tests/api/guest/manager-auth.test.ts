@@ -69,9 +69,9 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
     expect(sessions).toHaveLength(0);
   });
 
-  it("Task 2: correct password for manager without MFA logs in directly with status ok", async () => {
+  it("UC-009 BR-001/BR-002 + A3: manager chưa bật MFA chỉ nhận yêu cầu thiết lập, không phiên", async () => {
     const db = getOwnerDb();
-    const testEmail = `admin_direct_login_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
+    const testEmail = `admin_setup_required_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}@tinimath.test`;
     const passwordHash = await hashPassword("AdminSecret123!");
 
     const [manager] = await db
@@ -79,7 +79,7 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
       .values({
         email: testEmail,
         passwordHash,
-        displayName: "Direct Admin",
+        displayName: "Setup Admin",
         role: "super_admin",
         mfaEnabled: false,
       })
@@ -88,13 +88,25 @@ describe("Task 2 & 3 — Manager Login & MFA Handler (BR-ADA-01..08)", () => {
     const event = mockEvent({
       email: testEmail,
       password: "AdminSecret123!",
+      rememberMe: true,
     });
 
     const res = await loginHandler(event);
-    expect(res).toBeDefined();
-    expect(res.status).toBe("ok");
-    expect(res.manager).toBeDefined();
-    expect(res.manager.id).toBe(manager.id);
+    expect(res.status).toBe("MFA_REQUIRED");
+    expect(res.mfa_enabled).toBe(false);
+    expect(res.challenge).toBeDefined();
+    expect(res.manager).toBeUndefined();
+
+    const sessions = await db
+      .select()
+      .from(activeSessions)
+      .where(
+        and(
+          eq(activeSessions.accountType, "manager"),
+          eq(activeSessions.accountId, manager.id)
+        )
+      );
+    expect(sessions).toHaveLength(0);
   });
 
   it("Task 2: wrong password returns 401 INVALID_CREDENTIALS + audits manager_login_failed", async () => {

@@ -28,7 +28,11 @@ export async function requestUserDeletion(
 
   await db
     .update(users)
-    .set({ status: "deleted", updatedAt: currentDate })
+    .set({
+      status: "deleted",
+      purgeAt: scheduledPurgeAt,
+      updatedAt: currentDate,
+    })
     .where(eq(users.id, userId));
 
   await db
@@ -49,7 +53,7 @@ export async function cancelUserDeletion(
 ): Promise<void> {
   await db
     .update(users)
-    .set({ status: "active", updatedAt: new Date() })
+    .set({ status: "active", purgeAt: null, updatedAt: new Date() })
     .where(eq(users.id, userId));
 
   await db

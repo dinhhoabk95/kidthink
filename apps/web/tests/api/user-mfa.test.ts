@@ -399,6 +399,79 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
     }
   });
 
+  it("POST /api/users/mfa/setup khi MFA đã bật bị chặn 409, khoá cũ giữ nguyên (UC-052 BR-010, G3)", async () => {
+    const db = getOwnerDb();
+    const load = async () => {
+      const [row] = await db
+        .select()
+        .from(mfaSettings)
+        .where(
+          and(
+            eq(mfaSettings.accountType, "user"),
+            eq(mfaSettings.accountId, testUserId)
+          )
+        );
+      return row;
+    };
+    const before = await load();
+
+    try {
+      await mfaSetupHandler(mockUserEvent(new Date()));
+      expect.fail("Should throw MFA_ALREADY_ENABLED");
+    } catch (err: any) {
+      expect(err.statusCode || err.status).toBe(409);
+    }
+
+    const after = await load();
+    expect(after.secretEncrypted).toBe(before.secretEncrypted);
+    expect(after.confirmedAt).not.toBeNull();
+  });
+
+  it("POST /api/guest/auth/users/mfa: sai mã giữ thử thách, lần sai thứ 5 khoá 429 (UC-052 A1, A2, BR-013)", async () => {
+    const redis = getAuthRedisClient();
+    const mfaService = new MfaChallengeService(redis);
+    const challenge = await mfaService.createChallenge({
+      namespace: "user",
+      accountId: testUserId,
+      displayName: "MFA Test User",
+      rememberMe: false,
+      ipAddress: "127.0.0.1",
+    });
+    const call = (code: string) => {
+      const body = { challenge: challenge.challengeToken, code };
+      return guestMfaHandler({
+        method: "POST",
+        node: {
+          req: { method: "POST", headers: {}, body },
+          res: { statusCode: 200, setHeader: () => undefined },
+        },
+        context: { body },
+        _requestBody: body,
+        _body: body,
+      } as any);
+    };
+
+    for (let i = 0; i < 4; i++) {
+      try {
+        await call("000000");
+        expect.fail("Should throw MFA_INVALID_CODE");
+      } catch (err: any) {
+        expect(err.statusCode || err.status).toBe(401);
+      }
+    }
+    try {
+      await call("000000");
+      expect.fail("Should throw MFA_LOCKED");
+    } catch (err: any) {
+      expect(err.statusCode || err.status).toBe(429);
+    }
+
+    await redis.del(
+      `auth:v1:user:mfa_lock:${testUserId}`,
+      `auth:v1:user:mfa_fail:${testUserId}`
+    );
+  });
+
   it("POST /api/users/mfa/recovery-codes invalidates old codes and generates new (BR-MFA-11)", async () => {
     const code = generateTotpCode(currentTotpSecret);
     const event = mockUserEvent(new Date(), { code });

@@ -2,7 +2,7 @@ import {
   canAchieveBalance,
   sumWeights,
   type WeightedItem,
-} from "../systems/balance-system.js";
+} from "#src/systems/balance-system";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 

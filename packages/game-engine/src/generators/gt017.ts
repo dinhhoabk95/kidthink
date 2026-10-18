@@ -3,7 +3,7 @@ import {
   countHiddenCubes,
   hasNoFloatingCubes,
   isModelConnected,
-} from "../systems/isometric-system.js";
+} from "#src/systems/isometric-system";
 import {
   numberKeycap,
   pickOne,

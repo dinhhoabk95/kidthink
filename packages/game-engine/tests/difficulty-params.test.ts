@@ -1,22 +1,19 @@
 import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
+import { repoPath } from "@mindkid/config/paths";
 import { describe, expect, it } from "vitest";
 import {
   type EngineDifficultyParamsConfig,
   EngineDifficultyParamsConfigSchema,
-} from "../src/contracts/engine-difficulty-config.js";
-import { ALL_TEMPLATES } from "../src/generated/template-registry.js";
+} from "#src/contracts/engine-difficulty-config.js";
+import { ALL_TEMPLATES } from "#src/generated/template-registry.js";
 
-const HERE = path.dirname(fileURLToPath(import.meta.url));
-const CONFIG_PATH = path.resolve(
-  HERE,
-  "../config/engine-difficulty-params.json"
+const CONFIG_PATH = repoPath(
+  "packages/game-engine/config/engine-difficulty-params.json"
 );
 
 describe("Hợp đồng độ khó engine-difficulty-params.json (Task #263 T5)", () => {
   const raw = fs.readFileSync(CONFIG_PATH, "utf-8");
-  const parsed = JSON.parse(raw) as unknown;
+  const parsed = JSON.parse(raw) as EngineDifficultyParamsConfig;
 
   it("file JSON parse hợp lệ qua EngineDifficultyParamsConfigSchema", () => {
     const validated = EngineDifficultyParamsConfigSchema.parse(parsed);

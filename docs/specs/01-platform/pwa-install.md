@@ -5,7 +5,7 @@ area: platform
 status: implemented
 mvp: false
 phase: P5
-reviewed: 2026-08-13
+reviewed: 2026-10-18
 owns:
   - Manifest và tiêu chí mời cài đặt
 depends_on:

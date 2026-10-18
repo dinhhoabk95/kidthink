@@ -472,18 +472,42 @@ export class GT035Session extends TemplateGameSession<
   }
 
   override toAction(gesture: Gesture): GameAction | null {
+    if (this.isExecuting) {
+      return null;
+    }
     // Chạm nút ở `zones.action` tới đây thành `commit` (`BR-PSZ-05`): chạy chương trình.
     if (gesture.type === "commit") {
       return { type: "run_program", data: {} };
-    }
-    if (gesture.type !== "tap") {
-      return null;
     }
 
     const hitTolerance = 24;
     const { rows, cols } = this.content.grid;
     const gridSlotCount = rows * cols;
     const maxCmd = this.maxCommands;
+
+    if (gesture.type === "drop") {
+      const palCmd = this.findTappedPaletteCommand(
+        gesture.fromX,
+        gesture.fromY,
+        hitTolerance,
+        gridSlotCount + maxCmd
+      );
+      const queueIdx = this.findTappedQueueIndex(
+        gesture.toX,
+        gesture.toY,
+        hitTolerance,
+        gridSlotCount,
+        maxCmd
+      );
+      if (palCmd && queueIdx !== null) {
+        return { type: "add_command", data: { command: palCmd } };
+      }
+      return null;
+    }
+
+    if (gesture.type !== "tap") {
+      return null;
+    }
 
     // Check Palette buttons
     const palCmd = this.findTappedPaletteCommand(

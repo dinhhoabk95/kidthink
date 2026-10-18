@@ -18,9 +18,9 @@
       </div>
 
       <!-- Modal Card -->
-      <div class="clay-card">
+      <div class="clay-card tabular-nums">
         <!-- 3-Star Arc -->
-        <div class="stars-arc" v-if="stars != null && stars > 0">
+        <div class="stars-arc tabular-nums" v-if="stars != null && stars > 0">
           <div
             class="star-pill star-pill--left star-anim"
             :class="{ 'star-pill--dim': (stars ?? 0) < 1 }"
@@ -81,8 +81,29 @@
             <UIcon class="btn-icon" name="i-lucide-rotate-ccw" />
           </button>
         </div>
+
+        <!-- Lời mời đăng ký cho guest sau khi chơi xong, qua Parent Gate (`BR-PEN-05`). -->
+        <div class="guest-register-section" v-if="isGuest">
+          <button
+            aria-label="Ba mẹ đăng ký để lưu tiến độ"
+            class="btn-guest-register"
+            data-testid="guest-register-cta"
+            type="button"
+            @click="showRegisterParentGate = true"
+          >
+            <UIcon class="btn-guest-icon" name="i-lucide-lock" />
+            <span>Ba mẹ đăng ký để lưu tiến độ</span>
+          </button>
+        </div>
       </div>
     </div>
+
+    <ParentGateModal
+      v-if="showRegisterParentGate"
+      :client-only="true"
+      @cancel="showRegisterParentGate = false"
+      @verified="handleRegisterVerified"
+    />
   </div>
 </template>
 
@@ -90,6 +111,7 @@
   import { FeedbackSystem } from "@mindkid/game-engine";
   import { computed, ref, toRef, watch } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
+  import ParentGateModal from "~/components/parent-gate-modal.vue";
   import { useFocusTrap } from "~/composables/play/use-focus-trap";
   import type { CelebrationTier } from "~/composables/play/use-play-telemetry";
 
@@ -99,17 +121,23 @@
     label: string;
   }
 
+  interface GlobalWithRouter {
+    useRouter?: () => { push?: (path: string) => void } | undefined;
+  }
+
   const props = withDefaults(
     defineProps<{
       show: boolean;
       stars?: number | null;
       isIntro?: boolean;
+      isGuest?: boolean;
       celebration?: CelebrationTier;
       sticker?: VictorySticker | null;
     }>(),
     {
       stars: null,
       isIntro: false,
+      isGuest: false,
       celebration: "great",
       sticker: null,
     }
@@ -118,17 +146,30 @@
   const emit = defineEmits<{
     continue: [];
     replay: [];
+    register: [];
     /** Lời khen cần đọc thành tiếng khi modal mở (`BR-FBK-12`). */
     announce: [phrase: string];
   }>();
 
   const feedback = new FeedbackSystem();
+  const showRegisterParentGate = ref(false);
+
+  function handleRegisterVerified(): void {
+    showRegisterParentGate.value = false;
+    emit("register");
+    const getRouter = (globalThis as GlobalWithRouter).useRouter;
+    if (typeof getRouter === "function") {
+      getRouter()?.push?.("/register");
+    }
+  }
 
   watch(
     () => props.show,
     (isOpen) => {
       if (isOpen) {
         emit("announce", feedback.getCompliment());
+      } else {
+        showRegisterParentGate.value = false;
       }
     },
     { immediate: true }
@@ -416,6 +457,41 @@
 
   .btn-replay:active {
     transform: translateY(2px);
+  }
+
+  .guest-register-section {
+    width: 100%;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  .btn-guest-register {
+    min-height: 4rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 1.25rem;
+    border: 3px solid var(--color-brand-300);
+    background-color: var(--color-surface-100);
+    color: var(--color-brand-700);
+    font-family: var(--font-sans, "Quicksand", sans-serif);
+    font-size: 1rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .btn-guest-register:hover {
+    background-color: var(--color-surface-200);
+  }
+
+  .btn-guest-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
   }
 
   @keyframes starPulse {

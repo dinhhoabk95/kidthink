@@ -1,7 +1,14 @@
 import { getOwnerDb, levelDailyStats } from "@mindkid/db";
 import { and, desc, gte, lte, type SQL } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+
+const AnalyticsLevelsQuerySchema = z.object({
+  from: z.string().optional(),
+  to: z.string().optional(),
+  limit: z.coerce.number().optional(),
+});
 
 export const CONTENT_KPI_THRESHOLDS = {
   HIGH_ABANDONMENT_RATE: 0.4, // > 40%
@@ -12,7 +19,8 @@ export const CONTENT_KPI_THRESHOLDS = {
 
 export default defineEventHandler(async (event) => {
   await requireManagerSession(event);
-  const query = getQuery(event);
+  const parsedQuery = AnalyticsLevelsQuerySchema.safeParse(getQuery(event));
+  const query = parsedQuery.success ? parsedQuery.data : {};
 
   const from = typeof query.from === "string" ? query.from : undefined;
   const to = typeof query.to === "string" ? query.to : undefined;

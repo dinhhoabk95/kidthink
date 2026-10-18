@@ -10,7 +10,7 @@ import { AGE_BANDS, CONTENT_THEMES } from "@mindkid/shared";
 import {
   type ParsedSkill,
   parseTaxonomyDocs,
-} from "../seed-master/taxonomy/index.js";
+} from "#src/seed-master/taxonomy/index";
 import {
   buildSkillTemplateAffinityMatrix,
   getSkillAgeBands,

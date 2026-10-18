@@ -7,11 +7,13 @@ import {
   DUNNING_GRACE_PERIOD_DAYS,
   DUNNING_MAX_ATTEMPTS,
   isOfflinePackLeaseValid,
+  isPaymentWebhookOriginTrusted,
   isWebhookWithinReplayWindow,
   NOTICE_BEFORE_RECURRING_BILLING_DAYS,
   OFFLINE_PACK_MAX_LEASE_DAYS,
   OfflineCurriculumPackManifestSchema,
   PAYMENT_REPLAY_WINDOW_SECONDS,
+  parsePaymentWebhookBody,
   RecurringConsentSnapshotSchema,
   verifyPaymentWebhookSignature,
 } from "#src/index";
@@ -27,6 +29,7 @@ describe("P5.0 Web Scale Contracts", () => {
         status: "success",
         timestamp_seconds: 1_776_300_000,
         merchant_id: "merchant_vn_01",
+        mode: "sandbox",
       };
       const parsed = AutomatedPaymentWebhookPayloadSchema.parse(validPayload);
       expect(parsed.provider).toBe("payos");
@@ -42,6 +45,7 @@ describe("P5.0 Web Scale Contracts", () => {
         status: "success",
         timestamp_seconds: 1_776_300_000,
         merchant_id: "merchant_01",
+        mode: "sandbox",
       };
       const result =
         AutomatedPaymentWebhookPayloadSchema.safeParse(invalidPayload);
@@ -75,6 +79,7 @@ describe("P5.0 Web Scale Contracts", () => {
         status: "success",
         timestamp_seconds: 1_776_300_000,
         merchant_id: "merchant_01",
+        mode: "sandbox",
       });
 
       const signature = computePaymentWebhookSignature(rawBody, secret);
@@ -87,6 +92,75 @@ describe("P5.0 Web Scale Contracts", () => {
       ).toBe(false);
       expect(
         verifyPaymentWebhookSignature(rawBody, signature, "wrong_secret")
+      ).toBe(false);
+    });
+  });
+
+  describe("BR-APM-01: nguồn gốc tín hiệu và thân thô", () => {
+    const base = {
+      provider: "payos",
+      provider_event_id: "evt_1",
+      order_uuid: "123e4567-e89b-12d3-a456-426614174000",
+      amount_vnd: 490_000,
+      status: "success",
+      timestamp_seconds: 1_776_300_000,
+      merchant_id: "merchant_01",
+      mode: "sandbox",
+    };
+
+    it("parsePaymentWebhookBody parses raw text and drops embedded signature", () => {
+      const parsed = parsePaymentWebhookBody(
+        JSON.stringify({ ...base, signature: "abc" })
+      );
+      expect(parsed.ok).toBe(true);
+      if (parsed.ok) {
+        expect("signature" in parsed.payload).toBe(false);
+      }
+    });
+
+    it("parsePaymentWebhookBody rejects non-JSON, off-schema and missing mode", () => {
+      expect(parsePaymentWebhookBody("nope").ok).toBe(false);
+      expect(parsePaymentWebhookBody("{}").ok).toBe(false);
+      const { mode: _mode, ...noMode } = base;
+      expect(parsePaymentWebhookBody(JSON.stringify(noMode)).ok).toBe(false);
+      expect(
+        parsePaymentWebhookBody(JSON.stringify({ ...base, mode: "test" })).ok
+      ).toBe(false);
+    });
+
+    it("isPaymentWebhookOriginTrusted needs both merchant and mode to match", () => {
+      const expected = { merchantId: "merchant_01", mode: "sandbox" } as const;
+      expect(
+        isPaymentWebhookOriginTrusted(
+          { merchant_id: base.merchant_id, mode: "sandbox" },
+          expected
+        )
+      ).toBe(true);
+      expect(
+        isPaymentWebhookOriginTrusted(
+          { merchant_id: "merchant_02", mode: "sandbox" },
+          expected
+        )
+      ).toBe(false);
+      expect(
+        isPaymentWebhookOriginTrusted(
+          { merchant_id: "merchant_01", mode: "live" },
+          expected
+        )
+      ).toBe(false);
+    });
+
+    it("signature does not survive re-serialising the body", () => {
+      const secret = "test_webhook_secret_key_12345";
+      const raw = `{ "a": 1 }`;
+      const signature = computePaymentWebhookSignature(raw, secret);
+      expect(verifyPaymentWebhookSignature(raw, signature, secret)).toBe(true);
+      expect(
+        verifyPaymentWebhookSignature(
+          JSON.stringify(JSON.parse(raw)),
+          signature,
+          secret
+        )
       ).toBe(false);
     });
   });

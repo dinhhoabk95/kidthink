@@ -146,6 +146,8 @@
 
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
+  import { navigateTo } from "#imports";
+  import { useApi } from "~/composables/use-api";
 
   interface NotificationItem {
     uuid: string;
@@ -157,6 +159,7 @@
     read_at: string | null;
   }
 
+  const api = useApi();
   const items = ref<NotificationItem[]>([]);
   const unreadCount = ref(0);
   const snapshotAt = ref<string | null>(null);
@@ -174,7 +177,7 @@
       const cursorParam = isReset ? "" : nextCursor.value || "";
       const unreadParam = unreadOnly.value ? "1" : "0";
 
-      const data = await globalThis.$fetch<{
+      const data = await api<{
         items: NotificationItem[];
         next_cursor: string | null;
         unread_count: number;
@@ -220,10 +223,15 @@
   async function onItemClick(item: NotificationItem) {
     if (!item.read_at) {
       try {
-        await $fetch(`/api/users/notifications/${item.uuid}/read`, {
+        await api(`/api/users/notifications/${item.uuid}/read`, {
           method: "PATCH",
         });
-        item.read_at = new Date().toISOString();
+        const readTimestamp = new Date().toISOString();
+        items.value = items.value.map((entry) =>
+          entry.uuid === item.uuid
+            ? { ...entry, read_at: readTimestamp }
+            : entry
+        );
         if (unreadCount.value > 0) {
           unreadCount.value -= 1;
         }
@@ -232,8 +240,11 @@
       }
     }
 
-    const targetUrl = item.action_url.startsWith("/") ? item.action_url : "/me";
-    navigateTo(targetUrl);
+    const targetUrl =
+      item.action_url.startsWith("/") && !item.action_url.startsWith("//")
+        ? item.action_url
+        : "/me";
+    await navigateTo(targetUrl);
   }
 
   async function markAllAsRead() {
@@ -241,16 +252,15 @@
       return;
     }
     try {
-      await $fetch("/api/users/notifications/read-all", {
+      await api("/api/users/notifications/read-all", {
         method: "POST",
         body: { snapshot_at: snapshotAt.value },
       });
 
-      for (const item of items.value) {
-        if (!item.read_at) {
-          item.read_at = new Date().toISOString();
-        }
-      }
+      const readTimestamp = new Date().toISOString();
+      items.value = items.value.map((entry) =>
+        entry.read_at ? entry : { ...entry, read_at: readTimestamp }
+      );
 
       unreadCount.value = 0;
     } catch (_err) {

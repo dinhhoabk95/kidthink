@@ -1,4 +1,5 @@
-import { auditLogs, childProfiles, getOwnerDb } from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { childProfiles, getOwnerDb } from "@mindkid/db";
 import { AdminNoteRequiredError } from "@mindkid/errors/account";
 import { ChildPendingDeletionError } from "@mindkid/errors/child";
 import { NotFoundError } from "@mindkid/errors/common";
@@ -52,16 +53,23 @@ export default defineEventHandler(async (event) => {
     reason,
   });
 
-  // Record audit log
-  await db.insert(auditLogs).values({
-    actorType: "manager",
-    actorId: session.manager_id,
-    action: "manager.child_profile.archived",
-    entityType: "child_profile",
-    entityId: targetChild.uuid,
-    reason,
-    ipAddress: getVerifiedRemoteIp(event),
-    userAgent: getHeader(event, "user-agent") ?? "unknown",
+  const ipAddress = getVerifiedRemoteIp(event);
+  const userAgent = getHeader(event, "user-agent") ?? "unknown";
+
+  // Record audit log via writeAudit (BR-AUD-02, BR-AUD-05: no child PII)
+  await db.transaction(async (tx) => {
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: session.manager_id,
+      action: "child_profile_archived",
+      entity_type: "child_profile",
+      entity_id: targetChild.uuid,
+      before_data: { child_uuid: targetChild.uuid, status: targetChild.status },
+      after_data: { child_uuid: targetChild.uuid, status: result.status },
+      reason,
+      ip_address: ipAddress,
+      user_agent: userAgent,
+    });
   });
 
   return {

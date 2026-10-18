@@ -10,7 +10,7 @@
           {{ curriculumData.curriculum_title }}
         </h2>
       </div>
-      <div class="text-lg font-extrabold text-brand-600">
+      <div class="text-lg font-extrabold text-brand-600 tabular-nums">
         <span>{{ Math.round(curriculumData.progress * 100) }}%</span>
       </div>
     </div>
@@ -21,7 +21,7 @@
       v-if="nextStep && !nextStep.is_completed"
     >
       <div class="flex flex-col">
-        <span class="text-sm font-semibold text-surface-500">
+        <span class="text-sm font-semibold text-surface-500 tabular-nums">
           Tuần {{ nextStep.week_no }} · Buổi {{ nextStep.session_no }}
         </span>
         <p class="text-base font-bold text-surface-800" v-if="nextStep.item">
@@ -79,6 +79,7 @@
 
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
+  import { useApi } from "~/composables/use-api";
 
   const props = defineProps<{
     childUuid: string;
@@ -110,6 +111,7 @@
     curriculum_progress: number;
   }
 
+  const api = useApi();
   const curriculumData = ref<CurriculumProgressResponse | null>(null);
   const nextStep = ref<NextStepResponse | null>(null);
 
@@ -119,10 +121,10 @@
     }
     try {
       const [prog, next] = await Promise.all([
-        $fetch<CurriculumProgressResponse>(
+        api<CurriculumProgressResponse>(
           `/api/users/children/${props.childUuid}/curriculum/progress`
         ),
-        $fetch<NextStepResponse>(
+        api<NextStepResponse>(
           `/api/users/children/${props.childUuid}/curriculum/next`
         ),
       ]);

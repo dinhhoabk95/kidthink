@@ -62,6 +62,8 @@ export type DatasetAsset =
 export interface DatasetItem {
   readonly id: string;
   readonly label: string;
+  /** Nhãn đọc tiếng Việt cho biểu diễn lượng — `BR-NRL-09`. Mặc định dùng `label` nếu không khai riêng. */
+  readonly spokenLabel?: string;
   readonly glyph?: string;
   readonly image?: DatasetAsset;
   readonly value?: number;

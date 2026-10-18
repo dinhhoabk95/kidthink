@@ -1,8 +1,24 @@
-import { childDailyStats, getOwnerDb, playSessions } from "@mindkid/db";
+import {
+  childDailyStats,
+  getOwnerDb,
+  playSessions,
+  telemetryEvents,
+} from "@mindkid/db";
+import {
+  computeAbandonedSessionDurationSeconds,
+  getDateIct,
+  type TelemetryEventInput,
+} from "@mindkid/shared";
 import { and, eq, sql } from "drizzle-orm";
-import { applyAbandonedSessionMastery } from "./mastery.js";
+import { applyAbandonedSessionMastery } from "#src/mastery";
 
 const DEFAULT_SWEEP_LIMIT = 100;
+
+function isTelemetryPayloadRecord(
+  val: typeof telemetryEvents.$inferSelect.payload
+): val is NonNullable<TelemetryEventInput["payload"]> {
+  return typeof val === "object" && val !== null && !Array.isArray(val);
+}
 
 export async function sweepAbandonedSessions(
   now = new Date(),
@@ -23,13 +39,37 @@ export async function sweepAbandonedSessions(
     .limit(limit);
 
   let sweptCount = 0;
-  const dateIctStr = now.toISOString().slice(0, 10);
+  const dateIctStr = getDateIct(now);
 
   for (const session of candidateSessions) {
+    const events = await db
+      .select()
+      .from(telemetryEvents)
+      .where(eq(telemetryEvents.sessionUuid, session.sessionUuid))
+      .orderBy(telemetryEvents.seq);
+
+    const mappedEvents: TelemetryEventInput[] = events.map((e) => ({
+      sessionUuid: e.sessionUuid,
+      seq: e.seq,
+      eventName: e.eventName,
+      occurredAtMs: e.occurredAtMs,
+      payload: isTelemetryPayloadRecord(e.payload) ? e.payload : null,
+      clientTimestamp: e.clientTimestamp,
+    }));
+
+    const playTimeSec =
+      mappedEvents.length > 0
+        ? computeAbandonedSessionDurationSeconds(
+            mappedEvents,
+            session.startedAt
+          )
+        : Math.max(0, session.durationSeconds ?? 0);
+
     const [updatedRow] = await db
       .update(playSessions)
       .set({
         completionStatus: "abandoned",
+        durationSeconds: playTimeSec,
         updatedAt: now,
       })
       .where(
@@ -47,7 +87,6 @@ export async function sweepAbandonedSessions(
     sweptCount++;
 
     if (session.childProfileId) {
-      const playTimeSec = session.durationSeconds || 1800;
       await db
         .insert(childDailyStats)
         .values({

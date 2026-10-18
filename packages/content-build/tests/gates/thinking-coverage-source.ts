@@ -11,7 +11,7 @@
  * Corpus seed thì tất định, luôn đọc được, và là thứ được review qua PR.
  */
 
-import type { ContentItem } from "./thinking-coverage.ts";
+import type { ContentItem } from "#src/gates/thinking-coverage";
 
 /** Một hàng seed không quy được về competency hoặc mechanic. */
 export interface UnresolvedItem {
@@ -54,7 +54,7 @@ function resolveCompetency(
   return levelCode.match(COMPETENCY_FROM_LEVEL_CODE)?.[1] ?? null;
 }
 
-interface SeedLevelHeader {
+export interface SeedLevelHeader {
   code: string;
   template_code: string;
   age_min: number;
@@ -65,7 +65,7 @@ interface SeedLevelHeader {
   origin: "human" | "ai_assisted";
 }
 
-interface SeedLevel {
+export interface SeedLevel {
   header: SeedLevelHeader;
 }
 

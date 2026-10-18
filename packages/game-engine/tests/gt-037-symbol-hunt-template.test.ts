@@ -273,7 +273,7 @@ describe("GT-037 Template & Schema (Task #278 S2)", () => {
     it("khai báo đúng mã và cơ chế theo hợp đồng", () => {
       expect(GT037Template.code).toBe("GT-037");
       expect(GT037Template.mechanic).toBe("symbol-hunt");
-      expect(GT037Template.status).toBe("draft");
+      expect(GT037Template.status).toBe("published");
       expect(GT037Template.layouts).toEqual(["scatter-board"]);
       expect(GT037Template.age_min).toBe(4);
       expect(GT037Template.age_max).toBe(6);

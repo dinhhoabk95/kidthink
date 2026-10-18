@@ -1,7 +1,11 @@
 import {
   buildAgeRecommendationWarning,
+  canPublishLessonFlow,
+  computeAgeGap,
   findDuplicateLessonsInFlow,
   findPrerequisiteViolation,
+  findUnpublishedFlowLessons,
+  rankFlowsForChild,
 } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import { loadContentDemandLedger } from "#src/gates/content-demand-file";
@@ -44,8 +48,6 @@ describe("BR-LFM-05: một flow cấm chứa cùng một lesson hai lần", () =
   });
 
   it("mọi lộ trình soạn dùng mỗi bài học đúng một lần", () => {
-    // Bản cũ đọc `lesson_codes` — trường không tồn tại trên cấu hình — nên
-    // luôn kiểm một mảng rỗng. Nay đọc các bài thật mà sổ cầu gán cho tiết.
     const ledger = loadContentDemandLedger();
     const lessonsByRoadmap = new Map<string, string[]>();
     for (const cell of ledger.cells) {
@@ -80,8 +82,15 @@ describe("BR-LFM-06: thứ tự lesson tôn trọng prerequisite", () => {
   });
 });
 
-describe("BR-LFM-04: cảnh báo tuổi nêu rõ số tuổi lệch", () => {
-  it("trong khoảng thì không cảnh báo", () => {
+describe("BR-LFM-02, BR-LFM-03, BR-LFM-04: cảnh báo tuổi và age_gap nêu rõ số tuổi lệch", () => {
+  it("trong khoảng thì age_gap = 0 và không cảnh báo", () => {
+    expect(
+      computeAgeGap({
+        childAge: 5,
+        targetAgeMin: 4,
+        targetAgeMax: 6,
+      })
+    ).toBe(0);
     expect(
       buildAgeRecommendationWarning({
         childAge: 5,
@@ -91,7 +100,14 @@ describe("BR-LFM-04: cảnh báo tuổi nêu rõ số tuổi lệch", () => {
     ).toBeUndefined();
   });
 
-  it("ca âm: trẻ lớn hơn nhãn thì cảnh báo kèm cả hai con số", () => {
+  it("ca âm: trẻ lớn hơn nhãn thì age_gap > 0 và cảnh báo kèm cả hai con số", () => {
+    expect(
+      computeAgeGap({
+        childAge: 8,
+        targetAgeMin: 4,
+        targetAgeMax: 6,
+      })
+    ).toBe(2);
     const warning = buildAgeRecommendationWarning({
       childAge: 8,
       targetAgeMin: 4,
@@ -101,7 +117,14 @@ describe("BR-LFM-04: cảnh báo tuổi nêu rõ số tuổi lệch", () => {
     expect(warning).toContain("bé nhà bạn 8 tuổi");
   });
 
-  it("ca âm: trẻ nhỏ hơn nhãn cũng cảnh báo", () => {
+  it("ca âm: trẻ nhỏ hơn nhãn cũng tính đúng age_gap và cảnh báo", () => {
+    expect(
+      computeAgeGap({
+        childAge: 3,
+        targetAgeMin: 5,
+        targetAgeMax: 6,
+      })
+    ).toBe(2);
     expect(
       buildAgeRecommendationWarning({
         childAge: 3,
@@ -112,7 +135,6 @@ describe("BR-LFM-04: cảnh báo tuổi nêu rõ số tuổi lệch", () => {
   });
 
   it("targetAgeMin = 0 là mốc CÓ THẬT, không phải 'chưa khai'", () => {
-    // `(minAge && childAge < minAge)` của bản cũ coi 0 là chưa khai.
     expect(
       buildAgeRecommendationWarning({
         childAge: 1,
@@ -120,5 +142,71 @@ describe("BR-LFM-04: cảnh báo tuổi nêu rõ số tuổi lệch", () => {
         targetAgeMax: 6,
       })
     ).toBeUndefined();
+  });
+});
+
+describe("BR-LFM-07 & BR-LFM-09: xếp hạng đề xuất flow không lọc bỏ flow và không tự ghi danh", () => {
+  it("BR-LFM-07 & BR-LFM-09: trả đủ mọi flow published kèm fits_age, age_gap, recommend_score theo thứ tự ưu tiên", () => {
+    const ranked = rankFlowsForChild(3, [
+      {
+        code: "CUR-56",
+        title: "Flow 5–6 tuổi",
+        sessionCount: 126,
+        targetAgeMin: 5,
+        targetAgeMax: 6,
+      },
+      {
+        code: "CUR-34",
+        title: "Flow 3–4 tuổi",
+        sessionCount: 72,
+        targetAgeMin: 3,
+        targetAgeMax: 4,
+      },
+    ]);
+
+    expect(ranked).toHaveLength(2);
+    expect(ranked[0]).toMatchObject({
+      code: "CUR-34",
+      fits_age: true,
+      age_gap: 0,
+      recommend_score: 100,
+    });
+    expect(ranked[1]).toMatchObject({
+      code: "CUR-56",
+      fits_age: false,
+      age_gap: 2,
+      recommend_score: 50,
+    });
+    expect(ranked[1]?.warning).toContain("bé nhà bạn 3 tuổi");
+  });
+});
+
+describe("BR-LFM-08: flow chỉ publish được khi lắp đủ các chặng published có thật", () => {
+  const publishedCodes = new Set(ALL_SEED_LESSONS.map((l) => l.header.code));
+
+  it("flow lắp đủ lesson published có thật trong thư viện thì hợp lệ", () => {
+    const sample = ALL_SEED_LESSONS.slice(0, 3).map((l) => l.header.code);
+    const check = canPublishLessonFlow({
+      flowLessonCodes: sample,
+      publishedLessonCodes: publishedCodes,
+    });
+    expect(check.ok).toBe(true);
+    expect(check.missingLessonCodes).toEqual([]);
+  });
+
+  it("ca âm BR-LTV/BR-LFM-08: flow rỗng, có chặng trống hoặc trỏ tới lesson chưa published thì bị chặn", () => {
+    expect(findUnpublishedFlowLessons([], publishedCodes)).toEqual([
+      "<empty-flow>",
+    ]);
+
+    const checkMissing = canPublishLessonFlow({
+      flowLessonCodes: ["LES-0001", "", "LES-9999"],
+      publishedLessonCodes: publishedCodes,
+    });
+    expect(checkMissing.ok).toBe(false);
+    expect(checkMissing.missingLessonCodes).toEqual([
+      "<blank-slot>",
+      "LES-9999",
+    ]);
   });
 });

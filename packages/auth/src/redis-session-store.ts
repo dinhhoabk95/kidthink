@@ -8,7 +8,7 @@ import type {
   ManagerTokenPayload,
   UserTokenPayload,
 } from "./contracts";
-import type { AccountReference } from "./ports";
+import type { AccountReference, SessionStorePort } from "./ports";
 
 export type AuthNamespace = "user" | "manager";
 
@@ -20,6 +20,10 @@ export interface SessionData {
   readonly createdAt: number;
   readonly expiresAt: number;
   readonly activeChildId?: number;
+  /** Mốc xác minh lại gần nhất của đúng phiên này (UC-004 BR-022). */
+  readonly reauthAt?: number;
+  /** Phiên bản phiên của tài khoản lúc cấp; lệch `account_gen` hiện tại thì phiên đã bị thu hồi. */
+  readonly gen?: number;
 }
 
 export interface RememberData {
@@ -32,6 +36,7 @@ export interface RememberData {
   readonly absoluteExpiresAt: number;
   readonly role?: ManagerRole;
   readonly displayName: string;
+  readonly gen?: number;
 }
 
 export interface CreateSessionOptions {
@@ -76,6 +81,13 @@ export function sha256(input: string): string {
 
 export function generateTokenHex(bytes = 32): string {
   return crypto.randomBytes(bytes).toString("hex");
+}
+
+export function buildAuthSentinelKey(
+  namespace: AuthNamespace,
+  token: string
+): string {
+  return `auth:v1:${namespace}:sentinel:${token}`;
 }
 
 export interface MinimalRedisClient {
@@ -181,12 +193,17 @@ export class InMemoryRedisClient implements MinimalRedisClient {
   async incr(key: string): Promise<number> {
     const val = await this.get(key);
     const num = val ? Number.parseInt(val, 10) + 1 : 1;
+    const expiresAt = this.kv.get(key)?.expiresAt;
     await this.set(key, num.toString());
+    const item = this.kv.get(key);
+    if (item && expiresAt !== undefined) {
+      item.expiresAt = expiresAt;
+    }
     return num;
   }
 }
 
-export class RedisSessionStore {
+export class RedisSessionStore implements SessionStorePort {
   private readonly redis: MinimalRedisClient;
 
   constructor(redis: MinimalRedisClient) {
@@ -216,6 +233,15 @@ export class RedisSessionStore {
     return `auth:v1:${namespace}:account_gen:${accountId}`;
   }
 
+  private async currentGen(
+    namespace: AuthNamespace,
+    accountId: number
+  ): Promise<number> {
+    const raw = await this.redis.get(this.accountGenKey(namespace, accountId));
+    const parsed = raw === null ? 0 : Number.parseInt(raw, 10);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }
+
   async createSession(
     options: CreateSessionOptions
   ): Promise<CreatedSessionOutput> {
@@ -227,7 +253,9 @@ export class RedisSessionStore {
       const sessionToken = generateTokenHex(32); // 256-bit
       const sessionDigest = sha256(sessionToken);
 
+      const gen = await this.currentGen(options.namespace, options.accountId);
       const sessionData: SessionData = {
+        gen,
         accountId: options.accountId,
         displayName: options.displayName,
         role: options.role,
@@ -262,6 +290,7 @@ export class RedisSessionStore {
           absoluteExpiresAt,
           role: options.role,
           displayName: options.displayName,
+          gen,
         };
 
         await this.redis.set(
@@ -335,6 +364,15 @@ export class RedisSessionStore {
         return null;
       }
 
+      const currentGen = await this.currentGen(namespace, data.accountId);
+      if ((data.gen ?? 0) !== currentGen) {
+        await this.redis.del(this.sessionKey(namespace, digest));
+        return null;
+      }
+
+      const reauthAt =
+        typeof data.reauthAt === "number" ? new Date(data.reauthAt) : undefined;
+
       if (namespace === "user") {
         return {
           user: {
@@ -342,6 +380,7 @@ export class RedisSessionStore {
             display_name: data.displayName,
             session_id: digest,
             active_child_db_id: data.activeChildId,
+            reauth_at: reauthAt,
           },
         };
       }
@@ -353,6 +392,7 @@ export class RedisSessionStore {
             display_name: data.displayName,
             session_id: digest,
             role: data.role ?? "content_reviewer",
+            reauth_at: reauthAt,
           },
         };
       }
@@ -445,6 +485,15 @@ export class RedisSessionStore {
         throw new SessionRevokedError();
       }
 
+      const currentGen = await this.currentGen(
+        options.namespace,
+        rememberData.accountId
+      );
+      if ((rememberData.gen ?? 0) !== currentGen) {
+        await this.redis.del(rememberKey);
+        throw new SessionRevokedError();
+      }
+
       const nextRememberToken = await this.validateAndRotateVerifier(
         options.namespace,
         rememberKey,
@@ -487,6 +536,119 @@ export class RedisSessionStore {
           role: rememberData.role ?? "content_reviewer",
         },
       };
+    } catch (err) {
+      if (isAppError(err)) {
+        throw err;
+      }
+      throw new ServiceUnavailableError();
+    }
+  }
+
+  private async readSession(
+    namespace: AuthNamespace,
+    sessionId: string
+  ): Promise<SessionData | null> {
+    const raw = await this.redis.get(this.sessionKey(namespace, sessionId));
+    return raw ? JSON.parse(raw) : null;
+  }
+
+  async getDeviceId(
+    namespace: AuthNamespace,
+    sessionId: string
+  ): Promise<string | null> {
+    try {
+      return (await this.readSession(namespace, sessionId))?.deviceId ?? null;
+    } catch (err) {
+      if (isAppError(err)) {
+        throw err;
+      }
+      throw new ServiceUnavailableError();
+    }
+  }
+
+  async getReauthState(
+    sessionId: string,
+    account: AccountReference
+  ): Promise<{ readonly reauth_at: Date | null } | null> {
+    try {
+      const data = await this.readSession(account.account_type, sessionId);
+      if (!data || data.accountId !== account.account_id) {
+        return null;
+      }
+      return {
+        reauth_at:
+          typeof data.reauthAt === "number" ? new Date(data.reauthAt) : null,
+      };
+    } catch (err) {
+      if (isAppError(err)) {
+        throw err;
+      }
+      throw new ServiceUnavailableError();
+    }
+  }
+
+  /** Ghi mốc xác minh lại vào bản ghi phiên Redis, giữ nguyên hạn của phiên. */
+  async markReauthenticated(
+    sessionId: string,
+    account: AccountReference,
+    at: Date,
+    now: Date = new Date()
+  ): Promise<void> {
+    try {
+      const data = await this.readSession(account.account_type, sessionId);
+      if (!data || data.accountId !== account.account_id) {
+        throw new SessionRevokedError();
+      }
+      const remainingSeconds = Math.ceil(
+        (data.expiresAt - now.getTime()) / 1000
+      );
+      if (remainingSeconds <= 0) {
+        throw new SessionRevokedError();
+      }
+      const updated: SessionData = { ...data, reauthAt: at.getTime() };
+      await this.redis.set(
+        this.sessionKey(account.account_type, sessionId),
+        JSON.stringify(updated),
+        "EX",
+        remainingSeconds
+      );
+    } catch (err) {
+      if (isAppError(err)) {
+        throw err;
+      }
+      throw new ServiceUnavailableError();
+    }
+  }
+
+  async revokeSession(
+    sessionId: string,
+    account: AccountReference
+  ): Promise<void> {
+    const deviceId = await this.getDeviceId(account.account_type, sessionId);
+    if (deviceId) {
+      await this.revokeDevice(
+        account.account_type,
+        account.account_id,
+        deviceId
+      );
+    }
+  }
+
+  /** Thu hồi mọi thiết bị của tài khoản trừ `keepDeviceId` (đổi mật khẩu, bật MFA). */
+  async revokeOtherDevices(
+    namespace: AuthNamespace,
+    accountId: number,
+    keepDeviceId: string
+  ): Promise<void> {
+    try {
+      const deviceIds = await this.redis.smembers(
+        this.accountDevicesKey(namespace, accountId)
+      );
+      for (const deviceId of deviceIds) {
+        if (deviceId !== keepDeviceId) {
+          await this.revokeDevice(namespace, accountId, deviceId);
+        }
+      }
     } catch (err) {
       if (isAppError(err)) {
         throw err;

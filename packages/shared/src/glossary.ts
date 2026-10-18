@@ -19,6 +19,14 @@ export const BANNED_TERMS = [
   "student",
   "pupil",
   "score", // displayed to child — use "sao", "hoàn thành"
+  "native_mobile",
+  "licensing",
+  "marketplace",
+  "phụ huynh", // as account type — use "User" (BR-GLOS-04)
+  "giáo viên", // as account type — use "User" (BR-GLOS-04)
+  "chậm phát triển",
+  "IQ",
+  "chẩn đoán",
 ] as const;
 
 export type BannedTerm = (typeof BANNED_TERMS)[number];
@@ -38,4 +46,12 @@ export const TERM_REPLACEMENTS: Record<BannedTerm, string | null> = {
   student: "child profile",
   pupil: "child profile",
   score: "sao / hoàn thành",
+  native_mobile: null,
+  licensing: null,
+  marketplace: null,
+  "phụ huynh": "User",
+  "giáo viên": "User",
+  "chậm phát triển": "cần luyện thêm",
+  IQ: "cần luyện thêm",
+  "chẩn đoán": "cần luyện thêm",
 };

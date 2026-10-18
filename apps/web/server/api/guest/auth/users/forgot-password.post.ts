@@ -1,16 +1,12 @@
 import { generateSecureToken, hashSecureToken } from "@mindkid/auth";
-import {
-  getAppDb,
-  notificationDeliveries,
-  notifications,
-  users,
-  verificationTokens,
-} from "@mindkid/db";
+import { getAppDb, users, verificationTokens } from "@mindkid/db";
 import { ValidationError } from "@mindkid/errors/common";
+import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, type H3Event, readBody } from "h3";
 import { z } from "zod";
+import { buildAccountActionUrl } from "#server/utils/account-action-url";
 import {
   assertRateLimitAllowed,
   getVerifiedRemoteIp,
@@ -81,27 +77,21 @@ export async function handleForgotPassword(event: H3Event, testBody?: unknown) {
     expiresAt,
   });
 
-  const [createdNotification] = await db
-    .insert(notifications)
-    .values({
-      recipientType: "user",
-      recipientId: user.id,
-      templateCode: "password_reset",
-      payload: {
-        token: rawToken,
-        email: user.email,
-        displayName: user.displayName,
-      },
-    })
-    .returning();
-
-  if (createdNotification) {
-    await db.insert(notificationDeliveries).values({
-      notificationId: createdNotification.id,
-      channel: "email",
-      status: "queued",
-    });
-  }
+  const resetUrl = buildAccountActionUrl("password_reset", rawToken);
+  await dispatchTransactionalEmail({
+    recipientType: "user",
+    recipientId: user.id,
+    code: "password_reset",
+    to: user.email,
+    payload: {
+      email: user.email,
+      displayName: user.displayName,
+    },
+    secrets: {
+      token: rawToken,
+      url: resetUrl,
+    },
+  });
 
   return { ok: true };
 }

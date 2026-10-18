@@ -364,11 +364,12 @@
     resolveLevelCta,
   } from "@mindkid/shared/client";
   import { computed, onMounted, ref, watch } from "vue";
-  import { useRoute, useRouter } from "vue-router";
   import {
     definePageMeta,
     useFetch,
     useHead,
+    useRoute,
+    useRouter,
     useSeoMeta,
     useUserSession,
   } from "#imports";
@@ -377,6 +378,7 @@
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
+  import { useApi } from "~/composables/use-api";
 
   definePageMeta({ layout: false });
 
@@ -560,16 +562,17 @@
     }),
   });
 
+  const api = useApi();
   const completedLevelCodes = ref<string[]>([]);
 
   onMounted(async () => {
     if (loggedIn.value) {
       try {
         const [ctx, playMap] = await Promise.all([
-          $fetch<UserAccessContext>("/api/users/access-context", {
+          api<UserAccessContext>("/api/users/access-context", {
             credentials: "include",
           }),
-          $fetch<{ completed_level_codes?: string[] }>("/api/users/play/map", {
+          api<{ completed_level_codes?: string[] }>("/api/users/play/map", {
             credentials: "include",
           }).catch(() => null),
         ]);
@@ -582,7 +585,7 @@
       }
     } else {
       try {
-        const guestMap = await $fetch<{ completed_level_codes?: string[] }>(
+        const guestMap = await api<{ completed_level_codes?: string[] }>(
           "/api/guest/play/map",
           { credentials: "include" }
         );

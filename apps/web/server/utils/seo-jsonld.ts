@@ -1,5 +1,10 @@
 import { requireEnv } from "@mindkid/config";
-import { FAQ_ITEMS, type FaqItem } from "@mindkid/shared";
+import {
+  buildPublicHreflangLinks,
+  FAQ_ITEMS,
+  type FaqItem,
+  type HreflangLinkTag,
+} from "@mindkid/shared";
 
 const BRAND_NAME = "MindKid";
 
@@ -7,6 +12,13 @@ const BRAND_NAME = "MindKid";
 // renders the document, and importing this module must not require it.
 function siteUrl(): string {
   return requireEnv("SITE_URL");
+}
+
+/**
+ * BR-SEO2-09: Alternate hreflang (`vi-VN` & `x-default`) links using SITE_URL
+ */
+export function buildHreflangLinks(path: string): readonly HreflangLinkTag[] {
+  return buildPublicHreflangLinks(path, siteUrl());
 }
 
 /**

@@ -50,7 +50,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const now = new Date();
-  markCurrentSessionReauthenticated(event, now);
+  await markCurrentSessionReauthenticated(event, now);
 
   return {
     ok: true,

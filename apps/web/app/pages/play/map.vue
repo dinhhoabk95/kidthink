@@ -19,7 +19,9 @@
           v-if="mapData"
         >
           <UIcon class="w-6 h-6 text-amber-500" name="i-lucide-star" />
-          <span class="font-heading font-bold text-surface-800 text-lg">
+          <span
+            class="font-heading font-bold text-surface-800 text-lg tabular-nums"
+          >
             {{ mapData.completed_lessons }}/{{ mapData.total_lessons }}
           </span>
         </div>
@@ -91,7 +93,7 @@
               </span>
               <div>
                 <span
-                  class="font-heading font-bold text-xs uppercase tracking-wider text-brand-600 block"
+                  class="font-heading font-bold text-xs tracking-wider text-brand-600 block tabular-nums"
                 >
                   Tuần {{ w.week_no }}
                 </span>
@@ -194,11 +196,13 @@
   import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
+  import { useApi } from "~/composables/use-api";
 
   /** Bề mặt trẻ: layout kid light-only (`BR-WTM-04`, `BR-PSZ-11`). */
   definePageMeta({ layout: "kid" });
 
   const router = useRouter();
+  const apiFetch = useApi();
   const showParentGate = ref(false);
   const mapData = ref<ChildThemeMapResponse | null>(null);
   const isLoading = ref(true);
@@ -248,7 +252,7 @@
   onMounted(async () => {
     try {
       isLoading.value = true;
-      mapData.value = await $fetch<ChildThemeMapResponse>(
+      mapData.value = await apiFetch<ChildThemeMapResponse>(
         "/api/users/play/theme-map"
       );
     } catch {

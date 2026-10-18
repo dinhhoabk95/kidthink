@@ -511,29 +511,8 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
     expect(goodRes.status).toBe("approved");
   });
 
-  // --- 3. Review Decisions & Bulk Reject (BR-CRQ-03, D-KH) ---
-  it("Task 3: POST /api/managers/content/review-queue/bulk-reject rejects author items and logs records (D-KH, BR-CRQ-03)", async () => {
-    const db = getOwnerDb();
-    const tpl = await ensureTemplate();
-    const code = await getUniqueLevelCode("BLK");
-
-    await db.insert(gameLevels).values({
-      entityId: Math.floor(Math.random() * 800_000 + 100_000),
-      code,
-      contentVersion: 1,
-      templateId: tpl.id,
-      title: "Bulk Reject Target",
-      contentPack: VALID_CONTENT_PACK,
-      difficultyParams: {},
-      accessTier: "free",
-      status: "in_review",
-      authoredIn: "studio",
-      ageMin: 3,
-      ageMax: 6,
-      difficulty: 1,
-      createdByManagerId: testManagerId,
-    });
-
+  // --- 3. Review Decisions — Bulk Operations Forbidden (BR-CRQ-01) ---
+  it("Task 3: POST /api/managers/content/review-queue/bulk-reject returns 404 NOT_FOUND (BR-CRQ-01)", async () => {
     const event = mockEvent(
       {},
       {},
@@ -543,9 +522,13 @@ describe("Content Review, Publish, Versioning & SEO Admin APIs (P2.8, BR-CRQ-*, 
       }
     );
 
-    const res = (await bulkRejectHandler(event)) as any;
-    expect(res.success).toBe(true);
-    expect(res.rejected_count).toBeGreaterThan(0);
+    try {
+      await bulkRejectHandler(event);
+      expect.fail("Should throw 404 NOT_FOUND for bulk reject");
+    } catch (err) {
+      const httpErr = err as { statusCode?: number; status?: number };
+      expect(httpErr.statusCode ?? httpErr.status).toBe(404);
+    }
   });
 
   // --- 4. Publish, Archive & Rollback (BR-PUB-01..08, D-KI) ---

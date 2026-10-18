@@ -1,5 +1,5 @@
 import { optionalEnv } from "@mindkid/config";
-import { redactPii } from "./redactor.js";
+import { type RedactableValue, redactPii } from "./redactor.js";
 
 export type LogLevel = "debug" | "info" | "warn" | "error";
 export type ActorType = "guest" | "user" | "manager" | "system" | "worker";
@@ -14,7 +14,7 @@ export interface StructuredLogEntry {
   code?: string;
   duration_ms?: number;
   message?: string;
-  [key: string]: unknown;
+  [key: string]: RedactableValue;
 }
 
 export interface ClientErrorLogInput {
@@ -22,7 +22,7 @@ export interface ClientErrorLogInput {
   stack?: string;
   route?: string;
   user_agent?: string;
-  context?: Record<string, unknown>;
+  context?: Record<string, RedactableValue>;
 }
 
 /**

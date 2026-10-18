@@ -429,6 +429,7 @@
     LessonPlanSummary,
   } from "@mindkid/shared/client";
   import { computed, reactive, ref } from "vue";
+  import { useApi } from "~/composables/use-api";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
   // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
@@ -474,6 +475,8 @@
   const deleting = ref(false);
   const deleteError = ref<string | null>(null);
 
+  const api = useApi();
+
   function confirmDelete(plan: LessonPlanSummary) {
     deleteError.value = null;
     planToDelete.value = plan;
@@ -486,7 +489,7 @@
     deleting.value = true;
     deleteError.value = null;
     try {
-      await $fetch(`/api/users/lesson-plans/${planToDelete.value.uuid}`, {
+      await api(`/api/users/lesson-plans/${planToDelete.value.uuid}`, {
         method: "DELETE",
       });
       planToDelete.value = null;
@@ -527,13 +530,10 @@
         payload.source_lesson_code = createForm.source_lesson_code.trim();
       }
 
-      const created = await $fetch<LessonPlanDetail>(
-        "/api/users/lesson-plans",
-        {
-          method: "POST",
-          body: payload,
-        }
-      );
+      const created = await api<LessonPlanDetail>("/api/users/lesson-plans", {
+        method: "POST",
+        body: payload,
+      });
 
       showCreateModal.value = false;
       await navigateTo(`/lesson-plans/${created.uuid}`);
@@ -575,7 +575,7 @@
     for (let attempts = 1; attempts <= maxAttempts; attempts++) {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      const statusRes = await $fetch<{
+      const statusRes = await api<{
         status: string;
         download_url?: string;
         error?: string;
@@ -597,7 +597,7 @@
     bannerMessage.value = `Đang chuẩn bị xuất PDF cho giáo án "${plan.title}"...`;
 
     try {
-      const res = await $fetch<{ job_uuid: string; status: string }>(
+      const res = await api<{ job_uuid: string; status: string }>(
         "/api/users/exports",
         {
           method: "POST",

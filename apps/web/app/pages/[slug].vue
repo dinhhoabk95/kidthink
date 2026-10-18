@@ -131,18 +131,12 @@
     margin-bottom: 1rem;
   }
 
-  .badge-version,
   .badge-date,
   .badge-child-safety {
     font-size: 0.8rem;
     font-weight: 700;
     padding: 0.25rem 0.65rem;
     border-radius: 9999px;
-  }
-
-  .badge-version {
-    background-color: var(--color-brand-100);
-    color: var(--color-brand-800);
   }
 
   .badge-date {
@@ -213,46 +207,6 @@
     line-height: 1.7;
     color: var(--color-surface-700);
     margin: 0;
-  }
-
-  .legal-footer-meta {
-    margin-top: 3rem;
-  }
-
-  .version-history-box {
-    background-color: white;
-    padding: 1.5rem;
-    border-radius: 1rem;
-    border: 1px solid var(--color-surface-200);
-  }
-
-  .history-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--color-surface-900);
-    margin-bottom: 0.5rem;
-  }
-
-  .history-note {
-    font-size: 0.85rem;
-    color: var(--color-surface-600);
-    margin-bottom: 0.75rem;
-  }
-
-  .version-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-  }
-
-  .version-link {
-    color: var(--color-brand-600);
-    text-decoration: none;
-    font-weight: 600;
   }
 
   .not-found-box {

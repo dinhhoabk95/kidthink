@@ -1,4 +1,5 @@
 import { type EntitlementKey, PACKAGE_CATALOG } from "./entitlement-catalog.js";
+import { FEATURED_GUEST_LEVELS } from "./public-seo.js";
 import type { AccessTier } from "./taxonomy-types.js";
 
 export const TIER_ORDER = ["free", "login", "standard", "premium"] as const;
@@ -9,6 +10,22 @@ export const TIER_RANK: Record<AccessTier, number> = {
   standard: 2,
   premium: 3,
 };
+
+/**
+ * BR-LAD-07: Allow-list đóng gồm đúng 6 game level (1 mỗi competency C1–C6,
+ * difficulty ≤ 2) mà Guest được phép mở ở bậc `free`. Nguồn sự thật duy nhất
+ * lấy từ `FEATURED_GUEST_LEVELS`.
+ */
+export const GUEST_ALLOWLIST_LEVEL_CODES: readonly string[] =
+  FEATURED_GUEST_LEVELS.map((level) => level.code);
+
+const GUEST_ALLOWLIST_SET: ReadonlySet<string> = new Set(
+  GUEST_ALLOWLIST_LEVEL_CODES
+);
+
+export function isGuestAllowedLevel(code: string): boolean {
+  return GUEST_ALLOWLIST_SET.has(code);
+}
 
 /**
  * Bậc cần entitlement nào — mục 7.2 của
@@ -79,13 +96,21 @@ export function allowedTiers(
   return Promise.resolve(tiersUpTo(highestAllowedTier(caller, activeKeys)));
 }
 
+export interface EffectiveTierOptions {
+  readonly code?: string;
+  readonly callerKind?: CallerIdentity["kind"];
+}
+
 /**
  * BR-LAD-02: Content missing access_tier resolves to premium, not free.
  * BR-LAD-05: Effective tier = max(levelTier, curriculumTier).
+ * BR-LAD-07: Guest chỉ mở được 6 level trong allow-list; level `free` ngoài
+ * allow-list có bậc hiệu lực là `login` đối với Guest.
  */
 export function getEffectiveTier(
   levelTier?: AccessTier | null,
-  curriculumTier?: AccessTier | null
+  curriculumTier?: AccessTier | null,
+  options?: EffectiveTierOptions
 ): AccessTier {
   const resolvedLevelTier = levelTier ?? "premium";
   const resolvedCurriculumTier = curriculumTier ?? "free";
@@ -95,7 +120,19 @@ export function getEffectiveTier(
 
   const maxRank = Math.max(levelRank, curriculumRank);
 
-  return TIER_ORDER.find((t) => TIER_RANK[t] === maxRank) ?? "premium";
+  const resolvedTier =
+    TIER_ORDER.find((t) => TIER_RANK[t] === maxRank) ?? "premium";
+
+  if (
+    resolvedTier === "free" &&
+    options?.callerKind === "guest" &&
+    options.code !== undefined &&
+    !isGuestAllowedLevel(options.code)
+  ) {
+    return "login";
+  }
+
+  return resolvedTier;
 }
 
 export interface LockedPreviewMetadata {

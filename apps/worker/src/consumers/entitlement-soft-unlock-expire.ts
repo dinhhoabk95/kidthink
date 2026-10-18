@@ -1,5 +1,5 @@
 import { logJobDone } from "#src/log";
-import { runExpireSoftUnlockEntitlements } from "../services/payment-jobs.js";
+import { runExpireSoftUnlockEntitlements } from "#src/services/payment-jobs";
 import type { Consumer } from "./types.js";
 
 export const entitlementSoftUnlockExpire: Consumer<

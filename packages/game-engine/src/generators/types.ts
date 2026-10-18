@@ -32,12 +32,12 @@ export interface GeneratorInput {
   escalation_step?: number;
 }
 
-export interface GeneratedLevel<TContent = unknown, TDifficulty = unknown> {
+export interface GeneratedLevel<TContent = object, TDifficulty = object> {
   content_pack: TContent;
   difficulty_params: TDifficulty;
 }
 
-export interface LevelGenerator<TContent = unknown, TDifficulty = unknown> {
+export interface LevelGenerator<TContent = object, TDifficulty = object> {
   engine: `GT-${string}`;
   axes: {
     age_band: AgeBand[];

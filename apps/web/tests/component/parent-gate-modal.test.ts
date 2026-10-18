@@ -2,6 +2,12 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import ParentGateModal from "~/components/parent-gate-modal.vue";
+import { resetActiveParentGateModal } from "~/composables/play/parent-gate-state";
+import {
+  clearParentGateTelemetryRecords,
+  getParentGateTelemetryRecords,
+  sanitizeParentGatePayload,
+} from "~/composables/play/use-play-telemetry";
 
 vi.mock("~/composables/use-csrf-fetch", () => ({
   useCsrfHeaders: () => ({
@@ -13,9 +19,11 @@ const fetchMock = vi.fn();
 const CHALLENGE_REGEX = /(\d+)\s*[x×*]\s*(\d+)/;
 const WHITESPACE_REGEX = /\s+/g;
 
-describe("ParentGateModal — khoá tin cậy tách theo mode (Task #260 C2)", () => {
+describe("ParentGateModal — khoá tin cậy tách theo mode & telemetry (Task #260 C2, #294 S3)", () => {
   beforeEach(() => {
     sessionStorage.clear();
+    resetActiveParentGateModal();
+    clearParentGateTelemetryRecords();
     fetchMock.mockReset();
     fetchMock.mockResolvedValue({
       challenge_id: "srv-1",
@@ -23,7 +31,7 @@ describe("ParentGateModal — khoá tin cậy tách theo mode (Task #260 C2)", (
       factor_b: 4,
       challenge_payload: "server_payload",
     });
-    (globalThis as { $fetch?: unknown }).$fetch = fetchMock;
+    (globalThis as { $fetch?: typeof fetchMock }).$fetch = fetchMock;
   });
 
   it("đường clientOnly ghi trust vào khoá riêng `pg_client_trusted_until`", async () => {
@@ -127,15 +135,79 @@ describe("ParentGateModal — khoá tin cậy tách theo mode (Task #260 C2)", (
     reopened.unmount();
   });
 
-  it("phát parent_gate_shown khi mở", async () => {
+  it("phát parent_gate_shown, parent_gate_passed, parent_gate_failed và không chứa đáp án (spec §5, BR-PGT-07)", async () => {
     const wrapper = mount(ParentGateModal, {
-      props: { clientOnly: true },
+      props: { clientOnly: true, trigger: "switch_profile" },
       attachTo: document.body,
       global: { stubs: { UIcon: true } },
     });
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.emitted("parent_gate_shown")).toHaveLength(1);
+    expect(wrapper.emitted("parent_gate_shown")).toEqual([
+      [{ trigger: "switch_profile" }],
+    ]);
+
+    const input = wrapper.find("input");
+    // Lần 1 nhập sai (1)
+    await input.setValue("1");
+    await input.trigger("keyup.enter");
+    await wrapper.vm.$nextTick();
+
+    // Lần 2 nhập đúng
+    const text = wrapper.text();
+    const match = CHALLENGE_REGEX.exec(text.replace(WHITESPACE_REGEX, " "));
+    const expected = Number(match?.[1]) * Number(match?.[2]);
+    await input.setValue(String(expected));
+    await input.trigger("keyup.enter");
+    await wrapper.vm.$nextTick();
+
+    const records = getParentGateTelemetryRecords();
+    expect(records.map((r) => r.event_name)).toEqual([
+      "parent_gate_shown",
+      "parent_gate_failed",
+      "parent_gate_passed",
+    ]);
+    expect(records[0]?.payload).toEqual({ trigger: "switch_profile" });
+    expect(records[1]?.payload).toEqual({ attempts: 1 });
+    expect(records[2]?.payload).toEqual({ attempts: 2 });
+
+    // BR-PGT-07: Cấm chứa câu trả lời hoặc thừa số trong telemetry
+    for (const rec of records) {
+      expect(rec.payload).not.toHaveProperty("answer");
+      expect(rec.payload).not.toHaveProperty("factor_a");
+      expect(rec.payload).not.toHaveProperty("factor_b");
+    }
+
+    const sanitized = sanitizeParentGatePayload("parent_gate_passed", {
+      attempts: 1,
+      answer: 12,
+      factor_a: 3,
+      factor_b: 4,
+    });
+    expect(sanitized).toEqual({ attempts: 1 });
     wrapper.unmount();
+  });
+
+  it("BR-PGT-05: chỉ một modal cổng hoạt động tại một thời điểm trên một tab", async () => {
+    const first = mount(ParentGateModal, {
+      props: { clientOnly: true },
+      attachTo: document.body,
+      global: { stubs: { UIcon: true } },
+    });
+    await first.vm.$nextTick();
+
+    const second = mount(ParentGateModal, {
+      props: { clientOnly: true },
+      attachTo: document.body,
+      global: { stubs: { UIcon: true } },
+    });
+    await second.vm.$nextTick();
+
+    expect(first.find('[role="dialog"]').exists()).toBe(true);
+    expect(second.find('[role="dialog"]').exists()).toBe(false);
+    expect(second.emitted("cancel")).toHaveLength(1);
+
+    second.unmount();
+    first.unmount();
   });
 });

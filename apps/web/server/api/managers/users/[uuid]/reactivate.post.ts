@@ -1,4 +1,5 @@
-import { auditLogs, getOwnerDb, users } from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { getOwnerDb, users } from "@mindkid/db";
 import {
   AdminNoteRequiredError,
   UserAlreadyDeletedError,
@@ -46,30 +47,38 @@ export default defineEventHandler(async (event) => {
     throw new UserAlreadyDeletedError();
   }
 
-  const [updatedUser] = await db
-    .update(users)
-    .set({
-      status: "active",
-      suspendedReason: null,
-      updatedAt: new Date(),
-    })
-    .where(eq(users.id, targetUser.id))
-    .returning();
+  const ipAddress = getVerifiedRemoteIp(event);
+  const userAgent = getHeader(event, "user-agent") ?? "unknown";
 
-  if (!updatedUser) {
-    throw new InternalError("Cập nhật tài khoản thất bại");
-  }
+  const updatedUser = await db.transaction(async (tx) => {
+    const [row] = await tx
+      .update(users)
+      .set({
+        status: "active",
+        suspendedReason: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, targetUser.id))
+      .returning();
 
-  // Insert audit log
-  await db.insert(auditLogs).values({
-    actorType: "manager",
-    actorId: session.manager_id,
-    action: "manager.user.reactivated",
-    entityType: "user",
-    entityId: targetUser.uuid,
-    reason,
-    ipAddress: getVerifiedRemoteIp(event),
-    userAgent: getHeader(event, "user-agent") ?? "unknown",
+    if (!row) {
+      throw new InternalError("Cập nhật tài khoản thất bại");
+    }
+
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: session.manager_id,
+      action: "user_reactivated",
+      entity_type: "user",
+      entity_id: targetUser.uuid,
+      before_data: { status: targetUser.status },
+      after_data: { status: row.status },
+      reason,
+      ip_address: ipAddress,
+      user_agent: userAgent,
+    });
+
+    return row;
   });
 
   return {

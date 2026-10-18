@@ -1,10 +1,12 @@
+import { writeAudit } from "@mindkid/audit";
 import { getClient } from "@mindkid/cache";
-import { auditLogs, entitlements, getDb } from "@mindkid/db";
+import { entitlements, getDb, packages, quotaUsage } from "@mindkid/db";
 import {
   EntitlementNotFoundError,
   PackageNotFoundError,
 } from "@mindkid/errors/billing";
 import {
+  activeStackBase,
   computeStackedExpiryDate,
   type EntitlementKey,
   PACKAGE_CATALOG,
@@ -127,7 +129,7 @@ export async function mutateUserEntitlements(
         .limit(1);
 
       const newExpiresAt = computeStackedExpiryDate(
-        existing?.expiresAt,
+        activeStackBase(existing),
         params.durationDays,
         0,
         now
@@ -166,25 +168,25 @@ export async function mutateUserEntitlements(
       });
     }
 
-    // Insert audit log (BR-EGR-03, BR-AUD-01)
-    await tx.insert(auditLogs).values({
-      actorType: params.actor.type,
-      actorId: params.actor.id ?? null,
+    // Insert audit log (BR-EGR-03, BR-AUD-01, BR-AUD-02)
+    await writeAudit(tx, {
+      actor_type: params.actor.type,
+      actor_id: params.actor.id ?? null,
       action: "entitlement_granted",
-      entityType: "user",
-      entityId: String(params.userId),
-      beforeData: {
+      entity_type: "user",
+      entity_id: String(params.userId),
+      before_data: {
         package_code: params.packageCode,
       },
-      afterData: {
+      after_data: {
         package_code: params.packageCode,
         duration_days: params.durationDays,
         source: params.source,
         granted_keys: grantedResults.map((r) => r.key),
       },
       reason: params.reason,
-      ipAddress: params.actor.ip ?? null,
-      userAgent: params.actor.userAgent ?? null,
+      ip_address: params.actor.ip ?? null,
+      user_agent: params.actor.userAgent ?? null,
     });
 
     return grantedResults;
@@ -241,26 +243,26 @@ export async function revokeUserEntitlementById(
       })
       .where(eq(entitlements.id, id));
 
-    // Record audit log (BR-EGR-03)
-    await activeTx.insert(auditLogs).values({
-      actorType: actor.type,
-      actorId: actor.id ?? null,
+    // Record audit log (BR-EGR-03, BR-AUD-02)
+    await writeAudit(activeTx, {
+      actor_type: actor.type,
+      actor_id: actor.id ?? null,
       action: "entitlement_revoked",
-      entityType: "entitlement",
-      entityId: String(id),
-      beforeData: {
+      entity_type: "entitlement",
+      entity_id: String(id),
+      before_data: {
         status: previousStatus,
         entitlement_key: existing.entitlementKey,
         user_id: existing.userId,
       },
-      afterData: {
+      after_data: {
         status: "cancelled",
         entitlement_key: existing.entitlementKey,
         user_id: existing.userId,
       },
       reason,
-      ipAddress: actor.ip ?? null,
-      userAgent: actor.userAgent ?? null,
+      ip_address: actor.ip ?? null,
+      user_agent: actor.userAgent ?? null,
     });
 
     return {
@@ -283,4 +285,96 @@ export async function revokeUserEntitlementById(
   await invalidateUserEntitlementsCache(result.userId);
 
   return result;
+}
+
+export interface ResetUserQuotaParams {
+  userId: number;
+  quotaKey: string;
+  reason: string;
+  actor: {
+    type: "manager" | "system";
+    id?: number;
+    ip?: string | null;
+    userAgent?: string | null;
+  };
+}
+
+export async function resetUserQuota(
+  params: ResetUserQuotaParams
+): Promise<{ userId: number; quotaKey: string; resetCount: number }> {
+  const db = getDb();
+  const now = new Date();
+
+  return await db.transaction(async (tx) => {
+    const updated = await tx
+      .update(quotaUsage)
+      .set({
+        used: 0,
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(quotaUsage.userId, params.userId),
+          eq(quotaUsage.quotaKey, params.quotaKey)
+        )
+      )
+      .returning({ id: quotaUsage.id });
+
+    await writeAudit(tx, {
+      actor_type: params.actor.type,
+      actor_id: params.actor.id ?? null,
+      action: "quota_reset",
+      entity_type: "quota_usage",
+      entity_id: `${params.userId}:${params.quotaKey}`,
+      before_data: {
+        user_id: params.userId,
+        quota_key: params.quotaKey,
+      },
+      after_data: {
+        user_id: params.userId,
+        quota_key: params.quotaKey,
+        used: 0,
+        reset_rows: updated.length,
+      },
+      reason: params.reason,
+      ip_address: params.actor.ip ?? null,
+      user_agent: params.actor.userAgent ?? null,
+    });
+
+    return {
+      userId: params.userId,
+      quotaKey: params.quotaKey,
+      resetCount: updated.length,
+    };
+  });
+}
+
+export async function deployPackageCatalog(actor?: {
+  id?: number | null;
+  ip?: string | null;
+  userAgent?: string | null;
+}): Promise<{ deployedCodes: string[] }> {
+  const db = getDb();
+  const deployedCodes = Object.keys(PACKAGE_CATALOG);
+
+  await db.transaction(async (tx) => {
+    const existing = await tx.select({ code: packages.code }).from(packages);
+    await writeAudit(tx, {
+      actor_type: actor?.id ? "manager" : "system",
+      actor_id: actor?.id ?? null,
+      action: "package_catalog_deployed",
+      entity_type: "package_catalog",
+      entity_id: "PACKAGE_CATALOG",
+      before_data: {
+        existing_codes: existing.map((row) => row.code),
+      },
+      after_data: {
+        deployed_codes: deployedCodes,
+      },
+      ip_address: actor?.ip ?? null,
+      user_agent: actor?.userAgent ?? null,
+    });
+  });
+
+  return { deployedCodes };
 }

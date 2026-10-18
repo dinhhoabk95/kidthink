@@ -22,10 +22,10 @@ describe("Cổng check:engine-behavior-corpus (BR-EBD-04 nửa corpus)", () => {
     expect(b56?.passed).toBe(true);
   });
 
-  it("số engine có nội dung khớp số đo registry: 8 · 22 · 37", () => {
+  it("số engine có nội dung khớp số đo registry: 8 · 23 · 38", () => {
     const result = runEngineBehaviorCorpusGate();
     expect(result.bandSummaries.map((s) => s.enginesWithContent)).toEqual([
-      8, 22, 37,
+      8, 23, 38,
     ]);
   });
 

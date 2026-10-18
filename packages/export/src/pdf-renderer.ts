@@ -8,6 +8,14 @@
  * - BR-PDF-07: Full Vietnamese Unicode support (Identity-H / UTF-16BE encoding).
  */
 
+import {
+  buildCidWidthArray,
+  buildEmbeddedTrueTypeSubsetFont,
+  buildVietnameseToUnicodeCMap,
+  FONT_NAME_BOLD,
+  FONT_NAME_REGULAR,
+} from "./pdf-font.js";
+
 const FORBIDDEN_CHILD_DATA_KEYS: readonly string[] = [
   "child_id",
   "child_uuid",
@@ -69,11 +77,20 @@ function assertKeyAllowed(key: string, path: string): void {
   }
 }
 
+type ExportScanValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | object
+  | ExportScanValue[];
+
 /**
  * Validates that no child data or progress metrics exist in export payload (BR-PDF-06).
  */
-export function assertNoChildDataInExport(dto: Record<string, unknown>): void {
-  function scan(obj: unknown, path = ""): void {
+export function assertNoChildDataInExport(dto: object): void {
+  function scan(obj: ExportScanValue, path = ""): void {
     if (!obj || typeof obj !== "object") {
       return;
     }
@@ -84,9 +101,9 @@ export function assertNoChildDataInExport(dto: Record<string, unknown>): void {
       return;
     }
 
-    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+    for (const [key, value] of Object.entries(obj)) {
       assertKeyAllowed(key, path);
-      scan(value, path ? `${path}.${key}` : key);
+      scan(value as ExportScanValue, path ? `${path}.${key}` : key);
     }
   }
 
@@ -392,7 +409,7 @@ export function renderLessonPlanPdf(
   dto: LessonPlanExportDTO,
   options?: { exportDateIct?: string; maxPages?: number }
 ): PdfRenderResult {
-  assertNoChildDataInExport(dto as unknown as Record<string, unknown>);
+  assertNoChildDataInExport(dto);
 
   const maxPages = options?.maxPages ?? 20;
   const exportDateStr =
@@ -433,6 +450,52 @@ export function renderLessonPlanPdf(
   };
 }
 
+function addEmbeddedFontObjects(
+  addObject: (content: string) => number,
+  texts: string[]
+): { font1ObjId: number; font2ObjId: number } {
+  const font1ObjId = addObject(
+    `<< /Type /Font /Subtype /Type0 /BaseFont /${FONT_NAME_BOLD} /Encoding /Identity-H /ToUnicode 5 0 R /DescendantFonts [6 0 R] >>`
+  );
+  const font2ObjId = addObject(
+    `<< /Type /Font /Subtype /Type0 /BaseFont /${FONT_NAME_REGULAR} /Encoding /Identity-H /ToUnicode 5 0 R /DescendantFonts [7 0 R] >>`
+  );
+
+  const toUnicodeCMap = buildVietnameseToUnicodeCMap(texts);
+  addObject(
+    `<< /Length ${Buffer.byteLength(toUnicodeCMap, "binary")} >>\nstream\n${toUnicodeCMap}\nendstream`
+  );
+
+  const boldWidths = buildCidWidthArray(true);
+  const regularWidths = buildCidWidthArray(false);
+  addObject(
+    `<< /Type /Font /Subtype /CIDFontType2 /BaseFont /${FONT_NAME_BOLD} /CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> /FontDescriptor 8 0 R /CIDToGIDMap /Identity /DW 600 /W ${boldWidths} >>`
+  );
+  addObject(
+    `<< /Type /Font /Subtype /CIDFontType2 /BaseFont /${FONT_NAME_REGULAR} /CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> /FontDescriptor 9 0 R /CIDToGIDMap /Identity /DW 550 /W ${regularWidths} >>`
+  );
+  addObject(
+    `<< /Type /FontDescriptor /FontName /${FONT_NAME_BOLD} /Flags 32 /FontBBox [-500 -300 1200 1000] /ItalicAngle 0 /Ascent 800 /Descent -200 /CapHeight 700 /StemV 120 /FontFile2 10 0 R >>`
+  );
+  addObject(
+    `<< /Type /FontDescriptor /FontName /${FONT_NAME_REGULAR} /Flags 32 /FontBBox [-500 -300 1200 1000] /ItalicAngle 0 /Ascent 800 /Descent -200 /CapHeight 700 /StemV 70 /FontFile2 11 0 R >>`
+  );
+
+  const boldFontBytes = buildEmbeddedTrueTypeSubsetFont(true);
+  const boldFontStream = boldFontBytes.toString("latin1");
+  addObject(
+    `<< /Length ${boldFontBytes.length} /Length1 ${boldFontBytes.length} >>\nstream\n${boldFontStream}\nendstream`
+  );
+
+  const regularFontBytes = buildEmbeddedTrueTypeSubsetFont(false);
+  const regularFontStream = regularFontBytes.toString("latin1");
+  addObject(
+    `<< /Length ${regularFontBytes.length} /Length1 ${regularFontBytes.length} >>\nstream\n${regularFontStream}\nendstream`
+  );
+
+  return { font1ObjId, font2ObjId };
+}
+
 function generatePdfBinary(
   pages: RenderLine[][],
   meta: { documentTitle: string; exportDate: string; pageCount: number }
@@ -444,47 +507,22 @@ function generatePdfBinary(
     return objects.length;
   }
 
+  const allTexts: string[] = [
+    meta.documentTitle,
+    meta.exportDate,
+    "MindKid — Thư viện tư duy qua trò chơi cho trẻ mầm non",
+  ];
+  for (const page of pages) {
+    for (const line of page) {
+      allTexts.push(line.text);
+    }
+  }
+
   const catalogObjId = addObject("<< /Type /Catalog /Pages 2 0 R >>");
   const pagesObjId = addObject("");
-  const font1ObjId = addObject(
-    "<< /Type /Font /Subtype /Type0 /BaseFont /Helvetica-Bold /Encoding /Identity-H /ToUnicode 5 0 R /DescendantFonts [6 0 R] >>"
-  );
-  const font2ObjId = addObject(
-    "<< /Type /Font /Subtype /Type0 /BaseFont /Helvetica /Encoding /Identity-H /ToUnicode 5 0 R /DescendantFonts [7 0 R] >>"
-  );
-
-  const toUnicodeCMap =
-    "/CIDInit /ProcSet findresource begin\n" +
-    "12 dict begin\n" +
-    "begincmap\n" +
-    "/CIDSystemInfo << /Registry (Adobe) /Ordering (UCS) /Supplement 0 >> def\n" +
-    "/CMapName /Custom-ToUnicode def\n" +
-    "/CMapType 2 def\n" +
-    "1 begincodespacerange\n" +
-    "<0000> <FFFF>\n" +
-    "endcodespacerange\n" +
-    "1 beginbfrange\n" +
-    "<0000> <FFFF> <0000>\n" +
-    "endbfrange\n" +
-    "endcmap\n" +
-    "CMapName currentdict /CMap defineresource pop\n" +
-    "end\n" +
-    "end";
-  addObject(
-    `<< /Length ${Buffer.byteLength(toUnicodeCMap)} >>\nstream\n${toUnicodeCMap}\nendstream`
-  );
-
-  addObject(
-    "<< /Type /Font /Subtype /CIDFontType2 /BaseFont /Helvetica-Bold /CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> /FontDescriptor 8 0 R /DW 1000 /W [ 0 65535 600 ] >>"
-  );
-  addObject(
-    "<< /Type /Font /Subtype /CIDFontType2 /BaseFont /Helvetica /CIDSystemInfo << /Registry (Adobe) /Ordering (Identity) /Supplement 0 >> /FontDescriptor 9 0 R /DW 1000 /W [ 0 65535 550 ] >>"
-  );
-  addObject(
-    "<< /Type /FontDescriptor /FontName /Helvetica-Bold /Flags 32 /FontBBox [-500 -300 1200 1000] /ItalicAngle 0 /Ascent 800 /Descent -200 /CapHeight 700 /StemV 120 >>"
-  );
-  addObject(
-    "<< /Type /FontDescriptor /FontName /Helvetica /Flags 32 /FontBBox [-500 -300 1200 1000] /ItalicAngle 0 /Ascent 800 /Descent -200 /CapHeight 700 /StemV 70 >>"
+  const { font1ObjId, font2ObjId } = addEmbeddedFontObjects(
+    addObject,
+    allTexts
   );
 
   const pageObjectIds: number[] = [];
@@ -538,7 +576,7 @@ function generatePdfBinary(
 
     const contentStream = streamCommands.join("\n");
     const contentObjId = addObject(
-      `<< /Length ${Buffer.byteLength(contentStream)} >>\nstream\n${contentStream}\nendstream`
+      `<< /Length ${Buffer.byteLength(contentStream, "binary")} >>\nstream\n${contentStream}\nendstream`
     );
 
     const pageObjId = addObject(
@@ -555,11 +593,11 @@ function generatePdfBinary(
   const offsets: number[] = [0];
 
   for (let i = 0; i < objects.length; i++) {
-    offsets.push(Buffer.byteLength(body));
+    offsets.push(Buffer.byteLength(body, "binary"));
     body += `${i + 1} 0 obj\n${objects[i]}\nendobj\n`;
   }
 
-  const xrefOffset = Buffer.byteLength(body);
+  const xrefOffset = Buffer.byteLength(body, "binary");
   body += `xref\n0 ${objects.length + 1}\n`;
   body += "0000000000 65535 f \n";
   for (let i = 1; i <= objects.length; i++) {

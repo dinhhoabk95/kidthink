@@ -35,6 +35,9 @@ async function handleUnauthenticatedRedirect() {
  *   cắt ngang (401/403/428), và LUÔN throw lại — ❌ NEVER nuốt lỗi ở interceptor.
  */
 export function useApi() {
+  if (typeof globalThis.$fetch?.create !== "function") {
+    return globalThis.$fetch;
+  }
   return $fetch.create({
     onRequest({ options }) {
       try {

@@ -56,6 +56,8 @@ describe("GET /api/guest/levels/[code] — Detail CTA by Session (BR-GDP-09, BR-
   const db = getOwnerDb();
   const baseNum = 7100 + Math.floor(Math.random() * 800);
 
+  const allowlistFreeCode = "GL-C1-CNT-CARD-0001";
+  let insertedAllowlistFree = false;
   const freeCode = `GL-C1-CNT-CARD-${baseNum + 1}`;
   const loginCode = `GL-C1-CNT-CARD-${baseNum + 2}`;
   const standardCode = `GL-C1-CNT-CARD-${baseNum + 3}`;
@@ -82,6 +84,30 @@ describe("GET /api/guest/levels/[code] — Detail CTA by Session (BR-GDP-09, BR-
             .from(gameTemplates)
             .where(eq(gameTemplates.code, "GT-001"))
         )[0]?.id || 1;
+
+    const [existingAllowlist] = await db
+      .select({ id: gameLevels.id })
+      .from(gameLevels)
+      .where(eq(gameLevels.code, allowlistFreeCode))
+      .limit(1);
+
+    if (!existingAllowlist) {
+      await db.insert(gameLevels).values({
+        entityId: baseNum + 1999,
+        code: allowlistFreeCode,
+        title: "Allowlist Free Level",
+        status: "published",
+        accessTier: "free",
+        difficulty: 1,
+        ageMin: 3,
+        ageMax: 4,
+        themeId: "farm",
+        templateId,
+        contentPack: { items: [] },
+        difficultyParams: { count: 3 },
+      });
+      insertedAllowlistFree = true;
+    }
 
     await db.insert(gameLevels).values([
       {
@@ -158,6 +184,9 @@ describe("GET /api/guest/levels/[code] — Detail CTA by Session (BR-GDP-09, BR-
   });
 
   afterAll(async () => {
+    if (insertedAllowlistFree) {
+      await db.delete(gameLevels).where(eq(gameLevels.code, allowlistFreeCode));
+    }
     await db.delete(gameLevels).where(eq(gameLevels.code, freeCode));
     await db.delete(gameLevels).where(eq(gameLevels.code, loginCode));
     await db.delete(gameLevels).where(eq(gameLevels.code, standardCode));
@@ -165,14 +194,26 @@ describe("GET /api/guest/levels/[code] — Detail CTA by Session (BR-GDP-09, BR-
     await db.delete(gameLevels).where(eq(gameLevels.code, archivedCode));
   });
 
-  it("guest xem free level -> action: play", async () => {
-    const event = makeMockEvent({ code: freeCode });
+  it("BR-LAD-07: guest xem free level trong allow-list -> locked: false, action: play", async () => {
+    const event = makeMockEvent({ code: allowlistFreeCode });
     const res = (await guestLevelDetailHandler(event)) as LevelDetailResult;
 
     expect(res.locked).toBe(false);
     expect(res.cta.action).toBe("play");
-    expect(res.cta.href).toBe(`/play/${freeCode}`);
+    expect(res.cta.href).toBe(`/play/${allowlistFreeCode}`);
     expect(res.cta.text).toBe("Cho bé chơi ngay");
+  });
+
+  it("BR-LAD-07: guest xem free level ngoài allow-list -> locked: true, action: login", async () => {
+    const event = makeMockEvent({ code: freeCode });
+    const res = (await guestLevelDetailHandler(event)) as LevelDetailResult;
+
+    expect(res.locked).toBe(true);
+    expect(res.cta.action).toBe("login");
+    expect(res.cta.href).toBe(
+      `/login?redirect=${encodeURIComponent(`/play/${freeCode}`)}`
+    );
+    expect(res.cta.text).toBe("Đăng nhập để chơi");
   });
 
   it("guest xem login level -> action: login", async () => {

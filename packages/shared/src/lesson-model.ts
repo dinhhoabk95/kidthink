@@ -139,7 +139,7 @@ function checkOffscreenActivities(
 
   if (offscreenCount === 0) {
     const issue =
-      "BR-LSM-08: Bài học phải có ít nhất 1 hoạt động ngoài màn hình (không phải digital_game).";
+      "BR-LSM-02: Bài học phải có ít nhất 1 hoạt động ngoài màn hình (không phải digital_game).";
     if (options.isSeed || activityKinds.length > 0) {
       errors.push(issue);
     } else {
@@ -222,7 +222,7 @@ function validateGuideAndMaterials(
   const guideParts = checkGuideStructure(input.guide);
   if (guideParts < 5) {
     errors.push(
-      `BR-LSM-02: Hướng dẫn (Guide) phải trả lời đủ 5 câu hỏi cốt lõi cho người lớn (hiện tại: ${guideParts}/5 phần).`
+      `BR-LSM-03: Hướng dẫn (Guide) phải trả lời đủ 5 câu hỏi cốt lõi cho người lớn (hiện tại: ${guideParts}/5 phần).`
     );
   }
 
@@ -236,7 +236,7 @@ function validateGuideAndMaterials(
   if (typeof est === "number") {
     if (est < 5 || est > 45) {
       errors.push(
-        `BR-LSM-03: Tổng thời lượng bài học (${est} phút) vượt quá giới hạn cho phép (5–45 phút).`
+        `BR-LSM-05: Tổng thời lượng bài học (${est} phút) vượt quá giới hạn cho phép (5–45 phút).`
       );
     } else if (est < 15 || est > 30) {
       warnings.push(
@@ -269,14 +269,14 @@ function validateAssessmentAndReading(
   const skillsList = input.skill_codes || [];
   if (skillsList.length > 3) {
     errors.push(
-      `BR-LSM-07: Lesson không được gắn quá 3 skill (hiện tại: ${skillsList.length} skill).`
+      `BR-LSM-08: Lesson không được gắn quá 3 skill (hiện tại: ${skillsList.length} skill).`
     );
   }
 
   for (const term of FORBIDDEN_READING_ASSUMPTIONS) {
     if (term.test(allText)) {
       errors.push(
-        "BR-LSM-08: Lesson không được giả định trẻ tự đọc chữ, mọi chỉ dẫn phải đọc thành tiếng hoặc qua biểu tượng."
+        "BR-LSM-07: Lesson không được giả định trẻ tự đọc chữ, mọi chỉ dẫn phải đọc thành tiếng hoặc qua biểu tượng."
       );
       break;
     }

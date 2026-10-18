@@ -41,8 +41,15 @@ export interface SesEventMessage {
   };
 }
 
+export const DEFAULT_ALLOWED_SNS_TOPIC_ARNS: readonly string[] = [
+  "arn:aws:sns:ap-southeast-1:123456789012:mindkid-ses-events",
+  "arn:aws:sns:ap-southeast-1:123456789012:tinimath-ses-events",
+] as const;
+
+export const SNS_MESSAGE_MAX_AGE_SECONDS = 300;
+
 export interface VerifySnsOptions {
-  allowedTopicArns?: string[];
+  allowedTopicArns?: readonly string[];
   maxAgeSeconds?: number;
 }
 
@@ -56,6 +63,41 @@ export function verifySnsCertUrl(certUrl: string): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Kiểm tra `TopicArn` thuộc allow-list, `SigningCertURL` thuộc miền AWS SNS,
+ * và `Timestamp` trong ngưỡng chống phát lại (`BR-NOT-11`).
+ */
+export function verifySnsEnvelopeClaims(
+  msg: SnsMessage,
+  options?: VerifySnsOptions
+): { valid: boolean; error?: string } {
+  if (!(msg.Type && msg.TopicArn && msg.Signature && msg.SigningCertURL)) {
+    return { valid: false, error: "Missing required SNS fields" };
+  }
+
+  const allowedTopics =
+    options?.allowedTopicArns ?? DEFAULT_ALLOWED_SNS_TOPIC_ARNS;
+  if (allowedTopics.length > 0 && !allowedTopics.includes(msg.TopicArn)) {
+    return { valid: false, error: "TopicArn not in allow-list" };
+  }
+
+  if (!verifySnsCertUrl(msg.SigningCertURL)) {
+    return { valid: false, error: "Invalid SigningCertURL host" };
+  }
+
+  const msgTimestamp = new Date(msg.Timestamp).getTime();
+  if (Number.isNaN(msgTimestamp)) {
+    return { valid: false, error: "Invalid Timestamp format" };
+  }
+
+  const maxAge = options?.maxAgeSeconds ?? SNS_MESSAGE_MAX_AGE_SECONDS;
+  if (Math.abs(Date.now() - msgTimestamp) > maxAge * 1000) {
+    return { valid: false, error: "SNS message timestamp expired" };
+  }
+
+  return { valid: true };
 }
 
 /**
@@ -159,7 +201,7 @@ export async function verifySnsSignature(msg: SnsMessage): Promise<boolean> {
 }
 
 export function parseAndVerifySesNotification(
-  payload: unknown,
+  payload: SnsMessage | Record<string, string | undefined> | null | undefined,
   options?: VerifySnsOptions
 ): { valid: boolean; event?: SesEventMessage; error?: string } {
   if (!payload || typeof payload !== "object") {
@@ -167,29 +209,9 @@ export function parseAndVerifySesNotification(
   }
 
   const msg = payload as SnsMessage;
-  if (!(msg.Type && msg.TopicArn && msg.Signature && msg.SigningCertURL)) {
-    return { valid: false, error: "Missing required SNS fields" };
-  }
-
-  if (
-    options?.allowedTopicArns &&
-    !options.allowedTopicArns.includes(msg.TopicArn)
-  ) {
-    return { valid: false, error: "TopicArn not in allow-list" };
-  }
-
-  if (!verifySnsCertUrl(msg.SigningCertURL)) {
-    return { valid: false, error: "Invalid SigningCertURL host" };
-  }
-
-  const msgTimestamp = new Date(msg.Timestamp).getTime();
-  if (Number.isNaN(msgTimestamp)) {
-    return { valid: false, error: "Invalid Timestamp format" };
-  }
-
-  const maxAge = options?.maxAgeSeconds ?? 300;
-  if (Math.abs(Date.now() - msgTimestamp) > maxAge * 1000) {
-    return { valid: false, error: "SNS message timestamp expired" };
+  const envelopeCheck = verifySnsEnvelopeClaims(msg, options);
+  if (!envelopeCheck.valid) {
+    return { valid: false, error: envelopeCheck.error };
   }
 
   try {
@@ -202,7 +224,7 @@ export function parseAndVerifySesNotification(
     }
 
     return { valid: true, event: sesEvent };
-  } catch (err: unknown) {
+  } catch (err) {
     const errorMsg = err instanceof Error ? err.message : String(err);
     return {
       valid: false,

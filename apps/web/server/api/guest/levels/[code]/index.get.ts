@@ -8,6 +8,7 @@ import {
   allowedTiers,
   type CtaViewer,
   GUEST_CTA_VIEWER,
+  getEffectiveTier,
   resolveLevelCta,
   TIER_ENTITLEMENT,
 } from "@mindkid/shared";
@@ -117,7 +118,12 @@ export default defineEventHandler(async (event) => {
   }
 
   const { allowed, viewer } = await resolveCallerContext(event);
-  const isLocked = !allowed.includes(level.accessTier as AccessTier);
+  const callerKind = viewer.is_authenticated ? "user" : "guest";
+  const effectiveTier = getEffectiveTier(level.accessTier as AccessTier, null, {
+    code: level.code,
+    callerKind,
+  });
+  const isLocked = !allowed.includes(effectiveTier);
 
   const competencyMatch = level.code.match(RE_COMPETENCY);
   const competency = competencyMatch ? competencyMatch[1] : "C1";
@@ -133,7 +139,7 @@ export default defineEventHandler(async (event) => {
     .where(and(eq(gameLevels.status, "published"), ne(gameLevels.code, code)))
     .limit(4);
 
-  const cta = resolveLevelCta(code, level.accessTier as AccessTier, viewer);
+  const cta = resolveLevelCta(code, effectiveTier, viewer);
 
   // WP167.1: cùng một nguồn với đường config — trước đây đây là bản chép thứ hai
   // của cùng truy vấn, kèm cả dòng `rounds.length > 1 ? "rounds" : "attempts"`.
@@ -158,9 +164,7 @@ export default defineEventHandler(async (event) => {
     mechanic_type: template?.mechanic || "",
     access_tier: level.accessTier,
     locked: isLocked,
-    required_entitlement: isLocked
-      ? TIER_ENTITLEMENT[level.accessTier as AccessTier]
-      : null,
+    required_entitlement: isLocked ? TIER_ENTITLEMENT[effectiveTier] : null,
     scoring: {
       mode: RUNTIME_SCORING_MODE,
     },
@@ -183,12 +187,18 @@ export default defineEventHandler(async (event) => {
       "/images/previews/game-preview-2.webp",
       "/images/previews/game-preview-3.webp",
     ],
-    related_games: relatedLevels.map((g) => ({
-      code: g.code,
-      title: g.title,
-      difficulty: g.difficulty,
-      access_tier: g.access_tier,
-      locked: !allowed.includes(g.access_tier as AccessTier),
-    })),
+    related_games: relatedLevels.map((g) => {
+      const relatedTier = getEffectiveTier(g.access_tier as AccessTier, null, {
+        code: g.code,
+        callerKind,
+      });
+      return {
+        code: g.code,
+        title: g.title,
+        difficulty: g.difficulty,
+        access_tier: g.access_tier,
+        locked: !allowed.includes(relatedTier),
+      };
+    }),
   };
 });

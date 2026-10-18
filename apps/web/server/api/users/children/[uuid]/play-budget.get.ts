@@ -1,6 +1,10 @@
 import { childDailyStats, childProfiles, getOwnerDb } from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
-import { getDateIct, parseDateIct } from "@mindkid/shared";
+import {
+  computeRemainingPlaySeconds,
+  getDateIct,
+  parseDateIct,
+} from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 
@@ -38,7 +42,11 @@ export default defineEventHandler(async (event) => {
   const usedSeconds = stats?.totalPlayTimeSeconds || 0;
   const usedMinutes = Math.floor(usedSeconds / 60);
   const capMinutes = child.dailyPlayCapMinutes;
-  const remainingMinutes = Math.max(0, capMinutes - usedMinutes);
+  const remainingSeconds = computeRemainingPlaySeconds(
+    stats ?? null,
+    capMinutes
+  );
+  const remainingMinutes = Math.floor(remainingSeconds / 60);
 
   // Resets at next ICT midnight
   const tomorrowIct = getDateIct(Date.now() + 86_400_000);

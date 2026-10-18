@@ -52,6 +52,16 @@ const stubs = {
   KidLessonRow: {
     template: '<div data-testid="kid-lesson-row-stub">LessonRow</div>',
   },
+  KidRecommendationsRow: {
+    props: ["recommendations"],
+    template:
+      '<div data-testid="kid-recommendations-row-stub" :data-primary="recommendations?.primary?.level_code">RecommendationsRow</div>',
+  },
+  CurriculumProgressCard: {
+    props: ["childUuid"],
+    template:
+      '<div data-testid="curriculum-progress-card-stub" :data-child-uuid="childUuid">CurriculumProgressCard</div>',
+  },
   NuxtLink: {
     props: ["to"],
     template: '<a :href="to"><slot /></a>',
@@ -83,10 +93,11 @@ async function mountLobbyPage(): Promise<VueWrapper> {
   return wrapper;
 }
 
-describe("Sảnh chơi của trẻ /play (BR-PSZ-11, BR-CLF-05)", () => {
+describe("Sảnh chơi của trẻ /play (BR-PSZ-11, BR-CLF-05, BR-PEN-07)", () => {
   beforeEach(() => {
     pushMock.mockReset();
     pageMetaMock.mockReset();
+    mockActiveChildUuid.value = "child-uuid-1";
   });
 
   afterEach(() => {
@@ -185,5 +196,112 @@ describe("Sảnh chơi của trẻ /play (BR-PSZ-11, BR-CLF-05)", () => {
     expect(page.find('[data-testid="kid-badge-modal-stub"]').exists()).toBe(
       false
     );
+  });
+
+  it("BR-PEN-07: gọi screen.orientation.lock('landscape') best-effort khi vào /play, không lỗi khi thiếu hoặc reject", async () => {
+    const lockMock = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(window.screen, "orientation", {
+      configurable: true,
+      value: { lock: lockMock },
+    });
+
+    await mountLobbyPage();
+    expect(lockMock).toHaveBeenCalledWith("landscape");
+
+    wrapper?.unmount();
+    wrapper = null;
+
+    // Ca âm: trình duyệt không có orientation.lock hoặc reject thì vẫn không quăng lỗi
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {
+      // suppress test warning output
+    });
+    Object.defineProperty(window.screen, "orientation", {
+      configurable: true,
+      value: {
+        lock: vi.fn().mockRejectedValue(new Error("NotSupportedError")),
+      },
+    });
+    await expect(mountLobbyPage()).resolves.toBeDefined();
+    await flushPromises();
+    expect(warnSpy).toHaveBeenCalled();
+    warnSpy.mockRestore();
+
+    wrapper?.unmount();
+    wrapper = null;
+
+    Object.defineProperty(window.screen, "orientation", {
+      configurable: true,
+      value: {},
+    });
+    await expect(mountLobbyPage()).resolves.toBeDefined();
+  });
+
+  it("S5b: mount CurriculumProgressCard và KidRecommendationsRow cho trẻ (gọi /api/users/play/recommendations) và cho guest (gọi /api/guest/play/recommendations)", async () => {
+    const requestedUrls: string[] = [];
+    const fetchMock = vi.fn().mockImplementation((url: string) => {
+      requestedUrls.push(url);
+      if (url === "/api/users/play/recommendations") {
+        return Promise.resolve({
+          primary: {
+            level_code: "GL-C1-001",
+            title: "Đếm táo",
+            thumbnail_emoji: "🍎",
+            reason: "Gợi ý hôm nay",
+            reason_code: "ZPD",
+            locked: false,
+          },
+          alternatives: [],
+        });
+      }
+      if (url === "/api/guest/play/recommendations") {
+        return Promise.resolve({
+          primary: {
+            level_code: "GL-FREE-001",
+            title: "Bài chơi thử",
+            thumbnail_emoji: "🌟",
+            reason: "Dành cho khách",
+            reason_code: "FREE",
+            locked: false,
+          },
+          alternatives: [],
+        });
+      }
+      return Promise.resolve({});
+    });
+    vi.stubGlobal("$fetch", fetchMock);
+
+    // 1. Khi có activeChildUuid -> hiện CurriculumProgressCard + gọi /api/users/play/recommendations
+    mockActiveChildUuid.value = "child-uuid-1";
+    const page = await mountLobbyPage();
+    await flushPromises();
+
+    const curriculumStub = page.find(
+      '[data-testid="curriculum-progress-card-stub"]'
+    );
+    expect(curriculumStub.exists()).toBe(true);
+    expect(curriculumStub.attributes("data-child-uuid")).toBe("child-uuid-1");
+
+    const recStub = page.find('[data-testid="kid-recommendations-row-stub"]');
+    expect(recStub.exists()).toBe(true);
+    expect(recStub.attributes("data-primary")).toBe("GL-C1-001");
+    expect(requestedUrls).toContain("/api/users/play/recommendations");
+
+    wrapper?.unmount();
+    wrapper = null;
+
+    // 2. Khi guest (activeChildUuid rỗng) -> ẩn CurriculumProgressCard + gọi /api/guest/play/recommendations
+    mockActiveChildUuid.value = "";
+    const guestPage = await mountLobbyPage();
+    await flushPromises();
+
+    expect(
+      guestPage.find('[data-testid="curriculum-progress-card-stub"]').exists()
+    ).toBe(false);
+    const guestRecStub = guestPage.find(
+      '[data-testid="kid-recommendations-row-stub"]'
+    );
+    expect(guestRecStub.exists()).toBe(true);
+    expect(guestRecStub.attributes("data-primary")).toBe("GL-FREE-001");
+    expect(requestedUrls).toContain("/api/guest/play/recommendations");
   });
 });

@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { GT035_FIXTURES } from "../src/templates/GT-035/fixtures.js";
-import { GT035Session } from "../src/templates/GT-035/session.js";
+import { GT035_FIXTURES } from "#src/templates/GT-035/fixtures";
+import { GT035Session } from "#src/templates/GT-035/session";
 import GT035Template, {
   GT035ContentSchema,
   GT035DifficultySchema,
-} from "../src/templates/GT-035/template.js";
+} from "#src/templates/GT-035/template";
 
 function getFixture(index: number) {
   const fixture = GT035_FIXTURES[index];
@@ -373,5 +373,69 @@ describe("GT-035 Xếp hàng lệnh (command-sequence) Contract & Session Tests"
     const view = session.getView();
     expect(view.activePrompt).toBe(sampleFixture.content.prompt);
     expect(view.entities.length).toBeGreaterThan(0);
+  });
+
+  it("Scenario 14: handles drop gesture from palette into command queue and locks editing while executing (BR-E035-07)", () => {
+    expect(GT035Template.input).toEqual({
+      family: "drag",
+      verbs: ["drop", "tap", "commit"],
+      tolerance_px: 24,
+    });
+
+    const session = new GT035Session(
+      sampleFixture.content,
+      sampleFixture.difficulty,
+      "5-6"
+    );
+    session.prepareRound("5-6");
+
+    const { rows, cols } = sampleFixture.content.grid;
+    const gridSlotCount = rows * cols;
+    const maxCmd = sampleFixture.difficulty.max_commands ?? 8;
+    const pal0Slot = session.slots[gridSlotCount + maxCmd];
+    const queue0Slot = session.slots[gridSlotCount];
+    if (!(pal0Slot && queue0Slot)) {
+      throw new Error("pal0Slot and queue0Slot must exist");
+    }
+
+    const dropRes = session.dispatch({
+      type: "drop",
+      fromX: pal0Slot.x,
+      fromY: pal0Slot.y,
+      toX: queue0Slot.x,
+      toY: queue0Slot.y,
+      timeMs: 150,
+    });
+    expect(dropRes?.valid).toBe(true);
+    expect(
+      session.getEvents().filter((e) => e.event_name === "command_added").length
+    ).toBe(1);
+
+    // BR-E035-07: while program is executing, queue editing actions are ignored
+    session.isExecuting = true;
+    const lockedDrop = session.dispatch({
+      type: "drop",
+      fromX: pal0Slot.x,
+      fromY: pal0Slot.y,
+      toX: queue0Slot.x,
+      toY: queue0Slot.y,
+      timeMs: 200,
+    });
+    expect(lockedDrop).toEqual({ valid: false, feedback: "none" });
+    expect(
+      session.validateAction({
+        type: "add_command",
+        data: { command: "forward" },
+      }).valid
+    ).toBe(false);
+    expect(
+      session.validateAction({
+        type: "remove_command",
+        data: { index: 0 },
+      }).valid
+    ).toBe(false);
+    expect(
+      session.getEvents().filter((e) => e.event_name === "command_added").length
+    ).toBe(1);
   });
 });

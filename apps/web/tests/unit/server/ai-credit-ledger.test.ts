@@ -1,20 +1,22 @@
 import {
   auditLogs,
-  debitCredits,
-  getCreditBalance,
   getOwnerDb,
-  grantCredits,
-  listCreditTransactions,
   managers,
-  manualGrantCredits,
   notifications,
-  reconcileCreditBalance,
-  refundCredits,
   users,
 } from "@mindkid/db";
 import { AI_FEATURE_COSTS } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
+import {
+  debitCredits,
+  getCreditBalance,
+  grantCredits,
+  listCreditTransactions,
+  manualGrantCredits,
+  reconcileCreditBalance,
+  refundCredits,
+} from "#server/services/ai-credit.js";
 
 describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
   it("BR-ACL-01: records append-only ledger entries and maintains cached balance projection matching SUM(delta)", async () => {
@@ -167,25 +169,14 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
         cost: 2,
         feature: "instruction_rewrite",
       })
-    ).rejects.toThrow();
-
-    try {
-      await debitCredits({
-        userId: user.id,
-        cost: 2,
-        feature: "instruction_rewrite",
-      });
-    } catch (err: unknown) {
-      const error = err as {
-        status?: number;
-        code?: string;
-        details?: { required?: number; current?: number };
-      };
-      expect(error.status).toBe(402);
-      expect(error.code).toBe("INSUFFICIENT_CREDITS");
-      expect(error.details?.required).toBe(2);
-      expect(error.details?.current).toBe(1);
-    }
+    ).rejects.toMatchObject({
+      status: 402,
+      code: "INSUFFICIENT_CREDITS",
+      details: {
+        required: 2,
+        current: 1,
+      },
+    });
 
     // Verify balance remains non-negative (still 1)
     const bal = await getCreditBalance(user.id);
@@ -216,7 +207,7 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
 
     expect(ledgerEntry.createdAt).toBeDefined();
     // Verify ledger table schema has no expires_at column
-    expect((ledgerEntry as Record<string, unknown>).expiresAt).toBeUndefined();
+    expect("expiresAt" in ledgerEntry).toBe(false);
   });
 
   it("BR-ACL-05: atomic debit with row locking prevents race condition on concurrent requests", async () => {
@@ -294,8 +285,8 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
     expect(bal.balance).toBe(500);
 
     // AI credit is completely isolated from content entitlements
-    expect((bal as Record<string, unknown>).accessTier).toBeUndefined();
-    expect((bal as Record<string, unknown>).entitlements).toBeUndefined();
+    expect("accessTier" in bal).toBe(false);
+    expect("entitlements" in bal).toBe(false);
   });
 
   it("BR-ACL-07: manual grant by Super Admin requires reason >= 20 chars and logs audit entry", async () => {
@@ -393,10 +384,8 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
 
     expect(typeof ledgerEntry.delta).toBe("number");
     expect(Number.isInteger(ledgerEntry.delta)).toBe(true);
-    expect((ledgerEntry as Record<string, unknown>).costUsd).toBeUndefined();
-    expect(
-      (ledgerEntry as Record<string, unknown>).costUsdMicros
-    ).toBeUndefined();
+    expect("costUsd" in ledgerEntry).toBe(false);
+    expect("costUsdMicros" in ledgerEntry).toBe(false);
   });
 
   it("BR-ACL-09: triggers low-credit warning notification when balance drops below 20%", async () => {
@@ -452,10 +441,12 @@ describe("AI Credit Ledger Integration Tests (BR-ACL-01..09)", () => {
       (n) => n.templateCode === "ai_credits_low"
     );
     expect(lowCreditNotifs.length).toBe(1);
-    expect(
-      (lowCreditNotifs[0]?.payload as Record<string, unknown>)
-        ?.remaining_credits
-    ).toBe(15);
+    const payload = lowCreditNotifs[0]?.payload;
+    const remainingCredits =
+      payload && typeof payload === "object" && "remaining_credits" in payload
+        ? payload.remaining_credits
+        : undefined;
+    expect(remainingCredits).toBe(15);
   });
 
   it("Idempotency: repeated calls with identical idempotencyKey return cached result without double charging", async () => {

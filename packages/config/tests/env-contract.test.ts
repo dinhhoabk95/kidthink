@@ -1,5 +1,11 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { type AppType, ENV_REGISTRY, validateEnvFile } from "#src/env-contract";
+import {
+  type AppType,
+  BANNED_ENV_SYNONYMS,
+  ENV_REGISTRY,
+  scanSourceEnvUsage,
+  validateEnvFile,
+} from "#src/env-contract";
 import { parseEnvFile } from "#src/env-file";
 import { MissingEnvError, requireEnv } from "#src/require-env";
 
@@ -24,6 +30,12 @@ function sampleValue(def: (typeof ENV_REGISTRY)[number]): string {
   if (def.kind === "url") {
     const protocol = def.urlProtocols?.[0] ?? "https:";
     return `${protocol}//example.test/x`;
+  }
+  const [firstEnumValue] = def.enumValues ?? [];
+  if (def.kind === "enum" && firstEnumValue !== undefined) {
+    return def.enumValues?.includes("production")
+      ? "production"
+      : firstEnumValue;
   }
   return SAMPLE_BY_KIND[def.kind] ?? "value";
 }
@@ -270,5 +282,44 @@ describe("BR-ENV-13 — url phải khai và khớp giao thức", () => {
 
     expect(issue).toBeDefined();
     expect(issue).not.toContain("hunter2");
+  });
+});
+
+describe("BR-ENV-01 & BR-ENV-02 — cổng kiểm danh mục biến và tên đồng nghĩa bị cấm", () => {
+  it("BR-ENV-02: phát hiện file nguồn đọc tên đồng nghĩa đã bị bỏ và chỉ rõ tên chính thức", () => {
+    for (const [synonym, canonical] of Object.entries(BANNED_ENV_SYNONYMS)) {
+      const errors = scanSourceEnvUsage(`const v = process.env.${synonym};`);
+      expect(errors).toHaveLength(1);
+      expect(errors[0]?.varName).toBe(synonym);
+      expect(errors[0]?.issue).toContain(canonical);
+      expect(errors[0]?.issue).toContain("BR-ENV-02");
+    }
+  });
+
+  it("BR-ENV-02: validateEnvFile từ chối tên đồng nghĩa trong file .env", () => {
+    const parsed = envFor("web");
+    parsed.set("REDIS_URL", "redis://localhost:6380");
+
+    const result = validateEnvFile("web", parsed);
+    expect(result.valid).toBe(false);
+    const err = result.errors.find((e) => e.varName === "REDIS_URL");
+    expect(err?.issue).toContain("VALKEY_URL");
+    expect(err?.issue).toContain("BR-ENV-02");
+  });
+
+  it("BR-ENV-01: phát hiện file nguồn đọc biến chưa khai báo trong ENV_REGISTRY", () => {
+    const errors = scanSourceEnvUsage(
+      'const x = requireEnv("UNREGISTERED_CUSTOM_VAR");'
+    );
+    expect(errors).toHaveLength(1);
+    expect(errors[0]?.varName).toBe("UNREGISTERED_CUSTOM_VAR");
+    expect(errors[0]?.issue).toContain("BR-ENV-01");
+  });
+
+  it("BR-ENV-01: chấp nhận file nguồn đọc biến chính thức trong ENV_REGISTRY", () => {
+    const errors = scanSourceEnvUsage(
+      'const u = requireEnv("VALKEY_URL"); const s = process.env.SITE_URL;'
+    );
+    expect(errors).toEqual([]);
   });
 });

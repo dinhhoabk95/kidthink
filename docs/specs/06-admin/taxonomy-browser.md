@@ -2,12 +2,10 @@
 spec: TAXONOMY-BROWSER
 title: Duyệt cây taxonomy
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
-open_tasks:
-  - "#300"
 owns:
   - Bề mặt duyệt taxonomy trong admin
   - Chỉ báo khoảng trống nội dung
@@ -17,8 +15,6 @@ depends_on:
 ---
 
 # Duyệt cây taxonomy
-
-> **Chưa hoàn thành** — `/taxonomy` link tới `/admin/seed-authoring?skill_code=…` (trang không tồn tại) và `/studio/levels` không đọc `skill_code` từ query nên skill không được chọn sẵn (BR-TXB-04). Việc còn lại: [Task #300](../../tasks/300-admin-small-gaps-plan.md).
 
 ## 1. Objective
 

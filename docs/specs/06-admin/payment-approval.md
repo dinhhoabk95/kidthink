@@ -2,12 +2,10 @@
 spec: PAYMENT-APPROVAL
 title: Duyệt và từ chối đơn thanh toán
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-10-18
-open_tasks:
-  - "#297"
 owns:
   - Thao tác approve/reject và hậu quả
   - Cấp bù ngày
@@ -18,8 +16,6 @@ depends_on:
 ---
 
 # Duyệt và từ chối đơn thanh toán
-
-> **Chưa hoàn thành** — API approve/reject đã có nhưng admin chưa có màn `/payments/{uuid}/decide`, nên Manager chưa duyệt được đơn từ admin; checklist đối chiếu chưa có UI (BR-PAP-08). Việc còn lại: [Task #297](../../tasks/297-admin-payment-queue-plan.md).
 
 ## 1. Objective
 

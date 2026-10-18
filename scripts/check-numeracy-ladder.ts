@@ -8,6 +8,7 @@
  * - BR-NRL-04: Ký hiệu số (numeral) không đứng một mình dưới 5 tuổi.
  * - BR-NRL-05: Khoảng số nằm trong khoảng của kind (ví dụ dot-pattern chỉ tới 6).
  * - BR-NRL-06 / BR-ERC-13: Representation phải có hàm vẽ và call site thật trong engine.
+ * - BR-NRL-09: Mọi biểu diễn lượng bắt buộc có spokenLabel phát được bằng giọng Việt.
  *
  * Invariant: Strict TypeScript — NO `any`, NO `unknown`.
  */
@@ -23,7 +24,8 @@ export type NumeracyRuleId =
   | "BR-NRL-03"
   | "BR-NRL-04"
   | "BR-NRL-05"
-  | "BR-NRL-06";
+  | "BR-NRL-06"
+  | "BR-NRL-09";
 
 export interface NumeracyLadderViolation {
   readonly skill_code: string;
@@ -221,6 +223,60 @@ function checkProgression(
   return violations;
 }
 
+const ENGLISH_NUMBER_WORD_RE =
+  /^(zero|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve)$/i;
+const PURE_NUMERIC_OR_SYMBOL_RE = /^[0-9\s\W_]+$/u;
+const VALID_AUDIO_PATH_RE = /^(\/|audio\/|[a-z0-9/_-]+\.(mp3|ogg|wav|m4a)$)/i;
+
+/**
+ * BR-NRL-09: Mọi biểu diễn lượng BẮT BUỘC có spokenLabel phát được bằng giọng Việt,
+ * trỏ tài sản theo play-narration.md.
+ */
+export function checkSpokenLabels(
+  dataset: SkillDataset
+): NumeracyLadderViolation[] {
+  const violations: NumeracyLadderViolation[] = [];
+  for (const item of dataset.items) {
+    const rawSpoken = item.spokenLabel ?? item.label;
+    const spoken = rawSpoken.trim();
+
+    if (spoken.length === 0) {
+      violations.push({
+        skill_code: dataset.skill_code,
+        rung: 1,
+        rule: "BR-NRL-09",
+        message: `biểu diễn lượng '${item.id}' thiếu spokenLabel phát được bằng giọng Việt`,
+      });
+      continue;
+    }
+
+    if (
+      PURE_NUMERIC_OR_SYMBOL_RE.test(spoken) ||
+      ENGLISH_NUMBER_WORD_RE.test(spoken)
+    ) {
+      violations.push({
+        skill_code: dataset.skill_code,
+        rung: 1,
+        rule: "BR-NRL-09",
+        message: `biểu diễn lượng '${item.id}' có spokenLabel '${spoken}' không phát được bằng giọng Việt`,
+      });
+    }
+
+    if (item.audio_path !== undefined) {
+      const audioPath = item.audio_path.trim();
+      if (audioPath.length === 0 || !VALID_AUDIO_PATH_RE.test(audioPath)) {
+        violations.push({
+          skill_code: dataset.skill_code,
+          rung: 1,
+          rule: "BR-NRL-09",
+          message: `biểu diễn lượng '${item.id}' có audio_path '${item.audio_path}' không hợp lệ theo play-narration`,
+        });
+      }
+    }
+  }
+  return violations;
+}
+
 /**
  * Kiểm tra các luật của một dataset C1 đã tham gia ladder.
  */
@@ -303,6 +359,7 @@ export function validateDatasetLadder(
   }
 
   violations.push(...checkProgression(annotatedRungs, dataset.skill_code));
+  violations.push(...checkSpokenLabels(dataset));
 
   return violations;
 }
@@ -371,6 +428,7 @@ export function validateAllNumeracyLadders(
           message: `dataset của ${code} có một bậc ladder không có trường representation`,
         });
       }
+      violations.push(...checkSpokenLabels(dataset));
       continue;
     }
 
@@ -449,7 +507,7 @@ function runCli(): void {
 if (process.argv[1]?.endsWith("check-numeracy-ladder.ts")) {
   try {
     runCli();
-  } catch (err: unknown) {
+  } catch (err) {
     console.error("Lỗi thực thi cổng:", err);
     process.exit(1);
   }

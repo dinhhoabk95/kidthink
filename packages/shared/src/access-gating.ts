@@ -3,9 +3,8 @@ import {
   allowedTiers,
   buildTierLockedResponse,
   type CallerIdentity,
+  getEffectiveTier,
   type LockedPreviewMetadata,
-  TIER_ORDER,
-  TIER_RANK,
   type TierLockedResponse,
   upgradePackageCodesForTier,
 } from "./access-ladder.js";
@@ -213,15 +212,21 @@ export interface ContentAccessResult {
   age_mismatch: boolean;
 }
 
-function resolveEffectiveTier(content: ContentTarget): AccessTier {
+function resolveEffectiveTier(
+  content: ContentTarget,
+  callerKind: CallerIdentity["kind"]
+): AccessTier {
   const levelTier = content.level_tier ?? content.access_tier ?? "premium";
   const curriculumTier = content.curriculum_tier ?? "free";
-  const levelRank = TIER_RANK[levelTier as AccessTier] ?? TIER_RANK.premium;
-  const curriculumRank =
-    TIER_RANK[curriculumTier as AccessTier] ?? TIER_RANK.free;
-  const maxRank = Math.max(levelRank, curriculumRank);
 
-  return TIER_ORDER[maxRank] ?? "premium";
+  return getEffectiveTier(
+    levelTier as AccessTier,
+    curriculumTier as AccessTier,
+    {
+      code: content.code,
+      callerKind,
+    }
+  );
 }
 
 async function verifyChildOwnership(
@@ -348,8 +353,8 @@ export async function assertContentAccess(
     throw gatingError("NOT_FOUND");
   }
 
-  const effectiveTier = resolveEffectiveTier(content);
   const caller = ctx.caller;
+  const effectiveTier = resolveEffectiveTier(content, caller.kind);
 
   await verifyChildOwnership(caller, ctx);
 

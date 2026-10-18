@@ -6,7 +6,17 @@
  */
 
 import type { SkillDataset } from "@mindkid/shared";
-import type { ContentSeed, GateIssue, GateResult } from "../types.js";
+import type { ContentSeed, GateIssue, GateResult } from "#src/types";
+
+type PackNode =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | readonly PackNode[]
+  | { readonly [key: string]: PackNode }
+  | object;
 
 const NUMERIC_GLYPH_KEYS = [
   "value",
@@ -17,7 +27,7 @@ const NUMERIC_GLYPH_KEYS = [
 ] as const;
 
 function hasMatchingProperty(
-  obj: Record<string, unknown>,
+  obj: Record<string, PackNode>,
   glyphs: Set<string>
 ): boolean {
   for (const key of NUMERIC_GLYPH_KEYS) {
@@ -33,7 +43,7 @@ function hasMatchingProperty(
 }
 
 function nodeContainsGlyph(
-  obj: Record<string, unknown>,
+  obj: Record<string, PackNode>,
   glyphs: Set<string>
 ): boolean {
   if (typeof obj.glyph === "string" && glyphs.has(obj.glyph)) {
@@ -59,8 +69,8 @@ const IGNORED_KEYS = new Set([
 ]);
 
 function processArrayItem(
-  arr: unknown[],
-  stack: unknown[],
+  arr: PackNode[],
+  stack: PackNode[],
   glyphs: Set<string>
 ): boolean {
   for (const item of arr) {
@@ -75,8 +85,8 @@ function processArrayItem(
 }
 
 function processObjectItem(
-  obj: Record<string, unknown>,
-  stack: unknown[],
+  obj: Record<string, PackNode>,
+  stack: PackNode[],
   glyphs: Set<string>
 ): boolean {
   if (nodeContainsGlyph(obj, glyphs)) {
@@ -95,27 +105,31 @@ function processObjectItem(
 }
 
 function processStackItem(
-  current: unknown,
-  stack: unknown[],
+  current: PackNode,
+  stack: PackNode[],
   glyphs: Set<string>
 ): boolean {
   if (Array.isArray(current)) {
-    return processArrayItem(current, stack, glyphs);
+    return processArrayItem(current as PackNode[], stack, glyphs);
   }
 
   if (current && typeof current === "object") {
-    return processObjectItem(current as Record<string, unknown>, stack, glyphs);
+    return processObjectItem(
+      current as Record<string, PackNode>,
+      stack,
+      glyphs
+    );
   }
 
   return false;
 }
 
-function packContainsAnyGlyph(pack: unknown, glyphs: Set<string>): boolean {
+function packContainsAnyGlyph(pack: PackNode, glyphs: Set<string>): boolean {
   if (!pack || typeof pack !== "object") {
     return false;
   }
 
-  const stack: unknown[] = [pack];
+  const stack: PackNode[] = [pack];
 
   while (stack.length > 0) {
     const current = stack.pop();
@@ -128,6 +142,25 @@ function packContainsAnyGlyph(pack: unknown, glyphs: Set<string>): boolean {
     }
   }
 
+  return false;
+}
+
+function gt013PromptHasGlyph(
+  seed: ContentSeed,
+  glyphs: ReadonlySet<string>
+): boolean {
+  if (seed.header.template_code !== "GT-013") {
+    return false;
+  }
+  const prompt = (seed.content_pack as Record<string, PackNode> | null)?.prompt;
+  if (typeof prompt !== "string") {
+    return false;
+  }
+  for (const glyph of glyphs) {
+    if (prompt.includes(glyph)) {
+      return true;
+    }
+  }
   return false;
 }
 
@@ -164,19 +197,11 @@ export function checkGateConceptPresent(
     };
   }
 
-  let hasGlyph = packContainsAnyGlyph(seed.content_pack, glyphs);
-  if (!hasGlyph && seed.header.template_code === "GT-013") {
-    const prompt = (seed.content_pack as Record<string, unknown> | null)
-      ?.prompt;
-    if (typeof prompt === "string") {
-      for (const glyph of glyphs) {
-        if (prompt.includes(glyph)) {
-          hasGlyph = true;
-          break;
-        }
-      }
-    }
-  }
+  const hasPackGlyph =
+    seed.content_pack && typeof seed.content_pack === "object"
+      ? packContainsAnyGlyph(seed.content_pack, glyphs)
+      : false;
+  const hasGlyph = hasPackGlyph || gt013PromptHasGlyph(seed, glyphs);
 
   if (!hasGlyph) {
     issues.push({

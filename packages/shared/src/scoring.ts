@@ -76,19 +76,43 @@ function getEventTimeMs(ev: TelemetryEventInput): number | null {
   return null;
 }
 
+function extractPausedMs(
+  payload: TelemetryEventInput["payload"]
+): number | null {
+  if (!payload || typeof payload !== "object") {
+    return null;
+  }
+  const raw = payload.paused_ms;
+  if (typeof raw === "number" && Number.isFinite(raw) && raw >= 0) {
+    return raw;
+  }
+  return null;
+}
+
 function trackPauseIntervals(
   ev: TelemetryEventInput,
-  timeMs: number,
+  timeMs: number | null,
   pauseState: { pauseStartTime: number | null; totalPausedMs: number }
 ) {
-  if (ev.eventName === "session_paused" && pauseState.pauseStartTime === null) {
+  const isPause =
+    ev.eventName === "session_paused" || ev.eventName === "game_paused";
+  const isResume =
+    ev.eventName === "session_resumed" || ev.eventName === "game_resumed";
+
+  if (isPause && pauseState.pauseStartTime === null && timeMs !== null) {
     pauseState.pauseStartTime = timeMs;
-  } else if (
-    ev.eventName === "session_resumed" &&
-    pauseState.pauseStartTime !== null
-  ) {
-    pauseState.totalPausedMs += Math.max(0, timeMs - pauseState.pauseStartTime);
-    pauseState.pauseStartTime = null;
+  } else if (isResume) {
+    const payloadPausedMs = extractPausedMs(ev.payload);
+    if (payloadPausedMs !== null) {
+      pauseState.totalPausedMs += payloadPausedMs;
+      pauseState.pauseStartTime = null;
+    } else if (pauseState.pauseStartTime !== null && timeMs !== null) {
+      pauseState.totalPausedMs += Math.max(
+        0,
+        timeMs - pauseState.pauseStartTime
+      );
+      pauseState.pauseStartTime = null;
+    }
   }
 }
 
@@ -104,6 +128,91 @@ function updateSessionBounds(
   }
 }
 
+export function computePausedDurationMs(
+  events: readonly TelemetryEventInput[]
+): number {
+  if (!events || events.length === 0) {
+    return 0;
+  }
+  const sorted = [...events].sort((a, b) => a.seq - b.seq);
+  const bounds = { start: null as number | null, end: null as number | null };
+  const pauseState = {
+    pauseStartTime: null as number | null,
+    totalPausedMs: 0,
+  };
+
+  for (const ev of sorted) {
+    const timeMs = getEventTimeMs(ev);
+    if (timeMs !== null) {
+      updateSessionBounds(timeMs, bounds);
+    }
+    trackPauseIntervals(ev, timeMs, pauseState);
+  }
+
+  if (
+    pauseState.pauseStartTime !== null &&
+    bounds.end !== null &&
+    bounds.end > pauseState.pauseStartTime
+  ) {
+    pauseState.totalPausedMs += bounds.end - pauseState.pauseStartTime;
+  }
+
+  return Math.max(0, pauseState.totalPausedMs);
+}
+
+function resolveEventOffsetMs(
+  ev: TelemetryEventInput,
+  startedAtMs: number | null
+): number | null {
+  const hasValidStart = startedAtMs !== null && Number.isFinite(startedAtMs);
+  if (typeof ev.occurredAtMs === "number" && Number.isFinite(ev.occurredAtMs)) {
+    if (ev.occurredAtMs > 1_000_000_000_000 && hasValidStart) {
+      return Math.max(0, ev.occurredAtMs - startedAtMs);
+    }
+    return Math.max(0, ev.occurredAtMs);
+  }
+  if (ev.clientTimestamp && hasValidStart) {
+    const clientMs = new Date(ev.clientTimestamp).getTime();
+    if (Number.isFinite(clientMs)) {
+      return Math.max(0, clientMs - startedAtMs);
+    }
+  }
+  return null;
+}
+
+export function computeAbandonedSessionDurationSeconds(
+  events: readonly TelemetryEventInput[],
+  sessionStartedAt?: Date | string | null
+): number {
+  if (!events || events.length === 0) {
+    return 0;
+  }
+  const sorted = [...events].sort((a, b) => a.seq - b.seq);
+  const startedAtMs = sessionStartedAt
+    ? new Date(sessionStartedAt).getTime()
+    : null;
+  const bounds = { start: null as number | null, end: null as number | null };
+
+  for (const ev of sorted) {
+    const offsetMs = resolveEventOffsetMs(ev, startedAtMs);
+    if (offsetMs !== null) {
+      updateSessionBounds(offsetMs, bounds);
+    }
+  }
+
+  if (bounds.end === null) {
+    return 0;
+  }
+
+  const grossDurationMs =
+    bounds.end > 1_000_000_000_000 && bounds.start !== null
+      ? Math.max(0, bounds.end - bounds.start)
+      : bounds.end;
+
+  const pausedMs = computePausedDurationMs(sorted);
+  return Math.max(0, Math.round((grossDurationMs - pausedMs) / 1000));
+}
+
 function calculateSessionDuration(sortedEvents: TelemetryEventInput[]): number {
   const bounds = { start: null as number | null, end: null as number | null };
   const pauseState = {
@@ -113,10 +222,9 @@ function calculateSessionDuration(sortedEvents: TelemetryEventInput[]): number {
 
   for (const ev of sortedEvents) {
     const timeMs = getEventTimeMs(ev);
-    if (timeMs === null) {
-      continue;
+    if (timeMs !== null) {
+      updateSessionBounds(timeMs, bounds);
     }
-    updateSessionBounds(timeMs, bounds);
     trackPauseIntervals(ev, timeMs, pauseState);
   }
 

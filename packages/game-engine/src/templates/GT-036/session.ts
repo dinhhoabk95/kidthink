@@ -390,16 +390,55 @@ export class GT036Session extends TemplateGameSession<
     return null;
   }
 
+  private findDroppedElement(
+    gesture: Extract<Gesture, { type: "drop" }>,
+    tol: number
+  ): GameAction | null {
+    const count = this.content.track_length;
+    const palCount = this.content.palette.length;
+
+    let draggedPaletteId: string | null = null;
+    for (let p = 0; p < palCount; p++) {
+      const slot = this.slots[count + p];
+      const pal = this.content.palette[p];
+      if (
+        slot &&
+        pal &&
+        this.isHitSlot(slot, gesture.fromX, gesture.fromY, tol)
+      ) {
+        draggedPaletteId = pal.id;
+        break;
+      }
+    }
+    if (!draggedPaletteId) {
+      return null;
+    }
+
+    for (let i = 0; i < count; i++) {
+      const slot = this.slots[i];
+      if (slot && this.isHitSlot(slot, gesture.toX, gesture.toY, tol)) {
+        return {
+          type: "place_element",
+          data: { slotIndex: i, elementId: draggedPaletteId },
+        };
+      }
+    }
+    return null;
+  }
+
   override toAction(gesture: Gesture): GameAction | null {
     // Chạm nút ở `zones.action` tới đây thành `commit` (`BR-PSZ-05`): nộp dải.
     if (gesture.type === "commit") {
       return { type: "submit_creation", data: {} };
     }
+    const hitTolerance = 24;
+    if (gesture.type === "drop") {
+      return this.findDroppedElement(gesture, hitTolerance);
+    }
     if (gesture.type !== "tap") {
       return null;
     }
 
-    const hitTolerance = 24;
     return (
       this.findTappedPalette(gesture.x, gesture.y, hitTolerance) ??
       this.findTappedTrack(gesture.x, gesture.y, hitTolerance)

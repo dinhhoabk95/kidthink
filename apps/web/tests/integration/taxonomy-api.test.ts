@@ -1,50 +1,69 @@
+import { IncomingMessage, ServerResponse } from "node:http";
+import { Socket } from "node:net";
+import { createEvent, type H3Event } from "h3";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.mock("h3", () => ({
-  defineEventHandler: (handler: any) => handler,
+const mocks = vi.hoisted(() => ({
+  getQuery: vi.fn<() => Record<string, string>>(),
+  getRouterParam: vi.fn<() => string | undefined>(),
   setHeader: vi.fn(),
-  setResponseStatus: vi.fn(),
-  getQuery: vi.fn(),
-  getRouterParam: vi.fn(),
-  createError: (opts: any) => opts,
+  dbWhere:
+    vi.fn<() => Promise<{ id?: number; code: string; tier: string }[]>>(),
 }));
 
+vi.mock("h3", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("h3")>();
+  return {
+    ...actual,
+    defineEventHandler: <T>(handler: T): T => handler,
+    setHeader: mocks.setHeader,
+    setResponseStatus: vi.fn(),
+    getQuery: mocks.getQuery,
+    getRouterParam: mocks.getRouterParam,
+    createError: <T>(opts: T): T => opts,
+  };
+});
+
 vi.mock("@mindkid/db", () => ({
-  getOwnerDb: vi.fn(),
+  getOwnerDb: () => ({
+    select: () => ({
+      from: () => ({
+        where: mocks.dbWhere,
+      }),
+    }),
+  }),
   skills: { status: "status", code: "code", id: "id" },
   strands: {},
   learningObjectives: { skillId: "skillId" },
 }));
 
-import { getOwnerDb } from "@mindkid/db";
-import { getQuery, getRouterParam, setHeader } from "h3";
 import taxonomyIndexHandler from "#server/api/guest/taxonomy/index.get";
 import skillDetailHandler from "#server/api/guest/taxonomy/skills/[code].get";
 
+function makeMockEvent(): H3Event {
+  const req = new IncomingMessage(new Socket());
+  req.method = "GET";
+  req.url = "/api/guest/taxonomy";
+  const res = new ServerResponse(req);
+  return createEvent(req, res);
+}
+
 describe("Guest Taxonomy API & Performance (BR-TAX-06 & BR-TAX-10)", () => {
-  let mockEvent: any;
+  let mockEvent: H3Event;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockEvent = {};
+    mockEvent = makeMockEvent();
   });
 
   it("GET /api/guest/taxonomy returns tree and sets Cache-Control (BR-TAX-10)", async () => {
-    (getQuery as any).mockReturnValue({ depth: "skill" });
-    (getOwnerDb as any).mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        from: vi.fn().mockReturnValue({
-          where: vi
-            .fn()
-            .mockResolvedValue([{ code: "C1.CNT.01", tier: "basic" }]),
-        }),
-      }),
-    });
+    mocks.getQuery.mockReturnValue({ depth: "skill" });
+    mocks.dbWhere.mockResolvedValue([{ code: "C1.CNT.01", tier: "basic" }]);
 
     const response = await taxonomyIndexHandler(mockEvent);
 
     expect(response).toHaveProperty("competencies");
-    expect(setHeader).toHaveBeenCalledWith(
+    expect(mocks.setHeader).toHaveBeenCalledWith(
       mockEvent,
       "Cache-Control",
       "public, max-age=3600"
@@ -52,22 +71,16 @@ describe("Guest Taxonomy API & Performance (BR-TAX-06 & BR-TAX-10)", () => {
   });
 
   it("GET /api/guest/taxonomy/skills/:code returns skill and LOs", async () => {
-    (getRouterParam as any).mockReturnValue("C1.CNT.01");
-    (getOwnerDb as any).mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        from: vi.fn().mockReturnValue({
-          where: vi
-            .fn()
-            .mockResolvedValue([{ id: 1, code: "C1.CNT.01", tier: "basic" }]),
-        }),
-      }),
-    });
+    mocks.getRouterParam.mockReturnValue("C1.CNT.01");
+    mocks.dbWhere.mockResolvedValue([
+      { id: 1, code: "C1.CNT.01", tier: "basic" },
+    ]);
 
     const response = await skillDetailHandler(mockEvent);
 
     expect(response).toHaveProperty("skill");
     expect(response.skill.code).toBe("C1.CNT.01");
-    expect(setHeader).toHaveBeenCalledWith(
+    expect(mocks.setHeader).toHaveBeenCalledWith(
       mockEvent,
       "Cache-Control",
       "public, max-age=3600"
@@ -75,7 +88,7 @@ describe("Guest Taxonomy API & Performance (BR-TAX-06 & BR-TAX-10)", () => {
   });
 
   it("Ca âm: GET /api/guest/taxonomy/skills/INVALID returns 400 INVALID_CODE_FORMAT", async () => {
-    (getRouterParam as any).mockReturnValue("INVALID_CODE");
+    mocks.getRouterParam.mockReturnValue("INVALID_CODE");
 
     await expect(skillDetailHandler(mockEvent)).rejects.toMatchObject({
       statusCode: 400,
@@ -84,14 +97,8 @@ describe("Guest Taxonomy API & Performance (BR-TAX-06 & BR-TAX-10)", () => {
   });
 
   it("Ca âm: GET /api/guest/taxonomy/skills/C1.CNT.99 returns 404 NOT_FOUND for unseeded skill", async () => {
-    (getRouterParam as any).mockReturnValue("C1.CNT.99");
-    (getOwnerDb as any).mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        from: vi.fn().mockReturnValue({
-          where: vi.fn().mockResolvedValue([]),
-        }),
-      }),
-    });
+    mocks.getRouterParam.mockReturnValue("C1.CNT.99");
+    mocks.dbWhere.mockResolvedValue([]);
 
     await expect(skillDetailHandler(mockEvent)).rejects.toMatchObject({
       statusCode: 404,
@@ -100,16 +107,8 @@ describe("Guest Taxonomy API & Performance (BR-TAX-06 & BR-TAX-10)", () => {
   });
 
   it("BR-TAX-10 benchmark: 100 queries respond with P95 < 100ms", async () => {
-    (getQuery as any).mockReturnValue({ depth: "skill" });
-    (getOwnerDb as any).mockReturnValue({
-      select: vi.fn().mockReturnValue({
-        from: vi.fn().mockReturnValue({
-          where: vi
-            .fn()
-            .mockResolvedValue([{ code: "C1.CNT.01", tier: "basic" }]),
-        }),
-      }),
-    });
+    mocks.getQuery.mockReturnValue({ depth: "skill" });
+    mocks.dbWhere.mockResolvedValue([{ code: "C1.CNT.01", tier: "basic" }]);
 
     const latencies: number[] = [];
     for (let i = 0; i < 100; i++) {

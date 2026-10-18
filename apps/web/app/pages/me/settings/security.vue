@@ -1,32 +1,29 @@
 <template>
   <div class="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
-    <!-- Header -->
     <div class="border-b pb-4 border-surface-200">
-      <div class="flex items-center gap-2 mb-2">
-        <NuxtLink
-          class="text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1"
-          to="/me/settings"
-        >
-          <UIcon class="w-4 h-4" name="i-lucide-arrow-left" />
-          Quay lại Cài đặt
-        </NuxtLink>
-      </div>
+      <NuxtLink
+        class="text-sm font-semibold text-brand-600 hover:text-brand-700 inline-flex items-center gap-1 mb-2"
+        to="/me/settings"
+      >
+        <UIcon class="w-4 h-4" name="i-lucide-arrow-left" />
+        Quay lại Cài đặt
+      </NuxtLink>
       <h1 class="text-2xl md:text-3xl font-bold font-heading text-surface-900">
-        Bảo mật & Xác thực hai lớp (MFA)
+        Bảo mật & Quản lý phiên đăng nhập
       </h1>
       <p class="text-sm md:text-base text-surface-600 mt-1">
-        Tăng cường bảo vệ tài khoản bằng mã xác thực 6 số (TOTP) từ ứng dụng như
-        Google Authenticator hoặc 1Password.
+        Quản lý xác thực hai lớp (MFA) và kiểm tra các thiết bị đang đăng nhập
+        vào tài khoản của bạn.
       </p>
     </div>
 
-    <!-- Feedback Alerts -->
     <div
       class="p-4 rounded-2xl bg-danger-50 border-2 border-danger-200 text-sm text-danger-900 flex items-start gap-3"
+      data-testid="security-error-banner"
       v-if="errorMessage"
     >
       <UIcon
-        class="w-5 h-5 text-danger-600 flex-shrink-0 mt-0.5"
+        class="w-5 h-5 text-danger-600 shrink-0 mt-0.5"
         name="i-lucide-alert-circle"
       />
       <div class="flex-1 font-medium">{{ errorMessage }}</div>
@@ -42,10 +39,11 @@
 
     <div
       class="p-4 rounded-2xl bg-success-50 border-2 border-success-200 text-sm text-success-900 flex items-start gap-3"
+      data-testid="security-success-banner"
       v-if="successMessage"
     >
       <UIcon
-        class="w-5 h-5 text-success-600 flex-shrink-0 mt-0.5"
+        class="w-5 h-5 text-success-600 shrink-0 mt-0.5"
         name="i-lucide-check-circle-2"
       />
       <div class="flex-1 font-medium">{{ successMessage }}</div>
@@ -59,7 +57,6 @@
       </button>
     </div>
 
-    <!-- Loading State -->
     <div class="p-8 text-center" v-if="loading">
       <UIcon
         class="w-8 h-8 animate-spin text-brand-600 mx-auto"
@@ -68,451 +65,267 @@
       <p class="text-sm text-surface-500 mt-2">Đang tải thông tin bảo mật...</p>
     </div>
 
-    <!-- Main MFA Card -->
     <div class="space-y-6" v-else>
+      <SecurityMfaCard
+        :mfa-status="mfaStatus"
+        @error="errorMessage = $event"
+        @reload="loadSecurityData"
+        @success="successMessage = $event"
+      />
+
+      <!-- Active Sessions Card (BR-LGN-04, BR-LGN-05, BR-LGN-10) -->
       <div
-        class="bg-white rounded-2xl border-2 border-surface-200 p-5 md:p-6 space-y-6 shadow-sm"
+        class="bg-white rounded-2xl border-2 border-surface-200 p-5 md:p-6 space-y-5 shadow-sm"
+        data-testid="active-sessions-card"
       >
         <div
           class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-100 pb-4"
         >
           <div class="flex items-center gap-3">
             <div class="p-3 rounded-2xl bg-brand-50 text-brand-600">
-              <UIcon class="w-6 h-6" name="i-lucide-shield-check" />
+              <UIcon class="w-6 h-6" name="i-lucide-laptop" />
             </div>
             <div>
               <h2 class="text-lg font-bold font-heading text-surface-900">
-                Xác thực hai lớp (TOTP)
+                Thiết bị đang đăng nhập
               </h2>
               <p class="text-xs text-surface-500 mt-0.5">
-                MFA là tính năng tuỳ chọn cho tài khoản người dùng.
+                Kiểm tra các phiên hoạt động và thu hồi quyền truy cập nếu phát
+                hiện thiết bị lạ.
               </p>
             </div>
           </div>
 
-          <!-- Status badge -->
-          <div>
-            <span
-              class="px-3.5 py-1.5 text-xs font-bold rounded-full bg-success-100 text-success-800 border border-success-200 flex items-center gap-1.5"
-              v-if="mfaStatus?.enabled"
-            >
-              <UIcon class="w-4 h-4 text-success-600" name="i-lucide-check" />
-              Đang bật
-            </span>
-            <span
-              class="px-3.5 py-1.5 text-xs font-bold rounded-full bg-surface-100 text-surface-700 border border-surface-200"
-              v-else
-            >
-              Chưa kích hoạt
-            </span>
-          </div>
-        </div>
-
-        <!-- MFA Info & Actions when ENABLED -->
-        <div class="space-y-4" v-if="mfaStatus?.enabled">
-          <div
-            class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-surface-50 p-4 rounded-xl border border-surface-200"
+          <button
+            class="min-h-11 px-4 py-2 rounded-xl border-2 border-danger-200 bg-danger-50 hover:bg-danger-100 text-danger-700 font-semibold text-xs transition-colors"
+            data-testid="open-logout-all-modal-btn"
+            type="button"
+            :disabled="submitting"
+            @click="openLogoutAllModal"
           >
-            <div>
-              <span class="text-xs text-surface-500 block"
-                >Thời điểm kích hoạt:</span
-              >
-              <span class="font-medium text-surface-800">
-                {{ mfaStatus.confirmed_at ? formatDate(mfaStatus.confirmed_at) : '—' }}
-              </span>
-            </div>
-            <div>
-              <span class="text-xs text-surface-500 block"
-                >Số mã khôi phục còn lại:</span
-              >
-              <span class="font-bold text-surface-900">
-                {{ mfaStatus.recovery_codes_remaining }}
-                / 10
-              </span>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap items-center gap-3 pt-2">
-            <button
-              class="min-h-11 px-5 py-2.5 rounded-xl border-2 border-surface-300 hover:border-brand-600 text-surface-800 font-semibold text-sm transition-colors"
-              type="button"
-              :disabled="submitting"
-              @click="openRegenerateModal"
-            >
-              <UIcon
-                class="w-4 h-4 inline mr-1 text-brand-600"
-                name="i-lucide-refresh-cw"
-              />
-              Sinh lại 10 mã khôi phục
-            </button>
-
-            <button
-              class="min-h-11 px-5 py-2.5 rounded-xl border-2 border-danger-200 bg-danger-50 hover:bg-danger-100 text-danger-700 font-semibold text-sm transition-colors"
-              type="button"
-              :disabled="submitting"
-              @click="openDisableModal"
-            >
-              <UIcon
-                class="w-4 h-4 inline mr-1 text-danger-600"
-                name="i-lucide-shield-off"
-              />
-              Tắt xác thực hai lớp
-            </button>
-          </div>
+            Đăng xuất mọi thiết bị
+          </button>
         </div>
 
-        <!-- MFA Info & Actions when DISABLED -->
-        <div class="space-y-4" v-else>
-          <p class="text-sm text-surface-700 leading-relaxed">
-            Khi bật tính năng này, mỗi khi đăng nhập bằng mật khẩu hoặc tài
-            khoản mạng xã hội, bạn sẽ được yêu cầu nhập thêm mã 6 số ngẫu nhiên
-            từ ứng dụng xác thực trên điện thoại.
-          </p>
+        <div
+          class="text-sm text-surface-500 py-4 text-center"
+          data-testid="sessions-empty"
+          v-if="sessions.length === 0"
+        >
+          Không có phiên đăng nhập nào đang hoạt động.
+        </div>
 
-          <div class="pt-2">
+        <div class="space-y-3" data-testid="sessions-list" v-else>
+          <div
+            class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-surface-200 bg-surface-50"
+            data-testid="session-row"
+            v-for="sess in sessions"
+            :key="sess.id"
+          >
+            <div class="space-y-1">
+              <div class="flex flex-wrap items-center gap-2">
+                <span
+                  class="font-bold text-sm text-surface-900"
+                  data-testid="session-device-label"
+                >
+                  {{ formatDeviceLabel(sess) }}
+                </span>
+                <span
+                  class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-brand-100 text-brand-800"
+                  data-testid="current-session-badge"
+                  v-if="isCurrentSession(sess)"
+                >
+                  Thiết bị này
+                </span>
+                <span
+                  class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-surface-200 text-surface-700"
+                  data-testid="session-auth-method"
+                >
+                  {{ formatAuthMethod(sess) }}
+                </span>
+              </div>
+              <div
+                class="text-xs text-surface-500 flex flex-wrap gap-x-3 gap-y-1"
+              >
+                <span data-testid="session-location">
+                  Vị trí: {{ formatLocation(sess) }}
+                </span>
+                <span v-if="sess.createdAt || sess.created_at">
+                  Đăng nhập:
+                  {{ formatDate(String(sess.createdAt || sess.created_at)) }}
+                </span>
+                <span v-if="sess.lastUsedAt || sess.last_used_at">
+                  Hoạt động gần nhất:
+                  {{ formatDate(String(sess.lastUsedAt || sess.last_used_at)) }}
+                </span>
+              </div>
+            </div>
+
             <button
-              class="min-h-11 px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold font-heading rounded-xl transition-all shadow-sm flex items-center gap-2"
+              class="min-h-11 px-4 py-2 rounded-xl border border-danger-200 bg-white hover:bg-danger-50 text-danger-600 font-semibold text-xs transition-colors disabled:opacity-50 shrink-0"
               type="button"
-              :disabled="submitting"
-              @click="startSetupFlow"
+              v-if="!isCurrentSession(sess)"
+              :data-testid="`revoke-session-btn-${sess.id}`"
+              :disabled="revokingSessionId === sess.id"
+              @click="handleRevokeSession(sess.id)"
             >
-              <UIcon class="w-5 h-5" name="i-lucide-shield-plus" />
-              {{ submitting ? 'Đang chuẩn bị...' : 'Bắt đầu thiết lập MFA' }}
+              {{ revokingSessionId === sess.id ? "Đang thu hồi..." : "Thu hồi" }}
             </button>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SETUP MODAL / STEPPER -->
+    <!-- LOGOUT ALL REAUTH MODAL (BR-LGN-04) -->
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 overflow-y-auto"
-      v-if="setupState.isOpen"
+      aria-labelledby="logout-all-modal-title"
+      aria-modal="true"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+      data-testid="logout-all-reauth-modal"
+      role="dialog"
+      v-if="logoutAllModal.isOpen"
     >
       <div
-        class="bg-white rounded-3xl border-4 border-surface-300 p-6 max-w-lg w-full space-y-5 shadow-2xl my-8"
+        class="bg-white rounded-3xl border-4 border-surface-300 p-6 max-w-md w-full space-y-4 shadow-2xl"
       >
         <div
           class="flex items-center justify-between border-b border-surface-100 pb-3"
         >
-          <h3 class="text-lg font-bold font-heading text-surface-900">
-            {{ setupState.step === 'codes' ? 'Mã khôi phục dự phòng' : 'Thiết lập xác thực hai lớp' }}
+          <h3
+            class="text-lg font-bold font-heading text-danger-700"
+            id="logout-all-modal-title"
+          >
+            Đăng xuất khỏi mọi thiết bị
           </h3>
           <button
             aria-label="Đóng modal"
             class="text-surface-400 hover:text-surface-600 font-bold text-lg min-h-11 min-w-11 flex items-center justify-center"
             type="button"
-            v-if="setupState.step !== 'codes'"
-            @click="setupState.isOpen = false"
+            @click="logoutAllModal.isOpen = false"
           >
             <UIcon class="w-5 h-5" name="i-lucide-x" />
           </button>
         </div>
 
-        <!-- Step 1: Scan QR / Enter Secret -->
-        <div class="space-y-4" v-if="setupState.step === 'verify'">
-          <p class="text-xs text-surface-600">
-            1. Mở ứng dụng xác thực (Google Authenticator, Microsoft
-            Authenticator hoặc 1Password) trên điện thoại và thêm tài khoản bằng
-            mã khoá dưới đây:
-          </p>
+        <p class="text-xs text-surface-600">
+          Vui lòng nhập mật khẩu hiện tại để xác nhận thu hồi toàn bộ phiên đăng
+          nhập trên tất cả các thiết bị.
+        </p>
 
-          <!-- Secret text box -->
-          <div
-            class="p-3 bg-surface-50 rounded-xl border-2 border-surface-200 space-y-1"
-          >
-            <span class="text-xs text-surface-400 font-semibold block"
-              >Khóa bí mật (Secret Key):</span
-            >
-            <div class="flex items-center justify-between gap-2">
-              <span
-                class="font-mono text-sm font-bold text-brand-700 select-all break-all"
-              >
-                {{ setupState.secret }}
-              </span>
-              <button
-                class="min-h-11 px-3 py-1 text-xs font-semibold text-brand-600 hover:text-brand-700 bg-white border border-surface-200 rounded-xl flex items-center gap-1 shrink-0"
-                type="button"
-                @click="copySecret"
-              >
-                <UIcon class="w-3.5 h-3.5" name="i-lucide-copy" />
-                {{ setupState.copiedSecret ? 'Đã chép' : 'Sao chép' }}
-              </button>
-            </div>
-          </div>
-
-          <div class="space-y-2 pt-2">
+        <form
+          class="space-y-4"
+          data-testid="logout-all-reauth-form"
+          @submit.prevent="handleLogoutAll"
+        >
+          <div>
             <label
-              class="block text-xs font-bold text-surface-700"
-              for="setupVerifyCode"
+              class="block text-xs font-bold text-surface-700 mb-1"
+              for="logoutAllPassword"
             >
-              2. Nhập mã xác thực 6 số hiển thị trên ứng dụng để kích hoạt:
+              Mật khẩu hiện tại *
             </label>
             <input
-              class="w-full min-h-11 px-4 py-2.5 rounded-xl border-2 border-surface-300 focus:border-brand-600 focus:outline-none text-center font-mono text-xl font-bold tracking-widest text-surface-900"
-              id="setupVerifyCode"
-              maxlength="6"
-              placeholder="000000"
-              type="text"
-              v-model="setupState.code"
-              @keyup.enter="handleConfirmSetup"
+              autocomplete="current-password"
+              class="w-full min-h-11 px-4 py-2.5 rounded-xl border-2 border-surface-300 focus:border-danger-600 focus:outline-none text-base text-surface-900"
+              data-testid="logout-all-password-input"
+              id="logoutAllPassword"
+              required
+              type="password"
+              v-model="logoutAllModal.password"
             >
           </div>
+
+          <p
+            class="rounded-xl border border-amber-200 bg-amber-50 p-3 font-medium text-amber-900 text-xs"
+            data-testid="logout-all-modal-error"
+            v-if="logoutAllModal.error"
+          >
+            {{ logoutAllModal.error }}
+          </p>
 
           <div class="flex justify-end gap-3 pt-2">
             <button
               class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-200 text-xs font-bold text-surface-600 hover:bg-surface-50"
               type="button"
-              @click="setupState.isOpen = false"
+              @click="logoutAllModal.isOpen = false"
             >
               Huỷ
             </button>
             <button
-              class="min-h-11 px-6 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-xs font-bold font-heading"
-              type="button"
-              :disabled="setupState.code.trim().length !== 6 || submitting"
-              @click="handleConfirmSetup"
+              class="min-h-11 px-5 py-2 rounded-xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white text-xs font-bold font-heading"
+              data-testid="confirm-logout-all-btn"
+              type="submit"
+              :disabled="!logoutAllModal.password.trim() || submitting"
             >
-              {{ submitting ? 'Đang xác thực...' : 'Xác nhận & Bật MFA' }}
+              {{ submitting ? "Đang xử lý..." : "Xác nhận đăng xuất tất cả" }}
             </button>
           </div>
-        </div>
-
-        <!-- Step 2: Show 10 Recovery Codes Once (BR-MFA-07) -->
-        <div class="space-y-4" v-else-if="setupState.step === 'codes'">
-          <div
-            class="p-3 bg-warning-50 rounded-xl border border-warning-200 text-xs text-warning-900 space-y-1"
-          >
-            <strong class="font-bold flex items-center gap-1">
-              <UIcon
-                class="w-4 h-4 text-warning-700"
-                name="i-lucide-alert-triangle"
-              />
-              Lưu ý quan trọng (Chỉ hiển thị 1 lần duy nhất):
-            </strong>
-            <p>
-              Hãy lưu lại 10 mã khôi phục dưới đây ở nơi an toàn. Mỗi mã chỉ
-              dùng được 1 lần để đăng nhập nếu bạn mất quyền truy cập thiết bị
-              xác thực.
-            </p>
-          </div>
-
-          <div
-            class="grid grid-cols-2 gap-2 bg-surface-50 p-4 rounded-xl border border-surface-200"
-          >
-            <div
-              class="font-mono text-xs font-bold text-surface-800 p-2 bg-white rounded-xl border border-surface-200 text-center select-all"
-              v-for="(code, idx) in setupState.recoveryCodes"
-              :key="idx"
-            >
-              {{ code }}
-            </div>
-          </div>
-
-          <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
-            <div class="flex items-center gap-2">
-              <button
-                class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-300 hover:border-brand-600 text-xs font-bold text-surface-700 flex items-center gap-1.5"
-                type="button"
-                @click="copyAllCodes"
-              >
-                <UIcon class="w-4 h-4" name="i-lucide-copy" />
-                {{ setupState.copiedCodes ? 'Đã sao chép' : 'Sao chép tất cả' }}
-              </button>
-              <button
-                class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-300 hover:border-brand-600 text-xs font-bold text-surface-700 flex items-center gap-1.5"
-                type="button"
-                @click="downloadCodes"
-              >
-                <UIcon class="w-4 h-4" name="i-lucide-download" />
-                Tải file .txt
-              </button>
-            </div>
-
-            <button
-              class="min-h-11 px-6 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold font-heading"
-              type="button"
-              @click="finishSetup"
-            >
-              Tôi đã lưu an toàn
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- DISABLE MFA MODAL -->
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-      v-if="disableModal.isOpen"
-    >
-      <div
-        class="bg-white rounded-3xl border-4 border-surface-300 p-6 max-w-md w-full space-y-4 shadow-2xl"
-      >
-        <div
-          class="flex items-center justify-between border-b border-surface-100 pb-3"
-        >
-          <h3 class="text-lg font-bold font-heading text-surface-900">
-            Tắt xác thực hai lớp
-          </h3>
-          <button
-            aria-label="Đóng modal"
-            class="text-surface-400 hover:text-surface-600 font-bold text-lg min-h-11 min-w-11 flex items-center justify-center"
-            type="button"
-            @click="disableModal.isOpen = false"
-          >
-            <UIcon class="w-5 h-5" name="i-lucide-x" />
-          </button>
-        </div>
-
-        <p class="text-xs text-surface-600">
-          Để tắt MFA, vui lòng nhập mã xác thực 6 số từ ứng dụng xác thực hoặc
-          một mã khôi phục dự phòng:
-        </p>
-
-        <div class="space-y-2">
-          <label
-            class="block text-xs font-bold text-surface-700"
-            for="disableCode"
-          >
-            Mã TOTP hoặc mã khôi phục *
-          </label>
-          <input
-            class="w-full min-h-11 px-4 py-2.5 rounded-xl border-2 border-surface-300 focus:border-brand-600 focus:outline-none text-center font-mono text-base font-bold text-surface-900"
-            id="disableCode"
-            placeholder="Nhập mã 6 số hoặc mã khôi phục"
-            type="text"
-            v-model="disableModal.code"
-          >
-        </div>
-
-        <div class="flex justify-end gap-3 pt-2">
-          <button
-            class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-200 text-xs font-bold text-surface-600 hover:bg-surface-50"
-            type="button"
-            @click="disableModal.isOpen = false"
-          >
-            Huỷ
-          </button>
-          <button
-            class="min-h-11 px-5 py-2 rounded-xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white text-xs font-bold font-heading"
-            type="button"
-            :disabled="!disableModal.code.trim() || submitting"
-            @click="handleDisableMfa"
-          >
-            {{ submitting ? 'Đang tắt...' : 'Xác nhận tắt MFA' }}
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- REGENERATE CODES MODAL -->
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
-      v-if="regenerateModal.isOpen"
-    >
-      <div
-        class="bg-white rounded-3xl border-4 border-surface-300 p-6 max-w-md w-full space-y-4 shadow-2xl"
-      >
-        <div
-          class="flex items-center justify-between border-b border-surface-100 pb-3"
-        >
-          <h3 class="text-lg font-bold font-heading text-surface-900">
-            Sinh lại mã khôi phục
-          </h3>
-          <button
-            aria-label="Đóng modal"
-            class="text-surface-400 hover:text-surface-600 font-bold text-lg min-h-11 min-w-11 flex items-center justify-center"
-            type="button"
-            @click="regenerateModal.isOpen = false"
-          >
-            <UIcon class="w-5 h-5" name="i-lucide-x" />
-          </button>
-        </div>
-
-        <p class="text-xs text-surface-600">
-          Hành động này sẽ
-          <strong>vô hiệu hoá toàn bộ mã khôi phục cũ</strong>
-          và cấp 10 mã mới. Vui lòng nhập mã TOTP 6 số để xác nhận:
-        </p>
-
-        <div class="space-y-2">
-          <label
-            class="block text-xs font-bold text-surface-700"
-            for="regenerateCode"
-          >
-            Mã xác thực TOTP 6 số *
-          </label>
-          <input
-            class="w-full min-h-11 px-4 py-2.5 rounded-xl border-2 border-surface-300 focus:border-brand-600 focus:outline-none text-center font-mono text-lg font-bold tracking-widest text-surface-900"
-            id="regenerateCode"
-            maxlength="6"
-            placeholder="000000"
-            type="text"
-            v-model="regenerateModal.code"
-          >
-        </div>
-
-        <div class="flex justify-end gap-3 pt-2">
-          <button
-            class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-200 text-xs font-bold text-surface-600 hover:bg-surface-50"
-            type="button"
-            @click="regenerateModal.isOpen = false"
-          >
-            Huỷ
-          </button>
-          <button
-            class="min-h-11 px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-xs font-bold font-heading"
-            type="button"
-            :disabled="regenerateModal.code.trim().length !== 6 || submitting"
-            @click="handleRegenerateCodes"
-          >
-            {{ submitting ? 'Đang tạo...' : 'Tạo 10 mã mới' }}
-          </button>
-        </div>
+        </form>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+  import { normalizeApiError } from "@mindkid/errors/client";
   import { onMounted, reactive, ref } from "vue";
+  import SecurityMfaCard, {
+    type MfaStatusResponse,
+  } from "~/components/security-mfa-card.vue";
+  import { useApi } from "~/composables/use-api";
 
   definePageMeta({
     middleware: ["user-auth"],
   });
 
-  interface MfaStatusResponse {
-    enabled: boolean;
-    confirmed_at: string | null;
-    recovery_codes_remaining: number;
+  interface SessionItem {
+    id: string;
+    deviceLabel?: string | null;
+    device_label?: string | null;
+    ipAddress?: string | null;
+    ip_address?: string | null;
+    locationLabel?: string | null;
+    location_label?: string | null;
+    authMethod?: string | null;
+    auth_method?: string | null;
+    lastUsedAt?: string | null;
+    last_used_at?: string | null;
+    createdAt?: string | null;
+    created_at?: string | null;
+    isCurrent?: boolean;
+    is_current?: boolean;
   }
 
+  const IPV4_FULL_REGEX = /^(\d{1,3})\.(\d{1,3})\.\d{1,3}\.\d{1,3}$/;
+  const BROWSER_MATCHERS: [string, string][] = [
+    ["Edg/", "Edge"],
+    ["Chrome/", "Chrome"],
+    ["Firefox/", "Firefox"],
+    ["Safari/", "Safari"],
+  ];
+  const OS_MATCHERS: [string, string][] = [
+    ["Android", "Android"],
+    ["iPhone", "iOS"],
+    ["iPad", "iOS"],
+    ["Mac OS", "macOS"],
+    ["Windows", "Windows"],
+    ["Linux", "Linux"],
+  ];
+
+  const api = useApi();
+  const router = typeof useRouter === "function" ? useRouter() : null;
   const loading = ref(true);
   const submitting = ref(false);
+  const revokingSessionId = ref<string | null>(null);
   const errorMessage = ref("");
   const successMessage = ref("");
   const mfaStatus = ref<MfaStatusResponse | null>(null);
+  const sessions = ref<SessionItem[]>([]);
 
-  const setupState = reactive({
+  const logoutAllModal = reactive({
     isOpen: false,
-    step: "verify" as "verify" | "codes",
-    secret: "",
-    otpauthUrl: "",
-    code: "",
-    recoveryCodes: [] as string[],
-    copiedSecret: false,
-    copiedCodes: false,
-  });
-
-  const disableModal = reactive({
-    isOpen: false,
-    code: "",
-  });
-
-  const regenerateModal = reactive({
-    isOpen: false,
-    code: "",
+    password: "",
+    error: "",
   });
 
   function formatDate(iso: string): string {
@@ -529,188 +342,135 @@
     }
   }
 
-  function getErrorMessage(err: unknown, fallback: string): string {
-    if (typeof err === "object" && err !== null) {
-      const e = err as { message?: string; data?: { message?: string } };
-      return e.data?.message || e.message || fallback;
-    }
-    return fallback;
+  function isCurrentSession(sess: SessionItem): boolean {
+    return Boolean(sess.isCurrent ?? sess.is_current);
   }
 
-  async function loadMfaStatus() {
+  function formatAuthMethod(sess: SessionItem): string {
+    const raw = (sess.authMethod ?? sess.auth_method ?? "password")
+      .toLowerCase()
+      .trim();
+    if (raw === "google") {
+      return "Google";
+    }
+    if (raw === "facebook") {
+      return "Facebook";
+    }
+    return "Mật khẩu";
+  }
+
+  function matchToken(
+    raw: string,
+    pairs: [string, string][],
+    fallback: string
+  ): string {
+    const hit = pairs.find(([token]) => raw.includes(token));
+    return hit ? hit[1] : fallback;
+  }
+
+  function formatDeviceLabel(sess: SessionItem): string {
+    const raw = (sess.deviceLabel ?? sess.device_label ?? "").trim();
+    if (!raw) {
+      return "Trình duyệt web";
+    }
+    if (!raw.includes("Mozilla/")) {
+      return raw;
+    }
+    const browser = matchToken(raw, BROWSER_MATCHERS, "Trình duyệt");
+    const os = matchToken(raw, OS_MATCHERS, "Thiết bị");
+    return `${browser} trên ${os}`;
+  }
+
+  function formatLocation(sess: SessionItem): string {
+    const loc = (sess.locationLabel ?? sess.location_label ?? "").trim();
+    if (loc) {
+      return loc;
+    }
+    const ip = (sess.ipAddress ?? sess.ip_address ?? "").trim();
+    if (!ip) {
+      return "Không xác định";
+    }
+    const match = IPV4_FULL_REGEX.exec(ip);
+    if (match) {
+      return `${match[1]}.${match[2]}.x.x`;
+    }
+    return ip.includes(":") ? "Mạng IPv6" : ip;
+  }
+
+  async function loadSecurityData(): Promise<void> {
     loading.value = true;
     errorMessage.value = "";
     try {
-      const res = await $fetch<MfaStatusResponse>("/api/users/mfa/status");
-      mfaStatus.value = res;
-    } catch (err: unknown) {
-      errorMessage.value = getErrorMessage(
-        err,
-        "Không thể tải trạng thái xác thực hai lớp"
-      );
+      const [mfaRes, sessRes] = await Promise.all([
+        api<MfaStatusResponse>("/api/users/mfa/status").catch(() => null),
+        api<{ sessions: SessionItem[] }>("/api/users/auth/sessions").catch(
+          () => null
+        ),
+      ]);
+      if (mfaRes) {
+        mfaStatus.value = mfaRes;
+      }
+      if (sessRes?.sessions) {
+        sessions.value = sessRes.sessions;
+      }
+    } catch (err) {
+      errorMessage.value =
+        normalizeApiError(err).message ||
+        "Không thể tải thông tin bảo mật tài khoản";
     } finally {
       loading.value = false;
     }
   }
 
-  async function startSetupFlow() {
-    submitting.value = true;
+  async function handleRevokeSession(sessionId: string): Promise<void> {
+    revokingSessionId.value = sessionId;
     errorMessage.value = "";
     try {
-      const res = await $fetch<{ secret: string; otpauth_url: string }>(
-        "/api/users/mfa/setup",
-        {
-          method: "POST",
-        }
-      );
-      setupState.secret = res.secret;
-      setupState.otpauthUrl = res.otpauth_url;
-      setupState.code = "";
-      setupState.recoveryCodes = [];
-      setupState.step = "verify";
-      setupState.copiedSecret = false;
-      setupState.isOpen = true;
-    } catch (err: unknown) {
-      errorMessage.value = getErrorMessage(
-        err,
-        "Không thể khởi tạo thiết lập MFA"
-      );
+      await api(`/api/users/auth/sessions/${sessionId}`, { method: "DELETE" });
+      sessions.value = sessions.value.filter((s) => s.id !== sessionId);
+      successMessage.value = "Đã thu hồi phiên đăng nhập của thiết bị.";
+    } catch (err) {
+      errorMessage.value =
+        normalizeApiError(err).message ||
+        "Không thể thu hồi phiên đăng nhập này.";
     } finally {
-      submitting.value = false;
+      revokingSessionId.value = null;
     }
   }
 
-  function copySecret() {
-    if (!setupState.secret) {
-      return;
-    }
-    navigator.clipboard.writeText(setupState.secret);
-    setupState.copiedSecret = true;
-    setTimeout(() => {
-      setupState.copiedSecret = false;
-    }, 2000);
+  function openLogoutAllModal(): void {
+    logoutAllModal.password = "";
+    logoutAllModal.error = "";
+    logoutAllModal.isOpen = true;
   }
 
-  async function handleConfirmSetup() {
-    if (setupState.code.trim().length !== 6) {
+  async function handleLogoutAll(): Promise<void> {
+    if (!logoutAllModal.password.trim()) {
       return;
     }
     submitting.value = true;
-    errorMessage.value = "";
+    logoutAllModal.error = "";
     try {
-      const res = await $fetch<{ recovery_codes: string[] }>(
-        "/api/users/mfa/verify",
-        {
-          method: "POST",
-          body: { code: setupState.code.trim() },
-        }
-      );
-      setupState.recoveryCodes = res.recovery_codes || [];
-      setupState.step = "codes";
-      successMessage.value = "Xác thực hai lớp đã được kích hoạt thành công!";
-      await loadMfaStatus();
-    } catch (err: unknown) {
-      errorMessage.value = getErrorMessage(err, "Mã xác thực không hợp lệ");
-    } finally {
-      submitting.value = false;
-    }
-  }
-
-  function copyAllCodes() {
-    if (setupState.recoveryCodes.length === 0) {
-      return;
-    }
-    navigator.clipboard.writeText(setupState.recoveryCodes.join("\n"));
-    setupState.copiedCodes = true;
-    setTimeout(() => {
-      setupState.copiedCodes = false;
-    }, 2000);
-  }
-
-  function downloadCodes() {
-    if (setupState.recoveryCodes.length === 0) {
-      return;
-    }
-    const content =
-      "TINIMATH - MÃ KHÔI PHỤC XÁC THỰC HAI LỚP (MFA RECOVERY CODES)\n" +
-      "Mỗi mã chỉ sử dụng được 1 lần duy nhất.\n\n" +
-      setupState.recoveryCodes.map((c, i) => `${i + 1}. ${c}`).join("\n") +
-      `\n\nNgày tạo: ${new Date().toLocaleString("vi-VN")}`;
-    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `tinimath-mfa-recovery-codes-${new Date().toISOString().slice(0, 10)}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  function finishSetup() {
-    setupState.isOpen = false;
-  }
-
-  function openDisableModal() {
-    disableModal.code = "";
-    disableModal.isOpen = true;
-  }
-
-  async function handleDisableMfa() {
-    if (!disableModal.code.trim()) {
-      return;
-    }
-    submitting.value = true;
-    errorMessage.value = "";
-    try {
-      await $fetch("/api/users/mfa/disable", {
+      await api("/api/users/auth/reauth", {
         method: "POST",
-        body: { code: disableModal.code.trim() },
+        body: { password: logoutAllModal.password },
       });
-      successMessage.value = "Đã tắt xác thực hai lớp.";
-      disableModal.isOpen = false;
-      await loadMfaStatus();
-    } catch (err: unknown) {
-      errorMessage.value = getErrorMessage(
-        err,
-        "Mã xác thực không hợp lệ để tắt MFA"
-      );
-    } finally {
-      submitting.value = false;
-    }
-  }
-
-  function openRegenerateModal() {
-    regenerateModal.code = "";
-    regenerateModal.isOpen = true;
-  }
-
-  async function handleRegenerateCodes() {
-    if (regenerateModal.code.trim().length !== 6) {
-      return;
-    }
-    submitting.value = true;
-    errorMessage.value = "";
-    try {
-      const res = await $fetch<{ recovery_codes: string[] }>(
-        "/api/users/mfa/recovery-codes",
-        {
-          method: "POST",
-          body: { code: regenerateModal.code.trim() },
-        }
-      );
-      setupState.recoveryCodes = res.recovery_codes || [];
-      setupState.step = "codes";
-      setupState.isOpen = true;
-      regenerateModal.isOpen = false;
-      successMessage.value = "Đã sinh lại 10 mã khôi phục mới.";
-      await loadMfaStatus();
-    } catch (err: unknown) {
-      errorMessage.value = getErrorMessage(err, "Mã xác thực không hợp lệ");
+      await api("/api/users/auth/logout-all", { method: "POST", body: {} });
+      logoutAllModal.isOpen = false;
+      sessions.value = [];
+      successMessage.value = "Đã đăng xuất khỏi tất cả các thiết bị.";
+      if (router && typeof router.push === "function") {
+        await router.push("/login");
+      }
+    } catch (err) {
+      logoutAllModal.error =
+        normalizeApiError(err).message || "Mật khẩu xác thực không chính xác.";
     } finally {
       submitting.value = false;
     }
   }
 
   onMounted(() => {
-    loadMfaStatus();
+    loadSecurityData();
   });
 </script>

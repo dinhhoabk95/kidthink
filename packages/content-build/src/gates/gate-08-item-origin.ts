@@ -6,15 +6,25 @@
  */
 
 import type { SkillDataset } from "@mindkid/shared";
-import type { ContentSeed, GateIssue, GateResult } from "../types.js";
+import type { ContentSeed, GateIssue, GateResult } from "#src/types";
 
 const REGEX_STEP = /^step-/;
 const REGEX_PAIR = /^pair-/;
 const REGEX_SUFFIX_NUM = /[-_](?:[td]\d+|\d+)$/;
 
-function getItemId(obj: unknown): string | null {
+type PackValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | readonly PackValue[]
+  | { readonly [key: string]: PackValue }
+  | object;
+
+function getItemId(obj: PackValue): string | null {
   if (obj && typeof obj === "object") {
-    const rec = obj as Record<string, unknown>;
+    const rec = obj as Record<string, PackValue>;
     if (typeof rec.item_id === "string") {
       return rec.item_id;
     }
@@ -25,25 +35,25 @@ function getItemId(obj: unknown): string | null {
   return null;
 }
 
-function pushFromItemsList(arr: unknown, ids: string[]): void {
+function pushFromItemsList(arr: PackValue, ids: string[]): void {
   if (!Array.isArray(arr)) {
     return;
   }
   for (const el of arr) {
-    const id = getItemId(el);
+    const id = getItemId(el as PackValue);
     if (id) {
       ids.push(id);
     }
   }
 }
 
-function pushFromPairsList(arr: unknown, ids: string[]): void {
+function pushFromPairsList(arr: PackValue, ids: string[]): void {
   if (!Array.isArray(arr)) {
     return;
   }
   for (const pair of arr) {
     if (pair && typeof pair === "object") {
-      const pr = pair as Record<string, unknown>;
+      const pr = pair as Record<string, PackValue>;
       const leftId = getItemId(pr.left);
       if (leftId) {
         ids.push(leftId);
@@ -56,13 +66,13 @@ function pushFromPairsList(arr: unknown, ids: string[]): void {
   }
 }
 
-function extractItemIdsFromContentPack(pack: unknown): string[] {
+function extractItemIdsFromContentPack(pack: PackValue): string[] {
   if (!pack || typeof pack !== "object") {
     return [];
   }
 
   const ids: string[] = [];
-  const p = pack as Record<string, unknown>;
+  const p = pack as Record<string, PackValue>;
 
   const targetId = getItemId(p.target_item);
   if (targetId) {
@@ -102,7 +112,10 @@ export function checkGateItemOrigin(
   }
 
   const validItemIds = new Set(dataset.items.map((i) => i.id));
-  const rawIds = extractItemIdsFromContentPack(seed.content_pack);
+  const rawIds =
+    seed.content_pack && typeof seed.content_pack === "object"
+      ? extractItemIdsFromContentPack(seed.content_pack)
+      : [];
 
   for (const rawId of rawIds) {
     const normId = normalizeId(rawId);

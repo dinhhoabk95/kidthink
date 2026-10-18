@@ -75,6 +75,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
       status: "success" as const,
       timestamp_seconds: timestampSeconds,
       merchant_id: "merchant_test_123",
+      mode: "sandbox",
       raw_data: { test: true },
     };
 
@@ -163,6 +164,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
       status: "success" as const,
       timestamp_seconds: timestampSeconds,
       merchant_id: "merchant_test_123",
+      mode: "sandbox",
     };
 
     // First delivery
@@ -196,6 +198,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
       status: "success" as const,
       timestamp_seconds: oldTimestampSeconds,
       merchant_id: "merchant_test_123",
+      mode: "sandbox",
     };
 
     await expect(
@@ -242,6 +245,7 @@ describe("Automated Payment Integration Tests (P5.1 / Task #71)", () => {
       status: "success" as const,
       timestamp_seconds: timestampSeconds,
       merchant_id: "merchant_test_123",
+      mode: "sandbox",
     };
 
     await expect(

@@ -2,9 +2,21 @@ import { getDb, notificationDeliveries, notifications } from "@mindkid/db";
 import { alert, enqueue } from "@mindkid/queue";
 import { and, eq } from "drizzle-orm";
 
-function readErrorMessage(error: unknown): string {
+function readErrorMessage(
+  error: Error | string | object | null | undefined
+): string {
   return error instanceof Error ? error.message : String(error);
 }
+
+export type NotificationPayloadValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | readonly string[]
+  | readonly number[]
+  | Record<string, string | number | boolean | null | undefined>;
 
 export interface TransactionalEmailInput {
   recipientType: "user" | "manager";
@@ -12,7 +24,12 @@ export interface TransactionalEmailInput {
   /** Mã trong `NOTIFICATION_TYPES` — xem `notification-service.md` §7.1. */
   code: string;
   to: string;
-  payload: Record<string, unknown>;
+  payload: Record<string, NotificationPayloadValue>;
+  /**
+   * Bí mật dùng một lần (raw token, URL chứa token) chỉ đẩy sang job `email:send`,
+   * Cấm — NEVER lưu vào cột `notifications.payload` bền trong DB (`BR-EVF-01`, `#289` S1).
+   */
+  secrets?: Readonly<Record<string, string>>;
 }
 
 /**
@@ -64,15 +81,21 @@ export async function dispatchTransactionalEmail(
   // không với tới được, và trước sửa đổi này hàng delivery ở lại `queued` vĩnh
   // viễn: Cấm — NEVER có gì quét lại hàng `queued`, nên email xác nhận đổi mật
   // khẩu mất hẳn, im lặng, trong khi route trả 500 cho người đã đổi xong.
+  const jobPayload: Record<string, NotificationPayloadValue> = input.secrets
+    ? { ...input.payload, ...input.secrets }
+    : { ...input.payload };
+
   try {
     await enqueue("email:send", {
       notificationId,
       to: input.to,
       code: input.code,
-      payload: input.payload,
+      payload: jobPayload,
     });
-  } catch (error: unknown) {
-    const message = readErrorMessage(error);
+  } catch (error) {
+    const message = readErrorMessage(
+      error instanceof Error ? error : String(error)
+    );
 
     await recordEmailDeliveryOutcome(notificationId, {
       status: "failed",

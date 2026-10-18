@@ -30,6 +30,7 @@
 <script lang="ts" setup>
   import { getTouchFloor } from "@mindkid/game-engine";
   import { computed, onMounted, ref } from "vue";
+  import { useApi } from "~/composables/use-api";
 
   /**
    * Hàng bài học ở sảnh trẻ (`child-lesson-flow.md` §3): bài đang dở trước,
@@ -52,16 +53,13 @@
     () => `${Math.max(KID_TOUCH_FLOOR_PX, MIN_CARD_HEIGHT_PX)}px`
   );
 
+  const api = useApi();
   const lessons = ref<LessonSuggestion[]>([]);
 
   onMounted(async () => {
     try {
-      lessons.value = await $fetch<LessonSuggestion[]>(
-        "/api/users/play/lessons"
-      );
+      lessons.value = await api<LessonSuggestion[]>("/api/users/play/lessons");
     } catch {
-      // Hàng gợi ý là phần thêm của sảnh: chưa đăng nhập hay chưa chọn hồ sơ
-      // trẻ thì ẩn hàng, không điều hướng khỏi sảnh như `useApi` sẽ làm.
       lessons.value = [];
     }
   });

@@ -57,7 +57,7 @@ Chỗ skill có mặc định khác repo — **repo thắng**:
 
 ## Spec là contract, không phải tài liệu
 
-`docs/specs/` có **162 spec, một outcome một file**. Trước khi sửa hành vi, đọc spec sở
+`docs/specs/` là **một outcome một file** (số đếm ở bảng "Tổng" của `docs/specs/index.md`). Trước khi sửa hành vi, đọc spec sở
 hữu hành vi đó. Tra một `BR-*` về spec nào: `docs/specs/00-foundation/business-rules.md`.
 
 - Đổi hành vi mà spec đã chốt → sửa spec **trước**, trong cùng PR.
@@ -85,7 +85,7 @@ try { ... } catch (err) {
 Lớp exception theo model nằm ở `@mindkid/errors`
 (`ModelNotFoundError`, `ValidationError`, và lớp con cho từng model).
 
-Còn 33 khối `catch` trong `apps/*/server` — tất cả đều có logic thật (retry SQLSTATE
+Các khối `catch` còn lại trong `apps/web/server` đều có logic thật (retry SQLSTATE
 23505, health check, webhook). Đừng bỏ chúng.
 
 ## An toàn kiểu — `docs/specs/08-quality/type-safety.md`
@@ -122,16 +122,10 @@ admin:app/server/shared/node), so từng file với
 Giảm → xanh kèm nhắc chạy `pnpm typecheck:update`. Đây là **chỗ duy nhất** typecheck
 chạy: không app hay package nào còn script `typecheck` riêng.
 
-Nợ theo `typecheck-baseline.json` hiện tại: **3.142 lỗi** — root 1.318 · worker 312 ·
-web:app 685 · web:server 680 · admin:app 147 · bốn project còn lại 0. Con số **2.931** ghi
-trước đây sai ở mọi hạng mục. Trong 3.142 đó có **+194 lỗi mà Task #124 và #125 ghi THÊM**
-vào baseline cho mã vừa viết — bậc thang khi ấy chỉ là lời khuyên. Từ nay `--update` **từ
-chối** mọi lần tăng (`scripts/typecheck/ratchet.ts:refuseIncrease`); muốn tăng phải có
-`--allow-increase` kèm lý do trong PR. Sau khi sửa `origin` của bộ sinh level, root đo được
-**1.139** (−179) → tổng thực đo **2.963**; chưa chốt được vì cây làm việc còn lỗi mới chưa
-commit nằm ngoài phạm vi review. Gần như toàn bộ phần còn lại là `TS18048`/`TS2532` do
-`noUncheckedIndexedAccess`. `pnpm typecheck --only web` chạy riêng một app; `--only web:app`
-chạy riêng một project.
+Nợ trong `typecheck-baseline.json` là **0** trên cả 10 project: mọi lỗi type mới đều đỏ.
+`--update` từ chối mọi lần tăng (`scripts/typecheck/ratchet.ts:refuseIncrease`); muốn tăng
+phải có `--allow-increase` kèm lý do trong PR. `pnpm typecheck --only web` chạy riêng một app;
+`--only web:app` chạy riêng một project.
 
 Convention của workspace — `tsconfig.json` extend đúng một base, `vitest.config.ts` đi
 qua `defineWorkspaceTest`, script `test`, dependency khai `catalog:`, `pnpm check` đủ
@@ -147,15 +141,13 @@ project mà cổng typecheck chạy.
   `ERR_UNKNOWN_BUILTIN_MODULE: node:sqlite`.
 - `vitest 4` đã bỏ `--reporter=basic`; dùng `dot` hoặc `json`.
 - Postgres dev ở `127.0.0.1:5433`, Valkey `6380` (container giữ cổng mặc định).
-- `rtk` bọc lệnh KHÔNG chỉ nén output — nó thay hẳn kết quả (`biome check .` có 1 lỗi
-  vẫn in `Lint: No issues found`). Mọi lệnh đo cổng chạy qua `rtk proxy <lệnh>`.
+- Lệnh đo cổng chạy qua `rtk proxy` — xem "Luật đo cổng" ở trên.
 
 ## Cổng lint tuỳ biến đã bị gỡ (2026-08-29)
 
-`packages/gates` — 97 file, 10.713 dòng, 253 test cưỡng chế 96 rule `BR-*` và 18 rule
-`C1`–`C18` — đã bị xoá theo quyết định người dùng: trùng việc với Biome và `vue-tsc`.
+`packages/gates` đã bị xoá theo quyết định người dùng (trùng việc với Biome và `vue-tsc`).
 
-Cổng còn lại, **đây là toàn bộ**:
+Danh sách cổng đầy đủ là `scripts/check.sh` (đọc file đó, đừng tin bảng này là đủ). Các cổng hay đụng tới:
 
 | Lệnh | Đo gì | Phase của `check.sh` |
 | --- | --- | --- |
@@ -188,8 +180,7 @@ người dùng, design token/hex literal, ép kiểu `as T`, `any` trong test, t
 trường, giá, mặt công khai cho trẻ, convention workspace, **ngân sách hiệu năng**
 (`BR-PRF-01/02/08`), **emoji affordance** (`BR-EMJ-03`), **vệ sinh script shell**,
 **vệ sinh đường dẫn import**, **24 rule manifest web-scale**, và **nửa phần quét của
-`BR-GAT-01`**. Năm khoản in đậm KHÔNG có trong danh sách §4 của
-`112-gates-package-removal-plan.md` — bổ sung 2026-08-30.
+`BR-GAT-01`**.
 
 Đã khôi phục: `BR-ARB-04` (`apps/admin/tests/gates/`) và `BR-MFA-13`
 (`apps/web/tests/gates/mfa-key-custody.ts`). Bảng đủ 17 khoản:
@@ -232,4 +223,10 @@ Trên 500 dòng thì viết codemod, đừng sửa tay. Bài học đã trả gi
 
 - **Tất cả code phải commit trực tiếp vào nhánh `main`** — làm việc trực tiếp trên `main` hoặc merge mọi branch vào `main` trước khi hoàn tất task và push lên remote.
 - Không để code dở dang hoặc tồn đọng ở branch riêng mà chưa merge vào `main`.
+
+## Ngôn ngữ tài liệu & nội dung
+
+- **Toàn bộ tài liệu kỹ thuật, spec, model, documentation, use cases, hướng dẫn do Agent tạo hoặc cập nhật BẮT BUỘC dùng tiếng Việt**.
+- Tiếng Việt cho chuỗi hiển thị người dùng và tài liệu hệ thống; tiếng Anh cho code, slug, enum, path, route/slug, database identifier, schema key.
+
 

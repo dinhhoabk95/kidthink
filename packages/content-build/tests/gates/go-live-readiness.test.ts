@@ -1,13 +1,15 @@
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { describe, expect, it } from "vitest";
 import {
   evaluateGoLiveReadiness,
   formatGoLiveReport,
   type GoLiveConfig,
+  loadGoLiveConfig,
 } from "#src/gates/go-live-readiness";
 import type { MvpCurriculumConfig } from "#src/seed-master/roadmap-curricula";
 import type { ContentSeed, LessonSeed } from "#src/types";
 
-describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 (BR-GLR-01..09)", () => {
+describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 & #310 (BR-GLR-01..09)", () => {
   const mockConfig: GoLiveConfig = {
     version: 1,
     last_updated: "2026-08-30",
@@ -55,8 +57,6 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 (BR-GLR-01..09
         target_age_max: 6,
         estimated_minutes: 15,
         access_tier: "free",
-        // Hình dạng THẬT: `skill_codes` mảng trên header, Cấm — NEVER có
-        // `metadata` hay `status`.
         skill_codes: [skill],
         learning_objective_codes: [],
         activity_codes: [],
@@ -73,20 +73,21 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 (BR-GLR-01..09
     engines: string[],
     levelsPerEngine = 3,
     skill = "C1.CNT.01"
-  ): ContentSeed<unknown, unknown>[] {
-    return engines.flatMap((eng) =>
-      Array.from({ length: levelsPerEngine }, (_, idx) => ({
+  ): ContentSeed[] {
+    return engines.flatMap((eng) => {
+      const tpl = ALL_TEMPLATES[eng];
+      const ageMin = tpl?.age_min ?? 4;
+      const ageMax = tpl?.age_max ?? 5;
+      return Array.from({ length: levelsPerEngine }, (_, idx) => ({
         kind: "game_level",
         header: {
           code: `GL-TEST-${eng}-${idx + 1}`,
           content_version: 1,
-          // Engine của level nằm ở `template_code`, không phải
-          // `metadata.game_type_id` — trường sau chưa từng tồn tại.
           template_code: eng,
           title: `Level ${eng} ${idx + 1}`,
           instruction: "Bé hãy thử nhé",
-          age_min: 3,
-          age_max: 6,
+          age_min: ageMin,
+          age_max: ageMax,
           difficulty: 1,
           access_tier: idx === 0 ? ("free" as const) : ("standard" as const),
           skill_codes: [skill],
@@ -99,12 +100,12 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 (BR-GLR-01..09
         },
         content_pack: {},
         difficulty_params: {},
-      }))
-    );
+      }));
+    });
   }
 
   describe("Kịch bản cả hai trục đạt -> Sẵn sàng go-live", () => {
-    it("BR-GLR-09: Khi cả trục game template và trục giáo án đạt -> XANH (READY)", () => {
+    it("BR-GLR-04, BR-GLR-07, BR-GLR-08, BR-GLR-09: Khi cả hai trục đạt -> XANH, đếm động số engine và kèm lưu ý BR-GLR-07", () => {
       const lessons = createMockLessons(126, "C1.CNT.01");
       const gameLevels = createMockGameLevels(
         mockConfig.active_engines,
@@ -129,13 +130,20 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 (BR-GLR-01..09
 
       const report = formatGoLiveReport(res);
       expect(report).toContain("SẴN SÀNG GO-LIVE");
+      expect(report).toContain("3/3 engine đạt sàn nội dung bậc 0 (BR-ECD-01)");
+      expect(report).not.toContain("27/27 engine");
+      expect(report).toContain("BR-GLR-07");
+
+      const liveConfig = loadGoLiveConfig();
+      const allTemplateIds = Object.keys(ALL_TEMPLATES).sort();
+      expect([...liveConfig.active_engines].sort()).toEqual(allTemplateIds);
     });
   });
 
-  describe("Bảy Ca Âm Bắt Buộc (BR-GLR-01..09)", () => {
-    it("Ca âm 1: Một engine mất render() -> ĐỎ (BR-ERC-01)", () => {
+  describe("Các Ca Âm Bắt Buộc (BR-GLR-01..09)", () => {
+    it("Ca âm 1: Vượt sàn MVP 120 level (228 level) nhưng thiếu render() -> ĐỎ (BR-GLR-01 / BR-ERC-01)", () => {
       const lessons = createMockLessons(126);
-      const gameLevels = createMockGameLevels(mockConfig.active_engines);
+      const gameLevels = createMockGameLevels(mockConfig.active_engines, 76); // 228 levels > 120 MVP floor
 
       const res = evaluateGoLiveReadiness({
         config: mockConfig,
@@ -147,6 +155,7 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 (BR-GLR-01..09
         gameLevels,
       });
 
+      expect(gameLevels.length).toBe(228);
       expect(res.isGameAxisPassed).toBe(false);
       expect(res.isPassed).toBe(false);
       expect(res.violations.some((v) => v.includes("BR-ERC-01"))).toBe(true);
@@ -243,9 +252,12 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 (BR-GLR-01..09
       expect(res.violations.some((v) => v.includes("BR-GLR-06"))).toBe(true);
     });
 
-    it("Ca âm 7: Thêm engine active ngoài danh sách phạm vi -> ĐỎ (BR-GLR-05)", () => {
+    it("Ca âm 7: Thêm engine active hoặc level ngoài danh sách phạm vi -> ĐỎ (BR-GLR-05)", () => {
       const lessons = createMockLessons(126);
-      const gameLevels = createMockGameLevels(mockConfig.active_engines);
+      const gameLevels = createMockGameLevels([
+        ...mockConfig.active_engines,
+        "GT-014",
+      ]);
 
       const res = evaluateGoLiveReadiness({
         config: mockConfig,
@@ -260,6 +272,72 @@ describe("Cổng Điều Kiện Sẵn Sàng Go-Live — Task #125 (BR-GLR-01..09
       expect(res.isGameAxisPassed).toBe(false);
       expect(res.isPassed).toBe(false);
       expect(res.violations.some((v) => v.includes("BR-GLR-05"))).toBe(true);
+    });
+
+    it("Ca âm 8: Level có content_pack không khớp content_contract -> ĐỎ (BR-GLR-02 / BR-GTC-10)", () => {
+      const lessons = createMockLessons(126);
+      const gameLevels = createMockGameLevels(mockConfig.active_engines);
+      const first = gameLevels[0];
+      if (!first) {
+        throw new Error("Expected at least one mock game level");
+      }
+      const brokenLevels: ContentSeed[] = [
+        {
+          ...first,
+          content_pack: { invalid_corrupted_field: "broken" },
+        },
+        ...gameLevels.slice(1),
+      ];
+
+      const res = evaluateGoLiveReadiness({
+        config: mockConfig,
+        activeEngineIds: ["GT-001", "GT-002", "GT-003"],
+        implementedRenderEngineIds: ["GT-001", "GT-002", "GT-003"],
+        depthPassingEngineIds: ["GT-001", "GT-002", "GT-003"],
+        curriculaConfigs: mockCurricula,
+        lessons,
+        gameLevels: brokenLevels,
+      });
+
+      expect(res.isGameAxisPassed).toBe(false);
+      expect(res.isPassed).toBe(false);
+      expect(res.violations.some((v) => v.includes("BR-GLR-02"))).toBe(true);
+    });
+
+    it("Ca âm 9: Level gắn theme_tag ngoài từ vựng đóng hoặc sai band tuổi -> ĐỎ (BR-CTR-01 / BR-ECD-13)", () => {
+      const lessons = createMockLessons(126);
+      const gameLevels = createMockGameLevels(mockConfig.active_engines);
+      const first = gameLevels[0];
+      if (!first) {
+        throw new Error("Expected at least one mock game level");
+      }
+      const badThemeAndBandLevels: ContentSeed[] = [
+        {
+          ...first,
+          header: {
+            ...first.header,
+            age_min: 1,
+            age_max: 9,
+            theme_tag: "invalid_theme_xyz",
+          },
+        },
+        ...gameLevels.slice(1),
+      ];
+
+      const res = evaluateGoLiveReadiness({
+        config: mockConfig,
+        activeEngineIds: ["GT-001", "GT-002", "GT-003"],
+        implementedRenderEngineIds: ["GT-001", "GT-002", "GT-003"],
+        depthPassingEngineIds: ["GT-001", "GT-002", "GT-003"],
+        curriculaConfigs: mockCurricula,
+        lessons,
+        gameLevels: badThemeAndBandLevels,
+      });
+
+      expect(res.isGameAxisPassed).toBe(false);
+      expect(res.isPassed).toBe(false);
+      expect(res.violations.some((v) => v.includes("BR-CTR-01"))).toBe(true);
+      expect(res.violations.some((v) => v.includes("BR-ECD-13"))).toBe(true);
     });
   });
 });

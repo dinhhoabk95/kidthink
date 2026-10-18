@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full border-2 border-surface-300 bg-surface-100/90 backdrop-blur-sm shadow-inner"
+    class="flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full border-2 border-surface-300 bg-surface-100/90 backdrop-blur-sm shadow-inner tabular-nums"
     role="progressbar"
     :aria-label="`Vòng ${current + 1} trên ${total}`"
     :aria-valuemax="total"

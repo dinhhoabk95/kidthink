@@ -11,7 +11,7 @@ import {
   dispatchTransactionalEmail,
   isEmailAlreadyDispatched,
   recordEmailDeliveryOutcome,
-} from "../src/index.js";
+} from "#src/index";
 
 const CODE = "password_changed_notification";
 const created: number[] = [];
@@ -31,7 +31,7 @@ async function makeUser(): Promise<number> {
   return row.id;
 }
 
-describe("dispatchTransactionalEmail (BR-JOB-01, BR-JOB-02)", () => {
+describe("dispatchTransactionalEmail (BR-JOB-01, BR-JOB-02, BR-NOT-09, BR-NOT-12, BR-NOT-13)", () => {
   beforeAll(async () => {
     userId = await makeUser();
     await getQueue().obliterate({ force: true });
@@ -46,7 +46,7 @@ describe("dispatchTransactionalEmail (BR-JOB-01, BR-JOB-02)", () => {
     await disconnectQueue();
   });
 
-  it("ghi bản ghi notification, delivery `queued`, và đẩy job", async () => {
+  it("ghi bản ghi notification, delivery `queued`, và đẩy job (BR-NOT-09, BR-NOT-12, BR-NOT-13)", async () => {
     const { notificationId } = await dispatchTransactionalEmail({
       recipientType: "user",
       recipientId: userId,
@@ -67,6 +67,44 @@ describe("dispatchTransactionalEmail (BR-JOB-01, BR-JOB-02)", () => {
     const job = await getQueue().getJob(`email:send:${notificationId}`);
     expect(job, "jobId phải suy từ notificationId (BR-JOB-02)").toBeDefined();
     expect(job?.data.code).toBe(CODE);
+  });
+
+  it("không lưu khoá `secrets` vào `notifications.payload` nhưng vẫn truyền đủ cho job `email:send` (Task #289 S1)", async () => {
+    const { notificationId } = await dispatchTransactionalEmail({
+      recipientType: "user",
+      recipientId: userId,
+      code: "email_change_verification",
+      to: "new-address@example.com",
+      payload: {
+        new_email: "new-address@example.com",
+        expires_at: "2026-10-19T00:00:00.000Z",
+      },
+      secrets: {
+        token: "secret-raw-token-123",
+        url: "http://localhost:3000/verify-email-change?token=secret-raw-token-123",
+      },
+    });
+    created.push(notificationId);
+
+    const [notificationRow] = await getOwnerDb()
+      .select()
+      .from(notifications)
+      .where(eq(notifications.id, notificationId));
+
+    expect(notificationRow).toBeDefined();
+    const persistedPayload = notificationRow?.payload as
+      | Record<string, string>
+      | undefined;
+    expect(persistedPayload?.new_email).toBe("new-address@example.com");
+    expect(persistedPayload?.token).toBeUndefined();
+    expect(persistedPayload?.url).toBeUndefined();
+
+    const job = await getQueue().getJob(`email:send:${notificationId}`);
+    expect(job).toBeDefined();
+    const jobPayload = job?.data.payload as Record<string, string> | undefined;
+    expect(jobPayload?.new_email).toBe("new-address@example.com");
+    expect(jobPayload?.token).toBe("secret-raw-token-123");
+    expect(jobPayload?.url).toContain("token=secret-raw-token-123");
   });
 
   it("hai email khác nhau không dùng chung jobId", async () => {

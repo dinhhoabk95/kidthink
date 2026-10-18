@@ -2,7 +2,7 @@
 spec: API-ERROR-CLIENT
 title: Tầng xử lý lỗi API phía client
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
@@ -12,13 +12,9 @@ owns:
   - Interceptor chuẩn hoá `FetchError` thành cấu trúc lỗi đồng nhất
 depends_on:
   - ERROR-CODES
-open_tasks:
-  - "#308"
 ---
 
 # Tầng xử lý lỗi API phía client
-
-> **Chưa hoàn thành** — `BR-AEC-02`: 30 lời gọi `$fetch(` trần trong `apps/web/app/**` bỏ qua interceptor; helper `isApiErrorCode` chưa có; chưa test nào mang mã `BR-AEC-*`. Việc còn lại: [Task #308](../../tasks/308-foundation-gaps-plan.md).
 
 ## 1. Objective
 
@@ -102,8 +98,7 @@ export class ApiError extends Error {
 
 - `normalizeApiError(error): ApiError` — chuẩn hoá mọi loại lỗi (FetchError, Error, object lạ).
 - `isApiError(error, code?): error is ApiError` — type guard, khớp mã lỗi tuỳ chọn.
-- `isApiErrorCode<C extends ErrorCode>(error, code: C)` — khớp mã lỗi có kiểm tra compile-time
-  theo enum mã lỗi. **Chưa có** (Task #308).
+- `isApiErrorCode<C extends ClientErrorCode>(error, code: C): error is ApiError & { readonly code: C }` — khớp mã lỗi có kiểm tra compile-time theo enum mã lỗi (`ErrorCode | "NETWORK_ERROR"`).
 - `getFieldErrors(error): readonly ApiErrorField[]` — trích lỗi field validation.
 
 ## 8. API contract

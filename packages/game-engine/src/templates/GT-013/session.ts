@@ -48,7 +48,7 @@ import {
 import type { RenderSystem } from "#src/systems/render-system";
 import type { GT013Content, GT013Difficulty } from "./template.js";
 
-export interface MazeScaffoldHint {
+interface MazeScaffoldHint {
   /** Ô mà gợi ý vẽ tới, tính từ đầu nét vẽ hiện tại. */
   readonly cells: readonly MazeCell[];
   readonly ghost_hand: boolean;
@@ -80,6 +80,48 @@ function extractMazeSide(data: unknown): MazeSide | null {
   }
   return null;
 }
+
+function extractMazeCells(data: unknown): MazeCell[] {
+  if (typeof data === "object" && data !== null && "cells" in data) {
+    const raw = Reflect.get(data, "cells");
+    if (Array.isArray(raw)) {
+      const result: MazeCell[] = [];
+      for (const item of raw) {
+        const cell = extractMazeCell(item);
+        if (cell) {
+          result.push(cell);
+        }
+      }
+      return result;
+    }
+  }
+  return [];
+}
+
+function neighborSide(from: MazeCell, to: MazeCell): MazeSide | null {
+  const dr = to.row - from.row;
+  const dc = to.col - from.col;
+  if (dr === -1 && dc === 0) {
+    return "n";
+  }
+  if (dr === 1 && dc === 0) {
+    return "s";
+  }
+  if (dr === 0 && dc === 1) {
+    return "e";
+  }
+  if (dr === 0 && dc === -1) {
+    return "w";
+  }
+  return null;
+}
+
+const ARROW_GLYPHS: Record<MazeSide, string> = {
+  n: "⬆️",
+  e: "➡️",
+  s: "⬇️",
+  w: "⬅️",
+};
 
 /**
  * `GT-013` — tìm đường mê cung.
@@ -165,6 +207,14 @@ export class GT013Session extends TemplateGameSession<
     if (action.type === "submit_path") {
       return this.checkWinCondition() ? ACTION_CORRECT : ACTION_RETRY;
     }
+    if (action.type === "stroke_path") {
+      const cells = extractMazeCells(action.data);
+      const first = cells[0];
+      if (!first) {
+        return ACTION_IGNORED;
+      }
+      return this.isLegalStep(first) ? ACTION_CORRECT : ACTION_IGNORED;
+    }
     const cell = this.actionCell(action);
     if (!cell) {
       return ACTION_IGNORED;
@@ -172,40 +222,119 @@ export class GT013Session extends TemplateGameSession<
     return this.isLegalStep(cell) ? ACTION_CORRECT : ACTION_IGNORED;
   }
 
-  override toAction(gesture: Gesture): GameAction | null {
-    if (gesture.type !== "tap") {
+  private isInsideStage(x: number, y: number): boolean {
+    if (!this.stageRect) {
+      return true;
+    }
+    const s = this.stageRect;
+    return x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h;
+  }
+
+  private slotIndexToCell(i: number): MazeCell | null {
+    const { rows, cols } = this.content.grid;
+    const r = Math.floor(i / cols);
+    const c = i % cols;
+    return r < rows && c < cols ? { row: r, col: c } : null;
+  }
+
+  private findHitCell(x: number, y: number): MazeCell | null {
+    if (!this.isInsideStage(x, y)) {
       return null;
     }
-    const { rows, cols } = this.content.grid;
     for (let i = 0; i < this.slots.length; i++) {
       const slot = this.slots[i];
       if (!slot) {
         continue;
       }
-      const dx = Math.abs(gesture.x - slot.x);
-      const dy = Math.abs(gesture.y - slot.y);
       const radius = Math.max(slot.hitW ?? slot.w, slot.hitH ?? slot.h) / 2;
-      if (dx <= radius && dy <= radius) {
-        const r = Math.floor(i / cols);
-        const c = i % cols;
-        if (r < rows && c < cols) {
-          return {
-            type: "tap_cell",
-            data: { row: r, col: c },
-          };
-        }
+      if (Math.abs(x - slot.x) <= radius && Math.abs(y - slot.y) <= radius) {
+        return this.slotIndexToCell(i);
       }
     }
     return null;
   }
 
+  private toStrokeAction(
+    gesture: Extract<Gesture, { type: "stroke" }>
+  ): GameAction | null {
+    const firstPt = gesture.points[0];
+    if (!(firstPt && this.isInsideStage(firstPt.x, firstPt.y))) {
+      return null;
+    }
+
+    const head = this.tracker.getHead();
+    const cells: MazeCell[] = [];
+    for (const pt of gesture.points) {
+      const cell = this.findHitCell(pt.x, pt.y);
+      if (!cell) {
+        continue;
+      }
+      const prev = cells.at(-1) ?? head;
+      if (cell.row === prev.row && cell.col === prev.col) {
+        continue;
+      }
+      cells.push(cell);
+    }
+
+    if (cells.length === 0) {
+      return null;
+    }
+    if (cells.length === 1) {
+      return { type: "draw_step", data: cells[0] };
+    }
+    return { type: "stroke_path", data: { cells } };
+  }
+
+  override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "stroke") {
+      return this.toStrokeAction(gesture);
+    }
+    if (gesture.type !== "tap") {
+      return null;
+    }
+    const cell = this.findHitCell(gesture.x, gesture.y);
+    if (!cell) {
+      return null;
+    }
+    if (this.content.input_mode === "arrows") {
+      const side = neighborSide(this.tracker.getHead(), cell);
+      if (side) {
+        return {
+          type: "move_arrow",
+          data: { side },
+        };
+      }
+    }
+    return {
+      type: "tap_cell",
+      data: cell,
+    };
+  }
+
   override getHintTargetIndex(): number | null {
-    const goal = this.content.grid.goal;
-    const idx = goal.row * this.content.grid.cols + goal.col;
+    if (this.checkWinCondition() || this.isWon) {
+      return null;
+    }
+    const nextCell = this.remainingRoute()[0] ?? this.content.grid.goal;
+    const idx = nextCell.row * this.content.grid.cols + nextCell.col;
     return idx >= 0 && idx < this.slots.length ? idx : null;
   }
 
   override commit(action: GameAction): void {
+    if (action.type === "stroke_path") {
+      const cells = extractMazeCells(action.data);
+      for (const cell of cells) {
+        const res = this.onPathStep(cell);
+        if (res.status === "blocked") {
+          break;
+        }
+        if (this.checkWinCondition()) {
+          this.onPathSubmitted();
+          break;
+        }
+      }
+      return;
+    }
     const cell = this.actionCell(action);
     if (cell) {
       this.onPathStep(cell);
@@ -221,6 +350,7 @@ export class GT013Session extends TemplateGameSession<
     const { rows, cols, start, goal } = this.content.grid;
     const entities: ViewEntity[] = [];
     const pathKeys = new Set(this.tracker.getPath().map(cellKey));
+    const head = this.tracker.getHead();
 
     for (let i = 0; i < this.slots.length; i++) {
       const slot = this.slots[i];
@@ -240,6 +370,10 @@ export class GT013Session extends TemplateGameSession<
       const isInPath = pathKeys.has(cellKey({ row: r, col: c }));
       const role = toCellRole(isGoal, isRequired, isStart);
       const state: ViewEntity["state"] = isInPath ? "active" : "idle";
+      const side =
+        this.content.input_mode === "arrows"
+          ? neighborSide(head, { row: r, col: c })
+          : null;
 
       entities.push({
         id: `cell_${r}_${c}`,
@@ -250,6 +384,7 @@ export class GT013Session extends TemplateGameSession<
         y: slot.y,
         w: slot.w,
         h: slot.h,
+        ...(side ? { glyph: ARROW_GLYPHS[side] } : {}),
       });
     }
 
@@ -341,5 +476,3 @@ export class GT013Session extends TemplateGameSession<
     drawRequiredCells(ctx, this.content.grid, box, this.content.required_cells);
   }
 }
-
-export default GT013Session;

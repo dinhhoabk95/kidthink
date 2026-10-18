@@ -389,6 +389,7 @@
   import { findCompetency } from "@mindkid/shared/client";
   import { computed, ref, watch } from "vue";
   import { useFetch, useRoute } from "#imports";
+  import { useApi } from "~/composables/use-api";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
   // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
@@ -557,13 +558,14 @@
     if (!curriculum.value) {
       return;
     }
+    const api = useApi();
     isSaving.value = true;
     errorMessage.value = null;
     bannerMessage.value = null;
 
     try {
       // 1. Update meta
-      await $fetch(`/api/users/curricula/${uuid.value}`, {
+      await api(`/api/users/curricula/${uuid.value}`, {
         method: "PUT",
         body: {
           title: editMeta.value.title,
@@ -573,7 +575,7 @@
       });
 
       // 2. Update items
-      await $fetch(`/api/users/curricula/${uuid.value}/items`, {
+      await api(`/api/users/curricula/${uuid.value}/items`, {
         method: "PUT",
         body: {
           items: itemsList.value.map((i) => ({

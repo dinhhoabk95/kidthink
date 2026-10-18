@@ -1,5 +1,9 @@
 import { gameLevels, gameTemplates, getOwnerDb } from "@mindkid/db";
-import type { AccessTier, LevelCta } from "@mindkid/shared";
+import {
+  type AccessTier,
+  isGuestAllowedLevel,
+  type LevelCta,
+} from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -60,7 +64,7 @@ function makeMockEvent(
   return event as H3Event;
 }
 
-describe("GET /api/guest/levels — Catalog CTA & Session Independence (BR-GCP-02, BR-GCP-09, T.2)", () => {
+describe("GET /api/guest/levels — Catalog CTA & Session Independence (BR-GCP-02, BR-GCP-09, BR-LAD-07, T.2)", () => {
   const db = getOwnerDb();
   const baseNum = 8100 + Math.floor(Math.random() * 800);
 
@@ -157,7 +161,7 @@ describe("GET /api/guest/levels — Catalog CTA & Session Independence (BR-GCP-0
     }
   });
 
-  it("trả danh mục có cta theo góc nhìn guest cho mọi tier", async () => {
+  it("BR-LAD-07: trả danh mục có cta theo góc nhìn guest (chỉ mở 6 level allow-list, khoá level free ngoài allow-list)", async () => {
     const event = makeMockEvent({ limit: "50" });
     const res = (await guestLevelsHandler(event)) as CatalogResponseResult;
 
@@ -170,8 +174,17 @@ describe("GET /api/guest/levels — Catalog CTA & Session Independence (BR-GCP-0
       expect(item.cta.text).toBeDefined();
 
       if (item.access_tier === "free") {
-        expect(item.cta.action).toBe("play");
-        expect(item.cta.href).toBe(`/play/${item.code}`);
+        if (isGuestAllowedLevel(item.code)) {
+          expect(item.locked).toBe(false);
+          expect(item.cta.action).toBe("play");
+          expect(item.cta.href).toBe(`/play/${item.code}`);
+        } else {
+          expect(item.locked).toBe(true);
+          expect(item.cta.action).toBe("login");
+          expect(item.cta.href).toBe(
+            `/login?redirect=${encodeURIComponent(`/play/${item.code}`)}`
+          );
+        }
       } else if (item.access_tier === "login") {
         expect(item.cta.action).toBe("login");
         expect(item.cta.href).toBe(

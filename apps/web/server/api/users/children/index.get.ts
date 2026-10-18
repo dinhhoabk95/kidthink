@@ -26,6 +26,7 @@ export default defineEventHandler(async (event) => {
       avatar_id: child.avatarId,
       relationship: child.relationship,
       status: child.status,
+      purge_at: child.purgeAt ? child.purgeAt.toISOString() : null,
       daily_play_cap_minutes: child.dailyPlayCapMinutes,
     })),
   };

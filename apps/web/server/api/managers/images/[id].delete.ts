@@ -11,6 +11,7 @@ import {
 } from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
 import { ContentInUseError } from "@mindkid/errors/content";
+import { deletePublicImage } from "@mindkid/storage";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
@@ -120,7 +121,7 @@ async function findPublishedUsage(
 }
 
 export default defineEventHandler(async (event) => {
-  const manager = await requireManagerSession(event);
+  const manager = requireManagerSession(event);
   const idParam = getRouterParam(event, "id");
   const id = Number(idParam);
 
@@ -138,12 +139,13 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError("IMAGE_NOT_FOUND");
   }
 
-  // Check if used by published content via dedicated reverse index (BR-AUT2-01, BR-AUT2-03, D-KB)
+  // Check if used by published content via dedicated reverse index (BR-IMG-08, BR-AUT2-01, BR-AUT2-03, D-KB)
   const usedBy = await findPublishedUsage(db, imageRecord.storagePath);
 
   if (usedBy.length > 0) {
     throw new ContentInUseError(
-      "Cannot delete image that is currently in use by published content"
+      "Cannot delete image that is currently in use by published content",
+      { used_by: usedBy.map((u) => u.code) }
     );
   }
 
@@ -151,6 +153,11 @@ export default defineEventHandler(async (event) => {
   await db
     .delete(contentAssetRefs)
     .where(eq(contentAssetRefs.assetRef, imageRecord.storagePath));
+
+  deletePublicImage(imageRecord.storagePath);
+  if (imageRecord.thumbPath) {
+    deletePublicImage(imageRecord.thumbPath);
+  }
 
   const managerId = manager.manager_id;
   await db.transaction(async (tx) => {

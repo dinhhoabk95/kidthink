@@ -1,0 +1,89 @@
+[
+  {
+    "kind": "game_level",
+    "header": {
+      "code": "GL-C1-CNT-FAIL-0001",
+      "content_version": 1,
+      "template_code": "GT-001",
+      "title": "Level sai schema GT-001",
+      "instruction": "Bé chọn quả táo đỏ nhé.",
+      "age_min": 3,
+      "age_max": 4,
+      "difficulty": 1,
+      "access_tier": "free",
+      "skill_codes": ["C1.CNT.01"],
+      "learning_objective_codes": ["LO-C1.CNT.01-01"],
+      "what_tags": ["cnt"],
+      "thinking_tags": ["visual"],
+      "theme_tag": "farm",
+      "origin": "human",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Ngắn",
+      "options": []
+    },
+    "difficulty_params": {
+      "distractor_count": 1,
+      "hint_after_ms": 10000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  },
+  {
+    "kind": "game_level",
+    "header": {
+      "code": "GL-C4-CLS-FAIL-0002",
+      "content_version": 1,
+      "template_code": "GT-004",
+      "title": "Level vi phạm refine GT-004",
+      "instruction": "Bé xếp quả vào đúng rổ nhé.",
+      "age_min": 4,
+      "age_max": 5,
+      "difficulty": 2,
+      "access_tier": "standard",
+      "skill_codes": ["C3.CLS.01"],
+      "learning_objective_codes": ["LO-C3.CLS.01-01"],
+      "what_tags": ["cls"],
+      "thinking_tags": ["visual"],
+      "theme_tag": "farm",
+      "origin": "human",
+      "authored_in": "repo_seed"
+    },
+    "content_pack": {
+      "prompt": "Bé hãy xếp quả vào rổ cùng loại",
+      "groups": [
+        { "group_id": "g1", "label": "Táo", "label_emoji": "🍎" },
+        { "group_id": "g2", "label": "Chuối", "label_emoji": "🍌" }
+      ],
+      "items": [
+        {
+          "item_id": "i1",
+          "asset": { "kind": "emoji", "ref": "🍎" },
+          "correct_group_id": "g9"
+        },
+        {
+          "item_id": "i2",
+          "asset": { "kind": "emoji", "ref": "🍌" },
+          "correct_group_id": "g1"
+        },
+        {
+          "item_id": "i3",
+          "asset": { "kind": "emoji", "ref": "🍎" },
+          "correct_group_id": "g1"
+        },
+        {
+          "item_id": "i4",
+          "asset": { "kind": "emoji", "ref": "🍌" },
+          "correct_group_id": "g1"
+        }
+      ]
+    },
+    "difficulty_params": {
+      "distractor_count": 0,
+      "hint_after_ms": 12000,
+      "allow_retry": true,
+      "shuffle_items": true
+    }
+  }
+]

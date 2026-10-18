@@ -16,13 +16,14 @@ import type {
   GateIssue,
   GateResult,
   LessonSeed,
-} from "../types.js";
+} from "#src/types";
 import {
   isValidTagForAxis,
   PEDAGOGICAL_AXIS_REQUIREMENT,
-} from "../vocabulary.js";
+} from "#src/vocabulary";
 import { scanChildContentSafety } from "./blocklist.js";
 import { isLevelOutOfBand } from "./engine-content-depth.js";
+import { findDuplicateLevelInSameSkill } from "./game-level-model.js";
 import { checkGateItemOrigin } from "./gate-08-item-origin.js";
 import { checkGateConceptPresent } from "./gate-09-concept-present.js";
 import { checkGateMontessori } from "./montessori-gate.js";
@@ -275,8 +276,18 @@ function checkGate2(seed: AnyContentSeed): GateResult {
   };
 }
 
+type SeedNode =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | readonly SeedNode[]
+  | { readonly [key: string]: SeedNode }
+  | object;
+
 function collectEmojiRefs(
-  value: unknown,
+  value: SeedNode,
   refs: Set<string> = new Set()
 ): Set<string> {
   if (!value || typeof value !== "object") {
@@ -284,11 +295,11 @@ function collectEmojiRefs(
   }
   if (Array.isArray(value)) {
     for (const item of value) {
-      collectEmojiRefs(item, refs);
+      collectEmojiRefs(item as SeedNode, refs);
     }
     return refs;
   }
-  const record = value as Record<string, unknown>;
+  const record = value as Record<string, SeedNode>;
   if (record.kind === "emoji" && typeof record.ref === "string") {
     refs.add(record.ref);
   }
@@ -327,6 +338,11 @@ function checkGate3(seed: AnyContentSeed): GateResult {
       issues.push({
         code: "ASSET_REF_INVALID",
         message: `Mã emoji '${ref}' rỗng hoặc không hợp lệ.`,
+      });
+    } else if (ref.startsWith("EMJ-")) {
+      issues.push({
+        code: "EMOJI_CODE_REF_FORBIDDEN",
+        message: `[BR-CSA-13] Mã emoji '${ref}' còn là mã trung gian EMJ-*; phải dùng ký tự UTF-8 trực tiếp.`,
       });
     }
   }
@@ -531,7 +547,10 @@ function checkGate5(
   };
 }
 
-function checkGate6(seed: AnyContentSeed): GateResult {
+function checkGate6(
+  seed: AnyContentSeed,
+  existingLevels: readonly ContentSeed[] = []
+): GateResult {
   const issues: GateIssue[] = [];
   const { header } = seed;
 
@@ -543,6 +562,23 @@ function checkGate6(seed: AnyContentSeed): GateResult {
       code: "ORIGIN_INVALID",
       message: `origin phải là 'human' hoặc 'ai_assisted' (nhận: ${header.origin}).`,
     });
+  }
+
+  if (
+    seed.kind !== "activity" &&
+    seed.kind !== "lesson" &&
+    existingLevels.length > 0
+  ) {
+    const duplicate = findDuplicateLevelInSameSkill(
+      seed as ContentSeed,
+      existingLevels
+    );
+    if (duplicate) {
+      issues.push({
+        code: "DUPLICATE_CONTENT_IN_SKILL",
+        message: `Level '${header.code}' trùng nội dung trong cùng kỹ năng với mã bản trùng '${duplicate.header.code}' (BR-GLM-07).`,
+      });
+    }
   }
 
   return {
@@ -600,7 +636,8 @@ export function runEightGates(
   existingCodes: Set<string> = new Set(),
   batchCode?: string,
   registry: Record<string, GameTemplate> = ALL_TEMPLATES,
-  dataset?: SkillDataset
+  dataset?: SkillDataset,
+  existingLevels: readonly ContentSeed[] = []
 ): GateResult[] {
   const gates = [
     checkGate0(seed, existingCodes),
@@ -609,7 +646,7 @@ export function runEightGates(
     checkGate3(seed),
     checkGate4(seed),
     checkGate5(seed, registry),
-    checkGate6(seed),
+    checkGate6(seed, existingLevels),
     checkGate7(seed),
   ];
 

@@ -2,7 +2,7 @@
 spec: THINKING-COVERAGE-MATRIX
 title: Ma trận phủ trục tư duy — cổng đo sáu năng lực
 area: quality
-status: approved
+status: implemented
 mvp: false
 phase: P3
 reviewed: 2026-10-18
@@ -15,13 +15,9 @@ depends_on:
   - CONTENT-TAGGING
   - TAXONOMY-SERVICE
   - CONTENT-LIFECYCLE
-open_tasks:
-  - "#310"
 ---
 
 # Ma trận phủ trục tư duy — cổng đo sáu năng lực
-
-> **Chưa hoàn thành** — Cổng `packages/content-build/tests/gates/thinking-coverage.test.ts` đang đỏ 2 test (trục mechanic 37 so với 38 khuôn; corpus có 12 vi phạm) và không có trong `scripts/test-baseline.json` (`BR-TCM-01`, `BR-TCM-03..07`). Việc còn lại: [Task #310](../../tasks/310-quality-gates-gaps-plan.md).
 
 ## 1. Objective
 
@@ -51,7 +47,7 @@ Nó đo **catalog**, không đo trẻ. Trẻ học được gì thuộc [`pedago
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `pnpm --filter @mindkid/content-build exec vitest run tests/gates/thinking-coverage.test.ts` | Cổng nội dung | Chạy ma trận, mã thoát khác 0 khi thủng sàn. Logic ở `packages/content-build/tests/gates/thinking-coverage.ts`, sàn ở `thinking-coverage-config.json` cùng thư mục |
+| `pnpm --filter @mindkid/content-build exec vitest run tests/gates/thinking-coverage.test.ts` | Cổng nội dung | Chạy ma trận, mã thoát khác 0 khi thủng sàn. Logic ở `packages/content-build/src/gates/thinking-coverage.ts`, sàn ở `packages/content-build/tests/gates/thinking-coverage-config.json` |
 | [`admin-dashboard.md`](../06-admin/admin-dashboard.md) | Manager | Hiển thị ma trận, ô trống nổi lên trước |
 | Cổng publish của [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) | Cổng nội dung | Chặn publish làm thủng sàn |
 
@@ -81,7 +77,7 @@ Nó đo **catalog**, không đo trẻ. Trẻ học được gì thuộc [`pedago
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-TCM-01` | Từ vựng ba trục **đóng thật**: giá trị ngoài danh sách làm cổng đỏ, không có nhánh slug dự phòng. Cổng sống ở `packages/content-build/tests/gates/thinking-coverage.ts`. **Trạng thái 2026-08-29:** đóng thật cho `thinking` và `mechanic`; **nới** cho `what` (28 giá trị, hợp hai bộ) và cho `theme` (22 giá trị, hợp hai bộ). Cổng seed thì vẫn có nhánh `SLUG_REGEX.test(tag)` — xem mục 7.3a của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | Nhánh dự phòng hiện tại là lý do `gross_motor_counting` sống được trong seed. Một cổng nhận mọi thứ không phải cổng |
+| `BR-TCM-01` | Từ vựng ba trục **đóng thật**: giá trị ngoài danh sách làm cổng đỏ, không có nhánh slug dự phòng. Cổng sống ở `packages/content-build/src/gates/thinking-coverage.ts` (re-export tại `packages/content-build/tests/gates/thinking-coverage.ts`). **Trạng thái 2026-10-18:** đóng thật cho `thinking` (12 giá trị) và `mechanic` (38 khuôn `GT-001`..`GT-037`, bao gồm `symbol-hunt`); **nới** cho `what` (28 giá trị, hợp hai bộ) và cho `theme` (22 giá trị, hợp hai bộ). Cổng seed thì vẫn có nhánh `SLUG_REGEX.test(tag)` — xem mục 7.3a của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | Nhánh dự phòng hiện tại là lý do `gross_motor_counting` sống được trong seed. Một cổng nhận mọi thứ không phải cổng |
 | `BR-TCM-02` | Cổng phải có **ca âm** trong test: một tag bịa đặt phải làm cổng đỏ | Bài học đã trả giá một lần với công cụ lint khác — cổng không có ca âm là cổng không biết mình hỏng |
 | `BR-TCM-03` | Ma trận đếm **chỉ nội dung `published`**, đọc từ corpus seed trong repo. Nguồn không đọc được hoặc hàng không quy được competency hay mechanic thì cổng đỏ, **cấm giá trị mặc định** | Phủ là thứ trẻ mở được hôm nay, không phải thứ đang nằm trong hàng đợi duyệt. Bản cũ trả `[]` khi mất kết nối và mặc định `"C1"` khi không quy được, nên nó in "18/18 ô thiếu" kèm mã thoát 0 và dồn mọi hàng lạ vào C1 |
 | `BR-TCM-04` | Mỗi ô `competency × band tuổi` đạt sàn số game level ở §7.3 | Đây là dạng kiểm được của câu "phủ đủ sáu năng lực cho mọi lứa" |
@@ -160,10 +156,6 @@ nguồn chính. Ba giá trị `predict`, `plan`, `shift` vẫn dưới sàn 5 c�
 không.
 
 Luật cân bằng ở `BR-TCM-07` (tỉ lệ cao nhất trên thấp nhất ≤3) đang đạt ở 2,87 — sát trần.
-
-**Cổng đang đỏ** — xem khối "Chưa hoàn thành" ở đầu file. Hai test đỏ của
-`packages/content-build/tests/gates/thinking-coverage.test.ts` là việc của Task #310, không phải
-lý do nới sàn (`BR-TCL-07`).
 
 Sàn không phải để gây khó; nó để mức hiện có không tụt xuống mà không ai thấy.
 

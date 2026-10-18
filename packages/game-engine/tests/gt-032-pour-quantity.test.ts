@@ -33,7 +33,7 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
       expect(template.requires_tap_fallback).toBe(false);
       expect(template.input).toEqual({
         family: "tap",
-        verbs: ["tap"],
+        verbs: ["tap", "adjust"],
         tolerance_px: 24,
       });
       expect(template.events).toEqual([
@@ -296,6 +296,62 @@ describe("GT-032: So lượng chất lỏng (pour-quantity)", () => {
       expect(view.entities.length).toBe(f.content.cups.length);
       const correctEntity = view.entities.find((e) => e.id === "cup_b");
       expect(correctEntity?.state).toBe("correct");
+    });
+
+    it("supports adjust gesture for pour_to_mark in discrete integer units and wins on target", () => {
+      const content = GT032ContentSchema.parse({
+        prompt: "Bé hãy rót nước đến vạch 4 cho chiếc cốc nhé!",
+        question_type: "pour_to_mark",
+        conservation_trap: false,
+        cups: [
+          {
+            cup_id: "cup_pour",
+            shape: "standard",
+            capacity_units: 6,
+            fill_units: 2,
+            target_units: 4,
+            color: "sky",
+          },
+          {
+            cup_id: "cup_ref",
+            shape: "narrow_tall",
+            capacity_units: 6,
+            fill_units: 4,
+            target_units: 4,
+            color: "sky",
+          },
+        ],
+      });
+      const difficulty = getFixture(0).difficulty;
+      const session = new GT032Session(content, difficulty);
+      session.prepareRound("5-6");
+
+      expect(session.getCupFill("cup_pour")).toBe(2);
+      expect(session.checkWinCondition()).toBe(false);
+
+      // Adjust by +1 unit -> fill becomes 3 (not yet 4)
+      const step1 = session.dispatch({
+        type: "adjust",
+        delta: 1,
+        timeMs: 100,
+      });
+      expect(step1?.valid).toBe(true);
+      expect(session.getCupFill("cup_pour")).toBe(3);
+      expect(session.checkWinCondition()).toBe(false);
+
+      // Adjust by +1 unit -> fill becomes 4 (reaches target_units = 4 -> win!)
+      const step2 = session.dispatch({
+        type: "adjust",
+        delta: 1,
+        timeMs: 200,
+      });
+      expect(step2?.valid).toBe(true);
+      expect(session.getCupFill("cup_pour")).toBe(4);
+      expect(session.checkWinCondition()).toBe(true);
+
+      const events = session.getTelemetry().events.map((e) => e.event_name);
+      expect(events).toContain("liquid_poured");
+      expect(events).toContain("game_completed");
     });
   });
 });

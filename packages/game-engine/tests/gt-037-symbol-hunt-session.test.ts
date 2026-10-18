@@ -403,7 +403,7 @@ describe("GT-037 Session (Task #278 S3)", () => {
       expect(session.getHintTargetIndex()).toBeNull();
     });
 
-    it("ghi nhận chuỗi order và bản tóm tắt hunt_summary khi hoàn thành", () => {
+    it("ghi nhận chuỗi order và sự kiện round_completed khi hoàn thành", () => {
       const session = new GT037Session(singleTargetContent, {}, 777);
       session.prepareRound("5-6");
 
@@ -435,11 +435,12 @@ describe("GT-037 Session (Task #278 S3)", () => {
       session.completeSession();
       const telemetry = session.getTelemetry();
       const summary = telemetry.events.find(
-        (e) => e.event_name === "hunt_summary"
+        (e) => e.event_name === "round_completed"
       );
       expect(summary).toBeDefined();
-      expect(summary?.data?.commissions_count).toBe(1);
-      expect(summary?.data?.found_count).toBe(1);
+      expect(summary?.data?.commissions).toBe(1);
+      expect(summary?.data?.omissions).toBe(4);
+      expect(summary?.data?.order).toEqual([targetIdx, distractorIdx]);
     });
 
     it("getView trả về danh sách view entities đúng chuẩn", () => {

@@ -246,7 +246,7 @@ export const recurringSubscriptions = pgTable(
     offerCode: varchar("offer_code", { length: 40 }).notNull(),
     billingPeriod: varchar("billing_period", { length: 20 }).notNull(),
     priceVnd: bigint("price_vnd", { mode: "number" }).notNull(),
-    autoRenew: boolean("auto_renew").notNull().default(true),
+    autoRenew: boolean("auto_renew").notNull().default(false),
     status: recurringSubscriptionStatusEnum("status")
       .notNull()
       .default("active"),

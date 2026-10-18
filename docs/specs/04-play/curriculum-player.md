@@ -5,7 +5,7 @@ area: play
 status: implemented
 mvp: true
 phase: P3
-reviewed: 2026-08-15
+reviewed: 2026-10-18
 owns:
   - Luồng đi qua curriculum
   - Quy tắc mở khoá bước

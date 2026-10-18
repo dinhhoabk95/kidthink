@@ -280,8 +280,12 @@ function stickerRowsOf(childId: number) {
     .where(eq(childStickers.childProfileId, childId));
 }
 
-function errorCode(err: unknown): string | undefined {
-  return (err as { data?: { code?: string } }).data?.code;
+interface CodedError {
+  readonly data?: { readonly code?: string };
+}
+
+function errorCode(err: CodedError): string | undefined {
+  return err.data?.code;
 }
 
 const farmEmojis = new Set(
@@ -400,7 +404,7 @@ describe("Album sticker API (sticker-album.md, BR-STK-01..07)", () => {
     const child = await createChild();
 
     await expect(getAlbum(child, "?theme=dino")).rejects.toSatisfy(
-      (err: unknown) => errorCode(err) === "VALIDATION_FAILED"
+      (err: CodedError) => errorCode(err) === "VALIDATION_FAILED"
     );
   });
 
@@ -411,6 +415,8 @@ describe("Album sticker API (sticker-album.md, BR-STK-01..07)", () => {
 
     await expect(
       getAlbum({ ...stranger, childUuid: owner.childUuid })
-    ).rejects.toSatisfy((err: unknown) => errorCode(err) === "NO_ACTIVE_CHILD");
+    ).rejects.toSatisfy(
+      (err: CodedError) => errorCode(err) === "NO_ACTIVE_CHILD"
+    );
   });
 });

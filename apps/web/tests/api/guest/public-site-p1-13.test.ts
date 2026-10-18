@@ -1,18 +1,22 @@
 import {
+  buildPublicHreflangLinks,
   COMPETENCY_CATALOG,
   ESSENTIAL_COOKIES,
   FAQ_ITEMS,
   FEATURED_GUEST_LEVELS,
+  getRouteRobotsDirective,
   isIndexableFilter,
   isNoIndexRoute,
   LEGAL_DOCUMENTS,
   LOCAL_STORAGE_ITEMS,
+  NOINDEX_ROBOTS_DIRECTIVE,
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import {
   buildBreadcrumbListJsonLd,
   buildFaqPageJsonLd,
+  buildHreflangLinks,
   buildLearningResourceJsonLd,
   buildOrganizationJsonLd,
   buildWebSiteJsonLd,
@@ -26,6 +30,14 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
       expect(isNoIndexRoute("/me/settings")).toBe(true);
       expect(isNoIndexRoute("/me/notifications")).toBe(true);
       expect(isNoIndexRoute("/api/users/profile")).toBe(true);
+
+      expect(getRouteRobotsDirective("/play/GL-C1-001")).toBe(
+        NOINDEX_ROBOTS_DIRECTIVE
+      );
+      expect(getRouteRobotsDirective("/me/settings")).toBe(
+        NOINDEX_ROBOTS_DIRECTIVE
+      );
+      expect(getRouteRobotsDirective("/pricing")).toBe("index, follow");
 
       expect(isNoIndexRoute("/")).toBe(false);
       expect(isNoIndexRoute("/games")).toBe(false);
@@ -90,7 +102,7 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
       expect(sitemap.find((l) => l.code === "GL-C1-002")).toBeUndefined();
     });
 
-    it("BR-SEO2-09 & D-IB: verifies indexable filter rules (6 competencies + 3 age bands)", () => {
+    it("BR-SEO2-09 & D-IB: verifies indexable filter rules (6 competencies + 3 age bands) and hreflang links", () => {
       expect(isIndexableFilter({ competency: "C1" })).toBe(true);
       expect(isIndexableFilter({ competency: "C6" })).toBe(true);
       expect(isIndexableFilter({ age_band: "3-4" })).toBe(true);
@@ -99,6 +111,36 @@ describe("P1.13 Public Site, SEO, Legal & Cookie Integration Tests", () => {
       // Combinations of multiple filters default to canonical or noindex (D-IB)
       expect(isIndexableFilter({ competency: "C1", age: "4" })).toBe(false);
       expect(isIndexableFilter({ competency: "UNKNOWN" })).toBe(false);
+
+      const publicLinks = buildPublicHreflangLinks(
+        "/pricing",
+        "https://mindkid.vn"
+      );
+      expect(publicLinks).toEqual([
+        {
+          rel: "alternate",
+          hreflang: "vi-VN",
+          href: "https://mindkid.vn/pricing",
+        },
+        {
+          rel: "alternate",
+          hreflang: "x-default",
+          href: "https://mindkid.vn/pricing",
+        },
+      ]);
+
+      const serverHreflang = buildHreflangLinks("/programs");
+      expect(serverHreflang).toHaveLength(2);
+      expect(serverHreflang[0]?.hreflang).toBe("vi-VN");
+      expect(serverHreflang[1]?.hreflang).toBe("x-default");
+      expect(serverHreflang[0]?.href.endsWith("/programs")).toBe(true);
+
+      expect(
+        buildPublicHreflangLinks("/me/settings", "https://mindkid.vn")
+      ).toEqual([]);
+      expect(
+        buildPublicHreflangLinks("/play/GL-C1-001", "https://mindkid.vn")
+      ).toEqual([]);
     });
   });
 

@@ -29,8 +29,8 @@ export interface SystemMetricsResponse {
   open_alerts: OpenAlertItem[];
 }
 
-export default defineEventHandler(async (event) => {
-  await requireSuperAdminSession(event);
+export default defineEventHandler((event) => {
+  requireSuperAdminSession(event);
 
   const now = new Date().toISOString();
 

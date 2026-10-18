@@ -1,11 +1,19 @@
 import type { AgeBand } from "./contracts/types.js";
-import type { EngineView, Gesture } from "./interaction.js";
+import type { EngineView, Gesture, SystemBeat } from "./interaction.js";
 import { DEFAULT_LOGIC_SPACE, type LogicSpace } from "./layout/constants.js";
 import type { ZoneRect } from "./layout/stage-zones.js";
 import type { Slot } from "./layout/types";
 import type { CommitIcon } from "./render/commit-button.js";
 import type { ItemVisualState } from "./render/types.js";
+import {
+  type HintLevel,
+  type HintTarget,
+  resolveSteppedHintTarget,
+  type SteppedHintSessionCandidate,
+} from "./systems/hint-ladder.js";
 import type { RenderSystem } from "./systems/render-system";
+
+export type { HintLevel, HintTarget } from "./systems/hint-ladder.js";
 
 export type FeedbackKind =
   | "none"
@@ -24,14 +32,6 @@ export interface ActionResult {
   valid: boolean;
   feedback: FeedbackKind;
 }
-
-/**
- * Chỗ gợi ý (scaffolding) trỏ tới: một slot, hoặc nút hành động ở `zones.action`
- * khi bước đúng kế tiếp là nộp bài (`BR-PSZ-05`, Task #283).
- */
-export type HintTarget =
-  | { readonly kind: "slot"; readonly index: number }
-  | { readonly kind: "action" };
 
 /** Action the session does not handle — no feedback owed. */
 export const ACTION_IGNORED: ActionResult = Object.freeze({
@@ -82,6 +82,7 @@ export interface GameSession {
   destroy(): void;
   getView?(): EngineView;
   dispatch?(gesture: Gesture): ActionResult | undefined;
+  onBeat?(beat: SystemBeat): void;
   /**
    * Cổng cử chỉ của riêng session — `false` khi session đang đọc một câu hỏi
    * của chính nó (GT-000 ở mức bước, `BR-E000-12`). Bề mặt chơi nuốt cử chỉ và
@@ -101,6 +102,10 @@ export abstract class BaseGameSession implements GameSession {
   protected startTimeMs: number = Date.now();
   protected endTimeMs?: number;
   protected isCompleted = false;
+
+  onBeat(_beat: SystemBeat): void {
+    // Default no-op for system beats (reveal, hint, timeout)
+  }
 
   /**
    * Vòng gồm nhiều lượt độc lập (GT-026, GT-027): điểm vòng theo tỉ lệ lượt
@@ -157,8 +162,14 @@ export abstract class BaseGameSession implements GameSession {
  * validated `content_pack` plus its `difficulty_params`, and wins exactly once.
  */
 export abstract class TemplateGameSession<
-  TContent,
-  TDifficulty,
+  TContent extends
+    | object
+    | string
+    | number
+    | boolean
+    | null
+    | undefined = object,
+  TDifficulty = object,
 > extends BaseGameSession {
   readonly content: TContent;
   readonly difficulty: TDifficulty;
@@ -233,6 +244,32 @@ export abstract class TemplateGameSession<
     return this.needsCommit && !this.isWon && this.canCommit()
       ? { kind: "action" }
       : null;
+  }
+
+  /**
+   * Mục tiêu gợi ý theo bậc `L1` / `L2` / `L3` (Task #301 S2).
+   * Mặc định kiểm tra bộ giải trung tâm (`resolveSteppedHintTarget`), nếu chưa
+   * tách bậc thì rơi về `getHintTarget()`.
+   */
+  getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    const candidate: SteppedHintSessionCandidate = {
+      content:
+        typeof this.content === "object" ||
+        typeof this.content === "string" ||
+        typeof this.content === "number" ||
+        typeof this.content === "boolean" ||
+        this.content === null ||
+        this.content === undefined
+          ? this.content
+          : null,
+      checkWinCondition: () => this.checkWinCondition(),
+      getHintTarget: () => this.getHintTarget(),
+    };
+    const stepped = resolveSteppedHintTarget(candidate, level);
+    if (stepped !== undefined) {
+      return stepped;
+    }
+    return this.getHintTarget();
   }
 
   /** Phiên có cần khay vật thể riêng không (`BR-PSZ-01`). Mặc định false. */

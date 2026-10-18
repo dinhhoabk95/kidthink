@@ -2,10 +2,10 @@
 spec: CHILD-LESSON-FLOW
 title: Trẻ tự học một bài — làm quen, chuỗi trò chơi, phần thưởng
 area: play
-status: approved
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-10-03
+reviewed: 2026-10-18
 owns:
   - Khuôn một bài học trên bề mặt trẻ (làm quen → trò chơi → thưởng)
   - Lượt học của trẻ (`child_lesson_plays`) và cách suy bước hiện tại

@@ -5,7 +5,7 @@ area: admin
 status: implemented
 mvp: true
 phase: P2
-reviewed: 2026-08-13
+reviewed: 2026-10-18
 owns:
   - Nội dung màn hình chi tiết User
   - Ranh giới dữ liệu được hiện

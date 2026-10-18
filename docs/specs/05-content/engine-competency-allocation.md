@@ -2,12 +2,10 @@
 spec: ENGINE-COMPETENCY-ALLOCATION
 title: Ma trận phân bổ lĩnh vực tư duy theo engine và band tuổi
 area: content
-status: approved
+status: implemented
 mvp: false
 phase: P4
 reviewed: 2026-10-18
-open_tasks:
-  - "#309"
 owns:
   - Bản đồ tương hợp engine -> lĩnh vực tư duy
   - Sàn K lĩnh vực trên mỗi ô (engine × band tuổi hợp lệ)
@@ -20,8 +18,6 @@ depends_on:
 ---
 
 # Ma trận phân bổ lĩnh vực tư duy theo engine và band tuổi
-
-> **Chưa hoàn thành** — Chưa có script `check:engine-allocation` (mục 9) và chưa nối `scripts/check.sh`; test `packages/content-build/tests/gates/engine-competency-allocation.test.ts` không đòi 0 vi phạm, nên `BR-ECA-02/03/06/09` chưa chặn gì. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
 
 ## 1. Objective
 
@@ -41,7 +37,7 @@ Spec này sở hữu **phân bổ lĩnh vực**: xác định engine nào phục
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `runEngineAllocationGate` ở `packages/content-build/src/gates/allocation.ts` | Cổng phân bổ | Hiện chỉ được gọi từ test `packages/content-build/tests/gates/engine-competency-allocation.test.ts`; lệnh `check:engine-allocation` ở mục 9 chưa có (Task #309) |
+| `pnpm --filter @mindkid/content-build check:engine-allocation` (`packages/content-build/scripts/check-engine-allocation.ts`) | Cổng phân bổ | Chạy `runEngineAllocationGate` ở `packages/content-build/src/gates/allocation.ts` đối chiếu với sổ nợ chỉ giảm `packages/content-build/src/thresholds/engine-allocation-debt.json` và kiểm thử ở `packages/content-build/tests/gates/engine-competency-allocation.test.ts` |
 
 **Điều kiện trước:**
 

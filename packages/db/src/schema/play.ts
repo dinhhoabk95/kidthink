@@ -69,7 +69,7 @@ export const telemetryEvents = pgTable(
     seq: integer("seq").notNull(),
     childUuid: uuid("child_uuid"),
     gameLevelId: bigint("game_level_id", { mode: "number" }),
-    contentVersion: integer("content_version"),
+    contentVersion: integer("content_version").notNull(),
     templateCode: varchar("template_code", { length: 20 }),
     eventName: varchar("event_name", { length: 100 }).notNull(),
     occurredAtMs: integer("occurred_at_ms"),

@@ -1,12 +1,17 @@
+import { InvalidCancelReasonError } from "@mindkid/errors/billing";
 import { ValidationError } from "@mindkid/errors/common";
-
-import {
-  type AdminSubscriptionCancelReason,
-  AdminSubscriptionCancelRequestSchema,
-} from "@mindkid/shared";
-import { defineEventHandler, getRouterParam, readBody } from "h3";
+import { AdminSubscriptionCancelRequestSchema } from "@mindkid/shared";
+import { defineEventHandler, getRouterParam } from "h3";
+import { z } from "zod";
 import { adminCancelSubscription } from "#server/services/index.js";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
+import { readRequestBody } from "#server/utils/request-body";
+
+const RawCancelBodySchema = z.object({
+  reason: z.string().optional(),
+  admin_note: z.string().optional(),
+  revoke_immediate: z.boolean().optional(),
+});
 
 export default defineEventHandler(async (event) => {
   const managerSession = requireSuperAdminSession(event);
@@ -18,34 +23,33 @@ export default defineEventHandler(async (event) => {
     throw new ValidationError("ID gói thuê bao định kỳ không hợp lệ");
   }
 
-  const rawBody =
-    ((event.context as { body?: unknown })?.body as Record<string, unknown>) ??
-    ((await readBody(event).catch(() => undefined)) as Record<
-      string,
-      unknown
-    >) ??
-    ((event as unknown as { _body?: unknown })._body as Record<
-      string,
-      unknown
-    >);
+  const bodyParsed = RawCancelBodySchema.safeParse(
+    await readRequestBody(event)
+  );
+  if (!bodyParsed.success) {
+    throw new InvalidCancelReasonError(
+      "INVALID_CANCEL_REASON: Lý do huỷ hoặc ghi chú quản trị không hợp lệ (BR-ASC-03)"
+    );
+  }
+
   const parseResult = AdminSubscriptionCancelRequestSchema.safeParse({
     subscription_id: subscriptionId,
-    reason: rawBody?.reason,
-    admin_note: rawBody?.admin_note,
-    revoke_immediate: rawBody?.revoke_immediate ?? false,
+    reason: bodyParsed.data.reason,
+    admin_note: bodyParsed.data.admin_note,
+    revoke_immediate: bodyParsed.data.revoke_immediate ?? false,
   });
 
   if (!parseResult.success) {
-    throw new ValidationError(
-      parseResult.error.errors[0]?.message ??
-        "Lý do huỷ hoặc ghi chú quản trị không hợp lệ (BR-ASC-03);"
-    );
+    const issueMsg =
+      parseResult.error.issues[0]?.message ??
+      "Lý do huỷ hoặc ghi chú quản trị không hợp lệ (BR-ASC-03)";
+    throw new InvalidCancelReasonError(`INVALID_CANCEL_REASON: ${issueMsg}`);
   }
 
   const result = await adminCancelSubscription({
     managerId: managerSession.manager_id,
     subscriptionId: parseResult.data.subscription_id,
-    reason: parseResult.data.reason as AdminSubscriptionCancelReason,
+    reason: parseResult.data.reason,
     adminNote: parseResult.data.admin_note,
     revokeImmediate: parseResult.data.revoke_immediate,
   });

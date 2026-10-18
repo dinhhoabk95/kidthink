@@ -23,7 +23,7 @@ depends_on:
 
 # Giọng đọc trên bề mặt trẻ
 
-> **Chưa hoàn thành** — Cổng `check:narration-coverage` đã chạy nhưng nợ còn lớn: 0/37 engine có câu dẫn vòng có tiếng, 2009 vật chưa có tên đọc. Việc còn lại: [Task #296](../../tasks/296-play-narration-debt-plan.md).
+> **Chưa hoàn thành** — Cổng `check:narration-coverage` xanh (38/38 engine gọi lời dẫn nhịp mở vòng, 0/268 glyph thiếu tên tiếng Việt) nhưng nợ dữ liệu thu âm còn: 0/38 template có mp3 câu dẫn vòng (`rounds_with_instruction_audio = 0`), 2009/2448 vật chưa có `audio_path` hoặc `spokenLabel` (chờ chốt §11 câu 4). Việc còn lại: [Task #296](../../tasks/296-play-narration-debt-plan.md).
 
 ## 1. Objective
 

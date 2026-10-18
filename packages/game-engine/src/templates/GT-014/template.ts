@@ -75,7 +75,7 @@ export default defineTemplate({
   events: ["game_started", "item_placed", "balance_changed", "game_completed"],
   input: {
     family: "drag",
-    verbs: ["drag", "drop", "tap"],
+    verbs: ["drop", "tap"],
     tolerance_px: 24,
   },
   engine_session: "BalanceScaleSession",

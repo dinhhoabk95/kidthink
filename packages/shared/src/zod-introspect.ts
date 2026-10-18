@@ -1,4 +1,57 @@
+import { getByGlyph } from "@mindkid/emoji";
 import { z } from "zod";
+
+export type EmojiInputValidationResult =
+  | { readonly ok: true; readonly glyph: string }
+  | { readonly ok: false; readonly error: string };
+
+const EMOJI_CODE_PREFIX_REGEX = /^EMJ-/i;
+const graphemeSegmenter = new Intl.Segmenter("vi", { granularity: "grapheme" });
+
+/**
+ * Chuẩn hoá và kiểm tra giá trị nhập/dán trực tiếp vào trường emoji (BR-EPK-03, BR-EPK-09, BR-SDF-04).
+ * Chỉ chấp nhận chuỗi rỗng (xoá) hoặc đúng 1 grapheme thuộc danh mục @mindkid/emoji.
+ */
+export function validateEmojiInput(
+  rawInput: string
+): EmojiInputValidationResult {
+  const trimmed = rawInput.trim();
+  if (trimmed === "") {
+    return { ok: true, glyph: "" };
+  }
+
+  const normalized = trimmed.normalize("NFC");
+  if (EMOJI_CODE_PREFIX_REGEX.test(normalized)) {
+    return {
+      ok: false,
+      error: "Chỉ lưu ký tự emoji UTF-8, không dùng mã EMJ-* (BR-EPK-09).",
+    };
+  }
+
+  const segments = Array.from(
+    graphemeSegmenter.segment(normalized),
+    (segment) => segment.segment
+  );
+
+  if (segments.length !== 1) {
+    return {
+      ok: false,
+      error: "Vui lòng nhập hoặc dán đúng 1 ký tự emoji (BR-EPK-03).",
+    };
+  }
+
+  const singleGlyph = segments[0] ?? "";
+  const entry = getByGlyph(singleGlyph);
+  if (!entry) {
+    return {
+      ok: false,
+      error:
+        "Ký tự nhập vào không thuộc danh mục emoji giáo dục cho phép (BR-EPK-03).",
+    };
+  }
+
+  return { ok: true, glyph: singleGlyph };
+}
 
 export type UiHintType =
   | "emoji"

@@ -23,7 +23,7 @@ depends_on:
 
 # Thang biểu diễn lượng số học
 
-> **Chưa hoàn thành** — Bậc thang `scripts/numeracy-ladder-baseline.json` còn 93 kỹ năng C1 chưa khai `representation` (`BR-NRL-01`); `BR-NRL-09` (`spokenLabel`) chưa có kiểm. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
+> **Chưa hoàn thành** — Bậc thang `scripts/numeracy-ladder-baseline.json` còn 93 kỹ năng C1 chưa khai `representation` (`BR-NRL-01`). Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
 
 ## 1. Objective
 

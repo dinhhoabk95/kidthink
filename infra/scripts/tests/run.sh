@@ -12,6 +12,24 @@ HARNESS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${HARNESS_DIR}/../../.." && pwd)"
 MINDKID_SH="${REPO_ROOT}/infra/scripts/mindkid.sh"
 
+node_major() {
+  node --version 2>/dev/null | sed 's/^v//; s/\..*//'
+}
+
+NODE_MAJOR="$(node_major)"
+if [ -z "${NODE_MAJOR}" ] || [ "${NODE_MAJOR}" -lt 24 ]; then
+  NVM_NODE_DIR="${NVM_DIR:-${HOME}/.nvm}/versions/node"
+  if [ -d "${NVM_NODE_DIR}" ]; then
+    for candidate in $(ls -1 "${NVM_NODE_DIR}" | grep '^v24\.' | sort -V -r); do
+      candidate_bin="${NVM_NODE_DIR}/${candidate}/bin"
+      if [ -x "${candidate_bin}/node" ] && "${candidate_bin}/node" --version >/dev/null 2>&1; then
+        export PATH="${candidate_bin}:${PATH}"
+        break
+      fi
+    done
+  fi
+fi
+
 run_make_env() {
   if command -v tsx >/dev/null 2>&1; then
     tsx "${HARNESS_DIR}/make-env.ts" "$@"
@@ -243,7 +261,7 @@ case_4_interrupted_build_keeps_old_release() {
 }
 
 case_5_same_commit_twice_succeeds() {
-  printf 'Case 5 — the same commit released twice\n'
+  printf 'Case 5 — the same commit released twice (BR-DEP-12)\n'
   new_workspace
   local root="${WORKSPACE_ROOT}"
 
@@ -258,7 +276,7 @@ case_5_same_commit_twice_succeeds() {
 
   assert_eq "0" "${first_status}" "first release succeeds"
   assert_eq "0" "${second_status}" "second release succeeds"
-  assert_eq "2" "$(release_count)" "two distinct release directories exist"
+  assert_eq "2" "$(release_count)" "two distinct release directories exist (BR-DEP-12)"
   assert_eq "true" "$([ "${first_link}" != "${second_link}" ] && echo true || echo false)" \
     "the second release did not overwrite the first"
   assert_eq "true" "$([ -d "${first_link}" ] && echo true || echo false)" \
@@ -576,6 +594,178 @@ case_18_alerting_unconfigured_stops_release() {
   rm -rf "${root}"
 }
 
+case_19_rollback_to_pruned_release_fails() {
+  printf 'Case 19 — rollback to a release outside retention fails (BR-RBK-04)\n'
+  new_workspace
+  local root="${WORKSPACE_ROOT}"
+
+  bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
+  local first_link first_name
+  first_link="$(current_target)"
+  first_name="${first_link##*/}"
+
+  local i
+  for i in 2 3 4 5 6; do
+    sleep 1
+    add_commit "${root}/source" "commit ${i}"
+    bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
+  done
+
+  local sixth_link; sixth_link="$(current_target)"
+
+  local output status
+  output="$(bash "${MINDKID_SH}" rollback --to "${first_name}" 2>&1)"
+  status=$?
+
+  assert_eq "1" "${status}" "rollback to pruned release exits non-zero"
+  assert_eq "5" "$(release_count)" "only MK_KEEP_RELEASES=5 directories remain on disk"
+  assert_eq "${sixth_link}" "$(current_target)" "active release is untouched"
+  assert_contains "${output}" "not on this machine" "log states target is outside retention"
+  assert_contains "${output}" "deploy that commit again" "log tells operator to run forward release"
+  rm -rf "${root}"
+}
+
+case_20_parallel_rollback_is_refused() {
+  printf 'Case 20 — rollback while lock is held fails immediately (BR-RBK-05)\n'
+  new_workspace
+  local root="${WORKSPACE_ROOT}"
+  seed_first_release
+  local before_link; before_link="$(current_target)"
+
+  mkdir -p "${MK_ROOT}/.deploy.lock"
+  printf '%s\n' "$$" >"${MK_ROOT}/.deploy.lock/pid"
+
+  local output status
+  output="$(bash "${MINDKID_SH}" rollback 2>&1)"
+  status=$?
+
+  assert_eq "1" "${status}" "concurrent rollback exits non-zero"
+  assert_eq "${before_link}" "$(current_target)" "active release is untouched"
+  assert_contains "${output}" "in progress" "log says another operation holds the lock"
+  assert_contains "${output}" "Not queueing" "rollback does not queue"
+
+  rm -rf "${MK_ROOT}/.deploy.lock"
+  rm -rf "${root}"
+}
+
+case_21_rollback_smoke_failure_reports_critical() {
+  printf 'Case 21 — rollback smoke check failure exits non-zero and alerts critical (BR-RBK-06)\n'
+  new_workspace
+  local root="${WORKSPACE_ROOT}"
+  printf 'MK_ALERT_WEBHOOK_URL="https://hooks.example.test/alert"\n' >"${MK_CONF_FILE}"
+  bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
+
+  sleep 1
+  add_commit "${root}/source" "second"
+  bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
+
+  echo 503 >"${MK_FAKE_STATE}/http_status"
+
+  local output status
+  output="$(bash "${MINDKID_SH}" rollback 2>&1)"
+  status=$?
+
+  assert_eq "1" "${status}" "rollback exits non-zero when smoke check fails"
+  assert_contains "${output}" "Smoke check failed after rolling back" "log states smoke check failed after rollback"
+  local curl_calls
+  curl_calls="$(cat "${MK_FAKE_STATE}/curl.calls" 2>/dev/null || true)"
+  assert_contains "${curl_calls}" '"severity":"critical"' "critical notification sent"
+  rm -rf "${root}"
+}
+
+case_22_rollback_logs_and_notifies() {
+  printf 'Case 22 — rollback logs source, target, operator and emits warning notification (BR-RBK-07)\n'
+  new_workspace
+  local root="${WORKSPACE_ROOT}"
+  printf 'MK_ALERT_WEBHOOK_URL="https://hooks.example.test/alert"\n' >"${MK_CONF_FILE}"
+  bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
+  local first_link; first_link="$(current_target)"
+
+  sleep 1
+  add_commit "${root}/source" "second"
+  bash "${MINDKID_SH}" release --ref main >/dev/null 2>&1
+  local second_link; second_link="$(current_target)"
+
+  local status
+  MK_OPERATOR="ops-tester" bash "${MINDKID_SH}" rollback >/dev/null 2>&1
+  status=$?
+
+  assert_eq "0" "${status}" "rollback exits zero"
+  local deploy_log curl_calls
+  deploy_log="$(cat "${MK_LOG_DIR}/deploy.log" 2>/dev/null || true)"
+  curl_calls="$(cat "${MK_FAKE_STATE}/curl.calls" 2>/dev/null || true)"
+  assert_contains "${deploy_log}" "Rollback complete: ${second_link##*/} -> ${first_link##*/} by ops-tester." \
+    "deploy.log records source, target and operator"
+  assert_contains "${curl_calls}" "\"severity\":\"warning\",\"source\":\"mindkid-deploy\",\"message\":\"Rolled back from ${second_link##*/} to ${first_link##*/}.\"" \
+    "warning notification sent"
+  rm -rf "${root}"
+}
+
+case_23_missing_admin_css_entry_fails_artifact_smoke() {
+  printf 'Case 23 — admin CSS entry <= 100 KB fails artifact smoke before switch (BR-DEP-15)\n'
+  new_workspace
+  local root="${WORKSPACE_ROOT}"
+  seed_first_release
+  local before_link; before_link="$(current_target)"
+
+  add_commit "${root}/source" "second"
+  touch "${MK_FAKE_STATE}/artifact_missing_css"
+
+  local output status
+  output="$(bash "${MINDKID_SH}" release --ref main 2>&1)"
+  status=$?
+
+  assert_eq "1" "${status}" "release fails when admin CSS entry is <= 100 KB"
+  assert_eq "${before_link}" "$(current_target)" "symlink never switched to the unstyled release"
+  assert_contains "${output}" "BR-DEP-15" "log cites BR-DEP-15 artifact smoke failure"
+  rm -rf "${root}"
+}
+
+case_24_client_chunk_with_server_code_fails_artifact_smoke() {
+  printf 'Case 24 — client chunk containing node-gyp-build fails artifact smoke (BR-DEP-15)\n'
+  new_workspace
+  local root="${WORKSPACE_ROOT}"
+  seed_first_release
+  local before_link; before_link="$(current_target)"
+
+  add_commit "${root}/source" "second"
+  touch "${MK_FAKE_STATE}/artifact_client_server_leak"
+
+  local output status
+  output="$(bash "${MINDKID_SH}" release --ref main 2>&1)"
+  status=$?
+
+  assert_eq "1" "${status}" "release fails when client chunk leaks server-only code"
+  assert_eq "${before_link}" "$(current_target)" "symlink remains on the healthy release"
+  assert_contains "${output}" "BR-DEP-15" "log cites BR-DEP-15 client bundle leak"
+  rm -rf "${root}"
+}
+
+case_25_refuses_to_build_in_active_release() {
+  printf 'Case 25 — build_release refuses to run inside the active release directory (BR-DEP-13)\n'
+  new_workspace
+  local root="${WORKSPACE_ROOT}"
+  seed_first_release
+  local active_link; active_link="$(current_target)"
+
+  local output status
+  output="$(
+    # shellcheck disable=SC1091
+    source "${REPO_ROOT}/infra/scripts/lib/paths.sh"
+    source "${REPO_ROOT}/infra/scripts/lib/log.sh"
+    source "${REPO_ROOT}/infra/scripts/lib/atomic.sh"
+    source "${REPO_ROOT}/infra/scripts/lib/releases.sh"
+    source "${REPO_ROOT}/infra/scripts/lib/smoke.sh"
+    source "${REPO_ROOT}/infra/scripts/lib/build.sh"
+    build_release "${active_link}" 2>&1
+  )"
+  status=$?
+
+  assert_eq "1" "${status}" "build_release refuses to touch active release directory"
+  assert_contains "${output}" "BR-DEP-13" "log cites BR-DEP-13 active release protection"
+  rm -rf "${root}"
+}
+
 # --- driver -----------------------------------------------------------------
 
 main() {
@@ -604,6 +794,13 @@ main() {
   case_16_public_smoke_failure_rolls_back
   case_17_env_gate_reads_the_new_tree
   case_18_alerting_unconfigured_stops_release
+  case_19_rollback_to_pruned_release_fails
+  case_20_parallel_rollback_is_refused
+  case_21_rollback_smoke_failure_reports_critical
+  case_22_rollback_logs_and_notifies
+  case_23_missing_admin_css_entry_fails_artifact_smoke
+  case_24_client_chunk_with_server_code_fails_artifact_smoke
+  case_25_refuses_to_build_in_active_release
 
   printf '\n%s passed, %s failed\n' "${PASS}" "${FAIL}"
   [ "${FAIL}" -eq 0 ]

@@ -1,5 +1,5 @@
 /**
- * Unit test cho cổng check-numeracy-ladder (Task #268 / BR-NRL-01..06 / BR-ERC-13).
+ * Unit test cho cổng check-numeracy-ladder (Task #268 / #309 S7 / BR-NRL-01..06, BR-NRL-09 / BR-ERC-13).
  *
  * Invariant: Strict TypeScript — NO `any`, NO `unknown`.
  */
@@ -243,5 +243,49 @@ describe("check-numeracy-ladder", () => {
     const violations = validateDatasetLadder(dataset, identity);
 
     expect(violations).toHaveLength(0);
+  });
+
+  it("BR-NRL-09: Ca âm — Biểu diễn lượng có spokenLabel rỗng hoặc thiếu nhãn đọc tiếng Việt", () => {
+    const dataset = createMockDataset({
+      items: [
+        { id: "item_1", label: "một", spokenLabel: "   ", value: 1 },
+        { id: "item_2", label: "2", value: 2 },
+        { id: "item_3", label: "three", value: 3 },
+      ],
+    });
+    const identity = createMockIdentity({ age_min: 5, age_max: 6 });
+    const violations = validateDatasetLadder(dataset, identity);
+
+    const v09 = violations.filter((v) => v.rule === "BR-NRL-09");
+    expect(v09).toHaveLength(3);
+    expect(v09[0]?.message).toContain(
+      "biểu diễn lượng 'item_1' thiếu spokenLabel phát được bằng giọng Việt"
+    );
+    expect(v09[1]?.message).toContain(
+      "biểu diễn lượng 'item_2' có spokenLabel '2' không phát được bằng giọng Việt"
+    );
+    expect(v09[2]?.message).toContain(
+      "biểu diễn lượng 'item_3' có spokenLabel 'three' không phát được bằng giọng Việt"
+    );
+  });
+
+  it("BR-NRL-09: Ca âm — Biểu diễn lượng trỏ audio_path sai quy ước play-narration", () => {
+    const dataset = createMockDataset({
+      items: [
+        {
+          id: "item_1",
+          label: "năm chấm tròn",
+          spokenLabel: "năm chấm tròn",
+          audio_path: "invalid path without ext",
+          value: 5,
+        },
+      ],
+    });
+    const identity = createMockIdentity({ age_min: 5, age_max: 6 });
+    const violations = validateDatasetLadder(dataset, identity);
+
+    const v09 = violations.find((v) => v.rule === "BR-NRL-09");
+    expect(v09).toBeDefined();
+    expect(v09?.message).toContain("không hợp lệ theo play-narration");
   });
 });

@@ -74,10 +74,12 @@
               >
               <div class="hero-info">
                 <div class="hero-tags">
-                  <span class="tag-competency"
+                  <NuxtLink
+                    class="tag-competency"
+                    :to="`/games?competency=${game.competency}`"
                     >{{ findCompetency(game.competency)?.name ||
                     game.competency ||
-                    'Tư duy toán học' }}</span
+                    'Tư duy toán học' }}</NuxtLink
                   >
                   <span class="tag-age">{{ game.age_band }} tuổi</span>
                   <span class="tag-tier" :class="`tier-${game.access_tier}`">
@@ -100,6 +102,27 @@
                   name="i-lucide-arrow-right"
                 />
               </NuxtLink>
+              <button
+                class="mt-2 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold rounded-xl border border-surface-200 bg-surface-50 text-surface-700 hover:bg-surface-100 min-h-[44px] transition-colors disabled:opacity-75"
+                data-testid="save-game-library-btn"
+                type="button"
+                :disabled="isSavingLibrary || isSavedToLibrary"
+                @click="saveGameToLibrary"
+              >
+                <UIcon
+                  class="w-4 h-4"
+                  :name="isSavedToLibrary ? 'i-lucide-bookmark-check' : 'i-lucide-bookmark'"
+                />
+                <span>{{ getSaveGameButtonText() }}</span>
+              </button>
+              <p
+                class="mt-1 text-xs font-semibold text-danger-700"
+                data-testid="save-game-library-error"
+                role="alert"
+                v-if="saveLibraryError"
+              >
+                {{ saveLibraryError }}
+              </p>
               <p class="cta-subtext">✓ Tự động lưu tiến độ vào hồ sơ của bé</p>
             </div>
           </div>
@@ -238,6 +261,7 @@
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
+  import { useApi } from "~/composables/use-api";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
   // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
@@ -333,18 +357,61 @@
     allowed_tiers: AccessTier[];
   }
 
+  const api = useApi();
   const userAccessContext = ref<UserAccessContext | null>(null);
   const { loggedIn } = useUserSession();
+  const isSavingLibrary = ref(false);
+  const isSavedToLibrary = ref(false);
+  const saveLibraryError = ref("");
+
+  function getSaveGameButtonText(): string {
+    if (isSavedToLibrary.value) {
+      return "Đã lưu vào thư viện";
+    }
+    if (isSavingLibrary.value) {
+      return "Đang lưu...";
+    }
+    return "Lưu vào thư viện";
+  }
+
+  async function saveGameToLibrary(): Promise<void> {
+    if (isSavingLibrary.value || isSavedToLibrary.value || !code.value) {
+      return;
+    }
+    isSavingLibrary.value = true;
+    saveLibraryError.value = "";
+    try {
+      await api<{ success: boolean }>("/api/users/library/items", {
+        method: "POST",
+        body: {
+          entity_type: "game_level",
+          code: code.value,
+        },
+      });
+      isSavedToLibrary.value = true;
+    } catch (err) {
+      if (isApiError(err, "CODE_ALREADY_EXISTS")) {
+        isSavedToLibrary.value = true;
+      } else if (isApiError(err, "QUOTA_EXCEEDED")) {
+        saveLibraryError.value =
+          "Đã đạt giới hạn lưu trữ trong thư viện. Vui lòng nâng cấp gói hoặc xoá bớt mục cũ.";
+      } else if (isApiError(err, "UNAUTHENTICATED")) {
+        saveLibraryError.value =
+          "Vui lòng đăng nhập để lưu trò chơi vào thư viện.";
+      } else {
+        saveLibraryError.value = "Không thể lưu trò chơi vào thư viện lúc này.";
+      }
+    } finally {
+      isSavingLibrary.value = false;
+    }
+  }
 
   onMounted(async () => {
     if (loggedIn.value) {
       try {
-        const ctx = await $fetch<UserAccessContext>(
-          "/api/users/access-context",
-          {
-            credentials: "include",
-          }
-        );
+        const ctx = await api<UserAccessContext>("/api/users/access-context", {
+          credentials: "include",
+        });
         userAccessContext.value = ctx;
       } catch {
         // Giữ góc nhìn guest nếu fetch thất bại
@@ -417,7 +484,38 @@
             educationalLevel: `Trẻ mầm non ${game.value?.age_band || "3–6"} tuổi`,
             inLanguage: "vi-VN",
             isAccessibleForFree: game.value?.access_tier === "free",
+            teaches:
+              findCompetency(game.value?.competency || "C1")?.name ||
+              "Tư duy toán học",
             url: `https://mindkid.vn/games/${code.value}`,
+          }),
+      },
+      {
+        type: "application/ld+json",
+        innerHTML: () =>
+          JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              {
+                "@type": "ListItem",
+                position: 1,
+                name: "Trang chủ",
+                item: "https://mindkid.vn/",
+              },
+              {
+                "@type": "ListItem",
+                position: 2,
+                name: "Thư viện trò chơi",
+                item: "https://mindkid.vn/games",
+              },
+              {
+                "@type": "ListItem",
+                position: 3,
+                name: game.value?.title || "Trò chơi tư duy",
+                item: `https://mindkid.vn/games/${code.value}`,
+              },
+            ],
           }),
       },
     ],
@@ -430,18 +528,14 @@
     color: var(--color-surface-800);
     min-height: 100vh;
   }
-
   .detail-main {
     padding: 2rem 0 4rem;
   }
-
   .section-container {
     max-width: 64rem;
     margin: 0 auto;
     padding: 0 1rem;
   }
-
-  /* Breadcrumb */
   .breadcrumb-nav {
     display: flex;
     gap: 0.5rem;
@@ -449,18 +543,14 @@
     color: var(--color-surface-500);
     margin-bottom: 1.5rem;
   }
-
   .breadcrumb-nav a {
     color: var(--color-brand-600);
     text-decoration: none;
   }
-
   .breadcrumb-current {
     color: var(--color-surface-700);
     font-weight: 600;
   }
-
-  /* Hero Card */
   .detail-hero-card {
     background-color: white;
     border-radius: 1.5rem;
@@ -471,7 +561,6 @@
     gap: 1.5rem;
     margin-bottom: 2rem;
   }
-
   @media (min-width: 768px) {
     .detail-hero-card {
       flex-direction: row;
@@ -479,13 +568,11 @@
       justify-content: space-between;
     }
   }
-
   .hero-left {
     display: flex;
     align-items: center;
     gap: 1.5rem;
   }
-
   .detail-emoji {
     font-size: 3.5rem;
     display: flex;
@@ -496,13 +583,11 @@
     background-color: var(--color-surface-100);
     border-radius: 1.25rem;
   }
-
   .hero-tags {
     display: flex;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
   }
-
   .tag-competency,
   .tag-age,
   .tag-tier {
@@ -511,10 +596,10 @@
     padding: 0.2rem 0.6rem;
     border-radius: 0.5rem;
   }
-
   .tag-competency {
     background-color: var(--color-brand-100);
     color: var(--color-brand-800);
+    text-decoration: none;
   }
 
   .tag-age {
@@ -540,14 +625,12 @@
     color: var(--color-surface-500);
     margin: 0;
   }
-
   .hero-cta-box {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     min-width: 200px;
   }
-
   .btn-cta-play,
   .btn-cta-login,
   .btn-cta-upgrade {
@@ -562,58 +645,47 @@
     text-decoration: none;
     transition: background-color 0.15s;
   }
-
   .btn-cta-play {
     background-color: var(--color-cta, #c2410c);
     color: white;
     box-shadow: 0 4px 12px rgba(194, 65, 12, 0.25);
   }
-
   .btn-cta-play:hover {
     background-color: var(--color-cta-hover, #9a3412);
   }
-
   .btn-cta-login {
     background-color: var(--color-brand-600, #1a7f6b);
     color: white;
     box-shadow: 0 4px 12px rgba(26, 127, 107, 0.25);
   }
-
   .btn-cta-login:hover {
     background-color: var(--color-brand-700, #166657);
   }
-
   .btn-cta-upgrade {
     background-color: var(--color-brand-800, #145247);
     color: white;
     box-shadow: 0 4px 12px rgba(20, 82, 71, 0.25);
   }
-
   .btn-cta-upgrade:hover {
     background-color: var(--color-brand-900, #13443b);
   }
-
   .cta-subtext {
     font-size: 0.75rem;
     color: var(--color-surface-500);
     text-align: center;
     margin: 0;
   }
-
-  /* Detail Body Grid */
   .detail-body-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
     margin-bottom: 3rem;
   }
-
   @media (min-width: 768px) {
     .detail-body-grid {
       grid-template-columns: 2fr 1fr;
     }
   }
-
   .info-section {
     background-color: white;
     border-radius: 1.25rem;
@@ -621,14 +693,12 @@
     padding: 1.5rem;
     margin-bottom: 1.5rem;
   }
-
   .section-subheading {
     font-size: 1.2rem;
     font-weight: 700;
     color: var(--color-surface-900);
     margin-bottom: 0.75rem;
   }
-
   .pedagogical-desc,
   .mechanic-desc {
     font-size: 1rem;
@@ -636,15 +706,12 @@
     color: var(--color-surface-700);
     margin: 0;
   }
-
-  /* Previews */
   .previews-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
     margin-top: 1rem;
   }
-
   .preview-box {
     background-color: var(--color-surface-100);
     border: 1px solid var(--color-surface-200);
@@ -656,32 +723,26 @@
     align-items: center;
     gap: 0.5rem;
   }
-
   .preview-placeholder-emoji {
     font-size: 2rem;
   }
-
   .preview-caption {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--color-surface-600);
   }
-
-  /* Meta Aside */
   .meta-card {
     background-color: white;
     border-radius: 1.25rem;
     border: 1px solid var(--color-surface-200);
     padding: 1.5rem;
   }
-
   .meta-card-title {
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--color-surface-900);
     margin-bottom: 1rem;
   }
-
   .meta-list {
     list-style: none;
     padding: 0;
@@ -690,7 +751,6 @@
     flex-direction: column;
     gap: 0.75rem;
   }
-
   .meta-list li {
     display: flex;
     justify-content: space-between;
@@ -698,28 +758,22 @@
     padding-bottom: 0.5rem;
     border-bottom: 1px dashed var(--color-surface-200);
   }
-
   .meta-label {
     color: var(--color-surface-500);
   }
-
   .meta-val {
     font-weight: 600;
     color: var(--color-surface-800);
   }
-
   .difficulty-stars {
     color: var(--color-warning-500, orange);
   }
-
-  /* Related Games */
   .related-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 1rem;
     margin-top: 1rem;
   }
-
   .related-card {
     background-color: white;
     border: 1px solid var(--color-surface-200);
@@ -733,28 +787,23 @@
       transform 0.15s,
       border-color 0.15s;
   }
-
   .related-card:hover {
     transform: translateY(-2px);
     border-color: var(--color-brand-500);
   }
-
   .related-emoji {
     font-size: 2rem;
   }
-
   .related-title {
     font-size: 0.95rem;
     font-weight: 700;
     color: var(--color-surface-900);
   }
-
   .related-tag {
     font-size: 0.75rem;
     color: var(--color-surface-500);
   }
 
-  /* Archived Notice (410 State) */
   .archived-notice-card {
     background-color: white;
     border: 2px dashed var(--color-warning-500, orange);
@@ -762,27 +811,18 @@
     padding: 3rem 2rem;
     text-align: center;
   }
-
-  .archived-emoji {
-    font-size: 3rem;
-    display: block;
-    margin-bottom: 1rem;
-  }
-
   .archived-title {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--color-surface-900);
     margin-bottom: 0.5rem;
   }
-
   .archived-desc {
     font-size: 1rem;
     color: var(--color-surface-600);
     max-width: 36rem;
     margin: 0 auto 2rem;
   }
-
   .alternatives-grid {
     display: flex;
     flex-direction: column;
@@ -790,7 +830,6 @@
     max-width: 24rem;
     margin: 0 auto;
   }
-
   .alt-card-link {
     display: block;
     padding: 0.75rem 1rem;

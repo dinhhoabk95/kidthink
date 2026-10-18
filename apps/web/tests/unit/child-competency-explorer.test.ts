@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import {
   buildCompetencyGames,
   computeAgeBounds,
+  fitsAgeBounds,
   resolveTargetCompetency,
+  sortCompetencyLevels,
 } from "#server/services/child-competency-explorer";
 
 describe("resolveTargetCompetency (BR-CCE-01)", () => {
@@ -26,38 +28,84 @@ describe("resolveTargetCompetency (BR-CCE-01)", () => {
   });
 });
 
-describe("computeAgeBounds (BR-CCE-02)", () => {
+describe("computeAgeBounds & sortCompetencyLevels (BR-CCE-02)", () => {
   it("tính toán cận tuổi chuẩn theo age_band của trẻ", () => {
     expect(computeAgeBounds("3-4")).toEqual({ min: 3, max: 4 });
     expect(computeAgeBounds("4-5")).toEqual({ min: 4, max: 5 });
     expect(computeAgeBounds("5-6")).toEqual({ min: 5, max: 6 });
   });
-});
 
-describe("buildCompetencyGames (BR-CCE-03 & BR-CCE-04)", () => {
-  it("ghép nối dữ liệu level và thống kê lượt chơi của trẻ", () => {
+  it("BR-CCE-02: xếp trò chơi hợp age_band lên trước, trò chơi ngoài độ tuổi xếp sau và không bị loại bỏ", () => {
+    const bounds = computeAgeBounds("4-5");
+    expect(fitsAgeBounds({ ageMin: 4, ageMax: 5 }, bounds)).toBe(true);
+    expect(fitsAgeBounds({ ageMin: 5, ageMax: 6 }, bounds)).toBe(false);
+
     const levels = [
       {
-        id: 101,
-        code: "GL-C1-CNT-TCNT-0001",
-        title: "Tập đếm hoa quả",
-        thumbnailEmoji: "🍎",
-        themeId: "farm",
+        id: 1,
+        code: "GL-C1-CNT-0001",
+        title: "Cộng nâng cao 5-6 tuổi",
+        thumbnailEmoji: "🧮",
+        themeId: "school",
         accessTier: "free" as const,
+        ageMin: 5,
+        ageMax: 6,
       },
       {
-        id: 102,
-        code: "GL-C1-ADD-TCNT-0002",
-        title: "Cộng số kẹo",
-        thumbnailEmoji: null,
+        id: 2,
+        code: "GL-C1-CNT-0002",
+        title: "Đếm kẹo 4-5 tuổi",
+        thumbnailEmoji: "🍬",
         themeId: "candy",
-        accessTier: "premium" as const,
+        accessTier: "free" as const,
+        ageMin: 4,
+        ageMax: 5,
+      },
+      {
+        id: 3,
+        code: "GL-C1-CNT-0003",
+        title: "Nhận biết số 3 tuổi",
+        thumbnailEmoji: "1️⃣",
+        themeId: "farm",
+        accessTier: "free" as const,
+        ageMin: 3,
+        ageMax: 3,
       },
     ];
 
+    const sorted = sortCompetencyLevels(levels, bounds);
+    expect(sorted.map((l) => l.code)).toEqual([
+      "GL-C1-CNT-0002",
+      "GL-C1-CNT-0001",
+      "GL-C1-CNT-0003",
+    ]);
+  });
+});
+
+describe("buildCompetencyGames (BR-CCE-03, BR-CCE-04 & main flow bước 4)", () => {
+  const sampleLevels = [
+    {
+      id: 101,
+      code: "GL-C1-CNT-TCNT-0001",
+      title: "Tập đếm hoa quả",
+      thumbnailEmoji: "🍎",
+      themeId: "farm",
+      accessTier: "free" as const,
+    },
+    {
+      id: 102,
+      code: "GL-C1-ADD-TCNT-0002",
+      title: "Cộng số kẹo",
+      thumbnailEmoji: null,
+      themeId: "candy",
+      accessTier: "premium" as const,
+    },
+  ];
+
+  it("ghép nối dữ liệu level và thống kê lượt chơi của trẻ khi chưa có gói", () => {
     const statsMap = new Map([[101, { bestStars: 3, playCount: 5 }]]);
 
-    const result = buildCompetencyGames(levels, statsMap);
+    const result = buildCompetencyGames(sampleLevels, statsMap);
 
     expect(result).toHaveLength(2);
     expect(result[0]).toEqual({
@@ -74,12 +122,24 @@ describe("buildCompetencyGames (BR-CCE-03 & BR-CCE-04)", () => {
     expect(result[1]).toEqual({
       code: "GL-C1-ADD-TCNT-0002",
       title: "Cộng số kẹo",
-      thumbnail_emoji: "🎮", // fallback emoji
+      thumbnail_emoji: "🎮",
       theme_id: "candy",
       access_tier: "premium",
-      is_locked: true, // khoá trung tính
+      is_locked: true,
       best_stars: 0,
       play_count: 0,
     });
+  });
+
+  it("tính is_locked = false cho level premium khi gia đình có entitlement premium", () => {
+    const result = buildCompetencyGames(sampleLevels, new Map(), [
+      "free",
+      "login",
+      "standard",
+      "premium",
+    ]);
+
+    expect(result[0]?.is_locked).toBe(false);
+    expect(result[1]?.is_locked).toBe(false);
   });
 });

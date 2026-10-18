@@ -273,6 +273,7 @@
 
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
+  import { useApi } from "~/composables/use-api";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
   // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
@@ -294,6 +295,7 @@
     createdAt: string;
   }
 
+  const api = useApi();
   const games = ref<CustomGameItem[]>([]);
   const quota = ref({ limit: 10, current: 0 });
   const loading = ref(true);
@@ -315,7 +317,7 @@
         params.set("template_id", templateFilter.value);
       }
 
-      const res = await $fetch<{
+      const res = await api<{
         items: CustomGameItem[];
         total: number;
         quota: { limit: number; current: number };
@@ -341,7 +343,7 @@
     }
     deleting.value = true;
     try {
-      await $fetch(`/api/users/custom-games/${gameToDelete.value.uuid}`, {
+      await api(`/api/users/custom-games/${gameToDelete.value.uuid}`, {
         method: "DELETE",
       });
       gameToDelete.value = null;

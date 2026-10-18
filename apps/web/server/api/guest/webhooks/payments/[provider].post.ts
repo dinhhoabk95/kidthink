@@ -1,82 +1,107 @@
-import { requireFirstEnv } from "@mindkid/config";
+import { optionalEnv, requireEnv, requireFirstEnv } from "@mindkid/config";
 import { WebhookSignatureInvalidError } from "@mindkid/errors/billing";
 import { ValidationError } from "@mindkid/errors/common";
 import {
   AUTOMATED_PAYMENT_PROVIDERS,
   type AutomatedPaymentProvider,
-  AutomatedPaymentWebhookPayloadSchema,
+  isPaymentWebhookOriginTrusted,
+  PAYMENT_OPERATING_MODES,
+  type PaymentOperatingMode,
+  parsePaymentWebhookBody,
   verifyPaymentWebhookSignature,
 } from "@mindkid/shared";
-import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
+import { defineEventHandler, getHeader, getRouterParam, readRawBody } from "h3";
 import { processAutomatedPaymentWebhook } from "#server/services/index.js";
+
+function isOperatingMode(value: string): value is PaymentOperatingMode {
+  return PAYMENT_OPERATING_MODES.some((mode) => mode === value);
+}
+
+function isSupportedProvider(
+  value: string | undefined
+): value is AutomatedPaymentProvider {
+  return AUTOMATED_PAYMENT_PROVIDERS.some((provider) => provider === value);
+}
+
+/** Cảnh báo bảo mật có cấu trúc (UC-079 A1.2). Không ghi chữ ký hay thân thư. */
+function warnRejected(provider: AutomatedPaymentProvider, reason: string) {
+  console.warn(
+    JSON.stringify({
+      event: "payment_webhook.rejected",
+      provider,
+      reason,
+    })
+  );
+}
 
 export default defineEventHandler(async (event) => {
   const providerParam = getRouterParam(event, "provider");
 
-  if (
-    !(
-      providerParam &&
-      AUTOMATED_PAYMENT_PROVIDERS.includes(
-        providerParam as AutomatedPaymentProvider
-      )
-    )
-  ) {
+  if (!isSupportedProvider(providerParam)) {
     throw new ValidationError(
       `Payment provider không được hỗ trợ: ${providerParam}`
     );
   }
 
-  const provider = providerParam as AutomatedPaymentProvider;
-  const rawBody =
-    (event.context as { body?: unknown })?.body ??
-    (await readBody(event).catch(() => undefined)) ??
-    (event as unknown as { _body?: unknown })._body;
-  const rawBodyString =
-    typeof rawBody === "string" ? rawBody : JSON.stringify(rawBody);
+  const provider = providerParam;
+  const envKey = provider.toUpperCase();
 
-  const reqHeaders = event.node?.req?.headers as
-    | Record<string, string | undefined>
-    | undefined;
+  // BR-001: chữ ký tính trên BYTE THÔ của thân request, không phải JSON đã
+  // parse rồi tuần tự hoá lại. Chữ ký chỉ lấy từ header; chữ ký nằm trong thân
+  // không được chấp nhận.
+  const rawBody = await readRawBody(event, "utf8");
   const signature =
     getHeader(event, "x-webhook-signature") ||
     getHeader(event, "x-signature") ||
-    reqHeaders?.["x-webhook-signature"] ||
-    reqHeaders?.["x-signature"] ||
-    (rawBody as { signature?: string })?.signature ||
     "";
 
   const secretKey = requireFirstEnv([
-    `PAYMENT_${provider.toUpperCase()}_WEBHOOK_SECRET`,
+    `PAYMENT_${envKey}_WEBHOOK_SECRET`,
     "PAYMENT_WEBHOOK_SECRET",
   ]);
 
-  // BR-APM-01: xác minh vô điều kiện. Bọc bước này trong `if (signature)` là
-  // fail-open — người gọi chỉ cần **bỏ** header chữ ký là qua được cửa, và
-  // `processAutomatedPaymentWebhook` sẽ duyệt một đơn chưa trả tiền.
-  // `requireFirstEnv` đã ném nếu thiếu bí mật, nên `secretKey` luôn có giá trị.
-  const isSignatureValid = verifyPaymentWebhookSignature(
-    rawBodyString,
-    signature,
-    secretKey
-  );
-
-  if (!isSignatureValid) {
+  // Xác minh vô điều kiện: thân thiếu, chữ ký thiếu hay sai đều từ chối.
+  // Bọc bước này trong `if (signature)` là fail-open.
+  if (
+    !(rawBody && verifyPaymentWebhookSignature(rawBody, signature, secretKey))
+  ) {
+    warnRejected(provider, "signature_invalid");
     throw new WebhookSignatureInvalidError(
-      "Chữ ký số webhook không hợp lệ (BR-APM-01);"
+      "Chữ ký số webhook không hợp lệ (BR-001);"
     );
   }
 
-  const parseResult = AutomatedPaymentWebhookPayloadSchema.safeParse(rawBody);
+  // Chỉ đọc nội dung sau khi chữ ký đã khớp.
+  const parsed = parsePaymentWebhookBody(rawBody);
 
-  if (!parseResult.success) {
-    // `INVALID_WEBHOOK_PAYLOAD` chưa đăng ký trong error-codes.md, nên chưa
-    // dùng được; `VALIDATION_FAILED` là mã 422 đã có.
+  if (!parsed.ok) {
     throw new ValidationError(
       "Dữ liệu webhook không đúng định dạng schema chuẩn"
     );
   }
 
-  const result = await processAutomatedPaymentWebhook(parseResult.data);
+  const payload = parsed.payload;
+  const configuredMode = requireEnv("PAYMENT_MODE");
+  const merchantId =
+    optionalEnv(`PAYMENT_${envKey}_MERCHANT_ID`) ??
+    requireEnv("PAYMENT_MERCHANT_ID");
+
+  if (
+    payload.provider !== provider ||
+    !isOperatingMode(configuredMode) ||
+    !isPaymentWebhookOriginTrusted(payload, {
+      merchantId,
+      mode: configuredMode,
+    })
+  ) {
+    // Cùng mã lỗi với sai chữ ký để không lộ cấu hình cho người gọi.
+    warnRejected(provider, "origin_mismatch");
+    throw new WebhookSignatureInvalidError(
+      "Tín hiệu webhook sai đơn vị nhận tiền hoặc chế độ vận hành (BR-001);"
+    );
+  }
+
+  const result = await processAutomatedPaymentWebhook(payload);
 
   return {
     ok: true,

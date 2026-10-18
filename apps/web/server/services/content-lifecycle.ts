@@ -15,6 +15,7 @@ import {
   skills,
   worksheets,
 } from "@mindkid/db";
+import { enqueue } from "@mindkid/queue";
 import type { ContentLifecycleStatus, ManagerRole } from "@mindkid/shared";
 import {
   canTransition,
@@ -56,7 +57,8 @@ export type LifecycleErrorCode =
   | "PUBLISH_CHECKLIST_FAILED"
   | "ENTITY_NOT_FOUND"
   | "MACHINE_TRANSITION_FORBIDDEN"
-  | "CONTENT_IN_USE";
+  | "CONTENT_IN_USE"
+  | "CONTENT_IMMUTABLE";
 
 import { AppError, type ErrorDetails } from "@mindkid/errors/base";
 
@@ -726,6 +728,56 @@ async function fetchEntityDataForTransition(
   );
 }
 
+async function syncPublishedContentEmbedding(
+  entityType: "game_level" | "lesson" | "activity",
+  entityDbId: number,
+  currentVersion: number,
+  textToEmbed: string
+): Promise<void> {
+  await enqueue("embed:content", {
+    contentType: entityType,
+    contentId: entityDbId,
+    contentVersion: currentVersion,
+    model: DEFAULT_EMBEDDING_MODEL,
+  }).catch(() => undefined);
+
+  const vector = await aiProvider
+    .generateEmbedding(textToEmbed)
+    .catch(() => null);
+  if (!vector) {
+    return;
+  }
+
+  const db = getOwnerDb();
+  await db
+    .insert(contentEmbeddings)
+    .values({
+      contentType: entityType,
+      contentId: entityDbId,
+      contentVersion: currentVersion,
+      model: DEFAULT_EMBEDDING_MODEL,
+      embedding: vector,
+      chunkIndex: 0,
+      chunkText: textToEmbed,
+      updatedAt: new Date(),
+    })
+    .onConflictDoUpdate({
+      target: [
+        contentEmbeddings.contentType,
+        contentEmbeddings.contentId,
+        contentEmbeddings.contentVersion,
+        contentEmbeddings.model,
+        contentEmbeddings.chunkIndex,
+      ],
+      set: {
+        embedding: vector,
+        chunkText: textToEmbed,
+        updatedAt: new Date(),
+      },
+    })
+    .catch(() => undefined);
+}
+
 async function handlePostPublishEffects(
   req: TransitionRequest,
   itemData: Record<string, unknown>,
@@ -733,11 +785,29 @@ async function handlePostPublishEffects(
   code: string
 ): Promise<void> {
   if (
-    req.toStatus !== "published" ||
-    (req.entityType !== "lesson" &&
-      req.entityType !== "activity" &&
-      req.entityType !== "game_level")
+    req.entityType !== "lesson" &&
+    req.entityType !== "activity" &&
+    req.entityType !== "game_level"
   ) {
+    return;
+  }
+
+  if (req.toStatus === "archived") {
+    const db = getOwnerDb();
+    await db
+      .delete(contentEmbeddings)
+      .where(
+        and(
+          eq(contentEmbeddings.contentType, req.entityType),
+          eq(contentEmbeddings.contentId, req.entityDbId),
+          eq(contentEmbeddings.contentVersion, currentVersion)
+        )
+      )
+      .catch(() => undefined);
+    return;
+  }
+
+  if (req.toStatus !== "published") {
     return;
   }
 
@@ -749,40 +819,15 @@ async function handlePostPublishEffects(
     code
   ).catch(() => undefined);
 
-  if (req.entityType === "game_level" || req.entityType === "lesson") {
-    const textToEmbed = `${itemData.title || ""} ${itemData.instruction || itemData.summary || ""} ${code}`;
-    const vector = await aiProvider
-      .generateEmbedding(textToEmbed.trim() || code)
-      .catch(() => null);
-    if (vector) {
-      const db = getOwnerDb();
-      await db
-        .insert(contentEmbeddings)
-        .values({
-          contentType: req.entityType,
-          contentId: req.entityDbId,
-          contentVersion: currentVersion,
-          model: DEFAULT_EMBEDDING_MODEL,
-          embedding: vector,
-          chunkIndex: 0,
-          chunkText: textToEmbed.trim() || code,
-        })
-        .onConflictDoUpdate({
-          target: [
-            contentEmbeddings.contentType,
-            contentEmbeddings.contentId,
-            contentEmbeddings.contentVersion,
-            contentEmbeddings.model,
-            contentEmbeddings.chunkIndex,
-          ],
-          set: {
-            embedding: vector,
-            chunkText: textToEmbed.trim() || code,
-          },
-        })
-        .catch(() => undefined);
-    }
-  }
+  const textToEmbed =
+    `${itemData.title || ""} ${itemData.instruction || itemData.guide || itemData.summary || ""} ${code}`.trim() ||
+    code;
+  await syncPublishedContentEmbedding(
+    req.entityType,
+    req.entityDbId,
+    currentVersion,
+    textToEmbed
+  );
 }
 
 async function executeTransitionTransaction(
@@ -929,4 +974,20 @@ export function validateSeedBatchContent(
     }
   }
   return { ok: true };
+}
+
+/**
+ * BR-CLC-01: Bản published là bất biến; chỉ cho phép chuyển sang archived hoặc tạo version N+1.
+ */
+export function assertPublishedContentImmutable(
+  currentStatus: ContentLifecycleStatus,
+  toStatus?: ContentLifecycleStatus
+): void {
+  if (currentStatus === "published" && toStatus !== "archived") {
+    throw new LifecycleError(
+      "BR-CLC-01: Cannot modify published content directly; only transition to archived is allowed.",
+      "CONTENT_IMMUTABLE",
+      409
+    );
+  }
 }

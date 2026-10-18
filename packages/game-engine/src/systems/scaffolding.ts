@@ -31,6 +31,7 @@ export interface ScaffoldState {
   l3DurationMs: number;
   skipSuggested: boolean;
   voiceAvailable?: boolean;
+  lastTrigger?: "timer" | "miss_streak";
 }
 
 export interface ScaffoldingBandThresholds {
@@ -44,7 +45,7 @@ export interface ScaffoldingBandThresholds {
 
 export interface ScaffoldAction {
   level: ScaffoldingLevel;
-  trigger: "timer" | "miss_streak" | "voice_fallback" | "manual";
+  trigger: "timer" | "miss_streak" | "voice_fallback";
   focusIndex: number;
   ghostHandSpeed?: number;
   reducedMotion?: boolean;
@@ -82,6 +83,33 @@ export const SCAFFOLDING_BY_BAND: Record<AgeBand, ScaffoldingBandThresholds> = {
     l3_time_s: 40,
   },
 };
+
+export function resolveScaffoldingThresholds(
+  ageBand: AgeBand,
+  hintAfterMs?: number
+): ScaffoldingBandThresholds {
+  const base = SCAFFOLDING_BY_BAND[ageBand];
+  if (
+    typeof hintAfterMs !== "number" ||
+    !Number.isFinite(hintAfterMs) ||
+    hintAfterMs <= 0
+  ) {
+    return base;
+  }
+  const l1TimeS = hintAfterMs / 1000;
+  const gapL1ToL2 = base.l2_time_s - base.l1_time_s;
+  const gapL2ToL3 = base.l3_time_s - base.l2_time_s;
+  const l2TimeS = l1TimeS + gapL1ToL2;
+  const l3TimeS = l2TimeS + gapL2ToL3;
+  return {
+    l1_misses: base.l1_misses,
+    l1_time_s: l1TimeS,
+    l2_misses: base.l2_misses,
+    l2_time_s: l2TimeS,
+    l3_misses: base.l3_misses,
+    l3_time_s: l3TimeS,
+  };
+}
 
 function computeTargetLevel(
   state: ScaffoldState,
@@ -132,16 +160,21 @@ function advanceState(
 
   const levelChanged = targetLevel !== state.level;
   state.level = targetLevel;
+  if (levelChanged) {
+    state.lastTrigger = triggerType;
+  }
 
   return { triggerType, levelChanged, skipJustSuggested };
 }
 
 export class ScaffoldingSystem {
   private readonly internalAgeBand: AgeBand;
+  private readonly internalHintAfterMs?: number;
   private readonly internalState: ScaffoldState;
 
-  constructor(ageBand: AgeBand = "3-4") {
+  constructor(ageBand: AgeBand = "3-4", hintAfterMs?: number) {
     this.internalAgeBand = ageBand;
+    this.internalHintAfterMs = hintAfterMs;
     this.internalState = this.createInitialState();
   }
 
@@ -155,6 +188,7 @@ export class ScaffoldingSystem {
       l3DurationMs: 0,
       skipSuggested: false,
       voiceAvailable: true,
+      lastTrigger: "timer",
     };
   }
 
@@ -188,14 +222,16 @@ export class ScaffoldingSystem {
     state: ScaffoldState,
     ageBand: AgeBand,
     targetFocusIndex: number,
-    prefersReducedMotion?: boolean
+    prefersReducedMotion?: boolean,
+    hintAfterMs?: number
   ): ScaffoldAction | null;
   tick(
     deltaMs?: number,
     state?: ScaffoldState,
     ageBand?: AgeBand,
     targetFocusIndex?: number,
-    prefersReducedMotion?: boolean
+    prefersReducedMotion?: boolean,
+    hintAfterMs?: number
   ): ScaffoldAction | ScaffoldingLevel | null {
     if (state !== undefined) {
       return this.tickStateless(
@@ -203,7 +239,8 @@ export class ScaffoldingSystem {
         state,
         ageBand ?? this.internalAgeBand,
         targetFocusIndex ?? 0,
-        prefersReducedMotion ?? false
+        prefersReducedMotion ?? false,
+        hintAfterMs ?? this.internalHintAfterMs
       );
     }
     return this.tickInternal(deltaMs ?? DEFAULT_FRAME_MS);
@@ -212,7 +249,10 @@ export class ScaffoldingSystem {
   private tickInternal(deltaMs: number): ScaffoldingLevel {
     advanceState(
       this.internalState,
-      SCAFFOLDING_BY_BAND[this.internalAgeBand],
+      resolveScaffoldingThresholds(
+        this.internalAgeBand,
+        this.internalHintAfterMs
+      ),
       deltaMs
     );
     return this.internalState.level;
@@ -223,11 +263,12 @@ export class ScaffoldingSystem {
     state: ScaffoldState,
     ageBand: AgeBand,
     targetFocusIndex: number,
-    prefersReducedMotion: boolean
+    prefersReducedMotion: boolean,
+    hintAfterMs?: number
   ): ScaffoldAction | null {
     const { triggerType, levelChanged, skipJustSuggested } = advanceState(
       state,
-      SCAFFOLDING_BY_BAND[ageBand],
+      resolveScaffoldingThresholds(ageBand, hintAfterMs),
       deltaMs
     );
     state.focusIndex = targetFocusIndex;
@@ -270,6 +311,11 @@ export class ScaffoldingSystem {
 
   get missStreak(): number {
     return this.internalState.missStreak;
+  }
+
+  /** Nguyên nhân thực tế làm mức trợ giúp vừa leo thang (`BR-SCF-01`, `BR-SCF-07`). */
+  get lastTrigger(): "timer" | "miss_streak" {
+    return this.internalState.lastTrigger ?? "timer";
   }
 
   recordMiss(): ScaffoldingLevel {

@@ -78,14 +78,14 @@
           </span>
         </div>
         <NuxtLink
-          class="min-h-11 min-w-11 px-3 inline-flex items-center justify-center text-xs font-bold text-brand-600 bg-brand-50 rounded-xl no-underline active:scale-95 transition-transform"
+          class="min-h-16 min-w-16 px-4 inline-flex items-center justify-center text-xs font-bold text-brand-600 bg-brand-50 rounded-xl no-underline active:scale-95 transition-transform"
           v-if="!alt.locked"
           :to="`/play/${alt.level_code}`"
         >
           <span>Chơi</span>
         </NuxtLink>
         <div
-          class="min-h-11 min-w-11 px-2 inline-flex items-center justify-center text-xs text-surface-500 bg-surface-100 rounded-xl select-none"
+          class="min-h-16 min-w-16 px-3 inline-flex items-center justify-center text-xs text-surface-500 bg-surface-100 rounded-xl select-none"
           v-else
         >
           <UIcon class="w-4 h-4 text-surface-500" name="i-lucide-lock" />

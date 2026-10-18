@@ -13,6 +13,7 @@ import {
   lessonActivities,
   lessons,
   normalizeMechanicTagCode,
+  type OwnerDb,
   skillDatasets,
   skills,
   validateAndAssignTags,
@@ -21,9 +22,8 @@ import {
 import { ValidationError } from "@mindkid/errors/common";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { eq, inArray } from "drizzle-orm";
-import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import { readSeedGatesBaseline } from "./cli/check-seed-gates.js";
-import { runEightGates } from "./gates/runner.js";
+import { readSeedGatesBaseline } from "#src/cli/check-seed-gates";
+import { runEightGates } from "#src/gates/runner";
 import type {
   ActivitySeed,
   AnyContentSeed,
@@ -31,7 +31,7 @@ import type {
   ContentSeedRound,
   GateResult,
   LessonSeed,
-} from "./types.js";
+} from "#src/types";
 
 export interface SeedBatchInput {
   batchCode: string;
@@ -127,7 +127,7 @@ export function validateSeedsWithGates(
 }
 
 export async function executeSeedBatch(
-  db: NodePgDatabase<Record<string, unknown>>,
+  db: OwnerDb,
   input: SeedBatchInput,
   dryRun = false
 ): Promise<SeedExecutionResult> {
@@ -149,9 +149,38 @@ export async function executeSeedBatch(
     ? []
     : validateSeedsWithGates(seeds, input.batchCode);
 
+  const checklistSnapshot = {
+    batch_code: batchCode,
+    git_sha: gitSha || "local-dev",
+    pr_url: prUrl || "local",
+    gate_count: allGateResults.length,
+    all_passed: allGateResults.every((g) => g.passed),
+  };
+
   const result = await db
     // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: batch seeder workflow requires single-transaction orchestration
     .transaction(async (tx) => {
+      const [batchRow] = await tx
+        .insert(contentSeedBatches)
+        .values({
+          batchCode,
+          kind: inferredKind,
+          gitSha: gitSha || "local-dev",
+          prUrl: prUrl || "local",
+          approvedByManagerId: approvedByManagerId || null,
+          rowsInserted: 0,
+          gateResults: allGateResults,
+        })
+        .onConflictDoUpdate({
+          target: contentSeedBatches.batchCode,
+          set: {
+            rowsInserted: 0,
+            gateResults: allGateResults,
+          },
+        })
+        .returning({ id: contentSeedBatches.id });
+      const seedBatchId = batchRow?.id ?? null;
+
       // 2. Preload all lookup tables in parallel
       const [
         allSkills,
@@ -255,7 +284,7 @@ export async function executeSeedBatch(
 
       // 3. Process seeds in batches / chunks
       const gameLevelSeeds: Array<{
-        seed: ContentSeed<unknown, unknown>;
+        seed: ContentSeed;
         sequenceIndex: number;
       }> = [];
       const activitySeeds: Array<{
@@ -277,7 +306,7 @@ export async function executeSeedBatch(
           lessonSeeds.push({ seed: s as LessonSeed, sequenceIndex: seq });
         } else {
           gameLevelSeeds.push({
-            seed: s as ContentSeed<unknown, unknown>,
+            seed: s as ContentSeed,
             sequenceIndex: seq,
           });
         }
@@ -296,8 +325,8 @@ export async function executeSeedBatch(
           rounds: ContentSeedRound[];
           headerInstruction: string;
           headerDifficulty: number;
-          contentPack: unknown;
-          difficultyParams: unknown;
+          contentPack: ContentSeed["content_pack"];
+          difficultyParams: ContentSeed["difficulty_params"];
           skillMapEntries: Array<{ skillId: number; weight: number }>;
           matchedTags: (typeof contentTags.$inferSelect)[];
           learningObjectiveCodes: string[];
@@ -408,6 +437,7 @@ export async function executeSeedBatch(
             accessTier: header.access_tier,
             themeId: header.theme_tag || null,
             legacyV1Ref: header.legacy_v1_ref || null,
+            seedBatchId,
             skillDatasetId: matchedDataset?.id ?? null,
             projectionRef: template.code,
             contentPack: content_pack,
@@ -547,6 +577,7 @@ export async function executeSeedBatch(
               toStatus: "published",
               actorManagerId: approvedByManagerId || null,
               reason: `Seeded via batch ${batchCode} (origin: ${meta.origin})`,
+              checklistSnapshot,
             });
           }
 
@@ -632,6 +663,7 @@ export async function executeSeedBatch(
             status: "published",
             origin: header.origin,
             authoredIn: header.authored_in,
+            seedBatchId,
             publishedAt: new Date(),
           })
           .returning();
@@ -702,6 +734,7 @@ export async function executeSeedBatch(
           toStatus: "published",
           actorManagerId: approvedByManagerId || null,
           reason: `Seeded via batch ${batchCode} (origin: ${header.origin})`,
+          checklistSnapshot,
         });
       }
 
@@ -763,6 +796,7 @@ export async function executeSeedBatch(
             status: "published",
             origin: header.origin,
             authoredIn: header.authored_in,
+            seedBatchId,
             publishedAt: new Date(),
           })
           .returning();
@@ -848,19 +882,17 @@ export async function executeSeedBatch(
           toStatus: "published",
           actorManagerId: approvedByManagerId || null,
           reason: `Seeded via batch ${batchCode} (origin: ${header.origin})`,
+          checklistSnapshot,
         });
       }
 
-      // 4. Record seed batch
-      await tx.insert(contentSeedBatches).values({
-        batchCode,
-        kind: inferredKind,
-        gitSha: gitSha || "local-dev",
-        prUrl: prUrl || "local",
-        approvedByManagerId: approvedByManagerId || null,
-        rowsInserted: totalInserted,
-        gateResults: allGateResults,
-      });
+      // 4. Update seed batch rowsInserted count
+      if (seedBatchId !== null) {
+        await tx
+          .update(contentSeedBatches)
+          .set({ rowsInserted: totalInserted })
+          .where(eq(contentSeedBatches.id, seedBatchId));
+      }
 
       if (dryRun) {
         throw new Error("__DRY_RUN_ROLLBACK__");

@@ -16,10 +16,16 @@ import {
   ALL_TEMPLATES,
   type GameTemplate,
 } from "@mindkid/game-engine/registry";
+import type { ProjectionRequires, SkillDataset } from "@mindkid/shared";
 import {
   type ParsedSkill,
   parseTaxonomyDocs,
-} from "../seed-master/taxonomy/index.js";
+} from "#src/seed-master/taxonomy/index";
+
+export interface TemplateStructuralAffinityResult {
+  readonly compatible: boolean;
+  readonly reason: string;
+}
 
 export interface SkillAffinityEntry {
   readonly skill_code: string;
@@ -149,6 +155,155 @@ export function isTemplateAffinityMatch(
   }
 
   return true;
+}
+
+const NUMBER_BOND_ALLOWED_STRANDS = new Set(["C1.NCOMP", "C1.ADD", "C1.SUB"]);
+const CLOCK_HANDS_ALLOWED_SKILLS = new Set(["C1.MEAS.13"]);
+
+function hasOrderedDatasetAxis(dataset: SkillDataset): boolean {
+  if (!dataset.axes) {
+    return false;
+  }
+  return Object.values(dataset.axes).some(
+    (axis) =>
+      typeof axis === "object" &&
+      axis !== null &&
+      !Array.isArray(axis) &&
+      "ordered" in axis &&
+      axis.ordered === true
+  );
+}
+
+function checkBuilderDatasetRequirements(
+  templateCode: string,
+  dataset: SkillDataset,
+  builderRequires: ProjectionRequires
+): TemplateStructuralAffinityResult | null {
+  if (dataset.items.length < builderRequires.min_items) {
+    return {
+      compatible: false,
+      reason: `[BR-STS-10] Khuôn ${templateCode} đòi tối thiểu ${builderRequires.min_items} vật nhưng dataset ${dataset.skill_code} chỉ có ${dataset.items.length} vật`,
+    };
+  }
+
+  for (const facet of builderRequires.needs ?? []) {
+    const missingItem = dataset.items.find((item) => {
+      if (facet === "audio") {
+        return !item.audio_path || item.audio_path.trim().length === 0;
+      }
+      return !(facet in item) || Reflect.get(item, facet) === undefined;
+    });
+    if (missingItem) {
+      return {
+        compatible: false,
+        reason: `[BR-STS-10] Khuôn ${templateCode} đòi trường bắt buộc '${facet}' nhưng vật ${missingItem.id} trong dataset ${dataset.skill_code} không có`,
+      };
+    }
+  }
+  return null;
+}
+
+function checkDatasetStructuralThinking(
+  skill: {
+    readonly code: string;
+    readonly thinking_processes: readonly string[];
+  },
+  templateCode: string,
+  dataset: SkillDataset
+): TemplateStructuralAffinityResult | null {
+  if (
+    skill.thinking_processes.includes("compare") &&
+    !(
+      hasOrderedDatasetAxis(dataset) &&
+      dataset.relations?.some((r) => r.type === "contrast")
+    )
+  ) {
+    return {
+      compatible: false,
+      reason: `[BR-STS-10] Kỹ năng ${skill.code} khai compare nhưng dataset thiếu axes có thứ tự hoặc relations kiểu contrast để khuôn ${templateCode} tiêu thụ`,
+    };
+  }
+  if (
+    skill.thinking_processes.includes("match") &&
+    !dataset.relations?.some((r) => r.type === "pair")
+  ) {
+    return {
+      compatible: false,
+      reason: `[BR-STS-10] Kỹ năng ${skill.code} khai match nhưng dataset thiếu relations kiểu pair để khuôn ${templateCode} tiêu thụ`,
+    };
+  }
+  if (
+    skill.thinking_processes.includes("sort") &&
+    (!dataset.axes || Object.keys(dataset.axes).length === 0)
+  ) {
+    return {
+      compatible: false,
+      reason: `[BR-STS-10] Kỹ năng ${skill.code} khai sort nhưng dataset thiếu axes phân loại để khuôn ${templateCode} tiêu thụ`,
+    };
+  }
+  return null;
+}
+
+/**
+ * Kiểm tra engine tiêu thụ được cấu trúc bản chất mà kỹ năng và dataset khai (BR-STS-10),
+ * không chỉ dựa trên giao tập tag tư duy khác rỗng.
+ */
+export function checkTemplateStructuralAffinity(
+  skill: {
+    readonly code: string;
+    readonly strand_code?: string;
+    readonly thinking_processes: readonly string[];
+  },
+  templateCode: string,
+  dataset?: SkillDataset,
+  builderRequires?: ProjectionRequires
+): TemplateStructuralAffinityResult {
+  const strandCode =
+    skill.strand_code ?? skill.code.split(".").slice(0, 2).join(".");
+
+  if (
+    templateCode === "GT-007" &&
+    !NUMBER_BOND_ALLOWED_STRANDS.has(strandCode)
+  ) {
+    return {
+      compatible: false,
+      reason: `[BR-STS-10] Khuôn GT-007 (number-bond) đòi cấu trúc gộp-tách phần-toàn thể, không khớp bản chất kỹ năng ${skill.code} (${strandCode})`,
+    };
+  }
+
+  if (
+    templateCode === "GT-016" &&
+    !CLOCK_HANDS_ALLOWED_SKILLS.has(skill.code)
+  ) {
+    return {
+      compatible: false,
+      reason: `[BR-STS-10] Khuôn GT-016 (clock-hands) đòi cấu trúc thời gian/kim đồng hồ, không khớp bản chất kỹ năng ${skill.code} (${strandCode})`,
+    };
+  }
+
+  if (dataset && builderRequires) {
+    const reqErr = checkBuilderDatasetRequirements(
+      templateCode,
+      dataset,
+      builderRequires
+    );
+    if (reqErr) {
+      return reqErr;
+    }
+  }
+
+  if (dataset) {
+    const structErr = checkDatasetStructuralThinking(
+      skill,
+      templateCode,
+      dataset
+    );
+    if (structErr) {
+      return structErr;
+    }
+  }
+
+  return { compatible: true, reason: "" };
 }
 
 export function matchTemplatesForSkill(

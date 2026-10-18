@@ -13,7 +13,7 @@ import {
   type GameTemplate,
 } from "@mindkid/game-engine/registry";
 import { AGE_BANDS } from "@mindkid/shared";
-import type { ContentSeed } from "../types.js";
+import type { ContentSeed } from "#src/types";
 
 export interface EngineStepCriteria {
   level_count: number;

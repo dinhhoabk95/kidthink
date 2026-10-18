@@ -34,6 +34,19 @@ describe("Legacy V1 Coverage Gate — Task #170 (WP170.3, BR-LVC-01..05)", () =>
     }).toThrow(EMPTY_ERROR_REGEX);
   });
 
+  it("BR-LVC-06 — không có level nào lưu legacy_v1_ref bên trong content_pack", () => {
+    for (const level of ALL_SEED_LEVELS) {
+      const hasLegacyRefInPack =
+        typeof level.content_pack === "object" &&
+        level.content_pack !== null &&
+        "legacy_v1_ref" in level.content_pack;
+      expect(
+        hasLegacyRefInPack,
+        `Level ${level.header.code} không được lưu legacy_v1_ref trong content_pack (BR-LVC-06)`
+      ).toBe(false);
+    }
+  });
+
   describe("Ca âm cho WP170.3", () => {
     it("Ca âm 1: Gỡ nhãn legacy_v1_ref làm giảm số types covered xuống dưới ngưỡng -> cổng đỏ", () => {
       const activeLevels = ALL_SEED_LEVELS.filter(

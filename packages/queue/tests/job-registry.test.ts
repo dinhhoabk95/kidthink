@@ -25,10 +25,13 @@ const ADDON_JOB_NAMES = [
   "pdf:render",
   "sweep:pdf-cleanup",
   "embed:content",
+  "billing:renewal-reminder",
+  "billing:renew",
+  "billing:dunning-sweep",
 ];
 
 describe("Task 1 — Job Registry & Boundaries (BR-JOB-04, BR-JOB-07)", () => {
-  it("khai đủ 10 job MVP của job-queue.md §7.1 cộng 5 job add-on", () => {
+  it("khai đủ 10 job MVP của job-queue.md §7.1 cộng các job add-on", () => {
     const jobNames = JOB_REGISTRY.map((job) => job.name);
 
     for (const name of MVP_JOB_NAMES) {

@@ -2,12 +2,10 @@
 spec: ADMIN-DASHBOARD
 title: Bảng điều khiển vận hành
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-10-18
-open_tasks:
-  - "#297"
 owns:
   - Danh sách KPI hiện trên dashboard
   - Ngưỡng cảnh báo trên dashboard
@@ -17,8 +15,6 @@ depends_on:
 ---
 
 # Bảng điều khiển vận hành
-
-> **Chưa hoàn thành** — thẻ "việc cần làm" về đơn chờ duyệt link tới `/payments`, trang này chưa tồn tại nên ra 404 (BR-DSH-02). Việc còn lại: [Task #297](../../tasks/297-admin-payment-queue-plan.md).
 
 ## 1. Objective
 

@@ -1,4 +1,5 @@
-import { auditLogs, getOwnerDb, users } from "@mindkid/db";
+import { writeAudit } from "@mindkid/audit";
+import { getOwnerDb, users } from "@mindkid/db";
 import {
   AdminNoteRequiredError,
   UserAlreadyDeletedError,
@@ -46,33 +47,41 @@ export default defineEventHandler(async (event) => {
     throw new UserAlreadyDeletedError();
   }
 
-  // BR-USM-05: Increment session_version to revoke all active sessions immediately
+  const ipAddress = getVerifiedRemoteIp(event);
+  const userAgent = getHeader(event, "user-agent") ?? "unknown";
+
+  // BR-USM-05 & BR-AUD-02: Increment session_version and writeAudit in same transaction
   // BR-USM-04: Do NOT touch entitlements table
-  const [updatedUser] = await db
-    .update(users)
-    .set({
-      status: "suspended",
-      suspendedReason: reason,
-      sessionVersion: sql`${users.sessionVersion} + 1`,
-      updatedAt: new Date(),
-    })
-    .where(eq(users.id, targetUser.id))
-    .returning();
+  const updatedUser = await db.transaction(async (tx) => {
+    const [row] = await tx
+      .update(users)
+      .set({
+        status: "suspended",
+        suspendedReason: reason,
+        sessionVersion: sql`${users.sessionVersion} + 1`,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, targetUser.id))
+      .returning();
 
-  if (!updatedUser) {
-    throw new InternalError("Đình chỉ tài khoản thất bại");
-  }
+    if (!row) {
+      throw new InternalError("Đình chỉ tài khoản thất bại");
+    }
 
-  // Insert audit log
-  await db.insert(auditLogs).values({
-    actorType: "manager",
-    actorId: session.manager_id,
-    action: "manager.user.suspended",
-    entityType: "user",
-    entityId: targetUser.uuid,
-    reason,
-    ipAddress: getVerifiedRemoteIp(event),
-    userAgent: getHeader(event, "user-agent") ?? "unknown",
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: session.manager_id,
+      action: "user_suspended",
+      entity_type: "user",
+      entity_id: targetUser.uuid,
+      before_data: { status: targetUser.status },
+      after_data: { status: row.status },
+      reason,
+      ip_address: ipAddress,
+      user_agent: userAgent,
+    });
+
+    return row;
   });
 
   return {

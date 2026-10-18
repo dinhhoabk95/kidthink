@@ -1,6 +1,7 @@
 import {
+  generateSecureToken,
   getBrowserSessionService,
-  isOAuthProvider,
+  hashSecureToken,
   type NormalizedProfile,
 } from "@mindkid/auth";
 import {
@@ -11,6 +12,7 @@ import {
   PostgresSessionStore,
   socialIdentities,
   users,
+  verificationTokens,
 } from "@mindkid/db";
 import { ValidationError } from "@mindkid/errors/common";
 import {
@@ -18,25 +20,28 @@ import {
   SocialEmailConflictError,
   SocialIdentityAlreadyLinkedError,
 } from "@mindkid/errors/social";
+import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import {
   defineEventHandler,
-  deleteCookie,
-  getCookie,
   getHeader,
   type H3Event,
   readBody,
   setResponseStatus,
 } from "h3";
 import { z } from "zod";
-import { OAUTH_TICKET_COOKIE_NAME } from "#server/api/guest/auth/oauth/[provider]/callback.get";
+import { buildAccountActionUrl } from "#server/utils/account-action-url";
 import { throwValidationError } from "#server/utils/api-error";
 import {
   assertRateLimitAllowed,
   ensureUserCsrfCookie,
   getVerifiedRemoteIp,
 } from "#server/utils/auth-runtime";
+import {
+  clearOAuthTicketCookie,
+  readOAuthTicketProfile,
+} from "#server/utils/oauth-ticket";
 
 const SocialRegisterSchema = z
   .object({
@@ -50,7 +55,14 @@ const SocialRegisterSchema = z
 
 type SocialRegisterInput = z.infer<typeof SocialRegisterSchema>;
 
-function parseRegistrationPayload(rawBody: unknown): SocialRegisterInput {
+type RawSocialLoginBody =
+  | Record<string, string | number | boolean | null | undefined>
+  | null
+  | undefined;
+
+function parseRegistrationPayload(
+  rawBody: RawSocialLoginBody
+): SocialRegisterInput {
   const parsed = SocialRegisterSchema.safeParse(rawBody);
   if (!parsed.success) {
     throwValidationError(parsed.error);
@@ -70,41 +82,14 @@ function resolveProfileFromTicket(
   event: H3Event,
   expectedProvider: string
 ): NormalizedProfile {
-  const contextProfile = (
-    event.context as { oauth_profile?: NormalizedProfile }
-  )?.oauth_profile;
-
-  if (contextProfile) {
-    return contextProfile;
-  }
-
-  const ticketCookie = getCookie(event, OAUTH_TICKET_COOKIE_NAME);
-  if (!ticketCookie) {
+  const profile = readOAuthTicketProfile(event);
+  clearOAuthTicketCookie(event);
+  if (!profile || profile.provider !== expectedProvider) {
     throw new OauthStateInvalidError(
       "Phiên đăng ký mạng xã hội đã hết hạn. Vui lòng thử lại."
     );
   }
-
-  try {
-    const raw = Buffer.from(ticketCookie, "base64url").toString("utf8");
-    const parsedTicket = JSON.parse(raw);
-    const profile = parsedTicket?.profile;
-
-    if (
-      !(profile && isOAuthProvider(profile.provider)) ||
-      profile.provider !== expectedProvider
-    ) {
-      throw new Error("Invalid ticket provider");
-    }
-
-    deleteCookie(event, OAUTH_TICKET_COOKIE_NAME, { path: "/" });
-    return profile;
-  } catch {
-    deleteCookie(event, OAUTH_TICKET_COOKIE_NAME, { path: "/" });
-    throw new OauthStateInvalidError(
-      "Phiên đăng ký mạng xã hội đã hết hạn. Vui lòng thử lại."
-    );
-  }
+  return profile;
 }
 
 async function assertNoRegistrationConflicts(
@@ -259,17 +244,20 @@ async function establishRegistrationSession(
     .catch(() => null);
 }
 
-export async function handleSocialLogin(event: H3Event, testBody?: unknown) {
+export async function handleSocialLogin(
+  event: H3Event,
+  testBody?: RawSocialLoginBody
+) {
   const ipRateLimit = await enforceTwoAxisRateLimit({
     routeClass: "auth:social-login",
     remoteIp: getVerifiedRemoteIp(event),
   });
   assertRateLimitAllowed(ipRateLimit.statusCode);
 
-  const rawBody =
+  const rawBody: RawSocialLoginBody =
     testBody ??
-    (event.context as { body?: unknown })?.body ??
-    (await readBody(event).catch(() => ({})));
+    (event.context as { body?: RawSocialLoginBody })?.body ??
+    (await readBody<RawSocialLoginBody>(event).catch(() => ({})));
 
   const input = parseRegistrationPayload(rawBody);
   const profile = resolveProfileFromTicket(event, input.provider);
@@ -302,6 +290,35 @@ export async function handleSocialLogin(event: H3Event, testBody?: unknown) {
     finalDisplayName,
     profile
   );
+
+  if (newUser.status === "pending_verification") {
+    const rawToken = generateSecureToken();
+    const tokenHash = hashSecureToken(rawToken);
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await getAppDb().insert(verificationTokens).values({
+      accountType: "user",
+      accountId: newUser.id,
+      purpose: "email_verify",
+      tokenHash,
+      expiresAt,
+    });
+
+    await dispatchTransactionalEmail({
+      recipientType: "user",
+      recipientId: newUser.id,
+      code: "email_verification",
+      to: newUser.email,
+      payload: {
+        email: newUser.email,
+        displayName: newUser.displayName,
+      },
+      secrets: {
+        token: rawToken,
+        url: buildAccountActionUrl("email_verify", rawToken),
+      },
+    });
+  }
 
   await establishRegistrationSession(event, newUser);
 

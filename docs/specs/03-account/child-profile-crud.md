@@ -2,12 +2,10 @@
 spec: CHILD-PROFILE-CRUD
 title: Tạo và sửa hồ sơ trẻ
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
-open_tasks:
-  - "#290"
 owns:
   - Luồng tạo và sửa child profile
   - Ép danh sách đóng ở tầng người dùng
@@ -17,8 +15,6 @@ depends_on:
 ---
 
 # Tạo và sửa hồ sơ trẻ
-
-> **Chưa hoàn thành** — Tạo hồ sơ đã có; trang sửa `/me/children/{uuid}/edit` chưa có nên không UI nào gọi `PATCH /api/users/children/{uuid}`. Việc còn lại: [Task #290](../../tasks/290-account-ui-missing-pages-plan.md).
 
 ## 1. Objective
 

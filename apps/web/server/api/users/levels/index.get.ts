@@ -35,7 +35,11 @@ export default defineEventHandler(async (event) => {
   });
 
   if (result.no_store) {
-    setHeader(event, "Cache-Control", "no-store, no-cache, must-revalidate");
+    setHeader(
+      event,
+      "Cache-Control",
+      "private, no-store, no-cache, must-revalidate"
+    );
   }
 
   return {

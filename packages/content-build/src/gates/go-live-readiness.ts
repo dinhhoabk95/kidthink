@@ -5,9 +5,15 @@
 
 import { readFileSync } from "node:fs";
 import { repoPath } from "@mindkid/config/paths";
+import {
+  ALL_TEMPLATES,
+  type GameTemplate,
+} from "@mindkid/game-engine/registry";
+import { CANONICAL_THEME_CODES } from "@mindkid/shared";
 import { z } from "zod";
-import type { MvpCurriculumConfig } from "../seed-master/roadmap-curricula.js";
-import type { ContentSeed, LessonSeed } from "../types.js";
+import { isLevelOutOfBand, toAgeBand } from "#src/gates/engine-content-depth";
+import type { MvpCurriculumConfig } from "#src/seed-master/roadmap-curricula";
+import type { ContentSeed, LessonSeed } from "#src/types";
 
 export interface GoLiveConfig {
   version: number;
@@ -29,7 +35,8 @@ export interface GoLiveInput {
   depthPassingEngineIds: string[];
   curriculaConfigs: MvpCurriculumConfig[];
   lessons: LessonSeed[];
-  gameLevels: ContentSeed<unknown, unknown>[];
+  gameLevels: ContentSeed[];
+  enforceContractParse?: boolean;
 }
 
 export interface GoLiveCheckItem {
@@ -54,36 +61,37 @@ function checkScopeAndRender(
   scopeEngines: string[],
   activeEngineIds: string[],
   implementedRenderEngineIds: string[],
+  gameLevels: ContentSeed[],
   requiredCoveragePercent: number
 ): { items: GoLiveCheckItem[]; violations: string[]; passed: boolean } {
   const items: GoLiveCheckItem[] = [];
   const violations: string[] = [];
 
   const unexpected = activeEngineIds.filter((id) => !scopeEngines.includes(id));
-  const scopePassed = unexpected.length === 0;
+  const outOfScopeLevels = gameLevels.filter(
+    (gl) => !scopeEngines.includes(gl.header.template_code)
+  );
+  const scopePassed = unexpected.length === 0 && outOfScopeLevels.length === 0;
   items.push({
-    name: "Tất cả engine active nằm trong phạm vi cấu hình (BR-GLR-05)",
+    name: "Tất cả engine active và level published nằm trong phạm vi cấu hình (BR-GLR-05)",
     axis: "game_template",
     isHardBlock: true,
-    expected: "0 engine ngoài phạm vi",
-    actual: `${unexpected.length} engine ngoài phạm vi`,
+    expected: "0 engine/level ngoài phạm vi",
+    actual: `${unexpected.length} engine, ${outOfScopeLevels.length} level ngoài phạm vi`,
     passed: scopePassed,
     message: scopePassed
       ? undefined
-      : `Có engine active ngoài phạm vi: ${unexpected.join(", ")}`,
+      : `Ngoài phạm vi — engine: [${unexpected.join(", ")}], level: [${outOfScopeLevels.map((l) => l.header.code).join(", ")}]`,
   });
   if (!scopePassed) {
     violations.push(
-      `BR-GLR-05: Có engine active ngoài phạm vi cấu hình: ${unexpected.join(", ")}`
+      `BR-GLR-05: Có ${unexpected.length} engine active và ${outOfScopeLevels.length} level published ngoài phạm vi cấu hình.`
     );
   }
 
   const missingRender = scopeEngines.filter(
     (id) => !implementedRenderEngineIds.includes(id)
   );
-  // `engine_render_coverage_percent` từng được khai trong kiểu, được zod
-  // validate, rồi ❌ KHÔNG nhánh nào đọc — một ngưỡng chết. Ngưỡng cấu hình phải
-  // là thứ quyết định đạt hay trượt, nếu không thì đừng khai nó.
   const coveragePercent =
     scopeEngines.length === 0
       ? 100
@@ -112,7 +120,7 @@ function checkScopeAndRender(
 function checkDepthAndFreeEntry(
   scopeEngines: string[],
   depthPassingEngineIds: string[],
-  gameLevels: ContentSeed<unknown, unknown>[],
+  gameLevels: ContentSeed[],
   step: number
 ): { items: GoLiveCheckItem[]; violations: string[]; passed: boolean } {
   const items: GoLiveCheckItem[] = [];
@@ -123,7 +131,7 @@ function checkDepthAndFreeEntry(
   );
   const depthPassed = missingDepth.length === 0;
   items.push({
-    name: `27/27 engine đạt sàn nội dung bậc ${step} (BR-ECD-01)`,
+    name: `${scopeEngines.length}/${scopeEngines.length} engine đạt sàn nội dung bậc ${step} (BR-ECD-01)`,
     axis: "game_template",
     isHardBlock: true,
     expected: `${scopeEngines.length}/${scopeEngines.length} engine`,
@@ -144,8 +152,6 @@ function checkDepthAndFreeEntry(
     freeCount.set(id, 0);
   }
   for (const gl of gameLevels) {
-    // Engine của một level nằm ở `header.template_code`. `metadata.game_type_id`
-    // không tồn tại, nên phép đếm này trước đây luôn ra 0/27.
     const typeId = gl.header.template_code;
     const tier = gl.header.access_tier;
     if (
@@ -181,18 +187,175 @@ function checkDepthAndFreeEntry(
   return { items, violations, passed: depthPassed && freePassed };
 }
 
+function shouldValidatePackObject(
+  pack: ContentSeed["content_pack"],
+  enforceContractParse: boolean
+): boolean {
+  if (enforceContractParse) {
+    return true;
+  }
+  if (typeof pack !== "object" || pack === null) {
+    return true;
+  }
+  return Object.keys(pack).length > 0;
+}
+
+function checkSingleLevelContracts(
+  gl: ContentSeed,
+  template: GameTemplate | undefined,
+  enforceContractParse: boolean,
+  invalidContentPacks: string[],
+  invalidDifficultyParams: string[],
+  outOfBandLevels: string[],
+  invalidThemes: string[]
+): void {
+  const code = gl.header.code;
+  if (
+    !(gl.header.theme_tag && CANONICAL_THEME_CODES.has(gl.header.theme_tag))
+  ) {
+    invalidThemes.push(`${code}(${gl.header.theme_tag ?? ""})`);
+  }
+  if (!template) {
+    return;
+  }
+  const band = toAgeBand(gl.header.age_min, gl.header.age_max);
+  if (isLevelOutOfBand(gl, template, band)) {
+    outOfBandLevels.push(code);
+  }
+  if (shouldValidatePackObject(gl.content_pack, enforceContractParse)) {
+    const packParsed = template.content_contract.safeParse(gl.content_pack);
+    if (!packParsed.success) {
+      invalidContentPacks.push(code);
+    }
+  }
+  if (shouldValidatePackObject(gl.difficulty_params, enforceContractParse)) {
+    const diffParsed = template.difficulty_contract.safeParse(
+      gl.difficulty_params
+    );
+    if (!diffParsed.success) {
+      invalidDifficultyParams.push(code);
+    }
+  }
+}
+
+function checkLevelQualityContracts(
+  gameLevels: ContentSeed[],
+  enforceContractParse: boolean
+): { items: GoLiveCheckItem[]; violations: string[]; passed: boolean } {
+  const items: GoLiveCheckItem[] = [];
+  const violations: string[] = [];
+  const invalidContentPacks: string[] = [];
+  const invalidDifficultyParams: string[] = [];
+  const outOfBandLevels: string[] = [];
+  const invalidThemes: string[] = [];
+
+  for (const gl of gameLevels) {
+    const template = ALL_TEMPLATES[gl.header.template_code];
+    checkSingleLevelContracts(
+      gl,
+      template,
+      enforceContractParse,
+      invalidContentPacks,
+      invalidDifficultyParams,
+      outOfBandLevels,
+      invalidThemes
+    );
+  }
+
+  const total = gameLevels.length;
+  const packPassed = invalidContentPacks.length === 0;
+  items.push({
+    name: "content_pack parse bằng content_contract (BR-GLR-02 / BR-GTC-10)",
+    axis: "game_template",
+    isHardBlock: true,
+    expected: `${total}/${total} level`,
+    actual: `${total - invalidContentPacks.length}/${total} level`,
+    passed: packPassed,
+    message: packPassed
+      ? undefined
+      : `Level lỗi content_pack: ${invalidContentPacks.slice(0, 5).join(", ")}`,
+  });
+  if (!packPassed) {
+    violations.push(
+      `BR-GLR-02 (BR-GTC-10): Có ${invalidContentPacks.length} level không parse được content_pack.`
+    );
+  }
+
+  const diffPassed = invalidDifficultyParams.length === 0;
+  items.push({
+    name: "difficulty_params parse bằng difficulty_contract (BR-GLR-02)",
+    axis: "game_template",
+    isHardBlock: true,
+    expected: `${total}/${total} level`,
+    actual: `${total - invalidDifficultyParams.length}/${total} level`,
+    passed: diffPassed,
+    message: diffPassed
+      ? undefined
+      : `Level lỗi difficulty_params: ${invalidDifficultyParams.slice(0, 5).join(", ")}`,
+  });
+  if (!diffPassed) {
+    violations.push(
+      `BR-GLR-02: Có ${invalidDifficultyParams.length} level không parse được difficulty_params.`
+    );
+  }
+
+  const bandPassed = outOfBandLevels.length === 0;
+  items.push({
+    name: "Band tuổi level nằm trong band engine (BR-ECD-13)",
+    axis: "game_template",
+    isHardBlock: true,
+    expected: `${total}/${total} level`,
+    actual: `${total - outOfBandLevels.length}/${total} level`,
+    passed: bandPassed,
+    message: bandPassed
+      ? undefined
+      : `Level lệch band tuổi: ${outOfBandLevels.slice(0, 5).join(", ")}`,
+  });
+  if (!bandPassed) {
+    violations.push(
+      `BR-ECD-13: Có ${outOfBandLevels.length} level gắn band tuổi ngoài phạm vi engine.`
+    );
+  }
+
+  const themePassed = invalidThemes.length === 0;
+  items.push({
+    name: "theme_tag thuộc từ vựng đóng (BR-CTR-01)",
+    axis: "game_template",
+    isHardBlock: true,
+    expected: `${total}/${total} level`,
+    actual: `${total - invalidThemes.length}/${total} level`,
+    passed: themePassed,
+    message: themePassed
+      ? undefined
+      : `Level sai theme_tag: ${invalidThemes.slice(0, 5).join(", ")}`,
+  });
+  if (!themePassed) {
+    violations.push(
+      `BR-CTR-01: Có ${invalidThemes.length} level dùng theme_tag ngoài từ vựng đóng.`
+    );
+  }
+
+  return {
+    items,
+    violations,
+    passed: packPassed && diffPassed && bandPassed && themePassed,
+  };
+}
+
 function evaluateGameAxis(
   config: GoLiveConfig,
   activeEngineIds: string[],
   implementedRenderEngineIds: string[],
   depthPassingEngineIds: string[],
-  gameLevels: ContentSeed<unknown, unknown>[]
+  gameLevels: ContentSeed[],
+  enforceContractParse: boolean
 ): { items: GoLiveCheckItem[]; isPassed: boolean; violations: string[] } {
   const scopeEngines = config.active_engines;
   const res1 = checkScopeAndRender(
     scopeEngines,
     activeEngineIds,
     implementedRenderEngineIds,
+    gameLevels,
     config.thresholds.engine_render_coverage_percent
   );
   const res2 = checkDepthAndFreeEntry(
@@ -201,11 +364,12 @@ function evaluateGameAxis(
     gameLevels,
     config.thresholds.content_depth_step
   );
+  const res3 = checkLevelQualityContracts(gameLevels, enforceContractParse);
 
   return {
-    items: [...res1.items, ...res2.items],
-    isPassed: res1.passed && res2.passed,
-    violations: [...res1.violations, ...res2.violations],
+    items: [...res1.items, ...res2.items, ...res3.items],
+    isPassed: res1.passed && res2.passed && res3.passed,
+    violations: [...res1.violations, ...res2.violations, ...res3.violations],
   };
 }
 
@@ -257,7 +421,7 @@ function checkLessonSupplyAndFlow(
 
 function checkSkillLevelCoverage(
   publishedLessons: LessonSeed[],
-  gameLevels: ContentSeed<unknown, unknown>[],
+  gameLevels: ContentSeed[],
   minLevelReq: number
 ): { items: GoLiveCheckItem[]; violations: string[]; passed: boolean } {
   const items: GoLiveCheckItem[] = [];
@@ -310,9 +474,8 @@ function evaluateLessonAxis(
   config: GoLiveConfig,
   curriculaConfigs: MvpCurriculumConfig[],
   lessons: LessonSeed[],
-  gameLevels: ContentSeed<unknown, unknown>[]
+  gameLevels: ContentSeed[]
 ): { items: GoLiveCheckItem[]; isPassed: boolean; violations: string[] } {
-  // Seed repo = đã xuất bản; `LessonSeedHeader` không có trường `status`.
   const publishedLessons = lessons;
   const res1 = checkLessonSupplyAndFlow(
     publishedLessons,
@@ -345,6 +508,7 @@ export function evaluateGoLiveReadiness(input: GoLiveInput): GoLiveEvaluation {
     curriculaConfigs,
     lessons,
     gameLevels,
+    enforceContractParse = false,
   } = input;
 
   if (
@@ -369,7 +533,8 @@ export function evaluateGoLiveReadiness(input: GoLiveInput): GoLiveEvaluation {
     activeEngineIds,
     implementedRenderEngineIds,
     depthPassingEngineIds,
-    gameLevels
+    gameLevels,
+    enforceContractParse
   );
 
   const lessonEval = evaluateLessonAxis(
@@ -444,19 +609,14 @@ export function formatGoLiveReport(evaluation: GoLiveEvaluation): string {
   lines.push(
     `KẾT LUẬN GO-LIVE (BR-GLR-09): ${isPassed ? "SẴN SÀNG GO-LIVE (READY)" : "CHƯA SẴN SÀNG — LÙI NGÀY (BLOCKED)"}`
   );
+  lines.push(
+    "LƯU Ý (BR-GLR-07): Báo cáo này chỉ đo điều kiện sẵn sàng kỹ thuật và nội dung, KHÔNG phải bằng chứng hiệu quả sư phạm."
+  );
   lines.push("===============================================================");
 
   return lines.join("\n");
 }
 
-/**
- * Cấu hình là dữ liệu **ngoài** mã nguồn, nên nó được parse chứ không ép kiểu.
- *
- * `JSON.parse(raw) as GoLiveConfig` là một lời nói dối: không gì kiểm hình dạng.
- * Mất `min_levels_per_skill` thì `count < undefined` là `false` — luật phủ kỹ
- * năng biến mất trong im lặng và cổng vẫn xanh. Một ngưỡng `undefined` phải làm
- * cổng ĐỎ, Cấm — NEVER thành "không có gì vi phạm".
- */
 export const goLiveConfigSchema = z.object({
   version: z.number(),
   last_updated: z.string(),
@@ -470,7 +630,11 @@ export const goLiveConfigSchema = z.object({
   }),
 });
 
-export function parseGoLiveConfig(raw: unknown): GoLiveConfig {
+export type RawGoLiveConfigInput =
+  | GoLiveConfig
+  | Record<string, string | number | boolean | null | object | undefined>;
+
+export function parseGoLiveConfig(raw: RawGoLiveConfigInput): GoLiveConfig {
   const result = goLiveConfigSchema.safeParse(raw);
   if (!result.success) {
     throw new Error(
@@ -482,12 +646,17 @@ export function parseGoLiveConfig(raw: unknown): GoLiveConfig {
   return result.data;
 }
 
-export function loadGoLiveConfig(rawOverride?: unknown): GoLiveConfig {
+export function loadGoLiveConfig(
+  rawOverride?: RawGoLiveConfigInput
+): GoLiveConfig {
   if (rawOverride !== undefined) {
     return parseGoLiveConfig(rawOverride);
   }
   const configPath = repoPath(
     "packages/content-build/src/thresholds/go-live.json"
   );
-  return parseGoLiveConfig(JSON.parse(readFileSync(configPath, "utf8")));
+  const parsedJson: RawGoLiveConfigInput = JSON.parse(
+    readFileSync(configPath, "utf8")
+  );
+  return parseGoLiveConfig(parsedJson);
 }

@@ -1,7 +1,10 @@
 import { writeAudit } from "@mindkid/audit";
 import { curricula, getOwnerDb } from "@mindkid/db";
 import { InternalError, ValidationError } from "@mindkid/errors/common";
-import { VersionConflictError } from "@mindkid/errors/content";
+import {
+  ContentImmutableError,
+  VersionConflictError,
+} from "@mindkid/errors/content";
 import { CurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
@@ -79,6 +82,12 @@ async function getExistingCurriculumForPatch(
   if (existing.contentVersion !== expectedVersion) {
     throw new VersionConflictError(
       `Xung đột phiên bản: version hiện tại là ${existing.contentVersion}`
+    );
+  }
+
+  if (existing.status === "published") {
+    throw new ContentImmutableError(
+      "BR-CLC-01: Không thể sửa trực tiếp chương trình đã phát hành (published). Hãy tạo phiên bản mới."
     );
   }
 

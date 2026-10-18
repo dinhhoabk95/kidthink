@@ -1,6 +1,10 @@
 import { getOwnerDb, notificationDeliveries } from "@mindkid/db";
 import { WebhookSignatureInvalidError } from "@mindkid/errors/billing";
-import { type SnsMessage, verifySnsSignature } from "@mindkid/notification";
+import {
+  type SnsMessage,
+  verifySnsEnvelopeClaims,
+  verifySnsSignature,
+} from "@mindkid/notification";
 import { eq } from "drizzle-orm";
 import { defineEventHandler } from "h3";
 import { z } from "zod";
@@ -111,6 +115,18 @@ async function handleComplaint(
     .where(eq(notificationDeliveries.providerMessageId, messageId));
 }
 
+function parseJsonPayload(
+  raw: string
+): Record<string, string | number | boolean | null | object> | null {
+  try {
+    const parsed: Record<string, string | number | boolean | null | object> =
+      JSON.parse(raw);
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
 export default defineEventHandler(async (event) => {
   const envelope = SnsEnvelopeSchema.safeParse(await readRequestBody(event));
   if (!envelope.success) {
@@ -118,6 +134,13 @@ export default defineEventHandler(async (event) => {
   }
 
   const message = envelope.data as SnsMessage;
+  const claims = verifySnsEnvelopeClaims(message);
+  if (!claims.valid) {
+    throw new WebhookSignatureInvalidError(
+      "TopicArn hoặc Timestamp của phong bì SNS không hợp lệ."
+    );
+  }
+
   if (!(await verifySnsSignature(message))) {
     throw new WebhookSignatureInvalidError(
       "Chữ ký SNS không hợp lệ hoặc chứng chỉ ký không thuộc AWS."
@@ -128,13 +151,7 @@ export default defineEventHandler(async (event) => {
     return { status: "subscription_confirmed" };
   }
 
-  const parsedMessage = ((): unknown => {
-    try {
-      return JSON.parse(message.Message);
-    } catch {
-      return null;
-    }
-  })();
+  const parsedMessage = parseJsonPayload(message.Message);
 
   const sesEvent = SesEventSchema.safeParse(parsedMessage);
   if (!sesEvent.success) {

@@ -106,7 +106,7 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
     expect(resolve("/api/users/orders/abc-123", "GET").mode).toBe("exempt");
   });
 
-  it("rule 12 — event ingest is play:events for both namespaces (BR-RTL-06)", () => {
+  it("rule 12 — event ingest is play:events for both namespaces (BR-RTL-06, BR-ING-07)", () => {
     for (const path of [
       "/api/users/play-sessions/s-1/events",
       "/api/guest/play-sessions/s-1/events",
@@ -116,6 +116,13 @@ describe("resolveRateLimitRouteClass — RATE-LIMITING §7.2 / BR-RTL-10", () =>
         className: "play:events",
       });
     }
+    expect(RATE_LIMIT_CONFIGS["play:events"]).toEqual({
+      className: "play:events",
+      ipLimit: 600,
+      accountLimit: 300,
+      windowSeconds: 600,
+      failMode: "open",
+    });
     // `complete` không phải ingest event, không mượn hạn mức rộng của nó.
     expect(resolve("/api/guest/play-sessions/s-1/complete", "POST")).toEqual({
       mode: "middleware",

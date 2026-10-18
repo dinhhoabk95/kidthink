@@ -1,3 +1,3 @@
 import { defineWorkspaceTest } from "@mindkid/config/vitest";
 
-export default defineWorkspaceTest();
+export default defineWorkspaceTest({}, { database: false });

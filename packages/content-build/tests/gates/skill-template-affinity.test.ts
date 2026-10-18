@@ -5,9 +5,11 @@ import {
   ALL_TEMPLATES,
   type GameTemplate,
 } from "@mindkid/game-engine/registry";
+import type { SkillDataset } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
 import {
   buildSkillTemplateAffinityMatrix,
+  checkTemplateStructuralAffinity,
   type SkillAffinityMatrixData,
 } from "#src/gates/skill-template-affinity";
 
@@ -26,7 +28,7 @@ describe("Task #193 — Ma trận skill × khuôn (skill-template-affinity)", ()
     const computedData = buildSkillTemplateAffinityMatrix();
 
     expect(savedData.total_skills).toBe(computedData.total_skills);
-    expect(savedData.total_templates).toBe(36);
+    expect(savedData.total_templates).toBe(37);
     expect(savedData.metrics.band_3_4_skills_count).toBe(
       computedData.metrics.band_3_4_skills_count
     );
@@ -97,5 +99,53 @@ describe("Task #193 — Ma trận skill × khuôn (skill-template-affinity)", ()
     }
     expect(modifiedGT001Count).toBe(0);
     expect(modified.affinities).not.toEqual(baseline.affinities);
+  });
+
+  it("BR-STS-10: ca âm — từ chối ghép C1.CMP với GT-007 (number-bond) và C1.ORD với GT-016 (clock-hands)", () => {
+    const cmpBond = checkTemplateStructuralAffinity(
+      {
+        code: "C1.CMP.04",
+        strand_code: "C1.CMP",
+        thinking_processes: ["compare", "count"],
+      },
+      "GT-007"
+    );
+    expect(cmpBond.compatible).toBe(false);
+    expect(cmpBond.reason).toContain("[BR-STS-10]");
+
+    const ordClock = checkTemplateStructuralAffinity(
+      {
+        code: "C1.ORD.01",
+        strand_code: "C1.ORD",
+        thinking_processes: ["sequence", "count"],
+      },
+      "GT-016"
+    );
+    expect(ordClock.compatible).toBe(false);
+    expect(ordClock.reason).toContain("[BR-STS-10]");
+  });
+
+  it("BR-STS-10: ca âm — từ chối khi dataset không đáp ứng ProjectionRequires.needs hoặc cấu trúc tư duy", () => {
+    const incompleteDataset: SkillDataset = {
+      skill_code: "C1.NCOMP.01",
+      concept_label: "Gộp tách 2",
+      surface: "game",
+      items: [{ id: "i1", label: "Một" }],
+      ladder: [],
+      phrasing: { prompt_template: "Bé hãy gộp {label}" },
+    };
+
+    const missingNeeds = checkTemplateStructuralAffinity(
+      {
+        code: "C1.NCOMP.01",
+        strand_code: "C1.NCOMP",
+        thinking_processes: ["count"],
+      },
+      "GT-007",
+      incompleteDataset,
+      { min_items: 2, max_items: 10, needs: ["value"] }
+    );
+    expect(missingNeeds.compatible).toBe(false);
+    expect(missingNeeds.reason).toContain("[BR-STS-10]");
   });
 });

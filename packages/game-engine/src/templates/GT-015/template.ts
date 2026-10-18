@@ -117,7 +117,7 @@ export default defineTemplate({
   requires_tap_fallback: true,
   input: {
     family: "drag",
-    verbs: ["drag", "drop", "tap"],
+    verbs: ["drop", "tap"],
     tolerance_px: 24,
   },
   asset_kinds: ["emoji", "image", "audio"],

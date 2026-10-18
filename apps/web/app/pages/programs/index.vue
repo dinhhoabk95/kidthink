@@ -124,9 +124,10 @@
 </template>
 
 <script lang="ts" setup>
-  import type {
-    ProgramGroupPublic,
-    ProgramListPublicResponse,
+  import {
+    buildPublicHreflangLinks,
+    type ProgramGroupPublic,
+    type ProgramListPublicResponse,
   } from "@mindkid/shared/client";
   import { computed } from "vue";
 
@@ -182,9 +183,13 @@
           "Lộ trình học tư duy toán mầm non cho trẻ 3–6 tuổi theo 6 năng lực toán học.",
       },
       { property: "og:url", content: `${siteUrl}/programs` },
+      { property: "og:image", content: `${siteUrl}/images/og-home.png` },
       { property: "og:type", content: "website" },
     ],
-    link: [{ rel: "canonical", href: `${siteUrl}/programs` }],
+    link: [
+      { rel: "canonical", href: `${siteUrl}/programs` },
+      ...buildPublicHreflangLinks("/programs", siteUrl),
+    ],
   });
 </script>
 

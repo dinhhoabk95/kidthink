@@ -68,7 +68,24 @@ export class NodemailerSmtpDriver implements EmailDriver {
     }
 
     try {
-      const rendered = await renderEmailTemplate(req.code, req.payload);
+      const templateVars: Record<
+        string,
+        string | number | boolean | null | undefined
+      > = {};
+      for (const [k, v] of Object.entries(req.payload)) {
+        if (
+          typeof v === "string" ||
+          typeof v === "number" ||
+          typeof v === "boolean" ||
+          v === null ||
+          v === undefined
+        ) {
+          templateVars[k] = v;
+        } else {
+          templateVars[k] = String(v);
+        }
+      }
+      const rendered = await renderEmailTemplate(req.code, templateVars);
       const transporter = this.getTransporter();
 
       const messageIdHeader = req.deliveryId

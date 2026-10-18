@@ -37,8 +37,27 @@
 
     <!-- Filters -->
     <div
-      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 p-4 grid grid-cols-1 sm:grid-cols-4 gap-4"
+      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 p-4 grid grid-cols-1 sm:grid-cols-5 gap-4"
     >
+      <div>
+        <label
+          class="block text-xs font-bold text-surface-500 mb-1"
+          for="filter-actor-type"
+          >Loại Actor</label
+        >
+        <select
+          class="w-full p-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-transparent text-surface-900 dark:text-white focus:outline-none"
+          id="filter-actor-type"
+          v-model="actorTypeFilter"
+          @change="applyFilters"
+        >
+          <option value="">-- Tất cả Actor --</option>
+          <option value="manager">Manager</option>
+          <option value="user">User</option>
+          <option value="system">System</option>
+        </select>
+      </div>
+
       <div>
         <label
           class="block text-xs font-bold text-surface-500 mb-1"
@@ -49,7 +68,7 @@
           class="w-full p-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-transparent text-surface-900 dark:text-white focus:outline-none"
           id="filter-action"
           v-model="actionFilter"
-          @change="fetchLogs"
+          @change="applyFilters"
         >
           <option value="">-- Tất cả 28 hành động --</option>
           <option v-for="act in COMMON_ACTIONS" :key="act.key" :value="act.key">
@@ -71,7 +90,8 @@
           placeholder="game_level, user, flag..."
           type="text"
           v-model="entityTypeFilter"
-          @keyup.enter="fetchLogs"
+          @change="applyFilters"
+          @keyup.enter="applyFilters"
         >
       </div>
 
@@ -87,7 +107,8 @@
           placeholder="VD: C1.CNT.01, 42..."
           type="text"
           v-model="entityIdFilter"
-          @keyup.enter="fetchLogs"
+          @change="applyFilters"
+          @keyup.enter="applyFilters"
         >
       </div>
 
@@ -103,7 +124,8 @@
           placeholder="Tìm trong lý do..."
           type="text"
           v-model="searchQuery"
-          @keyup.enter="fetchLogs"
+          @change="applyFilters"
+          @keyup.enter="applyFilters"
         >
       </div>
     </div>
@@ -114,6 +136,12 @@
       v-if="hasActiveFilter"
     >
       <span class="font-bold">Bộ lọc đang áp dụng:</span>
+      <span
+        class="px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950/30 text-brand-700 dark:text-brand-300"
+        v-if="actorTypeFilter"
+      >
+        Actor: {{ actorTypeFilter }}
+      </span>
       <span
         class="px-2 py-0.5 rounded-full bg-brand-50 dark:bg-brand-950/30 text-brand-700 dark:text-brand-300"
         v-if="actionFilter"
@@ -414,9 +442,10 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, onMounted, ref } from "vue";
-  import { useRoute } from "vue-router";
+  import { computed, onMounted, ref, watch } from "vue";
+  import { useRoute, useRouter } from "vue-router";
   import { definePageMeta, useHead } from "#imports";
+  import { apiFetch, apiUrl } from "~/composables/use-api-client";
 
   definePageMeta({
     layout: "manager",
@@ -460,6 +489,14 @@
     { key: "mfa_recovery_approved", label: "Duyệt khôi phục MFA" },
   ];
 
+  type AuditPayloadValue =
+    | string
+    | number
+    | boolean
+    | null
+    | undefined
+    | object;
+
   interface AuditItem {
     id: number;
     uuid: string;
@@ -470,8 +507,8 @@
     entity_type: string;
     entity_id: string;
     reason: string | null;
-    before_data: Record<string, unknown> | null;
-    after_data: Record<string, unknown> | null;
+    before_data: Record<string, AuditPayloadValue> | null;
+    after_data: Record<string, AuditPayloadValue> | null;
     ip: string | null;
     user_agent: string | null;
     request_id: string | null;
@@ -479,9 +516,11 @@
   }
 
   const route = useRoute();
+  const router = useRouter();
   const logs = ref<AuditItem[]>([]);
   const isLoading = ref(true);
   const isExporting = ref(false);
+  const actorTypeFilter = ref(String(route.query.actor_type || ""));
   const actionFilter = ref(String(route.query.action || ""));
   const entityTypeFilter = ref(String(route.query.entity_type || ""));
   const entityIdFilter = ref(String(route.query.entity_id || ""));
@@ -492,7 +531,8 @@
 
   const hasActiveFilter = computed(() => {
     return Boolean(
-      actionFilter.value ||
+      actorTypeFilter.value ||
+        actionFilter.value ||
         entityTypeFilter.value ||
         entityIdFilter.value ||
         searchQuery.value
@@ -501,6 +541,9 @@
 
   const activeFilterSummary = computed(() => {
     const parts: string[] = [];
+    if (actorTypeFilter.value) {
+      parts.push(`actor=${actorTypeFilter.value}`);
+    }
     if (actionFilter.value) {
       parts.push(`hành động=${actionFilter.value}`);
     }
@@ -533,22 +576,67 @@
     }));
   });
 
+  function readFiltersFromQuery() {
+    actorTypeFilter.value = String(route.query.actor_type || "");
+    actionFilter.value = String(route.query.action || "");
+    entityTypeFilter.value = String(route.query.entity_type || "");
+    entityIdFilter.value = String(route.query.entity_id || "");
+    searchQuery.value = String(route.query.q || "");
+  }
+
+  function syncFiltersToQuery() {
+    const query: Record<string, string> = {};
+    if (actorTypeFilter.value) {
+      query.actor_type = actorTypeFilter.value;
+    }
+    if (actionFilter.value) {
+      query.action = actionFilter.value;
+    }
+    if (entityTypeFilter.value) {
+      query.entity_type = entityTypeFilter.value;
+    }
+    if (entityIdFilter.value) {
+      query.entity_id = entityIdFilter.value;
+    }
+    if (searchQuery.value) {
+      query.q = searchQuery.value;
+    }
+    router.replace({ query });
+  }
+
+  function applyFilters() {
+    syncFiltersToQuery();
+    fetchLogs();
+  }
+
+  watch(
+    () => route.query,
+    () => {
+      readFiltersFromQuery();
+      fetchLogs();
+    }
+  );
+
   onMounted(() => {
+    readFiltersFromQuery();
     fetchLogs();
   });
 
   async function fetchLogs() {
     isLoading.value = true;
     try {
+      const filterParams = {
+        actor_type: actorTypeFilter.value || undefined,
+        action: actionFilter.value || undefined,
+        entity_type: entityTypeFilter.value || undefined,
+        entity_id: entityIdFilter.value || undefined,
+        q: searchQuery.value || undefined,
+      };
       const res = await apiFetch<{ items: AuditItem[] }>(
         "/api/managers/audit-logs",
         {
-          params: {
-            action: actionFilter.value || undefined,
-            entity_type: entityTypeFilter.value || undefined,
-            entity_id: entityIdFilter.value || undefined,
-            q: searchQuery.value || undefined,
-          },
+          params: filterParams,
+          query: filterParams,
         }
       );
       logs.value = res.items || [];
@@ -560,10 +648,12 @@
   }
 
   function clearFilters() {
+    actorTypeFilter.value = "";
     actionFilter.value = "";
     entityTypeFilter.value = "";
     entityIdFilter.value = "";
     searchQuery.value = "";
+    syncFiltersToQuery();
     fetchLogs();
   }
 
@@ -571,6 +661,9 @@
     isExporting.value = true;
     try {
       const queryParams = new URLSearchParams();
+      if (actorTypeFilter.value) {
+        queryParams.set("actor_type", actorTypeFilter.value);
+      }
       if (actionFilter.value) {
         queryParams.set("action", actionFilter.value);
       }
@@ -606,7 +699,7 @@
     return matched ? matched.label : actKey;
   }
 
-  function formatVal(val: unknown): string {
+  function formatVal(val: AuditPayloadValue): string {
     if (val === undefined) {
       return "(không có)";
     }

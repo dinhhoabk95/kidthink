@@ -1,0 +1,127 @@
+{
+  "recorded_at": "2026-10-18",
+  "note": "Baseline nợ chỉ giảm cho BR-SKQ-02/03 trên 24 kỹ năng (38 vi phạm: 24 BR-SKQ-02, 14 BR-SKQ-03) — Task #310 S7b. Cấm nới hạn ngạch (C1 >= 20 level / 4 khuôn, C2..C6 >= 10 level / 2 khuôn) và cấm phát sinh nợ mới.",
+  "max_violations": 38,
+  "skills": {
+    "C1.DAT.01": {
+      "min_levels": 18,
+      "min_templates": 5,
+      "rules": ["BR-SKQ-02"]
+    },
+    "C1.DAT.02": {
+      "min_levels": 16,
+      "min_templates": 4,
+      "rules": ["BR-SKQ-02"]
+    },
+    "C1.DAT.04": {
+      "min_levels": 19,
+      "min_templates": 5,
+      "rules": ["BR-SKQ-02"]
+    },
+    "C1.DAT.05": {
+      "min_levels": 19,
+      "min_templates": 5,
+      "rules": ["BR-SKQ-02"]
+    },
+    "C1.MEAS.07": {
+      "min_levels": 16,
+      "min_templates": 4,
+      "rules": ["BR-SKQ-02"]
+    },
+    "C1.MEAS.09": {
+      "min_levels": 18,
+      "min_templates": 5,
+      "rules": ["BR-SKQ-02"]
+    },
+    "C1.OTO.05": {
+      "min_levels": 18,
+      "min_templates": 5,
+      "rules": ["BR-SKQ-02"]
+    },
+    "C1.PROB.04": {
+      "min_levels": 18,
+      "min_templates": 5,
+      "rules": ["BR-SKQ-02"]
+    },
+    "C1.PROB.05": {
+      "min_levels": 18,
+      "min_templates": 5,
+      "rules": ["BR-SKQ-02"]
+    },
+    "C4.SAF.06": {
+      "min_levels": 9,
+      "min_templates": 2,
+      "rules": ["BR-SKQ-02"]
+    },
+    "C5.VOC.06": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    },
+    "C5.VOC.07": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    },
+    "C5.VOC.08": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    },
+    "C5.VOC.10": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    },
+    "C5.VOC.11": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    },
+    "C5.VOC.12": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    },
+    "C5.VOC.13": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    },
+    "C5.VOC.14": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    },
+    "C5.VOC.15": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    },
+    "C5.VOC.16": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    },
+    "C5.VOC.17": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    },
+    "C5.VOC.18": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    },
+    "C5.VOC.19": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    },
+    "C5.VOC.20": {
+      "min_levels": 5,
+      "min_templates": 1,
+      "rules": ["BR-SKQ-02", "BR-SKQ-03"]
+    }
+  }
+}

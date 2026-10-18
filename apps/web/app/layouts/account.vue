@@ -25,18 +25,60 @@
           >
             Vào góc chơi
           </NuxtLink>
+          <NotificationBell />
+          <button
+            class="min-h-11 rounded-xl border border-surface-200 px-3.5 py-2 font-semibold text-sm text-surface-700 transition-colors hover:bg-surface-100 dark:border-surface-700 dark:text-surface-200 dark:hover:bg-surface-700"
+            data-testid="account-logout-btn"
+            type="button"
+            :disabled="isLoggingOut"
+            @click="handleLogout"
+          >
+            {{ isLoggingOut ? "Đang đăng xuất..." : "Đăng xuất" }}
+          </button>
         </div>
       </div>
     </header>
     <main
-      class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6"
+      class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6"
       id="main-content"
     >
+      <PwaInstallBanner :current-path="route.path" />
       <slot />
     </main>
   </div>
 </template>
 
 <script lang="ts" setup>
-  // Account Layout
+  import { NOINDEX_ROBOTS_DIRECTIVE } from "@mindkid/shared/client";
+  import { ref } from "vue";
+  import NotificationBell from "~/components/notification-bell.vue";
+  import PwaInstallBanner from "~/components/pwa/pwa-install-banner.vue";
+  import { useApi } from "~/composables/use-api";
+
+  const api = useApi();
+  const route = useRoute();
+  const router = typeof useRouter === "function" ? useRouter() : null;
+  const isLoggingOut = ref(false);
+
+  // BR-SEO2-01: Bề mặt tài khoản không được index
+  if (typeof useSeoMeta === "function") {
+    useSeoMeta({
+      robots: NOINDEX_ROBOTS_DIRECTIVE,
+    });
+  }
+
+  async function handleLogout(): Promise<void> {
+    isLoggingOut.value = true;
+    try {
+      await api("/api/users/auth/logout", {
+        method: "POST",
+        body: {},
+      });
+    } finally {
+      isLoggingOut.value = false;
+      if (router && typeof router.push === "function") {
+        await router.push("/login");
+      }
+    }
+  }
 </script>

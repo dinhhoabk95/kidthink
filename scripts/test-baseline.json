@@ -1,5 +1,5 @@
 {
-  "totalFailed": 36,
+  "totalFailed": 34,
   "failedFiles": [
     "apps/web/tests/api/advanced-report.test.ts",
     "apps/web/tests/api/curricula-builder.test.ts",
@@ -32,8 +32,6 @@
     "apps/web/tests/unit/server/ai-assistant-service.test.ts",
     "apps/web/tests/unit/server/ai-credit-ledger.test.ts",
     "apps/web/tests/unit/server/automated-payment.test.ts",
-    "apps/web/tests/unit/server/lifecycle-gates.test.ts",
-    "apps/web/tests/unit/server/lifecycle-service.test.ts",
     "apps/web/tests/unit/server/p3-account-curriculum-integration.test.ts",
     "apps/web/tests/unit/server/personal-curriculum-service.test.ts",
     "apps/web/tests/unit/server/tagging-seed.test.ts"

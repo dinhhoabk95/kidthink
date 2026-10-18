@@ -291,6 +291,58 @@ describe("cổng bố cục bài (BR-LTC)", () => {
     });
     expect(rulesOf([empty, OTHER])).not.toContain("BR-LTC-07");
   });
+
+  it("ca âm BR-LTC-08: vượt trần số chủ đề, số bước hoặc thời lượng band thì đỏ", () => {
+    const tooManyTopics = lesson({
+      code: "LES-TOPICS-5",
+      topics: [
+        ...(lesson().topics ?? []),
+        {
+          topic_code: "TP-C",
+          skill_code: "C1.CNT.01",
+          sequence_no: 3,
+          templates: ["GT-001", "GT-003"],
+          activity_codes: ["A1", "A3"],
+        },
+        {
+          topic_code: "TP-D",
+          skill_code: "C1.CMP.01",
+          sequence_no: 4,
+          templates: ["GT-004", "GT-006"],
+          activity_codes: ["A4"],
+        },
+        {
+          topic_code: "TP-T",
+          skill_code: "C1.CNT.01",
+          sequence_no: 5,
+          templates: ["GT-002", "GT-003"],
+          activity_codes: ["A2", "A3"],
+        },
+      ],
+    });
+    const tooLongMinutes = lesson({
+      code: "LES-MIN-30",
+      estimated_minutes: 30,
+      max_minutes: 25,
+    });
+    const tooManySteps = lesson({
+      code: "LES-STEPS-9",
+      activity_codes: ["A1", "A2", "A3", "A4", "A5", "OFF", "A1", "A2", "A3"],
+      max_steps: 8,
+    });
+
+    const hits = run([
+      tooManyTopics,
+      tooLongMinutes,
+      tooManySteps,
+      OTHER,
+    ]).violations.filter((found) => found.rule === "BR-LTC-08");
+    expect(hits.map((found) => found.lesson_code)).toEqual([
+      "LES-TOPICS-5",
+      "LES-MIN-30",
+      "LES-STEPS-9",
+    ]);
+  });
 });
 
 describe("sổ nợ cung khuôn (ratchet)", () => {

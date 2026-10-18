@@ -50,14 +50,17 @@ async function resolveTargetUserId(
     throw new NotFoundError("NOT_FOUND");
   }
 
-  if (parsed.data.password && foundUser.passwordHash) {
-    const isValid = await verifyPassword(
-      parsed.data.password,
-      foundUser.passwordHash
-    );
-    if (!isValid) {
-      throw new InvalidCredentialsError();
-    }
+  // UC-027 BR-003: không phiên thì bắt buộc xác minh bằng mật khẩu. Thiếu mật
+  // khẩu hoặc tài khoản không có mật khẩu đều bị từ chối, không đổi gì.
+  if (!(parsed.data.password && foundUser.passwordHash)) {
+    throw new InvalidCredentialsError();
+  }
+  const isValid = await verifyPassword(
+    parsed.data.password,
+    foundUser.passwordHash
+  );
+  if (!isValid) {
+    throw new InvalidCredentialsError();
   }
 
   return foundUser.id;

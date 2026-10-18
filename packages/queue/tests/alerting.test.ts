@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   AlertingUnreachableError,
+  type AlertPayload,
   alert,
   assertAlertingReachable,
   DeduplicatingAlertAdapter,
@@ -17,7 +18,7 @@ describe("Task 3 — Alert Port & Delivery (BR-JOB-03, BR-JOB-05, BR-TLM-06, D-F
     const adapter = new EmailAlertAdapter("ops@mindkid.vn");
 
     let dispatchedEmail: string | undefined;
-    let dispatchedPayload: any;
+    let dispatchedPayload: AlertPayload | undefined;
 
     registerAlertDispatcher((to, payload) => {
       dispatchedEmail = to;
@@ -40,8 +41,8 @@ describe("Task 3 — Alert Port & Delivery (BR-JOB-03, BR-JOB-05, BR-TLM-06, D-F
 
     expect(dispatchedEmail).toBe("ops@mindkid.vn");
     expect(dispatchedPayload).toBeDefined();
-    expect(dispatchedPayload.severity).toBe("error");
-    expect(dispatchedPayload.message).toContain("backlog exceeded");
+    expect(dispatchedPayload?.severity).toBe("error");
+    expect(dispatchedPayload?.message).toContain("backlog exceeded");
   });
 
   it("negative test: log-only alert adapter is rejected by operational delivery requirement (D-FX)", () => {

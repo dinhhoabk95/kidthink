@@ -143,6 +143,11 @@ describe("Task #107: Design Tokens & Single Source of Truth", () => {
     expect(TOUCH_FLOORS.absoluteMin).toBe(24);
   });
 
+  it("defines .tabular-nums utility for numeric counters and tables (BR-DSC-27)", () => {
+    expect(cssContent).toContain(".tabular-nums");
+    expect(cssContent).toContain("font-variant-numeric: tabular-nums;");
+  });
+
   describe("WCAG 2.1 Contrast and Accessibility Verifications (BR-A11-02)", () => {
     it("brand-600 (#1a7f6b) satisfies >= 4.5:1 contrast against white text", () => {
       const contrast = getContrastRatio("#1a7f6b", "#ffffff");

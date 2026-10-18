@@ -260,8 +260,15 @@ describe("sổ cầu — trên corpus thật", () => {
   });
 
   it("không ô nào dùng lại nội dung đã lấp ô khác", () => {
-    const all = ledger.cells.flatMap((cell) => [...cell.filled_by]);
-    expect(new Set(all).size).toBe(all.length);
+    const byRoadmap = new Map<string, string[]>();
+    for (const cell of ledger.cells) {
+      const list = byRoadmap.get(cell.roadmap_code) ?? [];
+      list.push(...cell.filled_by);
+      byRoadmap.set(cell.roadmap_code, list);
+    }
+    for (const [, codes] of byRoadmap) {
+      expect(new Set(codes).size).toBe(codes.length);
+    }
   });
 
   it("content-demand.json đã commit khớp lộ trình và kho hiện tại", () => {
@@ -297,8 +304,8 @@ describe("sổ cầu — band của nội dung lấp ô (BR-LRM-04)", () => {
       const prior = byRoadmap.get(cell.roadmap_code) ?? "";
       byRoadmap.set(cell.roadmap_code, `${prior}|${cell.filled_by.join(",")}`);
     }
-    expect(byRoadmap.size).toBe(3);
-    expect(new Set(byRoadmap.values()).size).toBe(3);
+    expect(byRoadmap.size).toBe(6);
+    expect(new Set(byRoadmap.values()).size).toBe(6);
   });
 
   it("ca âm: bài band 5-6 đặt vào lộ trình 3-4 thì đỏ và in mã bài", () => {

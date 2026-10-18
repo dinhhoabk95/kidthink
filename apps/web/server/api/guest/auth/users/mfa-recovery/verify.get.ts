@@ -4,25 +4,27 @@ import { TokenExpiredError } from "@mindkid/errors/auth";
 import { ValidationError } from "@mindkid/errors/common";
 import { and, eq, gt } from "drizzle-orm";
 import { defineEventHandler, getHeader, getQuery } from "h3";
+import { z } from "zod";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
+
+const MfaVerifyQuerySchema = z.object({
+  token: z.string().trim().min(1),
+});
 
 export default defineEventHandler(async (event) => {
   const rawQuery =
-    (event as unknown as { _query?: Record<string, unknown> })._query ||
-    (event.context as { query?: Record<string, unknown> })?.query ||
+    Reflect.get(event, "_query") ||
+    Reflect.get(event.context, "query") ||
     getQuery(event) ||
     {};
-  const token =
-    typeof (rawQuery as Record<string, unknown>)?.token === "string"
-      ? ((rawQuery as Record<string, unknown>).token as string).trim()
-      : "";
-
-  if (!token) {
+  const parsed = MfaVerifyQuerySchema.safeParse(rawQuery);
+  if (!parsed.success) {
     throw ValidationError.field(
       "token",
       "Mã xác thực token không được để trống"
     );
   }
+  const token = parsed.data.token;
 
   const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
   const db = getOwnerDb();

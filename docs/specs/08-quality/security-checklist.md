@@ -2,7 +2,7 @@
 spec: SECURITY-CHECKLIST
 title: Danh sách kiểm bảo mật
 area: quality
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-10-18
@@ -11,13 +11,9 @@ owns:
 depends_on:
   - AUTH-TOKENS-SESSIONS
   - CHILD-DATA-COMPLIANCE
-open_tasks:
-  - "#310"
 ---
 
 # Danh sách kiểm bảo mật
-
-> **Chưa hoàn thành** — `BR-SEC-04` đòi Zod cho body, query và params, nhưng cổng `apps/web/tests/security/route-validation.ts` chỉ đo body; query và params chưa có cổng. Việc còn lại: [Task #310](../../tasks/310-quality-gates-gaps-plan.md).
 
 ## 1. Objective
 

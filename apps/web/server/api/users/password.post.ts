@@ -1,14 +1,15 @@
 import { hashPassword, validatePasswordStrength } from "@mindkid/auth";
-import { activeSessions, getOwnerDb, users } from "@mindkid/db";
+import { getOwnerDb, users } from "@mindkid/db";
 import { PasswordNotSetError } from "@mindkid/errors/auth";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
-import { and, eq, ne } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
+import { revokeOtherUserSessions } from "#server/utils/session-revocation";
 
 const ChangePasswordSchema = z
   .object({
@@ -72,22 +73,7 @@ export default defineEventHandler(async (event) => {
     })
     .where(eq(users.id, userId));
 
-  const currentSessionId =
-    userSession.session_id ||
-    (event.context?.user as { session_id?: string })?.session_id ||
-    `sess_${userId}`;
-
-  await db
-    .update(activeSessions)
-    .set({ revokedAt: now })
-    .where(
-      and(
-        eq(activeSessions.accountType, "user"),
-        eq(activeSessions.accountId, userId),
-        ne(activeSessions.deviceId, currentSessionId)
-      )
-    )
-    .catch(() => null);
+  await revokeOtherUserSessions(event, now);
 
   // Send notification to current email (BR-ACS-02, BR-NOT-01)
   await dispatchTransactionalEmail({

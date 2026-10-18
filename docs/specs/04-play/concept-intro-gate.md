@@ -2,12 +2,10 @@
 spec: CONCEPT-INTRO-GATE
 title: Bắt buộc làm quen khái niệm trước khi vào màn chơi
 area: play
-status: approved
+status: implemented
 mvp: false
 phase: P4
 reviewed: 2026-10-18
-open_tasks:
-  - "#295"
 owns:
   - Bước 8 của thứ tự kiểm quyền — điều kiện sư phạm
   - Hàng đợi bài làm quen của một trò chơi
@@ -24,8 +22,6 @@ depends_on:
 ---
 
 # Bắt buộc làm quen khái niệm trước khi vào màn chơi
-
-> **Chưa hoàn thành** — Bước 8 đã chạy, nhưng `BR-CIG-12` (ma trận §7.3 cùng ca âm miễn cổng) chưa có test; nhiều BR khác chưa có test gắn mã. Việc còn lại: [Task #295](../../tasks/295-concept-intro-segments-plan.md).
 
 ## 1. Objective
 

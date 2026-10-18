@@ -13,5 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-  // MindKid web root shell
+  import { usePublicSeoHead } from "~/composables/use-public-seo";
+
+  usePublicSeoHead();
 </script>

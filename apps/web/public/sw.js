@@ -100,3 +100,16 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
+// 4. Purge offline pack & session caches upon logout or entitlement revocation (BR-OCP-05)
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "CLEAR_OFFLINE_PACKS") {
+    const cleanup = Promise.all([
+      caches.delete(CACHE_OFFLINE_PACK),
+      caches.delete(_CACHE_SESSION_ASSETS),
+    ]);
+    if (typeof event.waitUntil === "function") {
+      event.waitUntil(cleanup);
+    }
+  }
+});

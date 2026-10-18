@@ -208,7 +208,7 @@
                   <div class="flex items-center gap-2">
                     <NuxtLink
                       class="text-warning-700 hover:text-warning-800 font-medium"
-                      :to="`/admin/seed-authoring?skill_code=${skill.code}`"
+                      :to="`/studio/levels?skill_code=${skill.code}`"
                     >
                       Soạn level
                     </NuxtLink>

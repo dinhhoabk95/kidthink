@@ -87,6 +87,7 @@ export function buildLessonTopicsInput(
       activity_codes: header.activity_codes,
       topics: header.topics ?? [],
       offscreen: offscreen.has(header.code),
+      estimated_minutes: header.estimated_minutes,
     })),
     activities: collectActivities(),
     affinities: buildSkillTemplateAffinityMatrix().affinities,
@@ -141,7 +142,7 @@ export function runLessonTopicsGate(): number {
   if (report.violations.length > 0) {
     return 1;
   }
-  console.log("✅ Bố cục bài đạt BR-LTC-01/03/04/05/06/07/09");
+  console.log("✅ Bố cục bài đạt BR-LTC-01/03/04/05/06/07/08/09");
   return 0;
 }
 

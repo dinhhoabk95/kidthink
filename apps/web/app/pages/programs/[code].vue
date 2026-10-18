@@ -310,6 +310,27 @@
                   >
                     Chơi thử trò chơi miễn phí
                   </NuxtLink>
+                  <button
+                    class="inline-flex items-center justify-center gap-2 p-3 text-sm font-bold rounded-2xl bg-white/15 text-white min-h-[44px] hover:bg-white/25 transition-colors disabled:opacity-75"
+                    data-testid="save-program-library-btn"
+                    type="button"
+                    :disabled="isSavingLibrary || isSavedToLibrary"
+                    @click="saveProgramToLibrary"
+                  >
+                    <UIcon
+                      class="w-4 h-4"
+                      :name="isSavedToLibrary ? 'i-lucide-bookmark-check' : 'i-lucide-bookmark'"
+                    />
+                    <span>{{ getSaveProgramButtonText() }}</span>
+                  </button>
+                  <p
+                    class="text-xs font-semibold text-warning-100 bg-white/10 rounded-xl px-3 py-2"
+                    data-testid="save-program-library-error"
+                    role="alert"
+                    v-if="saveLibraryError"
+                  >
+                    {{ saveLibraryError }}
+                  </p>
                 </div>
               </div>
 
@@ -361,11 +382,13 @@
 
 <script lang="ts" setup>
   import { isApiError } from "@mindkid/errors/client";
-  import type {
-    ProgramAlternativeSuggestion,
-    ProgramDetailPublic,
+  import {
+    buildPublicHreflangLinks,
+    type ProgramAlternativeSuggestion,
+    type ProgramDetailPublic,
   } from "@mindkid/shared/client";
-  import { computed } from "vue";
+  import { computed, ref } from "vue";
+  import { useApi } from "~/composables/use-api";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
   // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
@@ -374,8 +397,55 @@
   definePageMeta({ layout: false });
 
   const route = useRoute();
+  const api = useApi();
   const programCode = computed(() => String(route.params.code || ""));
   const siteUrl = "https://mindkid.vn";
+
+  const isSavingLibrary = ref(false);
+  const isSavedToLibrary = ref(false);
+  const saveLibraryError = ref("");
+
+  function getSaveProgramButtonText(): string {
+    if (isSavedToLibrary.value) {
+      return "Đã lưu vào thư viện";
+    }
+    if (isSavingLibrary.value) {
+      return "Đang lưu...";
+    }
+    return "Lưu lộ trình vào thư viện";
+  }
+
+  async function saveProgramToLibrary(): Promise<void> {
+    if (isSavingLibrary.value || isSavedToLibrary.value || !programCode.value) {
+      return;
+    }
+    isSavingLibrary.value = true;
+    saveLibraryError.value = "";
+    try {
+      await api<{ success: boolean }>("/api/users/library/items", {
+        method: "POST",
+        body: {
+          entity_type: "curriculum",
+          code: programCode.value,
+        },
+      });
+      isSavedToLibrary.value = true;
+    } catch (err) {
+      if (isApiError(err, "CODE_ALREADY_EXISTS")) {
+        isSavedToLibrary.value = true;
+      } else if (isApiError(err, "QUOTA_EXCEEDED")) {
+        saveLibraryError.value =
+          "Đã đạt giới hạn lưu trữ trong thư viện. Vui lòng nâng cấp gói hoặc xoá bớt mục cũ.";
+      } else if (isApiError(err, "UNAUTHENTICATED")) {
+        saveLibraryError.value =
+          "Vui lòng đăng nhập để lưu lộ trình vào thư viện.";
+      } else {
+        saveLibraryError.value = "Không thể lưu lộ trình vào thư viện lúc này.";
+      }
+    } finally {
+      isSavingLibrary.value = false;
+    }
+  }
 
   const {
     data: program,
@@ -489,9 +559,13 @@
         { property: "og:title", content: pageTitle },
         { property: "og:description", content: pageDesc },
         { property: "og:url", content: canonicalUrl },
+        { property: "og:image", content: `${siteUrl}/images/og-home.png` },
         { property: "og:type", content: "website" },
       ],
-      link: [{ rel: "canonical", href: canonicalUrl }],
+      link: [
+        { rel: "canonical", href: canonicalUrl },
+        ...buildPublicHreflangLinks(`/programs/${p.code}`, siteUrl),
+      ],
       script: [
         {
           type: "application/ld+json",

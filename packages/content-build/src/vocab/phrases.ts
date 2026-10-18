@@ -303,6 +303,14 @@ export const ENGINE_PHRASES: Readonly<Record<string, EnginePhrases>> = {
       "5-6": "Bé gấp giấy tạo hình đồ vật xinh xắn nhé!",
     },
   },
+  "GT-037": {
+    title_template: "Tìm hết ký hiệu {noun}",
+    instruction_by_band: {
+      "3-4": "Bé chạm hết ký hiệu {noun} nhé!",
+      "4-5": "Bé tìm và chạm hết ký hiệu {noun} nhé!",
+      "5-6": "Bé quét bảng tìm đủ mọi ký hiệu {noun}!",
+    },
+  },
 };
 
 export function resolveEnginePhrases(

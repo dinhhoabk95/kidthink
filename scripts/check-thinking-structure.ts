@@ -12,7 +12,13 @@ import {
   C1_NUMERAL_INVENTORY,
   SKILL_DATASETS,
   SKILL_IDENTITIES,
+  THINKING_TAG_NORMALIZE_MAP,
 } from "@mindkid/content";
+
+import {
+  checkTemplateStructuralAffinity as checkTemplateStructuralAffinityGate,
+  type TemplateStructuralAffinityResult,
+} from "@mindkid/content-build/gates/skill-template-affinity";
 import type {
   DatasetAxis,
   DatasetAxisObject,
@@ -20,6 +26,12 @@ import type {
   SkillIdentity,
   ThinkingProcess,
 } from "@mindkid/shared";
+
+export function checkTemplateStructuralAffinity(
+  ...args: Parameters<typeof checkTemplateStructuralAffinityGate>
+): TemplateStructuralAffinityResult {
+  return checkTemplateStructuralAffinityGate(...args);
+}
 
 export const CANONICAL_THINKING_PROCESSES: readonly ThinkingProcess[] = [
   "observe",
@@ -143,14 +155,14 @@ function checkCompare(dataset: SkillDataset): ThinkingObligationResult {
     if (!hasContrast) {
       reasons.push("thiếu relations kiểu contrast");
     }
-    return { passed: false, missing: reasons.join(", ") };
+    return { passed: false, missing: `[BR-STS-01] ${reasons.join(", ")}` };
   }
   return { passed: true, missing: "" };
 }
 
 function checkSort(dataset: SkillDataset): ThinkingObligationResult {
   if (!dataset.axes || Object.keys(dataset.axes).length === 0) {
-    return { passed: false, missing: "thiếu axes phân loại" };
+    return { passed: false, missing: "[BR-STS-03] thiếu axes phân loại" };
   }
   const failures: string[] = [];
   for (const [axisName, axis] of Object.entries(dataset.axes)) {
@@ -173,7 +185,7 @@ function checkSort(dataset: SkillDataset): ThinkingObligationResult {
     }
   }
   if (failures.length > 0) {
-    return { passed: false, missing: failures.join("; ") };
+    return { passed: false, missing: `[BR-STS-03] ${failures.join("; ")}` };
   }
   return { passed: true, missing: "" };
 }
@@ -185,7 +197,7 @@ function checkMatch(dataset: SkillDataset): ThinkingObligationResult {
   if (!hasPair) {
     return {
       passed: false,
-      missing: "thiếu quan hệ kiểu pair trong relations",
+      missing: "[BR-STS-02] thiếu quan hệ kiểu pair trong relations",
     };
   }
   return { passed: true, missing: "" };
@@ -479,7 +491,7 @@ const OBLIGATION_CHECKERS: Record<
 };
 
 /**
- * Kiểm tra nghĩa vụ dữ liệu theo từng giá trị ThinkingProcess (Mục 7.1 của spec).
+ * Kiểm tra nghĩa vụ dữ liệu theo từng giá trị ThinkingProcess (Mục 7.1 của spec — BR-STS-01).
  */
 export function checkThinkingObligation(
   process: ThinkingProcess,
@@ -489,10 +501,218 @@ export function checkThinkingObligation(
   if (!checker) {
     return {
       passed: false,
-      missing: `Không có luật kiểm tra cho ThinkingProcess: "${process}"`,
+      missing: `[BR-STS-01] Không có luật kiểm tra cho ThinkingProcess: "${process}"`,
     };
   }
   return checker(dataset);
+}
+
+/**
+ * BR-STS-02: SkillDataset.relations bắt buộc khi thinking_processes giao với
+ * {match, compare, sequence, deduce, infer}.
+ */
+export const RELATIONS_REQUIRED_PROCESSES: readonly ThinkingProcess[] = [
+  "match",
+  "compare",
+  "sequence",
+  "deduce",
+  "infer",
+] as const;
+
+export function checkConditionalRelationsRequired(
+  thinkingProcesses: readonly ThinkingProcess[],
+  dataset: SkillDataset
+): ThinkingObligationResult {
+  const matched = thinkingProcesses.filter((proc) =>
+    RELATIONS_REQUIRED_PROCESSES.includes(proc)
+  );
+  if (matched.length === 0) {
+    return { passed: true, missing: "" };
+  }
+
+  if (!dataset.relations || dataset.relations.length === 0) {
+    const details = matched
+      .map((proc) => checkThinkingObligation(proc, dataset).missing)
+      .filter(Boolean)
+      .join("; ");
+    return {
+      passed: false,
+      missing: `[BR-STS-02] SkillDataset.relations bắt buộc khác rỗng khi khai báo ${matched.join(", ")}${details ? ` (${details})` : ""}`,
+    };
+  }
+
+  for (const proc of matched) {
+    const res = checkThinkingObligation(proc, dataset);
+    if (!res.passed) {
+      return {
+        passed: false,
+        missing: res.missing.includes("[BR-STS-02]")
+          ? res.missing
+          : `[BR-STS-02] ${res.missing}`,
+      };
+    }
+  }
+
+  return { passed: true, missing: "" };
+}
+
+/**
+ * BR-STS-03: SkillDataset.axes bắt buộc khi thinking_processes giao với
+ * {sort, compare, deduce}.
+ */
+export const AXES_REQUIRED_PROCESSES: readonly ThinkingProcess[] = [
+  "sort",
+  "compare",
+  "deduce",
+] as const;
+
+export function checkConditionalAxesRequired(
+  thinkingProcesses: readonly ThinkingProcess[],
+  dataset: SkillDataset
+): ThinkingObligationResult {
+  const matched = thinkingProcesses.filter((proc) =>
+    AXES_REQUIRED_PROCESSES.includes(proc)
+  );
+  if (matched.length === 0) {
+    return { passed: true, missing: "" };
+  }
+
+  if (!dataset.axes || Object.keys(dataset.axes).length === 0) {
+    const details = matched
+      .map((proc) => checkThinkingObligation(proc, dataset).missing)
+      .filter(Boolean)
+      .join("; ");
+    return {
+      passed: false,
+      missing: `[BR-STS-03] SkillDataset.axes bắt buộc khác rỗng khi khai báo ${matched.join(", ")}${details ? ` (${details})` : ""}`,
+    };
+  }
+
+  for (const proc of matched) {
+    const res = checkThinkingObligation(proc, dataset);
+    if (!res.passed) {
+      return {
+        passed: false,
+        missing: res.missing.includes("[BR-STS-03]")
+          ? res.missing
+          : `[BR-STS-03] ${res.missing}`,
+      };
+    }
+  }
+
+  return { passed: true, missing: "" };
+}
+
+/**
+ * BR-STS-06: Bảng ánh xạ thu hẹp 18 -> 12 tại mục 7.2 của skill-thinking-structure.md.
+ */
+export const DECLARED_THINKING_NARROWING_MAP: Readonly<
+  Record<string, ThinkingProcess>
+> = {
+  solve: "infer",
+  verify: "compare",
+  create: "plan",
+  listen: "observe",
+  describe: "observe",
+  deduce: "infer",
+};
+
+export function checkThinkingNarrowingMap(
+  normalizeMap: Readonly<Record<string, string>> = THINKING_TAG_NORMALIZE_MAP
+): string[] {
+  const violations: string[] = [];
+
+  for (const [from, to] of Object.entries(normalizeMap)) {
+    const declaredTarget = DECLARED_THINKING_NARROWING_MAP[from];
+    if (!declaredTarget) {
+      violations.push(
+        `[BR-STS-06] Ánh xạ thu hẹp "${from}" -> "${to}" trong THINKING_TAG_NORMALIZE_MAP không được khai báo tại mục 7.2 của spec.`
+      );
+    } else if (declaredTarget !== to) {
+      violations.push(
+        `[BR-STS-06] Ánh xạ thu hẹp "${from}" trỏ sang "${to}", lệch với mục 7.2 của spec (đòi "${declaredTarget}").`
+      );
+    }
+  }
+
+  for (const [from, expectedTo] of Object.entries(
+    DECLARED_THINKING_NARROWING_MAP
+  )) {
+    if (!(from in normalizeMap)) {
+      violations.push(
+        `[BR-STS-06] THINKING_TAG_NORMALIZE_MAP thiếu ánh xạ thu hẹp "${from}" -> "${expectedTo}" đã khai ở mục 7.2.`
+      );
+    }
+  }
+
+  return violations;
+}
+
+/**
+ * BR-STS-07: Các trường được phép trên SkillDataset và SkillPhrasing theo phán quyết mục 7.3.
+ * Hai trường phrasing.success_message và phrasing.hint_message đã bị phán quyết xoá.
+ */
+export const ALLOWED_SKILL_DATASET_FIELDS: ReadonlySet<string> = new Set([
+  "skill_code",
+  "concept_label",
+  "surface",
+  "items",
+  "relations",
+  "ordering",
+  "axes",
+  "ladder",
+  "phrasing",
+  "extends",
+]);
+
+export const ALLOWED_SKILL_PHRASING_FIELDS: ReadonlySet<string> = new Set([
+  "prompt_template",
+  "narration_template",
+]);
+
+export const REMOVED_SKILL_PHRASING_FIELDS: ReadonlySet<string> = new Set([
+  "success_message",
+  "hint_message",
+]);
+
+function inspectSingleDatasetConsumerFields(
+  code: string,
+  dataset: SkillDataset,
+  violations: string[]
+): void {
+  for (const key of Object.keys(dataset)) {
+    if (!ALLOWED_SKILL_DATASET_FIELDS.has(key)) {
+      violations.push(
+        `[BR-STS-07] Dataset ${code} chứa trường không có consumer "${key}" ngoài danh mục mục 7.3.`
+      );
+    }
+  }
+
+  if (!dataset.phrasing || typeof dataset.phrasing !== "object") {
+    return;
+  }
+
+  for (const phrasingKey of Object.keys(dataset.phrasing)) {
+    if (REMOVED_SKILL_PHRASING_FIELDS.has(phrasingKey)) {
+      violations.push(
+        `[BR-STS-07] Dataset ${code} chứa trường đã bị xoá "phrasing.${phrasingKey}" theo phán quyết mục 7.3.`
+      );
+    } else if (!ALLOWED_SKILL_PHRASING_FIELDS.has(phrasingKey)) {
+      violations.push(
+        `[BR-STS-07] Dataset ${code} chứa trường không có consumer "phrasing.${phrasingKey}".`
+      );
+    }
+  }
+}
+
+export function checkDatasetConsumerFields(
+  datasets: Readonly<Record<string, SkillDataset>> = SKILL_DATASETS
+): string[] {
+  const violations: string[] = [];
+  for (const [code, dataset] of Object.entries(datasets)) {
+    inspectSingleDatasetConsumerFields(code, dataset, violations);
+  }
+  return violations;
 }
 
 export interface ActivitySeedLike {
@@ -609,13 +829,22 @@ export function measureThinkingStructure(
   };
 }
 
+export type BaselineJsonCandidate =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | readonly BaselineJsonCandidate[]
+  | { readonly [key: string]: BaselineJsonCandidate };
+
 export function assertBaselineShape(
-  raw: unknown
+  raw: BaselineJsonCandidate | ThinkingStructureBaselineData
 ): asserts raw is ThinkingStructureBaselineData {
   if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
     throw new Error("Baseline không phải đối tượng JSON hợp lệ");
   }
-  const obj = raw as Record<string, unknown>;
+  const obj = raw as Record<string, BaselineJsonCandidate>;
   const requiredKeys = [
     "min_inspected_skills",
     "total_unproven_skills",
@@ -666,7 +895,7 @@ export function readBaseline(
     throw new Error(`Không tìm thấy baseline file: ${filePath}`);
   }
   const content = readFileSync(filePath, "utf-8");
-  const parsed: unknown = JSON.parse(content);
+  const parsed: BaselineJsonCandidate = JSON.parse(content);
   assertBaselineShape(parsed);
   return parsed;
 }
@@ -717,8 +946,14 @@ function checkRatchetViolations(
     (u) => !baselineUnprovenSet.has(u.skillCode)
   );
   if (newlyUnproven.length > 0) {
+    const detailedList = newlyUnproven
+      .map(
+        (u) =>
+          `${u.skillCode} (${u.unprovenProcesses.map((p) => `${p.process}: ${p.reason}`).join("; ")})`
+      )
+      .join(", ");
     violations.push(
-      `[BR-STS-11] Phát hiện kỹ năng mới rơi vào nợ: ${newlyUnproven.map((u) => u.skillCode).join(", ")}`
+      `[BR-STS-11] Phát hiện kỹ năng mới rơi vào nợ: ${detailedList}`
     );
   }
 
@@ -893,6 +1128,7 @@ export function runThinkingStructureCheck(options?: {
   identities?: Record<string, SkillIdentity>;
   datasets?: Record<string, SkillDataset>;
   activities?: readonly ActivitySeedLike[];
+  normalizeMap?: Readonly<Record<string, string>>;
 }): {
   exitCode: number;
   report: ThinkingStructureReport;
@@ -917,9 +1153,19 @@ export function runThinkingStructureCheck(options?: {
     console.warn(`   ⚠️ Bỏ qua ${skip.skillCode}: ${skip.reason}`);
   }
 
+  const narrowingViolations = checkThinkingNarrowingMap(options?.normalizeMap);
+  const consumerFieldViolations = checkDatasetConsumerFields(options?.datasets);
   const tagViolations = checkActivityTagViolations(report);
-  if (tagViolations.length > 0) {
-    return { exitCode: 1, report, violations: tagViolations };
+  const structuralGateViolations = [
+    ...narrowingViolations,
+    ...consumerFieldViolations,
+    ...tagViolations,
+  ];
+  if (structuralGateViolations.length > 0) {
+    for (const msg of [...narrowingViolations, ...consumerFieldViolations]) {
+      console.error(`❌ ${msg}`);
+    }
+    return { exitCode: 1, report, violations: structuralGateViolations };
   }
 
   if (isInit) {

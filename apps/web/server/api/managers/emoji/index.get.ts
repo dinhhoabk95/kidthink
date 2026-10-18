@@ -6,12 +6,21 @@ import {
   searchEmoji,
 } from "@mindkid/emoji";
 import { defineEventHandler, getQuery, setHeader } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+
+const EmojiSearchQuerySchema = z.object({
+  q: z.string().optional(),
+  category: z.string().optional(),
+  age_band: z.string().optional(),
+  limit: z.coerce.number().optional(),
+});
 
 export default defineEventHandler(async (event) => {
   await requireManagerSession(event);
 
-  const query = getQuery(event) || {};
+  const parsedQuery = EmojiSearchQuerySchema.safeParse(getQuery(event) || {});
+  const query = parsedQuery.success ? parsedQuery.data : {};
 
   const q = typeof query.q === "string" ? query.q.trim() : "";
   const category =
@@ -25,13 +34,16 @@ export default defineEventHandler(async (event) => {
   let pool = ALL_EMOJIS;
 
   if (q) {
-    pool = searchEmoji(q, 100);
+    pool = searchEmoji(q, ALL_EMOJIS.length);
   } else if (category) {
     pool = getEmojisByCategory(category as EmojiCategory);
   }
 
-  // Filter based on age_min
+  // Filter based on category (when combined with q) and age_min
   const filtered = pool.filter((e) => {
+    if (q && category && !e.categories.includes(category as EmojiCategory)) {
+      return false;
+    }
     if (ageBand) {
       const minAge = Number(ageBand.split("-")[0]) || 3;
       if (e.age_min > minAge) {

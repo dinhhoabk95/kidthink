@@ -4,14 +4,26 @@ import mjml2html from "mjml";
 const SCRIPT_TAG_REGEX = /<script/i;
 const EXTERNAL_IMG_REGEX = /<img[^>]+src=["']http/i;
 
-export interface TemplateDefinition<T = Record<string, unknown>> {
+export type EmailTemplateCode =
+  | NotificationCode
+  | "social_identity_linked"
+  | "social_identity_unlinked";
+
+export type TemplateVarScalar = string | number | boolean | null | undefined;
+export type TemplateVarValue =
+  | TemplateVarScalar
+  | readonly TemplateVarScalar[]
+  | { readonly [key: string]: TemplateVarScalar };
+export type TemplateVars = Record<string, TemplateVarValue>;
+
+export interface TemplateDefinition<T = TemplateVars> {
   subject: (vars: T) => string;
   mjml: (vars: T) => string;
   plainText: (vars: T) => string;
   requiredVars: string[];
 }
 
-function escapeHtml(str: unknown): string {
+function escapeHtml(str: TemplateVarValue): string {
   if (typeof str !== "string") {
     return String(str ?? "");
   }
@@ -23,10 +35,8 @@ function escapeHtml(str: unknown): string {
     .replace(/'/g, "&#39;");
 }
 
-export function escapeTemplateVars<T extends Record<string, unknown>>(
-  vars: T
-): T {
-  const escaped: Record<string, unknown> = {};
+export function escapeTemplateVars<T extends TemplateVars>(vars: T): T {
+  const escaped: TemplateVars = {};
   for (const [key, value] of Object.entries(vars)) {
     if (typeof value === "string") {
       escaped[key] = escapeHtml(value);
@@ -35,7 +45,9 @@ export function escapeTemplateVars<T extends Record<string, unknown>>(
         typeof item === "string" ? escapeHtml(item) : item
       );
     } else if (value !== null && typeof value === "object") {
-      escaped[key] = escapeTemplateVars(value as Record<string, unknown>);
+      escaped[key] = escapeTemplateVars(
+        value as Record<string, TemplateVarScalar>
+      );
     } else {
       escaped[key] = value;
     }
@@ -44,11 +56,11 @@ export function escapeTemplateVars<T extends Record<string, unknown>>(
 }
 
 export const TEMPLATE_REGISTRY: Record<
-  NotificationCode,
-  TemplateDefinition<Record<string, unknown>>
+  EmailTemplateCode,
+  TemplateDefinition<TemplateVars>
 > = {
   email_verification: {
-    requiredVars: ["url", "code"],
+    requiredVars: ["url"],
     subject: (_vars) => "[MindKid] Xác nhận địa chỉ email của bạn",
     mjml: (vars) => `
       <mjml>
@@ -57,7 +69,11 @@ export const TEMPLATE_REGISTRY: Record<
             <mj-column>
               <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
               <mj-text font-size="16px" color="#334155">Xin chào,</mj-text>
-              <mj-text font-size="14px" color="#475569">Mã xác thực email của bạn là: <strong>${vars.code}</strong></mj-text>
+              <mj-text font-size="14px" color="#475569">${
+                vars.code
+                  ? `Mã xác thực email của bạn là: <strong>${vars.code}</strong>`
+                  : "Vui lòng bấm vào nút bên dưới để xác thực địa chỉ email của bạn:"
+              }</mj-text>
               <mj-button background-color="#1a7f6b" href="${vars.url}">Xác thực email</mj-button>
             </mj-column>
           </mj-section>
@@ -65,7 +81,9 @@ export const TEMPLATE_REGISTRY: Record<
       </mjml>
     `,
     plainText: (vars) =>
-      `MindKid - Xác thực email\nMã xác thực của bạn: ${vars.code}\nHoặc truy cập: ${vars.url}`,
+      vars.code
+        ? `MindKid - Xác thực email\nMã xác thực của bạn: ${vars.code}\nHoặc truy cập: ${vars.url}`
+        : `MindKid - Xác thực email\nTruy cập: ${vars.url}`,
   },
   password_reset: {
     requiredVars: ["url"],
@@ -309,7 +327,247 @@ export const TEMPLATE_REGISTRY: Record<
     plainText: (vars) =>
       `MindKid - Xuất PDF cho giáo án "${vars.title}" không thành công: ${vars.error}. Lượt xuất đã được hoàn lại.`,
   },
+  social_identity_linked: {
+    requiredVars: ["provider"],
+    subject: (vars) => `[MindKid] Đã liên kết tài khoản ${vars.provider}`,
+    mjml: (vars) => `
+      <mjml>
+        <mj-body background-color="#f8fafc">
+          <mj-section background-color="#ffffff" border-radius="16px">
+            <mj-column>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
+              <mj-text font-size="16px" font-weight="bold" color="#334155">Liên kết mạng xã hội thành công</mj-text>
+              <mj-text font-size="14px" color="#475569">Tài khoản MindKid của bạn vừa được liên kết với <strong>${vars.provider}</strong>. Nếu không phải bạn thực hiện, vui lòng kiểm tra cài đặt bảo mật ngay.</mj-text>
+              <mj-button background-color="#1a7f6b" href="/me/settings/security">Kiểm tra bảo mật</mj-button>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `,
+    plainText: (vars) =>
+      `MindKid - Tài khoản của bạn vừa được liên kết với ${vars.provider}. Nếu không phải bạn thực hiện, vui lòng kiểm tra tại /me/settings/security.`,
+  },
+  social_identity_unlinked: {
+    requiredVars: ["provider"],
+    subject: (vars) => `[MindKid] Đã gỡ liên kết tài khoản ${vars.provider}`,
+    mjml: (vars) => `
+      <mjml>
+        <mj-body background-color="#f8fafc">
+          <mj-section background-color="#ffffff" border-radius="16px">
+            <mj-column>
+              <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
+              <mj-text font-size="16px" font-weight="bold" color="#334155">Gỡ liên kết mạng xã hội</mj-text>
+              <mj-text font-size="14px" color="#475569">Tài khoản MindKid của bạn vừa gỡ liên kết <strong>${vars.provider}</strong>. Nếu không phải bạn thực hiện, vui lòng kiểm tra cài đặt bảo mật ngay.</mj-text>
+              <mj-button background-color="#1a7f6b" href="/me/settings/security">Kiểm tra bảo mật</mj-button>
+            </mj-column>
+          </mj-section>
+        </mj-body>
+      </mjml>
+    `,
+    plainText: (vars) =>
+      `MindKid - Tài khoản của bạn vừa gỡ liên kết ${vars.provider}. Nếu không phải bạn thực hiện, vui lòng kiểm tra tại /me/settings/security.`,
+  },
 };
+
+export interface NotificationTemplateOverride {
+  contentVersion: number;
+  subject: string;
+  body: string;
+  updatedByManagerId: number;
+  updatedAt: string;
+}
+
+interface TemplateLifecycleEntry {
+  published: NotificationTemplateOverride | null;
+  draft: NotificationTemplateOverride | null;
+}
+
+export interface NotificationTemplateState {
+  code: EmailTemplateCode;
+  required_vars: string[];
+  content_version: number;
+  published_version: number;
+  status: "draft" | "published";
+  subject: string;
+  body: string;
+  published_subject: string;
+  published_body: string;
+  is_child_recipient: boolean;
+  updated_by_manager_id: number | null;
+  updated_at: string | null;
+}
+
+const templateLifecycleStore = new Map<
+  EmailTemplateCode,
+  TemplateLifecycleEntry
+>();
+
+function buildSampleVarsForDefault(
+  requiredVars: readonly string[]
+): TemplateVars {
+  const vars: TemplateVars = {};
+  for (const key of requiredVars) {
+    vars[key] = `{{${key}}}`;
+  }
+  return vars;
+}
+
+function interpolateTemplateString(
+  templateStr: string,
+  vars: TemplateVars
+): string {
+  return templateStr.replace(
+    /\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g,
+    (_match, key: string) => {
+      const val = vars[key];
+      if (val === undefined || val === null) {
+        return "";
+      }
+      return String(val);
+    }
+  );
+}
+
+function wrapBodyInMjmlIfNeeded(interpolatedBody: string): string {
+  const trimmed = interpolatedBody.trim();
+  if (trimmed.startsWith("<mjml")) {
+    return trimmed;
+  }
+  return `
+    <mjml>
+      <mj-body background-color="#f8fafc">
+        <mj-section background-color="#ffffff" border-radius="16px">
+          <mj-column>
+            <mj-text font-size="20px" font-weight="bold" color="#1a7f6b">MindKid</mj-text>
+            <mj-text font-size="14px" color="#475569">${interpolatedBody}</mj-text>
+          </mj-column>
+        </mj-section>
+      </mj-body>
+    </mjml>
+  `;
+}
+
+function stripHtmlTags(input: string): string {
+  return input
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+export function getNotificationTemplateState(
+  code: EmailTemplateCode
+): NotificationTemplateState {
+  const def = TEMPLATE_REGISTRY[code];
+  if (!def) {
+    throw new Error(`Unknown email notification template code '${code}'`);
+  }
+  const placeholderVars = buildSampleVarsForDefault(def.requiredVars);
+  const defaultSubject = def.subject(placeholderVars);
+  const defaultBody = def.plainText(placeholderVars);
+  const entry = templateLifecycleStore.get(code);
+  const published = entry?.published ?? null;
+  const draft = entry?.draft ?? null;
+  const active = draft ?? published;
+
+  return {
+    code,
+    required_vars: [...def.requiredVars],
+    content_version: active ? active.contentVersion : 1,
+    published_version: published ? published.contentVersion : 1,
+    status: draft ? "draft" : "published",
+    subject: active ? active.subject : defaultSubject,
+    body: active ? active.body : defaultBody,
+    published_subject: published ? published.subject : defaultSubject,
+    published_body: published ? published.body : defaultBody,
+    is_child_recipient: code.startsWith("child_"),
+    updated_by_manager_id: active ? active.updatedByManagerId : null,
+    updated_at: active ? active.updatedAt : null,
+  };
+}
+
+export function listNotificationTemplateStates(): NotificationTemplateState[] {
+  return (Object.keys(TEMPLATE_REGISTRY) as EmailTemplateCode[]).map((code) =>
+    getNotificationTemplateState(code)
+  );
+}
+
+export function saveNotificationTemplateDraft(input: {
+  code: EmailTemplateCode;
+  subject: string;
+  body: string;
+  updatedByManagerId: number;
+  baseVersion?: number;
+}): NotificationTemplateState {
+  const def = TEMPLATE_REGISTRY[input.code];
+  if (!def) {
+    throw new Error(`Unknown email notification template code '${input.code}'`);
+  }
+  const current = templateLifecycleStore.get(input.code);
+  const currentMaxVersion = Math.max(
+    1,
+    input.baseVersion ?? 1,
+    current?.published?.contentVersion ?? 1,
+    current?.draft?.contentVersion ?? 1
+  );
+  const nextVersion = currentMaxVersion + 1;
+  const nowIso = new Date().toISOString();
+
+  templateLifecycleStore.set(input.code, {
+    published: current?.published ?? null,
+    draft: {
+      contentVersion: nextVersion,
+      subject: input.subject,
+      body: input.body,
+      updatedByManagerId: input.updatedByManagerId,
+      updatedAt: nowIso,
+    },
+  });
+
+  return getNotificationTemplateState(input.code);
+}
+
+export function publishNotificationTemplate(input: {
+  code: EmailTemplateCode;
+  updatedByManagerId: number;
+  subject?: string;
+  body?: string;
+  baseVersion?: number;
+}): NotificationTemplateState {
+  const def = TEMPLATE_REGISTRY[input.code];
+  if (!def) {
+    throw new Error(`Unknown email notification template code '${input.code}'`);
+  }
+  const current = templateLifecycleStore.get(input.code);
+  const sourceDraft = current?.draft ?? null;
+  const currentState = getNotificationTemplateState(input.code);
+  const finalSubject =
+    input.subject ?? sourceDraft?.subject ?? currentState.subject;
+  const finalBody = input.body ?? sourceDraft?.body ?? currentState.body;
+  const nextVersion = sourceDraft
+    ? sourceDraft.contentVersion
+    : Math.max(
+        1,
+        input.baseVersion ?? 1,
+        current?.published?.contentVersion ?? 1
+      ) + (input.subject !== undefined || input.body !== undefined ? 1 : 0);
+
+  templateLifecycleStore.set(input.code, {
+    published: {
+      contentVersion: nextVersion,
+      subject: finalSubject,
+      body: finalBody,
+      updatedByManagerId: input.updatedByManagerId,
+      updatedAt: new Date().toISOString(),
+    },
+    draft: null,
+  });
+
+  return getNotificationTemplateState(input.code);
+}
+
+export function resetNotificationTemplateOverrides(): void {
+  templateLifecycleStore.clear();
+}
 
 export interface RenderEmailResult {
   subject: string;
@@ -317,9 +575,41 @@ export interface RenderEmailResult {
   text: string;
 }
 
+type MjmlCompiler = (
+  mjml: string,
+  options?: { validationLevel?: string }
+) => Promise<{ html: string; errors?: Array<{ formattedMessage: string }> }>;
+
+type MjmlModuleOrFn = MjmlCompiler | { default: MjmlCompiler };
+
+function resolveActiveTemplateOverride(
+  code: EmailTemplateCode,
+  useDraft?: boolean
+): NotificationTemplateOverride | null {
+  const lifecycleEntry = templateLifecycleStore.get(code);
+  if (useDraft) {
+    return lifecycleEntry?.draft ?? lifecycleEntry?.published ?? null;
+  }
+  return lifecycleEntry?.published ?? null;
+}
+
+function assertSafeRenderedHtml(html: string): void {
+  if (SCRIPT_TAG_REGEX.test(html)) {
+    throw new Error(
+      "Security gate error: Remote <script> tag detected in rendered email HTML"
+    );
+  }
+  if (EXTERNAL_IMG_REGEX.test(html)) {
+    throw new Error(
+      "Security gate error: External tracking image detected in rendered email HTML"
+    );
+  }
+}
+
 export async function renderEmailTemplate(
-  code: NotificationCode,
-  payload: Record<string, unknown>
+  code: EmailTemplateCode,
+  payload: TemplateVars,
+  options?: { useDraft?: boolean }
 ): Promise<RenderEmailResult> {
   const template = TEMPLATE_REGISTRY[code];
   if (!template) {
@@ -335,20 +625,26 @@ export async function renderEmailTemplate(
   }
 
   const escapedPayload = escapeTemplateVars(payload);
-  const subject = template.subject(escapedPayload);
-  const mjmlContent = template.mjml(escapedPayload);
-  const plainText = template.plainText(escapedPayload);
+  const activeOverride = resolveActiveTemplateOverride(code, options?.useDraft);
 
-  type MjmlCompiler = (
-    mjml: string,
-    options?: { validationLevel?: string }
-  ) => Promise<{ html: string; errors?: Array<{ formattedMessage: string }> }>;
+  const subject = activeOverride
+    ? interpolateTemplateString(activeOverride.subject, escapedPayload)
+    : template.subject(escapedPayload);
 
-  const fn: unknown = mjml2html;
-  const compileMjml: MjmlCompiler =
-    typeof fn === "function"
-      ? (fn as MjmlCompiler)
-      : (fn as { default: MjmlCompiler }).default;
+  const interpolatedBody = activeOverride
+    ? interpolateTemplateString(activeOverride.body, escapedPayload)
+    : null;
+
+  const mjmlContent = interpolatedBody
+    ? wrapBodyInMjmlIfNeeded(interpolatedBody)
+    : template.mjml(escapedPayload);
+
+  const plainText = interpolatedBody
+    ? stripHtmlTags(interpolatedBody)
+    : template.plainText(escapedPayload);
+
+  const fn: MjmlModuleOrFn = mjml2html as MjmlModuleOrFn;
+  const compileMjml: MjmlCompiler = typeof fn === "function" ? fn : fn.default;
 
   const renderResult = await compileMjml(mjmlContent, {
     validationLevel: "strict",
@@ -361,18 +657,7 @@ export async function renderEmailTemplate(
   }
 
   const html = renderResult.html;
-
-  // Security gate checks
-  if (SCRIPT_TAG_REGEX.test(html)) {
-    throw new Error(
-      "Security gate error: Remote <script> tag detected in rendered email HTML"
-    );
-  }
-  if (EXTERNAL_IMG_REGEX.test(html)) {
-    throw new Error(
-      "Security gate error: External tracking image detected in rendered email HTML"
-    );
-  }
+  assertSafeRenderedHtml(html);
 
   return {
     subject,

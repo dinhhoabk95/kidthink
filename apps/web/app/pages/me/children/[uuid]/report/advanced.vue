@@ -204,7 +204,7 @@
             <div class="flex items-center justify-end">
               <span
                 :class="[
-                  'text-xs font-bold px-2.5 py-0.5 rounded-full',
+                  'text-xs font-bold px-2.5 py-0.5 rounded-full tabular-nums',
                   comp.status === 'ready'
                     ? 'bg-success-100 text-success-800'
                     : 'bg-surface-100 text-surface-600',
@@ -239,7 +239,7 @@
                 ></div>
               </div>
               <p
-                class="text-xs text-surface-500"
+                class="text-xs text-surface-500 tabular-nums"
                 v-if="comp.status === 'insufficient_data'"
               >
                 Cần thêm {{ comp.sessions_needed }} phiên để hoàn thiện đánh giá
@@ -300,7 +300,7 @@
                 >
                   {{ str.mastery_label }}
                 </span>
-                <span class="text-[11px] text-surface-500"
+                <span class="text-[11px] text-surface-500 tabular-nums"
                   >{{ str.sessions_have }}
                   phiên</span
                 >
@@ -369,7 +369,7 @@
                 >
                   {{ sk.mastery_label }}
                 </span>
-                <span class="text-[11px] text-surface-500"
+                <span class="text-[11px] text-surface-500 tabular-nums"
                   >{{ sk.sessions_have }}
                   phiên ({{ sk.attempts_total }}
                   lượt)</span
@@ -443,7 +443,9 @@
                     :style="{ width: `${Math.max(8, w.completion_rate * 100)}%` }"
                   ></div>
                 </div>
-                <span class="w-20 text-right font-medium text-surface-600">
+                <span
+                  class="w-20 text-right font-medium text-surface-600 tabular-nums"
+                >
                   {{ w.completions_count }}/{{ w.sessions_count }}
                   phiên
                 </span>
@@ -458,7 +460,7 @@
             <p class="text-sm font-bold text-surface-700">
               Chưa có đủ dữ liệu xu hướng
             </p>
-            <p class="text-xs text-surface-500">
+            <p class="text-xs text-surface-500 tabular-nums">
               Đã ghi nhận {{ reportData.sections.weekly_trend.weeks_have }}/3
               tuần. Cần thêm
               {{ reportData.sections.weekly_trend.weeks_needed }}
@@ -493,7 +495,9 @@
             v-if="reportData.sections.independence_level.status === 'ready'"
           >
             <div class="text-center py-3 space-y-1">
-              <span class="text-4xl font-extrabold font-heading text-brand-600">
+              <span
+                class="text-4xl font-extrabold font-heading text-brand-600 tabular-nums"
+              >
                 {{ Math.round((reportData.sections.independence_level.independent_completion_rate ?? 0) * 100) }}%
               </span>
               <p class="text-xs text-surface-600 font-medium">
@@ -502,18 +506,18 @@
             </div>
 
             <div
-              class="p-3.5 rounded-2xl bg-surface-50 border border-surface-200 text-xs text-surface-700 space-y-1"
+              class="p-3.5 rounded-2xl bg-surface-50 border border-surface-200 text-xs text-surface-700 space-y-1 tabular-nums"
             >
               <div class="flex justify-between">
                 <span>Số phiên tự lập hoàn thành:</span>
-                <span class="font-bold text-surface-900"
+                <span class="font-bold text-surface-900 tabular-nums"
                   >{{ reportData.sections.independence_level.independent_sessions_count }}
                   phiên</span
                 >
               </div>
               <div class="flex justify-between">
                 <span>Tổng số phiên hoàn thành:</span>
-                <span class="font-bold text-surface-900"
+                <span class="font-bold text-surface-900 tabular-nums"
                   >{{ reportData.sections.independence_level.total_completed_sessions }}
                   phiên</span
                 >

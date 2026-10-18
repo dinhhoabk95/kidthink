@@ -5,11 +5,12 @@ import {
   recurringSubscriptions,
 } from "@mindkid/db";
 import {
+  InvalidCancelReasonError,
   SubscriptionAlreadyCancelledError,
   SubscriptionModelNotFoundError,
 } from "@mindkid/errors/billing";
-import { ValidationError } from "@mindkid/errors/common";
 import {
+  ADMIN_SUBSCRIPTION_CANCEL_REASONS,
   type AdminSubscriptionCancelReason,
   canCancelRecurringSubscription,
   DUNNING_GRACE_PERIOD_DAYS,
@@ -24,7 +25,7 @@ export interface CreateRecurringSubscriptionParams {
   billingPeriod: "monthly" | "annual";
   priceVnd: number;
   termsVersion: string;
-  consentSnapshot?: Record<string, unknown>;
+  consentSnapshot?: Record<string, string | number | boolean | null>;
 }
 
 export interface AdminCancelSubscriptionParams {
@@ -82,7 +83,8 @@ export async function createRecurringSubscription(
 export async function userCancelRecurringSubscription(
   userId: number,
   subscriptionId: number,
-  now = new Date()
+  now = new Date(),
+  reason?: string
 ) {
   const db = getOwnerDb();
 
@@ -108,6 +110,8 @@ export async function userCancelRecurringSubscription(
       );
     }
 
+    const cancelReason = reason?.trim() ? reason.trim() : "user_self_cancel";
+
     const [updatedSub] = await tx
       .update(recurringSubscriptions)
       .set({
@@ -115,7 +119,7 @@ export async function userCancelRecurringSubscription(
         status: "cancelled",
         cancelledAt: now,
         cancelledBy: "user",
-        cancelReason: "user_self_cancel",
+        cancelReason,
         updatedAt: now,
       })
       .where(eq(recurringSubscriptions.id, sub.id))
@@ -158,9 +162,15 @@ export async function adminCancelSubscription(
   params: AdminCancelSubscriptionParams,
   now = new Date()
 ) {
-  if (!params.adminNote || params.adminNote.trim().length < 20) {
-    throw new ValidationError(
-      "Ghi chú quản trị huỷ gói bắt buộc tối thiểu 20 ký tự"
+  if (
+    !(
+      ADMIN_SUBSCRIPTION_CANCEL_REASONS.includes(params.reason) &&
+      params.adminNote
+    ) ||
+    params.adminNote.trim().length < 20
+  ) {
+    throw new InvalidCancelReasonError(
+      "INVALID_CANCEL_REASON: Ghi chú quản trị huỷ gói bắt buộc tối thiểu 20 ký tự"
     );
   }
 

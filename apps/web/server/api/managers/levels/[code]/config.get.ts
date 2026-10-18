@@ -2,9 +2,14 @@ import { gameLevels, getOwnerDb } from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
 import { and, desc, eq } from "drizzle-orm";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { deliverGameConfig } from "#server/utils/game-config-runtime";
 import { issuePreviewToken } from "#server/utils/preview-token";
+
+const LevelConfigQuerySchema = z.object({
+  version: z.union([z.string(), z.number()]).optional(),
+});
 
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
@@ -13,8 +18,8 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError("NOT_FOUND");
   }
 
-  const query = getQuery(event);
-  const rawParam = query.version;
+  const parsedQuery = LevelConfigQuerySchema.safeParse(getQuery(event));
+  const rawParam = parsedQuery.success ? parsedQuery.data.version : undefined;
 
   let version: number | undefined;
   if (rawParam !== undefined && rawParam !== null) {

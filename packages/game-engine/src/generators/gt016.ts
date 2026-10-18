@@ -1,5 +1,5 @@
 import { shuffle } from "#src/rng/shuffle";
-import { timeToAngles } from "../systems/rotation-system.js";
+import { timeToAngles } from "#src/systems/rotation-system";
 import { VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 

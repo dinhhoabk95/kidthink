@@ -4,10 +4,25 @@ import {
   playSessions,
   telemetryEvents,
 } from "@mindkid/db";
-import { computeSessionResult, computeStars } from "@mindkid/shared";
+import {
+  computeSessionResult,
+  computeStars,
+  getDateIct,
+  type TelemetryEventInput,
+} from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { logJobDone } from "#src/log";
+import {
+  computeNetSessionDurationSeconds,
+  rollupChildDailyStatsForWindow,
+} from "#src/services/rollup";
 import type { Consumer } from "./types.js";
+
+function isPayloadRecord(
+  val: typeof telemetryEvents.$inferSelect.payload
+): val is NonNullable<TelemetryEventInput["payload"]> {
+  return typeof val === "object" && val !== null && !Array.isArray(val);
+}
 
 async function upsertChildSessionSummary(
   db: ReturnType<typeof getOwnerDb>,
@@ -90,19 +105,21 @@ export async function runSessionRollup(
     .where(eq(telemetryEvents.sessionUuid, targetUuid))
     .orderBy(telemetryEvents.seq);
 
-  // 3. Compute result using pure function (D-GI, BR-TLM-04)
-  const result = computeSessionResult(
-    events.map((e) => ({
-      sessionUuid: e.sessionUuid,
-      seq: e.seq,
-      eventName: e.eventName,
-      occurredAtMs: e.occurredAtMs,
-      payload: e.payload as Record<string, unknown> | null,
-      clientTimestamp: e.clientTimestamp,
-    }))
-  );
+  const mappedEvents: TelemetryEventInput[] = events.map((e) => ({
+    sessionUuid: e.sessionUuid,
+    seq: e.seq,
+    eventName: e.eventName,
+    occurredAtMs: e.occurredAtMs,
+    payload: isPayloadRecord(e.payload) ? e.payload : null,
+    clientTimestamp: e.clientTimestamp,
+  }));
 
-  const durationSec = Math.round(result.metrics.duration_ms / 1000);
+  // 3. Compute result using pure function (D-GI, BR-TLM-04, BR-HPL-07)
+  const result = computeSessionResult(mappedEvents);
+  const durationSec = computeNetSessionDurationSeconds(
+    session.durationSeconds,
+    mappedEvents
+  );
   const targetStatus =
     session.completionStatus === "in_progress"
       ? "completed"
@@ -110,7 +127,7 @@ export async function runSessionRollup(
 
   const stars = computeStars(result.normalized_score, targetStatus);
 
-  // 4. Update play_sessions if in_progress (BR-SPT-07 prevents updating terminal sessions)
+  // 4. Update play_sessions if in_progress or if net duration needs sync (BR-HPL-07)
   if (session.completionStatus === "in_progress") {
     await db
       .update(playSessions)
@@ -123,12 +140,21 @@ export async function runSessionRollup(
         updatedAt: new Date(),
       })
       .where(eq(playSessions.sessionUuid, targetUuid));
+  } else if (session.durationSeconds !== durationSec) {
+    await db
+      .update(playSessions)
+      .set({
+        durationSeconds: durationSec,
+        updatedAt: new Date(),
+      })
+      .where(eq(playSessions.sessionUuid, targetUuid));
   }
 
-  // 5. Update child_session_summaries if childProfileId is present (Idempotent upsert)
+  // 5. Update child_session_summaries & child_daily_stats if childProfileId is present (Idempotent upsert)
   if (session.childProfileId) {
+    const childId = Number(session.childProfileId);
     await upsertChildSessionSummary(db, {
-      childProfileId: session.childProfileId,
+      childProfileId: childId,
       sessionUuid: targetUuid,
       gameLevelId: session.gameLevelId,
       contentVersion: session.contentVersion,
@@ -141,6 +167,9 @@ export async function runSessionRollup(
       retryCount: result.metrics.retry_count ?? 0,
       completedAt: session.completedAt,
     });
+
+    const sessionDateIct = getDateIct(session.startedAt);
+    await rollupChildDailyStatsForWindow(db, sessionDateIct, childId);
   }
 
   // D-MH: mastery_state is updated synchronously in completePlaySession transaction.

@@ -6,17 +6,18 @@ import {
 } from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
 import { desc, eq } from "drizzle-orm";
-import { cleanEventPayload } from "./events/sanitize.js";
+import { cleanEventPayload } from "#src/events/sanitize";
 import {
   type IngestEventItem,
   validateBatchPayload,
   validateSequenceNumbers,
-} from "./events/validate.js";
+  validateTelemetryEventRecord,
+} from "#src/events/validate";
 import {
   checkSessionOwnership,
   type IngestOptions,
-} from "./session/ownership.js";
-import type { DbOrTx } from "./types.js";
+} from "#src/session/ownership";
+import type { DbOrTx } from "#src/types";
 
 function normalizeOccurredAtMs(
   rawMs: number | undefined,
@@ -80,6 +81,17 @@ export async function insertIngestedEventsBatch(
       ev.client_timestamp,
       ev.occurred_at_ms
     );
+    const cleanedPayload = cleanEventPayload(ev.event_name, ev.payload);
+
+    validateTelemetryEventRecord({
+      session_uuid: sessionUuid,
+      seq: ev.seq,
+      event_name: ev.event_name,
+      content_version: session.contentVersion,
+      occurred_at_ms: occurredAtMs,
+      payload: cleanedPayload,
+      client_timestamp: clientTimestamp,
+    });
 
     toInsert.push({
       sessionUuid,
@@ -90,7 +102,7 @@ export async function insertIngestedEventsBatch(
       templateCode: session.templateCode,
       eventName: ev.event_name,
       occurredAtMs,
-      payload: cleanEventPayload(ev.event_name, ev.payload),
+      payload: cleanedPayload,
       clientTimestamp,
     });
   }

@@ -3,6 +3,7 @@ import { activities, getOwnerDb, lessonActivities, lessons } from "@mindkid/db";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import {
   ActivityNotFoundError,
+  ContentImmutableError,
   LessonNotFoundError,
   VersionConflictError,
 } from "@mindkid/errors/content";
@@ -119,6 +120,12 @@ export default defineEventHandler(async (event) => {
   ) {
     throw new VersionConflictError(
       `Expected version ${expected_version}, but found ${lesson.contentVersion}`
+    );
+  }
+
+  if (lesson.status === "published") {
+    throw new ContentImmutableError(
+      "BR-CLC-01: Không thể sửa trực tiếp bài học đã phát hành (published). Hãy tạo phiên bản mới."
     );
   }
 

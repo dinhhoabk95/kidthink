@@ -38,11 +38,11 @@ describe("Security Checklist Contract (BR-SEC-01..10)", () => {
     }
   });
 
-  it("BR-SEC-04 — mọi route /api/* đọc body đều validate bằng Zod trong cùng file", () => {
+  it("BR-SEC-04 — mọi route /api/* đọc body, query, params đều validate bằng Zod trong cùng file", () => {
     const findings = findUnvalidatedRoutes();
     expect(
       findings,
-      "Tất cả các route /api/* phải Zod validate body (BR-SEC-04)"
+      "Tất cả các route /api/* phải Zod validate body, query, params (BR-SEC-04)"
     ).toEqual([]);
   });
 

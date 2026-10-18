@@ -1,4 +1,4 @@
-import { cluesNarrowToExactlyOne } from "../templates/GT-009/deduction.js";
+import { cluesNarrowToExactlyOne } from "#src/templates/GT-009/deduction";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 

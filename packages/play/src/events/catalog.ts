@@ -1,6 +1,6 @@
 export const ALLOWED_EVENT_NAMES = new Set<string>([
   "game_started",
-  "instructionewed",
+  "instruction_viewed",
   "game_paused",
   "game_resumed",
   "game_completed",
@@ -91,15 +91,36 @@ export const ALLOWED_EVENT_NAMES = new Set<string>([
   "element_removed",
   "creation_submitted",
   "rule_detected",
+  // Hệ thống — catalog §7.4
+  "payment_webhook_received",
+  "subscription_renewed",
+  "subscription_cancelled",
+  "offline_pack_downloaded",
+  "offline_pack_synced",
 ]);
 
 export const PII_FIELDS = new Set<string>([
+  "name",
   "display_name",
   "birth_year",
+  "age",
   "user_id",
   "email",
+  "phone",
+  "address",
   "ip",
+  "child_uuid",
   "score",
+  "x",
+  "y",
+  "client_x",
+  "client_y",
+  "page_x",
+  "page_y",
+  "screen_x",
+  "screen_y",
+  "touch_x",
+  "touch_y",
 ]);
 
 export const EVENT_PAYLOAD_FIELDS: Readonly<
@@ -113,7 +134,7 @@ export const EVENT_PAYLOAD_FIELDS: Readonly<
     "reduced_motion",
     "round_index",
   ]),
-  instructionewed: new Set(["modality", "replay_count"]),
+  instruction_viewed: new Set(["modality", "replay_count"]),
   game_paused: new Set(["reason"]),
   game_resumed: new Set(["paused_ms"]),
   game_completed: new Set(["duration_ms", "rounds_total", "rounds_correct"]),
@@ -178,6 +199,9 @@ export const EVENT_PAYLOAD_FIELDS: Readonly<
     "attempts",
     "hints_used",
     "duration_ms",
+    "omissions",
+    "commissions",
+    "order",
   ]),
   round_retried: new Set(["round_index", "retry_index"]),
   round_skipped: new Set(["round_index", "reason"]),
@@ -195,7 +219,12 @@ export const EVENT_PAYLOAD_FIELDS: Readonly<
   parent_gate_shown: new Set(["trigger"]),
   parent_gate_passed: new Set(["attempts"]),
   parent_gate_failed: new Set(["attempts"]),
-  item_selected: new Set(["item_id", "is_correct", "round_index"]),
+  item_selected: new Set([
+    "item_id",
+    "is_correct",
+    "round_index",
+    "commission",
+  ]),
   selection_submitted: new Set(["is_correct", "round_index"]),
   item_dragged: new Set(["item_id", "round_index"]),
   item_dropped: new Set([
@@ -348,4 +377,9 @@ export const EVENT_PAYLOAD_FIELDS: Readonly<
     "is_win",
     "round_index",
   ]),
+  payment_webhook_received: new Set(["order_id", "provider", "status"]),
+  subscription_renewed: new Set(["user_id", "package_code", "expires_at"]),
+  subscription_cancelled: new Set(["user_id", "package_code", "reason"]),
+  offline_pack_downloaded: new Set(["pack_id", "level_count", "bytes"]),
+  offline_pack_synced: new Set(["pack_id", "sessions_count", "events_count"]),
 };

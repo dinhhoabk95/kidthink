@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Dependency install and build (BR-DEP-05, BR-SRV-11).
+# Dependency install and build (BR-DEP-05, BR-DEP-13, BR-DEP-15, BR-SRV-11).
 #
 # Both happen inside the node:24-bookworm container, never on the host:
 #   - the workstation is macOS ARM and the server is Linux x86, and the image
@@ -9,6 +9,17 @@
 
 build_release() {
   local release_dir="$1"
+
+  # BR-DEP-13: Build runs only in the new release directory while the currently
+  # active release continues serving traffic; never build inside `current`.
+  local active_release=""
+  if command -v current_release_path >/dev/null 2>&1; then
+    active_release="$(current_release_path)"
+  fi
+  if [ -n "${active_release}" ] && [ "${release_dir}" = "${active_release}" ]; then
+    log_error "BR-DEP-13: refusing to build inside the currently active release directory (${release_dir})."
+    return 1
+  fi
 
   if ! command -v docker >/dev/null 2>&1; then
     log_error "docker not found; BR-DEP-05 requires the build to run in ${MK_BUILD_IMAGE}."
@@ -60,6 +71,8 @@ build_release() {
     log_error "Build finished but the release is missing built output for one or more applications."
     return 1
   fi
+
+  smoke_release_artifacts "${release_dir}" || return 1
 }
 
 run_migrations() {

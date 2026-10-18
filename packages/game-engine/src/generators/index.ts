@@ -89,5 +89,5 @@ export function getLevelGenerator(code: string): LevelGenerator | undefined {
 }
 
 // biome-ignore lint/performance/noBarrelFile: re-export deriveStream for level generators
-export { deriveStream } from "../rng/mulberry32.js";
+export { deriveStream } from "#src/rng/mulberry32";
 export { type LabelledVocabulary, pickContrast } from "./contrast.js";

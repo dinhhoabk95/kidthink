@@ -2,12 +2,10 @@
 spec: AUDIT-LOG-VIEWER
 title: Xem nhật ký kiểm toán
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-10-18
-open_tasks:
-  - "#300"
 owns:
   - Bề mặt tra cứu audit
 depends_on:
@@ -16,8 +14,6 @@ depends_on:
 ---
 
 # Xem nhật ký kiểm toán
-
-> **Chưa hoàn thành** — `/audit` không đọc `route.query`, nên link "xem lịch sử" mở danh sách không lọc; link chỉ có ở `/flags` và `/errors`, chưa có ở chi tiết User, level, đơn (BR-ALV-05). Việc còn lại: [Task #300](../../tasks/300-admin-small-gaps-plan.md).
 
 ## 1. Objective
 

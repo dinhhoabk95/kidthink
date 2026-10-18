@@ -15,7 +15,7 @@ export const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     reduced_motion: z.boolean(),
     round_index: NON_NEGATIVE_INT,
   }),
-  instructionewed: z.object({
+  instruction_viewed: z.object({
     modality: z.enum(["audio", "visual", "both"]),
     replay_count: NON_NEGATIVE_INT,
   }),
@@ -145,6 +145,11 @@ export const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     attempts: NON_NEGATIVE_INT,
     hints_used: NON_NEGATIVE_INT,
     duration_ms: NON_NEGATIVE_INT,
+    omissions: NON_NEGATIVE_INT.optional(),
+    commissions: NON_NEGATIVE_INT.optional(),
+    order: z
+      .union([z.enum(["forward", "backward"]), z.array(NON_NEGATIVE_INT)])
+      .optional(),
   }),
   round_retried: z.object({
     round_index: NON_NEGATIVE_INT,
@@ -193,6 +198,7 @@ export const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
   item_selected: z.object({
     item_id: CONTENT_ID,
     is_correct: z.boolean(),
+    commission: z.boolean().optional(),
     round_index: OPTIONAL_ROUND_INDEX,
   }),
   selection_submitted: z.object({
@@ -500,5 +506,30 @@ export const EVENT_PAYLOAD_SCHEMAS: Readonly<Record<string, z.AnyZodObject>> = {
     score: NON_NEGATIVE_INT,
     is_win: z.boolean(),
     round_index: OPTIONAL_ROUND_INDEX,
+  }),
+  payment_webhook_received: z.object({
+    order_id: CONTENT_ID,
+    provider: z.string().max(32),
+    status: z.string().max(32),
+  }),
+  subscription_renewed: z.object({
+    user_id: NON_NEGATIVE_INT,
+    package_code: CONTENT_ID,
+    expires_at: z.string().max(64),
+  }),
+  subscription_cancelled: z.object({
+    user_id: NON_NEGATIVE_INT,
+    package_code: CONTENT_ID,
+    reason: z.string().max(64),
+  }),
+  offline_pack_downloaded: z.object({
+    pack_id: CONTENT_ID,
+    level_count: NON_NEGATIVE_INT,
+    bytes: NON_NEGATIVE_INT,
+  }),
+  offline_pack_synced: z.object({
+    pack_id: CONTENT_ID,
+    sessions_count: NON_NEGATIVE_INT,
+    events_count: NON_NEGATIVE_INT,
   }),
 };

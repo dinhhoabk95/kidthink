@@ -8,12 +8,15 @@ import {
 } from "@mindkid/errors/common";
 import { UnsupportedMediaTypeError } from "@mindkid/errors/content";
 import {
+  buildRelativeImagePath,
   detectImageMimeType,
   isSvgContent,
+  normalizeImageAsset,
   uploadPublicImage,
 } from "@mindkid/storage";
 import {
   defineEventHandler,
+  type MultiPartData,
   readMultipartFormData,
   setResponseStatus,
 } from "h3";
@@ -50,8 +53,6 @@ function processField(
     result.alt = val.trim();
   }
 }
-
-import type { MultiPartData } from "h3";
 
 function parseMultipartItems(items: MultiPartData[] | null | undefined) {
   const result = {
@@ -105,7 +106,7 @@ function validateUpload(
 }
 
 export default defineEventHandler(async (event) => {
-  const manager = await requireManagerSession(event);
+  const manager = requireManagerSession(event);
 
   const rawFormData =
     (event as { _multipartFormData?: MultiPartData[] })._multipartFormData ??
@@ -118,24 +119,25 @@ export default defineEventHandler(async (event) => {
 
   validateUpload(fileBuffer, fileName, alt);
   const validBuffer = fileBuffer as Buffer;
+  const normalized = normalizeImageAsset(validBuffer);
 
   const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
   const fileHash = crypto.randomBytes(8).toString("hex");
-  const relativePath = `content/${year}/${month}/${fileHash}.webp`;
-  const thumbPath = `content/${year}/${month}/${fileHash}_thumb.webp`;
+  const { path: relativePath, thumbPath } = buildRelativeImagePath(
+    fileHash,
+    now
+  );
 
   await uploadPublicImage({
     key: relativePath,
-    body: validBuffer,
-    contentType: "image/webp",
+    body: normalized.buffer,
+    contentType: normalized.outputMimeType,
   });
 
   await uploadPublicImage({
     key: thumbPath,
-    body: validBuffer,
-    contentType: "image/webp",
+    body: normalized.buffer,
+    contentType: normalized.outputMimeType,
   });
 
   const managerId = manager.manager_id;
@@ -148,10 +150,10 @@ export default defineEventHandler(async (event) => {
       ownerId,
       storagePath: relativePath,
       thumbPath,
-      width: 960,
-      height: 960,
-      bytes: validBuffer.length,
-      mime: "image/webp",
+      width: normalized.width,
+      height: normalized.height,
+      bytes: normalized.fileSizeBytes,
+      mime: normalized.outputMimeType,
       altText: alt,
       visibility: "public",
       status: "active",
@@ -184,7 +186,7 @@ export default defineEventHandler(async (event) => {
     id: imageRecord.id,
     path: relativePath,
     thumb_path: thumbPath,
-    width: 960,
-    height: 960,
+    width: normalized.width,
+    height: normalized.height,
   };
 });

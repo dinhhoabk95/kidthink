@@ -2,6 +2,7 @@ import { getOwnerDb } from "@mindkid/db";
 import {
   type AccessTier,
   GUEST_CTA_VIEWER,
+  getEffectiveTier,
   resolveLevelCta,
 } from "@mindkid/shared";
 import { defineEventHandler, getQuery, setHeader } from "h3";
@@ -26,26 +27,40 @@ export default defineEventHandler(async (event) => {
   const result = await searchGameLevels(db, query, { role: "guest" });
 
   if (result.no_store) {
-    setHeader(event, "Cache-Control", "no-store, no-cache, must-revalidate");
+    setHeader(
+      event,
+      "Cache-Control",
+      "private, no-store, no-cache, must-revalidate"
+    );
   }
 
   const items = result.items.map((item) => {
-    const {
-      content_pack: _contentPack,
-      difficulty_params: _difficultyParams,
-      ...card
-    } = item as typeof item & {
-      content_pack?: unknown;
-      difficulty_params?: unknown;
-    };
-
+    const effectiveTier = getEffectiveTier(
+      item.access_tier as AccessTier,
+      null,
+      {
+        code: item.code,
+        callerKind: "guest",
+      }
+    );
     return {
-      ...card,
-      cta: resolveLevelCta(
-        card.code,
-        card.access_tier as AccessTier,
-        GUEST_CTA_VIEWER
-      ),
+      id: item.id,
+      entity_id: item.entity_id,
+      code: item.code,
+      title: item.title,
+      description: item.description,
+      instruction: item.instruction,
+      thumbnail_emoji: item.thumbnail_emoji,
+      theme_id: item.theme_id,
+      competency: item.competency,
+      age_band: item.age_band,
+      age_min: item.age_min,
+      age_max: item.age_max,
+      difficulty: item.difficulty,
+      access_tier: item.access_tier,
+      status: item.status,
+      locked: effectiveTier !== "free",
+      cta: resolveLevelCta(item.code, effectiveTier, GUEST_CTA_VIEWER),
     };
   });
 

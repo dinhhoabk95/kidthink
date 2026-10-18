@@ -2,12 +2,10 @@
 spec: NOTIFICATION-SERVICE
 title: Dịch vụ thông báo
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-10-18
-open_tasks:
-  - "#289"
 owns:
   - Danh sách loại thông báo
   - Logical notification và delivery đa kênh
@@ -19,8 +17,6 @@ depends_on:
 ---
 
 # Dịch vụ thông báo
-
-> **Chưa hoàn thành** — Thiếu `GET /api/users/notification-preferences` (chỉ có `PUT`); route SES chưa kiểm topic ARN allow-list và timestamp (`BR-NOT-11`); `BR-NOT-09`…`BR-NOT-13` chưa có test trỏ mã. Việc còn lại: [Task #289](../../tasks/289-transactional-email-dispatch-plan.md).
 
 ## 1. Objective
 

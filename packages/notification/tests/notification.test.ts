@@ -2,25 +2,36 @@ import { createSign, generateKeyPairSync } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import {
   buildSnsStringToSign,
+  type EmailTemplateCode,
   FakeLocalEmailDriver,
   NodemailerSmtpDriver,
   parseAndVerifySesNotification,
   renderEmailTemplate,
   verifySnsCertUrl,
+  verifySnsEnvelopeClaims,
   verifySnsSignatureWithCert,
 } from "#src/index";
 
 const FAKE_MSG_ID_REGEX = /^msg_fake_/;
 
-describe("@mindkid/notification tests", () => {
-  describe("Typed MJML renderer", () => {
-    it("renders all 11 notification template codes successfully", async () => {
-      const templates = [
+describe("@mindkid/notification tests (BR-NOT-09, BR-NOT-10, BR-NOT-11, BR-NOT-12, BR-NOT-13)", () => {
+  describe("Typed MJML renderer (BR-NOT-08, BR-NOT-09)", () => {
+    it("renders all notification template codes successfully", async () => {
+      const templates: ReadonlyArray<{
+        code: EmailTemplateCode;
+        payload: Record<string, string | number>;
+      }> = [
         {
           code: "email_verification",
           payload: {
             url: "https://tinimath.vn/verify?code=123",
             code: "123456",
+          },
+        },
+        {
+          code: "email_verification",
+          payload: {
+            url: "https://tinimath.vn/xac-thuc?token=abc",
           },
         },
         {
@@ -67,10 +78,18 @@ describe("@mindkid/notification tests", () => {
           code: "admin_alert",
           payload: { alertTitle: "High Load", message: "CPU > 90%" },
         },
-      ] as const;
+        {
+          code: "social_identity_linked",
+          payload: { provider: "google" },
+        },
+        {
+          code: "social_identity_unlinked",
+          payload: { provider: "facebook" },
+        },
+      ];
 
       for (const t of templates) {
-        const res = await renderEmailTemplate(t.code as any, t.payload);
+        const res = await renderEmailTemplate(t.code, t.payload);
         expect(res.subject).toBeTruthy();
         expect(res.html).toContain("<!doctype html>");
         expect(res.text).toBeTruthy();
@@ -96,7 +115,7 @@ describe("@mindkid/notification tests", () => {
     });
   });
 
-  describe("Email drivers", () => {
+  describe("Email drivers (BR-NOT-02, BR-NOT-10, BR-NOT-13)", () => {
     it("FakeLocalEmailDriver records sent emails in memory", async () => {
       const driver = new FakeLocalEmailDriver();
       const res = await driver.sendEmail({
@@ -110,7 +129,7 @@ describe("@mindkid/notification tests", () => {
       expect(driver.getSentMails()).toHaveLength(1);
     });
 
-    it("NodemailerSmtpDriver lazy initializes and validates email recipient", async () => {
+    it("NodemailerSmtpDriver lazy initializes and validates email recipient (BR-NOT-02, BR-NOT-10)", async () => {
       const driver = new NodemailerSmtpDriver({
         host: "smtp.mailtrap.io",
         port: 2525,
@@ -129,8 +148,8 @@ describe("@mindkid/notification tests", () => {
     });
   });
 
-  describe("SNS / SES Verifier", () => {
-    it("verifySnsCertUrl enforces AWS SNS domain pattern", () => {
+  describe("SNS / SES Verifier (BR-NOT-11, BR-NOT-12)", () => {
+    it("verifySnsCertUrl enforces AWS SNS domain pattern (BR-NOT-11)", () => {
       expect(
         verifySnsCertUrl(
           "https://sns.us-east-1.amazonaws.com/SimpleNotificationService.pem"
@@ -145,7 +164,36 @@ describe("@mindkid/notification tests", () => {
       ).toBe(false);
     });
 
-    it("parseAndVerifySesNotification parses valid SES event inside SNS message", () => {
+    it("verifySnsEnvelopeClaims checks allow-list TopicArn and anti-replay Timestamp (BR-NOT-11)", () => {
+      const validMsg = {
+        Type: "Notification" as const,
+        MessageId: "sns-123",
+        TopicArn: "arn:aws:sns:ap-southeast-1:123456789012:mindkid-ses-events",
+        Message: "{}",
+        Timestamp: new Date().toISOString(),
+        SignatureVersion: "1",
+        Signature: "sig",
+        SigningCertURL: "https://sns.ap-southeast-1.amazonaws.com/cert.pem",
+      };
+
+      expect(verifySnsEnvelopeClaims(validMsg).valid).toBe(true);
+
+      expect(
+        verifySnsEnvelopeClaims({
+          ...validMsg,
+          TopicArn: "arn:aws:sns:ap-southeast-1:999999999999:rogue-topic",
+        }).valid
+      ).toBe(false);
+
+      expect(
+        verifySnsEnvelopeClaims({
+          ...validMsg,
+          Timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+        }).valid
+      ).toBe(false);
+    });
+
+    it("parseAndVerifySesNotification parses valid SES event inside SNS message (BR-NOT-11)", () => {
       const snsMsg = {
         Type: "Notification",
         MessageId: "sns-123",
@@ -175,7 +223,7 @@ describe("@mindkid/notification tests", () => {
       expect(res.event?.mail.messageId).toBe("ses-msg-1");
     });
 
-    it("rejects SNS payload with disallowed TopicArn", () => {
+    it("rejects SNS payload with disallowed TopicArn (BR-NOT-11)", () => {
       const snsMsg = {
         Type: "Notification",
         MessageId: "sns-123",
@@ -197,7 +245,7 @@ describe("@mindkid/notification tests", () => {
       expect(res.error).toContain("TopicArn not in allow-list");
     });
 
-    it("verifySnsSignatureWithCert rejects a forged signature", () => {
+    it("verifySnsSignatureWithCert rejects a forged signature (BR-NOT-11)", () => {
       const { publicKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
       const certPem = publicKey.export({ type: "spki", format: "pem" });
 
@@ -215,7 +263,7 @@ describe("@mindkid/notification tests", () => {
       expect(verifySnsSignatureWithCert(forged, String(certPem))).toBe(false);
     });
 
-    it("verifySnsSignatureWithCert accepts a signature made with the matching key", () => {
+    it("verifySnsSignatureWithCert accepts a signature made with the matching key (BR-NOT-11)", () => {
       const { privateKey, publicKey } = generateKeyPairSync("rsa", {
         modulusLength: 2048,
       });

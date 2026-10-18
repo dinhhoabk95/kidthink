@@ -9,19 +9,23 @@
           Hàng Đợi Duyệt Nội Dung
         </h1>
         <p class="text-sm text-surface-500 mt-1">
-          Cổng kiểm soát chất lượng sư phạm và an toàn trước khi xuất bản
-          (P2.8).
+          Cổng kiểm soát chất lượng sư phạm và an toàn trước khi xuất bản (P2.8,
+          BR-CRQ-01).
         </p>
       </div>
 
-      <!-- Bulk Reject by Author Action (BR-CRQ-01: Bulk reject allowed, bulk approve FORBIDDEN) -->
       <div class="flex items-center gap-3" v-if="selectedAuthorId">
-        <button
-          class="px-4 py-2 rounded-2xl bg-danger-600 hover:bg-danger-700 active:scale-95 text-white font-semibold text-sm transition-all shadow-sm"
-          type="button"
-          @click="openBulkRejectModal"
+        <span
+          class="text-xs px-3 py-1.5 rounded-full bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 font-semibold"
         >
-          Từ chối cả lô của tác giả #{{ selectedAuthorId }}
+          Đang lọc tác giả #{{ selectedAuthorId }}
+        </span>
+        <button
+          class="px-3 py-1.5 rounded-xl border border-surface-300 dark:border-surface-600 text-xs font-semibold text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700"
+          type="button"
+          @click="selectAuthorForFilter(null)"
+        >
+          Bỏ lọc tác giả
         </button>
       </div>
     </div>
@@ -46,6 +50,7 @@
           <option value="">Tất cả loại</option>
           <option value="game_level">Màn chơi (Game Level)</option>
           <option value="lesson">Bài học (Lesson)</option>
+          <option value="activity">Hoạt động (Activity)</option>
         </select>
       </div>
 
@@ -164,63 +169,11 @@
 
             <NuxtLink
               class="px-4 py-2 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-semibold text-sm transition-all"
-              :to="`/studio/review/${item.id}?type=${item.entity_type}`"
+              :to="`/studio/review/${item.id}?type=${item.entity_type}&code=${encodeURIComponent(item.code)}&version=${item.version}`"
             >
               Mở duyệt
             </NuxtLink>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bulk Reject Modal -->
-    <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
-      v-if="isBulkRejectModalOpen"
-    >
-      <div
-        class="w-full max-w-lg bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4"
-      >
-        <h2 class="text-lg font-bold text-surface-900 dark:text-white">
-          Từ chối hàng loạt của tác giả #{{ selectedAuthorId }}
-        </h2>
-        <p class="text-xs text-surface-500">
-          Lý do từ chối là bắt buộc (tối thiểu 10 ký tự, BR-CRQ-03) và sẽ được
-          ghi vào nhật ký kiểm duyệt cho từng bản.
-        </p>
-
-        <div>
-          <label
-            class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
-            for="bulk-reject-reason"
-          >
-            Lý do từ chối *
-          </label>
-          <textarea
-            class="w-full p-3 text-sm rounded-xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-danger-500 focus:outline-none"
-            id="bulk-reject-reason"
-            placeholder="Nêu rõ lý do từ chối cho tác giả..."
-            rows="3"
-            v-model="bulkRejectReason"
-          />
-        </div>
-
-        <div class="flex items-center justify-end gap-3 pt-2">
-          <button
-            class="px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 font-semibold text-sm"
-            type="button"
-            @click="isBulkRejectModalOpen = false"
-          >
-            Huỷ
-          </button>
-          <button
-            class="px-5 py-2 rounded-xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white font-semibold text-sm transition-all"
-            type="button"
-            :disabled="bulkRejectReason.trim().length < 10 || isSubmitting"
-            @click="confirmBulkReject"
-          >
-            {{ isSubmitting ? "Đang xử lý..." : "Xác nhận từ chối cả lô" }}
-          </button>
         </div>
       </div>
     </div>
@@ -230,6 +183,7 @@
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
   import { definePageMeta, useHead } from "#imports";
+  import { apiFetch } from "~/composables/use-api-client";
 
   definePageMeta({
     layout: "manager",
@@ -258,10 +212,6 @@
   const selectedOrigin = ref("");
   const selectedAuthorId = ref<number | null>(null);
 
-  const isBulkRejectModalOpen = ref(false);
-  const bulkRejectReason = ref("");
-  const isSubmitting = ref(false);
-
   onMounted(() => {
     fetchQueue();
   });
@@ -282,7 +232,7 @@
 
       const res = await apiFetch<{ items: QueueItem[] }>(
         "/api/managers/content/review-queue",
-        { params }
+        { params, query: params }
       );
       queueItems.value = res.items || [];
     } catch (err) {
@@ -295,35 +245,6 @@
   function selectAuthorForFilter(authorId: number | null) {
     selectedAuthorId.value = authorId;
     fetchQueue();
-  }
-
-  function openBulkRejectModal() {
-    bulkRejectReason.value = "";
-    isBulkRejectModalOpen.value = true;
-  }
-
-  async function confirmBulkReject() {
-    if (bulkRejectReason.value.trim().length < 10 || !selectedAuthorId.value) {
-      return;
-    }
-
-    isSubmitting.value = true;
-    try {
-      await apiFetch("/api/managers/content/review-queue/bulk-reject", {
-        method: "POST",
-        body: {
-          created_by_manager_id: selectedAuthorId.value,
-          reason: bulkRejectReason.value.trim(),
-        },
-      });
-      isBulkRejectModalOpen.value = false;
-      selectedAuthorId.value = null;
-      await fetchQueue();
-    } catch (err) {
-      console.error("Failed to bulk reject", err);
-    } finally {
-      isSubmitting.value = false;
-    }
   }
 
   function formatDate(isoStr: string): string {

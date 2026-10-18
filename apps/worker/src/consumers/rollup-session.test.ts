@@ -1,4 +1,5 @@
 import {
+  childDailyStats,
   childProfiles,
   childSessionSummaries,
   gameLevels,
@@ -7,11 +8,12 @@ import {
   telemetryEvents,
   users,
 } from "@mindkid/db";
-import { eq } from "drizzle-orm";
+import { computeRemainingPlaySeconds, getDateIct } from "@mindkid/shared";
+import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
 import { runSessionRollup } from "./rollup-session.js";
 
-describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", () => {
+describe("Task 5 & #293 S2 — rollup:session Integration Suite (BR-TLM-04, BR-JOB-01, BR-HPL-02, BR-HPL-07)", () => {
   it("computes official score from events, updates play_sessions and child_session_summaries idempotently", async () => {
     const db = getOwnerDb();
 
@@ -96,24 +98,28 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
       {
         sessionUuid,
         seq: 1,
+        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid,
         seq: 2,
+        contentVersion: 1,
         eventName: "round_started",
         occurredAtMs: 100,
       },
       {
         sessionUuid,
         seq: 3,
+        contentVersion: 1,
         eventName: "hint_requested",
         occurredAtMs: 200,
       },
       {
         sessionUuid,
         seq: 4,
+        contentVersion: 1,
         eventName: "answer_selected",
         occurredAtMs: 300,
         payload: { fakeClientScore: 9999 },
@@ -121,6 +127,7 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
       {
         sessionUuid,
         seq: 5,
+        contentVersion: 1,
         eventName: "answer_correct",
         occurredAtMs: 400,
         payload: { score: 9999 },
@@ -128,12 +135,14 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
       {
         sessionUuid,
         seq: 6,
+        contentVersion: 1,
         eventName: "round_completed",
         occurredAtMs: 500,
       },
       {
         sessionUuid,
         seq: 7,
+        contentVersion: 1,
         eventName: "game_completed",
         occurredAtMs: 1000,
         payload: { score: 9999 },
@@ -174,5 +183,140 @@ describe("Task 5 — rollup:session Integration Suite (BR-TLM-04 & BR-JOB-01)", 
 
     expect(updatedPs2?.score).toBe(updatedPs1?.score);
     expect(updatedPs2?.starsEarned).toBe(updatedPs1?.starsEarned);
+  });
+
+  it("Task #293 S2 (BR-HPL-02 & BR-HPL-07): preserves extra_time_granted_minutes on rollup and subtracts paused_ms (10m play - 4m paused = 6m)", async () => {
+    const db = getOwnerDb();
+    const dateIct = getDateIct();
+
+    const [u] = await db
+      .insert(users)
+      .values({
+        email: `parent-pause-${Date.now()}@example.com`,
+        displayName: "Parent Pause",
+      })
+      .returning();
+    expect(u).toBeDefined();
+    if (!u) {
+      return;
+    }
+
+    const [child] = await db
+      .insert(childProfiles)
+      .values({
+        userId: u.id,
+        displayName: "Bé An",
+        birthYear: 2020,
+        avatarId: "preset_01",
+        dailyPlayCapMinutes: 30,
+      })
+      .returning();
+    expect(child).toBeDefined();
+    if (!child) {
+      return;
+    }
+
+    // Phụ huynh đã cấp thêm 15 phút trước đó
+    await db.insert(childDailyStats).values({
+      childProfileId: child.id,
+      dateIct,
+      totalPlayTimeSeconds: 0,
+      extraTimeGrantedMinutes: 15,
+    });
+
+    const suffix = Math.floor(Math.random() * 899_000 + 100_000);
+    const [gl] = await db
+      .insert(gameLevels)
+      .values({
+        entityId: suffix,
+        code: `GL-C1-PAUSE-${suffix}`,
+        contentVersion: 1,
+        templateCode: "GT-001",
+        title: "Level Pause Test",
+        contentPack: { test: true },
+        difficultyParams: {},
+        accessTier: "free",
+        status: "published",
+      })
+      .returning();
+    expect(gl).toBeDefined();
+    if (!gl) {
+      return;
+    }
+
+    const sessionUuid = `f1eebc99-9c0b-4ef8-bb6d-${Math.floor(Math.random() * 899_900_000_000 + 100_000_000_000)}`;
+    await db.insert(playSessions).values({
+      sessionUuid,
+      childProfileId: child.id,
+      gameLevelId: gl.id,
+      contentVersion: 1,
+      templateCode: "GT-001",
+      completionStatus: "in_progress",
+      startedAt: new Date(),
+    });
+
+    // Phiên tổng 10 phút (600_000ms) nhưng tạm dừng 4 phút (240_000ms)
+    await db.insert(telemetryEvents).values([
+      {
+        sessionUuid,
+        seq: 1,
+        contentVersion: 1,
+        eventName: "game_started",
+        occurredAtMs: 0,
+      },
+      {
+        sessionUuid,
+        seq: 2,
+        contentVersion: 1,
+        eventName: "game_paused",
+        occurredAtMs: 120_000,
+        payload: { reason: "tab_hidden" },
+      },
+      {
+        sessionUuid,
+        seq: 3,
+        contentVersion: 1,
+        eventName: "game_resumed",
+        occurredAtMs: 360_000,
+        payload: { paused_ms: 240_000 },
+      },
+      {
+        sessionUuid,
+        seq: 4,
+        contentVersion: 1,
+        eventName: "game_completed",
+        occurredAtMs: 600_000,
+        payload: { duration_ms: 600_000, rounds_total: 1, rounds_correct: 1 },
+      },
+    ]);
+
+    await runSessionRollup(sessionUuid);
+
+    const [updatedSession] = await db
+      .select()
+      .from(playSessions)
+      .where(eq(playSessions.sessionUuid, sessionUuid));
+    // 10 phút (600s) - 4 phút tạm dừng (240s) = 360s (6 phút)
+    expect(updatedSession?.durationSeconds).toBe(360);
+
+    const [stats] = await db
+      .select()
+      .from(childDailyStats)
+      .where(
+        and(
+          eq(childDailyStats.childProfileId, child.id),
+          eq(childDailyStats.dateIct, dateIct)
+        )
+      );
+
+    expect(stats?.totalPlayTimeSeconds).toBe(360);
+    // extraTimeGrantedMinutes không bị mất sau rollup!
+    expect(stats?.extraTimeGrantedMinutes).toBe(15);
+
+    const remainingMinutes = Math.floor(
+      computeRemainingPlaySeconds(stats ?? null, child.dailyPlayCapMinutes) / 60
+    );
+    // (30 + 15) - 6 = 39 phút còn lại
+    expect(remainingMinutes).toBe(39);
   });
 });

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { assetSchema } from "#src/contracts/shared-fields";
 import { defineTemplate, STANDARD_SCORING } from "#src/contracts/types";
 
-export const GT036PaletteItemSchema = z.object({
+const GT036PaletteItemSchema = z.object({
   id: z.string().min(1).max(32),
   asset: assetSchema(),
 });
@@ -80,8 +80,8 @@ const GT036Template = defineTemplate({
   asset_kinds: ["emoji", "image"],
   scoring: STANDARD_SCORING,
   input: {
-    family: "tap",
-    verbs: ["tap"],
+    family: "drag",
+    verbs: ["drop", "tap", "commit"],
     tolerance_px: 24,
   },
   events: [

@@ -53,17 +53,16 @@ export function usePwaInstall() {
 
     // Check standalone mode
     if (typeof window !== "undefined") {
+      const hasNavigatorStandalone =
+        "standalone" in window.navigator &&
+        Boolean(window.navigator.standalone);
       isStandalone.value =
-        window.matchMedia?.("(display-mode: standalone)")?.matches ||
-        Boolean(
-          (window.navigator as unknown as { standalone?: boolean })?.standalone
-        );
+        Boolean(window.matchMedia?.("(display-mode: standalone)")?.matches) ||
+        hasNavigatorStandalone;
 
       // Check iOS
       const ua = window.navigator.userAgent.toLowerCase();
-      isIos.value =
-        IOS_UA_REGEX.test(ua) &&
-        !(window as unknown as { MSStream?: unknown }).MSStream;
+      isIos.value = IOS_UA_REGEX.test(ua) && !("MSStream" in window);
 
       // Capture beforeinstallprompt (BR-PWA-01: keep it, don't show immediately)
       window.addEventListener("beforeinstallprompt", (e: Event) => {

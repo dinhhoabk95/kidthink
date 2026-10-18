@@ -231,9 +231,10 @@
     DEFAULT_REDIRECT_TARGET,
     sanitizeRedirectTarget,
   } from "@mindkid/shared/client";
-  import { computed, onMounted, ref } from "vue";
+  import { computed, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { definePageMeta, useSeoMeta, useUserSession } from "#imports";
+  import { useApi } from "~/composables/use-api";
 
   definePageMeta({
     layout: false,
@@ -258,13 +259,9 @@
     },
   ] as const;
 
-  interface ConsentRequirementItem {
-    consent_type: string;
-    reconsent_required_at: string | null;
-  }
-
   interface ConsentRequirementsResponse {
-    requirements: ConsentRequirementItem[];
+    terms: { requirement_at: string | null };
+    privacy: { requirement_at: string | null };
   }
 
   interface RegisterApiResponse {
@@ -277,6 +274,7 @@
 
   const route = useRoute();
   const router = useRouter();
+  const apiFetch = useApi();
   const { fetch: fetchSession } = useUserSession();
 
   const isLoading = ref(false);
@@ -307,34 +305,13 @@
     window.location.href = `/api/guest/auth/oauth/${providerId}/start?intent=login&return_to=${returnTo}`;
   }
 
-  async function fetchActiveConsentTypes(): Promise<{
-    termConsentId: string;
-    privacyConsentId: string;
-  }> {
-    let termConsentId = "terms_of_service";
-    let privacyConsentId = "privacy_policy";
-
-    try {
-      const consentReqs = await $fetch<ConsentRequirementsResponse>(
-        "/api/guest/consents/requirements"
-      );
-      if (consentReqs?.requirements) {
-        for (const req of consentReqs.requirements) {
-          if (req.consent_type === "terms_of_service") {
-            termConsentId = req.consent_type;
-          } else if (req.consent_type === "privacy_policy") {
-            privacyConsentId = req.consent_type;
-          }
-        }
-      }
-    } catch {
-      // Fallback to default constants
-    }
-
-    return { termConsentId, privacyConsentId };
+  async function fetchActiveConsentRequirements(): Promise<ConsentRequirementsResponse> {
+    return await apiFetch<ConsentRequirementsResponse>(
+      "/api/guest/consent-requirements"
+    );
   }
 
-  function parseRegisterError(err: unknown): string {
+  function parseRegisterError(err: Error | object | null): string {
     if (
       isApiError(err, "EMAIL_ALREADY_REGISTERED") ||
       (isApiError(err) && err.statusCode === 409)
@@ -364,25 +341,18 @@
     isLoading.value = true;
 
     try {
-      const { termConsentId, privacyConsentId } =
-        await fetchActiveConsentTypes();
+      const consentReqs = await fetchActiveConsentRequirements();
 
-      await $fetch<RegisterApiResponse>("/api/guest/auth/users/register", {
+      await apiFetch<RegisterApiResponse>("/api/guest/auth/users/register", {
         method: "POST",
         body: {
           display_name: regName.value,
           email: regEmail.value,
           password: regPassword.value,
-          consents: [
-            {
-              consent_type: termConsentId,
-              agreed: true,
-            },
-            {
-              consent_type: privacyConsentId,
-              agreed: true,
-            },
-          ],
+          accept_terms: true,
+          accept_privacy: true,
+          terms_requirement_at: consentReqs.terms.requirement_at,
+          privacy_requirement_at: consentReqs.privacy.requirement_at,
         },
         credentials: "include",
       });
@@ -397,8 +367,10 @@
       } else {
         await router.push(dest);
       }
-    } catch (err: unknown) {
-      errorMessage.value = parseRegisterError(err);
+    } catch (err) {
+      errorMessage.value = parseRegisterError(
+        typeof err === "object" ? err : null
+      );
     } finally {
       isLoading.value = false;
     }

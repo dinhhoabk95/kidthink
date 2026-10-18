@@ -10,6 +10,13 @@ import { z } from "zod";
 import { invalidateFlagCache } from "#server/services/index.js";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
+const scopeValueSchema = z
+  .object({
+    user_ids: z.array(z.number().int()).optional(),
+    percentage: z.number().min(0).max(100).optional(),
+  })
+  .passthrough();
+
 const patchFlagSchema = z.object({
   reason: z.string().min(10),
   enabled: z.boolean().optional().default(false),
@@ -17,7 +24,7 @@ const patchFlagSchema = z.object({
     .enum(["global", "user_ids", "percentage"])
     .optional()
     .default("global"),
-  scope_value: z.record(z.unknown()).nullable().optional(),
+  scope_value: scopeValueSchema.nullable().optional(),
 });
 
 export default defineEventHandler(async (event) => {

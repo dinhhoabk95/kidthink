@@ -54,6 +54,8 @@ setTestEnv(
   "test-payos-webhook-secret-0123456789"
 );
 setTestEnv("PAYMENT_WEBHOOK_SECRET", "test-payos-webhook-secret-0123456789");
+setTestEnv("PAYMENT_MODE", "sandbox");
+setTestEnv("PAYMENT_MERCHANT_ID", "test_merchant");
 
 import { InMemoryRedisClient, setAuthRedisClient } from "@mindkid/auth";
 import { clearInMemoryBuckets } from "@mindkid/cache";

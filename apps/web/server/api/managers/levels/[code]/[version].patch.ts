@@ -78,6 +78,7 @@ const patchLevelSchema = z.object({
 });
 
 import { throwValidationError } from "#server/utils/api-error";
+import { assertTemplateLayoutSupported } from "#server/utils/level-layout";
 
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);
@@ -135,6 +136,13 @@ export default defineEventHandler(async (event) => {
         "Content pack schema validation failed"
       );
     }
+  }
+
+  if (body.difficulty_params && existing.templateCode) {
+    assertTemplateLayoutSupported(
+      existing.templateCode,
+      body.difficulty_params
+    );
   }
 
   const updates = buildLevelUpdates(body);

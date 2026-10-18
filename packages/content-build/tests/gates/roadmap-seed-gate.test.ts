@@ -76,6 +76,9 @@ describe("cổng lộ trình soạn", () => {
       "RM-3-4-mam-01",
       "RM-4-5-chi-01",
       "RM-5-6-la-01",
+      "RM-3-4-mam-year-01",
+      "RM-4-5-chi-year-01",
+      "RM-5-6-la-year-01",
     ]);
     expect(rows.filter((row) => !row.passed)).toEqual([]);
   });

@@ -1,10 +1,24 @@
 import {
+  type CompetencyCode,
   CompetencyCodeSchema,
   STRANDS_CATALOG,
   StrandCodeSchema,
 } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
-import { COMPETENCIES, STRANDS } from "#src/index";
+import {
+  assertDag,
+  buildSkillTree,
+  COMPETENCIES,
+  getMemoizedSkillTree,
+  invalidateSkillTreeCache,
+  nextCandidates,
+  prerequisitesOf,
+  resolvePath,
+  resolveSkillsForCompetency,
+  type SkillRow,
+  STRANDS,
+  unlockedBy,
+} from "#src/index";
 
 const CYCLE_REGEX =
   /Cycle detected in skill prerequisites: SKILL-A -> SKILL-B -> SKILL-A \(BR-TAX-01\)/;
@@ -94,7 +108,7 @@ describe("STRANDS", () => {
 });
 
 describe("Taxonomy API functions & DAG validation", () => {
-  const sampleRows = [
+  const sampleRows: SkillRow[] = [
     {
       code: "C1.CNT.01",
       strand_code: "C1.CNT",
@@ -103,8 +117,8 @@ describe("Taxonomy API functions & DAG validation", () => {
       age_min: 3,
       age_max: 4,
       difficulty: 1,
-      thinking_processes: ["memorization"],
-      tier: "basic" as const,
+      thinking_processes: ["recall"],
+      tier: "basic",
       learning_objectives: [
         {
           code: "LO-C1.CNT.01-01",
@@ -121,8 +135,8 @@ describe("Taxonomy API functions & DAG validation", () => {
       age_min: 4,
       age_max: 5,
       difficulty: 2,
-      thinking_processes: ["memorization"],
-      tier: "basic" as const,
+      thinking_processes: ["recall"],
+      tier: "basic",
       prerequisites: [{ prerequisite_code: "C1.CNT.01" }],
     },
     {
@@ -133,14 +147,14 @@ describe("Taxonomy API functions & DAG validation", () => {
       age_min: 5,
       age_max: 6,
       difficulty: 3,
-      thinking_processes: ["logical_reasoning"],
-      tier: "basic" as const,
+      thinking_processes: ["deduce"],
+      tier: "basic",
       prerequisites: [{ prerequisite_code: "C1.CNT.02" }],
     },
   ];
 
   it("buildSkillTree creates valid tree and computes unlockedBy backlinks", () => {
-    const tree = buildSkillTree(sampleRows as any);
+    const tree = buildSkillTree(sampleRows);
     expect(tree.skills.size).toBe(3);
     expect(unlockedBy(tree, "C1.CNT.01").map((s) => s.code)).toEqual([
       "C1.CNT.02",
@@ -148,13 +162,14 @@ describe("Taxonomy API functions & DAG validation", () => {
   });
 
   it("resolveSkillsForCompetency returns all skills in competency C1", () => {
-    const tree = buildSkillTree(sampleRows as any);
-    const skills = resolveSkillsForCompetency(tree, "C1" as any);
+    const tree = buildSkillTree(sampleRows);
+    const c1Code: CompetencyCode = CompetencyCodeSchema.parse("C1");
+    const skills = resolveSkillsForCompetency(tree, c1Code);
     expect(skills).toHaveLength(3);
   });
 
   it("resolvePath resolves competency, strand, and skill accurately", () => {
-    const tree = buildSkillTree(sampleRows as any);
+    const tree = buildSkillTree(sampleRows);
 
     expect(resolvePath(tree, "C1")?.competency?.code).toBe("C1");
     expect(resolvePath(tree, "C1.CNT")?.strand?.code).toBe("C1.CNT");
@@ -163,7 +178,7 @@ describe("Taxonomy API functions & DAG validation", () => {
   });
 
   it("prerequisitesOf returns direct and transitive prerequisites without infinite loop on circular data", () => {
-    const tree = buildSkillTree(sampleRows as any);
+    const tree = buildSkillTree(sampleRows);
     const directPrereqs = prerequisitesOf(tree, "C1.CNT.03");
     expect(directPrereqs.map((s) => s.code)).toEqual(["C1.CNT.02"]);
 
@@ -176,7 +191,7 @@ describe("Taxonomy API functions & DAG validation", () => {
   });
 
   it("assertDag throws error with exact cycle path when cycle exists (BR-TAX-01)", () => {
-    const cyclicRows = [
+    const cyclicRows: SkillRow[] = [
       {
         code: "SKILL-A",
         strand_code: "C1.CNT",
@@ -185,8 +200,8 @@ describe("Taxonomy API functions & DAG validation", () => {
         age_min: 3,
         age_max: 4,
         difficulty: 1,
-        thinking_processes: ["memorization"],
-        tier: "basic" as const,
+        thinking_processes: ["recall"],
+        tier: "basic",
         prerequisites: [{ prerequisite_code: "SKILL-B" }],
       },
       {
@@ -197,13 +212,13 @@ describe("Taxonomy API functions & DAG validation", () => {
         age_min: 3,
         age_max: 4,
         difficulty: 1,
-        thinking_processes: ["memorization"],
-        tier: "basic" as const,
+        thinking_processes: ["recall"],
+        tier: "basic",
         prerequisites: [{ prerequisite_code: "SKILL-A" }],
       },
     ];
 
-    const tree = buildSkillTree(cyclicRows as any);
+    const tree = buildSkillTree(cyclicRows);
     expect(() => assertDag(tree)).toThrow(CYCLE_REGEX);
   });
 
@@ -212,7 +227,7 @@ describe("Taxonomy API functions & DAG validation", () => {
     for (let run = 0; run < 10; run++) {
       const nodeCount = 5 + Math.floor(Math.random() * 10); // 5 to 14 nodes
       const nodes = Array.from({ length: nodeCount }, (_, i) => `NODE-${i}`);
-      const rows = nodes.map((code, idx) => {
+      const rows: SkillRow[] = nodes.map((code, idx) => {
         // DAG edges: can only depend on nodes with strictly smaller index
         const prereqCount = Math.floor(Math.random() * Math.min(idx, 3));
         const prereqs: string[] = [];
@@ -231,25 +246,18 @@ describe("Taxonomy API functions & DAG validation", () => {
           age_min: 3,
           age_max: 4,
           difficulty: 1,
-          thinking_processes: ["memorization"],
-          tier: "basic" as const,
+          thinking_processes: ["recall"],
+          tier: "basic",
           prerequisites: prereqs.map((p) => ({ prerequisite_code: p })),
         };
       });
 
       // Valid DAG should pass assertDag
-      const validTree = buildSkillTree(rows as any);
+      const validTree = buildSkillTree(rows);
       expect(() => assertDag(validTree)).not.toThrow();
 
-      // Inject a cycle: pick node 0 and make it depend on node (nodeCount - 1)
-      const cyclicRows = JSON.parse(JSON.stringify(rows));
-      cyclicRows[0].prerequisites.push({
-        prerequisite_code: nodes[nodeCount - 1],
-      });
-
-      // If (nodeCount - 1) actually had a path to node 0, this forms a cycle
       // To guarantee a cycle: make node 0 depend on node 1, node 1 on node 2 ... node (N-1) on node 0
-      const directCycleRows = nodes.map((code, idx) => ({
+      const directCycleRows: SkillRow[] = nodes.map((code, idx) => ({
         code,
         strand_code: "C1.CNT",
         competency_code: "C1",
@@ -257,17 +265,19 @@ describe("Taxonomy API functions & DAG validation", () => {
         age_min: 3,
         age_max: 4,
         difficulty: 1,
-        thinking_processes: ["memorization"],
-        tier: "basic" as const,
-        prerequisites: [{ prerequisite_code: nodes[(idx + 1) % nodeCount] }],
+        thinking_processes: ["recall"],
+        tier: "basic",
+        prerequisites: [
+          { prerequisite_code: nodes[(idx + 1) % nodeCount] ?? "NODE-0" },
+        ],
       }));
-      const cyclicTree = buildSkillTree(directCycleRows as any);
+      const cyclicTree = buildSkillTree(directCycleRows);
       expect(() => assertDag(cyclicTree)).toThrow(CYCLE_DETECTED_REGEX);
     }
   });
 
   it("nextCandidates returns skills whose prerequisites are all mastered", () => {
-    const tree = buildSkillTree(sampleRows as any);
+    const tree = buildSkillTree(sampleRows);
     const mastered = new Set<string>(["C1.CNT.01"]);
 
     const candidates = nextCandidates(tree, mastered);
@@ -276,23 +286,11 @@ describe("Taxonomy API functions & DAG validation", () => {
 
   it("getMemoizedSkillTree caches tree and respects TTL / version", () => {
     invalidateSkillTreeCache();
-    const tree1 = getMemoizedSkillTree(sampleRows as any, "v1");
-    const tree2 = getMemoizedSkillTree(sampleRows as any, "v1");
+    const tree1 = getMemoizedSkillTree(sampleRows, "v1");
+    const tree2 = getMemoizedSkillTree(sampleRows, "v1");
     expect(tree1).toBe(tree2);
 
-    const tree3 = getMemoizedSkillTree(sampleRows as any, "v2");
+    const tree3 = getMemoizedSkillTree(sampleRows, "v2");
     expect(tree3).not.toBe(tree1);
   });
 });
-
-import {
-  assertDag,
-  buildSkillTree,
-  getMemoizedSkillTree,
-  invalidateSkillTreeCache,
-  nextCandidates,
-  prerequisitesOf,
-  resolvePath,
-  resolveSkillsForCompetency,
-  unlockedBy,
-} from "#src/index";

@@ -145,7 +145,7 @@ describe("Task 5 — POST /api/managers/children/[uuid]/archive (BR-CPA-07, D-IG
       .where(
         and(
           eq(auditLogs.entityId, child.uuid),
-          eq(auditLogs.action, "manager.child_profile.archived")
+          eq(auditLogs.action, "child_profile_archived")
         )
       );
     expect(auditLog).toBeDefined();

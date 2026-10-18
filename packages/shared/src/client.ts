@@ -23,6 +23,7 @@ export * from "./ai.js";
 export * from "./ai-credit.js";
 export * from "./asset-resolver.js";
 export * from "./audit.js";
+export * from "./basic-report.js";
 export * from "./child-data.js";
 export * from "./competency-catalog.js";
 export * from "./config-dictionary.js";

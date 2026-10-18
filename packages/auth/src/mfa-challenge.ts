@@ -83,6 +83,37 @@ export class MfaChallengeService {
     }
   }
 
+  /**
+   * Đọc thử thách mà không tiêu thụ, để nhập sai mã vẫn nhập lại được
+   * (UC-052 A1). Chỉ `consumeChallenge` mới xoá.
+   */
+  async peekChallenge(
+    namespace: AuthNamespace,
+    challengeToken: string
+  ): Promise<MfaChallengePayload> {
+    try {
+      if (!challengeToken || typeof challengeToken !== "string") {
+        throw new TokenExpiredError();
+      }
+      const raw = await this.redis.get(
+        this.challengeKey(namespace, sha256(challengeToken))
+      );
+      if (!raw) {
+        throw new TokenExpiredError();
+      }
+      const payload: MfaChallengePayload = JSON.parse(raw);
+      if (Date.now() - payload.createdAt >= MFA_CHALLENGE_TTL_SECONDS * 1000) {
+        throw new TokenExpiredError();
+      }
+      return payload;
+    } catch (err) {
+      if (isAppError(err)) {
+        throw err;
+      }
+      throw new ServiceUnavailableError();
+    }
+  }
+
   async consumeChallenge(
     namespace: AuthNamespace,
     challengeToken: string

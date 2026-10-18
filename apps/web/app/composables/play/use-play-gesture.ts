@@ -77,7 +77,7 @@ const HIDDEN_ACTION_BUTTON: ActionButtonState = {
   label: "",
 };
 
-function actionButtonOf(session: TemplateGameSession<unknown, unknown>) {
+function actionButtonOf(session: TemplateGameSession) {
   if (!session.needsCommit) {
     return HIDDEN_ACTION_BUTTON;
   }
@@ -238,7 +238,7 @@ export function usePlayGesture(options: GestureOptions) {
 
   function isActionTap(
     gesture: Gesture,
-    session: TemplateGameSession<unknown, unknown>
+    session: TemplateGameSession
   ): boolean {
     if (gesture.type !== "tap" || !session.needsCommit) {
       return false;
@@ -247,9 +247,7 @@ export function usePlayGesture(options: GestureOptions) {
     return Boolean(zones && isPointInZone(gesture.x, gesture.y, zones.action));
   }
 
-  function getActiveSession(
-    engine: GameEngine
-  ): TemplateGameSession<unknown, unknown> | null {
+  function getActiveSession(engine: GameEngine): TemplateGameSession | null {
     if (!engine.acceptingInput) {
       return null;
     }
@@ -266,7 +264,7 @@ export function usePlayGesture(options: GestureOptions) {
   function handleActionTap(
     gesture: Gesture,
     engine: GameEngine,
-    session: TemplateGameSession<unknown, unknown>
+    session: TemplateGameSession
   ): boolean {
     if (!isActionTap(gesture, session)) {
       return false;

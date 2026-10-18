@@ -194,6 +194,7 @@
   import { computed, onMounted, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { definePageMeta, useSeoMeta, useUserSession } from "#imports";
+  import { useApi } from "~/composables/use-api";
 
   definePageMeta({
     layout: false,
@@ -217,6 +218,7 @@
 
   const route = useRoute();
   const router = useRouter();
+  const apiFetch = useApi();
   const { fetch: fetchSession } = useUserSession();
 
   const isLoadingTicket = ref(true);
@@ -243,7 +245,7 @@
     }
 
     try {
-      const res = await $fetch<SocialTicketApiResponse>(
+      const res = await apiFetch<SocialTicketApiResponse>(
         "/api/guest/auth/users/social-ticket",
         { credentials: "include" }
       );
@@ -267,7 +269,7 @@
     }
   });
 
-  function extractSocialErrorMessage(err: unknown): string {
+  function extractSocialErrorMessage(err: Error | object | null): string {
     if (isApiError(err, "SOCIAL_EMAIL_CONFLICT")) {
       return "Email này đã được đăng ký tài khoản MindKid. Vui lòng đăng nhập bằng email trước, sau đó liên kết tài khoản trong phần Cài đặt.";
     }
@@ -291,7 +293,7 @@
     isSubmitting.value = true;
 
     try {
-      await $fetch<SocialLoginApiResponse>(
+      await apiFetch<SocialLoginApiResponse>(
         "/api/guest/auth/users/social-login",
         {
           method: "POST",
@@ -308,8 +310,10 @@
 
       await fetchSession();
       await router.push("/me");
-    } catch (err: unknown) {
-      errorMessage.value = extractSocialErrorMessage(err);
+    } catch (err) {
+      errorMessage.value = extractSocialErrorMessage(
+        typeof err === "object" ? err : null
+      );
     } finally {
       isSubmitting.value = false;
     }

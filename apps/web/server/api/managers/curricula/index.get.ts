@@ -1,11 +1,22 @@
 import { curricula, getOwnerDb } from "@mindkid/db";
 import { and, desc, eq, type SQL, sql } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+
+const CurriculaListQuerySchema = z.object({
+  search: z.string().optional(),
+  program_type: z.string().optional(),
+  status: z.string().optional(),
+  access_tier: z.string().optional(),
+  page: z.coerce.number().optional(),
+  limit: z.coerce.number().optional(),
+});
 
 export default defineEventHandler(async (event) => {
   await requireManagerSession(event);
-  const query = getQuery(event);
+  const parsedQuery = CurriculaListQuerySchema.safeParse(getQuery(event));
+  const query = parsedQuery.success ? parsedQuery.data : {};
 
   const search = query.search ? String(query.search).trim() : "";
   const programType = query.program_type

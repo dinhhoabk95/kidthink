@@ -148,6 +148,7 @@ describe("Web Scale Gate Drills & Failure Matrix — Task #78 / P5.3", () => {
         status: "success" as const,
         timestamp_seconds: nowSeconds,
         merchant_id: "merchant_scale_01",
+        mode: "sandbox",
       };
       const parsed = AutomatedPaymentWebhookPayloadSchema.parse(payload);
       expect(parsed.status).toBe("success");

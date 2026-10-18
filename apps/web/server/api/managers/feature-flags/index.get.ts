@@ -2,6 +2,7 @@ import { featureFlags, getOwnerDb } from "@mindkid/db";
 import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { CODE_FEATURE_FLAGS } from "@mindkid/shared";
 import { defineEventHandler } from "h3";
+import type { FeatureFlagScopeValue } from "#server/services/feature-flags";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export interface MergedFeatureFlag {
@@ -10,7 +11,7 @@ export interface MergedFeatureFlag {
   description: string;
   enabled: boolean;
   scope: string;
-  scope_value: Record<string, unknown> | null;
+  scope_value: FeatureFlagScopeValue | null;
   default_value: boolean;
   safe_default_reason?: string;
   expires_at: string;
@@ -20,6 +21,25 @@ export interface MergedFeatureFlag {
   updated_by_manager_id: number | null;
   update_reason: string | null;
   updated_at: string | null;
+}
+
+function toScopeValue(
+  raw: (typeof featureFlags.$inferSelect)["scopeValue"]
+): FeatureFlagScopeValue | null {
+  if (typeof raw !== "object" || raw === null) {
+    return null;
+  }
+  const userIdsRaw = Reflect.get(raw, "user_ids");
+  const pctRaw = Reflect.get(raw, "percentage");
+  const userIds = Array.isArray(userIdsRaw)
+    ? userIdsRaw.filter((item): item is number => typeof item === "number")
+    : undefined;
+  const percentage =
+    typeof pctRaw === "number" && Number.isFinite(pctRaw) ? pctRaw : undefined;
+  return {
+    ...(userIds === undefined ? {} : { user_ids: userIds }),
+    ...(percentage === undefined ? {} : { percentage }),
+  };
 }
 
 function buildCodeFlagItem(
@@ -42,9 +62,7 @@ function buildCodeFlagItem(
     description: codeDef.description,
     enabled: dbRow ? dbRow.enabled : codeDef.defaultValue,
     scope: dbRow ? dbRow.scope : "global",
-    scope_value: dbRow
-      ? (dbRow.scopeValue as Record<string, unknown> | null)
-      : null,
+    scope_value: dbRow ? toScopeValue(dbRow.scopeValue) : null,
     default_value: codeDef.defaultValue,
     safe_default_reason: codeDef.safeDefaultReason,
     expires_at: dbRow?.expiresAt
@@ -77,7 +95,7 @@ function buildOrphanFlagItem(
       "Cờ này tồn tại trong cơ sở dữ liệu nhưng không còn khai báo trong code",
     enabled: dbRow.enabled,
     scope: dbRow.scope,
-    scope_value: dbRow.scopeValue as Record<string, unknown> | null,
+    scope_value: toScopeValue(dbRow.scopeValue),
     default_value: dbRow.defaultValue,
     expires_at: dbRow.expiresAt.toISOString(),
     is_expired: isExpired,

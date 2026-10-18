@@ -315,7 +315,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <div
             class="p-4 rounded-2xl border border-surface-200 bg-white flex items-center justify-between gap-3"
-            v-for="(rec, idx) in (libraryData?.recommendations as Array<{ code: string; title: string; thumbnail_emoji?: string }> || [])"
+            v-for="(rec, idx) in (libraryData?.recommendations || [])"
             :key="idx"
           >
             <div class="flex items-center gap-2.5 min-w-0">
@@ -326,12 +326,12 @@
                 <h4 class="font-bold text-xs text-surface-900 truncate">
                   {{ rec.title }}
                 </h4>
-                <p class="text-[10px] text-surface-400">{{ rec.code }}</p>
+                <p class="text-[10px] text-surface-400">{{ rec.level_code }}</p>
               </div>
             </div>
             <NuxtLink
               class="min-h-11 px-3 py-1.5 bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold rounded-xl text-xs flex items-center justify-center shrink-0 transition-colors"
-              :to="`/games/${rec.code}`"
+              :to="`/games/${rec.level_code}`"
             >
               Chơi
             </NuxtLink>
@@ -406,7 +406,9 @@
 <script lang="ts" setup>
   import { computed, ref, watch } from "vue";
   import { useRouter } from "vue-router";
+  import { useApi } from "~/composables/use-api";
 
+  const api = useApi();
   const router = useRouter();
 
   const selectedType = ref<string | null>(null);
@@ -475,7 +477,7 @@
 
   async function deleteItem(entityType: string, entityId: number) {
     try {
-      await $fetch(`/api/users/library/items/${entityType}/${entityId}`, {
+      await api(`/api/users/library/items/${entityType}/${entityId}`, {
         method: "DELETE",
       });
       await refreshLibrary();
@@ -491,7 +493,7 @@
     }
     isCreatingCollection.value = true;
     try {
-      await $fetch("/api/users/collections", {
+      await api("/api/users/collections", {
         method: "POST",
         body: { name: newCollectionName.value.trim() },
       });

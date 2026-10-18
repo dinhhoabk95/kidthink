@@ -180,6 +180,8 @@
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
   import { useRoute } from "#imports";
+  import { useApi } from "~/composables/use-api";
+  import { useOfflinePack } from "~/composables/use-offline-pack";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
   // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
@@ -187,7 +189,25 @@
   // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
   definePageMeta({ layout: false });
 
+  interface FetchErrorShape {
+    readonly message?: string;
+    readonly data?: {
+      readonly message?: string;
+    };
+  }
+
+  function extractErrorMessage(err: object | null, fallback: string): string {
+    if (!err) {
+      return fallback;
+    }
+    const shaped = err as FetchErrorShape;
+    return shaped.data?.message || shaped.message || fallback;
+  }
+
+  const api = useApi();
   const route = useRoute();
+  const { purgeOfflinePacks, purgeIfRevokedOrUnauthenticated } =
+    useOfflinePack();
   const uuid = computed(() => String(route.params.uuid || ""));
 
   const isDownloadingWeek = ref<number | null>(null);
@@ -230,27 +250,40 @@
     successMessage.value = null;
 
     try {
-      const res = await globalThis.$fetch<{
+      const res = await api<{
         pack_id: string;
         total_size_bytes: number;
         lease_expires_at: string;
       }>(`/api/users/curricula/${uuid.value}/offline-pack?week=${weekNo}`);
 
-      downloadedWeeks.value.add(weekNo);
+      downloadedWeeks.value = new Set([...downloadedWeeks.value, weekNo]);
       successMessage.value = `Đã tải thành công gói học tập Tuần ${weekNo} (${Math.round(res.total_size_bytes / (1024 * 1024))} MB).`;
-    } catch (err: unknown) {
-      const fetchErr = err as { data?: { message?: string }; message?: string };
-      errorMessage.value =
-        fetchErr?.data?.message ||
-        fetchErr?.message ||
-        `Không thể tải gói Tuần ${weekNo}.`;
+    } catch (err) {
+      const errObj = typeof err === "object" && err !== null ? err : null;
+      const wasPurged = await purgeIfRevokedOrUnauthenticated(errObj);
+      if (wasPurged) {
+        downloadedWeeks.value = new Set();
+        errorMessage.value =
+          "Quyền truy cập gói học đã thay đổi hoặc hết hạn. Dữ liệu ngoại tuyến đã được dọn sạch.";
+      } else {
+        errorMessage.value = extractErrorMessage(
+          errObj,
+          `Không thể tải gói Tuần ${weekNo}.`
+        );
+      }
     } finally {
       isDownloadingWeek.value = null;
     }
   }
 
-  function deletePack(weekNo: number) {
-    downloadedWeeks.value.delete(weekNo);
+  async function deletePack(weekNo: number) {
+    const nextWeeks = new Set(
+      [...downloadedWeeks.value].filter((w) => w !== weekNo)
+    );
+    downloadedWeeks.value = nextWeeks;
+    if (nextWeeks.size === 0) {
+      await purgeOfflinePacks("manual");
+    }
     successMessage.value = `Đã xoá gói ngoại tuyến Tuần ${weekNo} khỏi bộ nhớ thiết bị.`;
   }
 </script>

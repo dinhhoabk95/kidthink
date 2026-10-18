@@ -91,7 +91,7 @@ describe("Gate check:round-sets (BR-RSM-01..13)", () => {
     ],
   };
 
-  it("passes valid single-round seed", () => {
+  it("passes valid single-round seed (BR-RSM-09)", () => {
     const singleSeed: ContentSeed = {
       kind: "game_level",
       header: validLevelCtx,
@@ -164,6 +164,63 @@ describe("Gate check:round-sets (BR-RSM-01..13)", () => {
     expect(result.violations).toHaveLength(0);
   });
 
+  it("fails (ca âm) when level has multiple learning objectives (BR-RSM-02)", () => {
+    const multiLoSeed: ContentSeed = {
+      kind: "game_level",
+      header: {
+        ...validLevelCtx,
+        learning_objective_codes: ["LO-C1.CNT.01-01", "LO-C1.CNT.01-02"],
+      },
+      content_pack: contentRound1,
+      difficulty_params: {
+        distractor_count: 1,
+        hint_after_ms: 10_000,
+        allow_retry: true,
+        shuffle_items: true,
+      },
+    };
+
+    const result = evaluateRoundSets([multiLoSeed]);
+    expect(result.isPassed).toBe(false);
+    expect(result.violations.some((v) => v.ruleCode === "BR-RSM-02")).toBe(
+      true
+    );
+  });
+
+  it("fails (ca âm) when a round content_pack fails template contract (BR-RSM-04)", () => {
+    const brokenPackSeed: ContentSeed = {
+      kind: "game_level",
+      header: validLevelCtx,
+      content_pack: contentRound1,
+      difficulty_params: {
+        distractor_count: 1,
+        hint_after_ms: 10_000,
+        allow_retry: true,
+        shuffle_items: true,
+      },
+      rounds: [
+        {
+          instruction: "Bé tìm quả táo",
+          content_pack: contentRound1,
+          difficulty_params: { distractor_count: 1 },
+          difficulty: 1,
+        },
+        {
+          instruction: "Bé tìm quả chuối",
+          content_pack: { prompt: "Thiếu options và target_item" },
+          difficulty_params: { distractor_count: 1 },
+          difficulty: 1,
+        },
+      ],
+    };
+
+    const result = evaluateRoundSets([brokenPackSeed]);
+    expect(result.isPassed).toBe(false);
+    expect(result.violations.some((v) => v.ruleCode === "BR-RSM-04")).toBe(
+      true
+    );
+  });
+
   it("fails (ca âm) when round set escalates on 2 difficulty axes simultaneously (BR-RSM-05)", () => {
     const invalidMultiSeed: ContentSeed = {
       kind: "game_level",
@@ -205,6 +262,61 @@ describe("Gate check:round-sets (BR-RSM-01..13)", () => {
     expect(result.isPassed).toBe(false);
     expect(result.violations.length).toBeGreaterThan(0);
     expect(result.violations.some((v) => v.ruleCode === "BR-RSM-05")).toBe(
+      true
+    );
+  });
+
+  it("fails (ca âm) when first round is not lowest difficulty (BR-RSM-06) or adjacent rounds duplicate content (BR-RSM-08)", () => {
+    const invalidOrderAndDupSeed: ContentSeed = {
+      kind: "game_level",
+      header: validLevelCtx,
+      content_pack: contentRound1,
+      difficulty_params: { distractor_count: 1 },
+      rounds: [
+        {
+          instruction: "Bé tìm quả táo",
+          content_pack: contentRound1,
+          difficulty_params: { distractor_count: 1 },
+          difficulty: 3,
+        },
+        {
+          instruction: "Bé tìm quả táo lần nữa",
+          content_pack: contentRound1,
+          difficulty_params: { distractor_count: 1 },
+          difficulty: 1,
+        },
+      ],
+    };
+
+    const result = evaluateRoundSets([invalidOrderAndDupSeed]);
+    expect(result.isPassed).toBe(false);
+    expect(result.violations.some((v) => v.ruleCode === "BR-RSM-06")).toBe(
+      true
+    );
+    expect(result.violations.some((v) => v.ruleCode === "BR-RSM-08")).toBe(
+      true
+    );
+  });
+
+  it("fails (ca âm) when round instruction exceeds 12 words or contains negation (BR-RSM-11)", () => {
+    const negInstructionSeed: ContentSeed = {
+      kind: "game_level",
+      header: validLevelCtx,
+      content_pack: contentRound1,
+      difficulty_params: { distractor_count: 1 },
+      rounds: [
+        {
+          instruction: "Bé đừng chọn quả chuối màu vàng nhé",
+          content_pack: contentRound1,
+          difficulty_params: { distractor_count: 1 },
+          difficulty: 1,
+        },
+      ],
+    };
+
+    const result = evaluateRoundSets([negInstructionSeed]);
+    expect(result.isPassed).toBe(false);
+    expect(result.violations.some((v) => v.ruleCode === "BR-RSM-11")).toBe(
       true
     );
   });

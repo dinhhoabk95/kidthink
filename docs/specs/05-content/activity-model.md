@@ -5,7 +5,7 @@ area: content
 status: implemented
 mvp: true
 phase: P3
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Ràng buộc biên tập của một activity
 depends_on:

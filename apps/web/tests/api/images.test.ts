@@ -6,13 +6,26 @@ import {
   getOwnerDb,
   managers,
 } from "@mindkid/db";
-import { signedUrl, url } from "@mindkid/storage";
+import { getPublicImage, signedUrl, url } from "@mindkid/storage";
 import { eq } from "drizzle-orm";
+import type { H3Event } from "h3";
 import { beforeEach, describe, expect, it } from "vitest";
 import assetUsageHandler from "#server/api/managers/assets/[...ref]/usage.get";
 import deleteImageHandler from "#server/api/managers/images/[id].delete";
 import uploadImageHandler from "#server/api/managers/images/index.post";
 import createLevelHandler from "#server/api/managers/levels/index.post";
+
+interface HttpErrorLike {
+  statusCode?: number;
+  status?: number;
+  details?: {
+    used_by?: readonly string[];
+  };
+}
+
+function readHttpStatus(err: HttpErrorLike): number | undefined {
+  return err.statusCode ?? err.status;
+}
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
@@ -21,7 +34,7 @@ const RELATIVE_IMAGE_PATH_REGEX = /^content\/\d{4}\/\d{2}\/[a-f0-9]+\.webp$/;
 const RELATIVE_THUMB_PATH_REGEX =
   /^content\/\d{4}\/\d{2}\/[a-f0-9]+_thumb\.webp$/;
 
-// Valid PNG magic bytes (89 50 4E 47 0D 0A 1A 0A)
+// Valid PNG magic bytes (89 50 4E 47 0D 0A 1A 0A) + 32x32 IHDR
 const VALID_PNG_BUFFER = Buffer.from([
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49,
   0x48, 0x44, 0x52, 0x00, 0x00, 0x00, 0x20, 0x00, 0x00, 0x00, 0x20,
@@ -31,6 +44,20 @@ const VALID_PNG_BUFFER = Buffer.from([
 const VALID_JPEG_BUFFER = Buffer.from([
   0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01,
 ]);
+
+// Valid JPEG 3000x2000 SOF0 header for BR-IMG-07 normalization test
+function makeJpeg3000x2000Buffer(): Buffer {
+  const buf = Buffer.alloc(20);
+  buf[0] = 0xff;
+  buf[1] = 0xd8;
+  buf[2] = 0xff;
+  buf[3] = 0xc0;
+  buf.writeUInt16BE(11, 4);
+  buf[6] = 8;
+  buf.writeUInt16BE(2000, 7);
+  buf.writeUInt16BE(3000, 9);
+  return buf;
+}
 
 // Fake PNG (text file renamed to .png)
 const FAKE_PNG_BUFFER = Buffer.from("THIS IS NOT A VALID PNG FILE AT ALL");
@@ -72,8 +99,8 @@ beforeEach(async () => {
 function mockMultipartEvent(
   managerRole?: "super_admin" | "content_reviewer",
   formDataItems: Array<{ name: string; data: Buffer; filename?: string }> = []
-) {
-  return {
+): H3Event {
+  const evt: object = {
     method: "POST",
     node: {
       req: {
@@ -102,14 +129,15 @@ function mockMultipartEvent(
       params: {},
     },
     _multipartFormData: formDataItems,
-  } as any;
+  };
+  return evt as H3Event;
 }
 
 function mockDeleteEvent(
   id: string,
   managerRole?: "super_admin" | "content_reviewer"
-) {
-  return {
+): H3Event {
+  const evt: object = {
     method: "DELETE",
     node: {
       req: {
@@ -134,14 +162,15 @@ function mockDeleteEvent(
         : {}),
       params: { id },
     },
-  } as any;
+  };
+  return evt as H3Event;
 }
 
 function mockUsageEvent(
   ref: string,
   managerRole?: "super_admin" | "content_reviewer"
-) {
-  return {
+): H3Event {
+  const evt: object = {
     method: "GET",
     node: {
       req: {
@@ -164,7 +193,8 @@ function mockUsageEvent(
         : {}),
       params: { ref },
     },
-  } as any;
+  };
+  return evt as H3Event;
 }
 
 describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-09, Spec §7.1)", () => {
@@ -184,8 +214,8 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
     try {
       await uploadImageHandler(event);
       expect.fail("Should have rejected SVG with 415");
-    } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(415);
+    } catch (err) {
+      expect(readHttpStatus(err as HttpErrorLike)).toBe(415);
     }
   });
 
@@ -197,8 +227,8 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
     try {
       await uploadImageHandler(event);
       expect.fail("Should have rejected fake PNG with 415");
-    } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(415);
+    } catch (err) {
+      expect(readHttpStatus(err as HttpErrorLike)).toBe(415);
     }
   });
 
@@ -216,8 +246,8 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
     try {
       await uploadImageHandler(event);
       expect.fail("Should have rejected >2MB with 413");
-    } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(413);
+    } catch (err) {
+      expect(readHttpStatus(err as HttpErrorLike)).toBe(413);
     }
   });
 
@@ -228,8 +258,8 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
     try {
       await uploadImageHandler(event);
       expect.fail("Should have rejected missing alt with 422");
-    } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(422);
+    } catch (err) {
+      expect(readHttpStatus(err as HttpErrorLike)).toBe(422);
     }
   });
 
@@ -241,13 +271,35 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
       { name: "owner_id", data: Buffer.from("1") },
     ]);
 
-    const res = (await uploadImageHandler(event)) as any;
+    const res = await uploadImageHandler(event);
     expect(res).toBeDefined();
     expect(res.id).toBeDefined();
     expect(res.path).toMatch(RELATIVE_IMAGE_PATH_REGEX);
     expect(res.thumb_path).toMatch(RELATIVE_THUMB_PATH_REGEX);
     expect(res.path).not.toContain("http");
     expect(res.path).not.toContain("https");
+    expect(res.width).toBe(32);
+    expect(res.height).toBe(32);
+  });
+
+  it("normalizes 3000x2000 JPEG upload to WebP <= 960px max edge and stores thumb (BR-IMG-07, Spec §9)", async () => {
+    const event = mockMultipartEvent("content_reviewer", [
+      {
+        name: "file",
+        data: makeJpeg3000x2000Buffer(),
+        filename: "landscape_3000x2000.jpg",
+      },
+      { name: "alt", data: Buffer.from("Phong cảnh lớn") },
+      { name: "owner_type", data: Buffer.from("game_level") },
+      { name: "owner_id", data: Buffer.from("1") },
+    ]);
+
+    const res = await uploadImageHandler(event);
+    expect(res.path).toMatch(RELATIVE_IMAGE_PATH_REGEX);
+    expect(res.thumb_path).toMatch(RELATIVE_THUMB_PATH_REGEX);
+    expect(res.width).toBe(960);
+    expect(res.height).toBe(640);
+    expect(Math.max(res.width, res.height)).toBeLessThanOrEqual(960);
   });
 
   it("constructs URLs dynamically without absolute host in DB (BR-IMG-05, D-KD)", () => {
@@ -264,7 +316,7 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
     expect(signed).toContain("signature=");
   });
 
-  it("DELETE /api/managers/images/:id prevents deletion when image is used by published content (BR-IMG-07, BR-AUT2-01)", async () => {
+  it("DELETE /api/managers/images/:id prevents deletion when image is used by published content and returns details.used_by (BR-IMG-08, BR-AUT2-01)", async () => {
     const db = getOwnerDb();
 
     // 1. Insert template if not exists
@@ -293,7 +345,7 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
       { name: "owner_type", data: Buffer.from("game_level") },
       { name: "owner_id", data: Buffer.from("1") },
     ]);
-    const uploaded = (await uploadImageHandler(event)) as any;
+    const uploaded = await uploadImageHandler(event);
 
     // 3. Create a published level referencing this image
     let levelCode = "";
@@ -332,17 +384,19 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
       assetRef: uploaded.path,
     });
 
-    // 4. Try to delete the image -> 409 CONTENT_IN_USE
+    // 4. Try to delete the image -> 409 CONTENT_IN_USE with details.used_by
     const delEvt = mockDeleteEvent(String(uploaded.id), "super_admin");
     try {
       await deleteImageHandler(delEvt);
       expect.fail("Should have thrown 409 CONTENT_IN_USE");
-    } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(409);
+    } catch (err) {
+      const httpErr = err as HttpErrorLike;
+      expect(readHttpStatus(httpErr)).toBe(409);
+      expect(httpErr.details?.used_by).toContain(levelCode);
     }
   });
 
-  it("DELETE /api/managers/images/:id deletes unused image successfully (BR-AUT2-06)", async () => {
+  it("DELETE /api/managers/images/:id deletes unused image and stored files successfully (BR-AUT2-06)", async () => {
     // 1. Upload an image
     const event = mockMultipartEvent("content_reviewer", [
       { name: "file", data: VALID_PNG_BUFFER, filename: "unused.png" },
@@ -350,20 +404,23 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
       { name: "owner_type", data: Buffer.from("game_level") },
       { name: "owner_id", data: Buffer.from("1") },
     ]);
-    const uploaded = (await uploadImageHandler(event)) as any;
+    const uploaded = await uploadImageHandler(event);
+    expect(getPublicImage(uploaded.path)).toBeDefined();
 
     // 2. Delete it
     const delEvt = mockDeleteEvent(String(uploaded.id), "super_admin");
-    const res = (await deleteImageHandler(delEvt)) as any;
+    const res = await deleteImageHandler(delEvt);
     expect(res.success).toBe(true);
 
-    // 3. Verify it is removed from content_images
+    // 3. Verify it is removed from content_images and storage
     const db = getOwnerDb();
     const [found] = await db
       .select()
       .from(contentImages)
       .where(eq(contentImages.id, uploaded.id));
     expect(found).toBeUndefined();
+    expect(getPublicImage(uploaded.path)).toBeUndefined();
+    expect(getPublicImage(uploaded.thumb_path)).toBeUndefined();
   });
 
   it("GET /api/managers/assets/:ref/usage returns usage breakdown and can_delete flag (BR-AUT2-03, BR-AUT2-04)", async () => {
@@ -428,10 +485,10 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
 
     // 3. Query usage when only in draft -> can_delete: true
     const usageEvt = mockUsageEvent(testRef, "content_reviewer");
-    const draftUsage = (await assetUsageHandler(usageEvt)) as any;
+    const draftUsage = await assetUsageHandler(usageEvt);
     expect(draftUsage.asset_ref).toBe(testRef);
     expect(draftUsage.used_by).toHaveLength(1);
-    expect(draftUsage.used_by[0].status).toBe("draft");
+    expect(draftUsage.used_by[0]?.status).toBe("draft");
     expect(draftUsage.can_delete).toBe(true);
     expect(draftUsage.block_reason).toBeNull();
 
@@ -472,7 +529,7 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
       assetRef: testRef,
     });
 
-    const pubUsage = (await assetUsageHandler(usageEvt)) as any;
+    const pubUsage = await assetUsageHandler(usageEvt);
     expect(pubUsage.used_by).toHaveLength(2);
     expect(pubUsage.can_delete).toBe(false);
     expect(pubUsage.block_reason).toBe("used_by_published");
@@ -480,7 +537,7 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
 
   it("syncs content_asset_refs in same transaction when creating level (D-KB)", async () => {
     const imageRef = `content/2026/08/tx_sync_${Date.now()}.webp`;
-    const createEvt = {
+    const createEvtObj: object = {
       method: "POST",
       node: {
         req: {
@@ -511,9 +568,10 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
           options: [{ label: "1", value: 1 }],
         },
       },
-    } as any;
+    };
+    const createEvt = createEvtObj as H3Event;
 
-    const created = (await createLevelHandler(createEvt)) as any;
+    const created = (await createLevelHandler(createEvt)) as { id: number };
     expect(created).toBeDefined();
 
     // Verify content_asset_refs has the new row
@@ -523,7 +581,7 @@ describe("Image Storage & Upload API (BR-IMG-01 - BR-IMG-12, BR-IUP-01 - BR-IUP-
       .from(contentAssetRefs)
       .where(eq(contentAssetRefs.entityId, created.id));
     expect(foundRef).toBeDefined();
-    expect(foundRef.assetRef).toBe(imageRef);
-    expect(foundRef.assetKind).toBe("image");
+    expect(foundRef?.assetRef).toBe(imageRef);
+    expect(foundRef?.assetKind).toBe("image");
   });
 });

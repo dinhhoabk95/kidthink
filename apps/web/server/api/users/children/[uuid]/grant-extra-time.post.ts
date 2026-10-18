@@ -26,9 +26,18 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError();
   }
 
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
+  const eventBody = (
+    event.context as {
+      body?: Record<string, string | number | boolean | null | undefined>;
+    }
+  )?.body;
   const body =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+    eventBody ||
+    ((await readBody(event)) as Record<
+      string,
+      string | number | boolean | null | undefined
+    >) ||
+    {};
   const parsed = GrantExtraTimeSchema.safeParse(body);
   if (!parsed.success) {
     throw new ValidationError();
@@ -76,14 +85,10 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const currentSeconds = stats?.totalPlayTimeSeconds || 0;
-  const newSeconds = Math.max(0, currentSeconds - minutes * 60);
-
   if (stats) {
     await db
       .update(childDailyStats)
       .set({
-        totalPlayTimeSeconds: newSeconds,
         extraTimeGrantedMinutes: alreadyGranted + minutes,
         updatedAt: new Date(),
       })
@@ -97,7 +102,7 @@ export default defineEventHandler(async (event) => {
     await db.insert(childDailyStats).values({
       childProfileId: child.id,
       dateIct,
-      totalPlayTimeSeconds: newSeconds,
+      totalPlayTimeSeconds: 0,
       extraTimeGrantedMinutes: minutes,
     });
   }

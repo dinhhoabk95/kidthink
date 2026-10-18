@@ -84,7 +84,7 @@ các job chạy song song.
 
 | Lệnh | Điều kiện | Đo gì |
 | --- | --- | --- |
-| `pnpm check:bundle` | Chỉ khi đã có `apps/web/.output` | Kích thước gzip từng chunk Nuxt client (`BR-ENG-17`, 80 KB). Không có build thì bước này bị bỏ qua mà không in gì |
+| `pnpm check:bundle` | Chỉ khi đã có `apps/web/.output` | Ngân sách bundle theo `BR-PRF-01` & `BR-ENG-17`: từng chunk client + preload template `GT-*` ≤ 80 KB gzip, app shell web/admin ≤ 180 KB gzip, trang public ≤ 500 KB gzip, payload level ≤ 200 KB. Không có build thì bước này bị bỏ qua mà không in gì |
 
 ### Không nằm trong `pnpm check`
 
@@ -150,11 +150,11 @@ bỏ sót ít nhất tám khoản; bảng dưới là bản đủ.
 
 | Linter đã xoá | Luật | Trạng thái |
 | --- | --- | --- |
-| `lint-route-validation.ts` | `BR-SEC-04` `BR-TYP-04` | **Còn** ở `apps/web/tests/security/`. Chỉ phủ body; query/param chưa đo |
+| `lint-route-validation.ts` | `BR-SEC-04` `BR-TYP-04` | **Đã khôi phục** ở `apps/web/tests/security/route-validation.ts` (phủ đủ `body`, `query`, `params`) |
 | `lint-runtime-boundary.ts` | `BR-ARB-01..07` `BR-ADA-01` `BR-TYP-07` | **Một phần**: chỉ `BR-ARB-04` và chỉ trong `apps/admin` |
 | `lint-tokens.ts` | `BR-DSC-01/02/03/05/06/13/14` `BR-A11-09` | **Một phần**: `packages/ui/tests/tokens.test.ts` đối chiếu giá trị token; `check:render-tokens` (`BR-DSC-26`) và `check:config-ownership` (`BR-DSC-24`) bù phần hex thô và sở hữu cấu hình. Quét class `uppercase` (`BR-A11-09`) chưa có |
 | `lint-mfa-key.ts` | `BR-MFA-13` | **Đã khôi phục** 2026-08-30 |
-| `lint-perf-budget.ts` | `BR-PRF-01/02/08` | **Một phần**: `client-entry-weight` (nhịp 1) và `check:bundle` (80 KB/chunk) đo `BR-PRF-01` cho chunk template. App shell, trang public, payload level, `BR-PRF-02/08` chưa đo |
+| `lint-perf-budget.ts` | `BR-PRF-01/02/08` | **Một phần**: `client-entry-weight` (nhịp 1) và `check:bundle` (`scripts/check-bundle.ts`) đo đủ `BR-PRF-01` (chunk template ≤ 80 KB, app shell web/admin ≤ 180 KB, trang public ≤ 500 KB, payload level ≤ 200 KB). `BR-PRF-02/08` đo ở runtime/production |
 | `lint-emoji-affordance.ts` | `BR-EMJ-03` | **MẤT** — thiếu trong danh sách §4 |
 | `lint-shell-scripts.ts` | vệ sinh script shell | **MẤT** — thiếu trong §4; không có `shellcheck` ở đâu cả |
 | `lint-import-paths.ts` | cấm import `../` xuyên tầng | **MẤT** — thiếu trong §4 |
@@ -173,7 +173,7 @@ bỏ sót ít nhất tám khoản; bảng dưới là bản đủ.
 | # | Câu hỏi | Chủ | Trạng thái |
 | --- | --- | --- | --- |
 | `Q-RG-1` | Bốn khoản "MẤT — thiếu trong §4" có dựng lại không, hay hạ luật xuống "chưa dựng"? | người quyết | mở |
-| `Q-RG-2` | `BR-PRF-01` khai "vượt ngân sách chặn merge" nhưng `size-limit`/`k6` không có trong repo. Wire vào hay hạ luật? | người quyết | **Đóng ở #209**: tách hai nhịp — quét import tĩnh tại `pnpm test` (`client-entry-weight`), đo gzip thật tại `pnpm check:bundle`. Phần ngân sách chưa đo theo dõi ở [Task #310](../../tasks/310-quality-gates-gaps-plan.md) |
+| `Q-RG-2` | `BR-PRF-01` khai "vượt ngân sách chặn merge" nhưng `size-limit`/`k6` không có trong repo. Wire vào hay hạ luật? | người quyết | **Đóng ở #209 & #310**: tách hai nhịp — quét import tĩnh tại `pnpm test` (`client-entry-weight`), đo gzip thật cho toàn bộ bảng ngân sách `BR-PRF-01` tại `pnpm check:bundle` (`scripts/check-bundle.ts`) |
 | `Q-RG-3` | Nợ `emoji_ref`: 7 glyph (🐭 ⬆️ ⬇️ ⬅️ ➡️ 💎 🐮) chưa có trong registry emoji. Bổ sung registry hay đổi nội dung? | Nội dung | mở |
 | `Q-RG-4` | Các cổng `check:*` mồ côi nối hết vào `check.sh` hay chỉ nối cổng chạy dưới một ngưỡng thời gian? | người quyết | **Đóng**: tám cổng còn tồn tại đã vào phase 1 của `check.sh`; ba script `check:round-sets`, `check:engine-allocation`, `check:age-band-fit` không còn trong `package.json` |
 | `Q-RG-5` | `pre-push` mở lại với nội dung gì? | Infra | **Đóng**: `pre-push` chạy `pnpm check:fast`, không cần Postgres và Valkey. Giá phải trả ghi ở §2b mục 2 |

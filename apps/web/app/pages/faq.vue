@@ -120,9 +120,15 @@
 
 <script lang="ts" setup>
   import { FAQ_ITEMS, type FaqItem } from "@mindkid/shared/client";
-  import { computed, onMounted, ref } from "vue";
-  import { useRoute, useRouter } from "vue-router";
-  import { useHead, useSeoMeta } from "#imports";
+  import { computed, onMounted, ref, watch } from "vue";
+  import {
+    definePageMeta,
+    useFetch,
+    useHead,
+    useRoute,
+    useRouter,
+    useSeoMeta,
+  } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
@@ -135,6 +141,15 @@
 
   const route = useRoute();
   const router = useRouter();
+
+  // BR-FAQ-04: Đọc nội dung FAQ từ seo_pages (page_type = 'faq', status = 'published')
+  // với fallback an toàn về FAQ_ITEMS khi DB chưa seed hàng faq.
+  const { data: faqPayload } = useFetch<{ items: FaqItem[] }>("/api/guest/faq");
+
+  const faqItems = computed<readonly FaqItem[]>(() => {
+    const items = faqPayload.value?.items;
+    return items && items.length > 0 ? items : FAQ_ITEMS;
+  });
 
   const categories = [
     { key: "all", label: "Tất cả câu hỏi" },
@@ -150,9 +165,11 @@
 
   const visibleItems = computed(() => {
     if (activeCategory.value === "all") {
-      return FAQ_ITEMS;
+      return faqItems.value;
     }
-    return FAQ_ITEMS.filter((item) => item.category === activeCategory.value);
+    return faqItems.value.filter(
+      (item) => item.category === activeCategory.value
+    );
   });
 
   function selectCategory(key: string) {
@@ -170,7 +187,7 @@
     if (expandedItems.value.includes(id)) {
       expandedItems.value = expandedItems.value.filter((i) => i !== id);
     } else {
-      expandedItems.value.push(id);
+      expandedItems.value = [...expandedItems.value, id];
       router.replace({ hash: `#${anchor}` });
     }
   }
@@ -202,11 +219,10 @@
 
   const RE_HASH = /^#/;
 
-  // BR-FAQ-01: Expand item from hash on mount
-  onMounted(() => {
+  function syncExpandedItems(items: readonly FaqItem[]): void {
     const hash = route.hash.replace(RE_HASH, "");
     if (hash) {
-      const targetItem = FAQ_ITEMS.find((item) => item.anchor === hash);
+      const targetItem = items.find((item) => item.anchor === hash);
       if (targetItem) {
         expandedItems.value = [targetItem.id];
         if (targetItem.category) {
@@ -218,13 +234,21 @@
             el.scrollIntoView({ behavior: "smooth" });
           }
         }, 100);
+        return;
       }
-    } else {
-      // Default open first 2 items
-      expandedItems.value = [FAQ_ITEMS[0]?.id, FAQ_ITEMS[1]?.id].filter(
-        (id): id is string => Boolean(id)
-      );
     }
+    expandedItems.value = [items[0]?.id, items[1]?.id].filter(
+      (id): id is string => Boolean(id)
+    );
+  }
+
+  // BR-FAQ-01: Expand item from hash on mount
+  onMounted(() => {
+    syncExpandedItems(faqItems.value);
+  });
+
+  watch(faqItems, (nextItems) => {
+    syncExpandedItems(nextItems);
   });
 
   // BR-FAQ-03: FAQPage JSON-LD
@@ -238,7 +262,7 @@
     ogType: "article",
   });
 
-  useHead({
+  useHead(() => ({
     htmlAttrs: { lang: "vi-VN" },
     link: [{ rel: "canonical", href: "https://mindkid.vn/faq" }],
     script: [
@@ -247,7 +271,7 @@
         innerHTML: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "FAQPage",
-          mainEntity: FAQ_ITEMS.map((faq) => ({
+          mainEntity: faqItems.value.map((faq) => ({
             "@type": "Question",
             name: faq.question,
             acceptedAnswer: {
@@ -258,7 +282,7 @@
         }),
       },
     ],
-  });
+  }));
 </script>
 
 <style scoped>

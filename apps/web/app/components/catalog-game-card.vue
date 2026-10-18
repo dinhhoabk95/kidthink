@@ -46,34 +46,66 @@
     </div>
 
     <div class="card-footer">
-      <!-- CTA theo bậc và trạng thái (BR-GCP-09) -->
-      <NuxtLink
-        :class="[
-          'btn-card-action',
-          game.cta?.action === 'play' ? 'btn-play-free' : 'btn-view-detail'
-        ]"
-        :to="game.cta?.href || `/games/${game.code}`"
+      <div class="card-actions-row">
+        <!-- CTA theo bậc và trạng thái (BR-GCP-09) -->
+        <NuxtLink
+          :class="[
+            'btn-card-action',
+            game.cta?.action === 'play' ? 'btn-play-free' : 'btn-view-detail'
+          ]"
+          :to="game.cta?.href || `/games/${game.code}`"
+        >
+          <UIcon
+            class="w-4 h-4 mr-1.5"
+            name="i-lucide-play"
+            v-if="game.cta?.action === 'play'"
+          />
+          {{ game.cta?.text || 'Xem chi tiết' }}
+        </NuxtLink>
+
+        <!-- Nút Lưu vào thư viện (BR-MLB-01) -->
+        <button
+          data-testid="save-library-btn"
+          type="button"
+          :aria-label="isSaved ? 'Đã lưu vào thư viện' : `Lưu ${game.title} vào thư viện`"
+          :class="['btn-save-library', isSaved ? 'btn-saved' : '']"
+          :disabled="isSaving || isSaved"
+          :title="isSaved ? 'Đã lưu vào thư viện' : 'Lưu vào thư viện'"
+          @click="saveToLibrary"
+        >
+          <UIcon
+            class="w-4 h-4"
+            :name="isSaved ? 'i-lucide-bookmark-check' : 'i-lucide-bookmark'"
+          />
+          <span>{{ isSaved ? 'Đã lưu' : 'Lưu' }}</span>
+        </button>
+      </div>
+
+      <p
+        class="save-feedback-error"
+        data-testid="save-library-error"
+        role="alert"
+        v-if="saveError"
       >
-        <UIcon
-          class="w-4 h-4 mr-1.5"
-          name="i-lucide-play"
-          v-if="game.cta?.action === 'play'"
-        />
-        {{ game.cta?.text || 'Xem chi tiết' }}
-      </NuxtLink>
+        {{ saveError }}
+      </p>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import {
     type AccessTier,
     findCompetency,
     type LevelCta,
   } from "@mindkid/shared/client";
+  import { ref } from "vue";
+  import { useApi } from "~/composables/use-api";
 
   interface CatalogItem {
     code: string;
+    entity_id?: number;
     title: string;
     competency: string | null;
     age_band: string | null;
@@ -85,9 +117,48 @@
     is_completed?: boolean;
   }
 
-  defineProps<{
+  const props = defineProps<{
     game: CatalogItem;
   }>();
+
+  const api = useApi();
+  const isSaving = ref(false);
+  const isSaved = ref(false);
+  const saveError = ref("");
+
+  async function saveToLibrary(): Promise<void> {
+    if (isSaving.value || isSaved.value) {
+      return;
+    }
+    isSaving.value = true;
+    saveError.value = "";
+    try {
+      await api<{ success: boolean }>("/api/users/library/items", {
+        method: "POST",
+        body: {
+          entity_type: "game_level",
+          ...(props.game.entity_id === undefined
+            ? {}
+            : { entity_id: props.game.entity_id }),
+          code: props.game.code,
+        },
+      });
+      isSaved.value = true;
+    } catch (err) {
+      if (isApiError(err, "CODE_ALREADY_EXISTS")) {
+        isSaved.value = true;
+      } else if (isApiError(err, "QUOTA_EXCEEDED")) {
+        saveError.value =
+          "Đã đạt giới hạn lưu trữ trong thư viện. Vui lòng nâng cấp gói hoặc xoá bớt mục cũ.";
+      } else if (isApiError(err, "UNAUTHENTICATED")) {
+        saveError.value = "Vui lòng đăng nhập để lưu vào thư viện.";
+      } else {
+        saveError.value = "Không thể lưu vào thư viện lúc này.";
+      }
+    } finally {
+      isSaving.value = false;
+    }
+  }
 
   function getTierLabel(tier: string): string {
     switch (tier) {
@@ -257,13 +328,22 @@
   .card-footer {
     margin-top: auto;
     padding-top: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .card-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
   .btn-card-action {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    flex: 1;
     min-height: 44px;
     border-radius: 0.85rem;
     font-weight: 800;
@@ -297,5 +377,42 @@
 
   .btn-view-detail:hover {
     background-color: var(--color-surface-200);
+  }
+
+  .btn-save-library {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 44px;
+    padding: 0 0.85rem;
+    border-radius: 0.85rem;
+    font-weight: 700;
+    font-size: 0.85rem;
+    background-color: var(--color-surface-50);
+    color: var(--color-surface-700);
+    border: 1px solid var(--color-surface-200);
+    cursor: pointer;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+
+  .btn-save-library:hover:not(:disabled) {
+    background-color: var(--color-surface-100);
+    color: var(--color-brand-700);
+  }
+
+  .btn-saved {
+    background-color: var(--color-success-50, #f0fdf4);
+    color: var(--color-success-700, #15803d);
+    border-color: var(--color-success-200, #bbf7d0);
+  }
+
+  .save-feedback-error {
+    margin: 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-danger-700, #b91c1c);
+    line-height: 1.35;
   }
 </style>

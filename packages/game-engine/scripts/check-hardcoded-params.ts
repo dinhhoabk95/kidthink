@@ -1,6 +1,6 @@
 /**
- * Cổng kiểm tra số cứng (magic numbers) trong templates/{name}/session.ts
- * và đếm .default(...) trên trường điều khiển độ khó (Task #263 T6 / BR-LDC-06..07).
+ * Cổng kiểm tra số cứng (magic numbers) trong templates/{name}/session.ts (BR-LDC-06)
+ * và đếm .default(...) trên trường điều khiển độ khó (Task #263 T6 / BR-LDC-07).
  *
  * Giới hạn nợ kỹ thuật: nợ chỉ được phép giảm (ratchet gate).
  *
@@ -9,15 +9,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { repoPath } from "@mindkid/config/paths";
 
-const HERE = path.dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = path.resolve(HERE, "../../..");
-const TEMPLATES_DIR = path.join(
-  REPO_ROOT,
-  "packages/game-engine/src/templates"
-);
-const BASELINE_PATH = path.join(
-  REPO_ROOT,
+const TEMPLATES_DIR = repoPath("packages/game-engine/src/templates");
+const BASELINE_PATH = repoPath(
   "packages/game-engine/config/hardcoded-params-baseline.json"
 );
 
@@ -26,6 +21,8 @@ const NON_TRIVIAL_NUMBERS_REGEX = /\b(?!(?:0|1)\b)\d+(\.\d+)?\b/g;
 const DIFFICULTY_SCHEMA_REGEX =
   /DifficultySchema\s*=\s*z\.object\(\{([\s\S]*?)\}\);/;
 const DEFAULT_METHOD_REGEX = /\.default\(/g;
+const FORBIDDEN_ITEM_COUNT_DEFAULT_REGEX =
+  /\bitem_count\s*:[^\n,}]*\.default\(/;
 
 export interface BaselineConfig {
   max_allowed_lines: number;
@@ -34,6 +31,9 @@ export interface BaselineConfig {
   note?: string;
 }
 
+/**
+ * BR-LDC-06: Đếm số dòng chứa hằng số điều khiển độ khó fix cứng trong session.ts.
+ */
 export function countHardcodedLinesInCode(content: string): number {
   const lines = content.split("\n");
   let count = 0;
@@ -61,6 +61,9 @@ export function countHardcodedLinesInCode(content: string): number {
   return count;
 }
 
+/**
+ * BR-LDC-07: Đếm số lần sử dụng .default(...) trong DifficultySchema.
+ */
 export function countSchemaDefaultsInCode(content: string): number {
   const match = content.match(DIFFICULTY_SCHEMA_REGEX);
   if (!match?.[1]) {
@@ -70,9 +73,21 @@ export function countSchemaDefaultsInCode(content: string): number {
   return defaults ? defaults.length : 0;
 }
 
+/**
+ * BR-LDC-07: Trường điều khiển độ khó bắt buộc (item_count) CẤM gắn .default(...) trong DifficultySchema.
+ */
+export function hasForbiddenDifficultyDefault(content: string): boolean {
+  const match = content.match(DIFFICULTY_SCHEMA_REGEX);
+  if (!match?.[1]) {
+    return false;
+  }
+  return FORBIDDEN_ITEM_COUNT_DEFAULT_REGEX.test(match[1]);
+}
+
 export function scanHardcodedTotals(templatesDir: string): {
   totalLines: number;
   totalDefaults: number;
+  forbiddenDefaultEngines: string[];
 } {
   const dirs = fs
     .readdirSync(templatesDir)
@@ -81,6 +96,7 @@ export function scanHardcodedTotals(templatesDir: string): {
 
   let totalLines = 0;
   let totalDefaults = 0;
+  const forbiddenDefaultEngines: string[] = [];
 
   for (const dir of dirs) {
     const sessionFile = path.join(templatesDir, dir, "session.ts");
@@ -93,10 +109,13 @@ export function scanHardcodedTotals(templatesDir: string): {
     if (fs.existsSync(templateFile)) {
       const content = fs.readFileSync(templateFile, "utf-8");
       totalDefaults += countSchemaDefaultsInCode(content);
+      if (hasForbiddenDifficultyDefault(content)) {
+        forbiddenDefaultEngines.push(dir);
+      }
     }
   }
 
-  return { totalLines, totalDefaults };
+  return { totalLines, totalDefaults, forbiddenDefaultEngines };
 }
 
 function updateBaselineFile(
@@ -124,42 +143,60 @@ function updateBaselineFile(
   }
 }
 
-export function scanHardcodedParams(options?: { updateBaseline?: boolean }): {
+export function scanHardcodedParams(options?: {
+  updateBaseline?: boolean;
+  maxAllowedLines?: number;
+  maxAllowedDefaults?: number;
+}): {
   totalLines: number;
   totalDefaults: number;
+  forbiddenDefaultEngines: string[];
   passed: boolean;
   maxAllowedLines: number;
   maxAllowedDefaults: number;
 } {
   const rawBaseline = fs.readFileSync(BASELINE_PATH, "utf-8");
   const baseline = JSON.parse(rawBaseline) as BaselineConfig;
+  const maxAllowedLines =
+    options?.maxAllowedLines ?? baseline.max_allowed_lines;
+  const maxAllowedDefaults =
+    options?.maxAllowedDefaults ?? baseline.max_allowed_defaults;
 
-  const { totalLines, totalDefaults } = scanHardcodedTotals(TEMPLATES_DIR);
+  const { totalLines, totalDefaults, forbiddenDefaultEngines } =
+    scanHardcodedTotals(TEMPLATES_DIR);
 
-  console.log("=== CỔNG CHECK:HARDCODED-PARAMS (Task #263 T6) ===");
   console.log(
-    `Số dòng chứa số cứng trong session.ts: ${totalLines} (trần: ${baseline.max_allowed_lines})`
+    "=== CỔNG CHECK:HARDCODED-PARAMS (Task #263 T6 / BR-LDC-06, BR-LDC-07) ==="
   );
   console.log(
-    `Số .default(...) trong DifficultySchema: ${totalDefaults} (trần: ${baseline.max_allowed_defaults})`
+    `Số dòng chứa số cứng trong session.ts (BR-LDC-06): ${totalLines} (trần: ${maxAllowedLines})`
+  );
+  console.log(
+    `Số .default(...) trong DifficultySchema (BR-LDC-07): ${totalDefaults} (trần: ${maxAllowedDefaults})`
   );
 
   if (options?.updateBaseline) {
     updateBaselineFile(baseline, totalLines, totalDefaults);
   }
 
-  const passedLines = totalLines <= baseline.max_allowed_lines;
-  const passedDefaults = totalDefaults <= baseline.max_allowed_defaults;
+  const passedLines = totalLines <= maxAllowedLines;
+  const passedDefaults =
+    totalDefaults <= maxAllowedDefaults && forbiddenDefaultEngines.length === 0;
   const passed = passedLines && passedDefaults;
 
   if (!passedLines) {
     console.error(
-      `✗ Số dòng chứa số cứng (${totalLines}) vượt trần cho phép (${baseline.max_allowed_lines}).`
+      `✗ [BR-LDC-06] Số dòng chứa số cứng (${totalLines}) vượt trần cho phép (${maxAllowedLines}).`
     );
   }
-  if (!passedDefaults) {
+  if (totalDefaults > maxAllowedDefaults) {
     console.error(
-      `✗ Số .default(...) trong schema (${totalDefaults}) vượt trần cho phép (${baseline.max_allowed_defaults}).`
+      `✗ [BR-LDC-07] Số .default(...) trong schema (${totalDefaults}) vượt trần cho phép (${maxAllowedDefaults}).`
+    );
+  }
+  if (forbiddenDefaultEngines.length > 0) {
+    console.error(
+      `✗ [BR-LDC-07] Trường bắt buộc item_count dùng .default(...) tại: ${forbiddenDefaultEngines.join(", ")}.`
     );
   }
   if (passed) {
@@ -169,9 +206,10 @@ export function scanHardcodedParams(options?: { updateBaseline?: boolean }): {
   return {
     totalLines,
     totalDefaults,
+    forbiddenDefaultEngines,
     passed,
-    maxAllowedLines: baseline.max_allowed_lines,
-    maxAllowedDefaults: baseline.max_allowed_defaults,
+    maxAllowedLines,
+    maxAllowedDefaults,
   };
 }
 

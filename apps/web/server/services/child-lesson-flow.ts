@@ -9,6 +9,8 @@ import {
   activities,
   type ChildLessonStepSnapshot,
   childLessonPlays,
+  curricula,
+  curriculumItems,
   gameLevels,
   type getOwnerDb,
   lessonActivities,
@@ -16,7 +18,13 @@ import {
   playSessions,
 } from "@mindkid/db";
 import { LessonNotFoundError } from "@mindkid/errors/content";
-import type { AccessTier, CallerIdentity } from "@mindkid/shared";
+import {
+  type AccessTier,
+  type CallerIdentity,
+  computeAgeGap,
+  type RankedChildFlow,
+  rankFlowsForChild,
+} from "@mindkid/shared";
 import { and, asc, eq, inArray, max } from "drizzle-orm";
 import { checkLevelIntroRequired } from "#server/utils/concept-intro-runtime";
 import {
@@ -334,6 +342,7 @@ export interface LessonSuggestion {
   readonly estimated_minutes: number | null;
   readonly in_progress: boolean;
   readonly fits_age: boolean;
+  readonly age_gap: number;
   /** Hình trẻ nhận ra: emoji của level đầu bài, không có thì `FALLBACK_LESSON_EMOJI`. */
   readonly thumbnail_emoji: string;
 }
@@ -415,9 +424,6 @@ export async function listLessonsForChild(
     .where(eq(lessons.status, "published"))
     .orderBy(asc(lessons.code));
 
-  const fitsAge = (min: number | null, max: number | null): boolean =>
-    (min === null || min <= age) && (max === null || age <= max);
-
   const rank = (suggestion: {
     in_progress: boolean;
     fits_age: boolean;
@@ -429,14 +435,22 @@ export async function listLessonsForChild(
   };
 
   const top = published
-    .map((row) => ({
-      id: row.id,
-      code: row.code,
-      title: row.title,
-      estimated_minutes: row.estimatedMinutes,
-      in_progress: inProgress.has(row.code),
-      fits_age: fitsAge(row.targetAgeMin, row.targetAgeMax),
-    }))
+    .map((row) => {
+      const ageGap = computeAgeGap({
+        childAge: age,
+        targetAgeMin: row.targetAgeMin,
+        targetAgeMax: row.targetAgeMax,
+      });
+      return {
+        id: row.id,
+        code: row.code,
+        title: row.title,
+        estimated_minutes: row.estimatedMinutes,
+        in_progress: inProgress.has(row.code),
+        fits_age: ageGap === 0,
+        age_gap: ageGap,
+      };
+    })
     .sort((a, b) => rank(a) - rank(b) || a.code.localeCompare(b.code))
     .slice(0, input.limit);
 
@@ -448,4 +462,68 @@ export async function listLessonsForChild(
     ...rest,
     thumbnail_emoji: emojis.get(id) || FALLBACK_LESSON_EMOJI,
   }));
+}
+
+export interface ListFlowsForChildInput {
+  readonly birthYear: number;
+  readonly now?: Date;
+}
+
+/**
+ * Danh sách flow ghi danh được cho phụ huynh kèm `fits_age`, `age_gap`,
+ * `recommend_score` (`lesson-flow-model.md` §8, `BR-LFM-02/03/04/07/09`).
+ */
+export async function listFlowsForChild(
+  db: Db,
+  input: ListFlowsForChildInput
+): Promise<RankedChildFlow[]> {
+  const age = (input.now ?? new Date()).getFullYear() - input.birthYear;
+  const rows = await db
+    .select({
+      id: curricula.id,
+      code: curricula.code,
+      title: curricula.title,
+      targetAgeMin: curricula.targetAgeMin,
+      targetAgeMax: curricula.targetAgeMax,
+      durationWeeks: curricula.durationWeeks,
+      sessionsPerWeek: curricula.sessionsPerWeek,
+    })
+    .from(curricula)
+    .where(eq(curricula.status, "published"))
+    .orderBy(asc(curricula.code));
+
+  if (rows.length === 0) {
+    return [];
+  }
+
+  const curriculumIds = rows.map((row) => row.id);
+  const itemRows = await db
+    .select({ curriculumId: curriculumItems.curriculumId })
+    .from(curriculumItems)
+    .where(inArray(curriculumItems.curriculumId, curriculumIds));
+
+  const itemCountByCurriculum = new Map<number, number>();
+  for (const item of itemRows) {
+    itemCountByCurriculum.set(
+      item.curriculumId,
+      (itemCountByCurriculum.get(item.curriculumId) ?? 0) + 1
+    );
+  }
+
+  return rankFlowsForChild(
+    age,
+    rows.map((row) => {
+      const actualItems = itemCountByCurriculum.get(row.id) ?? 0;
+      return {
+        code: row.code,
+        title: row.title,
+        sessionCount:
+          actualItems > 0
+            ? actualItems
+            : row.durationWeeks * row.sessionsPerWeek,
+        targetAgeMin: row.targetAgeMin,
+        targetAgeMax: row.targetAgeMax,
+      };
+    })
+  );
 }

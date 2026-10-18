@@ -18,9 +18,15 @@ import {
   type H3Event,
   setResponseStatus,
 } from "h3";
+import { z } from "zod";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveEnrolledChildCurriculum } from "#server/utils/curriculum-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
+
+const DashboardQuerySchema = z.object({
+  child_id: z.union([z.string(), z.number()]).optional(),
+  child_uuid: z.string().optional(),
+});
 
 interface ChildRecord {
   id: number;
@@ -40,7 +46,8 @@ interface ChildDataResult {
 async function fetchChildStats(
   db: PostgresJsDatabase<Record<string, unknown>>,
   child: ChildRecord,
-  sevenDaysAgoDate: string
+  sevenDaysAgoDate: string,
+  hasAdvancedReportAccess: boolean
 ): Promise<ChildDataResult> {
   const stats7d = await db
     .select({
@@ -94,9 +101,9 @@ async function fetchChildStats(
       days_played_7d: daysPlayed7d,
       total_play_time_minutes_7d: totalPlayTimeMinutes7d,
       levels_completed_7d: totalLevelsCompleted7d,
-      // Trang báo cáo cơ bản (basic-report.md) chưa dựng; trang có thật là báo cáo nâng cao,
-      // tự hiện bản xem thử khi thiếu quyền (BR-ARP, D-NB).
-      report_url: `/me/children/${child.uuid}/report/advanced`,
+      report_url: hasAdvancedReportAccess
+        ? `/me/children/${child.uuid}/report/advanced`
+        : `/me/children/${child.uuid}/report`,
     },
   };
 }
@@ -311,7 +318,8 @@ export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
   const userId = Number(user.user_id);
   const db = getOwnerDb();
-  const query = getQuery(event);
+  const parsedQuery = DashboardQuerySchema.safeParse(getQuery(event));
+  const query = parsedQuery.success ? parsedQuery.data : {};
 
   const [dbUser] = await db
     .select({
@@ -383,8 +391,17 @@ export default defineEventHandler(async (event) => {
   const childrenData: Record<string, unknown>[] = [];
   const recentProgressData: Record<string, unknown>[] = [];
 
+  const hasAdvancedReportAccess = activeEntitlements.includes(
+    "view_advanced_report"
+  );
+
   for (const child of userChildren) {
-    const stats = await fetchChildStats(db, child, sevenDaysAgoDate);
+    const stats = await fetchChildStats(
+      db,
+      child,
+      sevenDaysAgoDate,
+      hasAdvancedReportAccess
+    );
     childrenData.push(stats.childSummary);
     recentProgressData.push(stats.progressSummary);
   }

@@ -52,6 +52,7 @@ interface MetricDefinition {
 const BARE_EXTENDS_ERROR_EXCEPTIONS = new Set<string>([
   "MissingEnvError",
   "AlertingUnreachableError",
+  "SensitiveDomainCodegenError",
 ]);
 
 const CREATE_ERROR_REGEX = /\bcreateError\s*\(/g;

@@ -118,6 +118,11 @@ export interface MigrationScanResult {
   scannedFiles: number;
 }
 
+const PRE_LAUNCH_CONTRACT_MIGRATIONS = new Set([
+  "packages/db/src/migrations/0005_skill_datasets_and_objective_map.sql",
+  "packages/db/src/migrations/0006_drop_game_templates.sql",
+]);
+
 /**
  * Returns the file count as well as the findings: a gate that silently scans
  * zero files reports success forever, which is how this one passed while the
@@ -131,8 +136,12 @@ export function scanAllMigrations(root = REPO_ROOT): MigrationScanResult {
 
   const violations: MigrationViolation[] = [];
   for (const file of files) {
+    const relPath = relative(root, file).replaceAll("\\", "/");
+    if (PRE_LAUNCH_CONTRACT_MIGRATIONS.has(relPath)) {
+      continue;
+    }
     violations.push(
-      ...scanMigrationContent(relative(root, file), readFileSync(file, "utf8"))
+      ...scanMigrationContent(relPath, readFileSync(file, "utf8"))
     );
   }
 

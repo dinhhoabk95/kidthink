@@ -5,7 +5,7 @@ area: addon
 status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-11
+reviewed: 2026-10-18
 owns:
   - Luồng User tự lắp giáo án từ thư viện
 depends_on:

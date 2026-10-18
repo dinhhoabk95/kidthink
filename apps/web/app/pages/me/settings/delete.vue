@@ -1,38 +1,112 @@
 <template>
-  <div class="max-w-3xl mx-auto p-4 md:p-6 space-y-6">
+  <div class="mx-auto max-w-3xl space-y-6 p-4 md:p-6">
     <!-- Header -->
-    <div class="border-b pb-4 border-surface-200">
-      <div class="flex items-center gap-2 mb-2">
+    <div class="border-surface-200 border-b pb-4">
+      <div class="mb-2 flex items-center gap-2">
         <NuxtLink
-          class="text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1"
+          class="flex items-center gap-1 font-semibold text-brand-600 text-sm hover:text-brand-700"
           to="/me/settings"
         >
-          <UIcon class="w-4 h-4" name="i-lucide-arrow-left" />
+          <UIcon class="h-4 w-4" name="i-lucide-arrow-left" />
           Quay lại Cài đặt
         </NuxtLink>
       </div>
-      <h1 class="text-2xl md:text-3xl font-bold font-heading text-danger-700">
+      <h1 class="font-bold font-heading text-2xl text-danger-700 md:text-3xl">
         Xoá tài khoản và dữ liệu
       </h1>
-      <p class="text-sm md:text-base text-surface-600 mt-1">
+      <p class="mt-1 text-sm text-surface-600 md:text-base">
         Quyền yêu cầu xoá dữ liệu cá nhân theo Nghị định 13/2023/NĐ-CP. Vui lòng
         đọc kỹ thông tin dưới đây trước khi quyết định.
       </p>
     </div>
 
+    <!-- Status feedback banner -->
+    <div
+      class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 font-medium text-emerald-900 text-sm"
+      data-testid="deletion-status-message"
+      v-if="statusMessage"
+    >
+      {{ statusMessage }}
+    </div>
+
+    <!-- Pending Deletion State Banner & Cancel Action (BR-ADL-02) -->
+    <div
+      class="space-y-4 rounded-2xl border-2 border-amber-300 bg-amber-50 p-5 md:p-6"
+      data-testid="pending-deletion-banner"
+      v-if="deletionStatus.is_pending_deletion"
+    >
+      <div class="space-y-1">
+        <h2 class="font-bold font-heading text-amber-950 text-lg">
+          Tài khoản đang trong thời gian chờ xoá (30 ngày)
+        </h2>
+        <p class="text-amber-900 text-sm">
+          Tài khoản và toàn bộ dữ liệu học tập của bé sẽ bị xoá vĩnh viễn vào:
+          <strong class="font-semibold" data-testid="purge-at-display">
+            {{ formattedPurgeAt }}
+          </strong>
+        </p>
+        <p class="text-amber-800 text-xs">
+          Bạn có thể huỷ yêu cầu xoá ngay bên dưới để khôi phục nguyên trạng tài
+          khoản và hồ sơ của bé.
+        </p>
+      </div>
+
+      <button
+        class="min-h-11 rounded-xl bg-amber-600 px-5 py-2.5 font-semibold text-sm text-white shadow-xs transition hover:bg-amber-700 disabled:opacity-50"
+        data-testid="cancel-deletion-btn"
+        type="button"
+        :disabled="isCancelling"
+        @click="handleCancelDeletion"
+      >
+        {{ isCancelling ? "Đang khôi phục..." : "Huỷ yêu cầu xoá tài khoản" }}
+      </button>
+    </div>
+
+    <!-- Quantitative Impact Summary (BR-ADL-07) -->
+    <div class="grid gap-4 sm:grid-cols-2" data-testid="impact-summary-metrics">
+      <div class="rounded-2xl border border-danger-200 bg-white p-4 shadow-2xs">
+        <span class="block text-surface-500 text-xs"
+          >Hồ sơ bé bị ảnh hưởng</span
+        >
+        <span
+          class="mt-1 block font-bold text-2xl text-danger-700"
+          data-testid="child-profiles-count"
+        >
+          {{ summaryData.child_profiles_count }}
+          hồ sơ
+        </span>
+      </div>
+      <div class="rounded-2xl border border-danger-200 bg-white p-4 shadow-2xs">
+        <span class="block text-surface-500 text-xs"
+          >Thời hạn gói học còn lại sẽ mất</span
+        >
+        <span
+          class="mt-1 block font-bold text-2xl text-danger-700"
+          data-testid="active-subscription-days"
+        >
+          {{ summaryData.active_subscription_days }}
+          ngày
+        </span>
+      </div>
+    </div>
+
     <!-- Impact Details (BR-ADL-07) -->
     <div
-      class="bg-danger-50 border-2 border-danger-200 rounded-2xl p-5 md:p-6 space-y-4"
+      class="space-y-4 rounded-2xl border-2 border-danger-200 bg-danger-50 p-5 md:p-6"
     >
       <div
-        class="flex items-center gap-2 text-danger-800 font-bold font-heading text-lg"
+        class="flex items-center gap-2 font-bold font-heading text-danger-800 text-lg"
       >
-        <UIcon class="w-5 h-5 text-danger-600" name="i-lucide-alert-triangle" />
-        <span>Dữ liệu sẽ bị xoá vĩnh viễn sau 30 ngày:</span>
+        <UIcon class="h-5 w-5 text-danger-600" name="i-lucide-alert-triangle" />
+        <span
+          >Dữ liệu sẽ bị xoá vĩnh viễn sau
+          {{ summaryData.grace_period_days }}
+          ngày:</span
+        >
       </div>
 
       <ul
-        class="list-disc list-inside space-y-2 text-sm md:text-base text-danger-950"
+        class="list-inside list-disc space-y-2 text-danger-950 text-sm md:text-base"
       >
         <li v-for="(item, idx) in summaryData.lost_data_items" :key="idx">
           {{ item }}
@@ -42,18 +116,18 @@
 
     <!-- Retained by Law (BR-ADL-05, BR-ADL-07) -->
     <div
-      class="bg-surface-50 border-2 border-surface-200 rounded-2xl p-5 md:p-6 space-y-3"
+      class="space-y-3 rounded-2xl border-2 border-surface-200 bg-surface-50 p-5 md:p-6"
     >
       <h2
-        class="font-bold font-heading text-surface-900 text-base flex items-center gap-2"
+        class="flex items-center gap-2 font-bold font-heading text-base text-surface-900"
       >
-        <UIcon class="w-5 h-5 text-surface-600" name="i-lucide-scale" />
+        <UIcon class="h-5 w-5 text-surface-600" name="i-lucide-scale" />
         <span
           >Dữ liệu được lưu trữ theo quy định pháp luật (không chứa PII của bé):</span
         >
       </h2>
 
-      <ul class="list-disc list-inside space-y-1.5 text-sm text-surface-700">
+      <ul class="list-inside list-disc space-y-1.5 text-sm text-surface-700">
         <li v-for="(item, idx) in summaryData.retained_legal_items" :key="idx">
           {{ item }}
         </li>
@@ -62,40 +136,143 @@
 
     <!-- 30-Day Grace Period Notice (BR-ADL-01, BR-ADL-02) -->
     <div
-      class="p-4 rounded-xl bg-warning-50 border border-warning-200 text-sm text-warning-900 space-y-1"
+      class="space-y-1 rounded-xl border border-warning-200 bg-warning-50 p-4 text-sm text-warning-900"
     >
-      <p class="font-bold">Thời gian chờ 30 ngày trước khi xoá thật:</p>
+      <p class="font-bold">
+        Thời gian chờ {{ summaryData.grace_period_days }} ngày trước khi xoá
+        thật:
+      </p>
       <p>
         Sau khi gửi yêu cầu, mọi phiên đăng nhập sẽ được thu hồi ngay lập tức.
-        Trong vòng 30 ngày tới, bạn có thể đăng nhập lại bất cứ lúc nào để huỷ
-        yêu cầu và khôi phục nguyên trạng toàn bộ dữ liệu.
+        Trong vòng {{ summaryData.grace_period_days }} ngày tới, bạn có thể đăng
+        nhập lại bất cứ lúc nào để huỷ yêu cầu và khôi phục nguyên trạng toàn bộ
+        dữ liệu.
       </p>
     </div>
 
     <!-- Action Section -->
     <div
-      class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-surface-200"
+      class="flex flex-col items-center justify-between gap-4 border-surface-200 border-t pt-4 sm:flex-row"
     >
       <NuxtLink
-        class="min-h-11 px-6 py-2.5 bg-surface-100 hover:bg-surface-200 text-surface-800 font-semibold rounded-xl transition-colors w-full sm:w-auto text-center"
+        class="min-h-11 w-full rounded-xl bg-surface-100 px-6 py-2.5 text-center font-semibold text-surface-800 transition-colors hover:bg-surface-200 sm:w-auto"
         to="/me/settings"
       >
         Giữ tài khoản
       </NuxtLink>
 
       <button
-        class="min-h-11 px-6 py-2.5 bg-danger-600 hover:bg-danger-700 text-white font-semibold rounded-xl transition-colors shadow-sm w-full sm:w-auto"
+        class="min-h-11 w-full rounded-xl bg-danger-600 px-6 py-2.5 font-semibold text-white shadow-sm transition-colors hover:bg-danger-700 sm:w-auto"
+        data-testid="request-deletion-btn"
         type="button"
+        v-if="!deletionStatus.is_pending_deletion"
         @click="handleRequestDeletion"
       >
         Xác nhận yêu cầu xoá
       </button>
     </div>
+
+    <!-- Reauth & Final Confirmation Modal (BR-ADL-03) -->
+    <div
+      aria-labelledby="deletion-reauth-title"
+      aria-modal="true"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4"
+      data-testid="deletion-reauth-modal"
+      role="dialog"
+      v-if="isReauthModalOpen"
+    >
+      <div
+        class="w-full max-w-md space-y-4 rounded-2xl border border-surface-200 bg-white p-6 shadow-xl"
+      >
+        <div class="flex items-center justify-between">
+          <h2
+            class="font-bold font-heading text-danger-700 text-lg"
+            id="deletion-reauth-title"
+          >
+            Xác thực mật khẩu để xoá tài khoản
+          </h2>
+          <button
+            class="rounded-lg p-1.5 text-surface-500 hover:bg-surface-100"
+            data-testid="close-reauth-modal-btn"
+            type="button"
+            @click="closeReauthModal"
+          >
+            ✕
+          </button>
+        </div>
+
+        <p class="text-sm text-surface-600">
+          Vui lòng nhập mật khẩu hiện tại để xác nhận yêu cầu xoá tài khoản. Tài
+          khoản sẽ chuyển sang trạng thái chờ xoá trong
+          {{ summaryData.grace_period_days }}
+          ngày.
+        </p>
+
+        <form
+          class="space-y-4"
+          data-testid="deletion-reauth-form"
+          @submit.prevent="submitDeletionRequest"
+        >
+          <div>
+            <label
+              class="mb-1 block font-medium text-sm text-surface-700"
+              for="reauthPasswordInput"
+            >
+              Mật khẩu hiện tại
+            </label>
+            <input
+              autocomplete="current-password"
+              class="min-h-11 w-full rounded-xl border-2 border-surface-200 px-3.5 py-2.5 text-base text-surface-900 focus:border-danger-600 focus:outline-none"
+              data-testid="deletion-password-input"
+              id="reauthPasswordInput"
+              required
+              type="password"
+              v-model="reauthPassword"
+            >
+            <p
+              class="mt-1 text-amber-700 text-xs"
+              data-testid="deletion-field-error-password"
+              v-if="fieldErrors.password"
+            >
+              {{ fieldErrors.password }}
+            </p>
+          </div>
+
+          <p
+            class="rounded-xl border border-amber-200 bg-amber-50 p-3 font-medium text-amber-900 text-xs"
+            data-testid="deletion-modal-error"
+            v-if="modalError"
+          >
+            {{ modalError }}
+          </p>
+
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              class="min-h-11 rounded-xl border border-surface-300 px-4 py-2 font-semibold text-sm text-surface-700 hover:bg-surface-50"
+              type="button"
+              @click="closeReauthModal"
+            >
+              Giữ tài khoản
+            </button>
+            <button
+              class="min-h-11 rounded-xl bg-danger-600 px-5 py-2 font-semibold text-sm text-white hover:bg-danger-700 disabled:opacity-50"
+              data-testid="confirm-delete-submit-btn"
+              type="submit"
+              :disabled="isSubmittingDelete"
+            >
+              {{ isSubmittingDelete ? "Đang xử lý..." : "Xác nhận xoá" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { onMounted, ref } from "vue";
+  import { getFieldErrors, normalizeApiError } from "@mindkid/errors/client";
+  import { computed, onMounted, ref } from "vue";
+  import { useApi } from "~/composables/use-api";
 
   definePageMeta({
     middleware: ["user-auth"],
@@ -109,6 +286,13 @@
     retained_legal_items: string[];
   }
 
+  interface DeletionStatus {
+    status: string;
+    purge_at: string | null;
+    is_pending_deletion: boolean;
+  }
+
+  const api = useApi();
   const summaryData = ref<DeletionSummary>({
     child_profiles_count: 0,
     active_subscription_days: 0,
@@ -125,20 +309,126 @@
     ],
   });
 
+  const deletionStatus = ref<DeletionStatus>({
+    status: "active",
+    purge_at: null,
+    is_pending_deletion: false,
+  });
+
+  const isReauthModalOpen = ref(false);
+  const reauthPassword = ref("");
+  const isSubmittingDelete = ref(false);
+  const isCancelling = ref(false);
+  const modalError = ref("");
+  const fieldErrors = ref<Record<string, string>>({});
+  const statusMessage = ref("");
+
+  const formattedPurgeAt = computed(() => {
+    if (!deletionStatus.value.purge_at) {
+      return "Sau 30 ngày";
+    }
+    const parsed = new Date(deletionStatus.value.purge_at);
+    if (Number.isNaN(parsed.getTime())) {
+      return deletionStatus.value.purge_at;
+    }
+    return parsed.toISOString().split("T")[0] ?? deletionStatus.value.purge_at;
+  });
+
   onMounted(async () => {
     try {
-      const data = await globalThis.$fetch<DeletionSummary>(
-        "/api/users/account/delete-summary"
-      );
-      if (data) {
-        summaryData.value = data;
+      const [summaryRes, statusRes] = await Promise.all([
+        api<DeletionSummary>("/api/users/account/delete-summary").catch(
+          () => null
+        ),
+        api<DeletionStatus>("/api/users/account/delete/status").catch(
+          () => null
+        ),
+      ]);
+      if (summaryRes) {
+        summaryData.value = summaryRes;
       }
-    } catch (err) {
-      console.error("Failed to load delete summary", err);
+      if (statusRes) {
+        deletionStatus.value = statusRes;
+      }
+    } catch {
+      // Non-blocking fallback
     }
   });
 
-  function handleRequestDeletion() {
-    // Triggers reauth modal and deletion confirmation
+  function handleRequestDeletion(): void {
+    reauthPassword.value = "";
+    modalError.value = "";
+    fieldErrors.value = {};
+    isReauthModalOpen.value = true;
+  }
+
+  function closeReauthModal(): void {
+    isReauthModalOpen.value = false;
+  }
+
+  async function submitDeletionRequest(): Promise<void> {
+    modalError.value = "";
+    fieldErrors.value = {};
+    isSubmittingDelete.value = true;
+
+    try {
+      await api("/api/users/auth/reauth", {
+        method: "POST",
+        body: { password: reauthPassword.value },
+      });
+
+      const res = await api<{
+        purge_at: string;
+        grace_period_days: number;
+        message: string;
+      }>("/api/users/account/delete", {
+        method: "POST",
+        body: {},
+      });
+
+      deletionStatus.value = {
+        status: "pending_deletion",
+        purge_at: res.purge_at,
+        is_pending_deletion: true,
+      };
+      statusMessage.value =
+        res.message ||
+        "Yêu cầu xoá tài khoản đã được ghi nhận. Tài khoản sẽ xoá sau 30 ngày.";
+      isReauthModalOpen.value = false;
+    } catch (err) {
+      fieldErrors.value = Object.fromEntries(
+        getFieldErrors(err).map((f) => [f.field, f.message])
+      );
+      modalError.value = normalizeApiError(err).message;
+    } finally {
+      isSubmittingDelete.value = false;
+    }
+  }
+
+  async function handleCancelDeletion(): Promise<void> {
+    isCancelling.value = true;
+    statusMessage.value = "";
+
+    try {
+      const res = await api<{ status: string; message: string }>(
+        "/api/users/account/delete/cancel",
+        {
+          method: "POST",
+          body: {},
+        }
+      );
+
+      deletionStatus.value = {
+        status: res.status || "active",
+        purge_at: null,
+        is_pending_deletion: false,
+      };
+      statusMessage.value =
+        res.message || "Đã huỷ yêu cầu xoá và khôi phục tài khoản thành công.";
+    } catch (err) {
+      statusMessage.value = normalizeApiError(err).message;
+    } finally {
+      isCancelling.value = false;
+    }
   }
 </script>

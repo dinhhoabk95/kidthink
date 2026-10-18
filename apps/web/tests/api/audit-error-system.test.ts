@@ -7,7 +7,11 @@ import auditLogsExportGetHandler from "#server/api/managers/audit-logs/export.ge
 import auditLogsGetHandler from "#server/api/managers/audit-logs/index.get";
 import errorLogsPatchHandler from "#server/api/managers/error-logs/[fingerprint].patch";
 import errorLogsGetHandler from "#server/api/managers/error-logs/index.get";
-import systemStatusGetHandler from "#server/api/managers/system/status.get";
+import systemStatusGetHandler, {
+  probePostgres,
+  probeQueue,
+  probeValkey,
+} from "#server/api/managers/system/status.get";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
@@ -334,21 +338,37 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
       try {
         await systemStatusGetHandler(event);
         expect.fail("Should throw 403 INSUFFICIENT_ROLE");
-      } catch (err: any) {
-        expect(err.statusCode || err.status).toBe(403);
+      } catch (err) {
+        const httpErr = err as { statusCode?: number; status?: number };
+        expect(httpErr.statusCode ?? httpErr.status).toBe(403);
       }
     });
 
     it("returns 4 system groups with runbook links and no secrets (BR-SYS-03, BR-SYS-04, D-KT)", async () => {
       const event = mockManagerEvent("super_admin");
-      const res = (await systemStatusGetHandler(event)) as any;
+      const res = await systemStatusGetHandler(event);
 
       expect(res.as_of).toBeDefined();
       expect(res.services).toBeDefined();
       expect(["ok", "unknown", "bad"]).toContain(res.services.postgres.status);
+      expect(["up", "down", "degraded"]).toContain(res.services.postgres.state);
       expect(res.services.postgres.runbook_url).toBeDefined();
+      expect(["ok", "unknown", "bad"]).toContain(res.services.valkey.status);
+      expect(["up", "down", "degraded"]).toContain(res.services.valkey.state);
+      expect(typeof res.services.valkey.latency_ms).toBe("number");
+      expect(["ok", "unknown", "bad"]).toContain(res.services.queue.status);
+      expect(["up", "down", "degraded"]).toContain(res.services.queue.state);
       expect(res.jobs).toBeDefined();
       expect(["ok", "unknown", "bad"]).toContain(res.jobs.status);
+      expect(res.jobs.counts).toEqual(
+        expect.objectContaining({
+          waiting: expect.any(Number),
+          active: expect.any(Number),
+          completed: expect.any(Number),
+          failed: expect.any(Number),
+          delayed: expect.any(Number),
+        })
+      );
       expect(res.backups).toBeDefined();
       expect(["ok", "unknown", "bad"]).toContain(res.backups.status);
       expect(res.errors).toBeDefined();
@@ -359,6 +379,66 @@ describe("Log Viewers: Audit, Error, System Status (P2.10)", () => {
       expect(jsonStr).not.toContain("postgres://");
       expect(jsonStr).not.toContain("SECRET");
       expect(jsonStr).not.toContain("PASSWORD");
+    });
+
+    it("Scenario: BR-SYS-01 — never reports ok when Valkey or BullMQ fails, and reflects real queue job counts", async () => {
+      const valkeyDownFalse = await probeValkey(() => Promise.resolve(false));
+      expect(valkeyDownFalse.status).toBe("bad");
+      expect(valkeyDownFalse.state).toBe("down");
+      expect(valkeyDownFalse.status).not.toBe("ok");
+
+      const valkeyDownThrow = await probeValkey(() =>
+        Promise.reject(new Error("Connection refused"))
+      );
+      expect(valkeyDownThrow.status).toBe("unknown");
+      expect(valkeyDownThrow.state).toBe("down");
+      expect(valkeyDownThrow.status).not.toBe("ok");
+
+      const pgDegraded = await probePostgres(async () => {
+        await Promise.resolve();
+      }, 0);
+      expect(pgDegraded.status).toBe("bad");
+      expect(pgDegraded.state).toBe("degraded");
+
+      const nowMs = 1_700_000_060_000;
+      const queueHealthy = await probeQueue(
+        () => ({
+          getJobCounts: () =>
+            Promise.resolve({
+              waiting: 4,
+              active: 2,
+              completed: 19,
+              failed: 1,
+              delayed: 3,
+            }),
+          getWaiting: () => Promise.resolve([{ timestamp: 1_700_000_015_000 }]),
+        }),
+        nowMs
+      );
+      expect(queueHealthy.service.status).toBe("ok");
+      expect(queueHealthy.service.state).toBe("up");
+      expect(queueHealthy.jobs.status).toBe("ok");
+      expect(queueHealthy.jobs.waiting_count).toBe(4);
+      expect(queueHealthy.jobs.active_count).toBe(2);
+      expect(queueHealthy.jobs.completed_count).toBe(19);
+      expect(queueHealthy.jobs.failed_count).toBe(1);
+      expect(queueHealthy.jobs.delayed_count).toBe(3);
+      expect(queueHealthy.jobs.oldest_job_age_seconds).toBe(45);
+      expect(queueHealthy.jobs.counts).toEqual({
+        waiting: 4,
+        active: 2,
+        completed: 19,
+        failed: 1,
+        delayed: 3,
+      });
+
+      const queueDown = await probeQueue(() => ({
+        getJobCounts: () => Promise.reject(new Error("Valkey unreachable")),
+      }));
+      expect(queueDown.service.status).toBe("unknown");
+      expect(queueDown.service.state).toBe("down");
+      expect(queueDown.jobs.status).toBe("unknown");
+      expect(queueDown.jobs.status).not.toBe("ok");
     });
   });
 });

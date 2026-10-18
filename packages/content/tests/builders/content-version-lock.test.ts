@@ -5,8 +5,8 @@ import { describe, expect, it } from "vitest";
 import {
   buildLevelsForSkill,
   GENERATED_LEVEL_CONTENT_VERSION,
-} from "../../src/builders/build-levels.js";
-import { ALL_SKILL_SEEDS } from "../../src/skills/index.js";
+} from "#src/builders/build-levels";
+import { ALL_SKILL_SEEDS } from "#src/skills/index";
 
 const LOCK_PATH = fileURLToPath(
   new URL("../../content-version.lock.json", import.meta.url)
@@ -35,17 +35,24 @@ function readLock(): VersionLock | undefined {
   return JSON.parse(readFileSync(LOCK_PATH, "utf8")) as VersionLock;
 }
 
+function canUpdateLock(
+  lock: VersionLock | undefined,
+  currentHash: string,
+  currentVersion: number
+): boolean {
+  if (lock && lock.hash !== currentHash && lock.version >= currentVersion) {
+    return false;
+  }
+  return true;
+}
+
 describe("BR-CSA-17 — khoá phiên bản level sinh", () => {
   it("băm nội dung level đổi thì phải tăng GENERATED_LEVEL_CONTENT_VERSION", () => {
     const hash = hashBuiltLevels();
     const lock = readLock();
 
     if (process.env.UPDATE_CONTENT_LOCK === "1") {
-      if (
-        lock &&
-        lock.hash !== hash &&
-        lock.version >= GENERATED_LEVEL_CONTENT_VERSION
-      ) {
+      if (!canUpdateLock(lock, hash, GENERATED_LEVEL_CONTENT_VERSION)) {
         throw new Error(
           `Nội dung level đổi nhưng GENERATED_LEVEL_CONTENT_VERSION vẫn là ${GENERATED_LEVEL_CONTENT_VERSION}; tăng số này trước khi cập nhật khoá.`
         );
@@ -63,5 +70,14 @@ describe("BR-CSA-17 — khoá phiên bản level sinh", () => {
       hash === lock?.hash && GENERATED_LEVEL_CONTENT_VERSION === lock?.version,
       "Nội dung level sinh đã đổi: tăng GENERATED_LEVEL_CONTENT_VERSION rồi chạy UPDATE_CONTENT_LOCK=1 pnpm --filter @mindkid/content test content-version-lock (BR-CSA-17)"
     ).toBe(true);
+  });
+
+  it("Ca âm BR-CSA-17: băm đổi mà phiên bản không tăng thì từ chối cập nhật khoá", () => {
+    const existingLock: VersionLock = {
+      version: 8,
+      hash: "old-hash-value",
+    };
+    expect(canUpdateLock(existingLock, "new-hash-value", 8)).toBe(false);
+    expect(canUpdateLock(existingLock, "new-hash-value", 9)).toBe(true);
   });
 });

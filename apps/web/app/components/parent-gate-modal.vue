@@ -3,6 +3,7 @@
     aria-modal="true"
     class="fixed inset-0 z-50 flex items-center justify-center bg-surface-950/60 p-4 backdrop-blur-sm transition-all"
     role="dialog"
+    v-if="!isDuplicateInstance"
     ref="dialogRef"
     :aria-label="'Xác nhận người lớn'"
   >
@@ -121,11 +122,13 @@
   import { onMounted, ref } from "vue";
   import { useParentGateState } from "~/composables/play/parent-gate-state";
   import { useFocusTrap } from "~/composables/play/use-focus-trap";
+  import { recordParentGateTelemetry } from "~/composables/play/use-play-telemetry";
+  import { useApi } from "~/composables/use-api";
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
 
   /**
-   * Parent Gate — `BR-PEN-01`, mục 6 của
-   * `docs/specs/04-play/play-entry-and-profile-select.md`.
+   * Parent Gate — `BR-PEN-01`, `BR-PGT-01..07`, mục 5 của
+   * `docs/specs/04-play/parent-gate.md`.
    */
   interface ParentGateChallenge {
     challenge_id: string;
@@ -142,17 +145,19 @@
   const props = withDefaults(
     defineProps<{
       clientOnly?: boolean;
+      trigger?: string;
     }>(),
     {
       clientOnly: false,
+      trigger: "parent_gate",
     }
   );
 
   const emit = defineEmits<{
     verified: [gateToken: string];
     cancel: [];
-    parent_gate_shown: [];
-    parent_gate_passed: [];
+    parent_gate_shown: [payload?: { trigger: string }];
+    parent_gate_passed: [payload?: { attempts: number }];
     parent_gate_failed: [reason: string];
   }>();
 
@@ -161,6 +166,7 @@
     onEscape: () => emit("cancel"),
   });
 
+  const api = useApi();
   const { headers: csrfHeaders } = useCsrfHeaders();
   const gateState = useParentGateState({ clientOnly: props.clientOnly });
 
@@ -172,6 +178,7 @@
 
   const isLocked = gateState.isLocked;
   const remainingLockSeconds = gateState.remainingLockSeconds;
+  const isDuplicateInstance = gateState.isDuplicateInstance;
 
   function generateLocalChallenge(): void {
     const factor_a = Math.floor(Math.random() * 8) + 2;
@@ -192,7 +199,8 @@
       // Chỉ đường client mới được đi tắt bằng trust đã có: không có ai chấm
       // token ở phía server nên "trusted_session" là đủ.
       if (gateState.isTrusted()) {
-        emit("parent_gate_passed");
+        recordParentGateTelemetry("parent_gate_passed", { attempts: 0 });
+        emit("parent_gate_passed", { attempts: 0 });
         emit("verified", "trusted_session");
         return;
       }
@@ -205,7 +213,7 @@
     // trống cho tới khi trust hết hạn.
 
     try {
-      challenge.value = await $fetch<ParentGateChallenge>(
+      challenge.value = await api<ParentGateChallenge>(
         "/api/users/parent-gate/challenge",
         {
           method: "POST",
@@ -219,15 +227,17 @@
   }
 
   function markVerified(token: string): void {
-    gateState.recordSuccess();
+    const attempts = gateState.recordSuccess();
     gateState.setTrusted();
-    emit("parent_gate_passed");
+    recordParentGateTelemetry("parent_gate_passed", { attempts });
+    emit("parent_gate_passed", { attempts });
     emit("verified", token);
   }
 
   function handleFailedAttempt(): void {
-    const { locked } = gateState.recordFailedAttempt();
+    const { locked, attempts } = gateState.recordFailedAttempt();
     answer.value = null;
+    recordParentGateTelemetry("parent_gate_failed", { attempts });
 
     if (locked) {
       errorMessage.value =
@@ -267,7 +277,7 @@
     }
 
     try {
-      const result = await $fetch<ParentGateToken>(
+      const result = await api<ParentGateToken>(
         "/api/users/parent-gate/verify",
         {
           method: "POST",
@@ -288,7 +298,14 @@
   }
 
   onMounted(() => {
-    emit("parent_gate_shown");
+    if (!gateState.acquireModalSlot()) {
+      emit("cancel");
+      return;
+    }
+    recordParentGateTelemetry("parent_gate_shown", {
+      trigger: props.trigger,
+    });
+    emit("parent_gate_shown", { trigger: props.trigger });
     loadChallenge();
   });
 </script>

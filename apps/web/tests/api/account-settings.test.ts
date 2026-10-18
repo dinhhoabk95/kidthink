@@ -1,17 +1,29 @@
+import type { H3Event } from "h3";
 import { describe, expect, it } from "vitest";
 import verifyEmailChangeHandler from "#server/api/guest/auth/verify-email-change.post";
 import changeEmailHandler from "#server/api/users/email.post";
+import getNotificationPrefsHandler from "#server/api/users/notification-preferences.get";
 import updateNotificationPrefsHandler from "#server/api/users/notification-preferences.put";
 import changePasswordHandler from "#server/api/users/password.post";
 import setPasswordHandler from "#server/api/users/password.put";
 import updateProfileHandler from "#server/api/users/profile.patch";
 
+interface StatusError {
+  statusCode?: number;
+  status?: number;
+}
+
+function getErrorStatus(err: object | null | undefined): number | undefined {
+  const statusErr = err as StatusError | null | undefined;
+  return statusErr?.statusCode ?? statusErr?.status;
+}
+
 function mockEvent(
   method: string,
   userId = 401,
-  body: any = {},
+  body: Record<string, string | number | boolean> = {},
   options: { reauthAt?: Date | null; sessionId?: string } = {}
-) {
+): H3Event {
   const responseHeaders: Record<string, string> = {};
   const csrfToken = "a".repeat(64);
   return {
@@ -49,10 +61,10 @@ function mockEvent(
       body,
     },
     _body: body,
-  } as any;
+  } as H3Event;
 }
 
-describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11)", () => {
+describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11, BR-NOT-01)", () => {
   describe("PATCH /api/users/profile (BR-ACS-07)", () => {
     it("updates display_name without requiring reauth", async () => {
       const event = mockEvent("PATCH", 401, {
@@ -62,9 +74,9 @@ describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11)", () => {
       try {
         const res = await updateProfileHandler(event);
         expect(res.display_name).toBeDefined();
-      } catch (err: any) {
+      } catch (err) {
         // If user not found in mock DB, 404 is valid, but shouldn't fail with 428 REAUTH
-        expect(err.statusCode || err.status).not.toBe(428);
+        expect(getErrorStatus(err as object)).not.toBe(428);
       }
     });
 
@@ -78,8 +90,8 @@ describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11)", () => {
       try {
         await updateProfileHandler(event);
         expect.fail("Should have rejected extra fields with 422");
-      } catch (err: any) {
-        expect(err.statusCode || err.status).toBe(422);
+      } catch (err) {
+        expect(getErrorStatus(err as object)).toBe(422);
       }
     });
   });
@@ -96,8 +108,8 @@ describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11)", () => {
       try {
         await changePasswordHandler(event);
         expect.fail("Should have thrown 428 REAUTH_REQUIRED");
-      } catch (err: any) {
-        expect(err.statusCode || err.status).toBe(428);
+      } catch (err) {
+        expect(getErrorStatus(err as object)).toBe(428);
       }
     });
 
@@ -107,8 +119,8 @@ describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11)", () => {
       try {
         await changePasswordHandler(event);
         expect.fail("Should have thrown 422 for short password");
-      } catch (err: any) {
-        expect(err.statusCode || err.status).toBe(422);
+      } catch (err) {
+        expect(getErrorStatus(err as object)).toBe(422);
       }
     });
   });
@@ -125,8 +137,8 @@ describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11)", () => {
       try {
         await setPasswordHandler(event);
         expect.fail("Should have thrown 428 REAUTH_REQUIRED");
-      } catch (err: any) {
-        expect(err.statusCode || err.status).toBe(428);
+      } catch (err) {
+        expect(getErrorStatus(err as object)).toBe(428);
       }
     });
   });
@@ -143,8 +155,8 @@ describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11)", () => {
       try {
         await changeEmailHandler(event);
         expect.fail("Should have thrown 428 REAUTH_REQUIRED");
-      } catch (err: any) {
-        expect(err.statusCode || err.status).toBe(428);
+      } catch (err) {
+        expect(getErrorStatus(err as object)).toBe(428);
       }
     });
 
@@ -154,8 +166,8 @@ describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11)", () => {
       try {
         await changeEmailHandler(event);
         expect.fail("Should have thrown 422");
-      } catch (err: any) {
-        expect(err.statusCode || err.status).toBe(422);
+      } catch (err) {
+        expect(getErrorStatus(err as object)).toBe(422);
       }
     });
   });
@@ -170,25 +182,32 @@ describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11)", () => {
       try {
         await verifyEmailChangeHandler(event);
         expect.fail("Should have thrown TOKEN_EXPIRED");
-      } catch (err: any) {
-        expect(err.statusCode || err.status).toBe(410);
+      } catch (err) {
+        expect(getErrorStatus(err as object)).toBe(410);
       }
     });
   });
 
-  describe("PUT /api/users/notification-preferences (BR-ACS-06)", () => {
-    it("accepts weekly_progress and content_new toggles", async () => {
-      const event = mockEvent("PUT", 401, {
+  describe("GET & PUT /api/users/notification-preferences (BR-ACS-06, BR-NOT-01)", () => {
+    it("accepts weekly_progress and content_new toggles and returns them on GET", async () => {
+      const putEvent = mockEvent("PUT", 401, {
         weekly_progress: false,
         content_new: true,
       });
 
-      const res = await updateNotificationPrefsHandler(event);
-      expect(res.weekly_progress).toBe(false);
-      expect(res.content_new).toBe(true);
+      const putRes = await updateNotificationPrefsHandler(putEvent);
+      expect(putRes.weekly_progress).toBe(false);
+      expect(putRes.content_new).toBe(true);
+
+      const getEvent = mockEvent("GET", 401, {});
+      const getRes = await getNotificationPrefsHandler(getEvent);
+      expect(getRes).toEqual({
+        weekly_progress: false,
+        content_new: true,
+      });
     });
 
-    it("BR-ACS-06: rejects transactional notification keys with 422", async () => {
+    it("BR-ACS-06 / BR-NOT-01: rejects transactional notification keys with 422", async () => {
       const event = mockEvent("PUT", 401, {
         weekly_progress: true,
         order_approved: false, // Transactional key!
@@ -197,8 +216,8 @@ describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11)", () => {
       try {
         await updateNotificationPrefsHandler(event);
         expect.fail("Should have rejected transactional notification update");
-      } catch (err: any) {
-        expect(err.statusCode || err.status).toBe(422);
+      } catch (err) {
+        expect(getErrorStatus(err as object)).toBe(422);
       }
     });
   });

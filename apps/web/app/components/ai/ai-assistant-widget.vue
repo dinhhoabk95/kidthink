@@ -123,12 +123,14 @@
 
 <script lang="ts" setup>
   import { ref } from "vue";
+  import { useApi } from "~/composables/use-api";
 
   const props = defineProps<{
     childUuid: string;
     periodDays?: number;
   }>();
 
+  const api = useApi();
   const loading = ref(false);
   const loadingType = ref<"summary" | "explanation" | null>(null);
   const aiResult = ref<string | null>(null);
@@ -148,7 +150,7 @@
     errorMessage.value = null;
 
     try {
-      const res = await $fetch<{ summary: string; label: string }>(
+      const res = await api<{ summary: string; label: string }>(
         "/api/users/ai/summarize-report",
         {
           method: "POST",
@@ -175,7 +177,7 @@
     errorMessage.value = null;
 
     try {
-      const res = await $fetch<{ explanation: string; label: string }>(
+      const res = await api<{ explanation: string; label: string }>(
         "/api/users/ai/explain-report",
         {
           method: "POST",

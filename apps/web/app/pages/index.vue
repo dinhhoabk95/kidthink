@@ -192,6 +192,7 @@
 
 <script lang="ts" setup>
   import {
+    buildPublicHreflangLinks,
     FAQ_ITEMS,
     FEATURED_GUEST_LEVELS,
     findCompetency,
@@ -286,7 +287,10 @@
 
   useHead({
     htmlAttrs: { lang: "vi-VN" },
-    link: [{ rel: "canonical", href: "https://mindkid.vn/" }],
+    link: [
+      { rel: "canonical", href: "https://mindkid.vn/" },
+      ...buildPublicHreflangLinks("/", "https://mindkid.vn"),
+    ],
     script: [
       {
         type: "application/ld+json",
@@ -306,6 +310,22 @@
           url: "https://mindkid.vn",
           logo: "https://mindkid.vn/images/brand-logo.png",
         }),
+      },
+      {
+        type: "application/ld+json",
+        innerHTML: () =>
+          JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: homeData.value.faq.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: faq.answer,
+              },
+            })),
+          }),
       },
     ],
   });

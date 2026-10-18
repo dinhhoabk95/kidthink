@@ -1,7 +1,7 @@
 import {
   hasUniqueSolution,
   type SudokuGrid,
-} from "../systems/constraint-system.js";
+} from "#src/systems/constraint-system";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 

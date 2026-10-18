@@ -2,12 +2,10 @@
 spec: PROGRESS-AND-MASTERY
 title: Ghi nhận tiến độ và thành thạo
 area: play
-status: approved
+status: implemented
 mvp: true
 phase: P3
 reviewed: 2026-10-18
-open_tasks:
-  - "#294"
 owns:
   - Điều kiện ghi mastery
   - Bản đồ tiến độ hiển thị cho trẻ
@@ -18,8 +16,6 @@ depends_on:
 ---
 
 # Ghi nhận tiến độ và thành thạo
-
-> **Chưa hoàn thành** — §7.2: hai trong ba huy hiệu (hoàn thành strand đầu tiên, hoàn thành chương trình tuần) không bao giờ được trao vì không caller nào tính điều kiện; `BR-PRG-06` chưa có test gắn mã. Việc còn lại: [Task #294](../../tasks/294-play-surface-gaps-plan.md).
 
 ## 1. Objective
 

@@ -2,12 +2,10 @@
 spec: LESSON-FLOW-MODEL
 title: Thư viện giáo án master và flow ghi danh — tuổi là đề xuất, không phải khoá
 area: content
-status: approved
+status: implemented
 mvp: false
 phase: P4
 reviewed: 2026-10-18
-open_tasks:
-  - "#309"
 owns:
   - Quan hệ giữa thư viện giáo án master và một flow ghi danh
   - Vai trò của tuổi là tín hiệu đề xuất, không phải điều kiện ghi danh
@@ -21,8 +19,6 @@ depends_on:
 ---
 
 # Thư viện giáo án master và flow ghi danh — tuổi là đề xuất, không phải khoá
-
-> **Chưa hoàn thành** — Route `GET /api/users/children/{uuid}/flows` (mục 8) chưa có. `POST /api/users/children/{uuid}/enrollments` đã bỏ chặn tuổi (`BR-LFM-02`) nhưng trả chuỗi `warning` (audit ghi `age_warning`) thay cho số `age_gap` của mục 8 — chưa chốt bên nào đúng. `BR-LFM-07/08/09` chưa có kiểm. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
 
 ## 1. Objective
 
@@ -147,9 +143,9 @@ Cấm — NEVER thêm bước xác nhận thứ hai. Cảnh báo là thông tin,
 | | |
 |---|---|
 | Auth | `requireUserAuth()` |
-| 200 | `{ flows: [{ code, title, session_count, age_label, recommend_score, age_gap }] }` |
+| 200 | `{ flows: [{ code, title, session_count, age_label, fits_age, recommend_score, age_gap, warning? }] }` |
 
-`age_gap` bằng 0 khi tuổi trẻ trong khoảng nhãn; khác 0 thì giao diện dựng cảnh báo ở mục 7.3.
+`age_gap` bằng 0 (`fits_age = true`) khi tuổi trẻ trong khoảng nhãn; khác 0 thì giao diện dựng cảnh báo ở mục 7.3 (và `warning` trả kèm chuỗi cảnh báo theo `BR-LFM-04`).
 
 ### `POST /api/users/children/{uuid}/enrollments`
 
@@ -158,7 +154,7 @@ Route đã có ở [`curriculum-player.md`](../04-play/curriculum-player.md) m�
 
 | Trước | Sau |
 |---|---|
-| **422** khi tuổi trẻ ngoài khoảng curriculum (`D-ME`) | Bỏ. Ghi danh thành công, response mang `age_gap` |
+| **422** khi tuổi trẻ ngoài khoảng curriculum (`D-ME`) | Bỏ. Ghi danh thành công, response mang `age_gap` và `warning` |
 | **422** khi không mở được item bắt buộc nào | Giữ nguyên |
 | **409** `ALREADY_ENROLLED` | Giữ nguyên |
 

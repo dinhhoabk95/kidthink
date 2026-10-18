@@ -2,12 +2,10 @@
 spec: LEVEL-DIFFICULTY-CONTRACT
 title: Hợp đồng độ khó game level và tham số hoá cấu hình
 area: content
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
-open_tasks:
-  - "#309"
 owns:
   - Ánh xạ độ khó 1..5 về số item hiển thị và tham số điều khiển qua bảng tra engine
   - Quy định bắt buộc khai difficulty_params.item_count
@@ -22,8 +20,6 @@ depends_on:
 ---
 
 # Hợp đồng độ khó game level và tham số hoá cấu hình
-
-> **Chưa hoàn thành** — `check:hardcoded-params` (`BR-LDC-06`) có script ở `packages/game-engine/package.json` nhưng chưa nằm trong `scripts/check.sh`; `BR-LDC-03/05/07/08` chưa có test trỏ mã. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
 
 ## 1. Objective
 

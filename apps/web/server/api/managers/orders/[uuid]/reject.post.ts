@@ -1,11 +1,6 @@
+import { writeAudit } from "@mindkid/audit";
 import { MIN_ADMIN_NOTE_LENGTH } from "@mindkid/config";
-import {
-  auditLogs,
-  entitlements,
-  getDb,
-  notifications,
-  paymentOrders,
-} from "@mindkid/db";
+import { entitlements, getDb, notifications, paymentOrders } from "@mindkid/db";
 import { AdminNoteRequiredError } from "@mindkid/errors/account";
 import { OrderAlreadyProcessedError } from "@mindkid/errors/billing";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
@@ -118,21 +113,21 @@ export default defineEventHandler(async (event) => {
       revokedKeys.push(r.key);
     }
 
-    // Record audit log (BR-AUD-01)
-    await tx.insert(auditLogs).values({
-      actorType: "manager",
-      actorId: session.manager_id,
+    // Record audit log (BR-AUD-01, BR-AUD-02)
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: session.manager_id,
       action: "order_rejected",
-      entityType: "payment_order",
-      entityId: order.uuid,
-      beforeData: { status: currentStatus },
-      afterData: {
+      entity_type: "payment_order",
+      entity_id: order.uuid,
+      before_data: { status: currentStatus },
+      after_data: {
         status: "rejected",
         revoked_entitlements_count: revokedKeys.length,
       },
       reason: admin_note,
-      ipAddress: getVerifiedRemoteIp(event),
-      userAgent: getHeader(event, "user-agent") || null,
+      ip_address: getVerifiedRemoteIp(event),
+      user_agent: getHeader(event, "user-agent") || null,
     });
 
     // Enqueue notification for user

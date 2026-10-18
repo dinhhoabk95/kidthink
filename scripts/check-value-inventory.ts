@@ -23,6 +23,7 @@ import {
   C5_TONE_MARK_INVENTORY,
   C5_VOCABULARY_INVENTORY,
   type MeasureDimensionInventoryItem,
+  type NumberBondInventoryItem,
   type NumeralInventoryItem,
   type OrdinalInventoryItem,
   SKILL_DATASETS,
@@ -57,12 +58,16 @@ export interface InventoryBaselineData {
 
 export interface InventorySanityViolation {
   readonly code:
+    | "BR-SVI-01"
     | "BR-SVI-02"
     | "BR-SVI-03"
+    | "BR-SVI-04"
     | "BR-SVI-05"
     | "BR-SVI-06"
+    | "BR-SVI-07"
     | "BR-SVI-08"
     | "BR-SVI-09"
+    | "BR-SVI-10"
     | "BR-SVI-11"
     | "BR-SVI-12";
   readonly message: string;
@@ -691,6 +696,107 @@ export function checkSkillNumeralOrOrdinalSource(
   return [];
 }
 
+export function checkInventoryEmojiSeparation(
+  repoRoot: string = REPO_ROOT
+): readonly InventorySanityViolation[] {
+  const violations: InventorySanityViolation[] = [];
+  const inventoryRelPaths = [
+    "packages/content/src/inventories/c1-numeral.ts",
+    "packages/content/src/inventories/c1-ordinal.ts",
+    "packages/content/src/inventories/c1-number-bond.ts",
+    "packages/content/src/inventories/c1-quantity-rep.ts",
+    "packages/content/src/inventories/c1-measure-dimension.ts",
+    "packages/content/src/inventories/c1-pattern-unit.ts",
+    "packages/content/src/inventories/c5-letter.ts",
+    "packages/content/src/inventories/c5-digraph.ts",
+    "packages/content/src/inventories/c5-tone-mark.ts",
+    "packages/content/src/inventories/c5-rime.ts",
+    "packages/content/src/inventories/c5-onset.ts",
+    "packages/content/src/inventories/c5-vocabulary.ts",
+  ];
+  for (const relPath of inventoryRelPaths) {
+    const fullPath = join(repoRoot, relPath);
+    if (!existsSync(fullPath)) {
+      continue;
+    }
+    const content = readFileSync(fullPath, "utf-8");
+    if (
+      content.includes("@mindkid/emoji") ||
+      content.includes("packages/emoji")
+    ) {
+      violations.push({
+        code: "BR-SVI-01",
+        message: `Kho giá trị ${relPath} phụ thuộc vào packages/emoji (vi phạm tách biệt kho giá trị và kho hình ảnh)`,
+      });
+    }
+  }
+  return violations;
+}
+
+export function checkExplicitInventoryMatching(
+  targets: readonly InventoryCheckTarget[] = buildInventoryTargets()
+): readonly InventorySanityViolation[] {
+  const violations: InventorySanityViolation[] = [];
+  for (const target of targets) {
+    if (target.validIds.length === 0) {
+      violations.push({
+        code: "BR-SVI-04",
+        message: `Target ${target.id} không có danh sách validIds tường minh từ kho giá trị`,
+      });
+    }
+  }
+  return violations;
+}
+
+export function checkNumeralRequiredSplit(
+  items: readonly NumeralInventoryItem[] = C1_NUMERAL_INVENTORY
+): readonly InventorySanityViolation[] {
+  const violations: InventorySanityViolation[] = [];
+  if (items.length !== 21) {
+    violations.push({
+      code: "BR-SVI-07",
+      message: `c1-numeral.ts phải chứa đúng 21 chữ số 0–20, hiện có ${items.length}`,
+    });
+  }
+  for (const item of items) {
+    const shouldBeRequired = item.value >= 0 && item.value <= 10;
+    if (item.required !== shouldBeRequired) {
+      violations.push({
+        code: "BR-SVI-07",
+        message: `Chữ số ${item.value} (${item.id}) khai required=${String(item.required)}, phải là ${String(shouldBeRequired)}`,
+      });
+    }
+  }
+  return violations;
+}
+
+export function checkNumberBondCompleteness(
+  bonds: readonly NumberBondInventoryItem[] = C1_NUMBER_BOND_INVENTORY
+): readonly InventorySanityViolation[] {
+  const violations: InventorySanityViolation[] = [];
+  if (bonds.length !== 65) {
+    violations.push({
+      code: "BR-SVI-10",
+      message: `c1-number-bond.ts phải chứa đúng 65 cặp phân tách cho n=1..10, hiện có ${bonds.length}`,
+    });
+  }
+  for (let n = 1; n <= 10; n += 1) {
+    for (let a = 0; a <= n; a += 1) {
+      const b = n - a;
+      const found = bonds.some(
+        (item) => item.whole === n && item.part_a === a && item.part_b === b
+      );
+      if (!found) {
+        violations.push({
+          code: "BR-SVI-10",
+          message: `Thiếu cặp phân tách số (${a}, ${b}) cho tổng n=${n} trong c1-number-bond.ts`,
+        });
+      }
+    }
+  }
+  return violations;
+}
+
 export function checkRatchetProgression(
   totalMissing: number,
   baselineTotal: number
@@ -889,36 +995,10 @@ export function handleUpdateBaseline(
   return { exitCode: 0, report, sanityViolations };
 }
 
-export function runValueInventoryCheck(options: {
-  readonly isUpdate: boolean;
-  readonly repoRoot?: string;
-  readonly baselinePath?: string;
-  readonly datasets?: Readonly<Record<string, SkillDataset>>;
-  readonly acceptNewTargets?: readonly string[];
-}): {
-  readonly exitCode: number;
-  readonly report: InventoryDebtReport;
-  readonly sanityViolations: readonly InventorySanityViolation[];
-} {
-  const root = options.repoRoot ?? REPO_ROOT;
-  const datasets = options.datasets ?? SKILL_DATASETS;
-  const baseline = readBaseline(options.baselinePath ?? BASELINE_PATH);
-
-  // 1. Sanity checks (BR-SVI-05, BR-SVI-06, BR-SVI-08, BR-SVI-09, BR-SVI-11)
-  const fileViolations = checkInventoryFilesExist(root);
-  const numeralViolations = checkNumeralInventoryProperties(
-    C1_NUMERAL_INVENTORY,
-    root
-  );
-  const ordinalViolations = checkOrdinalInventoryProperties(
-    C1_ORDINAL_INVENTORY,
-    root
-  );
-  const measureViolations = checkMeasureDimensionsPolarity(
-    datasets,
-    C1_MEASURE_DIMENSION_INVENTORY
-  );
-
+function collectAllSanityViolations(
+  root: string,
+  datasets: Readonly<Record<string, SkillDataset>>
+): readonly InventorySanityViolation[] {
   const numeralOrdinalSkills = [
     "C1.NREC.01",
     "C1.NREC.02",
@@ -939,16 +1019,35 @@ export function runValueInventoryCheck(options: {
     }
   }
 
-  const propertyViolations = checkItemPropertiesMatchInventory(datasets);
-
-  const sanityViolations = [
-    ...fileViolations,
-    ...numeralViolations,
-    ...ordinalViolations,
-    ...measureViolations,
+  return [
+    ...checkInventoryEmojiSeparation(root),
+    ...checkExplicitInventoryMatching(),
+    ...checkInventoryFilesExist(root),
+    ...checkNumeralRequiredSplit(C1_NUMERAL_INVENTORY),
+    ...checkNumeralInventoryProperties(C1_NUMERAL_INVENTORY, root),
+    ...checkOrdinalInventoryProperties(C1_ORDINAL_INVENTORY, root),
+    ...checkNumberBondCompleteness(C1_NUMBER_BOND_INVENTORY),
+    ...checkMeasureDimensionsPolarity(datasets, C1_MEASURE_DIMENSION_INVENTORY),
     ...sourceViolations,
-    ...propertyViolations,
+    ...checkItemPropertiesMatchInventory(datasets),
   ];
+}
+
+export function runValueInventoryCheck(options: {
+  readonly isUpdate: boolean;
+  readonly repoRoot?: string;
+  readonly baselinePath?: string;
+  readonly datasets?: Readonly<Record<string, SkillDataset>>;
+  readonly acceptNewTargets?: readonly string[];
+}): {
+  readonly exitCode: number;
+  readonly report: InventoryDebtReport;
+  readonly sanityViolations: readonly InventorySanityViolation[];
+} {
+  const root = options.repoRoot ?? REPO_ROOT;
+  const datasets = options.datasets ?? SKILL_DATASETS;
+  const baseline = readBaseline(options.baselinePath ?? BASELINE_PATH);
+  const sanityViolations = collectAllSanityViolations(root, datasets);
 
   if (sanityViolations.length > 0) {
     for (const v of sanityViolations) {

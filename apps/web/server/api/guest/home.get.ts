@@ -1,13 +1,13 @@
 import { getOwnerDb } from "@mindkid/db";
 import {
   COMPETENCY_CATALOG,
-  FAQ_ITEMS,
   FEATURED_GUEST_LEVELS,
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
 import { defineEventHandler, setHeader } from "h3";
 import {
   countPublishedLevels,
+  listPublishedFaqItems,
   roundedLibrarySize,
 } from "#server/services/index.js";
 
@@ -50,7 +50,11 @@ export default defineEventHandler(async (event) => {
    * Ba số cứng 24 · 48 · 48 ở đây từng lệch thật (60 · 84 · 95) và người lớn
    * bấm sang danh mục là thấy ngay.
    */
-  const counts = await countPublishedLevels(getOwnerDb());
+  const db = getOwnerDb();
+  const [counts, faqItems] = await Promise.all([
+    countPublishedLevels(db),
+    listPublishedFaqItems(db),
+  ]);
   const standardCount = STANDARD_TIERS.reduce(
     (sum, tier) => sum + (counts.by_access_tier[tier] ?? 0),
     0
@@ -144,6 +148,6 @@ export default defineEventHandler(async (event) => {
     featured_levels: FEATURED_GUEST_LEVELS,
     programs,
     packages,
-    faq: FAQ_ITEMS.slice(0, 6),
+    faq: faqItems.slice(0, 6),
   };
 });

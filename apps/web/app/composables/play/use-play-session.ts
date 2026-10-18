@@ -149,6 +149,53 @@ export function readIntroStepFlags(view: IntroSessionView): IntroStepFlags {
 }
 
 /**
+ * Gom toàn bộ tài nguyên (hình ảnh + âm thanh câu dẫn của mọi vòng) để tải
+ * trước khi mở Vòng 1 (`BR-OFF-02`, Task #303 S3).
+ */
+export function collectSessionAssets(
+  payload: ConfigPayload
+): Array<{ ref: string; kind: string; url?: string; glyph?: string }> {
+  const result: Array<{
+    ref: string;
+    kind: string;
+    url?: string;
+    glyph?: string;
+  }> = [];
+  const seenUrls = new Set<string>();
+
+  const pushUniqueAsset = (asset: {
+    ref: string;
+    kind: string;
+    url?: string;
+    glyph?: string;
+  }): void => {
+    if (asset.url) {
+      if (seenUrls.has(asset.url)) {
+        return;
+      }
+      seenUrls.add(asset.url);
+    }
+    result.push(asset);
+  };
+
+  for (const asset of payload.assets ?? []) {
+    pushUniqueAsset(asset);
+  }
+
+  for (const round of payload.rounds ?? []) {
+    if (round.instruction_audio_path) {
+      pushUniqueAsset({
+        ref: `round_audio_${round.round_index}`,
+        kind: "audio",
+        url: round.instruction_audio_path,
+      });
+    }
+  }
+
+  return result;
+}
+
+/**
  * Câu dẫn chờ tiếng chuông mở vòng dứt rồi mới vang, để hai âm không đè nhau.
  */
 const ROUND_OPEN_NARRATION_DELAY_MS = 600;
@@ -180,7 +227,12 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   const earnedCelebration = ref<CelebrationTier>("great");
   const earnedStars = ref<number | null>(null);
 
-  const { uploadTelemetry, finishSession } = usePlayTelemetry();
+  const {
+    initTelemetrySession,
+    uploadTelemetry,
+    finishSession,
+    destroyTelemetrySession,
+  } = usePlayTelemetry();
   const { setInstructionAudio, playInstructionNarration, stopNarrationAudio } =
     usePlayAudio({
       getEngine: () => engine,
@@ -511,6 +563,24 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     );
   }
 
+  function initSessionTelemetryIfPresent(
+    payload: ConfigPayload,
+    levelCode: string
+  ): void {
+    const sessionUuid = payload.session?.uuid;
+    if (!sessionUuid) {
+      return;
+    }
+    const startedAtStr = payload.session?.started_at;
+    initTelemetrySession({
+      session_uuid: sessionUuid,
+      level_code: payload.code || payload.level_code || levelCode,
+      content_version: payload.content_version ?? 1,
+      is_guest: !loggedIn.value,
+      started_at: startedAtStr ? new Date(startedAtStr).getTime() : Date.now(),
+    });
+  }
+
   async function fetchAndStartGame(levelCode: string): Promise<void> {
     const endpoint = loggedIn.value
       ? `/api/users/levels/${levelCode}/config`
@@ -524,20 +594,26 @@ export function usePlaySession(options: UsePlaySessionOptions) {
     currentThemeId.value = payload.theme_id || "default";
     ageBand.value = payload.age_band || "3-4";
 
-    if (payload.assets && Array.isArray(payload.assets)) {
-      await preloadPlayAssets(payload.assets);
-    }
-
-    isLoading.value = false;
-    await nextTick();
-
     const rounds = payload.rounds ?? [];
     if (rounds.length === 0) {
       throw new Error(
         "Cấu hình trò chơi thiếu danh sách câu hỏi. Bé thử lại sau nhé!"
       );
     }
-    await preloadGameSession(payload.template_code);
+
+    initSessionTelemetryIfPresent(payload, levelCode);
+
+    // BR-OFF-02: Tải trọn vẹn tài nguyên của toàn bộ các vòng + template session
+    // trước khi tắt màn hình chờ và bắt đầu Vòng 1.
+    const allAssets = collectSessionAssets(payload);
+    await Promise.all([
+      preloadPlayAssets(allAssets),
+      preloadGameSession(payload.template_code),
+    ]);
+
+    isLoading.value = false;
+    await nextTick();
+
     startRounds(
       payload,
       rounds,
@@ -590,6 +666,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   function cleanupSession(): void {
     roundTimers.clearAll();
     stopNarrationAudio();
+    destroyTelemetrySession();
     if (roundRunner) {
       roundRunner.destroy();
       roundRunner = null;

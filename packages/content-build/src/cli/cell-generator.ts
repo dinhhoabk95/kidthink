@@ -7,7 +7,7 @@ import { AGE_BANDS } from "@mindkid/shared";
 import {
   type CellReport,
   generateMatrixReport,
-} from "../../scripts/check-matrix-budget.js";
+} from "#scripts/check-matrix-budget";
 
 export interface CellSpec {
   engine: string;

@@ -18,11 +18,17 @@ import {
   sendRedirect,
   setCookie,
 } from "h3";
+import { z } from "zod";
 import {
   assertRateLimitAllowed,
   getVerifiedRemoteIp,
 } from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
+
+const OAuthStartQuerySchema = z.object({
+  intent: z.string().optional(),
+  return_to: z.union([z.string(), z.array(z.string())]).optional(),
+});
 
 function getOAuthStateSecret(): string {
   return requireEnv("NUXT_SESSION_PASSWORD");
@@ -46,7 +52,8 @@ export default defineEventHandler(async (event) => {
   });
   assertRateLimitAllowed(ipRateLimit.statusCode);
 
-  const query = getQuery(event);
+  const parsedQuery = OAuthStartQuerySchema.safeParse(getQuery(event));
+  const query = parsedQuery.success ? parsedQuery.data : {};
   const rawIntent = String(query.intent || "login").toLowerCase();
   const intent = rawIntent === "link" ? ("link" as const) : ("login" as const);
   let rawReturnTo: string | undefined;

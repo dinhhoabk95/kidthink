@@ -1,16 +1,10 @@
 import { writeAudit } from "@mindkid/audit";
 import {
   getAuthRedisClient,
-  getBrowserSessionService,
   MfaChallengeService,
   verifyPassword,
 } from "@mindkid/auth";
-import {
-  getAppSql,
-  getOwnerDb,
-  managers,
-  PostgresSessionStore,
-} from "@mindkid/db";
+import { getOwnerDb, managers } from "@mindkid/db";
 import {
   InsufficientRoleError,
   InvalidCredentialsError,
@@ -19,12 +13,8 @@ import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
-import {
-  assertManagerRateLimitAllowed,
-  setManagerRememberCookie,
-} from "#server/utils/admin-auth-runtime";
+import { assertManagerRateLimitAllowed } from "#server/utils/admin-auth-runtime";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
-import { getManagerSessionConfig } from "#server/utils/session-runtime";
 
 const DUMMY_HASH =
   "$argon2id$v=19$m=19456,p=1,t=2$Zmx0piJSIcdd2b8oaF8ZUg$U60ArJk0sNteiIdlfZyr7G0shEXA+IqCyWIKs1La4WE";
@@ -91,67 +81,10 @@ export default defineEventHandler(async (event) => {
     throw new InsufficientRoleError();
   }
 
-  if (!manager.mfaEnabled) {
-    const sessionService = getBrowserSessionService();
-    const createdSession = await sessionService.create({
-      namespace: "manager",
-      accountId: manager.id,
-      displayName: manager.displayName,
-      role: manager.role,
-      rememberMe,
-      ipAddress: getVerifiedRemoteIp(event),
-    });
-
-    await setUserSession(
-      event,
-      {
-        secure: {
-          session_token: createdSession.sessionToken,
-        },
-      },
-      getManagerSessionConfig()
-    );
-
-    if (createdSession.rememberToken) {
-      setManagerRememberCookie(event, createdSession.rememberToken);
-    }
-
-    const pgStore = new PostgresSessionStore(getAppSql());
-    await pgStore
-      .recordSession({
-        account_type: "manager",
-        account_id: manager.id,
-        device_id: createdSession.deviceId,
-        remembered: !!rememberMe,
-        device_label: "manager-login",
-        ip_address: getVerifiedRemoteIp(event),
-        auth_method: "password",
-        expires_at: createdSession.expiresAt,
-      })
-      .catch(() => null);
-
-    await db.transaction(async (tx) => {
-      await writeAudit(tx, {
-        actor_type: "manager",
-        actor_id: manager.id,
-        action: "manager_login",
-        entity_type: "manager",
-        entity_id: manager.id.toString(),
-      });
-    });
-
-    return {
-      status: "ok",
-      manager: {
-        id: manager.id,
-        email: manager.email,
-        display_name: manager.displayName,
-        role: manager.role,
-      },
-    };
-  }
-
-  // MFA enabled: Create 5-minute opaque Redis MFA challenge token (BR-AUT-35)
+  // UC-009 BR-001/BR-002 + A3: mật khẩu chưa bao giờ đủ để cấp phiên. Manager chưa bật
+  // MFA nhận cùng loại yêu cầu xác thực tạm (mfa_enabled=false) để đi tiếp luồng thiết
+  // lập lần đầu ở /mfa-setup; vẫn chưa có phiên, cookie hay khả năng ghi nhớ nào.
+  // Yêu cầu xác thực tạm: opaque, một lần, 5 phút (BR-AUT-35)
   const mfaService = new MfaChallengeService(getAuthRedisClient());
   const createdChallenge = await mfaService.createChallenge({
     namespace: "manager",

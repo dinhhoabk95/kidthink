@@ -2,12 +2,10 @@
 spec: LESSON-TEMPLATE-VARIETY
 title: Đa dạng khuôn trong một bài học — cùng một kỹ năng, nhiều hình dạng chơi
 area: content
-status: approved
+status: implemented
 mvp: false
 phase: P5
 reviewed: 2026-10-18
-open_tasks:
-  - "#309"
 owns:
   - Số khuôn trò chơi tối thiểu cho một bài học
   - Ràng buộc nối bài học vào màn chơi số
@@ -22,8 +20,6 @@ depends_on:
 ---
 
 # Đa dạng khuôn trong một bài học — cùng một kỹ năng, nhiều hình dạng chơi
-
-> **Chưa hoàn thành** — Cổng `packages/content-build/tests/gates/lesson-variety.ts` mới đo `BR-LTV-01..05`; `BR-LTV-07` (sổ miễn trừ), `BR-LTV-09` (mỗi engine có ≥1 bài học trỏ tới) và `BR-LTV-10` (cảnh báo level không có đường vào) chưa được đo. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
 
 ## 1. Objective
 

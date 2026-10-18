@@ -2,12 +2,10 @@
 spec: RELEASE-DEPLOY
 title: Quy trình phát hành không gián đoạn
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-10-18
-open_tasks:
-  - "#304"
 owns:
   - Quy trình phát hành và điều kiện dừng của từng bước
   - Nguồn code được phép đi lên máy chủ
@@ -21,8 +19,6 @@ depends_on:
 ---
 
 # Phát hành lên máy chủ bằng một lệnh
-
-> **Chưa hoàn thành** — Cổng khói chưa kiểm artifact — `index.mjs` khởi động, SPA admin có CSS entry, chunk client không chứa mã server (`BR-DEP-15`); `BR-DEP-12/13` chưa có kiểm trỏ mã. Việc còn lại: [Task #304](../../tasks/304-platform-ops-gaps-plan.md).
 
 ## 1. Objective
 

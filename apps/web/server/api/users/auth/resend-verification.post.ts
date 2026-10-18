@@ -1,16 +1,12 @@
 import { generateSecureToken, hashSecureToken } from "@mindkid/auth";
-import {
-  getAppDb,
-  notificationDeliveries,
-  notifications,
-  users,
-  verificationTokens,
-} from "@mindkid/db";
+import { getAppDb, users, verificationTokens } from "@mindkid/db";
 import { ValidationError } from "@mindkid/errors/common";
+import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, type H3Event, readBody } from "h3";
 import { z } from "zod";
+import { buildAccountActionUrl } from "#server/utils/account-action-url";
 import {
   assertRateLimitAllowed,
   getVerifiedRemoteIp,
@@ -22,7 +18,7 @@ const EmailSchema = z
 
 export async function handleResendVerification(
   event: H3Event,
-  testBody?: unknown
+  testBody?: Record<string, string | number | boolean | null | undefined> | null
 ) {
   const ipRateLimit = await enforceTwoAxisRateLimit({
     routeClass: "auth:forgot-password",
@@ -35,11 +31,32 @@ export async function handleResendVerification(
     event.context?.body ??
     (await readBody(event).catch(() => null));
 
-  const parsed = EmailSchema.safeParse(rawBody);
-  if (!parsed.success) {
-    throw new ValidationError();
+  const db = getAppDb();
+  let email = "";
+
+  const hasEmailField =
+    rawBody !== null &&
+    typeof rawBody === "object" &&
+    "email" in rawBody &&
+    rawBody.email !== undefined &&
+    rawBody.email !== "";
+
+  if (hasEmailField || !event.context?.user?.user_id) {
+    const parsed = EmailSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      throw new ValidationError();
+    }
+    email = parsed.data.email.toLowerCase();
+  } else {
+    const [sessionUser] = await db
+      .select({ email: users.email })
+      .from(users)
+      .where(eq(users.id, event.context.user.user_id));
+    if (!sessionUser) {
+      return { ok: true };
+    }
+    email = sessionUser.email.toLowerCase();
   }
-  const email = parsed.data.email.toLowerCase();
 
   // BR-EVF-07: Rate limit resend
   const rateLimitRes = await enforceTwoAxisRateLimit({
@@ -50,7 +67,6 @@ export async function handleResendVerification(
 
   assertRateLimitAllowed(rateLimitRes.statusCode);
 
-  const db = getAppDb();
   const [user] = await db.select().from(users).where(eq(users.email, email));
 
   // BR-EVF-05: Always return 200 { ok: true }, never leak whether user exists or is active
@@ -86,28 +102,22 @@ export async function handleResendVerification(
     expiresAt,
   });
 
-  // Create notification
-  const [createdNotification] = await db
-    .insert(notifications)
-    .values({
-      recipientType: "user",
-      recipientId: user.id,
-      templateCode: "email_verification",
-      payload: {
-        token: rawToken,
-        email: user.email,
-        displayName: user.displayName,
-      },
-    })
-    .returning();
+  const actionUrl = buildAccountActionUrl("email_verify", rawToken);
 
-  if (createdNotification) {
-    await db.insert(notificationDeliveries).values({
-      notificationId: createdNotification.id,
-      channel: "email",
-      status: "queued",
-    });
-  }
+  await dispatchTransactionalEmail({
+    recipientType: "user",
+    recipientId: user.id,
+    code: "email_verification",
+    to: user.email,
+    payload: {
+      email: user.email,
+      displayName: user.displayName,
+    },
+    secrets: {
+      token: rawToken,
+      url: actionUrl,
+    },
+  });
 
   return { ok: true };
 }

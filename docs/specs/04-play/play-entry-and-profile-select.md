@@ -2,12 +2,10 @@
 spec: PLAY-ENTRY-AND-PROFILE-SELECT
 title: Vào khu vực chơi và chọn trẻ
 area: play
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
-open_tasks:
-  - "#294"
 owns:
   - Luồng vào khu vực chơi (guest và có hồ sơ)
 depends_on:
@@ -18,8 +16,6 @@ depends_on:
 ---
 
 # Vào khu vực chơi và chọn trẻ
-
-> **Chưa hoàn thành** — `BR-PEN-05` (lời mời đăng ký cho guest sau khi chơi) và `BR-PEN-07` (khoá màn hình ngang) chưa có trong code. Việc còn lại: [Task #294](../../tasks/294-play-surface-gaps-plan.md).
 
 ## 1. Objective
 

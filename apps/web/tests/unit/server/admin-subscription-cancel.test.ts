@@ -1,38 +1,36 @@
 import {
-  adminCancelSubscription,
   auditLogs,
-  createRecurringSubscription,
   entitlementKeys,
   entitlements,
   getOwnerDb,
   packages,
   recurringSubscriptions,
-  runDunningSweep,
   SEED_ENTITLEMENT_KEYS,
   SEED_PACKAGES,
-  userCancelRecurringSubscription,
   users,
 } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
+import {
+  adminCancelSubscription,
+  createRecurringSubscription,
+  runDunningSweep,
+  userCancelRecurringSubscription,
+} from "#server/services/recurring-billing";
 
-const RE_INVALID_CANCEL_REASON = /Ghi chú|VALIDATION_FAILED/;
+const RE_INVALID_CANCEL_REASON = /INVALID_CANCEL_REASON/;
 
 describe("Admin & User Subscription Cancellation Integration Tests (P5.1 / Task #71)", () => {
   beforeEach(async () => {
     const db = getOwnerDb();
 
-    await db
-      .insert(packages)
-      .values(SEED_PACKAGES as unknown as (typeof packages.$inferInsert)[])
-      .onConflictDoNothing();
+    for (const pkg of SEED_PACKAGES) {
+      await db.insert(packages).values(pkg).onConflictDoNothing();
+    }
 
-    await db
-      .insert(entitlementKeys)
-      .values(
-        SEED_ENTITLEMENT_KEYS as unknown as (typeof entitlementKeys.$inferInsert)[]
-      )
-      .onConflictDoNothing();
+    for (const k of SEED_ENTITLEMENT_KEYS) {
+      await db.insert(entitlementKeys).values(k).onConflictDoNothing();
+    }
   });
 
   it("Scenario: BR-RBL-03 — user self-cancel sets auto_renew=false, status=cancelled, and preserves entitlements until period end", async () => {

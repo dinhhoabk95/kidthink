@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  ALLOWED_EVENT_NAMES,
-  checkMasteryEligibility,
-} from "../../src/index.js";
+import { ALLOWED_EVENT_NAMES, checkMasteryEligibility } from "#src/index";
 
 describe("@mindkid/play eligibility tests", () => {
   it("BR-PSL-04: guest session (null childProfileId) is ineligible for mastery", () => {

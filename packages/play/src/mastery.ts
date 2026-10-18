@@ -6,8 +6,8 @@ import {
 import { contentSkillMap, masteryState } from "@mindkid/db";
 import type { computeSessionResult } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
-import { awardChildBadges } from "./badges.js";
-import type { DbOrTx } from "./types.js";
+import { awardChildBadges } from "#src/badges";
+import type { DbOrTx } from "#src/types";
 
 export async function recordSkillMasteryUpdate(params: {
   readonly db: DbOrTx;

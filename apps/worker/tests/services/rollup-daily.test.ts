@@ -1,21 +1,21 @@
 import {
   childDailyStats,
   childProfiles,
+  contentSkillMap,
   gameLevels,
   getOwnerDb,
   levelDailyStats,
   playSessions,
+  skillDailyStats,
+  skills,
   users,
 } from "@mindkid/db";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import {
-  runDailyRollup,
-  runExpireEntitlements,
-} from "../../src/services/rollup.js";
+import { runDailyRollup, runExpireEntitlements } from "#src/services/rollup";
 
 describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR-TLM-08)", () => {
-  it("runs daily rollup idempotently and excludes guest sessions from child stats (BR-TLM-02, BR-TLM-05)", async () => {
+  it("runs daily rollup idempotently and excludes guest sessions from child and skill stats (BR-TLM-02, BR-TLM-05)", async () => {
     const db = getOwnerDb();
     const dateIct = "2099-07-07";
     const testStartedAt = new Date("2099-07-07T10:00:00.000+07:00");
@@ -66,6 +66,19 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
       throw new Error("Failed to insert gl");
     }
 
+    const [firstSkill] = await db.select().from(skills).limit(1);
+    if (firstSkill) {
+      await db
+        .insert(contentSkillMap)
+        .values({
+          entityType: "game_level",
+          entityId: gl.id,
+          skillId: firstSkill.id,
+          weight: "1.00",
+        })
+        .onConflictDoNothing();
+    }
+
     // 3. Create Registered Child Session
     await db.insert(playSessions).values({
       childProfileId: child.id,
@@ -113,6 +126,20 @@ describe("Task 5 — Daily Rollup & Entitlement Expire (BR-TLM-02, BR-TLM-05, BR
     expect(levelStats1).toHaveLength(1);
     expect(levelStats1[0]?.playsCount).toBe(2); // Both child + guest included in level stats
     expect(levelStats1[0]?.completionsCount).toBe(2);
+
+    if (firstSkill) {
+      const skillStats1 = await db
+        .select()
+        .from(skillDailyStats)
+        .where(
+          and(
+            eq(skillDailyStats.skillId, firstSkill.id),
+            eq(skillDailyStats.dateIct, dateIct)
+          )
+        );
+      expect(skillStats1).toHaveLength(1);
+      expect(skillStats1[0]?.exposureCount).toBeGreaterThanOrEqual(1);
+    }
 
     // 6. Run daily rollup 2nd & 3rd time (BR-TLM-02 Idempotency Check)
     await runDailyRollup(dateIct);

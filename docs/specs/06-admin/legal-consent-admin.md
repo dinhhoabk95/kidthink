@@ -2,12 +2,10 @@
 spec: LEGAL-CONSENT-ADMIN
 title: Force đồng ý lại tài liệu pháp lý
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
-open_tasks:
-  - "#299"
 owns:
   - Luồng admin force re-consent
   - GET /api/managers/legal-consents
@@ -19,8 +17,6 @@ depends_on:
 ---
 
 # Force đồng ý lại tài liệu pháp lý
-
-> **Chưa hoàn thành** — `legal-consent-forces/index.post.ts` bỏ qua `expected_requirement_at` nên không bao giờ trả 409 `CONSENT_REQUIREMENT_CHANGED`; `confirm_deployed`/`confirm_all_users` là optional thay vì bắt buộc `true`; marker lấy giờ app, không do DB sinh và không kiểm lớn hơn marker cũ (BR-LCA-07); response thiếu `affected_user_count` (§8). Việc còn lại: [Task #299](../../tasks/299-admin-ops-truthfulness-plan.md).
 
 ## 1. Objective
 

@@ -3,7 +3,7 @@ import {
   type MazeCell,
   type MazeGrid,
   type MazeWall,
-} from "../systems/maze-system.js";
+} from "#src/systems/maze-system";
 import { getNouns, sampleUnique, VALID_GENERATOR_THEMES } from "./helpers.js";
 import type { LevelGenerator } from "./types.js";
 

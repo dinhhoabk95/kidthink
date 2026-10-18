@@ -65,6 +65,17 @@
         </p>
       </div>
 
+      <div class="mb-6" v-if="activeChildUuid">
+        <CurriculumProgressCard
+          :key="`curriculum-${activeChildUuid}`"
+          :child-uuid="activeChildUuid"
+        />
+      </div>
+
+      <div class="mb-6">
+        <KidRecommendationsRow :recommendations="recommendations" />
+      </div>
+
       <KidLessonRow :key="activeChildUuid || 'default'" />
 
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
@@ -156,15 +167,18 @@
    */
   import { COMPETENCY_CATALOG } from "@mindkid/shared/client";
   import { onMounted, ref, watch } from "vue";
+  import CurriculumProgressCard from "~/components/curriculum-progress-card.vue";
   import KidBadgeCelebrationModal from "~/components/kid/badge-celebration-modal.vue";
   import KidLessonRow from "~/components/kid/lesson-row.vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
   import KidProfileBadge from "~/components/kid/profile-badge.vue";
   import KidProfileSwitcherModal from "~/components/kid/profile-switcher-modal.vue";
+  import KidRecommendationsRow from "~/components/kid-recommendations-row.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
   import { useBadgeCelebration } from "~/composables/play/use-badge-celebration";
   import { useKidProfile } from "~/composables/play/use-kid-profile";
+  import { useApi } from "~/composables/use-api";
 
   /** Bề mặt trẻ: layout kid không navbar/footer người lớn (`BR-PSZ-11`, `BR-CLF-05`). */
   definePageMeta({ layout: "kid" });
@@ -175,8 +189,47 @@
     hoverBgClass: string;
   }
 
+  interface RecommendationItem {
+    level_code: string;
+    title: string;
+    thumbnail_emoji: string;
+    reason: string;
+    reason_code: string;
+    locked: boolean;
+  }
+
+  interface RecommendationsPayload {
+    primary: RecommendationItem;
+    alternatives: RecommendationItem[];
+  }
+
+  interface ScreenOrientationWithLock {
+    lock?: (orientation: "landscape") => Promise<void>;
+  }
+
   const router = useRouter();
+  const apiFetch = useApi();
   const showParentGate = ref(false);
+
+  /** Khoá màn hình ngang best-effort khi vào sảnh chơi (`BR-PEN-07`). */
+  function lockLandscapeBestEffort(): void {
+    if (typeof window === "undefined" || !window.screen?.orientation) {
+      return;
+    }
+    const orientation = window.screen.orientation as ScreenOrientationWithLock;
+    if (!("lock" in orientation) || typeof orientation.lock !== "function") {
+      return;
+    }
+    const lockPromise = orientation.lock("landscape");
+    if (lockPromise && typeof lockPromise.catch === "function") {
+      lockPromise.catch((err: Error) => {
+        console.warn(
+          "[play/lobby] orientation.lock(landscape) skipped:",
+          err?.message ?? err
+        );
+      });
+    }
+  }
 
   function leavePlay(): void {
     showParentGate.value = false;
@@ -222,6 +275,21 @@
     parentGateToken.value = null;
   }
 
+  // Gợi ý bài chơi kế tiếp cho bé hoặc guest (`next-game-recommendation.md`, S5b)
+  const recommendations = ref<RecommendationsPayload | null>(null);
+
+  async function loadRecommendations(): Promise<void> {
+    const endpoint = activeChildUuid.value
+      ? "/api/users/play/recommendations"
+      : "/api/guest/play/recommendations";
+    try {
+      const res = await apiFetch<RecommendationsPayload>(endpoint);
+      recommendations.value = res ?? null;
+    } catch {
+      recommendations.value = null;
+    }
+  }
+
   // Quản lý chúc mừng huy hiệu kỷ niệm (`BR-PRG-04`, `BR-PRG-07`, spec §4 item 5, §7.2)
   const { activeCelebrationBadge, checkAndCelebrate, dismissCelebration } =
     useBadgeCelebration();
@@ -235,7 +303,7 @@
       return;
     }
     try {
-      const mapRes = await $fetch<{
+      const mapRes = await apiFetch<{
         badges?: Array<{ badge_code: string; awarded_at?: string }>;
       }>("/api/users/play/map");
       childBadgesList.value = mapRes?.badges ?? [];
@@ -248,11 +316,14 @@
   }
 
   onMounted(() => {
+    lockLandscapeBestEffort();
     checkBadgesForActiveChild();
+    loadRecommendations();
   });
 
   watch(activeChildUuid, () => {
     checkBadgesForActiveChild();
+    loadRecommendations();
   });
 
   function handleConfirmBadge(): void {

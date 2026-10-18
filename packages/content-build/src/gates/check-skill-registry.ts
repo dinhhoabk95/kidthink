@@ -1,7 +1,7 @@
 /**
  * Check Skill Registry (BR-SDS-07).
  *
- * Mọi file định nghĩa kỹ năng trong thư mục `packages/db/src/seed-content/skills/`
+ * Mọi file định nghĩa kỹ năng trong thư mục `packages/content/src/skills/`
  * bắt buộc phải được đăng ký trong registry `SKILL_DATASETS` ở `skills/index.ts`.
  * Bất kỳ file nào nằm mồ côi ngoài registry sẽ làm cổng đỏ.
  */
@@ -10,7 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { repoPath } from "@mindkid/config/paths";
 import type { SkillDataset } from "@mindkid/shared";
-import type { GateIssue, GateResult } from "../types.js";
+import type { GateIssue, GateResult } from "#src/types";
 
 const SKILLS_DIR = repoPath("packages/content/src/skills");
 

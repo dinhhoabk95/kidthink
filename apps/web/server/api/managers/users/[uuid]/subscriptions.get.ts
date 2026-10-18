@@ -8,7 +8,7 @@ import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 const NUMERIC_REGEX = /^\d+$/;
 
 export default defineEventHandler(async (event) => {
-  await requireSuperAdminSession(event);
+  requireSuperAdminSession(event);
 
   const uuidParam =
     getRouterParam(event, "uuid") || getRouterParam(event, "id");

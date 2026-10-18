@@ -1,6 +1,6 @@
 import { type AgeBand, ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { AGE_BANDS } from "@mindkid/shared";
-import { ALL_SEED_LEVELS } from "../src/index.js";
+import { ALL_SEED_LEVELS } from "#src/index";
 
 export interface CellReport {
   readonly templateCode: string;

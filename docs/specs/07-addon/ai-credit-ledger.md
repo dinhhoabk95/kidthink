@@ -5,7 +5,7 @@ area: addon
 status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Mô hình credit và sổ ghi
 depends_on:

@@ -1,16 +1,16 @@
 import {
-  aiAssistantService,
   aiUsageLog,
   childProfiles,
   gameLevels,
   getDb,
   getOwnerDb,
-  grantCredits,
   users,
 } from "@mindkid/db";
 import { AI_SUGGESTION_LABEL } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, describe, expect, it } from "vitest";
+import { aiAssistantService } from "#server/services/ai-assistant.js";
+import { grantCredits } from "#server/services/ai-credit.js";
 import { aiProvider } from "#server/services/ai-provider.js";
 
 describe("AI Assistant Service Integration Tests (BR-AIA-01..11)", () => {

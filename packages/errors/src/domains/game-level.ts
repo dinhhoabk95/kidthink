@@ -47,6 +47,18 @@ export const LayoutNotSupportedError = defineError<{
   status: 422,
 });
 
+/** Số lượng slot vượt quá sức chứa hình học của layout ở sàn chạm (`BR-LAY-11`). */
+export const LayoutCapacityExceededError = defineError<{
+  readonly layout_id?: string;
+  readonly slot_count?: number;
+  readonly max_capacity?: number;
+  readonly age_band?: string;
+}>({
+  code: "LAYOUT_CAPACITY_EXCEEDED",
+  message: "Số lượng ô vượt quá sức chứa của bố cục ở độ tuổi này.",
+  status: 422,
+});
+
 /**
  * Trẻ chưa đi qua bài làm quen của một hoặc nhiều strand mà level chạm tới
  * (`BR-CIG-01`). Client dùng `details` để dựng hàng đợi làm quen rồi quay lại

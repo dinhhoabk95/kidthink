@@ -23,7 +23,7 @@ describe("Seed Initial Accounts Integration Tests", () => {
     }
   });
 
-  it("seeds managers and users with hashed passwords, child profiles, entitlements and consent logs", async () => {
+  it("BR-SIB-05 & BR-SIB-13: seeds managers and users with Argon2id hashed passwords, child profiles, entitlements and consent logs", async () => {
     const db = getOwnerDb();
 
     // 1. Run seeder
@@ -48,6 +48,7 @@ describe("Seed Initial Accounts Integration Tests", () => {
       expect(record.role).toBe(mgr.role);
       expect(record.mfaEnabled).toBe(false);
       expect(record.isActive).toBe(true);
+      expect(record.passwordHash.startsWith("$argon2id$")).toBe(true);
 
       const isValidPassword = await verifyPassword(
         mgr.passwordRaw,

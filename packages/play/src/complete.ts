@@ -13,12 +13,12 @@ import {
   formatKidSurfaceResponse,
 } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
-import { applySessionMasteryAndBadges } from "./mastery.js";
+import { applySessionMasteryAndBadges } from "#src/mastery";
 import {
   checkSessionOwnership,
   type IngestOptions,
-} from "./session/ownership.js";
-import type { EventPayload } from "./types.js";
+} from "#src/session/ownership";
+import type { EventPayload } from "#src/types";
 
 export async function completePlaySession(
   sessionUuid: string,

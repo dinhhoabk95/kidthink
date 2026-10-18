@@ -6,9 +6,10 @@
  */
 
 import { pathToFileURL } from "node:url";
+import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
 import { validateRoundSet } from "@mindkid/shared";
-import { ALL_SEED_LEVELS } from "../catalog.js";
-import type { AnyContentSeed, ContentSeed } from "../types.js";
+import { ALL_SEED_LEVELS } from "#src/catalog";
+import type { AnyContentSeed, ContentSeed } from "#src/types";
 
 export interface RoundSetGateViolation {
   levelCode: string;
@@ -28,6 +29,29 @@ function isContentSeed(seed: AnyContentSeed): seed is ContentSeed {
   return (
     seed.kind === "game_level" || (!seed.kind && "template_code" in seed.header)
   );
+}
+
+function validateTemplateContentContract(
+  templateCode: string,
+  contentPack: ContentSeed["content_pack"]
+): { success: boolean; error?: { message: string } } {
+  const tmpl = ALL_TEMPLATES[templateCode];
+  if (!tmpl?.content_contract) {
+    return {
+      success: false,
+      error: { message: `Unknown template '${templateCode}'` },
+    };
+  }
+  const parsed = tmpl.content_contract.safeParse(contentPack);
+  if (parsed.success) {
+    return { success: true };
+  }
+  return {
+    success: false,
+    error: {
+      message: parsed.error.issues.map((i) => i.message).join("; "),
+    },
+  };
 }
 
 /**
@@ -50,8 +74,8 @@ export function evaluateRoundSets(seeds: AnyContentSeed[]): RoundSetGateResult {
       round_index: number;
       template_code: string;
       instruction?: string | null;
-      content_pack: unknown;
-      difficulty_params: unknown;
+      content_pack: ContentSeed["content_pack"];
+      difficulty_params: ContentSeed["difficulty_params"];
       difficulty?: number | null;
       age_min?: number | null;
       age_max?: number | null;
@@ -91,6 +115,7 @@ export function evaluateRoundSets(seeds: AnyContentSeed[]): RoundSetGateResult {
     const validation = validateRoundSet({
       rounds: roundItems,
       learning_objective_count: header.learning_objective_codes?.length || 1,
+      content_contract_validator: validateTemplateContentContract,
     });
     if (!validation.ok) {
       for (const err of validation.violations) {
@@ -151,7 +176,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) {
     if (!report.isPassed) {
       process.exit(1);
     }
-  } catch (e: unknown) {
+  } catch (e) {
     console.error("Lỗi khi chạy cổng round sets:", e);
     process.exit(1);
   }

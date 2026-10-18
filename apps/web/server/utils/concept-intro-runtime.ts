@@ -6,6 +6,7 @@ import {
   playSessions,
   skillPrerequisites,
   skills,
+  telemetryEvents,
 } from "@mindkid/db";
 import { ALL_TEMPLATES, getGameTemplate } from "@mindkid/game-engine/registry";
 import type {
@@ -374,4 +375,106 @@ export async function checkLevelIntroRequired(
     primary_skill_code: primarySkillCode,
     intro_level_code: introQueue[0]?.intro_level_code,
   };
+}
+
+export interface ResolveIntroResumeParams {
+  readonly levelId: number;
+  readonly levelCode: string;
+  readonly totalSegments: number;
+  readonly childProfileId: number | null;
+  readonly guestDeviceId?: string;
+  readonly isPreview?: boolean;
+}
+
+function readSegmentIndexFromPayload(payload: object | null): number | null {
+  if (!(payload && "segment_index" in payload)) {
+    return null;
+  }
+  const val = Reflect.get(payload, "segment_index");
+  return typeof val === "number" && Number.isInteger(val) && val >= 0
+    ? val
+    : null;
+}
+
+export function computeIntroResumeSegmentIndex(params: {
+  readonly eventPayloads: readonly (object | null)[];
+  readonly totalSegments: number;
+  readonly isCompleted: boolean;
+  readonly isPreview?: boolean;
+}): number {
+  if (params.isPreview || params.isCompleted || params.totalSegments <= 1) {
+    return 0;
+  }
+  let maxCompletedIndex = -1;
+  for (const payload of params.eventPayloads) {
+    const idx = readSegmentIndexFromPayload(payload);
+    if (idx !== null && idx > maxCompletedIndex) {
+      maxCompletedIndex = idx;
+    }
+  }
+  if (maxCompletedIndex < 0) {
+    return 0;
+  }
+  const nextIndex = maxCompletedIndex + 1;
+  return nextIndex < params.totalSegments ? nextIndex : 0;
+}
+
+/**
+ * `BR-CIR-18`: tìm chỉ số phân đoạn tiếp theo khi trẻ/khách mở lại một bài làm
+ * quen đang dang dở (`in_progress` hoặc `abandoned`). Nếu bài đã từng
+ * `completed`, chưa có sự kiện `intro_segment_completed`, hoặc vượt tổng số
+ * phân đoạn thì trả `0` (chạy từ đầu).
+ */
+export async function resolveIntroResumeSegmentIndex(
+  db: ReturnType<typeof getOwnerDb>,
+  params: ResolveIntroResumeParams
+): Promise<number> {
+  if (params.isPreview || params.totalSegments <= 1) {
+    return 0;
+  }
+  if (params.childProfileId === null && !params.guestDeviceId) {
+    return 0;
+  }
+
+  const completedIds = await findCompletedIntroLevelIds(
+    db,
+    [{ levelId: params.levelId, levelCode: params.levelCode }],
+    params.childProfileId,
+    params.guestDeviceId
+  );
+  if (completedIds.has(params.levelId)) {
+    return 0;
+  }
+
+  const ownerCond =
+    params.childProfileId === null
+      ? eq(playSessions.guestDeviceId, params.guestDeviceId ?? "")
+      : eq(playSessions.childProfileId, params.childProfileId);
+
+  const eventRows = await db
+    .select({ payload: telemetryEvents.payload })
+    .from(telemetryEvents)
+    .innerJoin(
+      playSessions,
+      eq(playSessions.sessionUuid, telemetryEvents.sessionUuid)
+    )
+    .innerJoin(gameLevels, eq(gameLevels.id, playSessions.gameLevelId))
+    .where(
+      and(
+        eq(gameLevels.code, params.levelCode),
+        eq(playSessions.isPreview, false),
+        inArray(playSessions.completionStatus, ["in_progress", "abandoned"]),
+        ownerCond,
+        eq(telemetryEvents.eventName, "intro_segment_completed")
+      )
+    );
+
+  return computeIntroResumeSegmentIndex({
+    eventPayloads: eventRows.map((row) =>
+      typeof row.payload === "object" ? row.payload : null
+    ),
+    totalSegments: params.totalSegments,
+    isCompleted: false,
+    isPreview: params.isPreview,
+  });
 }

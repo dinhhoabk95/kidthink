@@ -60,7 +60,7 @@ export const projectGT014: Projection<"GT-014"> = {
 
     for (let i = 2; i < targetItemCount; i++) {
       const extraItem = shuffled[i] ?? {
-        id: `${itemHeavy.id}_extra_${i}`,
+        id: `${itemHeavy.id.slice(0, 20)}_ex_${i}`,
         label: itemHeavy.label,
         glyph: "⚖️",
       };

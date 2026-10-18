@@ -100,4 +100,24 @@ describe("nuxt.config CSP — nonce placeholder is required", () => {
     const broken = `"script-src": ["'self'", "'wasm-unsafe-eval'"],`;
     expect(scriptSrcOf(broken)).not.toContain("'nonce-{{nonce}}'");
   });
+
+  it("BR-LPV-01 — allows frame-ancestors from allowedOrigins only on /play/preview-sandbox while keeping global frame-ancestors 'self'", () => {
+    expect(config).toContain(`"frame-ancestors": ["'self'"]`);
+    expect(config).toContain(`"/play/preview-sandbox"`);
+    expect(config).toContain(
+      `"frame-ancestors": ["'self'", ...allowedOrigins]`
+    );
+    expect(config).toContain("xFrameOptions: false");
+
+    const nginxSiteConf = readFileSync(
+      join(REPO_ROOT, "infra/nginx/mindkid-site.conf.tmpl"),
+      "utf8"
+    );
+    expect(nginxSiteConf).toContain("location = /play/preview-sandbox");
+    const sandboxLocationBlock =
+      nginxSiteConf
+        .split("location = /play/preview-sandbox")[1]
+        ?.split("}")[0] ?? "";
+    expect(sandboxLocationBlock).not.toContain("X-Frame-Options");
+  });
 });

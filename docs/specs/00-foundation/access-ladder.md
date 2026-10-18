@@ -2,7 +2,7 @@
 spec: ACCESS-LADDER
 title: Bậc truy cập nội dung
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-10-18
@@ -13,13 +13,9 @@ owns:
 depends_on:
   - GLOSSARY
   - ACTORS
-open_tasks:
-  - "#308"
 ---
 
 # Bậc truy cập nội dung
-
-> **Chưa hoàn thành** — `BR-LAD-07`: allow-list guest chưa bị giới hạn đúng 6 level — `packages/shared/src/access-ladder.ts` cho guest mọi level tier `free`; `FEATURED_GUEST_LEVELS` chỉ dùng để hiển thị trang chủ. Việc còn lại: [Task #308](../../tasks/308-foundation-gaps-plan.md).
 
 ## 1. Objective
 
@@ -178,6 +174,13 @@ Scenario: BR-LAD-06 — guest không bị giới hạn lượt
   When guest chơi 20 lượt liên tiếp một level trong allow-list
   Then không lượt nào bị chặn
 
+Scenario: BR-LAD-07 — allow-list guest đúng 6 level
+  Given guest chưa đăng nhập
+  When guest gọi một level thuộc FEATURED_GUEST_LEVELS (6 mã C1–C6, difficulty <= 2)
+  Then hệ thống trả 200 kèm content_pack đầy đủ
+  When guest gọi một level access_tier = free nhưng nằm ngoài FEATURED_GUEST_LEVELS
+  Then hệ thống trả 403 TIER_LOCKED với required_entitlement là play_login_games
+
 Scenario: BR-LAD-08 — phiên đang mở không bị ngắt
   Given trẻ đang trong một phiên chơi level premium
   And entitlement premium của user vừa hết hạn
@@ -220,7 +223,7 @@ Scenario: BR-LAD-09 — không cache nội dung trả phí
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | **6 game level nào vào allow-list guest?** Cần 1 mỗi competency, difficulty ≤ 2 | P1 gating | Hoãn, chặn phase P1 | Nội dung |
+| ~~1~~ | ~~**6 game level nào vào allow-list guest?** Cần 1 mỗi competency, difficulty ≤ 2~~ **Đóng 2026-10-18 (Task #308)**: cố định theo `FEATURED_GUEST_LEVELS` (`GL-C1-CNT-CARD-0001`, `GL-C2-SHP-CARD-0001`, `GL-C3-PAT-CARD-0001`, `GL-C4-OBS-CARD-0001`, `GL-C5-STO-CARD-0001`, `GL-C6-MEM-CARD-0001`), cưỡng chế tại `access-ladder.ts`, `access-cta.ts`, `access-gating.ts` và các route `/api/guest/levels/**` | — | Đã đóng | Nội dung |
 | ~~2~~ | ~~Guest chơi xong bao nhiêu lượt thì hiện lời mời đăng ký?~~ **Đóng 2026-08-09 (T13, `D-AY`)**: 5 lượt chơi mượt | — | Đã đóng | D-AY |
 
 | ~~3~~ | ~~Gộp bậc `login` vào `standard`?~~ **Đóng 2026-08-06 (T10)**: **giữ enum 4 bậc** — `free`, `login`, `standard`, `premium`. Bỏ bậc sau khi có dữ liệu là migration + sửa ma trận 20 ô. Giữ `login` để có chỗ gate lưu tiến độ miễn phí. **Sửa 2026-08-07 (Checkpoint C)**: bản ghi cũ liệt kê giá trị đầu là `guest` — **sai**, `guest` là tên *actor*, tên *bậc* là `free` (§7.1 `type AccessTier`, `BR-LAD-01`, mục Access tier của [`glossary.md`](glossary.md)). Kết luận không đổi, chỉ sửa tên giá trị viết nhầm | — | Đã đóng | D-X (T10) |

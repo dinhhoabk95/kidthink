@@ -5,7 +5,7 @@ area: platform
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-10-18
 owns:
   - Bảng giới hạn theo route
   - Hai trục IP và account

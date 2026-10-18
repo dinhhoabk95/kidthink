@@ -135,6 +135,36 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
     expect(res.title).toBe("Đếm số bông hoa");
   });
 
+  it("Task #300 S2 — POST /api/managers/levels rejects missing access_tier with 422 VALIDATION_FAILED (BR-STU-06)", async () => {
+    const missingTierEvt = mockEvent(
+      "POST",
+      "content_reviewer",
+      {},
+      {
+        template_code: "GT-001",
+        title: "Màn chơi thiếu access_tier",
+      }
+    );
+
+    await expect(createLevelHandler(missingTierEvt)).rejects.toMatchObject({
+      statusCode: 422,
+      statusMessage: "VALIDATION_FAILED",
+    });
+
+    const validTierEvt = mockEvent(
+      "POST",
+      "content_reviewer",
+      {},
+      {
+        template_code: "GT-001",
+        title: "Màn chơi có access_tier tường minh",
+        access_tier: "standard",
+      }
+    );
+    const created = await createLevelHandler(validTierEvt);
+    expect(created.accessTier).toBe("standard");
+  });
+
   it("GET /api/managers/levels/[code]/[version] retrieves level details", async () => {
     // 1. Create a level first
     const createEvt = mockEvent(
@@ -380,6 +410,53 @@ describe("Game Level Studio & Management API (BR-STU-01 - BR-STU-10, Spec §7.2)
     await expect(createLevelHandler(createEvt)).rejects.toMatchObject({
       statusCode: 422,
       statusMessage: "LAYOUT_NOT_SUPPORTED",
+    });
+  });
+
+  it("Task #305 — PATCH /api/managers/levels/[code]/[version] rejects invalid layout_id with 422 LAYOUT_NOT_SUPPORTED (BR-LAY-02)", async () => {
+    const createEvt = mockEvent(
+      "POST",
+      "content_reviewer",
+      {},
+      {
+        template_code: "GT-001",
+        title: "Level for PATCH Layout Test",
+        access_tier: "free",
+      }
+    );
+    const created = await createLevelHandler(createEvt);
+
+    const invalidLayoutPatchEvt = mockEvent(
+      "PATCH",
+      "content_reviewer",
+      { code: created.code, version: "1" },
+      {
+        difficulty_params: {
+          layout_id: "card-flip-grid",
+        },
+      }
+    );
+
+    await expect(
+      patchLevelHandler(invalidLayoutPatchEvt)
+    ).rejects.toMatchObject({
+      statusCode: 422,
+      statusMessage: "LAYOUT_NOT_SUPPORTED",
+    });
+
+    const validLayoutPatchEvt = mockEvent(
+      "PATCH",
+      "content_reviewer",
+      { code: created.code, version: "1" },
+      {
+        difficulty_params: {
+          layout_id: "grid",
+        },
+      }
+    );
+    const updated = await patchLevelHandler(validLayoutPatchEvt);
+    expect(updated.difficultyParams).toMatchObject({
+      layout_id: "grid",
     });
   });
 });

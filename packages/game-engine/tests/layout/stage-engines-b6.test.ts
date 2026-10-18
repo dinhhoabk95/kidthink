@@ -266,7 +266,10 @@ function nextMove033(s: GT033Session): Move | null {
   if (cell < 0) {
     return null;
   }
-  const colorId = s.content.solution?.[cell] ?? s.content.palette[0]?.color_id;
+  const colorId =
+    s.getExpectedColorAt(cell) ??
+    s.content.solution?.[cell] ??
+    s.content.palette[0]?.color_id;
   const palette = s.content.palette.findIndex((p) => p.color_id === colorId);
   const from = slotAt(s.slots, total + palette);
   const to = slotAt(s.slots, cell);

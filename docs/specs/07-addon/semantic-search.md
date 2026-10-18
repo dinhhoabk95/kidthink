@@ -2,7 +2,7 @@
 spec: SEMANTIC-SEARCH
 title: Tìm kiếm ngữ nghĩa bằng vector embedding
 area: addon
-status: approved
+status: implemented
 mvp: false
 phase: P4
 reviewed: 2026-10-18
@@ -16,13 +16,9 @@ depends_on:
   - CONTENT-SEARCH
   - JOB-QUEUE
   - CHILD-DATA-COMPLIANCE
-open_tasks:
-  - "#311"
 ---
 
 # Tìm kiếm ngữ nghĩa bằng vector embedding
-
-> **Chưa hoàn thành** — `BR-SEM-03`, `BR-SEM-04` chưa có đường chạy: consumer `embed:content` (`apps/worker/src/consumers/embed-content.ts`) từ chối vô điều kiện và không nơi nào enqueue job này, nên `content_embeddings` không được ghi; embedding hiện là hash FNV mô phỏng. Việc còn lại: [Task #311](../../tasks/311-addon-provider-gaps-plan.md).
 
 > **Add-on — không bán ở MVP.** Một trong sáu tính năng của [`ai-assistant.md`](ai-assistant.md) (§7.1 dòng
 > "Tìm kiếm ngữ nghĩa"); file này là spec chi tiết cho **riêng** tính năng đó — schema

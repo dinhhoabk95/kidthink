@@ -2,7 +2,7 @@
 spec: DATA-MODEL-OVERVIEW
 title: Tổng quan mô hình dữ liệu
 area: foundation
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-10-18
@@ -15,13 +15,9 @@ depends_on:
   - ID-CONVENTIONS
   - CHILD-DATA-COMPLIANCE
   - CONTENT-VERSIONING
-open_tasks:
-  - "#305"
 ---
 
 # Tổng quan mô hình dữ liệu
-
-> **Chưa hoàn thành** — `BR-DM-08`: bảng `lesson_run_observations` (`packages/db/src/schema/lesson-runs.ts`) chưa có cột `updated_at`. Việc còn lại: [Task #305](../../tasks/305-platform-api-gaps-plan.md).
 
 ## 1. Objective
 

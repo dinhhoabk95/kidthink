@@ -12,7 +12,7 @@ import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 
 /**
  * Giới hạn tần suất hai trục cho mọi route `/api/*` — RATE-LIMITING §3, §4.1,
- * `BR-RTL-01`, `BR-RTL-10`.
+ * `BR-RTL-01`, `BR-RTL-10`, `BR-ING-07` (`play:events`: 600/IP · 300/account).
  *
  * Vì sao là middleware chứ không rải vào từng route: §7.2 khai 17 luật cho hơn
  * 280 route. Trước thay đổi này, 8 trong 16 lớp của registry **không route nào

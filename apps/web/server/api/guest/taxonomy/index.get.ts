@@ -1,13 +1,18 @@
 import { getOwnerDb, skills, strands } from "@mindkid/db";
 import { COMPETENCIES } from "@mindkid/taxonomy";
 import { defineEventHandler, getQuery, setHeader } from "h3";
+import { z } from "zod";
+
+const GuestTaxonomyQuerySchema = z.object({
+  depth: z.string().optional(),
+});
 
 export default defineEventHandler(async (event) => {
   // BR-TAX-10: Public max-age 3600 cache
   setHeader(event, "Cache-Control", "public, max-age=3600");
 
-  const query = getQuery(event);
-  const depth = (query.depth as string) || "skill";
+  const parsedQuery = GuestTaxonomyQuerySchema.safeParse(getQuery(event));
+  const depth = (parsedQuery.success && parsedQuery.data.depth) || "skill";
 
   if (depth === "competency") {
     return { competencies: COMPETENCIES };

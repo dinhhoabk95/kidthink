@@ -301,6 +301,40 @@ describe("packages/adaptive — Pure Adaptive Engine (BR-ADP-01..10, BR-PRG-08)"
 
       expect(suggestion?.revision_mode).toBe(true);
     });
+
+    it("BR-ADP-05: selectNext only adjusts difficulty within current curriculum step and never jumps steps", () => {
+      const now = new Date("2026-08-20T10:00:00Z");
+      const mastery = new Map<number, MasteryState>([
+        [
+          10,
+          {
+            child_id: 1,
+            skill_id: 10,
+            p_learn: 0.95,
+            ema_correct: 0.95,
+            hint_rate: 0.0,
+            attempts_total: 12,
+            best_p_learn: 0.95,
+            last_seen_at: now,
+            params_version: "v1",
+          },
+        ],
+      ]);
+
+      const suggestion = selectNext({
+        tree: {
+          prerequisites: [
+            { skill_id: 10, prerequisite_skill_id: 5, strength: 1.0 },
+          ],
+        },
+        mastery,
+        step: { week_no: 2, session_no: 1, position: 1, skill_ids: [10] },
+        now,
+      });
+
+      expect(suggestion?.action).toBe("step_up_one_difficulty");
+      expect(suggestion?.recommended_difficulty_delta).toBe(1);
+    });
   });
 
   describe("Mastery Labels & Word Guard (BR-PRG-08)", () => {

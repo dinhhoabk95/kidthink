@@ -1,18 +1,23 @@
 import {
   competencies,
   contentSkillMap,
-  createNewVersion,
-  deleteContentEntity,
   gameLevels,
   getOwnerDb,
   managers,
-  rollbackVersion,
   skills,
   strands,
-  transitionContent,
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
+import {
+  type LifecycleError,
+  transitionContent,
+} from "#server/services/content-lifecycle.js";
+import {
+  createNewVersion,
+  deleteContentEntity,
+  rollbackVersion,
+} from "#server/services/content-versioning.js";
 
 async function setupTestData() {
   const db = getOwnerDb();
@@ -224,7 +229,9 @@ describe("P0.6 Tasks 5, 6, 7 — Lifecycle & Versioning Services Integration Tes
         actorRole: "content_reviewer",
         reason: "Ngắn",
       })
-    ).rejects.toSatisfy((err: any) => err.code === "REJECTED_REASON_TOO_SHORT");
+    ).rejects.toSatisfy(
+      (err: LifecycleError) => err.code === "REJECTED_REASON_TOO_SHORT"
+    );
 
     // Rejection with >= 10 chars succeeds
     const res = await transitionContent({
@@ -250,7 +257,9 @@ describe("P0.6 Tasks 5, 6, 7 — Lifecycle & Versioning Services Integration Tes
         actorRole: "content_reviewer",
         expectedVersion: 99, // Mismatch
       })
-    ).rejects.toSatisfy((err: any) => err.code === "VERSION_CONFLICT");
+    ).rejects.toSatisfy(
+      (err: LifecycleError) => err.code === "VERSION_CONFLICT"
+    );
   });
 
   it("Task 6: Publish version 2 tự động archive version 1 trong 1 transaction (BR-CLC-07 & BR-VER-02)", async () => {
@@ -376,7 +385,7 @@ describe("P0.6 Tasks 5, 6, 7 — Lifecycle & Versioning Services Integration Tes
     await expect(
       rollbackVersion("game_level", glCode, 1, mgr.id, "content_reviewer")
     ).rejects.toSatisfy(
-      (err: unknown) => (err as { code?: string })?.code === "INSUFFICIENT_ROLE"
+      (err: LifecycleError) => err.code === "INSUFFICIENT_ROLE"
     );
 
     // super_admin rollback to v1 -> succeeds
@@ -412,12 +421,11 @@ describe("P0.6 Tasks 5, 6, 7 — Lifecycle & Versioning Services Integration Tes
         entityType: "game_level",
         entityDbId: level.id,
         toStatus: "in_review",
-        actorManagerId: undefined as unknown as number,
+        actorManagerId: 0,
         actorRole: "content_reviewer",
       })
     ).rejects.toSatisfy(
-      (err: unknown) =>
-        (err as { code?: string })?.code === "MACHINE_TRANSITION_FORBIDDEN"
+      (err: LifecycleError) => err.code === "MACHINE_TRANSITION_FORBIDDEN"
     );
 
     // Publish level
@@ -445,7 +453,7 @@ describe("P0.6 Tasks 5, 6, 7 — Lifecycle & Versioning Services Integration Tes
 
     // BR-CLC-08: Deleting published content fails with CONTENT_IN_USE
     await expect(deleteContentEntity("game_level", level.id)).rejects.toSatisfy(
-      (err: unknown) => (err as { code?: string })?.code === "CONTENT_IN_USE"
+      (err: LifecycleError) => err.code === "CONTENT_IN_USE"
     );
   });
 });

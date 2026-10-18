@@ -2,12 +2,10 @@
 spec: SYSTEM-ACTIVITY
 title: Trạng thái hệ thống trong quản trị
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-10-18
-open_tasks:
-  - "#299"
 owns:
   - Bề mặt xem sức khoẻ hệ thống trong admin
 depends_on:
@@ -18,8 +16,6 @@ depends_on:
 ---
 
 # Trạng thái hệ thống trong quản trị
-
-> **Chưa hoàn thành** — `system/status.get.ts` trả cứng `status: "ok"` cho Valkey, hàng đợi và job thay vì đo thật — báo xanh khi không đo gì (BR-SYS-01). Việc còn lại: [Task #299](../../tasks/299-admin-ops-truthfulness-plan.md).
 
 ## 1. Objective
 

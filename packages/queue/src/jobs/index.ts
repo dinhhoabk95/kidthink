@@ -2,6 +2,9 @@ import type { z } from "zod";
 import { accountPurge } from "./account-purge.js";
 import { backupPostgres } from "./backup-postgres.js";
 import { backupVerify } from "./backup-verify.js";
+import { billingDunningSweep } from "./billing-dunning-sweep.js";
+import { billingRenew } from "./billing-renew.js";
+import { billingRenewalReminder } from "./billing-renewal-reminder.js";
 import { emailSend } from "./email-send.js";
 import { embedContent } from "./embed-content.js";
 import { entitlementExpire } from "./entitlement-expire.js";
@@ -39,6 +42,9 @@ export const JOB_DEFINITIONS = [
   pdfRender,
   sweepPdfCleanup,
   embedContent,
+  billingRenewalReminder,
+  billingRenew,
+  billingDunningSweep,
 ] as const;
 
 export type AnyJobDefinition = (typeof JOB_DEFINITIONS)[number];

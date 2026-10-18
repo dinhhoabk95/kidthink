@@ -187,6 +187,59 @@ describe("Task P1.7 — Scoring and Result Engine", () => {
       expect(metrics.duration_ms).toBe(5000);
     });
 
+    it("calculates duration_ms subtracting canonical game_paused and game_resumed intervals", () => {
+      const events: TelemetryEventInput[] = [
+        {
+          sessionUuid: "s1",
+          seq: 1,
+          eventName: "game_started",
+          occurredAtMs: 0,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 2,
+          eventName: "game_paused",
+          occurredAtMs: 2000,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 3,
+          eventName: "game_resumed",
+          occurredAtMs: 5000,
+        },
+        {
+          sessionUuid: "s1",
+          seq: 4,
+          eventName: "game_completed",
+          occurredAtMs: 9000,
+        },
+      ];
+
+      expect(reconstructRounds(events).duration_ms).toBe(6000);
+    });
+
+    it("BR-SCF-02 & BR-SCO-03: 4 scaffold_escalated events increase hint_count to 4 without decreasing normalized_score", () => {
+      const baseEvents: TelemetryEventInput[] = [
+        { sessionUuid: "s1", seq: 1, eventName: "round_started" },
+        { sessionUuid: "s1", seq: 2, eventName: "answer_selected" },
+        { sessionUuid: "s1", seq: 3, eventName: "answer_correct" },
+        { sessionUuid: "s1", seq: 4, eventName: "round_completed" },
+      ];
+      const withFourHints: TelemetryEventInput[] = [
+        ...baseEvents,
+        { sessionUuid: "s1", seq: 5, eventName: "scaffold_escalated" },
+        { sessionUuid: "s1", seq: 6, eventName: "scaffold_escalated" },
+        { sessionUuid: "s1", seq: 7, eventName: "scaffold_escalated" },
+        { sessionUuid: "s1", seq: 8, eventName: "scaffold_escalated" },
+      ];
+
+      const baseRes = computeSessionResult(baseEvents);
+      const hintRes = computeSessionResult(withFourHints);
+
+      expect(hintRes.metrics.hint_count).toBe(4);
+      expect(hintRes.normalized_score).toBe(baseRes.normalized_score);
+    });
+
     it("returns 0 score when no round is completed", () => {
       const events: TelemetryEventInput[] = [
         {

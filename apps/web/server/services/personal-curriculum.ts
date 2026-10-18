@@ -96,7 +96,7 @@ async function checkSavedQuota(
   const currentCount = countResult?.count ?? 0;
   if (currentCount >= quotaLimit) {
     throw new QuotaExceededError(
-      `Bạn đã đạt giới hạn tối đa ${quotaLimit} lộ trình cá nhân đã lưu.`
+      `Bạn đã đạt hạn mức giới hạn tối đa ${quotaLimit} lộ trình cá nhân đã lưu.`
     );
   }
 }

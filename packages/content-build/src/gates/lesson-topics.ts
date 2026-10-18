@@ -10,8 +10,11 @@
 import type { LessonTopic } from "@mindkid/content";
 
 export const MIN_TOPICS_PER_LESSON = 2;
+export const MAX_TOPICS_PER_LESSON = 4;
 export const MIN_TEMPLATES_PER_TOPIC = 2;
 export const MIN_TEMPLATES_PER_LESSON = 3;
+export const MAX_STEPS_PER_LESSON = 8;
+export const MAX_LESSON_MINUTES = 25;
 
 export type LessonTopicsRule =
   | "BR-LTC-01"
@@ -21,6 +24,7 @@ export type LessonTopicsRule =
   | "BR-LTC-05"
   | "BR-LTC-06"
   | "BR-LTC-07"
+  | "BR-LTC-08"
   | "BR-LTC-09"
   | "DEBT-STALE";
 
@@ -38,6 +42,9 @@ export interface LessonTopicsLesson {
   readonly activity_codes: readonly string[];
   readonly topics: readonly LessonTopic[];
   readonly offscreen: boolean;
+  readonly estimated_minutes?: number;
+  readonly max_minutes?: number;
+  readonly max_steps?: number;
 }
 
 export interface LessonTopicsActivity {
@@ -395,11 +402,49 @@ function splitDebt(
   return { violations, debt };
 }
 
+function checkBandCeiling(lesson: LessonTopicsLesson): LessonTopicsViolation[] {
+  const found: LessonTopicsViolation[] = [];
+  if (lesson.topics.length > MAX_TOPICS_PER_LESSON) {
+    found.push(
+      violation(
+        "BR-LTC-08",
+        lesson.code,
+        `${lesson.topics.length} chủ đề vượt trần ${MAX_TOPICS_PER_LESSON}`
+      )
+    );
+  }
+  const maxSteps = lesson.max_steps ?? MAX_STEPS_PER_LESSON;
+  if (lesson.activity_codes.length > maxSteps) {
+    found.push(
+      violation(
+        "BR-LTC-08",
+        lesson.code,
+        `${lesson.activity_codes.length} bước hoạt động vượt trần band ${maxSteps}`
+      )
+    );
+  }
+  const maxMinutes = lesson.max_minutes ?? MAX_LESSON_MINUTES;
+  if (
+    lesson.estimated_minutes !== undefined &&
+    lesson.estimated_minutes > maxMinutes
+  ) {
+    found.push(
+      violation(
+        "BR-LTC-08",
+        lesson.code,
+        `thời lượng ${lesson.estimated_minutes} phút vượt trần band ${maxMinutes} phút`
+      )
+    );
+  }
+  return found;
+}
+
 export function evaluateLessonTopics(
   input: LessonTopicsInput
 ): LessonTopicsReport {
   const perLesson = input.lessons.flatMap((lesson) => [
     ...checkTopicCount(lesson),
+    ...checkBandCeiling(lesson),
     ...checkTopicRegistry(lesson, input.registry),
     ...checkTopics(lesson, input.affinities),
     ...checkActivitySkills(lesson, input.activities),

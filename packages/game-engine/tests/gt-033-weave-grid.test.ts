@@ -109,6 +109,46 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
       };
       expect(() => GT033ContentSchema.parse(invalid)).toThrow(RE_HAS_NULL);
     });
+
+    it("BR-E033-02: rejects when given cells violate row or column pattern", () => {
+      const invalid = {
+        prompt: "Bé chọn sợi len dệt nhé!",
+        grid: { rows: 3, cols: 3 },
+        palette: [
+          { color_id: "red", asset: { kind: "emoji" as const, ref: "🧶" } },
+          { color_id: "blue", asset: { kind: "emoji" as const, ref: "🧶" } },
+        ],
+        cells: [
+          "red",
+          "red",
+          "red",
+          "blue",
+          "red",
+          "blue",
+          "red",
+          "blue",
+          null,
+        ],
+        row_rule: "Xen kẽ 2 màu",
+        col_rule: "Xen kẽ 2 màu",
+      };
+      expect(() => GT033ContentSchema.parse(invalid)).toThrow("BR-E033-02");
+    });
+
+    it("BR-E033-01: rejects when grid has multiple solutions", () => {
+      const invalid = {
+        prompt: "Bé chọn sợi len dệt nhé!",
+        grid: { rows: 3, cols: 3 },
+        palette: [
+          { color_id: "red", asset: { kind: "emoji" as const, ref: "🧶" } },
+          { color_id: "yellow", asset: { kind: "emoji" as const, ref: "🧶" } },
+          { color_id: "blue", asset: { kind: "emoji" as const, ref: "🧶" } },
+        ],
+        // Cols 1 and 2 are blank in rows 0..1 -> two valid solutions
+        cells: ["red", null, null, "yellow", null, null, "blue", null, null],
+      };
+      expect(() => GT033ContentSchema.parse(invalid)).toThrow("BR-E033-01");
+    });
   });
 
   describe("Session Gameplay & 2D Pattern Weaving", () => {
@@ -335,6 +375,72 @@ describe("GT-033: Dệt hoa văn lưới (weave-grid)", () => {
       const view = session.getView();
       expect(view.activePrompt).toBe(f.content.prompt);
       expect(view.entities.length).toBe(totalCells + f.content.palette.length);
+    });
+
+    it("BR-E033-02 & BR-E033-03: validates from cell data without solution and flags only broken axis", () => {
+      const f = getFixture(1);
+      // 3x3 grid without explicit solution, row 1 has two blanks (index 4 and 5)
+      const contentWithoutSolution = {
+        prompt: f.content.prompt,
+        grid: { rows: 3, cols: 3 },
+        palette: f.content.palette,
+        cells: [
+          "red",
+          "yellow",
+          "blue",
+          "yellow",
+          null,
+          null,
+          "blue",
+          "red",
+          "yellow",
+        ],
+      };
+      const session = new GT033Session(contentWithoutSolution, f.difficulty);
+      session.setupEntities();
+
+      // At cell 4 (row 1, col 1):
+      // Row 1 is ["yellow", null, null] -> placing "red" does NOT violate row 1 ("yellow" !== "red")
+      // Col 1 is ["yellow", null, "red"] -> placing "red" violates col 1 (duplicates "red" at row 2)
+      const resColBroken = session.validateAction({
+        type: "place_yarn",
+        data: { cell_index: 4, color_id: "red" },
+      });
+      expect(resColBroken.valid).toBe(false);
+      session.commit({
+        type: "place_yarn",
+        data: { cell_index: 4, color_id: "red" },
+      });
+      expect(session.brokenRowIndex).toBeNull();
+      expect(session.brokenColIndex).toBe(1);
+      expect(session.checkWinCondition()).toBe(false);
+
+      // Undo and place correct "blue" at cell 4, then "red" at cell 5
+      session.commit({ type: "remove_yarn", data: { cell_index: 4 } });
+      session.commit({
+        type: "place_yarn",
+        data: { cell_index: 4, color_id: "blue" },
+      });
+      expect(session.brokenRowIndex).toBeNull();
+      expect(session.brokenColIndex).toBeNull();
+
+      // Placing "blue" at cell 5 (row 1, col 2) violates BOTH row 1 and col 2
+      session.commit({
+        type: "place_yarn",
+        data: { cell_index: 5, color_id: "blue" },
+      });
+      expect(session.brokenRowIndex).toBe(1);
+      expect(session.brokenColIndex).toBe(2);
+      expect(session.checkWinCondition()).toBe(false);
+
+      // Replace with correct "red" at cell 5 -> wins without content.solution!
+      session.commit({
+        type: "place_yarn",
+        data: { cell_index: 5, color_id: "red" },
+      });
+      expect(session.brokenRowIndex).toBeNull();
+      expect(session.brokenColIndex).toBeNull();
+      expect(session.checkWinCondition()).toBe(true);
     });
   });
 });

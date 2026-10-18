@@ -25,6 +25,7 @@ export {
   type FeedbackKind,
   type GameAction,
   type GameSession,
+  type HintLevel,
   type HintTarget,
   type SessionTelemetry,
   type TelemetryEvent,
@@ -166,7 +167,20 @@ export {
 } from "./mechanics/selection-mechanic.js";
 export {
   type BufferedEvent,
+  type BufferedEventPayload,
+  createIndexedDbBufferStorage,
+  createInMemoryBufferStorage,
+  FLUSH_INTERVAL_MS,
+  FLUSH_THRESHOLD,
+  type IngestibleTelemetryEvent,
+  MAX_BUFFER_BYTES,
+  MAX_EVENT_AGE_MS,
+  MAX_EVENTS_PER_BATCH,
+  type OfflineBufferStorageAdapter,
   OfflineEventBuffer,
+  type OfflineEventBufferOptions,
+  PERSIST_INTERVAL_MS,
+  type SendBufferedBatchFn,
   type SessionMeta,
 } from "./offline-buffer";
 export {
@@ -233,6 +247,10 @@ export {
   RETRY_ENCOURAGEMENTS,
 } from "./systems/feedback-system";
 export {
+  EXTERNAL_HINT_LADDER_TEMPLATES,
+  resolveSteppedHintTarget,
+} from "./systems/hint-ladder";
+export {
   canMove,
   cellKey,
   cellTowards,
@@ -286,6 +304,7 @@ export {
 } from "./systems/rule-detection-system.js";
 export {
   type AgeBand as ScaffoldingAgeBand,
+  resolveScaffoldingThresholds,
   type ScaffoldAction,
   type ScaffoldingBandThresholds,
   type ScaffoldingLevel,

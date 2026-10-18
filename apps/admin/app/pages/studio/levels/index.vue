@@ -77,6 +77,14 @@
           <option value="published">Đã phát hành (Published)</option>
           <option value="archived">Lưu trữ (Archived)</option>
         </select>
+
+        <input
+          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500 w-44 font-mono"
+          placeholder="Mã kỹ năng (VD: C1.CNT.01)"
+          type="text"
+          v-model="filters.skill_code"
+          @input="fetchLevels"
+        >
       </div>
 
       <span class="text-xs text-surface-500">
@@ -263,7 +271,7 @@
 
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
-  import { useRouter } from "vue-router";
+  import { useRoute, useRouter } from "vue-router";
   import { definePageMeta, useHead } from "#imports";
 
   definePageMeta({
@@ -288,6 +296,13 @@
     updatedAt?: string;
   }
 
+  interface ApiErrorPayload {
+    data?: {
+      message?: string;
+    };
+  }
+
+  const route = useRoute();
   const router = useRouter();
 
   const levels = ref<GameLevelListItem[]>([]);
@@ -295,10 +310,16 @@
   const isCreateModalOpen = ref(false);
   const actionNotification = ref("");
 
+  const initialSkillCode =
+    typeof route.query.skill_code === "string"
+      ? route.query.skill_code.trim()
+      : "";
+
   const filters = ref({
     q: "",
     template_code: "",
     status: "",
+    skill_code: initialSkillCode,
   });
 
   const newLevelForm = ref({
@@ -307,6 +328,9 @@
   });
 
   onMounted(() => {
+    if (typeof route.query.skill_code === "string") {
+      filters.value.skill_code = route.query.skill_code.trim();
+    }
     fetchLevels();
   });
 
@@ -335,6 +359,9 @@
       if (filters.value.status) {
         params.set("status", filters.value.status);
       }
+      if (filters.value.skill_code) {
+        params.set("skill_code", filters.value.skill_code);
+      }
 
       const res = await apiFetch<{ items: GameLevelListItem[] }>(
         `/api/managers/levels?${params.toString()}`
@@ -358,10 +385,9 @@
       });
       isCreateModalOpen.value = false;
       router.push(`/studio/levels/${created.code}`);
-    } catch (err: unknown) {
-      const message =
-        (err as { data?: { message?: string } })?.data?.message ||
-        "Lỗi tạo màn chơi";
+    } catch (err) {
+      const apiErr = err as ApiErrorPayload;
+      const message = apiErr?.data?.message || "Lỗi tạo màn chơi";
       actionNotification.value = message;
     }
   }
@@ -377,10 +403,9 @@
         { method: "POST" }
       );
       router.push(`/studio/levels/${cloned.code}`);
-    } catch (err: unknown) {
-      const message =
-        (err as { data?: { message?: string } })?.data?.message ||
-        "Lỗi nhân bản";
+    } catch (err) {
+      const apiErr = err as ApiErrorPayload;
+      const message = apiErr?.data?.message || "Lỗi nhân bản";
       actionNotification.value = message;
     }
   }

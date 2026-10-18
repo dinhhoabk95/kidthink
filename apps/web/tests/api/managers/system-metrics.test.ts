@@ -1,11 +1,17 @@
+import type { H3Event } from "h3";
 import { describe, expect, it } from "vitest";
 import handler from "#server/api/managers/system/metrics.get";
+
+interface HttpErrorLike {
+  statusCode?: number;
+  status?: number;
+}
 
 function mockEvent(
   managerRole?: "super_admin" | "content_reviewer",
   url = "/api/managers/system/metrics"
-) {
-  return {
+): H3Event {
+  const evt: object = {
     method: "GET",
     node: {
       req: {
@@ -26,28 +32,30 @@ function mockEvent(
           }
         : {}),
     },
-  } as any;
+  };
+  return evt as H3Event;
 }
 
 describe("Task 4 — GET /api/managers/system/metrics (BR-MON-01, Spec §7.1)", () => {
-  it("rejects unauthenticated request with 401", async () => {
+  it("rejects unauthenticated request with 401", () => {
     const event = mockEvent();
-    await expect(handler(event)).rejects.toThrow();
+    expect(() => handler(event)).toThrow();
   });
 
-  it("rejects content_reviewer with 403 INSUFFICIENT_ROLE", async () => {
+  it("rejects content_reviewer with 403 INSUFFICIENT_ROLE", () => {
     const event = mockEvent("content_reviewer");
     try {
-      await handler(event);
+      handler(event);
       expect.fail("Should have thrown 403");
-    } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(403);
+    } catch (err) {
+      const httpErr = err as HttpErrorLike;
+      expect(httpErr.statusCode ?? httpErr.status).toBe(403);
     }
   });
 
-  it("permits super_admin and returns 4 SLO snapshot with pending_source for unready metrics", async () => {
+  it("permits super_admin and returns 4 SLO snapshot with pending_source for unready metrics", () => {
     const event = mockEvent("super_admin");
-    const res = await handler(event);
+    const res = handler(event);
 
     expect(res).toBeDefined();
     expect(res.as_of).toBeDefined();

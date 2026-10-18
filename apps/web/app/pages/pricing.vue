@@ -285,7 +285,7 @@
         </div>
       </div>
 
-      <!-- Trust Commitments (BR-PRC-03, BR-PRC-04, BR-PRC-07) -->
+      <!-- Trust Commitments (BR-PRC-03, BR-PRC-04, BR-RBL-01, BR-RBL-03) -->
       <div
         class="max-w-4xl mx-auto bg-surface-100 dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-8 mb-16"
       >
@@ -315,8 +315,10 @@
             <p
               class="text-surface-700 dark:text-surface-200 text-base leading-relaxed"
             >
-              Gói <strong class="font-bold">không tự động gia hạn</strong>. Bạn
-              chủ động mua lại khi hết hạn.
+              Gói
+              <strong class="font-bold"
+                >chỉ tự động gia hạn khi bạn chủ động bật</strong
+              >, và bạn huỷ được bất cứ lúc nào.
             </p>
           </div>
           <div class="flex items-start">
@@ -337,15 +339,25 @@
 </template>
 
 <script lang="ts" setup>
-  import { PACKAGE_CATALOG } from "@mindkid/shared/client";
+  import {
+    buildPublicHreflangLinks,
+    PACKAGE_CATALOG,
+    PENDING_PRICE_VND,
+  } from "@mindkid/shared/client";
   import { useHead, useSeoMeta } from "#imports";
+
+  const siteUrl = "https://mindkid.vn";
 
   const standardPkg = PACKAGE_CATALOG["PKG-standard"] || {
     code: "PKG-standard",
     name: "Gói Tiêu chuẩn",
     description: "Đầy đủ lộ trình học chuẩn cho gia đình.",
     offers: [
-      { offer_code: "std_annual", price_vnd: 599_000, duration_days: 365 },
+      {
+        offer_code: "std_annual",
+        price_vnd: PENDING_PRICE_VND,
+        duration_days: 365,
+      },
     ],
   };
 
@@ -354,7 +366,11 @@
     name: "Gói Cao cấp",
     description: "Trải nghiệm học tập toàn diện và tính năng cao cấp.",
     offers: [
-      { offer_code: "prem_annual", price_vnd: 899_000, duration_days: 365 },
+      {
+        offer_code: "prem_annual",
+        price_vnd: PENDING_PRICE_VND,
+        duration_days: 365,
+      },
     ],
   };
 
@@ -368,11 +384,20 @@
   useSeoMeta({
     title: "Bảng giá gói học tập - MindKid",
     description:
-      "Bảng giá các gói học tập toán tư duy MindKid cho trẻ 3-6 tuổi. Minh bạch, không tự động gia hạn, hỗ trợ dùng ngay.",
+      "Bảng giá các gói học tập toán tư duy MindKid cho trẻ 3-6 tuổi. Minh bạch, chỉ tự động gia hạn khi bạn chủ động bật, hỗ trợ dùng ngay.",
+    ogTitle: "Bảng giá gói học tập - MindKid",
+    ogDescription:
+      "Bảng giá các gói học tập toán tư duy MindKid cho trẻ 3-6 tuổi. Minh bạch, chỉ tự động gia hạn khi bạn chủ động bật, hỗ trợ dùng ngay.",
+    ogImage: `${siteUrl}/images/og-home.png`,
+    ogType: "website",
   });
 
-  // Structured data Product + Offer (BR-PRC-08, D-JG)
+  // Structured data Product + Offer (BR-PRC-08, D-JG) & hreflang (BR-SEO2-09)
   useHead({
+    link: [
+      { rel: "canonical", href: `${siteUrl}/pricing` },
+      ...buildPublicHreflangLinks("/pricing", siteUrl),
+    ],
     script: [
       {
         type: "application/ld+json",

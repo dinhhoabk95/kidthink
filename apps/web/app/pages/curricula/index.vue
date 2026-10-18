@@ -589,6 +589,7 @@
 <script lang="ts" setup>
   import { computed, ref } from "vue";
   import { useFetch, useRouter } from "#imports";
+  import { useApi } from "~/composables/use-api";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
   // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
@@ -657,11 +658,13 @@
   const showDeleteModal = ref(false);
   const deletingCurriculum = ref<PersonalCurriculumItem | null>(null);
 
+  const api = useApi();
+
   async function handleCreateSubmit() {
     isSubmitting.value = true;
     errorMessage.value = null;
     try {
-      const created = await $fetch<PersonalCurriculumItem>(
+      const created = await api<PersonalCurriculumItem>(
         "/api/users/curricula",
         {
           method: "POST",
@@ -694,7 +697,7 @@
     isSubmitting.value = true;
     errorMessage.value = null;
     try {
-      const copied = await $fetch<PersonalCurriculumItem>(
+      const copied = await api<PersonalCurriculumItem>(
         "/api/users/curricula/copy",
         {
           method: "POST",
@@ -730,7 +733,7 @@
     isSubmitting.value = true;
     errorMessage.value = null;
     try {
-      await $fetch(
+      await api(
         `/api/users/children/${selectedChildUuid.value}/enroll-personal`,
         {
           method: "POST",
@@ -765,7 +768,7 @@
     errorMessage.value = null;
     const item = deletingCurriculum.value;
     try {
-      await $fetch(`/api/users/curricula/${item.uuid}`, {
+      await api(`/api/users/curricula/${item.uuid}`, {
         method: "DELETE",
       });
       showDeleteModal.value = false;

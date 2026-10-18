@@ -2,7 +2,18 @@ import { errorLogs, getOwnerDb } from "@mindkid/db";
 import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { and, desc, eq, gte, ilike, lte, or, type SQL, sql } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+
+const ErrorLogsQuerySchema = z.object({
+  status: z.string().optional(),
+  source: z.string().optional(),
+  level: z.string().optional(),
+  from: z.string().optional(),
+  to: z.string().optional(),
+  q: z.string().optional(),
+  limit: z.coerce.number().optional(),
+});
 
 export interface ErrorGroupItem {
   fingerprint: string;
@@ -89,7 +100,8 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  const query = getQuery(event);
+  const parsedQuery = ErrorLogsQuerySchema.safeParse(getQuery(event));
+  const query = parsedQuery.success ? parsedQuery.data : {};
 
   const limit = Math.min(Number(query.limit) || 50, 100);
   const conditions = buildErrorLogConditions(query);

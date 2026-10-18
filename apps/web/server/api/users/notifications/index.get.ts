@@ -1,17 +1,26 @@
 import { getOwnerDb, notificationReads, notifications } from "@mindkid/db";
 import { and, desc, eq, getTableColumns, isNull, lte, sql } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
+import { z } from "zod";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
-function sanitizeActionUrl(url: unknown): string {
+const UserNotificationsQuerySchema = z.object({
+  limit: z.union([z.string(), z.number()]).optional(),
+  unread_only: z.string().optional(),
+  cursor: z.string().optional(),
+});
+
+function sanitizeActionUrl(
+  url: string | number | boolean | null | undefined
+): string {
   if (typeof url === "string" && url.startsWith("/") && !url.startsWith("//")) {
     return url;
   }
   return "/me";
 }
 
-function parseInboxParams(query: Record<string, unknown>) {
+function parseInboxParams(query: z.infer<typeof UserNotificationsQuerySchema>) {
   const rawLimit = Number.parseInt(String(query.limit || "20"), 10);
   const limit = Math.min(
     Math.max(Number.isNaN(rawLimit) ? 20 : rawLimit, 1),
@@ -27,7 +36,8 @@ export default defineEventHandler(async (event) => {
   const userId = Number(user.user_id);
   const db = getOwnerDb();
 
-  const query = getQuery(event);
+  const parsedQuery = UserNotificationsQuerySchema.safeParse(getQuery(event));
+  const query = parsedQuery.success ? parsedQuery.data : {};
   const { limit, unreadOnly, cursor } = parseInboxParams(query);
 
   const snapshotAt = new Date().toISOString();
@@ -99,7 +109,11 @@ export default defineEventHandler(async (event) => {
         code: item.templateCode,
         title: String(payload.title || "Thông báo"),
         body: String(payload.body || ""),
-        action_url: sanitizeActionUrl(payload.action_url),
+        action_url: sanitizeActionUrl(
+          typeof payload.action_url === "string"
+            ? payload.action_url
+            : undefined
+        ),
         occurred_at: item.createdAt.toISOString(),
         read_at: item.readAt ? item.readAt.toISOString() : null,
       };

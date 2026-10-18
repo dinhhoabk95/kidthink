@@ -116,9 +116,7 @@ export const lessonRunObservations = pgTable(
     observedAt: timestamp("observed_at", { withTimezone: true })
       .defaultNow()
       .notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .defaultNow()
-      .notNull(),
+    ...timestamps(),
   },
   (table) => [
     unique("lesson_run_obs_run_obj_unique").on(

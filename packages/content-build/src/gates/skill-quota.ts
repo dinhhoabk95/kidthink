@@ -18,11 +18,12 @@ import fs from "node:fs";
 import path from "node:path";
 import { repoPath } from "@mindkid/config/paths";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
+import { z } from "zod";
 import {
   type ParsedSkill,
   parseTaxonomyDocs,
-} from "../seed-master/taxonomy/index.js";
-import type { ContentSeed } from "../types.js";
+} from "#src/seed-master/taxonomy/index";
+import type { ContentSeed } from "#src/types";
 
 export interface QuotaConfig {
   readonly c1: {
@@ -449,5 +450,131 @@ export function evaluateSkillQuota(
     parseRejectedCount: parseViolations.length,
     deficits,
     violations: allViolations,
+  };
+}
+
+export const SkillQuotaDebtRuleSchema = z.enum(["BR-SKQ-02", "BR-SKQ-03"]);
+
+export const SkillQuotaDebtEntrySchema = z.object({
+  min_levels: z.number().int().min(1),
+  min_templates: z.number().int().min(1),
+  rules: z.array(SkillQuotaDebtRuleSchema).min(1),
+});
+
+export const SkillQuotaDebtConfigSchema = z.object({
+  recorded_at: z.string().min(1),
+  note: z.string().min(1),
+  max_violations: z.number().int().min(0),
+  skills: z.record(z.string().min(1), SkillQuotaDebtEntrySchema),
+});
+
+export type SkillQuotaDebtEntry = z.infer<typeof SkillQuotaDebtEntrySchema>;
+export type SkillQuotaDebtConfig = z.infer<typeof SkillQuotaDebtConfigSchema>;
+
+export interface SkillQuotaDebtEvaluation {
+  readonly passed: boolean;
+  readonly maxViolations: number;
+  readonly debtViolations: readonly SkillQuotaViolation[];
+  readonly unexcusedViolations: readonly SkillQuotaViolation[];
+  readonly staleEntries: readonly string[];
+}
+
+const DEBT_FILE_PATH =
+  "packages/content-build/src/thresholds/skill-quota-debt.json";
+
+export function readSkillQuotaDebt(customPath?: string): SkillQuotaDebtConfig {
+  const filePath = customPath ?? repoPath(DEBT_FILE_PATH);
+  if (!fs.existsSync(filePath)) {
+    return {
+      recorded_at: "",
+      note: "Không tìm thấy skill-quota-debt.json — trần mặc định 0.",
+      max_violations: 0,
+      skills: {},
+    };
+  }
+  const raw = JSON.parse(fs.readFileSync(filePath, "utf8"));
+  return SkillQuotaDebtConfigSchema.parse(raw);
+}
+
+function isViolationCoveredByDebt(
+  v: SkillQuotaViolation,
+  entry: SkillQuotaDebtEntry | undefined
+): boolean {
+  if (!entry) {
+    return false;
+  }
+  if (v.ruleId === "BR-SKQ-02") {
+    return (
+      entry.rules.includes("BR-SKQ-02") &&
+      typeof v.actual === "number" &&
+      v.actual >= entry.min_levels
+    );
+  }
+  if (v.ruleId === "BR-SKQ-03") {
+    return (
+      entry.rules.includes("BR-SKQ-03") &&
+      typeof v.actual === "number" &&
+      v.actual >= entry.min_templates
+    );
+  }
+  return false;
+}
+
+function collectStaleDebtEntries(
+  seenDebtKeys: ReadonlySet<string>,
+  debt: SkillQuotaDebtConfig
+): string[] {
+  const staleEntries: string[] = [];
+  for (const [skillCode, entry] of Object.entries(debt.skills)) {
+    for (const ruleId of entry.rules) {
+      const key = `${skillCode}::${ruleId}`;
+      if (!seenDebtKeys.has(key)) {
+        staleEntries.push(
+          `[DEBT-STALE] Skill ${skillCode} đã đạt ${ruleId}, cần gỡ khỏi skill-quota-debt.json và hạ trần max_violations.`
+        );
+      }
+    }
+  }
+  return staleEntries;
+}
+
+export function evaluateSkillQuotaWithDebt(
+  report: SkillQuotaReport,
+  debt: SkillQuotaDebtConfig = readSkillQuotaDebt()
+): SkillQuotaDebtEvaluation {
+  const debtViolations: SkillQuotaViolation[] = [];
+  const unexcusedViolations: SkillQuotaViolation[] = [];
+  const seenDebtKeys = new Set<string>();
+
+  for (const v of report.violations) {
+    const entry = v.skill_code ? debt.skills[v.skill_code] : undefined;
+    if (v.skill_code && isViolationCoveredByDebt(v, entry)) {
+      debtViolations.push(v);
+      seenDebtKeys.add(`${v.skill_code}::${v.ruleId}`);
+    } else {
+      unexcusedViolations.push(v);
+    }
+  }
+
+  const staleEntries =
+    report.totalValidLevels > 0
+      ? collectStaleDebtEntries(seenDebtKeys, debt)
+      : [];
+
+  if (debtViolations.length > debt.max_violations) {
+    unexcusedViolations.push({
+      ruleId: "BR-SKQ-02",
+      message: `Số vi phạm trong sổ nợ (${debtViolations.length}) vượt quá trần max_violations (${debt.max_violations}).`,
+      actual: debtViolations.length,
+      expected: debt.max_violations,
+    });
+  }
+
+  return {
+    passed: unexcusedViolations.length === 0 && staleEntries.length === 0,
+    maxViolations: debt.max_violations,
+    debtViolations,
+    unexcusedViolations,
+    staleEntries,
   };
 }

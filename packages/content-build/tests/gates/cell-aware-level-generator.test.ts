@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { generateMatrixReport } from "#scripts/check-matrix-budget";
 import { validateCellSpec } from "#src/cli/cell-generator";
 import { generateLevelsCore } from "#src/cli/gen-levels";
-import { generateMatrixReport } from "../../scripts/check-matrix-budget.js";
 
 describe("Cell-aware Level Generator (Task #161 / BR-LGK-12)", () => {
   it("Ca 1: --cell GT-026/4-5/C2 bị từ chối do bản đồ tương hợp cấm C2", () => {
@@ -77,7 +77,7 @@ describe("Cell-aware Level Generator (Task #161 / BR-LGK-12)", () => {
 
   it("Ca 7: Kiểm tra danh sách ô của generateMatrixReport khớp số lượng ô hợp lệ", () => {
     const report = generateMatrixReport();
-    expect(report.totalCells).toBe(88);
-    expect(report.reports.length).toBe(88);
+    expect(report.totalCells).toBe(90);
+    expect(report.reports.length).toBe(90);
   });
 });

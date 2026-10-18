@@ -242,7 +242,7 @@ const GT037Template = defineTemplate({
   code: "GT-037",
   name: "Tìm hết ký hiệu",
   mechanic: "symbol-hunt",
-  status: "draft",
+  status: "published",
   version: 1,
   engine_session: "GT037Session",
   layouts: ["scatter-board"],
@@ -267,7 +267,7 @@ const GT037Template = defineTemplate({
   events: [
     "game_started",
     "item_selected",
-    "hint_shown",
+    "selection_submitted",
     "round_completed",
     "game_completed",
   ],

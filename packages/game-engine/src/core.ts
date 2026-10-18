@@ -1,6 +1,7 @@
 import type { AgeBand } from "./contracts/types.js";
 import {
   type GameSession,
+  type HintLevel,
   type TelemetryEvent,
   TemplateGameSession,
 } from "./game-session.js";
@@ -18,7 +19,10 @@ import {
   type DegradationState,
 } from "./systems/degradation.js";
 import { RenderSystem } from "./systems/render-system.js";
-import { ScaffoldingSystem } from "./systems/scaffolding.js";
+import {
+  type ScaffoldingLevel,
+  ScaffoldingSystem,
+} from "./systems/scaffolding.js";
 
 /** Session có ô nhận trạng thái tuột hiệu ứng (36/37 template khai trường này). */
 function hasDegradationSlot(
@@ -43,6 +47,22 @@ function holdsClockWhileInputClosed(session: GameSession | undefined): boolean {
 /** Monotonic clock, falling back to Date.now in non-browser test envs. */
 function nowMs(): number {
   return typeof performance === "undefined" ? Date.now() : performance.now();
+}
+
+function extractHintAfterMs(
+  difficultyParams: EngineConfig["difficulty_params"]
+): number | undefined {
+  if (
+    typeof difficultyParams === "object" &&
+    difficultyParams !== null &&
+    "hint_after_ms" in difficultyParams
+  ) {
+    const raw = Reflect.get(difficultyParams, "hint_after_ms");
+    if (typeof raw === "number" && Number.isFinite(raw) && raw > 0) {
+      return raw;
+    }
+  }
+  return undefined;
 }
 
 function resolveLevelLayoutId(
@@ -135,6 +155,15 @@ export const ENGINE_EVENT_WILDCARD = "*";
 /** Trần một bước khung hình (ms) — xem `renderFrame`. */
 const MAX_FRAME_DELTA_MS = 100;
 
+/** Chu kỳ phát mẫu FPS về telemetry (ms) — `event-catalog.md` §7.3, `BR-PRF-03`. */
+export const FPS_SAMPLE_INTERVAL_MS = 30_000;
+
+/**
+ * Bộ đệm tĩnh cho mẫu FPS (30s × 120fps = 3600 mẫu) để không cấp phát mảng/object
+ * mỗi khung hình (`BR-PRF-05`).
+ */
+const FPS_SAMPLE_BUFFER_CAPACITY = 3600;
+
 export class GameEngine {
   config?: EngineConfig;
   activeSession?: GameSession;
@@ -146,6 +175,8 @@ export class GameEngine {
   focusIndex: number | null = null;
   /** Gợi ý đang trỏ vào nút hành động ở `zones.action`; shell nháy nút (`BR-PSZ-05`). */
   actionHinted = false;
+  /** Danh sách id vùng chú ý đang được tô sáng ở `L1`/`L2` (Task #301 S2). */
+  hintRegionIds: readonly string[] = [];
   skipSuggested = false;
   /**
    * Cổng chờ câu dẫn đọc xong (`BR-PNR-11`, Task #273).
@@ -211,6 +242,14 @@ export class GameEngine {
 
   /** FPS làm mượt theo trung bình trượt — một khung lag không hạ cả cảnh. */
   private smoothedFps = 60;
+  private readonly fpsSampleBuffer = new Float32Array(
+    FPS_SAMPLE_BUFFER_CAPACITY
+  );
+  private readonly fpsScratchBuffer = new Float32Array(
+    FPS_SAMPLE_BUFFER_CAPACITY
+  );
+  private fpsSampleCount = 0;
+  private fpsWindowElapsedMs = 0;
   /** Set by `start(canvas)`. Absent in headless runs — the loop then skips drawing. */
   private ctx?: CanvasRenderingContext2D;
 
@@ -258,10 +297,16 @@ export class GameEngine {
         ));
     this.renderSystem.reducedMotion = effectiveReducedMotion;
     this.audio.setEnabled(config.audio_enabled);
-    this.scaffolding = new ScaffoldingSystem(config.age_band);
+    this.scaffolding = new ScaffoldingSystem(
+      config.age_band,
+      extractHintAfterMs(config.difficulty_params)
+    );
     this.focusIndex = null;
     this.actionHinted = false;
+    this.hintRegionIds = [];
     this.skipSuggested = false;
+    this.fpsSampleCount = 0;
+    this.fpsWindowElapsedMs = 0;
 
     if (this.activeSession) {
       this.activeSession.destroy();
@@ -308,29 +353,34 @@ export class GameEngine {
     this.loop();
   }
 
+  private applyHintTargetForLevel(level: ScaffoldingLevel): void {
+    if (level === 0 || !(this.activeSession instanceof TemplateGameSession)) {
+      this.actionHinted = false;
+      this.hintRegionIds = [];
+      this.focusIndex = null;
+      this.scaffolding?.setFocusIndex(null);
+      return;
+    }
+
+    const hintLevel: HintLevel = level === 2 || level === 3 ? level : 1;
+    const hint = this.activeSession.getHintTargetForLevel(hintLevel);
+    const targetIdx = hint?.kind === "slot" ? hint.index : null;
+
+    this.actionHinted = hint?.kind === "action";
+    this.hintRegionIds = hint?.kind === "region" ? hint.ids : [];
+    this.focusIndex = targetIdx;
+    this.scaffolding?.setFocusIndex(targetIdx);
+  }
+
   private tickScaffolding(deltaMs: number): void {
     if (!this.scaffolding) {
       return;
     }
-    const hint =
-      this.activeSession instanceof TemplateGameSession
-        ? this.activeSession.getHintTarget()
-        : null;
-    const targetIdx = hint?.kind === "slot" ? hint.index : null;
-
-    this.scaffolding.setFocusIndex(targetIdx);
-
     const prevLevel = this.scaffolding.getCurrentLevel();
     const prevSkip = this.scaffolding.isSkipSuggested;
     const level = this.scaffolding.tick(deltaMs);
 
-    this.actionHinted = level > 0 && hint?.kind === "action";
-    if (level > 0 && targetIdx !== null) {
-      this.focusIndex = targetIdx;
-    } else {
-      this.focusIndex = null;
-      this.scaffolding.setFocusIndex(null);
-    }
+    this.applyHintTargetForLevel(level);
 
     if (level !== prevLevel && level > 0) {
       // Payload phải khớp `EVENT_PAYLOAD_FIELDS`/`EVENT_PAYLOAD_SCHEMAS` của
@@ -343,7 +393,7 @@ export class GameEngine {
         data: {
           round_index: roundIdx,
           level,
-          trigger: this.scaffolding.missStreak > 0 ? "miss_streak" : "timer",
+          trigger: this.scaffolding.lastTrigger,
           elapsed_ms: Math.round(this.scaffolding.elapsedMs),
         },
       });
@@ -418,19 +468,63 @@ export class GameEngine {
   }
 
   /**
-   * Đẩy trạng thái tuột hiệu ứng vào session đang chạy. Sàn chạm, kênh âm và
-   * cỡ chữ Cấm — NEVER tuột: chúng là sàn tiếp cận, không phải trang trí.
+   * Đẩy trạng thái tuột hiệu ứng vào session đang chạy và lấy mẫu `fps_sample`
+   * định kỳ (`BR-PRF-03`). Sàn chạm, kênh âm và cỡ chữ Cấm — NEVER tuột: chúng
+   * là sàn tiếp cận, không phải trang trí.
    */
   private applyDegradation(deltaMs: number): void {
+    if (deltaMs > 0) {
+      const frameFps = Math.min(120, 1000 / deltaMs);
+      this.smoothedFps = this.smoothedFps * 0.9 + frameFps * 0.1;
+      this.recordFpsSample(deltaMs, frameFps);
+    }
     const session = this.activeSession;
     if (!hasDegradationSlot(session)) {
       return;
     }
-    if (deltaMs > 0) {
-      const frameFps = Math.min(120, 1000 / deltaMs);
-      this.smoothedFps = this.smoothedFps * 0.9 + frameFps * 0.1;
-    }
     session.degradation = this.degradationManager.updateFps(this.smoothedFps);
+  }
+
+  private recordFpsSample(deltaMs: number, frameFps: number): void {
+    if (this.fpsSampleCount < FPS_SAMPLE_BUFFER_CAPACITY) {
+      this.fpsSampleBuffer[this.fpsSampleCount] = frameFps;
+      this.fpsSampleCount += 1;
+    }
+    this.fpsWindowElapsedMs += deltaMs;
+    if (
+      this.fpsWindowElapsedMs >= FPS_SAMPLE_INTERVAL_MS &&
+      this.fpsSampleCount > 0
+    ) {
+      this.flushFpsSample();
+    }
+  }
+
+  private flushFpsSample(): void {
+    const count = this.fpsSampleCount;
+    if (count === 0) {
+      return;
+    }
+    const slice = this.fpsScratchBuffer.subarray(0, count);
+    slice.set(this.fpsSampleBuffer.subarray(0, count));
+    slice.sort();
+
+    const minRaw = slice[0] ?? 0;
+    const p50Raw = slice[Math.floor((count - 1) * 0.5)] ?? 0;
+    const p95Raw = slice[Math.floor((count - 1) * 0.95)] ?? 0;
+
+    this.fpsSampleCount = 0;
+    this.fpsWindowElapsedMs = 0;
+
+    this.emitEvent({
+      event_name: "fps_sample",
+      timestamp_ms: Date.now(),
+      data: {
+        p50: Math.round(p50Raw * 100) / 100,
+        p95: Math.round(p95Raw * 100) / 100,
+        min: Math.round(minRaw * 100) / 100,
+        sample_count: count,
+      },
+    });
   }
 
   /**
@@ -463,6 +557,45 @@ export class GameEngine {
     }
   };
 
+  private renderScaffoldingOverlay(
+    ctx: CanvasRenderingContext2D,
+    now: number
+  ): void {
+    const pulsePhase = (now % 1000) / 1000;
+    if (
+      this.focusIndex !== null &&
+      this.activeSession instanceof TemplateGameSession
+    ) {
+      const slot = this.activeSession.slots[this.focusIndex];
+      if (slot) {
+        const radius = Math.min(slot.hitW, slot.hitH) / 2 + 6;
+        this.renderSystem.renderScaffoldingAura(
+          ctx,
+          slot.x,
+          slot.y,
+          radius,
+          pulsePhase
+        );
+      }
+      return;
+    }
+
+    if (this.hintRegionIds.length > 0 && this.activeSession?.getView) {
+      for (const entity of this.activeSession.getView().entities) {
+        if (this.hintRegionIds.includes(entity.id)) {
+          this.renderSystem.renderScaffoldingRegion(
+            ctx,
+            entity.x,
+            entity.y,
+            entity.w,
+            entity.h,
+            pulsePhase
+          );
+        }
+      }
+    }
+  }
+
   private renderFrame(): void {
     const now = nowMs();
     // Tab quay lại từ nền hoặc GC dài cho một delta cả giây: trần lại để thang
@@ -475,22 +608,7 @@ export class GameEngine {
     if (this.ctx) {
       this.renderSystem.clear(this.ctx);
       this.activeSession?.render?.(this.ctx, this.renderSystem, now);
-      if (
-        this.focusIndex !== null &&
-        this.activeSession instanceof TemplateGameSession
-      ) {
-        const slot = this.activeSession.slots[this.focusIndex];
-        if (slot) {
-          const radius = Math.min(slot.hitW, slot.hitH) / 2 + 6;
-          this.renderSystem.renderScaffoldingAura(
-            this.ctx,
-            slot.x,
-            slot.y,
-            radius,
-            (now % 1000) / 1000
-          );
-        }
-      }
+      this.renderScaffoldingOverlay(this.ctx, now);
       this.onAfterRender?.(this.ctx, this.renderSystem, now);
     }
   }
@@ -573,6 +691,8 @@ export class GameEngine {
     this.isRunning = false;
     this.isPaused = false;
     this.ctx = undefined;
+    this.fpsSampleCount = 0;
+    this.fpsWindowElapsedMs = 0;
     this.cancelFrame();
     this.audio.dispose();
     this.onSkipAvailable = undefined;

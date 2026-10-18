@@ -1,4 +1,3 @@
-import { AppError } from "@mindkid/auth";
 import {
   entitlementKeys,
   getOwnerDb,
@@ -8,10 +7,12 @@ import {
   SEED_PACKAGES,
   users,
 } from "@mindkid/db";
+import { AppError } from "@mindkid/errors";
 import { computePaymentWebhookSignature } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, it } from "vitest";
 import paymentWebhookHandler from "#server/api/guest/webhooks/payments/[provider].post";
+import { mockRawWebhookEvent } from "../../mock-payment-webhook.js";
 
 const RE_INVALID_PAYMENT_PROVIDER =
   /không được hỗ trợ|VALIDATION_FAILED|INVALID_PAYMENT_PROVIDER/;
@@ -23,27 +24,11 @@ function mockWebhookEvent(params: {
   body: unknown;
   signature?: string;
 }) {
-  const rawBody = params.body;
-
-  return {
-    method: "POST",
-    node: {
-      req: {
-        headers: {
-          ...(params.signature
-            ? { "x-webhook-signature": params.signature }
-            : {}),
-        },
-      },
-      res: {},
-    },
-    context: {
-      params: { provider: params.provider },
-      body: rawBody,
-    },
-    _body: rawBody,
-    body: rawBody,
-  } as unknown as Parameters<typeof paymentWebhookHandler>[0];
+  return mockRawWebhookEvent({
+    provider: params.provider,
+    rawBody: JSON.stringify(params.body),
+    signature: params.signature,
+  });
 }
 
 describe("POST /api/guest/webhooks/payments/[provider] (BR-APM-01..07)", () => {
@@ -92,6 +77,7 @@ describe("POST /api/guest/webhooks/payments/[provider] (BR-APM-01..07)", () => {
       status: "success",
       timestamp_seconds: Math.floor(Date.now() / 1000),
       merchant_id: "test_merchant",
+      mode: "sandbox",
     };
 
     const event = mockWebhookEvent({
@@ -135,6 +121,7 @@ describe("POST /api/guest/webhooks/payments/[provider] (BR-APM-01..07)", () => {
       status: "success",
       timestamp_seconds: Math.floor(Date.now() / 1000),
       merchant_id: "test_merchant",
+      mode: "sandbox",
     };
 
     const signature = computePaymentWebhookSignature(
@@ -195,6 +182,7 @@ describe("POST /api/guest/webhooks/payments/[provider] (BR-APM-01..07)", () => {
         status: "success",
         timestamp_seconds: Math.floor(Date.now() / 1000),
         merchant_id: "test_merchant",
+        mode: "sandbox",
       },
     });
 
@@ -220,6 +208,7 @@ describe("POST /api/guest/webhooks/payments/[provider] (BR-APM-01..07)", () => {
         status: "success",
         timestamp_seconds: Math.floor(Date.now() / 1000),
         merchant_id: "test_merchant",
+        mode: "sandbox",
       },
       signature: "invalid_hex_signature_12345",
     });

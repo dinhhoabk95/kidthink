@@ -6,4 +6,4 @@ export type DbTransaction = Parameters<
 >[0];
 export type DbOrTx = DbClient | DbTransaction;
 
-export type { EventPayload, EventPayloadValue } from "./events/validate.js";
+export type { EventPayload, EventPayloadValue } from "#src/events/validate";

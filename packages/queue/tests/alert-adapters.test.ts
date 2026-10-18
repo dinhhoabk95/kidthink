@@ -15,14 +15,16 @@ describe("Task 1 — Alert Adapters & Reliability (BR-MON-01, BR-MON-03, BR-MON-
     let requestBody: {
       chat_id?: string;
       text?: string;
-      [key: string]: unknown;
     } | null = null;
 
-    const mockFetch = vi
+    const mockFetch: typeof fetch = vi
       .fn()
       .mockImplementation((url: string, init?: RequestInit) => {
         calledUrl = url;
-        requestBody = JSON.parse((init?.body as string) || "{}");
+        requestBody = JSON.parse((init?.body as string) || "{}") as {
+          chat_id?: string;
+          text?: string;
+        };
         return Promise.resolve({
           ok: true,
           status: 200,
@@ -33,7 +35,7 @@ describe("Task 1 — Alert Adapters & Reliability (BR-MON-01, BR-MON-03, BR-MON-
     const adapter = new TelegramAlertAdapter({
       botToken: "test_bot_token_123",
       chatId: "ops_channel_456",
-      fetchFn: mockFetch as unknown as typeof fetch,
+      fetchFn: mockFetch,
     });
 
     const payload: AlertPayload = {
@@ -52,7 +54,6 @@ describe("Task 1 — Alert Adapters & Reliability (BR-MON-01, BR-MON-03, BR-MON-
     const body = requestBody as {
       chat_id?: string;
       text?: string;
-      [key: string]: unknown;
     } | null;
     expect(body?.chat_id).toBe("ops_channel_456");
     expect(String(body?.text)).toContain(
@@ -65,7 +66,7 @@ describe("Task 1 — Alert Adapters & Reliability (BR-MON-01, BR-MON-03, BR-MON-
   });
 
   it("TelegramAlertAdapter automatically falls back to Email on 5xx failure and logs incident (D-S)", async () => {
-    const mockFetch = vi.fn().mockImplementation(() => {
+    const mockFetch: typeof fetch = vi.fn().mockImplementation(() => {
       return Promise.resolve({
         ok: false,
         status: 502,
@@ -86,7 +87,7 @@ describe("Task 1 — Alert Adapters & Reliability (BR-MON-01, BR-MON-03, BR-MON-
       botToken: "test_bot_token_123",
       chatId: "ops_channel_456",
       fallbackAdapter: fallbackEmailAdapter,
-      fetchFn: mockFetch as unknown as typeof fetch,
+      fetchFn: mockFetch,
     });
 
     const payload: AlertPayload = {
@@ -107,14 +108,16 @@ describe("Task 1 — Alert Adapters & Reliability (BR-MON-01, BR-MON-03, BR-MON-
 
   it("HealthchecksAlertAdapter sends dead-man switch pings and failure signals", async () => {
     let pingedEndpoint = "";
-    const mockFetch = vi.fn().mockImplementation((url: string) => {
-      pingedEndpoint = url;
-      return Promise.resolve({ ok: true, status: 200 } as Response);
-    });
+    const mockFetch: typeof fetch = vi
+      .fn()
+      .mockImplementation((url: string) => {
+        pingedEndpoint = url;
+        return Promise.resolve({ ok: true, status: 200 } as Response);
+      });
 
     const hcAdapter = new HealthchecksAlertAdapter({
       pingUrl: "https://hc-ping.com/12345678-abcd-ef01-2345-6789abcdef01",
-      fetchFn: mockFetch as unknown as typeof fetch,
+      fetchFn: mockFetch,
     });
 
     await hcAdapter.ping("success", "Heartbeat tick");

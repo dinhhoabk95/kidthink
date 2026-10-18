@@ -2,12 +2,10 @@
 spec: LOGIN-AND-SESSION
 title: Đăng nhập và quản lý phiên
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-10-18
-open_tasks:
-  - "#290"
 owns:
   - Luồng đăng nhập User bằng email và mật khẩu
   - Quản lý thiết bị đang đăng nhập
@@ -17,8 +15,6 @@ depends_on:
 ---
 
 # Đăng nhập và quản lý phiên
-
-> **Chưa hoàn thành** — `BR-LGN-04/05/10`: chưa có UI danh sách thiết bị và nút đăng xuất / đăng xuất mọi thiết bị trong khu `/me` (API đã có). Việc còn lại: [Task #290](../../tasks/290-account-ui-missing-pages-plan.md).
 
 ## 1. Objective
 

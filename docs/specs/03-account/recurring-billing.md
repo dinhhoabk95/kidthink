@@ -2,12 +2,10 @@
 spec: RECURRING-BILLING
 title: Gia hạn thuê bao tự động và quản lý chu kỳ
 area: account
-status: approved
+status: implemented
 mvp: false
 phase: P5
 reviewed: 2026-10-18
-open_tasks:
-  - "#292"
 owns:
   - Đăng ký gia hạn tự động và snapshot consent định kỳ
   - Quản lý trạng thái subscription recurring và huỷ gia hạn
@@ -24,8 +22,6 @@ depends_on:
 ---
 
 # Gia hạn thuê bao tự động và quản lý chu kỳ
-
-> **Chưa hoàn thành** — Mới có bảng `recurring_subscriptions` và service; ba route `/api/users/subscriptions/recurring{,/opt-in,/cancel}` chưa có, worker chưa có job nhắc 3 ngày / thu phí / dunning (`BR-RBL-02/04/05`), schema `auto_renew` mặc định `true` trái §7. Việc còn lại: [Task #292](../../tasks/292-recurring-billing-plan.md).
 
 ## 1. Objective
 

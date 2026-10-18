@@ -522,7 +522,7 @@ describe("GT-034 — generator contract conformity", () => {
     });
 
     it("generates 4 rounds of GT-001 escalating monotonically within band limits", () => {
-      const rounds = [0, 1, 2, 3].map((step) => {
+      const rounds34 = [0, 1, 2, 3].map((step) => {
         const rng = createRng(42);
         return GT001Generator.generate({
           rng,
@@ -533,18 +533,31 @@ describe("GT-034 — generator contract conformity", () => {
         });
       });
 
-      const optionCounts = rounds.map(
+      const optionCounts34 = rounds34.map(
         (r) => (r.content_pack as { options: unknown[] }).options.length
       );
-      // For band 3-4, step 0 gives 3, step 1 gives 4, step 2 gives 4, step 3 gives 4 (capped at 4)
-      expect(optionCounts[0]).toBe(3);
-      expect(optionCounts[1]).toBe(4);
-      expect(optionCounts[2]).toBe(4);
-      expect(optionCounts[3]).toBe(4);
-
-      for (const count of optionCounts) {
-        expect(count).toBeLessThanOrEqual(4); // Band 3-4 cap is 4 items
+      for (const count of optionCounts34) {
+        expect(count).toBe(3); // Band 3-4 cap is 3 items (BR-E001-01)
       }
+
+      const rounds56 = [0, 1, 2, 3].map((step) => {
+        const rng = createRng(42);
+        return GT001Generator.generate({
+          rng,
+          age_band: "5-6",
+          theme: "school",
+          vocabulary: themeVocab,
+          escalation_step: step,
+        });
+      });
+
+      const optionCounts56 = rounds56.map(
+        (r) => (r.content_pack as { options: unknown[] }).options.length
+      );
+      expect(optionCounts56[0]).toBe(5);
+      expect(optionCounts56[1]).toBe(6);
+      expect(optionCounts56[2]).toBe(6);
+      expect(optionCounts56[3]).toBe(6);
     });
   });
 

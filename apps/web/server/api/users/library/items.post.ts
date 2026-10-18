@@ -6,12 +6,18 @@ import { saveLibraryItem } from "#server/services/index.js";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
-const SaveLibraryItemSchema = z.object({
-  entity_type: z.enum(["game_level", "lesson", "curriculum", "activity"]),
-  entity_id: z.coerce.number().positive(),
-  collection_id: z.coerce.number().positive().optional().nullable(),
-  note: z.string().max(500).optional().nullable(),
-});
+const SaveLibraryItemSchema = z
+  .object({
+    entity_type: z.enum(["game_level", "lesson", "curriculum", "activity"]),
+    entity_id: z.coerce.number().positive().optional(),
+    code: z.string().trim().min(1).max(100).optional(),
+    collection_id: z.coerce.number().positive().optional().nullable(),
+    note: z.string().max(500).optional().nullable(),
+  })
+  .refine(
+    (data) => data.entity_id !== undefined || Boolean(data.code),
+    "Cần cung cấp entity_id hoặc code của nội dung cần lưu"
+  );
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
@@ -28,6 +34,7 @@ export default defineEventHandler(async (event) => {
     userId,
     entityType: parsed.data.entity_type,
     entityId: parsed.data.entity_id,
+    code: parsed.data.code,
     collectionId: parsed.data.collection_id,
     note: parsed.data.note,
   });

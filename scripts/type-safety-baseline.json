@@ -1,0 +1,1618 @@
+{
+  "totals": {
+    "tsDirectives": 2,
+    "explicitAny": 112,
+    "asUnknownAs": 49,
+    "unknownDeclarations": 581
+  },
+  "files": {
+    "apps/admin/app/components/studio/image-crop-modal.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/admin/app/components/studio/schema-form-field.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/admin/app/components/studio/schema-form-renderer.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 35
+    },
+    "apps/admin/app/composables/use-admin-auth.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/admin/app/composables/use-api-client.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 4
+    },
+    "apps/admin/app/layouts/manager.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/admin/app/pages/flags/index.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/admin/app/pages/index.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/admin/app/pages/login.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 6
+    },
+    "apps/admin/app/pages/packages/index.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/admin/app/pages/studio/levels/[code].vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "apps/admin/app/pages/studio/seo/index.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/admin/app/pages/studio/worksheets/index.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/admin/app/pages/users/[uuid]/mfa-recovery.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/admin/tests/integration/api-client.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 5
+    },
+    "apps/admin/tests/unit/auth-middleware.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 5,
+      "unknownDeclarations": 2
+    },
+    "apps/web/app/components/ai-report-assistant.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 5
+    },
+    "apps/web/app/components/ai/ai-assistant-widget.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "apps/web/app/composables/play/use-play-gesture.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 8
+    },
+    "apps/web/app/pages/consent-required.vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "apps/web/app/pages/custom-games/[uuid].vue": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 4
+    },
+    "apps/web/server/api/guest/auth/users/forgot-password.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/guest/auth/users/login.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/guest/auth/users/reset-password.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/guest/auth/verify-email-change.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/guest/seo-pages/[slug].get.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/managers/activities/[code]/[version].patch.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 2,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/managers/audit-logs/export.get.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/managers/audit-logs/index.get.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 7
+    },
+    "apps/web/server/api/managers/auth/reauth.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/managers/content/[type]/[id]/versions.get.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 6
+    },
+    "apps/web/server/api/managers/entitlements/[id].delete.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/managers/error-logs/index.get.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "apps/web/server/api/managers/lesson-exemplars/approve.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/managers/lesson-exemplars/nominate.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/managers/lesson-exemplars/revoke.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/managers/lessons/[code]/[version].patch.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 2,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/managers/levels/[code]/[version].patch.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/managers/seo-pages/[slug]/[version].patch.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/managers/seo-pages/[slug]/preview.get.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/managers/seo-pages/index.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/managers/users/[uuid]/ai-credits.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/managers/users/[uuid]/entitlements.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/managers/worksheets/index.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/account/delete/cancel.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/ai/explain-report.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/ai/rewrite-guide.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/ai/suggest-content.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/ai/summarize-report.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/auth/reauth.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/children/[uuid]/activate.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/users/children/[uuid]/curriculum/complete-item.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/users/children/[uuid]/enroll-personal.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/children/[uuid]/enrollments/index.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/users/children/[uuid]/index.delete.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/users/children/[uuid]/index.patch.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 5
+    },
+    "apps/web/server/api/users/children/[uuid]/personal-curriculum/complete-item.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/children/[uuid]/settings.patch.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/users/children/index.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/consents/index.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/consents/withdraw.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/curricula/[uuid]/index.put.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/curricula/[uuid]/items.put.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/curricula/copy.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/curricula/index.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/custom-games/[uuid]/index.patch.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/custom-games/index.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/dashboard.get.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "apps/web/server/api/users/exports/index.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/lesson-plans/[uuid].patch.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/lesson-plans/[uuid]/items.put.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/lesson-plans/[uuid]/refresh-item.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/lesson-plans/index.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/lesson-runs/[run_uuid]/complete.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/users/lesson-runs/[run_uuid]/index.get.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/users/lesson-runs/[run_uuid]/index.patch.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/users/lesson-runs/[run_uuid]/observations.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "apps/web/server/api/users/lesson-runs/index.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/users/notifications/index.get.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/api/users/offline/sync.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/orders/index.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/parent-gate/verify.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/password.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/password.put.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/profile.patch.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/api/users/subscription/cancel.post.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 5
+    },
+    "apps/web/server/error.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 5
+    },
+    "apps/web/server/plugins/auth-session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/services/ai-credit.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 27,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/server/services/catalog-counts.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/services/content-lifecycle.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/services/lesson-session-runner.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/services/recommendation.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/services/semantic-search.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/utils/asset-refs.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/utils/auth-runtime-factory.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/server/utils/pg-error.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/server/utils/request-body.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 4
+    },
+    "apps/web/server/utils/round-set-runtime.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 4
+    },
+    "apps/web/tests/api/account-deletion.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 1,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/ai-assistant.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/audit-error-system.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/child-profile-archive.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 1,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/child-profile-crud.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 1,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/child-profile-switching.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 1,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/consent-management.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 2,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/curricula-builder.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/curriculum-player.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/custom-game-mastery-isolation.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/custom-game.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/flags-export-notify.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/game-config-delivery.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 2,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/guest-levels-catalog.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/tests/api/guest/curricula.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 1,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/guest/manager-auth.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 1,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/guest/manager-mfa-enrollment.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/guest/public-site-p1-13.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/guest/themes.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 8,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/guest/webhooks-payment.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 2,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/lesson-plans.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/levels-studio.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/managers/audit-logs.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 2,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/managers/child-archive-admin.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/managers/dashboard-api.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 6,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/managers/entitlement-grant.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/tests/api/managers/lesson-detail-routes.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/managers/package-catalog-admin.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 2,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/managers/taxonomy-browser.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 3,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/managers/user-ops.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/managers/users-list.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 2,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/notifications-api.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 1,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/parent-gate-routes.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 1,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/payment-flow-e2e.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 2,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/pdf-export.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/personal-curriculum.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/review-publish-seo.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/templates.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 5,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/api/users/library.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/users/offline-pack.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/api/users/subscription-view.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 1,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/component/kid-badge-celebration-modal.test.ts": {
+      "tsDirectives": 1,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/integration/auth-middleware.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/integration/consent-guard.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/integration/rate-limit-middleware.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/integration/security-headers.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/mock-imports.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 10
+    },
+    "apps/web/tests/unit/play-gesture-verdict.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/tests/unit/play-gt001-two-rounds.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 4
+    },
+    "apps/web/tests/unit/play-prompt-speaker.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/web/tests/unit/server/automated-payment.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 2,
+      "unknownDeclarations": 0
+    },
+    "apps/web/tests/unit/server/payment-webhook-route.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/web/tests/unit/use-api.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 6,
+      "unknownDeclarations": 28
+    },
+    "apps/worker/src/consumers/account-purge.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/worker/src/consumers/backup-postgres.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 1,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/worker/src/consumers/backup-verify.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 6,
+      "asUnknownAs": 2,
+      "unknownDeclarations": 0
+    },
+    "apps/worker/src/consumers/email-send.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/worker/src/consumers/index.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/worker/src/consumers/types.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/worker/src/errors.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/worker/src/index.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/worker/src/monitor.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/worker/src/scripts/backup-manual.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "apps/worker/src/worker.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "apps/worker/tests/fixtures/incomplete-consumer-table.ts": {
+      "tsDirectives": 1,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "packages/adaptive/src/level-params.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 8
+    },
+    "packages/audit/src/index.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/auth/src/contracts.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/auth/tests/auth-namespace.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 1
+    },
+    "packages/auth/tests/oauth-registry.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 4,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "packages/auth/tests/parent-gate.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 1,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "packages/cache/src/index.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 0
+    },
+    "packages/content-build/src/catalog.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 4
+    },
+    "packages/content-build/src/gates/legacy-v1-coverage.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 10
+    },
+    "packages/content-build/src/gates/lesson-supply.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/content-build/src/seed-master/accounts.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/content-build/src/seed-master/action-suggestions.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/content-build/src/seed-master/content-tags.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/content-build/src/seed-master/taxonomy/index.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/content-build/tests/gates/backfill-tasks-179-180.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/content-build/tests/gates/fixtures/eight-gates-fixtures.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 2,
+      "unknownDeclarations": 0
+    },
+    "packages/content-build/tests/gates/fixtures/engine-depth-fixtures.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/content-build/tests/gates/lesson-topics.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/content-build/tests/gates/seed-quarantine.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/content/src/types.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 6
+    },
+    "packages/db/scripts/replay-adaptive.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/db/src/purge.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 4
+    },
+    "packages/db/src/seed-accounts.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/db/src/tagging.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/db/tests/unit/purge-schedule.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 2
+    },
+    "packages/errors/src/base.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/errors/src/client.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 10
+    },
+    "packages/errors/src/model.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 5
+    },
+    "packages/export/src/worksheet-renderer.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/game-engine/scripts/create-template.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/src/core.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 5
+    },
+    "packages/game-engine/src/game-session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/src/layout/registry.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/src/mechanics/ordering-mechanic.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/game-engine/src/mechanics/pairing-mechanic.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/game-engine/src/mechanics/placement-mechanic.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/game-engine/src/mechanics/selection-mechanic.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/game-engine/src/round-runner.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 4
+    },
+    "packages/game-engine/src/systems/inhibition-system.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/src/systems/rule-system.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/src/systems/speech-synthesis-adapter.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/src/templates/GT-001/session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/src/templates/GT-002/session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/src/templates/GT-007/session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/src/templates/GT-008/session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/src/templates/GT-013/session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/src/templates/GT-014/session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 4
+    },
+    "packages/game-engine/src/templates/GT-015/session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/src/templates/GT-016/session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/game-engine/src/templates/GT-019/session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/game-engine/src/templates/GT-022/session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/game-engine/src/templates/GT-025/session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/src/templates/GT-036/session.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 8
+    },
+    "packages/game-engine/tests/audio-controller.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 23,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "packages/game-engine/tests/contract.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 1,
+      "asUnknownAs": 2,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/tests/core.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 4
+    },
+    "packages/game-engine/tests/engine-accepting-input.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/tests/engine-play-language.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/tests/gates/engine-specs.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 5
+    },
+    "packages/game-engine/tests/gates/engine-turn.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/tests/gates/fixtures/hardcoded-coords-aux/helper.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/tests/gates/glyph-code-leak.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 0
+    },
+    "packages/game-engine/tests/gates/one-narration-source.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/tests/gates/round-lifecycle.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/tests/layout/hit-matches-drawn.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/tests/layout/prompt-single-source.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/game-engine/tests/layout/reduced-motion.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 5
+    },
+    "packages/game-engine/tests/layout/stage-engines-b1.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/tests/layout/stage-engines-b2.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/tests/layout/stage-engines-b3.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/tests/layout/stage-engines-b4.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/tests/layout/stage-engines-b5.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/tests/layout/stage-engines-b6.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/tests/render/label-floor.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 0
+    },
+    "packages/game-engine/tests/render/numeracy-primitives.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 0
+    },
+    "packages/game-engine/tests/render/render-fit.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/game-engine/tests/wrong-feedback-visual.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/notification/src/fcm-driver.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/notification/src/smtp-driver.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/play/tests/gates/engine-event-contract.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/queue/src/alert.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/queue/src/index.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/queue/src/jobs/define.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 5
+    },
+    "packages/queue/tests/alert-timeouts.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 6,
+      "unknownDeclarations": 0
+    },
+    "packages/shared/src/access-gating.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 3
+    },
+    "packages/shared/src/activity-schemas.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 1,
+      "unknownDeclarations": 0
+    },
+    "packages/shared/src/asset-resolver.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/shared/src/audit.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/shared/src/custom-game.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 8
+    },
+    "packages/shared/src/email-job.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/shared/src/email-sender.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/shared/src/lesson-model.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/shared/src/lesson-plan.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    },
+    "packages/shared/src/notifications.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/shared/src/publish-checklist.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 17
+    },
+    "packages/shared/src/round-event-gate.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/shared/src/round-set-validation.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 3
+    },
+    "packages/shared/src/scoring.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/shared/tests/access-gating.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 7
+    },
+    "packages/shared/tests/admin-child-projection.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 4,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "packages/shared/tests/child-data.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/shared/tests/gates/form-gates.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 1
+    },
+    "packages/shared/tests/lesson-plan.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 2,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 0
+    },
+    "packages/shared/tests/round-event-gate.test.ts": {
+      "tsDirectives": 0,
+      "explicitAny": 0,
+      "asUnknownAs": 0,
+      "unknownDeclarations": 2
+    }
+  }
+}

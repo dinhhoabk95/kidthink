@@ -11,5 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-  // Public Layout
+  import { usePublicSeoHead } from "~/composables/use-public-seo";
+
+  usePublicSeoHead();
 </script>

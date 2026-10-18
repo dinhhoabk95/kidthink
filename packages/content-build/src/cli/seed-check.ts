@@ -1,16 +1,16 @@
 import { SKILL_DATASETS } from "@mindkid/content";
 import { activities, gameLevels, getOwnerDb, lessons } from "@mindkid/db";
 import { eq } from "drizzle-orm";
-import { checkSkillRegistry } from "../gates/check-skill-registry.js";
-import { GATE_1_LADDER_BASELINES } from "../gates/ladder";
+import { checkSkillRegistry } from "#src/gates/check-skill-registry";
+import { GATE_1_LADDER_BASELINES } from "#src/gates/ladder";
 import {
   checkLegacyV1Coverage,
   printLegacyV1CoverageReport,
-} from "../gates/legacy-v1-coverage";
-import { checkGateMontessoriCorpus } from "../gates/montessori-gate";
-import { runEightGates } from "../gates/runner";
-import { ALL_SEED_CONTENT, ALL_SEED_LEVELS } from "../index.js";
-import type { AnyContentSeed, ContentSeed, GateResult } from "../types.js";
+} from "#src/gates/legacy-v1-coverage";
+import { checkGateMontessoriCorpus } from "#src/gates/montessori-gate";
+import { runEightGates } from "#src/gates/runner";
+import { ALL_SEED_CONTENT, ALL_SEED_LEVELS } from "#src/index";
+import type { AnyContentSeed, ContentSeed, GateResult } from "#src/types";
 
 interface Gate1Tracker {
   totalContentPackFails: number;

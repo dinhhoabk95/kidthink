@@ -24,7 +24,7 @@ depends_on:
 
 # Một bài học gồm nhiều chủ đề, mỗi chủ đề có nhiều khuôn trò chơi
 
-> **Chưa hoàn thành** — Cổng `check:lesson-topics` chạy theo bậc thang nợ: `packages/content-build/src/thresholds/lesson-topics-debt.json` còn 25 lesson vi phạm `BR-LTC-01..04` (`level_stock_short` 18, `matrix_empty` 7); `BR-LTC-08` chưa có kiểm. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
+> **Chưa hoàn thành** — Cổng `check:lesson-topics` đã kiểm `BR-LTC-01..09` (gồm trần band `BR-LTC-08`) và chạy theo bậc thang nợ: `packages/content-build/src/thresholds/lesson-topics-debt.json` còn 25 lesson ghi nợ cung khuôn (`level_stock_short` 18, `matrix_empty` 7). Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
 
 ## 1. Objective
 

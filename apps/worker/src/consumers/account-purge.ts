@@ -1,9 +1,48 @@
-import { getOwnerDb, hardPurgeUser, users } from "@mindkid/db";
+import { type AuditTx, writeAudit } from "@mindkid/audit";
+import {
+  childProfiles,
+  getOwnerDb,
+  hardPurgeChildProfile,
+  hardPurgeUser,
+  users,
+} from "@mindkid/db";
 import { alert } from "@mindkid/queue";
-import { and, eq, lte } from "drizzle-orm";
+import { and, eq, inArray, lte } from "drizzle-orm";
 import { readErrorMessage } from "#src/errors";
 import { logJobDone } from "#src/log";
-import type { Consumer } from "./types.js";
+import type { Consumer, JobContext } from "./types.js";
+
+export async function recordPurgeAudit(
+  tx: AuditTx,
+  entry:
+    | { kind: "child_data_purged"; childUuid: string }
+    | { kind: "user_deleted"; userId: number; purgedAt: Date }
+) {
+  if (entry.kind === "child_data_purged") {
+    return await writeAudit(tx, {
+      actor_type: "system",
+      action: "child_data_purged",
+      entity_type: "child_profile",
+      entity_id: entry.childUuid,
+      after_data: {
+        child_uuid: entry.childUuid,
+        purged: true,
+        telemetry_anonymized: true,
+      },
+    });
+  }
+  return await writeAudit(tx, {
+    actor_type: "system",
+    action: "user_deleted",
+    entity_type: "user",
+    entity_id: String(entry.userId),
+    reason: "account_deletion_grace_expired",
+    after_data: {
+      purged_at: entry.purgedAt.toISOString(),
+      telemetry_anonymized: true,
+    },
+  });
+}
 
 /**
  * BR-ADL-01..10 & D-GY: tìm mọi tài khoản `deleted` có `purge_at <= now()`,
@@ -17,6 +56,46 @@ import type { Consumer } from "./types.js";
  */
 /** Trần mỗi lượt chạy: lượt sau sẽ vét tiếp phần còn lại. */
 const PURGE_BATCH_SIZE = 200;
+
+/**
+ * Hồ sơ trẻ `pending_deletion` / `archived` đã quá `purge_at`. Hồ sơ của tài
+ * khoản `deleted` đã được `hardPurgeUser` xoá ở bước 1 theo `users.purge_at`.
+ */
+async function purgeDueChildProfiles(
+  db: ReturnType<typeof getOwnerDb>,
+  now: Date,
+  ctx: JobContext
+): Promise<{ purged: number; batch: number }> {
+  const due = await db
+    .select({ id: childProfiles.id, uuid: childProfiles.uuid })
+    .from(childProfiles)
+    .where(
+      and(
+        inArray(childProfiles.status, ["pending_deletion", "archived"]),
+        lte(childProfiles.purgeAt, now)
+      )
+    )
+    .limit(PURGE_BATCH_SIZE);
+
+  let purged = 0;
+  for (const child of due) {
+    if (ctx.signal.aborted) {
+      break;
+    }
+    try {
+      await hardPurgeChildProfile(db, child.id, child.uuid);
+      purged++;
+    } catch (error: unknown) {
+      await alert("error", "Child profile purge job failed", {
+        jobId: ctx.jobId,
+        childId: child.id,
+        error: readErrorMessage(error),
+      });
+      throw error;
+    }
+  }
+  return { purged, batch: due.length };
+}
 
 export const accountPurge: Consumer<"account:purge"> = async (payload, ctx) => {
   const db = getOwnerDb();
@@ -65,10 +144,23 @@ export const accountPurge: Consumer<"account:purge"> = async (payload, ctx) => {
     }
   }
 
+  // Bước 2 (UC-019, UC-027 BR-001): hồ sơ trẻ đã quá `purge_at`.
+  const children = payload.userId
+    ? { purged: 0, batch: 0 }
+    : await purgeDueChildProfiles(db, now, ctx);
+  const purgedChildren = children.purged;
+
   logJobDone("account:purge", ctx, {
     purged: purgedCount,
     batch: targets.length,
+    purgedChildren,
   });
   // `remaining` báo còn tồn đọng để lượt sau vét tiếp.
-  return { purgedCount, remaining: targets.length === PURGE_BATCH_SIZE };
+  return {
+    purgedCount,
+    purgedChildren,
+    remaining:
+      targets.length === PURGE_BATCH_SIZE ||
+      children.batch === PURGE_BATCH_SIZE,
+  };
 };

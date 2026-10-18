@@ -10,52 +10,33 @@ import { readFileSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { repoPath } from "@mindkid/config/paths";
 import { ALL_TEMPLATES } from "@mindkid/game-engine/registry";
+import { z } from "zod";
 import {
   evaluateEngineDepth,
   loadEngineDepthConfig,
-} from "../gates/engine-content-depth";
+} from "#src/gates/engine-content-depth";
 import {
   evaluateGoLiveReadiness,
   formatGoLiveReport,
   loadGoLiveConfig,
-} from "../gates/go-live-readiness";
-import { ALL_SEED_LESSONS, ALL_SEED_LEVELS } from "../index.js";
-import { ROADMAP_CURRICULA_CONFIGS } from "../seed-master/roadmap-curricula.js";
+} from "#src/gates/go-live-readiness";
+import { ALL_SEED_LESSONS, ALL_SEED_LEVELS } from "#src/index";
+import { ROADMAP_CURRICULA_CONFIGS } from "#src/seed-master/roadmap-curricula";
 
-/**
- * Engine nào đang active — hỏi **registry template**, không hỏi file cấu hình.
- *
- * Cấu hình khai *phạm vi mong muốn*; registry khai *thực tế*. So hai thứ khác
- * nguồn mới là một phép đo. Bản cũ truyền `config.active_engines` vào cả ba
- * tham số, nên `BR-GLR-05`, `BR-ERC-01` và `BR-ECD-01` đều là phép so một mảng
- * với chính nó: ba dòng `[PASS]` không hề nhìn vào một engine nào.
- */
+const renderImplementedSchema = z.array(z.string());
+
 function resolveActiveEngineIds(): string[] {
   return Object.keys(ALL_TEMPLATES).sort();
 }
 
-/**
- * Engine có `render()` = engine nằm trong bậc thang render của game-engine.
- *
- * ❌ NEVER suy ra từ `getLevelGenerator(id)`: **bộ sinh level** là công cụ soạn
- * nội dung, không liên quan gì tới việc engine có vẽ được hay không. Dùng nó
- * làm proxy khiến `BR-ERC-01` báo 19/27 trong khi con số thật nằm ở
- * `packages/game-engine/config/render-implemented.json` — nguồn mà chính cổng
- * `check:render` đo và cưỡng chế.
- */
 function resolveImplementedRenderEngineIds(scope: string[]): string[] {
   const configPath = repoPath(
     "packages/game-engine/config/render-implemented.json"
   );
-  const parsed: unknown = JSON.parse(readFileSync(configPath, "utf8"));
-  if (!Array.isArray(parsed)) {
-    throw new Error(
-      `render-implemented.json phải là một mảng mã engine, đọc ra ${typeof parsed}`
-    );
-  }
-  const implemented = new Set(
-    parsed.filter((x): x is string => typeof x === "string")
+  const parsed = renderImplementedSchema.parse(
+    JSON.parse(readFileSync(configPath, "utf8"))
   );
+  const implemented = new Set(parsed);
   return scope.filter((id) => implemented.has(id));
 }
 
@@ -84,6 +65,7 @@ export function runGoLiveGate(options?: { quiet?: boolean }): number {
     curriculaConfigs: ROADMAP_CURRICULA_CONFIGS,
     lessons: [...ALL_SEED_LESSONS],
     gameLevels: ALL_SEED_LEVELS,
+    enforceContractParse: true,
   });
 
   const report = formatGoLiveReport(evaluation);

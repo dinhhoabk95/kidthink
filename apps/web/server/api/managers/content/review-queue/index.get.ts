@@ -9,6 +9,7 @@ import {
 } from "@mindkid/db";
 import { and, desc, eq, inArray, or, type SQL, sql } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 export interface ReviewQueueItem {
@@ -402,16 +403,25 @@ async function fetchCurriculumReviewQueue(
   }));
 }
 
+const ReviewQueueQuerySchema = z.object({
+  entity_type: z.string().optional(),
+  created_by_manager_id: z.coerce.number().optional(),
+  origin: z.string().optional(),
+  authored_in: z.string().optional(),
+  limit: z.coerce.number().optional(),
+});
+
 export default defineEventHandler(async (event) => {
   await requireManagerSession(event);
-  const query = getQuery(event);
+  const parsedQuery = ReviewQueueQuerySchema.safeParse(getQuery(event));
+  const query = parsedQuery.success ? parsedQuery.data : {};
 
-  const filterType = query.entity_type as string | undefined;
+  const filterType = query.entity_type;
   const filterManagerId = query.created_by_manager_id
     ? Number(query.created_by_manager_id)
     : undefined;
-  const filterOrigin = query.origin as string | undefined;
-  const filterAuthoredIn = query.authored_in as string | undefined;
+  const filterOrigin = query.origin;
+  const filterAuthoredIn = query.authored_in;
   const limit = Math.min(Number(query.limit) || 50, 50);
 
   const db = getOwnerDb();

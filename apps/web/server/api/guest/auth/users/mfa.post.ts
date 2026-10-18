@@ -1,9 +1,9 @@
 import {
+  completeMfaChallenge,
   decryptTotpSecret,
   getAuthRedisClient,
   getBrowserSessionService,
   hashRecoveryCode,
-  MfaChallengeService,
   verifyTotpCode,
 } from "@mindkid/auth";
 import {
@@ -87,40 +87,56 @@ export default defineEventHandler(async (event) => {
   }
   const { challenge, code } = parsed.data;
 
-  // Consume opaque Redis MFA challenge (BR-AUT-35, BR-MFA-09)
-  const mfaChallengeService = new MfaChallengeService(getAuthRedisClient());
-  const challengePayload = await mfaChallengeService.consumeChallenge(
-    "user",
-    challenge
-  );
-
+  // UC-052 A1/A2/BR-013: sai mã giữ thử thách để nhập lại, 5 lần sai khoá 15 phút.
+  // Thử thách chỉ bị tiêu thụ khi mã đúng (BR-AUT-35, BR-MFA-09).
   const db = getOwnerDb();
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, challengePayload.accountId));
+  const verified: {
+    account: typeof users.$inferSelect | null;
+    recoveryCodeId: number | null;
+  } = { account: null, recoveryCodeId: null };
+  const challengePayload = await completeMfaChallenge({
+    redis: getAuthRedisClient(),
+    namespace: "user",
+    challengeToken: challenge,
+    verify: async (payload) => {
+      const [account] = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, payload.accountId));
+      if (
+        !account ||
+        account.status === "deleted" ||
+        account.status === "suspended"
+      ) {
+        throw new InvalidCredentialsError();
+      }
+      const result = await verifyUserMfa(db, account.id, code);
+      verified.account = account;
+      verified.recoveryCodeId = result.recoveryCodeId;
+      return result.verified;
+    },
+  });
 
-  if (!user || user.status === "deleted" || user.status === "suspended") {
+  const user = verified.account;
+  if (!user) {
     throw new InvalidCredentialsError();
   }
 
-  const mfaResult = await verifyUserMfa(db, user.id, code);
-
-  if (!mfaResult.verified) {
-    throw new InvalidCredentialsError();
-  }
-
-  // If recovery code used, mark it as consumed (BR-MFA-02)
-  if (mfaResult.recoveryCodeId !== null) {
-    await db
+  // Mã khôi phục dùng đúng một lần (BR-MFA-02): hai request song song chỉ một request thắng.
+  if (verified.recoveryCodeId !== null) {
+    const [claimed] = await db
       .update(mfaRecoveryCodes)
       .set({ usedAt: new Date() })
       .where(
         and(
-          eq(mfaRecoveryCodes.id, mfaResult.recoveryCodeId),
+          eq(mfaRecoveryCodes.id, verified.recoveryCodeId),
           isNull(mfaRecoveryCodes.usedAt)
         )
-      );
+      )
+      .returning({ id: mfaRecoveryCodes.id });
+    if (!claimed) {
+      throw new InvalidCredentialsError();
+    }
   }
 
   // Create user session in Redis

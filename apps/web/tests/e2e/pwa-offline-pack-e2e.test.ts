@@ -1,11 +1,19 @@
 import fs from "node:fs";
 import path from "node:path";
+import { ApiError } from "@mindkid/errors/client";
 import {
   canPromptPwaInstall,
   isOfflinePackLeaseValid,
+  OFFLINE_PACK_CACHE_NAME,
   validateStorageQuotaForPack,
 } from "@mindkid/shared";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import {
+  CLEAR_OFFLINE_PACKS_MESSAGE_TYPE,
+  clearOfflinePackClientData,
+  SESSION_ASSETS_CACHE_NAME,
+  shouldPurgeOfflinePacksOnError,
+} from "~/composables/use-offline-pack";
 
 describe("PWA Install & Offline Curriculum Pack E2E Verification (BR-PWA, BR-OCP, BR-OFF)", () => {
   function getPublicPath(file: string): string {
@@ -27,8 +35,8 @@ describe("PWA Install & Offline Curriculum Pack E2E Verification (BR-PWA, BR-OCP
     });
   });
 
-  describe("Service Worker Cache Storage & Safety Isolation (BR-OFF-07, BR-OCP-03, D-P5OFF-C)", () => {
-    it("sw.js defines offline pack cache and isolates API routes from unintentional caching", () => {
+  describe("Service Worker Cache Storage & Safety Isolation (BR-OFF-07, BR-OCP-03, BR-OCP-05, D-P5OFF-C)", () => {
+    it("sw.js defines offline pack cache, isolates API routes, and handles CLEAR_OFFLINE_PACKS message", () => {
       const swPath = getPublicPath("sw.js");
       expect(fs.existsSync(swPath)).toBe(true);
 
@@ -38,6 +46,8 @@ describe("PWA Install & Offline Curriculum Pack E2E Verification (BR-PWA, BR-OCP
       expect(swContent).toContain("fetch(event.request)");
       expect(swContent).toContain("CACHE_SHELL");
       expect(swContent).toContain("clients.claim()");
+      expect(swContent).toContain("CLEAR_OFFLINE_PACKS");
+      expect(swContent).toContain("caches.delete(CACHE_OFFLINE_PACK)");
     });
   });
 
@@ -124,6 +134,85 @@ describe("PWA Install & Offline Curriculum Pack E2E Verification (BR-PWA, BR-OCP
       });
       expect(result.sufficient).toBe(true);
       expect(result.requiredWithBufferBytes).toBe(75 * 1024 * 1024);
+    });
+  });
+
+  describe("Offline Pack Cleanup on Logout or Entitlement Revocation (BR-OCP-05)", () => {
+    it("BR-OCP-05 (ca âm): xoá sạch CacheStorage (caches.has === false), IndexedDB store và gửi postMessage tới Service Worker khi đăng xuất", async () => {
+      const activeCaches = new Set<string>([
+        OFFLINE_PACK_CACHE_NAME,
+        SESSION_ASSETS_CACHE_NAME,
+        "shell-v1",
+      ]);
+      const cachesMock = {
+        has: (name: string) => Promise.resolve(activeCaches.has(name)),
+        delete: (name: string) => {
+          const existed = activeCaches.delete(name);
+          return Promise.resolve(existed);
+        },
+      };
+
+      let storedEventsCount = 4;
+      const indexedDbStorageMock = {
+        clear: () => {
+          storedEventsCount = 0;
+          return Promise.resolve();
+        },
+      };
+
+      const postMessageMock = vi.fn();
+      const swContainerMock = {
+        controller: {
+          postMessage: postMessageMock,
+        },
+      };
+
+      expect(await cachesMock.has(OFFLINE_PACK_CACHE_NAME)).toBe(true);
+      expect(storedEventsCount).toBe(4);
+
+      const result = await clearOfflinePackClientData({
+        reason: "logout",
+        cachesApi: cachesMock,
+        indexedDbStorage: indexedDbStorageMock,
+        serviceWorkerContainer: swContainerMock,
+      });
+
+      expect(result).toEqual({
+        cacheDeleted: true,
+        indexedDbCleared: true,
+        serviceWorkerNotified: true,
+      });
+      expect(await cachesMock.has(OFFLINE_PACK_CACHE_NAME)).toBe(false);
+      expect(await cachesMock.has(SESSION_ASSETS_CACHE_NAME)).toBe(false);
+      expect(await cachesMock.has("shell-v1")).toBe(true);
+      expect(storedEventsCount).toBe(0);
+      expect(postMessageMock).toHaveBeenCalledWith({
+        type: CLEAR_OFFLINE_PACKS_MESSAGE_TYPE,
+        reason: "logout",
+      });
+    });
+
+    it("BR-OCP-05 (ca âm): phát hiện lỗi thu hồi quyền lợi (403 ENTITLEMENT_REQUIRED / TIER_LOCKED) và hết phiên (401 UNAUTHENTICATED) để kích hoạt dọn gói offline", () => {
+      const revokedErr = new ApiError({
+        code: "ENTITLEMENT_REQUIRED",
+        statusCode: 403,
+        message: "Quyền lợi gói học đã bị thu hồi",
+      });
+      const unauthErr = new ApiError({
+        code: "UNAUTHENTICATED",
+        statusCode: 401,
+        message: "Phiên đăng nhập đã hết hạn",
+      });
+      const validationErr = new ApiError({
+        code: "VALIDATION_FAILED",
+        statusCode: 422,
+        message: "Tuần không hợp lệ",
+      });
+
+      expect(shouldPurgeOfflinePacksOnError(revokedErr)).toBe(true);
+      expect(shouldPurgeOfflinePacksOnError(unauthErr)).toBe(true);
+      expect(shouldPurgeOfflinePacksOnError(validationErr)).toBe(false);
+      expect(shouldPurgeOfflinePacksOnError(null)).toBe(false);
     });
   });
 });

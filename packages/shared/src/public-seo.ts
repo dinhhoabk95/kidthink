@@ -20,12 +20,55 @@ export type IndexableAgeBand = (typeof INDEXABLE_AGE_BANDS)[number];
 /**
  * BR-SEO2-01: Routes requiring 'noindex, nofollow'
  */
+export const NOINDEX_ROBOTS_DIRECTIVE = "noindex, nofollow" as const;
+
 export function isNoIndexRoute(path: string): boolean {
   return (
     path.startsWith("/play") ||
     path.startsWith("/me") ||
     path.startsWith("/api")
   );
+}
+
+export function getRouteRobotsDirective(
+  path: string
+): typeof NOINDEX_ROBOTS_DIRECTIVE | "index, follow" {
+  return isNoIndexRoute(path) ? NOINDEX_ROBOTS_DIRECTIVE : "index, follow";
+}
+
+// biome-ignore lint/style/useConsistentTypeDefinitions: type alias để tương thích với Unhead ResolvableLink index signature
+export type HreflangLinkTag = {
+  readonly rel: "alternate";
+  readonly hreflang: "vi-VN" | "x-default";
+  readonly href: string;
+};
+
+const TRAILING_SLASH_REGEX = /\/+$/;
+
+/**
+ * BR-SEO2-09: Build alternate hreflang (`vi-VN` + `x-default`) links with
+ * absolute URLs for public pages. Noindex surfaces return an empty array.
+ */
+export function buildPublicHreflangLinks(
+  path: string,
+  siteUrl = "https://mindkid.vn"
+): readonly HreflangLinkTag[] {
+  if (isNoIndexRoute(path)) {
+    return [];
+  }
+  const normalizedBase = siteUrl.replace(TRAILING_SLASH_REGEX, "");
+  const cleanPath = path.split("?")[0]?.split("#")[0] || "/";
+  const normalizedPath = cleanPath.startsWith("/")
+    ? cleanPath
+    : `/${cleanPath}`;
+  const fullUrl =
+    normalizedPath === "/"
+      ? `${normalizedBase}/`
+      : `${normalizedBase}${normalizedPath}`;
+  return [
+    { rel: "alternate", hreflang: "vi-VN", href: fullUrl },
+    { rel: "alternate", hreflang: "x-default", href: fullUrl },
+  ];
 }
 
 /**

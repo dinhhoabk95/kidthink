@@ -2,7 +2,7 @@
 spec: DESIGN-SYSTEM-CONTRACT
 title: Contract design system
 area: quality
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
@@ -10,13 +10,10 @@ owns:
   - Token, kit component, quy tắc bốn bề mặt
 depends_on:
   - ACCESSIBILITY
-open_tasks:
-  - "#310"
+open_tasks: []
 ---
 
 # Contract design system
-
-> **Chưa hoàn thành** — `BR-DSC-27` (`tabular-nums` cho số đếm, điểm) chưa làm: không có chỗ dùng nào trong `apps/` và `packages/`, cũng chưa có cổng. Việc còn lại: [Task #310](../../tasks/310-quality-gates-gaps-plan.md).
 
 ## 1. Objective
 

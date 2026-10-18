@@ -78,4 +78,29 @@ describe("P2.9 Admin Screens (BR-FLG, BR-FFA, BR-EXP, BR-NTA)", () => {
       expect(notificationsPageContent).toContain("Xem trước");
     });
   });
+
+  describe("Legal Consent Force Page (/legal-consents — BR-LCA-06..09)", () => {
+    const legalConsentsPageContent = readFileSync(
+      join(import.meta.dirname, "../../app/pages/legal-consents/index.vue"),
+      "utf-8"
+    );
+
+    it("Scenario: BR-LCA-06 — requires both confirm_deployed and confirm_all_users checkboxes before submit", () => {
+      expect(legalConsentsPageContent).toContain("forceForm.confirm_deployed");
+      expect(legalConsentsPageContent).toContain("forceForm.confirm_all_users");
+      expect(legalConsentsPageContent).toContain("confirm_deployed: true");
+      expect(legalConsentsPageContent).toContain("confirm_all_users: true");
+    });
+
+    it("Scenario: BR-LCA-08 & §8 — displays affected_user_count and sends expected_requirement_at for 409 check", () => {
+      expect(legalConsentsPageContent).toContain("affected_user_count");
+      expect(legalConsentsPageContent).toContain("expected_requirement_at");
+      expect(legalConsentsPageContent).toContain("CONSENT_REQUIREMENT_CHANGED");
+    });
+
+    it("Scenario: BR-LCA-09 — renders document_url as read-only link and shows last_updated_on without document editor", () => {
+      expect(legalConsentsPageContent).toContain(':href="req.document_url"');
+      expect(legalConsentsPageContent).toContain("req.last_updated_on");
+    });
+  });
 });

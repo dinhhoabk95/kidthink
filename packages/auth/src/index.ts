@@ -44,6 +44,16 @@ export {
   MfaChallengeService,
 } from "./mfa-challenge.js";
 export {
+  MFA_LOCK_SECONDS,
+  MFA_MAX_FAILURES,
+  MfaAttemptGuard,
+  type MfaFailureResult,
+} from "./mfa-lockout.js";
+export {
+  type CompleteMfaChallengeInput,
+  completeMfaChallenge,
+} from "./mfa-verification.js";
+export {
   getOAuthRegistry,
   type OAuthProviderConfig,
   OAuthProviderRegistry,
@@ -57,6 +67,13 @@ export {
   OAUTH_STATE_TTL_SECONDS,
   sanitizeReturnTo,
 } from "./oauth/state-store.js";
+export {
+  decodeOAuthTicket,
+  encodeOAuthTicket,
+  OAUTH_TICKET_COOKIE_NAME,
+  OAUTH_TICKET_TTL_SECONDS,
+  type OAuthTicketPayload,
+} from "./oauth/ticket-store.js";
 export {
   isOAuthProvider,
   type NormalizedProfile,
@@ -115,6 +132,7 @@ export {
 } from "./redis-client.js";
 export {
   type AuthNamespace as RedisAuthNamespace,
+  buildAuthSentinelKey,
   type CreatedSessionOutput,
   type CreateSessionOptions,
   generateTokenHex,

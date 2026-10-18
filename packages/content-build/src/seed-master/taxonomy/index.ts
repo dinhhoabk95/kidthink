@@ -3,6 +3,7 @@ import path from "node:path";
 import { SKILL_IDENTITIES } from "@mindkid/content";
 import {
   competencies,
+  type getOwnerDb,
   learningObjectives,
   skillDatasets,
   skillPrerequisites,
@@ -22,7 +23,8 @@ import {
   STRANDS,
 } from "@mindkid/taxonomy";
 import { sql } from "drizzle-orm";
-import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+
+type TaxonomyDbClient = ReturnType<typeof getOwnerDb>;
 
 export interface ParsedSkill {
   code: string;
@@ -331,6 +333,40 @@ function validateSkillPrerequisites(
   }
 }
 
+function isThinkingProcess(tp: string): tp is ThinkingProcess {
+  return CANONICAL_THINKING_SET.has(tp);
+}
+
+function validateHierarchyChains(skillsToSeed: ParsedSkill[]): void {
+  const strandCompMap = new Map<string, string>();
+  for (const st of STRANDS) {
+    strandCompMap.set(st.code, st.competency_code);
+  }
+  const seenLoCodes = new Set<string>();
+
+  for (const s of skillsToSeed) {
+    const expectedComp = strandCompMap.get(s.strand_code);
+    if (!expectedComp) {
+      throw new Error(
+        `BR-TAX-03 violation: Skill ${s.code} references unknown strand '${s.strand_code}'`
+      );
+    }
+    if (expectedComp !== s.competency_code) {
+      throw new Error(
+        `BR-TAX-03 violation: Skill ${s.code} competency '${s.competency_code}' does not match strand '${s.strand_code}' (${expectedComp})`
+      );
+    }
+    for (const lo of s.learning_objectives) {
+      if (seenLoCodes.has(lo.code)) {
+        throw new Error(
+          `BR-TAX-03 violation: Learning objective '${lo.code}' belongs to multiple skills`
+        );
+      }
+      seenLoCodes.add(lo.code);
+    }
+  }
+}
+
 function validateSkillBounds(skillsToSeed: ParsedSkill[]): void {
   for (const s of skillsToSeed) {
     if (s.age_min < 3 || s.age_max > 7 || s.age_min > s.age_max) {
@@ -374,6 +410,7 @@ export function validateTaxonomyInvariants(skillsToSeed: ParsedSkill[]): void {
     }
   }
 
+  validateHierarchyChains(skillsToSeed);
   validateSkillBounds(skillsToSeed);
   validateSkillPrerequisites(skillsToSeed, skillMap);
 
@@ -385,7 +422,7 @@ export function validateTaxonomyInvariants(skillsToSeed: ParsedSkill[]): void {
     age_min: s.age_min,
     age_max: s.age_max,
     difficulty: s.difficulty,
-    thinking_processes: s.thinking_processes as unknown as ThinkingProcess[],
+    thinking_processes: s.thinking_processes.filter(isThinkingProcess),
     tier: s.tier,
     prerequisites: s.prerequisites.map((pCode) => ({
       prerequisite_code: pCode,
@@ -403,7 +440,7 @@ export function validateTaxonomyInvariants(skillsToSeed: ParsedSkill[]): void {
 }
 
 async function seedCompetenciesStep(
-  db: NodePgDatabase<Record<string, unknown>>
+  db: TaxonomyDbClient
 ): Promise<Map<string, number>> {
   const values = COMPETENCIES.map((comp) => ({
     code: comp.code,
@@ -436,7 +473,7 @@ async function seedCompetenciesStep(
 }
 
 async function seedStrandsStep(
-  db: NodePgDatabase<Record<string, unknown>>,
+  db: TaxonomyDbClient,
   compIdMap: Map<string, number>
 ): Promise<Map<string, number>> {
   const values = STRANDS.map((str, idx) => {
@@ -476,7 +513,7 @@ async function seedStrandsStep(
 }
 
 async function seedSkillsStep(
-  db: NodePgDatabase<Record<string, unknown>>,
+  db: TaxonomyDbClient,
   seededSkills: ParsedSkill[],
   strandIdMap: Map<string, number>
 ): Promise<Map<string, number>> {
@@ -528,7 +565,7 @@ async function seedSkillsStep(
 }
 
 async function seedPrerequisitesStep(
-  db: NodePgDatabase<Record<string, unknown>>,
+  db: TaxonomyDbClient,
   seededSkills: ParsedSkill[],
   skillIdMap: Map<string, number>
 ): Promise<void> {
@@ -561,7 +598,7 @@ async function seedPrerequisitesStep(
 }
 
 async function seedLearningObjectivesStep(
-  db: NodePgDatabase<Record<string, unknown>>,
+  db: TaxonomyDbClient,
   seededSkills: ParsedSkill[],
   skillIdMap: Map<string, number>
 ): Promise<number> {
@@ -609,7 +646,7 @@ async function seedLearningObjectivesStep(
 }
 
 export async function seedSkillDatasetsStep(
-  db: NodePgDatabase<Record<string, unknown>>,
+  db: TaxonomyDbClient,
   skillIdMap: Map<string, number>,
   datasetsOverride?: Record<string, SkillDataset>
 ): Promise<number> {
@@ -617,7 +654,7 @@ export async function seedSkillDatasetsStep(
   const datasets = datasetsOverride ?? SKILL_DATASETS;
   if (!datasetsOverride) {
     const { checkSkillRegistry } = await import(
-      "../../gates/check-skill-registry.js"
+      "#src/gates/check-skill-registry"
     );
     const registryGate = checkSkillRegistry(SKILL_DATASETS);
     if (!registryGate.passed) {
@@ -689,7 +726,7 @@ export async function seedSkillDatasetsStep(
  * Idempotent according to `code`.
  */
 export async function seedTaxonomyMasterData(
-  db: NodePgDatabase<Record<string, unknown>>,
+  db: TaxonomyDbClient,
   docsDir?: string
 ): Promise<{
   competencyCount: number;

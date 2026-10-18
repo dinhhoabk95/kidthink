@@ -1,45 +1,38 @@
 import { TransactionalNotificationCannotBeDisabledError } from "@mindkid/errors/account";
 import { ValidationError } from "@mindkid/errors/common";
-
-import { defineEventHandler, readBody } from "h3";
-import { z } from "zod";
+import { defineEventHandler } from "h3";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
-
-const ALLOWED_PREFERENCE_KEYS = new Set(["weekly_progress", "content_new"]);
-
-const NotificationPreferencesSchema = z
-  .object({
-    weekly_progress: z.boolean().optional(),
-    content_new: z.boolean().optional(),
-  })
-  .strict();
+import {
+  ALLOWED_PREFERENCE_KEYS,
+  NotificationPreferencesPatchSchema,
+  setUserNotificationPreferences,
+} from "#server/utils/notification-preferences-runtime";
+import { readBodyWithLimit } from "#server/utils/request-body";
 
 export default defineEventHandler(async (event) => {
-  await requireWebUserSession(event);
+  const userSession = await requireWebUserSession(event);
+  const userId = Number(userSession.user_id);
 
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
-  const rawBody =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const rawBody = await readBodyWithLimit(event);
 
-  // Check for disallowed / transactional keys (BR-ACS-06)
+  // Check for disallowed / transactional keys (BR-ACS-06, BR-NOT-01)
   for (const key of Object.keys(rawBody)) {
     if (!ALLOWED_PREFERENCE_KEYS.has(key)) {
       throw new TransactionalNotificationCannotBeDisabledError();
     }
   }
 
-  const parsed = NotificationPreferencesSchema.safeParse(rawBody);
+  const parsed = NotificationPreferencesPatchSchema.safeParse(rawBody);
   if (!parsed.success) {
     throw new ValidationError("Tuỳ chọn thông báo không hợp lệ.");
   }
 
-  const weeklyProgress = parsed.data.weekly_progress ?? true;
-  const contentNew = parsed.data.content_new ?? true;
+  const updated = setUserNotificationPreferences(userId, parsed.data);
 
   return {
-    weekly_progress: weeklyProgress,
-    content_new: contentNew,
+    weekly_progress: updated.weekly_progress,
+    content_new: updated.content_new,
     message: "Cập nhật tuỳ chọn thông báo thành công.",
   };
 });

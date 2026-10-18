@@ -7,7 +7,41 @@ import {
 import { InsufficientRoleError } from "@mindkid/errors/auth";
 import { and, desc, eq, gte, ilike, lte, or, type SQL } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+
+const ManagerNotificationsQuerySchema = z.object({
+  code: z.string().optional(),
+  status: z.string().optional(),
+  channel: z.string().optional(),
+  recipient: z.string().optional(),
+  from: z.string().optional(),
+  to: z.string().optional(),
+  limit: z.string().optional(),
+});
+
+type NotificationPayloadScalar = string | number | boolean | null | undefined;
+
+type NotificationPayloadObject = Record<
+  string,
+  NotificationPayloadScalar | readonly NotificationPayloadScalar[]
+>;
+
+type DeliveryStatus = (typeof notificationDeliveries.$inferSelect)["status"];
+type DeliveryChannel = (typeof notificationDeliveries.$inferSelect)["channel"];
+
+interface NotificationSearchQuery {
+  code?: string;
+  status?: string;
+  channel?: string;
+  recipient?: string;
+  from?: string;
+  to?: string;
+  limit?: string;
+}
+
+const SENSITIVE_KEY_PATTERN =
+  /(^|_)(otp|code|token|secret|password|pin|hash)($|_)/i;
 
 /**
  * Mask email for privacy (BR-NTA-06, BR-LOG-04): j***@example.com
@@ -24,29 +58,34 @@ function redactEmail(email: string): string {
 }
 
 /**
- * Strips raw OTP / token fields from payload display (BR-NTA-06)
+ * Strips raw OTP / token / secret fields from payload display (BR-NTA-04)
  */
-function sanitizeNotificationPayload(
-  payload: Record<string, unknown> | null,
+export function sanitizeNotificationPayload(
+  payload: NotificationPayloadObject | null,
   templateCode: string
-): Record<string, unknown> | null {
+): NotificationPayloadObject | null {
   if (!payload || typeof payload !== "object") {
     return null;
   }
-  const clean = { ...payload };
+  const clean: NotificationPayloadObject = { ...payload };
 
-  if (clean.otp) {
-    clean.otp = "******";
+  for (const key of Object.keys(clean)) {
+    if (
+      key === "order_code" ||
+      key === "orderCode" ||
+      key === "entity_code" ||
+      key === "package_code"
+    ) {
+      continue;
+    }
+    if (SENSITIVE_KEY_PATTERN.test(key)) {
+      clean[key] = "******";
+    }
   }
-  if (clean.code) {
-    clean.code = "******";
-  }
-  if (clean.token) {
-    clean.token = "******";
-  }
+
   if (
     (templateCode.includes("otp") || templateCode.includes("verify")) &&
-    clean.password
+    "password" in clean
   ) {
     clean.password = undefined;
   }
@@ -54,7 +93,7 @@ function sanitizeNotificationPayload(
   return clean;
 }
 
-function parseRecipientCondition(recipient?: unknown): SQL | undefined {
+function parseRecipientCondition(recipient?: string): SQL | undefined {
   if (typeof recipient !== "string" || !recipient.trim()) {
     return undefined;
   }
@@ -71,7 +110,7 @@ function parseRecipientCondition(recipient?: unknown): SQL | undefined {
 
 function parseDateCondition(
   field: typeof notificationDeliveries.createdAt,
-  value: unknown,
+  value: string | undefined,
   operator: "gte" | "lte"
 ): SQL | undefined {
   if (typeof value !== "string" || !value.trim()) {
@@ -84,7 +123,7 @@ function parseDateCondition(
   return operator === "gte" ? gte(field, d) : lte(field, d);
 }
 
-function buildQueryConditions(query: Record<string, unknown>): SQL[] {
+function buildQueryConditions(query: NotificationSearchQuery): SQL[] {
   const conditions: SQL[] = [];
 
   if (typeof query.code === "string" && query.code.trim()) {
@@ -93,9 +132,15 @@ function buildQueryConditions(query: Record<string, unknown>): SQL[] {
 
   if (typeof query.status === "string" && query.status.trim()) {
     conditions.push(
+      eq(notificationDeliveries.status, query.status.trim() as DeliveryStatus)
+    );
+  }
+
+  if (typeof query.channel === "string" && query.channel.trim()) {
+    conditions.push(
       eq(
-        notificationDeliveries.status,
-        query.status.trim() as (typeof notificationDeliveries.$inferSelect)["status"]
+        notificationDeliveries.channel,
+        query.channel.trim() as DeliveryChannel
       )
     );
   }
@@ -136,7 +181,12 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  const query = getQuery(event);
+  const parsedQuery = ManagerNotificationsQuerySchema.safeParse(
+    getQuery(event)
+  );
+  const query: NotificationSearchQuery = parsedQuery.success
+    ? parsedQuery.data
+    : {};
   const limit = Math.min(Number(query.limit) || 50, 100);
   const conditions = buildQueryConditions(query);
 
@@ -182,7 +232,7 @@ export default defineEventHandler(async (event) => {
       ? redactEmail(r.recipientEmail)
       : null,
     payload: sanitizeNotificationPayload(
-      r.payload as Record<string, unknown> | null,
+      r.payload as NotificationPayloadObject | null,
       r.templateCode
     ),
   }));

@@ -152,7 +152,7 @@ describe("Task 3 — User Ops: Suspend, Reactivate, Send Password Reset (BR-USM-
       .where(
         and(
           eq(auditLogs.entityId, user.uuid),
-          eq(auditLogs.action, "manager.user.suspended")
+          eq(auditLogs.action, "user_suspended")
         )
       );
     expect(auditLog).toBeDefined();

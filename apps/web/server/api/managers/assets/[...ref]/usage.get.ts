@@ -9,7 +9,12 @@ import {
 import { ValidationError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+
+const AssetUsageQuerySchema = z.object({
+  ref: z.string().optional(),
+});
 
 export interface AssetUsageItem {
   entity_type: string;
@@ -117,11 +122,11 @@ async function resolveUsageItem(
 
 export default defineEventHandler(
   async (event): Promise<AssetUsageResponse> => {
-    await requireManagerSession(event);
+    requireManagerSession(event);
 
-    const query = getQuery(event);
+    const parsedQuery = AssetUsageQuerySchema.safeParse(getQuery(event));
     const paramRef = getRouterParam(event, "ref");
-    const rawRef = (query.ref as string) || paramRef;
+    const rawRef = (parsedQuery.success && parsedQuery.data.ref) || paramRef;
 
     if (!rawRef) {
       throw new ValidationError("Asset reference (ref) is required");

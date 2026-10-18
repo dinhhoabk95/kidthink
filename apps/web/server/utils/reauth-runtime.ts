@@ -1,65 +1,70 @@
-import { REAUTH_MAX_AGE_SECONDS } from "@mindkid/auth";
-import { ReauthRequiredError } from "@mindkid/errors/auth";
+import {
+  getBrowserSessionService,
+  REAUTH_MAX_AGE_SECONDS,
+} from "@mindkid/auth";
+import {
+  ReauthRequiredError,
+  UnauthenticatedError,
+} from "@mindkid/errors/auth";
 import type { H3Event } from "h3";
 
+function reauthRequired(): Error {
+  return new ReauthRequiredError({
+    methods: ["password", "mfa_totp"],
+  });
+}
+
+/**
+ * UC-004 BR-022: mốc xác minh lại nằm trong bản ghi phiên Redis; middleware
+ * `auth` nạp nó vào `event.context.user|manager.reauth_at` ở mỗi request.
+ */
 export function requireReauth(
   event: H3Event,
   now: Date = new Date(),
   maxAgeSeconds: number = REAUTH_MAX_AGE_SECONDS
 ): void {
-  const context = event.context as {
-    reauth_at?: Date | string | null;
-    user?: { reauth_at?: Date | string | null };
-    superadmin?: { reauth_at?: Date | string | null };
-    manager?: { reauth_at?: Date | string | null };
-  };
-
-  const rawReauthAt =
-    context?.reauth_at ??
-    context?.user?.reauth_at ??
-    context?.superadmin?.reauth_at ??
-    context?.manager?.reauth_at;
-  if (!rawReauthAt) {
-    throw new ReauthRequiredError({
-      methods: ["password", "mfa_totp"],
-    });
+  const reauthAt =
+    event.context.user?.reauth_at ?? event.context.manager?.reauth_at;
+  if (!reauthAt) {
+    throw reauthRequired();
   }
 
-  const reauthAt =
-    rawReauthAt instanceof Date ? rawReauthAt : new Date(rawReauthAt);
-
   if (Number.isNaN(reauthAt.getTime())) {
-    throw new ReauthRequiredError({
-      methods: ["password", "mfa_totp"],
-    });
+    throw reauthRequired();
   }
 
   const ageMs = now.getTime() - reauthAt.getTime();
   if (ageMs < 0 || ageMs > maxAgeSeconds * 1000) {
-    throw new ReauthRequiredError({
-      methods: ["password", "mfa_totp"],
-    });
+    throw reauthRequired();
   }
 }
 
-export function markCurrentSessionReauthenticated(
+/** Ghi mốc xác minh lại vào phiên Redis, rồi phản chiếu vào request hiện tại. */
+export async function markCurrentSessionReauthenticated(
   event: H3Event,
   now: Date = new Date()
-): void {
-  const context = event.context as {
-    reauth_at?: Date | string | null;
-    user?: { reauth_at?: Date | string | null };
-    superadmin?: { reauth_at?: Date | string | null };
-    manager?: { reauth_at?: Date | string | null };
-  };
-  context.reauth_at = now;
-  if (context.user) {
-    context.user.reauth_at = now;
+): Promise<void> {
+  const service = getBrowserSessionService();
+  const { user, manager } = event.context;
+  if (user) {
+    await service.markReauthenticated(
+      "user",
+      user.user_id,
+      user.session_id,
+      now
+    );
+    event.context.user = { ...user, reauth_at: now };
+    return;
   }
-  if (context.superadmin) {
-    context.superadmin.reauth_at = now;
+  if (manager) {
+    await service.markReauthenticated(
+      "manager",
+      manager.manager_id,
+      manager.session_id,
+      now
+    );
+    event.context.manager = { ...manager, reauth_at: now };
+    return;
   }
-  if (context.manager) {
-    context.manager.reauth_at = now;
-  }
+  throw new UnauthenticatedError();
 }

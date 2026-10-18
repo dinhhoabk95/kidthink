@@ -13,12 +13,17 @@ export default defineEventHandler((event) => {
     throw new NotFoundError("Không tìm thấy văn bản pháp lý.");
   }
 
-  setHeader(event, "Cache-Control", "public, max-age=3600");
+  setHeader(
+    event,
+    "Cache-Control",
+    doc.requiresConsent ? "no-store" : "public, max-age=3600"
+  );
 
   return {
     slug: doc.slug,
     title: doc.title,
     last_updated_on: doc.effectiveDate,
+    legal_review_status: doc.reviewStatus,
     review_status: doc.reviewStatus,
     summary: doc.summary,
     requires_consent: doc.requiresConsent,

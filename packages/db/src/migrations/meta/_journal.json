@@ -64,6 +64,13 @@
       "when": 1788900000000,
       "tag": "0008_child_stickers",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1789000000000,
+      "tag": "0009_published_content_immutable_triggers",
+      "breakpoints": true
     }
   ]
 }

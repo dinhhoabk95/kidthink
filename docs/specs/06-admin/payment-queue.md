@@ -2,12 +2,10 @@
 spec: PAYMENT-QUEUE
 title: Hàng đợi đơn thanh toán
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-10-18
-open_tasks:
-  - "#297"
 owns:
   - Danh sách đơn chờ xử lý và bộ lọc
   - Bề mặt đối chiếu chứng từ
@@ -17,8 +15,6 @@ depends_on:
 ---
 
 # Hàng đợi đơn thanh toán
-
-> **Chưa hoàn thành** — admin chưa có trang `/payments` và không gọi `GET /api/managers/orders*`; mục nav và thẻ dashboard trỏ tới `/payments` ra 404 (BR-PQU-01). API đã có. Việc còn lại: [Task #297](../../tasks/297-admin-payment-queue-plan.md).
 
 ## 1. Objective
 

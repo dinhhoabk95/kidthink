@@ -2,12 +2,10 @@
 spec: OFFLINE-CURRICULUM-PACK
 title: Gói học tập ngoại tuyến và quản lý hạn mức
 area: account
-status: approved
+status: implemented
 mvp: false
 phase: P5
 reviewed: 2026-10-18
-open_tasks:
-  - "#303"
 owns:
   - Manifest gói học tập offline và xác thực tính toàn vẹn asset
   - Cơ chế cấp quyền hạn lease, kiểm soát hết hạn và thu hồi gói offline
@@ -25,8 +23,6 @@ depends_on:
 ---
 
 # Gói học tập ngoại tuyến và quản lý hạn mức
-
-> **Chưa hoàn thành** — `BR-OCP-05`: chưa có đường dọn gói offline (cache `OFFLINE_PACK_CACHE_NAME` + store client) khi đăng xuất hoặc bị thu hồi quyền lợi; `sw.js` chỉ dọn cache cũ lúc activate. Việc còn lại: [Task #303](../../tasks/303-offline-play-buffer-plan.md).
 
 ## 1. Objective
 

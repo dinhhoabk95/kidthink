@@ -3,10 +3,15 @@ import { NoActiveChildError } from "@mindkid/errors/child";
 import { allowedTiers } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, deleteCookie, getCookie, getQuery } from "h3";
+import { z } from "zod";
 import { getRecommendationsForChild } from "#server/services/index.js";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
+
+const UserRecommendationsQuerySchema = z.object({
+  limit: z.coerce.number().optional(),
+});
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
@@ -41,8 +46,10 @@ export default defineEventHandler(async (event) => {
   }
 
   // 2. Parse query parameters (clamped limit <= 5)
-  const query = getQuery(event);
-  const rawLimit = Number(query.limit);
+  const parsedQuery = UserRecommendationsQuerySchema.safeParse(getQuery(event));
+  const rawLimit = Number(
+    parsedQuery.success ? parsedQuery.data.limit : Number.NaN
+  );
   const limit = Number.isFinite(rawLimit)
     ? Math.max(1, Math.min(rawLimit, 5))
     : 5;

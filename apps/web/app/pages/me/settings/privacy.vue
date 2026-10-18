@@ -139,6 +139,7 @@
 
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
+  import { useApi } from "~/composables/use-api";
 
   definePageMeta({
     middleware: ["user-auth"],
@@ -154,6 +155,7 @@
     status: "active" | "required" | "withdrawn";
   }
 
+  const api = useApi();
   const consents = ref<ConsentItem[]>([
     {
       consent_type: "terms",
@@ -186,7 +188,7 @@
 
   async function loadConsents() {
     try {
-      const data = await globalThis.$fetch<{ consents: ConsentItem[] }>(
+      const data = await api<{ consents: ConsentItem[] }>(
         "/api/users/consents"
       );
       if (data?.consents) {
@@ -214,7 +216,7 @@
 
   async function handleAcceptConsent(item: ConsentItem) {
     try {
-      await globalThis.$fetch("/api/users/consents", {
+      await api("/api/users/consents", {
         method: "POST",
         body: {
           consent_type: item.consent_type,
@@ -230,7 +232,7 @@
 
   async function handleWithdrawAction(item: ConsentItem) {
     try {
-      await globalThis.$fetch("/api/users/consents/withdraw", {
+      await api("/api/users/consents/withdraw", {
         method: "POST",
         body: {
           consent_type: item.consent_type,

@@ -4,7 +4,13 @@ import { ValidationError } from "@mindkid/errors/common";
 import { PACKAGE_CATALOG } from "@mindkid/shared";
 import { and, desc, eq, gte, inArray, isNull, lt, or } from "drizzle-orm";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
+import { z } from "zod";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
+
+const SubscribersQuerySchema = z.object({
+  limit: z.coerce.number().optional(),
+  cursor: z.coerce.number().optional(),
+});
 
 export default defineEventHandler(async (event) => {
   await requireSuperAdminSession(event);
@@ -18,7 +24,8 @@ export default defineEventHandler(async (event) => {
     throw new PackageNotFoundError("Gói không tồn tại trong catalog.");
   }
 
-  const query = getQuery(event) || {};
+  const parsedQuery = SubscribersQuerySchema.safeParse(getQuery(event) || {});
+  const query = parsedQuery.success ? parsedQuery.data : {};
   const limit = Math.min(Math.max(Number(query.limit) || 50, 1), 100);
   const cursor = query.cursor ? Number(query.cursor) : 0;
 

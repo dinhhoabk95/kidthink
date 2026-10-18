@@ -323,4 +323,77 @@ describe("GT-013 — ba bậc gợi ý (điều kiện nghiệm thu 15)", () => 
     }
     expect(session.getScaffoldHint(1)).toBeNull();
   });
+
+  it("getHintTargetIndex trỏ vào ô kế tiếp trên đường hợp lệ thay vì ô đích", () => {
+    const session = newSession(0);
+    session.prepareRound("4-5");
+    // Start at (0,0), next valid step is (1,0) -> slot index 1 * 3 + 0 = 3 (not goal at index 8)
+    expect(session.getHintTargetIndex()).toBe(3);
+
+    session.onPathStep({ row: 1, col: 0 });
+    // Next valid step is (2,0) -> slot index 2 * 3 + 0 = 6
+    expect(session.getHintTargetIndex()).toBe(6);
+  });
+
+  it("nhận cử chỉ stroke đi qua nhiều ô và dừng khi thắng", () => {
+    const session = newSession(0);
+    session.prepareRound("4-5");
+
+    const s00 = session.slots[0];
+    const s10 = session.slots[3];
+    const s20 = session.slots[6];
+    const s21 = session.slots[7];
+    const s22 = session.slots[8];
+    if (!(s00 && s10 && s20 && s21 && s22)) {
+      throw new Error("maze slots must exist");
+    }
+
+    const res = session.dispatch({
+      type: "stroke",
+      points: [
+        { x: s00.x, y: s00.y },
+        { x: s10.x, y: s10.y },
+        { x: s20.x, y: s20.y },
+        { x: s21.x, y: s21.y },
+        { x: s22.x, y: s22.y },
+      ],
+      timeMs: 100,
+    });
+    expect(res?.valid).toBe(true);
+    expect(session.checkWinCondition()).toBe(true);
+  });
+
+  it("chế độ input_mode = arrows phát move_arrow khi chạm ô liền kề và gắn glyph mũi tên", () => {
+    const session = newSession(2);
+    session.prepareRound("5-6");
+
+    // Start at (0,0), neighbor (0,1) is at index 1 ("e")
+    const slot01 = session.slots[1];
+    if (!slot01) {
+      throw new Error("slot01 must exist");
+    }
+    const action = session.toAction({
+      type: "tap",
+      x: slot01.x,
+      y: slot01.y,
+      timeMs: 100,
+    });
+    expect(action).toEqual({
+      type: "move_arrow",
+      data: { side: "e" },
+    });
+
+    const viewBefore = session.getView();
+    const neighborEntity = viewBefore.entities.find((e) => e.id === "cell_0_1");
+    expect(neighborEntity?.glyph).toBe("➡️");
+
+    const res = session.dispatch({
+      type: "tap",
+      x: slot01.x,
+      y: slot01.y,
+      timeMs: 120,
+    });
+    expect(res?.valid).toBe(true);
+    expect(session.getPath().at(-1)).toEqual({ row: 0, col: 1 });
+  });
 });

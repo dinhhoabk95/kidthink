@@ -218,13 +218,30 @@ export interface WorksheetValidationResult {
   warnings: string[];
 }
 
+const CHILD_PII_PATTERNS = [
+  /\bchild_name\b/i,
+  /\bstudent_name\b/i,
+  /\bdate_of_birth\b/i,
+  /\bschool_name\b/i,
+  /họ\s+và\s+tên\s+bé/i,
+  /ngày\s+sinh\s+của\s+bé/i,
+  /trường\s+mầm\s+non/i,
+];
+
+function matchesAnyPattern(
+  texts: readonly string[],
+  patterns: readonly RegExp[]
+): boolean {
+  return patterns.some((pattern) => texts.some((text) => pattern.test(text)));
+}
+
 /**
  * Physical & Editorial Invariant Validator for Worksheets
  */
 export function validateWorksheetContent(input: {
   title: string;
   layout_template: string;
-  content_blocks: unknown;
+  content_blocks: WorksheetContentBlock | object;
   instructions?: string | null;
   learning_objective_ids?: (number | string)[];
 }): WorksheetValidationResult {
@@ -254,23 +271,32 @@ export function validateWorksheetContent(input: {
 
   // 3. BR-WSM-02: NEVER require children to read text
   const blockJsonStr = JSON.stringify(input.content_blocks || "");
-  for (const pattern of CHILD_READING_PATTERNS) {
-    if (pattern.test(blockJsonStr) || pattern.test(input.title)) {
-      errors.push(
-        "BR-WSM-02: Không được yêu cầu trẻ đọc chữ. Mọi chỉ dẫn cho trẻ phải là hình ảnh/biểu tượng trực quan."
-      );
-      break;
-    }
+  if (matchesAnyPattern([blockJsonStr, input.title], CHILD_READING_PATTERNS)) {
+    errors.push(
+      "BR-WSM-02: Không được yêu cầu trẻ đọc chữ. Mọi chỉ dẫn cho trẻ phải là hình ảnh/biểu tượng trực quan."
+    );
   }
 
-  // 4. BR-WSM-05: Instructions for adults in footer
+  // 4. BR-WSM-08: NEVER include child PII fields on worksheet page
+  if (
+    matchesAnyPattern(
+      [blockJsonStr, input.title, input.instructions ?? ""],
+      CHILD_PII_PATTERNS
+    )
+  ) {
+    errors.push(
+      "BR-WSM-08: Không được thu thập hoặc hiển thị dữ liệu cá nhân (PII) của trẻ trên trang PDF."
+    );
+  }
+
+  // 5. BR-WSM-05: Instructions for adults in footer
   if (!input.instructions || input.instructions.trim().length < 10) {
     errors.push(
       "BR-WSM-05: Worksheet bắt buộc phải có hướng dẫn sư phạm cho người lớn ở chân trang (tối thiểu 10 ký tự)."
     );
   }
 
-  // 5. Objectives
+  // 6. Objectives
   const objCount = Array.isArray(input.learning_objective_ids)
     ? input.learning_objective_ids.length
     : 0;

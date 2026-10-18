@@ -32,6 +32,8 @@ interface GT032ActionPayload {
   readonly cup_id?: string;
   readonly id?: string;
   readonly option_id?: string;
+  readonly delta?: number;
+  readonly fill_units?: number;
 }
 
 export class GT032Session extends TemplateGameSession<
@@ -45,13 +47,30 @@ export class GT032Session extends TemplateGameSession<
   isWin = false;
   showHintMarks = false;
 
+  private readonly cupFills: Map<string, number> = new Map();
   private particles: Particle[] = [];
+
+  constructor(
+    content: GT032Content,
+    difficulty: GT032Difficulty,
+    layoutSeed = 0,
+    themeId?: string
+  ) {
+    super(content, difficulty, layoutSeed, themeId);
+    for (const cup of content.cups) {
+      this.cupFills.set(cup.cup_id, cup.fill_units);
+    }
+  }
 
   setupEntities(): void {
     this.selectedCupId = null;
     this.isWin = false;
     this.showHintMarks = false;
     this.particles = [];
+    this.cupFills.clear();
+    for (const cup of this.content.cups) {
+      this.cupFills.set(cup.cup_id, cup.fill_units);
+    }
     this.recordEvent("game_started", {
       template_code: "GT-032",
       question_type: this.content.question_type,
@@ -59,9 +78,26 @@ export class GT032Session extends TemplateGameSession<
     });
   }
 
+  getCupFill(cupId: string): number {
+    const tracked = this.cupFills.get(cupId);
+    if (tracked !== undefined) {
+      return tracked;
+    }
+    const cup = this.content.cups.find((c) => c.cup_id === cupId);
+    return cup?.fill_units ?? 0;
+  }
+
+  getTargetFill(cup: GT032Cup): number {
+    return cup.target_units ?? this.content.target_units ?? cup.capacity_units;
+  }
+
   override getHintTargetIndex(): number | null {
     if (this.isWin || this.isWon) {
       return null;
+    }
+    if (this.content.question_type === "pour_to_mark") {
+      const idx = this.content.cups.findIndex((c) => !this.isCupCorrect(c));
+      return idx >= 0 ? idx : 0;
     }
     const idx = this.content.cups.findIndex((c) => this.isCupCorrect(c));
     return idx >= 0 ? idx : null;
@@ -81,25 +117,89 @@ export class GT032Session extends TemplateGameSession<
   isCupCorrect(cup: GT032Cup): boolean {
     const qType = this.content.question_type;
     const cups = this.content.cups;
+    const fill = this.getCupFill(cup.cup_id);
 
     if (qType === "more") {
-      const maxFill = Math.max(...cups.map((c) => c.fill_units));
-      return cup.fill_units === maxFill;
+      const maxFill = Math.max(...cups.map((c) => this.getCupFill(c.cup_id)));
+      return fill === maxFill;
     }
 
     if (qType === "less") {
-      const minFill = Math.min(...cups.map((c) => c.fill_units));
-      return cup.fill_units === minFill;
+      const minFill = Math.min(...cups.map((c) => this.getCupFill(c.cup_id)));
+      return fill === minFill;
     }
 
     if (qType === "same") {
       const matchingCount = cups.filter(
-        (c) => c.fill_units === cup.fill_units
+        (c) => this.getCupFill(c.cup_id) === fill
       ).length;
       return matchingCount >= 2;
     }
 
-    return cup.fill_units === cup.capacity_units;
+    return fill === this.getTargetFill(cup);
+  }
+
+  private resolvePourTargetCup(cupId?: string): GT032Cup | null {
+    if (cupId) {
+      return this.content.cups.find((c) => c.cup_id === cupId) ?? null;
+    }
+    if (this.selectedCupId) {
+      const selected = this.content.cups.find(
+        (c) => c.cup_id === this.selectedCupId
+      );
+      if (selected) {
+        return selected;
+      }
+    }
+    return (
+      this.content.cups.find((c) => !this.isCupCorrect(c)) ??
+      this.content.cups[0] ??
+      null
+    );
+  }
+
+  private computeNextPourFill(
+    cup: GT032Cup,
+    data: GT032ActionPayload
+  ): number | null {
+    const current = this.getCupFill(cup.cup_id);
+    if (data.fill_units !== undefined) {
+      if (
+        !Number.isInteger(data.fill_units) ||
+        data.fill_units < 0 ||
+        data.fill_units > cup.capacity_units
+      ) {
+        return null;
+      }
+      return data.fill_units;
+    }
+    const delta = data.delta ?? 0;
+    if (!Number.isFinite(delta) || delta === 0) {
+      return null;
+    }
+    const stepDelta =
+      delta > 0
+        ? Math.max(1, Math.round(delta))
+        : Math.min(-1, Math.round(delta));
+    const next = Math.max(0, Math.min(cup.capacity_units, current + stepDelta));
+    return next === current ? null : next;
+  }
+
+  private validateAdjustCup(data: GT032ActionPayload): ActionResult {
+    if (this.content.question_type !== "pour_to_mark") {
+      return ACTION_IGNORED;
+    }
+    const cup = this.resolvePourTargetCup(
+      data.cup_id ?? data.id ?? data.option_id
+    );
+    if (!cup) {
+      return ACTION_IGNORED;
+    }
+    const nextFill = this.computeNextPourFill(cup, data);
+    if (nextFill === null) {
+      return ACTION_IGNORED;
+    }
+    return ACTION_CORRECT;
   }
 
   private validateSelectCup(cupId: string): ActionResult {
@@ -135,11 +235,64 @@ export class GT032Session extends TemplateGameSession<
       return this.validateSelectCup(cupId);
     }
 
+    if (type === "adjust_cup" || type === "pour_cup") {
+      return this.validateAdjustCup(data);
+    }
+
     if (type === "show_hint") {
       return ACTION_CORRECT;
     }
 
     return ACTION_IGNORED;
+  }
+
+  private isPourGoalSatisfied(activeCup: GT032Cup): boolean {
+    const cupsWithExplicitTarget = this.content.cups.filter(
+      (c) => c.target_units !== undefined
+    );
+    if (cupsWithExplicitTarget.length > 0) {
+      return cupsWithExplicitTarget.every((c) => this.isCupCorrect(c));
+    }
+    return this.isCupCorrect(activeCup);
+  }
+
+  private commitAdjustCup(data: GT032ActionPayload): void {
+    if (this.content.question_type !== "pour_to_mark") {
+      return;
+    }
+    const cup = this.resolvePourTargetCup(
+      data.cup_id ?? data.id ?? data.option_id
+    );
+    if (!cup) {
+      return;
+    }
+    const nextFill = this.computeNextPourFill(cup, data);
+    if (nextFill === null) {
+      return;
+    }
+    this.cupFills.set(cup.cup_id, nextFill);
+    this.selectedCupId = cup.cup_id;
+    const reachedTarget = this.isCupCorrect(cup);
+    this.recordEvent("liquid_poured", {
+      cup_id: cup.cup_id,
+      fill_units: nextFill,
+      target_units: this.getTargetFill(cup),
+      is_correct: reachedTarget,
+    });
+
+    if (this.isPourGoalSatisfied(cup)) {
+      this.isWin = true;
+      this.isWon = true;
+      const cupIdx = this.content.cups.findIndex(
+        (c) => c.cup_id === cup.cup_id
+      );
+      const slot = this.slots[cupIdx];
+      if (slot) {
+        this.particles.push(...spawnParticlesAtSlot(slot, 16));
+      }
+      this.recordEvent("game_completed", { score: 100 });
+      this.winSession();
+    }
   }
 
   private commitSelectCup(cupId: string): void {
@@ -148,10 +301,14 @@ export class GT032Session extends TemplateGameSession<
       return;
     }
 
+    if (this.content.question_type === "pour_to_mark") {
+      this.selectedCupId = cup.cup_id;
+    }
+
     const correct = this.isCupCorrect(cup);
     this.recordEvent("cup_selected", {
       cup_id: cup.cup_id,
-      fill_units: cup.fill_units,
+      fill_units: this.getCupFill(cup.cup_id),
       is_correct: correct,
     });
 
@@ -186,16 +343,43 @@ export class GT032Session extends TemplateGameSession<
       return;
     }
 
+    if (type === "adjust_cup" || type === "pour_cup") {
+      this.commitAdjustCup(data);
+      return;
+    }
+
     if (type === "show_hint") {
       this.showHintMarks = true;
     }
   }
 
   override toAction(gesture: Gesture): GameAction | null {
-    if (gesture.type !== "tap") {
+    if (gesture.type === "adjust") {
+      return this.toAdjustAction(gesture);
+    }
+    if (gesture.type === "tap") {
+      return this.toTapAction(gesture.x, gesture.y);
+    }
+    return null;
+  }
+
+  private toAdjustAction(
+    gesture: Extract<Gesture, { type: "adjust" }>
+  ): GameAction | null {
+    if (this.content.question_type !== "pour_to_mark") {
       return null;
     }
+    const targetCup = this.resolvePourTargetCup();
+    if (!(targetCup && Number.isFinite(gesture.delta)) || gesture.delta === 0) {
+      return null;
+    }
+    return {
+      type: "adjust_cup",
+      data: { cup_id: targetCup.cup_id, delta: gesture.delta },
+    };
+  }
 
+  private toTapAction(x: number, y: number): GameAction | null {
     const hitTolerance = 24;
     for (let i = 0; i < this.content.cups.length; i++) {
       const cup = this.content.cups[i];
@@ -205,17 +389,13 @@ export class GT032Session extends TemplateGameSession<
       }
       const hw = (slot.hitW ?? slot.w) / 2 + hitTolerance;
       const hh = (slot.hitH ?? slot.h) / 2 + hitTolerance;
-      if (
-        Math.abs(gesture.x - slot.x) <= hw &&
-        Math.abs(gesture.y - slot.y) <= hh
-      ) {
+      if (Math.abs(x - slot.x) <= hw && Math.abs(y - slot.y) <= hh) {
         return {
           type: "select_cup",
           data: { cup_id: cup.cup_id },
         };
       }
     }
-
     return null;
   }
 
@@ -288,7 +468,7 @@ export class GT032Session extends TemplateGameSession<
           cupId: cup.cup_id,
           shape: cup.shape,
           capacityUnits: cup.capacity_units,
-          fillUnits: cup.fill_units,
+          fillUnits: this.getCupFill(cup.cup_id),
           color: cup.color,
           isSelected: this.selectedCupId === cup.cup_id,
           showHintMarks: this.showHintMarks,

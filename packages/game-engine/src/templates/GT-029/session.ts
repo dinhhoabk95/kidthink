@@ -332,7 +332,40 @@ export class GT029Session extends TemplateGameSession<
     return null;
   }
 
+  private findDroppedItem(
+    gesture: Extract<Gesture, { type: "drop" }>
+  ): GameAction | null {
+    const hitTolerance = 24;
+    const itemCount = this.content.initial_items.length;
+    for (let i = 0; i < itemCount; i++) {
+      const slot = this.slots[i];
+      const item = this.content.initial_items[i];
+      if (!(slot && item)) {
+        continue;
+      }
+      const hw = (slot.hitW ?? slot.w) / 2 + hitTolerance;
+      const hh = (slot.hitH ?? slot.h) / 2 + hitTolerance;
+      if (
+        Math.abs(gesture.fromX - slot.x) <= hw &&
+        Math.abs(gesture.fromY - slot.y) <= hh
+      ) {
+        const dragDist = Math.hypot(gesture.toX - slot.x, gesture.toY - slot.y);
+        if (dragDist <= slot.w / 2) {
+          return null;
+        }
+        return {
+          type: "remove_item",
+          data: { item_id: item.item_id },
+        };
+      }
+    }
+    return null;
+  }
+
   override toAction(gesture: Gesture): GameAction | null {
+    if (gesture.type === "drop") {
+      return this.findDroppedItem(gesture);
+    }
     if (gesture.type !== "tap") {
       return null;
     }

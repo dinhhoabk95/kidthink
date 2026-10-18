@@ -379,6 +379,7 @@
     LessonPlanItemType,
   } from "@mindkid/shared/client";
   import { reactive, ref, watch } from "vue";
+  import { useApi } from "~/composables/use-api";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
   // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
@@ -518,10 +519,12 @@
     });
   }
 
+  const api = useApi();
+
   async function refreshItemVersion(index: number) {
     pageError.value = null;
     try {
-      await $fetch(`/api/users/lesson-plans/${uuid}/refresh-item`, {
+      await api(`/api/users/lesson-plans/${uuid}/refresh-item`, {
         method: "POST",
         body: { position: index },
       });
@@ -549,7 +552,7 @@
 
     try {
       // 1. Update metadata
-      await $fetch(`/api/users/lesson-plans/${uuid}`, {
+      await api(`/api/users/lesson-plans/${uuid}`, {
         method: "PATCH",
         body: {
           title: editMeta.title.trim(),
@@ -572,7 +575,7 @@
         custom_note: i.custom_note || undefined,
       }));
 
-      await $fetch(`/api/users/lesson-plans/${uuid}/items`, {
+      await api(`/api/users/lesson-plans/${uuid}/items`, {
         method: "PUT",
         body: {
           expected_version: plan.value.version + 1,
@@ -619,7 +622,7 @@
     for (let attempts = 1; attempts <= maxAttempts; attempts++) {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      const statusRes = await $fetch<{
+      const statusRes = await api<{
         status: string;
         download_url?: string;
         error?: string;
@@ -641,7 +644,7 @@
     pageMessage.value = "Đang khởi tạo yêu cầu xuất PDF...";
 
     try {
-      const res = await $fetch<{ job_uuid: string; status: string }>(
+      const res = await api<{ job_uuid: string; status: string }>(
         "/api/users/exports",
         {
           method: "POST",

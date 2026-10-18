@@ -1,15 +1,11 @@
+import { writeAudit } from "@mindkid/audit";
 import { MAX_BONUS_DAYS, MIN_ADMIN_NOTE_LENGTH } from "@mindkid/config";
-import {
-  auditLogs,
-  entitlements,
-  getDb,
-  notifications,
-  paymentOrders,
-} from "@mindkid/db";
+import { entitlements, getDb, notifications, paymentOrders } from "@mindkid/db";
 import { AdminNoteRequiredError } from "@mindkid/errors/account";
 import { OrderAlreadyProcessedError } from "@mindkid/errors/billing";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import {
+  activeStackBase,
   assertPaymentOrderTransition,
   computeStackedExpiryDate,
   PACKAGE_CATALOG,
@@ -129,7 +125,7 @@ async function grantEntitlementsForOrder(
       .limit(1);
 
     const newExpiresAt = computeStackedExpiryDate(
-      existing?.expiresAt,
+      activeStackBase(existing),
       offerDurationDays,
       bonusDays,
       now
@@ -246,22 +242,41 @@ async function executeOrderApproval(
       order.packageCode
     );
 
-    await tx.insert(auditLogs).values({
-      actorType: "manager",
-      actorId: session.manager_id,
+    await writeAudit(tx, {
+      actor_type: "manager",
+      actor_id: session.manager_id,
       action: "order_approved",
-      entityType: "payment_order",
-      entityId: order.uuid,
-      beforeData: { status: currentStatus },
-      afterData: {
+      entity_type: "payment_order",
+      entity_id: order.uuid,
+      before_data: { status: currentStatus },
+      after_data: {
         status: "approved",
         bonus_days: bonusDays,
         checklist,
       },
       reason: adminNote,
-      ipAddress: ip,
-      userAgent,
+      ip_address: ip,
+      user_agent: userAgent,
     });
+
+    if (bonusDays > 0) {
+      await writeAudit(tx, {
+        actor_type: "manager",
+        actor_id: session.manager_id,
+        action: "bonus_days_granted",
+        entity_type: "payment_order",
+        entity_id: order.uuid,
+        before_data: { bonus_days: 0 },
+        after_data: {
+          bonus_days: bonusDays,
+          user_id: order.userId,
+          package_code: order.packageCode,
+        },
+        reason: adminNote,
+        ip_address: ip,
+        user_agent: userAgent,
+      });
+    }
 
     await tx.insert(notifications).values({
       recipientType: "user",

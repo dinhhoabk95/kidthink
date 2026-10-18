@@ -103,4 +103,29 @@ describe("Task 6 — Admin Users Screens (BR-USM-01..08, BR-USD-01..06, BR-CPA-0
     expect(archiveModalContent).toContain('minlength="10"');
     expect(archiveModalContent).toContain("reason.trim().length < 10");
   });
+
+  it("Scenario: BR-ALV-05 — /users/[uuid] provides deep-link to audit log history", () => {
+    expect(userDetailContent).toContain("/audit?entity_type=user&entity_id=");
+    expect(userDetailContent).toContain("Xem lịch sử");
+  });
+
+  it("Scenario: BR-ASC-01..06 — /users/[uuid] mounts UserSubscriptionsSection with cancel subscription modal and reauth", () => {
+    const userSubscriptionsContent = readFileSync(
+      join(
+        import.meta.dirname,
+        "../../app/components/users/user-subscriptions-section.vue"
+      ),
+      "utf-8"
+    );
+    expect(userDetailContent).toContain("<UserSubscriptionsSection");
+    expect(userSubscriptionsContent).toContain("/api/managers/users/");
+    expect(userSubscriptionsContent).toContain("/subscriptions");
+    expect(userSubscriptionsContent).toContain("Huỷ gói");
+    expect(userSubscriptionsContent).toContain(
+      "cancelForm.admin_note.trim().length < 20"
+    );
+    expect(userSubscriptionsContent).toContain("/api/managers/auth/reauth");
+    expect(userSubscriptionsContent).toContain("/api/managers/subscriptions/");
+    expect(userSubscriptionsContent).toContain("/cancel");
+  });
 });

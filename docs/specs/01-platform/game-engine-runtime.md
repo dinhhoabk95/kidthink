@@ -5,7 +5,7 @@ area: platform
 status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Vòng lặp render và ngân sách hiệu năng
   - Ràng buộc thiết kế cho bề mặt trẻ 3–6

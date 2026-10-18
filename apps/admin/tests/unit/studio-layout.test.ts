@@ -1,8 +1,11 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { validateEmojiInput } from "@mindkid/shared/client";
 import { describe, expect, it } from "vitest";
 
-describe("Studio Layout & Components (BR-STU, BR-LPV, BR-EPK)", () => {
+const EMJ_PREFIX_REGEX = /^EMJ-/;
+
+describe("Studio Layout & Components (BR-STU, BR-LPV, BR-EPK, BR-SDF)", () => {
   const studioCodeSource = readFileSync(
     join(import.meta.dirname, "../../app/pages/studio/levels/[code].vue"),
     "utf-8"
@@ -28,6 +31,13 @@ describe("Studio Layout & Components (BR-STU, BR-LPV, BR-EPK)", () => {
     ),
     "utf-8"
   );
+  const formFieldSource = readFileSync(
+    join(
+      import.meta.dirname,
+      "../../app/components/studio/schema-form-field.vue"
+    ),
+    "utf-8"
+  );
 
   it("Scenario: 40/60 Split Workspace Layout (Plan §4 Task 4)", () => {
     expect(studioCodeSource).toContain("lg:w-[40%]");
@@ -43,9 +53,15 @@ describe("Studio Layout & Components (BR-STU, BR-LPV, BR-EPK)", () => {
     expect(studioCodeSource).toContain("expected_version");
   });
 
-  it("Scenario: BR-LPV-01..07 — Live Preview Frame Controls & Iframe Integration", () => {
+  it("Scenario: BR-LPV-01..07 — Live Preview Frame Controls, Absolute Web Origin & Iframe Integration", () => {
+    expect(livePreviewSource).toContain("useRuntimeConfig");
+    expect(livePreviewSource).toContain("apiBaseUrl");
+    expect(livePreviewSource).toContain("resolveWebOrigin");
     expect(livePreviewSource).toContain("previewUrl");
+    expect(livePreviewSource).toContain("webOrigin.value");
     expect(livePreviewSource).toContain("/play/preview-sandbox");
+    expect(livePreviewSource).toContain("event.origin !== webOrigin.value");
+    expect(livePreviewSource).not.toContain(', "*"');
     expect(livePreviewSource).toContain("MindKid_STUDIO_UPDATE");
     expect(livePreviewSource).toContain("MindKid_STUDIO_REPLAY");
     expect(livePreviewSource).toContain("300"); // 300ms debounce
@@ -62,6 +78,48 @@ describe("Studio Layout & Components (BR-STU, BR-LPV, BR-EPK)", () => {
     expect(emojiPickerSource).toContain("ArrowRight");
     expect(emojiPickerSource).toContain("Escape");
     expect(emojiPickerSource).toContain("Báo thiếu emoji");
+  });
+
+  it("Scenario: BR-EPK-03 & BR-SDF-04 — Direct Emoji Glyph Input & Validation in SchemaFormField", () => {
+    expect(formFieldSource).toContain("onEmojiDirectInput");
+    expect(formFieldSource).toContain("validateEmojiInput");
+    expect(formFieldSource).toContain("effectiveError");
+
+    const validBear = validateEmojiInput("🐻");
+    expect(validBear).toEqual({ ok: true, glyph: "🐻" });
+
+    const validTrimmed = validateEmojiInput("  🍎  ");
+    expect(validTrimmed).toEqual({ ok: true, glyph: "🍎" });
+
+    const cleared = validateEmojiInput("   ");
+    expect(cleared).toEqual({ ok: true, glyph: "" });
+
+    const invalidMulti = validateEmojiInput("ab");
+    expect(invalidMulti.ok).toBe(false);
+    if (!invalidMulti.ok) {
+      expect(invalidMulti.error).toContain("BR-EPK-03");
+    }
+
+    const invalidTwoEmojis = validateEmojiInput("🍎🍌");
+    expect(invalidTwoEmojis.ok).toBe(false);
+
+    const invalidAscii = validateEmojiInput("x");
+    expect(invalidAscii.ok).toBe(false);
+  });
+
+  it("Scenario: BR-EPK-09 — Stores UTF-8 Glyph and Rejects EMJ-* Slug Codes", () => {
+    const validApple = validateEmojiInput("🍎");
+    expect(validApple.ok).toBe(true);
+    if (validApple.ok) {
+      expect(validApple.glyph).toBe("🍎");
+      expect(validApple.glyph).not.toMatch(EMJ_PREFIX_REGEX);
+    }
+
+    const slugCode = validateEmojiInput("EMJ-apple");
+    expect(slugCode.ok).toBe(false);
+    if (!slugCode.ok) {
+      expect(slugCode.error).toContain("BR-EPK-09");
+    }
   });
 
   it("Scenario: BR-STU-09 — Inline Field Errors in Form Renderer", () => {

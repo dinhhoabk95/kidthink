@@ -107,6 +107,15 @@
         </select>
       </div>
 
+      <p
+        class="rounded-2xl border border-surface-200 bg-surface-50 p-3.5 text-xs leading-relaxed text-surface-600 dark:border-surface-700 dark:bg-surface-900/60 dark:text-surface-400"
+        data-testid="privacy-transparency-notice"
+      >
+        Chúng tôi chỉ hỏi tên gọi và năm sinh để chọn nội dung phù hợp với bé.
+        Chúng tôi không thu thập họ tên đầy đủ, ngày sinh, ảnh chụp, hay thông
+        tin trường lớp.
+      </p>
+
       <div
         class="flex items-center gap-2.5 rounded-2xl border-2 border-danger-200 bg-danger-50 p-3.5 text-danger-700 dark:border-danger-800/60 dark:bg-danger-950/40 dark:text-danger-300"
         role="alert"
@@ -145,6 +154,7 @@
   import { useRoute, useRouter } from "vue-router";
 
   import { definePageMeta } from "#imports";
+  import { useApi } from "~/composables/use-api";
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
   import { AVATAR_PRESETS } from "~/utils/child-avatar";
 
@@ -167,6 +177,7 @@
   const MIN_AGE = 3;
   const MAX_AGE = 6;
 
+  const api = useApi();
   const route = useRoute();
   const router = useRouter();
   const { headers: csrfHeaders } = useCsrfHeaders();
@@ -199,7 +210,7 @@
     isSaving.value = true;
     errorMessage.value = null;
     try {
-      const created = await $fetch<CreatedChild>("/api/users/children", {
+      const created = await api<CreatedChild>("/api/users/children", {
         method: "POST",
         headers: csrfHeaders(),
         credentials: "include",
@@ -213,7 +224,7 @@
 
       // Hồ sơ đầu tiên chưa cần Parent Gate — `activate` chỉ đòi gate token khi
       // đã có trẻ khác đang được chọn (`BR-PEN-01`).
-      await $fetch(`/api/users/children/${created.uuid}/activate`, {
+      await api(`/api/users/children/${created.uuid}/activate`, {
         method: "POST",
         headers: csrfHeaders(),
         credentials: "include",

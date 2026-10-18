@@ -2,12 +2,10 @@
 spec: CONCEPT-INTRO-RUNNER
 title: Chạy dãy hành động của một bài làm quen — bề mặt của trẻ
 area: play
-status: approved
+status: implemented
 mvp: false
 phase: P4
 reviewed: 2026-10-18
-open_tasks:
-  - "#295"
 owns:
   - Vòng chạy các phân đoạn và dãy hành động của `GT-000`
   - Bắt buộc phát tiếng ở bước giới thiệu
@@ -23,8 +21,6 @@ depends_on:
 ---
 
 # Chạy dãy hành động của một bài làm quen — bề mặt của trẻ
-
-> **Chưa hoàn thành** — `BR-CIR-17`/`BR-CIR-18` chưa đạt: `GT-000` gộp mọi phân đoạn thành một dãy, ghi cứng `segment_id: "seg_0"`, không có mốc ăn mừng theo phân đoạn và không resume đúng mốc. Việc còn lại: [Task #295](../../tasks/295-concept-intro-segments-plan.md).
 
 ## 1. Objective
 

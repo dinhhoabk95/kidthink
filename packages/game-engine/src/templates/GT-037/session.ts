@@ -374,11 +374,9 @@ export class GT037Session extends TemplateGameSession<
         this.particles.push(...spawnParticlesAtSlot(slot, 6));
       }
       this.recordEvent("item_selected", {
-        slot_index: slotIndex,
-        symbol_id: symbol.id,
-        is_target: true,
-        found_count: this.foundTargets.size,
-        total_targets: this.targetCopies,
+        item_id: symbol.id,
+        is_correct: true,
+        commission: false,
       });
 
       if (
@@ -396,9 +394,8 @@ export class GT037Session extends TemplateGameSession<
       this.wrongSlotIndex = slotIndex;
       this.wrongTimestamp = now;
       this.recordEvent("item_selected", {
-        slot_index: slotIndex,
-        symbol_id: symbol.id,
-        is_target: false,
+        item_id: symbol.id,
+        is_correct: false,
         commission: true,
       });
 
@@ -410,11 +407,8 @@ export class GT037Session extends TemplateGameSession<
 
   private commitDeclare(): void {
     const omissions = Math.max(0, this.targetCopies - this.foundTargets.size);
-    this.recordEvent("declare_submitted", {
-      omissions,
-      commissions_count: this.commissions.length,
-      found_count: this.foundTargets.size,
-      total_targets: this.targetCopies,
+    this.recordEvent("selection_submitted", {
+      is_correct: omissions === 0,
     });
     if (omissions === 0) {
       this.winSession();
@@ -438,12 +432,14 @@ export class GT037Session extends TemplateGameSession<
       return;
     }
     const omissions = Math.max(0, this.targetCopies - this.foundTargets.size);
-    this.recordEvent("hunt_summary", {
+    this.recordEvent("round_completed", {
+      round_index: 0,
+      attempts: this.order.length,
+      hints_used: 0,
+      duration_ms: 0,
       omissions,
-      commissions_count: this.commissions.length,
-      order_length: this.order.length,
-      total_targets: this.targetCopies,
-      found_count: this.foundTargets.size,
+      commissions: this.commissions.length,
+      order: this.order.map((o) => o.slotIndex),
     });
     super.completeSession();
   }

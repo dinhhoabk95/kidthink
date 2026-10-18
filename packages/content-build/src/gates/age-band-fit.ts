@@ -3,7 +3,9 @@ import { repoPath } from "@mindkid/config/paths";
 import type { AgeBand } from "@mindkid/game-engine/contracts";
 import { AGE_BANDS } from "@mindkid/shared";
 import { z } from "zod";
-import { ALL_SEED_LESSONS, ALL_SEED_LEVELS } from "../catalog.js";
+import { ALL_SEED_LESSONS, ALL_SEED_LEVELS } from "#src/catalog";
+
+export const SEED_LEVELS_CORPUS = ALL_SEED_LEVELS;
 
 export const AgeBandLimitsSchema = z.object({
   difficulty_max: z.number().int().min(1).max(5),

@@ -763,3 +763,237 @@ describe("GT-000 — chạm chỉ được chấm khi câu hỏi của bước �
     expect(session.currentStepIndex).toBe(questionIndex + 1);
   });
 });
+
+describe("GT-000 Multi-segment & Resume (Task #295 — BR-CIM-03, BR-CIR-17, BR-CIR-18)", () => {
+  const twoSegContent: GT000Content = {
+    concept: {
+      skill_code: "C1.NREC.01",
+      label: "Số 1, 2, 3, 4",
+      teaches: ["C1.NREC.01"],
+      values: ["n1", "n2", "n3", "n4"],
+      sequence_no: 1,
+    },
+    assets: [
+      {
+        asset_id: "n1",
+        kind: "glyph",
+        label: "Số một",
+        glyph: "1",
+        contrast_group: "num",
+      },
+      {
+        asset_id: "n2",
+        kind: "glyph",
+        label: "Số hai",
+        glyph: "2",
+        contrast_group: "num",
+      },
+      {
+        asset_id: "n3",
+        kind: "glyph",
+        label: "Số ba",
+        glyph: "3",
+        contrast_group: "num",
+      },
+      {
+        asset_id: "n4",
+        kind: "glyph",
+        label: "Số bốn",
+        glyph: "4",
+        contrast_group: "num",
+      },
+    ],
+    segments: [
+      {
+        segment_id: "seg_1",
+        asset_ids: ["n1", "n2"],
+        steps: [
+          { action: "present", target_asset_id: "n1" },
+          { action: "echo", target_asset_id: "n1", repeat_count: 1 },
+          {
+            action: "recognise",
+            target_asset_id: "n1",
+            distractor_asset_ids: ["n2"],
+          },
+          {
+            action: "recall",
+            target_asset_id: "n1",
+            option_asset_ids: ["n1", "n2"],
+          },
+        ],
+        is_review: false,
+      },
+      {
+        segment_id: "seg_2",
+        asset_ids: ["n1", "n2", "n3", "n4"],
+        steps: [
+          { action: "present", target_asset_id: "n3" },
+          {
+            action: "recognise",
+            target_asset_id: "n3",
+            distractor_asset_ids: ["n4"],
+          },
+          {
+            action: "recall",
+            target_asset_id: "n3",
+            option_asset_ids: ["n1", "n2", "n3", "n4"],
+          },
+        ],
+        is_review: true,
+      },
+    ],
+    requires_reintro: false,
+  };
+
+  const baseDifficulty = {
+    hint_after_ms: 12_000,
+    allow_retry: true,
+    auto_play_audio: true,
+    speak_along: "off" as const,
+  };
+
+  it("BR-CIM-03: phân đoạn dạy (is_review = false) > 3 chất liệu bị từ chối; 2–3 chất liệu pass; phân đoạn ôn (is_review = true) tới 6 chất liệu pass", async () => {
+    const { GT000SegmentSchema } = await import(
+      "#src/templates/GT-000/template"
+    );
+    const firstSeg = twoSegContent.segments?.[0];
+    const secondSeg = twoSegContent.segments?.[1];
+    if (!(firstSeg && secondSeg)) {
+      throw new Error("Missing segments in fixture");
+    }
+
+    const badTeachingSeg = {
+      ...firstSeg,
+      asset_ids: ["n1", "n2", "n3", "n4"],
+      is_review: false,
+    };
+    const badRes = GT000SegmentSchema.safeParse(badTeachingSeg);
+    expect(badRes.success).toBe(false);
+    if (!badRes.success) {
+      expect(badRes.error.message).toContain("BR-CIM-03");
+    }
+
+    expect(GT000SegmentSchema.safeParse(firstSeg).success).toBe(true);
+    expect(
+      GT000SegmentSchema.safeParse({
+        ...firstSeg,
+        asset_ids: ["n1", "n2", "n3"],
+      }).success
+    ).toBe(true);
+    expect(GT000SegmentSchema.safeParse(secondSeg).success).toBe(true);
+  });
+
+  it("BR-CIR-17: chạy từng phân đoạn, phát intro_segment_started/completed với segment_id và segment_index thật, ăn mừng nhẹ mốc, Cấm — NEVER phát seg_0 cứng", () => {
+    const session = new GT000Session(twoSegContent, baseDifficulty);
+    const popSpy = vi.spyOn(session.audio, "playPopCelebrateSound");
+    session.prepareRound("3-4");
+
+    expect(session.currentSegmentIndex).toBe(0);
+    expect(session.currentStepIndex).toBe(0);
+
+    // Seg 0: present (step 0) -> echo (step 1) -> recognise (step 2) -> recall (step 3)
+    session.commit({ type: "tap_item", data: {} });
+    session.commit({ type: "tap_item", data: {} });
+    // Miss once on recognise in seg_1
+    session.commit({
+      type: "tap_item",
+      data: { item_id: "n2", asset_id: "n2" },
+    });
+    session.commit({
+      type: "tap_item",
+      data: { item_id: "n1", asset_id: "n1" },
+    });
+    // Complete seg_1 at recall (step 3)
+    session.commit({
+      type: "tap_item",
+      data: { item_id: "n1", asset_id: "n1" },
+    });
+
+    expect(session.currentSegmentIndex).toBe(1);
+    expect(session.currentSegmentStepIndex).toBe(0);
+    expect(session.currentStepIndex).toBe(4);
+    expect(popSpy).toHaveBeenCalledTimes(1);
+    expect(session.checkWinCondition()).toBe(false);
+
+    // Seg 1: present (step 4) -> recognise (step 5) -> recall (step 6)
+    session.commit({ type: "tap_item", data: {} });
+    session.commit({
+      type: "tap_item",
+      data: { item_id: "n3", asset_id: "n3" },
+    });
+    session.commit({
+      type: "tap_item",
+      data: { item_id: "n3", asset_id: "n3" },
+    });
+
+    expect(session.checkWinCondition()).toBe(true);
+
+    const events = session.getTelemetry().events;
+    const segStarted = events.filter(
+      (e) => e.event_name === "intro_segment_started"
+    );
+    const segCompleted = events.filter(
+      (e) => e.event_name === "intro_segment_completed"
+    );
+
+    expect(segStarted).toHaveLength(2);
+    expect(segStarted[0]?.data).toMatchObject({
+      segment_id: "seg_1",
+      segment_index: 0,
+      asset_count: 2,
+      is_review: false,
+    });
+    expect(segStarted[1]?.data).toMatchObject({
+      segment_id: "seg_2",
+      segment_index: 1,
+      asset_count: 4,
+      is_review: true,
+    });
+
+    expect(segCompleted).toHaveLength(2);
+    expect(segCompleted[0]?.data).toMatchObject({
+      segment_id: "seg_1",
+      segment_index: 0,
+      miss_count: 1,
+    });
+    expect(segCompleted[1]?.data).toMatchObject({
+      segment_id: "seg_2",
+      segment_index: 1,
+      miss_count: 0,
+    });
+
+    for (const ev of [...segStarted, ...segCompleted]) {
+      expect(ev.data?.segment_id).not.toBe("seg_0");
+    }
+  });
+
+  it("BR-CIR-18: khởi tạo với resume_segment_index = 1 bắt đầu từ step đầu của segment 1; giá trị ngoài khoảng rơi về 0", () => {
+    const resumed = new GT000Session(twoSegContent, {
+      ...baseDifficulty,
+      resume_segment_index: 1,
+    });
+    resumed.prepareRound("3-4");
+
+    expect(resumed.currentSegmentIndex).toBe(1);
+    expect(resumed.currentSegmentStepIndex).toBe(0);
+    expect(resumed.currentStepIndex).toBe(4);
+    expect(resumed.getView().entities[0]?.id).toBe("n3");
+
+    const startedEvents = resumed
+      .getTelemetry()
+      .events.filter((e) => e.event_name === "intro_segment_started");
+    expect(startedEvents).toHaveLength(1);
+    expect(startedEvents[0]?.data).toMatchObject({
+      segment_id: "seg_2",
+      segment_index: 1,
+    });
+
+    const outOfRange = new GT000Session(twoSegContent, {
+      ...baseDifficulty,
+      resume_segment_index: 99,
+    });
+    outOfRange.prepareRound("3-4");
+    expect(outOfRange.currentSegmentIndex).toBe(0);
+    expect(outOfRange.currentStepIndex).toBe(0);
+  });
+});

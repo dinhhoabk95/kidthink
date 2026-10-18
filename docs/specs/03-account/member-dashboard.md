@@ -5,7 +5,7 @@ area: account
 status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Nội dung trang /me
   - Thứ tự ưu tiên thông tin

@@ -3,16 +3,27 @@ import {
   contentSkillMap,
   gameLevels,
   lessons,
+  type OwnerDb,
   skills,
   strands,
 } from "@mindkid/db";
 import type { AccessTier } from "@mindkid/shared";
-import { AGE_BANDS, allowedTiers } from "@mindkid/shared";
-import { and, eq, gte, lte, sql } from "drizzle-orm";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { AGE_BANDS, allowedTiers, getEffectiveTier } from "@mindkid/shared";
+import { and, eq, gt, gte, lte, sql } from "drizzle-orm";
+import type { getQuery } from "h3";
 import { z } from "zod";
 
 export type SearchViewerRole = "guest" | "user" | "manager";
+export type RawSearchParamsInput =
+  | ReturnType<typeof getQuery>
+  | Record<string, string | number | boolean | undefined | string[]>
+  | SearchParams
+  | undefined;
+
+const VIETNAMESE_ACCENTED =
+  "àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđÀÁẠẢÃÂẦẤẬẨẪĂẰẮẶẲẴÈÉẸẺẼÊỀẾỆỂỄÌÍỊỈĨÒÓỌỎÕÔỒỐỘỔỖƠỜỚỢỞỠÙÚỤỦŨƯỪỨỰỬỮỲÝỴỶỸĐ";
+const VIETNAMESE_UNACCENTED =
+  "aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyydAAAAAAAAAAAAAAAAAEEEEEEEEEEEIIIIIOOOOOOOOOOOOOOOOOUUUUUUUUUUUYYYYYD";
 
 export const SearchParamsSchema = z.object({
   q: z.string().optional(),
@@ -38,6 +49,7 @@ export const SearchParamsSchema = z.object({
   competency: z.enum(["C1", "C2", "C3", "C4", "C5", "C6"]).optional(),
   strand: z.string().optional(),
   skill: z.string().optional(),
+  skill_code: z.string().optional(),
   learning_objective: z.string().optional(),
   difficulty: z.coerce.number().min(1).max(5).optional(),
   duration_max: z.coerce.number().optional(),
@@ -47,6 +59,7 @@ export const SearchParamsSchema = z.object({
   theme: z.string().optional(),
   access_tier: z.enum(["free", "login", "standard", "premium"]).optional(),
   template: z.string().optional(),
+  template_code: z.string().optional(),
   status: z
     .enum([
       "draft",
@@ -90,8 +103,9 @@ function buildBasicConditions(
   if (params.access_tier) {
     conditions.push(eq(gameLevels.accessTier, params.access_tier));
   }
-  if (params.template) {
-    conditions.push(eq(gameLevels.templateCode, params.template));
+  const targetTemplate = params.template ?? params.template_code;
+  if (targetTemplate) {
+    conditions.push(eq(gameLevels.templateCode, targetTemplate));
   }
   if (params.age_min !== undefined) {
     conditions.push(gte(gameLevels.ageMin, params.age_min));
@@ -147,6 +161,19 @@ function buildSearchWhereConditions(
     );
   }
 
+  const rawSkill = (params.skill_code ?? params.skill)?.trim();
+  if (rawSkill) {
+    conditions.push(
+      sql`EXISTS (
+        SELECT 1 FROM ${contentSkillMap}
+        JOIN ${skills} ON ${contentSkillMap.skillId} = ${skills.id}
+        WHERE ${contentSkillMap.entityType} IN ('game_level', 'level')
+          AND ${contentSkillMap.entityId} = ${gameLevels.id}
+          AND ${skills.code} = ${rawSkill}
+      )`
+    );
+  }
+
   if (params.q && params.q.trim().length > 0) {
     const rawQuery = params.q.trim();
     const normalizedQuery = removeVietnameseTones(rawQuery);
@@ -157,7 +184,8 @@ function buildSearchWhereConditions(
         ${gameLevels.title} ILIKE ${patternRaw} OR
         ${gameLevels.description} ILIKE ${patternRaw} OR
         ${gameLevels.code} ILIKE ${patternRaw} OR
-        ${gameLevels.title} ILIKE ${patternNorm}
+        translate(${gameLevels.title}, ${VIETNAMESE_ACCENTED}, ${VIETNAMESE_UNACCENTED}) ILIKE ${patternNorm} OR
+        translate(coalesce(${gameLevels.description}, ''), ${VIETNAMESE_ACCENTED}, ${VIETNAMESE_UNACCENTED}) ILIKE ${patternNorm}
       )`
     );
   }
@@ -209,8 +237,8 @@ interface RawRow {
   difficulty?: number | null;
   accessTier: string;
   status: string;
-  contentPack: unknown;
-  difficultyParams: unknown;
+  contentPack: (typeof gameLevels.$inferSelect)["contentPack"];
+  difficultyParams: (typeof gameLevels.$inferSelect)["difficultyParams"];
   createdAt: Date;
 }
 
@@ -239,8 +267,16 @@ export function ageBandLabel(
   return `${ageMin}-${ageMax}`;
 }
 
-function formatSearchItem(row: RawRow, userAllowedTiers: AccessTier[]) {
-  const isAccessible = userAllowedTiers.includes(row.accessTier as AccessTier);
+function formatSearchItem(
+  row: RawRow,
+  userAllowedTiers: AccessTier[],
+  viewerRole: SearchViewerRole = "user"
+) {
+  const effectiveTier = getEffectiveTier(row.accessTier as AccessTier, null, {
+    code: row.code,
+    callerKind: viewerRole,
+  });
+  const isAccessible = userAllowedTiers.includes(effectiveTier);
   const isLocked = !isAccessible;
 
   const card = {
@@ -274,8 +310,8 @@ function formatSearchItem(row: RawRow, userAllowedTiers: AccessTier[]) {
 }
 
 export async function searchGameLevels(
-  db: PostgresJsDatabase<Record<string, unknown>>,
-  rawParams: unknown,
+  db: OwnerDb,
+  rawParams: RawSearchParamsInput,
   viewer: { role: SearchViewerRole; userPackage?: string }
 ) {
   const params = SearchParamsSchema.parse(rawParams ?? {});
@@ -314,7 +350,9 @@ export async function searchGameLevels(
   const lastRow = pageRows.at(-1);
   const nextCursor = hasMore && lastRow ? String(lastRow.id) : null;
 
-  const items = pageRows.map((row) => formatSearchItem(row, userAllowedTiers));
+  const items = pageRows.map((row) =>
+    formatSearchItem(row, userAllowedTiers, viewer.role)
+  );
 
   if (params.sort === "relevance") {
     items.sort((a, b) => {
@@ -325,9 +363,12 @@ export async function searchGameLevels(
     });
   }
 
-  const hasPaidOrLockedContent = items.some(
-    (item) => item.locked || item.access_tier !== "free"
-  );
+  const isPaidViewer =
+    viewer.userPackage === "PKG-premium" ||
+    viewer.userPackage === "PKG-standard";
+  const hasPaidOrLockedContent =
+    isPaidViewer ||
+    items.some((item) => item.locked || item.access_tier !== "free");
 
   const facets = await buildGameLevelFacets(db, params, viewer.role);
 
@@ -349,6 +390,13 @@ export interface GameLevelFacets {
   strand?: Record<string, number>;
 }
 
+interface FacetCountRow {
+  code: string;
+  ageMin: number | null;
+  ageMax: number | null;
+  accessTier: AccessTier;
+}
+
 /**
  * Số lượng cho từng giá trị bộ lọc — `GAME-CATALOG-PUBLIC` §8.
  *
@@ -358,16 +406,16 @@ export interface GameLevelFacets {
  */
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: aggregate facets branching
 async function buildGameLevelFacets(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: OwnerDb,
   params: SearchParams,
   viewerRole: SearchViewerRole
 ): Promise<GameLevelFacets> {
   const countWith = async (
     overrides: Partial<SearchParams>
-  ): Promise<Array<{ key: string; count: number }>> => {
+  ): Promise<FacetCountRow[]> => {
     const scoped = { ...params, ...overrides };
     const conditions = buildSearchWhereConditions(scoped, viewerRole);
-    const rows = await db
+    return await db
       .select({
         code: gameLevels.code,
         ageMin: gameLevels.ageMin,
@@ -376,30 +424,25 @@ async function buildGameLevelFacets(
       })
       .from(gameLevels)
       .where(conditions.length > 0 ? and(...conditions) : undefined);
-    return rows.map((row) => ({
-      key: row.code,
-      count: 1,
-      ...row,
-    })) as unknown as Array<{ key: string; count: number }>;
   };
 
   const clearCursor = { cursor: undefined };
 
-  const competencyRows = (await countWith({
+  const competencyRows = await countWith({
     ...clearCursor,
     competency: undefined,
-  })) as unknown as Array<{ code: string }>;
-  const ageRows = (await countWith({
+  });
+  const ageRows = await countWith({
     ...clearCursor,
     age: undefined,
     age_min: undefined,
     age_max: undefined,
     age_band: undefined,
-  })) as unknown as Array<{ ageMin: number | null; ageMax: number | null }>;
-  const tierRows = (await countWith({
+  });
+  const tierRows = await countWith({
     ...clearCursor,
     access_tier: undefined,
-  })) as unknown as Array<{ accessTier: string }>;
+  });
   const totalRows = await countWith(clearCursor);
 
   const competency: Record<string, number> = {};
@@ -493,22 +536,30 @@ function buildActivityConditions(
   if (params.cursor) {
     const cursorId = Number(params.cursor);
     if (!Number.isNaN(cursorId)) {
-      conditions.push(gte(activities.id, cursorId));
+      conditions.push(gt(activities.id, cursorId));
     }
   }
 
   if (params.q && params.q.trim().length > 0) {
-    const patternRaw = `%${params.q.trim()}%`;
+    const rawQuery = params.q.trim();
+    const normalizedQuery = removeVietnameseTones(rawQuery);
+    const patternRaw = `%${rawQuery}%`;
+    const patternNorm = `%${normalizedQuery}%`;
     conditions.push(
-      sql`(${activities.title} ILIKE ${patternRaw} OR ${activities.instruction} ILIKE ${patternRaw} OR ${activities.materials} ILIKE ${patternRaw})`
+      sql`(
+        ${activities.title} ILIKE ${patternRaw} OR
+        ${activities.instruction} ILIKE ${patternRaw} OR
+        ${activities.materials} ILIKE ${patternRaw} OR
+        translate(${activities.title}, ${VIETNAMESE_ACCENTED}, ${VIETNAMESE_UNACCENTED}) ILIKE ${patternNorm}
+      )`
     );
   }
   return conditions;
 }
 
 export async function searchActivities(
-  db: PostgresJsDatabase<Record<string, unknown>>,
-  rawParams: unknown,
+  db: OwnerDb,
+  rawParams: RawSearchParamsInput,
   viewer: { role: SearchViewerRole; userPackage?: string }
 ) {
   const params = SearchParamsSchema.parse(rawParams ?? {});
@@ -571,9 +622,12 @@ export async function searchActivities(
     };
   });
 
-  const hasPaidOrLockedContent = items.some(
-    (item) => item.locked || item.access_tier !== "free"
-  );
+  const isPaidViewer =
+    viewer.userPackage === "PKG-premium" ||
+    viewer.userPackage === "PKG-standard";
+  const hasPaidOrLockedContent =
+    isPaidViewer ||
+    items.some((item) => item.locked || item.access_tier !== "free");
 
   return {
     items,
@@ -609,7 +663,7 @@ function buildLessonConditions(
   if (params.cursor) {
     const cursorId = Number(params.cursor);
     if (!Number.isNaN(cursorId)) {
-      conditions.push(gte(lessons.id, cursorId));
+      conditions.push(gt(lessons.id, cursorId));
     }
   }
 
@@ -618,9 +672,17 @@ function buildLessonConditions(
   }
 
   if (params.q && params.q.trim().length > 0) {
-    const patternRaw = `%${params.q.trim()}%`;
+    const rawQuery = params.q.trim();
+    const normalizedQuery = removeVietnameseTones(rawQuery);
+    const patternRaw = `%${rawQuery}%`;
+    const patternNorm = `%${normalizedQuery}%`;
     conditions.push(
-      sql`(${lessons.title} ILIKE ${patternRaw} OR ${lessons.guide} ILIKE ${patternRaw} OR ${lessons.materials} ILIKE ${patternRaw})`
+      sql`(
+        ${lessons.title} ILIKE ${patternRaw} OR
+        ${lessons.guide} ILIKE ${patternRaw} OR
+        ${lessons.materials} ILIKE ${patternRaw} OR
+        translate(${lessons.title}, ${VIETNAMESE_ACCENTED}, ${VIETNAMESE_UNACCENTED}) ILIKE ${patternNorm}
+      )`
     );
   }
 
@@ -628,8 +690,8 @@ function buildLessonConditions(
 }
 
 export async function searchLessons(
-  db: PostgresJsDatabase<Record<string, unknown>>,
-  rawParams: unknown,
+  db: OwnerDb,
+  rawParams: RawSearchParamsInput,
   viewer: { role: SearchViewerRole; userPackage?: string }
 ) {
   const params = SearchParamsSchema.parse(rawParams ?? {});
@@ -704,9 +766,12 @@ export async function searchLessons(
     };
   });
 
-  const hasPaidOrLockedContent = items.some(
-    (item) => item.locked || item.access_tier !== "free"
-  );
+  const isPaidViewer =
+    viewer.userPackage === "PKG-premium" ||
+    viewer.userPackage === "PKG-standard";
+  const hasPaidOrLockedContent =
+    isPaidViewer ||
+    items.some((item) => item.locked || item.access_tier !== "free");
 
   return {
     items,

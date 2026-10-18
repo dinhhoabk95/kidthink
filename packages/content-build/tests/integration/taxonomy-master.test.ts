@@ -3,14 +3,18 @@ import type { SkillDataset } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { afterEach, describe, expect, it } from "vitest";
 import {
+  getAllTaxonomySkills,
   parseTaxonomyDocs,
   seedSkillDatasetsStep,
   seedTaxonomyMasterData,
   validateTaxonomyInvariants,
-} from "../../src/seed-master/taxonomy/index.js";
+} from "#src/seed-master/taxonomy/index";
 
 const CYCLE_REGEX = /Cycle detected in skill prerequisites/;
 const BR_TAX_02_REGEX = /BR-TAX-02 violation/;
+const BR_TAX_03_REGEX = /BR-TAX-03 violation/;
+const BR_TAX_04_REGEX = /BR-TAX-04 violation/;
+const BR_TAX_05_REGEX = /BR-TAX-05 violation/;
 
 describe("Taxonomy Master Seeder & Invariants (BR-TAX-01..09)", () => {
   afterEach(async () => {
@@ -22,6 +26,12 @@ describe("Taxonomy Master Seeder & Invariants (BR-TAX-01..09)", () => {
   it("parses docs/taxonomy/ and satisfies BR-TAX-09 counts", () => {
     const skills = parseTaxonomyDocs("docs/taxonomy");
     expect(skills.length).toBeGreaterThanOrEqual(408);
+  });
+
+  it("loads all TypeScript SKILL_IDENTITIES and validates invariants (BR-TAX-01..05)", () => {
+    const tsSkills = getAllTaxonomySkills();
+    expect(tsSkills.length).toBeGreaterThanOrEqual(408);
+    expect(() => validateTaxonomyInvariants(tsSkills)).not.toThrow();
   });
 
   it("validates invariants without throwing on valid taxonomy docs", () => {
@@ -78,6 +88,73 @@ describe("Taxonomy Master Seeder & Invariants (BR-TAX-01..09)", () => {
 
     expect(() => validateTaxonomyInvariants(incompleteSkills)).toThrow(
       BR_TAX_02_REGEX
+    );
+  });
+
+  it("Ca âm BR-TAX-03: skill with unknown strand or duplicate LO throws error", () => {
+    const validSkills = parseTaxonomyDocs("docs/taxonomy");
+    const invalidStrandSkills = validSkills.map((s, idx) =>
+      idx === 0 ? { ...s, strand_code: "C1.UNKNOWN" } : s
+    );
+    expect(() => validateTaxonomyInvariants(invalidStrandSkills)).toThrow(
+      BR_TAX_03_REGEX
+    );
+
+    const firstLoCode =
+      validSkills[0]?.learning_objectives[0]?.code ?? "LO-C1.CNT.01-01";
+    const dupLoSkills = validSkills.map((s, idx) =>
+      idx === 1
+        ? {
+            ...s,
+            learning_objectives: s.learning_objectives.map((lo, lIdx) =>
+              lIdx === 0 ? { ...lo, code: firstLoCode } : lo
+            ),
+          }
+        : s
+    );
+    expect(() => validateTaxonomyInvariants(dupLoSkills)).toThrow(
+      BR_TAX_03_REGEX
+    );
+  });
+
+  it("Ca âm BR-TAX-04: invalid age range, difficulty, or thinking process throws error", () => {
+    const validSkills = parseTaxonomyDocs("docs/taxonomy");
+    const badAgeSkills = validSkills.map((s, idx) =>
+      idx === 0 ? { ...s, age_min: 5, age_max: 4 } : s
+    );
+    expect(() => validateTaxonomyInvariants(badAgeSkills)).toThrow(
+      BR_TAX_04_REGEX
+    );
+
+    const badDiffSkills = validSkills.map((s, idx) =>
+      idx === 0 ? { ...s, difficulty: 6 } : s
+    );
+    expect(() => validateTaxonomyInvariants(badDiffSkills)).toThrow(
+      BR_TAX_04_REGEX
+    );
+
+    const badThinkingSkills = validSkills.map((s, idx) =>
+      idx === 0 ? { ...s, thinking_processes: ["not_a_process"] } : s
+    );
+    expect(() => validateTaxonomyInvariants(badThinkingSkills)).toThrow(
+      BR_TAX_04_REGEX
+    );
+  });
+
+  it("Ca âm BR-TAX-05: prerequisite difficulty > skill difficulty throws error", () => {
+    const validSkills = parseTaxonomyDocs("docs/taxonomy");
+    const secondSkillCode = validSkills[1]?.code ?? "C1.CNT.02";
+    const badPrereqDiffSkills = validSkills.map((s, idx) => {
+      if (idx === 0) {
+        return { ...s, difficulty: 1, prerequisites: [secondSkillCode] };
+      }
+      if (idx === 1) {
+        return { ...s, difficulty: 3, prerequisites: [] };
+      }
+      return s;
+    });
+    expect(() => validateTaxonomyInvariants(badPrereqDiffSkills)).toThrow(
+      BR_TAX_05_REGEX
     );
   });
 

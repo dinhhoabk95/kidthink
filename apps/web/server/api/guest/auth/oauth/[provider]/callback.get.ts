@@ -30,6 +30,7 @@ import {
   SocialIdentityAlreadyLinkedError,
   SocialProviderAlreadyLinkedError,
 } from "@mindkid/errors/social";
+import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import {
@@ -42,13 +43,13 @@ import {
   getRouterParam,
   type H3Event,
   sendRedirect,
-  setCookie,
 } from "h3";
 import {
   assertRateLimitAllowed,
   ensureUserCsrfCookie,
   getVerifiedRemoteIp,
 } from "#server/utils/auth-runtime";
+import { issueOAuthTicketCookie } from "#server/utils/oauth-ticket";
 
 function getOAuthStateSecret(): string {
   return requireEnv("NUXT_SESSION_PASSWORD");
@@ -62,8 +63,6 @@ export function maskEmail(email: string | null): string {
   const firstChar = name?.[0] || "*";
   return `${firstChar}***@${domain}`;
 }
-
-export const OAUTH_TICKET_COOKIE_NAME = "tm_oauth_ticket";
 
 function validateOAuthProvider(
   _event: H3Event,
@@ -84,7 +83,7 @@ function validateOAuthProvider(
 function parseAndValidateState(
   event: H3Event,
   rawProvider: OAuthProvider,
-  queryState: unknown
+  queryState: string | undefined
 ): OAuthStatePayload {
   const stateCookie = getCookie(event, OAUTH_COOKIE_NAME);
   if (!stateCookie) {
@@ -176,6 +175,23 @@ async function handleOAuthLinkFlow(
     ipAddress: getVerifiedRemoteIp(event),
     userAgent: getHeader(event, "user-agent") || "unknown",
   });
+
+  const [linkedUser] = await db
+    .select({ email: users.email })
+    .from(users)
+    .where(eq(users.id, currentUserId));
+
+  if (linkedUser) {
+    await dispatchTransactionalEmail({
+      recipientType: "user",
+      recipientId: currentUserId,
+      code: "social_identity_linked",
+      to: linkedUser.email,
+      payload: {
+        provider: rawProvider,
+      },
+    });
+  }
 
   return sendRedirect(event, `${returnTo}?linked=${rawProvider}`, 302);
 }
@@ -306,20 +322,8 @@ async function handleOAuthLoginFlow(
     }
   }
 
-  // Nhánh B: Registration Ticket
-  const ticketPayload = { profile, created_at: Date.now() };
-  const ticketToken = Buffer.from(
-    JSON.stringify(ticketPayload),
-    "utf8"
-  ).toString("base64url");
-
-  setCookie(event, OAUTH_TICKET_COOKIE_NAME, ticketToken, {
-    httpOnly: true,
-    maxAge: 600,
-    path: "/",
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-  });
+  // Nhánh B: Registration Ticket (ký HMAC, hạn 10 phút)
+  issueOAuthTicketCookie(event, profile);
 
   return sendRedirect(event, `/register/consent?provider=${rawProvider}`, 302);
 }
@@ -334,7 +338,8 @@ export default defineEventHandler(async (event) => {
     return sendRedirect(event, "/login?cancelled=true", 302);
   }
 
-  const statePayload = parseAndValidateState(event, provider, query.state);
+  const rawState = typeof query.state === "string" ? query.state : undefined;
+  const statePayload = parseAndValidateState(event, provider, rawState);
 
   const ipRateLimit = await enforceTwoAxisRateLimit({
     routeClass: "auth:oauth:callback",

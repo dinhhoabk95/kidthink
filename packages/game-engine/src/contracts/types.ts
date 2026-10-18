@@ -57,9 +57,11 @@ export const STANDARD_SCORING: ScoringSchema = {
   star_thresholds: [60, 80, 100],
 };
 
+import type { PlayVerb } from "#src/interaction";
+
 export interface EngineInputConfig {
   readonly family: string;
-  readonly verbs: readonly string[];
+  readonly verbs: readonly PlayVerb[];
   readonly tolerance_px?: number;
 }
 
@@ -93,7 +95,7 @@ export interface TemplateDefinition<
   C extends z.ZodType = z.ZodType,
   D extends z.ZodType = z.ZodType,
 > extends GameTemplate<C, D> {
-  session?: () => Promise<unknown>;
+  session?: () => Promise<object>;
 }
 
 export function defineTemplate<

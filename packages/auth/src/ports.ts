@@ -30,15 +30,6 @@ export interface ManagerSessionRecord extends BaseSessionRecord {
 export type SessionRecord = UserSessionRecord | ManagerSessionRecord;
 
 export interface SessionStorePort {
-  createSession?(input: {
-    account_type: AccountType;
-    account_id: number;
-    device_label?: string;
-    ip_address?: string;
-    auth_method: AuthMethod;
-    remembered?: boolean;
-    expires_at: Date;
-  }): Promise<{ session_id: string }>;
   revokeSession(sessionId: string, account: AccountReference): Promise<void>;
   /** Atomically increments `session_version` and deletes all sessions. */
   revokeAll(account: AccountReference): Promise<void>;

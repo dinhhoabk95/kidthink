@@ -12,6 +12,11 @@ import { describe, expect, it } from "vitest";
 import {
   type ActivitySeedLike,
   assertBaselineShape,
+  checkConditionalAxesRequired,
+  checkConditionalRelationsRequired,
+  checkDatasetConsumerFields,
+  checkTemplateStructuralAffinity,
+  checkThinkingNarrowingMap,
   checkThinkingObligation,
   readBaseline,
   runThinkingStructureCheck,
@@ -88,7 +93,7 @@ describe("check-thinking-structure (Task #266 / BR-STS-01..11)", () => {
 
   it("C3: assertBaselineShape ném lỗi khi sai kiểu dữ liệu của trường", () => {
     const wrongTypeData = {
-      min_inspected_skills: "443" as unknown as number,
+      min_inspected_skills: "443",
       total_unproven_skills: 10,
       distinct_prompt_templates: 1,
       unproven_by_competency: {},
@@ -616,5 +621,321 @@ describe("check-thinking-structure (Task #266 / BR-STS-01..11)", () => {
     expect(exitCode).toBe(1);
     expect(violations.some((v) => v.includes("[BR-STS-08]"))).toBe(true);
     expect(violations.some((v) => v.includes("counting"))).toBe(true);
+  });
+
+  // ── Task #309 S7: Anchor tests cho BR-STS-01, BR-STS-02, BR-STS-03, BR-STS-06, BR-STS-07, BR-STS-10 ──
+
+  it("BR-STS-01: Scenario BR-STS-01 — kỹ năng C1.CMP.04 khai compare mà dataset không có axes thì cổng đỏ", () => {
+    const tempBaselinePath = join(
+      tmpdir(),
+      `test-baseline-sts-01-${Date.now()}.json`
+    );
+    const mockBaseline: ThinkingStructureBaselineData = {
+      min_inspected_skills: 1,
+      total_unproven_skills: 0,
+      distinct_prompt_templates: 1,
+      unproven_by_competency: { C1: 0, C2: 0, C3: 0, C4: 0, C5: 0, C6: 0 },
+      unproven_by_thinking: { compare: 0, count: 0 },
+      unproven_skill_codes: [],
+    };
+    writeFileSync(tempBaselinePath, JSON.stringify(mockBaseline), "utf-8");
+
+    const identities = {
+      "C1.CMP.04": createMockIdentity({
+        code: "C1.CMP.04",
+        strand_code: "C1.CMP",
+        thinking_processes: ["compare", "count"],
+      }),
+    };
+    const datasets = {
+      "C1.CMP.04": createMockDataset({
+        skill_code: "C1.CMP.04",
+        axes: undefined,
+        items: [
+          { id: "i1", label: "Nhiều táo", value: 5 },
+          { id: "i2", label: "Ít táo", value: 2 },
+        ],
+      }),
+    };
+
+    const { exitCode, violations } = runThinkingStructureCheck({
+      baselinePath: tempBaselinePath,
+      identities,
+      datasets,
+      activities: [],
+    });
+
+    expect(exitCode).toBe(1);
+    expect(
+      violations.some(
+        (v) =>
+          v.includes("C1.CMP.04") &&
+          v.includes("[BR-STS-01]") &&
+          v.includes("thiếu axes có thứ tự")
+      )
+    ).toBe(true);
+  });
+
+  it("BR-STS-02: Scenario BR-STS-02 — kỹ năng C1.OTO.01 khai match mà relations rỗng thì cổng đỏ", () => {
+    const tempBaselinePath = join(
+      tmpdir(),
+      `test-baseline-sts-02-${Date.now()}.json`
+    );
+    const mockBaseline: ThinkingStructureBaselineData = {
+      min_inspected_skills: 1,
+      total_unproven_skills: 0,
+      distinct_prompt_templates: 1,
+      unproven_by_competency: { C1: 0, C2: 0, C3: 0, C4: 0, C5: 0, C6: 0 },
+      unproven_by_thinking: { match: 0 },
+      unproven_skill_codes: [],
+    };
+    writeFileSync(tempBaselinePath, JSON.stringify(mockBaseline), "utf-8");
+
+    const emptyRelationsDataset = createMockDataset({
+      skill_code: "C1.OTO.01",
+      relations: [],
+    });
+
+    const relResult = checkConditionalRelationsRequired(
+      ["match"],
+      emptyRelationsDataset
+    );
+    expect(relResult.passed).toBe(false);
+    expect(relResult.missing).toContain("[BR-STS-02]");
+    expect(relResult.missing).toContain("thiếu quan hệ kiểu pair");
+
+    const { exitCode, violations } = runThinkingStructureCheck({
+      baselinePath: tempBaselinePath,
+      identities: {
+        "C1.OTO.01": createMockIdentity({
+          code: "C1.OTO.01",
+          strand_code: "C1.OTO",
+          thinking_processes: ["match"],
+        }),
+      },
+      datasets: { "C1.OTO.01": emptyRelationsDataset },
+      activities: [],
+    });
+
+    expect(exitCode).toBe(1);
+    expect(
+      violations.some(
+        (v) =>
+          v.includes("C1.OTO.01") &&
+          v.includes("[BR-STS-02]") &&
+          v.includes("thiếu quan hệ kiểu pair")
+      )
+    ).toBe(true);
+  });
+
+  it("BR-STS-02: ca dương — relations có quan hệ pair hợp lệ khi khai match -> xanh", () => {
+    const validMatchDataset = createMockDataset({
+      skill_code: "C1.OTO.01",
+      relations: [{ type: "pair", source_id: "item_1", target_id: "item_2" }],
+    });
+    const relResult = checkConditionalRelationsRequired(
+      ["match"],
+      validMatchDataset
+    );
+    expect(relResult.passed).toBe(true);
+  });
+
+  it("BR-STS-03: Scenario BR-STS-03 — kỹ năng C3.CLS.01 khai sort với 1 item mỗi nhóm thì cổng đỏ", () => {
+    const tempBaselinePath = join(
+      tmpdir(),
+      `test-baseline-sts-03-${Date.now()}.json`
+    );
+    const mockBaseline: ThinkingStructureBaselineData = {
+      min_inspected_skills: 1,
+      total_unproven_skills: 0,
+      distinct_prompt_templates: 1,
+      unproven_by_competency: { C1: 0, C2: 0, C3: 0, C4: 0, C5: 0, C6: 0 },
+      unproven_by_thinking: { sort: 0 },
+      unproven_skill_codes: [],
+    };
+    writeFileSync(tempBaselinePath, JSON.stringify(mockBaseline), "utf-8");
+
+    const onePerGroupDataset = createMockDataset({
+      skill_code: "C3.CLS.01",
+      axes: {
+        color: ["red", "green", "blue"],
+      },
+      items: [
+        { id: "i1", label: "Đỏ", category: { color: "red" } },
+        { id: "i2", label: "Xanh lá", category: { color: "green" } },
+        { id: "i3", label: "Xanh dương", category: { color: "blue" } },
+      ],
+    });
+
+    const axesResult = checkConditionalAxesRequired(
+      ["sort"],
+      onePerGroupDataset
+    );
+    expect(axesResult.passed).toBe(false);
+    expect(axesResult.missing).toContain("[BR-STS-03]");
+    expect(axesResult.missing).toContain("dưới 2 item");
+
+    const { exitCode, violations } = runThinkingStructureCheck({
+      baselinePath: tempBaselinePath,
+      identities: {
+        "C3.CLS.01": createMockIdentity({
+          code: "C3.CLS.01",
+          competency_code: "C3",
+          strand_code: "C3.CLS",
+          thinking_processes: ["sort"],
+        }),
+      },
+      datasets: { "C3.CLS.01": onePerGroupDataset },
+      activities: [],
+    });
+
+    expect(exitCode).toBe(1);
+    expect(
+      violations.some(
+        (v) =>
+          v.includes("C3.CLS.01") &&
+          v.includes("[BR-STS-03]") &&
+          v.includes("dưới 2 item")
+      )
+    ).toBe(true);
+  });
+
+  it("BR-STS-06: kiểm tra bảng ánh xạ thu hẹp THINKING_TAG_NORMALIZE_MAP khớp mục 7.2 (ca dương & ca âm)", () => {
+    expect(checkThinkingNarrowingMap()).toEqual([]);
+
+    // Ca âm 1: thêm ánh xạ thu hẹp chưa khai báo ở mục 7.2
+    const undeclaredViolations = checkThinkingNarrowingMap({
+      solve: "infer",
+      verify: "compare",
+      create: "plan",
+      listen: "observe",
+      describe: "observe",
+      deduce: "infer",
+      visual: "observe",
+    });
+    expect(undeclaredViolations.some((v) => v.includes("[BR-STS-06]"))).toBe(
+      true
+    );
+    expect(undeclaredViolations.some((v) => v.includes('"visual"'))).toBe(true);
+
+    // Ca âm 2: sai đích ánh xạ (deduce -> observe thay vì infer)
+    const wrongTargetResult = runThinkingStructureCheck({
+      identities: {},
+      datasets: {},
+      activities: [],
+      normalizeMap: {
+        solve: "infer",
+        verify: "compare",
+        create: "plan",
+        listen: "observe",
+        describe: "observe",
+        deduce: "observe",
+      },
+    });
+    expect(wrongTargetResult.exitCode).toBe(1);
+    expect(
+      wrongTargetResult.violations.some(
+        (v) => v.includes("[BR-STS-06]") && v.includes('"deduce"')
+      )
+    ).toBe(true);
+  });
+
+  it("BR-STS-07: kiểm tra cấm trường chết không có consumer (phrasing.success_message, phrasing.hint_message)", () => {
+    // Ca dương trên toàn bộ SKILL_DATASETS thật
+    expect(checkDatasetConsumerFields()).toEqual([]);
+
+    // Ca âm: dataset lén chứa phrasing.success_message và phrasing.hint_message đã bị xoá ở mục 7.3
+    const baseDataset = createMockDataset({ skill_code: "C1.TEST.DEAD" });
+    const deadPhrasing: SkillDataset["phrasing"] & {
+      readonly success_message: string;
+      readonly hint_message: string;
+    } = {
+      ...baseDataset.phrasing,
+      success_message: "Giỏi lắm!",
+      hint_message: "Gợi ý nè!",
+    };
+    const datasetWithDeadFields: SkillDataset = {
+      ...baseDataset,
+      phrasing: deadPhrasing,
+    };
+
+    const { exitCode, violations } = runThinkingStructureCheck({
+      identities: {},
+      datasets: { "C1.TEST.DEAD": datasetWithDeadFields },
+      activities: [],
+    });
+
+    expect(exitCode).toBe(1);
+    expect(
+      violations.some(
+        (v) =>
+          v.includes("[BR-STS-07]") && v.includes("phrasing.success_message")
+      )
+    ).toBe(true);
+    expect(
+      violations.some(
+        (v) => v.includes("[BR-STS-07]") && v.includes("phrasing.hint_message")
+      )
+    ).toBe(true);
+  });
+
+  it("BR-STS-10: engine phải khớp bản chất cấu trúc mà kỹ năng khai (ca âm & ca dương)", () => {
+    // Ca âm 1: C1.CMP (so sánh) ghép với GT-007 (number-bond)
+    const cmpWithBond = checkTemplateStructuralAffinity(
+      {
+        code: "C1.CMP.04",
+        strand_code: "C1.CMP",
+        thinking_processes: ["compare", "count"],
+      },
+      "GT-007"
+    );
+    expect(cmpWithBond.compatible).toBe(false);
+    expect(cmpWithBond.reason).toContain("[BR-STS-10]");
+    expect(cmpWithBond.reason).toContain("GT-007");
+
+    // Ca âm 2: C1.ORD (thứ tự) ghép với GT-016 (clock-hands)
+    const ordWithClock = checkTemplateStructuralAffinity(
+      {
+        code: "C1.ORD.01",
+        strand_code: "C1.ORD",
+        thinking_processes: ["sequence", "count"],
+      },
+      "GT-016"
+    );
+    expect(ordWithClock.compatible).toBe(false);
+    expect(ordWithClock.reason).toContain("[BR-STS-10]");
+    expect(ordWithClock.reason).toContain("GT-016");
+
+    // Ca âm 3: Kỹ năng khai compare nhưng dataset thiếu cấu trúc axes có thứ tự / contrast
+    const cmpWithoutStructure = checkTemplateStructuralAffinity(
+      {
+        code: "C1.CMP.04",
+        strand_code: "C1.CMP",
+        thinking_processes: ["compare"],
+      },
+      "GT-031",
+      createMockDataset({ skill_code: "C1.CMP.04", axes: undefined })
+    );
+    expect(cmpWithoutStructure.compatible).toBe(false);
+    expect(cmpWithoutStructure.reason).toContain("[BR-STS-10]");
+
+    // Ca dương: C1.NCOMP.01 ghép với GT-007 khi dataset đủ value và min_items
+    const validBond = checkTemplateStructuralAffinity(
+      {
+        code: "C1.NCOMP.01",
+        strand_code: "C1.NCOMP",
+        thinking_processes: ["count"],
+      },
+      "GT-007",
+      createMockDataset({
+        skill_code: "C1.NCOMP.01",
+        items: [
+          { id: "n1", label: "Một", value: 1 },
+          { id: "n2", label: "Hai", value: 2 },
+        ],
+      }),
+      { min_items: 2, max_items: 10, needs: ["value"] }
+    );
+    expect(validBond.compatible).toBe(true);
   });
 });

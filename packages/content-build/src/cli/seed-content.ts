@@ -1,9 +1,9 @@
 import { optionalEnv } from "@mindkid/config";
 import { getOwnerDb } from "@mindkid/db";
-import { loadContentDemandLedger } from "../gates/content-demand-file.js";
-import { ALL_SEED_CONTENT } from "../index.js";
-import { parseSeedProfile, selectSeedContent } from "../seed-profile.js";
-import { executeSeedBatch } from "../service.js";
+import { loadContentDemandLedger } from "#src/gates/content-demand-file";
+import { ALL_SEED_CONTENT } from "#src/index";
+import { parseSeedProfile, selectSeedContent } from "#src/seed-profile";
+import { executeSeedBatch } from "#src/service";
 
 export async function runSeedContent(
   dryRun = false,

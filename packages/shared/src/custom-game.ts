@@ -3,6 +3,10 @@ import { moderateCustomGameMetadata } from "@mindkid/moderation";
 import { z } from "zod";
 import type { AgeBand } from "./age-bands.js";
 
+export function isEmojiInCatalog(glyph: string): boolean {
+  return isInCatalog(glyph);
+}
+
 export type CustomGameSafeParseResult =
   | { success: true; data: unknown }
   | {

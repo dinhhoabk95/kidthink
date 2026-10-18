@@ -1,5 +1,4 @@
 import {
-  createRecurringSubscription,
   entitlementKeys,
   getOwnerDb,
   packages,
@@ -9,19 +8,21 @@ import {
   users,
 } from "@mindkid/db";
 import { eq } from "drizzle-orm";
+import type { H3Event } from "h3";
 import { beforeEach, describe, expect, it } from "vitest";
 import adminCancelHandler from "#server/api/managers/subscriptions/[id]/cancel.post";
+import { createRecurringSubscription } from "#server/services/recurring-billing";
 
 const CSRF_TOKEN =
   "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
 
-const RE_INVALID_CANCEL_REASON = /VALIDATION_FAILED|Ghi chú huỷ gói/;
+const RE_INVALID_CANCEL_REASON = /INVALID_CANCEL_REASON/;
 
 function mockManagerEvent(
   managerRole?: "super_admin" | "content_reviewer",
   subscriptionId?: number,
-  body?: Record<string, unknown>
-) {
+  body?: Record<string, string | number | boolean>
+): H3Event {
   return {
     method: "POST",
     node: {
@@ -56,24 +57,20 @@ function mockManagerEvent(
         : {}),
     },
     _body: body,
-  } as unknown as Parameters<typeof adminCancelHandler>[0];
+  } as H3Event;
 }
 
 describe("POST /api/managers/subscriptions/[id]/cancel (BR-ASC-01..06)", () => {
   beforeEach(async () => {
     const db = getOwnerDb();
 
-    await db
-      .insert(packages)
-      .values(SEED_PACKAGES as unknown as (typeof packages.$inferInsert)[])
-      .onConflictDoNothing();
+    for (const pkg of SEED_PACKAGES) {
+      await db.insert(packages).values(pkg).onConflictDoNothing();
+    }
 
-    await db
-      .insert(entitlementKeys)
-      .values(
-        SEED_ENTITLEMENT_KEYS as unknown as (typeof entitlementKeys.$inferInsert)[]
-      )
-      .onConflictDoNothing();
+    for (const k of SEED_ENTITLEMENT_KEYS) {
+      await db.insert(entitlementKeys).values(k).onConflictDoNothing();
+    }
   });
 
   it("Scenario: rejects unauthenticated request with 401", async () => {
@@ -91,16 +88,13 @@ describe("POST /api/managers/subscriptions/[id]/cancel (BR-ASC-01..06)", () => {
       admin_note: "Ghi chú hợp lệ dài trên hai mươi ký tự.",
     });
 
-    try {
-      await adminCancelHandler(event);
-      expect.fail("Should have thrown 403");
-    } catch (err: unknown) {
-      const errorObj = err as { statusCode?: number; status?: number };
-      expect(errorObj.statusCode || errorObj.status).toBe(403);
-    }
+    await expect(adminCancelHandler(event)).rejects.toMatchObject({
+      statusCode: 403,
+      code: "INSUFFICIENT_ROLE",
+    });
   });
 
-  it("Scenario: rejects admin note shorter than 20 chars with 422", async () => {
+  it("Scenario: rejects admin note shorter than 20 chars with 422 INVALID_CANCEL_REASON", async () => {
     const event = mockManagerEvent("super_admin", 1, {
       reason: "other",
       admin_note: "Ngắn",
@@ -109,6 +103,25 @@ describe("POST /api/managers/subscriptions/[id]/cancel (BR-ASC-01..06)", () => {
     await expect(adminCancelHandler(event)).rejects.toThrowError(
       RE_INVALID_CANCEL_REASON
     );
+    await expect(adminCancelHandler(event)).rejects.toMatchObject({
+      code: "INVALID_CANCEL_REASON",
+      statusCode: 422,
+    });
+  });
+
+  it("Scenario: rejects reason outside closed list with 422 INVALID_CANCEL_REASON", async () => {
+    const event = mockManagerEvent("super_admin", 1, {
+      reason: "outside_closed_list",
+      admin_note: "Ghi chú hợp lệ dài trên hai mươi ký tự.",
+    });
+
+    await expect(adminCancelHandler(event)).rejects.toThrowError(
+      RE_INVALID_CANCEL_REASON
+    );
+    await expect(adminCancelHandler(event)).rejects.toMatchObject({
+      code: "INVALID_CANCEL_REASON",
+      statusCode: 422,
+    });
   });
 
   it("Scenario: successfully cancels subscription with super_admin session", async () => {
@@ -122,6 +135,10 @@ describe("POST /api/managers/subscriptions/[id]/cancel (BR-ASC-01..06)", () => {
       })
       .returning();
 
+    if (!user) {
+      throw new Error("Failed to insert user");
+    }
+
     const sub = await createRecurringSubscription({
       userId: user.id,
       packageCode: "PKG-standard",
@@ -130,6 +147,10 @@ describe("POST /api/managers/subscriptions/[id]/cancel (BR-ASC-01..06)", () => {
       priceVnd: 299_000,
       termsVersion: "v1.0",
     });
+
+    if (!sub) {
+      throw new Error("Failed to create subscription");
+    }
 
     const event = mockManagerEvent("super_admin", sub.id, {
       reason: "user_request_messenger",
@@ -149,7 +170,7 @@ describe("POST /api/managers/subscriptions/[id]/cancel (BR-ASC-01..06)", () => {
       .select()
       .from(recurringSubscriptions)
       .where(eq(recurringSubscriptions.id, sub.id));
-    expect(dbSub.status).toBe("cancelled");
-    expect(dbSub.cancelReason).toBe("user_request_messenger");
+    expect(dbSub?.status).toBe("cancelled");
+    expect(dbSub?.cancelReason).toBe("user_request_messenger");
   });
 });

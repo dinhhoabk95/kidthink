@@ -2,12 +2,10 @@
 spec: CONTENT-REVIEW-QUEUE
 title: Hàng đợi duyệt nội dung
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-10-18
-open_tasks:
-  - "#298"
 owns:
   - Hàng đợi và thứ tự ưu tiên duyệt
   - Checklist duyệt
@@ -18,8 +16,6 @@ depends_on:
 ---
 
 # Hàng đợi duyệt nội dung
-
-> **Chưa hoàn thành** — code có `POST /api/managers/content/review-queue/bulk-reject` và nút từ chối theo lô, trái BR-CRQ-01; `studio/review/[id].vue` luôn tải game level kể cả với lesson/activity, chưa có gate bản xem thử cho người dạy (BR-CRQ-02), và checklist UI dùng nhóm của game level nên duyệt lesson/activity bị 422 (BR-CRQ-07). Việc còn lại: [Task #298](../../tasks/298-admin-content-review-fixes-plan.md).
 
 ## 1. Objective
 

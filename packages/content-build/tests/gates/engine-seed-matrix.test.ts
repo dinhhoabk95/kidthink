@@ -24,7 +24,7 @@ const specsDir = path.join(repoRoot, "docs/specs/01-platform/engines");
 const skillThinkingMap = buildSkillThinkingMap(ALL_SKILL_SEEDS);
 
 describe("Cổng check:engine-seed-matrix — Task #263 T13..T16", () => {
-  it("Khảo sát chuẩn: quét 37 phiếu, 241 ô có mục tiêu, đúng 0 ô thủng trên 0 engine (hoàn tất xóa nợ toàn diện T16)", () => {
+  it("Khảo sát chuẩn: quét 38 phiếu, 247 ô có mục tiêu, đúng 0 ô thủng trên 0 engine (hoàn tất xóa nợ toàn diện T16)", () => {
     const baseline = loadSeedMatrixBaseline();
     const report = evaluateEngineSeedMatrix(
       ALL_SEED_LEVELS,
@@ -33,8 +33,8 @@ describe("Cổng check:engine-seed-matrix — Task #263 T13..T16", () => {
       skillThinkingMap
     );
 
-    expect(report.totalEngines).toBe(37);
-    expect(report.totalTargetCells).toBe(241);
+    expect(report.totalEngines).toBe(38);
+    expect(report.totalTargetCells).toBe(247);
     expect(report.totalHoles).toBe(0);
     expect(report.passed).toBe(true);
     expect(report.newHoles.length).toBe(0);
@@ -44,13 +44,13 @@ describe("Cổng check:engine-seed-matrix — Task #263 T13..T16", () => {
 
     const formatted = formatSeedMatrixReport(report);
     expect(formatted).toContain("CHECK:ENGINE-SEED-MATRIX");
-    expect(formatted).toContain("Tổng số ô có mục tiêu: 241");
+    expect(formatted).toContain("Tổng số ô có mục tiêu: 247");
     expect(formatted).toContain("Số ô thủng: 0");
   });
 
   // Phiếu đặt trước (BR-ESS-15) chưa có khuôn nên chưa thể có level; mồ côi thật do
-  // check:engine-specs sở hữu. Cổng này bỏ qua nhưng phải khai số bỏ qua trong báo cáo.
-  it("bỏ qua phiếu chưa có khuôn trong registry và khai rõ trong báo cáo", () => {
+  // check:engine-specs sở hữu. Khi tất cả 38 phiếu đã có khuôn thì skippedNoTemplate rỗng.
+  it("không còn phiếu chưa có khuôn trong registry khi toàn bộ GT-000..GT-037 đã triển khai", () => {
     const report = evaluateEngineSeedMatrix(
       ALL_SEED_LEVELS,
       specsDir,
@@ -58,11 +58,8 @@ describe("Cổng check:engine-seed-matrix — Task #263 T13..T16", () => {
       skillThinkingMap
     );
 
-    expect(report.skippedNoTemplate).toEqual(["GT-037"]);
+    expect(report.skippedNoTemplate).toEqual([]);
     expect(report.deficits.some((d) => d.engine === "GT-037")).toBe(false);
-    expect(formatSeedMatrixReport(report)).toContain(
-      "Bỏ qua 1 phiếu chưa có khuôn: GT-037"
-    );
   });
 
   it("Ca âm 1: bảng thiếu cột tag → ném lỗi (ERR_MISSING_TAG_COLUMNS)", () => {

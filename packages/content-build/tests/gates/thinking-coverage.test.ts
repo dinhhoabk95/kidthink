@@ -10,10 +10,11 @@ import {
   formatCoverageReport,
   type ThinkingCoverageConfig,
   validateTagVocabulary,
-} from "./thinking-coverage.ts";
+} from "#src/gates/thinking-coverage";
 import {
   loadItemsFromSeedCorpus,
   mapSeedLevels,
+  type SeedLevelHeader,
 } from "./thinking-coverage-source.ts";
 
 function createMockCatalog(): ContentItem[] {
@@ -384,7 +385,7 @@ describe("Task #94 — Thinking Coverage Matrix (BR-TCM-01..11)", () => {
 describe("BR-TCM-03 — nguồn đọc corpus seed", () => {
   const mechanics = new Map([["GT-001", "tap-select"]]);
 
-  function seedLevel(over: Record<string, unknown>) {
+  function seedLevel(over: Partial<SeedLevelHeader>) {
     return {
       header: {
         code: "GL-C3-CLS-BOX-0001",
@@ -438,7 +439,27 @@ describe("Cổng đo phủ tư duy trên corpus seed thật (BR-TCM-01..11)", ()
     expect(unresolved).toEqual([]);
   });
 
-  it("corpus seed đạt mọi quy định phủ tư duy", async () => {
+  it("BR-TCL-04: CA ÂM — ô chỉ có khuôn cơ bản GT-001..GT-008 thì bị chặn", () => {
+    const catalog = createMockCatalog().map((item) => {
+      if (item.competencyCode === "C3" && item.ageBand === "5-6") {
+        return { ...item, templateCode: "GT-001" };
+      }
+      return item;
+    });
+
+    const result = evaluateThinkingCoverage(catalog, {
+      ...DEFAULT_CONFIG,
+      enforceFloors: true,
+    });
+    expect(result.passed).toBe(false);
+    const nonBasicViolation = result.violations.find(
+      (v) => v.ruleId === "BR-TCL-04" && v.cell === "C3 5-6"
+    );
+    expect(nonBasicViolation).toBeDefined();
+    expect(nonBasicViolation?.type).toBe("error");
+  });
+
+  it("corpus seed đạt mọi quy định phủ tư duy và BR-TGB-03 (inhibit/shift > 0)", async () => {
     const { items } = await loadItemsFromSeedCorpus();
     const config: ThinkingCoverageConfig = {
       ...DEFAULT_CONFIG,
@@ -451,6 +472,10 @@ describe("Cổng đo phủ tư duy trên corpus seed thật (BR-TCM-01..11)", ()
     };
 
     const result = evaluateThinkingCoverage(items, config);
+
+    // BR-TGB-03: inhibit và shift phải có nguồn sinh ra (> 0)
+    expect(result.thinkingMatrix.inhibit).toBeGreaterThan(0);
+    expect(result.thinkingMatrix.shift).toBeGreaterThan(0);
 
     // Cùng tiêu chí đỏ/xanh với CLI `lint:thinking-coverage` cũ: chỉ vi phạm
     // mức `error` chặn, hàng `warning` là sàn phase kế tiếp (BR-TCM-06).

@@ -184,6 +184,7 @@ export function resolveRateLimitRouteClass(
     return manager;
   }
 
+  // BR-ING-07: rate limit riêng, rộng (600/IP · 300/account) cho route nhận event.
   if (PLAY_EVENTS_PATH.test(path) && method === "POST") {
     return { mode: "middleware", className: "play:events" };
   }
@@ -211,6 +212,7 @@ export const ORDER_PROOF_BODY_LIMIT_BYTES =
 
 export const ROUTE_BODY_SIZE_LIMITS: Readonly<Record<string, number>> = {
   "/api/managers/images": MANAGER_IMAGE_BODY_LIMIT_BYTES,
+  "/api/managers/audio": MANAGER_IMAGE_BODY_LIMIT_BYTES,
   "/api/guest/auth/users/register": 32 * 1024,
 };
 

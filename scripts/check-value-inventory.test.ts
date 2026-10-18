@@ -24,6 +24,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   C1_MEASURE_DIMENSION_INVENTORY,
+  C1_NUMBER_BOND_INVENTORY,
+  C1_NUMERAL_INVENTORY,
   type NumeralInventoryItem,
   type OrdinalInventoryItem,
   SKILL_DATASETS,
@@ -33,10 +35,14 @@ import { describe, expect, it } from "vitest";
 import {
   buildC1NumeralTarget,
   buildC5LetTarget,
+  checkExplicitInventoryMatching,
+  checkInventoryEmojiSeparation,
   checkInventoryFilesExist,
   checkItemPropertiesMatchInventory,
   checkMeasureDimensionsPolarity,
+  checkNumberBondCompleteness,
   checkNumeralInventoryProperties,
+  checkNumeralRequiredSplit,
   checkOrdinalInventoryProperties,
   checkRatchetProgression,
   checkSkillNumeralOrOrdinalSource,
@@ -50,7 +56,7 @@ import {
   runValueInventoryCheck,
 } from "./check-value-inventory.js";
 
-describe("check-value-inventory negative tests (BR-SVI-02..12)", () => {
+describe("check-value-inventory negative & positive tests (BR-SVI-01..12)", () => {
   // T5.1 Ca âm BR-SVI-02
   it("T5.1 [BR-SVI-02] phát hiện item ngoại lai 'cup' trong dataset C5.LET.03", () => {
     const originalDataset = SKILL_DATASETS["C5.LET.03"];
@@ -415,5 +421,55 @@ describe("check-value-inventory negative tests (BR-SVI-02..12)", () => {
 
     const result = handleUpdateBaseline(mockReport, mockBaseline, [], []);
     expect(result.exitCode).toBe(1);
+  });
+
+  // T5.16 BR-SVI-01: Tách biệt kho giá trị và kho hình ảnh
+  it("T5.16 [BR-SVI-01] các file kho giá trị tách biệt hoàn toàn với packages/emoji", () => {
+    expect(checkInventoryEmojiSeparation()).toEqual([]);
+  });
+
+  // T5.17 BR-SVI-04: Đối sánh tường minh với kho giá trị đã khai báo
+  it("T5.17 [BR-SVI-04] mọi target đều có danh sách validIds tường minh, từ chối target rỗng", () => {
+    expect(checkExplicitInventoryMatching()).toEqual([]);
+    const badViolations = checkExplicitInventoryMatching([
+      {
+        id: "BAD.TARGET",
+        name: "Target thiếu validIds",
+        skillCodes: ["C1.NREC.01"],
+        expectedIds: [],
+        validIds: [],
+      },
+    ]);
+    expect(badViolations.length).toBe(1);
+    expect(badViolations[0]?.code).toBe("BR-SVI-04");
+  });
+
+  // T5.18 BR-SVI-07: Phép đếm 0–10 là bắt buộc (required: true), 11–20 là mở rộng (required: false)
+  it("T5.18 [BR-SVI-07] kiểm tra phân tách required 0-10 và mở rộng 11-20 trong c1-numeral.ts", () => {
+    expect(checkNumeralRequiredSplit(C1_NUMERAL_INVENTORY)).toEqual([]);
+    const nrecTarget = buildC1NumeralTarget();
+    expect(nrecTarget.expectedIds.length).toBe(11);
+    expect(nrecTarget.validIds.length).toBe(21);
+
+    const mutated = C1_NUMERAL_INVENTORY.map((item) =>
+      item.value === 15 ? { ...item, required: true } : item
+    );
+    const violations = checkNumeralRequiredSplit(mutated);
+    expect(violations.length).toBe(1);
+    expect(violations[0]?.code).toBe("BR-SVI-07");
+  });
+
+  // T5.19 BR-SVI-10: Mỗi bộ phân tách số n trong c1-number-bond.ts chứa đủ n+1 cặp có thứ tự (tổng 65 cặp)
+  it("T5.19 [BR-SVI-10] kiểm tra đủ 65 cặp phân tách số có thứ tự cho n=1..10", () => {
+    expect(checkNumberBondCompleteness(C1_NUMBER_BOND_INVENTORY)).toEqual([]);
+
+    const missingOne = C1_NUMBER_BOND_INVENTORY.filter(
+      (b) => !(b.whole === 5 && b.part_a === 2 && b.part_b === 3)
+    );
+    const violations = checkNumberBondCompleteness(missingOne);
+    expect(violations.some((v) => v.code === "BR-SVI-10")).toBe(true);
+    expect(
+      violations.some((v) => v.message.includes("(2, 3) cho tổng n=5"))
+    ).toBe(true);
   });
 });

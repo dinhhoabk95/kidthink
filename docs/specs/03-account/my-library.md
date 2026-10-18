@@ -2,12 +2,10 @@
 spec: MY-LIBRARY
 title: Thư viện cá nhân
 area: account
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
-open_tasks:
-  - "#290"
 owns:
   - Lưu và tổ chức nội dung yêu thích
 depends_on:
@@ -16,8 +14,6 @@ depends_on:
 ---
 
 # Thư viện cá nhân
-
-> **Chưa hoàn thành** — Chưa có nút lưu trên thẻ nội dung (§3) — không UI nào gọi `POST /api/users/library/items`; `services/library.ts` còn ném `Error` thường thay vì lớp `@mindkid/errors`. Việc còn lại: [Task #290](../../tasks/290-account-ui-missing-pages-plan.md).
 
 ## 1. Objective
 

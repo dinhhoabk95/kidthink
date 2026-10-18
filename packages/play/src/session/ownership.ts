@@ -2,7 +2,7 @@ import { childProfiles, type playSessions } from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
 import { and, eq } from "drizzle-orm";
 
-import type { DbOrTx } from "../types.js";
+import type { DbOrTx } from "#src/types";
 
 export interface IngestOptions {
   readonly callerChildProfileId?: number | null;

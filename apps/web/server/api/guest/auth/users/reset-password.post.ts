@@ -6,23 +6,27 @@ import {
 import {
   activeSessions,
   getAppDb,
-  notificationDeliveries,
-  notifications,
   users,
   verificationTokens,
 } from "@mindkid/db";
 import { TokenExpiredError } from "@mindkid/errors/auth";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
+import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, type H3Event, readBody } from "h3";
 import { z } from "zod";
+import { revokeAllUserSessions } from "#server/utils/session-revocation";
 
 const ResetPasswordSchema = z
   .object({
     token: z.string().trim().min(1).max(512),
-    new_password: z.string().min(8).max(1024),
+    new_password: z.string().min(8).max(1024).optional(),
+    password: z.string().min(8).max(1024).optional(),
   })
-  .strict();
+  .strict()
+  .refine((data) => Boolean(data.new_password ?? data.password), {
+    message: "Mật khẩu mới là bắt buộc.",
+  });
 
 export async function handleResetPassword(event: H3Event, testBody?: unknown) {
   const rawBody =
@@ -33,7 +37,8 @@ export async function handleResetPassword(event: H3Event, testBody?: unknown) {
   if (!parsed.success) {
     throw new ValidationError();
   }
-  const { token, new_password: newPassword } = parsed.data;
+  const token = parsed.data.token;
+  const newPassword = parsed.data.new_password ?? parsed.data.password ?? "";
 
   const passVal = validatePasswordStrength(newPassword);
   if (!passVal.valid) {
@@ -116,27 +121,22 @@ export async function handleResetPassword(event: H3Event, testBody?: unknown) {
           eq(activeSessions.accountId, user.id)
         )
       );
+  });
 
-    const [createdNotification] = await tx
-      .insert(notifications)
-      .values({
-        recipientType: "user",
-        recipientId: user.id,
-        templateCode: "password_changed",
-        payload: {
-          email: user.email,
-          displayName: user.displayName,
-        },
-      })
-      .returning();
+  // UC-005 BR-003: sau khi giao dịch thành công, đá mọi phiên và remember token ở Redis.
+  await revokeAllUserSessions(user.id);
 
-    if (createdNotification) {
-      await tx.insert(notificationDeliveries).values({
-        notificationId: createdNotification.id,
-        channel: "email",
-        status: "queued",
-      });
-    }
+  // BR-PWR-04: Gửi email thông báo sau khi đổi thành công
+  await dispatchTransactionalEmail({
+    recipientType: "user",
+    recipientId: user.id,
+    code: "password_changed",
+    to: user.email,
+    payload: {
+      email: user.email,
+      displayName: user.displayName,
+      timestamp: now.toISOString(),
+    },
   });
 
   return { ok: true };

@@ -30,10 +30,15 @@ import {
 } from "#src/render/index.js";
 import type { DegradationState } from "#src/systems/degradation";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
-import type {
-  GT033Content,
-  GT033Difficulty,
-  GT033PaletteItem,
+import {
+  areWeaveCellsValid,
+  extractWeaveCol,
+  extractWeaveRow,
+  type GT033Content,
+  type GT033Difficulty,
+  type GT033PaletteItem,
+  isWeaveLineValid,
+  solveWeaveGrid,
 } from "./template.js";
 
 const HIT_TOLERANCE_PX = 24;
@@ -78,6 +83,7 @@ export class GT033Session extends TemplateGameSession<
   brokenRowIndex: number | null = null;
   brokenColIndex: number | null = null;
   isWin = false;
+  private inferredSolution: readonly string[] | null = null;
   private particles: Particle[] = [];
 
   setupEntities(): void {
@@ -88,6 +94,15 @@ export class GT033Session extends TemplateGameSession<
     this.brokenColIndex = null;
     this.isWin = false;
     this.particles = [];
+    const paletteIds = this.content.palette.map((p) => p.color_id);
+    const solved = solveWeaveGrid(
+      this.content.grid.rows,
+      this.content.grid.cols,
+      paletteIds,
+      this.content.cells,
+      1
+    );
+    this.inferredSolution = solved[0] ?? this.content.solution ?? null;
 
     this.recordEvent("game_started", {
       template_code: "GT-033",
@@ -99,28 +114,35 @@ export class GT033Session extends TemplateGameSession<
     });
   }
 
+  private resolveMismatchHintIndex(
+    cellIndex: number,
+    expectedColor: string | undefined,
+    totalCells: number
+  ): number {
+    if (expectedColor && this.selectedColorId !== expectedColor) {
+      const palIdx = this.content.palette.findIndex(
+        (p) => p.color_id === expectedColor
+      );
+      if (palIdx >= 0) {
+        return totalCells + palIdx;
+      }
+    }
+    return cellIndex;
+  }
+
   override getHintTargetIndex(): number | null {
     if (this.isWin || this.isWon) {
       return null;
     }
     const totalCells = this.content.grid.rows * this.content.grid.cols;
-    const solution = this.content.solution;
+    const solution = this.inferredSolution ?? this.content.solution;
     if (!solution) {
       const blank = this.placedCells.indexOf(null);
       return blank >= 0 ? blank : null;
     }
     for (let i = 0; i < totalCells; i++) {
       if (this.placedCells[i] !== solution[i]) {
-        const expectedColor = solution[i];
-        if (this.selectedColorId !== expectedColor) {
-          const palIdx = this.content.palette.findIndex(
-            (p) => p.color_id === expectedColor
-          );
-          if (palIdx >= 0) {
-            return totalCells + palIdx;
-          }
-        }
-        return i;
+        return this.resolveMismatchHintIndex(i, solution[i], totalCells);
       }
     }
     return null;
@@ -165,6 +187,43 @@ export class GT033Session extends TemplateGameSession<
     return ACTION_CORRECT;
   }
 
+  private evaluatePlacement(
+    cellIndex: number,
+    colorId: string
+  ): { rowValid: boolean; colValid: boolean; isCellCorrect: boolean } {
+    const { rows, cols } = this.content.grid;
+    const period = this.content.palette.length;
+    const row = Math.floor(cellIndex / cols);
+    const col = cellIndex % cols;
+
+    const candidate = [...this.placedCells];
+    candidate[cellIndex] = colorId;
+
+    const rowValid = isWeaveLineValid(
+      extractWeaveRow(candidate, cols, row),
+      period
+    );
+    const colValid = isWeaveLineValid(
+      extractWeaveCol(candidate, rows, cols, col),
+      period
+    );
+
+    if (!(rowValid && colValid)) {
+      return { rowValid, colValid, isCellCorrect: false };
+    }
+
+    const expectedColor =
+      this.inferredSolution?.[cellIndex] ??
+      this.content.solution?.[cellIndex] ??
+      null;
+    const isCellCorrect = expectedColor === null || expectedColor === colorId;
+    if (!isCellCorrect) {
+      return { rowValid: false, colValid: false, isCellCorrect: false };
+    }
+
+    return { rowValid: true, colValid: true, isCellCorrect: true };
+  }
+
   private validatePlaceYarn(
     cellIndex: number,
     colorId: string | null
@@ -183,11 +242,7 @@ export class GT033Session extends TemplateGameSession<
       return ACTION_IGNORED;
     }
 
-    const expectedColor = this.content.solution
-      ? this.content.solution[cellIndex]
-      : null;
-    const isCellCorrect = expectedColor === null || expectedColor === colorId;
-
+    const { isCellCorrect } = this.evaluatePlacement(cellIndex, colorId);
     if (!isCellCorrect) {
       return ACTION_RETRY;
     }
@@ -273,23 +328,22 @@ export class GT033Session extends TemplateGameSession<
       return;
     }
 
-    this.placedCells[cellIndex] = colorId;
-    this.selectedCellIndex = cellIndex;
-
     const row = Math.floor(cellIndex / this.content.grid.cols);
     const col = cellIndex % this.content.grid.cols;
+    const { rowValid, colValid, isCellCorrect } = this.evaluatePlacement(
+      cellIndex,
+      colorId
+    );
 
-    const expectedColor = this.content.solution
-      ? this.content.solution[cellIndex]
-      : null;
-    const isCellCorrect = expectedColor === null || expectedColor === colorId;
+    this.placedCells[cellIndex] = colorId;
+    this.selectedCellIndex = cellIndex;
 
     if (isCellCorrect) {
       this.brokenRowIndex = null;
       this.brokenColIndex = null;
     } else {
-      this.brokenRowIndex = row;
-      this.brokenColIndex = col;
+      this.brokenRowIndex = rowValid ? null : row;
+      this.brokenColIndex = colValid ? null : col;
     }
 
     this.recordEvent("yarn_placed", {
@@ -558,12 +612,15 @@ export class GT033Session extends TemplateGameSession<
   }
 
   private verifyGridSolved(): boolean {
-    if (this.content.solution) {
-      return this.placedCells.every(
-        (cell, idx) => cell === this.content.solution?.[idx]
-      );
+    if (!this.placedCells.every((cell) => cell !== null)) {
+      return false;
     }
-    return this.placedCells.every((cell) => cell !== null);
+    return areWeaveCellsValid(
+      this.content.grid.rows,
+      this.content.grid.cols,
+      this.placedCells,
+      this.content.palette.length
+    );
   }
 
   override checkWinCondition(): boolean {
@@ -576,6 +633,14 @@ export class GT033Session extends TemplateGameSession<
 
   getPlacedCells(): readonly (string | null)[] {
     return this.placedCells;
+  }
+
+  getExpectedColorAt(cellIndex: number): string | null {
+    return (
+      this.inferredSolution?.[cellIndex] ??
+      this.content.solution?.[cellIndex] ??
+      null
+    );
   }
 
   private renderGridCells(

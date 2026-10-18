@@ -10,7 +10,13 @@ import {
 import type { SkillProgressionTier } from "@mindkid/shared";
 import { sql } from "drizzle-orm";
 import { defineEventHandler, getQuery } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+
+const ManagerTaxonomyQuerySchema = z.object({
+  gaps_only: z.union([z.string(), z.boolean()]).optional(),
+  depth: z.string().optional(),
+});
 
 export const TAXONOMY_SUFFICIENT_THRESHOLD = 3;
 
@@ -264,9 +270,10 @@ function computeEnhancedTaxonomy(
 export default defineEventHandler(async (event) => {
   await requireManagerSession(event);
 
-  const query = getQuery(event);
+  const parsedQuery = ManagerTaxonomyQuerySchema.safeParse(getQuery(event));
+  const query = parsedQuery.success ? parsedQuery.data : {};
   const gapsOnly = query.gaps_only === "true" || query.gaps_only === true;
-  const depth = (query.depth as string) || "skill";
+  const depth = query.depth || "skill";
 
   const now = Date.now();
   let baseData: CachedTaxonomyData["data"];

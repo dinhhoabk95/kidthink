@@ -4,11 +4,13 @@ import { EmailAlreadyInUseError } from "@mindkid/errors/account";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { and, eq, isNull } from "drizzle-orm";
-import { defineEventHandler, readBody } from "h3";
+import { defineEventHandler } from "h3";
 import { z } from "zod";
 
+import { buildAccountActionUrl } from "#server/utils/account-action-url";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
+import { readBodyWithLimit } from "#server/utils/request-body";
 
 const ChangeEmailSchema = z
   .object({
@@ -21,10 +23,7 @@ export default defineEventHandler(async (event) => {
   await requireReauth(event);
 
   const userId = Number(userSession.user_id);
-
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
-  const rawBody =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const rawBody = await readBodyWithLimit(event);
 
   const parsed = ChangeEmailSchema.safeParse(rawBody);
   if (!parsed.success) {
@@ -86,6 +85,10 @@ export default defineEventHandler(async (event) => {
     expiresAt,
   });
 
+  const actionUrl = buildAccountActionUrl("email_change", rawToken, {
+    email: newEmail,
+  });
+
   // Enqueue verification email to the NEW email address (BR-ACS-03)
   await dispatchTransactionalEmail({
     recipientType: "user",
@@ -93,9 +96,12 @@ export default defineEventHandler(async (event) => {
     code: "email_change_verification",
     to: newEmail,
     payload: {
-      token: rawToken,
       new_email: newEmail,
       expires_at: expiresAt.toISOString(),
+    },
+    secrets: {
+      token: rawToken,
+      url: actionUrl,
     },
   });
 

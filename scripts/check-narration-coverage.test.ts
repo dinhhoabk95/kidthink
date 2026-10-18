@@ -19,7 +19,8 @@ describe("Cổng check:narration-coverage (Task #269 / BR-PNR-01..10)", () => {
     expect(ok).toBe(true);
     expect(violations).toHaveLength(0);
     expect(stats.datasets_with_audio_path).toBeGreaterThanOrEqual(53);
-    expect(stats.engines_with_round_narration).toBe(37);
+    expect(stats.engines_with_round_narration).toBeGreaterThanOrEqual(37);
+    expect(stats.engines_with_round_narration).toBe(stats.engines_total);
     expect(stats.items_with_audio_path).toBeGreaterThanOrEqual(439);
     expect(stats.items_without_spoken_name).toBeLessThanOrEqual(2009);
   });

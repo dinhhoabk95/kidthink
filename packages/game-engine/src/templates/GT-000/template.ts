@@ -76,6 +76,10 @@ export const GT000SegmentSchema = z
     steps: z.array(GT000StepSchema).min(3).max(12),
     is_review: z.boolean().default(false),
   })
+  .refine((seg) => seg.is_review || seg.asset_ids.length <= 3, {
+    message:
+      "Mỗi phân đoạn dạy chỉ được có 2–3 chất liệu (BR-CIM-03, BR-E000-03)",
+  })
   .refine(
     (seg) => {
       const lastStep = seg.steps.at(-1);
@@ -113,6 +117,7 @@ export const GT000ContentSchema = z
     segments: z.array(GT000SegmentSchema).min(1).max(8).optional(),
     steps: z.array(GT000StepSchema).min(3).max(12).optional(),
     requires_reintro: z.boolean().default(false),
+    resume_segment_index: z.number().int().min(0).optional(),
   })
   .refine((data) => Boolean(data.segments || data.steps), {
     message: "content_pack phải có segments hoặc steps",
@@ -185,11 +190,13 @@ export const GT000DifficultySchema = z
      * Cấm — NEVER có bậc thứ ba mở micro thật; xem `BR-CIM-10`.
      */
     speak_along: z.enum(["off", "tap"]).default(SPEAK_ALONG_DEFAULT),
+    resume_segment_index: z.number().int().min(0).optional(),
   })
   .strict();
 
 export type GT000Asset = z.infer<typeof GT000AssetSchema>;
 export type GT000Step = z.infer<typeof GT000StepSchema>;
+export type GT000Segment = z.infer<typeof GT000SegmentSchema>;
 export type GT000Content = z.infer<typeof GT000ContentSchema>;
 export type GT000Difficulty = z.infer<typeof GT000DifficultySchema>;
 

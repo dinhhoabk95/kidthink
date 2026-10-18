@@ -1,5 +1,5 @@
 import { InsufficientRoleError } from "@mindkid/errors/auth";
-import { TEMPLATE_REGISTRY } from "@mindkid/notification";
+import { listNotificationTemplateStates } from "@mindkid/notification";
 import { defineEventHandler } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -13,18 +13,7 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  const templates = Object.entries(TEMPLATE_REGISTRY).map(([code, def]) => {
-    // BR-NTA-06 scanner check: ensure recipient is never child
-    const isChildRecipient = code.startsWith("child_");
-
-    return {
-      code,
-      required_vars: def.requiredVars,
-      content_version: 1,
-      status: "published",
-      is_child_recipient: isChildRecipient,
-    };
-  });
+  const templates = listNotificationTemplateStates();
 
   return {
     items: templates,

@@ -272,8 +272,11 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
         );
 
         const forceRes = await forceReconsentHandler(forceEvent);
+        expect(forceEvent.node.res.statusCode).toBe(201);
         expect(forceRes.consent_type).toBe("terms");
-        expect(forceRes.reconsent_required_at).toBeDefined();
+        expect(forceRes.requirement_at).toBeDefined();
+        expect(forceRes.reconsent_required_at).toBe(forceRes.requirement_at);
+        expect(forceRes.affected_user_count).toBeGreaterThanOrEqual(1);
 
         // Check audit log was written (BR-LCA-03)
         const audits = await db
@@ -372,10 +375,133 @@ describe("Consent Management — P1.14 & D12 (D-QV, D-QW, D-QX, D-QY, D-QZ)", ()
       await expect(forceReconsentHandler(event)).rejects.toThrow();
     });
 
-    it("GET /api/managers/legal-consents lists all requirements", async () => {
+    it("BR-LCA-06: rejects missing or false confirm_deployed / confirm_all_users with 422 VALIDATION_FAILED", async () => {
+      const missingConfirmEvent = mockEvent(
+        "POST",
+        undefined,
+        {
+          consent_type: "privacy",
+          notice: "Cập nhật chính sách quyền riêng tư 2026",
+          reason: "Bổ sung quy định lưu trữ dữ liệu theo kiểm toán",
+        },
+        { isManager: true, managerId: 101 }
+      );
+      await expect(
+        forceReconsentHandler(missingConfirmEvent)
+      ).rejects.toMatchObject({
+        code: "VALIDATION_FAILED",
+        statusCode: 422,
+      });
+
+      const falseConfirmEvent = mockEvent(
+        "POST",
+        undefined,
+        {
+          consent_type: "privacy",
+          notice: "Cập nhật chính sách quyền riêng tư 2026",
+          reason: "Bổ sung quy định lưu trữ dữ liệu theo kiểm toán",
+          confirm_deployed: true,
+          confirm_all_users: false,
+        },
+        { isManager: true, managerId: 101 }
+      );
+      await expect(
+        forceReconsentHandler(falseConfirmEvent)
+      ).rejects.toMatchObject({
+        code: "VALIDATION_FAILED",
+        statusCode: 422,
+      });
+    });
+
+    it("BR-LCA-07 & §8: compares expected_requirement_at (409 CONSENT_REQUIREMENT_CHANGED on stale) and strictly advances DB marker", async () => {
+      const db = getOwnerDb();
+      const [m] = await db
+        .insert(managers)
+        .values({
+          email: `super_admin_lca07_${Date.now()}_${Math.random()}@mindkid.test`,
+          passwordHash: "adminhash",
+          displayName: "Super Admin LCA07",
+          role: "super_admin",
+        })
+        .returning();
+
+      try {
+        // First force when current marker is null
+        const firstRes = await forceReconsentHandler(
+          mockEvent(
+            "POST",
+            undefined,
+            {
+              consent_type: "privacy",
+              expected_requirement_at: null,
+              notice: "Cập nhật chính sách quyền riêng tư lần 1 năm 2026",
+              reason: "Triển khai điều khoản bảo mật mới lần 1",
+              confirm_deployed: true,
+              confirm_all_users: true,
+            },
+            { isManager: true, managerId: m.id }
+          )
+        );
+
+        // Concurrent/stale request still sending expected_requirement_at: null -> 409 CONSENT_REQUIREMENT_CHANGED
+        await expect(
+          forceReconsentHandler(
+            mockEvent(
+              "POST",
+              undefined,
+              {
+                consent_type: "privacy",
+                expected_requirement_at: null,
+                notice: "Cập nhật chính sách quyền riêng tư bị xung đột",
+                reason: "Quản trị viên thứ hai bấm trên màn hình cũ",
+                confirm_deployed: true,
+                confirm_all_users: true,
+              },
+              { isManager: true, managerId: m.id }
+            )
+          )
+        ).rejects.toMatchObject({
+          code: "CONSENT_REQUIREMENT_CHANGED",
+          statusCode: 409,
+        });
+
+        // Second force with matching expected_requirement_at -> strictly greater DB marker
+        const secondRes = await forceReconsentHandler(
+          mockEvent(
+            "POST",
+            undefined,
+            {
+              consent_type: "privacy",
+              expected_requirement_at: firstRes.requirement_at,
+              notice: "Cập nhật chính sách quyền riêng tư lần 2 năm 2026",
+              reason: "Triển khai điều khoản bảo mật mới lần 2",
+              confirm_deployed: true,
+              confirm_all_users: true,
+            },
+            { isManager: true, managerId: m.id }
+          )
+        );
+
+        expect(new Date(secondRes.requirement_at).getTime()).toBeGreaterThan(
+          new Date(firstRes.requirement_at).getTime()
+        );
+      } finally {
+        await db
+          .delete(managers)
+          .where(eq(managers.id, m.id))
+          .catch(() => null);
+      }
+    });
+
+    it("GET /api/managers/legal-consents lists all requirements with affected_user_count and last_updated_on", async () => {
       const event = mockEvent("GET", undefined, {}, { isManager: true });
       const res = await getManagerConsentsHandler(event);
       expect(res.requirements).toHaveLength(3);
+      expect(res.items).toHaveLength(3);
+      for (const item of res.items) {
+        expect(item.last_updated_on).toBeDefined();
+        expect(typeof item.affected_user_count).toBe("number");
+      }
     });
   });
 

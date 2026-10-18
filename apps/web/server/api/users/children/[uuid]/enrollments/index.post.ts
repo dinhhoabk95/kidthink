@@ -18,6 +18,7 @@ import {
   type AccessTier,
   allowedTiers,
   buildAgeRecommendationWarning,
+  computeAgeGap,
 } from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
 import {
@@ -95,6 +96,18 @@ export function computeAgeRecommendationWarning(
 ): string | undefined {
   const currentYear = new Date().getFullYear();
   return buildAgeRecommendationWarning({
+    childAge: currentYear - child.birthYear,
+    targetAgeMin: curriculum.targetAgeMin,
+    targetAgeMax: curriculum.targetAgeMax,
+  });
+}
+
+export function computeEnrollmentAgeGap(
+  child: typeof childProfiles.$inferSelect,
+  curriculum: typeof curricula.$inferSelect
+): number {
+  const currentYear = new Date().getFullYear();
+  return computeAgeGap({
     childAge: currentYear - child.birthYear,
     targetAgeMin: curriculum.targetAgeMin,
     targetAgeMax: curriculum.targetAgeMax,
@@ -232,7 +245,8 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError("Không tìm thấy chương trình học.");
   }
 
-  // 4. Compute age recommendation warning (BR-LFM-02, BR-LFM-03, BR-LFM-04 - tuổi không chặn ghi danh)
+  // 4. Compute age recommendation warning & age_gap (BR-LFM-02, BR-LFM-03, BR-LFM-04 - tuổi không chặn ghi danh)
+  const ageGap = computeEnrollmentAgeGap(child, curriculum);
   const ageWarning = computeAgeRecommendationWarning(child, curriculum);
 
   // 5. Gating pre-check: User must be able to open at least 1 mandatory item (D-ME / BR-CUR-10)
@@ -266,6 +280,7 @@ export default defineEventHandler(async (event) => {
       child_uuid: child.uuid,
       curriculum_code: curriculum.code,
       curriculum_version: curriculum.contentVersion,
+      age_gap: ageGap,
       age_warning: ageWarning,
     },
   });
@@ -277,6 +292,7 @@ export default defineEventHandler(async (event) => {
     curriculum_version: curriculum.contentVersion,
     status: enrollment.status,
     enrolled_at: enrollment.enrolledAt,
+    age_gap: ageGap,
     warning: ageWarning,
   };
 });

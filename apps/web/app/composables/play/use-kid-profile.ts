@@ -1,6 +1,7 @@
 import { isApiError, normalizeApiError } from "@mindkid/errors/client";
 import { computed, ref } from "vue";
 import { useCookie, useFetch } from "#imports";
+import { useApi } from "~/composables/use-api";
 import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
 
 export interface KidProfileItem {
@@ -43,6 +44,7 @@ export interface SwitchChildResult {
  * - Chuyển đổi an toàn sang hồ sơ trẻ khác kèm xác thực Parent Gate khi có yêu cầu.
  */
 export function useKidProfile() {
+  const api = useApi();
   const { headers: csrfHeaders } = useCsrfHeaders();
   const activeChildUuid = useCookie<string | null>("active_child_id", {
     default: () => null,
@@ -88,7 +90,7 @@ export function useKidProfile() {
     switchError.value = null;
 
     try {
-      const response = await $fetch<ActivateChildResponse>(
+      const response = await api<ActivateChildResponse>(
         `/api/users/children/${targetUuid}/activate`,
         {
           method: "POST",

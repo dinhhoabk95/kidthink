@@ -1,11 +1,30 @@
-import { consentLogs, getAppDb, socialIdentities, users } from "@mindkid/db";
-import { eq, inArray } from "drizzle-orm";
+import { encodeOAuthTicket, type NormalizedProfile } from "@mindkid/auth";
+import {
+  consentLogs,
+  getAppDb,
+  notificationDeliveries,
+  notifications,
+  socialIdentities,
+  users,
+  verificationTokens,
+} from "@mindkid/db";
+import { and, eq, inArray } from "drizzle-orm";
+import type { H3Event } from "h3";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { handleSocialLogin } from "#server/api/guest/auth/users/social-login.post";
 
-function createMockEvent(options: { oauth_profile?: any; ip?: string } = {}) {
+function createMockEvent(
+  options: { oauth_profile?: NormalizedProfile; ip?: string } = {}
+): H3Event {
   const responseHeaders: Record<string, string> = {};
   const csrfToken = "a".repeat(64);
+  // Vé đăng ký đi qua cookie đã ký như production, không nhét vào event.context.
+  const ticketCookie = options.oauth_profile
+    ? `; tm_oauth_ticket=${encodeOAuthTicket(
+        { profile: options.oauth_profile, created_at: Date.now() },
+        process.env.NUXT_SESSION_PASSWORD ?? ""
+      )}`
+    : "";
   return {
     method: "POST",
     node: {
@@ -13,7 +32,7 @@ function createMockEvent(options: { oauth_profile?: any; ip?: string } = {}) {
         headers: {
           "sec-fetch-site": "same-origin",
           "x-csrf-token": csrfToken,
-          cookie: `tm_u_csrf=${csrfToken}`,
+          cookie: `tm_u_csrf=${csrfToken}${ticketCookie}`,
         },
         socket: {
           remoteAddress: options.ip || "127.0.0.1",
@@ -32,10 +51,8 @@ function createMockEvent(options: { oauth_profile?: any; ip?: string } = {}) {
         statusCode: 200,
       },
     },
-    context: {
-      oauth_profile: options.oauth_profile,
-    },
-  } as any;
+    context: {},
+  } as Partial<H3Event> as H3Event;
 }
 
 describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-IO)", () => {
@@ -111,10 +128,6 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
         accept_privacy: true,
       });
 
-      if (res?.user?.id) {
-        createdUserIds.push(res.user.id);
-      }
-
       expect(res.user.displayName).toBe("Verified Parent");
       expect(res.user.status).toBe("active"); // Google email_verified -> active (BR-SCL-05)
 
@@ -123,6 +136,10 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
         .select()
         .from(users)
         .where(eq(users.email, email));
+
+      if (dbUser?.id) {
+        createdUserIds.push(dbUser.id);
+      }
 
       expect(dbUser).toBeDefined();
       expect(dbUser?.passwordHash).toBeNull(); // BR-SCL-08: NULL password is valid
@@ -154,7 +171,7 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
       }
     });
 
-    it("BR-SCL-05: Facebook registration creates pending_verification user", async () => {
+    it("BR-SCL-05: Facebook registration creates pending_verification user and dispatches email_verification", async () => {
       const email = genEmail("fb_user");
       const sub = `fb_user_${Date.now()}_${Math.floor(Math.random() * 1_000_000)}`;
       const mockEvent = createMockEvent({
@@ -174,10 +191,6 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
         accept_privacy: true,
       });
 
-      if (res?.user?.id) {
-        createdUserIds.push(res.user.id);
-      }
-
       expect(res.user.status).toBe("pending_verification"); // BR-SCL-05
 
       const [dbUser] = await db
@@ -185,8 +198,44 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
         .from(users)
         .where(eq(users.email, email));
 
+      if (dbUser?.id) {
+        createdUserIds.push(dbUser.id);
+      }
+
       expect(dbUser?.status).toBe("pending_verification");
       expect(dbUser?.emailVerifiedAt).toBeNull();
+
+      // Verify verification token & email_verification notification (#289 S4)
+      const [tokenRow] = await db
+        .select()
+        .from(verificationTokens)
+        .where(
+          and(
+            eq(verificationTokens.accountType, "user"),
+            eq(verificationTokens.accountId, dbUser?.id ?? 0),
+            eq(verificationTokens.purpose, "email_verify")
+          )
+        );
+      expect(tokenRow).toBeDefined();
+
+      const [notif] = await db
+        .select()
+        .from(notifications)
+        .where(eq(notifications.recipientId, dbUser?.id ?? 0));
+      expect(notif).toBeDefined();
+      expect(notif?.templateCode).toBe("email_verification");
+      const savedPayload = notif?.payload as Record<string, string> | undefined;
+      expect(savedPayload?.token).toBeUndefined();
+      expect(savedPayload?.url).toBeUndefined();
+
+      if (notif) {
+        const deliveries = await db
+          .select()
+          .from(notificationDeliveries)
+          .where(eq(notificationDeliveries.notificationId, notif.id));
+        expect(deliveries).toHaveLength(1);
+        expect(deliveries[0]?.channel).toBe("email");
+      }
     });
   });
 
@@ -218,18 +267,25 @@ describe("Task 3, 4 & 5 — Social Login & Registration (BR-SCL-01..14, D-IN, D-
         },
       });
 
-      try {
-        await handleSocialLogin(mockEvent, {
+      await expect(
+        handleSocialLogin(mockEvent, {
           provider: "google",
           display_name: "Google Profile Name",
           accept_terms: true,
           accept_privacy: true,
-        });
-        expect.fail("Should have thrown SOCIAL_EMAIL_CONFLICT");
-      } catch (err: any) {
-        expect(err.statusCode || err.status).toBe(409);
-        expect(err.data?.code || err.code).toBe("SOCIAL_EMAIL_CONFLICT");
-      }
+        })
+      ).rejects.toSatisfy(
+        (err: {
+          statusCode?: number;
+          status?: number;
+          data?: { code?: string };
+          code?: string;
+        }) => {
+          expect(err.statusCode || err.status).toBe(409);
+          expect(err.data?.code || err.code).toBe("SOCIAL_EMAIL_CONFLICT");
+          return true;
+        }
+      );
 
       // Invariant check: 0 social_identities rows created
       const identities = await db

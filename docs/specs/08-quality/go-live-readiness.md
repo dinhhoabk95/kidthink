@@ -2,7 +2,7 @@
 spec: GO-LIVE-READINESS
 title: Điều kiện go-live của tầng game — khác MVP
 area: quality
-status: approved
+status: implemented
 mvp: false
 phase: P4
 reviewed: 2026-10-18
@@ -21,13 +21,10 @@ depends_on:
   - CONTENT-SEED-AUTHORING
   - GAME-ENGINE-RUNTIME
   - RELEASE-DEPLOY
-open_tasks:
-  - "#310"
+open_tasks: []
 ---
 
 # Điều kiện go-live của tầng game — khác MVP
-
-> **Chưa hoàn thành** — Cổng `check:go-live` (`packages/content-build/src/gates/go-live-readiness.ts`) chạy trong `check.sh` nhưng chỉ đo 7 phép (mục 1, 8, 9, 14, 15 của 7.2, phạm vi `BR-GLR-05` và trạng thái chương trình dài nhất); các mục 2–7, 10–13, 16–21 chưa đo, trái `BR-GLR-01`. Nhãn phép đo sàn nội dung còn ghi cứng `27/27 engine`. Việc còn lại: [Task #310](../../tasks/310-quality-gates-gaps-plan.md).
 
 ## 1. Objective
 

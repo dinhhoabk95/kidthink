@@ -256,6 +256,7 @@ export const seoPageTypeEnum = pgEnum("seo_page_type", [
   "age_program",
   "topic",
   "static",
+  "faq",
 ]);
 
 export const seoPages = pgTable(

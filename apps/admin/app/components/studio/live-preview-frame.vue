@@ -164,17 +164,44 @@
 <script lang="ts" setup>
   import { AGE_BANDS, type AgeBand } from "@mindkid/shared/client";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+  import { useRuntimeConfig } from "#imports";
 
   export interface PreviewValidationError {
     message: string;
     issues?: Array<{ path: string; message: string }>;
   }
 
+  const TRAILING_SLASHES_REGEX = /\/+$/;
+  const TRAILING_API_REGEX = /\/api$/;
+
+  export function resolveWebOrigin(apiBaseUrl: string): string {
+    const trimmed = apiBaseUrl
+      .trim()
+      .replace(TRAILING_SLASHES_REGEX, "")
+      .replace(TRAILING_API_REGEX, "");
+    if (!trimmed) {
+      return "";
+    }
+    try {
+      return new URL(trimmed).origin;
+    } catch {
+      return trimmed;
+    }
+  }
+
   const props = defineProps<{
     templateCode: string;
-    levelData: Record<string, unknown>;
+    levelData: object;
     validationError?: PreviewValidationError | null;
+    previewToken?: string | null;
   }>();
+
+  const emit = defineEmits<(e: "preview-loaded") => void>();
+
+  const runtimeConfig = useRuntimeConfig();
+  const webOrigin = computed(() =>
+    resolveWebOrigin(String(runtimeConfig.public.apiBaseUrl || ""))
+  );
 
   const selectedAgeBand = ref<AgeBand>("3-4");
   const reducedMotion = ref(false);
@@ -192,16 +219,42 @@
   const ageBands = AGE_BANDS.map((id) => ({ id, label: AGE_BAND_LABELS[id] }));
 
   const previewUrl = computed(() => {
-    return `/play/preview-sandbox?template=${props.templateCode}`;
+    const params = new URLSearchParams();
+    params.set("template", props.templateCode);
+    if (props.previewToken) {
+      params.set("token", props.previewToken);
+    }
+    return [webOrigin.value, `/play/preview-sandbox?${params.toString()}`].join(
+      ""
+    );
   });
 
+  function handleWindowMessage(event: MessageEvent) {
+    if (!webOrigin.value || event.origin !== webOrigin.value) {
+      return;
+    }
+    const data = event.data as { type?: string } | null;
+    if (!data || typeof data !== "object") {
+      return;
+    }
+    if (data.type === "MindKid_STUDIO_SANDBOX_READY") {
+      isIframeLoading.value = false;
+      postUpdateToIframe();
+      emit("preview-loaded");
+    } else if (data.type === "MindKid_STUDIO_SESSION_LOADED") {
+      emit("preview-loaded");
+    }
+  }
+
   onMounted(() => {
+    window.addEventListener("message", handleWindowMessage);
     if (previewIframeRef.value) {
       previewIframeRef.value.addEventListener("load", handleIframeLoad);
     }
   });
 
   onUnmounted(() => {
+    window.removeEventListener("message", handleWindowMessage);
     if (previewIframeRef.value) {
       previewIframeRef.value.removeEventListener("load", handleIframeLoad);
     }
@@ -210,6 +263,7 @@
   function handleIframeLoad() {
     isIframeLoading.value = false;
     postUpdateToIframe();
+    emit("preview-loaded");
   }
 
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -255,19 +309,19 @@
 
   function replaySession() {
     const iframe = previewIframeRef.value;
-    if (iframe?.contentWindow) {
+    if (iframe?.contentWindow && webOrigin.value) {
       iframe.contentWindow.postMessage(
         {
           type: "MindKid_STUDIO_REPLAY",
         },
-        "*"
+        webOrigin.value
       );
     }
   }
 
   function postUpdateToIframe() {
     const iframe = previewIframeRef.value;
-    if (!iframe?.contentWindow) {
+    if (!(iframe?.contentWindow && webOrigin.value)) {
       return;
     }
 
@@ -282,7 +336,7 @@
           muted: isMuted.value,
         },
       },
-      "*"
+      webOrigin.value
     );
   }
 </script>

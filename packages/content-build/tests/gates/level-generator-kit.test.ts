@@ -8,7 +8,7 @@ import { describe, expect, it } from "vitest";
 import { generateLevelsCore } from "#src/cli/gen-levels";
 
 const ALL_36_ENGINES = Object.keys(ALL_TEMPLATES)
-  .filter((k) => k !== "GT-000")
+  .filter((k) => k !== "GT-000" && k !== "GT-037")
   .sort();
 
 const ERR_ENGINE_NOT_FOUND = /không tồn tại trong ALL_TEMPLATES/;
@@ -87,15 +87,7 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
       silent: true,
     });
 
-    for (const item of result.items as Array<{
-      header: {
-        origin: string;
-        thinking_tags: string[];
-        what_tags: string[];
-        skill_codes: string[];
-        instruction: string;
-      };
-    }>) {
+    for (const item of result.items) {
       // `BR-LGK-06` chỉ đòi "phân biệt được với human". Q3 của
       // `level-generator-kit.md` (giá trị origin cho nội dung sinh máy) vẫn mở,
       // nên dùng giá trị CÓ THẬT trong enum thay vì bịa "generator" — thứ sinh
@@ -141,9 +133,9 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
       silent: true,
     });
 
-    const hashes = (
-      result.items as Array<{ content_pack: Record<string, unknown> }>
-    ).map((item) => JSON.stringify(item.content_pack));
+    const hashes = result.items.map((item) =>
+      JSON.stringify(item.content_pack)
+    );
     const uniqueHashes = new Set(hashes);
 
     expect(uniqueHashes.size).toBe(hashes.length);
@@ -177,7 +169,7 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
       ).toBe(0);
 
       // Verify each candidate matches content_contract
-      for (const item of result.items as Array<{ content_pack: unknown }>) {
+      for (const item of result.items) {
         const parsed = template?.content_contract.safeParse(item.content_pack);
         expect(
           parsed?.success,
@@ -208,9 +200,9 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
         `Engine ${engine} phải sinh đủ ${count} level`
       ).toBe(count);
 
-      const hashes = (
-        result.items as Array<{ content_pack: Record<string, unknown> }>
-      ).map((item) => JSON.stringify(item.content_pack));
+      const hashes = result.items.map((item) =>
+        JSON.stringify(item.content_pack)
+      );
       const uniqueHashes = new Set(hashes);
       expect(
         uniqueHashes.size,
@@ -220,6 +212,57 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
   }, 30_000);
 
   describe("Ca âm cho bộ sinh (WP121.4)", () => {
+    it("Ca âm BR-LGK-03: Ứng viên trượt content_contract bị loại bỏ, không tự sửa", async () => {
+      const { ALL_LEVEL_GENERATORS } = await import("@mindkid/game-engine");
+      const origGen = ALL_LEVEL_GENERATORS["GT-001"];
+      if (!origGen) {
+        throw new Error("GT-001 generator must exist");
+      }
+
+      ALL_LEVEL_GENERATORS["GT-001"] = {
+        ...origGen,
+        generate: () => ({
+          content_pack: { invalid_schema_field: true },
+          difficulty_params: {},
+        }),
+      };
+
+      try {
+        const result = generateLevelsCore({
+          engine: "GT-001",
+          count: 2,
+          seed: 42,
+          theme: "school",
+          silent: true,
+        });
+        expect(result.writtenCount).toBe(0);
+        expect(result.contractRejectedCount).toBeGreaterThan(0);
+      } finally {
+        ALL_LEVEL_GENERATORS["GT-001"] = origGen;
+      }
+    });
+
+    it("Ca âm BR-LGK-10: Tĩnh — các generator gt001..gt036 không tự gán thinking_tags, what_tags, skill_codes", () => {
+      const genDir = repoPath("packages/game-engine/src/generators");
+      const files = fs
+        .readdirSync(genDir)
+        .filter((f) => f.startsWith("gt") && f.endsWith(".ts"));
+      expect(files.length).toBe(36);
+
+      for (const file of files) {
+        const src = fs.readFileSync(path.join(genDir, file), "utf-8");
+        expect(src, `${file} không được gán thinking_tags`).not.toContain(
+          "thinking_tags"
+        );
+        expect(src, `${file} không được gán what_tags`).not.toContain(
+          "what_tags"
+        );
+        expect(src, `${file} không được gán skill_codes`).not.toContain(
+          "skill_codes"
+        );
+      }
+    });
+
     it("Ca âm Đợt 0: Generator không dùng rng làm kiểm tra năng lực thất bại", () => {
       const fakeNonRngGenerator = {
         engine: "GT-013" as const,

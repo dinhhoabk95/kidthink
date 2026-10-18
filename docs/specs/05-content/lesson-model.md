@@ -5,7 +5,7 @@ area: content
 status: implemented
 mvp: true
 phase: P3
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Ràng buộc biên tập của một lesson
 depends_on:
@@ -49,7 +49,7 @@ Không có.
 | `BR-LSM-05` | Tổng thời lượng 15–30 phút, trần cứng 45 | Tối ưu khoảng thời gian tập trung hiệu quả của trẻ mầm non mà không gây quá tải |
 | `BR-LSM-06` | Phần đánh giá mô tả **hành vi quan sát được**, không mức độ trừu tượng | "Bé chỉ đúng vật to hơn" đo được; "bé hiểu khái niệm kích thước" thì không |
 | `BR-LSM-07` | Cấm — **NEVER giả định trẻ biết đọc** | Đảm bảo trẻ 3-6 tuổi chưa biết đọc chữ vẫn tham gia và hiểu được hướng dẫn học tập |
-| `BR-LSM-08` | Lesson phục vụ **một cụm learning objective liên quan**, không rải rác | Giữ sự tập trung vào một mục tiêu sư phạm cốt lõi và tránh làm rối kiến thức |
+| `BR-LSM-08` | Lesson phục vụ **một cụm learning objective / kỹ năng liên quan** (tối đa 3 skill), không rải rác | Giữ sự tập trung vào một mục tiêu sư phạm cốt lõi và tránh làm rối kiến thức |
 | `BR-LSM-09` | Phần mở rộng là **tuỳ chọn**, không bắt buộc | Người dạy quyết định theo sức trẻ hôm đó |
 
 ## 7. Data

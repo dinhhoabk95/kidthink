@@ -8,7 +8,13 @@ export default defineEventHandler(async (event) => {
 
   const db = getOwnerDb();
   const query = getQuery(event);
-  const result = await searchGameLevels(db, query, { role: "manager" });
+  const skillCode =
+    typeof query.skill_code === "string" ? query.skill_code.trim() : undefined;
+  const result = await searchGameLevels(
+    db,
+    skillCode ? { ...query, skill_code: skillCode, skill: skillCode } : query,
+    { role: "manager" }
+  );
 
   return {
     items: result.items,

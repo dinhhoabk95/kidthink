@@ -22,6 +22,7 @@ import nextStepHandler from "#server/api/users/children/[uuid]/curriculum/next.g
 import progressHandler from "#server/api/users/children/[uuid]/curriculum/progress.get";
 import enrollHandler from "#server/api/users/children/[uuid]/enrollments/index.post";
 import withdrawHandler from "#server/api/users/children/[uuid]/enrollments/withdraw.post";
+import flowsHandler from "#server/api/users/children/[uuid]/flows.get";
 import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 function makeUserEvent(
@@ -697,7 +698,25 @@ describe("Curriculum Player Suite — P3.4 (BR-CUR-01..10, D-MA..D-MG)", {
     );
 
     expect(res.status).toBe("active");
+    expect(res.age_gap).toBe(2);
     expect(res.warning).toContain("bé nhà bạn 8 tuổi");
+  });
+
+  it("GET /flows returns published flows with fits_age and age_gap and returns 404 for another parent's child (BR-LFM-02/03/04/07/09)", async () => {
+    const { user, child, curriculum } = await createTestFixtures();
+
+    const res = await flowsHandler(
+      makeUserEvent(user.id, { uuid: child.uuid })
+    );
+    const found = res.flows.find((f) => f.code === curriculum.code);
+    expect(found).toBeDefined();
+    expect(found?.fits_age).toBe(true);
+    expect(found?.age_gap).toBe(0);
+
+    const otherUserId = user.id + 999;
+    await expect(
+      flowsHandler(makeUserEvent(otherUserId, { uuid: child.uuid }))
+    ).rejects.toThrow();
   });
 
   it("POST /enrollments rejects when user tier opens 0 mandatory items with 422 VALIDATION_FAILED", async () => {

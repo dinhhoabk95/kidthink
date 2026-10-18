@@ -1,10 +1,19 @@
 import { getOwnerDb } from "@mindkid/db";
 import { type AgeBand, isAgeBand } from "@mindkid/shared";
 import { defineEventHandler, getQuery } from "h3";
+import { z } from "zod";
 import { getGuestRecommendations } from "#server/services/index.js";
 
+const GuestRecommendationsQuerySchema = z.object({
+  limit: z.coerce.number().optional(),
+  age_band: z.string().optional(),
+});
+
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event);
+  const parsedQuery = GuestRecommendationsQuerySchema.safeParse(
+    getQuery(event)
+  );
+  const query = parsedQuery.success ? parsedQuery.data : {};
   const rawLimit = Number(query.limit);
   const limit = Number.isFinite(rawLimit)
     ? Math.max(1, Math.min(rawLimit, 5))

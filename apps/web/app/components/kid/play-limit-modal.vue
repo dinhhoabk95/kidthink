@@ -73,7 +73,7 @@
         </p>
         <div class="flex items-center justify-center gap-3">
           <button
-            class="min-h-12 px-5 rounded-xl bg-warning-400 text-surface-900 font-heading font-bold text-sm border-2 border-warning-500 shadow-[0_2px_0_var(--color-warning-600)] active:translate-y-0.5 transition-all disabled:opacity-50"
+            class="min-h-16 px-5 rounded-xl bg-warning-400 text-surface-900 font-heading font-bold text-base border-2 border-warning-500 shadow-[0_2px_0_var(--color-warning-600)] active:translate-y-0.5 transition-all disabled:opacity-50"
             data-testid="grant-15-mins-btn"
             type="button"
             :disabled="isSubmitting"
@@ -82,7 +82,7 @@
             +15 phút
           </button>
           <button
-            class="min-h-12 px-5 rounded-xl bg-cta-600 text-white font-heading font-bold text-sm border-2 border-cta-700 shadow-[0_2px_0_var(--color-cta-800)] active:translate-y-0.5 transition-all disabled:opacity-50"
+            class="min-h-16 px-5 rounded-xl bg-cta-600 text-white font-heading font-bold text-base border-2 border-cta-700 shadow-[0_2px_0_var(--color-cta-800)] active:translate-y-0.5 transition-all disabled:opacity-50"
             data-testid="grant-30-mins-btn"
             type="button"
             :disabled="isSubmitting"
@@ -99,25 +99,15 @@
         </p>
       </div>
 
-      <!-- Nút hành động chính chuẩn Kid Surface (sàn touch >= 64px, không đỏ) -->
+      <!-- Nút hành động duy nhất dẫn qua ParentGateModal (§7.3, BR-HPL-04, sàn touch >= 64px) -->
       <div
         class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2"
+        v-if="!showParentExtendOptions"
       >
-        <button
-          class="w-full sm:w-auto min-h-16 px-6 rounded-2xl bg-brand-600 text-white font-heading font-bold text-lg border-[3px] border-brand-700 shadow-[0_4px_0_var(--color-brand-800)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--color-brand-800)] transition-all flex items-center justify-center gap-2"
-          data-testid="play-limit-leave-btn"
-          type="button"
-          @click="handleLeave"
-        >
-          <UIcon class="w-6 h-6" name="i-lucide-home" />
-          <span>Về sảnh chơi</span>
-        </button>
-
         <button
           class="w-full sm:w-auto min-h-16 px-6 rounded-2xl bg-white text-brand-700 font-heading font-bold text-lg border-[3px] border-brand-300 shadow-[0_4px_0_var(--color-brand-300)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--color-brand-300)] transition-all flex items-center justify-center gap-2"
           data-testid="play-limit-ask-parent-btn"
           type="button"
-          v-if="!showParentExtendOptions && childUuid"
           @click="showParentGate = true"
         >
           <UIcon class="w-6 h-6 text-brand-600" name="i-lucide-lock" />
@@ -128,6 +118,7 @@
 
     <!-- Parent Gate Modal (Bảo vệ luồng xin thêm giờ của người lớn, xác thực token HMAC qua server) -->
     <ParentGateModal
+      trigger="extend_play_time"
       v-if="showParentGate"
       :client-only="false"
       @cancel="showParentGate = false"
@@ -141,6 +132,7 @@
   import { ref } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
+  import { useApi } from "~/composables/use-api";
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
 
   interface OfflineActivity {
@@ -163,6 +155,7 @@
     (e: "granted", minutes: number): void;
   }>();
 
+  const api = useApi();
   const showParentGate = ref(false);
   const showParentExtendOptions = ref(false);
   const parentGateToken = ref<string>("");
@@ -184,10 +177,6 @@
     },
   ];
 
-  function handleLeave(): void {
-    emit("leave");
-  }
-
   function onParentGateVerified(token?: string): void {
     showParentGate.value = false;
     if (token) {
@@ -204,7 +193,7 @@
     grantErrorMessage.value = null;
 
     try {
-      await $fetch(`/api/users/children/${props.childUuid}/grant-extra-time`, {
+      await api(`/api/users/children/${props.childUuid}/grant-extra-time`, {
         method: "POST",
         headers: getCsrfHeaders(),
         body: {

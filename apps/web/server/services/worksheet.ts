@@ -252,7 +252,9 @@ export async function updateWorksheetDraft(
 
   const mergedTitle = input.title ?? existing.title;
   const mergedTemplate = input.layout_template ?? existing.layoutTemplate;
-  const mergedBlocks = input.content_blocks ?? existing.contentBlocks;
+  const mergedBlocks =
+    input.content_blocks ??
+    (existing.contentBlocks as WorksheetFormInput["content_blocks"]);
   const mergedInstructions = input.instructions ?? existing.instructions;
   const mergedObjectives =
     input.learning_objective_ids ??

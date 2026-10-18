@@ -370,7 +370,9 @@
   import { computed, onMounted, ref } from "vue";
   import { useRoute } from "vue-router";
   import { z } from "zod";
+  import { useApi } from "~/composables/use-api";
 
+  const api = useApi();
   const route = useRoute();
   const lessonCode = computed(() => {
     const raw = route.params.code;
@@ -409,7 +411,7 @@
       code: string;
       title: string;
       contentVersion: number;
-      guide: unknown;
+      guide: Record<string, string | undefined> | null;
       status: string;
     };
     steps: StepDetail[];
@@ -512,13 +514,13 @@
     pending.value = true;
     hasError.value = false;
     try {
-      const res = await $fetch<LessonSession>("/api/users/lesson-runs", {
+      const res = await api<LessonSession>("/api/users/lesson-runs", {
         method: "POST",
         body: { lesson_code: lessonCode.value },
       });
       session.value = res;
       currentStepIndex.value = res.currentStep === 0 ? -1 : res.currentStep;
-    } catch (err: unknown) {
+    } catch (err) {
       hasError.value = true;
       let msg = "Không thể kết nối đến tiết học.";
       if (err && typeof err === "object" && "data" in err) {
@@ -546,7 +548,7 @@
     }
     updatingStep.value = true;
     try {
-      const res = await $fetch<{ currentStep: number; status: string }>(
+      const res = await api<{ currentStep: number; status: string }>(
         `/api/users/lesson-runs/${session.value.runUuid}`,
         {
           method: "PATCH",
@@ -570,7 +572,7 @@
     }
     updatingStep.value = true;
     try {
-      const res = await $fetch<{ currentStep: number; status: string }>(
+      const res = await api<{ currentStep: number; status: string }>(
         `/api/users/lesson-runs/${session.value.runUuid}`,
         {
           method: "PATCH",
@@ -597,7 +599,7 @@
     }
     observations.value = { ...observations.value, [objectiveCode]: level };
     try {
-      await $fetch(
+      await api(
         `/api/users/lesson-runs/${session.value.runUuid}/observations`,
         {
           method: "POST",
@@ -618,7 +620,7 @@
     }
     completing.value = true;
     try {
-      await $fetch(`/api/users/lesson-runs/${session.value.runUuid}/complete`, {
+      await api(`/api/users/lesson-runs/${session.value.runUuid}/complete`, {
         method: "POST",
       });
       session.value = { ...session.value, status: "completed" };

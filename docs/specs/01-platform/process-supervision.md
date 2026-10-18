@@ -2,12 +2,10 @@
 spec: PROCESS-SUPERVISION
 title: Giám sát tiến trình và luân chuyển log
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
 reviewed: 2026-10-18
-open_tasks:
-  - "#304"
 owns:
   - Mô hình tiến trình của web và worker trên máy chủ
   - Chính sách khởi động lại và khởi động cùng máy
@@ -20,8 +18,6 @@ depends_on:
 ---
 
 # Giám sát tiến trình ứng dụng trên máy chủ
-
-> **Chưa hoàn thành** — Web chạy `instances: "max"` không tính cùng pool kết nối cơ sở dữ liệu (`BR-SUP-08`); `BR-SUP-07` (log không chứa bí mật) chưa có kiểm. Việc còn lại: [Task #304](../../tasks/304-platform-ops-gaps-plan.md).
 
 ## 1. Objective
 
@@ -121,6 +117,17 @@ xuống tiến trình con; tiến trình con không bao giờ mở tệp env.
 | Giãn cách giữa hai lần dựng lại  | tăng dần, tối đa 30 giây   | Tránh vòng lặp dựng lại nhanh                               |
 | Thời gian chờ tắt êm             | 10 giây                    | Đủ để yêu cầu đang xử lý xong                               |
 | Luân chuyển log                  | mỗi ngày, giữ 14 ngày, nén | Giới hạn cứng để đĩa không đầy                              |
+
+### 7.3 Công thức pool kết nối (`BR-SUP-08`)
+
+Mỗi tiến trình Node mở một pool kết nối cơ sở dữ liệu tối đa `DB_POOL_MAX = 2` kết nối (`packages/db/src/client.ts`).
+Số bản `web` trong `infra/pm2/ecosystem.config.cjs` được tính bằng `resolveWebInstances()` để thỏa bất biến:
+
+```
+(web_instances + worker_instances) * DB_POOL_MAX <= DB_MAX_CONNECTIONS
+```
+
+Với `DB_MAX_CONNECTIONS = 20`, `WORKER_INSTANCES = 1`, `MIN_WEB_INSTANCES = 2`: `web_instances = min(max(vCPU, 2), floor(20 / 2) - 1) = min(max(vCPU, 2), 9)`. Cấm đặt `instances: "max"` không trần vì trên máy nhiều nhân sẽ làm tràn giới hạn kết nối PostgreSQL.
 
 ## 8. API contract
 

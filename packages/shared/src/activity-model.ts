@@ -76,7 +76,6 @@ export interface ActivityValidationInput {
   ref_type?: string | null;
   ref_id?: number | null;
   ref_code?: string | null;
-  [key: string]: unknown;
 }
 
 export interface ActivityValidationResult {
@@ -164,7 +163,7 @@ function validateKindAndRef(
 ): void {
   if (!ACTIVITY_KINDS.includes(kind as ActivityKind)) {
     errors.push(
-      `BR-ACM-02: Loại hoạt động '${kind}' không hợp lệ. Phải thuộc 1 trong 10 loại: ${ACTIVITY_KINDS.join(", ")}.`
+      `D-LB: Loại hoạt động '${kind}' không hợp lệ. Phải thuộc 1 trong 10 loại: ${ACTIVITY_KINDS.join(", ")}.`
     );
   }
 
@@ -305,13 +304,11 @@ function checkSafetyAndWarnings(
     const questionMatches = allText.match(OPEN_QUESTIONS_REGEX) || [];
     if (questionMatches.length < 3) {
       warnings.push(
-        "BR-ACM-07.2: Hoạt động thảo luận nên có ít nhất 3 câu hỏi mở gợi mở tư duy."
+        "D-LD: Hoạt động thảo luận nên có ít nhất 3 câu hỏi mở gợi mở tư duy."
       );
     }
   } else if (kind === "movement" && !MOVEMENT_SPACE_REGEX.test(allText)) {
-    warnings.push(
-      "BR-ACM-07.2: Hoạt động vận động nên nêu rõ không gian cần thiết."
-    );
+    warnings.push("D-LD: Hoạt động vận động nên nêu rõ không gian cần thiết.");
   }
 }
 
@@ -322,9 +319,7 @@ export function validateActivityModel(
   const warnings: string[] = [];
 
   if (input.code && !CODE_PATTERN.test(input.code)) {
-    errors.push(
-      "BR-ACM-01: Mã activity phải có định dạng ACT-xxxx (4 chữ số)."
-    );
+    errors.push("BR-ID-05: Mã activity phải có định dạng ACT-xxxx (4 chữ số).");
   }
 
   const kind = (input.kind || input.activity_kind || "") as string;
@@ -336,7 +331,7 @@ export function validateActivityModel(
     input.estimated_minutes > 20
   ) {
     errors.push(
-      "BR-ACM-04: Thời lượng hoạt động phải nằm trong khoảng từ 2 đến 20 phút."
+      "BR-ACM-02: Thời lượng hoạt động phải nằm trong khoảng từ 2 đến 20 phút."
     );
   }
 

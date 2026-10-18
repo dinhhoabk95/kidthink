@@ -1,10 +1,7 @@
 import { writeAudit } from "@mindkid/audit";
 import { gameLevels, getOwnerDb, managers } from "@mindkid/db";
 import { InternalError } from "@mindkid/errors/common";
-import {
-  LayoutNotSupportedError,
-  TemplateNotSupportedError,
-} from "@mindkid/errors/game-level";
+import { TemplateNotSupportedError } from "@mindkid/errors/game-level";
 import { getGameTemplate } from "@mindkid/game-engine/registry";
 import { eq, sql } from "drizzle-orm";
 import { defineEventHandler, setResponseStatus } from "h3";
@@ -12,6 +9,7 @@ import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
 import { syncContentAssetRefs } from "#server/utils/asset-refs";
+import { assertTemplateLayoutSupported } from "#server/utils/level-layout";
 import { readPostgresErrorCode } from "#server/utils/pg-error";
 import { readRequestBody } from "#server/utils/request-body";
 
@@ -27,6 +25,8 @@ import { readRequestBody } from "#server/utils/request-body";
  * Đây là ca dùng `unknown` hợp lệ theo TYPE-SAFETY `BR-TYP-03` — dữ liệu đi
  * tiếp tới một schema khác, không bị đọc trực tiếp ở đây.
  */
+const ACCESS_TIERS = ["free", "login", "standard", "premium"] as const;
+
 const createLevelSchema = z.object({
   template_code: z.string().min(1, "template_code là bắt buộc"),
   code: z.string().min(1, "Mã màn chơi không được rỗng").optional(),
@@ -38,7 +38,7 @@ const createLevelSchema = z.object({
   age_min: z.number().int().min(3).max(6).optional(),
   age_max: z.number().int().min(3).max(6).optional(),
   difficulty: z.number().int().min(1).max(5).optional(),
-  access_tier: z.enum(["free", "login", "standard", "premium"]).optional(),
+  access_tier: z.enum(ACCESS_TIERS),
   origin: z.enum(["human", "ai_assisted"]).optional(),
 });
 
@@ -86,7 +86,7 @@ function buildInsertValues(
     ageMin: input.age_min ?? templateAgeMin,
     ageMax: input.age_max ?? templateAgeMax,
     difficulty: input.difficulty ?? 1,
-    accessTier: input.access_tier ?? "free",
+    accessTier: input.access_tier,
     status: "draft" as const,
     origin: input.origin ?? "human",
     authoredIn: "studio" as const,
@@ -194,17 +194,7 @@ export default defineEventHandler(async (event) => {
   }
   const db = getOwnerDb();
 
-  const rawLayoutId = input.difficulty_params?.layout_id;
-  const requestedLayoutId =
-    typeof rawLayoutId === "string" ? rawLayoutId : undefined;
-  if (
-    requestedLayoutId &&
-    !template.layouts.some((layoutId) => layoutId === requestedLayoutId)
-  ) {
-    throw new LayoutNotSupportedError(
-      `Layout '${requestedLayoutId}' is not supported by template '${templateCode}' (BR-LAY-02)`
-    );
-  }
+  assertTemplateLayoutSupported(templateCode, input.difficulty_params);
 
   const { levelCode, count } = await resolveLevelCode(
     db,

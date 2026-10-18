@@ -4,6 +4,8 @@ import { mount } from "@vue/test-utils";
 import { describe, expect, it } from "vitest";
 import VictoryModal from "~/components/kid/victory-modal.vue";
 
+const DIGIT_REGEX = /\d/;
+
 /**
  * Harness DOM cho bề mặt chơi (Task #260 T13/T15).
  * Chỉ `tests/component/` chạy trong happy-dom; phần còn lại của apps/web giữ
@@ -18,6 +20,15 @@ describe("KidVictoryModal", () => {
     expect(wrapper.findAll(".star-icon")).toHaveLength(1);
   });
 
+  it("BR-SCO-02 (BR-SCR-02): stars = 2 thì hiện đúng 2 sao và không chứa con số điểm nào", () => {
+    const wrapper = mount(VictoryModal, {
+      props: { show: true, stars: 2, celebration: "good" },
+    });
+
+    expect(wrapper.findAll(".star-icon")).toHaveLength(2);
+    expect(wrapper.text()).not.toMatch(DIGIT_REGEX);
+  });
+
   it("stars = 3 thì hiện đúng 3 sao", () => {
     const wrapper = mount(VictoryModal, {
       props: { show: true, stars: 3 },
@@ -26,16 +37,23 @@ describe("KidVictoryModal", () => {
     expect(wrapper.findAll(".star-icon")).toHaveLength(3);
   });
 
-  it("stars = null thì Cấm — NEVER hiện sao nào", () => {
-    const wrapper = mount(VictoryModal, {
+  it("BR-SCO-07 (BR-SCR-07): stars = null hoặc 0 thì Cấm — NEVER hiện sao nào", () => {
+    const wrapperNull = mount(VictoryModal, {
       props: { show: true, stars: null },
     });
 
-    expect(wrapper.findAll(".star-icon")).toHaveLength(0);
-    expect(wrapper.find(".stars-arc").exists()).toBe(false);
+    expect(wrapperNull.findAll(".star-icon")).toHaveLength(0);
+    expect(wrapperNull.find(".stars-arc").exists()).toBe(false);
+
+    const wrapperZero = mount(VictoryModal, {
+      props: { show: true, stars: 0 },
+    });
+
+    expect(wrapperZero.findAll(".star-icon")).toHaveLength(0);
+    expect(wrapperZero.find(".stars-arc").exists()).toBe(false);
   });
 
-  it("Ca âm: DOM Cấm — NEVER chứa chuỗi `Điểm` (BR-FBK: trẻ mầm non không đọc điểm số)", () => {
+  it("Ca âm BR-SCO-02 (BR-SCR-02): DOM Cấm — NEVER chứa chuỗi `Điểm` (BR-FBK: trẻ mầm non không đọc điểm số)", () => {
     const wrapper = mount(VictoryModal, {
       props: { show: true, stars: 2, celebration: "good" },
     });
@@ -44,7 +62,7 @@ describe("KidVictoryModal", () => {
     expect(wrapper.text()).not.toContain("điểm");
   });
 
-  it("`/complete` lỗi (celebration nice_try, stars null) thì Cấm — NEVER khen `Bé Giỏi Quá!`", () => {
+  it("BR-SCO-08 (BR-SCR-08): `/complete` lỗi hoặc điểm thấp (celebration nice_try) vẫn luôn hiển thị lời khen tích cực", () => {
     const wrapper = mount(VictoryModal, {
       props: { show: true, stars: null, celebration: "nice_try" },
     });
@@ -173,6 +191,66 @@ describe("KidVictoryModal", () => {
     });
 
     expect(wrapper.find('[data-testid="victory-sticker"]').exists()).toBe(
+      false
+    );
+  });
+
+  it("BR-PEN-05: guest thấy CTA 'Ba mẹ đăng ký để lưu tiến độ', bấm mở Parent Gate rồi chuyển tới /register", async () => {
+    const pushSpy = (path: string) => {
+      pushedPaths.push(path);
+    };
+    const pushedPaths: string[] = [];
+    Object.assign(globalThis, {
+      useRouter: () => ({ push: pushSpy }),
+    });
+
+    const ParentGateStub = {
+      name: "ParentGateModal",
+      emits: ["verified", "cancel"],
+      template:
+        '<div data-testid="guest-parent-gate"><button data-testid="guest-gate-verify" type="button" @click="$emit(\'verified\', \'client_verified\')">Verify</button></div>',
+    };
+
+    try {
+      const wrapper = mount(VictoryModal, {
+        props: { show: true, stars: 3, isGuest: true },
+        global: {
+          stubs: {
+            ParentGateModal: ParentGateStub,
+          },
+        },
+      });
+
+      const cta = wrapper.find('[data-testid="guest-register-cta"]');
+      expect(cta.exists()).toBe(true);
+      expect(cta.text()).toContain("Ba mẹ đăng ký để lưu tiến độ");
+      expect(wrapper.find('[data-testid="guest-parent-gate"]').exists()).toBe(
+        false
+      );
+
+      await cta.trigger("click");
+      expect(wrapper.find('[data-testid="guest-parent-gate"]').exists()).toBe(
+        true
+      );
+      expect(pushedPaths).toEqual([]);
+
+      await wrapper.get('[data-testid="guest-gate-verify"]').trigger("click");
+      expect(wrapper.emitted("register")).toHaveLength(1);
+      expect(pushedPaths).toEqual(["/register"]);
+      expect(wrapper.find('[data-testid="guest-parent-gate"]').exists()).toBe(
+        false
+      );
+    } finally {
+      Reflect.deleteProperty(globalThis, "useRouter");
+    }
+  });
+
+  it("BR-PEN-05 (ca âm): user đã đăng nhập (isGuest = false) không thấy CTA đăng ký", () => {
+    const wrapper = mount(VictoryModal, {
+      props: { show: true, stars: 3, isGuest: false },
+    });
+
+    expect(wrapper.find('[data-testid="guest-register-cta"]').exists()).toBe(
       false
     );
   });

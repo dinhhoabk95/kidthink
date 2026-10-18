@@ -259,6 +259,7 @@
       <!-- Victory Celebration Modal -->
       <KidVictoryModal
         :celebration="earnedCelebration"
+        :is-guest="!loggedIn"
         :is-intro="isIntroLevel"
         :show="showVictoryModal"
         :stars="earnedStars"

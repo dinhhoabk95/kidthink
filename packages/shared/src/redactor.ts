@@ -48,15 +48,26 @@ export function isPiiKey(key: string): boolean {
   );
 }
 
+export type RedactableValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | object;
+
 function redactPrimitive<T>(input: T): T {
   if (typeof input === "string" && input.toLowerCase().startsWith("bearer ")) {
-    return "[REDACTED_BEARER_TOKEN]" as unknown as T;
+    const redacted: string = "[REDACTED_BEARER_TOKEN]";
+    return redacted as T & string;
   }
   return input;
 }
 
-function redactObject(obj: Record<string, unknown>): Record<string, unknown> {
-  const result: Record<string, unknown> = {};
+function redactObject(
+  obj: Record<string, RedactableValue>
+): Record<string, RedactableValue> {
+  const result: Record<string, RedactableValue> = {};
   for (const [key, value] of Object.entries(obj)) {
     if (isPiiKey(key)) {
       continue;
@@ -88,7 +99,10 @@ export function redactPii<T>(input: T): T {
     return redactPrimitive(input);
   }
   if (Array.isArray(input)) {
-    return input.map((item) => redactPii(item)) as unknown as T;
+    const mapped: RedactableValue[] = input.map((item: RedactableValue) =>
+      redactPii(item)
+    );
+    return mapped as T & RedactableValue[];
   }
   if (
     input instanceof Date ||
@@ -97,5 +111,5 @@ export function redactPii<T>(input: T): T {
   ) {
     return input;
   }
-  return redactObject(input as Record<string, unknown>) as T;
+  return redactObject(input as Record<string, RedactableValue>) as T;
 }

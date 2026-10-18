@@ -1,3 +1,4 @@
+import { clearInMemoryBuckets } from "@mindkid/cache";
 import {
   featureFlags,
   getOwnerDb,
@@ -32,6 +33,7 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+  clearInMemoryBuckets();
   await ensureTestEntities();
 });
 
@@ -368,6 +370,71 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
       expect(res.url).toBeDefined();
       expect(res.row_count).toBeGreaterThanOrEqual(1);
     }, 30_000);
+
+    it("rejects export exceeding MAX_EXPORT_ROWS with 422 instead of silently truncating (BR-EXP-05)", async () => {
+      const event = mockManagerEvent(
+        "super_admin",
+        { kind: "subscriptions" },
+        {
+          reason: "Kiểm thử vượt trần số lượng dòng xuất",
+          max_rows: "1",
+        }
+      );
+      await expect(exportsHandler(event)).rejects.toMatchObject({
+        statusCode: 422,
+        statusMessage: "VALIDATION_FAILED",
+      });
+    }, 30_000);
+
+    it("filters exported rows by from/to ISO date range and rejects invalid ranges with 422 (Spec §8)", async () => {
+      const futureRangeEvent = mockManagerEvent(
+        "super_admin",
+        { kind: "subscriptions" },
+        {
+          reason: "Lọc dữ liệu trong tương lai không có bản ghi",
+          from: "2099-01-01",
+          to: "2099-01-31",
+        }
+      );
+      const futureRes = await exportsHandler(futureRangeEvent);
+      expect(futureRes.row_count).toBe(0);
+
+      const reversedRangeEvent = mockManagerEvent(
+        "super_admin",
+        { kind: "subscriptions" },
+        {
+          reason: "Khoảng thời gian bị đảo ngược từ sau tới trước",
+          from: "2026-10-20",
+          to: "2026-10-10",
+        }
+      );
+      await expect(exportsHandler(reversedRangeEvent)).rejects.toMatchObject({
+        statusCode: 422,
+        statusMessage: "VALIDATION_FAILED",
+      });
+    }, 30_000);
+
+    it("rate limits export to 5 requests per day per manager via @mindkid/cache returning 429 on 6th attempt (BR-EXP-07)", async () => {
+      for (let i = 1; i <= 5; i++) {
+        const evt = mockManagerEvent(
+          "super_admin",
+          { kind: "revenue" },
+          { reason: `Xuất dữ liệu lần thứ ${i} trong ngày` }
+        );
+        const res = await exportsHandler(evt);
+        expect(res.url).toBeDefined();
+      }
+
+      const sixthEvt = mockManagerEvent(
+        "super_admin",
+        { kind: "revenue" },
+        { reason: "Xuất dữ liệu lần thứ 6 vượt giới hạn ngày" }
+      );
+      await expect(exportsHandler(sixthEvt)).rejects.toMatchObject({
+        statusCode: 429,
+        statusMessage: "RATE_LIMITED",
+      });
+    }, 30_000);
   });
 
   describe("Notifications Admin & Resend (BR-NTA-01 - BR-NTA-05)", () => {
@@ -531,7 +598,7 @@ describe("Feature Flags, Data Export & Notification Admin (P2.9)", () => {
         expect.fail("Should throw 422 MISSING_REQUIRED_VARIABLES");
       } catch (err: any) {
         expect(err.statusCode || err.status).toBe(422);
-        expect(err.statusMessage).toBe("MISSING_REQUIRED_VARIABLES");
+        expect(err.message).toContain("BR-NTA-07");
       }
     });
 

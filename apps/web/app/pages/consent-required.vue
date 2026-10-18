@@ -156,6 +156,7 @@
 <script lang="ts" setup>
   import { isApiError } from "@mindkid/errors/client";
   import { computed, onMounted, reactive, ref } from "vue";
+  import { useApi } from "~/composables/use-api";
 
   definePageMeta({
     middleware: ["user-auth"],
@@ -171,6 +172,7 @@
     status: "active" | "required" | "withdrawn";
   }
 
+  const api = useApi();
   const route = useRoute();
   const router = useRouter();
 
@@ -211,7 +213,7 @@
     loading.value = true;
     errorMessage.value = null;
     try {
-      const data = await globalThis.$fetch<{ consents: ConsentItem[] }>(
+      const data = await api<{ consents: ConsentItem[] }>(
         "/api/users/consents"
       );
       if (data?.consents) {
@@ -246,7 +248,7 @@
 
   async function submitConsentItems(items: ConsentItem[]) {
     for (const item of items) {
-      await globalThis.$fetch("/api/users/consents", {
+      await api("/api/users/consents", {
         method: "POST",
         body: {
           consent_type: item.consent_type,
@@ -307,7 +309,7 @@
 
   async function handleLogout() {
     try {
-      await globalThis.$fetch("/api/users/auth/logout", { method: "POST" });
+      await api("/api/users/auth/logout", { method: "POST" });
     } finally {
       window.location.href = "/";
     }

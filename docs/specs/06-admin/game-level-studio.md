@@ -2,12 +2,10 @@
 spec: GAME-LEVEL-STUDIO
 title: Studio soạn màn chơi
 area: admin
-status: approved
+status: implemented
 mvp: true
 phase: P2
 reviewed: 2026-10-18
-open_tasks:
-  - "#300"
 owns:
   - Luồng soạn một game level
   - Ràng buộc soạn thảo và lưu nháp
@@ -19,8 +17,6 @@ depends_on:
 ---
 
 # Studio soạn màn chơi
-
-> **Chưa hoàn thành** — `POST /api/managers/levels` cho `access_tier` optional và mặc định `"free"`, trái BR-STU-06. Việc còn lại: [Task #300](../../tasks/300-admin-small-gaps-plan.md).
 
 ## 1. Objective
 

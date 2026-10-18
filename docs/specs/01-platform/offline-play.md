@@ -2,12 +2,10 @@
 spec: OFFLINE-PLAY
 title: Chơi khi mất mạng
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
-open_tasks:
-  - "#303"
 owns:
   - Hành vi khi mất mạng giữa phiên
   - Buffer event offline và đồng bộ lại
@@ -17,8 +15,6 @@ depends_on:
 ---
 
 # Chơi khi mất mạng
-
-> **Chưa hoàn thành** — `OfflineEventBuffer` có trong `packages/game-engine` nhưng app chưa dùng: không buffer IndexedDB, event lỗi mạng bị bỏ, chưa flush lần mở sau, chưa preload toàn bộ asset (`BR-OFF-01`, `BR-OFF-02`, `BR-OFF-03`, `BR-OFF-06`). Việc còn lại: [Task #303](../../tasks/303-offline-play-buffer-plan.md).
 
 ## 1. Objective
 

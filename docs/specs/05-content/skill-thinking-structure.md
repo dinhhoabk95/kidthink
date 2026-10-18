@@ -22,7 +22,7 @@ depends_on:
 
 # Cấu trúc tư duy trong bộ dữ liệu kỹ năng
 
-> **Chưa hoàn thành** — Bậc thang `scripts/thinking-structure-baseline.json` còn 313/443 kỹ năng chưa chứng minh cấu trúc tư duy (`BR-STS-*`); `BR-STS-02/03/06/07/10` chưa có kiểm. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
+> **Chưa hoàn thành** — Toàn bộ quy tắc `BR-STS-01..11` đã có kiểm tra tự động và kiểm thử ca âm (`scripts/check-thinking-structure.test.ts`, `packages/content/tests/builders/build-levels.test.ts`, `packages/content-build/tests/gates/skill-template-affinity.test.ts`), nhưng bậc thang `scripts/thinking-structure-baseline.json` còn 313/443 kỹ năng chưa chứng minh cấu trúc tư duy. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
 
 ## 1. Objective
 

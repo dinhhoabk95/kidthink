@@ -2,12 +2,10 @@
 spec: ADMIN-SUBSCRIPTION-CANCEL
 title: Manager huỷ gói đăng ký của User và dừng gia hạn
 area: admin
-status: approved
+status: implemented
 mvp: false
 phase: P5
 reviewed: 2026-10-18
-open_tasks:
-  - "#300"
 owns:
   - Manager huỷ gói đăng ký của User theo yêu cầu nhận qua kênh ngoài
   - Dừng tự động gia hạn và xử lý thời hạn entitlement
@@ -24,8 +22,6 @@ depends_on:
 ---
 
 # Manager huỷ gói đăng ký của User và dừng gia hạn
-
-> **Chưa hoàn thành** — API huỷ đã có nhưng `/users/{uuid}` chưa có mục gói đăng ký và nút "Huỷ gói" (§3); lý do sai trả `VALIDATION_FAILED` thay vì `INVALID_CANCEL_REASON`; `cancel.post.ts` còn ép kiểu `as unknown as`. Việc còn lại: [Task #300](../../tasks/300-admin-small-gaps-plan.md).
 
 ## 1. Objective
 

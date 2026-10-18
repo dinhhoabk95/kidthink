@@ -1,4 +1,7 @@
 import type { JsonValue } from "./base.ts";
+import type { ErrorCode } from "./codes.ts";
+
+export type ClientErrorCode = ErrorCode | "NETWORK_ERROR";
 
 // biome-ignore lint/style/useConsistentTypeDefinitions: type alias để thoả ràng buộc JsonValue
 export type ApiErrorField = {
@@ -165,6 +168,16 @@ export function isApiError(error: unknown, code?: string): error is ApiError {
     }
   }
   return false;
+}
+
+/**
+ * Kiểm tra xem lỗi có phải ApiError khớp mã lỗi cụ thể (compile-time checked theo ClientErrorCode).
+ */
+export function isApiErrorCode<C extends ClientErrorCode, E = ApiError>(
+  error: E,
+  code: C
+): error is E & ApiError & { readonly code: C } {
+  return isApiError(error, code);
 }
 
 /**

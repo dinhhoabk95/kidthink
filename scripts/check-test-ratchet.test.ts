@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   isLoosening,
+  scanEmptyTestsInSource,
+  scanRepoEmptyTests,
   type TestBaseline,
   verifyAgainstBaseline,
 } from "./check-test-ratchet.ts";
@@ -11,7 +13,7 @@ const baseline: TestBaseline = {
   minTotalSuites: 100,
 };
 
-describe("Cổng check:test-ratchet (Task #260 I5 & I6)", () => {
+describe("Cổng check:test-ratchet (BR-TST-01..10)", () => {
   it("giữ nguyên tập đỏ và đủ suite thì xanh", () => {
     const verdict = verifyAgainstBaseline(
       baseline,
@@ -66,5 +68,31 @@ describe("Cổng check:test-ratchet (Task #260 I5 & I6)", () => {
   it("--update chấp nhận khi nợ giảm", () => {
     expect(isLoosening(baseline, ["a.test.ts"], 100)).toBe(false);
     expect(isLoosening(baseline, [], 120)).toBe(false);
+  });
+
+  it("Ca âm BR-TST-10: phát hiện test rỗng it('works', () => {}) và tautology expect(true).toBe(true)", () => {
+    const sample = [
+      'describe("sample", () => {',
+      '  it("works", () => {});',
+      '  test("tautology", () => {',
+      "    expect(true).toBe(true);",
+      "  });",
+      '  it("real assertion", () => {',
+      "    expect(1 + 1).toBe(2);",
+      "  });",
+      "});",
+    ].join("\n");
+
+    const violations = scanEmptyTestsInSource(sample, "sample.test.ts");
+    expect(violations).toHaveLength(2);
+    expect(violations[0]?.kind).toBe("empty-body");
+    expect(violations[0]?.rule).toBe("BR-TST-10");
+    expect(violations[1]?.kind).toBe("tautology");
+    expect(violations[1]?.rule).toBe("BR-TST-10");
+  });
+
+  it("BR-TST-10: toàn bộ *.test.ts trong repo không có test rỗng hoặc tautology thuần", () => {
+    const violations = scanRepoEmptyTests();
+    expect(violations).toEqual([]);
   });
 });

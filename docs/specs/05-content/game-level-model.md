@@ -2,12 +2,10 @@
 spec: GAME-LEVEL-MODEL
 title: Mô hình màn chơi — ràng buộc biên tập
 area: content
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
-open_tasks:
-  - "#309"
 owns:
   - Ràng buộc biên tập của một game level
   - Tiêu chuẩn chất lượng nội dung
@@ -17,8 +15,6 @@ depends_on:
 ---
 
 # Mô hình màn chơi — ràng buộc biên tập
-
-> **Chưa hoàn thành** — Test `packages/content-build/tests/integration/game-level-model.test.ts` chỉ kiểm hình thức cho `BR-GLM-01/03/06/07/08/10` (đúng một skill weight 1.0, nhiễu khác đáp án, emoji thuộc registry, level cùng skill khác nội dung, leo một chiều, theme nhất quán); cổng phát hiện level trùng ở mục 9 chưa có. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
 
 ## 1. Objective
 

@@ -1,11 +1,15 @@
 import { getByGlyph } from "@mindkid/emoji";
 import { describe, expect, it, vi } from "vitest";
+import { getOptionCount } from "#src/generators/gt001";
 import { DEFAULT_LOGIC_SPACE } from "#src/layout/constants";
 import { computeStageZones, type ZoneRect } from "#src/layout/stage-zones";
 import { RenderSystem } from "#src/systems/render-system";
 import { GT001_FIXTURES } from "#src/templates/GT-001/fixtures";
 import { GT001Session } from "#src/templates/GT-001/session";
-import { GT001ContentSchema } from "#src/templates/GT-001/template";
+import {
+  GT001ContentSchema,
+  validateGT001BandLimits,
+} from "#src/templates/GT-001/template";
 
 vi.mock("#src/render/shared-render", async (importOriginal) => {
   const actual =
@@ -371,5 +375,103 @@ describe("GT-001 — vẽ nằm trọn trong zones.stage (BR-PSZ-01)", () => {
     session.render(ctx, rs, 0);
     const violations = getViolations();
     expect(violations.length).toBeGreaterThan(0);
+  });
+});
+
+describe("GT-001 — Business Rules (BR-E001-01..04)", () => {
+  const baseFixture = GT001_FIXTURES[0];
+  if (!baseFixture) {
+    throw new Error("Fixture GT-001 not found");
+  }
+
+  it("BR-E001-01: enforces option and distractor caps per age band (3-4 <= 3, 4-5 <= 4, 5-6 <= 6)", () => {
+    expect(getOptionCount("3-4", 0)).toBeLessThanOrEqual(3);
+    expect(getOptionCount("3-4", 3)).toBeLessThanOrEqual(3);
+    expect(getOptionCount("4-5", 0)).toBeLessThanOrEqual(4);
+    expect(getOptionCount("4-5", 3)).toBeLessThanOrEqual(4);
+    expect(getOptionCount("5-6", 3)).toBeLessThanOrEqual(6);
+
+    expect(
+      validateGT001BandLimits(
+        baseFixture.content,
+        baseFixture.difficulty,
+        "3-4"
+      )
+    ).toBe(true);
+
+    const fourOptionsContent = {
+      ...baseFixture.content,
+      options: [
+        ...baseFixture.content.options,
+        {
+          item_id: "grape_opt",
+          asset: { kind: "emoji" as const, ref: "🍇" },
+          is_correct: false,
+        },
+      ],
+    };
+    const threeDistractorsDiff = {
+      ...baseFixture.difficulty,
+      distractor_count: 3,
+    };
+
+    expect(
+      validateGT001BandLimits(fourOptionsContent, threeDistractorsDiff, "3-4")
+    ).toBe(false);
+    expect(
+      validateGT001BandLimits(fourOptionsContent, threeDistractorsDiff, "4-5")
+    ).toBe(true);
+  });
+
+  it("BR-E001-02: rejects compound two-criteria prompts in GT001ContentSchema", () => {
+    const compoundPromptContent = {
+      ...baseFixture.content,
+      prompt: "Tìm quả táo màu đỏ và to nhất",
+    };
+    const parsed = GT001ContentSchema.safeParse(compoundPromptContent);
+    expect(parsed.success).toBe(false);
+  });
+
+  it("BR-E001-03: rejects distractors that duplicate the correct option visual asset", () => {
+    const ambiguousDistractorContent = {
+      ...baseFixture.content,
+      options: [
+        {
+          item_id: "apple_opt_1",
+          asset: { kind: "emoji" as const, ref: "🍎" },
+          is_correct: true,
+        },
+        {
+          item_id: "apple_opt_2",
+          asset: { kind: "emoji" as const, ref: "🍎" },
+          is_correct: false,
+        },
+      ],
+    };
+    const parsed = GT001ContentSchema.safeParse(ambiguousDistractorContent);
+    expect(parsed.success).toBe(false);
+  });
+
+  it("BR-E001-04: requires exactly 1 option with is_correct === true", () => {
+    const zeroCorrect = {
+      ...baseFixture.content,
+      options: baseFixture.content.options.map((o) => ({
+        ...o,
+        is_correct: false,
+      })),
+    };
+    const twoCorrect = {
+      ...baseFixture.content,
+      options: baseFixture.content.options.map((o) => ({
+        ...o,
+        is_correct: true,
+      })),
+    };
+
+    expect(GT001ContentSchema.safeParse(zeroCorrect).success).toBe(false);
+    expect(GT001ContentSchema.safeParse(twoCorrect).success).toBe(false);
+    expect(GT001ContentSchema.safeParse(baseFixture.content).success).toBe(
+      true
+    );
   });
 });

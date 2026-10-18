@@ -2,12 +2,10 @@
 spec: GAME-TEMPLATE-CONTRACT
 title: Contract khuôn trò chơi
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
-open_tasks:
-  - "#305"
 owns:
   - Hình dạng GameTemplate
   - content_contract và difficulty_contract
@@ -21,8 +19,6 @@ depends_on:
 ---
 
 # Contract khuôn trò chơi
-
-> **Chưa hoàn thành** — `BR-GTC-10` chưa có test round-trip `content_pack` × `content_contract` trên toàn bộ level seed và chưa nối vào `scripts/check.sh`. Việc còn lại: [Task #305](../../tasks/305-platform-api-gaps-plan.md).
 
 ## 1. Objective
 
@@ -97,7 +93,7 @@ Template là **Lớp 1** — thêm template là việc của dev, không của M
 | `BR-GTC-07` (xuất JSON Schema) | `content_contract` phải xuất được sang **JSON Schema**, và phải **suy ra kiểu TS** được (`z.infer`) | JSON Schema cho studio sinh form ([`schema-driven-form.md`](../06-admin/schema-driven-form.md)); kiểu TS cho seeder bắt lỗi lúc `tsc` (`BR-CSA-12`) |
 | `BR-GTC-08` (breaking change) | Đổi `content_contract` của template đã publish = **breaking change**, cần migration kế hoạch | Mọi `game_level` đã seed giữ `content_pack` parse được bằng contract **cũ**. Đổi contract mà không migrate = level cũ fail parse ở `BR-GTC-02` — phát hiện lúc trẻ mở màn chơi, không phải lúc deploy |
 | `BR-GTC-09` (checkWinCondition thuần) | `checkWinCondition()` **thuần** — cấm side effect | Nó được gọi nhiều lần mỗi frame |
-| `BR-GTC-10` (round-trip test) | Test round-trip `content_pack` × `content_contract` chạy trên **toàn bộ** level đã seed. **Chưa nối vào cổng nào** — đo 2026-08-29: 162 trên 228 level không parse được, xem mục 7.3a của [`content-seed-authoring.md`](content-seed-authoring.md) | Một level lọt lưới là một đứa trẻ gặp màn hình trắng |
+| `BR-GTC-10` (round-trip test) | Test round-trip `content_pack` × `content_contract` chạy trên **toàn bộ** level đã seed (`packages/content-build/src/gates/content-contract-roundtrip.ts` và `packages/content-build/tests/gates/content-contract-roundtrip.test.ts`, kèm ca âm fixture) | Một level lọt lưới là một đứa trẻ gặp màn hình trắng |
 | `BR-GTC-11` (asset nhận chữ) | `assetSchema()` khai đúng ba nhánh `emoji` · `image` · `text`; mọi `content_contract` dùng chung helper đó, cấm — NEVER khai lại union tại chỗ | Kỹ năng chữ số và chữ cái cần một khe cho ký tự; không có nhánh `text` thì bảng chữ cái phải dạy bằng ảnh em bé. Nhánh đã có ở [`shared-fields.ts:16`](../../../packages/game-engine/src/contracts/shared-fields.ts) và lớp vẽ đã xử lý nó — union khai lại tại chỗ là chỗ nhánh đó biến mất. Đo 2026-09-03: **một** vi phạm, [`GT-000/template.ts:15`](../../../packages/game-engine/src/templates/GT-000/template.ts) khai union hai nhánh tại chỗ, và GT-000 chính là engine ngữ âm. Nguồn vật thì thuộc `BR-SDS-02` (vật phải là vật của kỹ năng) |
 | `BR-TGB-04` (không-hành-động là một phán quyết) | Session phán quyết được việc trẻ **không** chạm khi cửa sổ thời gian đóng. Đường đó nằm trong hợp đồng `GameSession` dùng chung — `update(deltaMs)` trả `ActionResult \| null` (mục 7.4) — không nằm riêng trong Session của một khuôn | Cài riêng trong một Session thì khuôn thứ hai cần nó sẽ cài lại lần nữa, đúng thứ `BR-TAK-05` cấm. `GT-026` là khuôn đầu tiên dùng đường này |
 | `BR-TGB-05` (không-hành-động vẫn có phản hồi) | Hết thời gian mà trẻ không chạm thì vẫn phát phản hồi, cấm — NEVER im lặng | `BR-ENG-07` — sai đáp án luôn có phản hồi. Không hành động cũng là một đáp án |

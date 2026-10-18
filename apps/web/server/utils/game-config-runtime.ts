@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import {
+  childDailyStats,
   childProfiles,
   gameLevels,
   getOwnerDb,
@@ -13,6 +14,7 @@ import {
   GameLevelNotFoundError,
   TemplateNotSupportedError,
 } from "@mindkid/errors/game-level";
+import { DailyPlayCapReachedError } from "@mindkid/errors/play";
 import {
   type GameTemplate,
   getGameTemplate,
@@ -22,13 +24,15 @@ import {
   assertContentAccess,
   type CallerIdentity,
   type ContentAccessResult,
+  computeRemainingPlaySeconds,
   type EntitlementKey,
+  getDateIct,
   MAX_PAYLOAD_BYTES_GZIPPED,
   measureRoundSetPayloadBytes,
   resolveAssets,
 } from "@mindkid/shared";
 import { and, desc, eq } from "drizzle-orm";
-import { type H3Event, setHeader } from "h3";
+import { getQuery, type H3Event, setHeader } from "h3";
 import { checkLevelIntroRequired } from "#server/utils/concept-intro-runtime";
 import {
   loadRoundSet,
@@ -43,6 +47,7 @@ export interface GameConfigDeliveryOptions {
   guestDeviceId?: string;
   callerChildAge?: number;
   activeKeys?: EntitlementKey[];
+  lessonRunId?: string | number | null;
 }
 
 interface LevelTemplateRow {
@@ -119,10 +124,60 @@ async function fetchLevelAndTemplate(
   return { level: levelRow, template };
 }
 
+function isExemptFromDailyPlayCap(
+  options: GameConfigDeliveryOptions,
+  event: H3Event,
+  template: GameTemplate,
+  ownedChild: typeof childProfiles.$inferSelect | null
+): boolean {
+  if (
+    options.isManagerPreview ||
+    options.caller.kind !== "user" ||
+    !ownedChild
+  ) {
+    return true;
+  }
+  if (template.kind === "teach") {
+    return true;
+  }
+  if (options.lessonRunId !== undefined && options.lessonRunId !== null) {
+    return true;
+  }
+  const query = getQuery(event);
+  return typeof query.lesson === "string" && query.lesson.trim().length > 0;
+}
+
+async function assertChildDailyPlayQuota(
+  ownedChild: typeof childProfiles.$inferSelect
+): Promise<boolean> {
+  const db = getOwnerDb();
+  const dateIct = getDateIct();
+  const [stats] = await db
+    .select()
+    .from(childDailyStats)
+    .where(
+      and(
+        eq(childDailyStats.childProfileId, ownedChild.id),
+        eq(childDailyStats.dateIct, dateIct)
+      )
+    )
+    .limit(1);
+
+  const remainingSeconds = computeRemainingPlaySeconds(
+    stats ?? null,
+    ownedChild.dailyPlayCapMinutes
+  );
+  if (remainingSeconds <= 0) {
+    throw new DailyPlayCapReachedError();
+  }
+  return true;
+}
+
 async function runContentAccessGuard(
   level: typeof gameLevels.$inferSelect,
+  template: GameTemplate,
   options: GameConfigDeliveryOptions,
-  _event: H3Event,
+  event: H3Event,
   ownedChild: typeof childProfiles.$inferSelect | null
 ): Promise<ContentAccessResult> {
   try {
@@ -153,6 +208,15 @@ async function runContentAccessGuard(
             lessonRunId: null,
             isManagerPreview: options.isManagerPreview,
           }),
+        checkQuotaRemaining: async () => {
+          if (isExemptFromDailyPlayCap(options, event, template, ownedChild)) {
+            return true;
+          }
+          if (!ownedChild) {
+            return true;
+          }
+          return await assertChildDailyPlayQuota(ownedChild);
+        },
       }
     );
   } catch (err) {
@@ -220,8 +284,15 @@ async function createPlaySessionRecord(
 function validateLevelAndRounds(
   _event: H3Event,
   templateCode: string,
-  level: { code: string; contentVersion: number; contentPack: unknown },
-  rounds: Array<{ round_index: number; content_pack: unknown }>
+  level: {
+    code: string;
+    contentVersion: number;
+    contentPack: typeof gameLevels.$inferSelect.contentPack;
+  },
+  rounds: Array<{
+    round_index: number;
+    content_pack: typeof gameLevels.$inferSelect.contentPack;
+  }>
 ): void {
   const validation = validateContentPack(templateCode, level.contentPack);
   if (!validation.success) {
@@ -232,7 +303,7 @@ function validateLevelAndRounds(
     throw new ContentPackInvalidError(
       `Content pack invalid for level ${level.code}`,
       {
-        details: validation.error?.details as unknown as JsonValue,
+        details: (validation.error?.details ?? null) as JsonValue,
       }
     );
   }
@@ -247,7 +318,7 @@ function validateLevelAndRounds(
         `Round ${round.round_index} content pack invalid`,
         {
           round_index: round.round_index,
-          details: roundValidation.error?.details as unknown as JsonValue,
+          details: (roundValidation.error?.details ?? null) as JsonValue,
         }
       );
     }
@@ -272,7 +343,7 @@ function validateLevelAndRounds(
  */
 function assertPayloadWithinCap(
   levelCode: string,
-  contentPacks: readonly unknown[]
+  contentPacks: readonly (typeof gameLevels.$inferSelect.contentPack)[]
 ): void {
   const bytes = measureRoundSetPayloadBytes(contentPacks);
   if (bytes <= MAX_PAYLOAD_BYTES_GZIPPED) {
@@ -307,6 +378,7 @@ export async function deliverGameConfig(
 
   const accessResult = await runContentAccessGuard(
     level,
+    template,
     options,
     event,
     ownedChild

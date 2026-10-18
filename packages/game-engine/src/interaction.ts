@@ -1,25 +1,59 @@
+import type { AgeBand } from "@mindkid/shared/age-bands";
 import { TOUCH_FLOORS } from "@mindkid/shared/touch-floors";
-import type { AgeBand } from "./contracts/types";
 
 const DEFAULT_LONG_PRESS_EXIT_MS = 800;
 
-export type PlayVerb =
-  | "tap"
-  | "drop"
-  | "stroke"
-  | "adjust"
-  | "commit"
-  | "revert";
+export const PLAY_VERBS = [
+  "tap",
+  "drop",
+  "stroke",
+  "adjust",
+  "commit",
+  "revert",
+] as const;
 
-export type SystemBeat = "reveal" | "hint" | "timeout";
+export type PlayVerb = (typeof PLAY_VERBS)[number];
+
+export const SYSTEM_BEATS = ["reveal", "hint", "timeout"] as const;
+
+export type SystemBeat = (typeof SYSTEM_BEATS)[number];
 export type Beat = SystemBeat;
 
-export type EntityVisual =
-  | "idle"
-  | "active"
-  | "selected"
-  | "correct"
-  | "incorrect";
+export const INTERACTION_STATES = [
+  "idle",
+  "active",
+  "selected",
+  "locked",
+  "rejected",
+] as const;
+
+export type InteractionState = (typeof INTERACTION_STATES)[number];
+
+export const ENTITY_VISUALS = [
+  "idle",
+  "active",
+  "selected",
+  "correct",
+  "incorrect",
+] as const;
+
+export type EntityVisual = (typeof ENTITY_VISUALS)[number];
+
+export const INTERACTION_TO_ENTITY_VISUAL: Readonly<
+  Record<InteractionState, EntityVisual>
+> = {
+  idle: "idle",
+  active: "active",
+  selected: "selected",
+  locked: "correct",
+  rejected: "incorrect",
+};
+
+export function mapInteractionStateToVisual(
+  state: InteractionState
+): EntityVisual {
+  return INTERACTION_TO_ENTITY_VISUAL[state];
+}
 
 export type Gesture =
   | {

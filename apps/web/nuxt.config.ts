@@ -86,6 +86,33 @@ export default defineNuxtConfig({
       allowHeaders: ["Content-Type", "Authorization", "x-csrf-token"],
     },
   },
+  // BR-SEO2-01: Bề mặt tài khoản và bề mặt trẻ không được index
+  routeRules: {
+    "/me": {
+      headers: { "X-Robots-Tag": "noindex, nofollow" },
+    },
+    "/me/**": {
+      headers: { "X-Robots-Tag": "noindex, nofollow" },
+    },
+    "/play": {
+      headers: { "X-Robots-Tag": "noindex, nofollow" },
+    },
+    "/play/**": {
+      headers: { "X-Robots-Tag": "noindex, nofollow" },
+    },
+    // BR-LPV-01: Cho phép nhúng iframe xem trước từ origin admin đã allowlist
+    "/play/preview-sandbox": {
+      headers: { "X-Robots-Tag": "noindex, nofollow" },
+      security: {
+        headers: {
+          xFrameOptions: false,
+          contentSecurityPolicy: {
+            "frame-ancestors": ["'self'", ...allowedOrigins],
+          },
+        },
+      },
+    },
+  },
   runtimeConfig: {
     session: {
       name: USER_SESSION_COOKIE,
@@ -100,6 +127,7 @@ export default defineNuxtConfig({
     // Ranh giới public/private rõ ràng (BR-CFO-12)
     public: {
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL ?? "",
+      siteUrl: process.env.SITE_URL ?? "https://mindkid.vn",
     },
   },
 });

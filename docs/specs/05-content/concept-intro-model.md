@@ -2,12 +2,10 @@
 spec: CONCEPT-INTRO-MODEL
 title: Mô hình bài làm quen khái niệm — input format và workflow chung
 area: content
-status: approved
+status: implemented
 mvp: false
 phase: P4
 reviewed: 2026-10-18
-open_tasks:
-  - "#295"
 owns:
   - Ràng buộc biên tập của một bài làm quen khái niệm
   - Hành động `echo` — tập nói theo, không thu giọng
@@ -23,8 +21,6 @@ depends_on:
 ---
 
 # Mô hình bài làm quen khái niệm — input format và workflow chung
-
-> **Chưa hoàn thành** — `BR-CIM-03` chốt 2–3 chất liệu mỗi segment, nhưng `GT000SegmentSchema.asset_ids` ở `packages/game-engine/src/templates/GT-000/template.ts` vẫn nhận tới 6. Phần còn lại của mô hình (segment, echo, ôn) đã chạy. Việc còn lại: [Task #295](../../tasks/295-concept-intro-segments-plan.md).
 
 ## 1. Objective
 

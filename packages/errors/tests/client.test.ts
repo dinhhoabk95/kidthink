@@ -3,10 +3,11 @@ import {
   ApiError,
   getFieldErrors,
   isApiError,
+  isApiErrorCode,
   normalizeApiError,
 } from "#src/client";
 
-describe("client error helpers", () => {
+describe("client error helpers (BR-AEC-01, BR-AEC-03, BR-AEC-05)", () => {
   it("normalizeApiError: chuẩn hóa response data có code và message", () => {
     const fetchErr = {
       status: 403,
@@ -25,7 +26,7 @@ describe("client error helpers", () => {
     expect(err.details).toEqual({ access_tier: "premium" });
   });
 
-  it("normalizeApiError: lỗi mạng ra mã client-only NETWORK_ERROR", () => {
+  it("BR-AEC-05: normalizeApiError biến lỗi mạng thành mã client-only NETWORK_ERROR, không lộ chi tiết kỹ thuật", () => {
     const networkErr = new TypeError("Failed to fetch");
     const err = normalizeApiError(networkErr);
 
@@ -33,9 +34,10 @@ describe("client error helpers", () => {
     expect(err.code).toBe("NETWORK_ERROR");
     expect(err.statusCode).toBe(0);
     expect(err.message).toContain("kiểm tra đường truyền");
+    expect(err.message).not.toContain("TypeError");
   });
 
-  it("isApiError: nhận diện đúng và lọc theo mã", () => {
+  it("BR-AEC-01: isApiError và isApiErrorCode nhận diện đúng và lọc theo mã lỗi", () => {
     const err = new ApiError({
       code: "CONSENT_REQUIRED",
       message: "Cần đồng ý",
@@ -46,9 +48,16 @@ describe("client error helpers", () => {
     expect(isApiError(err, "CONSENT_REQUIRED")).toBe(true);
     expect(isApiError(err, "UNAUTHENTICATED")).toBe(false);
     expect(isApiError(new Error("khác"))).toBe(false);
+
+    expect(isApiErrorCode(err, "CONSENT_REQUIRED")).toBe(true);
+    expect(isApiErrorCode(err, "QUOTA_EXCEEDED")).toBe(false);
+    expect(isApiErrorCode(new Error("khác"), "CONSENT_REQUIRED")).toBe(false);
+
+    const netErr = normalizeApiError(new TypeError("Failed to fetch"));
+    expect(isApiErrorCode(netErr, "NETWORK_ERROR")).toBe(true);
   });
 
-  it("getFieldErrors: trích xuất đúng danh sách lỗi validation theo trường", () => {
+  it("BR-AEC-03: getFieldErrors trích xuất đúng danh sách lỗi validation theo trường", () => {
     const validationErr = {
       statusCode: 422,
       data: {
@@ -72,7 +81,7 @@ describe("client error helpers", () => {
     expect(fields[1]).toEqual({ field: "age", message: "Tuổi từ 3 đến 6" });
   });
 
-  it("getFieldErrors: trả mảng rỗng nếu không có details.fields", () => {
+  it("BR-AEC-03: getFieldErrors trả mảng rỗng nếu không có details.fields", () => {
     const plainErr = {
       status: 404,
       data: { code: "NOT_FOUND", message: "Không tìm thấy" },

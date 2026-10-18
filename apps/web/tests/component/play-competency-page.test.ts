@@ -6,10 +6,21 @@ const pushMock = vi.fn();
 const replaceMock = vi.fn();
 const pageMetaMock = vi.fn();
 const fetchMock = vi.fn();
+const speakMock = vi.fn(() => true);
+const cancelSpeechMock = vi.fn();
+
+let mockRouteCode = "C1";
+
+vi.mock("~/composables/play/use-speech", () => ({
+  useSpeech: () => ({
+    speak: speakMock,
+    cancel: cancelSpeechMock,
+  }),
+}));
 
 vi.stubGlobal("definePageMeta", pageMetaMock);
 vi.stubGlobal("useRouter", () => ({ push: pushMock, replace: replaceMock }));
-vi.stubGlobal("useRoute", () => ({ params: { code: "C1" } }));
+vi.stubGlobal("useRoute", () => ({ params: { code: mockRouteCode } }));
 vi.stubGlobal("$fetch", fetchMock);
 
 const ParentGateStub = {
@@ -85,6 +96,7 @@ async function mountCompetencyPage(): Promise<VueWrapper> {
 describe("Trang khám phá năng lực cho trẻ /play/competency/[code] (BR-CCE-01..08)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockRouteCode = "C1";
     fetchMock.mockResolvedValue(mockCompetencyResponse);
   });
 
@@ -131,6 +143,34 @@ describe("Trang khám phá năng lực cho trẻ /play/competency/[code] (BR-CCE
     const backBtn = page.find('[data-testid="back-to-play-btn"]');
     expect(backBtn.exists()).toBe(true);
     expect(backBtn.attributes("href")).toBe("/play");
+  });
+
+  it("BR-CCE-08: áp dụng màu chủ đạo theo mã năng lực và gọi useSpeech đọc lời giới thiệu khi vào trang", async () => {
+    mockRouteCode = "C2";
+    fetchMock.mockResolvedValue({
+      ...mockCompetencyResponse,
+      competency: {
+        code: "C2",
+        name: "Tư duy không gian",
+        tagline:
+          "Nhận biết hình khối, phương hướng, lộ trình và phép xoay hình.",
+        icon_path: "/competencies/c2.svg",
+      },
+    });
+
+    const page = await mountCompetencyPage();
+
+    expect(page.attributes("data-competency-code")).toBe("C2");
+    const badge = page.find('[data-testid="competency-badge"]');
+    expect(badge.exists()).toBe(true);
+    expect(badge.classes()).toContain("border-competency-c2");
+
+    const gameCard = page.find('[data-testid="competency-game-item"]');
+    expect(gameCard.classes()).toContain("border-cta-200");
+
+    expect(speakMock).toHaveBeenCalledWith(
+      "Tư duy không gian. Nhận biết hình khối, phương hướng, lộ trình và phép xoay hình."
+    );
   });
 
   it("kích hoạt cổng phụ huynh từ nút khoá an toàn", async () => {

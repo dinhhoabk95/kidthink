@@ -16,6 +16,7 @@ describe("Play Schema Integration Tests", () => {
       .values({
         sessionUuid,
         seq: 1,
+        contentVersion: 1,
         eventName: "game_start",
       })
       .onConflictDoNothing();
@@ -24,6 +25,7 @@ describe("Play Schema Integration Tests", () => {
       db.insert(telemetryEvents).values({
         sessionUuid,
         seq: 1,
+        contentVersion: 1,
         eventName: "game_start_duplicate",
       })
     ).rejects.toThrow();
@@ -189,6 +191,7 @@ describe("Play Schema Integration Tests", () => {
     await db.insert(telemetryEvents).values({
       sessionUuid,
       seq: 1,
+      contentVersion: 1,
       childUuid: "c1111111-1111-1111-1111-111111111111",
       eventName: "step_complete",
     });

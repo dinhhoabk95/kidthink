@@ -5,6 +5,8 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
@@ -193,6 +195,36 @@ export class SubstitutionSession extends TemplateGameSession<
   override getHintTargetIndex(): number | null {
     const idx = this.content.options.findIndex((o) => o.is_correct);
     return idx >= 0 ? idx : null;
+  }
+
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    if (this.checkWinCondition()) {
+      return null;
+    }
+    const questionSymbolIds =
+      this.content.question.kind === "value"
+        ? [this.content.question.symbol_id]
+        : this.content.question.symbol_ids;
+    const qSymbols = new Set(questionSymbolIds);
+    const relatedEquations = this.content.equations.filter((eq) =>
+      eq.left.some((sym) => qSymbols.has(sym))
+    );
+    const ruleIds = (
+      relatedEquations.length > 0 ? relatedEquations : this.content.equations
+    ).map((eq) => eq.equation_id);
+    if (level === 1) {
+      return {
+        kind: "region",
+        ids: ruleIds.length > 0 ? [ruleIds[0] ?? "rule-row-0"] : ["rule-row-0"],
+      };
+    }
+    if (level === 2) {
+      return {
+        kind: "region",
+        ids: [...questionSymbolIds.map((sym) => `question:${sym}`), ...ruleIds],
+      };
+    }
+    return this.getHintTarget();
   }
 
   override commit(action: GameAction): void {

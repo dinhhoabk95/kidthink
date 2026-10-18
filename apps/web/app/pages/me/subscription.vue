@@ -165,14 +165,135 @@
         <!-- Data Preservation Notice (BR-SBV-02) -->
         <div
           class="p-4 rounded-2xl border-2 border-brand-200 bg-brand-50/50 flex items-start gap-3"
+          data-testid="data-preservation-notice"
         >
           <UIcon
             class="w-5 h-5 text-brand-600 flex-shrink-0 mt-0.5"
             name="i-lucide-shield-check"
           />
           <p class="text-xs md:text-sm text-brand-900 leading-relaxed">
-            {{ data.data_preservation_notice }}
+            {{ data.data_preservation_notice || DEFAULT_DATA_PRESERVATION_NOTICE }}
           </p>
+        </div>
+
+        <!-- Recurring Subscription Management (BR-RBL-01, BR-RBL-03) -->
+        <div
+          class="p-6 rounded-3xl border-4 border-surface-200 bg-white space-y-4"
+          data-testid="recurring-billing-section"
+        >
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="text-base font-bold font-heading text-surface-900">
+              Gia hạn tự động định kỳ
+            </h3>
+            <span
+              class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-success-100 text-success-800 border border-success-300"
+              v-if="data.recurring_subscription?.auto_renew"
+            >
+              Đang bật tự gia hạn
+            </span>
+            <span
+              class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-surface-100 text-surface-700"
+              v-else
+            >
+              Chưa bật
+            </span>
+          </div>
+
+          <div
+            class="rounded-2xl border-2 border-danger-200 bg-danger-50 p-3 text-xs font-semibold text-danger-700"
+            role="alert"
+            v-if="recurringErrorMessage"
+          >
+            {{ recurringErrorMessage }}
+          </div>
+
+          <!-- Active Recurring State -->
+          <div
+            class="space-y-3 text-xs text-surface-700"
+            v-if="data.recurring_subscription?.auto_renew"
+          >
+            <p>
+              Gói
+              <strong>{{ data.recurring_subscription.package_code }}</strong>
+              ({{ data.recurring_subscription.billing_period === "annual" ? "Theo năm" : "Theo tháng" }})
+              — Mức phí:
+              <strong
+                >{{ formatMoney(data.recurring_subscription.price_vnd) }}</strong
+              >
+            </p>
+            <p v-if="data.recurring_subscription.next_billing_at">
+              Ngày thu phí kế tiếp:
+              <strong
+                >{{ formatDate(data.recurring_subscription.next_billing_at) }}</strong
+              >
+            </p>
+            <p class="text-surface-500">
+              {{ data.cancellation_guidance || DEFAULT_CANCELLATION_GUIDANCE }}
+            </p>
+            <button
+              class="min-h-11 px-4 py-2 rounded-2xl border-2 border-danger-300 bg-white text-danger-700 font-bold hover:bg-danger-50 transition-colors disabled:opacity-60"
+              data-testid="recurring-cancel-btn"
+              type="button"
+              :disabled="isRecurringSubmitting"
+              @click="handleCancelRecurring"
+            >
+              {{ isRecurringSubmitting ? "Đang xử lý..." : "Huỷ gia hạn tự động" }}
+            </button>
+          </div>
+
+          <!-- Opt-in Form (BR-RBL-01: explicit consent required) -->
+          <form class="space-y-3" v-else @submit.prevent="handleOptInRecurring">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <label class="flex flex-col gap-1 font-semibold text-surface-700">
+                <span>Chọn gói gia hạn</span>
+                <select
+                  class="min-h-11 rounded-2xl border-2 border-surface-300 bg-surface-50 px-3 py-2 text-sm text-surface-900"
+                  data-testid="recurring-package-select"
+                  v-model="selectedRecurringPackage"
+                >
+                  <option value="PKG-standard">Gói Tiêu chuẩn</option>
+                  <option value="PKG-premium">Gói Cao cấp</option>
+                </select>
+              </label>
+
+              <label class="flex flex-col gap-1 font-semibold text-surface-700">
+                <span>Chu kỳ thanh toán</span>
+                <select
+                  class="min-h-11 rounded-2xl border-2 border-surface-300 bg-surface-50 px-3 py-2 text-sm text-surface-900"
+                  data-testid="recurring-period-select"
+                  v-model="selectedBillingPeriod"
+                >
+                  <option value="monthly">Hàng tháng</option>
+                  <option value="annual">Hàng năm</option>
+                </select>
+              </label>
+            </div>
+
+            <label
+              class="flex items-start gap-2.5 cursor-pointer text-xs text-surface-600"
+            >
+              <input
+                class="mt-0.5 h-5 w-5 shrink-0 rounded border-2 border-surface-300 accent-brand-600"
+                data-testid="recurring-consent-checkbox"
+                type="checkbox"
+                v-model="recurringConsentAccepted"
+              >
+              <span>
+                Tôi đồng ý tường minh cho phép MindKid tự động gia hạn định kỳ
+                theo mức giá niêm yết và hiểu rằng tôi có thể huỷ bất kỳ lúc nào
+                trước ngày thu phí tiếp theo.
+              </span>
+            </label>
+
+            <button
+              class="min-h-11 px-5 py-2.5 rounded-2xl bg-brand-600 text-white text-xs font-bold hover:bg-brand-500 transition-colors disabled:opacity-60"
+              data-testid="recurring-opt-in-btn"
+              type="submit"
+              :disabled="isRecurringSubmitting || !recurringConsentAccepted"
+            >
+              {{ isRecurringSubmitting ? "Đang đăng ký..." : "Bật tự động gia hạn" }}
+            </button>
+          </form>
         </div>
       </section>
 
@@ -327,7 +448,38 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
+  import { ref } from "vue";
   import { useFetch } from "#imports";
+  import { useApi } from "~/composables/use-api";
+
+  const DEFAULT_DATA_PRESERVATION_NOTICE =
+    "Khi gói hết hạn, hồ sơ của các bé và toàn bộ tiến độ học vẫn được giữ nguyên. Bạn chỉ tạm thời không truy cập được nội dung trả phí.";
+
+  const DEFAULT_CANCELLATION_GUIDANCE =
+    "Huỷ gia hạn tự động có thể thực hiện trực tiếp tại đây bất kỳ lúc nào. Quyền lợi hiện tại được giữ nguyên cho đến hết chu kỳ đã thanh toán.";
+
+  interface RecurringSubscriptionInfo {
+    id: number;
+    package_code: string;
+    billing_period: "monthly" | "annual";
+    price_vnd: number;
+    auto_renew: boolean;
+    status: string;
+    current_period_end: string;
+    next_billing_at: string | null;
+    can_cancel: boolean;
+  }
+
+  const apiFetch = useApi();
+
+  const selectedRecurringPackage = ref<"PKG-standard" | "PKG-premium">(
+    "PKG-standard"
+  );
+  const selectedBillingPeriod = ref<"monthly" | "annual">("monthly");
+  const recurringConsentAccepted = ref(false);
+  const isRecurringSubmitting = ref(false);
+  const recurringErrorMessage = ref("");
 
   const {
     data,
@@ -376,9 +528,74 @@
       reviewed_at: string | null;
       polite_reason: string | null;
     }>;
+    recurring_subscription?: RecurringSubscriptionInfo | null;
+    cancellation_guidance?: string;
     data_preservation_notice: string;
     has_higher_tier: boolean;
   }>("/api/users/subscription");
+
+  function parseRecurringError(err: Error | object | null): string {
+    if (isApiError(err)) {
+      return err.message;
+    }
+    if (err instanceof Error) {
+      return err.message;
+    }
+    return "Không thể cập nhật cài đặt gia hạn tự động. Vui lòng thử lại.";
+  }
+
+  async function handleOptInRecurring() {
+    if (!recurringConsentAccepted.value) {
+      recurringErrorMessage.value =
+        "Vui lòng đồng ý điều khoản gia hạn tự động trước khi đăng ký.";
+      return;
+    }
+
+    recurringErrorMessage.value = "";
+    isRecurringSubmitting.value = true;
+
+    try {
+      await apiFetch("/api/users/subscriptions/recurring/opt-in", {
+        method: "POST",
+        body: {
+          package_code: selectedRecurringPackage.value,
+          billing_period: selectedBillingPeriod.value,
+          consent_accepted: true,
+        },
+        credentials: "include",
+      });
+      recurringConsentAccepted.value = false;
+      await refresh();
+    } catch (err) {
+      recurringErrorMessage.value = parseRecurringError(
+        typeof err === "object" ? err : null
+      );
+    } finally {
+      isRecurringSubmitting.value = false;
+    }
+  }
+
+  async function handleCancelRecurring() {
+    recurringErrorMessage.value = "";
+    isRecurringSubmitting.value = true;
+
+    try {
+      await apiFetch("/api/users/subscriptions/recurring/cancel", {
+        method: "POST",
+        body: {
+          subscription_id: data.value?.recurring_subscription?.id,
+        },
+        credentials: "include",
+      });
+      await refresh();
+    } catch (err) {
+      recurringErrorMessage.value = parseRecurringError(
+        typeof err === "object" ? err : null
+      );
+    } finally {
+      isRecurringSubmitting.value = false;
+    }
+  }
 
   function orderStatusLabel(status: string): string {
     switch (status) {

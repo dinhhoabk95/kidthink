@@ -37,13 +37,32 @@ if [ -f "${state}/migrate_fails" ] && [[ "${command_text}" == *"db:migrate"* ]];
   exit 1
 fi
 
-# A successful build leaves exactly the artefacts release_has_artifacts checks.
+# A successful build leaves artefacts that satisfy release_has_artifacts and
+# smoke_release_artifacts (BR-DEP-15) unless a negative test flag is set.
 if [[ "${command_text}" == *"pnpm build"* ]] && [ -n "${workspace}" ]; then
   mkdir -p "${workspace}/apps/web/.output/server" \
-           "${workspace}/apps/admin/.output/public" \
+           "${workspace}/apps/web/.output/public/_nuxt" \
+           "${workspace}/apps/admin/.output/public/_nuxt" \
            "${workspace}/apps/worker/dist"
-  echo "// built" >"${workspace}/apps/web/.output/server/index.mjs"
-  echo "<!doctype html>" >"${workspace}/apps/admin/.output/public/index.html"
+  if [ -f "${state}/artifact_server_dirname_leak" ]; then
+    echo "export const dir = __dirname;" >"${workspace}/apps/web/.output/server/index.mjs"
+  else
+    echo "export const serverReady = true;" >"${workspace}/apps/web/.output/server/index.mjs"
+  fi
+  echo "export const webClient = true;" >"${workspace}/apps/web/.output/public/_nuxt/entry.test.js"
+  echo '<!doctype html><html><head><link rel="stylesheet" href="/_nuxt/entry.test.css"></head><body><div id="__nuxt"></div></body></html>' \
+    >"${workspace}/apps/admin/.output/public/index.html"
+  if [ -f "${state}/artifact_missing_css" ]; then
+    echo "body{margin:0}" >"${workspace}/apps/admin/.output/public/_nuxt/entry.test.css"
+  else
+    head -c 105000 /dev/zero | tr '\0' 'a' >"${workspace}/apps/admin/.output/public/_nuxt/entry.test.css"
+  fi
+  if [ -f "${state}/artifact_client_server_leak" ]; then
+    echo "import gyp from 'node-gyp-build'; export const x = gyp;" \
+      >"${workspace}/apps/admin/.output/public/_nuxt/entry.test.js"
+  else
+    echo "export const adminClient = true;" >"${workspace}/apps/admin/.output/public/_nuxt/entry.test.js"
+  fi
   echo "// built" >"${workspace}/apps/worker/dist/index.js"
 fi
 

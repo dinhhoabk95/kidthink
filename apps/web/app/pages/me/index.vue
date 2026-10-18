@@ -181,7 +181,7 @@
                 </p>
                 <p class="text-xs text-surface-600 pt-1">
                   Đã chơi:
-                  <span class="font-bold text-surface-900"
+                  <span class="font-bold text-surface-900 tabular-nums"
                     >{{ child.days_played_7d }}
                     ngày</span
                   >
@@ -244,7 +244,7 @@
                 class="font-bold text-sm text-surface-900 flex items-center gap-2"
               >
                 <span>{{ prog.display_name }}</span>
-                <span class="text-xs font-normal text-surface-500">
+                <span class="text-xs font-normal text-surface-500 tabular-nums">
                   ({{ prog.days_played_7d }}
                   ngày chơi · {{ prog.total_play_time_minutes_7d }} phút ·
                   {{ prog.levels_completed_7d }}
@@ -301,7 +301,9 @@
             class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
           >
             <div class="space-y-1">
-              <span class="text-xs font-bold text-brand-600 tracking-wider">
+              <span
+                class="text-xs font-bold text-brand-600 tracking-wider tabular-nums"
+              >
                 Tuần {{ dashboardData.curriculum.current_week }} /
                 {{ dashboardData.curriculum.duration_weeks }}
               </span>
@@ -311,7 +313,9 @@
             </div>
 
             <div class="text-right sm:text-right">
-              <span class="text-2xl font-bold font-heading text-brand-600">
+              <span
+                class="text-2xl font-bold font-heading text-brand-600 tabular-nums"
+              >
                 {{ Math.round((dashboardData.curriculum.progress || 0) * 100) }}%
               </span>
               <p class="text-xs text-surface-500">Tiến độ hoàn thành</p>
@@ -451,7 +455,9 @@
             class="p-4 rounded-2xl bg-warning-50 border border-warning-200 text-xs text-warning-900 space-y-1"
             v-if="dashboardData.subscription?.quota?.show_quota_indicator"
           >
-            <div class="flex items-center justify-between font-bold">
+            <div
+              class="flex items-center justify-between font-bold tabular-nums"
+            >
               <span
                 >Hồ sơ các bé:
                 {{ dashboardData.subscription.quota.children_count }}
@@ -476,9 +482,11 @@
 <script lang="ts" setup>
   import { computed, ref, watch } from "vue";
   import { useRoute, useRouter } from "vue-router";
+  import { useApi } from "~/composables/use-api";
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
   import { resolveAvatarEmoji } from "~/utils/child-avatar";
 
+  const api = useApi();
   const route = useRoute();
   const router = useRouter();
   const { headers: csrfHeaders } = useCsrfHeaders();
@@ -607,13 +615,13 @@
   async function activateChildThenPlay(childUuid: string) {
     childSwitchError.value = null;
     try {
-      await $fetch(`/api/users/children/${childUuid}/activate`, {
+      await api(`/api/users/children/${childUuid}/activate`, {
         method: "POST",
         headers: csrfHeaders(),
         credentials: "include",
       });
       await router.push("/play");
-    } catch (err: unknown) {
+    } catch (err) {
       const activateError = err as {
         data?: { code?: string; message?: string };
         statusCode?: number;

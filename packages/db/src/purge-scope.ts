@@ -340,6 +340,12 @@ export const PURGE_TABLE_CLASSIFICATIONS: readonly TablePurgeMetadata[] = [
     legalBasis: "BR-AST-01",
   },
   {
+    tableName: "content_audio",
+    classification: "retain",
+    reason: "Kho âm thanh thuyết minh và hiệu ứng bài học",
+    legalBasis: "BR-AST-01",
+  },
+  {
     tableName: "content_tags",
     classification: "retain",
     reason: "Từ vựng gắn thẻ nội dung 3 trục",

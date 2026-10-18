@@ -14,6 +14,7 @@ import {
   UnsupportedMediaTypeError,
 } from "@mindkid/errors/content";
 import {
+  canTransitionPaymentOrderStatus,
   computeSoftUnlockExpiresAt,
   PACKAGE_CATALOG,
   type PaymentOrderStatus,
@@ -27,6 +28,7 @@ import {
   readMultipartFormData,
 } from "h3";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 interface ParsedProofInput {
   bankTxnRef: string;
@@ -120,10 +122,8 @@ export default defineEventHandler(async (event) => {
 
   const currentStatus = order.status as PaymentOrderStatus;
   if (
-    currentStatus === "approved" ||
-    currentStatus === "expired" ||
-    currentStatus === "rejected" ||
-    currentStatus === "cancelled"
+    currentStatus !== "submitted" &&
+    !canTransitionPaymentOrderStatus(currentStatus, "submitted")
   ) {
     throw new InvalidStatusTransitionError({
       current_status: currentStatus,
@@ -189,6 +189,10 @@ export default defineEventHandler(async (event) => {
       }
     }
   });
+
+  if (order.userId > 0) {
+    await invalidateUserEntitlementsCache(order.userId);
+  }
 
   return {
     status: "submitted",

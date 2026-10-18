@@ -2,12 +2,10 @@
 spec: CONTENT-TAGGING
 title: Gắn thẻ nội dung ba trục
 area: content
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
-open_tasks:
-  - "#305"
 owns:
   - Từ vựng ba trục what/thinking/mechanic
   - content_skill_map và weight
@@ -18,8 +16,6 @@ depends_on:
 ---
 
 # Gắn thẻ nội dung ba trục
-
-> **Chưa hoàn thành** — Chưa có route `PUT /api/managers/content/{type}/{id}/tags` (mục 8); validator ở `packages/db/src/tagging.ts` chưa được route nào gọi, và `BR-TAG-05`/`BR-TAG-06` chưa có test chứng minh. Việc còn lại: [Task #305](../../tasks/305-platform-api-gaps-plan.md).
 
 ## 1. Objective
 

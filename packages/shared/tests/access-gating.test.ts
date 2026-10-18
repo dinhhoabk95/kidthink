@@ -14,14 +14,23 @@ import { allowedTiers, type CallerIdentity } from "#src/access-ladder";
 import type { EntitlementKey } from "#src/entitlement-catalog";
 import type { AccessTier } from "#src/taxonomy-types";
 
-describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
+describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08, BR-LAD-07)", () => {
   const publishedFree: ContentTarget = {
-    code: "LVL-FREE-001",
+    code: "GL-C1-CNT-CARD-0001",
     access_tier: "free",
     status: "published",
     age_min: 3,
     age_max: 5,
     title: "Đếm hoa quả",
+  };
+
+  const publishedFreeOutsideAllowlist: ContentTarget = {
+    code: "GL-C1-CNT-CARD-0002",
+    access_tier: "free",
+    status: "published",
+    age_min: 3,
+    age_max: 5,
+    title: "Đếm hoa quả 2",
   };
 
   const publishedLogin: ContentTarget = {
@@ -267,6 +276,32 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
       }
     });
 
+    it("BR-LAD-07: guest calling free level outside 6-level allow-list throws 403 TIER_LOCKED with access_tier login", async () => {
+      try {
+        await assertContentAccess(publishedFreeOutsideAllowlist, {
+          caller: { kind: "guest" },
+        });
+        expect.unreachable(
+          "Should throw 403 TIER_LOCKED for free level outside guest allow-list"
+        );
+      } catch (err: unknown) {
+        expect(err).toBeInstanceOf(AccessGatingError);
+        const gatingErr = err as AccessGatingError;
+        expect(gatingErr.code).toBe("TIER_LOCKED");
+        expect(gatingErr.status).toBe(403);
+        expect(gatingErr.details?.access_tier).toBe("login");
+        expect(gatingErr.details?.required_entitlement).toBe(
+          "play_login_games"
+        );
+      }
+
+      const userRes = await assertContentAccess(publishedFreeOutsideAllowlist, {
+        caller: { kind: "user", user_id: "u1", active_child_id: null },
+        activeKeys: [],
+      });
+      expect(userRes.is_preview).toBe(false);
+    });
+
     it("User with expired entitlement throws 403 on new request (BR-LAD-08)", async () => {
       try {
         await assertContentAccess(publishedPremium, {
@@ -465,6 +500,285 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08)", () => {
           }
         )
       );
+    });
+  });
+
+  describe("Task 8: Step 8 Concept Intro Gate Matrix & Exemptions (BR-CIG-01 .. BR-CIG-17)", () => {
+    const queueItem1 = {
+      intro_level_code: "GL-C1-NUM-INTR-0001",
+      skill_code: "C1.NUM.01",
+      title: "Làm quen với các con số 1–3",
+      thumbnail_emoji: "🔢",
+    };
+    const queueItem2 = {
+      intro_level_code: "GL-C1-CNT-INTR-0001",
+      skill_code: "C1.CNT.01",
+      title: "Tập đếm từng đồ vật",
+      thumbnail_emoji: "🍎",
+    };
+
+    interface IntroMatrixRow {
+      readonly label: string;
+      readonly caller: CallerIdentity;
+      readonly lessonRunId?: string | null;
+      readonly introCheckResult: {
+        readonly intro_required: boolean;
+        readonly intro_queue?: readonly (typeof queueItem1)[];
+        readonly intro_remaining?: number;
+        readonly return_level_code?: string;
+        readonly primary_skill_code?: string;
+        readonly intro_level_code?: string;
+      };
+      readonly expectedStatus: 200 | 428;
+      readonly expectedQueueLength?: number;
+      readonly expectedRemaining?: number;
+    }
+
+    // §7.3 Matrix: 2 caller types (guest, child profile) x 5 columns = 10 cells (BR-CIG-12)
+    const introMatrixRows: readonly IntroMatrixRow[] = [
+      // Guest rows (BR-CIG-07)
+      {
+        label: "guest | intro_queue rỗng (skill không có bài làm quen)",
+        caller: { kind: "guest" },
+        introCheckResult: { intro_required: false },
+        expectedStatus: 200,
+      },
+      {
+        label: "guest | intro_queue rỗng (đã hoàn thành hết)",
+        caller: { kind: "guest" },
+        introCheckResult: { intro_required: false },
+        expectedStatus: 200,
+      },
+      {
+        label: "guest | intro_queue có 1 mục",
+        caller: { kind: "guest" },
+        introCheckResult: {
+          intro_required: true,
+          intro_queue: [queueItem1],
+          intro_remaining: 0,
+          return_level_code: publishedFree.code,
+          primary_skill_code: "C1.CNT.01",
+          intro_level_code: queueItem1.intro_level_code,
+        },
+        expectedStatus: 428,
+        expectedQueueLength: 1,
+        expectedRemaining: 0,
+      },
+      {
+        label: "guest | intro_queue có 3 mục (cắt còn 2, intro_remaining = 1)",
+        caller: { kind: "guest" },
+        introCheckResult: {
+          intro_required: true,
+          intro_queue: [queueItem1, queueItem2],
+          intro_remaining: 1,
+          return_level_code: publishedFree.code,
+          primary_skill_code: "C1.CNT.01",
+          intro_level_code: queueItem1.intro_level_code,
+        },
+        expectedStatus: 428,
+        expectedQueueLength: 2,
+        expectedRemaining: 1,
+      },
+      {
+        label: "guest | Đang trong lesson_run",
+        caller: { kind: "guest" },
+        lessonRunId: "lr-guest-001",
+        introCheckResult: {
+          intro_required: true,
+          intro_queue: [queueItem1],
+          intro_remaining: 0,
+        },
+        expectedStatus: 200,
+      },
+      // Child profile rows (BR-CIG-06)
+      {
+        label: "child | intro_queue rỗng (skill không có bài làm quen)",
+        caller: { kind: "user", user_id: "u1", active_child_id: "c1" },
+        introCheckResult: { intro_required: false },
+        expectedStatus: 200,
+      },
+      {
+        label: "child | intro_queue rỗng (đã hoàn thành hết)",
+        caller: { kind: "user", user_id: "u1", active_child_id: "c1" },
+        introCheckResult: { intro_required: false },
+        expectedStatus: 200,
+      },
+      {
+        label: "child | intro_queue có 1 mục",
+        caller: { kind: "user", user_id: "u1", active_child_id: "c1" },
+        introCheckResult: {
+          intro_required: true,
+          intro_queue: [queueItem1],
+          intro_remaining: 0,
+          return_level_code: publishedFree.code,
+          primary_skill_code: "C1.CNT.01",
+          intro_level_code: queueItem1.intro_level_code,
+        },
+        expectedStatus: 428,
+        expectedQueueLength: 1,
+        expectedRemaining: 0,
+      },
+      {
+        label: "child | intro_queue có 3 mục (cắt còn 2, intro_remaining = 1)",
+        caller: { kind: "user", user_id: "u1", active_child_id: "c1" },
+        introCheckResult: {
+          intro_required: true,
+          intro_queue: [queueItem1, queueItem2],
+          intro_remaining: 1,
+          return_level_code: publishedFree.code,
+          primary_skill_code: "C1.CNT.01",
+          intro_level_code: queueItem1.intro_level_code,
+        },
+        expectedStatus: 428,
+        expectedQueueLength: 2,
+        expectedRemaining: 1,
+      },
+      {
+        label: "child | Đang trong lesson_run",
+        caller: { kind: "user", user_id: "u1", active_child_id: "c1" },
+        lessonRunId: "lr-child-001",
+        introCheckResult: {
+          intro_required: true,
+          intro_queue: [queueItem1],
+          intro_remaining: 0,
+        },
+        expectedStatus: 200,
+      },
+    ];
+
+    interface IntroErrorDetails {
+      readonly intro_queue?: readonly (typeof queueItem1)[];
+      readonly intro_remaining?: number;
+      readonly return_level_code?: string;
+      readonly primary_skill_code?: string;
+      readonly intro_level_code?: string;
+    }
+
+    it("BR-CIG-12, BR-CIG-01, BR-CIG-06, BR-CIG-07, BR-CIG-09, BR-CIG-10: Data-driven test cho đủ 10 ô ma trận §7.3", async () => {
+      expect(introMatrixRows).toHaveLength(10);
+
+      for (const row of introMatrixRows) {
+        if (row.expectedStatus === 200) {
+          const res = await assertContentAccess(publishedFree, {
+            caller: row.caller,
+            lessonRunId: row.lessonRunId ?? null,
+            checkIntroRequired: () => row.introCheckResult,
+          });
+          expect(res.is_preview, row.label).toBe(false);
+        } else {
+          try {
+            await assertContentAccess(publishedFree, {
+              caller: row.caller,
+              lessonRunId: row.lessonRunId ?? null,
+              checkIntroRequired: () => row.introCheckResult,
+            });
+            expect.unreachable(
+              `Row [${row.label}] expected 428 INTRO_REQUIRED`
+            );
+          } catch (err) {
+            expect(err, row.label).toBeInstanceOf(AccessGatingError);
+            if (!(err instanceof AccessGatingError)) {
+              throw err;
+            }
+            expect(err.code, row.label).toBe("INTRO_REQUIRED");
+            expect(err.status, row.label).toBe(428);
+            const details = (err.details ?? {}) as IntroErrorDetails;
+            const queue = details.intro_queue ?? [];
+            expect(queue, row.label).toHaveLength(row.expectedQueueLength ?? 0);
+            expect(details.intro_remaining, row.label).toBe(
+              row.expectedRemaining ?? 0
+            );
+            expect(details.return_level_code, row.label).toBe(
+              publishedFree.code
+            );
+            expect(details.primary_skill_code, row.label).toBe("C1.CNT.01");
+            expect(details.intro_level_code, row.label).toBe(
+              queueItem1.intro_level_code
+            );
+          }
+        }
+      }
+    });
+
+    it("BR-CIG-02, BR-CIG-03, BR-CIG-04, BR-CIG-05: các trường hợp miễn cổng làm quen (teach, lesson_run, preview, không có bài intro)", async () => {
+      let hookCalled = false;
+      const throwingHook = () => {
+        hookCalled = true;
+        return {
+          intro_required: true,
+          intro_queue: [queueItem1],
+          intro_remaining: 0,
+        };
+      };
+
+      // BR-CIG-02: template.kind = 'teach' miễn bước 8 (chống vòng lặp vô hạn)
+      const teachLevel: ContentTarget = {
+        ...publishedFree,
+        code: "GL-C1-CNT-INTR-0001",
+        kind: "teach",
+        template_kind: "teach",
+      };
+      await assertContentAccess(teachLevel, {
+        caller: { kind: "user", user_id: "u1", active_child_id: "c1" },
+        checkIntroRequired: throwingHook,
+      });
+      expect(hookCalled).toBe(false);
+
+      // BR-CIG-03: đang trong lesson_run miễn bước 8
+      await assertContentAccess(publishedFree, {
+        caller: { kind: "user", user_id: "u1", active_child_id: "c1" },
+        lessonRunId: "lesson-run-123",
+        checkIntroRequired: throwingHook,
+      });
+      expect(hookCalled).toBe(false);
+
+      // BR-CIG-04: manager preview miễn bước 8
+      const previewRes = await assertContentAccess(publishedFree, {
+        caller: { kind: "manager", manager_id: "m1", role: "content_editor" },
+        isManagerPreview: true,
+        managerAudience: true,
+        checkIntroRequired: throwingHook,
+      });
+      expect(previewRes.is_preview).toBe(true);
+      expect(hookCalled).toBe(false);
+
+      // BR-CIG-05: skill chưa có bài làm quen published -> không chặn
+      const noIntroRes = await assertContentAccess(publishedFree, {
+        caller: { kind: "guest" },
+        checkIntroRequired: () => ({ intro_required: false }),
+      });
+      expect(noIntroRes.is_preview).toBe(false);
+    });
+
+    it("BR-CIG-08, BR-CIG-11, BR-CIG-15, BR-CIG-16: phiên abandoned/bỏ qua vẫn bị chặn 428 INTRO_REQUIRED ở lần mở tiếp theo theo thứ tự topo tiên quyết", async () => {
+      // Phiên làm quen trước đó bị abandoned hoặc trẻ chọn bỏ qua -> chưa có completed -> checkIntroRequired trả queue topo [tiên quyết, đích]
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          await assertContentAccess(publishedFree, {
+            caller: { kind: "user", user_id: "u1", active_child_id: "c1" },
+            checkIntroRequired: () => ({
+              intro_required: true,
+              intro_queue: [queueItem1, queueItem2],
+              intro_remaining: 0,
+              return_level_code: publishedFree.code,
+              primary_skill_code: "C1.CNT.01",
+            }),
+          });
+          expect.unreachable(`Attempt ${attempt} should throw 428`);
+        } catch (err) {
+          if (!(err instanceof AccessGatingError)) {
+            throw err;
+          }
+          expect(err.code).toBe("INTRO_REQUIRED");
+          expect(err.status).toBe(428);
+          const details = (err.details ?? {}) as IntroErrorDetails;
+          const queue = details.intro_queue ?? [];
+          // BR-CIG-15: tiên quyết đứng trước kỹ năng phụ thuộc
+          expect(queue[0]?.skill_code).toBe("C1.NUM.01");
+          expect(queue[1]?.skill_code).toBe("C1.CNT.01");
+          expect(details.intro_level_code).toBe(queueItem1.intro_level_code);
+        }
+      }
     });
   });
 });

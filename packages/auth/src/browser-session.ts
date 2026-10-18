@@ -42,6 +42,18 @@ export interface BrowserSessionService {
   restore(input: RestoreRememberSessionInput): Promise<RestoredSessionOutput>;
   revokeDevice(input: RevokeDeviceInput): Promise<void>;
   revokeAll(account: AccountReference): Promise<void>;
+  /** Thu hồi mọi thiết bị trừ thiết bị của phiên hiện tại. */
+  revokeOtherDevices(
+    namespace: AuthNamespace,
+    accountId: number,
+    currentSessionId: string
+  ): Promise<{ readonly keptDeviceId: string | null }>;
+  markReauthenticated(
+    namespace: AuthNamespace,
+    accountId: number,
+    sessionId: string,
+    at?: Date
+  ): Promise<void>;
 }
 
 export class DefaultBrowserSessionService implements BrowserSessionService {
@@ -89,5 +101,36 @@ export class DefaultBrowserSessionService implements BrowserSessionService {
 
   revokeAll(account: AccountReference): Promise<void> {
     return this.store.revokeAll(account);
+  }
+
+  async revokeOtherDevices(
+    namespace: AuthNamespace,
+    accountId: number,
+    currentSessionId: string
+  ): Promise<{ readonly keptDeviceId: string | null }> {
+    const deviceId = await this.store.getDeviceId(namespace, currentSessionId);
+    if (!deviceId) {
+      // Không xác định được thiết bị hiện tại: thu hồi hết còn an toàn hơn giữ lại.
+      await this.store.revokeAll({
+        account_type: namespace,
+        account_id: accountId,
+      });
+      return { keptDeviceId: null };
+    }
+    await this.store.revokeOtherDevices(namespace, accountId, deviceId);
+    return { keptDeviceId: deviceId };
+  }
+
+  markReauthenticated(
+    namespace: AuthNamespace,
+    accountId: number,
+    sessionId: string,
+    at: Date = new Date()
+  ): Promise<void> {
+    return this.store.markReauthenticated(
+      sessionId,
+      { account_type: namespace, account_id: accountId },
+      at
+    );
   }
 }

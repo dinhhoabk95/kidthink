@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { GT036Fixtures } from "../src/templates/GT-036/fixtures.js";
-import { GT036Session } from "../src/templates/GT-036/session.js";
-import type {
-  GT036Content,
-  GT036Difficulty,
-} from "../src/templates/GT-036/template.js";
+import { GT036_FIXTURES } from "#src/templates/GT-036/fixtures";
+import { GT036Session } from "#src/templates/GT-036/session";
+import GT036Template, {
+  type GT036Content,
+  type GT036Difficulty,
+} from "#src/templates/GT-036/template";
 
-const sampleFixture = GT036Fixtures[0];
+const sampleFixture = GT036_FIXTURES[0];
 if (!sampleFixture) {
   throw new Error("Missing GT036 fixture");
 }
@@ -15,7 +15,7 @@ function getFixture(index: number): {
   content: GT036Content;
   difficulty: GT036Difficulty;
 } {
-  const f = GT036Fixtures[index];
+  const f = GT036_FIXTURES[index];
   if (!f) {
     throw new Error(`Missing GT036 fixture at index ${index}`);
   }
@@ -362,7 +362,7 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
 
   it("Scenario 13: BR-E036-03 — Palette in all fixtures does not use system feedback color tokens", () => {
     const forbiddenTokens = ["success", "danger", "feedback", "correct"];
-    for (const fixture of GT036Fixtures) {
+    for (const fixture of GT036_FIXTURES) {
       for (const item of fixture.content.palette) {
         if (item.asset.kind === "emoji") {
           for (const tok of forbiddenTokens) {
@@ -424,5 +424,38 @@ describe("GT-036 (free-create) TemplateGameSession (BR-E036-01..05)", () => {
     const view = session.getView();
     expect(view.activePrompt).toBe(sampleFixture.content.prompt);
     expect(view.entities.length).toBeGreaterThan(0);
+  });
+
+  it("Scenario 15: handles drop gesture from palette slot onto track slot", () => {
+    expect(GT036Template.input).toEqual({
+      family: "drag",
+      verbs: ["drop", "tap", "commit"],
+      tolerance_px: 24,
+    });
+
+    const session = new GT036Session(
+      sampleFixture.content,
+      sampleFixture.difficulty,
+      "5-6"
+    );
+    session.prepareRound("5-6");
+
+    const count = sampleFixture.content.track_length;
+    const pal1Slot = session.slots[count + 1];
+    const track2Slot = session.slots[2];
+    if (!(pal1Slot && track2Slot)) {
+      throw new Error("pal1Slot and track2Slot must exist");
+    }
+
+    const dropRes = session.dispatch({
+      type: "drop",
+      fromX: pal1Slot.x,
+      fromY: pal1Slot.y,
+      toX: track2Slot.x,
+      toY: track2Slot.y,
+      timeMs: 150,
+    });
+    expect(dropRes?.valid).toBe(true);
+    expect(session.placedElements[2]).toBe("moon");
   });
 });

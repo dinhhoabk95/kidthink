@@ -5,6 +5,8 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type { EngineView, Gesture, ViewEntity } from "#src/interaction";
@@ -189,6 +191,36 @@ export class FlashRecallSession extends TemplateGameSession<
   override getHintTargetIndex(): number | null {
     const idx = this.content.options.findIndex((o) => o.is_correct);
     return idx >= 0 ? idx : null;
+  }
+
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    if (this.checkWinCondition()) {
+      return null;
+    }
+    if (level === 1) {
+      return {
+        kind: "region",
+        ids: this.difficulty.allow_replay
+          ? ["replay-button"]
+          : ["cloche-plate"],
+      };
+    }
+    if (level === 2) {
+      const correctOpt = this.content.options.find((o) => o.is_correct);
+      const distractorOpt = this.content.options.find((o) => !o.is_correct);
+      const narrowedIds: string[] = [];
+      if (correctOpt) {
+        narrowedIds.push(`opt-${correctOpt.value}`);
+      }
+      if (distractorOpt) {
+        narrowedIds.push(`opt-${distractorOpt.value}`);
+      }
+      return {
+        kind: "region",
+        ids: narrowedIds.length > 0 ? narrowedIds : ["options-narrowed"],
+      };
+    }
+    return this.getHintTarget();
   }
 
   override commit(action: GameAction): void {

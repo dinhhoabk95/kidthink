@@ -43,8 +43,26 @@ server {
         include /etc/nginx/snippets/mindkid-proxy.conf;
     }
 
+    # BR-ING-07: separate wide rate-limit zone for play telemetry event ingestion.
+    location ~* ^/api/(?:users|guest)/play-sessions/[^/]+/events$ {
+        limit_req zone=play_events_ip burst=60 nodelay;
+        proxy_pass http://127.0.0.1:3000;
+        include /etc/nginx/snippets/mindkid-proxy.conf;
+    }
+
     location /api/ {
         limit_req zone=mindkid_api burst=30 nodelay;
+        proxy_pass http://127.0.0.1:3000;
+        include /etc/nginx/snippets/mindkid-proxy.conf;
+    }
+
+    # BR-LPV-01: Studio live preview embeds /play/preview-sandbox from admin.${SITE_DOMAIN}.
+    # Omit X-Frame-Options on this route so Nuxt's CSP frame-ancestors governs framing.
+    location = /play/preview-sandbox {
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        add_header X-Content-Type-Options nosniff always;
+        add_header Referrer-Policy strict-origin-when-cross-origin always;
+        add_header Cross-Origin-Opener-Policy same-origin always;
         proxy_pass http://127.0.0.1:3000;
         include /etc/nginx/snippets/mindkid-proxy.conf;
     }

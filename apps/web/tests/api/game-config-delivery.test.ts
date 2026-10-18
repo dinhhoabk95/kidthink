@@ -197,6 +197,21 @@ async function seedTestRounds(gameLevelId: number, count: number) {
   await db.insert(gameLevelRounds).values(rows);
 }
 
+async function ensureAllowlistFreeLevel() {
+  const code = "GL-C1-CNT-CARD-0001";
+  const db = getOwnerDb();
+  const [existing] = await db
+    .select()
+    .from(gameLevels)
+    .where(and(eq(gameLevels.code, code), eq(gameLevels.status, "published")))
+    .limit(1);
+  if (existing) {
+    return { level: existing, code };
+  }
+  const { level } = await seedTestLevel({ code, accessTier: "free" });
+  return { level, code };
+}
+
 describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
   describe("Task 1 — Server Asset Resolution (BR-CFG-07)", () => {
     it("resolves emoji, image, audio asset refs without hardcoding CDN strings in client", () => {
@@ -218,22 +233,37 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
     });
   });
 
-  describe("Task 2 — Ba Route Config & Gating Matrix", () => {
-    it("GET /api/guest/levels/[code]/config returns config for free level", async () => {
-      const code = `GL-C1-CNT-TEST-${Math.floor(Math.random() * 8999 + 1000)}`;
-      await seedTestLevel({ code, accessTier: "free" });
+  describe("Task 2 — Ba Route Config & Gating Matrix (BR-LAD-07)", () => {
+    it("BR-LAD-07: GET /api/guest/levels/[code]/config returns config for allow-listed free level", async () => {
+      const { code, level } = await ensureAllowlistFreeLevel();
 
       const event = mockEvent("GET", undefined, { code });
       const res = (await guestConfigHandler(event)) as any;
 
       expect(res.level_code).toBe(code);
-      expect(res.content_version).toBe(1);
-      expect(res.template_code).toBe("GT-001");
+      expect(res.content_version).toBe(level.contentVersion);
+      expect(res.template_code).toBe(level.templateCode);
       expect(res.session).toBeDefined();
       expect(res.session.uuid).toBeDefined();
       expect(res.layout_seed).toBeDefined();
       expect(typeof res.layout_seed).toBe("number");
       expect(res.assets).toBeDefined();
+    });
+
+    it("BR-LAD-07: GET /api/guest/levels/[code]/config returns 403 TIER_LOCKED for free level outside guest allow-list", async () => {
+      const code = `GL-C1-CNT-TEST-${Math.floor(Math.random() * 8999 + 1000)}`;
+      await seedTestLevel({ code, accessTier: "free" });
+
+      const event = mockEvent("GET", undefined, { code });
+      try {
+        await guestConfigHandler(event);
+        expect.fail(
+          "Should throw 403 TIER_LOCKED for non-allowlisted free level"
+        );
+      } catch (err: any) {
+        expect(err.statusCode || err.status).toBe(403);
+        expect(err.code || err.statusMessage).toBe("TIER_LOCKED");
+      }
     });
 
     it("GET /api/guest/levels/[code]/config returns 403 TIER_LOCKED for premium level", async () => {
@@ -338,9 +368,9 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
         .spyOn(console, "error")
         .mockImplementation(() => undefined);
 
-      const event = mockEvent("GET", undefined, { code });
+      const event = mockEvent("GET", mockUserAuth(99), { code });
       try {
-        await guestConfigHandler(event);
+        await userConfigHandler(event);
         expect.fail("Should throw 422 CONTENT_PACK_INVALID");
       } catch (err: any) {
         expect(err.statusCode || err.status).toBe(422);
@@ -362,8 +392,8 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-SESS-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "free", contentVersion: 3 });
 
-      const event = mockEvent("GET", undefined, { code });
-      const res = (await guestConfigHandler(event)) as any;
+      const event = mockEvent("GET", mockUserAuth(99), { code });
+      const res = (await userConfigHandler(event)) as any;
 
       expect(res.session.uuid).toBeDefined();
       expect(res.content_version).toBe(3);
@@ -398,8 +428,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
 
   describe("Task 5 — Dual Cache Modes (BR-CFG-04, BR-CFG-05, D-FT)", () => {
     it("sets Cache-Control: public, max-age=300 for free level (BR-CFG-05)", async () => {
-      const code = `GL-C1-CNT-FREE-${Math.floor(Math.random() * 8999 + 1000)}`;
-      await seedTestLevel({ code, accessTier: "free" });
+      const { code } = await ensureAllowlistFreeLevel();
 
       const event = mockEvent("GET", undefined, { code });
       await guestConfigHandler(event);
@@ -431,8 +460,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
     });
 
     it("D-FT negative test 2: fails if free level returns no-store", async () => {
-      const code = `GL-C1-CNT-NEGB-${Math.floor(Math.random() * 8999 + 1000)}`;
-      await seedTestLevel({ code, accessTier: "free" });
+      const { code } = await ensureAllowlistFreeLevel();
 
       const event = mockEvent("GET", undefined, { code });
       await guestConfigHandler(event);
@@ -483,11 +511,11 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
         },
       });
 
-      const event = mockEvent("GET", undefined, { code });
+      const event = mockEvent("GET", mockUserAuth(99), { code });
 
       // `PAYLOAD_TOO_LARGE` đã có trong registry là **413**, không phải 422 —
       // mục 7 của `error-codes.md` để cột "Khi nào" rỗng vì nó là mã chung.
-      await expect(guestConfigHandler(event)).rejects.toMatchObject({
+      await expect(userConfigHandler(event)).rejects.toMatchObject({
         statusCode: 413,
         statusMessage: "PAYLOAD_TOO_LARGE",
       });
@@ -521,8 +549,8 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
         },
       });
 
-      const event = mockEvent("GET", undefined, { code });
-      await expect(guestConfigHandler(event)).rejects.toBeDefined();
+      const event = mockEvent("GET", mockUserAuth(99), { code });
+      await expect(userConfigHandler(event)).rejects.toBeDefined();
 
       const db = getOwnerDb();
       const sessions = await db
@@ -537,8 +565,8 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-UNDR-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "free" });
 
-      const event = mockEvent("GET", undefined, { code });
-      await expect(guestConfigHandler(event)).resolves.toBeDefined();
+      const event = mockEvent("GET", mockUserAuth(99), { code });
+      await expect(userConfigHandler(event)).resolves.toBeDefined();
     });
   });
 
@@ -557,8 +585,8 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-DFLT-${Math.floor(Math.random() * 8999 + 1000)}`;
       const { level } = await seedTestLevel({ code, accessTier: "free" });
 
-      const event = mockEvent("GET", undefined, { code });
-      const payload = (await guestConfigHandler(event)) as any;
+      const event = mockEvent("GET", mockUserAuth(99), { code });
+      const payload = (await userConfigHandler(event)) as any;
 
       expect(payload.rounds).toHaveLength(1);
       expect(payload.rounds[0].round_index).toBe(0);
@@ -573,8 +601,8 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const code = `GL-C1-CNT-MODE-${Math.floor(Math.random() * 8999 + 1000)}`;
       await seedTestLevel({ code, accessTier: "free" });
 
-      const event = mockEvent("GET", undefined, { code });
-      const payload = (await guestConfigHandler(event)) as any;
+      const event = mockEvent("GET", mockUserAuth(99), { code });
+      const payload = (await userConfigHandler(event)) as any;
 
       expect(payload.scoring.mode).toBe("rounds");
     });
@@ -584,8 +612,8 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       const { level } = await seedTestLevel({ code, accessTier: "free" });
       await seedTestRounds(level.id, 3);
 
-      const event = mockEvent("GET", undefined, { code });
-      const payload = (await guestConfigHandler(event)) as any;
+      const event = mockEvent("GET", mockUserAuth(99), { code });
+      const payload = (await userConfigHandler(event)) as any;
 
       expect(payload.rounds).toHaveLength(3);
       expect(payload.rounds.map((r: any) => r.round_index)).toEqual([0, 1, 2]);
@@ -595,8 +623,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
 
   describe("Task 6 — Payload Budget & Preload (BR-CFG-08 & BR-CFG-01)", () => {
     it("BR-CFG-08: payload size is under 200 KB gzipped", async () => {
-      const code = `GL-C1-CNT-BDGT-${Math.floor(Math.random() * 8999 + 1000)}`;
-      await seedTestLevel({ code, accessTier: "free" });
+      const { code } = await ensureAllowlistFreeLevel();
 
       const event = mockEvent("GET", undefined, { code });
       const payload = await guestConfigHandler(event);
@@ -609,8 +636,7 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
     });
 
     it("BR-CFG-01: payload contains all details needed for full play session without mid-game fetches", async () => {
-      const code = `GL-C1-CNT-FULL-${Math.floor(Math.random() * 8999 + 1000)}`;
-      await seedTestLevel({ code, accessTier: "free" });
+      const { code } = await ensureAllowlistFreeLevel();
 
       const event = mockEvent("GET", undefined, { code });
       const payload = (await guestConfigHandler(event)) as any;

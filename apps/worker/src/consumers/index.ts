@@ -2,6 +2,9 @@ import { type JobName, jobSchema } from "@mindkid/queue";
 import { accountPurge } from "./account-purge.js";
 import { backupPostgres } from "./backup-postgres.js";
 import { backupVerify } from "./backup-verify.js";
+import { billingDunningSweep } from "./billing-dunning-sweep.js";
+import { billingRenew } from "./billing-renew.js";
+import { billingRenewalReminder } from "./billing-renewal-reminder.js";
 import { emailSend } from "./email-send.js";
 import { embedContent } from "./embed-content.js";
 import { entitlementExpire } from "./entitlement-expire.js";
@@ -54,6 +57,12 @@ export const CONSUMERS: Record<JobName, ErasedConsumer> = {
   "account:purge": bind("account:purge", accountPurge),
   "backup:postgres": bind("backup:postgres", backupPostgres),
   "backup:verify": bind("backup:verify", backupVerify),
+  "billing:dunning-sweep": bind("billing:dunning-sweep", billingDunningSweep),
+  "billing:renew": bind("billing:renew", billingRenew),
+  "billing:renewal-reminder": bind(
+    "billing:renewal-reminder",
+    billingRenewalReminder
+  ),
   "email:send": bind("email:send", emailSend),
   "embed:content": bind("embed:content", embedContent),
   "entitlement:expire": bind("entitlement:expire", entitlementExpire),

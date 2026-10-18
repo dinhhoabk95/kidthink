@@ -89,7 +89,7 @@ Không có route HTTP.
 | `BR-LVC-04` | Bậc thang trong `packages/content-build/src/thresholds/legacy-v1-coverage.json`: Bậc 0 (1 level/dạng, 20 dạng) · Bậc 1 (10, 51) · Bậc 2 (10, 57) · **Bậc 3 (10, 59)**. Bậc đang bật: 3 | Mức 59/60 có chủ đích: `D5-08` chỉ có 5 level vì trần 5 level một cặp kỹ năng-khuôn (`BR-SKQ-04`) của `C1.MEAS.13` |
 | `BR-LVC-05` | Cổng `check:legacy-v1` fail khi danh sách level rỗng hoặc không đọc được nguồn | Không có dữ liệu mà báo xanh là xanh giả |
 | `BR-LVC-06` | Cấm — NEVER lưu `legacy_v1_ref` trong `content_pack` | Mã truy vết là metadata biên tập; engine không đọc, và `content_pack` thuộc `content_contract` của template |
-| `BR-LVB-15` · `BR-LVB-10` (không dạng game nguồn nào mồ côi) | Mỗi dạng game nguồn trỏ tới một `template_code` có trong registry engine. Dạng nào quyết định không làm khuôn thì có một hàng ở mục 7.1 kèm lý do và điều kiện mở lại; cấm — NEVER bỏ im lặng. Đo 2026-10-18: 60/60 dạng có `template_code`, mục 7.1 rỗng. Test hiện chỉ kiểm sự tồn tại trong registry với mã ≤ `GT-027` | Không có luật này thì "phủ xong chưa" là câu trả lời theo cảm giác, và một cơ chế bị bỏ mà không ghi lý do sẽ được người sau đề xuất lại |
+| `BR-LVB-15` · `BR-LVB-10` (không dạng game nguồn nào mồ côi) | Mỗi dạng game nguồn trỏ tới một `template_code` có trong registry engine. Dạng nào quyết định không làm khuôn thì có một hàng ở mục 7.1 kèm lý do và điều kiện mở lại; cấm — NEVER bỏ im lặng. Đo 2026-10-18: 60/60 dạng có `template_code`, mục 7.1 rỗng, và test kiểm sự tồn tại trong registry cho toàn bộ 60/60 dạng (`GT-001..GT-036`) | Không có luật này thì "phủ xong chưa" là câu trả lời theo cảm giác, và một cơ chế bị bỏ mà không ghi lý do sẽ được người sau đề xuất lại |
 
 ## 7. Data
 

@@ -1,3 +1,5 @@
+import fs from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   assertEntitlementKey,
@@ -7,7 +9,35 @@ import {
   QUOTA_KEYS,
 } from "#src/entitlement-catalog";
 
-describe("Task 2 & 4: Entitlement and Catalog Registry (BR-ENT-01, BR-ENT-03, BR-PKG-04, BR-PKG-05, BR-PKG-08)", () => {
+const ROOT_DIR = path.resolve(import.meta.dirname, "../../..");
+const HARDCODED_PRICE_VND_REGEX = /price_vnd:\s*[1-9][\d_]*/;
+const SOURCE_FILE_REGEX = /\.(ts|vue)$/;
+
+function collectSourceFiles(dir: string): string[] {
+  const results: string[] = [];
+  if (!fs.existsSync(dir)) {
+    return results;
+  }
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (
+        entry.name !== "node_modules" &&
+        entry.name !== "dist" &&
+        entry.name !== ".nuxt" &&
+        entry.name !== ".output" &&
+        entry.name !== "tests"
+      ) {
+        results.push(...collectSourceFiles(fullPath));
+      }
+    } else if (entry.isFile() && SOURCE_FILE_REGEX.test(fullPath)) {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
+describe("Task 2 & 4: Entitlement and Catalog Registry (BR-ENT-01, BR-ENT-03, BR-MVP-02, BR-MVP-03, BR-PKG-01..08)", () => {
   it("BR-ENT-01 & BR-ENT-03: ENTITLEMENT_KEYS has exactly 16 keys, 8 MVP and 8 pre-declared", () => {
     expect(ENTITLEMENT_KEYS).toHaveLength(16);
     const mvpKeys = ENTITLEMENT_KEYS.filter((k) => k.is_mvp);
@@ -26,13 +56,55 @@ describe("Task 2 & 4: Entitlement and Catalog Registry (BR-ENT-01, BR-ENT-03, BR
     );
   });
 
-  it("BR-PKG-04: PACKAGE_CATALOG has 2 public packages and 4 hidden add-ons", () => {
+  it("BR-PKG-01 & BR-PKG-04: PACKAGE_CATALOG has exactly 2 public active MVP SKUs (PKG-standard, PKG-premium) and 4 hidden add-ons", () => {
     const packages = Object.values(PACKAGE_CATALOG);
-    const publicPkgs = packages.filter((p) => p.is_public);
+    const publicPkgs = packages.filter(
+      (p) => p.is_public && p.status === "active"
+    );
     const addOnPkgs = packages.filter((p) => !p.is_public);
 
-    expect(publicPkgs).toHaveLength(2);
+    expect(publicPkgs.map((p) => p.code)).toEqual([
+      "PKG-standard",
+      "PKG-premium",
+    ]);
     expect(addOnPkgs).toHaveLength(4);
+  });
+
+  it("BR-MVP-02: public/sellable packages only grant MVP entitlement keys (is_mvp = true)", () => {
+    const mvpKeySet: ReadonlySet<string> = new Set(
+      ENTITLEMENT_KEYS.filter((k) => k.is_mvp).map((k) => k.key)
+    );
+    const publicPkgs = Object.values(PACKAGE_CATALOG).filter(
+      (p) => p.is_public
+    );
+
+    for (const pkg of publicPkgs) {
+      for (const key of pkg.entitlements) {
+        expect(mvpKeySet.has(key), `${pkg.code} -> ${key}`).toBe(true);
+      }
+    }
+  });
+
+  it("BR-MVP-03 & BR-PKG-05: all add-on packages have is_public = false and declare requires_spec", () => {
+    const addOnPkgs = Object.values(PACKAGE_CATALOG).filter(
+      (p) => !p.is_public
+    );
+    expect(addOnPkgs).toHaveLength(4);
+    for (const pkg of addOnPkgs) {
+      expect(pkg.is_public).toBe(false);
+      expect(pkg.requires_spec).toBeTruthy();
+    }
+  });
+
+  it("BR-PKG-06: every package entitlement resolves to a Vietnamese label in ENTITLEMENT_KEYS", () => {
+    const labelMap = new Map(ENTITLEMENT_KEYS.map((k) => [k.key, k.label]));
+    for (const pkg of Object.values(PACKAGE_CATALOG)) {
+      for (const key of pkg.entitlements) {
+        const label = labelMap.get(key);
+        expect(label, `${pkg.code} -> ${key}`).toBeDefined();
+        expect((label ?? "").length).toBeGreaterThan(0);
+      }
+    }
   });
 
   it("BR-PKG-08: premium package contains all entitlements of standard package", () => {
@@ -49,12 +121,26 @@ describe("Task 2 & 4: Entitlement and Catalog Registry (BR-ENT-01, BR-ENT-03, BR
     }
   });
 
-  it("All prices are PENDING_PRICE_VND (0)", () => {
+  it("BR-PKG-02: all catalog prices use PENDING_PRICE_VND (0) and no source file hardcodes price_vnd numbers", () => {
     expect(PENDING_PRICE_VND).toBe(0);
     for (const pkg of Object.values(PACKAGE_CATALOG)) {
       for (const offer of pkg.offers) {
         expect(offer.price_vnd).toBe(PENDING_PRICE_VND);
       }
     }
+
+    const files = [
+      ...collectSourceFiles(path.join(ROOT_DIR, "apps")),
+      ...collectSourceFiles(path.join(ROOT_DIR, "packages")),
+    ].filter((f) => !f.endsWith("entitlement-catalog.ts"));
+
+    const violations: string[] = [];
+    for (const file of files) {
+      const content = fs.readFileSync(file, "utf-8");
+      if (HARDCODED_PRICE_VND_REGEX.test(content)) {
+        violations.push(path.relative(ROOT_DIR, file));
+      }
+    }
+    expect(violations).toEqual([]);
   });
 });

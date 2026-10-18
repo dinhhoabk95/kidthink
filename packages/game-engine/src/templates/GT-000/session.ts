@@ -33,6 +33,7 @@ import {
   type GT000Asset,
   type GT000Content,
   type GT000Difficulty,
+  type GT000Segment,
   type GT000Step,
   resolveSpeakAlong,
   type SpeakAlongMode,
@@ -91,6 +92,8 @@ export class GT000Session extends TemplateGameSession<
   GT000Difficulty
 > {
   currentStepIndex = 0;
+  currentSegmentIndex = 0;
+  currentSegmentStepIndex = 0;
   selectedAssetId: string | null = null;
   readonly missCounts = new Map<string, number>();
   readonly deferredAssetIds: string[] = [];
@@ -111,7 +114,21 @@ export class GT000Session extends TemplateGameSession<
   lastTtsUsed = false;
 
   private allSteps: GT000Step[] = [];
+  private normalizedSegments: GT000Segment[] = [];
+  private segmentMissBaseline = 0;
+  private readonly initialResumeSegmentIndex?: number;
   private currentAgeBand: AgeBand = "3-4";
+
+  constructor(
+    content: GT000Content,
+    difficulty: GT000Difficulty,
+    layoutSeed = 0,
+    themeId?: string,
+    resumeSegmentIndex?: number
+  ) {
+    super(content, difficulty, layoutSeed, themeId);
+    this.initialResumeSegmentIndex = resumeSegmentIndex;
+  }
 
   /**
    * Bậc "tập nói theo" đang áp dụng — trường thiếu là `off` (`BR-E000-11`).
@@ -122,20 +139,90 @@ export class GT000Session extends TemplateGameSession<
     return resolveSpeakAlong(this.difficulty);
   }
 
+  get segments(): readonly GT000Segment[] {
+    if (this.normalizedSegments.length === 0) {
+      this.normalizedSegments = this.resolveNormalizedSegments();
+    }
+    return this.normalizedSegments;
+  }
+
   get steps(): readonly GT000Step[] {
     if (this.allSteps.length === 0) {
-      this.allSteps = [
-        ...(this.content.steps ??
-          this.content.segments?.flatMap((s) => s.steps) ??
-          []),
-      ];
+      this.allSteps = this.segments.flatMap((s) => s.steps);
     }
     return this.allSteps;
   }
 
+  private resolveNormalizedSegments(): GT000Segment[] {
+    if (this.content.segments && this.content.segments.length > 0) {
+      return [...this.content.segments];
+    }
+    return [
+      {
+        segment_id: "seg_1",
+        asset_ids: this.content.assets.map((a) => a.asset_id),
+        steps: [...(this.content.steps ?? [])],
+        is_review: false,
+      },
+    ];
+  }
+
+  private resolveStartSegmentIndex(totalSegments: number): number {
+    const raw =
+      this.initialResumeSegmentIndex ??
+      this.difficulty.resume_segment_index ??
+      this.content.resume_segment_index ??
+      0;
+    if (!Number.isInteger(raw) || raw <= 0 || raw >= totalSegments) {
+      return 0;
+    }
+    return raw;
+  }
+
+  private computeGlobalStepOffset(segmentIndex: number): number {
+    let offset = 0;
+    for (let i = 0; i < segmentIndex; i++) {
+      offset += this.normalizedSegments[i]?.steps.length ?? 0;
+    }
+    return offset;
+  }
+
+  private emitSegmentStarted(segmentIndex: number): void {
+    const seg = this.normalizedSegments[segmentIndex];
+    if (!seg) {
+      return;
+    }
+    this.recordEvent("intro_segment_started", {
+      segment_id: seg.segment_id,
+      segment_index: segmentIndex,
+      asset_count: seg.asset_ids.length,
+      is_review: seg.is_review ?? false,
+    });
+  }
+
+  private getTotalMissCount(): number {
+    let total = 0;
+    for (const count of this.missCounts.values()) {
+      total += count;
+    }
+    return total;
+  }
+
+  private syncSegmentCursorFromStepIndex(globalStepIdx: number): void {
+    let remaining = globalStepIdx;
+    for (let i = 0; i < this.normalizedSegments.length; i++) {
+      const len = this.normalizedSegments[i]?.steps.length ?? 0;
+      if (remaining < len) {
+        this.currentSegmentIndex = i;
+        this.currentSegmentStepIndex = remaining;
+        return;
+      }
+      remaining -= len;
+    }
+  }
+
   setupEntities(): void {
     this.isWon = false;
-    this.currentStepIndex = 0;
     this.selectedAssetId = null;
     this.missCounts.clear();
     this.deferredAssetIds.length = 0;
@@ -145,24 +232,23 @@ export class GT000Session extends TemplateGameSession<
     this.audioPromptCalled = false;
     this.releaseStepPrompt();
     this.lastTtsUsed = false;
-    this.allSteps = [
-      ...(this.content.steps ??
-        this.content.segments?.flatMap((s) => s.steps) ??
-        []),
-    ];
+    this.segmentMissBaseline = 0;
+    this.normalizedSegments = this.resolveNormalizedSegments();
+    this.allSteps = this.normalizedSegments.flatMap((s) => s.steps);
+
+    const startSegIdx = this.resolveStartSegmentIndex(
+      this.normalizedSegments.length
+    );
+    this.currentSegmentIndex = startSegIdx;
+    this.currentSegmentStepIndex = 0;
+    this.currentStepIndex = this.computeGlobalStepOffset(startSegIdx);
 
     this.recordEvent("game_started", {
       template_code: "GT-000",
       total_steps: this.steps.length,
     });
 
-    this.recordEvent("intro_segment_started", {
-      segment_id: "seg_0",
-      segment_index: 0,
-      asset_count: this.content.assets.length,
-      is_review: false,
-    });
-
+    this.emitSegmentStarted(startSegIdx);
     this.updateCurrentStepLayout();
   }
 
@@ -714,25 +800,44 @@ export class GT000Session extends TemplateGameSession<
     this.audio.stopAll();
     this.renderItemStates.clear();
     this.selectedAssetId = null;
+
+    const currentSeg = this.normalizedSegments[this.currentSegmentIndex];
     this.currentStepIndex += 1;
-    if (this.currentStepIndex >= this.steps.length) {
-      this.isWon = true;
-      let totalMisses = 0;
-      for (const count of this.missCounts.values()) {
-        totalMisses += count;
-      }
-      this.recordEvent("intro_segment_completed", {
-        segment_id: "seg_0",
-        segment_index: 0,
-        miss_count: totalMisses,
-      });
-      this.recordEvent("game_completed", {
-        completed: true,
-        total_steps: this.steps.length,
-      });
-    } else {
+    this.currentSegmentStepIndex += 1;
+
+    const isSegmentDone =
+      !currentSeg || this.currentSegmentStepIndex >= currentSeg.steps.length;
+    if (!isSegmentDone) {
       this.updateCurrentStepLayout();
+      return;
     }
+
+    const totalMisses = this.getTotalMissCount();
+    const segmentMisses = Math.max(0, totalMisses - this.segmentMissBaseline);
+    this.segmentMissBaseline = totalMisses;
+
+    if (currentSeg) {
+      this.recordEvent("intro_segment_completed", {
+        segment_id: currentSeg.segment_id,
+        segment_index: this.currentSegmentIndex,
+        miss_count: segmentMisses,
+      });
+    }
+
+    if (this.currentSegmentIndex + 1 < this.normalizedSegments.length) {
+      this.currentSegmentIndex += 1;
+      this.currentSegmentStepIndex = 0;
+      this.audio.playPopCelebrateSound();
+      this.emitSegmentStarted(this.currentSegmentIndex);
+      this.updateCurrentStepLayout();
+      return;
+    }
+
+    this.isWon = true;
+    this.recordEvent("game_completed", {
+      completed: true,
+      total_steps: this.steps.length,
+    });
   }
 
   prevStep(): void {
@@ -743,6 +848,7 @@ export class GT000Session extends TemplateGameSession<
     this.renderItemStates.clear();
     this.selectedAssetId = null;
     this.currentStepIndex -= 1;
+    this.syncSegmentCursorFromStepIndex(this.currentStepIndex);
     this.updateCurrentStepLayout();
   }
 

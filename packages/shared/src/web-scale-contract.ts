@@ -12,6 +12,11 @@ export type AutomatedPaymentProvider =
 
 export const PAYMENT_REPLAY_WINDOW_SECONDS = 300; // ≤ 5 minutes
 
+/** Chế độ vận hành của cổng (UC-079 BR-001). Tín hiệu sandbox không duyệt đơn live. */
+export const PAYMENT_OPERATING_MODES = ["sandbox", "live"] as const;
+
+export type PaymentOperatingMode = (typeof PAYMENT_OPERATING_MODES)[number];
+
 export const AutomatedPaymentWebhookPayloadSchema = z.object({
   provider: z.enum(AUTOMATED_PAYMENT_PROVIDERS),
   provider_event_id: z.string().min(1),
@@ -20,12 +25,55 @@ export const AutomatedPaymentWebhookPayloadSchema = z.object({
   status: z.enum(["success", "failed", "cancelled"]),
   timestamp_seconds: z.number().int().positive(),
   merchant_id: z.string().min(1),
-  signature: z.string().optional(),
+  mode: z.enum(PAYMENT_OPERATING_MODES),
 });
 
 export type AutomatedPaymentWebhookPayload = z.infer<
   typeof AutomatedPaymentWebhookPayloadSchema
 >;
+
+export type PaymentWebhookParseResult =
+  | { ok: true; payload: AutomatedPaymentWebhookPayload }
+  | { ok: false };
+
+/**
+ * Parse thân thô của webhook. CHỈ gọi sau khi chữ ký đã xác minh trên đúng
+ * chuỗi byte này (UC-079 BR-001: kiểm chữ ký trước khi đọc nội dung).
+ */
+export function parsePaymentWebhookBody(
+  rawBody: string
+): PaymentWebhookParseResult {
+  try {
+    const result = AutomatedPaymentWebhookPayloadSchema.safeParse(
+      JSON.parse(rawBody)
+    );
+    return result.success ? { ok: true, payload: result.data } : { ok: false };
+  } catch {
+    return { ok: false };
+  }
+}
+
+function constantTimeStringEqual(a: string, b: string): boolean {
+  const aHash = createHmac("sha256", "payment-origin").update(a).digest();
+  const bHash = createHmac("sha256", "payment-origin").update(b).digest();
+  return timingSafeEqual(aHash, bHash);
+}
+
+/**
+ * Đối chiếu mã đơn vị nhận tiền và chế độ vận hành của tín hiệu với cấu hình
+ * (UC-079 BR-001 bước 5). So sánh hằng thời gian.
+ */
+export function isPaymentWebhookOriginTrusted(
+  payload: Pick<AutomatedPaymentWebhookPayload, "merchant_id" | "mode">,
+  expected: { merchantId: string; mode: PaymentOperatingMode }
+): boolean {
+  const merchantOk = constantTimeStringEqual(
+    payload.merchant_id,
+    expected.merchantId
+  );
+  const modeOk = payload.mode === expected.mode;
+  return merchantOk && modeOk;
+}
 
 export function isWebhookWithinReplayWindow(
   webhookTimestampSeconds: number,

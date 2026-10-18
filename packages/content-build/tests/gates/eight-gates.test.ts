@@ -117,7 +117,7 @@ describe("Tám cổng thẩm định nội dung seed (BR-CSA-02, Task #117)", ()
     });
   });
 
-  describe("Gate 3: Asset & Tuổi", () => {
+  describe("Gate 3: Asset & Tuổi (BR-CSA-13)", () => {
     it("fails when age_min > age_max or age out of bounds", () => {
       const results = runEightGates(FIXTURE_GATE_3_INVALID_AGE, new Set());
       const gate3 = results.find((r) => r.gate === 3);
@@ -128,6 +128,56 @@ describe("Tám cổng thẩm định nội dung seed (BR-CSA-02, Task #117)", ()
             i.code === "AGE_RANGE_INVALID" || i.code === "AGE_OUT_OF_BOUNDS"
         )
       ).toBe(true);
+    });
+
+    it("fails when emoji ref uses intermediate EMJ-* code (BR-CSA-13)", () => {
+      const seedWithEmjCode: ContentSeed = {
+        ...VALID_GAME_LEVEL_SEED,
+        content_pack: {
+          prompt: "Bé chọn quả táo",
+          target_item: {
+            item_id: "apple",
+            asset: { kind: "emoji", ref: "EMJ-red-apple" },
+          },
+          options: [
+            {
+              item_id: "apple",
+              asset: { kind: "emoji", ref: "EMJ-red-apple" },
+              is_correct: true,
+            },
+          ],
+        },
+      };
+      const results = runEightGates(seedWithEmjCode, new Set());
+      const gate3 = results.find((r) => r.gate === 3);
+      expect(gate3?.passed).toBe(false);
+      expect(
+        gate3?.issues.some((i) => i.code === "EMOJI_CODE_REF_FORBIDDEN")
+      ).toBe(true);
+      expect(gate3?.issues[0]?.message).toContain("EMJ-red-apple");
+    });
+
+    it("passes Gate 3 when emoji ref is a UTF-8 glyph outside @mindkid/emoji catalog (BR-CSA-13)", () => {
+      const seedWithNonCatalogGlyph: ContentSeed = {
+        ...VALID_GAME_LEVEL_SEED,
+        content_pack: {
+          prompt: "Bé chọn khủng long",
+          target_item: {
+            item_id: "dino",
+            asset: { kind: "emoji", ref: "🦖" },
+          },
+          options: [
+            {
+              item_id: "dino",
+              asset: { kind: "emoji", ref: "🦖" },
+              is_correct: true,
+            },
+          ],
+        },
+      };
+      const results = runEightGates(seedWithNonCatalogGlyph, new Set());
+      const gate3 = results.find((r) => r.gate === 3);
+      expect(gate3?.passed).toBe(true);
     });
   });
 

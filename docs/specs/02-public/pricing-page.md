@@ -8,7 +8,6 @@ phase: P2
 reviewed: 2026-10-18
 open_tasks:
   - "#290"
-  - "#292"
 owns:
   - Trình bày gói và giá cho khách
 depends_on:
@@ -19,7 +18,7 @@ depends_on:
 
 # Trang giá
 
-> **Chưa hoàn thành** — CTA mua gói trỏ `/me/orders/create?package=…` nhưng trang đó chưa có (404). Trang vẫn in câu "không tự động gia hạn" của `BR-PRC-07` đã ngưng; câu về gia hạn tự động theo `recurring-billing.md` chưa có. Việc còn lại: [Task #290](../../tasks/290-account-ui-missing-pages-plan.md), [Task #292](../../tasks/292-recurring-billing-plan.md).
+> **Chưa hoàn thành** — CTA mua gói trỏ `/me/orders/create?package=…` nhưng trang đó chưa có (404). Việc còn lại: [Task #290](../../tasks/290-account-ui-missing-pages-plan.md).
 
 ## 1. Objective
 

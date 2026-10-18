@@ -6,7 +6,7 @@ import type {
   SkillSeed,
   ThinkingProcess,
 } from "@mindkid/shared";
-import type { ContentSeed, ContentSeedRound } from "../types.js";
+import type { ContentSeed, ContentSeedRound } from "#src/types";
 import { buildConceptIntroPrompt } from "./gt-000.js";
 import { ALL_BUILDERS } from "./registry.js";
 import { numberDuplicateTitles, resolveLevelTitle } from "./title-resolver.js";
@@ -20,7 +20,7 @@ const REGEX_MONTESSORI_CODE = /-01\d{2}$/;
  * Đổi nội dung level đã gieo (kể cả `title`) thì tăng số này — seeder archive
  * bản cũ và publish bản mới trong một transaction; giữ nguyên số thì seeder bỏ qua.
  */
-export const GENERATED_LEVEL_CONTENT_VERSION = 7;
+export const GENERATED_LEVEL_CONTENT_VERSION = 8;
 
 /**
  * Chỗ trống trong `phrasing.prompt_template` mà bộ dựng level thay được.
@@ -112,13 +112,15 @@ function buildLevelRounds(
     });
 
     let instruction: string;
+    const packWithPrompt = projected.content_pack as {
+      prompt?: string | number | boolean | null;
+    } | null;
     if (
-      typeof projected.content_pack === "object" &&
-      projected.content_pack !== null &&
-      "prompt" in projected.content_pack &&
-      typeof (projected.content_pack as { prompt: unknown }).prompt === "string"
+      typeof packWithPrompt === "object" &&
+      packWithPrompt !== null &&
+      typeof packWithPrompt.prompt === "string"
     ) {
-      instruction = (projected.content_pack as { prompt: string }).prompt;
+      instruction = packWithPrompt.prompt;
     } else if (levelPlan.template === "GT-000") {
       instruction = buildConceptIntroPrompt(dataset.concept_label);
     } else {
@@ -133,12 +135,11 @@ function buildLevelRounds(
     instruction = instruction.replace(/\bkhông\b/gi, "số 0");
 
     if (
-      typeof projected.content_pack === "object" &&
-      projected.content_pack !== null &&
-      "prompt" in projected.content_pack &&
-      typeof (projected.content_pack as { prompt: unknown }).prompt === "string"
+      typeof packWithPrompt === "object" &&
+      packWithPrompt !== null &&
+      typeof packWithPrompt.prompt === "string"
     ) {
-      (projected.content_pack as { prompt: string }).prompt = instruction;
+      packWithPrompt.prompt = instruction;
     }
 
     rounds.push({
@@ -294,7 +295,7 @@ const STRAND_WHAT_TAG_MAP: Record<string, string> = {
   "C6.WM": "mem",
 };
 
-const CANONICAL_THINKING_TAGS = new Set([
+export const CANONICAL_THINKING_TAGS = new Set<string>([
   "observe",
   "compare",
   "sort",
@@ -309,17 +310,17 @@ const CANONICAL_THINKING_TAGS = new Set([
   "count",
 ]);
 
-const THINKING_TAG_NORMALIZE_MAP: Record<string, string> = {
-  listen: "observe",
+/**
+ * Sáu ánh xạ thu hẹp từ 18 ThinkingProcess về 12 tag nội dung chuẩn (BR-STS-06, mục 7.2).
+ */
+export const THINKING_TAG_NORMALIZE_MAP: Readonly<
+  Record<string, ThinkingProcess>
+> = {
   solve: "infer",
   verify: "compare",
   create: "plan",
+  listen: "observe",
   describe: "observe",
-  visual: "observe",
-  analytical: "infer",
-  inhibitory: "inhibit",
-  working_memory: "recall",
-  focus: "observe",
   deduce: "infer",
 };
 
@@ -517,7 +518,7 @@ export function buildLevelsForSkill(skill: SkillSeed): ContentSeed[] {
       contentSeeds.push(
         buildSingleLevel(builder, dataset, identity, levelPlan, title)
       );
-    } catch (err: unknown) {
+    } catch (err) {
       if (err instanceof Error && err.message.includes("[BR-E002-04]")) {
         // D-275-5: Dataset không đủ vật phân biệt được → level không sinh
         continue;

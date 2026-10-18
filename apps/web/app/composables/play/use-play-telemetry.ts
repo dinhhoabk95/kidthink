@@ -1,7 +1,12 @@
-import type { RoundRunner, TelemetryEvent } from "@mindkid/game-engine";
+import {
+  createIndexedDbBufferStorage,
+  type OfflineBufferStorageAdapter,
+  OfflineEventBuffer,
+  type RoundRunner,
+  type SessionMeta,
+  type TelemetryEvent,
+} from "@mindkid/game-engine";
 import { useApi } from "~/composables/use-api";
-
-const MAX_EVENTS_PER_REQUEST = 50;
 
 export type CelebrationTier = "great" | "good" | "nice_try";
 
@@ -15,6 +20,99 @@ export interface SessionCompleteResponse {
 export type FinishSessionResult =
   | { readonly ok: true; readonly data: SessionCompleteResponse }
   | { readonly ok: false; readonly error: string };
+
+export interface UsePlayTelemetryOptions {
+  readonly storage?: OfflineBufferStorageAdapter;
+  readonly flushIntervalMs?: number;
+  readonly persistIntervalMs?: number;
+}
+
+export type ParentGateTelemetryEventName =
+  | "parent_gate_shown"
+  | "parent_gate_passed"
+  | "parent_gate_failed";
+
+export interface ParentGateTelemetryRecord {
+  readonly event_name: ParentGateTelemetryEventName;
+  readonly payload: Readonly<Record<string, string | number>>;
+  readonly timestamp_ms: number;
+}
+
+const FORBIDDEN_PARENT_GATE_KEYS = new Set<string>([
+  "answer",
+  "factor_a",
+  "factor_b",
+  "challenge_payload",
+  "expected_answer",
+]);
+
+const parentGateTelemetryRecords: ParentGateTelemetryRecord[] = [];
+let activeTelemetryBuffer: OfflineEventBuffer | null = null;
+let parentGateSeqCounter = 10_000;
+
+export function sanitizeParentGatePayload(
+  eventName: ParentGateTelemetryEventName,
+  rawPayload: Readonly<Record<string, string | number>>
+): Readonly<Record<string, string | number>> {
+  const safe: Record<string, string | number> = {};
+  for (const [key, value] of Object.entries(rawPayload)) {
+    if (FORBIDDEN_PARENT_GATE_KEYS.has(key)) {
+      continue;
+    }
+    if (eventName === "parent_gate_shown" && key === "trigger") {
+      safe.trigger = String(value);
+    } else if (
+      (eventName === "parent_gate_passed" ||
+        eventName === "parent_gate_failed") &&
+      key === "attempts"
+    ) {
+      safe.attempts = Number(value);
+    }
+  }
+  return safe;
+}
+
+export function recordParentGateTelemetry(
+  eventName: ParentGateTelemetryEventName,
+  rawPayload: Readonly<Record<string, string | number>>
+): ParentGateTelemetryRecord {
+  const payload = sanitizeParentGatePayload(eventName, rawPayload);
+  const timestampMs = Date.now();
+  const record: ParentGateTelemetryRecord = {
+    event_name: eventName,
+    payload,
+    timestamp_ms: timestampMs,
+  };
+  parentGateTelemetryRecords.push(record);
+
+  const meta = activeTelemetryBuffer?.getSessionMeta();
+  if (activeTelemetryBuffer && meta) {
+    parentGateSeqCounter += 1;
+    const occurredAtMs = Math.max(
+      0,
+      Math.min(2_147_483_647, Math.round(timestampMs - meta.started_at))
+    );
+    activeTelemetryBuffer.ingestEvents([
+      {
+        seq: parentGateSeqCounter,
+        event_name: eventName,
+        occurred_at_ms: occurredAtMs,
+        client_timestamp: new Date(timestampMs).toISOString(),
+        payload,
+      },
+    ]);
+  }
+
+  return record;
+}
+
+export function getParentGateTelemetryRecords(): readonly ParentGateTelemetryRecord[] {
+  return [...parentGateTelemetryRecords];
+}
+
+export function clearParentGateTelemetryRecords(): void {
+  parentGateTelemetryRecords.length = 0;
+}
 
 interface StatusHolder {
   status: string | number;
@@ -32,7 +130,7 @@ function extractErrorDetails(err: object | null): {
   return { status, message };
 }
 
-function formatTelemetryPayload(
+export function formatTelemetryPayload(
   rawEvents: readonly TelemetryEvent[],
   sessionStartedAt?: string | null
 ): {
@@ -58,11 +156,76 @@ function formatTelemetryPayload(
   }));
 }
 
-export function usePlayTelemetry() {
+const defaultPersistentStorage = createIndexedDbBufferStorage();
+
+export function usePlayTelemetry(options?: UsePlayTelemetryOptions) {
   const api = useApi();
+  const storage = options?.storage ?? defaultPersistentStorage;
 
   function playSessionApiBase(loggedIn: boolean): string {
     return loggedIn ? "/api/users" : "/api/guest";
+  }
+
+  const buffer = new OfflineEventBuffer({
+    storage,
+    flushIntervalMs: options?.flushIntervalMs,
+    persistIntervalMs: options?.persistIntervalMs,
+    sendBatch: async (targetSessionUuid, isGuest, batch) => {
+      const endpoint = `${playSessionApiBase(!isGuest)}/play-sessions/${targetSessionUuid}/events`;
+      const resp = await api<{ accepted?: number; skipped?: number }>(
+        endpoint,
+        {
+          method: "POST",
+          body: {
+            events: batch.map((ev) => ({
+              seq: ev.seq,
+              event_name: ev.event_name,
+              occurred_at_ms: ev.occurred_at_ms,
+              client_timestamp: ev.client_timestamp,
+              payload: ev.payload,
+            })),
+          },
+        }
+      );
+      return {
+        accepted: resp?.accepted ?? batch.length,
+        skipped: resp?.skipped ?? 0,
+      };
+    },
+  });
+
+  function initTelemetrySession(meta: SessionMeta): void {
+    buffer.initSession(meta);
+    activeTelemetryBuffer = buffer;
+    if (!meta.is_guest) {
+      buffer.restoreAndFlushPersisted().catch(() => undefined);
+    }
+  }
+
+  function ensureSessionInitialized(
+    sessionUuid: string,
+    loggedIn: boolean,
+    sessionStartedAt?: string | null
+  ): void {
+    const active = buffer.getSessionMeta();
+    if (
+      active &&
+      active.session_uuid === sessionUuid &&
+      active.is_guest === !loggedIn
+    ) {
+      activeTelemetryBuffer = buffer;
+      return;
+    }
+    buffer.initSession({
+      session_uuid: sessionUuid,
+      level_code: active?.level_code ?? "UNKNOWN",
+      content_version: active?.content_version ?? 1,
+      is_guest: !loggedIn,
+      started_at: sessionStartedAt
+        ? new Date(sessionStartedAt).getTime()
+        : Date.now(),
+    });
+    activeTelemetryBuffer = buffer;
   }
 
   async function uploadTelemetry(
@@ -71,26 +234,16 @@ export function usePlayTelemetry() {
     loggedIn: boolean,
     sessionStartedAt?: string | null
   ): Promise<void> {
+    ensureSessionInitialized(sessionUuid, loggedIn, sessionStartedAt);
+
     const rawEvents = roundRunner.getAllTelemetry();
     const events = formatTelemetryPayload(rawEvents, sessionStartedAt);
 
-    for (let from = 0; from < events.length; from += MAX_EVENTS_PER_REQUEST) {
-      const chunk = events.slice(from, from + MAX_EVENTS_PER_REQUEST);
-      const endpoint = `${playSessionApiBase(loggedIn)}/play-sessions/${sessionUuid}/events`;
-      try {
-        await api(endpoint, {
-          method: "POST",
-          body: { events: chunk },
-        });
-      } catch (err) {
-        const { status, message } = extractErrorDetails(
-          err instanceof Object ? err : null
-        );
-        console.error(
-          `[play-telemetry] uploadTelemetry thất bại — session: ${sessionUuid}, endpoint: ${endpoint}, status: ${status}, error: ${message}`
-        );
-      }
+    buffer.ingestEvents(events);
+    if (loggedIn) {
+      await buffer.persistToStorage();
     }
+    await buffer.flush();
   }
 
   async function finishSession(
@@ -128,8 +281,23 @@ export function usePlayTelemetry() {
     }
   }
 
+  function destroyTelemetrySession(): void {
+    if (activeTelemetryBuffer === buffer) {
+      activeTelemetryBuffer = null;
+    }
+    buffer.destroy();
+  }
+
+  function getOfflineBuffer(): OfflineEventBuffer {
+    return buffer;
+  }
+
   return {
+    initTelemetrySession,
     uploadTelemetry,
     finishSession,
+    destroyTelemetrySession,
+    getOfflineBuffer,
+    recordParentGateTelemetry,
   };
 }

@@ -5,6 +5,7 @@ import {
 } from "@mindkid/auth";
 import { getOwnerDb, mfaSettings, users } from "@mindkid/db";
 import { UserNotFoundError } from "@mindkid/errors/account";
+import { MfaAlreadyEnabledError } from "@mindkid/errors/auth";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler } from "h3";
 import { getMfaEncryptionKey } from "#server/utils/admin-auth-runtime";
@@ -30,10 +31,6 @@ export default defineEventHandler(async (event) => {
     throw new UserNotFoundError("USER_NOT_FOUND");
   }
 
-  // Generate TOTP secret via otpauth (BR-MFA-12)
-  const secret = generateTotpSecret();
-  const encryptedSecret = encryptTotpSecret(secret, getMfaEncryptionKey()); // BR-MFA-01, BR-MFA-13
-
   // Upsert unconfirmed mfaSettings
   const [existing] = await db
     .select()
@@ -44,6 +41,18 @@ export default defineEventHandler(async (event) => {
         eq(mfaSettings.accountId, userId)
       )
     );
+
+  // UC-052 BR-010: MFA đã xác nhận thì không phát khoá mới; thay thiết bị phải
+  // đi qua tắt (cần xác thực lại cộng một mã hợp lệ, BR-003) hoặc khôi phục.
+  if (existing?.confirmedAt) {
+    throw new MfaAlreadyEnabledError(
+      "Xác thực hai lớp đã được bật. Hãy tắt (kèm mã hợp lệ) trước khi thiết lập lại."
+    );
+  }
+
+  // Generate TOTP secret via otpauth (BR-MFA-12)
+  const secret = generateTotpSecret();
+  const encryptedSecret = encryptTotpSecret(secret, getMfaEncryptionKey()); // BR-MFA-01, BR-MFA-13
 
   if (existing) {
     await db

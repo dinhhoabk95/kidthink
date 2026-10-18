@@ -39,8 +39,8 @@ describe("GT-029: Bớt khỏi nhóm (remove-from-set)", () => {
         "game_completed",
       ]);
       expect(template.input).toEqual({
-        family: "tap",
-        verbs: ["tap"],
+        family: "drag",
+        verbs: ["drop", "tap"],
         tolerance_px: 24,
       });
     });
@@ -317,6 +317,41 @@ describe("GT-029: Bớt khỏi nhóm (remove-from-set)", () => {
       });
       expect(tapOpt?.valid).toBe(true);
       expect(session.checkWinCondition()).toBe(true);
+    });
+
+    it("handles drop gesture to remove items from the group and keeps removed items visible on screen (BR-E029-03)", () => {
+      const f = getFixture(0);
+      const session = new GT029Session(f.content, f.difficulty);
+      session.prepareRound("4-5");
+
+      const slot0 = session.slots[0];
+      const slot1 = session.slots[1];
+      if (!(slot0 && slot1)) {
+        throw new Error("slot0 and slot1 must exist");
+      }
+
+      // Drop item 0 away from its slot -> removed
+      const drop0 = session.dispatch({
+        type: "drop",
+        fromX: slot0.x,
+        fromY: slot0.y,
+        toX: slot0.x + 180,
+        toY: slot0.y + 120,
+        timeMs: 150,
+      });
+      expect(drop0?.valid).toBe(true);
+      expect(session.getRemovedCount()).toBe(1);
+
+      // BR-E029-03: Removed item still remains in EngineView entities (not deleted from screen)
+      const viewAfterRemove = session.getView();
+      expect(viewAfterRemove.entities.length).toBe(
+        f.content.initial_items.length
+      );
+      const item0Entity = viewAfterRemove.entities.find(
+        (e) => e.id === f.content.initial_items[0]?.item_id
+      );
+      expect(item0Entity).toBeDefined();
+      expect(item0Entity?.state).toBe("selected");
     });
   });
 });

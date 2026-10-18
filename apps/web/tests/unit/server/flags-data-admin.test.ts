@@ -1,6 +1,16 @@
+import { clearInMemoryBuckets } from "@mindkid/cache";
 import { CODE_FEATURE_FLAGS, type FeatureFlagKey } from "@mindkid/shared";
 import { describe, expect, it } from "vitest";
-import { isEnabled } from "#server/services/feature-flags.js";
+import {
+  assertRowCountWithinLimit,
+  checkExportRateLimit,
+  MAX_EXPORT_ROWS,
+  parseExportDateRange,
+} from "#server/api/managers/exports/[kind].get.js";
+import {
+  evaluateFlagScope,
+  isEnabled,
+} from "#server/services/feature-flags.js";
 
 const MASK_EMAIL_REGEX = /(?<=^.).*(?=@)/;
 
@@ -20,9 +30,7 @@ describe("P2.9 Feature Flags, Data Export & Notification Admin Invariants (BR-FL
       const val = await isEnabled("ai_content_pipeline");
       expect(typeof val).toBe("boolean");
 
-      const unknownFlag = await isEnabled(
-        "unknown_flag_xyz" as unknown as FeatureFlagKey
-      );
+      const unknownFlag = await isEnabled("unknown_flag_xyz");
       expect(unknownFlag).toBe(false);
     });
 
@@ -38,19 +46,52 @@ describe("P2.9 Feature Flags, Data Export & Notification Admin Invariants (BR-FL
     });
 
     it("Scenario: BR-FLG-04 / D-KO — percentage rollout flags are deterministic and sticky based on user_id hash", () => {
-      const computeSticky = (userId: number, percentage: number) => {
-        return userId % 100 < percentage;
-      };
-
       const userA = 1042;
       const userB = 1089;
       // Fixed 50% rollout: userA (42 < 50) -> true; userB (89 >= 50) -> false
-      expect(computeSticky(userA, 50)).toBe(true);
-      expect(computeSticky(userB, 50)).toBe(false);
+      expect(
+        evaluateFlagScope(
+          true,
+          "percentage",
+          { percentage: 50 },
+          { user_id: userA }
+        )
+      ).toBe(true);
+      expect(
+        evaluateFlagScope(
+          true,
+          "percentage",
+          { percentage: 50 },
+          { user_id: userB }
+        )
+      ).toBe(false);
+      expect(
+        evaluateFlagScope(
+          true,
+          "user_ids",
+          { user_ids: [userA] },
+          { user_id: userA }
+        )
+      ).toBe(true);
+      expect(
+        evaluateFlagScope(
+          true,
+          "user_ids",
+          { user_ids: [userA] },
+          { user_id: userB }
+        )
+      ).toBe(false);
 
       // Deterministic: 100 consecutive calls return same value
       for (let i = 0; i < 100; i++) {
-        expect(computeSticky(userA, 50)).toBe(true);
+        expect(
+          evaluateFlagScope(
+            true,
+            "percentage",
+            { percentage: 50 },
+            { user_id: userA }
+          )
+        ).toBe(true);
       }
     });
 
@@ -149,15 +190,35 @@ describe("P2.9 Feature Flags, Data Export & Notification Admin Invariants (BR-FL
     });
 
     it("Scenario: BR-EXP-05 — limits export size to max 100,000 rows per request returning 422 if exceeded", () => {
-      const requestedRowsCount = 150_000;
-      const isAllowed = requestedRowsCount <= 100_000;
-      expect(isAllowed).toBe(false);
+      expect(MAX_EXPORT_ROWS).toBe(100_000);
+      expect(() => assertRowCountWithinLimit(100_000)).not.toThrow();
+      expect(() => assertRowCountWithinLimit(100_001)).toThrowError(
+        expect.objectContaining({
+          statusCode: 422,
+          statusMessage: "VALIDATION_FAILED",
+        })
+      );
     });
 
-    it("Scenario: BR-EXP-07 — rate limits export requests to max 5 per day per manager returning 429", () => {
-      const dailyExportCount = 6;
-      const isRateLimited = dailyExportCount > 5;
-      expect(isRateLimited).toBe(true);
+    it("Scenario: Spec §8 — parseExportDateRange validates ISO dates, from <= to, and max 366-day span", () => {
+      const valid = parseExportDateRange("2026-08-01", "2026-08-31");
+      expect(valid.from?.toISOString()).toBe("2026-08-01T00:00:00.000Z");
+      expect(valid.to?.toISOString()).toBe("2026-08-31T23:59:59.999Z");
+
+      expect(() => parseExportDateRange("2026-09-10", "2026-09-01")).toThrow();
+      expect(() => parseExportDateRange("not-a-date", "2026-09-01")).toThrow();
+      expect(() => parseExportDateRange("2024-01-01", "2026-01-01")).toThrow();
+    });
+
+    it("Scenario: BR-EXP-07 — rate limits export requests to max 5 per day per manager returning 429", async () => {
+      clearInMemoryBuckets();
+      for (let i = 1; i <= 5; i++) {
+        await expect(checkExportRateLimit(999)).resolves.toBeUndefined();
+      }
+      await expect(checkExportRateLimit(999)).rejects.toMatchObject({
+        statusCode: 429,
+        statusMessage: "RATE_LIMITED",
+      });
     });
 
     it("Scenario: BR-EXP-08 — user email address in subscriptions export is anonymized/masked", () => {

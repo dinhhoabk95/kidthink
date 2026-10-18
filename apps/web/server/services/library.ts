@@ -1,16 +1,22 @@
+import type { RecommendationItem } from "@mindkid/adaptive";
 import {
   activities,
   collections,
   curricula,
   gameLevels,
+  type getOwnerDb,
   lessons,
   libraryItems,
   userTagMap,
 } from "@mindkid/db";
+import { QuotaExceededError } from "@mindkid/errors/billing";
+import { NotFoundError } from "@mindkid/errors/common";
+import { CodeAlreadyExistsError } from "@mindkid/errors/content";
 import { type AccessTier, TIER_ORDER, TIER_RANK } from "@mindkid/shared";
 import { and, desc, eq, sql } from "drizzle-orm";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import { getGuestRecommendations } from "./recommendation.ts";
+
+type LibraryDatabase = ReturnType<typeof getOwnerDb>;
 
 export interface GetLibraryOptions {
   userId: number;
@@ -38,10 +44,7 @@ export interface LibraryItemPayload {
   tags?: string[];
 }
 
-export async function getUserCollections(
-  db: PostgresJsDatabase<Record<string, unknown>>,
-  userId: number
-) {
+export async function getUserCollections(db: LibraryDatabase, userId: number) {
   const userCols = await db
     .select({
       id: collections.id,
@@ -79,7 +82,7 @@ export async function getUserCollections(
 }
 
 export async function createCollection(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: LibraryDatabase,
   userId: number,
   name: string
 ) {
@@ -88,12 +91,16 @@ export async function createCollection(
     .from(collections)
     .where(eq(collections.userId, userId));
 
-  if ((existingCount?.count ?? 0) >= 20) {
-    const err = new Error("Vượt quá giới hạn 20 bộ sưu tập cho phép.");
-    (err as unknown as { statusCode: number; code: string }).statusCode = 402;
-    (err as unknown as { statusCode: number; code: string }).code =
-      "COLLECTION_LIMIT_EXCEEDED";
-    throw err;
+  const currentCount = existingCount?.count ?? 0;
+  if (currentCount >= 20) {
+    throw new QuotaExceededError(
+      {
+        quota_key: "collections",
+        limit: 20,
+        current: currentCount,
+      },
+      "Vượt quá giới hạn 20 bộ sưu tập cho phép."
+    );
   }
 
   const [created] = await db
@@ -101,7 +108,7 @@ export async function createCollection(
     .values({
       userId,
       name: name.trim(),
-      position: existingCount?.count ?? 0,
+      position: currentCount,
     })
     .returning({
       id: collections.id,
@@ -120,7 +127,7 @@ export async function createCollection(
 }
 
 export async function updateCollection(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: LibraryDatabase,
   params: {
     userId: number;
     collectionId: number;
@@ -128,7 +135,7 @@ export async function updateCollection(
     position?: number;
   }
 ) {
-  const patch: Record<string, unknown> = {};
+  const patch: { name?: string; position?: number } = {};
   if (params.name !== undefined) {
     patch.name = params.name.trim();
   }
@@ -153,11 +160,7 @@ export async function updateCollection(
     });
 
   if (!updated) {
-    const err = new Error("Không tìm thấy bộ sưu tập.");
-    (err as unknown as { statusCode: number; code: string }).statusCode = 404;
-    (err as unknown as { statusCode: number; code: string }).code =
-      "COLLECTION_NOT_FOUND";
-    throw err;
+    throw new NotFoundError("Không tìm thấy bộ sưu tập.");
   }
 
   return {
@@ -169,7 +172,7 @@ export async function updateCollection(
 }
 
 export async function deleteCollection(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: LibraryDatabase,
   params: { userId: number; collectionId: number }
 ) {
   const [deleted] = await db
@@ -183,26 +186,83 @@ export async function deleteCollection(
     .returning({ id: collections.id });
 
   if (!deleted) {
-    const err = new Error("Không tìm thấy bộ sưu tập.");
-    (err as unknown as { statusCode: number; code: string }).statusCode = 404;
-    (err as unknown as { statusCode: number; code: string }).code =
-      "COLLECTION_NOT_FOUND";
-    throw err;
+    throw new NotFoundError("Không tìm thấy bộ sưu tập.");
   }
 
   return { success: true };
 }
 
+async function resolveEntityIdByCode(
+  db: LibraryDatabase,
+  entityType: "game_level" | "lesson" | "curriculum" | "activity",
+  code: string
+): Promise<number | null> {
+  const normalizedCode = code.trim();
+  if (!normalizedCode) {
+    return null;
+  }
+  if (entityType === "game_level") {
+    const [row] = await db
+      .select({ entityId: gameLevels.entityId })
+      .from(gameLevels)
+      .where(eq(gameLevels.code, normalizedCode))
+      .orderBy(desc(gameLevels.contentVersion))
+      .limit(1);
+    return row?.entityId ?? null;
+  }
+  if (entityType === "lesson") {
+    const [row] = await db
+      .select({ entityId: lessons.entityId })
+      .from(lessons)
+      .where(eq(lessons.code, normalizedCode))
+      .orderBy(desc(lessons.contentVersion))
+      .limit(1);
+    return row?.entityId ?? null;
+  }
+  if (entityType === "curriculum") {
+    const [row] = await db
+      .select({ entityId: curricula.entityId })
+      .from(curricula)
+      .where(eq(curricula.code, normalizedCode))
+      .orderBy(desc(curricula.contentVersion))
+      .limit(1);
+    return row?.entityId ?? null;
+  }
+  const [row] = await db
+    .select({ entityId: activities.entityId })
+    .from(activities)
+    .where(eq(activities.code, normalizedCode))
+    .orderBy(desc(activities.contentVersion))
+    .limit(1);
+  return row?.entityId ?? null;
+}
+
 export async function addLibraryItem(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: LibraryDatabase,
   params: {
     userId: number;
     entityType: "game_level" | "lesson" | "curriculum" | "activity";
-    entityId: number;
+    entityId?: number;
+    code?: string;
     collectionId?: number | null;
     note?: string | null;
   }
 ) {
+  let resolvedEntityId = params.entityId;
+  if (resolvedEntityId === undefined && params.code) {
+    const foundId = await resolveEntityIdByCode(
+      db,
+      params.entityType,
+      params.code
+    );
+    if (foundId !== null) {
+      resolvedEntityId = foundId;
+    }
+  }
+  if (resolvedEntityId === undefined || resolvedEntityId <= 0) {
+    throw new NotFoundError("Không tìm thấy nội dung cần lưu vào thư viện.");
+  }
+
   const [existing] = await db
     .select({
       id: libraryItems.userId,
@@ -212,16 +272,12 @@ export async function addLibraryItem(
       and(
         eq(libraryItems.userId, params.userId),
         eq(libraryItems.entityType, params.entityType),
-        eq(libraryItems.entityId, params.entityId)
+        eq(libraryItems.entityId, resolvedEntityId)
       )
     );
 
   if (existing) {
-    const err = new Error("Mục này đã tồn tại trong thư viện.");
-    (err as unknown as { statusCode: number; code: string }).statusCode = 409;
-    (err as unknown as { statusCode: number; code: string }).code =
-      "DUPLICATE_LIBRARY_ITEM";
-    throw err;
+    throw new CodeAlreadyExistsError("Mục này đã tồn tại trong thư viện.");
   }
 
   const [created] = await db
@@ -229,7 +285,7 @@ export async function addLibraryItem(
     .values({
       userId: params.userId,
       entityType: params.entityType,
-      entityId: params.entityId,
+      entityId: resolvedEntityId,
       collectionId: params.collectionId ?? null,
       note: params.note?.trim() ?? null,
     })
@@ -241,7 +297,7 @@ export async function addLibraryItem(
 export const saveLibraryItem = addLibraryItem;
 
 export async function removeLibraryItem(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: LibraryDatabase,
   params: {
     userId: number;
     entityType: "game_level" | "lesson" | "curriculum" | "activity";
@@ -278,7 +334,7 @@ interface ResolvedEntityMeta {
 }
 
 async function resolveGameLevelMeta(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: LibraryDatabase,
   entityId: number
 ): Promise<ResolvedEntityMeta> {
   const levels = await db
@@ -305,7 +361,7 @@ async function resolveGameLevelMeta(
 }
 
 async function resolveLessonMeta(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: LibraryDatabase,
   entityId: number
 ): Promise<ResolvedEntityMeta> {
   const les = await db
@@ -330,7 +386,7 @@ async function resolveLessonMeta(
 }
 
 async function resolveCurriculumMeta(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: LibraryDatabase,
   entityId: number
 ): Promise<ResolvedEntityMeta> {
   const currs = await db
@@ -355,7 +411,7 @@ async function resolveCurriculumMeta(
 }
 
 async function resolveActivityMeta(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: LibraryDatabase,
   entityId: number
 ): Promise<ResolvedEntityMeta> {
   const acts = await db
@@ -380,7 +436,7 @@ async function resolveActivityMeta(
 }
 
 function resolveEntityMeta(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: LibraryDatabase,
   entityType: string,
   entityId: number
 ): Promise<ResolvedEntityMeta> {
@@ -404,7 +460,7 @@ function resolveEntityMeta(
 }
 
 export async function getUserLibrary(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: LibraryDatabase,
   options: GetLibraryOptions
 ) {
   const conditions = [eq(libraryItems.userId, options.userId)];
@@ -469,7 +525,7 @@ export async function getUserLibrary(
     });
   }
 
-  let recommendations: unknown[] = [];
+  let recommendations: RecommendationItem[] = [];
   if (result.length === 0 && !options.collectionId && !options.q) {
     const recs = await getGuestRecommendations(db, { limit: 5 });
     recommendations = recs.primary

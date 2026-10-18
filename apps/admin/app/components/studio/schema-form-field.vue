@@ -14,14 +14,23 @@
       </span>
     </div>
 
-    <!-- 1. Emoji Hint -->
+    <!-- 1. Emoji Hint (BR-EPK-03, BR-EPK-09, BR-SDF-04) -->
     <div class="flex items-center gap-3" v-if="hint === 'emoji'">
       <div
-        class="w-12 h-12 rounded-2xl border-2 border-surface-300 dark:border-surface-600 flex items-center justify-center text-2xl bg-white dark:bg-surface-800 shadow-sm"
+        class="w-12 h-12 rounded-2xl border-2 border-surface-300 dark:border-surface-600 flex items-center justify-center text-2xl bg-white dark:bg-surface-800 shadow-sm shrink-0"
       >
         <span v-if="stringValue">{{ stringValue }}</span>
         <span class="text-surface-400 text-sm" v-else>Trống</span>
       </div>
+      <input
+        class="w-28 min-h-10 px-3 py-2 text-base text-center rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 focus:border-brand-500 focus:outline-none"
+        placeholder="Dán 🍎..."
+        type="text"
+        :aria-label="label ? `${label} (dán trực tiếp)` : 'Dán emoji trực tiếp'"
+        :id="fieldId"
+        :value="emojiDraftValue"
+        @input="onEmojiDirectInput"
+      >
       <button
         class="min-h-10 px-4 py-2 rounded-2xl border-2 border-brand-600 bg-brand-600 text-white font-medium text-base hover:bg-brand-700 active:scale-95 transition-all"
         type="button"
@@ -192,19 +201,19 @@
       >
     </div>
 
-    <!-- Inline Field Error (BR-STU-09) -->
+    <!-- Inline Field Error (BR-STU-09, BR-EPK-03) -->
     <p
       class="mt-1.5 text-xs text-danger-600 dark:text-danger-400 font-medium"
-      v-if="props.error"
+      v-if="effectiveError"
     >
-      {{ props.error }}
+      {{ effectiveError }}
     </p>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import type { UiHintType } from "@mindkid/shared/client";
-  import { computed } from "vue";
+  import { type UiHintType, validateEmojiInput } from "@mindkid/shared/client";
+  import { computed, ref, watch } from "vue";
 
   const props = defineProps<{
     name: string;
@@ -237,6 +246,16 @@
     }
     return "";
   });
+
+  const emojiDraftValue = ref(stringValue.value);
+  const localEmojiError = ref("");
+
+  watch(stringValue, (nextVal) => {
+    emojiDraftValue.value = nextVal;
+    localEmojiError.value = "";
+  });
+
+  const effectiveError = computed(() => localEmojiError.value || props.error);
 
   const numericValue = computed(() => {
     if (typeof props.modelValue === "number") {
@@ -274,7 +293,22 @@
     emit("open-emoji-picker", { path: props.path, value: stringValue.value });
   }
 
+  function onEmojiDirectInput(e: Event) {
+    const target = e.target as HTMLInputElement;
+    const raw = target.value;
+    emojiDraftValue.value = raw;
+    const validation = validateEmojiInput(raw);
+    if (!validation.ok) {
+      localEmojiError.value = validation.error;
+      return;
+    }
+    localEmojiError.value = "";
+    updateValue(validation.glyph);
+  }
+
   function clearEmoji() {
+    localEmojiError.value = "";
+    emojiDraftValue.value = "";
     updateValue("");
   }
 

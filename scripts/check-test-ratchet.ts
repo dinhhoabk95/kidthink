@@ -58,6 +58,109 @@ export interface RatchetVerdict {
   readonly reasons: readonly string[];
 }
 
+export interface EmptyTestViolation {
+  readonly file: string;
+  readonly line: number;
+  readonly rule: "BR-TST-10";
+  readonly kind: "empty-body" | "tautology";
+  readonly snippet: string;
+}
+
+const EMPTY_BODY_TEST_RE =
+  /^\s*(?:it|test)\s*\(\s*(["'`])(?:[^"'`\\]|\\.)*\1\s*,\s*(?:async\s*)?\([^)]*\)\s*=>\s*\{\s*\}\s*\)/gm;
+
+const TAUTOLOGY_ONLY_TEST_RE =
+  /^\s*(?:it|test)\s*\(\s*(["'`])(?:[^"'`\\]|\\.)*\1\s*,\s*(?:async\s*)?\([^)]*\)\s*=>\s*\{\s*expect\(\s*(true|false|1|0)\s*\)\.(?:toBe|toEqual)\(\s*\2\s*\)\s*;?\s*\}\s*\)/gm;
+
+function lineNumberAt(source: string, index: number): number {
+  let line = 1;
+  for (let i = 0; i < index && i < source.length; i++) {
+    if (source.charCodeAt(i) === 10) {
+      line++;
+    }
+  }
+  return line;
+}
+
+/**
+ * Quét một file test nguồn để phát hiện test rỗng hoặc tautology thuần (`BR-TST-10`).
+ */
+export function scanEmptyTestsInSource(
+  source: string,
+  file = "<inline>"
+): EmptyTestViolation[] {
+  const violations: EmptyTestViolation[] = [];
+
+  for (const match of source.matchAll(EMPTY_BODY_TEST_RE)) {
+    const idx = match.index ?? 0;
+    violations.push({
+      file,
+      line: lineNumberAt(source, idx),
+      rule: "BR-TST-10",
+      kind: "empty-body",
+      snippet: match[0].trim(),
+    });
+  }
+
+  for (const match of source.matchAll(TAUTOLOGY_ONLY_TEST_RE)) {
+    const idx = match.index ?? 0;
+    violations.push({
+      file,
+      line: lineNumberAt(source, idx),
+      rule: "BR-TST-10",
+      kind: "tautology",
+      snippet: match[0].trim(),
+    });
+  }
+
+  return violations;
+}
+
+function collectRepoTestFiles(dir: string, out: string[]): void {
+  if (!fs.existsSync(dir)) {
+    return;
+  }
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (
+      entry.name === "node_modules" ||
+      entry.name === ".nuxt" ||
+      entry.name === ".output" ||
+      entry.name === "dist" ||
+      entry.name === ".git"
+    ) {
+      continue;
+    }
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      collectRepoTestFiles(fullPath, out);
+    } else if (entry.isFile() && entry.name.endsWith(".test.ts")) {
+      out.push(fullPath);
+    }
+  }
+}
+
+/**
+ * Quét toàn bộ file `*.test.ts` trong `packages/`, `apps/`, `scripts/` để chặn test rỗng (`BR-TST-10`).
+ */
+export function scanRepoEmptyTests(
+  rootDir: string = REPO_ROOT
+): EmptyTestViolation[] {
+  const files: string[] = [];
+  for (const sub of ["packages", "apps", "scripts"]) {
+    collectRepoTestFiles(path.join(rootDir, sub), files);
+  }
+  files.sort();
+
+  const violations: EmptyTestViolation[] = [];
+  for (const absPath of files) {
+    const relPath = path.relative(rootDir, absPath).replace(/\\/g, "/");
+    const content = fs.readFileSync(absPath, "utf8");
+    violations.push(...scanEmptyTestsInSource(content, relPath));
+  }
+  return violations;
+}
+
 function parseArgs(): {
   isUpdate: boolean;
   isForce: boolean;

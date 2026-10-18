@@ -101,13 +101,23 @@ function resolveActionFromScore(
   };
 }
 
+export interface SkillPrerequisiteEdge {
+  readonly skill_id: number;
+  readonly prerequisite_skill_id: number;
+  readonly strength?: number;
+}
+
+export interface SkillTree {
+  readonly prerequisites?: readonly SkillPrerequisiteEdge[];
+}
+
 /**
  * BR-ADP-05, BR-ADP-08, BR-ADP-09, D-MM
  * Pure function to select next adaptive action within current curriculum step.
  * If step is null (free play / off-curriculum), returns null per D-MM (owned by P3.6).
  */
 export function selectNext(params: {
-  tree?: unknown;
+  tree?: SkillTree;
   mastery: Map<number, MasteryState>;
   step: CurriculumStepContext | null;
   now: Date;

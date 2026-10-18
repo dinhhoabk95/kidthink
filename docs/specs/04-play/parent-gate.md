@@ -2,12 +2,10 @@
 spec: PARENT-GATE
 title: Cổng người lớn
 area: play
-status: approved
+status: implemented
 mvp: true
 phase: P1
 reviewed: 2026-10-18
-open_tasks:
-  - "#294"
 owns:
   - Cơ chế xác minh người lớn
   - Nơi bắt buộc có cổng
@@ -17,8 +15,6 @@ depends_on:
 ---
 
 # Cổng người lớn
-
-> **Chưa hoàn thành** — §7.3: event `parent_gate_shown` / `parent_gate_passed` / `parent_gate_failed` có trong catalog nhưng client chưa phát; `BR-PGT-05`, `BR-PGT-07` chưa có test gắn mã. Việc còn lại: [Task #294](../../tasks/294-play-surface-gaps-plan.md).
 
 ## 1. Objective
 

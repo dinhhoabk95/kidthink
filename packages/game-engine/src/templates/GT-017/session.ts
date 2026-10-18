@@ -5,6 +5,8 @@ import {
   ACTION_RETRY,
   type ActionResult,
   type GameAction,
+  type HintLevel,
+  type HintTarget,
   TemplateGameSession,
 } from "#src/game-session";
 import type {
@@ -170,6 +172,28 @@ export class BlockStackSession extends TemplateGameSession<
   override getHintTargetIndex(): number | null {
     const idx = this.content.options.findIndex((o) => o.is_correct);
     return idx >= 0 ? idx : null;
+  }
+
+  override getHintTargetForLevel(level: HintLevel): HintTarget | null {
+    if (this.checkWinCondition()) {
+      return null;
+    }
+    if (level === 1) {
+      const bottomLayerIds = this.content.model
+        .filter((c) => c.z === 0)
+        .map((c) => `cube:${c.x},${c.y},${c.z}`);
+      return {
+        kind: "region",
+        ids: ["model-layer-bottom", ...bottomLayerIds],
+      };
+    }
+    if (level === 2) {
+      return {
+        kind: "region",
+        ids: ["model-hidden-cubes", "model-view"],
+      };
+    }
+    return this.getHintTarget();
   }
 
   override commit(action: GameAction): void {

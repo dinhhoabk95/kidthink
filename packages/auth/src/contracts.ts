@@ -10,6 +10,8 @@ export interface UserTokenPayload {
   readonly display_name: string;
   readonly session_id: string;
   readonly active_child_db_id?: number;
+  /** Mốc xác minh lại gần nhất của phiên, đọc từ Redis (UC-004 BR-022). */
+  readonly reauth_at?: Date;
 }
 
 export interface ManagerTokenPayload {
@@ -17,6 +19,7 @@ export interface ManagerTokenPayload {
   readonly display_name: string;
   readonly session_id: string;
   readonly role: ManagerRole;
+  readonly reauth_at?: Date;
 }
 
 export interface UserAuthContext {

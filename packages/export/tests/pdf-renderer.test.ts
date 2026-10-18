@@ -1,19 +1,21 @@
 import { describe, expect, it } from "vitest";
 import {
   assertNoChildDataInExport,
+  extractTextFromPdf,
   type LessonPlanExportDTO,
   renderLessonPlanPdf,
   toUtf16BeHex,
-} from "../src/index.js";
+} from "#src/index";
 
 const PAGE_LIMIT_EXCEEDED_REGEX =
   /BR-PDF-05 Violation: Vượt quá giới hạn tối đa 20 trang/;
 const BR_PDF_06_VIOLATION_REGEX = /BR-PDF-06 Violation/;
+const MAX_PDF_BYTES = 2 * 1024 * 1024;
 
 describe("PDF Renderer Unit Tests (BR-PDF-04, 05, 06, 07)", () => {
   const samplePlan: LessonPlanExportDTO = {
     uuid: "11111111-1111-4111-8111-111111111111",
-    title: "Bé đếm quả táo và phân loại hình học",
+    title: "Bé học đếm — Bé đếm quả táo và phân loại hình học",
     target_age: 4,
     estimated_minutes: 35,
     notes:
@@ -61,30 +63,41 @@ describe("PDF Renderer Unit Tests (BR-PDF-04, 05, 06, 07)", () => {
     ],
   };
 
-  it("[BR-PDF-07] Nhúng font và mã hóa Unicode hiển thị đúng tiếng Việt có dấu", () => {
+  it("[BR-PDF-07] Nhúng font TrueType subset tiếng Việt (/FontFile2, /CIDToGIDMap, /W, /ToUnicode) và trích xuất lại đúng tiếng Việt", () => {
     const result = renderLessonPlanPdf(samplePlan);
     expect(result.pdfBuffer).toBeInstanceOf(Buffer);
     expect(result.pdfBuffer.length).toBeGreaterThan(500);
+    expect(result.pdfBuffer.length).toBeLessThan(MAX_PDF_BYTES);
 
     const pdfString = result.pdfBuffer.toString("binary");
-    // Verify standard PDF structure
     expect(pdfString.startsWith("%PDF-1.4")).toBe(true);
     expect(pdfString).toContain("%%EOF");
     expect(pdfString).toContain("/Type /Catalog");
     expect(pdfString).toContain("/Type /Pages");
-    expect(pdfString).toContain("/Identity-H");
-    expect(pdfString).toContain("ToUnicode");
+    expect(pdfString).toContain("/Encoding /Identity-H");
+    expect(pdfString).toContain("/Subtype /CIDFontType2");
+    expect(pdfString).toContain("/CIDToGIDMap /Identity");
+    expect(pdfString).toContain("/FontFile2");
+    expect(pdfString).toContain("/W [");
+    expect(pdfString).toContain("/ToUnicode");
+    expect(pdfString).toContain("beginbfchar");
 
-    // Verify Vietnamese text UTF-16BE hex encoding presence ("Bé đếm quả táo")
     const titleUtf16Hex = toUtf16BeHex("KẾ HOẠCH BÀI DẠY:");
     expect(pdfString).toContain(titleUtf16Hex);
+
+    const extractedText = extractTextFromPdf(result.pdfBuffer);
+    expect(extractedText).toContain("KẾ HOẠCH BÀI DẠY:");
+    expect(extractedText).toContain("BÉ HỌC ĐẾM");
+    expect(extractedText).toContain("Đếm số lượng quả táo");
+    expect(extractedText).toContain(
+      "Cho trẻ đếm lần lượt từng quả táo trên bàn."
+    );
   });
 
   it("[BR-PDF-04] Watermark chỉ nằm ở chân trang, không che nội dung", () => {
     const result = renderLessonPlanPdf(samplePlan);
     const pdfString = result.pdfBuffer.toString("binary");
 
-    // Check footer watermark coordinates (y = 32..45 pt, strictly at bottom of A4)
     expect(pdfString).toContain("40 45 m 555 45 l S");
     expect(pdfString).toContain("40 32 Td");
 
@@ -101,7 +114,6 @@ describe("PDF Renderer Unit Tests (BR-PDF-04, 05, 06, 07)", () => {
   });
 
   it("[BR-PDF-05] Từ chối và ném lỗi khi tài liệu vượt quá 20 trang", () => {
-    // Generate a huge lesson plan with 150 items that exceed 20 pages
     const hugeItems = Array.from({ length: 120 }, (_, i) => ({
       position: i,
       item_type: "activity" as const,
@@ -136,23 +148,15 @@ describe("PDF Renderer Unit Tests (BR-PDF-04, 05, 06, 07)", () => {
   });
 
   it("[BR-PDF-06] Kiểm tra chống rò rỉ dữ liệu trẻ (PII & Mastery progress)", () => {
-    // Valid clean plan passes
-    expect(() =>
-      assertNoChildDataInExport(
-        samplePlan as unknown as Record<string, unknown>
-      )
-    ).not.toThrow();
+    expect(() => assertNoChildDataInExport(samplePlan)).not.toThrow();
 
-    // Plan containing child_id or child_name must throw
     const dirtyPlanWithChildId = {
       ...samplePlan,
       child_id: 12_345,
     };
-    expect(() =>
-      assertNoChildDataInExport(
-        dirtyPlanWithChildId as unknown as Record<string, unknown>
-      )
-    ).toThrow(BR_PDF_06_VIOLATION_REGEX);
+    expect(() => assertNoChildDataInExport(dirtyPlanWithChildId)).toThrow(
+      BR_PDF_06_VIOLATION_REGEX
+    );
 
     const dirtyPlanWithChildProfile = {
       ...samplePlan,
@@ -167,11 +171,9 @@ describe("PDF Renderer Unit Tests (BR-PDF-04, 05, 06, 07)", () => {
         },
       ],
     };
-    expect(() =>
-      assertNoChildDataInExport(
-        dirtyPlanWithChildProfile as unknown as Record<string, unknown>
-      )
-    ).toThrow(BR_PDF_06_VIOLATION_REGEX);
+    expect(() => assertNoChildDataInExport(dirtyPlanWithChildProfile)).toThrow(
+      BR_PDF_06_VIOLATION_REGEX
+    );
 
     const dirtyPlanWithMasteryState = {
       ...samplePlan,
@@ -179,10 +181,8 @@ describe("PDF Renderer Unit Tests (BR-PDF-04, 05, 06, 07)", () => {
         p_learn: 0.85,
       },
     };
-    expect(() =>
-      assertNoChildDataInExport(
-        dirtyPlanWithMasteryState as unknown as Record<string, unknown>
-      )
-    ).toThrow(BR_PDF_06_VIOLATION_REGEX);
+    expect(() => assertNoChildDataInExport(dirtyPlanWithMasteryState)).toThrow(
+      BR_PDF_06_VIOLATION_REGEX
+    );
   });
 });

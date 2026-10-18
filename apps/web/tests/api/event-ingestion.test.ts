@@ -1,5 +1,7 @@
+import fs from "node:fs";
 // biome-ignore lint/performance/noNamespaceImport: spy on module exports in test
 import * as adaptive from "@mindkid/adaptive";
+import { repoPath } from "@mindkid/config/paths";
 import {
   childProfiles,
   competencies,
@@ -13,6 +15,11 @@ import {
   users,
 } from "@mindkid/db";
 import { completePlaySession, ingestPlayEvents } from "@mindkid/play";
+import {
+  enforceTwoAxisRateLimit,
+  RATE_LIMIT_CONFIGS,
+  resolveRateLimitRouteClass,
+} from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import { describe, expect, it, vi } from "vitest";
 
@@ -189,9 +196,8 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         isUserCall: false,
         guestDeviceId: "device-seq-order",
       })
-    ).rejects.toSatisfy((err: unknown) => {
-      const e = err as { code?: string };
-      return e.code === "INVALID_SEQUENCE";
+    ).rejects.toSatisfy((err: { code?: string }) => {
+      return err.code === "INVALID_SEQUENCE";
     });
 
     // Ingest seq 5
@@ -206,9 +212,8 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
         isUserCall: false,
         guestDeviceId: "device-seq-order",
       })
-    ).rejects.toSatisfy((err: unknown) => {
-      const e = err as { code?: string };
-      return e.code === "EVENT_OUT_OF_ORDER";
+    ).rejects.toSatisfy((err: { code?: string }) => {
+      return err.code === "EVENT_OUT_OF_ORDER";
     });
   });
 
@@ -248,7 +253,10 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
       .where(eq(telemetryEvents.sessionUuid, uuid));
 
     expect(saved).toBeDefined();
-    const payload = (saved?.payload ?? {}) as Record<string, unknown>;
+    const payload = (saved?.payload ?? {}) as {
+      period?: string;
+      step_index?: number;
+    };
     expect(Object.keys(payload).length).toBeGreaterThan(0);
     expect(payload.period).toBe("present");
     expect(payload.step_index).toBe(0);
@@ -511,5 +519,64 @@ describe("Task P1.6 / #250 — Event Ingestion Gates (BR-ING, BR-EVT, BR-TRX)", 
     expect(rows[1]?.occurredAtMs).toBeGreaterThanOrEqual(0);
     expect(rows[1]?.occurredAtMs).toBeLessThanOrEqual(2_147_483_647);
     expect(rows[2]?.occurredAtMs).toBe(2_147_483_647);
+  });
+
+  // BR-ING-07 (Task #294 S2): Rate limit riêng cho route nhận event (600/IP · 300/tài khoản)
+  it("BR-ING-07: nginx defines play_events_ip zone (600r/m) and dedicated location for play-sessions events", () => {
+    const limitsConf = fs.readFileSync(
+      repoPath("infra/nginx/mindkid-limits.conf"),
+      "utf-8"
+    );
+    expect(limitsConf).toContain("zone=play_events_ip:10m rate=600r/m");
+
+    const siteConf = fs.readFileSync(
+      repoPath("infra/nginx/mindkid-site.conf.tmpl"),
+      "utf-8"
+    );
+    expect(siteConf).toContain(
+      "location ~* ^/api/(?:users|guest)/play-sessions/[^/]+/events$"
+    );
+    expect(siteConf).toContain("limit_req zone=play_events_ip");
+  });
+
+  it("BR-ING-07: play:events route class enforces 600/IP and 300/account and returns 429 when account exceeds 300", async () => {
+    expect(
+      resolveRateLimitRouteClass(
+        "/api/users/play-sessions/sess-123/events",
+        "POST"
+      )
+    ).toEqual({
+      mode: "middleware",
+      className: "play:events",
+    });
+    expect(
+      resolveRateLimitRouteClass(
+        "/api/guest/play-sessions/sess-123/events",
+        "POST"
+      )
+    ).toEqual({
+      mode: "middleware",
+      className: "play:events",
+    });
+
+    const cfg = RATE_LIMIT_CONFIGS["play:events"];
+    expect(cfg?.ipLimit).toBe(600);
+    expect(cfg?.accountLimit).toBe(300);
+
+    const accountId = `u:br-ing-07-${Date.now()}`;
+    let statusAt301 = 200;
+    for (let i = 1; i <= 301; i++) {
+      const result = await enforceTwoAxisRateLimit({
+        routeClass: "play:events",
+        remoteIp: `198.51.100.${(i % 200) + 1}:${i}`,
+        accountIdentifier: accountId,
+      });
+      if (i <= 300) {
+        expect(result.statusCode).toBe(200);
+      } else {
+        statusAt301 = result.statusCode;
+      }
+    }
+    expect(statusAt301).toBe(429);
   });
 });

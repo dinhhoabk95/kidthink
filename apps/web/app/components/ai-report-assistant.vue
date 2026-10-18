@@ -86,6 +86,7 @@
   import { isApiError } from "@mindkid/errors/client";
   import { AI_SUGGESTION_LABEL } from "@mindkid/shared/client";
   import { ref } from "vue";
+  import { useApi } from "~/composables/use-api";
 
   const props = withDefaults(
     defineProps<{
@@ -111,6 +112,7 @@
     (e: "completed", data: unknown): void;
   }>();
 
+  const api = useApi();
   const suggestionLabel = AI_SUGGESTION_LABEL;
   const isDismissed = ref(false);
   const isLoading = ref(false);
@@ -180,7 +182,7 @@
         props.skillCode
       );
 
-      const res = await $fetch<AiResponsePayload>(endpoint, {
+      const res = await api<AiResponsePayload>(endpoint, {
         method: "POST",
         body,
       });

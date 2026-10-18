@@ -1083,6 +1083,38 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
     label: "Yêu cầu làm quen lại",
     help: "Bắt buộc học lại bài làm quen khi làm sai nhiều lần.",
   },
+  resume_segment_index: {
+    label: "Phân đoạn tiếp tục",
+    help: "Chỉ số phân đoạn bắt đầu tiếp tục khi vào lại bài làm quen.",
+  },
+  target_units: {
+    label: "Mức nước mục tiêu",
+    help: "Số đơn vị dung tích mục tiêu cần đạt trong cốc.",
+  },
+  orientation_free: {
+    label: "Không phụ thuộc hướng xoay",
+    help: "Bật nếu ký hiệu vẫn đúng khi xoay các góc khác nhau.",
+  },
+  target_ids: {
+    label: "Danh sách mã ký hiệu mục tiêu",
+    help: "Các mã ký hiệu bé cần tìm và chọn trong lưới.",
+  },
+  target_copies: {
+    label: "Số bản sao ký hiệu mục tiêu",
+    help: "Số lần xuất hiện của ký hiệu mục tiêu trên bảng tìm kiếm.",
+  },
+  confusable_ids: {
+    label: "Danh sách mã ký hiệu dễ nhầm",
+    help: "Các mã ký hiệu nhiễu có hình dáng gần giống mục tiêu.",
+  },
+  rotation_jitter: {
+    label: "Độ lệch góc xoay ngẫu nhiên",
+    help: "Mức độ xoay nghiêng nhẹ của các ký hiệu trên bảng.",
+  },
+  finish_mode: {
+    label: "Chế độ hoàn thành lượt",
+    help: "Cách kết thúc màn chơi khi tìm đủ ký hiệu mục tiêu.",
+  },
 };
 
 /**
@@ -1090,6 +1122,9 @@ export const CONFIG_DICTIONARY: Record<string, FieldDictionaryEntry> = {
  * Every entry must have a clear documented rationale.
  */
 export const TEXT_FALLBACK_ALLOWLIST: Record<string, string> = {
+  resume_segment_index: "Chỉ số phân đoạn số nguyên để tiếp tục bài làm quen.",
+  target_ids: "Mã định danh ký hiệu mục tiêu cần tìm.",
+  confusable_ids: "Mã định danh ký hiệu gây nhiễu dễ nhầm lẫn.",
   asset_id: "Mã định danh duy nhất của chất liệu bài học.",
   audio_path: "Đường dẫn file âm thanh giọng đọc phát âm mẫu.",
   glyph: "Ký tự mặt số hoặc chữ cái hiển thị trực quan.",

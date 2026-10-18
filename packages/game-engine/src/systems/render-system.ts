@@ -311,6 +311,38 @@ export class RenderSystem {
   }
 
   /**
+   * Vẽ khung sáng nét đứt màu hổ phách cho vùng chú ý (`region`) ở L1/L2 (Task #301 S2).
+   * Dùng token `designTokens.colors.montessori.amber` — Cấm hex literal.
+   */
+  renderScaffoldingRegion(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    pulsePhase: number
+  ): void {
+    if (!(Number.isFinite(x) && Number.isFinite(y)) || w <= 0 || h <= 0) {
+      return;
+    }
+    const pulseScale = this.reducedMotion
+      ? 1
+      : 1 + Math.sin(pulsePhase * Math.PI * 2) * 0.06;
+    const rw = (w + 12) * pulseScale;
+    const rh = (h + 12) * pulseScale;
+
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.strokeStyle = designTokens.colors.montessori.amber;
+    ctx.lineWidth = 4;
+    ctx.setLineDash([8, 6]);
+    ctx.beginPath();
+    ctx.roundRect(-rw / 2, -rh / 2, rw, rh, 12);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  /**
    * Vẽ hạt ăn mừng. Khi `reducedMotion`, hạt mờ hơn và nhỏ hơn; số lượng đã
    * được giảm từ `spawnParticlesAtSlot` (BR-FBK-09) chứ không giảm ở đây.
    */

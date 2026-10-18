@@ -1,8 +1,14 @@
 import crypto from "node:crypto";
 import {
+  childBadges,
+  childDailyStats,
   childProfiles,
   competencies,
   contentSkillMap,
+  curricula,
+  curriculumEnrollments,
+  curriculumItemProgress,
+  curriculumItems,
   gameLevels,
   getOwnerDb,
   masteryState,
@@ -14,7 +20,7 @@ import {
 } from "@mindkid/db";
 import { and, eq } from "drizzle-orm";
 import { describe, expect, it } from "vitest";
-import { completePlaySession } from "../src/index.js";
+import { awardChildBadges, completePlaySession } from "#src/index";
 
 describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
   async function createTestFixtures() {
@@ -188,24 +194,62 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
 
     // Ingest telemetry events (2 correct rounds out of 2)
     await db.insert(telemetryEvents).values([
-      { sessionUuid, seq: 1, eventName: "game_started", occurredAtMs: 0 },
-      { sessionUuid, seq: 2, eventName: "round_started", occurredAtMs: 100 },
+      {
+        sessionUuid,
+        seq: 1,
+        contentVersion: 1,
+        eventName: "game_started",
+        occurredAtMs: 0,
+      },
+      {
+        sessionUuid,
+        seq: 2,
+        contentVersion: 1,
+        eventName: "round_started",
+        occurredAtMs: 100,
+      },
       {
         sessionUuid,
         seq: 3,
+        contentVersion: 1,
         eventName: "answer_correct",
         occurredAtMs: 200,
       },
-      { sessionUuid, seq: 4, eventName: "round_completed", occurredAtMs: 300 },
-      { sessionUuid, seq: 5, eventName: "round_started", occurredAtMs: 400 },
+      {
+        sessionUuid,
+        seq: 4,
+        contentVersion: 1,
+        eventName: "round_completed",
+        occurredAtMs: 300,
+      },
+      {
+        sessionUuid,
+        seq: 5,
+        contentVersion: 1,
+        eventName: "round_started",
+        occurredAtMs: 400,
+      },
       {
         sessionUuid,
         seq: 6,
+        contentVersion: 1,
         eventName: "answer_correct",
         occurredAtMs: 500,
       },
-      { sessionUuid, seq: 7, eventName: "round_completed", occurredAtMs: 600 },
-      { sessionUuid, seq: 8, eventName: "game_completed", occurredAtMs: 700 },
+      {
+        sessionUuid,
+        seq: 7,
+        contentVersion: 1,
+        eventName: "round_completed",
+        occurredAtMs: 600,
+      },
+      {
+        sessionUuid,
+        seq: 8,
+        contentVersion: 1,
+        eventName: "game_completed",
+        occurredAtMs: 700,
+      },
     ]);
 
     // Complete session
@@ -257,30 +301,35 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       {
         sessionUuid: session1Uuid,
         seq: 1,
+        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid: session1Uuid,
         seq: 2,
+        contentVersion: 1,
         eventName: "round_started",
         occurredAtMs: 100,
       },
       {
         sessionUuid: session1Uuid,
         seq: 3,
+        contentVersion: 1,
         eventName: "answer_correct",
         occurredAtMs: 200,
       },
       {
         sessionUuid: session1Uuid,
         seq: 4,
+        contentVersion: 1,
         eventName: "round_completed",
         occurredAtMs: 300,
       },
       {
         sessionUuid: session1Uuid,
         seq: 5,
+        contentVersion: 1,
         eventName: "game_completed",
         occurredAtMs: 400,
       },
@@ -323,30 +372,35 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       {
         sessionUuid: session2Uuid,
         seq: 1,
+        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid: session2Uuid,
         seq: 2,
+        contentVersion: 1,
         eventName: "round_started",
         occurredAtMs: 100,
       },
       {
         sessionUuid: session2Uuid,
         seq: 3,
+        contentVersion: 1,
         eventName: "answer_incorrect",
         occurredAtMs: 200,
       },
       {
         sessionUuid: session2Uuid,
         seq: 4,
+        contentVersion: 1,
         eventName: "round_completed",
         occurredAtMs: 300,
       },
       {
         sessionUuid: session2Uuid,
         seq: 5,
+        contentVersion: 1,
         eventName: "game_completed",
         occurredAtMs: 400,
       },
@@ -395,12 +449,14 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       {
         sessionUuid: guestSessionUuid,
         seq: 1,
+        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid: guestSessionUuid,
         seq: 2,
+        contentVersion: 1,
         eventName: "game_completed",
         occurredAtMs: 100,
       },
@@ -426,12 +482,14 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       {
         sessionUuid: previewSessionUuid,
         seq: 1,
+        contentVersion: 1,
         eventName: "game_started",
         occurredAtMs: 0,
       },
       {
         sessionUuid: previewSessionUuid,
         seq: 2,
+        contentVersion: 1,
         eventName: "game_completed",
         occurredAtMs: 100,
       },
@@ -447,5 +505,185 @@ describe("P3.5 Adaptive & Mastery Integration Tests (PostgreSQL)", () => {
       .where(eq(masteryState.skillId, skill.id));
 
     expect(rows.length).toBe(0);
+  });
+
+  it("Scenario: BR-PRG-06 — mastery is computed on server from event sequence and ignores client-injected p_learn", async () => {
+    const db = getOwnerDb();
+    const { u, child, skill, level, templateCode } = await createTestFixtures();
+
+    const sessionUuid = crypto.randomUUID();
+    await db.insert(playSessions).values({
+      sessionUuid,
+      childProfileId: child.id,
+      gameLevelId: level.id,
+      contentVersion: 1,
+      templateCode,
+      completionStatus: "in_progress",
+    });
+
+    await db.insert(telemetryEvents).values([
+      {
+        sessionUuid,
+        seq: 1,
+        contentVersion: 1,
+        eventName: "game_started",
+        occurredAtMs: 0,
+      },
+      {
+        sessionUuid,
+        seq: 2,
+        contentVersion: 1,
+        eventName: "round_started",
+        occurredAtMs: 100,
+      },
+      {
+        sessionUuid,
+        seq: 3,
+        contentVersion: 1,
+        eventName: "answer_incorrect",
+        occurredAtMs: 200,
+      },
+      {
+        sessionUuid,
+        seq: 4,
+        contentVersion: 1,
+        eventName: "round_completed",
+        occurredAtMs: 300,
+      },
+      {
+        sessionUuid,
+        seq: 5,
+        contentVersion: 1,
+        eventName: "game_completed",
+        occurredAtMs: 400,
+        payload: { p_learn: 0.99, best_p_learn: 0.99 },
+      },
+    ]);
+
+    await completePlaySession(sessionUuid, undefined, {
+      isUserCall: true,
+      callerAccountId: u.id,
+    });
+
+    const [row] = await db
+      .select()
+      .from(masteryState)
+      .where(
+        and(
+          eq(masteryState.childProfileId, child.id),
+          eq(masteryState.skillId, skill.id)
+        )
+      );
+
+    expect(row).toBeDefined();
+    expect(Number(row?.pLearn)).toBeLessThan(0.15);
+    expect(Number(row?.bestPLearn)).toBeLessThan(0.15);
+  });
+
+  it("Scenario: §7.2 & BR-PRG-04 — awardChildBadges awards PLAY_DAYS_5, STRAND_FIRST_COMPLETE and WEEK_CURRICULUM_COMPLETE idempotently", async () => {
+    const db = getOwnerDb();
+    const { child, skill, level } = await createTestFixtures();
+
+    await db.insert(masteryState).values({
+      childProfileId: child.id,
+      skillId: skill.id,
+      pLearn: "0.8500",
+      bestPLearn: "0.8500",
+      emaCorrect: "0.9000",
+      hintRate: "0.0000",
+      attemptsTotal: 4,
+      paramsVersion: "v1",
+      lastSeenAt: new Date(),
+    });
+
+    for (let d = 1; d <= 5; d++) {
+      await db.insert(childDailyStats).values({
+        childProfileId: child.id,
+        dateIct: `2026-10-0${d}`,
+        totalPlayTimeSeconds: 300,
+        levelsAttempted: 1,
+        levelsCompleted: 1,
+        starsEarned: 3,
+      });
+    }
+
+    const [curr] = await db
+      .insert(curricula)
+      .values({
+        entityId: Math.floor(Math.random() * 800_000 + 100_000),
+        code: `CUR-BDG-${Date.now()}`,
+        title: "Lộ trình huy hiệu",
+        accessTier: "free",
+        status: "published",
+        durationWeeks: 1,
+        sessionsPerWeek: 1,
+      })
+      .returning();
+    if (!curr) {
+      throw new Error("Failed to insert curriculum");
+    }
+
+    const [item] = await db
+      .insert(curriculumItems)
+      .values({
+        curriculumId: curr.id,
+        weekNo: 1,
+        sessionNo: 1,
+        position: 1,
+        entityType: "game_level",
+        entityId: level.entityId,
+        isRequired: true,
+      })
+      .returning();
+    if (!item) {
+      throw new Error("Failed to insert curriculum item");
+    }
+
+    const [enrollment] = await db
+      .insert(curriculumEnrollments)
+      .values({
+        childId: child.id,
+        curriculumId: curr.id,
+        status: "active",
+      })
+      .returning();
+    if (!enrollment) {
+      throw new Error("Failed to insert enrollment");
+    }
+
+    await db.insert(curriculumItemProgress).values({
+      enrollmentId: enrollment.id,
+      childId: child.id,
+      curriculumItemId: item.id,
+      status: "completed",
+      completedAt: new Date(),
+    });
+
+    const now = new Date();
+    const sessionUuid = crypto.randomUUID();
+    await awardChildBadges({
+      db,
+      childId: child.id,
+      sessionUuid,
+      now,
+    });
+    await awardChildBadges({
+      db,
+      childId: child.id,
+      sessionUuid,
+      now,
+    });
+
+    const badges = await db
+      .select()
+      .from(childBadges)
+      .where(eq(childBadges.childProfileId, child.id));
+    const codes = badges.map((b) => b.badgeCode).sort();
+
+    expect(codes).toEqual([
+      "PLAY_DAYS_5",
+      "STRAND_FIRST_COMPLETE",
+      "WEEK_CURRICULUM_COMPLETE",
+    ]);
   });
 });

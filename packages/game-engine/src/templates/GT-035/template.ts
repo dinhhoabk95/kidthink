@@ -175,8 +175,8 @@ const GT035Template = defineTemplate({
   asset_kinds: ["emoji", "image"],
   scoring: STANDARD_SCORING,
   input: {
-    family: "tap",
-    verbs: ["tap"],
+    family: "drag",
+    verbs: ["drop", "tap", "commit"],
     tolerance_px: 24,
   },
   events: [

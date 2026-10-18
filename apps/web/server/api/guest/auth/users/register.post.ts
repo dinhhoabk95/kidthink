@@ -10,7 +10,6 @@ import {
   consentRequirements,
   getAppDb,
   getAppSql,
-  notifications,
   PostgresSessionStore,
   users,
   verificationTokens,
@@ -23,6 +22,7 @@ import {
   ServiceUnavailableError,
   ValidationError,
 } from "@mindkid/errors/common";
+import { dispatchTransactionalEmail } from "@mindkid/notification";
 import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import {
@@ -33,6 +33,7 @@ import {
   setResponseStatus,
 } from "h3";
 import { z } from "zod";
+import { buildAccountActionUrl } from "#server/utils/account-action-url";
 import {
   assertRateLimitAllowed,
   ensureUserCsrfCookie,
@@ -53,7 +54,12 @@ const registerSchema = z
 
 export type RegisterPayload = z.infer<typeof registerSchema>;
 
-function parseAndValidateRegisterBody(body: unknown): RegisterPayload {
+type RawRequestBody =
+  | Record<string, string | number | boolean | null | undefined>
+  | null
+  | undefined;
+
+function parseAndValidateRegisterBody(body: RawRequestBody): RegisterPayload {
   const result = registerSchema.safeParse(body);
   if (!result.success) {
     throw new ValidationError({
@@ -80,7 +86,10 @@ function parseAndValidateRegisterBody(body: unknown): RegisterPayload {
   };
 }
 
-export async function handleRegister(event: H3Event, testBody?: unknown) {
+export async function handleRegister(
+  event: H3Event,
+  testBody?: RawRequestBody
+) {
   const rawIp = getVerifiedRemoteIp(event);
   const rateLimitRes = await enforceTwoAxisRateLimit({
     routeClass: "auth:register",
@@ -89,10 +98,10 @@ export async function handleRegister(event: H3Event, testBody?: unknown) {
 
   assertRateLimitAllowed(rateLimitRes.statusCode);
 
-  const rawBody =
+  const rawBody: RawRequestBody =
     testBody ??
     event.context?.body ??
-    (await readBody(event).catch(() => null));
+    (await readBody<RawRequestBody>(event).catch(() => null));
   const validated = parseAndValidateRegisterBody(rawBody);
 
   const db = getAppDb();
@@ -181,15 +190,18 @@ export async function handleRegister(event: H3Event, testBody?: unknown) {
     expiresAt,
   });
 
-  // Create notification record
-  await db.insert(notifications).values({
+  await dispatchTransactionalEmail({
     recipientType: "user",
     recipientId: newUser.id,
-    templateCode: "email_verification",
+    code: "email_verification",
+    to: newUser.email,
     payload: {
-      token: rawToken,
       email: newUser.email,
       displayName: newUser.displayName,
+    },
+    secrets: {
+      token: rawToken,
+      url: buildAccountActionUrl("email_verify", rawToken),
     },
   });
 
