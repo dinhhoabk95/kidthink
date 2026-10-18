@@ -58,7 +58,7 @@ export const GT003ContentSchema = z
     }
   });
 
-export const GT003DifficultySchema = z.object({
+const GT003DifficultySchema = z.object({
   /** Tổng số vật bày ra — khớp bảng tra độ khó (`BR-LDC-01`). */
   item_count: z.number().int().min(2).max(6).optional(),
   distractor_count: z.number().int().min(0).max(4),

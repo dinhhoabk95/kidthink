@@ -7,7 +7,7 @@ import { cluesNarrowToExactlyOne } from "./deduction.js";
  * Vị ngữ của một manh mối — union phân biệt theo `kind`.
  * Mỗi manh mối thu hẹp tập ứng viên; không manh mối nào tự nó chỉ ra đáp án.
  */
-export const GT009PredicateSchema = z.discriminatedUnion("kind", [
+const GT009PredicateSchema = z.discriminatedUnion("kind", [
   z.object({ kind: z.literal("greater_than"), value: z.number().int() }),
   z.object({ kind: z.literal("less_than"), value: z.number().int() }),
   z.object({ kind: z.literal("not_equal"), value: z.number().int() }),
@@ -67,8 +67,6 @@ export const GT009DifficultySchema = z.object({
   hint_after_ms: z.number().int().min(6000).max(30_000),
   allow_retry: z.boolean(),
 });
-
-export type { GT009ContentShape } from "./deduction.js";
 
 export type GT009Content = z.infer<typeof GT009ContentSchema>;
 export type GT009Difficulty = z.infer<typeof GT009DifficultySchema>;

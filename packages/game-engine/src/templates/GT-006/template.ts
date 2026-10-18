@@ -18,7 +18,7 @@ export const GT006ContentSchema = z.object({
   representation: z.enum(["number-line", "sequence"]).optional(),
 });
 
-export const GT006DifficultySchema = z.object({
+const GT006DifficultySchema = z.object({
   hint_after_ms: z.number().int().min(10_000).max(40_000),
   allow_retry: z.boolean(),
   shuffle_initial: z.boolean(),

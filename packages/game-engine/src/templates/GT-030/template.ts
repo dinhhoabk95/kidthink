@@ -2,18 +2,18 @@ import { z } from "zod";
 import { assetSchema, promptFields } from "#src/contracts/shared-fields";
 import { defineTemplate, STANDARD_SCORING } from "#src/contracts/types";
 
-export const GT030ObjectSchema = z.object({
+const GT030ObjectSchema = z.object({
   object_id: z.string().min(1),
   asset: assetSchema(),
   length_in_units: z.number().int().min(2).max(10),
 });
 
-export const GT030UnitSchema = z.object({
+const GT030UnitSchema = z.object({
   unit_id: z.string().min(1),
   asset: assetSchema(),
 });
 
-export const GT030AnswerOptionSchema = z.object({
+const GT030AnswerOptionSchema = z.object({
   option_id: z.string().min(1),
   value: z.number().int().min(1).max(20),
   is_correct: z.boolean(),

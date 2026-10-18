@@ -24,7 +24,7 @@ export function everyGroupHasAtLeastOneItem(data: {
   return data.groups.every((g) => targetedGroups.has(g.group_id));
 }
 
-export const GT004BaseContentSchema = z.object({
+const GT004BaseContentSchema = z.object({
   ...promptFields(),
   groups: z
     .array(
@@ -57,7 +57,7 @@ export const GT004ContentSchema = GT004BaseContentSchema.refine(
   message: "Every group must have at least one item assigned",
 });
 
-export const GT004DifficultySchema = z.object({
+const GT004DifficultySchema = z.object({
   item_count: z.number().int().min(4).max(10),
   distractor_count: z.number().int().min(0).max(3),
   hint_after_ms: z.number().int().min(8000).max(40_000),

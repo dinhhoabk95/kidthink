@@ -351,5 +351,3 @@ export class GT018Session extends TemplateGameSession<
     });
   }
 }
-
-export default GT018Session;

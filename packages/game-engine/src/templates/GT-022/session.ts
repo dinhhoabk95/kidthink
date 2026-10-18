@@ -347,5 +347,3 @@ export class GT022Session extends TemplateGameSession<
     );
   }
 }
-
-export default GT022Session;

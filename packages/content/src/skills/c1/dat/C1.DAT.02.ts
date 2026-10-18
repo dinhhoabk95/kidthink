@@ -1,7 +1,3 @@
-import { getQuantityRep } from "#src/inventories/index";
-
-export const C1_DAT_02_REP = getQuantityRep("rep_tally");
-
 import type { SkillDataset, SkillIdentity, SkillSeed } from "@mindkid/shared";
 
 export const C1_DAT_02_IDENTITY: SkillIdentity = {

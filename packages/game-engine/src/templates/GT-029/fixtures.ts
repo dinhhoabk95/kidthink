@@ -1,6 +1,6 @@
 import type { GT029Content, GT029Difficulty } from "./template";
 
-export interface GT029Fixture {
+interface GT029Fixture {
   name: string;
   content: GT029Content;
   difficulty: GT029Difficulty;

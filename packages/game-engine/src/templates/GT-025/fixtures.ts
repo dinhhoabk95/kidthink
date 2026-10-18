@@ -202,5 +202,3 @@ export const GT025_FIXTURES: {
     },
   },
 ];
-
-export default GT025_FIXTURES;

@@ -2,8 +2,7 @@ import { z } from "zod";
 import { assetSchema } from "#src/contracts/shared-fields";
 import { defineTemplate } from "#src/contracts/types";
 
-export const GT000AssetKindSchema = z.enum(["glyph", "word", "image"]);
-export type GT000AssetKind = z.infer<typeof GT000AssetKindSchema>;
+const GT000AssetKindSchema = z.enum(["glyph", "word", "image"]);
 
 export const GT000AssetSchema = z
   .object({
@@ -22,7 +21,7 @@ export const GT000AssetSchema = z
       "Mọi chất liệu BẮT BUỘC có một hình minh hoạ (glyph hoặc image_ref) và một nhãn tiếng Việt (BR-E000-02)",
   });
 
-export const GT000StepPresentSchema = z.object({
+const GT000StepPresentSchema = z.object({
   action: z.literal("present"),
   target_asset_id: z.string().min(1),
   narration_line: z.string().optional(),
@@ -34,35 +33,35 @@ export const GT000StepPresentSchema = z.object({
  * Máy đọc mẫu, trẻ nói theo thành tiếng, rồi chạm để đi tiếp.
  * Cấm — NEVER yêu cầu micro, NEVER ghi âm, NEVER chấm phát âm (`BR-CIR-23`).
  */
-export const GT000StepEchoSchema = z.object({
+const GT000StepEchoSchema = z.object({
   action: z.literal("echo"),
   target_asset_id: z.string().min(1),
   repeat_count: z.number().int().min(1).max(3).default(1),
   prompt_line: z.string().optional(),
 });
 
-export const GT000StepRecogniseSchema = z.object({
+const GT000StepRecogniseSchema = z.object({
   action: z.literal("recognise"),
   target_asset_id: z.string().min(1),
   distractor_asset_ids: z.array(z.string().min(1)).min(1).max(3),
   prompt_line: z.string().optional(),
 });
 
-export const GT000StepLinkSchema = z.object({
+const GT000StepLinkSchema = z.object({
   action: z.literal("link"),
   source_asset_id: z.string().min(1),
   target_asset_id: z.string().min(1),
   prompt_line: z.string().optional(),
 });
 
-export const GT000StepRecallSchema = z.object({
+const GT000StepRecallSchema = z.object({
   action: z.literal("recall"),
   target_asset_id: z.string().min(1),
   option_asset_ids: z.array(z.string().min(1)).min(2).max(4),
   prompt_line: z.string().optional(),
 });
 
-export const GT000StepSchema = z.discriminatedUnion("action", [
+const GT000StepSchema = z.discriminatedUnion("action", [
   GT000StepPresentSchema,
   GT000StepEchoSchema,
   GT000StepRecogniseSchema,
@@ -162,7 +161,7 @@ export type SpeakAlongMode = "off" | "tap";
  * parse schema), nên `.default()` của Zod không có tác dụng lúc chơi: session
  * phải tự đọc trường thiếu bằng hằng này (`resolveSpeakAlong`).
  */
-export const SPEAK_ALONG_DEFAULT: SpeakAlongMode = "off";
+const SPEAK_ALONG_DEFAULT: SpeakAlongMode = "off";
 
 export function resolveSpeakAlong(difficulty: {
   readonly speak_along?: SpeakAlongMode;
@@ -189,14 +188,12 @@ export const GT000DifficultySchema = z
   })
   .strict();
 
-export type GT000StepEcho = z.infer<typeof GT000StepEchoSchema>;
 export type GT000Asset = z.infer<typeof GT000AssetSchema>;
 export type GT000Step = z.infer<typeof GT000StepSchema>;
-export type GT000Segment = z.infer<typeof GT000SegmentSchema>;
 export type GT000Content = z.infer<typeof GT000ContentSchema>;
 export type GT000Difficulty = z.infer<typeof GT000DifficultySchema>;
 
-export const INTRO_SCORING = {
+const INTRO_SCORING = {
   max_score: 0,
   pass_threshold: 0,
   star_thresholds: [0, 0, 0] as [number, number, number],

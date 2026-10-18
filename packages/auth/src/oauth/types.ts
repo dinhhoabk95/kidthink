@@ -26,12 +26,6 @@ export interface OAuthProviderPublicInfo {
   readonly is_enabled: boolean;
 }
 
-export interface OAuthProviderEnvConfig {
-  readonly clientId?: string;
-  readonly clientSecret?: string;
-  readonly siteUrl?: string;
-}
-
 export interface OAuthStatePayload {
   readonly state: string;
   readonly code_verifier: string;

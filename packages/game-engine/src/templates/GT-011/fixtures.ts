@@ -111,5 +111,3 @@ export const GT011_FIXTURES: {
     },
   },
 ];
-
-export default GT011_FIXTURES;

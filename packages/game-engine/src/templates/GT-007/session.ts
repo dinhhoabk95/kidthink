@@ -516,5 +516,3 @@ export class GT007Session extends TemplateGameSession<
     });
   }
 }
-
-export default GT007Session;

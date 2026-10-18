@@ -2,13 +2,13 @@
  * `solver.ts` — giải hệ phương trình hình ảnh mầm non (2–3 ẩn, nghiệm nguyên dương trong khoảng 1–20).
  */
 
-export interface EquationDefinition {
+interface EquationDefinition {
   readonly equation_id: string;
   readonly left: readonly string[]; // symbol_ids
   readonly right_value: number;
 }
 
-export interface SystemSolution {
+interface SystemSolution {
   readonly values: Record<string, number>;
 }
 
@@ -63,15 +63,6 @@ export function solveEquationSystem(
 
   search(0, {});
   return solutions;
-}
-
-/** Kiểm tra hệ có đúng 1 nghiệm nguyên dương duy nhất. */
-export function hasUniqueSystemSolution(
-  symbolIds: readonly string[],
-  equations: readonly EquationDefinition[],
-  maxVal = 20
-): boolean {
-  return solveEquationSystem(symbolIds, equations, maxVal).length === 1;
 }
 
 /** Tính đáp án đúng cho câu hỏi dựa trên nghiệm của hệ. */

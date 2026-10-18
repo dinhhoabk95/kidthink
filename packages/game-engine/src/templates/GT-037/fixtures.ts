@@ -1,6 +1,6 @@
 import type { GT037Content, GT037Difficulty } from "./template.js";
 
-export interface GT037Fixture {
+interface GT037Fixture {
   readonly id: string;
   readonly name_vi: string;
   readonly content: GT037Content;
@@ -144,5 +144,3 @@ export const GT037_FIXTURES: GT037Fixture[] = [
     },
   },
 ];
-
-export const GT037Fixtures = GT037_FIXTURES;

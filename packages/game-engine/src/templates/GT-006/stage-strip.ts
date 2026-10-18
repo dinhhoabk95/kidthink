@@ -6,7 +6,7 @@ const DECOR_STRIP_PX = 64;
 /** Dải trang trí không được chiếm quá phần này của sân khấu thấp. */
 const DECOR_STRIP_MAX_SHARE = 0.3;
 
-export interface StageSplit {
+interface StageSplit {
   /** Phần dành cho dải ô. */
   readonly slots: ZoneRect;
   /** Dải đáy cho đường ray hoặc trục số, nằm trong `stage`. */

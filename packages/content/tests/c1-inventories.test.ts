@@ -140,4 +140,20 @@ describe("C1 Value Inventories (Task #265 / L2)", () => {
     // Quantity rep
     expect(getQuantityRep("rep_ten_frame").kind).toBe("ten-frame");
   });
+
+  // Các skill C1.DAT/OTO/PROB/PAT/MEAS dựa vào những id kho này; trước đây được
+  // kiểm ngầm bằng hằng `C1_*_REP`/`_UNIT`/`_DIMENSION` lúc import (đã gỡ vì 0 người dùng).
+  it("TD.2: mọi id kho mà skill C1 dựa vào đều tồn tại", async () => {
+    const { getMeasureDimension, getPatternUnit, getQuantityRep } =
+      await import("../src/inventories/index.js");
+
+    for (const id of ["rep_tally", "rep_discrete_object"]) {
+      expect(() => getQuantityRep(id)).not.toThrow();
+    }
+    for (const id of ["pat_ab", "pat_aab", "pat_abb", "pat_aabb", "pat_abc"]) {
+      expect(() => getPatternUnit(id)).not.toThrow();
+    }
+    // `dim_time` (C1.MEAS.10–13) chỉ được tra bằng `find*`, chưa có trong kho: không kiểm.
+    expect(() => getMeasureDimension("dim_length")).not.toThrow();
+  });
 });

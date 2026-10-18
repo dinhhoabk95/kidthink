@@ -2,7 +2,7 @@ import { z } from "zod";
 import { assetSchema, promptFields } from "#src/contracts/shared-fields";
 import { defineTemplate } from "#src/contracts/types";
 
-export const GT008ContentSchema = z.object({
+const GT008ContentSchema = z.object({
   ...promptFields(),
   slots: z
     .array(
@@ -26,7 +26,7 @@ export const GT008ContentSchema = z.object({
     .max(9),
 });
 
-export const GT008DifficultySchema = z.object({
+const GT008DifficultySchema = z.object({
   slot_count: z.number().int().min(2).max(9),
   distractor_count: z.number().int().min(0).max(4),
   hint_after_ms: z.number().int().min(6000).max(30_000),

@@ -18,7 +18,7 @@ export interface CubeCoord {
 
 export type RotationAngle = 0 | 90 | 180 | 270;
 
-export interface IsometricProjection {
+interface IsometricProjection {
   readonly screenX: number;
   readonly screenY: number;
   readonly depth: number;

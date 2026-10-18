@@ -1,10 +1,10 @@
 import type { ContentDemandLedger } from "./gates/content-demand.js";
 import type { AnyContentSeed } from "./types.js";
 
-export const SEED_PROFILES = ["full", "core"] as const;
-export type SeedProfile = (typeof SEED_PROFILES)[number];
+const SEED_PROFILES = ["full", "core"] as const;
+type SeedProfile = (typeof SEED_PROFILES)[number];
 
-export const DEFAULT_SEED_PROFILE: SeedProfile = "full";
+const DEFAULT_SEED_PROFILE: SeedProfile = "full";
 
 function isSeedProfile(value: string): value is SeedProfile {
   return SEED_PROFILES.some((profile) => profile === value);
@@ -27,9 +27,7 @@ function isLevelSeed(seed: AnyContentSeed): boolean {
   return seed.kind !== "lesson" && seed.kind !== "activity";
 }
 
-export function ledgerLevelCodes(
-  ledger: ContentDemandLedger
-): ReadonlySet<string> {
+function ledgerLevelCodes(ledger: ContentDemandLedger): ReadonlySet<string> {
   const codes = new Set<string>();
   for (const cell of ledger.cells) {
     if (cell.role === "practice") {

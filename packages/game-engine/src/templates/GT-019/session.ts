@@ -633,5 +633,3 @@ export class GT019Session extends TemplateGameSession<
     });
   }
 }
-
-export default GT019Session;

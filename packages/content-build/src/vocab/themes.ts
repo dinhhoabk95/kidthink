@@ -43,11 +43,3 @@ export function getThemeVocabulary(themeCode: string): ThemeVocabulary {
     contrast: pickContrast(vocabulary, CONTENT_THEMES.map(toVocabulary)),
   };
 }
-
-export function getAllThemeVocabularies(): Record<string, ThemeVocabulary> {
-  const map: Record<string, ThemeVocabulary> = {};
-  for (const theme of CONTENT_THEMES) {
-    map[theme.code] = getThemeVocabulary(theme.code);
-  }
-  return map;
-}

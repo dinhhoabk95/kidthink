@@ -24,7 +24,7 @@ const activityCardSchema = () =>
     minute: z.union([z.literal(0), z.literal(30)]),
   });
 
-export const GT016BaseSchema = z.object({
+const GT016BaseSchema = z.object({
   ...promptFields(),
   mode: z.enum(["read", "set", "match"]).default("read"),
   target_time: clockTimeSchema(),

@@ -358,5 +358,3 @@ export class GT006Session extends TemplateGameSession<
     drawLocomotive(ctx, x, firstSlot.y, 90, 70);
   }
 }
-
-export default GT006Session;

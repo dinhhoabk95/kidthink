@@ -9,10 +9,10 @@ import type { GT012Content } from "./template.js";
  * lựa chọn trên dock ở bên kia. Portrait xếp đĩa trên, lựa chọn dưới; ngang xếp
  * đĩa trái, lựa chọn phải — sân khấu ngang quá thấp để chồng hai tầng.
  */
-export const PLATE_MAX_PX = 220;
+const PLATE_MAX_PX = 220;
 
 /** Cạnh vật trên đĩa — vật loé không chạm được nên không chịu sàn chạm. */
-export const FLASH_ITEM_PX = 64;
+const FLASH_ITEM_PX = 64;
 
 /** Số cột tối đa khi vật loé không xếp theo xúc xắc. */
 const FLASH_GRID_MAX_COLS = 3;

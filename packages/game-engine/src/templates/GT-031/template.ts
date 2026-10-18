@@ -18,13 +18,13 @@ export function canFormTargetAmount(values: number[], target: number): boolean {
   return dp[target] === true;
 }
 
-export const GT031CoinSchema = z.object({
+const GT031CoinSchema = z.object({
   coin_id: z.string().min(1),
   asset: assetSchema(),
   value: z.number().int().min(1).max(20),
 });
 
-export const GT031ItemToBuySchema = z.object({
+const GT031ItemToBuySchema = z.object({
   label: z.string().min(1),
   asset: assetSchema(),
 });

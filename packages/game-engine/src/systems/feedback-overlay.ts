@@ -18,7 +18,7 @@ export interface FeedbackPoint {
   readonly y: number;
 }
 
-export interface PulseFrame {
+interface PulseFrame {
   readonly x: number;
   readonly y: number;
   readonly radius: number;

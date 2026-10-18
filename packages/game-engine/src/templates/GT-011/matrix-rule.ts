@@ -8,38 +8,38 @@
  * WB21 dạng 1, ma trận 2×2 của WB15, và biến thể xoay.
  */
 
-export interface MatrixAsset {
+interface MatrixAsset {
   readonly kind: string;
   readonly ref?: string;
   readonly path?: string;
   readonly text?: string;
 }
 
-export interface MatrixCell {
+interface MatrixCell {
   readonly row: number;
   readonly col: number;
   readonly asset: MatrixAsset | null;
 }
 
-export interface MatrixShape {
+interface MatrixShape {
   readonly rows: number;
   readonly cols: number;
   readonly cells: readonly MatrixCell[];
 }
 
-export interface MatrixOption {
+interface MatrixOption {
   readonly option_id: string;
   readonly asset: MatrixAsset;
   readonly is_correct: boolean;
 }
 
-export interface MatrixContentShape {
+interface MatrixContentShape {
   readonly matrix: MatrixShape;
   readonly options: readonly MatrixOption[];
 }
 
 /** Khoá so sánh của một ký hiệu — `ref` cho emoji, `path` cho ảnh, `text` cho chữ/glyph. */
-export function assetKey(asset: MatrixAsset): string {
+function assetKey(asset: MatrixAsset): string {
   return `${asset.kind}:${asset.ref ?? asset.path ?? asset.text ?? ""}`;
 }
 

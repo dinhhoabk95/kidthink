@@ -12,11 +12,10 @@
 
 export const MIN_FLASH_MS = 800;
 export const MAX_FLASH_MS = 3000;
-export const DEFAULT_FLASH_MS = 1500;
 
-export type FlashTimerState = "idle" | "running" | "expired";
+type FlashTimerState = "idle" | "running" | "expired";
 
-export interface FlashTimerConfig {
+interface FlashTimerConfig {
   readonly flashMs: number;
   readonly allowReplay?: boolean;
 }

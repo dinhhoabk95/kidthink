@@ -8,14 +8,14 @@ export interface BeatInstrument {
   readonly name_vi?: string;
 }
 
-export interface BeatSystemOptions {
+interface BeatSystemOptions {
   readonly tempo_bpm: number;
   readonly instruments: readonly BeatInstrument[];
   readonly age_band?: AgeBand;
 }
 
 /** Tolerance window in milliseconds for timing-based checks by age band */
-export const BEAT_TIMING_TOLERANCE_MS: Record<AgeBand, number> = {
+const BEAT_TIMING_TOLERANCE_MS: Record<AgeBand, number> = {
   "3-4": 300,
   "4-5": 220,
   "5-6": 160,

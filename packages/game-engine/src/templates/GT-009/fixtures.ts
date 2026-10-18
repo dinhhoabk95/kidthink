@@ -113,5 +113,3 @@ export const GT009_FIXTURES: {
     },
   },
 ];
-
-export default GT009_FIXTURES;

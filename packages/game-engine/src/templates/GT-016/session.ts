@@ -580,4 +580,3 @@ export class ClockHandsSession extends TemplateGameSession<
 }
 
 export const GT016Session = ClockHandsSession;
-export default ClockHandsSession;

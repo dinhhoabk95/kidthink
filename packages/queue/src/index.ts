@@ -65,8 +65,6 @@ export function enqueue<T extends JobName>(
   });
 }
 
-export const enqueueJob = enqueue;
-
 export function getWaitingCount(): Promise<number> {
   return getQueue().getWaitingCount();
 }

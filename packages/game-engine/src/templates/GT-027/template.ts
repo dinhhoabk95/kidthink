@@ -2,7 +2,7 @@ import { z } from "zod";
 import { assetSchema, promptFields } from "#src/contracts/shared-fields";
 import { defineTemplate, STANDARD_SCORING } from "#src/contracts/types";
 
-export const GT027ContentSchema = z.object({
+const GT027ContentSchema = z.object({
   ...promptFields(),
   rules: z
     .array(
@@ -33,7 +33,7 @@ export const GT027ContentSchema = z.object({
   switch_after_trials: z.number().int().min(2).max(4).default(2),
 });
 
-export const GT027DifficultySchema = z.object({
+const GT027DifficultySchema = z.object({
   item_count: z.number().int().min(4).max(12),
   target_count: z.number().int().min(2).max(6).optional(),
   signal_duration_ms: z.number().int().min(1000).max(4000).default(2000),

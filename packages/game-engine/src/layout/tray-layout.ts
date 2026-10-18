@@ -31,7 +31,7 @@ export const CONTAINER_MIN_W = 260;
 export const CONTAINER_MIN_H = 150;
 
 /** Sân khấu và khay shell cấp cho vòng này — đủ cả hai thì engine chơi trong khung. */
-export interface TrayZones {
+interface TrayZones {
   readonly stage: ZoneRect;
   readonly tray: ZoneRect;
 }

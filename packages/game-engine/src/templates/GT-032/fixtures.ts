@@ -1,6 +1,6 @@
 import type { GT032Content, GT032Difficulty } from "./template.js";
 
-export interface GT032Fixture {
+interface GT032Fixture {
   name: string;
   band?: string;
   content: GT032Content;

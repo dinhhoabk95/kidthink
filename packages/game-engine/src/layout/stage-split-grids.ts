@@ -11,7 +11,7 @@ import { computeStageCellSlots, type Size } from "#src/layout/stage-targets";
 import type { ZoneRect } from "#src/layout/stage-zones";
 import type { Slot, SlotRole } from "#src/layout/types";
 
-export interface SplitGridsSpec {
+interface SplitGridsSpec {
   readonly leftCount: number;
   readonly rightCount: number;
   readonly stage: ZoneRect;

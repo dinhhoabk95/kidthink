@@ -1,7 +1,7 @@
 import type { AgeBand } from "@mindkid/game-engine/contracts";
 import { getThemeVocabulary } from "./themes.js";
 
-export interface EnginePhrases {
+interface EnginePhrases {
   readonly title_template: string;
   readonly instruction_by_band: Readonly<Record<AgeBand, string>>;
 }

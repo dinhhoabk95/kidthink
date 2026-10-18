@@ -19,7 +19,7 @@ const HERO_SHARE_WIDE = 0.45;
 /** Cạnh lớn nhất của một ô lựa chọn trong vùng còn lại. */
 export const HERO_OPTION_CELL_MAX_PX = 112;
 
-export interface HeroSplit {
+interface HeroSplit {
   readonly hero: ZoneRect;
   readonly rest: ZoneRect;
 }
@@ -28,7 +28,7 @@ export interface HeroSplit {
 const REST_PADDING_PX = SLOT_GAP_PX;
 
 /** Số ô lựa chọn và sàn chạm — để chọn kiểu chia mà các ô vừa không phân trang. */
-export interface HeroRestFit {
+interface HeroRestFit {
   readonly count: number;
   readonly touchFloor: number;
 }

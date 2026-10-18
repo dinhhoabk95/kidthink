@@ -6,8 +6,7 @@
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev --port 3000",
-    "test": "vitest run",
-    "typecheck": "vue-tsc -b"
+    "test": "vitest run"
   },
   "dependencies": {
     "@mindkid/adaptive": "workspace:*",
@@ -46,6 +45,7 @@
     "@vue/test-utils": "catalog:",
     "vue": "catalog:",
     "vue-tsc": "catalog:",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "nitropack": "catalog:"
   }
 }

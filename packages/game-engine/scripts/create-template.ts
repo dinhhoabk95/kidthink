@@ -138,8 +138,6 @@ export class ${codeNum}Session extends TemplateGameSession<
 
   private drawFeedback(_ctx: CanvasRenderingContext2D, _rs: RenderSystem, _slots: unknown, _timeMs: number): void {}
 }
-
-export default ${codeNum}Session;
 `;
 
 const fixturesContent = `import type { ${codeNum}Content, ${codeNum}Difficulty } from "./template.js";

@@ -21,7 +21,7 @@ const COMMON_PASSWORDS = new Set([
   "abcdefgh",
 ]);
 
-export interface PasswordValidationResult {
+interface PasswordValidationResult {
   valid: boolean;
   reason?: string;
 }

@@ -10,7 +10,7 @@
  * với ô xung đột trong hàng, cột hoặc vùng mà không cần báo đỏ.
  */
 
-export type SudokuRegionMode = "row_col" | "row_col_box";
+type SudokuRegionMode = "row_col" | "row_col_box";
 
 export interface SudokuCell<T = string> {
   readonly row: number;
@@ -41,17 +41,8 @@ export function get2x2BoxIndex(row: number, col: number): number {
   return boxRow * 2 + boxCol;
 }
 
-/** Lấy ô tại toạ độ (row, col). */
-export function getCellAt<T>(
-  grid: SudokuGrid<T>,
-  row: number,
-  col: number
-): SudokuCell<T> | undefined {
-  return grid.cells.find((c) => c.row === row && c.col === col);
-}
-
 /** Lấy ma trận 2 chiều (size × size) từ danh sách ô. */
-export function toMatrix<T>(grid: SudokuGrid<T>): (T | null)[][] {
+function toMatrix<T>(grid: SudokuGrid<T>): (T | null)[][] {
   const matrix: (T | null)[][] = Array.from({ length: grid.size }, () =>
     new Array(grid.size).fill(null)
   );

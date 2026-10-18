@@ -1,6 +1,6 @@
 import type { GT034Content, GT034Difficulty } from "./template";
 
-export interface GT034Fixture {
+interface GT034Fixture {
   readonly id: string;
   readonly name_vi: string;
   readonly content: GT034Content;

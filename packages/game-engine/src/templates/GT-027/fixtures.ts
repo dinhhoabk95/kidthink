@@ -203,5 +203,3 @@ export const GT027_FIXTURES: {
     },
   },
 ];
-
-export default GT027_FIXTURES;

@@ -626,4 +626,3 @@ export class BalanceScaleSession extends TemplateGameSession<
 }
 
 export const GT014Session = BalanceScaleSession;
-export default BalanceScaleSession;

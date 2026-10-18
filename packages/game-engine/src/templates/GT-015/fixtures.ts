@@ -1,6 +1,6 @@
 import type { GT015Content, GT015Difficulty } from "./template.js";
 
-export interface GameLevelFixture<TContent, TDifficulty> {
+interface GameLevelFixture<TContent, TDifficulty> {
   id?: string;
   template_code?: string;
   title_vi?: string;
@@ -124,11 +124,7 @@ export const SAMPLE_LEVEL_3: GameLevelFixture<GT015Content, GT015Difficulty> = {
   },
 };
 
-export const SAMPLE_LEVELS = [
-  SAMPLE_LEVEL_1,
-  SAMPLE_LEVEL_2,
-  SAMPLE_LEVEL_3,
-] as const;
+const SAMPLE_LEVELS = [SAMPLE_LEVEL_1, SAMPLE_LEVEL_2, SAMPLE_LEVEL_3] as const;
 
 export const GT015_FIXTURES = SAMPLE_LEVELS.map((s) => ({
   content: s.content_pack,

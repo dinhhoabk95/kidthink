@@ -25,7 +25,7 @@ export const GT018ContentSchema = z.object({
     .max(8),
 });
 
-export const GT018DifficultySchema = z.object({
+const GT018DifficultySchema = z.object({
   hint_after_ms: z.number().int().min(5000).max(30_000).default(8000),
   allow_retry: z.boolean().default(true),
   auto_play_audio: z.boolean().default(true),

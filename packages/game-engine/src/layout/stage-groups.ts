@@ -31,7 +31,7 @@ import { computeStageZones, type ZoneRect } from "./stage-zones.js";
 import type { Slot, SlotRole } from "./types.js";
 
 /** Cạnh ô lớn nhất — ô to hơn thì nhóm nhỏ chiếm hết sân khấu. */
-export const STAGE_GROUP_CELL_MAX_PX = 96;
+const STAGE_GROUP_CELL_MAX_PX = 96;
 
 /** Bước giảm cạnh ô khi tìm cỡ vừa sân khấu. */
 const CELL_STEP_PX = 4;

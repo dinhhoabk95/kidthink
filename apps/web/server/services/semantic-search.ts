@@ -1,7 +1,7 @@
 import { aiUsageLog, gameLevels, getOwnerDb, lessons } from "@mindkid/db";
 import {
+  AI_FEATURE_COSTS,
   AiSearchQuerySchema,
-  CREDIT_COST_MAP,
   DEFAULT_EMBEDDING_MODEL,
 } from "@mindkid/shared";
 import { and, eq, sql } from "drizzle-orm";
@@ -267,7 +267,7 @@ export async function performSemanticSearch(
 
   assertNoEgressViolation(cleanQuery, "semantic_search_query");
 
-  const creditCost = CREDIT_COST_MAP.semantic_search;
+  const creditCost = AI_FEATURE_COSTS.semantic_search;
   const idempotencyKey = `sem_search_${userId}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 
   await debitAiCredits({

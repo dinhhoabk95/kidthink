@@ -76,5 +76,3 @@ export const GT028_FIXTURES: {
     },
   },
 ];
-
-export default GT028_FIXTURES;

@@ -19,7 +19,7 @@ const MIN_OBJECT_H_PX = 40;
 /** Cạnh lớn nhất của ô đặt đơn vị và ô đáp án. */
 const CELL_MAX_PX = 96;
 
-export interface MeasureZonesInput {
+interface MeasureZonesInput {
   readonly unitCount: number;
   readonly optionCount: number;
   readonly stage: ZoneRect;

@@ -45,7 +45,7 @@ export function trayRowPadX(trayW: number, edge: number): number {
 }
 
 /** Số vật một hàng chứa được khi mỗi vật chiếm `edge` và cách nhau `SLOT_GAP_PX`. */
-export function trayItemsPerRow(trayW: number, edge: number): number {
+function trayItemsPerRow(trayW: number, edge: number): number {
   return itemsFitting(trayW - 2 * trayRowPadX(trayW, edge), edge);
 }
 

@@ -53,7 +53,7 @@ chỗ thay vì một.
 
 1. Capability được dùng bởi **≥ 2 app** (vd cache dùng ở `web` + `worker`) → tách package.
 2. Package bọc thư viện ngoài (driver) export **interface theo domain của dự án** — hàm,
-   type đặt tên theo nghiệp vụ (`getCached`, `enqueueJob`, `requireUserAuth`), không export
+   type đặt tên theo nghiệp vụ (`getCached`, `enqueue`, `requireUserAuth`), không export
    lại type/instance của thư viện nền nguyên trạng.
 3. Driver chỉ mình nó import thư viện runtime nền. `apps/*` **không** `import` trực tiếp
    `iovalkey`/`ioredis`/`rate-limiter-flexible`/`bullmq`/`otpauth`/`openid-client`/

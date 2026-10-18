@@ -66,8 +66,9 @@ describe("Cấu hình go-live được parse, không ép kiểu (BR-GLR-06)", ()
 
 /**
  * Bộ sinh level (`cli/gen-levels.ts`) **cố ý** ghi `title: ""`, `instruction: ""`
- * và tag rỗng — nó tự khai "bước 6 thuộc về người". 198 bản nháp trong
- * `seed-content/generated/` vì thế là nháp hợp lệ, ❌ NEVER là rác cần xoá.
+ * và tag rỗng — nó tự khai "bước 6 thuộc về người". Đầu ra của nó vì thế là
+ * nháp hợp lệ chờ người soạn, không được commit vào cây (test chạy bộ sinh ở
+ * chế độ `silent` hoặc ghi ra thư mục tạm).
  *
  * Thứ thiếu là cái chặn: `generated/` không nằm trong `ALL_SEED_LEVELS`, nhưng
  * không luật nào ngăn ai đó nối nó vào. Một level không tên, không lời dẫn mà

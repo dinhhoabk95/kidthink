@@ -2,7 +2,7 @@ import { z } from "zod";
 import { assetSchema, promptFields } from "#src/contracts/shared-fields";
 import { defineTemplate, STANDARD_SCORING } from "#src/contracts/types";
 
-export const GT034InstrumentSchema = z.object({
+const GT034InstrumentSchema = z.object({
   instrument_id: z.string().min(1),
   asset: assetSchema(),
   freq: z.number().min(50).max(2000),

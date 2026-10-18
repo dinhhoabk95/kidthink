@@ -33,7 +33,7 @@ import type { DegradationState } from "#src/systems/degradation";
 import type { RenderSystem } from "#src/systems/render-system";
 import type { GT020Content, GT020Difficulty } from "./template.js";
 
-export interface FlatCard {
+interface FlatCard {
   readonly cardId: string;
   readonly pairKey: string;
   readonly asset: GT020Content["pairs"][number]["card_a"]["asset"];
@@ -329,5 +329,3 @@ export class GT020Session extends TemplateGameSession<
     });
   }
 }
-
-export default GT020Session;

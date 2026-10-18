@@ -55,17 +55,6 @@ export function minuteAngleToMinute(minuteAngleDeg: number): number {
 }
 
 /**
- * Làm tròn góc quay về nấc kim giờ gần nhất (bước 30° hoặc 15° nếu có nửa giờ).
- */
-export function snapHourAngle(rawAngleDeg: number, minute = 0): number {
-  const normalized = ((rawAngleDeg % 360) + 360) % 360;
-  // Mỗi giờ 30 độ
-  const baseHour = Math.round(normalized / 30) % 12;
-  const offset = minute === 30 ? 15 : 0;
-  return (baseHour * 30 + offset) % 360;
-}
-
-/**
  * Chuyển góc quay kim giờ thành số giờ (1..12).
  */
 export function hourAngleToHour(hourAngleDeg: number): number {

@@ -15,6 +15,7 @@ catalog:
   typescript: ~5.9.3 # ❌ chưa 7.x — xem plan.md D-I
   "@types/node": ^24.7.0 # khớp runtime Node 24, không nhảy theo @types/node 26
   vitest: ^4.1.10
+  "@vitest/coverage-v8": 4.1.10 # ghim CỨNG = bản vitest trong lockfile: peer của nó đòi vitest đúng cùng bản patch. Nâng vitest thì nâng dòng này cùng lúc — `pnpm test:coverage`
   happy-dom: ^17.4.5
   "@vitejs/plugin-vue": ^6.0.8
   "@vue/test-utils": ^2.4.6
@@ -28,6 +29,7 @@ catalog:
   h3: ^1.15.4
   vue: ^3.5.41
   vue-tsc: ^3.3.9
+  nitropack: ^2.13.4 # apps/web/server/error.ts import type NitroErrorHandler; bản Nuxt 4.5 đang kéo
 
   # UI Kit & Styling — Task 3 (BR-DSC-03, D-FE)
   "@nuxt/ui": ^4.0.0

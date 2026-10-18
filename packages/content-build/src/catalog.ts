@@ -10,14 +10,8 @@ import type { AnyContentSeed, ContentSeed } from "./types.js";
 export const ALL_SEED_ACTIVITIES = ALL_ACTIVITIES;
 export const ALL_SEED_LESSONS = ALL_LESSONS;
 
-export const ALL_BUILT_LEVELS: ContentSeed<unknown, unknown>[] =
-  ALL_SKILL_SEEDS.flatMap((skill) => buildLevelsForSkill(skill));
-
-export const STATIC_SEED_LEVELS: ContentSeed<unknown, unknown>[] =
-  ALL_BUILT_LEVELS;
-
 export const ALL_SEED_LEVELS: ContentSeed<unknown, unknown>[] =
-  ALL_BUILT_LEVELS;
+  ALL_SKILL_SEEDS.flatMap((skill) => buildLevelsForSkill(skill));
 
 export const SHIPPABLE_SEED_LEVELS: ContentSeed<unknown, unknown>[] =
   ALL_SEED_LEVELS.filter(

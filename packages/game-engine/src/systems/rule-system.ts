@@ -16,7 +16,7 @@ export interface RuleDefinition<TItem = unknown> {
   readonly validator: (item: TItem) => boolean;
 }
 
-export interface RuleSystemConfig<TItem = unknown> {
+interface RuleSystemConfig<TItem = unknown> {
   readonly rules: readonly RuleDefinition<TItem>[];
   readonly switchAfterTrials: number;
   readonly signalDurationMs?: number;

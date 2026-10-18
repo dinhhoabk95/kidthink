@@ -4,34 +4,31 @@
  * khác nhau về "ứng viên nào bị loại", và trẻ sẽ thấy đúng chỗ lệch đó.
  */
 
-export interface GT009Predicate {
+interface GT009Predicate {
   readonly kind: "greater_than" | "less_than" | "not_equal" | "between";
   readonly value?: number;
   readonly min?: number;
   readonly max?: number;
 }
 
-export interface GT009Candidate {
+interface GT009Candidate {
   readonly candidate_id: string;
   readonly value: number;
 }
 
-export interface GT009Clue {
+interface GT009Clue {
   readonly clue_id: string;
   readonly predicate: GT009Predicate;
 }
 
-export interface GT009ContentShape {
+interface GT009ContentShape {
   readonly candidates: readonly GT009Candidate[];
   readonly clues: readonly GT009Clue[];
   readonly answer_candidate_id: string;
 }
 
 /** Một ứng viên thoả một manh mối hay không. */
-export function satisfiesClue(
-  value: number,
-  predicate: GT009Predicate
-): boolean {
+function satisfiesClue(value: number, predicate: GT009Predicate): boolean {
   switch (predicate.kind) {
     case "greater_than":
       return value > (predicate.value ?? Number.POSITIVE_INFINITY);

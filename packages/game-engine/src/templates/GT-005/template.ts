@@ -22,7 +22,7 @@ export const GT005ContentSchema = z.object({
     .max(6),
 });
 
-export const GT005DifficultySchema = z.object({
+const GT005DifficultySchema = z.object({
   hint_after_ms: z.number().int().min(6000).max(30_000),
   allow_retry: z.boolean(),
   shuffle_sides: z.boolean(),

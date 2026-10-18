@@ -375,5 +375,3 @@ export class GT001Session extends TemplateGameSession<
     return { ...slot, x: slot.x + Math.sin(elapsed * 0.05) * 4 };
   }
 }
-
-export default GT001Session;

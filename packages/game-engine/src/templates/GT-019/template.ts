@@ -2,7 +2,7 @@ import { z } from "zod";
 import { assetSchema, promptFields } from "#src/contracts/shared-fields";
 import { defineTemplate, STANDARD_SCORING } from "#src/contracts/types";
 
-export const GT019ContentSchema = z.object({
+const GT019ContentSchema = z.object({
   ...promptFields(),
   target_slots: z
     .array(
@@ -38,7 +38,7 @@ export const GT019ContentSchema = z.object({
     .max(4),
 });
 
-export const GT019DifficultySchema = z.object({
+const GT019DifficultySchema = z.object({
   allow_flip: z.boolean().default(false),
   rotation_step: z.literal(90).default(90),
   hint_after_ms: z.number().int().min(5000).max(30_000).default(8000),

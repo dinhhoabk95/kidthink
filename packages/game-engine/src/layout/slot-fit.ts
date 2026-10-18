@@ -82,7 +82,7 @@ export function dockRectAroundSlots(
  * Thân đất sét (`RenderSystem.drawClayBody`) có tấm đáy 3D tịnh tiến xuống 5 px
  * dưới bán kính, nên vật vẽ ở slot sát mép stage tràn ra ngoài.
  */
-export const CLAY_SLAB_DEPTH_PX = 5;
+const CLAY_SLAB_DEPTH_PX = 5;
 
 /**
  * Thu cạnh **vẽ** của slot để thân đất sét cộng tấm đáy nằm trong vùng chạm.
@@ -175,9 +175,9 @@ export function trayBoxWithin(
  * hát của GT-018) nằm ở đỉnh `zones.stage`; phần còn lại cho slot. Cao hơn
  * viên thuốc nhãn (`drawSubPromptText`: tối thiểu 32 px) một khe hở.
  */
-export const CAPTION_BAND_PX = 44;
+const CAPTION_BAND_PX = 44;
 
-export interface CaptionSplit {
+interface CaptionSplit {
   readonly caption: ZoneRect;
   readonly body: ZoneRect;
 }
@@ -196,7 +196,7 @@ export function splitCaption(stage: ZoneRect): CaptionSplit {
   };
 }
 
-export interface FigureSplit {
+interface FigureSplit {
   readonly figure: ZoneRect;
   readonly rest: ZoneRect;
 }

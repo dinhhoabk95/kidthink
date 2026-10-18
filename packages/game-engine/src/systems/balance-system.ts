@@ -16,7 +16,7 @@ export interface WeightedItem {
 
 export type BalanceState = "balanced" | "left_heavy" | "right_heavy";
 
-export const MAX_TILT_ANGLE_DEG = 25;
+const MAX_TILT_ANGLE_DEG = 25;
 
 /** Tính tổng trọng lượng danh sách vật thể. */
 export function sumWeights(items: readonly WeightedItem[]): number {

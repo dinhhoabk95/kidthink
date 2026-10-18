@@ -17,7 +17,7 @@ export const GT002ContentSchema = z.object({
     .max(8),
 });
 
-export const GT002DifficultySchema = z.object({
+const GT002DifficultySchema = z.object({
   distractor_count: z.number().int().min(1).max(5),
   target_count: z.number().int().min(2).max(5),
   hint_after_ms: z.number().int().min(8000).max(35_000),

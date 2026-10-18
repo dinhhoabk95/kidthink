@@ -16,8 +16,6 @@
     "otpauth": "catalog:"
   },
   "devDependencies": {
-    "@mindkid/config": "workspace:*",
-    "fast-check": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

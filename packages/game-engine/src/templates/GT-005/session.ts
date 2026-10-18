@@ -469,5 +469,3 @@ export class GT005Session extends TemplateGameSession<
     }
   }
 }
-
-export default GT005Session;

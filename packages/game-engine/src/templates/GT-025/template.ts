@@ -40,7 +40,7 @@ export const GT025ContentSchema = z.object({
     .max(5),
 });
 
-export const GT025DifficultySchema = z.object({
+const GT025DifficultySchema = z.object({
   item_count: z.number().int().min(2).max(4),
   target_count: z.number().int().min(1).max(2).optional(),
   distractor_count: z.number().int().min(0).max(2).optional(),

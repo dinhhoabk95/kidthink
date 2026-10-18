@@ -26,7 +26,7 @@ export interface Size {
   readonly h: number;
 }
 
-export interface StageCellsSpec {
+interface StageCellsSpec {
   readonly count: number;
   readonly stage: ZoneRect;
   readonly touchFloor: number;
@@ -159,7 +159,7 @@ export function computeStageCellSlots(spec: StageCellsSpec): Slot[] {
   return slots;
 }
 
-export interface StageTreeSpec {
+interface StageTreeSpec {
   readonly partCount: number;
   readonly stage: ZoneRect;
   readonly touchFloor: number;
@@ -241,9 +241,9 @@ export function computeStageTreeSlots(spec: StageTreeSpec): Slot[] {
   return slots;
 }
 
-export type MirrorAxis = "vertical" | "horizontal";
+type MirrorAxis = "vertical" | "horizontal";
 
-export interface StageMirrorSpec {
+interface StageMirrorSpec {
   readonly count: number;
   readonly axis: MirrorAxis;
   readonly stage: ZoneRect;
@@ -252,7 +252,7 @@ export interface StageMirrorSpec {
   readonly firstIndex?: number;
 }
 
-export interface StageMirror {
+interface StageMirror {
   /** Mẫu tham chiếu, vai `neutral`. */
   readonly reference: readonly Slot[];
   /** Ô đích đối xứng qua trục với mẫu cùng chỉ số, vai `target`. */

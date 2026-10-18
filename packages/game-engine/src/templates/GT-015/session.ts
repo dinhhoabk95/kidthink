@@ -45,7 +45,7 @@ const NO_HIT_TOLERANCE_PX = 0;
 /** Cạnh ô lưới lớn nhất trên sân khấu — cùng cỡ ô của `matrix-slot-grid`. */
 const GRID_CELL_MAX_PX = 96;
 
-export interface SudokuCellState {
+interface SudokuCellState {
   readonly row: number;
   readonly col: number;
   readonly value: string | null;
@@ -595,4 +595,3 @@ export class SudokuMiniSession extends TemplateGameSession<
 }
 
 export const GT015Session = SudokuMiniSession;
-export default SudokuMiniSession;

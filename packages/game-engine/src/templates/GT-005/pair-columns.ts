@@ -16,7 +16,7 @@ const MAX_SLOT_H = 90;
 /** Thân đất sét vẽ thêm một thanh dày 5 px dưới ô (`RenderSystem.drawClayBody`). */
 const CLAY_SLAB_PX = 5;
 
-export interface PairColumnsInput {
+interface PairColumnsInput {
   readonly stage: ZoneRect;
   readonly ageBand: AgeBand;
   readonly cssPerLogic?: number;

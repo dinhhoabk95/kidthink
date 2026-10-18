@@ -12,9 +12,9 @@
 
 export type CommandType = "forward" | "turn_left" | "turn_right" | "loop";
 
-export type FacingDirection = "up" | "right" | "down" | "left";
+type FacingDirection = "up" | "right" | "down" | "left";
 
-export interface GridCoord {
+interface GridCoord {
   col: number;
   row: number;
 }
@@ -23,16 +23,16 @@ export interface RobotState extends GridCoord {
   facing: FacingDirection;
 }
 
-export interface CollectibleItem extends GridCoord {
+interface CollectibleItem extends GridCoord {
   id: string;
 }
 
-export interface CommandItem {
+interface CommandItem {
   type: CommandType;
   count?: number; // Cho lệnh loop (mặc định 2)
 }
 
-export interface ExecutionStepLog {
+interface ExecutionStepLog {
   stepIndex: number;
   command: CommandType;
   fromState: RobotState;

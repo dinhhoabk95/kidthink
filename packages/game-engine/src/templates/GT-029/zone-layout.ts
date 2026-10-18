@@ -20,7 +20,7 @@ import type { Slot } from "#src/layout/types";
 /** Phần sân khấu cho phép thử đặt dock — dock ôm sát slot nên thường nhỏ hơn. */
 const OPTIONS_CANDIDATE_SHARE = 0.5;
 
-export interface ItemsAndOptionsAreas {
+interface ItemsAndOptionsAreas {
   /** Vùng cho lưới vật. */
   readonly items: ZoneRect;
   /** Vùng cho hàng phương án (không gồm lề dock). */

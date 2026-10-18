@@ -28,13 +28,13 @@ import { designTokens } from "#src/systems/designTokens";
 import type { Particle, RenderSystem } from "#src/systems/render-system";
 import type { GT037Content, GT037Difficulty, GT037Symbol } from "./template.js";
 
-export interface GT037Commission {
+interface GT037Commission {
   readonly slotIndex: number;
   readonly symbolId: string;
   readonly timeMs: number;
 }
 
-export interface GT037OrderStep {
+interface GT037OrderStep {
   readonly slotIndex: number;
   readonly symbolId: string;
   readonly isTarget: boolean;

@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { repoPath } from "@mindkid/config/paths";
 import { getLevelGenerator } from "@mindkid/game-engine/generators";
@@ -20,8 +21,7 @@ const PROVENANCE_REGEX = new RegExp(
 
 describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => {
   it("Scenario: BR-LGK-02 — cùng seed cho cùng đầu ra byte-for-byte", () => {
-    const tmpDir = path.resolve(import.meta.dirname, "fixtures/tmp");
-    fs.mkdirSync(tmpDir, { recursive: true });
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "mindkid-lgk-"));
 
     const file1 = path.join(tmpDir, "out1.ts");
     const file2 = path.join(tmpDir, "out2.ts");
@@ -54,6 +54,7 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
       if (fs.existsSync(file2)) {
         fs.unlinkSync(file2);
       }
+      fs.rmSync(tmpDir, { recursive: true, force: true });
     }
   });
 
@@ -67,6 +68,7 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
         count: 5,
         seed: 999,
         theme: "farm",
+        silent: true,
       });
 
       expect(result.writtenCount).toBe(5);
@@ -82,6 +84,7 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
       count: 3,
       seed: 12_345,
       theme: "school",
+      silent: true,
     });
 
     for (const item of result.items as Array<{
@@ -107,8 +110,7 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
   });
 
   it("Scenario: BR-LGK-07 — provenance header có định dạng hợp lệ", () => {
-    const tmpDir = path.resolve(import.meta.dirname, "fixtures/tmp");
-    fs.mkdirSync(tmpDir, { recursive: true });
+    const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "mindkid-lgk-"));
     const file = path.join(tmpDir, "prov.ts");
 
     try {
@@ -126,6 +128,7 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
       if (fs.existsSync(file)) {
         fs.unlinkSync(file);
       }
+      fs.rmSync(tmpDir, { recursive: true, force: true });
     }
   });
 
@@ -135,6 +138,7 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
       count: 10,
       seed: 999,
       theme: "school",
+      silent: true,
     });
 
     const hashes = (
@@ -160,6 +164,7 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
         count: 5,
         seed: 20_260_829,
         theme: "school",
+        silent: true,
       });
 
       expect(
@@ -195,6 +200,7 @@ describe("Level Generator Kit — Task #121 & Task #197 (BR-LGK-01..10)", () => 
         count,
         seed: 12_345,
         theme: "school",
+        silent: true,
       });
 
       expect(

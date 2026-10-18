@@ -93,7 +93,7 @@ export function numberKeycap(n: number): string {
   return n === 10 ? KEYCAP_TEN : `${n}\uFE0F\u20E3`;
 }
 
-export interface NumericOption {
+interface NumericOption {
   option_id: string;
   value: number;
   is_correct: boolean;

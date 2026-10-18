@@ -8,14 +8,14 @@ import type { ZoneRect } from "#src/layout/stage-zones";
  * waypoint cách xa nhau nhất có thể (`BR-LAY-05`). Không có `stage` thì giữ
  * nguyên toạ độ (`BR-LAY-10`).
  */
-export interface StageFit {
+interface StageFit {
   /** Hệ số co từ toạ độ nội dung sang toạ độ logic. */
   readonly scale: number;
   readonly offsetX: number;
   readonly offsetY: number;
 }
 
-export interface FitPoint {
+interface FitPoint {
   readonly x: number;
   readonly y: number;
 }

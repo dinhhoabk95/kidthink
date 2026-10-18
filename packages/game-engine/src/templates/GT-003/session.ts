@@ -634,5 +634,3 @@ export class GT003Session extends TemplateGameSession<
     rs.drawParticles(ctx, this.particles);
   }
 }
-
-export default GT003Session;

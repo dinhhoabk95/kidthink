@@ -50,6 +50,8 @@
     "gen:levels": "tsx src/cli/gen-levels.ts",
     "reset-content": "tsx scripts/reset-content.ts",
     "report:tags": "tsx scripts/report-tag-vocabulary.ts",
+    "gen-level-allocation": "tsx scripts/gen-level-allocation.ts",
+    "gen-skill-affinity": "tsx scripts/gen-skill-affinity.ts",
     "check:engine-behavior-corpus": "tsx src/gates/engine-behavior-corpus.ts"
   },
   "imports": {

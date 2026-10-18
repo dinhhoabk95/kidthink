@@ -19,7 +19,6 @@
     "@mindkid/config": "workspace:*",
     "@types/mjml": "catalog:",
     "@types/nodemailer": "catalog:",
-    "fast-check": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },

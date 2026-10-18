@@ -6,7 +6,7 @@
  * System này độc lập với khuôn (BR-TGB-08).
  */
 
-export type StimulusKind = "go" | "nogo";
+type StimulusKind = "go" | "nogo";
 
 export interface TrialItem<T = unknown> {
   readonly id: string;
@@ -14,13 +14,13 @@ export interface TrialItem<T = unknown> {
   readonly data?: T;
 }
 
-export type TrialOutcome =
+type TrialOutcome =
   | "hit" // Go + Acted -> Đúng
   | "miss" // Go + No action -> Sai (omission error)
   | "correct_rejection" // No-Go + No action -> Đúng
   | "false_alarm"; // No-Go + Acted -> Sai (commission error)
 
-export interface TrialResult {
+interface TrialResult {
   readonly trialIndex: number;
   readonly stimulusId: string;
   readonly kind: StimulusKind;
@@ -29,7 +29,7 @@ export interface TrialResult {
   readonly isCorrect: boolean;
 }
 
-export interface InhibitionSystemConfig<T = unknown> {
+interface InhibitionSystemConfig<T = unknown> {
   readonly trials: readonly TrialItem<T>[];
   readonly stimulusWindowMs: number;
   readonly isiMs?: number;
