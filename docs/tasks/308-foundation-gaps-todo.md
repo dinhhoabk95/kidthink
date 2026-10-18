@@ -30,6 +30,10 @@ Spec: [`access-ladder.md`](../specs/00-foundation/access-ladder.md) `BR-LAD-07`,
 - [ ] Test đỏ insert thiếu `content_version`
 - [ ] Migration mới (xử lý hàng NULL cũ) + Zod event bắt buộc
 
+## S5b — `pre-push` = `pnpm check` (`BR-RBS-03`)
+- [ ] `lefthook.yml`: job `check` chạy `pnpm services && pnpm check`
+- [ ] Ca âm: test DB đỏ tạm → push bị chặn; Postgres tắt → push bị chặn
+
 ## S6 — Nghiệm thu
 - [ ] `rtk proxy pnpm lint` exit 0
 - [ ] `rtk proxy pnpm typecheck` exit 0

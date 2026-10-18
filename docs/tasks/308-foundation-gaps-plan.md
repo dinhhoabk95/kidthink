@@ -2,7 +2,7 @@
 
 Contract: `docs/specs/00-foundation/access-ladder.md` (`BR-LAD-07`), `docs/specs/00-foundation/api-error-client.md` (`BR-AEC-02`, `BR-AEC-03`), `docs/specs/00-foundation/content-lifecycle.md` (`BR-CLC-01`), `docs/specs/00-foundation/content-versioning.md` (`BR-VER-03`, cùng `BR-EVT-06` của `event-catalog.md`).
 
-Ghi chú: `repo-bootstrap.md` (pre-push) có trong bảng phạm vi ban đầu, nhưng đợt #288 đã sửa spec theo `lefthook.yml` thật (`BR-RBS-03`: `pre-commit` = format + lint + lint:deps + engine-gates, `pre-push` = `check:fast`) và spec không còn `open_tasks: ["#308"]`. Task này chỉ kiểm lại ở slice nghiệm thu, không có slice riêng.
+Ghi chú: `repo-bootstrap.md` — đợt #288 lỡ nới `BR-RBS-03` xuống `check:fast` cho khớp `lefthook.yml`; đã khôi phục luật gốc (`pre-push` = `pnpm services` + `pnpm check`) và spec mang `open_tasks: ["#308"]`. Slice S5b dưới đây sửa `lefthook.yml`.
 
 ---
 
@@ -42,8 +42,12 @@ Gap có bằng chứng (audit G1 §A, §E):
 - **S5 — `content_version` NOT NULL (`BR-VER-03`)**
   - Test trước: insert telemetry thiếu `content_version` → lỗi DB và lỗi Zod.
   - Xong khi: migration mới áp được trên dữ liệu dev có sẵn; test ingest xanh.
+- **S5b — `pre-push` chạy `pnpm check` đầy đủ (`BR-RBS-03`)**
+  - Sửa job `check` trong `lefthook.yml`: `pnpm services && pnpm check` thay cho `pnpm check:fast`; cập nhật khối chú thích đầu file (bỏ mục "Điểm mù").
+  - Ca âm: tạo một test đỏ tạm trong project cần DB, `git push --dry-run` thật (hoặc `lefthook run pre-push --force`) phải exit khác 0; tắt Postgres thì hook đỏ.
+  - Xong khi: ca âm đo được, rồi bỏ test đỏ tạm.
 - **S6 — Nghiệm thu**
   - `rtk proxy pnpm lint`, `rtk proxy pnpm typecheck`, test `@mindkid/shared`, `@mindkid/errors`, `@mindkid/db`, `@mindkid/web` liên quan, `rtk proxy pnpm check:migration-hashes`, `rtk proxy pnpm check:test-ratchet`.
-  - Kiểm lại `repo-bootstrap.md` `BR-RBS-03` khớp `lefthook.yml` (không sửa nếu đã khớp).
+  - Kiểm lại `repo-bootstrap.md` `BR-RBS-03` khớp `lefthook.yml` sau slice S5b.
   - Spec: 4 file — bỏ `#308` khỏi `open_tasks` + khối "Chưa hoàn thành"; nâng `status: implemented` (`api-error-client` từ `approved`); `reviewed`. Nếu `api-error-client` còn thiếu §9 Gherkin/§10/§11 theo khuôn 11 mục, bổ sung trong cùng commit spec.
   - Commit vào `main`.

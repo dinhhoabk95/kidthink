@@ -2,10 +2,12 @@
 spec: REPO-BOOTSTRAP
 title: Dependency baseline và gate local
 area: foundation
-status: implemented
+status: approved
 mvp: true
 phase: P0
 reviewed: 2026-10-18
+open_tasks:
+  - "#308"
 owns:
   - Cấu trúc gốc workspace `mindkid/` và trình tự dựng repo
   - Dependency/tech baseline (version tối thiểu từng lớp)
@@ -14,6 +16,8 @@ depends_on: []
 ---
 
 # Dependency baseline và gate local
+
+> **Chưa hoàn thành** — `BR-RBS-03` chốt `pre-push` = `pnpm services` + `pnpm check` đầy đủ; `lefthook.yml` hiện chỉ chạy `pnpm check:fast` (vitest chỉ project `@mindkid/game-engine`, không chạy test tích hợp DB và `check:test-ratchet`). Việc còn lại: [Task #308](../../tasks/308-foundation-gaps-plan.md).
 
 ## 1. Objective
 
@@ -67,12 +71,11 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
         cổng engine (`check:engine-specs`, `check:render`, `check:engine-depth`,
         `check:engine-turn`, `check:engine-behavior`, `check:difficulty-ladder`,
         `check:hardcoded-params`, `check:engine-seed-matrix`).
-   - `pre-push`: `pnpm check:fast` = `scripts/check.sh --fast` — Phase 1 lint và các cổng
-     `check:*`, Phase 2 `pnpm typecheck`, Phase 3 vitest **chỉ** project
-     `@mindkid/game-engine`.
-   - Điểm mù có chủ đích: test tích hợp cần DB và `check:test-ratchet` chỉ chạy ở
-     `pnpm check` đầy đủ (Phase 3 đỏ nếu `pnpm services` lỗi). `pnpm test:deploy` (Phase 4)
-     không nằm trong `check`, chạy tay khi phát hành.
+   - `pre-push`: `pnpm services` rồi `pnpm check` đầy đủ — Phase 1 lint và các cổng
+     `check:*`, Phase 2 `pnpm typecheck`, Phase 3 toàn bộ vitest gồm test tích hợp DB và
+     `check:test-ratchet` (Phase 3 đỏ nếu `pnpm services` lỗi). `pnpm check:fast` chỉ là lệnh
+     chạy tay khi đang sửa, không phải gate. `pnpm test:deploy` (Phase 4) không nằm trong
+     `check`, chạy tay khi phát hành.
 7. Gate ra của một thay đổi: `pnpm check` xanh tại máy (đã bật PG + Valkey), hook
    `pre-commit`/`pre-push` xanh **và** ca âm chặn đúng (`BR-RBS-03`).
 
@@ -92,7 +95,7 @@ hệ sinh thái Nuxt đã kiểm chứng thay vì tự viết (quyết định D
 |---|---|---|
 | `BR-RBS-01` | **Ngưng — 2026-10-18.** Rule về giới hạn tài sản được chuyển vào repo lúc khởi tạo; giai đoạn đó đã xong. Nguyên tắc còn hiệu lực nằm ở D9 của [`SPEC.md`](../../SPEC.md). Không tái dùng số (`BR-REG2-02`) | Hết đối tượng |
 | `BR-RBS-02` | Mọi workspace package (`package.json` gốc, `apps/*`, `packages/*`) mang scope `@mindkid/*`; không scope nào khác cùng tồn tại | Hai scope trộn lẫn làm import path không nhất quán và dễ import nhầm. Test `packages/shared/tests/foundation-contracts.test.ts` trích mã này |
-| `BR-RBS-03` | Gate local `lefthook` (§4 bước 6: `pre-commit` = format + lint + lint:deps + engine-gates; `pre-push` = `check:fast`) phải xanh **và** chặn đúng ở ca âm. Thêm hoặc bớt job trong `lefthook.yml` là đổi spec này | Gate exit 0 khi có lỗi là chuyện **đã xảy ra** ở project này (`ultracite check`, `check:services`, và cổng typecheck khi trình biên dịch bị OOM kill). Gate không có ca âm đã đo là gate chưa tồn tại |
+| `BR-RBS-03` | Gate local `lefthook` (§4 bước 6: `pre-commit` = format + lint + lint:deps + engine-gates; `pre-push` = `pnpm services` + `pnpm check`) phải xanh **và** chặn đúng ở ca âm. Thêm hoặc bớt job trong `lefthook.yml` là đổi spec này | Gate exit 0 khi có lỗi là chuyện **đã xảy ra** ở project này (`ultracite check`, `check:services`, và cổng typecheck khi trình biên dịch bị OOM kill). Gate không có ca âm đã đo là gate chưa tồn tại |
 | `BR-RBS-03a` | `lefthook install` phải chạy tự động qua `prepare` script của `package.json` — không dựa vào người mới clone tự nhớ | Hook chỉ tồn tại trong `.git/hooks/` (không được commit). Người clone mà không cài hook thì gate im lặng biến mất, và git không báo gì |
 | `BR-RBS-04` | **Ngưng — 2026-10-18.** Rule chặn code nghiệp vụ trước khi foundation được duyệt; giai đoạn đó đã qua. Nguyên tắc "contract trước implementation" vẫn ở [`roadmap.md`](../roadmap.md). Không tái dùng số (`BR-REG2-02`) | Hết đối tượng |
 | `BR-RBS-05` | Dependency ở §7.1 **ưu tiên adopt** thư viện phổ biến; chỉ tự viết khi không có thư viện phù hợp hoặc cần bọc dùng chung nhiều app (driver) | Mục 0, quyết định D10 của [`SPEC.md`](../../SPEC.md) |
@@ -192,12 +195,12 @@ Không sở hữu route nào.
 ## 9. Acceptance criteria
 
 ```gherkin
-Scenario: BR-RBS-03 — pre-push chạy check:fast
+Scenario: BR-RBS-03 — pre-push chạy pnpm check đầy đủ
   Given lefthook đã cài vào .git/hooks
   When chạy `git push` thật (không phải `lefthook run pre-push` thủ công — lệnh
     thủ công thiếu ref data trên stdin mà git thật cung cấp, lefthook đọc thành
     "0 file cần push" và skip mọi job, exit 0 giả. Muốn test thủ công đúng: thêm `--force`)
-  Then job "check" chạy `pnpm check:fast`
+  Then job "check" chạy `pnpm services` rồi `pnpm check`
   And push chỉ đi tiếp khi lệnh đó exit 0
 
 Scenario: BR-RBS-03 — ca âm, gate chặn commit vi phạm
@@ -252,8 +255,8 @@ Scenario: BR-RBS-10 — ca âm, admin gọi API cross-origin không vỡ CORS
 
 **Always**
 - Pin version qua `engines` + pnpm `catalog:`, không rải version rời.
-- Chạy `pnpm check` đầy đủ (PG + Valkey đã bật) trước khi coi một thay đổi là xong: `pre-push`
-  chỉ là tập con.
+- Chạy `pnpm check` đầy đủ (PG + Valkey đã bật) trước khi coi một thay đổi là xong; `pre-push`
+  chạy đúng lệnh đó.
 - Thêm job vào `lefthook.yml` kèm ca âm đã đo.
 
 **Ask first**
@@ -283,4 +286,4 @@ Scenario: BR-RBS-10 — ca âm, admin gọi API cross-origin không vỡ CORS
 | 9 | Kích thước pool `postgres.js` (`max`) và `PG max_connections` phải tính theo **loại EC2 instance thật** (số vCPU × số PM2 instance) — chưa chốt vì chưa biết instance type production | [`data-model-overview.md`](data-model-overview.md), deploy | Hoãn, chặn phase P1 | hoãn |
 | ~~10~~ | ~~Chiến lược version control cho corpus spec~~ **Đóng 2026-08-09 (`D-U`)**: corpus spec ([`SPEC.md`](../../SPEC.md) + `docs/specs/` + `docs/tasks/` + `docs/taxonomy/` + `docs/montessori/`) nằm trong `mindkid/docs/`, cùng git repo và dòng lịch sử với code. `mindkid/SPEC.md` là symlink → `docs/SPEC.md` | — | Đã đóng | D-U |
 | ~~11~~ | ~~Bật lại CI cổng tự động khi nào~~ **Đóng 2026-08-06**: không còn CI để bật. `BR-RBS-03` đo bằng hook thật + ca âm tại máy | — | Đã đóng | D-S (T1) |
-| ~~12~~ | ~~Gate local bỏ qua được bằng `--no-verify`~~ **Đóng 2026-08-09 (`D-CL`)**: giữ lefthook làm phản hồi nhanh local; `main` cấm direct/force push, bắt buộc PR + ít nhất một approving human review và dismiss approval khi có commit mới | — | Đã đóng | D-CL |
+| ~~12~~ | ~~Gate local bỏ qua được bằng `--no-verify`~~ **Đóng 2026-08-09 (`D-CL`)**: giữ lefthook làm phản hồi nhanh local; `main` cấm direct/force push, bắt buộc PR + ít nhất một approving human review và dismiss approval khi có commit mới. **Thay thế 2026-10-18**: `CLAUDE.md` mục "Git workflow" chốt commit thẳng vào `main`; không còn PR bắt buộc hay branch protection. Lefthook (`BR-RBS-03`) là gate duy nhất, `--no-verify` vẫn bỏ qua được | — | Đã đóng | D-CL (đã thay) |

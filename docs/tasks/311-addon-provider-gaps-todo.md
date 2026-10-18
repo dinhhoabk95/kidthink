@@ -27,6 +27,10 @@ Spec: [`ai-assistant.md`](../specs/07-addon/ai-assistant.md), [`semantic-search.
 - [ ] Test đỏ publish → enqueue; archive → không trả về
 - [ ] Enqueue trong `content-lifecycle.ts`; lệnh backfill
 
+## S5b — Token FCM Web thật (`browser-push`)
+- [ ] Test đỏ: trang cài đặt gửi token từ Firebase Messaging, không còn `fcm_token_client_`
+- [ ] Dùng `firebase/messaging` trong `pages/me/settings/notifications.vue`
+
 ## S6 — Nghiệm thu
 - [ ] `rtk proxy pnpm lint` exit 0
 - [ ] `rtk proxy pnpm typecheck` exit 0

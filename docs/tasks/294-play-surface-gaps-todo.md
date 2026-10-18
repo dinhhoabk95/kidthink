@@ -28,6 +28,7 @@ Spec: `04-play/` progress-and-mastery (`BR-PRG-06`, §7.2), play-entry-and-profi
 ## S5 — Competency explorer
 - [ ] Test đỏ: màu theo năng lực + speech lời giới thiệu (`BR-CCE-08`)
 - [ ] Test đỏ: `is_locked` theo entitlement gia đình
+- [ ] Test đỏ: level ngoài `age_band` vẫn trả về, xếp sau level hợp tuổi (`BR-CCE-02`)
 - [ ] Sửa `pages/play/competency/[code].vue` và route `competency/[code].get.ts`
 - [ ] Bổ sung §8–§11 cho spec nếu #288 chưa làm
 

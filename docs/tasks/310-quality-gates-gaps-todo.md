@@ -44,6 +44,11 @@ Spec: [`08-quality/`](../specs/08-quality/) thinking-coverage-matrix, security-c
 - [ ] Cổng bậc thang `unknown` khai mới (AST) + ca âm
 - [ ] Chụp danh sách sau — trùng khít
 
+## S7b — Cổng xanh giả + test chạy rỗng
+- [ ] `check:skill-quota` trỏ `tsx scripts/check-skill-quota.ts`; hỏi người dùng nội dung hay bậc thang
+- [ ] Sửa import 3 test (`lifecycle-service`, `lifecycle-gates`, `ai-credit-ledger`) về `#server/services/*`
+- [ ] `check:test-ratchet --update` sau khi 3 file ra khỏi danh sách đỏ
+
 ## S8 — Nghiệm thu
 - [ ] `rtk proxy pnpm lint` exit 0
 - [ ] `rtk proxy pnpm typecheck` exit 0

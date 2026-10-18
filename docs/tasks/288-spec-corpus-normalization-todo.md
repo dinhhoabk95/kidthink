@@ -36,8 +36,8 @@ Spec: [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 2, 3, 3.1; [`business-ru
 - [x] Tạo 24 phiếu task #289–#312
 
 ## Cần người quyết
-- [ ] `D-CL` (PR bắt buộc) với `CLAUDE.md` (commit thẳng `main`)
-- [ ] `BR-CCE-02` với `BR-CLF-07`
+- [x] `D-CL` (PR bắt buộc) với `CLAUDE.md` (commit thẳng `main`) — `CLAUDE.md` thắng
+- [x] `BR-CCE-02` với `BR-CLF-07` — xếp hạng, không lọc (Task #294)
 - [ ] `BR-RBS-02` giữ hay ngưng
 - [ ] `BR-GLR-04` "27 engine" với 38 khuôn
 - [ ] Mã lỗi webhook SES 401 hay 400

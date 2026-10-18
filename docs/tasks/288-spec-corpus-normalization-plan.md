@@ -116,10 +116,9 @@ Cùng #288 là 25 task. Mỗi spec còn thiếu trỏ đúng số ở trên qua 
 
 ## 5. Cần người quyết (không tự chốt trong đợt này)
 
-1. `repo-bootstrap.md` §11 Q12 (`D-CL`) ghi `main` cấm push thẳng, bắt buộc PR — `CLAUDE.md` ghi
-   commit thẳng vào `main`. Một trong hai phải đổi.
-2. `BR-CCE-02` (explorer loại trò chơi ngoài `age_band`) với `BR-CLF-07` / `access-gating.md`
-   (tuổi chỉ để xếp, không chặn).
+1. ~~`D-CL` với `CLAUDE.md`~~ — chốt 2026-10-18: `CLAUDE.md` thắng (commit thẳng `main`); `repo-bootstrap.md`
+   Q12 và `content-seed-authoring.md` Q7 ghi `D-CL` đã bị thay.
+2. ~~`BR-CCE-02` với `BR-CLF-07`~~ — chốt 2026-10-18: xếp hạng theo tuổi, không lọc; code → Task #294.
 3. `BR-RBS-02` giữ (test `foundation-contracts.test.ts` còn trích đúng nghĩa) hay ngưng như đề xuất ban đầu.
 4. `BR-GLR-04` khai phạm vi go-live "27 engine" trong khi registry có 38 khuôn.
 5. Webhook SES trả 401 `WEBHOOK_SIGNATURE_INVALID` theo code; muốn 400 thì thành gap của #289.

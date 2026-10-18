@@ -184,8 +184,9 @@ Hai chỗ hỏng kèm theo, đo cùng ngày:
   `#src/layout/constants.js` trong khi file là `constants.ts`, nên resolver tìm
   `constants.js.ts`. `pnpm --filter @mindkid/content-build check:round-sets` thoát khác 0 vì lỗi module,
   không vì nội dung.
-- `packages/content/src/generated/*.ts` chứa **430 level** mà **không file nào
-  import**. Chúng không vào `ALL_SEED_LEVELS`, nên không vào cả tập gieo lẫn tập cổng đo.
+- 430 level trong `packages/content-build/src/generated/gen-gt*.ts` không file nào import đã bị
+  xoá ngày 2026-10-18 (câu hỏi 4 mục 11). Chúng chưa từng vào `ALL_SEED_LEVELS`, nên mọi con số
+  ở mục này không đổi.
 
 ### 7.6 Giá phải trả của mỗi bậc
 
@@ -295,7 +296,6 @@ Scenario: cổng dừng khi nguồn không parse được
 - Bật bậc tiếp theo ở mục 7.4.
 - Đổi mục tiêu `4 · 6 · 8` ở mục 7.2.
 - Đổi định nghĩa vòng gọi lại ở `BR-RSD-05`.
-- Xử lý 430 level trong `generated/` mà không ai import.
 
 **Never**
 - Hạ bậc đã bật để cổng xanh.
@@ -311,5 +311,5 @@ Scenario: cổng dừng khi nguồn không parse được
 | 1 | Mục tiêu `4 · 6 · 8` lấy từ tài liệu nước ngoài, chưa đo với trẻ Việt trên máy tính bảng. Con số đúng là bao nhiêu? | Bật Bậc 2 | P4 | người quyết | **Mở.** Nối vào câu hỏi 3 mục 11 [`round-set-model.md`](round-set-model.md) — cùng một lỗ hổng dữ liệu, hai file cùng chờ một đợt playtest |
 | 2 | Vòng gọi lại có tính vào `rounds_total` của `first_try_ratio` không, hay tách thành chỉ số ghi nhớ riêng? | Hình dạng số đo mục 7.1 [`scoring-and-result.md`](../04-play/scoring-and-result.md) | P4 | Backend | **Mở.** Tính vào thì trẻ nhớ tốt được thưởng đúng chỗ; tách ra thì `first_try_ratio` giữ nghĩa "làm đúng ngay lần đầu" nguyên vẹn |
 | 3 | Sinh lại 3.156 hạt `.json` bằng `--rounds` có phá `legacy_v1_ref` và mã level đang được lesson trỏ tới không? | Bậc 1 | P4 | Nội dung | **Mở.** Phải đo trước khi chạy: `activities.refId` trỏ tới `game_levels.code`, đổi mã là làm chết link bước chơi của tiết học |
-| 4 | 430 level trong `seed-content/generated/*.ts` không file nào import — xoá, hay nối vào tập gieo? | Mẫu số của mọi sàn trong file này | P4 | người quyết | **Mở.** Nối vào thì corpus tăng 12% và mọi con số ở mục 7.6 phải tính lại; xoá thì mất công sinh của một lô cũ |
-| 5 | Cổng `check:round-sets` không chạy được vì import đứt ở `GT-001/session.ts:10`. Sửa trong task nào? | Mọi ca âm của `BR-RSD-12` | P4 | Backend | **Mở.** Một ký tự `.js` thừa, nhưng nó nằm ngoài phạm vi nội dung — cùng loại với lỗi barrel `@mindkid/config` |
+| 4 | 430 level trong `src/generated/gen-gt*.ts` không file nào import — xoá, hay nối vào tập gieo? | — | — | người quyết | **Đã đóng 2026-10-18: xoá.** Mẫu số ở mục 7.6 giữ nguyên vì các level này chưa từng vào `ALL_SEED_LEVELS` |
+| 5 | Cổng `check:round-sets` không chạy được vì import đứt ở `GT-001/session.ts:10`. Sửa trong task nào? | Mọi ca âm của `BR-RSD-12` | P4 | Backend | **Đã đóng 2026-10-18:** Đã sửa import và kiểm chứng `check:round-sets` cùng bộ ca âm `round-sets.test.ts` chạy xanh |

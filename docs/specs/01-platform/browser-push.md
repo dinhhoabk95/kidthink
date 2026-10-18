@@ -2,10 +2,12 @@
 spec: BROWSER-PUSH
 title: Thông báo trình duyệt qua FCM Web
 area: platform
-status: implemented
+status: approved
 mvp: false
 phase: P5
-reviewed: 2026-08-13
+reviewed: 2026-10-18
+open_tasks:
+  - "#311"
 owns:
   - Đăng ký và xoay endpoint thông báo trình duyệt
   - FCM Web delivery adapter
@@ -17,6 +19,8 @@ depends_on:
 ---
 
 # Thông báo trình duyệt qua FCM Web
+
+> **Chưa hoàn thành** — route `/api/users/notification-endpoints` và driver `fcm-driver.ts` đã có, nhưng trang `/me/settings/notifications` gửi token giả `fcm_token_client_*` thay vì lấy token từ Firebase Messaging; package `firebase` của web chưa được import ở đâu. Việc còn lại: [Task #311](../../tasks/311-addon-provider-gaps-plan.md).
 
 ## 1. Objective
 

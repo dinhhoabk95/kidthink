@@ -1,6 +1,6 @@
 # Kế hoạch Task #311: Provider thật cho addon AI, embedding và font PDF (Addon Provider Gaps)
 
-Contract: `docs/specs/07-addon/ai-assistant.md` (OQ1, `BR-AIA-*`), `docs/specs/07-addon/semantic-search.md` (`BR-SEM-03`, `BR-SEM-04`), `docs/specs/07-addon/pdf-export.md` (`BR-PDF-07`); liên quan `docs/specs/08-quality/testing-strategy.md` (`BR-TST-03`: bản mô phỏng cho test).
+Contract: `docs/specs/07-addon/ai-assistant.md` (OQ1, `BR-AIA-*`), `docs/specs/07-addon/semantic-search.md` (`BR-SEM-03`, `BR-SEM-04`), `docs/specs/07-addon/pdf-export.md` (`BR-PDF-07`), `docs/specs/01-platform/browser-push.md` (token FCM Web thật); liên quan `docs/specs/08-quality/testing-strategy.md` (`BR-TST-03`: bản mô phỏng cho test).
 
 ---
 
@@ -38,8 +38,12 @@ Mục tiêu: ba addon chạy thật trong vận hành; bản mô phỏng tất �
 - **S5 — Producer khi publish + backfill (`BR-SEM-04`)**
   - Test trước: publish nội dung → có job `embed:content` trong queue; archive → embedding bị bỏ/không trả về.
   - Xong khi: test web xanh; lệnh backfill chạy được trên DB dev.
+- **S5b — Token FCM Web thật (`browser-push`)**
+  - Hiện `apps/web/app/pages/me/settings/notifications.vue` gửi token giả `fcm_token_client_*`; package `firebase` khai trong `apps/web/package.json` nhưng không file nào import.
+  - Test trước: trang cài đặt lấy token qua `getToken` của Firebase Messaging (mock SDK trong test) rồi POST `/api/users/notification-endpoints`; không còn chuỗi `fcm_token_client_`.
+  - Xong khi: test web xanh; kiểm tay nhận được một thông báo trên trình duyệt dev.
 - **S6 — Nghiệm thu**
   - `rtk proxy pnpm lint`, `rtk proxy pnpm typecheck`, test `@mindkid/export`, `@mindkid/worker`, `@mindkid/web` liên quan, `rtk proxy pnpm check:migration-hashes` (nếu có migration), `rtk proxy pnpm check:test-ratchet`.
   - Kiểm tay: tạo PDF mẫu mở bằng trình xem PDF, dấu tiếng Việt hiển thị đúng; tìm kiếm ngữ nghĩa trả kết quả không qua fallback.
-  - Spec 3 file: bỏ `#311` khỏi `open_tasks` + khối "Chưa hoàn thành"; nâng `status: implemented`; `reviewed`.
+  - Spec 4 file: bỏ `#311` khỏi `open_tasks` + khối "Chưa hoàn thành"; nâng `status: implemented`; `reviewed`.
   - Commit vào `main`.
