@@ -2,10 +2,10 @@
 spec: ACCESS-LADDER
 title: Bậc truy cập nội dung
 area: foundation
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-06
+reviewed: 2026-10-18
 owns:
   - Enum access_tier và thứ tự bao hàm
   - Quy tắc mặc-định-đóng
@@ -13,9 +13,13 @@ owns:
 depends_on:
   - GLOSSARY
   - ACTORS
+open_tasks:
+  - "#308"
 ---
 
 # Bậc truy cập nội dung
+
+> **Chưa hoàn thành** — `BR-LAD-07`: allow-list guest chưa bị giới hạn đúng 6 level — `packages/shared/src/access-ladder.ts` cho guest mọi level tier `free`; `FEATURED_GUEST_LEVELS` chỉ dùng để hiển thị trang chủ. Việc còn lại: [Task #308](../../tasks/308-foundation-gaps-plan.md).
 
 ## 1. Objective
 

@@ -2,10 +2,12 @@
 spec: NOTIFICATION-INBOX
 title: Hộp thư thông báo của User
 area: account
-status: implemented
+status: approved
 mvp: false
 phase: P5
-reviewed: 2026-08-13
+reviewed: 2026-10-18
+open_tasks:
+  - "#290"
 owns:
   - Danh sách thông báo User xem lại
   - Trạng thái đã đọc và số chưa đọc
@@ -15,6 +17,8 @@ depends_on:
 ---
 
 # Hộp thư thông báo của User
+
+> **Chưa hoàn thành** — API và trang `/me/notifications` đã có; component `NotificationBell` chưa được gắn vào layout `/me` (§3). Việc còn lại: [Task #290](../../tasks/290-account-ui-missing-pages-plan.md).
 
 ## 1. Objective
 

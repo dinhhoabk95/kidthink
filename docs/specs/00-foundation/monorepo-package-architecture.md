@@ -5,7 +5,7 @@ area: foundation
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-29
+reviewed: 2026-10-18
 owns:
   - Quy tắc khi nào tách package mới vs viết inline trong app
   - Pattern "driver" bọc thư viện bên thứ ba dùng chung nhiều app
@@ -116,18 +116,18 @@ tiếp `jose`; mọi first-party auth credential đều opaque.
 | Logging | `packages/config` (factory logger dùng chung) hoặc `packages/observability` nếu tách | `pino` + `pino-http` (Nitro plugin) | [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md) |
 | Alert tới người | `apps/worker` (job định kỳ ping) + script cổng tự động | Healthchecks.io (`fetch` ping) + Telegram Bot API (`fetch` thô) | [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md), [`job-queue.md`](../01-platform/job-queue.md) |
 | Taxonomy | `packages/taxonomy` | Pure TS, không thư viện ngoài | [`taxonomy-service.md`](../01-platform/taxonomy-service.md) |
-| Emoji | `packages/emoji` | Pure TS + data, port từ v1 | [`emoji-registry.md`](../01-platform/emoji-registry.md) |
-| Game engine | `packages/game-engine` | Canvas 2D thuần TS, port từ v1 | [`game-template-contract.md`](../01-platform/game-template-contract.md), [`game-engine-runtime.md`](../01-platform/game-engine-runtime.md) |
+| Emoji | `packages/emoji` | Pure TS + data | [`emoji-registry.md`](../01-platform/emoji-registry.md) |
+| Game engine | `packages/game-engine` | Canvas 2D thuần TS | [`game-template-contract.md`](../01-platform/game-template-contract.md), [`game-engine-runtime.md`](../01-platform/game-engine-runtime.md) |
 | Adaptive | `packages/adaptive` | Pure TS (BKT/ZPD), không thư viện ngoài | [`adaptive-engine.md`](../01-platform/adaptive-engine.md) |
 | SEO / sitemap / OG-image / schema.org | **Không cần driver** — cấu hình `nuxt.config.ts` trong `apps/web` | `@nuxtjs/seo` (+ `@takumi-rs/core`) | [`seo-and-structured-data.md`](../02-public/seo-and-structured-data.md) |
 | Form sinh từ schema (admin) | **Không cần driver** — dùng trực tiếp trong `apps/admin` | `UForm` (Nuxt UI v4) + Zod 4 | [`schema-driven-form.md`](../06-admin/schema-driven-form.md) |
 | Rich text hạn chế (admin) | **Không cần driver** — dùng trực tiếp trong `apps/admin` | `Editor` (Nuxt UI v4, nền Tiptap 3) | [`seo-content-admin.md`](../06-admin/seo-content-admin.md) |
-| DB | `packages/db` | Drizzle + driver `postgres.js` | [`data-model-overview.md`](../01-platform/data-model-overview.md) và các `schema-*` |
+| DB | `packages/db` | Drizzle + driver `postgres.js` | [`data-model-overview.md`](data-model-overview.md) và các `schema-*` |
 | Kho nội dung học | `packages/content` | Pure TS, không thư viện ngoài, không chạm database | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md), [`skill-dataset-model.md`](../05-content/skill-dataset-model.md) |
 | Nạp & kiểm tra nội dung | `packages/content-build` | Drizzle + Node scripts + test gates | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) |
-| Nhật ký kiểm toán | `packages/audit` | Ghi nhật ký kiểm toán, quét dữ liệu nhạy cảm | [`audit-logs.md`](../06-admin/audit-logs.md) |
-| Phiên chơi & thành thạo | `packages/play` | Xử lý sự kiện chơi, cập nhật BKT mastery và huy hiệu | [`gameplay-session.md`](../04-play/gameplay-session.md) |
-| Kết xuất tài liệu | `packages/export` | Dựng PDF giáo án, phiếu bài tập | [`pdf-export.md`](../04-play/pdf-export.md) |
+| Nhật ký kiểm toán | `packages/audit` | Ghi nhật ký kiểm toán, quét dữ liệu nhạy cảm | [`audit-log.md`](../01-platform/audit-log.md) |
+| Phiên chơi & thành thạo | `packages/play` | Xử lý sự kiện chơi, cập nhật BKT mastery và huy hiệu | [`play-session-lifecycle.md`](../04-play/play-session-lifecycle.md) |
+| Kết xuất tài liệu | `packages/export` | Dựng PDF giáo án, phiếu bài tập | [`pdf-export.md`](../07-addon/pdf-export.md) |
 | Kiểm duyệt nội dung UGC (P4, ngoài MVP) | `packages/moderation` | **Chưa chốt** — tự xây danh sách đóng tiếng Việt hay API bên thứ ba, xem [`custom-game-builder.md`](../07-addon/custom-game-builder.md) Q4 (`D-CF`) | [`custom-game-builder.md`](../07-addon/custom-game-builder.md) `BR-CGB-09` |
 
 Package không thuộc bảng trên (`shared`, `config`, `ui`) không bọc thư viện nền theo nghĩa
@@ -135,7 +135,7 @@ driver — `shared` chỉ chứa Zod/type/constant, `config` chỉ chứa preset
 UI kit. Xem mục 8.1 của [`SPEC.md`](../../SPEC.md) cho ranh giới đầy đủ của từng package.
 
 `packages/payment`, `packages/notification` là **package mới** chưa có trong cây thư mục ở
-mục 8 của [`SPEC.md`](../../SPEC.md) — thêm vào khi port/dựng thật, đúng theo quy tắc
+mục 8 của [`SPEC.md`](../../SPEC.md) — thêm vào khi dựng thật, đúng theo quy tắc
 `BR-MPA-01` (`apps/*` không được import trực tiếp thư viện nền cho capability dùng chung từ
 ít nhất 2 app, luôn qua package driver): capability dùng ≥2 app thì tách; nếu MVP chỉ
 `apps/web` cần thì để inline, tách khi `apps/admin` cần dùng lại — vd gửi email từ admin khi

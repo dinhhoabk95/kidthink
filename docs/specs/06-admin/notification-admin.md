@@ -2,10 +2,12 @@
 spec: NOTIFICATION-ADMIN
 title: Quản lý thông báo
 area: admin
-status: implemented
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-13
+reviewed: 2026-10-18
+open_tasks:
+  - "#299"
 owns:
   - Bề mặt theo dõi thông báo đã gửi
   - Soạn nội dung template thông báo
@@ -15,6 +17,8 @@ depends_on:
 ---
 
 # Quản lý thông báo
+
+> **Chưa hoàn thành** — `PATCH /api/managers/notification-templates/{code}/{version}` không lưu gì, chỉ ghi audit rồi trả object dựng tay; template vẫn nằm trong `TEMPLATE_REGISTRY` của code, không qua vòng đời duyệt (BR-NTA-03). UI chưa gọi PATCH. Việc còn lại: [Task #299](../../tasks/299-admin-ops-truthfulness-plan.md).
 
 ## 1. Objective
 
@@ -29,7 +33,7 @@ Và cho phép sửa nội dung template không cần deploy.
 
 ## 3. Entry points
 
-`/notifications` · `/notifications/templates` · `GET /api/managers/notifications`.
+`/notifications` (hai tab: nhật ký gửi và mẫu thông báo) · `GET /api/managers/notification-templates` · `GET /api/managers/notifications`.
 
 ## 4. Main flow
 

@@ -46,7 +46,7 @@ Hai điểm bản cũ ghi sai, đã sửa khi chuyển vào spec:
 | [`game-level-model.md`](../specs/05-content/game-level-model.md)                | Ranh giới nguồn vật; thêm mục checklist; câu hỏi mở 3                                                                       |
 | [`game-template-contract.md`](../specs/01-platform/game-template-contract.md)   | `BR-GTC-11` — asset ba nhánh, dùng chung `assetSchema()`; ví dụ `GT-004` sửa theo code                                      |
 | [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) | Bảng `skill_datasets`, `content_objective_map`; cột `skill_dataset_id`, `projection_ref`; `BR-SCT-08` từ vựng `entity_type` |
-| [`data-model-overview.md`](../specs/01-platform/data-model-overview.md)         | Hai bảng mới vào mục 7.1 và 7.2                                                                                             |
+| [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md)         | Hai bảng mới vào mục 7.1 và 7.2                                                                                             |
 | [`engine-content-depth.md`](../specs/05-content/engine-content-depth.md)        | Hạn ngạch đo độ phủ, không đo độ trung thực                                                                                 |
 | [`content-theme-registry.md`](../specs/05-content/content-theme-registry.md)    | Chủ đề là lớp áo, không phải nguồn vật                                                                                      |
 | [`index.md`](../specs/index.md) · [`roadmap.md`](../specs/roadmap.md)           | Đăng ký spec mới; chèn bước P1.11a trước lô soạn level                                                                      |

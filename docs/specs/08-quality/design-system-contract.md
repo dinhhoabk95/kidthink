@@ -2,17 +2,21 @@
 spec: DESIGN-SYSTEM-CONTRACT
 title: Contract design system
 area: quality
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-29
+reviewed: 2026-10-18
 owns:
   - Token, kit component, quy tắc bốn bề mặt
 depends_on:
   - ACCESSIBILITY
+open_tasks:
+  - "#310"
 ---
 
 # Contract design system
+
+> **Chưa hoàn thành** — `BR-DSC-27` (`tabular-nums` cho số đếm, điểm) chưa làm: không có chỗ dùng nào trong `apps/` và `packages/`, cũng chưa có cổng. Việc còn lại: [Task #310](../../tasks/310-quality-gates-gaps-plan.md).
 
 ## 1. Objective
 
@@ -76,7 +80,7 @@ Gốc layer là **thư mục** `packages/ui`, không phải tên package `@mindk
 | `BR-DSC-23` | Bộ icon của kit bắt buộc cài **local** (`@iconify-json/lucide`). Cấm — **NEVER để Nuxt Icon đi lấy icon qua `api.iconify.design` lúc chạy** | CSP của `apps/web` là `default-src 'self'` và không mở `connect-src` cho iconify — ở production icon chết câm. Cảnh báo dev là `[Icon] Collection lucide is not found locally` |
 | `BR-DSC-24` (một nguồn token) | `packages/ui/assets/css/tailwind.css` và `packages/game-engine/src/systems/designTokens.ts` BẮT BUỘC sinh từ đúng một nguồn. Cấm — NEVER sửa tay cả hai | Đo ngày 2026-09-11: hai file đã lệch. Họ `surface` ở CSS là warm-stone (`500` là `#78716c`) còn ở TypeScript là warm-oatmeal (`500` là `#827660`). Mục 1 của [`02-color.md`](../../design-system/02-color.md) khẳng định hai file đồng bộ — khẳng định đó sai, và không cổng nào đo |
 | `BR-DSC-25` (phông khai thì phải nạp) | Mọi họ phông xuất hiện trong `designTokens.ts` hoặc trong `ctx.font` BẮT BUỘC nằm trong danh sách nạp của `packages/ui/nuxt.config.ts` | `designTokens.ts` khai `Quicksand` và `Fredoka`; cả hai không được nạp, nên mọi chuỗi canvas rơi fallback về `Baloo 2` mà không có lỗi nào. Đây là dạng hỏng im lặng: chữ vẫn hiện, chỉ sai phông |
-| `BR-DSC-26` (`BR-DSC-02` có cổng trở lại) | Luật cấm hex thô trong `packages/game-engine` BẮT BUỘC có cổng chạy trong `pnpm check`, kèm ca âm | Nợ hiện tại là 59 hằng hex thô (42 trong `shared-render.ts`, 17 trong `shared-render-shapes.ts`). Cổng cũ mất cùng `packages/gates`; một luật không có cổng là một luật đã chết mà chưa ai khai tử |
+| `BR-DSC-26` (`BR-DSC-02` có cổng trở lại) | Luật cấm hex thô trong `packages/game-engine` BẮT BUỘC có cổng chạy trong `pnpm check`, kèm ca âm | Cổng cũ mất cùng `packages/gates`; một luật không có cổng là một luật đã chết mà chưa ai khai tử. Nay cổng là `pnpm check:render-tokens` (`scripts/check-render-tokens.ts`), chạy ở phase 1 của `scripts/check.sh` theo kiểu bậc thang: nợ hex thô chỉ được giảm |
 | `BR-DSC-27` (chữ số thẳng cột) | Mọi dãy số đếm và điểm số trên bề mặt DOM BẮT BUỘC dùng `tabular-nums` | Mục 3 của [`03-typography.md`](../../design-system/03-typography.md) đã quy định điều này; đo ngày 2026-09-11 thì chuỗi `tabular-nums` không xuất hiện ở bất kỳ đâu trong `apps/web`. Số nhảy bề rộng làm bố cục rung mỗi lần trẻ đếm thêm một |
 | `BR-DSC-28` (nút trên bề mặt trẻ giữ sàn) | Mọi nút trên bề mặt trẻ, **kể cả nút trạng thái lỗi**, BẮT BUỘC đạt sàn chạm của band theo `BR-A11-04` | `apps/web/app/assets/css/play-surface.css:381` đặt `.btn-audio-speak`, `.btn-primary`, `.btn-secondary` ở `min-height: 48px` — dưới sàn 64 px. Trạng thái lỗi là lúc trẻ cần bấm trúng nhất |
 
@@ -144,8 +148,11 @@ grep -rn 'dark:' apps/web/app/components/kid apps/web/app/pages/play
 grep -rnE '#[0-9a-fA-F]{6}' packages/game-engine/src --include='*.ts' | grep -v designTokens
 ```
 
-Bốn lệnh này là **toàn bộ** phần cưỡng chế còn lại của spec này: cổng máy đo token
-đã bị gỡ cùng `packages/gates`. Quên chạy là rule trôi.
+Cổng máy đo token cũ đã bị gỡ cùng `packages/gates`. Phần đã có cổng trở lại:
+`check:config-ownership` (`BR-DSC-24`), `check:render-tokens` (`BR-DSC-26`),
+`apps/web/tests/gates/kid-surface-touch-floor.ts` (`BR-DSC-28`) và
+`packages/ui/tests/tokens.test.ts` (`BR-DSC-03/06/14`). Phần còn lại chỉ có bốn lệnh trên;
+quên chạy là rule trôi.
 
 ## 8. API contract
 

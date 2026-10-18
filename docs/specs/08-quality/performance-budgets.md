@@ -2,18 +2,22 @@
 spec: PERFORMANCE-BUDGETS
 title: Ngân sách hiệu năng
 area: quality
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Ngưỡng hiệu năng theo bề mặt và cách đo
 depends_on:
   - GAME-ENGINE-RUNTIME
   - MONITORING-AND-ALERTING
+open_tasks:
+  - "#310"
 ---
 
 # Ngân sách hiệu năng
+
+> **Chưa hoàn thành** — `BR-PRF-01` mới đo ngân sách chunk template (`check:bundle`, `client-entry-weight`); app shell 180 KB, trang public 500 KB, payload level 200 KB và LCP chưa đo. Sự kiện `fps_sample` có schema nhưng không nơi nào phát; chưa có kịch bản k6. Việc còn lại: [Task #310](../../tasks/310-quality-gates-gaps-plan.md).
 
 ## 1. Objective
 
@@ -49,7 +53,7 @@ cổng tự động size check · Playwright throttle 4G · k6 · `fps_sample` t
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-PRF-01` | Vượt ngân sách **chặn merge** — ⚠️ **CHƯA DỰNG** | Ngân sách không ép là ngân sách không tồn tại. Câu đó hiện đúng với chính luật này: `size-limit` và `k6` **không có trong `package.json` nào**, và `lint-perf-budget.ts` — thứ duy nhất từng mã hoá các con số này — bị xoá cùng `packages/gates` ngày 2026-08-29. Xem [`runtime-gates.md`](runtime-gates.md) §3 và `Q-RG-2` |
+| `BR-PRF-01` | Vượt ngân sách **chặn merge** — ⚠️ **mới dựng một phần** | Ngân sách không ép là ngân sách không tồn tại. Phần đã có cổng: chunk template 80 KB qua `client-entry-weight.test.ts` (quét import tĩnh, trong `pnpm test`) và `pnpm check:bundle` (gzip thật, chỉ chạy khi có `apps/web/.output`). App shell, trang public, payload level chưa có cổng; `size-limit` và `k6` không có trong `package.json` nào. Xem [`runtime-gates.md`](runtime-gates.md) §3 và `Q-RG-2` |
 | `BR-PRF-02` | Đo trên **thiết bị và mạng mục tiêu**, không trên máy dev | Máy dev nhanh gấp 5 lần thiết bị thật |
 | `BR-PRF-03` | Suy giảm khi tải nặng: bỏ **hạt và bóng**, Cấm — **NEVER sàn touch hay kênh phản hồi** | Đẹp hy sinh được; dùng được thì không |
 | `BR-PRF-04` | Cấm — **NEVER network call trong lúc chơi** | `BR-ENG-03` |
@@ -118,7 +122,7 @@ k6                → API P95            (chưa dựng)
 ## 9. Acceptance criteria
 
 ```gherkin
-# ⚠️ CHƯA DỰNG — không có cổng nào chạy kịch bản này. Giữ làm đặc tả.
+# ⚠️ CHƯA DỰNG cho app shell — cổng hiện có chỉ đo chunk template. Giữ làm đặc tả.
 Scenario: BR-PRF-01 — vượt ngân sách chặn merge
   Given một thay đổi làm app shell vượt 180 KB gzipped
   When cổng tự động chạy

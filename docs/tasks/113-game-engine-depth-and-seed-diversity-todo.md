@@ -160,12 +160,12 @@
 ## WP113.5 — Registry chủ đề
 
 - [ ] Chốt 14 giá trị ở mục 7.1a của [`content-theme-registry.md`](../specs/05-content/content-theme-registry.md), hoặc bác bằng danh sách khác.
-- [ ] Gộp ba nguồn về một: `packages/shared/src/constants/content-themes.ts` (`BR-CTR-12`); mục 7.2 của [`content-tagging.md`](../specs/01-platform/content-tagging.md) và `seed-master/content-tags.ts` trỏ về đó.
+- [ ] Gộp ba nguồn về một: `packages/shared/src/constants/content-themes.ts` (`BR-CTR-12`); mục 7.2 của [`content-tagging.md`](../specs/05-content/content-tagging.md) và `seed-master/content-tags.ts` trỏ về đó.
 - [ ] Thi công `check:theme-registry` kèm ca âm (`BR-CTR-02`).
 - [ ] Nhận `art` vào từ vựng và gắn lại `household` (2) cùng `technology` (1) — làm `thinking-coverage.test.ts` xanh lại.
 - [ ] Gắn lại tag **14 level** ở mục 7.1b bằng version mới: `park`→`nature` (6), `fruit`→`food` (3), `shape`→trục `what` (2), `household`→`home` (2), `technology`→`home` (1).
 - [ ] Quyết trần catalog 25% hay 20% (câu hỏi 1 ở mục 11 của file đó).
-- [ ] Quyết trục `what` đóng về bộ nào — câu hỏi 3 ở mục 11 của [`content-tagging.md`](../specs/01-platform/content-tagging.md).
+- [ ] Quyết trục `what` đóng về bộ nào — câu hỏi 3 ở mục 11 của [`content-tagging.md`](../specs/05-content/content-tagging.md).
 
 ## WP113.6 — Bộ sinh level
 

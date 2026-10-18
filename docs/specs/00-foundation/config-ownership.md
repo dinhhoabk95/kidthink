@@ -2,10 +2,10 @@
 spec: CONFIG-OWNERSHIP
 title: Sở hữu cấu hình — một hằng số, một nơi, một chủ
 area: foundation
-status: draft
+status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-09-11
+reviewed: 2026-10-18
 owns:
   - Cây quyết định nơi một hằng số cấu hình được phép sống
   - Phân loại bốn hạng cấu hình và chủ sở hữu của từng hạng
@@ -54,7 +54,7 @@ câu trả lời sai trở nên đỏ được.
 |---|---|---|
 | Dev | — | Tra cây quyết định mục 7.1 trước khi đặt một hằng số mới |
 | Người duyệt | reviewer | Từ chối thay đổi đặt hằng số sai hạng |
-| Cổng kiểm tra | CI / `check.sh` | Chạy `check:config-ownership` |
+| Cổng kiểm tra | `scripts/check.sh` | Chạy `check:config-ownership` ở Phase 1 |
 
 ## 3. Entry points
 
@@ -65,7 +65,7 @@ câu trả lời sai trở nên đỏ được.
 | `packages/content-build/src/thresholds/*.json` | Dev / Nội dung | Ngưỡng biên soạn nội dung |
 | `packages/game-engine/config/*.json` | Dev | Tham số engine |
 | `scripts/*-baseline.json` | Dev | Ratchet cổng chất lượng |
-| `scripts/check-config-ownership.ts` | CI / Dev | Script cổng, phải dựng mới |
+| `scripts/check-config-ownership.ts` | `check.sh` / Dev | Script cổng, test ca âm ở `scripts/check-config-ownership.test.ts` |
 
 ## 4. Main flow
 
@@ -158,26 +158,30 @@ Hạng B nhận hai thứ hiện nằm sai chỗ: **band tuổi** (`BR-CFO-06`) 
 | 6 | `packages/content-build/src/thresholds/` | 12 JSON | C | Là nguồn duy nhất cho cấu hình nội dung và engine |
 | 7 | `packages/db/config/` | 9 entry | symlink | Đã symlink toàn bộ 9/9 file trỏ về `packages/content-build/src/thresholds/` |
 | 8 | `scripts/*-baseline.json` | 11 JSON | D | Đã bổ sung `scripts/config-ownership-baseline.json` (7 trục) |
+
+`BR-CFO-08` hiện được giữ bằng đối chiếu **hai chiều** giữa `tailwind.css` và `designTokens.ts`
+(từng bậc màu trùng tên, từng họ phông, và phông khai phải được nạp) trong
+`scripts/check-config-ownership.ts`. Bước **sinh** từ một nguồn vẫn chờ câu hỏi mở 1 ở mục 11;
+cho tới lúc đó cổng đỏ ngay khi hai file lệch nhau.
 | 9 | root · `apps/*` · `infra/` | — | ngoài phạm vi hạng | Khai báo `runtimeConfig.public` rõ ràng trong Nuxt config (`BR-CFO-12`) |
 
 ### 7.4 Hình dạng ratchet
 
 ```jsonc
-// scripts/config-ownership-baseline.json
+// scripts/config-ownership-baseline.json — đo 2026-10-18
 {
-  "duplicate_config_files": 6,
-  "duplicate_constant_values": 2,
-  "age_band_declarations": 8,
-  "touch_floor_declarations": 4,
-  "token_source_count": 2,
-  "orphan_check_scripts": 11,
-  "commented_lefthook_blocks": 1
+  "duplicate_config_files": 0,
+  "duplicate_constant_values": 0,
+  "age_band_declarations": 1,
+  "touch_floor_declarations": 1,
+  "token_source_count": 1,
+  "orphan_check_scripts": 0,
+  "commented_lefthook_blocks": 0
 }
 ```
 
-Mọi số ở đây chỉ được giảm. Đích cuối: `duplicate_config_files` 0 ·
-`duplicate_constant_values` 0 · `age_band_declarations` 1 · `touch_floor_declarations` 1 ·
-`token_source_count` 1 · `orphan_check_scripts` 0 · `commented_lefthook_blocks` 0.
+Mọi số ở đây chỉ được giảm, và cả bảy trục đã chạm đích cuối. Điểm xuất phát đo 2026-09-11 là
+6 · 2 · 8 · 4 · 2 · 11 · 1 theo đúng thứ tự trên.
 
 ## 8. API contract
 
@@ -273,6 +277,6 @@ Scenario: BR-CFO-04 — số trần trong thân hàm thì cổng đỏ
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | 1 | Nguồn duy nhất của token thiết kế là file CSS rồi sinh ra TypeScript, hay ngược lại; CSS sinh ra TS thì cần một bước build mới, TS sinh ra CSS thì Tailwind mất khả năng đọc tĩnh `@theme` | `BR-CFO-08` | P1 | Studio UI |
-| 2 | Sáu file trong `packages/db/config/` đổi thành symlink hay bỏ hẳn và sửa đường dẫn đọc; symlink không chạy trên Windows và repo chưa chốt có hỗ trợ Windows không | `BR-CFO-02` | P1 | Infra |
-| 3 | Mười một cổng mồ côi: nối tất cả vào `check.sh` hay chỉ nối những cổng chạy dưới một ngưỡng thời gian; `check:skill-quota` phải dựng trọn 6.388 level nên có thể không hợp với vòng lặp cục bộ | `BR-CFO-09` | P1 | người quyết |
-| 4 | `pre-push` mở lại với nội dung gì; bản cũ chạy `pnpm services` và `pnpm check`, `pnpm services` cần Postgres và Valkey đang chạy nên hỏng trên máy chưa dựng dịch vụ | `BR-CFO-11` | P1 | Infra |
+| ~~2~~ | ~~Sáu file trong `packages/db/config/` đổi thành symlink hay bỏ hẳn?~~ **Đóng 2026-10-18**: chọn symlink — cả 9/9 entry trong `packages/db/config/` trỏ về `packages/content-build/src/thresholds/`; trục `duplicate_config_files` = 0 | — | Đã đóng | Infra |
+| ~~3~~ | ~~Mười một cổng mồ côi: nối tất cả hay chỉ một phần?~~ **Đóng 2026-10-18**: trục `orphan_check_scripts` = 0 — mọi script `check:*` đều có call site trong `scripts/check.sh` hoặc `lefthook.yml` | — | Đã đóng | người quyết |
+| ~~4~~ | ~~`pre-push` mở lại với nội dung gì?~~ **Đóng 2026-10-18**: `pre-push` chạy `pnpm check:fast` (không cần Postgres/Valkey), xem §4 bước 6 của [`repo-bootstrap.md`](repo-bootstrap.md); trục `commented_lefthook_blocks` = 0 | — | Đã đóng | Infra |

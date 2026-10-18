@@ -2,10 +2,12 @@
 spec: RECURRING-BILLING
 title: Gia hạn thuê bao tự động và quản lý chu kỳ
 area: account
-status: implemented
+status: approved
 mvp: false
 phase: P5
-reviewed: 2026-08-16
+reviewed: 2026-10-18
+open_tasks:
+  - "#292"
 owns:
   - Đăng ký gia hạn tự động và snapshot consent định kỳ
   - Quản lý trạng thái subscription recurring và huỷ gia hạn
@@ -22,6 +24,8 @@ depends_on:
 ---
 
 # Gia hạn thuê bao tự động và quản lý chu kỳ
+
+> **Chưa hoàn thành** — Mới có bảng `recurring_subscriptions` và service; ba route `/api/users/subscriptions/recurring{,/opt-in,/cancel}` chưa có, worker chưa có job nhắc 3 ngày / thu phí / dunning (`BR-RBL-02/04/05`), schema `auto_renew` mặc định `true` trái §7. Việc còn lại: [Task #292](../../tasks/292-recurring-billing-plan.md).
 
 ## 1. Objective
 
@@ -102,6 +106,14 @@ kế thừa các quy tắc quản lý quyền lợi từ [`../00-foundation/enti
 | `dunning_attempts` | integer | Đếm số lần thử lại (tối đa 3) |
 
 ## 8. API contract
+
+### `GET /api/users/subscriptions/recurring`
+
+| | |
+|---|---|
+| Auth | `requireUserAuth()` |
+| 200 | `{ "subscription_id": string, "package_code": string, "billing_period": "monthly" \| "annual", "auto_renew": boolean, "status": "active" \| "past_due" \| "cancelled" \| "expired", "current_period_end": string, "next_billing_date": string \| null, "price_vnd": integer }` |
+| 404 | `NOT_FOUND` — User chưa có subscription định kỳ |
 
 ### `POST /api/users/subscriptions/recurring/opt-in`
 

@@ -1,5 +1,5 @@
 /**
- * Spec sở hữu: docs/specs/08-quality/legacy-v1-coverage.md
+ * Spec sở hữu: docs/specs/08-quality/source-game-type-coverage.md
  * Rules: BR-LVC-01..05
  *
  * Cổng phủ 60 game types v1 theo bậc thang (Legacy V1 Coverage Gate).

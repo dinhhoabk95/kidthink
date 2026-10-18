@@ -5,7 +5,7 @@ area: foundation
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-19
+reviewed: 2026-10-18
 owns:
   - Bản đồ prefix BR → spec sở hữu
   - Danh sách rule không bao giờ được vi phạm
@@ -17,7 +17,8 @@ depends_on:
 
 ## 1. Objective
 
-Corpus có **~1350 business rule** trên 151 spec. Registry này **không** liệt kê lại từng rule —
+Corpus có **2107 business rule** khai ở mục 6 của 193 spec module và 38 phiếu engine (đếm
+2026-10-18, §7.2). Registry này **không** liệt kê lại từng rule —
 nó ánh xạ **prefix → spec sở hữu**, để tra ngược từ một ID trong code hoặc test về nơi định
 nghĩa.
 
@@ -88,18 +89,19 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-RBS` | [`repo-bootstrap.md`](repo-bootstrap.md) |
 | `BR-MPA` | [`monorepo-package-architecture.md`](monorepo-package-architecture.md) |
 | `BR-ARB` | [`app-runtime-boundary.md`](app-runtime-boundary.md) |
+| `BR-DM` | [`data-model-overview.md`](data-model-overview.md) |
 
 **Platform**
 
 | Prefix | Spec | | Prefix | Spec |
 |---|---|---|---|---|
-| `BR-DM` | [`data-model-overview.md`](../01-platform/data-model-overview.md) | | `BR-SIB` | [`schema-identity-billing.md`](../01-platform/schema-identity-billing.md) |
-| `BR-SCT` | [`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md) | | `BR-SPT` | [`schema-play-telemetry.md`](../01-platform/schema-play-telemetry.md) |
+| `BR-SIB` | [`schema-identity-billing.md`](../01-platform/schema-identity-billing.md) | | `BR-SCT` | [`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md) |
+| `BR-SPT` | [`schema-play-telemetry.md`](../01-platform/schema-play-telemetry.md) | | | |
 | `BR-TAX` | [`taxonomy-service.md`](../01-platform/taxonomy-service.md) | | `BR-GTC` | [`game-template-contract.md`](../01-platform/game-template-contract.md) |
 | `BR-ENG` | [`game-engine-runtime.md`](../01-platform/game-engine-runtime.md) | | `BR-ADP` | [`adaptive-engine.md`](../01-platform/adaptive-engine.md) |
 | `BR-TLM` | [`telemetry-pipeline.md`](../01-platform/telemetry-pipeline.md) | | `BR-AUD` | [`audit-log.md`](../01-platform/audit-log.md) |
 | `BR-AUT` | [`auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) | | `BR-IMG` | [`image-storage.md`](../01-platform/image-storage.md) |
-| `BR-EMJ` | [`emoji-registry.md`](../01-platform/emoji-registry.md) | | `BR-TAG` | [`content-tagging.md`](../01-platform/content-tagging.md) |
+| `BR-EMJ` | [`emoji-registry.md`](../01-platform/emoji-registry.md) | | | |
 | `BR-SRC` | [`content-search.md`](../01-platform/content-search.md) | | `BR-JOB` | [`job-queue.md`](../01-platform/job-queue.md) |
 | `BR-NOT` | [`notification-service.md`](../01-platform/notification-service.md) | | `BR-HLT` | [`health-check.md`](../01-platform/health-check.md) |
 | `BR-BAK` | [`backup-and-restore.md`](../01-platform/backup-and-restore.md) | | `BR-MON` | [`monitoring-and-alerting.md`](../01-platform/monitoring-and-alerting.md) |
@@ -107,18 +109,17 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-RTL` | [`rate-limiting.md`](../01-platform/rate-limiting.md) | | `BR-FLG` | [`feature-flag-service.md`](../01-platform/feature-flag-service.md) |
 | `BR-CSA` | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | | `BR-AIG` | [`ai-codegen-pipeline.md`](../01-platform/ai-codegen-pipeline.md) |
 | `BR-OAP` | [`oauth-provider-registry.md`](../01-platform/oauth-provider-registry.md) | | `BR-BPS` | [`browser-push.md`](../01-platform/browser-push.md) |
-| `BR-APM` | [`automated-payment.md`](../01-platform/automated-payment.md) | | `BR-OCP` | [`offline-curriculum-pack.md`](../01-platform/offline-curriculum-pack.md) |
+| `BR-APM` | [`automated-payment.md`](../01-platform/automated-payment.md) | | | |
 | `BR-AST` | [`audio-storage.md`](../01-platform/audio-storage.md) | | `BR-LAY` | [`game-layout-engine.md`](../01-platform/game-layout-engine.md) |
 | `BR-RNG` | [`deterministic-randomness.md`](../01-platform/deterministic-randomness.md) | | `BR-TAK` | [`template-authoring-kit.md`](../01-platform/template-authoring-kit.md) |
 | `BR-ENV` | [`env-contract.md`](../01-platform/env-contract.md) | | `BR-SRV` | [`server-provisioning.md`](../01-platform/server-provisioning.md) |
 | `BR-SUP` | [`process-supervision.md`](../01-platform/process-supervision.md) | | `BR-DEP` | [`release-deploy.md`](../01-platform/release-deploy.md) |
-| `BR-RBK` | [`release-rollback.md`](../01-platform/release-rollback.md) | | `BR-MTB` | [`montessori-template-batch.md`](../01-platform/montessori-template-batch.md) |
-| `BR-LVB` | [`legacy-v1-template-batch.md`](../01-platform/legacy-v1-template-batch.md) | | `BR-TGB` | [`taxonomy-gap-batch.md`](../01-platform/taxonomy-gap-batch.md) |
+| `BR-RBK` | [`release-rollback.md`](../01-platform/release-rollback.md) | | | |
 | `BR-ESS` | [`engine-spec-sheet.md`](../01-platform/engine-spec-sheet.md) | | `BR-LGK` | [`level-generator-kit.md`](../01-platform/level-generator-kit.md) |
 | `BR-ERC` | [`engine-render-contract.md`](../01-platform/engine-render-contract.md) | | `BR-EPL` | [`engine-play-language.md`](../01-platform/engine-play-language.md) |
 | `BR-EIC` | [`engine-input-contract.md`](../01-platform/engine-input-contract.md) | | `BR-EBD` | [`engine-behavior-domain.md`](../01-platform/engine-behavior-domain.md) |
 | `BR-ETS` | [`engine-turn-script.md`](../01-platform/engine-turn-script.md) | | `BR-PSZ` | [`play-stage-zones.md`](../01-platform/play-stage-zones.md) |
-| `BR-E000`…`BR-E037` | [`engines/index.md`](../01-platform/engines/index.md) (38 spec engine: 37 trong registry + 1 đặt trước) | | | |
+| `BR-E000`…`BR-E037` | [`engines/index.md`](../01-platform/engines/index.md) (38 phiếu engine, khớp 38 mã trong registry; prefix `BR-E<3 số mã GT>`) | | | |
 
 **Public**
 
@@ -145,6 +146,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-PPU` | [`payment-proof-upload.md`](../03-account/payment-proof-upload.md) | | `BR-SBV` | [`subscription-view.md`](../03-account/subscription-view.md) |
 | `BR-SCL` | [`social-login.md`](../03-account/social-login.md) | | `BR-SLK` | [`social-account-linking.md`](../03-account/social-account-linking.md) |
 | `BR-NIB` | [`notification-inbox.md`](../03-account/notification-inbox.md) | | `BR-RBL` | [`recurring-billing.md`](../03-account/recurring-billing.md) |
+| `BR-OCP` | [`offline-curriculum-pack.md`](../03-account/offline-curriculum-pack.md) | | `BR-LSR` | [`lesson-session-runner.md`](../03-account/lesson-session-runner.md) |
 
 **Play**
 
@@ -156,7 +158,7 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-SCF` | [`scaffolding-and-hints.md`](../04-play/scaffolding-and-hints.md) | | `BR-FBK` | [`feedback-and-celebration.md`](../04-play/feedback-and-celebration.md) |
 | `BR-PGT` | [`parent-gate.md`](../04-play/parent-gate.md) | | `BR-HPL` | [`healthy-play-limits.md`](../04-play/healthy-play-limits.md) |
 | `BR-CUR` | [`curriculum-player.md`](../04-play/curriculum-player.md) | | `BR-PRG` | [`progress-and-mastery.md`](../04-play/progress-and-mastery.md) |
-| `BR-REC` | [`next-game-recommendation.md`](../04-play/next-game-recommendation.md) | | `BR-LSR` | [`lesson-session-runner.md`](../04-play/lesson-session-runner.md) |
+| `BR-REC` | [`next-game-recommendation.md`](../04-play/next-game-recommendation.md) | | | |
 | `BR-RSP` | [`round-sequence-play.md`](../04-play/round-sequence-play.md) | | `BR-CIR` | [`concept-intro-runner.md`](../04-play/concept-intro-runner.md) |
 | `BR-CIG` | [`concept-intro-gate.md`](../04-play/concept-intro-gate.md) | | `BR-PNR` | [`play-narration.md`](../04-play/play-narration.md) |
 | `BR-CLF` | [`child-lesson-flow.md`](../04-play/child-lesson-flow.md) | | `BR-STK` | [`sticker-album.md`](../04-play/sticker-album.md) |
@@ -169,9 +171,9 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-GLM` | [`game-level-model.md`](../05-content/game-level-model.md) | | `BR-LSM` | [`lesson-model.md`](../05-content/lesson-model.md) |
 | `BR-ACM` | [`activity-model.md`](../05-content/activity-model.md) | | `BR-CRM` | [`curriculum-model.md`](../05-content/curriculum-model.md) |
 | `BR-WSM` | [`worksheet-model.md`](../05-content/worksheet-model.md) | | `BR-LEX` | [`lesson-exemplar-set.md`](../05-content/lesson-exemplar-set.md) |
-| `BR-MCM` | [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) | | `BR-MGL` | [`montessori-game-level-batch.md`](../05-content/montessori-game-level-batch.md) |
-| `BR-MLS` | [`montessori-lesson-batch.md`](../05-content/montessori-lesson-batch.md) | | `BR-RSM` | [`round-set-model.md`](../05-content/round-set-model.md) |
-| `BR-TCL` | [`template-coverage-level-batch.md`](../05-content/template-coverage-level-batch.md) | | `BR-LTV` | [`lesson-template-variety.md`](../05-content/lesson-template-variety.md) |
+| `BR-MCM` | [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) | | `BR-RSM` | [`round-set-model.md`](../05-content/round-set-model.md) |
+| `BR-MGL` | [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) mục 6 + 7.7–7.10 | | `BR-MLS` | [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) mục 6 + 7.11–7.13 |
+| `BR-TAG` | [`content-tagging.md`](../05-content/content-tagging.md) | | `BR-LTV` | [`lesson-template-variety.md`](../05-content/lesson-template-variety.md) |
 | `BR-ECD` | [`engine-content-depth.md`](../05-content/engine-content-depth.md) | | `BR-CTR` | [`content-theme-registry.md`](../05-content/content-theme-registry.md) |
 | `BR-LCD` | [`lesson-corpus-depth.md`](../05-content/lesson-corpus-depth.md) | | `BR-LFM` | [`lesson-flow-model.md`](../05-content/lesson-flow-model.md) |
 | `BR-RSD` | [`round-set-corpus-depth.md`](../05-content/round-set-corpus-depth.md) | | `BR-CIM` | [`concept-intro-model.md`](../05-content/concept-intro-model.md) |
@@ -181,6 +183,19 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-SAP` | [`skill-age-progression.md`](../05-content/skill-age-progression.md) | | `BR-CTM` | [`concept-topic-model.md`](../05-content/concept-topic-model.md) |
 | `BR-SVI` | [`skill-value-inventory.md`](../05-content/skill-value-inventory.md) | | `BR-LDC` | [`level-difficulty-contract.md`](../05-content/level-difficulty-contract.md) |
 | `BR-STS` | [`skill-thinking-structure.md`](../05-content/skill-thinking-structure.md) | | `BR-NRL` | [`numeracy-representation-ladder.md`](../05-content/numeracy-representation-ladder.md) |
+| `BR-LRM` | [`learning-roadmap-model.md`](../05-content/learning-roadmap-model.md) | | `BR-LTC` | [`lesson-topic-composition.md`](../05-content/lesson-topic-composition.md) |
+
+**Prefix chia nhiều spec** — luật bền của các đợt dựng khuôn và nạp nội dung (kế hoạch đợt nằm
+ở `docs/tasks/`, không là spec — mục 2 của [`CONVENTIONS.md`](../CONVENTIONS.md)). Mỗi mã giữ
+số cũ; tra mã cụ thể bằng `rg` trong `docs/specs/`. Đây là ngoại lệ có chủ ý của `BR-REG2-01`:
+prefix vẫn duy nhất (không hai **nhóm luật** dùng chung), chỉ có chủ sở hữu bị chia theo nội dung.
+
+| Prefix | Spec sở hữu |
+|---|---|
+| `BR-MTB` | [`engine-spec-sheet.md`](../01-platform/engine-spec-sheet.md) mục 6 (01–06, 08, 13, 15) · [`game-template-contract.md`](../01-platform/game-template-contract.md) mục 6 (07, 09, 10, 12, 14) · [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md) mục 6 (11) |
+| `BR-LVB` | [`engine-spec-sheet.md`](../01-platform/engine-spec-sheet.md) mục 6 (01, 02, 04–08, 12) · [`game-template-contract.md`](../01-platform/game-template-contract.md) mục 6 (09, 11, 13) · [`source-game-type-coverage.md`](../08-quality/source-game-type-coverage.md) mục 6 (10, 15) |
+| `BR-TGB` | [`engine-spec-sheet.md`](../01-platform/engine-spec-sheet.md) mục 6 (02, 06, 08, 09) · [`game-template-contract.md`](../01-platform/game-template-contract.md) mục 6 + 7.4 (04, 05) · [`thinking-coverage-matrix.md`](../08-quality/thinking-coverage-matrix.md) mục 6 (03) · [`engines/GT-027.md`](../01-platform/engines/GT-027.md) (07) · [`engines/GT-026.md`](../01-platform/engines/GT-026.md) (10) |
+| `BR-TCL` | [`engine-content-depth.md`](../05-content/engine-content-depth.md) mục 6 (02) · [`thinking-coverage-matrix.md`](../08-quality/thinking-coverage-matrix.md) mục 6 (04, 07) · [`game-template-contract.md`](../01-platform/game-template-contract.md) mục 6 (08) |
 
 **Admin**
 
@@ -220,20 +235,38 @@ tham chiếu — cấm — NEVER còn lệnh nào đo tự động; reviewer tra
 | `BR-A11` | [`accessibility.md`](../08-quality/accessibility.md) | | `BR-PRF` | [`performance-budgets.md`](../08-quality/performance-budgets.md) |
 | `BR-DSC` | [`design-system-contract.md`](../08-quality/design-system-contract.md) | | `BR-PED` | [`pedagogical-evidence.md`](../08-quality/pedagogical-evidence.md) |
 | `BR-TCM` | [`thinking-coverage-matrix.md`](../08-quality/thinking-coverage-matrix.md) | | `BR-TYP` | [`type-safety.md`](../08-quality/type-safety.md) |
-| `BR-GLR` | [`go-live-readiness.md`](../08-quality/go-live-readiness.md) | | `BR-LVC` | [`legacy-v1-coverage.md`](../08-quality/legacy-v1-coverage.md) |
+| `BR-GLR` | [`go-live-readiness.md`](../08-quality/go-live-readiness.md) | | `BR-LVC` | [`source-game-type-coverage.md`](../08-quality/source-game-type-coverage.md) |
 
-### 7.2 Thống kê
+### 7.2 Mã ngưng và mã mới
+
+Mã ngưng **không** bị xoá khỏi lịch sử và **không** được tái dùng số (`BR-REG2-02`). Code hay test
+còn trích mã ngưng thì task ghi ở cột cuối đổi chỗ trích.
+
+| Mã | Trạng thái | Lý do | Ngày |
+|---|---|---|---|
+| `BR-RBS-01`, `BR-RBS-04` | Ngưng | Luật của giai đoạn khởi tạo repo (tài sản chuyển vào repo; chặn code trước khi foundation duyệt) — giai đoạn đã qua; xem mục 6 của [`repo-bootstrap.md`](repo-bootstrap.md) | 2026-10-18 |
+| `BR-PRC-07` | Ngưng | Thay bằng gia hạn tự động của [`recurring-billing.md`](../03-account/recurring-billing.md); `pricing.vue` và `payment-flow-e2e.test.ts` còn trích — Task #292 | 2026-10-18 |
+| `BR-LVB-03` | Ngưng | Luật chép code nguồn không còn đối tượng; phần còn đúng trùng `BR-TAK-05` | 2026-10-18 |
+| `BR-LVB-14` | Ngưng | Trùng `BR-ENG-17` (ngân sách bundle) | 2026-10-18 |
+| `BR-TGB-01` | Ngưng | Luật sổ sách giữa hai đợt dựng khuôn, không còn là contract | 2026-10-18 |
+| `BR-TCL-01` | Ngưng | Đạt 2026-08-29; thay bằng bậc 0 của `BR-ECD-01` | 2026-10-18 |
+| `BR-TCL-03`, `BR-TCL-05` | Ngưng | Luật một lần của đợt nạp level; phần bền là `BR-GTC-10` | 2026-10-18 |
+| `BR-TCL-06` | Ngưng | Trùng `BR-GLM-01` | 2026-10-18 |
+| `BR-CIR-23` | Mới | Tập nói: máy không nghe, step `echo` — trước dùng nhầm số `BR-CIR-21` (số đó giữ nghĩa "tên event đã đăng ký") | 2026-10-18 |
+| `BR-LVC-06` | Mới | Cấm lưu `legacy_v1_ref` trong `content_pack` — luật có từ trước, nay mới đánh số | 2026-10-18 |
+
+### 7.2a Thống kê
+
+Đếm 2026-10-18 bằng script đọc mục 6 của mọi file trong `docs/specs/` (không tính
+`TEMPLATE.md`, `CONVENTIONS.md`, khuôn phiếu engine). Đếm lại khi thêm spec hoặc gộp luật.
 
 | | Số |
 |---|---:|
-| Spec module | 167 |
-| Prefix BR | 167 |
-| Business rule | ~1523 |
-
-**Cảnh báo:** con số "spec module" trước 2026-08-05 ghi **123**, trong khi
-[`../index.md`](../index.md) đếm **124**. Lệch có từ trước, chưa truy nguyên. Đã đặt lại theo
-[`index.md`](../index.md) (124 + 3 spec SNS/OAuth = 127) — nếu ai tìm ra nguồn lệch thì sửa cả
-hai chỗ.
+| Spec module (theo [`../index.md`](../index.md)) | 194 |
+| Spec module có bảng `BR-*` ở mục 6 | 193 |
+| Phiếu engine có bảng `BR-*` | 38 |
+| Prefix BR (kể cả 38 prefix `BR-E0nn`) | 240 |
+| Business rule khai ở mục 6 | 2107 |
 
 ### 7.3 Rule không bao giờ được nới lỏng
 

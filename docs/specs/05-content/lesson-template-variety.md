@@ -2,11 +2,12 @@
 spec: LESSON-TEMPLATE-VARIETY
 title: Đa dạng khuôn trong một bài học — cùng một kỹ năng, nhiều hình dạng chơi
 area: content
-status: implemented
+status: approved
 mvp: false
 phase: P5
-reviewed: 2026-08-30
-
+reviewed: 2026-10-18
+open_tasks:
+  - "#309"
 owns:
   - Số khuôn trò chơi tối thiểu cho một bài học
   - Ràng buộc nối bài học vào màn chơi số
@@ -22,6 +23,8 @@ depends_on:
 
 # Đa dạng khuôn trong một bài học — cùng một kỹ năng, nhiều hình dạng chơi
 
+> **Chưa hoàn thành** — Cổng `packages/content-build/tests/gates/lesson-variety.ts` mới đo `BR-LTV-01..05`; `BR-LTV-07` (sổ miễn trừ), `BR-LTV-09` (mỗi engine có ≥1 bài học trỏ tới) và `BR-LTV-10` (cảnh báo level không có đường vào) chưa được đo. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
+
 ## 1. Objective
 
 Một đứa trẻ luyện một kỹ năng qua đúng một hình dạng trò chơi sẽ giỏi hình dạng đó, chưa chắc
@@ -30,7 +33,7 @@ là đơn vị của catalog, không phải đơn vị trẻ gặp. Đơn vị t
 
 Không spec nào sở hữu luật đó. Đã đối chiếu `owns` của
 [`lesson-model.md`](lesson-model.md) (sàn biên tập một tiết), [`activity-model.md`](activity-model.md)
-(ràng buộc theo `kind`), [`lesson-session-runner.md`](../04-play/lesson-session-runner.md)
+(ràng buộc theo `kind`), [`lesson-session-runner.md`](../03-account/lesson-session-runner.md)
 (cách chạy từng bước) và [`thinking-coverage-matrix.md`](../08-quality/thinking-coverage-matrix.md)
 (ngưỡng phủ catalog): không file nào nói một bài học phải chơi được bằng bao nhiêu khuôn.
 
@@ -63,7 +66,7 @@ của bài học. Đo ngày 2026-08-29: **151 trên 162** liên kết không tho
 
 Ba ca đọc được, không phải lỗi công cụ:
 
-<!-- taxonomy-refs:historical — ba ca đo 2026-08-29 dùng mã taxonomy v1 đã bỏ -->
+<!-- taxonomy-refs:historical — ba ca đo 2026-08-29 dùng mã taxonomy cũ đã bỏ -->
 | Bài học | Kỹ năng bài học | Trỏ tới level | Kỹ năng của level |
 |---|---|---|---|
 | `LES-0003` | `C1.CNT.02` đếm | `GL-C1-SEQ-PAT-0014` | `C1.NREC.09` nhận diện số |
@@ -90,10 +93,10 @@ Chuỗi liên kết xanh, mã không treo, cổng không kêu — và nội dung
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `pnpm --filter @mindkid/db test` | Cổng nội dung | Cổng của file này |
+| `pnpm --filter @mindkid/content-build test` | Cổng nội dung | Cổng của file này |
 | [`lesson-authoring.md`](../06-admin/lesson-authoring.md) | Người soạn nội dung | Nơi gắn activity vào bài học |
 | [`activity-authoring.md`](../06-admin/activity-authoring.md) | Người soạn nội dung | Nơi một activity trỏ vào game level |
-| `/lessons/<code>/run` | Người dạy | Bề mặt chạy bài học, xem mục 7 của [`lesson-session-runner.md`](../04-play/lesson-session-runner.md) |
+| `/lessons/<code>/run` | Người dạy | Bề mặt chạy bài học, xem mục 7 của [`lesson-session-runner.md`](../03-account/lesson-session-runner.md) |
 
 ## 4. Main flow
 
@@ -127,9 +130,9 @@ Chuỗi liên kết xanh, mã không treo, cổng không kêu — và nội dung
 | `BR-LTV-05` (đa dạng không phá cấu trúc) | Thêm bước chơi thứ hai vẫn phải giữ `BR-LSM-02` (≥1 hoạt động ngoài màn hình) và `BR-LSM-05` (trần thời lượng) | Đa dạng khuôn mà biến tiết học thành hai mươi phút màn hình là đổi một vấn đề lấy một vấn đề tệ hơn |
 | `BR-LTV-06` (cổng có ca âm) | Cổng của file này có ca âm: một bài học hai bước chơi cùng `template_code` phải làm cổng đỏ | `BR-TYP-07`. Cổng không có ca âm là cổng không biết mình hỏng |
 | `BR-LTV-07` (miễn trừ ghi lại) | Bài học được miễn `BR-LTV-02` vì kỹ năng chỉ có một khuôn thì **ghi một hàng** vào mục 7.4, kèm kỹ năng và khuôn | Miễn trừ không ghi lại sẽ thành thói quen, và thói quen đó đúng là thứ file này ngăn |
+| `BR-LTV-08` (không đếm khuôn chưa có nội dung) | Cổng chỉ đếm khuôn có game level `published` thật, không đếm khuôn chỉ có `fixtures.ts` | Trùng lý do `BR-TCL-02`. Khuôn không có nội dung không cho trẻ thêm hình dạng nào |
 | `BR-LTV-09` (phủ engine trong giáo án) | Mỗi engine `active` có game level `published` phải được **ít nhất một** bài học trỏ tới | Đo 2026-08-29: 25 trên 27 engine được giáo án dùng; `GT-007` và `GT-008` không bài học nào dẫn tới. Engine không nằm trong lộ trình học là engine chỉ gặp trẻ qua danh mục, không qua chương trình |
 | `BR-LTV-10` (level có đường vào) | Cảnh báo khi một game level `published` không bài học nào trỏ tới | Đo 2026-08-29: **111 trên 228** level có đường vào từ giáo án; 117 level chỉ vào được qua danh mục. Cảnh báo chứ không chặn — danh mục là đường vào hợp lệ |
-| `BR-LTV-08` (không đếm khuôn chưa có nội dung) | Cổng chỉ đếm khuôn có game level `published` thật, không đếm khuôn chỉ có `fixtures.ts` | Trùng lý do `BR-TCL-02`. Khuôn không có nội dung không cho trẻ thêm hình dạng nào |
 
 ## 7. Data
 

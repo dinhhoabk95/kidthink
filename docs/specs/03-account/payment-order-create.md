@@ -2,10 +2,12 @@
 spec: PAYMENT-ORDER-CREATE
 title: Tạo đơn thanh toán
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#290"
 owns:
   - Luồng chọn gói và tạo đơn
   - Hiển thị VietQR và hướng dẫn
@@ -15,6 +17,8 @@ depends_on:
 ---
 
 # Tạo đơn thanh toán
+
+> **Chưa hoàn thành** — API tạo đơn đã có; trang tạo đơn (`/me/orders/create`) chưa có nên `BR-POC-02/03/05/07` (STK, nội dung chuyển khoản, nút sao chép) chưa hiện ra cho người dùng. Việc còn lại: [Task #290](../../tasks/290-account-ui-missing-pages-plan.md).
 
 ## 1. Objective
 

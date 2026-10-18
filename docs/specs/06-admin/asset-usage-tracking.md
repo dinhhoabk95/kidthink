@@ -2,10 +2,12 @@
 spec: ASSET-USAGE-TRACKING
 title: Theo dõi nơi asset đang được dùng
 area: admin
-status: implemented
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#300"
 owns:
   - Truy vấn ngược từ asset về nội dung dùng nó
   - Cảnh báo trước khi xoá asset
@@ -16,6 +18,8 @@ depends_on:
 ---
 
 # Theo dõi nơi asset đang được dùng
+
+> **Chưa hoàn thành** — API usage và `DELETE /api/managers/images/{id}` (409 `CONTENT_IN_USE`) đã có, nhưng admin chưa có trang `/studio/assets/{id}/usage` và chưa có modal xác nhận xoá gọi các API đó (§3). Việc còn lại: [Task #300](../../tasks/300-admin-small-gaps-plan.md).
 
 ## 1. Objective
 

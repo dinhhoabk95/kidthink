@@ -2,10 +2,12 @@
 spec: PAYMENT-PROOF-UPLOAD
 title: Nộp chứng từ thanh toán
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#290"
 owns:
   - Luồng nộp chứng từ và nhận quyền tạm
 depends_on:
@@ -14,6 +16,8 @@ depends_on:
 ---
 
 # Nộp chứng từ thanh toán
+
+> **Chưa hoàn thành** — API nộp chứng từ đã có; trang `/me/orders/{uuid}/proof` chưa có nên `BR-PPU-04/06/07` chưa kiểm được trên giao diện. Việc còn lại: [Task #290](../../tasks/290-account-ui-missing-pages-plan.md).
 
 ## 1. Objective
 

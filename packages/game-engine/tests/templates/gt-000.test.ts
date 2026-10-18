@@ -449,13 +449,13 @@ describe("GT-000 Concept Intro Session (M0 & M1 Acceptance)", () => {
     });
   });
 
-  describe("Tập nói theo — BR-CIR-21, BR-CIR-22", () => {
+  describe("Tập nói theo — BR-CIR-23, BR-CIR-22", () => {
     const echoFixture = GT000_FIXTURES[0];
     if (!echoFixture) {
       throw new Error("Fixture GT-000 not found");
     }
 
-    it("BR-CIR-21: đi qua bước echo không phát sinh event mang dữ liệu âm thanh", () => {
+    it("BR-CIR-23: đi qua bước echo không phát sinh event mang dữ liệu âm thanh", () => {
       const session = new GT000Session(
         echoFixture.content,
         echoFixture.difficulty

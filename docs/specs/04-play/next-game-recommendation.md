@@ -5,7 +5,7 @@ area: play
 status: implemented
 mvp: true
 phase: P3
-reviewed: 2026-08-15
+reviewed: 2026-10-18
 owns:
   - Luật gợi ý theo rule
   - Thứ tự ưu tiên nguồn gợi ý
@@ -204,30 +204,3 @@ Scenario: không bao giờ trả rỗng
 |---|---|---|---|---|
 | 1 | Loại 3 level gần nhất có đủ không? Với 120 level thì trẻ sẽ gặp lại khá nhanh | P3 | Giữ loại 3 level gần nhất cho MVP; mở rộng cửa sổ loại trừ nếu ghi nhận hiện tượng lặp lại quá nhanh ở P4 (đóng theo D-MV) | Backend |
 | 2 | `popular` dùng số lượt chơi tổng — có rủi ro tạo vòng lặp tự củng cố không? | P3 | Kết hợp popular với trọng số xáo trộn có hạt giống (seed) để tái lập trong test và tránh tự củng cố (đóng theo D-MV) | Backend |
- Then vẫn có primary với reason_code revision
-```
-
-## 10. Boundaries
-
-**Always**
-- Gating trước khi gợi ý.
-- Curriculum ưu tiên hơn adaptive.
-- Kèm `reason_code` và `reason`.
-
-**Ask first**
-- Đổi thứ tự ưu tiên §4.
-- Thêm `reason_code` mới.
-- Dùng ML thay luật.
-
-**Never**
-- Gợi ý nội dung không chơi được (quá 1 item).
-- Gợi ý theo hành vi cá nhân của trẻ khác.
-- Trả danh sách rỗng.
-- Cho adaptive phủ quyết curriculum.
-
-## 11. Open questions
-
-| # | Câu hỏi | Chặn phase | Đề xuất chốt | Chủ |
-|---|---|---|---|---|
-| 1 | Loại 3 level gần nhất có đủ không? Với 120 level thì trẻ sẽ gặp lại khá nhanh | P3 | Giữ loại 3 level gần nhất cho MVP; mở rộng cửa sổ loại trừ nếu ghi nhận hiện tượng lặp lại quá nhanh ở P4 | Backend |
-| 2 | `popular` dùng số lượt chơi tổng — có rủi ro tạo vòng lặp tự củng cố không? | P3 | Kết hợp popular với trọng số xáo trộn ngẫu nhiên nhẹ (random noise) để tránh hiện tượng hiệu ứng đám đông | Backend |

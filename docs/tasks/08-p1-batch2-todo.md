@@ -132,7 +132,7 @@ Gom tất cả câu hỏi cần người vào **một phiên**. Hỏi rải rác
 
 Lô đụng `play_sessions` và `play_events`. **Mọi cột phát sinh phải sửa
 [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) và mục 7 của
-[`data-model-overview.md`](../specs/01-platform/data-model-overview.md) trong cùng commit** —
+[`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) trong cùng commit** —
 `C12` kiểm bản đồ bảng hai chiều và sẽ đỏ nếu chỉ sửa một bên.
 
 ### Bước 4 — [`game-config-delivery.md`](../specs/04-play/game-config-delivery.md)
@@ -601,7 +601,7 @@ này có trước lô 2. Cùng loại khuyết tật với "Khuyết tật 3" m�
 18 spec thiếu:
 
 - [x] `01-platform`: [`content-search.md`](../specs/01-platform/content-search.md) ·
-      [`content-tagging.md`](../specs/01-platform/content-tagging.md) ·
+      [`content-tagging.md`](../specs/05-content/content-tagging.md) ·
       [`job-queue.md`](../specs/01-platform/job-queue.md) ·
       [`monitoring-and-alerting.md`](../specs/01-platform/monitoring-and-alerting.md) ·
       [`offline-play.md`](../specs/01-platform/offline-play.md) ·

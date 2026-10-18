@@ -65,7 +65,7 @@ describe("Legacy V1 Template Batch (§7.4, BR-LVB-01..15)", () => {
     expect(new TraceSystem()).toBeInstanceOf(TraceSystem);
   });
 
-  it("GT-024 strictly bans age band 3-4 and does not enforce tap fallback (BR-LVB-08)", () => {
+  it("GT-024 strictly bans age band 3-4 and does not enforce tap fallback (BR-LVB-06)", () => {
     const t024 = getGameTemplate("GT-024");
     expect(t024?.mechanic).toBe("trace-path");
     expect(t024?.age_min).toBe(5);
@@ -74,7 +74,7 @@ describe("Legacy V1 Template Batch (§7.4, BR-LVB-01..15)", () => {
     expect(t024?.requires_tap_fallback).toBe(false);
   });
 
-  it("all 7 templates have at least 3 sample levels in fixtures (BR-TAK-09, BR-LVB-15)", () => {
+  it("all 7 templates have at least 3 sample levels in fixtures (BR-TAK-09, BR-LVB-07)", () => {
     expect(GT018_FIXTURES.length).toBeGreaterThanOrEqual(3);
     expect(GT019_FIXTURES.length).toBeGreaterThanOrEqual(3);
     expect(GT020_FIXTURES.length).toBeGreaterThanOrEqual(3);

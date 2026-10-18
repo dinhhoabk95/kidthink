@@ -4,7 +4,7 @@
 > [`Task #168`](168-v1-game-list-integration-plan.md), đợt 1.
 > **Chặn:** mọi task còn lại của chương trình. 9 khuôn mới cần 7 giá trị `mechanic` mới, và đổ
 > chúng vào một union đang lệch hai chiều là nhân lỗi lên.
-> **Spec sở hữu:** [`content-tagging.md`](../specs/01-platform/content-tagging.md) mục 7.1 (từ vựng trục `mechanic`) ·
+> **Spec sở hữu:** [`content-tagging.md`](../specs/05-content/content-tagging.md) mục 7.1 (từ vựng trục `mechanic`) ·
 > [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) (trường `mechanic` của template).
 
 ## 1. Trả lời ngắn
@@ -56,7 +56,7 @@ union ở `shared` và để `game-engine` import một chiều — cấm — NE
 - mọi giá trị union hoặc có template dùng, hoặc nằm trong `RESERVED_MECHANICS`;
 - `RESERVED_MECHANICS` rỗng dần theo chương trình, cấm — NEVER phình ra.
 
-**Bước 4 — đồng bộ tài liệu.** [`content-tagging.md`](../specs/01-platform/content-tagging.md) mục 7.1 trong cùng PR.
+**Bước 4 — đồng bộ tài liệu.** [`content-tagging.md`](../specs/05-content/content-tagging.md) mục 7.1 trong cùng PR.
 
 ## 5. Điều kiện nghiệm thu
 

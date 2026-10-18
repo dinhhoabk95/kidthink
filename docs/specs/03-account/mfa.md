@@ -5,7 +5,7 @@ area: account
 status: implemented
 mvp: false
 phase: P2
-reviewed: 2026-08-13
+reviewed: 2026-10-18
 owns:
   - Thiết lập và dùng MFA cho tài khoản User
 depends_on:
@@ -41,9 +41,9 @@ MFA đứng **sau** mọi cách xác thực yếu tố thứ nhất — mật kh
 
 ## 3. Entry points
 
-`packages/auth/src/mfa/` (adapter `otpauth` duy nhất) · `/me/settings/security` ·
-`POST /api/users/mfa/setup` · `/verify` · `/disable` ·
-`GET /api/users/mfa/recovery-codes` · `POST /api/guest/auth/users/mfa` (thử thách lúc đăng
+`packages/auth/src/totp.ts` (adapter `otpauth` duy nhất) cùng `mfa-challenge.ts`, `mfa-lockout.ts`, `mfa-verification.ts` · `/me/settings/security` ·
+`GET /api/users/mfa/status` · `POST /api/users/mfa/setup` · `/verify` · `/disable` ·
+`POST /api/users/mfa/recovery-codes` · `POST /api/guest/auth/users/mfa` (thử thách lúc đăng
 nhập, dùng chung cho cả mật khẩu và SNS).
 
 ## 4. Main flow

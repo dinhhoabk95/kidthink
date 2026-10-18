@@ -2,10 +2,13 @@
 spec: REGISTRATION
 title: Đăng ký tài khoản
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-14
+reviewed: 2026-10-18
+open_tasks:
+  - "#289"
+  - "#290"
 owns:
   - Luồng đăng ký bằng email
   - Ràng buộc đồng ý điều khoản
@@ -16,6 +19,8 @@ depends_on:
 ---
 
 # Đăng ký tài khoản
+
+> **Chưa hoàn thành** — Email xác thực sau đăng ký không được gửi (route không enqueue `email:send`) nên tài khoản mới kẹt `pending_verification`; `register/index.vue` gọi sai path `/api/guest/consents/requirements` (thật: `/api/guest/consent-requirements`) và `catch {}` nuốt lỗi. Việc còn lại: [Task #289](../../tasks/289-transactional-email-dispatch-plan.md), [Task #290](../../tasks/290-account-ui-missing-pages-plan.md).
 
 ## 1. Objective
 

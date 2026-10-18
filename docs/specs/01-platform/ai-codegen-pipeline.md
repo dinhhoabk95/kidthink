@@ -2,10 +2,12 @@
 spec: AI-CODEGEN-PIPELINE
 title: Pipeline AI sinh code từ spec
 area: platform
-status: implemented
+status: draft
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-10-18
+open_tasks:
+  - "#307"
 owns:
   - Artefact máy đọc được sinh ra từ spec
   - Cái gì AI được sinh code, cái gì không
@@ -18,9 +20,11 @@ depends_on:
 
 # Pipeline AI sinh code từ spec
 
+> **Chưa hoàn thành** — pipeline chưa được dựng: sáu lệnh `gen:*` ở §3, `spec-index.json` và `GenCheckResult` (§8) chưa tồn tại; chỉ các rule quy trình (`BR-AIG-01`, `BR-AIG-03`, `BR-AIG-04`, `BR-AIG-05`, `BR-AIG-07`, `BR-AIG-10`) đang được giữ bằng review và `packages/shared/tests/quality-rules.test.ts`. Việc còn lại: [Task #307](../../tasks/307-ai-codegen-pipeline-plan.md).
+
 ## 1. Objective
 
-Corpus spec v2 có **124 file** với API contract dạng bảng, Gherkin acceptance, và business
+Corpus spec (số đếm ở bảng "Tổng" của [`index.md`](../index.md)) có API contract dạng bảng, Gherkin acceptance, và business
 rule đánh số. Đó là đủ cấu trúc để sinh phần lớn code khung một cách máy móc: Zod schema,
 bảng Drizzle, route skeleton, Session class skeleton, và **test từ Gherkin**.
 
@@ -58,7 +62,7 @@ nhau.
 
 | Lệnh | Sinh gì | Loại |
 |---|---|---|
-| `pnpm gen:spec-index` | `spec-index.json` — frontmatter + API contract + BR + Gherkin của 124 spec | xác định |
+| `pnpm gen:spec-index` | `spec-index.json` — frontmatter + API contract + BR + Gherkin của mọi spec trong corpus | xác định |
 | `pnpm gen:schema` | Drizzle table từ section Data của spec | xác định |
 | `pnpm gen:zod` | Zod schema từ API contract | xác định |
 | `pnpm gen:routes` | Route skeleton: guard, Zod parse, mã lỗi, `TODO` thân hàm | xác định |

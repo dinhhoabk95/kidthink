@@ -5,7 +5,7 @@ area: platform
 status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-19
+reviewed: 2026-10-18
 
 owns:
   - Chi phí thêm một game template
@@ -249,6 +249,6 @@ Scenario: BR-TAK-12 — cờ khai rồi bỏ đó bị chặn
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~Bốn nguyên thuỷ ở §7.3 có phủ được template 7–20 không?~~ **Đóng 2026-08-20 (T98, `D-RX`)**: phủ được **năm** khuôn tiếp theo, không phủ sáu khuôn sau đó. Danh sách cơ chế đã có ở mục 7.1 của [`montessori-template-batch.md`](montessori-template-batch.md): `GT-007` tới `GT-011` dựng trọn trên `placement` và `selection`, chỉ thêm hàng layout; `GT-012` tới `GT-017` mỗi khuôn cần một system engine mới (hẹn giờ, mê cung, cân, ràng buộc lưới, xoay kim, phối cảnh đẳng cự). Ranh giới đó là lý do mã được cấp theo lớp chi phí | — | Đã đóng | D-RX |
+| ~~1~~ | ~~Bốn nguyên thuỷ ở §7.3 có phủ được template 7–20 không?~~ **Đóng 2026-08-20 (T98, `D-RX`)**: phủ được **năm** khuôn tiếp theo, không phủ sáu khuôn sau đó. Danh sách cơ chế đã có ở lô `montessori`, mục 7.5 của [`engine-spec-sheet.md`](engine-spec-sheet.md): `GT-007` tới `GT-011` dựng trọn trên `placement` và `selection`, chỉ thêm hàng layout; `GT-012` tới `GT-017` mỗi khuôn cần một system engine mới (hẹn giờ, mê cung, cân, ràng buộc lưới, xoay kim, phối cảnh đẳng cự). Ranh giới đó là lý do mã được cấp theo lớp chi phí | — | Đã đóng | D-RX |
 | 2 | Trần số template trước khi cần tách gói theo nhóm cơ chế là bao nhiêu? Phải đo kích thước Session class trung bình sau khi có nguyên thuỷ | `BR-TAK-08` | P4 | hoãn — đo được sau bước đầu |
-| 3 | 60 game type của v1 port sang bao nhiêu template mới, và bao nhiêu chỉ là `content_pack` khác? Trùng câu hỏi 1 ở [`game-template-contract.md`](game-template-contract.md) §11, giờ trả lời được vì có chi phí thật để so | Phạm vi P4 | P4 | hoãn — khảo sát trước |
+| ~~3~~ | ~~Danh mục 60 dạng bài phủ bằng bao nhiêu template, và bao nhiêu chỉ là `content_pack` khác?~~ **Đóng 2026-10-18**: danh mục phủ bằng 37 khuôn `GT-001`…`GT-037` (lô `GT-018`…`GT-024` lấp các cơ chế còn thiếu); bảng phủ ở [`engines/index.md`](engines/index.md) và [`../08-quality/source-game-type-coverage.md`](../08-quality/source-game-type-coverage.md) | — | Đã đóng | — |

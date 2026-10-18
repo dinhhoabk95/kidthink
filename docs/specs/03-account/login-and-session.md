@@ -2,10 +2,12 @@
 spec: LOGIN-AND-SESSION
 title: Đăng nhập và quản lý phiên
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-14
+reviewed: 2026-10-18
+open_tasks:
+  - "#290"
 owns:
   - Luồng đăng nhập User bằng email và mật khẩu
   - Quản lý thiết bị đang đăng nhập
@@ -15,6 +17,8 @@ depends_on:
 ---
 
 # Đăng nhập và quản lý phiên
+
+> **Chưa hoàn thành** — `BR-LGN-04/05/10`: chưa có UI danh sách thiết bị và nút đăng xuất / đăng xuất mọi thiết bị trong khu `/me` (API đã có). Việc còn lại: [Task #290](../../tasks/290-account-ui-missing-pages-plan.md).
 
 ## 1. Objective
 
@@ -33,7 +37,7 @@ User. Cấm Trẻ không đăng nhập.
 
 ## 3. Entry points
 
-`/login` · `POST /api/guest/auth/users/login` · `POST /api/guest/auth/users/remember` ·
+`/login` · `POST /api/guest/auth/users/login` · `POST /api/users/auth/restore` ·
 `/logout` · `/logout-all` · `GET /api/users/auth/sessions`.
 
 ## 4. Main flow
@@ -111,7 +115,7 @@ User. Cấm Trẻ không đăng nhập.
 Body `{ email, password, rememberMe?: boolean }`. 200 → đặt cookie. 401 `INVALID_CREDENTIALS` ·
 403 `ACCOUNT_SUSPENDED` · 429 `RATE_LIMITED`.
 
-### `POST /api/guest/auth/users/remember`
+### `POST /api/users/auth/restore`
 
 Body rỗng; remember cookie + `x-csrf-token`. 200 → rotate credential, đặt session một giờ;
 401 nếu thiếu/hết/reuse, 503 nếu Redis không tới được.

@@ -40,7 +40,7 @@ token làm hai handler này về đúng `session_version`. Spec
 
 - [x] Vá 52 bảng trên 15 file schema
 - [x] Thêm import `timestamp` cho `tagging.ts`, `taxonomy.ts`
-- [x] Sửa `BR-DM-08` trong [`data-model-overview.md`](../specs/01-platform/data-model-overview.md):
+- [x] Sửa `BR-DM-08` trong [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md):
       "bảng sửa được có `updated_at`" → "mọi bảng có cả hai, không ngoại lệ"
 - [x] Mở rộng allow-list cột của `telemetry_events` thêm `updated_at` — cột chết trên bảng
       INSERT-only, không nới `BR-CDC-05`

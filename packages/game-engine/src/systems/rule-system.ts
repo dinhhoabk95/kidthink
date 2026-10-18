@@ -1,6 +1,6 @@
 /**
  * Rule System — quản lý chuyển đổi luật (rule switching) cho bài tập linh hoạt nhận thức (C6.FLX).
- * Spec: docs/specs/01-platform/taxonomy-gap-batch.md §7.1, §7.3
+ * Spec: docs/specs/01-platform/engines/GT-027.md (BR-TGB-07, BR-TGB-10 ở GT-026.md) · docs/specs/01-platform/engine-spec-sheet.md (BR-TGB-08)
  * Business rules: BR-TGB-07, BR-TGB-08, BR-TGB-10
  *
  * System này độc lập với khuôn (BR-TGB-08).

@@ -65,7 +65,7 @@ Mỗi file: đọc mục 11, thêm hai cột, gán `Chặn phase` và `Chủ` th
 
 - [x] [`ai-codegen-pipeline.md`](../specs/01-platform/ai-codegen-pipeline.md)
 - [x] [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md)
-- [x] [`content-tagging.md`](../specs/01-platform/content-tagging.md)
+- [x] [`content-tagging.md`](../specs/05-content/content-tagging.md)
 - [x] [`emoji-registry.md`](../specs/01-platform/emoji-registry.md)
 - [x] [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md)
 - [x] [`health-check.md`](../specs/01-platform/health-check.md)

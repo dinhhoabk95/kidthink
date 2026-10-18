@@ -2,7 +2,7 @@
 
 > **Loại task:** implementation lát dọc (L). Checklist: [`95-lesson-session-runner-todo.md`](95-lesson-session-runner-todo.md).
 > Thứ tự tám task: [`REMAINING-SEQUENCE.md`](REMAINING-SEQUENCE.md). **Chặn** [`Task #96`](96-lesson-exemplar-set-plan.md).
-> **Spec đóng:** [`lesson-session-runner.md`](../specs/04-play/lesson-session-runner.md) (P4, 16 rule, 9 scenario — spec P4 lớn nhất).
+> **Spec đóng:** [`lesson-session-runner.md`](../specs/03-account/lesson-session-runner.md) (P4, 16 rule, 9 scenario — spec P4 lớn nhất).
 
 ## 1. Outcome
 

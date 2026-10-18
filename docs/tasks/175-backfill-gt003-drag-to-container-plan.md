@@ -4,7 +4,7 @@
 > **Đích:** 8 game type v1 trên `GT-003` kéo vào đích, **80 level** mang `legacy_v1_ref`.
 > **Chặn bởi:** chốt kiểm 1 — [`#170`](170-legacy-v1-traceability-spine-plan.md) · [`#171`](171-solver-backed-generators-plan.md) · [`#172`](172-geometry-checked-generators-plan.md) · [`#173`](173-generator-theme-axis-expansion-plan.md) · [`#174`](174-engine-depth-step-1-plan.md).
 > **Chạy song song được với** năm task backfill còn lại của đợt 2.
-> **Spec sở hữu:** `docs/specs/08-quality/legacy-v1-coverage.md` (viết ở `#170`) · [`game-level-model.md`](../specs/05-content/game-level-model.md).
+> **Spec sở hữu:** `docs/specs/08-quality/source-game-type-coverage.md` (viết ở `#170`) · [`game-level-model.md`](../specs/05-content/game-level-model.md).
 
 ## 1. Đích
 

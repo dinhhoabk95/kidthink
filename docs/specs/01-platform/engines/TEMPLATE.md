@@ -1,5 +1,5 @@
 ---
-spec: ENGINE-GT-0NN
+spec: ENGINE-GTnnn
 title: <tên engine> — <cơ chế một câu>
 area: platform
 status: draft
@@ -7,7 +7,7 @@ mvp: false
 phase: P4
 reviewed: YYYY-MM-DD
 engine: <slug>
-batch: mvp | montessori | legacy-v1 | taxonomy-gap
+batch: mvp | montessori | activity-catalog | taxonomy-gap | core-pedagogy
 owns:
   - Hợp đồng nội dung của engine <mã>
   - Hợp đồng vẽ của engine <mã>

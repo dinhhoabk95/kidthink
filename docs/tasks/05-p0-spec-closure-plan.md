@@ -166,7 +166,7 @@ gọn.
    [`id-conventions`](../specs/00-foundation/id-conventions.md) §7, quy tắc khoá ngoại dùng
    `id` (`D-AE`), kiến trúc Sidebase Local + JWT access + refresh-token rotation hiện hành ở
    [`auth-tokens-sessions`](../specs/01-platform/auth-tokens-sessions.md) §7.4, và bản đồ bảng
-   ở [`data-model-overview`](../specs/01-platform/data-model-overview.md) §7.
+   ở [`data-model-overview`](../specs/00-foundation/data-model-overview.md) §7.
 3. **Sửa cảnh báo `C6`** — điền cột "vì sao" cho mọi rule đang trống. Không xoá rule để hết
    cảnh báo. [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §5: rule không có "vì sao" sẽ bị người sau xoá nhầm.
 4. **Chạy checklist review** [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10, đủ mười một mục.

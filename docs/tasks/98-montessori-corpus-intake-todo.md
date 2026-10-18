@@ -111,7 +111,7 @@
 - [x] **Kiểm soát lỗi tự thân** mô tả trong file mô tả, và có một bước trong journey E2E nơi trẻ tự sửa trước khi hệ thống báo (`BR-MTB-14`).
 - [x] Ba mức gợi ý L1, L2, L3 nối được vào khuôn.
 - [x] Ba game level mẫu chạy hết; một journey E2E xanh.
-- [x] Thêm đúng một giá trị `mechanic` vào mục 7.1 của [`content-tagging.md`](../specs/01-platform/content-tagging.md) trong **cùng PR** (`D-RK`).
+- [x] Thêm đúng một giá trị `mechanic` vào mục 7.1 của [`content-tagging.md`](../specs/05-content/content-tagging.md) trong **cùng PR** (`D-RK`).
 - [x] `pnpm --filter @mindkid/game-engine gen:templates` chạy lại không sinh diff.
 - [x] Đủ 15 điều kiện nghiệm thu ở mục 7.5 của spec khuôn.
 

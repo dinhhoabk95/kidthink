@@ -2,10 +2,13 @@
 spec: EMAIL-VERIFICATION
 title: Xác thực email
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#289"
+  - "#290"
 owns:
   - Luồng xác thực email
   - Vòng đời token xác thực
@@ -15,6 +18,8 @@ depends_on:
 ---
 
 # Xác thực email
+
+> **Chưa hoàn thành** — `BR-EVF-*`: route chỉ INSERT `notifications`, không enqueue `email:send` nên email xác thực không gửi; payload thiếu `url`; raw token nằm trong `notifications.payload`. Trang `/xac-thuc` chưa có. Việc còn lại: [Task #289](../../tasks/289-transactional-email-dispatch-plan.md), [Task #290](../../tasks/290-account-ui-missing-pages-plan.md).
 
 ## 1. Objective
 

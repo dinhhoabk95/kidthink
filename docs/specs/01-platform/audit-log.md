@@ -2,10 +2,12 @@
 spec: AUDIT-LOG
 title: Nhật ký kiểm toán
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-14
+reviewed: 2026-10-18
+open_tasks:
+  - "#305"
 owns:
   - Danh sách hành động bắt buộc audit
   - Hình dạng bản ghi audit
@@ -16,6 +18,8 @@ depends_on:
 ---
 
 # Nhật ký kiểm toán
+
+> **Chưa hoàn thành** — `BR-AUD-02`/`BR-AUD-03` chưa đạt: `managers/users/[uuid]/suspend.post.ts` ghi thẳng `auditLogs` với action `manager.user.suspended` (ngoài danh sách đóng §7.2, bỏ qua `writeAudit`); các action `user_suspended`, `user_reactivated`, `user_deleted`, `quota_reset`, `bonus_days_granted`, `package_catalog_deployed`, `child_profile_archived`, `child_data_purged` mới chỉ được khai báo, chưa luồng nào ghi. Việc còn lại: [Task #305](../../tasks/305-platform-api-gaps-plan.md).
 
 ## 1. Objective
 
@@ -219,8 +223,8 @@ Scenario: force đồng ý lại có audit nguyên tử
 ## 11. Open questions
 
 > **Chủ duy nhất của câu hỏi retention (2026-08-07, T12)**: Q1 dưới đây và
-> [`data-model-overview`](data-model-overview.md) §11 Q2 hỏi **cùng một** thứ. Theo luật
-> "một outcome một chủ", câu hỏi thuộc file này — nó `owns` hình dạng bản ghi audit. [`data-model-overview.md`](data-model-overview.md) §11 Q2
+> [`data-model-overview`](../00-foundation/data-model-overview.md) §11 Q2 hỏi **cùng một** thứ. Theo luật
+> "một outcome một chủ", câu hỏi thuộc file này — nó `owns` hình dạng bản ghi audit. [`data-model-overview.md`](../00-foundation/data-model-overview.md) §11 Q2
 > trỏ về đây.
 >
 > **Không câu nào dưới đây chặn migration #1.**

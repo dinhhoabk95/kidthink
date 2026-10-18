@@ -28,7 +28,7 @@ tới `GT-024`, và đúng một cơ chế bị bỏ có ghi lý do (`free-creat
 | Khuôn có game level thật | 8 (`GT-001` tới `GT-008`) | `packages/db/src/seed-content/` |
 | Khuôn có nội dung bằng 0 | 16 (`GT-009` tới `GT-024`) | cùng nguồn |
 | Activity `kind: digital_game` | 0 trên 81 | `packages/db/src/seed-content/activities/` |
-| Giá trị trục `thinking` không `mechanic` nào sinh được | 2 (`inhibit`, `shift`) | mục 7.1 của [`content-tagging.md`](../specs/01-platform/content-tagging.md) |
+| Giá trị trục `thinking` không `mechanic` nào sinh được | 2 (`inhibit`, `shift`) | mục 7.1 của [`content-tagging.md`](../specs/05-content/content-tagging.md) |
 | `game_templates` trong cơ sở dữ liệu dev | 281 hàng, gồm `GT-999`, `GT-212` do test sinh | truy vấn trực tiếp |
 | Game level trong corpus không parse được bằng `content_contract` | 169 trên 172 | đối chiếu contract từng hàng |
 

@@ -2,10 +2,12 @@
 spec: ADMIN-DASHBOARD
 title: Bảng điều khiển vận hành
 area: admin
-status: implemented
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#297"
 owns:
   - Danh sách KPI hiện trên dashboard
   - Ngưỡng cảnh báo trên dashboard
@@ -16,6 +18,8 @@ depends_on:
 
 # Bảng điều khiển vận hành
 
+> **Chưa hoàn thành** — thẻ "việc cần làm" về đơn chờ duyệt link tới `/payments`, trang này chưa tồn tại nên ra 404 (BR-DSH-02). Việc còn lại: [Task #297](../../tasks/297-admin-payment-queue-plan.md).
+
 ## 1. Objective
 
 Một màn hình trả lời **"hôm nay phải làm gì"** trong một lần nhìn.
@@ -23,7 +27,7 @@ Một màn hình trả lời **"hôm nay phải làm gì"** trong một lần nh
 Đây **không phải BI**. Nó là danh sách việc: đơn chờ duyệt, nội dung chờ duyệt, cảnh báo
 hệ thống. Số liệu tăng trưởng chỉ đủ để biết xu hướng, không để phân tích sâu.
 
-> Tách khỏi [`user-management.md`](user-management.md) có chủ đích. v1 gộp hai thứ vào một spec và không trả lời được
+> Tách khỏi [`user-management.md`](user-management.md) có chủ đích: gộp hai thứ vào một spec thì không trả lời được
 > "phần nào xong". Dashboard chỉ đọc; quản lý User là bề mặt khác, có mutation và có audit
 > riêng.
 

@@ -1,15 +1,15 @@
 ---
 doc: CONVENTIONS
-title: Quy ước viết specification — v2
+title: Quy ước viết specification
 version: 2.0.0
 status: active
 created: 2026-08-04
+reviewed: 2026-10-18
 ---
 
-# Quy ước viết specification (v2)
+# Quy ước viết specification
 
 Áp dụng cho [`../SPEC.md`](../SPEC.md) và mọi file dưới `specs/`.
-Thay đổi so với v1 và lý do: [`AUDIT-v1.md`](AUDIT-v1.md) §4.
 
 ## 1. Một outcome, một file — luật cứng
 
@@ -42,21 +42,29 @@ Khi phân vân: **tách**. Hai file nhỏ dễ gộp lại hơn một file to d�
 
 | Thư mục | Chứa gì |
 |---|---|
-| `00-foundation/` | Contract cắt ngang mọi bề mặt. Không map vào một màn hình |
-| `01-platform/` | Năng lực nội bộ, không phải bề mặt người dùng |
+| `specs/` (gốc) | Không có spec module. Chỉ có tài liệu điều hướng của corpus: [`index.md`](index.md) (bản đồ + bảng đếm), [`CONVENTIONS.md`](CONVENTIONS.md) (file này), [`TEMPLATE.md`](TEMPLATE.md) (khuôn), [`READING-GUIDE.md`](READING-GUIDE.md) (cách đọc), [`roadmap.md`](roadmap.md) (thứ tự implement) |
+| `00-foundation/` | Contract cắt ngang mọi bề mặt, kể cả các registry (`business-rules`, `error-codes`, `event-catalog`, `glossary`, `id-conventions`) và bản đồ schema. Không map vào một màn hình |
+| `01-platform/` | Năng lực nội bộ, không phải bề mặt người dùng: schema, auth, engine runtime, hạ tầng vận hành |
 | `02-public/` | Outcome của khách chưa đăng nhập |
-| `03-account/` | Outcome của User đã đăng nhập |
+| `03-account/` | Outcome của User đã đăng nhập (kể cả người lớn chạy tiết học và gói offline của họ) |
 | `04-play/` | Outcome của trẻ trên bề mặt chơi |
-| `05-content/` | Mô hình nội dung — hình dạng dữ liệu và ràng buộc biên tập |
+| `05-content/` | Mô hình nội dung và ràng buộc biên tập: hình dạng `content_pack`/lesson/curriculum, độ sâu corpus, ánh xạ nguồn, gắn nhãn nội dung. Spec ở đây trả lời *"nội dung phải trông thế nào"*, không trả lời *"màn hình làm gì"* |
 | `06-admin/` | Outcome của Manager |
-| `07-addon/` | Spec đầy đủ, **không lên catalog MVP** (§SPEC.md 1.6) |
-| `08-quality/` | Contract chất lượng cắt ngang: test, bảo mật, a11y, hiệu năng, design |
+| `07-addon/` | Spec đầy đủ, **không lên catalog MVP** (mục 1.6 của [`../SPEC.md`](../SPEC.md)) |
+| `08-quality/` | Contract chất lượng cắt ngang và cổng đo của chúng: test, bảo mật, a11y, hiệu năng, design system, an toàn kiểu, phủ tư duy, phủ dạng game nguồn, sổ cổng runtime, điều kiện go-live |
 
 **Một thư mục con duy nhất được phép:** `01-platform/engines/` chứa phiếu spec của từng game
 engine, một file cho một mã `GT`. Phiếu là spec **mở rộng** mười tám mục — 11 mục chuẩn cộng 7
 mục engine chuyên biệt; hình dạng và luật đối chiếu ở
-[`01-platform/engine-spec-sheet.md`](01-platform/engine-spec-sheet.md).
+[`01-platform/engine-spec-sheet.md`](01-platform/engine-spec-sheet.md). Thư mục này còn hai
+file không phải phiếu: `engines/TEMPLATE.md` (khuôn phiếu) và `engines/index.md` (bảng phiếu,
+**sinh tự động** bằng `pnpm --filter @mindkid/game-engine gen:engine-index` — không sửa tay).
 Thư mục con khác cần quyết định, vì mỗi tầng lồng thêm là một chỗ nữa để một outcome trốn được.
+
+**Không có spec "lô" hay spec kế hoạch một lần.** Spec mô tả contract **còn hiệu lực** — một
+luật mà code phải giữ mãi. Kế hoạch một đợt việc (nạp một lô level, dựng một nhóm khuôn, thứ tự
+làm, cổng hoàn tất đợt) nằm ở `docs/tasks/<n>-<slug>-{plan,todo}.md`. Luật bền sinh ra từ một
+đợt việc thì chuyển vào spec sở hữu outcome đó; phần còn lại là lịch sử của task, không là spec.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 Contract bị copy sẽ drift.
@@ -76,19 +84,35 @@ owns:
   - <entity, route, hoặc quyết định mà spec này là nguồn sự thật duy nhất>
 depends_on:
   - <spec id phải approved trước>
+open_tasks:            # tuỳ chọn — chỉ khi code chưa khớp contract
+  - "#293"
 ---
 ```
 
 | Field | Nghĩa |
 |---|---|
-| `status` | Độ chín của **spec**, không phải của code. `implemented` chỉ đặt khi acceptance criteria đã xanh |
+| `status` | `draft` — đang viết, chưa chốt · `approved` — contract đã chốt, code chưa khớp đủ · `implemented` — acceptance criteria đã xanh **và** không còn `open_tasks`. Giá trị thứ tư `published` **chỉ** dùng cho phiếu engine `01-platform/engines/GT-*.md` (phiếu đã đủ khuôn và đối chiếu registry, xem [`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md)); spec module không dùng |
+| `open_tasks` | Tuỳ chọn. Danh sách số task (chuỗi `"#nnn"`) đang giữ phần code chưa khớp contract. Có `open_tasks` thì `status` **không** được là `implemented`; task xong thì gỡ số khỏi danh sách, hết số thì xoá khoá và nâng `implemented` |
 | `mvp` | `true` nếu chặn release MVP |
 | `phase` | Phase sớm nhất spec này được implement — khớp `../SPEC.md` §12 |
 | `owns` | Thứ mà **chỉ** file này được định nghĩa. Nếu hai file cùng `owns` một thứ, một trong hai sai |
 | `depends_on` | Dùng để xếp thứ tự implement. Cấm chu trình |
 
-Không có `classification`, không có `verified_against_code`, không có `sources`.
-v2 là greenfield — không có code để đối chiếu, và spec không mang lineage.
+Không có `classification`, không có `verified_against_code`, không có `sources`. Spec không
+mang lineage: nó nói contract hiện hành, lịch sử nằm trong git và `docs/tasks/`.
+
+### 3.1 Khối "Chưa hoàn thành"
+
+Spec có `open_tasks` mang thêm một khối trích dẫn **ngay dưới dòng `# Tiêu đề`**:
+
+```markdown
+> **Chưa hoàn thành** — <tóm tắt gap 1–2 câu, nêu mã BR>. Việc còn lại: [Task #293](../tasks/293-healthy-play-limits-enforcement-plan.md).
+```
+
+Link trong mẫu trên tính từ file này (gốc `specs/`). Trong spec thật ở thư mục khu vực, link
+là `../../tasks/...`; phiếu engine ở `01-platform/engines/` sâu thêm một cấp nên là `../../../tasks/...`.
+Không xoá `BR-*` hay scenario chưa đạt để spec "khớp" code — spec vẫn là contract; khoảng
+cách nằm trong khối này và trong task. Gỡ khối cùng lúc gỡ số task cuối cùng khỏi `open_tasks`.
 
 ## 4. Mười một section — đúng thứ tự
 
@@ -190,6 +214,9 @@ Mỗi scenario map được sang **đúng một** test. Tên test mang ID scenar
 ## 10. Checklist review
 
 - [ ] Metadata đủ 9 field. `owns` không trùng spec nào khác.
+- [ ] Có `open_tasks` thì `status` khác `implemented`, có khối "Chưa hoàn thành" dưới tiêu đề,
+      và mỗi link task resolve được.
+- [ ] Không phải spec "lô"/kế hoạch một lần (mục 2) — kế hoạch đi vào `docs/tasks/`.
 - [ ] 11 section đúng thứ tự, không section nào rỗng không giải thích.
 - [ ] Tên file không nối hai outcome.
 - [ ] Mọi `BR-*` có cột "vì sao" và có ID không trùng.
@@ -198,7 +225,7 @@ Mỗi scenario map được sang **đúng một** test. Tên test mang ID scenar
 - [ ] Mọi link nội bộ resolve được.
 - [ ] Không `classification`, không `tenant_id`, không persona enum, không cột `role` trên `users`.
 - [ ] `depends_on` không tạo chu trình.
-- [ ] Bảng ở mục 7 của [`data-model-overview.md`](01-platform/data-model-overview.md) khớp hai
+- [ ] Bảng ở mục 7 của [`data-model-overview.md`](00-foundation/data-model-overview.md) khớp hai
       chiều với §7.x của mỗi `schema-*`.
 - [ ] Mã ID trong spec khớp regex ở mục 7 của
       [`id-conventions.md`](00-foundation/id-conventions.md) (ví dụ khớp regex cùng hàng).
@@ -221,7 +248,8 @@ sau Task #4, không chỉ corpus đã có.
 ### 11.1 Bảng thay ký hiệu
 
 Không dùng 14 ký hiệu dưới đây trong văn xuôi. Bọc trong khối mã vì chính bảng này liệt kê ký
-hiệu bị cấm — đối tượng được nói tới, không phải cách viết vi phạm (kiểm tra C14 bỏ qua khối mã).
+hiệu bị cấm — đối tượng được nói tới, không phải cách viết vi phạm. Không còn cổng máy nào quét
+luật này; giữ bằng review.
 
 ```
 ❌  →  "Không …", "Cấm …", "… không phải là …" tuỳ ngữ cảnh. Ô bảng nhị phân: "Không"
@@ -289,8 +317,8 @@ thích ngắn, lần sau dùng trần: `ZPD`, `LO`, `KPI`, `idempotency`, `rollu
 ### 11.4 Tham chiếu file
 
 Mọi lần nhắc tới một tài liệu khác phải là liên kết bấm được, đường dẫn tương đối, kèm số mục
-nếu đang nói về một chỗ cụ thể. Đường dẫn trong ví dụ minh hoạ vẫn phải resolve thật — kiểm tra
-C4 quét cả nội dung trong khối mã, không bỏ qua như C9/C10 làm.
+nếu đang nói về một chỗ cụ thể. Đường dẫn trong ví dụ minh hoạ vẫn phải resolve thật, kể cả khi
+nằm trong khối mã. Không còn cổng máy nào kiểm link corpus; giữ bằng review.
 
 ```markdown
 Sai:   Xem `access-ladder` §7.3.
@@ -330,14 +358,12 @@ Mọi spec `status: approved` chứa bảng câu hỏi mở ở section "## 11. 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 
 Cột thứ sáu `Quyết định / Trạng thái` được phép và đang dùng ở 8 spec; nó không thay thế cột
-`Chủ`. Đo ngày 2026-08-29 trên toàn corpus: **157** spec dùng đúng 5 cột, **8** dùng 6 cột,
-**2** dùng `Không có.` — không spec nào dưới 5 cột. [`TEMPLATE.md`](TEMPLATE.md) trước đó vẫn
-in khuôn 3 cột của v1 và đã sửa cùng ngày.
+`Chủ`. [`TEMPLATE.md`](TEMPLATE.md) in sẵn khuôn 5 cột.
 
-`checkC16` báo lỗi `fail` nếu bảng dưới 5 cột hoặc ô `Chặn phase`/`Chủ` rỗng — nhưng `checkC16` chỉ
-hỏi ô có rỗng không, không hỏi ô **chứa gì**. `checkC17` (Task #13) hỏi tiếp câu đó: ô `Chủ` phải
-khớp đúng **một** trong bốn dạng sau, so khớp **toàn chuỗi** (không phải chuỗi con — `"người quyết —
-chặn P2"` không hợp lệ dù chứa `"người quyết"`, vì phase bị nhét sai cột):
+Ô `Chặn phase` và `Chủ` không được rỗng, và ô `Chủ` phải khớp đúng **một** trong bốn dạng sau,
+so khớp **toàn chuỗi** (không phải chuỗi con — `"người quyết — chặn P2"` không hợp lệ dù chứa
+`"người quyết"`, vì phase bị nhét sai cột). Hai cổng từng đo luật này đã gỡ cùng `packages/gates`
+(2026-08-29); giữ bằng review:
 
 | Dạng | Viết thế nào | Dùng khi |
 |---|---|---|
@@ -347,7 +373,7 @@ chặn P2"` không hợp lệ dù chứa `"người quyết"`, vì phase bị nh
 | Mã quyết định | `D-XX`, kèm task trong ngoặc nếu cần: `D-AE (T11)` | **Chỉ** cho hàng đã gạch `~~n~~` — hàng chưa gạch không được dùng mã |
 
 Cấm: rỗng, `-`, `—`, `TBD`, tên đội tự phát (`Product / QA`, `DevOps / Infra`…), văn xuôi, phase
-lẫn vào cột `Chủ`. `checkC17` `fail` khi `status: approved`, `warn` khi `draft`.
+lẫn vào cột `Chủ`. Spec `approved` phải sạch; spec `draft` được nợ tạm.
 
 **Khuôn đóng một hàng nhóm A** (câu hỏi đã có câu trả lời nằm sai chỗ — ở cột `Chủ` thay vì đã
 đóng đúng cách). Mẫu, hàng 2 của [`content-versioning.md`](00-foundation/content-versioning.md)

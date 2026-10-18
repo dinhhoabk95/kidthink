@@ -61,7 +61,7 @@
 ### Task 4 — Kiểm kê và ghi nợ vào spec
 
 - [x] Bảng nợ `play_sessions` · `child_session_summaries` · ba bảng rollup vào [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §11, mỗi dòng có bước sở hữu.
-- [x] Ghi D-DN · D-DO · D-DP · D-DQ vào sổ quyết định [`data-model-overview.md`](../specs/01-platform/data-model-overview.md).
+- [x] Ghi D-DN · D-DO · D-DP · D-DQ vào sổ quyết định [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md).
 - [x] Không đổi cột nào thuộc bảng nợ trong PR này.
 - [x] `pnpm --filter @mindkid/gates test` 0 lỗi, 0 cảnh báo.
 

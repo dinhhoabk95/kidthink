@@ -62,7 +62,7 @@ Mỗi bước: chín việc ở kế hoạch mục 5; mỗi work package S/M m�
 - [x] **P0.4** Ràng buộc pháp lý trước khi thiết kế bảng trẻ — [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md)
 - [x] **P0.5** Ladder + entitlement + package — [`access-ladder.md`](../specs/00-foundation/access-ladder.md) → [`entitlement-model.md`](../specs/00-foundation/entitlement-model.md) → [`package-catalog.md`](../specs/00-foundation/package-catalog.md)
 - [x] **P0.6** Vòng đời + version nội dung — [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) → [`content-versioning.md`](../specs/00-foundation/content-versioning.md)
-- [x] **P0.7** Thiết kế schema — [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) → [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md)
+- [x] **P0.7** Thiết kế schema — [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) → [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md)
 - [x] **P0.8** Migration đầu tiên, gate local xanh trên schema thật
 - [x] **P0.8b** Sao lưu và quan sát; dựng khung tối thiểu `packages/queue` + `apps/worker` cho job `backup:postgres` (`D-BT`, `D-BU`) — [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) · [`health-check.md`](../specs/01-platform/health-check.md)
 - [x] **P0.9** Taxonomy service + seed Lớp 1 — [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) · [`emoji-registry.md`](../specs/01-platform/emoji-registry.md)
@@ -104,7 +104,7 @@ MVP, và nó chỉ cần bước P1.2 xong.
 - [x] **P1.7** Tính điểm ở server — [`scoring-and-result.md`](../specs/04-play/scoring-and-result.md)
 - [x] **P1.8** Scaffolding, phản hồi, parent gate, hạn mức giờ — [`scaffolding-and-hints.md`](../specs/04-play/scaffolding-and-hints.md) · [`feedback-and-celebration.md`](../specs/04-play/feedback-and-celebration.md) · [`parent-gate.md`](../specs/04-play/parent-gate.md) · [`healthy-play-limits.md`](../specs/04-play/healthy-play-limits.md)
 - [x] **P1.9** Hồ sơ trẻ và chọn trẻ chơi — [`child-profile-crud.md`](../specs/03-account/child-profile-crud.md) · [`child-profile-switching.md`](../specs/03-account/child-profile-switching.md) · [`child-profile-archive.md`](../specs/03-account/child-profile-archive.md) · [`play-entry-and-profile-select.md`](../specs/04-play/play-entry-and-profile-select.md)
-- [x] **P1.10** Gắn tag nội dung & seeder nội dung nền — [`content-tagging.md`](../specs/01-platform/content-tagging.md) · [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md)
+- [x] **P1.10** Gắn tag nội dung & seeder nội dung nền — [`content-tagging.md`](../specs/05-content/content-tagging.md) · [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md)
 - [x] **P1.11** ≥120 game level `published` — [`game-level-model.md`](../specs/05-content/game-level-model.md)
 - [x] **P1.11b** Tìm kiếm nội dung — [`content-search.md`](../specs/01-platform/content-search.md)
 - [x] **P1.11c** Đóng claim/KPI evidence sư phạm và protocol kiểm thử với trẻ — [`Task #81`](81-pedagogical-evidence-contract-plan.md)
@@ -183,7 +183,7 @@ Chỉ bắt đầu khi P0–P3 `implemented`. Mỗi add-on **lên catalog cùng 
 - [x] [`custom-game-builder.md`](../specs/07-addon/custom-game-builder.md) · [`personal-curriculum.md`](../specs/07-addon/personal-curriculum.md) — chặn bởi: quota
 - [x] [`semantic-search.md`](../specs/07-addon/semantic-search.md) — **chặn migration**: `N` của cột `vector` phụ thuộc embedding model, đổi `N` là đổi migration
 - [x] Chín câu hỏi giá/quota ở [`CORPUS-CLOSURE.md`](CORPUS-CLOSURE.md) đã chốt trước khi lên catalog
-- [ ] [`lesson-session-runner.md`](../specs/04-play/lesson-session-runner.md) (Task #95) → [`lesson-exemplar-set.md`](../specs/05-content/lesson-exemplar-set.md) (Task #96) — spec sau khai `depends_on` spec trước
+- [ ] [`lesson-session-runner.md`](../specs/03-account/lesson-session-runner.md) (Task #95) → [`lesson-exemplar-set.md`](../specs/05-content/lesson-exemplar-set.md) (Task #96) — spec sau khai `depends_on` spec trước
 - [ ] [`template-authoring-kit.md`](../specs/01-platform/template-authoring-kit.md) (Task #97) — chặn bởi P1.17, vì nó khai `depends_on` cả hai spec ở bước đó
 
 ## P5 — Web scale, 1 spec hiện có

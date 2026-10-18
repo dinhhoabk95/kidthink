@@ -5,7 +5,7 @@ area: admin
 status: implemented
 mvp: true
 phase: P3
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Luồng dựng và sắp xếp curriculum
   - Ràng buộc cấu trúc chương trình
@@ -30,7 +30,7 @@ Readiness — **không biên soạn lại nội dung**. Builder là công cụ �
 
 ## 3. Entry points
 
-`/studio/curricula` · `/studio/curricula/{code}/{version}`.
+`/studio/curricula` — soạn tuần và mục ngay trong trang, không có trang con theo `{code}/{version}`.
 
 ## 4. Main flow
 

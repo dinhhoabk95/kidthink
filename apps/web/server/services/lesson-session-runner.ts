@@ -1,6 +1,6 @@
 /**
  * Lesson Session Runner Service (BR-LSR-01..16).
- * Spec: docs/specs/04-play/lesson-session-runner.md
+ * Spec: docs/specs/03-account/lesson-session-runner.md
  *
  * Rules:
  * - BR-LSR-01: Single-step presentation logic.

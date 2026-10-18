@@ -2,10 +2,12 @@
 spec: PLAY-EVENT-INGESTION
 title: Nạp sự kiện chơi
 area: play
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#294"
 owns:
   - Giao thức gửi lô event
   - Quy tắc idempotency và thứ tự
@@ -15,6 +17,8 @@ depends_on:
 ---
 
 # Nạp sự kiện chơi
+
+> **Chưa hoàn thành** — `BR-ING-07` chưa có: không có zone rate limit riêng cho route nhận event (600/IP · 300/tài khoản), chỉ dùng giới hạn chung. Việc còn lại: [Task #294](../../tasks/294-play-surface-gaps-plan.md).
 
 ## 1. Objective
 

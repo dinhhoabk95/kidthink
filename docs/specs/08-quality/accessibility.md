@@ -2,16 +2,20 @@
 spec: ACCESSIBILITY
 title: Tiêu chuẩn tiếp cận
 area: quality
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-29
+reviewed: 2026-10-18
 owns:
   - Ngưỡng a11y theo bề mặt
 depends_on: []
+open_tasks:
+  - "#310"
 ---
 
 # Tiêu chuẩn tiếp cận
+
+> **Chưa hoàn thành** — `BR-A11-01` (0 vi phạm axe) chưa có công cụ đo: repo không có `@axe-core/playwright`. `BR-A11-09` đang bị vi phạm ở `apps/web/app/pages/play/map.vue` (class `uppercase`). Việc còn lại: [Task #310](../../tasks/310-quality-gates-gaps-plan.md).
 
 ## 1. Objective
 

@@ -5,7 +5,7 @@ area: platform
 status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-08-07
+reviewed: 2026-10-18
 owns:
   - Danh sách job và lịch chạy
   - Quy tắc retry và idempotency
@@ -21,7 +21,7 @@ depends_on:
 Việc chậm, việc theo lịch, và việc được phép thất bại không nằm trong đường request.
 BullMQ trên Valkey; producer ở `packages/queue`, consumer ở `apps/worker`.
 
-Bài học đắt nhất từ v1: **worker bị tắt mà không ai biết**. Producer vẫn đẩy job, không
+Hỏng đắt nhất của job nền: **worker bị tắt mà không ai biết**. Producer vẫn đẩy job, không
 consumer nào lấy ra, email và export im lặng không chạy. Spec này ép alert cho tình huống
 đó thành điều kiện go-live.
 
@@ -67,9 +67,9 @@ consumer nào lấy ra, email và export im lặng không chạy. Spec này ép 
 | `BR-JOB-02` | `jobId` xác định từ khoá nghiệp vụ | Chống đẩy trùng ở tầng producer |
 | `BR-JOB-03` | Backlog vượt ngưỡng → **alert tới người** | Worker chết im lặng là chế độ hỏng tệ nhất |
 | `BR-JOB-04` | `packages/queue` Cấm — **NEVER chứa consumer**; `apps/worker` Cấm — **NEVER expose HTTP** | Trộn hai vai làm worker trở thành một app web không ai bảo trì |
-| `BR-JOB-05` | Job fail hết retry Cấm — **NEVER bị bỏ im lặng** | Job nền không có người dùng đứng chờ để báo hỏng — im lặng là chế độ mặc định của nó. `account:purge` fail im lặng thì vi phạm nghĩa vụ xoá dữ liệu; `backup:postgres` fail im lặng thì đúng bài học v1 (`BR-BAK-04`) |
+| `BR-JOB-05` | Job fail hết retry Cấm — **NEVER bị bỏ im lặng** | Job nền không có người dùng đứng chờ để báo hỏng — im lặng là chế độ mặc định của nó. `account:purge` fail im lặng thì vi phạm nghĩa vụ xoá dữ liệu; `backup:postgres` fail im lặng thì mất bản sao lưu mà không ai biết (`BR-BAK-04`) |
 | `BR-JOB-06` | Job chạm dữ liệu trẻ tuân thủ đủ ràng buộc [`child-data-compliance.md`](../00-foundation/child-data-compliance.md) | Job chạy ngoài ngữ cảnh request dễ quên guard |
-| `BR-JOB-07` | Worker **phải có process trong cấu hình production** | v1 comment mất worker và không ai phát hiện |
+| `BR-JOB-07` | Worker **phải có process trong cấu hình production** | Worker bị comment khỏi cấu hình thì không ai phát hiện |
 | `BR-JOB-08` | Job dài chia lô có checkpoint | Job 30 phút fail ở phút 29 mà làm lại từ đầu là lãng phí |
 
 ## 7. Data

@@ -2,10 +2,12 @@
 spec: CHILD-PROFILE-ARCHIVE
 title: Lưu trữ và xoá hồ sơ trẻ
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#290"
 owns:
   - Luồng lưu trữ và xoá một hồ sơ trẻ
 depends_on:
@@ -14,6 +16,8 @@ depends_on:
 ---
 
 # Lưu trữ và xoá hồ sơ trẻ
+
+> **Chưa hoàn thành** — API lưu trữ, khôi phục, xoá, huỷ xoá đã có, nhưng trang `/me/children/{uuid}` chưa có nên không UI nào gọi các route đó. Việc còn lại: [Task #290](../../tasks/290-account-ui-missing-pages-plan.md).
 
 ## 1. Objective
 

@@ -2,10 +2,12 @@
 spec: ACCOUNT-DELETION
 title: Xoá tài khoản và dữ liệu
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#290"
 owns:
   - Luồng yêu cầu xoá và huỷ yêu cầu
   - Phạm vi dữ liệu bị xoá
@@ -15,6 +17,8 @@ depends_on:
 ---
 
 # Xoá tài khoản và dữ liệu
+
+> **Chưa hoàn thành** — API và worker purge đã có, nhưng `handleRequestDeletion()` ở `app/pages/me/settings/delete.vue` còn thân rỗng — `BR-ADL-02/03/07` chưa làm được từ giao diện (yêu cầu xoá, xem trạng thái, hoàn tác). Việc còn lại: [Task #290](../../tasks/290-account-ui-missing-pages-plan.md).
 
 ## 1. Objective
 

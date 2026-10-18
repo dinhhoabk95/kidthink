@@ -2,7 +2,7 @@
 
 > **Chương trình:** [`Task #168`](168-v1-game-list-integration-plan.md) — Tích hợp 60 game type v1 vào v2.  
 > **Kế hoạch:** [`170-legacy-v1-traceability-spine-plan.md`](170-legacy-v1-traceability-spine-plan.md).  
-> **Spec sở hữu:** [`docs/specs/08-quality/legacy-v1-coverage.md`](../specs/08-quality/legacy-v1-coverage.md).  
+> **Spec sở hữu:** [`docs/specs/08-quality/source-game-type-coverage.md`](../specs/08-quality/source-game-type-coverage.md).  
 > **Ngày thực hiện:** 2026-09-01  
 > **Trạng thái cổng Bậc 0:** ĐẠT 20 / 60 game types (ngưỡng sàn: 20/60).
 

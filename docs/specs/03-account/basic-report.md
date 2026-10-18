@@ -2,10 +2,12 @@
 spec: BASIC-REPORT
 title: Báo cáo cơ bản
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#291"
 owns:
   - Nội dung báo cáo cơ bản
   - Ranh giới ngôn ngữ báo cáo
@@ -15,6 +17,8 @@ depends_on:
 ---
 
 # Báo cáo cơ bản
+
+> **Chưa hoàn thành** — Route `GET /api/users/children/{uuid}/reports/basic` (§8) và trang `/me/children/{uuid}/report` chưa có; test `BR-BRP-*` hiện chỉ assert trên hằng số tự khai. Việc còn lại: [Task #291](../../tasks/291-public-account-small-gaps-plan.md).
 
 ## 1. Objective
 

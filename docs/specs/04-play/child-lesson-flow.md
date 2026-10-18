@@ -21,7 +21,7 @@ depends_on:
 
 ## 1. Objective
 
-Hôm nay `lessons` chỉ có đường chạy cho người lớn dẫn ([`lesson-session-runner.md`](lesson-session-runner.md)).
+Hôm nay `lessons` chỉ có đường chạy cho người lớn dẫn ([`lesson-session-runner.md`](../03-account/lesson-session-runner.md)).
 Trẻ ở nhà thì chơi từng level rời, không có khuôn bài. Các app mầm non trẻ quen dùng (tham chiếu
 KidsUP Pro) đều theo một nhịp: bài 5–7 phút, mở bằng thẻ làm quen, luyện bằng vài trò chơi, kết
 bằng phần thưởng.

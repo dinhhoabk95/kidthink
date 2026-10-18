@@ -4,9 +4,8 @@ title: Bộ tiết học mẫu — chuẩn để đối chiếu
 area: content
 status: implemented
 mvp: false
-
 phase: P4
-reviewed: 2026-08-17
+reviewed: 2026-10-18
 owns:
   - Tiêu chuẩn một tiết học mẫu
   - Ma trận phủ của bộ tiết học mẫu
@@ -47,6 +46,7 @@ số — nhịp mà phần lớn lesson viết vội bỏ qua.
 | `/lessons?exemplar=1` | Người dạy | Danh sách bộ tiết học mẫu |
 | [`lesson-authoring.md`](../06-admin/lesson-authoring.md) | Người soạn | Nơi đặt cờ đề cử |
 | [`content-review-queue.md`](../06-admin/content-review-queue.md) | Chuyên gia | Nơi duyệt đề cử |
+| `POST /api/managers/lesson-exemplars/{nominate,approve,revoke}` · `GET /api/managers/lesson-exemplars/matrix` | Manager | Bốn route của file này, mục 8 |
 
 ## 4. Main flow
 
@@ -130,8 +130,43 @@ Ma trận này đo **nội dung**. Ma trận đo **toàn bộ catalog** theo tr�
 
 ## 8. API contract
 
-Không sở hữu route. Cờ mẫu đặt qua luồng duyệt của
-[`content-review-queue.md`](../06-admin/content-review-queue.md); danh sách đọc qua route lesson sẵn có với tham số lọc.
+File này sở hữu bốn route manager dưới `apps/web/server/api/managers/lesson-exemplars/`, cùng gọi
+`LessonExemplarService` ở `apps/web/server/services/lesson-exemplar.ts`. Cả bốn đòi
+`requireSuperAdminSession()` (vai `super_admin` cộng CSRF manager). Danh sách cho người dạy đọc
+qua route lesson sẵn có với tham số lọc. Response thành công có dạng `{ success: true, data }`.
+
+### `POST /api/managers/lesson-exemplars/nominate`
+
+| | |
+|---|---|
+| Body | `{ lesson_id: int > 0, competency: "C1"…"C6", age_band: "3-4" \| "4-5" \| "5-6", notes?: string ≤ 1000 }` |
+| 200 | `data: { nominated: true, eligibility }` — kết quả kiểm năm điều kiện máy kiểm được ở mục 7.1 |
+| 422 | `VALIDATION_FAILED` — body sai, lesson không đủ điều kiện, hoặc ô ma trận đã đủ 2 mẫu (`BR-LEX-08`) |
+| 403 | `INSUFFICIENT_ROLE` (`BR-LEX-10`) |
+
+### `POST /api/managers/lesson-exemplars/approve`
+
+| | |
+|---|---|
+| Body | Như `nominate` |
+| 200 | `data: { success: true, lessonId }` — đặt `is_exemplar` và ô ma trận trên `lessons` |
+| 422 | `VALIDATION_FAILED` — như `nominate` |
+| 403 | `INSUFFICIENT_ROLE` (`BR-LEX-10`) |
+
+### `POST /api/managers/lesson-exemplars/revoke`
+
+| | |
+|---|---|
+| Body | `{ lesson_id: int > 0, reason: string 5–1000 }` |
+| 200 | `data: { revoked: true }` |
+| 422 | `VALIDATION_FAILED` |
+| 403 | `INSUFFICIENT_ROLE` |
+
+### `GET /api/managers/lesson-exemplars/matrix`
+
+| | |
+|---|---|
+| 200 | `data: { matrix: { C1…C6: { "3-4" \| "4-5" \| "5-6": [{ id, code, title, approvedAt }] } }, totalCount, missingCells: string[] }` — ma trận phủ mục 7.2, chỉ đếm lesson `published` |
 
 ## 9. Acceptance criteria
 

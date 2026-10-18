@@ -32,7 +32,7 @@ export const GT000StepPresentSchema = z.object({
  * Tập nói theo — `BR-CIM-19`, `BR-E000-10`.
  *
  * Máy đọc mẫu, trẻ nói theo thành tiếng, rồi chạm để đi tiếp.
- * Cấm — NEVER yêu cầu micro, NEVER ghi âm, NEVER chấm phát âm (`BR-CIR-21`).
+ * Cấm — NEVER yêu cầu micro, NEVER ghi âm, NEVER chấm phát âm (`BR-CIR-23`).
  */
 export const GT000StepEchoSchema = z.object({
   action: z.literal("echo"),

@@ -233,7 +233,7 @@ Lưu ý khi thay: chỉ đổi **ký hiệu**, không đổi thuật ngữ đứ
 | Viết tắt | Viết thành |
 |---|---|
 | `OQ` | "câu hỏi còn mở" |
-| `DMO` | [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) |
+| `DMO` | [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) |
 | `SIB` | [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) |
 | `SCT` | [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) |
 | `SPT` | [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) |
@@ -338,7 +338,7 @@ khối mã**, không bỏ qua như kiểm tra C10 làm. Một đường dẫn v�
 Sai:   Xem `access-ladder` §7.3.
 Sai:   Theo `data-model-overview` §7 thì bảng này thuộc module ops.
 Đúng:  Xem mục 7.3 của [`access-ladder.md`](../specs/00-foundation/access-ladder.md).
-Đúng:  Theo mục 7 của [`data-model-overview.md`](../specs/01-platform/data-model-overview.md),
+Đúng:  Theo mục 7 của [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md),
        bảng này thuộc module `ops`.
 ```
 

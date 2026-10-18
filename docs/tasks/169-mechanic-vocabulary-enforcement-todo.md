@@ -37,7 +37,7 @@
 
 ## WP169.4 — Đồng bộ tài liệu
 
-- [x] Mục 7.1 của [`content-tagging.md`](../specs/01-platform/content-tagging.md) liệt kê đúng 36 giá trị, đánh dấu 9 giá trị đặt trước.
+- [x] Mục 7.1 của [`content-tagging.md`](../specs/05-content/content-tagging.md) liệt kê đúng 36 giá trị, đánh dấu 9 giá trị đặt trước.
 - [x] Ghi vào `docs/specs/00-foundation/business-rules.md` nếu phát sinh `BR` mới.
 
 ## Đóng task

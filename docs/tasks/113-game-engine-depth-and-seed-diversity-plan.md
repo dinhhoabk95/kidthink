@@ -193,7 +193,7 @@ lại là phần engine không nạp được.
 
 Đo cùng ngày, ba nguồn khai từ vựng độc lập và chúng lệch nhau:
 
-| Trục | Nguồn 1 — mục 7.1 và 7.2 của [`content-tagging.md`](../specs/01-platform/content-tagging.md) | Nguồn 2 — `seed-master/content-tags.ts` | Nguồn 3 — cổng `thinking-coverage.ts` | Corpus |
+| Trục | Nguồn 1 — mục 7.1 và 7.2 của [`content-tagging.md`](../specs/05-content/content-tagging.md) | Nguồn 2 — `seed-master/content-tags.ts` | Nguồn 3 — cổng `thinking-coverage.ts` | Corpus |
 |---|---|---|---|---|
 | `what` | 14: `number` `quantity` `geometry` … | 14: `cnt` `cmp` `ops` `shp` … | **28 — hợp cả hai** | 79 lượt theo nguồn 1, 160 lượt theo nguồn 2 |
 | `thinking` | 12: `observe` `compare` `sort` … | 12: `visual` `auditory` `spatial` … | **12 — chỉ nguồn 1** | 284 / 284 lượt theo nguồn 1 |
@@ -445,7 +445,7 @@ nội dung làm nó đổi.
 | [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) | Tám cổng theo hàng, đường ghi published, idempotency, provenance | Không thêm cổng theo hàng. Cổng mới là cổng theo **tập hợp** |
 | [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) | Hình dạng `GameTemplate`, `content_contract`, `BR-GTC-*` | Phiếu engine **trích** contract, cấm — NEVER chép lại giá trị |
 | [`template-authoring-kit.md`](../specs/01-platform/template-authoring-kit.md) | Chi phí thêm một engine | Bộ sinh level chỉ lo `content_pack`, không đụng registry engine |
-| [`content-tagging.md`](../specs/01-platform/content-tagging.md) | Từ vựng trục `what`, `thinking`, `mechanic` | Registry chủ đề chỉ đóng trục `theme` — trục thứ tư, chưa ai đóng |
+| [`content-tagging.md`](../specs/05-content/content-tagging.md) | Từ vựng trục `what`, `thinking`, `mechanic` | Registry chủ đề chỉ đóng trục `theme` — trục thứ tư, chưa ai đóng |
 
 ## 8. Câu hỏi còn mở
 
@@ -457,6 +457,6 @@ nội dung làm nó đổi.
 | 3 | Bộ sinh level sinh `content_pack` bằng tổ hợp có seed hay bằng mô hình ngôn ngữ? Tổ hợp thì tất định và rẻ nhưng lặp; mô hình thì đa dạng nhưng phải qua cổng 4 và cổng 7 của [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) | Bước 4 ở mục 6 | P4 | Backend |
 | 4 | Trần tập trung chủ đề đặt ở mức nào? `school` đang ở 37%. Trần 20% buộc soạn lại hoặc gắn lại tag cho khoảng 40 level đã published, mà bản published thì bất biến theo `BR-CLC-01` | Bước 2 ở mục 6 | P4 | Nội dung |
 | 6 | 162 level không parse được `content_pack` — sửa nội dung cho vừa contract, hay đổi contract cho vừa nội dung? Đổi contract là breaking change `BR-GTC-08` và đụng cả 27 engine; sửa nội dung là 162 version mới. Cấm — NEVER chọn đường thứ ba là nới cổng 1 | Bật `BR-CSA-16`, và mọi thứ ở bước 5 mục 6 | P4 | người quyết |
-| 7 | Trục `what` đóng về bộ nào? Cổng đang ép trên hợp 28 giá trị, tức hợp thức hoá cả hai. Trùng câu hỏi 3 ở mục 11 của [`content-tagging.md`](../specs/01-platform/content-tagging.md) | `BR-ECD-04` không đo được | P4 | người quyết |
+| 7 | Trục `what` đóng về bộ nào? Cổng đang ép trên hợp 28 giá trị, tức hợp thức hoá cả hai. Trùng câu hỏi 3 ở mục 11 của [`content-tagging.md`](../specs/05-content/content-tagging.md) | `BR-ECD-04` không đo được | P4 | người quyết |
 | 8 | Cổng `thinking-coverage` đang đỏ 7 vi phạm ở trục `theme` (`art`, `household`, `technology`). Nhận `art` vào từ vựng rồi gắn lại 3 level, hay gắn lại cả 7? Mục 7.1b của [`content-theme-registry.md`](../specs/05-content/content-theme-registry.md) khuyến nghị đường thứ nhất | `pnpm --filter @mindkid/db test` xanh | P4 | Nội dung |
 | 5 | 21 engine đang ở 3 level: nâng lên sàn, hay đánh dấu `deprecated` một phần trong số đó? Giữ một engine không nội dung tốn chi phí bảo trì mà không mang lại màn chơi nào | Bước 5 ở mục 6 | P5 | người quyết |

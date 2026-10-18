@@ -74,7 +74,7 @@ describe("Cấu hình go-live được parse, không ép kiểu (BR-GLR-06)", ()
  * lọt vào corpus thì trẻ mở ra thấy màn không có câu lệnh — và mọi cổng chiều
  * sâu vẫn đếm nó là một level đủ tiêu chuẩn.
  */
-describe("Corpus seed ❌ NEVER chứa bản nháp chưa soạn (BR-LVB-01)", () => {
+describe("Corpus seed ❌ NEVER chứa bản nháp chưa soạn (BR-LGK-08)", () => {
   it("mọi level đã seed đều có title và instruction thật", () => {
     const unnamed = ALL_SEED_LEVELS.filter(
       (l) =>

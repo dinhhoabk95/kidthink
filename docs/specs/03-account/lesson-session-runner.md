@@ -1,11 +1,11 @@
 ---
 spec: LESSON-SESSION-RUNNER
 title: Chạy một tiết học — bề mặt của người dạy
-area: play
+area: account
 status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-17
+reviewed: 2026-10-18
 owns:
   - Luồng người dạy chạy một tiết học
   - Quy tắc chuyển giữa hoạt động ngoài màn hình và game level
@@ -49,7 +49,7 @@ quan sát chứ không thành văn bản tự do về đứa trẻ.
 |---|---|---|
 | `/lessons/{code}/run` | Người dạy | Bề mặt chính |
 | `/lessons/{code}` | Người dạy | Trang xem trước, có nút bắt đầu |
-| [`curriculum-player.md`](curriculum-player.md) | Người dạy | Một `curriculum_item` trỏ tới lesson mở thẳng vào đây |
+| [`curriculum-player.md`](../04-play/curriculum-player.md) | Người dạy | Một `curriculum_item` trỏ tới lesson mở thẳng vào đây |
 
 ## 4. Main flow
 
@@ -60,7 +60,7 @@ quan sát chứ không thành văn bản tự do về đứa trẻ.
 4. Người dạy bấm bắt đầu. Bề mặt hiện **một bước tại một thời điểm**.
 5. Bước ngoài màn hình: hiện hướng dẫn cho người lớn, cộng hai nhánh "nếu bé làm được ngay"
    và "nếu bé chưa làm được". Không đồng hồ đếm ngược. Người dạy bấm xong khi xong.
-6. Bước game level: bàn giao cho engine theo [`play-session-lifecycle.md`](play-session-lifecycle.md). Xong màn chơi thì
+6. Bước game level: bàn giao cho engine theo [`play-session-lifecycle.md`](../04-play/play-session-lifecycle.md). Xong màn chơi thì
    quyền điều khiển quay lại bề mặt này.
 7. Bước đúc kết: hiện câu hỏi đúc kết cho người dạy hỏi bé.
 8. Màn đánh giá: hiện các mô tả hành vi quan sát được của lesson. Người dạy tick từng mô tả

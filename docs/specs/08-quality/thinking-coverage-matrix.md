@@ -2,27 +2,33 @@
 spec: THINKING-COVERAGE-MATRIX
 title: Ma trận phủ trục tư duy — cổng đo sáu năng lực
 area: quality
-status: implemented
+status: approved
 mvp: false
 phase: P3
-reviewed: 2026-08-22
+reviewed: 2026-10-18
 owns:
   - Ngưỡng phủ nội dung theo trục tư duy
   - Cổng chặn khi một ô phủ tụt dưới sàn
+  - Luật mỗi giá trị trục `thinking` phải có khuôn sinh ra được
+  - Luật mỗi ô phủ có level chạy trên khuôn ngoài rổ cơ bản
 depends_on:
   - CONTENT-TAGGING
   - TAXONOMY-SERVICE
   - CONTENT-LIFECYCLE
+open_tasks:
+  - "#310"
 ---
 
 # Ma trận phủ trục tư duy — cổng đo sáu năng lực
+
+> **Chưa hoàn thành** — Cổng `packages/content-build/tests/gates/thinking-coverage.test.ts` đang đỏ 2 test (trục mechanic 37 so với 38 khuôn; corpus có 12 vi phạm) và không có trong `scripts/test-baseline.json` (`BR-TCM-01`, `BR-TCM-03..07`). Việc còn lại: [Task #310](../../tasks/310-quality-gates-gaps-plan.md).
 
 ## 1. Objective
 
 Sản phẩm tuyên bố rèn luyện sáu năng lực tư duy. Hôm nay không cổng nào trả lời được câu
 "đã phủ đủ chưa" bằng một con số — và tệ hơn, thứ đáng ra để đo đang hỏng lặng lẽ.
 
-[`content-tagging.md`](../01-platform/content-tagging.md) §7.1 khai ba trục là **từ vựng đóng**. Cổng seed thì nhận bất kỳ
+[`content-tagging.md`](../05-content/content-tagging.md) §7.1 khai ba trục là **từ vựng đóng**. Cổng seed thì nhận bất kỳ
 chuỗi nào dạng slug, nên seed hiện tại đã có `counting` và `gross_motor_counting` — hai giá
 trị không thuộc 12 giá trị của trục `thinking`, và cổng in ra là hợp lệ. Trục dùng để đo phủ
 mà tự chế được giá trị mới thì phép đo vô nghĩa.
@@ -45,7 +51,7 @@ Nó đo **catalog**, không đo trẻ. Trẻ học được gì thuộc [`pedago
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `pnpm --filter @mindkid/db test` | Cổng nội dung | Chạy ma trận, mã thoát khác 0 khi thủng sàn |
+| `pnpm --filter @mindkid/content-build exec vitest run tests/gates/thinking-coverage.test.ts` | Cổng nội dung | Chạy ma trận, mã thoát khác 0 khi thủng sàn. Logic ở `packages/content-build/tests/gates/thinking-coverage.ts`, sàn ở `thinking-coverage-config.json` cùng thư mục |
 | [`admin-dashboard.md`](../06-admin/admin-dashboard.md) | Manager | Hiển thị ma trận, ô trống nổi lên trước |
 | Cổng publish của [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) | Cổng nội dung | Chặn publish làm thủng sàn |
 
@@ -75,7 +81,7 @@ Nó đo **catalog**, không đo trẻ. Trẻ học được gì thuộc [`pedago
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-TCM-01` | Từ vựng ba trục **đóng thật**: giá trị ngoài danh sách làm cổng đỏ, không có nhánh slug dự phòng. Cổng sống ở `packages/db/tests/gates/thinking-coverage.ts`. **Trạng thái 2026-08-29:** đóng thật cho `thinking` và `mechanic`; **nới** cho `what` (28 giá trị, hợp hai bộ) và cho `theme` (22 giá trị, hợp hai bộ). Cổng seed thì vẫn có nhánh `SLUG_REGEX.test(tag)` — xem mục 7.3a của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | Nhánh dự phòng hiện tại là lý do `gross_motor_counting` sống được trong seed. Một cổng nhận mọi thứ không phải cổng |
+| `BR-TCM-01` | Từ vựng ba trục **đóng thật**: giá trị ngoài danh sách làm cổng đỏ, không có nhánh slug dự phòng. Cổng sống ở `packages/content-build/tests/gates/thinking-coverage.ts`. **Trạng thái 2026-08-29:** đóng thật cho `thinking` và `mechanic`; **nới** cho `what` (28 giá trị, hợp hai bộ) và cho `theme` (22 giá trị, hợp hai bộ). Cổng seed thì vẫn có nhánh `SLUG_REGEX.test(tag)` — xem mục 7.3a của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | Nhánh dự phòng hiện tại là lý do `gross_motor_counting` sống được trong seed. Một cổng nhận mọi thứ không phải cổng |
 | `BR-TCM-02` | Cổng phải có **ca âm** trong test: một tag bịa đặt phải làm cổng đỏ | Bài học đã trả giá một lần với công cụ lint khác — cổng không có ca âm là cổng không biết mình hỏng |
 | `BR-TCM-03` | Ma trận đếm **chỉ nội dung `published`**, đọc từ corpus seed trong repo. Nguồn không đọc được hoặc hàng không quy được competency hay mechanic thì cổng đỏ, **cấm giá trị mặc định** | Phủ là thứ trẻ mở được hôm nay, không phải thứ đang nằm trong hàng đợi duyệt. Bản cũ trả `[]` khi mất kết nối và mặc định `"C1"` khi không quy được, nên nó in "18/18 ô thiếu" kèm mã thoát 0 và dồn mọi hàng lạ vào C1 |
 | `BR-TCM-04` | Mỗi ô `competency × band tuổi` đạt sàn số game level ở §7.3 | Đây là dạng kiểm được của câu "phủ đủ sáu năng lực cho mọi lứa" |
@@ -86,6 +92,9 @@ Nó đo **catalog**, không đo trẻ. Trẻ học được gì thuộc [`pedago
 | `BR-TCM-09` | Báo cáo in **ô còn thiếu và thiếu bao nhiêu**, không in tỉ lệ phần trăm tổng | Một con số phần trăm 92 che được sáu ô trống. Danh sách ô thiếu thì không che được gì |
 | `BR-TCM-10` | Ma trận này **không** dùng làm bằng chứng hiệu quả sư phạm | Phủ catalog và hiệu quả với trẻ là hai thứ khác nhau. Trộn chúng là đúng loại tuyên bố mà `BR-PED-01` cấm |
 | `BR-TCM-11` | Ngưỡng sàn cấu hình được qua tệp cấu hình bên ngoài, không hardcode hằng số trong mã nguồn | Cho phép vận hành điều chỉnh mở sàn dần theo từng phase mà không phải can thiệp sửa mã nguồn |
+| `BR-TGB-03` (`inhibit` và `shift` có nguồn) | Mỗi giá trị `inhibit` và `shift` của trục `thinking` phải có **ít nhất một** `mechanic` sinh ra được: `go-nogo` (`GT-026`) cho `inhibit`, `rule-switch` (`GT-027`) cho `shift` | Một trục khai 12 giá trị mà hai giá trị không cách nào đạt được là một trục nói dối. Đo 2026-08-22, `shift` bằng 0 trên toàn catalog và sẽ đứng yên ở 0 dù soạn thêm bao nhiêu nội dung, cho tới khi có khuôn đổi luật giữa chừng |
+| `BR-TCL-04` (khuôn ngoài rổ cơ bản) | Mỗi ô `competency × band tuổi` có **≥1** level chạy trên khuôn ngoài rổ cơ bản `GT-001`..`GT-008` | Đây là chỗ chữ "đa dạng" thành số đếm được. Sàn hai `mechanic` của `BR-TCM-05` đạt được bằng hai khuôn dễ nhất, nên nó không đo được điều này |
+| `BR-TCL-07` (không nới sàn) | Ô không đạt sàn thì soạn thêm level, **cấm** hạ sàn hay mở rộng từ vựng tag để nội dung hiện tại đi qua | Nới cổng để nội dung hiện tại đi qua là đúng thứ đã làm hỏng trục `thinking` một lần rồi (mục 1) |
 
 
 ## 7. Data
@@ -105,7 +114,7 @@ review qua PR (`D7`).
 
 ### 7.1 Từ vựng đóng
 
-Nguồn sự thật là [`content-tagging.md`](../01-platform/content-tagging.md) §7.1. File này không chép lại giá trị — nó chỉ
+Nguồn sự thật là [`content-tagging.md`](../05-content/content-tagging.md) §7.1. File này không chép lại giá trị — nó chỉ
 ràng buộc rằng cổng đọc đúng nguồn đó và không có nhánh dự phòng.
 
 Trục `thinking` có 12 giá trị. Trục `what` có 14. Trục `mechanic` suy ra từ template, không
@@ -126,6 +135,7 @@ nhập tay.
 | Phủ năng lực | ≥6 game level mỗi ô | P3 |
 | Phủ năng lực | ≥1 lesson mỗi ô | P4 |
 | Đa dạng cơ chế | ≥2 mechanic mỗi ô | P3 |
+| Khuôn ngoài rổ cơ bản | ≥1 level ngoài `GT-001`..`GT-008` mỗi ô (`BR-TCL-04`) | P3 |
 | Phủ tiến trình tư duy | ≥5 game level mỗi giá trị | P4 |
 | Luật cân bằng | tỉ lệ cao nhất trên thấp nhất ≤3 | P4 |
 
@@ -151,11 +161,9 @@ không.
 
 Luật cân bằng ở `BR-TCM-07` (tỉ lệ cao nhất trên thấp nhất ≤3) đang đạt ở 2,87 — sát trần.
 
-**Cổng đang đỏ.** `packages/db/tests/gates/thinking-coverage.test.ts` fail với 7 vi phạm
-`BR-TCM-01`, tất cả ở trục `theme`: `household` (2 level), `art` (4), `technology` (1). Ba
-giá trị đó không có trong `CANONICAL_THEME_TAGS`. Đường sửa ở mục 7.1b của
-[`content-theme-registry.md`](../05-content/content-theme-registry.md): nhận `art` vào từ
-vựng, gắn lại 3 level còn lại bằng version mới.
+**Cổng đang đỏ** — xem khối "Chưa hoàn thành" ở đầu file. Hai test đỏ của
+`packages/content-build/tests/gates/thinking-coverage.test.ts` là việc của Task #310, không phải
+lý do nới sàn (`BR-TCL-07`).
 
 Sàn không phải để gây khó; nó để mức hiện có không tụt xuống mà không ai thấy.
 
@@ -245,6 +253,22 @@ Scenario: BR-TCM-06 — tiến trình tư duy dưới sàn bị nêu
   Given giá trị thinking "plan" có 0 game level published
   When chạy cổng phủ
   Then báo cáo nêu plan thiếu 5
+
+Scenario: BR-TGB-03 — inhibit và shift có nguồn sinh ra
+  Given khuôn GT-026 và GT-027 đã published và có level trong corpus seed
+  When chạy cổng đo phủ trục tư duy
+  Then giá trị "inhibit" khác 0
+  And giá trị "shift" khác 0
+
+Scenario: BR-TCL-04 — ô chỉ có khuôn cơ bản thì bị chặn
+  Given ô C3 band 5-6 có tám level và tất cả chạy trên GT-001 tới GT-008
+  When chạy cổng phủ
+  Then cổng đỏ và nêu ô đó thiếu khuôn ngoài rổ cơ bản
+
+Scenario: BR-TCL-07 — không nới sàn để nội dung đi qua
+  Given một ô còn thiếu hai level
+  When ai đó hạ sàn của ô đó xuống
+  Then thay đổi đó bị từ chối ở review
 ```
 
 ## 10. Boundaries
@@ -265,13 +289,14 @@ Scenario: BR-TCM-06 — tiến trình tư duy dưới sàn bị nêu
 - Thay danh sách ô thiếu bằng một tỉ lệ phần trăm.
 - Dùng ma trận này làm bằng chứng hiệu quả sư phạm.
 - Chặn archive vì lý do phủ.
+- Hạ sàn hoặc mở rộng từ vựng tag để nội dung hiện tại đi qua (`BR-TCL-07`).
 
 ## 11. Open questions
  
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ | Quyết định / Trạng thái |
 |---|---|---|---|---|---|
-| 1 | 12 giá trị trục `thinking` có phủ được 230 skill không? `plan`, `inhibit`, `shift` chưa có nội dung nào — thiếu nội dung hay thiếu giá trị phù hợp? Trùng câu hỏi 1 ở [`content-tagging.md`](../01-platform/content-tagging.md) §11 | Sàn `BR-TCM-06` | P4 | Nội dung | **Đã đóng (Task #94 WP94.0):** 12 giá trị trục `thinking` là từ vựng đóng Lớp 1 chuẩn. Ở P3, sàn phủ năng lực (≥6 game level) và mechanic (≥2 mechanic) được cưỡng chế; sàn phủ 12 trục `thinking` (≥5 game level) được theo dõi dưới dạng cảnh báo ở P3 và áp dụng chặn ở P4 khi mở rộng biên soạn. |
+| 1 | 12 giá trị trục `thinking` có phủ được 230 skill không? `plan`, `inhibit`, `shift` chưa có nội dung nào — thiếu nội dung hay thiếu giá trị phù hợp? Trùng câu hỏi 1 ở [`content-tagging.md`](../05-content/content-tagging.md) §11 | Sàn `BR-TCM-06` | P4 | Nội dung | **Đã đóng (Task #94 WP94.0):** 12 giá trị trục `thinking` là từ vựng đóng Lớp 1 chuẩn. Ở P3, sàn phủ năng lực (≥6 game level) và mechanic (≥2 mechanic) được cưỡng chế; sàn phủ 12 trục `thinking` (≥5 game level) được theo dõi dưới dạng cảnh báo ở P3 và áp dụng chặn ở P4 khi mở rộng biên soạn. |
 | 2 | Sàn nên tính theo band tuổi hay theo strand? 41 strand thì ma trận 6 × 3 là thô | Độ mịn của phép đo | P4 | người quyết | **Đã đóng (Task #94 WP94.0):** P3 áp dụng sàn theo 6 năng lực × 3 dải tuổi (18 ô) để kiểm soát cân bằng nền tảng. Phân rã theo 41 strand được đưa vào dashboard giám sát chuyên sâu ở P4. |
 | 3 | Lesson và game level có nên chung một sàn không? Một lesson 20 phút không tương đương một màn chơi 2 phút | Sàn lesson ở §7.3 | P4 | Nội dung | **Đã đóng (Task #94 WP94.0):** Tách sàn riêng giữa game level và lesson. P3 áp dụng sàn ≥6 game level mỗi ô. Sàn lesson (≥1 lesson mỗi ô) áp dụng từ P4. |
-| 4 | Trục `what` và trục `theme` vẫn đang nới: danh sách hợp lệ của cổng chứa 14 viết tắt seed-master (`cnt`, `cmp`, `mem`, …) và 10 theme ngoài 12 giá trị của [`content-tagging.md`](../01-platform/content-tagging.md) §7.1–§7.2. Gắn lại hai trục này về từ vựng đóng, hay đóng từ vựng lại quanh giá trị đang dùng? | `BR-TCM-01` cho hai trục còn lại | P4 | Nội dung | Mở. Trục `thinking` và `mechanic` đã đóng thật ngày 2026-08-22; hai trục còn lại chưa |
+| 4 | Trục `what` và trục `theme` vẫn đang nới: danh sách hợp lệ của cổng chứa 14 viết tắt seed-master (`cnt`, `cmp`, `mem`, …) và 10 theme ngoài 12 giá trị của [`content-tagging.md`](../05-content/content-tagging.md) §7.1–§7.2. Gắn lại hai trục này về từ vựng đóng, hay đóng từ vựng lại quanh giá trị đang dùng? | `BR-TCM-01` cho hai trục còn lại | P4 | Nội dung | Mở. Trục `thinking` và `mechanic` đã đóng thật ngày 2026-08-22; hai trục còn lại chưa |
 | 5 | `content_pack` của **169 trên 172** game level trong corpus seed không parse được bằng `content_contract` của template chúng khai. `BR-GTC-10` yêu cầu điều ngược lại, nhưng bộ cổng seed ở [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) không cổng nào parse `content_pack`, và bộ test tuân thủ chỉ parse `fixtures.ts` chứ không parse corpus seed. Sửa nội dung, hay sửa contract? | `BR-GTC-10`, và mọi kế hoạch nội dung dựa trên corpus seed | P4 | người quyết | Mở. Đo ngày 2026-08-22 |

@@ -6,7 +6,7 @@
 >
 > **Ba acceptance của task này KHÔNG hoàn thành** — đã chuyển sang Task #3 T5/T6, xem
 > [`02-foundation-approve-plan.md`](02-foundation-approve-plan.md) §Nợ Task #2 để lại:
-> 1. [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §Ràng buộc chờ — **chưa tạo**, 11 quyết định T8–T12 không ở đâu tập trung.
+> 1. [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §Ràng buộc chờ — **chưa tạo**, 11 quyết định T8–T12 không ở đâu tập trung.
 > 2. [`SPEC.md`](../SPEC.md) §13 Cổng ra P0 — **chưa có** dòng neo D-W, cũng chưa có dòng backup/monitoring (Q4).
 > 3. C6 "cột vì sao không rỗng" — hạ xuống **warning** ở `2cfdb71`, 228 warning còn tồn.
 >
@@ -170,7 +170,7 @@
 Mỗi spec chạy đúng 4 bước: (1) checklist §10 phần thủ công → (2) đóng OQ chặn kèm **vì sao +
 ngày** → (3) `status: approved` + `reviewed:` → (4) `lint:specs` xanh (C8 gác thứ tự).
 
-Mỗi quyết định đụng schema thì ghi thêm một dòng vào [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §Ràng buộc chờ.
+Mỗi quyết định đụng schema thì ghi thêm một dòng vào [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §Ràng buộc chờ.
 
 ### T8 — Layer 0
 - [ ] [`glossary.md`](../specs/00-foundation/glossary.md) — 0 OQ, approve sau checklist
@@ -207,7 +207,7 @@ Mỗi quyết định đụng schema thì ghi thêm một dòng vào [`data-mode
 - [ ] 16/16 `00-foundation` = `status: approved`
 - [ ] `pnpm --filter @mindkid/gates test` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0
 - [ ] **Ca âm cuối**: đặt [`glossary.md`](../specs/00-foundation/glossary.md) về `draft` thì C8 làm đỏ 11 spec phụ thuộc nó
-- [ ] [`todo.md`](../tasks/todo.md) ghi việc kế tiếp: **P0 bước 7** — [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) → `schema-*`
+- [ ] [`todo.md`](../tasks/todo.md) ghi việc kế tiếp: **P0 bước 7** — [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) → `schema-*`
 - [ ] người Người duyệt — hành động khó đảo, mở đường cho PR schema đầu tiên
 
 ---

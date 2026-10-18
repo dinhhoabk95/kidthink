@@ -4,6 +4,7 @@ title: Cách đọc corpus spec và tài liệu task
 version: 1.0.0
 status: active
 created: 2026-08-07
+reviewed: 2026-10-18
 ---
 
 # Cách đọc corpus spec và tài liệu task
@@ -22,9 +23,9 @@ Lần đầu vào dự án, đọc đúng 4 file này trước, theo thứ tự:
 
 | # | File | Trả lời câu gì |
 |---|---|---|
-| 1 | [`../SPEC.md`](../SPEC.md) §0 | 10 quyết định định hình dự án. Đọc **hết** — mọi thứ sau đều dựa vào |
+| 1 | [`../SPEC.md`](../SPEC.md) §0 | 12 quyết định định hình dự án. Đọc **hết** — mọi thứ sau đều dựa vào |
 | 2 | [`00-foundation/glossary.md`](00-foundation/glossary.md) §7 | Từ vựng nghiệp vụ: competency, strand, skill, template vs level |
-| 3 | [`index.md`](index.md) | Bản đồ 130 spec, tra "muốn biết X thì đọc file nào" |
+| 3 | [`index.md`](index.md) | Bản đồ 194 spec (cộng 38 phiếu engine), tra "muốn biết X thì đọc file nào" |
 | 4 | File này | Ký hiệu và cách đọc |
 
 Sau đó mới mở spec cụ thể. Cấm đọc corpus theo thứ tự thư mục — `00-foundation/` là
@@ -71,11 +72,14 @@ depends_on:                       # spec phải approved TRƯỚC file này
 | Giá trị | Nghĩa |
 |---|---|
 | `draft` | Đang viết hoặc chờ duyệt. Nội dung có thể đổi |
-| `approved` | Đã duyệt. Đổi là **breaking** — phải ghi lại vì sao, giữ cả kết luận cũ |
-| `implemented` | Acceptance criteria §9 đã **xanh thật**. Không đặt vì "code viết xong rồi" |
+| `approved` | Đã duyệt. Đổi là **breaking** — phải ghi lại vì sao, giữ cả kết luận cũ. Code chưa khớp đủ |
+| `implemented` | Acceptance criteria §9 đã **xanh thật** và không còn `open_tasks`. Không đặt vì "code viết xong rồi" |
+| `published` | Chỉ phiếu engine `01-platform/engines/GT-*.md` — phiếu đủ khuôn, đã đối chiếu registry |
 
-Lưu ý: `status: approved` + code chưa tồn tại là trạng thái **bình thường** — cả 26 spec
-`approved` hiện tại đều chưa có dòng code nào.
+Spec `approved` hay `draft` mà code chưa khớp mang khoá `open_tasks` (ví dụ `["#293"]`) và một
+khối **"Chưa hoàn thành"** ngay dưới tiêu đề, trỏ tới task giữ phần việc còn lại. Ngày
+2026-10-18 có 87 spec như vậy — cột **Task mở** của [`index.md`](index.md) liệt kê từng spec.
+Quy ước đầy đủ: mục 3.1 của [`CONVENTIONS.md`](CONVENTIONS.md).
 
 **`phase` là phase *implement*, không phải phase *approve*.**
 
@@ -225,7 +229,7 @@ tiêu đề, cấm đọc tuần tự từng ô.
 |---|---|
 | `BR-XXX-NN` là gì | `grep -rn 'BR-XXX-NN' docs/specs/` |
 | `D-XX` là quyết định gì | `grep -rn '\| \*\*D-XX\*\*' docs/tasks/` |
-| Spec nào `owns` một bảng | `grep -rn '<tên_bảng>' docs/specs/01-platform/data-model-overview.md` |
+| Spec nào `owns` một bảng | `grep -rn '<tên_bảng>' docs/specs/00-foundation/data-model-overview.md` |
 | Mã lỗi có hợp lệ không | [`00-foundation/error-codes.md`](00-foundation/error-codes.md) |
 | Format một loại mã | [`00-foundation/id-conventions.md`](00-foundation/id-conventions.md) §7 |
 | Spec nào đã approved | `grep -rl '^status: approved' docs/specs --include='*.md'` |

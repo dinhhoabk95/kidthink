@@ -22,7 +22,7 @@ function main(): void {
 
   const taggingSources = [
     repoPath("packages/db/src/schema/tagging.ts"),
-    repoPath("docs/specs/01-platform/content-tagging.md"),
+    repoPath("docs/specs/05-content/content-tagging.md"),
   ];
 
   const result = scanEngineBehaviorGate({

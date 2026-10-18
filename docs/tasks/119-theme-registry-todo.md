@@ -10,7 +10,7 @@
 
 - [x] Đọc `CANONICAL_THEME_TAGS` ở `packages/db/tests/gates/thinking-coverage.ts:141` — đếm 22.
 - [x] Đọc trục `theme` ở `packages/db/src/seed-master/content-tags.ts` — đếm 12.
-- [x] Đọc mục 7.2 của [`content-tagging.md`](../specs/01-platform/content-tagging.md).
+- [x] Đọc mục 7.2 của [`content-tagging.md`](../specs/05-content/content-tagging.md).
 - [x] Xác nhận `packages/shared/src/constants/` chưa tồn tại.
 - [x] `pnpm --filter @mindkid/db report:tags` — ghi phân bố `theme_tag` thật.
 - [x] Đếm level mang `household` `technology` `art` — kỳ vọng 2 · 1 · 4.

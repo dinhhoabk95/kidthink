@@ -126,7 +126,7 @@ entitlement-grant · subscription-view · package-catalog-admin (độc lập)
 
 **Cảnh báo:** mọi cột schema phát sinh trong lô này phải sửa
 [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) **và** mục 7 của
-[`data-model-overview.md`](../specs/01-platform/data-model-overview.md) trong **cùng một commit**
+[`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) trong **cùng một commit**
 — `C12` kiểm hai chiều.
 
 ### Bước 5 — [`payment-order-create.md`](../specs/03-account/payment-order-create.md)

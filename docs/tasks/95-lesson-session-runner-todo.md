@@ -8,7 +8,7 @@
 
 ## Preflight
 
-- [x] Đọc [`lesson-session-runner.md`](../specs/04-play/lesson-session-runner.md) §6, §7, §8, §11.
+- [x] Đọc [`lesson-session-runner.md`](../specs/03-account/lesson-session-runner.md) §6, §7, §8, §11.
 - [x] Xác nhận bốn dependency của spec đều `implemented`.
 - [x] Xác nhận ba bảng ở §7 chưa tồn tại trong lược đồ.
 - [x] `pnpm check` và `pnpm test` xanh trước khi sửa dòng đầu tiên.

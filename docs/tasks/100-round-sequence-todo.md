@@ -34,7 +34,7 @@
 - [x] Migration expand: copy `content_pack`, `difficulty_params`, `instruction` của mọi level thành `round_index = 0`.
 - [x] `pnpm --filter @mindkid/db test` xanh.
 - [ ] Đọc một level cũ trước và sau migration, so từng field: phải y hệt.
-- [x] Cập nhật mục 7.4 của [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) — bảng mới phải khớp hai chiều với [`data-model-overview.md`](../specs/01-platform/data-model-overview.md).
+- [x] Cập nhật mục 7.4 của [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) — bảng mới phải khớp hai chiều với [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md).
 
 ## WP100.3 — Cổng publish cho 13 rule biên tập
 

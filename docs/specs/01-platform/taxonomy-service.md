@@ -5,7 +5,7 @@ area: platform
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-07
+reviewed: 2026-10-18
 owns:
   - Cấu trúc cây competency → strand → skill → learning objective
   - Bất biến DAG của skill_prerequisites
@@ -78,7 +78,7 @@ C5 nhận 5 strand nhận biết mới (`C5.LET`, `C5.DGR`, `C5.TMK`, `C5.RIM`, 
 | Nơi | |
 |---|---|
 | `packages/taxonomy/` | Pure TS — dựng cây, traversal, kiểm bất biến |
-| `packages/db/src/seed-master/taxonomy/` | Seed 6 + 71 + 408 + ≥1.224 |
+| `packages/content-build/src/seed-master/taxonomy/` | Seed 6 + 71 + 408 + ≥1.224 |
 | `GET /api/guest/taxonomy` | Cây công khai cho SEO và trang chương trình |
 | `06-admin/taxonomy-browser.md` | Manager duyệt |
 
@@ -127,7 +127,7 @@ C5 nhận 5 strand nhận biết mới (`C5.LET`, `C5.DGR`, `C5.TMK`, `C5.RIM`, 
 | `learning_objectives` | `id` PK, `code` (hiển thị), `skill_id` FK, `behaviour`, `observable_criteria`, `position` |
 
 Cột thật xem [`schema-content-taxonomy.md`](schema-content-taxonomy.md) §7.1 — file này chỉ
-liệt kê field, không phải nguồn `owns`. FK dùng `id` theo [`data-model-overview.md`](data-model-overview.md) `BR-DM-13`
+liệt kê field, không phải nguồn `owns`. FK dùng `id` theo [`data-model-overview.md`](../00-foundation/data-model-overview.md) `BR-DM-13`
 (D-AE, sửa lại 2026-08-07) — `code` giữ lại làm định danh hiển thị, không dùng làm FK.
 
 ### 7.2 Phân bố MVP

@@ -2,10 +2,10 @@
 spec: ENGINE-RENDER-CONTRACT
 title: Hợp đồng vẽ của engine — từ content_pack ra pixel
 area: platform
-status: draft
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-29
+reviewed: 2026-10-18
 owns:
   - Hình dạng hợp đồng vẽ của một game engine
   - Luật mọi engine active phải cài đặt render

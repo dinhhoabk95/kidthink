@@ -2,10 +2,12 @@
 spec: LESSON-TOPIC-COMPOSITION
 title: Một bài học gồm nhiều chủ đề, mỗi chủ đề có nhiều khuôn trò chơi
 area: content
-status: draft
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-09-20
+reviewed: 2026-10-18
+open_tasks:
+  - "#309"
 owns:
   - Quan hệ một bài học có nhiều chủ đề học
   - Quan hệ một chủ đề có nhiều khuôn trò chơi hoạt động
@@ -21,6 +23,8 @@ depends_on:
 ---
 
 # Một bài học gồm nhiều chủ đề, mỗi chủ đề có nhiều khuôn trò chơi
+
+> **Chưa hoàn thành** — Cổng `check:lesson-topics` chạy theo bậc thang nợ: `packages/content-build/src/thresholds/lesson-topics-debt.json` còn 25 lesson vi phạm `BR-LTC-01..04` (`level_stock_short` 18, `matrix_empty` 7); `BR-LTC-08` chưa có kiểm. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
 
 ## 1. Objective
 
@@ -57,7 +61,7 @@ corpus**; file này ép đa dạng **bên trong một bài**.
 | `packages/content/src/lessons/**` | Người soạn | Nguồn sự thật của bài học. Trường `topics[]` là mới |
 | `packages/content/src/activities/**` | Người soạn | Hoạt động, gồm `digital_game` trỏ `ref_code` |
 | `packages/content-build/src/gates/skill-template-affinity.ts` | Dev | Có sẵn — trả khuôn hợp lệ theo kỹ năng |
-| `packages/content-build/src/gates/lesson-variety.ts` | Dev | Có sẵn — phải mở rộng để đo trong một bài |
+| `packages/content-build/tests/gates/lesson-variety.ts` | Dev | Có sẵn — phải mở rộng để đo trong một bài |
 
 ## 4. Main flow
 

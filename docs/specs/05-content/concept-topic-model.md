@@ -2,10 +2,10 @@
 spec: CONCEPT-TOPIC-MODEL
 title: Chủ đề làm quen — bài học mở đầu là game level, không phải kỹ năng
 area: content
-status: draft
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-09-06
+reviewed: 2026-10-18
 owns:
   - Từ vựng chủ đề làm quen và chỗ nó được khai
   - Luật gắn một bài học mở đầu vào các kỹ năng chơi mà nó dạy

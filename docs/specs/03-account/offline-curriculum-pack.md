@@ -1,11 +1,13 @@
 ---
 spec: OFFLINE-CURRICULUM-PACK
 title: Gói học tập ngoại tuyến và quản lý hạn mức
-area: platform
-status: implemented
+area: account
+status: approved
 mvp: false
 phase: P5
-reviewed: 2026-08-16
+reviewed: 2026-10-18
+open_tasks:
+  - "#303"
 owns:
   - Manifest gói học tập offline và xác thực tính toàn vẹn asset
   - Cơ chế cấp quyền hạn lease, kiểm soát hết hạn và thu hồi gói offline
@@ -24,6 +26,8 @@ depends_on:
 
 # Gói học tập ngoại tuyến và quản lý hạn mức
 
+> **Chưa hoàn thành** — `BR-OCP-05`: chưa có đường dọn gói offline (cache `OFFLINE_PACK_CACHE_NAME` + store client) khi đăng xuất hoặc bị thu hồi quyền lợi; `sw.js` chỉ dọn cache cũ lúc activate. Việc còn lại: [Task #303](../../tasks/303-offline-play-buffer-plan.md).
+
 ## 1. Objective
 
 Cho phép người lớn chủ động tải trước toàn bộ nội dung của một tuần hoặc một chủ đề học tập
@@ -34,8 +38,8 @@ Cache Storage), cấp quyền hạn theo cơ chế lease có thời hạn (tối
 tiến độ khi thiết bị có mạng trở lại.
 
 Spec này sở hữu manifest gói học tập, cơ chế lease/revocation và quản lý lưu trữ offline nâng cao;
-kế thừa cơ chế đệm phiên cục bộ từ [`offline-play.md`](offline-play.md) và cài đặt ứng dụng từ
-[`pwa-install.md`](pwa-install.md).
+kế thừa cơ chế đệm phiên cục bộ từ [`offline-play.md`](../01-platform/offline-play.md) và cài đặt ứng dụng từ
+[`pwa-install.md`](../01-platform/pwa-install.md).
 
 ## 2. Actors
 

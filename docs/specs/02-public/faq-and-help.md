@@ -2,10 +2,12 @@
 spec: FAQ-AND-HELP
 title: Câu hỏi thường gặp và hướng dẫn
 area: public
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#291"
 owns:
   - Nội dung FAQ và trang hướng dẫn
 depends_on:
@@ -13,6 +15,8 @@ depends_on:
 ---
 
 # Câu hỏi thường gặp và hướng dẫn
+
+> **Chưa hoàn thành** — `BR-FAQ-04`: nội dung FAQ còn hằng số `FAQ_ITEMS` trong `packages/shared` (đọc ở `faq.vue` và `home.get.ts`), chưa đọc từ `seo_pages` `page_type='faq'` nên admin không sửa được. Việc còn lại: [Task #291](../../tasks/291-public-account-small-gaps-plan.md).
 
 ## 1. Objective
 

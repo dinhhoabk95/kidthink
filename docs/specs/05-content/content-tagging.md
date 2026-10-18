@@ -1,11 +1,13 @@
 ---
 spec: CONTENT-TAGGING
 title: Gắn thẻ nội dung ba trục
-area: platform
-status: implemented
+area: content
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#305"
 owns:
   - Từ vựng ba trục what/thinking/mechanic
   - content_skill_map và weight
@@ -16,6 +18,8 @@ depends_on:
 ---
 
 # Gắn thẻ nội dung ba trục
+
+> **Chưa hoàn thành** — Chưa có route `PUT /api/managers/content/{type}/{id}/tags` (mục 8); validator ở `packages/db/src/tagging.ts` chưa được route nào gọi, và `BR-TAG-05`/`BR-TAG-06` chưa có test chứng minh. Việc còn lại: [Task #305](../../tasks/305-platform-api-gaps-plan.md).
 
 ## 1. Objective
 
@@ -39,7 +43,7 @@ lọc theo một cây.
 
 | Nơi | |
 |---|---|
-| `packages/db/src/seed-master/content-tags.ts` | Từ vựng Lớp 1 |
+| `packages/content-build/src/seed-master/content-tags.ts` | Từ vựng Lớp 1 |
 | `06-admin/game-level-studio.md` | Gắn tag |
 | `01-platform/content-search.md` | Tiêu thụ tag |
 
@@ -70,7 +74,7 @@ lọc theo một cây.
 | `BR-TAG-04` | Mỗi nội dung có **đúng một** skill `weight = 1.0` | Hai mục tiêu chính là không có mục tiêu chính |
 | `BR-TAG-05` | Tag do User tạo Cấm — **NEVER** vào catalog công khai | Tag tự do không qua kiểm duyệt từ vựng — một User đặt tên xúc phạm hay sai chính tả mà lọt vào tìm kiếm công khai thì cả hệ thống thừa hưởng lỗi cá nhân đó |
 | `BR-TAG-06` | AI **đề xuất** tag, người **xác nhận**. Cấm tự gắn | Tag sai làm nội dung không tìm thấy hoặc tìm nhầm |
-| `BR-TAG-07` | `content_tag_map` là FK polymorphic → **bắt buộc** test bắt orphan | [`data-model-overview.md`](data-model-overview.md) `BR-DM-04` — FK đa hình không ép được ở Postgres, nên đây là 1 trong 9 chỗ đóng phải có integration test, không phải khuyến nghị |
+| `BR-TAG-07` | `content_tag_map` là FK polymorphic → **bắt buộc** test bắt orphan | [`data-model-overview.md`](../00-foundation/data-model-overview.md) `BR-DM-04` — FK đa hình không ép được ở Postgres, nên đây là 1 trong 9 chỗ đóng phải có integration test, không phải khuyến nghị |
 
 ## 7. Data
 
@@ -83,7 +87,7 @@ lọc theo một cây.
 | **mechanic** | `tap-select` `tap-select-multi` `drag-to-container` `sort-groups` `pair-match` `sequence-order` `number-bond` `drag-to-slot` `clue-deduction` `substitution` `matrix-choice` `flash-recall` `maze-route` `balance-scale` `sudoku-mini` `clock-hands` `block-stack` `listen-respond` `rotate-transform` `memory-flip` `mirror-complete` `hidden-object` `construct` `trace-path` `spot-difference` `go-nogo` `rule-switch` `tap-count` `remove-from-set` `measure-with-unit` `coin-compose` `pour-quantity` `weave-grid` `beat-sequence` `command-sequence` `free-create` |
 
 Trục `mechanic` suy ra từ `game_templates.mechanic` — không nhập tay. Ba mươi sáu giá trị
-khớp một–một với 36 engine ở [`engines/index.md`](engines/index.md).
+khớp một–một với 36 engine ở [`engines/index.md`](../01-platform/engines/index.md).
 
 **Độ trôi đo ngày 2026-08-29 trên 228 game level:**
 
@@ -98,7 +102,7 @@ chứng minh điều đó. Mười một giá trị ngoài của trục `what` l
 khái niệm mới.
 
 **Trục `what` có cổng, nhưng cổng đó ép trên một bộ khác.** `CANONICAL_WHAT_TAGS` ở
-`packages/db/tests/gates/thinking-coverage.ts` chứa **28** giá trị: 14 của mục 7.1 này cộng
+`packages/content-build/tests/gates/thinking-coverage.ts` chứa **28** giá trị: 14 của mục 7.1 này cộng
 14 chữ viết tắt của Lớp 1, kèm chú thích `// DB seed-master abbreviations`. Vì vậy cổng xanh
 trong khi corpus dùng lẫn hai bộ.
 
@@ -112,14 +116,14 @@ Xem câu hỏi 3 ở mục 11.
 ### 7.2 Tag chủ đề (trục thứ tư) — chủ đã chuyển
 
 Trục `theme` **không còn thuộc file này**. Từ vựng, trần tập trung, và cổng cưỡng chế đã
-chuyển sang [`content-theme-registry.md`](../05-content/content-theme-registry.md) (Task #113/#119,
+chuyển sang [`content-theme-registry.md`](content-theme-registry.md) (Task #113/#119,
 2026-08-29). File này giữ nguyên ba trục sư phạm `what`, `thinking`, `mechanic`.
 
 Nguồn sự thật duy nhất cho từ vựng chủ đề định nghĩa tại
 `packages/shared/src/constants/content-themes.ts` (`BR-CTR-12`).
 
 Lưu trong `content_tags` với `axis = 'theme'` — cột `axis` của
-[`schema-content-taxonomy.md`](schema-content-taxonomy.md) §7.2 khai đúng 4 giá trị
+[`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md) §7.2 khai đúng 4 giá trị
 (`what`\|`thinking`\|`mechanic`\|`theme`); đây vẫn là chỗ giá trị thứ tư đó được dùng, và ràng
 buộc trên nó nay đọc ở spec mới.
 
@@ -202,6 +206,6 @@ Scenario: BR-TAG-07 — orphan tag map bị bắt
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Từ vựng `what` và `thinking` đã đủ phủ 230 skill chưa? Cần đối chiếu. **Không chặn approve spec này** — từ vựng là Lớp 1, mở rộng qua PR như mọi hằng số Lớp 1 khác, không phải quyết định kiến trúc | [`content-seed-authoring.md`](content-seed-authoring.md) — lộ ra khi seeder thật cố gắn tag cho 230 skill | P1 | hoãn — đo được khi seed |
-| 2 | `weight` do người đặt hay suy từ mức độ khớp LO? | [`adaptive-engine.md`](adaptive-engine.md) | P3 | hoãn — P3, engine chưa tồn tại |
-| 3 | Trục `what` có 160 trên 239 lượt gắn nằm ngoài từ vựng, toàn chữ viết tắt tự phát. Gắn lại tag cho corpus theo 14 giá trị đang có, hay nâng danh sách viết tắt lên thành từ vựng? Bản published bất biến nên mọi cách đều là INSERT version mới | `BR-ECD-04` (đa dạng trục nội dung) của [`engine-content-depth.md`](../05-content/engine-content-depth.md) không đo được | P4 | người quyết |
+| 1 | Từ vựng `what` và `thinking` đã đủ phủ 230 skill chưa? Cần đối chiếu. **Không chặn approve spec này** — từ vựng là Lớp 1, mở rộng qua PR như mọi hằng số Lớp 1 khác, không phải quyết định kiến trúc | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) — lộ ra khi seeder thật cố gắn tag cho 230 skill | P1 | hoãn — đo được khi seed |
+| 2 | `weight` do người đặt hay suy từ mức độ khớp LO? | [`adaptive-engine.md`](../01-platform/adaptive-engine.md) | P3 | hoãn — P3, engine chưa tồn tại |
+| 3 | Trục `what` có 160 trên 239 lượt gắn nằm ngoài từ vựng, toàn chữ viết tắt tự phát. Gắn lại tag cho corpus theo 14 giá trị đang có, hay nâng danh sách viết tắt lên thành từ vựng? Bản published bất biến nên mọi cách đều là INSERT version mới | `BR-ECD-04` (đa dạng trục nội dung) của [`engine-content-depth.md`](engine-content-depth.md) không đo được | P4 | người quyết |

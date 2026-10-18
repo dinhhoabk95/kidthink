@@ -192,7 +192,7 @@ parent-gate → play-entry-and-profile-select        scaffolding-and-hints (đ�
 
 Đây là lô đụng bảng `play_sessions` và `play_events`. **Mọi thay đổi cột phát sinh ở đây phải
 sửa [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) và mục 7 của
-[`data-model-overview.md`](../specs/01-platform/data-model-overview.md) cùng lúc** — `C12` kiểm
+[`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) cùng lúc** — `C12` kiểm
 bản đồ bảng hai chiều và sẽ đỏ nếu chỉ sửa một bên. Cả hai file đó là `P0` đã `approved`, nên
 sửa chúng là **đổi contract**: ghi `D-*` và nêu ở cổng dừng.
 
@@ -237,7 +237,7 @@ Bảy việc đầu là vòng lặp của Task #5 và Task #6, giữ nguyên. Vi
    định dạng mã ở [`id-conventions.md`](../specs/00-foundation/id-conventions.md) mục 7; khoá
    ngoại dùng `id` (`D-AE`); kiến trúc Sidebase Local + JWT access + xoay refresh token ở
    [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) mục 7.4; bản đồ
-   bảng ở [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) mục 7; danh
+   bảng ở [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) mục 7; danh
    sách đa hình 9 mục (`D-AQ`).
 3. **Sửa cảnh báo `C6`** — điền cột "vì sao" cho mọi rule đang trống. Không xoá rule để hết cảnh
    báo. [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 5: rule không có "vì sao" sẽ bị người sau
@@ -328,7 +328,7 @@ tách ra chạy trước Task #7 — chín spec đó là phần duy nhất của
 | Rủi ro | Ảnh hưởng | Giảm thiểu |
 |---|---|---|
 | 8 quyết định cần chủ dự án nằm rải khắp 5 lô | Cao — dừng việc nhiều lần | Gom một phiên ở Cổng dừng A (mục 7) |
-| Lô B phát sinh cột schema mới | Cao — đổi 2 spec `P0` đã `approved` | Sửa [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) và [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) **cùng commit**; `C12` là cổng |
+| Lô B phát sinh cột schema mới | Cao — đổi 2 spec `P0` đã `approved` | Sửa [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) và [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) **cùng commit**; `C12` là cổng |
 | Sửa [`access-ladder.md`](../specs/00-foundation/access-ladder.md) và [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) — spec đã `approved` | Trung bình | Ghi `D-*`, nêu ở cổng dừng của lô tương ứng, không sửa lặng lẽ |
 | [`social-login.md`](../specs/03-account/social-login.md) 281 dòng, 27 rule | Trung bình — dễ đọc lướt | Để riêng ở lô E, không ghép chung ngày với spec khác |
 | 30 commit, mỗi commit một lần `pnpm --filter @mindkid/gates test` | Thấp — chỉ tốn thời gian | `pnpm test` và `pnpm check` chạy cuối lô, không sau mỗi spec |

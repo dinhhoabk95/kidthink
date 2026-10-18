@@ -2,10 +2,12 @@
 spec: PLAY-ENTRY-AND-PROFILE-SELECT
 title: Vào khu vực chơi và chọn trẻ
 area: play
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#294"
 owns:
   - Luồng vào khu vực chơi (guest và có hồ sơ)
 depends_on:
@@ -16,6 +18,8 @@ depends_on:
 ---
 
 # Vào khu vực chơi và chọn trẻ
+
+> **Chưa hoàn thành** — `BR-PEN-05` (lời mời đăng ký cho guest sau khi chơi) và `BR-PEN-07` (khoá màn hình ngang) chưa có trong code. Việc còn lại: [Task #294](../../tasks/294-play-surface-gaps-plan.md).
 
 ## 1. Objective
 
@@ -44,7 +48,7 @@ và không đổi được bởi trẻ.
 `active_child_id` **không** thuộc spec này — sở hữu duy nhất bởi
 [`child-profile-switching.md`](../03-account/child-profile-switching.md). Spec này chỉ **gọi
 lại** endpoint đó khi luồng vào khu vực chơi cần chọn trẻ trước, đúng "một outcome một file"
-([`AUDIT-v1.md`](../AUDIT-v1.md)). Trước sửa, cả hai spec cùng khai `owns` mảnh cơ chế này.
+([`CONVENTIONS.md`](../CONVENTIONS.md) §1).
 
 ## 4. Main flow
 
@@ -100,13 +104,9 @@ Cấm thanh tìm kiếm. Cấm bộ lọc. Cấm danh sách dài phải cuộn n
 
 ### `POST /api/users/children/{uuid}/activate`
 
-| | |
-|---|---|
-| Auth | `requireUserAuth()` + ownership |
-| Body | `{ gate_token? }` — bắt buộc khi đã có `active_child_id` khác |
-| 200 | Đặt cookie, trả `{ child: { uuid, display_name, avatar_id, age_band } }` |
-| 403 | `PARENT_GATE_REQUIRED` |
-| 404 | Trẻ không tồn tại hoặc không thuộc caller |
+Contract (auth, `gate_token`, cookie, mã lỗi) sở hữu bởi
+[`child-profile-switching.md`](../03-account/child-profile-switching.md) mục 8. Spec này chỉ gọi
+lại route đó; `BR-PEN-01` là điều kiện mà luồng vào khu vực chơi dựa vào.
 
 ### `GET /api/users/play/home`
 

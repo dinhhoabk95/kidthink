@@ -239,7 +239,7 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
 
 ## Lô 2 — platform
 
-### Bước 8 — [`content-tagging.md`](../specs/01-platform/content-tagging.md) (172 dòng, 7 rule, 2 hỏi mở, 2 `C6`)
+### Bước 8 — [`content-tagging.md`](../specs/05-content/content-tagging.md) (172 dòng, 7 rule, 2 hỏi mở, 2 `C6`)
 
 - [x] Đọc hết file
 - [x] Đối chiếu ba trục `what`/`thinking`/`mechanic` với
@@ -373,7 +373,7 @@ Spec mà `D-AG` của Task #5 đã cắt cạnh để không phải kéo vào l�
 
 ---
 
-## Bước 15 — [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2: danh sách FK đa hình 7 sang 9
+## Bước 15 — [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7.2: danh sách FK đa hình 7 sang 9
 
 Lý do đầy đủ: [`07-first-migration-plan.md`](07-first-migration-plan.md) §2a.
 

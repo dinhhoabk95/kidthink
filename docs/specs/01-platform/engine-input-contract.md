@@ -2,10 +2,10 @@
 spec: ENGINE-INPUT-CONTRACT
 title: Hợp đồng nhập của engine — từ con trỏ tới dispatch
 area: platform
-status: draft
+status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-09-04
+reviewed: 2026-10-18
 owns:
   - Định nghĩa kiểu EngineInput, EngineView, ViewEntity, EntityVisual
   - Ba vòng đời con trỏ (tap, drag-drop, stroke)

@@ -22,7 +22,7 @@
 
 ## WP101.1 — Đăng ký mechanic
 
-- [x] Thêm 7 giá trị vào từ vựng trục `mechanic` của [`content-tagging.md`](../specs/01-platform/content-tagging.md) §7.
+- [x] Thêm 7 giá trị vào từ vựng trục `mechanic` của [`content-tagging.md`](../specs/05-content/content-tagging.md) §7.
 - [x] Ca âm: khuôn khai `mechanic` chưa đăng ký phải làm cổng phủ đỏ.
 - [x] Kiểm không giá trị nào trùng `mechanic` của `GT-001` tới `GT-017`.
 

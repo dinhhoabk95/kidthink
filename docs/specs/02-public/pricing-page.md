@@ -2,18 +2,24 @@
 spec: PRICING-PAGE
 title: Trang giá
 area: public
-status: implemented
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#290"
+  - "#292"
 owns:
   - Trình bày gói và giá cho khách
 depends_on:
   - PACKAGE-CATALOG
   - PAYMENT-ORDER-CREATE
+  - RECURRING-BILLING
 ---
 
 # Trang giá
+
+> **Chưa hoàn thành** — CTA mua gói trỏ `/me/orders/create?package=…` nhưng trang đó chưa có (404). Trang vẫn in câu "không tự động gia hạn" của `BR-PRC-07` đã ngưng; câu về gia hạn tự động theo `recurring-billing.md` chưa có. Việc còn lại: [Task #290](../../tasks/290-account-ui-missing-pages-plan.md), [Task #292](../../tasks/292-recurring-billing-plan.md).
 
 ## 1. Objective
 
@@ -57,7 +63,7 @@ Guest · User.
 | `BR-PRC-04` | Nói rõ **dữ liệu không mất** khi hết hạn | `BR-SBV-02` |
 | `BR-PRC-05` | Cấm — **NEVER đếm ngược giả hay "chỉ còn X suất"** | Sản phẩm cho trẻ em bán bằng niềm tin |
 | `BR-PRC-06` | Add-on chưa bán **không xuất hiện** | `BR-PKG-05` |
-| `BR-PRC-07` | Nêu rõ **không tự động gia hạn** | Không có cổng thanh toán tự động; kỳ vọng sai tạo khiếu nại |
+| ~~`BR-PRC-07`~~ | **Ngưng** — thay bằng [`recurring-billing.md`](../03-account/recurring-billing.md) (Task #292). ~~Nêu rõ không tự động gia hạn~~. Giữ hàng để mã này không bị dùng lại | Sản phẩm có gia hạn tự động với opt-in tường minh (`BR-RBL-01`), nên câu "không tự gia hạn" không còn đúng |
 | `BR-PRC-08` | Structured data `Product` + `Offer` từ dữ liệu | Tối ưu SEO và khai báo giá chính thức cho các máy tìm kiếm theo chuẩn Schema.org |
 
 ## 7. Data
@@ -81,7 +87,8 @@ Mọi ô sinh từ dữ liệu, không viết tay.
 
 - "Thanh toán bằng chuyển khoản ngân hàng. Chúng tôi xác nhận trong vòng 12 giờ làm việc, và
   bạn dùng được ngay trong lúc chờ."
-- "Gói **không tự động gia hạn**. Bạn chủ động mua lại khi hết hạn."
+- "Gói **chỉ tự động gia hạn khi bạn chủ động bật**, và bạn huỷ được bất cứ lúc nào." — theo
+  `BR-RBL-01`, `BR-RBL-03` ở [`recurring-billing.md`](../03-account/recurring-billing.md).
 - "Khi hết hạn, hồ sơ và tiến độ học của bé vẫn được giữ nguyên."
 
 ## 8. API contract
@@ -108,9 +115,9 @@ Scenario: BR-PRC-03 — nói rõ duyệt tay
   When mở trang giá
   Then có câu nêu thanh toán chuyển khoản và thời gian xác nhận
 
-Scenario: BR-PRC-07 — nói rõ không tự gia hạn
+Scenario: BR-RBL-01 — nói rõ gia hạn tự động chỉ khi chủ động bật
   When mở trang giá
-  Then có câu khẳng định gói không tự động gia hạn
+  Then có câu nêu gói chỉ tự gia hạn khi User chủ động bật và huỷ được bất cứ lúc nào
 
 Scenario: BR-PRC-04 — nói rõ dữ liệu không mất
   When mở trang giá
@@ -126,7 +133,7 @@ Scenario: user đã có gói thì đánh dấu
 
 **Always**
 - Sinh giá và quyền lợi từ dữ liệu.
-- Nêu rõ duyệt tay, không tự gia hạn, dữ liệu không mất.
+- Nêu rõ duyệt tay, gia hạn tự động chỉ khi chủ động bật, dữ liệu không mất.
 
 **Ask first**
 - Thêm cột hoặc dòng vào bảng.

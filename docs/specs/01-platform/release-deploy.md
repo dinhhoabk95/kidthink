@@ -5,7 +5,9 @@ area: platform
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-30
+reviewed: 2026-10-18
+open_tasks:
+  - "#304"
 owns:
   - Quy trình phát hành và điều kiện dừng của từng bước
   - Nguồn code được phép đi lên máy chủ
@@ -20,6 +22,8 @@ depends_on:
 
 # Phát hành lên máy chủ bằng một lệnh
 
+> **Chưa hoàn thành** — Cổng khói chưa kiểm artifact — `index.mjs` khởi động, SPA admin có CSS entry, chunk client không chứa mã server (`BR-DEP-15`); `BR-DEP-12/13` chưa có kiểm trỏ mã. Việc còn lại: [Task #304](../../tasks/304-platform-ops-gaps-plan.md).
+
 ## 1. Objective
 
 Người vận hành chạy **một lệnh** và bản mới lên máy chủ, hoặc không lên chút nào. Không có trạng
@@ -30,9 +34,6 @@ Yêu cầu thứ hai, quan trọng ngang: **trạng thái máy phát triển kh�
 chủ.** Không phải bằng nội quy nhắc nhau, mà bằng cấu trúc — nguồn code duy nhất là commit đã đẩy
 lên kho, nên tệp chưa commit, thư mục phụ thuộc của máy trạm, tệp cấu hình dev và cơ sở dữ liệu
 dev **không có phương tiện** để đi lên.
-
-Đo ngày 2026-08-18: `infra/scripts/deploy.sh` dài 50 dòng và mọi bước thật trong đó đều đang bị
-chú thích. Không có quy trình phát hành nào tồn tại.
 
 ## 2. Actors
 

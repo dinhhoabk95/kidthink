@@ -127,7 +127,7 @@
 
 - [x] Mỗi `BR-TAG-*` có test tham chiếu mã rule.
 - [x] Mỗi `BR-CSA-*` có test tham chiếu mã rule.
-- [x] [`content-tagging.md`](../specs/01-platform/content-tagging.md) → `implemented`.
+- [x] [`content-tagging.md`](../specs/05-content/content-tagging.md) → `implemented`.
 - [x] [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) → `implemented`.
 - [x] Ba số `D-HE` + khảo sát port v1 (P1.2 T1) bàn giao cho kế hoạch **P1.11**.
 - [x] Tick **P1.10** ở [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md) khi `check:progress` tự xanh.

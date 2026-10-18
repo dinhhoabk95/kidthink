@@ -2,14 +2,18 @@
 spec: GAME-TEMPLATE-CONTRACT
 title: Contract khuôn trò chơi
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-07
+reviewed: 2026-10-18
+open_tasks:
+  - "#305"
 owns:
   - Hình dạng GameTemplate
   - content_contract và difficulty_contract
   - Sáu template MVP
+  - Đường phán quyết khi trẻ không hành động trong hợp đồng GameSession
+  - Luật hành vi chung của Session (xáo trộn có seed, event vòng, kiểm soát lỗi tự thân, band khuôn thắng band nguồn)
 depends_on:
   - GLOSSARY
   - ID-CONVENTIONS
@@ -17,6 +21,8 @@ depends_on:
 ---
 
 # Contract khuôn trò chơi
+
+> **Chưa hoàn thành** — `BR-GTC-10` chưa có test round-trip `content_pack` × `content_contract` trên toàn bộ level seed và chưa nối vào `scripts/check.sh`. Việc còn lại: [Task #305](../../tasks/305-platform-api-gaps-plan.md).
 
 ## 1. Objective
 
@@ -93,6 +99,15 @@ Template là **Lớp 1** — thêm template là việc của dev, không của M
 | `BR-GTC-09` (checkWinCondition thuần) | `checkWinCondition()` **thuần** — cấm side effect | Nó được gọi nhiều lần mỗi frame |
 | `BR-GTC-10` (round-trip test) | Test round-trip `content_pack` × `content_contract` chạy trên **toàn bộ** level đã seed. **Chưa nối vào cổng nào** — đo 2026-08-29: 162 trên 228 level không parse được, xem mục 7.3a của [`content-seed-authoring.md`](content-seed-authoring.md) | Một level lọt lưới là một đứa trẻ gặp màn hình trắng |
 | `BR-GTC-11` (asset nhận chữ) | `assetSchema()` khai đúng ba nhánh `emoji` · `image` · `text`; mọi `content_contract` dùng chung helper đó, cấm — NEVER khai lại union tại chỗ | Kỹ năng chữ số và chữ cái cần một khe cho ký tự; không có nhánh `text` thì bảng chữ cái phải dạy bằng ảnh em bé. Nhánh đã có ở [`shared-fields.ts:16`](../../../packages/game-engine/src/contracts/shared-fields.ts) và lớp vẽ đã xử lý nó — union khai lại tại chỗ là chỗ nhánh đó biến mất. Đo 2026-09-03: **một** vi phạm, [`GT-000/template.ts:15`](../../../packages/game-engine/src/templates/GT-000/template.ts) khai union hai nhánh tại chỗ, và GT-000 chính là engine ngữ âm. Nguồn vật thì thuộc `BR-SDS-02` (vật phải là vật của kỹ năng) |
+| `BR-TGB-04` (không-hành-động là một phán quyết) | Session phán quyết được việc trẻ **không** chạm khi cửa sổ thời gian đóng. Đường đó nằm trong hợp đồng `GameSession` dùng chung — `update(deltaMs)` trả `ActionResult \| null` (mục 7.4) — không nằm riêng trong Session của một khuôn | Cài riêng trong một Session thì khuôn thứ hai cần nó sẽ cài lại lần nữa, đúng thứ `BR-TAK-05` cấm. `GT-026` là khuôn đầu tiên dùng đường này |
+| `BR-TGB-05` (không-hành-động vẫn có phản hồi) | Hết thời gian mà trẻ không chạm thì vẫn phát phản hồi, cấm — NEVER im lặng | `BR-ENG-07` — sai đáp án luôn có phản hồi. Không hành động cũng là một đáp án |
+| `BR-LVB-09` (phát event vòng ngay từ đầu) | Khuôn `GT-018` tới `GT-024` **bắt buộc** phát `round_started` và `round_completed` theo `BR-RSP-02` ngay ở phiên bản đầu tiên | Thiếu event vòng thì `rounds_total = 0` và không trẻ nào lên được hai sao — xem mục 1 của [`round-sequence-play.md`](../04-play/round-sequence-play.md). Khuôn mới kế thừa lỗ đó là nhân lỗ lên |
+| `BR-LVB-11` (khuôn mới không đổi contract cũ) | Thêm khuôn mới cấm — NEVER đổi `content_contract` của bất kỳ khuôn nào đã publish | `BR-GTC-08` (breaking change). Mọi `game_level` đã seed giữ `content_pack` parse được bằng contract cũ |
+| `BR-MTB-07` · `BR-LVB-13` (xáo trộn qua nguồn ngẫu nhiên có seed) | Mọi xáo trộn vị trí, thứ tự vật gây nhiễu, chọn biến thể trong Session phải đi qua [`deterministic-randomness.md`](deterministic-randomness.md) | `BR-LAY-08` giao việc xáo trộn cho spec ngẫu nhiên chứ không cho hàm layout. Phiên chơi không tái lập được thì không điều tra được báo cáo bất thường của một đứa trẻ cụ thể |
+| `BR-MTB-09` (khuôn không mang xuất xứ nguồn) | Khuôn **không gắn** skill, competency, workbook hay mã dạng game nguồn trong code. Xuất xứ là ghi chú cho người đọc ở phiếu engine, cấm thành field | `BR-GTC-01` (template không gắn skill) — field xuất xứ trong khuôn là đường để skill quay lại vào template |
+| `BR-MTB-10` · `BR-TCL-08` (band khuôn thắng band nguồn) | Band tuổi của level nằm trong `age_min`..`age_max` và ngoài `banned_age_bands` của khuôn. Khi band của nguồn nội dung (workbook, dạng game nguồn) rộng hơn band khuôn, **khuôn thắng**: dạng bài dời band hoặc chờ | `BR-GTC-05` ép ở cổng seed. Khuôn cấm band nào là có lý do phát triển; nới band khuôn để nội dung vừa là đổi quyết định thiết kế bằng áp lực lịch |
+| `BR-MTB-12` (không mở rộng asset im lặng) | Khuôn cần loại asset ngoài `emoji`, `image`, `audio` phải **Ask first** trước khi viết `template.ts` | Mỗi loại asset mới kéo theo storage, quyền, và ngân sách ở [`performance-budgets.md`](../08-quality/performance-budgets.md). Phát hiện điều đó sau khi Session class đã xong là quá muộn |
+| `BR-MTB-14` (kiểm soát lỗi tự thân) | Khuôn `GT-007` tới `GT-017` phải cho trẻ **tự nhận ra sai** từ chính vật liệu, trước khi phản hồi đúng-sai của hệ thống chạy; mô tả cách đó trong file mô tả khuôn | Nguyên lý kiểm soát lỗi tự thân (mục 7.0 của [`montessori-corpus-mapping.md`](../05-content/montessori-corpus-mapping.md)): hình không khớp khuôn, tổng hai bên không cân, lưới lặp giá trị. Khuôn chỉ báo sai bằng dấu đỏ đã bỏ đúng thứ làm giáo cụ hoạt động |
 
 ## 7. Data
 
@@ -127,14 +142,13 @@ interface GameTemplate {
 
 ### 7.2 Sáu template MVP
 
-> **Trạng thái 2026-08-29:** registry có **27** template, `GT-001` tới `GT-027`. Sáu template
-> dưới đây là lô MVP; 21 template còn lại thuộc ba lô sau, danh mục ở
-> [`montessori-template-batch.md`](montessori-template-batch.md),
-> [`legacy-v1-template-batch.md`](legacy-v1-template-batch.md) và
-> [`taxonomy-gap-batch.md`](taxonomy-gap-batch.md). Bảng tra đủ 27 mã kèm cơ chế, band tuổi và
-> fallback tap: [`engines/index.md`](engines/index.md). Mỗi mã có một phiếu spec riêng theo
-> [`engine-spec-sheet.md`](engine-spec-sheet.md).
-
+> Registry có **38** template, `GT-000` tới `GT-037` (`packages/game-engine/src/templates/`).
+> Sáu template dưới đây là lô MVP. Các mã còn lại chia theo lô `core-pedagogy` (`GT-000`),
+> `montessori` (`GT-007` tới `GT-017`), `activity-catalog` (`GT-018` tới `GT-024`, `GT-028` tới
+> `GT-036`) và `taxonomy-gap` (`GT-025` tới `GT-027`, `GT-037`); dãy mã và lớp chi phí từng lô
+> ở mục 7.5 của [`engine-spec-sheet.md`](engine-spec-sheet.md), luật cấp mã ở mục 6 của file đó.
+> Bảng tra đủ 38 mã kèm cơ chế, band tuổi và fallback tap: [`engines/index.md`](engines/index.md).
+> Mỗi mã có một phiếu spec riêng.
 
 | Code | Tên | Mechanic | Band | Fallback tap | Giới hạn item |
 |---|---|---|---|:--:|---|
@@ -192,7 +206,7 @@ interface GameSession {
   validateAction(a: { type: string; data: unknown }): { valid: boolean; feedback: FeedbackKind };
   checkWinCondition(): boolean;      // PHẢI thuần
   render?(ctx: CanvasRenderingContext2D, rs: RenderSystem, timeMs: number): void;
-  update?(deltaMs: number): void;
+  update?(deltaMs: number): ActionResult | void | null;
   getTelemetry(): SessionTelemetry;
   completeSession(): void;
   destroy(): void;
@@ -201,6 +215,15 @@ interface GameSession {
 
 Side effect khi item được đặt đúng đi vào `onItemLocked`, cấm — **NEVER** trong `validateAction`
 (được gọi cả lúc hover) hay `checkWinCondition` (được gọi nhiều lần mỗi frame).
+
+**Phán quyết khi trẻ không hành động** (`BR-TGB-04`, `BR-TGB-05`). `ActionResult` thường sinh
+từ `validateAction(action)`; một lượt trẻ **không** chạm thì không có `GameAction` nào. Đường
+chung là `update(deltaMs)`: engine gọi nó mỗi frame
+([`game-session.ts`](../../../packages/game-engine/src/game-session.ts)), và khi cửa sổ thời gian
+đóng mà không có thao tác, Session trả một `ActionResult` kèm phản hồi; mọi frame khác trả
+`null` hoặc không trả gì. Hai đường khác đã bị loại: thêm `checkTimeout()` vào hợp đồng bắt mọi
+Session cài một hàm mà gần như không Session nào dùng; engine sinh `GameAction` giả kiểu
+`timeout` làm telemetry ghi một hành động trẻ không làm.
 
 ## 8. API contract
 
@@ -284,6 +307,55 @@ Scenario: BR-GTC-04 — admin không tạo được template
 Scenario: mỗi template có E2E journey
   When kiểm thư mục test e2e
   Then mỗi template trong `GT-001`…`GT-006` có ít nhất một journey xanh
+
+Scenario: BR-TGB-04 — không hành động vẫn ra phán quyết
+  Given một lượt GT-026 có dấu cấm chạm và cửa sổ thời gian 2 giây
+  When trẻ không chạm gì cho tới khi cửa sổ đóng
+  Then update trả một ActionResult và phiên ghi nhận một lượt đúng
+  And đường phán quyết đó nằm trong hợp đồng GameSession dùng chung
+
+Scenario: BR-TGB-05 — không hành động vẫn có phản hồi
+  Given một lượt GT-026 có dấu phải chạm
+  When trẻ không chạm gì cho tới khi cửa sổ đóng
+  Then trẻ nhận một phản hồi thấy được
+  And phản hồi đó không phải im lặng
+
+Scenario: BR-LVB-09 — khuôn GT-018 tới GT-024 phát event vòng
+  Given một phiên chơi GT-021 hoàn thành
+  When đọc chuỗi telemetry của phiên
+  Then chuỗi chứa ít nhất một round_started
+  And chuỗi chứa ít nhất một round_completed
+
+Scenario: BR-LVB-11 — khuôn mới không đụng contract cũ
+  Given cây làm việc trước khi thêm một khuôn mới
+  When khuôn mới đã ship
+  Then không content_contract nào của khuôn đã publish bị đổi
+
+Scenario: BR-MTB-07 — phiên chơi tái lập được
+  Given một phiên chơi GT-011 với một seed cố định
+  When chạy lại phiên với cùng seed
+  Then thứ tự và vị trí mọi phần tử giống hệt lần trước
+
+Scenario: BR-MTB-09 — khuôn không mang xuất xứ nguồn
+  When đọc file mô tả của mọi khuôn
+  Then không khuôn nào có field skill, competency, workbook hay mã dạng game nguồn
+
+Scenario: BR-MTB-10 — band khuôn thắng band nguồn
+  Given GT-014 khai age_min bằng 5
+  And bảng ánh xạ Montessori xếp workbook 16 ở band 5-6
+  When một seeder khai age_min bằng 4 cho một level GT-014
+  Then cổng seed fail
+
+Scenario: BR-TCL-08 — band khuôn cấm thì level bị chặn
+  Given khuôn GT-024 khai banned_age_bands ["3-4"]
+  When soạn một level GT-024 cho band 3-4
+  Then cổng seed đỏ và nêu band bị cấm
+
+Scenario: BR-MTB-14 — kiểm soát lỗi tự thân có thật
+  Given journey E2E của một khuôn GT-007 tới GT-017
+  When đọc các bước của journey
+  Then có một bước trẻ tự sửa sau khi vật liệu báo sai
+  And bước đó xảy ra trước khi hệ thống hiện phản hồi đúng sai
 ```
 
 ## 10. Boundaries
@@ -293,12 +365,15 @@ Scenario: mỗi template có E2E journey
 - Giữ `checkWinCondition()` thuần.
 - Khai báo fallback tap cho mọi mechanic drag.
 - Test round-trip trên toàn bộ level đã seed.
+- Phát phản hồi cho một lượt trẻ không hành động, qua `update(deltaMs)` dùng chung.
+- Đi qua nguồn ngẫu nhiên có seed cho mọi xáo trộn.
 
 **Ask first**
 - Thêm template mới.
 - Đổi `content_contract` của template đã publish.
 - Nới `limits` của một template.
 - Cho một template chạy ở band tuổi mới.
+- Thêm loại asset ngoài `emoji`, `image`, `audio` (`BR-MTB-12`).
 
 **Never**
 - Gắn skill vào template.
@@ -306,6 +381,8 @@ Scenario: mỗi template có E2E journey
 - Cho admin tạo/sửa template qua UI.
 - Side effect trong `checkWinCondition` hoặc `validateAction`.
 - Tin `content_pack` từ client mà không parse lại.
+- Cài đường phán quyết không-hành-động riêng trong một Session.
+- Gắn skill, competency, workbook hay mã dạng game nguồn vào khuôn.
 
 ## 11. Open questions
 
@@ -318,8 +395,8 @@ Scenario: mỗi template có E2E journey
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| ~~1~~ | ~~60 game type của v1 port thành `content_pack` của 6 template được bao nhiêu phần trăm?~~ **Đóng 2026-08-29 (T113, `D-SG`)**: không port sang 6 template mà cấp cơ chế riêng. 60 game type của [`game-type-migration.md`](../../taxonomy/game-type-migration.md) nay phủ bởi 27 engine — 6 MVP cộng 11 lô Montessori, 7 lô kế thừa v1, 3 lô khoảng trống taxonomy. Câu hỏi còn lại không phải số cơ chế mà là chiều sâu nội dung mỗi cơ chế, và nó chuyển sang [`engine-content-depth.md`](../05-content/engine-content-depth.md) | — | Đã đóng | D-SG |
-| ~~2~~ | ~~Template thứ 7–10 nên là gì?~~ **Đóng 2026-08-20 (T98, `D-RW`)**: mười một khuôn `GT-007` tới `GT-017` đã có danh mục, band tuổi và điều kiện nghiệm thu ở [`montessori-template-batch.md`](montessori-template-batch.md), suy ra từ 59 dạng bài của corpus Montessori chứ không từ danh sách mechanic của PRD. Maze và rotate nằm trong đó (`GT-013`, `GT-016`); memory-flip **không** — không dạng bài nguồn nào cần nó | — | Đã đóng | D-RW |
+| ~~1~~ | ~~60 game type trong danh mục chuyển đổi map được vào `content_pack` của 6 template bao nhiêu phần trăm?~~ **Đóng 2026-08-29 (T113, `D-SG`)**: không port sang 6 template mà cấp cơ chế riêng. 60 game type của [`game-type-migration.md`](../../taxonomy/game-type-migration.md) nay phủ bởi 27 engine — 6 MVP cộng 11 lô `montessori`, 7 khuôn đầu của lô `activity-catalog`, 3 lô `taxonomy-gap` (nay registry có 38 mã, mục 7.2). Câu hỏi còn lại không phải số cơ chế mà là chiều sâu nội dung mỗi cơ chế, và nó chuyển sang [`engine-content-depth.md`](../05-content/engine-content-depth.md) | — | Đã đóng | D-SG |
+| ~~2~~ | ~~Template thứ 7–10 nên là gì?~~ **Đóng 2026-08-20 (T98, `D-RW`)**: mười một khuôn `GT-007` tới `GT-017` (lô `montessori`, mục 7.5 của [`engine-spec-sheet.md`](engine-spec-sheet.md)) đã có phiếu riêng ở [`engines/index.md`](engines/index.md), suy ra từ 59 dạng bài của corpus Montessori chứ không từ danh sách mechanic của PRD. Maze và rotate nằm trong đó (`GT-013`, `GT-016`); memory-flip **không** — không dạng bài nguồn nào cần nó | — | Đã đóng | D-RW |
 | ~~3~~ | ~~`scoring` schema chung cho mọi template hay mỗi template một kiểu?~~ **Đóng 2026-08-09 (T13, `D-BA`)**: xem [`scoring-and-result.md`](../04-play/scoring-and-result.md) — P1 dùng `scoring` schema chung (rounds/timer), sequence-order chấm cả chuỗi ở P1 | — | Đã đóng | D-BA |
 
 | ~~4~~ | ~~Xuất Zod → JSON Schema mất `refine`, nên form studio không cảnh báo được ràng buộc quan hệ tới lúc submit. Có nên khai `refine` dạng ui-hint riêng để form biết trước không?~~ **Đóng 2026-08-09 (T13, `D-BK`)**: dùng custom serializer để khai `uiHint` cho `refine` đơn giản ở client — xem [`schema-driven-form.md`](../06-admin/schema-driven-form.md); các `refine` quan hệ phức tạp validate tại server | — | Đã đóng | D-BK |

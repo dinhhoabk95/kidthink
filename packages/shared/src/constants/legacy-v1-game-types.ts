@@ -1,7 +1,7 @@
 /**
  * Registry 60 game type v1 (D1-01..D6-11) ánh xạ sang v2 (C1-01..C6-03).
  * Nguồn sự thật: docs/taxonomy/game-type-migration.md & docs/tasks/168-v1-game-list-integration-spec.md.
- * Spec sở hữu: docs/specs/08-quality/legacy-v1-coverage.md.
+ * Spec sở hữu: docs/specs/08-quality/source-game-type-coverage.md.
  */
 
 export interface LegacyV1GameType {

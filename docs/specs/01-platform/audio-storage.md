@@ -2,10 +2,12 @@
 spec: AUDIO-STORAGE
 title: Lưu trữ và chuẩn hoá audio asset
 area: platform
-status: implemented
+status: approved
 mvp: false
 phase: P2
-reviewed: 2026-08-16
+reviewed: 2026-10-18
+open_tasks:
+  - "#306"
 owns:
   - Pipeline chuẩn hoá và lưu trữ audio asset
   - Quy tắc sở hữu audio asset theo content item
@@ -17,6 +19,8 @@ depends_on:
 ---
 
 # Lưu trữ và chuẩn hoá audio asset
+
+> **Chưa hoàn thành** — chỉ có bảng ánh xạ §7.3 (`audio-legacy-map.ts`); bảng `content_audio`, route `POST`/`DELETE /api/managers/audio`, kiểm magic bytes, chuẩn hoá LUFS và ghi audit (`BR-AST-01`..`BR-AST-08`) chưa có. Việc còn lại: [Task #306](../../tasks/306-audio-storage-plan.md).
 
 ## 1. Objective
 
@@ -111,11 +115,11 @@ Chọn file audio trong Studio
 | Mức âm lượng chuẩn hoá | Trần −16 LUFS, true peak ≤ −1 dBTP |
 | Onset & Decay | Ramp-in ≥ 20ms, ramp-out ≥ 40ms |
 
-### 7.3 Bảng ánh xạ di sản `d1`–`d6` sang `C1`–`C6` (Task #269)
+### 7.3 Bảng ánh xạ thư mục audio `d1`–`d6` sang `C1`–`C6` (Task #269)
 
-Ánh xạ nhiều-nhiều giữa các thư mục di sản v1 (`apps/web/public/audio/voice/`) và các nhánh kỹ năng v2:
+Ánh xạ nhiều-nhiều giữa các thư mục audio theo nhánh `common`, `d1`–`d6` trong `apps/web/public/audio/voice/` và các nhánh kỹ năng C1–C6:
 
-| Nhánh di sản | Thư mục con / tệp | Số tệp | Nhánh v2 tương ứng | Loại câu |
+| Thư mục audio | Thư mục con / tệp | Số tệp | Nhánh kỹ năng tương ứng | Loại câu |
 |---|---|---:|---|---|
 | `common` | `common/numbers/0..30.mp3` | 31 | `C1.NREC`, `C1.CNT` | `item_name` |
 | `d1` | `d1/instruction/**`, `d1/nr_*`, `d1/question_*` | 63 | `C1.CNT`, `C1.NREC`, `C1.ORD`, `C1.SUB`, `C1.CMP`, `C1.OTO`, `C1.PROB` | `instruction` |

@@ -2,10 +2,10 @@
 spec: SKILL-VALUE-INVENTORY
 title: Kho giá trị kỹ năng — nguồn sự thật cho dãy giá trị ngôn ngữ và số học
 area: content
-status: draft
+status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-09-11
+reviewed: 2026-10-18
 owns:
   - Danh mục kho giá trị kỹ năng ngôn ngữ (chữ cái, chữ ghép, dấu thanh, vần, âm đầu, từ vựng)
   - Danh mục kho giá trị kỹ năng số học (chữ số, số thứ tự, phân tách số, lối biểu diễn lượng, chiều đo, đơn vị lặp)

@@ -2,10 +2,12 @@
 spec: PARENT-GATE
 title: Cổng người lớn
 area: play
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#294"
 owns:
   - Cơ chế xác minh người lớn
   - Nơi bắt buộc có cổng
@@ -15,6 +17,8 @@ depends_on:
 ---
 
 # Cổng người lớn
+
+> **Chưa hoàn thành** — §7.3: event `parent_gate_shown` / `parent_gate_passed` / `parent_gate_failed` có trong catalog nhưng client chưa phát; `BR-PGT-05`, `BR-PGT-07` chưa có test gắn mã. Việc còn lại: [Task #294](../../tasks/294-play-surface-gaps-plan.md).
 
 ## 1. Objective
 
@@ -82,7 +86,15 @@ không cần nhớ gì.
 
 ### 7.2 Trạng thái
 
-`parent_gate_trusted_until` — sessionStorage, không cookie (không cần gửi lên server).
+| Trạng thái | Nơi giữ | Dùng cho |
+|---|---|---|
+| `<prefix>_trusted_until`, `<prefix>_failed_attempts`, `<prefix>_lock_until` (`prefix` là `pg_client` hoặc `pg_server`) | sessionStorage của tab (`apps/web/app/composables/play/parent-gate-state.ts`) | Cửa sổ tin cậy 5 phút (`BR-PGT-04`) và khoá 60 giây sau 3 lần sai — thuần UX |
+| `gate_token` | Bộ nhớ client, gửi kèm request của thao tác người lớn | Bằng chứng do server ký (HMAC) rằng người lớn vừa qua thử thách; hạn 5 phút, gắn `user_id` |
+
+Thao tác đổi trạng thái thật mà spec khác bắt buộc qua cổng (vd. cấp thêm giờ chơi —
+[`healthy-play-limits.md`](healthy-play-limits.md) `BR-HPL-06`; đổi hồ sơ trẻ —
+[`child-profile-switching.md`](../03-account/child-profile-switching.md)) phải gửi `gate_token`
+và server tự kiểm chữ ký, hạn, chủ sở hữu.
 
 ### 7.3 Event
 
@@ -93,10 +105,32 @@ Tỉ lệ fail cao là tín hiệu thử thách quá khó — theo dõi trong KP
 
 ## 8. API contract
 
-Không có route. Hoàn toàn client-side.
+Hai route, cả hai yêu cầu phiên User (`requireWebUserSession`). Lõi ký và kiểm ở
+`packages/auth/src/parent-gate.ts`.
 
-Server **không** tin cổng này — mọi endbề mặt người lớn vẫn kiểm `requireUserAuth()`
-(`BR-PGT-06`).
+### `POST /api/users/parent-gate/challenge`
+
+| | |
+|---|---|
+| Auth | Phiên User |
+| Request | Không có body |
+| Response 200 | `{ challenge_id, factor_a, factor_b, challenge_payload }` — `factor_a`, `factor_b` là hai số một chữ số (§7.1); `challenge_payload` là thử thách đã ký HMAC, hạn 5 phút |
+
+### `POST /api/users/parent-gate/verify`
+
+| | |
+|---|---|
+| Auth | Phiên User |
+| Request | `{ challenge_payload: string (1–2048), answer: int }` — Zod `.strict()` |
+| Response 200 | `{ gate_token, expires_at }` — `gate_token` ký HMAC, gắn `user_id`, hạn 5 phút |
+| 400 `VALIDATION_FAILED` | Body sai hình dạng |
+| 400 `PARENT_GATE_INVALID` | Chữ ký sai, payload hỏng, hoặc thử thách đã dùng rồi (một thử thách chỉ đổi được một token) |
+| 410 `PARENT_GATE_EXPIRED` | Thử thách quá hạn 5 phút |
+| 403 `PARENT_GATE_FAILED` | Sai đáp án — client hiển thị theo `BR-PGT-03`, không trách trẻ |
+
+Route nhận `gate_token` tự kiểm token (vd. `grant-extra-time.post.ts` trả 403 khi thiếu hoặc
+sai). Cổng vẫn **không** thay guard server: mọi route bề mặt người lớn vẫn kiểm phiên và quyền
+sở hữu như bình thường (`BR-PGT-06`); `gate_token` chỉ thêm bằng chứng "người lớn vừa có mặt".
 
 ## 9. Acceptance criteria
 

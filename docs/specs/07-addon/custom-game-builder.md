@@ -5,7 +5,7 @@ area: addon
 status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-16
+reviewed: 2026-10-18
 owns:
   - Luồng User tạo game từ template
   - Ràng buộc validation cho game do User tạo
@@ -45,30 +45,26 @@ của Manager, và đó là một luồng khác chưa có ở phiên bản này.
 | `BR-CGB-04` | Emoji **bắt buộc** nằm trong danh mục `@mindkid/emoji` — ngoại lệ duy nhất của `BR-EMJ-01`; ảnh upload trừ quota `upload_mb` | `BR-EMJ-12` — `packages/moderation` chỉ quét `title` và `instruction`, không quét emoji. Đây là chỗ duy nhất còn chặn tư cách thành viên |
 | `BR-CGB-05` | Validation §7.1 chạy ở **server** trước khi lưu | Sai schema làm crash engine trước mặt trẻ |
 | `BR-CGB-06` | Game custom **không cập nhật `mastery_state`** | Nội dung chưa kiểm duyệt không được đẩy dữ liệu học chính thức |
-| `BR-CGB-07` | Chỉ **6 template MVP** dùng được. Danh sách sống ở **một** chỗ: `packages/shared/src/custom-game.ts`; mọi nơi khác import từ đó | Hạn chế phạm vi thử nghiệm ở các khuôn mẫu ổn định nhất đã được tối ưu hóa cho mầm non. Phần "một chỗ" thêm 2026-08-29 — xem mục 6.1 |
+| `BR-CGB-07` | Chỉ **6 template MVP** dùng được. Danh sách sống ở **một** chỗ: `packages/shared/src/custom-game.ts`; mọi nơi khác import từ đó | Hạn chế phạm vi thử nghiệm ở các khuôn mẫu ổn định nhất đã được tối ưu hóa cho mầm non. Hiện trạng nguồn khai: mục 6.1 |
 | `BR-CGB-08` | Quota `custom_games_saved` theo gói add-on | Kiểm soát dung lượng lưu trữ và khuyến khích người dùng nâng cấp gói dịch vụ |
 | `BR-CGB-09` | Nội dung do User tạo qua `packages/moderation` trước khi lưu | UGC, dù riêng tư, vẫn tới trẻ |
 | `BR-CGB-10` | Áp **mọi ràng buộc biên tập** của [`game-level-model.md`](../05-content/game-level-model.md) §7.1 | Trẻ 3 tuổi không phân biệt game của ai |
 
-### 6.1 Ba nguồn khai danh sách template, hai giá trị khác nhau
+### 6.1 Nguồn khai danh sách template
 
-Đo ngày 2026-08-29:
+Đo ngày 2026-10-18:
 
 | Nguồn | Giá trị | Ai dùng |
 |---|---|---|
-| `packages/shared/src/custom-game.ts` | **6** — `GT-001`…`GT-006` | `createCustomGameSchema`, tức đường validate của `POST /api/users/custom-games` |
-| `packages/game-engine/src/generated/template-codes.ts` | **27** — `CUSTOM_GAME_TEMPLATE_CODES = ALL_TEMPLATE_CODES` | không ai; chỉ được re-export ở `index.ts` |
-| `apps/web/app/pages/custom-games/create.vue` | **6**, viết tay trong `switch` | giao diện chọn khuôn |
+| `packages/shared/src/custom-game.ts` | **6** — `GT-001`…`GT-006` (`CUSTOM_GAME_TEMPLATE_CODES`) | `customGameTemplateCodeSchema`, tức đường validate của `POST /api/users/custom-games` |
+| `apps/web/app/pages/custom-games/create.vue` | **6**, viết tay trong mảng `templates` và `switch` của `getDefaultContentPack` | giao diện chọn khuôn |
 
-Hành vi hiện tại **đúng** `BR-CGB-07`: đường ghi validate bằng bộ 6. Nhưng hai hằng số **cùng
-tên** mang hai giá trị khác nhau ở hai package, và bản 27 nằm trong tệp sinh tự động nên nó
-lớn thêm mỗi lần thêm engine. Một lần import nhầm package là mở cả 27 khuôn cho người dùng mà
-không lỗi biên dịch nào.
+`CUSTOM_GAME_TEMPLATE_CODES` chỉ còn **một** định nghĩa trong monorepo. Test
+`packages/shared/tests/custom-game-validation.test.ts` ("exactly ONE definition") đỏ nếu ai
+khai lại hằng số này ở chỗ khác.
 
-Nguồn thứ ba viết tay danh sách trong giao diện, nên thêm khuôn vào bộ 6 phải sửa hai chỗ.
-
-Việc phải làm: xoá `CUSTOM_GAME_TEMPLATE_CODES` khỏi `template-codes.ts` và khỏi barrel của
-`@mindkid/game-engine`; giao diện import từ `@mindkid/shared`.
+Còn lại: giao diện chưa import danh sách mã từ `@mindkid/shared`. Đường ghi vẫn đúng
+`BR-CGB-07` vì server validate bằng bộ 6, nhưng thêm khuôn vào bộ 6 phải sửa thêm giao diện.
 
 ## 7. Data
 

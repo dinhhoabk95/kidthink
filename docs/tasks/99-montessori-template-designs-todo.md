@@ -36,7 +36,7 @@
 - [x] KSL: ứng viên vi phạm mờ đi và mang dấu gạch, **vẫn hiển thị** — `getEliminatedIds()` / `getSurvivingIds()`, nội dung không cắt hàng nào.
 - [x] Ba level mẫu trong `fixtures.ts` — WB14 dạng 1, dạng 2, biến thể 2 manh mối.
 - [x] Band 4-5 dùng bảng tối đa **6** ứng viên — test giữ trần này.
-- [x] Thêm `clue-deduction` vào từ vựng trục `mechanic` (mục 7.1 [`content-tagging.md`](../specs/01-platform/content-tagging.md)) và vào `GameMechanic` trong cùng PR.
+- [x] Thêm `clue-deduction` vào từ vựng trục `mechanic` (mục 7.1 [`content-tagging.md`](../specs/05-content/content-tagging.md)) và vào `GameMechanic` trong cùng PR.
 - [x] Journey trẻ tự loại trừ **trước** phản hồi hệ thống — `gt-009-clue-deduction.test.ts`: sau ba manh mối chỉ có `clue_revealed` và `candidate_eliminated`, chưa event đúng-sai nào. **Lưu ý:** repo chưa có bộ E2E trình duyệt cho khuôn; `GT-007` và `GT-008` cũng dừng ở mức test phiên engine.
 - [x] `pnpm --filter @mindkid/game-engine gen:templates` không sinh diff; 19 test cho `GT-009`.
 - [ ] Điều kiện nghiệm thu 12 (ngân sách hiệu năng band thấp nhất) chưa đo — cần harness đo fps.
@@ -68,7 +68,7 @@
 - [x] Ba level mẫu ở [`fixtures.ts`](../../packages/game-engine/src/templates/GT-013/fixtures.ts) — WB09-D1 hành lang đơn (0 ngõ cụt) · WB09-D2 ngã ba có bẫy (1 ngõ cụt) · WB09-D3 thu thập hai vật phẩm (mê cung phủ kín 4×4, 5 ngõ cụt). Một test đối chiếu `dead_end_count` khai trong `difficulty` với số ngõ cụt **đo được** trên chính lưới đó, nên số không trôi.
 - [x] Đóng câu hỏi mở số 7 bằng `D-RY`: giữ cả hai dạng đầu vào — mục 7.7 của [`montessori-template-batch.md`](../specs/01-platform/montessori-template-batch.md).
 - [x] Ba event mới đăng ký đủ **bốn** chỗ, không phải một: catalog §7.2 · `ALLOWED_EVENT_NAMES` · `EVENT_PAYLOAD_FIELDS` · `EVENT_PAYLOAD_SCHEMAS`. `pnpm --filter @mindkid/db test` xanh. `path_blocked` nhận `row` và `col` **âm** — chặn ở biên lưới là ô ngoài lưới.
-- [x] `maze-route` vào từ vựng trục `mechanic` (mục 7.1 [`content-tagging.md`](../specs/01-platform/content-tagging.md)); `GameMechanic` đã có sẵn giá trị này từ trước.
+- [x] `maze-route` vào từ vựng trục `mechanic` (mục 7.1 [`content-tagging.md`](../specs/05-content/content-tagging.md)); `GameMechanic` đã có sẵn giá trị này từ trước.
 - [x] `asset_kinds` chỉ khai `audio`, khác chín khuôn trước. Đo được: `content_pack` của khuôn này không mang emoji hay ảnh nào — lưới vẽ bằng canvas (`D-RL`), asset duy nhất là `prompt_audio_ref`.
 - [x] `pnpm --filter @mindkid/game-engine gen:templates` không sinh diff; `lint:templates` · `lint:events` · `lint:specs` · `lint:rule-ids` · `lint` · `typecheck` xanh; 27 test cho `GT-013`, engine từ 188 lên 247 test.
 - [ ] Điều kiện nghiệm thu 7 (journey E2E) và 12 (ngân sách hiệu năng) chưa đo — cùng nợ với `GT-009` và `GT-011`: repo chưa có bộ E2E trình duyệt cho khuôn, và chưa có harness đo fps.

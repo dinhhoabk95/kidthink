@@ -136,9 +136,9 @@ Mọi handler API. Mọi spec khai báo mã lỗi phải đăng ký ở đây.
 | `SUBSCRIPTION_ALREADY_CANCELLED` | 409 | Gói thuê bao định kỳ đã được huỷ trước đó ([`recurring-billing.md`](../03-account/recurring-billing.md) · [`admin-subscription-cancel.md`](../06-admin/admin-subscription-cancel.md)) |
 | `SUBSCRIPTION_NOT_FOUND` | 404 | Không tìm thấy gói thuê bao định kỳ ([`admin-subscription-cancel.md`](../06-admin/admin-subscription-cancel.md)) |
 | `INVALID_CANCEL_REASON` | 422 | Lý do huỷ không hợp lệ hoặc ghi chú quản trị < 20 ký tự ([`admin-subscription-cancel.md`](../06-admin/admin-subscription-cancel.md)) |
-| `OFFLINE_PACK_EXPIRED` | 410 | Gói học tập offline đã hết hạn lease ([`offline-curriculum-pack.md`](../01-platform/offline-curriculum-pack.md)) |
-| `OFFLINE_PACK_CORRUPTED` | 422 | Gói học tập offline bị lỗi toàn vẹn hoặc sai checksum ([`offline-curriculum-pack.md`](../01-platform/offline-curriculum-pack.md)) |
-| `STORAGE_QUOTA_INSUFFICIENT` | 422 | Bộ nhớ thiết bị không đủ để tải gói offline ([`offline-curriculum-pack.md`](../01-platform/offline-curriculum-pack.md)) |
+| `OFFLINE_PACK_EXPIRED` | 410 | Gói học tập offline đã hết hạn lease ([`offline-curriculum-pack.md`](../03-account/offline-curriculum-pack.md)) |
+| `OFFLINE_PACK_CORRUPTED` | 422 | Gói học tập offline bị lỗi toàn vẹn hoặc sai checksum ([`offline-curriculum-pack.md`](../03-account/offline-curriculum-pack.md)) |
+| `STORAGE_QUOTA_INSUFFICIENT` | 422 | Bộ nhớ thiết bị không đủ để tải gói offline ([`offline-curriculum-pack.md`](../03-account/offline-curriculum-pack.md)) |
 | `ORDER_CANNOT_BE_CANCELLED` | 409 | Huỷ đơn không ở trạng thái chờ thanh toán |
 | `REFUND_EXCEEDS_CAPTURED_AMOUNT` | 422 | Số tiền hoàn vượt số thực thu của đơn ([`automated-payment.md`](../01-platform/automated-payment.md)) |
 | `REFUND_ALREADY_PROCESSED` | 409 | Lệnh hoàn tiền đã xử lý trước đó ([`automated-payment.md`](../01-platform/automated-payment.md)) |

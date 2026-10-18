@@ -2,10 +2,12 @@
 spec: ACCOUNT-SETTINGS
 title: Cài đặt tài khoản
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-13
+reviewed: 2026-10-18
+open_tasks:
+  - "#290"
 owns:
   - Đổi thông tin tài khoản, mật khẩu, email
   - Đặt mật khẩu lần đầu cho tài khoản chỉ có SNS
@@ -17,6 +19,8 @@ depends_on:
 ---
 
 # Cài đặt tài khoản
+
+> **Chưa hoàn thành** — API đổi hồ sơ, mật khẩu, email đã có reauth, nhưng `openPasswordModal()` / `openEmailModal()` ở `app/pages/me/settings/index.vue` còn stub — `BR-ACS-01..05, 09, 10` chưa làm được từ giao diện. Việc còn lại: [Task #290](../../tasks/290-account-ui-missing-pages-plan.md).
 
 ## 1. Objective
 

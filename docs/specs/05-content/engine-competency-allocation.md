@@ -2,11 +2,12 @@
 spec: ENGINE-COMPETENCY-ALLOCATION
 title: Ma trận phân bổ lĩnh vực tư duy theo engine và band tuổi
 area: content
-status: implemented
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-09-03
-
+reviewed: 2026-10-18
+open_tasks:
+  - "#309"
 owns:
   - Bản đồ tương hợp engine -> lĩnh vực tư duy
   - Sàn K lĩnh vực trên mỗi ô (engine × band tuổi hợp lệ)
@@ -20,13 +21,15 @@ depends_on:
 
 # Ma trận phân bổ lĩnh vực tư duy theo engine và band tuổi
 
+> **Chưa hoàn thành** — Chưa có script `check:engine-allocation` (mục 9) và chưa nối `scripts/check.sh`; test `packages/content-build/tests/gates/engine-competency-allocation.test.ts` không đòi 0 vi phạm, nên `BR-ECA-02/03/06/09` chưa chặn gì. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
+
 ## 1. Objective
 
 [`engine-content-depth.md`](engine-content-depth.md) sở hữu câu hỏi *"engine này có đủ nội dung không"*, đo bằng sáu chỉ số kỹ thuật: `thinking` · `what` · `theme` · `difficulty`. Các chỉ số đó không đo **competency** — sáu lĩnh vực tư duy `C1`…`C6` vốn là bộ khung sư phạm cốt lõi của toàn bộ chương trình giáo dục mầm non.
 
 Spec này sở hữu **phân bổ lĩnh vực**: xác định engine nào phục vụ lĩnh vực nào, và mỗi ô (engine × band tuổi hợp lệ) phải có bao nhiêu lĩnh vực khác nhau (mật độ K). Spec này **cộng thêm** vào chiều sâu nội dung, cấm — NEVER thay thế [`engine-content-depth.md`](engine-content-depth.md).
 
-## 2. Actors & Permissions
+## 2. Actors
 
 | Actor | Quyền |
 |---|---|
@@ -34,15 +37,21 @@ Spec này sở hữu **phân bổ lĩnh vực**: xác định engine nào phục
 | Agent / Developer | Chạy cổng kiểm tra `check:engine-allocation`, bảo đảm tuân thủ ma trận |
 | Hệ thống CI / Lefthook | Cưỡng chế cổng `check:engine-allocation` trước khi merge nội dung |
 
-## 3. Preconditions
+## 3. Entry points
+
+| Route / màn hình | Actor | Ghi chú |
+|---|---|---|
+| `runEngineAllocationGate` ở `packages/content-build/src/gates/allocation.ts` | Cổng phân bổ | Hiện chỉ được gọi từ test `packages/content-build/tests/gates/engine-competency-allocation.test.ts`; lệnh `check:engine-allocation` ở mục 9 chưa có (Task #309) |
+
+**Điều kiện trước:**
 
 1. Toàn bộ template engine có mặt trong registry `@mindkid/game-engine` với danh sách `banned_age_bands` chuẩn xác.
-2. File cấu hình `packages/db/config/engine-competency-allocation.json` tồn tại, hợp lệ theo Zod schema.
+2. File cấu hình `packages/content-build/src/thresholds/engine-competency-allocation.json` tồn tại, hợp lệ theo Zod schema.
 3. Corpus seed chứa các game level đã gắn mã `skill_codes` trỏ vào taxonomy `C1`…`C6`.
 
-## 4. Main Flow
+## 4. Main flow
 
-1. Cổng `check:engine-allocation` nạp cấu hình `packages/db/config/engine-competency-allocation.json`.
+1. Cổng `check:engine-allocation` nạp cấu hình `packages/content-build/src/thresholds/engine-competency-allocation.json`.
 2. Kiểm tra tính toàn vẹn của tệp cấu hình qua Zod schema: `k` (mặc định 3), `affinity`, `exceptions`, `exception_cap`.
 3. Đọc danh sách engine từ registry game engine và tập hợp `ALL_SEED_LEVELS`.
 4. Lập danh sách các ô hợp lệ `(engine × band)` bằng cách loại bỏ các band nằm trong `banned_age_bands`.
@@ -53,14 +62,14 @@ Spec này sở hữu **phân bổ lĩnh vực**: xác định engine nào phục
 6. In danh sách mọi ngoại lệ đang bật (`BR-ECA-06`).
 7. Báo cáo chi tiết ô nào thiếu lĩnh vực nào. Nếu có bất kỳ ô nào thiếu mà không có ngoại lệ, trả về mã thoát exit 1.
 
-## 5. Alternative Flows
+## 5. Alternative flows
 
 - **Engine deprecated**: Bỏ qua các engine đã bị đánh dấu deprecated trong registry.
 - **Band bị cấm**: Bỏ qua các band tuổi nằm trong `banned_age_bands` của template (`BR-ECA-04`).
 - **Nguồn dữ liệu lỗi**: Nếu không đọc được corpus hoặc file cấu hình, dừng ngay lập tức với exit code ≠ 0 (`BR-ECA-08`).
 - **Ngoại lệ hợp lệ**: Ô được miễn trừ nếu có mặt trong danh sách `exceptions` với đầy đủ `reason`, `decided_by`, `date`.
 
-## 6. Business Rules
+## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
@@ -74,7 +83,7 @@ Spec này sở hữu **phân bổ lĩnh vực**: xác định engine nào phục
 | `BR-ECA-08` | Nguồn không đọc được thì dừng với mã thoát ≠ 0; cấm trả về rỗng rồi báo đạt | Ngăn chặn false positive làm lọt lỗi nghiêm trọng |
 | `BR-ECA-09` | Báo cáo in danh sách cụ thể ô nào thiếu lĩnh vực nào; cấm chỉ in tỷ lệ phần trăm chung | Cung cấp thông tin hành động trực tiếp cho tác giả nội dung biên tập |
 
-## 7. Data Contract & Schema
+## 7. Data
 
 ```ts
 export interface EngineAffinityConfig {
@@ -104,11 +113,11 @@ export interface EngineAllocationConfigFile {
 }
 ```
 
-## 8. Interfaces & Endpoints
+## 8. API contract
 
 Spec này thuộc tầng công cụ kiểm định (Quality & Gates). Không sở hữu endpoint HTTP public nào. Số đo phân bổ phục vụ báo cáo nội bộ và bảo đảm chất lượng build.
 
-## 9. Acceptance Scenarios
+## 9. Acceptance criteria
 
 ```gherkin
 Scenario: Ô hợp lệ đạt đủ K lĩnh vực
@@ -134,7 +143,7 @@ Scenario: Ngoại lệ hợp lệ và trong trần
 - **Never**: Không gán ép level vào lĩnh vực bị cấm của engine để chạy theo số lượng.
 - **Always**: Mọi ngoại lệ phải có người chịu trách nhiệm và ngày ký duyệt cụ thể.
 
-## 11. Open Questions (Đã chốt)
+## 11. Open questions
 
 - `Q158-1`: Xử lý thế nào với level gắn 2 kỹ năng thuộc 2 lĩnh vực khác nhau? -> Chốt: Tính cả 2 lĩnh vực nếu cả 2 đều nằm trong danh sách được phép của engine.
 - `Q158-2`: Trần ngoại lệ là bao nhiêu? -> Chốt: 8 ô (~10% tổng số ô hợp lệ).

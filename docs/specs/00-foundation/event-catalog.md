@@ -2,10 +2,10 @@
 spec: EVENT-CATALOG
 title: Catalog sự kiện và schema payload
 area: foundation
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-07
+reviewed: 2026-10-18
 owns:
   - Danh sách tên sự kiện hợp lệ
   - Schema payload từng sự kiện
@@ -13,9 +13,13 @@ owns:
 depends_on:
   - GLOSSARY
   - CHILD-DATA-COMPLIANCE
+open_tasks:
+  - "#308"
 ---
 
 # Catalog sự kiện và schema payload
+
+> **Chưa hoàn thành** — `BR-EVT-06`: cột `telemetry_events.content_version` vẫn nullable (`packages/db/src/schema/play.ts`), nên event thiếu phiên bản nội dung vẫn ghi được. Việc còn lại: [Task #308](../../tasks/308-foundation-gaps-plan.md).
 
 ## 1. Objective
 

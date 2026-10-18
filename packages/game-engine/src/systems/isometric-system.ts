@@ -1,7 +1,7 @@
 /**
  * `isometricSystem` — phép chiếu đẳng cự (isometric), xoay mô hình 3D theo trục Z,
  * sắp xếp thứ tự vẽ (painter's algorithm) và phát hiện khối lập phương bị che khuất.
- * Mục 7.4 của [`montessori-template-batch.md`](../../../../docs/specs/01-platform/montessori-template-batch.md).
+ * Lô `montessori`, mục 7.5 và `BR-MTB-15` ở mục 6 của [`engine-spec-sheet.md`](../../../../docs/specs/01-platform/engine-spec-sheet.md).
  *
  * System này **độc lập với khuôn** (`BR-MTB-15`): nhận toạ độ khối 3D thuần dữ liệu
  * `{ x, y, z }` và không phụ thuộc vào Zod hay bất kỳ file nào trong `templates/`.

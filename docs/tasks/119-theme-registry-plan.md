@@ -4,7 +4,7 @@
 > [`Task #113`](113-game-engine-depth-and-seed-diversity-plan.md).
 > **Spec sở hữu:** [`content-theme-registry.md`](../specs/05-content/content-theme-registry.md)
 > — đóng, `status: draft` → `implemented` ở cuối task.
-> **Spec đọc kèm:** [`content-tagging.md`](../specs/01-platform/content-tagging.md) mục 7.2 ·
+> **Spec đọc kèm:** [`content-tagging.md`](../specs/05-content/content-tagging.md) mục 7.2 ·
 > [`level-generator-kit.md`](../specs/01-platform/level-generator-kit.md) mục 7.2.
 > **Chặn bởi:** quyết định `Q119-1` (chốt 14 giá trị) và `Q119-2` (trần catalog).
 
@@ -16,7 +16,7 @@ Trục `theme` có **ba nguồn sự thật** trong mã, không nguồn nào th�
 |---|---|---:|
 | Cổng `thinking-coverage` | `packages/db/tests/gates/thinking-coverage.ts:141` `CANONICAL_THEME_TAGS` | **22** |
 | Từ vựng seed | `packages/db/src/seed-master/content-tags.ts` `axis: "theme"` | **12** |
-| Spec | mục 7.2 của [`content-tagging.md`](../specs/01-platform/content-tagging.md) | khác cả hai |
+| Spec | mục 7.2 của [`content-tagging.md`](../specs/05-content/content-tagging.md) | khác cả hai |
 
 `packages/shared/src/constants/` **chưa tồn tại** — chỗ mà `BR-CTR-12` chỉ định làm nguồn duy
 nhất còn là thư mục trống.
@@ -88,7 +88,7 @@ pnpm --filter @mindkid/db report:tags
    `age_floor`, mô tả bối cảnh — hình dạng ở mục 7.2 của spec.
 2. `packages/db/src/seed-master/content-tags.ts` trục `theme` **import** từ đó, bỏ danh sách riêng.
 3. `CANONICAL_THEME_TAGS` ở `tests/gates/thinking-coverage.ts` **import** từ đó, bỏ `Set` viết tay.
-4. Mục 7.2 của [`content-tagging.md`](../specs/01-platform/content-tagging.md) trỏ về file mới,
+4. Mục 7.2 của [`content-tagging.md`](../specs/05-content/content-tagging.md) trỏ về file mới,
    không chép lại danh sách. Sửa spec **trong cùng PR**.
 5. Test: đếm số nơi định nghĩa danh sách chủ đề trong monorepo — kỳ vọng **1**.
 

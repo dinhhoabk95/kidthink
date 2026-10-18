@@ -1,20 +1,18 @@
 ---
 spec: ROOT
-title: MindKid — Project Specification (v2, greenfield)
+title: MindKid — Project Specification
 version: 2.0.0-draft
 status: draft — chờ duyệt
 created: 2026-08-04
-supersedes: tinimath/docs/SPEC.md (v1.0.0)
+reviewed: 2026-10-18
 ---
 
-# MindKid — Project Specification v2
+# MindKid — Project Specification
 
-> **Bản viết lại từ đầu.** Không dựa trên code hiện tại.
-> Repo `tinimath/` (v1) trở thành **tham khảo đọc-only**: taxonomy `docs/taxonomy/`,
-> `packages/emoji`, và `packages/game-engine` là ba tài sản được port sang.
-> Mọi thứ còn lại — schema, API, app shell — viết mới theo spec này.
+> Contract toàn dự án. Spec module chi tiết nằm ở [`specs/`](specs/index.md); file này chốt
+> quyết định định hình, kiến trúc nội dung, quyền, dữ liệu trẻ, stack và phase gate.
 >
-> Nguồn: PRD phân tích 2026-08-04 + hiệu chỉnh của product owner + corpus spec v1.
+> Nguồn: PRD phân tích 2026-08-04 + hiệu chỉnh của product owner.
 
 ## Quy trình
 
@@ -28,9 +26,9 @@ Quy tắc thô: nếu có người sẽ ngạc nhiên vì kết quả, việc đ
 
 ---
 
-## 0. Mười hai quyết định định hình v2
+## 0. Mười hai quyết định định hình sản phẩm
 
-Đây là delta so với v1. Mỗi dòng là một quyết định đã chốt, kèm lý do.
+Mỗi dòng là một quyết định đã chốt, kèm lý do.
 
 | #       | Quyết định                                                                                                                                                                                                                                                                                                       | Lý do                                                                                                                                                                                                                                                                      |
 | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -41,8 +39,8 @@ Quy tắc thô: nếu có người sẽ ngạc nhiên vì kết quả, việc đ
 | **D5**  | **Nội dung đã publish bất biến.** Sửa = tạo version mới. Play session ghim `content_version`                                                                                                                                                                                                                     | Báo cáo học tập của một đứa trẻ phải giải thích được bằng đúng nội dung nó đã chơi, không phải bản đã sửa sau đó                                                                                                                                                           |
 | **D6**  | **Tuân thủ Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15, Nghị định 13/2023 và Luật Trẻ em (VN)** là ràng buộc thiết kế, không phải checklist cuối                                                                                                                                                                    | Thu dữ liệu trẻ vượt nhu cầu là thứ không rút lại được sau khi đã ghi; Luật 91/2025/QH15 đã có hiệu lực từ 01/01/2026 và là căn cứ hiện hành không được bỏ sót                                                                                                             |
 | **D7**  | **AI soạn trong repo, người merge.** AI agent IDE hỗ trợ viết seeder nội dung và code; cổng người là **PR review**, và merge chính là phát hành. Cấm có LLM nào chạy trong hệ thống để sinh nội dung                                                                                                             | Ranh giới cũ ("NEVER để AI sinh nội dung cốt lõi") đặt sai chỗ. Cái cần cấm không phải việc **soạn thảo**, mà việc **phát hành không có người kiểm**. Đặt cổng ở PR thì cổng đó có diff, có `git blame`, và revert được bằng một lệnh                                      |
-| **D8**  | **Đổi tên dự án: TiniMath → MindKid.** Package scope, domain, chuỗi hiển thị người dùng đổi theo. Thư mục repo v1 cũ (`tinimath/`) giữ nguyên tên — đó là tên lịch sử của thư mục tham khảo đọc-only, không phải thương hiệu                                                                                    | Product owner chốt định vị lại thương hiệu trước khi viết dòng code v2 đầu tiên, tránh phải rename giữa chừng khi đã có package đã publish, domain đã trỏ DNS                                                                                                              |
-| **D9**  | **Khởi tạo source mới từ đầu trong `mindkid/`**, nằm cạnh `tinimath/` (v1) trong cùng workspace — thay vì update dần code cũ. Port có chọn lọc theo [`docs/specs/00-foundation/repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md)                                                                        | Update dần trên nền v1 mang theo nợ kỹ thuật đã ghi nhận ở [`AUDIT-v1.md`](specs/AUDIT-v1.md) — 31 spec gộp nhiều outcome, thiếu 8 loại spec. Greenfield cho phép áp toàn bộ 134 spec v2 sạch từ dòng code đầu tiên                                                        |
+| **D8**  | **Tên dự án là MindKid.** Package scope `@mindkid/*`, domain và mọi chuỗi hiển thị người dùng dùng tên này | Product owner chốt thương hiệu trước dòng code đầu tiên, để không phải đổi tên giữa chừng khi đã có package, domain trỏ DNS và nội dung đã phát hành |
+| **D9**  | **Một repo `mindkid/`, viết theo spec từ dòng code đầu tiên.** Tài sản nhập vào repo (taxonomy, kho emoji, lõi game engine) đi qua cổng chọn lọc của [`docs/specs/00-foundation/repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md) | Spec gộp nhiều outcome thì không trả lời được câu "tính năng này xong chưa" (mục 14.1). Code viết sau spec một-outcome-một-file thì mỗi file có đúng một contract để đối chiếu |
 | **D10** | **Ưu tiên adopt thư viện Nuxt ecosystem đã kiểm chứng** (auth, sitemap/SEO, cache, queue) thay vì tự xây từ đầu. Khi cần dùng chung nhiều app, bọc lại thành **package driver nội bộ** — xem [`docs/specs/00-foundation/monorepo-package-architecture.md`](specs/00-foundation/monorepo-package-architecture.md) | Tự xây auth/queue/sitemap không tạo khác biệt cạnh tranh, chỉ tốn thời gian dev và mang rủi ro bảo mật tự phát hiện. Thư viện phổ biến có test, security patch, cộng đồng review. Driver nội bộ giữ interface ổn định cho nhiều app và không khoá cứng vào một thư viện    |
 | **D11** | **Phạm vi hiện hành là web-only và vận hành tại Việt Nam.** PWA vẫn là web delivery; native mobile app, classroom/B2B, licensing/white-label, marketplace và mở thị trường ngoài Việt Nam không có spec triển khai, task hay placeholder schema trong roadmap hiện hành.                                         | Lập kế hoạch cho một mô hình sản phẩm chưa được chọn tạo contract giả và kéo theo actor, pháp lý, thanh toán, store review hoặc multi-tenancy không cần thiết. Nếu sau này mở rộng, người quyết phải mở một chương trình scope mới và viết spec sở hữu trước khi lập task. |
 | **D12** | **Tài liệu pháp lý là singleton code-owned, không quản lý policy version.** Sửa nội dung bằng PR; sau deploy, `super_admin` chủ động force re-consent bằng một mốc thời gian cho từng loại `terms` · `privacy` · `child_data`.                                                                                   | Hệ thống chỉ cần biết User đã đồng ý trước hay sau lần force gần nhất. Lịch sử Git + audit của thao tác force giữ dấu vận hành; dựng kho version và diff policy tạo thêm schema, route và UI nhưng không tăng giá trị sản phẩm tương xứng.                                 |
@@ -218,7 +216,7 @@ trong studio rồi gán.
 
 ### 1.8 Quy mô nội dung MVP
 
-| Lớp                   |                                                                 MVP |          V1 |
+| Lớp                   |                                                                 MVP |     Sau MVP |
 | --------------------- | ------------------------------------------------------------------: | ----------: |
 | Competency            |                                                                   6 |           6 |
 | Strand                |                                                                  41 |          41 |
@@ -229,7 +227,11 @@ trong studio rồi gán.
 | Lesson                |                                                            **≥ 60** | 1.500–2.500 |
 | Curriculum            | **5** (4 theo tuổi + 1 chương trình 42 tuần, phát hành 12 tuần đầu) |        8–10 |
 
-Đủ để một trẻ quay lại trong **4–8 tuần** — tiêu chí MVP thành công.
+Đủ để một trẻ quay lại trong **4–8 tuần** — tiêu chí MVP thành công. Cột "Sau MVP" là mốc
+quy mô sản phẩm mục tiêu sau khi MVP đạt, không phải cam kết phase.
+
+Hiện trạng đo 2026-10-18 (đã vượt sàn MVP ở ba lớp): **76** strand, **443** skill, **38** khuôn
+`GT-000`…`GT-037` (danh sách: [`specs/01-platform/engines/index.md`](specs/01-platform/engines/index.md)).
 
 ---
 
@@ -361,11 +363,11 @@ engine trong lúc trẻ đang chơi.
 | GT-005 | Ghép cặp           | pair-match        |
 | GT-006 | Sắp xếp thứ tự     | sequence-order    |
 
-**Port từ v1:** `packages/game-engine` v1 có 60 Session class và hai mechanic base
-(`DragDropSession`, `TapSelectSession`) đã đúng hướng. Sáu template MVP dựng trên hai base
-đó cộng bốn base mới. 60 game type cũ là **backlog nội dung**, không phải backlog code —
-port dần thành `content_pack` sau MVP, cái nào không map được thì giữ Session riêng và
-đăng ký như một template `content_contract` hẹp. Cả hai đường dùng chung registry.
+**60 dạng game nguồn là backlog nội dung, không phải backlog code.** Mỗi dạng map thành
+`content_pack` của một template có sẵn; dạng nào không map được thì đăng ký thành một template
+`content_contract` hẹp. Cả hai đường dùng chung registry. Sáu template trên là sàn MVP; registry
+hiện có 38 khuôn. Độ phủ 60 dạng được đo ở
+[`source-game-type-coverage.md`](specs/08-quality/source-game-type-coverage.md).
 
 ### 2.5 Lesson và Activity
 
@@ -689,7 +691,7 @@ sách · đổi cấu hình game · đổi feature flag.
    test bắt orphan.
 5. **`audit_logs` · `consent_logs` · `content_review_log` · `telemetry_events` là INSERT-only**
    (`play_sessions` cũng vậy, chỉ sau khi `status = completed` — xem `BR-SPT-07`).
-   (**D-BV**, T15, 2026-08-09: SPEC.md gọi bảng này `play_events` từ v2.0.0, nhưng
+   (**D-BV**, T15, 2026-08-09: SPEC.md gọi bảng này `play_events` từ bản 2.0.0, nhưng
    [`schema-play-telemetry.md`](specs/01-platform/schema-play-telemetry.md) — spec sở hữu
    schema, review sau — và code thật đều dùng `telemetry_events`. Sửa SPEC.md cho khớp,
    không đổi schema.)
@@ -782,7 +784,7 @@ mindkid/
 │   ├── web/          Nuxt 4 — public + play + account + API        :3000
 │   ├── admin/        Nuxt 4 SPA tĩnh — authoring studio + vận hành (admin.{domain})
 │   └── worker/       Nitro — BullMQ consumer (email, export, job)  :3099
-├── packages/                          12 package
+├── packages/                          20 package
 │   ├── config/       Biome preset, TSConfig base, hằng số dùng chung
 │   ├── shared/       Zod schema, type, constant — KHÔNG logic
 │   ├── db/           Drizzle schema, migration, seed
@@ -796,21 +798,29 @@ mindkid/
 │   ├── emoji/        32 nhóm emoji data + tìm tiếng Việt
 │   ├── game-engine/  Canvas 2D thuần TS, template + Session
 │   ├── adaptive/     BKT mastery + ZPD selector — pure TS, KHÔNG ghi DB
+│   ├── errors/       AppError + lớp exception domain (H3Error hạng nhất), registry mã lỗi
+│   ├── content/      Kho nội dung học (skill, builder, activity, lesson) — KHÔNG ghi DB
+│   ├── content-build/ Nạp nội dung vào DB, cổng chất lượng corpus
+│   ├── play/         Phiên chơi, sự kiện chơi, BKT mastery, huy hiệu
+│   ├── audit/        Ghi audit log, quét dữ liệu nhạy cảm
+│   ├── notification/ Dispatch logical notification, SMTP/SES, FCM Web, MJML
+│   ├── moderation/   Blocklist nội dung cho bề mặt trẻ
+│   ├── export/       Kết xuất PDF giáo án, worksheet
 │   └── ui/           Nuxt Layer — Nuxt UI v4 preset + brand component
 ├── docs/                     spec + task, cùng git repo code (D-U, xem [`repo-bootstrap.md`](specs/00-foundation/repo-bootstrap.md)
 │                             §11 Q10 — lịch sử 3 lượt quyết định, lượt cuối giữ tại đây)
 │   ├── SPEC.md               file này (root `SPEC.md` symlink về đây)
 │   ├── specs/                spec từng module — đọc TRƯỚC khi implement
-│   ├── taxonomy/             registry C1–C6 + 230 skill
+│   ├── taxonomy/             registry C1–C6 + 443 skill
 │   ├── montessori/           tài liệu tham khảo nguồn
 │   └── tasks/                plan.md · todo.md
 ├── infra/                    deploy script, nginx, monitoring
 └── .agents/                  AGENTS.md + rules/ + agents/ + commands/
 ```
 
-**3 app + 12 package** (v1 có 4 + 18). Cắt: `socket`, `ai-vision`, `ai-voice`,
-`ai-planner`, `moderation`, `exports`, `admin` layer, `valkey` (gộp vào `cache`).
-Thêm lại **khi** tính năng của chúng vào scope, không trước.
+**3 app + 20 package** (đếm `apps/*` và `packages/*` ngày 2026-10-18). Không có package
+`socket`, `ai-vision`, `ai-voice`, `ai-planner`, `admin` layer, `valkey` (gộp vào `cache`) —
+chỉ thêm **khi** tính năng của chúng vào scope, không trước.
 
 ### 8.1 Ranh giới kiến trúc
 
@@ -1225,48 +1235,51 @@ hình báo cáo mang câu này.
 
 Mỗi outcome có **đúng một** spec sở hữu. Spec khác **link tới**, không copy contract.
 
-**163 spec module.** Bản đồ đầy đủ: [`docs/specs/index.md`](specs/index.md).
+**194 spec module** cộng 38 phiếu engine (đếm 2026-10-18). Bản đồ đầy đủ, bảng đếm theo khu
+vực và cột task còn mở: [`docs/specs/index.md`](specs/index.md).
 
 ```
 docs/
 ├── SPEC.md                    file này — contract toàn dự án
 └── specs/
-    ├── AUDIT-v1.md            vì sao KHÔNG dùng lại corpus v1
-    ├── CONVENTIONS.md         quy ước viết spec v2
-    ├── TEMPLATE.md · index.md · roadmap.md
-    ├── 00-foundation/  17     contract cắt ngang mọi bề mặt
-    ├── 01-platform/    42     năng lực nội bộ (gồm seeder nội dung + codegen + OAuth + browser push + thanh toán tự động + offline pack + audio storage + layout + ngẫu nhiên có seed + bộ dựng template + lô khuôn Montessori + hợp đồng biến môi trường + dựng máy + giám sát tiến trình + phát hành + quay lui)
+    ├── CONVENTIONS.md         quy ước viết spec
+    ├── TEMPLATE.md · index.md · READING-GUIDE.md · roadmap.md
+    ├── 00-foundation/  20     contract cắt ngang mọi bề mặt (registry, bản đồ schema)
+    ├── 01-platform/    44     năng lực nội bộ: schema, auth, engine runtime, seeder, hạ tầng vận hành
+    │   └── engines/    38     phiếu engine GT-000…GT-037 + TEMPLATE.md + index.md (sinh tự động)
     ├── 02-public/       9     khách chưa đăng nhập
-    ├── 03-account/     22     User đã đăng nhập (gồm SNS login + linking + notification inbox + recurring billing)
-    ├── 04-play/        15     bề mặt trẻ — core business (gồm bề mặt chạy tiết học của người dạy + chuỗi vòng trong một phiên)
-    ├── 05-content/     12     ràng buộc biên tập nội dung (gồm bộ tiết học mẫu + ba spec lô Montessori + chuỗi vòng)
+    ├── 03-account/     24     User đã đăng nhập (gồm tiết học người lớn dẫn + gói offline)
+    ├── 04-play/        21     bề mặt trẻ — core business
+    ├── 05-content/     27     mô hình nội dung và ràng buộc biên tập
     ├── 06-admin/       31     Manager (gồm studio + duyệt + huỷ gói)
     ├── 07-addon/        7     spec đủ, KHÔNG bán ở MVP
-    └── 08-quality/      8     test · bảo mật · a11y · hiệu năng · design · phủ tư duy · an toàn kiểu
+    └── 08-quality/     11     test · bảo mật · a11y · hiệu năng · design · phủ tư duy · an toàn kiểu · cổng runtime
 ```
 
 ### 14.1 Luật cứng: một outcome, một file
 
-v1 gộp 11/26 module (`dashboard-and-users`, `identity-and-security`, `adaptive-and-curriculum`…)
-và hệ quả là **không trả lời được "tính năng này xong chưa"** — nhãn của outcome mạnh nhất
-che outcome yếu nhất.
+Spec gộp nhiều outcome (`dashboard-and-users`, `identity-and-security`, `adaptive-and-curriculum`…)
+**không trả lời được "tính năng này xong chưa"** — nhãn của outcome mạnh nhất che outcome yếu
+nhất.
 
-v2 cấm gộp. Kiểm bằng câu hỏi: _"tính năng này xong chưa?"_ — nếu câu trả lời phải là "phần
+Cấm gộp. Kiểm bằng câu hỏi: _"tính năng này xong chưa?"_ — nếu câu trả lời phải là "phần
 A xong, phần B chưa" thì file đang gộp và phải tách.
 
 Chữ `and` trong tên file bị cấm khi nó nối **hai outcome**; được phép khi nó đặt tên cho
 **một** outcome không tách được ([`backup-and-restore.md`](specs/01-platform/backup-and-restore.md) — một backup chưa từng restore không
 phải backup).
 
-### 14.2 Thay đổi so với quy ước v1
+### 14.2 Hình dạng một spec
 
-| v1                                            | v2                                                           | Vì sao                                               |
-| --------------------------------------------- | ------------------------------------------------------------ | ---------------------------------------------------- |
-| Section **Current state** (bằng chứng code)   | → **Dependencies**                                           | Greenfield không có code để đối chiếu                |
-| `classification: Running \| Partial running…` | → `status: draft \| approved \| implemented`                 | Đo độ chín của **spec**, không của code chưa tồn tại |
-| —                                             | + Section **Business rules** đánh số `BR-xxx` kèm **vì sao** | Tra chéo được từ test và code                        |
-| —                                             | + Section **Error codes**                                    | Không có nơi sở hữu ở v1                             |
-| Acceptance dạng gạch đầu dòng                 | → **Gherkin**                                                | Map thẳng sang test, sinh được bằng `gen:tests`      |
+| Quy ước | Vì sao |
+| ------- | ------ |
+| `status: draft \| approved \| implemented`; còn code chưa khớp thì thêm `open_tasks` và khối "Chưa hoàn thành" | Đo độ chín của spec và khoảng cách tới code bằng một chỗ, tra được bằng script |
+| Section **Business rules** đánh số `BR-xxx` kèm **vì sao** | Tra chéo được từ test và code |
+| Mã lỗi đăng ký ở [`error-codes.md`](specs/00-foundation/error-codes.md), spec chỉ trích | Mỗi mã lỗi có đúng một nơi sở hữu |
+| Acceptance dạng **Gherkin** | Map thẳng sang test, mỗi scenario fail được |
+| Không spec "lô" hay kế hoạch một lần — kế hoạch nằm ở `docs/tasks/` | Spec là contract còn hiệu lực, không là nhật ký đợt việc |
+
+Quy ước đầy đủ: [`specs/CONVENTIONS.md`](specs/CONVENTIONS.md).
 
 Giữ cấu trúc **theo bề mặt** thay vì theo tầng kỹ thuật (PRD §30.1). _Lý do:_ mỗi spec sở
 hữu một outcome người dùng thấy được; tách theo `03-api`/`04-data`/`05-ui` làm một outcome bị
@@ -1276,30 +1289,31 @@ xé ra 5 file và không file nào trả lời được câu hỏi ở §14.1.
 
 | Registry                                                     | Nội dung                                                     |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [`business-rules.md`](specs/00-foundation/business-rules.md) | 120 prefix → spec; **danh sách rule không bao giờ được nới** |
+| [`business-rules.md`](specs/00-foundation/business-rules.md) | 240 prefix → spec; **danh sách rule không bao giờ được nới** |
 | [`error-codes.md`](specs/00-foundation/error-codes.md)       | Mọi mã lỗi nghiệp vụ → HTTP status                           |
 | [`event-catalog.md`](specs/00-foundation/event-catalog.md)   | Tên event + schema payload                                   |
 | [`glossary.md`](specs/00-foundation/glossary.md)             | Từ vựng chuẩn + từ bị cấm                                    |
 | [`id-conventions.md`](specs/00-foundation/id-conventions.md) | Định dạng mã + mã bất biến                                   |
 
-**Mẫu feature spec** ([`TEMPLATE.md`](specs/TEMPLATE.md)): Purpose · Actors · Preconditions · Main flow ·
-Alternative flows · Business rules · Permissions · Data model · API contracts · Events ·
-UI states · Validation · Error codes · Acceptance criteria (Gherkin) · Analytics ·
-Security · Out of scope · Dependencies · Known gaps.
+**Mẫu feature spec** ([`TEMPLATE.md`](specs/TEMPLATE.md)) — 11 section đúng thứ tự: Objective · Actors ·
+Entry points · Main flow · Alternative flows · Business rules · Data · API contract ·
+Acceptance criteria (Gherkin) · Boundaries · Open questions. Spec `07-addon/` rút gọn; phiếu
+engine dùng khuôn 18 mục của [`engine-spec-sheet.md`](specs/01-platform/engine-spec-sheet.md).
 
-**Quy tắc ID:**
+**Quy tắc ID** (nguồn sự thật: mục 7 của [`id-conventions.md`](specs/00-foundation/id-conventions.md)):
 
 ```
-CMP-x      Competency        GT-xxx     Game Template
-STR-xxx    Strand            G-xxxxx    Game Level (instance)
-SKL-xxx    Skill             PKG-xxx    Package
-LO-xxxx    Learning Objective ENT-xxx   Entitlement key
-CUR-xxx    Curriculum        F-xxx      Feature
-LES-xxxx   Lesson            BR-xxx     Business Rule
-ACT-xxxx   Activity          EVT-xxx    Event
+C1…C6              Competency            GL-C1-CNT-MATCH-0007  Game Level (instance)
+C1.CNT             Strand                LES-0042              Lesson
+C1.CNT.03          Skill                 ACT-0117              Activity
+LO-C1.CNT.03-01    Learning Objective    CUR-001               Curriculum
+GT-003             Game Template         WS-0009               Worksheet
+PKG-premium        Package               play_premium_games    Entitlement key
+F-001              Feature (tài liệu)    BR-<SPEC>-01          Business Rule (tài liệu)
 ```
 
-Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, không đổi.
+Mã taxonomy (`C1.CNT.03`) đã biên soạn, bất biến, không đổi. Event dùng `snake_case`, mã lỗi
+`SCREAMING_SNAKE` — không có tiền tố số.
 
 ---
 
@@ -1310,7 +1324,7 @@ Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, 
 | 1   | **Giá cuối** của `standard` và `premium` (365 ngày / vĩnh viễn)                                                                                                                                                                 | Mở thanh toán           |
 | 2   | 6 game level nào vào allow-list guest? 1 mỗi competency, difficulty 1–2                                                                                                                                                         | P1 gating               |
 | 10  | Giữ VietQR duyệt tay vĩnh viễn hay thêm cổng thanh toán ở P5?                                                                                                                                                                   | Payment roadmap         |
-| 11  | Backup + monitoring: v1 **không có gì**. Ai sở hữu và ngân sách bao nhiêu?                                                                                                                                                      | Go-live                 |
+| 11  | Backup + monitoring: ai sở hữu vận hành và ngân sách bao nhiêu?                                                                                                                                                      | Go-live                 |
 | 12  | Bằng chứng nào đủ để nói sản phẩm **rèn luyện, khai phá tư duy**, thay vì chỉ chứng minh trẻ chơi được và quay lại? Cần chốt claim, KPI sư phạm và protocol kiểm thử với trẻ trước khi dùng kết quả đó làm thông điệp sản phẩm. | P1 nghiệm thu · Go-live |
 | 13  | Giữ contract **≥60 lesson** và cho phép tái sử dụng trong chương trình 42 tuần, hay nâng lên **≥126 lesson distinct** như đề xuất ở Task #54?                                                                                   | P3.1 · lịch nội dung    |
 
@@ -1318,20 +1332,20 @@ Mã taxonomy giữ format v1 (`C1.CNT.03`) — đã biên soạn, bất biến, 
 
 | Câu                                                      | Quyết định                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | Ngày                           |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
-| Phạm vi làm lại                                          | **Spec mới + code mới từ đầu**; port `game-engine`, `emoji`, taxonomy data                                                                                                                                                                                                                                                                                                                                                                                                                        | 2026-08-04                     |
+| Phạm vi                                                  | **Code viết theo spec**; taxonomy data, kho emoji và lõi `game-engine` nhập có chọn lọc                                                                                                                                                                                                                                                                                                                                                                                                                        | 2026-08-04                     |
 | Authoring studio ở MVP                                   | **Có, đầy đủ** — Manager tạo game level mới, 0 dòng code                                                                                                                                                                                                                                                                                                                                                                                                                                          | 2026-08-04                     |
 | Add-on ở MVP                                             | **Chỉ spec, không lên catalog.** MVP bán đúng `standard` + `premium`                                                                                                                                                                                                                                                                                                                                                                                                                              | 2026-08-04                     |
 | Premium vs Creator                                       | **Gộp.** Premium bao hàm quyền học của Creator; quyền tạo nằm ở add-on                                                                                                                                                                                                                                                                                                                                                                                                                            | 2026-08-04                     |
 | Pháp lý                                                  | **Việt Nam** — Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15 + Nghị định 13/2023 + Luật Trẻ em. Không COPPA/GDPR-K ở MVP                                                                                                                                                                                                                                                                                                                                                                               | Cập nhật 2026-08-14            |
 | Legal singleton và re-consent (`D12`)                    | **Không quản lý policy version.** Ba tài liệu cần đồng ý là singleton code-owned; `super_admin` force bằng `reconsent_required_at`, mọi lần force ghi audit                                                                                                                                                                                                                                                                                                                                       | 2026-08-14                     |
 | Chủ và năng lực review nội dung (`D-CN`, thay thế `D-W`) | Nhóm Nội dung sở hữu; baseline 20 LO, 6 game level hoặc 3 lesson/người/ngày, đo lại sau pilot 30 LO + 6 level                                                                                                                                                                                                                                                                                                                                                                                     | 2026-08-09                     |
-| Port 60 game type v1                                     | Giữ làm backlog **nội dung**, map dần thành `content_pack`; không port 60 Session class thành backlog code. Sáu template vẫn là phạm vi MVP                                                                                                                                                                                                                                                                                                                                                       | Đối chiếu §2.4 ngày 2026-08-12 |
+| 60 dạng game nguồn                                       | Giữ làm backlog **nội dung**, map dần thành `content_pack`; không biến 60 dạng thành 60 Session class. Sáu template vẫn là sàn MVP                                                                                                                                                                                                                                                                                                                                                            | Đối chiếu §2.4 ngày 2026-08-12 |
 | Ngân sách rà soát pháp lý (`D-AS`)                       | 50M VND cho tư vấn IP/Bảo vệ dữ liệu trước go-live; owner chi tiết ở [`legal-pages.md`](specs/02-public/legal-pages.md)                                                                                                                                                                                                                                                                                                                                                                           | 2026-08-09                     |
 | Thiết bị chuẩn 60 fps (`D-CH`)                           | Lenovo Tab M8 2 GB RAM; Chrome ổn định mới nhất, pin >30%, tắt tiết kiệm pin; chạy ba lần lấy median                                                                                                                                                                                                                                                                                                                                                                                              | 2026-08-09                     |
-| Repo mới hay branch v2?                                  | **Repo riêng `mindkid/`**, nằm cạnh `tinimath/` (v1). Port có chọn lọc: `game-engine`, `emoji`, taxonomy data                                                                                                                                                                                                                                                                                                                                                                                     | 2026-08-06 (D-A)               |
+| Repo                                                     | **Repo riêng `mindkid/`**. Tài sản nhập có chọn lọc: `game-engine`, `emoji`, taxonomy data                                                                                                                                                                                                                                                                                                                                                                                                         | 2026-08-06 (D-A)               |
 | Thư viện ảnh                                             | **Không có.** Emoji cố định; ảnh upload gắn content item                                                                                                                                                                                                                                                                                                                                                                                                                                          | 2026-08-04                     |
 | Master data                                              | **Lớp 1 code-owned, admin read-only**; Lớp 2 studio CRUD                                                                                                                                                                                                                                                                                                                                                                                                                                          | 2026-08-04                     |
 | Dùng AI để soạn game và code?                            | **Có — AI agent IDE soạn file trong repo, người merge.** Nội dung nền là **seeder** (8 cổng tự động → PR review → seed ghi thẳng `published`). Code Task #14 được phép đi vào sáu vùng nhạy cảm nhưng phải có test âm, gate tự động và người review diff; không auto-merge, không chạy migration ngoài local, không tự publish. Cấm có pipeline LLM sinh nội dung trong runtime. Hard rule cũ "NEVER để AI sinh nội dung cốt lõi" viết sai chỗ — cái cần cấm là **phát hành không có người kiểm** | 2026-08-09                     |
 | Nội dung nền vào DB ở trạng thái nào?                    | **`published` thẳng từ seed.** Cổng người là PR review, không phải hàng đợi duyệt. Seed chỉ INSERT và vẫn chạy đủ checklist publish. Sau đó admin quản lý trong studio bằng version mới                                                                                                                                                                                                                                                                                                           | 2026-08-05                     |
-| Tách nhỏ spec tới mức nào?                               | **Một outcome một file.** 31 spec v1 → **124** spec v2. Tên file có `and` bị cấm khi nối hai outcome                                                                                                                                                                                                                                                                                                                                                                                              | 2026-08-05                     |
+| Tách nhỏ spec tới mức nào?                               | **Một outcome một file.** 124 spec lúc chốt (194 ngày 2026-10-18). Tên file có `and` bị cấm khi nối hai outcome                                                                                                                                                                                                                                                                                                                                                                                              | 2026-08-05                     |
 | Audio tiếng Việt & Fallback (`D-AV`)                     | **P1 kết hợp clip tĩnh + Web Speech API (TTS vi-VN)** với visual fallback (ghost hand / highlight / icon) không crash khi thiếu voice; P2 quản lý audio asset qua [`audio-storage.md`](specs/01-platform/audio-storage.md) riêng biệt khỏi image pipeline                                                                                                                                                                                                                                         | 2026-08-16 (Task #80)          |

@@ -2,10 +2,12 @@
 spec: SEO-AND-STRUCTURED-DATA
 title: SEO kỹ thuật và dữ liệu có cấu trúc
 area: public
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#291"
 owns:
   - Meta tag, sitemap, robots, canonical
   - Schema JSON-LD toàn site
@@ -13,6 +15,8 @@ depends_on: []
 ---
 
 # SEO kỹ thuật và dữ liệu có cấu trúc
+
+> **Chưa hoàn thành** — `BR-SEO2-01`: `/me/**`, `/play/**` chỉ có `Disallow` trong `robots.txt`, chưa có meta/header `noindex`. `BR-SEO2-09`: chưa có `hreflang`. Việc còn lại: [Task #291](../../tasks/291-public-account-small-gaps-plan.md).
 
 ## 1. Objective
 

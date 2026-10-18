@@ -5,7 +5,7 @@ area: content
 status: draft
 mvp: false
 phase: P4
-reviewed: 2026-09-02
+reviewed: 2026-10-18
 owns:
   - Sàn số vòng thật có trong corpus seed, theo bậc thang
   - Mục tiêu số vòng mỗi band tuổi và cơ sở của con số
@@ -55,7 +55,7 @@ ra sao.
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `pnpm --filter @mindkid/db check:round-sets` | Dev, CI | Cổng hiện có, mục 7.5 nói nó thiếu gì |
+| `pnpm --filter @mindkid/content-build check:round-sets` | Dev, CI | Cổng hiện có, mục 7.5 nói nó thiếu gì |
 | [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md) | AI agent IDE | Ràng buộc lúc sinh seeder |
 | [`level-generator-kit.md`](../01-platform/level-generator-kit.md) | Dev | `gen:levels --rounds=n` và `escalation_step` |
 | [`game-level-studio.md`](../06-admin/game-level-studio.md) | Người soạn | Bề mặt soạn thủ công |

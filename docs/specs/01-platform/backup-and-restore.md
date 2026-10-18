@@ -2,10 +2,12 @@
 spec: BACKUP-AND-RESTORE
 title: Sao lưu và khôi phục
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-07
+reviewed: 2026-10-18
+open_tasks:
+  - "#304"
 owns:
   - Lịch sao lưu và retention
   - Quy trình verify restore
@@ -17,13 +19,14 @@ depends_on:
 
 # Sao lưu và khôi phục
 
+> **Chưa hoàn thành** — backup, verify, retention và offsite đã chạy trong worker; nhưng `BR-BAK-06` chưa có cổng go-live nào đỏ khi `backup_log` chưa có lần verify restore thành công (hiện chỉ là chữ trên trang `/system` của admin). Việc còn lại: [Task #304](../../tasks/304-platform-ops-gaps-plan.md).
+
 ## 1. Objective
 
 Hệ thống giữ **dữ liệu học tập của trẻ**. Mất nó là mất thứ không mua lại được — người lớn
 không thể "chơi lại 8 tuần".
 
-v1 vận hành **không có backup nào**. Spec này biến backup thành điều kiện go-live, không
-phải việc để sau.
+Spec này biến backup thành điều kiện go-live, không phải việc để sau.
 
 > **Một backup chưa từng restore không phải backup.** Đó là lý do §4 bước 3 tồn tại và là
 > lý do file này không tách "backup" khỏi "restore".
@@ -74,9 +77,9 @@ phải việc để sau.
 | `BR-BAK-01` | Backup **verify hàng tuần** bằng restore thật | Dump không restore được là dump vô dụng, và chỉ phát hiện lúc cần nhất |
 | `BR-BAK-02` | Dump **mã hoá at rest**; khoá không nằm cùng chỗ với dump | Một dump là **toàn bộ** dữ liệu trẻ trong một file di chuyển được — nó rời khỏi vành đai bảo vệ của DB. Khoá để cùng chỗ với dump thì mã hoá không mua thêm gì: ai lấy được file cũng lấy được khoá |
 | `BR-BAK-03` | Mỗi lần chạy ghi `backup_log` kèm `sha256` | Không có bản ghi thì không chứng minh được đã chạy |
-| `BR-BAK-04` | Fail Cấm — **NEVER im lặng** | v1 có `backup_log` rỗng và không ai biết |
+| `BR-BAK-04` | Fail Cấm — **NEVER im lặng** | Bảng `backup_log` rỗng mà không ai biết là cách backup hỏng phổ biến nhất |
 | `BR-BAK-05` | Retention **30 daily / 12 weekly / 24 monthly** | Hỏng dữ liệu âm thầm (bug ghi sai, xoá nhầm) thường chỉ lộ ra sau nhiều tuần — chỉ giữ bản mới nhất nghĩa là mọi bản backup đều đã nhiễm lúc phát hiện. Ba tầng thưa dần đổi dung lượng lấy chiều sâu thời gian |
-| `BR-BAK-06` | Go-live **không được** khi chưa có ít nhất **một** lần verify restore thành công | Đây là chỗ biến `BR-BAK-01` từ ý định thành cổng. v1 có bảng `backup_log` mà rỗng — nghĩa là "đã có backup" chưa bao giờ được kiểm chứng. Một lần restore thật là bằng chứng rẻ nhất rằng đường khôi phục tồn tại |
+| `BR-BAK-06` | Go-live **không được** khi chưa có ít nhất **một** lần verify restore thành công | Đây là chỗ biến `BR-BAK-01` từ ý định thành cổng. Có bảng `backup_log` không có nghĩa là đã có backup được kiểm chứng. Một lần restore thật là bằng chứng rẻ nhất rằng đường khôi phục tồn tại |
 | `BR-BAK-07` | Dump Cấm — **NEVER** để trên máy cá nhân hoặc bucket công khai | Chứa dữ liệu trẻ |
 | `BR-BAK-08` | DR drill hàng quý, ghi RTO đo được | RTO không đo là RTO không biết |
 

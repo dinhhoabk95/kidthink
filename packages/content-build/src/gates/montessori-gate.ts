@@ -1,7 +1,7 @@
 /* biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: gate validation logic */
 
 /**
- * Spec sở hữu: docs/specs/05-content/montessori-game-level-batch.md
+ * Spec sở hữu: docs/specs/05-content/montessori-corpus-mapping.md (mục 6, 7.7–7.10)
  * Rule sở hữu: BR-MGL-01, BR-MGL-02, BR-MGL-07, BR-MGL-12, BR-MCM-06, BR-MLS-08, BR-MLS-09, D-RR
  */
 

@@ -167,7 +167,7 @@ bằng** con số đã chốt ở WP117.3. Con số đó chỉ được **giảm
 
 Trục `theme` **không** đóng ở đây — nó thuộc [`Task #119`](119-theme-registry-plan.md). Trục
 `what` cũng chưa đóng; câu hỏi 3 mục 11 của
-[`content-tagging.md`](../specs/01-platform/content-tagging.md) chưa có trả lời.
+[`content-tagging.md`](../specs/05-content/content-tagging.md) chưa có trả lời.
 
 ### WP117.4 — Đo theo engine và giao việc sửa
 
@@ -238,4 +238,4 @@ Nếu đường B: phạm vi task này đổi hẳn — nó thành task sửa sp
 |---|---|---|---|
 | `Q117-1` | Sửa nội dung (A) hay sửa contract (B) cho 162 bản ghi | WP117.4, 27 task engine `#130`–`#156`, và Task #118 #122 #125 | Product + Backend |
 | `Q117-2` | `hint_after_ms` và `allow_retry` đáng lẽ có mặc định? Đo `difficulty_contract` trước khi trả lời | 169 bản ghi | Backend |
-| `Q117-3` | Trục `what` đóng về bộ giá trị nào — câu hỏi 3 mục 11 của [`content-tagging.md`](../specs/01-platform/content-tagging.md). Chưa trả lời thì cổng 5 chỉ đóng được trục `thinking` | Mức đóng của cổng 5 | Nội dung |
+| `Q117-3` | Trục `what` đóng về bộ giá trị nào — câu hỏi 3 mục 11 của [`content-tagging.md`](../specs/05-content/content-tagging.md). Chưa trả lời thì cổng 5 chỉ đóng được trục `thinking` | Mức đóng của cổng 5 | Nội dung |

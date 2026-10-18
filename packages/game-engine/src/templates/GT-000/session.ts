@@ -293,7 +293,7 @@ export class GT000Session extends TemplateGameSession<
   }
 
   /**
-   * Phát mẫu cho bước tập nói theo — BR-CIR-21.
+   * Phát mẫu cho bước tập nói theo — BR-CIR-23.
    *
    * Máy đọc, trẻ nói theo thành tiếng, rồi chạm để đi tiếp.
    * Cấm — NEVER mở micro, NEVER ghi âm, NEVER chấm phát âm.

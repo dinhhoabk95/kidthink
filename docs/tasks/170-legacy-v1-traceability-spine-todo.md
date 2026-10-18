@@ -53,7 +53,7 @@
 
 ## WP170.5 — Spec
 
-- [x] Viết `docs/specs/08-quality/legacy-v1-coverage.md`, 11 mục, `status: draft`.
+- [x] Viết `docs/specs/08-quality/source-game-type-coverage.md`, 11 mục, `status: draft`.
 - [x] `owns`: định nghĩa "một game type v1 đã tích hợp" · bậc thang phủ v1 · nguồn sự thật cho `legacy_v1_ref`.
 - [x] Đăng ký `BR-LVC-*` vào [`business-rules.md`](../specs/00-foundation/business-rules.md).
 - [x] Thêm dòng vào [`docs/specs/index.md`](../specs/index.md).

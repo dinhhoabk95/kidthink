@@ -4,7 +4,7 @@
 > **Đích:** mọi skill C1 có **≥20** level, mọi skill C2–C6 có **≥10** level, và mỗi skill trải
 > **≥4 khuôn** (C1) hoặc **≥2 khuôn** (còn lại), mỗi khuôn nhận **2–5** level.
 > **Spec sở hữu:** [`engine-content-depth.md`](../specs/05-content/engine-content-depth.md) ·
-> [`content-tagging.md`](../specs/01-platform/content-tagging.md) ·
+> [`content-tagging.md`](../specs/05-content/content-tagging.md) ·
 > [`level-generator-kit.md`](../specs/01-platform/level-generator-kit.md).
 > **Chặn bởi:** đợt 0 của chính nó. **Chặn:** mọi việc nội dung còn lại.
 >

@@ -2,10 +2,12 @@
 spec: AUTOMATED-PAYMENT
 title: Cổng thanh toán tự động và đối soát
 area: platform
-status: implemented
+status: approved
 mvp: false
 phase: P5
-reviewed: 2026-08-16
+reviewed: 2026-10-18
+open_tasks:
+  - "#305"
 owns:
   - Cổng thanh toán trực tuyến tự động và xác thực webhook chữ ký
   - Trạng thái thanh toán tự động và xử lý trùng lặp
@@ -21,6 +23,8 @@ depends_on:
 ---
 
 # Cổng thanh toán tự động và đối soát
+
+> **Chưa hoàn thành** — webhook và `reconcileAutomatedPayments` đã có, nhưng ba route §8 chưa tồn tại: `POST /api/users/orders/{uuid}/checkout-session`, `GET /api/managers/payments/reconciliation`, `POST /api/managers/payments/reconciliation/run`. Việc còn lại: [Task #305](../../tasks/305-platform-api-gaps-plan.md).
 
 ## 1. Objective
 

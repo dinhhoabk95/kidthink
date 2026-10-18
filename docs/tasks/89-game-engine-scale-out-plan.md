@@ -3,7 +3,7 @@
 > **Loại task:** bổ sung corpus (L) — 6 spec mới, không sửa spec đã approve.
 > **Câu hỏi gốc:** engine hiện tại có đáp ứng "hàng chục, hàng trăm game template rèn luyện
 > 6 loại hình tư duy cho trẻ mầm non" không? Nếu chưa thì thiếu gì.
-> **Spec sở hữu liên quan:** [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) · [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) · [`lesson-model.md`](../specs/05-content/lesson-model.md) · [`content-tagging.md`](../specs/01-platform/content-tagging.md).
+> **Spec sở hữu liên quan:** [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) · [`game-engine-runtime.md`](../specs/01-platform/game-engine-runtime.md) · [`lesson-model.md`](../specs/05-content/lesson-model.md) · [`content-tagging.md`](../specs/05-content/content-tagging.md).
 
 ## 1. Trả lời ngắn
 
@@ -72,7 +72,7 @@ Lỗ hổng 2 không bị cổng nào bắt — cùng họ với nợ đã ghi �
 
 ### 2.4 Từ vựng trục tư duy khai là đóng nhưng không được ép
 
-[`content-tagging.md`](../specs/01-platform/content-tagging.md) §7.1 khai ba trục là **từ vựng đóng**, trục `thinking`
+[`content-tagging.md`](../specs/05-content/content-tagging.md) §7.1 khai ba trục là **từ vựng đóng**, trục `thinking`
 đúng 12 giá trị. Cổng seed thì không ép:
 
 ```ts
@@ -105,7 +105,7 @@ cách toàn bộ corpus nội dung đang được gắn tag.
 
 | Nguồn | Trục `thinking` |
 |---|---|
-| [`content-tagging.md`](../specs/01-platform/content-tagging.md) §7.1 | `observe` `compare` `sort` `match` `sequence` `infer` `predict` `plan` `recall` `inhibit` `shift` `count` |
+| [`content-tagging.md`](../specs/05-content/content-tagging.md) §7.1 | `observe` `compare` `sort` `match` `sequence` `infer` `predict` `plan` `recall` `inhibit` `shift` `count` |
 | `packages/db/src/seed-master/content-tags.ts` | `visual` `auditory` `spatial` `analytical` `abstract` `deductive` `inductive` `sequential` `associative` `critical` `flexible` `inhibitory` |
 
 Giao của hai bộ là **rỗng**. Trục `what` cũng vậy. Nghĩa là bản cài đặt Lớp 1 chưa từng
@@ -141,7 +141,7 @@ Ghi ra để bác được, không hỏi lại bằng multiple-choice.
 | [`game-layout-engine.md`](../specs/01-platform/game-layout-engine.md) | platform | P1 | Có | `layouts: LayoutId[]` là trường trong `GameTemplate` nhưng không spec nào định nghĩa từ vựng hay hình học |
 | [`deterministic-randomness.md`](../specs/01-platform/deterministic-randomness.md) | platform | P1 | Có | `shuffle_*` khai trong difficulty contract; không spec nào nói ngẫu nhiên lấy từ đâu và tái dựng thế nào |
 | [`template-authoring-kit.md`](../specs/01-platform/template-authoring-kit.md) | platform | P4 | Không | [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) §4 mô tả 6 bước thêm template nhưng không sở hữu **chi phí** của 6 bước đó |
-| [`lesson-session-runner.md`](../specs/04-play/lesson-session-runner.md) | play | P4 | Không | [`lesson-model.md`](../specs/05-content/lesson-model.md) sở hữu ràng buộc biên tập; [`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md) sở hữu luồng soạn. Không ai sở hữu luồng **chạy** một tiết học |
+| [`lesson-session-runner.md`](../specs/03-account/lesson-session-runner.md) | play | P4 | Không | [`lesson-model.md`](../specs/05-content/lesson-model.md) sở hữu ràng buộc biên tập; [`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md) sở hữu luồng soạn. Không ai sở hữu luồng **chạy** một tiết học |
 | [`lesson-exemplar-set.md`](../specs/05-content/lesson-exemplar-set.md) | content | P4 | Không | "Tiết học mẫu" chưa có định nghĩa nào phân biệt nó với một lesson thường |
 | [`thinking-coverage-matrix.md`](../specs/08-quality/thinking-coverage-matrix.md) | quality | P3 | Không | Không cổng nào trả lời được "đã phủ đủ 6 loại hình tư duy chưa" |
 
@@ -167,13 +167,13 @@ làm là: sửa defect trước, layout và ngẫu nhiên tiếp, bộ kit sau c
 | 3 | Approve và thi công layout engine + nguồn ngẫu nhiên | `layouts` và `shuffle_*` thành thật |
 | 4 | Approve [`thinking-coverage-matrix.md`](../specs/08-quality/thinking-coverage-matrix.md) | Trả lời được câu hỏi gốc bằng số |
 | 5 | Approve và thi công [`template-authoring-kit.md`](../specs/01-platform/template-authoring-kit.md) | Template thứ 7 trở đi |
-| 6 | Approve [`lesson-session-runner.md`](../specs/04-play/lesson-session-runner.md) cùng [`lesson-exemplar-set.md`](../specs/05-content/lesson-exemplar-set.md) | Tiết học mẫu |
+| 6 | Approve [`lesson-session-runner.md`](../specs/03-account/lesson-session-runner.md) cùng [`lesson-exemplar-set.md`](../specs/05-content/lesson-exemplar-set.md) | Tiết học mẫu |
 
 ## 7. Câu hỏi còn mở
 
 | # | Câu hỏi | Chặn phase | Chủ |
 |---|---|---|---|
 | 1 | Trần số template nên là bao nhiêu trước khi bundle chơi cần tách theo template? Cần đo kích thước một Session class trung bình | P4 | đo được sau bước 5 |
-| 2 | 12 giá trị trục `thinking` có đủ phủ 230 skill không? Trùng với [`content-tagging.md`](../specs/01-platform/content-tagging.md) §11 câu hỏi 1, giờ đo được vì §2.4 đã lộ rằng seed đang tự chế giá trị mới | P3 | Nội dung |
+| 2 | 12 giá trị trục `thinking` có đủ phủ 230 skill không? Trùng với [`content-tagging.md`](../specs/05-content/content-tagging.md) §11 câu hỏi 1, giờ đo được vì §2.4 đã lộ rằng seed đang tự chế giá trị mới | P3 | Nội dung |
 | 3 | Ai biên soạn bộ tiết học mẫu? Trùng nợ ở [`lesson-model.md`](../specs/05-content/lesson-model.md) §11 câu hỏi 1 | P4 | người quyết |
-| 4 | **Từ vựng nào thắng?** [`content-tagging.md`](../specs/01-platform/content-tagging.md) §7.1 và `seed-master/content-tags.ts` khai hai bộ giao nhau rỗng, và seed thật dùng ~120 giá trị tự do ngoài cả hai. Ba lựa chọn: giữ bộ của spec và gắn lại tag cho 139 nội dung; nâng bộ seed-master lên thành spec; hoặc tách trục thứ tư cho tag mô tả tự do và giữ ba trục sư phạm đóng. Chặn cứng bước 2 ở §6 | P3 | người quyết |
+| 4 | **Từ vựng nào thắng?** [`content-tagging.md`](../specs/05-content/content-tagging.md) §7.1 và `seed-master/content-tags.ts` khai hai bộ giao nhau rỗng, và seed thật dùng ~120 giá trị tự do ngoài cả hai. Ba lựa chọn: giữ bộ của spec và gắn lại tag cho 139 nội dung; nâng bộ seed-master lên thành spec; hoặc tách trục thứ tư cho tag mô tả tự do và giữ ba trục sư phạm đóng. Chặn cứng bước 2 ở §6 | P3 | người quyết |

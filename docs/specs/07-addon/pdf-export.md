@@ -2,19 +2,23 @@
 spec: PDF-EXPORT
 title: Xuất PDF
 area: addon
-status: implemented
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Cơ chế render PDF và giới hạn
 depends_on:
   - LESSON-PLAN-CREATOR
   - JOB-QUEUE
   - ENTITLEMENT-MODEL
+open_tasks:
+  - "#311"
 ---
 
 # Xuất PDF
+
+> **Chưa hoàn thành** — `BR-PDF-07` chưa đạt: `packages/export/src/pdf-renderer.ts` khai font `Helvetica` Type0/Identity-H mà không nhúng file font (không `FontFile2`, không `CIDToGIDMap`), nên dấu tiếng Việt có thể vỡ. Test `[BR-PDF-07]` chỉ kiểm chuỗi `/Identity-H` nên xanh giả. Việc còn lại: [Task #311](../../tasks/311-addon-provider-gaps-plan.md).
 
 > **Add-on — không bán ở MVP.** Đi kèm `addon_lesson_plan`.
 

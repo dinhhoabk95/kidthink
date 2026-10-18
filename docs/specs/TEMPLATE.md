@@ -23,9 +23,15 @@ owns:
   - <thứ mà CHỈ file này định nghĩa>
 depends_on:
   - <spec id>
+# open_tasks:          # tuỳ chọn — chỉ khi code chưa khớp contract; khi có, status không được là implemented
+#   - "#nnn"
 ---
 
 # <Tiêu đề>
+
+<!-- Chỉ khi có open_tasks — giữ khối dưới, xoá khi task cuối xong (CONVENTIONS.md mục 3.1):
+> **Chưa hoàn thành** — <tóm tắt gap 1–2 câu, nêu mã BR>. Việc còn lại: [Task #nnn](../../tasks/nnn-<slug>-plan.md).
+-->
 
 ## 1. Objective
 

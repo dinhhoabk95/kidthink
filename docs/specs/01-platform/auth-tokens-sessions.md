@@ -2,10 +2,12 @@
 spec: AUTH-TOKENS-SESSIONS
 title: Token, cookie và vòng đời phiên
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-14
+reviewed: 2026-10-18
+open_tasks:
+  - "#305"
 owns:
   - Cookie session opaque của User và Manager
   - Vòng đời session một giờ và remember-me một năm
@@ -18,6 +20,8 @@ depends_on:
 ---
 
 # Token, cookie và vòng đời phiên
+
+> **Chưa hoàn thành** — Manager chưa có `GET /api/managers/auth/sessions` và `DELETE /api/managers/auth/sessions/{id}` (chỉ User có); cookie `tm_u_remember`/`tm_m_remember` hiện đặt `Path=/` thay vì chỉ route `restore` như §7.4. Việc còn lại: [Task #305](../../tasks/305-platform-api-gaps-plan.md).
 
 ## 1. Objective
 
@@ -62,7 +66,7 @@ Better-Auth, Sidebase AuthJS và `next-auth`.
 | `apps/admin/app/composables/use-api-client.ts` | Gọi API tuyệt đối tới web, `credentials: include`, giữ CSRF token trong memory |
 | `POST /api/guest/auth/{users\|managers}/login` | Xác thực đầu vào; User tạo session, Manager tạo opaque MFA challenge; nhận `rememberMe` |
 | `POST /api/guest/auth/{users\|managers}/mfa` | Tiêu thụ nguyên tử opaque MFA challenge đúng namespace rồi mới tạo session/remember |
-| `POST /api/guest/auth/{users\|managers}/remember` | Xoay remember credential và tạo session làm việc mới |
+| `POST /api/{users\|managers}/auth/restore` | Xoay remember credential và tạo session làm việc mới |
 | `GET /api/_auth/session` | Trả safe projection được hydrate từ Redis; không trả locator/credential |
 | `POST /api/{users\|managers}/auth/logout` | Thu hồi thiết bị hiện tại và xoá cookie |
 | `POST /api/{users\|managers}/auth/logout-all` | Thu hồi mọi thiết bị của account |
@@ -85,7 +89,7 @@ Better-Auth, Sidebase AuthJS và `next-auth`.
    expiry/generation/device state, rồi gắn domain context. Guard route vẫn đồng bộ và không làm
    I/O lần hai.
 5. Sau một giờ, session tuyệt đối hết hạn. Nếu có remember cookie còn hạn, client gọi route
-   `remember`: backend kiểm CSRF, xoay remember credential và CSRF token nguyên tử, tạo session
+   `restore`: backend kiểm CSRF, xoay remember credential và CSRF token nguyên tử, tạo session
    một giờ mới với `reauthAt=null`, rồi giữ nguyên mốc remember hết hạn tuyệt đối ban đầu.
 6. Client chỉ tự thử restore lúc bootstrap hoặc sau một request đọc/idempotent nhận 401. Không
    tự retry request đổi trạng thái để tránh thực thi hai lần.
@@ -101,7 +105,7 @@ credential của bước mật khẩu; client không thể thêm tuỳ chọn n�
 | Nhánh | Hành vi |
 |---|---|
 | `rememberMe=false` hoặc bỏ trống | Không tạo remember credential; cookie locator vẫn hết hạn sau một giờ |
-| Session hết hạn, remember còn hạn | Route remember xoay credential và tạo session một giờ mới |
+| Session hết hạn, remember còn hạn | Route `restore` xoay credential và tạo session một giờ mới |
 | Remember token đã dùng lại | Thu hồi mọi credential/session của account, 401 `SESSION_REVOKED`, ghi audit |
 | Remember đã tới mốc 365 ngày | 401; đăng nhập đầy đủ lại, rotation không gia hạn |
 | Session/remember sai namespace | 401, không thử namespace còn lại |
@@ -195,13 +199,15 @@ interface MfaChallenge {
 
 Key prefix đóng, có version:
 
-- `auth:session:v1:{namespace}:{sha256(sessionToken)}` → payload, TTL tối đa 3600 giây;
-- `auth:remember:v1:{namespace}:{sha256(selector)}` → record + digest verifier hiện hành, TTL
+- `auth:v1:{namespace}:session:{sha256(sessionToken)}` → payload, TTL tối đa 3600 giây;
+- `auth:v1:{namespace}:remember:{sha256(selector)}` → record + digest verifier hiện hành, TTL
   còn lại tới mốc tuyệt đối;
-- `auth:device:v1:{namespace}:{deviceId}` → locator digest hiện hành;
-- `auth:account:v1:{namespace}:{accountId}` → set device id để revoke-all;
-- `auth:generation:v1:{namespace}:{accountId}` → generation thu hồi toàn account.
-- `auth:challenge:v1:{namespace}:{sha256(challenge)}` → pre-auth record one-time, TTL tối đa 300 giây.
+- `auth:v1:{namespace}:device:{deviceId}` → locator digest hiện hành;
+- `auth:v1:{namespace}:account_devices:{accountId}` → set device id để revoke-all;
+- `auth:v1:{namespace}:account_gen:{accountId}` → generation thu hồi toàn account.
+- `auth:v1:{namespace}:mfa_challenge:{sha256(challenge)}` → pre-auth record one-time, TTL tối đa 300 giây.
+
+Nguồn: `packages/auth/src/redis-session-store.ts`, `packages/auth/src/mfa-challenge.ts`.
 
 Không dùng `SCAN` trong request/revoke. Lua script lookup selector family, so verifier
 constant-time, kiểm namespace/generation/TTL và cập nhật verifier + session + device pointer
@@ -233,8 +239,8 @@ hoặc dữ liệu trẻ ngoài allow-list.
 | Cookie | Cơ chế | HttpOnly | SameSite | Path | TTL |
 |---|---|:--:|---|---|---|
 | `mindkid-user-session` / `mindkid-manager-session` | Sealed locator chứa opaque session token | Có | Lax | `/` | 1 giờ tuyệt đối |
-| `tm_u_remember` | Remember credential User, chỉ tạo khi chọn | Có | Strict | `/api/guest/auth/users/remember` | tối đa 365 ngày tuyệt đối |
-| `tm_m_remember` | Remember credential Manager, chỉ tạo sau MFA | Có | Strict | `/api/guest/auth/managers/remember` | tối đa 365 ngày tuyệt đối |
+| `tm_u_remember` | Remember credential User, chỉ tạo khi chọn | Có | Strict | `/api/users/auth/restore` | tối đa 365 ngày tuyệt đối |
+| `tm_m_remember` | Remember credential Manager, chỉ tạo sau MFA | Có | Strict | `/api/managers/auth/restore` | tối đa 365 ngày tuyệt đối |
 | `tm_u_csrf` / `tm_m_csrf` | Double-submit; TTL theo credential dài nhất hiện có | Cấm | Strict | `/` | 1 giờ hoặc tối đa 365 ngày |
 | `active_child_id` | Context do người lớn chọn, không phải auth credential | Cấm | Lax | `/` | 30 ngày |
 | `tm_did` | Guest device | Cấm | Lax | `/` | 1 năm |
@@ -269,8 +275,8 @@ function requireRole(e: H3Event, role: ManagerRole): void;
 | `POST /api/guest/auth/users/login` | không | `{email,password,rememberMe?:boolean}`; 200 đặt cookie |
 | `POST /api/guest/auth/managers/login` | không | `{email,password,rememberMe?:boolean}`; 428 challenge bind preference |
 | `POST /api/guest/auth/{users\|managers}/mfa` | opaque challenge one-time đúng namespace | 200 tạo session; remember chỉ khi challenge cho phép |
-| `POST /api/guest/auth/users/remember` | remember cookie + CSRF | rotate + session mới; body rỗng |
-| `POST /api/guest/auth/managers/remember` | remember cookie + CSRF | rotate + session mới; body rỗng |
+| `POST /api/users/auth/restore` | remember cookie + CSRF | rotate + session mới; body rỗng |
+| `POST /api/managers/auth/restore` | remember cookie + CSRF | rotate + session mới; body rỗng |
 | `POST /api/{users\|managers}/auth/reauth` | session + CSRF | Xác minh một method hiện có; chỉ cập nhật `reauthAt` của Redis session hiện tại, không gia hạn credential |
 | `POST /api/{users\|managers}/auth/logout` | session + CSRF | revoke thiết bị hiện tại |
 | `POST /api/{users\|managers}/auth/logout-all` | session + CSRF | revoke mọi thiết bị |

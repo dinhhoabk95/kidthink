@@ -2,10 +2,10 @@
 spec: SKILL-DATASET-MODEL
 title: Bộ dữ liệu của một kỹ năng — nguồn vật duy nhất cho mọi khuôn game
 area: content
-status: draft
+status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-09-03
+reviewed: 2026-10-18
 owns:
   - Hình dạng bộ dữ liệu (`SkillDataset`) gắn với đúng một kỹ năng
   - Luật chiếu bộ dữ liệu vào `content_pack` của từng khuôn game
@@ -125,7 +125,7 @@ sai, và đó là việc của người.
 | `BR-SDS-13` (cổng chạy lúc gieo)             | `content-build` phải chạy 10 cổng                                                                            | `packages/content-build/src/cli/seed-content.ts:9` khai `skipGates = true`: gieo hôm nay chạy **0 cổng** |
 | `BR-SDS-14` (mã level bất biến)              | Đổi bố cục seeder cấm — NEVER đổi `game_levels.code` đã publish                                              | `BR-ID-01` (mã bất biến sau khi phát hành), mục 5 của [`id-conventions.md`](../00-foundation/id-conventions.md). Mã mã hoá lịch sử, không mã hoá phân loại                                                           |
 | `BR-SDS-15` (mục tiêu học tập phải ghi được) | `learning_objective_codes` của một level phải ghi xuống database                                             | Hiện chỉ được cổng kiểm rồi vứt; không bảng nào giữ, nên lộ trình học không truy được về mục tiêu                                                                                                                    |
-| `BR-SDS-16` (tên level theo kỹ năng và chủ đề) | `title` của level dựng từ tên kỹ năng + đối tượng hoặc nhãn của `theme`. Cấm — NEVER lộ mã khuôn (`GT-xxx`) hay `Cấp N`. Nhiều level của một kỹ năng ra cùng tên thì thêm ` · Bài N` theo thứ tự trong `levels[]`, nên tên duy nhất trong một kỹ năng; level mới thêm vào **cuối** danh sách. `theme` không có nhãn thì build **ném**, cấm — NEVER lùi về tên kỹ năng trần | Tên là thứ phụ huynh và trẻ đọc trên thẻ danh mục. `Đếm đồ vật - GT-004 (Cấp 2)` là tên của máy, không phải của bài; nhưng bỏ bậc khó mà không thay gì làm 11 thẻ cùng tên `Đếm con vật nông trại`. Đổi tên cho corpus đã gieo đi bằng `content_version` mới (mục 5 của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md)): v1 archive, v2 publish trong một transaction, rollback qua studio; cấm — NEVER UPDATE tại chỗ hàng `published` |
+| `BR-SDS-16` (tên level theo kỹ năng và chủ đề) | `title` của level dựng từ tên kỹ năng + đối tượng hoặc nhãn của `theme`. Cấm — NEVER lộ mã khuôn (`GT-xxx`) hay `Cấp N`. Nhiều level của một kỹ năng ra cùng tên thì thêm ` · Bài N` theo thứ tự trong `levels[]`, nên tên duy nhất trong một kỹ năng; level mới thêm vào **cuối** danh sách. `theme` không có nhãn thì build **ném**, cấm — NEVER lùi về tên kỹ năng trần | Tên là thứ phụ huynh và trẻ đọc trên thẻ danh mục. `Đếm đồ vật - GT-004 (Cấp 2)` là tên của máy, không phải của bài; nhưng bỏ bậc khó mà không thay gì làm 11 thẻ cùng tên `Đếm con vật nông trại`. Đổi tên cho corpus đã gieo đi bằng `content_version` mới (mục 5 của [`content-seed-authoring.md`](../01-platform/content-seed-authoring.md)): bản cũ archive, bản mới publish trong một transaction, rollback qua studio; cấm — NEVER UPDATE tại chỗ hàng `published` |
 | `BR-STA-01` (tương thích theo thinking & age) | Khuôn hợp lệ khi `thinking_processes ∩ template.thinking ≠ ∅` và tuổi không thuộc `banned_age_bands`         | Tránh sinh bài chơi không phù hợp lứa tuổi hoặc sai mục tiêu tư duy                                                                                                                   |
 | `BR-STA-02` (sàn khuôn cho kỹ năng)          | Mỗi kỹ năng C1 có ≥4 khuôn hợp lệ, C2–C6 có ≥2 khuôn hợp lệ                                                  | Đảm bảo độ đa dạng hình thức chơi theo `BR-SKQ-03`                                                                                                                                     |
 | `BR-ALC-01` (trần level mỗi cặp kỹ năng-khuôn) | Một cặp (kỹ năng, khuôn) tối đa 5 level                                                                      | Đảm bảo không dồn level vào một khuôn duy nhất (`BR-SKQ-04`)                                                                                                                          |
@@ -300,12 +300,12 @@ trong `db:seed` (`BR-SDS-13`).
 Ba khoản dưới đây cùng phạm vi vì lộ trình học đọc qua đúng đường này. Cột và bảng do mục 7
 của [`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md) định nghĩa:
 
-- `content_skill_map.entity_type` lệch chuỗi: seeder ghi `'game_level'`, bốn nơi đọc
-  `'level'` — [`dashboard.get.ts:123`](../../../apps/web/server/api/managers/dashboard.get.ts),
+- **Đã trả.** `content_skill_map.entity_type` từng lệch chuỗi (seeder ghi `'game_level'`, bốn nơi
+  đọc `'level'`). Cả bốn nơi nay lọc `'game_level'` — [`dashboard.get.ts:123`](../../../apps/web/server/api/managers/dashboard.get.ts),
   [`skills/[code].get.ts:101`](../../../apps/web/server/api/managers/taxonomy/skills/%5Bcode%5D.get.ts),
-  [`rollup.ts:155`](../../../packages/db/src/services/rollup.ts),
-  [`advanced-report.ts:803`](../../../packages/db/src/services/advanced-report.ts). Bốn truy
-  vấn này đang trả 0 và không báo lỗi.
+  [`rollup.ts:155`](../../../apps/worker/src/services/rollup.ts),
+  [`advanced-report.ts:809`](../../../apps/web/server/services/advanced-report.ts). Giữ ở đây
+  làm mốc: lệch chuỗi kiểu này làm truy vấn trả 0 mà không báo lỗi.
 - Bốn level `GT-000` mang mã ba đoạn (`GL-C1-INTRO-0001` và ba mã cùng dạng) không thoả
   `CHECK` của `game_levels.code` ở mục 7 của
   [`id-conventions.md`](../00-foundation/id-conventions.md) và trượt `content_contract`.

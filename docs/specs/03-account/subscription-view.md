@@ -2,10 +2,12 @@
 spec: SUBSCRIPTION-VIEW
 title: Xem gói và lịch sử thanh toán
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#291"
 owns:
   - Màn hình gói hiện tại và lịch sử giao dịch
 depends_on:
@@ -14,6 +16,8 @@ depends_on:
 ---
 
 # Xem gói và lịch sử thanh toán
+
+> **Chưa hoàn thành** — `BR-SBV-02`: trang `/me/subscription` chưa có câu "dữ liệu không mất khi hết hạn". Việc còn lại: [Task #291](../../tasks/291-public-account-small-gaps-plan.md).
 
 ## 1. Objective
 

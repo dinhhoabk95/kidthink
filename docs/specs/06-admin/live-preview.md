@@ -2,10 +2,12 @@
 spec: LIVE-PREVIEW
 title: Xem trước bằng engine thật
 area: admin
-status: implemented
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#298"
 owns:
   - Cơ chế preview trong studio
   - Quy tắc hiển thị lỗi preview
@@ -14,6 +16,8 @@ depends_on:
 ---
 
 # Xem trước bằng engine thật
+
+> **Chưa hoàn thành** — iframe trong `live-preview-frame.vue` dùng URL tương đối `/play/preview-sandbox`, trong khi admin là static SPA trên `admin.{domain}`, nên khung xem trước không chạy engine thật (BR-LPV-01). Việc còn lại: [Task #298](../../tasks/298-admin-content-review-fixes-plan.md).
 
 ## 1. Objective
 
@@ -36,7 +40,7 @@ không có chiều ngược lại (`D-AN`).
 
 ## 3. Entry points
 
-Khung phải của `/studio/levels/{code}/{version}` · `GET /api/managers/levels/{code}/{version}/config`.
+Khung phải của `/studio/levels/{code}` và của `/studio/review/{id}` · `GET /api/managers/levels/{code}/config?version={version}`.
 
 ## 4. Main flow
 

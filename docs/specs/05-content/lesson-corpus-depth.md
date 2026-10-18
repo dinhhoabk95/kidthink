@@ -5,7 +5,7 @@ area: content
 status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-30
+reviewed: 2026-10-18
 owns:
   - Quan hệ cung cầu giữa số tiết flow đòi và số lesson trong thư viện master
   - Cầu game level suy ra từ kỹ năng của thư viện giáo án
@@ -70,8 +70,8 @@ Hai con số 45 và 48 là toàn bộ món nợ nội dung của trục giáo á
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `pnpm --filter @mindkid/db check:lesson-supply` | Cổng cung cầu | Chạy trong cổng tự động trước khi merge |
-| `packages/db/src/seed-master/curricula.ts` | Dev | Nguồn của cầu: `durationWeeks × sessionsPerWeek` |
+| `pnpm --filter @mindkid/content-build check:lesson-supply` | Cổng cung cầu | Chạy trong cổng tự động trước khi merge |
+| `packages/content-build/src/seed-master/curricula.ts` | Dev | Nguồn của cầu: `durationWeeks × sessionsPerWeek` |
 | `packages/content/src/lessons/` | Người soạn | Nguồn của cung |
 | [`curriculum-builder.md`](../06-admin/curriculum-builder.md) | Manager | Studio phải chặn publish khi thiếu |
 
@@ -113,7 +113,7 @@ Hai con số 45 và 48 là toàn bộ món nợ nội dung của trục giáo á
 
 ## 7. Data
 
-**Đọc:** `packages/db/src/seed-master/curricula.ts` · `packages/content/src/lessons/`.
+**Đọc:** `packages/content-build/src/seed-master/curricula.ts` · `packages/content/src/lessons/`.
 **Ghi:** không ghi database. Đầu ra là báo cáo và mã thoát.
 
 ### 7.1 Công thức cầu
@@ -166,7 +166,7 @@ kỹ năng xuất hiện trong thư viện cần **≥2** game level phục vụ
 | Kỹ năng có ≥2 level | 15 |
 | **Level cần soạn thêm để mọi kỹ năng đạt ≥2** | **48** |
 
-<!-- taxonomy-refs:historical — phép đo 2026-08 dùng mã taxonomy v1 đã bỏ; giữ nguyên để bản ghi đúng -->
+<!-- taxonomy-refs:historical — phép đo 2026-08 dùng mã taxonomy cũ đã bỏ; giữ nguyên để bản ghi đúng -->
 Mười ca thiếu đầu tiên: `C1.CNT.01` `C1.CNT.02` `C1.CNT.03` `C1.CNT.11` `C2.POS.01` `C2.2D.01`
 `C2.2D.02` `C3.PAT.01` `C4.LEN.01` `C4.WGT.01` — toàn kỹ năng nền, không phải kỹ năng hiếm.
 

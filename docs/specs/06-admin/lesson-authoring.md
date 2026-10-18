@@ -5,7 +5,7 @@ area: admin
 status: implemented
 mvp: true
 phase: P3
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Luồng soạn một lesson
   - Ràng buộc lắp activity vào lesson
@@ -31,7 +31,7 @@ hoạt động ngoài màn hình.
 
 ## 3. Entry points
 
-`/studio/lessons` · `/studio/lessons/new` · `/studio/lessons/{code}/{version}`.
+`/studio/lessons` — tạo và soạn lesson ngay trong trang, không có trang con theo `{code}/{version}`.
 
 ## 4. Main flow
 

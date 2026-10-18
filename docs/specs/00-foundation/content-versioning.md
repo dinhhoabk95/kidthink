@@ -2,10 +2,10 @@
 spec: CONTENT-VERSIONING
 title: Phiên bản nội dung và neo lịch sử
 area: foundation
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-07
+reviewed: 2026-10-18
 owns:
   - Ngữ nghĩa content_version
   - Quy tắc ghim version trong play session
@@ -13,9 +13,13 @@ owns:
 depends_on:
   - CONTENT-LIFECYCLE
   - ID-CONVENTIONS
+open_tasks:
+  - "#308"
 ---
 
 # Phiên bản nội dung và neo lịch sử
+
+> **Chưa hoàn thành** — `BR-VER-03` (cùng `BR-EVT-06`): `telemetry_events.content_version` vẫn nullable (`packages/db/src/schema/play.ts`). Việc còn lại: [Task #308](../../tasks/308-foundation-gaps-plan.md).
 
 ## 1. Objective
 
@@ -124,7 +128,7 @@ Ngoài dữ liệu chơi (ghim đúng version, không đổi theo published mớ
 nội dung khác cần luôn theo bản published mới nhất** (`curriculum_items`, `current_curriculum_id`)
 dùng `entity_id` — neo dòng dõi bất biến qua version, xem mục 7 đầu mục của
 [`schema-content-taxonomy.md`](../01-platform/schema-content-taxonomy.md) và quy tắc `BR-DM-13`
-của [`data-model-overview.md`](../01-platform/data-model-overview.md). Cả hai loại đều là `id`,
+của [`data-model-overview.md`](data-model-overview.md). Cả hai loại đều là `id`,
 không phải `code` (quyết định D-AE — dùng `entity_id` neo dòng dõi thay cho tham chiếu bằng
 `code`, FK vẫn trỏ `id`).
 

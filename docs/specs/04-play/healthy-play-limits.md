@@ -2,10 +2,12 @@
 spec: HEALTHY-PLAY-LIMITS
 title: Hạn mức giờ chơi lành mạnh
 area: play
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#293"
 owns:
   - Cách đếm thời gian chơi
   - Hành vi khi chạm hạn mức
@@ -16,6 +18,8 @@ depends_on:
 ---
 
 # Hạn mức giờ chơi lành mạnh
+
+> **Chưa hoàn thành** — Main flow bước 3 chưa chạy: `checkQuotaRemaining` không được truyền nên 402 `DAILY_PLAY_CAP_REACHED` không bao giờ ném; rollup ghi đè phần giờ cấp thêm; `BR-HPL-07` chưa trừ `paused_ms` và sweep gán cứng 1800 s cho phiên bỏ dở; §7.3 yêu cầu nút duy nhất qua Parent Gate nhưng modal hết giờ còn nút về `/play`. Việc còn lại: [Task #293](../../tasks/293-healthy-play-limits-enforcement-plan.md).
 
 ## 1. Objective
 

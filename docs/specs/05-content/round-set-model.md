@@ -5,7 +5,7 @@ area: content
 status: implemented
 mvp: false
 phase: P2
-reviewed: 2026-08-21
+reviewed: 2026-10-18
 owns:
   - Ràng buộc biên tập của chuỗi vòng trong một game level
   - Quy tắc leo thang độ khó giữa các vòng liền kề
@@ -260,7 +260,7 @@ Scenario: BR-RSM-13 — trộn band trong một set bị chặn
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ | Quyết định / Trạng thái |
 |---|---|---|---|---|---|
 | 1 | `game_level_rounds` là bảng con hay cột `rounds` jsonb trên `game_levels`? Bảng con cho phép ràng buộc UNIQUE và query từng vòng; jsonb rẻ hơn và khớp cách `content_pack` đang lưu | Hình dạng schema, migration | P2 | Backend | **Bảng con `game_level_rounds` (Task #100 WP100.1).** UNIQUE `(game_level_id, round_index)` ép bởi DB — ràng buộc index liên tục và không trùng vòng không cần code giữ. Query từng vòng cho phép migration và debug mà không parse jsonb. Spec mục 7.2 đã viết theo phương án này, không cần đổi |
-| 2 | Migrate level đã seed: copy `content_pack` hiện có thành `round_index = 0` rồi drop cột cũ theo expand-contract, hay giữ cột cũ vĩnh viễn làm vòng 0? | Kế hoạch migration | P2 | người quyết | **Expand-contract (Task #100 WP100.1).** Pha expand: tạo `game_level_rounds`, copy `content_pack`/`difficulty_params`/`instruction`/`instruction_audio_path` của mọi level thành `round_index = 0`. Pha contract: drop 4 cột cũ trên `game_levels` sau khi tất cả code đã đọc từ bảng mới. Repo đã có `packages/db/tests/gates/migration-expand.ts` nên pattern có sẵn. Giữ cột cũ vĩnh viễn tạo hai nguồn cho cùng dữ liệu — drift không tránh được |
+| 2 | Migrate level đã seed: copy `content_pack` hiện có thành `round_index = 0` rồi drop cột cũ theo expand-contract, hay giữ cột cũ vĩnh viễn làm vòng 0? | Kế hoạch migration | P2 | người quyết | **Expand-contract (Task #100 WP100.1).** Pha expand: tạo `game_level_rounds`, copy `content_pack`/`difficulty_params`/`instruction`/`instruction_audio_path` của mọi level thành `round_index = 0`. Pha contract: drop 4 cột cũ trên `game_levels` sau khi tất cả code đã đọc từ bảng mới. Repo đã có `packages/content-build/tests/gates/migration-expand.ts` nên pattern có sẵn. Giữ cột cũ vĩnh viễn tạo hai nguồn cho cùng dữ liệu — drift không tránh được |
 | 3 | Trần vòng ở band 3–4 dựa trên suy luận về sức chú ý, chưa đo với trẻ. Con số đúng là bao nhiêu? | Trần mục 7.1 | P2 nghiệm thu | người quyết | **Vẫn mở.** `D-167A` nâng trần lên `6 · 8 · 10` nhưng **không** đóng câu hỏi này: nó nâng bằng lập luận thời lượng, không bằng dữ liệu quan sát trẻ. Chờ dữ liệu từ [`pedagogical-evidence.md`](../08-quality/pedagogical-evidence.md) |
 | 5 | Trần vòng tối đa của một set là bao nhiêu? (`D-167A`) | Trần mục 7.1, ngân sách payload | P2 | chủ dự án | **Tối đa 10 vòng, chốt 2026-08-31 ([`Task #167`](../../tasks/167-round-loop-closure-plan.md) WP167.0).** Thi công theo thang `3-4: 6 · 4-5: 8 · 5-6: 10`, giữ hình dạng thang vì trần thời lượng `BR-RSM-12` không bảo vệ được sức chú ý của band nhỏ — 10 vòng band 3–4 vẫn dưới 5 phút mà vẫn là một dãy dài với trẻ 3 tuổi. Số đo hậu thuẫn: 10 vòng nhân ~20 giây là 3,3 phút, còn dư dưới trần 5 phút; `first_try_ratio` được 11 mức nên hai ngưỡng 0,55 và 0,85 mới có nghĩa; đổi lại ngân sách payload rơi về **20 KB một vòng**, nên cùng lô đã bắt `BR-RSM-10` đo **cả ở delivery-time** chứ không chỉ lúc duyệt |
 | 4 | Set có nên cho phép vòng **tuỳ chọn** — vòng khó thêm chỉ hiện khi trẻ làm đúng hết các vòng trước? | Phạm vi P2 | P3 | người quyết | Hoãn. Vòng tuỳ chọn làm `rounds_total` khác nhau giữa hai lượt chơi cùng một level, phá tính so sánh của `first_try_ratio` |

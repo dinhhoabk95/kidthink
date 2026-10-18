@@ -2,10 +2,10 @@
 spec: GO-LIVE-READINESS
 title: Điều kiện go-live của tầng game — khác MVP
 area: quality
-status: implemented
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-30
+reviewed: 2026-10-18
 owns:
   - Định nghĩa go-live của tầng game và chỗ nó khác MVP
   - Danh sách chặn cứng đo được trước khi mở cho người dùng thật
@@ -21,9 +21,13 @@ depends_on:
   - CONTENT-SEED-AUTHORING
   - GAME-ENGINE-RUNTIME
   - RELEASE-DEPLOY
+open_tasks:
+  - "#310"
 ---
 
 # Điều kiện go-live của tầng game — khác MVP
+
+> **Chưa hoàn thành** — Cổng `check:go-live` (`packages/content-build/src/gates/go-live-readiness.ts`) chạy trong `check.sh` nhưng chỉ đo 7 phép (mục 1, 8, 9, 14, 15 của 7.2, phạm vi `BR-GLR-05` và trạng thái chương trình dài nhất); các mục 2–7, 10–13, 16–21 chưa đo, trái `BR-GLR-01`. Nhãn phép đo sàn nội dung còn ghi cứng `27/27 engine`. Việc còn lại: [Task #310](../../tasks/310-quality-gates-gaps-plan.md).
 
 ## 1. Objective
 
@@ -153,6 +157,11 @@ bằng chứng hiệu quả sư phạm; ranh giới đó thuộc
 ### 7.2 Danh sách chặn cứng
 
 Đo trên **các engine trong phạm vi go-live**, không phải trên cả 27.
+
+Cột "Hiện tại" của hai bảng dưới là ảnh chụp ngày 2026-08-30, không còn được cập nhật. Số đo
+thật lấy từ `pnpm check:go-live`. Ngày 2026-10-18, cổng đó chỉ đo mục 1, 8, 9, 14, 15 cùng hai
+phép phụ (phạm vi `BR-GLR-05`, chương trình dài nhất đã `published`); các mục còn lại chưa có
+phép đo (xem khối "Chưa hoàn thành" ở đầu file).
 
 | # | Mục | Ngưỡng | Loại | Hiện tại trên 27 engine |
 |---|---|---|---|---|

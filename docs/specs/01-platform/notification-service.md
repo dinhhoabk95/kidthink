@@ -2,10 +2,12 @@
 spec: NOTIFICATION-SERVICE
 title: Dịch vụ thông báo
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-10-18
+open_tasks:
+  - "#289"
 owns:
   - Danh sách loại thông báo
   - Logical notification và delivery đa kênh
@@ -17,6 +19,8 @@ depends_on:
 ---
 
 # Dịch vụ thông báo
+
+> **Chưa hoàn thành** — Thiếu `GET /api/users/notification-preferences` (chỉ có `PUT`); route SES chưa kiểm topic ARN allow-list và timestamp (`BR-NOT-11`); `BR-NOT-09`…`BR-NOT-13` chưa có test trỏ mã. Việc còn lại: [Task #289](../../tasks/289-transactional-email-dispatch-plan.md).
 
 ## 1. Objective
 
@@ -44,7 +48,7 @@ Task #83.
 | `packages/notification` | Domain event, typed renderer, channel driver và provider adapter |
 | `notifications` · `notification_deliveries` | Logical notification và trạng thái từng kênh |
 | Job `email:send` | Consumer của delivery `email` |
-| `POST /api/system/notifications/ses-events` | Nhận delivery/bounce/complaint từ SES→SNS |
+| `POST /api/guest/webhooks/ses-sns` | Nhận delivery/bounce/complaint từ SES→SNS |
 | `/me/settings/notifications` | User bật/tắt loại định kỳ |
 
 **D-BU** (T15, 2026-08-09): `depends_on: JOB-QUEUE` (P1) là cạnh đảo phase thật, đã xử lý ở
@@ -75,7 +79,7 @@ giảm duplicate trong phạm vi ứng dụng nhưng **không được mô tả 
 | User đã opt-out loại đó | Ghi logical notification + delivery `suppressed`; không gửi |
 | Email bounce cứng/complaint | Đánh dấu địa chỉ `bouncing`, dừng loại định kỳ; email bảo mật giao dịch chỉ retry khi policy cho phép |
 | Provider lỗi trước khi nhận mail | Retry; backlog cao → alert |
-| SNS signature sai hoặc topic không allow-list | 400, không cập nhật state, log security event không chứa payload nhạy cảm |
+| SNS signature sai hoặc topic không allow-list | 401 `WEBHOOK_SIGNATURE_INVALID`, không cập nhật state, log security event không chứa payload nhạy cảm |
 | Tài khoản `deleted` | Cấm tạo delivery; event tồn tại trước đó bị suppress |
 | Kênh chưa kích hoạt (`fcm_web`) | Producer không enqueue; không fallback âm thầm từ email sang push |
 
@@ -150,10 +154,13 @@ escape; không nhận template/HTML do User hay Manager gửi thẳng. Bắt bu�
 
 Body `{ weekly_progress: bool, content_new: bool }`. Loại giao dịch không xuất hiện.
 
-### `POST /api/system/notifications/ses-events`
+### `POST /api/guest/webhooks/ses-sns`
 
+Nằm dưới `/api/guest/` vì người gọi là AWS, không có phiên: chữ ký SNS là danh tính duy nhất.
 Nhận SNS envelope từ topic allow-list. Xác minh signature trước parse event; xử lý idempotent theo
-SNS message id + SES message id. 204 cho event hợp lệ đã xử lý hoặc đã thấy; 400 cho envelope sai.
+SNS message id + SES message id. 200 kèm `{ status }` cho event hợp lệ đã xử lý hoặc đã thấy
+(`processed`, `subscription_confirmed`, `no_message_id`); envelope sai hoặc chữ ký sai → 401
+`WEBHOOK_SIGNATURE_INVALID` (`WebhookSignatureInvalidError`), không cập nhật state.
 
 Inbox API thuộc [`notification-inbox.md`](../03-account/notification-inbox.md), không đặt ở đây.
 
@@ -198,13 +205,13 @@ Scenario: BR-NOT-10 — SMTP dùng TLS và pool
 Scenario: BR-NOT-11 — SNS giả không đổi delivery
   Given request có SNS signature sai
   When gọi SES event webhook
-  Then trả 400
+  Then trả 401 `WEBHOOK_SIGNATURE_INVALID`
   And không notification_deliveries nào đổi trạng thái
 
 Scenario: BR-NOT-11 — certificate URL ngoài AWS bị chặn
   Given SNS envelope trỏ SigningCertURL tới host không thuộc allow-list AWS
   When gọi SES event webhook
-  Then trả 400 trước khi fetch URL
+  Then trả 401 `WEBHOOK_SIGNATURE_INVALID` trước khi fetch URL
 
 Scenario: opt-out được tôn trọng
   Given user tắt weekly_progress

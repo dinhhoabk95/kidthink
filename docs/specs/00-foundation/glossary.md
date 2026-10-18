@@ -5,7 +5,7 @@ area: foundation
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-11
+reviewed: 2026-10-18
 owns:
   - Định nghĩa duy nhất của mọi thuật ngữ domain
   - Ánh xạ thuật ngữ PRD ↔ thuật ngữ code
@@ -16,7 +16,7 @@ depends_on: []
 
 ## 1. Objective
 
-Một từ, một nghĩa, toàn corpus. PRD gốc và code v1 dùng lệch nhau ở vài chỗ quan trọng
+Một từ, một nghĩa, toàn corpus. PRD gốc dùng lệch nhau ở vài chỗ quan trọng
 (`domain` vs `strand`, `game` vs `game level`) — lệch từ vựng là lệch schema, và lệch
 schema phát hiện được lúc migration thì đã muộn.
 
@@ -56,12 +56,12 @@ Không có.
 | **Competency** | Năng lực | Tầng 1. Đúng **6**: C1–C6 | ability, area |
 | **Bậc** (`tier`) | Vị trí của một kỹ năng trong strand: `basic` · `core` · `advanced`. Mô tả **nhiệm vụ**, Cấm — NEVER mô tả đứa trẻ |
 | **Band tiền tiểu học** | Dải `6-7` — trẻ chuẩn bị vào lớp 1. Thêm cùng lúc với trục tiền đọc viết `C5` |
-| **Strand** | Nhánh | Tầng 2, thuộc một Competency. 41 cái | **domain** (PRD gọi vậy — không dùng) |
-| **Skill** | Kỹ năng | Tầng 3. 230 cái. Mã bất biến `C1.CNT.03` | competency detail |
+| **Strand** | Nhánh | Tầng 2, thuộc một Competency. 76 cái (registry [`docs/taxonomy/index.md`](../../taxonomy/index.md), đo 2026-10-18) | **domain** (PRD gọi vậy — không dùng) |
+| **Skill** | Kỹ năng | Tầng 3. 443 cái (cùng registry, đo 2026-10-18). Mã bất biến `C1.CNT.03` | competency detail |
 | **Learning Objective** (LO) | Mục tiêu học tập | Tầng 4. **Một hành vi quan sát được**. ≥3 mỗi Skill | goal, outcome |
 | **Thinking process** | Tiến trình tư duy | Trục metadata `thinking`: observe, compare, sort, … | cognitive skill |
 
-> PRD dùng `Domain` cho tầng 2. Corpus v2 dùng **Strand**. Lý do: `domain` đã mang nghĩa
+> PRD dùng `Domain` cho tầng 2. Corpus dùng **Strand**. Lý do: `domain` đã mang nghĩa
 > "domain module" trong kiến trúc schema — trùng nghĩa trong cùng codebase là nguồn lỗi.
 
 ### 7.2 Game
@@ -182,7 +182,7 @@ không thuộc phạm vi cấm này.
 Scenario: BR-GLOS-03 — từ bị cấm không tồn tại trong corpus
   Given toàn bộ thư mục docs/specs
   When grep -rniE "tenant_id|school_admin|persona enum" docs/specs
-  Then không có kết quả nào ngoài file glossary.md và AUDIT-v1.md
+  Then không có kết quả nào ngoài file glossary.md
 
 Scenario: BR-GLOS-01 — tầng 2 taxonomy chỉ gọi là strand
   Given toàn bộ corpus spec và schema

@@ -5,7 +5,7 @@ area: platform
 status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-08-13
+reviewed: 2026-10-18
 owns:
   - Danh sách metric và ngưỡng alert
   - Kênh nhận alert
@@ -19,7 +19,7 @@ depends_on:
 
 ## 1. Objective
 
-v1 có health check trả 503 đúng cách và **không ai được thông báo**. Một health check không
+Health check trả 503 đúng cách mà **không ai được thông báo** thì vô dụng. Một health check không
 có alerting chỉ là một endpoint.
 
 Alert phải **tới được người**, không chỉ ghi vào log mà không ai đọc.

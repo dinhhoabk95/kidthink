@@ -2,10 +2,10 @@
 spec: PLAY-STAGE-ZONES
 title: Bàn chơi năm vùng — bố cục chung của mọi game engine trên bề mặt trẻ
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P4
-reviewed: 2026-10-03
+reviewed: 2026-10-18
 owns:
   - Năm vùng của bàn chơi, thứ tự và vị trí của chúng theo hướng màn hình
   - Ranh giới shell và engine — vùng nào ai vẽ, ai nhận chạm

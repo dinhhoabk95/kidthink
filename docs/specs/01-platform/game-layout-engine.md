@@ -2,10 +2,12 @@
 spec: GAME-LAYOUT-ENGINE
 title: Bố cục màn chơi — từ vựng layout và hình học slot
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-19
+reviewed: 2026-10-18
+open_tasks:
+  - "#305"
 owns:
   - Từ vựng LayoutId
   - Hình học slot và vùng chạm của một slot
@@ -16,6 +18,8 @@ depends_on:
 ---
 
 # Bố cục màn chơi — từ vựng layout và hình học slot
+
+> **Chưa hoàn thành** — `LAYOUT_NOT_SUPPORTED` mới được ép ở `POST /api/managers/levels`; `PATCH /api/managers/levels/{code}/{version}` ghi `difficulty_params` mà không kiểm `layout_id` thuộc `template.layouts` (`BR-LAY-02`). Việc còn lại: [Task #305](../../tasks/305-platform-api-gaps-plan.md).
 
 ## 1. Objective
 

@@ -5,7 +5,9 @@ area: play
 status: approved
 mvp: false
 phase: P4
-reviewed: 2026-10-10
+reviewed: 2026-10-18
+open_tasks:
+  - "#294"
 owns:
   - Bề mặt khám phá trò chơi theo năng lực cho trẻ (`/play/competency/[code]`)
   - API lấy danh mục trò chơi theo năng lực cho trẻ (`/api/users/play/competency/[code]`)
@@ -19,11 +21,13 @@ depends_on:
 
 # Khám phá trò chơi theo năng lực cho trẻ
 
+> **Chưa hoàn thành** — `BR-CCE-08` chưa có: trang chưa đổi màu theo năng lực và mascot chưa đọc to lời giới thiệu. Main flow bước 4 chưa đúng: `is_locked` tính cứng theo `access_tier === "premium"`, chưa đọc entitlement của gia đình. Việc còn lại: [Task #294](../../tasks/294-play-surface-gaps-plan.md).
+
 ## 1. Objective
 
 Trẻ mầm non 3–6 tuổi khi ở sảnh chơi `/play` có thể tự do khám phá thế giới trò chơi theo 6 nhóm năng lực tư duy nền tảng (C1: Số & Lượng, C2: Không gian & Hình học, C3: Logic & Quy luật, C4: Đo lường & So sánh, C5: Phân loại & Dữ liệu, C6: Tập trung & Trí nhớ).
 
-Trước đây, các thẻ năng lực tại `/play` đang liên kết tới `/games?competency=${c.code}` — một trang web dành cho người lớn có thanh điều hướng công khai, ô tìm kiếm từ khoá và bộ lọc chữ, vi phạm quy tắc `BR-PSZ-11` và `BR-PEN-03`.
+Thẻ năng lực tại `/play` Cấm dẫn tới `/games` — trang của người lớn có thanh điều hướng công khai, ô tìm kiếm từ khoá và bộ lọc chữ, trái `BR-PSZ-11` và `BR-PEN-03`.
 
 Spec này xác lập **Bề mặt khám phá trò chơi theo năng lực** (`/play/competency/[code]`) hoàn toàn trên Kid Surface (layout `kid`), mang lại trải nghiệm duyệt game an toàn, trực quan, không chữ số phức tạp và có thể chơi ngay.
 
@@ -75,11 +79,19 @@ Spec này xác lập **Bề mặt khám phá trò chơi theo năng lực** (`/pl
 | `BR-CCE-07` | Hiển thị thành tích sao (1–3 sao) trực quan nếu trẻ đã từng hoàn thành level | Khuyến khích động lực học tập và ôn luyện lại |
 | `BR-CCE-08` | Mỗi danh mục năng lực có màu sắc chủ đạo, linh vật Mascot Gấu Con chào đón và đọc to lời giới thiệu | Mang lại không khí vui tươi, thân thiện với trẻ em |
 
-## 7. Data Contract
+## 7. Data
 
-### `GET /api/users/play/competency/[code]`
+Đọc, không ghi:
 
-Response:
+| Entity | Dùng cho |
+|---|---|
+| `child_profiles` | Trẻ đang hoạt động, năm sinh để suy `age_band` |
+| `COMPETENCY_CATALOG` (`@mindkid/shared`) | Kiểm `code` thuộc `C1`…`C6`, tên và tagline năng lực |
+| `game_levels` | Level `published`, mã `GL-<code>-*`, khoảng tuổi giao với `age_band` (`BR-CCE-02`) |
+| `play_sessions` | `best_stars` và `play_count` của chính trẻ (`BR-CCE-07`) |
+
+### 7.1 Response
+
 ```ts
 interface CompetencyGameItem {
   code: string;
@@ -107,3 +119,83 @@ interface ChildCompetencyResponse {
   games: CompetencyGameItem[];
 }
 ```
+
+## 8. API contract
+
+### `GET /api/users/play/competency/{code}`
+
+| | |
+|---|---|
+| Auth | Phiên User (`defineApiRoute` `auth: "user"`) + trẻ đang hoạt động thuộc caller (`requireOwnedActiveChild`) |
+| Param | `code` — mã năng lực `C1`…`C6`, không phân biệt hoa thường |
+| Response 200 | `ChildCompetencyResponse` (§7.1) |
+| 401 | Chưa đăng nhập |
+| 404 `NOT_FOUND` | `code` không thuộc `C1`…`C6` |
+| 428 `NO_ACTIVE_CHILD` | Chưa chọn trẻ hoặc cookie `active_child_id` không trỏ tới trẻ của caller |
+
+## 9. Acceptance criteria
+
+```gherkin
+Scenario: BR-CCE-01 — layout kid
+  When render /play/competency/C1
+  Then trang dùng layout kid
+  And không có navbar hay footer công khai
+
+Scenario: BR-CCE-02 — chỉ trò chơi hợp tuổi
+  Given trẻ 4–5 tuổi
+  And có một level C1 published chỉ dành cho 5–6 tuổi
+  When gọi GET /api/users/play/competency/C1
+  Then level đó không có trong games
+
+Scenario: BR-CCE-04 — trò chơi khoá hiện trung tính
+  Given một level C1 mà trẻ chưa có quyền
+  When render /play/competency/C1
+  Then thẻ level hiện ổ khoá
+  And không có số tiền hay tên gói nào trên trang
+
+Scenario: BR-CCE-05 — không có ô tìm kiếm hay bộ lọc chữ
+  When render /play/competency/C1
+  Then không có input tìm kiếm
+  And không có dropdown bộ lọc
+
+Scenario: BR-CCE-06 — thẻ năng lực ở sảnh dẫn vào bề mặt trẻ
+  When render sảnh /play
+  Then mọi thẻ năng lực trỏ tới /play/competency/{code}
+  And không thẻ nào trỏ tới /games
+
+Scenario: BR-CCE-07 — sao của level đã chơi
+  Given trẻ đã hoàn thành một level C1 với 2 sao
+  When gọi GET /api/users/play/competency/C1
+  Then level đó có best_stars bằng 2
+
+Scenario: BR-CCE-08 — màu và lời chào theo năng lực
+  When trẻ mở /play/competency/C2
+  Then trang dùng màu chủ đạo của C2
+  And mascot đọc to lời giới thiệu của C2
+
+Scenario: mã năng lực không hợp lệ
+  When gọi GET /api/users/play/competency/C9
+  Then trả 404
+```
+
+## 10. Boundaries
+
+**Always**
+- Dùng layout `kid`; thoát chỉ qua cổng phụ huynh.
+- Kiểm trẻ thuộc caller ở mỗi request.
+- Lọc level theo `published` và tuổi của trẻ trên server.
+
+**Ask first**
+- Thêm cách phân loại khác ngoài năng lực.
+- Đổi luật lọc theo tuổi (`BR-CCE-02`) — xem Open question 1.
+
+**Never**
+- Hiện giá tiền, tên gói, hay lời mời nâng cấp.
+- Ô tìm kiếm chữ hoặc dropdown lọc.
+- Link từ bề mặt này ra trang công khai của người lớn.
+
+## 11. Open questions
+
+| # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
+|---|---|---|---|---|
+| 1 | `BR-CCE-02` loại bỏ trò chơi ngoài `age_band`, trong khi [`child-lesson-flow.md`](child-lesson-flow.md) `BR-CLF-07` và [`access-gating.md`](access-gating.md) chỉ dùng tuổi để xếp hạng / cảnh báo, không chặn. Bên nào đúng? | Luật lọc tuổi trên bề mặt trẻ | P4 | người quyết |

@@ -2,10 +2,12 @@
 spec: SCHEMA-DRIVEN-FORM
 title: Form sinh từ schema
 area: admin
-status: implemented
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#300"
 owns:
   - Cơ chế suy widget từ Zod
   - Quy ước đặt tên field
@@ -14,6 +16,8 @@ depends_on:
 ---
 
 # Form sinh từ schema
+
+> **Chưa hoàn thành** — field `uiHint = emoji` chưa nhập tay được, chỉ chọn qua picker (BR-SDF-04, cùng gốc BR-EPK-03). Việc còn lại: [Task #300](../../tasks/300-admin-small-gaps-plan.md).
 
 ## 1. Objective
 
@@ -39,7 +43,7 @@ không phải `──→ schema-driven-form`).
 
 ## 3. Entry points
 
-`packages/admin/utils/zodIntrospect.ts` · `configDictionary.ts` (nhãn tiếng Việt) ·
+`packages/shared/src/zod-introspect.ts` · `packages/shared/src/config-dictionary.ts` (nhãn tiếng Việt) ·
 `GET /api/managers/templates/{code}/contract`.
 
 ## 4. Main flow

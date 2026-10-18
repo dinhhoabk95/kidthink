@@ -2,10 +2,12 @@
 spec: PLAY-NARRATION
 title: Giọng đọc trên bề mặt trẻ — mọi yêu cầu phải nghe được trước khi đọc được
 area: play
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-09-11
+reviewed: 2026-10-18
+open_tasks:
+  - "#296"
 owns:
   - Hợp đồng phát giọng Việt cho mọi yêu cầu và mọi vật trên bề mặt trẻ
   - Thứ tự dự phòng khi không phát được file tiếng
@@ -20,6 +22,8 @@ depends_on:
 ---
 
 # Giọng đọc trên bề mặt trẻ
+
+> **Chưa hoàn thành** — Cổng `check:narration-coverage` đã chạy nhưng nợ còn lớn: 0/37 engine có câu dẫn vòng có tiếng, 2009 vật chưa có tên đọc. Việc còn lại: [Task #296](../../tasks/296-play-narration-debt-plan.md).
 
 ## 1. Objective
 
@@ -126,8 +130,7 @@ TTS).
 | `voice/d6/` | 17 | Điều hành |
 | **Tổng** | **742** | |
 
-Cấu trúc thư mục `d1`…`d6` là di sản v1 và không khớp mã competency `C1`…`C6` của v2 một cách
-hiển nhiên. Bảng ánh xạ hai chiều là việc đầu tiên của lát cắt; nó thuộc
+Thư mục `voice/d1`…`voice/d6` không khớp mã competency `C1`…`C6` một cách hiển nhiên. Bảng ánh xạ hai chiều là việc đầu tiên của lát cắt; nó thuộc
 [`audio-storage.md`](../01-platform/audio-storage.md) mục 7.
 
 ### 7.2 Thứ tự dự phòng — bốn bậc
@@ -284,7 +287,7 @@ Scenario: BR-PNR-11 — quá hạn dự phòng vẫn mở cử chỉ
 
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
-| 1 | Ánh xạ thư mục di sản `d1`…`d6` sang `C1`…`C6` là một-một hay nhiều-nhiều; `d5` hiện chứa `money_template` và `clock_template` vốn thuộc `C1.MEAS` của v2 | Việc gắn 742 file vào dataset | P1 | Nội dung |
+| 1 | Ánh xạ thư mục `voice/d1`…`voice/d6` sang `C1`…`C6` là một-một hay nhiều-nhiều; `d5` hiện chứa `money_template` và `clock_template` vốn thuộc `C1.MEAS` | Việc gắn 742 file vào dataset | P1 | Nội dung |
 | 2 | Câu dẫn của vòng sinh từ `narration_template` của dataset hay soạn riêng theo level; sinh từ template thì 443 câu giống nhau như prompt hiện tại | `BR-PNR-04` | P1 | Nội dung |
 | 3 | Tên vật có phát mỗi lần chạm hay chỉ lần chạm đầu trong vòng; phát mỗi lần thì với engine chạm nhanh như `GT-028` sẽ chồng tiếng | `BR-PNR-02` | P2 | Studio UI |
 | 4 | Có thu giọng người cho 36 engine còn lại hay chấp nhận bậc 2 tổng hợp giọng làm mức phục vụ cho các engine ngoài `C1` | Phạm vi chi phí thu âm | P2 | người quyết |

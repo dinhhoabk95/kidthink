@@ -5,7 +5,7 @@ area: admin
 status: implemented
 mvp: true
 phase: P2
-reviewed: 2026-08-13
+reviewed: 2026-10-18
 owns:
   - Danh sách User và bộ lọc
   - Thao tác khoá/mở tài khoản
@@ -23,7 +23,7 @@ Tìm một User để hỗ trợ, và thực hiện đúng ba thao tác vận h�
 **xoá theo yêu cầu**.
 
 > Tách khỏi [`admin-dashboard.md`](admin-dashboard.md) và khỏi [`user-detail.md`](user-detail.md). Danh sách là bề mặt tìm kiếm; chi tiết
-> là bề mặt đọc sâu. Gộp cả ba như v1 làm không ai trả lời được phần nào đã xong.
+> là bề mặt đọc sâu. Gộp cả ba vào một spec thì không trả lời được phần nào đã xong.
 
 ## 2. Actors
 

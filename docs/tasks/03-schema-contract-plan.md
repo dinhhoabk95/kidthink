@@ -1,4 +1,4 @@
-# Plan — Task #3: P0 bước 7 — khoá contract schema ([`data-model-overview.md`](../specs/01-platform/data-model-overview.md) → `schema-*`)
+# Plan — Task #3: P0 bước 7 — khoá contract schema ([`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) → `schema-*`)
 
 > **Hồ sơ lưu trữ.** Task #3 kết thúc 2026-08-07. File này giữ nguyên văn phong cũ, tức còn
 > dùng ký hiệu và chữ viết tắt mà Task #4 đang loại bỏ. Quy ước viết hiện hành nằm ở
@@ -32,7 +32,7 @@ Task #2 (2026-08-06). Chúng chưa biết những quyết định đó tồn t�
 - **2 spec tự mâu thuẫn với chính dependency đã `approved` của nó** (partition, FK curriculum).
 - **1 spec `approved` tự mâu thuẫn trong chính nó** — [`id-conventions.md`](../specs/00-foundation/id-conventions.md) §7 vẫn ghi `G-…\d{3}`
   trong khi §11 Q1/Q2 của **cùng file đó** đã chốt `GL-…\d{4}`.
-- **6 lệch bảng** giữa [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7 (bản đồ module) và ba spec con.
+- **6 lệch bảng** giữa [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7 (bản đồ module) và ba spec con.
 - **2 ràng buộc bất khả thi ở Postgres** nếu viết đúng chữ trong spec (§Rủi ro kỹ thuật).
 
 Đây không phải việc đọc–duyệt như Task #2. Đây là việc **hoà giải contract**: mỗi mâu thuẫn
@@ -58,8 +58,8 @@ seed 230 skill + 690 LO là hai phase deprecation (`BR-DM-09`).
 | `pnpm test` | **73/73** (2 file) — tăng từ 56/56, +17 unit test cho `parseFrontmatter` · C7 · C9 |
 | `pnpm --filter @mindkid/gates test` | exit 0 — 130 spec · 11 check · **0 error · 228–232 warning** |
 | Spec `approved` | **16/130** (đúng 16 file `00-foundation`) |
-| Spec cần approve ở task này | **6** (hoặc 7, xem D-Y): [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) · [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) · [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) · 3 × `schema-*` |
-| Quyết định T8–T12 đụng schema | **11** — không cái nào được ghi vào [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) |
+| Spec cần approve ở task này | **6** (hoặc 7, xem D-Y): [`taxonomy-service.md`](../specs/01-platform/taxonomy-service.md) · [`game-template-contract.md`](../specs/01-platform/game-template-contract.md) · [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) · 3 × `schema-*` |
+| Quyết định T8–T12 đụng schema | **11** — không cái nào được ghi vào [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) |
 | OQ trong 6 spec đích | **17** (DMO 3 · SIB 2 · SCT 2 · SPT 2 · TAX 4 · GTC 4) |
 | OQ đã bị đóng ở chỗ khác nhưng còn mở ở spec đích | **3** (DMO Q1 · SPT Q1 · SCT Q1) |
 | Bảng lệch giữa DMO §7 và schema-* | **6** |
@@ -70,7 +70,7 @@ seed 230 skill + 690 LO là hai phase deprecation (`BR-DM-09`).
 
 | # | Nợ | Kéo vào |
 |---|---|---|
-| 1 | [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §Ràng buộc chờ chưa tạo — 11 quyết định T8–T12 nằm rải trong 16 file OQ | **T5** |
+| 1 | [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §Ràng buộc chờ chưa tạo — 11 quyết định T8–T12 nằm rải trong 16 file OQ | **T5** |
 | 2 | [`SPEC.md`](../SPEC.md) §13 Cổng ra P0 thiếu dòng neo **D-W** ([`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) Q1 phải có chủ trước P1) và thiếu dòng backup/monitoring (Q4 chốt P0) | **T5** |
 | 3 | C6 "cột vì sao không rỗng" hạ xuống warning (`2cfdb71`) — 228 warning tồn | **Ngoài phạm vi**, theo dõi riêng |
 | 4 | [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) Q1 vẫn ghi chủ = *"cần chủ có tên (D-W)"* — chưa có tên thật, hạn vẫn ghi "chờ P1" chung chung, đúng cái mà todo T7 cấm | **Checkpoint C** |
@@ -89,7 +89,7 @@ Checkpoint B là nơi người chốt.
 | M2 | [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §7.4 `code` = "`G-*`", acceptance dùng `G-C1-CNT-007` | M1 | **A** — kéo theo M1 |
 | M3 | `id-conventions.md:112` `Game level trong URL` = `G-C1-CNT-007`; `:133-150` 4 scenario dùng mã cũ | M1 | **A** |
 | M4 | [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §11 Q1 "*Partition `telemetry_events` theo tháng ngay từ P0?*" — **còn mở** | [`event-catalog.md`](../specs/00-foundation/event-catalog.md) §11 Q2 **đóng 2026-08-06 (T11)**: **có**, partition quyết định lúc `CREATE TABLE` | **A** — SPT `depends_on: EVENT-CATALOG`, không được mở lại câu dependency đã đóng |
-| M5 | [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §11 Q1 cùng câu hỏi partition — **còn mở**, ghi "Chặn P1" | idem M4 | **A** |
+| M5 | [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §11 Q1 cùng câu hỏi partition — **còn mở**, ghi "Chặn P1" | idem M4 | **A** |
 | M6 | [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) §11 Q1 "*`curriculum_items` ghim `entity_version` hay lấy published mới nhất?*" — còn mở | [`content-versioning.md`](../specs/00-foundation/content-versioning.md) §11 Q2 **đóng (T11)**: **`code` only**, luôn published mới nhất | **A** — đóng bằng tham chiếu |
 | M7 | [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) §7.1 (**approved**) — `current_curriculum_id` **FK** | [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §7.1 — `current_curriculum_code` **varchar**; `BR-SCT-06` + `BR-DM-10` cấm trỏ nội dung bằng `bigserial` | **A** — spec `approved` sai, phải sửa (`BR-RBS-08`) |
 | M8 | [`child-data-compliance.md`](../specs/00-foundation/child-data-compliance.md) §7.3 — telemetry được phép `occurred_at` | [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §7.3 — `occurred_at_ms` int (tương đối) + `ingested_at` | **A** — đổi tên trong danh sách cho phép, không đổi ngữ nghĩa |
@@ -99,7 +99,7 @@ Checkpoint B là nơi người chốt.
 
 ### Lệch bản đồ bảng (6 chỗ)
 
-[`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7 khẳng định **11 module** và liệt kê bảng của mỗi module. Ba spec con
+[`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7 khẳng định **11 module** và liệt kê bảng của mỗi module. Ba spec con
 định nghĩa bảng không có trong bản đồ đó, và bản đồ có một bảng không spec nào định nghĩa cột:
 
 | Bảng | Có ở | Thiếu ở |
@@ -110,7 +110,7 @@ Checkpoint B là nơi người chốt.
 | `content_review_log` | DMO §7 module `ops` → uỷ quyền [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md); DMO §7.2 tính nó vào 7 FK polymorphic | **Không spec nào định nghĩa cột.** [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) §7.10 không có nó |
 
 `content_review_log` là chỗ nghiêm trọng nhất: nó được 6 spec tham chiếu
-([`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) · [`content-versioning.md`](../specs/00-foundation/content-versioning.md) · [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) · [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) ·
+([`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) · [`content-versioning.md`](../specs/00-foundation/content-versioning.md) · [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) · [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) ·
 [`publish-and-version.md`](../specs/06-admin/publish-and-version.md) · [`content-review-queue.md`](../specs/06-admin/content-review-queue.md)) và bị tính vào bất biến `BR-DM-04`, nhưng
 **không có chủ định nghĩa cột** — `owns` không nêu ở đâu.
 
@@ -185,10 +185,10 @@ hiện tại thì không immutable thì **không compile được**. Ba lối:
 | **D-AB** | `billing_period` (M10) — enum cột thật hay khoá trong `packages.offers` JSONB? Chốt: **giữ JSONB** `offers[]`, đổi khoá `billing_period`→`billing_period`, miền đóng `{yearly, monthly}` | T8: SIB §7.6 sửa khoá + ghi miền đóng, MVP chỉ dùng `yearly` |
 | **D-AC** | `content_review_log` — spec nào `owns` cột của nó? Chốt: **[`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) §7.10a** | T8: cột chuyển từ [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) §7.2 (bản đầy đủ hơn) sang SIB; CLC giữ ngữ nghĩa |
 | **D-AD** | Migration #1 gồm bảng `ops` nào? Chốt: `audit_logs`+`content_review_log`+`backup_log`; hoãn 4 bảng | T8: SIB §7.10 ghi điều kiện chặn — [`audit-log.md`](../specs/01-platform/audit-log.md)+[`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) phải `approved` trước bước 8 |
-| **D-AE** | *(phát sinh 2026-08-07 khi làm T8, ngoài phạm vi M1–M11 gốc)* Người dùng: FK/quan hệ đa hình mặc định phải dùng **`id`** khoá chính, không `code`. **Lần 1** tôi giữ ngoại lệ cho taxonomy Lớp 1 + `game_templates` và cho tham chiếu "luôn theo published mới nhất" — người dùng bác: **"FK tất cả phải tham chiếu ID, không có ngoại lệ."** **Lần 2 (chốt)**: **0 ngoại lệ**. Taxonomy Lớp 1/`game_templates` giữ cột `code` (định danh hiển thị/URL, không phải FK) nhưng bảng khác trỏ tới bằng `id`. "Luôn theo published mới nhất" chuyển cơ chế: cột **`entity_id`** (neo dòng dõi, bất biến qua version, gán lúc copy-on-write) — vẫn là `id`, không phải `code` | Thêm cột `entity_id` vào 5 bảng Lớp 2 có version (`game_levels`·`lessons`·`activities`·`curricula`·`worksheets`). Đổi toàn bộ `_code`→`_id`: taxonomy Lớp 1 (`competency_id`/`strand_id`/`skill_id`/`tag_id`), `game_levels.template_id`, `content_review_log.entity_id`, `curriculum_items.entity_id`, `current_curriculum_id`, `activities.ref_id`, `lesson_activities.activity_id`, `my-library.entity_id`, +8 chỗ mirror lệch ở [`content-search.md`](../specs/01-platform/content-search.md)/[`content-tagging.md`](../specs/01-platform/content-tagging.md)/[`worksheet-model.md`](../specs/05-content/worksheet-model.md)/[`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md)/[`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md)/[`custom-game-builder.md`](../specs/07-addon/custom-game-builder.md). **Không đổi** (external-facing, `BR-DM-10` — lớp khác): API request/response body, URL param, event payload JSONB, runtime config gửi client — những chỗ này vẫn hợp lệ dùng `code` |
+| **D-AE** | *(phát sinh 2026-08-07 khi làm T8, ngoài phạm vi M1–M11 gốc)* Người dùng: FK/quan hệ đa hình mặc định phải dùng **`id`** khoá chính, không `code`. **Lần 1** tôi giữ ngoại lệ cho taxonomy Lớp 1 + `game_templates` và cho tham chiếu "luôn theo published mới nhất" — người dùng bác: **"FK tất cả phải tham chiếu ID, không có ngoại lệ."** **Lần 2 (chốt)**: **0 ngoại lệ**. Taxonomy Lớp 1/`game_templates` giữ cột `code` (định danh hiển thị/URL, không phải FK) nhưng bảng khác trỏ tới bằng `id`. "Luôn theo published mới nhất" chuyển cơ chế: cột **`entity_id`** (neo dòng dõi, bất biến qua version, gán lúc copy-on-write) — vẫn là `id`, không phải `code` | Thêm cột `entity_id` vào 5 bảng Lớp 2 có version (`game_levels`·`lessons`·`activities`·`curricula`·`worksheets`). Đổi toàn bộ `_code`→`_id`: taxonomy Lớp 1 (`competency_id`/`strand_id`/`skill_id`/`tag_id`), `game_levels.template_id`, `content_review_log.entity_id`, `curriculum_items.entity_id`, `current_curriculum_id`, `activities.ref_id`, `lesson_activities.activity_id`, `my-library.entity_id`, +8 chỗ mirror lệch ở [`content-search.md`](../specs/01-platform/content-search.md)/[`content-tagging.md`](../specs/05-content/content-tagging.md)/[`worksheet-model.md`](../specs/05-content/worksheet-model.md)/[`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md)/[`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md)/[`custom-game-builder.md`](../specs/07-addon/custom-game-builder.md). **Không đổi** (external-facing, `BR-DM-10` — lớp khác): API request/response body, URL param, event payload JSONB, runtime config gửi client — những chỗ này vẫn hợp lệ dùng `code` |
 
 Lưu ý: **Mọi ID trên đều là quyết định đụng schema.** Mỗi cái phải ghi một dòng vào
-[`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §Ràng buộc chờ (T5) — đó là chỗ bước 8 đọc lại trước khi viết cột, và là
+[`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §Ràng buộc chờ (T5) — đó là chỗ bước 8 đọc lại trước khi viết cột, và là
 nợ #1 mà Task #2 để lại.
 
 ---
@@ -294,7 +294,7 @@ checkbox không phản ánh sự thật và ba acceptance chưa xong (nợ #1–
 **Mô tả:** Sáu lệch bảng và mâu thuẫn `G-`/`GL-` **không có cổng nào bắt được**. Chúng tồn tại
 được vì C1–C11 không đọc §7. Sửa tay 6 chỗ mà không thêm cổng thì lần thứ bảy lại lọt.
 
-**C12 — bản đồ bảng khớp hai chiều.** Trích tên bảng từ [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7 (cột `Bảng`)
+**C12 — bản đồ bảng khớp hai chiều.** Trích tên bảng từ [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7 (cột `Bảng`)
 và từ §7.x của ba `schema-*`; lỗi nếu một bên có mà bên kia không.
 
 **C13 — mã ID trong spec khớp [`id-conventions.md`](../specs/00-foundation/id-conventions.md) §7.** Với mỗi hàng của bảng §7
@@ -409,7 +409,7 @@ D-Y · D-Z · D-AA · M1 **đã chốt 2026-08-06** (xem §Quyết định). Cò
 
 ## Phase 2 — Hoà giải quyết định vào spec (T5…T8 song song)
 
-### T5 — [`data-model-overview.md`](../specs/01-platform/data-model-overview.md): §Ràng buộc chờ + bản đồ + neo [`SPEC.md`](../SPEC.md) §13
+### T5 — [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md): §Ràng buộc chờ + bản đồ + neo [`SPEC.md`](../SPEC.md) §13
 
 **Việc**
 - Thêm **§7.3 Ràng buộc chờ** — bảng `| Nguồn | Quyết định | Ngày | Ảnh hưởng cột |`, gồm
@@ -545,7 +545,7 @@ kèm **vì sao + ngày** → (3) `status: approved` + `reviewed:` → (4) `lint:
       **phạm vi P1**, không chặn hình dạng contract. Q2·Q3·Q4 hoãn có chủ.
 
 ### T10 — Layer 2
-- [ ] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) — sau T5, 3/3 OQ có kết luận.
+- [ ] [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) — sau T5, 3/3 OQ có kết luận.
 
 ### T11 — Layer 3
 - [ ] [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) (**D-Y = 7**) — 4 OQ phân loại; deps `ACTORS`·`ERROR-CODES`·`REPO-BOOTSTRAP` .
@@ -555,7 +555,7 @@ kèm **vì sao + ngày** → (3) `status: approved` + `reviewed:` → (4) `lint:
 
 - [ ] **7** spec đích `status: approved`; tổng `approved` = **23/130**.
 - [ ] `pnpm --filter @mindkid/gates test` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0.
-- [ ] **Ca âm C8**: đặt [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) về `draft` thì 3 `schema-*` chuyển đỏ.
+- [ ] **Ca âm C8**: đặt [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) về `draft` thì 3 `schema-*` chuyển đỏ.
 - [ ] **Ca âm C12**: xoá `social_identities` khỏi DMO §7 thì đỏ.
 - [ ] **Ca âm C13**: đổi một ví dụ mã thành `G-C1-CNT-007` thì đỏ.
 - [ ] [`todo.md`](../tasks/todo.md) ghi việc kế tiếp: **P0 bước 8** — `packages/db/src/schema/*.ts` + migration #1,
@@ -619,10 +619,10 @@ cd ..
 grep -l 'status: approved' docs/specs/**/*.md | wc -l          # 23
 grep -rn 'G-C[1-6]-' docs/ | wc -l                             # 0
 grep -rn 'session_month' docs/ | wc -l                          # 0  (đề xuất D-Z bị bác)
-grep -c 'Ràng buộc chờ' docs/specs/01-platform/data-model-overview.md  # ≥ 1
+grep -c 'Ràng buộc chờ' docs/specs/00-foundation/data-model-overview.md  # ≥ 1
 ```
 
 **Cổng ra Task #3:** **7** spec `approved` (23/130) · `lint:specs` 13 check xanh có ca âm ·
-[`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.3 chứa **≥19 dòng** ràng buộc chờ · [`SPEC.md`](../SPEC.md) §13 có **3** dòng neo mới
+[`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7.3 chứa **≥19 dòng** ràng buộc chờ · [`SPEC.md`](../SPEC.md) §13 có **3** dòng neo mới
 (2 P0 + 1 P1) · 0 mã `G-C…` còn trong corpus · [`event-catalog.md`](../specs/00-foundation/event-catalog.md) Q2 mở lại **có chủ + ngưỡng số** ·
 [`todo.md`](../tasks/todo.md) ghi điều kiện chặn của bước 8.

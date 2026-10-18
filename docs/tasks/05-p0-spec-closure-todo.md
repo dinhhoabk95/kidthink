@@ -110,7 +110,7 @@ File: [`08-quality/security-checklist.md`](../specs/08-quality/security-checklis
 - [x] Đọc hết file
 - [x] Đối chiếu sáu vùng cấm section 5 với [`SPEC.md`](../SPEC.md) §0 quyết định `D8`
 - [x] Đối chiếu với [`game-template-contract`](../specs/01-platform/game-template-contract.md)
-      và [`data-model-overview`](../specs/01-platform/data-model-overview.md), cả hai đã `approved`
+      và [`data-model-overview`](../specs/00-foundation/data-model-overview.md), cả hai đã `approved`
 - [x] **Cảnh báo `C3`** — section 5 tên "Vùng cấm — AI không sinh code", chuẩn là
       "Alternative flows". Chốt: đổi tên, hay ghi ngoại lệ vào [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §4
 - [x] Điền "vì sao" cho `BR-AIG-01`

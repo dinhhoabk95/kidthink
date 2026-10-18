@@ -2,7 +2,7 @@
 
 # Danh mục phiếu engine
 
-37 engine trong registry, 38 phiếu, 1 đặt trước, 0 mồ côi.
+38 engine trong registry, 38 phiếu, 0 đặt trước, 0 mồ côi.
 
 Hình dạng phiếu và luật đối chiếu: [`engine-spec-sheet.md`](../engine-spec-sheet.md).
 Sàn nội dung mỗi engine: [`engine-content-depth.md`](../../05-content/engine-content-depth.md).
@@ -29,25 +29,26 @@ Sàn nội dung mỗi engine: [`engine-content-depth.md`](../../05-content/engin
 | [`GT-015`](GT-015.md) | Lưới không lặp | `sudoku-mini` | `sap-dat` | 5–6 | — | Có | montessori |
 | [`GT-016`](GT-016.md) | Xoay kim đồng hồ | `clock-hands` | `dieu-chinh` | 5–6 | — | Có | montessori |
 | [`GT-017`](GT-017.md) | Xếp khối và phối cảnh | `block-stack` | `chi-dinh` | 5–6 | — | Không | montessori |
-| [`GT-018`](GT-018.md) | Nghe rồi làm | `listen-respond` | `chi-dinh` | 4–6 | — | Không | legacy-v1 |
-| [`GT-019`](GT-019.md) | Xoay và lật mảnh | `rotate-transform` | `dieu-chinh` | 4–6 | — | Có | legacy-v1 |
-| [`GT-020`](GT-020.md) | Lật thẻ tìm cặp | `memory-flip` | `chi-dinh` | 3–6 | — | Không | legacy-v1 |
-| [`GT-021`](GT-021.md) | Hoàn thiện đối xứng | `mirror-complete` | `sap-dat` | 4–6 | — | Có | legacy-v1 |
-| [`GT-022`](GT-022.md) | Tìm vật thể ẩn | `hidden-object` | `chi-dinh` | 4–6 | — | Không | legacy-v1 |
-| [`GT-023`](GT-023.md) | Lắp ghép hình thể | `construct` | `sap-dat` | 4–6 | — | Có | legacy-v1 |
-| [`GT-024`](GT-024.md) | Vẽ theo nét | `trace-path` | `lan-net` | 5–6 | 3-4 | Không | legacy-v1 |
+| [`GT-018`](GT-018.md) | Nghe rồi làm | `listen-respond` | `chi-dinh` | 4–6 | — | Không | activity-catalog |
+| [`GT-019`](GT-019.md) | Xoay và lật mảnh | `rotate-transform` | `dieu-chinh` | 4–6 | — | Có | activity-catalog |
+| [`GT-020`](GT-020.md) | Lật thẻ tìm cặp | `memory-flip` | `chi-dinh` | 3–6 | — | Không | activity-catalog |
+| [`GT-021`](GT-021.md) | Hoàn thiện đối xứng | `mirror-complete` | `sap-dat` | 4–6 | — | Có | activity-catalog |
+| [`GT-022`](GT-022.md) | Tìm vật thể ẩn | `hidden-object` | `chi-dinh` | 4–6 | — | Không | activity-catalog |
+| [`GT-023`](GT-023.md) | Lắp ghép hình thể | `construct` | `sap-dat` | 4–6 | — | Có | activity-catalog |
+| [`GT-024`](GT-024.md) | Vẽ theo nét | `trace-path` | `lan-net` | 5–6 | 3-4 | Không | activity-catalog |
 | [`GT-025`](GT-025.md) | Tìm điểm khác biệt | `spot-difference` | `chi-dinh` | 4–6 | — | Không | taxonomy-gap |
 | [`GT-026`](GT-026.md) | Chỉ chạm khi đúng dấu | `go-nogo` | `chi-dinh` | 4–6 | 3-4 | Không | taxonomy-gap |
 | [`GT-027`](GT-027.md) | Đổi luật giữa chừng | `rule-switch` | `chi-dinh` | 5–6 | 3-4 | Không | taxonomy-gap |
-| [`GT-028`](GT-028.md) | Chạm đếm tích luỹ | `tap-count` | `chi-dinh` | 4–6 | 3-4 | Không | legacy-v1 |
-| [`GT-029`](GT-029.md) | Bớt khỏi nhóm | `remove-from-set` | `van-chuyen` | 4–6 | 3-4 | Có | legacy-v1 |
-| [`GT-030`](GT-030.md) | Đo bằng đơn vị lặp | `measure-with-unit` | `van-chuyen` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
-| [`GT-031`](GT-031.md) | Gộp tiền xu | `coin-compose` | `van-chuyen` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
-| [`GT-032`](GT-032.md) | So lượng chất lỏng | `pour-quantity` | `chi-dinh` | 5–6 | 3-4 · 4-5 | Không | legacy-v1 |
-| [`GT-033`](GT-033.md) | Dệt hoa văn lưới | `weave-grid` | `sap-dat` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
-| [`GT-034`](GT-034.md) | Gõ theo nhịp | `beat-sequence` | `sap-dat` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
-| [`GT-035`](GT-035.md) | Xếp hàng lệnh | `command-sequence` | `sap-dat` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
-| [`GT-036`](GT-036.md) | Tự tạo quy luật | `free-create` | `kien-tao` | 5–6 | 3-4 · 4-5 | Có | legacy-v1 |
+| [`GT-028`](GT-028.md) | Chạm đếm tích luỹ | `tap-count` | `chi-dinh` | 4–6 | 3-4 | Không | activity-catalog |
+| [`GT-029`](GT-029.md) | Bớt khỏi nhóm | `remove-from-set` | `van-chuyen` | 4–6 | 3-4 | Có | activity-catalog |
+| [`GT-030`](GT-030.md) | Đo bằng đơn vị lặp | `measure-with-unit` | `van-chuyen` | 5–6 | 3-4 · 4-5 | Có | activity-catalog |
+| [`GT-031`](GT-031.md) | Gộp tiền xu | `coin-compose` | `van-chuyen` | 5–6 | 3-4 · 4-5 | Có | activity-catalog |
+| [`GT-032`](GT-032.md) | So lượng chất lỏng | `pour-quantity` | `chi-dinh` | 5–6 | 3-4 · 4-5 | Không | activity-catalog |
+| [`GT-033`](GT-033.md) | Dệt hoa văn lưới | `weave-grid` | `sap-dat` | 5–6 | 3-4 · 4-5 | Có | activity-catalog |
+| [`GT-034`](GT-034.md) | Gõ theo nhịp | `beat-sequence` | `sap-dat` | 5–6 | 3-4 · 4-5 | Có | activity-catalog |
+| [`GT-035`](GT-035.md) | Xếp hàng lệnh | `command-sequence` | `sap-dat` | 5–6 | 3-4 · 4-5 | Có | activity-catalog |
+| [`GT-036`](GT-036.md) | Tự tạo quy luật | `free-create` | `kien-tao` | 5–6 | 3-4 · 4-5 | Có | activity-catalog |
+| [`GT-037`](GT-037.md) | Tìm hết ký hiệu | `symbol-hunt` | `chi-dinh` | 4–6 | 3-4 | Không | taxonomy-gap |
 
 ## Engine đặt trước — spec có, `template.ts` chưa
 
@@ -56,4 +57,3 @@ ra đời trước khuôn, và cổng đối chiếu trường trích chỉ bậ
 
 | Mã | Tên | Cơ chế đặt trước | Lô | Plan sở hữu |
 |---|---|---|---|---|
-| [`GT-037`](GT-037.md) | Tìm hết ký hiệu | `symbol-hunt` | taxonomy-gap | [`278-engine-gt-037-symbol-hunt-plan.md`](../../../tasks/278-engine-gt-037-symbol-hunt-plan.md) |

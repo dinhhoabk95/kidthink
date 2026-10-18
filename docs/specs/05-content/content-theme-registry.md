@@ -5,7 +5,7 @@ area: content
 status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-29
+reviewed: 2026-10-18
 owns:
   - Từ vựng đóng trục theme và việc cưỡng chế nó
   - Trần tập trung chủ đề trên catalog và trên một engine
@@ -21,7 +21,7 @@ depends_on:
 
 ## 1. Objective
 
-[`content-tagging.md`](../01-platform/content-tagging.md) mục 7.2 **đã có** một từ vựng trục
+[`content-tagging.md`](content-tagging.md) mục 7.2 **đã có** một từ vựng trục
 `theme` — mười hai giá trị, khai là "trục thứ tư, tuỳ chọn". Vấn đề không phải là thiếu từ
 vựng. Vấn đề là từ vựng đó **không ai sở hữu và không cổng nào ép**: `BR-TAG-02` (mỗi nội
 dung published có ≥1 tag mỗi trục) cố ý chỉ ép ba trục sư phạm, nên `theme` trôi tự do.
@@ -46,7 +46,7 @@ khác nhau, và mức độ đó dự đoán chính xác độ trôi.
 File này nhận quyền sở hữu trục `theme`: chốt lại từ vựng, đặt trần tập trung, và nêu đường
 gắn lại tag cho nội dung đã published mà không phá `BR-CLC-01` (bản published bất biến).
 Nó cấm — NEVER đụng ba trục sư phạm; ba trục đó thuộc
-[`content-tagging.md`](../01-platform/content-tagging.md).
+[`content-tagging.md`](content-tagging.md).
 
 ## 2. Actors
 
@@ -62,7 +62,7 @@ Nó cấm — NEVER đụng ba trục sư phạm; ba trục đó thuộc
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
 | `packages/shared/src/constants/content-themes.ts` | Dev | Từ vựng Lớp 1, nguồn sự thật |
-| `pnpm --filter @mindkid/db check:theme-registry` | Cổng chủ đề | Chạy trong cổng tự động trước khi merge |
+| `packages/content-build/tests/gates/theme-registry.test.ts` (`evaluateThemeRegistry` ở `packages/content-build/src/gates/theme-registry.ts`) | Cổng chủ đề | Chạy trong `pnpm check:test-ratchet` trước khi merge, trên corpus seed thật kèm ca âm |
 | `docs/specs/01-platform/engines/GT-<nnn>.md` mục 6 | Người soạn | Ma trận seed nêu chủ đề mục tiêu của engine đó |
 | [`game-catalog-public.md`](../02-public/game-catalog-public.md) | Khách | Chủ đề là một bộ lọc người dùng thấy. Đó là lý do nó phải đóng |
 
@@ -91,7 +91,7 @@ Nó cấm — NEVER đụng ba trục sư phạm; ba trục đó thuộc
 
 | ID | Rule | Vì sao |
 |---|---|---|
-| `BR-CTR-01` (từ vựng đóng thật) | `theme_tag` phải thuộc từ vựng ở mục 7.1. Giá trị ngoài làm cổng đỏ, cấm — NEVER nhánh slug dự phòng | Không cưỡng chế là lý do 100 trên 228 level đang mang giá trị ngoài từ vựng của mục 7.2 trong [`content-tagging.md`](../01-platform/content-tagging.md), và giá trị dùng nhiều thứ hai toàn corpus (`farm`, 42 level) nằm ngoài danh sách |
+| `BR-CTR-01` (từ vựng đóng thật) | `theme_tag` phải thuộc từ vựng ở mục 7.1. Giá trị ngoài làm cổng đỏ, cấm — NEVER nhánh slug dự phòng | Không cưỡng chế là lý do 100 trên 228 level đang mang giá trị ngoài từ vựng của mục 7.2 trong [`content-tagging.md`](content-tagging.md), và giá trị dùng nhiều thứ hai toàn corpus (`farm`, 42 level) nằm ngoài danh sách |
 | `BR-CTR-02` (cổng có ca âm) | Cổng phải có test ca âm: một chủ đề bịa đặt phải làm cổng đỏ | Cổng không có ca âm là cổng không biết mình hỏng |
 | `BR-CTR-03` (bắt buộc trên game level) | Mọi `game_level` có `theme_tag`, không rỗng, không mặc định | Chủ đề là bộ lọc người dùng thấy. Ô trống nghĩa là màn chơi đó không tìm thấy được |
 | `BR-CTR-04` (trần catalog) | Không chủ đề nào vượt trần tỉ lệ ở mục 7.3 trên toàn catalog | `school` đang ở 37%. Trẻ chơi mười màn thấy chín màn cùng bối cảnh |
@@ -101,8 +101,8 @@ Nó cấm — NEVER đụng ba trục sư phạm; ba trục đó thuộc
 | `BR-CTR-08` (chủ đề có vốn từ) | Mỗi giá trị trong từ vựng có mục vốn từ tương ứng ở [`level-generator-kit.md`](../01-platform/level-generator-kit.md) mục 7.2 | Một chủ đề không có danh từ và emoji đi kèm là một chủ đề không soạn nội dung được |
 | `BR-CTR-09` (sàn tuổi của chủ đề) | Mỗi chủ đề khai `age_floor`; nội dung dùng chủ đề đó ở band thấp hơn bị chặn | `technology` không phải bối cảnh của trẻ 3 tuổi. Đây là ràng buộc sư phạm, không phải độ khó |
 | `BR-CTR-10` (gắn lại tag là version mới) | Đổi `theme_tag` của nội dung đã published là **version mới**, cấm — NEVER `UPDATE` tại chỗ | `BR-CLC-01` và `BR-CSA-01` (seed chỉ INSERT) không có ngoại lệ cho việc dọn tag |
-| `BR-CTR-12` (một nguồn sự thật) | Từ vựng `theme` sống ở **một** chỗ: `packages/shared/src/constants/content-themes.ts`. Mục 7.2 của [`content-tagging.md`](../01-platform/content-tagging.md), `seed-master/content-tags.ts`, và `CANONICAL_THEME_TAGS` của cổng phải trỏ về đó, cấm — NEVER giữ danh sách riêng | Bốn nguồn ở mục 7.1, hai nguồn đầu giao nhau đúng hai giá trị, nguồn thứ ba hoà giải bằng cách hợp cả hai thành 22 giá trị. Hợp hai danh sách mâu thuẫn không phải là đóng từ vựng; nó là hợp thức hoá cả hai |
 | `BR-CTR-11` (thêm chủ đề cần người quyết) | Thêm giá trị mới vào từ vựng đi qua PR và cần người quyết | Từ vựng mở dần bằng PR của người soạn là từ vựng sẽ trôi lại như hôm nay |
+| `BR-CTR-12` (một nguồn sự thật) | Từ vựng `theme` sống ở **một** chỗ: `packages/shared/src/constants/content-themes.ts`. Mục 7.2 của [`content-tagging.md`](content-tagging.md), `seed-master/content-tags.ts`, và `CANONICAL_THEME_TAGS` của cổng phải trỏ về đó, cấm — NEVER giữ danh sách riêng | Bốn nguồn ở mục 7.1, hai nguồn đầu giao nhau đúng hai giá trị, nguồn thứ ba hoà giải bằng cách hợp cả hai thành 22 giá trị. Hợp hai danh sách mâu thuẫn không phải là đóng từ vựng; nó là hợp thức hoá cả hai |
 
 > **Chủ đề là lớp áo, không phải nguồn vật.** `BR-CTR-06` cấm giá trị nội dung học nằm ở trục
 > `theme`. Mặt còn lại của cùng ranh giới đó nằm ở `BR-SDS-10` (chủ đề là lớp áo), mục 6 của
@@ -121,16 +121,16 @@ Trục `theme` không có một từ vựng bị bỏ quên. Nó có **bốn** n
 
 | # | Nguồn | Giá trị | Có cổng ép |
 |---|---|---|---|
-| 1 | Mục 7.2 của [`content-tagging.md`](../01-platform/content-tagging.md) | 12: `animal` `fruit` `vegetable` `vehicle` `shape` `family` `school` `weather` `festival` `body` `food` `nature` | Không |
-| 2 | `packages/db/src/seed-master/content-tags.ts`, Lớp 1 trong database | 12: `farm` `jungle` `ocean` `space` `school` `home` `park` `vehicles` `food` `dino` `fairytale` `seasons` | Không |
-| 3 | `CANONICAL_THEME_TAGS` ở `packages/db/tests/gates/thinking-coverage.ts` | **22** — hợp của nguồn 1 và 2 | **Có** — `BR-TCM-01` |
+| 1 | Mục 7.2 của [`content-tagging.md`](content-tagging.md) | 12: `animal` `fruit` `vegetable` `vehicle` `shape` `family` `school` `weather` `festival` `body` `food` `nature` | Không |
+| 2 | `packages/content-build/src/seed-master/content-tags.ts`, Lớp 1 trong database | 12: `farm` `jungle` `ocean` `space` `school` `home` `park` `vehicles` `food` `dino` `fairytale` `seasons` | Không |
+| 3 | `CANONICAL_THEME_TAGS` ở `packages/content-build/tests/gates/thinking-coverage.ts` | **22** — hợp của nguồn 1 và 2 | **Có** — `BR-TCM-01` |
 | 4 | Corpus seed thật, 228 level | 15: `school` 84 · `farm` 42 · `home` 33 · `animal` 14 · `nature` 11 · `ocean` 8 · `food` 7 · `vehicle` 7 · `park` 6 · `space` 4 · `art` 4 · `fruit` 3 · `shape` 2 · `household` 2 · `technology` 1 | — |
 
 Giao của nguồn 1 và nguồn 2 là **hai** giá trị: `school` và `food`. Nguồn 3 là cổng duy nhất
 thật sự chạy, và nó giải quyết mâu thuẫn bằng cách **hợp cả hai** — 22 giá trị. Nguồn 4 dùng
 ba giá trị chưa nguồn nào có: `art` (4 level), `household` (2), `technology` (1).
 
-**Cổng đó đang đỏ.** `packages/db/tests/gates/thinking-coverage.test.ts` fail với 7 vi phạm
+**Cổng đó đang đỏ.** `packages/content-build/tests/gates/thinking-coverage.test.ts` fail với 7 vi phạm
 `BR-TCM-01`, đúng ba giá trị vừa nêu. Đây là hỏng đã có trước Task #113, và mục 7.1b dưới đây
 là đường sửa nó.
 
@@ -147,7 +147,7 @@ corpus dùng `vehicle`.
 | `what` | **hoà** — corpus dùng 9 giá trị của spec và 11 giá trị của Lớp 1 | 160 / 239 |
 | `theme` | **Lớp 1 thắng** — 6 trong 8 giá trị "ngoài spec" là giá trị của Lớp 1 | 100 / 228 level |
 
-### 7.1a Từ vựng chốt — mười bốn giá trị
+### 7.1a Từ vựng chốt — mười sáu giá trị
 
 Hoà giải ba nguồn: giữ giá trị đang dùng thật, gộp giá trị trùng nghĩa, bỏ giá trị không phải
 bối cảnh và giá trị chưa nguồn nào dùng.
@@ -168,9 +168,16 @@ bối cảnh và giá trị chưa nguồn nào dùng.
 | `body` | Cơ thể, giác quan | 3 | 0 | Có | Không | Có |
 | `weather` | Thời tiết | 3 | 0 | Có | Không | Có |
 | `festival` | Lễ Tết, Trung thu | 4 | 0 | Có | Không | Có |
+| `job` | Nghề nghiệp: bác sĩ, cô giáo, đầu bếp, nông dân | 3 | 0 | — | — | — |
+| `homeland` | Quê hương, đất nước, danh lam, di tích truyền thống | 4 | 0 | — | — | — |
 
 Bốn giá trị cuối chưa có level nào. Chúng ở lại vì `BR-CTR-04` (trần catalog) buộc `school`
 phải nhường chỗ, và vì lễ Tết là bối cảnh gần trẻ Việt Nam nhất mà corpus đang không có.
+
+`job` và `homeland` được thêm sau phép đo 2026-08-29 qua PR theo `BR-CTR-11`, nên cột số level
+và ba cột nguồn để trống. Danh sách đầy đủ, `age_floor` và vốn từ của chúng sống ở
+`packages/shared/src/constants/content-themes.ts`; test
+`packages/content-build/tests/gates/theme-registry.test.ts` khẳng định đúng mười sáu giá trị.
 
 ### 7.1b Giá trị bị loại và đường gắn lại
 
@@ -316,4 +323,4 @@ Scenario: GET /api/guest/themes chỉ trả chủ đề có nội dung
 | 1 | Trần catalog đặt 25% hay 20%? 25% cho `school` phải hạ từ 84 xuống ≤71 level hoặc corpus phải lên 336 level; 20% thì lên 420 | Bật `BR-CTR-04` | P4 | người quyết |
 | 2 | Bốn giá trị chưa có level nào (`family`, `body`, `weather`, `festival`) giữ lại hay bỏ? Giữ thì `BR-CTR-08` (chủ đề có vốn từ) đòi vốn từ cho chủ đề chưa dùng; bỏ thì trần `school` khó hạ hơn | Phạm vi từ vựng | P4 | Nội dung |
 | 3 | `age_floor` của `ocean` là 4 hay 3? Trẻ 3 tuổi biết con cá; câu hỏi là bối cảnh biển có thêm gánh nặng nhận thức nào không | `BR-CTR-09` áp cho `ocean` | P4 | Nội dung |
-| 4 | Chủ đề có nên là trục thứ tư trong [`content-tagging.md`](../01-platform/content-tagging.md) hay giữ tách ra? Trùng câu hỏi 4 ở mục 7 của [`89-game-engine-scale-out-plan.md`](../../tasks/89-game-engine-scale-out-plan.md), nơi đã nêu lựa chọn tách trục thứ tư cho tag mô tả | Vị trí của `BR-CTR-01` trong corpus | P4 | người quyết |
+| 4 | Chủ đề có nên là trục thứ tư trong [`content-tagging.md`](content-tagging.md) hay giữ tách ra? Trùng câu hỏi 4 ở mục 7 của [`89-game-engine-scale-out-plan.md`](../../tasks/89-game-engine-scale-out-plan.md), nơi đã nêu lựa chọn tách trục thứ tư cho tag mô tả | Vị trí của `BR-CTR-01` trong corpus | P4 | người quyết |

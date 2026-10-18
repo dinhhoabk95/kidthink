@@ -5,7 +5,9 @@ area: play
 status: approved
 mvp: false
 phase: P4
-reviewed: 2026-09-06
+reviewed: 2026-10-18
+open_tasks:
+  - "#295"
 owns:
   - Bước 8 của thứ tự kiểm quyền — điều kiện sư phạm
   - Hàng đợi bài làm quen của một trò chơi
@@ -23,13 +25,15 @@ depends_on:
 
 # Bắt buộc làm quen khái niệm trước khi vào màn chơi
 
+> **Chưa hoàn thành** — Bước 8 đã chạy, nhưng `BR-CIG-12` (ma trận §7.3 cùng ca âm miễn cổng) chưa có test; nhiều BR khác chưa có test gắn mã. Việc còn lại: [Task #295](../../tasks/295-concept-intro-segments-plan.md).
+
 ## 1. Objective
 
 Hôm nay có **hai đường** dẫn trẻ tới một màn chơi, và chỉ một đường có dạy:
 
 | Đường | Có dạy trước không |
 |---|---|
-| Giáo án — [`curriculum-player.md`](curriculum-player.md) → [`lesson-session-runner.md`](lesson-session-runner.md) → bước `digital_game` | **Có**, ba pha, có người lớn |
+| Giáo án — [`curriculum-player.md`](curriculum-player.md) → [`lesson-session-runner.md`](../03-account/lesson-session-runner.md) → bước `digital_game` | **Có**, ba pha, có người lớn |
 | Danh mục — `/games` → `/play/{code}` | **Không**. Bảy bước của [`access-gating.md`](access-gating.md) hỏi về tiền, hạn mức và tuổi — không bước nào hỏi trẻ đã biết khái niệm chưa |
 
 Đường thứ hai là đường phụ huynh dùng khi để trẻ chơi một mình. File này đóng nó lại: thêm

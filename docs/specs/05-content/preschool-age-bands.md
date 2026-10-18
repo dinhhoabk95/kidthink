@@ -5,8 +5,7 @@ area: content
 status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-09-03
-
+reviewed: 2026-10-18
 owns:
   - Ràng buộc biên soạn của nội dung theo band tuổi mầm non
 depends_on:
@@ -27,7 +26,7 @@ Spec này sở hữu **ràng buộc biên soạn nội dung theo band tuổi**: 
 
 Spec này ép **chất lượng biên soạn bài học và trò chơi**, tuyệt đối cấm — NEVER dùng để chặn quyền ghi danh hoặc học vượt của trẻ (`D-SI` giữ nguyên).
 
-## 2. Actors & Permissions
+## 2. Actors
 
 | Actor | Quyền |
 |---|---|
@@ -35,15 +34,21 @@ Spec này ép **chất lượng biên soạn bài học và trò chơi**, tuyệ
 | Quality Gate Runner | Kiểm tra tính phù hợp của toàn bộ kho nội dung qua cổng `check:age-band-fit` |
 | Phụ huynh / Trẻ em | Tự do ghi danh lộ trình theo nhu cầu; không bị hệ thống chặn truy cập dựa vào tuổi thực |
 
-## 3. Preconditions
+## 3. Entry points
+
+| Route / màn hình | Actor | Ghi chú |
+|---|---|---|
+| `packages/content-build/src/gates/age-band-fit.ts` | Cổng vừa band | Gọi từ `packages/content-build/src/gates/roadmap-seed-runner.ts`; test `packages/content-build/tests/gates/preschool-age-bands.test.ts` |
+
+**Điều kiện trước:**
 
 1. Taxonomy kỹ năng đã phân loại đầy đủ theo `age_min` và `age_max` trong khoảng [3, 6].
-2. File cấu hình trần giới hạn `packages/db/config/preschool-age-bands.json` tồn tại và hợp lệ.
+2. File cấu hình trần giới hạn `packages/content-build/src/thresholds/preschool-age-bands.json` tồn tại và hợp lệ.
 3. Các bài học (`lessons`) và màn chơi (`game_levels`) đều khai báo `age_min`, `age_max` hoặc `age_band`.
 
-## 4. Main Flow
+## 4. Main flow
 
-1. Cổng `check:age-band-fit` nạp cấu hình trần từ `packages/db/config/preschool-age-bands.json`.
+1. Cổng `check:age-band-fit` nạp cấu hình trần từ `packages/content-build/src/thresholds/preschool-age-bands.json`.
 2. Đọc toàn bộ danh sách `lessons` và `game_levels` trong corpus seed.
 3. Xác định band tuổi tương ứng của từng bản ghi (`3-4`, `4-5`, hoặc `5-6`).
 4. Đối chiếu các thuộc tính đo lường với trần quy định của band:
@@ -53,12 +58,12 @@ Spec này ép **chất lượng biên soạn bài học và trò chơi**, tuyệ
 5. Thu thập danh sách các bản ghi vượt trần và in báo cáo chi tiết từng mã bản ghi.
 6. Nếu có bản ghi vi phạm, trả về mã thoát exit 1 để ngăn chặn merge nội dung lỗi.
 
-## 5. Alternative Flows
+## 5. Alternative flows
 
 - **Nguồn dữ liệu không đọc được**: Dừng ngay lập tức với mã thoát exit ≠ 0 (`BR-PAR-05`).
 - **Nội dung đa độ tuổi**: Bản ghi có khoảng tuổi bao trùm nhiều band phải thỏa mãn trần của band nhỏ tuổi nhất mà nó tuyên bố hỗ trợ.
 
-## 6. Business Rules
+## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
@@ -70,7 +75,7 @@ Spec này ép **chất lượng biên soạn bài học và trò chơi**, tuyệ
 | `BR-PAR-06` | Báo cáo in chi tiết từng bản ghi lệch kèm trần bị vượt; cấm chỉ in tỷ lệ phần trăm chung | Cung cấp thông tin hành động cụ thể cho biên tập viên sửa đổi |
 | `BR-PAR-07` | Cổng kiểm tra phải có các ca kiểm thử âm và dương tự động | Đảm bảo cơ chế kiểm định luôn hoạt động chính xác |
 
-## 7. Data Contract & Trần Giới Hạn
+## 7. Data
 
 Bảng trần giới hạn sư phạm theo band tuổi (Nguồn: Khung giáo dục mầm non Thông tư 51/2020/TT-BGDĐT & Thuyết phát triển nhận thức Piaget):
 
@@ -82,11 +87,11 @@ Bảng trần giới hạn sư phạm theo band tuổi (Nguồn: Khung giáo d�
 | `concurrent_items_max` | **4 vật** | **6 vật** | **8 vật** | Dung lượng trí nhớ làm việc (working memory span) |
 | `criteria_max` | **1 tiêu chí** | **2 tiêu chí** | **3 tiêu chí** | Khả năng phân loại đa chiều (ví dụ: chỉ màu sắc vs màu + hình) |
 
-## 8. Interfaces & Endpoints
+## 8. API contract
 
 Spec này thuộc tầng kiểm định nội dung biên soạn (Content Authoring Gates). Không có HTTP endpoint công khai.
 
-## 9. Acceptance Scenarios
+## 9. Acceptance criteria
 
 ```gherkin
 Scenario: Tiết học vượt trần thời lượng cho phép ở lứa 3-4 tuổi
@@ -110,7 +115,7 @@ Scenario: Khẳng định không chặn ghi danh theo tuổi (BR-PAR-04)
 - **Never**: Tuyệt đối không dùng spec này để từ chối ghi danh của trẻ trên API.
 - **Never**: Không tự ý nới lỏng trần giới hạn trong file cấu hình khi chưa có sự đồng ý của chuyên gia sư phạm.
 
-## 11. Open Questions (Đã chốt)
+## 11. Open questions
 
 - `Q159-1`: Năm con số trần lấy từ nguồn nào? -> Chốt: Lấy từ Khung giáo dục mầm non Việt Nam và tài liệu phát triển nhận thức mầm non chuẩn hóa ở mục 7.
 - `Q159-2`: Các bản ghi hiện đang lệch trần xử lý thế nào? -> Chốt: Giữ nguyên trong task này; đưa vào danh sách rà soát và điều chỉnh của Task #124.

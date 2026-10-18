@@ -5,7 +5,7 @@ area: foundation
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-11
+reviewed: 2026-10-18
 owns:
   - Định nghĩa cái gì thuộc MVP
   - Thứ tự hy sinh khi thiếu nguồn lực
@@ -96,13 +96,16 @@ Bốn thứ này rẻ khi làm đúng lúc và rất đắt khi vá sau. Chúng 
 | Lớp | MVP | Cắt được xuống |
 |---|---:|---:|
 | Competency | 6 | 6 |
-| Strand | 41 | 41 |
-| Skill | 230 | 230 |
-| Learning Objective | ≥690 | ≥690 |
-| Game Template | 6 | 6 |
+| Strand | 76 | 76 |
+| Skill | 443 | 443 |
+| Learning Objective | ≥3 × Skill (≥1329) | ≥3 × Skill (≥1329) |
+| Game Template | 38 (`GT-000`…`GT-037`) | 38 |
 | Game Level published | ≥120 | 80 |
 | Lesson published | ≥60 | 40 |
 | Curriculum | 5 | 1 |
+
+Số Strand và Skill lấy theo registry [`docs/taxonomy/index.md`](../../taxonomy/index.md) (đo
+2026-10-18); registry đổi thì bảng này đổi theo.
 
 Taxonomy không cắt được — nó là bộ xương mà mọi thứ khác treo lên. Cắt skill là cắt khả
 năng đo, và không thêm lại được cho dữ liệu đã thu.

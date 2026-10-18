@@ -5,7 +5,7 @@ area: play
 status: implemented
 mvp: true
 phase: P1
-reviewed: 2026-10-03
+reviewed: 2026-10-18
 owns:
   - Ngôn ngữ phản hồi đúng/sai
   - Quy tắc ăn mừng
@@ -108,8 +108,7 @@ Cấm — **NEVER**: "Sai rồi", "Không đúng", "Bé chưa giỏi", bất k�
 
 ### 7.4 Dáng mascot
 
-Mascot là **Gấu Con** — người quyết chốt 2026-10-03 (#279), thay `D-DB` "Thỏ Tini" vốn là tàn dư
-tên TiniMath (`D8`). Asset là bốn sprite SVG đặt ngoài engine (`apps/web/public/mascot/`); engine giữ
+Mascot là **Gấu Con** — người quyết chốt 2026-10-03 (#279). Asset là bốn sprite SVG đặt ngoài engine (`apps/web/public/mascot/`); engine giữ
 hợp đồng sáu dáng (`MASCOT_SPRITE_FILES`) và có bản vẽ thay thế bằng primitive khi sprite chưa nạp.
 
 | Dáng | Khi nào | Giữ | Sprite |
@@ -221,5 +220,5 @@ Scenario: BR-FBK-10 — âm không có onset tức thì
 | # | Câu hỏi | Chặn gì | Chặn phase | Chủ |
 |---|---|---|---|---|
 | ~~1~~ | ~~Lời khen thu âm người thật hay TTS?~~ **Đóng 2026-08-09 (T13, `D-AV`)**: P1 dùng audio clip tĩnh + Web Speech API (TTS), hoãn thu studio sang P2 | Âm thanh phản hồi | Đã đóng | D-AV |
-| ~~2~~ | ~~Mascot có nhất quán qua mọi theme không, hay đổi theo theme?~~ **Đóng 2026-08-09 (T13, `D-DB`)**: một mascot giữ vai trò chính ở mọi theme, background đổi theo theme. Con vật đổi từ Thỏ Tini sang Gấu Con ngày 2026-10-03 — §7.4 | Mascot thiết kế | Đã đóng | D-DB |
+| ~~2~~ | ~~Mascot có nhất quán qua mọi theme không, hay đổi theo theme?~~ **Đóng 2026-08-09 (T13, `D-DB`)**: một mascot giữ vai trò chính ở mọi theme, background đổi theo theme. Con vật là Gấu Con (chốt 2026-10-03) — §7.4 | Mascot thiết kế | Đã đóng | D-DB |
 

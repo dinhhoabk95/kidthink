@@ -2,10 +2,10 @@
 spec: SEMANTIC-SEARCH
 title: Tìm kiếm ngữ nghĩa bằng vector embedding
 area: addon
-status: implemented
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Lược đồ lưu vector embedding của nội dung
   - Job tái tạo embedding khi publish/update
@@ -16,9 +16,13 @@ depends_on:
   - CONTENT-SEARCH
   - JOB-QUEUE
   - CHILD-DATA-COMPLIANCE
+open_tasks:
+  - "#311"
 ---
 
 # Tìm kiếm ngữ nghĩa bằng vector embedding
+
+> **Chưa hoàn thành** — `BR-SEM-03`, `BR-SEM-04` chưa có đường chạy: consumer `embed:content` (`apps/worker/src/consumers/embed-content.ts`) từ chối vô điều kiện và không nơi nào enqueue job này, nên `content_embeddings` không được ghi; embedding hiện là hash FNV mô phỏng. Việc còn lại: [Task #311](../../tasks/311-addon-provider-gaps-plan.md).
 
 > **Add-on — không bán ở MVP.** Một trong sáu tính năng của [`ai-assistant.md`](ai-assistant.md) (§7.1 dòng
 > "Tìm kiếm ngữ nghĩa"); file này là spec chi tiết cho **riêng** tính năng đó — schema
@@ -105,7 +109,7 @@ là tính năng của User.
 | `content_type` | enum(`level`,`lesson`,`activity`) | |
 | `content_id` | uuid | FK polymorphic — không ép được ở Postgres, integration test bắt orphan (`BR-DM-04`) |
 | `content_version` | int | Khớp `content_versioning` |
-| `embedding` | `vector(N)` (pgvector) | `N` (`PENDING_EMBEDDING_DIM`) phụ thuộc model chọn ở OQ1 |
+| `embedding` | `vector(1536)` (pgvector) | Schema hiện cứng `1536` (`packages/db/src/schema/ai.ts`) dù OQ1 chưa chốt model; model chọn khác chiều thì cần migration mới |
 | `model_version` | text | Để biết vector cũ cần re-embed khi đổi model |
 | `created_at` | timestamptz | |
 

@@ -2,10 +2,10 @@
 spec: ENGINE-TURN-SCRIPT
 title: Kịch bản một lượt chơi — bảy nhịp từ mở màn tới chơi lại
 area: platform
-status: draft
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-09-08
+reviewed: 2026-10-18
 owns:
   - Bảy nhịp của một lượt chơi và thứ tự bắt buộc giữa chúng
   - Luật mở màn — thứ tự dựng cảnh và thời điểm nhận chạm đầu tiên

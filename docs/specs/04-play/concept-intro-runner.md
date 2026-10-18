@@ -5,7 +5,9 @@ area: play
 status: approved
 mvp: false
 phase: P4
-reviewed: 2026-09-06
+reviewed: 2026-10-18
+open_tasks:
+  - "#295"
 owns:
   - Vòng chạy các phân đoạn và dãy hành động của `GT-000`
   - Bắt buộc phát tiếng ở bước giới thiệu
@@ -22,6 +24,8 @@ depends_on:
 
 # Chạy dãy hành động của một bài làm quen — bề mặt của trẻ
 
+> **Chưa hoàn thành** — `BR-CIR-17`/`BR-CIR-18` chưa đạt: `GT-000` gộp mọi phân đoạn thành một dãy, ghi cứng `segment_id: "seg_0"`, không có mốc ăn mừng theo phân đoạn và không resume đúng mốc. Việc còn lại: [Task #295](../../tasks/295-concept-intro-segments-plan.md).
+
 ## 1. Objective
 
 [`concept-intro-model.md`](../05-content/concept-intro-model.md) sở hữu **input format**: kho
@@ -33,7 +37,7 @@ một hành động nhỏ; năm hành động (`present` · `echo` · `recognise
 một khuôn** trên cả ba loại chất liệu — ký tự, từ khoá học, hình minh hoạ. Người soạn đổi
 dãy thì trẻ thấy bài khác; runner không đổi.
 
-Khác [`lesson-session-runner.md`](lesson-session-runner.md) ở chỗ quyết định tất cả: ở đó
+Khác [`lesson-session-runner.md`](../03-account/lesson-session-runner.md) ở chỗ quyết định tất cả: ở đó
 **người lớn giữ nhịp**, ở đây **không có người lớn nào cả**. Nên bài làm quen không được có
 bước nào cần diễn giải, không được có chữ nào phải đọc, và không được có ngã cụt nào mà trẻ
 tự thoát không nổi.
@@ -77,7 +81,7 @@ tự thoát không nổi.
 | `action` | Màn dựng gì | Trẻ thao tác | Đúng thì | Sai thì |
 |---|---|---|---|---|
 | `present` | **Một** chất liệu giữa màn. `glyph` và `word` hiện mặt chữ; `word` đọc chậm từng `syllables` | Chạm bất kỳ đâu | Sang step kế | Không có nhánh sai — `BR-CIR-04` |
-| `echo` | **Một** chất liệu giữa màn, nhịp sóng âm chạy trong lúc phát mẫu rồi dừng. Hiện nút "Bé nói theo" và nút nghe lại | Nói theo thành tiếng, rồi chạm nút đi tiếp. Nghe lại được tối đa `repeat_count` lần | Sang step kế | Không có nhánh sai — máy Cấm — **NEVER** nghe, `BR-CIR-21` |
+| `echo` | **Một** chất liệu giữa màn, nhịp sóng âm chạy trong lúc phát mẫu rồi dừng. Hiện nút "Bé nói theo" và nút nghe lại | Nói theo thành tiếng, rồi chạm nút đi tiếp. Nghe lại được tối đa `repeat_count` lần | Sang step kế | Không có nhánh sai — máy Cấm — **NEVER** nghe, `BR-CIR-23` |
 | `recognise` | Target cùng `distractors`, xáo vị trí | Chạm chất liệu đúng | Âm mừng ngắn, sang step kế | Chạy lại `present` của **chính target** rồi hỏi lại step này |
 | `link` | Target một bên, `pair_with` cùng 1–2 mồi nhử bên kia | Kéo hoặc chạm nối hai bên | Nối sáng lên, sang step kế | Như `recognise` — nhắc lại rồi hỏi lại |
 | `recall` | **Một** chất liệu, rồi đọc lần lượt hai `name_options` gắn hai nút hình | Chạm nút | Sang step kế | **Cũng sang step kế**; kết quả vào `intro_recall_answered` — `BR-CIR-07` |
@@ -116,7 +120,7 @@ tự thoát không nổi.
 | `BR-CIR-09` (Cấm micro) | Runtime Cấm — **NEVER** gọi `getUserMedia`, Cấm — **NEVER** xin quyền micro | `BR-CDC-04`, `BR-AST-04`, `BR-CIM-10` |
 | `BR-CIR-10` (Cấm chữ bắt buộc đọc) | Mọi chữ trên bề mặt này Cấm — **NEVER** là kênh thông tin duy nhất; luôn có tiếng nói song song | `BR-LSM-07`, `BR-LSR-10`. Bài làm quen là bề mặt dễ vi phạm nhất vì nó là bài **dạy chữ** |
 | `BR-CIR-11` (không mastery) | Lượt làm quen Cấm — **NEVER** ghi `mastery_state` | [`progress-and-mastery.md`](progress-and-mastery.md) ghi thành thạo từ **kết quả chơi**. Trẻ vừa được cho biết đáp án ngay trước đó — coi đó là bằng chứng thành thạo là nói dối báo cáo gửi phụ huynh |
-| `BR-CIR-21` (tập nói: máy không nghe) | Step `echo` phát mẫu rồi **chờ trẻ chạm**. Cấm — **NEVER** yêu cầu quyền micro, Cấm — **NEVER** ghi âm, Cấm — **NEVER** chấm phát âm, Cấm — **NEVER** phát event nào mang dữ liệu âm thanh hay đường dẫn ghi âm | `BR-CIM-10`, `BR-CDC-04`, Luật 91/2025/QH15 và Nghị định 13/2023. Trẻ tập nói được mà máy không cần nghe; xin micro để "chấm cho vui" là thu dữ liệu sinh trắc của trẻ, thứ không rút lại được sau khi đã ghi |
+| `BR-CIR-23` (tập nói: máy không nghe) | Step `echo` phát mẫu rồi **chờ trẻ chạm**. Cấm — **NEVER** yêu cầu quyền micro, Cấm — **NEVER** ghi âm, Cấm — **NEVER** chấm phát âm, Cấm — **NEVER** phát event nào mang dữ liệu âm thanh hay đường dẫn ghi âm | `BR-CIM-10`, `BR-CDC-04`, Luật 91/2025/QH15 và Nghị định 13/2023. Trẻ tập nói được mà máy không cần nghe; xin micro để "chấm cho vui" là thu dữ liệu sinh trắc của trẻ, thứ không rút lại được sau khi đã ghi |
 | `BR-CIR-22` (tập nói có chỗ nghe lại) | Step `echo` BẮT BUỘC có nút nghe lại, tối đa `repeat_count` lần, mặc định 1. Nút đi tiếp Cấm — **NEVER** bị khoá theo đồng hồ | Trẻ ba tuổi nghe hụt một lần là mất cả mẫu. Nhưng khoá nút đi tiếp cho tới khi hết một khoảng thời gian là biến bước dạy thành bước chờ, và trẻ học được rằng chờ là cách qua màn |
 | `BR-CIR-12` (không scaffolding leo thang) | Hệ trợ giúp ba cấp của [`scaffolding-and-hints.md`](scaffolding-and-hints.md) **tắt** ở `present`, bật rút gọn ở `recognise` và `link` (chỉ L1 highlight) | Leo thang tồn tại để trẻ không kẹt trong một **thử thách**. `present` không phải thử thách, và ghost hand làm hộ sẽ phá `BR-SCF-04` |
 | `BR-CIR-13` (Cấm điểm và đồng hồ) | Cấm — **NEVER** hiện sao, điểm, phần trăm, hay đồng hồ | `BR-ENG-11`, `BR-CIM-08` |
@@ -231,7 +235,7 @@ Scenario: BR-CIR-21 — tên event chưa đăng ký thì cổng chặn
   When cổng danh mục event chạy
   Then cổng đỏ và nêu đúng tên event chưa đăng ký
 
-Scenario: BR-CIR-21 — step echo không xin micro
+Scenario: BR-CIR-23 — step echo không xin micro
   Given trẻ đi vào một step echo
   When runner dựng màn
   Then runner không gọi API micro nào

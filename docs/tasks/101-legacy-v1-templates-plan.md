@@ -81,7 +81,7 @@ system của khuôn khác.
 | ID | Cỡ | Công việc | Kết quả kiểm được |
 |---|---:|---|---|
 | WP101.0 | S | Chốt câu hỏi còn mở số 1 (ba khuôn ngoài lô) và số 3 (`free-scene` là `LayoutId` thật hay chế độ ngoài layout engine) | Hai quyết định ghi vào spec kèm lý do |
-| WP101.1 | S | Thêm 7 giá trị `mechanic` vào từ vựng trục `mechanic` của [`content-tagging.md`](../specs/01-platform/content-tagging.md) | Cổng phủ đỏ khi khuôn khai `mechanic` chưa đăng ký; ca âm bắt buộc |
+| WP101.1 | S | Thêm 7 giá trị `mechanic` vào từ vựng trục `mechanic` của [`content-tagging.md`](../specs/05-content/content-tagging.md) | Cổng phủ đỏ khi khuôn khai `mechanic` chưa đăng ký; ca âm bắt buộc |
 | WP101.2 | M | `GT-018` `listen-respond` trên `AudioController` đã có; phủ C3-04, C3-08, C5-01 | Ba level mẫu chạy được; phát `round_started`; không xin quyền microphone; `pnpm --filter @mindkid/game-engine gen:templates` không đổi file viết tay ngoài thư mục khuôn |
 | WP101.3 | S | `GT-019` `rotate-transform` mở rộng `rotationSystem`; xoay bằng nút góc 90 độ | Không file mới dưới `systems/`; không đường nào xoay bằng cử chỉ hai ngón; ba level mẫu |
 | WP101.4 | M | `GT-020` `memory-flip` + `cardSystem`; dùng lại layout `card-flip-grid` và `timerSystem` | `cardSystem` có test chạy được **không nạp** `GT-020`; ba level mẫu; band 3–6 |

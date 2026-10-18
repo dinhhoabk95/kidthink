@@ -5,7 +5,7 @@ area: platform
 status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-30
+reviewed: 2026-10-18
 owns:
   - Chi phí soạn game level thứ tư trở đi của một engine
   - Hình dạng bộ sinh content_pack gắn với một engine
@@ -51,7 +51,7 @@ qua đúng con đường mà một level viết tay đi qua.
 | Actor | Quyền cần | Làm được gì ở đây |
 |---|---|---|
 | Người soạn nội dung | `content_reviewer` | Cấp trục sinh và vốn từ, chạy bộ sinh, **đọc từng ứng viên**, giữ hoặc bỏ |
-| Dev | — | Viết `generator.ts` cho một engine, dựa trên `content_contract` của engine đó |
+| Dev | — | Viết bộ sinh `generators/gt0NN.ts` cho một engine, dựa trên `content_contract` của engine đó |
 | Bộ sinh | — | Sinh ứng viên `content_pack` tất định từ seed, lấy vật từ `SkillDataset`. Cấm ghi vào database |
 | AI agent IDE | — | Sinh vốn từ và câu lệnh gợi ý. Cấm — NEVER chạy `seed:content`, cấm merge PR (`BR-CSA-07`) |
 | Người review PR | `content_reviewer` | Cổng người duy nhất, y như với level viết tay (`BR-CSA-02`) |
@@ -60,8 +60,8 @@ qua đúng con đường mà một level viết tay đi qua.
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `packages/game-engine/src/templates/<code>/generator.ts` | Dev | Bộ sinh của một engine, cạnh `template.ts` và `fixtures.ts` |
-| `packages/content/src/vocab/<axis>.ts` | Người soạn | Vốn từ dùng chung giữa các engine: chủ đề, emoji theo chủ đề, mẫu câu lệnh |
+| `packages/game-engine/src/generators/gt0NN.ts` | Dev | Bộ sinh của một engine (một file mỗi engine, đăng ký ở `generators/index.ts`) |
+| `packages/content-build/src/vocab/<axis>.ts` | Người soạn | Vốn từ dùng chung giữa các engine: chủ đề, emoji theo chủ đề, mẫu câu lệnh |
 | `pnpm --filter @mindkid/content-build gen:levels --engine=GT-014 --count=9` | Người soạn | Sinh ứng viên ra file seeder, **không** ghi database |
 | `pnpm --filter @mindkid/content-build seed:content` | Người phát hành | Không đổi. Bộ sinh dừng trước bước này |
 
@@ -87,7 +87,7 @@ Bước 6 là bước không bỏ được. Mọi thứ trước nó là dựng 
 
 | Nhánh | Điều kiện | Hành vi |
 |---|---|---|
-| Engine chưa có `generator.ts` | Engine mới, hoặc cơ chế không sinh máy được | `gen:levels` dừng với thông báo nêu engine thiếu bộ sinh. Soạn tay vẫn hợp lệ |
+| Engine chưa có bộ sinh trong `generators/` | Engine mới, hoặc cơ chế không sinh máy được | `gen:levels` dừng với thông báo nêu engine thiếu bộ sinh. Soạn tay vẫn hợp lệ |
 | Ứng viên trượt `content_contract` | Dataset không đủ vật cho `limits` | **Dừng**, in kỹ năng, khuôn, số vật thiếu (`BR-SDS-05` — cấm thử lại). Cấm — NEVER sửa tự động cho vừa contract, cấm — NEVER sinh lại tới khi qua cổng |
 | Ứng viên trùng ứng viên đã có | Vốn từ hẹp | Cổng 6 (trùng lặp) của [`content-seed-authoring.md`](content-seed-authoring.md) bắt. Bộ sinh cũng tự lọc trước để đỡ lãng phí lượt đọc của người |
 | Emoji không có trong danh mục | Vốn từ tự chế | Nhận, nhưng ghi vào báo cáo kiểm kê — danh mục là vốn từ khuyến nghị (`BR-EMJ-01`) |
@@ -115,8 +115,8 @@ việc màn chơi đó rèn tiến trình tư duy nào là phán đoán sư ph�
 
 ## 7. Data
 
-**Đọc:** `content_contract` của engine · vốn từ ở `packages/content/src/vocab/` · `@mindkid/emoji` Lớp 1.
-**Ghi:** file seeder TS trong `packages/content/src/manual/<competency>/`. Không ghi database.
+**Đọc:** `content_contract` của engine · vốn từ ở `packages/content-build/src/vocab/` · `@mindkid/emoji` Lớp 1.
+**Ghi:** file seeder TS trong `packages/content-build/src/generated/` (mặc định `gen-<engine>-<seed>.ts`, đổi bằng `--out`). Không ghi database.
 
 ### 7.1 Hình dạng một bộ sinh
 
@@ -165,7 +165,7 @@ gen:levels --engine=GT-014 --count=9 --band=4-5 --seed=20260829
   ứng viên dựng      12
   trượt content_contract  2   (weight_span vượt limits)
   trùng ứng viên đã có     1
-  ghi ra                   9   packages/content/src/manual/c4/gen-gt014-20260829.ts
+  ghi ra                   9   packages/content-build/src/generated/gen-gt014-20260829.ts
   chưa đặt mã, chưa đặt tag, chưa có instruction — bước 6 thuộc về người
 ```
 
@@ -235,7 +235,7 @@ Scenario: BR-LGK-11 — đổi theme không đổi tập vật
   Then tập item_id trùng khít
 
 Scenario: BR-LGK-10 — bộ sinh không đặt tag ba trục
-  When đọc mọi generator.ts trong packages/game-engine/src/templates
+  When đọc mọi file bộ sinh trong packages/game-engine/src/generators
   Then không file nào ghi thinking_tags, what_tags, hay skill_codes
 
 Scenario: BR-LGK-06 — nguồn giữ nguyên sau khi người sửa

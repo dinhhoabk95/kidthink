@@ -17,7 +17,7 @@ const tableFile = resolve(
 );
 const specFile = resolve(
   rootDir,
-  "docs/specs/05-content/montessori-game-level-batch.md"
+  "docs/specs/05-content/montessori-corpus-mapping.md"
 );
 const seedContentDir = resolve(rootDir, "packages/db/src/seed-content");
 const REPO_PATHS = { tableFile, specFile, seedContentDir };

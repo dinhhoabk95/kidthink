@@ -2,10 +2,12 @@
 spec: LEVEL-DIFFICULTY-CONTRACT
 title: Hợp đồng độ khó game level và tham số hoá cấu hình
 area: content
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-09-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#309"
 owns:
   - Ánh xạ độ khó 1..5 về số item hiển thị và tham số điều khiển qua bảng tra engine
   - Quy định bắt buộc khai difficulty_params.item_count
@@ -20,6 +22,8 @@ depends_on:
 ---
 
 # Hợp đồng độ khó game level và tham số hoá cấu hình
+
+> **Chưa hoàn thành** — `check:hardcoded-params` (`BR-LDC-06`) có script ở `packages/game-engine/package.json` nhưng chưa nằm trong `scripts/check.sh`; `BR-LDC-03/05/07/08` chưa có test trỏ mã. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
 
 ## 1. Objective
 
@@ -48,7 +52,7 @@ Hợp đồng này xác lập:
 |---|---|---|
 | `packages/game-engine/config/engine-difficulty-params.json` | Dev / Biên soạn | Bảng tra 37 engine × 5 mức kèm lý do sư phạm |
 | `packages/content/src/levels/**/*.ts` | Biên soạn | Nơi khai báo `difficulty_params` trên từng level |
-| `packages/game-engine/src/runtime/round-runner.ts` | Trẻ chơi | Đọc trực tiếp `config.difficulty_params.item_count` |
+| `packages/game-engine/src/round-runner.ts` | Trẻ chơi | Đọc trực tiếp `config.difficulty_params.item_count` |
 | `pnpm --filter @mindkid/game-engine check:difficulty-ladder` | Cổng CI/Git | Cổng kiểm tra độ khó chạy trong pre-commit |
 
 ## 4. Main flow

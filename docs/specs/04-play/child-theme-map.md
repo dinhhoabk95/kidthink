@@ -2,10 +2,10 @@
 spec: CHILD-THEME-MAP
 title: Bản đồ chủ đề tuần cho trẻ tự học
 area: play
-status: approved
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-10-10
+reviewed: 2026-10-18
 owns:
   - Bản đồ chủ đề tuần trên bề mặt trẻ (`/play/map`)
   - API lấy dữ liệu tiến trình bản đồ chủ đề tuần (`/api/users/play/theme-map`)
@@ -23,8 +23,8 @@ depends_on:
 ## 1. Objective
 
 Trẻ mầm non 3–6 tuổi học theo chu kỳ tuần/tháng gắn với 10 chủ đề năm học GDMN Việt Nam.
-Hiện tại trẻ có sảnh chơi `/play` (Task #280) và album sticker `/play/stickers` (Task #282),
-nhưng chưa có góc nhìn tổng thể về hành trình học tập (bản đồ đảo/hành tinh bài học theo tuần).
+Bên cạnh sảnh chơi `/play` và album sticker `/play/stickers`, trẻ cần một góc nhìn tổng thể
+về hành trình học tập (bản đồ đảo/hành tinh bài học theo tuần).
 
 Spec này định hình **Bản đồ chủ đề tuần** trên bề mặt trẻ (`/play/map`), kết nối trực tiếp
 với lộ trình 36 tuần chuẩn của GDMN (`RM-*-year-01`, Task #272) và khuôn học bài tự động
@@ -82,6 +82,18 @@ với lộ trình 36 tuần chuẩn của GDMN (`RM-*-year-01`, Task #272) và k
 
 ## 7. Data
 
+Đọc, không ghi:
+
+| Entity | Dùng cho |
+|---|---|
+| `child_profiles` | Trẻ đang hoạt động, năm sinh để suy `age_band` |
+| `curriculum_enrollments` + `curricula` | Enrollment `active` thắng; nếu không có, chọn curriculum theo band tuổi (`BR-WTM-01`) |
+| `curriculum_weeks`, `curriculum_items`, `lessons` | 36 tuần và các trạm bài học |
+| `child_lesson_plays` | Trạng thái từng trạm (`BR-WTM-02`) |
+
+Mã curriculum theo band tuổi trong code là `CUR-RM-3-4-mam-year-01`, `CUR-RM-4-5-chi-year-01`,
+`CUR-RM-5-6-la-year-01` (curriculum dựng từ roadmap `RM-*-year-01`).
+
 ### 7.1 Response của `GET /api/users/play/theme-map`
 
 ```ts
@@ -115,3 +127,89 @@ interface ChildThemeMapResponse {
   weeks: ThemeMapWeek[];
 }
 ```
+
+## 8. API contract
+
+### `GET /api/users/play/theme-map`
+
+| | |
+|---|---|
+| Auth | Phiên User (`defineApiRoute` `auth: "user"`) + trẻ đang hoạt động thuộc caller (`requireOwnedActiveChild`) |
+| Request | Không có query, không có body |
+| Response 200 | `ChildThemeMapResponse` (§7.1) |
+| 401 | Chưa đăng nhập |
+| 428 `NO_ACTIVE_CHILD` | Chưa chọn trẻ hoặc cookie `active_child_id` không trỏ tới trẻ của caller |
+
+Server không ghi gì. Route không nhận tham số chọn lộ trình — lộ trình luôn do `BR-WTM-01` quyết.
+
+## 9. Acceptance criteria
+
+```gherkin
+Scenario: BR-WTM-01 — lộ trình theo enrollment, rồi theo tuổi
+  Given trẻ 4–5 tuổi không có enrollment active
+  When gọi GET /api/users/play/theme-map
+  Then roadmap_code là CUR-RM-4-5-chi-year-01
+  Given trẻ có enrollment active vào một curriculum khác
+  When gọi lại
+  Then roadmap_code là mã curriculum của enrollment đó
+
+Scenario: BR-WTM-02 — trạng thái trạm suy từ server
+  Given trẻ có một child_lesson_plays completed cho bài L1
+  When gọi GET /api/users/play/theme-map
+  Then trạm L1 có status completed
+  And client không gửi trạng thái nào lên
+
+Scenario: BR-WTM-03 — mascot đứng ở trạm chưa xong đầu tiên
+  Given hai trạm đầu completed, trạm thứ ba not_started
+  When gọi GET /api/users/play/theme-map
+  Then current_lesson_code là mã trạm thứ ba
+
+Scenario: BR-WTM-04 — bề mặt trẻ
+  When render /play/map
+  Then trang dùng layout kid
+  And không có dark mode
+
+Scenario: BR-WTM-05 — thoát qua cổng phụ huynh
+  When trẻ chạm nút khoá
+  Then cổng phụ huynh hiện ra
+  And chỉ xác minh đúng mới rời khỏi /play/map
+
+Scenario: BR-WTM-06 — chạm trạm vào bài học
+  When trẻ chạm trạm bài có mã L1
+  Then trình duyệt điều hướng tới /play/lesson/L1
+
+Scenario: BR-WTM-07 — cuộn tự do
+  Given tuần hiện tại là tuần 10
+  When trẻ cuộn bản đồ về tuần 1 hoặc tới tuần 36
+  Then bản đồ cuộn được, không bị khoá ở tuần 10
+
+Scenario: BR-WTM-08 — tuần có tên chủ đề và tỉ lệ hoàn thành
+  When render một tuần
+  Then hiện tên chủ đề của tuần
+  And hiện tỉ lệ bài đã hoàn thành của tuần đó
+
+Scenario: chưa chọn trẻ
+  Given user đăng nhập chưa chọn trẻ
+  When gọi GET /api/users/play/theme-map
+  Then trả 428 NO_ACTIVE_CHILD
+```
+
+## 10. Boundaries
+
+**Always**
+- Suy trạng thái trạm từ `child_lesson_plays` trên server.
+- Dùng layout `kid`; thoát chỉ qua cổng phụ huynh.
+- Kiểm trẻ thuộc caller ở mỗi request.
+
+**Ask first**
+- Đổi cách chọn lộ trình (`BR-WTM-01`).
+- Thêm hành động khác ngoài "vào bài học" cho một trạm.
+
+**Never**
+- Tin trạng thái trạm do client gửi.
+- Khoá cứng màn hình ở tuần hiện tại.
+- Hiện giá tiền, gói, hay lời mời nâng cấp trên bản đồ.
+
+## 11. Open questions
+
+Không có.

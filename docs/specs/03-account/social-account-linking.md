@@ -2,10 +2,12 @@
 spec: SOCIAL-ACCOUNT-LINKING
 title: Liên kết và gỡ mạng xã hội
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-13
+reviewed: 2026-10-18
+open_tasks:
+  - "#289"
 owns:
   - Liên kết thêm SNS vào tài khoản đang dùng
   - Gỡ liên kết SNS
@@ -19,6 +21,8 @@ depends_on:
 ---
 
 # Liên kết và gỡ mạng xã hội
+
+> **Chưa hoàn thành** — `BR-SLK-05`: liên kết và gỡ đã ghi `audit_logs` nhưng chưa gửi email thông báo. Việc còn lại: [Task #289](../../tasks/289-transactional-email-dispatch-plan.md).
 
 ## 1. Objective
 
@@ -47,6 +51,7 @@ SNS cả năm mà không bao giờ mở trang này, và ngược lại.
 | `/me/settings/security` | User | Nhóm **Bảo mật** ở [`account-settings.md`](account-settings.md) §7.1 |
 | `GET /api/users/social-identities` | User | Danh sách đã gắn |
 | `GET /api/guest/auth/oauth/{provider}/start?intent=link` | User | Bắt đầu liên kết |
+| `GET /api/guest/auth/oauth/{provider}/callback` | User | Provider gọi về; với `intent=link` ghi liên kết ngay tại đây |
 | `DELETE /api/users/social-identities/{provider}` | User | Gỡ |
 
 ## 4. Main flow
@@ -60,7 +65,9 @@ SNS cả năm mà không bao giờ mở trang này, và ngược lại.
    [`../01-platform/auth-tokens-sessions.md`](../01-platform/auth-tokens-sessions.md) §7.4 —
    trừ khi đã reauth trong 5 phút qua.
 4. Luồng OAuth `intent=link` → `NormalizedProfile`.
-5. Kiểm ba điều kiện §5. Đạt cả ba → ghi `social_identities`, ghi `audit_logs`.
+5. Callback `GET /api/guest/auth/oauth/{provider}/callback` kiểm ba điều kiện §5. Đạt cả ba →
+   ghi `social_identities`, ghi `audit_logs`, rồi chuyển về trang gọi với `?linked={provider}`.
+   Không có bước gọi API riêng sau callback.
 6. Gửi email thông báo "đã liên kết {provider}" tới địa chỉ hiện tại.
 
 **Gỡ**
@@ -148,16 +155,17 @@ giữa hai tab.
 | 302 | Tới provider |
 | 428 | `REAUTH_REQUIRED` |
 
-### `POST /api/users/social-identities`
+### `GET /api/guest/auth/oauth/{provider}/callback` (nhánh `intent=link`)
+
+Liên kết hoàn tất ngay trong callback; không có `POST /api/users/social-identities`.
 
 | | |
 |---|---|
-| Auth | `requireUserAuth()` + reauth ≤5 phút + `x-csrf-token` |
-| Body | `{ provider }` — hồ sơ đọc từ cookie `tm_oauth` đã xác thực |
-| 201 | `{ provider, masked_email, linked_at }` |
+| Auth | Phiên User hợp lệ; reauth đã kiểm ở bước `start` |
+| Đầu vào | `code` + `state` từ provider; hồ sơ chuẩn hoá thành `NormalizedProfile` |
+| 302 | Về trang gọi kèm `?linked={provider}` sau khi ghi `social_identities` + `audit_logs` |
 | 409 | `SOCIAL_PROVIDER_ALREADY_LINKED` |
 | 409 | `SOCIAL_IDENTITY_ALREADY_LINKED` |
-| 428 | `REAUTH_REQUIRED` |
 
 ### `DELETE /api/users/social-identities/{provider}`
 

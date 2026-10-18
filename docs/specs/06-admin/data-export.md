@@ -2,10 +2,12 @@
 spec: DATA-EXPORT
 title: Xuất dữ liệu từ quản trị
 area: admin
-status: implemented
+status: approved
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-10-18
+open_tasks:
+  - "#299"
 owns:
   - Loại dữ liệu được xuất và giới hạn
   - Ràng buộc bảo vệ khi xuất
@@ -15,6 +17,8 @@ depends_on:
 ---
 
 # Xuất dữ liệu từ quản trị
+
+> **Chưa hoàn thành** — rate limit chỉ là `Map` trong bộ nhớ, không qua Redis (BR-EXP-07); query `.limit(MAX_EXPORT_ROWS)` cắt dữ liệu im lặng thay vì trả 422 khi vượt trần (BR-EXP-05); query `from`/`to` bị bỏ qua (§8). Việc còn lại: [Task #299](../../tasks/299-admin-ops-truthfulness-plan.md).
 
 ## 1. Objective
 

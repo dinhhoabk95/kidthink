@@ -2,10 +2,10 @@
 spec: AI-ASSISTANT
 title: Trợ lý AI cho người dùng
 area: addon
-status: implemented
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Phạm vi tính năng AI hướng người dùng
   - Ranh giới cứng của AI với dữ liệu trẻ
@@ -13,9 +13,13 @@ depends_on:
   - AI-CREDIT-LEDGER
   - CHILD-DATA-COMPLIANCE
   - ADVANCED-REPORT
+open_tasks:
+  - "#311"
 ---
 
 # Trợ lý AI cho người dùng
+
+> **Chưa hoàn thành** — Chưa có provider LLM thật (câu hỏi mở 1): `aiProvider` trong `apps/web/server/services/ai-provider.ts` là bản mô phỏng tất định, trả chuỗi soạn sẵn, nên các tính năng `BR-AIA-*` chạy trên template chứ không phải mô hình. Việc còn lại: [Task #311](../../tasks/311-addon-provider-gaps-plan.md).
 
 > **Add-on — không bán ở MVP.** Lên catalog khi [`ai-credit-ledger.md`](ai-credit-ledger.md) đạt `implemented`.
 

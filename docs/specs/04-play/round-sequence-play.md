@@ -55,7 +55,7 @@ Ràng buộc kiến trúc của file này: **không sửa `TemplateGameSession`*
 | `GET /api/{ns}/levels/{code}/config` | Trẻ, Guest, Manager | Trả cả round set, tạo phiên như tác dụng phụ (`BR-PSL-10`) |
 | `POST /api/{ns}/play-sessions/{uuid}/events` | Engine | Nạp event vòng theo lô |
 | `POST /api/{ns}/play-sessions/{uuid}/complete` | Engine | Hoàn tất sau vòng cuối |
-| [`lesson-session-runner.md`](lesson-session-runner.md) | Người dạy | Một bước `digital_game` mở một round set |
+| [`lesson-session-runner.md`](../03-account/lesson-session-runner.md) | Người dạy | Một bước `digital_game` mở một round set |
 
 ## 4. Main flow
 

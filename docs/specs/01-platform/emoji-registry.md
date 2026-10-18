@@ -2,10 +2,10 @@
 spec: EMOJI-REGISTRY
 title: Kho emoji cố định
 area: platform
-status: approved
+status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-09-01
+reviewed: 2026-10-18
 owns:
   - Danh mục emoji mã cứng dùng cho picker và tìm kiếm
   - Metadata và tìm kiếm tiếng Việt

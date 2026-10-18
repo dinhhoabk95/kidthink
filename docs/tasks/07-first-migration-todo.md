@@ -125,7 +125,7 @@ P2→P0). Bỏ sót bảng này thì
 
 - [x] `audit_logs` — cột theo [`audit-log.md`](../specs/01-platform/audit-log.md) §7.1, index ba cột theo §7.1
 - [x] `content_review_log` — polymorphic `(entity_type, entity_id)`, đây là **1 trong 9** chỗ
-      đóng của [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2
+      đóng của [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7.2
 - [x] `backup_log` — cột theo [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) §7.2
 - [x] `notifications` — cột theo [`notification-service.md`](../specs/01-platform/notification-service.md) §7.2
       (`recipient_type`/`recipient_id` polymorphic **nhưng không** nằm trong danh sách đóng 9
@@ -222,14 +222,14 @@ File: `packages/db/src/schema/game.ts` — theo
 
 ---
 
-## Bước 8 — Đóng lỗ hổng spec: [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 (KHÔNG viết code)
+## Bước 8 — Đóng lỗ hổng spec: [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7.2 (KHÔNG viết code)
 
 Xem lý do đầy đủ ở [`07-first-migration-plan.md`](07-first-migration-plan.md) §2a.
 
 - [x] **Đã đóng trước khi Task #7 bắt đầu.** Task #6 bước 15 tìm đúng lỗ hổng này khi đối
       chiếu spec P1 và sửa nó ở đó, sớm hơn kế hoạch — `D-AQ`, commit
       [`06-p1-spec-closure-todo.md`](06-p1-spec-closure-todo.md) bước 15. Danh sách đóng ở
-      [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 đã là
+      [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7.2 đã là
       **9 chỗ** (thêm `activities.ref_id`, `curriculum_items.entity_id`), `status: approved`,
       `reviewed: 2026-08-08`
 - [x] Xác nhận không cần làm lại: `pnpm --filter @mindkid/gates test` 0 lỗi, danh sách đã có 9 dòng
@@ -249,7 +249,7 @@ File: `packages/db/src/schema/content.ts` — theo
       (cha-con, ghim), `activity_id` FK `activities(entity_id)` (D3 — many-to-one hợp lệ)
 - [x] `worksheets` — Lớp 2, `entity_id` self-FK
 - [x] `content_images` — theo [`image-storage.md`](../specs/01-platform/image-storage.md) §7.1
-      (spec `draft` — chỉ tạo cột đã có acceptance criteria rõ ở [`data-model-overview.md`](../specs/01-platform/data-model-overview.md),
+      (spec `draft` — chỉ tạo cột đã có acceptance criteria rõ ở [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md),
       **ask first** nếu cột nào không rõ nguồn)
 - [x] Trigger `BR-SCT-05` mở rộng cho 3 bảng Lớp 2 mới (`lessons`·`activities`·`worksheets`)
 - [x] `pnpm db:generate` (+ `--custom` cho trigger) → đọc SQL → `pnpm db:migrate`
@@ -283,7 +283,7 @@ File: `packages/db/src/schema/curriculum.ts` — theo
 
 ## Cổng dừng C
 
-- [x] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 có đúng 9 dòng, `pnpm --filter @mindkid/gates test` 0 lỗi
+- [x] [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7.2 có đúng 9 dòng, `pnpm --filter @mindkid/gates test` 0 lỗi
 - [x] 9/9 file schema tồn tại (identity, billing, ops, taxonomy, tagging, game, content,
       curriculum — 8 vừa xong; child/play/adaptive còn ở Bước 11–13)
 - [x] 6 test orphan polymorphic xanh (content_tag_map, content_skill_map, content_images,

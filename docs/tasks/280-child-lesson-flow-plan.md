@@ -11,7 +11,7 @@ thưởng. MindKid có đủ nguyên liệu nhưng chưa có khuôn đó:
 - Cổng làm quen GT-000.
 - Trang chơi level.
 
-Đường duy nhất để chạy bài là [`lesson-session-runner`](../specs/04-play/lesson-session-runner.md),
+Đường duy nhất để chạy bài là [`lesson-session-runner`](../specs/03-account/lesson-session-runner.md),
 dành cho **người lớn** dẫn. Trẻ ở nhà chỉ chơi từng level rời.
 
 ## 2. Cách làm

@@ -2,7 +2,7 @@
 
 > Viết 2026-08-09. Bước sở hữu: **P1.10** của
 > [`14-implementation-sequence-todo.md`](14-implementation-sequence-todo.md).
-> Spec sở hữu: [`content-tagging.md`](../specs/01-platform/content-tagging.md) ·
+> Spec sở hữu: [`content-tagging.md`](../specs/05-content/content-tagging.md) ·
 > [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md).
 >
 > ```
@@ -58,7 +58,7 @@ chưa có.
 
 ### 1.4 Một câu hỏi mở chặn P1
 
-§11 Q1 của [`content-tagging.md`](../specs/01-platform/content-tagging.md): từ vựng `what` và
+§11 Q1 của [`content-tagging.md`](../specs/05-content/content-tagging.md): từ vựng `what` và
 `thinking` **đã đủ phủ 230 skill chưa?** Chủ ghi "hoãn — đo được khi seed". Xử ở `D-HC`: đo
 **trước** khi soạn hàng loạt, không đo bằng cách gặp lỗi ở bản thứ 80.
 

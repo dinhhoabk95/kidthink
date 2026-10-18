@@ -6,7 +6,7 @@
 > dung học trước khi vào trò chơi chính."*
 >
 > **Spec liên quan:** `docs/specs/04-play/access-gating.md` · `docs/specs/01-platform/game-engine-runtime.md` ·
-> `docs/specs/05-content/lesson-model.md` · `docs/specs/04-play/lesson-session-runner.md` ·
+> `docs/specs/05-content/lesson-model.md` · `docs/specs/03-account/lesson-session-runner.md` ·
 > `docs/specs/00-foundation/error-codes.md`
 
 ---

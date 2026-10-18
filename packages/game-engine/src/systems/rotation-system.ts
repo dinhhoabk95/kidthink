@@ -1,7 +1,7 @@
 /**
  * `rotationSystem` — tính toán góc quay kim giờ, kim phút, nhảy nấc (snap)
  * và chuyển đổi giữa góc quay và thời gian { hour, minute }.
- * Mục 7.4 của [`montessori-template-batch.md`](../../../../docs/specs/01-platform/montessori-template-batch.md).
+ * Lô `montessori`, mục 7.5 và `BR-MTB-15` ở mục 6 của [`engine-spec-sheet.md`](../../../../docs/specs/01-platform/engine-spec-sheet.md).
  *
  * System này **độc lập với khuôn** (`BR-MTB-15`): không phụ thuộc vào Zod
  * hay bất kỳ file nào trong `templates/`.

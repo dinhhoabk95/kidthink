@@ -3,6 +3,7 @@ doc: ROADMAP
 title: Thứ tự implement — đồ thị phụ thuộc
 version: 2.0.0
 created: 2026-08-04
+reviewed: 2026-10-18
 ---
 
 # Thứ tự implement
@@ -49,13 +50,13 @@ Thứ tự làm:
 | # | Việc | Spec sở hữu |
 |---|---|---|
 | 0 | Cổng chất lượng, vùng cấm & cắt MVP | [`testing-strategy.md`](08-quality/testing-strategy.md) · [`ai-codegen-pipeline.md`](01-platform/ai-codegen-pipeline.md) · [`mvp-scope.md`](00-foundation/mvp-scope.md) |
-| 1 | Dựng khung repo trong `mindkid/` + chốt dependency baseline + port có chọn lọc từ v1 | [`repo-bootstrap.md`](00-foundation/repo-bootstrap.md) · [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md) |
+| 1 | Dựng khung repo trong `mindkid/` + chốt dependency baseline + nhập có chọn lọc tài sản nền (taxonomy, emoji, lõi engine) | [`repo-bootstrap.md`](00-foundation/repo-bootstrap.md) · [`monorepo-package-architecture.md`](00-foundation/monorepo-package-architecture.md) |
 | 2 | Chốt từ vựng và ID | [`glossary.md`](00-foundation/glossary.md) · [`id-conventions.md`](00-foundation/id-conventions.md) |
 | 3 | Chốt tác nhân và guard | [`actors.md`](00-foundation/actors.md) · [`auth-tokens-sessions.md`](01-platform/auth-tokens-sessions.md) |
 | 4 | Chốt ràng buộc pháp lý **trước** khi thiết kế bảng trẻ | [`child-data-compliance.md`](00-foundation/child-data-compliance.md) |
 | 5 | Chốt ladder + entitlement + package | [`access-ladder.md`](00-foundation/access-ladder.md) → [`entitlement-model.md`](00-foundation/entitlement-model.md) → [`package-catalog.md`](00-foundation/package-catalog.md) |
 | 6 | Chốt vòng đời + version nội dung | [`content-lifecycle.md`](00-foundation/content-lifecycle.md) → [`content-versioning.md`](00-foundation/content-versioning.md) |
-| 7 | Thiết kế schema | [`data-model-overview.md`](01-platform/data-model-overview.md) → [`schema-identity-billing.md`](01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](01-platform/schema-play-telemetry.md) |
+| 7 | Thiết kế schema | [`data-model-overview.md`](00-foundation/data-model-overview.md) → [`schema-identity-billing.md`](01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](01-platform/schema-play-telemetry.md) |
 | 8 | Chạy migration đầu tiên, gate local xanh trên schema thật | [`repo-bootstrap.md`](00-foundation/repo-bootstrap.md) (cơ chế) + `schema-*` (cột) |
 | 8b | Sao lưu và quan sát | [`backup-and-restore.md`](01-platform/backup-and-restore.md) · [`health-check.md`](01-platform/health-check.md) |
 | 9 | Taxonomy service + seed Lớp 1, gồm ≥690 LO | [`taxonomy-service.md`](01-platform/taxonomy-service.md) · [`emoji-registry.md`](01-platform/emoji-registry.md) |
@@ -125,7 +126,7 @@ access-gating ──→ game-config-delivery ──→ play-session-lifecycle
 | 7 | Tính điểm ở server | [`scoring-and-result.md`](04-play/scoring-and-result.md) |
 | 8 | Scaffolding, phản hồi, parent gate, hạn mức giờ | [`scaffolding-and-hints.md`](04-play/scaffolding-and-hints.md) · [`feedback-and-celebration.md`](04-play/feedback-and-celebration.md) · [`parent-gate.md`](04-play/parent-gate.md) · [`healthy-play-limits.md`](04-play/healthy-play-limits.md) |
 | 9 | Quản lý hồ sơ trẻ, lưu trữ & chọn trẻ chơi | [`child-profile-crud.md`](03-account/child-profile-crud.md) · [`child-profile-switching.md`](03-account/child-profile-switching.md) · [`child-profile-archive.md`](03-account/child-profile-archive.md) · [`play-entry-and-profile-select.md`](04-play/play-entry-and-profile-select.md) |
-| 10 | Gắn tag nội dung & **Seeder nội dung nền** | [`content-tagging.md`](01-platform/content-tagging.md) · [`content-seed-authoring.md`](01-platform/content-seed-authoring.md) |
+| 10 | Gắn tag nội dung & **Seeder nội dung nền** | [`content-tagging.md`](05-content/content-tagging.md) · [`content-seed-authoring.md`](01-platform/content-seed-authoring.md) |
 | 11 | ≥120 game level `published` | [`game-level-model.md`](05-content/game-level-model.md) |
 | 11a | **Nguồn vật của level** — dataset kỹ năng, bộ chiếu thay bộ sinh theo khuôn, hai cổng trung thực. Đứng **trước** việc soạn lô level: đo 2026-09-03, corpus 5.013 level đạt 100% phủ kỹ năng và 0% trung thực kỹ năng | [`skill-dataset-model.md`](05-content/skill-dataset-model.md) |
 | 11b | Tìm kiếm nội dung — chung cho catalog công khai, thư viện, studio | [`content-search.md`](01-platform/content-search.md) |
@@ -184,23 +185,23 @@ image-upload · emoji-picker ──→ game-level-studio
 | 8 | Trưng bày chương trình ra public | [`program-showcase.md`](02-public/program-showcase.md) |
 | 9 | Tích hợp curriculum vào account: bật khối chương trình đang học, chốt bố cục nhiều trẻ và phạm vi thư viện theo trẻ | [`member-dashboard.md`](03-account/member-dashboard.md) · [`my-library.md`](03-account/my-library.md) · [`curriculum-player.md`](04-play/curriculum-player.md) — [`Task #82`](../tasks/82-p3-account-curriculum-integration-plan.md) |
 | 10 | Ma trận phủ tư duy và cổng phủ nội dung | [`thinking-coverage-matrix.md`](08-quality/thinking-coverage-matrix.md) |
-| 11 | Nạp corpus Montessori **lô A** — phần chạy được trên sáu khuôn hiện có, không dòng code engine nào | [`montessori-corpus-mapping.md`](05-content/montessori-corpus-mapping.md) → [`montessori-game-level-batch.md`](05-content/montessori-game-level-batch.md) · [`montessori-lesson-batch.md`](05-content/montessori-lesson-batch.md) |
+| 11 | Nạp corpus Montessori **lô A** — phần chạy được trên sáu khuôn hiện có, không dòng code engine nào | [`montessori-corpus-mapping.md`](05-content/montessori-corpus-mapping.md) (mục 7.7 tới 7.13) |
 
 ## P4 — Add-on (ngoài MVP)
 
 Chỉ bắt đầu khi P0–P3 đã `implemented`. Mỗi add-on **lên catalog cùng lúc với tính năng của nó**, không trước.
 
 Ba spec add-on nữa nằm ngoài dòng catalog và có thứ tự riêng:
-[`lesson-session-runner.md`](04-play/lesson-session-runner.md) →
+[`lesson-session-runner.md`](03-account/lesson-session-runner.md) →
 [`lesson-exemplar-set.md`](05-content/lesson-exemplar-set.md) (spec sau khai
 `depends_on: LESSON-SESSION-RUNNER`; điều kiện mẫu được kiểm dựa trên bản ghi phiên chạy), còn
 [`template-authoring-kit.md`](01-platform/template-authoring-kit.md) chờ cả hai spec P1
 ở bước 2c vì nó khai `depends_on` cả hai.
 
-[`montessori-template-batch.md`](01-platform/montessori-template-batch.md) đứng sau cả ba spec P1 ở
+Lô khuôn `montessori` (mục 7.5 của [`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md)) đứng sau cả ba spec P1 ở
 bước 2c và sau [`template-authoring-kit.md`](01-platform/template-authoring-kit.md) — nó cấp mười một mã khuôn
 `GT-007` tới `GT-017` cho corpus Montessori. Lô B của
-[`montessori-game-level-batch.md`](05-content/montessori-game-level-batch.md) (bước 3 tới 9 ở mục 7.3 của spec đó)
+[`montessori-corpus-mapping.md`](05-content/montessori-corpus-mapping.md) (`BR-MTB-11`)
 mở khoá theo từng khuôn, không mở khoá cả lô một lúc. Mã cấp theo **lớp chi phí**: `GT-007` tới
 `GT-011` chỉ cần hàng layout mới trong registry, `GT-012` tới `GT-017` mỗi khuôn kéo theo một
 system engine chưa tồn tại. Nhóm đầu mở khoá 12 trên 16 workbook lô B mà không thêm system nào.
@@ -246,7 +247,7 @@ không phải nơi giữ chỗ cho mô hình sản phẩm khác.
 |---|---|---|---|
 | 0 | Đóng contract Web scale và tạo spec owner còn thiếu | [`pwa-install.md`](01-platform/pwa-install.md) đã có; automated payment và offline curriculum pack đã có spec riêng | Task #70 |
 | 1 | Cổng thanh toán tự động, đối soát và huỷ gói theo outcome đã duyệt | [`automated-payment.md`](01-platform/automated-payment.md) · [`recurring-billing.md`](03-account/recurring-billing.md) · [`admin-subscription-cancel.md`](06-admin/admin-subscription-cancel.md) | Task #71 |
-| 2 | PWA install và offline curriculum pack | [`pwa-install.md`](01-platform/pwa-install.md) · [`offline-play.md`](01-platform/offline-play.md) · [`offline-curriculum-pack.md`](01-platform/offline-curriculum-pack.md) | Task #72 |
+| 2 | PWA install và offline curriculum pack | [`pwa-install.md`](01-platform/pwa-install.md) · [`offline-play.md`](01-platform/offline-play.md) · [`offline-curriculum-pack.md`](03-account/offline-curriculum-pack.md) | Task #72 |
 | 3 | User xem lại notification và nhận browser push best-effort | [`notification-inbox.md`](03-account/notification-inbox.md) → [`browser-push.md`](01-platform/browser-push.md); FCM không chặn email | Task #84 |
 | 4 | Cổng ra Web scale dựa trên evidence | Spec/task manifest được duyệt ở Task #70, bổ sung evidence notification nếu Task #84 vào release | Task #78 |
 
@@ -297,11 +298,11 @@ task riêng. Khoản nợ đó nằm ở [`08-quality/runtime-gates.md`](08-qual
 | #92 | [`game-layout-engine.md`](01-platform/game-layout-engine.md) | câu hỏi §11 Q2: 12 giá trị layout có gộp được không |
 | #93 | [`deterministic-randomness.md`](01-platform/deterministic-randomness.md) | Task #92, và migration thêm cột seed vào bảng phiên chơi |
 | #94 | [`thinking-coverage-matrix.md`](08-quality/thinking-coverage-matrix.md) | chưa nội dung nào gắn tag trục tư duy — cổng sẽ đo ma trận rỗng |
-| #95 | [`lesson-session-runner.md`](04-play/lesson-session-runner.md) | ba bảng mới, và câu hỏi §11 Q3 định hình lược đồ |
+| #95 | [`lesson-session-runner.md`](03-account/lesson-session-runner.md) | ba bảng mới, và câu hỏi §11 Q3 định hình lược đồ |
 | #96 | [`lesson-exemplar-set.md`](05-content/lesson-exemplar-set.md) | Task #95, và chưa spec nào sở hữu nơi lưu bản ghi chơi thử |
 | #97 | [`template-authoring-kit.md`](01-platform/template-authoring-kit.md) | Task #92 và #93 |
-| [#98](../tasks/98-montessori-corpus-intake-plan.md) | [`montessori-corpus-mapping.md`](05-content/montessori-corpus-mapping.md) · [`montessori-game-level-batch.md`](05-content/montessori-game-level-batch.md) · [`montessori-lesson-batch.md`](05-content/montessori-lesson-batch.md) · [`montessori-template-batch.md`](01-platform/montessori-template-batch.md) | không còn bị chặn — 16 câu hỏi đóng bằng `D-RG` tới `D-RV` ngày 2026-08-20; lô A chạy được ngay, lô B chờ khuôn theo bốn nhóm |
-| [#99](../tasks/99-montessori-template-designs-plan.md) | chín khuôn còn lại của [`montessori-template-batch.md`](01-platform/montessori-template-batch.md) | trần C1 đã dùng hết — bốn khuôn chỉ phục vụ C1 không có nội dung nào seed được; chờ quyết định nới trần |
+| [#98](../tasks/98-montessori-corpus-intake-plan.md) | [`montessori-corpus-mapping.md`](05-content/montessori-corpus-mapping.md) · [`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md) (lô `montessori`) | không còn bị chặn — 16 câu hỏi đóng bằng `D-RG` tới `D-RV` ngày 2026-08-20; lô A chạy được ngay, lô B chờ khuôn theo bốn nhóm |
+| [#99](../tasks/99-montessori-template-designs-plan.md) | chín khuôn còn lại của lô `montessori` ([`engine-spec-sheet.md`](01-platform/engine-spec-sheet.md) mục 7.5) | trần C1 đã dùng hết — bốn khuôn chỉ phục vụ C1 không có nội dung nào seed được; chờ quyết định nới trần |
 
 ### Thứ tự task cho spec chưa triển khai, chốt 2026-08-29
 
@@ -322,7 +323,7 @@ liệu, và soạn nội dung. Task #114 tách phạm vi mở của nó thành 1
 | [#116](../tasks/116-engine-vertical-slices-plan.md) | chương trình 27 lát dọc engine — không sở hữu spec nào | chương trình | #115 #120 |
 | [#117](../tasks/117-seed-gate-truth-plan.md) | nợ của [`content-seed-authoring`](01-platform/content-seed-authoring.md) | cổng + nợ dữ liệu | quyết định về 162 level |
 | [#118](../tasks/118-band-violation-cleanup-plan.md) | nợ 42 level ngoài band | nợ dữ liệu | #117, quyết định người |
-| [#119](../tasks/119-theme-registry-plan.md) | [`content-theme-registry`](05-content/content-theme-registry.md) | cổng + từ vựng | quyết định 14 giá trị |
+| [#119](../tasks/119-theme-registry-plan.md) | [`content-theme-registry`](05-content/content-theme-registry.md) | cổng + từ vựng | quyết định bộ giá trị theme (nay 16 chủ đề) |
 | [#120](../tasks/120-engine-spec-contract-plan.md) | [`engine-spec-sheet`](01-platform/engine-spec-sheet.md) — khuôn spec engine theo SDD | contract + cổng | — |
 | [#121](../tasks/121-level-generator-kit-plan.md) | [`level-generator-kit`](01-platform/level-generator-kit.md) | mã | #119, cách sinh |
 | [#122](../tasks/122-engine-content-depth-plan.md) | [`engine-content-depth`](05-content/engine-content-depth.md) | cổng + ngân sách | #117 #119 #120 #121 |
@@ -330,7 +331,7 @@ liệu, và soạn nội dung. Task #114 tách phạm vi mở của nó thành 1
 | [#124](../tasks/124-lesson-corpus-depth-plan.md) | [`lesson-corpus-depth`](05-content/lesson-corpus-depth.md) | nội dung + cổng | #123 |
 | [#125](../tasks/125-go-live-readiness-plan.md) | [`go-live-readiness`](08-quality/go-live-readiness.md) | cổng | #156 #122 #124 |
 | [#126](../tasks/126-montessori-closure-plan.md) | bốn spec Montessori | đóng đuôi | trần C1 |
-| [#127](../tasks/127-template-diversity-ratification-plan.md) | [`taxonomy-gap-batch`](01-platform/taxonomy-gap-batch.md) · [`lesson-template-variety`](05-content/lesson-template-variety.md) · [`template-coverage-level-batch`](05-content/template-coverage-level-batch.md) | đo + phê chuẩn | #117 #122 #124 |
+| [#127](../tasks/127-template-diversity-ratification-plan.md) | [`engine-spec-sheet`](01-platform/engine-spec-sheet.md) (lô `taxonomy-gap`) · [`lesson-template-variety`](05-content/lesson-template-variety.md) · [`thinking-coverage-matrix`](08-quality/thinking-coverage-matrix.md) (`BR-TCL-04`) | đo + phê chuẩn | #117 #122 #124 |
 | [#128](../tasks/128-infra-go-live-plan.md) | năm spec phát hành P0 | hạ tầng | ba quyết định người |
 | [#129](../tasks/129-mfa-and-runtime-boundary-closure-plan.md) | [`manager-mfa-enrollment`](06-admin/manager-mfa-enrollment.md) · [`app-runtime-boundary`](00-foundation/app-runtime-boundary.md) | đóng đuôi | một số đo DB |
 | [#130](../tasks/130-engine-gt-001-plan.md) … [#156](../tasks/156-engine-gt-027-plan.md) | **27 spec engine** `GT-001`…`GT-027` — một task một spec | lát dọc | #115 #120; #130 là pilot |

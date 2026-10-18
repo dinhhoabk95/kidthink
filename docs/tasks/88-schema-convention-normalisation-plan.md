@@ -1,7 +1,7 @@
 # Kế hoạch — Task #88: Chuẩn hoá 5 quy ước schema toàn cục
 
 > **Loại task:** refactor xuyên suốt (L). Chạy trên nền lần gộp migration ngay trước đó — `packages/db/src/migrations` đã về một `0000_init.sql` sinh từ `src/schema/*.ts`.
-> **Spec sở hữu:** [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) · [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) · [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md).
+> **Spec sở hữu:** [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) · [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) · [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) · [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) · [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md).
 
 ## 1. Outcome
 
@@ -86,7 +86,7 @@ Bốn chỉ thị đụng spec đang `approved`. Theo nguyên tắc "sửa spec 
 |---|---|---|
 | Bỏ `_vi` | ba spec `schema-*` | Vốn đã ghi tên trơn (`title`, `instruction`, `notice`) — code lệch, spec đúng. Không phải sửa spec, chỉ sửa code. |
 | Bỏ refresh token | [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) | Spec đang mô tả vòng đời refresh token và `session_version`. Phải viết lại §7.2/§7.5 sang mô hình session + remember me. |
-| `updated_at` mọi bảng | [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) `BR-DM-08` | Rule hiện ghi "bảng sửa được có `updated_at`". Siết thành "mọi bảng" là mở rộng, cần sửa câu chữ. |
+| `updated_at` mọi bảng | [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) `BR-DM-08` | Rule hiện ghi "bảng sửa được có `updated_at`". Siết thành "mọi bảng" là mở rộng, cần sửa câu chữ. |
 | `id` mọi bảng | [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) §7.5/§7.6, [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) | Chỉ ảnh hưởng bốn bảng khoá tự nhiên ở giả định 3. Nếu người quyết định muốn ép cả bốn thì sửa spec trước. |
 
 ## 6. Rủi ro

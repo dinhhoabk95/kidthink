@@ -60,7 +60,7 @@
 - [x] `GT-026` `go-nogo`: `template.ts`, `session.ts`, ba fixture, `banned_age_bands: ["3-4"]`.
 - [x] `ruleSystem` kèm bộ test độc lập với khuôn.
 - [x] `GT-027` `rule-switch`: `template.ts`, `session.ts`, ba fixture, báo đổi luật bằng âm và hình.
-- [x] Đăng ký ba `mechanic` mới vào mục 7.1 của [`content-tagging.md`](../specs/01-platform/content-tagging.md).
+- [x] Đăng ký ba `mechanic` mới vào mục 7.1 của [`content-tagging.md`](../specs/05-content/content-tagging.md).
 - [x] `pnpm --filter @mindkid/game-engine gen:templates`, kiểm không file viết tay nào ngoài ba thư mục khuôn đổi.
 - [x] Cổng phủ báo `inhibit` và `shift` khác 0.
 

@@ -34,7 +34,7 @@ này **hoãn 24 dạng bài**, không cắt chúng.
 4. Nguồn lệch: **14 trên 21** workbook lấy C1 làm competency chính, **không workbook nào** phủ
    C5 hay C6. Nạp hết ở hai level mỗi dạng bài đẩy tỉ lệ cân bằng lên **4,8 lần**, vượt trần ba
    lần của `BR-TCM-07`.
-5. Từ vựng trục `mechanic` có hai bộ: mục 7.1 của [`content-tagging.md`](../specs/01-platform/content-tagging.md)
+5. Từ vựng trục `mechanic` có hai bộ: mục 7.1 của [`content-tagging.md`](../specs/05-content/content-tagging.md)
    khai đúng sáu giá trị khớp code; Trục 3 của [`taxonomy/index.md`](../taxonomy/index.md) khai
    mười sáu giá trị khác. `D-RK` chọn bộ thứ nhất.
 6. Seed hiện tại gắn tag ngoài từ vựng (`what_tags: ["cnt"]`, `thinking_tags: ["visual"]`). Đây
@@ -61,7 +61,7 @@ từng spec.
 | `D-RH` | Một level đúng một skill code; strand phụ đi vào tag | mapping mục 7.1 |
 | `D-RI` | Chuẩn hoá cú pháp dạng bài trong chính dataset | mapping mục 7.5 |
 | `D-RJ` | Task #98 không thêm nguồn C5 hay C6 | mapping mục 11 |
-| `D-RK` | [`content-tagging.md`](../specs/01-platform/content-tagging.md) thắng cho trục `mechanic`; đăng ký theo từng khuôn | template mục 7.5 |
+| `D-RK` | [`content-tagging.md`](../specs/05-content/content-tagging.md) thắng cho trục `mechanic`; đăng ký theo từng khuôn | template mục 7.5 |
 | `D-RL` | `GT-015` và `GT-017` vẽ bằng canvas; `asset_kinds` giữ `emoji` | template mục 7.5 |
 | `D-RM` | Thời gian hiện kích thích `GT-011` thuộc `difficulty_params`, 800ms tới 3000ms | template mục 7.5 |
 | `D-RN` | Ship bốn nhóm khuôn, cổng người giữa các nhóm | template mục 7.4 |

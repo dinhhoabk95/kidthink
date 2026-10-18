@@ -5,7 +5,7 @@ area: admin
 status: implemented
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Thao tác cấp/thu hồi entitlement bằng tay
   - Giới hạn và audit của thao tác này
@@ -34,7 +34,7 @@ dùng thử cho đối tác, game custom theo yêu cầu.
 
 ## 3. Entry points
 
-`/users/{uuid}/entitlements` · `POST /api/managers/users/{uuid}/entitlements` ·
+Mục quyền lợi trong `/users/{uuid}` (không có trang riêng) · `POST /api/managers/users/{uuid}/entitlements` ·
 `DELETE /api/managers/entitlements/{id}`.
 
 ## 4. Main flow

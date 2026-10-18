@@ -5,8 +5,7 @@ area: content
 status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-09-03
-
+reviewed: 2026-10-18
 owns:
   - Thứ tự giới thiệu kỹ năng theo tháng tuổi
 depends_on:
@@ -26,7 +25,7 @@ Spec này sở hữu **bảng thứ tự kỹ năng theo lát tuổi (tháng tu�
 
 Bảng này là **gợi ý định hướng sư phạm**, tuyệt đối cấm — NEVER dùng để chặn trẻ mở bài học hoặc giới hạn quyền học vượt của trẻ (`D-SI` giữ nguyên).
 
-## 2. Actors & Permissions
+## 2. Actors
 
 | Actor | Quyền |
 |---|---|
@@ -35,27 +34,33 @@ Bảng này là **gợi ý định hướng sư phạm**, tuyệt đối cấm �
 | Adaptive Engine | Tham chiếu bảng thứ tự để đề xuất kỹ năng tiếp theo trong vùng phát triển gần nhất (ZPD) |
 | Trẻ em / Phụ huynh | Trải nghiệm tự do, không bị khóa nội dung dựa trên tuổi thực |
 
-## 3. Preconditions
+## 3. Entry points
+
+| Route / màn hình | Actor | Ghi chú |
+|---|---|---|
+| `pnpm check:skill-progression` (`packages/content-build/src/gates/skill-progression.ts`) | Cổng tiến trình | Chạy trong `scripts/check.sh` |
+
+**Điều kiện trước:**
 
 1. Danh mục Taxonomy kỹ năng `C1`…`C6` và đồ thị phụ thuộc tiên quyết (`skill_prerequisites`) đã được định nghĩa và là đồ thị có hướng không chu trình (DAG).
-2. Tệp cấu hình `packages/db/config/skill-age-progression.json` tồn tại, phủ đủ các kỹ năng có nội dung.
+2. Tệp cấu hình `packages/content-build/src/thresholds/skill-age-progression.json` tồn tại, phủ đủ các kỹ năng có nội dung.
 
-## 4. Main Flow
+## 4. Main flow
 
-1. Cổng `check:skill-progression` nạp cấu hình `packages/db/config/skill-age-progression.json`.
+1. Cổng `check:skill-progression` nạp cấu hình `packages/content-build/src/thresholds/skill-age-progression.json`.
 2. Kiểm tra tính hợp lệ qua Zod schema: `skill_code`, `age_slice`, `rank_in_slice`, `source`.
 3. Kiểm tra độ phủ: mọi kỹ năng đang có game level hoặc lesson đều phải có mặt trong bảng (`BR-SAP-04`).
 4. Kiểm tra tiên quyết: thứ hạng kỹ năng phải tương thích với `skill_prerequisites`. Kỹ năng tiên quyết phải được xếp trước hoặc cùng lát tuổi với kỹ năng phụ thuộc (`BR-SAP-02`).
 5. Đối chiếu với các lộ trình học (`curricula`): nếu thứ tự bài học trong lộ trình lệch so với bảng, đưa ra **cảnh báo** sư phạm nhưng không chặn xuất bản (`BR-SAP-03`).
 6. Trả về kết quả kiểm tra đạt (mã thoát 0).
 
-## 5. Alternative Flows
+## 5. Alternative flows
 
 - **Nguồn dữ liệu lỗi**: Dừng ngay lập tức với mã thoát exit ≠ 0 (`BR-SAP-06`).
 - **Thiếu kỹ năng trong bảng**: Báo lỗi đỏ và dừng tiến trình nếu kỹ năng đang có nội dung nhưng thiếu trong bảng phân bổ (`BR-SAP-04`).
 - **Lộ trình xếp lệch bảng**: Hệ thống ghi log cảnh báo để người soạn rà soát, nhưng không chặn build (`BR-SAP-03`).
 
-## 6. Business Rules
+## 6. Business rules
 
 | ID | Rule | Vì sao |
 |---|---|---|
@@ -67,7 +72,7 @@ Bảng này là **gợi ý định hướng sư phạm**, tuyệt đối cấm �
 | `BR-SAP-06` | Nguồn dữ liệu không đọc được thì dừng tiến trình với mã thoát ≠ 0 | Ngăn chặn false positive làm lọt lỗi hệ thống |
 | `BR-SAP-07` | Cổng kiểm tra phải có các ca kiểm thử tự động kiểm tra vi phạm tiên quyết và thiếu dữ liệu | Đảm bảo cổng kiểm soát luôn được bảo vệ |
 
-## 7. Data Contract & Nguồn Sư Phạm
+## 7. Data
 
 ```ts
 export interface SkillProgressionRow {
@@ -88,11 +93,11 @@ export interface SkillProgressionConfig {
 
 Nguồn chuẩn hóa: Khung chương trình giáo dục mầm non Việt Nam (Thông tư 51/2020/TT-BGDĐT) làm trục chuẩn quốc gia, kết hợp các giai đoạn nhạy cảm giác quan và tư duy logic theo phương pháp Montessori.
 
-## 8. Interfaces & Endpoints
+## 8. API contract
 
 Spec này thuộc tầng công cụ kiểm định chất lượng sư phạm. Không sở hữu API endpoint trực tiếp.
 
-## 9. Acceptance Scenarios
+## 9. Acceptance criteria
 
 ```gherkin
 Scenario: Kỹ năng có level nhưng thiếu dòng trong bảng tiến trình
@@ -116,7 +121,7 @@ Scenario: Lộ trình xếp lệch bảng chỉ đưa ra cảnh báo (BR-SAP-03)
 - **Never**: Tuyệt đối không dùng bảng tiến trình để chặn quyền truy cập bài học của trẻ.
 - **Always**: Mọi dòng dữ liệu phải có trường `source` trỏ tới tài liệu sư phạm căn cứ.
 
-## 11. Open Questions (Đã chốt)
+## 11. Open questions
 
 - `Q160-1`: Nguồn căn cứ sư phạm lấy từ đâu? -> Chốt: Chương trình GDMN Thông tư 51/2020/TT-BGDĐT kết hợp Montessori Early Learning Framework.
 - `Q160-2`: Kỹ năng trải dài 2 lát tuổi xếp thế nào? -> Chốt: Xếp ở lát tuổi bắt đầu tiếp cận.

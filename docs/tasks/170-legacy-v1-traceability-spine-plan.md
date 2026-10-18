@@ -4,7 +4,7 @@
 > [`Task #168`](168-v1-game-list-integration-plan.md), đợt 1.
 > **Chặn:** toàn bộ đợt 2, 3, 4. Không có xương này thì "đã tích hợp 60/60" là câu nói, không phải số.
 > **Chặn bởi:** [`Task #169`](169-mechanic-vocabulary-enforcement-plan.md).
-> **Spec sở hữu:** viết mới `docs/specs/08-quality/legacy-v1-coverage.md`, `status: draft`.
+> **Spec sở hữu:** viết mới `docs/specs/08-quality/source-game-type-coverage.md`, `status: draft`.
 > **Nguồn:** [`../taxonomy/game-type-migration.md`](../taxonomy/game-type-migration.md) — 60 hàng, đã có sẵn trong repo.
 
 ## 1. Trả lời ngắn

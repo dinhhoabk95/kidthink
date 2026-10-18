@@ -230,7 +230,7 @@ theo §7.3 và viết ca âm cho PII.
 
 **Tiêu chí nghiệm thu**
 - [ ] Bảng nợ vào [`schema-play-telemetry.md`](../specs/01-platform/schema-play-telemetry.md) §11, mỗi dòng có bước sở hữu.
-- [ ] Ghi D-DN · D-DO · D-DP · D-DQ vào sổ quyết định của [`data-model-overview.md`](../specs/01-platform/data-model-overview.md).
+- [ ] Ghi D-DN · D-DO · D-DP · D-DQ vào sổ quyết định của [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md).
 - [ ] Không đổi bất kỳ cột nào thuộc bảng nợ trong PR này.
 
 **Kiểm chứng**

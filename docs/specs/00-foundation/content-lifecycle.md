@@ -2,10 +2,10 @@
 spec: CONTENT-LIFECYCLE
 title: Vòng đời nội dung và cổng duyệt
 area: foundation
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-07
+reviewed: 2026-10-18
 owns:
   - Enum trạng thái nội dung và bảng chuyển trạng thái
   - Quy tắc ai được chuyển trạng thái nào
@@ -14,9 +14,13 @@ owns:
 depends_on:
   - GLOSSARY
   - ACTORS
+open_tasks:
+  - "#308"
 ---
 
 # Vòng đời nội dung và cổng duyệt
+
+> **Chưa hoàn thành** — `BR-CLC-01`: chưa có DB trigger chặn `UPDATE` trên hàng `published` — INSERT-only hiện chỉ dựa vào REVOKE trên role `mindkid_app` (`packages/db/src/client.ts`). Việc còn lại: [Task #308](../../tasks/308-foundation-gaps-plan.md).
 
 ## 1. Objective
 
@@ -145,7 +149,7 @@ sinh nào khác.
 **Định nghĩa cột chuyển sang [`schema-identity-billing.md`](../01-platform/schema-identity-billing.md)
 mục 7.10a, theo quyết định D-AC** (2026-08-07 — cột `content_review_log` thuộc
 [`schema-identity-billing.md`](../01-platform/schema-identity-billing.md), không thuộc file
-này). Mục 7 của [`data-model-overview.md`](../01-platform/data-model-overview.md) xếp bảng này
+này). Mục 7 của [`data-model-overview.md`](data-model-overview.md) xếp bảng này
 vào module `ops`, sở hữu bởi file đó. File này (content-lifecycle) giữ quyền định nghĩa **ngữ
 nghĩa**: mỗi hàng ghi một lần chuyển trạng thái (`from_status`/`to_status`), `reason` bắt buộc
 ≥10 ký tự khi `to_status = 'rejected'` (quy tắc `BR-CLC-05` — `rejected` bắt buộc có lý do dài

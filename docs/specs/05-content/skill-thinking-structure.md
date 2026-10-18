@@ -2,10 +2,12 @@
 spec: SKILL-THINKING-STRUCTURE
 title: Cấu trúc tư duy trong bộ dữ liệu kỹ năng — dataset phải chứng minh được kỹ năng nó khai
 area: content
-status: draft
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-09-11
+reviewed: 2026-10-18
+open_tasks:
+  - "#309"
 owns:
   - Luật soạn `relations` và `axes` theo từng giá trị `ThinkingProcess`
   - Phép đo trung thực tư duy — dataset có mang cấu trúc chứng minh được kỹ năng tư duy nó khai không
@@ -19,6 +21,8 @@ depends_on:
 ---
 
 # Cấu trúc tư duy trong bộ dữ liệu kỹ năng
+
+> **Chưa hoàn thành** — Bậc thang `scripts/thinking-structure-baseline.json` còn 313/443 kỹ năng chưa chứng minh cấu trúc tư duy (`BR-STS-*`); `BR-STS-02/03/06/07/10` chưa có kiểm. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
 
 ## 1. Objective
 

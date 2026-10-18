@@ -5,7 +5,7 @@ area: admin
 status: implemented
 mvp: true
 phase: P2
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Thao tác publish, archive, rollback trong admin
   - Màn hình lịch sử version
@@ -32,7 +32,7 @@ depends_on:
 
 ## 3. Entry points
 
-`/studio/publish` · `/studio/levels/{code}/versions` ·
+`/studio/publish` · danh sách phiên bản hiển thị trong `/studio/review/{id}` ·
 `POST /api/managers/content/{type}/{id}/transition` ·
 `GET /api/managers/content/{type}/{code}/versions`.
 

@@ -2,17 +2,21 @@
 spec: TESTING-STRATEGY
 title: Chiến lược kiểm thử
 area: quality
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-08
+reviewed: 2026-10-18
 owns:
   - Tầng test, ngưỡng coverage, bài test không được rút gọn
 depends_on:
   - CONVENTIONS
+open_tasks:
+  - "#310"
 ---
 
 # Chiến lược kiểm thử
+
+> **Chưa hoàn thành** — Sàn coverage của `BR-TST-01` chưa được ép (không có `coverage.thresholds` trong `@mindkid/config/vitest`); chưa có `gen:tests`, chưa có tầng E2E trình duyệt, A11y (axe) và Load (k6) của mục 7.1; `BR-TST-10` chưa đạt. Thư mục `apps/web/tests/e2e/` chạy bằng vitest, không phải trình duyệt. Việc còn lại: [Task #310](../../tasks/310-quality-gates-gaps-plan.md).
 
 ## 1. Objective
 

@@ -21,7 +21,7 @@ chặn được việc phát hành một chương trình học nghiêng hẳn v�
    chặn publish ngay lập tức — không phải vì nội dung sai, mà vì tag chưa có.
 4. `packages/db/tests/gates/thinking-coverage.test.ts` không tồn tại; không có lệnh `pnpm` nào cho nó.
 5. Không cần migration.
-6. §11 Q1 của spec **trùng câu hỏi** Q1 của [`content-tagging.md`](../specs/01-platform/content-tagging.md):
+6. §11 Q1 của spec **trùng câu hỏi** Q1 của [`content-tagging.md`](../specs/05-content/content-tagging.md):
    ba trục `plan`, `inhibit`, `shift` chưa có nội dung nào — thiếu nội dung hay thiếu giá trị phù
    hợp. Một câu hỏi, hai chỗ đang chờ.
 
@@ -34,7 +34,7 @@ chặn được việc phát hành một chương trình học nghiêng hẳn v�
    theo dải tuổi hay theo strand, và lesson với màn chơi có chung sàn không.
 3. **Cổng chỉ đọc.** Nó không tự gắn tag, không tự sửa nội dung.
 4. **Không siết từ vựng tag trong task này.** Việc gắn lại tag là việc của
-   [`content-tagging.md`](../specs/01-platform/content-tagging.md); ở đây chỉ đo.
+   [`content-tagging.md`](../specs/05-content/content-tagging.md); ở đây chỉ đo.
 
 ## 4. Thứ tự
 

@@ -2,10 +2,10 @@
 spec: ENGINE-BEHAVIOR-DOMAIN
 title: Miền hành vi của engine — sáu miền, bằng chứng quan sát, trục biến thể
 area: platform
-status: draft
+status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-09-07
+reviewed: 2026-10-18
 owns:
   - Từ vựng đóng sáu miền hành vi của engine
   - Luật mỗi engine khai đúng một miền chủ đạo
@@ -102,7 +102,7 @@ nào (`BR-EBD-03`).
 |---|---|---|
 | `BR-EBD-01` (miền suy từ cử chỉ) | Mỗi miền định nghĩa bằng bộ ba: **cử chỉ chủ đạo** của [`engine-play-language.md`](engine-play-language.md) × **đối tượng tác động** × **ràng buộc nhịp**. Cấm — NEVER đặt cử chỉ mới ở đây | Corpus đã có bốn từ vựng tag song song và một cuộc dọn dẹp chưa xong. Miền hành vi là **cách nhóm** một từ vựng đã đóng, cấm là trục thứ năm |
 | `BR-EBD-02` (một miền chủ đạo) | Mỗi engine khai **đúng một** miền chủ đạo và **tối đa một** miền phụ | Hai miền chủ đạo là không có miền chủ đạo — cùng lý do với `BR-TAG-04` (đúng một skill trọng số 1.0) |
-| `BR-EBD-03` (miền không phải tag nội dung) | Cấm — NEVER thêm `behavior_domain` vào từ vựng tag của [`content-tagging.md`](content-tagging.md) hay vào bảng `content_tags`. Ánh xạ `mechanic` → miền là hàm nhiều–một, suy được | Người soạn nội dung không được gánh thêm một ô bắt buộc nữa. Trục `what` đã cho thấy một trục nới lỏng thì corpus lệch 160 lượt gắn |
+| `BR-EBD-03` (miền không phải tag nội dung) | Cấm — NEVER thêm `behavior_domain` vào từ vựng tag của [`content-tagging.md`](../05-content/content-tagging.md) hay vào bảng `content_tags`. Ánh xạ `mechanic` → miền là hàm nhiều–một, suy được | Người soạn nội dung không được gánh thêm một ô bắt buộc nữa. Trục `what` đã cho thấy một trục nới lỏng thì corpus lệch 160 lượt gắn |
 | `BR-EBD-04` (sàn miền theo band) | Mỗi band có ≥K miền khả dụng (engine không cấm band đó **và** có ≥1 level `published`). K là **bậc thang**, đo 2026-09-07: `3-4` = 2, `4-5` = 5, `5-6` = 6. Cấm tụt | Trẻ 3–4 tuổi chỉ được chỉ và mang là một khoảng trống vận động, không phải một lựa chọn thiết kế. Bậc thang biến nó thành số theo dõi được thay vì một nhận xét |
 | `BR-EBD-05` (câu quan sát bằng lời người) | Mục 17 có ≥1 **câu quan sát**: động từ trẻ làm + đối tượng + điều kiện, viết như dòng cô giáo ghi vào sổ. Cấm — NEVER viết bằng từ kỹ thuật (`chọn đáp án đúng`, `hoàn thành lượt`) | Một câu ghi được là một câu kiểm được. Bằng chứng phát triển của trẻ là hành vi, không phải mã trạng thái |
 | `BR-EBD-06` (điều kiện phát triển tiên quyết) | Mục 17 khai điều kiện **vận động · chú ý · bộ nhớ làm việc · ngôn ngữ** tối thiểu của band nhỏ nhất engine nhận, và `age_min` cùng `banned_age_bands` phải **suy ra được** từ bảng đó | Hôm nay band bị cấm được biện luận bằng một câu văn xuôi khác nhau ở mỗi phiếu, nên không đối chiếu được giữa 37 engine. `BR-GTC-05` nói cấm band vì mechanic sai lứa; nó không nói *sai ở chỗ nào* |

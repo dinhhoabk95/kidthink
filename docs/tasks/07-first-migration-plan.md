@@ -17,14 +17,14 @@
 
 **Trong phạm vi:**
 - 11 file `packages/db/src/schema/*.ts` (bản đồ module của
-  [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7).
+  [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7).
 - Migration Drizzle áp được lên DB rỗng (`docker-compose.yml` đã có PG 17 + Valkey 9).
 - Cơ chế ép ràng buộc mà Drizzle schema DSL không diễn đạt được: INSERT-only bằng quyền DB,
   trigger chặn sửa hàng `published`/phiên đã `completed`.
 - Seed script tối thiểu, idempotent (chỉ dữ liệu Lớp 1 **không phụ thuộc taxonomy**).
 - Integration test cho 7 (hoặc nhiều hơn — xem §2a) FK polymorphic + mọi CHECK/trigger có
   acceptance criteria trong bốn spec `schema-*` cùng
-  [`data-model-overview.md`](../specs/01-platform/data-model-overview.md),
+  [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md),
   [`audit-log.md`](../specs/01-platform/audit-log.md) và
   [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md).
 
@@ -141,7 +141,7 @@ chính bảng đó đã là mục tiêu FK hợp lệ vì `id` luôn UNIQUE (PK)
 ## 2a. Lỗ hổng spec — bắt buộc đóng trước khi viết `content.ts` và `curriculum.ts`
 
 **Phát hiện khi đọc chéo ba spec, chưa ai ghi nhận:**
-[`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 khai "danh sách
+[`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7.2 khai "danh sách
 đóng" **bảy chỗ** FK polymorphic bắt buộc test orphan. Nhưng
 [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) mô tả thêm
 **hai chỗ polymorphic thật** không có trong danh sách đó:
@@ -151,13 +151,13 @@ chính bảng đó đã là mục tiêu FK hợp lệ vì `id` luôn UNIQUE (PK)
 | `activities.ref_id` | `ref_type` (`game_level` hoặc `worksheet`) | §7.5 |
 | `curriculum_items.entity_id` | `entity_type` (`lesson` hoặc `game_level`) | §7.6 |
 
-[`data-model-overview.md`](../specs/01-platform/data-model-overview.md) Boundaries ghi rõ **"Ask first: Thêm một FK polymorphic thứ tám"** —
+[`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) Boundaries ghi rõ **"Ask first: Thêm một FK polymorphic thứ tám"** —
 nghĩa là con số bảy được coi là chốt, thêm cái thứ tám (ở đây là **hai** cái, thứ 8 và thứ 9)
 là đổi hợp đồng, không phải chi tiết triển khai tự quyết được. Nguyên tắc của
 [`roadmap.md`](../specs/roadmap.md): "Đổi contract thì đổi spec trước".
 
 **Việc phải làm ở Bước 8 (xem todo), trước khi viết code Bước 9/10:**
-1. Cập nhật [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 — thêm hai dòng (`activities.ref_id`,
+1. Cập nhật [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7.2 — thêm hai dòng (`activities.ref_id`,
    `curriculum_items.entity_id`) vào danh sách đóng, cùng cột "Test bắt buộc".
 2. Cập nhật số đếm "Bảy chỗ" → "Chín chỗ" trong văn xuôi.
 3. `reviewed` cập nhật ngày làm, giữ `status: approved` (đây là sửa lỗi sót, không phải mở
@@ -175,7 +175,7 @@ Kiểm tra thực tế trạng thái repo trước khi lập kế hoạch này:
 | `packages/db/src/index.ts` | `export {}` (rỗng) | Driver connection thật (owner + app, xem D1) |
 | `packages/db/package.json` | Không có dependency nào | Thêm `drizzle-orm` `drizzle-kit` `postgres` |
 | `pnpm-workspace.yaml` catalog | Chỉ có `postgres` driver (cho `check-services.ts`) | Thêm `drizzle-orm@^0.45`, `drizzle-kit@^0.31` (version đã chốt ở [`repo-bootstrap.md`](../specs/00-foundation/repo-bootstrap.md) §7.1 — **lockstep**, không lệch minor) |
-| `package.json` gốc — scripts | Không có `db:generate`/`db:migrate`/`db:seed` | Thêm cả ba — [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §4 và acceptance criteria đòi hỏi đúng ba lệnh này |
+| `package.json` gốc — scripts | Không có `db:generate`/`db:migrate`/`db:seed` | Thêm cả ba — [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §4 và acceptance criteria đòi hỏi đúng ba lệnh này |
 | `docker-compose.yml` | Chỉ user `postgres` (superuser) | Thêm bước tạo role `mindkid_app` (xem D1) — làm trong migration SQL, **không** sửa `docker-compose.yml` (role là dữ liệu trong DB, không phải hạ tầng container) |
 | `drizzle.config.ts` | Chưa tồn tại | Tạo ở gốc `packages/db/`, trỏ `schema: "./src/schema/*.ts"`, `out: "./src/migrations"` |
 
@@ -202,7 +202,7 @@ thầm chọn một số nghe hợp lý.
 | 6 | `tagging.ts` | 4 bảng | `BR-DM-03`, `BR-SCT-07` | 5 | S |
 | 7 | `game.ts` | `game_templates`·`game_levels` | `BR-SCT-02/03/05` | 5 | M |
 | — | **Cổng dừng B** | | | | |
-| 8 | Đóng lỗ hổng spec (§2a) | [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) | — | — | XS, **spec, không code** |
+| 8 | Đóng lỗ hổng spec (§2a) | [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) | — | — | XS, **spec, không code** |
 | 9 | `content.ts` | 5 bảng | `BR-SCT-05`, polymorphic mới ở §2a | 6, 7, 8 | M |
 | 10 | `curriculum.ts` | 4 bảng | `BR-SCT-06`, polymorphic mới ở §2a | 9, 8 | M |
 | — | **Cổng dừng C** | | | | |
@@ -236,7 +236,7 @@ thể chạy bất kỳ lúc nào sau đó.
   định cần xác nhận, không phải chỗ lướt qua.
 
 ### Cổng dừng C — sau Bước 10 (content + curriculum, hậu Bước 8)
-- [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 đã có 9 (không phải 7) dòng, `pnpm --filter @mindkid/gates test` 0 lỗi.
+- [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7.2 đã có 9 (không phải 7) dòng, `pnpm --filter @mindkid/gates test` 0 lỗi.
 - Test orphan cho `activities.ref_id` và `curriculum_items.entity_id` xanh — hai ca mới sinh
   ra từ Bước 8, không phải hai ca "cho đủ số".
 - `BR-SCT-06` — test entity_id bất biến qua version (given/when/then đã có sẵn trong spec).

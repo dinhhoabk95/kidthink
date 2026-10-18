@@ -45,7 +45,7 @@
 | 11 lệch/mâu thuẫn contract (M1–M11) | **0** | 0 — **+2 lệch mới** tìm ở CP-C, đã sửa |
 | 6 bảng lệch giữa DMO §7 và `schema-*` | **0** — C12 xanh | 0 |
 | `content_review_log` không spec nào `owns` cột | có đúng **1** chủ | SIB §7.10a |
-| [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §Ràng buộc chờ | **≥19 dòng** | Lưu ý: **17** — xem ghi chú dưới |
+| [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §Ràng buộc chờ | **≥19 dòng** | Lưu ý: **17** — xem ghi chú dưới |
 | [`SPEC.md`](../SPEC.md) §13 thiếu 3 dòng neo (D-W · Q4/T9 · D-Z) | có đủ **3** (2 ở P0, 1 ở P1) | 3 |
 | [`event-catalog.md`](../specs/00-foundation/event-catalog.md) Q2 đóng "có partition" — xung đột PK | **mở lại**, chờ P1, có tên chủ + ngưỡng 5M hàng/2GB | |
 | 17 OQ ở 6 spec đích | 0 mở mà không có `Chặn phase` + `Chủ` | 0 |
@@ -84,7 +84,7 @@
 ## T2 — Hai check mới: C12 · C13
 
 - [x] **Sửa spec trước** (`BR-RBS-08`): [`CONVENTIONS.md`](../specs/CONVENTIONS.md) §10 — **13 check** (SPEC.md ko ghi số)
-- [x] C12 — tên bảng ở [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7 <-> §7.x của 3 `schema-*`, khớp **hai chiều**
+- [x] C12 — tên bảng ở [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7 <-> §7.x của 3 `schema-*`, khớp **hai chiều**
 - [x] C13 — (a) `ví dụ` khớp `regex` của **cùng hàng** trong [`id-conventions.md`](../specs/00-foundation/id-conventions.md) §7;
       (b) mọi literal mã trong corpus khớp regex của prefix nó mang
 - [x] **Chạy ngay khi viết xong, TRƯỚC T3–T8 thì exit 1**, báo đúng:
@@ -175,7 +175,7 @@
 
 ---
 
-## T5 — [`data-model-overview.md`](../specs/01-platform/data-model-overview.md): §Ràng buộc chờ + bản đồ + neo [`SPEC.md`](../SPEC.md) §13 song song được
+## T5 — [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md): §Ràng buộc chờ + bản đồ + neo [`SPEC.md`](../SPEC.md) §13 song song được
 
 - [x] Thêm **§7.3 Ràng buộc chờ** — 16 dòng, mỗi dòng có nguồn + ngày + ảnh hưởng cột
   - [x] [`id-conventions.md`](../specs/00-foundation/id-conventions.md) Q1·Q2 (T9) — `GL-…\d{4}` thì `game_levels.code`
@@ -274,9 +274,9 @@ Khi làm §7.10a phát hiện [`content-lifecycle.md`](../specs/00-foundation/co
 cột `content_review_log` khác — sâu hơn và đang gắn với `BR-CLC-05/06/10/11` thật. Đồng thời
 người dùng yêu cầu: **FK/quan hệ đa hình mặc định dùng `id`, trừ taxonomy Lớp 1 + `game_templates`
 (có `code` riêng) và tham chiếu cố ý luôn theo bản published mới nhất**. Xử lý cả hai cùng lúc
-(quyết định **D-AE**, xem [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.3 + `BR-DM-13` mới):
+(quyết định **D-AE**, xem [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7.3 + `BR-DM-13` mới):
 
-- [x] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md): làm rõ `BR-DM-10` (chỉ áp lớp đối ngoại) + thêm `BR-DM-13` (FK nội
+- [x] [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md): làm rõ `BR-DM-10` (chỉ áp lớp đối ngoại) + thêm `BR-DM-13` (FK nội
       bộ mặc định `id`, 2 ngoại lệ) + dòng D-AE ở §7.3
 - [x] [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md): `lesson_activities` PK → `(lesson_id, position)`;
       `curriculum_items.curriculum_code+version` → `curriculum_id`; `curriculum_enrollments`
@@ -317,12 +317,12 @@ không phải code, không có ngoại lệ."** Sửa lại đúng:
       [`curriculum-builder.md`](../specs/06-admin/curriculum-builder.md) PUT body `entity_id`
 - [x] Thêm cột `entity_id` vào 5 bảng Lớp 2 có version: `game_levels`·`lessons`·`activities`·
       `curricula`·`worksheets`
-- [x] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) `BR-DM-13` viết lại — bỏ hẳn 2 ngoại lệ, chỉ còn quy tắc
+- [x] [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) `BR-DM-13` viết lại — bỏ hẳn 2 ngoại lệ, chỉ còn quy tắc
       "id cho FK, code cho định danh hiển thị" + cơ chế `entity_id`
 - [x] [`content-versioning.md`](../specs/00-foundation/content-versioning.md) §11 Q2 — thêm lượt sửa thứ 3 (lượt 1: T11 "code only"; lượt 2:
       D-AE lần 1 hôm nay giữ code làm ngoại lệ — **sai**; lượt 3: D-AE lần 2 — `entity_id`)
 - [x] Quét toàn corpus, sửa thêm 8 chỗ mirror bị lệch phát hiện thêm:
-      [`content-search.md`](../specs/01-platform/content-search.md)/[`content-tagging.md`](../specs/01-platform/content-tagging.md) (`tag_code`→`tag_id`), [`worksheet-model.md`](../specs/05-content/worksheet-model.md)/
+      [`content-search.md`](../specs/01-platform/content-search.md)/[`content-tagging.md`](../specs/05-content/content-tagging.md) (`tag_code`→`tag_id`), [`worksheet-model.md`](../specs/05-content/worksheet-model.md)/
       [`lesson-authoring.md`](../specs/06-admin/lesson-authoring.md) (`learning_objective_codes`→`_ids`), [`progress-and-mastery.md`](../specs/04-play/progress-and-mastery.md)
       (`skill_codes`→`skill_ids`), [`custom-game-builder.md`](../specs/07-addon/custom-game-builder.md) (`template_code`/`skill_codes`)
 - [x] **Không đổi** (external-facing theo `BR-DM-10`, khác lớp với FK nội bộ): API
@@ -346,7 +346,7 @@ không phải code, không có ngoại lệ."** Sửa lại đúng:
         dùng `free` (§7.1 `type AccessTier`, `BR-LAD-01`, [`glossary.md`](../specs/00-foundation/glossary.md), [`access-gating.md`](../specs/04-play/access-gating.md) ma trận,
         DMO §7.3). Đọc closure đó mà viết migration thì tạo nhầm giá trị enum. Đã sửa, không
         đổi kết luận
-  - [x] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.3 trỏ `monorepo-package-map` — file thật là
+  - [x] [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7.3 trỏ `monorepo-package-map` — file thật là
         [`monorepo-package-architecture.md`](../specs/00-foundation/monorepo-package-architecture.md). Đã sửa thành link resolve được
   - [x] 9 closure còn lại khớp nguyên văn nguồn ✓
 - [x] 1 commit / task, message ghi rõ đóng **M mấy** / **D nào**
@@ -377,7 +377,7 @@ Mỗi spec 4 bước: (1) checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) 
 - [x] `approved` 16 → **18**/130 · `pnpm check` exit 0 · `pnpm test` 81/81
 
 ### T10 — Layer 2
-- [x] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) — sau T5, 3/3 OQ có kết luận (Q1 đóng D-Z · Q2 hoãn chờ P1 ·
+- [x] [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) — sau T5, 3/3 OQ có kết luận (Q1 đóng D-Z · Q2 hoãn chờ P1 ·
       Q3 hoãn chờ P3, cả hai có chủ + phase) · `approved` + `reviewed: 2026-08-07`
 - [x] C8 xanh — 4 deps (`GLOSSARY`·`ID-CONVENTIONS`·`CHILD-DATA-COMPLIANCE`·
       `CONTENT-VERSIONING`) đều `approved` từ trước
@@ -399,7 +399,7 @@ Mỗi spec 4 bước: (1) checklist [`CONVENTIONS.md`](../specs/CONVENTIONS.md) 
 
 - [x] Tổng `approved` = **23/130** (7 spec đích) — đo bằng `grep -rl '^status: approved'`
 - [x] `pnpm --filter @mindkid/gates test` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0 (81/81)
-- [x] **Ca âm C8**: [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) → `draft` thì exit 1, đỏ **đúng 3** `schema-*`
+- [x] **Ca âm C8**: [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) → `draft` thì exit 1, đỏ **đúng 3** `schema-*`
 - [x] **Ca âm C12**: xoá `social_identities` khỏi DMO §7 thì exit 1, báo đúng tên bảng
 - [x] **Ca âm C13**: đổi ví dụ mã về `G-C1-CNT-007` thì exit 1, báo đúng `file:line` + regex
 - [x] Phạm vi đo là **corpus** (`docs/specs/` + `docs/SPEC.md`), không phải cả `docs/` —

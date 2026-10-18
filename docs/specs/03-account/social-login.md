@@ -2,10 +2,12 @@
 spec: SOCIAL-LOGIN
 title: Đăng ký và đăng nhập bằng mạng xã hội
 area: account
-status: implemented
+status: approved
 mvp: true
 phase: P1
-reviewed: 2026-08-14
+reviewed: 2026-10-18
+open_tasks:
+  - "#289"
 owns:
   - Luồng đăng ký lần đầu bằng SNS
   - Luồng đăng nhập lại bằng SNS
@@ -19,6 +21,8 @@ depends_on:
 ---
 
 # Đăng ký và đăng nhập bằng mạng xã hội
+
+> **Chưa hoàn thành** — `BR-SCL-05`: nhánh email chưa xác minh tạo tài khoản `pending_verification` nhưng không gửi email xác thực. Việc còn lại: [Task #289](../../tasks/289-transactional-email-dispatch-plan.md).
 
 ## 1. Objective
 

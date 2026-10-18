@@ -75,7 +75,7 @@
       Q4 còn lỗi bảng 6 cột, đã dọn
 - [x] [`offline-play.md`](../specs/01-platform/offline-play.md) — A1+B1, cấp `D-CR`
 - [x] [`backup-and-restore.md`](../specs/01-platform/backup-and-restore.md) — B1
-- [x] [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) — C1, hàng lỗi 6 cột (đã dọn),
+- [x] [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) — C1, hàng lỗi 6 cột (đã dọn),
       chép Chủ thật từ audit-log.md §11 Q1
 - [x] [`pwa-install.md`](../specs/01-platform/pwa-install.md) — B1
 - [x] Sau lô: `C17` 80 → 71 (giảm đúng 9)

@@ -5,7 +5,7 @@ area: admin
 status: implemented
 mvp: true
 phase: P2
-reviewed: 2026-08-14
+reviewed: 2026-10-18
 owns:
   - Soạn nội dung trang SEO
   - Ràng buộc meta và structured data
@@ -29,7 +29,7 @@ sửa được **không cần deploy**.
 
 ## 3. Entry points
 
-`/studio/seo` · `/studio/seo/{slug}/{version}`.
+`/studio/seo` — soạn trang SEO ngay trong trang, không có trang con theo `{slug}/{version}`.
 
 ## 4. Main flow
 

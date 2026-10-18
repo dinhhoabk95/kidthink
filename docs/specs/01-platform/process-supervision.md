@@ -5,7 +5,9 @@ area: platform
 status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-30
+reviewed: 2026-10-18
+open_tasks:
+  - "#304"
 owns:
   - Mô hình tiến trình của web và worker trên máy chủ
   - Chính sách khởi động lại và khởi động cùng máy
@@ -18,6 +20,8 @@ depends_on:
 ---
 
 # Giám sát tiến trình ứng dụng trên máy chủ
+
+> **Chưa hoàn thành** — Web chạy `instances: "max"` không tính cùng pool kết nối cơ sở dữ liệu (`BR-SUP-08`); `BR-SUP-07` (log không chứa bí mật) chưa có kiểm. Việc còn lại: [Task #304](../../tasks/304-platform-ops-gaps-plan.md).
 
 ## 1. Objective
 

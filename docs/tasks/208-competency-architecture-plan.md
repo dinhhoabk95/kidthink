@@ -9,7 +9,7 @@
 > `docs/specs/05-content/skill-dataset-model.md` (trục kỹ năng) ·
 > `docs/specs/01-platform/content-seed-authoring.md` §7.1 (bố cục nội dung) ·
 > `docs/specs/01-platform/taxonomy-service.md` (cây phân loại) ·
-> `SPEC.md` §8.1 (ranh giới package) · `docs/specs/01-platform/data-model-overview.md` (luật schema)
+> `SPEC.md` §8.1 (ranh giới package) · `docs/specs/00-foundation/data-model-overview.md` (luật schema)
 
 ---
 

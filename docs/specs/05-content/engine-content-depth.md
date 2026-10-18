@@ -5,14 +5,14 @@ area: content
 status: implemented
 mvp: false
 phase: P4
-reviewed: 2026-08-30
+reviewed: 2026-10-18
 owns:
   - Sàn số game level tính trên từng engine
   - Ma trận đa dạng bên trong một engine
   - Bậc thang bật sàn theo phase và luật không tụt
+  - Luật chỉ đếm level thật trong corpus, không đếm fixture (`BR-TCL-02`)
 depends_on:
   - GAME-LEVEL-MODEL
-  - TEMPLATE-COVERAGE-LEVEL-BATCH
   - CONTENT-SEED-AUTHORING
   - CONTENT-TAGGING
   - THINKING-COVERAGE-MATRIX
@@ -51,8 +51,8 @@ cộng thêm vào ma trận phủ competency, cấm — NEVER thay thế. Ràng 
 
 | Route / màn hình | Actor | Ghi chú |
 |---|---|---|
-| `pnpm --filter @mindkid/db check:engine-depth` | Cổng chiều sâu | Chạy trong cổng tự động trước khi merge |
-| `packages/db/config/engine-depth.json` | Người quyết | Bậc đang bật và sàn của từng bậc. Ngoài mã nguồn, theo `BR-TCM-11` (ngưỡng cấu hình được) |
+| `pnpm --filter @mindkid/content-build check:engine-depth` | Cổng chiều sâu | Chạy trong cổng tự động trước khi merge |
+| `packages/content-build/src/thresholds/engine-depth.json` | Người quyết | Bậc đang bật và sàn của từng bậc. Ngoài mã nguồn, theo `BR-TCM-11` (ngưỡng cấu hình được) |
 | `docs/specs/01-platform/engines/GT-<nnn>.md` mục 6 | Người soạn | Ma trận mục tiêu riêng của engine đó |
 
 ## 4. Main flow
@@ -83,7 +83,7 @@ cộng thêm vào ma trận phủ competency, cấm — NEVER thay thế. Ràng 
 | `BR-ECD-01` (sàn theo engine) | Mỗi engine đang `active` đạt sàn số level của bậc đang bật ở mục 7.3 | Sàn theo competency đã có; nó không thấy được engine rỗng vì engine khác che |
 | `BR-ECD-02` (sàn theo band hợp lệ) | Mỗi **band tuổi hợp lệ** của một engine đạt sàn số level của bậc đang bật | 3 level dồn vào một band nghĩa là hai lứa còn lại mở engine ra và không có gì để chơi. `GT-014` `GT-016` `GT-017` `GT-027` đang ở đúng trạng thái đó |
 | `BR-ECD-03` (đa dạng trục tư duy) | Mỗi engine phủ số giá trị trục `thinking` tối thiểu của bậc đang bật | Một engine chỉ sinh một tiến trình tư duy là một engine chỉ dùng được một lần trong lộ trình học |
-| `BR-ECD-04` (đa dạng trục nội dung) | Mỗi engine phủ số giá trị trục `what` tối thiểu của bậc đang bật, và giá trị phải thuộc từ vựng đóng ở mục 7.1 của [`content-tagging.md`](../01-platform/content-tagging.md) | Đo ngày 2026-08-29: **160 trên 239** lượt gắn trục `what` nằm ngoài 14 giá trị đóng, và 17 engine có đúng **một** giá trị. Đo trên từ vựng trôi thì con số không nói gì |
+| `BR-ECD-04` (đa dạng trục nội dung) | Mỗi engine phủ số giá trị trục `what` tối thiểu của bậc đang bật, và giá trị phải thuộc từ vựng đóng ở mục 7.1 của [`content-tagging.md`](content-tagging.md) | Đo ngày 2026-08-29: **160 trên 239** lượt gắn trục `what` nằm ngoài 14 giá trị đóng, và 17 engine có đúng **một** giá trị. Đo trên từ vựng trôi thì con số không nói gì |
 | `BR-ECD-05` (đa dạng chủ đề) | Mỗi engine phủ số giá trị trục `theme` tối thiểu của bậc đang bật, theo từ vựng ở [`content-theme-registry.md`](content-theme-registry.md) | Trẻ chơi mười màn liên tiếp cùng bối cảnh sẽ chán trước khi kỹ năng hình thành. Đo ngày 2026-08-29: `school` chiếm 84 trên 228 level toàn catalog |
 | `BR-ECD-06` (trải độ khó — chuyển trục) | Thang tiến bộ độ khó chuyển sang trục **kỹ năng**, quy định tại [`level-difficulty-contract.md`](level-difficulty-contract.md) theo `BR-LDC-04` (Task #263). Mỗi kỹ năng trải trên ≥2 mức; trục engine không áp sàn `difficulty_span`. | Độ khó thuộc kỹ năng, không thuộc engine |
 | `BR-ECD-07` (cửa vào không trả phí) | Mỗi engine có **≥1** level `access_tier` là `free` hoặc `login` | Một engine mà mọi màn đều `premium` thì phụ huynh chưa mua không bao giờ thấy nó tồn tại. Đo hôm nay: chỉ 23 trên 228 level là `free` |
@@ -93,6 +93,7 @@ cộng thêm vào ma trận phủ competency, cấm — NEVER thay thế. Ràng 
 | `BR-ECD-11` (cổng có ca âm) | Cổng phải có test ca âm: bớt một level của engine đang sát sàn phải làm cổng đỏ | Cổng không có ca âm là cổng không biết mình hỏng |
 | `BR-ECD-12` (chiều sâu không phải bằng chứng sư phạm) | Số đo ở đây cấm — NEVER dùng làm bằng chứng hiệu quả học tập | Cùng ranh giới mà `BR-TCM-10` và `BR-PED-01` (cấm tuyên bố hiệu quả từ số đo catalog) đã đặt |
 | `BR-ECD-13` (band level nằm trong band engine) | Level có `age_min` nhỏ hơn hoặc `age_max` lớn hơn band của engine thì cổng **đỏ** | `BR-GTC-05` (band tuổi của template được ép) có kịch bản nghiệm thu ở mục 9 của [`game-template-contract.md`](../01-platform/game-template-contract.md), nhưng kịch bản đó nói về route studio. Đường seeder không đi qua route đó và bộ cổng theo hàng không đối chiếu hai nguồn. Đo ngày 2026-08-29: **42 trên 228 level** vi phạm, trong đó 15 màn `GT-006` gắn cho band mà engine bị cấm |
+| `BR-TCL-02` (level thật, không phải fixture) | Số level của một engine chỉ đếm level trong corpus seed, **không** tính `fixtures.ts` của thư mục khuôn | `fixtures.ts` không đi qua bộ cổng nội dung, không có tag ba trục, không vào ma trận phủ. Fixture chứng minh contract chạy; level chứng minh trẻ chơi được |
 
 ### 6.1 Hạn ngạch theo kỹ năng — `BR-SKQ-*`
 
@@ -127,7 +128,7 @@ check:skill-quota`.
 ## 7. Data
 
 **Đọc:** `packages/content/src/` · registry engine ·
-`packages/db/config/engine-depth.json`.
+`packages/content-build/src/thresholds/engine-depth.json`.
 **Ghi:** không ghi vào database. Đầu ra là báo cáo và mã thoát.
 
 ### 7.1 Vì sao nguồn là corpus seed
@@ -160,9 +161,9 @@ dùng chung `DATABASE_URL` với test tích hợp và chứa hàng rác do test 
 | Chặn từ phase | đang chặn | P4 | P5 | sau go-live |
 
 Bậc 0 là mức hôm nay, ghi ra để `BR-ECD-09` (không tụt) có mốc so. Nó **bằng đúng** hạn ngạch
-`BR-TCL-01` của [`template-coverage-level-batch.md`](template-coverage-level-batch.md), đã đạt
-trên cả 27 engine ngày 2026-08-29. Hai file không đặt hai sàn khác nhau: file kia sở hữu **lô
-một lần** đưa engine từ 0 lên 3; file này sở hữu **sàn không tụt** và các bậc sau đó.
+≥3 level mỗi khuôn của lô phủ khuôn tháng 8/2026 (`BR-TCL-01`, đã ngưng sau khi đạt trên cả
+27 engine ngày 2026-08-29). Từ đó sàn duy nhất cho số level mỗi engine là `BR-ECD-01` ở file
+này, kèm `BR-TCL-02` (chỉ đếm level thật, không đếm `fixtures.ts`).
 
 ### 7.4 Giá phải trả của mỗi bậc
 
@@ -182,7 +183,7 @@ một cổng đỏ thường trực là một cổng sắp bị tắt.
 | Cách nói | Trường | Từ vựng |
 |---|---|---|
 | "theo từng độ tuổi" | `age_min` · `age_max` gộp thành band | `3-4` · `4-5` · `5-6` |
-| "theo loại bài học" | `what_tags` | 14 giá trị đóng, mục 7.1 của [`content-tagging.md`](../01-platform/content-tagging.md) |
+| "theo loại bài học" | `what_tags` | 14 giá trị đóng, mục 7.1 của [`content-tagging.md`](content-tagging.md) |
 | "theo loại chủ đề tư duy" | `thinking_tags` | 12 giá trị đóng, cùng nguồn |
 
 Trục `theme` là trục thứ tư, chưa đóng, và [`content-theme-registry.md`](content-theme-registry.md)
@@ -275,6 +276,11 @@ Scenario: nguồn không đọc được thì cổng đỏ, không xanh
   When chạy check:engine-depth
   Then cổng thoát với mã khác 0
   And đầu ra không chứa dòng nào báo đạt sàn
+
+Scenario: BR-TCL-02 — fixture không được tính thay level
+  Given khuôn GT-015 có ba fixture và không có game level nào trong corpus seed
+  When chạy check:engine-depth
+  Then báo cáo ghi GT-015 có 0 level và thiếu theo sàn của bậc đang bật
 ```
 
 ## 10. Boundaries
@@ -303,6 +309,6 @@ Scenario: nguồn không đọc được thì cổng đỏ, không xanh
 |---|---|---|---|---|
 | 1 | Bậc 2 là 12 hay 20 level mỗi engine? Chênh nhau 216 level phải soạn | Bước 5 ở mục 6 của [`113-game-engine-depth-and-seed-diversity-plan.md`](../../tasks/113-game-engine-depth-and-seed-diversity-plan.md) | P5 | Nội dung |
 | 2 | 17 engine đang ở 3 level: nâng hết lên sàn, hay `deprecated` bớt? Nâng hết tốn 181 level ở bậc 2 | Bật bậc 2 | P5 | người quyết |
-| 3 | Trục `what` có 160 trên 239 lượt gắn ngoài từ vựng, toàn chữ viết tắt tự phát (`mem`, `cnt`, `shp`, …). Gắn lại tag cho corpus, hay nâng danh sách viết tắt thành từ vựng? Trùng câu hỏi 3 ở mục 11 của [`content-tagging.md`](../01-platform/content-tagging.md) | `BR-ECD-04` không đo được | P4 | người quyết |
+| 3 | Trục `what` có 160 trên 239 lượt gắn ngoài từ vựng, toàn chữ viết tắt tự phát (`mem`, `cnt`, `shp`, …). Gắn lại tag cho corpus, hay nâng danh sách viết tắt thành từ vựng? Trùng câu hỏi 3 ở mục 11 của [`content-tagging.md`](content-tagging.md) | `BR-ECD-04` không đo được | P4 | người quyết |
 | 5 | 42 level vi phạm `BR-ECD-13` đã published, mà bản published bất biến theo `BR-CLC-01`. Sửa band là version mới cho cả 42, hay archive rồi soạn lại cho đúng lứa? Mười lăm màn `GT-006` ở band bị cấm không phải lỗi tag — chúng là nội dung soạn sai lứa | Bật `BR-ECD-13` | P4 | người quyết |
 | 4 | `BR-ECD-07` yêu cầu mỗi engine có cửa vào không trả phí. Điều đó đụng thang truy cập ở [`access-ladder.md`](../00-foundation/access-ladder.md) không? Cần đối chiếu trước khi bật bậc 1 | Bật bậc 1 | P4 | người quyết |

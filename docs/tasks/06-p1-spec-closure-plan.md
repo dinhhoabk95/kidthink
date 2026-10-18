@@ -236,7 +236,7 @@ tuỳ chọn. Thứ tự theo [`roadmap.md`](../specs/roadmap.md) §P1.
 | 2 | [`04-play/access-gating`](../specs/04-play/access-gating.md) | 205 | 8 | 2 | 1 | game-config-delivery → session → ingestion → scoring · catalog · detail |
 | 3 | [`01-platform/content-seed-authoring`](../specs/01-platform/content-seed-authoring.md) | 405 | 14 | 6 | 0 | **đường găng dài nhất của MVP** |
 | 4 | [`05-content/game-level-model`](../specs/05-content/game-level-model.md) | 162 | 10 | 2 | 0 | nội dung level cho seeder |
-| 5 | [`01-platform/content-tagging`](../specs/01-platform/content-tagging.md) | 172 | 7 | 2 | 2 | content-search → my-library · game-catalog-public |
+| 5 | [`01-platform/content-tagging`](../specs/05-content/content-tagging.md) | 172 | 7 | 2 | 2 | content-search → my-library · game-catalog-public |
 | 6 | [`01-platform/telemetry-pipeline`](../specs/01-platform/telemetry-pipeline.md) | 186 | 9 | 3 | 2 | basic-report |
 | 7 | [`01-platform/oauth-provider-registry`](../specs/01-platform/oauth-provider-registry.md) | 254 | 15 | 2 | 0 | social-login → social-account-linking |
 | 8 | [`01-platform/monitoring-and-alerting`](../specs/01-platform/monitoring-and-alerting.md) | 192 | 7 | 3 | 2 | performance-budgets |
@@ -259,7 +259,7 @@ thứ tự ưu tiên nếu phải dừng giữa chừng.
    `D-AG`. Cần đối chiếu ít nhất: định dạng mã ở
    [`id-conventions.md`](../specs/00-foundation/id-conventions.md) §7, quy tắc khoá ngoại
    luôn dùng `id` và cơ chế `entity_id` neo dòng dõi (`D-AE`), bản đồ bảng ở
-   [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7, và
+   [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7, và
    [`notification-service.md`](../specs/01-platform/notification-service.md) đã là P0
    (`D-AF`).
 3. **Sửa cảnh báo `C6`** — điền cột "vì sao" cho mọi rule đang trống. Cấm xoá rule để hết
@@ -292,7 +292,7 @@ chu trình thì cả Bước 2 lẫn Bước 16 đang giải một bài toán kh
 cổng chưa được chứng minh.
 
 Bước 15 là lỗ hổng phát hiện khi soạn [`07-first-migration-plan.md`](07-first-migration-plan.md) §2a:
-[`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §7.2 khai "danh sách
+[`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §7.2 khai "danh sách
 đóng" **bảy** chỗ FK đa hình bắt buộc test orphan, nhưng
 [`schema-content-taxonomy.md`](../specs/01-platform/schema-content-taxonomy.md) mô tả thêm
 hai chỗ đa hình thật (`activities.ref_id` §7.5, `curriculum_items.entity_id` §7.6) không có

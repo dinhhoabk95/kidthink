@@ -5,7 +5,7 @@ area: platform
 status: implemented
 mvp: true
 phase: P0
-reviewed: 2026-08-07
+reviewed: 2026-10-18
 owns:
   - Định nghĩa cột module taxonomy, tagging, game, content, curriculum
 depends_on:
@@ -49,8 +49,8 @@ Không có.
 | `BR-SCT-04` | `content_pack` và `difficulty_params` là **hai cột JSONB riêng** | `BR-DM-02` |
 | `BR-SCT-05` (trigger chặn UPDATE) | Trigger chặn `UPDATE` hàng `published` | [`content-lifecycle.md`](../00-foundation/content-lifecycle.md) `BR-CLC-01` (bản published bất biến) |
 | `BR-SCT-06` (neo dòng dõi) | `curriculum_items` trỏ tới nội dung bằng `(entity_type, entity_id)` — `entity_id` là **neo dòng dõi** (`entity_id` lineage anchor), bất biến qua mọi version, không phải `id` của một hàng version cụ thể | Ghim đúng hàng version thì content update xong curriculum vẫn thấy bản cũ. Neo dòng dõi + `WHERE status='published'` giải quyết mà **vẫn là `id`**, không cần `code` (D-AE, sửa lại 2026-08-07) |
-| `BR-SCT-07` (weight CHECK) | `content_skill_map.weight` có `CHECK (weight > 0 AND weight <= 1)` | [`data-model-overview.md`](data-model-overview.md) `BR-DM-03` định nghĩa miền `[0,1]`; `CHECK` là chỗ **duy nhất** ép được — miền ghi trong prose không chặn một seeder ghi `weight = 5`. Cận dưới **loại trừ 0**: một hàng `weight = 0` nghĩa là "có ánh xạ nhưng không đóng góp gì", mâu thuẫn với chính việc hàng đó tồn tại, và nó làm mọi phép chuẩn hoá mastery chia cho tổng bằng 0 |
-| `BR-SCT-08` (từ vựng `entity_type` đóng) | `entity_type` của `content_skill_map`, `content_tag_map`, `content_objective_map` nhận đúng bộ giá trị `game_level` · `lesson` · `activity` · `curriculum` · `worksheet`, ép bằng enum ở tầng database | Seeder ghi `'game_level'` trong khi bốn nơi đọc `'level'` — [`dashboard.get.ts:123`](../../../apps/web/server/api/managers/dashboard.get.ts), [`skills/[code].get.ts:101`](../../../apps/web/server/api/managers/taxonomy/skills/%5Bcode%5D.get.ts), [`rollup.ts:155`](../../../packages/db/src/services/rollup.ts), [`advanced-report.ts:803`](../../../packages/db/src/services/advanced-report.ts). Bốn truy vấn đó trả 0 hàng và **không** báo lỗi, vì cột `text` nhận mọi chuỗi |
+| `BR-SCT-07` (weight CHECK) | `content_skill_map.weight` có `CHECK (weight > 0 AND weight <= 1)` | [`data-model-overview.md`](../00-foundation/data-model-overview.md) `BR-DM-03` định nghĩa miền `[0,1]`; `CHECK` là chỗ **duy nhất** ép được — miền ghi trong prose không chặn một seeder ghi `weight = 5`. Cận dưới **loại trừ 0**: một hàng `weight = 0` nghĩa là "có ánh xạ nhưng không đóng góp gì", mâu thuẫn với chính việc hàng đó tồn tại, và nó làm mọi phép chuẩn hoá mastery chia cho tổng bằng 0 |
+| `BR-SCT-08` (từ vựng `entity_type` đóng) | `entity_type` của `content_skill_map`, `content_tag_map`, `content_objective_map` nhận đúng bộ giá trị `game_level` · `lesson` · `activity` · `curriculum` · `worksheet`, ép bằng enum ở tầng database | Seeder ghi `'game_level'` trong khi bốn nơi đọc `'level'` — [`dashboard.get.ts:123`](../../../apps/web/server/api/managers/dashboard.get.ts), [`skills/[code].get.ts:101`](../../../apps/web/server/api/managers/taxonomy/skills/%5Bcode%5D.get.ts), [`rollup.ts:155`](../../../apps/worker/src/services/rollup.ts), [`advanced-report.ts:809`](../../../apps/web/server/services/advanced-report.ts). Bốn truy vấn đó trả 0 hàng và **không** báo lỗi, vì cột `text` nhận mọi chuỗi |
 
 ## 7. Data
 

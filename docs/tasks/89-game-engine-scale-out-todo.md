@@ -11,7 +11,7 @@
 - [x] Viết [`game-layout-engine.md`](../specs/01-platform/game-layout-engine.md) — 10 rule `BR-LAY`
 - [x] Viết [`deterministic-randomness.md`](../specs/01-platform/deterministic-randomness.md) — 10 rule `BR-RNG`
 - [x] Viết [`template-authoring-kit.md`](../specs/01-platform/template-authoring-kit.md) — 12 rule `BR-TAK`
-- [x] Viết [`lesson-session-runner.md`](../specs/04-play/lesson-session-runner.md) — 11 rule `BR-LSR`
+- [x] Viết [`lesson-session-runner.md`](../specs/03-account/lesson-session-runner.md) — 11 rule `BR-LSR`
 - [x] Viết [`lesson-exemplar-set.md`](../specs/05-content/lesson-exemplar-set.md) — 10 rule `BR-LEX`
 - [x] Viết [`thinking-coverage-matrix.md`](../specs/08-quality/thinking-coverage-matrix.md) — 10 rule `BR-TCM`
 - [x] Đăng ký 6 prefix mới ở [`business-rules.md`](../specs/00-foundation/business-rules.md), thêm mã `LAYOUT_NOT_SUPPORTED` ở [`error-codes.md`](../specs/00-foundation/error-codes.md)
@@ -57,7 +57,7 @@ trên sống sót. Phân bố: `server/api` 353 · `packages/db` 160 · `app/pag
 - [x] Viết `pnpm --filter @mindkid/db report:tags` đo độ lệch giữa từ vựng Lớp 1 và tag thật trong seed
 - [x] Đo được: trục `what` 120/130 giá trị ngoài từ vựng; trục `thinking` 116/122.
       Một nửa số lượt gắn tag nằm ngoài từ vựng
-- [x] Phát hiện hai từ vựng đóng khác nhau, giao **rỗng**: [`content-tagging.md`](../specs/01-platform/content-tagging.md) §7.1 so với
+- [x] Phát hiện hai từ vựng đóng khác nhau, giao **rỗng**: [`content-tagging.md`](../specs/05-content/content-tagging.md) §7.1 so với
       `seed-master/content-tags.ts`
 - [ ] **Chặn:** chốt từ vựng nào thắng — câu hỏi mở 4 ở kế hoạch §7
 - [ ] Sau khi chốt: gắn lại tag cho 139 nội dung đã seed
@@ -95,6 +95,6 @@ một cổng luôn đỏ, và cổng luôn đỏ cũng không ai đọc.
 
 - [ ] Bảng `lesson_runs` · `lesson_run_steps` · `lesson_run_observations`
 - [ ] Bề mặt `/lessons/{code}/run`, một bước một lúc
-- [ ] 4 route ở [`lesson-session-runner.md`](../specs/04-play/lesson-session-runner.md) §8
+- [ ] 4 route ở [`lesson-session-runner.md`](../specs/03-account/lesson-session-runner.md) §8
 - [ ] Cờ `is_exemplar` cùng 3 field kèm theo trên `lessons`
 - [ ] Soạn 18 tiết học mẫu lấp đủ ma trận — chặn bởi câu hỏi mở 1 ở [`lesson-exemplar-set.md`](../specs/05-content/lesson-exemplar-set.md) §11

@@ -9,7 +9,7 @@
 
 - [x] Đọc [`thinking-coverage-matrix.md`](../specs/08-quality/thinking-coverage-matrix.md) §6, §7, §11.
 - [x] Đo số nội dung đã publish có tag trục tư duy, theo từng trục. Số đo ngày 2026-08-18: không trục nào có nội dung.
-- [x] Đọc §11 Q1 của [`content-tagging.md`](../specs/01-platform/content-tagging.md) — cùng câu hỏi, đừng trả lời hai lần khác nhau.
+- [x] Đọc §11 Q1 của [`content-tagging.md`](../specs/05-content/content-tagging.md) — cùng câu hỏi, đừng trả lời hai lần khác nhau.
 
 ## WP94.0 — Câu hỏi người
 

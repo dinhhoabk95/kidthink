@@ -184,7 +184,7 @@ entitlement-grant · subscription-view · package-catalog-admin (độc lập)
 
 Đây là lô duy nhất đụng bảng `payment_orders` và `entitlements`. **Mọi thay đổi cột phát sinh ở
 đây phải sửa [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) và
-mục 7 của [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) cùng lúc** —
+mục 7 của [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) cùng lúc** —
 `C12` (bản đồ bảng khớp hai chiều giữa hai file) sẽ đỏ nếu chỉ sửa một bên. Cả hai file đó là
 `P0` đã `approved`, nên sửa chúng là **đổi contract**: ghi `D-*` và nêu ở cổng dừng.
 
@@ -243,7 +243,7 @@ Giữ nguyên vòng lặp của Task #5, Task #6 và Task #8.
    [`id-conventions.md`](../specs/00-foundation/id-conventions.md) mục 7; khoá ngoại dùng `id`
    (`D-AE`); kiến trúc Sidebase Local + JWT access + xoay refresh token ở
    [`auth-tokens-sessions.md`](../specs/01-platform/auth-tokens-sessions.md) mục 7.4; bản đồ bảng
-   ở [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) mục 7; danh sách đa
+   ở [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) mục 7; danh sách đa
    hình 9 mục (`D-AQ`); `scoring` schema chung (`D-BA`).
 3. **Sửa cảnh báo `C6`** — điền cột "vì sao" cho mọi rule đang trống. **Không xoá rule để hết
    cảnh báo.** [`CONVENTIONS.md`](../specs/CONVENTIONS.md) mục 5: rule không có "vì sao" sẽ bị
@@ -345,7 +345,7 @@ Mọi sai lệch phát hiện ở đây sẽ tốn một migration mới + một
 
 | Rủi ro | Ảnh hưởng | Giảm thiểu |
 |---|---|---|
-| Lô B phát sinh cột schema mới | Cao — đổi 2 spec `P0` đã `approved` | Sửa [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) và [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) **cùng commit**; `C12` là cổng |
+| Lô B phát sinh cột schema mới | Cao — đổi 2 spec `P0` đã `approved` | Sửa [`schema-identity-billing.md`](../specs/01-platform/schema-identity-billing.md) và [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) **cùng commit**; `C12` là cổng |
 | Sửa [`payment-flow.md`](../specs/00-foundation/payment-flow.md) · [`content-lifecycle.md`](../specs/00-foundation/content-lifecycle.md) · [`package-catalog.md`](../specs/00-foundation/package-catalog.md) — đều `approved` | Trung bình | Ghi `D-*`, nêu ở cổng dừng của lô tương ứng, không sửa lặng lẽ |
 | Ép chốt giá hoặc SLA chỉ để lật được cờ `approved` | Cao — đổi quyết định thương mại cho tiện việc lint | Mục 7; sáu câu gom về Cổng dừng A |
 | Đóng câu hỏi bằng cách xoá nó | Cao — mất thông tin lặng lẽ | Đối chiếu tay ở bước cuối: mọi câu hỏi biến mất phải có `D-*` tương ứng |

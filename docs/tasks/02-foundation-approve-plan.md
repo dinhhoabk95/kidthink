@@ -379,7 +379,7 @@ Mỗi task T8–T12 chạy đúng một quy trình trên từng spec trong layer
 - [ ] Mọi OQ chờ còn nguyên, có `Chặn phase` + `Chủ`
 - [ ] `status: approved` + `reviewed` đúng ngày
 - [ ] `pnpm --filter @mindkid/gates test` exit 0 (C8 chứng minh dependency đã approved trước)
-- [ ] Mỗi quyết định đóng OQ đụng schema thì ghi thêm dòng vào [`data-model-overview.md`](../specs/01-platform/data-model-overview.md)
+- [ ] Mỗi quyết định đóng OQ đụng schema thì ghi thêm dòng vào [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md)
       §Ràng buộc chờ (để P0 bước 7 không phải đọc lại 16 file)
 
 ---
@@ -417,7 +417,7 @@ OQ P0: [`package-catalog.md`](../specs/00-foundation/package-catalog.md) Q2 (gó
 - [ ] 16/16 `00-foundation` = `status: approved`
 - [ ] `pnpm --filter @mindkid/gates test` exit 0 · `pnpm check` exit 0 · `pnpm test` exit 0
 - [ ] Ca âm cuối: đặt một spec về `draft` thì C8 làm đỏ mọi spec phụ thuộc nó
-- [ ] `docs/tasks/todo.md` ghi rõ **P0 bước 7 ([`data-model-overview.md`](../specs/01-platform/data-model-overview.md) → `schema-*`) là việc kế tiếp**
+- [ ] `docs/tasks/todo.md` ghi rõ **P0 bước 7 ([`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) → `schema-*`) là việc kế tiếp**
 - [ ] Người duyệt — đây là hành động khó đảo: mở đường cho PR schema đầu tiên
 
 ---
@@ -427,7 +427,7 @@ OQ P0: [`package-catalog.md`](../specs/00-foundation/package-catalog.md) Q2 (gó
 | Rủi ro | Mức | Giảm thiểu |
 |---|---|---|
 | "Approved" thành nghi lễ đóng dấu — đọc lướt 16 file rồi đổi 16 dòng frontmatter | **Cao** | C8 + checklist thủ công ở bước 1 mỗi layer + checkpoint người ở C và D. Bar là *đóng OQ chặn P0*, không phải *đổi status* |
-| Đóng OQ schema bằng phỏng đoán (partition, FK, enum) rồi P0 bước 7 phải đảo lại | Cao | Mỗi quyết định chặn phải ghi **vì sao đo được**, và đẩy sang [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §Ràng buộc chờ để bước 7 kiểm lại trước khi viết cột |
+| Đóng OQ schema bằng phỏng đoán (partition, FK, enum) rồi P0 bước 7 phải đảo lại | Cao | Mỗi quyết định chặn phải ghi **vì sao đo được**, và đẩy sang [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §Ràng buộc chờ để bước 7 kiểm lại trước khi viết cột |
 | Di chuyển 140 file làm vỡ link mà không ai thấy | Trung bình | Check C4 chạy **trước và sau** T2, so số link resolve. Giữ `docs/SPEC.md` làm file thật thì 0 link phải sửa |
 | `lint-specs.ts` xanh giả — bài học `ultracite`/`dependency-cruiser`/`check-services` | **Cao** | 11 ca âm bắt buộc + yêu cầu script phải **đỏ ngay lần chạy đầu** trên 3 vi phạm đã biết |
 | D-W trở thành cách chôn câu hỏi: hạ xuống P1 rồi quên mất, tới lúc P1 vẫn không có người biên soạn | **Cao** | [`mvp-scope.md`](../specs/00-foundation/mvp-scope.md) §11 phải ghi hạn cụ thể (*trước khi [`content-seed-authoring.md`](../specs/01-platform/content-seed-authoring.md) khởi động*) + tên chủ, không ghi "P1" chung chung. Cổng ra P0 ở [`SPEC.md`](../SPEC.md) §13 thêm một dòng: Q1 phải có chủ trước khi mở P1 |
@@ -470,7 +470,7 @@ git log --oneline docs/specs/                                              # his
 ```
 
 **Cổng ra của Task #2:** 16/16 `approved` · `pnpm --filter @mindkid/gates test` xanh có ca âm · mọi OQ chờ có
-chủ và phase · [`data-model-overview.md`](../specs/01-platform/data-model-overview.md) §Ràng buộc chờ ghi đủ quyết định schema đã chốt.
+chủ và phase · [`data-model-overview.md`](../specs/00-foundation/data-model-overview.md) §Ràng buộc chờ ghi đủ quyết định schema đã chốt.
 
 **Vị trí file này:** hiện ở `docs/tasks/plan.md` tại workspace root. **T2 di chuyển nó** sang
 `mindkid/docs/tasks/plan.md` cùng toàn bộ corpus — đó là đích ghi trong [`SPEC.md`](../SPEC.md) §8.

@@ -2,10 +2,12 @@
 spec: LESSON-FLOW-MODEL
 title: Thư viện giáo án master và flow ghi danh — tuổi là đề xuất, không phải khoá
 area: content
-status: implemented
+status: approved
 mvp: false
 phase: P4
-reviewed: 2026-08-30
+reviewed: 2026-10-18
+open_tasks:
+  - "#309"
 owns:
   - Quan hệ giữa thư viện giáo án master và một flow ghi danh
   - Vai trò của tuổi là tín hiệu đề xuất, không phải điều kiện ghi danh
@@ -19,6 +21,8 @@ depends_on:
 ---
 
 # Thư viện giáo án master và flow ghi danh — tuổi là đề xuất, không phải khoá
+
+> **Chưa hoàn thành** — Route `GET /api/users/children/{uuid}/flows` (mục 8) chưa có. `POST /api/users/children/{uuid}/enrollments` đã bỏ chặn tuổi (`BR-LFM-02`) nhưng trả chuỗi `warning` (audit ghi `age_warning`) thay cho số `age_gap` của mục 8 — chưa chốt bên nào đúng. `BR-LFM-07/08/09` chưa có kiểm. Việc còn lại: [Task #309](../../tasks/309-content-model-gaps-plan.md).
 
 ## 1. Objective
 

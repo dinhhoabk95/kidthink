@@ -2,10 +2,12 @@
 spec: HEALTH-CHECK
 title: Health check dịch vụ
 area: platform
-status: implemented
+status: approved
 mvp: true
 phase: P0
-reviewed: 2026-08-13
+reviewed: 2026-10-18
+open_tasks:
+  - "#304"
 owns:
   - Endpoint health và ngữ nghĩa mã trả về
   - Danh sách dịch vụ critical
@@ -14,6 +16,8 @@ depends_on:
 ---
 
 # Health check dịch vụ
+
+> **Chưa hoàn thành** — Health check chưa ghi/đọc/xoá sentinel ở keyspace auth (`BR-HLT-02`); `BR-HLT-02/03/05/06` chưa có test trỏ mã. Việc còn lại: [Task #304](../../tasks/304-platform-ops-gaps-plan.md).
 
 ## 1. Objective
 

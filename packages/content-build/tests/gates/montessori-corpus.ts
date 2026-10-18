@@ -2,10 +2,10 @@ import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 /**
- * Spec sở hữu: docs/specs/05-content/montessori-game-level-batch.md mục 7.5
+ * Spec sở hữu: docs/specs/05-content/montessori-corpus-mapping.md mục 7.9
  * Rule sở hữu: BR-MGL-01, D-RQ
  *
- * Ba chỗ cùng nói một con số về corpus Montessori: bảng tra dạng bài, mục 7.5 của spec,
+ * Ba chỗ cùng nói một con số về corpus Montessori: bảng tra dạng bài, mục 7.9 của spec,
  * và chính seeder. Trước T99 WP99.0 chúng lệch nhau (57 · 33 · 24 so với 59 · 34 · 25),
  * và không cổng nào bắt. Cổng này đếm lại từ nguồn rồi so với số đã viết.
  */
@@ -38,8 +38,8 @@ export interface SeededCounts {
 const TABLE_ROW_REGEX = /^\|\s*`(WB\d{2}-D\d)`\s*\|([^\n]*)$/gm;
 const DEFERRED_CELL = "*Hoãn*";
 const BATCH_A_CELL = "**Nhận (Lô A)**";
-const SPEC_SECTION_START = "### 7.5";
-const SPEC_SECTION_END = "### 7.6";
+const SPEC_SECTION_START = "### 7.9 ";
+const SPEC_SECTION_END = "### 7.10 ";
 const SPEC_ROW_REGEX = /^\|\s*(C[1-6])\s*\|([^\n]*)$/gm;
 const SPEC_TOTAL_REGEX = /^\|\s*\*\*Tổng\*\*\s*\|([^\n]*)$/m;
 const SUMMARY_ROW_REGEX = /^\|\s*([^|]+?)\s*\|\s*\*{0,2}(\d+)\*{0,2}\s*\|$/gm;
@@ -315,12 +315,12 @@ function checkSpecTable(
   const start = specMarkdown.indexOf(SPEC_SECTION_START);
   if (start === -1) {
     throw new Error(
-      `Không tìm thấy mục ${SPEC_SECTION_START} trong spec lô level`
+      `Không tìm thấy mục ${SPEC_SECTION_START} trong spec ánh xạ corpus Montessori`
     );
   }
   const end = specMarkdown.indexOf(SPEC_SECTION_END, start);
   const section = specMarkdown.slice(start, end === -1 ? undefined : end);
-  const spec = "montessori-game-level-batch.md §7.5";
+  const spec = "montessori-corpus-mapping.md §7.9";
 
   SPEC_ROW_REGEX.lastIndex = 0;
   let row = SPEC_ROW_REGEX.exec(section);
