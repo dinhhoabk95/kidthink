@@ -1,5 +1,9 @@
 import { hashSecureToken } from "@mindkid/auth";
 import { getAppDb, users, verificationTokens } from "@mindkid/db";
+import {
+  AccountDeletedError,
+  AccountSuspendedError,
+} from "@mindkid/errors/account";
 import { TokenExpiredError } from "@mindkid/errors/auth";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { and, eq, isNull } from "drizzle-orm";
@@ -10,10 +14,15 @@ const VerifyEmailSchema = z
   .object({ token: z.string().trim().min(1).max(512) })
   .strict();
 
+export interface VerifyEmailResult {
+  status: "active";
+  already_verified: boolean;
+}
+
 export async function handleVerifyEmail(
   event: H3Event,
   testBody?: Record<string, string | number | boolean | null | undefined> | null
-) {
+): Promise<VerifyEmailResult> {
   const rawBody =
     testBody ??
     event.context?.body ??
@@ -64,6 +73,14 @@ export async function handleVerifyEmail(
     throw new NotFoundError();
   }
 
+  if (user.status === "suspended") {
+    throw new AccountSuspendedError();
+  }
+
+  if (user.status === "deleted") {
+    throw new AccountDeletedError();
+  }
+
   // BR-EVF-04: If token already used BUT user is active, return active smoothly
   if (vToken.usedAt !== null) {
     if (user.status === "active") {
@@ -106,7 +123,9 @@ export async function handleVerifyEmail(
         emailVerifiedAt: now,
         updatedAt: now,
       })
-      .where(eq(users.id, user.id));
+      .where(
+        and(eq(users.id, user.id), eq(users.status, "pending_verification"))
+      );
   });
 
   if (alreadyVerifiedInTx) {

@@ -195,4 +195,51 @@ describe("Task 2 — Email Verification (BR-EVF-01..08)", () => {
 
     await expect(verifyHandler(verifyEvent)).rejects.toThrow();
   }, 30_000);
+
+  it("rejects email verification token if user account is suspended or deleted (prevents unban bypass)", async () => {
+    const db = getAppDb();
+    const passHash = await hashPassword("chuoixanh123");
+    const email = `verify-suspended-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
+
+    const [user] = await db
+      .insert(users)
+      .values({
+        email,
+        passwordHash: passHash,
+        displayName: "Suspended User",
+        status: "suspended",
+      })
+      .returning();
+    if (!user) {
+      throw new Error("Failed to insert test user");
+    }
+
+    const rawToken = generateSecureToken();
+    const tokenHash = hashSecureToken(rawToken);
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    await db.insert(verificationTokens).values({
+      accountType: "user",
+      accountId: user.id,
+      purpose: "email_verify",
+      tokenHash,
+      expiresAt,
+    });
+
+    const { default: handler } = await import(
+      "#server/api/guest/auth/users/verify-email.post"
+    );
+
+    const event = createMockPostEvent({ token: rawToken });
+    await expect(handler(event)).rejects.toMatchObject({
+      statusCode: 403,
+      code: "ACCOUNT_SUSPENDED",
+    });
+
+    const [stillSuspended] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, user.id));
+    expect(stillSuspended?.status).toBe("suspended");
+  });
 });

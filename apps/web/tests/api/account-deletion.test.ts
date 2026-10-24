@@ -1,4 +1,5 @@
-import { hardPurgeUser } from "@mindkid/db";
+import { getBrowserSessionService } from "@mindkid/auth";
+import { getOwnerDb, hardPurgeUser, users } from "@mindkid/db";
 import { describe, expect, it } from "vitest";
 import deleteAccountHandler from "#server/api/users/account/delete.post";
 import deleteSummaryHandler from "#server/api/users/account/delete-summary.get";
@@ -77,6 +78,53 @@ describe("Task 6 — Account Deletion & Purge Lifecycle (BR-ADL-01..10)", () => 
       } catch (err: any) {
         expect(err.statusCode || err.status).toBe(428);
       }
+    });
+
+    it("BR-ADL-01: revokes all Redis sessions when account deletion is requested", async () => {
+      const db = getOwnerDb();
+      const email = `del-sess-${Date.now()}-${Math.floor(Math.random() * 10_000)}@example.com`;
+      const [u] = await db
+        .insert(users)
+        .values({
+          email,
+          displayName: "Delete Session User",
+          status: "active",
+        })
+        .returning();
+      if (!u) {
+        throw new Error("Failed to insert test user");
+      }
+
+      const sessionService = getBrowserSessionService();
+      const created = await sessionService.create({
+        namespace: "user",
+        accountId: u.id,
+        displayName: u.displayName,
+      });
+
+      const resolvedBefore = await sessionService.resolve(
+        "user",
+        created.sessionToken
+      );
+      expect(resolvedBefore?.user?.user_id).toBe(u.id);
+
+      const event = mockEvent(
+        "POST",
+        u.id,
+        {},
+        {
+          reauthAt: new Date(),
+          sessionId: created.sessionId,
+        }
+      );
+      const res = await deleteAccountHandler(event);
+      expect(res.grace_period_days).toBe(30);
+
+      const resolvedAfter = await sessionService.resolve(
+        "user",
+        created.sessionToken
+      );
+      expect(resolvedAfter?.user).toBeUndefined();
     });
   });
 

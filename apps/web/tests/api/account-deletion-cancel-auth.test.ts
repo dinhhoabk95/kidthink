@@ -42,6 +42,8 @@ function event(body: Record<string, string>) {
 describe("UC-027 BR-003: huỷ xoá không phiên phải xác minh", () => {
   beforeEach(() => {
     cancelSpy.mockClear();
+    state.user.status = "deleted";
+    state.user.purgeAt = new Date(Date.now() + 86_400_000);
     state.user.passwordHash = "hash";
   });
 
@@ -64,6 +66,34 @@ describe("UC-027 BR-003: huỷ xoá không phiên phải xác minh", () => {
     await expect(
       handler(event({ email: "a@b.vn", password: "good-pass" }) as never)
     ).rejects.toMatchObject({ statusCode: 401 });
+    expect(cancelSpy).not.toHaveBeenCalled();
+  });
+
+  it("tài khoản đang suspended: từ chối 403 ACCOUNT_SUSPENDED, không được tự mở khoá", async () => {
+    state.user.status = "suspended";
+    await expect(
+      handler(event({ email: "a@b.vn", password: "good-pass" }) as never)
+    ).rejects.toMatchObject({ statusCode: 403, code: "ACCOUNT_SUSPENDED" });
+    expect(cancelSpy).not.toHaveBeenCalled();
+  });
+
+  it("tài khoản đang active hoặc pending_verification: từ chối 409 INVALID_STATUS_TRANSITION", async () => {
+    state.user.status = "active";
+    await expect(
+      handler(event({ email: "a@b.vn", password: "good-pass" }) as never)
+    ).rejects.toMatchObject({
+      statusCode: 409,
+      code: "INVALID_STATUS_TRANSITION",
+    });
+    expect(cancelSpy).not.toHaveBeenCalled();
+  });
+
+  it("tài khoản deleted nhưng purge_at là null (đã purge xong): từ chối 410 ACCOUNT_PURGED", async () => {
+    state.user.status = "deleted";
+    state.user.purgeAt = null;
+    await expect(
+      handler(event({ email: "a@b.vn", password: "good-pass" }) as never)
+    ).rejects.toMatchObject({ statusCode: 410, code: "ACCOUNT_PURGED" });
     expect(cancelSpy).not.toHaveBeenCalled();
   });
 

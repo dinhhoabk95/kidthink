@@ -6,6 +6,7 @@ import {
   getOwnerDb,
   hardPurgeUser,
   requestUserDeletion,
+  socialIdentities,
 } from "#src/index";
 import { childProfiles } from "#src/schema/child";
 import { users } from "#src/schema/identity";
@@ -40,7 +41,7 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
       throw new Error("Failed to insert consent");
     }
 
-    // 3. Create Child Profile
+    // 3. Create Child Profile (active) + 1 already archived Child Profile
     const [child] = await db
       .insert(childProfiles)
       .values({
@@ -53,6 +54,29 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
     if (!child) {
       throw new Error("Failed to insert child");
     }
+
+    const [archivedChild] = await db
+      .insert(childProfiles)
+      .values({
+        userId: u.id,
+        displayName: "Bé Mai",
+        birthYear: 2020,
+        avatarId: "preset_dog_01",
+        status: "archived",
+      })
+      .returning();
+    if (!archivedChild) {
+      throw new Error("Failed to insert archived child");
+    }
+
+    // 3b. Create Social Identity (BR-ADL-10)
+    await db.insert(socialIdentities).values({
+      userId: u.id,
+      provider: "google",
+      providerUserId: `google-uid-${u.uuid}`,
+      emailAtProvider: email,
+      emailVerifiedAtProvider: true,
+    });
 
     // 4. Create Telemetry Events
     const sessionUuid = crypto.randomUUID();
@@ -82,6 +106,12 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
     await cancelUserDeletion(db, u.id);
     const [uRestored] = await db.select().from(users).where(eq(users.id, u.id));
     expect(uRestored?.status).toBe("active");
+
+    const [archivedAfterCancel] = await db
+      .select()
+      .from(childProfiles)
+      .where(eq(childProfiles.id, archivedChild.id));
+    expect(archivedAfterCancel?.status).toBe("archived");
 
     // Re-request deletion for hard purge test
     const { scheduledPurgeAt: purgeAt2 } = await requestUserDeletion(
@@ -116,6 +146,20 @@ describe("Purge and Anonymization Integration Tests — Task 10", () => {
       .from(childProfiles)
       .where(eq(childProfiles.userId, u.id));
     expect(remainingChildren.length).toBe(0);
+
+    // BR-ADL-10: Verify social_identities hard deleted
+    const remainingSocial = await db
+      .select()
+      .from(socialIdentities)
+      .where(eq(socialIdentities.userId, u.id));
+    expect(remainingSocial.length).toBe(0);
+
+    // BR-ADL-09: Verify users PII anonymized and purgeAt cleared
+    const [uPurged] = await db.select().from(users).where(eq(users.id, u.id));
+    expect(uPurged?.email).toBe(`deleted+${u.uuid}@mindkid.invalid`);
+    expect(uPurged?.displayName).toBe("Đã xoá");
+    expect(uPurged?.passwordHash).toBeNull();
+    expect(uPurged?.purgeAt).toBeNull();
 
     // BR-SPT-04: Verify telemetry_events.child_uuid is NULL, but row count unchanged
     const [telemetryAfter] = await db

@@ -1,16 +1,23 @@
 import { writeAudit } from "@mindkid/audit";
-import { getOwnerDb, requestUserDeletion, users } from "@mindkid/db";
+import {
+  activeSessions,
+  getOwnerDb,
+  requestUserDeletion,
+  users,
+} from "@mindkid/db";
 import { UserAlreadyDeletedError } from "@mindkid/errors/account";
 import { NotFoundError } from "@mindkid/errors/common";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, deleteCookie, getHeader } from "h3";
 
 import {
+  clearUserRememberCookie,
   getVerifiedRemoteIp,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
+import { revokeAllUserSessions } from "#server/utils/session-revocation";
 
 export default defineEventHandler(async (event) => {
   const userSession = await requireWebUserSession(event);
@@ -41,6 +48,17 @@ export default defineEventHandler(async (event) => {
   const userAgent = getHeader(event, "user-agent") ?? null;
 
   await db.transaction(async (tx) => {
+    await tx
+      .update(activeSessions)
+      .set({ revokedAt: now })
+      .where(
+        and(
+          eq(activeSessions.accountType, "user"),
+          eq(activeSessions.accountId, userId),
+          isNull(activeSessions.revokedAt)
+        )
+      );
+
     await writeAudit(tx, {
       actor_type: "user",
       actor_id: userId,
@@ -57,6 +75,13 @@ export default defineEventHandler(async (event) => {
       user_agent: userAgent,
     });
   });
+
+  // BR-ADL-01: Thu hồi toàn bộ phiên đăng nhập Redis và xoá cookie
+  await revokeAllUserSessions(userId);
+  if (typeof clearUserSession === "function") {
+    await clearUserSession(event).catch(() => null);
+  }
+  clearUserRememberCookie(event);
 
   // Clear active_child_id cookie
   deleteCookie(event, "active_child_id", { path: "/" });

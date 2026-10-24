@@ -1,15 +1,22 @@
 import { verifyPassword } from "@mindkid/auth";
 import { cancelUserDeletion, getOwnerDb, users } from "@mindkid/db";
-import { AccountPurgedError } from "@mindkid/errors/account";
+import {
+  AccountPurgedError,
+  AccountSuspendedError,
+} from "@mindkid/errors/account";
 import {
   InvalidCredentialsError,
   UnauthenticatedError,
 } from "@mindkid/errors/auth";
 import { NotFoundError } from "@mindkid/errors/common";
+import { InvalidStatusTransitionError } from "@mindkid/errors/content";
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
+
+const DUMMY_HASH =
+  "$argon2id$v=19$m=19456,p=1,t=2$Zmx0piJSIcdd2b8oaF8ZUg$U60ArJk0sNteiIdlfZyr7G0shEXA+IqCyWIKs1La4WE";
 
 const CancelDeletionSchema = z
   .object({
@@ -26,12 +33,14 @@ async function resolveTargetUserId(
     ?.user_id;
 
   if (sessionUserId) {
+    const { validateUserCsrf } = await import("#server/utils/auth-runtime");
+    validateUserCsrf(event);
     return Number(sessionUserId);
   }
 
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
+  const eventBody = (event.context as { body?: Record<string, string> })?.body;
   const rawBody =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+    eventBody || (await readBody<Record<string, string>>(event)) || {};
   const parsed = CancelDeletionSchema.safeParse(rawBody);
 
   if (!(parsed.success && parsed.data.email)) {
@@ -40,21 +49,23 @@ async function resolveTargetUserId(
     );
   }
 
+  if (!parsed.data.password) {
+    throw new InvalidCredentialsError();
+  }
+
   const [foundUser] = await db
     .select()
     .from(users)
     .where(eq(users.email, parsed.data.email.toLowerCase()))
     .limit(1);
 
-  if (!foundUser) {
-    throw new NotFoundError("NOT_FOUND");
-  }
-
   // UC-027 BR-003: không phiên thì bắt buộc xác minh bằng mật khẩu. Thiếu mật
   // khẩu hoặc tài khoản không có mật khẩu đều bị từ chối, không đổi gì.
-  if (!(parsed.data.password && foundUser.passwordHash)) {
+  if (!foundUser?.passwordHash) {
+    await verifyPassword(parsed.data.password, DUMMY_HASH).catch(() => false);
     throw new InvalidCredentialsError();
   }
+
   const isValid = await verifyPassword(
     parsed.data.password,
     foundUser.passwordHash
@@ -84,8 +95,18 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError("NOT_FOUND");
   }
 
+  if (account.status === "suspended") {
+    throw new AccountSuspendedError();
+  }
+
+  if (account.status !== "deleted") {
+    throw new InvalidStatusTransitionError(
+      "Tài khoản không ở trạng thái chờ xoá."
+    );
+  }
+
   const now = new Date();
-  if (account.purgeAt && account.purgeAt.getTime() <= now.getTime()) {
+  if (!account.purgeAt || account.purgeAt.getTime() <= now.getTime()) {
     throw new AccountPurgedError();
   }
 
