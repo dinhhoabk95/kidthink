@@ -17,6 +17,8 @@ export const AUDIT_ACTIONS = {
   QUOTA_RESET: "quota_reset",
 
   // Billing / Orders
+  ORDER_CREATED: "order_created",
+  PAYMENT_PROOF_SUBMITTED: "payment_proof_submitted",
   ORDER_APPROVED: "order_approved",
   ORDER_REJECTED: "order_rejected",
   BONUS_DAYS_GRANTED: "bonus_days_granted",

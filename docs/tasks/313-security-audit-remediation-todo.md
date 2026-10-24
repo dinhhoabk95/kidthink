@@ -12,9 +12,9 @@ Plan: [`313-security-audit-remediation-plan.md`](313-security-audit-remediation-
 - [x] Chạy vitest & typecheck xanh cho S1
 
 ## S2 — Chặn lạm dụng `soft_unlock`, bỏ tài khoản ngân hàng giả fallback, và sửa clobber `manual_grant` (`[C-02]`, `[H-09]`, `[H-11]`)
-- [ ] Test đỏ & fix `POST /api/users/orders/[uuid]/proof` (`pending_proof` transition, kiểm `expiresAt`, chống lặp `soft_unlock` vô hạn, `.for("update")`, `writeAudit`)
-- [ ] Test đỏ & fix `POST /api/users/orders` (xoá fallback tài khoản ngân hàng giả `1234567890`, fail-closed `503`, `writeAudit`)
-- [ ] Test đỏ & fix `payment-jobs.ts` (không ghi đè `manual_grant`) và `pdf-export.ts` (bỏ default entitlements fail-open)
+- [x] Test đỏ & fix `POST /api/users/orders/[uuid]/proof` (`pending_proof` transition, kiểm `expiresAt`, chống lặp `soft_unlock` vô hạn, `.for("update")`, `writeAudit`)
+- [x] Test đỏ & fix `POST /api/users/orders` (xoá fallback tài khoản ngân hàng giả `1234567890`, fail-closed `503`, `writeAudit`)
+- [x] Test đỏ & fix `payment-jobs.ts` (không ghi đè `manual_grant`) và `pdf-export.ts` (bỏ default entitlements fail-open)
 
 ## S3 — Rate Limiting 2 trục, `MfaAttemptGuard` cho Manager/User, Reauth TOTP/Social & Session Revocation (`[H-01]`, `[H-02]`, `[H-04]`, `[M-01..M-06]`, `[L-02..L-04]`)
 - [ ] Test đỏ & fix `rate-limit-routes.ts` + `token-bucket.ts` (phân loại `/api/users/{password,mfa/*,account/delete*,parent-gate/*}`, bỏ hardcode salt)

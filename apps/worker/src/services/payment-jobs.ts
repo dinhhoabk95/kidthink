@@ -279,6 +279,7 @@ export async function runRecurringBillingRenewSweep(
           .where(
             and(
               eq(entitlements.userId, sub.userId),
+              eq(entitlements.source, "package_order"),
               inArray(entitlements.status, ["active", "grace_period"])
             )
           );
@@ -326,6 +327,7 @@ export async function runRecurringBillingRenewSweep(
           .where(
             and(
               eq(entitlements.userId, sub.userId),
+              eq(entitlements.source, "package_order"),
               eq(entitlements.status, "active")
             )
           );
@@ -406,6 +408,7 @@ export async function runRecurringDunningSweep(now = new Date()): Promise<{
           .where(
             and(
               eq(entitlements.userId, sub.userId),
+              eq(entitlements.source, "package_order"),
               inArray(entitlements.status, ["grace_period", "active"])
             )
           );

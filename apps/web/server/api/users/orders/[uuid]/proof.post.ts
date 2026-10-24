@@ -1,3 +1,4 @@
+import { writeAudit } from "@mindkid/audit";
 import {
   PROOF_ALLOWED_MIME_TYPES,
   PROOF_MAX_IMAGE_SIZE_BYTES,
@@ -24,14 +25,18 @@ import {
   isSvgContent,
   uploadPrivateAsset,
 } from "@mindkid/storage";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray, ne } from "drizzle-orm";
 import {
   defineEventHandler,
+  getHeader,
   getRouterParam,
   type H3Event,
   readMultipartFormData,
 } from "h3";
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import {
+  getVerifiedRemoteIp,
+  requireWebUserSession,
+} from "#server/utils/auth-runtime";
 import { invalidateUserEntitlementsCache } from "#server/utils/entitlements-runtime";
 
 interface ParsedProofInput {
@@ -131,9 +136,27 @@ async function grantSoftUnlockEntitlements(
   tx: DbTransaction,
   order: typeof paymentOrders.$inferSelect,
   softUnlockExpiresAt: Date
-): Promise<void> {
+): Promise<boolean> {
+  const [priorUnapprovedOrder] = await tx
+    .select()
+    .from(paymentOrders)
+    .where(
+      and(
+        eq(paymentOrders.userId, order.userId),
+        eq(paymentOrders.packageCode, order.packageCode),
+        ne(paymentOrders.id, order.id),
+        inArray(paymentOrders.status, ["rejected", "submitted", "under_review"])
+      )
+    )
+    .limit(1);
+
+  if (priorUnapprovedOrder) {
+    return false;
+  }
+
   const pkg = PACKAGE_CATALOG[order.packageCode];
   const entitlementKeysToGrant = pkg?.entitlements || [];
+  let grantedAny = false;
 
   for (const key of entitlementKeysToGrant) {
     const [existingEntitlement] = await tx
@@ -156,6 +179,7 @@ async function grantSoftUnlockEntitlements(
         status: "soft_unlock",
         expiresAt: softUnlockExpiresAt,
       });
+      grantedAny = true;
       continue;
     }
 
@@ -173,8 +197,34 @@ async function grantSoftUnlockEntitlements(
           updatedAt: new Date(),
         })
         .where(eq(entitlements.id, existingEntitlement.id));
+      grantedAny = true;
     }
   }
+
+  return grantedAny;
+}
+
+function assertOrderAcceptsProof(
+  order: typeof paymentOrders.$inferSelect,
+  now: Date
+): PaymentOrderStatus {
+  const currentStatus = order.status as PaymentOrderStatus;
+  const isExpiredPending =
+    (currentStatus === "pending" || currentStatus === "pending_proof") &&
+    order.expiresAt !== null &&
+    order.expiresAt.getTime() <= now.getTime();
+
+  if (
+    isExpiredPending ||
+    (currentStatus !== "submitted" &&
+      !canTransitionPaymentOrderStatus(currentStatus, "submitted"))
+  ) {
+    throw new InvalidStatusTransitionError({
+      current_status: currentStatus,
+      reason: "Đơn hàng đã kết thúc xử lý hoặc đã hết hạn.",
+    });
+  }
+  return currentStatus;
 }
 
 export default defineEventHandler(async (event) => {
@@ -200,43 +250,72 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError();
   }
 
-  const currentStatus = order.status as PaymentOrderStatus;
-  if (
-    currentStatus !== "submitted" &&
-    !canTransitionPaymentOrderStatus(currentStatus, "submitted")
-  ) {
-    throw new InvalidStatusTransitionError({
-      current_status: currentStatus,
-      reason: "Đơn hàng đã kết thúc xử lý hoặc đã hết hạn.",
-    });
-  }
+  const now = new Date();
+  assertOrderAcceptsProof(order, now);
 
   const { bankTxnRef, proofFile } = await extractProofFormData(event);
   const uploadedPath = await uploadProofFileIfProvided(proofFile, order.uuid);
-  const newProofPath = uploadedPath ?? order.proofPath;
-
-  const isFirstSubmission = currentStatus === "pending";
-  const softUnlockExpiresAt = computeSoftUnlockExpiresAt();
+  const softUnlockExpiresAt = computeSoftUnlockExpiresAt(now);
+  let grantedSoftUnlock = false;
 
   await db.transaction(async (tx) => {
+    const [lockedOrder] = await tx
+      .select()
+      .from(paymentOrders)
+      .where(
+        and(
+          eq(paymentOrders.uuid, orderUuid),
+          eq(paymentOrders.userId, session.user_id)
+        )
+      )
+      .for("update");
+
+    if (!lockedOrder) {
+      throw new NotFoundError();
+    }
+
+    const lockedStatus = assertOrderAcceptsProof(lockedOrder, now);
+    const isFirstSubmission =
+      lockedStatus === "pending" || lockedStatus === "pending_proof";
+    const newProofPath = uploadedPath ?? lockedOrder.proofPath;
+
     await tx
       .update(paymentOrders)
       .set({
         ...(isFirstSubmission
           ? {
               status: "submitted" as const,
-              submittedAt: new Date(),
+              submittedAt: now,
             }
           : {}),
         bankTxnRef,
         proofPath: newProofPath,
-        updatedAt: new Date(),
+        updatedAt: now,
       })
-      .where(eq(paymentOrders.id, order.id));
+      .where(eq(paymentOrders.id, lockedOrder.id));
 
     if (isFirstSubmission) {
-      await grantSoftUnlockEntitlements(tx, order, softUnlockExpiresAt);
+      grantedSoftUnlock = await grantSoftUnlockEntitlements(
+        tx,
+        lockedOrder,
+        softUnlockExpiresAt
+      );
     }
+
+    await writeAudit(tx, {
+      actor_type: "user",
+      actor_id: lockedOrder.userId,
+      action: "payment_proof_submitted",
+      entity_type: "payment_order",
+      entity_id: lockedOrder.uuid,
+      before_data: { status: lockedStatus },
+      after_data: {
+        status: "submitted",
+        soft_unlock_granted: grantedSoftUnlock,
+      },
+      ip_address: getVerifiedRemoteIp(event),
+      user_agent: getHeader(event, "user-agent") ?? null,
+    });
   });
 
   if (order.userId > 0) {
@@ -245,7 +324,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     status: "submitted",
-    soft_unlock_until: softUnlockExpiresAt,
+    soft_unlock_until: grantedSoftUnlock ? softUnlockExpiresAt : null,
     message:
       "Bạn đã có thể dùng ngay. Chúng tôi sẽ xác nhận trong 12 giờ làm việc.",
   };

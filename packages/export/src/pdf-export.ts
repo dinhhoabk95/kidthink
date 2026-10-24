@@ -128,10 +128,7 @@ export async function requestExportJob(
   options?: RequestExportJobOptions
 ): Promise<{ job_uuid: string; status: "queued" }> {
   const db = getDb();
-  const entitlements = options?.userEntitlements ?? [
-    "create_lesson_plan",
-    "export_pdf",
-  ];
+  const entitlements = options?.userEntitlements ?? [];
 
   // 1. Entitlement check
   if (!entitlements.includes("export_pdf")) {

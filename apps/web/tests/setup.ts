@@ -46,6 +46,7 @@ setTestEnv(
   "test-notification-token-encryption-key-0123456789"
 );
 setTestEnv("VIETQR_BANK_ID", "970407");
+setTestEnv("VIETQR_BANK_NAME", "Techcombank");
 setTestEnv("VIETQR_ACCOUNT_NO", "1234567890");
 setTestEnv("VIETQR_ACCOUNT_NAME", "MINDKID CORP");
 setTestEnv("VALKEY_URL", "redis://localhost:6380");

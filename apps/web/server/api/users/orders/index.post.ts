@@ -1,3 +1,4 @@
+import { writeAudit } from "@mindkid/audit";
 import { getDb, paymentOrders, users } from "@mindkid/db";
 import { UnauthenticatedError } from "@mindkid/errors/auth";
 import {
@@ -6,7 +7,7 @@ import {
   PackageNotFoundError,
   PackageNotSellableError,
 } from "@mindkid/errors/billing";
-import { InternalError } from "@mindkid/errors/common";
+import { InternalError, ServiceUnavailableError } from "@mindkid/errors/common";
 import {
   computeOrderPendingExpiresAt,
   formatTransferNote,
@@ -15,11 +16,12 @@ import {
   type VietQrPayloadResult,
 } from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
-import { defineEventHandler, readBody, setResponseStatus } from "h3";
+import { defineEventHandler, getHeader, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
 import { throwValidationError } from "#server/utils/api-error";
 import {
   assertUnrestrictedUser,
+  getVerifiedRemoteIp,
   requireWebUserSession,
 } from "#server/utils/auth-runtime";
 
@@ -105,6 +107,18 @@ export default defineEventHandler(async (event) => {
   const expiresAt = computeOrderPendingExpiresAt();
   const amountVnd = offer.price_vnd;
 
+  let vietQr: VietQrPayloadResult;
+  try {
+    vietQr = generateVietQrPayload({
+      amountVnd,
+      transferNote,
+    });
+  } catch {
+    throw new ServiceUnavailableError(
+      "Hệ thống thanh toán tạm thời chưa cấu hình tài khoản nhận chuyển khoản."
+    );
+  }
+
   const [insertedOrder] = await db
     .insert(paymentOrders)
     .values({
@@ -124,28 +138,21 @@ export default defineEventHandler(async (event) => {
     throw new InternalError("Tạo đơn hàng thất bại");
   }
 
-  let vietQr: VietQrPayloadResult;
-  try {
-    vietQr = generateVietQrPayload({
-      amountVnd,
-      transferNote,
-    });
-  } catch {
-    vietQr = {
-      qrPayload: `vietqr://970407/1234567890?amount=${amountVnd}&info=${encodeURIComponent(
-        transferNote
-      )}`,
-      qrImageUrl: `https://img.vietqr.io/image/970407-1234567890-compact2.png?amount=${amountVnd}&addInfo=${encodeURIComponent(
-        transferNote
-      )}`,
-      bankInfo: {
-        bankId: "970407",
-        bankName: "Techcombank",
-        accountNo: "1234567890",
-        accountName: "MINDKID CORP",
-      },
-    };
-  }
+  await writeAudit(db, {
+    actor_type: "user",
+    actor_id: userRecord.id,
+    action: "order_created",
+    entity_type: "payment_order",
+    entity_id: insertedOrder.uuid,
+    after_data: {
+      package_code: insertedOrder.packageCode,
+      offer_code: insertedOrder.offerCode,
+      amount_vnd: insertedOrder.amountVnd,
+      status: insertedOrder.status,
+    },
+    ip_address: getVerifiedRemoteIp(event),
+    user_agent: getHeader(event, "user-agent") ?? null,
+  });
 
   setResponseStatus(event, 201);
   return {
