@@ -25,6 +25,7 @@ import {
   deriveAgeBand,
 } from "@mindkid/shared";
 import { and, desc, eq, gte, sql } from "drizzle-orm";
+import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtime";
 import { debitCredits, refundCredits } from "./ai-credit.ts";
 import { validateAiReportEgress } from "./ai-egress-guard.ts";
 import { aiProvider } from "./ai-provider.ts";
@@ -363,10 +364,15 @@ export class AiAssistantService {
     });
 
     const safeLimit = Math.min(Math.max(1, options.limit ?? 5), 10);
-    const allowed = await allowedTiers({ kind: "user", user_id: "user" }, [
-      "play_login_games",
-      "play_standard_games",
-    ]);
+    const activeKeys = await resolveUserActiveEntitlements(userId);
+    const allowed = await allowedTiers(
+      {
+        kind: "user",
+        user_id: String(userId),
+        active_child_id: options.childUuid ?? "active",
+      },
+      activeKeys
+    );
 
     if (options.contentType === "lesson") {
       const lessonRows = await db

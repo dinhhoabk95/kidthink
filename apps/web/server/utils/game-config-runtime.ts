@@ -4,6 +4,7 @@ import {
   childProfiles,
   gameLevels,
   getOwnerDb,
+  lessons,
   playSessions,
 } from "@mindkid/db";
 import { isAppError, type JsonValue } from "@mindkid/errors/base";
@@ -124,12 +125,12 @@ async function fetchLevelAndTemplate(
   return { level: levelRow, template };
 }
 
-function isExemptFromDailyPlayCap(
+async function isExemptFromDailyPlayCap(
   options: GameConfigDeliveryOptions,
   event: H3Event,
   template: GameTemplate,
   ownedChild: typeof childProfiles.$inferSelect | null
-): boolean {
+): Promise<boolean> {
   if (
     options.isManagerPreview ||
     options.caller.kind !== "user" ||
@@ -144,7 +145,18 @@ function isExemptFromDailyPlayCap(
     return true;
   }
   const query = getQuery(event);
-  return typeof query.lesson === "string" && query.lesson.trim().length > 0;
+  const lessonCode =
+    typeof query.lesson === "string" ? query.lesson.trim() : "";
+  if (lessonCode.length === 0) {
+    return false;
+  }
+  const db = getOwnerDb();
+  const [publishedLesson] = await db
+    .select({ id: lessons.id })
+    .from(lessons)
+    .where(and(eq(lessons.code, lessonCode), eq(lessons.status, "published")))
+    .limit(1);
+  return Boolean(publishedLesson);
 }
 
 async function assertChildDailyPlayQuota(
@@ -209,7 +221,9 @@ async function runContentAccessGuard(
             isManagerPreview: options.isManagerPreview,
           }),
         checkQuotaRemaining: async () => {
-          if (isExemptFromDailyPlayCap(options, event, template, ownedChild)) {
+          if (
+            await isExemptFromDailyPlayCap(options, event, template, ownedChild)
+          ) {
             return true;
           }
           if (!ownedChild) {

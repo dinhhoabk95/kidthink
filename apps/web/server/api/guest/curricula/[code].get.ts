@@ -229,7 +229,10 @@ export default defineEventHandler(async (event) => {
     .from(curricula)
     .where(eq(curricula.code, code));
 
-  if (!curriculum || curriculum.status === "draft") {
+  if (
+    !curriculum ||
+    (curriculum.status !== "published" && curriculum.status !== "archived")
+  ) {
     throw new CurriculumNotFoundError(code);
   }
 

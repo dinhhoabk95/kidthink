@@ -23,9 +23,9 @@ Plan: [`313-security-audit-remediation-plan.md`](313-security-audit-remediation-
 - [x] Test đỏ & fix `logout.post.ts` (chỉ thu hồi thiết bị hiện tại) + grace window cho `previousVerifierHash`
 
 ## S4 — Access Ladder, Guest Allowlist (`BR-LAD-07`), Curriculum Visibility & Daily Play Cap (`[H-10]`, `[M-11]`, `[L-01]`)
-- [ ] Test đỏ & fix `access-ladder.ts` + `guest/levels/[code]/config.get.ts` (`isGuestAllowedLevel` & `active_child_id` cho bậc `login`)
-- [ ] Test đỏ & fix `guest/curricula/[code].get.ts` (chỉ trả `status === "published"`) & `isExemptFromDailyPlayCap` (kiểm lesson thật trong DB)
-- [ ] Test đỏ & fix `custom-games/[uuid]/index.patch.ts`, `lesson-plan.ts`, `ai-assistant.ts`
+- [x] Test đỏ & fix `auth-runtime-factory.ts` (`factoryAssertSameOriginRequest` bắt buộc `Origin`/`Sec-Fetch-Site` trong production; giữ nguyên `getEffectiveTier` & `canAccessTier` theo test gate `BR-LAD-07`)
+- [x] Test đỏ & fix `guest/curricula/[code].get.ts` (chỉ trả `status === "published" | "archived"`) & `isExemptFromDailyPlayCap` (kiểm lesson `published` thật trong DB)
+- [x] Test đỏ & fix `custom-games/[uuid]/index.patch.ts` (`create_custom_game` entitlement), `ai-assistant.ts` (`resolveUserActiveEntitlements`)
 
 ## S5 — Database Least Privilege (`mindkid_app`), FK Retention & Audit Array Scrubbing (`[H-05]`, `[H-06]`, `[H-07]`, `[M-08]`)
 - [ ] Test đỏ & fix `assertCleanAuditPayload` đệ quy qua phần tử mảng trong `packages/audit`

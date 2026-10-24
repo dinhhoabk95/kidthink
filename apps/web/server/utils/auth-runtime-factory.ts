@@ -73,6 +73,14 @@ export function factoryAssertSameOriginRequest(event: H3Event): void {
 
   const origin = getHeader(event, "origin");
   const host = getHeader(event, "host");
+  if (
+    process.env.NODE_ENV === "production" &&
+    !(origin && host) &&
+    fetchSite !== "same-origin" &&
+    fetchSite !== "same-site"
+  ) {
+    throw new CsrfInvalidError();
+  }
   if (!(origin && host)) {
     return;
   }
