@@ -602,25 +602,33 @@ export function estimateAudioDurationMs(
   mimeType: AllowedAudioMimeType,
   declaredDurationMs?: number
 ): number {
+  const buf = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+  let estimatedFromBuffer = Math.max(
+    100,
+    Math.round((buf.length / 8000) * 1000)
+  );
+  if (mimeType === "audio/wav" && buf.length >= 44) {
+    const byteRate = buf.readUInt32LE(28);
+    if (byteRate > 0) {
+      const dataBytes = Math.max(1, buf.length - 44);
+      estimatedFromBuffer = Math.max(
+        100,
+        Math.round((dataBytes / byteRate) * 1000)
+      );
+    }
+  }
+
   if (
     typeof declaredDurationMs === "number" &&
     Number.isFinite(declaredDurationMs) &&
     declaredDurationMs > 0
   ) {
-    return Math.round(declaredDurationMs);
+    return estimatedFromBuffer > MAX_AUDIO_DURATION_MS
+      ? estimatedFromBuffer
+      : Math.round(declaredDurationMs);
   }
 
-  const buf = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
-  if (mimeType === "audio/wav" && buf.length >= 44) {
-    const byteRate = buf.readUInt32LE(28);
-    if (byteRate > 0) {
-      const dataBytes = Math.max(1, buf.length - 44);
-      return Math.max(100, Math.round((dataBytes / byteRate) * 1000));
-    }
-  }
-
-  // Estimate duration assuming 64 kbps (8,000 bytes/s) compressed stream
-  return Math.max(100, Math.round((buf.length / 8000) * 1000));
+  return estimatedFromBuffer;
 }
 
 export function normalizeAudioAsset(
@@ -694,15 +702,13 @@ export async function uploadPublicAudio(
   if (options.key.startsWith("http://") || options.key.startsWith("https://")) {
     throw new Error("BR-AST-05: Audio path must be relative");
   }
-  const normalizedPath = options.key.startsWith("/")
-    ? options.key.slice(1)
-    : options.key;
+  const normalizedPath = sanitizeRelativeStoragePath(options.key);
 
   if (inMemoryPublicStore.has(normalizedPath)) {
     throw new Error("BR-AST-06: Audio file overwrite is forbidden");
   }
 
-  inMemoryPublicStore.set(normalizedPath, {
+  setBoundedStoreEntry(inMemoryPublicStore, normalizedPath, {
     body: options.body,
     contentType: options.contentType,
     createdAt: new Date(),

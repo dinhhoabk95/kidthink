@@ -50,7 +50,6 @@ catalog:
 
   # Auth — Task #85: nuxt-auth-utils >=0.5.30 for opaque session locator projection
   "nuxt-auth-utils": ^0.5.30
-  jose: ^6.1.0
   otpauth: ^9.5.0
   openid-client: ^6.8.0
 

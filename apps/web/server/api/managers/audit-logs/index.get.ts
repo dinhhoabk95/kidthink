@@ -65,7 +65,19 @@ function validateAuditDateRange(
   const fromDate = fromStr ? new Date(fromStr) : undefined;
   const toDate = toStr ? new Date(toStr) : undefined;
 
+  if (fromDate && Number.isNaN(fromDate.getTime())) {
+    throw new ValidationError("Tham số thời gian 'from' không hợp lệ");
+  }
+  if (toDate && Number.isNaN(toDate.getTime())) {
+    throw new ValidationError("Tham số thời gian 'to' không hợp lệ");
+  }
+
   if (fromDate && toDate) {
+    if (toDate.getTime() < fromDate.getTime()) {
+      throw new ValidationError(
+        "Thời gian kết thúc 'to' phải lớn hơn hoặc bằng 'from'"
+      );
+    }
     const diffDays =
       (toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24);
     if (diffDays > 90) {

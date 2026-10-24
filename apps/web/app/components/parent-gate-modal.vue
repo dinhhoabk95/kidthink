@@ -207,6 +207,7 @@
     // trống cho tới khi trust hết hạn.
 
     try {
+      localExpectedAnswer.value = null;
       challenge.value = await api<ParentGateChallenge>(
         "/api/users/parent-gate/challenge",
         {
@@ -216,7 +217,9 @@
         }
       );
     } catch {
-      generateLocalChallenge();
+      challenge.value = null;
+      errorMessage.value =
+        "Không thể tải câu hỏi xác nhận từ máy chủ. Vui lòng thử lại.";
     }
   }
 
@@ -260,7 +263,7 @@
     isVerifying.value = true;
     errorMessage.value = null;
 
-    if (localExpectedAnswer.value !== null) {
+    if (props.clientOnly && localExpectedAnswer.value !== null) {
       if (Number(answer.value) === localExpectedAnswer.value) {
         markVerified("client_verified");
       } else {

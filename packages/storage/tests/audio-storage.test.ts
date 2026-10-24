@@ -105,11 +105,18 @@ describe("normalizeAudioAsset (BR-AST-01, BR-AST-02, BR-AST-03)", () => {
     );
   });
 
-  it("BR-AST-01: từ chối file có thời lượng vượt quá 30 giây (AUDIO_DURATION_EXCEEDED)", () => {
+  it("BR-AST-01: từ chối file có thời lượng vượt quá 30 giây kể cả khi client khai báo declaredDurationMs giả nhỏ hơn ([M-12])", () => {
     const ogg = audioHeader([0x4f, 0x67, 0x67, 0x53], 8000);
     expect(() =>
       normalizeAudioAsset(ogg, {
         declaredDurationMs: MAX_AUDIO_DURATION_MS + 1,
+      })
+    ).toThrow("AUDIO_DURATION_EXCEEDED");
+
+    const longBuffer = audioHeader([0x4f, 0x67, 0x67, 0x53], 300_000);
+    expect(() =>
+      normalizeAudioAsset(longBuffer, {
+        declaredDurationMs: 1000,
       })
     ).toThrow("AUDIO_DURATION_EXCEEDED");
   });
@@ -167,6 +174,15 @@ describe("buildRelativeAudioPath & uploadPublicAudio (BR-AST-05, BR-AST-06)", ()
         contentType: "audio/ogg",
       })
     ).rejects.toThrow("BR-AST-05");
+
+    // [M-12] BR-IMG-05: Cấm path traversal trong uploadPublicAudio
+    await expect(
+      uploadPublicAudio({
+        key: "audio/2026/../../etc/passwd.ogg",
+        body,
+        contentType: "audio/ogg",
+      })
+    ).rejects.toThrow("BR-IMG-05");
 
     expect(deletePublicAudio(key)).toBe(true);
     expect(getPublicAudio(key)).toBeUndefined();

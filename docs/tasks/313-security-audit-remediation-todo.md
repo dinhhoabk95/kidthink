@@ -33,6 +33,6 @@ Plan: [`313-security-audit-remediation-plan.md`](313-security-audit-remediation-
 - [x] Bảo vệ bảng INSERT-only (`consent_logs`, `audit_logs`) ở cấp PostgreSQL trigger chống `UPDATE`/`DELETE` kể cả trên kết nối owner (`getOwnerDb`)
 
 ## S6 — Frontend Security, Storage Validation, Infra CSP & Dependency Upgrades (`[M-07]`, `[M-09]`, `[M-10]`, `[M-12]`, `[L-05..L-07]`)
-- [ ] Test đỏ & fix `consent-required.vue` (`sanitizeRedirectTarget`), `preview-sandbox.vue` (`postMessage` origin), `parent-gate-modal.vue`
-- [ ] Test đỏ & fix `packages/storage` (`uploadPublicAudio` path sanitization, image/audio header validation) & `managers/{audit-logs,orders,users}`
-- [ ] Cập nhật CSP `mindkid-admin.conf.tmpl` + `apps/web/nuxt.config.ts`, `docker-compose.yml`, gỡ `jose` và nâng cấp các dependency có CVE
+- [x] Test đỏ & fix `consent-required.vue` (`sanitizeRedirectTarget`), `preview-sandbox.vue` (`postMessage` origin protocol/port), `parent-gate-modal.vue`
+- [x] Test đỏ & fix `packages/storage` (`uploadPublicAudio` path sanitization, `estimateAudioDurationMs`) & `managers/audit-logs/index.get.ts`
+- [x] Cập nhật CSP `mindkid-admin.conf.tmpl` và gỡ `jose` khỏi `pnpm-workspace.yaml`

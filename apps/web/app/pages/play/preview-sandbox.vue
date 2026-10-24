@@ -260,8 +260,10 @@
       if (currentHost.includes(".")) {
         const baseDomain = currentHost.replace(ADMIN_PREFIX_REGEX, "");
         if (
-          originUrl.hostname === baseDomain ||
-          originUrl.hostname === `admin.${baseDomain}`
+          originUrl.protocol === window.location.protocol &&
+          originUrl.port === window.location.port &&
+          (originUrl.hostname === baseDomain ||
+            originUrl.hostname === `admin.${baseDomain}`)
         ) {
           return true;
         }

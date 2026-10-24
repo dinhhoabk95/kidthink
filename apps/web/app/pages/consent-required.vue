@@ -209,6 +209,7 @@
 
 <script lang="ts" setup>
   import { type ApiError, normalizeApiError } from "@mindkid/errors/client";
+  import { sanitizeRedirectTarget } from "@mindkid/shared/client";
   import { computed, onMounted, reactive, ref } from "vue";
   import {
     definePageMeta,
@@ -328,18 +329,11 @@
 
   function getSafeReturnTo(): string {
     const rawReturnTo = route.query?.return_to;
-    const returnTo =
-      typeof rawReturnTo === "string" && rawReturnTo.trim().length > 0
-        ? rawReturnTo.trim()
-        : "/me";
-    if (
-      returnTo.startsWith("/") &&
-      !returnTo.startsWith("//") &&
-      returnTo !== "/consent-required"
-    ) {
-      return returnTo;
-    }
-    return "/me";
+    const sanitized = sanitizeRedirectTarget(
+      typeof rawReturnTo === "string" ? rawReturnTo : undefined,
+      "/me"
+    );
+    return sanitized === "/consent-required" ? "/me" : sanitized;
   }
 
   async function loadConsents(): Promise<void> {
