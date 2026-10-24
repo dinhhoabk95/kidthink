@@ -110,29 +110,29 @@
                 {{ child.display_name }}
               </span>
               <span
-                class="block text-xs font-semibold text-surface-500 dark:text-surface-400"
+                class="block text-sm font-semibold text-surface-600 dark:text-surface-400"
               >
                 {{ child.age_band }}
                 tuổi
               </span>
             </span>
             <div
-              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface-100 text-surface-400 transition-colors group-hover:bg-brand-50 group-hover:text-brand-600 dark:bg-surface-700 dark:text-surface-400 dark:group-hover:bg-brand-950/60 dark:group-hover:text-brand-400"
+              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-surface-100 text-surface-500 transition-colors group-hover:bg-brand-50 group-hover:text-brand-600 dark:bg-surface-700 dark:text-surface-300 dark:group-hover:bg-brand-950/60 dark:group-hover:text-brand-400"
             >
               <UIcon class="h-5 w-5" name="i-lucide-chevron-right" />
             </div>
           </button>
           <div
-            class="flex items-center justify-end gap-3 border-t border-surface-100 pt-2 text-xs font-semibold dark:border-surface-700"
+            class="flex flex-wrap items-center justify-end gap-2 border-t border-surface-100 pt-2 text-sm font-semibold dark:border-surface-700"
           >
             <NuxtLink
-              class="text-surface-600 hover:text-brand-600 dark:text-surface-400 dark:hover:text-brand-400"
+              class="inline-flex min-h-11 items-center rounded-xl px-3 text-surface-600 transition-colors hover:bg-surface-100 hover:text-brand-600 dark:text-surface-300 dark:hover:bg-surface-700 dark:hover:text-brand-400"
               :to="`/me/children/${child.uuid}/edit`"
             >
               Sửa hồ sơ
             </NuxtLink>
             <NuxtLink
-              class="text-brand-600 hover:text-brand-700 dark:text-brand-400"
+              class="inline-flex min-h-11 items-center rounded-xl px-3 text-brand-600 transition-colors hover:bg-brand-50 hover:text-brand-700 dark:text-brand-400 dark:hover:bg-brand-950/50"
               :to="`/me/children/${child.uuid}`"
             >
               Quản lý hồ sơ
@@ -151,7 +151,7 @@
         </NuxtLink>
       </div>
 
-      <!-- Archived Children Section (child-profile-archive.md §7.1) -->
+      <!-- Archived Children Section -->
       <div
         class="space-y-3 border-t border-surface-200 pt-5 dark:border-surface-700"
         v-if="archivedChildren.length > 0"
@@ -167,23 +167,23 @@
             v-for="child in archivedChildren"
             :key="child.uuid"
           >
-            <div class="flex items-center gap-3 min-w-0">
+            <div class="flex min-w-0 items-center gap-3">
               <span aria-hidden="true" class="text-xl">
                 {{ resolveAvatarEmoji(child.avatar_id) }}
               </span>
               <div class="min-w-0">
                 <p
-                  class="truncate font-bold text-sm text-surface-800 dark:text-surface-200"
+                  class="truncate text-sm font-bold text-surface-800 dark:text-surface-200"
                 >
                   {{ child.display_name }}
                 </p>
-                <p class="text-xs text-surface-500">
+                <p class="text-sm text-surface-600 dark:text-surface-400">
                   Đã lưu trữ · {{ child.age_band }} tuổi
                 </p>
               </div>
             </div>
             <NuxtLink
-              class="shrink-0 rounded-xl border border-surface-300 bg-white px-3 py-1.5 text-xs font-bold text-surface-800 hover:bg-surface-100 dark:border-surface-600 dark:bg-surface-700 dark:text-surface-100"
+              class="inline-flex min-h-11 shrink-0 items-center justify-center rounded-2xl border-2 border-surface-300 bg-white px-3.5 py-2 text-sm font-bold text-surface-800 hover:bg-surface-100 dark:border-surface-600 dark:bg-surface-700 dark:text-surface-100"
               :to="`/me/children/${child.uuid}`"
             >
               Chi tiết
@@ -192,7 +192,7 @@
         </ul>
       </div>
 
-      <!-- Pending Deletion Children Section (child-profile-archive.md §7.1) -->
+      <!-- Pending Deletion Children Section -->
       <div
         class="space-y-3 border-t border-surface-200 pt-5 dark:border-surface-700"
         v-if="pendingDeletionChildren.length > 0"
@@ -208,23 +208,23 @@
             v-for="child in pendingDeletionChildren"
             :key="child.uuid"
           >
-            <div class="flex items-center gap-3 min-w-0">
+            <div class="flex min-w-0 items-center gap-3">
               <span aria-hidden="true" class="text-xl">
                 {{ resolveAvatarEmoji(child.avatar_id) }}
               </span>
               <div class="min-w-0">
                 <p
-                  class="truncate font-bold text-sm text-amber-950 dark:text-amber-100"
+                  class="truncate text-sm font-bold text-amber-950 dark:text-amber-100"
                 >
                   {{ child.display_name }}
                 </p>
-                <p class="text-xs text-amber-800 dark:text-amber-300">
+                <p class="text-sm text-amber-800 dark:text-amber-300">
                   Chờ xoá vĩnh viễn
                 </p>
               </div>
             </div>
             <NuxtLink
-              class="shrink-0 rounded-xl bg-amber-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-amber-700"
+              class="inline-flex min-h-11 shrink-0 items-center justify-center rounded-2xl bg-amber-600 px-3.5 py-2 text-sm font-bold text-white hover:bg-amber-700"
               :to="`/me/children/${child.uuid}`"
             >
               Hoàn tác
@@ -255,16 +255,6 @@
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
   import { resolveAvatarEmoji } from "~/utils/child-avatar";
 
-  /**
-   * Màn hình chọn trẻ — mục 3 của
-   * `docs/specs/04-play/play-entry-and-profile-select.md`.
-   *
-   * Đặt `active_child_id` là việc của `POST /api/users/children/{uuid}/activate`
-   * (`D-BY`, sở hữu bởi `docs/specs/03-account/child-profile-switching.md`):
-   * endpoint đó kiểm ownership ở DB, ép Parent Gate khi **đổi** trẻ
-   * (`BR-PEN-01`), và huỷ phiên chơi dở của trẻ trước. Trang này Cấm — NEVER
-   * tự ghi cookie.
-   */
   definePageMeta({ middleware: ["user-auth"] });
 
   interface ChildListItem {

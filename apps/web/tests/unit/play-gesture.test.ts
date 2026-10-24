@@ -244,7 +244,7 @@ describe("usePlayGesture — đường bàn phím (Task #260 I11)", () => {
     expect(onMiss).not.toHaveBeenCalled();
   });
 
-  it("bề mặt chạm-chọn (không có ô đích): Enter vẫn gửi tap ngay", () => {
+  it("bề mặt chạm-chọn (không có ô đích): Enter vẫn gửi tap ngay và không giữ stagedEntityId", () => {
     const { gesture, session } = makeHarness([
       { id: "opt-1", role: "source" },
       { id: "opt-2", role: "source" },
@@ -257,6 +257,7 @@ describe("usePlayGesture — đường bàn phím (Task #260 I11)", () => {
     gesture.handleAccessibleEntityTap(option);
 
     expect(session.dispatched.map((a) => a.type)).toEqual(["tap_item"]);
+    expect(gesture.stagedEntityId.value).toBeNull();
   });
 });
 
@@ -333,6 +334,28 @@ describe("usePlayGesture — chạm ngoài slot và chạm lại minh hoạ (Tas
     expect(session.dispatched).toHaveLength(0);
     expect(speakPrompt).not.toHaveBeenCalled();
     expect(onMiss).not.toHaveBeenCalled();
+  });
+
+  it("khi GT-000 chuyển sang bước kế (currentStepIndex tăng trong dispatch): không gọi speakKeyword đè câu dẫn bước mới", () => {
+    const { gesture, session, speakPrompt, onSuccess } = makeTapSelectHarness([
+      { id: "opt-1", role: "source" },
+      { id: "opt-2", role: "source" },
+    ]);
+    Object.assign(session, { currentStepIndex: 1 });
+    const origValidate = session.validateAction.bind(session);
+    session.validateAction = (action: GameAction) => {
+      const res = origValidate(action);
+      if (res.valid) {
+        Object.assign(session, { currentStepIndex: 2 });
+      }
+      return res;
+    };
+
+    gesture.dispatchGesture({ type: "tap", x: 100, y: 100, timeMs: 0 });
+
+    expect(session.dispatched).toHaveLength(1);
+    expect(onSuccess).toHaveBeenCalledTimes(1);
+    expect(speakPrompt).not.toHaveBeenCalled();
   });
 
   it("từ khoá có mp3: phát mp3 trước, TTS chỉ khi mp3 lỗi (Task #274 S7b)", () => {

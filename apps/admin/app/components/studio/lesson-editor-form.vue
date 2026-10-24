@@ -3,20 +3,22 @@
     class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 p-6 space-y-4 shadow-sm"
   >
     <div
-      class="flex justify-between items-center border-b pb-3 dark:border-surface-700"
+      class="flex flex-wrap justify-between items-center gap-3 border-b pb-3 dark:border-surface-700"
     >
-      <div>
-        <h2 class="text-lg font-bold text-surface-900 dark:text-white">
-          {{ lesson.code || 'Bài học mới' }}
+      <div class="min-w-0">
+        <h2
+          class="text-lg font-bold text-surface-900 dark:text-white break-words"
+        >
+          {{ lesson.code || "Bài học mới" }}
           (v{{ lesson.content_version || 1 }})
         </h2>
-        <span class="text-xs text-surface-400 font-mono"
-          >{{ autosaveStatus || 'Tự động lưu sau mỗi 30 giây' }}</span
-        >
+        <span class="text-xs text-surface-400 font-mono">{{
+          autosaveStatus || "Tự động lưu sau mỗi 30 giây"
+        }}</span>
       </div>
 
       <button
-        class="px-3 py-1.5 text-xs font-bold rounded-xl bg-surface-100 text-surface-600 hover:bg-surface-200"
+        class="min-h-11 inline-flex items-center justify-center px-3 py-1.5 text-xs font-bold rounded-xl bg-surface-100 text-surface-600 hover:bg-surface-200 shrink-0"
         type="button"
         @click="emit('close')"
       >
@@ -32,7 +34,7 @@
           >Tiêu đề bài học *</label
         >
         <input
-          class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+          class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
           id="lesson-title"
           placeholder="Ví dụ: Khám phá số lượng 5 và các hình tròn"
           type="text"
@@ -40,7 +42,7 @@
         >
       </div>
 
-      <div class="grid grid-cols-3 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
           <label
             class="block text-xs font-bold text-surface-500 mb-1"
@@ -48,7 +50,7 @@
             >Tuổi tối thiểu</label
           >
           <input
-            class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+            class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
             id="lesson-age-min"
             max="6"
             min="3"
@@ -63,7 +65,7 @@
             >Tuổi tối đa</label
           >
           <input
-            class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+            class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
             id="lesson-age-max"
             max="6"
             min="3"
@@ -78,7 +80,7 @@
             >Thời lượng (5–45 phút)</label
           >
           <input
-            class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+            class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
             id="lesson-est-mins"
             max="45"
             min="5"
@@ -96,7 +98,7 @@
           Hướng dẫn cho người lớn (Guide - trả lời đủ 5 phần) *
         </label>
         <textarea
-          class="w-full min-h-24 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none text-sm"
+          class="w-full min-h-24 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
           id="lesson-guide"
           placeholder="1. Mục tiêu; 2. Chuẩn bị; 3. Mở đầu; 4. Khi trẻ làm được; 5. Khi trẻ cần giúp"
           rows="4"
@@ -104,7 +106,7 @@
         />
       </div>
 
-      <div class="grid grid-cols-2 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label
             class="block text-xs font-bold text-surface-500 mb-1"
@@ -112,7 +114,7 @@
             >Khởi động (Warm-up 2–5 phút)</label
           >
           <input
-            class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+            class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
             id="lesson-warmup"
             placeholder="Hát bài hát đếm ngón tay"
             type="text"
@@ -126,7 +128,7 @@
             >Đúc kết / Phản hồi (Reflection)</label
           >
           <input
-            class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+            class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
             id="lesson-reflection"
             placeholder="Hỏi trẻ cảm nhận và đếm lại đồ vật quanh phòng"
             type="text"
@@ -143,7 +145,7 @@
           Đánh giá quan sát (Assessment - hành vi cụ thể quan sát được) *
         </label>
         <input
-          class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+          class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
           id="lesson-assessment"
           placeholder="Bé chỉ và đếm chính xác nhóm 5 đồ vật trong 3 lần thử"
           type="text"
@@ -158,7 +160,7 @@
           >Mở rộng tại nhà (Extension - tuỳ chọn)</label
         >
         <input
-          class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+          class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
           id="lesson-extension"
           placeholder="Cùng mẹ xếp bát đũa cho bữa tối"
           type="text"
@@ -169,7 +171,7 @@
 
     <div class="flex justify-end gap-3 pt-4 border-t dark:border-surface-700">
       <button
-        class="px-5 py-2.5 rounded-2xl bg-brand-600 text-white font-semibold text-sm hover:bg-brand-700"
+        class="min-h-11 inline-flex items-center justify-center px-5 py-2.5 rounded-2xl bg-brand-600 text-white font-semibold text-sm hover:bg-brand-700"
         type="button"
         @click="emit('save')"
       >

@@ -8,7 +8,7 @@
       <div class="mb-6 text-center">
         <NuxtLink
           aria-label="Về trang chủ MindKid"
-          class="mb-3 inline-flex items-center gap-2 font-heading text-2xl font-bold text-brand-600 transition-transform active:scale-95 dark:text-brand-400"
+          class="mb-3 inline-flex min-h-11 items-center gap-2 rounded-xl px-2 font-heading text-2xl font-bold text-brand-600 transition-transform focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 active:scale-95 dark:text-brand-400"
           to="/"
         >
           <UIcon
@@ -22,7 +22,7 @@
         >
           Quên mật khẩu
         </h1>
-        <p class="mt-1 text-sm text-surface-600 dark:text-surface-400">
+        <p class="mt-1 text-base text-surface-600 dark:text-surface-400">
           Nhập địa chỉ email của bạn để nhận hướng dẫn đặt lại mật khẩu.
         </p>
       </div>
@@ -83,7 +83,7 @@
         </div>
 
         <button
-          class="mt-2 flex min-h-12 w-full items-center justify-center rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-6 py-3 font-heading text-base font-bold text-white shadow-[0_4px_0_var(--color-brand-700)] transition-all hover:bg-brand-500 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-brand-700)] disabled:cursor-not-allowed disabled:opacity-60"
+          class="mt-2 flex min-h-12 w-full items-center justify-center rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-6 py-3 font-heading text-base font-bold text-white shadow-[0_4px_0_var(--color-brand-700)] transition-all hover:bg-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-brand-700)] disabled:cursor-not-allowed disabled:opacity-60"
           data-testid="forgot-submit-btn"
           type="submit"
           :disabled="isSubmitting || !email"
@@ -97,7 +97,8 @@
         class="mt-6 border-t border-surface-200 pt-4 text-center dark:border-surface-700"
       >
         <NuxtLink
-          class="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand-600 transition-colors hover:text-brand-500 dark:text-brand-400"
+          class="inline-flex min-h-11 items-center gap-1.5 rounded-xl px-2 text-sm font-semibold text-brand-600 transition-colors hover:text-brand-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 dark:text-brand-400"
+          data-testid="back-to-login-link"
           to="/login"
         >
           <UIcon class="h-4 w-4" name="i-lucide-arrow-left" />
@@ -111,6 +112,7 @@
 <script lang="ts" setup>
   import { normalizeApiError } from "@mindkid/errors/client";
   import { ref } from "vue";
+  import { definePageMeta, useSeoMeta } from "#imports";
   import { useApi } from "~/composables/use-api";
 
   definePageMeta({
@@ -150,4 +152,10 @@
       isSubmitting.value = false;
     }
   }
+
+  useSeoMeta({
+    title: "Quên mật khẩu — MindKid",
+    description:
+      "Khôi phục mật khẩu tài khoản phụ huynh trên nền tảng học toán tư duy MindKid",
+  });
 </script>

@@ -112,15 +112,15 @@ export function generateRecoveryCodes(count = 10): string[] {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
   for (let i = 0; i < count; i++) {
-    const bytes = randomBytes(6);
+    const bytes = randomBytes(12);
     let part1 = "";
     let part2 = "";
     let part3 = "";
 
     for (let j = 0; j < 4; j++) {
       const b0 = bytes[j] ?? 0;
-      const b1 = bytes[j + 1] ?? 0;
-      const b2 = bytes[j + 2] ?? 0;
+      const b1 = bytes[j + 4] ?? 0;
+      const b2 = bytes[j + 8] ?? 0;
       part1 += chars[b0 % chars.length] ?? "";
       part2 += chars[b1 % chars.length] ?? "";
       part3 += chars[b2 % chars.length] ?? "";

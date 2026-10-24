@@ -11,7 +11,7 @@
           v-if="isArchived"
         >
           <div
-            class="inline-block text-xs font-bold px-4 py-1.5 rounded-full bg-surface-100 text-surface-800 mb-4"
+            class="inline-block text-sm font-bold px-4 py-1.5 rounded-full bg-surface-100 text-surface-800 mb-4"
           >
             Đã ngừng phát hành
           </div>
@@ -33,7 +33,7 @@
               v-for="sug in archivedSuggestions"
               :key="sug.code"
             >
-              <div class="flex justify-between text-xs font-bold mb-2">
+              <div class="flex justify-between text-sm font-bold mb-2">
                 <span
                   >{{ sug.target_age.min }}–{{ sug.target_age.max }}
                   tuổi</span
@@ -42,14 +42,14 @@
               </div>
               <h2 class="text-base font-bold mb-4 flex-1">
                 <NuxtLink
-                  class="text-surface-900 hover:text-brand-600"
+                  class="inline-flex items-center min-h-11 text-surface-900 hover:text-brand-600"
                   :to="`/programs/${sug.code}`"
                 >
                   {{ sug.title }}
                 </NuxtLink>
               </h2>
               <NuxtLink
-                class="text-sm font-bold text-brand-600 hover:underline"
+                class="inline-flex items-center min-h-11 text-sm font-bold text-brand-600 hover:underline"
                 :to="`/programs/${sug.code}`"
               >
                 Xem lộ trình mới →
@@ -58,7 +58,7 @@
           </div>
 
           <NuxtLink
-            class="inline-flex items-center px-6 py-3 text-sm font-bold rounded-2xl bg-surface-200 text-surface-800 hover:bg-surface-300"
+            class="inline-flex items-center min-h-11 px-6 py-3 text-sm font-bold rounded-2xl bg-surface-200 text-surface-800 hover:bg-surface-300"
             to="/programs"
           >
             ← Khám phá tất cả chương trình
@@ -79,7 +79,7 @@
             hướng.
           </p>
           <NuxtLink
-            class="inline-flex items-center px-5 py-2.5 text-sm font-bold rounded-xl bg-brand-600 text-white hover:bg-brand-700"
+            class="inline-flex items-center min-h-11 px-5 py-2.5 text-sm font-bold rounded-2xl bg-brand-600 text-white hover:bg-brand-700"
             to="/programs"
           >
             ← Quay lại danh sách chương trình
@@ -105,15 +105,21 @@
         <div class="space-y-8" v-else-if="program">
           <!-- Breadcrumbs -->
           <nav aria-label="Đường dẫn trang" class="mb-4">
-            <ol class="flex items-center gap-2 text-sm text-surface-600">
+            <ol
+              class="flex flex-wrap items-center gap-2 text-sm text-surface-600"
+            >
               <li>
-                <NuxtLink class="hover:text-brand-600" to="/"
+                <NuxtLink
+                  class="inline-flex items-center min-h-11 hover:text-brand-600"
+                  to="/"
                   >Trang chủ</NuxtLink
                 >
               </li>
               <li aria-hidden="true" class="text-surface-400">/</li>
               <li>
-                <NuxtLink class="hover:text-brand-600" to="/programs"
+                <NuxtLink
+                  class="inline-flex items-center min-h-11 hover:text-brand-600"
+                  to="/programs"
                   >Chương trình</NuxtLink
                 >
               </li>
@@ -128,7 +134,7 @@
           <section
             class="bg-white border-3 border-surface-200 rounded-3xl p-6 md:p-8 shadow-sm"
           >
-            <div class="flex gap-3 mb-4">
+            <div class="flex flex-wrap gap-3 mb-4">
               <span
                 class="text-sm font-bold px-3 py-1.5 rounded-xl bg-surface-100 text-surface-700"
               >
@@ -137,7 +143,7 @@
                 tuổi
               </span>
               <span
-                class="text-xs font-bold px-3 py-1.5 rounded-xl bg-surface-100 text-surface-800"
+                class="text-sm font-bold px-3 py-1.5 rounded-xl bg-surface-100 text-surface-800"
               >
                 {{ getTierLabel(program.access_tier) }}
               </span>
@@ -152,7 +158,10 @@
             <p
               class="text-base md:text-lg text-surface-600 leading-relaxed max-w-3xl mb-8"
             >
-              {{ program.description || 'Chương trình phát triển tư duy toán học bài bản, rèn luyện tư duy logic, hình học không gian và kỹ năng giải quyết vấn đề qua các hoạt động trải nghiệm tương tác.' }}
+              {{
+                program.description ||
+                  "Chương trình phát triển tư duy toán học bài bản, rèn luyện tư duy logic, hình học không gian và kỹ năng giải quyết vấn đề qua các hoạt động trải nghiệm tương tác."
+              }}
             </p>
 
             <div
@@ -166,7 +175,7 @@
                     >{{ program.duration_weeks }}
                     tuần</span
                   >
-                  <span class="text-xs text-surface-500"
+                  <span class="text-sm text-surface-600"
                     >Thời lượng lộ trình</span
                   >
                 </div>
@@ -179,7 +188,7 @@
                     >{{ program.sessions_per_week }}
                     buổi / tuần</span
                   >
-                  <span class="text-xs text-surface-500">Nhịp độ học tập</span>
+                  <span class="text-sm text-surface-600">Nhịp độ học tập</span>
                 </div>
               </div>
               <div class="flex items-center gap-3">
@@ -189,7 +198,7 @@
                     class="block font-heading text-lg font-bold text-surface-900"
                     >6 Năng lực</span
                   >
-                  <span class="text-xs text-surface-500"
+                  <span class="text-sm text-surface-600"
                     >Phát triển toàn diện</span
                   >
                 </div>
@@ -201,7 +210,9 @@
           <div class="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8">
             <!-- Left: Weeks Syllabus -->
             <div>
-              <div class="flex justify-between items-baseline mb-6">
+              <div
+                class="flex flex-wrap justify-between items-baseline gap-2 mb-6"
+              >
                 <h2 class="font-heading text-xl md:text-2xl font-bold">
                   Cấu trúc lộ trình học tập
                 </h2>
@@ -216,9 +227,11 @@
                   v-for="week in program.weeks"
                   :key="week.week_no"
                 >
-                  <div class="flex justify-between items-start gap-4">
+                  <div
+                    class="flex flex-col sm:flex-row sm:justify-between items-start gap-2 sm:gap-4"
+                  >
                     <div class="flex flex-col gap-1">
-                      <span class="text-xs font-extrabold text-brand-600"
+                      <span class="text-sm font-extrabold text-brand-600"
                         >Tuần {{ week.week_no }}</span
                       >
                       <h3 class="text-base md:text-lg font-bold leading-snug">
@@ -226,7 +239,7 @@
                       </h3>
                     </div>
                     <div
-                      class="flex items-center gap-1.5 text-xs text-surface-500 whitespace-nowrap"
+                      class="flex items-center gap-1.5 text-sm text-surface-600 whitespace-nowrap"
                     >
                       <span>{{ week.session_count }} buổi</span>
                       <span>•</span>
@@ -239,35 +252,40 @@
                     class="mt-4 space-y-3"
                     v-if="week.items && week.items.length > 0"
                   >
-                    <div
-                      class="flex items-center gap-3.5 bg-surface-50 p-3.5 rounded-xl border border-surface-200"
+                    <NuxtLink
+                      class="flex flex-wrap sm:flex-nowrap items-center gap-3.5 bg-surface-50 hover:bg-surface-100 p-3.5 rounded-2xl border-2 border-surface-200 hover:border-brand-500 transition-colors min-h-11"
                       v-for="(item, idx) in week.items"
                       :key="`${item.code}-${idx}`"
+                      :to="getItemHref(item)"
                     >
                       <div>
                         <span
-                          class="text-xs font-bold px-2 py-1 rounded-xl bg-surface-100 text-brand-700"
+                          class="text-sm font-bold px-2.5 py-1 rounded-xl bg-surface-100 text-brand-700 inline-block"
                           v-if="item.entity_type === 'lesson'"
                           >Bài học</span
                         >
                         <span
-                          class="text-xs font-bold px-2 py-1 rounded-xl bg-surface-100 text-surface-800"
+                          class="text-sm font-bold px-2.5 py-1 rounded-xl bg-surface-100 text-surface-800 inline-block"
                           v-else
                           >Trò chơi</span
                         >
                       </div>
-                      <div class="flex-1">
-                        <h4 class="text-sm font-bold m-0">{{ item.title }}</h4>
-                        <span class="text-xs text-surface-500"
+                      <div class="flex-1 min-w-0">
+                        <h4 class="text-base font-bold m-0 text-surface-900">
+                          {{ item.title }}
+                        </h4>
+                        <span class="text-sm text-surface-600"
                           >{{ item.estimated_minutes }}
                           phút</span
                         >
                       </div>
                       <span
-                        class="text-xs font-bold px-2 py-1 rounded-xl bg-surface-200 text-surface-700"
-                        >{{ getTierLabel(item.access_tier) }}</span
+                        class="text-sm font-bold px-2.5 py-1 rounded-xl bg-surface-200 text-surface-700"
+                        >{{
+                          getTierLabel(item.access_tier)
+                        }}</span
                       >
-                    </div>
+                    </NuxtLink>
                   </div>
 
                   <!-- Locked summary for Weeks 3+ (BR-PSH-01) -->
@@ -299,19 +317,19 @@
 
                 <div class="flex flex-col gap-3">
                   <NuxtLink
-                    class="inline-flex items-center justify-center p-3.5 text-base font-bold rounded-2xl bg-cta text-white min-h-[48px] hover:bg-cta-hover"
+                    class="inline-flex items-center justify-center p-3.5 text-base font-bold rounded-2xl bg-cta text-white min-h-11 hover:bg-cta-hover"
                     to="/pricing"
                   >
                     Đăng ký gói học cho bé
                   </NuxtLink>
                   <NuxtLink
-                    class="inline-flex items-center justify-center p-3 text-sm font-bold rounded-2xl bg-white/15 text-white min-h-[44px] hover:bg-white/25"
+                    class="inline-flex items-center justify-center p-3 text-sm font-bold rounded-2xl bg-white/15 text-white min-h-11 hover:bg-white/25"
                     to="/games"
                   >
                     Chơi thử trò chơi miễn phí
                   </NuxtLink>
                   <button
-                    class="inline-flex items-center justify-center gap-2 p-3 text-sm font-bold rounded-2xl bg-white/15 text-white min-h-[44px] hover:bg-white/25 transition-colors disabled:opacity-75"
+                    class="inline-flex items-center justify-center gap-2 p-3 text-sm font-bold rounded-2xl bg-white/15 text-white min-h-11 hover:bg-white/25 transition-colors disabled:opacity-75"
                     data-testid="save-program-library-btn"
                     type="button"
                     :disabled="isSavingLibrary || isSavedToLibrary"
@@ -324,7 +342,7 @@
                     <span>{{ getSaveProgramButtonText() }}</span>
                   </button>
                   <p
-                    class="text-xs font-semibold text-warning-100 bg-white/10 rounded-xl px-3 py-2"
+                    class="text-sm font-semibold text-warning-100 bg-white/10 rounded-xl px-3 py-2"
                     data-testid="save-program-library-error"
                     role="alert"
                     v-if="saveLibraryError"
@@ -339,7 +357,7 @@
                 <h3 class="font-heading text-lg font-bold mb-1">
                   Phân bố năng lực toán học
                 </h3>
-                <p class="text-xs text-surface-500 mb-5">
+                <p class="text-sm text-surface-600 mb-5">
                   Tỉ lệ phân bổ mục tiêu học tập qua 6 năng lực:
                 </p>
 
@@ -349,7 +367,7 @@
                     v-for="comp in program.competency_distribution"
                     :key="comp.code"
                   >
-                    <div class="flex justify-between text-xs font-bold">
+                    <div class="flex justify-between text-sm font-bold">
                       <span class="text-surface-700">{{ comp.label }}</span>
                       <span class="text-brand-600"
                         >{{ Math.round(comp.share * 100) }}%</span
@@ -386,6 +404,7 @@
     buildPublicHreflangLinks,
     type ProgramAlternativeSuggestion,
     type ProgramDetailPublic,
+    type ProgramWeekItemPublic,
   } from "@mindkid/shared/client";
   import { computed, ref } from "vue";
   import { useApi } from "~/composables/use-api";
@@ -413,6 +432,13 @@
       return "Đang lưu...";
     }
     return "Lưu lộ trình vào thư viện";
+  }
+
+  function getItemHref(item: ProgramWeekItemPublic): string {
+    if (item.entity_type === "lesson") {
+      return item.code ? `/play/lesson/${item.code}` : "/play";
+    }
+    return item.code ? `/games/${item.code}` : "/games";
   }
 
   async function saveProgramToLibrary(): Promise<void> {
@@ -484,28 +510,12 @@
     }
   }
 
-  useHead(() => {
-    if (isArchived.value) {
-      return {
-        title: "Chương trình học đã lưu trữ | MindKid",
-        meta: [{ name: "robots", content: "noindex, nofollow" }],
-      };
-    }
-
-    if (!program.value) {
-      return {
-        title: "Chương trình học | MindKid",
-      };
-    }
-
-    const p = program.value;
-    const pageTitle = `${p.title} (${p.duration_weeks} tuần) | MindKid`;
-    const pageDesc =
-      p.description ||
-      `Chương trình học tư duy toán mầm non ${p.duration_weeks} tuần cho trẻ ${p.target_age.min}–${p.target_age.max} tuổi. Khám phá ngay!`;
-    const canonicalUrl = `${siteUrl}/programs/${p.code}`;
-
-    const courseJsonLd = {
+  function buildProgramCourseJsonLd(
+    p: ProgramDetailPublic,
+    pageDesc: string,
+    canonicalUrl: string
+  ) {
+    return {
       "@context": "https://schema.org",
       "@type": "Course",
       name: p.title,
@@ -526,8 +536,13 @@
         duration: `P${p.duration_weeks}W`,
       },
     };
+  }
 
-    const breadcrumbJsonLd = {
+  function buildProgramBreadcrumbJsonLd(
+    p: ProgramDetailPublic,
+    canonicalUrl: string
+  ) {
+    return {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       itemListElement: [
@@ -551,6 +566,28 @@
         },
       ],
     };
+  }
+
+  useHead(() => {
+    if (isArchived.value) {
+      return {
+        title: "Chương trình học đã lưu trữ | MindKid",
+        meta: [{ name: "robots", content: "noindex, nofollow" }],
+      };
+    }
+
+    if (!program.value) {
+      return {
+        title: "Chương trình học | MindKid",
+      };
+    }
+
+    const p = program.value;
+    const pageTitle = `${p.title} (${p.duration_weeks} tuần) | MindKid`;
+    const pageDesc =
+      p.description ||
+      `Chương trình học tư duy toán mầm non ${p.duration_weeks} tuần cho trẻ ${p.target_age.min}–${p.target_age.max} tuổi. Khám phá ngay!`;
+    const canonicalUrl = `${siteUrl}/programs/${p.code}`;
 
     return {
       title: pageTitle,
@@ -569,13 +606,19 @@
       script: [
         {
           type: "application/ld+json",
-          innerHTML: JSON.stringify(courseJsonLd),
+          innerHTML: JSON.stringify(
+            buildProgramCourseJsonLd(p, pageDesc, canonicalUrl)
+          ),
         },
         {
           type: "application/ld+json",
-          innerHTML: JSON.stringify(breadcrumbJsonLd),
+          innerHTML: JSON.stringify(
+            buildProgramBreadcrumbJsonLd(p, canonicalUrl)
+          ),
         },
       ],
     };
   });
 </script>
+
+<style scoped></style>

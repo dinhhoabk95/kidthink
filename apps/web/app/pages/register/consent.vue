@@ -9,7 +9,7 @@
       <div class="mb-6 text-center">
         <NuxtLink
           aria-label="Về trang chủ MindKid"
-          class="mb-3 inline-flex items-center gap-2 font-heading text-2xl font-bold text-brand-600 transition-transform active:scale-95 dark:text-brand-400"
+          class="mb-3 inline-flex min-h-11 items-center gap-2 font-heading text-2xl font-bold text-brand-600 transition-transform active:scale-95 dark:text-brand-400"
           to="/"
         >
           <UIcon
@@ -50,9 +50,9 @@
           class="h-5 w-5 shrink-0 text-danger-600 dark:text-danger-400"
           name="i-lucide-alert-circle"
         />
-        <span class="text-sm font-semibold leading-snug"
-          >{{ errorMessage }}</span
-        >
+        <span class="text-sm font-semibold leading-snug">{{
+          errorMessage
+        }}</span>
       </div>
 
       <!-- Registration Form -->
@@ -99,7 +99,7 @@
             :disabled="isEmailReadonly"
           >
           <span
-            class="text-xs text-surface-500 dark:text-surface-400"
+            class="text-sm text-surface-500 dark:text-surface-400"
             v-if="isEmailReadonly"
           >
             Email được cung cấp và xác thực bởi {{ providerLabel }}.
@@ -109,14 +109,14 @@
         <!-- Checkbox 1: Terms (BR-REG-02, BR-SCL-01) -->
         <div class="mt-1 flex items-start gap-2.5">
           <input
-            class="mt-0.5 h-5 w-5 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
+            class="mt-0.5 h-6 w-6 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
             id="social-terms"
             required
             type="checkbox"
             v-model="acceptTerms"
           >
           <label
-            class="cursor-pointer text-xs font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
+            class="cursor-pointer text-sm font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
             for="social-terms"
           >
             Tôi đồng ý với
@@ -134,14 +134,14 @@
         <!-- Checkbox 2: Privacy (BR-REG-02, BR-SCL-01) -->
         <div class="flex items-start gap-2.5">
           <input
-            class="mt-0.5 h-5 w-5 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
+            class="mt-0.5 h-6 w-6 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
             id="social-privacy"
             required
             type="checkbox"
             v-model="acceptPrivacy"
           >
           <label
-            class="cursor-pointer text-xs font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
+            class="cursor-pointer text-sm font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
             for="social-privacy"
           >
             Tôi đồng ý với
@@ -159,7 +159,8 @@
               to="/child-privacy"
             >
               Bảo vệ dữ liệu trẻ em
-            </NuxtLink>.
+            </NuxtLink
+            >.
           </label>
         </div>
 
@@ -191,8 +192,8 @@
 
 <script lang="ts" setup>
   import { isApiError } from "@mindkid/errors/client";
-  import { computed, onMounted, ref } from "vue";
-  import { useRoute, useRouter } from "vue-router";
+  import { computed, onMounted, ref, watch } from "vue";
+  import { type LocationQueryValue, useRoute, useRouter } from "vue-router";
   import { definePageMeta, useSeoMeta, useUserSession } from "#imports";
   import { useApi } from "~/composables/use-api";
 
@@ -200,12 +201,19 @@
     layout: false,
   });
 
+  interface SocialTicketPayload {
+    provider: "google" | "facebook";
+    email: string | null;
+    display_name: string;
+  }
+
   interface SocialTicketApiResponse {
-    ticket: {
-      provider: "google" | "facebook";
-      email: string | null;
-      display_name: string;
-    };
+    ticket: SocialTicketPayload | null;
+  }
+
+  interface ConsentRequirementsResponse {
+    terms: { requirement_at: string | null };
+    privacy: { requirement_at: string | null };
   }
 
   interface SocialLoginApiResponse {
@@ -214,6 +222,15 @@
       displayName: string;
       status: string;
     };
+  }
+
+  function resolveProviderParam(
+    raw: LocationQueryValue | LocationQueryValue[] | undefined
+  ): "google" | "facebook" {
+    const val = Array.isArray(raw) ? raw[0] : raw;
+    return String(val || "").toLowerCase() === "facebook"
+      ? "facebook"
+      : "google";
   }
 
   const route = useRoute();
@@ -225,32 +242,55 @@
   const isSubmitting = ref(false);
   const errorMessage = ref("");
 
-  const provider = ref<"google" | "facebook">("google");
+  const provider = ref<"google" | "facebook">(
+    resolveProviderParam(route.query.provider)
+  );
   const displayName = ref("");
   const email = ref("");
   const isEmailReadonly = ref(false);
   const acceptTerms = ref(false);
   const acceptPrivacy = ref(false);
+  const termsRequirementAt = ref<string | null>(null);
+  const privacyRequirementAt = ref<string | null>(null);
 
   const providerLabel = computed(() => {
     return provider.value === "google" ? "Google" : "Facebook";
   });
 
-  onMounted(async () => {
-    const rawParam = String(route.query.provider || "").toLowerCase();
-    if (rawParam === "facebook") {
-      provider.value = "facebook";
-    } else {
-      provider.value = "google";
+  watch(
+    () => route.query.provider,
+    (newProvider) => {
+      provider.value = resolveProviderParam(newProvider);
     }
+  );
+
+  async function loadConsentRequirements(): Promise<void> {
+    try {
+      const reqs = await apiFetch<ConsentRequirementsResponse>(
+        "/api/guest/consent-requirements"
+      );
+      termsRequirementAt.value = reqs.terms.requirement_at;
+      privacyRequirementAt.value = reqs.privacy.requirement_at;
+    } catch {
+      termsRequirementAt.value = null;
+      privacyRequirementAt.value = null;
+    }
+  }
+
+  onMounted(async () => {
+    provider.value = resolveProviderParam(route.query.provider);
 
     try {
-      const res = await apiFetch<SocialTicketApiResponse>(
-        "/api/guest/auth/users/social-ticket",
-        { credentials: "include" }
-      );
+      const [res] = await Promise.all([
+        apiFetch<SocialTicketApiResponse>(
+          "/api/guest/auth/users/social-ticket",
+          { credentials: "include" }
+        ),
+        loadConsentRequirements(),
+      ]);
 
       if (res?.ticket) {
+        errorMessage.value = "";
         provider.value = res.ticket.provider;
         displayName.value = res.ticket.display_name || "";
         if (res.ticket.email) {
@@ -260,6 +300,9 @@
           email.value = "";
           isEmailReadonly.value = false;
         }
+      } else {
+        errorMessage.value =
+          "Phiên xác thực mạng xã hội đã hết hạn hoặc không hợp lệ. Vui lòng quay lại và thử lại.";
       }
     } catch {
       errorMessage.value =
@@ -272,6 +315,9 @@
   function extractSocialErrorMessage(err: Error | object | null): string {
     if (isApiError(err, "SOCIAL_EMAIL_CONFLICT")) {
       return "Email này đã được đăng ký tài khoản MindKid. Vui lòng đăng nhập bằng email trước, sau đó liên kết tài khoản trong phần Cài đặt.";
+    }
+    if (isApiError(err, "CONSENT_REQUIREMENT_CHANGED")) {
+      return "Điều khoản sử dụng hoặc Chính sách quyền riêng tư vừa được cập nhật. Vui lòng kiểm tra và xác nhận lại.";
     }
     if (isApiError(err)) {
       return err.message;
@@ -300,9 +346,11 @@
           body: {
             provider: provider.value,
             display_name: displayName.value,
-            email: email.value,
+            email: email.value || undefined,
             accept_terms: acceptTerms.value,
             accept_privacy: acceptPrivacy.value,
+            terms_requirement_at: termsRequirementAt.value,
+            privacy_requirement_at: privacyRequirementAt.value,
           },
           credentials: "include",
         }
@@ -311,9 +359,13 @@
       await fetchSession();
       await router.push("/me");
     } catch (err) {
-      errorMessage.value = extractSocialErrorMessage(
-        typeof err === "object" ? err : null
-      );
+      const errorObj = typeof err === "object" ? err : null;
+      if (isApiError(errorObj, "CONSENT_REQUIREMENT_CHANGED")) {
+        acceptTerms.value = false;
+        acceptPrivacy.value = false;
+        await loadConsentRequirements();
+      }
+      errorMessage.value = extractSocialErrorMessage(errorObj);
     } finally {
       isSubmitting.value = false;
     }

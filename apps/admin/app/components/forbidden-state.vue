@@ -20,7 +20,7 @@
     </div>
     <div class="pt-3">
       <NuxtLink
-        class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold font-heading transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
+        class="min-h-11 inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold font-heading transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
         to="/"
       >
         Về Bảng điều khiển

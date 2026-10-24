@@ -6,20 +6,44 @@ import { defineEventHandler, getQuery, setResponseHeader } from "h3";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 
+type AuditActorType = typeof auditLogs.$inferSelect.actorType;
+type AuditColumnValue =
+  (typeof auditLogs.$inferSelect)[keyof typeof auditLogs.$inferSelect];
+
 function escapeLikeWildcards(text: string): string {
   return text.replace(/([%_\\])/g, "\\$1");
 }
 
-function escapeCsvField(val: unknown): string {
+function isAuditActorType(val: string): val is AuditActorType {
+  return val === "user" || val === "manager" || val === "system";
+}
+
+function readQueryString(query: object, key: string): string | undefined {
+  const val = Reflect.get(query, key);
+  if (typeof val === "string") {
+    const trimmed = val.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+  }
+  if (typeof val === "number" && Number.isFinite(val)) {
+    return String(val);
+  }
+  return undefined;
+}
+
+const FORMULA_PREFIX_REGEX = /^[=+\-@\t\r]/;
+
+function escapeCsvField(val: AuditColumnValue): string {
   if (val === null || val === undefined) {
     return "";
   }
-  const str = typeof val === "object" ? JSON.stringify(val) : String(val);
+  const rawStr = typeof val === "object" ? JSON.stringify(val) : String(val);
+  const str = FORMULA_PREFIX_REGEX.test(rawStr) ? `'${rawStr}` : rawStr;
   if (
     str.includes(",") ||
     str.includes('"') ||
     str.includes("\n") ||
-    str.includes("\r")
+    str.includes("\r") ||
+    str.startsWith("'")
   ) {
     return `"${str.replace(/"/g, '""')}"`;
   }
@@ -45,12 +69,14 @@ function validateAuditDateRange(
   return { fromDate, toDate };
 }
 
-function buildActionCondition(action: unknown): SQL<unknown> | null {
+function buildActionCondition(query: object): SQL | null {
+  const action = Reflect.get(query, "action");
   if (!action) {
     return null;
   }
   if (Array.isArray(action)) {
-    return inArray(auditLogs.action, action.map(String));
+    const actions = action.map((item) => String(item).trim()).filter(Boolean);
+    return actions.length > 0 ? inArray(auditLogs.action, actions) : null;
   }
   if (typeof action === "string" && action.includes(",")) {
     const actions = action
@@ -59,37 +85,45 @@ function buildActionCondition(action: unknown): SQL<unknown> | null {
       .filter(Boolean);
     return actions.length > 0 ? inArray(auditLogs.action, actions) : null;
   }
-  return eq(auditLogs.action, String(action));
+  if (typeof action === "string") {
+    const trimmed = action.trim();
+    return trimmed ? eq(auditLogs.action, trimmed) : null;
+  }
+  return null;
 }
 
 function buildAuditConditions(
-  query: Record<string, unknown>,
+  query: object,
   dates: { fromDate?: Date; toDate?: Date }
-): SQL<unknown>[] {
-  const conditions: SQL<unknown>[] = [];
+): SQL[] {
+  const conditions: SQL[] = [];
 
-  if (query.actor_type) {
-    conditions.push(
-      eq(
-        auditLogs.actorType,
-        query.actor_type as typeof auditLogs.$inferSelect.actorType
-      )
-    );
+  const actorType = readQueryString(query, "actor_type");
+  const actorIdRaw = readQueryString(query, "actor_id");
+  const entityType = readQueryString(query, "entity_type");
+  const entityId = readQueryString(query, "entity_id");
+  const searchQ = readQueryString(query, "q");
+
+  if (actorType && isAuditActorType(actorType)) {
+    conditions.push(eq(auditLogs.actorType, actorType));
   }
-  if (query.actor_id) {
-    conditions.push(eq(auditLogs.actorId, Number(query.actor_id)));
+  if (actorIdRaw) {
+    const parsedActorId = Number(actorIdRaw);
+    if (Number.isInteger(parsedActorId)) {
+      conditions.push(eq(auditLogs.actorId, parsedActorId));
+    }
   }
 
-  const actCond = buildActionCondition(query.action);
+  const actCond = buildActionCondition(query);
   if (actCond) {
     conditions.push(actCond);
   }
 
-  if (query.entity_type) {
-    conditions.push(eq(auditLogs.entityType, String(query.entity_type)));
+  if (entityType) {
+    conditions.push(eq(auditLogs.entityType, entityType));
   }
-  if (query.entity_id) {
-    conditions.push(eq(auditLogs.entityId, String(query.entity_id)));
+  if (entityId) {
+    conditions.push(eq(auditLogs.entityId, entityId));
   }
   if (dates.fromDate) {
     conditions.push(gte(auditLogs.createdAt, dates.fromDate));
@@ -97,9 +131,9 @@ function buildAuditConditions(
   if (dates.toDate) {
     conditions.push(lte(auditLogs.createdAt, dates.toDate));
   }
-  if (typeof query.q === "string" && query.q.trim()) {
+  if (searchQ) {
     conditions.push(
-      ilike(auditLogs.reason, `%${escapeLikeWildcards(query.q.trim())}%`)
+      ilike(auditLogs.reason, `%${escapeLikeWildcards(searchQ)}%`)
     );
   }
 
@@ -110,10 +144,11 @@ export default defineEventHandler(async (event) => {
   const session = await requireSuperAdminSession(event);
   const query = getQuery(event);
 
-  const limit = Math.min(Math.max(Number(query.limit) || 5000, 1), 10_000);
+  const rawLimit = Number(readQueryString(query, "limit"));
+  const limit = Math.min(Math.max(rawLimit || 5000, 1), 10_000);
   const dates = validateAuditDateRange(
-    query.from ? String(query.from) : undefined,
-    query.to ? String(query.to) : undefined
+    readQueryString(query, "from"),
+    readQueryString(query, "to")
   );
 
   const conditions = buildAuditConditions(query, dates);
@@ -127,22 +162,23 @@ export default defineEventHandler(async (event) => {
     .orderBy(desc(auditLogs.createdAt))
     .limit(limit);
 
+  const filterAction = readQueryString(query, "action") ?? null;
+  const filterEntityType = readQueryString(query, "entity_type") ?? null;
+  const customReason = readQueryString(query, "reason");
+
   // BR-ALV-06: Log data_exported in audit_logs
   await db.transaction(async (tx) => {
     await writeAudit(tx, {
       actor_type: "manager",
       actor_id: session.manager_id,
       action: "data_exported",
-      reason:
-        typeof query.reason === "string" && query.reason.trim()
-          ? query.reason.trim()
-          : "Xuất dữ liệu kiểm toán CSV (BR-ALV-06)",
+      reason: customReason || "Xuất dữ liệu kiểm toán CSV (BR-ALV-06)",
       entity_type: "audit_logs",
       entity_id: `export_${Date.now()}`,
       after_data: {
         exported_row_count: rows.length,
-        filter_action: query.action || null,
-        filter_entity_type: query.entity_type || null,
+        filter_action: filterAction,
+        filter_entity_type: filterEntityType,
       },
       ip_address: getVerifiedRemoteIp(event),
     });

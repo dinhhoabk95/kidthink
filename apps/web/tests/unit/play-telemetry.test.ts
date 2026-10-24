@@ -13,7 +13,11 @@ vi.mock("~/composables/use-api", () => ({
 }));
 
 import { collectSessionAssets } from "~/composables/play/use-play-session";
-import { usePlayTelemetry } from "~/composables/play/use-play-telemetry";
+import {
+  recordParentGateTelemetry,
+  setActiveRoundRunner,
+  usePlayTelemetry,
+} from "~/composables/play/use-play-telemetry";
 
 function createFakeRoundRunner(events: TelemetryEvent[] = []): RoundRunner {
   const fakeState: RoundRunnerState = {
@@ -29,6 +33,9 @@ function createFakeRoundRunner(events: TelemetryEvent[] = []): RoundRunner {
   const fakeRunner = {
     getState: (): RoundRunnerState => fakeState,
     getAllTelemetry: (): TelemetryEvent[] => events,
+    recordExternalEvent: (event: TelemetryEvent): void => {
+      events.push(event);
+    },
   };
 
   return fakeRunner as RoundRunner;
@@ -229,5 +236,62 @@ describe("usePlayTelemetry & offline play (BR-OFF-01, BR-OFF-02, BR-OFF-03, BR-O
       "/audio/r1.mp3",
       "/audio/r2.mp3",
     ]);
+  });
+
+  it("recordParentGateTelemetry giữa ván chơi đánh seq nối tiếp với roundRunner, không nhảy lên 10001 gây 409 EVENT_OUT_OF_ORDER", async () => {
+    const storage = createInMemoryBufferStorage();
+    const baseTime = 1_700_000_000_000;
+    const roundEvents: TelemetryEvent[] = [
+      {
+        event_name: "round_started",
+        timestamp_ms: baseTime + 100,
+        data: { round_index: 0 },
+      },
+    ];
+    const runner = createFakeRoundRunner(roundEvents);
+    const {
+      initTelemetrySession,
+      uploadTelemetry,
+      getOfflineBuffer,
+      destroyTelemetrySession,
+    } = usePlayTelemetry({ storage });
+
+    initTelemetrySession({
+      session_uuid: "session-pg-order",
+      level_code: "GL-C1-CNT-01",
+      content_version: 1,
+      is_guest: false,
+      started_at: baseTime,
+    });
+    setActiveRoundRunner(runner);
+
+    recordParentGateTelemetry("parent_gate_shown", { trigger: "exit_game" });
+
+    roundEvents.push({
+      event_name: "round_completed",
+      timestamp_ms: baseTime + 2000,
+      data: { round_index: 0 },
+    });
+
+    mockApi.mockResolvedValueOnce({ accepted: 3, skipped: 0 });
+    await uploadTelemetry(
+      "session-pg-order",
+      runner,
+      true,
+      new Date(baseTime).toISOString()
+    );
+
+    const callBody = (
+      mockApi.mock.calls[0]?.[1] as {
+        body?: { events?: Array<{ seq: number; event_name: string }> };
+      }
+    )?.body;
+    expect(callBody?.events?.map((e) => [e.seq, e.event_name])).toEqual([
+      [1, "round_started"],
+      [2, "parent_gate_shown"],
+      [3, "round_completed"],
+    ]);
+    expect(getOfflineBuffer().getPendingEvents()).toHaveLength(0);
+    destroyTelemetrySession();
   });
 });

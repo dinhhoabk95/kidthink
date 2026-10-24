@@ -1,9 +1,9 @@
-import { requireUserAuth } from "@mindkid/auth";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { SessionAlreadyCompletedError } from "@mindkid/errors/play";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { LessonSessionRunnerService } from "#server/services/index.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const UpdateStepSchema = z.object({
   step_index: z.number().int().min(0),
@@ -11,7 +11,7 @@ const UpdateStepSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const auth = requireUserAuth(event);
+  const auth = requireWebUserSession(event);
   const runUuid = getRouterParam(event, "run_uuid");
 
   if (!runUuid) {
@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
     );
 
     return result;
-  } catch (err: unknown) {
+  } catch (err) {
     const errorName = err instanceof Error ? err.name : "";
     if (errorName === "NOT_FOUND") {
       throw new NotFoundError("Không tìm thấy lượt chạy.");

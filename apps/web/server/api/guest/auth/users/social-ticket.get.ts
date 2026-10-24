@@ -1,5 +1,4 @@
 import type { OAuthProvider } from "@mindkid/auth";
-import { UnauthenticatedError } from "@mindkid/errors/auth";
 import { defineApiRoute } from "#server/utils/define-api-route";
 import { readOAuthTicketProfile } from "#server/utils/oauth-ticket";
 
@@ -11,12 +10,10 @@ interface SocialTicketResponse {
 
 export default defineApiRoute({
   auth: "guest",
-  handler({ event }): { ticket: SocialTicketResponse } {
+  handler({ event }): { ticket: SocialTicketResponse | null } {
     const profile = readOAuthTicketProfile(event);
     if (!profile) {
-      throw new UnauthenticatedError(
-        "Phiên đăng ký mạng xã hội không hợp lệ hoặc đã hết hạn."
-      );
+      return { ticket: null };
     }
 
     return {

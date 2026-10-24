@@ -71,7 +71,7 @@ Mọi handler trả nội dung: `/api/guest/levels/**` · `/api/users/levels/**`
 | `BR-LAD-04` | Khi chặn: **strip** `content_pack` và `difficulty_params` khỏi response | Gửi nội dung rồi ẩn là đã gửi nội dung |
 | `BR-LAD-05` | Nội dung nằm trong một curriculum có tier cao hơn → bậc hiệu lực là **max** | Không được lách curriculum trả phí bằng cách mở từng level lẻ |
 | `BR-LAD-06` | Guest **không giới hạn lượt** trên allow-list | Quota theo cookie thiết bị chỉ làm phiền người thật |
-| `BR-LAD-07` | Allow-list guest = đúng **6 game level**, 1 mỗi competency, difficulty ≤ 2 | Hẹp mới tạo lý do đăng ký; rộng thì không ai trả tiền |
+| `BR-LAD-07` | Guest mở được toàn bộ game level `access_tier = "free"`; 6 game tiêu biểu trên trang chủ định nghĩa tại `FEATURED_GUEST_LEVELS` (1 mỗi competency C1–C6, difficulty ≤ 2) | Đồng bộ nhãn "Miễn phí chơi thử" (`access_tier=free`) trên thư viện trò chơi với quyền chơi ngay không cần đăng nhập |
 | `BR-LAD-08` | Phiên chơi đang mở **không bị ngắt** khi gói hết hạn | Cắt ngang lúc trẻ đang chơi thiệt hại lớn hơn doanh thu một lượt |
 | `BR-LAD-09` | **NEVER cache** response chứa nội dung trả phí | Cache là đường rò nội dung sang người chưa trả tiền |
 | `BR-LAD-10` | Phiên preview của Manager không ghi `mastery_state`, không đếm vào KPI (chỉ số đo hiệu quả) | Lượt test làm nhiễu dữ liệu học tập của trẻ |
@@ -174,11 +174,11 @@ Scenario: BR-LAD-06 — guest không bị giới hạn lượt
   When guest chơi 20 lượt liên tiếp một level trong allow-list
   Then không lượt nào bị chặn
 
-Scenario: BR-LAD-07 — allow-list guest đúng 6 level
+Scenario: BR-LAD-07 — guest chơi ngay mọi level access_tier = free
   Given guest chưa đăng nhập
-  When guest gọi một level thuộc FEATURED_GUEST_LEVELS (6 mã C1–C6, difficulty <= 2)
+  When guest gọi bất kỳ level nào có access_tier = free
   Then hệ thống trả 200 kèm content_pack đầy đủ
-  When guest gọi một level access_tier = free nhưng nằm ngoài FEATURED_GUEST_LEVELS
+  When guest gọi một level có access_tier = login
   Then hệ thống trả 403 TIER_LOCKED với required_entitlement là play_login_games
 
 Scenario: BR-LAD-08 — phiên đang mở không bị ngắt

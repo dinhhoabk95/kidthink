@@ -12,6 +12,6 @@ import { useApi } from "~/composables/use-api";
 export default defineNuxtPlugin(() => {
   if (import.meta.client) {
     const api = useApi();
-    globalThis.$fetch = api;
+    Reflect.set(globalThis, "$fetch", api);
   }
 });

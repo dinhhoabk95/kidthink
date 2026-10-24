@@ -19,16 +19,23 @@ const WithdrawConsentSchema = z
   })
   .strict();
 
+type RawWithdrawConsentBody =
+  | Record<string, string | number | boolean | null | undefined>
+  | null
+  | undefined;
+
 export default defineEventHandler(async (event) => {
-  const userSession = await requireWebUserSession(event);
+  const userSession = requireWebUserSession(event);
   const userId = Number(userSession.user_id);
 
   // Require recent reauth (≤ 5 min)
   requireReauth(event);
 
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
-  const rawBody =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const eventBody = (event.context as { body?: RawWithdrawConsentBody })?.body;
+  const rawBody: RawWithdrawConsentBody =
+    eventBody ||
+    (await readBody<RawWithdrawConsentBody>(event).catch(() => null)) ||
+    {};
 
   const parsed = WithdrawConsentSchema.safeParse(rawBody);
   if (!parsed.success) {

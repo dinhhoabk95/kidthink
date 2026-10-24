@@ -11,7 +11,7 @@ import {
 import { readBodyWithLimit } from "#server/utils/request-body";
 
 export default defineEventHandler(async (event) => {
-  const userSession = await requireWebUserSession(event);
+  const userSession = requireWebUserSession(event);
   const userId = Number(userSession.user_id);
 
   const rawBody = await readBodyWithLimit(event);

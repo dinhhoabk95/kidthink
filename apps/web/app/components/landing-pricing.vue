@@ -22,9 +22,9 @@
           <h3 class="pkg-name">{{ pkg.name }}</h3>
           <p class="pkg-desc">{{ pkg.description }}</p>
           <div class="pkg-price">
-            <span class="price-num"
-              >{{ pkg.price_vnd.toLocaleString('vi-VN') }}</span
-            >
+            <span class="price-num">{{
+              pkg.price_vnd.toLocaleString("vi-VN")
+            }}</span>
             <span class="price-currency">đ</span>
             <span class="price-period">/ trọn đời</span>
           </div>
@@ -116,7 +116,7 @@
     position: absolute;
     top: -0.75rem;
     right: 1.5rem;
-    background-color: var(--color-cta, #c2410c);
+    background-color: var(--color-cta);
     color: white;
     font-size: 0.75rem;
     font-weight: 700;

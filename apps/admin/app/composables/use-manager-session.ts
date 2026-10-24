@@ -1,23 +1,5 @@
-import {
-  type AdminManager,
-  useAdminAuth as useBaseAdminAuth,
-} from "~/composables/use-admin-auth";
-import { apiFetch } from "~/composables/use-api-client";
+import { useAdminAuth } from "~/composables/use-admin-auth";
 
-export type ManagerRole = NonNullable<AdminManager["role"]>;
-
-export function useAdminAuth() {
-  const base = useBaseAdminAuth();
-
-  async function reauth(password: string): Promise<void> {
-    await apiFetch("/api/managers/auth/reauth", {
-      method: "POST",
-      body: { password },
-    });
-  }
-
-  return {
-    ...base,
-    reauth,
-  };
+export function useManagerSession() {
+  return useAdminAuth();
 }

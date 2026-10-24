@@ -28,7 +28,14 @@ const ResetPasswordSchema = z
     message: "Mật khẩu mới là bắt buộc.",
   });
 
-export async function handleResetPassword(event: H3Event, testBody?: unknown) {
+type ResetPasswordBodyInput =
+  | z.input<typeof ResetPasswordSchema>
+  | Record<string, string | number | boolean | null | undefined>;
+
+export async function handleResetPassword(
+  event: H3Event,
+  testBody?: ResetPasswordBodyInput
+): Promise<{ ok: boolean }> {
   const rawBody =
     testBody ??
     event.context?.body ??

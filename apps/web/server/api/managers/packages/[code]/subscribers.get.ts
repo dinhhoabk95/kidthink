@@ -13,7 +13,7 @@ const SubscribersQuerySchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  await requireSuperAdminSession(event);
+  requireSuperAdminSession(event);
   const code = getRouterParam(event, "code");
   if (!code) {
     throw new ValidationError("Mã gói là bắt buộc.");

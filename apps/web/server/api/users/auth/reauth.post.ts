@@ -21,9 +21,9 @@ export default defineEventHandler(async (event) => {
   const userSession = await requireWebUserSession(event);
   const userId = Number(userSession.user_id);
 
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
+  const eventBody = (event.context as { body?: Record<string, string> })?.body;
   const rawBody =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+    eventBody || (await readBody<Record<string, string>>(event)) || {};
 
   const parsed = ReauthSchema.safeParse(rawBody);
   if (!parsed.success) {

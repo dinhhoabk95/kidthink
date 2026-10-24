@@ -154,10 +154,6 @@ export async function checkRateLimit(
       };
     }
 
-    return {
-      allowed: false,
-      remaining: 0,
-      resetSeconds: windowSeconds,
-    };
+    throw err;
   }
 }

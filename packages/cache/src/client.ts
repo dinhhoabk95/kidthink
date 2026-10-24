@@ -5,15 +5,21 @@ let client: Redis | undefined;
 
 export function getClient(): Redis {
   if (!client) {
-    client = new Redis(requireValkeyUrl(), {
+    const instance = new Redis(requireValkeyUrl(), {
       connectTimeout: 2000,
       commandTimeout: 2000,
       maxRetriesPerRequest: 1,
       retryStrategy: () => null,
     });
-    client.on("error", () => {
+    instance.on("error", () => {
       /* noop */
     });
+    instance.on("end", () => {
+      if (client === instance) {
+        client = undefined;
+      }
+    });
+    client = instance;
   }
   return client;
 }

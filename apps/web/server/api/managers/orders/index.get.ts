@@ -38,23 +38,31 @@ const querySchema = z.object({
 
 type QueryFilter = z.infer<typeof querySchema>;
 
+const VALID_ORDER_STATUSES = [
+  "draft",
+  "pending",
+  "pending_proof",
+  "submitted",
+  "under_review",
+  "approved",
+  "rejected",
+  "expired",
+  "cancelled",
+] as const;
+
+type ValidOrderStatus = (typeof VALID_ORDER_STATUSES)[number];
+
+function isValidOrderStatus(val: string): val is ValidOrderStatus {
+  return (VALID_ORDER_STATUSES as readonly string[]).includes(val);
+}
+
 function buildFilterConditions(filter: QueryFilter): SQL[] {
   const conditions: SQL[] = [];
 
   const statusList = filter.status
     .split(",")
     .map((s) => s.trim())
-    .filter(Boolean) as (
-    | "draft"
-    | "pending"
-    | "pending_proof"
-    | "submitted"
-    | "under_review"
-    | "approved"
-    | "rejected"
-    | "expired"
-    | "cancelled"
-  )[];
+    .filter(isValidOrderStatus);
 
   if (statusList.length > 0) {
     conditions.push(inArray(paymentOrders.status, statusList));

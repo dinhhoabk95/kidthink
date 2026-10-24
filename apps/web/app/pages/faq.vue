@@ -21,7 +21,10 @@
             v-for="cat in categories"
             :key="cat.key"
             :aria-selected="activeCategory === cat.key"
-            :class="['tab-btn', { active: activeCategory === cat.key }]"
+            :class="[
+              'tab-btn min-h-11',
+              { active: activeCategory === cat.key },
+            ]"
             :data-key="cat.key"
             @click="onCategoryClick"
           >
@@ -38,7 +41,7 @@
             :id="item.anchor"
           >
             <button
-              class="accordion-trigger"
+              class="accordion-trigger min-h-11"
               type="button"
               :aria-expanded="expandedItems.includes(item.id)"
               :data-anchor="item.anchor"
@@ -46,9 +49,9 @@
               @click="onToggleItemClick"
             >
               <span class="q-text">{{ item.question }}</span>
-              <span aria-hidden="true" class="q-icon"
-                >{{ expandedItems.includes(item.id) ? '−' : '+' }}</span
-              >
+              <span aria-hidden="true" class="q-icon">{{
+                expandedItems.includes(item.id) ? "−" : "+"
+              }}</span>
             </button>
             <div
               class="accordion-body"
@@ -59,7 +62,7 @@
               <!-- BR-FAQ-02: Legal links if applicable -->
               <div class="legal-ref-box" v-if="item.legalLink">
                 <span class="ref-label">Xem văn bản pháp lý đầy đủ:</span>
-                <NuxtLink class="ref-link" :to="item.legalLink">
+                <NuxtLink class="ref-link min-h-11" :to="item.legalLink">
                   <UIcon
                     class="w-4 h-4 ml-1 inline-block"
                     name="i-lucide-arrow-right"
@@ -79,7 +82,7 @@
           </p>
           <div class="support-channels">
             <a
-              class="channel-card flex items-center gap-3"
+              class="channel-card min-h-11 flex items-center gap-3"
               href="mailto:support@mindkid.vn"
             >
               <UIcon
@@ -93,7 +96,7 @@
               </div>
             </a>
             <a
-              class="channel-card flex items-center gap-3"
+              class="channel-card min-h-11 flex items-center gap-3"
               href="https://zalo.me/mindkid"
               rel="noopener noreferrer"
               target="_blank"
@@ -151,7 +154,12 @@
     return items && items.length > 0 ? items : FAQ_ITEMS;
   });
 
-  const categories = [
+  interface FaqCategoryTab {
+    readonly key: "all" | FaqItem["category"];
+    readonly label: string;
+  }
+
+  const categories: readonly FaqCategoryTab[] = [
     { key: "all", label: "Tất cả câu hỏi" },
     { key: "product", label: "Về sản phẩm" },
     { key: "content", label: "Về nội dung sư phạm" },
@@ -160,10 +168,10 @@
     { key: "privacy", label: "Về quyền riêng tư" },
   ];
 
-  const activeCategory = ref("all");
+  const activeCategory = ref<string>("all");
   const expandedItems = ref<string[]>([]);
 
-  const visibleItems = computed(() => {
+  const visibleItems = computed<readonly FaqItem[]>(() => {
     if (activeCategory.value === "all") {
       return faqItems.value;
     }
@@ -172,30 +180,38 @@
     );
   });
 
-  function selectCategory(key: string) {
+  function selectCategory(key: string): void {
     activeCategory.value = key;
   }
 
-  function onCategoryClick(event: MouseEvent) {
-    const key = (event.currentTarget as HTMLElement).dataset.key;
+  function onCategoryClick(event: MouseEvent): void {
+    if (!(event.currentTarget instanceof HTMLElement)) {
+      return;
+    }
+    const key = event.currentTarget.dataset.key;
     if (key) {
       selectCategory(key);
     }
   }
 
-  function toggleItem(id: string, anchor: string) {
+  function toggleItem(id: string, anchor: string): void {
     if (expandedItems.value.includes(id)) {
       expandedItems.value = expandedItems.value.filter((i) => i !== id);
     } else {
       expandedItems.value = [...expandedItems.value, id];
-      router.replace({ hash: `#${anchor}` });
+      if (typeof window !== "undefined") {
+        window.history.replaceState(window.history.state, "", `#${anchor}`);
+      }
+      router.replace({ path: route.path, hash: `#${anchor}` });
     }
   }
 
-  function onToggleItemClick(event: MouseEvent) {
-    const target = event.currentTarget as HTMLElement;
-    const id = target.dataset.id;
-    const anchor = target.dataset.anchor;
+  function onToggleItemClick(event: MouseEvent): void {
+    if (!(event.currentTarget instanceof HTMLElement)) {
+      return;
+    }
+    const id = event.currentTarget.dataset.id;
+    const anchor = event.currentTarget.dataset.anchor;
     if (id && anchor) {
       toggleItem(id, anchor);
     }
@@ -338,9 +354,12 @@
     background-color: white;
     color: var(--color-surface-700);
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     cursor: pointer;
-    transition: all 0.15s;
+    transition:
+      background-color 0.15s,
+      color 0.15s,
+      border-color 0.15s;
   }
 
   .tab-btn.active {
@@ -380,6 +399,7 @@
     font-size: 1.1rem;
     font-weight: 700;
     color: var(--color-surface-900);
+    overflow-wrap: break-word;
   }
 
   .q-icon {
@@ -387,6 +407,7 @@
     font-weight: 700;
     color: var(--color-brand-600);
     margin-left: 1rem;
+    flex-shrink: 0;
   }
 
   .accordion-body {
@@ -399,6 +420,7 @@
     line-height: 1.6;
     color: var(--color-surface-700);
     margin: 1rem 0 0 0;
+    overflow-wrap: break-word;
   }
 
   .legal-ref-box {
@@ -408,16 +430,20 @@
     border-radius: 0.75rem;
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 0.5rem;
   }
 
   .ref-label {
-    font-size: 0.85rem;
-    color: var(--color-surface-500);
+    font-size: 0.875rem;
+    color: var(--color-surface-600);
   }
 
   .ref-link {
-    font-size: 0.85rem;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.875rem;
     font-weight: 600;
     color: var(--color-brand-600);
     text-decoration: none;
@@ -426,7 +452,7 @@
   /* Support Box */
   .support-box {
     margin-top: 4rem;
-    padding: 2.5rem 2rem;
+    padding: 2.5rem 1.5rem;
     background-color: white;
     border-radius: 1.5rem;
     border: 2px solid var(--color-surface-200);
@@ -462,6 +488,7 @@
   }
 
   .channel-card {
+    min-height: 44px;
     padding: 1.5rem;
     background-color: var(--color-surface-50);
     border-radius: 1rem;
@@ -493,7 +520,7 @@
   }
 
   .channel-note {
-    font-size: 0.8rem;
-    color: var(--color-surface-500);
+    font-size: 0.875rem;
+    color: var(--color-surface-600);
   }
 </style>

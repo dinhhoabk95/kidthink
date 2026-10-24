@@ -1,12 +1,16 @@
 import { NotFoundError } from "@mindkid/errors/common";
 import { LEGAL_DOCUMENTS } from "@mindkid/shared";
 import { defineEventHandler, getRouterParam, setHeader } from "h3";
+import { z } from "zod";
+
+const LegalSlugSchema = z.string().trim().min(1).max(100);
 
 export default defineEventHandler((event) => {
-  const slug = getRouterParam(event, "slug");
-  if (!slug) {
+  const parsedSlug = LegalSlugSchema.safeParse(getRouterParam(event, "slug"));
+  if (!parsedSlug.success) {
     throw new NotFoundError();
   }
+  const slug = parsedSlug.data;
 
   const doc = LEGAL_DOCUMENTS.find((d) => d.slug === slug);
   if (!doc) {

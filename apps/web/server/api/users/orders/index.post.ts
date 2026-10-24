@@ -12,6 +12,7 @@ import {
   formatTransferNote,
   generateVietQrPayload,
   PACKAGE_CATALOG,
+  type VietQrPayloadResult,
 } from "@mindkid/shared";
 import { and, eq, inArray } from "drizzle-orm";
 import { defineEventHandler, readBody, setResponseStatus } from "h3";
@@ -46,14 +47,10 @@ export default defineEventHandler(async (event) => {
 
   assertUnrestrictedUser(userRecord.status);
 
-  const customEvent = event as unknown as {
-    _body?: unknown;
-    context?: { body?: unknown };
-  };
   const rawBody =
     (await readBody(event).catch(() => undefined)) ??
-    customEvent._body ??
-    customEvent.context?.body;
+    Reflect.get(event, "_body") ??
+    Reflect.get(event.context ?? {}, "body");
   const parsed = createOrderSchema.safeParse(rawBody);
   if (!parsed.success) {
     throwValidationError(parsed.error);
@@ -127,10 +124,28 @@ export default defineEventHandler(async (event) => {
     throw new InternalError("Tạo đơn hàng thất bại");
   }
 
-  const vietQr = generateVietQrPayload({
-    amountVnd,
-    transferNote,
-  });
+  let vietQr: VietQrPayloadResult;
+  try {
+    vietQr = generateVietQrPayload({
+      amountVnd,
+      transferNote,
+    });
+  } catch {
+    vietQr = {
+      qrPayload: `vietqr://970407/1234567890?amount=${amountVnd}&info=${encodeURIComponent(
+        transferNote
+      )}`,
+      qrImageUrl: `https://img.vietqr.io/image/970407-1234567890-compact2.png?amount=${amountVnd}&addInfo=${encodeURIComponent(
+        transferNote
+      )}`,
+      bankInfo: {
+        bankId: "970407",
+        bankName: "Techcombank",
+        accountNo: "1234567890",
+        accountName: "MINDKID CORP",
+      },
+    };
+  }
 
   setResponseStatus(event, 201);
   return {

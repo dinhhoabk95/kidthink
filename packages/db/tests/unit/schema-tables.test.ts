@@ -520,4 +520,28 @@ describe("Schema Play & Telemetry Rules (BR-SPT-01..BR-SPT-08)", () => {
     );
     expect(userFk?.onDelete).toBe("cascade");
   });
+
+  it("Performance Hot Indexes: play_sessions, telemetry_events, content_tag_map, content_skill_map có đủ B-Tree index cho các truy vấn nóng", () => {
+    const playIdxNames = getTableConfig(schema.playSessions).indexes.map(
+      (i) => i.config.name
+    );
+    expect(playIdxNames).toContain("idx_play_sessions_session_uuid");
+    expect(playIdxNames).toContain("idx_play_sessions_child_started_at");
+    expect(playIdxNames).toContain("idx_play_sessions_guest_status");
+
+    const tlmIdxNames = getTableConfig(schema.telemetryEvents).indexes.map(
+      (i) => i.config.name
+    );
+    expect(tlmIdxNames).toContain("idx_telemetry_events_created_at");
+
+    const tagMapIdxNames = getTableConfig(schema.contentTagMap).indexes.map(
+      (i) => i.config.name
+    );
+    expect(tagMapIdxNames).toContain("idx_content_tag_map_tag_entity");
+
+    const skillMapIdxNames = getTableConfig(schema.contentSkillMap).indexes.map(
+      (i) => i.config.name
+    );
+    expect(skillMapIdxNames).toContain("idx_content_skill_map_skill_entity");
+  });
 });

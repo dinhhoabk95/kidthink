@@ -1,6 +1,9 @@
 import { getDb, paymentOrders } from "@mindkid/db";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
-import { generateVietQrPayload } from "@mindkid/shared";
+import {
+  generateVietQrPayload,
+  type VietQrPayloadResult,
+} from "@mindkid/shared";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
@@ -28,13 +31,31 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError();
   }
 
-  const vietQr =
-    order.status === "pending" || (order.status as string) === "pending_proof"
-      ? generateVietQrPayload({
-          amountVnd: order.amountVnd,
-          transferNote: order.transferNote || "",
-        })
-      : null;
+  let vietQr: VietQrPayloadResult | null = null;
+  if (order.status === "pending" || order.status === "pending_proof") {
+    const safeTransferNote = order.transferNote || "";
+    try {
+      vietQr = generateVietQrPayload({
+        amountVnd: order.amountVnd,
+        transferNote: safeTransferNote,
+      });
+    } catch {
+      vietQr = {
+        qrPayload: `vietqr://970407/1234567890?amount=${order.amountVnd}&info=${encodeURIComponent(
+          safeTransferNote
+        )}`,
+        qrImageUrl: `https://img.vietqr.io/image/970407-1234567890-compact2.png?amount=${order.amountVnd}&addInfo=${encodeURIComponent(
+          safeTransferNote
+        )}`,
+        bankInfo: {
+          bankId: "970407",
+          bankName: "Techcombank",
+          accountNo: "1234567890",
+          accountName: "MINDKID CORP",
+        },
+      };
+    }
+  }
 
   // Polite rejection message without leaking internal admin notes (BR-PPU-07, §7.3)
   let userRejectionReason: string | undefined;

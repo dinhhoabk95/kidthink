@@ -1,9 +1,5 @@
 import { gameLevels, gameTemplates, getOwnerDb } from "@mindkid/db";
-import {
-  type AccessTier,
-  isGuestAllowedLevel,
-  type LevelCta,
-} from "@mindkid/shared";
+import type { AccessTier, LevelCta } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
@@ -161,7 +157,7 @@ describe("GET /api/guest/levels — Catalog CTA & Session Independence (BR-GCP-0
     }
   });
 
-  it("BR-LAD-07: trả danh mục có cta theo góc nhìn guest (chỉ mở 6 level allow-list, khoá level free ngoài allow-list)", async () => {
+  it("BR-LAD-07: trả danh mục có cta theo góc nhìn guest (mở toàn bộ level free cho khách chơi ngay)", async () => {
     const event = makeMockEvent({ limit: "50" });
     const res = (await guestLevelsHandler(event)) as CatalogResponseResult;
 
@@ -174,17 +170,9 @@ describe("GET /api/guest/levels — Catalog CTA & Session Independence (BR-GCP-0
       expect(item.cta.text).toBeDefined();
 
       if (item.access_tier === "free") {
-        if (isGuestAllowedLevel(item.code)) {
-          expect(item.locked).toBe(false);
-          expect(item.cta.action).toBe("play");
-          expect(item.cta.href).toBe(`/play/${item.code}`);
-        } else {
-          expect(item.locked).toBe(true);
-          expect(item.cta.action).toBe("login");
-          expect(item.cta.href).toBe(
-            `/login?redirect=${encodeURIComponent(`/play/${item.code}`)}`
-          );
-        }
+        expect(item.locked).toBe(false);
+        expect(item.cta.action).toBe("play");
+        expect(item.cta.href).toBe(`/play/${item.code}`);
       } else if (item.access_tier === "login") {
         expect(item.cta.action).toBe("login");
         expect(item.cta.href).toBe(

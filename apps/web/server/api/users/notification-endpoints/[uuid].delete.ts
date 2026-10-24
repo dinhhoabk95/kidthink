@@ -6,7 +6,7 @@ import { defineEventHandler, getRouterParam, setResponseStatus } from "h3";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
+  const user = requireWebUserSession(event);
   const userId = Number(user.user_id);
   const uuidParam = getRouterParam(event, "uuid");
 

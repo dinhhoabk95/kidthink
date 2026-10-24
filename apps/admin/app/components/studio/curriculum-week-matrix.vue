@@ -1,6 +1,6 @@
 <template>
   <div class="space-y-4">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-wrap items-center justify-between gap-2">
       <h2 class="text-lg font-bold text-surface-900 dark:text-white">
         2. Khung phân phối nội dung theo tuần
       </h2>
@@ -11,29 +11,33 @@
 
     <!-- Weeks List -->
     <div
-      class="p-5 rounded-3xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-sm space-y-4"
-      v-for="w in (durationWeeks || 1)"
+      class="p-4 sm:p-5 rounded-3xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-sm space-y-4"
+      v-for="w in durationWeeks || 1"
       :key="`week-${w}`"
     >
       <!-- Week Header & Goal -->
       <div
-        class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-surface-100 dark:border-surface-700"
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-surface-100 dark:border-surface-700"
       >
-        <div class="flex items-center gap-3">
-          <span
-            class="px-3 py-1 bg-brand-600 text-white font-bold text-sm rounded-xl"
+        <div
+          class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 flex-1 min-w-0"
+        >
+          <label
+            class="px-3 py-1.5 bg-brand-600 text-white font-bold text-sm rounded-xl shrink-0 self-start sm:self-auto"
+            :for="`week-goal-${w}`"
           >
             Tuần {{ w }}
-          </span>
+          </label>
           <input
-            class="px-3 py-1.5 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white w-72 sm:w-96 focus:outline-none focus:border-brand-500"
+            class="min-h-11 px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white w-full sm:max-w-md min-w-0 focus:outline-none focus:border-brand-500"
             placeholder="Nhập mục tiêu sư phạm tuần..."
             type="text"
+            :id="`week-goal-${w}`"
             :value="getWeekGoal(w)"
-            @input="(e: Event) => emit('update-goal', w, (e.target as HTMLInputElement).value)"
+            @input="onGoalInput(w, $event)"
           >
         </div>
-        <span class="text-xs text-surface-400">
+        <span class="text-xs text-surface-400 shrink-0">
           {{ getItemsInWeek(w).length }}
           hoạt động
         </span>
@@ -43,17 +47,17 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div
           class="p-3 rounded-2xl bg-surface-50 dark:bg-surface-900/60 border border-surface-200 dark:border-surface-700 space-y-2"
-          v-for="s in (sessionsPerWeek || 3)"
+          v-for="s in sessionsPerWeek || 3"
           :key="`week-${w}-session-${s}`"
         >
-          <div class="flex items-center justify-between">
+          <div class="flex items-center justify-between gap-2">
             <span
               class="text-xs font-bold text-surface-600 dark:text-surface-300"
             >
               Buổi {{ s }}
             </span>
             <button
-              class="text-xs text-brand-600 dark:text-brand-400 hover:underline font-semibold"
+              class="min-h-11 px-3 py-1.5 rounded-xl text-xs text-brand-600 dark:text-brand-400 bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/60 font-semibold transition-colors"
               type="button"
               @click="emit('open-drawer', w, s)"
             >
@@ -70,7 +74,7 @@
             >
               <div class="flex items-center gap-1.5 flex-1 min-w-0">
                 <span
-                  class="px-1.5 py-0.5 text-[10px] font-bold rounded-xl"
+                  class="px-1.5 py-0.5 text-[10px] font-bold rounded-xl shrink-0"
                   :class="
                     item.entity_type === 'lesson'
                       ? 'bg-warning-100 text-warning-800'
@@ -89,7 +93,8 @@
 
               <div class="flex items-center gap-1 shrink-0">
                 <button
-                  class="text-surface-400 hover:text-danger-500 p-1"
+                  aria-label="Xoá khỏi buổi"
+                  class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl text-surface-400 hover:text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-950/40 transition-colors"
                   title="Xoá khỏi buổi"
                   type="button"
                   @click="emit('remove-item', w, s, idx)"
@@ -145,6 +150,12 @@
     (e: "open-drawer", weekNo: number, sessionNo: number): void;
     (e: "remove-item", weekNo: number, sessionNo: number, idx: number): void;
   }>();
+
+  function onGoalInput(weekNo: number, event: Event) {
+    if (event.target instanceof HTMLInputElement) {
+      emit("update-goal", weekNo, event.target.value);
+    }
+  }
 
   function getWeekGoal(weekNo: number): string {
     return props.weeks.find((w) => w.week_no === weekNo)?.goal || "";

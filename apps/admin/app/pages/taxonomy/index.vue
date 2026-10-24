@@ -1,102 +1,142 @@
 <template>
-  <div class="max-w-6xl mx-auto p-4 md:p-8 space-y-6">
+  <div class="max-w-6xl mx-auto p-4 md:p-8 space-y-6 min-w-0">
     <!-- Header -->
-    <div class="border-b border-surface-200 pb-5">
+    <div class="border-b border-surface-200 dark:border-surface-800 pb-5">
       <div
-        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 min-w-0"
       >
-        <div>
+        <div class="min-w-0">
           <h1
-            class="text-2xl md:text-3xl font-bold font-heading text-surface-900"
+            class="text-2xl md:text-3xl font-bold font-heading text-surface-900 dark:text-surface-100"
           >
             Duyệt Cây Phân Loại Tư Duy (Taxonomy Browser)
           </h1>
-          <p class="text-sm md:text-base text-surface-600 mt-1">
+          <p class="text-base text-surface-600 dark:text-surface-300 mt-1">
             Bản đồ 6 năng lực, 41 mạch và 230 kỹ năng chuẩn sư phạm. Dữ liệu chỉ
             đọc — cấu trúc taxonomy được quản lý qua PR.
           </p>
         </div>
         <div
-          class="text-xs text-surface-500 bg-surface-100 px-3 py-1.5 rounded-xl self-start"
+          class="text-sm text-surface-600 dark:text-surface-300 bg-surface-100 dark:bg-surface-800 px-3 py-1.5 rounded-xl self-start shrink-0"
           v-if="asOf"
         >
-          Cập nhật: {{ new Date(asOf).toLocaleTimeString('vi-VN') }}
+          Cập nhật: {{ new Date(asOf).toLocaleTimeString("vi-VN") }}
         </div>
       </div>
     </div>
 
     <!-- Summary & Legend Card -->
     <div
-      class="bg-white rounded-2xl border-2 border-surface-200 p-5 space-y-4 shadow-sm"
+      class="bg-white dark:bg-surface-900 rounded-3xl border-2 border-surface-200 dark:border-surface-800 p-5 space-y-4 shadow-xs"
     >
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-        <div class="p-3 bg-surface-50 rounded-xl border border-surface-200">
-          <div class="text-2xl font-bold font-heading text-surface-900">
+        <div
+          class="p-3 bg-surface-50 dark:bg-surface-800/60 rounded-2xl border border-surface-200 dark:border-surface-700"
+        >
+          <div
+            class="text-2xl font-bold font-heading text-surface-900 dark:text-surface-100"
+          >
             {{ summary.total_skills }}
           </div>
-          <div class="text-xs text-surface-600">Tổng kỹ năng</div>
+          <div class="text-sm text-surface-600 dark:text-surface-300">
+            Tổng kỹ năng
+          </div>
         </div>
-        <div class="p-3 bg-success-50 rounded-xl border border-success-200">
-          <div class="text-2xl font-bold font-heading text-success-700">
+        <div
+          class="p-3 bg-success-50 dark:bg-success-950/40 rounded-2xl border border-success-200 dark:border-success-800"
+        >
+          <div
+            class="text-2xl font-bold font-heading text-success-700 dark:text-success-300"
+          >
             {{ summary.total_published_levels }}
           </div>
-          <div class="text-xs text-success-800">Levels đã xuất bản</div>
+          <div class="text-sm text-success-800 dark:text-success-200">
+            Levels đã xuất bản
+          </div>
         </div>
-        <div class="p-3 bg-warning-50 rounded-xl border border-warning-200">
-          <div class="text-2xl font-bold font-heading text-warning-700">
+        <div
+          class="p-3 bg-warning-50 dark:bg-warning-950/40 rounded-2xl border border-warning-200 dark:border-warning-800"
+        >
+          <div
+            class="text-2xl font-bold font-heading text-warning-700 dark:text-warning-300"
+          >
             {{ summary.total_draft_levels }}
           </div>
-          <div class="text-xs text-warning-800">Levels bản nháp</div>
+          <div class="text-sm text-warning-800 dark:text-warning-200">
+            Levels bản nháp
+          </div>
         </div>
-        <div class="p-3 bg-danger-50 rounded-xl border border-danger-200">
-          <div class="text-2xl font-bold font-heading text-danger-700">
+        <div
+          class="p-3 bg-danger-50 dark:bg-danger-950/40 rounded-2xl border border-danger-200 dark:border-danger-800"
+        >
+          <div
+            class="text-2xl font-bold font-heading text-danger-700 dark:text-danger-300"
+          >
             {{ summary.total_gaps }}
           </div>
-          <div class="text-xs text-danger-800">Kỹ năng chưa có nội dung</div>
+          <div class="text-sm text-danger-800 dark:text-danger-200">
+            Kỹ năng chưa có nội dung
+          </div>
         </div>
       </div>
 
       <!-- Legend -->
       <div
-        class="pt-3 border-t border-surface-200 flex flex-wrap items-center gap-3 text-xs text-surface-600"
+        class="pt-3 border-t border-surface-200 dark:border-surface-800 flex flex-wrap items-center gap-3 text-sm text-surface-600 dark:text-surface-300"
       >
-        <span class="font-semibold text-surface-700">Chỉ báo độ phủ:</span>
-        <span
-          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-success-100 text-success-800 font-medium"
+        <span class="font-semibold text-surface-700 dark:text-surface-200"
+          >Chỉ báo độ phủ:</span
         >
-          <span class="w-2 h-2 rounded-full bg-success-500"></span>
+        <span
+          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-success-100 dark:bg-success-900/50 text-success-800 dark:text-success-200 font-medium"
+        >
+          <span class="w-2 h-2 rounded-full bg-success-500" />
           Đủ (&ge;3 levels)
         </span>
         <span
-          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-warning-100 text-warning-800 font-medium"
+          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-warning-100 dark:bg-warning-900/50 text-warning-800 dark:text-warning-200 font-medium"
         >
-          <span class="w-2 h-2 rounded-full bg-warning-500"></span>
+          <span class="w-2 h-2 rounded-full bg-warning-500" />
           Mỏng (1–2 levels - kỳ vọng MVP)
         </span>
         <span
-          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-danger-100 text-danger-800 font-medium"
+          class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-danger-100 dark:bg-danger-900/50 text-danger-800 dark:text-danger-200 font-medium"
         >
-          <span class="w-2 h-2 rounded-full bg-danger-500"></span>
+          <span class="w-2 h-2 rounded-full bg-danger-500" />
           Chưa có (0 level)
         </span>
       </div>
     </div>
 
     <!-- Filters -->
-    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="w-full sm:w-80">
-        <UInput
-          icon="i-lucide-search"
-          placeholder="Tìm mã hoặc tên kỹ năng..."
-          v-model="searchQuery"
+    <div
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 min-w-0"
+    >
+      <div class="w-full sm:w-80 relative">
+        <label class="sr-only" for="taxonomy-search">
+          Tìm mã hoặc tên kỹ năng
+        </label>
+        <UIcon
+          aria-hidden="true"
+          class="w-4 h-4 text-surface-500 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+          name="i-lucide-search"
         />
+        <input
+          class="w-full min-h-11 pl-10 pr-4 py-2 text-base rounded-2xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900 text-surface-900 dark:text-surface-100 placeholder:text-surface-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:border-brand-500"
+          id="taxonomy-search"
+          placeholder="Tìm mã hoặc tên kỹ năng..."
+          type="search"
+          v-model="searchQuery"
+        >
       </div>
-      <div class="flex items-center gap-3 self-end sm:self-auto">
+      <div class="flex items-center gap-3 self-start sm:self-auto">
         <label
-          class="flex items-center gap-2 text-sm text-surface-700 cursor-pointer select-none"
+          class="min-h-11 px-3.5 py-2 rounded-2xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-900 flex items-center gap-2.5 text-sm font-medium text-surface-700 dark:text-surface-200 cursor-pointer select-none"
+          for="taxonomy-gaps-only"
         >
           <input
-            class="rounded border-surface-300 text-brand-600 focus:ring-brand-500"
+            class="w-6 h-6 rounded-xl border-surface-300 dark:border-surface-600 text-brand-600 focus:ring-brand-500 shrink-0"
+            id="taxonomy-gaps-only"
             type="checkbox"
             v-model="gapsOnly"
           >
@@ -105,56 +145,96 @@
       </div>
     </div>
 
-    <!-- Competencies & Skills List -->
-    <div class="space-y-6" v-if="filteredCompetencies.length > 0">
+    <!-- Loading State -->
+    <div
+      class="p-12 text-center bg-white dark:bg-surface-900 rounded-3xl border-2 border-surface-200 dark:border-surface-800 space-y-3"
+      v-if="isLoading && competencies.length === 0"
+    >
       <div
-        class="bg-white rounded-2xl border-2 border-surface-200 overflow-hidden shadow-sm"
+        aria-hidden="true"
+        class="w-8 h-8 border-2 border-brand-600 border-t-transparent rounded-full animate-spin mx-auto"
+      />
+      <p class="text-base font-medium text-surface-700 dark:text-surface-200">
+        Đang tải cây phân loại kỹ năng...
+      </p>
+    </div>
+
+    <!-- Error State -->
+    <div
+      class="p-8 text-center bg-danger-50 dark:bg-danger-950/40 rounded-3xl border-2 border-danger-200 dark:border-danger-800 space-y-3"
+      role="alert"
+      v-else-if="errorMessage"
+    >
+      <p class="text-base font-semibold text-danger-800 dark:text-danger-200">
+        {{ errorMessage }}
+      </p>
+      <button
+        class="min-h-11 px-4 py-2 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
+        type="button"
+        @click="loadTaxonomy"
+      >
+        Thử lại
+      </button>
+    </div>
+
+    <!-- Competencies & Skills List -->
+    <div class="space-y-6" v-else-if="filteredCompetencies.length > 0">
+      <div
+        class="bg-white dark:bg-surface-900 rounded-3xl border-2 border-surface-200 dark:border-surface-800 overflow-hidden shadow-xs"
         v-for="comp in filteredCompetencies"
         :key="comp.id"
       >
         <!-- Competency Header -->
         <div
-          class="p-4 md:p-5 bg-surface-50 border-b border-surface-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
+          class="p-4 md:p-5 bg-surface-50 dark:bg-surface-800/60 border-b border-surface-200 dark:border-surface-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 min-w-0"
         >
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3 min-w-0">
             <span
-              class="px-3 py-1 bg-brand-600 text-white font-bold rounded-xl text-sm"
+              class="px-3 py-1 bg-brand-600 text-white font-bold rounded-xl text-sm shrink-0"
             >
               {{ comp.code }}
             </span>
-            <h2 class="text-lg font-bold font-heading text-surface-900">
+            <h2
+              class="text-lg font-bold font-heading text-surface-900 dark:text-surface-100 truncate"
+            >
               {{ comp.name }}
             </h2>
           </div>
-          <div class="flex items-center gap-3 text-xs text-surface-600">
+          <div
+            class="flex flex-wrap items-center gap-2 text-sm text-surface-600 dark:text-surface-300"
+          >
             <span>{{ comp.total_strands }} mạch</span>
             <span>&bull;</span>
             <span>{{ comp.total_skills }} kỹ năng</span>
             <span>&bull;</span>
-            <span class="text-success-700 font-medium"
-              >{{ comp.published_count }}
-              đã xuất bản</span
-            >
+            <span class="text-success-700 dark:text-success-300 font-medium">
+              {{ comp.published_count }}
+              đã xuất bản
+            </span>
           </div>
         </div>
 
         <!-- Strands and Skills within Competency -->
-        <div class="divide-y divide-surface-200">
+        <div class="divide-y divide-surface-200 dark:divide-surface-800">
           <div
-            class="p-4 md:p-5 space-y-3"
+            class="p-4 md:p-5 space-y-3 min-w-0"
             v-for="strand in getStrandsForComp(comp.id)"
             :key="strand.id"
           >
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="font-bold text-surface-700 text-sm font-heading"
-                  >{{ strand.code }}</span
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex flex-wrap items-center gap-2 min-w-0">
+                <span
+                  class="font-bold text-surface-700 dark:text-surface-200 text-sm font-heading"
                 >
-                <span class="text-surface-900 font-semibold text-sm"
-                  >{{ strand.name }}</span
+                  {{ strand.code }}
+                </span>
+                <span
+                  class="text-surface-900 dark:text-surface-100 font-semibold text-sm"
                 >
+                  {{ strand.name }}
+                </span>
               </div>
-              <div class="text-xs text-surface-500">
+              <div class="text-sm text-surface-600 dark:text-surface-300">
                 {{ getSkillsForStrand(strand.id).length }}
                 kỹ năng
               </div>
@@ -163,34 +243,39 @@
             <!-- Skills Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               <div
-                class="p-3.5 rounded-xl border border-surface-200 hover:border-brand-400 transition-colors bg-surface-50 flex flex-col justify-between gap-2"
+                class="p-3.5 rounded-2xl border-2 border-surface-200 dark:border-surface-800 hover:border-brand-400 dark:hover:border-brand-600 transition-colors bg-surface-50 dark:bg-surface-800/50 flex flex-col justify-between gap-3 min-w-0"
                 v-for="skill in getSkillsForStrand(strand.id)"
                 :key="skill.id"
                 :class="{ 'opacity-60': skill.is_deprecated }"
               >
-                <div>
+                <div class="min-w-0">
                   <div class="flex items-center justify-between gap-2">
-                    <span class="font-mono text-xs font-bold text-brand-700"
-                      >{{ skill.code }}</span
-                    >
                     <span
-                      class="text-xs px-2 py-0.5 rounded-full font-medium"
+                      class="font-mono text-sm font-bold text-brand-700 dark:text-brand-300"
+                    >
+                      {{ skill.code }}
+                    </span>
+                    <span
+                      class="text-sm px-2.5 py-0.5 rounded-full font-medium shrink-0"
                       :class="{
-                        'bg-success-100 text-success-800': skill.gap_status === 'sufficient',
-                        'bg-warning-100 text-warning-800': skill.gap_status === 'thin',
-                        'bg-danger-100 text-danger-800': skill.gap_status === 'empty'
+                        'bg-success-100 dark:bg-success-900/50 text-success-800 dark:text-success-200':
+                          skill.gap_status === 'sufficient',
+                        'bg-warning-100 dark:bg-warning-900/50 text-warning-800 dark:text-warning-200':
+                          skill.gap_status === 'thin',
+                        'bg-danger-100 dark:bg-danger-900/50 text-danger-800 dark:text-danger-200':
+                          skill.gap_status === 'empty',
                       }"
                     >
                       {{ getGapLabel(skill.gap_status) }}
                     </span>
                   </div>
                   <h3
-                    class="text-sm font-semibold text-surface-900 mt-1 line-clamp-2"
+                    class="text-base font-semibold text-surface-900 dark:text-surface-100 mt-1 line-clamp-2"
                   >
                     {{ skill.name }}
                   </h3>
                   <div
-                    class="text-xs text-surface-500 mt-1 flex items-center gap-2"
+                    class="text-sm text-surface-600 dark:text-surface-300 mt-1 flex flex-wrap items-center gap-2"
                   >
                     <span>Độ tuổi {{ skill.age_min }}–{{ skill.age_max }}</span>
                     <span>&bull;</span>
@@ -199,21 +284,23 @@
                 </div>
 
                 <div
-                  class="pt-2 border-t border-surface-200 flex items-center justify-between text-xs"
+                  class="pt-2.5 border-t border-surface-200 dark:border-surface-700 flex flex-wrap items-center justify-between gap-2 text-sm"
                 >
-                  <span class="text-surface-600">
+                  <span class="text-surface-600 dark:text-surface-300">
                     {{ skill.published_count }}
-                    pub / {{ skill.draft_count }} nháp
+                    pub /
+                    {{ skill.draft_count }}
+                    nháp
                   </span>
-                  <div class="flex items-center gap-2">
+                  <div class="flex flex-wrap items-center gap-2">
                     <NuxtLink
-                      class="text-warning-700 hover:text-warning-800 font-medium"
+                      class="min-h-11 inline-flex items-center px-3 py-1.5 rounded-xl bg-warning-50 dark:bg-warning-950/50 text-warning-800 dark:text-warning-300 hover:bg-warning-100 dark:hover:bg-warning-900/60 font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
                       :to="`/studio/levels?skill_code=${skill.code}`"
                     >
                       Soạn level
                     </NuxtLink>
                     <NuxtLink
-                      class="text-brand-600 hover:text-brand-700 font-medium"
+                      class="min-h-11 inline-flex items-center px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/50 text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/60 font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
                       :to="`/taxonomy/${skill.code}`"
                     >
                       Chi tiết &rarr;
@@ -229,17 +316,17 @@
 
     <!-- Empty State -->
     <div
-      class="p-12 text-center bg-white rounded-2xl border-2 border-surface-200"
+      class="p-12 text-center bg-white dark:bg-surface-900 rounded-3xl border-2 border-surface-200 dark:border-surface-800"
       v-else
     >
       <UIcon
-        class="w-12 h-12 text-surface-400 mx-auto mb-3"
+        class="w-12 h-12 text-surface-500 mx-auto mb-3"
         name="i-lucide-folder-search"
       />
-      <h3 class="text-lg font-bold text-surface-800">
+      <h3 class="text-lg font-bold text-surface-800 dark:text-surface-100">
         Không tìm thấy kỹ năng nào
       </h3>
-      <p class="text-sm text-surface-600 mt-1">
+      <p class="text-base text-surface-600 dark:text-surface-300 mt-1">
         Thử điều chỉnh từ khoá tìm kiếm hoặc bỏ chọn lọc thiếu nội dung.
       </p>
     </div>
@@ -249,6 +336,7 @@
 <script lang="ts" setup>
   import { computed, onMounted, ref } from "vue";
   import { definePageMeta, useHead } from "#imports";
+  import { apiFetch } from "~/composables/use-api-client";
 
   definePageMeta({
     layout: "manager",
@@ -269,7 +357,8 @@
     difficulty: number;
     thinking_processes: string[];
     what_axis: string[];
-    status: string;
+    tier?: string;
+    status?: string;
     is_deprecated: boolean;
     published_count: number;
     draft_count: number;
@@ -323,6 +412,8 @@
   const searchQuery = ref("");
   const gapsOnly = ref(false);
   const asOf = ref("");
+  const isLoading = ref(true);
+  const errorMessage = ref<string | null>(null);
 
   const summary = ref({
     total_skills: 0,
@@ -336,6 +427,8 @@
   const skills = ref<SkillItem[]>([]);
 
   async function loadTaxonomy() {
+    isLoading.value = true;
+    errorMessage.value = null;
     try {
       const res = await apiFetch<TaxonomyResponse>("/api/managers/taxonomy");
       if (res) {
@@ -345,8 +438,11 @@
         strands.value = res.strands || [];
         skills.value = res.skills || [];
       }
-    } catch (err) {
-      console.error("Failed to load taxonomy tree", err);
+    } catch {
+      errorMessage.value =
+        "Không thể tải cây phân loại kỹ năng. Vui lòng thử lại.";
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -382,7 +478,7 @@
     });
   });
 
-  function getStrandsForComp(compId: number) {
+  function getStrandsForComp(compId: number): StrandItem[] {
     const visibleStrandIds = new Set(
       filteredSkills.value.map((s) => s.strand_id)
     );
@@ -391,7 +487,7 @@
     );
   }
 
-  function getSkillsForStrand(strandId: number) {
+  function getSkillsForStrand(strandId: number): SkillItem[] {
     return filteredSkills.value.filter((s) => s.strand_id === strandId);
   }
 

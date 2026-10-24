@@ -3,6 +3,7 @@ import {
   bigint,
   boolean,
   check,
+  index,
   integer,
   jsonb,
   pgTable,
@@ -59,6 +60,15 @@ export const playSessions = pgTable(
       "check_play_sessions_layout_seed",
       sql`${table.layoutSeed} IS NULL OR (${table.layoutSeed} >= 0 AND ${table.layoutSeed} <= 4294967295)`
     ),
+    index("idx_play_sessions_session_uuid").on(table.sessionUuid),
+    index("idx_play_sessions_child_started_at").on(
+      table.childProfileId,
+      table.startedAt
+    ),
+    index("idx_play_sessions_guest_status").on(
+      table.guestDeviceId,
+      table.completionStatus
+    ),
   ]
 );
 
@@ -80,7 +90,10 @@ export const telemetryEvents = pgTable(
       .notNull(),
     ...timestamps(),
   },
-  (table) => [primaryKey({ columns: [table.sessionUuid, table.seq] })]
+  (table) => [
+    primaryKey({ columns: [table.sessionUuid, table.seq] }),
+    index("idx_telemetry_events_created_at").on(table.createdAt),
+  ]
 );
 
 export const childSessionSummaries = pgTable(

@@ -65,10 +65,10 @@
 .game-play-container.theme-default {
   background: linear-gradient(
     145deg,
-    #fffef7 0%,
-    #fef9c3 30%,
-    #e0f2fe 70%,
-    #dcfce7 100%
+    var(--color-surface-50) 0%,
+    var(--color-warning-100) 30%,
+    var(--color-brand-100) 70%,
+    var(--color-success-100) 100%
   );
   --ambient-1: rgba(254, 240, 138, 0.6);
   --ambient-2: rgba(186, 230, 253, 0.6);
@@ -311,7 +311,9 @@
     inset 0 2px 6px rgba(255, 255, 255, 0.9),
     0 12px 36px rgba(180, 130, 60, 0.12),
     0 4px 12px rgba(245, 158, 11, 0.08);
-  border: 4px solid #fed7aa;
+  border: 4px solid var(--color-warning-200);
+  min-width: 0;
+  min-height: 0;
 }
 
 .game-canvas {
@@ -462,7 +464,7 @@
   bottom: 0.75rem;
   margin: 0;
   text-align: center;
-  font-size: 0.875rem;
+  font-size: 1rem;
   line-height: 1.25;
   color: var(--color-surface-700);
 }
@@ -484,4 +486,10 @@
   .portrait-gate__arrow {
     animation: none;
   }
+}
+
+#nuxt-devtools-container,
+.nuxt-devtools-panel,
+nuxt-devtools-frame {
+  display: none !important;
 }

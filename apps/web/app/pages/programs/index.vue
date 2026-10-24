@@ -12,6 +12,35 @@
             Lộ trình học bài bản theo từng độ tuổi và hành trình phát triển toàn
             diện 6 năng lực tư duy toán học cho trẻ 3–6 tuổi.
           </p>
+
+          <!-- Bộ lọc theo độ tuổi -->
+          <fieldset
+            aria-label="Lọc chương trình theo độ tuổi"
+            class="age-filter-bar border-0 p-0 m-0"
+          >
+            <button
+              class="age-filter-btn min-h-11"
+              data-testid="age-filter-all"
+              type="button"
+              :aria-pressed="selectedAgeBand === ''"
+              :class="{ active: selectedAgeBand === '' }"
+              @click="selectAgeBand('')"
+            >
+              Tất cả độ tuổi
+            </button>
+            <button
+              class="age-filter-btn min-h-11"
+              type="button"
+              v-for="band in AGE_FILTER_OPTIONS"
+              :key="band.value"
+              :aria-pressed="selectedAgeBand === band.value"
+              :class="{ active: selectedAgeBand === band.value }"
+              :data-testid="`age-filter-${band.value}`"
+              @click="selectAgeBand(band.value)"
+            >
+              {{ band.label }}
+            </button>
+          </fieldset>
         </div>
 
         <!-- Loading State -->
@@ -25,16 +54,20 @@
           <p class="error-text">
             Không thể tải danh sách chương trình. Vui lòng thử lại sau.
           </p>
-          <button class="btn-retry" type="button" @click="() => refresh()">
+          <button
+            class="btn-retry min-h-11"
+            type="button"
+            @click="() => refresh()"
+          >
             Thử lại
           </button>
         </div>
 
         <!-- Groups & Cards -->
-        <div class="programs-content" v-else-if="groups.length > 0">
+        <div class="programs-content" v-else-if="filteredGroups.length > 0">
           <section
             class="program-group-section"
-            v-for="group in groups"
+            v-for="group in filteredGroups"
             :key="group.code"
             :aria-labelledby="`group-heading-${group.code}`"
           >
@@ -49,6 +82,7 @@
                 class="program-card"
                 v-for="program in group.programs"
                 :key="program.code"
+                :data-program-code="program.code"
               >
                 <div class="card-header">
                   <div class="card-badges">
@@ -73,7 +107,10 @@
                 </div>
 
                 <p class="program-desc">
-                  {{ program.description || 'Chương trình rèn luyện tư duy toán học mầm non qua trò chơi và hoạt động trải nghiệm.' }}
+                  {{
+                    program.description ||
+                      "Chương trình rèn luyện tư duy toán học mầm non qua trò chơi và hoạt động trải nghiệm."
+                  }}
                 </p>
 
                 <div class="card-meta">
@@ -97,7 +134,7 @@
 
                 <div class="card-action">
                   <NuxtLink
-                    class="btn-view-program"
+                    class="btn-view-program min-h-11"
                     :to="`/programs/${program.code}`"
                   >
                     Xem lộ trình chi tiết
@@ -129,7 +166,22 @@
     type ProgramGroupPublic,
     type ProgramListPublicResponse,
   } from "@mindkid/shared/client";
-  import { computed } from "vue";
+  import { computed, ref } from "vue";
+
+  type AgeBandFilter = "" | "3-4" | "4-5" | "5-6";
+
+  interface AgeFilterOption {
+    value: "3-4" | "4-5" | "5-6";
+    label: string;
+    min: number;
+    max: number;
+  }
+
+  const AGE_FILTER_OPTIONS: readonly AgeFilterOption[] = [
+    { value: "3-4", label: "3–4 tuổi (Mầm)", min: 3, max: 4 },
+    { value: "4-5", label: "4–5 tuổi (Chồi)", min: 4, max: 5 },
+    { value: "5-6", label: "5–6 tuổi (Lá)", min: 5, max: 6 },
+  ];
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
   // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
@@ -138,6 +190,7 @@
   definePageMeta({ layout: false });
 
   const siteUrl = "https://mindkid.vn";
+  const selectedAgeBand = ref<AgeBandFilter>("");
 
   const {
     data,
@@ -149,6 +202,29 @@
   });
 
   const groups = computed<ProgramGroupPublic[]>(() => data.value?.groups || []);
+
+  const filteredGroups = computed<ProgramGroupPublic[]>(() => {
+    const activeOption = AGE_FILTER_OPTIONS.find(
+      (opt) => opt.value === selectedAgeBand.value
+    );
+    if (!activeOption) {
+      return groups.value;
+    }
+    return groups.value
+      .map((group) => ({
+        ...group,
+        programs: group.programs.filter(
+          (prog) =>
+            prog.target_age.min === activeOption.min &&
+            prog.target_age.max === activeOption.max
+        ),
+      }))
+      .filter((group) => group.programs.length > 0);
+  });
+
+  function selectAgeBand(band: AgeBandFilter): void {
+    selectedAgeBand.value = band;
+  }
 
   function getTierLabel(tier: string): string {
     switch (tier) {
@@ -233,7 +309,7 @@
     font-family: var(--font-heading, "Fredoka", sans-serif);
     font-size: 2.25rem;
     font-weight: 700;
-    line-height: 1.3;
+    line-height: 1.4;
     color: var(--color-surface-900);
     margin-bottom: 0.75rem;
   }
@@ -244,6 +320,52 @@
     max-width: 720px;
     margin: 0 auto;
     line-height: 1.6;
+  }
+
+  .age-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.625rem;
+    margin-top: 1.75rem;
+  }
+
+  .age-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.5rem 1.125rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    border-radius: 1rem;
+    border: 2px solid var(--color-surface-200);
+    background-color: var(--color-surface-0, white);
+    color: var(--color-surface-700);
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .age-filter-btn:hover {
+    border-color: var(--color-brand-600);
+    color: var(--color-brand-600);
+  }
+
+  .age-filter-btn.active {
+    background-color: var(--color-brand-600);
+    border-color: var(--color-brand-600);
+    color: var(--color-surface-0, white);
+  }
+
+  .age-filter-btn:focus-visible,
+  .program-link:focus-visible,
+  .btn-view-program:focus-visible,
+  .btn-retry:focus-visible {
+    outline: 3px solid var(--color-brand-600);
+    outline-offset: 2px;
   }
 
   .program-group-section {
@@ -260,6 +382,7 @@
     font-family: var(--font-heading, "Fredoka", sans-serif);
     font-size: 1.5rem;
     font-weight: 700;
+    line-height: 1.4;
     color: var(--color-surface-800);
   }
 
@@ -291,6 +414,7 @@
 
   .card-badges {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     gap: 0.5rem;
@@ -298,7 +422,7 @@
   }
 
   .age-badge {
-    font-size: 0.8125rem;
+    font-size: 0.875rem;
     font-weight: 700;
     padding: 0.25rem 0.625rem;
     border-radius: 0.75rem;
@@ -307,7 +431,7 @@
   }
 
   .tier-badge {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 700;
     padding: 0.25rem 0.625rem;
     border-radius: 0.75rem;
@@ -342,6 +466,9 @@
   }
 
   .program-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--color-surface-900);
     text-decoration: none;
   }
@@ -351,7 +478,7 @@
   }
 
   .program-desc {
-    font-size: 0.9375rem;
+    font-size: 1rem;
     color: var(--color-surface-600);
     line-height: 1.5;
     margin-bottom: 1.25rem;
@@ -360,6 +487,7 @@
 
   .card-meta {
     display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
     padding: 0.75rem 0;
     border-top: 1px solid var(--color-surface-100);
@@ -375,7 +503,7 @@
   }
 
   .meta-label {
-    color: var(--color-surface-500);
+    color: var(--color-surface-600);
   }
 
   .meta-value {
@@ -443,11 +571,15 @@
   }
 
   .btn-retry {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
     margin-top: 1rem;
     padding: 0.5rem 1.25rem;
     font-size: 0.875rem;
     font-weight: 700;
-    border-radius: 0.75rem;
+    border-radius: 1rem;
     background-color: var(--color-brand-600);
     color: var(--color-surface-0, white);
     border: none;

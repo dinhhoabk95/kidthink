@@ -6,7 +6,8 @@
     >
       <div class="mb-2 flex items-center gap-2">
         <NuxtLink
-          class="inline-flex items-center gap-1 text-sm font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400"
+          class="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400"
+          data-testid="back-to-children-link"
           to="/me/children"
         >
           <UIcon class="h-4 w-4" name="i-lucide-arrow-left" />
@@ -82,19 +83,19 @@
         v-if="quotaExceededError"
       >
         <p class="text-sm font-bold">{{ quotaExceededError }}</p>
-        <p class="text-xs text-amber-900 dark:text-amber-300">
+        <p class="text-sm text-amber-900 dark:text-amber-300">
           Bạn có thể lưu trữ một hồ sơ bé khác đang hoạt động để giải phóng
           suất, hoặc nâng cấp gói dịch vụ để mở thêm hạn mức hồ sơ.
         </p>
         <div class="flex flex-wrap gap-3 pt-1">
           <NuxtLink
-            class="inline-flex min-h-11 items-center justify-center rounded-xl bg-amber-600 px-4 py-2 text-xs font-bold text-white hover:bg-amber-700"
+            class="inline-flex min-h-11 items-center justify-center rounded-2xl bg-amber-600 px-4 py-2 text-sm font-bold text-white hover:bg-amber-700"
             to="/pricing"
           >
             Xem gói nâng cấp
           </NuxtLink>
           <NuxtLink
-            class="inline-flex min-h-11 items-center justify-center rounded-xl border border-amber-300 bg-white px-4 py-2 text-xs font-bold text-amber-900 hover:bg-amber-100 dark:bg-surface-800 dark:text-amber-200"
+            class="inline-flex min-h-11 items-center justify-center rounded-2xl border border-amber-300 bg-white px-4 py-2 text-sm font-bold text-amber-900 hover:bg-amber-100 dark:bg-surface-800 dark:text-amber-200"
             to="/me/children"
           >
             Quản lý các hồ sơ khác
@@ -120,19 +121,21 @@
               {{ formattedPurgeAt }}
             </strong>
           </p>
-          <p class="text-xs text-amber-800 dark:text-amber-300">
+          <p class="text-sm text-amber-800 dark:text-amber-300">
             Trong thời gian ân hạn 30 ngày, bạn có thể huỷ yêu cầu xoá bất cứ
             lúc nào để giữ nguyên toàn bộ dữ liệu của bé.
           </p>
         </div>
         <button
-          class="min-h-11 rounded-xl bg-amber-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-amber-700 disabled:opacity-50"
+          class="min-h-11 rounded-2xl bg-amber-600 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-amber-700 disabled:opacity-50"
           data-testid="cancel-delete-child-btn"
           type="button"
           :disabled="isBusy"
           @click="handleCancelDelete"
         >
-          {{ isCancellingDelete ? "Đang khôi phục..." : "Huỷ yêu cầu xoá hồ sơ" }}
+          {{
+            isCancellingDelete ? "Đang khôi phục..." : "Huỷ yêu cầu xoá hồ sơ"
+          }}
         </button>
       </div>
 
@@ -159,7 +162,7 @@
                   {{ child.display_name }}
                 </h2>
                 <span
-                  class="rounded-full px-3 py-0.5 text-xs font-bold"
+                  class="rounded-full px-3 py-0.5 text-sm font-bold"
                   data-testid="child-status-badge"
                   :class="statusBadgeClass"
                 >
@@ -194,6 +197,16 @@
             >
               <UIcon class="h-4 w-4" name="i-lucide-bar-chart-3" />
               <span>Xem báo cáo học tập</span>
+            </NuxtLink>
+
+            <NuxtLink
+              class="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-2xl bg-brand-600 px-4 py-2 text-sm font-bold text-white shadow-xs transition hover:bg-brand-700"
+              data-testid="play-child-link"
+              to="/play"
+              v-if="child.status === 'active'"
+            >
+              <UIcon class="h-4 w-4" name="i-lucide-gamepad-2" />
+              <span>Vào chơi</span>
             </NuxtLink>
           </div>
         </div>
@@ -313,7 +326,8 @@
             Xác nhận xoá hồ sơ bé {{ child.display_name }}
           </h2>
           <button
-            class="rounded-lg p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700"
+            aria-label="Đóng hộp thoại xác nhận xoá"
+            class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl p-1.5 text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700"
             data-testid="close-delete-modal-btn"
             type="button"
             @click="closeDeleteModal"
@@ -345,7 +359,7 @@
             </label>
             <input
               autocomplete="off"
-              class="min-h-11 w-full rounded-xl border-2 border-surface-200 px-3.5 py-2.5 text-base text-surface-900 focus:border-danger-600 focus:outline-none dark:border-surface-600 dark:bg-surface-900 dark:text-surface-100"
+              class="min-h-11 w-full rounded-2xl border-2 border-surface-200 px-3.5 py-2.5 text-base text-surface-900 focus:border-danger-600 focus:outline-none dark:border-surface-600 dark:bg-surface-900 dark:text-surface-100"
               data-testid="delete-confirm-name-input"
               id="confirm-child-name"
               required
@@ -364,7 +378,7 @@
             </label>
             <input
               autocomplete="current-password"
-              class="min-h-11 w-full rounded-xl border-2 border-surface-200 px-3.5 py-2.5 text-base text-surface-900 focus:border-danger-600 focus:outline-none dark:border-surface-600 dark:bg-surface-900 dark:text-surface-100"
+              class="min-h-11 w-full rounded-2xl border-2 border-surface-200 px-3.5 py-2.5 text-base text-surface-900 focus:border-danger-600 focus:outline-none dark:border-surface-600 dark:bg-surface-900 dark:text-surface-100"
               data-testid="delete-password-input"
               id="delete-child-password"
               required
@@ -374,7 +388,7 @@
           </div>
 
           <p
-            class="rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs font-semibold text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
+            class="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm font-semibold text-amber-900 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-200"
             data-testid="delete-modal-error"
             v-if="deleteModalError"
           >
@@ -383,14 +397,14 @@
 
           <div class="flex justify-end gap-3 pt-2">
             <button
-              class="min-h-11 rounded-xl border border-surface-300 px-4 py-2 text-sm font-semibold text-surface-700 hover:bg-surface-50 dark:border-surface-600 dark:text-surface-200"
+              class="min-h-11 rounded-2xl border border-surface-300 px-4 py-2 text-sm font-semibold text-surface-700 hover:bg-surface-50 dark:border-surface-600 dark:text-surface-200"
               type="button"
               @click="closeDeleteModal"
             >
               Giữ lại hồ sơ
             </button>
             <button
-              class="min-h-11 rounded-xl bg-danger-600 px-5 py-2 text-sm font-semibold text-white hover:bg-danger-700 disabled:opacity-50"
+              class="min-h-11 rounded-2xl bg-danger-600 px-5 py-2 text-sm font-semibold text-white hover:bg-danger-700 disabled:opacity-50"
               data-testid="confirm-delete-child-btn"
               type="submit"
               :disabled="isDeleting"

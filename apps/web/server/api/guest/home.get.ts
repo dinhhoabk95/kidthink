@@ -1,6 +1,8 @@
+import { getCached, setCached } from "@mindkid/cache";
 import { getOwnerDb } from "@mindkid/db";
 import {
   COMPETENCY_CATALOG,
+  type FaqItem,
   FEATURED_GUEST_LEVELS,
   PACKAGE_CATALOG,
 } from "@mindkid/shared";
@@ -8,8 +10,43 @@ import { defineEventHandler, setHeader } from "h3";
 import {
   countPublishedLevels,
   listPublishedFaqItems,
+  type PublishedLevelCounts,
   roundedLibrarySize,
 } from "#server/services/index.js";
+
+const HOME_CACHE_KEY = "guest:home:data:v1";
+const HOME_CACHE_TTL_SECONDS = 300;
+
+interface CachedHomeData {
+  counts: PublishedLevelCounts;
+  faqItems: FaqItem[];
+}
+
+async function resolveHomeData(): Promise<CachedHomeData> {
+  try {
+    const cached = await getCached<CachedHomeData>(HOME_CACHE_KEY);
+    if (cached?.counts && Array.isArray(cached.faqItems)) {
+      return cached;
+    }
+  } catch {
+    // Valkey unavailable — fallback cleanly to DB
+  }
+
+  const db = getOwnerDb();
+  const [counts, faqItems] = await Promise.all([
+    countPublishedLevels(db),
+    listPublishedFaqItems(db),
+  ]);
+  const data: CachedHomeData = { counts, faqItems };
+
+  try {
+    await setCached(HOME_CACHE_KEY, data, HOME_CACHE_TTL_SECONDS);
+  } catch {
+    // Non-blocking cache write
+  }
+
+  return data;
+}
 
 /** Thứ tự ba lớp mầm non — trùng với band tuổi của `game_levels`. */
 const PROGRAM_BANDS = [
@@ -50,11 +87,7 @@ export default defineEventHandler(async (event) => {
    * Ba số cứng 24 · 48 · 48 ở đây từng lệch thật (60 · 84 · 95) và người lớn
    * bấm sang danh mục là thấy ngay.
    */
-  const db = getOwnerDb();
-  const [counts, faqItems] = await Promise.all([
-    countPublishedLevels(db),
-    listPublishedFaqItems(db),
-  ]);
+  const { counts, faqItems } = await resolveHomeData();
   const standardCount = STANDARD_TIERS.reduce(
     (sum, tier) => sum + (counts.by_access_tier[tier] ?? 0),
     0

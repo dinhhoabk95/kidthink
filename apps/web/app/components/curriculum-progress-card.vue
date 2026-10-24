@@ -1,11 +1,12 @@
 <template>
   <div
     class="rounded-3xl p-6 bg-white border-[3px] border-brand-100 shadow-sm"
+    data-testid="curriculum-progress-card"
     v-if="curriculumData"
   >
     <div class="flex justify-between items-start mb-4">
       <div class="flex flex-col gap-1">
-        <span class="text-xs font-bold text-brand-600">Lộ trình học</span>
+        <span class="text-base font-bold text-brand-600">Lộ trình học</span>
         <h2 class="text-xl font-bold text-surface-900">
           {{ curriculumData.curriculum_title }}
         </h2>
@@ -21,7 +22,7 @@
       v-if="nextStep && !nextStep.is_completed"
     >
       <div class="flex flex-col">
-        <span class="text-sm font-semibold text-surface-500 tabular-nums">
+        <span class="text-base font-semibold text-surface-500 tabular-nums">
           Tuần {{ nextStep.week_no }} · Buổi {{ nextStep.session_no }}
         </span>
         <p class="text-base font-bold text-surface-800" v-if="nextStep.item">
@@ -32,12 +33,12 @@
       <!-- Action Button -->
       <div>
         <NuxtLink
-          class="inline-flex items-center justify-center min-h-11 px-5 text-sm font-bold text-white bg-cta rounded-2xl no-underline active:scale-95 transition-transform"
+          class="inline-flex items-center justify-center min-h-16 min-w-16 px-5 text-base font-bold text-white bg-cta rounded-2xl no-underline active:scale-95 transition-transform"
           v-if="nextStep.item && !nextStep.item.locked"
           :to="
             nextStep.item.entity_type === 'game_level'
               ? `/play/${nextStep.item.entity_code}`
-              : `/lessons/${nextStep.item.entity_code}`
+              : `/play/lesson/${nextStep.item.entity_code}`
           "
         >
           <span>Học tiếp</span>
@@ -45,7 +46,7 @@
 
         <!-- Neutral lock badge for locked tier item (BR-CUR-06) -->
         <div
-          class="inline-flex items-center gap-1 px-3 py-2 text-xs font-semibold text-surface-600 bg-surface-200 rounded-xl"
+          class="inline-flex items-center gap-1 px-3 py-2 text-base font-semibold text-surface-600 bg-surface-200 rounded-xl"
           v-else-if="nextStep.item?.locked"
         >
           <UIcon class="w-3.5 h-3.5" name="i-lucide-lock" />
@@ -60,7 +61,7 @@
       v-else-if="curriculumData.is_completed"
     >
       <UIcon class="w-6 h-6 text-amber-500 shrink-0" name="i-lucide-star" />
-      <p class="text-sm font-semibold text-success-600">
+      <p class="text-base font-semibold text-success-600">
         Bé đã hoàn thành xuất sắc toàn bộ lộ trình!
       </p>
     </div>
@@ -121,15 +122,17 @@
     }
     try {
       const [prog, next] = await Promise.all([
-        api<CurriculumProgressResponse>(
-          `/api/users/children/${props.childUuid}/curriculum/progress`
+        api<CurriculumProgressResponse | null>(
+          `/api/users/children/${props.childUuid}/curriculum/progress`,
+          { query: { optional: "1" } }
         ),
-        api<NextStepResponse>(
-          `/api/users/children/${props.childUuid}/curriculum/next`
+        api<NextStepResponse | null>(
+          `/api/users/children/${props.childUuid}/curriculum/next`,
+          { query: { optional: "1" } }
         ),
       ]);
-      curriculumData.value = prog;
-      nextStep.value = next;
+      curriculumData.value = prog ?? null;
+      nextStep.value = next ?? null;
     } catch {
       // Graceful fallback if not enrolled or error
       curriculumData.value = null;

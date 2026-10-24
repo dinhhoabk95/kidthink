@@ -1,32 +1,48 @@
 <template>
-  <div class="space-y-6 max-w-6xl mx-auto">
-    <!-- Role Guard: Forbidden for non-super_admin -->
-    <ForbiddenState v-if="!isSuperAdmin" />
+  <NuxtPage v-if="isChildRoute" />
 
-    <div class="space-y-6" v-else>
+  <div
+    class="w-full max-w-6xl mx-auto space-y-6 min-w-0 overflow-x-hidden"
+    v-else
+  >
+    <!-- Loading State while session initializes -->
+    <LoadingState v-if="loading && !user" />
+
+    <!-- Role Guard: Forbidden for non-super_admin -->
+    <ForbiddenState v-else-if="!isSuperAdmin" />
+
+    <div class="space-y-6 min-w-0" v-else>
       <!-- Header with back button -->
       <div
-        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-surface-200 pb-5"
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-surface-200 pb-5 min-w-0"
       >
-        <div class="space-y-1">
+        <div class="space-y-1 min-w-0">
           <div class="flex items-center gap-2">
             <NuxtLink
-              class="text-xs font-bold font-heading text-brand-600 hover:underline flex items-center gap-1"
+              class="min-h-11 px-2 py-1 rounded-xl text-xs font-bold font-heading text-brand-600 hover:underline inline-flex items-center gap-1"
               to="/users"
             >
               ← Danh sách người dùng
             </NuxtLink>
           </div>
-          <h1 class="text-2xl font-bold font-heading text-surface-900">
+          <h1
+            class="text-xl sm:text-2xl font-bold font-heading text-surface-900 break-words"
+          >
             Chi tiết tài khoản người dùng
           </h1>
-          <p class="text-xs text-surface-500 font-mono" v-if="detail?.account">
+          <p
+            class="text-xs text-surface-500 font-mono break-all"
+            v-if="detail?.account"
+          >
             UUID: {{ detail.account.uuid }}
           </p>
         </div>
 
         <!-- Global Action Buttons on Header -->
-        <div class="flex items-center gap-2" v-if="detail?.account">
+        <div
+          class="flex flex-wrap items-center gap-2 min-w-0"
+          v-if="detail?.account"
+        >
           <NuxtLink
             class="min-h-11 px-4 py-2 rounded-2xl border-2 border-surface-200 bg-white hover:bg-surface-50 text-surface-700 text-xs font-bold font-heading transition-colors inline-flex items-center"
             :to="`/audit?entity_type=user&entity_id=${detail.account.uuid}`"
@@ -72,9 +88,12 @@
           class="w-5 h-5 text-danger-500 shrink-0 mt-0.5"
           name="i-lucide-alert-triangle"
         />
-        <div class="flex-1 font-medium">{{ errorMessage }}</div>
+        <div class="flex-1 font-medium break-words min-w-0">
+          {{ errorMessage }}
+        </div>
         <button
-          class="text-danger-600 hover:text-danger-800 font-bold"
+          aria-label="Đóng thông báo lỗi"
+          class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl text-danger-600 hover:text-danger-800 font-bold"
           type="button"
           @click="dismissError"
         >
@@ -90,9 +109,12 @@
           class="w-5 h-5 text-success-500 shrink-0 mt-0.5"
           name="i-lucide-check-circle-2"
         />
-        <div class="flex-1 font-medium">{{ successMessage }}</div>
+        <div class="flex-1 font-medium break-words min-w-0">
+          {{ successMessage }}
+        </div>
         <button
-          class="text-success-600 hover:text-success-800 font-bold"
+          aria-label="Đóng thông báo thành công"
+          class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl text-success-600 hover:text-success-800 font-bold"
           type="button"
           @click="dismissSuccess"
         >
@@ -104,7 +126,7 @@
       <LoadingState v-if="loading" />
 
       <!-- Four Groups of Information (§7.1) + Subscriptions -->
-      <div class="space-y-6" v-else-if="detail">
+      <div class="space-y-6 min-w-0" v-else-if="detail">
         <!-- GROUP 1: Thông tin tài khoản -->
         <UserAccountSection :account="detail.account" />
 
@@ -153,7 +175,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, onMounted, reactive, ref } from "vue";
+  import { normalizeApiError } from "@mindkid/errors/client";
+  import { computed, onMounted, reactive, ref, watch } from "vue";
   import { definePageMeta, useHead, useRoute } from "#imports";
   import ForbiddenState from "~/components/forbidden-state.vue";
   import LoadingState from "~/components/loading-state.vue";
@@ -170,18 +193,27 @@
     type PaymentOrderItem,
   } from "~/components/users/user-payments-section.vue";
   import UserSubscriptionsSection from "~/components/users/user-subscriptions-section.vue";
-  import type { ManagerRole } from "~/composables/nav-config";
+  import { useAdminAuth } from "~/composables/use-admin-auth";
+  import { apiFetch } from "~/composables/use-api-client";
 
   definePageMeta({
     layout: "manager",
   });
 
   const route = useRoute();
-  const { user } = useAdminAuth();
+  const { user, fetchSession } = useAdminAuth();
+
+  const isChildRoute = computed(() => {
+    const uuid = typeof route.params.uuid === "string" ? route.params.uuid : "";
+    return (
+      Boolean(uuid) &&
+      route.path !== `/users/${uuid}` &&
+      route.path !== `/users/${uuid}/`
+    );
+  });
 
   const isSuperAdmin = computed(() => {
-    const role = (user.value as { role?: ManagerRole } | null)?.role;
-    return role === "super_admin";
+    return user.value?.role === "super_admin";
   });
 
   interface UserDetailResponse {
@@ -193,6 +225,7 @@
       status: string;
       email_verified: boolean;
       email_verified_at: string | null;
+      mfa_enabled?: boolean;
       suspended_reason: string | null;
       purge_at: string | null;
       active_session_count: number;
@@ -205,13 +238,6 @@
       history: EntitlementItem[];
     };
     payments: PaymentOrderItem[];
-  }
-
-  interface ApiErrorResponse {
-    data?: {
-      message?: string;
-      code?: string;
-    };
   }
 
   const detail = ref<UserDetailResponse | null>(null);
@@ -256,12 +282,22 @@
   }
 
   async function loadDetail() {
-    if (!isSuperAdmin.value) {
+    if (isChildRoute.value) {
       return;
     }
 
-    const uuid = route.params.uuid as string;
+    if (!user.value) {
+      await fetchSession();
+    }
+
+    if (!isSuperAdmin.value) {
+      loading.value = false;
+      return;
+    }
+
+    const uuid = typeof route.params.uuid === "string" ? route.params.uuid : "";
     if (!uuid) {
+      loading.value = false;
       return;
     }
 
@@ -274,9 +310,9 @@
       );
       detail.value = data;
     } catch (err) {
-      const apiErr = err as ApiErrorResponse;
       errorMessage.value =
-        apiErr?.data?.message || "Không thể tải thông tin chi tiết người dùng.";
+        normalizeApiError(err).message ||
+        "Không thể tải thông tin chi tiết người dùng.";
     } finally {
       loading.value = false;
     }
@@ -315,9 +351,9 @@
       userActionModal.type = null;
       await loadDetail();
     } catch (err) {
-      const apiErr = err as ApiErrorResponse;
       errorMessage.value =
-        apiErr?.data?.message || `Xảy ra lỗi khi ${actionLabel} tài khoản.`;
+        normalizeApiError(err).message ||
+        `Xảy ra lỗi khi ${actionLabel} tài khoản.`;
     } finally {
       submitting.value = false;
     }
@@ -342,9 +378,9 @@
       successMessage.value =
         "Đã gửi link đặt lại mật khẩu đến email của người dùng.";
     } catch (err) {
-      const apiErr = err as ApiErrorResponse;
       errorMessage.value =
-        apiErr?.data?.message || "Không thể gửi link đặt lại mật khẩu.";
+        normalizeApiError(err).message ||
+        "Không thể gửi link đặt lại mật khẩu.";
     } finally {
       submitting.value = false;
     }
@@ -380,13 +416,21 @@
       childArchiveModal.child = null;
       await loadDetail();
     } catch (err) {
-      const apiErr = err as ApiErrorResponse;
       errorMessage.value =
-        apiErr?.data?.message || "Xảy ra lỗi khi lưu trữ hồ sơ trẻ.";
+        normalizeApiError(err).message || "Xảy ra lỗi khi lưu trữ hồ sơ trẻ.";
     } finally {
       submitting.value = false;
     }
   }
+
+  watch(
+    () => [isSuperAdmin.value, route.params.uuid, isChildRoute.value],
+    ([canAccess, uuid, childRoute]) => {
+      if (canAccess && uuid && !childRoute && !detail.value) {
+        loadDetail();
+      }
+    }
+  );
 
   onMounted(() => {
     loadDetail();

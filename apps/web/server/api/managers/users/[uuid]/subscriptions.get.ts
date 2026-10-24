@@ -1,11 +1,13 @@
 import { getOwnerDb, recurringSubscriptions, users } from "@mindkid/db";
 import { UserNotFoundError } from "@mindkid/errors/account";
 import { ValidationError } from "@mindkid/errors/common";
-import { desc, eq, or } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 const NUMERIC_REGEX = /^\d+$/;
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export default defineEventHandler(async (event) => {
   requireSuperAdminSession(event);
@@ -16,14 +18,17 @@ export default defineEventHandler(async (event) => {
     throw ValidationError.field("uuid", "ID người dùng không hợp lệ");
   }
 
+  const isNumeric = NUMERIC_REGEX.test(uuidParam);
+  if (!(isNumeric || UUID_REGEX.test(uuidParam))) {
+    throw new UserNotFoundError(uuidParam);
+  }
+
   const db = getOwnerDb();
   const [targetUser] = await db
     .select({ id: users.id, uuid: users.uuid })
     .from(users)
     .where(
-      NUMERIC_REGEX.test(uuidParam)
-        ? or(eq(users.id, Number(uuidParam)), eq(users.uuid, uuidParam))
-        : eq(users.uuid, uuidParam)
+      isNumeric ? eq(users.id, Number(uuidParam)) : eq(users.uuid, uuidParam)
     )
     .limit(1);
 

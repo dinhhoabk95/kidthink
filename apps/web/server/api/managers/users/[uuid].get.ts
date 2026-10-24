@@ -16,10 +16,13 @@ import { defineEventHandler, getHeader, getRouterParam, setHeader } from "h3";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export default defineEventHandler(async (event) => {
-  const session = await requireSuperAdminSession(event);
+  const session = requireSuperAdminSession(event);
   const userUuid = getRouterParam(event, "uuid");
-  if (!userUuid) {
+  if (!(userUuid && UUID_REGEX.test(userUuid))) {
     throw new NotFoundError();
   }
 

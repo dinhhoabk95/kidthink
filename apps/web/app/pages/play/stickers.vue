@@ -182,7 +182,7 @@
     height: 4.5rem;
     border-radius: 1.25rem;
     border: 3px solid var(--color-surface-300);
-    background-color: var(--color-surface-0, #fff);
+    background-color: var(--color-surface-0);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -245,10 +245,12 @@
     height: 4.5rem;
     border-radius: 1.25rem;
     border: 3px dashed var(--color-brand-300);
-    background-color: var(--color-surface-0, #fff);
+    background-color: var(--color-surface-0);
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family:
+      "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
     font-size: 2.75rem;
     line-height: 1;
   }

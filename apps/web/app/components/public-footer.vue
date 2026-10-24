@@ -29,7 +29,9 @@
               <NuxtLink
                 class="footer-link"
                 :to="`/games?competency=${comp.code}`"
-                >{{ comp.name }}</NuxtLink
+                >{{
+                  comp.name
+                }}</NuxtLink
               >
             </li>
           </ul>

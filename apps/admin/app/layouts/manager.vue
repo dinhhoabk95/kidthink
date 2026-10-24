@@ -2,30 +2,48 @@
   <div
     class="min-h-screen flex bg-surface-50 dark:bg-surface-950 text-surface-900 dark:text-surface-100 font-sans transition-colors duration-150"
   >
+    <!-- Mobile Sidebar Backdrop -->
+    <button
+      aria-label="Đóng thanh điều hướng"
+      class="fixed inset-0 z-20 bg-surface-950/50 backdrop-blur-xs md:hidden"
+      type="button"
+      v-if="isMobileSidebarOpen"
+      @click="isMobileSidebarOpen = false"
+    />
+
     <!-- Sidebar Navigation -->
     <aside
       aria-label="Thanh điều hướng chính"
-      class="bg-white dark:bg-surface-900 border-r border-surface-200 dark:border-surface-800 flex flex-col shrink-0 min-h-screen select-none transition-all duration-200 z-30"
-      :class="[isSidebarCollapsed ? 'w-16' : 'w-60']"
+      class="bg-white dark:bg-surface-900 border-r border-surface-200 dark:border-surface-800 flex-col shrink-0 min-h-screen select-none transition-transform duration-200 z-30"
+      :class="[
+        isMobileSidebarOpen
+          ? 'fixed inset-y-0 left-0 flex w-60 shadow-2xl md:shadow-none md:static'
+          : 'hidden md:flex',
+        isSidebarCollapsed ? 'md:w-16' : 'md:w-60',
+      ]"
     >
       <!-- Logo Brand Header -->
       <div
-        class="h-13 border-b border-surface-200 dark:border-surface-800 flex items-center px-4 justify-between"
+        class="h-14 border-b border-surface-200 dark:border-surface-800 flex items-center px-3 justify-between gap-2"
       >
-        <NuxtLink class="flex items-center gap-3 min-w-0" to="/">
+        <NuxtLink
+          class="flex items-center gap-2.5 min-w-0 min-h-11 px-1 rounded-xl focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
+          to="/"
+          @click="isMobileSidebarOpen = false"
+        >
           <div
-            class="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-sm font-heading shadow-sm shrink-0"
+            class="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center text-white font-bold text-sm font-heading shadow-xs shrink-0"
           >
             MK
           </div>
           <div class="min-w-0 truncate" v-if="!isSidebarCollapsed">
             <div
-              class="font-bold font-heading text-sm text-surface-900 dark:text-surface-100 leading-none truncate"
+              class="font-bold font-heading text-sm text-surface-900 dark:text-surface-100 leading-tight truncate"
             >
               MindKid Admin
             </div>
             <div
-              class="text-[10px] text-surface-400 dark:text-surface-500 font-medium truncate mt-0.5"
+              class="text-xs text-surface-500 dark:text-surface-400 font-medium truncate"
             >
               Mission Control
             </div>
@@ -34,7 +52,8 @@
 
         <!-- Toggle Collapse Button on Desktop -->
         <button
-          class="p-1 rounded-lg text-surface-400 hover:text-surface-700 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+          aria-label="Thu gọn thanh điều hướng"
+          class="hidden md:inline-flex items-center justify-center min-w-11 min-h-11 rounded-xl text-surface-500 hover:text-surface-900 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
           title="Thu gọn thanh điều hướng"
           type="button"
           v-if="!isSidebarCollapsed"
@@ -47,13 +66,13 @@
       <!-- Navigation Links Groups -->
       <nav class="p-2 space-y-4 flex-1 overflow-y-auto overflow-x-hidden">
         <div
-          class="space-y-0.5"
+          class="space-y-1"
           v-for="group in categorizedNavItems"
           :key="group.key"
         >
           <!-- Category Header (only when expanded) -->
           <div
-            class="px-2.5 pt-1.5 pb-1 text-[10px] font-bold uppercase tracking-wider text-surface-400 dark:text-surface-500"
+            class="px-2.5 pt-1.5 pb-1 text-xs font-bold tracking-wide text-surface-500 dark:text-surface-400"
             v-if="!isSidebarCollapsed"
           >
             {{ group.label }}
@@ -67,12 +86,13 @@
 
           <!-- Nav Items in Group -->
           <NuxtLink
-            class="flex items-center rounded-xl text-xs font-medium transition-all duration-150 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
+            class="flex items-center min-h-11 rounded-xl text-xs font-medium transition-colors duration-150 focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
             v-for="item in group.items"
             :key="item.id"
+            :aria-label="isSidebarCollapsed ? item.label : undefined"
             :class="[
               isSidebarCollapsed
-                ? 'justify-center w-10 h-10 mx-auto'
+                ? 'justify-center w-11 h-11 mx-auto'
                 : 'justify-between px-2.5 py-2 w-full',
               isActive(item.href)
                 ? 'bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 font-semibold border-l-2 border-brand-600 dark:border-brand-500'
@@ -80,6 +100,7 @@
             ]"
             :title="isSidebarCollapsed ? item.label : undefined"
             :to="item.href"
+            @click="isMobileSidebarOpen = false"
           >
             <div class="flex items-center gap-2.5 min-w-0">
               <UIcon class="w-4 h-4 shrink-0 text-current" :name="item.icon" />
@@ -94,7 +115,7 @@
               v-if="!isSidebarCollapsed && (item.badge || item.shortcut)"
             >
               <span
-                class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 font-mono"
+                class="text-[10px] font-bold px-1.5 py-0.5 rounded-xl bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400 font-mono"
                 v-if="item.badge"
               >
                 {{ item.badge }}
@@ -110,7 +131,8 @@
       >
         <!-- Expand Button when collapsed -->
         <button
-          class="w-10 h-10 mx-auto rounded-xl flex items-center justify-center text-surface-400 hover:text-surface-700 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
+          aria-label="Mở rộng thanh điều hướng"
+          class="w-11 h-11 mx-auto rounded-xl flex items-center justify-center text-surface-500 hover:text-surface-900 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors"
           title="Mở rộng thanh điều hướng"
           type="button"
           v-if="isSidebarCollapsed"
@@ -122,18 +144,18 @@
         <!-- User Identity Block when expanded -->
         <div class="flex items-center gap-2.5 px-2 py-1.5" v-else>
           <div
-            class="w-7 h-7 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-800 dark:text-brand-300 flex items-center justify-center font-bold text-xs shrink-0"
+            class="w-8 h-8 rounded-full bg-brand-100 dark:bg-brand-900/60 text-brand-800 dark:text-brand-300 flex items-center justify-center font-bold text-xs shrink-0"
           >
             {{ managerInitials }}
           </div>
           <div class="flex-1 min-w-0">
             <div
-              class="text-xs font-semibold text-surface-900 dark:text-surface-100 truncate leading-tight"
+              class="text-xs font-semibold text-surface-900 dark:text-surface-100 truncate leading-normal"
             >
               {{ managerDisplayName }}
             </div>
             <div
-              class="text-[10px] text-surface-400 dark:text-surface-500 truncate"
+              class="text-xs text-surface-500 dark:text-surface-400 truncate leading-normal"
             >
               {{ roleLabel }}
             </div>
@@ -144,27 +166,28 @@
 
     <!-- Main Viewport Area -->
     <div class="flex-1 flex flex-col min-w-0">
-      <!-- Topbar Header (h-13: 52px) -->
+      <!-- Topbar Header -->
       <header
-        class="h-13 bg-white/80 dark:bg-surface-900/80 backdrop-blur border-b border-surface-200 dark:border-surface-800 px-4 sm:px-6 flex items-center justify-between sticky top-0 z-20"
+        class="min-h-14 bg-white/80 dark:bg-surface-900/80 backdrop-blur border-b border-surface-200 dark:border-surface-800 px-3 sm:px-6 py-1.5 flex items-center justify-between gap-2 sticky top-0 z-20"
       >
         <!-- Left: Sidebar Toggle & Breadcrumb -->
-        <div class="flex items-center gap-3 min-w-0">
+        <div class="flex items-center gap-2 sm:gap-3 min-w-0">
           <button
-            class="p-1.5 rounded-xl text-surface-500 hover:text-surface-900 dark:hover:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors md:hidden"
+            aria-label="Mở thanh điều hướng"
+            class="min-w-11 min-h-11 inline-flex items-center justify-center rounded-xl text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-surface-100 hover:bg-surface-100 dark:hover:bg-surface-800 transition-colors md:hidden shrink-0"
             title="Menu"
             type="button"
-            @click="toggleSidebar"
+            @click="isMobileSidebarOpen = !isMobileSidebarOpen"
           >
             <UIcon class="w-5 h-5" name="i-lucide-menu" />
           </button>
 
           <nav
             aria-label="Breadcrumb"
-            class="flex items-center gap-1.5 text-xs text-surface-500 dark:text-surface-400 min-w-0"
+            class="flex items-center gap-1.5 text-xs text-surface-600 dark:text-surface-300 min-w-0"
           >
             <NuxtLink
-              class="hover:text-surface-900 dark:hover:text-surface-200 font-medium transition-colors"
+              class="min-h-11 inline-flex items-center px-1.5 rounded-xl hover:text-surface-900 dark:hover:text-surface-100 font-medium transition-colors truncate"
               to="/"
             >
               Trang chủ
@@ -185,9 +208,9 @@
         </div>
 
         <!-- Center: Quick Command Palette Trigger (Cmd+K) -->
-        <div class="flex-1 max-w-sm mx-4 hidden sm:block">
+        <div class="flex-1 max-w-sm mx-2 hidden sm:block">
           <button
-            class="w-full flex items-center justify-between gap-3 px-3 py-1.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-surface-50/80 dark:bg-surface-800/60 text-xs text-surface-400 dark:text-surface-500 hover:border-surface-300 dark:hover:border-surface-600 transition-colors"
+            class="w-full min-h-11 flex items-center justify-between gap-3 px-3 py-1.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-surface-50/80 dark:bg-surface-800/60 text-xs text-surface-500 dark:text-surface-400 hover:border-surface-300 dark:hover:border-surface-600 transition-colors"
             type="button"
             @click="isCommandPaletteOpen = true"
           >
@@ -196,7 +219,7 @@
               <span class="truncate">Tìm trang, phân hệ, lệnh...</span>
             </span>
             <kbd
-              class="font-mono text-[10px] px-1.5 py-0.5 rounded bg-surface-200 dark:bg-surface-700 text-surface-600 dark:text-surface-300 shrink-0"
+              class="font-mono text-[10px] px-1.5 py-0.5 rounded-xl bg-surface-200 dark:bg-surface-700 text-surface-600 dark:text-surface-300 shrink-0"
             >
               ⌘K
             </kbd>
@@ -204,22 +227,20 @@
         </div>
 
         <!-- Right Controls: Status + Theme + Profile + Logout -->
-        <div class="flex items-center gap-2 sm:gap-3">
+        <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
           <!-- System Status Pill -->
           <NuxtLink
-            class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border border-success-200 dark:border-success-900/60 bg-success-50 dark:bg-success-950/40 text-success-700 dark:text-success-400 hover:bg-success-100 dark:hover:bg-success-900/60 transition-colors"
+            class="hidden lg:inline-flex items-center gap-1.5 min-h-11 px-3 py-1 rounded-full text-xs font-medium border border-success-200 dark:border-success-900/60 bg-success-50 dark:bg-success-950/40 text-success-700 dark:text-success-400 hover:bg-success-100 dark:hover:bg-success-900/60 transition-colors"
             title="Xem chi tiết trạng thái hệ thống"
             to="/system"
           >
-            <span
-              class="w-1.5 h-1.5 rounded-full bg-success-500 animate-pulse"
-            />
-            <span class="font-mono text-[11px]">Hệ thống OK</span>
+            <span class="w-2 h-2 rounded-full bg-success-500 animate-pulse" />
+            <span class="font-mono text-xs">Hệ thống OK</span>
           </NuxtLink>
 
           <!-- Theme Switcher (Dark / Light) -->
           <button
-            class="p-2 rounded-xl border border-surface-200 dark:border-surface-700 hover:bg-surface-100 dark:hover:bg-surface-800 text-surface-600 dark:text-surface-300 transition-colors"
+            class="min-w-11 min-h-11 inline-flex items-center justify-center rounded-xl border border-surface-200 dark:border-surface-700 hover:bg-surface-100 dark:hover:bg-surface-800 text-surface-600 dark:text-surface-300 transition-colors"
             type="button"
             :aria-label="isDark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'"
             :title="isDark ? 'Chuyển sang giao diện sáng' : 'Chuyển sang giao diện tối'"
@@ -233,11 +254,12 @@
 
           <!-- Logout Button -->
           <button
-            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-surface-200 dark:border-surface-700 hover:border-surface-300 dark:hover:border-surface-600 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-200 text-xs font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
+            aria-label="Đăng xuất"
+            class="min-h-11 min-w-11 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl border border-surface-200 dark:border-surface-700 hover:border-surface-300 dark:hover:border-surface-600 bg-white dark:bg-surface-800 text-surface-700 dark:text-surface-200 text-xs font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
             type="button"
             @click="handleLogout"
           >
-            <UIcon class="w-3.5 h-3.5" name="i-lucide-log-out" />
+            <UIcon class="w-4 h-4 shrink-0" name="i-lucide-log-out" />
             <span class="hidden sm:inline">Đăng xuất</span>
           </button>
         </div>
@@ -246,6 +268,7 @@
       <!-- Main Content Fluid Container -->
       <main
         class="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-[1700px] mx-auto min-w-0"
+        id="main-content"
       >
         <slot />
       </main>
@@ -270,6 +293,7 @@
     type ManagerRole,
     NAV_CATEGORIES,
   } from "~/composables/nav-config";
+  import { useAdminAuth } from "~/composables/use-admin-auth";
 
   const route = useRoute();
   const router = useRouter();
@@ -278,14 +302,8 @@
   const { user, clear, fetchSession } = useAdminAuth();
   await fetchSession();
 
-  interface ManagerSessionUser {
-    role?: string;
-    display_name?: string;
-    email?: string;
-    [key: string]: unknown;
-  }
-
   const isSidebarCollapsed = ref(false);
+  const isMobileSidebarOpen = ref(false);
   const isCommandPaletteOpen = ref(false);
 
   const isDark = computed(() => {
@@ -316,13 +334,12 @@
   }
 
   const managerRole = computed<ManagerRole>(() => {
-    const r = (user.value as ManagerSessionUser | null)?.role;
+    const r = user.value?.role;
     return r === "content_reviewer" ? "content_reviewer" : "super_admin";
   });
 
   const managerDisplayName = computed(() => {
-    const u = user.value as ManagerSessionUser | null;
-    return u?.display_name || u?.email || "Quản trị viên";
+    return user.value?.display_name || user.value?.email || "Quản trị viên";
   });
 
   const managerInitials = computed(() => {

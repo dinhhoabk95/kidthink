@@ -4,7 +4,7 @@
     <div class="border-surface-200 border-b pb-4">
       <div class="mb-2 flex items-center gap-2">
         <NuxtLink
-          class="flex items-center gap-1 font-semibold text-brand-600 text-sm hover:text-brand-700"
+          class="inline-flex min-h-11 items-center gap-1.5 font-semibold text-brand-600 text-sm hover:text-brand-700"
           to="/me/settings"
         >
           <UIcon class="h-4 w-4" name="i-lucide-arrow-left" />
@@ -14,7 +14,7 @@
       <h1 class="font-bold font-heading text-2xl text-danger-700 md:text-3xl">
         Xoá tài khoản và dữ liệu
       </h1>
-      <p class="mt-1 text-sm text-surface-600 md:text-base">
+      <p class="mt-1 text-base text-surface-600">
         Quyền yêu cầu xoá dữ liệu cá nhân theo Nghị định 13/2023/NĐ-CP. Vui lòng
         đọc kỹ thông tin dưới đây trước khi quyết định.
       </p>
@@ -22,7 +22,7 @@
 
     <!-- Status feedback banner -->
     <div
-      class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 font-medium text-emerald-900 text-sm"
+      class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 font-medium text-emerald-900 text-sm"
       data-testid="deletion-status-message"
       v-if="statusMessage"
     >
@@ -39,20 +39,20 @@
         <h2 class="font-bold font-heading text-amber-950 text-lg">
           Tài khoản đang trong thời gian chờ xoá (30 ngày)
         </h2>
-        <p class="text-amber-900 text-sm">
+        <p class="text-amber-900 text-base">
           Tài khoản và toàn bộ dữ liệu học tập của bé sẽ bị xoá vĩnh viễn vào:
           <strong class="font-semibold" data-testid="purge-at-display">
             {{ formattedPurgeAt }}
           </strong>
         </p>
-        <p class="text-amber-800 text-xs">
+        <p class="text-amber-800 text-sm">
           Bạn có thể huỷ yêu cầu xoá ngay bên dưới để khôi phục nguyên trạng tài
           khoản và hồ sơ của bé.
         </p>
       </div>
 
       <button
-        class="min-h-11 rounded-xl bg-amber-600 px-5 py-2.5 font-semibold text-sm text-white shadow-xs transition hover:bg-amber-700 disabled:opacity-50"
+        class="inline-flex min-h-11 items-center justify-center rounded-2xl bg-amber-600 px-5 py-2.5 font-semibold text-sm text-white shadow-xs transition hover:bg-amber-700 disabled:opacity-50"
         data-testid="cancel-deletion-btn"
         type="button"
         :disabled="isCancelling"
@@ -65,7 +65,7 @@
     <!-- Quantitative Impact Summary (BR-ADL-07) -->
     <div class="grid gap-4 sm:grid-cols-2" data-testid="impact-summary-metrics">
       <div class="rounded-2xl border border-danger-200 bg-white p-4 shadow-2xs">
-        <span class="block text-surface-500 text-xs"
+        <span class="block font-medium text-sm text-surface-600"
           >Hồ sơ bé bị ảnh hưởng</span
         >
         <span
@@ -77,7 +77,7 @@
         </span>
       </div>
       <div class="rounded-2xl border border-danger-200 bg-white p-4 shadow-2xs">
-        <span class="block text-surface-500 text-xs"
+        <span class="block font-medium text-sm text-surface-600"
           >Thời hạn gói học còn lại sẽ mất</span
         >
         <span
@@ -105,9 +105,7 @@
         >
       </div>
 
-      <ul
-        class="list-inside list-disc space-y-2 text-danger-950 text-sm md:text-base"
-      >
+      <ul class="list-inside list-disc space-y-2 text-base text-danger-950">
         <li v-for="(item, idx) in summaryData.lost_data_items" :key="idx">
           {{ item }}
         </li>
@@ -123,11 +121,12 @@
       >
         <UIcon class="h-5 w-5 text-surface-600" name="i-lucide-scale" />
         <span
-          >Dữ liệu được lưu trữ theo quy định pháp luật (không chứa PII của bé):</span
+          >Dữ liệu được lưu trữ theo quy định pháp luật (không chứa PII của
+          bé):</span
         >
       </h2>
 
-      <ul class="list-inside list-disc space-y-1.5 text-sm text-surface-700">
+      <ul class="list-inside list-disc space-y-1.5 text-base text-surface-700">
         <li v-for="(item, idx) in summaryData.retained_legal_items" :key="idx">
           {{ item }}
         </li>
@@ -136,7 +135,7 @@
 
     <!-- 30-Day Grace Period Notice (BR-ADL-01, BR-ADL-02) -->
     <div
-      class="space-y-1 rounded-xl border border-warning-200 bg-warning-50 p-4 text-sm text-warning-900"
+      class="space-y-1 rounded-2xl border border-warning-200 bg-warning-50 p-4 text-base text-warning-900"
     >
       <p class="font-bold">
         Thời gian chờ {{ summaryData.grace_period_days }} ngày trước khi xoá
@@ -155,14 +154,14 @@
       class="flex flex-col items-center justify-between gap-4 border-surface-200 border-t pt-4 sm:flex-row"
     >
       <NuxtLink
-        class="min-h-11 w-full rounded-xl bg-surface-100 px-6 py-2.5 text-center font-semibold text-surface-800 transition-colors hover:bg-surface-200 sm:w-auto"
+        class="inline-flex min-h-11 w-full items-center justify-center rounded-2xl bg-surface-100 px-6 py-2.5 text-center font-semibold text-surface-800 transition-colors hover:bg-surface-200 sm:w-auto"
         to="/me/settings"
       >
         Giữ tài khoản
       </NuxtLink>
 
       <button
-        class="min-h-11 w-full rounded-xl bg-danger-600 px-6 py-2.5 font-semibold text-white shadow-sm transition-colors hover:bg-danger-700 sm:w-auto"
+        class="inline-flex min-h-11 w-full items-center justify-center rounded-2xl bg-danger-600 px-6 py-2.5 font-semibold text-white shadow-sm transition-colors hover:bg-danger-700 sm:w-auto"
         data-testid="request-deletion-btn"
         type="button"
         v-if="!deletionStatus.is_pending_deletion"
@@ -182,7 +181,7 @@
       v-if="isReauthModalOpen"
     >
       <div
-        class="w-full max-w-md space-y-4 rounded-2xl border border-surface-200 bg-white p-6 shadow-xl"
+        class="w-full max-w-md space-y-4 rounded-3xl border border-surface-200 bg-white p-6 shadow-xl"
       >
         <div class="flex items-center justify-between">
           <h2
@@ -192,7 +191,8 @@
             Xác thực mật khẩu để xoá tài khoản
           </h2>
           <button
-            class="rounded-lg p-1.5 text-surface-500 hover:bg-surface-100"
+            aria-label="Đóng hộp thoại"
+            class="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl p-2 text-surface-500 hover:bg-surface-100"
             data-testid="close-reauth-modal-btn"
             type="button"
             @click="closeReauthModal"
@@ -201,7 +201,7 @@
           </button>
         </div>
 
-        <p class="text-sm text-surface-600">
+        <p class="text-base text-surface-600">
           Vui lòng nhập mật khẩu hiện tại để xác nhận yêu cầu xoá tài khoản. Tài
           khoản sẽ chuyển sang trạng thái chờ xoá trong
           {{ summaryData.grace_period_days }}
@@ -222,7 +222,7 @@
             </label>
             <input
               autocomplete="current-password"
-              class="min-h-11 w-full rounded-xl border-2 border-surface-200 px-3.5 py-2.5 text-base text-surface-900 focus:border-danger-600 focus:outline-none"
+              class="min-h-11 w-full rounded-2xl border-2 border-surface-200 px-3.5 py-2.5 text-base text-surface-900 focus:border-danger-600 focus:outline-none"
               data-testid="deletion-password-input"
               id="reauthPasswordInput"
               required
@@ -230,7 +230,7 @@
               v-model="reauthPassword"
             >
             <p
-              class="mt-1 text-amber-700 text-xs"
+              class="mt-1 text-amber-700 text-sm"
               data-testid="deletion-field-error-password"
               v-if="fieldErrors.password"
             >
@@ -239,7 +239,7 @@
           </div>
 
           <p
-            class="rounded-xl border border-amber-200 bg-amber-50 p-3 font-medium text-amber-900 text-xs"
+            class="rounded-2xl border border-amber-200 bg-amber-50 p-3 font-medium text-amber-900 text-sm"
             data-testid="deletion-modal-error"
             v-if="modalError"
           >
@@ -248,14 +248,14 @@
 
           <div class="flex justify-end gap-3 pt-2">
             <button
-              class="min-h-11 rounded-xl border border-surface-300 px-4 py-2 font-semibold text-sm text-surface-700 hover:bg-surface-50"
+              class="inline-flex min-h-11 items-center justify-center rounded-2xl border border-surface-300 px-4 py-2 font-semibold text-sm text-surface-700 hover:bg-surface-50"
               type="button"
               @click="closeReauthModal"
             >
               Giữ tài khoản
             </button>
             <button
-              class="min-h-11 rounded-xl bg-danger-600 px-5 py-2 font-semibold text-sm text-white hover:bg-danger-700 disabled:opacity-50"
+              class="inline-flex min-h-11 items-center justify-center rounded-2xl bg-danger-600 px-5 py-2 font-semibold text-sm text-white hover:bg-danger-700 disabled:opacity-50"
               data-testid="confirm-delete-submit-btn"
               type="submit"
               :disabled="isSubmittingDelete"

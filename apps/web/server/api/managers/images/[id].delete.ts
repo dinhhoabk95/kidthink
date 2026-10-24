@@ -1,5 +1,6 @@
 import { writeAudit } from "@mindkid/audit";
 import {
+  activities,
   contentAssetRefs,
   contentImages,
   gameLevels,
@@ -12,7 +13,7 @@ import {
 import { NotFoundError } from "@mindkid/errors/common";
 import { ContentInUseError } from "@mindkid/errors/content";
 import { deletePublicImage } from "@mindkid/storage";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -61,6 +62,23 @@ async function checkRefRowPublished(
         status: les.status,
       };
     }
+  } else if (refRow.entityType === "activity") {
+    const [act] = await db
+      .select({
+        code: activities.code,
+        version: activities.contentVersion,
+        status: activities.status,
+      })
+      .from(activities)
+      .where(eq(activities.id, refRow.entityId));
+    if (act?.status === "published") {
+      return {
+        type: "activity",
+        code: act.code,
+        version: act.version,
+        status: act.status,
+      };
+    }
   } else if (refRow.entityType === "worksheet") {
     const [ws] = await db
       .select({
@@ -101,18 +119,21 @@ async function checkRefRowPublished(
 
 async function findPublishedUsage(
   db: OwnerDb,
-  storagePath: string
+  storagePath: string,
+  imageId: number
 ): Promise<PublishedUsageRef[]> {
   const usedBy: PublishedUsageRef[] = [];
+  const seenCodes = new Set<string>();
   const refs = await db
     .select()
     .from(contentAssetRefs)
-    .where(eq(contentAssetRefs.assetRef, storagePath))
+    .where(inArray(contentAssetRefs.assetRef, [storagePath, String(imageId)]))
     .limit(50);
 
   for (const refRow of refs) {
     const usage = await checkRefRowPublished(db, refRow);
-    if (usage) {
+    if (usage && !seenCodes.has(usage.code)) {
+      seenCodes.add(usage.code);
       usedBy.push(usage);
     }
   }
@@ -140,7 +161,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check if used by published content via dedicated reverse index (BR-IMG-08, BR-AUT2-01, BR-AUT2-03, D-KB)
-  const usedBy = await findPublishedUsage(db, imageRecord.storagePath);
+  const usedBy = await findPublishedUsage(db, imageRecord.storagePath, id);
 
   if (usedBy.length > 0) {
     throw new ContentInUseError(
@@ -152,7 +173,9 @@ export default defineEventHandler(async (event) => {
   await db.delete(contentImages).where(eq(contentImages.id, id));
   await db
     .delete(contentAssetRefs)
-    .where(eq(contentAssetRefs.assetRef, imageRecord.storagePath));
+    .where(
+      inArray(contentAssetRefs.assetRef, [imageRecord.storagePath, String(id)])
+    );
 
   deletePublicImage(imageRecord.storagePath);
   if (imageRecord.thumbPath) {

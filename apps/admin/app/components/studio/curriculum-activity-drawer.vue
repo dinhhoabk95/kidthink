@@ -4,12 +4,14 @@
     v-if="isOpen"
   >
     <div
+      aria-modal="true"
       class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden"
+      role="dialog"
     >
       <div
-        class="p-5 border-b border-surface-200 dark:border-surface-700 flex items-center justify-between"
+        class="p-4 sm:p-5 border-b border-surface-200 dark:border-surface-700 flex items-center justify-between gap-3"
       >
-        <div>
+        <div class="min-w-0">
           <h3 class="text-base font-bold text-surface-900 dark:text-white">
             Thêm hoạt động vào Tuần {{ targetWeek }}, Buổi {{ targetSession }}
           </h3>
@@ -18,27 +20,32 @@
           </p>
         </div>
         <button
-          class="text-surface-400 hover:text-surface-600 dark:hover:text-white text-xl font-bold p-1"
+          aria-label="Đóng hộp thoại chọn hoạt động"
+          class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl text-surface-400 hover:text-surface-600 dark:hover:text-white text-xl font-bold shrink-0"
           type="button"
           @click="emit('close')"
         >
-          <UIcon class="w-5 h-5" name="i-lucide-x" />
+          <span aria-hidden="true">×</span>
         </button>
       </div>
 
       <!-- Filter & Search in Picker -->
       <div
-        class="p-4 bg-surface-50 dark:bg-surface-900 border-b border-surface-200 dark:border-surface-700 flex gap-3"
+        class="p-4 bg-surface-50 dark:bg-surface-900 border-b border-surface-200 dark:border-surface-700 flex flex-col sm:flex-row gap-3"
       >
         <select
-          class="px-3 py-1.5 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white"
+          aria-label="Loại học liệu"
+          class="min-h-11 px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white"
+          id="picker-entity-type"
           v-model="pickerTab"
         >
           <option value="lesson">Bài học (Lessons)</option>
           <option value="game_level">Màn chơi (Game Levels)</option>
         </select>
         <input
-          class="flex-1 px-3 py-1.5 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white"
+          aria-label="Tìm kiếm học liệu"
+          class="flex-1 min-h-11 px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white min-w-0"
+          id="picker-search-q"
           placeholder="Tìm kiếm theo mã hoặc tiêu đề..."
           type="text"
           v-model="pickerSearch"
@@ -78,7 +85,7 @@
           </div>
 
           <button
-            class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-brand-600 hover:bg-brand-700 text-white shrink-0"
+            class="min-h-11 px-4 py-2 text-xs font-semibold rounded-xl bg-brand-600 hover:bg-brand-700 text-white shrink-0"
             type="button"
             @click="emit('select', item)"
           >

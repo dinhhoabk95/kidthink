@@ -7,6 +7,7 @@ import {
 import {
   auditLogs,
   consentLogs,
+  consentRequirements,
   getAppDb,
   getAppSql,
   PostgresSessionStore,
@@ -14,6 +15,7 @@ import {
   users,
   verificationTokens,
 } from "@mindkid/db";
+import { ConsentRequirementChangedError } from "@mindkid/errors/account";
 import { ValidationError } from "@mindkid/errors/common";
 import {
   OauthStateInvalidError,
@@ -50,6 +52,8 @@ const SocialRegisterSchema = z
     email: z.string().trim().email().max(255).optional(),
     accept_terms: z.boolean(),
     accept_privacy: z.boolean(),
+    terms_requirement_at: z.string().nullable().optional(),
+    privacy_requirement_at: z.string().nullable().optional(),
   })
   .strict();
 
@@ -76,6 +80,40 @@ function parseRegistrationPayload(
   }
 
   return parsed.data;
+}
+
+async function assertConsentRequirementsMatch(input: SocialRegisterInput) {
+  if (
+    input.terms_requirement_at === undefined &&
+    input.privacy_requirement_at === undefined
+  ) {
+    return;
+  }
+
+  const db = getAppDb();
+  const reqs = await db.select().from(consentRequirements);
+  const termsReq = reqs.find((r) => r.consentType === "terms");
+  const privReq = reqs.find((r) => r.consentType === "privacy");
+
+  if (
+    input.terms_requirement_at !== undefined &&
+    termsReq?.reconsentRequiredAt &&
+    (!input.terms_requirement_at ||
+      new Date(input.terms_requirement_at).getTime() !==
+        termsReq.reconsentRequiredAt.getTime())
+  ) {
+    throw new ConsentRequirementChangedError();
+  }
+
+  if (
+    input.privacy_requirement_at !== undefined &&
+    privReq?.reconsentRequiredAt &&
+    (!input.privacy_requirement_at ||
+      new Date(input.privacy_requirement_at).getTime() !==
+        privReq.reconsentRequiredAt.getTime())
+  ) {
+    throw new ConsentRequirementChangedError();
+  }
 }
 
 function resolveProfileFromTicket(
@@ -260,6 +298,7 @@ export async function handleSocialLogin(
     (await readBody<RawSocialLoginBody>(event).catch(() => ({})));
 
   const input = parseRegistrationPayload(rawBody);
+  await assertConsentRequirementsMatch(input);
   const profile = resolveProfileFromTicket(event, input.provider);
 
   const finalEmail = (

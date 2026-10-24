@@ -237,9 +237,14 @@ function computeSkillsTouchedSection(params: {
   };
 }
 
+export type BasicReportLevelRow = Pick<
+  typeof gameLevels.$inferSelect,
+  "id" | "entityId" | "code" | "title" | "thumbnailEmoji" | "status"
+>;
+
 function computeFavoriteGamesSection(params: {
   sessionRows: SessionSummaryRow[];
-  levelById: Map<number, typeof gameLevels.$inferSelect>;
+  levelById: Map<number, BasicReportLevelRow>;
 }): BasicReportFavoriteGamesSection {
   const { sessionRows, levelById } = params;
   const byLevelCode = new Map<
@@ -286,7 +291,7 @@ function computeFavoriteGamesSection(params: {
 
 function computeVersionMarkersAndRecentSessions(params: {
   sessionRows: SessionSummaryRow[];
-  levelById: Map<number, typeof gameLevels.$inferSelect>;
+  levelById: Map<number, BasicReportLevelRow>;
 }): {
   recentSessions: BasicReportRecentSessionsSection;
   versionMarkers: BasicReportVersionMarker[];
@@ -357,7 +362,7 @@ function computeVersionMarkersAndRecentSessions(params: {
 }
 
 function buildSuggestedInitialGames(
-  allLevels: (typeof gameLevels.$inferSelect)[]
+  allLevels: BasicReportLevelRow[]
 ): BasicReportSuggestedGame[] {
   const published = allLevels.filter((l) => l.status === "published");
   if (published.length >= 3) {
@@ -414,15 +419,15 @@ function computeSuggestionsSection(
 }
 
 function buildLevelSkillMaps(params: {
-  allLevels: (typeof gameLevels.$inferSelect)[];
+  allLevels: BasicReportLevelRow[];
   allMappings: (typeof contentSkillMap.$inferSelect)[];
   allSkills: (typeof skills.$inferSelect)[];
 }): {
-  levelById: Map<number, typeof gameLevels.$inferSelect>;
+  levelById: Map<number, BasicReportLevelRow>;
   skillsByLevelId: Map<number, (typeof skills.$inferSelect)[]>;
 } {
   const { allLevels, allMappings, allSkills } = params;
-  const levelById = new Map<number, typeof gameLevels.$inferSelect>();
+  const levelById = new Map<number, BasicReportLevelRow>();
   const levelIdsByEntityId = new Map<number, number[]>();
 
   for (const l of allLevels) {
@@ -475,7 +480,7 @@ export interface BuildBasicReportDataInput {
   toDateIct: string;
   dailyRows: DailyStatRow[];
   sessionRows: SessionSummaryRow[];
-  allLevels: (typeof gameLevels.$inferSelect)[];
+  allLevels: BasicReportLevelRow[];
   allMappings: (typeof contentSkillMap.$inferSelect)[];
   allSkills: (typeof skills.$inferSelect)[];
 }
@@ -629,7 +634,16 @@ export async function buildBasicReport(params: {
           )
         )
         .orderBy(desc(childSessionSummaries.createdAt)),
-      db.select().from(gameLevels),
+      db
+        .select({
+          id: gameLevels.id,
+          entityId: gameLevels.entityId,
+          code: gameLevels.code,
+          title: gameLevels.title,
+          thumbnailEmoji: gameLevels.thumbnailEmoji,
+          status: gameLevels.status,
+        })
+        .from(gameLevels),
       db
         .select()
         .from(contentSkillMap)

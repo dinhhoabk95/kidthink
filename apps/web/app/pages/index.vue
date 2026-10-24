@@ -27,9 +27,9 @@
               v-for="comp in homeData.competencies"
               :key="comp.code"
             >
-              <span aria-hidden="true" class="comp-emoji"
-                >{{ comp.emoji }}</span
-              >
+              <span aria-hidden="true" class="comp-emoji">{{
+                comp.emoji
+              }}</span>
               <h3 class="comp-name">{{ comp.name }}</h3>
               <p class="comp-desc">{{ comp.description }}</p>
               <NuxtLink
@@ -89,16 +89,16 @@
               :key="game.code"
             >
               <div class="game-emoji-wrap">
-                <span aria-hidden="true" class="game-emoji"
-                  >{{ game.emoji }}</span
-                >
+                <span aria-hidden="true" class="game-emoji">{{
+                  game.emoji
+                }}</span>
                 <span class="badge-free">Miễn phí</span>
               </div>
               <h3 class="game-title">{{ game.title }}</h3>
               <div class="game-meta">
-                <span class="badge-competency"
-                  >{{ findCompetency(game.competency)?.name || game.competency }}</span
-                >
+                <span class="badge-competency">{{
+                  findCompetency(game.competency)?.name || game.competency
+                }}</span>
                 <span class="badge-age">{{ game.age_band }} tuổi</span>
               </div>
               <NuxtLink class="btn-game-play" :to="`/play/${game.code}`">

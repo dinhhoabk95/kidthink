@@ -7,6 +7,7 @@ import {
 } from "@mindkid/db";
 import {
   and,
+  asc,
   count,
   desc,
   eq,
@@ -32,7 +33,9 @@ function escapeLikeWildcards(text: string): string {
 
 export const listUsersQuerySchema = z.object({
   q: z.string().trim().max(100).optional(),
-  status: z.enum(["active", "suspended", "deleted"]).optional(),
+  status: z
+    .enum(["pending_verification", "active", "suspended", "deleted"])
+    .optional(),
   package_code: z.string().trim().optional(),
   created_from: z.string().datetime().optional(),
   created_to: z.string().datetime().optional(),
@@ -40,7 +43,9 @@ export const listUsersQuerySchema = z.object({
     .enum(["true", "false"])
     .transform((val) => val === "true")
     .optional(),
-  sort: z.enum(["created_desc", "created_asc"]).default("created_desc"),
+  sort: z
+    .enum(["newest", "last_active", "created_desc", "created_asc"])
+    .default("created_desc"),
   limit: z.coerce.number().int().min(1).max(100).default(20),
   cursor: z.string().optional(),
 });
@@ -53,10 +58,10 @@ function buildSearchFilter(q?: string): SQL | undefined {
     return undefined;
   }
   const escaped = escapeLikeWildcards(q);
-  const prefixPattern = `${escaped}%`;
+  const pattern = `%${escaped}%`;
   const orCondition = or(
-    ilike(users.email, prefixPattern),
-    ilike(users.displayName, prefixPattern)
+    ilike(users.email, pattern),
+    ilike(users.displayName, pattern)
   );
   return orCondition ?? undefined;
 }
@@ -105,6 +110,7 @@ function buildUserConditions(db: OwnerDb, query: ParsedQuery): SQL[] {
   conditions.push(...dateAndCursor);
 
   if (query.package_code) {
+    const escapedPkg = escapeLikeWildcards(query.package_code);
     const usersWithPkg = db
       .select({ userId: entitlements.userId })
       .from(entitlements)
@@ -112,8 +118,12 @@ function buildUserConditions(db: OwnerDb, query: ParsedQuery): SQL[] {
         and(
           eq(entitlements.status, "active"),
           or(
+            gte(entitlements.expiresAt, new Date()),
+            sql`${entitlements.expiresAt} IS NULL`
+          ),
+          or(
             eq(entitlements.entitlementKey, query.package_code),
-            gte(entitlements.expiresAt, new Date())
+            ilike(entitlements.grantReason, `%${escapedPkg}%`)
           )
         )
       );
@@ -212,10 +222,11 @@ export default defineEventHandler(async (event) => {
     throw parsedQuery.error;
   }
 
-  const { limit, has_children } = parsedQuery.data;
+  const { limit, has_children, sort } = parsedQuery.data;
   const db = getOwnerDb();
   const conditions = buildUserConditions(db, parsedQuery.data);
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+  const orderClause = sort === "created_asc" ? asc(users.id) : desc(users.id);
 
   const userRows = await db
     .select({
@@ -229,7 +240,7 @@ export default defineEventHandler(async (event) => {
     })
     .from(users)
     .where(whereClause)
-    .orderBy(desc(users.id))
+    .orderBy(orderClause)
     .limit(limit + 1);
 
   let nextCursor: string | null = null;
@@ -271,6 +282,14 @@ export default defineEventHandler(async (event) => {
     items = items.filter((item) =>
       has_children ? item.child_count > 0 : item.child_count === 0
     );
+  }
+
+  if (sort === "last_active") {
+    items = [...items].sort((a, b) => {
+      const timeA = a.last_active_at ? new Date(a.last_active_at).getTime() : 0;
+      const timeB = b.last_active_at ? new Date(b.last_active_at).getTime() : 0;
+      return timeB - timeA;
+    });
   }
 
   return {

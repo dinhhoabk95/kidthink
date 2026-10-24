@@ -1,5 +1,5 @@
 import { isApiError, normalizeApiError } from "@mindkid/errors/client";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import { useCookie, useFetch } from "#imports";
 import { useApi } from "~/composables/use-api";
 import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
@@ -59,6 +59,14 @@ export function useKidProfile() {
     refresh: refreshChildren,
   } = useFetch<ChildrenListResponse>("/api/users/children", {
     key: "user-children-list",
+    immediate: Boolean(activeChildUuid.value),
+    watch: false,
+  });
+
+  watch(activeChildUuid, (uuid) => {
+    if (uuid && !data.value) {
+      refreshChildren();
+    }
   });
 
   const children = computed<KidProfileItem[]>(() => {

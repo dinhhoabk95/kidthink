@@ -30,6 +30,27 @@ type NotificationPayloadObject = Record<
 type DeliveryStatus = (typeof notificationDeliveries.$inferSelect)["status"];
 type DeliveryChannel = (typeof notificationDeliveries.$inferSelect)["channel"];
 
+const VALID_DELIVERY_STATUSES: readonly DeliveryStatus[] = [
+  "queued",
+  "dispatched",
+  "failed",
+  "suppressed",
+];
+
+const VALID_DELIVERY_CHANNELS: readonly DeliveryChannel[] = [
+  "email",
+  "in_app",
+  "fcm_web",
+];
+
+function isDeliveryStatus(val: string): val is DeliveryStatus {
+  return VALID_DELIVERY_STATUSES.some((s) => s === val);
+}
+
+function isDeliveryChannel(val: string): val is DeliveryChannel {
+  return VALID_DELIVERY_CHANNELS.some((c) => c === val);
+}
+
 interface NotificationSearchQuery {
   code?: string;
   status?: string;
@@ -108,6 +129,8 @@ function parseRecipientCondition(recipient?: string): SQL | undefined {
   return ilike(users.email, `%${term}%`);
 }
 
+const DATE_ONLY_REGEX = /^\d{4}-\d{2}-\d{2}$/;
+
 function parseDateCondition(
   field: typeof notificationDeliveries.createdAt,
   value: string | undefined,
@@ -116,7 +139,12 @@ function parseDateCondition(
   if (typeof value !== "string" || !value.trim()) {
     return undefined;
   }
-  const d = new Date(value.trim());
+  const trimmed = value.trim();
+  const isoStr =
+    operator === "lte" && DATE_ONLY_REGEX.test(trimmed)
+      ? `${trimmed}T23:59:59.999Z`
+      : trimmed;
+  const d = new Date(isoStr);
   if (Number.isNaN(d.getTime())) {
     return undefined;
   }
@@ -131,18 +159,17 @@ function buildQueryConditions(query: NotificationSearchQuery): SQL[] {
   }
 
   if (typeof query.status === "string" && query.status.trim()) {
-    conditions.push(
-      eq(notificationDeliveries.status, query.status.trim() as DeliveryStatus)
-    );
+    const trimmedStatus = query.status.trim();
+    if (isDeliveryStatus(trimmedStatus)) {
+      conditions.push(eq(notificationDeliveries.status, trimmedStatus));
+    }
   }
 
   if (typeof query.channel === "string" && query.channel.trim()) {
-    conditions.push(
-      eq(
-        notificationDeliveries.channel,
-        query.channel.trim() as DeliveryChannel
-      )
-    );
+    const trimmedChannel = query.channel.trim();
+    if (isDeliveryChannel(trimmedChannel)) {
+      conditions.push(eq(notificationDeliveries.channel, trimmedChannel));
+    }
   }
 
   const fromCond = parseDateCondition(

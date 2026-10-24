@@ -3,6 +3,7 @@ import {
   type ManagerTokenPayload,
   type UserTokenPayload,
 } from "@mindkid/auth";
+import { isAppError } from "@mindkid/errors/base";
 import { defineEventHandler, getCookie, getHeader, type H3Event } from "h3";
 import {
   clearManagerRememberCookie,
@@ -41,6 +42,12 @@ function isUserApiPath(path: string): boolean {
   return path === "/api" || path.startsWith("/api/");
 }
 
+function rethrowIfServiceUnavailable(err: object | null | undefined): void {
+  if (isAppError(err) && err.status === 503) {
+    throw err;
+  }
+}
+
 async function resolveUserSession(event: H3Event) {
   const session = await getUserSession(event);
   const secure = session.secure as { session_token?: string } | undefined;
@@ -67,7 +74,8 @@ async function resolveUserSession(event: H3Event) {
         setUserRememberCookie(event, restored.rememberToken);
         return restored.user;
       }
-    } catch {
+    } catch (err) {
+      rethrowIfServiceUnavailable(err as object | null | undefined);
       clearUserRememberCookie(event);
     }
   }
@@ -111,7 +119,8 @@ async function resolveManagerSession(event: H3Event) {
         setManagerRememberCookie(event, restored.rememberToken);
         return restored.manager;
       }
-    } catch {
+    } catch (err) {
+      rethrowIfServiceUnavailable(err as object | null | undefined);
       clearManagerRememberCookie(event);
     }
   }
@@ -138,8 +147,9 @@ export default defineEventHandler(async (event) => {
     if (isUserApiPath(event.path)) {
       event.context.user = await resolveUserSession(event);
     }
-  } catch {
+  } catch (err) {
     event.context.user = undefined;
     event.context.manager = undefined;
+    rethrowIfServiceUnavailable(err as object | null | undefined);
   }
 });

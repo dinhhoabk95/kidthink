@@ -66,9 +66,9 @@
           class="h-5 w-5 shrink-0 text-danger-600 dark:text-danger-400"
           name="i-lucide-alert-circle"
         />
-        <span class="text-sm font-semibold leading-snug"
-          >{{ errorMessage }}</span
-        >
+        <span class="text-sm font-semibold leading-snug">{{
+          errorMessage
+        }}</span>
       </div>
 
       <!-- Register Form (BR-REG-01: 3 fields) -->
@@ -130,14 +130,14 @@
         <!-- Checkbox 1: Terms (BR-REG-02) -->
         <div class="mt-1 flex items-start gap-2.5">
           <input
-            class="mt-0.5 h-5 w-5 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
+            class="mt-0.5 h-6 w-6 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
             id="reg-terms"
             required
             type="checkbox"
             v-model="acceptTerms"
           >
           <label
-            class="cursor-pointer text-xs font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
+            class="cursor-pointer text-sm font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
             for="reg-terms"
           >
             Tôi đồng ý với
@@ -155,14 +155,14 @@
         <!-- Checkbox 2: Privacy (BR-REG-02) -->
         <div class="flex items-start gap-2.5">
           <input
-            class="mt-0.5 h-5 w-5 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
+            class="mt-0.5 h-6 w-6 shrink-0 rounded-xl border-2 border-surface-300 accent-brand-600 dark:border-surface-600"
             id="reg-privacy"
             required
             type="checkbox"
             v-model="acceptPrivacy"
           >
           <label
-            class="cursor-pointer text-xs font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
+            class="cursor-pointer text-sm font-semibold leading-relaxed text-surface-600 dark:text-surface-400"
             for="reg-privacy"
           >
             Tôi đồng ý với
@@ -180,7 +180,8 @@
               to="/child-privacy"
             >
               Bảo vệ dữ liệu trẻ em
-            </NuxtLink>.
+            </NuxtLink
+            >.
           </label>
         </div>
 

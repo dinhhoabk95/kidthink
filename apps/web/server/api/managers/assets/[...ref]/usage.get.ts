@@ -1,5 +1,7 @@
 import {
+  activities,
   contentAssetRefs,
+  contentImages,
   gameLevels,
   getOwnerDb,
   lessons,
@@ -7,7 +9,7 @@ import {
   worksheets,
 } from "@mindkid/db";
 import { ValidationError } from "@mindkid/errors/common";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { defineEventHandler, getQuery, getRouterParam } from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
@@ -32,6 +34,8 @@ export interface AssetUsageResponse {
 }
 
 const LEADING_SLASHES_REGEX = /^\/+/;
+const TRAILING_USAGE_REGEX = /\/usage$/;
+const POSITIVE_INT_REGEX = /^\d+$/;
 
 async function resolveUsageItem(
   db: ReturnType<typeof getOwnerDb>,
@@ -74,6 +78,26 @@ async function resolveUsageItem(
           version: les.version,
           status: les.status,
           title: les.title,
+        }
+      : null;
+  }
+  if (refRow.entityType === "activity") {
+    const [act] = await db
+      .select({
+        code: activities.code,
+        version: activities.contentVersion,
+        status: activities.status,
+        title: activities.title,
+      })
+      .from(activities)
+      .where(eq(activities.id, refRow.entityId));
+    return act
+      ? {
+          entity_type: "activity",
+          code: act.code,
+          version: act.version,
+          status: act.status,
+          title: act.title,
         }
       : null;
   }
@@ -120,23 +144,70 @@ async function resolveUsageItem(
   return null;
 }
 
+async function expandCandidateAssetRefs(
+  db: ReturnType<typeof getOwnerDb>,
+  assetRef: string
+): Promise<{ resolvedAssetRef: string; candidateRefs: string[] }> {
+  let resolvedAssetRef = assetRef;
+  const candidateRefs: string[] = [assetRef];
+
+  if (!POSITIVE_INT_REGEX.test(assetRef)) {
+    return { resolvedAssetRef, candidateRefs };
+  }
+
+  const numericId = Number(assetRef);
+  if (!(Number.isSafeInteger(numericId) && numericId > 0)) {
+    return { resolvedAssetRef, candidateRefs };
+  }
+
+  const [imageRow] = await db
+    .select({
+      storagePath: contentImages.storagePath,
+    })
+    .from(contentImages)
+    .where(eq(contentImages.id, numericId));
+
+  if (imageRow?.storagePath) {
+    const normalizedPath = imageRow.storagePath.replace(
+      LEADING_SLASHES_REGEX,
+      ""
+    );
+    resolvedAssetRef = normalizedPath;
+    if (!candidateRefs.includes(normalizedPath)) {
+      candidateRefs.push(normalizedPath);
+    }
+    if (!candidateRefs.includes(imageRow.storagePath)) {
+      candidateRefs.push(imageRow.storagePath);
+    }
+  }
+
+  return { resolvedAssetRef, candidateRefs };
+}
+
 export default defineEventHandler(
   async (event): Promise<AssetUsageResponse> => {
     requireManagerSession(event);
 
     const parsedQuery = AssetUsageQuerySchema.safeParse(getQuery(event));
-    const paramRef = getRouterParam(event, "ref");
+    const paramRef = getRouterParam(event, "ref")?.replace(
+      TRAILING_USAGE_REGEX,
+      ""
+    );
     const rawRef = (parsedQuery.success && parsedQuery.data.ref) || paramRef;
 
     if (!rawRef) {
       throw new ValidationError("Asset reference (ref) is required");
     }
 
-    const assetRef = decodeURIComponent(rawRef).replace(
-      LEADING_SLASHES_REGEX,
-      ""
-    );
+    const assetRef = decodeURIComponent(rawRef)
+      .replace(TRAILING_USAGE_REGEX, "")
+      .replace(LEADING_SLASHES_REGEX, "");
     const db = getOwnerDb();
+
+    const { resolvedAssetRef, candidateRefs } = await expandCandidateAssetRefs(
+      db,
+      assetRef
+    );
 
     // Query reverse asset index table (BR-AUT2-03: P95 < 200ms)
     const refs = await db
@@ -148,15 +219,20 @@ export default defineEventHandler(
         assetRef: contentAssetRefs.assetRef,
       })
       .from(contentAssetRefs)
-      .where(eq(contentAssetRefs.assetRef, assetRef))
+      .where(inArray(contentAssetRefs.assetRef, candidateRefs))
       .limit(200);
 
     const usedBy: AssetUsageItem[] = [];
+    const seenKeys = new Set<string>();
 
     for (const refRow of refs) {
       const item = await resolveUsageItem(db, refRow);
       if (item) {
-        usedBy.push(item);
+        const dedupeKey = `${item.entity_type}:${item.code}:${item.version}`;
+        if (!seenKeys.has(dedupeKey)) {
+          seenKeys.add(dedupeKey);
+          usedBy.push(item);
+        }
       }
     }
 
@@ -167,7 +243,7 @@ export default defineEventHandler(
     const blockReason = isUsedInPublished ? "used_by_published" : null;
 
     return {
-      asset_ref: assetRef,
+      asset_ref: resolvedAssetRef,
       used_by: usedBy,
       can_delete: canDelete,
       block_reason: blockReason,

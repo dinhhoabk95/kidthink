@@ -1,10 +1,11 @@
 import { getOwnerDb, users } from "@mindkid/db";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { eq } from "drizzle-orm";
-import { defineEventHandler, readBody } from "h3";
+import { defineEventHandler } from "h3";
 import { z } from "zod";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
+import { readBodyWithLimit } from "#server/utils/request-body";
 
 const ProfileUpdateSchema = z
   .object({
@@ -16,9 +17,7 @@ export default defineEventHandler(async (event) => {
   const userSession = await requireWebUserSession(event);
   const userId = Number(userSession.user_id);
 
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
-  const rawBody =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+  const rawBody = await readBodyWithLimit(event);
 
   const parsed = ProfileUpdateSchema.safeParse(rawBody);
   if (!parsed.success) {

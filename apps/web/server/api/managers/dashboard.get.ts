@@ -321,7 +321,7 @@ async function querySystemMetrics(db: OwnerDb) {
 
 export default defineEventHandler(
   async (event): Promise<DashboardApiResponse> => {
-    const manager = await requireManagerSession(event);
+    const manager = requireManagerSession(event);
     const db = getOwnerDb();
 
     const asOf = await resolveDashboardAsOf(db);

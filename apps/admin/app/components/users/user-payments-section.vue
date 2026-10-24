@@ -1,22 +1,25 @@
 <template>
   <section
     aria-labelledby="group-payments-heading"
-    class="bg-white rounded-3xl border-4 border-surface-200 p-6 space-y-4 shadow-sm"
+    class="bg-white rounded-3xl border-4 border-surface-200 p-4 sm:p-6 space-y-4 shadow-sm min-w-0 overflow-hidden"
   >
     <div
-      class="flex items-center justify-between border-b-2 border-surface-100 pb-3"
+      class="flex flex-wrap items-center justify-between gap-3 border-b-2 border-surface-100 pb-3 min-w-0"
     >
       <h2
-        class="text-lg font-bold font-heading text-surface-900 flex items-center gap-2"
+        class="text-lg font-bold font-heading text-surface-900 flex items-center gap-2 break-words min-w-0"
         id="group-payments-heading"
       >
-        <UIcon class="w-5 h-5 text-surface-500" name="i-lucide-credit-card" />
-        Lịch sử đơn thanh toán ({{ payments.length }})
+        <UIcon
+          class="w-5 h-5 text-surface-500 shrink-0"
+          name="i-lucide-credit-card"
+        />
+        <span>Lịch sử đơn thanh toán ({{ payments.length }})</span>
       </h2>
 
       <!-- Future Action: Disabled with step label P2.3 -->
       <button
-        class="min-h-11 px-3.5 py-1.5 rounded-2xl border-2 border-surface-200 bg-surface-100 text-surface-400 text-xs font-bold font-heading cursor-not-allowed flex items-center gap-1.5"
+        class="min-h-11 px-3.5 py-1.5 rounded-2xl border-2 border-surface-200 bg-surface-100 text-surface-400 text-xs font-bold font-heading cursor-not-allowed flex flex-wrap items-center gap-1.5"
         disabled
         title="Xem hàng đợi đơn sẽ khả dụng ở bước P2.3"
         type="button"

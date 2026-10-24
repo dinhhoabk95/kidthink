@@ -49,6 +49,18 @@ const createLessonSchema = z.object({
     .optional(),
 });
 
+function toLessonAuditData(row: typeof lessons.$inferSelect) {
+  return {
+    id: row.id,
+    entity_id: row.entityId,
+    code: row.code,
+    content_version: row.contentVersion,
+    title: row.title,
+    access_tier: row.accessTier,
+    status: row.status,
+  };
+}
+
 async function attachLessonActivitiesAndSkills(
   db: ReturnType<typeof getOwnerDb>,
   createdLessonId: number,
@@ -150,7 +162,7 @@ export default defineEventHandler(async (event) => {
       action: "content_created",
       entity_type: "lesson",
       entity_id: String(created.id),
-      after_data: created as unknown as Record<string, unknown>,
+      after_data: toLessonAuditData(created),
       reason: "Manager created lesson via Studio",
     });
   });

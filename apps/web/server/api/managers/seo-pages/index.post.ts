@@ -3,7 +3,8 @@ import { getOwnerDb, seoPages } from "@mindkid/db";
 import { InternalError, ValidationError } from "@mindkid/errors/common";
 import { CodeAlreadyExistsError } from "@mindkid/errors/content";
 import { and, eq } from "drizzle-orm";
-import { defineEventHandler, readBody } from "h3";
+import { defineEventHandler, readBody, setResponseStatus } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
 const FORBIDDEN_LEGAL_SLUGS = [
@@ -15,17 +16,39 @@ const FORBIDDEN_LEGAL_SLUGS = [
   "/child-privacy",
 ];
 
+const DANGEROUS_SEO_TAG_REGEX =
+  /<\s*\/?\s*(?:script|iframe|svg|object|embed|base|meta|link|style|form)\b/i;
+const INLINE_EVENT_ATTR_REGEX = /\bon[a-z]+\s*=/i;
+const DATA_URI_ATTR_REGEX = /\b(?:href|src|xlink:href)\s*=\s*["']?\s*data:/i;
+
+function decodeHtmlEntitiesForInspect(input: string): string {
+  return input
+    .replace(/&#x([0-9a-f]+);?/gi, (_, hex: string) =>
+      String.fromCodePoint(Number.parseInt(hex, 16) || 0)
+    )
+    .replace(/&#([0-9]+);?/g, (_, dec: string) =>
+      String.fromCodePoint(Number.parseInt(dec, 10) || 0)
+    )
+    .replace(/&colon;/gi, ":")
+    .replace(/&tab;/gi, "\t")
+    .replace(/&newline;/gi, "\n");
+}
+
 function sanitizeRichText(html: string | undefined): string | undefined {
   if (!html) {
     return html;
   }
-  const lower = html.toLowerCase();
+  const decoded = decodeHtmlEntitiesForInspect(html);
+  const lower = decoded.toLowerCase();
+  const collapsed = Array.from(lower)
+    .filter((ch) => ch.charCodeAt(0) > 32)
+    .join("");
   if (
-    lower.includes("<script") ||
-    lower.includes("<iframe") ||
-    lower.includes("javascript:") ||
-    lower.includes("onclick=") ||
-    lower.includes("onerror=")
+    DANGEROUS_SEO_TAG_REGEX.test(lower) ||
+    INLINE_EVENT_ATTR_REGEX.test(lower) ||
+    DATA_URI_ATTR_REGEX.test(lower) ||
+    collapsed.includes("javascript:") ||
+    collapsed.includes("vbscript:")
   ) {
     throw new ValidationError(
       "Nội dung chứa mã script hoặc HTML không được phép (BR-SEO-02)"
@@ -34,14 +57,12 @@ function sanitizeRichText(html: string | undefined): string | undefined {
   return html;
 }
 
-import { z } from "zod";
-
 const createSeoPageSchema = z.object({
   slug: z.string().min(1),
   title: z.string().min(1),
   meta_description: z.string().min(1),
   page_type: z
-    .enum(["competency", "skill", "age_program", "topic", "static"])
+    .enum(["competency", "skill", "age_program", "topic", "static", "faq"])
     .optional()
     .default("topic"),
   h1: z.string().optional(),
@@ -55,8 +76,12 @@ const createSeoPageSchema = z.object({
   faq_items: z.array(z.object({ q: z.string(), a: z.string() })).optional(),
 });
 
+type CreateSeoPageInput =
+  | z.input<typeof createSeoPageSchema>
+  | Record<string, never>;
+
 function validateAndBuildSeoInsert(
-  rawBody: unknown,
+  rawBody: CreateSeoPageInput,
   managerId: number
 ): typeof seoPages.$inferInsert {
   const parsedResult = createSeoPageSchema.safeParse(rawBody);
@@ -86,7 +111,7 @@ function validateAndBuildSeoInsert(
 
   const title = body.title.trim();
   const metaDescription = body.meta_description.trim();
-  const pageType = body.page_type as (typeof seoPages.$inferInsert)["pageType"];
+  const pageType = body.page_type;
   const h1 = body.h1 ? body.h1.trim() : title;
   const bodyHtml = sanitizeRichText(body.body);
   const ogImagePath = body.og_image_path ? String(body.og_image_path) : null;

@@ -104,13 +104,11 @@ export interface EffectiveTierOptions {
 /**
  * BR-LAD-02: Content missing access_tier resolves to premium, not free.
  * BR-LAD-05: Effective tier = max(levelTier, curriculumTier).
- * BR-LAD-07: Guest chỉ mở được 6 level trong allow-list; level `free` ngoài
- * allow-list có bậc hiệu lực là `login` đối với Guest.
  */
 export function getEffectiveTier(
   levelTier?: AccessTier | null,
   curriculumTier?: AccessTier | null,
-  options?: EffectiveTierOptions
+  _options?: EffectiveTierOptions
 ): AccessTier {
   const resolvedLevelTier = levelTier ?? "premium";
   const resolvedCurriculumTier = curriculumTier ?? "free";
@@ -120,19 +118,7 @@ export function getEffectiveTier(
 
   const maxRank = Math.max(levelRank, curriculumRank);
 
-  const resolvedTier =
-    TIER_ORDER.find((t) => TIER_RANK[t] === maxRank) ?? "premium";
-
-  if (
-    resolvedTier === "free" &&
-    options?.callerKind === "guest" &&
-    options.code !== undefined &&
-    !isGuestAllowedLevel(options.code)
-  ) {
-    return "login";
-  }
-
-  return resolvedTier;
+  return TIER_ORDER.find((t) => TIER_RANK[t] === maxRank) ?? "premium";
 }
 
 export interface LockedPreviewMetadata {

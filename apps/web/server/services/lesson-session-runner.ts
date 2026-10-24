@@ -27,7 +27,7 @@ import {
   lessonRuns,
   lessons,
 } from "@mindkid/db";
-import { and, eq } from "drizzle-orm";
+import { and, eq, or } from "drizzle-orm";
 
 export interface StartLessonRunInput {
   userId: number;
@@ -58,7 +58,12 @@ export interface StartLessonRunResult {
     code: string;
     title: string;
     contentVersion: number;
-    guide: unknown;
+    guide: string | null;
+    materials?: string | null;
+    warmUp?: string | null;
+    reflection?: string | null;
+    assessment?: string | null;
+    extension?: string | null;
     status: string;
   };
   steps: LessonRunStepDetail[];
@@ -178,9 +183,12 @@ async function createStepsForRun(
     .from(lessonActivities)
     .leftJoin(
       activities,
-      and(
-        eq(activities.entityId, lessonActivities.activityId),
-        eq(activities.status, "published")
+      or(
+        and(
+          eq(activities.entityId, lessonActivities.activityId),
+          eq(activities.status, "published")
+        ),
+        eq(activities.id, lessonActivities.activityId)
       )
     )
     .where(eq(lessonActivities.lessonId, lessonId));
@@ -306,7 +314,16 @@ export async function getLessonRun(
     })
     .from(lessonRunSteps)
     .leftJoin(activities, eq(lessonRunSteps.activityId, activities.id))
-    .leftJoin(gameLevels, eq(activities.refId, gameLevels.id))
+    .leftJoin(
+      gameLevels,
+      or(
+        eq(activities.refId, gameLevels.id),
+        and(
+          eq(activities.refId, gameLevels.entityId),
+          eq(gameLevels.status, "published")
+        )
+      )
+    )
     .where(eq(lessonRunSteps.lessonRunId, run.run.id));
 
   const sortedSteps = [...stepsRaw].sort(
@@ -337,6 +354,11 @@ export async function getLessonRun(
       title: run.lesson.title,
       contentVersion: run.run.contentVersion,
       guide: run.lesson.guide,
+      materials: run.lesson.materials,
+      warmUp: run.lesson.warmUp,
+      reflection: run.lesson.reflection,
+      assessment: run.lesson.assessment,
+      extension: run.lesson.extension,
       status: run.lesson.status,
     },
     steps,
@@ -516,7 +538,7 @@ export async function completeLessonRun(
     .where(eq(lessonRuns.id, run.id));
 
   const obs = await db
-    .select()
+    .select({ id: lessonRunObservations.id })
     .from(lessonRunObservations)
     .where(eq(lessonRunObservations.lessonRunId, run.id));
 

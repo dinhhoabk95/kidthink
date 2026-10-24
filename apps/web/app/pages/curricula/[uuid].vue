@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-h-screen bg-surface-50 text-surface-900 dark:bg-surface-900 dark:text-surface-100 flex flex-col"
+    class="min-h-screen bg-surface-50 text-surface-900 dark:bg-surface-900 dark:text-surface-100 flex flex-col overflow-x-hidden"
   >
     <PublicNavbar />
 
@@ -10,18 +10,18 @@
     >
       <!-- Breadcrumb & Nav -->
       <div
-        class="mb-4 flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400 font-bold"
+        class="mb-4 flex items-center gap-2 text-sm text-surface-600 dark:text-surface-400 font-bold min-w-0"
       >
         <NuxtLink
-          class="hover:underline flex items-center gap-1"
+          class="hover:underline inline-flex items-center gap-1 min-h-11 shrink-0"
           to="/curricula"
         >
           <span>← Lộ trình cá nhân</span>
         </NuxtLink>
-        <span>/</span>
-        <span class="text-surface-800 dark:text-surface-200 truncate"
-          >{{ curriculum?.title || 'Đang tải...' }}</span
-        >
+        <span class="shrink-0">/</span>
+        <span class="text-surface-800 dark:text-surface-200 truncate">{{
+          curriculum?.title || "Đang tải..."
+        }}</span>
       </div>
 
       <!-- Loading State -->
@@ -29,7 +29,7 @@
         <div
           class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-brand-500 border-t-transparent"
         ></div>
-        <p class="mt-3 text-surface-500 text-sm">
+        <p class="mt-3 text-surface-600 dark:text-surface-400 text-sm">
           Đang tải nội dung lộ trình...
         </p>
       </div>
@@ -38,30 +38,30 @@
       <div class="space-y-6" v-else-if="curriculum">
         <!-- Top Toolbar -->
         <div
-          class="bg-white dark:bg-surface-800 border-4 border-surface-200 dark:border-surface-700 rounded-3xl p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+          class="bg-white dark:bg-surface-800 border-4 border-surface-200 dark:border-surface-700 rounded-3xl p-4 sm:p-6 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4"
         >
-          <div class="flex-1">
-            <div class="flex items-center gap-3">
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-3">
               <input
                 aria-label="Tên lộ trình"
-                class="text-xl sm:text-2xl font-heading font-extrabold text-surface-900 dark:text-white bg-transparent border-b-2 border-dashed border-surface-300 dark:border-surface-600 focus:border-brand-500 focus:outline-none w-full max-w-md py-1"
+                class="min-h-11 text-xl sm:text-2xl font-heading font-extrabold text-surface-900 dark:text-white bg-transparent border-b-2 border-dashed border-surface-300 dark:border-surface-600 focus:border-brand-500 focus:outline-none w-full max-w-md py-1"
                 placeholder="Nhập tên lộ trình..."
                 type="text"
                 v-model="editMeta.title"
               >
               <span
-                class="px-2.5 py-0.5 rounded-full text-xs font-bold shrink-0"
+                class="px-3 py-1 rounded-full text-sm font-bold shrink-0"
                 :class="
                   editMeta.status === 'ready'
                     ? 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-200'
                     : 'bg-warning-100 text-warning-800 dark:bg-warning-900/50 dark:text-warning-200'
                 "
               >
-                {{ editMeta.status === 'ready' ? 'Sẵn sàng' : 'Bản nháp' }}
+                {{ editMeta.status === "ready" ? "Sẵn sàng" : "Bản nháp" }}
               </span>
             </div>
             <div
-              class="mt-2 text-xs text-surface-500 dark:text-surface-400 flex items-center gap-3"
+              class="mt-2 text-sm text-surface-600 dark:text-surface-400 flex flex-wrap items-center gap-3"
             >
               <span>Phiên bản: v{{ curriculum.version }}</span>
               <span>•</span>
@@ -84,7 +84,11 @@
               "
               @click="toggleStatus"
             >
-              {{ editMeta.status === 'ready' ? 'Chuyển về Bản nháp' : 'Đánh dấu Sẵn sàng' }}
+              {{
+                editMeta.status === "ready"
+                  ? "Chuyển về Bản nháp"
+                  : "Đánh dấu Sẵn sàng"
+              }}
             </button>
 
             <button
@@ -93,19 +97,20 @@
               :disabled="isSaving"
               @click="saveChanges"
             >
-              {{ isSaving ? 'Đang lưu...' : 'Lưu lộ trình' }}
+              {{ isSaving ? "Đang lưu..." : "Lưu lộ trình" }}
             </button>
           </div>
         </div>
 
         <!-- Banner Feedback -->
         <div
-          class="p-4 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-300 dark:border-success-700 text-success-800 dark:text-success-200 text-sm font-bold flex items-center justify-between"
+          class="p-4 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-300 dark:border-success-700 text-success-800 dark:text-success-200 text-sm font-bold flex items-center justify-between gap-2"
           v-if="bannerMessage"
         >
           <span>{{ bannerMessage }}</span>
           <button
-            class="font-bold text-sm"
+            aria-label="Đóng thông báo"
+            class="inline-flex items-center justify-center min-h-11 min-w-11 rounded-xl font-bold text-sm shrink-0"
             type="button"
             @click="bannerMessage = null"
           >
@@ -114,12 +119,13 @@
         </div>
 
         <div
-          class="p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 dark:border-danger-700 text-danger-800 dark:text-danger-200 text-sm font-bold flex items-center justify-between"
+          class="p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 dark:border-danger-700 text-danger-800 dark:text-danger-200 text-sm font-bold flex items-center justify-between gap-2"
           v-if="errorMessage"
         >
           <span>{{ errorMessage }}</span>
           <button
-            class="font-bold text-sm"
+            aria-label="Đóng thông báo lỗi"
+            class="inline-flex items-center justify-center min-h-11 min-w-11 rounded-xl font-bold text-sm shrink-0"
             type="button"
             @click="errorMessage = null"
           >
@@ -129,9 +135,11 @@
 
         <!-- Balance Report & Non-blocking Warnings -->
         <div
-          class="bg-white dark:bg-surface-800 border-4 border-surface-200 dark:border-surface-700 rounded-3xl p-6 space-y-4"
+          class="bg-white dark:bg-surface-800 border-4 border-surface-200 dark:border-surface-700 rounded-3xl p-4 sm:p-6 space-y-4"
         >
-          <div class="flex items-center justify-between">
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1"
+          >
             <h3
               class="font-heading font-extrabold text-base text-surface-900 dark:text-white flex items-center gap-2"
             >
@@ -141,7 +149,7 @@
               />
               <span>Chỉ số cân bằng sư phạm</span>
             </h3>
-            <span class="text-xs text-surface-500"
+            <span class="text-sm text-surface-600 dark:text-surface-400"
               >Tự động phân tích theo 6 nhóm năng lực tư duy</span
             >
           </div>
@@ -152,12 +160,12 @@
             v-if="curriculum.warnings && curriculum.warnings.length > 0"
           >
             <div
-              class="p-3 rounded-2xl bg-warning-50 dark:bg-warning-950/30 border border-warning-300 dark:border-warning-700/60 text-warning-900 dark:text-warning-200 text-xs flex items-start gap-2"
+              class="p-3 rounded-2xl bg-warning-50 dark:bg-warning-950/30 border border-warning-300 dark:border-warning-700/60 text-warning-900 dark:text-warning-200 text-sm flex items-start gap-2"
               v-for="(w, idx) in curriculum.warnings"
               :key="idx"
             >
               <span
-                class="text-warning-600 font-bold shrink-0 flex items-center gap-1"
+                class="text-warning-700 dark:text-warning-300 font-bold shrink-0 flex items-center gap-1"
               >
                 <UIcon
                   class="w-4 h-4 text-warning-600 shrink-0"
@@ -165,12 +173,12 @@
                 />
                 <span>Lưu ý:</span>
               </span>
-              <span>{{ w }}</span>
+              <span class="min-w-0 break-words">{{ w }}</span>
             </div>
           </div>
 
           <div
-            class="p-3 rounded-2xl bg-success-50 dark:bg-success-950/30 border border-success-200 dark:border-success-800 text-success-800 dark:text-success-200 text-xs flex items-center gap-2 font-bold"
+            class="p-3 rounded-2xl bg-success-50 dark:bg-success-950/30 border border-success-200 dark:border-success-800 text-success-800 dark:text-success-200 text-sm flex items-center gap-2 font-bold"
             v-else
           >
             <UIcon
@@ -187,19 +195,21 @@
         <!-- Weekly Planner Matrix -->
         <div class="space-y-6">
           <div
-            class="bg-white dark:bg-surface-800 border-4 border-surface-200 dark:border-surface-700 rounded-3xl p-6 shadow-sm"
+            class="bg-white dark:bg-surface-800 border-4 border-surface-200 dark:border-surface-700 rounded-3xl p-4 sm:p-6 shadow-sm"
             v-for="weekNo in curriculum.duration_weeks"
             :key="weekNo"
           >
             <div
-              class="flex items-center justify-between border-b border-surface-100 dark:border-surface-700 pb-3 mb-4"
+              class="flex items-center justify-between border-b border-surface-100 dark:border-surface-700 pb-3 mb-4 gap-2"
             >
               <h4
                 class="font-heading font-extrabold text-base text-brand-700 dark:text-brand-300"
               >
                 Tuần {{ weekNo }}
               </h4>
-              <span class="text-xs text-surface-500 font-bold">
+              <span
+                class="text-sm text-surface-600 dark:text-surface-400 font-bold"
+              >
                 {{ getWeekItems(weekNo).length }}
                 bài học/trò chơi
               </span>
@@ -208,17 +218,17 @@
             <!-- Sessions grid for this week -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div
-                class="bg-surface-50 dark:bg-surface-900/60 border-2 border-surface-200 dark:border-surface-700/80 rounded-2xl p-4 flex flex-col justify-between"
+                class="bg-surface-50 dark:bg-surface-900/60 border-2 border-surface-200 dark:border-surface-700/80 rounded-2xl p-4 flex flex-col justify-between min-w-0"
                 v-for="sessionNo in curriculum.sessions_per_week"
                 :key="sessionNo"
               >
                 <div>
                   <div
-                    class="flex items-center justify-between text-xs font-bold text-surface-500 dark:text-surface-400 mb-2"
+                    class="flex items-center justify-between text-sm font-bold text-surface-600 dark:text-surface-400 mb-2 gap-2"
                   >
                     <span>Buổi {{ sessionNo }}</span>
                     <button
-                      class="text-brand-600 hover:text-brand-700 dark:text-brand-400 font-bold"
+                      class="inline-flex items-center justify-center min-h-11 px-3 py-2 rounded-xl text-sm text-brand-600 hover:text-brand-700 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-950/40 font-bold transition-colors"
                       type="button"
                       @click="openAddItemModal(weekNo, sessionNo)"
                     >
@@ -229,7 +239,7 @@
                   <!-- Item list for this session -->
                   <div class="space-y-2 mt-2">
                     <div
-                      class="p-2.5 rounded-xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 shadow-2xs flex items-center justify-between gap-2"
+                      class="p-2.5 rounded-xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 shadow-2xs flex items-center justify-between gap-2 min-w-0"
                       v-for="(it, itIdx) in getSessionItems(weekNo, sessionNo)"
                       :key="itIdx"
                     >
@@ -240,20 +250,27 @@
                         />
                         <div class="truncate">
                           <div
-                            class="text-xs font-bold text-surface-800 dark:text-surface-100 truncate"
+                            class="text-sm font-bold text-surface-800 dark:text-surface-100 truncate"
                           >
                             {{ it.title }}
                           </div>
-                          <div class="text-3xs text-surface-500 truncate">
+                          <div
+                            class="text-sm text-surface-600 dark:text-surface-400 truncate"
+                          >
                             {{ it.code }}
                             ·
-                            {{ findCompetency(it.competency_code ?? '')?.name || it.competency_code || 'Tư duy toán học' }}
+                            {{
+                              findCompetency(it.competency_code ?? "")?.name ||
+                                it.competency_code ||
+                                "Tư duy toán học"
+                            }}
                           </div>
                         </div>
                       </div>
 
                       <button
-                        class="text-danger-500 hover:text-danger-700 text-xs p-1 font-bold shrink-0"
+                        aria-label="Xoá mục này"
+                        class="inline-flex items-center justify-center min-h-11 min-w-11 rounded-xl text-danger-600 hover:bg-danger-50 dark:text-danger-400 dark:hover:bg-danger-950/40 font-bold shrink-0 transition-colors"
                         title="Xoá mục này"
                         type="button"
                         @click="removeItem(it)"
@@ -263,7 +280,7 @@
                     </div>
 
                     <div
-                      class="text-center py-4 text-xs text-surface-400 border border-dashed border-surface-300 dark:border-surface-700 rounded-xl"
+                      class="text-center py-4 text-sm text-surface-600 dark:text-surface-400 border border-dashed border-surface-300 dark:border-surface-700 rounded-xl"
                       v-if="getSessionItems(weekNo, sessionNo).length === 0"
                     >
                       Chưa có nội dung
@@ -274,6 +291,22 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- Not Found / Error State -->
+      <div
+        class="text-center py-16 bg-white dark:bg-surface-800 border-4 border-surface-200 dark:border-surface-700 rounded-3xl p-8 space-y-4"
+        v-else
+      >
+        <p class="text-base font-bold text-surface-700 dark:text-surface-200">
+          Không tìm thấy lộ trình cá nhân này.
+        </p>
+        <NuxtLink
+          class="inline-flex items-center justify-center px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-500 text-white font-heading font-bold text-sm min-h-11"
+          to="/curricula"
+        >
+          Quay lại danh sách lộ trình
+        </NuxtLink>
       </div>
     </main>
 
@@ -286,7 +319,7 @@
         class="bg-white dark:bg-surface-800 border-4 border-surface-200 dark:border-surface-700 rounded-3xl max-w-xl w-full p-6 shadow-2xl space-y-4"
       >
         <div
-          class="flex items-center justify-between border-b border-surface-200 dark:border-surface-700 pb-3"
+          class="flex items-center justify-between border-b border-surface-200 dark:border-surface-700 pb-3 gap-2"
         >
           <h3
             class="font-heading font-extrabold text-lg text-surface-900 dark:text-white"
@@ -294,7 +327,8 @@
             Thêm vào Tuần {{ targetWeek }}, Buổi {{ targetSession }}
           </h3>
           <button
-            class="text-surface-500 hover:text-surface-700 text-lg font-bold min-h-11 min-w-11"
+            aria-label="Đóng hộp thoại"
+            class="inline-flex items-center justify-center rounded-xl text-surface-500 hover:text-surface-700 dark:hover:text-surface-300 text-lg font-bold min-h-11 min-w-11 shrink-0"
             type="button"
             @click="showAddModal = false"
           >
@@ -304,9 +338,9 @@
 
         <div class="space-y-4">
           <!-- Type Filter -->
-          <div class="flex gap-2">
+          <div class="flex flex-wrap gap-2">
             <button
-              class="px-4 py-1.5 rounded-xl font-bold text-xs transition-all"
+              class="px-4 py-2 rounded-2xl font-bold text-sm min-h-11 transition-all"
               type="button"
               :class="
                 selectedType === 'game_level'
@@ -318,7 +352,7 @@
               Trò chơi (Game Levels)
             </button>
             <button
-              class="px-4 py-1.5 rounded-xl font-bold text-xs transition-all"
+              class="px-4 py-2 rounded-2xl font-bold text-sm min-h-11 transition-all"
               type="button"
               :class="
                 selectedType === 'lesson'
@@ -336,33 +370,37 @@
             class="max-h-60 overflow-y-auto space-y-2 border border-surface-200 dark:border-surface-700 rounded-2xl p-2"
           >
             <button
-              class="w-full text-left p-3 rounded-xl border border-surface-200 dark:border-surface-700 hover:border-brand-500 flex items-center justify-between cursor-pointer"
+              class="w-full text-left p-3 rounded-xl border border-surface-200 dark:border-surface-700 hover:border-brand-500 flex items-center justify-between gap-2 cursor-pointer min-h-11"
               type="button"
               v-for="item in availableCatalogItems"
               :key="item.id"
               :class="selectedCatalogItem?.id === item.id ? 'bg-brand-50 dark:bg-brand-950/40 border-brand-500' : ''"
               @click="selectedCatalogItem = item"
             >
-              <div>
-                <div class="font-bold text-xs text-surface-900 dark:text-white">
+              <div class="min-w-0">
+                <div
+                  class="font-bold text-sm text-surface-900 dark:text-white truncate"
+                >
                   {{ item.title }}
                 </div>
-                <div class="text-3xs text-surface-500">
+                <div
+                  class="text-sm text-surface-600 dark:text-surface-400 truncate"
+                >
                   {{ item.code }}
                   · Gói {{ item.access_tier }}
                 </div>
               </div>
-              <span class="text-xs font-bold text-brand-600"
-                >{{ selectedCatalogItem?.id === item.id ? '✓ Chọn' : '+' }}</span
-              >
+              <span class="text-sm font-bold text-brand-600 shrink-0">{{
+                selectedCatalogItem?.id === item.id ? "✓ Chọn" : "+"
+              }}</span>
             </button>
           </div>
 
           <div
-            class="pt-4 flex justify-end gap-3 border-t border-surface-200 dark:border-surface-700"
+            class="pt-4 flex flex-wrap justify-end gap-3 border-t border-surface-200 dark:border-surface-700"
           >
             <button
-              class="px-4 py-2 rounded-2xl border-2 border-surface-300 text-surface-700 dark:text-surface-300 font-bold text-sm min-h-11"
+              class="px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 font-bold text-sm min-h-11"
               type="button"
               @click="showAddModal = false"
             >
@@ -386,9 +424,10 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import { findCompetency } from "@mindkid/shared/client";
   import { computed, ref, watch } from "vue";
-  import { useFetch, useRoute } from "#imports";
+  import { useFetch, useRoute, useSeoMeta } from "#imports";
   import { useApi } from "~/composables/use-api";
 
   // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
@@ -441,6 +480,15 @@
     refresh,
   } = useFetch<CurriculumDetail>(() => `/api/users/curricula/${uuid.value}`);
 
+  useSeoMeta({
+    title: () =>
+      curriculum.value?.title
+        ? `${curriculum.value.title} — Lộ trình cá nhân MindKid`
+        : "Chi tiết lộ trình cá nhân — MindKid",
+    description:
+      "Chỉnh sửa và quản lý chi tiết lộ trình học toán tư duy cá nhân cho bé.",
+  });
+
   const editMeta = ref({
     title: "",
     status: "draft" as "draft" | "ready",
@@ -463,22 +511,25 @@
     { immediate: true }
   );
 
-  function getWeekItems(weekNo: number) {
+  function getWeekItems(weekNo: number): CurriculumItemRef[] {
     return itemsList.value.filter((i) => i.week_no === weekNo);
   }
 
-  function getSessionItems(weekNo: number, sessionNo: number) {
+  function getSessionItems(
+    weekNo: number,
+    sessionNo: number
+  ): CurriculumItemRef[] {
     return itemsList.value
       .filter((i) => i.week_no === weekNo && i.session_no === sessionNo)
       .sort((a, b) => a.position - b.position);
   }
 
-  function toggleStatus() {
+  function toggleStatus(): void {
     editMeta.value.status =
       editMeta.value.status === "ready" ? "draft" : "ready";
   }
 
-  function removeItem(item: CurriculumItemRef) {
+  function removeItem(item: CurriculumItemRef): void {
     itemsList.value = itemsList.value.filter(
       (i) =>
         !(
@@ -497,8 +548,7 @@
   const selectedType = ref<"game_level" | "lesson">("game_level");
   const selectedCatalogItem = ref<CatalogEntry | null>(null);
 
-  // Catalog sample data
-  const availableCatalogItems = ref<CatalogEntry[]>([
+  const CATALOG_ITEMS: readonly CatalogEntry[] = [
     {
       id: 1,
       entity_type: "game_level",
@@ -520,16 +570,20 @@
       title: "Khám phá các hình khối",
       access_tier: "standard",
     },
-  ]);
+  ];
 
-  function openAddItemModal(weekNo: number, sessionNo: number) {
+  const availableCatalogItems = computed<CatalogEntry[]>(() =>
+    CATALOG_ITEMS.filter((item) => item.entity_type === selectedType.value)
+  );
+
+  function openAddItemModal(weekNo: number, sessionNo: number): void {
     targetWeek.value = weekNo;
     targetSession.value = sessionNo;
     selectedCatalogItem.value = null;
     showAddModal.value = true;
   }
 
-  function confirmAddItem() {
+  function confirmAddItem(): void {
     if (!selectedCatalogItem.value) {
       return;
     }
@@ -554,7 +608,7 @@
     showAddModal.value = false;
   }
 
-  async function saveChanges() {
+  async function saveChanges(): Promise<void> {
     if (!curriculum.value) {
       return;
     }
@@ -591,12 +645,14 @@
 
       bannerMessage.value = "Lộ trình đã được lưu thành công.";
       await refresh();
-    } catch (err: unknown) {
-      const fetchErr = err as { data?: { message?: string }; message?: string };
-      errorMessage.value =
-        fetchErr?.data?.message ||
-        fetchErr?.message ||
-        "Không thể lưu lộ trình.";
+    } catch (err) {
+      if (isApiError(err)) {
+        errorMessage.value = err.message;
+      } else if (err instanceof Error) {
+        errorMessage.value = err.message;
+      } else {
+        errorMessage.value = "Không thể lưu lộ trình.";
+      }
     } finally {
       isSaving.value = false;
     }

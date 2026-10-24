@@ -10,7 +10,7 @@
         >
           Gói học & Quyền lợi
         </h1>
-        <p class="text-sm text-surface-600 mt-1">
+        <p class="text-base text-surface-600 mt-1">
           Quản lý gói đăng ký, quyền lợi mở khóa và lịch sử giao dịch
         </p>
       </div>
@@ -18,6 +18,7 @@
       <!-- Single Primary Upgrade CTA (BR-SBV-07) -->
       <NuxtLink
         class="min-h-11 px-5 py-2.5 bg-cta hover:bg-cta-hover text-white font-bold font-heading rounded-2xl shadow-md transition-all text-center flex items-center justify-center gap-2"
+        data-testid="upgrade-cta-link"
         to="/pricing"
         v-if="data?.has_higher_tier"
       >
@@ -28,9 +29,9 @@
 
     <!-- Loading State -->
     <div class="py-16 text-center text-surface-500" v-if="pending">
-      <UIcon
-        class="w-8 h-8 animate-spin mx-auto mb-2 text-brand-600"
-        name="i-lucide-loader-2"
+      <span
+        aria-hidden="true"
+        class="inline-block w-8 h-8 border-4 border-surface-200 border-t-brand-600 rounded-full animate-spin mx-auto mb-2"
       />
       <p>Đang tải thông tin gói...</p>
     </div>
@@ -86,53 +87,55 @@
                 : 'border-brand-200 bg-white'
             ]"
           >
-            <div class="flex items-start justify-between gap-3">
-              <div>
-                <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-2">
                   <h3 class="text-lg font-bold font-heading text-surface-900">
                     {{ pkg.name }}
                   </h3>
                   <span
-                    class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-warning-100 text-warning-800 border border-warning-300"
+                    class="px-2.5 py-0.5 rounded-full text-sm font-bold bg-warning-100 text-warning-800 border border-warning-300"
                     v-if="pkg.is_soft_unlock"
                   >
                     Đang chờ xác nhận
                   </span>
                   <span
-                    class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-success-100 text-success-800 border border-success-300"
+                    class="px-2.5 py-0.5 rounded-full text-sm font-bold bg-success-100 text-success-800 border border-success-300"
                     v-else
                   >
                     Đang hoạt động
                   </span>
                 </div>
-                <p class="text-xs text-surface-600 mt-1">
+                <p class="text-sm text-surface-600 mt-1">
                   {{ pkg.description }}
                 </p>
               </div>
 
               <span
-                class="text-xs px-2 py-1 rounded-xl bg-surface-100 text-surface-700 font-medium whitespace-nowrap"
+                class="text-sm px-2.5 py-1 rounded-xl bg-surface-100 text-surface-700 font-medium whitespace-nowrap"
               >
                 {{ pkg.source_label }}
               </span>
             </div>
 
             <div
-              class="pt-2 border-t border-surface-100 grid grid-cols-2 gap-2 text-xs"
+              class="pt-2 border-t border-surface-100 grid grid-cols-2 gap-2 text-sm"
             >
               <div>
                 <span class="text-surface-500 block">Kích hoạt:</span>
-                <span class="font-bold text-surface-800"
-                  >{{ formatDate(pkg.granted_at) }}</span
-                >
+                <span class="font-bold text-surface-800">{{
+                  formatDate(pkg.granted_at)
+                }}</span>
               </div>
               <div class="text-right">
                 <span class="text-surface-500 block">Hết hạn:</span>
                 <span class="font-bold text-surface-800">
-                  {{ pkg.expires_at ? formatDate(pkg.expires_at) : "Vĩnh viễn" }}
+                  {{
+                    pkg.expires_at ? formatDate(pkg.expires_at) : "Vĩnh viễn"
+                  }}
                 </span>
                 <span
-                  class="text-[11px] text-brand-600 font-semibold block"
+                  class="text-sm text-brand-600 font-semibold block"
                   v-if="pkg.days_left !== null"
                 >
                   (Còn {{ pkg.days_left }} ngày)
@@ -147,12 +150,12 @@
           class="p-6 rounded-3xl border-4 border-surface-200 bg-white space-y-3"
           v-else
         >
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-2">
             <h3 class="text-lg font-bold font-heading text-surface-900">
               Gói Miễn phí (Mặc định)
             </h3>
             <span
-              class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-surface-100 text-surface-700"
+              class="px-2.5 py-0.5 rounded-full text-sm font-bold bg-surface-100 text-surface-700"
               >Mặc định</span
             >
           </div>
@@ -171,8 +174,10 @@
             class="w-5 h-5 text-brand-600 flex-shrink-0 mt-0.5"
             name="i-lucide-shield-check"
           />
-          <p class="text-xs md:text-sm text-brand-900 leading-relaxed">
-            {{ data.data_preservation_notice || DEFAULT_DATA_PRESERVATION_NOTICE }}
+          <p class="text-sm md:text-base text-brand-900 leading-relaxed">
+            {{
+              data.data_preservation_notice || DEFAULT_DATA_PRESERVATION_NOTICE
+            }}
           </p>
         </div>
 
@@ -181,18 +186,18 @@
           class="p-6 rounded-3xl border-4 border-surface-200 bg-white space-y-4"
           data-testid="recurring-billing-section"
         >
-          <div class="flex items-center justify-between gap-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
             <h3 class="text-base font-bold font-heading text-surface-900">
               Gia hạn tự động định kỳ
             </h3>
             <span
-              class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-success-100 text-success-800 border border-success-300"
+              class="px-2.5 py-0.5 rounded-full text-sm font-bold bg-success-100 text-success-800 border border-success-300"
               v-if="data.recurring_subscription?.auto_renew"
             >
               Đang bật tự gia hạn
             </span>
             <span
-              class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-surface-100 text-surface-700"
+              class="px-2.5 py-0.5 rounded-full text-sm font-bold bg-surface-100 text-surface-700"
               v-else
             >
               Chưa bật
@@ -200,7 +205,7 @@
           </div>
 
           <div
-            class="rounded-2xl border-2 border-danger-200 bg-danger-50 p-3 text-xs font-semibold text-danger-700"
+            class="rounded-2xl border-2 border-danger-200 bg-danger-50 p-3 text-sm font-semibold text-danger-700"
             role="alert"
             v-if="recurringErrorMessage"
           >
@@ -209,23 +214,26 @@
 
           <!-- Active Recurring State -->
           <div
-            class="space-y-3 text-xs text-surface-700"
+            class="space-y-3 text-sm text-surface-700"
             v-if="data.recurring_subscription?.auto_renew"
           >
             <p>
               Gói
               <strong>{{ data.recurring_subscription.package_code }}</strong>
-              ({{ data.recurring_subscription.billing_period === "annual" ? "Theo năm" : "Theo tháng" }})
-              — Mức phí:
-              <strong
-                >{{ formatMoney(data.recurring_subscription.price_vnd) }}</strong
-              >
+              ({{
+                data.recurring_subscription.billing_period === "annual"
+                  ? "Theo năm"
+                  : "Theo tháng"
+              }}) — Mức phí:
+              <strong>{{
+                formatMoney(data.recurring_subscription.price_vnd)
+              }}</strong>
             </p>
             <p v-if="data.recurring_subscription.next_billing_at">
               Ngày thu phí kế tiếp:
-              <strong
-                >{{ formatDate(data.recurring_subscription.next_billing_at) }}</strong
-              >
+              <strong>{{
+                formatDate(data.recurring_subscription.next_billing_at)
+              }}</strong>
             </p>
             <p class="text-surface-500">
               {{ data.cancellation_guidance || DEFAULT_CANCELLATION_GUIDANCE }}
@@ -237,17 +245,19 @@
               :disabled="isRecurringSubmitting"
               @click="handleCancelRecurring"
             >
-              {{ isRecurringSubmitting ? "Đang xử lý..." : "Huỷ gia hạn tự động" }}
+              {{
+                isRecurringSubmitting ? "Đang xử lý..." : "Huỷ gia hạn tự động"
+              }}
             </button>
           </div>
 
           <!-- Opt-in Form (BR-RBL-01: explicit consent required) -->
           <form class="space-y-3" v-else @submit.prevent="handleOptInRecurring">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
               <label class="flex flex-col gap-1 font-semibold text-surface-700">
                 <span>Chọn gói gia hạn</span>
                 <select
-                  class="min-h-11 rounded-2xl border-2 border-surface-300 bg-surface-50 px-3 py-2 text-sm text-surface-900"
+                  class="min-h-11 rounded-2xl border-2 border-surface-300 bg-surface-50 px-3 py-2 text-base text-surface-900"
                   data-testid="recurring-package-select"
                   v-model="selectedRecurringPackage"
                 >
@@ -259,7 +269,7 @@
               <label class="flex flex-col gap-1 font-semibold text-surface-700">
                 <span>Chu kỳ thanh toán</span>
                 <select
-                  class="min-h-11 rounded-2xl border-2 border-surface-300 bg-surface-50 px-3 py-2 text-sm text-surface-900"
+                  class="min-h-11 rounded-2xl border-2 border-surface-300 bg-surface-50 px-3 py-2 text-base text-surface-900"
                   data-testid="recurring-period-select"
                   v-model="selectedBillingPeriod"
                 >
@@ -270,7 +280,7 @@
             </div>
 
             <label
-              class="flex items-start gap-2.5 cursor-pointer text-xs text-surface-600"
+              class="flex min-h-11 items-start gap-2.5 py-1 cursor-pointer text-sm text-surface-600"
             >
               <input
                 class="mt-0.5 h-5 w-5 shrink-0 rounded border-2 border-surface-300 accent-brand-600"
@@ -286,12 +296,16 @@
             </label>
 
             <button
-              class="min-h-11 px-5 py-2.5 rounded-2xl bg-brand-600 text-white text-xs font-bold hover:bg-brand-500 transition-colors disabled:opacity-60"
+              class="min-h-11 px-5 py-2.5 rounded-2xl bg-brand-600 text-white text-sm font-bold hover:bg-brand-500 transition-colors disabled:opacity-60"
               data-testid="recurring-opt-in-btn"
               type="submit"
               :disabled="isRecurringSubmitting || !recurringConsentAccepted"
             >
-              {{ isRecurringSubmitting ? "Đang đăng ký..." : "Bật tự động gia hạn" }}
+              {{
+                isRecurringSubmitting
+                  ? "Đang đăng ký..."
+                  : "Bật tự động gia hạn"
+              }}
             </button>
           </form>
         </div>
@@ -316,8 +330,10 @@
           >
             <div>
               <span
-                class="text-xs font-bold text-surface-500 tracking-wider block"
-                >{{ quota.label }}</span
+                class="text-sm font-bold text-surface-500 tracking-wider block"
+                >{{
+                  quota.label
+                }}</span
               >
               <span
                 class="text-lg font-bold font-heading text-surface-900 mt-0.5 block"
@@ -334,7 +350,7 @@
         <div
           class="p-6 rounded-3xl border-4 border-surface-200 bg-white space-y-4"
         >
-          <h3 class="text-sm font-bold font-heading text-surface-700">
+          <h3 class="text-base font-bold font-heading text-surface-700">
             Các tính năng đang mở khóa
           </h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -343,18 +359,18 @@
               v-for="ent in data.entitlements"
               :key="ent.key"
             >
-              <div class="flex items-center justify-between gap-1">
-                <span class="font-bold text-xs text-surface-900 truncate"
-                  >{{ ent.label }}</span
-                >
+              <div class="flex flex-wrap items-center justify-between gap-1">
+                <span class="font-bold text-sm text-surface-900 truncate">{{
+                  ent.label
+                }}</span>
                 <span
-                  class="text-[10px] px-1.5 py-0.5 rounded bg-surface-200 text-surface-700"
+                  class="text-sm px-2 py-0.5 rounded-xl bg-surface-200 text-surface-700"
                 >
                   {{ ent.source_label }}
                 </span>
               </div>
               <p
-                class="text-[11px] text-surface-500 line-clamp-2"
+                class="text-sm text-surface-600 line-clamp-2"
                 v-if="ent.description"
               >
                 {{ ent.description }}
@@ -385,33 +401,37 @@
               :key="order.uuid"
             >
               <div class="space-y-1">
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
                   <span
                     class="font-bold font-heading text-surface-900 text-base"
-                    >{{ order.package_name }}</span
+                    >{{
+                      order.package_name
+                    }}</span
                   >
                   <span
                     :class="[
-                      'px-2.5 py-0.5 rounded-full text-xs font-bold border',
+                      'px-2.5 py-0.5 rounded-full text-sm font-bold border',
                       orderStatusStyle(order.status)
                     ]"
                   >
                     {{ orderStatusLabel(order.status) }}
                   </span>
                 </div>
-                <div class="text-xs text-surface-500 flex items-center gap-3">
+                <div
+                  class="text-sm text-surface-500 flex flex-wrap items-center gap-3"
+                >
                   <span
                     >Mã đơn:
-                    <code class="font-mono text-surface-700"
-                      >{{ order.uuid.slice(0, 8) }}</code
-                    ></span
+                    <code class="font-mono text-surface-700">{{
+                      order.uuid.slice(0, 8)
+                    }}</code></span
                   >
                   <span>{{ formatDate(order.created_at) }}</span>
                 </div>
 
                 <!-- Polite reason for rejected orders (BR-SBV-04: no internal admin note) -->
                 <p
-                  class="text-xs text-danger-700 bg-danger-50 p-2 rounded-xl border border-danger-200 mt-2"
+                  class="text-sm text-danger-700 bg-danger-50 p-2 rounded-xl border border-danger-200 mt-2"
                   v-if="order.polite_reason"
                 >
                   {{ order.polite_reason }}
@@ -422,7 +442,7 @@
                 <span class="font-bold text-base text-surface-900 block">
                   {{ formatMoney(order.amount_vnd) }}
                 </span>
-                <span class="text-xs text-surface-500 block"
+                <span class="text-sm text-surface-500 block"
                   >Chuyển khoản VietQR</span
                 >
               </div>
@@ -651,3 +671,6 @@
     return `${amount.toLocaleString("vi-VN")} đ`;
   }
 </script>
+
+<style scoped>
+</style>

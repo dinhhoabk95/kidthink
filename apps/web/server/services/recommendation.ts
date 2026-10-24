@@ -44,7 +44,28 @@ export interface GetGuestRecommendationsOptions {
   seed?: number;
 }
 
-type PublishedGameLevel = typeof gameLevels.$inferSelect;
+type PublishedGameLevel = Pick<
+  typeof gameLevels.$inferSelect,
+  | "id"
+  | "entityId"
+  | "code"
+  | "title"
+  | "thumbnailEmoji"
+  | "accessTier"
+  | "ageMin"
+  | "ageMax"
+>;
+
+const publishedGameLevelColumns = {
+  id: gameLevels.id,
+  entityId: gameLevels.entityId,
+  code: gameLevels.code,
+  title: gameLevels.title,
+  thumbnailEmoji: gameLevels.thumbnailEmoji,
+  accessTier: gameLevels.accessTier,
+  ageMin: gameLevels.ageMin,
+  ageMax: gameLevels.ageMax,
+};
 
 /**
  * Resolves thumbnail emoji to string with fallback. (Task #202 D-EE)
@@ -104,25 +125,25 @@ async function resolveTier1CurriculumCandidate(
     return null;
   }
 
-  const rawItems = await db
-    .select()
-    .from(curriculumItems)
-    .where(eq(curriculumItems.curriculumId, activeEnrollment.curriculumId));
-
-  const rawWeeks = await db
-    .select()
-    .from(curriculumWeeks)
-    .where(eq(curriculumWeeks.curriculumId, activeEnrollment.curriculumId));
-
-  const progressRows = await db
-    .select({ curriculumItemId: curriculumItemProgress.curriculumItemId })
-    .from(curriculumItemProgress)
-    .where(
-      and(
-        eq(curriculumItemProgress.enrollmentId, activeEnrollment.id),
-        eq(curriculumItemProgress.status, "completed")
-      )
-    );
+  const [rawItems, rawWeeks, progressRows] = await Promise.all([
+    db
+      .select()
+      .from(curriculumItems)
+      .where(eq(curriculumItems.curriculumId, activeEnrollment.curriculumId)),
+    db
+      .select()
+      .from(curriculumWeeks)
+      .where(eq(curriculumWeeks.curriculumId, activeEnrollment.curriculumId)),
+    db
+      .select({ curriculumItemId: curriculumItemProgress.curriculumItemId })
+      .from(curriculumItemProgress)
+      .where(
+        and(
+          eq(curriculumItemProgress.enrollmentId, activeEnrollment.id),
+          eq(curriculumItemProgress.status, "completed")
+        )
+      ),
+  ]);
 
   const completedItemIds = new Set(progressRows.map((p) => p.curriculumItemId));
 
@@ -466,14 +487,17 @@ export async function getRecommendationsForChild(
   const dateIct = now.toISOString().slice(0, 10);
   const seed = options.seed ?? generateDailySeed(childId, dateIct);
 
-  const { totalPlaysCount, recentLevelCodes, allPlayedLevelCodeSet } =
-    await loadPlayedLevelCodes(db, childId);
-
-  const allPublishedLevels = await db
-    .select()
-    .from(gameLevels)
-    .where(eq(gameLevels.status, "published"))
-    .orderBy(asc(gameLevels.code));
+  const [
+    { totalPlaysCount, recentLevelCodes, allPlayedLevelCodeSet },
+    allPublishedLevels,
+  ] = await Promise.all([
+    loadPlayedLevelCodes(db, childId),
+    db
+      .select(publishedGameLevelColumns)
+      .from(gameLevels)
+      .where(eq(gameLevels.status, "published"))
+      .orderBy(asc(gameLevels.code)),
+  ]);
 
   const publishedByEntityId = new Map<number, PublishedGameLevel>();
   const publishedByCode = new Map<string, PublishedGameLevel>();
@@ -615,27 +639,31 @@ export async function getGuestRecommendations(
   const { ageBand, limit = 5, seed = 42 } = options;
   const [targetAgeMin, targetAgeMax] = parseAgeBandRange(ageBand);
 
-  const freeLevels = await db
-    .select()
-    .from(gameLevels)
-    .where(
-      and(eq(gameLevels.status, "published"), eq(gameLevels.accessTier, "free"))
-    )
-    .orderBy(asc(gameLevels.code));
+  const [freeLevels, popularStats] = await Promise.all([
+    db
+      .select(publishedGameLevelColumns)
+      .from(gameLevels)
+      .where(
+        and(
+          eq(gameLevels.status, "published"),
+          eq(gameLevels.accessTier, "free")
+        )
+      )
+      .orderBy(asc(gameLevels.code)),
+    db
+      .select({
+        levelCode: levelDailyStats.levelCode,
+        totalPlays: sql<number>`SUM(${levelDailyStats.playsCount})::int`,
+      })
+      .from(levelDailyStats)
+      .groupBy(levelDailyStats.levelCode),
+  ]);
 
   const matchingFree = freeLevels.filter((gl) =>
     isLevelAgeMatch(gl.ageMin, gl.ageMax, targetAgeMin, targetAgeMax)
   );
 
   const levelsToUse = matchingFree.length > 0 ? matchingFree : freeLevels;
-
-  const popularStats = await db
-    .select({
-      levelCode: levelDailyStats.levelCode,
-      totalPlays: sql<number>`SUM(${levelDailyStats.playsCount})::int`,
-    })
-    .from(levelDailyStats)
-    .groupBy(levelDailyStats.levelCode);
 
   const popularMap = new Map<string, number>();
   for (const s of popularStats) {

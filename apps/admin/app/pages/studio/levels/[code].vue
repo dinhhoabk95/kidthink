@@ -1,21 +1,24 @@
 <template>
   <div
-    class="studio-workspace h-screen flex flex-col bg-surface-100 dark:bg-surface-900 overflow-hidden"
+    class="studio-workspace min-h-[calc(100vh-8rem)] flex flex-col bg-surface-100 dark:bg-surface-900 rounded-3xl border-2 border-surface-200 dark:border-surface-700 overflow-hidden min-w-0"
   >
     <!-- Top Action Bar -->
     <header
-      class="h-16 px-6 bg-white dark:bg-surface-800 border-b-2 border-surface-200 dark:border-surface-700 flex items-center justify-between z-10 shrink-0"
+      class="min-h-16 px-4 sm:px-6 py-3 bg-white dark:bg-surface-800 border-b-2 border-surface-200 dark:border-surface-700 flex flex-wrap items-center justify-between gap-3 z-10 shrink-0"
     >
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3 min-w-0 flex-1">
         <NuxtLink
-          class="w-10 h-10 rounded-2xl flex items-center justify-center text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 transition-all font-bold"
+          aria-label="Quay lại danh sách màn chơi"
+          class="w-11 h-11 min-w-11 min-h-11 rounded-2xl flex items-center justify-center text-surface-500 hover:bg-surface-100 dark:hover:bg-surface-700 transition-all font-bold shrink-0"
           to="/studio/levels"
         >
           ←
         </NuxtLink>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-base font-bold text-surface-900 dark:text-white">
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-2">
+            <h1
+              class="text-base font-bold text-surface-900 dark:text-white break-words"
+            >
               {{ levelTitle }}
             </h1>
             <span
@@ -30,16 +33,16 @@
               {{ statusLabel }}
             </span>
           </div>
-          <span class="text-xs text-surface-500">
+          <span class="text-xs text-surface-500 block mt-0.5">
             {{ autosaveStatus }}
           </span>
         </div>
       </div>
 
       <!-- Right Action Controls -->
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-2 sm:gap-3">
         <button
-          class="min-h-10 px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 font-semibold text-sm transition-all"
+          class="min-h-11 px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 font-semibold text-sm transition-all"
           type="button"
           @click="duplicateCurrentLevel"
         >
@@ -47,7 +50,7 @@
         </button>
 
         <button
-          class="min-h-10 px-4 py-2 rounded-2xl border-2 border-brand-600 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 font-semibold text-sm hover:bg-brand-100 transition-all"
+          class="min-h-11 px-4 py-2 rounded-2xl border-2 border-brand-600 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 font-semibold text-sm hover:bg-brand-100 transition-all"
           type="button"
           :disabled="isSaving"
           @click="manualSave"
@@ -56,7 +59,7 @@
         </button>
 
         <button
-          class="min-h-10 px-5 py-2 rounded-2xl bg-success-600 hover:bg-success-700 active:scale-95 text-white font-semibold text-sm transition-all shadow-sm"
+          class="min-h-11 px-5 py-2 rounded-2xl bg-success-600 hover:bg-success-700 active:scale-95 text-white font-semibold text-sm transition-all shadow-sm"
           type="button"
           v-if="levelData.status === 'draft'"
           @click="submitForReview"
@@ -68,23 +71,49 @@
 
     <!-- Notification Toast/Banner -->
     <div
-      class="px-6 py-2 bg-brand-600 text-white text-xs font-semibold flex items-center justify-between"
+      class="px-4 sm:px-6 py-2 bg-brand-600 text-white text-xs font-semibold flex flex-wrap items-center justify-between gap-2"
       v-if="toastMessage"
     >
       <span>{{ toastMessage }}</span>
-      <button class="underline font-bold" type="button" @click="dismissToast">
+      <button
+        class="min-h-11 px-3 py-1.5 underline font-bold"
+        type="button"
+        @click="dismissToast"
+      >
         Đóng
       </button>
     </div>
 
     <!-- Main 40/60 Split Workspace (BR-STU-01) -->
-    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+    <div class="flex-1 flex flex-col lg:flex-row min-w-0">
       <!-- Left Panel: 40% Schema Form -->
       <section
-        class="w-full lg:w-[40%] h-full overflow-y-auto p-6 border-r-2 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900/50"
+        class="w-full lg:w-[40%] lg:max-h-[calc(100vh-12rem)] overflow-y-auto p-4 sm:p-6 border-b-2 lg:border-b-0 lg:border-r-2 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900/50 min-w-0"
       >
-        <div class="py-20 text-center text-surface-400" v-if="isLoading">
-          Đang tải dữ liệu và cấu hình hợp đồng...
+        <div
+          class="py-20 flex flex-col items-center justify-center text-center text-surface-400"
+          v-if="isLoading"
+        >
+          <div
+            class="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mb-3"
+          ></div>
+          <span>Đang tải dữ liệu và cấu hình hợp đồng...</span>
+        </div>
+
+        <div
+          class="p-6 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800 text-center space-y-3"
+          v-else-if="loadError"
+        >
+          <p class="text-sm font-semibold text-danger-700 dark:text-danger-300">
+            {{ loadError }}
+          </p>
+          <button
+            class="min-h-11 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold transition-all"
+            type="button"
+            @click="reloadAll"
+          >
+            Thử tải lại
+          </button>
         </div>
 
         <SchemaFormRenderer
@@ -101,15 +130,28 @@
 
       <!-- Right Panel: 60% Live Preview Frame -->
       <section
-        class="w-full lg:w-[60%] h-full p-6 bg-surface-950 flex flex-col"
+        class="w-full lg:w-[60%] min-h-[420px] lg:min-h-[600px] p-4 sm:p-6 bg-surface-950 flex flex-col min-w-0"
       >
+        <div
+          class="flex-1 flex flex-col items-center justify-center rounded-3xl border-2 border-surface-800 bg-surface-900 text-surface-400"
+          v-if="isLoading"
+        >
+          <div
+            class="w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin mb-3"
+          ></div>
+          <span class="text-sm font-medium"
+            >Đang chuẩn bị khung xem thử...</span
+          >
+        </div>
+
         <LivePreviewFrame
+          v-else
           :level-data="levelData"
           :template-code="templateCode"
           :validation-error="previewValidationError"
         />
       </section>
-    </main>
+    </div>
 
     <!-- Emoji Picker Modal -->
     <EmojiPickerModal
@@ -129,6 +171,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { getFieldErrors, isApiError } from "@mindkid/errors/client";
   import type { UiHintResult } from "@mindkid/shared/client";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
   import { useRoute, useRouter } from "vue-router";
@@ -138,7 +181,12 @@
   import LivePreviewFrame, {
     type PreviewValidationError,
   } from "~/components/studio/live-preview-frame.vue";
+  import type {
+    StudioRecord,
+    StudioValue,
+  } from "~/components/studio/schema-form-field.vue";
   import SchemaFormRenderer from "~/components/studio/schema-form-renderer.vue";
+  import { apiFetch } from "~/composables/use-api-client";
 
   definePageMeta({
     layout: "manager",
@@ -153,8 +201,8 @@
     description?: string;
     instruction?: string;
     themeId?: string;
-    contentPack: Record<string, unknown>;
-    difficultyParams: Record<string, unknown>;
+    contentPack: StudioRecord;
+    difficultyParams: StudioRecord;
     accessTier: string;
     status: string;
   }
@@ -167,16 +215,19 @@
     labels?: Record<string, { label: string; help?: string }>;
   }
 
+  const ARRAY_INDEX_SEGMENT_RE = /\[(\d+)\]/g;
+
   const route = useRoute();
   const router = useRouter();
 
   const code = String(route.params.code || "");
   const isLoading = ref(true);
   const isSaving = ref(false);
+  const loadError = ref("");
   const autosaveStatus = ref("Đã đồng bộ");
   const toastMessage = ref("");
 
-  const levelData = ref<Record<string, unknown>>({
+  const levelData = ref<StudioRecord>({
     title: "",
     theme_id: "nature",
     instruction: "",
@@ -217,7 +268,13 @@
   });
 
   const templateCode = computed(() => {
-    return (levelData.value.templateCode as string) || "GT-001";
+    if (
+      typeof levelData.value.templateCode === "string" &&
+      levelData.value.templateCode
+    ) {
+      return levelData.value.templateCode;
+    }
+    return "GT-001";
   });
 
   const contractContentHints = computed(() => {
@@ -263,8 +320,7 @@
   let autosaveTimer: ReturnType<typeof setInterval> | null = null;
 
   onMounted(async () => {
-    await fetchLevel();
-    await fetchContract();
+    await reloadAll();
     setupAutosave();
   });
 
@@ -293,22 +349,42 @@
     toastMessage.value = "";
   }
 
-  async function fetchLevel() {
+  async function reloadAll() {
+    isLoading.value = true;
+    loadError.value = "";
+    const loaded = await fetchLevel();
+    if (loaded) {
+      await fetchContract();
+    }
+    isLoading.value = false;
+  }
+
+  async function fetchLevel(): Promise<boolean> {
     try {
       const res = await apiFetch<LevelDetailResponse>(
         `/api/managers/levels/${code}/latest`
       );
       levelData.value = {
-        ...res,
+        id: res.id,
+        code: res.code,
+        contentVersion: res.contentVersion,
+        content_version: res.contentVersion,
+        templateCode: res.templateCode || "GT-001",
         title: res.title,
-        instruction: res.instruction,
-        theme_id: res.themeId,
-        content_pack: res.contentPack,
-        difficulty_params: res.difficultyParams,
-        access_tier: res.accessTier,
+        description: res.description || "",
+        instruction: res.instruction || "",
+        theme_id: res.themeId || "nature",
+        content_pack: res.contentPack || {},
+        difficulty_params: res.difficultyParams || {},
+        access_tier: res.accessTier || "free",
+        status: res.status || "draft",
       };
+      return true;
     } catch (err) {
-      console.error("Failed to load level", err);
+      loadError.value = isApiError(err)
+        ? err.message
+        : "Không thể tải thông tin màn chơi.";
+      return false;
     }
   }
 
@@ -320,9 +396,9 @@
       );
       contractData.value = res || {};
     } catch (err) {
-      console.error("Failed to load contract", err);
-    } finally {
-      isLoading.value = false;
+      loadError.value = isApiError(err)
+        ? err.message
+        : "Không thể tải cấu hình hợp đồng mẫu trò chơi.";
     }
   }
 
@@ -344,6 +420,7 @@
     }
     isSaving.value = true;
     autosaveStatus.value = "Đang lưu...";
+    validationErrors.value = {};
 
     try {
       const payload = {
@@ -363,20 +440,27 @@
 
       autosaveStatus.value = `Đã lưu lúc ${new Date().toLocaleTimeString()}`;
       previewValidationError.value = null;
-    } catch (err: unknown) {
+    } catch (err) {
       autosaveStatus.value = "Lưu thất bại";
-      const errorObj = err as {
-        data?: {
-          message?: string;
-          data?: { details?: { issues?: PreviewValidationError["issues"] } };
-        };
-      };
-      if (errorObj.data?.message) {
-        previewValidationError.value = {
-          message: errorObj.data.message,
-          issues: errorObj.data?.data?.details?.issues,
-        };
+      const fieldErrs = getFieldErrors(err);
+      if (fieldErrs.length > 0) {
+        const mappedErrors: Record<string, string> = {};
+        for (const item of fieldErrs) {
+          mappedErrors[item.field] = item.message;
+        }
+        validationErrors.value = mappedErrors;
       }
+      const message = isApiError(err)
+        ? err.message
+        : "Dữ liệu màn chơi chưa hợp lệ";
+      const issues = fieldErrs.map((item) => ({
+        path: item.field,
+        message: item.message,
+      }));
+      previewValidationError.value = {
+        message,
+        issues: issues.length > 0 ? issues : undefined,
+      };
     } finally {
       isSaving.value = false;
     }
@@ -393,11 +477,10 @@
       );
       toastMessage.value = "Đã gửi duyệt thành công!";
       await fetchLevel();
-    } catch (err: unknown) {
-      const message =
-        (err as { data?: { message?: string } })?.data?.message ||
-        "Không thể gửi duyệt";
-      toastMessage.value = message;
+    } catch (err) {
+      toastMessage.value = isApiError(err)
+        ? err.message
+        : "Không thể gửi duyệt";
     }
   }
 
@@ -408,11 +491,8 @@
         { method: "POST" }
       );
       router.push(`/studio/levels/${res.code}`);
-    } catch (err: unknown) {
-      const message =
-        (err as { data?: { message?: string } })?.data?.message ||
-        "Lỗi nhân bản";
-      toastMessage.value = message;
+    } catch (err) {
+      toastMessage.value = isApiError(err) ? err.message : "Lỗi nhân bản";
     }
   }
 
@@ -434,6 +514,61 @@
     isImageModalOpen.value = false;
   }
 
+  function isStudioRecord(val: StudioValue): val is StudioRecord {
+    return Boolean(val) && typeof val === "object" && !Array.isArray(val);
+  }
+
+  function stepIntoContainer(curr: StudioValue, part: string): StudioValue {
+    if (Array.isArray(curr)) {
+      const idx = Number(part);
+      const elem = curr[idx];
+      if (isStudioRecord(elem) || Array.isArray(elem)) {
+        return elem;
+      }
+      const nextObj: StudioRecord = {};
+      curr[idx] = nextObj;
+      return nextObj;
+    }
+    if (isStudioRecord(curr)) {
+      const existing = curr[part];
+      if (isStudioRecord(existing) || Array.isArray(existing)) {
+        return existing;
+      }
+      const nextObj: StudioRecord = {};
+      curr[part] = nextObj;
+      return nextObj;
+    }
+    return curr;
+  }
+
+  function setFieldValueByPath(rawPath: string, nextValue: StudioValue) {
+    const pathParts = rawPath
+      .replace(ARRAY_INDEX_SEGMENT_RE, ".$1")
+      .split(".")
+      .filter((part) => part.length > 0);
+    if (pathParts.length === 0) {
+      return;
+    }
+
+    let curr: StudioValue = levelData.value;
+    for (let i = 0; i < pathParts.length - 1; i++) {
+      const part = pathParts[i];
+      if (part) {
+        curr = stepIntoContainer(curr, part);
+      }
+    }
+
+    const lastKey = pathParts.at(-1);
+    if (!lastKey) {
+      return;
+    }
+    if (Array.isArray(curr)) {
+      curr[Number(lastKey)] = nextValue;
+    } else if (isStudioRecord(curr)) {
+      curr[lastKey] = nextValue;
+    }
+  }
+
   function onImageUploaded(payload: {
     path: string;
     targetFieldPath?: string;
@@ -442,45 +577,13 @@
     if (!targetPath) {
       return;
     }
-
-    const pathParts = targetPath.split(".");
-    let curr: Record<string, unknown> = levelData.value;
-    for (let i = 0; i < pathParts.length - 1; i++) {
-      const part = pathParts[i];
-      if (!part) {
-        continue;
-      }
-      if (!curr[part] || typeof curr[part] !== "object") {
-        curr[part] = {};
-      }
-      curr = curr[part] as Record<string, unknown>;
-    }
-    const lastKey = pathParts.at(-1);
-    if (lastKey) {
-      curr[lastKey] = payload.path;
-    }
+    setFieldValueByPath(targetPath, payload.path);
   }
 
   function onEmojiSelected(emoji: string) {
     if (!activeEmojiFieldPath.value) {
       return;
     }
-
-    const pathParts = activeEmojiFieldPath.value.split(".");
-    let curr: Record<string, unknown> = levelData.value;
-    for (let i = 0; i < pathParts.length - 1; i++) {
-      const part = pathParts[i];
-      if (!part) {
-        continue;
-      }
-      if (!curr[part] || typeof curr[part] !== "object") {
-        curr[part] = {};
-      }
-      curr = curr[part] as Record<string, unknown>;
-    }
-    const lastKey = pathParts.at(-1);
-    if (lastKey) {
-      curr[lastKey] = emoji;
-    }
+    setFieldValueByPath(activeEmojiFieldPath.value, emoji);
   }
 </script>

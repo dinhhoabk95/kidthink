@@ -1,56 +1,74 @@
 <template>
-  <div class="public-page-wrapper">
+  <div class="public-page-wrapper min-h-screen bg-surface-50 text-surface-800">
     <PublicNavbar />
 
-    <main class="detail-main" id="main-content">
-      <div class="section-container">
+    <main class="detail-main pt-8 pb-16" id="main-content">
+      <div class="section-container max-w-5xl mx-auto px-4">
         <!-- 410 Archived State (BR-GDP-03 & D-IA) -->
-        <div class="archived-notice-card" role="alert" v-if="isArchived">
+        <div
+          class="archived-notice-card bg-white border-2 border-dashed border-warning-500 rounded-3xl p-8 text-center"
+          role="alert"
+          v-if="isArchived"
+        >
           <UIcon
             aria-hidden="true"
             class="w-12 h-12 text-surface-400 block mx-auto mb-2"
             name="i-lucide-package"
           />
-          <h1 class="archived-title">
+          <h1 class="archived-title text-2xl font-bold text-surface-900 mb-2">
             Trò chơi này đã ngừng phát hành (HTTP 410)
           </h1>
-          <p class="archived-desc">
+          <p
+            class="archived-desc text-base text-surface-600 max-w-xl mx-auto mb-8"
+          >
             Nội dung bài học này đã được thay thế hoặc hoàn thành chu kỳ sử
             dụng. Bạn có thể tham khảo các trò chơi tương đương dưới đây:
           </p>
-          <div class="alternatives-grid">
+          <div class="alternatives-grid flex flex-col gap-3 max-w-sm mx-auto">
             <NuxtLink
-              class="alt-card-link"
+              class="alt-card-link min-h-11 inline-flex items-center justify-center px-4 py-3 rounded-xl bg-surface-100 text-brand-600 font-semibold no-underline"
               v-for="alt in alternatives"
               :key="alt.code"
               :to="`/games/${alt.code}`"
             >
               <UIcon
-                class="w-4 h-4 ml-1 inline-block"
+                class="w-4 h-4 mr-1.5 inline-block shrink-0"
                 name="i-lucide-arrow-right"
-              />{{ alt.title }}
-              ({{ alt.code }})
+              />
+              <span>{{ alt.title }} ({{ alt.code }})</span>
             </NuxtLink>
           </div>
         </div>
 
         <!-- 404 Not Found State -->
-        <div class="archived-notice-card" role="alert" v-else-if="hasError">
+        <div
+          class="archived-notice-card bg-white border-2 border-dashed border-warning-500 rounded-3xl p-8 text-center"
+          role="alert"
+          v-else-if="hasError"
+        >
           <UIcon
             aria-hidden="true"
             class="w-12 h-12 text-surface-400 block mx-auto mb-2"
             name="i-lucide-search"
           />
-          <h1 class="archived-title">Không tìm thấy trò chơi</h1>
-          <p class="archived-desc">
+          <h1 class="archived-title text-2xl font-bold text-surface-900 mb-2">
+            Không tìm thấy trò chơi
+          </h1>
+          <p
+            class="archived-desc text-base text-surface-600 max-w-xl mx-auto mb-8"
+          >
             Trò chơi này không tồn tại hoặc chưa được phát hành công khai.
           </p>
-          <div class="alternatives-grid">
-            <NuxtLink class="alt-card-link" to="/games">
+          <div class="alternatives-grid flex flex-col gap-3 max-w-sm mx-auto">
+            <NuxtLink
+              class="alt-card-link min-h-11 inline-flex items-center justify-center px-4 py-3 rounded-xl bg-surface-100 text-brand-600 font-semibold no-underline"
+              to="/games"
+            >
               <UIcon
-                class="w-4 h-4 ml-1 inline-block"
+                class="w-4 h-4 mr-1.5 inline-block shrink-0"
                 name="i-lucide-arrow-right"
-              />Khám phá thư viện trò chơi
+              />
+              <span>Khám phá thư viện trò chơi</span>
             </NuxtLink>
           </div>
         </div>
@@ -58,113 +76,197 @@
         <!-- Normal Game Detail Content -->
         <article class="game-detail-article" v-else-if="game">
           <!-- Breadcrumb -->
-          <nav aria-label="Đường dẫn trang" class="breadcrumb-nav">
-            <NuxtLink to="/">Trang chủ</NuxtLink>
+          <nav
+            aria-label="Đường dẫn trang"
+            class="breadcrumb-nav flex flex-wrap items-center gap-2 text-sm text-surface-500 mb-6"
+          >
+            <NuxtLink
+              class="min-h-11 inline-flex items-center text-brand-600 no-underline"
+              to="/"
+              >Trang chủ</NuxtLink
+            >
             <span aria-hidden="true">/</span>
-            <NuxtLink to="/games">Thư viện trò chơi</NuxtLink>
+            <NuxtLink
+              class="min-h-11 inline-flex items-center text-brand-600 no-underline"
+              to="/games"
+              >Thư viện trò chơi</NuxtLink
+            >
             <span aria-hidden="true">/</span>
-            <span class="breadcrumb-current">{{ game.title }}</span>
+            <span class="breadcrumb-current text-surface-700 font-semibold">{{
+              game.title
+            }}</span>
           </nav>
 
           <!-- Top Hero Card -->
-          <div class="detail-hero-card">
-            <div class="hero-left">
-              <span aria-hidden="true" class="detail-emoji"
-                >{{ game.thumbnail_emoji || '🎮' }}</span
+          <div
+            class="detail-hero-card bg-white rounded-3xl border-2 border-surface-200 p-5 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-8"
+          >
+            <div
+              class="hero-left flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6 min-w-0"
+            >
+              <span
+                aria-hidden="true"
+                class="detail-emoji text-5xl flex items-center justify-center w-20 h-20 shrink-0 bg-surface-100 rounded-2xl"
+                >{{
+                  game.thumbnail_emoji || "🎮"
+                }}</span
               >
-              <div class="hero-info">
-                <div class="hero-tags">
+              <div class="hero-info min-w-0">
+                <div class="hero-tags flex flex-wrap items-center gap-2 mb-2">
                   <NuxtLink
-                    class="tag-competency"
+                    class="tag-competency min-h-11 inline-flex items-center text-sm font-bold px-3 py-1.5 rounded-xl bg-brand-100 text-brand-800 no-underline"
                     :to="`/games?competency=${game.competency}`"
-                    >{{ findCompetency(game.competency)?.name ||
-                    game.competency ||
-                    'Tư duy toán học' }}</NuxtLink
                   >
-                  <span class="tag-age">{{ game.age_band }} tuổi</span>
-                  <span class="tag-tier" :class="`tier-${game.access_tier}`">
-                    {{ game.locked ? 'Cần nâng cấp' : 'Chơi ngay' }}
+                    {{
+                      findCompetency(game.competency)?.name ||
+                        game.competency ||
+                        "Tư duy toán học"
+                    }}
+                  </NuxtLink>
+                  <NuxtLink
+                    class="tag-strand min-h-11 inline-flex items-center text-sm font-bold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-700 border border-brand-200 no-underline"
+                    v-if="strandInfo"
+                    :to="`/games?competency=${game.competency}&strand=${strandInfo.code}`"
+                  >
+                    Kỹ năng: {{ strandInfo.name }}
+                  </NuxtLink>
+                  <span
+                    class="tag-age inline-flex items-center text-sm font-bold px-3 py-1.5 rounded-xl bg-surface-100 text-surface-700"
+                    >{{ game.age_band }}
+                    tuổi</span
+                  >
+                  <span
+                    class="tag-tier inline-flex items-center text-sm font-bold px-3 py-1.5 rounded-xl"
+                    :class="`tier-${game.access_tier}`"
+                  >
+                    {{ getTierBadgeLabel(game.access_tier, game.locked) }}
                   </span>
                 </div>
-                <h1 class="detail-title">{{ game.title }}</h1>
-                <p class="detail-code">Mã bài học: {{ game.code }}</p>
+                <h1
+                  class="detail-title font-heading text-2xl sm:text-3xl font-bold text-surface-900 mb-1 break-words"
+                >
+                  {{ game.title }}
+                </h1>
+                <p class="detail-code text-sm text-surface-500 m-0">
+                  Mã bài học: {{ game.code }}
+                </p>
               </div>
             </div>
 
-            <div class="hero-cta-box">
+            <div class="hero-cta-box flex flex-col gap-2 min-w-[200px]">
               <NuxtLink
+                class="min-h-11"
+                data-testid="game-detail-primary-cta"
                 :class="getCtaButtonClass(game.cta?.action)"
                 :to="game.cta?.href || `/play/${game.code}`"
               >
-                {{ game.cta?.text || 'Cho bé chơi ngay' }}
+                {{ game.cta?.text || "Cho bé chơi ngay" }}
                 <UIcon
-                  class="w-4 h-4 ml-1 inline-block"
+                  class="w-4 h-4 ml-1 inline-block shrink-0"
                   name="i-lucide-arrow-right"
                 />
               </NuxtLink>
               <button
-                class="mt-2 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold rounded-xl border border-surface-200 bg-surface-50 text-surface-700 hover:bg-surface-100 min-h-[44px] transition-colors disabled:opacity-75"
+                class="mt-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-bold rounded-2xl border border-surface-200 bg-surface-50 text-surface-700 hover:bg-surface-100 min-h-11 transition-colors disabled:opacity-75"
                 data-testid="save-game-library-btn"
                 type="button"
                 :disabled="isSavingLibrary || isSavedToLibrary"
                 @click="saveGameToLibrary"
               >
                 <UIcon
-                  class="w-4 h-4"
-                  :name="isSavedToLibrary ? 'i-lucide-bookmark-check' : 'i-lucide-bookmark'"
+                  class="w-4 h-4 shrink-0"
+                  :name="
+                    isSavedToLibrary
+                      ? 'i-lucide-bookmark-check'
+                      : 'i-lucide-bookmark'
+                  "
                 />
                 <span>{{ getSaveGameButtonText() }}</span>
               </button>
               <p
-                class="mt-1 text-xs font-semibold text-danger-700"
+                class="mt-1 text-sm font-semibold text-danger-700"
                 data-testid="save-game-library-error"
                 role="alert"
                 v-if="saveLibraryError"
               >
                 {{ saveLibraryError }}
               </p>
-              <p class="cta-subtext">✓ Tự động lưu tiến độ vào hồ sơ của bé</p>
+              <p class="cta-subtext text-sm text-surface-500 text-center m-0">
+                <UIcon
+                  aria-hidden="true"
+                  class="w-4 h-4 inline-block text-emerald-600 mr-1"
+                  name="i-lucide-check"
+                />
+                Tự động lưu tiến độ vào hồ sơ của bé
+              </p>
             </div>
           </div>
 
           <!-- Main Info Grid -->
-          <div class="detail-body-grid">
+          <div
+            class="detail-body-grid grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
+          >
             <!-- Col 1: Mô tả sư phạm & Cơ chế chơi -->
-            <div class="detail-content-col">
-              <section class="info-section">
-                <h2 class="section-subheading">Mục tiêu phát triển tư duy</h2>
-                <!-- BR-GDP-02: Pedagogical description without revealing answers -->
-                <p class="pedagogical-desc">{{ game.description }}</p>
+            <div class="detail-content-col md:col-span-2 flex flex-col gap-6">
+              <section
+                class="info-section bg-white rounded-2xl border border-surface-200 p-6"
+              >
+                <h2
+                  class="section-subheading text-xl font-bold text-surface-900 mb-3"
+                >
+                  Mục tiêu phát triển tư duy
+                </h2>
+                <p
+                  class="pedagogical-desc text-base leading-relaxed text-surface-700 m-0"
+                >
+                  {{ game.description }}
+                </p>
               </section>
 
-              <section class="info-section">
-                <h2 class="section-subheading">Hình ảnh xem trước trò chơi</h2>
-                <!-- D-CV: 3 static preview images -->
-                <div class="previews-row">
-                  <div class="preview-box">
-                    <span aria-hidden="true" class="preview-placeholder-emoji"
-                      >🍎</span
+              <section
+                class="info-section bg-white rounded-2xl border border-surface-200 p-6"
+              >
+                <h2
+                  class="section-subheading text-xl font-bold text-surface-900 mb-3"
+                >
+                  Hình ảnh xem trước trò chơi
+                </h2>
+                <div
+                  class="previews-row grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4"
+                >
+                  <div
+                    class="preview-box bg-surface-100 border border-surface-200 rounded-xl p-5 text-center flex flex-col items-center gap-2"
+                    v-for="preview in PREVIEW_STEPS"
+                    :key="preview.caption"
+                  >
+                    <span
+                      aria-hidden="true"
+                      class="preview-placeholder-emoji text-3xl"
+                      >{{
+                        preview.emoji
+                      }}</span
                     >
-                    <span class="preview-caption">Khởi động bài học</span>
-                  </div>
-                  <div class="preview-box">
-                    <span aria-hidden="true" class="preview-placeholder-emoji"
-                      >🖐️</span
+                    <span
+                      class="preview-caption text-sm font-semibold text-surface-600"
+                      >{{
+                        preview.caption
+                      }}</span
                     >
-                    <span class="preview-caption">Tương tác kéo thả</span>
-                  </div>
-                  <div class="preview-box">
-                    <span aria-hidden="true" class="preview-placeholder-emoji"
-                      >⭐</span
-                    >
-                    <span class="preview-caption">Ăn mừng hoàn thành</span>
                   </div>
                 </div>
               </section>
 
-              <section class="info-section">
-                <h2 class="section-subheading">Cách thức tương tác</h2>
-                <p class="mechanic-desc">
+              <section
+                class="info-section bg-white rounded-2xl border border-surface-200 p-6"
+              >
+                <h2
+                  class="section-subheading text-xl font-bold text-surface-900 mb-3"
+                >
+                  Cách thức tương tác
+                </h2>
+                <p
+                  class="mechanic-desc text-base leading-relaxed text-surface-700 m-0"
+                >
                   Trò chơi sử dụng cơ chế kéo thả và chạm chọn trực quan trên
                   màn hình cảm ứng, có giọng đọc thuyết minh hướng dẫn từng bước
                   bằng tiếng Việt chuẩn.
@@ -174,34 +276,82 @@
 
             <!-- Col 2: Thông số bài học -->
             <aside class="detail-meta-aside">
-              <div class="meta-card">
-                <h3 class="meta-card-title">Thông tin bài học</h3>
-                <ul class="meta-list">
-                  <li>
-                    <span class="meta-label">Độ tuổi phù hợp:</span>
-                    <span class="meta-val">{{ game.age_band }} tuổi</span>
-                  </li>
-                  <li>
-                    <span class="meta-label">Năng lực trọng tâm:</span>
-                    <span class="meta-val"
-                      >{{ findCompetency(game.competency)?.name ||
-                      game.competency ||
-                      'Tư duy toán học' }}</span
+              <div
+                class="meta-card bg-white rounded-2xl border border-surface-200 p-6"
+              >
+                <h3
+                  class="meta-card-title text-lg font-bold text-surface-900 mb-4"
+                >
+                  Thông tin bài học
+                </h3>
+                <ul class="meta-list list-none p-0 m-0 flex flex-col gap-3">
+                  <li
+                    class="flex flex-wrap justify-between gap-2 text-sm pb-2 border-b border-dashed border-surface-200"
+                  >
+                    <span class="meta-label text-surface-500"
+                      >Độ tuổi phù hợp:</span
+                    >
+                    <span class="meta-val font-semibold text-surface-800"
+                      >{{ game.age_band }}
+                      tuổi</span
                     >
                   </li>
-                  <li>
-                    <span class="meta-label">Độ khó bài tập:</span>
-                    <span class="meta-val difficulty-stars"
-                      >{{ '★'.repeat(game.difficulty || 1) }}</span
+                  <li
+                    class="flex flex-wrap justify-between gap-2 text-sm pb-2 border-b border-dashed border-surface-200"
+                  >
+                    <span class="meta-label text-surface-500"
+                      >Năng lực trọng tâm:</span
+                    >
+                    <span class="meta-val font-semibold text-surface-800">{{
+                      findCompetency(game.competency)?.name ||
+                        game.competency ||
+                        "Tư duy toán học"
+                    }}</span>
+                  </li>
+                  <li
+                    class="flex flex-wrap justify-between gap-2 text-sm pb-2 border-b border-dashed border-surface-200"
+                    v-if="strandInfo"
+                  >
+                    <span class="meta-label text-surface-500"
+                      >Mạch kỹ năng:</span
+                    >
+                    <span class="meta-val font-semibold text-surface-800"
+                      >{{ strandInfo.name }}
+                      ({{ strandInfo.code }})</span
                     >
                   </li>
-                  <li>
-                    <span class="meta-label">Thời lượng ước tính:</span>
-                    <span class="meta-val">3–5 phút</span>
+                  <li
+                    class="flex flex-wrap justify-between gap-2 text-sm pb-2 border-b border-dashed border-surface-200"
+                  >
+                    <span class="meta-label text-surface-500"
+                      >Độ khó bài tập:</span
+                    >
+                    <span
+                      class="meta-val difficulty-stars font-semibold text-warning-500"
+                      >{{
+                        "★".repeat(game.difficulty || 1)
+                      }}</span
+                    >
                   </li>
-                  <li>
-                    <span class="meta-label">Dạng tương tác:</span>
-                    <span class="meta-val">Canvas 2D tương tác</span>
+                  <li
+                    class="flex flex-wrap justify-between gap-2 text-sm pb-2 border-b border-dashed border-surface-200"
+                  >
+                    <span class="meta-label text-surface-500"
+                      >Thời lượng ước tính:</span
+                    >
+                    <span class="meta-val font-semibold text-surface-800"
+                      >3–5 phút</span
+                    >
+                  </li>
+                  <li
+                    class="flex flex-wrap justify-between gap-2 text-sm pb-2 border-b border-dashed border-surface-200"
+                  >
+                    <span class="meta-label text-surface-500"
+                      >Dạng tương tác:</span
+                    >
+                    <span class="meta-val font-semibold text-surface-800"
+                      >Canvas 2D tương tác</span
+                    >
                   </li>
                 </ul>
               </div>
@@ -213,21 +363,34 @@
             aria-labelledby="related-heading"
             class="related-games-section"
           >
-            <h2 class="section-subheading" id="related-heading">
+            <h2
+              class="section-subheading text-xl font-bold text-surface-900 mb-3"
+              id="related-heading"
+            >
               Trò chơi cùng chủ đề
             </h2>
-            <div class="related-grid">
+            <div
+              class="related-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4"
+            >
               <NuxtLink
-                class="related-card"
+                class="related-card min-h-11 bg-white border border-surface-200 rounded-2xl p-4 flex flex-col gap-2 no-underline"
                 v-for="rel in relatedGames"
                 :key="rel.code"
                 :to="`/games/${rel.code}`"
               >
-                <span aria-hidden="true" class="related-emoji"
-                  >{{ rel.emoji || '🎲' }}</span
+                <span aria-hidden="true" class="related-emoji text-3xl">{{
+                  rel.emoji || "🎲"
+                }}</span>
+                <span
+                  class="related-title text-base font-bold text-surface-900"
+                  >{{
+                    rel.title
+                  }}</span
                 >
-                <span class="related-title">{{ rel.title }}</span>
-                <span class="related-tag">{{ rel.age_band }} tuổi</span>
+                <span class="related-tag text-sm text-surface-500"
+                  >{{ rel.age_band || "3-6" }}
+                  tuổi</span
+                >
               </NuxtLink>
             </div>
           </section>
@@ -247,86 +410,46 @@
     type CtaViewer,
     type EntitlementKey,
     findCompetency,
+    findStrand,
     resolveLevelCta,
+    type StrandCatalogEntry,
   } from "@mindkid/shared/client";
   import { computed, onMounted, ref } from "vue";
   import { useRoute } from "vue-router";
-  import {
-    definePageMeta,
-    useFetch,
-    useHead,
-    useSeoMeta,
-    useUserSession,
-  } from "#imports";
+  import { definePageMeta, useFetch, useUserSession } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
   import { useApi } from "~/composables/use-api";
+  import {
+    type AlternativeGame,
+    type GameDetailResponse,
+    hasErrorAlternatives,
+    LEVEL_STRAND_REGEX,
+    type RelatedGame,
+    type UserAccessContext,
+    useGameDetailSeo,
+  } from "~/composables/use-game-detail-seo";
 
-  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
-  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
-  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
-  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
   definePageMeta({ layout: false });
 
-  interface RelatedGame {
-    code: string;
-    title: string;
-    difficulty?: number;
-    access_tier: string;
-    locked: boolean;
-    emoji?: string;
-    age_band?: string;
-  }
-
-  interface AlternativeGame {
-    code: string;
-    title: string;
-    access_tier?: string;
-  }
-
-  interface GameDetailResponse {
-    code: string;
-    title: string;
-    description: string;
-    competency: string;
-    age_min: number;
-    age_max: number;
-    age_band: string;
-    difficulty: number;
-    theme_id: string;
-    template_code: string;
-    template_name: string;
-    mechanic_type: string;
-    access_tier: string;
-    locked: boolean;
-    scoring: { mode: string };
-    rounds: Array<{
-      round_index: number;
-      instruction?: string | null;
-    }>;
-    cta: {
-      text: string;
-      action: string;
-      href: string;
-    };
-    preview_images?: string[];
-    related_games?: RelatedGame[];
-    thumbnail_emoji?: string;
-  }
-
-  interface ApiErrorData {
-    code?: string;
-    data?: {
-      code?: string;
-      alternatives?: AlternativeGame[];
-    };
-  }
+  const PREVIEW_STEPS: ReadonlyArray<{ emoji: string; caption: string }> = [
+    { emoji: "🍎", caption: "Khởi động bài học" },
+    { emoji: "🖐️", caption: "Tương tác kéo thả" },
+    { emoji: "⭐", caption: "Ăn mừng hoàn thành" },
+  ];
 
   const route = useRoute();
-  const code = computed(
-    () => (route.params.code as string) || "GL-C1-CNT-CARD-0001"
-  );
+  const code = computed<string>(() => {
+    const raw = route.params.code;
+    if (typeof raw === "string" && raw.length > 0) {
+      return raw;
+    }
+    if (Array.isArray(raw) && typeof raw[0] === "string" && raw[0].length > 0) {
+      return raw[0];
+    }
+    return "GL-C1-CNT-CARD-0001";
+  });
 
   const { data: gameData, error } = await useFetch<GameDetailResponse>(
     () => `/api/guest/levels/${code.value}`
@@ -339,9 +462,15 @@
   });
 
   const alternatives = computed<AlternativeGame[]>(() => {
-    const errData = error.value?.data as ApiErrorData | undefined;
-    if (errData?.data?.alternatives && errData.data.alternatives.length > 0) {
-      return errData.data.alternatives;
+    const rawData = error.value?.data;
+    if (
+      rawData &&
+      typeof rawData === "object" &&
+      hasErrorAlternatives(rawData) &&
+      Array.isArray(rawData.data?.alternatives) &&
+      rawData.data.alternatives.length > 0
+    ) {
+      return rawData.data.alternatives;
     }
     return [
       { code: "GL-C1-CNT-CARD-0001", title: "Đếm số táo đỏ" },
@@ -349,13 +478,6 @@
       { code: "GL-C3-PAT-CARD-0001", title: "Tìm thẻ theo quy luật" },
     ];
   });
-
-  interface UserAccessContext {
-    is_authenticated: boolean;
-    has_active_child: boolean;
-    active_keys: string[];
-    allowed_tiers: AccessTier[];
-  }
 
   const api = useApi();
   const userAccessContext = ref<UserAccessContext | null>(null);
@@ -432,9 +554,9 @@
     const viewer: CtaViewer = {
       is_authenticated: true,
       has_active_child: ctx.has_active_child,
-      active_keys: ctx.active_keys as EntitlementKey[],
+      active_keys: ctx.active_keys,
     };
-    const tier = raw.access_tier as AccessTier;
+    const tier = raw.access_tier;
     const isLocked = !ctx.allowed_tiers.includes(tier);
 
     return {
@@ -443,6 +565,25 @@
       cta: resolveLevelCta(raw.code, tier, viewer),
     };
   });
+
+  const strandInfo = computed<StrandCatalogEntry | undefined>(() => {
+    const g = game.value;
+    if (!g) {
+      return undefined;
+    }
+    if (g.strand_code) {
+      const byApi = findStrand(g.strand_code);
+      if (byApi) {
+        return byApi;
+      }
+    }
+    const match = LEVEL_STRAND_REGEX.exec(g.code);
+    if (!match) {
+      return undefined;
+    }
+    return findStrand(`${match[1]}.${match[2]}`);
+  });
+
   const relatedGames = computed(() => gameData.value?.related_games ?? []);
 
   function getCtaButtonClass(action?: string): string {
@@ -455,181 +596,42 @@
     return "btn-cta-upgrade";
   }
 
-  // BR-SEO2-04 & BR-GDP-04: Structured data & SEO meta
-  useSeoMeta({
-    title: () =>
-      `${game.value?.title || "Trò chơi tư duy"} — Trò chơi cho bé ${game.value?.age_band || "3–6"} tuổi | MindKid`,
-    description: () => game.value?.description || "",
-    ogTitle: () => `${game.value?.title || "Trò chơi tư duy"} — MindKid`,
-    ogDescription: () => game.value?.description || "",
-    ogImage: () => `https://mindkid.vn/images/og-${code.value}.png`,
-    ogType: "article",
-  });
+  function getTierBadgeLabel(tier: string, locked: boolean): string {
+    if (!locked || tier === "free") {
+      return "Chơi ngay";
+    }
+    if (tier === "login") {
+      return "Cần đăng ký";
+    }
+    if (tier === "standard") {
+      return "Gói Tiêu chuẩn";
+    }
+    if (tier === "premium") {
+      return "Gói Premium";
+    }
+    return "Cần nâng cấp";
+  }
 
-  useHead({
-    htmlAttrs: { lang: "vi-VN" },
-    link: [
-      { rel: "canonical", href: `https://mindkid.vn/games/${code.value}` },
-    ],
-    script: [
-      {
-        type: "application/ld+json",
-        innerHTML: () =>
-          JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "LearningResource",
-            name: game.value?.title || "Trò chơi tư duy",
-            description: game.value?.description || "",
-            learningResourceType: "Interactive Game",
-            educationalLevel: `Trẻ mầm non ${game.value?.age_band || "3–6"} tuổi`,
-            inLanguage: "vi-VN",
-            isAccessibleForFree: game.value?.access_tier === "free",
-            teaches:
-              findCompetency(game.value?.competency || "C1")?.name ||
-              "Tư duy toán học",
-            url: `https://mindkid.vn/games/${code.value}`,
-          }),
-      },
-      {
-        type: "application/ld+json",
-        innerHTML: () =>
-          JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              {
-                "@type": "ListItem",
-                position: 1,
-                name: "Trang chủ",
-                item: "https://mindkid.vn/",
-              },
-              {
-                "@type": "ListItem",
-                position: 2,
-                name: "Thư viện trò chơi",
-                item: "https://mindkid.vn/games",
-              },
-              {
-                "@type": "ListItem",
-                position: 3,
-                name: game.value?.title || "Trò chơi tư duy",
-                item: `https://mindkid.vn/games/${code.value}`,
-              },
-            ],
-          }),
-      },
-    ],
-  });
+  // BR-SEO2-04 & BR-GDP-04: Structured data & SEO meta
+  useGameDetailSeo(game, strandInfo, code);
 </script>
 
 <style scoped>
-  .public-page-wrapper {
-    background-color: var(--color-surface-50);
-    color: var(--color-surface-800);
-    min-height: 100vh;
+  .tier-free {
+    background-color: var(--color-success-100);
+    color: var(--color-success-800);
   }
-  .detail-main {
-    padding: 2rem 0 4rem;
-  }
-  .section-container {
-    max-width: 64rem;
-    margin: 0 auto;
-    padding: 0 1rem;
-  }
-  .breadcrumb-nav {
-    display: flex;
-    gap: 0.5rem;
-    font-size: 0.85rem;
-    color: var(--color-surface-500);
-    margin-bottom: 1.5rem;
-  }
-  .breadcrumb-nav a {
-    color: var(--color-brand-600);
-    text-decoration: none;
-  }
-  .breadcrumb-current {
-    color: var(--color-surface-700);
-    font-weight: 600;
-  }
-  .detail-hero-card {
-    background-color: white;
-    border-radius: 1.5rem;
-    border: 2px solid var(--color-surface-200);
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  @media (min-width: 768px) {
-    .detail-hero-card {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-    }
-  }
-  .hero-left {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-  }
-  .detail-emoji {
-    font-size: 3.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 5.5rem;
-    height: 5.5rem;
-    background-color: var(--color-surface-100);
-    border-radius: 1.25rem;
-  }
-  .hero-tags {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-  .tag-competency,
-  .tag-age,
-  .tag-tier {
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 0.2rem 0.6rem;
-    border-radius: 0.5rem;
-  }
-  .tag-competency {
+  .tier-login {
     background-color: var(--color-brand-100);
     color: var(--color-brand-800);
-    text-decoration: none;
   }
-
-  .tag-age {
-    background-color: var(--color-surface-100);
-    color: var(--color-surface-700);
+  .tier-standard {
+    background-color: var(--color-warning-100);
+    color: var(--color-warning-800);
   }
-
-  .tier-free {
-    background-color: var(--color-success-100, lightgreen);
-    color: var(--color-success-800, darkgreen);
-  }
-
-  .detail-title {
-    font-family: var(--font-heading, "Fredoka", sans-serif);
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--color-surface-900);
-    margin: 0 0 0.25rem 0;
-  }
-
-  .detail-code {
-    font-size: 0.85rem;
-    color: var(--color-surface-500);
-    margin: 0;
-  }
-  .hero-cta-box {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    min-width: 200px;
+  .tier-premium {
+    background-color: var(--color-cta-100);
+    color: var(--color-cta-800);
   }
   .btn-cta-play,
   .btn-cta-login,
@@ -646,197 +648,30 @@
     transition: background-color 0.15s;
   }
   .btn-cta-play {
-    background-color: var(--color-cta, #c2410c);
-    color: white;
-    box-shadow: 0 4px 12px rgba(194, 65, 12, 0.25);
+    background-color: var(--color-cta);
+    color: var(--color-surface-0);
   }
   .btn-cta-play:hover {
-    background-color: var(--color-cta-hover, #9a3412);
+    background-color: var(--color-cta-hover);
   }
   .btn-cta-login {
-    background-color: var(--color-brand-600, #1a7f6b);
-    color: white;
-    box-shadow: 0 4px 12px rgba(26, 127, 107, 0.25);
+    background-color: var(--color-brand-600);
+    color: var(--color-surface-0);
   }
   .btn-cta-login:hover {
-    background-color: var(--color-brand-700, #166657);
+    background-color: var(--color-brand-700);
   }
   .btn-cta-upgrade {
-    background-color: var(--color-brand-800, #145247);
-    color: white;
-    box-shadow: 0 4px 12px rgba(20, 82, 71, 0.25);
+    background-color: var(--color-brand-800);
+    color: var(--color-surface-0);
   }
   .btn-cta-upgrade:hover {
-    background-color: var(--color-brand-900, #13443b);
-  }
-  .cta-subtext {
-    font-size: 0.75rem;
-    color: var(--color-surface-500);
-    text-align: center;
-    margin: 0;
-  }
-  .detail-body-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    margin-bottom: 3rem;
-  }
-  @media (min-width: 768px) {
-    .detail-body-grid {
-      grid-template-columns: 2fr 1fr;
-    }
-  }
-  .info-section {
-    background-color: white;
-    border-radius: 1.25rem;
-    border: 1px solid var(--color-surface-200);
-    padding: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  .section-subheading {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--color-surface-900);
-    margin-bottom: 0.75rem;
-  }
-  .pedagogical-desc,
-  .mechanic-desc {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: var(--color-surface-700);
-    margin: 0;
-  }
-  .previews-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-  .preview-box {
-    background-color: var(--color-surface-100);
-    border: 1px solid var(--color-surface-200);
-    border-radius: 0.75rem;
-    padding: 1.5rem 0.5rem;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  .preview-placeholder-emoji {
-    font-size: 2rem;
-  }
-  .preview-caption {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--color-surface-600);
-  }
-  .meta-card {
-    background-color: white;
-    border-radius: 1.25rem;
-    border: 1px solid var(--color-surface-200);
-    padding: 1.5rem;
-  }
-  .meta-card-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--color-surface-900);
-    margin-bottom: 1rem;
-  }
-  .meta-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  .meta-list li {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px dashed var(--color-surface-200);
-  }
-  .meta-label {
-    color: var(--color-surface-500);
-  }
-  .meta-val {
-    font-weight: 600;
-    color: var(--color-surface-800);
-  }
-  .difficulty-stars {
-    color: var(--color-warning-500, orange);
-  }
-  .related-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
+    background-color: var(--color-brand-900);
   }
   .related-card {
-    background-color: white;
-    border: 1px solid var(--color-surface-200);
-    border-radius: 1rem;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    text-decoration: none;
-    transition:
-      transform 0.15s,
-      border-color 0.15s;
+    transition: border-color 0.15s;
   }
   .related-card:hover {
-    transform: translateY(-2px);
     border-color: var(--color-brand-500);
-  }
-  .related-emoji {
-    font-size: 2rem;
-  }
-  .related-title {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: var(--color-surface-900);
-  }
-  .related-tag {
-    font-size: 0.75rem;
-    color: var(--color-surface-500);
-  }
-
-  .archived-notice-card {
-    background-color: white;
-    border: 2px dashed var(--color-warning-500, orange);
-    border-radius: 1.5rem;
-    padding: 3rem 2rem;
-    text-align: center;
-  }
-  .archived-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--color-surface-900);
-    margin-bottom: 0.5rem;
-  }
-  .archived-desc {
-    font-size: 1rem;
-    color: var(--color-surface-600);
-    max-width: 36rem;
-    margin: 0 auto 2rem;
-  }
-  .alternatives-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    max-width: 24rem;
-    margin: 0 auto;
-  }
-  .alt-card-link {
-    display: block;
-    padding: 0.75rem 1rem;
-    background-color: var(--color-surface-100);
-    color: var(--color-brand-600);
-    font-weight: 600;
-    border-radius: 0.75rem;
-    text-decoration: none;
   }
 </style>

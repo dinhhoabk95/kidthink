@@ -1,13 +1,13 @@
 <template>
-  <div class="schema-form-renderer space-y-6">
+  <div class="schema-form-renderer space-y-6 min-w-0">
     <!-- Group 1: Thông tin cơ bản -->
     <div
-      class="rounded-3xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 p-5 shadow-sm"
+      class="rounded-3xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 p-4 sm:p-5 shadow-sm min-w-0"
     >
       <h3
         class="text-base font-bold text-surface-900 dark:text-white mb-4 flex items-center gap-2"
       >
-        <span class="w-2.5 h-2.5 rounded-full bg-brand-600"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-brand-600 shrink-0"></span>
         Thông tin chung
       </h3>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -46,20 +46,20 @@
 
     <!-- Group 2: Nội dung bài học (content_pack) -->
     <div
-      class="rounded-3xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 p-5 shadow-sm"
+      class="rounded-3xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 p-4 sm:p-5 shadow-sm min-w-0"
     >
       <h3
         class="text-base font-bold text-surface-900 dark:text-white mb-4 flex items-center gap-2"
       >
-        <span class="w-2.5 h-2.5 rounded-full bg-success-500"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-success-500 shrink-0"></span>
         Nội dung bài học (Content Pack)
       </h3>
 
-      <div class="space-y-4">
+      <div class="space-y-4 min-w-0">
         <template v-for="(node, key) in contentHints" :key="key">
           <!-- Nested Object -->
           <div
-            class="p-4 rounded-2xl bg-surface-50 dark:bg-surface-900/50 border border-surface-200 dark:border-surface-700"
+            class="p-4 rounded-2xl bg-surface-50 dark:bg-surface-900/50 border border-surface-200 dark:border-surface-700 min-w-0"
             v-if="node.hint === 'object'"
           >
             <h4
@@ -67,7 +67,7 @@
             >
               {{ getLabel(String(key), String(key)) }}
             </h4>
-            <div class="space-y-3">
+            <div class="space-y-3 min-w-0">
               <template
                 v-for="(childNode, childKey) in node.children"
                 :key="childKey"
@@ -93,10 +93,10 @@
 
           <!-- Nested Array -->
           <div
-            class="p-4 rounded-2xl bg-surface-50 dark:bg-surface-900/50 border border-surface-200 dark:border-surface-700"
+            class="p-4 rounded-2xl bg-surface-50 dark:bg-surface-900/50 border border-surface-200 dark:border-surface-700 min-w-0"
             v-else-if="node.hint === 'array'"
           >
-            <div class="flex items-center justify-between mb-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
               <h4
                 class="text-sm font-bold text-surface-800 dark:text-surface-200"
               >
@@ -104,7 +104,7 @@
                 ({{ getArrayLength(String(key)) }})
               </h4>
               <button
-                class="min-h-9 px-3 py-1.5 rounded-xl border border-brand-600 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-sm font-medium hover:bg-brand-100 transition-all"
+                class="min-h-11 px-3.5 py-2 rounded-xl border border-brand-600 bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-sm font-medium hover:bg-brand-100 transition-all"
                 type="button"
                 @click="onAddArrayItem(String(key), node.elementHint)"
               >
@@ -112,18 +112,18 @@
               </button>
             </div>
 
-            <div class="space-y-3">
+            <div class="space-y-3 min-w-0">
               <div
-                class="p-3.5 rounded-xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 relative shadow-sm"
+                class="p-3.5 rounded-xl bg-white dark:bg-surface-800 border border-surface-200 dark:border-surface-700 relative shadow-sm min-w-0"
                 v-for="(item, idx) in getArrayItems(String(key))"
                 :key="idx"
               >
-                <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center justify-between gap-2 mb-2">
                   <span class="text-xs font-semibold text-surface-500"
                     >Mục #{{ idx + 1 }}</span
                   >
                   <button
-                    class="text-xs text-danger-500 hover:text-danger-700 font-medium px-2 py-1"
+                    class="min-h-11 px-3 py-1.5 rounded-xl text-xs text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-950/30 font-semibold transition-all"
                     type="button"
                     @click="onRemoveArrayItem(String(key), idx)"
                   >
@@ -132,7 +132,7 @@
                 </div>
 
                 <div
-                  class="space-y-3"
+                  class="space-y-3 min-w-0"
                   v-if="node.elementHint?.hint === 'object'"
                 >
                   <template
@@ -195,15 +195,15 @@
 
     <!-- Group 3: Thông số độ khó (difficulty_params) -->
     <div
-      class="rounded-3xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 p-5 shadow-sm"
+      class="rounded-3xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 p-4 sm:p-5 shadow-sm min-w-0"
     >
       <h3
         class="text-base font-bold text-surface-900 dark:text-white mb-4 flex items-center gap-2"
       >
-        <span class="w-2.5 h-2.5 rounded-full bg-warning-500"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-warning-500 shrink-0"></span>
         Độ khó (Difficulty Parameters)
       </h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 min-w-0">
         <template v-for="(node, key) in difficultyHints" :key="key">
           <SchemaFormField
             :error="getFieldErrorMessage(`difficulty_params.${String(key)}`)"
@@ -224,12 +224,12 @@
 
     <!-- Group 4: Quyền truy cập (access_tier) -->
     <div
-      class="rounded-3xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 p-5 shadow-sm"
+      class="rounded-3xl border-2 border-surface-200 dark:border-surface-700 bg-white dark:bg-surface-800 p-4 sm:p-5 shadow-sm min-w-0"
     >
       <h3
         class="text-base font-bold text-surface-900 dark:text-white mb-4 flex items-center gap-2"
       >
-        <span class="w-2.5 h-2.5 rounded-full bg-brand-500"></span>
+        <span class="w-2.5 h-2.5 rounded-full bg-brand-500 shrink-0"></span>
         Quyền truy cập (Access Tier)
       </h3>
       <SchemaFormField
@@ -249,11 +249,14 @@
 
 <script lang="ts" setup>
   import type { UiHintResult } from "@mindkid/shared/client";
-  import SchemaFormField from "./schema-form-field.vue";
+  import SchemaFormField, {
+    type StudioRecord,
+    type StudioValue,
+  } from "~/components/studio/schema-form-field.vue";
 
   const props = withDefaults(
     defineProps<{
-      modelValue: Record<string, unknown>;
+      modelValue: StudioRecord;
       contentHints: Record<string, UiHintResult>;
       difficultyHints: Record<string, UiHintResult>;
       labels?: Record<string, { label: string; help?: string }>;
@@ -266,12 +269,34 @@
   );
 
   const emit = defineEmits<{
-    (e: "update:modelValue", value: Record<string, unknown>): void;
+    (e: "update:modelValue", value: StudioRecord): void;
     (
       e: "open-image-modal" | "open-emoji-picker",
       payload: { path: string; value: string }
     ): void;
   }>();
+
+  function isStudioRecord(val: StudioValue): val is StudioRecord {
+    return Boolean(val) && typeof val === "object" && !Array.isArray(val);
+  }
+
+  function cloneStudioValue(val: StudioValue): StudioValue {
+    if (Array.isArray(val)) {
+      return val.map((item) => cloneStudioValue(item));
+    }
+    if (isStudioRecord(val)) {
+      return cloneStudioRecord(val);
+    }
+    return val;
+  }
+
+  function cloneStudioRecord(record: StudioRecord): StudioRecord {
+    const result: StudioRecord = {};
+    for (const [k, v] of Object.entries(record)) {
+      result[k] = cloneStudioValue(v);
+    }
+    return result;
+  }
 
   function getLabel(key: string, fallback: string): string {
     return props.labels[key]?.label || fallback;
@@ -285,31 +310,27 @@
     return props.errors?.[fieldKey];
   }
 
-  function updateTitle(val: unknown) {
+  function updateTitle(val: StudioValue) {
     emit("update:modelValue", { ...props.modelValue, title: val });
   }
 
-  function updateTheme(val: unknown) {
+  function updateTheme(val: StudioValue) {
     emit("update:modelValue", { ...props.modelValue, theme_id: val });
   }
 
-  function updateInstruction(val: unknown) {
+  function updateInstruction(val: StudioValue) {
     emit("update:modelValue", { ...props.modelValue, instruction: val });
   }
 
-  function updateAccessTier(val: unknown) {
+  function updateAccessTier(val: StudioValue) {
     emit("update:modelValue", { ...props.modelValue, access_tier: val });
   }
 
-  function getNestedValue(pathParts: string[]): unknown {
-    let curr: unknown = props.modelValue;
+  function getNestedValue(pathParts: string[]): StudioValue {
+    let curr: StudioValue = props.modelValue;
     for (const part of pathParts) {
-      if (
-        curr &&
-        typeof curr === "object" &&
-        part in (curr as Record<string, unknown>)
-      ) {
-        curr = (curr as Record<string, unknown>)[part];
+      if (isStudioRecord(curr) && part in curr) {
+        curr = curr[part];
       } else {
         return undefined;
       }
@@ -317,20 +338,22 @@
     return curr;
   }
 
-  function setNestedValue(pathParts: string[], val: unknown) {
-    const updated: Record<string, unknown> = JSON.parse(
-      JSON.stringify(props.modelValue)
-    );
-    let curr: Record<string, unknown> = updated;
+  function setNestedValue(pathParts: string[], val: StudioValue) {
+    const updated = cloneStudioRecord(props.modelValue);
+    let curr: StudioRecord = updated;
     for (let i = 0; i < pathParts.length - 1; i++) {
       const part = pathParts[i];
       if (!part) {
         continue;
       }
-      if (!curr[part] || typeof curr[part] !== "object") {
-        curr[part] = {};
+      const existing = curr[part];
+      if (isStudioRecord(existing)) {
+        curr = existing;
+      } else {
+        const nextObj: StudioRecord = {};
+        curr[part] = nextObj;
+        curr = nextObj;
       }
-      curr = curr[part] as Record<string, unknown>;
     }
     const lastKey = pathParts.at(-1);
     if (lastKey) {
@@ -339,12 +362,13 @@
     emit("update:modelValue", updated);
   }
 
-  function getArrayItems(key: string): unknown[] {
-    const contentPack = props.modelValue.content_pack as
-      | Record<string, unknown>
-      | undefined;
-    if (contentPack && Array.isArray(contentPack[key])) {
-      return contentPack[key] as unknown[];
+  function getArrayItems(key: string): StudioValue[] {
+    const contentPack = props.modelValue.content_pack;
+    if (isStudioRecord(contentPack)) {
+      const arr = contentPack[key];
+      if (Array.isArray(arr)) {
+        return arr;
+      }
     }
     return [];
   }
@@ -353,54 +377,56 @@
     return getArrayItems(key).length;
   }
 
-  function getArrayItemProperty(item: unknown, prop: string): unknown {
-    if (
-      item &&
-      typeof item === "object" &&
-      prop in (item as Record<string, unknown>)
-    ) {
-      return (item as Record<string, unknown>)[prop];
+  function getArrayItemProperty(item: StudioValue, prop: string): StudioValue {
+    if (isStudioRecord(item) && prop in item) {
+      return item[prop];
     }
     return undefined;
   }
 
-  function onAddArrayItem(arrayKey: string, elementHint?: UiHintResult) {
-    const updated: Record<string, unknown> = JSON.parse(
-      JSON.stringify(props.modelValue)
-    );
-    if (!updated.content_pack || typeof updated.content_pack !== "object") {
-      updated.content_pack = {};
+  function buildDefaultObjectItem(elementHint?: UiHintResult): StudioValue {
+    if (elementHint?.hint !== "object" || !elementHint.children) {
+      return "";
     }
-    const cp = updated.content_pack as Record<string, unknown>;
-    if (!Array.isArray(cp[arrayKey])) {
-      cp[arrayKey] = [];
-    }
-
-    let newItem: unknown = "";
-    if (elementHint?.hint === "object" && elementHint.children) {
-      const objItem: Record<string, unknown> = {};
-      for (const [k, v] of Object.entries(elementHint.children)) {
-        if (v.hint === "toggle") {
-          objItem[k] = false;
-        } else if (v.hint === "slider") {
-          objItem[k] = v.min ?? 0;
-        } else {
-          objItem[k] = "";
-        }
+    const objItem: StudioRecord = {};
+    for (const [k, v] of Object.entries(elementHint.children)) {
+      if (v.hint === "toggle") {
+        objItem[k] = false;
+      } else if (v.hint === "slider") {
+        objItem[k] = v.min ?? 0;
+      } else {
+        objItem[k] = "";
       }
-      newItem = objItem;
+    }
+    return objItem;
+  }
+
+  function onAddArrayItem(arrayKey: string, elementHint?: UiHintResult) {
+    const updated = cloneStudioRecord(props.modelValue);
+    let cp: StudioRecord;
+    if (isStudioRecord(updated.content_pack)) {
+      cp = updated.content_pack;
+    } else {
+      cp = {};
+      updated.content_pack = cp;
     }
 
-    (cp[arrayKey] as unknown[]).push(newItem);
+    let arr: StudioValue[];
+    if (Array.isArray(cp[arrayKey])) {
+      arr = cp[arrayKey];
+    } else {
+      arr = [];
+      cp[arrayKey] = arr;
+    }
+
+    arr.push(buildDefaultObjectItem(elementHint));
     emit("update:modelValue", updated);
   }
 
   function onRemoveArrayItem(arrayKey: string, index: number) {
-    const updated: Record<string, unknown> = JSON.parse(
-      JSON.stringify(props.modelValue)
-    );
-    const cp = updated.content_pack as Record<string, unknown> | undefined;
-    if (cp && Array.isArray(cp[arrayKey])) {
+    const updated = cloneStudioRecord(props.modelValue);
+    const cp = updated.content_pack;
+    if (isStudioRecord(cp) && Array.isArray(cp[arrayKey])) {
       cp[arrayKey].splice(index, 1);
       emit("update:modelValue", updated);
     }
@@ -410,29 +436,27 @@
     arrayKey: string,
     index: number,
     field: string,
-    val: unknown
+    val: StudioValue
   ) {
-    const updated: Record<string, unknown> = JSON.parse(
-      JSON.stringify(props.modelValue)
-    );
-    const cp = updated.content_pack as Record<string, unknown> | undefined;
-    if (cp && Array.isArray(cp[arrayKey]) && cp[arrayKey][index]) {
-      const targetItem = cp[arrayKey][index] as Record<string, unknown>;
-      targetItem[field] = val;
-      emit("update:modelValue", updated);
+    const updated = cloneStudioRecord(props.modelValue);
+    const cp = updated.content_pack;
+    if (isStudioRecord(cp) && Array.isArray(cp[arrayKey])) {
+      const targetItem = cp[arrayKey][index];
+      if (isStudioRecord(targetItem)) {
+        targetItem[field] = val;
+        emit("update:modelValue", updated);
+      }
     }
   }
 
   function onUpdateArrayPrimitive(
     arrayKey: string,
     index: number,
-    val: unknown
+    val: StudioValue
   ) {
-    const updated: Record<string, unknown> = JSON.parse(
-      JSON.stringify(props.modelValue)
-    );
-    const cp = updated.content_pack as Record<string, unknown> | undefined;
-    if (cp && Array.isArray(cp[arrayKey])) {
+    const updated = cloneStudioRecord(props.modelValue);
+    const cp = updated.content_pack;
+    if (isStudioRecord(cp) && Array.isArray(cp[arrayKey])) {
       cp[arrayKey][index] = val;
       emit("update:modelValue", updated);
     }

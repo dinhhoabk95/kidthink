@@ -23,6 +23,7 @@ import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
 import { getMfaEncryptionKey } from "#server/utils/admin-auth-runtime";
+import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
 
 const MfaSchema = z
   .object({
@@ -140,13 +141,14 @@ export default defineEventHandler(async (event) => {
   }
 
   // Create user session in Redis
+  const clientIp = getVerifiedRemoteIp(event);
   const sessionService = getBrowserSessionService();
   const createdSession = await sessionService.create({
     namespace: "user",
     accountId: user.id,
     displayName: user.displayName,
     rememberMe: challengePayload.rememberMe,
-    ipAddress: "127.0.0.1",
+    ipAddress: clientIp,
   });
 
   await setUserSession(event, {
@@ -164,7 +166,7 @@ export default defineEventHandler(async (event) => {
       device_id: createdSession.deviceId,
       remembered: !!challengePayload.rememberMe,
       device_label: "user-mfa",
-      ip_address: "127.0.0.1",
+      ip_address: clientIp,
       auth_method: "password",
       expires_at: createdSession.expiresAt,
     })

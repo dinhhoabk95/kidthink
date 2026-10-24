@@ -5,10 +5,15 @@ import {
   type CurriculumPlayerWeekGoal,
   computeCurriculumProgress,
 } from "@mindkid/shared";
-import { defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getQuery, getRouterParam } from "h3";
+import { z } from "zod";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveEnrolledChildCurriculum } from "#server/utils/curriculum-runtime";
+
+const ProgressQuerySchema = z.object({
+  optional: z.enum(["0", "1", "true", "false"]).optional(),
+});
 
 interface WeekItemSummary {
   id: number;
@@ -175,6 +180,10 @@ export default defineEventHandler(async (event) => {
   }
 
   const userId = Number(user.user_id);
+  const parsedQuery = ProgressQuerySchema.safeParse(getQuery(event));
+  const isOptional =
+    parsedQuery.success &&
+    (parsedQuery.data.optional === "1" || parsedQuery.data.optional === "true");
 
   // 1. Resolve child, enrollment, items, weeks, completed items, and user tiers
   const {
@@ -184,9 +193,18 @@ export default defineEventHandler(async (event) => {
     weeks,
     completedItemIds,
     userAllowedTiers,
-  } = await resolveEnrolledChildCurriculum(event, userId, uuid, {
-    requireActive: false,
-  });
+  } = isOptional
+    ? await resolveEnrolledChildCurriculum(event, userId, uuid, {
+        requireActive: false,
+        requireEnrollment: false,
+      })
+    : await resolveEnrolledChildCurriculum(event, userId, uuid, {
+        requireActive: false,
+      });
+
+  if (!enrollment) {
+    return null;
+  }
 
   // 2. Compute overall progress (BR-CUR-07 & D-MD)
   const { denominator, numerator, progress } = computeCurriculumProgress({

@@ -63,23 +63,37 @@
   .header-container {
     max-width: 72rem;
     margin: 0 auto;
-    padding: 0.75rem 1rem;
+    padding: 0.75rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
   }
 
   .brand-logo {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.375rem;
     text-decoration: none;
     font-family: var(--font-heading, "Fredoka", sans-serif);
     font-weight: 700;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     color: var(--color-brand-600);
     flex-shrink: 0;
+  }
+
+  @media (min-width: 640px) {
+    .header-container {
+      padding: 0.75rem 1rem;
+      gap: 1rem;
+      flex-wrap: nowrap;
+    }
+
+    .brand-logo {
+      gap: 0.5rem;
+      font-size: 1.5rem;
+    }
   }
 
   .nav-links {
@@ -114,7 +128,7 @@
   .nav-actions {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.375rem;
     flex-shrink: 0;
   }
 
@@ -122,9 +136,10 @@
     text-decoration: none;
     color: var(--color-surface-700);
     font-weight: 700;
-    font-size: 0.95rem;
-    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    padding: 0.5rem;
     border-radius: 0.75rem;
+    white-space: nowrap;
     transition: all 0.15s;
   }
 
@@ -138,21 +153,38 @@
     align-items: center;
     justify-content: center;
     min-height: 44px;
-    padding: 0.5rem 1.25rem;
-    background-color: var(--color-cta, #c2410c);
+    padding: 0.5rem 0.75rem;
+    background-color: var(--color-cta);
     color: white;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.875rem;
     border-radius: 1rem;
     text-decoration: none;
+    white-space: nowrap;
     box-shadow: 0 4px 6px -1px rgba(194, 65, 12, 0.2);
     transition:
       transform 0.15s,
       background-color 0.15s;
   }
 
+  @media (min-width: 640px) {
+    .nav-actions {
+      gap: 0.75rem;
+    }
+
+    .nav-link-login {
+      font-size: 0.95rem;
+      padding: 0.5rem 0.75rem;
+    }
+
+    .btn-play-trial {
+      padding: 0.5rem 1.25rem;
+      font-size: 0.95rem;
+    }
+  }
+
   .btn-play-trial:hover {
-    background-color: var(--color-cta-hover, #9a3412);
+    background-color: var(--color-cta-hover);
     transform: translateY(-1px);
   }
 

@@ -6,8 +6,54 @@ import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { issuePreviewToken } from "#server/utils/preview-token";
 
-function buildStructuredData(page: typeof seoPages.$inferSelect) {
-  const schemas: Record<string, unknown>[] = [];
+interface StructuredDataEntry {
+  "@context": string;
+  "@type": "Course" | "Article" | "FAQPage";
+  name?: string;
+  headline?: string;
+  description?: string;
+  provider?: {
+    "@type": "Organization";
+    name: string;
+    url: string;
+  };
+  author?: {
+    "@type": "Organization";
+    name: string;
+  };
+  mainEntity?: Array<{
+    "@type": "Question";
+    name: string;
+    acceptedAnswer: {
+      "@type": "Answer";
+      text: string;
+    };
+  }>;
+}
+
+function extractFaqPairs(
+  rawFaqItems: (typeof seoPages.$inferSelect)["faqItems"]
+): Array<{ q: string; a: string }> {
+  if (!Array.isArray(rawFaqItems)) {
+    return [];
+  }
+  const pairs: Array<{ q: string; a: string }> = [];
+  for (const item of rawFaqItems) {
+    if (typeof item === "object" && item !== null) {
+      const qVal = Reflect.get(item, "q") ?? Reflect.get(item, "question");
+      const aVal = Reflect.get(item, "a") ?? Reflect.get(item, "answer");
+      if (typeof qVal === "string" && typeof aVal === "string") {
+        pairs.push({ q: qVal, a: aVal });
+      }
+    }
+  }
+  return pairs;
+}
+
+function buildStructuredData(
+  page: typeof seoPages.$inferSelect
+): StructuredDataEntry[] {
+  const schemas: StructuredDataEntry[] = [];
 
   // Base Schema
   if (
@@ -40,7 +86,7 @@ function buildStructuredData(page: typeof seoPages.$inferSelect) {
   }
 
   // FAQ Schema (BR-SEO-06)
-  const faqs = (page.faqItems as Array<{ q: string; a: string }>) || [];
+  const faqs = extractFaqPairs(page.faqItems);
   if (faqs.length > 0) {
     schemas.push({
       "@context": "https://schema.org",

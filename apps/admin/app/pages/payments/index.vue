@@ -1,39 +1,49 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-6 min-w-0 max-w-full overflow-x-hidden">
     <!-- Role Guard (BR-PQU-08: super_admin only) -->
     <ForbiddenState v-if="!isSuperAdmin" />
 
-    <div class="space-y-6" v-else>
+    <div class="space-y-6 min-w-0" v-else>
       <!-- Header & SLA Summary -->
       <div
-        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-surface-200 pb-5"
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-surface-200 pb-5 min-w-0"
       >
-        <div>
-          <h1 class="text-2xl font-bold font-heading text-surface-900">
+        <div class="min-w-0">
+          <h1
+            class="text-2xl font-bold font-heading text-surface-900 break-words"
+          >
             Hàng đợi đơn chuyển khoản
           </h1>
-          <p class="text-sm text-surface-500 mt-1">
+          <p class="text-sm text-surface-500 mt-1 break-words">
             Tra cứu, kiểm tra chứng từ chuyển khoản và điều hướng tới màn hình
             đối chiếu xử lý đơn hàng.
           </p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-3">
+        <div class="flex flex-wrap items-center gap-3 min-w-0">
+          <div
+            class="px-3.5 py-2 rounded-2xl bg-surface-100 border border-surface-200 text-xs font-semibold text-surface-700"
+          >
+            Chờ xử lý:
+            <span class="font-bold text-surface-900">{{
+              stats.pending_count
+            }}</span>
+          </div>
           <div
             class="px-3.5 py-2 rounded-2xl bg-surface-100 border border-surface-200 text-xs font-semibold text-surface-700"
           >
             Chờ duyệt:
-            <span class="font-bold text-surface-900"
-              >{{ stats.submitted_count }}</span
-            >
+            <span class="font-bold text-surface-900">{{
+              stats.submitted_count
+            }}</span>
           </div>
           <div
             class="px-3.5 py-2 rounded-2xl bg-brand-50 border border-brand-200 text-xs font-semibold text-brand-800"
           >
             Đang đối chiếu:
-            <span class="font-bold text-brand-900"
-              >{{ stats.under_review_count }}</span
-            >
+            <span class="font-bold text-brand-900">{{
+              stats.under_review_count
+            }}</span>
           </div>
           <!-- SLA 24h Badge (BR-PQU-07) -->
           <div
@@ -41,7 +51,7 @@
               'px-3.5 py-2 rounded-2xl border text-xs font-bold inline-flex items-center gap-1.5',
               stats.oldest_waiting_hours > 24
                 ? 'bg-danger-50 border-danger-300 text-danger-800'
-                : 'bg-success-50 border-success-200 text-success-800'
+                : 'bg-success-50 border-success-200 text-success-800',
             ]"
           >
             <UIcon
@@ -72,9 +82,10 @@
           class="w-5 h-5 text-danger-500 shrink-0 mt-0.5"
           name="i-lucide-alert-triangle"
         />
-        <div class="flex-1 font-medium">{{ errorMessage }}</div>
+        <div class="flex-1 font-medium break-words">{{ errorMessage }}</div>
         <button
-          class="text-danger-600 hover:text-danger-800 font-bold"
+          aria-label="Đóng thông báo lỗi"
+          class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl text-danger-600 hover:text-danger-800 font-bold"
           type="button"
           @click="errorMessage = null"
         >
@@ -83,16 +94,16 @@
       </div>
 
       <!-- Status Tabs -->
-      <div class="flex flex-wrap items-center gap-2">
+      <div class="flex flex-wrap items-center gap-2 min-w-0">
         <button
           type="button"
           v-for="tab in statusTabs"
           :key="tab.key"
           :class="[
-            'px-4 py-2 rounded-2xl text-xs font-bold font-heading transition-colors border-2',
+            'min-h-11 px-4 py-2 rounded-2xl text-xs font-bold font-heading transition-colors border-2 inline-flex items-center justify-center',
             activeStatusTab === tab.key
               ? 'bg-brand-600 text-white border-brand-600'
-              : 'bg-white text-surface-700 border-surface-200 hover:bg-surface-50'
+              : 'bg-white text-surface-700 border-surface-200 hover:bg-surface-50',
           ]"
           @click="selectStatusTab(tab.key)"
         >
@@ -102,12 +113,14 @@
 
       <!-- Filter Bar -->
       <form
-        class="bg-white rounded-3xl border-2 border-surface-200 p-5 shadow-xs space-y-4"
+        class="bg-white rounded-3xl border-2 border-surface-200 p-4 sm:p-5 shadow-xs space-y-4 min-w-0"
         @submit.prevent="applyFilters"
       >
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 min-w-0"
+        >
           <!-- Search Query -->
-          <div>
+          <div class="min-w-0">
             <label
               class="block text-xs font-bold font-heading text-surface-700 mb-1.5"
               for="filter-order-q"
@@ -115,7 +128,7 @@
               Tìm kiếm đơn hàng
             </label>
             <input
-              class="w-full px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
+              class="w-full min-h-11 px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
               id="filter-order-q"
               placeholder="Mã đơn, mã GD ngân hàng, email..."
               type="text"
@@ -124,7 +137,7 @@
           </div>
 
           <!-- Package Code -->
-          <div>
+          <div class="min-w-0">
             <label
               class="block text-xs font-bold font-heading text-surface-700 mb-1.5"
               for="filter-package-code"
@@ -132,18 +145,22 @@
               Gói cước
             </label>
             <select
-              class="w-full px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
+              class="w-full min-h-11 px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
               id="filter-package-code"
               v-model="filters.package_code"
             >
               <option value="">Tất cả gói</option>
+              <option value="PKG-standard">
+                Gói Tiêu chuẩn (PKG-standard)
+              </option>
+              <option value="PKG-premium">Gói Premium (PKG-premium)</option>
               <option value="standard">Gói Gia Đình (standard)</option>
               <option value="teacher_pro">Gói Giáo Viên (teacher_pro)</option>
             </select>
           </div>
 
           <!-- Sort (BR-PQU-02: FIFO oldest default) -->
-          <div>
+          <div class="min-w-0">
             <label
               class="block text-xs font-bold font-heading text-surface-700 mb-1.5"
               for="filter-sort"
@@ -151,7 +168,7 @@
               Thứ tự ưu tiên (FIFO)
             </label>
             <select
-              class="w-full px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
+              class="w-full min-h-11 px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
               id="filter-sort"
               v-model="filters.sort"
             >
@@ -161,7 +178,7 @@
           </div>
 
           <!-- Limit (BR-PQU-06: <= 100) -->
-          <div>
+          <div class="min-w-0">
             <label
               class="block text-xs font-bold font-heading text-surface-700 mb-1.5"
               for="filter-limit"
@@ -169,7 +186,7 @@
               Số dòng mỗi trang (tối đa 100)
             </label>
             <select
-              class="w-full px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
+              class="w-full min-h-11 px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
               id="filter-limit"
               v-model.number="filters.limit"
             >
@@ -180,7 +197,7 @@
           </div>
 
           <!-- Amount Range -->
-          <div>
+          <div class="min-w-0">
             <label
               class="block text-xs font-bold font-heading text-surface-700 mb-1.5"
               for="filter-amount-min"
@@ -188,7 +205,7 @@
               Số tiền từ (VND)
             </label>
             <input
-              class="w-full px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
+              class="w-full min-h-11 px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
               id="filter-amount-min"
               min="0"
               placeholder="Ví dụ: 100000"
@@ -197,7 +214,7 @@
             >
           </div>
 
-          <div>
+          <div class="min-w-0">
             <label
               class="block text-xs font-bold font-heading text-surface-700 mb-1.5"
               for="filter-amount-max"
@@ -205,7 +222,7 @@
               Số tiền đến (VND)
             </label>
             <input
-              class="w-full px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
+              class="w-full min-h-11 px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
               id="filter-amount-max"
               min="0"
               placeholder="Ví dụ: 2000000"
@@ -215,7 +232,7 @@
           </div>
 
           <!-- Submitted Date Range -->
-          <div>
+          <div class="min-w-0">
             <label
               class="block text-xs font-bold font-heading text-surface-700 mb-1.5"
               for="filter-submitted-from"
@@ -223,14 +240,14 @@
               Gửi chứng từ từ ngày
             </label>
             <input
-              class="w-full px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
+              class="w-full min-h-11 px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
               id="filter-submitted-from"
               type="date"
               v-model="filters.submitted_from"
             >
           </div>
 
-          <div>
+          <div class="min-w-0">
             <label
               class="block text-xs font-bold font-heading text-surface-700 mb-1.5"
               for="filter-submitted-to"
@@ -238,7 +255,7 @@
               Đến ngày
             </label>
             <input
-              class="w-full px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
+              class="w-full min-h-11 px-3.5 py-2 text-sm rounded-xl border-2 border-surface-200 bg-surface-50 text-surface-900 focus:outline-none focus:border-brand-500"
               id="filter-submitted-to"
               type="date"
               v-model="filters.submitted_to"
@@ -246,16 +263,16 @@
           </div>
         </div>
 
-        <div class="flex items-center justify-end gap-3 pt-1">
+        <div class="flex flex-wrap items-center justify-end gap-3 pt-1">
           <button
-            class="px-4 py-2 rounded-xl border-2 border-surface-200 hover:bg-surface-50 text-surface-700 text-xs font-bold font-heading transition-colors"
+            class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-200 hover:bg-surface-50 text-surface-700 text-xs font-bold font-heading transition-colors inline-flex items-center justify-center"
             type="button"
             @click="resetFilters"
           >
             Đặt lại bộ lọc
           </button>
           <button
-            class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold font-heading transition-colors"
+            class="min-h-11 px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold font-heading transition-colors inline-flex items-center justify-center"
             type="submit"
             :disabled="loading"
           >
@@ -266,7 +283,7 @@
 
       <!-- Orders Queue Table (BR-PQU-01: Read-only queue, NO direct decision buttons) -->
       <div
-        class="bg-white rounded-3xl border-2 border-surface-200 overflow-hidden shadow-xs"
+        class="bg-white rounded-3xl border-2 border-surface-200 overflow-hidden shadow-xs min-w-0"
       >
         <div
           class="p-12 text-center text-surface-500 font-medium"
@@ -294,10 +311,10 @@
               <tr
                 class="bg-surface-50 border-b-2 border-surface-200 text-xs font-bold font-heading text-surface-600 uppercase"
               >
-                <th class="px-5 py-3.5">Mã đơn & Thời gian</th>
+                <th class="px-5 py-3.5">Mã đơn &amp; Thời gian</th>
                 <th class="px-5 py-3.5">Khách hàng</th>
-                <th class="px-5 py-3.5">Gói & Số tiền</th>
-                <th class="px-5 py-3.5">Giao dịch & Cảnh báo</th>
+                <th class="px-5 py-3.5">Gói &amp; Số tiền</th>
+                <th class="px-5 py-3.5">Giao dịch &amp; Cảnh báo</th>
                 <th class="px-5 py-3.5">Trạng thái</th>
                 <th class="px-5 py-3.5 text-right">Điều hướng đối chiếu</th>
               </tr>
@@ -314,7 +331,7 @@
                     class="font-mono font-bold text-brand-700 hover:underline block"
                     :to="`/payments/${item.uuid}`"
                   >
-                    {{ item.order_code }}
+                    {{ getOrderCode(item) }}
                   </NuxtLink>
                   <span class="text-xs text-surface-500 block">
                     Gửi: {{ formatDate(item.submitted_at || item.created_at) }}
@@ -345,8 +362,7 @@
                     {{ formatVnd(item.amount_vnd) }}
                   </div>
                   <div class="text-xs font-mono text-surface-600">
-                    {{ item.package_name_vi }}
-                    ({{ item.package_code }})
+                    {{ getPackageLabel(item) }}
                   </div>
                 </td>
 
@@ -356,7 +372,7 @@
                     Mã GD: {{ item.bank_txn_ref || "Chưa khai báo" }}
                   </div>
                   <div class="text-xs text-surface-500">
-                    Nội dung CK: {{ item.transfer_note }}
+                    Nội dung CK: {{ item.transfer_note || "—" }}
                   </div>
                   <div class="flex flex-wrap gap-1.5 pt-0.5">
                     <span
@@ -389,21 +405,21 @@
                 <!-- Navigation Actions Only (BR-PQU-01: No direct mutation in list) -->
                 <td class="px-5 py-4 text-right space-x-2 whitespace-nowrap">
                   <button
-                    class="inline-flex items-center px-3 py-1.5 rounded-xl border border-surface-200 bg-surface-50 hover:bg-surface-100 text-surface-700 text-xs font-bold transition-colors"
+                    class="min-h-11 inline-flex items-center px-3 py-1.5 rounded-xl border border-surface-200 bg-surface-50 hover:bg-surface-100 text-surface-700 text-xs font-bold transition-colors"
                     type="button"
-                    v-if="item.has_proof_image"
-                    @click="previewProofImage(item.uuid, item.order_code)"
+                    v-if="hasProof(item)"
+                    @click="previewProofImage(item.uuid, getOrderCode(item))"
                   >
                     Ảnh CK (15p)
                   </button>
                   <NuxtLink
-                    class="inline-flex items-center px-3 py-1.5 rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-800 text-xs font-bold font-heading transition-colors"
+                    class="min-h-11 inline-flex items-center px-3 py-1.5 rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-800 text-xs font-bold font-heading transition-colors"
                     :to="`/payments/${item.uuid}`"
                   >
                     Chi tiết
                   </NuxtLink>
                   <NuxtLink
-                    class="inline-flex items-center px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold font-heading transition-colors"
+                    class="min-h-11 inline-flex items-center px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold font-heading transition-colors"
                     v-if="
                       item.status === 'submitted' ||
                       item.status === 'under_review'
@@ -420,11 +436,11 @@
 
         <!-- Cursor Pagination -->
         <div
-          class="px-5 py-4 bg-surface-50 border-t-2 border-surface-200 flex items-center justify-between"
+          class="px-5 py-4 bg-surface-50 border-t-2 border-surface-200 flex flex-wrap items-center justify-between gap-2"
           v-if="nextCursor || cursorHistory.length > 0"
         >
           <button
-            class="px-4 py-1.5 rounded-xl border border-surface-300 bg-white text-xs font-bold text-surface-700 disabled:opacity-40"
+            class="min-h-11 px-4 py-1.5 rounded-xl border border-surface-300 bg-white text-xs font-bold text-surface-700 disabled:opacity-40 inline-flex items-center justify-center"
             type="button"
             :disabled="cursorHistory.length === 0 || loading"
             @click="goPrevPage"
@@ -432,7 +448,7 @@
             Trang trước
           </button>
           <button
-            class="px-4 py-1.5 rounded-xl bg-brand-600 text-white text-xs font-bold disabled:opacity-40"
+            class="min-h-11 px-4 py-1.5 rounded-xl bg-brand-600 text-white text-xs font-bold disabled:opacity-40 inline-flex items-center justify-center"
             type="button"
             :disabled="!nextCursor || loading"
             @click="goNextPage"
@@ -450,9 +466,11 @@
         <div
           class="w-full max-w-xl bg-white rounded-3xl border-4 border-surface-200 p-6 shadow-xl space-y-4"
         >
-          <div class="flex items-center justify-between">
-            <div>
-              <h2 class="text-base font-bold font-heading text-surface-900">
+          <div class="flex items-center justify-between gap-3">
+            <div class="min-w-0">
+              <h2
+                class="text-base font-bold font-heading text-surface-900 break-words"
+              >
                 Chứng từ chuyển khoản: {{ proofModal.orderCode }}
               </h2>
               <p class="text-xs text-surface-500">
@@ -460,7 +478,8 @@
               </p>
             </div>
             <button
-              class="text-surface-500 hover:text-surface-800"
+              aria-label="Đóng hộp thoại chứng từ"
+              class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl text-surface-500 hover:text-surface-800 shrink-0"
               type="button"
               @click="closeProofModal"
             >
@@ -502,14 +521,11 @@
 
 <script lang="ts" setup>
   import { normalizeApiError } from "@mindkid/errors/client";
-  import { computed, onMounted, reactive, ref } from "vue";
+  import { computed, onMounted, reactive, ref, watch } from "vue";
   import { definePageMeta, useHead } from "#imports";
   import ForbiddenState from "~/components/forbidden-state.vue";
+  import { useAdminAuth } from "~/composables/use-admin-auth";
   import { apiFetch } from "~/composables/use-api-client";
-  import {
-    type ManagerRole,
-    useAdminAuth,
-  } from "~/composables/use-manager-session";
 
   definePageMeta({
     layout: "manager",
@@ -519,37 +535,46 @@
     title: "Hàng đợi đơn chuyển khoản",
   });
 
-  const { user } = useAdminAuth();
+  const { user, fetchSession } = useAdminAuth();
 
   const isSuperAdmin = computed(() => {
-    const role = (user.value as { role?: ManagerRole } | null)?.role;
-    return role === "super_admin";
+    return user.value?.role === "super_admin";
   });
 
   type OrderStatus =
+    | "draft"
     | "pending"
+    | "pending_proof"
     | "submitted"
     | "under_review"
     | "approved"
     | "rejected"
     | "expired"
-    | "refunded";
+    | "cancelled";
 
   interface OrderQueueItem {
     uuid: string;
-    order_code: string;
+    order_code?: string;
     status: OrderStatus;
     package_code: string;
-    package_name_vi: string;
+    package_name_vi?: string;
+    offer_code?: string;
     amount_vnd: number;
     bank_txn_ref: string | null;
-    transfer_note: string;
-    transferred_at: string | null;
+    transfer_note: string | null;
+    transferred_at?: string | null;
     submitted_at: string | null;
     created_at: string;
-    expires_at: string;
-    has_proof_image: boolean;
-    user: { uuid: string; email: string; display_name: string | null };
+    expires_at: string | null;
+    has_proof?: boolean;
+    has_proof_image?: boolean;
+    user: {
+      id?: number;
+      uuid?: string;
+      email: string;
+      display_name: string | null;
+      child_profiles_count?: number;
+    };
     flags: {
       duplicate_bank_txn_ref: boolean;
       user_has_prior_rejected_order: boolean;
@@ -557,6 +582,7 @@
   }
 
   interface OrderQueueStats {
+    pending_count: number;
     submitted_count: number;
     under_review_count: number;
     oldest_waiting_hours: number;
@@ -565,7 +591,12 @@
   interface OrderQueueResponse {
     items: OrderQueueItem[];
     next_cursor: string | null;
-    stats: OrderQueueStats;
+    stats: {
+      pending_count?: number;
+      submitted_count?: number;
+      under_review_count?: number;
+      oldest_waiting_hours: number;
+    };
   }
 
   type StatusTabKey =
@@ -588,17 +619,19 @@
     approved: "approved",
     rejected: "rejected",
     expired: "expired",
-    all: "pending,submitted,under_review,approved,rejected,expired,refunded",
+    all: "draft,pending,pending_proof,submitted,under_review,approved,rejected,expired,cancelled",
   };
 
   const STATUS_LABEL_MAP: Record<OrderStatus, string> = {
+    draft: "Bản nháp",
     pending: "Chờ thanh toán",
+    pending_proof: "Chờ chứng từ",
     submitted: "Chờ duyệt",
     under_review: "Đang đối chiếu",
     approved: "Đã duyệt",
     rejected: "Từ chối",
     expired: "Hết hạn",
-    refunded: "Đã hoàn tiền",
+    cancelled: "Đã huỷ",
   };
 
   const STATUS_BADGE_MAP: Partial<Record<OrderStatus, string>> = {
@@ -608,9 +641,17 @@
     rejected: "bg-danger-100 text-danger-800",
   };
 
+  const PACKAGE_NAME_MAP: Record<string, string> = {
+    "PKG-standard": "Gói Tiêu chuẩn",
+    "PKG-premium": "Gói Premium",
+    standard: "Gói Gia Đình",
+    teacher_pro: "Gói Giáo Viên",
+  };
+
   const activeStatusTab = ref<StatusTabKey>("pending_review");
   const orders = ref<OrderQueueItem[]>([]);
   const stats = reactive<OrderQueueStats>({
+    pending_count: 0,
     submitted_count: 0,
     under_review_count: 0,
     oldest_waiting_hours: 0,
@@ -645,6 +686,104 @@
     return STATUS_PARAM_MAP[tab];
   }
 
+  function getOrderCode(item: OrderQueueItem): string {
+    if (item.order_code) {
+      return item.order_code;
+    }
+    if (item.transfer_note) {
+      return item.transfer_note;
+    }
+    const clean = item.uuid
+      .replace(/[^a-zA-Z0-9]/g, "")
+      .slice(0, 8)
+      .toUpperCase();
+    return `TM${clean}`;
+  }
+
+  function getPackageLabel(item: OrderQueueItem): string {
+    if (item.package_name_vi) {
+      return `${item.package_name_vi} (${item.package_code})`;
+    }
+    const name = PACKAGE_NAME_MAP[item.package_code];
+    return name ? `${name} (${item.package_code})` : item.package_code;
+  }
+
+  function hasProof(item: OrderQueueItem): boolean {
+    return Boolean(item.has_proof_image ?? item.has_proof);
+  }
+
+  function buildOrderQueryParams(): Record<string, string | number> {
+    const cap = Math.min(Math.max(1, Number(filters.limit) || 50), 100);
+    const query: Record<string, string | number> = {
+      sort: filters.sort,
+      limit: cap,
+    };
+
+    const statusParam = resolveStatusParam(activeStatusTab.value);
+    if (statusParam) {
+      query.status = statusParam;
+    }
+    if (filters.q.trim()) {
+      query.q = filters.q.trim();
+    }
+    if (filters.package_code) {
+      query.package_code = filters.package_code;
+    }
+    if (String(filters.amount_min).trim()) {
+      query.amount_min = Number(filters.amount_min);
+    }
+    if (String(filters.amount_max).trim()) {
+      query.amount_max = Number(filters.amount_max);
+    }
+    if (filters.submitted_from.trim()) {
+      query.submitted_from = new Date(
+        `${filters.submitted_from.trim()}T00:00:00.000Z`
+      ).toISOString();
+    }
+    if (filters.submitted_to.trim()) {
+      query.submitted_to = new Date(
+        `${filters.submitted_to.trim()}T23:59:59.999Z`
+      ).toISOString();
+    }
+    if (currentCursor.value) {
+      query.cursor = currentCursor.value;
+    }
+
+    return query;
+  }
+
+  function applyStatsResponse(
+    rawStats: OrderQueueResponse["stats"] | undefined,
+    loadedItems: OrderQueueItem[]
+  ) {
+    if (!rawStats) {
+      return;
+    }
+    const submittedFromItems = loadedItems.filter(
+      (i) => i.status === "submitted"
+    ).length;
+    const underReviewFromItems = loadedItems.filter(
+      (i) => i.status === "under_review"
+    ).length;
+
+    if (rawStats.submitted_count !== undefined) {
+      stats.submitted_count = rawStats.submitted_count;
+    } else if (activeStatusTab.value === "pending_review") {
+      stats.submitted_count = submittedFromItems;
+    }
+
+    if (rawStats.under_review_count !== undefined) {
+      stats.under_review_count = rawStats.under_review_count;
+    } else if (activeStatusTab.value === "pending_review") {
+      stats.under_review_count = underReviewFromItems;
+    }
+
+    stats.pending_count =
+      rawStats.pending_count ??
+      stats.submitted_count + stats.under_review_count;
+    stats.oldest_waiting_hours = rawStats.oldest_waiting_hours ?? 0;
+  }
+
   async function fetchOrders() {
     if (!isSuperAdmin.value) {
       loading.value = false;
@@ -654,57 +793,17 @@
     errorMessage.value = null;
 
     try {
-      const cap = Math.min(Math.max(1, Number(filters.limit) || 50), 100);
-      const query: Record<string, string | number> = {
-        sort: filters.sort,
-        limit: cap,
-      };
-
-      const statusParam = resolveStatusParam(activeStatusTab.value);
-      if (statusParam) {
-        query.status = statusParam;
-      }
-      if (filters.q.trim()) {
-        query.q = filters.q.trim();
-      }
-      if (filters.package_code) {
-        query.package_code = filters.package_code;
-      }
-      if (String(filters.amount_min).trim()) {
-        query.amount_min = Number(filters.amount_min);
-      }
-      if (String(filters.amount_max).trim()) {
-        query.amount_max = Number(filters.amount_max);
-      }
-      if (filters.submitted_from.trim()) {
-        query.submitted_from = new Date(
-          `${filters.submitted_from.trim()}T00:00:00.000Z`
-        ).toISOString();
-      }
-      if (filters.submitted_to.trim()) {
-        query.submitted_to = new Date(
-          `${filters.submitted_to.trim()}T23:59:59.999Z`
-        ).toISOString();
-      }
-      if (currentCursor.value) {
-        query.cursor = currentCursor.value;
-      }
-
+      const query = buildOrderQueryParams();
       const res = await apiFetch<OrderQueueResponse>("/api/managers/orders", {
         query,
       });
 
-      orders.value = res.items || [];
+      const loadedItems = res.items || [];
+      orders.value = loadedItems;
       nextCursor.value = res.next_cursor ?? null;
-      if (res.stats) {
-        stats.submitted_count = res.stats.submitted_count;
-        stats.under_review_count = res.stats.under_review_count;
-        stats.oldest_waiting_hours = res.stats.oldest_waiting_hours;
-      }
+      applyStatsResponse(res.stats, loadedItems);
     } catch (err) {
-      errorMessage.value = normalizeApiError(
-        err as Parameters<typeof normalizeApiError>[0]
-      ).message;
+      errorMessage.value = normalizeApiError(err).message;
     } finally {
       loading.value = false;
     }
@@ -775,9 +874,7 @@
       proofModal.url = res.url;
       proofModal.expiresAt = res.expires_at;
     } catch (err) {
-      proofModal.error = normalizeApiError(
-        err as Parameters<typeof normalizeApiError>[0]
-      ).message;
+      proofModal.error = normalizeApiError(err).message;
     } finally {
       proofModal.loading = false;
     }
@@ -824,7 +921,16 @@
     }
   }
 
-  onMounted(() => {
-    fetchOrders();
+  watch(isSuperAdmin, (allowed) => {
+    if (allowed) {
+      fetchOrders();
+    }
+  });
+
+  onMounted(async () => {
+    if (!user.value) {
+      await fetchSession();
+    }
+    await fetchOrders();
   });
 </script>

@@ -6,17 +6,20 @@
 
     <main
       class="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6"
+      data-testid="offline-pack-page"
       id="main-content"
     >
       <!-- Breadcrumb -->
       <div
-        class="flex items-center gap-2 text-sm text-surface-500 dark:text-surface-400 font-bold"
+        class="flex items-center gap-2 text-sm text-surface-600 dark:text-surface-300 font-bold"
       >
         <NuxtLink
-          class="hover:underline flex items-center gap-1"
+          class="hover:underline inline-flex items-center gap-1.5 min-h-11 px-2 rounded-xl"
+          data-testid="breadcrumb-curricula-link"
           to="/curricula"
         >
-          <span>← Lộ trình học</span>
+          <UIcon class="w-4 h-4 shrink-0" name="i-lucide-arrow-left" />
+          <span>Lộ trình học</span>
         </NuxtLink>
         <span>/</span>
         <span class="text-surface-800 dark:text-surface-200 truncate"
@@ -26,23 +29,28 @@
 
       <!-- Header Card -->
       <div
-        class="bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 rounded-3xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        class="bg-white dark:bg-surface-800 border-3 border-surface-200 dark:border-surface-700 rounded-3xl p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        data-testid="offline-header-card"
       >
         <div>
           <h1
             class="text-xl sm:text-2xl font-bold font-heading text-surface-900 dark:text-white flex items-center gap-2.5"
           >
-            <span>📦</span>
+            <UIcon
+              class="w-6 h-6 text-brand-600 dark:text-brand-400 shrink-0"
+              name="i-lucide-package-check"
+            />
             <span>Tải trước gói học ngoại tuyến</span>
           </h1>
-          <p class="text-sm text-surface-600 dark:text-surface-300 mt-1">
+          <p class="text-base text-surface-600 dark:text-surface-300 mt-1">
             Tải trước bài học và trò chơi để bé chơi mượt mà khi đi du lịch hoặc
             mất mạng.
           </p>
         </div>
 
         <div
-          class="px-4 py-2 rounded-2xl bg-brand-50 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800 text-xs font-bold text-brand-700 dark:text-brand-300 shrink-0 self-start sm:self-center"
+          class="px-4 py-2 rounded-2xl bg-brand-50 dark:bg-brand-950/40 border border-brand-200 dark:border-brand-800 text-sm font-bold text-brand-700 dark:text-brand-300 shrink-0 self-start sm:self-center"
+          data-testid="offline-lease-badge"
         >
           <span>Hạn lease: 7 ngày / lần tải</span>
         </div>
@@ -50,16 +58,23 @@
 
       <!-- Storage Quota Status -->
       <div
-        class="bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 rounded-2xl p-5 shadow-xs space-y-3"
+        class="bg-white dark:bg-surface-800 border-3 border-surface-200 dark:border-surface-700 rounded-2xl p-5 shadow-xs space-y-3"
+        data-testid="offline-storage-card"
       >
-        <div class="flex items-center justify-between text-sm">
+        <div class="flex flex-wrap items-center justify-between gap-2 text-sm">
           <span
             class="font-bold text-surface-800 dark:text-surface-200 flex items-center gap-2"
           >
-            <span>💾</span>
+            <UIcon
+              class="w-5 h-5 text-brand-600 dark:text-brand-400 shrink-0"
+              name="i-lucide-hard-drive"
+            />
             <span>Bộ nhớ thiết bị khả dụng</span>
           </span>
-          <span class="font-semibold text-surface-600 dark:text-surface-400">
+          <span
+            class="font-semibold text-surface-600 dark:text-surface-300"
+            data-testid="offline-storage-available"
+          >
             {{ availableStorageMb }}
             MB trống (cần tối thiểu 75 MB cho gói 25 MB)
           </span>
@@ -69,7 +84,7 @@
           class="w-full bg-surface-200 dark:bg-surface-700 h-2.5 rounded-full overflow-hidden"
         >
           <div
-            class="bg-brand-600 h-full rounded-full transition-all duration-300"
+            class="bg-brand-600 h-full rounded-full"
             :style="{ width: `${storageUsagePercent}%` }"
           ></div>
         </div>
@@ -77,13 +92,14 @@
 
       <!-- Feedback Messages -->
       <div
-        class="p-4 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-300 dark:border-success-700 text-success-800 dark:text-success-200 text-sm font-bold flex items-center justify-between"
+        class="p-4 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-300 dark:border-success-700 text-success-800 dark:text-success-200 text-sm font-bold flex items-center justify-between gap-2"
+        data-testid="offline-success-banner"
         v-if="successMessage"
       >
         <span>{{ successMessage }}</span>
         <button
           aria-label="Đóng thông báo"
-          class="font-bold text-sm min-h-11 min-w-11 flex items-center justify-center"
+          class="font-bold text-sm min-h-11 min-w-11 flex items-center justify-center shrink-0"
           type="button"
           @click="successMessage = null"
         >
@@ -92,13 +108,14 @@
       </div>
 
       <div
-        class="p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 dark:border-danger-700 text-danger-800 dark:text-danger-200 text-sm font-bold flex items-center justify-between"
+        class="p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 dark:border-danger-700 text-danger-800 dark:text-danger-200 text-sm font-bold flex items-center justify-between gap-2"
+        data-testid="offline-error-banner"
         v-if="errorMessage"
       >
         <span>{{ errorMessage }}</span>
         <button
           aria-label="Đóng thông báo lỗi"
-          class="font-bold text-sm min-h-11 min-w-11 flex items-center justify-center"
+          class="font-bold text-sm min-h-11 min-w-11 flex items-center justify-center shrink-0"
           type="button"
           @click="errorMessage = null"
         >
@@ -114,33 +131,42 @@
           Danh sách các tuần học
         </h2>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 gap-4"
+          data-testid="offline-weeks-grid"
+        >
           <div
-            class="bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 rounded-2xl p-5 shadow-xs flex flex-col justify-between gap-4"
+            class="bg-white dark:bg-surface-800 border-3 border-surface-200 dark:border-surface-700 rounded-2xl p-5 shadow-xs flex flex-col justify-between gap-4"
+            data-testid="offline-week-card"
             v-for="week in 4"
             :key="week"
           >
             <div>
-              <div class="flex items-center justify-between">
+              <div class="flex items-center justify-between gap-2">
                 <span
                   class="font-heading font-extrabold text-base text-surface-900 dark:text-white"
                 >
                   Tuần {{ week }}
                 </span>
                 <span
-                  class="text-xs font-bold px-2.5 py-0.5 rounded-full"
+                  class="text-sm font-bold px-2.5 py-0.5 rounded-full"
+                  data-testid="offline-week-status"
                   :class="downloadedWeeks.has(week)
                     ? 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-200'
                     : 'bg-surface-100 text-surface-600 dark:bg-surface-700 dark:text-surface-300'"
                 >
-                  {{ downloadedWeeks.has(week) ? 'Đã tải ngoại tuyến' : 'Chưa tải' }}
+                  {{
+                    downloadedWeeks.has(week)
+                      ? "Đã tải ngoại tuyến"
+                      : "Chưa tải"
+                  }}
                 </span>
               </div>
-              <p class="text-xs text-surface-500 dark:text-surface-400 mt-1">
+              <p class="text-sm text-surface-600 dark:text-surface-300 mt-1">
                 Dung lượng: ~25 MB • 3 buổi học (6 trò chơi & bài học)
               </p>
               <p
-                class="text-2xs text-success-600 dark:text-success-400 mt-1 font-semibold"
+                class="text-sm text-success-600 dark:text-success-400 mt-1 font-semibold"
                 v-if="downloadedWeeks.has(week)"
               >
                 Hiệu lực lease còn lại: 7 ngày
@@ -151,7 +177,8 @@
               class="flex items-center gap-2 pt-2 border-t border-surface-100 dark:border-surface-700/60"
             >
               <button
-                class="flex-1 min-h-11 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-heading font-bold text-xs rounded-xl transition-all shadow-sm disabled:opacity-50"
+                class="flex-1 min-h-11 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-heading font-bold text-sm rounded-2xl transition-all shadow-sm disabled:opacity-50"
+                data-testid="offline-download-btn"
                 type="button"
                 :disabled="isDownloadingWeek === week"
                 @click="downloadPack(week)"
@@ -160,7 +187,8 @@
               </button>
 
               <button
-                class="min-h-11 px-3 py-2 text-danger-600 hover:text-danger-700 text-xs font-bold rounded-xl border border-danger-200 hover:border-danger-300 transition-colors"
+                class="min-h-11 px-3 py-2 text-danger-600 hover:text-danger-700 text-sm font-bold rounded-2xl border border-danger-200 hover:border-danger-300 transition-colors"
+                data-testid="offline-delete-btn"
                 type="button"
                 v-if="downloadedWeeks.has(week)"
                 @click="deletePack(week)"
@@ -178,6 +206,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { normalizeApiError } from "@mindkid/errors/client";
   import { computed, onMounted, ref } from "vue";
   import { useRoute } from "#imports";
   import { useApi } from "~/composables/use-api";
@@ -189,19 +218,21 @@
   // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
   definePageMeta({ layout: false });
 
-  interface FetchErrorShape {
-    readonly message?: string;
-    readonly data?: {
-      readonly message?: string;
-    };
-  }
-
   function extractErrorMessage(err: object | null, fallback: string): string {
     if (!err) {
       return fallback;
     }
-    const shaped = err as FetchErrorShape;
-    return shaped.data?.message || shaped.message || fallback;
+    const normalized = normalizeApiError(err);
+    return normalized.message || fallback;
+  }
+
+  function formatPackSize(bytes: number): string {
+    const mb = bytes / (1024 * 1024);
+    if (mb >= 1) {
+      return `${Math.round(mb)} MB`;
+    }
+    const kb = Math.max(1, Math.round(bytes / 1024));
+    return `${kb} KB`;
   }
 
   const api = useApi();
@@ -257,7 +288,7 @@
       }>(`/api/users/curricula/${uuid.value}/offline-pack?week=${weekNo}`);
 
       downloadedWeeks.value = new Set([...downloadedWeeks.value, weekNo]);
-      successMessage.value = `Đã tải thành công gói học tập Tuần ${weekNo} (${Math.round(res.total_size_bytes / (1024 * 1024))} MB).`;
+      successMessage.value = `Đã tải thành công gói học tập Tuần ${weekNo} (${formatPackSize(res.total_size_bytes)}).`;
     } catch (err) {
       const errObj = typeof err === "object" && err !== null ? err : null;
       const wasPurged = await purgeIfRevokedOrUnauthenticated(errObj);

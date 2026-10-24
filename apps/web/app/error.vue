@@ -16,7 +16,11 @@
         {{ is404 ? "Không tìm thấy trang" : "Đã xảy ra lỗi" }}
       </h1>
       <p class="text-surface-600 dark:text-surface-300 mb-6 text-base">
-        {{ is404 ? "Trang bạn đang tìm kiếm không tồn tại hoặc đã được chuyển đi." : "Hệ thống gặp sự cố trong quá trình xử lý yêu cầu của bạn." }}
+        {{
+          is404
+            ? "Trang bạn đang tìm kiếm không tồn tại hoặc đã được chuyển đi."
+            : "Hệ thống gặp sự cố trong quá trình xử lý yêu cầu của bạn."
+        }}
       </p>
       <UButton
         class="w-full justify-center"

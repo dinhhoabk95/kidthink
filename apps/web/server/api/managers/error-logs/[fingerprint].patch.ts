@@ -8,11 +8,25 @@ import { defineApiRoute } from "#server/utils/define-api-route";
 
 const patchErrorLogSchema = z.object({
   status: z
-    .enum(["new", "in_progress", "resolved", "ignored"])
+    .enum(["open", "ack", "resolved", "new", "in_progress", "ignored"])
     .optional()
     .default("resolved"),
   notes: z.string().nullable().optional(),
 });
+
+type RawPatchStatus = z.infer<typeof patchErrorLogSchema>["status"];
+
+function normalizeErrorGroupStatus(
+  raw: RawPatchStatus | undefined
+): "open" | "ack" | "resolved" {
+  if (raw === "new" || raw === "open") {
+    return "open";
+  }
+  if (raw === "in_progress" || raw === "ack") {
+    return "ack";
+  }
+  return "resolved";
+}
 
 export default defineApiRoute({
   auth: "super_admin",
@@ -23,7 +37,7 @@ export default defineApiRoute({
       throw new NotFoundError("FINGERPRINT_NOT_FOUND");
     }
 
-    const status = body.status as (typeof errorLogs.$inferInsert)["status"];
+    const status = normalizeErrorGroupStatus(body.status);
     const notes = body.notes ? body.notes.trim() : null;
 
     const db = getOwnerDb();

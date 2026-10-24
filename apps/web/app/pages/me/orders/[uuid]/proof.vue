@@ -3,10 +3,11 @@
     <!-- Header -->
     <div class="border-surface-200 border-b pb-4 dark:border-surface-700">
       <NuxtLink
-        class="mb-2 inline-flex items-center gap-1.5 font-semibold text-brand-600 text-sm hover:text-brand-500 dark:text-brand-400"
+        class="mb-2 inline-flex min-h-11 items-center gap-1.5 font-semibold text-brand-600 text-sm hover:text-brand-500 dark:text-brand-400"
+        data-testid="back-to-subscription-link"
         to="/me/subscription"
       >
-        <UIcon class="h-4 w-4" name="i-lucide-arrow-left" />
+        <UIcon class="h-4 w-4 shrink-0" name="i-lucide-arrow-left" />
         <span>Quay lại Gói học & Quyền lợi</span>
       </NuxtLink>
       <h1
@@ -14,7 +15,7 @@
       >
         Nộp chứng từ thanh toán
       </h1>
-      <p class="mt-1 text-sm text-surface-600 dark:text-surface-400">
+      <p class="mt-1 text-base text-surface-700 dark:text-surface-300">
         Cung cấp mã giao dịch ngân hàng và ảnh biên lai để mở khoá dùng ngay 3
         ngày trong lúc chờ duyệt.
       </p>
@@ -22,32 +23,75 @@
 
     <!-- Order Status Summary (Spec §7.3) -->
     <div
-      class="rounded-3xl border-2 border-surface-200 bg-white p-5 shadow-sm dark:border-surface-700 dark:bg-surface-800"
+      class="space-y-4 rounded-3xl border-4 border-surface-200 bg-white p-5 shadow-sm dark:border-surface-700 dark:bg-surface-800"
       data-testid="order-status-card"
       v-if="orderDetail"
     >
       <div class="flex flex-wrap items-center justify-between gap-2">
-        <div>
-          <span class="block text-surface-500 text-xs"
-            >Nội dung chuyển khoản</span
-          >
+        <div class="min-w-0">
           <span
-            class="font-bold font-mono text-base text-surface-900 dark:text-surface-100"
+            class="block font-semibold text-sm text-surface-600 dark:text-surface-300"
+          >
+            Nội dung chuyển khoản
+          </span>
+          <span
+            class="break-all font-bold font-mono text-base text-surface-900 dark:text-surface-100"
+            data-testid="order-transfer-note"
           >
             {{ orderDetail.transfer_note }}
           </span>
         </div>
         <span
-          class="rounded-full border border-brand-200 bg-brand-50 px-3 py-1 font-bold text-brand-800 text-xs dark:border-brand-700 dark:bg-brand-900 dark:text-brand-200"
+          class="rounded-full border-2 border-brand-200 bg-brand-50 px-3 py-1 font-bold text-brand-800 text-sm dark:border-brand-700 dark:bg-brand-900 dark:text-brand-200"
           data-testid="order-status-badge"
         >
           {{ statusDisplayLabel(orderDetail.status) }}
         </span>
       </div>
 
+      <!-- Transfer & VietQR Summary -->
+      <div
+        class="grid grid-cols-1 gap-3 border-surface-200 border-t pt-4 text-sm sm:grid-cols-2 dark:border-surface-700"
+        data-testid="order-transfer-summary"
+      >
+        <div>
+          <span class="block text-surface-600 dark:text-surface-300">
+            Số tiền thanh toán
+          </span>
+          <span
+            class="font-bold text-base text-brand-700 dark:text-brand-300"
+            data-testid="order-amount"
+          >
+            {{ formatVnd(orderDetail.amount_vnd) }}
+          </span>
+        </div>
+        <div class="flex items-start gap-2" data-testid="order-qr-info">
+          <UIcon
+            class="mt-0.5 h-5 w-5 shrink-0 text-brand-600 dark:text-brand-400"
+            name="i-lucide-qr-code"
+          />
+          <div class="min-w-0">
+            <span class="block text-surface-600 dark:text-surface-300">
+              Phương thức thanh toán
+            </span>
+            <span
+              class="break-words font-bold text-surface-900 dark:text-surface-100"
+              data-testid="order-bank-info"
+            >
+              <template v-if="orderDetail.bank_info">
+                VietQR —
+                {{ orderDetail.bank_info.bankName }}
+                ({{ orderDetail.bank_info.accountNo }})
+              </template>
+              <template v-else> Chuyển khoản ngân hàng VietQR </template>
+            </span>
+          </div>
+        </div>
+      </div>
+
       <!-- Polite rejection reason (BR-PPU-07 / §7.3) -->
       <div
-        class="mt-3 rounded-xl border border-danger-200 bg-danger-50 p-3 text-danger-800 text-xs dark:border-danger-800 dark:bg-danger-950/40 dark:text-danger-200"
+        class="rounded-xl border-2 border-danger-200 bg-danger-50 p-3 text-danger-800 text-sm dark:border-danger-800 dark:bg-danger-950/40 dark:text-danger-200"
         data-testid="order-rejection-reason"
         v-if="orderDetail.status === 'rejected' && orderDetail.rejection_reason"
       >
@@ -71,10 +115,10 @@
           <h2 class="font-bold font-heading text-lg">
             Bạn đã có thể dùng ngay!
           </h2>
-          <p class="text-sm leading-relaxed">
+          <p class="text-base leading-relaxed">
             {{ submittedResult.message }}
           </p>
-          <p class="font-semibold text-xs">
+          <p class="font-semibold text-sm">
             Quyền tạm (soft unlock 3 ngày) có hiệu lực đến:
             <span data-testid="soft-unlock-until">
               {{ formatDateTime(submittedResult.soft_unlock_until) }}
@@ -107,13 +151,13 @@
     >
       <div class="space-y-1.5">
         <label
-          class="block font-bold text-sm text-surface-700 dark:text-surface-300"
+          class="block font-bold text-sm text-surface-700 dark:text-surface-200"
           for="bank-txn-ref"
         >
           Mã giao dịch ngân hàng <span class="text-danger-600">*</span>
         </label>
         <input
-          class="min-h-11 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-base text-surface-900 focus:border-brand-600 focus:bg-white focus:outline-none dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100"
+          class="min-h-11 w-full rounded-2xl border-[3px] border-surface-300 bg-surface-50 px-3.5 py-2.5 text-base text-surface-900 focus:border-brand-600 focus:bg-white focus:outline-none dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100"
           data-testid="bank-txn-ref-input"
           id="bank-txn-ref"
           maxlength="64"
@@ -123,7 +167,7 @@
           type="text"
           v-model.trim="bankTxnRef"
         >
-        <p class="text-surface-500 text-xs dark:text-surface-400">
+        <p class="text-sm text-surface-600 dark:text-surface-300">
           Nhập mã tham chiếu / mã giao dịch (4–64 ký tự) hiển thị trên biên lai
           chuyển khoản.
         </p>
@@ -131,27 +175,27 @@
 
       <div class="space-y-1.5">
         <label
-          class="block font-bold text-sm text-surface-700 dark:text-surface-300"
+          class="block font-bold text-sm text-surface-700 dark:text-surface-200"
           for="proof-file"
         >
           Ảnh chụp màn hình chuyển khoản (khuyến nghị)
         </label>
         <input
           accept="image/jpeg,image/png,image/webp"
-          class="block w-full text-sm text-surface-700 file:mr-4 file:min-h-11 file:rounded-xl file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:font-bold file:text-brand-700 hover:file:bg-brand-100 dark:text-surface-300"
+          class="block min-h-11 w-full max-w-full overflow-hidden text-base text-surface-700 file:mr-4 file:min-h-11 file:rounded-xl file:border-0 file:bg-brand-50 file:px-4 file:py-2 file:font-bold file:text-brand-700 file:text-sm hover:file:bg-brand-100 dark:text-surface-200 dark:file:bg-brand-900 dark:file:text-brand-200"
           data-testid="proof-file-input"
           id="proof-file"
           type="file"
           @change="handleFileChange"
         >
-        <p class="text-surface-500 text-xs dark:text-surface-400">
+        <p class="text-sm text-surface-600 dark:text-surface-300">
           Chấp nhận định dạng JPEG, PNG hoặc WebP, dung lượng tối đa 5 MB.
         </p>
       </div>
 
       <!-- Warning when submitting without image (§5) -->
       <div
-        class="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-amber-900 text-xs dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200"
+        class="rounded-2xl border-2 border-warning-400 bg-warning-50 p-3.5 text-sm text-warning-900 dark:border-warning-600 dark:bg-warning-950/30 dark:text-warning-200"
         data-testid="no-image-warning"
         v-if="!selectedFile"
       >
@@ -160,7 +204,7 @@
       </div>
 
       <button
-        class="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-6 py-3 font-bold font-heading text-base text-white shadow-sm transition hover:bg-brand-700 disabled:opacity-60"
+        class="flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-6 py-3 text-center font-bold font-heading text-base text-white shadow-sm transition hover:bg-brand-700 disabled:opacity-60"
         data-testid="submit-proof-btn"
         type="submit"
         :disabled="isSubmitting"
@@ -184,6 +228,13 @@
 
   const MAX_PROOF_SIZE_BYTES = 5 * 1024 * 1024;
 
+  interface BankInfoSummary {
+    bankId: string;
+    bankName: string;
+    accountNo: string;
+    accountName: string;
+  }
+
   interface OrderDetailResponse {
     uuid: string;
     package_code: string;
@@ -193,6 +244,9 @@
     transfer_note: string;
     bank_txn_ref?: string | null;
     rejection_reason?: string;
+    qr_payload?: string;
+    qr_image_url?: string;
+    bank_info?: BankInfoSummary | null;
   }
 
   interface ProofSubmitResponse {
@@ -205,19 +259,19 @@
   const api = useApi();
   const route = useRoute();
 
-  const orderUuid = computed(() => String(route?.params?.uuid ?? ""));
+  const orderUuid = computed<string>(() => String(route?.params?.uuid ?? ""));
   const orderDetail = ref<OrderDetailResponse | null>(null);
-  const bankTxnRef = ref("");
+  const bankTxnRef = ref<string>("");
   const selectedFile = ref<File | null>(null);
-  const isSubmitting = ref(false);
-  const errorMessage = ref("");
+  const isSubmitting = ref<boolean>(false);
+  const errorMessage = ref<string>("");
   const submittedResult = ref<{
     status: string;
     soft_unlock_until: string;
     message: string;
   } | null>(null);
 
-  const canSubmitProof = computed(() => {
+  const canSubmitProof = computed<boolean>(() => {
     if (!orderDetail.value) {
       return true;
     }
@@ -265,6 +319,10 @@
     }
   }
 
+  function formatVnd(amount: number): string {
+    return `${new Intl.NumberFormat("vi-VN").format(amount)} ₫`;
+  }
+
   function formatDateTime(iso: string): string {
     try {
       return new Date(iso).toLocaleDateString("vi-VN", {
@@ -277,9 +335,10 @@
     }
   }
 
-  function handleFileChange(event: Event) {
+  function handleFileChange(event: Event): void {
     errorMessage.value = "";
-    const target = event.target as HTMLInputElement | null;
+    const target =
+      event.target instanceof HTMLInputElement ? event.target : null;
     const file = target?.files?.[0] ?? null;
 
     if (file && file.size > MAX_PROOF_SIZE_BYTES) {
@@ -292,7 +351,7 @@
     selectedFile.value = file;
   }
 
-  async function handleSubmitProof() {
+  async function handleSubmitProof(): Promise<void> {
     errorMessage.value = "";
 
     const trimmedRef = bankTxnRef.value.trim();

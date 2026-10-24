@@ -9,18 +9,24 @@ import {
   strands,
 } from "@mindkid/db";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
-import { and, eq } from "drizzle-orm";
-import { defineEventHandler, getRouterParam } from "h3";
+import { and, eq, or } from "drizzle-orm";
+import { defineEventHandler, getRouterParams } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+
+const SkillCodeParamsSchema = z.object({
+  code: z.string().trim().min(1).max(40),
+});
 
 export default defineEventHandler(async (event) => {
   // Both super_admin and content_reviewer can read (BR-TXB-01)
   await requireManagerSession(event);
 
-  const code = getRouterParam(event, "code");
-  if (!code) {
+  const parsedParams = SkillCodeParamsSchema.safeParse(getRouterParams(event));
+  if (!parsedParams.success) {
     throw new ValidationError();
   }
+  const { code } = parsedParams.data;
 
   const db = getOwnerDb();
 
@@ -85,7 +91,7 @@ export default defineEventHandler(async (event) => {
     .where(eq(skillPrerequisites.prerequisiteId, skill.id));
 
   // 4. Fetch attached content (game levels & lessons)
-  const attachedLevels = await db
+  const attachedLevelsRows = await db
     .select({
       id: gameLevels.id,
       code: gameLevels.code,
@@ -99,10 +105,24 @@ export default defineEventHandler(async (event) => {
       gameLevels,
       and(
         eq(contentSkillMap.entityType, "game_level"),
-        eq(contentSkillMap.entityId, gameLevels.id)
+        or(
+          eq(contentSkillMap.entityId, gameLevels.id),
+          eq(contentSkillMap.entityId, gameLevels.entityId)
+        )
       )
     )
     .where(eq(contentSkillMap.skillId, skill.id));
+
+  const uniqueLevelsMap = new Map<
+    number,
+    (typeof attachedLevelsRows)[number]
+  >();
+  for (const row of attachedLevelsRows) {
+    if (!uniqueLevelsMap.has(row.id)) {
+      uniqueLevelsMap.set(row.id, row);
+    }
+  }
+  const attachedLevels = Array.from(uniqueLevelsMap.values());
 
   // 5. Structure response per §7.2
   return {
@@ -115,6 +135,7 @@ export default defineEventHandler(async (event) => {
       competency_code: skill.competencyCode,
       competency_name: skill.competencyName,
       tier: skill.tier,
+      status: "seeded",
       is_deprecated: false,
     },
     attributes: {

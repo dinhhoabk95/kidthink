@@ -39,7 +39,7 @@ function computeConsentState(
 }
 
 export default defineEventHandler(async (event) => {
-  const userSession = await requireWebUserSession(event);
+  const userSession = requireWebUserSession(event);
   const userId = Number(userSession.user_id);
 
   const db = getOwnerDb();

@@ -80,7 +80,7 @@ export const EMOJI_CATEGORIES: Record<EmojiCategory, EmojiEntry[]> = {
 };
 
 // ── All unique emojis flat array (deduped by glyph) ──────────────
-export const ALL_EMOJIS: EmojiEntry[] = (() => {
+export const ALL_EMOJIS: EmojiEntry[] = /* @__PURE__ */ (() => {
   const map = new Map<string, EmojiEntry>();
   for (const list of Object.values(EMOJI_CATEGORIES)) {
     for (const entry of list) {
@@ -95,7 +95,7 @@ export const ALL_EMOJIS: EmojiEntry[] = (() => {
 
 // ── Curriculum theme → emoji entries map ─────────────────────────
 export const CURRICULUM_EMOJI_MAP: Record<CurriculumTheme, EmojiEntry[]> =
-  (() => {
+  /* @__PURE__ */ (() => {
     const map = {} as Record<CurriculumTheme, EmojiEntry[]>;
     for (const theme of Object.keys(
       CURRICULUM_THEME_CATEGORIES
@@ -117,21 +117,22 @@ export const CURRICULUM_EMOJI_MAP: Record<CurriculumTheme, EmojiEntry[]> =
   })();
 
 // ── Group → emoji entries ────────────────────────────────────────
-export const GROUP_EMOJI_MAP: Record<EmojiGroup, EmojiEntry[]> = (() => {
-  const map = {} as Record<EmojiGroup, EmojiEntry[]>;
-  for (const group of Object.keys(EMOJI_GROUPS) as EmojiGroup[]) {
-    const categories = EMOJI_GROUPS[group];
-    const seen = new Set<string>();
-    const entries: EmojiEntry[] = [];
-    for (const cat of categories) {
-      for (const entry of EMOJI_CATEGORIES[cat] ?? []) {
-        if (!seen.has(entry.emoji)) {
-          seen.add(entry.emoji);
-          entries.push(entry);
+export const GROUP_EMOJI_MAP: Record<EmojiGroup, EmojiEntry[]> =
+  /* @__PURE__ */ (() => {
+    const map = {} as Record<EmojiGroup, EmojiEntry[]>;
+    for (const group of Object.keys(EMOJI_GROUPS) as EmojiGroup[]) {
+      const categories = EMOJI_GROUPS[group];
+      const seen = new Set<string>();
+      const entries: EmojiEntry[] = [];
+      for (const cat of categories) {
+        for (const entry of EMOJI_CATEGORIES[cat] ?? []) {
+          if (!seen.has(entry.emoji)) {
+            seen.add(entry.emoji);
+            entries.push(entry);
+          }
         }
       }
+      map[group] = entries;
     }
-    map[group] = entries;
-  }
-  return map;
-})();
+    return map;
+  })();

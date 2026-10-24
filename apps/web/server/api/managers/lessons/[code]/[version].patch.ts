@@ -38,6 +38,18 @@ const updateLessonSchema = z.object({
 
 type UpdateLessonInput = z.infer<typeof updateLessonSchema>;
 
+function toLessonAuditData(row: typeof lessons.$inferSelect) {
+  return {
+    id: row.id,
+    entity_id: row.entityId,
+    code: row.code,
+    content_version: row.contentVersion,
+    title: row.title,
+    access_tier: row.accessTier,
+    status: row.status,
+  };
+}
+
 async function syncLessonSkills(
   db: ReturnType<typeof getOwnerDb>,
   entityId: number,
@@ -132,8 +144,8 @@ async function handlePublishedLessonFork(
       action: "content_created",
       entity_type: "lesson",
       entity_id: String(created.id),
-      before_data: existing as unknown as Record<string, unknown>,
-      after_data: created as unknown as Record<string, unknown>,
+      before_data: toLessonAuditData(existing),
+      after_data: toLessonAuditData(created),
       reason: `Manager created new draft version ${newVersion} from published lesson`,
     });
   });
@@ -147,7 +159,7 @@ async function handleDraftLessonUpdate(
   data: UpdateLessonInput,
   managerId: number
 ) {
-  const patch: Record<string, unknown> = {
+  const patch: Partial<typeof lessons.$inferInsert> = {
     updatedAt: new Date(),
   };
 
@@ -204,8 +216,8 @@ async function handleDraftLessonUpdate(
       action: "content_created",
       entity_type: "lesson",
       entity_id: String(updated.id),
-      before_data: existing as unknown as Record<string, unknown>,
-      after_data: updated as unknown as Record<string, unknown>,
+      before_data: toLessonAuditData(existing),
+      after_data: toLessonAuditData(updated),
       reason: "Manager updated lesson via Studio",
     });
   });

@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     );
 
     return result;
-  } catch (err: unknown) {
+  } catch (err) {
     const errorName = err instanceof Error ? err.name : "";
     if (errorName === "NOT_FOUND") {
       throw new NotFoundError("Không tìm thấy lượt chạy.");

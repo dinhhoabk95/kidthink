@@ -18,12 +18,8 @@ export default defineEventHandler(async (event) => {
     const created = await createWorksheetDraft(parsed.data, session.manager_id);
     setResponseStatus(event, 201);
     return created;
-  } catch (err: unknown) {
-    const errorObj = err as {
-      statusCode?: number;
-      message?: string;
-      details?: unknown;
-    };
-    throw new InternalError(errorObj.message);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : undefined;
+    throw new InternalError(message);
   }
 });

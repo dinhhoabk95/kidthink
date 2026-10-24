@@ -1,4 +1,8 @@
-import { checkRateLimit, type RateLimitCheckResult } from "@mindkid/cache";
+import {
+  checkRateLimit,
+  hashRateLimitIdentifier,
+  type RateLimitCheckResult,
+} from "@mindkid/cache";
 import {
   calculateProgressiveLockoutSeconds,
   getRouteClassConfig,
@@ -55,12 +59,14 @@ export async function enforceTwoAxisRateLimit(
   }
 
   try {
+    const failOpen = cfg.failMode !== "closed";
     // Axis 1: IP Rate Limit
-    const ipKey = `rl:ip:${cfg.className}:${safeIp}`;
+    const ipKey = `ip:${cfg.className}:${safeIp}`;
     const ipCheck: RateLimitCheckResult = await checkRateLimit(
       ipKey,
       cfg.ipLimit,
-      cfg.windowSeconds
+      cfg.windowSeconds,
+      failOpen
     );
 
     if (!ipCheck.allowed) {
@@ -77,11 +83,13 @@ export async function enforceTwoAxisRateLimit(
 
     // Axis 2: Account / Identifier Rate Limit (if configured)
     if (cfg.accountLimit && input.accountIdentifier) {
-      const accKey = `rl:acc:${cfg.className}:${input.accountIdentifier.toLowerCase()}`;
+      const hashedIdentifier = hashRateLimitIdentifier(input.accountIdentifier);
+      const accKey = `acc:${cfg.className}:${hashedIdentifier}`;
       const accCheck: RateLimitCheckResult = await checkRateLimit(
         accKey,
         cfg.accountLimit,
-        cfg.windowSeconds
+        cfg.windowSeconds,
+        failOpen
       );
 
       if (!accCheck.allowed) {

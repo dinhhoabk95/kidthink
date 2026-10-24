@@ -6,7 +6,16 @@ export type EmojiInputValidationResult =
   | { readonly ok: false; readonly error: string };
 
 const EMOJI_CODE_PREFIX_REGEX = /^EMJ-/i;
-const graphemeSegmenter = new Intl.Segmenter("vi", { granularity: "grapheme" });
+let graphemeSegmenterCache: Intl.Segmenter | null = null;
+
+function getGraphemeSegmenter(): Intl.Segmenter {
+  if (!graphemeSegmenterCache) {
+    graphemeSegmenterCache = new Intl.Segmenter("vi", {
+      granularity: "grapheme",
+    });
+  }
+  return graphemeSegmenterCache;
+}
 
 /**
  * Chuẩn hoá và kiểm tra giá trị nhập/dán trực tiếp vào trường emoji (BR-EPK-03, BR-EPK-09, BR-SDF-04).
@@ -29,7 +38,7 @@ export function validateEmojiInput(
   }
 
   const segments = Array.from(
-    graphemeSegmenter.segment(normalized),
+    getGraphemeSegmenter().segment(normalized),
     (segment) => segment.segment
   );
 

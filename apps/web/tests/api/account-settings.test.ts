@@ -1,3 +1,6 @@
+import { hashSecureToken } from "@mindkid/auth";
+import { getOwnerDb, users, verificationTokens } from "@mindkid/db";
+import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { describe, expect, it } from "vitest";
 import verifyEmailChangeHandler from "#server/api/guest/auth/verify-email-change.post";
@@ -184,6 +187,46 @@ describe("Task 2 — Account Settings Endpoints (BR-ACS-01..11, BR-NOT-01)", () 
         expect.fail("Should have thrown TOKEN_EXPIRED");
       } catch (err) {
         expect(getErrorStatus(err as object)).toBe(410);
+      }
+    });
+
+    it("rejects valid token when new_email does not match the bound email", async () => {
+      const db = getOwnerDb();
+      const rawToken = `tok_${Date.now()}`;
+      const intendedEmail = `intended_${Date.now()}@example.com`;
+      const hijackEmail = `hijack_${Date.now()}@example.com`;
+      const [testUser] = await db
+        .insert(users)
+        .values({
+          email: `orig_${Date.now()}@example.com`,
+          displayName: "Email Change User",
+          status: "active",
+        })
+        .returning({ id: users.id });
+
+      await db.insert(verificationTokens).values({
+        accountType: "user",
+        accountId: testUser.id,
+        purpose: "email_verify",
+        tokenHash: hashSecureToken(`email_change:${rawToken}:${intendedEmail}`),
+        expiresAt: new Date(Date.now() + 3_600_000),
+      });
+
+      try {
+        const hijackEvent = mockEvent("POST", 0, {
+          token: rawToken,
+          new_email: hijackEmail,
+        });
+        await expect(
+          verifyEmailChangeHandler(hijackEvent)
+        ).rejects.toMatchObject({
+          statusCode: 410,
+        });
+      } finally {
+        await db
+          .delete(verificationTokens)
+          .where(eq(verificationTokens.accountId, testUser.id));
+        await db.delete(users).where(eq(users.id, testUser.id));
       }
     });
   });

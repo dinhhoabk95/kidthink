@@ -2,6 +2,7 @@ import { sql } from "drizzle-orm";
 import {
   bigint,
   check,
+  index,
   numeric,
   pgEnum,
   pgTable,
@@ -51,6 +52,7 @@ export const contentTagMap = pgTable(
   },
   (table) => [
     primaryKey({ columns: [table.entityType, table.entityId, table.tagId] }),
+    index("idx_content_tag_map_tag_entity").on(table.tagId, table.entityType),
   ]
 );
 
@@ -67,6 +69,10 @@ export const contentSkillMap = pgTable(
   },
   (table) => [
     primaryKey({ columns: [table.entityType, table.entityId, table.skillId] }),
+    index("idx_content_skill_map_skill_entity").on(
+      table.skillId,
+      table.entityType
+    ),
     check(
       "check_content_skill_map_weight",
       sql`${table.weight} > 0 AND ${table.weight} <= 1`

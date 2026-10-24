@@ -27,6 +27,19 @@ import { throwValidationError } from "#server/utils/api-error";
 
 type UpdateActivityInput = z.infer<typeof updateActivityFormSchema>;
 
+function toActivityAuditData(row: typeof activities.$inferSelect) {
+  return {
+    id: row.id,
+    entity_id: row.entityId,
+    code: row.code,
+    content_version: row.contentVersion,
+    kind: row.kind,
+    title: row.title,
+    access_tier: row.accessTier,
+    status: row.status,
+  };
+}
+
 async function validateActivityPatch(
   db: ReturnType<typeof getOwnerDb>,
   targetKind: string,
@@ -143,8 +156,8 @@ async function handlePublishedActivityFork(
       action: "content_created",
       entity_type: "activity",
       entity_id: String(created.id),
-      before_data: existing as unknown as Record<string, unknown>,
-      after_data: created as unknown as Record<string, unknown>,
+      before_data: toActivityAuditData(existing),
+      after_data: toActivityAuditData(created),
       reason: `Manager created new draft version ${newVersion} from published activity`,
     });
   });
@@ -158,12 +171,12 @@ async function handleDraftActivityUpdate(
   data: UpdateActivityInput,
   managerId: number
 ) {
-  const patch: Record<string, unknown> = {
+  const patch: Partial<typeof activities.$inferInsert> = {
     updatedAt: new Date(),
   };
 
   if (data.kind !== undefined) {
-    patch.kind = data.kind;
+    patch.kind = data.kind as typeof activities.$inferSelect.kind;
     patch.refType = resolveActivityRefType(data.kind);
   }
   if (data.title !== undefined) {
@@ -204,8 +217,8 @@ async function handleDraftActivityUpdate(
       action: "content_created",
       entity_type: "activity",
       entity_id: String(updated.id),
-      before_data: existing as unknown as Record<string, unknown>,
-      after_data: updated as unknown as Record<string, unknown>,
+      before_data: toActivityAuditData(existing),
+      after_data: toActivityAuditData(updated),
       reason: "Manager updated activity via Studio",
     });
   });

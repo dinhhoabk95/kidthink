@@ -8,7 +8,12 @@ import {
 import { ValidationError } from "@mindkid/errors/common";
 import { CurriculumNotFoundError } from "@mindkid/errors/curriculum";
 import { and, eq } from "drizzle-orm";
-import { defineEventHandler, getRouterParam, readBody } from "h3";
+import {
+  defineEventHandler,
+  getRouterParam,
+  readBody,
+  setResponseStatus,
+} from "h3";
 import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 
@@ -77,6 +82,13 @@ async function copyWeeksAndItems(
   }
 }
 
+function isUniqueConstraintError(err: object | null | undefined): boolean {
+  if (!err || typeof err !== "object") {
+    return false;
+  }
+  return "code" in err && err.code === "23505";
+}
+
 async function createDuplicateRecord(
   db: ReturnType<typeof getOwnerDb>,
   source: typeof curricula.$inferSelect,
@@ -84,7 +96,7 @@ async function createDuplicateRecord(
   requestedCode: string | undefined,
   managerId: number
 ) {
-  let lastErr: unknown;
+  let lastErr: Error = new Error("Không thể tạo bản sao chương trình");
   for (let attempt = 0; attempt < 5; attempt++) {
     const newCode = requestedCode || (await generateNextCurriculumCode(db));
     const newEntityId = Date.now() + Math.floor(Math.random() * 100_000);
@@ -114,10 +126,15 @@ async function createDuplicateRecord(
       if (created) {
         return created;
       }
-    } catch (err: unknown) {
-      lastErr = err;
+    } catch (err) {
+      lastErr =
+        err instanceof Error
+          ? err
+          : new Error("Không thể tạo bản sao chương trình");
       if (
-        (err as { code?: string })?.code === "23505" &&
+        err &&
+        typeof err === "object" &&
+        isUniqueConstraintError(err) &&
         !requestedCode &&
         attempt < 4
       ) {

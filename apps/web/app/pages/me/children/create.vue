@@ -17,6 +17,7 @@
 
     <form
       class="space-y-5 rounded-3xl border-4 border-surface-200 bg-white p-6 shadow-[0_10px_25px_-5px_rgba(30,27,75,0.08)] dark:border-surface-700 dark:bg-surface-800 sm:p-8"
+      data-testid="create-child-form"
       @submit.prevent="submit"
     >
       <div class="space-y-1.5">
@@ -24,11 +25,12 @@
           class="text-sm font-bold text-surface-700 dark:text-surface-300"
           for="child-name"
         >
-          Tên gọi của bé
+          Tên gọi ở nhà của bé
         </label>
         <input
           autocomplete="off"
           class="min-h-11 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-base text-surface-900 transition-all placeholder:text-surface-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100 dark:placeholder:text-surface-500 dark:focus:border-brand-500 dark:focus:bg-surface-900"
+          data-testid="child-display-name-input"
           id="child-name"
           maxlength="40"
           placeholder="Ví dụ: Bé Bơ, Sóc, Tin..."
@@ -37,7 +39,7 @@
           v-model.trim="displayName"
         >
         <span
-          class="block text-xs font-semibold text-surface-500 dark:text-surface-400"
+          class="block text-sm font-semibold text-surface-500 dark:text-surface-400"
         >
           Chỉ cần dùng tên gọi ở nhà, bảo vệ tối đa dữ liệu riêng tư của bé.
         </span>
@@ -52,6 +54,7 @@
         </label>
         <select
           class="min-h-11 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-base text-surface-900 transition-all focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100 dark:focus:border-brand-500 dark:focus:bg-surface-900"
+          data-testid="child-birth-year-select"
           id="birth-year"
           required
           v-model.number="birthYear"
@@ -61,23 +64,30 @@
             tuổi)
           </option>
         </select>
+        <span
+          class="block text-sm font-semibold text-brand-700 dark:text-brand-300"
+          data-testid="derived-age-band"
+        >
+          Nhóm tuổi tự động: {{ derivedAgeBand }} tuổi
+        </span>
       </div>
 
-      <fieldset class="space-y-2">
+      <fieldset class="space-y-2" data-testid="avatar-preset-grid">
         <legend
           class="text-sm font-bold text-surface-700 dark:text-surface-300"
         >
           Hình đại diện cho bé
         </legend>
-        <div class="grid grid-cols-6 gap-2 sm:gap-2.5">
+        <div class="grid grid-cols-4 gap-2.5 sm:grid-cols-6">
           <button
+            data-testid="avatar-preset-btn"
             type="button"
             v-for="preset in AVATAR_PRESETS"
             :key="preset.id"
             :aria-label="`Chọn hình đại diện ${preset.emoji}`"
             :aria-pressed="avatarId === preset.id"
             :class="[
-              'flex h-12 w-full items-center justify-center rounded-2xl border-2 text-2xl transition-all active:scale-95',
+              'avatar-emoji flex h-12 min-h-11 min-w-11 w-full items-center justify-center rounded-2xl border-2 text-2xl transition-all active:scale-95',
               avatarId === preset.id
                 ? 'border-brand-600 bg-brand-50 shadow-[0_0_0_2px_var(--color-brand-600)] dark:border-brand-400 dark:bg-brand-950/60'
                 : 'border-surface-200 bg-surface-50 hover:border-surface-300 dark:border-surface-700 dark:bg-surface-900/60 dark:hover:border-surface-600'
@@ -98,6 +108,7 @@
         </label>
         <select
           class="min-h-11 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-base text-surface-900 transition-all focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100 dark:focus:border-brand-500 dark:focus:bg-surface-900"
+          data-testid="child-relationship-select"
           id="relationship"
           v-model="relationship"
         >
@@ -108,7 +119,7 @@
       </div>
 
       <p
-        class="rounded-2xl border border-surface-200 bg-surface-50 p-3.5 text-xs leading-relaxed text-surface-600 dark:border-surface-700 dark:bg-surface-900/60 dark:text-surface-400"
+        class="rounded-2xl border border-surface-200 bg-surface-50 p-3.5 text-sm leading-relaxed text-surface-600 dark:border-surface-700 dark:bg-surface-900/60 dark:text-surface-400"
         data-testid="privacy-transparency-notice"
       >
         Chúng tôi chỉ hỏi tên gọi và năm sinh để chọn nội dung phù hợp với bé.
@@ -118,6 +129,7 @@
 
       <div
         class="flex items-center gap-2.5 rounded-2xl border-2 border-danger-200 bg-danger-50 p-3.5 text-danger-700 dark:border-danger-800/60 dark:bg-danger-950/40 dark:text-danger-300"
+        data-testid="create-child-error"
         role="alert"
         v-if="errorMessage"
       >
@@ -131,16 +143,18 @@
       <div class="flex gap-3 pt-2">
         <NuxtLink
           class="flex min-h-12 flex-1 items-center justify-center rounded-2xl border-2 border-surface-200 bg-surface-50 px-4 font-bold text-surface-800 transition-colors hover:bg-surface-100 dark:border-surface-700 dark:bg-surface-800 dark:text-surface-200 dark:hover:bg-surface-700"
+          data-testid="cancel-create-child-link"
           :to="backLink"
         >
           Quay lại
         </NuxtLink>
         <button
           class="flex min-h-12 flex-1 items-center justify-center rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-6 font-heading text-base font-bold text-white shadow-[0_4px_0_var(--color-brand-700)] transition-all hover:bg-brand-500 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-brand-700)] disabled:cursor-not-allowed disabled:opacity-50"
+          data-testid="submit-child-btn"
           type="submit"
           :disabled="isSaving || !displayName"
         >
-          {{ isSaving ? 'Đang lưu...' : 'Tạo hồ sơ' }}
+          {{ isSaving ? "Đang lưu..." : "Tạo hồ sơ" }}
         </button>
       </div>
     </form>
@@ -149,7 +163,10 @@
 
 <script lang="ts" setup>
   import { normalizeApiError } from "@mindkid/errors/client";
-  import { sanitizeRedirectTarget } from "@mindkid/shared/client";
+  import {
+    deriveAgeBand,
+    sanitizeRedirectTarget,
+  } from "@mindkid/shared/client";
   import { computed, ref } from "vue";
   import { useRoute, useRouter } from "vue-router";
 
@@ -158,14 +175,9 @@
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
   import { AVATAR_PRESETS } from "~/utils/child-avatar";
 
-  /**
-   * Tạo hồ sơ bé — mục 3 của
-   * `docs/specs/03-account/child-profile-crud.md`.
-   *
-   * Form chỉ gửi đúng bốn trường mà `parseChildProfileInput` cho phép; gửi thừa
-   * một trường là 400 `CHILD_FIELD_NOT_ALLOWED`.
-   */
   definePageMeta({ middleware: ["user-auth"] });
+
+  type RelationshipKind = "child" | "student" | "other";
 
   interface CreatedChild {
     uuid: string;
@@ -183,7 +195,7 @@
   const { headers: csrfHeaders } = useCsrfHeaders();
 
   const currentYear = new Date().getFullYear();
-  const birthYearOptions = computed(() => {
+  const birthYearOptions = computed((): number[] => {
     const years: number[] = [];
     for (let age = MIN_AGE; age <= MAX_AGE; age += 1) {
       years.push(currentYear - age);
@@ -194,19 +206,38 @@
   const displayName = ref("");
   const birthYear = ref<number>(currentYear - MIN_AGE);
   const avatarId = ref<string>(AVATAR_PRESETS[0]?.id ?? "avatar-preset-01");
-  const relationship = ref<"child" | "student" | "other">("child");
+  const relationship = ref<RelationshipKind>("child");
   const isSaving = ref(false);
   const errorMessage = ref<string | null>(null);
 
-  const destination = computed(() =>
+  const derivedAgeBand = computed((): string =>
+    deriveAgeBand(birthYear.value, currentYear)
+  );
+
+  const destination = computed((): string =>
     sanitizeRedirectTarget(route.query.redirect, "/play")
   );
 
   const backLink = computed(
-    () => `/me/children?redirect=${encodeURIComponent(destination.value)}`
+    (): string =>
+      `/me/children?redirect=${encodeURIComponent(destination.value)}`
   );
 
-  async function submit() {
+  const ACTIVE_CHILD_COOKIE_REGEX = /(?:^|;\s*)active_child_id=[^;]+/;
+
+  function hasActiveChildCookie(): boolean {
+    if (typeof document === "undefined" || !document.cookie) {
+      return false;
+    }
+    return ACTIVE_CHILD_COOKIE_REGEX.test(document.cookie);
+  }
+
+  async function submit(): Promise<void> {
+    if (!displayName.value.trim()) {
+      errorMessage.value = "Vui lòng nhập tên gọi ở nhà của bé.";
+      return;
+    }
+
     isSaving.value = true;
     errorMessage.value = null;
     try {
@@ -215,21 +246,21 @@
         headers: csrfHeaders(),
         credentials: "include",
         body: {
-          display_name: displayName.value,
+          display_name: displayName.value.trim(),
           birth_year: birthYear.value,
           avatar_id: avatarId.value,
           relationship: relationship.value,
         },
       });
 
-      // Hồ sơ đầu tiên chưa cần Parent Gate — `activate` chỉ đòi gate token khi
-      // đã có trẻ khác đang được chọn (`BR-PEN-01`).
-      await api(`/api/users/children/${created.uuid}/activate`, {
-        method: "POST",
-        headers: csrfHeaders(),
-        credentials: "include",
-        body: {},
-      });
+      if (!hasActiveChildCookie()) {
+        await api(`/api/users/children/${created.uuid}/activate`, {
+          method: "POST",
+          headers: csrfHeaders(),
+          credentials: "include",
+          body: {},
+        });
+      }
 
       await router.push(destination.value);
     } catch (err) {
@@ -241,3 +272,10 @@
     }
   }
 </script>
+
+<style scoped>
+  .avatar-emoji {
+    font-family:
+      "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+  }
+</style>

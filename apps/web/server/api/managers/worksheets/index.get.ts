@@ -14,8 +14,14 @@ export default defineEventHandler(async (event) => {
   const accessTier =
     typeof query.access_tier === "string" ? query.access_tier : undefined;
   const search = typeof query.search === "string" ? query.search : undefined;
-  const limit = query.limit ? Number(query.limit) : 50;
-  const offset = query.offset ? Number(query.offset) : 0;
+  const rawLimit = query.limit ? Number(query.limit) : 50;
+  const limit = Number.isFinite(rawLimit)
+    ? Math.min(100, Math.max(1, Math.trunc(rawLimit)))
+    : 50;
+  const rawOffset = query.offset ? Number(query.offset) : 0;
+  const offset = Number.isFinite(rawOffset)
+    ? Math.max(0, Math.trunc(rawOffset))
+    : 0;
 
   const items = await listWorksheets({
     layoutTemplate,

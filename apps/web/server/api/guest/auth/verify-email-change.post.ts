@@ -1,9 +1,9 @@
-import { hashSecureToken } from "@mindkid/auth";
+import { getBrowserSessionService, hashSecureToken } from "@mindkid/auth";
 import { getOwnerDb, users, verificationTokens } from "@mindkid/db";
 import { EmailAlreadyInUseError } from "@mindkid/errors/account";
 import { TokenExpiredError } from "@mindkid/errors/auth";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
-import { and, eq, gt, isNull } from "drizzle-orm";
+import { and, eq, gt, isNull, sql } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import { throwValidationError } from "#server/utils/api-error";
@@ -25,8 +25,10 @@ export default defineEventHandler(async (event) => {
     throwValidationError(parsed.error);
   }
 
-  const tokenHash = hashSecureToken(parsed.data.token);
-  const newEmail = parsed.data.new_email.toLowerCase();
+  const newEmail = parsed.data.new_email.trim().toLowerCase();
+  const tokenHash = hashSecureToken(
+    `email_change:${parsed.data.token}:${newEmail}`
+  );
   const now = new Date();
 
   const db = getOwnerDb();
@@ -75,19 +77,40 @@ export default defineEventHandler(async (event) => {
     throw new EmailAlreadyInUseError();
   }
 
-  // Update user email and mark token used
-  await db
-    .update(users)
-    .set({
-      email: newEmail,
-      updatedAt: now,
-    })
-    .where(eq(users.id, userId));
+  // Update user email and mark token used atomically
+  await db.transaction(async (tx) => {
+    const [claimed] = await tx
+      .update(verificationTokens)
+      .set({ usedAt: now })
+      .where(
+        and(
+          eq(verificationTokens.id, tokenRecord.id),
+          isNull(verificationTokens.usedAt)
+        )
+      )
+      .returning({ id: verificationTokens.id });
 
-  await db
-    .update(verificationTokens)
-    .set({ usedAt: now })
-    .where(eq(verificationTokens.id, tokenRecord.id));
+    if (!claimed) {
+      throw new TokenExpiredError();
+    }
+
+    await tx
+      .update(users)
+      .set({
+        email: newEmail,
+        emailVerifiedAt: now,
+        sessionVersion: sql`${users.sessionVersion} + 1`,
+        updatedAt: now,
+      })
+      .where(eq(users.id, userId));
+  });
+
+  await getBrowserSessionService()
+    .revokeAll({
+      account_type: "user",
+      account_id: userId,
+    })
+    .catch(() => null);
 
   // BR-ACS-05: Send notice to the OLD email address
   await dispatchTransactionalEmail({

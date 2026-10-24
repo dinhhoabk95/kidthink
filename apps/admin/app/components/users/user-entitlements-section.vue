@@ -1,22 +1,22 @@
 <template>
   <section
     aria-labelledby="group-entitlements-heading"
-    class="bg-white rounded-3xl border-4 border-surface-200 p-6 space-y-5 shadow-sm"
+    class="bg-white rounded-3xl border-4 border-surface-200 p-4 sm:p-6 space-y-5 shadow-sm min-w-0 overflow-hidden"
   >
     <div
-      class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-surface-100 pb-4"
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-surface-100 pb-4 min-w-0"
     >
       <h2
-        class="text-lg font-bold font-heading text-surface-900 flex items-center gap-2"
+        class="text-lg font-bold font-heading text-surface-900 flex items-center gap-2 break-words min-w-0"
         id="group-entitlements-heading"
       >
-        <UIcon class="w-5 h-5 text-surface-500" name="i-lucide-key" />
-        Gói & Quyền sử dụng (Entitlements)
+        <UIcon class="w-5 h-5 text-surface-500 shrink-0" name="i-lucide-key" />
+        <span>Gói & Quyền sử dụng (Entitlements)</span>
       </h2>
 
       <!-- Enabled Action: Cấp quyền thủ công (Task 3 & BR-EGR-01..05) -->
       <button
-        class="min-h-11 px-4 py-2 rounded-2xl border-2 border-brand-300 bg-brand-50 hover:bg-brand-100 text-brand-900 text-xs font-bold font-heading transition-colors flex items-center gap-1.5 shadow-sm"
+        class="min-h-11 px-4 py-2 rounded-2xl border-2 border-brand-300 bg-brand-50 hover:bg-brand-100 text-brand-900 text-xs font-bold font-heading transition-colors flex items-center gap-1.5 shadow-sm self-start sm:self-auto"
         type="button"
         v-if="userUuid"
         @click="openGrantModal"
@@ -69,7 +69,7 @@
                       : 'bg-brand-100 text-brand-800 border border-brand-300'
                   ]"
                 >
-                  {{ e.source === 'manual_grant' ? 'Cấp tay' : 'Thanh toán' }}
+                  {{ e.source === "manual_grant" ? "Cấp tay" : "Thanh toán" }}
                 </span>
               </td>
               <td class="p-3">
@@ -88,24 +88,24 @@
               </td>
               <td class="p-3 text-surface-700">
                 <div>
-                  {{ e.expires_at ? formatDate(e.expires_at) : 'Vĩnh viễn' }}
+                  {{ e.expires_at ? formatDate(e.expires_at) : "Vĩnh viễn" }}
                 </div>
                 <div class="text-[10px] text-surface-400">
                   Cấp: {{ formatDate(e.granted_at) }}
                 </div>
               </td>
               <td class="p-3 text-surface-700">
-                {{ e.granted_by || 'Hệ thống' }}
+                {{ e.granted_by || "Hệ thống" }}
               </td>
               <td
                 class="p-3 text-surface-600 max-w-xs truncate"
                 :title="e.grant_reason || ''"
               >
-                {{ e.grant_reason || '—' }}
+                {{ e.grant_reason || "—" }}
               </td>
               <td class="p-3 text-right">
                 <button
-                  class="px-2.5 py-1 rounded-xl border border-danger-300 bg-danger-50 hover:bg-danger-100 text-danger-800 text-[11px] font-bold transition-colors"
+                  class="min-h-11 px-3 py-1.5 rounded-xl border border-danger-300 bg-danger-50 hover:bg-danger-100 text-danger-800 text-[11px] font-bold transition-colors inline-flex items-center justify-center"
                   type="button"
                   @click="() => openRevokeModal(e)"
                 >
@@ -152,7 +152,7 @@
             <tr v-for="e in entitlements.history" :key="e.id">
               <td class="p-2.5 font-mono text-surface-700">{{ e.key }}</td>
               <td class="p-2.5">
-                {{ e.source === 'manual_grant' ? 'Cấp tay' : 'Thanh toán' }}
+                {{ e.source === "manual_grant" ? "Cấp tay" : "Thanh toán" }}
               </td>
               <td class="p-2.5">
                 <span
@@ -161,15 +161,15 @@
                     e.status === 'cancelled' ? 'bg-danger-100 text-danger-800' : 'bg-surface-100 text-surface-600'
                   ]"
                 >
-                  {{ e.status === 'cancelled' ? 'Đã thu hồi' : 'Hết hạn' }}
+                  {{ e.status === "cancelled" ? "Đã thu hồi" : "Hết hạn" }}
                 </span>
               </td>
               <td class="p-2.5">
-                {{ e.expires_at ? formatDate(e.expires_at) : '—' }}
+                {{ e.expires_at ? formatDate(e.expires_at) : "—" }}
               </td>
-              <td class="p-2.5">{{ e.granted_by || 'Hệ thống' }}</td>
+              <td class="p-2.5">{{ e.granted_by || "Hệ thống" }}</td>
               <td class="p-2.5 max-w-xs truncate" :title="e.grant_reason || ''">
-                {{ e.grant_reason || '—' }}
+                {{ e.grant_reason || "—" }}
               </td>
             </tr>
           </tbody>
@@ -338,7 +338,7 @@
               type="submit"
               :disabled="isGrantDisabled || isSubmitting"
             >
-              {{ isSubmitting ? 'Đang cấp...' : 'Xác nhận cấp quyền' }}
+              {{ isSubmitting ? "Đang cấp..." : "Xác nhận cấp quyền" }}
             </button>
           </div>
         </form>
@@ -377,8 +377,9 @@
 
         <p class="text-xs text-surface-600 leading-relaxed">
           Bạn đang thu hồi quyền
-          <code class="font-mono font-bold text-surface-900"
-            >{{ selectedEntitlement.key }}</code
+          <code class="font-mono font-bold text-surface-900">{{
+            selectedEntitlement.key
+          }}</code
           >. Hành động này có hiệu lực ngay lập tức và vô hiệu hóa quyền truy
           cập của người dùng.
         </p>
@@ -427,7 +428,7 @@
               type="submit"
               :disabled="revokeReason.trim().length < 10 || isSubmitting"
             >
-              {{ isSubmitting ? 'Đang thu hồi...' : 'Xác nhận thu hồi' }}
+              {{ isSubmitting ? "Đang thu hồi..." : "Xác nhận thu hồi" }}
             </button>
           </div>
         </form>
@@ -437,7 +438,9 @@
 </template>
 
 <script lang="ts" setup>
+  import { normalizeApiError } from "@mindkid/errors/client";
   import { computed, reactive, ref } from "vue";
+  import { apiFetch } from "~/composables/use-api-client";
 
   export interface EntitlementItem {
     id: number;
@@ -520,10 +523,9 @@
 
       closeGrantModal();
       emit("refresh");
-    } catch (err: unknown) {
-      const apiErr = err as { data?: { message?: string } };
+    } catch (err) {
       grantError.value =
-        apiErr?.data?.message || "Xảy ra lỗi khi cấp quyền thủ công.";
+        normalizeApiError(err).message || "Xảy ra lỗi khi cấp quyền thủ công.";
     } finally {
       isSubmitting.value = false;
     }
@@ -563,10 +565,9 @@
 
       closeRevokeModal();
       emit("refresh");
-    } catch (err: unknown) {
-      const apiErr = err as { data?: { message?: string } };
+    } catch (err) {
       revokeError.value =
-        apiErr?.data?.message || "Xảy ra lỗi khi thu hồi quyền.";
+        normalizeApiError(err).message || "Xảy ra lỗi khi thu hồi quyền.";
     } finally {
       isSubmitting.value = false;
     }

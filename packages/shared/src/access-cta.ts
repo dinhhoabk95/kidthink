@@ -1,8 +1,4 @@
-import {
-  highestAllowedTier,
-  isGuestAllowedLevel,
-  TIER_RANK,
-} from "./access-ladder.js";
+import { highestAllowedTier, TIER_RANK } from "./access-ladder.js";
 import type { EntitlementKey } from "./entitlement-catalog.js";
 import type { AccessTier } from "./taxonomy-types.js";
 
@@ -81,13 +77,13 @@ function buildCta(action: CtaAction, code: string): LevelCta {
 }
 
 function resolveAction(
-  code: string,
+  _code: string,
   tier: AccessTier,
   viewer: CtaViewer
 ): CtaAction {
   if (!viewer.is_authenticated) {
     if (tier === "free") {
-      return isGuestAllowedLevel(code) ? "play" : "login";
+      return "play";
     }
     return tier === "login" ? "login" : upgradeAction(tier);
   }

@@ -427,23 +427,49 @@ async function buildGameLevelFacets(
   };
 
   const clearCursor = { cursor: undefined };
+  const strandConditions = buildSearchWhereConditions(
+    { ...params, strand: undefined, cursor: undefined },
+    viewerRole
+  );
 
-  const competencyRows = await countWith({
-    ...clearCursor,
-    competency: undefined,
-  });
-  const ageRows = await countWith({
-    ...clearCursor,
-    age: undefined,
-    age_min: undefined,
-    age_max: undefined,
-    age_band: undefined,
-  });
-  const tierRows = await countWith({
-    ...clearCursor,
-    access_tier: undefined,
-  });
-  const totalRows = await countWith(clearCursor);
+  const [competencyRows, ageRows, tierRows, totalRows, strandRows] =
+    await Promise.all([
+      countWith({
+        ...clearCursor,
+        competency: undefined,
+      }),
+      countWith({
+        ...clearCursor,
+        age: undefined,
+        age_min: undefined,
+        age_max: undefined,
+        age_band: undefined,
+      }),
+      countWith({
+        ...clearCursor,
+        access_tier: undefined,
+      }),
+      countWith(clearCursor),
+      db
+        .select({
+          code: strands.code,
+          count: sql<number>`count(distinct ${gameLevels.id})`.mapWith(Number),
+        })
+        .from(gameLevels)
+        .innerJoin(
+          contentSkillMap,
+          and(
+            eq(contentSkillMap.entityId, gameLevels.id),
+            eq(contentSkillMap.entityType, "game_level")
+          )
+        )
+        .innerJoin(skills, eq(contentSkillMap.skillId, skills.id))
+        .innerJoin(strands, eq(skills.strandId, strands.id))
+        .where(
+          strandConditions.length > 0 ? and(...strandConditions) : undefined
+        )
+        .groupBy(strands.code),
+    ]);
 
   const competency: Record<string, number> = {};
   for (const row of competencyRows) {
@@ -472,28 +498,6 @@ async function buildGameLevelFacets(
   for (const row of tierRows) {
     access_tier[row.accessTier] = (access_tier[row.accessTier] ?? 0) + 1;
   }
-
-  const strandConditions = buildSearchWhereConditions(
-    { ...params, strand: undefined, cursor: undefined },
-    viewerRole
-  );
-  const strandRows = await db
-    .select({
-      code: strands.code,
-      count: sql<number>`count(distinct ${gameLevels.id})`.mapWith(Number),
-    })
-    .from(gameLevels)
-    .innerJoin(
-      contentSkillMap,
-      and(
-        eq(contentSkillMap.entityId, gameLevels.id),
-        eq(contentSkillMap.entityType, "game_level")
-      )
-    )
-    .innerJoin(skills, eq(contentSkillMap.skillId, skills.id))
-    .innerJoin(strands, eq(skills.strandId, strands.id))
-    .where(strandConditions.length > 0 ? and(...strandConditions) : undefined)
-    .groupBy(strands.code);
 
   const strand: Record<string, number> = {};
   for (const row of strandRows) {
@@ -547,6 +551,7 @@ function buildActivityConditions(
     const patternNorm = `%${normalizedQuery}%`;
     conditions.push(
       sql`(
+        ${activities.code} ILIKE ${patternRaw} OR
         ${activities.title} ILIKE ${patternRaw} OR
         ${activities.instruction} ILIKE ${patternRaw} OR
         ${activities.materials} ILIKE ${patternRaw} OR
@@ -678,6 +683,7 @@ function buildLessonConditions(
     const patternNorm = `%${normalizedQuery}%`;
     conditions.push(
       sql`(
+        ${lessons.code} ILIKE ${patternRaw} OR
         ${lessons.title} ILIKE ${patternRaw} OR
         ${lessons.guide} ILIKE ${patternRaw} OR
         ${lessons.materials} ILIKE ${patternRaw} OR

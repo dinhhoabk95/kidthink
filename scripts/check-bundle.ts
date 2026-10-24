@@ -197,6 +197,20 @@ function evaluateTemplatePreloads(
   }
 }
 
+function addPreloadResourceFiles(
+  target: Set<string>,
+  preload: Readonly<Record<string, PrecomputedResource>> | undefined
+): void {
+  if (!preload) {
+    return;
+  }
+  for (const res of Object.values(preload)) {
+    if (res.file) {
+      target.add(res.file);
+    }
+  }
+}
+
 function computeWebAppShellBytes(
   webOutputDir: string,
   nuxtDir: string,
@@ -211,11 +225,7 @@ function computeWebAppShellBytes(
 
   if (epPreload) {
     const shellFiles = new Set<string>();
-    for (const res of Object.values(epPreload)) {
-      if (res.file) {
-        shellFiles.add(res.file);
-      }
-    }
+    addPreloadResourceFiles(shellFiles, epPreload);
     return sumGzipBytesForFiles(shellFiles, gzipByRelPath);
   }
 
@@ -276,6 +286,30 @@ function evaluateLevelPayloads(
   return maxLevelPayloadBytes;
 }
 
+function computePublicPageGzipBytes(
+  precomputed: PrecomputedManifest | null | undefined,
+  gzipByRelPath: ReadonlyMap<string, number>
+): number {
+  const deps = precomputed?.dependencies;
+  const publicEntryPreload = deps?.["pages/index.vue"]?.preload;
+  if (publicEntryPreload) {
+    const pageFiles = new Set<string>();
+    const epKey = precomputed?.entrypoints?.[0];
+    addPreloadResourceFiles(
+      pageFiles,
+      epKey ? deps?.[epKey]?.preload : undefined
+    );
+    addPreloadResourceFiles(pageFiles, publicEntryPreload);
+    return sumGzipBytesForFiles(pageFiles, gzipByRelPath);
+  }
+
+  let totalGzipBytes = 0;
+  for (const gz of gzipByRelPath.values()) {
+    totalGzipBytes += gz;
+  }
+  return totalGzipBytes;
+}
+
 export function evaluateBundleBudgets(
   input: BundleCheckInput
 ): BundleCheckReport {
@@ -307,10 +341,10 @@ export function evaluateBundleBudgets(
     });
   }
 
-  let publicPageGzipBytes = 0;
-  for (const gz of gzipByRelPath.values()) {
-    publicPageGzipBytes += gz;
-  }
+  const publicPageGzipBytes = computePublicPageGzipBytes(
+    input.precomputed,
+    gzipByRelPath
+  );
   if (publicPageGzipBytes > MAX_PUBLIC_PAGE_GZIP_BYTES) {
     violations.push({
       category: "public_page",

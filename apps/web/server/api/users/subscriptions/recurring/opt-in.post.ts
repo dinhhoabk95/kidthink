@@ -20,7 +20,10 @@ import { eq } from "drizzle-orm";
 import { getRequestHeader, type H3Event } from "h3";
 import { z } from "zod";
 import { createRecurringSubscription } from "#server/services/recurring-billing";
-import { assertUnrestrictedUser } from "#server/utils/auth-runtime";
+import {
+  assertUnrestrictedUser,
+  getVerifiedRemoteIp,
+} from "#server/utils/auth-runtime";
 import { defineApiRoute } from "#server/utils/define-api-route";
 
 const optInRecurringSchema = z
@@ -78,11 +81,7 @@ function extractRequestClientMeta(event: H3Event): {
   ipAddress: string;
   userAgent: string;
 } {
-  const forwardedIp = getRequestHeader(event, "x-forwarded-for")
-    ?.split(",")[0]
-    ?.trim();
-  const ipAddress =
-    forwardedIp || event.node?.req?.socket?.remoteAddress || "127.0.0.1";
+  const ipAddress = getVerifiedRemoteIp(event);
   const userAgent = getRequestHeader(event, "user-agent") || "unknown";
   return { ipAddress, userAgent };
 }

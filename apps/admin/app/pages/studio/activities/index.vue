@@ -1,21 +1,23 @@
 <template>
-  <div class="activities-dashboard p-6 space-y-6 max-w-7xl mx-auto">
+  <div class="activities-dashboard w-full space-y-6 max-w-7xl mx-auto min-w-0">
     <!-- Header -->
     <div
-      class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 min-w-0"
     >
-      <div>
-        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
+      <div class="min-w-0">
+        <h1
+          class="text-2xl font-bold text-surface-900 dark:text-white break-words"
+        >
           Xưởng Soạn Hoạt Động (Activity Studio)
         </h1>
-        <p class="text-sm text-surface-500 dark:text-surface-400">
+        <p class="text-sm text-surface-500 dark:text-surface-400 break-words">
           Tạo và quản lý 10 loại hoạt động giáo dục độc lập, tái sử dụng trong
           các bài học.
         </p>
       </div>
 
       <button
-        class="min-h-11 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-semibold text-base shadow-sm transition-all flex items-center gap-2"
+        class="min-h-11 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-semibold text-base shadow-sm transition-all inline-flex items-center justify-center gap-2 self-start sm:self-auto shrink-0"
         type="button"
         @click="openCreateModal"
       >
@@ -25,12 +27,12 @@
 
     <!-- Notification Banner -->
     <div
-      class="p-4 rounded-2xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700 text-brand-900 dark:text-brand-200 text-sm flex items-center justify-between"
+      class="p-4 rounded-2xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700 text-brand-900 dark:text-brand-200 text-sm flex items-center justify-between gap-3"
       v-if="actionNotification"
     >
-      <span>{{ actionNotification }}</span>
+      <span class="min-w-0 break-words">{{ actionNotification }}</span>
       <button
-        class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline"
+        class="min-h-11 min-w-11 px-3 text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline inline-flex items-center justify-center shrink-0"
         type="button"
         @click="dismissNotification"
       >
@@ -40,12 +42,12 @@
 
     <!-- Filters & Search -->
     <div
-      class="p-4 rounded-2xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-sm flex flex-wrap gap-4 items-center justify-between"
+      class="p-4 rounded-2xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-sm flex flex-wrap gap-4 items-center justify-between min-w-0"
     >
-      <div class="flex flex-wrap gap-3 items-center flex-1">
+      <div class="flex flex-wrap gap-3 items-center flex-1 min-w-0">
         <label class="sr-only" for="filter-q">Tìm kiếm</label>
         <input
-          class="min-h-10 px-4 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500 w-64"
+          class="min-h-11 w-full sm:w-64 min-w-0 max-w-full px-4 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
           id="filter-q"
           placeholder="Tìm mã hoặc tiêu đề hoạt động..."
           type="text"
@@ -55,7 +57,7 @@
 
         <label class="sr-only" for="filter-kind">Loại hoạt động</label>
         <select
-          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
+          class="min-h-11 w-full sm:w-auto min-w-0 max-w-full px-3.5 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
           id="filter-kind"
           v-model="filters.kind"
           @change="fetchActivities"
@@ -75,7 +77,7 @@
 
         <label class="sr-only" for="filter-status">Trạng thái</label>
         <select
-          class="min-h-10 px-3 py-2 text-sm rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
+          class="min-h-11 w-full sm:w-auto min-w-0 max-w-full px-3.5 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
           id="filter-status"
           v-model="filters.status"
           @change="fetchActivities"
@@ -97,10 +99,17 @@
 
     <!-- Activities Table -->
     <div
-      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 shadow-sm overflow-hidden"
+      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 shadow-sm overflow-hidden min-w-0"
     >
-      <div class="p-12 text-center text-surface-500" v-if="isLoading">
-        Đang tải danh sách hoạt động...
+      <div
+        class="p-12 text-center text-surface-500 flex flex-col items-center justify-center gap-3"
+        v-if="isLoading"
+      >
+        <div
+          aria-hidden="true"
+          class="w-7 h-7 border-3 border-brand-600 border-t-transparent rounded-full animate-spin"
+        />
+        <span>Đang tải danh sách hoạt động...</span>
       </div>
 
       <div
@@ -110,7 +119,7 @@
         Không tìm thấy hoạt động nào phù hợp với bộ lọc.
       </div>
 
-      <div class="overflow-x-auto" v-else>
+      <div class="overflow-x-auto w-full" v-else>
         <table class="w-full text-left text-sm">
           <thead
             class="bg-surface-50 dark:bg-surface-900 border-b border-surface-200 dark:border-surface-700 text-surface-500 text-xs font-bold"
@@ -130,7 +139,7 @@
               v-for="act in activities"
               :key="act.id"
             >
-              <td class="py-3 px-4">
+              <td class="py-3 px-4 whitespace-nowrap">
                 <div
                   class="font-bold text-surface-900 dark:text-white flex items-center gap-1.5"
                 >
@@ -155,7 +164,9 @@
                   Vật liệu: {{ act.materials }}
                 </div>
               </td>
-              <td class="py-3 px-4 text-surface-600 dark:text-surface-300">
+              <td
+                class="py-3 px-4 text-surface-600 dark:text-surface-300 whitespace-nowrap"
+              >
                 <span class="inline-flex items-center gap-1">
                   <UIcon
                     class="w-3.5 h-3.5 text-surface-400 shrink-0"
@@ -164,7 +175,7 @@
                   <span>{{ act.estimated_minutes }} phút</span>
                 </span>
               </td>
-              <td class="py-3 px-4">
+              <td class="py-3 px-4 whitespace-nowrap">
                 <span
                   class="px-2.5 py-1 rounded-full text-xs font-bold capitalize"
                   :class="getTierBadgeClass(act.access_tier)"
@@ -172,7 +183,7 @@
                   {{ act.access_tier }}
                 </span>
               </td>
-              <td class="py-3 px-4">
+              <td class="py-3 px-4 whitespace-nowrap">
                 <span
                   class="px-2.5 py-1 rounded-full text-xs font-bold"
                   :class="getStatusBadgeClass(act.status)"
@@ -180,30 +191,32 @@
                   {{ act.status }}
                 </span>
               </td>
-              <td class="py-3 px-4 text-right space-x-2">
-                <button
-                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-warning-500 text-white hover:bg-warning-600"
-                  type="button"
-                  v-if="act.status === 'draft'"
-                  @click="submitForReview(act)"
-                >
-                  Gửi duyệt
-                </button>
-                <button
-                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 hover:bg-brand-100"
-                  type="button"
-                  @click="openEditModal(act)"
-                >
-                  Sửa
-                </button>
-                <button
-                  class="px-3 py-1.5 text-xs font-bold rounded-xl bg-danger-50 text-danger-600 hover:bg-danger-100"
-                  type="button"
-                  v-if="act.status !== 'archived'"
-                  @click="promptArchiveActivity(act)"
-                >
-                  Lưu trữ
-                </button>
+              <td class="py-3 px-4 text-right whitespace-nowrap">
+                <div class="inline-flex items-center justify-end gap-2">
+                  <button
+                    class="min-h-11 px-3 py-1.5 text-xs font-bold rounded-xl bg-warning-500 text-white hover:bg-warning-600 inline-flex items-center justify-center"
+                    type="button"
+                    v-if="act.status === 'draft'"
+                    @click="submitForReview(act)"
+                  >
+                    Gửi duyệt
+                  </button>
+                  <button
+                    class="min-h-11 px-3 py-1.5 text-xs font-bold rounded-xl bg-brand-50 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 hover:bg-brand-100 inline-flex items-center justify-center"
+                    type="button"
+                    @click="openEditModal(act)"
+                  >
+                    Sửa
+                  </button>
+                  <button
+                    class="min-h-11 px-3 py-1.5 text-xs font-bold rounded-xl bg-danger-50 text-danger-600 hover:bg-danger-100 inline-flex items-center justify-center"
+                    type="button"
+                    v-if="act.status !== 'archived'"
+                    @click="promptArchiveActivity(act)"
+                  >
+                    Lưu trữ
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -220,10 +233,14 @@
         class="bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-300 dark:border-surface-700 p-6 w-full max-w-2xl shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
       >
         <div
-          class="flex justify-between items-center border-b pb-3 dark:border-surface-700"
+          class="flex justify-between items-center border-b pb-3 dark:border-surface-700 gap-2"
         >
           <h2 class="text-lg font-bold text-surface-900 dark:text-white">
-            {{ isEditing ? `Chỉnh sửa hoạt động: ${activeForm.code}` : 'Tạo hoạt động mới' }}
+            {{
+              isEditing
+                ? `Chỉnh sửa hoạt động: ${activeForm.code}`
+                : "Tạo hoạt động mới"
+            }}
           </h2>
           <span
             class="text-xs text-surface-400 font-mono"
@@ -234,7 +251,7 @@
         </div>
 
         <div class="space-y-4 text-sm">
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label
                 class="block text-xs font-bold text-surface-500 mb-1"
@@ -242,7 +259,7 @@
                 >Loại hoạt động (Kind) *</label
               >
               <select
-                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+                class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
                 id="form-kind"
                 v-model="activeForm.kind"
                 :disabled="isEditing && activeForm.status === 'published'"
@@ -269,7 +286,7 @@
                 >Gói truy cập (Access Tier) *</label
               >
               <select
-                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+                class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
                 id="form-tier"
                 v-model="activeForm.access_tier"
               >
@@ -288,7 +305,7 @@
               >Tiêu đề hoạt động tiếng Việt *</label
             >
             <input
-              class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+              class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
               id="form-title"
               placeholder="Ví dụ: Đếm hạt đậu và ghép thẻ số"
               type="text"
@@ -303,7 +320,7 @@
               >Liên kết Game Level ID *</label
             >
             <input
-              class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+              class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
               id="form-refid"
               placeholder="ID của màn chơi đã xuất bản"
               type="number"
@@ -311,7 +328,7 @@
             >
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label
                 class="block text-xs font-bold text-surface-500 mb-1"
@@ -319,7 +336,7 @@
                 >Thời lượng ước tính (2–20 phút) *</label
               >
               <input
-                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+                class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
                 id="form-mins"
                 max="20"
                 min="2"
@@ -335,7 +352,7 @@
                 >Vật liệu cần chuẩn bị</label
               >
               <input
-                class="w-full min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
+                class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none"
                 id="form-materials"
                 type="text"
                 v-model="activeForm.materials"
@@ -353,7 +370,7 @@
               kép, Dễ hơn, Khó hơn) *
             </label>
             <textarea
-              class="w-full min-h-24 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none text-sm"
+              class="w-full min-h-24 px-3 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:border-brand-500 focus:outline-none text-base"
               id="form-instruction"
               placeholder='Chuẩn bị đồ dùng. "Bé hãy đếm xem có mấy hạt nào!". Dễ hơn: đếm 3 hạt. Khó hơn: đếm 10 hạt.'
               rows="4"
@@ -366,18 +383,18 @@
           class="flex justify-end gap-3 pt-3 border-t dark:border-surface-700"
         >
           <button
-            class="px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 font-semibold text-sm"
+            class="min-h-11 inline-flex items-center justify-center px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 font-semibold text-sm"
             type="button"
             @click="closeModal"
           >
             Đóng
           </button>
           <button
-            class="px-5 py-2 rounded-xl bg-brand-600 text-white font-semibold text-sm hover:bg-brand-700 transition-all"
+            class="min-h-11 inline-flex items-center justify-center px-5 py-2 rounded-xl bg-brand-600 text-white font-semibold text-sm hover:bg-brand-700 transition-all"
             type="button"
             @click="saveActivity"
           >
-            {{ isEditing ? 'Cập nhật' : 'Tạo hoạt động' }}
+            {{ isEditing ? "Cập nhật" : "Tạo hoạt động" }}
           </button>
         </div>
       </div>
@@ -386,9 +403,10 @@
 </template>
 
 <script lang="ts" setup>
-  import { isApiError } from "@mindkid/errors/client";
+  import { type ApiError, normalizeApiError } from "@mindkid/errors/client";
   import { computed, onMounted, onUnmounted, ref } from "vue";
   import { definePageMeta, useHead } from "#imports";
+  import { apiFetch } from "~/composables/use-api-client";
 
   definePageMeta({
     layout: "manager",
@@ -410,6 +428,7 @@
     estimated_minutes: number;
     access_tier: string;
     status: string;
+    ref_type?: string | null;
     ref_id?: number | null;
   }
 
@@ -433,6 +452,7 @@
     materials: "",
     estimated_minutes: 10,
     access_tier: "standard",
+    ref_type: null,
     ref_id: null,
   });
 
@@ -460,6 +480,37 @@
   const isOffscreenKind = computed(() => {
     return activeForm.value.kind !== "digital_game";
   });
+
+  function resolveRefType(kind: string | undefined): string | null {
+    if (kind === "digital_game") {
+      return "game_level";
+    }
+    if (kind === "worksheet") {
+      return "worksheet";
+    }
+    return null;
+  }
+
+  function buildActivityPayload() {
+    const kind = activeForm.value.kind || "manipulative";
+    const refType = resolveRefType(kind);
+    const rawRefId = activeForm.value.ref_id;
+    const refId =
+      refType !== null && typeof rawRefId === "number" && rawRefId > 0
+        ? rawRefId
+        : null;
+
+    return {
+      kind,
+      title: activeForm.value.title ?? "",
+      instruction: activeForm.value.instruction ?? "",
+      materials: activeForm.value.materials ?? null,
+      estimated_minutes: Number(activeForm.value.estimated_minutes ?? 10),
+      access_tier: activeForm.value.access_tier || "standard",
+      ref_type: refType,
+      ref_id: refId,
+    };
+  }
 
   function getKindIcon(kind: string): string {
     const map: Record<string, string> = {
@@ -544,6 +595,7 @@
       materials: "",
       estimated_minutes: 10,
       access_tier: "standard",
+      ref_type: null,
       ref_id: null,
     };
     isModalOpen.value = true;
@@ -566,7 +618,7 @@
         `/api/managers/activities/${activeForm.value.code}/${activeForm.value.content_version}`,
         {
           method: "PATCH",
-          body: activeForm.value,
+          body: buildActivityPayload(),
         }
       );
       autosaveStatus.value = "Đã tự động lưu nháp ✓";
@@ -577,28 +629,28 @@
 
   async function saveActivity() {
     try {
+      const payload = buildActivityPayload();
       if (isEditing.value) {
         await apiFetch(
           `/api/managers/activities/${activeForm.value.code}/${activeForm.value.content_version}`,
           {
             method: "PATCH",
-            body: activeForm.value,
+            body: payload,
           }
         );
         actionNotification.value = "Cập nhật hoạt động thành công!";
       } else {
         await apiFetch("/api/managers/activities", {
           method: "POST",
-          body: activeForm.value,
+          body: payload,
         });
         actionNotification.value = "Tạo hoạt động mới thành công!";
       }
       closeModal();
       fetchActivities();
-    } catch (err: unknown) {
-      actionNotification.value =
-        (err as { data?: { message?: string } })?.data?.message ||
-        "Lỗi lưu hoạt động";
+    } catch (err) {
+      const apiErr = normalizeApiError(err);
+      actionNotification.value = apiErr.message || "Lỗi lưu hoạt động";
     }
   }
 
@@ -613,47 +665,49 @@
       });
       actionNotification.value = `Đã gửi duyệt hoạt động ${act.code}`;
       fetchActivities();
-    } catch (err: unknown) {
-      actionNotification.value =
-        (err as { data?: { message?: string } })?.data?.message ||
-        "Lỗi chuyển trạng thái";
+    } catch (err) {
+      const apiErr = normalizeApiError(err);
+      actionNotification.value = apiErr.message || "Lỗi chuyển trạng thái";
     }
   }
 
-  function extractInUseLessonCodes(err: unknown): string {
-    if (!isApiError(err)) {
+  function extractInUseLessonCodes(apiErr: ApiError): string {
+    const inUse = apiErr.details?.in_use_by;
+    if (!Array.isArray(inUse)) {
       return "";
     }
-    const details = err.details as
-      | { in_use_by?: { code: string }[] }
-      | undefined;
-    const inUse = details?.in_use_by ?? [];
-    return inUse.map((l) => l.code).join(", ");
+    const codes: string[] = [];
+    for (const item of inUse) {
+      if (
+        typeof item === "object" &&
+        item !== null &&
+        !Array.isArray(item) &&
+        typeof item.code === "string"
+      ) {
+        codes.push(item.code);
+      }
+    }
+    return codes.join(", ");
   }
 
-  function handleArchiveError(err: unknown) {
+  function handleArchiveError(apiErr: ApiError) {
     if (
-      isApiError(err, "CONTENT_IN_USE") ||
-      isApiError(err, "VERSION_CONFLICT") ||
-      (isApiError(err) && err.statusCode === 409)
+      apiErr.code === "CONTENT_IN_USE" ||
+      apiErr.code === "VERSION_CONFLICT" ||
+      apiErr.statusCode === 409
     ) {
-      const lessonCodes = extractInUseLessonCodes(err);
+      const lessonCodes = extractInUseLessonCodes(apiErr);
       if (lessonCodes) {
         actionNotification.value = `Không thể lưu trữ: Hoạt động đang được dùng trong các bài học (${lessonCodes})`;
         return;
       }
-      actionNotification.value = isApiError(err)
-        ? err.message
-        : "Xung đột phiên bản nội dung hoặc hoạt động đang được sử dụng";
+      actionNotification.value =
+        apiErr.message ||
+        "Xung đột phiên bản nội dung hoặc hoạt động đang được sử dụng";
       return;
     }
 
-    if (isApiError(err) || err instanceof Error) {
-      actionNotification.value = err.message;
-      return;
-    }
-
-    actionNotification.value = "Lỗi lưu trữ hoạt động";
+    actionNotification.value = apiErr.message || "Lỗi lưu trữ hoạt động";
   }
 
   async function promptArchiveActivity(act: ActivityItem) {
@@ -667,8 +721,8 @@
       });
       actionNotification.value = `Đã lưu trữ hoạt động ${act.code}`;
       fetchActivities();
-    } catch (err: unknown) {
-      handleArchiveError(err);
+    } catch (err) {
+      handleArchiveError(normalizeApiError(err));
     }
   }
 </script>

@@ -1,22 +1,27 @@
 <template>
-  <div class="curricula-studio p-6 space-y-6 max-w-7xl mx-auto">
+  <div
+    class="curricula-studio w-full p-4 sm:p-6 space-y-6 max-w-7xl mx-auto min-w-0"
+  >
     <!-- Header -->
     <div
-      class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 min-w-0"
     >
-      <div>
-        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
+      <div class="min-w-0">
+        <h1
+          class="text-2xl font-bold text-surface-900 dark:text-white break-words"
+        >
           Xưởng Thiết Kế Khung Chương Trình (Curriculum Studio)
         </h1>
-        <p class="text-sm text-surface-500 dark:text-surface-400">
+        <p class="text-sm text-surface-500 dark:text-surface-400 break-words">
           Biên soạn khung phân phối 8–52 tuần, phân bổ cân bằng 6 nhóm năng lực
           tư duy.
         </p>
       </div>
 
-      <div class="flex items-center gap-3" v-if="!isEditorActive">
+      <div class="flex items-center gap-3 shrink-0" v-if="!isEditorActive">
         <button
           class="min-h-11 px-5 py-2.5 rounded-2xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white font-semibold text-base shadow-sm transition-all flex items-center gap-2"
+          id="btn-create-curriculum"
           type="button"
           @click="openCreateCurriculum"
         >
@@ -27,12 +32,12 @@
 
     <!-- Notification Banner -->
     <div
-      class="p-4 rounded-2xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700 text-brand-900 dark:text-brand-200 text-sm flex items-center justify-between"
+      class="p-4 rounded-2xl bg-brand-50 dark:bg-brand-900/40 border border-brand-200 dark:border-brand-700 text-brand-900 dark:text-brand-200 text-sm flex items-center justify-between gap-3"
       v-if="actionNotification"
     >
-      <span>{{ actionNotification }}</span>
+      <span class="min-w-0 break-words">{{ actionNotification }}</span>
       <button
-        class="text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline"
+        class="min-h-11 px-3 py-1.5 text-xs font-bold text-brand-600 dark:text-brand-400 hover:underline shrink-0"
         type="button"
         @click="dismissNotification"
       >
@@ -41,50 +46,121 @@
     </div>
 
     <!-- Filter & List View (when not editing) -->
-    <CurriculumListView
-      v-if="!isEditorActive"
-      :curricula-list="curriculaList"
-      :filters="filters"
-      :is-loading="isLoading"
-      @delete="deleteCurriculum"
-      @duplicate="duplicateCurriculum"
-      @edit="openEditCurriculum"
-      @filter-change="fetchCurricula"
-    />
+    <div class="space-y-4 min-w-0" v-if="!isEditorActive">
+      <div
+        class="p-4 rounded-2xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-sm flex flex-wrap gap-3 items-end min-w-0"
+      >
+        <div class="w-full sm:flex-1 min-w-0">
+          <label
+            class="block text-xs font-semibold text-surface-600 dark:text-surface-300 mb-1"
+            for="filter-curriculum-q"
+          >
+            Tìm kiếm chương trình
+          </label>
+          <input
+            class="w-full min-h-11 px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+            id="filter-curriculum-q"
+            placeholder="Nhập mã CUR-xxx hoặc tiêu đề..."
+            type="text"
+            v-model="filters.q"
+            @input="fetchCurricula"
+            @keyup.enter="fetchCurricula"
+          >
+        </div>
+
+        <div class="w-full sm:w-48 min-w-0">
+          <label
+            class="block text-xs font-semibold text-surface-600 dark:text-surface-300 mb-1"
+            for="filter-curriculum-type"
+          >
+            Loại hình
+          </label>
+          <select
+            class="w-full min-h-11 px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
+            id="filter-curriculum-type"
+            v-model="filters.program_type"
+            @change="fetchCurricula"
+          >
+            <option value="">Tất cả</option>
+            <option value="age_based">Theo độ tuổi</option>
+            <option value="journey">Hành trình</option>
+          </select>
+        </div>
+
+        <div class="w-full sm:w-48 min-w-0">
+          <label
+            class="block text-xs font-semibold text-surface-600 dark:text-surface-300 mb-1"
+            for="filter-curriculum-status"
+          >
+            Trạng thái
+          </label>
+          <select
+            class="w-full min-h-11 px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
+            id="filter-curriculum-status"
+            v-model="filters.status"
+            @change="fetchCurricula"
+          >
+            <option value="">Tất cả</option>
+            <option value="draft">Bản nháp (draft)</option>
+            <option value="in_review">Chờ duyệt (in_review)</option>
+            <option value="approved">Đã duyệt (approved)</option>
+            <option value="published">Đã xuất bản (published)</option>
+            <option value="archived">Lưu trữ (archived)</option>
+          </select>
+        </div>
+
+        <button
+          class="min-h-11 px-4 py-2 text-sm font-semibold rounded-xl bg-surface-100 hover:bg-surface-200 dark:bg-surface-700 dark:hover:bg-surface-600 text-surface-800 dark:text-surface-100 transition-colors shrink-0"
+          id="btn-filter-curricula"
+          type="button"
+          @click="fetchCurricula"
+        >
+          Lọc danh sách
+        </button>
+      </div>
+
+      <CurriculumListTable
+        :curricula="curriculaList"
+        :is-loading="isLoading"
+        @delete="deleteCurriculum"
+        @duplicate="duplicateCurriculum"
+        @edit="openEditCurriculum"
+      />
+    </div>
 
     <!-- Curriculum Matrix Editor -->
-    <div class="space-y-6" v-else>
+    <div class="space-y-6 min-w-0" v-else>
       <!-- Top Action Bar -->
       <div
         class="p-4 rounded-3xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-sm flex flex-wrap gap-4 items-center justify-between sticky top-4 z-10"
       >
-        <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center gap-3">
           <button
-            class="min-h-10 px-3 py-2 text-sm font-semibold rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-700 dark:bg-surface-700 dark:text-surface-200"
+            class="min-h-11 px-3 py-2 text-sm font-semibold rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-700 dark:bg-surface-700 dark:text-surface-200"
             type="button"
             @click="closeEditor"
           >
             ← Danh sách
           </button>
           <div>
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
               <span
                 class="font-mono font-bold text-surface-900 dark:text-white text-base"
               >
-                {{ activeCurriculum.code }}
-                v{{ activeCurriculum.content_version }}
+                {{ activeCurriculum.code || "CUR-NEW" }}
+                v{{ activeCurriculum.content_version || 1 }}
               </span>
               <span
                 class="px-2 py-0.5 text-xs font-bold rounded-full"
                 :class="getStatusBadgeClass(activeCurriculum.status || 'draft')"
               >
-                {{ activeCurriculum.status }}
+                {{ activeCurriculum.status || "draft" }}
               </span>
               <span
                 class="px-2 py-0.5 text-xs font-mono rounded-xl bg-surface-100 dark:bg-surface-700 text-surface-600 dark:text-surface-300"
                 title="Khóa kiểm soát đồng thời"
               >
-                Lock v{{ activeCurriculum.content_version }}
+                Lock v{{ activeCurriculum.content_version || 1 }}
               </span>
             </div>
             <span class="text-xs text-surface-500" v-if="autosaveStatus">
@@ -93,16 +169,17 @@
           </div>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center gap-3">
           <button
-            class="min-h-10 px-4 py-2 text-sm font-semibold rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-700 dark:bg-surface-700 dark:text-surface-200"
+            class="min-h-11 px-4 py-2 text-sm font-semibold rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-700 dark:bg-surface-700 dark:text-surface-200"
             type="button"
+            v-if="activeCurriculum.code"
             @click="duplicateActiveCurriculum"
           >
             Nhân bản (Clone)
           </button>
           <button
-            class="min-h-10 px-5 py-2 text-sm font-semibold rounded-xl bg-success-600 hover:bg-success-700 active:scale-95 text-white shadow-sm transition-all"
+            class="min-h-11 px-5 py-2 text-sm font-semibold rounded-xl bg-success-600 hover:bg-success-700 active:scale-95 text-white shadow-sm transition-all"
             type="button"
             v-if="activeCurriculum.status === 'draft'"
             @click="submitForReview"
@@ -110,36 +187,187 @@
             Gửi duyệt (Submit)
           </button>
           <button
-            class="min-h-10 px-6 py-2 text-sm font-bold rounded-xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white shadow-sm transition-all"
+            class="min-h-11 px-6 py-2 text-sm font-bold rounded-xl bg-brand-600 hover:bg-brand-700 active:scale-95 text-white shadow-sm transition-all"
             type="button"
             :disabled="isSaving"
             @click="saveAll"
           >
-            {{ isSaving ? 'Đang lưu...' : 'Lưu thay đổi' }}
+            {{ isSaving ? "Đang lưu..." : "Lưu thay đổi" }}
           </button>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 min-w-0">
         <!-- Main Column: Metadata & Week/Session Matrix -->
-        <div class="lg:col-span-2 space-y-6">
+        <div class="lg:col-span-2 space-y-6 min-w-0">
           <!-- Metadata Settings Card -->
-          <CurriculumConfigCard v-model="activeCurriculum" />
+          <div
+            class="p-5 sm:p-6 rounded-3xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-sm space-y-4"
+          >
+            <h2 class="text-lg font-bold text-surface-900 dark:text-white">
+              1. Cấu hình thông tin chương trình
+            </h2>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="sm:col-span-2">
+                <label
+                  class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
+                  for="curr-title"
+                >
+                  Tiêu đề chương trình *
+                </label>
+                <input
+                  class="w-full min-h-11 px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
+                  id="curr-title"
+                  placeholder="VD: Chương trình tư duy mầm non 3-4 tuổi"
+                  type="text"
+                  v-model="activeCurriculum.title"
+                >
+              </div>
+
+              <div>
+                <label
+                  class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
+                  for="curr-program-type"
+                >
+                  Loại hình chương trình
+                </label>
+                <select
+                  class="w-full min-h-11 px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
+                  id="curr-program-type"
+                  v-model="activeCurriculum.program_type"
+                >
+                  <option value="age_based">Theo độ tuổi (age_based)</option>
+                  <option value="journey">Hành trình (journey)</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
+                  for="curr-access-tier"
+                >
+                  Phân tầng gói cước (Access Tier)
+                </label>
+                <select
+                  class="w-full min-h-11 px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
+                  id="curr-access-tier"
+                  v-model="activeCurriculum.access_tier"
+                >
+                  <option value="free">Free</option>
+                  <option value="login">Login</option>
+                  <option value="standard">Standard</option>
+                  <option value="premium">Premium</option>
+                </select>
+              </div>
+
+              <div>
+                <label
+                  class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
+                  for="curr-age-min"
+                >
+                  Độ tuổi tối thiểu
+                </label>
+                <input
+                  class="w-full min-h-11 px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
+                  id="curr-age-min"
+                  max="6"
+                  min="3"
+                  type="number"
+                  v-model.number="activeCurriculum.target_age_min"
+                >
+              </div>
+
+              <div>
+                <label
+                  class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
+                  for="curr-age-max"
+                >
+                  Độ tuổi tối đa
+                </label>
+                <input
+                  class="w-full min-h-11 px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
+                  id="curr-age-max"
+                  max="6"
+                  min="3"
+                  type="number"
+                  v-model.number="activeCurriculum.target_age_max"
+                >
+              </div>
+
+              <div>
+                <label
+                  class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
+                  for="curr-duration-weeks"
+                >
+                  Số tuần (Duration Weeks)
+                </label>
+                <input
+                  class="w-full min-h-11 px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
+                  id="curr-duration-weeks"
+                  max="52"
+                  min="1"
+                  type="number"
+                  v-model.number="activeCurriculum.duration_weeks"
+                  @change="syncWeeksCount"
+                >
+              </div>
+
+              <div>
+                <label
+                  class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
+                  for="curr-sessions-per-week"
+                >
+                  Số buổi mỗi tuần
+                </label>
+                <input
+                  class="w-full min-h-11 px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
+                  id="curr-sessions-per-week"
+                  max="7"
+                  min="1"
+                  type="number"
+                  v-model.number="activeCurriculum.sessions_per_week"
+                >
+              </div>
+
+              <div class="sm:col-span-2">
+                <label
+                  class="block text-xs font-bold text-surface-700 dark:text-surface-300 mb-1"
+                  for="curr-description"
+                >
+                  Mô tả chương trình
+                </label>
+                <textarea
+                  class="w-full px-3 py-2 text-base rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
+                  id="curr-description"
+                  placeholder="Mô tả định hướng sư phạm của chương trình..."
+                  rows="2"
+                  v-model="activeCurriculum.description"
+                />
+              </div>
+            </div>
+          </div>
 
           <!-- Week-by-Week Matrix Editor Component -->
-          <CurriculumWeeksMatrix
+          <CurriculumWeekMatrix
             :duration-weeks="activeCurriculum.duration_weeks || 1"
             :items="activeItems"
             :sessions-per-week="activeCurriculum.sessions_per_week || 3"
             :weeks="activeWeeks"
-            @open-add-drawer="openAddDrawer"
+            @open-drawer="openAddDrawer"
             @remove-item="removeItem"
-            @update-week-goal="updateWeekGoal"
+            @update-goal="updateWeekGoal"
           />
         </div>
 
         <!-- Sidebar: Real-time Balance Engine Indicators -->
-        <CurriculumBalancePanel :report="balanceReport" />
+        <div class="min-w-0">
+          <CurriculumBalancePanel
+            :game-levels-count="gameLevelsCount"
+            :lessons-count="lessonsCount"
+            :report="balanceReport"
+          />
+        </div>
       </div>
     </div>
 
@@ -156,17 +384,14 @@
 </template>
 
 <script lang="ts" setup>
-  import { calculateCurriculumBalance } from "@mindkid/shared/client";
-  import { computed, onMounted, ref } from "vue";
+  import { onMounted } from "vue";
   import { definePageMeta, useHead } from "#imports";
-  import CurriculumActivityDrawer, {
-    type LibraryItem,
-  } from "~/components/studio/curriculum-activity-drawer.vue";
+  import CurriculumActivityDrawer from "~/components/studio/curriculum-activity-drawer.vue";
   import CurriculumBalancePanel from "~/components/studio/curriculum-balance-panel.vue";
-  import CurriculumListTable, {
-    type CurriculumTableItem,
-  } from "~/components/studio/curriculum-list-table.vue";
+  import CurriculumListTable from "~/components/studio/curriculum-list-table.vue";
   import CurriculumWeekMatrix from "~/components/studio/curriculum-week-matrix.vue";
+  import { useCurriculumStudio } from "~/composables/use-curriculum-studio";
+  import { getStatusBadgeClass } from "~/utils/worksheet-studio";
 
   definePageMeta({
     layout: "manager",
@@ -176,576 +401,45 @@
     title: "Studio khung chương trình",
   });
 
-  interface CurriculumItemRow {
-    id?: number;
-    week_no: number;
-    session_no: number;
-    position: number;
-    entity_type: "lesson" | "game_level";
-    entity_id: number;
-    is_required?: boolean;
-    code?: string;
-    title?: string;
-    status?: string;
-    competency_code?: string;
-    difficulty?: number;
-    estimated_minutes?: number;
-  }
-
-  interface CurriculumWeekRow {
-    week_no: number;
-    goal: string;
-  }
-
-  interface CurriculumData {
-    id?: number;
-    code?: string;
-    content_version?: number;
-    program_type?: "age_based" | "journey";
-    target_age_min?: number;
-    target_age_max?: number;
-    duration_weeks?: number;
-    sessions_per_week?: number;
-    title?: string;
-    description?: string;
-    access_tier?: "free" | "login" | "standard" | "premium";
-    status?: string;
-    weeks?: CurriculumWeekRow[];
-    items?: CurriculumItemRow[];
-  }
-
-  type CurriculumListItem = CurriculumData;
-
-  interface ApiCurriculaResponse {
-    items: Array<{
-      id: number;
-      code: string;
-      contentVersion: number;
-      programType: "age_based" | "journey";
-      targetAgeMin?: number;
-      targetAgeMax?: number;
-      durationWeeks: number;
-      sessionsPerWeek: number;
-      title: string;
-      description?: string;
-      accessTier: "free" | "login" | "standard" | "premium";
-      status: string;
-    }>;
-  }
-
-  interface ApiCurriculumDetailResponse {
-    id: number;
-    code: string;
-    contentVersion: number;
-    programType: "age_based" | "journey";
-    targetAgeMin?: number;
-    targetAgeMax?: number;
-    durationWeeks: number;
-    sessionsPerWeek: number;
-    title: string;
-    description?: string;
-    accessTier: "free" | "login" | "standard" | "premium";
-    status: string;
-    weeks: Array<{ weekNo: number; goal: string }>;
-    items: Array<{
-      id: number;
-      weekNo: number;
-      sessionNo: number;
-      position: number;
-      entityType: "lesson" | "game_level";
-      entityId: number;
-      isRequired?: boolean;
-      code?: string;
-      title?: string;
-      status?: string;
-      competency_code?: string;
-      difficulty?: number;
-      estimated_minutes?: number;
-    }>;
-  }
-
-  const curriculaList = ref<CurriculumData[]>([]);
-  const activeCurriculum = ref<CurriculumData>({});
-  const activeWeeks = ref<CurriculumWeekRow[]>([]);
-  const activeItems = ref<CurriculumItemRow[]>([]);
-
-  const libraryItems = ref<LibraryItem[]>([]);
-  const isLoading = ref(true);
-  const isSaving = ref(false);
-  const isEditorActive = ref(false);
-  const isDrawerOpen = ref(false);
-  const targetWeek = ref(1);
-  const targetSession = ref(1);
-  const actionNotification = ref("");
-  const autosaveStatus = ref("");
-
-  const filters = ref({
-    q: "",
-    program_type: "",
-    status: "",
-  });
+  const {
+    curriculaList,
+    activeCurriculum,
+    activeWeeks,
+    activeItems,
+    libraryItems,
+    isLoading,
+    isSaving,
+    isEditorActive,
+    isDrawerOpen,
+    targetWeek,
+    targetSession,
+    actionNotification,
+    autosaveStatus,
+    filters,
+    lessonsCount,
+    gameLevelsCount,
+    balanceReport,
+    dismissNotification,
+    fetchCurricula,
+    fetchLibraryItems,
+    syncWeeksCount,
+    openCreateCurriculum,
+    openEditCurriculum,
+    closeEditor,
+    updateWeekGoal,
+    openAddDrawer,
+    closeDrawer,
+    selectItemForSession,
+    removeItem,
+    saveAll,
+    duplicateActiveCurriculum,
+    duplicateCurriculum,
+    deleteCurriculum,
+    submitForReview,
+  } = useCurriculumStudio();
 
   onMounted(() => {
     fetchCurricula();
     fetchLibraryItems();
   });
-
-  function getStatusBadgeClass(status?: string): string {
-    if (status === "published") {
-      return "bg-success-500 text-white";
-    }
-    if (status === "approved") {
-      return "bg-brand-500 text-white";
-    }
-    if (status === "in_review") {
-      return "bg-warning-500 text-white";
-    }
-    if (status === "archived") {
-      return "bg-surface-400 text-white";
-    }
-    return "bg-surface-200 text-surface-700 dark:bg-surface-700 dark:text-surface-300";
-  }
-
-  function dismissNotification() {
-    actionNotification.value = "";
-  }
-
-  async function fetchCurricula() {
-    isLoading.value = true;
-    try {
-      const params = new URLSearchParams();
-      if (filters.value.q) {
-        params.set("search", filters.value.q);
-      }
-      if (filters.value.program_type) {
-        params.set("program_type", filters.value.program_type);
-      }
-      if (filters.value.status) {
-        params.set("status", filters.value.status);
-      }
-
-      const res = await apiFetch<ApiCurriculaResponse>(
-        `/api/managers/curricula?${params.toString()}`
-      );
-      curriculaList.value = res.items.map((i) => ({
-        id: i.id,
-        code: i.code,
-        content_version: i.contentVersion,
-        program_type: i.programType,
-        target_age_min: i.targetAgeMin,
-        target_age_max: i.targetAgeMax,
-        duration_weeks: i.durationWeeks,
-        sessions_per_week: i.sessionsPerWeek,
-        title: i.title,
-        description: i.description,
-        access_tier: i.accessTier,
-        status: i.status,
-      }));
-    } catch {
-      actionNotification.value = "Lỗi khi tải danh sách chương trình.";
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  async function fetchLibraryItems() {
-    try {
-      const [lesRes, lvlRes] = await Promise.all([
-        apiFetch<{
-          items: Array<{
-            entity_id: number;
-            code: string;
-            title: string;
-            estimated_minutes?: number;
-          }>;
-        }>("/api/managers/content/search?type=lessons&limit=100").catch(() => ({
-          items: [],
-        })),
-        apiFetch<{
-          items: Array<{
-            entity_id: number;
-            code: string;
-            title: string;
-            difficulty?: number;
-          }>;
-        }>("/api/managers/content/search?type=game_levels&limit=100").catch(
-          () => ({
-            items: [],
-          })
-        ),
-      ]);
-
-      const list: LibraryItem[] = [];
-      for (const les of lesRes.items) {
-        list.push({
-          entity_type: "lesson",
-          entity_id: les.entity_id,
-          code: les.code,
-          title: les.title,
-          estimated_minutes: les.estimated_minutes ?? 20,
-        });
-      }
-      for (const lvl of lvlRes.items) {
-        list.push({
-          entity_type: "game_level",
-          entity_id: lvl.entity_id,
-          code: lvl.code,
-          title: lvl.title,
-          difficulty: lvl.difficulty ?? 1,
-          estimated_minutes: 10,
-        });
-      }
-      libraryItems.value = list;
-    } catch {
-      libraryItems.value = [];
-    }
-  }
-
-  function openCreateCurriculum() {
-    activeCurriculum.value = {
-      title: "Chương trình học mới",
-      program_type: "age_based",
-      target_age_min: 3,
-      target_age_max: 4,
-      duration_weeks: 8,
-      sessions_per_week: 3,
-      access_tier: "standard",
-      status: "draft",
-      content_version: 1,
-    };
-    activeWeeks.value = Array.from({ length: 8 }, (_, i) => ({
-      week_no: i + 1,
-      goal: `Mục tiêu tuần ${i + 1}`,
-    }));
-    activeItems.value = [];
-    isEditorActive.value = true;
-  }
-
-  async function openEditCurriculum(curr: CurriculumListItem) {
-    isLoading.value = true;
-    try {
-      const res = await apiFetch<ApiCurriculumDetailResponse>(
-        `/api/managers/curricula/${curr.code}/${curr.content_version}`
-      );
-      activeCurriculum.value = {
-        id: res.id,
-        code: res.code,
-        content_version: res.contentVersion,
-        program_type: res.programType,
-        target_age_min: res.targetAgeMin,
-        target_age_max: res.targetAgeMax,
-        duration_weeks: res.durationWeeks,
-        sessions_per_week: res.sessionsPerWeek,
-        title: res.title,
-        description: res.description,
-        access_tier: res.accessTier,
-        status: res.status,
-      };
-
-      activeWeeks.value = res.weeks.map((w) => ({
-        week_no: w.weekNo,
-        goal: w.goal,
-      }));
-
-      activeItems.value = res.items.map((it) => ({
-        id: it.id,
-        week_no: it.weekNo,
-        session_no: it.sessionNo,
-        position: it.position,
-        entity_type: it.entityType,
-        entity_id: it.entityId,
-        is_required: it.isRequired ?? true,
-        code: it.code,
-        title: it.title,
-        status: it.status,
-        competency_code: it.competency_code,
-        difficulty: it.difficulty,
-        estimated_minutes: it.estimated_minutes,
-      }));
-
-      isEditorActive.value = true;
-    } catch {
-      actionNotification.value = "Lỗi khi tải chi tiết chương trình.";
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  function closeEditor() {
-    isEditorActive.value = false;
-    activeCurriculum.value = {};
-    activeWeeks.value = [];
-    activeItems.value = [];
-    fetchCurricula();
-  }
-
-  function updateWeekGoal(w: number, goal: string) {
-    const wk = activeWeeks.value.find((item) => item.week_no === w);
-    if (wk) {
-      wk.goal = goal;
-    } else {
-      activeWeeks.value.push({ week_no: w, goal });
-    }
-  }
-
-  function openAddDrawer(w: number, s: number) {
-    targetWeek.value = w;
-    targetSession.value = s;
-    isDrawerOpen.value = true;
-  }
-
-  function closeDrawer() {
-    isDrawerOpen.value = false;
-  }
-
-  function selectItemForSession(item: LibraryItem) {
-    const existingInSession = activeItems.value.filter(
-      (it) =>
-        it.week_no === targetWeek.value && it.session_no === targetSession.value
-    );
-    const nextPos = existingInSession.length + 1;
-
-    activeItems.value.push({
-      week_no: targetWeek.value,
-      session_no: targetSession.value,
-      position: nextPos,
-      entity_type: item.entity_type,
-      entity_id: item.entity_id,
-      is_required: true,
-      code: item.code,
-      title: item.title,
-      competency_code: item.competency_code,
-      difficulty: item.difficulty,
-      estimated_minutes: item.estimated_minutes,
-    });
-    closeDrawer();
-  }
-
-  function removeItem(w: number, s: number, index: number) {
-    const sessionItems = activeItems.value.filter(
-      (it) => it.week_no === w && it.session_no === s
-    );
-    const targetItem = sessionItems[index];
-    if (targetItem) {
-      activeItems.value = activeItems.value.filter((it) => it !== targetItem);
-      // Re-index positions
-      const remaining = activeItems.value.filter(
-        (it) => it.week_no === w && it.session_no === s
-      );
-      remaining.forEach((it, idx) => {
-        it.position = idx + 1;
-      });
-    }
-  }
-
-  const balanceReport = computed(() => {
-    return calculateCurriculumBalance({
-      code: activeCurriculum.value.code || "DRAFT",
-      program_type: activeCurriculum.value.program_type || "age_based",
-      duration_weeks: activeCurriculum.value.duration_weeks || 8,
-      sessions_per_week: activeCurriculum.value.sessions_per_week || 3,
-      title: activeCurriculum.value.title || "Draft Curriculum",
-      target_age_min: activeCurriculum.value.target_age_min,
-      target_age_max: activeCurriculum.value.target_age_max,
-      status: activeCurriculum.value.status || "draft",
-      weeks: activeWeeks.value.map((w) => ({
-        week_no: w.week_no,
-        goal: w.goal,
-      })),
-      items: activeItems.value.map((it) => ({
-        week_no: it.week_no,
-        session_no: it.session_no,
-        position: it.position,
-        entity_type: it.entity_type,
-        entity_id: it.entity_id,
-        code: it.code,
-        title: it.title,
-        status: it.status,
-        competency_code: it.competency_code,
-        difficulty: it.difficulty,
-        estimated_minutes: it.estimated_minutes,
-        is_required: it.is_required,
-      })),
-    });
-  });
-
-  async function saveAll() {
-    isSaving.value = true;
-    try {
-      if (
-        activeCurriculum.value.code &&
-        activeCurriculum.value.content_version
-      ) {
-        // Update metadata
-        await apiFetch(
-          `/api/managers/curricula/${activeCurriculum.value.code}/${activeCurriculum.value.content_version}`,
-          {
-            method: "PATCH",
-            body: {
-              expected_version: activeCurriculum.value.content_version,
-              title: activeCurriculum.value.title,
-              description: activeCurriculum.value.description,
-              program_type: activeCurriculum.value.program_type,
-              target_age_min: activeCurriculum.value.target_age_min,
-              target_age_max: activeCurriculum.value.target_age_max,
-              duration_weeks: activeCurriculum.value.duration_weeks,
-              sessions_per_week: activeCurriculum.value.sessions_per_week,
-              access_tier: activeCurriculum.value.access_tier,
-            },
-          }
-        );
-
-        // Update weeks
-        await apiFetch(
-          `/api/managers/curricula/${activeCurriculum.value.code}/${activeCurriculum.value.content_version}/weeks`,
-          {
-            method: "PUT",
-            body: {
-              expected_version: activeCurriculum.value.content_version,
-              weeks: activeWeeks.value.map((w) => ({
-                week_no: w.week_no,
-                goal: w.goal,
-              })),
-            },
-          }
-        );
-
-        // Update items
-        await apiFetch(
-          `/api/managers/curricula/${activeCurriculum.value.code}/${activeCurriculum.value.content_version}/items`,
-          {
-            method: "PUT",
-            body: {
-              expected_version: activeCurriculum.value.content_version,
-              items: activeItems.value.map((it) => ({
-                week_no: it.week_no,
-                session_no: it.session_no,
-                position: it.position,
-                entity_type: it.entity_type,
-                entity_id: it.entity_id,
-                is_required: it.is_required ?? true,
-              })),
-            },
-          }
-        );
-
-        actionNotification.value =
-          "Đã lưu toàn bộ khung chương trình thành công!";
-      } else {
-        // Create new
-        const created = await apiFetch<{
-          id: number;
-          code: string;
-          contentVersion: number;
-        }>("/api/managers/curricula", {
-          method: "POST",
-          body: {
-            title: activeCurriculum.value.title,
-            description: activeCurriculum.value.description,
-            program_type: activeCurriculum.value.program_type,
-            target_age_min: activeCurriculum.value.target_age_min,
-            target_age_max: activeCurriculum.value.target_age_max,
-            duration_weeks: activeCurriculum.value.duration_weeks,
-            sessions_per_week: activeCurriculum.value.sessions_per_week,
-            access_tier: activeCurriculum.value.access_tier,
-            weeks: activeWeeks.value,
-            items: activeItems.value,
-          },
-        });
-        activeCurriculum.value.id = created.id;
-        activeCurriculum.value.code = created.code;
-        activeCurriculum.value.content_version = created.contentVersion;
-        actionNotification.value = `Đã tạo chương trình ${created.code} thành công!`;
-      }
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Không thể kết nối";
-      actionNotification.value = `Lỗi lưu chương trình: ${msg}`;
-    } finally {
-      isSaving.value = false;
-    }
-  }
-
-  async function duplicateActiveCurriculum() {
-    if (!activeCurriculum.value.code) {
-      return;
-    }
-    try {
-      const dup = await apiFetch<{
-        code: string;
-        content_version?: number;
-        contentVersion?: number;
-      }>(
-        `/api/managers/curricula/${activeCurriculum.value.code}/${activeCurriculum.value.content_version}/duplicate`,
-        {
-          method: "POST",
-        }
-      );
-      actionNotification.value = `Đã nhân bản thành ${dup.code}!`;
-      openEditCurriculum({
-        code: dup.code,
-        content_version: dup.contentVersion || dup.content_version || 1,
-      });
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Lỗi không xác định";
-      actionNotification.value = `Lỗi nhân bản: ${msg}`;
-    }
-  }
-
-  async function duplicateCurriculum(curr: CurriculumListItem) {
-    try {
-      const dup = await apiFetch<{ code: string }>(
-        `/api/managers/curricula/${curr.code}/${curr.content_version}/duplicate`,
-        {
-          method: "POST",
-        }
-      );
-      actionNotification.value = `Đã nhân bản ${curr.code} thành ${dup.code}!`;
-      fetchCurricula();
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Lỗi không xác định";
-      actionNotification.value = `Lỗi nhân bản: ${msg}`;
-    }
-  }
-
-  async function deleteCurriculum(curr: CurriculumListItem) {
-    try {
-      await apiFetch(
-        `/api/managers/curricula/${curr.code}/${curr.content_version}`,
-        {
-          method: "DELETE",
-        }
-      );
-      actionNotification.value = `Đã xoá ${curr.code}!`;
-      fetchCurricula();
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Lỗi không xác định";
-      actionNotification.value = `Lỗi xoá: ${msg}`;
-    }
-  }
-
-  async function submitForReview() {
-    if (!activeCurriculum.value.id) {
-      actionNotification.value =
-        "Vui lòng lưu chương trình trước khi gửi duyệt.";
-      return;
-    }
-    try {
-      await apiFetch(
-        `/api/managers/content/curriculum/${activeCurriculum.value.id}/transition`,
-        {
-          method: "POST",
-          body: {
-            target_status: "in_review",
-          },
-        }
-      );
-      activeCurriculum.value.status = "in_review";
-      actionNotification.value =
-        "Đã gửi chương trình lên hàng duyệt thành công!";
-    } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : "Vi phạm quy chuẩn sư phạm";
-      actionNotification.value = `Lỗi gửi duyệt: ${msg}`;
-    }
-  }
 </script>

@@ -24,9 +24,11 @@
           {{ isMfaStep ? "Xác thực hai bước (MFA)" : "Chào mừng trở lại!" }}
         </h1>
         <p class="mt-1 text-sm text-surface-600 dark:text-surface-400">
-          {{ isMfaStep
+          {{
+            isMfaStep
               ? "Nhập mã xác thực 6 chữ số từ ứng dụng bảo mật của bạn."
-              : "Đăng nhập để tiếp tục hành trình học tập cùng bé" }}
+              : "Đăng nhập để tiếp tục hành trình học tập cùng bé"
+          }}
         </p>
       </div>
 
@@ -68,9 +70,9 @@
           class="h-5 w-5 shrink-0 text-danger-600 dark:text-danger-400"
           name="i-lucide-alert-circle"
         />
-        <span class="text-sm font-semibold leading-snug"
-          >{{ errorMessage }}</span
-        >
+        <span class="text-sm font-semibold leading-snug">{{
+          errorMessage
+        }}</span>
       </div>
 
       <!-- MFA Verification Form -->

@@ -4,7 +4,6 @@
 
     <main class="catalog-main" id="main-content">
       <div class="section-container">
-        <!-- Header Hero -->
         <header class="catalog-header">
           <div class="header-content">
             <div class="header-badge">
@@ -17,14 +16,12 @@
               nhóm năng lực nền tảng cho trẻ mầm non (3–6 tuổi).
             </p>
           </div>
-
-          <!-- Ô tìm kiếm từ khóa lớn -->
           <div class="search-bar-wrap">
             <div class="search-input-box">
               <UIcon class="search-icon" name="i-lucide-search" />
               <input
                 aria-label="Tìm kiếm trò chơi hoặc kỹ năng"
-                class="search-input"
+                class="search-input min-h-11"
                 placeholder="Tìm theo tên trò chơi, kỹ năng (ví dụ: đếm, mê cung, hình vuông, so sánh)..."
                 type="search"
                 :value="searchKeyword"
@@ -32,7 +29,7 @@
               >
               <button
                 aria-label="Xoá tìm kiếm"
-                class="search-clear-btn"
+                class="search-clear-btn min-h-11 min-w-11"
                 type="button"
                 v-if="searchKeyword"
                 @click="clearSearch"
@@ -42,12 +39,13 @@
             </div>
           </div>
         </header>
-
-        <!-- Thanh năng lực dạng chip cuộn ngang trên mobile -->
         <nav aria-label="Nhóm năng lực tư duy" class="mobile-competency-bar">
           <button
             type="button"
-            :class="['mobile-comp-chip', { active: selectedCompetency === '' }]"
+            :class="[
+              'mobile-comp-chip min-h-11',
+              { active: selectedCompetency === '' }
+            ]"
             @click="selectCompetency('')"
           >
             <span class="inline-flex items-center gap-1">
@@ -63,22 +61,30 @@
             type="button"
             v-for="comp in COMPETENCY_OPTIONS"
             :key="comp.value"
-            :class="['mobile-comp-chip', { active: selectedCompetency === comp.value }]"
+            :class="[
+              'mobile-comp-chip min-h-11',
+              { active: selectedCompetency === comp.value }
+            ]"
             @click="selectCompetency(comp.value)"
           >
-            <span>{{ comp.emoji }} {{ comp.label }}</span>
+            <span class="inline-flex items-center gap-1.5">
+              <UIcon
+                aria-hidden="true"
+                class="w-4 h-4 shrink-0"
+                :name="getCompetencyIcon(comp.value)"
+              />
+              <span>{{ comp.label }}</span>
+            </span>
             <span
               class="chip-count"
               v-if="facetCount('competency', comp.value) !== null"
             >
-              ({{ facetCount('competency', comp.value) }})
+              ({{ facetCount("competency", comp.value) }})
             </span>
           </button>
         </nav>
 
-        <!-- Layout 2 cột: Sidebar Danh mục năng lực & Kỹ năng + Lưới trò chơi -->
         <div class="catalog-layout">
-          <!-- Cột trái: Sidebar gom nhóm năng lực & mạch kỹ năng -->
           <CatalogSidebar
             :facet-counts="competencyFacetCounts"
             :selected-competency="selectedCompetency"
@@ -88,18 +94,17 @@
             @select-competency="selectCompetency"
             @select-strand="selectStrand"
           />
-
-          <!-- Cột phải: Thanh lọc chi tiết + Lưới thẻ trò chơi -->
           <section aria-label="Danh sách trò chơi" class="catalog-content-area">
-            <!-- Thanh Quick Filters (Độ tuổi, Gói, Độ khó, Sắp xếp) -->
             <search aria-label="Bộ lọc chi tiết" class="quick-filter-toolbar">
-              <!-- Bộ lọc Độ tuổi (Segmented Pills) -->
               <div class="filter-section-block">
                 <span class="filter-block-label">Độ tuổi:</span>
                 <div class="filter-pills-row">
                   <button
                     type="button"
-                    :class="['filter-pill-btn', { active: selectedAgeBand === '' }]"
+                    :class="[
+                      'filter-pill-btn min-h-11',
+                      { active: selectedAgeBand === '' }
+                    ]"
                     @click="setAgeBand('')"
                   >
                     Tất cả
@@ -109,7 +114,7 @@
                     v-for="option in AGE_BAND_OPTIONS"
                     :key="option.value"
                     :class="[
-                      'filter-pill-btn',
+                      'filter-pill-btn min-h-11',
                       { active: selectedAgeBand === option.value },
                       { disabled: isFacetEmpty('age_band', option.value) }
                     ]"
@@ -121,19 +126,16 @@
                       class="pill-count"
                       v-if="facetCount('age_band', option.value) !== null"
                     >
-                      ({{ facetCount('age_band', option.value) }})
+                      ({{ facetCount("age_band", option.value) }})
                     </span>
                   </button>
                 </div>
               </div>
-
-              <!-- Hàng bộ lọc phụ: Quyền truy cập + Độ khó + Sắp xếp -->
               <div class="filter-secondary-row">
-                <!-- Quyền truy cập -->
                 <div class="filter-select-wrap">
                   <label class="sr-only" for="filter-tier">Gói truy cập</label>
                   <select
-                    class="filter-compact-select"
+                    class="filter-compact-select min-h-11"
                     id="filter-tier"
                     v-model="selectedTier"
                     @change="updateFilters"
@@ -145,16 +147,16 @@
                       :disabled="isFacetEmpty('access_tier', option.value)"
                       :value="option.value"
                     >
-                      {{ facetLabel(option.label, "access_tier", option.value) }}
+                      {{
+                        facetLabel(option.label, "access_tier", option.value)
+                      }}
                     </option>
                   </select>
                 </div>
-
-                <!-- Độ khó (1-5 sao) -->
                 <div class="filter-select-wrap">
                   <label class="sr-only" for="filter-difficulty">Độ khó</label>
                   <select
-                    class="filter-compact-select"
+                    class="filter-compact-select min-h-11"
                     id="filter-difficulty"
                     v-model="selectedDifficulty"
                     @change="updateFilters"
@@ -167,12 +169,10 @@
                     <option value="5">●●●●● 5 - Xuất sắc</option>
                   </select>
                 </div>
-
-                <!-- Sắp xếp -->
                 <div class="filter-select-wrap ml-auto">
                   <label class="sr-only" for="filter-sort">Sắp xếp</label>
                   <select
-                    class="filter-compact-select"
+                    class="filter-compact-select min-h-11"
                     id="filter-sort"
                     v-model="selectedSort"
                     @change="updateFilters"
@@ -184,92 +184,104 @@
                 </div>
               </div>
             </search>
-
-            <!-- Thanh Active Filter Tags (khi có tiêu chí đang chọn) -->
             <div class="active-filters-bar" v-if="hasActiveFilters">
               <span class="active-filters-title">Đang lọc:</span>
               <div class="active-tags-list">
-                <!-- Tag Năng lực -->
                 <span class="active-tag" v-if="selectedCompetency">
-                  {{ findCompetency(selectedCompetency)?.name || selectedCompetency }}
+                  {{
+                    findCompetency(selectedCompetency)?.name ||
+                      selectedCompetency
+                  }}
                   <button
                     aria-label="Bỏ lọc năng lực"
-                    class="tag-close-btn"
+                    class="tag-close-btn min-h-11 min-w-11"
                     type="button"
                     @click="selectCompetency('')"
                   >
-                    ✕
+                    <UIcon
+                      aria-hidden="true"
+                      class="w-3.5 h-3.5"
+                      name="i-lucide-x"
+                    />
                   </button>
                 </span>
-
-                <!-- Tag Mạch kỹ năng -->
                 <span class="active-tag" v-if="selectedStrand">
                   Kỹ năng: {{ selectedStrandLabel }}
                   <button
                     aria-label="Bỏ lọc kỹ năng"
-                    class="tag-close-btn"
+                    class="tag-close-btn min-h-11 min-w-11"
                     type="button"
                     @click="selectStrand('')"
                   >
-                    ✕
+                    <UIcon
+                      aria-hidden="true"
+                      class="w-3.5 h-3.5"
+                      name="i-lucide-x"
+                    />
                   </button>
                 </span>
-
-                <!-- Tag Độ tuổi -->
                 <span class="active-tag" v-if="selectedAgeBand">
                   {{ getAgeBandLabel(selectedAgeBand) }}
                   <button
                     aria-label="Bỏ lọc độ tuổi"
-                    class="tag-close-btn"
+                    class="tag-close-btn min-h-11 min-w-11"
                     type="button"
                     @click="setAgeBand('')"
                   >
-                    ✕
+                    <UIcon
+                      aria-hidden="true"
+                      class="w-3.5 h-3.5"
+                      name="i-lucide-x"
+                    />
                   </button>
                 </span>
-
-                <!-- Tag Gói -->
                 <span class="active-tag" v-if="selectedTier">
                   {{ getTierFilterLabel(selectedTier) }}
                   <button
                     aria-label="Bỏ lọc gói truy cập"
-                    class="tag-close-btn"
+                    class="tag-close-btn min-h-11 min-w-11"
                     type="button"
                     @click="selectedTier = ''; updateFilters();"
                   >
-                    ✕
+                    <UIcon
+                      aria-hidden="true"
+                      class="w-3.5 h-3.5"
+                      name="i-lucide-x"
+                    />
                   </button>
                 </span>
-
-                <!-- Tag Độ khó -->
                 <span class="active-tag" v-if="selectedDifficulty">
-                  Độ khó: {{ '●'.repeat(Number(selectedDifficulty)) }}
+                  Độ khó: {{ "●".repeat(Number(selectedDifficulty)) }}
                   <button
                     aria-label="Bỏ lọc độ khó"
-                    class="tag-close-btn"
+                    class="tag-close-btn min-h-11 min-w-11"
                     type="button"
                     @click="selectedDifficulty = ''; updateFilters();"
                   >
-                    ✕
+                    <UIcon
+                      aria-hidden="true"
+                      class="w-3.5 h-3.5"
+                      name="i-lucide-x"
+                    />
                   </button>
                 </span>
-
-                <!-- Tag Từ khóa -->
                 <span class="active-tag" v-if="searchKeyword">
                   Từ khóa: "{{ searchKeyword }}"
                   <button
                     aria-label="Bỏ lọc từ khóa"
-                    class="tag-close-btn"
+                    class="tag-close-btn min-h-11 min-w-11"
                     type="button"
                     @click="clearSearch"
                   >
-                    ✕
+                    <UIcon
+                      aria-hidden="true"
+                      class="w-3.5 h-3.5"
+                      name="i-lucide-x"
+                    />
                   </button>
                 </span>
-
-                <!-- Nút Xoá tất cả -->
                 <button
-                  class="btn-clear-all-filters"
+                  class="btn-clear-all-filters min-h-11"
                   type="button"
                   @click="resetFilters"
                 >
@@ -305,7 +317,7 @@
                 thử xoá bớt bộ lọc hoặc tìm kiếm từ khoá khác nhé!
               </p>
               <button
-                class="btn-reset-filters"
+                class="btn-reset-filters min-h-11"
                 type="button"
                 @click="resetFilters"
               >
@@ -321,23 +333,33 @@
               v-if="hasPrevPage || nextCursor"
             >
               <button
-                class="page-nav-btn"
+                class="page-nav-btn min-h-11"
                 type="button"
                 :disabled="!hasPrevPage"
                 @click="prevPage"
               >
-                ← Trang trước
+                <UIcon
+                  aria-hidden="true"
+                  class="w-4 h-4 mr-1"
+                  name="i-lucide-arrow-left"
+                />
+                <span>Trang trước</span>
               </button>
               <span class="page-status">
                 Hiển thị {{ levels.length }} / {{ totalCount }} trò chơi
               </span>
               <button
-                class="page-nav-btn"
+                class="page-nav-btn min-h-11"
                 type="button"
                 :disabled="!nextCursor"
                 @click="nextPage"
               >
-                Trang sau →
+                <span>Trang sau</span>
+                <UIcon
+                  aria-hidden="true"
+                  class="w-4 h-4 ml-1"
+                  name="i-lucide-arrow-right"
+                />
               </button>
             </nav>
           </section>
@@ -379,85 +401,25 @@
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
   import { useApi } from "~/composables/use-api";
+  import {
+    AGE_BAND_OPTIONS,
+    type CatalogItem,
+    type CatalogResponse,
+    COMPETENCY_OPTIONS,
+    getAgeBandLabel,
+    getCompetencyIcon,
+    getTierFilterLabel,
+    normalizeStrandCode,
+    PAGE_SIZE,
+    TIER_OPTIONS,
+    type UserAccessContext,
+  } from "~/composables/use-games-catalog-page";
 
   definePageMeta({ layout: false });
-
-  interface CatalogItem {
-    code: string;
-    title: string;
-    competency: string | null;
-    age_band: string | null;
-    difficulty: number | null;
-    access_tier: AccessTier;
-    thumbnail_emoji: string | null;
-    locked: boolean;
-    cta: LevelCta;
-  }
-
-  interface CatalogFacets {
-    total: number;
-    competency: Record<string, number>;
-    age_band: Record<string, number>;
-    age: Record<string, number>;
-    access_tier: Record<string, number>;
-    strand?: Record<string, number>;
-  }
-
-  interface CatalogResponse {
-    items: CatalogItem[];
-    total: number;
-    facets: CatalogFacets;
-    next_cursor: string | null;
-  }
-
-  interface UserAccessContext {
-    has_active_child: boolean;
-    active_keys: string[];
-    allowed_tiers: string[];
-  }
-
-  /** Nhãn dẫn xuất từ nguồn duy nhất — Cấm — NEVER chép tay lại (task 165). */
-  const COMPETENCY_OPTIONS = COMPETENCY_CATALOG.map((entry) => ({
-    value: entry.code,
-    label: entry.name,
-    emoji: entry.emoji,
-  }));
-
-  const AGE_BAND_LABELS: Record<
-    AgeBand,
-    { label: string; shortLabel: string }
-  > = {
-    "3-4": { label: "3–4 tuổi (Lớp Mầm)", shortLabel: "3–4 tuổi (Mầm)" },
-    "4-5": { label: "4–5 tuổi (Lớp Chồi)", shortLabel: "4–5 tuổi (Chồi)" },
-    "5-6": { label: "5–6 tuổi (Lớp Lá)", shortLabel: "5–6 tuổi (Lá)" },
-  };
-
-  const AGE_BAND_OPTIONS = AGE_BANDS.map((band) => ({
-    value: band,
-    ...AGE_BAND_LABELS[band],
-  }));
-
-  const TIER_OPTIONS = [
-    { value: "free", label: "Miễn phí chơi thử" },
-    { value: "login", label: "Cần đăng ký tài khoản" },
-    { value: "standard", label: "Gói Tiêu chuẩn" },
-    { value: "premium", label: "Gói Premium" },
-  ] as const;
-
-  /** `BR-GCP-08` — trần phân trang 60. */
-  const PAGE_SIZE = 60;
 
   const route = useRoute();
   const router = useRouter();
   const { loggedIn } = useUserSession();
-
-  function normalizeStrandCode(raw: string | undefined): string {
-    if (!raw) {
-      return "";
-    }
-    const found = findStrand(raw);
-    return found ? found.code : raw;
-  }
 
   const selectedCompetency = ref((route.query.competency as string) || "");
   const selectedStrand = ref(
@@ -473,7 +435,6 @@
 
   const userAccessContext = ref<UserAccessContext | null>(null);
 
-  // Debounce search input
   let searchTimer: ReturnType<typeof setTimeout> | null = null;
   function onSearchInput(event: Event): void {
     const target = event.target as HTMLInputElement;
@@ -482,11 +443,16 @@
       clearTimeout(searchTimer);
     }
     searchTimer = setTimeout(() => {
+      searchTimer = null;
       updateFilters();
     }, 350);
   }
 
   function clearSearch(): void {
+    if (searchTimer) {
+      clearTimeout(searchTimer);
+      searchTimer = null;
+    }
     searchKeyword.value = "";
     updateFilters();
   }
@@ -568,17 +534,18 @@
   onMounted(async () => {
     if (loggedIn.value) {
       try {
-        const [ctx, playMap] = await Promise.all([
-          api<UserAccessContext>("/api/users/access-context", {
-            credentials: "include",
-          }),
-          api<{ completed_level_codes?: string[] }>("/api/users/play/map", {
-            credentials: "include",
-          }).catch(() => null),
-        ]);
+        const ctx = await api<UserAccessContext>("/api/users/access-context", {
+          credentials: "include",
+        });
         userAccessContext.value = ctx;
-        if (playMap?.completed_level_codes) {
-          completedLevelCodes.value = playMap.completed_level_codes;
+        if (ctx.has_active_child) {
+          const playMap = await api<{ completed_level_codes?: string[] }>(
+            "/api/users/play/map",
+            { credentials: "include" }
+          ).catch(() => null);
+          if (playMap?.completed_level_codes) {
+            completedLevelCodes.value = playMap.completed_level_codes;
+          }
         }
       } catch {
         // Keep guest perspective if access-context fails
@@ -713,6 +680,10 @@
   }
 
   function resetFilters(): void {
+    if (searchTimer) {
+      clearTimeout(searchTimer);
+      searchTimer = null;
+    }
     selectedCompetency.value = "";
     selectedStrand.value = "";
     selectedAgeBand.value = "";
@@ -744,16 +715,6 @@
     pushQuery();
   }
 
-  function getTierFilterLabel(tier: string): string {
-    const match = TIER_OPTIONS.find((t) => t.value === tier);
-    return match ? match.label : tier;
-  }
-
-  function getAgeBandLabel(band: string): string {
-    const match = AGE_BAND_OPTIONS.find((a) => a.value === band);
-    return match ? match.label : `${band} tuổi`;
-  }
-
   watch(
     () => route.query,
     (newQuery) => {
@@ -766,7 +727,9 @@
       selectedTier.value = (newQuery.access_tier as string) || "";
       selectedDifficulty.value = (newQuery.difficulty as string) || "";
       selectedSort.value = (newQuery.sort as string) || "relevance";
-      searchKeyword.value = (newQuery.q as string) || "";
+      if (!searchTimer) {
+        searchKeyword.value = (newQuery.q as string) || "";
+      }
       cursor.value = (newQuery.cursor as string) || "";
     }
   );
@@ -788,509 +751,5 @@
 </script>
 
 <style scoped>
-  .public-page-wrapper {
-    background-color: var(--color-surface-50);
-    color: var(--color-surface-800);
-    min-height: 100vh;
-  }
-
-  .catalog-main {
-    padding: 2rem 0 4.5rem;
-  }
-
-  .section-container {
-    max-width: 80rem;
-    margin: 0 auto;
-    padding: 0 1.25rem;
-  }
-
-  /* Header Section */
-  .catalog-header {
-    margin-bottom: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .header-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .header-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    align-self: flex-start;
-    padding: 0.35rem 0.85rem;
-    border-radius: 9999px;
-    background-color: var(--color-brand-50, #eff6ff);
-    border: 1px solid var(--color-brand-200, #bfdbfe);
-    color: var(--color-brand-700, #1d4ed8);
-    font-size: 0.85rem;
-    font-weight: 700;
-  }
-
-  .catalog-title {
-    font-family: var(--font-heading, "Fredoka", sans-serif);
-    font-size: 2.35rem;
-    font-weight: 700;
-    color: var(--color-surface-900);
-    margin: 0;
-    line-height: 1.2;
-  }
-
-  .catalog-subtitle {
-    font-size: 1.05rem;
-    color: var(--color-surface-600);
-    max-width: 52rem;
-    margin: 0;
-    line-height: 1.6;
-  }
-
-  /* Search Bar */
-  .search-bar-wrap {
-    width: 100%;
-    max-width: 48rem;
-  }
-
-  .search-input-box {
-    position: relative;
-    display: flex;
-    align-items: center;
-    background-color: white;
-    border: 2px solid var(--color-surface-200);
-    border-radius: 1rem;
-    padding: 0.25rem 0.75rem;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
-    transition:
-      border-color 0.2s,
-      box-shadow 0.2s;
-  }
-
-  .search-input-box:focus-within {
-    border-color: var(--color-brand-500);
-    box-shadow: 0 0 0 4px var(--color-brand-100, rgba(79, 70, 229, 0.15));
-  }
-
-  .search-icon {
-    width: 1.25rem;
-    height: 1.25rem;
-    color: var(--color-surface-400);
-    margin-left: 0.5rem;
-    flex-shrink: 0;
-  }
-
-  .search-input {
-    width: 100%;
-    min-height: 48px;
-    padding: 0.5rem 0.75rem;
-    border: none;
-    background: transparent;
-    font-size: 1rem;
-    color: var(--color-surface-900);
-    outline: none;
-  }
-
-  .search-input::placeholder {
-    color: var(--color-surface-400);
-  }
-
-  .search-clear-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 9999px;
-    border: none;
-    background-color: var(--color-surface-100);
-    color: var(--color-surface-600);
-    cursor: pointer;
-    transition: background-color 0.15s;
-    margin-right: 0.25rem;
-  }
-
-  .search-clear-btn:hover {
-    background-color: var(--color-surface-200);
-    color: var(--color-surface-900);
-  }
-
-  /* Mobile Competency Bar */
-  .mobile-competency-bar {
-    display: none;
-    gap: 0.5rem;
-    overflow-x: auto;
-    padding-bottom: 0.75rem;
-    margin-bottom: 1.25rem;
-    scrollbar-width: none;
-  }
-
-  .mobile-competency-bar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .mobile-comp-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    white-space: nowrap;
-    padding: 0.5rem 0.85rem;
-    border-radius: 9999px;
-    border: 1.5px solid var(--color-surface-200);
-    background-color: white;
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--color-surface-700);
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .mobile-comp-chip.active {
-    background-color: var(--color-brand-600);
-    border-color: var(--color-brand-600);
-    color: white;
-  }
-
-  .chip-count {
-    opacity: 0.75;
-    font-size: 0.75rem;
-  }
-
-  /* 2-Column Catalog Layout */
-  .catalog-layout {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 2rem;
-    align-items: start;
-  }
-
-  /* Quick Filter Toolbar */
-  .quick-filter-toolbar {
-    background-color: white;
-    border: 2px solid var(--color-surface-200);
-    border-radius: 1.25rem;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
-  }
-
-  .filter-section-block {
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    flex-wrap: wrap;
-  }
-
-  .filter-block-label {
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: var(--color-surface-700);
-    min-width: 60px;
-  }
-
-  .filter-pills-row {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-    flex: 1;
-  }
-
-  .filter-pill-btn {
-    min-height: 40px;
-    padding: 0.4rem 0.85rem;
-    border-radius: 0.75rem;
-    border: 1.5px solid var(--color-surface-200);
-    background-color: var(--color-surface-50);
-    color: var(--color-surface-700);
-    font-size: 0.85rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  .filter-pill-btn:hover:not(:disabled) {
-    background-color: var(--color-surface-100);
-    border-color: var(--color-surface-300);
-  }
-
-  .filter-pill-btn.active {
-    background-color: var(--color-brand-600);
-    border-color: var(--color-brand-600);
-    color: white;
-    box-shadow: 0 2px 6px rgba(79, 70, 229, 0.2);
-  }
-
-  .filter-pill-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-  }
-
-  .pill-count {
-    font-size: 0.75rem;
-    opacity: 0.85;
-  }
-
-  .filter-secondary-row {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    padding-top: 0.75rem;
-    border-top: 1px solid var(--color-surface-100);
-  }
-
-  .filter-select-wrap {
-    display: flex;
-    align-items: center;
-  }
-
-  .filter-compact-select {
-    min-height: 40px;
-    padding: 0.4rem 0.85rem;
-    border-radius: 0.75rem;
-    border: 1.5px solid var(--color-surface-200);
-    background-color: var(--color-surface-50);
-    color: var(--color-surface-800);
-    font-size: 0.85rem;
-    font-weight: 700;
-    outline: none;
-    cursor: pointer;
-    transition: border-color 0.15s;
-  }
-
-  .filter-compact-select:focus {
-    border-color: var(--color-brand-600);
-  }
-
-  .ml-auto {
-    margin-left: auto;
-  }
-
-  /* Active Filters Bar */
-  .active-filters-bar {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    margin-bottom: 1.5rem;
-    padding: 0.5rem 0.75rem;
-    background-color: var(--color-surface-100);
-    border-radius: 0.85rem;
-  }
-
-  .active-filters-title {
-    font-size: 0.8rem;
-    font-weight: 800;
-    color: var(--color-surface-600);
-  }
-
-  .active-tags-list {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-  }
-
-  .active-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.25rem 0.65rem;
-    border-radius: 0.5rem;
-    background-color: white;
-    border: 1px solid var(--color-brand-300, #a5b4fc);
-    color: var(--color-brand-800, #3730a3);
-    font-size: 0.8rem;
-    font-weight: 700;
-  }
-
-  .tag-close-btn {
-    background: none;
-    border: none;
-    color: var(--color-brand-500);
-    cursor: pointer;
-    padding: 0;
-    font-size: 0.75rem;
-    font-weight: 800;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .tag-close-btn:hover {
-    color: var(--color-brand-800);
-  }
-
-  .btn-clear-all-filters {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    padding: 0.25rem 0.65rem;
-    border-radius: 0.5rem;
-    border: 1px dashed var(--color-surface-300);
-    background: none;
-    color: var(--color-surface-600);
-    font-size: 0.8rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-
-  .btn-clear-all-filters:hover {
-    background-color: white;
-    color: var(--color-surface-900);
-    border-style: solid;
-  }
-
-  /* Cards Grid */
-  .catalog-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 1.5rem;
-  }
-
-  /* Empty State */
-  .catalog-empty {
-    text-align: center;
-    padding: 4rem 1.5rem;
-    background-color: white;
-    border-radius: 1.25rem;
-    border: 2px dashed var(--color-surface-200);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
-  .empty-emoji {
-    font-size: 3rem;
-  }
-
-  .empty-title {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: var(--color-surface-900);
-    margin: 0;
-  }
-
-  .empty-text {
-    font-size: 0.95rem;
-    color: var(--color-surface-600);
-    max-width: 32rem;
-    margin: 0;
-    line-height: 1.5;
-  }
-
-  .btn-reset-filters {
-    min-height: 44px;
-    padding: 0.6rem 1.5rem;
-    background-color: var(--color-brand-600);
-    color: white;
-    font-weight: 800;
-    font-size: 0.9rem;
-    border-radius: 0.85rem;
-    border: none;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    margin-top: 0.5rem;
-    box-shadow: 0 3px 0 var(--color-brand-800);
-    transition: all 0.15s;
-  }
-
-  .btn-reset-filters:hover {
-    background-color: var(--color-brand-700);
-  }
-
-  .btn-reset-filters:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 var(--color-brand-800);
-  }
-
-  /* Pagination */
-  .pagination-bar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1.5rem;
-    margin-top: 3rem;
-  }
-
-  .page-nav-btn {
-    min-height: 44px;
-    padding: 0.5rem 1.25rem;
-    border-radius: 0.75rem;
-    border: 2px solid var(--color-surface-300);
-    background-color: white;
-    color: var(--color-surface-800);
-    font-weight: 700;
-    font-size: 0.9rem;
-    cursor: pointer;
-    box-shadow: 0 2px 0 var(--color-surface-200);
-    transition: all 0.15s;
-  }
-
-  .page-nav-btn:hover:not(:disabled) {
-    border-color: var(--color-brand-500);
-    color: var(--color-brand-600);
-  }
-
-  .page-nav-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    box-shadow: none;
-  }
-
-  .page-status {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--color-surface-600);
-  }
-
-  .catalog-error {
-    padding: 2rem 1rem;
-    text-align: center;
-    color: var(--color-surface-700);
-    background-color: white;
-    border: 2px dashed var(--color-surface-300);
-    border-radius: 1rem;
-  }
-
-  /* Responsive Breakpoints */
-  @media (max-width: 1024px) {
-    .catalog-layout {
-      grid-template-columns: 1fr;
-    }
-
-    .mobile-competency-bar {
-      display: flex;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .catalog-title {
-      font-size: 1.85rem;
-    }
-
-    .filter-secondary-row {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .filter-compact-select {
-      width: 100%;
-    }
-
-    .ml-auto {
-      margin-left: 0;
-    }
-  }
+  @import "~/assets/css/games-catalog.css";
 </style>

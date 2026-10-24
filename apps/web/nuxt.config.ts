@@ -75,6 +75,7 @@ export default defineNuxtConfig({
     },
     rateLimiter: false,
     csrf: false,
+    removeLoggers: false,
     requestSizeLimiter: {
       maxRequestSizeInBytes: 10 * 1024 * 1024,
       maxUploadFileRequestInBytes: 10 * 1024 * 1024,

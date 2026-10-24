@@ -1,4 +1,3 @@
-import { requireUserAuth } from "@mindkid/auth";
 import { NoActiveChildError } from "@mindkid/errors/child";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { ContentArchivedError } from "@mindkid/errors/content";
@@ -6,7 +5,10 @@ import { defineEventHandler, readBody, setResponseStatus } from "h3";
 import { z } from "zod";
 import { LessonSessionRunnerService } from "#server/services/index.js";
 
-import { getOptionalActiveChildUuid } from "#server/utils/auth-runtime";
+import {
+  getOptionalActiveChildUuid,
+  requireWebUserSession,
+} from "#server/utils/auth-runtime";
 
 const StartRunSchema = z.object({
   lesson_code: z.string().min(1),
@@ -14,7 +16,7 @@ const StartRunSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const auth = requireUserAuth(event);
+  const auth = requireWebUserSession(event);
   const rawBody = await readBody(event);
   const parsed = StartRunSchema.safeParse(rawBody);
 
@@ -37,7 +39,7 @@ export default defineEventHandler(async (event) => {
 
     setResponseStatus(event, 201);
     return result;
-  } catch (err: unknown) {
+  } catch (err) {
     const errorName = err instanceof Error ? err.name : "";
     if (errorName === "NO_ACTIVE_CHILD") {
       throw new NoActiveChildError(

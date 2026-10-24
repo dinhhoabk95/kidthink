@@ -43,7 +43,7 @@ export const getOwnerDb = lazy(() => drizzle(getOwnerSql()));
 
 export const getAppDb = lazy(() => drizzle(getAppSql()));
 
-export const getDb = getOwnerDb;
+export const getDb = getAppDb;
 
 export type AppDb = ReturnType<typeof getAppDb>;
 export type OwnerDb = ReturnType<typeof getOwnerDb>;

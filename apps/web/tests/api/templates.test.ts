@@ -47,9 +47,9 @@ describe("Game Template API Endpoints (BR-GTC-04, spec §8)", () => {
     const event = mockEvent("POST");
     try {
       await createTemplateHandler(event);
-      expect.fail("Should have thrown 405");
+      expect.fail("Should have thrown 422");
     } catch (err: any) {
-      expect(err.statusCode || err.status).toBe(405);
+      expect(err.statusCode || err.status).toBe(422);
     }
   });
 

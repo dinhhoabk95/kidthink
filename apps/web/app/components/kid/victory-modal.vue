@@ -25,21 +25,31 @@
             class="star-pill star-pill--left star-anim"
             :class="{ 'star-pill--dim': (stars ?? 0) < 1 }"
           >
-            <span class="star-icon" v-if="(stars ?? 0) >= 1">⭐</span>
+            <UIcon
+              class="w-12 h-12 text-amber-400 fill-current"
+              name="i-lucide-star"
+              v-if="(stars ?? 0) >= 1"
+            />
           </div>
           <div
             class="star-pill star-pill--center star-anim"
             :class="{ 'star-pill--dim': (stars ?? 0) < 2 }"
           >
-            <span class="star-icon star-icon--big" v-if="(stars ?? 0) >= 2"
-              >⭐</span
-            >
+            <UIcon
+              class="w-12 h-12 text-amber-400 fill-current"
+              name="i-lucide-star"
+              v-if="(stars ?? 0) >= 2"
+            />
           </div>
           <div
             class="star-pill star-pill--right star-anim"
             :class="{ 'star-pill--dim': (stars ?? 0) < 3 }"
           >
-            <span class="star-icon" v-if="(stars ?? 0) >= 3">⭐</span>
+            <UIcon
+              class="w-12 h-12 text-amber-400 fill-current"
+              name="i-lucide-star"
+              v-if="(stars ?? 0) >= 3"
+            />
           </div>
         </div>
 
@@ -51,9 +61,9 @@
           v-if="sticker"
           :aria-label="`Sticker mới: ${sticker.label}`"
         >
-          <span aria-hidden="true" class="sticker-emoji"
-            >{{ sticker.emoji }}</span
-          >
+          <span aria-hidden="true" class="sticker-emoji">{{
+            sticker.emoji
+          }}</span>
         </div>
 
         <!-- Headline -->
@@ -197,15 +207,15 @@
 
   const celebrationSubtitle = computed(() => {
     if (props.isIntro) {
-      return "Bé đã hoàn thành bài làm quen! 🎉";
+      return "Bé đã hoàn thành bài làm quen!";
     }
     if (props.celebration === "good") {
-      return "Bé đã hoàn thành cả bài rồi! 🎉";
+      return "Bé đã hoàn thành cả bài rồi!";
     }
     if (props.celebration === "nice_try") {
-      return "Bé đi hết chặng đường rồi, giỏi lắm! 🎉";
+      return "Bé đi hết chặng đường rồi, giỏi lắm!";
     }
-    return "Bé làm đúng hết rồi! 🎉";
+    return "Bé làm đúng hết rồi!";
   });
 </script>
 
@@ -323,7 +333,7 @@
     margin-bottom: 0.5rem;
     border-radius: 1.75rem;
     border: 4px dashed var(--color-brand-300);
-    background-color: var(--color-surface-0, #fff);
+    background-color: var(--color-surface-0);
     display: flex;
     align-items: center;
     justify-content: center;

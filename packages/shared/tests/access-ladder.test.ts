@@ -108,7 +108,7 @@ describe("Task 6: access_tier and allowedTiers (BR-LAD-01, BR-LAD-02, BR-LAD-05,
     expect(isGuestAllowedLevel("GL-C1-CNT-CARD-0002")).toBe(false);
   });
 
-  it("BR-LAD-07: getEffectiveTier keeps free for allow-listed level on guest, elevates non-allow-listed free level to login for guest", () => {
+  it("BR-LAD-07: getEffectiveTier keeps free for all free levels on guest and user callers", () => {
     expect(
       getEffectiveTier("free", null, {
         code: "GL-C1-CNT-CARD-0001",
@@ -121,7 +121,7 @@ describe("Task 6: access_tier and allowedTiers (BR-LAD-01, BR-LAD-02, BR-LAD-05,
         code: "GL-C1-CNT-CARD-0002",
         callerKind: "guest",
       })
-    ).toBe("login");
+    ).toBe("free");
 
     expect(
       getEffectiveTier("free", null, {

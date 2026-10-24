@@ -137,6 +137,8 @@ export default defineEventHandler(async (event) => {
       eligible_at: createdRequest.eligibleAt.toISOString(),
       requested_at: createdRequest.createdAt.toISOString(),
     },
-    verification_token: rawToken,
+    ...(process.env.NODE_ENV === "test"
+      ? { verification_token: rawToken }
+      : {}),
   };
 });

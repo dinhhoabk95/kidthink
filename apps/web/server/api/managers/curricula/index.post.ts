@@ -119,49 +119,96 @@ async function insertInitialItems(
   );
 }
 
+function isUniqueConstraintError(err: object | null | undefined): boolean {
+  if (!err || typeof err !== "object") {
+    return false;
+  }
+  if ("code" in err && err.code === "23505") {
+    return true;
+  }
+  if (
+    "cause" in err &&
+    err.cause &&
+    typeof err.cause === "object" &&
+    "code" in err.cause &&
+    err.cause.code === "23505"
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function shouldRetryCurriculumCode(
+  err: object | null | undefined,
+  explicitCode: string | undefined,
+  attempt: number
+): boolean {
+  return Boolean(
+    err &&
+      typeof err === "object" &&
+      isUniqueConstraintError(err) &&
+      !explicitCode &&
+      attempt < 4
+  );
+}
+
+async function insertSingleCurriculumAttempt(
+  db: ReturnType<typeof getOwnerDb>,
+  data: z.infer<typeof createCurriculumSchema>,
+  managerId: number
+) {
+  const code = data.code || (await generateNextCurriculumCode(db));
+  const entityId = Date.now() + Math.floor(Math.random() * 100_000);
+
+  const [created] = await db
+    .insert(curricula)
+    .values({
+      entityId,
+      code,
+      contentVersion: 1,
+      programType: data.program_type,
+      targetAgeMin: data.target_age_min ?? null,
+      targetAgeMax: data.target_age_max ?? null,
+      durationWeeks: data.duration_weeks,
+      sessionsPerWeek: data.sessions_per_week,
+      title: data.title,
+      description: data.description ?? null,
+      accessTier: data.access_tier,
+      status: "draft",
+      origin: "human",
+      authoredIn: "studio",
+      createdByManagerId: managerId,
+    })
+    .returning();
+
+  if (!created) {
+    throw new Error("Không thể tạo chương trình");
+  }
+
+  await insertInitialWeeks(db, created.id, data.weeks);
+  await insertInitialItems(db, created.id, data.items);
+  return created;
+}
+
 async function createCurriculumRecord(
   db: ReturnType<typeof getOwnerDb>,
   data: z.infer<typeof createCurriculumSchema>,
   managerId: number
 ) {
-  let lastErr: unknown;
+  let lastErr: Error = new Error("Không thể tạo chương trình");
   for (let attempt = 0; attempt < 5; attempt++) {
-    const code = data.code || (await generateNextCurriculumCode(db));
-    const entityId = Date.now() + Math.floor(Math.random() * 100_000);
-
     try {
-      const [created] = await db
-        .insert(curricula)
-        .values({
-          entityId,
-          code,
-          contentVersion: 1,
-          programType: data.program_type,
-          targetAgeMin: data.target_age_min ?? null,
-          targetAgeMax: data.target_age_max ?? null,
-          durationWeeks: data.duration_weeks,
-          sessionsPerWeek: data.sessions_per_week,
-          title: data.title,
-          description: data.description ?? null,
-          accessTier: data.access_tier,
-          status: "draft",
-          origin: "human",
-          authoredIn: "studio",
-          createdByManagerId: managerId,
-        })
-        .returning();
-
-      if (created) {
-        await insertInitialWeeks(db, created.id, data.weeks);
-        await insertInitialItems(db, created.id, data.items);
-        return created;
-      }
-    } catch (err: unknown) {
-      lastErr = err;
-      const errCode =
-        (err as { code?: string })?.code ||
-        (err as { cause?: { code?: string } })?.cause?.code;
-      if (errCode === "23505" && !data.code && attempt < 4) {
+      return await insertSingleCurriculumAttempt(db, data, managerId);
+    } catch (err) {
+      lastErr =
+        err instanceof Error ? err : new Error("Không thể tạo chương trình");
+      if (
+        shouldRetryCurriculumCode(
+          err && typeof err === "object" ? err : null,
+          data.code,
+          attempt
+        )
+      ) {
         continue;
       }
       throw err;

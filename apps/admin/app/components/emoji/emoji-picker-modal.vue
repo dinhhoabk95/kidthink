@@ -26,7 +26,7 @@
         </div>
         <button
           aria-label="Đóng"
-          class="w-9 h-9 rounded-2xl flex items-center justify-center text-surface-400 hover:text-surface-600 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-700 transition-all font-bold text-lg"
+          class="w-11 h-11 min-w-11 min-h-11 rounded-2xl flex items-center justify-center text-surface-400 hover:text-surface-600 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-700 transition-all font-bold text-lg"
           type="button"
           @click="close"
         >
@@ -51,7 +51,7 @@
         <button
           type="button"
           :class="[
-            'px-3.5 py-1.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border',
+            'min-h-11 px-3.5 py-1.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border',
             selectedCategory
               ? 'bg-white dark:bg-surface-800 border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-100'
               : 'bg-brand-600 border-brand-600 text-white shadow-sm',
@@ -65,7 +65,7 @@
           v-for="cat in categories"
           :key="cat"
           :class="[
-            'px-3.5 py-1.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border',
+            'min-h-11 px-3.5 py-1.5 rounded-xl text-sm font-semibold whitespace-nowrap transition-all border',
             selectedCategory === cat
               ? 'bg-brand-600 border-brand-600 text-white shadow-sm'
               : 'bg-white dark:bg-surface-800 border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700',
@@ -86,7 +86,7 @@
         </div>
         <div class="flex flex-wrap gap-2">
           <button
-            class="w-10 h-10 min-w-10 min-h-10 rounded-2xl flex items-center justify-center text-[28px] leading-none hover:bg-brand-50 dark:hover:bg-surface-700 hover:scale-110 active:scale-95 transition-all font-emoji"
+            class="w-11 h-11 min-w-11 min-h-11 rounded-2xl flex items-center justify-center text-[28px] leading-none hover:bg-brand-50 dark:hover:bg-surface-700 hover:scale-110 active:scale-95 transition-all font-emoji"
             type="button"
             v-for="e in recentEmojis"
             :key="e"
@@ -117,7 +117,7 @@
             Đã gửi yêu cầu bổ sung emoji cho nhóm phát triển.
           </div>
           <button
-            class="px-4 py-2 rounded-2xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-300 text-xs font-semibold hover:bg-brand-100 transition-all"
+            class="min-h-11 px-4 py-2 rounded-2xl bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-300 text-xs font-semibold hover:bg-brand-100 transition-all"
             type="button"
             v-else
             @click="reportMissingEmoji"
@@ -154,6 +154,7 @@
 
 <script lang="ts" setup>
   import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
+  import { apiFetch } from "~/composables/use-api-client";
 
   interface EmojiItem {
     name: string;

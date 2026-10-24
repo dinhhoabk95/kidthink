@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-white border-2 border-surface-200 rounded-3xl p-6 sm:p-8 shadow-sm"
+    class="bg-white border-2 border-surface-200 rounded-3xl p-6 sm:p-8 shadow-sm w-full min-w-0"
   >
     <!-- State 1: Email + Password -->
     <div class="space-y-6" v-if="authState === 'password'">
@@ -8,14 +8,14 @@
         <h1 class="text-xl font-bold font-heading text-surface-900">
           Đăng nhập quản trị
         </h1>
-        <p class="text-xs text-surface-500">
+        <p class="text-sm text-surface-500">
           Nhập thông tin tài khoản được cấp quyền
         </p>
       </div>
 
       <!-- Error Alert -->
       <div
-        class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-danger-700 text-xs font-medium flex items-center gap-2"
+        class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-danger-700 text-sm font-medium flex items-center gap-2"
         role="alert"
         v-if="errorMessage"
       >
@@ -24,16 +24,16 @@
       </div>
 
       <form class="space-y-4" @submit.prevent="handlePasswordLogin">
-        <div class="space-y-1">
+        <div class="space-y-1.5">
           <label
-            class="block text-xs font-bold font-heading text-surface-700"
+            class="block text-sm font-bold font-heading text-surface-700"
             for="admin-email"
           >
             Email quản trị
           </label>
           <input
             autocomplete="username"
-            class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-brand-600 focus:outline-none text-sm text-surface-900 transition-colors"
+            class="min-h-11 w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-brand-600 focus:outline-none text-base text-surface-900 transition-colors"
             id="admin-email"
             placeholder="admin@tinimath.vn"
             required
@@ -42,16 +42,16 @@
           >
         </div>
 
-        <div class="space-y-1">
+        <div class="space-y-1.5">
           <label
-            class="block text-xs font-bold font-heading text-surface-700"
+            class="block text-sm font-bold font-heading text-surface-700"
             for="admin-password"
           >
             Mật khẩu
           </label>
           <input
             autocomplete="current-password"
-            class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-brand-600 focus:outline-none text-sm text-surface-900 transition-colors"
+            class="min-h-11 w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-brand-600 focus:outline-none text-base text-surface-900 transition-colors"
             id="admin-password"
             placeholder="••••••••••••"
             required
@@ -60,15 +60,15 @@
           >
         </div>
 
-        <div class="flex items-center gap-2 pt-1">
+        <div class="flex items-center gap-2.5 pt-1">
           <input
-            class="w-4 h-4 rounded-xl border-2 border-surface-300 text-brand-600 focus:ring-brand-500"
+            class="w-6 h-6 shrink-0 rounded-xl border-2 border-surface-300 text-brand-600 focus:ring-brand-500"
             id="admin-remember"
             type="checkbox"
             v-model="rememberMe"
           >
           <label
-            class="text-xs text-surface-600 select-none"
+            class="text-sm text-surface-600 select-none cursor-pointer"
             for="admin-remember"
           >
             Ghi nhớ đăng nhập trên thiết bị này
@@ -76,7 +76,7 @@
         </div>
 
         <button
-          class="w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold font-heading text-sm transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
+          class="min-h-11 w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold font-heading text-base transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
           type="submit"
           :disabled="isLoading"
         >
@@ -92,14 +92,14 @@
         <h1 class="text-xl font-bold font-heading text-surface-900">
           Thiết lập xác thực hai yếu tố
         </h1>
-        <p class="text-xs text-surface-500">
+        <p class="text-sm text-surface-500">
           Bắt buộc cho tài khoản quản trị (BR-ADA-01)
         </p>
       </div>
 
       <!-- Error Alert -->
       <div
-        class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-danger-700 text-xs font-medium flex items-center gap-2"
+        class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-danger-700 text-sm font-medium flex items-center gap-2"
         role="alert"
         v-if="errorMessage"
       >
@@ -109,18 +109,18 @@
 
       <div class="space-y-3">
         <div
-          class="p-4 rounded-2xl bg-surface-50 border-2 border-surface-200 space-y-2 text-xs text-surface-700"
+          class="p-4 rounded-2xl bg-surface-50 border-2 border-surface-200 space-y-2 text-sm text-surface-700"
         >
           <div class="font-bold font-heading text-surface-900">
             1. Quét mã hoặc nhập URI vào ứng dụng Authenticator:
           </div>
           <div
-            class="p-2 bg-white rounded-xl border border-surface-200 font-mono text-[11px] break-all select-all text-surface-800"
+            class="p-2.5 bg-white rounded-xl border border-surface-200 font-mono text-sm break-all select-all text-surface-800"
           >
             {{ otpauthUri }}
           </div>
           <button
-            class="text-[11px] font-bold text-brand-600 hover:text-brand-800 underline"
+            class="min-h-11 inline-flex items-center text-sm font-bold text-brand-600 hover:text-brand-800 underline"
             type="button"
             @click="copyOtpauthUri"
           >
@@ -129,16 +129,16 @@
         </div>
 
         <form class="space-y-4 pt-2" @submit.prevent="handleMfaSubmit">
-          <div class="space-y-1">
+          <div class="space-y-1.5">
             <label
-              class="block text-xs font-bold font-heading text-surface-700"
+              class="block text-sm font-bold font-heading text-surface-700"
               for="enroll-totp-code"
             >
               2. Nhập mã xác thực 6 số từ ứng dụng:
             </label>
             <input
               autocomplete="one-time-code"
-              class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-brand-600 focus:outline-none text-center font-mono text-lg tracking-widest text-surface-900 transition-colors"
+              class="min-h-11 w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-brand-600 focus:outline-none text-center font-mono text-lg tracking-widest text-surface-900 transition-colors"
               id="enroll-totp-code"
               inputmode="numeric"
               maxlength="6"
@@ -151,7 +151,7 @@
           </div>
 
           <button
-            class="w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold font-heading text-sm transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
+            class="min-h-11 w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold font-heading text-base transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
             type="submit"
             :disabled="isLoading || totpCode.length !== 6"
           >
@@ -160,7 +160,7 @@
           </button>
 
           <button
-            class="w-full text-center text-xs text-surface-500 hover:text-surface-800 font-medium pt-1"
+            class="min-h-11 w-full text-center text-sm text-surface-500 hover:text-surface-800 font-medium pt-1"
             type="button"
             @click="resetToPassword"
           >
@@ -176,7 +176,7 @@
         <h1 class="text-xl font-bold font-heading text-surface-900">
           Mã khôi phục dự phòng
         </h1>
-        <p class="text-xs text-surface-500">
+        <p class="text-sm text-surface-500">
           Lưu trữ an toàn 10 mã này để đăng nhập khi mất thiết bị MFA
         </p>
       </div>
@@ -184,9 +184,9 @@
       <div
         class="p-4 rounded-2xl bg-surface-50 border-2 border-surface-200 space-y-3"
       >
-        <div class="grid grid-cols-2 gap-2 font-mono text-xs text-surface-800">
+        <div class="grid grid-cols-2 gap-2 font-mono text-sm text-surface-800">
           <div
-            class="p-2 bg-white rounded-xl border border-surface-200 text-center select-all font-semibold"
+            class="p-2 bg-white rounded-xl border border-surface-200 text-center select-all font-semibold break-all"
             v-for="(code, idx) in recoveryCodes"
             :key="idx"
           >
@@ -195,7 +195,7 @@
         </div>
 
         <button
-          class="w-full py-2 rounded-xl border-2 border-surface-200 hover:bg-white text-xs font-bold font-heading text-surface-700 transition-colors"
+          class="min-h-11 w-full py-2 rounded-xl border-2 border-surface-200 hover:bg-white text-sm font-bold font-heading text-surface-700 transition-colors"
           type="button"
           @click="copyAllRecoveryCodes"
         >
@@ -204,15 +204,15 @@
       </div>
 
       <div class="space-y-4">
-        <div class="flex items-start gap-2">
+        <div class="flex items-start gap-2.5">
           <input
-            class="w-4 h-4 mt-0.5 rounded-xl border-2 border-surface-300 text-brand-600 focus:ring-brand-500"
+            class="w-6 h-6 mt-0.5 shrink-0 rounded-xl border-2 border-surface-300 text-brand-600 focus:ring-brand-500"
             id="confirm-saved-recovery"
             type="checkbox"
             v-model="hasSavedRecoveryCodes"
           >
           <label
-            class="text-xs text-surface-600 select-none"
+            class="text-sm text-surface-600 select-none cursor-pointer"
             for="confirm-saved-recovery"
           >
             Tôi đã lưu trữ 10 mã khôi phục này ở nơi an toàn. Tôi hiểu rằng các
@@ -221,7 +221,7 @@
         </div>
 
         <button
-          class="w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold font-heading text-sm transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
+          class="min-h-11 w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold font-heading text-base transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
           type="button"
           :disabled="!hasSavedRecoveryCodes"
           @click="finishEnrollmentAndRedirect"
@@ -237,14 +237,18 @@
         <h1 class="text-xl font-bold font-heading text-surface-900">
           Xác thực hai yếu tố
         </h1>
-        <p class="text-xs text-surface-500">
-          {{ isRecoveryMode ? "Nhập mã khôi phục dự phòng" : "Nhập mã xác thực từ ứng dụng Authenticator" }}
+        <p class="text-sm text-surface-500">
+          {{
+            isRecoveryMode
+              ? "Nhập mã khôi phục dự phòng"
+              : "Nhập mã xác thực từ ứng dụng Authenticator"
+          }}
         </p>
       </div>
 
       <!-- Error Alert -->
       <div
-        class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-danger-700 text-xs font-medium flex items-center gap-2"
+        class="p-3 rounded-2xl bg-danger-50 border border-danger-200 text-danger-700 text-sm font-medium flex items-center gap-2"
         role="alert"
         v-if="errorMessage"
       >
@@ -253,16 +257,20 @@
       </div>
 
       <form class="space-y-4" @submit.prevent="handleMfaSubmit">
-        <div class="space-y-1">
+        <div class="space-y-1.5">
           <label
-            class="block text-xs font-bold font-heading text-surface-700"
+            class="block text-sm font-bold font-heading text-surface-700"
             for="mfa-code"
           >
-            {{ isRecoveryMode ? "Mã khôi phục (vd: ABCD-1234-EFGH)" : "Mã xác thực 6 số" }}
+            {{
+              isRecoveryMode
+                ? "Mã khôi phục (vd: ABCD-1234-EFGH)"
+                : "Mã xác thực 6 số"
+            }}
           </label>
           <input
             autocomplete="one-time-code"
-            class="w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-brand-600 focus:outline-none text-center font-mono text-lg tracking-widest text-surface-900 transition-colors"
+            class="min-h-11 w-full px-3.5 py-2.5 rounded-2xl border-2 border-surface-200 focus:border-brand-600 focus:outline-none text-center font-mono text-lg tracking-widest text-surface-900 transition-colors"
             id="mfa-code"
             required
             type="text"
@@ -273,7 +281,7 @@
         </div>
 
         <button
-          class="w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold font-heading text-sm transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
+          class="min-h-11 w-full py-3 rounded-2xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white font-bold font-heading text-base transition-all duration-200 shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
           type="submit"
           :disabled="isLoading || !totpCode.trim()"
         >
@@ -281,16 +289,16 @@
           <span v-else>Đăng nhập</span>
         </button>
 
-        <div class="flex items-center justify-between pt-2 text-xs">
+        <div class="flex items-center justify-between pt-2 text-sm">
           <button
-            class="text-brand-600 hover:text-brand-800 font-medium"
+            class="min-h-11 inline-flex items-center text-brand-600 hover:text-brand-800 font-medium"
             type="button"
             @click="toggleRecoveryMode"
           >
             {{ isRecoveryMode ? "Dùng mã 6 số (TOTP)" : "Dùng mã khôi phục" }}
           </button>
           <button
-            class="text-surface-500 hover:text-surface-800 font-medium"
+            class="min-h-11 inline-flex items-center text-surface-500 hover:text-surface-800 font-medium"
             type="button"
             @click="resetToPassword"
           >
@@ -303,10 +311,9 @@
 </template>
 
 <script lang="ts" setup>
-  import { isApiError } from "@mindkid/errors/client";
+  import { type ApiError, normalizeApiError } from "@mindkid/errors/client";
   import { ref } from "vue";
-  import { useRouter } from "vue-router";
-  import { definePageMeta, useHead } from "#imports";
+  import { definePageMeta, navigateTo, useHead } from "#imports";
   import { useAdminAuth } from "~/composables/use-admin-auth";
   import { useApiClient } from "~/composables/use-api-client";
 
@@ -318,7 +325,6 @@
     title: "Đăng nhập quản trị",
   });
 
-  const router = useRouter();
   const api = useApiClient();
   const { fetchSession } = useAdminAuth();
 
@@ -346,21 +352,19 @@
     mfa_enabled: boolean;
   }
 
-  function extractManagerChallenge(err: unknown): {
+  function extractManagerChallenge(apiErr: ApiError): {
     challenge: string;
     mfaEnabled: boolean;
   } {
-    if (
-      isApiError(err, "MFA_REQUIRED") ||
-      (isApiError(err) && err.statusCode === 428)
-    ) {
-      const details = err.details as Record<string, unknown> | undefined;
+    if (apiErr.code === "MFA_REQUIRED" || apiErr.statusCode === 428) {
+      const challengeVal = apiErr.details?.challenge;
+      const mfaEnabledVal = apiErr.details?.mfa_enabled;
       return {
-        challenge: String(details?.challenge ?? ""),
-        mfaEnabled: Boolean(details?.mfa_enabled),
+        challenge: typeof challengeVal === "string" ? challengeVal : "",
+        mfaEnabled: Boolean(mfaEnabledVal),
       };
     }
-    throw err;
+    throw apiErr;
   }
 
   async function handleMfaSetup(challenge: string) {
@@ -400,8 +404,9 @@
         }
         challenge = res.challenge;
         mfaEnabled = Boolean(res.mfa_enabled);
-      } catch (err: unknown) {
-        const extracted = extractManagerChallenge(err);
+      } catch (err) {
+        const apiErr = normalizeApiError(err);
+        const extracted = extractManagerChallenge(apiErr);
         challenge = extracted.challenge;
         mfaEnabled = extracted.mfaEnabled;
       }
@@ -414,9 +419,10 @@
       } else {
         await handleMfaSetup(challenge);
       }
-    } catch (err: unknown) {
+    } catch (err) {
+      const apiErr = normalizeApiError(err);
       errorMessage.value = extractLoginErrorMessage(
-        err,
+        apiErr,
         "Email hoặc mật khẩu không chính xác."
       );
     } finally {
@@ -424,12 +430,12 @@
     }
   }
 
-  function extractLoginErrorMessage(err: unknown, fallback: string): string {
-    if (isApiError(err)) {
-      return err.message;
-    }
-    if (err instanceof Error) {
-      return err.message;
+  function extractLoginErrorMessage(
+    apiErr: ApiError,
+    fallback: string
+  ): string {
+    if (apiErr.message && apiErr.code !== "INTERNAL_ERROR") {
+      return apiErr.message;
     }
     return fallback;
   }
@@ -455,9 +461,10 @@
       } else {
         await finishEnrollmentAndRedirect();
       }
-    } catch (err: unknown) {
+    } catch (err) {
+      const apiErr = normalizeApiError(err);
       errorMessage.value = extractLoginErrorMessage(
-        err,
+        apiErr,
         "Mã xác thực không hợp lệ. Vui lòng thử lại."
       );
     } finally {

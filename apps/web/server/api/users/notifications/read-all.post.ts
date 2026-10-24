@@ -13,7 +13,7 @@ const readAllSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
+  const user = requireWebUserSession(event);
   const userId = Number(user.user_id);
   const body = (await readBody(event).catch(() => ({}))) || {};
   const parsed = readAllSchema.safeParse(body);

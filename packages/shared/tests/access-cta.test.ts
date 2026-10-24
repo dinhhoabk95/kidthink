@@ -197,13 +197,11 @@ describe("resolveLevelCta — tập đóng", () => {
     expect(cta.href).not.toContain("/../");
   });
 
-  it("BR-LAD-07: guest xem level free ngoài allow-list nhận action login thay vì play", () => {
+  it("BR-LAD-07: guest xem mọi level free đều nhận action play", () => {
     const outsideCode = "GL-C1-CNT-CARD-0002";
     const guestCta = resolveLevelCta(outsideCode, "free", guest);
-    expect(guestCta.action).toBe("login");
-    expect(guestCta.href).toBe(
-      `/login?redirect=${encodeURIComponent(`/play/${outsideCode}`)}`
-    );
+    expect(guestCta.action).toBe("play");
+    expect(guestCta.href).toBe(`/play/${outsideCode}`);
 
     const userCta = resolveLevelCta(outsideCode, "free", userNoChild);
     expect(userCta.action).toBe("play");

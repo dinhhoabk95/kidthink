@@ -18,7 +18,7 @@
         <h2 class="font-heading text-2xl font-bold text-surface-900">
           Bé nào đang chơi cùng MindKid?
         </h2>
-        <p class="text-sm font-semibold text-surface-600">
+        <p class="text-base font-semibold text-surface-600">
           Chọn đúng bé để tiến độ và bài học được tính chính xác cho bé nhé.
         </p>
       </div>
@@ -33,9 +33,9 @@
           class="h-5 w-5 shrink-0 text-warning-600"
           name="i-lucide-alert-circle"
         />
-        <span class="text-xs font-semibold leading-snug"
-          >{{ switchError }}</span
-        >
+        <span class="text-base font-semibold leading-snug">{{
+          switchError
+        }}</span>
       </div>
 
       <!-- Danh sách thẻ các bé -->
@@ -48,7 +48,7 @@
           :key="child.uuid"
           :aria-pressed="child.uuid === activeUuid"
           :class="[
-            'min-h-16 w-full p-3.5 rounded-2xl border-[3px] flex items-center gap-3 transition-all text-left',
+            'min-h-16 min-w-16 w-full p-3.5 rounded-2xl border-[3px] flex items-center gap-3 transition-all text-left',
             child.uuid === activeUuid
               ? 'border-brand-500 bg-brand-50/70 shadow-[0_4px_0_var(--color-brand-500)]'
               : 'border-surface-200 bg-white shadow-[0_4px_0_var(--color-surface-200)] hover:border-brand-300 active:shadow-[0_1px_0_var(--color-surface-200)] active:translate-y-0.5'
@@ -70,14 +70,14 @@
             >
               {{ child.display_name }}
             </span>
-            <span class="text-xs font-semibold text-surface-500 mt-0.5">
+            <span class="text-base font-semibold text-surface-500 mt-0.5">
               {{ formatAgeBand(child.age_band) }}
             </span>
           </div>
 
           <div class="shrink-0" v-if="child.uuid === activeUuid">
             <span
-              class="inline-flex items-center gap-1 text-xs font-bold text-brand-700 bg-brand-200 px-2 py-1 rounded-full"
+              class="inline-flex items-center gap-1 text-base font-bold text-brand-700 bg-brand-200 px-2 py-1 rounded-full"
             >
               <UIcon class="w-3.5 h-3.5 text-brand-700" name="i-lucide-check" />
               <span>Đang chơi</span>
@@ -88,7 +88,7 @@
 
       <div class="pt-2 flex justify-end">
         <button
-          class="min-h-12 w-full rounded-2xl border-2 border-surface-200 bg-surface-50 px-5 font-bold text-surface-700 transition-colors hover:bg-surface-100 active:translate-y-0.5"
+          class="min-h-16 min-w-16 w-full rounded-2xl border-2 border-surface-200 bg-surface-50 px-5 font-bold text-surface-700 transition-colors hover:bg-surface-100 active:translate-y-0.5"
           type="button"
           :disabled="isSwitching"
           @click="emit('close')"

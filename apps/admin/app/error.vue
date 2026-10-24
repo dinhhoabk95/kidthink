@@ -16,7 +16,11 @@
         {{ is404 ? "Không tìm thấy trang quản trị" : "Đã xảy ra lỗi quản trị" }}
       </h1>
       <p class="text-surface-600 dark:text-surface-300 mb-6 text-base">
-        {{ is404 ? "Trang quản trị bạn đang tìm kiếm không tồn tại hoặc đã được chuyển đi." : "Hệ thống quản trị gặp sự cố trong quá trình xử lý yêu cầu." }}
+        {{
+          is404
+            ? "Trang quản trị bạn đang tìm kiếm không tồn tại hoặc đã được chuyển đi."
+            : "Hệ thống quản trị gặp sự cố trong quá trình xử lý yêu cầu."
+        }}
       </p>
       <UButton
         class="w-full justify-center"

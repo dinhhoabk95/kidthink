@@ -9,7 +9,7 @@
       id="main-content"
     >
       <!-- Top Navigation / Breadcrumb -->
-      <div class="flex items-center justify-between mb-6">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
         <NuxtLink
           class="inline-flex items-center gap-2 text-sm font-bold text-brand-600 dark:text-brand-400 hover:underline min-h-11"
           to="/lesson-plans"
@@ -17,7 +17,7 @@
           <span>← Quay lại thư viện giáo án</span>
         </NuxtLink>
 
-        <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center gap-3">
           <button
             class="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 text-surface-800 dark:text-surface-100 text-sm font-bold shadow-sm transition-all min-h-11"
             type="button"
@@ -25,7 +25,7 @@
             @click="handleExportPdf"
           >
             <UIcon class="w-4 h-4 shrink-0" name="i-lucide-file-text" />
-            <span>{{ exporting ? 'Đang xuất...' : 'Xuất PDF' }}</span>
+            <span>{{ exporting ? "Đang xuất..." : "Xuất PDF" }}</span>
           </button>
 
           <button
@@ -35,19 +35,20 @@
             @click="saveAll"
           >
             <UIcon class="w-4 h-4 shrink-0" name="i-lucide-save" />
-            <span>{{ saving ? 'Đang lưu...' : 'Lưu giáo án' }}</span>
+            <span>{{ saving ? "Đang lưu..." : "Lưu giáo án" }}</span>
           </button>
         </div>
       </div>
 
       <!-- Toast Feedback Banner -->
       <div
-        class="mb-4 p-4 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-300 dark:border-success-700 text-success-800 dark:text-success-200 text-sm font-bold flex items-center justify-between"
+        class="mb-4 p-4 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-300 dark:border-success-700 text-success-800 dark:text-success-200 text-sm font-bold flex items-center justify-between gap-3"
         v-if="pageMessage"
       >
         <span>{{ pageMessage }}</span>
         <button
-          class="text-success-700 dark:text-success-300 font-bold text-sm"
+          aria-label="Đóng thông báo"
+          class="text-success-700 dark:text-success-300 font-bold text-sm min-h-11 min-w-11 inline-flex items-center justify-center shrink-0"
           type="button"
           @click="pageMessage = null"
         >
@@ -56,12 +57,13 @@
       </div>
 
       <div
-        class="mb-4 p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 dark:border-danger-700 text-danger-800 dark:text-danger-200 text-sm font-bold flex items-center justify-between"
+        class="mb-4 p-4 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-300 dark:border-danger-700 text-danger-800 dark:text-danger-200 text-sm font-bold flex items-center justify-between gap-3"
         v-if="pageError"
       >
         <span>{{ pageError }}</span>
         <button
-          class="text-danger-700 dark:text-danger-300 font-bold text-sm"
+          aria-label="Đóng thông báo lỗi"
+          class="text-danger-700 dark:text-danger-300 font-bold text-sm min-h-11 min-w-11 inline-flex items-center justify-center shrink-0"
           type="button"
           @click="pageError = null"
         >
@@ -92,7 +94,7 @@
           Không tìm thấy hoặc không thể tải giáo án.
         </p>
         <NuxtLink
-          class="px-4 py-2 rounded-xl bg-surface-200 text-surface-800 text-sm font-bold inline-block mt-2"
+          class="px-4 py-2 rounded-xl bg-surface-200 text-surface-800 text-sm font-bold inline-flex items-center justify-center min-h-11 mt-2"
           to="/lesson-plans"
         >
           Về danh sách
@@ -100,20 +102,31 @@
       </div>
 
       <div class="space-y-8" v-else-if="plan">
+        <div>
+          <h1
+            class="text-2xl sm:text-3xl font-heading font-extrabold text-surface-900 dark:text-white"
+          >
+            {{ editMeta.title || plan.title || "Chi tiết giáo án" }}
+          </h1>
+          <p class="mt-1 text-sm text-surface-600 dark:text-surface-400">
+            Tùy chỉnh thông tin chung và sắp xếp danh sách hoạt động giảng dạy.
+          </p>
+        </div>
+
         <!-- Metadata Header Card -->
         <section
           aria-labelledby="plan-meta-heading"
           class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-sm"
         >
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
             <h2
-              class="text-xs font-bold text-surface-500 dark:text-surface-400"
+              class="text-sm font-bold text-surface-600 dark:text-surface-300"
               id="plan-meta-heading"
             >
               Thông tin chung (Phiên bản {{ plan.version }})
             </h2>
             <span
-              class="text-xs font-bold text-success-600 dark:text-success-400"
+              class="text-sm font-bold text-success-600 dark:text-success-400"
               v-if="saveMessage"
             >
               {{ saveMessage }}
@@ -182,7 +195,7 @@
                 Ghi chú sư phạm & Dụng cụ chuẩn bị
               </label>
               <textarea
-                class="w-full px-4 py-2.5 rounded-2xl border-2 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white text-base focus:border-brand-500 focus:outline-none"
+                class="w-full px-4 py-2.5 rounded-2xl border-2 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white text-base focus:border-brand-500 focus:outline-none min-h-11"
                 id="editor-notes"
                 maxlength="2000"
                 rows="2"
@@ -194,7 +207,7 @@
 
         <!-- Items Management Section -->
         <section aria-labelledby="plan-items-heading" class="space-y-4">
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2
                 class="text-xl font-heading font-bold text-surface-900 dark:text-white"
@@ -202,9 +215,7 @@
               >
                 Danh sách hoạt động trong bài học ({{ items.length }})
               </h2>
-              <p
-                class="text-surface-600 dark:text-surface-400 text-xs sm:text-sm"
-              >
+              <p class="text-surface-600 dark:text-surface-400 text-sm">
                 Sử dụng nút Lên/Xuống để sắp xếp thứ tự các hoạt động theo mạch
                 giảng dạy.
               </p>
@@ -212,7 +223,7 @@
 
             <div class="flex items-center gap-2">
               <button
-                class="px-3.5 py-2 rounded-2xl bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 text-surface-800 dark:text-surface-200 text-xs font-bold min-h-11"
+                class="px-3.5 py-2 rounded-2xl bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 text-surface-800 dark:text-surface-200 text-sm font-bold min-h-11"
                 type="button"
                 @click="addCustomNote"
               >
@@ -246,7 +257,7 @@
               v-for="(item, idx) in items"
               :key="`item-${idx}`"
             >
-              <div class="flex items-start gap-4 flex-1">
+              <div class="flex items-start gap-4 flex-1 min-w-0">
                 <!-- Position badge -->
                 <span
                   class="w-8 h-8 rounded-xl bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300 flex items-center justify-center font-heading font-bold text-sm shrink-0"
@@ -254,25 +265,25 @@
                   {{ idx + 1 }}
                 </span>
 
-                <div class="flex-1">
+                <div class="flex-1 min-w-0">
                   <!-- Type and update warning -->
                   <div class="flex flex-wrap items-center gap-2 mb-1">
                     <span
-                      class="px-2 py-0.5 rounded-full text-xs font-bold"
+                      class="px-2.5 py-0.5 rounded-full text-sm font-bold"
                       :class="getTypeBadgeClass(item.item_type)"
                     >
                       {{ getTypeLabel(item.item_type) }}
                     </span>
 
                     <span
-                      class="text-xs text-surface-500 font-mono"
+                      class="text-sm text-surface-600 dark:text-surface-300 font-mono"
                       v-if="item.item_code"
                     >
                       {{ item.item_code }}
                     </span>
 
                     <span
-                      class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-warning-100 text-warning-800 dark:bg-warning-950/50 dark:text-warning-300 border border-warning-300 dark:border-warning-700 flex items-center gap-1"
+                      class="px-2.5 py-0.5 rounded-full text-sm font-bold bg-warning-100 text-warning-800 dark:bg-warning-950/50 dark:text-warning-300 border border-warning-300 dark:border-warning-700 flex items-center gap-1"
                       v-if="item.has_update"
                     >
                       <UIcon
@@ -286,7 +297,8 @@
                   <!-- Item Content -->
                   <div class="mt-2" v-if="item.item_type === 'custom_note'">
                     <input
-                      class="w-full px-3 py-1.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white text-sm focus:border-brand-500 focus:outline-none min-h-11"
+                      aria-label="Nội dung ghi chú"
+                      class="w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white text-base focus:border-brand-500 focus:outline-none min-h-11"
                       placeholder="Nội dung ghi chú..."
                       type="text"
                       v-model="item.custom_note"
@@ -300,7 +312,7 @@
                       {{ getSnapshotTitle(item) }}
                     </h3>
                     <p
-                      class="text-xs text-surface-600 dark:text-surface-400 mt-1 line-clamp-2"
+                      class="text-sm text-surface-600 dark:text-surface-400 mt-1 line-clamp-2"
                       v-if="getSnapshotInstruction(item)"
                     >
                       {{ getSnapshotInstruction(item) }}
@@ -310,7 +322,8 @@
                   <!-- Custom Instruction Override -->
                   <div class="mt-2" v-if="item.item_type !== 'custom_note'">
                     <input
-                      class="w-full px-3 py-1.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900 text-surface-700 dark:text-surface-300 text-xs focus:border-brand-500 focus:outline-none"
+                      aria-label="Hướng dẫn bổ sung"
+                      class="w-full px-3 py-2 rounded-xl border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-900 text-surface-700 dark:text-surface-300 text-base focus:border-brand-500 focus:outline-none min-h-11"
                       placeholder="Thêm hướng dẫn bổ sung của riêng bạn (tuỳ chọn)..."
                       type="text"
                       v-model="item.custom_instruction"
@@ -324,7 +337,7 @@
                 class="flex items-center gap-2 shrink-0 self-end md:self-center"
               >
                 <button
-                  class="px-3 py-1.5 rounded-xl bg-warning-500 hover:bg-warning-600 text-white text-xs font-bold min-h-11 shadow-sm"
+                  class="px-3 py-1.5 rounded-xl bg-warning-500 hover:bg-warning-600 text-white text-sm font-bold min-h-11 shadow-sm"
                   type="button"
                   v-if="item.has_update"
                   @click="refreshItemVersion(idx)"
@@ -372,11 +385,13 @@
 </template>
 
 <script lang="ts" setup>
+  import { normalizeApiError } from "@mindkid/errors/client";
   import type {
     LessonPlanDetail,
     LessonPlanItemInput,
     LessonPlanItemSnapshot,
     LessonPlanItemType,
+    LessonPlanSummary,
   } from "@mindkid/shared/client";
   import { reactive, ref, watch } from "vue";
   import { useApi } from "~/composables/use-api";
@@ -400,6 +415,13 @@
     latest_version?: number | null;
   }
 
+  interface EditableMeta {
+    title: string;
+    target_age: number | undefined;
+    estimated_minutes: number | undefined;
+    notes: string;
+  }
+
   const route = useRoute();
   const uuid = String(route.params.uuid);
 
@@ -414,10 +436,10 @@
     refresh,
   } = await useFetch<LessonPlanDetail>(`/api/users/lesson-plans/${uuid}`);
 
-  const editMeta = reactive({
+  const editMeta = reactive<EditableMeta>({
     title: "",
-    target_age: undefined as number | undefined,
-    estimated_minutes: undefined as number | undefined,
+    target_age: undefined,
+    estimated_minutes: undefined,
     notes: "",
   });
 
@@ -427,6 +449,20 @@
   const exporting = ref(false);
   const pageMessage = ref<string | null>(null);
   const pageError = ref<string | null>(null);
+
+  function extractCustomNoteContent(
+    snapshot: LessonPlanItemSnapshot | null | undefined,
+    customInstruction: string | null | undefined
+  ): string {
+    if (
+      snapshot &&
+      "content" in snapshot &&
+      typeof snapshot.content === "string"
+    ) {
+      return snapshot.content || customInstruction || "";
+    }
+    return customInstruction || "";
+  }
 
   watch(
     plan,
@@ -445,9 +481,7 @@
           custom_instruction: i.custom_instruction,
           custom_note:
             i.item_type === "custom_note"
-              ? (i.snapshot as { content?: string })?.content ||
-                i.custom_instruction ||
-                ""
+              ? extractCustomNoteContent(i.snapshot, i.custom_instruction)
               : "",
           snapshot: i.snapshot,
           has_update: i.has_update,
@@ -458,7 +492,7 @@
     { immediate: true }
   );
 
-  function getTypeLabel(type: LessonPlanItemType) {
+  function getTypeLabel(type: LessonPlanItemType): string {
     if (type === "activity") {
       return "Hoạt động";
     }
@@ -468,7 +502,7 @@
     return "Ghi chú";
   }
 
-  function getTypeBadgeClass(type: LessonPlanItemType) {
+  function getTypeBadgeClass(type: LessonPlanItemType): string {
     if (type === "activity") {
       return "bg-brand-100 text-brand-800 dark:bg-brand-950 dark:text-brand-300";
     }
@@ -479,16 +513,27 @@
   }
 
   function getSnapshotTitle(item: EditableItem): string {
-    const snap = item.snapshot as { title?: string } | undefined;
-    return snap?.title || item.item_code || "Hoạt động";
+    const snap = item.snapshot;
+    if (snap && "title" in snap && typeof snap.title === "string") {
+      return snap.title || item.item_code || "Hoạt động";
+    }
+    return item.item_code || "Hoạt động";
   }
 
   function getSnapshotInstruction(item: EditableItem): string {
-    const snap = item.snapshot as { instruction?: string } | undefined;
-    return snap?.instruction || "";
+    const snap = item.snapshot;
+    if (
+      snap &&
+      "instruction" in snap &&
+      typeof snap.instruction === "string" &&
+      snap.instruction
+    ) {
+      return snap.instruction;
+    }
+    return "";
   }
 
-  function moveItem(index: number, delta: number) {
+  function moveItem(index: number, delta: number): void {
     const targetIndex = index + delta;
     if (targetIndex < 0 || targetIndex >= items.value.length) {
       return;
@@ -498,30 +543,43 @@
     if (!(currentItem && targetItem)) {
       return;
     }
-    items.value[index] = targetItem;
-    items.value[targetIndex] = currentItem;
+    const next = [...items.value];
+    next[index] = targetItem;
+    next[targetIndex] = currentItem;
+    items.value = next.map((entry, idx) => ({
+      ...entry,
+      position: idx,
+    }));
   }
 
-  function removeItem(index: number) {
-    items.value.splice(index, 1);
+  function removeItem(index: number): void {
+    items.value = items.value
+      .filter((_, idx) => idx !== index)
+      .map((entry, idx) => ({
+        ...entry,
+        position: idx,
+      }));
   }
 
-  function addCustomNote() {
-    items.value.push({
-      position: items.value.length,
-      item_type: "custom_note",
-      item_code: null,
-      source_entity_id: null,
-      source_content_version: null,
-      custom_instruction: null,
-      custom_note: "",
-      snapshot: { content: "" },
-    });
+  function addCustomNote(): void {
+    items.value = [
+      ...items.value,
+      {
+        position: items.value.length,
+        item_type: "custom_note",
+        item_code: null,
+        source_entity_id: null,
+        source_content_version: null,
+        custom_instruction: null,
+        custom_note: "",
+        snapshot: { content: "" },
+      },
+    ];
   }
 
   const api = useApi();
 
-  async function refreshItemVersion(index: number) {
+  async function refreshItemVersion(index: number): Promise<void> {
     pageError.value = null;
     try {
       await api(`/api/users/lesson-plans/${uuid}/refresh-item`, {
@@ -530,40 +588,45 @@
       });
       pageMessage.value = "Đã cập nhật mục lên phiên bản mới nhất.";
       await refresh();
-    } catch (err: unknown) {
-      const errorObject = err as {
-        data?: { message?: string };
-        message?: string;
-      };
+    } catch (err) {
       pageError.value =
-        errorObject?.data?.message ||
-        errorObject?.message ||
-        "Không thể cập nhật phiên bản mục.";
+        normalizeApiError(err).message || "Không thể cập nhật phiên bản mục.";
     }
   }
 
-  async function saveAll() {
+  async function saveAll(): Promise<void> {
     if (!plan.value) {
       return;
     }
+    const trimmedTitle = editMeta.title.trim();
+    if (!trimmedTitle) {
+      pageError.value = "Tiêu đề giáo án không được để trống.";
+      return;
+    }
+
     saving.value = true;
     saveMessage.value = null;
     pageError.value = null;
 
     try {
       // 1. Update metadata
-      await api(`/api/users/lesson-plans/${uuid}`, {
-        method: "PATCH",
-        body: {
-          title: editMeta.title.trim(),
-          target_age: editMeta.target_age ? Number(editMeta.target_age) : null,
-          estimated_minutes: editMeta.estimated_minutes
-            ? Number(editMeta.estimated_minutes)
-            : null,
-          notes: editMeta.notes.trim() || null,
-          expected_version: plan.value.version,
-        },
-      });
+      const metaRes = await api<LessonPlanSummary>(
+        `/api/users/lesson-plans/${uuid}`,
+        {
+          method: "PATCH",
+          body: {
+            title: trimmedTitle,
+            target_age: editMeta.target_age
+              ? Number(editMeta.target_age)
+              : null,
+            estimated_minutes: editMeta.estimated_minutes
+              ? Number(editMeta.estimated_minutes)
+              : null,
+            notes: editMeta.notes.trim() || null,
+            expected_version: plan.value.version,
+          },
+        }
+      );
 
       // 2. Update items
       const itemsPayload: LessonPlanItemInput[] = items.value.map((i) => ({
@@ -578,7 +641,7 @@
       await api(`/api/users/lesson-plans/${uuid}/items`, {
         method: "PUT",
         body: {
-          expected_version: plan.value.version + 1,
+          expected_version: metaRes.version,
           items: itemsPayload,
         },
       });
@@ -588,14 +651,9 @@
       setTimeout(() => {
         saveMessage.value = null;
       }, 3000);
-    } catch (err: unknown) {
-      const errorObject = err as {
-        data?: { message?: string };
-        message?: string;
-      };
+    } catch (err) {
       pageError.value =
-        errorObject?.data?.message ||
-        errorObject?.message ||
+        normalizeApiError(err).message ||
         "Không thể lưu giáo án. Vui lòng tải lại trang.";
     } finally {
       saving.value = false;
@@ -638,7 +696,7 @@
     throw new Error("Hết thời gian chờ kết xuất file PDF.");
   }
 
-  async function handleExportPdf() {
+  async function handleExportPdf(): Promise<void> {
     exporting.value = true;
     pageError.value = null;
     pageMessage.value = "Đang khởi tạo yêu cầu xuất PDF...";
@@ -663,14 +721,9 @@
         downloadUrl,
         `giao-an-${plan.value?.title || "lesson-plan"}.pdf`
       );
-    } catch (err: unknown) {
-      const errorObject = err as {
-        data?: { message?: string };
-        message?: string;
-      };
+    } catch (err) {
       pageError.value =
-        errorObject?.data?.message ||
-        errorObject?.message ||
+        normalizeApiError(err).message ||
         "Không thể xuất PDF. Vui lòng kiểm tra lại quyền truy cập hoặc quota.";
     } finally {
       exporting.value = false;

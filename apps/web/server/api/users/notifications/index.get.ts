@@ -11,6 +11,18 @@ const UserNotificationsQuerySchema = z.object({
   cursor: z.string().optional(),
 });
 
+const NotificationPayloadSchema = z.object({
+  title: z.string().optional(),
+  body: z.string().optional(),
+  action_url: z.string().optional(),
+});
+
+interface InboxParams {
+  limit: number;
+  unreadOnly: boolean;
+  cursor: string | undefined;
+}
+
 function sanitizeActionUrl(
   url: string | number | boolean | null | undefined
 ): string {
@@ -20,7 +32,9 @@ function sanitizeActionUrl(
   return "/me";
 }
 
-function parseInboxParams(query: z.infer<typeof UserNotificationsQuerySchema>) {
+function parseInboxParams(
+  query: z.infer<typeof UserNotificationsQuerySchema>
+): InboxParams {
   const rawLimit = Number.parseInt(String(query.limit || "20"), 10);
   const limit = Math.min(
     Math.max(Number.isNaN(rawLimit) ? 20 : rawLimit, 1),
@@ -32,7 +46,7 @@ function parseInboxParams(query: z.infer<typeof UserNotificationsQuerySchema>) {
 }
 
 export default defineEventHandler(async (event) => {
-  const user = await requireWebUserSession(event);
+  const user = requireWebUserSession(event);
   const userId = Number(user.user_id);
   const db = getOwnerDb();
 
@@ -103,17 +117,14 @@ export default defineEventHandler(async (event) => {
 
   return {
     items: items.map((item) => {
-      const payload = (item.payload as Record<string, unknown>) || {};
+      const parsedPayload = NotificationPayloadSchema.safeParse(item.payload);
+      const payload = parsedPayload.success ? parsedPayload.data : {};
       return {
         uuid: item.uuid,
         code: item.templateCode,
-        title: String(payload.title || "Thông báo"),
-        body: String(payload.body || ""),
-        action_url: sanitizeActionUrl(
-          typeof payload.action_url === "string"
-            ? payload.action_url
-            : undefined
-        ),
+        title: payload.title || "Thông báo",
+        body: payload.body || "",
+        action_url: sanitizeActionUrl(payload.action_url),
         occurred_at: item.createdAt.toISOString(),
         read_at: item.readAt ? item.readAt.toISOString() : null,
       };

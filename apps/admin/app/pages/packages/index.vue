@@ -16,7 +16,7 @@
               class="w-6 h-6 text-brand-600 shrink-0"
               name="i-lucide-package"
             />
-            <span>Catalog Gói & Quyền lợi</span>
+            <span>Catalog Gói &amp; Quyền lợi</span>
           </h1>
           <p class="text-xs text-surface-600 mt-1">
             Xem danh mục gói sản phẩm, số lượng người đăng ký và doanh thu 30
@@ -45,12 +45,12 @@
           class="w-5 h-5 text-warning-600 shrink-0 mt-0.5"
           name="i-lucide-info"
         />
-        <div class="text-xs text-warning-900 leading-relaxed">
+        <div class="text-xs text-warning-900 leading-relaxed min-w-0">
           <strong>Lưu ý:</strong>
           Giá và quyền lợi gói là hợp đồng thương mại Lớp 1. Mọi thay đổi về giá
           hoặc thời hạn phải thực hiện qua Pull Request tại
           <code
-            class="font-mono bg-warning-100 px-1 py-0.5 rounded text-warning-950 font-bold"
+            class="font-mono bg-warning-100 px-1 py-0.5 rounded text-warning-950 font-bold break-all"
             >packages/shared/src/entitlement-catalog.ts</code
           >, không chỉnh sửa trực tiếp từ giao diện quản trị.
         </div>
@@ -79,7 +79,7 @@
         >
           <!-- Card Header -->
           <div class="flex items-start justify-between gap-3">
-            <div>
+            <div class="min-w-0">
               <div class="flex items-center gap-2 flex-wrap">
                 <h2 class="text-lg font-bold font-heading text-surface-900">
                   {{ pkg.name }}
@@ -125,9 +125,9 @@
           >
             <span class="font-bold">Điều kiện lên catalog:</span>
             Spec
-            <code class="font-mono font-bold text-brand-950"
-              >{{ pkg.requires_spec }}</code
-            >
+            <code class="font-mono font-bold text-brand-950 break-all">{{
+              pkg.requires_spec
+            }}</code>
             phải đạt trạng thái
             <span class="font-bold text-success-700">implemented</span>.
           </div>
@@ -154,7 +154,55 @@
             </div>
           </div>
 
-          <!-- Entitlements & Quotas -->
+          <!-- Offers: Billing Period, Price & Duration (§7.1) -->
+          <div
+            class="space-y-1.5 pt-2 border-t border-surface-100 text-xs"
+            v-if="pkg.offers.length > 0"
+          >
+            <div class="font-bold text-surface-700">
+              Chu kỳ &amp; Giá niêm yết:
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <div
+                class="px-2.5 py-1 rounded-xl bg-surface-50 border border-surface-200 text-[11px] text-surface-700 inline-flex items-center gap-1.5"
+                v-for="offer in pkg.offers"
+                :key="offer.offer_code"
+              >
+                <span class="font-semibold text-surface-900"
+                  >{{ offer.billing_period }}:</span
+                >
+                <span class="font-mono font-bold text-brand-700">{{
+                  formatMoney(offer.price_vnd)
+                }}</span>
+                <span class="text-surface-500">
+                  ({{
+                    offer.duration_days
+                      ? `${offer.duration_days} ngày`
+                      : "Trọn đời"
+                  }})
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quotas (§7.1) -->
+          <div
+            class="space-y-1.5 pt-2 border-t border-surface-100 text-xs"
+            v-if="getQuotaEntries(pkg.quotas).length > 0"
+          >
+            <div class="font-bold text-surface-700">Hạn mức (Quotas):</div>
+            <div class="flex flex-wrap gap-1.5">
+              <span
+                class="px-2 py-0.5 rounded-xl bg-brand-50 border border-brand-200 text-[11px] font-mono text-brand-900"
+                v-for="[ quotaKey, quotaVal ] in getQuotaEntries(pkg.quotas)"
+                :key="quotaKey"
+              >
+                {{ quotaKey }}: {{ quotaVal }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Entitlements -->
           <div class="space-y-2 pt-2 border-t border-surface-100 text-xs">
             <div class="font-bold text-surface-700">
               Quyền lợi mở khoá ({{ pkg.entitlements.length }}):
@@ -173,7 +221,7 @@
           <!-- Card Actions: View Subscribers -->
           <div class="pt-2 flex items-center justify-end">
             <button
-              class="min-h-11 px-4 py-2 rounded-2xl border-2 border-surface-200 bg-white hover:bg-surface-50 text-surface-800 text-xs font-bold font-heading transition-colors"
+              class="min-h-11 px-4 py-2 rounded-2xl border-2 border-surface-200 bg-white hover:bg-surface-50 text-surface-800 text-xs font-bold font-heading transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
               type="button"
               @click="() => openSubscribersModal(pkg.code, pkg.name)"
             >
@@ -192,7 +240,7 @@
           class="bg-white rounded-3xl border-4 border-surface-200 max-w-2xl w-full p-6 space-y-4 shadow-xl max-h-[85vh] flex flex-col"
         >
           <div
-            class="flex items-center justify-between border-b pb-3 border-surface-100 flex-shrink-0"
+            class="flex items-center justify-between border-b pb-3 border-surface-100 shrink-0"
           >
             <div>
               <h3 class="text-lg font-bold font-heading text-surface-900">
@@ -203,7 +251,8 @@
               </p>
             </div>
             <button
-              class="text-surface-400 hover:text-surface-600 font-bold text-lg"
+              aria-label="Đóng danh sách người dùng"
+              class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl text-surface-500 hover:text-surface-700 hover:bg-surface-100 font-bold text-lg transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
               type="button"
               @click="closeSubscribersModal"
             >
@@ -211,15 +260,13 @@
             </button>
           </div>
 
-          <div
-            class="py-12 text-center text-surface-500 flex-1"
+          <LoadingState
+            message="Đang tải danh sách người dùng..."
             v-if="loadingSubscribers"
-          >
-            <p>Đang tải danh sách người dùng...</p>
-          </div>
+          />
 
           <div
-            class="overflow-y-auto flex-1 border border-surface-200 rounded-2xl"
+            class="overflow-x-auto overflow-y-auto flex-1 border border-surface-200 rounded-2xl"
             v-else-if="subscribersList.length > 0"
           >
             <table class="w-full text-left text-xs">
@@ -253,22 +300,26 @@
                       :class="[
                         'px-2 py-0.5 rounded-full text-[10px] font-bold',
                         sub.source === 'manual_grant'
-                          ? 'bg-brand-100 text-brand-800'
-                          : 'bg-brand-100 text-brand-800'
+                          ? 'bg-warning-100 text-warning-800'
+                          : 'bg-brand-100 text-brand-800',
                       ]"
                     >
-                      {{ sub.source === 'manual_grant' ? 'Cấp tay' : 'Thanh toán' }}
+                      {{
+                        sub.source === "manual_grant" ? "Cấp tay" : "Thanh toán"
+                      }}
                     </span>
                   </td>
                   <td class="p-3 text-surface-600">
                     {{ formatDate(sub.granted_at) }}
                   </td>
                   <td class="p-3 text-surface-600">
-                    {{ sub.expires_at ? formatDate(sub.expires_at) : 'Vĩnh viễn' }}
+                    {{
+                      sub.expires_at ? formatDate(sub.expires_at) : "Vĩnh viễn"
+                    }}
                   </td>
                   <td class="p-3 text-right">
                     <NuxtLink
-                      class="text-brand-600 hover:underline font-bold"
+                      class="inline-flex items-center justify-end min-h-11 px-2 text-brand-600 hover:underline font-bold"
                       :to="`/users/${sub.user_uuid}`"
                     >
                       Xem hồ sơ
@@ -284,10 +335,10 @@
           </div>
 
           <div
-            class="flex items-center justify-end pt-3 border-t border-surface-100 flex-shrink-0"
+            class="flex items-center justify-end pt-3 border-t border-surface-100 shrink-0"
           >
             <button
-              class="min-h-11 px-5 py-2 rounded-2xl border-2 border-surface-200 bg-white hover:bg-surface-50 text-surface-800 font-bold transition-colors"
+              class="min-h-11 px-5 py-2 rounded-2xl border-2 border-surface-200 bg-white hover:bg-surface-50 text-surface-800 font-bold transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
               type="button"
               @click="closeSubscribersModal"
             >
@@ -305,7 +356,8 @@
   import { definePageMeta, useHead } from "#imports";
   import ForbiddenState from "~/components/forbidden-state.vue";
   import LoadingState from "~/components/loading-state.vue";
-  import type { ManagerRole } from "~/composables/nav-config";
+  import { useAdminAuth } from "~/composables/use-admin-auth";
+  import { apiFetch } from "~/composables/use-api-client";
 
   definePageMeta({
     layout: "manager",
@@ -317,9 +369,15 @@
 
   const { user } = useAdminAuth();
   const isSuperAdmin = computed(() => {
-    const role = (user.value as { role?: ManagerRole } | null)?.role;
-    return role === "super_admin";
+    return user.value?.role === "super_admin";
   });
+
+  interface PackageOffer {
+    offer_code: string;
+    billing_period: string;
+    price_vnd: number;
+    duration_days: number | null;
+  }
 
   interface PackageItem {
     code: string;
@@ -329,12 +387,7 @@
     is_public: boolean;
     is_featured: boolean;
     status: string;
-    offers: Array<{
-      offer_code: string;
-      billing_period: string;
-      price_vnd: number;
-      duration_days: number | null;
-    }>;
+    offers: PackageOffer[];
     entitlements: string[];
     quotas?: Record<string, number>;
     requires_spec?: string | null;
@@ -362,8 +415,9 @@
   const subscribersList = ref<SubscriberItem[]>([]);
   const loadingSubscribers = ref(false);
 
-  async function loadPackages() {
+  async function loadPackages(): Promise<void> {
     if (!isSuperAdmin.value) {
+      loading.value = false;
       return;
     }
     loading.value = true;
@@ -374,16 +428,20 @@
         "/api/managers/packages"
       );
       packagesList.value = data.packages;
-    } catch (err: unknown) {
-      const apiErr = err as { data?: { message?: string } };
+    } catch (err) {
       errorMessage.value =
-        apiErr?.data?.message || "Không thể tải danh mục gói.";
+        err instanceof Error && err.message
+          ? err.message
+          : "Không thể tải danh mục gói.";
     } finally {
       loading.value = false;
     }
   }
 
-  async function openSubscribersModal(code: string, name: string) {
+  async function openSubscribersModal(
+    code: string,
+    name: string
+  ): Promise<void> {
     selectedPackageCode.value = code;
     selectedPackageName.value = name;
     isSubscribersModalOpen.value = true;
@@ -395,18 +453,27 @@
         `/api/managers/packages/${code}/subscribers?limit=100`
       );
       subscribersList.value = data.subscribers;
-    } catch (_err) {
+    } catch {
       subscribersList.value = [];
     } finally {
       loadingSubscribers.value = false;
     }
   }
 
-  function closeSubscribersModal() {
+  function closeSubscribersModal(): void {
     isSubscribersModalOpen.value = false;
     selectedPackageCode.value = "";
     selectedPackageName.value = "";
     subscribersList.value = [];
+  }
+
+  function getQuotaEntries(
+    quotas?: Record<string, number>
+  ): [string, number][] {
+    if (!quotas) {
+      return [];
+    }
+    return Object.entries(quotas);
   }
 
   function formatDate(isoDate: string): string {
@@ -427,14 +494,14 @@
 
   function getPackageCardClass(pkg: PackageItem): string {
     const base =
-      "p-6 rounded-3xl border-4 transition-all space-y-4 shadow-sm bg-white";
+      "p-6 rounded-3xl border-4 transition-all space-y-4 shadow-sm bg-white min-w-0";
     if (pkg.status === "retired") {
       return `${base} opacity-60 border-surface-300 bg-surface-50`;
     }
     if (pkg.is_public) {
       return `${base} border-brand-200 hover:border-brand-300`;
     }
-    return `${base} border-brand-200 hover:border-brand-300`;
+    return `${base} border-surface-200 hover:border-surface-300`;
   }
 
   onMounted(() => {

@@ -3,7 +3,11 @@
     class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 shadow-sm overflow-hidden"
   >
     <div class="p-12 text-center text-surface-500" v-if="isLoading">
-      Đang tải danh sách chương trình...
+      <div
+        aria-hidden="true"
+        class="w-6 h-6 rounded-full border-2 border-brand-600 border-t-transparent animate-spin mx-auto mb-3"
+      />
+      <span>Đang tải danh sách chương trình...</span>
     </div>
 
     <div
@@ -33,10 +37,10 @@
           <tr
             class="hover:bg-surface-50/80 dark:hover:bg-surface-700/30 transition-colors"
             v-for="curr in curricula"
-            :key="curr.id"
+            :key="curr.id ?? curr.code"
           >
             <td
-              class="py-3 px-4 font-mono font-bold text-surface-900 dark:text-surface-100"
+              class="py-3 px-4 font-mono font-bold text-surface-900 dark:text-surface-100 whitespace-nowrap"
             >
               {{ curr.code }}
               <span class="text-xs font-normal text-surface-400"
@@ -46,31 +50,39 @@
             <td class="py-3 px-4 font-medium text-surface-900 dark:text-white">
               {{ curr.title }}
             </td>
-            <td class="py-3 px-4">
+            <td class="py-3 px-4 whitespace-nowrap">
               <span
                 class="px-2.5 py-1 text-xs font-semibold rounded-xl"
                 :class="
                   curr.program_type === 'age_based'
                     ? 'bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-200'
-                    : 'bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-200'
+                    : 'bg-success-100 text-success-800 dark:bg-success-900/50 dark:text-success-200'
                 "
               >
-                {{ curr.program_type === "age_based"
+                {{
+                  curr.program_type === "age_based"
                     ? "Theo độ tuổi"
-                    : "Hành trình" }}
+                    : "Hành trình"
+                }}
               </span>
             </td>
-            <td class="py-3 px-4 text-surface-600 dark:text-surface-300">
-              {{ curr.target_age_min && curr.target_age_max
+            <td
+              class="py-3 px-4 text-surface-600 dark:text-surface-300 whitespace-nowrap"
+            >
+              {{
+                curr.target_age_min && curr.target_age_max
                   ? `${curr.target_age_min}–${curr.target_age_max} tuổi`
-                  : "Mọi độ tuổi" }}
+                  : "Mọi độ tuổi"
+              }}
             </td>
-            <td class="py-3 px-4 text-surface-600 dark:text-surface-300">
+            <td
+              class="py-3 px-4 text-surface-600 dark:text-surface-300 whitespace-nowrap"
+            >
               {{ curr.duration_weeks }}
               tuần ({{ curr.sessions_per_week }}
               buổi/tuần)
             </td>
-            <td class="py-3 px-4">
+            <td class="py-3 px-4 whitespace-nowrap">
               <span
                 class="px-2 py-0.5 text-xs font-medium rounded-xl"
                 :class="getTierBadgeClass(curr.access_tier)"
@@ -78,7 +90,7 @@
                 {{ curr.access_tier }}
               </span>
             </td>
-            <td class="py-3 px-4">
+            <td class="py-3 px-4 whitespace-nowrap">
               <span
                 class="px-2.5 py-1 text-xs font-bold rounded-full"
                 :class="getStatusBadgeClass(curr.status)"
@@ -86,29 +98,31 @@
                 {{ curr.status }}
               </span>
             </td>
-            <td class="py-3 px-4 text-right space-x-2">
-              <button
-                class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300 transition-colors"
-                type="button"
-                @click="onEdit(curr)"
-              >
-                Mở soạn thảo
-              </button>
-              <button
-                class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-700 dark:bg-surface-700 dark:text-surface-200 transition-colors"
-                type="button"
-                @click="onDuplicate(curr)"
-              >
-                Nhân bản
-              </button>
-              <button
-                class="px-3 py-1.5 text-xs font-semibold rounded-xl bg-danger-50 hover:bg-danger-100 text-danger-600 dark:bg-danger-950 dark:text-danger-300 transition-colors"
-                type="button"
-                v-if="curr.status === 'draft'"
-                @click="onDelete(curr)"
-              >
-                Xoá
-              </button>
+            <td class="py-3 px-4 text-right whitespace-nowrap">
+              <div class="flex items-center justify-end gap-2">
+                <button
+                  class="min-h-11 px-3 py-2 text-xs font-semibold rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 dark:bg-brand-950 dark:text-brand-300 transition-colors whitespace-nowrap"
+                  type="button"
+                  @click="onEdit(curr)"
+                >
+                  Mở soạn thảo
+                </button>
+                <button
+                  class="min-h-11 px-3 py-2 text-xs font-semibold rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-700 dark:bg-surface-700 dark:text-surface-200 transition-colors whitespace-nowrap"
+                  type="button"
+                  @click="onDuplicate(curr)"
+                >
+                  Nhân bản
+                </button>
+                <button
+                  class="min-h-11 px-3 py-2 text-xs font-semibold rounded-xl bg-danger-50 hover:bg-danger-100 text-danger-600 dark:bg-danger-950 dark:text-danger-300 transition-colors whitespace-nowrap"
+                  type="button"
+                  v-if="curr.status === 'draft'"
+                  @click="onDelete(curr)"
+                >
+                  Xoá
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>

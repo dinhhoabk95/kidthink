@@ -101,8 +101,10 @@
 
 <script lang="ts" setup>
   import {
+    type CookieDefinition,
     ESSENTIAL_COOKIES,
     LOCAL_STORAGE_ITEMS,
+    type StorageDefinition,
   } from "@mindkid/shared/client";
   import { useHead, useSeoMeta } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
@@ -115,8 +117,8 @@
   // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
   definePageMeta({ layout: false });
 
-  const essentialCookies = ESSENTIAL_COOKIES;
-  const localStorageItems = LOCAL_STORAGE_ITEMS;
+  const essentialCookies: readonly CookieDefinition[] = ESSENTIAL_COOKIES;
+  const localStorageItems: readonly StorageDefinition[] = LOCAL_STORAGE_ITEMS;
 
   useSeoMeta({
     title: "Chính sách Cookie — MindKid",
@@ -153,23 +155,26 @@
 
   .meta-pills {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin-bottom: 1rem;
   }
 
   .pill-version,
   .pill-date {
-    font-size: 0.8rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
     font-weight: 700;
-    padding: 0.25rem 0.65rem;
+    padding: 0.25rem 0.75rem;
     border-radius: 9999px;
     background-color: var(--color-brand-100);
     color: var(--color-brand-800);
   }
 
   .policy-title {
-    font-family: var(--font-heading, "Fredoka", sans-serif);
-    font-size: 2.25rem;
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    line-height: 1.4;
     font-weight: 700;
     color: var(--color-surface-900);
     margin-bottom: 0.75rem;
@@ -183,41 +188,55 @@
   }
 
   .policy-section {
-    background-color: white;
+    background-color: var(--color-surface-0);
     border-radius: 1.25rem;
     border: 1px solid var(--color-surface-200);
-    padding: 2rem;
+    padding: 1.25rem;
     margin-bottom: 2rem;
+  }
+
+  @media (min-width: 640px) {
+    .policy-title {
+      font-size: 2.25rem;
+    }
+
+    .policy-section {
+      padding: 2rem;
+    }
   }
 
   .section-heading {
     font-size: 1.3rem;
+    line-height: 1.4;
     font-weight: 700;
     color: var(--color-surface-900);
     margin-bottom: 0.75rem;
   }
 
   .section-text {
-    font-size: 0.95rem;
+    font-size: 1rem;
     line-height: 1.6;
     color: var(--color-surface-700);
     margin-bottom: 1.25rem;
   }
 
   .table-responsive {
+    width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .cookie-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
   }
 
   .cookie-table th,
   .cookie-table td {
     padding: 0.75rem 1rem;
     text-align: left;
+    line-height: 1.5;
     border-bottom: 1px solid var(--color-surface-200);
   }
 
@@ -237,11 +256,13 @@
 
   .badge-essential {
     display: inline-block;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
     font-weight: 700;
-    padding: 0.2rem 0.5rem;
-    border-radius: 0.4rem;
-    background-color: var(--color-success-100, lightgreen);
-    color: var(--color-success-800, darkgreen);
+    padding: 0.25rem 0.625rem;
+    border-radius: 0.5rem;
+    background-color: var(--color-success-100);
+    color: var(--color-success-800);
+    white-space: nowrap;
   }
 </style>

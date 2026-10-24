@@ -16,17 +16,19 @@
         >
           Cài đặt ứng dụng MindKid
         </h3>
-        <p
-          class="text-xs sm:text-sm text-surface-600 dark:text-surface-300 mt-0.5"
-        >
-          {{ isIos ? 'Chạm biểu tượng Chia sẻ rồi chọn "Thêm vào MH chính" để mở toàn màn hình cho bé chơi mượt mà.' : 'Thêm MindKid vào màn hình chính tablet để mở toàn màn hình, không thanh địa chỉ, giúp bé tập trung hơn.' }}
+        <p class="text-sm text-surface-600 dark:text-surface-300 mt-0.5">
+          {{
+            isIos
+              ? 'Chạm biểu tượng Chia sẻ rồi chọn "Thêm vào MH chính" để mở toàn màn hình cho bé chơi mượt mà.'
+              : "Thêm MindKid vào màn hình chính tablet để mở toàn màn hình, không thanh địa chỉ, giúp bé tập trung hơn."
+          }}
         </p>
       </div>
     </div>
 
     <div class="flex items-center gap-3 shrink-0 self-end sm:self-center">
       <button
-        class="min-h-11 px-4 py-2 text-xs sm:text-sm font-semibold text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white transition-colors"
+        class="min-h-11 px-4 py-2 text-sm font-semibold text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white transition-colors"
         data-testid="pwa-dismiss-btn"
         type="button"
         @click="handleDismiss"
@@ -35,7 +37,7 @@
       </button>
 
       <button
-        class="min-h-11 px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-heading font-bold rounded-xl transition-all shadow-sm active:scale-95"
+        class="min-h-11 px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-heading font-bold rounded-xl transition-all shadow-sm active:scale-95"
         data-testid="pwa-install-btn"
         type="button"
         v-if="!isIos"

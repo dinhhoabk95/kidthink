@@ -1,19 +1,24 @@
 <template>
   <div
-    class="min-h-screen min-h-dvh bg-surface-100 flex flex-col justify-between p-4 sm:p-8 select-none"
+    class="min-h-screen min-h-dvh bg-surface-100 flex flex-col justify-between p-4 sm:p-8 select-none overflow-x-hidden"
     :data-competency-code="activeCode"
+    :style="{ '--hud-touch-floor': `${KID_TOUCH_FLOOR_PX}px` }"
   >
     <!-- Kid Top Bar / HUD -->
     <header
-      class="flex items-center justify-between max-w-5xl mx-auto w-full mb-6 gap-2"
+      class="flex flex-wrap items-center justify-between max-w-5xl mx-auto w-full mb-6 gap-3"
     >
       <div class="flex items-center gap-3">
         <!-- Nút quay lại sảnh chơi cho bé (BR-CCE-05) -->
         <NuxtLink
           aria-label="Quay lại sảnh chơi"
-          class="min-h-16 min-w-16 rounded-2xl bg-white border-[3px] border-surface-300 shadow-[0_4px_0_var(--color-surface-300)] active:shadow-[0_1px_0_var(--color-surface-300)] active:translate-y-0.5 flex items-center justify-center transition-all"
+          class="back-to-play-btn rounded-2xl bg-white border-[3px] border-surface-300 shadow-[0_4px_0_var(--color-surface-300)] active:shadow-[0_1px_0_var(--color-surface-300)] active:translate-y-0.5 flex items-center justify-center transition-all"
           data-testid="back-to-play-btn"
           to="/play"
+          :style="{
+            width: 'var(--hud-touch-floor, 4rem)',
+            height: 'var(--hud-touch-floor, 4rem)',
+          }"
         >
           <UIcon class="w-8 h-8 text-surface-700" name="i-lucide-arrow-left" />
         </NuxtLink>
@@ -26,10 +31,10 @@
       </div>
 
       <div class="flex items-center gap-3" v-if="competencyData">
-        <KidMascot pose="happy" :size="56" />
+        <KidMascot class="hidden sm:block" pose="happy" :size="56" />
 
         <button
-          class="bg-white border-[3px] min-h-16 px-4 sm:px-5 py-2 rounded-2xl shadow-sm flex items-center gap-2 transition-all active:translate-y-0.5"
+          class="bg-white border-[3px] min-h-16 min-w-16 px-4 sm:px-5 py-2 rounded-2xl shadow-sm flex items-center gap-2 transition-all active:translate-y-0.5"
           data-testid="competency-badge"
           type="button"
           :aria-label="`Nghe giới thiệu ${competencyData.competency.name}`"
@@ -37,12 +42,12 @@
           @click="speakIntro"
         >
           <img
-            class="w-7 h-7 object-contain"
+            class="w-7 h-7 object-contain shrink-0"
             :alt="competencyData.competency.name"
             :src="competencyData.competency.icon_path"
           >
           <span
-            class="font-heading font-bold text-lg sm:text-xl"
+            class="font-heading font-bold text-base sm:text-xl"
             :class="palette.titleClass"
           >
             {{ competencyData.competency.name }}
@@ -94,7 +99,7 @@
             Bé hãy khám phá các nhóm năng lực khác trong sảnh chơi nhé!
           </p>
           <NuxtLink
-            class="inline-flex items-center justify-center min-h-16 px-6 rounded-2xl bg-brand-600 text-white font-heading font-bold text-base shadow-[0_4px_0_var(--color-brand-800)] active:shadow-none active:translate-y-1 transition-all"
+            class="inline-flex items-center justify-center min-h-16 min-w-16 px-6 rounded-2xl bg-brand-600 text-white font-heading font-bold text-base shadow-[0_4px_0_var(--color-brand-800)] active:shadow-none active:translate-y-1 transition-all"
             to="/play"
           >
             Về sảnh chơi
@@ -111,7 +116,7 @@
         <template v-for="game in competencyData.games" :key="game.code">
           <!-- Trò chơi mở được -->
           <NuxtLink
-            class="flex flex-col items-center justify-between p-4 sm:p-5 rounded-3xl border-4 bg-white min-h-24 active:translate-y-1 transition-all group"
+            class="flex flex-col items-center justify-between p-4 sm:p-5 rounded-3xl border-4 bg-white min-h-24 min-w-16 active:translate-y-1 transition-all group"
             data-testid="competency-game-item"
             v-if="!game.is_locked"
             :aria-label="`Chơi ${game.title}`"
@@ -128,7 +133,7 @@
             </div>
 
             <span
-              class="font-heading font-bold text-base sm:text-lg text-surface-900 text-center line-clamp-2 mb-2"
+              class="font-heading font-bold text-base sm:text-lg text-surface-900 text-center line-clamp-2 break-words w-full mb-2"
             >
               {{ game.title }}
             </span>
@@ -160,7 +165,7 @@
 
           <!-- Trò chơi bị khoá trung tính (BR-PEN-04, BR-PEN-06, BR-CCE-04) -->
           <div
-            class="flex flex-col items-center justify-between p-4 sm:p-5 rounded-3xl border-4 border-surface-200 bg-surface-50/80 min-h-24 opacity-75 cursor-not-allowed select-none"
+            class="flex flex-col items-center justify-between p-4 sm:p-5 rounded-3xl border-4 border-surface-200 bg-surface-50/80 min-h-24 min-w-16 opacity-75 cursor-not-allowed select-none"
             data-testid="competency-game-item-locked"
             v-else
             :aria-label="`${game.title} (Chưa mở khoá)`"
@@ -176,13 +181,13 @@
             </div>
 
             <span
-              class="font-heading font-bold text-base sm:text-lg text-surface-500 text-center line-clamp-2 mb-2"
+              class="font-heading font-bold text-base sm:text-lg text-surface-500 text-center line-clamp-2 break-words w-full mb-2"
             >
               {{ game.title }}
             </span>
 
             <div
-              class="flex items-center gap-1.5 mt-auto text-surface-400 py-0.5"
+              class="flex items-center gap-1.5 mt-auto text-surface-500 py-0.5"
             >
               <UIcon class="w-5 h-5" name="i-lucide-lock" />
             </div>
@@ -193,7 +198,7 @@
 
     <!-- Footer Safe Zone -->
     <footer
-      class="max-w-5xl mx-auto w-full mt-6 text-center text-base text-surface-400"
+      class="max-w-5xl mx-auto w-full mt-6 text-center text-base text-surface-600"
     >
       MindKid Thinking Play — Khám phá năng lực tư duy
     </footer>
@@ -212,6 +217,8 @@
   /**
    * Khám phá trò chơi theo năng lực cho trẻ — `child-competency-explorer.md`, `BR-CCE-01..08`.
    */
+  import { getTouchFloor } from "@mindkid/game-engine";
+  import { type AccessTier, findCompetency } from "@mindkid/shared/client";
   import { computed, onMounted, ref } from "vue";
   import type { ChildCompetencyResponse } from "#server/services/child-competency-explorer";
   import KidMascot from "~/components/kid/mascot.vue";
@@ -222,12 +229,30 @@
 
   definePageMeta({ layout: "kid" });
 
+  const KID_TOUCH_FLOOR_PX = getTouchFloor("3-4");
+
   interface CompetencyPalette {
     readonly badgeClass: string;
     readonly titleClass: string;
     readonly cardBorderClass: string;
     readonly iconBgClass: string;
     readonly pillClass: string;
+  }
+
+  interface GuestLevelItem {
+    readonly code: string;
+    readonly title: string;
+    readonly thumbnail_emoji?: string | null;
+    readonly theme_id?: string | null;
+    readonly access_tier: AccessTier;
+    readonly locked?: boolean;
+  }
+
+  interface GuestLevelsPayload {
+    readonly items?: readonly GuestLevelItem[];
+    readonly competency?: ChildCompetencyResponse["competency"];
+    readonly child?: ChildCompetencyResponse["child"];
+    readonly games?: ChildCompetencyResponse["games"];
   }
 
   const COMPETENCY_PALETTES: Record<string, CompetencyPalette> = {
@@ -294,6 +319,7 @@
   const router = useRouter();
   const apiFetch = useApi();
   const { speak } = useSpeech();
+  const activeChildCookie = useCookie<string | null>("active_child_id");
   const code = String(route.params.code ?? "").toUpperCase();
 
   const showParentGate = ref(false);
@@ -321,12 +347,67 @@
     router.push("/");
   }
 
+  async function loadGuestCompetencyData(
+    compCode: string
+  ): Promise<ChildCompetencyResponse | null> {
+    const entry = findCompetency(compCode);
+    if (!entry) {
+      return null;
+    }
+    const res = await apiFetch<GuestLevelsPayload>(
+      `/api/guest/levels?competency=${entry.code}&limit=60`
+    );
+    if (res.competency && res.child && Array.isArray(res.games)) {
+      return {
+        competency: res.competency,
+        child: res.child,
+        games: res.games,
+      };
+    }
+    const items = res.items ?? [];
+    return {
+      competency: {
+        code: entry.code,
+        name: entry.name,
+        tagline: entry.tagline ?? entry.short,
+        icon_path: `/competencies/${entry.code.toLowerCase()}.svg`,
+      },
+      child: {
+        uuid: "guest",
+        display_name: "Bé",
+        age_band: "3-4",
+      },
+      games: items.map((item) => ({
+        code: item.code,
+        title: item.title,
+        thumbnail_emoji: item.thumbnail_emoji ?? "🎮",
+        theme_id: item.theme_id ?? "",
+        access_tier: item.access_tier,
+        is_locked: Boolean(item.locked),
+        best_stars: 0,
+        play_count: 0,
+      })),
+    };
+  }
+
   onMounted(async () => {
+    const entry = findCompetency(code);
+    if (!entry) {
+      competencyData.value = null;
+      isLoading.value = false;
+      router.replace("/play");
+      return;
+    }
+
     try {
       isLoading.value = true;
-      competencyData.value = await apiFetch<ChildCompetencyResponse>(
-        `/api/users/play/competency/${code}`
-      );
+      if (activeChildCookie.value) {
+        competencyData.value = await apiFetch<ChildCompetencyResponse>(
+          `/api/users/play/competency/${entry.code}`
+        );
+      } else {
+        competencyData.value = await loadGuestCompetencyData(entry.code);
+      }
       speakIntro();
     } catch {
       competencyData.value = null;
@@ -336,3 +417,10 @@
     }
   });
 </script>
+
+<style scoped>
+  .back-to-play-btn {
+    width: var(--hud-touch-floor, 4rem);
+    height: var(--hud-touch-floor, 4rem);
+  }
+</style>

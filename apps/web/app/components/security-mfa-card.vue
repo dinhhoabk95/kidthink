@@ -1,6 +1,7 @@
 <template>
   <div
     class="bg-white rounded-2xl border-2 border-surface-200 p-5 md:p-6 space-y-6 shadow-sm"
+    data-testid="security-mfa-card"
   >
     <div
       class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-surface-100 pb-4"
@@ -13,21 +14,23 @@
           <h2 class="text-lg font-bold font-heading text-surface-900">
             Xác thực hai lớp (TOTP)
           </h2>
-          <p class="text-xs text-surface-500 mt-0.5">
+          <p class="text-sm text-surface-600 mt-0.5">
             MFA là tính năng tuỳ chọn cho tài khoản người dùng.
           </p>
         </div>
       </div>
 
       <span
-        class="px-3.5 py-1.5 text-xs font-bold rounded-full bg-success-100 text-success-800 border border-success-200 inline-flex items-center gap-1.5"
+        class="px-3.5 py-1.5 text-sm font-bold rounded-full bg-success-100 text-success-800 border border-success-200 inline-flex items-center gap-1.5"
+        data-testid="mfa-status-badge"
         v-if="mfaStatus?.enabled"
       >
         <UIcon class="w-4 h-4 text-success-600" name="i-lucide-check" />
         Đang bật
       </span>
       <span
-        class="px-3.5 py-1.5 text-xs font-bold rounded-full bg-surface-100 text-surface-700 border border-surface-200"
+        class="px-3.5 py-1.5 text-sm font-bold rounded-full bg-surface-100 text-surface-700 border border-surface-200"
+        data-testid="mfa-status-badge"
         v-else
       >
         Chưa kích hoạt
@@ -39,15 +42,17 @@
         class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm bg-surface-50 p-4 rounded-xl border border-surface-200"
       >
         <div>
-          <span class="text-xs text-surface-500 block"
+          <span class="text-sm text-surface-600 block"
             >Thời điểm kích hoạt:</span
           >
           <span class="font-medium text-surface-800">
-            {{ mfaStatus.confirmed_at ? formatDate(mfaStatus.confirmed_at) : "—" }}
+            {{
+              mfaStatus.confirmed_at ? formatDate(mfaStatus.confirmed_at) : "—"
+            }}
           </span>
         </div>
         <div>
-          <span class="text-xs text-surface-500 block"
+          <span class="text-sm text-surface-600 block"
             >Số mã khôi phục còn lại:</span
           >
           <span class="font-bold text-surface-900">
@@ -85,6 +90,7 @@
       </p>
       <button
         class="min-h-11 px-6 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold font-heading rounded-xl transition-all shadow-sm inline-flex items-center gap-2"
+        data-testid="mfa-start-setup-btn"
         type="button"
         :disabled="submitting"
         @click="startSetupFlow"
@@ -106,7 +112,11 @@
           class="flex items-center justify-between border-b border-surface-100 pb-3"
         >
           <h3 class="text-lg font-bold font-heading text-surface-900">
-            {{ setupState.step === "codes" ? "Mã khôi phục dự phòng" : "Thiết lập xác thực hai lớp" }}
+            {{
+              setupState.step === "codes"
+                ? "Mã khôi phục dự phòng"
+                : "Thiết lập xác thực hai lớp"
+            }}
           </h3>
           <button
             aria-label="Đóng modal"
@@ -120,7 +130,7 @@
         </div>
 
         <div class="space-y-4" v-if="setupState.step === 'verify'">
-          <p class="text-xs text-surface-600">
+          <p class="text-sm text-surface-600">
             1. Mở ứng dụng xác thực (Google Authenticator, Microsoft
             Authenticator hoặc 1Password) và thêm khóa bí mật:
           </p>
@@ -133,7 +143,7 @@
               {{ setupState.secret }}
             </span>
             <button
-              class="min-h-11 px-3 py-1 text-xs font-semibold text-brand-600 hover:text-brand-700 bg-white border border-surface-200 rounded-xl shrink-0"
+              class="min-h-11 px-3 py-1 text-sm font-semibold text-brand-600 hover:text-brand-700 bg-white border border-surface-200 rounded-xl shrink-0"
               type="button"
               @click="copySecret"
             >
@@ -143,7 +153,7 @@
 
           <div class="space-y-2 pt-2">
             <label
-              class="block text-xs font-bold text-surface-700"
+              class="block text-sm font-bold text-surface-700"
               for="setupVerifyCode"
             >
               2. Nhập mã xác thực 6 số hiển thị trên ứng dụng để kích hoạt:
@@ -161,14 +171,14 @@
 
           <div class="flex justify-end gap-3 pt-2">
             <button
-              class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-200 text-xs font-bold text-surface-600 hover:bg-surface-50"
+              class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-200 text-sm font-bold text-surface-600 hover:bg-surface-50"
               type="button"
               @click="setupState.isOpen = false"
             >
               Huỷ
             </button>
             <button
-              class="min-h-11 px-6 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-xs font-bold font-heading"
+              class="min-h-11 px-6 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-bold font-heading"
               type="button"
               :disabled="setupState.code.trim().length !== 6 || submitting"
               @click="handleConfirmSetup"
@@ -180,7 +190,7 @@
 
         <div class="space-y-4" v-else-if="setupState.step === 'codes'">
           <div
-            class="p-3 bg-warning-50 rounded-xl border border-warning-200 text-xs text-warning-900 space-y-1"
+            class="p-3 bg-warning-50 rounded-xl border border-warning-200 text-sm text-warning-900 space-y-1"
           >
             <strong class="font-bold block"
               >Lưu ý quan trọng (Chỉ hiển thị 1 lần duy nhất):</strong
@@ -195,7 +205,7 @@
             class="grid grid-cols-2 gap-2 bg-surface-50 p-4 rounded-xl border border-surface-200"
           >
             <div
-              class="font-mono text-xs font-bold text-surface-800 p-2 bg-white rounded-xl border border-surface-200 text-center select-all"
+              class="font-mono text-sm font-bold text-surface-800 p-2 bg-white rounded-xl border border-surface-200 text-center select-all"
               v-for="(code, idx) in setupState.recoveryCodes"
               :key="idx"
             >
@@ -206,14 +216,14 @@
           <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
             <div class="flex items-center gap-2">
               <button
-                class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-300 hover:border-brand-600 text-xs font-bold text-surface-700"
+                class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-300 hover:border-brand-600 text-sm font-bold text-surface-700"
                 type="button"
                 @click="copyAllCodes"
               >
                 {{ setupState.copiedCodes ? "Đã sao chép" : "Sao chép tất cả" }}
               </button>
               <button
-                class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-300 hover:border-brand-600 text-xs font-bold text-surface-700"
+                class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-300 hover:border-brand-600 text-sm font-bold text-surface-700"
                 type="button"
                 @click="downloadCodes"
               >
@@ -221,7 +231,7 @@
               </button>
             </div>
             <button
-              class="min-h-11 px-6 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold font-heading"
+              class="min-h-11 px-6 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold font-heading"
               type="button"
               @click="setupState.isOpen = false"
             >
@@ -244,7 +254,11 @@
           class="flex items-center justify-between border-b border-surface-100 pb-3"
         >
           <h3 class="text-lg font-bold font-heading text-surface-900">
-            {{ totpModal.mode === "disable" ? "Tắt xác thực hai lớp" : "Sinh lại mã khôi phục" }}
+            {{
+              totpModal.mode === "disable"
+                ? "Tắt xác thực hai lớp"
+                : "Sinh lại mã khôi phục"
+            }}
           </h3>
           <button
             aria-label="Đóng modal"
@@ -256,18 +270,24 @@
           </button>
         </div>
 
-        <p class="text-xs text-surface-600">
-          {{ totpModal.mode === "disable"
+        <p class="text-sm text-surface-600">
+          {{
+            totpModal.mode === "disable"
               ? "Để tắt MFA, vui lòng nhập mã xác thực 6 số từ ứng dụng xác thực hoặc một mã khôi phục dự phòng:"
-              : "Hành động này sẽ vô hiệu hoá toàn bộ mã khôi phục cũ và cấp 10 mã mới. Vui lòng nhập mã TOTP 6 số:" }}
+              : "Hành động này sẽ vô hiệu hoá toàn bộ mã khôi phục cũ và cấp 10 mã mới. Vui lòng nhập mã TOTP 6 số:"
+          }}
         </p>
 
         <div class="space-y-2">
           <label
-            class="block text-xs font-bold text-surface-700"
+            class="block text-sm font-bold text-surface-700"
             for="totpActionCode"
           >
-            {{ totpModal.mode === "disable" ? "Mã TOTP hoặc mã khôi phục *" : "Mã xác thực TOTP 6 số *" }}
+            {{
+              totpModal.mode === "disable"
+                ? "Mã TOTP hoặc mã khôi phục *"
+                : "Mã xác thực TOTP 6 số *"
+            }}
           </label>
           <input
             class="w-full min-h-11 px-4 py-2.5 rounded-xl border-2 border-surface-300 focus:border-brand-600 focus:outline-none text-center font-mono text-base font-bold text-surface-900"
@@ -280,14 +300,14 @@
 
         <div class="flex justify-end gap-3 pt-2">
           <button
-            class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-200 text-xs font-bold text-surface-600 hover:bg-surface-50"
+            class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-200 text-sm font-bold text-surface-600 hover:bg-surface-50"
             type="button"
             @click="totpModal.mode = null"
           >
             Huỷ
           </button>
           <button
-            class="min-h-11 px-5 py-2 rounded-xl disabled:opacity-50 text-white text-xs font-bold font-heading"
+            class="min-h-11 px-5 py-2 rounded-xl disabled:opacity-50 text-white text-sm font-bold font-heading"
             type="button"
             :class="totpModal.mode === 'disable' ? 'bg-danger-600 hover:bg-danger-700' : 'bg-brand-600 hover:bg-brand-700'"
             :disabled="!totpModal.code.trim() || submitting"

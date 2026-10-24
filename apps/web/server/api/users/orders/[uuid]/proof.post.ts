@@ -19,7 +19,11 @@ import {
   PACKAGE_CATALOG,
   type PaymentOrderStatus,
 } from "@mindkid/shared";
-import { uploadPrivateAsset } from "@mindkid/storage";
+import {
+  detectImageMimeType,
+  isSvgContent,
+  uploadPrivateAsset,
+} from "@mindkid/storage";
 import { and, eq } from "drizzle-orm";
 import {
   defineEventHandler,
@@ -75,10 +79,19 @@ async function uploadProofFileIfProvided(
     throw new PayloadTooLargeError("Ảnh chứng từ không được vượt quá 5 MB.");
   }
 
-  const mimeType = proofFile.type?.toLowerCase() || "";
+  if (isSvgContent(proofFile.data)) {
+    throw new UnsupportedMediaTypeError(
+      "Chỉ chấp nhận tệp ảnh định dạng JPEG, PNG hoặc WEBP."
+    );
+  }
+
+  const detectedMime = detectImageMimeType(proofFile.data);
   if (
-    !PROOF_ALLOWED_MIME_TYPES.includes(
-      mimeType as (typeof PROOF_ALLOWED_MIME_TYPES)[number]
+    !(
+      detectedMime &&
+      PROOF_ALLOWED_MIME_TYPES.includes(
+        detectedMime as (typeof PROOF_ALLOWED_MIME_TYPES)[number]
+      )
     )
   ) {
     throw new UnsupportedMediaTypeError(
@@ -86,15 +99,82 @@ async function uploadProofFileIfProvided(
     );
   }
 
-  const ext = mimeType.split("/")[1] || "jpg";
+  if (proofFile.type) {
+    const declaredMime = proofFile.type.toLowerCase();
+    if (
+      !PROOF_ALLOWED_MIME_TYPES.includes(
+        declaredMime as (typeof PROOF_ALLOWED_MIME_TYPES)[number]
+      )
+    ) {
+      throw new UnsupportedMediaTypeError(
+        "Chỉ chấp nhận tệp ảnh định dạng JPEG, PNG hoặc WEBP."
+      );
+    }
+  }
+
+  const ext = detectedMime.split("/")[1] || "jpg";
   const storageKey = `proofs/${orderUuid}/${Date.now()}.${ext}`;
 
   const uploadResult = await uploadPrivateAsset({
     key: storageKey,
     body: proofFile.data,
-    contentType: mimeType,
+    contentType: detectedMime,
   });
   return uploadResult.path;
+}
+
+type DbTransaction = Parameters<
+  Parameters<ReturnType<typeof getDb>["transaction"]>[0]
+>[0];
+
+async function grantSoftUnlockEntitlements(
+  tx: DbTransaction,
+  order: typeof paymentOrders.$inferSelect,
+  softUnlockExpiresAt: Date
+): Promise<void> {
+  const pkg = PACKAGE_CATALOG[order.packageCode];
+  const entitlementKeysToGrant = pkg?.entitlements || [];
+
+  for (const key of entitlementKeysToGrant) {
+    const [existingEntitlement] = await tx
+      .select()
+      .from(entitlements)
+      .where(
+        and(
+          eq(entitlements.userId, order.userId),
+          eq(entitlements.entitlementKey, key)
+        )
+      )
+      .limit(1);
+
+    if (!existingEntitlement) {
+      await tx.insert(entitlements).values({
+        userId: order.userId,
+        entitlementKey: key,
+        source: "package_order",
+        sourceRef: order.uuid,
+        status: "soft_unlock",
+        expiresAt: softUnlockExpiresAt,
+      });
+      continue;
+    }
+
+    if (
+      existingEntitlement.status === "expired" ||
+      existingEntitlement.status === "cancelled"
+    ) {
+      await tx
+        .update(entitlements)
+        .set({
+          status: "soft_unlock",
+          source: "package_order",
+          sourceRef: order.uuid,
+          expiresAt: softUnlockExpiresAt,
+          updatedAt: new Date(),
+        })
+        .where(eq(entitlements.id, existingEntitlement.id));
+    }
+  }
 }
 
 export default defineEventHandler(async (event) => {
@@ -135,58 +215,27 @@ export default defineEventHandler(async (event) => {
   const uploadedPath = await uploadProofFileIfProvided(proofFile, order.uuid);
   const newProofPath = uploadedPath ?? order.proofPath;
 
+  const isFirstSubmission = currentStatus === "pending";
   const softUnlockExpiresAt = computeSoftUnlockExpiresAt();
 
   await db.transaction(async (tx) => {
     await tx
       .update(paymentOrders)
       .set({
-        status: "submitted",
-        submittedAt: new Date(),
+        ...(isFirstSubmission
+          ? {
+              status: "submitted" as const,
+              submittedAt: new Date(),
+            }
+          : {}),
         bankTxnRef,
         proofPath: newProofPath,
         updatedAt: new Date(),
       })
       .where(eq(paymentOrders.id, order.id));
 
-    const pkg = PACKAGE_CATALOG[order.packageCode];
-    const entitlementKeysToGrant = pkg?.entitlements || [];
-
-    for (const key of entitlementKeysToGrant) {
-      const [existingEntitlement] = await tx
-        .select()
-        .from(entitlements)
-        .where(
-          and(
-            eq(entitlements.userId, order.userId),
-            eq(entitlements.entitlementKey, key)
-          )
-        )
-        .limit(1);
-
-      if (existingEntitlement) {
-        if (existingEntitlement.status !== "active") {
-          await tx
-            .update(entitlements)
-            .set({
-              status: "soft_unlock",
-              source: "package_order",
-              sourceRef: order.uuid,
-              expiresAt: softUnlockExpiresAt,
-              updatedAt: new Date(),
-            })
-            .where(eq(entitlements.id, existingEntitlement.id));
-        }
-      } else {
-        await tx.insert(entitlements).values({
-          userId: order.userId,
-          entitlementKey: key,
-          source: "package_order",
-          sourceRef: order.uuid,
-          status: "soft_unlock",
-          expiresAt: softUnlockExpiresAt,
-        });
-      }
+    if (isFirstSubmission) {
+      await grantSoftUnlockEntitlements(tx, order, softUnlockExpiresAt);
     }
   });
 

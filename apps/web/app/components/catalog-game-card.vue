@@ -2,15 +2,15 @@
   <div class="catalog-card">
     <div class="card-top">
       <span aria-hidden="true" class="card-emoji">
-        {{ game.thumbnail_emoji || '🎲' }}
+        {{ game.thumbnail_emoji || "🎲" }}
       </span>
-      <div class="flex items-center gap-1.5">
+      <div class="flex flex-wrap items-center justify-end gap-1.5">
         <!-- Huy hiệu "Đã học xong" trên thẻ bài dạy (BR-CIG-08, Task #254) -->
         <span
-          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-success-500 text-white font-heading text-xs font-bold shadow-sm"
+          class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl bg-success-500 text-white font-heading text-sm font-bold shadow-sm whitespace-nowrap shrink-0"
           v-if="game.is_completed"
         >
-          <span>✓</span>
+          <UIcon aria-hidden="true" class="w-3.5 h-3.5" name="i-lucide-check" />
           <span>Đã học xong</span>
         </span>
         <!-- Neutral lock badge (BR-GCP-05) -->
@@ -22,7 +22,10 @@
 
     <div class="card-body">
       <h2 class="card-title">
-        <NuxtLink class="card-title-link" :to="`/games/${game.code}`">
+        <NuxtLink
+          class="card-title-link min-h-11 inline-flex items-center"
+          :to="`/games/${game.code}`"
+        >
           {{ game.title }}
         </NuxtLink>
       </h2>
@@ -30,17 +33,21 @@
         <span
           :class="['tag-badge', `comp-badge-${game.competency?.toLowerCase() || 'c1'}`]"
         >
-          {{ findCompetency(game.competency ?? '')?.name || game.competency || 'Tư duy toán học' }}
+          {{
+            findCompetency(game.competency ?? "")?.name ||
+              game.competency ||
+              "Tư duy toán học"
+          }}
         </span>
         <span class="tag-badge tag-age">
-          {{ game.age_band || '3-4' }}
+          {{ game.age_band || "3-4" }}
           tuổi
         </span>
         <span
           class="tag-badge difficulty-dots"
           :aria-label="`Độ khó ${game.difficulty}/5`"
         >
-          {{ '●'.repeat(game.difficulty || 1) }}
+          {{ "●".repeat(game.difficulty || 1) }}
         </span>
       </div>
     </div>
@@ -50,7 +57,7 @@
         <!-- CTA theo bậc và trạng thái (BR-GCP-09) -->
         <NuxtLink
           :class="[
-            'btn-card-action',
+            'btn-card-action min-h-11',
             game.cta?.action === 'play' ? 'btn-play-free' : 'btn-view-detail'
           ]"
           :to="game.cta?.href || `/games/${game.code}`"
@@ -60,7 +67,7 @@
             name="i-lucide-play"
             v-if="game.cta?.action === 'play'"
           />
-          {{ game.cta?.text || 'Xem chi tiết' }}
+          {{ game.cta?.text || "Xem chi tiết" }}
         </NuxtLink>
 
         <!-- Nút Lưu vào thư viện (BR-MLB-01) -->
@@ -68,7 +75,7 @@
           data-testid="save-library-btn"
           type="button"
           :aria-label="isSaved ? 'Đã lưu vào thư viện' : `Lưu ${game.title} vào thư viện`"
-          :class="['btn-save-library', isSaved ? 'btn-saved' : '']"
+          :class="['btn-save-library min-h-11', isSaved ? 'btn-saved' : '']"
           :disabled="isSaving || isSaved"
           :title="isSaved ? 'Đã lưu vào thư viện' : 'Lưu vào thư viện'"
           @click="saveToLibrary"
@@ -77,7 +84,7 @@
             class="w-4 h-4"
             :name="isSaved ? 'i-lucide-bookmark-check' : 'i-lucide-bookmark'"
           />
-          <span>{{ isSaved ? 'Đã lưu' : 'Lưu' }}</span>
+          <span>{{ isSaved ? "Đã lưu" : "Lưu" }}</span>
         </button>
       </div>
 
@@ -178,24 +185,24 @@
 
 <style scoped>
   .catalog-card {
-    background-color: white;
+    background-color: var(--color-surface-0);
     border-radius: 1.25rem;
     border: 2px solid var(--color-surface-200);
     padding: 1.25rem;
     display: flex;
     flex-direction: column;
     gap: 0.85rem;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+    box-shadow: 0 4px 12px
+      color-mix(in srgb, var(--color-surface-900) 3%, transparent);
     transition:
-      transform 0.15s,
       border-color 0.15s,
       box-shadow 0.15s;
   }
 
   .catalog-card:hover {
-    transform: translateY(-3px);
     border-color: var(--color-brand-400);
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    box-shadow: 0 8px 24px
+      color-mix(in srgb, var(--color-surface-900) 8%, transparent);
   }
 
   .card-top {
@@ -211,38 +218,42 @@
   .card-emoji {
     font-size: 3rem;
     line-height: 1;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+    filter: drop-shadow(
+      0 2px 4px color-mix(in srgb, var(--color-surface-900) 8%, transparent)
+    );
   }
 
   .lock-badge {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 800;
     padding: 0.3rem 0.65rem;
     border-radius: 9999px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .tier-free {
-    background-color: var(--color-success-100, #dcfce7);
-    color: var(--color-success-800, #166534);
-    border: 1px solid var(--color-success-200, #bbf7d0);
+    background-color: var(--color-success-100);
+    color: var(--color-success-800);
+    border: 1px solid var(--color-success-200);
   }
 
   .tier-login {
-    background-color: var(--color-brand-100, #e0e7ff);
-    color: var(--color-brand-800, #3730a3);
-    border: 1px solid var(--color-brand-200, #c7d2fe);
+    background-color: var(--color-brand-100);
+    color: var(--color-brand-800);
+    border: 1px solid var(--color-brand-200);
   }
 
   .tier-standard {
-    background-color: var(--color-warning-100, #fef3c7);
-    color: var(--color-warning-800, #92400e);
-    border: 1px solid var(--color-warning-200, #fde68a);
+    background-color: var(--color-warning-100);
+    color: var(--color-warning-800);
+    border: 1px solid var(--color-warning-200);
   }
 
   .tier-premium {
-    background-color: var(--color-primary-100, #f3e8ff);
-    color: var(--color-primary-800, #6b21a8);
-    border: 1px solid var(--color-primary-200, #e9d5ff);
+    background-color: var(--color-cta-100);
+    color: var(--color-cta-800);
+    border: 1px solid var(--color-cta-200);
   }
 
   .card-title {
@@ -271,7 +282,7 @@
   }
 
   .tag-badge {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 700;
     padding: 0.25rem 0.55rem;
     border-radius: 0.5rem;
@@ -280,39 +291,69 @@
   }
 
   .comp-badge-c1 {
-    background-color: #eff6ff;
-    color: #1d4ed8;
-    border: 1px solid #bfdbfe;
+    background-color: color-mix(
+      in srgb,
+      var(--color-competency-c1) 10%,
+      var(--color-surface-0)
+    );
+    color: var(--color-competency-c1);
+    border: 1px solid
+      color-mix(in srgb, var(--color-competency-c1) 25%, var(--color-surface-0));
   }
 
   .comp-badge-c2 {
-    background-color: #f0fdf4;
-    color: #15803d;
-    border: 1px solid #bbf7d0;
+    background-color: color-mix(
+      in srgb,
+      var(--color-competency-c2) 10%,
+      var(--color-surface-0)
+    );
+    color: var(--color-competency-c2);
+    border: 1px solid
+      color-mix(in srgb, var(--color-competency-c2) 25%, var(--color-surface-0));
   }
 
   .comp-badge-c3 {
-    background-color: #faf5ff;
-    color: #7e22ce;
-    border: 1px solid #e9d5ff;
+    background-color: color-mix(
+      in srgb,
+      var(--color-competency-c3) 10%,
+      var(--color-surface-0)
+    );
+    color: var(--color-competency-c3);
+    border: 1px solid
+      color-mix(in srgb, var(--color-competency-c3) 25%, var(--color-surface-0));
   }
 
   .comp-badge-c4 {
-    background-color: #fff7ed;
-    color: #c2410c;
-    border: 1px solid #fed7aa;
+    background-color: color-mix(
+      in srgb,
+      var(--color-competency-c4) 10%,
+      var(--color-surface-0)
+    );
+    color: var(--color-competency-c4);
+    border: 1px solid
+      color-mix(in srgb, var(--color-competency-c4) 25%, var(--color-surface-0));
   }
 
   .comp-badge-c5 {
-    background-color: #fef2f2;
-    color: #b91c1c;
-    border: 1px solid #fecaca;
+    background-color: color-mix(
+      in srgb,
+      var(--color-competency-c5) 10%,
+      var(--color-surface-0)
+    );
+    color: var(--color-competency-c5);
+    border: 1px solid
+      color-mix(in srgb, var(--color-competency-c5) 25%, var(--color-surface-0));
   }
 
   .comp-badge-c6 {
-    background-color: #ecfeff;
-    color: #0e7490;
-    border: 1px solid #a5f3fc;
+    background-color: color-mix(
+      in srgb,
+      var(--color-competency-c6) 10%,
+      var(--color-surface-0)
+    );
+    color: var(--color-competency-c6);
+    border: 1px solid
+      color-mix(in srgb, var(--color-competency-c6) 25%, var(--color-surface-0));
   }
 
   .tag-age {
@@ -321,7 +362,7 @@
   }
 
   .difficulty-dots {
-    color: var(--color-cta, #f97316);
+    color: var(--color-cta);
     letter-spacing: 1px;
   }
 
@@ -359,13 +400,13 @@
   }
 
   .btn-play-free {
-    background-color: var(--color-cta, #c2410c);
-    color: white;
-    box-shadow: 0 3px 0 var(--color-cta-hover, #9a3412);
+    background-color: var(--color-cta);
+    color: var(--color-surface-0);
+    box-shadow: 0 3px 0 var(--color-cta-hover);
   }
 
   .btn-play-free:hover {
-    background-color: var(--color-cta-hover, #9a3412);
+    background-color: var(--color-cta-hover);
   }
 
   .btn-view-detail {
@@ -388,7 +429,7 @@
     padding: 0 0.85rem;
     border-radius: 0.85rem;
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     background-color: var(--color-surface-50);
     color: var(--color-surface-700);
     border: 1px solid var(--color-surface-200);
@@ -403,16 +444,16 @@
   }
 
   .btn-saved {
-    background-color: var(--color-success-50, #f0fdf4);
-    color: var(--color-success-700, #15803d);
-    border-color: var(--color-success-200, #bbf7d0);
+    background-color: var(--color-success-50);
+    color: var(--color-success-700);
+    border-color: var(--color-success-200);
   }
 
   .save-feedback-error {
     margin: 0;
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 600;
-    color: var(--color-danger-700, #b91c1c);
+    color: var(--color-danger-700);
     line-height: 1.35;
   }
 </style>

@@ -1,6 +1,9 @@
 import { isApiError, normalizeApiError } from "@mindkid/errors/client";
 import { ref } from "vue";
 
+const RE_ALL_CAPS_CODE = /^[A-Z0-9_]{3,}$/;
+const RE_FILE_STACK_PATH = /[a-zA-Z0-9_]+\.[a-zA-Z]{2,4}/;
+
 export interface IntroQueueItemDetails {
   readonly intro_level_code: string;
   readonly skill_code?: string;
@@ -134,16 +137,31 @@ export function usePlayError(options: PlayErrorOptions = {}) {
     return new Error("Màn chơi này không tồn tại hoặc đã được cập nhật.");
   }
 
+  function sanitizeChildErrorMessage(rawMessage: string): string {
+    if (
+      !rawMessage ||
+      rawMessage.includes("LAYOUT_CAPACITY_EXCEEDED") ||
+      rawMessage.includes("BR-") ||
+      rawMessage.includes("Error:") ||
+      rawMessage.includes("at ") ||
+      RE_ALL_CAPS_CODE.test(rawMessage.trim()) ||
+      RE_FILE_STACK_PATH.test(rawMessage)
+    ) {
+      return "Trò chơi đang được sắp xếp lại cho vừa màn hình. Bé bấm nút thử lại nhé!";
+    }
+    return rawMessage;
+  }
+
   function getErrorMessage(
     err: Error | Record<string, string | number>
   ): string {
+    let msg = "Lỗi kết nối mạng";
     if (isApiError(err)) {
-      return err.message;
+      msg = err.message;
+    } else if (err instanceof Error) {
+      msg = err.message;
     }
-    if (err instanceof Error) {
-      return err.message;
-    }
-    return "Lỗi kết nối mạng";
+    return sanitizeChildErrorMessage(msg);
   }
 
   function getErrorCodeOrStatus(err: Error | Record<string, string | number>): {

@@ -3,6 +3,7 @@
     aria-modal="true"
     class="fixed inset-0 z-50 flex items-center justify-center bg-surface-950/60 p-4 backdrop-blur-sm select-none"
     role="dialog"
+    ref="dialogRef"
     :aria-label="'Thông báo hạn mức giờ chơi của bé'"
   >
     <div
@@ -12,13 +13,11 @@
       <div class="flex justify-center">
         <div class="relative">
           <KidMascot pose="idle" :size="80" />
-          <span
-            aria-label="Ngôi sao"
-            class="absolute -top-2 -right-2 text-2xl"
-            role="img"
-          >
-            🌟
-          </span>
+          <UIcon
+            aria-hidden="true"
+            class="absolute -top-2 -right-2 w-7 h-7 text-amber-400 fill-current"
+            name="i-lucide-star"
+          />
         </div>
       </div>
 
@@ -37,7 +36,7 @@
 
       <!-- Gợi ý 2 hoạt động ngoài màn hình (Offline Activities - `BR-HPL-04`, §7.3) -->
       <div class="space-y-3 text-left">
-        <p class="font-heading font-bold text-surface-700 text-sm sm:text-base">
+        <p class="font-heading font-bold text-surface-700 text-base">
           Gợi ý hoạt động vui nhộn ngoài màn hình:
         </p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -50,12 +49,10 @@
               {{ act.emoji }}
             </span>
             <div>
-              <h3
-                class="font-heading font-bold text-brand-900 text-sm sm:text-base"
-              >
+              <h3 class="font-heading font-bold text-brand-900 text-base">
                 {{ act.title }}
               </h3>
-              <p class="text-xs text-surface-600 mt-0.5">
+              <p class="text-base text-surface-600 mt-0.5">
                 {{ act.desc }}
               </p>
             </div>
@@ -68,12 +65,12 @@
         class="p-4 rounded-2xl border-2 border-warning-300 bg-warning-50 space-y-3"
         v-if="showParentExtendOptions"
       >
-        <p class="font-heading font-bold text-warning-900 text-sm">
+        <p class="font-heading font-bold text-warning-900 text-base">
           Phụ huynh muốn cho bé chơi thêm bao nhiêu phút?
         </p>
         <div class="flex items-center justify-center gap-3">
           <button
-            class="min-h-16 px-5 rounded-xl bg-warning-400 text-surface-900 font-heading font-bold text-base border-2 border-warning-500 shadow-[0_2px_0_var(--color-warning-600)] active:translate-y-0.5 transition-all disabled:opacity-50"
+            class="min-h-16 min-w-16 px-5 rounded-2xl bg-warning-400 text-surface-900 font-heading font-bold text-base border-2 border-warning-500 shadow-[0_2px_0_var(--color-warning-600)] active:translate-y-0.5 transition-all disabled:opacity-50"
             data-testid="grant-15-mins-btn"
             type="button"
             :disabled="isSubmitting"
@@ -82,7 +79,7 @@
             +15 phút
           </button>
           <button
-            class="min-h-16 px-5 rounded-xl bg-cta-600 text-white font-heading font-bold text-base border-2 border-cta-700 shadow-[0_2px_0_var(--color-cta-800)] active:translate-y-0.5 transition-all disabled:opacity-50"
+            class="min-h-16 min-w-16 px-5 rounded-2xl bg-cta-600 text-white font-heading font-bold text-base border-2 border-cta-700 shadow-[0_2px_0_var(--color-cta-800)] active:translate-y-0.5 transition-all disabled:opacity-50"
             data-testid="grant-30-mins-btn"
             type="button"
             :disabled="isSubmitting"
@@ -92,7 +89,7 @@
           </button>
         </div>
         <p
-          class="text-xs text-warning-800 font-semibold"
+          class="text-base text-warning-800 font-semibold"
           v-if="grantErrorMessage"
         >
           {{ grantErrorMessage }}
@@ -105,7 +102,7 @@
         v-if="!showParentExtendOptions"
       >
         <button
-          class="w-full sm:w-auto min-h-16 px-6 rounded-2xl bg-white text-brand-700 font-heading font-bold text-lg border-[3px] border-brand-300 shadow-[0_4px_0_var(--color-brand-300)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--color-brand-300)] transition-all flex items-center justify-center gap-2"
+          class="w-full sm:w-auto min-h-16 min-w-16 px-6 rounded-2xl bg-white text-brand-700 font-heading font-bold text-lg border-[3px] border-brand-300 shadow-[0_4px_0_var(--color-brand-300)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--color-brand-300)] transition-all flex items-center justify-center gap-2"
           data-testid="play-limit-ask-parent-btn"
           type="button"
           @click="showParentGate = true"
@@ -132,6 +129,7 @@
   import { ref } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
+  import { useFocusTrap } from "~/composables/play/use-focus-trap";
   import { useApi } from "~/composables/use-api";
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
 
@@ -154,6 +152,11 @@
     (e: "leave"): void;
     (e: "granted", minutes: number): void;
   }>();
+
+  const dialogRef = ref<HTMLElement | null>(null);
+  useFocusTrap(dialogRef, ref(true), {
+    onEscape: () => emit("leave"),
+  });
 
   const api = useApi();
   const showParentGate = ref(false);

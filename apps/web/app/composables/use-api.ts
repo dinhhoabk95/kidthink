@@ -2,6 +2,13 @@ import { type ApiError, normalizeApiError } from "@mindkid/errors/client";
 import { navigateTo, useRoute, useUserSession } from "#imports";
 import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
 
+type WebApiOptions = NonNullable<Parameters<typeof $fetch.create>[0]>;
+
+export type WebApiClient = <T = void>(
+  request: RequestInfo,
+  options?: WebApiOptions
+) => Promise<T>;
+
 async function handleUnauthenticatedRedirect() {
   try {
     const { clear } = useUserSession();
@@ -34,9 +41,9 @@ async function handleUnauthenticatedRedirect() {
  * - `onResponseError`: Chuẩn hoá sang `ApiError`, điều hướng theo mã lỗi
  *   cắt ngang (401/403/428), và LUÔN throw lại — ❌ NEVER nuốt lỗi ở interceptor.
  */
-export function useApi() {
+export function useApi(): WebApiClient {
   if (typeof globalThis.$fetch?.create !== "function") {
-    return globalThis.$fetch;
+    return globalThis.$fetch as WebApiClient;
   }
   return $fetch.create({
     onRequest({ options }) {
@@ -108,5 +115,5 @@ export function useApi() {
       // Luôn throw lại ApiError đã chuẩn hoá — ❌ NEVER nuốt lỗi ở interceptor
       throw apiError;
     },
-  });
+  }) as WebApiClient;
 }

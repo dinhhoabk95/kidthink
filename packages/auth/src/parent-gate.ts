@@ -110,15 +110,16 @@ export function verifyParentGateChallenge(
       throw new ParentGateInvalidError();
     }
 
-    if (Number(answer) !== payload.factorA * payload.factorB) {
-      throw new ParentGateFailedError();
-    }
-
+    // Always mark challenge consumed on first verification attempt (single-use)
     consumedChallenges.set(payload.challengeId, payload.expiresAt);
     for (const [id, expiry] of consumedChallenges) {
       if (expiry <= Date.now()) {
         consumedChallenges.delete(id);
       }
+    }
+
+    if (Number(answer) !== payload.factorA * payload.factorB) {
+      throw new ParentGateFailedError();
     }
 
     // Create gate_token valid for 5 minutes (300s)

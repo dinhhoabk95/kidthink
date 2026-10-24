@@ -15,11 +15,12 @@ import {
 } from "@mindkid/errors/child";
 import { InternalError, ValidationError } from "@mindkid/errors/common";
 import {
+  type CreateChildProfileInput,
   deriveAgeBand,
   isValidAvatarPreset,
   parseChildProfileInput,
 } from "@mindkid/shared";
-import { and, count, eq, gt, isNull, ne, or } from "drizzle-orm";
+import { and, count, desc, eq, gt, isNull, ne, or } from "drizzle-orm";
 import {
   defineEventHandler,
   type H3Event,
@@ -28,11 +29,22 @@ import {
 } from "h3";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
-function parseAndValidateInput(rawBody: unknown, currentYear: number) {
+type RawChildInputValue = string | number | boolean | null | undefined;
+type RawChildInputRecord = Record<string, RawChildInputValue>;
+
+interface ValidationErrorShape {
+  code?: string;
+  message?: string;
+}
+
+function parseAndValidateInput(
+  rawBody: RawChildInputRecord | object | null | undefined,
+  currentYear: number
+): CreateChildProfileInput {
   try {
     return parseChildProfileInput(rawBody, currentYear);
-  } catch (err: unknown) {
-    const errorObj = err as { code?: string; message?: string };
+  } catch (err) {
+    const errorObj = err as ValidationErrorShape;
     if (errorObj?.code === "CHILD_FIELD_NOT_ALLOWED") {
       throw new ChildFieldNotAllowedError(
         "Form chỉ chấp nhận 4 trường: display_name, birth_year, avatar_id, relationship."
@@ -47,7 +59,10 @@ function parseAndValidateInput(rawBody: unknown, currentYear: number) {
   }
 }
 
-async function verifyChildConsentAndQuota(_event: H3Event, userId: number) {
+async function verifyChildConsentAndQuota(
+  _event: H3Event,
+  userId: number
+): Promise<void> {
   const db = getOwnerDb();
 
   // Check child_data consent (BR-CPC-05)
@@ -60,9 +75,10 @@ async function verifyChildConsentAndQuota(_event: H3Event, userId: number) {
         eq(consentLogs.consentType, "child_data")
       )
     )
+    .orderBy(desc(consentLogs.createdAt), desc(consentLogs.id))
     .limit(1);
 
-  if (!existingConsent) {
+  if (existingConsent?.action !== "accepted") {
     throw new ConsentRequiredError(
       "Cần đồng ý thu thập dữ liệu trẻ em trước khi tạo hồ sơ."
     );
@@ -123,9 +139,9 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  const eventBody = (event.context as { body?: Record<string, unknown> })?.body;
+  const eventBody = (event.context as { body?: RawChildInputRecord })?.body;
   const rawBody =
-    eventBody || ((await readBody(event)) as Record<string, unknown>) || {};
+    eventBody || ((await readBody<RawChildInputRecord>(event)) ?? {});
   const currentYear = new Date().getFullYear();
 
   const parsedInput = parseAndValidateInput(rawBody, currentYear);

@@ -1,4 +1,3 @@
-import { requireUserAuth } from "@mindkid/auth";
 import { ChildFieldNotAllowedError } from "@mindkid/errors/child";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import {
@@ -9,13 +8,16 @@ import {
 } from "h3";
 import { z } from "zod";
 import { LessonSessionRunnerService } from "#server/services/index.js";
+import { requireWebUserSession } from "#server/utils/auth-runtime";
 
 const RecordObservationSchema = z.object({
   objective_code: z.string().min(1),
   level: z.enum(["did_it", "with_help", "not_yet"]),
 });
 
-function assertAllowedKeys(rawBody: unknown): void {
+function assertAllowedKeys(
+  rawBody: Record<string, string> | null | undefined
+): void {
   if (rawBody && typeof rawBody === "object") {
     const keys = Object.keys(rawBody);
     const allowed = new Set(["objective_code", "level"]);
@@ -28,7 +30,7 @@ function assertAllowedKeys(rawBody: unknown): void {
   }
 }
 
-function handleServiceError(err: unknown): never {
+function handleServiceError(err: Error | object | null | undefined): never {
   const errorName = err instanceof Error ? err.name : "";
   const errorMessage = err instanceof Error ? err.message : "";
   if (errorName === "CHILD_FIELD_NOT_ALLOWED") {
@@ -46,14 +48,16 @@ function handleServiceError(err: unknown): never {
 }
 
 export default defineEventHandler(async (event) => {
-  const auth = requireUserAuth(event);
+  const auth = requireWebUserSession(event);
   const runUuid = getRouterParam(event, "run_uuid");
 
   if (!runUuid) {
     throw new ValidationError("Thiếu run_uuid.");
   }
 
-  const rawBody = await readBody(event);
+  const rawBody = await readBody<Record<string, string> | null | undefined>(
+    event
+  );
   assertAllowedKeys(rawBody);
 
   const parsed = RecordObservationSchema.safeParse(rawBody);
@@ -72,7 +76,7 @@ export default defineEventHandler(async (event) => {
 
     setResponseStatus(event, 201);
     return result;
-  } catch (err: unknown) {
-    handleServiceError(err);
+  } catch (err) {
+    handleServiceError(err instanceof Error ? err : null);
   }
 });

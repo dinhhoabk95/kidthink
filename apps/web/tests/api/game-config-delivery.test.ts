@@ -250,16 +250,21 @@ describe("Task P1.4 — Game Config Delivery End-to-End Suite", () => {
       expect(res.assets).toBeDefined();
     });
 
-    it("BR-LAD-07: GET /api/guest/levels/[code]/config returns 403 TIER_LOCKED for free level outside guest allow-list", async () => {
-      const code = `GL-C1-CNT-TEST-${Math.floor(Math.random() * 8999 + 1000)}`;
-      await seedTestLevel({ code, accessTier: "free" });
+    it("BR-LAD-07: GET /api/guest/levels/[code]/config returns config for any free level and 403 TIER_LOCKED for login level", async () => {
+      const freeCode = `GL-C1-CNT-TEST-${Math.floor(Math.random() * 8999 + 1000)}`;
+      await seedTestLevel({ code: freeCode, accessTier: "free" });
 
-      const event = mockEvent("GET", undefined, { code });
+      const freeEvent = mockEvent("GET", undefined, { code: freeCode });
+      const freeRes = (await guestConfigHandler(freeEvent)) as any;
+      expect(freeRes.level_code).toBe(freeCode);
+
+      const loginCode = `GL-C1-CNT-LOGN-${Math.floor(Math.random() * 8999 + 1000)}`;
+      await seedTestLevel({ code: loginCode, accessTier: "login" });
+
+      const loginEvent = mockEvent("GET", undefined, { code: loginCode });
       try {
-        await guestConfigHandler(event);
-        expect.fail(
-          "Should throw 403 TIER_LOCKED for non-allowlisted free level"
-        );
+        await guestConfigHandler(loginEvent);
+        expect.fail("Should throw 403 TIER_LOCKED for login level on guest");
       } catch (err: any) {
         expect(err.statusCode || err.status).toBe(403);
         expect(err.code || err.statusMessage).toBe("TIER_LOCKED");

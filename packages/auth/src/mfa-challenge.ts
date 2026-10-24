@@ -131,8 +131,11 @@ export class MfaChallengeService {
         throw new TokenExpiredError();
       }
 
-      // Atomic one-time consume: delete immediately!
-      await this.redis.del(key);
+      // Atomic one-time consume: delete immediately and verify this call won the race!
+      const deletedCount = await this.redis.del(key);
+      if (!deletedCount) {
+        throw new TokenExpiredError();
+      }
 
       const payload: MfaChallengePayload = JSON.parse(raw);
       if (Date.now() - payload.createdAt >= MFA_CHALLENGE_TTL_SECONDS * 1000) {

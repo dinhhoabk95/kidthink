@@ -29,47 +29,47 @@ export interface ErrorGroupItem {
   resolved_notes: string | null;
 }
 
+type ErrorLogsQuery = z.infer<typeof ErrorLogsQuerySchema>;
+type ErrorStatus = "open" | "ack" | "resolved";
+type ErrorSource = "server" | "client";
+type ErrorLevel = "warn" | "error" | "fatal";
+
+function isErrorStatus(val: string | undefined): val is ErrorStatus {
+  return val === "open" || val === "ack" || val === "resolved";
+}
+
+function isErrorSource(val: string | undefined): val is ErrorSource {
+  return val === "server" || val === "client";
+}
+
+function isErrorLevel(val: string | undefined): val is ErrorLevel {
+  return val === "warn" || val === "error" || val === "fatal";
+}
+
 function escapeLikeWildcards(text: string): string {
   return text.replace(/([%_\\])/g, "\\$1");
 }
 
-function buildErrorLogConditions(
-  query: Record<string, unknown>
-): SQL<unknown>[] {
-  const conditions: SQL<unknown>[] = [];
+function buildErrorLogConditions(query: ErrorLogsQuery): SQL[] {
+  const conditions: SQL[] = [];
 
-  if (query.status) {
-    conditions.push(
-      eq(
-        errorLogs.status,
-        String(query.status) as typeof errorLogs.$inferSelect.status
-      )
-    );
+  if (isErrorStatus(query.status)) {
+    conditions.push(eq(errorLogs.status, query.status));
   }
-  if (query.source) {
-    conditions.push(
-      eq(
-        errorLogs.source,
-        String(query.source) as typeof errorLogs.$inferSelect.source
-      )
-    );
+  if (isErrorSource(query.source)) {
+    conditions.push(eq(errorLogs.source, query.source));
   }
-  if (query.level) {
-    conditions.push(
-      eq(
-        errorLogs.level,
-        String(query.level) as typeof errorLogs.$inferSelect.level
-      )
-    );
+  if (isErrorLevel(query.level)) {
+    conditions.push(eq(errorLogs.level, query.level));
   }
   if (query.from) {
-    const fromDate = new Date(String(query.from));
+    const fromDate = new Date(query.from);
     if (!Number.isNaN(fromDate.getTime())) {
       conditions.push(gte(errorLogs.createdAt, fromDate));
     }
   }
   if (query.to) {
-    const toDate = new Date(String(query.to));
+    const toDate = new Date(query.to);
     if (!Number.isNaN(toDate.getTime())) {
       conditions.push(lte(errorLogs.createdAt, toDate));
     }

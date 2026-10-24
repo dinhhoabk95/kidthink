@@ -2,10 +2,10 @@ import { getOwnerDb, mfaRecoveryRequests, users } from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
 import { desc, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
-import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 
 export default defineEventHandler(async (event) => {
-  await requireManagerSession(event);
+  await requireSuperAdminSession(event);
   const userUuid = getRouterParam(event, "uuid");
   if (!userUuid) {
     throw new NotFoundError();

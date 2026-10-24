@@ -229,6 +229,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
 
   const {
     initTelemetrySession,
+    setActiveRoundRunner,
     uploadTelemetry,
     finishSession,
     destroyTelemetrySession,
@@ -457,6 +458,19 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         engine?.scaffolding?.resetOnSuccess();
         canSkipRound.value = false;
         syncView();
+        const sessionUuid = cachedPayload?.session?.uuid;
+        if (sessionUuid && roundRunner && !roundRunner.getState().isFinished) {
+          uploadTelemetry(
+            sessionUuid,
+            roundRunner,
+            loggedIn.value,
+            cachedPayload?.session?.started_at
+          ).catch((err) => {
+            console.error(
+              `[play-session] uploadTelemetry thất bại ở round completed — session: ${sessionUuid}, error: ${err instanceof Error ? err.message : String(err)}`
+            );
+          });
+        }
       },
       onAllRoundsCompleted: () => {
         engine?.audio.playLevelCelebrateSound();
@@ -472,6 +486,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
         }, 500);
       },
     });
+    setActiveRoundRunner(roundRunner);
 
     const factory = (cfg: EngineConfig) => {
       roundRunner?.startFirstRound();
@@ -537,6 +552,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
       zones.tray ?? undefined,
       vp.scale
     );
+    options.refreshStageZones?.();
   }
 
   /**
@@ -666,6 +682,7 @@ export function usePlaySession(options: UsePlaySessionOptions) {
   function cleanupSession(): void {
     roundTimers.clearAll();
     stopNarrationAudio();
+    setActiveRoundRunner(null);
     destroyTelemetrySession();
     if (roundRunner) {
       roundRunner.destroy();

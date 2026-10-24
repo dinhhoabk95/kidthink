@@ -53,8 +53,10 @@ export default defineEventHandler(async (event) => {
   }
 
   const currentActiveUuid = getCookie(event, "active_child_id");
-  const eventBody = (event.context as { body?: unknown })?.body;
-  const raw = eventBody || (await readBody(event).catch(() => ({})));
+  const eventBody = (event.context as { body?: { gate_token?: string } })?.body;
+  const raw =
+    eventBody ||
+    (await readBody<{ gate_token?: string }>(event).catch(() => ({})));
   const parsed = activateChildSchema.safeParse(raw);
   if (!parsed.success) {
     throwValidationError(parsed.error);

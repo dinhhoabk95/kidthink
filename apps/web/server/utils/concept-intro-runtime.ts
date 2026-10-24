@@ -84,25 +84,22 @@ async function collectTransitivePrerequisiteSkillIds(
   initialSkillIds: number[]
 ): Promise<number[]> {
   const allSkillIds = new Set<number>(initialSkillIds);
-  const queueToExpand = [...initialSkillIds];
+  let frontier = [...initialSkillIds];
 
-  while (queueToExpand.length > 0) {
-    const currentId = queueToExpand.pop();
-    if (!currentId) {
-      continue;
-    }
-
+  while (frontier.length > 0) {
     const prereqs = await db
       .select({ prereqId: skillPrerequisites.prerequisiteId })
       .from(skillPrerequisites)
-      .where(eq(skillPrerequisites.skillId, currentId));
+      .where(inArray(skillPrerequisites.skillId, frontier));
 
+    const nextFrontier: number[] = [];
     for (const row of prereqs) {
       if (!allSkillIds.has(row.prereqId)) {
         allSkillIds.add(row.prereqId);
-        queueToExpand.push(row.prereqId);
+        nextFrontier.push(row.prereqId);
       }
     }
+    frontier = nextFrontier;
   }
 
   return Array.from(allSkillIds);

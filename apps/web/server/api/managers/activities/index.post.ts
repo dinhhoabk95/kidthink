@@ -18,6 +18,19 @@ function generateActivityCode(existingCount: number): string {
   return `ACT-${numStr}`;
 }
 
+function toActivityAuditData(row: typeof activities.$inferSelect) {
+  return {
+    id: row.id,
+    entity_id: row.entityId,
+    code: row.code,
+    content_version: row.contentVersion,
+    kind: row.kind,
+    title: row.title,
+    access_tier: row.accessTier,
+    status: row.status,
+  };
+}
+
 async function validateActivityCreation(
   db: ReturnType<typeof getOwnerDb>,
   data: { kind: string; ref_id?: number | null }
@@ -59,7 +72,7 @@ export default defineEventHandler(async (event) => {
   const db = getOwnerDb();
   await validateActivityCreation(db, data);
 
-  const code = data.code || generateActivityCode(Date.now() % 9000);
+  const code = data.code || generateActivityCode(1000 + (Date.now() % 8998));
   const entityId = Date.now();
   const refType = resolveActivityRefType(data.kind);
   const refId = data.kind === "digital_game" ? data.ref_id : null;
@@ -111,7 +124,7 @@ export default defineEventHandler(async (event) => {
       action: "content_created",
       entity_type: "activity",
       entity_id: String(created.id),
-      after_data: created as unknown as Record<string, unknown>,
+      after_data: toActivityAuditData(created),
       reason: "Manager created activity via Studio",
     });
   });

@@ -8,41 +8,39 @@
     :aria-label="'Xác nhận người lớn'"
   >
     <div
-      class="w-full max-w-sm space-y-4 rounded-3xl border-4 border-surface-200 bg-white p-6 shadow-2xl dark:border-surface-700 dark:bg-surface-800 sm:p-7"
+      class="w-full max-w-sm space-y-4 rounded-3xl border-4 border-surface-200 bg-white p-6 shadow-2xl sm:p-7"
     >
       <div class="space-y-1.5 text-center sm:text-left">
         <div
-          class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-100 text-brand-600 dark:bg-brand-950/80 dark:text-brand-400"
+          class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-100 text-brand-600"
         >
           <UIcon class="w-5 h-5" name="i-lucide-lock" />
         </div>
-        <h2
-          class="font-heading text-xl font-bold text-surface-900 dark:text-surface-50"
-        >
+        <h2 class="font-heading text-xl font-bold text-surface-900">
           Câu hỏi dành cho người lớn
         </h2>
-        <p class="text-xs font-semibold text-surface-600 dark:text-surface-400">
+        <p class="text-sm font-semibold text-surface-600">
           Thao tác này cần người lớn xác nhận để bé không tự ý thoát hoặc đổi hồ
           sơ.
         </p>
       </div>
 
       <div
-        class="my-2 rounded-2xl border-2 border-brand-200 bg-brand-50/60 py-3 text-center dark:border-brand-800/60 dark:bg-brand-950/40"
+        class="my-2 rounded-2xl border-2 border-brand-200 bg-brand-50/60 py-3 text-center"
       >
         <p
-          class="font-heading text-2xl font-bold tracking-wider text-brand-700 dark:text-brand-300"
+          class="font-heading text-2xl font-bold tracking-wider text-brand-700"
           v-if="challenge"
         >
           {{ challenge.factor_a }}
           × {{ challenge.factor_b }} = ?
         </p>
         <div
-          class="flex items-center justify-center gap-2 text-sm font-semibold text-surface-500 dark:text-surface-400"
+          class="flex items-center justify-center gap-2 text-sm font-semibold text-surface-500"
           v-else
         >
           <UIcon
-            class="h-4 w-4 animate-spin text-brand-600 dark:text-brand-400"
+            class="h-4 w-4 animate-spin text-brand-600"
             name="i-lucide-loader-2"
           />
           <span>Đang tải câu hỏi...</span>
@@ -51,13 +49,13 @@
 
       <div class="space-y-1.5" v-if="!isLocked">
         <label
-          class="text-sm font-bold text-surface-700 dark:text-surface-300"
+          class="text-sm font-bold text-surface-700"
           for="parent-gate-answer"
         >
           Câu trả lời của bạn
         </label>
         <input
-          class="min-h-12 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-center text-xl font-bold text-surface-900 transition-all placeholder:text-surface-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15 dark:border-surface-700 dark:bg-surface-900 dark:text-surface-100 dark:placeholder:text-surface-500 dark:focus:border-brand-500 dark:focus:bg-surface-900"
+          class="min-h-12 w-full rounded-2xl border-2 border-surface-300 bg-surface-50 px-3.5 py-2.5 text-center text-xl font-bold text-surface-900 transition-all placeholder:text-surface-400 focus:border-brand-600 focus:bg-white focus:outline-none focus:ring-4 focus:ring-brand-500/15"
           id="parent-gate-answer"
           inputmode="numeric"
           placeholder="Nhập kết quả"
@@ -69,49 +67,49 @@
       </div>
 
       <div
-        class="flex items-center gap-2 rounded-2xl border-2 border-warning-200 bg-warning-50 p-3 text-warning-800 dark:border-warning-800/60 dark:bg-warning-950/40 dark:text-warning-200"
+        class="flex items-center gap-2 rounded-2xl border-2 border-warning-200 bg-warning-50 p-3 text-warning-800"
         role="alert"
         v-if="isLocked"
       >
         <UIcon
-          class="h-5 w-5 shrink-0 text-warning-600 dark:text-warning-400"
+          class="h-5 w-5 shrink-0 text-warning-600"
           name="i-lucide-clock"
         />
-        <span class="text-xs font-semibold leading-snug">
+        <span class="text-sm font-semibold leading-snug">
           Đã nhập sai 3 lần. Vui lòng chờ {{ remainingLockSeconds }} giây để thử
           lại.
         </span>
       </div>
 
       <div
-        class="flex items-center gap-2 rounded-2xl border-2 border-warning-200 bg-warning-50 p-3 text-warning-800 dark:border-warning-800/60 dark:bg-warning-950/40 dark:text-warning-200"
+        class="flex items-center gap-2 rounded-2xl border-2 border-warning-200 bg-warning-50 p-3 text-warning-800"
         role="alert"
         v-else-if="errorMessage"
       >
         <UIcon
-          class="h-5 w-5 shrink-0 text-warning-600 dark:text-warning-400"
+          class="h-5 w-5 shrink-0 text-warning-600"
           name="i-lucide-alert-circle"
         />
-        <span class="text-xs font-semibold leading-snug"
-          >{{ errorMessage }}</span
-        >
+        <span class="text-sm font-semibold leading-snug">{{
+          errorMessage
+        }}</span>
       </div>
 
       <div class="flex gap-2.5 pt-1">
         <button
-          class="flex min-h-11 flex-1 items-center justify-center rounded-2xl border-2 border-surface-200 bg-surface-50 px-4 font-bold text-surface-800 transition-colors hover:bg-surface-100 active:scale-95 dark:border-surface-700 dark:bg-surface-800 dark:text-surface-200 dark:hover:bg-surface-700"
+          class="flex min-h-16 flex-1 items-center justify-center rounded-2xl border-2 border-surface-200 bg-surface-50 px-4 font-bold text-surface-800 transition-colors hover:bg-surface-100 active:scale-95"
           type="button"
           @click="emit('cancel')"
         >
           Huỷ
         </button>
         <button
-          class="flex min-h-11 flex-1 items-center justify-center rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-4 font-heading font-bold text-white shadow-[0_4px_0_var(--color-brand-700)] transition-all hover:bg-brand-500 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-brand-700)] disabled:cursor-not-allowed disabled:opacity-50"
+          class="flex min-h-16 flex-1 items-center justify-center rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-4 font-heading font-bold text-white shadow-[0_4px_0_var(--color-brand-700)] transition-all hover:bg-brand-500 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-brand-700)] disabled:cursor-not-allowed disabled:opacity-50"
           type="button"
           :disabled="!challenge || isVerifying || answer === null || isLocked"
           @click="submit"
         >
-          {{ isVerifying ? 'Kiểm tra...' : 'Xác nhận' }}
+          {{ isVerifying ? "Kiểm tra..." : "Xác nhận" }}
         </button>
       </div>
     </div>
@@ -126,10 +124,6 @@
   import { useApi } from "~/composables/use-api";
   import { useCsrfHeaders } from "~/composables/use-csrf-fetch";
 
-  /**
-   * Parent Gate — `BR-PEN-01`, `BR-PGT-01..07`, mục 5 của
-   * `docs/specs/04-play/parent-gate.md`.
-   */
   interface ParentGateChallenge {
     challenge_id: string;
     factor_a: number;

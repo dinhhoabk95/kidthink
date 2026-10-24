@@ -1,8 +1,12 @@
 <template>
-  <div class="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+  <div
+    class="max-w-4xl mx-auto p-4 md:p-6 space-y-6"
+    data-testid="security-settings-page"
+  >
     <div class="border-b pb-4 border-surface-200">
       <NuxtLink
-        class="text-sm font-semibold text-brand-600 hover:text-brand-700 inline-flex items-center gap-1 mb-2"
+        class="min-h-11 text-sm font-semibold text-brand-600 hover:text-brand-700 inline-flex items-center gap-1 mb-2"
+        data-testid="back-to-settings-link"
         to="/me/settings"
       >
         <UIcon class="w-4 h-4" name="i-lucide-arrow-left" />
@@ -12,8 +16,8 @@
         Bảo mật & Quản lý phiên đăng nhập
       </h1>
       <p class="text-sm md:text-base text-surface-600 mt-1">
-        Quản lý xác thực hai lớp (MFA) và kiểm tra các thiết bị đang đăng nhập
-        vào tài khoản của bạn.
+        Quản lý mật khẩu, xác thực hai lớp (MFA) và kiểm tra các thiết bị đang
+        đăng nhập vào tài khoản của bạn.
       </p>
     </div>
 
@@ -62,10 +66,44 @@
         class="w-8 h-8 animate-spin text-brand-600 mx-auto"
         name="i-lucide-loader-2"
       />
-      <p class="text-sm text-surface-500 mt-2">Đang tải thông tin bảo mật...</p>
+      <p class="text-sm text-surface-600 mt-2">Đang tải thông tin bảo mật...</p>
     </div>
 
     <div class="space-y-6" v-else>
+      <!-- Password Change Card (BR-ACS-01, BR-ACS-02) -->
+      <div
+        class="bg-white rounded-2xl border-2 border-surface-200 p-5 md:p-6 space-y-4 shadow-sm"
+        data-testid="security-password-card"
+      >
+        <div
+          class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+        >
+          <div class="flex items-center gap-3">
+            <div class="p-3 rounded-2xl bg-brand-50 text-brand-600">
+              <UIcon class="w-6 h-6" name="i-lucide-key-round" />
+            </div>
+            <div>
+              <h2 class="text-lg font-bold font-heading text-surface-900">
+                Đổi mật khẩu
+              </h2>
+              <p class="text-sm text-surface-600 mt-0.5">
+                Cập nhật mật khẩu định kỳ để bảo vệ tài khoản tốt hơn. Khi đổi
+                mật khẩu, các thiết bị khác sẽ tự động đăng xuất.
+              </p>
+            </div>
+          </div>
+
+          <button
+            class="min-h-11 px-5 py-2.5 rounded-xl border-2 border-surface-300 bg-white hover:border-brand-600 text-surface-800 font-semibold text-sm transition-colors shrink-0"
+            data-testid="open-password-modal-btn"
+            type="button"
+            @click="openPasswordModal"
+          >
+            Đổi mật khẩu
+          </button>
+        </div>
+      </div>
+
       <SecurityMfaCard
         :mfa-status="mfaStatus"
         @error="errorMessage = $event"
@@ -89,7 +127,7 @@
               <h2 class="text-lg font-bold font-heading text-surface-900">
                 Thiết bị đang đăng nhập
               </h2>
-              <p class="text-xs text-surface-500 mt-0.5">
+              <p class="text-sm text-surface-600 mt-0.5">
                 Kiểm tra các phiên hoạt động và thu hồi quyền truy cập nếu phát
                 hiện thiết bị lạ.
               </p>
@@ -97,7 +135,7 @@
           </div>
 
           <button
-            class="min-h-11 px-4 py-2 rounded-xl border-2 border-danger-200 bg-danger-50 hover:bg-danger-100 text-danger-700 font-semibold text-xs transition-colors"
+            class="min-h-11 px-4 py-2 rounded-xl border-2 border-danger-200 bg-danger-50 hover:bg-danger-100 text-danger-700 font-semibold text-sm transition-colors shrink-0"
             data-testid="open-logout-all-modal-btn"
             type="button"
             :disabled="submitting"
@@ -108,7 +146,7 @@
         </div>
 
         <div
-          class="text-sm text-surface-500 py-4 text-center"
+          class="text-sm text-surface-600 py-4 text-center"
           data-testid="sessions-empty"
           v-if="sessions.length === 0"
         >
@@ -131,21 +169,21 @@
                   {{ formatDeviceLabel(sess) }}
                 </span>
                 <span
-                  class="px-2.5 py-0.5 text-xs font-bold rounded-full bg-brand-100 text-brand-800"
+                  class="px-2.5 py-0.5 text-sm font-bold rounded-full bg-brand-100 text-brand-800"
                   data-testid="current-session-badge"
                   v-if="isCurrentSession(sess)"
                 >
                   Thiết bị này
                 </span>
                 <span
-                  class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-surface-200 text-surface-700"
+                  class="px-2.5 py-0.5 text-sm font-semibold rounded-full bg-surface-200 text-surface-700"
                   data-testid="session-auth-method"
                 >
                   {{ formatAuthMethod(sess) }}
                 </span>
               </div>
               <div
-                class="text-xs text-surface-500 flex flex-wrap gap-x-3 gap-y-1"
+                class="text-sm text-surface-600 flex flex-wrap gap-x-3 gap-y-1"
               >
                 <span data-testid="session-location">
                   Vị trí: {{ formatLocation(sess) }}
@@ -162,17 +200,168 @@
             </div>
 
             <button
-              class="min-h-11 px-4 py-2 rounded-xl border border-danger-200 bg-white hover:bg-danger-50 text-danger-600 font-semibold text-xs transition-colors disabled:opacity-50 shrink-0"
+              class="min-h-11 px-4 py-2 rounded-xl border border-danger-200 bg-white hover:bg-danger-50 text-danger-600 font-semibold text-sm transition-colors disabled:opacity-50 shrink-0"
               type="button"
               v-if="!isCurrentSession(sess)"
               :data-testid="`revoke-session-btn-${sess.id}`"
               :disabled="revokingSessionId === sess.id"
               @click="handleRevokeSession(sess.id)"
             >
-              {{ revokingSessionId === sess.id ? "Đang thu hồi..." : "Thu hồi" }}
+              {{
+                revokingSessionId === sess.id ? "Đang thu hồi..." : "Thu hồi"
+              }}
             </button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- PASSWORD CHANGE MODAL (BR-ACS-01, BR-ACS-02) -->
+    <div
+      aria-labelledby="password-modal-title"
+      aria-modal="true"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50"
+      data-testid="password-modal"
+      role="dialog"
+      v-if="passwordModal.isOpen"
+    >
+      <div
+        class="bg-white rounded-3xl border-4 border-surface-300 p-6 max-w-md w-full space-y-4 shadow-2xl"
+      >
+        <div
+          class="flex items-center justify-between border-b border-surface-100 pb-3"
+        >
+          <h3
+            class="text-lg font-bold font-heading text-surface-900"
+            id="password-modal-title"
+          >
+            Đổi mật khẩu
+          </h3>
+          <button
+            aria-label="Đóng modal đổi mật khẩu"
+            class="text-surface-400 hover:text-surface-600 font-bold text-lg min-h-11 min-w-11 flex items-center justify-center"
+            data-testid="close-password-modal-btn"
+            type="button"
+            @click="closePasswordModal"
+          >
+            <UIcon class="w-5 h-5" name="i-lucide-x" />
+          </button>
+        </div>
+
+        <p class="text-sm text-surface-600">
+          Xác nhận mật khẩu hiện tại trước khi đổi sang mật khẩu mới. Các thiết
+          bị khác sẽ được đăng xuất sau khi đổi.
+        </p>
+
+        <form
+          class="space-y-4"
+          data-testid="password-form"
+          @submit.prevent="handlePasswordSubmit"
+        >
+          <div>
+            <label
+              class="block text-sm font-bold text-surface-700 mb-1"
+              for="securityCurrentPassword"
+            >
+              Mật khẩu hiện tại *
+            </label>
+            <input
+              autocomplete="current-password"
+              class="w-full min-h-11 px-4 py-2.5 rounded-xl border-2 border-surface-300 focus:border-brand-600 focus:outline-none text-base text-surface-900"
+              data-testid="password-current-input"
+              id="securityCurrentPassword"
+              required
+              type="password"
+              v-model="passwordModal.currentPassword"
+            >
+            <p
+              class="mt-1 text-amber-700 text-sm"
+              data-testid="password-field-error-current"
+              v-if="passwordFieldErrors.password"
+            >
+              {{ passwordFieldErrors.password }}
+            </p>
+          </div>
+
+          <div>
+            <label
+              class="block text-sm font-bold text-surface-700 mb-1"
+              for="securityNewPassword"
+            >
+              Mật khẩu mới (tối thiểu 8 ký tự) *
+            </label>
+            <input
+              autocomplete="new-password"
+              class="w-full min-h-11 px-4 py-2.5 rounded-xl border-2 border-surface-300 focus:border-brand-600 focus:outline-none text-base text-surface-900"
+              data-testid="password-new-input"
+              id="securityNewPassword"
+              minlength="8"
+              required
+              type="password"
+              v-model="passwordModal.newPassword"
+            >
+            <p
+              class="mt-1 text-amber-700 text-sm"
+              data-testid="password-field-error-new"
+              v-if="passwordFieldErrors.new_password"
+            >
+              {{ passwordFieldErrors.new_password }}
+            </p>
+          </div>
+
+          <div>
+            <label
+              class="block text-sm font-bold text-surface-700 mb-1"
+              for="securityConfirmPassword"
+            >
+              Xác nhận mật khẩu mới *
+            </label>
+            <input
+              autocomplete="new-password"
+              class="w-full min-h-11 px-4 py-2.5 rounded-xl border-2 border-surface-300 focus:border-brand-600 focus:outline-none text-base text-surface-900"
+              data-testid="password-confirm-input"
+              id="securityConfirmPassword"
+              minlength="8"
+              required
+              type="password"
+              v-model="passwordModal.confirmPassword"
+            >
+            <p
+              class="mt-1 text-amber-700 text-sm"
+              data-testid="password-field-error-confirm"
+              v-if="passwordFieldErrors.confirm_password"
+            >
+              {{ passwordFieldErrors.confirm_password }}
+            </p>
+          </div>
+
+          <p
+            class="rounded-xl border border-amber-200 bg-amber-50 p-3 font-medium text-amber-900 text-sm"
+            data-testid="password-modal-error"
+            v-if="passwordModal.error"
+          >
+            {{ passwordModal.error }}
+          </p>
+
+          <div class="flex justify-end gap-3 pt-2">
+            <button
+              class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-200 text-sm font-bold text-surface-600 hover:bg-surface-50"
+              data-testid="cancel-password-modal-btn"
+              type="button"
+              @click="closePasswordModal"
+            >
+              Huỷ
+            </button>
+            <button
+              class="min-h-11 px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 text-white text-sm font-bold font-heading"
+              data-testid="submit-password-btn"
+              type="submit"
+              :disabled="isSubmittingPassword"
+            >
+              {{ isSubmittingPassword ? "Đang xử lý..." : "Cập nhật mật khẩu" }}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -207,7 +396,7 @@
           </button>
         </div>
 
-        <p class="text-xs text-surface-600">
+        <p class="text-sm text-surface-600">
           Vui lòng nhập mật khẩu hiện tại để xác nhận thu hồi toàn bộ phiên đăng
           nhập trên tất cả các thiết bị.
         </p>
@@ -219,7 +408,7 @@
         >
           <div>
             <label
-              class="block text-xs font-bold text-surface-700 mb-1"
+              class="block text-sm font-bold text-surface-700 mb-1"
               for="logoutAllPassword"
             >
               Mật khẩu hiện tại *
@@ -236,7 +425,7 @@
           </div>
 
           <p
-            class="rounded-xl border border-amber-200 bg-amber-50 p-3 font-medium text-amber-900 text-xs"
+            class="rounded-xl border border-amber-200 bg-amber-50 p-3 font-medium text-amber-900 text-sm"
             data-testid="logout-all-modal-error"
             v-if="logoutAllModal.error"
           >
@@ -245,14 +434,15 @@
 
           <div class="flex justify-end gap-3 pt-2">
             <button
-              class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-200 text-xs font-bold text-surface-600 hover:bg-surface-50"
+              class="min-h-11 px-4 py-2 rounded-xl border-2 border-surface-200 text-sm font-bold text-surface-600 hover:bg-surface-50"
+              data-testid="cancel-logout-all-modal-btn"
               type="button"
               @click="logoutAllModal.isOpen = false"
             >
               Huỷ
             </button>
             <button
-              class="min-h-11 px-5 py-2 rounded-xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white text-xs font-bold font-heading"
+              class="min-h-11 px-5 py-2 rounded-xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white text-sm font-bold font-heading"
               data-testid="confirm-logout-all-btn"
               type="submit"
               :disabled="!logoutAllModal.password.trim() || submitting"
@@ -267,7 +457,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { normalizeApiError } from "@mindkid/errors/client";
+  import { getFieldErrors, normalizeApiError } from "@mindkid/errors/client";
   import { onMounted, reactive, ref } from "vue";
   import SecurityMfaCard, {
     type MfaStatusResponse,
@@ -316,11 +506,21 @@
   const router = typeof useRouter === "function" ? useRouter() : null;
   const loading = ref(true);
   const submitting = ref(false);
+  const isSubmittingPassword = ref(false);
   const revokingSessionId = ref<string | null>(null);
   const errorMessage = ref("");
   const successMessage = ref("");
   const mfaStatus = ref<MfaStatusResponse | null>(null);
   const sessions = ref<SessionItem[]>([]);
+  const passwordFieldErrors = ref<Record<string, string>>({});
+
+  const passwordModal = reactive({
+    isOpen: false,
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+    error: "",
+  });
 
   const logoutAllModal = reactive({
     isOpen: false,
@@ -419,6 +619,66 @@
         "Không thể tải thông tin bảo mật tài khoản";
     } finally {
       loading.value = false;
+    }
+  }
+
+  function openPasswordModal(): void {
+    passwordModal.currentPassword = "";
+    passwordModal.newPassword = "";
+    passwordModal.confirmPassword = "";
+    passwordModal.error = "";
+    passwordFieldErrors.value = {};
+    passwordModal.isOpen = true;
+  }
+
+  function closePasswordModal(): void {
+    passwordModal.isOpen = false;
+  }
+
+  async function handlePasswordSubmit(): Promise<void> {
+    passwordModal.error = "";
+    passwordFieldErrors.value = {};
+
+    if (passwordModal.newPassword.length < 8) {
+      passwordFieldErrors.value = {
+        new_password: "Mật khẩu mới phải có ít nhất 8 ký tự.",
+      };
+      return;
+    }
+
+    if (passwordModal.newPassword !== passwordModal.confirmPassword) {
+      passwordFieldErrors.value = {
+        confirm_password: "Mật khẩu xác nhận không khớp.",
+      };
+      return;
+    }
+
+    isSubmittingPassword.value = true;
+    try {
+      await api("/api/users/auth/reauth", {
+        method: "POST",
+        body: { password: passwordModal.currentPassword },
+      });
+
+      const res = await api<{ ok: boolean; message: string }>(
+        "/api/users/password",
+        {
+          method: "POST",
+          body: { new_password: passwordModal.newPassword },
+        }
+      );
+
+      successMessage.value = res.message || "Đã cập nhật mật khẩu thành công.";
+      passwordModal.isOpen = false;
+      await loadSecurityData();
+    } catch (err) {
+      passwordFieldErrors.value = Object.fromEntries(
+        getFieldErrors(err).map((f) => [f.field, f.message])
+      );
+      passwordModal.error =
+        normalizeApiError(err).message || "Không thể cập nhật mật khẩu.";
+    } finally {
+      isSubmittingPassword.value = false;
     }
   }
 

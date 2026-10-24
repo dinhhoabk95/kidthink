@@ -1,6 +1,6 @@
 <template>
   <button
-    class="min-h-16 px-4 py-2 flex items-center gap-3 rounded-2xl bg-white border-[3px] border-brand-300 shadow-[0_4px_0_var(--color-brand-300)] active:shadow-[0_1px_0_var(--color-brand-300)] active:translate-y-0.5 transition-all text-left select-none"
+    class="min-h-16 min-w-16 px-4 py-2 flex items-center gap-3 rounded-2xl bg-white border-[3px] border-brand-300 shadow-[0_4px_0_var(--color-brand-300)] active:shadow-[0_1px_0_var(--color-brand-300)] active:translate-y-0.5 transition-all text-left select-none max-w-full"
     data-testid="kid-profile-badge"
     type="button"
     v-if="activeChild"
@@ -20,7 +20,7 @@
       >
         {{ activeChild.display_name }}
       </span>
-      <span class="text-xs font-semibold text-brand-600 leading-tight">
+      <span class="text-base font-semibold text-brand-600 leading-tight">
         {{ ageBandLabel }}
       </span>
     </div>

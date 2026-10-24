@@ -1,18 +1,20 @@
 <template>
-  <div class="space-y-6">
+  <div class="space-y-6 min-w-0">
     <!-- Role Guard: Forbidden for non-super_admin -->
     <ForbiddenState v-if="!isSuperAdmin" />
 
-    <div class="space-y-6" v-else>
+    <div class="space-y-6 min-w-0" v-else>
       <!-- Header -->
       <div
-        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-surface-200 pb-5"
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b-2 border-surface-200 pb-5 min-w-0"
       >
-        <div>
-          <h1 class="text-2xl font-bold font-heading text-surface-900">
+        <div class="min-w-0">
+          <h1
+            class="text-2xl font-bold font-heading text-surface-900 break-words"
+          >
             Tra cứu và quản lý người dùng
           </h1>
-          <p class="text-sm text-surface-500 mt-1">
+          <p class="text-sm text-surface-500 mt-1 break-words">
             Tra cứu thông tin tài khoản người dùng, số hồ sơ trẻ và thực hiện
             thao tác vận hành.
           </p>
@@ -21,16 +23,19 @@
 
       <!-- Feedback Alerts -->
       <div
-        class="p-4 rounded-2xl bg-danger-50 border-2 border-danger-200 text-sm text-danger-900 flex items-start gap-3"
+        class="p-4 rounded-2xl bg-danger-50 border-2 border-danger-200 text-sm text-danger-900 flex items-center gap-3"
         v-if="errorMessage"
       >
         <UIcon
-          class="w-5 h-5 text-danger-500 shrink-0 mt-0.5"
+          class="w-5 h-5 text-danger-500 shrink-0"
           name="i-lucide-alert-triangle"
         />
-        <div class="flex-1 font-medium">{{ errorMessage }}</div>
+        <div class="flex-1 font-medium break-words min-w-0">
+          {{ errorMessage }}
+        </div>
         <button
-          class="text-danger-600 hover:text-danger-800 font-bold"
+          aria-label="Đóng thông báo lỗi"
+          class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl text-danger-600 hover:text-danger-800 font-bold shrink-0"
           type="button"
           @click="dismissError"
         >
@@ -39,16 +44,19 @@
       </div>
 
       <div
-        class="p-4 rounded-2xl bg-success-50 border-2 border-success-200 text-sm text-success-900 flex items-start gap-3"
+        class="p-4 rounded-2xl bg-success-50 border-2 border-success-200 text-sm text-success-900 flex items-center gap-3"
         v-if="successMessage"
       >
         <UIcon
-          class="w-5 h-5 text-success-500 shrink-0 mt-0.5"
+          class="w-5 h-5 text-success-500 shrink-0"
           name="i-lucide-check-circle-2"
         />
-        <div class="flex-1 font-medium">{{ successMessage }}</div>
+        <div class="flex-1 font-medium break-words min-w-0">
+          {{ successMessage }}
+        </div>
         <button
-          class="text-success-600 hover:text-success-800 font-bold"
+          aria-label="Đóng thông báo thành công"
+          class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl text-success-600 hover:text-success-800 font-bold shrink-0"
           type="button"
           @click="dismissSuccess"
         >
@@ -58,14 +66,14 @@
 
       <!-- Filter Controls (§7.1) -->
       <div
-        class="bg-white rounded-3xl border-4 border-surface-200 p-5 space-y-4 shadow-sm"
+        class="bg-white rounded-3xl border-4 border-surface-200 p-4 sm:p-5 space-y-4 shadow-sm min-w-0 overflow-hidden"
       >
         <form
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 min-w-0"
           @submit.prevent="applyFilters"
         >
           <!-- Search input q -->
-          <div class="space-y-1.5 sm:col-span-2">
+          <div class="space-y-1.5 sm:col-span-2 min-w-0">
             <label
               class="block text-xs font-bold font-heading text-surface-700"
               for="filter-q"
@@ -73,7 +81,7 @@
               Tìm kiếm (Email hoặc Tên hiển thị)
             </label>
             <input
-              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm"
+              class="min-h-11 w-full min-w-0 max-w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm"
               id="filter-q"
               placeholder="Nhập email hoặc tên người dùng..."
               type="text"
@@ -82,7 +90,7 @@
           </div>
 
           <!-- Status filter -->
-          <div class="space-y-1.5">
+          <div class="space-y-1.5 min-w-0">
             <label
               class="block text-xs font-bold font-heading text-surface-700"
               for="filter-status"
@@ -90,7 +98,7 @@
               Trạng thái
             </label>
             <select
-              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm bg-white"
+              class="min-h-11 w-full min-w-0 max-w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm bg-white"
               id="filter-status"
               v-model="filterForm.status"
             >
@@ -103,7 +111,7 @@
           </div>
 
           <!-- Has children filter -->
-          <div class="space-y-1.5">
+          <div class="space-y-1.5 min-w-0">
             <label
               class="block text-xs font-bold font-heading text-surface-700"
               for="filter-has-children"
@@ -111,7 +119,7 @@
               Hồ sơ trẻ
             </label>
             <select
-              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm bg-white"
+              class="min-h-11 w-full min-w-0 max-w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm bg-white"
               id="filter-has-children"
               v-model="filterForm.has_children"
             >
@@ -122,7 +130,7 @@
           </div>
 
           <!-- Package filter -->
-          <div class="space-y-1.5">
+          <div class="space-y-1.5 min-w-0">
             <label
               class="block text-xs font-bold font-heading text-surface-700"
               for="filter-pkg"
@@ -130,7 +138,7 @@
               Gói kích hoạt
             </label>
             <input
-              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm"
+              class="min-h-11 w-full min-w-0 max-w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm"
               id="filter-pkg"
               placeholder="Mã gói (VD: content.standard)"
               type="text"
@@ -139,7 +147,7 @@
           </div>
 
           <!-- Sort filter -->
-          <div class="space-y-1.5">
+          <div class="space-y-1.5 min-w-0">
             <label
               class="block text-xs font-bold font-heading text-surface-700"
               for="filter-sort"
@@ -147,7 +155,7 @@
               Sắp xếp
             </label>
             <select
-              class="w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm bg-white"
+              class="min-h-11 w-full min-w-0 max-w-full px-3.5 py-2.5 rounded-2xl border-[3px] border-surface-200 focus:border-brand-500 focus:outline-none text-sm bg-white"
               id="filter-sort"
               v-model="filterForm.sort"
             >
@@ -157,7 +165,9 @@
           </div>
 
           <!-- Buttons -->
-          <div class="sm:col-span-2 flex items-end gap-3 pt-1">
+          <div
+            class="sm:col-span-2 flex flex-wrap items-end gap-3 pt-1 min-w-0"
+          >
             <button
               class="min-h-11 px-5 py-2 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold font-heading transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
               type="submit"
@@ -180,10 +190,10 @@
 
       <!-- User List Table (§7.2) -->
       <div
-        class="bg-white rounded-3xl border-4 border-surface-200 overflow-hidden shadow-sm"
+        class="bg-white rounded-3xl border-4 border-surface-200 overflow-hidden shadow-sm min-w-0"
         v-else-if="users.length > 0"
       >
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto w-full">
           <table class="w-full text-left text-sm">
             <thead
               class="bg-surface-50 border-b-2 border-surface-200 text-xs font-bold font-heading text-surface-600"
@@ -207,14 +217,14 @@
                 <!-- Email & Display Name -->
                 <td class="px-5 py-4">
                   <NuxtLink
-                    class="font-bold text-brand-700 hover:underline block"
+                    class="min-h-11 inline-flex items-center font-bold text-brand-700 hover:underline"
                     :to="`/users/${u.uuid}`"
                   >
                     {{ u.email }}
                   </NuxtLink>
-                  <span class="text-xs text-surface-500"
-                    >{{ u.display_name }}</span
-                  >
+                  <span class="block text-xs text-surface-500">{{
+                    u.display_name
+                  }}</span>
                 </td>
 
                 <!-- Status -->
@@ -251,7 +261,7 @@
                 <!-- Action buttons -->
                 <td class="px-5 py-4 text-right space-x-2 whitespace-nowrap">
                   <NuxtLink
-                    class="inline-flex items-center px-3 py-1.5 rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-800 text-xs font-bold font-heading transition-colors"
+                    class="min-h-11 inline-flex items-center px-3 py-1.5 rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-800 text-xs font-bold font-heading transition-colors"
                     :to="`/users/${u.uuid}`"
                   >
                     Chi tiết
@@ -259,7 +269,7 @@
 
                   <!-- Suspend Button -->
                   <button
-                    class="inline-flex items-center px-3 py-1.5 rounded-xl border-2 border-warning-300 bg-warning-50 hover:bg-warning-100 text-warning-800 text-xs font-bold font-heading transition-colors"
+                    class="min-h-11 inline-flex items-center px-3 py-1.5 rounded-xl border-2 border-warning-300 bg-warning-50 hover:bg-warning-100 text-warning-800 text-xs font-bold font-heading transition-colors"
                     type="button"
                     v-if="u.status === 'active'"
                     @click="() => openActionModal(u, 'suspend')"
@@ -269,7 +279,7 @@
 
                   <!-- Reactivate Button -->
                   <button
-                    class="inline-flex items-center px-3 py-1.5 rounded-xl border-2 border-success-300 bg-success-50 hover:bg-success-100 text-success-800 text-xs font-bold font-heading transition-colors"
+                    class="min-h-11 inline-flex items-center px-3 py-1.5 rounded-xl border-2 border-success-300 bg-success-50 hover:bg-success-100 text-success-800 text-xs font-bold font-heading transition-colors"
                     type="button"
                     v-if="u.status === 'suspended'"
                     @click="() => openActionModal(u, 'reactivate')"
@@ -285,7 +295,7 @@
 
       <!-- Empty State with §5 suggestion -->
       <div
-        class="bg-white rounded-3xl border-4 border-surface-200 p-12 text-center space-y-3"
+        class="bg-white rounded-3xl border-4 border-surface-200 p-6 sm:p-12 text-center space-y-3 min-w-0"
         v-else
       >
         <UIcon
@@ -302,7 +312,7 @@
         </p>
         <div class="pt-2">
           <button
-            class="px-4 py-2 rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-700 text-xs font-bold font-heading transition-colors"
+            class="min-h-11 inline-flex items-center justify-center px-4 py-2 rounded-xl bg-surface-100 hover:bg-surface-200 text-surface-700 text-xs font-bold font-heading transition-colors"
             type="button"
             @click="resetFilters"
           >
@@ -321,9 +331,11 @@
         >
           <div class="space-y-1">
             <h3 class="text-xl font-bold font-heading text-surface-900">
-              {{ actionModal.type === "suspend"
+              {{
+                actionModal.type === "suspend"
                   ? "Xác nhận tạm khoá tài khoản"
-                  : "Xác nhận mở khoá tài khoản" }}
+                  : "Xác nhận mở khoá tài khoản"
+              }}
             </h3>
             <p class="text-xs text-surface-500">
               Người dùng:
@@ -385,11 +397,13 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import { computed, onMounted, reactive, ref } from "vue";
   import { definePageMeta, useHead } from "#imports";
   import ForbiddenState from "~/components/forbidden-state.vue";
   import LoadingState from "~/components/loading-state.vue";
-  import type { ManagerRole } from "~/composables/nav-config";
+  import { useAdminAuth } from "~/composables/use-admin-auth";
+  import { apiFetch } from "~/composables/use-api-client";
 
   definePageMeta({
     layout: "manager",
@@ -399,11 +413,10 @@
     title: "Quản lý người dùng",
   });
 
-  const { user } = useAdminAuth();
+  const { user, fetchSession } = useAdminAuth();
 
   const isSuperAdmin = computed(() => {
-    const role = (user.value as { role?: ManagerRole } | null)?.role;
-    return role === "super_admin";
+    return user.value?.role === "super_admin";
   });
 
   interface UserListItem {
@@ -416,13 +429,6 @@
     active_package: string | null;
     created_at: string;
     last_active_at: string | null;
-  }
-
-  interface ApiErrorResponse {
-    data?: {
-      message?: string;
-      code?: string;
-    };
   }
 
   const users = ref<UserListItem[]>([]);
@@ -504,7 +510,11 @@
   }
 
   async function loadUsers() {
+    if (!user.value) {
+      await fetchSession();
+    }
     if (!isSuperAdmin.value) {
+      loading.value = false;
       return;
     }
 
@@ -533,10 +543,10 @@
         `/api/managers/users?${queryParams.toString()}`
       );
       users.value = data?.items || [];
-    } catch (err: unknown) {
-      const apiErr = err as ApiErrorResponse;
-      errorMessage.value =
-        apiErr?.data?.message || "Không thể tải danh sách người dùng.";
+    } catch (err) {
+      errorMessage.value = isApiError(err)
+        ? err.message
+        : "Không thể tải danh sách người dùng.";
     } finally {
       loading.value = false;
     }
@@ -555,8 +565,11 @@
     loadUsers();
   }
 
-  function openActionModal(user: UserListItem, type: "suspend" | "reactivate") {
-    actionModal.user = user;
+  function openActionModal(
+    targetUser: UserListItem,
+    type: "suspend" | "reactivate"
+  ) {
+    actionModal.user = targetUser;
     actionModal.type = type;
     actionModal.reason = "";
     errorMessage.value = null;
@@ -592,10 +605,10 @@
       successMessage.value = `Đã ${actionLabel} tài khoản ${actionModal.user.email} thành công.`;
       closeActionModal();
       await loadUsers();
-    } catch (err: unknown) {
-      const apiErr = err as ApiErrorResponse;
-      errorMessage.value =
-        apiErr?.data?.message || `Xảy ra lỗi khi ${actionLabel} tài khoản.`;
+    } catch (err) {
+      errorMessage.value = isApiError(err)
+        ? err.message
+        : `Xảy ra lỗi khi ${actionLabel} tài khoản.`;
     } finally {
       submitting.value = false;
     }

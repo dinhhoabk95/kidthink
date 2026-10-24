@@ -8,7 +8,7 @@
       <div class="mb-6 text-center">
         <NuxtLink
           aria-label="Về trang chủ MindKid"
-          class="mb-3 inline-flex items-center gap-2 font-heading text-2xl font-bold text-brand-600 transition-transform active:scale-95 dark:text-brand-400"
+          class="mb-3 inline-flex min-h-11 items-center gap-2 rounded-xl px-2 font-heading text-2xl font-bold text-brand-600 transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:scale-95 dark:text-brand-400"
           to="/"
         >
           <UIcon
@@ -22,7 +22,9 @@
         >
           Đặt lại mật khẩu mới
         </h1>
-        <p class="mt-1 text-sm text-surface-600 dark:text-surface-400">
+        <p
+          class="mt-1 text-base leading-normal text-surface-600 dark:text-surface-400"
+        >
           Nhập mật khẩu mới an toàn cho tài khoản của bạn.
         </p>
       </div>
@@ -31,17 +33,20 @@
       <div
         class="space-y-4 rounded-2xl border-2 border-warning-300 bg-warning-50 p-4 text-center dark:border-warning-700 dark:bg-warning-950/40"
         data-testid="reset-token-expired"
+        role="alert"
         v-if="isTokenInvalidOrExpired"
       >
         <UIcon
           class="mx-auto h-8 w-8 text-warning-600 dark:text-warning-400"
           name="i-lucide-clock-alert"
         />
-        <p class="text-sm font-semibold text-warning-900 dark:text-warning-200">
+        <p
+          class="text-base font-semibold leading-normal text-warning-900 dark:text-warning-200"
+        >
           Liên kết đặt lại mật khẩu đã hết hạn hoặc đã được sử dụng.
         </p>
         <NuxtLink
-          class="inline-flex min-h-11 w-full items-center justify-center rounded-2xl bg-brand-600 px-5 py-2.5 font-heading text-sm font-bold text-white hover:bg-brand-700"
+          class="inline-flex min-h-11 w-full items-center justify-center rounded-2xl bg-brand-600 px-5 py-2.5 font-heading text-base font-bold text-white transition-colors hover:bg-brand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:scale-[0.98]"
           data-testid="request-again-link"
           to="/quen-mat-khau"
         >
@@ -61,7 +66,7 @@
             class="h-5 w-5 shrink-0 text-danger-600 dark:text-danger-400"
             name="i-lucide-alert-circle"
           />
-          <span class="text-sm font-semibold leading-snug">
+          <span class="text-sm font-semibold leading-normal">
             {{ errorMessage }}
           </span>
         </div>
@@ -77,7 +82,7 @@
             class="h-5 w-5 shrink-0 text-success-600 dark:text-success-400"
             name="i-lucide-check-circle"
           />
-          <span class="text-sm font-semibold leading-snug">
+          <span class="text-sm font-semibold leading-normal">
             Đặt lại mật khẩu thành công. Đang chuyển về trang đăng nhập...
           </span>
         </div>
@@ -128,7 +133,7 @@
           </div>
 
           <button
-            class="mt-2 flex min-h-12 w-full items-center justify-center rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-6 py-3 font-heading text-base font-bold text-white shadow-[0_4px_0_var(--color-brand-700)] transition-all hover:bg-brand-500 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-brand-700)] disabled:cursor-not-allowed disabled:opacity-60"
+            class="mt-2 flex min-h-12 w-full items-center justify-center rounded-2xl border-[3px] border-brand-700 bg-brand-600 px-6 py-3 font-heading text-base font-bold text-white shadow-[0_4px_0_var(--color-brand-700)] transition-all hover:bg-brand-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-brand-700)] disabled:cursor-not-allowed disabled:opacity-60"
             data-testid="reset-submit-btn"
             type="submit"
             :disabled="isSubmitting || isSuccess"
@@ -143,7 +148,7 @@
         class="mt-6 border-t border-surface-200 pt-4 text-center dark:border-surface-700"
       >
         <NuxtLink
-          class="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand-600 transition-colors hover:text-brand-500 dark:text-brand-400"
+          class="inline-flex min-h-11 items-center gap-1.5 rounded-xl px-2 text-sm font-semibold text-brand-600 transition-colors hover:text-brand-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 dark:text-brand-400"
           to="/login"
         >
           <UIcon class="h-4 w-4" name="i-lucide-arrow-left" />
@@ -157,7 +162,7 @@
 <script lang="ts" setup>
   import { normalizeApiError } from "@mindkid/errors/client";
   import { computed, ref } from "vue";
-  import { navigateTo, useRoute } from "#imports";
+  import { definePageMeta, navigateTo, useRoute, useSeoMeta } from "#imports";
   import { useApi } from "~/composables/use-api";
 
   definePageMeta({
@@ -165,26 +170,30 @@
     alias: ["/dat-lai-mat-khau"],
   });
 
+  interface ResetPasswordResponse {
+    ok: boolean;
+  }
+
   const api = useApi();
   const route = useRoute();
 
-  const token = computed(() => {
+  const token = computed<string>(() => {
     const raw = route?.query?.token;
     return typeof raw === "string" ? raw.trim() : "";
   });
 
-  const newPassword = ref("");
-  const confirmPassword = ref("");
-  const isSubmitting = ref(false);
-  const isSuccess = ref(false);
-  const isExpiredFromApi = ref(false);
-  const errorMessage = ref("");
+  const newPassword = ref<string>("");
+  const confirmPassword = ref<string>("");
+  const isSubmitting = ref<boolean>(false);
+  const isSuccess = ref<boolean>(false);
+  const isExpiredFromApi = ref<boolean>(false);
+  const errorMessage = ref<string>("");
 
-  const isTokenInvalidOrExpired = computed(
+  const isTokenInvalidOrExpired = computed<boolean>(
     () => !token.value || isExpiredFromApi.value
   );
 
-  async function handleReset() {
+  async function handleReset(): Promise<void> {
     errorMessage.value = "";
 
     if (newPassword.value.length < 8) {
@@ -199,7 +208,7 @@
 
     isSubmitting.value = true;
     try {
-      await api("/api/guest/auth/users/reset-password", {
+      await api<ResetPasswordResponse>("/api/guest/auth/users/reset-password", {
         method: "POST",
         body: {
           token: token.value,
@@ -224,4 +233,9 @@
       isSubmitting.value = false;
     }
   }
+
+  useSeoMeta({
+    title: "Đặt lại mật khẩu mới — MindKid",
+    description: "Đặt lại mật khẩu mới an toàn cho tài khoản phụ huynh MindKid",
+  });
 </script>

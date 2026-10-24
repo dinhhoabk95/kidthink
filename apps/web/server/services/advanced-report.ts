@@ -694,10 +694,15 @@ function indexSessionTouches(
   };
 }
 
+type AdvancedReportLevelRow = Pick<
+  typeof gameLevels.$inferSelect,
+  "id" | "code"
+>;
+
 function buildReportLookupMaps(params: {
   allCompetencies: (typeof competencies.$inferSelect)[];
   allStrands: (typeof strands.$inferSelect)[];
-  allLevels: (typeof gameLevels.$inferSelect)[];
+  allLevels: AdvancedReportLevelRow[];
   allMappings: (typeof contentSkillMap.$inferSelect)[];
   childMasteryList: (typeof masteryState.$inferSelect)[];
   actionSuggestionsList: (typeof skillActionSuggestions.$inferSelect)[];
@@ -714,7 +719,7 @@ function buildReportLookupMaps(params: {
     strandById.set(Number(s.id), s);
   }
 
-  const levelById = new Map<number, typeof gameLevels.$inferSelect>();
+  const levelById = new Map<number, AdvancedReportLevelRow>();
   for (const l of params.allLevels) {
     levelById.set(Number(l.id), l);
   }
@@ -807,7 +812,12 @@ export async function buildAdvancedReport(params: {
       .select()
       .from(contentSkillMap)
       .where(eq(contentSkillMap.entityType, "game_level")),
-    db.select().from(gameLevels),
+    db
+      .select({
+        id: gameLevels.id,
+        code: gameLevels.code,
+      })
+      .from(gameLevels),
     db
       .select()
       .from(playSessions)

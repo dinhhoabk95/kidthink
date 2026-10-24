@@ -105,10 +105,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const rawBody =
-    (event.context?.body as unknown) ??
-    (event as { _body?: unknown })._body ??
-    (await readBody(event).catch(() => ({}))) ??
-    {};
+    event.context?.body ?? (await readBody(event).catch(() => ({}))) ?? {};
   const parsed = patchCurriculumSchema.safeParse(rawBody);
   if (!parsed.success) {
     throw new ValidationError(

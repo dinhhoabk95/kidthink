@@ -3,12 +3,17 @@ import { getOwnerDb, users, verificationTokens } from "@mindkid/db";
 import { EmailAlreadyInUseError } from "@mindkid/errors/account";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { dispatchTransactionalEmail } from "@mindkid/notification";
+import { enforceTwoAxisRateLimit } from "@mindkid/shared";
 import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler } from "h3";
 import { z } from "zod";
 
 import { buildAccountActionUrl } from "#server/utils/account-action-url";
-import { requireWebUserSession } from "#server/utils/auth-runtime";
+import {
+  assertRateLimitAllowed,
+  getVerifiedRemoteIp,
+  requireWebUserSession,
+} from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
 import { readBodyWithLimit } from "#server/utils/request-body";
 
@@ -23,6 +28,13 @@ export default defineEventHandler(async (event) => {
   await requireReauth(event);
 
   const userId = Number(userSession.user_id);
+  const rateLimitRes = await enforceTwoAxisRateLimit({
+    routeClass: "auth:forgot-password",
+    remoteIp: getVerifiedRemoteIp(event),
+    accountIdentifier: String(userId),
+  });
+  assertRateLimitAllowed(rateLimitRes.statusCode);
+
   const rawBody = await readBodyWithLimit(event);
 
   const parsed = ChangeEmailSchema.safeParse(rawBody);
@@ -60,7 +72,7 @@ export default defineEventHandler(async (event) => {
 
   // Generate token valid for 24h (BR-ACS-03, BR-ACS-04)
   const rawToken = generateSecureToken();
-  const tokenHash = hashSecureToken(rawToken);
+  const tokenHash = hashSecureToken(`email_change:${rawToken}:${newEmail}`);
   const now = new Date();
   const expiresAt = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 

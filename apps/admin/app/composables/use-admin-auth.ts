@@ -3,11 +3,11 @@ import { useState } from "#imports";
 import { useApiClient } from "./use-api-client";
 
 export interface AdminManager {
+  id?: number;
   manager_id?: number;
   display_name?: string;
   role?: "super_admin" | "content_reviewer";
   email?: string;
-  [key: string]: unknown;
 }
 
 export function useAdminAuth() {
@@ -40,6 +40,10 @@ export function useAdminAuth() {
     }
   }
 
+  async function reauth(password: string): Promise<void> {
+    await api.post("/api/managers/auth/reauth", { password });
+  }
+
   return {
     manager,
     user: manager,
@@ -47,5 +51,6 @@ export function useAdminAuth() {
     loggedIn: computed(() => Boolean(manager.value)),
     fetchSession,
     clear,
+    reauth,
   };
 }

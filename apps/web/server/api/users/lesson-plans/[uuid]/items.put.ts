@@ -14,8 +14,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const eventBody =
-    (event.context as { body?: Record<string, unknown> })?.body ||
-    (event as { _body?: Record<string, unknown> })._body;
+    Reflect.get(event.context, "body") || Reflect.get(event, "_body");
   const body = eventBody || (await readBody(event)) || {};
   const parsed = ReplaceLessonPlanItemsSchema.safeParse(body);
   if (!parsed.success) {

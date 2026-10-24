@@ -4,11 +4,12 @@ import { GameLevelNotFoundError } from "@mindkid/errors/game-level";
 import { and, desc, eq, or } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
+import { issuePreviewToken } from "#server/utils/preview-token";
 
 const NUMERIC_REGEX = /^\d+$/;
 
 export default defineEventHandler(async (event) => {
-  await requireManagerSession(event);
+  const manager = await requireManagerSession(event);
 
   const code = getRouterParam(event, "code");
   const versionParam = getRouterParam(event, "version");
@@ -65,9 +66,20 @@ export default defineEventHandler(async (event) => {
           .orderBy(desc(gameLevels.contentVersion))
           .limit(1);
 
-  if (!rows || rows.length === 0) {
+  const row = rows[0];
+  if (!row) {
     throw new GameLevelNotFoundError();
   }
 
-  return rows[0];
+  const previewToken = issuePreviewToken({
+    entityType: "game_level",
+    id: row.id,
+    version: row.contentVersion,
+    managerId: manager.manager_id,
+  });
+
+  return {
+    ...row,
+    preview_token: previewToken,
+  };
 });

@@ -12,29 +12,31 @@
 
     <!-- Primary Recommendation Card -->
     <div
-      class="primary-card rounded-3xl p-5 bg-white border-[3px] border-brand-200 shadow-sm flex items-center justify-between gap-4"
+      class="primary-card rounded-3xl p-4 sm:p-5 bg-white border-[3px] border-brand-200 shadow-sm flex flex-wrap sm:flex-nowrap items-center justify-between gap-4"
       v-if="recommendations.primary"
     >
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-4 min-w-0 flex-1">
         <div
-          class="emoji-box min-h-16 min-w-16 h-16 w-16 rounded-2xl bg-surface-100 flex items-center justify-center text-3xl select-none"
+          class="emoji-box min-h-16 min-w-16 h-16 w-16 rounded-2xl bg-surface-100 flex items-center justify-center text-3xl select-none shrink-0"
         >
           <span>{{ recommendations.primary.thumbnail_emoji }}</span>
         </div>
-        <div class="flex flex-col gap-1">
-          <h4 class="text-base font-bold text-surface-900 font-heading">
+        <div class="flex flex-col gap-1 min-w-0">
+          <h4
+            class="text-base font-bold text-surface-900 font-heading truncate"
+          >
             {{ recommendations.primary.title }}
           </h4>
-          <span class="text-xs font-semibold text-surface-500">
+          <span class="text-base font-semibold text-surface-500">
             {{ recommendations.primary.reason }}
           </span>
         </div>
       </div>
 
       <!-- Action -->
-      <div>
+      <div class="shrink-0">
         <NuxtLink
-          class="min-h-16 min-w-16 px-6 inline-flex items-center justify-center font-bold text-white bg-cta rounded-2xl active:scale-95 transition-transform no-underline"
+          class="min-h-16 min-w-16 px-6 inline-flex items-center justify-center font-bold text-white bg-brand-600 border-2 border-brand-700 rounded-2xl active:scale-95 transition-transform no-underline"
           v-if="!recommendations.primary.locked"
           :to="`/play/${recommendations.primary.level_code}`"
         >
@@ -43,7 +45,7 @@
 
         <!-- Neutral lock badge (BR-REC-07, BR-CUR-06) -->
         <div
-          class="min-h-16 min-w-16 px-4 inline-flex items-center justify-center text-xs font-semibold text-surface-600 bg-surface-200 rounded-2xl select-none"
+          class="min-h-16 min-w-16 px-4 inline-flex items-center justify-center text-base font-semibold text-surface-600 bg-surface-200 rounded-2xl select-none"
           v-else
         >
           <span class="inline-flex items-center gap-1">
@@ -56,7 +58,7 @@
 
     <!-- Alternatives List -->
     <div
-      class="alternatives-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3"
+      class="alternatives-grid grid grid-cols-1 sm:grid-cols-2 gap-4"
       v-if="recommendations.alternatives && recommendations.alternatives.length > 0"
     >
       <div
@@ -65,27 +67,27 @@
         :key="alt.level_code"
       >
         <div
-          class="emoji-box min-h-11 min-w-11 h-11 w-11 rounded-xl bg-surface-100 flex items-center justify-center text-xl select-none"
+          class="emoji-box min-h-16 min-w-16 h-16 w-16 rounded-xl bg-surface-100 flex items-center justify-center text-xl select-none shrink-0"
         >
           <span>{{ alt.thumbnail_emoji }}</span>
         </div>
         <div class="flex flex-col flex-1 min-w-0">
-          <p class="text-sm font-bold text-surface-800 truncate font-heading">
+          <p class="text-base font-bold text-surface-800 truncate font-heading">
             {{ alt.title }}
           </p>
-          <span class="text-xs text-surface-500 truncate">
+          <span class="text-base text-surface-500 truncate">
             {{ alt.reason }}
           </span>
         </div>
         <NuxtLink
-          class="min-h-16 min-w-16 px-4 inline-flex items-center justify-center text-xs font-bold text-brand-600 bg-brand-50 rounded-xl no-underline active:scale-95 transition-transform"
+          class="min-h-16 min-w-16 px-4 inline-flex items-center justify-center text-base font-bold text-brand-600 bg-brand-50 rounded-xl no-underline active:scale-95 transition-transform shrink-0"
           v-if="!alt.locked"
           :to="`/play/${alt.level_code}`"
         >
           <span>Chơi</span>
         </NuxtLink>
         <div
-          class="min-h-16 min-w-16 px-3 inline-flex items-center justify-center text-xs text-surface-500 bg-surface-100 rounded-xl select-none"
+          class="min-h-16 min-w-16 px-3 inline-flex items-center justify-center text-base text-surface-500 bg-surface-100 rounded-xl select-none shrink-0"
           v-else
         >
           <UIcon class="w-4 h-4 text-surface-500" name="i-lucide-lock" />

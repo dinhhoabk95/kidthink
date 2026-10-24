@@ -1,17 +1,19 @@
 <template>
-  <div class="p-8 max-w-6xl mx-auto space-y-6">
+  <div class="max-w-6xl mx-auto space-y-6 min-w-0">
     <ForbiddenState v-if="!isSuperAdmin" />
 
-    <div class="space-y-6" v-else>
+    <div class="space-y-6 min-w-0" v-else>
       <!-- Header -->
       <div
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
       >
-        <div>
-          <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
+        <div class="min-w-0">
+          <h1
+            class="text-2xl font-bold font-heading text-surface-900 dark:text-white"
+          >
             Quản Lý Thông Báo & Email (P2.9)
           </h1>
-          <p class="text-sm text-surface-500 mt-1">
+          <p class="text-base text-surface-600 dark:text-surface-300 mt-1">
             Theo dõi nhật ký chuyển phát AWS SES, gửi lại thông báo giao dịch và
             quản lý mẫu email hệ thống.
           </p>
@@ -19,15 +21,15 @@
 
         <!-- Tab Switcher -->
         <div
-          class="flex items-center gap-2 bg-surface-100 dark:bg-surface-800 p-1.5 rounded-2xl border border-surface-200 dark:border-surface-700"
+          class="flex flex-wrap items-center gap-2 bg-surface-100 dark:bg-surface-800 p-1.5 rounded-2xl border-2 border-surface-200 dark:border-surface-700"
         >
           <button
             type="button"
             :class="[
-              'px-4 py-2 rounded-xl text-xs font-bold transition-all',
+              'min-h-11 px-4 py-2 rounded-xl text-sm font-bold transition-all focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none',
               activeTab === 'logs'
                 ? 'bg-white dark:bg-surface-700 text-brand-600 dark:text-white shadow-sm'
-                : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
+                : 'text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white',
             ]"
             @click="activeTab = 'logs'"
           >
@@ -36,10 +38,10 @@
           <button
             type="button"
             :class="[
-              'px-4 py-2 rounded-xl text-xs font-bold transition-all',
+              'min-h-11 px-4 py-2 rounded-xl text-sm font-bold transition-all focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none',
               activeTab === 'templates'
                 ? 'bg-white dark:bg-surface-700 text-brand-600 dark:text-white shadow-sm'
-                : 'text-surface-600 dark:text-surface-400 hover:text-surface-900'
+                : 'text-surface-600 dark:text-surface-300 hover:text-surface-900 dark:hover:text-white',
             ]"
             @click="activeTab = 'templates'"
           >
@@ -51,11 +53,12 @@
       <!-- Feedback banners -->
       <div
         class="p-4 rounded-2xl bg-danger-50 border-2 border-danger-200 text-sm text-danger-900 flex items-center justify-between gap-3"
+        role="alert"
         v-if="feedbackError"
       >
         <span>{{ feedbackError }}</span>
         <button
-          class="text-xs font-bold text-danger-700"
+          class="min-h-11 px-3 rounded-xl text-sm font-bold text-danger-700 hover:bg-danger-100 transition-colors"
           type="button"
           @click="feedbackError = null"
         >
@@ -65,11 +68,12 @@
 
       <div
         class="p-4 rounded-2xl bg-success-50 border-2 border-success-200 text-sm text-success-900 flex items-center justify-between gap-3"
+        role="status"
         v-if="feedbackSuccess"
       >
         <span>{{ feedbackSuccess }}</span>
         <button
-          class="text-xs font-bold text-success-700"
+          class="min-h-11 px-3 rounded-xl text-sm font-bold text-success-700 hover:bg-success-100 transition-colors"
           type="button"
           @click="feedbackSuccess = null"
         >
@@ -78,25 +82,28 @@
       </div>
 
       <!-- TAB 1: Deliveries Log -->
-      <div class="space-y-4" v-if="activeTab === 'logs'">
+      <div class="space-y-4 min-w-0" v-if="activeTab === 'logs'">
         <!-- Search & Filters (BR-NTA-06) -->
         <div class="flex flex-wrap items-center gap-3">
           <input
-            class="px-3.5 py-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
+            aria-label="Tìm theo email hoặc ID người nhận"
+            class="min-h-11 w-full sm:w-auto px-3.5 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
             placeholder="Tìm theo email hoặc ID..."
             type="text"
             v-model="filterRecipient"
             @keyup.enter="fetchDeliveries"
           >
           <input
-            class="px-3.5 py-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
+            aria-label="Lọc theo mã mẫu thông báo"
+            class="min-h-11 w-full sm:w-auto px-3.5 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
             placeholder="Mã template (ví dụ: order_approved)..."
             type="text"
             v-model="filterCode"
             @keyup.enter="fetchDeliveries"
           >
           <select
-            class="px-3.5 py-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
+            aria-label="Lọc theo trạng thái chuyển phát"
+            class="min-h-11 w-full sm:w-auto px-3.5 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
             v-model="filterStatus"
           >
             <option value="">Tất cả trạng thái</option>
@@ -107,25 +114,25 @@
           </select>
           <input
             aria-label="Từ ngày"
-            class="px-3.5 py-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white"
+            class="min-h-11 w-full sm:w-auto px-3.5 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
             type="date"
             v-model="filterFrom"
           >
           <input
             aria-label="Đến ngày"
-            class="px-3.5 py-2 text-xs rounded-xl border border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white"
+            class="min-h-11 w-full sm:w-auto px-3.5 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-900 dark:text-white focus:outline-none focus:border-brand-500"
             type="date"
             v-model="filterTo"
           >
           <button
-            class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition-all"
+            class="min-h-11 px-4 py-2 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold transition-all focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
             type="button"
             @click="fetchDeliveries"
           >
             Lọc
           </button>
           <button
-            class="px-4 py-2 rounded-xl border border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-all"
+            class="min-h-11 px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-sm font-bold transition-all focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
             type="button"
             @click="resetFilters"
           >
@@ -137,22 +144,27 @@
         <div
           class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 overflow-hidden shadow-sm"
         >
-          <div class="p-12 text-center text-surface-400" v-if="isLoading">
+          <div
+            class="p-12 text-center text-base text-surface-600 dark:text-surface-300"
+            v-if="isLoading"
+          >
             Đang tải nhật ký thông báo...
           </div>
 
           <div
-            class="p-12 text-center text-surface-500"
+            class="p-12 text-center text-surface-600 dark:text-surface-300"
             v-else-if="deliveries.length === 0"
           >
             <UIcon
-              class="w-10 h-10 text-surface-400 block mb-2 mx-auto"
+              class="w-10 h-10 text-surface-500 dark:text-surface-400 block mb-2 mx-auto"
               name="i-lucide-inbox"
             />
-            <p class="font-bold text-surface-700 dark:text-surface-300">
+            <p
+              class="text-base font-bold text-surface-700 dark:text-surface-200"
+            >
               Chưa có thông báo nào
             </p>
-            <p class="text-xs">
+            <p class="text-sm mt-1">
               Các thông báo giao dịch và hệ thống sẽ xuất hiện tại đây.
             </p>
           </div>
@@ -166,57 +178,72 @@
               v-for="item in deliveries"
               :key="item.id"
             >
-              <div class="space-y-1">
+              <div class="space-y-1 min-w-0">
                 <div class="flex items-center gap-2.5 flex-wrap">
                   <span
-                    class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 font-bold text-surface-700 dark:text-surface-300"
+                    class="font-mono text-sm px-2.5 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 font-bold text-surface-700 dark:text-surface-200"
                   >
                     {{ item.templateCode }}
                   </span>
 
                   <span
-                    :class="['text-xs px-2.5 py-0.5 rounded-full font-semibold', statusClass(item.status)]"
+                    :class="[
+                      'text-sm px-2.5 py-0.5 rounded-full font-semibold',
+                      statusClass(item.status),
+                    ]"
                   >
                     {{ statusLabel(item.status) }}
                   </span>
 
-                  <span class="text-xs text-surface-400">
+                  <span class="text-sm text-surface-600 dark:text-surface-300">
                     Kênh: {{ item.channel }}
                   </span>
                 </div>
 
-                <p class="text-sm font-bold text-surface-900 dark:text-white">
+                <p
+                  class="text-base font-bold text-surface-900 dark:text-white break-words"
+                >
                   Người nhận:
-                  {{ item.recipientEmailMasked || item.recipientEmail || `User #${item.recipientId}` }}
+                  {{
+                    item.recipientEmailMasked ||
+                      item.recipientEmail ||
+                      `User #${item.recipientId}`
+                  }}
                 </p>
 
                 <p
-                  class="text-xs text-danger-600 font-semibold"
+                  class="text-sm text-danger-600 font-semibold break-words"
                   v-if="item.error"
                 >
                   Lỗi: {{ item.error }}
                 </p>
                 <p
-                  class="text-xs text-warning-600 font-semibold"
+                  class="text-sm text-warning-600 font-semibold break-words"
                   v-if="item.suppressedReason"
                 >
                   Bị chặn: {{ item.suppressedReason }}
                 </p>
 
-                <p class="text-xs text-surface-400">
+                <p class="text-sm text-surface-600 dark:text-surface-300">
                   Thời gian: {{ formatDate(item.createdAt) }}
                 </p>
               </div>
 
               <div class="flex items-center gap-3 shrink-0">
                 <button
-                  class="px-3.5 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 hover:bg-brand-600 hover:text-white text-xs font-bold transition-all"
+                  class="min-h-11 px-4 py-2 rounded-2xl bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 hover:bg-brand-600 hover:text-white text-sm font-bold transition-all"
                   type="button"
-                  v-if="item.status === 'failed' || item.status === 'suppressed'"
+                  v-if="
+                    item.status === 'failed' || item.status === 'suppressed'
+                  "
                   :disabled="isResendingId === item.notificationId"
                   @click="resendNotification(item.notificationId)"
                 >
-                  {{ isResendingId === item.notificationId ? "Đang gửi..." : "Gửi lại" }}
+                  {{
+                    isResendingId === item.notificationId
+                      ? "Đang gửi..."
+                      : "Gửi lại"
+                  }}
                 </button>
               </div>
             </div>
@@ -225,12 +252,12 @@
       </div>
 
       <!-- TAB 2: Notification Templates -->
-      <div class="space-y-4" v-else>
+      <div class="space-y-4 min-w-0" v-else>
         <div
           class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 overflow-hidden shadow-sm"
         >
           <div
-            class="p-12 text-center text-surface-400"
+            class="p-12 text-center text-base text-surface-600 dark:text-surface-300"
             v-if="isLoadingTemplates"
           >
             Đang tải danh sách mẫu thông báo...
@@ -245,19 +272,19 @@
               v-for="tpl in templates"
               :key="tpl.code"
             >
-              <div class="space-y-1">
+              <div class="space-y-1 min-w-0">
                 <div class="flex items-center gap-2.5 flex-wrap">
                   <span
-                    class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 font-bold text-surface-700 dark:text-surface-300"
+                    class="font-mono text-sm px-2.5 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 font-bold text-surface-700 dark:text-surface-200"
                   >
                     {{ tpl.code }}
                   </span>
                   <span
                     :class="[
-                      'text-xs px-2 py-0.5 rounded-full font-semibold',
+                      'text-sm px-2.5 py-0.5 rounded-full font-semibold',
                       tpl.status === 'published'
                         ? 'bg-success-100 text-success-800'
-                        : 'bg-warning-100 text-warning-800'
+                        : 'bg-warning-100 text-warning-800',
                     ]"
                   >
                     Phiên bản {{ tpl.content_version }} ({{ tpl.status }})
@@ -265,31 +292,35 @@
                 </div>
 
                 <p
-                  class="text-xs font-semibold text-surface-800 dark:text-surface-200"
+                  class="text-sm font-semibold text-surface-800 dark:text-surface-200 break-words"
                   v-if="tpl.subject"
                 >
                   Tiêu đề: {{ tpl.subject }}
                 </p>
 
-                <p class="text-xs text-surface-500">
+                <p
+                  class="text-sm text-surface-600 dark:text-surface-300 break-words"
+                >
                   Biến bắt buộc:
                   <code
-                    class="font-mono text-xs bg-surface-100 dark:bg-surface-700 px-1.5 py-0.5 rounded"
-                    >{{ tpl.required_vars.join(', ') }}</code
+                    class="font-mono text-sm bg-surface-100 dark:bg-surface-700 px-2 py-0.5 rounded-xl"
+                    >{{
+                      tpl.required_vars.join(", ")
+                    }}</code
                   >
                 </p>
               </div>
 
-              <div class="flex items-center gap-2.5 shrink-0">
+              <div class="flex flex-wrap items-center gap-2.5 shrink-0">
                 <button
-                  class="px-3.5 py-1.5 rounded-xl border border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-200 hover:bg-surface-100 text-xs font-bold transition-all"
+                  class="min-h-11 px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 text-surface-700 dark:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-700 text-sm font-bold transition-all"
                   type="button"
                   @click="openEditModal(tpl)"
                 >
                   Chỉnh sửa
                 </button>
                 <button
-                  class="px-3.5 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 hover:bg-brand-600 hover:text-white text-xs font-bold transition-all"
+                  class="min-h-11 px-4 py-2 rounded-2xl bg-brand-50 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300 hover:bg-brand-600 hover:text-white text-sm font-bold transition-all"
                   type="button"
                   @click="openPreviewModal(tpl.code)"
                 >
@@ -307,16 +338,19 @@
         v-if="isEditOpen && editingTemplate"
       >
         <div
-          class="w-full max-w-2xl bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4"
+          class="w-full max-w-2xl bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
         >
-          <div class="flex items-center justify-between">
-            <h2 class="text-lg font-bold text-surface-900 dark:text-white">
+          <div class="flex items-center justify-between gap-2">
+            <h2
+              class="text-lg font-bold font-heading text-surface-900 dark:text-white"
+            >
               Chỉnh sửa mẫu thông báo:
               {{ editingTemplate.code }}
               (v{{ editingTemplate.content_version }})
             </h2>
             <button
-              class="text-surface-400 hover:text-surface-600 font-bold text-sm"
+              aria-label="Đóng hộp thoại chỉnh sửa"
+              class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl text-surface-500 hover:text-surface-700 dark:text-surface-300 dark:hover:text-white font-bold text-sm"
               type="button"
               @click="isEditOpen = false"
             >
@@ -325,10 +359,12 @@
           </div>
 
           <div
-            class="p-3 rounded-xl bg-surface-50 border border-surface-200 text-xs text-surface-600"
+            class="p-3 rounded-2xl bg-surface-50 dark:bg-surface-900 border-2 border-surface-200 dark:border-surface-700 text-sm text-surface-700 dark:text-surface-200 break-words"
           >
             Biến bắt buộc phải giữ trong mẫu (BR-NTA-07):
-            <code class="font-mono font-bold text-brand-700">
+            <code
+              class="font-mono font-bold text-brand-700 dark:text-brand-300"
+            >
               {{ formatRequiredVars(editingTemplate.required_vars) }}
             </code>
           </div>
@@ -336,13 +372,13 @@
           <div class="space-y-3">
             <div>
               <label
-                class="block text-xs font-bold text-surface-700 mb-1"
+                class="block text-sm font-bold text-surface-700 dark:text-surface-200 mb-1"
                 for="tpl-subject"
               >
                 Tiêu đề email *
               </label>
               <input
-                class="w-full px-3.5 py-2 text-sm rounded-xl border border-surface-300 bg-white text-surface-900"
+                class="min-h-11 w-full px-3.5 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
                 id="tpl-subject"
                 type="text"
                 v-model="editForm.subject"
@@ -351,13 +387,13 @@
 
             <div>
               <label
-                class="block text-xs font-bold text-surface-700 mb-1"
+                class="block text-sm font-bold text-surface-700 dark:text-surface-200 mb-1"
                 for="tpl-body"
               >
                 Nội dung mẫu (MJML / HTML có chứa biến bắt buộc) *
               </label>
               <textarea
-                class="w-full px-3.5 py-2 text-xs font-mono rounded-xl border border-surface-300 bg-white text-surface-900"
+                class="w-full px-3.5 py-2 text-base font-mono rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
                 id="tpl-body"
                 rows="6"
                 v-model="editForm.body"
@@ -366,13 +402,13 @@
 
             <div>
               <label
-                class="block text-xs font-bold text-surface-700 mb-1"
+                class="block text-sm font-bold text-surface-700 dark:text-surface-200 mb-1"
                 for="tpl-reason"
               >
                 Ghi chú cập nhật / phê duyệt
               </label>
               <input
-                class="w-full px-3.5 py-2 text-xs rounded-xl border border-surface-300 bg-white text-surface-900"
+                class="min-h-11 w-full px-3.5 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-900 text-surface-900 dark:text-white"
                 id="tpl-reason"
                 placeholder="Lý do chỉnh sửa hoặc phát hành mẫu..."
                 type="text"
@@ -381,16 +417,16 @@
             </div>
           </div>
 
-          <div class="flex items-center justify-end gap-3 pt-2">
+          <div class="flex flex-wrap items-center justify-end gap-3 pt-2">
             <button
-              class="px-4 py-2 rounded-xl bg-surface-200 text-surface-700 text-xs font-bold"
+              class="min-h-11 px-4 py-2 rounded-2xl bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-200 text-sm font-bold"
               type="button"
               @click="isEditOpen = false"
             >
               Huỷ
             </button>
             <button
-              class="px-4 py-2 rounded-xl border-2 border-brand-600 text-brand-700 hover:bg-brand-50 text-xs font-bold"
+              class="min-h-11 px-4 py-2 rounded-2xl border-2 border-brand-600 text-brand-700 dark:text-brand-300 hover:bg-brand-50 dark:hover:bg-brand-900/30 text-sm font-bold"
               type="button"
               :disabled="isSavingTemplate"
               @click="submitTemplateChange('save_draft')"
@@ -398,7 +434,7 @@
               Lưu bản nháp (Draft)
             </button>
             <button
-              class="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold"
+              class="min-h-11 px-4 py-2 rounded-2xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold"
               type="button"
               :disabled="isSavingTemplate"
               @click="submitTemplateChange('publish')"
@@ -415,14 +451,17 @@
         v-if="isPreviewOpen"
       >
         <div
-          class="w-full max-w-2xl bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4"
+          class="w-full max-w-2xl bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto"
         >
-          <div class="flex items-center justify-between">
-            <h2 class="text-lg font-bold text-surface-900 dark:text-white">
+          <div class="flex items-center justify-between gap-2">
+            <h2
+              class="text-lg font-bold font-heading text-surface-900 dark:text-white"
+            >
               Xem trước mẫu: {{ previewCode }}
             </h2>
             <button
-              class="text-surface-400 hover:text-surface-600 dark:hover:text-surface-200 font-bold text-sm"
+              aria-label="Đóng hộp thoại xem trước"
+              class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl text-surface-500 hover:text-surface-700 dark:text-surface-300 dark:hover:text-white font-bold text-sm"
               type="button"
               @click="isPreviewOpen = false"
             >
@@ -430,26 +469,33 @@
             </button>
           </div>
 
-          <div class="p-8 text-center text-surface-400" v-if="isPreviewLoading">
+          <div
+            class="p-8 text-center text-base text-surface-600 dark:text-surface-300"
+            v-if="isPreviewLoading"
+          >
             Đang kết xuất bản xem trước...
           </div>
 
           <div class="space-y-3" v-else>
             <div
-              class="p-3 bg-surface-50 dark:bg-surface-900 rounded-xl border border-surface-200 dark:border-surface-700"
+              class="p-3 bg-surface-50 dark:bg-surface-900 rounded-2xl border-2 border-surface-200 dark:border-surface-700"
             >
-              <span class="text-xs text-surface-400 block">Tiêu đề:</span>
+              <span class="text-sm text-surface-600 dark:text-surface-300 block"
+                >Tiêu đề:</span
+              >
               <span
-                class="text-sm font-bold text-surface-800 dark:text-surface-200"
-                >{{ previewSubject }}</span
+                class="text-base font-bold text-surface-800 dark:text-surface-200"
+                >{{
+                  previewSubject
+                }}</span
               >
             </div>
 
             <div
-              class="rounded-xl border border-surface-200 dark:border-surface-700 overflow-hidden max-h-96 overflow-y-auto p-4 bg-surface-50"
+              class="rounded-2xl border-2 border-surface-200 dark:border-surface-700 overflow-hidden max-h-96 overflow-y-auto p-4 bg-surface-50 dark:bg-surface-900"
             >
               <iframe
-                class="w-full h-72 border-0 rounded-lg bg-white"
+                class="w-full h-72 border-0 rounded-xl bg-white"
                 sandbox=""
                 title="Xem trước mẫu thông báo"
                 v-if="previewHtml"
@@ -460,7 +506,7 @@
 
           <div class="flex justify-end pt-2">
             <button
-              class="px-4 py-2 rounded-xl bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-200 hover:bg-surface-300 font-semibold text-xs"
+              class="min-h-11 px-4 py-2 rounded-2xl bg-surface-200 dark:bg-surface-700 text-surface-700 dark:text-surface-200 hover:bg-surface-300 font-semibold text-sm"
               type="button"
               @click="isPreviewOpen = false"
             >
@@ -478,11 +524,8 @@
   import { computed, onMounted, reactive, ref } from "vue";
   import { definePageMeta, useHead } from "#imports";
   import ForbiddenState from "~/components/forbidden-state.vue";
+  import { useAdminAuth } from "~/composables/use-admin-auth";
   import { apiFetch } from "~/composables/use-api-client";
-  import {
-    type ManagerRole,
-    useAdminAuth,
-  } from "~/composables/use-manager-session";
 
   definePageMeta({
     layout: "manager",
@@ -492,11 +535,10 @@
     title: "Quản lý thông báo",
   });
 
-  const { user } = useAdminAuth();
+  const { user, fetchSession } = useAdminAuth();
 
   const isSuperAdmin = computed(() => {
-    const role = (user.value as { role?: ManagerRole } | null)?.role;
-    return role === "super_admin";
+    return user.value?.role === "super_admin";
   });
 
   interface DeliveryItem {
@@ -554,13 +596,15 @@
     reason: "",
   });
 
-  onMounted(() => {
+  onMounted(async () => {
+    if (!user.value) {
+      await fetchSession();
+    }
     if (!isSuperAdmin.value) {
       isLoading.value = false;
       return;
     }
-    fetchDeliveries();
-    fetchTemplates();
+    await Promise.all([fetchDeliveries(), fetchTemplates()]);
   });
 
   async function fetchDeliveries() {
@@ -590,9 +634,7 @@
       );
       deliveries.value = res.items || [];
     } catch (err) {
-      feedbackError.value = normalizeApiError(
-        err as Parameters<typeof normalizeApiError>[0]
-      ).message;
+      feedbackError.value = normalizeApiError(err).message;
     } finally {
       isLoading.value = false;
     }
@@ -615,9 +657,7 @@
       );
       templates.value = res.items || [];
     } catch (err) {
-      feedbackError.value = normalizeApiError(
-        err as Parameters<typeof normalizeApiError>[0]
-      ).message;
+      feedbackError.value = normalizeApiError(err).message;
     } finally {
       isLoadingTemplates.value = false;
     }
@@ -657,9 +697,7 @@
       isEditOpen.value = false;
       await fetchTemplates();
     } catch (err) {
-      feedbackError.value = normalizeApiError(
-        err as Parameters<typeof normalizeApiError>[0]
-      ).message;
+      feedbackError.value = normalizeApiError(err).message;
     } finally {
       isSavingTemplate.value = false;
     }
@@ -680,9 +718,7 @@
       previewSubject.value = res.subject;
       previewHtml.value = res.html;
     } catch (err) {
-      feedbackError.value = normalizeApiError(
-        err as Parameters<typeof normalizeApiError>[0]
-      ).message;
+      feedbackError.value = normalizeApiError(err).message;
     } finally {
       isPreviewLoading.value = false;
     }
@@ -700,9 +736,7 @@
         "Đã tạo bản ghi mới và đẩy yêu cầu gửi lại vào hàng đợi (BR-NTA-01).";
       await fetchDeliveries();
     } catch (err) {
-      feedbackError.value = normalizeApiError(
-        err as Parameters<typeof normalizeApiError>[0]
-      ).message;
+      feedbackError.value = normalizeApiError(err).message;
     } finally {
       isResendingId.value = null;
     }

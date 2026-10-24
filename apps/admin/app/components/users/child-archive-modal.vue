@@ -60,7 +60,7 @@
 
 <script lang="ts" setup>
   import { ref, watch } from "vue";
-  import type { ChildProfileItem } from "./user-children-section.vue";
+  import type { ChildProfileItem } from "~/components/users/user-children-section.vue";
 
   const props = defineProps<{
     child: ChildProfileItem | null;

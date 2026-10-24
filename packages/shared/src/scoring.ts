@@ -296,7 +296,10 @@ function processRoundEvent(
         trialBased: ev.payload?.trial_based === true,
       });
     }
-  } else if (name === "round_completed" && state.currentRound) {
+  } else if (
+    (name === "round_completed" || name === "round_skipped") &&
+    state.currentRound
+  ) {
     state.currentRound.hasEnded = true;
   }
 }
@@ -309,9 +312,6 @@ function evaluateRounds(rounds: RoundState[]): {
   let roundCredit = 0;
   for (const round of rounds) {
     if (!round.hasEnded && round.attempts.length > 0) {
-      console.warn(
-        `[reconstructRounds] Round ${round.roundIndex} missing round_completed, inferring from last attempt`
-      );
       round.hasEnded = true;
     }
     if (round.attempts.length === 0) {

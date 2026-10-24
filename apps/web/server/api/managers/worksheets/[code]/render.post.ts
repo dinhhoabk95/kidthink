@@ -46,12 +46,8 @@ export default defineEventHandler(async (event) => {
       },
       inspection: result.inspection,
     };
-  } catch (err: unknown) {
-    const errorObj = err as {
-      statusCode?: number;
-      message?: string;
-      details?: unknown;
-    };
-    throw new InternalError(errorObj.message);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : undefined;
+    throw new InternalError(message);
   }
 });

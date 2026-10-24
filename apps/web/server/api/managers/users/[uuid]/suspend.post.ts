@@ -1,11 +1,12 @@
 import { writeAudit } from "@mindkid/audit";
-import { getOwnerDb, users } from "@mindkid/db";
+import { getBrowserSessionService } from "@mindkid/auth";
+import { activeSessions, getOwnerDb, users } from "@mindkid/db";
 import {
   AdminNoteRequiredError,
   UserAlreadyDeletedError,
 } from "@mindkid/errors/account";
 import { InternalError, NotFoundError } from "@mindkid/errors/common";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam, readBody } from "h3";
 import { z } from "zod";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
@@ -68,6 +69,17 @@ export default defineEventHandler(async (event) => {
       throw new InternalError("Đình chỉ tài khoản thất bại");
     }
 
+    await tx
+      .update(activeSessions)
+      .set({ revokedAt: new Date() })
+      .where(
+        and(
+          eq(activeSessions.accountType, "user"),
+          eq(activeSessions.accountId, targetUser.id),
+          isNull(activeSessions.revokedAt)
+        )
+      );
+
     await writeAudit(tx, {
       actor_type: "manager",
       actor_id: session.manager_id,
@@ -83,6 +95,13 @@ export default defineEventHandler(async (event) => {
 
     return row;
   });
+
+  await getBrowserSessionService()
+    .revokeAll({
+      account_type: "user",
+      account_id: targetUser.id,
+    })
+    .catch(() => null);
 
   return {
     success: true,

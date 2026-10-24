@@ -8,6 +8,7 @@ import {
 import { SeoPageNotFoundError } from "@mindkid/errors/content";
 import { and, eq } from "drizzle-orm";
 import { defineEventHandler, getRouterParam, readBody } from "h3";
+import { z } from "zod";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { throwValidationError } from "#server/utils/api-error";
 
@@ -20,17 +21,59 @@ const FORBIDDEN_LEGAL_SLUGS = [
   "/child-privacy",
 ];
 
+const patchSeoPageSchema = z.object({
+  page_type: z
+    .enum(["competency", "skill", "age_program", "topic", "static", "faq"])
+    .optional(),
+  title: z.string().optional(),
+  meta_description: z.string().optional(),
+  h1: z.string().nullable().optional(),
+  body: z.string().optional(),
+  og_image_path: z.string().nullable().optional(),
+  canonical_url: z.string().nullable().optional(),
+  noindex: z.boolean().optional(),
+  related_content_refs: z
+    .array(z.object({ type: z.string(), code: z.string() }))
+    .optional(),
+  faq_items: z.array(z.object({ q: z.string(), a: z.string() })).optional(),
+  new_slug: z.string().optional(),
+});
+
+type PatchSeoPageInput = z.infer<typeof patchSeoPageSchema>;
+
+const DANGEROUS_SEO_TAG_REGEX =
+  /<\s*\/?\s*(?:script|iframe|svg|object|embed|base|meta|link|style|form)\b/i;
+const INLINE_EVENT_ATTR_REGEX = /\bon[a-z]+\s*=/i;
+const DATA_URI_ATTR_REGEX = /\b(?:href|src|xlink:href)\s*=\s*["']?\s*data:/i;
+
+function decodeHtmlEntitiesForInspect(input: string): string {
+  return input
+    .replace(/&#x([0-9a-f]+);?/gi, (_, hex: string) =>
+      String.fromCodePoint(Number.parseInt(hex, 16) || 0)
+    )
+    .replace(/&#([0-9]+);?/g, (_, dec: string) =>
+      String.fromCodePoint(Number.parseInt(dec, 10) || 0)
+    )
+    .replace(/&colon;/gi, ":")
+    .replace(/&tab;/gi, "\t")
+    .replace(/&newline;/gi, "\n");
+}
+
 function sanitizeRichText(html: string | undefined): string | undefined {
   if (!html) {
     return html;
   }
-  const lower = html.toLowerCase();
+  const decoded = decodeHtmlEntitiesForInspect(html);
+  const lower = decoded.toLowerCase();
+  const collapsed = Array.from(lower)
+    .filter((ch) => ch.charCodeAt(0) > 32)
+    .join("");
   if (
-    lower.includes("<script") ||
-    lower.includes("<iframe") ||
-    lower.includes("javascript:") ||
-    lower.includes("onclick=") ||
-    lower.includes("onerror=")
+    DANGEROUS_SEO_TAG_REGEX.test(lower) ||
+    INLINE_EVENT_ATTR_REGEX.test(lower) ||
+    DATA_URI_ATTR_REGEX.test(lower) ||
+    collapsed.includes("javascript:") ||
+    collapsed.includes("vbscript:")
   ) {
     throw new ValidationError(
       "Nội dung chứa mã script hoặc HTML không được phép (BR-SEO-02)"
@@ -40,7 +83,7 @@ function sanitizeRichText(html: string | undefined): string | undefined {
 }
 
 function handleSlugChange(
-  newSlugVal: unknown,
+  newSlugVal: string | undefined,
   existing: typeof seoPages.$inferSelect,
   currentSlug: string,
   updates: Partial<typeof seoPages.$inferInsert>
@@ -48,7 +91,7 @@ function handleSlugChange(
   if (!newSlugVal || newSlugVal === currentSlug) {
     return;
   }
-  const newSlug = String(newSlugVal).trim().toLowerCase();
+  const newSlug = newSlugVal.trim().toLowerCase();
   if (
     FORBIDDEN_LEGAL_SLUGS.includes(newSlug) ||
     FORBIDDEN_LEGAL_SLUGS.includes(`/${newSlug}`)
@@ -64,31 +107,28 @@ function handleSlugChange(
 }
 
 function applyMetaFields(
-  body: Record<string, unknown> | undefined,
+  body: PatchSeoPageInput,
   updates: Partial<typeof seoPages.$inferInsert>
 ): void {
-  if (body?.og_image_path !== undefined) {
-    updates.ogImagePath = body.og_image_path as string | null;
+  if (body.og_image_path !== undefined) {
+    updates.ogImagePath = body.og_image_path;
   }
-  if (body?.canonical_url !== undefined) {
-    updates.canonicalUrl = body.canonical_url as string | null;
+  if (body.canonical_url !== undefined) {
+    updates.canonicalUrl = body.canonical_url;
   }
-  if (body?.noindex !== undefined) {
+  if (body.noindex !== undefined) {
     updates.noindex = Boolean(body.noindex);
   }
-  if (body?.related_content_refs !== undefined) {
-    updates.relatedContentRefs = body.related_content_refs as Array<{
-      type: string;
-      code: string;
-    }>;
+  if (body.related_content_refs !== undefined) {
+    updates.relatedContentRefs = body.related_content_refs;
   }
-  if (body?.faq_items !== undefined) {
-    updates.faqItems = body.faq_items as Array<{ q: string; a: string }>;
+  if (body.faq_items !== undefined) {
+    updates.faqItems = body.faq_items;
   }
 }
 
 function buildSeoPageUpdates(
-  body: Record<string, unknown> | undefined,
+  body: PatchSeoPageInput,
   existing: typeof seoPages.$inferSelect,
   slug: string
 ): Partial<typeof seoPages.$inferInsert> {
@@ -96,41 +136,27 @@ function buildSeoPageUpdates(
     updatedAt: new Date(),
   };
 
-  if (body?.title) {
-    updates.title = String(body.title).trim();
+  if (body.page_type) {
+    updates.pageType = body.page_type;
   }
-  if (body?.meta_description) {
-    updates.metaDescription = String(body.meta_description).trim();
+  if (body.title) {
+    updates.title = body.title.trim();
   }
-  if (body?.h1 !== undefined) {
-    updates.h1 = body.h1 ? String(body.h1).trim() : null;
+  if (body.meta_description) {
+    updates.metaDescription = body.meta_description.trim();
   }
-  if (body?.body !== undefined) {
-    updates.body = sanitizeRichText(body.body as string | undefined);
+  if (body.h1 !== undefined) {
+    updates.h1 = body.h1 ? body.h1.trim() : null;
+  }
+  if (body.body !== undefined) {
+    updates.body = sanitizeRichText(body.body);
   }
 
   applyMetaFields(body, updates);
-  handleSlugChange(body?.new_slug, existing, slug, updates);
+  handleSlugChange(body.new_slug, existing, slug, updates);
 
   return updates;
 }
-
-import { z } from "zod";
-
-const patchSeoPageSchema = z.object({
-  title: z.string().optional(),
-  meta_description: z.string().optional(),
-  h1: z.string().nullable().optional(),
-  body: z.string().optional(),
-  og_image_path: z.string().nullable().optional(),
-  canonical_url: z.string().nullable().optional(),
-  noindex: z.boolean().optional(),
-  related_content_refs: z
-    .array(z.object({ type: z.string(), code: z.string() }))
-    .optional(),
-  faq_items: z.array(z.object({ q: z.string(), a: z.string() })).optional(),
-  new_slug: z.string().optional(),
-});
 
 export default defineEventHandler(async (event) => {
   const manager = await requireManagerSession(event);

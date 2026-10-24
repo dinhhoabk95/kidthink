@@ -7,9 +7,11 @@
       class="bg-white rounded-3xl border-4 border-surface-200 p-6 md:p-8 max-w-lg w-full space-y-5 shadow-xl"
     >
       <h3 class="text-xl font-bold font-heading text-surface-900">
-        {{ modalType === "suspend"
+        {{
+          modalType === "suspend"
             ? "Tạm khoá tài khoản người dùng"
-            : "Mở khoá tài khoản người dùng" }}
+            : "Mở khoá tài khoản người dùng"
+        }}
       </h3>
       <form class="space-y-4" @submit.prevent="handleSubmit">
         <div class="space-y-1.5">

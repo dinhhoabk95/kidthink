@@ -185,7 +185,7 @@ const errorHandler: NitroErrorHandler = (error, event) => {
   logServerSide(appError ?? error, statusCode, event.method ?? "GET", url.href);
 
   let body: ApiErrorBody;
-  if (appError && statusCode < SERVER_ERROR_STATUS) {
+  if (appError && (statusCode < SERVER_ERROR_STATUS || statusCode === 503)) {
     body = appError.toResponse();
   } else if (pgMapped) {
     body = pgMapped.body;

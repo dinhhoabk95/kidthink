@@ -9,7 +9,7 @@
     <!-- Loading State -->
     <div class="loading-state" v-if="isLoading">
       <div class="loading-box">
-        <span aria-hidden="true" class="loading-emoji animate-bounce">🐻</span>
+        <KidMascot :pose="'listen'" :size="96" />
         <p class="loading-text">Đang chuẩn bị bài học cho bé...</p>
       </div>
     </div>
@@ -17,33 +17,33 @@
     <!-- Error State (Pre-reader friendly) -->
     <div class="error-state" v-else-if="errorMessage">
       <div class="error-card">
-        <span aria-hidden="true" class="error-emoji">{{ errorEmoji }}</span>
+        <KidMascot :pose="'encourage'" :size="96" />
         <h2 class="error-title">{{ errorTitle }}</h2>
         <p class="error-desc">{{ errorMessage }}</p>
         <div class="error-actions">
           <button
             aria-label="Nghe hướng dẫn"
-            class="btn-audio-speak"
+            class="btn-audio-speak min-h-16 min-w-16"
             type="button"
             @click="speakErrorPrompt"
           >
             <UIcon class="w-6 h-6 text-brand-600" name="i-lucide-volume-2" />
             <span>Nghe giải thích</span>
           </button>
-          <NuxtLink
-            class="btn-primary"
+          <button
+            class="btn-primary min-h-16 min-w-16"
+            type="button"
             v-if="errorActionLink"
-            :to="errorActionLink"
+            @click="handleErrorAction"
           >
             {{ errorActionText }}
-          </NuxtLink>
-          <NuxtLink class="btn-secondary" to="/play">
+          </button>
+          <NuxtLink class="btn-secondary min-h-16 min-w-16" to="/play">
             Về sảnh trò chơi
           </NuxtLink>
         </div>
       </div>
     </div>
-
     <!-- Active Game Viewport -->
     <div class="game-viewport" v-show="!(isLoading || errorMessage)">
       <!-- TOP HUD BAR — đúng ba nút: khoá phụ huynh, hạt tiến độ, loa nghe
@@ -56,7 +56,7 @@
         <!-- Parent Lock (800ms Long-Press) -->
         <button
           aria-label="Cổng phụ huynh / Thoát (nhấn giữ 1 giây)"
-          class="btn-parent-lock"
+          class="btn-parent-lock min-h-16 min-w-16"
           type="button"
           @pointercancel="cancelParentLockHold"
           @pointerdown="startParentLockHold"
@@ -91,7 +91,6 @@
             <UIcon class="w-6 h-6 text-surface-600" name="i-lucide-lock" />
           </div>
         </button>
-
         <!-- Round Progress Indicator -->
         <div class="progress-container">
           <KidRoundProgressIndicator
@@ -99,18 +98,16 @@
             :total="totalRounds"
           />
         </div>
-
         <!-- Audio Replay -->
         <button
           aria-label="Nghe lại hướng dẫn"
-          class="btn-audio-replay clay-button"
+          class="btn-audio-replay clay-button min-h-16 min-w-16"
           type="button"
           @click="replayInstructionAudio"
         >
           <UIcon class="w-6 h-6 shrink-0" name="i-lucide-volume-2" />
         </button>
       </header>
-
       <!-- MAIN ARENA: Montessori Wooden Tray Canvas -->
       <main class="main-arena">
         <div class="wooden-tray-container">
@@ -122,7 +119,6 @@
             @pointermove="handlePointerMove"
             @pointerup="handlePointerUp"
           />
-
           <!-- Bàn không vừa ở khung ngang thấp (`BR-PSZ-14`): lớp xoay máy dọc phủ
                canvas, chặn chạm, chỉ icon — chữ ở aria-label (`BR-FBK-12`). -->
           <div
@@ -153,7 +149,6 @@
               {{ PORTRAIT_GATE_PARENT_HINT }}
             </p>
           </div>
-
           <!-- Accessible DOM buttons for assistive tech & keyboard navigation -->
           <!-- Vùng thông báo riêng: `aria-live` Cấm — NEVER đặt trên container
                chứa button, vì mỗi lần đổi vòng screen reader sẽ đọc lại cả
@@ -161,7 +156,6 @@
           <div aria-live="polite" class="sr-only" role="status">
             {{ liveAnnouncement }}
           </div>
-
           <section
             aria-label="Các đối tượng tương tác"
             class="absolute inset-0 pointer-events-none z-10"
@@ -183,7 +177,7 @@
             >
               {{ getAccessibleLabel(entity) }}
               <span
-                class="ml-1 text-xs text-warning-700"
+                class="ml-1 text-base text-warning-700"
                 v-if="stagedEntityId === entity.id"
               >
                 (Đang chọn)
@@ -205,20 +199,18 @@
               {{ actionButton.label }}
             </button>
           </section>
-
           <!-- Bỏ qua câu này — chỗ tạm ở góc đối diện nút hành động tương lai
                (`D-277-7`, `zones.action` dựng ở #277 S4). Ra khỏi HUD để giữ
                đúng ba nút của `BR-PSZ-07`. -->
           <button
             aria-label="Bỏ qua câu này"
-            class="btn-skip-floating clay-button"
+            class="btn-skip-floating clay-button min-h-16 min-w-16"
             type="button"
             v-if="canSkipRound"
             @click="handleSkipRound"
           >
             <UIcon class="w-6 h-6 shrink-0" name="i-lucide-forward" />
           </button>
-
           <!-- Nút bước làm quen GT-000: chỉ icon, chữ ở aria-label (`BR-FBK-12`, `BR-PSZ-07`) -->
           <div
             class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-6 z-20 pointer-events-auto"
@@ -233,7 +225,6 @@
             >
               <UIcon class="w-8 h-8" name="i-lucide-arrow-left" />
             </button>
-
             <button
               aria-label="Nghe lại mẫu"
               class="min-h-16 min-w-16 px-4 justify-center rounded-2xl border-[3px] border-surface-300 bg-white text-surface-700 font-heading font-bold text-xl shadow-[0_6px_0_var(--color-surface-300)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-surface-300)] flex items-center gap-2 cursor-pointer transition-all"
@@ -242,7 +233,6 @@
             >
               <UIcon class="w-8 h-8 text-cta" name="i-lucide-volume-2" />
             </button>
-
             <button
               class="min-h-16 min-w-20 px-6 justify-center rounded-2xl border-[3px] border-cta-hover bg-cta text-white font-heading font-bold text-xl shadow-[0_6px_0_var(--color-cta-hover)] active:translate-y-1 active:shadow-[0_2px_0_var(--color-cta-hover)] flex items-center gap-3 cursor-pointer transition-all"
               type="button"
@@ -255,7 +245,6 @@
           </div>
         </div>
       </main>
-
       <!-- Victory Celebration Modal -->
       <KidVictoryModal
         :celebration="earnedCelebration"
@@ -267,7 +256,6 @@
         @continue="handleContinueNext"
         @replay="handleReplayGame"
       />
-
       <!-- Parent Gate Exit Modal -->
       <ParentGateModal
         v-if="showParentGate"
@@ -275,7 +263,6 @@
         @cancel="showParentGate = false"
         @verified="handleParentVerified"
       />
-
       <!-- Healthy Play Limits Modal (`BR-HPL-01..08`) -->
       <KidPlayLimitModal
         v-if="isPlayLimitReached"
@@ -302,6 +289,7 @@
     type ViewEntity,
   } from "@mindkid/game-engine";
   import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+  import KidMascot from "~/components/kid/mascot.vue";
   import {
     PORTRAIT_GATE_LABEL,
     PORTRAIT_GATE_PARENT_HINT,
@@ -351,6 +339,7 @@
 
   const canvasRef = ref<HTMLCanvasElement | null>(null);
   const showParentGate = ref(false);
+  const pendingParentNavigation = ref("");
   const isPromptPillPulsing = ref(false);
   const {
     progress: parentLockHoldProgress,
@@ -392,6 +381,11 @@
   const activeChildCookie = useCookie<string | null>("active_child_id");
   const activeChildUuid = computed(() => activeChildCookie.value ?? "");
 
+  function applyLoadError(err: Error | Record<string, string | number>): void {
+    isLoading.value = false;
+    errorMessage.value = handleApiError(err, levelCode, loggedIn.value).message;
+  }
+
   async function handleExtraTimeGranted(): Promise<void> {
     isPlayLimitReached.value = false;
     errorMessage.value = null;
@@ -400,13 +394,7 @@
       await fetchAndStartGame(levelCode);
       observeCanvasSize();
     } catch (err) {
-      isLoading.value = false;
-      const appErr = handleApiError(
-        err as Error | Record<string, string | number>,
-        levelCode,
-        loggedIn.value
-      );
-      errorMessage.value = appErr.message;
+      applyLoadError(err as Error | Record<string, string | number>);
     }
   }
 
@@ -635,8 +623,26 @@
     }, 1200);
   }
 
+  function handleErrorAction(): void {
+    if (!errorActionLink.value) {
+      return;
+    }
+    if (errorActionLink.value.startsWith("/play")) {
+      navigateTo(errorActionLink.value);
+    } else {
+      pendingParentNavigation.value = errorActionLink.value;
+      showParentGate.value = true;
+    }
+  }
+
   function handleParentVerified(): void {
     showParentGate.value = false;
+    if (pendingParentNavigation.value) {
+      const target = pendingParentNavigation.value;
+      pendingParentNavigation.value = "";
+      navigateTo(target || "/play");
+      return;
+    }
     const returnTo = route.query.return_to || route.query.return_level_code;
     if (typeof returnTo === "string" && returnTo) {
       router.push(`/play/${returnTo}`);
@@ -655,29 +661,12 @@
     getRoundRunner()?.replayCurrentRoundNarration();
   }
 
-  function handleEchoReplay(): void {
-    dispatchGesture({
-      type: "commit",
-      timeMs: Date.now(),
-      intent: "replay",
-    });
+  function sendCommitIntent(intent: "replay" | "advance" | "prev"): void {
+    dispatchGesture({ type: "commit", timeMs: Date.now(), intent });
   }
-
-  function handleEchoDone(): void {
-    dispatchGesture({
-      type: "commit",
-      timeMs: Date.now(),
-      intent: "advance",
-    });
-  }
-
-  function handleIntroPrev(): void {
-    dispatchGesture({
-      type: "commit",
-      timeMs: Date.now(),
-      intent: "prev",
-    });
-  }
+  const handleEchoReplay = () => sendCommitIntent("replay");
+  const handleEchoDone = () => sendCommitIntent("advance");
+  const handleIntroPrev = () => sendCommitIntent("prev");
 
   function handleContinueNext(): void {
     showVictoryModal.value = false;
@@ -687,13 +676,7 @@
   function handleReplayGame(): void {
     showVictoryModal.value = false;
     isLoading.value = true;
-    fetchAndStartGame(levelCode).catch(
-      (err: Error | Record<string, string | number>) => {
-        isLoading.value = false;
-        const appErr = handleApiError(err, levelCode, loggedIn.value);
-        errorMessage.value = appErr.message;
-      }
-    );
+    fetchAndStartGame(levelCode).catch(applyLoadError);
   }
 
   function handleResize(): void {
@@ -795,13 +778,7 @@
       await fetchAndStartGame(levelCode);
       observeCanvasSize();
     } catch (err) {
-      isLoading.value = false;
-      const appErr = handleApiError(
-        err as Error | Record<string, string | number>,
-        levelCode,
-        loggedIn.value
-      );
-      errorMessage.value = appErr.message;
+      applyLoadError(err as Error | Record<string, string | number>);
     }
   });
 

@@ -1,5 +1,6 @@
+import { getAuthRedisClient, RedisSessionStore } from "@mindkid/auth";
 import { activeSessions, getAppDb } from "@mindkid/db";
-import { and, eq, gte } from "drizzle-orm";
+import { and, eq, gte, isNull } from "drizzle-orm";
 import { defineEventHandler, type H3Event } from "h3";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
@@ -17,6 +18,9 @@ function redactIpAddress(ipAddress: string | null): string | null {
 export async function handleGetSessions(event: H3Event) {
   const userSession = await requireWebUserSession(event);
   const db = getAppDb();
+  const currentDeviceId = await new RedisSessionStore(getAuthRedisClient())
+    .getDeviceId("user", userSession.session_id)
+    .catch(() => null);
 
   const rows = await db
     .select()
@@ -25,6 +29,7 @@ export async function handleGetSessions(event: H3Event) {
       and(
         eq(activeSessions.accountType, "user"),
         eq(activeSessions.accountId, userSession.user_id),
+        isNull(activeSessions.revokedAt),
         gte(activeSessions.expiresAt, new Date())
       )
     );
@@ -38,7 +43,9 @@ export async function handleGetSessions(event: H3Event) {
       authMethod: r.authMethod,
       lastUsedAt: r.lastUsedAt,
       createdAt: r.createdAt,
-      isCurrent: String(r.id) === userSession.session_id,
+      isCurrent:
+        String(r.id) === userSession.session_id ||
+        Boolean(currentDeviceId && r.deviceId === currentDeviceId),
     })),
   };
 }

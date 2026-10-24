@@ -1,6 +1,6 @@
 <template>
-  <div class="schema-field mb-4">
-    <div class="flex items-center justify-between mb-1.5">
+  <div class="schema-field mb-4 min-w-0">
+    <div class="flex flex-wrap items-center justify-between gap-1 mb-1.5">
       <label
         class="block text-sm font-semibold text-surface-700 dark:text-surface-200"
         v-if="label"
@@ -15,7 +15,7 @@
     </div>
 
     <!-- 1. Emoji Hint (BR-EPK-03, BR-EPK-09, BR-SDF-04) -->
-    <div class="flex items-center gap-3" v-if="hint === 'emoji'">
+    <div class="flex flex-wrap items-center gap-3" v-if="hint === 'emoji'">
       <div
         class="w-12 h-12 rounded-2xl border-2 border-surface-300 dark:border-surface-600 flex items-center justify-center text-2xl bg-white dark:bg-surface-800 shadow-sm shrink-0"
       >
@@ -23,7 +23,7 @@
         <span class="text-surface-400 text-sm" v-else>Trống</span>
       </div>
       <input
-        class="w-28 min-h-10 px-3 py-2 text-base text-center rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 focus:border-brand-500 focus:outline-none"
+        class="w-28 min-h-11 px-3 py-2 text-base text-center rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 focus:border-brand-500 focus:outline-none"
         placeholder="Dán 🍎..."
         type="text"
         :aria-label="label ? `${label} (dán trực tiếp)` : 'Dán emoji trực tiếp'"
@@ -32,14 +32,14 @@
         @input="onEmojiDirectInput"
       >
       <button
-        class="min-h-10 px-4 py-2 rounded-2xl border-2 border-brand-600 bg-brand-600 text-white font-medium text-base hover:bg-brand-700 active:scale-95 transition-all"
+        class="min-h-11 px-4 py-2 rounded-2xl border-2 border-brand-600 bg-brand-600 text-white font-medium text-base hover:bg-brand-700 active:scale-95 transition-all"
         type="button"
         @click="openEmojiPicker"
       >
         {{ stringValue ? "Đổi emoji" : "Chọn emoji" }}
       </button>
       <button
-        class="min-h-10 px-3 py-2 rounded-2xl border-2 border-surface-300 text-surface-600 dark:text-surface-300 text-sm hover:bg-surface-100 dark:hover:bg-surface-700 transition-all"
+        class="min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 text-surface-600 dark:text-surface-300 text-sm hover:bg-surface-100 dark:hover:bg-surface-700 transition-all"
         type="button"
         v-if="stringValue"
         @click="clearEmoji"
@@ -49,9 +49,9 @@
     </div>
 
     <!-- 2. Image Hint -->
-    <div class="flex items-center gap-3" v-else-if="hint === 'image'">
+    <div class="flex flex-wrap items-center gap-3" v-else-if="hint === 'image'">
       <div
-        class="w-16 h-16 rounded-2xl border-2 border-surface-300 dark:border-surface-600 flex items-center justify-center bg-surface-100 dark:bg-surface-800 overflow-hidden"
+        class="w-16 h-16 rounded-2xl border-2 border-surface-300 dark:border-surface-600 flex items-center justify-center bg-surface-100 dark:bg-surface-800 overflow-hidden shrink-0"
       >
         <img
           class="w-full h-full object-cover"
@@ -64,14 +64,14 @@
         >
       </div>
       <button
-        class="min-h-10 px-4 py-2 rounded-2xl border-2 border-brand-600 bg-brand-600 text-white font-medium text-base hover:bg-brand-700 active:scale-95 transition-all"
+        class="min-h-11 px-4 py-2 rounded-2xl border-2 border-brand-600 bg-brand-600 text-white font-medium text-base hover:bg-brand-700 active:scale-95 transition-all"
         type="button"
         @click="openImageModal"
       >
         {{ stringValue ? "Đổi ảnh" : "Tải ảnh lên" }}
       </button>
       <button
-        class="min-h-10 px-3 py-2 rounded-2xl border-2 border-surface-300 text-surface-600 dark:text-surface-300 text-sm hover:bg-surface-100 dark:hover:bg-surface-700 transition-all"
+        class="min-h-11 px-3 py-2 rounded-2xl border-2 border-surface-300 text-surface-600 dark:text-surface-300 text-sm hover:bg-surface-100 dark:hover:bg-surface-700 transition-all"
         type="button"
         v-if="stringValue"
         @click="clearImage"
@@ -87,7 +87,7 @@
         v-for="color in tokenColors"
         :key="color.name"
         :class="[
-          'w-10 h-10 rounded-2xl border-2 transition-all flex items-center justify-center',
+          'w-11 h-11 min-w-11 min-h-11 rounded-2xl border-2 transition-all flex items-center justify-center',
           color.bgClass,
           modelValue === color.name
             ? 'border-brand-600 ring-2 ring-brand-500 scale-110'
@@ -107,7 +107,7 @@
     <!-- 4. Audio Hint -->
     <div class="flex items-center gap-3" v-else-if="hint === 'audio'">
       <input
-        class="flex-1 min-h-10 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 focus:border-brand-500 focus:outline-none"
+        class="flex-1 min-w-0 min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 focus:border-brand-500 focus:outline-none"
         placeholder="Audio ref (chờ contract Task #80)"
         type="text"
         :id="fieldId"
@@ -118,9 +118,9 @@
 
     <!-- 5. Duration / Slider Hint -->
     <div class="space-y-2" v-else-if="hint === 'duration' || hint === 'slider'">
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-4 min-w-0">
         <input
-          class="flex-1 accent-brand-600 h-2 bg-surface-200 rounded-xl cursor-pointer"
+          class="flex-1 min-w-0 min-h-11 accent-brand-600 bg-surface-200 rounded-xl cursor-pointer"
           type="range"
           :id="fieldId"
           :max="max ?? 100"
@@ -130,9 +130,9 @@
           @input="onNumberInput"
         >
         <span
-          class="min-w-16 px-2.5 py-1 text-center font-mono text-base font-semibold rounded-xl bg-surface-100 dark:bg-surface-700 text-surface-800 dark:text-surface-100 border border-surface-300 dark:border-surface-600"
+          class="min-h-11 min-w-16 px-2.5 py-1 inline-flex items-center justify-center text-center font-mono text-base font-semibold rounded-xl bg-surface-100 dark:bg-surface-700 text-surface-800 dark:text-surface-100 border border-surface-300 dark:border-surface-600 shrink-0"
         >
-          {{ numericValue }}{{ hint === 'duration' ? 'ms' : '' }}
+          {{ numericValue }}{{ hint === "duration" ? "ms" : "" }}
         </span>
       </div>
     </div>
@@ -140,7 +140,7 @@
     <!-- 6. Textarea Hint -->
     <div v-else-if="hint === 'textarea'">
       <textarea
-        class="w-full px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 focus:border-brand-500 focus:outline-none"
+        class="w-full min-h-24 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 focus:border-brand-500 focus:outline-none"
         rows="3"
         :id="fieldId"
         :placeholder="placeholder || 'Nhập nội dung...'"
@@ -152,7 +152,7 @@
     <!-- 7. Select Hint -->
     <div v-else-if="hint === 'select'">
       <select
-        class="w-full min-h-10 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 focus:border-brand-500 focus:outline-none"
+        class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 focus:border-brand-500 focus:outline-none"
         :id="fieldId"
         :value="stringValue"
         @change="onSelectChange"
@@ -167,32 +167,36 @@
     <!-- 8. Toggle Hint -->
     <div class="flex items-center gap-3" v-else-if="hint === 'toggle'">
       <button
+        class="min-h-11 inline-flex items-center gap-3 px-1 cursor-pointer rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600"
         role="switch"
         type="button"
         :aria-checked="Boolean(modelValue)"
-        :class="[
-          'relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600',
-          modelValue ? 'bg-brand-600' : 'bg-surface-300 dark:bg-surface-600',
-        ]"
         :id="fieldId"
         @click="toggleValue"
       >
         <span
           :class="[
-            'pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out',
-            modelValue ? 'translate-x-5' : 'translate-x-0',
+            'relative inline-flex h-7 w-12 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out',
+            modelValue ? 'bg-brand-600' : 'bg-surface-300 dark:bg-surface-600',
           ]"
-        />
+        >
+          <span
+            :class="[
+              'pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out',
+              modelValue ? 'translate-x-5' : 'translate-x-0',
+            ]"
+          />
+        </span>
+        <span class="text-base text-surface-700 dark:text-surface-300">
+          {{ modelValue ? "Bật" : "Tắt" }}
+        </span>
       </button>
-      <span class="text-base text-surface-700 dark:text-surface-300">
-        {{ modelValue ? "Bật" : "Tắt" }}
-      </span>
     </div>
 
     <!-- 9. Text (Fallback) -->
     <div v-else>
       <input
-        class="w-full min-h-10 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 focus:border-brand-500 focus:outline-none"
+        class="w-full min-h-11 px-3 py-2 text-base rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-white dark:bg-surface-800 text-surface-800 dark:text-surface-100 focus:border-brand-500 focus:outline-none"
         type="text"
         :id="fieldId"
         :placeholder="placeholder || 'Nhập giá trị...'"
@@ -214,12 +218,19 @@
 <script lang="ts" setup>
   import { type UiHintType, validateEmojiInput } from "@mindkid/shared/client";
   import { computed, ref, watch } from "vue";
+  import { apiUrl } from "~/composables/use-api-client";
+
+  export type StudioPrimitive = string | number | boolean | null | undefined;
+  export interface StudioRecord {
+    [key: string]: StudioValue;
+  }
+  export type StudioValue = StudioPrimitive | StudioRecord | StudioValue[];
 
   const props = defineProps<{
     name: string;
     path: string;
     hint: UiHintType;
-    modelValue: unknown;
+    modelValue: StudioValue;
     label?: string;
     help?: string;
     placeholder?: string;
@@ -231,7 +242,7 @@
   }>();
 
   const emit = defineEmits<{
-    (e: "update:modelValue", value: unknown): void;
+    (e: "update:modelValue", value: StudioValue): void;
     (
       e: "open-emoji-picker" | "open-image-modal",
       payload: { path: string; value: string }
@@ -243,6 +254,9 @@
   const stringValue = computed(() => {
     if (typeof props.modelValue === "string") {
       return props.modelValue;
+    }
+    if (typeof props.modelValue === "number") {
+      return String(props.modelValue);
     }
     return "";
   });
@@ -281,7 +295,7 @@
     { name: "surface", label: "Surface Stone", bgClass: "bg-surface-600" },
   ];
 
-  function updateValue(val: unknown) {
+  function updateValue(val: StudioValue) {
     emit("update:modelValue", val);
   }
 
@@ -294,8 +308,10 @@
   }
 
   function onEmojiDirectInput(e: Event) {
-    const target = e.target as HTMLInputElement;
-    const raw = target.value;
+    if (!(e.target instanceof HTMLInputElement)) {
+      return;
+    }
+    const raw = e.target.value;
     emojiDraftValue.value = raw;
     const validation = validateEmojiInput(raw);
     if (!validation.ok) {
@@ -325,18 +341,35 @@
   }
 
   function onTextInput(e: Event) {
-    const target = e.target as HTMLInputElement | HTMLTextAreaElement;
-    updateValue(target.value);
+    if (
+      !(
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      )
+    ) {
+      return;
+    }
+    const raw = e.target.value;
+    if (typeof props.modelValue === "number") {
+      const parsed = Number(raw);
+      updateValue(Number.isNaN(parsed) ? 0 : parsed);
+      return;
+    }
+    updateValue(raw);
   }
 
   function onNumberInput(e: Event) {
-    const target = e.target as HTMLInputElement;
-    updateValue(Number(target.value));
+    if (!(e.target instanceof HTMLInputElement)) {
+      return;
+    }
+    updateValue(Number(e.target.value));
   }
 
   function onSelectChange(e: Event) {
-    const target = e.target as HTMLSelectElement;
-    updateValue(target.value);
+    if (!(e.target instanceof HTMLSelectElement)) {
+      return;
+    }
+    updateValue(e.target.value);
   }
 
   function getImageUrl(path: string): string {

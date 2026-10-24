@@ -88,12 +88,34 @@ function actionButtonOf(session: TemplateGameSession) {
   };
 }
 
+function dispatchSessionGesture(
+  session: TemplateGameSession,
+  gesture: Gesture,
+  entities: readonly ViewEntity[]
+): { verdict: ActionResult | null; tapped: ViewEntity | null } {
+  const tapped =
+    gesture.type === "tap"
+      ? findHitEntity(entities, gesture.x, gesture.y)
+      : null;
+  const stepBefore = (session as { currentStepIndex?: number })
+    .currentStepIndex;
+  const verdict = session.dispatch(gesture);
+  const stepAfter = (session as { currentStepIndex?: number }).currentStepIndex;
+  const stepAdvanced = stepBefore !== undefined && stepAfter !== stepBefore;
+  return {
+    verdict: verdict ?? null,
+    tapped: stepAdvanced ? null : tapped,
+  };
+}
+
 export function usePlayGesture(options: GestureOptions) {
   const { getEngine, canvasRef, onRoundWon, onRetryDisallowed, onVerdict } =
     options;
 
   const viewEntities = ref<readonly ViewEntity[]>([]);
   const actionButton = ref<ActionButtonState>(HIDDEN_ACTION_BUTTON);
+  const stagedSourceEntity = ref<ViewEntity | null>(null);
+  const stagedEntityId = computed(() => stagedSourceEntity.value?.id ?? null);
 
   let activePointerId: number | null = null;
   let startClientX = 0;
@@ -101,6 +123,16 @@ export function usePlayGesture(options: GestureOptions) {
   let startLogicX = 0;
   let startLogicY = 0;
   let isDragging = false;
+
+  /**
+   * Bề mặt hai bước (kéo-thả) nhận ra qua việc view có ô đích.
+   * Ở đó, chọn nguồn Cấm — NEVER gửi kèm gesture `tap`: template kéo-thả chấm
+   * tap là sai, nên `scaffolding.onMiss()` chạy và hint leo thang chỉ vì trẻ
+   * dùng bàn phím. Template chạm-chọn (không có ô đích) thì tap CHÍNH là đáp án.
+   */
+  function isTwoStepSurface(): boolean {
+    return viewEntities.value.some((entity) => entity.role === "target");
+  }
 
   function syncView(): void {
     const engine = getEngine();
@@ -111,6 +143,15 @@ export function usePlayGesture(options: GestureOptions) {
     } else {
       viewEntities.value = [];
       actionButton.value = HIDDEN_ACTION_BUTTON;
+    }
+    if (
+      stagedSourceEntity.value &&
+      !(
+        isTwoStepSurface() &&
+        viewEntities.value.some((e) => e.id === stagedSourceEntity.value?.id)
+      )
+    ) {
+      stagedSourceEntity.value = null;
     }
   }
 
@@ -293,21 +334,15 @@ export function usePlayGesture(options: GestureOptions) {
       return;
     }
     const session = getActiveSession(engine);
-    if (!session) {
+    if (!session || handleActionTap(gesture, engine, session)) {
       return;
     }
 
-    if (handleActionTap(gesture, engine, session)) {
-      return;
-    }
-
-    // Cùng hình học chạm với `toAction()` của engine (Task #274 S1d).
-    const tapped =
-      gesture.type === "tap"
-        ? findHitEntity(viewEntities.value, gesture.x, gesture.y)
-        : null;
-
-    const verdict = session.dispatch(gesture);
+    const { verdict, tapped } = dispatchSessionGesture(
+      session,
+      gesture,
+      viewEntities.value
+    );
     if (verdict) {
       handleVerdict(verdict, engine, session, tapped, gesture);
     }
@@ -393,19 +428,6 @@ export function usePlayGesture(options: GestureOptions) {
     }
   }
 
-  const stagedSourceEntity = ref<ViewEntity | null>(null);
-  const stagedEntityId = computed(() => stagedSourceEntity.value?.id ?? null);
-
-  /**
-   * Bề mặt hai bước (kéo-thả) nhận ra qua việc view có ô đích.
-   * Ở đó, chọn nguồn Cấm — NEVER gửi kèm gesture `tap`: template kéo-thả chấm
-   * tap là sai, nên `scaffolding.onMiss()` chạy và hint leo thang chỉ vì trẻ
-   * dùng bàn phím. Template chạm-chọn (không có ô đích) thì tap CHÍNH là đáp án.
-   */
-  function isTwoStepSurface(): boolean {
-    return viewEntities.value.some((entity) => entity.role === "target");
-  }
-
   /** Bước 2 của đường bàn phím: đã có nguồn đang chọn. */
   function handleTapWithStagedSource(
     staged: ViewEntity,
@@ -427,11 +449,13 @@ export function usePlayGesture(options: GestureOptions) {
     }
 
     if (entity.role === "source") {
+      if (!twoStep) {
+        stagedSourceEntity.value = null;
+        dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
+        return;
+      }
       // Bỏ chọn, hoặc đổi nguồn đang chọn.
       stagedSourceEntity.value = entity.id === staged.id ? null : entity;
-      if (!twoStep) {
-        dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });
-      }
       return;
     }
 
@@ -449,11 +473,9 @@ export function usePlayGesture(options: GestureOptions) {
       return;
     }
 
-    if (entity.role === "source") {
+    if (entity.role === "source" && twoStep) {
       stagedSourceEntity.value = entity;
-      if (twoStep) {
-        return;
-      }
+      return;
     }
 
     dispatchGesture({ type: "tap", x: entity.x, y: entity.y, timeMs });

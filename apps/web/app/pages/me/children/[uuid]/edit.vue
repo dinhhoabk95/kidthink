@@ -5,11 +5,11 @@
     >
       <div class="mb-2 flex items-center gap-2">
         <NuxtLink
-          class="inline-flex items-center gap-1 text-sm font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400"
+          class="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700 dark:text-brand-400"
           data-testid="back-to-child-link"
           :to="`/me/children/${childUuid}`"
         >
-          <UIcon class="h-4 w-4" name="i-lucide-arrow-left" />
+          <UIcon class="h-4 w-4 shrink-0" name="i-lucide-arrow-left" />
           <span>Quay lại hồ sơ bé</span>
         </NuxtLink>
       </div>
@@ -18,7 +18,7 @@
       >
         Sửa hồ sơ của bé
       </h1>
-      <p class="text-sm text-surface-600 dark:text-surface-400">
+      <p class="text-base text-surface-600 dark:text-surface-300">
         Cập nhật thông tin cơ bản cho trẻ {{ MIN_AGE }}–{{ MAX_AGE }}
         tuổi.
       </p>
@@ -26,7 +26,7 @@
 
     <!-- Loading State -->
     <div
-      class="py-12 text-center text-surface-500 dark:text-surface-400"
+      class="py-12 text-center text-surface-600 dark:text-surface-300"
       data-testid="edit-child-loading"
       v-if="loading"
     >
@@ -34,7 +34,7 @@
         class="mx-auto mb-3 h-8 w-8 animate-spin text-brand-600 dark:text-brand-400"
         name="i-lucide-loader-2"
       />
-      <p class="text-sm font-semibold">Đang tải thông tin hồ sơ bé...</p>
+      <p class="text-base font-semibold">Đang tải thông tin hồ sơ bé...</p>
     </div>
 
     <!-- Not Found / Load Error -->
@@ -43,7 +43,7 @@
       data-testid="edit-child-load-error"
       v-else-if="loadError"
     >
-      <p class="text-sm font-semibold text-danger-700 dark:text-danger-300">
+      <p class="text-base font-semibold text-danger-700 dark:text-danger-300">
         {{ loadError }}
       </p>
       <NuxtLink
@@ -72,7 +72,7 @@
       <!-- 1. display_name (BR-CPC-02) -->
       <div class="space-y-1.5">
         <label
-          class="text-sm font-bold text-surface-700 dark:text-surface-300"
+          class="text-sm font-bold text-surface-700 dark:text-surface-200"
           for="child-name"
         >
           Tên gọi ở nhà của bé
@@ -89,7 +89,7 @@
           v-model.trim="displayName"
         >
         <span
-          class="block text-xs font-semibold text-surface-500 dark:text-surface-400"
+          class="block text-sm font-semibold text-surface-600 dark:text-surface-300"
         >
           Chỉ dùng tên gọi ở nhà, không nhập họ tên đầy đủ của bé.
         </span>
@@ -98,7 +98,7 @@
       <!-- 2. birth_year (BR-CPC-03, BR-CPC-08) -->
       <div class="space-y-1.5">
         <label
-          class="text-sm font-bold text-surface-700 dark:text-surface-300"
+          class="text-sm font-bold text-surface-700 dark:text-surface-200"
           for="birth-year"
         >
           Bé sinh năm
@@ -116,7 +116,7 @@
           </option>
         </select>
         <span
-          class="block text-xs font-semibold text-brand-700 dark:text-brand-300"
+          class="block text-sm font-semibold text-brand-700 dark:text-brand-300"
           data-testid="derived-age-band"
         >
           Nhóm tuổi tự động: {{ derivedAgeBand }} tuổi
@@ -126,11 +126,11 @@
       <!-- 3. avatar_id preset grid (BR-CPC-04: Preset only, no upload) -->
       <fieldset class="space-y-2" data-testid="avatar-preset-grid">
         <legend
-          class="text-sm font-bold text-surface-700 dark:text-surface-300"
+          class="text-sm font-bold text-surface-700 dark:text-surface-200"
         >
           Chọn hình đại diện
         </legend>
-        <div class="grid grid-cols-6 gap-2 sm:gap-2.5">
+        <div class="grid grid-cols-4 gap-2.5 sm:grid-cols-6">
           <button
             data-testid="avatar-preset-btn"
             type="button"
@@ -139,7 +139,7 @@
             :aria-label="`Chọn hình đại diện ${preset.emoji}`"
             :aria-pressed="avatarId === preset.id"
             :class="[
-              'flex h-12 w-full items-center justify-center rounded-2xl border-2 text-2xl transition-all active:scale-95',
+              'flex min-h-12 min-w-11 w-full items-center justify-center rounded-2xl border-2 text-2xl transition-all active:scale-95',
               avatarId === preset.id
                 ? 'border-brand-600 bg-brand-50 shadow-[0_0_0_2px_var(--color-brand-600)] dark:border-brand-400 dark:bg-brand-950/60'
                 : 'border-surface-200 bg-surface-50 hover:border-surface-300 dark:border-surface-700 dark:bg-surface-900/60 dark:hover:border-surface-600',
@@ -154,7 +154,7 @@
       <!-- 4. relationship -->
       <div class="space-y-1.5">
         <label
-          class="text-sm font-bold text-surface-700 dark:text-surface-300"
+          class="text-sm font-bold text-surface-700 dark:text-surface-200"
           for="relationship"
         >
           Quan hệ
@@ -173,7 +173,7 @@
 
       <!-- Transparency Explanation (BR-CPC-06, §7.1) -->
       <p
-        class="rounded-2xl border border-surface-200 bg-surface-50 p-3.5 text-xs leading-relaxed text-surface-600 dark:border-surface-700 dark:bg-surface-900/60 dark:text-surface-400"
+        class="rounded-2xl border border-surface-200 bg-surface-50 p-3.5 text-sm leading-relaxed text-surface-600 dark:border-surface-700 dark:bg-surface-900/60 dark:text-surface-300"
         data-testid="privacy-transparency-notice"
       >
         Chúng tôi chỉ hỏi tên gọi và năm sinh để chọn nội dung phù hợp với bé.
@@ -244,6 +244,16 @@
 
   const MIN_AGE = 3;
   const MAX_AGE = 6;
+  const DEFAULT_AVATAR_ID = AVATAR_PRESETS[0]?.id ?? "avatar-preset-01";
+
+  const LEGACY_AVATAR_MAP: Record<string, string> = {
+    "avatar-bear-01": "avatar-preset-01",
+    "avatar-rabbit-01": "avatar-preset-02",
+    "avatar-cat-01": "avatar-preset-03",
+    "avatar-dog-01": "avatar-preset-04",
+    "avatar-fox-01": "avatar-preset-05",
+    "avatar-panda-01": "avatar-preset-06",
+  };
 
   const api = useApi();
   const route = useRoute();
@@ -251,24 +261,31 @@
   const childUuid = computed(() => String(route.params.uuid || ""));
   const currentYear = new Date().getFullYear();
 
-  const birthYearOptions = computed(() => {
-    const years: number[] = [];
-    for (let age = MIN_AGE; age <= MAX_AGE; age += 1) {
-      years.push(currentYear - age);
-    }
-    return years;
-  });
-
   const loading = ref(true);
   const loadError = ref("");
   const displayName = ref("");
   const birthYear = ref<number>(currentYear - MIN_AGE);
-  const avatarId = ref<string>(AVATAR_PRESETS[0]?.id ?? "avatar-preset-01");
+  const loadedBirthYear = ref<number | null>(null);
+  const avatarId = ref<string>(DEFAULT_AVATAR_ID);
   const relationship = ref<RelationshipKind>("child");
 
   const isSaving = ref(false);
   const errorMessage = ref("");
   const statusMessage = ref("");
+
+  const birthYearOptions = computed(() => {
+    const years: number[] = [];
+    for (let age = MIN_AGE; age <= MAX_AGE; age += 1) {
+      years.push(currentYear - age);
+    }
+    if (
+      loadedBirthYear.value !== null &&
+      !years.includes(loadedBirthYear.value)
+    ) {
+      years.push(loadedBirthYear.value);
+    }
+    return years;
+  });
 
   const derivedAgeBand = computed(() =>
     deriveAgeBand(birthYear.value, currentYear)
@@ -281,6 +298,29 @@
       return value;
     }
     return "child";
+  }
+
+  function normalizeAvatarId(value: string | null | undefined): string {
+    if (!value) {
+      return DEFAULT_AVATAR_ID;
+    }
+    if (AVATAR_PRESETS.some((preset) => preset.id === value)) {
+      return value;
+    }
+    return LEGACY_AVATAR_MAP[value] ?? DEFAULT_AVATAR_ID;
+  }
+
+  const CSRF_COOKIE_REGEX = /(?:^|;\s*)tm_u_csrf=([^;]+)/;
+
+  function readCsrfHeaders(): Record<string, string> | undefined {
+    if (typeof document === "undefined") {
+      return undefined;
+    }
+    const match = document.cookie.match(CSRF_COOKIE_REGEX);
+    if (!match?.[1]) {
+      return undefined;
+    }
+    return { "x-csrf-token": decodeURIComponent(match[1]) };
   }
 
   async function loadChildProfile(): Promise<void> {
@@ -302,7 +342,8 @@
       }
       displayName.value = found.display_name;
       birthYear.value = found.birth_year;
-      avatarId.value = found.avatar_id;
+      loadedBirthYear.value = found.birth_year;
+      avatarId.value = normalizeAvatarId(found.avatar_id);
       relationship.value = normalizeRelationship(found.relationship);
     } catch (err) {
       loadError.value =
@@ -322,10 +363,12 @@
     statusMessage.value = "";
 
     try {
+      const csrfHeaders = readCsrfHeaders();
       const updated = await api<ChildProfileItem>(
         `/api/users/children/${childUuid.value}`,
         {
           method: "PATCH",
+          ...(csrfHeaders ? { headers: csrfHeaders } : {}),
           body: {
             display_name: displayName.value.trim(),
             birth_year: birthYear.value,
@@ -337,7 +380,8 @@
 
       displayName.value = updated.display_name;
       birthYear.value = updated.birth_year;
-      avatarId.value = updated.avatar_id;
+      loadedBirthYear.value = updated.birth_year;
+      avatarId.value = normalizeAvatarId(updated.avatar_id);
       relationship.value = normalizeRelationship(updated.relationship);
       statusMessage.value = "Đã cập nhật hồ sơ của bé thành công.";
     } catch (err) {

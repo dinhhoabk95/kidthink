@@ -52,7 +52,9 @@ export interface NormalizedImageAsset {
   fileSizeBytes: number;
 }
 
-// In-memory store for local testing/dev when S3 is not configured
+// In-memory store for local testing/dev when S3 is not configured (capped to prevent OOM)
+const MAX_IN_MEMORY_STORE_ENTRIES = 200;
+
 const inMemoryPrivateStore = new Map<
   string,
   { body: Buffer | Uint8Array; contentType: string; createdAt: Date }
@@ -62,6 +64,35 @@ const inMemoryPublicStore = new Map<
   string,
   { body: Buffer | Uint8Array; contentType: string; createdAt: Date }
 >();
+
+function sanitizeRelativeStoragePath(rawPath: string): string {
+  const trimmed = rawPath.startsWith("/") ? rawPath.slice(1) : rawPath;
+  if (
+    trimmed.includes("..") ||
+    trimmed.includes("\\") ||
+    trimmed.includes("\0")
+  ) {
+    throw new Error("BR-IMG-05: Unsafe path traversal characters in key");
+  }
+  return trimmed;
+}
+
+function setBoundedStoreEntry(
+  store: Map<
+    string,
+    { body: Buffer | Uint8Array; contentType: string; createdAt: Date }
+  >,
+  key: string,
+  entry: { body: Buffer | Uint8Array; contentType: string; createdAt: Date }
+): void {
+  if (!store.has(key) && store.size >= MAX_IN_MEMORY_STORE_ENTRIES) {
+    const oldestKey = store.keys().next().value;
+    if (oldestKey !== undefined) {
+      store.delete(oldestKey);
+    }
+  }
+  store.set(key, entry);
+}
 
 export function getS3BucketName(): string {
   return requireEnv("AWS_S3_PRIVATE_BUCKET");
@@ -287,15 +318,13 @@ export async function uploadPublicImage(
   if (options.key.startsWith("http://") || options.key.startsWith("https://")) {
     throw new Error("BR-IMG-05: Image path must be relative");
   }
-  const normalizedPath = options.key.startsWith("/")
-    ? options.key.slice(1)
-    : options.key;
+  const normalizedPath = sanitizeRelativeStoragePath(options.key);
 
   if (inMemoryPublicStore.has(normalizedPath)) {
     throw new Error("BR-IMG-06: Image file overwrite is forbidden");
   }
 
-  inMemoryPublicStore.set(normalizedPath, {
+  setBoundedStoreEntry(inMemoryPublicStore, normalizedPath, {
     body: options.body,
     contentType: options.contentType,
     createdAt: new Date(),
@@ -309,12 +338,12 @@ export async function uploadPublicImage(
 export function getPublicImage(
   path: string
 ): { body: Buffer | Uint8Array; contentType: string } | undefined {
-  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  const normalizedPath = sanitizeRelativeStoragePath(path);
   return inMemoryPublicStore.get(normalizedPath);
 }
 
 export function deletePublicImage(path: string): boolean {
-  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  const normalizedPath = sanitizeRelativeStoragePath(path);
   return inMemoryPublicStore.delete(normalizedPath);
 }
 
@@ -322,11 +351,9 @@ export async function uploadPrivateAsset(
   options: UploadPrivateAssetOptions
 ): Promise<PrivateUploadResult> {
   await Promise.resolve();
-  const normalizedPath = options.key.startsWith("/")
-    ? options.key.slice(1)
-    : options.key;
+  const normalizedPath = sanitizeRelativeStoragePath(options.key);
 
-  inMemoryPrivateStore.set(normalizedPath, {
+  setBoundedStoreEntry(inMemoryPrivateStore, normalizedPath, {
     body: options.body,
     contentType: options.contentType,
     createdAt: new Date(),
@@ -338,7 +365,7 @@ export async function uploadPrivateAsset(
 }
 
 export function deletePrivateAsset(path: string): boolean {
-  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  const normalizedPath = sanitizeRelativeStoragePath(path);
   return inMemoryPrivateStore.delete(normalizedPath);
 }
 
@@ -427,8 +454,11 @@ export function verifySignedUrlToken(
   expiresTimestamp: number,
   signature: string
 ): boolean {
-  if (Date.now() > expiresTimestamp) {
-    return false; // Expired
+  if (!Number.isFinite(expiresTimestamp) || Date.now() > expiresTimestamp) {
+    return false; // Expired or invalid timestamp
+  }
+  if (!signature || typeof signature !== "string") {
+    return false;
   }
 
   const secret = assetSigningSecret();
@@ -437,10 +467,13 @@ export function verifySignedUrlToken(
     .update(`${path}:${expiresTimestamp}`)
     .digest("hex");
 
-  return crypto.timingSafeEqual(
-    Buffer.from(signature, "hex"),
-    Buffer.from(expectedSig, "hex")
-  );
+  const sigBuf = Buffer.from(signature, "hex");
+  const expectedBuf = Buffer.from(expectedSig, "hex");
+  if (sigBuf.length !== expectedBuf.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(sigBuf, expectedBuf);
 }
 
 export function isPrivateStorageConfigured(): boolean {

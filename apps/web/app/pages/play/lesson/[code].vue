@@ -44,9 +44,10 @@
               name="i-lucide-lock"
               v-else-if="step.locked"
             />
-            <span class="step-emoji" v-else-if="step.thumbnail_emoji"
-              >{{ step.thumbnail_emoji }}</span
-            >
+            <span class="step-emoji" v-else-if="step.thumbnail_emoji">{{
+              step.thumbnail_emoji
+            }}</span>
+            <UIcon class="w-6 h-6" name="i-lucide-sparkles" v-else />
           </li>
         </ol>
 
@@ -224,6 +225,10 @@
 <style scoped>
   .lesson-surface {
     min-height: 100dvh;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     background-color: var(--color-surface-100);
@@ -239,9 +244,11 @@
     position: relative;
     width: var(--hud-touch-floor);
     height: var(--hud-touch-floor);
+    min-width: 4rem;
+    min-height: 4rem;
     border-radius: 1.25rem;
     border: 3px solid var(--color-surface-300);
-    background-color: var(--color-surface-0, #fff);
+    background-color: var(--color-surface-0);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -250,6 +257,7 @@
 
   .lesson-main {
     flex: 1;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -267,12 +275,16 @@
 
   .step-dots {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 100%;
+    box-sizing: border-box;
     gap: 0.75rem;
     list-style: none;
     padding: 0.75rem 1.25rem;
     margin: 0;
     border-radius: 9999px;
-    border: 2px solid var(--color-surface-300);
+    border: 3px solid var(--color-surface-300);
     background-color: var(--color-surface-50);
   }
 
@@ -304,6 +316,8 @@
   }
 
   .step-emoji {
+    font-family:
+      "Noto Color Emoji", "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
     font-size: 1.5rem;
     line-height: 1;
   }
@@ -311,11 +325,13 @@
   .play-button {
     width: 8rem;
     height: 8rem;
+    min-width: 4rem;
+    min-height: 4rem;
     border-radius: 9999px;
     border: none;
-    border-bottom: 8px solid var(--color-cta-700, #9a3412);
-    background-color: var(--color-cta-500, #f97316);
-    color: #fff;
+    border-bottom: 8px solid var(--color-cta-700);
+    background-color: var(--color-cta-500);
+    color: var(--color-surface-0);
     display: inline-flex;
     align-items: center;
     justify-content: center;

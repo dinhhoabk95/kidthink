@@ -1,22 +1,27 @@
 <template>
-  <div class="p-8 max-w-5xl mx-auto space-y-6">
+  <div class="py-2 sm:py-4 max-w-5xl mx-auto space-y-6 min-w-0">
     <!-- Header -->
     <div
-      class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 min-w-0"
     >
-      <div>
-        <h1 class="text-2xl font-bold text-surface-900 dark:text-white">
+      <div class="min-w-0">
+        <h1
+          class="text-2xl font-bold text-surface-900 dark:text-white leading-snug"
+        >
           Theo Dõi Nơi Asset Đang Được Dùng
         </h1>
-        <p class="text-sm text-surface-500 mt-1">
+        <p
+          class="text-sm text-surface-600 dark:text-surface-300 mt-1 leading-relaxed"
+        >
           Kiểm tra danh sách nội dung tham chiếu trước khi xoá tài nguyên hình
           ảnh (BR-AUT2-01..06).
         </p>
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3 shrink-0">
         <button
-          class="px-4 py-2 rounded-2xl border-2 border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-all"
+          class="min-h-11 px-4 py-2.5 inline-flex items-center justify-center rounded-2xl border-2 border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
+          id="btn-refresh-usage"
           type="button"
           @click="fetchUsage"
         >
@@ -24,7 +29,8 @@
         </button>
 
         <button
-          class="px-4 py-2 rounded-2xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white text-xs font-bold transition-all"
+          class="min-h-11 px-4 py-2.5 inline-flex items-center justify-center rounded-2xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:ring-danger-500 focus-visible:outline-none"
+          id="btn-delete-asset"
           type="button"
           :disabled="isDeleting || isDeleted"
           @click="openDeleteConfirmModal"
@@ -36,18 +42,20 @@
 
     <!-- Asset Reference Input & Summary -->
     <div
-      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 p-5 space-y-4 shadow-sm"
+      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 p-4 sm:p-6 space-y-4 shadow-xs min-w-0"
     >
-      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-        <div class="flex-1">
+      <div
+        class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 min-w-0"
+      >
+        <div class="flex-1 min-w-0">
           <label
-            class="block text-xs font-bold text-surface-500 mb-1"
+            class="block text-sm font-bold text-surface-700 dark:text-surface-200 mb-1.5"
             for="asset-ref-input"
           >
             Đường dẫn Asset (asset_ref)
           </label>
           <input
-            class="w-full p-2.5 text-sm font-mono rounded-xl border border-surface-300 dark:border-surface-600 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white focus:outline-none"
+            class="w-full min-h-11 px-3.5 py-2.5 text-base font-mono rounded-2xl border-2 border-surface-300 dark:border-surface-600 bg-surface-50 dark:bg-surface-900 text-surface-900 dark:text-white focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
             id="asset-ref-input"
             placeholder="content/2026/08/ab12cd.webp"
             type="text"
@@ -56,25 +64,29 @@
           >
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 shrink-0">
           <span
-            class="px-3 py-1.5 rounded-full text-xs font-bold"
+            class="px-3.5 py-2 rounded-full text-sm font-bold"
+            data-testid="asset-delete-status-badge"
             :class="
               usageData.can_delete
                 ? 'bg-success-100 text-success-800 dark:bg-success-950/40 dark:text-success-300'
                 : 'bg-danger-100 text-danger-800 dark:bg-danger-950/40 dark:text-danger-300'
             "
           >
-            {{ usageData.can_delete
+            {{
+              usageData.can_delete
                 ? "Có thể xoá"
-                : "Chặn xoá (Đang dùng ở bản published)" }}
+                : "Chặn xoá (Đang dùng ở bản published)"
+            }}
           </span>
         </div>
       </div>
 
       <!-- Status Banners (§5 Alternative Flows) -->
       <div
-        class="p-3 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800 text-xs text-danger-800 dark:text-danger-300 font-medium"
+        class="p-3.5 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800 text-sm text-danger-800 dark:text-danger-300 font-medium leading-relaxed"
+        data-testid="banner-published-block"
         v-if="usageData.block_reason === 'used_by_published'"
       >
         Ảnh này đang được dùng bởi nội dung <strong>published</strong>. Hệ thống
@@ -82,7 +94,8 @@
       </div>
 
       <div
-        class="p-3 rounded-2xl bg-warning-50 dark:bg-warning-950/40 border border-warning-200 dark:border-warning-800 text-xs text-warning-800 dark:text-warning-300 font-medium"
+        class="p-3.5 rounded-2xl bg-warning-50 dark:bg-warning-950/40 border border-warning-200 dark:border-warning-800 text-sm text-warning-800 dark:text-warning-300 font-medium leading-relaxed"
+        data-testid="banner-draft-warning"
         v-else-if="hasDraftUsage"
       >
         Ảnh đang được dùng ở bản <strong>draft</strong>. Nếu xoá, bản nháp sẽ
@@ -90,7 +103,8 @@
       </div>
 
       <div
-        class="p-3 rounded-2xl bg-surface-100 dark:bg-surface-700/50 border border-surface-200 dark:border-surface-600 text-xs text-surface-700 dark:text-surface-300 font-medium"
+        class="p-3.5 rounded-2xl bg-surface-100 dark:bg-surface-700/50 border border-surface-200 dark:border-surface-600 text-sm text-surface-700 dark:text-surface-200 font-medium leading-relaxed"
+        data-testid="banner-archived-info"
         v-else-if="hasArchivedUsage"
       >
         Ảnh chỉ còn dùng ở bản <strong>archived</strong>. Cho phép xoá, nhưng
@@ -98,14 +112,16 @@
       </div>
 
       <div
-        class="p-3 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-200 dark:border-success-800 text-xs text-success-800 dark:text-success-300 font-semibold"
+        class="p-3.5 rounded-2xl bg-success-50 dark:bg-success-950/40 border border-success-200 dark:border-success-800 text-sm text-success-800 dark:text-success-300 font-semibold leading-relaxed"
+        data-testid="banner-delete-success"
         v-if="isDeleted"
       >
         Đã xoá ảnh thành công và ghi nhận nhật ký kiểm toán (BR-AUT2-06).
       </div>
 
       <div
-        class="p-3 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800 text-xs text-danger-700 dark:text-danger-300 font-semibold"
+        class="p-3.5 rounded-2xl bg-danger-50 dark:bg-danger-950/40 border border-danger-200 dark:border-danger-800 text-sm text-danger-700 dark:text-danger-300 font-semibold leading-relaxed"
+        role="alert"
         v-if="errorMessage"
       >
         {{ errorMessage }}
@@ -114,70 +130,83 @@
 
     <!-- Used By List (BR-AUT2-04) -->
     <div
-      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 overflow-hidden shadow-sm"
+      class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 overflow-hidden shadow-xs min-w-0"
+      data-testid="asset-used-by-card"
     >
       <div
-        class="px-6 py-4 border-b border-surface-200 dark:border-surface-700 flex items-center justify-between"
+        class="px-4 sm:px-6 py-4 border-b border-surface-200 dark:border-surface-700 flex items-center justify-between gap-2"
       >
-        <h2 class="text-sm font-bold text-surface-900 dark:text-white">
+        <h2 class="text-base font-bold text-surface-900 dark:text-white">
           Danh sách nội dung tham chiếu ({{ usageData.used_by.length }})
         </h2>
       </div>
 
-      <div class="p-12 text-center text-surface-400" v-if="isLoading">
-        Đang truy vấn chỉ mục ngược...
+      <div
+        class="p-12 flex flex-col items-center justify-center gap-3 text-center text-surface-600 dark:text-surface-300"
+        v-if="isLoading"
+      >
+        <span
+          aria-hidden="true"
+          class="w-6 h-6 rounded-full border-2 border-brand-600 border-t-transparent animate-spin"
+        />
+        <span class="text-sm font-medium">Đang truy vấn chỉ mục ngược...</span>
       </div>
 
       <div
-        class="p-12 text-center text-surface-500"
+        class="p-10 sm:p-12 text-center text-surface-600 dark:text-surface-300"
+        data-testid="asset-used-by-empty"
         v-else-if="usageData.used_by.length === 0"
       >
-        <p class="font-bold text-surface-700 dark:text-surface-300">
+        <p class="text-base font-bold text-surface-800 dark:text-surface-200">
           Không có nội dung nào đang sử dụng asset này
         </p>
-        <p class="text-xs text-surface-400 mt-1">
+        <p class="text-sm text-surface-600 dark:text-surface-300 mt-1">
           Bạn có thể xoá ảnh này an toàn mà không làm ảnh hưởng tới nội dung.
         </p>
       </div>
 
       <div
         class="divide-y divide-surface-100 dark:divide-surface-700/60"
+        data-testid="asset-used-by-list"
         v-else
       >
         <div
-          class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-50 dark:hover:bg-surface-700/20 transition-all"
+          class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-surface-50 dark:hover:bg-surface-700/20 transition-colors min-w-0"
+          data-testid="asset-used-by-item"
           v-for="item in usageData.used_by"
           :key="`${item.entity_type}_${item.code}_${item.version}`"
         >
-          <div class="space-y-1">
+          <div class="space-y-1.5 min-w-0">
             <div class="flex items-center gap-2.5 flex-wrap">
               <span
-                class="font-mono text-xs px-2.5 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 font-bold text-surface-700 dark:text-surface-300"
+                class="font-mono text-sm px-2.5 py-0.5 rounded-full bg-surface-100 dark:bg-surface-700 font-bold text-surface-700 dark:text-surface-200"
               >
                 {{ item.code }}
                 v{{ item.version }}
               </span>
 
               <span
-                class="text-xs px-2.5 py-0.5 rounded-full font-bold"
+                class="text-sm px-2.5 py-0.5 rounded-full font-bold"
                 :class="getStatusBadgeClass(item.status)"
               >
                 {{ item.status }}
               </span>
 
-              <span class="text-xs text-surface-400">
+              <span class="text-sm text-surface-600 dark:text-surface-300">
                 Loại: {{ formatEntityType(item.entity_type) }}
               </span>
             </div>
 
-            <p class="text-sm font-bold text-surface-900 dark:text-white">
+            <p
+              class="text-base font-bold text-surface-900 dark:text-white break-words"
+            >
               {{ item.title }}
             </p>
           </div>
 
           <div class="flex items-center gap-2 shrink-0">
             <NuxtLink
-              class="px-4 py-2 rounded-xl bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 hover:bg-brand-600 hover:text-white text-xs font-bold transition-all"
+              class="min-h-11 px-4 py-2.5 inline-flex items-center justify-center rounded-xl bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 hover:bg-brand-600 hover:text-white text-sm font-bold transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
               :to="getEntityRoute(item)"
             >
               Mở nội dung →
@@ -189,30 +218,39 @@
 
     <!-- Confirm Delete Modal -->
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
+      aria-labelledby="modal-confirm-delete-title"
+      aria-modal="true"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-xs"
+      role="dialog"
       v-if="isDeleteConfirmOpen"
     >
       <div
         class="w-full max-w-md bg-white dark:bg-surface-800 rounded-3xl border-4 border-surface-200 dark:border-surface-700 p-6 shadow-2xl space-y-4"
       >
-        <h2 class="text-lg font-bold text-surface-900 dark:text-white">
+        <h2
+          class="text-lg font-bold text-surface-900 dark:text-white"
+          id="modal-confirm-delete-title"
+        >
           Xác nhận xoá hình ảnh #{{ assetId }}
         </h2>
-        <p class="text-xs text-surface-600 dark:text-surface-300">
+        <p
+          class="text-sm text-surface-600 dark:text-surface-300 leading-relaxed"
+        >
           Bạn có chắc chắn muốn xoá hình ảnh này? Thao tác xoá sẽ được ghi vào
           nhật ký kiểm toán (BR-AUT2-06).
         </p>
 
         <div class="flex items-center justify-end gap-3 pt-2">
           <button
-            class="px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 font-semibold text-sm"
+            class="min-h-11 px-4 py-2.5 inline-flex items-center justify-center rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 font-semibold text-sm transition-colors focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:outline-none"
             type="button"
             @click="isDeleteConfirmOpen = false"
           >
             Huỷ
           </button>
           <button
-            class="px-5 py-2 rounded-xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white font-semibold text-sm transition-all"
+            class="min-h-11 px-5 py-2.5 inline-flex items-center justify-center rounded-xl bg-danger-600 hover:bg-danger-700 disabled:opacity-50 text-white font-semibold text-sm transition-colors focus-visible:ring-2 focus-visible:ring-danger-500 focus-visible:outline-none"
+            id="btn-confirm-delete-image"
             type="button"
             :disabled="isDeleting"
             @click="confirmDeleteImage"
@@ -225,18 +263,25 @@
 
     <!-- 409 CONTENT_IN_USE Modal (BR-AUT2-01) -->
     <div
-      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm"
+      aria-labelledby="modal-conflict-title"
+      aria-modal="true"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-xs"
+      role="dialog"
       v-if="isConflictModalOpen"
     >
       <div
         class="w-full max-w-lg bg-white dark:bg-surface-800 rounded-3xl border-4 border-danger-300 dark:border-danger-700 p-6 shadow-2xl space-y-4"
       >
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-bold text-danger-700 dark:text-danger-400">
+        <div class="flex items-center justify-between gap-2">
+          <h2
+            class="text-lg font-bold text-danger-700 dark:text-danger-400"
+            id="modal-conflict-title"
+          >
             Không thể xoá hình ảnh đang sử dụng (409 CONTENT_IN_USE)
           </h2>
           <button
-            class="text-surface-400 hover:text-surface-600 text-xl font-bold"
+            aria-label="Đóng hộp thoại"
+            class="min-w-11 min-h-11 inline-flex items-center justify-center rounded-xl text-surface-500 hover:text-surface-700 dark:text-surface-300 dark:hover:text-white hover:bg-surface-100 dark:hover:bg-surface-700 text-xl font-bold transition-colors shrink-0"
             type="button"
             @click="isConflictModalOpen = false"
           >
@@ -244,7 +289,9 @@
           </button>
         </div>
 
-        <p class="text-xs text-surface-600 dark:text-surface-300">
+        <p
+          class="text-sm text-surface-600 dark:text-surface-300 leading-relaxed"
+        >
           Hình ảnh này đang được tham chiếu bởi các nội dung đã xuất bản. Vui
           lòng gỡ hoặc thay thế ảnh trong các nội dung dưới đây trước khi xoá
           (BR-AUT2-01):
@@ -254,21 +301,21 @@
           class="divide-y divide-surface-100 dark:divide-surface-700 border border-surface-200 dark:border-surface-700 rounded-2xl max-h-60 overflow-y-auto"
         >
           <div
-            class="p-3 flex items-center justify-between gap-3 text-xs"
+            class="p-3 flex items-center justify-between gap-3 text-sm"
             v-for="refItem in conflictUsedBy"
             :key="`${refItem.entity_type}_${refItem.code}`"
           >
-            <div>
+            <div class="min-w-0">
               <span
                 class="font-mono font-bold text-surface-900 dark:text-white"
               >
                 {{ refItem.code }}
               </span>
-              <span class="ml-2 text-surface-500">
+              <span class="ml-2 text-surface-600 dark:text-surface-300">
                 {{ refItem.title }}
               </span>
               <span
-                class="ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold"
+                class="ml-2 px-2 py-0.5 rounded-full text-sm font-bold"
                 :class="getStatusBadgeClass(refItem.status)"
               >
                 {{ refItem.status }}
@@ -276,7 +323,7 @@
             </div>
 
             <NuxtLink
-              class="text-brand-600 dark:text-brand-400 font-bold hover:underline shrink-0"
+              class="min-h-11 px-3 py-2 inline-flex items-center text-brand-600 dark:text-brand-400 font-bold hover:underline shrink-0"
               :to="getEntityRoute(refItem)"
               @click="isConflictModalOpen = false"
             >
@@ -287,7 +334,7 @@
 
         <div class="flex justify-end pt-2">
           <button
-            class="px-5 py-2 rounded-xl bg-surface-200 dark:bg-surface-700 font-bold text-xs text-surface-800 dark:text-surface-200"
+            class="min-h-11 px-5 py-2.5 inline-flex items-center justify-center rounded-xl bg-surface-200 dark:bg-surface-700 font-bold text-sm text-surface-800 dark:text-surface-200 transition-colors"
             type="button"
             @click="isConflictModalOpen = false"
           >
@@ -338,6 +385,37 @@
     };
   }
 
+  function extractApiError(
+    err: object | Error | null | undefined
+  ): ApiErrorShape {
+    if (typeof err !== "object" || err === null) {
+      return {};
+    }
+    const statusVal = Reflect.get(err, "status");
+    const statusCodeVal = Reflect.get(err, "statusCode");
+    const codeVal = Reflect.get(err, "code");
+    const messageVal = Reflect.get(err, "message");
+    const detailsVal = Reflect.get(err, "details");
+
+    let usedBy: string[] | undefined;
+    if (typeof detailsVal === "object" && detailsVal !== null) {
+      const rawUsedBy = Reflect.get(detailsVal, "used_by");
+      if (Array.isArray(rawUsedBy)) {
+        usedBy = rawUsedBy.filter(
+          (item): item is string => typeof item === "string"
+        );
+      }
+    }
+
+    return {
+      status: typeof statusVal === "number" ? statusVal : undefined,
+      statusCode: typeof statusCodeVal === "number" ? statusCodeVal : undefined,
+      code: typeof codeVal === "string" ? codeVal : undefined,
+      message: typeof messageVal === "string" ? messageVal : undefined,
+      details: usedBy ? { used_by: usedBy } : undefined,
+    };
+  }
+
   const route = useRoute();
   const api = useApiClient();
 
@@ -383,14 +461,16 @@
     errorMessage.value = "";
 
     try {
-      const encodedRef = encodeURIComponent(refVal);
       const res = await api.get<AssetUsageResponse>(
-        `/api/managers/assets/${encodedRef}/usage`,
+        "/api/managers/assets/usage",
         {
           query: { ref: refVal },
         }
       );
       usageData.value = res;
+      if (res.asset_ref) {
+        assetRefInput.value = res.asset_ref;
+      }
     } catch {
       errorMessage.value = "Không thể tải thông tin nơi sử dụng của asset.";
     } finally {
@@ -401,6 +481,22 @@
   function openDeleteConfirmModal() {
     errorMessage.value = "";
     isDeleteConfirmOpen.value = true;
+  }
+
+  function resolveConflictUsedBy(codesFromError: string[]): AssetUsageItem[] {
+    const matchedItems = usageData.value.used_by.filter(
+      (u) => u.status === "published" || codesFromError.includes(u.code)
+    );
+    if (matchedItems.length > 0) {
+      return matchedItems;
+    }
+    return codesFromError.map((code) => ({
+      entity_type: "game_level",
+      code,
+      version: 1,
+      status: "published",
+      title: code,
+    }));
   }
 
   async function confirmDeleteImage() {
@@ -420,26 +516,13 @@
       await fetchUsage();
     } catch (err) {
       isDeleteConfirmOpen.value = false;
-      const apiErr = err as ApiErrorShape;
+      const apiErr = extractApiError(typeof err === "object" ? err : undefined);
       const status = apiErr.status ?? apiErr.statusCode;
 
       if (status === 409 || apiErr.code === "CONTENT_IN_USE") {
-        const codesFromError = apiErr.details?.used_by ?? [];
-        const matchedItems = usageData.value.used_by.filter(
-          (u) => u.status === "published" || codesFromError.includes(u.code)
+        conflictUsedBy.value = resolveConflictUsedBy(
+          apiErr.details?.used_by ?? []
         );
-
-        if (matchedItems.length > 0) {
-          conflictUsedBy.value = matchedItems;
-        } else {
-          conflictUsedBy.value = codesFromError.map((code) => ({
-            entity_type: "game_level",
-            code,
-            version: 1,
-            status: "published",
-            title: code,
-          }));
-        }
         isConflictModalOpen.value = true;
       } else {
         errorMessage.value =

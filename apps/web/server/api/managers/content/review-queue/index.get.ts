@@ -130,7 +130,7 @@ async function fetchGameLevelReviewQueue(
   publishedSkillIds: Set<number>,
   incompleteCurriculumItemKeys: Set<string>
 ): Promise<ReviewQueueItem[]> {
-  const conditions: SQL<unknown>[] = [
+  const conditions: SQL[] = [
     eq(gameLevels.status, "in_review"),
     eq(gameLevels.authoredIn, "studio"),
   ];
@@ -228,7 +228,7 @@ async function fetchLessonReviewQueue(
   },
   incompleteCurriculumItemKeys: Set<string>
 ): Promise<ReviewQueueItem[]> {
-  const conditions: SQL<unknown>[] = [
+  const conditions: SQL[] = [
     eq(lessons.status, "in_review"),
     eq(lessons.authoredIn, "studio"),
   ];
@@ -300,7 +300,7 @@ async function fetchActivityReviewQueue(
     limit: number;
   }
 ): Promise<ReviewQueueItem[]> {
-  const conditions: SQL<unknown>[] = [
+  const conditions: SQL[] = [
     eq(activities.status, "in_review"),
     eq(activities.authoredIn, "studio"),
   ];
@@ -356,7 +356,7 @@ async function fetchCurriculumReviewQueue(
     limit: number;
   }
 ): Promise<ReviewQueueItem[]> {
-  const conditions: SQL<unknown>[] = [
+  const conditions: SQL[] = [
     eq(curricula.status, "in_review"),
     eq(curricula.authoredIn, "studio"),
   ];

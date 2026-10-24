@@ -23,15 +23,23 @@ function stripVS16(str: string): string {
   return str.replace(/\uFE0F/g, "");
 }
 
-// Fast lookup map for glyph -> EmojiEntry
-const GLYPH_MAP = new Map<string, EmojiEntry>();
-for (const entry of ALL_EMOJIS) {
-  const nfc = entry.emoji.normalize("NFC");
-  GLYPH_MAP.set(nfc, entry);
-  const stripped = stripVS16(nfc);
-  if (!GLYPH_MAP.has(stripped)) {
-    GLYPH_MAP.set(stripped, entry);
+// Lazy lookup map for glyph -> EmojiEntry so importing module has zero top-level side effects
+let glyphMapCache: Map<string, EmojiEntry> | null = null;
+
+function getGlyphMap(): Map<string, EmojiEntry> {
+  if (!glyphMapCache) {
+    const map = new Map<string, EmojiEntry>();
+    for (const entry of ALL_EMOJIS) {
+      const nfc = entry.emoji.normalize("NFC");
+      map.set(nfc, entry);
+      const stripped = stripVS16(nfc);
+      if (!map.has(stripped)) {
+        map.set(stripped, entry);
+      }
+    }
+    glyphMapCache = map;
   }
+  return glyphMapCache;
 }
 
 /**
@@ -114,10 +122,9 @@ export function getByGlyph(glyph: string): EmojiEntry | null {
   if (!glyph) {
     return null;
   }
+  const map = getGlyphMap();
   const normalized = glyph.normalize("NFC");
-  return (
-    GLYPH_MAP.get(normalized) ?? GLYPH_MAP.get(stripVS16(normalized)) ?? null
-  );
+  return map.get(normalized) ?? map.get(stripVS16(normalized)) ?? null;
 }
 
 /**

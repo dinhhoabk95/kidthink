@@ -163,7 +163,11 @@ export async function runPostgresBackup(
 
     pruneLocalDumps(directory);
   } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : String(error);
+    const rawMessage = error instanceof Error ? error.message : String(error);
+    const message = rawMessage.replace(
+      /(:\/\/[^:\s/]+:)[^@\s]+@/g,
+      "$1[REDACTED]@"
+    );
 
     await getOwnerDb()
       .update(backupLog)

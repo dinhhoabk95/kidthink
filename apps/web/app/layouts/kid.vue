@@ -18,3 +18,11 @@
     robots: NOINDEX_ROBOTS_DIRECTIVE,
   });
 </script>
+
+<style>
+  #nuxt-devtools-container,
+  .nuxt-devtools-panel,
+  nuxt-devtools-frame {
+    display: none !important;
+  }
+</style>

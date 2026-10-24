@@ -15,6 +15,13 @@ export default defineNuxtConfig({
   },
   css: [fileURLToPath(new URL("./assets/css/tailwind.css", import.meta.url))],
   fonts: {
+    providers: {
+      adobe: false,
+      bunny: false,
+      fontshare: false,
+      fontsource: false,
+      googleicons: false,
+    },
     defaults: {
       weights: [400, 500, 600, 700, 800],
       styles: ["normal"],
@@ -38,6 +45,15 @@ export default defineNuxtConfig({
         "cta",
         "retry",
       ],
+    },
+  },
+  vite: {
+    build: {
+      rolldownOptions: {
+        checks: {
+          pluginTimings: false,
+        },
+      },
     },
   },
 });

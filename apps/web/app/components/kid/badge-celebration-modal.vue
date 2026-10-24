@@ -4,6 +4,7 @@
     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-surface-900/60 backdrop-blur-sm select-none"
     data-testid="kid-badge-celebration-modal"
     role="dialog"
+    ref="modalRef"
   >
     <div
       class="bg-white rounded-3xl border-4 border-brand-300 p-6 sm:p-8 max-w-lg w-full text-center shadow-[0_12px_24px_rgba(30,27,75,0.18)] relative overflow-hidden"
@@ -41,7 +42,7 @@
       <!-- Tiêu đề & Lời chúc ấm áp (BR-PRG-02: Không điểm số, không so sánh) -->
       <div class="space-y-2 mb-6">
         <div
-          class="inline-block px-4 py-1 rounded-full bg-warning-100 text-warning-800 text-xs sm:text-sm font-heading font-bold mb-1"
+          class="inline-block px-4 py-1 rounded-full bg-warning-100 text-warning-800 text-base font-heading font-bold mb-1"
         >
           Huy hiệu Kỷ niệm Mới
         </div>
@@ -63,7 +64,7 @@
       <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
         <button
           aria-label="Nghe lời chúc mừng của Gấu Con"
-          class="min-h-16 px-4 rounded-2xl bg-surface-100 border-[3px] border-surface-300 text-brand-600 font-heading font-bold text-base flex items-center justify-center gap-2 active:translate-y-0.5 transition-all w-full sm:w-auto"
+          class="min-h-16 min-w-16 px-4 rounded-2xl bg-surface-100 border-[3px] border-surface-300 text-brand-600 font-heading font-bold text-base flex items-center justify-center gap-2 active:translate-y-0.5 transition-all w-full sm:w-auto"
           type="button"
           @click="speakCongrats"
         >
@@ -72,7 +73,7 @@
         </button>
 
         <button
-          class="min-h-16 px-8 rounded-2xl bg-brand-600 text-white font-heading font-bold text-lg sm:text-xl border-[3px] border-brand-700 shadow-[0_4px_0_var(--color-brand-800)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--color-brand-800)] transition-all flex items-center justify-center gap-2 w-full sm:w-auto flex-1"
+          class="min-h-16 min-w-16 px-8 rounded-2xl bg-brand-600 text-white font-heading font-bold text-lg sm:text-xl border-[3px] border-brand-700 shadow-[0_4px_0_var(--color-brand-800)] active:translate-y-0.5 active:shadow-[0_1px_0_var(--color-brand-800)] transition-all flex items-center justify-center gap-2 w-full sm:w-auto flex-1"
           data-testid="badge-confirm-btn"
           type="button"
           @click="handleConfirm"
@@ -86,9 +87,11 @@
 </template>
 
 <script lang="ts" setup>
-  import { onUnmounted } from "vue";
+  import { ref } from "vue";
   import KidMascot from "~/components/kid/mascot.vue";
   import type { BadgeMeta } from "~/composables/play/use-badge-celebration";
+  import { useFocusTrap } from "~/composables/play/use-focus-trap";
+  import { useSpeech } from "~/composables/play/use-speech";
 
   const props = defineProps<{
     badge: BadgeMeta;
@@ -97,32 +100,20 @@
 
   const emit = defineEmits<(e: "confirm") => void>();
 
+  const modalRef = ref<HTMLElement | null>(null);
+  useFocusTrap(modalRef, ref(true), {
+    onEscape: () => handleConfirm(),
+  });
+
+  const { speak, cancel: cancelSpeech } = useSpeech();
+
   function speakCongrats(): void {
-    if (
-      typeof window === "undefined" ||
-      !("speechSynthesis" in window) ||
-      typeof SpeechSynthesisUtterance === "undefined"
-    ) {
-      return;
-    }
-    window.speechSynthesis.cancel();
     const textToSpeak = `${props.badge.title}. ${props.badge.congratsText}`;
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-    utterance.lang = "vi-VN";
-    utterance.rate = 0.95;
-    window.speechSynthesis.speak(utterance);
+    speak(textToSpeak);
   }
 
   function handleConfirm(): void {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-    }
+    cancelSpeech();
     emit("confirm");
   }
-
-  onUnmounted(() => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-    }
-  });
 </script>

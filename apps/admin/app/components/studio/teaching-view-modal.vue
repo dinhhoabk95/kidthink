@@ -7,9 +7,9 @@
       class="bg-white dark:bg-surface-800 rounded-3xl border-4 border-brand-300 dark:border-brand-700 p-6 w-full max-w-2xl shadow-2xl space-y-4 max-h-[85vh] overflow-y-auto"
     >
       <div
-        class="flex justify-between items-center border-b pb-3 dark:border-surface-700"
+        class="flex justify-between items-center gap-3 border-b pb-3 dark:border-surface-700 min-w-0"
       >
-        <div>
+        <div class="min-w-0">
           <h2
             class="text-base font-bold text-surface-900 dark:text-white flex items-center gap-2"
           >
@@ -19,10 +19,13 @@
             />
             <span>Bản xem trước cho người dạy (Teaching View)</span>
           </h2>
-          <div class="text-xs text-surface-500">{{ data?.lesson?.title }}</div>
+          <div class="text-xs text-surface-500 break-words">
+            {{ data?.lesson?.title }}
+          </div>
         </div>
         <button
-          class="p-1.5 rounded-xl text-surface-400 hover:bg-surface-100"
+          aria-label="Đóng bản xem trước"
+          class="min-h-11 min-w-11 inline-flex items-center justify-center p-1.5 rounded-xl text-surface-400 hover:bg-surface-100 shrink-0"
           type="button"
           @click="emit('close')"
         >
@@ -73,12 +76,12 @@
             Trình tự các hoạt động:
           </div>
           <div
-            class="p-3 rounded-2xl border border-surface-200 dark:border-surface-700 flex justify-between items-center"
+            class="p-3 rounded-2xl border border-surface-200 dark:border-surface-700 flex justify-between items-center gap-2 min-w-0"
             v-for="act in data?.activities || []"
             :key="act.position"
           >
-            <div>
-              <span class="font-bold"
+            <div class="min-w-0">
+              <span class="font-bold break-words"
                 >#{{ act.position }} {{ act.activity?.title }}</span
               >
               <div class="text-surface-500 font-mono flex items-center gap-1">
@@ -87,22 +90,26 @@
                   name="i-lucide-clock"
                 />
                 <span
-                  >{{ act.activity?.estimated_minutes }}
+                  >{{
+                    act.activity?.estimated_minutes ??
+                      act.activity?.estimatedMinutes ??
+                      5
+                  }}
                   phút · {{ act.activity?.kind }}</span
                 >
               </div>
             </div>
             <span
-              class="px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1"
+              class="px-2 py-0.5 rounded-full text-[10px] font-bold inline-flex items-center gap-1 shrink-0"
               :class="act.is_offscreen ? 'bg-success-100 text-success-800' : 'bg-brand-100 text-brand-800'"
             >
               <UIcon
                 class="w-3 h-3"
                 :name="act.is_offscreen ? 'i-lucide-leaf' : 'i-lucide-gamepad-2'"
               />
-              <span
-                >{{ act.is_offscreen ? 'Ngoài màn hình' : 'Kỹ thuật số' }}</span
-              >
+              <span>{{
+                act.is_offscreen ? "Ngoài màn hình" : "Kỹ thuật số"
+              }}</span>
             </span>
           </div>
         </div>
@@ -122,7 +129,7 @@
 
       <div class="flex justify-end pt-3 border-t dark:border-surface-700">
         <button
-          class="px-4 py-2 text-xs font-bold rounded-xl bg-brand-600 text-white"
+          class="min-h-11 inline-flex items-center justify-center px-4 py-2 text-xs font-bold rounded-xl bg-brand-600 text-white"
           type="button"
           @click="emit('close')"
         >
@@ -149,7 +156,8 @@
       is_offscreen: boolean;
       activity?: {
         title: string;
-        estimated_minutes: number;
+        estimated_minutes?: number;
+        estimatedMinutes?: number;
         kind: string;
       };
     }[];

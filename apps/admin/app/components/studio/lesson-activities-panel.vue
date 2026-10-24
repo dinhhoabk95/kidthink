@@ -3,9 +3,9 @@
     class="bg-white dark:bg-surface-800 rounded-3xl border-2 border-surface-200 dark:border-surface-700 p-6 space-y-4 shadow-sm"
   >
     <div
-      class="flex justify-between items-center border-b pb-3 dark:border-surface-700"
+      class="flex flex-wrap justify-between items-center gap-3 border-b pb-3 dark:border-surface-700"
     >
-      <div>
+      <div class="min-w-0">
         <h2 class="text-base font-bold text-surface-900 dark:text-white">
           Hoạt động thành phần ({{ activities.length }})
         </h2>
@@ -15,7 +15,7 @@
       </div>
 
       <button
-        class="px-3 py-1.5 text-xs font-bold rounded-xl bg-brand-600 text-white hover:bg-brand-700"
+        class="min-h-11 inline-flex items-center justify-center px-3 py-1.5 text-xs font-bold rounded-xl bg-brand-600 text-white hover:bg-brand-700 shrink-0"
         type="button"
         @click="emit('openAddModal')"
       >
@@ -54,16 +54,17 @@
                 name="i-lucide-clock"
               />
               <span
-                >{{ item.activity?.estimated_minutes || 5 }}p ·
-                {{ item.activity?.kind || 'activity' }}</span
+                >{{ getActivityMinutes(item.activity) }}p ·
+                {{ item.activity?.kind || "activity" }}</span
               >
             </div>
           </div>
         </div>
 
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-1 shrink-0">
           <button
-            class="p-1 rounded-xl hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-500"
+            aria-label="Chuyển lên"
+            class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-500"
             type="button"
             :disabled="idx === 0"
             @click="emit('moveActivity', idx, -1)"
@@ -71,7 +72,8 @@
             ▲
           </button>
           <button
-            class="p-1 rounded-xl hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-500"
+            aria-label="Chuyển xuống"
+            class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl hover:bg-surface-200 dark:hover:bg-surface-700 text-surface-500"
             type="button"
             :disabled="idx === activities.length - 1"
             @click="emit('moveActivity', idx, 1)"
@@ -79,7 +81,8 @@
             ▼
           </button>
           <button
-            class="p-1 rounded-xl text-danger-500 hover:bg-danger-100 dark:hover:bg-danger-900/40 font-bold ml-1"
+            aria-label="Xoá hoạt động"
+            class="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl text-danger-500 hover:bg-danger-100 dark:hover:bg-danger-900/40 font-bold ml-1"
             type="button"
             @click="emit('removeActivity', idx)"
           >
@@ -90,10 +93,10 @@
     </div>
 
     <div
-      class="pt-4 border-t dark:border-surface-700 flex justify-between items-center"
+      class="pt-4 border-t dark:border-surface-700 flex flex-wrap justify-between items-center gap-2"
     >
       <button
-        class="px-4 py-2 text-xs font-bold rounded-xl bg-surface-100 text-surface-700 hover:bg-surface-200 inline-flex items-center gap-1"
+        class="min-h-11 px-4 py-2 text-xs font-bold rounded-xl bg-surface-100 text-surface-700 hover:bg-surface-200 inline-flex items-center justify-center gap-1"
         type="button"
         @click="emit('openTeachingView')"
       >
@@ -102,7 +105,7 @@
       </button>
 
       <button
-        class="px-4 py-2 text-xs font-bold rounded-xl bg-brand-600 text-white hover:bg-brand-700"
+        class="min-h-11 px-4 py-2 text-xs font-bold rounded-xl bg-brand-600 text-white hover:bg-brand-700 inline-flex items-center justify-center"
         type="button"
         @click="emit('saveActivities')"
       >
@@ -121,12 +124,14 @@
     is_required: boolean;
     activity?: {
       id: number;
-      entity_id: number;
+      entity_id?: number;
+      entityId?: number;
       code: string;
       kind: string;
       title: string;
-      estimated_minutes: number;
-    };
+      estimated_minutes?: number;
+      estimatedMinutes?: number;
+    } | null;
   }
 
   const props = defineProps<{
@@ -140,9 +145,13 @@
     (e: "removeActivity", index: number): void;
   }>();
 
+  function getActivityMinutes(act?: AssembledActivityItem["activity"]): number {
+    return act?.estimated_minutes ?? act?.estimatedMinutes ?? 5;
+  }
+
   const totalMinutes = computed(() => {
     return props.activities.reduce(
-      (sum, a) => sum + (a.activity?.estimated_minutes || 5),
+      (sum, a) => sum + getActivityMinutes(a.activity),
       0
     );
   });

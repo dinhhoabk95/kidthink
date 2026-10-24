@@ -1,24 +1,24 @@
 <template>
   <section
     aria-labelledby="group-subscriptions-heading"
-    class="bg-white dark:bg-surface-900 rounded-3xl border-4 border-surface-200 dark:border-surface-800 p-6 space-y-5 shadow-sm"
+    class="bg-white dark:bg-surface-900 rounded-3xl border-4 border-surface-200 dark:border-surface-800 p-4 sm:p-6 space-y-5 shadow-sm min-w-0 overflow-hidden"
   >
     <div
-      class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-surface-100 dark:border-surface-800 pb-4"
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-surface-100 dark:border-surface-800 pb-4 min-w-0"
     >
       <h2
-        class="text-lg font-bold font-heading text-surface-900 dark:text-surface-100 flex items-center gap-2"
+        class="text-lg font-bold font-heading text-surface-900 dark:text-surface-100 flex items-center gap-2 break-words min-w-0"
         id="group-subscriptions-heading"
       >
         <UIcon
-          class="w-5 h-5 text-surface-500 dark:text-surface-400"
+          class="w-5 h-5 text-surface-500 dark:text-surface-400 shrink-0"
           name="i-lucide-repeat"
         />
-        Gói đăng ký & Dịch vụ (Subscriptions)
+        <span>Gói đăng ký & Dịch vụ (Subscriptions)</span>
       </h2>
 
       <button
-        class="px-3 py-1.5 rounded-xl border border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-colors"
+        class="min-h-11 px-4 py-2 rounded-2xl border-2 border-surface-200 dark:border-surface-700 bg-surface-50 dark:bg-surface-800 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-200 text-xs font-bold transition-colors inline-flex items-center justify-center self-start sm:self-auto"
         type="button"
         :disabled="loading"
         @click="loadSubscriptions"
@@ -79,7 +79,9 @@
             <td class="p-3 text-surface-700 dark:text-surface-300">
               <div class="font-bold">{{ formatVnd(sub.price_vnd) }}</div>
               <div class="text-[10px] text-surface-500 dark:text-surface-400">
-                {{ sub.billing_period === "annual" ? "Hàng năm" : "Hàng tháng" }}
+                {{
+                  sub.billing_period === "annual" ? "Hàng năm" : "Hàng tháng"
+                }}
               </div>
             </td>
             <td class="p-3">
@@ -123,7 +125,7 @@
             </td>
             <td class="p-3 text-right">
               <button
-                class="px-3 py-1.5 rounded-xl border border-danger-300 dark:border-danger-700 bg-danger-50 dark:bg-danger-950/50 hover:bg-danger-100 dark:hover:bg-danger-900/60 text-danger-800 dark:text-danger-200 text-[11px] font-bold transition-colors disabled:opacity-50"
+                class="min-h-11 px-3 py-1.5 rounded-xl border border-danger-300 dark:border-danger-700 bg-danger-50 dark:bg-danger-950/50 hover:bg-danger-100 dark:hover:bg-danger-900/60 text-danger-800 dark:text-danger-200 text-[11px] font-bold transition-colors disabled:opacity-50 inline-flex items-center justify-center"
                 type="button"
                 v-if="canCancel(sub.status)"
                 :disabled="isUserDeleted"

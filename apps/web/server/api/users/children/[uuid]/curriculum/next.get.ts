@@ -2,10 +2,15 @@ import { curriculumEnrollments, getOwnerDb } from "@mindkid/db";
 import { NotFoundError } from "@mindkid/errors/common";
 import { resolveNextStep } from "@mindkid/shared";
 import { eq } from "drizzle-orm";
-import { defineEventHandler, getRouterParam } from "h3";
+import { defineEventHandler, getQuery, getRouterParam } from "h3";
+import { z } from "zod";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { resolveEnrolledChildCurriculum } from "#server/utils/curriculum-runtime";
+
+const NextQuerySchema = z.object({
+  optional: z.enum(["0", "1", "true", "false"]).optional(),
+});
 
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
@@ -16,12 +21,25 @@ export default defineEventHandler(async (event) => {
 
   const userId = Number(user.user_id);
   const db = getOwnerDb();
+  const parsedQuery = NextQuerySchema.safeParse(getQuery(event));
+  const isOptional =
+    parsedQuery.success &&
+    (parsedQuery.data.optional === "1" || parsedQuery.data.optional === "true");
 
   // 1. Resolve child, active enrollment, items, published entities, and user allowed tiers in batch
   const { enrollment, items, weeks, completedItemIds, userAllowedTiers } =
-    await resolveEnrolledChildCurriculum(event, userId, uuid, {
-      requireActive: false,
-    });
+    isOptional
+      ? await resolveEnrolledChildCurriculum(event, userId, uuid, {
+          requireActive: false,
+          requireEnrollment: false,
+        })
+      : await resolveEnrolledChildCurriculum(event, userId, uuid, {
+          requireActive: false,
+        });
+
+  if (!enrollment) {
+    return null;
+  }
 
   // 2. Compute next step (BR-CUR-01..10, D-MG, D-ME, D-MD)
   const nextStep = resolveNextStep({

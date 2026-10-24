@@ -64,7 +64,10 @@
 
     <div class="py-2" v-else>
       <p class="text-sm text-surface-600 mb-3 font-medium">
-        {{ promptPlaceholder || "Xem tóm tắt sư phạm và định hướng rèn luyện cho bé." }}
+        {{
+          promptPlaceholder ||
+            "Xem tóm tắt sư phạm và định hướng rèn luyện cho bé."
+        }}
       </p>
       <button
         class="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-white shadow-sm hover:bg-brand-700 active:scale-95 transition-all focus-visible:ring-2 focus-visible:ring-brand-500 disabled:opacity-50"

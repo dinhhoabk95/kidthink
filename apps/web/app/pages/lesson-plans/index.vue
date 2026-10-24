@@ -111,9 +111,9 @@
         v-else-if="plans.length === 0"
       >
         <div
-          class="w-20 h-20 rounded-full bg-brand-50 dark:bg-brand-950/50 flex items-center justify-center text-3xl mb-4 border-2 border-brand-200 dark:border-brand-800 text-brand-600 dark:text-brand-400 font-heading font-bold"
+          class="w-20 h-20 rounded-full bg-brand-50 dark:bg-brand-950/50 flex items-center justify-center mb-4 border-2 border-brand-200 dark:border-brand-800 text-brand-600 dark:text-brand-400 font-heading font-bold"
         >
-          📝
+          <UIcon class="w-10 h-10" name="i-lucide-file-text" />
         </div>
         <h2
           class="text-xl font-heading font-bold text-surface-800 dark:text-surface-200"
@@ -146,18 +146,19 @@
           :key="plan.uuid"
         >
           <div>
-            <div class="flex items-center justify-between gap-2 mb-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
               <span
-                class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-300"
+                class="px-2.5 py-0.5 rounded-full text-sm font-bold bg-surface-100 dark:bg-surface-700 text-surface-700 dark:text-surface-300"
                 v-if="plan.target_age"
               >
                 Độ tuổi: {{ plan.target_age }} tuổi
               </span>
               <span
-                class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400"
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-sm font-bold bg-brand-50 dark:bg-brand-950/40 text-brand-600 dark:text-brand-400"
                 v-if="plan.estimated_minutes"
               >
-                ⏱️ {{ plan.estimated_minutes }} phút
+                <UIcon class="w-4 h-4 shrink-0" name="i-lucide-clock" />
+                <span>{{ plan.estimated_minutes }} phút</span>
               </span>
             </div>
 
@@ -165,7 +166,7 @@
               class="text-lg font-heading font-bold text-surface-900 dark:text-white line-clamp-2"
             >
               <NuxtLink
-                class="hover:text-brand-600 dark:hover:text-brand-400 focus:outline-none focus:underline"
+                class="inline-flex items-center min-h-11 hover:text-brand-600 dark:hover:text-brand-400 focus:outline-none focus:underline"
                 :to="`/lesson-plans/${plan.uuid}`"
               >
                 {{ plan.title }}
@@ -180,7 +181,7 @@
             </p>
 
             <div
-              class="mt-3 text-xs text-brand-600 dark:text-brand-400 font-medium"
+              class="mt-3 text-sm text-brand-600 dark:text-brand-400 font-medium"
               v-if="plan.source_lesson_code"
             >
               Sao chép từ: {{ plan.source_lesson_code }}
@@ -188,36 +189,36 @@
           </div>
 
           <div
-            class="mt-6 pt-4 border-t border-surface-100 dark:border-surface-700/60 flex items-center justify-between"
+            class="mt-6 pt-4 border-t border-surface-100 dark:border-surface-700/60 flex flex-wrap items-center justify-between gap-3"
           >
             <span
-              class="text-xs text-surface-500 dark:text-surface-400 font-medium"
+              class="text-sm text-surface-500 dark:text-surface-400 font-medium"
             >
               {{ plan.item_count }}
               mục
             </span>
 
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
               <button
-                class="px-3 py-1.5 rounded-xl bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 text-surface-800 dark:text-surface-100 text-xs font-bold min-h-11 inline-flex items-center justify-center disabled:opacity-50 gap-1"
+                class="px-3 py-1.5 rounded-xl bg-surface-200 hover:bg-surface-300 dark:bg-surface-700 dark:hover:bg-surface-600 text-surface-800 dark:text-surface-100 text-sm font-bold min-h-11 inline-flex items-center justify-center disabled:opacity-50 gap-1"
                 type="button"
                 :disabled="exportingUuid === plan.uuid"
                 @click="handleQuickExport(plan)"
               >
                 <UIcon class="w-4 h-4 shrink-0" name="i-lucide-file-text" />
-                <span
-                  >{{ exportingUuid === plan.uuid ? 'Đang xuất...' : 'Xuất PDF' }}</span
-                >
+                <span>{{
+                  exportingUuid === plan.uuid ? "Đang xuất..." : "Xuất PDF"
+                }}</span>
               </button>
               <NuxtLink
-                class="px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 hover:bg-brand-100 text-xs font-bold min-h-11 inline-flex items-center justify-center"
+                class="px-3 py-1.5 rounded-xl bg-brand-50 dark:bg-brand-950/40 text-brand-700 dark:text-brand-300 hover:bg-brand-100 text-sm font-bold min-h-11 inline-flex items-center justify-center"
                 :to="`/lesson-plans/${plan.uuid}`"
               >
                 Chỉnh sửa
               </NuxtLink>
               <button
                 aria-label="Xóa giáo án"
-                class="px-3 py-1.5 rounded-xl bg-surface-100 hover:bg-danger-50 dark:bg-surface-700 dark:hover:bg-danger-950/40 text-surface-600 hover:text-danger-600 dark:text-surface-300 dark:hover:text-danger-400 text-xs font-bold min-h-11"
+                class="px-3 py-1.5 rounded-xl bg-surface-100 hover:bg-danger-50 dark:bg-surface-700 dark:hover:bg-danger-950/40 text-surface-600 hover:text-danger-600 dark:text-surface-300 dark:hover:text-danger-400 text-sm font-bold min-h-11 inline-flex items-center justify-center"
                 type="button"
                 @click="confirmDelete(plan)"
               >
@@ -267,7 +268,7 @@
               >
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label
                   class="block text-sm font-bold text-surface-700 dark:text-surface-300 mb-1"
@@ -347,7 +348,7 @@
             {{ createError }}
           </div>
 
-          <div class="mt-6 flex items-center justify-end gap-3">
+          <div class="mt-6 flex flex-wrap items-center justify-end gap-3">
             <button
               class="px-5 py-2.5 rounded-2xl bg-surface-100 hover:bg-surface-200 dark:bg-surface-700 dark:hover:bg-surface-600 text-surface-700 dark:text-surface-200 font-bold min-h-11"
               type="button"
@@ -360,7 +361,7 @@
               type="submit"
               :disabled="creating"
             >
-              {{ creating ? 'Đang tạo...' : 'Tạo giáo án' }}
+              {{ creating ? "Đang tạo..." : "Tạo giáo án" }}
             </button>
           </div>
         </form>
@@ -386,8 +387,9 @@
         </h2>
         <p class="text-surface-600 dark:text-surface-400 text-sm mb-6">
           Bạn có chắc chắn muốn xóa giáo án
-          <strong class="text-surface-900 dark:text-white"
-            >{{ planToDelete.title }}</strong
+          <strong class="text-surface-900 dark:text-white">{{
+            planToDelete.title
+          }}</strong
           >? Thao tác này không thể hoàn tác.
         </p>
 
@@ -398,7 +400,7 @@
           {{ deleteError }}
         </div>
 
-        <div class="flex items-center justify-center gap-3">
+        <div class="flex flex-wrap items-center justify-center gap-3">
           <button
             class="px-5 py-2.5 rounded-2xl bg-surface-100 hover:bg-surface-200 dark:bg-surface-700 dark:hover:bg-surface-600 text-surface-700 dark:text-surface-200 font-bold min-h-11"
             type="button"
@@ -412,7 +414,7 @@
             :disabled="deleting"
             @click="handleDelete"
           >
-            {{ deleting ? 'Đang xóa...' : 'Xóa vĩnh viễn' }}
+            {{ deleting ? "Đang xóa..." : "Xóa vĩnh viễn" }}
           </button>
         </div>
       </div>
@@ -423,6 +425,7 @@
 </template>
 
 <script lang="ts" setup>
+  import { normalizeApiError } from "@mindkid/errors/client";
   import type {
     CreateLessonPlanInput,
     LessonPlanDetail,
@@ -463,10 +466,18 @@
   const creating = ref(false);
   const createError = ref<string | null>(null);
 
-  const createForm = reactive({
+  interface CreateLessonPlanForm {
+    title: string;
+    target_age: number | undefined;
+    estimated_minutes: number | undefined;
+    notes: string;
+    source_lesson_code: string;
+  }
+
+  const createForm = reactive<CreateLessonPlanForm>({
     title: "",
-    target_age: undefined as number | undefined,
-    estimated_minutes: undefined as number | undefined,
+    target_age: undefined,
+    estimated_minutes: undefined,
     notes: "",
     source_lesson_code: "",
   });
@@ -494,15 +505,9 @@
       });
       planToDelete.value = null;
       await refresh();
-    } catch (err: unknown) {
-      const errorObject = err as {
-        data?: { message?: string };
-        message?: string;
-      };
+    } catch (err) {
       deleteError.value =
-        errorObject?.data?.message ||
-        errorObject?.message ||
-        "Không thể xóa giáo án.";
+        normalizeApiError(err).message || "Không thể xóa giáo án.";
     } finally {
       deleting.value = false;
     }
@@ -537,15 +542,9 @@
 
       showCreateModal.value = false;
       await navigateTo(`/lesson-plans/${created.uuid}`);
-    } catch (err: unknown) {
-      const errorObject = err as {
-        data?: { message?: string };
-        message?: string;
-      };
+    } catch (err) {
       createError.value =
-        errorObject?.data?.message ||
-        errorObject?.message ||
-        "Không thể tạo giáo án.";
+        normalizeApiError(err).message || "Không thể tạo giáo án.";
     } finally {
       creating.value = false;
     }
@@ -612,14 +611,9 @@
       const downloadUrl = await pollExportDownload(res.job_uuid);
       bannerMessage.value = `Đã xuất PDF thành công cho giáo án "${plan.title}"! Đang tải file về máy...`;
       triggerBrowserDownload(downloadUrl, `giao-an-${plan.title}.pdf`);
-    } catch (err: unknown) {
-      const errorObject = err as {
-        data?: { message?: string };
-        message?: string;
-      };
+    } catch (err) {
       bannerError.value =
-        errorObject?.data?.message ||
-        errorObject?.message ||
+        normalizeApiError(err).message ||
         "Không thể xuất PDF. Vui lòng kiểm tra quyền truy cập hoặc quota.";
     } finally {
       exportingUuid.value = null;

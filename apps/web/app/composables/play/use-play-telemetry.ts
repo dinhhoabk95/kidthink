@@ -48,7 +48,11 @@ const FORBIDDEN_PARENT_GATE_KEYS = new Set<string>([
 
 const parentGateTelemetryRecords: ParentGateTelemetryRecord[] = [];
 let activeTelemetryBuffer: OfflineEventBuffer | null = null;
-let parentGateSeqCounter = 10_000;
+let activeRoundRunner: RoundRunner | null = null;
+
+export function setActiveRoundRunner(runner: RoundRunner | null): void {
+  activeRoundRunner = runner;
+}
 
 export function sanitizeParentGatePayload(
   eventName: ParentGateTelemetryEventName,
@@ -85,22 +89,44 @@ export function recordParentGateTelemetry(
   };
   parentGateTelemetryRecords.push(record);
 
+  if (
+    activeRoundRunner &&
+    typeof activeRoundRunner.recordExternalEvent === "function"
+  ) {
+    activeRoundRunner.getAllTelemetry();
+    activeRoundRunner.recordExternalEvent({
+      event_name: eventName,
+      timestamp_ms: timestampMs,
+      data: payload,
+    });
+  }
+
   const meta = activeTelemetryBuffer?.getSessionMeta();
   if (activeTelemetryBuffer && meta) {
-    parentGateSeqCounter += 1;
-    const occurredAtMs = Math.max(
-      0,
-      Math.min(2_147_483_647, Math.round(timestampMs - meta.started_at))
-    );
-    activeTelemetryBuffer.ingestEvents([
-      {
-        seq: parentGateSeqCounter,
-        event_name: eventName,
-        occurred_at_ms: occurredAtMs,
-        client_timestamp: new Date(timestampMs).toISOString(),
-        payload,
-      },
-    ]);
+    if (
+      activeRoundRunner &&
+      typeof activeRoundRunner.recordExternalEvent === "function"
+    ) {
+      const events = formatTelemetryPayload(
+        activeRoundRunner.getAllTelemetry(),
+        new Date(meta.started_at).toISOString()
+      );
+      activeTelemetryBuffer.ingestEvents(events);
+    } else {
+      const occurredAtMs = Math.max(
+        0,
+        Math.min(2_147_483_647, Math.round(timestampMs - meta.started_at))
+      );
+      activeTelemetryBuffer.ingestEvents([
+        {
+          seq: activeTelemetryBuffer.getNextSeq(),
+          event_name: eventName,
+          occurred_at_ms: occurredAtMs,
+          client_timestamp: new Date(timestampMs).toISOString(),
+          payload,
+        },
+      ]);
+    }
   }
 
   return record;
@@ -284,6 +310,7 @@ export function usePlayTelemetry(options?: UsePlayTelemetryOptions) {
   function destroyTelemetrySession(): void {
     if (activeTelemetryBuffer === buffer) {
       activeTelemetryBuffer = null;
+      activeRoundRunner = null;
     }
     buffer.destroy();
   }
@@ -294,6 +321,7 @@ export function usePlayTelemetry(options?: UsePlayTelemetryOptions) {
 
   return {
     initTelemetrySession,
+    setActiveRoundRunner,
     uploadTelemetry,
     finishSession,
     destroyTelemetrySession,

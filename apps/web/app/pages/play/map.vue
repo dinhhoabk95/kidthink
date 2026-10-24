@@ -4,7 +4,7 @@
   >
     <!-- Kid Top Bar / HUD -->
     <header
-      class="flex items-center justify-between max-w-5xl mx-auto w-full mb-6"
+      class="flex flex-wrap items-center justify-between gap-3 max-w-5xl mx-auto w-full mb-6"
     >
       <!-- Lối ra an toàn: khoá phụ huynh nhấn giữ (`BR-PSZ-11`, `BR-WTM-05`). -->
       <KidParentLockButton
@@ -12,15 +12,16 @@
         @unlock="showParentGate = true"
       />
 
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
         <!-- Đếm tiến độ và huy hiệu hoàn thành -->
         <div
-          class="bg-white border-[3px] border-surface-300 px-4 py-2 rounded-2xl shadow-sm flex items-center gap-2"
+          class="bg-white border-[3px] border-surface-300 px-3 sm:px-4 py-2 rounded-2xl shadow-sm flex items-center gap-2"
+          data-testid="play-map-progress"
           v-if="mapData"
         >
           <UIcon class="w-6 h-6 text-amber-500" name="i-lucide-star" />
           <span
-            class="font-heading font-bold text-surface-800 text-lg tabular-nums"
+            class="font-heading font-bold text-surface-800 text-base sm:text-lg tabular-nums"
           >
             {{ mapData.completed_lessons }}/{{ mapData.total_lessons }}
           </span>
@@ -29,11 +30,11 @@
         <KidMascot pose="idle" :size="56" />
 
         <div
-          class="bg-white border-[3px] border-surface-300 px-5 py-2 rounded-2xl shadow-sm"
+          class="bg-white border-[3px] border-surface-300 px-4 sm:px-5 py-2 rounded-2xl shadow-sm"
         >
-          <span class="font-heading font-bold text-brand-700 text-xl"
-            >Bản Đồ Bài Học</span
-          >
+          <h1 class="font-heading font-bold text-brand-700 text-lg sm:text-xl">
+            Bản Đồ Bài Học
+          </h1>
         </div>
       </div>
     </header>
@@ -77,51 +78,59 @@
         <!-- Danh sách các tuần theo chủ đề GDMN -->
         <section
           class="bg-white border-4 rounded-3xl p-5 sm:p-6 transition-all"
+          data-testid="play-map-week-card"
           v-for="w in mapData.weeks"
           :key="w.week_no"
           :aria-label="`Tuần ${w.week_no}: ${w.theme_title}`"
           :class="getWeekCardClass(w)"
         >
           <!-- Tiêu đề Tuần & Chủ đề -->
-          <div class="flex items-center justify-between mb-4">
-            <div class="flex items-center gap-3">
+          <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div class="flex items-center gap-3 min-w-0">
               <span
                 aria-hidden="true"
-                class="w-12 h-12 rounded-2xl bg-surface-100 border-2 border-surface-300 flex items-center justify-center text-2xl"
+                class="w-12 h-12 shrink-0 rounded-2xl bg-surface-100 border-2 border-surface-300 flex items-center justify-center text-2xl"
               >
                 {{ w.theme_emoji }}
               </span>
-              <div>
+              <div class="min-w-0">
                 <span
-                  class="font-heading font-bold text-xs tracking-wider text-brand-600 block tabular-nums"
+                  class="font-heading font-bold text-base tracking-wider text-brand-600 block tabular-nums"
                 >
                   Tuần {{ w.week_no }}
                 </span>
                 <h2
-                  class="font-heading font-bold text-lg sm:text-xl text-surface-900"
+                  class="font-heading font-bold text-lg sm:text-xl text-surface-900 break-words"
                 >
                   {{ w.theme_title }}
                 </h2>
               </div>
             </div>
 
-            <!-- Huy hiệu tuần hoàn thành hoặc tuần đang học -->
-            <div
-              class="flex items-center gap-1.5 text-emerald-600 font-heading text-sm font-bold"
-              v-if="w.is_completed"
-            >
-              <UIcon
-                class="w-5 h-5 text-emerald-500"
-                name="i-lucide-check-circle-2"
-              />
-              <span>Đã xong</span>
-            </div>
-            <div
-              class="flex items-center gap-1.5 text-cta-600 font-heading text-sm font-bold animate-pulse"
-              v-else-if="w.is_current"
-            >
-              <UIcon class="w-5 h-5 text-cta-500" name="i-lucide-sparkles" />
-              <span>Đang học</span>
+            <!-- Huy hiệu tuần hoàn thành hoặc tuần đang học & tỉ lệ bài hoàn thành (`BR-WTM-08`) -->
+            <div class="flex items-center gap-2 shrink-0">
+              <span
+                class="font-heading font-bold text-base text-surface-600 bg-surface-100 border-2 border-surface-300 px-3 py-1 rounded-xl tabular-nums"
+              >
+                {{ countCompletedInWeek(w.lessons) }}/{{ w.lessons.length }}
+              </span>
+              <div
+                class="flex items-center gap-1.5 text-emerald-600 font-heading text-base font-bold"
+                v-if="w.is_completed"
+              >
+                <UIcon
+                  class="w-5 h-5 text-emerald-500"
+                  name="i-lucide-check-circle-2"
+                />
+                <span>Đã xong</span>
+              </div>
+              <div
+                class="flex items-center gap-1.5 text-cta-600 font-heading text-base font-bold animate-pulse"
+                v-else-if="w.is_current"
+              >
+                <UIcon class="w-5 h-5 text-cta-500" name="i-lucide-sparkles" />
+                <span>Đang học</span>
+              </div>
             </div>
           </div>
 
@@ -135,7 +144,7 @@
               <!-- Mascot chỉ vị trí trạm bài hiện tại (`BR-WTM-03`) -->
               <div
                 aria-hidden="true"
-                class="absolute -top-12 z-10 flex flex-col items-center animate-bounce"
+                class="absolute -top-12 z-10 flex flex-col items-center animate-bounce pointer-events-none"
                 v-if="les.is_current"
               >
                 <KidMascot pose="happy" :size="40" />
@@ -144,6 +153,7 @@
               <!-- Trạm bài học tròn to chuẩn Kid Surface (`BR-WTM-04`, `BR-WTM-06`) -->
               <button
                 class="w-18 h-18 min-w-16 min-h-16 rounded-3xl border-4 flex items-center justify-center text-3xl transition-all relative"
+                data-testid="play-map-lesson-node"
                 type="button"
                 :aria-label="`Bài học ${les.title}, trạng thái: ${getLessonStatusLabel(les.status)}`"
                 :class="getLessonButtonClass(les.status)"
@@ -175,7 +185,7 @@
 
     <!-- Footer Safe Zone -->
     <footer
-      class="max-w-5xl mx-auto w-full mt-6 text-center text-xs text-surface-400"
+      class="max-w-5xl mx-auto w-full mt-6 text-center text-base text-surface-600"
     >
       MindKid Thinking Play — Bản đồ học tập mầm non
     </footer>
@@ -192,7 +202,10 @@
 
 <script lang="ts" setup>
   import { onMounted, ref } from "vue";
-  import type { ChildThemeMapResponse } from "#server/services/child-theme-map";
+  import type {
+    ChildThemeMapResponse,
+    ThemeMapLesson,
+  } from "#server/services/child-theme-map";
   import KidMascot from "~/components/kid/mascot.vue";
   import KidParentLockButton from "~/components/kid/parent-lock-button.vue";
   import ParentGateModal from "~/components/parent-gate-modal.vue";
@@ -214,6 +227,10 @@
 
   function openLesson(lessonCode: string): void {
     router.push(`/play/lesson/${lessonCode}`);
+  }
+
+  function countCompletedInWeek(lessonsList: ThemeMapLesson[]): number {
+    return lessonsList.filter((les) => les.status === "completed").length;
   }
 
   function getWeekCardClass(w: {

@@ -15,6 +15,11 @@ import { z } from "zod";
 import { throwValidationError } from "#server/utils/api-error";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 
+interface DeleteChildBodyInput {
+  password?: string;
+  confirm_name?: string;
+}
+
 const deleteChildSchema = z.object({
   password: z.string().optional().default(""),
   confirm_name: z.string().optional().default(""),
@@ -40,8 +45,10 @@ export default defineEventHandler(async (event) => {
     throw new NotFoundError("NOT_FOUND");
   }
 
-  const eventBody = (event.context as { body?: unknown })?.body;
-  const raw = eventBody || (await readBody(event).catch(() => ({})));
+  const eventBody = (event.context as { body?: DeleteChildBodyInput })?.body;
+  const raw =
+    eventBody ||
+    (await readBody<DeleteChildBodyInput>(event).catch(() => ({})));
   const parsed = deleteChildSchema.safeParse(raw);
   if (!parsed.success) {
     throwValidationError(parsed.error);

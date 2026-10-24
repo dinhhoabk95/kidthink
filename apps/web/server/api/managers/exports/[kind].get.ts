@@ -156,6 +156,19 @@ export function assertRowCountWithinLimit(
   }
 }
 
+const FORMULA_PREFIX_REGEX = /^[=+\-@\t\r]/;
+
+function sanitizeCsvCell(val: string | number | null | undefined): string {
+  if (val === null || val === undefined) {
+    return "";
+  }
+  const normalized = String(val).replace(/[\r\n]+/g, " ");
+  const safe = FORMULA_PREFIX_REGEX.test(normalized)
+    ? `'${normalized}`
+    : normalized;
+  return safe.replace(/"/g, '""');
+}
+
 function redactEmail(email: string): string {
   const parts = email.split("@");
   const name = parts[0];
@@ -205,7 +218,7 @@ async function exportRevenueCsv(
   let csvContent =
     "\uFEFFMã đơn,Gói,Số tiền (VNĐ),Trạng thái,Email Người dùng,Thời gian tạo\n";
   for (const r of rows) {
-    csvContent += `"${r.orderCode || ""}","${r.packageCode}",${r.amountVnd},"${r.status}","${r.userEmail || ""}","${r.createdAt.toISOString()}"\n`;
+    csvContent += `"${sanitizeCsvCell(r.orderCode)}","${sanitizeCsvCell(r.packageCode)}",${r.amountVnd},"${sanitizeCsvCell(r.status)}","${sanitizeCsvCell(r.userEmail)}","${r.createdAt.toISOString()}"\n`;
   }
   return { csvContent, rowCount: rows.length };
 }
@@ -237,7 +250,7 @@ async function exportSubscriptionsCsv(
   let csvContent = "\uFEFFUser ID,Email (Rút gọn),Ngày đăng ký\n";
   for (const r of rows) {
     const redacted = r.email ? redactEmail(r.email) : "";
-    csvContent += `${r.userId},"${redacted}","${r.createdAt.toISOString()}"\n`;
+    csvContent += `${r.userId},"${sanitizeCsvCell(redacted)}","${r.createdAt.toISOString()}"\n`;
   }
   return { csvContent, rowCount: rows.length };
 }
@@ -271,7 +284,7 @@ async function exportContentKpiCsv(
   let csvContent =
     "\uFEFFMã màn chơi,Phiên bản,Tiêu đề,Gói truy cập,Trạng thái\n";
   for (const r of rows) {
-    csvContent += `"${r.code}",${r.version},"${r.title}","${r.accessTier}","${r.status}"\n`;
+    csvContent += `"${sanitizeCsvCell(r.code)}",${r.version},"${sanitizeCsvCell(r.title)}","${sanitizeCsvCell(r.accessTier)}","${sanitizeCsvCell(r.status)}"\n`;
   }
   return { csvContent, rowCount: rows.length };
 }
@@ -303,7 +316,7 @@ async function exportSkillCoverageCsv(
 
   let csvContent = "\uFEFFMã kỹ năng,Tên kỹ năng,Độ khó,Bậc\n";
   for (const r of rows) {
-    csvContent += `"${r.code}","${r.name}",${r.difficulty},"${r.tier}"\n`;
+    csvContent += `"${sanitizeCsvCell(r.code)}","${sanitizeCsvCell(r.name)}",${r.difficulty},"${sanitizeCsvCell(r.tier)}"\n`;
   }
   return { csvContent, rowCount: rows.length };
 }
@@ -331,7 +344,7 @@ async function exportAuditCsv(
   let csvContent =
     "\uFEFFUUID,Actor Type,Actor ID,Action,Entity Type,Entity ID,Reason,Created At\n";
   for (const r of rows) {
-    csvContent += `"${r.uuid}","${r.actorType}",${r.actorId || ""},"${r.action}","${r.entityType}","${r.entityId}","${r.reason || ""}","${r.createdAt.toISOString()}"\n`;
+    csvContent += `"${sanitizeCsvCell(r.uuid)}","${sanitizeCsvCell(r.actorType)}",${r.actorId || ""},"${sanitizeCsvCell(r.action)}","${sanitizeCsvCell(r.entityType)}","${sanitizeCsvCell(r.entityId)}","${sanitizeCsvCell(r.reason)}","${r.createdAt.toISOString()}"\n`;
   }
   return { csvContent, rowCount: rows.length };
 }
@@ -402,7 +415,7 @@ async function exportCurriculumHealthCsv(
     const itemsCount = itemCountMap.get(r.id) ?? 0;
     const activeEnrollments = enrollmentCountMap.get(r.id) ?? 0;
 
-    csvContent += `"${r.code}",${r.version},"${r.title}","${r.programType}","${r.status}",${r.durationWeeks},${r.sessionsPerWeek},${itemsCount},${activeEnrollments},"${r.createdAt.toISOString()}"\n`;
+    csvContent += `"${sanitizeCsvCell(r.code)}",${r.version},"${sanitizeCsvCell(r.title)}","${sanitizeCsvCell(r.programType)}","${sanitizeCsvCell(r.status)}",${r.durationWeeks},${r.sessionsPerWeek},${itemsCount},${activeEnrollments},"${r.createdAt.toISOString()}"\n`;
   }
 
   return { csvContent, rowCount: rows.length };

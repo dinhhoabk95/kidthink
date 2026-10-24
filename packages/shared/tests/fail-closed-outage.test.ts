@@ -6,8 +6,9 @@ vi.mock("@mindkid/cache", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@mindkid/cache")>();
   return {
     ...actual,
-    checkRateLimit: vi.fn((key: string, limit: number, windowSeconds: number) =>
-      actual.checkRateLimit(key, limit, windowSeconds)
+    checkRateLimit: vi.fn(
+      (key: string, limit: number, windowSeconds: number, failOpen?: boolean) =>
+        actual.checkRateLimit(key, limit, windowSeconds, failOpen)
     ),
   };
 });

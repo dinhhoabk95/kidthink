@@ -182,16 +182,21 @@ export async function runVerifyBackup(
       }
     }
 
+    const sanitizedError = readErrorMessage(error).replace(
+      /(:\/\/[^:\s/]+:)[^@\s]+@/g,
+      "$1[REDACTED]@"
+    );
+
     await alert("critical", "Backup verify failed", {
       jobId,
-      error: readErrorMessage(error),
+      error: sanitizedError,
     });
 
     await getOwnerDb()
       .update(backupLog)
       .set({
         status: "failed",
-        errorMessage: readErrorMessage(error),
+        errorMessage: sanitizedError,
         finishedAt: new Date(),
       })
       .where(eq(backupLog.id, log.id));

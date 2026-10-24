@@ -1,7 +1,13 @@
-import { childProfiles, entitlements, getOwnerDb } from "@mindkid/db";
+import {
+  childProfiles,
+  consentLogs,
+  entitlements,
+  getOwnerDb,
+} from "@mindkid/db";
+import { ConsentRequiredError } from "@mindkid/errors/account";
 import { ChildLimitExceededError } from "@mindkid/errors/billing";
 import { InternalError, NotFoundError } from "@mindkid/errors/common";
-import { and, count, eq, gt, isNull, or } from "drizzle-orm";
+import { and, count, desc, eq, gt, isNull, or } from "drizzle-orm";
 import { defineEventHandler, getRouterParam } from "h3";
 
 import { requireWebUserSession } from "#server/utils/auth-runtime";
@@ -24,6 +30,25 @@ export default defineEventHandler(async (event) => {
 
   if (!child) {
     throw new NotFoundError("NOT_FOUND");
+  }
+
+  // Check child_data consent (BR-CPC-05)
+  const [latestConsent] = await db
+    .select()
+    .from(consentLogs)
+    .where(
+      and(
+        eq(consentLogs.userId, userId),
+        eq(consentLogs.consentType, "child_data")
+      )
+    )
+    .orderBy(desc(consentLogs.createdAt), desc(consentLogs.id))
+    .limit(1);
+
+  if (latestConsent?.action !== "accepted") {
+    throw new ConsentRequiredError(
+      "Cần đồng ý thu thập dữ liệu trẻ em trước khi khôi phục hồ sơ."
+    );
   }
 
   // BR-CPR-02: Quota check on restore

@@ -8,7 +8,11 @@
         <div class="not-found-box" v-if="!doc">
           <h1>Trang không tìm thấy</h1>
           <p>Nội dung bạn yêu cầu không tồn tại hoặc đã được chuyển đổi.</p>
-          <NuxtLink to="/">Quay về trang chủ</NuxtLink>
+          <NuxtLink
+            class="btn-back-home min-h-11 inline-flex items-center justify-center"
+            to="/"
+            >Quay về trang chủ</NuxtLink
+          >
         </div>
 
         <!-- Legal Document Content -->
@@ -23,7 +27,11 @@
                 class="badge-child-safety inline-flex items-center gap-1"
                 v-if="doc.isChildSpecific"
               >
-                <UIcon class="w-3.5 h-3.5" name="i-lucide-shield-check" />
+                <UIcon
+                  aria-hidden="true"
+                  class="w-4 h-4"
+                  name="i-lucide-shield-check"
+                />
                 <span>Bảo vệ trẻ em</span>
               </span>
             </div>
@@ -74,7 +82,13 @@
   definePageMeta({ layout: false });
 
   const route = useRoute();
-  const slug = computed(() => route.params.slug as string);
+  const slug = computed<string>(() => {
+    const raw = route.params.slug;
+    if (Array.isArray(raw)) {
+      return raw[0] ?? "";
+    }
+    return raw ?? "";
+  });
 
   const doc = computed<LegalDocument | undefined>(() => {
     return LEGAL_DOCUMENTS.find((d) => d.slug === slug.value);
@@ -86,19 +100,18 @@
   }
 
   useSeoMeta({
-    title: doc.value
-      ? `${doc.value.title} — MindKid`
-      : "Trang pháp lý — MindKid",
-    description:
+    title: () =>
+      doc.value ? `${doc.value.title} — MindKid` : "Trang pháp lý — MindKid",
+    description: () =>
       doc.value?.summary || "Văn bản pháp lý và chính sách nền tảng MindKid.",
-    ogTitle: doc.value ? `${doc.value.title} — MindKid` : "MindKid",
+    ogTitle: () => (doc.value ? `${doc.value.title} — MindKid` : "MindKid"),
     ogType: "article",
   });
 
-  useHead({
+  useHead(() => ({
     htmlAttrs: { lang: "vi-VN" },
     link: [{ rel: "canonical", href: `https://mindkid.vn/${slug.value}` }],
-  });
+  }));
 </script>
 
 <style scoped>
@@ -133,7 +146,7 @@
 
   .badge-date,
   .badge-child-safety {
-    font-size: 0.8rem;
+    font-size: 0.875rem;
     font-weight: 700;
     padding: 0.25rem 0.65rem;
     border-radius: 9999px;
@@ -151,10 +164,18 @@
 
   .legal-title {
     font-family: var(--font-heading, "Fredoka", sans-serif);
-    font-size: 2.25rem;
+    font-size: 1.75rem;
+    line-height: 1.3;
     font-weight: 700;
     color: var(--color-surface-900);
     margin-bottom: 1rem;
+    overflow-wrap: break-word;
+  }
+
+  @media (min-width: 640px) {
+    .legal-title {
+      font-size: 2.25rem;
+    }
   }
 
   .legal-summary-box {
@@ -176,13 +197,20 @@
 
   .legal-section-block {
     background-color: white;
-    padding: 1.75rem;
-    border-radius: 1.25rem;
+    padding: 1.25rem;
+    border-radius: 1.5rem;
     border: 1px solid var(--color-surface-200);
+  }
+
+  @media (min-width: 640px) {
+    .legal-section-block {
+      padding: 1.75rem;
+    }
   }
 
   .section-heading {
     font-size: 1.3rem;
+    line-height: 1.4;
     font-weight: 700;
     color: var(--color-surface-900);
     margin-bottom: 0.75rem;
@@ -191,8 +219,9 @@
   .section-summary-callout {
     background-color: var(--color-surface-50);
     padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
-    font-size: 0.9rem;
+    border-radius: 0.75rem;
+    font-size: 1rem;
+    line-height: 1.6;
     color: var(--color-surface-700);
     margin-bottom: 1rem;
   }
@@ -212,5 +241,22 @@
   .not-found-box {
     text-align: center;
     padding: 4rem 1rem;
+  }
+
+  .btn-back-home {
+    min-height: 44px;
+    padding: 0.625rem 1.25rem;
+    border-radius: 1rem;
+    background-color: var(--color-brand-600);
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    margin-top: 1rem;
+    transition: background-color 0.2s;
+  }
+
+  .btn-back-home:hover {
+    background-color: var(--color-brand-700);
   }
 </style>

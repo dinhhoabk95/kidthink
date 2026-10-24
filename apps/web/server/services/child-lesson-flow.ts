@@ -141,11 +141,16 @@ async function planSteps(
   caller: CallerIdentity
 ): Promise<ChildLessonStepSnapshot[]> {
   const introsByLevel = new Map<string, readonly string[]>();
-  for (const level of levels) {
-    const check = await checkLevelIntroRequired(level, caller);
+  const checks = await Promise.all(
+    levels.map(async (level) => ({
+      code: level.code,
+      check: await checkLevelIntroRequired(level, caller),
+    }))
+  );
+  for (const { code, check } of checks) {
     const queue = check.intro_required ? (check.intro_queue ?? []) : [];
     introsByLevel.set(
-      level.code,
+      code,
       queue.map((item) => item.intro_level_code)
     );
   }

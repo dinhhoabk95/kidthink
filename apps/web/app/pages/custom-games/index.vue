@@ -36,7 +36,8 @@
             class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-2xl bg-cta hover:bg-cta-hover text-white font-heading font-bold shadow-md transition-all active:scale-95 min-h-11"
             to="/custom-games/create"
           >
-            <span>+ Tạo trò chơi mới</span>
+            <UIcon class="w-5 h-5 mr-1.5" name="i-lucide-plus" />
+            <span>Tạo trò chơi mới</span>
           </NuxtLink>
         </div>
       </div>
@@ -76,7 +77,7 @@
             >Trạng thái:</label
           >
           <select
-            class="w-full px-3 py-2 rounded-xl bg-white dark:bg-surface-800 border border-surface-300 dark:border-surface-700 text-sm font-bold text-surface-900 dark:text-white"
+            class="w-full px-3 py-2 rounded-xl bg-white dark:bg-surface-800 border border-surface-300 dark:border-surface-700 text-sm font-bold text-surface-900 dark:text-white min-h-11"
             id="status-filter"
             v-model="statusFilter"
             @change="fetchGames"
@@ -95,18 +96,18 @@
             >Mẫu game:</label
           >
           <select
-            class="w-full px-3 py-2 rounded-xl bg-white dark:bg-surface-800 border border-surface-300 dark:border-surface-700 text-sm font-bold text-surface-900 dark:text-white"
+            class="w-full px-3 py-2 rounded-xl bg-white dark:bg-surface-800 border border-surface-300 dark:border-surface-700 text-sm font-bold text-surface-900 dark:text-white min-h-11"
             id="template-filter"
             v-model="templateFilter"
             @change="fetchGames"
           >
             <option value="">Tất cả (6 mẫu)</option>
-            <option value="GT-001">GT-001: Lựa chọn đơn</option>
-            <option value="GT-002">GT-002: Ghép cặp 1-1</option>
-            <option value="GT-003">GT-003: Phân loại 2 nhóm</option>
-            <option value="GT-004">GT-004: Kéo thả vào khay</option>
-            <option value="GT-005">GT-005: Hoàn thành dãy</option>
-            <option value="GT-006">GT-006: Ma trận logic</option>
+            <option value="GT-001">GT-001: Chọn một đáp án</option>
+            <option value="GT-002">GT-002: Chọn nhiều đáp án</option>
+            <option value="GT-003">GT-003: Kéo vào đích</option>
+            <option value="GT-004">GT-004: Phân loại vào nhóm</option>
+            <option value="GT-005">GT-005: Ghép cặp</option>
+            <option value="GT-006">GT-006: Sắp xếp thứ tự</option>
           </select>
         </div>
       </div>
@@ -164,15 +165,15 @@
           <div>
             <div class="flex items-center justify-between gap-2 mb-3">
               <span
-                class="px-2.5 py-1 rounded-xl bg-surface-100 dark:bg-surface-700 text-surface-800 dark:text-surface-200 text-xs font-bold font-mono"
+                class="px-2.5 py-1 rounded-xl bg-surface-100 dark:bg-surface-700 text-surface-800 dark:text-surface-200 text-sm font-bold font-mono"
               >
                 {{ game.templateId }}
               </span>
               <span
-                class="px-2.5 py-1 rounded-xl text-xs font-bold"
+                class="px-2.5 py-1 rounded-xl text-sm font-bold"
                 :class="game.status === 'ready' ? 'bg-success-100 text-success-800 dark:bg-success-900/40 dark:text-success-300' : 'bg-warning-100 text-warning-800 dark:bg-warning-900/40 dark:text-warning-300'"
               >
-                {{ game.status === 'ready' ? 'Sẵn sàng chơi' : 'Bản nháp' }}
+                {{ game.status === "ready" ? "Sẵn sàng chơi" : "Bản nháp" }}
               </span>
             </div>
 
@@ -182,13 +183,13 @@
               {{ game.title }}
             </h2>
             <p
-              class="text-xs text-surface-500 dark:text-surface-400 line-clamp-2 mb-4"
+              class="text-sm text-surface-500 dark:text-surface-400 line-clamp-2 mb-4"
             >
               {{ game.instruction }}
             </p>
 
             <div
-              class="flex items-center gap-3 text-xs text-surface-600 dark:text-surface-400 font-bold mb-4"
+              class="flex flex-wrap items-center gap-3 text-sm text-surface-600 dark:text-surface-400 font-bold mb-4"
             >
               <span>Độ tuổi: {{ game.ageMin }}-{{ game.ageMax }} tuổi</span>
               <span>•</span>
@@ -198,10 +199,10 @@
 
           <!-- Card Actions -->
           <div
-            class="pt-4 border-t border-surface-100 dark:border-surface-700/60 flex items-center justify-between gap-2"
+            class="pt-4 border-t border-surface-100 dark:border-surface-700/60 flex flex-wrap items-center justify-between gap-2"
           >
             <NuxtLink
-              class="inline-flex items-center justify-center px-3.5 py-2 rounded-xl bg-surface-100 dark:bg-surface-700 hover:bg-surface-200 dark:hover:bg-surface-600 text-surface-800 dark:text-surface-200 font-heading font-bold text-xs transition-all min-h-11"
+              class="inline-flex items-center justify-center px-3.5 py-2 rounded-xl bg-surface-100 dark:bg-surface-700 hover:bg-surface-200 dark:hover:bg-surface-600 text-surface-800 dark:text-surface-200 font-heading font-bold text-sm transition-all min-h-11"
               :to="`/custom-games/${game.uuid}`"
             >
               <span>Chỉnh sửa</span>
@@ -209,7 +210,7 @@
 
             <div class="flex items-center gap-2">
               <button
-                class="inline-flex items-center justify-center px-3.5 py-2 rounded-xl bg-success-600 hover:bg-success-700 text-white font-heading font-bold text-xs transition-all min-h-11"
+                class="inline-flex items-center justify-center px-3.5 py-2 rounded-xl bg-success-600 hover:bg-success-700 text-white font-heading font-bold text-sm transition-all min-h-11"
                 type="button"
                 v-if="game.status === 'ready'"
                 @click="openPlayModal(game)"
@@ -219,7 +220,7 @@
 
               <button
                 aria-label="Xóa trò chơi"
-                class="inline-flex items-center justify-center px-2.5 py-2 rounded-xl bg-danger-50 dark:bg-danger-950/40 hover:bg-danger-100 text-danger-700 dark:text-danger-300 text-xs font-bold transition-all min-h-11"
+                class="inline-flex items-center justify-center px-3 py-2 rounded-xl bg-danger-50 dark:bg-danger-950/40 hover:bg-danger-100 text-danger-700 dark:text-danger-300 text-sm font-bold transition-all min-h-11 min-w-11"
                 type="button"
                 @click="confirmDelete(game)"
               >
@@ -233,7 +234,9 @@
 
     <!-- Delete Confirmation Modal -->
     <div
+      aria-modal="true"
       class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+      role="dialog"
       v-if="gameToDelete"
     >
       <div
@@ -263,23 +266,97 @@
             :disabled="deleting"
             @click="executeDelete"
           >
-            {{ deleting ? 'Đang xóa...' : 'Xóa trò chơi' }}
+            {{ deleting ? "Đang xóa..." : "Xóa trò chơi" }}
           </button>
         </div>
       </div>
     </div>
+
+    <!-- Test Play Modal -->
+    <div
+      aria-modal="true"
+      class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      data-testid="custom-game-play-modal"
+      role="dialog"
+      v-if="gameToPlay"
+    >
+      <div
+        class="max-w-4xl w-full p-5 sm:p-6 rounded-3xl bg-white dark:bg-surface-800 border-2 border-surface-200 dark:border-surface-700 shadow-xl flex flex-col gap-4"
+      >
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span
+                class="px-2.5 py-0.5 rounded-xl bg-brand-100 text-brand-700 text-sm font-mono font-bold"
+              >
+                {{ gameToPlay.templateId }}
+              </span>
+              <span class="text-sm font-bold text-surface-500">
+                Chế độ chơi thử cách ly
+              </span>
+            </div>
+            <h2
+              class="text-lg sm:text-xl font-heading font-extrabold text-surface-900 dark:text-white"
+            >
+              {{ gameToPlay.title }}
+            </h2>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button
+              class="px-3.5 py-2 rounded-xl bg-surface-100 dark:bg-surface-700 hover:bg-surface-200 text-surface-800 dark:text-surface-200 font-heading font-bold text-sm min-h-11 inline-flex items-center gap-1.5"
+              type="button"
+              @click="replaySandbox"
+            >
+              <UIcon class="w-4 h-4" name="i-lucide-rotate-ccw" />
+              <span>Chơi lại</span>
+            </button>
+            <button
+              aria-label="Đóng cửa sổ chơi thử"
+              class="px-4 py-2 rounded-xl bg-surface-200 dark:bg-surface-700 hover:bg-surface-300 text-surface-800 dark:text-surface-200 font-heading font-bold text-sm min-h-11"
+              type="button"
+              @click="closePlayModal"
+            >
+              Đóng
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="w-full aspect-video rounded-2xl overflow-hidden border-2 border-surface-200 dark:border-surface-700 bg-surface-50"
+        >
+          <iframe
+            class="w-full h-full border-0"
+            title="Khung chơi thử trò chơi tùy chỉnh"
+            ref="playIframeRef"
+            :src="`/play/preview-sandbox?fit=fill&template=${encodeURIComponent(gameToPlay.templateId)}`"
+          />
+        </div>
+      </div>
+    </div>
+
+    <PublicFooter />
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { onMounted, ref } from "vue";
+  import { onBeforeUnmount, onMounted, ref } from "vue";
+  import PublicFooter from "~/components/public-footer.vue";
+  import PublicNavbar from "~/components/public-navbar.vue";
   import { useApi } from "~/composables/use-api";
 
-  // Trang này tự dựng chrome (PublicNavbar + <main id="main-content"> +
-  // PublicFooter). Không tắt layout thì `default.vue` dựng thêm một bộ nữa:
-  // navbar và footer hiện hai lần, và có hai phần tử cùng id="main-content"
-  // nên skip-link của app.vue nhảy sai chỗ (BR-A11-05).
   definePageMeta({ layout: false });
+
+  type PackScalar = string | number | boolean | null;
+
+  type CustomGameRecordMap = Record<
+    string,
+    | PackScalar
+    | PackScalar[]
+    | Record<string, PackScalar>
+    | Record<string, PackScalar | Record<string, PackScalar>>[]
+    | undefined
+  >;
 
   interface CustomGameItem {
     id: number;
@@ -290,9 +367,15 @@
     themeId: string;
     ageMin: number;
     ageMax: number;
+    contentPack?: CustomGameRecordMap;
+    difficultyParams?: Record<string, PackScalar | PackScalar[] | undefined>;
     status: "draft" | "ready";
     version: number;
     createdAt: string;
+  }
+
+  interface SandboxMessageData {
+    type?: string;
   }
 
   const api = useApi();
@@ -303,6 +386,8 @@
   const statusFilter = ref("");
   const templateFilter = ref("");
   const gameToDelete = ref<CustomGameItem | null>(null);
+  const gameToPlay = ref<CustomGameItem | null>(null);
+  const playIframeRef = ref<HTMLIFrameElement | null>(null);
   const deleting = ref(false);
 
   async function fetchGames() {
@@ -324,10 +409,11 @@
       }>(`/api/users/custom-games?${params.toString()}`);
       games.value = res.items || [];
       quota.value = res.quota || { limit: 10, current: 0 };
-    } catch (err: unknown) {
-      const e = err as { data?: { message?: string } };
+    } catch (err) {
       errorMessage.value =
-        e?.data?.message || "Không thể tải danh sách trò chơi.";
+        err instanceof Error && err.message
+          ? err.message
+          : "Không thể tải danh sách trò chơi.";
     } finally {
       loading.value = false;
     }
@@ -348,20 +434,75 @@
       });
       gameToDelete.value = null;
       await fetchGames();
-    } catch (err: unknown) {
-      const e = err as { data?: { message?: string } };
-      errorMessage.value = e?.data?.message || "Lỗi khi xóa trò chơi.";
+    } catch (err) {
+      errorMessage.value =
+        err instanceof Error && err.message
+          ? err.message
+          : "Lỗi khi xóa trò chơi.";
     } finally {
       deleting.value = false;
     }
   }
 
+  function postGameToSandbox() {
+    const active = gameToPlay.value;
+    const targetWindow = playIframeRef.value?.contentWindow;
+    if (!(active && targetWindow)) {
+      return;
+    }
+    targetWindow.postMessage(
+      {
+        type: "MindKid_STUDIO_UPDATE",
+        payload: {
+          templateCode: active.templateId,
+          ageBand: `${active.ageMin}-${active.ageMax}`,
+          levelData: {
+            code: `CUSTOM-${active.uuid}`,
+            content_pack: active.contentPack ?? {},
+            difficulty_params: active.difficultyParams ?? {},
+            theme_id: active.themeId,
+          },
+        },
+      },
+      window.location.origin
+    );
+  }
+
+  function replaySandbox() {
+    const targetWindow = playIframeRef.value?.contentWindow;
+    if (!targetWindow) {
+      return;
+    }
+    targetWindow.postMessage(
+      { type: "MindKid_STUDIO_REPLAY" },
+      window.location.origin
+    );
+  }
+
   function openPlayModal(game: CustomGameItem) {
-    navigateTo(`/games/custom-${game.uuid}`);
+    gameToPlay.value = game;
+  }
+
+  function closePlayModal() {
+    gameToPlay.value = null;
+  }
+
+  function onWindowMessage(event: MessageEvent<SandboxMessageData>) {
+    if (event.origin !== window.location.origin) {
+      return;
+    }
+    if (event.data?.type === "MindKid_STUDIO_SANDBOX_READY") {
+      postGameToSandbox();
+    }
   }
 
   onMounted(() => {
+    window.addEventListener("message", onWindowMessage);
     fetchGames();
+  });
+
+  onBeforeUnmount(() => {
+    window.removeEventListener("message", onWindowMessage);
   });
 </script>
 

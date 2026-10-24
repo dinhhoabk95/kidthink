@@ -10,11 +10,11 @@ packages:
 # tới — pin trước cho thư viện chưa dùng chỉ tạo version chết.
 catalog:
   # Tooling — xem plan.md D-H (lint) và D-I (TypeScript)
-  "@biomejs/biome": ^2.5.7
+  "@biomejs/biome": ^2.5.15
   ultracite: ~6.5.1 # ❌ NEVER ^7 — từ 7.0 ultracite bỏ Biome sang oxlint/oxfmt
   typescript: ~5.9.3 # ❌ chưa 7.x — xem plan.md D-I
-  "@types/node": ^24.7.0 # khớp runtime Node 24, không nhảy theo @types/node 26
-  vitest: ^4.1.10
+  "@types/node": ^24.19.2 # khớp runtime Node 24, không nhảy theo @types/node 26
+  vitest: ^4.1.12
   "@vitest/coverage-v8": 4.1.10 # ghim CỨNG = bản vitest trong lockfile: peer của nó đòi vitest đúng cùng bản patch. Nâng vitest thì nâng dòng này cùng lúc — `pnpm test:coverage`
   happy-dom: ^17.4.5
   "@vitejs/plugin-vue": ^6.0.8
@@ -22,7 +22,7 @@ catalog:
   fast-check: ^3.23.2
   zod: ^3.25.0 # Zod 4 (Standard Schema) — id-conventions §7.1, BR-ID-05
   zod-to-json-schema: ^3.24.3
-  dependency-cruiser: ^18.1.1 # cưỡng chế BR-MPA-01/06/07 trong gate local
+  dependency-cruiser: ^18.7.0 # cưỡng chế BR-MPA-01/06/07 trong gate local
 
   # Nuxt app runtime — P0.3. Pin the current 4.5 security-patched line.
   nuxt: ^4.5.1
@@ -80,12 +80,12 @@ catalog:
   # tsx — runner TS cho script vận hành (`pnpm services`, `pnpm deploy`,
   # `db:migrate`, `db:seed`). Cấm — NEVER khai version rời ở package con: gốc và
   # apps/worker cùng gọi nó, hai bản pin lệch là hai runtime TS khác nhau.
-  tsx: ^4.23.11
+  tsx: ^4.23.15
   # argon2 — hash mật khẩu (auth-tokens-sessions.md §1). Từng khai `^0.45.1` rời
   # ở CẢ packages/auth và apps/worker; bump một chỗ là chạy hai bản native
   # addon trong cùng một process.
   argon2: ^0.45.1
-  lefthook: ^2.1.10
+  lefthook: ^2.2.2
 
 onlyBuiltDependencies:
   - sharp
@@ -103,7 +103,6 @@ allowBuilds:
   msgpackr-extract: false
   protobufjs: false
   vue-demi: false
-
 
 # unhead phải là MỘT bản duy nhất trong cây. nuxt 4.5.2 khai `unhead: ^3.3.1`
 # còn @nuxt/ui 4.11.0 khai `@unhead/vue: ^3.3.2`; lockfile chốt hai bản (3.3.1

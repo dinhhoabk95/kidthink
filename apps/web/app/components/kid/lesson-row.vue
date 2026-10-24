@@ -14,12 +14,11 @@
       :style="{ minHeight: cardMinHeight }"
       :to="`/play/lesson/${lesson.code}`"
     >
-      <span aria-hidden="true" class="lesson-emoji"
-        >{{ lesson.thumbnail_emoji }}</span
-      >
+      <span aria-hidden="true" class="lesson-emoji">{{
+        lesson.thumbnail_emoji
+      }}</span>
       <UIcon
-        aria-hidden="true"
-        class="w-8 h-8 shrink-0"
+        class="w-8 h-8 shrink-0 fill-current"
         name="i-lucide-play"
         v-if="lesson.in_progress"
       />

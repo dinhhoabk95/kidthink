@@ -99,6 +99,34 @@ function resolveEntitlements(
   return { activeOrSoftRows, resolved };
 }
 
+function toActivePackageItem(
+  pkg: PackageDefinition,
+  primary: EntitlementDbRow,
+  now: Date
+): ActivePackageItem {
+  const expiresAtDate = primary.expiresAt ? new Date(primary.expiresAt) : null;
+  const daysLeft = expiresAtDate
+    ? Math.max(
+        0,
+        Math.ceil(
+          (expiresAtDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+        )
+      )
+    : null;
+
+  return {
+    code: pkg.code,
+    name: pkg.name,
+    description: pkg.description,
+    status: primary.status,
+    source_label: resolveSourceLabel(primary.source),
+    granted_at: new Date(primary.grantedAt).toISOString(),
+    expires_at: expiresAtDate ? expiresAtDate.toISOString() : null,
+    days_left: daysLeft,
+    is_soft_unlock: primary.status === "soft_unlock",
+  };
+}
+
 function resolvePackages(
   activeOrSoftRows: EntitlementDbRow[],
   now: Date
@@ -109,36 +137,16 @@ function resolvePackages(
     if (!pkg.entitlements || pkg.entitlements.length === 0) {
       continue;
     }
-    const matching = activeOrSoftRows.filter((e) =>
-      (pkg.entitlements as readonly string[]).includes(e.key)
+    const requiredKeys = pkg.entitlements as readonly string[];
+    const hasAllEntitlements = requiredKeys.every((reqKey) =>
+      activeOrSoftRows.some((e) => e.key === reqKey)
     );
-
-    const primary = matching[0];
+    if (!hasAllEntitlements) {
+      continue;
+    }
+    const primary = activeOrSoftRows.find((e) => requiredKeys.includes(e.key));
     if (primary) {
-      const expiresAtDate = primary.expiresAt
-        ? new Date(primary.expiresAt)
-        : null;
-      let daysLeft: number | null = null;
-      if (expiresAtDate) {
-        daysLeft = Math.max(
-          0,
-          Math.ceil(
-            (expiresAtDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
-          )
-        );
-      }
-
-      activePackages.push({
-        code: pkg.code,
-        name: pkg.name,
-        description: pkg.description,
-        status: primary.status,
-        source_label: resolveSourceLabel(primary.source),
-        granted_at: new Date(primary.grantedAt).toISOString(),
-        expires_at: expiresAtDate ? expiresAtDate.toISOString() : null,
-        days_left: daysLeft,
-        is_soft_unlock: primary.status === "soft_unlock",
-      });
+      activePackages.push(toActivePackageItem(pkg, primary, now));
     }
   }
 

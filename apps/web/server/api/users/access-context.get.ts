@@ -1,4 +1,6 @@
+import { childProfiles, getOwnerDb } from "@mindkid/db";
 import { allowedTiers } from "@mindkid/shared";
+import { and, eq } from "drizzle-orm";
 import { defineEventHandler } from "h3";
 
 import {
@@ -20,7 +22,23 @@ import { resolveUserActiveEntitlements } from "#server/utils/entitlements-runtim
  */
 export default defineEventHandler(async (event) => {
   const user = await requireWebUserSession(event);
-  const activeChildUuid = getOptionalActiveChildUuid(event);
+  const candidateChildUuid = getOptionalActiveChildUuid(event);
+  let activeChildUuid: string | null = null;
+  if (candidateChildUuid) {
+    const db = getOwnerDb();
+    const [ownedChild] = await db
+      .select({ uuid: childProfiles.uuid })
+      .from(childProfiles)
+      .where(
+        and(
+          eq(childProfiles.uuid, candidateChildUuid),
+          eq(childProfiles.userId, user.user_id),
+          eq(childProfiles.status, "active")
+        )
+      )
+      .limit(1);
+    activeChildUuid = ownedChild?.uuid ?? null;
+  }
   const activeKeys = await resolveUserActiveEntitlements(user.user_id);
 
   return {

@@ -24,6 +24,32 @@ const TRAILING_SLASH = /\/$/;
 const LEADING_SLASH = /^\//;
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
+function normalizeErrorPayload(
+  payload: object | string | number | boolean | null | undefined
+) {
+  if (
+    typeof payload === "object" &&
+    payload !== null &&
+    !("code" in payload) &&
+    "status" in payload
+  ) {
+    const statusVal = Reflect.get(payload, "status");
+    if (typeof statusVal === "string") {
+      const challengeVal = Reflect.get(payload, "challenge");
+      const mfaEnabledVal = Reflect.get(payload, "mfa_enabled");
+      return {
+        code: statusVal,
+        message: "Vui lòng hoàn tất xác thực hai yếu tố.",
+        details: {
+          challenge: typeof challengeVal === "string" ? challengeVal : "",
+          mfa_enabled: Boolean(mfaEnabledVal),
+        },
+      };
+    }
+  }
+  return payload;
+}
+
 /**
  * BR-ARB-04: admin chạy trên `admin.{domain}` — một host tĩnh không có `/api`.
  * Mọi URL API, kể cả `href`, `src` và `window.open`, phải đi qua đây; URL tương
@@ -75,7 +101,9 @@ export function useApiClient() {
   ): Promise<T> {
     const method = String(options.method || "GET").toUpperCase();
     const isSafeMethod = SAFE_METHODS.has(method);
-    if (!(csrfToken.value || isSafeMethod)) {
+    const normalizedPath = `/${path.replace(LEADING_SLASH, "")}`;
+    const isGuestRoute = normalizedPath.startsWith("/api/guest/");
+    if (!(csrfToken.value || isSafeMethod || isGuestRoute)) {
       await loadSession();
     }
 
@@ -89,23 +117,24 @@ export function useApiClient() {
       credentials: "include",
       headers,
       async onResponseError(context: {
-        error?: unknown;
+        error?: object | string | number | boolean | null;
         response?: {
           status: number;
           statusText?: string;
-          _data?: unknown;
+          _data?: object | string | number | boolean | null;
         };
       }) {
-        const rawError =
-          context.error ??
-          (context.response
-            ? {
-                status: context.response.status,
-                statusCode: context.response.status,
-                data: context.response._data,
-                message: context.response.statusText,
-              }
-            : undefined);
+        const responseData = context.response
+          ? normalizeErrorPayload(context.response._data)
+          : undefined;
+        const rawError = context.response
+          ? {
+              status: context.response.status,
+              statusCode: context.response.status,
+              data: responseData,
+              message: context.response.statusText,
+            }
+          : context.error;
 
         const apiError = normalizeApiError(rawError);
 

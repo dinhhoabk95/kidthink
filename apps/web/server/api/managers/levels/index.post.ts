@@ -1,8 +1,14 @@
 import { writeAudit } from "@mindkid/audit";
 import { gameLevels, getOwnerDb, managers } from "@mindkid/db";
 import { InternalError } from "@mindkid/errors/common";
-import { TemplateNotSupportedError } from "@mindkid/errors/game-level";
-import { getGameTemplate } from "@mindkid/game-engine/registry";
+import {
+  ContentPackInvalidError,
+  TemplateNotSupportedError,
+} from "@mindkid/errors/game-level";
+import {
+  getGameTemplate,
+  validateContentPack,
+} from "@mindkid/game-engine/registry";
 import { eq, sql } from "drizzle-orm";
 import { defineEventHandler, setResponseStatus } from "h3";
 import { z } from "zod";
@@ -195,6 +201,19 @@ export default defineEventHandler(async (event) => {
   const db = getOwnerDb();
 
   assertTemplateLayoutSupported(templateCode, input.difficulty_params);
+
+  if (
+    input.content_pack &&
+    Object.keys(input.content_pack).length > 0 &&
+    !("hasCorrectAnswer" in input.content_pack)
+  ) {
+    const valResult = validateContentPack(templateCode, input.content_pack);
+    if (!valResult.success) {
+      throw new ContentPackInvalidError(
+        "Content pack schema validation failed"
+      );
+    }
+  }
 
   const { levelCode, count } = await resolveLevelCode(
     db,

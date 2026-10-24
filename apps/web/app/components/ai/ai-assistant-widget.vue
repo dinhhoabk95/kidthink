@@ -100,7 +100,11 @@
         <span
           class="text-xs font-bold font-heading text-brand-800 tracking-wider"
         >
-          {{ aiResultType === 'summary' ? 'Tóm tắt tổng quan' : 'Góc nhìn sư phạm cho ba mẹ' }}
+          {{
+            aiResultType === "summary"
+              ? "Tóm tắt tổng quan"
+              : "Góc nhìn sư phạm cho ba mẹ"
+          }}
         </span>
         <span
           class="px-2 py-0.5 text-xs font-semibold rounded-xl bg-white border border-brand-200 text-brand-700"

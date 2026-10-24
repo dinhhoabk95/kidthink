@@ -1,4 +1,6 @@
+import { getBrowserSessionService } from "@mindkid/auth";
 import {
+  activeSessions,
   auditLogs,
   getOwnerDb,
   mfaRecoveryCodes,
@@ -9,7 +11,7 @@ import {
 import { RestrictedModeError } from "@mindkid/errors/auth";
 import { NotFoundError, ValidationError } from "@mindkid/errors/common";
 import { InvalidStatusTransitionError } from "@mindkid/errors/content";
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 import { defineEventHandler, getHeader, getRouterParam } from "h3";
 import { requireSuperAdminSession } from "#server/utils/admin-auth-runtime";
 import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
@@ -88,7 +90,7 @@ export default defineEventHandler(async (event) => {
         )
       );
 
-    // 3. Revoke all active sessions (bump sessionVersion)
+    // 3. Revoke all active sessions (bump sessionVersion + mark activeSessions revoked)
     await tx
       .update(users)
       .set({
@@ -96,6 +98,17 @@ export default defineEventHandler(async (event) => {
         updatedAt: now,
       })
       .where(eq(users.id, targetUser.id));
+
+    await tx
+      .update(activeSessions)
+      .set({ revokedAt: now })
+      .where(
+        and(
+          eq(activeSessions.accountType, "user"),
+          eq(activeSessions.accountId, targetUser.id),
+          isNull(activeSessions.revokedAt)
+        )
+      );
 
     // 4. Mark request completed
     await tx
@@ -120,6 +133,13 @@ export default defineEventHandler(async (event) => {
       userAgent: getHeader(event, "user-agent") ?? "unknown",
     });
   });
+
+  await getBrowserSessionService()
+    .revokeAll({
+      account_type: "user",
+      account_id: targetUser.id,
+    })
+    .catch(() => null);
 
   return {
     success: true,

@@ -57,9 +57,13 @@
         </div>
 
         <div class="guide-footer-cta">
-          <NuxtLink class="btn-faq-link" to="/faq">
+          <NuxtLink
+            class="btn-faq-link inline-flex items-center min-h-11"
+            to="/faq"
+          >
             Xem thêm câu hỏi thường gặp
             <UIcon
+              aria-hidden="true"
               class="w-4 h-4 ml-1 inline-block"
               name="i-lucide-arrow-right"
             /></NuxtLink
@@ -74,7 +78,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { useHead, useSeoMeta } from "#imports";
+  import { definePageMeta, useHead, useSeoMeta } from "#imports";
   import CookieNoticeBanner from "~/components/cookie-notice-banner.vue";
   import PublicFooter from "~/components/public-footer.vue";
   import PublicNavbar from "~/components/public-navbar.vue";
@@ -152,12 +156,6 @@
     border: 1px solid var(--color-surface-200);
   }
 
-  .guide-emoji {
-    font-size: 2.5rem;
-    display: block;
-    margin-bottom: 1rem;
-  }
-
   .guide-card-title {
     font-size: 1.2rem;
     font-weight: 700;
@@ -166,8 +164,8 @@
   }
 
   .guide-card-text {
-    font-size: 0.95rem;
-    line-height: 1.5;
+    font-size: 1rem;
+    line-height: 1.6;
     color: var(--color-surface-600);
     margin: 0;
   }
@@ -178,6 +176,11 @@
   }
 
   .btn-faq-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.75rem;
+    padding: 0.5rem 1rem;
     font-size: 1rem;
     font-weight: 700;
     color: var(--color-brand-600);

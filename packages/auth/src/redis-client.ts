@@ -20,6 +20,12 @@ export function getAuthRedisClient(): MinimalRedisClient {
     client.on("error", () => {
       /* fail-closed handled per operation */
     });
+    client.on("end", () => {
+      if (authRedisClient === client) {
+        authRedisClient = undefined;
+        browserSessionService = undefined;
+      }
+    });
     authRedisClient = client;
   }
   return authRedisClient;

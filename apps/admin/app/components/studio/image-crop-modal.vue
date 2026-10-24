@@ -26,7 +26,7 @@
         </div>
         <button
           aria-label="Đóng"
-          class="w-9 h-9 rounded-2xl flex items-center justify-center text-surface-400 hover:text-surface-600 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-700 transition-all font-bold text-lg"
+          class="w-11 h-11 min-w-11 min-h-11 rounded-2xl flex items-center justify-center text-surface-400 hover:text-surface-600 dark:hover:text-surface-200 hover:bg-surface-100 dark:hover:bg-surface-700 transition-all font-bold text-lg"
           type="button"
           @click="close"
         >
@@ -123,16 +123,16 @@
 
           <!-- Controls: Rotate 90 & Reset -->
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2">
+            <div class="flex flex-wrap items-center gap-2">
               <button
-                class="px-3.5 py-1.5 rounded-xl border border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 text-xs font-bold transition-all flex items-center gap-1.5"
+                class="min-h-11 px-3.5 py-2 rounded-xl border border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 text-xs font-bold transition-all flex items-center gap-1.5"
                 type="button"
                 @click="rotateClockwise"
               >
                 <span>↻ Xoay 90°</span>
               </button>
               <button
-                class="px-3.5 py-1.5 rounded-xl border border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 text-xs font-semibold transition-all"
+                class="min-h-11 px-3.5 py-2 rounded-xl border border-surface-300 dark:border-surface-600 hover:bg-surface-100 dark:hover:bg-surface-700 text-surface-700 dark:text-surface-300 text-xs font-semibold transition-all"
                 type="button"
                 @click="triggerFileInput"
               >
@@ -176,14 +176,14 @@
         class="flex items-center justify-end gap-3 pt-3 border-t border-surface-200 dark:border-surface-700 shrink-0"
       >
         <button
-          class="px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 font-semibold text-sm"
+          class="min-h-11 px-4 py-2 rounded-xl text-surface-600 dark:text-surface-300 hover:bg-surface-100 dark:hover:bg-surface-700 font-semibold text-sm"
           type="button"
           @click="close"
         >
           Huỷ
         </button>
         <button
-          class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm shadow-sm transition-all flex items-center gap-2"
+          class="min-h-11 px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-sm shadow-sm transition-all flex items-center gap-2"
           type="button"
           v-if="imageSource"
           :disabled="!altText.trim() || isUploading"
@@ -197,7 +197,9 @@
 </template>
 
 <script lang="ts" setup>
+  import { isApiError } from "@mindkid/errors/client";
   import { nextTick, ref, watch } from "vue";
+  import { apiFetch } from "~/composables/use-api-client";
 
   const props = defineProps<{
     isOpen: boolean;
@@ -237,8 +239,10 @@
   }
 
   function onFileSelected(e: Event) {
-    const target = e.target as HTMLInputElement;
-    const file = target.files?.[0];
+    if (!(e.target instanceof HTMLInputElement)) {
+      return;
+    }
+    const file = e.target.files?.[0];
     if (file) {
       processIncomingFile(file);
     }
@@ -267,11 +271,14 @@
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      imageSource.value = e.target?.result as string;
-      rotationDegrees.value = 0;
-      nextTick(() => {
-        renderCroppedCanvases();
-      });
+      const result = e.target?.result;
+      if (typeof result === "string") {
+        imageSource.value = result;
+        rotationDegrees.value = 0;
+        nextTick(() => {
+          renderCroppedCanvases();
+        });
+      }
     };
     reader.readAsDataURL(file);
   }
@@ -290,7 +297,6 @@
 
     const img = new Image();
     img.onload = () => {
-      // 1. Draw on main 256x256 crop preview
       const ctx = cropCanvasRef.value?.getContext("2d");
       if (ctx) {
         ctx.clearRect(0, 0, 256, 256);
@@ -306,7 +312,6 @@
         ctx.restore();
       }
 
-      // 2. Draw on 96x96 real size preview
       const realCtx = realSizeCanvasRef.value?.getContext("2d");
       if (realCtx) {
         realCtx.clearRect(0, 0, 96, 96);
@@ -362,11 +367,10 @@
         targetFieldPath: props.targetFieldPath,
       });
       emit("close");
-    } catch (err: unknown) {
-      const message =
-        (err as { data?: { message?: string } })?.data?.message ||
-        "Lỗi khi tải ảnh lên máy chủ";
-      errorMessage.value = message;
+    } catch (err) {
+      errorMessage.value = isApiError(err)
+        ? err.message
+        : "Lỗi khi tải ảnh lên máy chủ";
     } finally {
       isUploading.value = false;
     }

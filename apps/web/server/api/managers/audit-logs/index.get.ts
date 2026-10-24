@@ -6,6 +6,18 @@ import { defineEventHandler } from "h3";
 import { requireManagerSession } from "#server/utils/admin-auth-runtime";
 import { readRequestQuery } from "#server/utils/request-body";
 
+export type AuditPayloadValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | object;
+
+export type AuditPayloadRecord = Record<string, AuditPayloadValue>;
+
+type AuditActorType = typeof auditLogs.$inferSelect.actorType;
+
 export interface FormattedAuditItem {
   id: number;
   uuid: string;
@@ -18,8 +30,8 @@ export interface FormattedAuditItem {
   entityType?: string;
   entityId?: string;
   reason: string | null;
-  before_data: Record<string, unknown> | null;
-  after_data: Record<string, unknown> | null;
+  before_data: AuditPayloadRecord | null;
+  after_data: AuditPayloadRecord | null;
   ip: string | null;
   user_agent: string | null;
   request_id: string | null;
@@ -28,6 +40,22 @@ export interface FormattedAuditItem {
 
 function escapeLikeWildcards(text: string): string {
   return text.replace(/([%_\\])/g, "\\$1");
+}
+
+function isAuditActorType(val: string): val is AuditActorType {
+  return val === "user" || val === "manager" || val === "system";
+}
+
+function readQueryString(query: object, key: string): string | undefined {
+  const val = Reflect.get(query, key);
+  if (typeof val === "string") {
+    const trimmed = val.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+  }
+  if (typeof val === "number" && Number.isFinite(val)) {
+    return String(val);
+  }
+  return undefined;
 }
 
 function validateAuditDateRange(
@@ -49,12 +77,14 @@ function validateAuditDateRange(
   return { fromDate, toDate };
 }
 
-function buildActionCondition(action: unknown): SQL<unknown> | null {
+function buildActionCondition(query: object): SQL | null {
+  const action = Reflect.get(query, "action");
   if (!action) {
     return null;
   }
   if (Array.isArray(action)) {
-    return inArray(auditLogs.action, action.map(String));
+    const actions = action.map((item) => String(item).trim()).filter(Boolean);
+    return actions.length > 0 ? inArray(auditLogs.action, actions) : null;
   }
   if (typeof action === "string" && action.includes(",")) {
     const actions = action
@@ -63,47 +93,50 @@ function buildActionCondition(action: unknown): SQL<unknown> | null {
       .filter(Boolean);
     return actions.length > 0 ? inArray(auditLogs.action, actions) : null;
   }
-  return eq(auditLogs.action, String(action));
+  if (typeof action === "string") {
+    const trimmed = action.trim();
+    return trimmed ? eq(auditLogs.action, trimmed) : null;
+  }
+  return null;
 }
 
 function buildAuditConditions(
-  query: Record<string, unknown>,
+  query: object,
   dates: { fromDate?: Date; toDate?: Date }
-): SQL<unknown>[] {
-  const conditions: SQL<unknown>[] = [];
+): SQL[] {
+  const conditions: SQL[] = [];
 
-  const actorType = (query.actor_type || query.actorType) as string | undefined;
-  const actorId = (query.actor_id || query.actorId) as
-    | string
-    | number
-    | undefined;
-  const entityType = (query.entity_type || query.entityType) as
-    | string
-    | undefined;
-  const entityId = (query.entity_id || query.entityId) as string | undefined;
+  const actorType =
+    readQueryString(query, "actor_type") || readQueryString(query, "actorType");
+  const actorIdRaw =
+    readQueryString(query, "actor_id") || readQueryString(query, "actorId");
+  const entityType =
+    readQueryString(query, "entity_type") ||
+    readQueryString(query, "entityType");
+  const entityId =
+    readQueryString(query, "entity_id") || readQueryString(query, "entityId");
+  const searchQ = readQueryString(query, "q");
 
-  if (actorType) {
-    conditions.push(
-      eq(
-        auditLogs.actorType,
-        actorType as typeof auditLogs.$inferSelect.actorType
-      )
-    );
+  if (actorType && isAuditActorType(actorType)) {
+    conditions.push(eq(auditLogs.actorType, actorType));
   }
-  if (actorId) {
-    conditions.push(eq(auditLogs.actorId, Number(actorId)));
+  if (actorIdRaw) {
+    const parsedActorId = Number(actorIdRaw);
+    if (Number.isInteger(parsedActorId)) {
+      conditions.push(eq(auditLogs.actorId, parsedActorId));
+    }
   }
 
-  const actCond = buildActionCondition(query.action);
+  const actCond = buildActionCondition(query);
   if (actCond) {
     conditions.push(actCond);
   }
 
   if (entityType) {
-    conditions.push(eq(auditLogs.entityType, String(entityType)));
+    conditions.push(eq(auditLogs.entityType, entityType));
   }
   if (entityId) {
-    conditions.push(eq(auditLogs.entityId, String(entityId)));
+    conditions.push(eq(auditLogs.entityId, entityId));
   }
   if (dates.fromDate) {
     conditions.push(gte(auditLogs.createdAt, dates.fromDate));
@@ -111,9 +144,9 @@ function buildAuditConditions(
   if (dates.toDate) {
     conditions.push(lte(auditLogs.createdAt, dates.toDate));
   }
-  if (typeof query.q === "string" && query.q.trim()) {
+  if (searchQ) {
     conditions.push(
-      ilike(auditLogs.reason, `%${escapeLikeWildcards(query.q.trim())}%`)
+      ilike(auditLogs.reason, `%${escapeLikeWildcards(searchQ)}%`)
     );
   }
 
@@ -132,10 +165,11 @@ export default defineEventHandler(async (event) => {
 
   const query = readRequestQuery(event);
 
-  const limit = Math.min(Math.max(Number(query.limit) || 50, 1), 200);
+  const rawLimit = Number(readQueryString(query, "limit"));
+  const limit = Math.min(Math.max(rawLimit || 50, 1), 200);
   const dates = validateAuditDateRange(
-    query.from ? String(query.from) : undefined,
-    query.to ? String(query.to) : undefined
+    readQueryString(query, "from"),
+    readQueryString(query, "to")
   );
 
   const conditions = buildAuditConditions(query, dates);
@@ -164,8 +198,18 @@ export default defineEventHandler(async (event) => {
     .limit(limit);
 
   const formatted: FormattedAuditItem[] = rows.map((r) => {
-    const beforeObj = (r.beforeData as Record<string, unknown> | null) || null;
-    const afterObj = (r.afterData as Record<string, unknown> | null) || null;
+    const beforeObj: AuditPayloadRecord | null =
+      typeof r.beforeData === "object" &&
+      r.beforeData !== null &&
+      !Array.isArray(r.beforeData)
+        ? (r.beforeData as AuditPayloadRecord)
+        : null;
+    const afterObj: AuditPayloadRecord | null =
+      typeof r.afterData === "object" &&
+      r.afterData !== null &&
+      !Array.isArray(r.afterData)
+        ? (r.afterData as AuditPayloadRecord)
+        : null;
     const requestId =
       (beforeObj?.request_id ? String(beforeObj.request_id) : null) ||
       (afterObj?.request_id ? String(afterObj.request_id) : null) ||

@@ -7,7 +7,7 @@ import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { requireReauth } from "#server/utils/reauth-runtime";
 
 export default defineEventHandler(async (event) => {
-  const userSession = await requireWebUserSession(event);
+  const userSession = requireWebUserSession(event);
   const userId = Number(userSession.user_id);
 
   // Require reauth (≤ 5 min)

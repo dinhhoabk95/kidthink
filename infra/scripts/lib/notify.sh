@@ -25,9 +25,16 @@ notify() {
     return 0
   fi
 
+  local safe_sev="${severity//\\/\\\\}"
+  safe_sev="${safe_sev//\"/\\\"}"
+  local safe_msg="${message//\\/\\\\}"
+  safe_msg="${safe_msg//\"/\\\"}"
+  safe_msg="${safe_msg//$'\n'/ }"
+  safe_msg="${safe_msg//$'\r'/ }"
+
   curl -sS -m 10 -X POST \
     -H 'Content-Type: application/json' \
-    --data "$(printf '{"severity":"%s","source":"mindkid-deploy","message":"%s"}' "${severity}" "${message}")" \
+    --data "$(printf '{"severity":"%s","source":"mindkid-deploy","message":"%s"}' "${safe_sev}" "${safe_msg}")" \
     "${MK_ALERT_WEBHOOK_URL}" >/dev/null 2>&1 \
     || log_warn "Notification POST failed for severity ${severity}."
 

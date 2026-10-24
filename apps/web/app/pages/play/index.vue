@@ -4,9 +4,9 @@
   >
     <!-- Kid Top Bar / HUD -->
     <header
-      class="flex items-center justify-between max-w-5xl mx-auto w-full mb-6"
+      class="flex flex-wrap items-center justify-between gap-3 max-w-5xl mx-auto w-full mb-6"
     >
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3 min-w-0">
         <!-- Lối ra duy nhất của bề mặt trẻ: khoá phụ huynh nhấn giữ (`BR-PSZ-11`, `BR-CLF-05`, `BR-PGT-01`). -->
         <KidParentLockButton
           data-testid="play-parent-lock"
@@ -19,9 +19,14 @@
           :has-multiple-children="hasMultipleChildren"
           @request-switch="handleRequestSwitch"
         />
+        <UIcon
+          aria-hidden="true"
+          class="sr-only"
+          name="i-lucide-arrow-left-right"
+        />
       </div>
 
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-3">
         <!-- Vào bản đồ chủ đề tuần: chỉ icon, chữ ở aria-label (`BR-WTM-05`). -->
         <NuxtLink
           aria-label="Bản đồ học tập của bé"
@@ -76,7 +81,7 @@
         <KidRecommendationsRow :recommendations="recommendations" />
       </div>
 
-      <KidLessonRow :key="activeChildUuid || 'default'" />
+      <KidLessonRow v-if="activeChildUuid" :key="activeChildUuid" />
 
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6">
         <NuxtLink
@@ -84,7 +89,7 @@
           :key="c.code"
           :aria-label="`Chơi ${c.title}`"
           :class="[
-            'flex flex-col items-center justify-center p-6 rounded-3xl border-4 bg-white transition-all',
+            'flex flex-col items-center justify-center p-4 sm:p-6 rounded-3xl border-4 bg-white transition-all',
             'min-h-20 min-w-20 shadow-[0_8px_0_var(--color-surface-300)] active:shadow-[0_2px_0_var(--color-surface-300)] active:translate-y-1.5',
             c.borderClass,
             c.hoverBgClass
@@ -108,7 +113,7 @@
           >
             {{ c.title }}
           </span>
-          <span class="text-xs sm:text-sm text-surface-500 text-center mt-1">
+          <span class="text-base text-surface-500 text-center mt-1">
             {{ c.desc }}
           </span>
         </NuxtLink>
@@ -117,7 +122,7 @@
 
     <!-- Footer Safe Zone -->
     <footer
-      class="max-w-5xl mx-auto w-full mt-6 text-center text-xs text-surface-400"
+      class="max-w-5xl mx-auto w-full mt-6 text-center text-base text-surface-600"
     >
       MindKid Thinking Play — Chơi mà Học
     </footer>
@@ -161,9 +166,9 @@
 
 <script lang="ts" setup>
   /**
-   * Sảnh chơi cho trẻ — nhãn dẫn xuất từ `COMPETENCY_CATALOG` (task 165).
-   * Tích hợp nhận diện và đổi hồ sơ bé an toàn (Task #285, BR-CPS-01..07, BR-PEN-01).
-   * Tích hợp chúc mừng huy hiệu kỷ niệm (Task #287, BR-PRG-04, BR-PRG-07).
+   * Sảnh chơi cho trẻ — nhãn dẫn xuất từ `COMPETENCY_CATALOG`.
+   * Tích hợp nhận diện và đổi hồ sơ bé an toàn (`BR-CPS-01..07`, `BR-PEN-01`).
+   * Tích hợp chúc mừng huy hiệu kỷ niệm (`BR-PRG-04`, `BR-PRG-07`).
    */
   import { COMPETENCY_CATALOG } from "@mindkid/shared/client";
   import { onMounted, ref, watch } from "vue";

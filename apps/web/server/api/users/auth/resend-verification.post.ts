@@ -16,10 +16,14 @@ const EmailSchema = z
   .object({ email: z.string().trim().email().max(255) })
   .strict();
 
+export interface ResendVerificationResult {
+  ok: boolean;
+}
+
 export async function handleResendVerification(
   event: H3Event,
   testBody?: Record<string, string | number | boolean | null | undefined> | null
-) {
+): Promise<ResendVerificationResult> {
   const ipRateLimit = await enforceTwoAxisRateLimit({
     routeClass: "auth:forgot-password",
     remoteIp: getVerifiedRemoteIp(event),

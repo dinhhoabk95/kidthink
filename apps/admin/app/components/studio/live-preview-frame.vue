@@ -1,22 +1,22 @@
 <template>
   <div
-    class="live-preview-container flex flex-col h-full bg-surface-900 rounded-3xl overflow-hidden border-2 border-surface-800 shadow-inner"
+    class="live-preview-container flex flex-col h-full min-h-[360px] min-w-0 bg-surface-900 rounded-3xl overflow-hidden border-2 border-surface-800 shadow-inner"
   >
     <!-- Preview Controls Toolbar -->
     <div
-      class="h-14 px-4 bg-surface-950 border-b border-surface-800 flex items-center justify-between shrink-0"
+      class="min-h-14 px-3 sm:px-4 py-2 bg-surface-950 border-b border-surface-800 flex flex-wrap items-center justify-between gap-2 shrink-0"
     >
-      <div class="flex items-center gap-3">
+      <div class="flex flex-wrap items-center gap-2 min-w-0">
         <!-- Age Band Scaffolding Level Selector (BR-LPV-01, BR-LPV-06) -->
         <div
-          class="flex items-center gap-1.5 bg-surface-900 p-1 rounded-2xl border border-surface-800"
+          class="flex flex-wrap items-center gap-1 bg-surface-900 p-1 rounded-2xl border border-surface-800"
         >
           <button
             type="button"
             v-for="band in ageBands"
             :key="band.id"
             :class="[
-              'px-2.5 py-1 rounded-xl text-xs font-bold transition-all',
+              'min-h-11 px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all',
               selectedAgeBand === band.id
                 ? 'bg-brand-600 text-white shadow-sm'
                 : 'text-surface-400 hover:text-white',
@@ -31,7 +31,7 @@
         <button
           type="button"
           :class="[
-            'min-h-9 px-3 py-1 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5',
+            'min-h-11 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5',
             reducedMotion
               ? 'bg-warning-500/20 border-warning-500 text-warning-300'
               : 'border-surface-700 text-surface-400 hover:bg-surface-800',
@@ -49,7 +49,7 @@
         <button
           type="button"
           :class="[
-            'min-h-9 px-3 py-1 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5',
+            'min-h-11 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5',
             isMuted
               ? 'bg-danger-500/20 border-danger-500 text-danger-300'
               : 'border-surface-700 text-surface-400 hover:bg-surface-800',
@@ -63,23 +63,23 @@
         <button
           type="button"
           :class="[
-            'min-h-9 px-3 py-1 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5',
+            'min-h-11 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all flex items-center gap-1.5',
             scaleMode === '100%'
               ? 'bg-brand-600 border-brand-600 text-white shadow-sm'
               : 'border-surface-700 text-surface-400 hover:bg-surface-800',
           ]"
           @click="toggleScaleMode"
         >
-          <span
-            >{{ scaleMode === "100%" ? "100% (960×540)" : "Tự vừa (Fit)" }}</span
-          >
+          <span>{{
+            scaleMode === "100%" ? "100% (960×540)" : "Tự vừa (Fit)"
+          }}</span>
         </button>
       </div>
 
       <!-- Replay & Reload Controls -->
       <div class="flex items-center gap-2">
         <button
-          class="min-h-9 px-3 py-1 rounded-xl border border-surface-700 bg-surface-800 hover:bg-surface-700 text-surface-200 text-xs font-bold transition-all flex items-center gap-1"
+          class="min-h-11 px-3 py-1.5 rounded-xl border border-surface-700 bg-surface-800 hover:bg-surface-700 text-surface-200 text-xs font-bold transition-all flex items-center gap-1"
           type="button"
           @click="replaySession"
         >
@@ -90,14 +90,16 @@
 
     <!-- Live Preview Canvas Frame (16:9 fixed ratio logic space 960x540) -->
     <div
-      class="flex-1 p-4 flex flex-col items-center justify-center relative overflow-auto bg-surface-950"
+      class="flex-1 p-3 sm:p-4 flex flex-col items-center justify-center relative overflow-auto bg-surface-950 min-w-0"
     >
       <!-- Validation Error Banner (BR-LPV-03) -->
       <div
         class="absolute top-4 left-4 right-4 z-20 p-4 rounded-2xl bg-danger-950/90 border-2 border-danger-600 text-danger-200 text-sm shadow-xl backdrop-blur-sm"
         v-if="validationError"
       >
-        <div class="font-bold flex items-center justify-between mb-1">
+        <div
+          class="font-bold flex flex-wrap items-center justify-between gap-2 mb-1"
+        >
           <div class="flex items-center gap-2">
             <UIcon
               class="w-4 h-4 text-danger-400 shrink-0"
@@ -108,7 +110,7 @@
             >
           </div>
           <button
-            class="text-xs px-2.5 py-1 rounded-xl bg-danger-800 hover:bg-danger-700 text-white font-mono transition-all"
+            class="min-h-11 text-xs px-3 py-1.5 rounded-xl bg-danger-800 hover:bg-danger-700 text-white font-mono transition-all"
             type="button"
             @click="copyErrorDetails"
           >
@@ -174,7 +176,7 @@
   const TRAILING_SLASHES_REGEX = /\/+$/;
   const TRAILING_API_REGEX = /\/api$/;
 
-  export function resolveWebOrigin(apiBaseUrl: string): string {
+  function resolveWebOrigin(apiBaseUrl: string): string {
     const trimmed = apiBaseUrl
       .trim()
       .replace(TRAILING_SLASHES_REGEX, "")
@@ -233,15 +235,16 @@
     if (!webOrigin.value || event.origin !== webOrigin.value) {
       return;
     }
-    const data = event.data as { type?: string } | null;
-    if (!data || typeof data !== "object") {
+    const raw: object | null =
+      typeof event.data === "object" ? event.data : null;
+    if (!(raw && "type" in raw)) {
       return;
     }
-    if (data.type === "MindKid_STUDIO_SANDBOX_READY") {
+    if (raw.type === "MindKid_STUDIO_SANDBOX_READY") {
       isIframeLoading.value = false;
       postUpdateToIframe();
       emit("preview-loaded");
-    } else if (data.type === "MindKid_STUDIO_SESSION_LOADED") {
+    } else if (raw.type === "MindKid_STUDIO_SESSION_LOADED") {
       emit("preview-loaded");
     }
   }
@@ -325,12 +328,16 @@
       return;
     }
 
+    const plainLevelData: object = JSON.parse(
+      JSON.stringify(props.levelData ?? {})
+    );
+
     iframe.contentWindow.postMessage(
       {
         type: "MindKid_STUDIO_UPDATE",
         payload: {
           templateCode: props.templateCode,
-          levelData: props.levelData,
+          levelData: plainLevelData,
           ageBand: selectedAgeBand.value,
           reducedMotion: reducedMotion.value,
           muted: isMuted.value,

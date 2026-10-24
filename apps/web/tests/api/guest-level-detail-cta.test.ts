@@ -204,16 +204,14 @@ describe("GET /api/guest/levels/[code] — Detail CTA by Session (BR-GDP-09, BR-
     expect(res.cta.text).toBe("Cho bé chơi ngay");
   });
 
-  it("BR-LAD-07: guest xem free level ngoài allow-list -> locked: true, action: login", async () => {
+  it("BR-LAD-07: guest xem mọi free level -> locked: false, action: play", async () => {
     const event = makeMockEvent({ code: freeCode });
     const res = (await guestLevelDetailHandler(event)) as LevelDetailResult;
 
-    expect(res.locked).toBe(true);
-    expect(res.cta.action).toBe("login");
-    expect(res.cta.href).toBe(
-      `/login?redirect=${encodeURIComponent(`/play/${freeCode}`)}`
-    );
-    expect(res.cta.text).toBe("Đăng nhập để chơi");
+    expect(res.locked).toBe(false);
+    expect(res.cta.action).toBe("play");
+    expect(res.cta.href).toBe(`/play/${freeCode}`);
+    expect(res.cta.text).toBe("Cho bé chơi ngay");
   });
 
   it("guest xem login level -> action: login", async () => {

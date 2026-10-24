@@ -21,7 +21,8 @@
                 name="i-lucide-check"
               />
               <span
-                >Theo dõi tiến độ tư duy trực quan mà không tạo áp lực điểm số</span
+                >Theo dõi tiến độ tư duy trực quan mà không tạo áp lực điểm
+                số</span
               >
             </li>
             <li class="flex items-start gap-2">
@@ -30,7 +31,8 @@
                 name="i-lucide-check"
               />
               <span
-                >Hướng dẫn gợi ý hoạt động tương tác ngoài đời thực với con</span
+                >Hướng dẫn gợi ý hoạt động tương tác ngoài đời thực với
+                con</span
               >
             </li>
             <li class="flex items-start gap-2">
@@ -60,7 +62,8 @@
                 name="i-lucide-check"
               />
               <span
-                >Thư viện học liệu trò chơi đa dạng chuẩn hoá khung mầm non</span
+                >Thư viện học liệu trò chơi đa dạng chuẩn hoá khung mầm
+                non</span
               >
             </li>
             <li class="flex items-start gap-2">
@@ -69,7 +72,8 @@
                 name="i-lucide-check"
               />
               <span
-                >Hỗ trợ giờ hoạt động góc và bài học nhóm tương tác trực quan</span
+                >Hỗ trợ giờ hoạt động góc và bài học nhóm tương tác trực
+                quan</span
               >
             </li>
             <li class="flex items-start gap-2">

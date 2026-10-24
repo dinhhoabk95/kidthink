@@ -16,7 +16,10 @@ const EmailSchema = z
   .object({ email: z.string().trim().email().max(255) })
   .strict();
 
-export async function handleForgotPassword(event: H3Event, testBody?: unknown) {
+export async function handleForgotPassword(
+  event: H3Event,
+  testBody?: { email?: string }
+): Promise<{ ok: boolean }> {
   const ipRateLimit = await enforceTwoAxisRateLimit({
     routeClass: "auth:forgot-password",
     remoteIp: getVerifiedRemoteIp(event),

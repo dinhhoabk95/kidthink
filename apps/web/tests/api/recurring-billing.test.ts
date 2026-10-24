@@ -17,6 +17,9 @@ import cancelRecurringHandler from "#server/api/users/subscriptions/recurring/ca
 import getRecurringHandler from "#server/api/users/subscriptions/recurring/index.get";
 import optInRecurringHandler from "#server/api/users/subscriptions/recurring/opt-in.post";
 
+const CSRF_TOKEN =
+  "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
+
 function mockUserEvent(
   userId?: number,
   body?: Record<string, string | number | boolean>,
@@ -29,6 +32,8 @@ function mockUserEvent(
         headers: {
           "user-agent": "VitestRecurringTest/1.0",
           "x-forwarded-for": "127.0.0.1",
+          "x-csrf-token": CSRF_TOKEN,
+          cookie: `tm_u_csrf=${CSRF_TOKEN}`,
         },
         socket: { remoteAddress: "127.0.0.1" },
       },

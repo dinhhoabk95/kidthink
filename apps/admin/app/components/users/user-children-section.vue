@@ -1,32 +1,35 @@
 <template>
   <section
     aria-labelledby="group-children-heading"
-    class="bg-white rounded-3xl border-4 border-surface-200 p-6 space-y-4 shadow-sm"
+    class="bg-white rounded-3xl border-4 border-surface-200 p-4 sm:p-6 space-y-4 shadow-sm min-w-0 overflow-hidden"
   >
     <div
-      class="flex items-center justify-between border-b-2 border-surface-100 pb-3"
+      class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-surface-100 pb-3 min-w-0"
     >
       <h2
-        class="text-lg font-bold font-heading text-surface-900 flex items-center gap-2"
+        class="text-lg font-bold font-heading text-surface-900 flex items-center gap-2 break-words min-w-0"
         id="group-children-heading"
       >
-        <UIcon class="w-5 h-5 text-surface-500" name="i-lucide-baby" />
-        Hồ sơ trẻ ({{ children.length }})
+        <UIcon class="w-5 h-5 text-surface-500 shrink-0" name="i-lucide-baby" />
+        <span>Hồ sơ trẻ ({{ children.length }})</span>
       </h2>
-      <span class="text-xs text-surface-500 font-medium">
+      <span class="text-xs text-surface-500 font-medium break-words">
         Chỉ xem tên và độ tuổi hỗ trợ (BR-USD-02)
       </span>
     </div>
 
-    <div class="divide-y-2 divide-surface-100" v-if="children.length > 0">
+    <div
+      class="divide-y-2 divide-surface-100 min-w-0"
+      v-if="children.length > 0"
+    >
       <div
-        class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 first:pt-0 last:pb-0"
+        class="py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 first:pt-0 last:pb-0 min-w-0"
         v-for="child in children"
         :key="child.uuid"
       >
-        <div class="space-y-1">
-          <div class="flex items-center gap-3">
-            <h3 class="text-base font-bold text-surface-900">
+        <div class="space-y-1 min-w-0">
+          <div class="flex flex-wrap items-center gap-2 sm:gap-3 min-w-0">
+            <h3 class="text-base font-bold text-surface-900 break-words">
               {{ child.display_name }}
             </h3>
             <span
@@ -41,7 +44,7 @@
               {{ getChildStatusLabel(child.status) }}
             </span>
           </div>
-          <div class="text-xs text-surface-500">
+          <div class="text-xs text-surface-500 break-words">
             Ngày tạo: {{ formatDate(child.created_at) }}
             <span
               class="ml-2 text-danger-600 font-medium"
@@ -53,7 +56,7 @@
         </div>
 
         <!-- Action: Archive Child Profile (BR-CPA-07: ONLY allowed mutation) -->
-        <div>
+        <div class="min-w-0">
           <button
             class="min-h-11 px-4 py-2 rounded-2xl border-2 border-warning-300 bg-warning-50 hover:bg-warning-100 text-warning-800 text-xs font-bold font-heading transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             type="button"

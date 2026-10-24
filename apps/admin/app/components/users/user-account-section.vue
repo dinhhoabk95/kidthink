@@ -1,17 +1,17 @@
 <template>
   <section
     aria-labelledby="group-account-heading"
-    class="bg-white rounded-3xl border-4 border-surface-200 p-6 space-y-4 shadow-sm"
+    class="bg-white rounded-3xl border-4 border-surface-200 p-4 sm:p-6 space-y-4 shadow-sm min-w-0 overflow-hidden"
   >
     <div
-      class="flex items-center justify-between border-b-2 border-surface-100 pb-3"
+      class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-surface-100 pb-3 min-w-0"
     >
       <h2
-        class="text-lg font-bold font-heading text-surface-900 flex items-center gap-2"
+        class="text-lg font-bold font-heading text-surface-900 flex items-center gap-2 break-words min-w-0"
         id="group-account-heading"
       >
-        <UIcon class="w-5 h-5 text-surface-500" name="i-lucide-user" />
-        Thông tin tài khoản
+        <UIcon class="w-5 h-5 text-surface-500 shrink-0" name="i-lucide-user" />
+        <span>Thông tin tài khoản</span>
       </h2>
       <span
         class="px-2.5 py-1 rounded-full text-xs font-bold font-heading"
@@ -21,55 +21,60 @@
       </span>
     </div>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-      <div>
-        <span class="text-xs text-surface-400 block">Địa chỉ Email:</span>
-        <span class="font-bold text-surface-900 font-mono"
-          >{{ account.email }}</span
-        >
+    <div
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm min-w-0"
+    >
+      <div class="min-w-0">
+        <span class="text-xs text-surface-500 block">Địa chỉ Email:</span>
+        <span class="font-bold text-surface-900 font-mono break-all">{{
+          account.email
+        }}</span>
       </div>
 
-      <div>
-        <span class="text-xs text-surface-400 block">Tên hiển thị:</span>
-        <span class="font-bold text-surface-900"
-          >{{ account.display_name }}</span
-        >
+      <div class="min-w-0">
+        <span class="text-xs text-surface-500 block">Tên hiển thị:</span>
+        <span class="font-bold text-surface-900 break-words">{{
+          account.display_name
+        }}</span>
       </div>
 
-      <div>
-        <span class="text-xs text-surface-400 block">Xác thực Email:</span>
-        <div class="flex items-center gap-2">
+      <div class="min-w-0">
+        <span class="text-xs text-surface-500 block">Xác thực Email:</span>
+        <div class="flex flex-wrap items-center gap-2">
           <span
             class="font-medium text-success-700 flex items-center gap-1"
             v-if="account.email_verified"
           >
-            <UIcon class="w-4 h-4 text-success-600" name="i-lucide-check" />
-            Đã xác thực
+            <UIcon
+              class="w-4 h-4 text-success-600 shrink-0"
+              name="i-lucide-check"
+            />
+            <span>Đã xác thực</span>
           </span>
           <span
             class="font-medium text-warning-700 flex items-center gap-1"
             v-else
           >
             <UIcon
-              class="w-4 h-4 text-warning-600"
+              class="w-4 h-4 text-warning-600 shrink-0"
               name="i-lucide-alert-triangle"
             />
-            Chưa xác thực
+            <span>Chưa xác thực</span>
           </span>
         </div>
       </div>
 
-      <div>
-        <span class="text-xs text-surface-400 block"
+      <div class="min-w-0">
+        <span class="text-xs text-surface-500 block"
           >Xác thực hai lớp (MFA):</span
         >
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-2">
           <span class="font-medium text-success-700" v-if="account.mfa_enabled">
             ✓ Đang bật
           </span>
           <span class="font-medium text-surface-500" v-else> Chưa bật </span>
           <NuxtLink
-            class="text-xs font-bold text-brand-600 hover:underline"
+            class="min-h-11 px-2 inline-flex items-center text-xs font-bold text-brand-600 hover:underline"
             v-if="account.mfa_enabled"
             :to="`/users/${account.uuid}/mfa-recovery`"
           >
@@ -78,31 +83,31 @@
         </div>
       </div>
 
-      <div>
-        <span class="text-xs text-surface-400 block"
+      <div class="min-w-0">
+        <span class="text-xs text-surface-500 block"
           >Số phiên đăng nhập mở:</span
         >
-        <span class="font-bold text-surface-900"
-          >{{ account.active_session_count }}</span
-        >
+        <span class="font-bold text-surface-900">{{
+          account.active_session_count
+        }}</span>
       </div>
 
-      <div>
-        <span class="text-xs text-surface-400 block">Ngày tạo:</span>
-        <span class="text-surface-700"
-          >{{ formatDate(account.created_at) }}</span
-        >
+      <div class="min-w-0">
+        <span class="text-xs text-surface-500 block">Ngày tạo:</span>
+        <span class="text-surface-700 break-words">{{
+          formatDate(account.created_at)
+        }}</span>
       </div>
 
-      <div>
-        <span class="text-xs text-surface-400 block">Hoạt động gần nhất:</span>
-        <span class="text-surface-700"
-          >{{ account.last_active_at ? formatDate(account.last_active_at) : "—" }}</span
-        >
+      <div class="min-w-0">
+        <span class="text-xs text-surface-500 block">Hoạt động gần nhất:</span>
+        <span class="text-surface-700 break-words">{{
+          account.last_active_at ? formatDate(account.last_active_at) : "—"
+        }}</span>
       </div>
 
       <div
-        class="sm:col-span-2 text-danger-700 bg-danger-50 p-2.5 rounded-xl border border-danger-200"
+        class="sm:col-span-2 text-danger-700 bg-danger-50 p-2.5 rounded-xl border border-danger-200 min-w-0 break-words"
         v-if="account.suspended_reason"
       >
         <span class="text-xs font-bold block">Lý do tạm khoá:</span>
@@ -110,7 +115,7 @@
       </div>
 
       <div
-        class="sm:col-span-2 text-surface-700 bg-surface-100 p-2.5 rounded-xl border border-surface-200"
+        class="sm:col-span-2 text-surface-700 bg-surface-100 p-2.5 rounded-xl border border-surface-200 min-w-0 break-words"
         v-if="account.purge_at"
       >
         <span class="text-xs font-bold block"

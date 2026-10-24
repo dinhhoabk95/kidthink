@@ -2,6 +2,7 @@ import {
   childDailyStats,
   childProfiles,
   childSessionSummaries,
+  entitlements,
   gameLevels,
   getOwnerDb,
   paymentOrders,
@@ -9,11 +10,15 @@ import {
   users,
 } from "@mindkid/db";
 import { ChildNotFoundError } from "@mindkid/errors/child";
-import { allowedTiers, resolveNextStep } from "@mindkid/shared";
+import {
+  allowedTiers,
+  PACKAGE_CATALOG,
+  resolveNextStep,
+} from "@mindkid/shared";
 import { and, desc, eq, gte } from "drizzle-orm";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import {
   defineEventHandler,
+  getCookie,
   getQuery,
   type H3Event,
   setResponseStatus,
@@ -28,6 +33,9 @@ const DashboardQuerySchema = z.object({
   child_uuid: z.string().optional(),
 });
 
+type DashboardQuery = z.infer<typeof DashboardQuerySchema>;
+type OwnerDatabase = ReturnType<typeof getOwnerDb>;
+
 interface ChildRecord {
   id: number;
   uuid: string;
@@ -38,13 +46,58 @@ interface ChildRecord {
   status: string;
 }
 
+interface DashboardChildSummary {
+  id: number;
+  uuid: string;
+  display_name: string;
+  birth_year: number;
+  avatar_id: string;
+  relationship: string | null;
+  days_played_7d: number;
+  latest_level: string | null;
+}
+
+interface DashboardProgressSummary {
+  child_id: number;
+  child_uuid: string;
+  display_name: string;
+  days_played_7d: number;
+  total_play_time_minutes_7d: number;
+  levels_completed_7d: number;
+  report_url: string;
+}
+
 interface ChildDataResult {
-  childSummary: Record<string, unknown>;
-  progressSummary: Record<string, unknown>;
+  childSummary: DashboardChildSummary;
+  progressSummary: DashboardProgressSummary;
+}
+
+interface DashboardNextItem {
+  entity_type: string;
+  entity_code: string;
+  title: string;
+  locked: boolean;
+}
+
+interface DashboardCurriculumBlock {
+  enrolled: boolean;
+  curriculum?: null;
+  enrollment_id?: number;
+  curriculum_id?: number;
+  curriculum_code?: string;
+  title?: string;
+  duration_weeks?: number;
+  current_week?: number;
+  current_session?: number;
+  progress?: number;
+  week_progress?: { done: number; total: number } | number;
+  week_blocked_by_tier?: boolean;
+  is_completed?: boolean;
+  next_item?: DashboardNextItem | null;
 }
 
 async function fetchChildStats(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: OwnerDatabase,
   child: ChildRecord,
   sevenDaysAgoDate: string,
   hasAdvancedReportAccess: boolean
@@ -112,7 +165,7 @@ async function resolveCurriculumBlock(
   event: H3Event,
   userId: number,
   activeChild: ChildRecord | null
-): Promise<Record<string, unknown> | null> {
+): Promise<DashboardCurriculumBlock | null> {
   if (!activeChild) {
     return null;
   }
@@ -153,7 +206,7 @@ async function resolveCurriculumBlock(
         ? {
             entity_type: nextStep.item.entity_type,
             entity_code: nextStep.item.entity_code,
-            title: nextStep.item.title,
+            title: nextStep.item.title ?? "",
             locked: nextStep.item.locked,
           }
         : null,
@@ -165,9 +218,9 @@ async function resolveCurriculumBlock(
 }
 
 function resolveActiveChild(
-  _event: H3Event,
+  event: H3Event,
   userChildren: ChildRecord[],
-  query: Record<string, unknown>
+  query: DashboardQuery
 ): ChildRecord | null {
   let requestedChildId: number | null = null;
   if (query.child_id) {
@@ -181,23 +234,28 @@ function resolveActiveChild(
   }
 
   if (requestedChildId) {
-    const belongs = userChildren.some((c) => c.id === requestedChildId);
-    if (!belongs) {
+    const match = userChildren.find((c) => c.id === requestedChildId);
+    if (!match) {
       throw new ChildNotFoundError("CHILD_NOT_FOUND");
+    }
+    return match;
+  }
+
+  const cookieActiveUuid = event?.node?.req?.headers
+    ? getCookie(event, "active_child_id")
+    : undefined;
+  if (cookieActiveUuid) {
+    const cookieChild = userChildren.find((c) => c.uuid === cookieActiveUuid);
+    if (cookieChild) {
+      return cookieChild;
     }
   }
 
-  return (
-    (requestedChildId
-      ? userChildren.find((c) => c.id === requestedChildId)
-      : null) ||
-    userChildren[0] ||
-    null
-  );
+  return userChildren[0] || null;
 }
 
 async function buildTodoList(
-  db: PostgresJsDatabase<Record<string, unknown>>,
+  db: OwnerDatabase,
   userId: number,
   userStatus?: string,
   isExpiringSoon?: boolean,
@@ -256,6 +314,25 @@ async function buildTodoList(
   return todoList;
 }
 
+function resolveTierLabel(
+  packageCode: string | null | undefined,
+  activeTiers: string[]
+): { packageName: string; tier: string } {
+  if (packageCode) {
+    return {
+      packageName: PACKAGE_CATALOG[packageCode]?.name || packageCode,
+      tier: packageCode,
+    };
+  }
+  if (activeTiers.includes("premium")) {
+    return { packageName: "Premium", tier: "premium" };
+  }
+  if (activeTiers.includes("standard")) {
+    return { packageName: "Standard", tier: "standard" };
+  }
+  return { packageName: "Miễn phí", tier: "free" };
+}
+
 function computeSubscriptionState(
   sub:
     | {
@@ -265,14 +342,16 @@ function computeSubscriptionState(
       }
     | undefined,
   activeTiers: string[],
-  userChildrenCount: number
+  userChildrenCount: number,
+  fallbackExpiresAt?: Date | null
 ) {
   let daysLeft: number | null = null;
   let isExpiringSoon = false;
   let hasExpired = false;
+  const effectivePeriodEnd = sub?.currentPeriodEnd ?? fallbackExpiresAt ?? null;
 
-  if (sub?.currentPeriodEnd) {
-    const diffMs = sub.currentPeriodEnd.getTime() - Date.now();
+  if (effectivePeriodEnd) {
+    const diffMs = effectivePeriodEnd.getTime() - Date.now();
     daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
     if (daysLeft < 0) {
       hasExpired = true;
@@ -292,16 +371,16 @@ function computeSubscriptionState(
     upgradeCta = { label: "Gia hạn gói học", url: "/pricing" };
   }
 
+  const { packageName, tier } = resolveTierLabel(sub?.packageCode, activeTiers);
+
   return {
     daysLeft,
     isExpiringSoon,
     subscriptionBlock: {
-      package_name:
-        sub?.packageCode ||
-        (activeTiers.includes("standard") ? "Standard" : "Miễn phí"),
-      tier: sub?.packageCode || "free",
+      package_name: packageName,
+      tier,
       status: sub?.status || "active",
-      expires_at: sub?.currentPeriodEnd?.toISOString() || null,
+      expires_at: effectivePeriodEnd?.toISOString() || null,
       days_left: daysLeft,
       quota: {
         children_count: userChildrenCount,
@@ -319,7 +398,7 @@ export default defineEventHandler(async (event) => {
   const userId = Number(user.user_id);
   const db = getOwnerDb();
   const parsedQuery = DashboardQuerySchema.safeParse(getQuery(event));
-  const query = parsedQuery.success ? parsedQuery.data : {};
+  const query: DashboardQuery = parsedQuery.success ? parsedQuery.data : {};
 
   const [dbUser] = await db
     .select({
@@ -373,8 +452,24 @@ export default defineEventHandler(async (event) => {
     .orderBy(desc(recurringSubscriptions.id))
     .limit(1);
 
+  const [latestEntitlement] = await db
+    .select({
+      expiresAt: entitlements.expiresAt,
+    })
+    .from(entitlements)
+    .where(
+      and(eq(entitlements.userId, userId), eq(entitlements.status, "active"))
+    )
+    .orderBy(desc(entitlements.expiresAt))
+    .limit(1);
+
   const { daysLeft, isExpiringSoon, subscriptionBlock } =
-    computeSubscriptionState(sub, activeTiers, userChildren.length);
+    computeSubscriptionState(
+      sub,
+      activeTiers,
+      userChildren.length,
+      latestEntitlement?.expiresAt ?? null
+    );
 
   const todoList = await buildTodoList(
     db,
@@ -388,8 +483,8 @@ export default defineEventHandler(async (event) => {
     .toISOString()
     .slice(0, 10);
 
-  const childrenData: Record<string, unknown>[] = [];
-  const recentProgressData: Record<string, unknown>[] = [];
+  const childrenData: DashboardChildSummary[] = [];
+  const recentProgressData: DashboardProgressSummary[] = [];
 
   const hasAdvancedReportAccess = activeEntitlements.includes(
     "view_advanced_report"

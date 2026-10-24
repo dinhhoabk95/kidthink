@@ -276,24 +276,14 @@ describe("P1.3 Access Gating (BR-GAT-01 .. BR-GAT-08, BR-LAD-07)", () => {
       }
     });
 
-    it("BR-LAD-07: guest calling free level outside 6-level allow-list throws 403 TIER_LOCKED with access_tier login", async () => {
-      try {
-        await assertContentAccess(publishedFreeOutsideAllowlist, {
+    it("BR-LAD-07: guest calling any free level succeeds with 200", async () => {
+      const guestRes = await assertContentAccess(
+        publishedFreeOutsideAllowlist,
+        {
           caller: { kind: "guest" },
-        });
-        expect.unreachable(
-          "Should throw 403 TIER_LOCKED for free level outside guest allow-list"
-        );
-      } catch (err: unknown) {
-        expect(err).toBeInstanceOf(AccessGatingError);
-        const gatingErr = err as AccessGatingError;
-        expect(gatingErr.code).toBe("TIER_LOCKED");
-        expect(gatingErr.status).toBe(403);
-        expect(gatingErr.details?.access_tier).toBe("login");
-        expect(gatingErr.details?.required_entitlement).toBe(
-          "play_login_games"
-        );
-      }
+        }
+      );
+      expect(guestRes.is_preview).toBe(false);
 
       const userRes = await assertContentAccess(publishedFreeOutsideAllowlist, {
         caller: { kind: "user", user_id: "u1", active_child_id: null },

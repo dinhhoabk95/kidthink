@@ -64,6 +64,26 @@ export function generateWorksheetCode(existingCount: number): string {
   return `WS-${numStr}`;
 }
 
+export function serializeWorksheet(ws: typeof worksheets.$inferSelect) {
+  return {
+    ...ws,
+    entity_id: ws.entityId,
+    content_version: ws.contentVersion,
+    layout_template: ws.layoutTemplate,
+    content_blocks: ws.contentBlocks,
+    learning_objective_ids: ws.learningObjectiveIds,
+    pdf_path: ws.pdfPath,
+    preview_path: ws.previewPath,
+    render_job_id: ws.renderJobId,
+    render_status: ws.renderStatus,
+    render_input_hash: ws.renderInputHash,
+    source_content_version: ws.sourceContentVersion,
+    render_page_count: ws.renderPageCount,
+    render_grayscale_passed: ws.renderGrayscalePassed,
+    access_tier: ws.accessTier,
+  };
+}
+
 /**
  * Lists worksheets with optional filters
  */
@@ -105,10 +125,9 @@ export async function listWorksheets(options: ListWorksheetsOptions = {}) {
     .limit(options.limit || 50)
     .offset(options.offset || 0);
 
-  if (conditions.length > 0) {
-    return await query.where(and(...conditions));
-  }
-  return await query;
+  const rows =
+    conditions.length > 0 ? await query.where(and(...conditions)) : await query;
+  return rows.map(serializeWorksheet);
 }
 
 /**
@@ -128,7 +147,7 @@ export async function getWorksheetByCode(code: string, version?: number) {
     .orderBy(desc(worksheets.contentVersion))
     .limit(1);
 
-  return ws || null;
+  return ws ? serializeWorksheet(ws) : null;
 }
 
 /**
@@ -143,7 +162,7 @@ export async function getPublishedWorksheetByCode(code: string) {
     .orderBy(desc(worksheets.contentVersion))
     .limit(1);
 
-  return ws || null;
+  return ws ? serializeWorksheet(ws) : null;
 }
 
 /**
@@ -156,7 +175,7 @@ export async function getWorksheetById(id: number) {
     .from(worksheets)
     .where(eq(worksheets.id, id))
     .limit(1);
-  return ws || null;
+  return ws ? serializeWorksheet(ws) : null;
 }
 
 /**
@@ -225,7 +244,7 @@ export async function createWorksheetDraft(
       reason: "Manager created worksheet draft via Studio",
     });
 
-    return created;
+    return serializeWorksheet(created);
   });
 }
 
@@ -277,7 +296,7 @@ export async function updateWorksheetDraft(
     );
   }
 
-  const patch: Record<string, unknown> = {
+  const patch: Partial<typeof worksheets.$inferInsert> = {
     title: mergedTitle,
     layoutTemplate: mergedTemplate,
     contentBlocks: mergedBlocks,
@@ -318,7 +337,7 @@ export async function updateWorksheetDraft(
       reason: "Manager updated worksheet draft",
     });
 
-    return updated;
+    return serializeWorksheet(updated);
   });
 }
 
@@ -381,7 +400,7 @@ export async function createNewWorksheetVersion(
       reason: `Created version v${newVersion} for worksheet ${code}`,
     });
 
-    return created;
+    return serializeWorksheet(created);
   });
 }
 
@@ -392,7 +411,7 @@ export async function renderWorksheetArtifact(
   id: number,
   managerId: number
 ): Promise<{
-  worksheet: typeof worksheets.$inferSelect;
+  worksheet: ReturnType<typeof serializeWorksheet>;
   pdfBuffer: Buffer;
   inspection: WorksheetPhysicalInspectionResult;
 }> {
@@ -459,7 +478,7 @@ export async function renderWorksheetArtifact(
       reason: `Rendered vector PDF artifact for worksheet ${ws.code} v${ws.contentVersion}`,
     });
 
-    return res;
+    return serializeWorksheet(res);
   });
 
   return {

@@ -136,7 +136,7 @@
     justify-content: center;
     min-height: 48px;
     padding: 0.75rem 1.75rem;
-    background-color: var(--color-cta, #c2410c);
+    background-color: var(--color-cta);
     color: white;
     font-weight: 700;
     font-size: 1.05rem;
@@ -149,7 +149,7 @@
   }
 
   .btn-cta-primary:hover {
-    background-color: var(--color-cta-hover, #9a3412);
+    background-color: var(--color-cta-hover);
     transform: translateY(-2px);
   }
 

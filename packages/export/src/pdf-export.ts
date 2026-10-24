@@ -149,10 +149,12 @@ export async function requestExportJob(
     );
   }
 
-  // 3. Verify refId exists and belongs to user (for lesson_plan)
+  // 3. Verify refId exists and belongs to user
   if (kind === "lesson_plan") {
     // Throws NOT_FOUND if not found or belongs to another user
     await loadLessonPlanForExport(userId, refId);
+  } else {
+    throw new Error(`Loại xuất ${kind} chưa được hỗ trợ renderer.`);
   }
 
   // 4. Reserve quota & insert queued export job

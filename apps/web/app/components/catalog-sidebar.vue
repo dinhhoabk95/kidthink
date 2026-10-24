@@ -7,7 +7,7 @@
           <span>Nhóm năng lực tư duy</span>
         </div>
         <button
-          class="sidebar-reset-btn"
+          class="sidebar-reset-btn min-h-11"
           title="Xoá chọn năng lực"
           type="button"
           v-if="selectedCompetency"
@@ -22,7 +22,10 @@
         <!-- Mục Tất cả -->
         <button
           type="button"
-          :class="['competency-nav-item', { active: selectedCompetency === '' }]"
+          :class="[
+            'competency-nav-item min-h-11',
+            { active: selectedCompetency === '' }
+          ]"
           @click="onSelectCompetency('')"
         >
           <div class="nav-item-left">
@@ -46,11 +49,18 @@
         >
           <button
             type="button"
-            :class="['competency-nav-item', { active: selectedCompetency === comp.code }]"
+            :class="[
+              'competency-nav-item min-h-11',
+              { active: selectedCompetency === comp.code }
+            ]"
             @click="onSelectCompetency(comp.code)"
           >
             <div class="nav-item-left">
-              <span class="nav-item-emoji">{{ comp.emoji }}</span>
+              <UIcon
+                aria-hidden="true"
+                class="w-4 h-4 shrink-0 nav-item-emoji"
+                :name="getCompetencyIcon(comp.code)"
+              />
               <div class="nav-item-text">
                 <span class="nav-item-title">{{ comp.name }}</span>
                 <span class="nav-item-sub">{{ comp.short }}</span>
@@ -72,7 +82,10 @@
             <div class="strands-pill-grid">
               <button
                 type="button"
-                :class="['strand-pill', { active: selectedStrand === '' }]"
+                :class="[
+                  'strand-pill min-h-11',
+                  { active: selectedStrand === '' }
+                ]"
                 @click="onSelectStrand('')"
               >
                 Tất cả
@@ -82,7 +95,7 @@
                 v-for="strand in getStrands(comp.code)"
                 :key="strand.code"
                 :class="[
-                  'strand-pill',
+                  'strand-pill min-h-11',
                   { active: selectedStrand === strand.code }
                 ]"
                 @click="onSelectStrand(strand.code)"
@@ -106,6 +119,7 @@
     findStrandsByCompetency,
     type StrandCatalogEntry,
   } from "@mindkid/shared/client";
+  import { getCompetencyIcon } from "~/composables/use-games-catalog-page";
 
   const props = withDefaults(
     defineProps<{
@@ -147,14 +161,22 @@
   .taxonomy-sidebar {
     position: sticky;
     top: 5rem;
+    min-width: 0;
+  }
+
+  @media (max-width: 1024px) {
+    .taxonomy-sidebar {
+      position: static;
+    }
   }
 
   .sidebar-card {
-    background-color: white;
+    background-color: var(--color-surface-0);
     border-radius: 1.25rem;
     border: 2px solid var(--color-surface-200);
     padding: 1.25rem;
-    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+    box-shadow: 0 4px 16px
+      color-mix(in srgb, var(--color-surface-900) 4%, transparent);
   }
 
   .sidebar-header {
@@ -176,14 +198,18 @@
   }
 
   .sidebar-reset-btn {
-    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    font-size: 0.875rem;
     font-weight: 700;
     color: var(--color-brand-600);
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0.2rem 0.4rem;
-    border-radius: 0.35rem;
+    padding: 0.4rem 0.65rem;
+    border-radius: 0.5rem;
   }
 
   .sidebar-reset-btn:hover {
@@ -224,10 +250,11 @@
   }
 
   .competency-nav-item.active {
-    background-color: var(--color-brand-50, #eff6ff);
-    border-color: var(--color-brand-400, #818cf8);
-    color: var(--color-brand-900, #1e1b4b);
-    box-shadow: 0 2px 8px rgba(79, 70, 229, 0.08);
+    background-color: var(--color-brand-50);
+    border-color: var(--color-brand-400);
+    color: var(--color-brand-900);
+    box-shadow: 0 2px 8px
+      color-mix(in srgb, var(--color-brand-600) 8%, transparent);
   }
 
   .nav-item-left {
@@ -257,7 +284,7 @@
   }
 
   .nav-item-sub {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     color: var(--color-surface-500);
     white-space: nowrap;
     overflow: hidden;
@@ -269,11 +296,11 @@
   }
 
   .nav-item-badge {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 800;
     padding: 0.2rem 0.5rem;
     border-radius: 9999px;
-    background-color: white;
+    background-color: var(--color-surface-0);
     border: 1px solid var(--color-surface-200);
     color: var(--color-surface-600);
     flex-shrink: 0;
@@ -282,7 +309,7 @@
   .competency-nav-item.active .nav-item-badge {
     background-color: var(--color-brand-600);
     border-color: var(--color-brand-600);
-    color: white;
+    color: var(--color-surface-0);
   }
 
   /* Strands Sublist */
@@ -310,7 +337,7 @@
   }
 
   .strands-sublist-title {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 700;
     color: var(--color-surface-600);
   }
@@ -322,11 +349,14 @@
   }
 
   .strand-pill {
-    padding: 0.25rem 0.55rem;
-    border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.45rem 0.75rem;
+    border-radius: 0.65rem;
     border: 1px solid var(--color-surface-200);
-    background-color: white;
-    font-size: 0.75rem;
+    background-color: var(--color-surface-0);
+    font-size: 0.875rem;
     font-weight: 600;
     color: var(--color-surface-700);
     cursor: pointer;
@@ -341,12 +371,12 @@
   .strand-pill.active {
     background-color: var(--color-brand-600);
     border-color: var(--color-brand-600);
-    color: white;
+    color: var(--color-surface-0);
   }
 
   .strand-pill-count {
-    font-size: 0.7rem;
-    opacity: 0.8;
+    font-size: 0.875rem;
+    opacity: 0.85;
     margin-left: 0.2rem;
   }
 </style>

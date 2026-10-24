@@ -16,29 +16,35 @@ import {
   type RawCurriculumItemRecord,
   toProgramDetailPublic,
 } from "@mindkid/shared";
-import { and, asc, eq, inArray, ne } from "drizzle-orm";
+import { and, asc, eq, inArray, ne, or } from "drizzle-orm";
 import { defineEventHandler, getRouterParam, setHeader } from "h3";
 
 const CURRICULUM_CODE_REGEX = /^CUR-[A-Za-z0-9_-]+$/;
 const COMPETENCY_REGEX = /^(?:GL-|LES-)?(C[1-6])/i;
 const ALL_COMPETENCIES = ["C1", "C2", "C3", "C4", "C5", "C6"];
 
+interface GameLevelMapEntry {
+  code: string;
+  title: string;
+  accessTier: AccessTier;
+}
+
+interface LessonMapEntry extends GameLevelMapEntry {
+  estimatedMinutes?: number | null;
+}
+
 async function loadGameLevelsMap(
   db: ReturnType<typeof getOwnerDb>,
   entityIds: number[]
-): Promise<
-  Map<number, { code: string; title: string; accessTier: AccessTier }>
-> {
-  const map = new Map<
-    number,
-    { code: string; title: string; accessTier: AccessTier }
-  >();
+): Promise<Map<number, GameLevelMapEntry>> {
+  const map = new Map<number, GameLevelMapEntry>();
   if (entityIds.length === 0) {
     return map;
   }
 
   const rows = await db
     .select({
+      id: gameLevels.id,
       entityId: gameLevels.entityId,
       code: gameLevels.code,
       title: gameLevels.title,
@@ -47,17 +53,22 @@ async function loadGameLevelsMap(
     .from(gameLevels)
     .where(
       and(
-        inArray(gameLevels.entityId, entityIds),
+        or(
+          inArray(gameLevels.id, entityIds),
+          inArray(gameLevels.entityId, entityIds)
+        ),
         eq(gameLevels.status, "published")
       )
     );
 
   for (const row of rows) {
-    map.set(row.entityId, {
+    const entry: GameLevelMapEntry = {
       code: row.code,
       title: row.title,
       accessTier: row.accessTier as AccessTier,
-    });
+    };
+    map.set(row.id, entry);
+    map.set(row.entityId, entry);
   }
   return map;
 }
@@ -65,32 +76,15 @@ async function loadGameLevelsMap(
 async function loadLessonsMap(
   db: ReturnType<typeof getOwnerDb>,
   entityIds: number[]
-): Promise<
-  Map<
-    number,
-    {
-      code: string;
-      title: string;
-      accessTier: AccessTier;
-      estimatedMinutes?: number | null;
-    }
-  >
-> {
-  const map = new Map<
-    number,
-    {
-      code: string;
-      title: string;
-      accessTier: AccessTier;
-      estimatedMinutes?: number | null;
-    }
-  >();
+): Promise<Map<number, LessonMapEntry>> {
+  const map = new Map<number, LessonMapEntry>();
   if (entityIds.length === 0) {
     return map;
   }
 
   const rows = await db
     .select({
+      id: lessons.id,
       entityId: lessons.entityId,
       code: lessons.code,
       title: lessons.title,
@@ -99,16 +93,24 @@ async function loadLessonsMap(
     })
     .from(lessons)
     .where(
-      and(inArray(lessons.entityId, entityIds), eq(lessons.status, "published"))
+      and(
+        or(
+          inArray(lessons.id, entityIds),
+          inArray(lessons.entityId, entityIds)
+        ),
+        eq(lessons.status, "published")
+      )
     );
 
   for (const row of rows) {
-    map.set(row.entityId, {
+    const entry: LessonMapEntry = {
       code: row.code,
       title: row.title,
       accessTier: row.accessTier as AccessTier,
       estimatedMinutes: row.estimatedMinutes,
-    });
+    };
+    map.set(row.id, entry);
+    map.set(row.entityId, entry);
   }
   return map;
 }

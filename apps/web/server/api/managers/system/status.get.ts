@@ -71,6 +71,15 @@ export interface SystemStatusResponse {
       restored_rows: number;
       finished_at: string | null;
     } | null;
+    recent_logs: Array<{
+      id: number;
+      backup_type: string;
+      status: string;
+      size_bytes: number;
+      restored_rows: number;
+      started_at: string;
+      finished_at: string | null;
+    }>;
     has_verified_backup: boolean;
     warning: string | null;
     runbook_url: string;
@@ -321,17 +330,26 @@ export default defineEventHandler(async (event) => {
     latest_dump: latestDump
       ? {
           status: latestDump.status,
-          size_bytes: latestDump.sizeBytes,
+          size_bytes: latestDump.sizeBytes ?? 0,
           started_at: latestDump.startedAt.toISOString(),
         }
       : null,
     latest_verify: latestVerify
       ? {
           status: latestVerify.status,
-          restored_rows: latestVerify.restoredRows,
+          restored_rows: latestVerify.restoredRows ?? 0,
           finished_at: latestVerify.finishedAt?.toISOString() || null,
         }
       : null,
+    recent_logs: latestBackups.map((item) => ({
+      id: item.id,
+      backup_type: item.backupType,
+      status: item.status,
+      size_bytes: item.sizeBytes ?? 0,
+      restored_rows: item.restoredRows ?? 0,
+      started_at: item.startedAt.toISOString(),
+      finished_at: item.finishedAt ? item.finishedAt.toISOString() : null,
+    })),
     has_verified_backup: hasVerifiedBackup,
     warning: hasVerifiedBackup
       ? null

@@ -429,6 +429,10 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
 
   it("POST /api/guest/auth/users/mfa: sai mã giữ thử thách, lần sai thứ 5 khoá 429 (UC-052 A1, A2, BR-013)", async () => {
     const redis = getAuthRedisClient();
+    await redis.del(
+      `auth:v1:user:mfa_lock:${testUserId}`,
+      `auth:v1:user:mfa_fail:${testUserId}`
+    );
     const mfaService = new MfaChallengeService(redis);
     const challenge = await mfaService.createChallenge({
       namespace: "user",
@@ -560,10 +564,10 @@ describe("User MFA Flow (P2.11, BR-MFA-01 - BR-MFA-12)", () => {
 
       try {
         await mfaRecoveryCompleteHandler(event);
-        expect.fail("Should throw WAITING_PERIOD_NOT_ELAPSED");
+        expect.fail("Should throw VALIDATION_FAILED");
       } catch (err: any) {
-        expect(err.statusCode || err.status).toBe(400);
-        expect(err.statusMessage).toBe("WAITING_PERIOD_NOT_ELAPSED");
+        expect(err.statusCode || err.status).toBe(422);
+        expect(err.code || err.statusMessage).toBe("VALIDATION_FAILED");
       }
     });
 

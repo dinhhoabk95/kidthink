@@ -34,12 +34,8 @@ export default defineEventHandler(async (event) => {
       session.manager_id
     );
     return updated;
-  } catch (err: unknown) {
-    const errorObj = err as {
-      statusCode?: number;
-      message?: string;
-      details?: unknown;
-    };
-    throw new InternalError(errorObj.message);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : undefined;
+    throw new InternalError(message);
   }
 });
