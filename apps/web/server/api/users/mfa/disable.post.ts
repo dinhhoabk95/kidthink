@@ -1,11 +1,14 @@
 import {
   decryptTotpSecret,
+  getAuthRedisClient,
   hashRecoveryCode,
+  MfaAttemptGuard,
   verifyTotpCode,
 } from "@mindkid/auth";
 import { getOwnerDb, mfaRecoveryCodes, mfaSettings } from "@mindkid/db";
 import {
   MfaInvalidCodeError,
+  MfaLockedError,
   MfaSecretCorruptedError,
 } from "@mindkid/errors/auth";
 import { ValidationError } from "@mindkid/errors/common";
@@ -40,6 +43,8 @@ export default defineEventHandler(async (event) => {
   }
 
   const code = parsedResult.data.code.trim();
+  const attemptGuard = new MfaAttemptGuard(getAuthRedisClient());
+  await attemptGuard.assertNotLocked("user", userId);
 
   const db = getOwnerDb();
   const [setting] = await db
@@ -98,8 +103,13 @@ export default defineEventHandler(async (event) => {
   }
 
   if (!isCodeValid) {
+    const failure = await attemptGuard.recordFailure("user", userId);
+    if (failure.locked) {
+      throw new MfaLockedError();
+    }
     throw new MfaInvalidCodeError("Mã xác thực không hợp lệ");
   }
+  await attemptGuard.reset("user", userId);
 
   // Delete mfaSettings and all recovery codes
   await db

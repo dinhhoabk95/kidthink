@@ -112,7 +112,7 @@ function processDataPayload(
 
 export interface AuditTx {
   insert: (table: typeof auditLogs) => {
-    values: (vals: Record<string, string | number | null | object>) => {
+    values: (vals: typeof auditLogs.$inferInsert) => {
       returning: () => Promise<
         Array<Partial<typeof auditLogs.$inferSelect> & { id: number }>
       >;

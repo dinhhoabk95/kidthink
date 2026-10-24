@@ -51,10 +51,15 @@ export async function clearRateLimitBuckets(): Promise<void> {
  */
 export function hashRateLimitIdentifier(
   identifier: string,
-  secret = "tinimath_ratelimit_salt"
+  secret?: string
 ): string {
+  const effectiveSecret =
+    secret ||
+    process.env.RATE_LIMIT_HMAC_SECRET ||
+    process.env.NUXT_SESSION_PASSWORD ||
+    "tinimath_ratelimit_salt";
   const normalized = identifier.trim().toLowerCase();
-  return createHmac("sha256", secret)
+  return createHmac("sha256", effectiveSecret)
     .update(normalized)
     .digest("hex")
     .slice(0, 32);

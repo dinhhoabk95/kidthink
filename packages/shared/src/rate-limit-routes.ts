@@ -123,6 +123,29 @@ function resolveManagerRoute(
   return { mode: "middleware", className: "managers:*" };
 }
 
+const USER_SENSITIVE_AUTH_POST_PATHS = new Set([
+  "/api/users/password",
+  "/api/users/email",
+  "/api/users/account/delete",
+  "/api/users/account/delete/cancel",
+]);
+
+function isUserSensitiveAuthRoute(path: string, method: string): boolean {
+  if (path === "/api/users/password" && method === "PUT") {
+    return true;
+  }
+  return method === "POST" && USER_SENSITIVE_AUTH_POST_PATHS.has(path);
+}
+
+function isUserMfaOrParentGateRoute(path: string): boolean {
+  return (
+    path === "/api/users/mfa" ||
+    path.startsWith("/api/users/mfa/") ||
+    path === "/api/users/parent-gate" ||
+    path.startsWith("/api/users/parent-gate/")
+  );
+}
+
 function resolveUserRoute(
   path: string,
   method: string
@@ -133,13 +156,19 @@ function resolveUserRoute(
   if (ORDER_PROOF_PATH.test(path) && method === "POST") {
     return { mode: "middleware", className: "payment:proof" };
   }
+  if (isUserSensitiveAuthRoute(path, method)) {
+    return { mode: "middleware", className: "auth:login" };
+  }
+  if (isUserMfaOrParentGateRoute(path)) {
+    return { mode: "middleware", className: "auth:mfa" };
+  }
   if (path === "/api/users/ai/search") {
     return { mode: "middleware", className: "search" };
   }
-  if (path === "/api/users/data-export") {
-    return { mode: "middleware", className: "export:data" };
-  }
-  if (path === "/api/users/exports" && method === "POST") {
+  if (
+    path === "/api/users/data-export" ||
+    (path === "/api/users/exports" && method === "POST")
+  ) {
     return { mode: "middleware", className: "export:data" };
   }
   return null;

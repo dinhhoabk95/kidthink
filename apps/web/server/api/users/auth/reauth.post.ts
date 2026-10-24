@@ -1,21 +1,125 @@
-import { verifyPassword } from "@mindkid/auth";
-import { getOwnerDb, users } from "@mindkid/db";
+import {
+  decryptTotpSecret,
+  getAuthRedisClient,
+  MfaAttemptGuard,
+  verifyPassword,
+  verifyTotpCode,
+} from "@mindkid/auth";
+import { getOwnerDb, mfaSettings, socialIdentities, users } from "@mindkid/db";
 import {
   InvalidCredentialsError,
+  MfaLockedError,
   PasswordNotSetError,
 } from "@mindkid/errors/auth";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
-
+import { getMfaEncryptionKey } from "#server/utils/admin-auth-runtime";
 import { requireWebUserSession } from "#server/utils/auth-runtime";
 import { markCurrentSessionReauthenticated } from "#server/utils/reauth-runtime";
 
 const ReauthSchema = z
   .object({
-    password: z.string().min(1).max(1024),
+    password: z.string().min(1).max(1024).optional(),
+    totp: z.string().length(6).optional(),
+    code: z.string().length(6).optional(),
+    method: z.enum(["password", "totp", "social"]).optional(),
+    provider: z.enum(["google", "facebook"]).optional(),
   })
   .strict();
+
+type ReauthPayload = z.infer<typeof ReauthSchema>;
+
+async function verifyUserTotpReauth(
+  db: ReturnType<typeof getOwnerDb>,
+  userId: number,
+  totpCode: string
+): Promise<void> {
+  const attemptGuard = new MfaAttemptGuard(getAuthRedisClient());
+  await attemptGuard.assertNotLocked("user", userId);
+  const [mfa] = await db
+    .select()
+    .from(mfaSettings)
+    .where(
+      and(
+        eq(mfaSettings.accountType, "user"),
+        eq(mfaSettings.accountId, userId)
+      )
+    )
+    .limit(1);
+
+  if (!(mfa?.confirmedAt && mfa.secretEncrypted)) {
+    throw new InvalidCredentialsError();
+  }
+  const secret = decryptTotpSecret(mfa.secretEncrypted, getMfaEncryptionKey());
+  if (!verifyTotpCode(totpCode, secret)) {
+    const failure = await attemptGuard.recordFailure("user", userId);
+    if (failure.locked) {
+      throw new MfaLockedError();
+    }
+    throw new InvalidCredentialsError();
+  }
+  await attemptGuard.reset("user", userId);
+}
+
+async function verifyUserSocialReauth(
+  db: ReturnType<typeof getOwnerDb>,
+  userId: number,
+  passwordHash: string | null,
+  provider?: "google" | "facebook"
+): Promise<void> {
+  if (passwordHash) {
+    throw new InvalidCredentialsError();
+  }
+  const providerCondition = provider
+    ? and(
+        eq(socialIdentities.userId, userId),
+        eq(socialIdentities.provider, provider)
+      )
+    : eq(socialIdentities.userId, userId);
+  const [linked] = await db
+    .select({ id: socialIdentities.id })
+    .from(socialIdentities)
+    .where(providerCondition)
+    .limit(1);
+  if (!linked) {
+    throw new InvalidCredentialsError();
+  }
+}
+
+async function verifyUserPasswordReauth(
+  password: string | undefined,
+  passwordHash: string | null
+): Promise<void> {
+  if (!password) {
+    throw new InvalidCredentialsError();
+  }
+  if (!passwordHash) {
+    throw new PasswordNotSetError();
+  }
+  const isValid = await verifyPassword(password, passwordHash);
+  if (!isValid) {
+    throw new InvalidCredentialsError();
+  }
+}
+
+async function performUserReauthVerification(
+  db: ReturnType<typeof getOwnerDb>,
+  userId: number,
+  passwordHash: string | null,
+  data: ReauthPayload
+): Promise<void> {
+  const totpCode = data.totp ?? data.code;
+  if (totpCode) {
+    await verifyUserTotpReauth(db, userId, totpCode);
+    return;
+  }
+  if (data.method === "social" || data.provider) {
+    await verifyUserSocialReauth(db, userId, passwordHash, data.provider);
+    return;
+  }
+  await verifyUserPasswordReauth(data.password, passwordHash);
+}
 
 export default defineEventHandler(async (event) => {
   const userSession = await requireWebUserSession(event);
@@ -37,17 +141,16 @@ export default defineEventHandler(async (event) => {
     .where(eq(users.id, userId))
     .limit(1);
 
-  if (!account?.passwordHash) {
-    throw new PasswordNotSetError();
-  }
-
-  const isValid = await verifyPassword(
-    parsed.data.password,
-    account.passwordHash
-  );
-  if (!isValid) {
+  if (!account) {
     throw new InvalidCredentialsError();
   }
+
+  await performUserReauthVerification(
+    db,
+    userId,
+    account.passwordHash,
+    parsed.data
+  );
 
   const now = new Date();
   await markCurrentSessionReauthenticated(event, now);

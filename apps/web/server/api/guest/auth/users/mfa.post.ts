@@ -23,7 +23,11 @@ import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 
 import { getMfaEncryptionKey } from "#server/utils/admin-auth-runtime";
-import { getVerifiedRemoteIp } from "#server/utils/auth-runtime";
+import {
+  ensureUserCsrfCookie,
+  getVerifiedRemoteIp,
+  setUserRememberCookie,
+} from "#server/utils/auth-runtime";
 
 const MfaSchema = z
   .object({
@@ -81,7 +85,10 @@ async function verifyUserMfa(
 }
 
 export default defineEventHandler(async (event) => {
-  const body = (await readBody(event).catch(() => null)) ?? {};
+  const body =
+    (event.context as { body?: Record<string, string> })?.body ??
+    (await readBody(event).catch(() => null)) ??
+    {};
   const parsed = MfaSchema.safeParse(body);
   if (!parsed.success) {
     throw new InvalidCredentialsError();
@@ -157,6 +164,11 @@ export default defineEventHandler(async (event) => {
     },
   });
 
+  if (createdSession.rememberToken) {
+    setUserRememberCookie(event, createdSession.rememberToken);
+  }
+  ensureUserCsrfCookie(event);
+
   // Record PG metadata
   const pgStore = new PostgresSessionStore(getAppSql());
   await pgStore
@@ -176,6 +188,7 @@ export default defineEventHandler(async (event) => {
     status: "ok",
     user: {
       id: user.id,
+      uuid: user.uuid,
       email: user.email,
       display_name: user.displayName,
     },

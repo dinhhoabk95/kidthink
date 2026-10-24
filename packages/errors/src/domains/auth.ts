@@ -84,6 +84,7 @@ export const PasswordAlreadySetError = defineError({
 
 export const MfaRequiredError = defineError<{
   readonly user_id?: number;
+  readonly challenge?: string;
 }>({
   code: "MFA_REQUIRED",
   message: "Vui lòng hoàn tất xác thực đa yếu tố để tiếp tục.",

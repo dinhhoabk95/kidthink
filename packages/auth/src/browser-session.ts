@@ -41,6 +41,11 @@ export interface BrowserSessionService {
   ): Promise<AuthContext | null>;
   restore(input: RestoreRememberSessionInput): Promise<RestoredSessionOutput>;
   revokeDevice(input: RevokeDeviceInput): Promise<void>;
+  revokeSession(
+    namespace: AuthNamespace,
+    accountId: number,
+    sessionId: string
+  ): Promise<string | null>;
   revokeAll(account: AccountReference): Promise<void>;
   /** Thu hồi mọi thiết bị trừ thiết bị của phiên hiện tại. */
   revokeOtherDevices(
@@ -97,6 +102,19 @@ export class DefaultBrowserSessionService implements BrowserSessionService {
       input.accountId,
       input.deviceId
     );
+  }
+
+  async revokeSession(
+    namespace: AuthNamespace,
+    accountId: number,
+    sessionId: string
+  ): Promise<string | null> {
+    const deviceId = await this.store.getDeviceId(namespace, sessionId);
+    if (deviceId) {
+      await this.store.revokeDevice(namespace, accountId, deviceId);
+      return deviceId;
+    }
+    return null;
   }
 
   revokeAll(account: AccountReference): Promise<void> {

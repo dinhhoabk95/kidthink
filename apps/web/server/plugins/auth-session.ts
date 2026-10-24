@@ -1,4 +1,5 @@
 import { getBrowserSessionService } from "@mindkid/auth";
+import { isAppError } from "@mindkid/errors/base";
 
 declare const sessionHooks: {
   hook(
@@ -26,7 +27,10 @@ export default defineNitroPlugin(() => {
       } else {
         session.user = undefined;
       }
-    } catch {
+    } catch (err) {
+      if (isAppError(err) && err.status === 503) {
+        throw err;
+      }
       session.user = undefined;
     }
   });

@@ -88,6 +88,37 @@ export function factoryAssertSameOriginRequest(event: H3Event): void {
   }
 }
 
+function toHeaderList(value: unknown): string[] {
+  if (value === undefined) {
+    return [];
+  }
+  if (Array.isArray(value)) {
+    return value.map(String);
+  }
+  return [String(value)];
+}
+
+function ensureResponseAppendHeader(response: {
+  setHeader?: (name: string, value: string | string[]) => void;
+  getHeader?: (name: string) => unknown;
+  appendHeader?: (name: string, value: string | readonly string[]) => void;
+}): boolean {
+  if (typeof response.setHeader !== "function") {
+    return false;
+  }
+  if (typeof response.appendHeader === "function") {
+    return true;
+  }
+  const setHeaderFn = response.setHeader.bind(response);
+  const getHeaderFn = response.getHeader?.bind(response);
+  response.appendHeader = (name: string, value: string | readonly string[]) => {
+    const prev = getHeaderFn ? toHeaderList(getHeaderFn(name)) : [];
+    const additions = toHeaderList(value);
+    setHeaderFn(name, [...prev, ...additions]);
+  };
+  return true;
+}
+
 export function createAuthRuntime(namespace: AuthNamespace) {
   const config = getAuthNamespaceConfig(namespace);
   const rememberCookieName =
@@ -100,8 +131,17 @@ export function createAuthRuntime(namespace: AuthNamespace) {
     }
 
     const token = generateCsrfToken();
-    const response = event.node?.res;
-    if (typeof response?.setHeader !== "function") {
+    const response = event.node?.res as
+      | {
+          setHeader?: (name: string, value: string | string[]) => void;
+          getHeader?: (name: string) => unknown;
+          appendHeader?: (
+            name: string,
+            value: string | readonly string[]
+          ) => void;
+        }
+      | undefined;
+    if (!(response && ensureResponseAppendHeader(response))) {
       return token;
     }
     setCookie(event, config.csrfCookieName, token, {

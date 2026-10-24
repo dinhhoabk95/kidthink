@@ -1,11 +1,11 @@
 import { writeAudit } from "@mindkid/audit";
 import {
+  completeMfaChallenge,
   decryptTotpSecret,
   generateRecoveryCodes,
   getAuthRedisClient,
   getBrowserSessionService,
   hashRecoveryCode,
-  MfaChallengeService,
   verifyTotpCode,
 } from "@mindkid/auth";
 import {
@@ -27,6 +27,7 @@ import { defineEventHandler, readBody } from "h3";
 import { z } from "zod";
 import {
   assertManagerRateLimitAllowed,
+  ensureManagerCsrfCookie,
   getMfaEncryptionKey,
   setManagerRememberCookie,
 } from "#server/utils/admin-auth-runtime";
@@ -88,72 +89,97 @@ async function verifyManagerMfa(
 }
 
 export default defineEventHandler(async (event) => {
-  const body = (await readBody(event).catch(() => null)) ?? {};
-  const parsed = MfaSchema.safeParse(body);
+  const rawBody =
+    (event.context as { body?: Record<string, string> })?.body ??
+    (await readBody(event).catch(() => null)) ??
+    {};
+  const parsed = MfaSchema.safeParse(rawBody);
   if (!parsed.success) {
     throw new InvalidCredentialsError();
   }
   const { challenge, code } = parsed.data;
 
-  // Consume opaque Redis MFA challenge atomically (BR-AUT-35, BR-MME-03)
-  const mfaChallengeService = new MfaChallengeService(getAuthRedisClient());
-  const challengePayload = await mfaChallengeService
-    .consumeChallenge("manager", challenge)
-    .catch(() => {
-      throw new InvalidCredentialsError();
-    });
-
   const db = getOwnerDb();
-  const [manager] = await db
-    .select()
-    .from(managers)
-    .where(eq(managers.id, challengePayload.accountId));
+  const state: {
+    manager: typeof managers.$inferSelect | null;
+    isFirstEnrollment: boolean;
+    recoveryCodeId: number | null;
+  } = {
+    manager: null,
+    isFirstEnrollment: false,
+    recoveryCodeId: null,
+  };
 
+  // Enforce MfaAttemptGuard + keep challenge on failed attempt up to 5 failures (BR-AUT-35, BR-MME-03)
+  const challengePayload = await completeMfaChallenge({
+    redis: getAuthRedisClient(),
+    namespace: "manager",
+    challengeToken: challenge,
+    verify: async (payload) => {
+      const [manager] = await db
+        .select()
+        .from(managers)
+        .where(eq(managers.id, payload.accountId));
+
+      if (!manager) {
+        throw new InvalidCredentialsError();
+      }
+
+      if (!manager.isActive) {
+        throw new InsufficientRoleError();
+      }
+
+      const rateLimit = await enforceTwoAxisRateLimit({
+        routeClass: "auth:mfa",
+        remoteIp: getVerifiedRemoteIp(event),
+        accountIdentifier: String(manager.id),
+      });
+      assertManagerRateLimitAllowed(rateLimit.statusCode);
+
+      const [mfaSetting] = await db
+        .select()
+        .from(mfaSettings)
+        .where(
+          and(
+            eq(mfaSettings.accountType, "manager"),
+            eq(mfaSettings.accountId, manager.id)
+          )
+        );
+
+      const isFirstEnrollment =
+        !manager.mfaEnabled && (!mfaSetting || mfaSetting.confirmedAt === null);
+
+      const mfaResult = await verifyManagerMfa(db, manager.id, code);
+      if (
+        !mfaResult.verified ||
+        (isFirstEnrollment && mfaResult.recoveryCodeId !== null)
+      ) {
+        await db.transaction(async (tx) => {
+          await writeAudit(tx, {
+            actor_type: "manager",
+            actor_id: manager.id,
+            action: "manager_mfa_failed",
+            entity_type: "manager",
+            entity_id: manager.id.toString(),
+            reason: "Invalid MFA code or recovery code",
+          });
+        });
+        return false;
+      }
+
+      state.manager = manager;
+      state.isFirstEnrollment = isFirstEnrollment;
+      state.recoveryCodeId = mfaResult.recoveryCodeId;
+      return true;
+    },
+  });
+
+  const manager = state.manager;
   if (!manager) {
     throw new InvalidCredentialsError();
   }
-
-  if (!manager.isActive) {
-    throw new InsufficientRoleError();
-  }
-
-  const rateLimit = await enforceTwoAxisRateLimit({
-    routeClass: "auth:mfa",
-    remoteIp: getVerifiedRemoteIp(event),
-    accountIdentifier: String(manager.id),
-  });
-  assertManagerRateLimitAllowed(rateLimit.statusCode);
-
-  const [mfaSetting] = await db
-    .select()
-    .from(mfaSettings)
-    .where(
-      and(
-        eq(mfaSettings.accountType, "manager"),
-        eq(mfaSettings.accountId, manager.id)
-      )
-    );
-
-  const isFirstEnrollment =
-    !manager.mfaEnabled && (!mfaSetting || mfaSetting.confirmedAt === null);
-
-  const mfaResult = await verifyManagerMfa(db, manager.id, code);
-  if (
-    !mfaResult.verified ||
-    (isFirstEnrollment && mfaResult.recoveryCodeId !== null)
-  ) {
-    await db.transaction(async (tx) => {
-      await writeAudit(tx, {
-        actor_type: "manager",
-        actor_id: manager.id,
-        action: "manager_mfa_failed",
-        entity_type: "manager",
-        entity_id: manager.id.toString(),
-        reason: "Invalid MFA code or recovery code",
-      });
-    });
-    throw new InvalidCredentialsError();
-  }
+  const { isFirstEnrollment } = state;
+  const mfaResult = { recoveryCodeId: state.recoveryCodeId };
 
   let recoveryCodesToReturn: string[] | undefined;
 
@@ -254,6 +280,7 @@ export default defineEventHandler(async (event) => {
   if (createdSession.rememberToken) {
     setManagerRememberCookie(event, createdSession.rememberToken);
   }
+  ensureManagerCsrfCookie(event);
 
   // Record PG metadata
   const pgStore = new PostgresSessionStore(getAppSql());

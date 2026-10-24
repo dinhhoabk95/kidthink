@@ -17,10 +17,10 @@ Plan: [`313-security-audit-remediation-plan.md`](313-security-audit-remediation-
 - [x] Test đỏ & fix `payment-jobs.ts` (không ghi đè `manual_grant`) và `pdf-export.ts` (bỏ default entitlements fail-open)
 
 ## S3 — Rate Limiting 2 trục, `MfaAttemptGuard` cho Manager/User, Reauth TOTP/Social & Session Revocation (`[H-01]`, `[H-02]`, `[H-04]`, `[M-01..M-06]`, `[L-02..L-04]`)
-- [ ] Test đỏ & fix `rate-limit-routes.ts` + `token-bucket.ts` (phân loại `/api/users/{password,mfa/*,account/delete*,parent-gate/*}`, bỏ hardcode salt)
-- [ ] Test đỏ & fix `managers/mfa.post.ts`, `users/mfa/*`, `oauth/[provider]/callback.get.ts` (`completeMfaChallenge` + atomic `MfaAttemptGuard` + cookie `tm_u_csrf`/`tm_u_remember`)
-- [ ] Test đỏ & fix `reauth.post.ts` (hỗ trợ `totp` & `social`) + gắn `requireReauth` trên các route đặc quyền `super_admin`
-- [ ] Test đỏ & fix `logout.post.ts` (chỉ thu hồi thiết bị hiện tại) + grace window cho `previousVerifierHash`
+- [x] Test đỏ & fix `rate-limit-routes.ts` + `token-bucket.ts` (phân loại `/api/users/{password,mfa/*,account/delete*,parent-gate/*}`, bỏ hardcode salt)
+- [x] Test đỏ & fix `managers/mfa.post.ts`, `users/mfa/*`, `oauth/[provider]/callback.get.ts` (`completeMfaChallenge` + atomic `MfaAttemptGuard` + cookie `tm_u_csrf`/`tm_u_remember`)
+- [x] Test đỏ & fix `reauth.post.ts` (hỗ trợ `totp` & `social`) + gắn `requireReauth` trên các route đặc quyền `super_admin`
+- [x] Test đỏ & fix `logout.post.ts` (chỉ thu hồi thiết bị hiện tại) + grace window cho `previousVerifierHash`
 
 ## S4 — Access Ladder, Guest Allowlist (`BR-LAD-07`), Curriculum Visibility & Daily Play Cap (`[H-10]`, `[M-11]`, `[L-01]`)
 - [ ] Test đỏ & fix `access-ladder.ts` + `guest/levels/[code]/config.get.ts` (`isGuestAllowedLevel` & `active_child_id` cho bậc `login`)

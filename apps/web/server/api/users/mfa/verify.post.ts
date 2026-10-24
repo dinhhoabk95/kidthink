@@ -1,13 +1,16 @@
 import {
   decryptTotpSecret,
   generateRecoveryCodes,
+  getAuthRedisClient,
   hashRecoveryCode,
+  MfaAttemptGuard,
   verifyTotpCode,
 } from "@mindkid/auth";
 import { getOwnerDb, mfaRecoveryCodes, mfaSettings, users } from "@mindkid/db";
 import {
   MfaAlreadyEnabledError,
   MfaInvalidCodeError,
+  MfaLockedError,
   MfaRequiredError,
   MfaSecretCorruptedError,
 } from "@mindkid/errors/auth";
@@ -35,6 +38,8 @@ export default defineEventHandler(async (event) => {
   }
 
   const code = parsedResult.data.code.trim();
+  const attemptGuard = new MfaAttemptGuard(getAuthRedisClient());
+  await attemptGuard.assertNotLocked("user", userId);
 
   const db = getOwnerDb();
   const [setting] = await db
@@ -69,8 +74,13 @@ export default defineEventHandler(async (event) => {
   const isValid = verifyTotpCode(code, decryptedSecret); // BR-MFA-04, BR-MFA-12
 
   if (!isValid) {
+    const failure = await attemptGuard.recordFailure("user", userId);
+    if (failure.locked) {
+      throw new MfaLockedError();
+    }
     throw new MfaInvalidCodeError("Mã xác thực không chính xác");
   }
+  await attemptGuard.reset("user", userId);
 
   // BR-MFA-02: Generate 10 recovery codes, store hashes
   const rawRecoveryCodes = generateRecoveryCodes(10);

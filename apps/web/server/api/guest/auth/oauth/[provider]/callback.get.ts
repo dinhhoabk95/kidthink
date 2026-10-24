@@ -1,8 +1,10 @@
 import {
   decodeOAuthStatePayload,
+  getAuthRedisClient,
   getBrowserSessionService,
   getOAuthRegistry,
   isOAuthProvider,
+  MfaChallengeService,
   type NormalizedProfile,
   OAUTH_COOKIE_NAME,
   type OAuthProvider,
@@ -293,9 +295,17 @@ async function handleOAuthLoginFlow(
       );
 
     if (mfa?.confirmedAt) {
+      const mfaService = new MfaChallengeService(getAuthRedisClient());
+      const createdChallenge = await mfaService.createChallenge({
+        namespace: "user",
+        accountId: user.id,
+        displayName: user.displayName,
+        rememberMe: false,
+        ipAddress: getVerifiedRemoteIp(event),
+      });
       throw new MfaRequiredError(
         "Vui lòng hoàn tất xác thực đa yếu tố để tiếp tục.",
-        { user_id: user.id }
+        { challenge: createdChallenge.challengeToken }
       );
     }
 

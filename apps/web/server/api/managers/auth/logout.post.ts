@@ -1,4 +1,6 @@
 import { getBrowserSessionService } from "@mindkid/auth";
+import { activeSessions, getOwnerDb } from "@mindkid/db";
+import { and, eq, isNull } from "drizzle-orm";
 import { defineEventHandler, type H3Event } from "h3";
 import {
   clearManagerRememberCookie,
@@ -18,12 +20,23 @@ export async function handleLogout(event: H3Event) {
 
   const manager = event.context.manager;
   if (manager) {
-    await getBrowserSessionService()
-      .revokeAll({
-        account_type: "manager",
-        account_id: manager.manager_id,
-      })
+    const deviceId = await getBrowserSessionService()
+      .revokeSession("manager", manager.manager_id, manager.session_id)
       .catch(() => null);
+    if (deviceId) {
+      await getOwnerDb()
+        .update(activeSessions)
+        .set({ revokedAt: new Date() })
+        .where(
+          and(
+            eq(activeSessions.accountType, "manager"),
+            eq(activeSessions.accountId, manager.manager_id),
+            eq(activeSessions.deviceId, deviceId),
+            isNull(activeSessions.revokedAt)
+          )
+        )
+        .catch(() => null);
+    }
   }
 
   await clearUserSession(event, getManagerSessionConfig());
