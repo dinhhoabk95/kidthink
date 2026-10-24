@@ -11,6 +11,7 @@
     "0008_child_stickers": "3d4febdbd21dc547eae597a81000b1aa0a71680b11076bffda8b575598d0cbf2",
     "0009_published_content_immutable_triggers": "708abdf86f909750f9fcaa262bd43d958c0a7807ff2748f7a23fbb73fcb334d6",
     "0010_lesson_run_observations_updated_at": "75c71bb3d686526a51492025d0d3c51316c8b35ded5aece6e6375e8cd3160a3c",
-    "0011_performance_hot_indexes": "815d14992a2bbef2ca42fcaadd78592963d2121c5dead19519181767e5dc6188"
+    "0011_performance_hot_indexes": "815d14992a2bbef2ca42fcaadd78592963d2121c5dead19519181767e5dc6188",
+    "0012_audit_consent_immutable_and_fk_restrict": "10b5fc83f7e279d1a2407047f9a94cfd16ebccf91d7e50ee16e5e9fb2982142a"
   }
 }

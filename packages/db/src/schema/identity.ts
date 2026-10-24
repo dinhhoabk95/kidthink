@@ -213,7 +213,7 @@ export const consentLogs = pgTable("consent_logs", {
   id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
   userId: bigint("user_id", { mode: "number" })
     .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+    .references(() => users.id, { onDelete: "restrict" }),
   consentType: consentTypeEnum("consent_type").notNull(),
   action: consentActionEnum("action").notNull().default("accepted"),
   ipAddress: text("ip_address").notNull(),

@@ -349,12 +349,38 @@ describe("Schema Identity & Billing Rules (BR-SIB-01..BR-SIB-13)", () => {
     expect(sampleHash.startsWith("$argon2id$")).toBe(true);
   });
 
-  it("BR-SIB-06: audit_logs và consent_logs là bảng INSERT-only có created_at NOT NULL", () => {
+  it("BR-SIB-06: audit_logs và consent_logs là bảng INSERT-only có created_at NOT NULL, và consent_logs / payment_orders / ai_credit_ledger giữ onDelete=restrict trên user_id", () => {
     const auditCols = getTableColumns(schema.auditLogs);
     const consentCols = getTableColumns(schema.consentLogs);
     expect(auditCols.createdAt.notNull).toBe(true);
     expect(consentCols.createdAt.notNull).toBe(true);
     expect(consentCols.action.enumValues).toEqual(["accepted", "withdrawn"]);
+
+    for (const table of [
+      schema.consentLogs,
+      schema.paymentOrders,
+      schema.aiCreditLedger,
+    ]) {
+      const cfg = getTableConfig(table);
+      const userFk = cfg.foreignKeys.find(
+        (fk) => getTableName(fk.reference().foreignTable) === "users"
+      );
+      expect(userFk?.onDelete).toBe("restrict");
+    }
+
+    const migration0012 = readFileSync(
+      resolve(
+        import.meta.dirname,
+        "..",
+        "..",
+        "src",
+        "migrations",
+        "0012_audit_consent_immutable_and_fk_restrict.sql"
+      ),
+      "utf8"
+    );
+    expect(migration0012).toContain("prevent_insert_only_mutation");
+    expect(migration0012).toContain("ON DELETE restrict");
   });
 
   it("BR-SIB-07: users và managers đều dùng kiểu citext UNIQUE cho cột email (case-insensitive)", () => {

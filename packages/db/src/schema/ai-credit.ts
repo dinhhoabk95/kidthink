@@ -30,7 +30,7 @@ export const aiCreditLedger = pgTable(
     uuid: uuid("uuid").defaultRandom().notNull().unique(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "restrict" }),
     delta: integer("delta").notNull(),
     reason: aiCreditReasonEnum("reason").notNull(),
     refType: varchar("ref_type", { length: 60 }),

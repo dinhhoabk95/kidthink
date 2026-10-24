@@ -139,7 +139,7 @@ export const paymentOrders = pgTable(
     uuid: uuid("uuid").defaultRandom().notNull().unique(),
     userId: bigint("user_id", { mode: "number" })
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "restrict" }),
     packageCode: varchar("package_code", { length: 40 })
       .notNull()
       .references(() => packages.code),

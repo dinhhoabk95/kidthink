@@ -50,18 +50,33 @@ const FORBIDDEN_SECRET_KEYS = new Set([
   "recovery_codes",
 ]);
 
+type AuditFieldValue = string | number | boolean | null | undefined | object;
+
 /**
  * BR-AUD-05 & BR-AUD-06: Payload runtime scanner
  */
 export function assertCleanAuditPayload(
-  payload: Record<string, unknown> | null | undefined,
+  payload: AuditInput["before_data"],
   fieldLabel: string
 ): void {
   if (!payload || typeof payload !== "object") {
     return;
   }
 
-  function scan(obj: Record<string, unknown>, path = ""): void {
+  function scanValue(val: AuditFieldValue, path: string): void {
+    if (!val || typeof val !== "object") {
+      return;
+    }
+    if (Array.isArray(val)) {
+      for (let i = 0; i < val.length; i += 1) {
+        scanValue(val[i] as AuditFieldValue, `${path}[${i}]`);
+      }
+      return;
+    }
+    scan(val as Record<string, AuditFieldValue>, path);
+  }
+
+  function scan(obj: Record<string, AuditFieldValue>, path = ""): void {
     for (const [key, value] of Object.entries(obj)) {
       const lowerKey = key.toLowerCase();
 
@@ -81,13 +96,11 @@ export function assertCleanAuditPayload(
         );
       }
 
-      if (value && typeof value === "object" && !Array.isArray(value)) {
-        scan(value as Record<string, unknown>, `${path}.${key}`);
-      }
+      scanValue(value, `${path}.${key}`);
     }
   }
 
-  scan(payload);
+  scan(payload as Record<string, AuditFieldValue>);
 }
 
 const MAX_PAYLOAD_BYTES = 100 * 1024; // 100KB payload threshold

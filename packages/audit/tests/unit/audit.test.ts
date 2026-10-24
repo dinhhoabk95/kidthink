@@ -15,14 +15,12 @@ function createTestTx() {
   const tx: AuditTx = {
     insert() {
       return {
-        values(
-          vals:
-            | Record<string, string | number | null | object>
-            | Record<string, string | number | null | object>[]
-        ) {
+        values(vals) {
           const rows = Array.isArray(vals) ? vals : [vals];
           for (const row of rows) {
-            inserted.push(row);
+            inserted.push(
+              row as Record<string, string | number | null | object>
+            );
           }
           return {
             returning() {
@@ -54,6 +52,22 @@ describe("@mindkid/audit unit tests", () => {
 
     expect(() => {
       assertCleanAuditPayload({ access_token: "secret_tok" }, "test");
+    }).toThrow(AuditError);
+  });
+
+  it("BR-AUD-05 & BR-AUD-06 ([M-08]): recursively blocks PII and secrets inside arrays and nested arrays", () => {
+    expect(() => {
+      assertCleanAuditPayload(
+        { items: [{ id: 1, display_name: "Bé An" }] },
+        "before_data"
+      );
+    }).toThrow(AuditError);
+
+    expect(() => {
+      assertCleanAuditPayload(
+        { matrix: [[{ password_hash: "$argon2id$secret" }]] },
+        "after_data"
+      );
     }).toThrow(AuditError);
   });
 

@@ -156,8 +156,8 @@ async function ensureTestDatabase(url: string): Promise<void> {
       GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO mindkid_app;
       ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO mindkid_app;
       ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO mindkid_app;
-      REVOKE UPDATE, DELETE ON TABLE consent_logs FROM mindkid_app;
-      REVOKE UPDATE, DELETE ON TABLE audit_logs FROM mindkid_app;
+      REVOKE UPDATE, DELETE, TRUNCATE ON TABLE consent_logs FROM mindkid_app;
+      REVOKE UPDATE, DELETE, TRUNCATE ON TABLE audit_logs FROM mindkid_app;
 
       CREATE OR REPLACE FUNCTION prevent_published_update()
       RETURNS TRIGGER AS $$

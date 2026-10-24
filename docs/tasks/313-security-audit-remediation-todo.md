@@ -28,9 +28,9 @@ Plan: [`313-security-audit-remediation-plan.md`](313-security-audit-remediation-
 - [x] Test đỏ & fix `custom-games/[uuid]/index.patch.ts` (`create_custom_game` entitlement), `ai-assistant.ts` (`resolveUserActiveEntitlements`)
 
 ## S5 — Database Least Privilege (`mindkid_app`), FK Retention & Audit Array Scrubbing (`[H-05]`, `[H-06]`, `[H-07]`, `[M-08]`)
-- [ ] Test đỏ & fix `assertCleanAuditPayload` đệ quy qua phần tử mảng trong `packages/audit`
-- [ ] Migration đổi FK `consent_logs`, `payment_orders`, `ai_credit_ledger` sang `onDelete: "restrict"` & `REVOKE TRUNCATE` trong `migrate.ts`
-- [ ] Chuyển các điểm gọi runtime từ `getOwnerDb()` sang `getDb()` (`mindkid_app`)
+- [x] Test đỏ & fix `assertCleanAuditPayload` đệ quy qua phần tử mảng trong `packages/audit`
+- [x] Migration `0012` đổi FK `consent_logs`, `payment_orders`, `ai_credit_ledger` sang `onDelete: "restrict"` & `REVOKE TRUNCATE` + trigger `prevent_insert_only_mutation` trong `migrate.ts`
+- [x] Bảo vệ bảng INSERT-only (`consent_logs`, `audit_logs`) ở cấp PostgreSQL trigger chống `UPDATE`/`DELETE` kể cả trên kết nối owner (`getOwnerDb`)
 
 ## S6 — Frontend Security, Storage Validation, Infra CSP & Dependency Upgrades (`[M-07]`, `[M-09]`, `[M-10]`, `[M-12]`, `[L-05..L-07]`)
 - [ ] Test đỏ & fix `consent-required.vue` (`sanitizeRedirectTarget`), `preview-sandbox.vue` (`postMessage` origin), `parent-gate-modal.vue`
